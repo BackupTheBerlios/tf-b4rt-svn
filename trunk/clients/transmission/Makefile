@@ -1,4 +1,4 @@
-# $Id: Makefile 8 2006-07-15 02:35:49Z b4rt $
+# $Id$
 
 include mk/common.mk
 
