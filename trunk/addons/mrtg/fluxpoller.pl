@@ -27,10 +27,13 @@ my ( $REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE );
 # bin Vars
 my ( $BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_FSTAT, $BIN_GREP, $BIN_AWK );
 
+# webserver-user (only needed on bsd)
+my $WEBUSER = "www";
+
 # check env
 checkEnv();
 
-# define binaries
+# define common binaries
 $BIN_CAT = "/bin/cat";
 $BIN_HEAD = "/usr/bin/head";
 $BIN_TAIL = "/usr/bin/tail";
@@ -47,7 +50,6 @@ if ($OSTYPE == 1) { # linux
 # Main
 #-------------------------------------------------------------------------------
 
-
 # find binaries
 if ($autoFindBinaries != 0) { findBinaries() };
 
@@ -60,20 +62,20 @@ $EXTENSION=$1;
 # main-"switch"
 SWITCH: {
 	$_ = shift @ARGV;
-	/^traffic/ && do {
+	/^traffic/ && do { # --- traffic ---
 		printTraffic(shift @ARGV, shift @ARGV);
 		exit;
 	};
-	/^connections/ && do {
+	/^connections/ && do { # --- connections ---
 		printConnections(shift @ARGV);
 		exit;
 	};
-	/.*(help|-h).*/ && do {
+	/.*(help|-h).*/ && do { # --- help ---
 		printUsage();
-    exit;
+		exit;
 	};
 	printUsage();
-  exit;
+	exit;
 }
 
 #===============================================================================
@@ -88,21 +90,21 @@ SWITCH: {
 #-------------------------------------------------------------------------------
 sub printTraffic {
 	my $fluxDir = shift;
-  if (!(defined $fluxDir)) {
-    printUsage();
-    exit;
-  }
-  $fluxDir .= "/.torrents";
-  my $outputFormat = shift;
-  if ($outputFormat eq "mrtg") {
-    mrtgPrintTraffic($fluxDir);
+	if (!(defined $fluxDir)) {
+		printUsage();
+		exit;
+	}
+	$fluxDir .= "/.torrents";
+	my $outputFormat = shift;
+	if ($outputFormat eq "mrtg") {
+		mrtgPrintTraffic($fluxDir);
 	} elsif ($outputFormat eq "cacti") {
-    cactiPrintTraffic($fluxDir);
+		cactiPrintTraffic($fluxDir);
 	} else {
-    # get traffic-vals
-    my @traffic = fluxTraffic($fluxDir);
-    # print traffic-vals
-    print $traffic[0]." ".$traffic[1]."\n";
+		# get traffic-vals
+		my @traffic = fluxTraffic($fluxDir);
+		# print traffic-vals
+		print $traffic[0]." ".$traffic[1]."\n";
 	}
 }
 
@@ -113,18 +115,18 @@ sub printTraffic {
 #-------------------------------------------------------------------------------
 sub mrtgPrintTraffic {
 	my $fluxDir = shift;
-  # get traffic-vals
-  my @traffic = fluxTraffic($fluxDir);
-  # print down-speed for mrtg 
-  print $traffic[0];
-  print "\n";
-  # print up-speed for mrtg
-  print $traffic[1];
-  print "\n";
-  # print uptime for mrtg
-  mrtgPrintUptime();
-  # print target-name for mrtg
-  mrtgPrintTargetname();
+	# get traffic-vals
+	my @traffic = fluxTraffic($fluxDir);
+	# print down-speed for mrtg 
+	print $traffic[0];
+	print "\n";
+	# print up-speed for mrtg
+	print $traffic[1];
+	print "\n";
+	# print uptime for mrtg
+	mrtgPrintUptime();
+	# print target-name for mrtg
+	mrtgPrintTargetname();
 }
 
 #-------------------------------------------------------------------------------
@@ -134,16 +136,16 @@ sub mrtgPrintTraffic {
 #-------------------------------------------------------------------------------
 sub cactiPrintTraffic {
 	my $fluxDir = shift;
-  # get traffic-vals
-  my @traffic = fluxTraffic($fluxDir);
-  # print traffic for cacti
-  my $trafficLine = "";
-  $trafficLine .= "bandwidth_in:";
-  $trafficLine .= $traffic[0];
-  $trafficLine .= " ";
-  $trafficLine .= "bandwidth_out:";
-  $trafficLine .= $traffic[1];
-  print $trafficLine;
+	# get traffic-vals
+	my @traffic = fluxTraffic($fluxDir);
+	# print traffic for cacti
+	my $trafficLine = "";
+	$trafficLine .= "bandwidth_in:";
+	$trafficLine .= $traffic[0];
+	$trafficLine .= " ";
+	$trafficLine .= "bandwidth_out:";
+	$trafficLine .= $traffic[1];
+	print $trafficLine;
 }
 
 #-------------------------------------------------------------------------------
@@ -153,13 +155,13 @@ sub cactiPrintTraffic {
 #-------------------------------------------------------------------------------
 sub printConnections {
 	my $outputFormat = shift;
-  if ($outputFormat eq "mrtg") {
-    mrtgPrintConnections();
+	if ($outputFormat eq "mrtg") {
+		mrtgPrintConnections();
 	} elsif ($outputFormat eq "cacti") {
-    cactiPrintConnections();
+		cactiPrintConnections();
 	} else {
-    print fluxConnections();
-    print "\n";
+		print fluxConnections();
+		print "\n";
 	}
 }
 
@@ -169,16 +171,16 @@ sub printConnections {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub mrtgPrintConnections {
-  # print down-"speed" for mrtg
-  print fluxConnections();
-  print "\n";
-  # print up-"speed" for mrtg
-  print "0";
-  print "\n";
-  # print uptime for mrtg
-  mrtgPrintUptime();
-  # print target-name for mrtg
-  mrtgPrintTargetname();
+	# print down-"speed" for mrtg
+	print fluxConnections();
+	print "\n";
+	# print up-"speed" for mrtg
+	print "0";
+	print "\n";
+	# print uptime for mrtg
+	mrtgPrintUptime();
+	# print target-name for mrtg
+	mrtgPrintTargetname();
 }
 
 #-------------------------------------------------------------------------------
@@ -187,8 +189,8 @@ sub mrtgPrintConnections {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub cactiPrintConnections {
-  # print connections for cacti
-  print fluxConnections();
+	# print connections for cacti
+	print fluxConnections();
 }
 
 #-------------------------------------------------------------------------------
@@ -197,11 +199,11 @@ sub cactiPrintConnections {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub mrtgPrintUptime {
-  # uptime data for mrtg
-  my $uptime = `uptime`;
-  my @uptimeAry = split(/\s/, $uptime, 6);
+	# uptime data for mrtg
+	my $uptime = `uptime`;
+	my @uptimeAry = split(/\s/, $uptime, 6);
 	(my $timeLabel = $uptimeAry[4]) =~ s/,.*//;
-  print $uptimeAry[3]." ".$timeLabel."\n";
+	print $uptimeAry[3]." ".$timeLabel."\n";
 }
 
 #-------------------------------------------------------------------------------
@@ -210,9 +212,9 @@ sub mrtgPrintUptime {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub mrtgPrintTargetname {
-  # target-name for mrtg
-  my $targetname = `hostname`; 
-  print $targetname;
+	# target-name for mrtg
+	my $targetname = `hostname`; 
+	print $targetname;
 }
 
 #-------------------------------------------------------------------------------
@@ -222,35 +224,35 @@ sub mrtgPrintTargetname {
 #-------------------------------------------------------------------------------
 sub fluxTraffic {
 	my $fluxDir = shift;
-  # init speed-sum-vars
-  my $downspeed = 0.0;
-  my $upspeed = 0.0;
-  # process stat-files
-  opendir(DIR, $fluxDir);
-  my @files = map { $_->[1] } # extract pathnames
+	# init speed-sum-vars
+	my $downspeed = 0.0;
+	my $upspeed = 0.0;
+	# process stat-files
+	opendir(DIR, $fluxDir);
+	my @files = map { $_->[1] } # extract pathnames
 	map { [ $_, "$fluxDir/$_" ] } # full paths
 	grep { !/^\./ } # no dot-files
 	grep { /.*\.stat$/ } # only .stat-files
-  readdir(DIR);
-  closedir(DIR);
-  foreach my $statFile (@files) {
-    if (-f $statFile) {
-      my ($down, $up) = split(/\n/, `$BIN_CAT $statFile | $BIN_HEAD -n 5 | $BIN_TAIL -n 2`, 2);
-      if ($down != "") {
-        $down =~ s/(.*\d)(\s.*)/$1/;
-        chomp $down;
-        $downspeed += $down;
-      }
-      if ($up != "") {
-        $up =~ s/(.*\d)(\s.*)/$1/;
-        chomp $up;
-        $upspeed += $up;
-      }
-    }
-  }
-  my @retVal;
-  $retVal[0] = ($downspeed<<10);
-  $retVal[1] = ($upspeed<<10);
+	readdir(DIR);
+	closedir(DIR);
+	foreach my $statFile (@files) {
+		if (-f $statFile) {
+			my ($down, $up) = split(/\n/, `$BIN_CAT $statFile | $BIN_HEAD -n 5 | $BIN_TAIL -n 2`, 2);
+			if ($down != "") {
+				$down =~ s/(.*\d)(\s.*)/$1/;
+				chomp $down;
+				$downspeed += $down;
+			}
+			if ($up != "") {
+				$up =~ s/(.*\d)(\s.*)/$1/;
+				chomp $up;
+				$upspeed += $up;
+			}
+		}
+	}
+	my @retVal;
+	$retVal[0] = ($downspeed<<10);
+	$retVal[1] = ($upspeed<<10);
 	return @retVal;
 }
 
@@ -260,7 +262,7 @@ sub fluxTraffic {
 # Return: int with current flux-tcp-connections (python + transmission)
 #-------------------------------------------------------------------------------
 sub fluxConnections {
-  my $cons = 0;
+	my $cons = 0;
 	my $cons_temp = 0;
 	if ($OSTYPE == 1) { # linux
 		foreach my $bin_socket (@BINS_SOCKET) {
@@ -270,12 +272,46 @@ sub fluxConnections {
 		}
 	} elsif ($OSTYPE == 2) { # bsd
 		foreach my $bin_socket (@BINS_SOCKET) {
-			$cons_temp = `$BIN_FSTAT -u www | $BIN_GREP $bin_socket | $BIN_GREP -c tcp`;
+			$cons_temp = `$BIN_FSTAT -u $WEBUSER | $BIN_GREP $bin_socket | $BIN_GREP -c tcp`;
 			chomp $cons_temp;
 			$cons += $cons_temp;
 		}
 	}
-  return $cons;
+	return $cons;
+}
+
+#-------------------------------------------------------------------------------
+# Sub: findBinaries
+# Parameters:	-
+# Return:		-
+#-------------------------------------------------------------------------------
+sub findBinaries {
+	$BIN_CAT = `whereis cat | awk '{print \$2}'`; chomp $BIN_CAT;
+	$BIN_HEAD = `whereis head | awk '{print \$2}'`; chomp $BIN_HEAD;
+	$BIN_TAIL = `whereis tail | awk '{print \$2}'`; chomp $BIN_TAIL;
+	$BIN_NETSTAT = `whereis netstat | awk '{print \$2}'`; chomp $BIN_NETSTAT;
+	$BIN_FSTAT = `whereis fstat | awk '{print \$2}'`; chomp $BIN_FSTAT;
+	$BIN_GREP = `whereis grep | awk '{print \$2}'`; chomp $BIN_GREP;
+	$BIN_AWK = `whereis awk | awk '{print \$2}'`; chomp $BIN_AWK;
+}
+
+#-------------------------------------------------------------------------------
+# Sub: checkEnv
+# Parameters:	-
+# Return:		-
+#-------------------------------------------------------------------------------
+sub checkEnv {	
+	## win32 not supported ;)
+	if ("$^O" =~ /win32/i) {
+		print "\r\nWin32 not supported.\r\n";
+		exit;
+	} elsif ("$^O" =~ /linux/i) {
+		$OSTYPE = 1;
+		return;
+	} elsif ("$^O" =~ /bsd$/i) {
+		$OSTYPE = 2;
+		return;
+	}
 }
 
 #-------------------------------------------------------------------------------
@@ -284,7 +320,7 @@ sub fluxConnections {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub printUsage {
-  print <<"USAGE";
+	print <<"USAGE";
 
 $PROG.$EXTENSION (Revision $REVISION)
 
@@ -313,38 +349,4 @@ USAGE
   
 }
 
-#-------------------------------------------------------------------------------
-# Sub: findBinaries
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
-sub findBinaries {
-  $BIN_CAT = `whereis cat | awk '{print \$2}'`; chomp $BIN_CAT;
-  $BIN_HEAD = `whereis head | awk '{print \$2}'`; chomp $BIN_HEAD;
-  $BIN_TAIL = `whereis tail | awk '{print \$2}'`; chomp $BIN_TAIL;
-  $BIN_NETSTAT = `whereis netstat | awk '{print \$2}'`; chomp $BIN_NETSTAT;
-	$BIN_FSTAT = `whereis fstat | awk '{print \$2}'`; chomp $BIN_FSTAT;
-  $BIN_GREP = `whereis grep | awk '{print \$2}'`; chomp $BIN_GREP;
-  $BIN_AWK = `whereis awk | awk '{print \$2}'`; chomp $BIN_AWK;
-}
-
-#-------------------------------------------------------------------------------
-# Sub: checkEnv
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
-sub checkEnv {	
-  ## win32 not supported ;)
-  if ("$^O" =~ /win32/i) {
-    print "\r\nWin32 not supported.\r\n";
-    exit;
-  } elsif ("$^O" =~ /linux/i) {
-		$OSTYPE = 1;
-		return;
-	} elsif ("$^O" =~ /bsd$/i) {
-		$OSTYPE = 2;
-		return;
-	}
-}
-
-
+# EOF
