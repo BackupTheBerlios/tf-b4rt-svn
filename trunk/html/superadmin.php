@@ -178,7 +178,6 @@ if (isset($_REQUEST["b"])) {
 }
 
 // update
-/*
 if (isset($_REQUEST["u"])) {
 	$updateStep = trim($_REQUEST["u"]);
 	if ($updateStep != "") {
@@ -387,7 +386,6 @@ if (isset($_REQUEST["u"])) {
 		exit;
 	}
 }
-*/
 
 // queue
 if (isset($_REQUEST["q"])) {
@@ -678,8 +676,6 @@ buildPage(@trim($_REQUEST["a"]));
 printPage();
 exit;
 
-
-
 // -----------------------------------------------------------------------------
 // functions
 // -----------------------------------------------------------------------------
@@ -724,8 +720,8 @@ function buildPage($action) {
 	$htmlTop .= '<a href="' . _FILE_THIS . '?a=2">Changelog</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?a=3" target="_blank">Issues</a>';
-	//$htmlTop .= '<a href="' . _FILE_THIS . '?a=4">Update</a>';
-	//$htmlTop .= ' | ';
+	$htmlTop .= ' | ';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?a=4">Update</a>';
 	// body
 	switch($action) {
 		case "b": // backup passthru
@@ -734,7 +730,6 @@ function buildPage($action) {
 		case "-b": // backup-error passthru
 			$statusImage = "red.gif";
 		break;
-		/*
 		case "-u": // update-error passthru
 			$statusImage = "red.gif";
 			$htmlTitle = "Update";
@@ -745,7 +740,6 @@ function buildPage($action) {
 			//$htmlMain .= '<br><br>';
 			//$htmlMain .= getReleaseList();
 		break;
-		*/
 		case "q": // queue passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
@@ -864,7 +858,6 @@ function buildPage($action) {
 			echo $issueText;
 			exit;
 		break;
-		/*
 		case "4": // update
 			$htmlTitle = "Update";
 			// version-check
@@ -890,7 +883,6 @@ function buildPage($action) {
 			//$htmlMain .= '<br><br>';
 			//$htmlMain .= getReleaseList();
 		break;
-		*/
 		case "5": // news
 			$htmlTitle = "News";
 			$htmlMain .= '<br>';
@@ -898,26 +890,6 @@ function buildPage($action) {
 			$htmlMain .= '<hr>';
 			$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
 		break;
-		/*
-		case "5": // tfqmgr-log
-			$htmlTitle = "tfqmgr-log";
-			$htmlMain .= '<pre>';
-			$htmlMain .= getDataFromFile($cfg["path"].'.tfqmgr/tfqmgr.log');
-			$htmlMain .= '</pre>';
-		break;
-		case "6": // tfqmgr-status
-			$htmlTitle = "tfqmgr-status";
-			include_once("QueueManager.php");
-			$queueManager = QueueManager::getQueueManagerInstance($cfg,'tfqmgr');
-			if ($queueManager->isQueueManagerRunning()) {
-				$htmlMain .= '<br><pre>';
-				$htmlMain .= $queueManager->statusQueueManager();
-				$htmlMain .= '</pre>';
-			} else {
-				$htmlMain .= '<br><strong>tfqmgr not running</strong>';
-			}
-		break;
-		*/
 		default:
 			$htmlTitle = "SuperAdmin";
 			$statusImage = "black.gif";

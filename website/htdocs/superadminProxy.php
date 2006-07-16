@@ -27,9 +27,7 @@
 define('_FILE_NEWS','newshtml.txt');
 define('_FILE_CHANGELOG','changelog.txt');
 define('_FILE_ISSUES','issues.txt');
-/*
 define('_FILE_VERSION_CURRENT','version.txt');
-define('_FILESDIR','files');
 define('_UPDATE_BASEDIR','update');
 define('_UPDATE_DATADIR','data');
 define('_UPDATE_SQLDIR','sql');
@@ -38,15 +36,13 @@ define('_UPDATE_INDEX','update.txt');
 define('_UPDATE_DB','db.txt');
 define('_UPDATE_MYSQL','mysql.txt');
 define('_UPDATE_SQLITE','sqlite.txt');
-define('_UPDATE_SQL','sql.txt');
-*/
+//define('_FILESDIR','files');
 
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
 
 // update
-/*
 $update = @trim($_REQUEST["u"]);
 if ((isset($update)) && ($update != "")) {
     // hold current version
@@ -155,7 +151,6 @@ if ((isset($update)) && ($update != "")) {
         bailOut(false);
     }
 }
-*/
 
 // standard-action
 $action = @trim($_REQUEST["a"]);
@@ -214,7 +209,6 @@ function outputData($data) {
  * bails out cause of errors.
  *
  */
-/*
 function bailOut($compressed = false) {
     $errorString = "0"."\n"."cant auto-update from your version. please do manual update.";
     if ($compressed) {
@@ -225,7 +219,31 @@ function bailOut($compressed = false) {
     }
     exit;
 }
-*/
+
+/**
+ * get file-list
+ *
+ * @return filelist as string
+ */
+function getFileList($currentVersion, $remoteVersion) {
+    // file list
+    $dirName = "./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" ._UPDATE_DATADIR . "/" . _UPDATE_HTMLDIR;
+    if (file_exists($dirName)) {
+        if ($dirHandle = opendir($dirName)) {
+            $updateFileList = "";
+            while (false !== ($file = readdir($dirHandle))) {
+                if ((substr($file, 0, 1)) != ".")
+                    $updateFileList .= $file . "\n";
+            }
+            closedir($dirHandle);
+            return $updateFileList;
+        } else {
+            return "0";
+        }
+    } else {
+        return "0";
+    }
+}
 
 /**
  * get release-list
@@ -252,33 +270,6 @@ function getReleaseList() {
     } else {
         die("dir ".$dirName."does not exist");
         return "";
-    }
-}
-*/
-
-/**
- * get file-list
- *
- * @return filelist as string
- */
-/*
-function getFileList($currentVersion, $remoteVersion) {
-    // file list
-    $dirName = "./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" ._UPDATE_DATADIR . "/" . _UPDATE_HTMLDIR;
-    if (file_exists($dirName)) {
-        if ($dirHandle = opendir($dirName)) {
-            $updateFileList = "";
-            while (false !== ($file = readdir($dirHandle))) {
-                if ((substr($file, 0, 1)) != ".")
-                    $updateFileList .= $file . "\n";
-            }
-            closedir($dirHandle);
-            return $updateFileList;
-        } else {
-            return "0";
-        }
-    } else {
-        return "0";
     }
 }
 */
