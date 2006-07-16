@@ -1,0 +1,46 @@
+/* $Id$ */
+
+/* standard-fonts */
+body, p, ul, li, strong, em, input, select, textarea, a, table, tr, th, td, span { font-size: 10pt; color: rgb(0,0,0); font-family: Monospace; }
+
+/* headlines */
+h1, h2, h3, h4, h5, h6{ color: #111111; }
+
+/* tables */
+table {  width:800; vertical-align:top; text-align:left; border-left-color: #111111; border-bottom-color: #111111; border-top-color: #111111; border-collapse: collapse; border-right-color: #111111; table-border-color: #111111; table-border-color-light: rgb(153,255,204); table-border-color-dark: rgb(0,0,51) }
+table th {  text-align:left }
+table td {  text-align:left }
+
+/* lists */
+ul { list-style-type:circle; }
+ul ul { list-style-type:disc; }
+ul ul ul { list-style-type:square; }
+
+/* forms */
+select, textarea { border-right: #111111 1px solid; border-top: #111111 1px solid; border-left: #111111 1px solid; border-bottom: #111111 1px solid; background-color: #ffffff; }
+
+/* hr */
+hr{ margin-left:0px; text-align:left; width:800; color: #A2BED4; noshade }
+hr.header{ margin-left:0px; text-align:left; width:800; color: #94ABC0; noshade }
+
+
+/* links */
+a { background: none transparent scroll repeat 0% 0%; color: #003399; text-decoration: none; }
+a:hover { color: #f00000; text-decoration: none; }
+a img { border:none }
+
+/* prop-stuff */
+
+table.std { width:800; border-left-color: #111111; border-bottom-color: #111111; border-top-color: #111111; border-collapse: collapse; border-right-color: #111111; table-border-color: #111111; table-border-color-light: rgb(153,255,204); table-border-color-dark: rgb(0,0,51); }
+table.std th{ background-color: #94ABC0; }
+
+/* small */
+div.small { font-size: 8pt; }
+div.small a { font-size: 10px; }
+div.small a:hover { font-size: 10px; }
+
+/* path-name */
+span.path-root { font-weight: bold; font-size: 1.6em; color: rgb(0,0,0); font-family: Courier; }
+span.path-tree { font-weight: normal; font-size: 1.2em; color: rgb(0,0,0); font-family: Courier; }
+span.path-leaf { font-weight: bolder; font-size: 1.2em; color: rgb(0,0,0); font-family: Courier; }
+

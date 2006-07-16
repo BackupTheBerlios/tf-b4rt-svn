@@ -1,0 +1,830 @@
+--------------------------------------------------------------------------------
+ $Id$
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+Issues
+--------------------------------------------------------------------------------
+
+* Issue :
+blank pages or access-errors (includes/requires)
+
+- Solution :
+ensure the files+dirs in the docroot are readable by your webserver-user.
+
+one possible solution is to "chown" the files to your webserver-user. this may
+be done with a line like that :
+chown -R username /path/to/torrentflux-directory
+change dir + username to fit your system so a possible line would be :
+chown -R www-data /var/www
+
+
+* Issue :
+directory listing shows other's users dirs even when hack
+"Only Admin can see other user torrents" is enabled.
+
+- Solution :
+none atm as i dont see a way now (as things are in tf) to combine this :
+ + have specific safe paths per torrent
+ + do not jail non-admins in their "home-dirs"
+ + be secure
+
+
+* Issue :
+tfqmgr.pl (<= Revision 1.29) does not work on bsd-systems.
+
+- Solution :
+none atm as the bsd-port of Perl-IPC::Shareable has not yet
+implemented support for arrays.
+with version v9(+) you could just use lord_nors QueueManager "Qmgr" on bsds.
+
+
+* Issue :
+superadmin.php : changelog,issues,version and update not working.
+
+PHP 4.1
+Warning: gzinflate(): buffer error in /var/www/superadmin.php on line 980
+This is common error in PHP Version 4.1, as it has some bugs in buffer handling.
+http://bugs.php.net/bug.php?id=14939
+
+PHP 4.4.2 on apache2
+apache-process just dies with a segfault.
+http://bugs.php.net/bug.php?id=36017
+
+- Solution :
+none atm if you run one of the above setups.
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-93
+--------------------------------------------------------------------------------
+
+* Issue :
+  "delete torrents + data" / "wipe torrents" operations do not delete data in
+  some cases. (when savepath of torrent saved in db has no trailing slash)
+
+- Solution :
+
+## ClientHandler.php
+
+# find this (line 241 @v93) :
+    $this->savepath = $this->cfg['path'].$this->owner;
+
+# replace with :
+    $this->savepath = $this->cfg['path'].$this->owner."/";
+  // ensure path has trailing slash
+  $this->savepath = checkDirPathString($this->savepath);
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-92
+--------------------------------------------------------------------------------
+
+* Issue :
+  ~ "delete torrents + data" operation does not delete data if data is in a
+    specific savepath (not homedir) or data is "owned" by another user.
+  ~ new tornado-workaround behaves buggy. checkbox is disabled although files
+    are present. (thats because data cant be found because of wrong path)
+  issues are caused by a bug in savepath-load in functions "deleteTorrentData"
+  and "getTorrentDataSize". "delete data"-bug also present in versions < v92.
+
+- Solution :
+
+## functions.b4rt.php
+
+# find this in the function "deleteTorrentData" (lines 685-689 @v92) :
+    if (in_array("savepath",$cfg))
+        $savepath = $cfg["savepath"];
+    if (empty($savepath))
+      $savepath = $cfg["path"]."/".$cfg['user'];
+    $delete = $savepath."/".$delete;
+
+# replace with :
+    if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
+        $cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+    $delete = $cfg["savepath"].$delete;
+
+# find this in the function "getTorrentDataSize" (lines 729-733 @v92) :
+    if (in_array("savepath",$cfg))
+        $savepath = $cfg["savepath"];
+    if (empty($savepath))
+      $savepath = $cfg["path"]."/".$cfg['user'];
+    $name = $savepath."/".$name;
+
+# replace with :
+    if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
+        $cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+    $name = $cfg["savepath"].$name;
+
+## startpop.php
+
+# find this (lines 33+34 @v92) :
+if (empty($cfg["savepath"]))
+    $cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+
+# replace with :
+if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
+    $cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-91
+--------------------------------------------------------------------------------
+
+* Issue :
+Fresh (New) BitTornado-Clients fail on start if "skip hashcheck" is used.
+this is reproducable and a problem inside BitTornado.
+as this is a BitTornado-problem its present in all versions since b4rt-v5 which
+is first version having "skip hashcheck".
+
+- Solution :
+
+
+## startpop.php :
+
+# find this (v91 : 251-257):
+<!-- Skip hashcheck -->
+<table>
+<tr>
+    <td aligh="right">Dont check hashes:</td>
+    <td colspan="3"><input type="checkbox" name="skiphashcheck" <?php if ($cfg["skiphashcheck"] != 0) { echo ' checked';} ?>></td>
+</tr>
+</table>
+
+# replace with this :
+<!-- Skip hashcheck -->
+<table>
+<tr>
+    <td aligh="right">Dont check hashes :</td>
+    <?php
+    if (getTorrentDataSize($torrent) > 0) {
+        echo '<td colspan="3"><input type="checkbox" name="skiphashcheck"';
+        if ($cfg["skiphashcheck"] != 0)
+            echo ' checked';
+        echo '></td>';
+    } else {
+        echo '<td colspan="3"><input type="checkbox" name="skiphashcheck" disabled></td>';
+    }
+    ?>
+</tr>
+</table>
+
+
+## ClientHandler.tornado.php :
+
+# find this (v91 : 81):
+if (!(empty($this->skip_hash_check)))
+
+# replace with this :
+if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($torrent) > 0))
+
+
+## functions.b4rt.php :
+
+# add this function :
+/**
+ * gets size of data of a torrent
+ *
+ * @param $torrent name of the torrent
+ * @return int with size of data of torrent.
+ *         -1 if error
+ *         4096 if dir (lol ~)
+ *         string with file/dir-name if doesnt exist. (lol~)
+ */
+function getTorrentDataSize($torrent) {
+    global $cfg;
+    require_once('BDecode.php');
+    $ftorrent=$cfg["torrent_file_path"].$torrent;
+    $fd = fopen($ftorrent, "rd");
+    $alltorrent = fread($fd, filesize($ftorrent));
+    $btmeta = BDecode($alltorrent);
+    $name = $btmeta['info']['name'];
+    if(trim($name) != "") {
+        // load torrent-settings from db to get data-location
+        loadTorrentSettingsToConfig($torrent);
+        if (in_array("savepath",$cfg))
+            $savepath = $cfg["savepath"];
+        if (empty($savepath))
+          $savepath = $cfg["path"]."/".$cfg['user'];
+        $name = $savepath."/".$name;
+        # this is from dir.php - its not a function, and we need to call it several times
+        $tData = stripslashes(stripslashes($name));
+        if (!ereg("(\.\.\/)", $tData)) {
+            $fileSize = file_size($tData);
+            return $fileSize;
+        }
+    }
+    return -1;
+}
+
+
+* Issue :
+queuemanager-stats show more running torrents than there actually really are.
+(also present in versions <v91)
+
+- Solution :
+
+change in the function "getRunningTorrentCount" in the file "functions.b4rt.php":
+
+# find this:
+if ((substr($file, -1, 1)) == "d")
+
+# replace with:
+if ((substr($file, -4, 4)) == ".pid")
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-9
+--------------------------------------------------------------------------------
+
+* Issue :
+move-hack may behave buggy... eg by moving a file into a subfolder of docroot.
+this only applies if you use relative paths.
+
+- Solution :
+
+replace lines 44+45 in move.php with this code:
+
+  $dirValid = true;
+  if (strlen($targetDir) <= 0) {
+      $dirValid = false;
+  } else {
+      // we need absolute paths or stuff will end up in docroot
+      // inform user .. dont move it into a fallback-dir which may be a hastle
+      if ($targetDir{0} != '/') {
+          echo "Target-dirs must be specified with absolute and not relative paths. <br>";
+          $dirValid = false;
+      }
+  }
+  // check dir
+  if (($dirValid) && (checkDirectory($targetDir,0777))) {
+
+
+
+* Issue :
+fluxcli.php cant start users torrents when queuing is active.
+that also means torrents enqueued by users when queuemanager is tfqmgr or Qmgr
+will never be started.
+note : only torrents from users are affected ! admins torrents or single user-
+       installs wont notice this bug.
+note : version  <v9 are also affected !
+
+- Solution :
+add this line into line 264 (v9) of fluxcli.php:
+
+$cfg["AllowQueing"] = 0;
+
+so lines 264-266 should look like this:
+$cfg["AllowQueing"] = 0;
+$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+$clientHandler->startTorrentClient($torrent, 0);
+
+
+
+* Issue :
+error in rss-feed if there are stalled transmission-clients in the transfer-list
+error may be something like that :
+XML Parsing Error: not well-formed
+
+- Solution :
+change lines 110-122 of stats.php to this :
+
+    $content .= "<name><![CDATA[".$entry."]]></name>\n";
+    $content .= "<speeds><![CDATA[".$speed."]]></speeds>\n";
+    $content .= "<size><![CDATA[".formatBytesToKBMGGB($af->size)."]]></size>\n";
+    $content .= "<percent><![CDATA[".$af->percent_done."]]></percent>\n";
+    $content .= "<sharing><![CDATA[". $sharing ."]]></sharing>\n";
+    $content .= "<remaining><![CDATA[".str_replace('&#8734', '-', $af->time_left)."]]></remaining>\n";
+    $content .= "<transfered><![CDATA[".formatBytesToKBMGGB($torrentTotals['downtotal'])." - ".formatBytesToKBMGGB($torrentTotals['uptotal'])."]]></transfered>\n";
+    $content .= "</torrent>\n";
+    }
+  $content .= "</torrents>\n";
+  $content .= "<tf_details>\n";
+  $content .= "<total_speeds><![CDATA[".number_format($cfg["total_download"], 2)." - ".number_format($cfg["total_upload"], 2)."]]></total_speeds>\n";
+  $content .= "<free_space><![CDATA[".formatFreeSpace($cfg['free_space'])."]]></free_space>\n";
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-85
+--------------------------------------------------------------------------------
+
+* Issue :
+gui has missing images and is without css.(does not apply to superadmin-updates)
+
+- Solution :
+delete the file ".htaccess" in the "themes"-dir of tflux.
+
+
+* Issue :
+sharing-percentage + sharekill (values defined in admin-defaults) when starting
+by Upload+Start does not work.
+
+- Solution :
+
+add this function to functions.b4rt.php :
+
+/**
+ * injects a atorrent
+ *
+ * @param $torrent
+ * @return boolean
+ */
+function injectTorrent($torrent) {
+    global $cfg;
+    include_once("AliasFile.php");
+    $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($torrent).".stat",  $cfg['user'], $cfg);
+    $af->running = "2"; // file is new
+    $af->size = getDownloadSize($cfg["torrent_file_path"].$torrent);
+    $af->WriteFile();
+    return true;
+}
+
+
+replace lines 144-154 in index.php
+
+from this :
+
+// instant action ?
+$actionId = getRequestVar('aid');
+if (isset($actionId)) {
+    switch ($actionId) {
+        case 3:
+            $_REQUEST['queue'] = 'on';
+        case 2:
+            indexStartTorrent($file_name);
+            break;
+    }
+}
+
+to this :
+
+// init stat-file
+injectTorrent($file_name);
+// instant action ?
+$actionId = getRequestVar('aid');
+if (isset($actionId)) {
+    switch ($actionId) {
+        case 3:
+           $_REQUEST['queue'] = 'on';
+        case 2:
+           if ($cfg["enable_file_priority"]) {
+               include_once("setpriority.php");
+               // Process setPriority Request.
+               setPriority(urldecode($file_name));
+           }
+           include_once("ClientHandler.php");
+           $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+           $clientHandler->startTorrentClient($file_name, 0);
+           // just a sec..
+           sleep(1);
+           break;
+    }
+}
+
+
+replace lines 183-195 in index.php
+
+from this :
+
+// instant action ?
+$actionId = getRequestVar('aid');
+if (isset($actionId)) {
+    switch ($actionId) {
+        case 3:
+            $_REQUEST['queue'] = 'on';
+        case 2:
+            indexStartTorrent($file_name);
+            break;
+    }
+} else {
+    header("location: index.php");
+}
+
+
+to this :
+
+// init stat-file
+injectTorrent($file_name);
+// instant action ?
+$actionId = getRequestVar('aid');
+if (isset($actionId)) {
+    switch ($actionId) {
+        case 3:
+           $_REQUEST['queue'] = 'on';
+        case 2:
+           if ($cfg["enable_file_priority"]) {
+               include_once("setpriority.php");
+               // Process setPriority Request.
+               setPriority(urldecode($file_name));
+           }
+           include_once("ClientHandler.php");
+           $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+           $clientHandler->startTorrentClient($file_name, 0);
+           // just a sec..
+           sleep(1);
+           break;
+    }
+}
+
+
+find this line in multiup.php (its in line 82) :
+
+if ($cfg["enable_file_priority"]) {
+
+
+add this above the line :
+
+// init stat-file
+injectTorrent($torrent);
+
+
+
+* Issue :
+Values of XFER-hack not 100% correct when restarting transmissionclients.
+
+- Solution :
+i missed to modify some lines of XFER in v85 which still use stat-files direct
+and not the new methods from the ClientHandlers.
+
+2 changes in functions.tf.php in the function getDirList:
+
+
+find this (lines 2126+2127):
+
+$torrentowner = getOwner($entry);
+$owner = IsOwner($cfg["user"], $torrentowner);
+
+
+add this below:
+
+$torrentTotals = getTorrentTotalsCurrent($entry);
+
+
+find this (lines 2146-2195):
+
+//XFER: add upload/download stats to the xfer array
+if ($cfg['enable_xfer'] == 1) {
+  $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+  $newday = !$db->GetOne($sql);
+  showError($db,$sql);
+  sumUsage($torrentowner, $af->downtotal, $af->uptotal, 'total');
+  sumUsage($torrentowner, $af->downtotal, $af->uptotal, 'month');
+  sumUsage($torrentowner, $af->downtotal, $af->uptotal, 'week');
+  sumUsage($torrentowner, $af->downtotal, $af->uptotal, 'day');
+  //XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
+  if ($newday) {
+    $newday = 2;
+    $sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
+    $lastDate = $db->GetOne($sql);
+    showError($db,$sql);
+    // MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
+    $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+    if ($db->GetOne($sql)) {
+        $sql = 'UPDATE tf_xfer SET download = download+'.($af->downtotal+0).', upload = upload+'.($af->uptotal+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+        $db->Execute($sql);
+        showError($db,$sql);
+    } else {
+        showError($db,$sql);
+        // b4rt-8
+        // blackwidow :
+        //$sql = 'INSERT INTO tf_xfer SET user = "'.$torrentowner.'", date = "'.$lastDate.'", download = '.($af->downtotal+0).', upload = '.($af->uptotal+0);
+        // carlo1234 :
+        $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($af->downtotal+0).','.($af->uptotal+0).')';
+        // b4rt-8
+        $db->Execute($sql);
+        showError($db,$sql);
+    }
+    $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+    if ($db->GetOne($sql)) {
+      $sql = 'UPDATE tf_xfer SET download = download-'.($af->downtotal+0).', upload = upload-'.($af->uptotal+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+      $db->Execute($sql);
+      showError($db,$sql);
+    } else {
+      showError($db,$sql);
+        // b4rt-8
+        // blackwidow :
+        //$sql = 'INSERT INTO tf_xfer SET user = "'.$torrentowner.'", date = '.$db->DBDate(time()).', download = -'.($af->downtotal+0).', upload = -'.($af->uptotal+0);
+           // carlo1234 :
+        $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($af->downtotal+0).',-'.($af->uptotal+0).')';
+        // b4rt-8
+        $db->Execute($sql);
+        showError($db,$sql);
+    }
+  }
+}
+
+replace with this :
+
+//XFER: add upload/download stats to the xfer array
+if ($cfg['enable_xfer'] == 1) {
+  $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+  $newday = !$db->GetOne($sql);
+  showError($db,$sql);
+  sumUsage($torrentowner, ($torrentTotals["downtotal"]+0), ($torrentTotals["uptotal"]+0), 'total');
+  sumUsage($torrentowner, ($torrentTotals["downtotal"]+0), ($torrentTotals["uptotal"]+0), 'month');
+  sumUsage($torrentowner, ($torrentTotals["downtotal"]+0), ($torrentTotals["uptotal"]+0), 'week');
+  sumUsage($torrentowner, ($torrentTotals["downtotal"]+0), ($torrentTotals["uptotal"]+0), 'day');
+  //XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
+  if ($newday) {
+    $newday = 2;
+    $sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
+    $lastDate = $db->GetOne($sql);
+    showError($db,$sql);
+    // MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
+    $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+    if ($db->GetOne($sql)) {
+        $sql = 'UPDATE tf_xfer SET download = download+'.($torrentTotals["downtotal"]+0).', upload = upload+'.($torrentTotals["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+        $db->Execute($sql);
+        showError($db,$sql);
+    } else {
+        showError($db,$sql);
+        $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($torrentTotals["downtotal"]+0).','.($torrentTotals["uptotal"]+0).')';
+        $db->Execute($sql);
+        showError($db,$sql);
+    }
+    $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+    if ($db->GetOne($sql)) {
+        $sql = 'UPDATE tf_xfer SET download = download-'.($torrentTotals["downtotal"]+0).', upload = upload-'.($torrentTotals["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+        $db->Execute($sql);
+        showError($db,$sql);
+    } else {
+        showError($db,$sql);
+        $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($torrentTotals["downtotal"]+0).',-'.($torrentTotals["uptotal"]+0).')';
+        $db->Execute($sql);
+        showError($db,$sql);
+    }
+  }
+}
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-84
+--------------------------------------------------------------------------------
+
+* Issue :
+Warning: Cannot modify header information - headers already sent by (output started at /var/www/adodb/adodb.inc.php:8014) in /var/www/functions.tf.php on line 54
+
+note: this only applies to you if you made an upgrade/install from tarball. if
+      you upgraded to v84 via superadmin.php you are not affected by this !
+
+- Solution :
+messed up php-files produce this.
+
+the easiest way now for you all having the problem is to replace the adodb
+(whole dir with subdirs etc) of my v84 tarball with the content of an older
+tarball or the tarball of 2.1 final. you dont need to touch any code with
+this method.
+
+pls check also the thread on torrentflux-forum now, this post and follow-ups:
+http://www.torrentflux.com/forum/index.php/topic,1265.msg11399.html#msg11399
+
+
+* Issue :
+up- and down-totals wrong after restart of a transmission-client.
+xfer-hack shows wrong stats (when using + restarting transmission-clients)
+(bug is also present in versions <v84)
+
+- Solution :
+no solution yet, but i found the cause for this. transmission is behaving
+different as tornado on restart. while tornado always flushes his totals-stats
+and has always 0 for up and 0 for down after a start transmission "remembers"
+what it has already transferred.
+my code is written for the "tornado"-behaviour of "not-remembering transfer-stats"
+so it behaves bogus on transmissionclients.
+this behaviour of transmission-clients also affects xfer-hack as xfer-hack does
+the same like my totals code (pull stats from stat-file on client-start, process
+em and safe values to the database). this means if you restart transmission-
+clients you will have wrong xfer-stats as well.
+
+update as soon as i have a elegant solution for this in mind/implemented.
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-83
+--------------------------------------------------------------------------------
+
+* Issue :
+fluxcli.php not working. (-> tfqmgr.pl not working (starting clients))
+
+- Solution :
+upgrade to v84 or do by hand:
+find this in fluxcli.php :
+$clientHandler->stopTorrentClient($torrent), $alias);
+replace with this:
+$clientHandler->stopTorrentClient($torrent,$alias);
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-82
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-81
+--------------------------------------------------------------------------------
+
+* Issue :
+tfqmgr.pl is missing in the v81-tarball.
+
+- Solution :
+use tfqmgr.pl from v8-tarball.
+
+
+* Issue (reported on php 5.0.5) :
+Fatal error: Only variables can be passed by reference in /var/www/ClientHandler.tornado.php on line 41
+
+- Solution :
+v82 will fix this.
+
+
+* Issue (reported on php 5.0.4) :
+  PHP Notice:  Undefined variable: data in /var/www/config.php on line 145
+  PHP Notice:  Undefined variable: data in /var/www/QueueManager.tfqmgr.php on line 96
+  PHP Notice:  Undefined variable: data in /var/www/QueueManager.tfqmgr.php on line 265
+
+- Solution :
+v82 will fix this.
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-802
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-801
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-8
+--------------------------------------------------------------------------------
+
+* Issue :
+deleting data in dir-view as non-admin buggy.
+
+activity log :
+ILLEGAL DELETE: user tried to delete file.ext
+
+- Solution :
+update to v801.
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-7
+--------------------------------------------------------------------------------
+
+* Issue :
+tfQManager counted as running torrent. tfQManager in tornado-process-list.
+
+= fixed =
+
+* Issue :
+when only admin can see other torrents option enabled, normal users cannot delete their own files.
+
+= fixed =
+
+* Issue :
+cache-leftovers from transmission-clients.
+
+= fixed =
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-61
+--------------------------------------------------------------------------------
+
+* Issue :
+Warning: Missing argument 3 for stoptorrentclient() in /var/www/ClientHandler.transmission.php on line 101
+
+Warning: Missing argument 4 for stoptorrentclient() in /var/www/ClientHandler.tornado.php on line 119
+
+Warning: Cannot modify header information - headers already sent by (output started at /var/www/ClientHandler.transmission.php:101) in /var/www/multi.php on line 85
+
+- Solution :
+exchange the 3 php-files from this post :
+http://www.torrentflux.com/forum/index.php/topic,1265.msg10084.html#msg10084
+
+* Issue :
+tfQManager not working with transmission or not working as expected with tornado.
+- Solution :
+none so far.
+
+* Issue :
+note: this issue seems to be bsd-specific but not 100% sure yet as its a unsolved one.
+transmission-client stays in "Starting"-status but never starts.
+webserver-log show up an error like this:
+
+Syntax error: "&" unexpected
+
+- Solution :
+none so far.
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-6
+--------------------------------------------------------------------------------
+
+* Issue :
+tfQManager not working with tornado.
+- Solution :
+functions.php :
+find this:
+ $btphp = "'" . $cmd1. "; HOME=".$cfg["path"]."; export HOME; nohup " . $pyCmd . " " .$cfg["btphpbin"] . " '";
+change to:
+ $btphp = "'" . $cmd1. "; HOME=".$cfg["path"]."; export HOME; nohup " . $pyCmd . " " .$cfg["btclient_tornado_bin"] . " '";
+
+* Issue :
+Fatal error: Call to undefined function getRunningClients() in /var/www/ClientHandler.php on line 479
+- Solution :
+ClientHandler.php :
+find this:
+ return count(getRunningClients());
+change to:
+ return count($this->getRunningClients());
+
+* Issue :
+wrong totals-stats and errors in downloaddetails
+- Solution :
+functions.b4rt.php :
+in the function resetTorrentTotals :
+insert this:
+ include_once("AliasFile.php");
+above this:
+ $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $owner, $cfg);
+
+* Issue :
+Warning: chmod(): No such file or directory in /home/dhcpbe/public_html/flux/functions.php on line 340
+Warning: Cannot modify header information - headers already sent by (output started at /home/dhcpbe/public_html/flux/functions.php:340) in /home/dhcpbe/public_html/flux/multi.php on line 85)
+- Solution :
+functions.php:
+find this:
+ chmod($file,0777);
+change to:
+ @chmod($file,0777);
+
+* Issue :
+PHP Parse error:  parse error, unexpected ';' in /var/www/html/torrent/admin.php on line 1249, referer: http://torrent/torrent/login.php- Solution :
+- Solution :
+admin.php :
+remove the obsolete (+ messed) parts  :
+  <!-- b4rt-6 -->
+  <!--
+  <tr>
+      <td align="left" width="350" valign="top"><strong>btphptornado.py Path</strong><br>
+      Specify the path to the btphptornado.py python script:
+      </td>
+      <td valign="top">
+          <input name="btphpbin" type="Text" maxlength="254" value="<?php    //echo($cfg["btphpbin"]); ?>" size="55"><?php echo //validateFile($cfg["btphpbin"]) ?>
+      </td>
+  </tr>
+  -->
+  <!-- b4rt-6 -->
+
+and:
+
+  <!-- b4rt-6 -->
+  <!--
+  <tr>
+      <td align="left" width="350" valign="top"><strong>Extra BitTornado Commandline Options</strong><br>
+      DO NOT include --max_upload_rate, --minport, --maxport, --max_uploads here as they are
+      included by TorrentFlux settings above:
+      </td>
+      <td valign="top">
+          <input name="cmd_options" type="Text" maxlength="254" value="<?php    echo($cfg["cmd_options"]); ?>" size="55">
+      </td>
+  </tr>
+  -->
+  <!-- b4rt-6 -->
+
+* Issue :
+unserialize errors
+eg:
+PHP Notice:  unserialize() [<a href='function.unserialize'>function.unserialize</a>]: Argument is not a string in /var/www/html/torrent/AliasFile.php on line 94
+PHP Notice:  Undefined index:  download in /var/www/html/torrent/functions.php on line 125
+PHP Notice:  Undefined index:  upload in /var/www/html/torrent/functions.php on line 129
+PHP Notice:  Undefined index:  upload in /var/www/html/torrent/functions.php on line 126
+PHP Notice:  Undefined index:  total in /var/www/html/torrent/functions.php on line 127
+PHP Notice:  Undefined index:  total in /var/www/html/torrent/functions.php on line 128
+- Solution :
+AliasFile.php:
+find this:
+ return new AliasFileTornado($inFile, $user, $fluxCfg);
+change to:
+ return new AliasFileTornado($inFile, $user, serialize($fluxCfg));
+and
+find this:
+ return new AliasFileTransmission($inFile, $user, $fluxCfg);
+change to:
+ return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
+
+RunningTorrent.php
+find this:
+ return new RunningTorrentTornado($psLine,$fluxCfg);
+change to:
+ return new RunningTorrentTornado($psLine,serialize($fluxCfg));
+and
+find this:
+ return new RunningTorrentTransmission($psLine,$fluxCfg);
+change to:
+ return new RunningTorrentTransmission($psLine,serialize($fluxCfg));
+
