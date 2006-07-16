@@ -1,80 +1,128 @@
+<?php
+
+/**
+ * <p> $Id$ </p>
+ * @version $Revision$
+ */
+
+/*******************************************************************************
+
+ LICENSE
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License (GPL)
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ To read the license please visit http://www.gnu.org/copyleft/gpl.html
+
+*******************************************************************************/
+
+// file-defines
+define('_FILE_NEWS','newshtml.txt');
+define('_FILE_VERSION','version.txt');
+
+// get + define current version
+define('_VERSION_CURRENT',trim(getDataFromFile(_FILE_VERSION)));
+
+/**
+ * load data of file
+ *
+ * @param $file the file
+ * @return data
+ */
+function getDataFromFile($file) {
+    // read content
+    if($fileHandle = @fopen($file,'r')) {
+        $data = null;
+        while (!@feof($fileHandle))
+            $data .= @fgets($fileHandle, 4096);
+        @fclose ($fileHandle);
+    }
+    return $data;
+}
+
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<?php
-   list($proj, $dom1, $dom2) = split("\.", $HTTP_HOST, 3);
-   echo "   <meta http-equiv=\"refresh\" content=\"5; URL=http://developer.berlios.de/projects/$proj/\">\n";
-?>
-   <title>BerliOS - Der Open-Source-Mediator</title>
-   <link rel="stylesheet" href="http://developer.berlios.de/berlios.css" type="text/css">
+   <title>TorrentFlux-b4rt</title>
+   <link rel="stylesheet" type="text/css" href="/css/default.css">
+   <link rel="alternate" title="News - RSS 0.91" href="http://developer.berlios.de/export/rss_bsnews.php?group_id=7000" type="application/rss+xml">
+   <link rel="alternate" title="Releases - RSS 0.91" href="http://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" type="application/rss+xml">
+   <link rel="alternate" title="News - RSS 2.0" href="http://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" type="application/rss+xml">
+   <link rel="alternate" title="Releases - RSS 2.0" href="http://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" type="application/rss+xml">
 </head>
-<body>
-
-<!-- top strip -->
-<table BORDER=0 CELLSPACING=0 CELLPADDING=2 WIDTH="100%" BGCOLOR="#7B7B7B" >
-<tr>
-<td><span class=maintitlebar>&nbsp; 
-<b><a href="http://www.berlios.de/index.php.en" class="maintitlebar">Home</a></b> |
-<b><a href="http://developer.berlios.de/about.php" class="maintitlebar">About us</a></b> |
-<b><a href="http://developer.berlios.de/partners.php" class="maintitlebar">Partners</a></b> |
-<b><a href="http://developer.berlios.de/contact.php" class="maintitlebar">Contact</a></b></span></td>
-</tr>
-</table>
-<!-- end top strip -->
-
-<!-- top title -->
-<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
-<tr VALIGN=TOP BGCOLOR="#FFCC33">
-<td BGCOLOR="#FFFFFF"><a href="http://www.berlios.de/index.php.en"><img src="http://developer.berlios.de/images/berliOS_logo.png" ALT="BerliOS" HSPACE=5 VSPACE=5 BORDER=0 height=61 width=238></a></td>
-<td WIDTH="10" BGCOLOR="#FFCC33"><img SRC="http://developer.berlios.de/images/blank.gif" ALT="" BORDER=0 height=1 width=10></td>
-<td VALIGN=middle WIDTH="99%"><b><font size="+1">BerliOS</font></b>
-<br>The Open Source Mediator</td>
-
-<!-- logo at right -->
-<td VALIGN=middle>
-<a href="http://www.fokus.fraunhofer.de/" TARGET="_blank"><img SRC="http://developer.berlios.de/images/logo_fokus.png" ALT="FOKUS" HSPACE=10 BORDER=0 height=60 width=60 align=RIGHT></a></td>
-</tr>
-<!-- end logo at right -->
-
-<tr>
-<td COLSPAN="4" BGCOLOR="#7B7B7B"><img SRC="http://developer.berlios.de/images/blank.gif" ALT="" height=2 width=2></td>
-</tr>
-</table>
-<!-- end top title -->
+<body onload="status=location.hostname;">
 
 <!-- content -->
-<p>
-<?php
-if ( file_exists("/usr/local/httpd/include/adsense.php") ) {
-        include("/usr/local/httpd/include/adsense.php");
-}
-?>
-<p>
-<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
-<tr VALIGN=TOP>
-<td align=center>
-<h2>Welcome to <?php echo "http://".$HTTP_HOST; ?></h2>
-<p>We are sorry but this project has not yet uploaded its webpage.
-<br>Please check back soon for updates or visit <a href="http://developer.berlios.de/projects/<?php echo $proj; ?>/">BerliOS Developer Project</a> Homepage.
-<p>The project is hosted by 
-<a href="http://developer.berlios.de">
-<img src="http://developer.berlios.de/bslogo.php?group_id=0&type=1" width="124" height="32" border="0" alt="BerliOS Logo"></A>
-</td>
-
-</tr>
+<table class="std">
+ <tr>
+  <td style="vertical-align:bottom; text-align:left" nowrap>
+   <a href="/"><span class="path-root">TorrentFlux-b4rt</span></a>
+  </td>
+  <td style="vertical-align:top; text-align:right" nowrap>
+   <div class="small">
+    Current Version : <?php echo _VERSION_CURRENT; ?>
+   </div>
+  </td>
+ </tr>
 </table>
-<p>&nbsp;
+<hr class="header">
+<br>
+<a href="http://developer.berlios.de/project/showfiles.php?group_id=7000" target="_blank"
+	onmouseover="status='Releases'; return true;"
+	onmouseout="status=location.hostname; return true;" class="nav">
+	<img src="/images/hand.right.gif" align="absmiddle" />
+	Releases
+</a>
+<br>
+<a href="http://developer.berlios.de/projects/tf-b4rt/" target="_blank"
+	onmouseover="status='BerliOS Developer Project'; return true;"
+	onmouseout="status=location.hostname; return true;" class="nav">
+	<img src="/images/hand.right.gif" align="absmiddle" />
+	BerliOS Developer Project
+</a>
+<br>
+<a href="http://www.torrentflux.com/forum/index.php/topic,1265.0.html" target="_blank"
+	onmouseover="status='Thread on TorrentFlux-Forum'; return true;"
+	onmouseout="status=location.hostname; return true;" class="nav">
+	<img src="/images/hand.right.gif" align="absmiddle" />
+	Thread on TorrentFlux-Forum
+</a>
+<br>
+<a href="ftp://ftp.berlios.de/pub/tf-b4rt/misc/" target="_blank"
+	onmouseover="status='misc Files'; return true;"
+	onmouseout="status=location.hostname; return true;" class="nav">
+	<img src="/images/hand.right.gif" align="absmiddle" />
+	misc Files
+</a>
+<br><br>
+<h4>News :</h4>
+<table class="std">
+ <tr>
+  <td>
+   <?php echo(getDataFromFile(_FILE_NEWS)); ?>
+  </td>
+ </tr>
+</table>
+<p>
+<hr class="header">
+<div class="small">$Id$</div>
 <!-- end content -->
 
 <!-- footer -->
-<table BORDER=0 CELLSPACING=0 CELLPADDING=2 WIDTH="100%" BGCOLOR="#7B7B7B" >
-<tr>
-<td ALIGN=CENTER><span class="titlebar"><font color="#FFFFFF">Copyright
-&copy; 2000-<?php echo date("Y"); ?> <a href="http://www.fokus.fraunhofer.de/" class="maintitlebar" TARGET="_blank">
-FOKUS</a></font></span></td>
-</tr>
-</table>
+<p>
+<hr class="header">
+<a href="http://developer.berlios.de" title="BerliOS Developer" target="_blank">
+ <img src="http://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo">
+</a>
 <!-- end footer -->
 
 </body>
