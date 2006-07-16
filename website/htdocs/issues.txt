@@ -31,7 +31,7 @@ none atm as i dont see a way now (as things are in tf) to combine this :
 
 
 * Issue :
-tfqmgr.pl (<= Revision 1.29) does not work on bsd-systems.
+tfqmgr.pl (<= CVS-Revision 1.29 / SVN-Revision 3) does not work on bsd-systems.
 
 - Solution :
 none atm as the bsd-port of Perl-IPC::Shareable has not yet
@@ -53,6 +53,11 @@ http://bugs.php.net/bug.php?id=36017
 
 - Solution :
 none atm if you run one of the above setups.
+
+
+--------------------------------------------------------------------------------
+Issues in torrentflux_2.1-b4rt-94
+--------------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------

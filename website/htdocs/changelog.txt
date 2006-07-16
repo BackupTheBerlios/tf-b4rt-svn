@@ -1,5 +1,39 @@
---------------------------------------------------------------------------------
+================================================================================
  $Id$
+================================================================================
+
+
+  b4rt-94
+
+
+  note : this is the last of the "old" releases. this is not yet one of the 
+         "new" berliOS releases (so no tag/branch in svn for this also)
+         primary meant to "make the move to berliOS" and have your superadmin-
+         pages access the new server.
+         codebase is a svn-export of svn-changeset 18 of berliOS-svn-repository
+
+
+  changes since initial svn-import :
+
+- superadmin-update move to berliOS.
+  proxy-script on berliOS-homepage serves update-content.
+
+- changes in version-check code. 
+  it now is checked if local version is a svn-version and if its the case 
+  version-page prints out so.
+
+- changed UpdateRefresh() in inc.index.head.b4rt.php / inc.index.head.tf.php 
+  to conform to W3C standards.
+
+- transmission updated to svn609.
+  some minor changes in cli.
+
+- new function "News" in superadmin-page shows latest news.
+
+- cleaned up perl-code. added var for webserver-user in fluxpoller.pl (code
+  on bsd for connections needs that, "www" was hardcoded in sub before)
+
+
 --------------------------------------------------------------------------------
 
   changes from b4rt-93 to initial svn-import @ berlios
