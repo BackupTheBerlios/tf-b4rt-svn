@@ -48,7 +48,7 @@ Installing
 1. Untar the package into a directory then copy the contents of 
 the "html" folder into your web site directory.
 
-    tar -zxvf torrentflux.tar.gz
+    tar -jxvf torrentflux<version>.tar.bz2
 
 2. Create a database and load the mysql_torrentflux.sql script. 
 Database abstraction is supported starting in TorrentFlux 2.0 
