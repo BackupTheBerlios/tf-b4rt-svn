@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * <p> $Id$ </p>
+ * @version $Revision$
+ */
+
 /*******************************************************************************
 
  LICENSE
@@ -18,14 +23,13 @@
 
 *******************************************************************************/
 
-
 // defines
 define('_DIR_BACKUP','.backup');
-define('_URL_FORUM','http://www.torrentflux.com/forum/index.php/topic,1265.0.html');
+define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_VERSION_LOCAL','version');
 define('_VERSION_REMOTE','version.txt');
-define('_VERSION_PROXY','flux.php');
-define('_VERSION_BASE','http://flux.b4rt.dyndns.org/');
+define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
+define('_SUPERADMIN_PROXY','superadminProxy.php');
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
 
 // includes
@@ -174,13 +178,14 @@ if (isset($_REQUEST["b"])) {
 }
 
 // update
+/*
 if (isset($_REQUEST["u"])) {
     $updateStep = trim($_REQUEST["u"]);
     if ($updateStep != "") {
         switch($updateStep) {
             case "0":
                 // get updateIndex to check if update from this version possible
-                $updateIndexData = trim(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?u=0&v=" . _VERSION_THIS));
+                $updateIndexData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=0&v=" . _VERSION_THIS));
                 if ((isset($updateIndexData)) && ($updateIndexData != "")) {
                     $updateIndexVars = explode("\n",$updateIndexData);
                     $updatePossible = trim($updateIndexVars[0]);
@@ -210,7 +215,7 @@ if (isset($_REQUEST["u"])) {
             break;
             case "1":
                 // get db-settings
-                $updateDBData = trim(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?u=1&v=" . _VERSION_THIS));
+                $updateDBData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=1&v=" . _VERSION_THIS));
                 if ((isset($updateDBData)) && ($updateDBData != "")) {
                     $updateDBVars = explode("\n",$updateDBData);
                     $updateNeeded = trim($updateDBVars[0]);
@@ -252,7 +257,7 @@ if (isset($_REQUEST["u"])) {
             break;
             case "2":
                 // get sql-data
-                $updateSQLData = trim(gzinflate(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?u=2&v=" . _VERSION_THIS . "&d=".$cfg["db_type"])));
+                $updateSQLData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION_THIS . "&d=".$cfg["db_type"])));
                 if ((isset($updateSQLData)) && ($updateSQLData != "")) {
                     if (ob_get_level() == 0) ob_start();
                     sendLine('<strong>Update - Database</strong><br><br><em>Updating Database... Please Wait...</em><ul>');
@@ -296,7 +301,7 @@ if (isset($_REQUEST["u"])) {
             break;
             case "3":
                 // get file-list
-                $updateFileList = trim(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?u=3&v=" . _VERSION_THIS));
+                $updateFileList = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=3&v=" . _VERSION_THIS));
                 if ((isset($updateFileList)) && ($updateFileList != "")) {
                     echo '<strong>Update - Files</strong>';
                     echo '<br><br>';
@@ -324,7 +329,7 @@ if (isset($_REQUEST["u"])) {
                     foreach ($updateFileAry as $requestFile) {
                         $requestFile = trim($requestFile);
                         sendLine('<li>'.$requestFile);
-                        $fileData = trim(gzinflate(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?u=4&v=" . _VERSION_THIS . "&f=".$requestFile)));
+                        $fileData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=4&v=" . _VERSION_THIS . "&f=".$requestFile)));
                         sendLine(' (' . strlen($fileData) .')');
                         if ($handle = fopen($requestFile, "w")) {
                             if (fwrite($handle, $fileData)) {
@@ -345,7 +350,7 @@ if (isset($_REQUEST["u"])) {
                     }
                     sendLine('</ul><p><font color="green">File-Update done.</font><br><br>');
                     sendLine('Updating Version-Information...');
-                    $versionAvailable = trim(getDataFromUrl(_VERSION_BASE._VERSION_REMOTE));
+                    $versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
                     if ((isset($versionAvailable)) && ($versionAvailable != "")) {
                         if ($handle = fopen(_VERSION_LOCAL, "w")) {
                             if (fwrite($handle, $versionAvailable)) {
@@ -382,6 +387,7 @@ if (isset($_REQUEST["u"])) {
         exit;
     }
 }
+*/
 
 // queue
 if (isset($_REQUEST["q"])) {
@@ -709,15 +715,17 @@ function buildPage($action) {
     $htmlTop .= ' | ';
     $htmlTop .= '<a href="' . _FILE_THIS . '?q=0">tfqmgr</a>';
     $htmlTop .= ' | ';
+    $htmlTop .= '<a href="' . _FILE_THIS . '?a=1">Help</a>';
+    $htmlTop .= ' | ';
     $htmlTop .= '<a href="' . _FILE_THIS . '?a=0">Version</a>';
     $htmlTop .= ' | ';
-    $htmlTop .= '<a href="' . _FILE_THIS . '?a=4">Update</a>';
+    $htmlTop .= '<a href="' . _FILE_THIS . '?a=5">News</a>';
     $htmlTop .= ' | ';
     $htmlTop .= '<a href="' . _FILE_THIS . '?a=2">Changelog</a>';
     $htmlTop .= ' | ';
-    $htmlTop .= '<a href="' . _FILE_THIS . '?a=1">Help</a>';
-    $htmlTop .= ' | ';
     $htmlTop .= '<a href="' . _FILE_THIS . '?a=3" target="_blank">Issues</a>';
+    //$htmlTop .= '<a href="' . _FILE_THIS . '?a=4">Update</a>';
+    //$htmlTop .= ' | ';
     // body
     switch($action) {
         case "b": // backup passthru
@@ -726,6 +734,7 @@ function buildPage($action) {
         case "-b": // backup-error passthru
             $statusImage = "red.gif";
         break;
+        /*
         case "-u": // update-error passthru
             $statusImage = "red.gif";
             $htmlTitle = "Update";
@@ -733,9 +742,10 @@ function buildPage($action) {
             $htmlMain .= '<br><br>';
             $htmlMain .= 'Please use the most recent tarball and perform a manual update.';
             $htmlMain .= '<br>';
-            $htmlMain .= '<br><br>';
-            $htmlMain .= getReleaseList();
+            //$htmlMain .= '<br><br>';
+            //$htmlMain .= getReleaseList();
         break;
+        */
         case "q": // queue passthru
             $statusImage = "black.gif";
             $htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
@@ -776,7 +786,7 @@ function buildPage($action) {
         case "0": // version
             $htmlTitle = "Version";
             // version-check
-            $versionAvailable = trim(getDataFromUrl(_VERSION_BASE._VERSION_REMOTE));
+            $versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
             if ((isset($versionAvailable)) && ($versionAvailable != "")) {
                 // set image
                 if ($versionAvailable == _VERSION_THIS)
@@ -794,11 +804,11 @@ function buildPage($action) {
                     $htmlMain .= '<br><br>';
                     $htmlMain .= '<strong><font color="red">There is a new Version available !</font></strong>';
                     $htmlMain .= '<br><br>';
-                    $htmlMain .= '<strong>Forum Thread : </strong>';
+                    $htmlMain .= '<strong>Homepage : </strong>';
                     $htmlMain .= '<br>';
-                    $htmlMain .= '<a href="'._URL_FORUM.'" target="_blank">'._URL_FORUM.'</a>';
-                    $htmlMain .= '<br><br>';
-                    $htmlMain .= getReleaseList();
+                    $htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
+                    //$htmlMain .= '<br><br>';
+                    //$htmlMain .= getReleaseList();
                 } else {
                     $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
                     $htmlMain .= '<br><br>';
@@ -814,17 +824,19 @@ function buildPage($action) {
                 $htmlMain = '<br>';
                 $htmlMain .= '<font color="red">Error getting available version.</font>';
                 $htmlMain .= '<br><br>';
-                $htmlMain .= '<strong>Forum Thread : </strong>';
+                $htmlMain .= '<strong>Homepage : </strong>';
                 $htmlMain .= '<br>';
-                $htmlMain .= '<a href="'._URL_FORUM.'" target="_blank">'._URL_FORUM.'</a>';
+                $htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
+                $htmlMain .= '<br>';
             }
         break;
         case "1": // help
             $htmlTitle = "Help";
             $htmlMain .= '<br><p>';
-            $htmlMain .= '<strong>For Help with this Version look/post in this Thread on the TorrentFlux-Forum :</strong>';
+            $htmlMain .= '<strong>For Help with this Version check Homepage on berliOS :</strong>';
             $htmlMain .= '<p>';
-            $htmlMain .= '<a href="'._URL_FORUM.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Thread on the TorrentFlux-Forum" border="0"> '._URL_FORUM.'</a>';
+            $htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+            $htmlMain .= '<br><br>';
         break;
         case "2": // changelog
             $htmlTitle = "Changelog";
@@ -832,21 +844,22 @@ function buildPage($action) {
             $htmlMain .= '<h4>Changelog<h4>';
             $htmlMain .= '<hr>';
             $htmlMain .= '<pre>';
-            $htmlMain .= gzinflate(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?a=1"));
+            $htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
             $htmlMain .= '</pre>';
         break;
         case "3": // issues
             $htmlTitle = "Issues";
             $issueText = "Error getting issues";
-            $issueText = gzinflate(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?a=2"));
+            $issueText = gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
             header("Content-Type: text/plain");
             echo $issueText;
             exit;
         break;
+        /*
         case "4": // update
             $htmlTitle = "Update";
             // version-check
-            $versionAvailable = trim(getDataFromUrl(_VERSION_BASE._VERSION_REMOTE));
+            $versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
             if ((isset($versionAvailable)) && ($versionAvailable != "")) {
                 // set image
                 if ($versionAvailable == _VERSION_THIS)
@@ -862,12 +875,23 @@ function buildPage($action) {
                     $htmlMain .= '</form><p>';
                 }
             }
-            $htmlMain .= '<strong>Forum Thread : </strong>';
+            $htmlMain .= '<strong>Homepage : </strong>';
             $htmlMain .= '<br>';
-            $htmlMain .= '<a href="'._URL_FORUM.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Thread on the TorrentFlux-Forum" border="0"> '._URL_FORUM.'</a>';
-            $htmlMain .= '<br><br>';
-            $htmlMain .= getReleaseList();
+            $htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+            //$htmlMain .= '<br><br>';
+            //$htmlMain .= getReleaseList();
         break;
+        */
+        case "5": // news
+            $htmlTitle = "News";
+            $htmlMain .= '<br>';
+            $htmlMain .= '<h4>News<h4>';
+            $htmlMain .= '<hr>';
+            $htmlMain .= '<pre>';
+            $htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
+            $htmlMain .= '</pre>';
+        break;
+        /*
         case "5": // tfqmgr-log
             $htmlTitle = "tfqmgr-log";
             $htmlMain .= '<pre>';
@@ -886,6 +910,7 @@ function buildPage($action) {
                 $htmlMain .= '<br><strong>tfqmgr not running</strong>';
             }
         break;
+        */
         default:
             $htmlTitle = "SuperAdmin";
             $statusImage = "black.gif";
@@ -1018,8 +1043,8 @@ function updateErrorNice($message = "") {
     $htmlMain .= '<br>';
     if ((isset($message)) && ($message != "") && (trim($message) != "0"))
         $htmlMain .= '<br><pre>'.$message.'</pre>';
-    $htmlMain .= '<br><br>';
-    $htmlMain .= getReleaseList();
+    //$htmlMain .= '<br><br>';
+    //$htmlMain .= getReleaseList();
     $statusImage = "red.gif";
     printPage();
     exit;
@@ -1103,7 +1128,7 @@ function getAdoConnection() {
 function getReleaseList() {
     global $cfg, $error;
     $retVal = "";
-    $releaseList = gzinflate(getDataFromUrl(_VERSION_BASE . _VERSION_PROXY ."?a=3"));
+    $releaseList = gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=3"));
     if ((isset($releaseList)) && ($releaseList != "")) {
         $retVal .= '<strong>Available Tarballs : </strong>';
         $retVal .= '<br>';
@@ -1120,17 +1145,17 @@ function getReleaseList() {
                 $releaseVersion = substr((array_pop(explode("_",$release))), 0, -8);
                 $retVal .= '<tr>';
                 $retVal .= '<td align="center">';
-                $retVal .= '<a href="'._VERSION_BASE.'files/'.$release.'">';
+                $retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'">';
                 $retVal .= '<img src="images/download_owner.gif" title="Download '.$releaseVersion.'" border="0">';
                 $retVal .= '</a>';
                 $retVal .= '</td>';
                 $retVal .= '<td align="right">';
-                $retVal .= '<a href="'._VERSION_BASE.'files/'.$release.'">';
+                $retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'">';
                 $retVal .= $releaseVersion;
                 $retVal .= '</a>';
                 $retVal .= '</td>';
                 $retVal .= '<td align="right">';
-                $retVal .= '<a href="'._VERSION_BASE.'files/'.$release.'.md5">';
+                $retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'.md5">';
                 $retVal .= 'md5';
                 $retVal .= '</a>';
                 $retVal .= '</td>';
