@@ -789,33 +789,42 @@ function buildPage($action) {
 			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
 			if ((isset($versionAvailable)) && ($versionAvailable != "")) {
 				// set image
-				if ($versionAvailable == _VERSION_THIS || _VERSION_THIS == "svn")
+				if ($versionAvailable == _VERSION_THIS || (substr(_VERSION_THIS, 0, 3)) == "svn")
 					$statusImage = "green.gif";
 				else
 					$statusImage = "red.gif";
 				// version-text
 				$htmlMain .= '<br>';
-				if ($versionAvailable != _VERSION_THIS && _VERSION_THIS != "svn") {
-					$htmlMain .= '<strong>This Version : </strong>';
-					$htmlMain .= '<font color="red">'._VERSION_THIS.'</font>';
-					$htmlMain .= '<br><br>';
-					$htmlMain .= '<strong>Available Version : </strong>';
-					$htmlMain .= $versionAvailable;
-					$htmlMain .= '<br><br>';
-					$htmlMain .= '<strong><font color="red">There is a new Version available !</font></strong>';
-					$htmlMain .= '<br><br>';
-					$htmlMain .= '<strong>Homepage : </strong>';
-					$htmlMain .= '<br>';
-					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
-					//$htmlMain .= '<br><br>';
-					//$htmlMain .= getReleaseList();
+				if ((substr(_VERSION_THIS, 0, 3)) == "svn") {
+				        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<strong>Available Version : </strong>';
+    					$htmlMain .= $versionAvailable;
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<font color="blue">This Version is a svn-Version.</font>';
 				} else {
-					$htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
-					$htmlMain .= '<br><br>';
-					$htmlMain .= '<strong>Available Version : </strong>';
-					$htmlMain .= $versionAvailable;
-					$htmlMain .= '<br><br>';
-					$htmlMain .= '<font color="green">This Version looks good.</font>';
+    				if ($versionAvailable != _VERSION_THIS) {
+    					$htmlMain .= '<strong>This Version : </strong>';
+    					$htmlMain .= '<font color="red">'._VERSION_THIS.'</font>';
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<strong>Available Version : </strong>';
+    					$htmlMain .= $versionAvailable;
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<strong><font color="red">There is a new Version available !</font></strong>';
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<strong>Homepage : </strong>';
+    					$htmlMain .= '<br>';
+    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
+    					//$htmlMain .= '<br><br>';
+    					//$htmlMain .= getReleaseList();
+    				} else {
+    					$htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<strong>Available Version : </strong>';
+    					$htmlMain .= $versionAvailable;
+    					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<font color="green">This Version looks good.</font>';
+    				}
 				}
 				$htmlMain .= '<br><br>';
 			} else { // could not get the version
