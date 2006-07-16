@@ -887,9 +887,7 @@ function buildPage($action) {
             $htmlMain .= '<br>';
             $htmlMain .= '<h4>News<h4>';
             $htmlMain .= '<hr>';
-            $htmlMain .= '<pre>';
             $htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
-            $htmlMain .= '</pre>';
         break;
         /*
         case "5": // tfqmgr-log
@@ -1482,6 +1480,5 @@ function backupCreate($talk = false, $compression = 0) {
     AuditAction($cfg["constants"]["admin"], "FluxBackup Created : ".$fileArchiveName);
     return $fileArchiveName;
 }
-
 
 ?>
