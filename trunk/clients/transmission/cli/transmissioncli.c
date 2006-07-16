@@ -24,6 +24,8 @@
 
 /*******************************************************************************
  * Torrentflux integration history :
+ * 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here, 
+ *                     check svn-log on berliOS-svn from now on.
  * 15/07/06 : b4rt   - changes due to move to svn.
  * 08/07/06 : b4rt   - synced changes of official transmissioncli (r163-r310)
  *                   - changed statfile-output-format for "seeds" and "peers"
@@ -120,16 +122,13 @@ int main( int argc, char ** argv )
     double tf_sharing=0.0;
     char   tf_string[80];
 
-	/* b4rt */
     int tf_seeders, tf_leechers;
 
     /* Get options */
     if( parseCommandLine( argc, argv ) )
     {
-		/* b4rt */
-		printf( "\nTransmission %s [%d] - TorrentFlux-cli [%d]\nhttp://transmission.m0k.org/ - http://www.torrentflux.com/\n\n",
+		printf( "\nTransmission %s [%d] - TorrentFlux-cli [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
 		VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-
         printf( USAGE, argv[0], TR_DEFAULT_PORT );
         return 1;
     }
@@ -137,10 +136,8 @@ int main( int argc, char ** argv )
 	/* show help */
     if( showHelp )
     {
-		/* b4rt */
-		printf( "\nTransmission %s [%d] - TorrentFlux-cli [%d]\nhttp://transmission.m0k.org/ - http://www.torrentflux.com/\n\n",
+		printf( "\nTransmission %s [%d] - TorrentFlux-cli [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
 		VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-
 		printf( USAGE, argv[0], TR_DEFAULT_PORT );
 		return 0;
     }
@@ -170,7 +167,6 @@ int main( int argc, char ** argv )
     h = tr_init();
 
     /* Open and parse torrent file */
-	/* b4rt */
     if( !( tor = tr_torrentInit( h, torrentPath, 0, &error ) ) )
     {
         printf( "Failed opening torrent file `%s'\n", torrentPath );
@@ -224,7 +220,7 @@ int main( int argc, char ** argv )
 
     signal( SIGINT, sigHandler );
 
-    /* b4rt : modified arg-conversion */
+    /* modified arg-conversion */
 	/* If running torrentflux, Download limit = 0 means no limit */
     if (tf_stat_file != NULL) {
         // up
@@ -372,7 +368,6 @@ int main( int argc, char ** argv )
                     sprintf (tf_string,"&#8734"); /* &#8734 = infinite symbol in html */
                 }
 
-				/* b4rt */
 				if (s->seeders < 0) {
 					tf_seeders = 0;
 				} else {
@@ -393,7 +388,6 @@ int main( int argc, char ** argv )
                 if (tf_stat != NULL)
                 {
                     tr_info_t * info = tr_torrentInfo( tor );
-					/* b4rt */
 					fprintf(tf_stat, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
                             1,                                  /* State                */
                             100.0 * s->progress,                /* downloading progress */
@@ -438,7 +432,6 @@ int main( int argc, char ** argv )
                 mustDie = 1;
             }
 
-			/* b4rt */
 			if (s->seeders < 0) {
 				tf_seeders = 0;
 			} else {
@@ -454,7 +447,6 @@ int main( int argc, char ** argv )
             if(tf_stat_file != NULL)
             {
                 tf_stat = fopen(tf_stat_file, "w+");
-				/* b4rt */
 				fprintf(tf_stat, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
                         1,                                  /* State            */
                         100.0 * s->progress,                /* progress         */
