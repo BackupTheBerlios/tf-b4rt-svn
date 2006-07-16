@@ -118,7 +118,6 @@ function getDataFromFile($file) {
 <!-- end content -->
 
 <!-- footer -->
-<p>
 <hr class="header">
 <a href="http://developer.berlios.de" title="BerliOS Developer" target="_blank">
  <img src="http://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo">
