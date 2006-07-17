@@ -90,18 +90,18 @@ function getDataFromFile($file) {
 	BerliOS Developer Project
 </a>
 <br>
-<a href="http://www.torrentflux.com/forum/index.php/topic,1265.0.html" target="_blank"
-	onmouseover="status='Thread on TorrentFlux-Forum'; return true;"
-	onmouseout="status=location.hostname; return true;" class="nav">
-	<img src="/images/hand.right.gif" align="absmiddle" />
-	Thread on TorrentFlux-Forum
-</a>
-<br>
 <a href="ftp://ftp.berlios.de/pub/tf-b4rt/misc/" target="_blank"
 	onmouseover="status='misc Files'; return true;"
 	onmouseout="status=location.hostname; return true;" class="nav">
 	<img src="/images/hand.right.gif" align="absmiddle" />
 	misc Files
+</a>
+<br>
+<a href="http://www.torrentflux.com/forum/index.php/topic,1265.0.html" target="_blank"
+	onmouseover="status='Thread on TorrentFlux-Forum'; return true;"
+	onmouseout="status=location.hostname; return true;" class="nav">
+	<img src="/images/hand.right.gif" align="absmiddle" />
+	Thread on TorrentFlux-Forum
 </a>
 <br><br>
 <h4>News :</h4>

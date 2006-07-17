@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /* standard-fonts */
-body, p, ul, li, strong, em, input, select, textarea, a, table, tr, th, td, span { font-size: 10pt; color: rgb(0,0,0); font-family: Monospace; }
+body, p, ul, li, strong, em, input, select, textarea, a, table, tr, th, td, span { font-size: 10pt; color: rgb(0,0,0); font: helvetica, tahoma, verdana, geneva, lucida, 'lucida grande', arial, sans-serif; }
 
 /* headlines */
 h1, h2, h3, h4, h5, h6{ color: #111111; }
@@ -35,12 +35,12 @@ table.std { width:800; border-left-color: #111111; border-bottom-color: #111111;
 table.std th{ background-color: #94ABC0; }
 
 /* small */
-div.small { font-size: 8pt; }
-div.small a { font-size: 10px; }
-div.small a:hover { font-size: 10px; }
+div.small { font-size: 8pt; font: 'courier new', courier, monospace;}
+div.small a { font-size: 10px; font: 'courier new', courier, monospace;}
+div.small a:hover { font-size: 10px; font: 'courier new', courier, monospace;}
 
 /* path-name */
-span.path-root { font-weight: bold; font-size: 1.6em; color: rgb(0,0,0); font-family: Courier; }
-span.path-tree { font-weight: normal; font-size: 1.2em; color: rgb(0,0,0); font-family: Courier; }
-span.path-leaf { font-weight: bolder; font-size: 1.2em; color: rgb(0,0,0); font-family: Courier; }
+span.path-root { font-weight: bold; font-size: 1.6em; color: rgb(0,0,0); font: helvetica, tahoma, verdana, geneva, lucida, 'lucida grande', arial, sans-serif; }
+span.path-tree { font-weight: normal; font-size: 1.2em; color: rgb(0,0,0); font: helvetica, tahoma, verdana, geneva, lucida, 'lucida grande', arial, sans-serif; }
+span.path-leaf { font-weight: bolder; font-size: 1.2em; color: rgb(0,0,0); font: helvetica, tahoma, verdana, geneva, lucida, 'lucida grande', arial, sans-serif; }
 
