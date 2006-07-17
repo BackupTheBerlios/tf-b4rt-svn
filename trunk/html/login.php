@@ -22,15 +22,21 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// ADODB support.
+# always good to have a session started
+session_start("TorrentFlux");
+
+# require some things
+require_once("config.php");
 require_once('db.php');
 require_once("settingsfunctions.php");
+require_once("admin/vlib/vlibTemplate.php");
 
-// Create Connection.
+# create new template
+$tmpl = new vlibTemplate("tmpl/login.tmpl");
+
+# get connected
 $db = getdb();
 loadSettings();
-session_start("TorrentFlux");
-require_once("config.php");
 include("themes/".$cfg["default_theme"]."/index.php");
 global $cfg;
 if(isset($_SESSION['user'])) {
@@ -39,7 +45,7 @@ if(isset($_SESSION['user'])) {
 }
 ob_start();
 
-// authentication
+# authentication
 switch ($cfg['auth_type']) {
 	case 3: /* Basic-Passthru */
 	case 2: /* Basic-Auth */
@@ -70,6 +76,9 @@ switch ($cfg['auth_type']) {
 			$user = strtolower($username);
 			$iamhim = addslashes($password);
 		}
+		$tmpl->setvar('username', $username);
+		$tmpl->setvar('password', $password);
+		$tmpl->setvar('check', $check);
 		break;
 	case 0: /* Form-Based Auth Standard */
 	default:
@@ -78,7 +87,7 @@ switch ($cfg['auth_type']) {
 		break;
 }
 
-// time
+# time
 $create_time = time();
 // Check for user
 if(!empty($user) && !empty($iamhim)) {
@@ -159,136 +168,20 @@ if(!empty($user) && !empty($iamhim)) {
 		header("location: ".$next_loc);
 		exit();
 	} else { // wrong credentials
-		$login_failed = 1;
+		$tmpl->setvar('login_failed', 1);
 		AuditAction($cfg["constants"]["access_denied"], "FAILED AUTH: ".$user);
 	}
-} else {
-    $login_failed = 0;
 }
-// html part
-?>
-<!DOCTYPE html
-PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-	<title><?php echo $cfg["pagetitle"] ?></title>
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-	<link rel="stylesheet" type="text/css" href="themes/<?php echo $cfg["default_theme"] ?>/style.css" />
-	<meta http-equiv="pragma" content="no-cache" />
-</head>
-<body bgcolor="<?php echo $cfg["main_bgcolor"] ?>">
 
-<script type="text/javascript">
-<!--
-function loginvalidate() {
-	msg = "";
-	pass = document.theForm.iamhim.value;
-	user = document.theForm.username.value;
-	if (user.length < 1)
-	{
-		msg = msg + "* Username is required\n";
-		document.theForm.username.focus();
-	}
-	if(pass.length<1)
-	{
-		msg = msg + "* Password is required\n";
-		if (user.length > 0)
-		{
-			document.theForm.iamhim.focus();
-		}
-	}
-	if (msg != "")
-	{
-		alert("Check the following:\n\n" + msg);
-		return false;
-	}
-}
--->
-</script>
-<br /><br /><br />
-<div align="center">
-	<table border="1" bordercolor="<?php echo $cfg["table_border_dk"] ?>" cellpadding="0" cellspacing="0">
-	<tr>
-		<td>
-		<table border="0" cellpadding="4" cellspacing="0" width="100%">
-			<tr>
-					<td align="left" background="themes/<?php echo $cfg["default_theme"] ?>/images/bar.gif" bgcolor="<?php echo $cfg["main_bgcolor"] ?>">
-					<font class="title"><?php echo $cfg["pagetitle"] ?> Login</font>
-					</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td bgcolor="<?php echo $cfg["table_header_bg"] ?>">
-		<div align="center">
-		<table width="100%" bgcolor="<?php echo $cfg["body_data_bg"] ?>">
-			<tr>
-				<td>
-				<table bgcolor="<?php echo $cfg["body_data_bg"] ?>" width="352 pixels" cellpadding="1">
-				<tr>
-					<td>
-					<div align="center">
-					<table border="0" cellpadding="4" cellspacing="0">
-						<tr>
-						<td>
-						<?php
-							if ($login_failed == 1) {
-								?>
-								<div align="center">Login failed.<br>Please try again.</div>
-							<?php
-							}
-							?>
-						<form name="theForm" action="login.php" method="post" onsubmit="return loginvalidate()">
-						<table width="100%" cellpadding="5" cellspacing="0" border="0">
-							<tr>
-								<td align="right">Username: </td>
-								<td><input type="text" name="username" value="<?PHP if ($cfg['auth_type'] == 1) echo $username; ?>" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+# define some things
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('default_theme', $cfg["default_theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+$tmpl->setvar('auth_type', $cfg["auth_type"]);
 
-							</tr>
-							<tr>
-								<td align="right">Password:</td>
-								<td><input type="password" name="iamhim" value="<?PHP if ($cfg['auth_type'] == 1) echo $password; ?>" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-							</tr>
-							<?php
-							if ($cfg['auth_type'] == 1) {
-							?>
-								<tr><td align="right">Remember me:</td><td align="left"><input type="checkbox" name="check" value="true"
-								<?php
-								if ($check == "true") {
-									echo " checked ";
-								}
-								?>
-								size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td></tr>
-							<?php
-							}
-							?>
-							<tr>
-								<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
-							</tr>
-						</table>
-						</form>
-					</td>
-					</tr>
-					</table>
-					</div>
-				</td>
-			</tr>
-			</table>
-			</td>
-		</tr>
-		</table>
-		</div>
-		</td>
-	</tr>
-	</table>
-</div>
-<script type="text/javascript">
-	document.theForm.username.focus();
-</script>
-</body>
-</html>
-<?php
-ob_end_flush();
+# lets parse the hole thing
+$tmpl->pparse();
 ?>
