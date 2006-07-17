@@ -287,12 +287,6 @@ if ($cfg['enable_bigboldwarning'] != "0") {
 	}
 }
 
-if ($cfg['ui_indexrefresh'] != "0") {
-	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
-		$tmpl->setvar('page_refresh', $page_refresh);
-	}
-}
-
 // bigboldwarning
 if ($cfg['enable_bigboldwarning'] != "1") {
 	if($drivespace >= 98) {
