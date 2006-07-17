@@ -27,16 +27,17 @@ session_start("TorrentFlux");
 
 # require some things
 require_once("config.php");
-require_once('db.php');
+require_once('functions/db.php');
 require_once("settingsfunctions.php");
 require_once("lib/vlib/vlibTemplate.php");
-
-# create new template
-$tmpl = new vlibTemplate("tmpl/login.tmpl");
 
 # get connected
 $db = getdb();
 loadSettings();
+
+# create new template
+$tmpl = new vlibTemplate("tmpl/".$cfg["default_theme"]."/login.tmpl");
+
 include("themes/".$cfg["default_theme"]."/index.php");
 global $cfg;
 if(isset($_SESSION['user'])) {
