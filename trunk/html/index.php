@@ -169,7 +169,7 @@ if ($cfg["index_page"] == "b4rt") {
 }
 elseif ($cfg["index_page"] == "tf") {
 	$transferList = getDirList($cfg["torrent_file_path"]);
-	
+
 }
 
 if ($cfg['ui_indexrefresh'] != "0") {
@@ -396,6 +396,7 @@ $tmpl->setvar('_TOTALSPEED', _TOTALSPEED);
 $tmpl->setvar('_ID_CONNECTIONS', _ID_CONNECTIONS);
 $tmpl->setvar('_DRIVESPACE', _DRIVESPACE);
 $tmpl->setvar('_SERVERLOAD', _SERVERLOAD);
+$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 $tmpl->setvar('_ONLINE', _ONLINE);
 $tmpl->setvar('_OFFLINE', _OFFLINE);
 $tmpl->setvar('hide_offline', $cfg["hide_offline"]);
