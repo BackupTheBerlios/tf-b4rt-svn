@@ -24,7 +24,7 @@
 
 // will need include of config.php
 include_once('config.php');
-include_once('adodb/adodb.inc.php');
+include_once('lib/adodb/adodb.inc.php');
 
 function getdb() {
     global $cfg;

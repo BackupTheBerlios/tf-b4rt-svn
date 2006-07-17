@@ -29,7 +29,7 @@ session_start("TorrentFlux");
 require_once("config.php");
 require_once('db.php');
 require_once("settingsfunctions.php");
-require_once("admin/vlib/vlibTemplate.php");
+require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
 $tmpl = new vlibTemplate("tmpl/login.tmpl");
