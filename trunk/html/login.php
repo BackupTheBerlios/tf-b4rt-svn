@@ -27,7 +27,7 @@ session_start("TorrentFlux");
 
 # require some things
 require_once("config.php");
-require_once('functions/db.php');
+require_once('db.php');
 require_once("settingsfunctions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
