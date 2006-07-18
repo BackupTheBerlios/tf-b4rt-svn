@@ -36,7 +36,7 @@ function showIndex() {
         $hideChecked = "checked";
     }
 
-    DisplayHead($cfg["user"]."'s "._PROFILE);
+    echo DisplayHead($cfg["user"]."'s "._PROFILE);
 
     echo "<div align=\"center\">";
     echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" width=\"760\">";
@@ -553,7 +553,7 @@ function updateProfile($pass1, $pass2, $hideOffline, $theme, $language)
 
     UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);
 
-    DisplayHead($cfg["user"]."'s "._PROFILE);
+    echo DisplayHead($cfg["user"]."'s "._PROFILE);
 
     echo "<div align=\"center\">";
     echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\" width=\"760\">";
@@ -578,7 +578,7 @@ function updateProfile($pass1, $pass2, $hideOffline, $theme, $language)
 function ShowCookies()
 {
     global $cfg, $db;
-    DisplayHead($cfg["user"] . "'s "._PROFILE);
+    echo DisplayHead($cfg["user"] . "'s "._PROFILE);
 
     $cid = @ $_GET["cid"]; // Cookie ID
 

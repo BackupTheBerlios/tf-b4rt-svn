@@ -31,7 +31,7 @@ global $cfg;
 
 $torrent = getRequestVar('torrent');
 
-DisplayHead(_TORRENTDETAILS);
+echo DisplayHead(_TORRENTDETAILS);
 
 echo "<table width=\"740\" border=0 cellpadding=0 cellspacing=0><tr><td>";
 

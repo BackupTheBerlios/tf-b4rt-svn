@@ -22,7 +22,7 @@
 include("config.php");
 include("functions.php");
 
-DisplayHead(_REN_TITLE, false);
+echo DisplayHead(_REN_TITLE, false);
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 ?>

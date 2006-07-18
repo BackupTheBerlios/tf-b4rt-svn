@@ -69,7 +69,7 @@ if (file_exists($filename)) {
 }
 
 // render page content
-DisplayHead(_ID_MRTG);
+echo DisplayHead(_ID_MRTG);
 if ((count($mrtgTargets)) > 0)
   echo $htmlTargets;
 echo '<div align="center" id="BodyLayer" name="BodyLayer" style="border: thin solid ';

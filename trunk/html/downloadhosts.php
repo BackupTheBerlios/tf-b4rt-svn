@@ -55,7 +55,7 @@ if(strlen($torrentLabel) >= 39)
 
 $hd = getStatusImage($af);
 
-DisplayHead(_ID_HOSTS, false, "15", $af->percent_done."% ");
+echo DisplayHead(_ID_HOSTS, false, "15", $af->percent_done."% ");
 
 ?>
     <div align="center">

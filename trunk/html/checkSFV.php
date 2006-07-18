@@ -25,7 +25,7 @@
 	include_once("settingsfunctions.php");
 	loadSettings();
 
-	DisplayHead('sfv check', false);
+	echo DisplayHead('sfv check', false);
 
 	// Main BG
 	echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";

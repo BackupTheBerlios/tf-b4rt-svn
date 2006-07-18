@@ -98,7 +98,7 @@ if (!empty($_FILES['upload_files'])) {
         exit();
     }
 }
-displayHead(_MULTIPLE_UPLOAD);
+echo displayHead(_MULTIPLE_UPLOAD);
 ?>
 
 <?php

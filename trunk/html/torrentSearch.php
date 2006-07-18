@@ -62,7 +62,7 @@ include_once("searchEngines/SearchEngineBase.php");
         }
     }
 
-    DisplayHead("TorrentSearch "._SEARCH);
+    echo DisplayHead("TorrentSearch "._SEARCH);
 
     echo "<style>.tinyRow {font-size:2px;height:2px;}</style>";
 

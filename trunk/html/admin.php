@@ -117,7 +117,7 @@ function addUser($newUser, $pass1, $userType)
 	$newUser = strtolower($newUser);
 	if (IsUser($newUser))
 	{
-		DisplayHead(_ADMINISTRATION);
+		echo DisplayHead(_ADMINISTRATION);
 
 		// Admin Menu
 		displayMenu();
@@ -143,7 +143,7 @@ function updateUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 	$user_id = strtolower($user_id);
 	if (IsUser($user_id) && ($user_id != $org_user_id))
 	{
-		DisplayHead(_ADMINISTRATION);
+		echo DisplayHead(_ADMINISTRATION);
 
 		// Admin Menu
 		displayMenu();
@@ -215,7 +215,7 @@ function deleteUser($user_id)
 function showIndex($min = 0)
 {
 	global $cfg;
-	DisplayHead(_ADMINISTRATION);
+	echo DisplayHead(_ADMINISTRATION);
 
 	// Admin Menu
 	displayMenu();
@@ -240,7 +240,7 @@ function showUserActivity($min=0, $user_id="", $srchFile="", $srchAction="")
 {
 	global $cfg;
 
-	DisplayHead(_ADMINUSERACTIVITY);
+	echo DisplayHead(_ADMINUSERACTIVITY);
 
 	// Admin Menu
 	displayMenu();
@@ -654,7 +654,7 @@ function displayUserSection()
 function editUser($user_id)
 {
 	global $cfg, $db;
-	DisplayHead(_USERADMIN);
+	echo DisplayHead(_USERADMIN);
 
 	$editUserImage = "images/user.gif";
 	$selected_n = "selected";
@@ -884,7 +884,7 @@ function editUser($user_id)
 function CreateUser()
 {
 	global $cfg;
-	DisplayHead(_USERADMIN);
+	echo DisplayHead(_USERADMIN);
 
 	// Admin Menu
 	displayMenu();
@@ -996,7 +996,7 @@ function CreateUser()
 function editLinks()
 {
 	global $cfg;
-	DisplayHead(_ADMINEDITLINKS);
+	echo DisplayHead(_ADMINEDITLINKS);
 
 	// Admin Menu
 	displayMenu();
@@ -1094,7 +1094,7 @@ function editLinks()
 function editRSS()
 {
 	global $cfg;
-	DisplayHead("Administration - RSS");
+	echo DisplayHead("Administration - RSS");
 
 	// Admin Menu
 	displayMenu();
@@ -1169,7 +1169,7 @@ function configSettings()
 	include_once("AliasFile.php");
 	include_once("RunningTorrent.php");
 
-	DisplayHead("Administration - Settings");
+	echo DisplayHead("Administration - Settings");
 
 	// Admin Menu
 	displayMenu();
@@ -2521,7 +2521,7 @@ function queueSettings() {
 	}
 
 	// head
-	DisplayHead("Administration - Queue Settings");
+	echo DisplayHead("Administration - Queue Settings");
 	// Admin Menu
 	displayMenu();
 
@@ -2913,7 +2913,7 @@ function searchSettings()
 	include_once("RunningTorrent.php");
 	include_once("searchEngines/SearchEngineBase.php");
 
-	DisplayHead("Administration - Search Settings");
+	echo DisplayHead("Administration - Search Settings");
 
 	// Admin Menu
 	displayMenu();
@@ -3068,7 +3068,7 @@ function uiSettings() {
 	// load global settings + overwrite per-user settings
 	loadSettings();
 	// display
-	DisplayHead("Administration - UI Settings");
+	echo DisplayHead("Administration - UI Settings");
 	// Admin Menu
 	displayMenu();
 	// Main Settings Section
@@ -3390,7 +3390,7 @@ switch ($op)
 
 	//XFER
 	case "xfer":
-		DisplayHead(_XFER);
+		echo DisplayHead(_XFER);
 		displayMenu();
 		if ($cfg['enable_xfer'] == 1) {
 			getDirList($cfg["torrent_file_path"],0);

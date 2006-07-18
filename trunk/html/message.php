@@ -55,7 +55,7 @@ if (!empty($message)) {
         $message = ">".str_replace("\n", "\n>", $message);
         $message = "\n\n\n".$message;
     }
-    DisplayHead(_SENDMESSAGETITLE);
+    echo DisplayHead(_SENDMESSAGETITLE);
 ?>
 
 <form name="theForm" method="post" action="message.php">

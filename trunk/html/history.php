@@ -31,7 +31,7 @@ include_once("functions.php");
 //****************************************************************************
 function showIndex($min)
 {
-    DisplayHead(_UPLOADHISTORY);
+    echo DisplayHead(_UPLOADHISTORY);
 
     // Display Activity
     displayActivity($min);

@@ -25,7 +25,7 @@
 include_once("config.php");
 include_once("functions.php");
 
-DisplayHead("Cookie Help", false);
+echo DisplayHead("Cookie Help", false);
 ?>
 <script language="JavaScript">
     function closeme()

@@ -13,7 +13,7 @@
 
 include_once('config.php');
 include_once('functions.php');
-DisplayHead(_XFER);
+echo DisplayHead(_XFER);
 if ($cfg['enable_xfer'] == 1) {
     $cfg['xfer_realtime'] = 1;
     getDirList($cfg['torrent_file_path']);

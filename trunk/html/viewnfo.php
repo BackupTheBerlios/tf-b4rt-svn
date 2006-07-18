@@ -27,7 +27,7 @@
 include_once("config.php");
 include_once("functions.php");
 
-DisplayHead("View NFO");
+echo DisplayHead("View NFO");
 
 $file = $_GET["path"];
 $folder = htmlspecialchars( substr( $file, 0, strrpos( $file, "/" ) ) );

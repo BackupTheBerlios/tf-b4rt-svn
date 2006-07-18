@@ -160,7 +160,7 @@ if (isset($dir)) {
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-DisplayHead(_DIRECTORYLIST);
+echo DisplayHead(_DIRECTORYLIST);
 ?>
 <script language="JavaScript">
 function MakeTorrent(name_file)

@@ -46,7 +46,7 @@ if (!empty($mid)) {
         // Mark it as NOT new.
         MarkMessageRead($mid);
     }
-    DisplayHead(_MESSAGES);
+    echo DisplayHead(_MESSAGES);
     //$message = check_html($message, "nohtml");
     $message = check_html($message, "a");
     $message = str_replace("\n", "<br>", $message);
@@ -63,7 +63,7 @@ if (!empty($mid)) {
     echo "</tr><td colspan=2 bgcolor=\"".$cfg["table_data_bg"]."\">"._MESSAGE.":<blockquote><strong>".$message."</strong></blockquote></td></tr>";
     echo "</table>";
 } else {
-    DisplayHead(_MESSAGES);
+    echo DisplayHead(_MESSAGES);
     // read and display all messages in a list.
     $inx = 0;
     DisplayMessageList();
