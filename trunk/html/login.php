@@ -36,7 +36,7 @@ $db = getdb();
 loadSettings();
 
 # create new template
-$tmpl = new vlibTemplate("tmpl/".$cfg["default_theme"]."/login.tmpl");
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/login.tmpl");
 
 include("themes/".$cfg["default_theme"]."/index.php");
 global $cfg;

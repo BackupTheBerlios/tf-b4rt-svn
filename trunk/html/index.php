@@ -27,7 +27,7 @@ require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("tmpl/".$cfg["default_theme"]."/index.tmpl");
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/index.tmpl");
 
 // global fields
 $messages = "";
