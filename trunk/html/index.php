@@ -422,6 +422,8 @@ $tmpl->setvar('_WARNING', _WARNING);
 $tmpl->setvar('_DRIVESPACEUSED', _DRIVESPACEUSED);
 $tmpl->setvar('_SERVERXFERSTATS', _SERVERXFERSTATS);
 $tmpl->setvar('_ADMINMESSAGE', _ADMINMESSAGE);
+$tmpl->setvar('DisplayTitleBar', DisplayTitleBar($cfg["pagetitle"]));
+$tmpl->setvar('displayDriveSpaceBar', displayDriveSpaceBar($drivespace));
 
 $tmpl->pparse();
 ?>

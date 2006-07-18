@@ -81,10 +81,7 @@
 				<table border="1" bordercolor="<tmpl_var name="table_border_dk">" cellpadding="4" cellspacing="0" width="100%">
 					<tr>
 						<td colspan="2" background="themes/<tmpl_var name="theme">/images/bar.gif">
-							<! rework!!! -->
-							<?php
-								DisplayTitleBar(Torrentflux);
-							?>
+							<tmpl_var name="DisplayTitleBar">
 						</td>
 					</tr>
 					<tr>
@@ -267,8 +264,7 @@
 			</tr>
 			<tr>
 				<td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
-				<!-- todo -->
-					<?php displayDriveSpaceBar(30); ?>
+					<tmpl_var name="displayDriveSpaceBar">
 					<tmpl_if name="xfer_realtime">
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
@@ -432,7 +428,6 @@
 				</td>
 			</tr>
 		</table>
-		<!-- todo -->
 		<?php DisplayTorrentFluxLink(true) ?>
 		<tmpl_if name="IsForceReadMsg">
 			<script language="JavaScript">

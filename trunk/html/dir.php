@@ -189,7 +189,7 @@ function UncompDetails(URL)
 }
 </script>
 <?php
-displayDriveSpaceBar(getDriveSpace($cfg["path"]));
+echo displayDriveSpaceBar(getDriveSpace($cfg["path"]));
 echo "<br>";
 if(!isset($dir)) $dir = "";
 ListDirectory($cfg["path"].$dir);
