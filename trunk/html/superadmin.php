@@ -870,7 +870,7 @@ function buildPage($action) {
 					$statusImage = "red.gif";
 				// version-text
 				$htmlMain .= '<br>';
-				if ($versionAvailable != _VERSION_THIS) {
+				if ($versionAvailable != _VERSION_THIS && (substr(_VERSION_THIS, 0, 3)) != "svn") {
 					$htmlMain .= '<form name="update" action="' . _FILE_THIS . '" method="post">';
 					$htmlMain .= '<input type="Hidden" name="u" value="0">';
 					$htmlMain .= '<input type="submit" value="Update to Version '.$versionAvailable.'">';
