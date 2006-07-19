@@ -778,7 +778,7 @@ function DisplayHead($subTopic, $showButtons=true, $refresh="", $percentdone="")
 	$DisplayHead = '
 	<html>
 	<HEAD>
-		<TITLE>'.$percentdone.'.'.$cfg["pagetitle"].'</TITLE>
+		<TITLE>'.$percentdone.' '.$cfg["pagetitle"].'</TITLE>
 		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
 		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
 		<LINK REL="StyleSheet" HREF="themes/'.$cfg["theme"].'/style.css" TYPE="text/css">
