@@ -384,10 +384,10 @@
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="left" valign="bottom">
 														<b><tmpl_var name="_SERVERXFERSTATS"></b><br>
-														<tmpl_var name="totalxfer1">
-														<tmpl_var name="monthxfer1">
-														<tmpl_var name="weekxfer1">
-														<tmpl_var name="dayxfer1">
+														<tmpl_var name="_TOTALXFER">: <strong><tmpl_var name="totalxfer1"></strong><br>
+														<tmpl_var name="_MONTHXFER">: <strong><tmpl_var name="monthxfer1"></strong><br>
+														<tmpl_var name="_WEEKXFER">: <strong><tmpl_var name="weekxfer1"></strong><br>
+														<tmpl_var name="_DAYXFER">: <strong><tmpl_var name="dayxfer1"></strong><br>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="queueActive2">
@@ -402,20 +402,23 @@
 												</tmpl_if>
 												<td class="tiny" align="center" valign="bottom">
 													<b><tmpl_var name="_OTHERSERVERSTATS"></b><br>
-													<tmpl_var name="downloadspeed1">
-													<tmpl_var name="uploadspeed1">
-													<tmpl_var name="totalspeed1">
-													<tmpl_var name="id_connections1">
-													<tmpl_var name="drivespace1">
-													<tmpl_var name="serverload1">
+													
+													
+													
+													<tmpl_var name="_DOWNLOADSPEED">: <strong><tmpl_var name="downloadspeed1"> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
+													<tmpl_var name="_UPLOADSPEED">: <strong><tmpl_var name="uploadspeed1"> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
+													<tmpl_var name="_TOTALSPEED">: <strong><tmpl_var name="totalspeed1"> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>
+													<tmpl_var name="_ID_CONNECTIONS">: <strong><tmpl_var name="id_connections1"> (<tmpl_var name="id_connections11">)</strong><br>
+													<tmpl_var name="_DRIVESPACE">: <strong><tmpl_var name="drivespace1"></strong><br>
+													<tmpl_var name="_SERVERLOAD">: <strong><tmpl_var name="serverload1"></strong>
 												</td>
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="right" valign="bottom">
 														<b><tmpl_var name="_YOURXFERSTATS"></b><br>
-														<tmpl_var name="total2">
-														<tmpl_var name="month2">
-														<tmpl_var name="week2">
-														<tmpl_var name="day2">
+														<tmpl_var name="_TOTALXFER">: <strong><tmpl_var name="total2"></strong><br>
+														<tmpl_var name="_MONTHXFER">: <strong><tmpl_var name="month2"></strong><br>
+														<tmpl_var name="_WEEKXFER">: <strong><tmpl_var name="week2"></strong><br>
+														<tmpl_var name="_DAYXFER">: <strong><tmpl_var name="day2"></strong><br>
 													</td>
 												</tmpl_if>
 											</tr>

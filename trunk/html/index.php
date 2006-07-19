@@ -299,14 +299,10 @@ if ($cfg['index_page_stats'] != 0) {
 	if (!array_key_exists("total_download",$cfg)) $cfg["total_download"] = 0;
 	if (!array_key_exists("total_upload",$cfg)) $cfg["total_upload"] = 0;
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
-		$totalxfer1 = _TOTALXFER.': <strong>'.formatFreeSpace($xfer_total['total']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('totalxfer1', $totalxfer1);
-		$monthxfer1 = _MONTHXFER.': <strong>'.formatFreeSpace($xfer_total['month']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('monthxfer1', $monthxfer1);
-		$weekxfer1 = _WEEKXFER.': <strong>'.formatFreeSpace($xfer_total['week']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('weekxfer1', $weekxfer1);
-		$dayxfer1 = _DAYXFER.': <strong>'.formatFreeSpace($xfer_total['day']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('dayxfer1', $dayxfer1);
+		$tmpl->setvar('totalxfer1', formatFreeSpace($xfer_total['total']['total']/(1024*1024)));
+		$tmpl->setvar('monthxfer1', formatFreeSpace($xfer_total['month']['total']/(1024*1024)));
+		$tmpl->setvar('weekxfer1', formatFreeSpace($xfer_total['week']['total']/(1024*1024)));
+		$tmpl->setvar('dayxfer1', formatFreeSpace($xfer_total['day']['total']/(1024*1024)));
 	}
 	if ($queueActive) {
 		$tmpl->setvar('queueActive2', 1);
@@ -325,32 +321,32 @@ if ($cfg['index_page_stats'] != 0) {
 	$sumMaxUpRate = getSumMaxUpRate();
 	$sumMaxDownRate = getSumMaxDownRate();
 	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
-	$downloadspeed1 = _DOWNLOADSPEED.': <strong>'.number_format($cfg["total_download"], 2).' ('.number_format($sumMaxDownRate, 2).')</strong> kB/s<br>';
-	$tmpl->setvar('downloadspeed1', $downloadspeed1);
-	$uploadspeed1 = _UPLOADSPEED.': <strong>'.number_format($cfg["total_upload"], 2).' ('.number_format($sumMaxUpRate, 2).')</strong> kB/s<br>';
-	$tmpl->setvar('uploadspeed1', $uploadspeed1);
-	$totalspeed1 = _TOTALSPEED.': <strong>'.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' ('.number_format($sumMaxRate, 2).')</strong> kB/s<br>';
-	$tmpl->setvar('totalspeed1', $totalspeed1);
+	
+	
+	
+	
+	
+
+	$tmpl->setvar('downloadspeed1', number_format($cfg["total_download"], 2));
+	$tmpl->setvar('downloadspeed11', number_format($sumMaxDownRate, 2));
+	$tmpl->setvar('uploadspeed1', number_format($cfg["total_upload"], 2));
+	$tmpl->setvar('uploadspeed11', number_format($sumMaxUpRate, 2));
+	$tmpl->setvar('totalspeed1', number_format($cfg["total_download"]+$cfg["total_upload"], 2));
+	$tmpl->setvar('totalspeed11', number_format($sumMaxRate, 2));
 	if ($cfg["index_page_connections"] != 0) {
-		$id_connections1 = _ID_CONNECTIONS.': <strong>'.$netstatConnectionsSum.' ('.getSumMaxCons().')</strong><br>';
-		$tmpl->setvar('id_connections1', $id_connections1);
+		$tmpl->setvar('id_connections1', $netstatConnectionsSum);
+		$tmpl->setvar('id_connections11', getSumMaxCons());
 	}
-	$drivespace1 = _DRIVESPACE.': <strong>'.formatFreeSpace($cfg["free_space"]).'</strong><br>';
-	$tmpl->setvar('drivespace1', $drivespace1);
+	$tmpl->setvar('drivespace1', formatFreeSpace($cfg["free_space"]));
 	if ($cfg["show_server_load"] != 0) {
-		$serverload1 = _SERVERLOAD . ': <strong>'.$loadavgString.'</strong>';
-		$tmpl->setvar('serverload1', $serverload1);
+		$tmpl->setvar('serverload1', $loadavgString);
 	}
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('_YOURXFERSTATS', _YOURXFERSTATS);
-		$total2 = _TOTALXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['total']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('total2', $total2);
-		$month2 = _MONTHXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['month']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('month2', $month2);
-		$week2 = _WEEKXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['week']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('week2', $week2);
-		$day2 = _DAYXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['day']['total']/(1024*1024)).'</strong><br>';
-		$tmpl->setvar('day2', $day2);
+		$tmpl->setvar('total2', formatFreeSpace($xfer[$cfg['user']]['total']['total']/(1024*1024)));
+		$tmpl->setvar('month2', formatFreeSpace($xfer[$cfg['user']]['month']['total']/(1024*1024)));
+		$tmpl->setvar('week2', formatFreeSpace($xfer[$cfg['user']]['week']['total']/(1024*1024)));
+		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg['user']]['day']['total']/(1024*1024)));
 	}
 }
 if (IsForceReadMsg()) {
@@ -428,6 +424,10 @@ $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('version', $cfg["version"]);
 $tmpl->setvar('ui_dim_superadmin_w', $cfg["ui_dim_superadmin_w"]);
 $tmpl->setvar('ui_dim_superadmin_h', $cfg["ui_dim_superadmin_h"]);
+$tmpl->setvar('_TOTALXFER', _TOTALXFER);
+$tmpl->setvar('_MONTHXFER', _MONTHXFER);
+$tmpl->setvar('_WEEKXFER', _WEEKXFER);
+$tmpl->setvar('_DAYXFER', _DAYXFER);
 
 $tmpl->pparse();
 ?>
