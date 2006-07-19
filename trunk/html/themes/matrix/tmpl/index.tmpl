@@ -428,7 +428,19 @@
 				</td>
 			</tr>
 		</table>
-		<tmpl_var name="DisplayTorrentFluxLink">
+		<tmpl_if name="ui_displayfluxlink">
+			<div align="right">
+				<a href="http://www.torrentflux.com" target="_blank"><font class="tinywhite">TorrentFlux <tmpl_name="version"></font></a>&nbsp;&nbsp;
+				<script language="JavaScript">
+					function SuperAdmin(name_file) {
+						window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=<tmpl_var name="ui_dim_superadmin_w">,height=<tmpl_var name="ui_dim_superadmin_h">")
+					}
+				</script>
+				<a href="JavaScript:SuperAdmin('superadmin.php?a=0')">
+					<img src="images/arrow.gif" width="9" height="9" title="Version" border="0">
+				</a>
+			</div>
+		</tmpl_if>
 		<tmpl_if name="IsForceReadMsg">
 			<script language="JavaScript">
 				if (confirm("tmpl_if name="_ADMINMESSAGE">")) {
