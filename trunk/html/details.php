@@ -64,6 +64,6 @@ switch ($cfg["metainfoclient"]) {
 
 echo "</div>";
 
-DisplayFoot();
+echo DisplayFoot();
 
 ?>

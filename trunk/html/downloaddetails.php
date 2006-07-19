@@ -217,6 +217,6 @@ echo DisplayHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% ");
 </td></tr></table>
 <?php
 
-DisplayFoot(false);
+echo DisplayFoot(false);
 
 ?>

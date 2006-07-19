@@ -321,12 +321,6 @@ if ($cfg['index_page_stats'] != 0) {
 	$sumMaxUpRate = getSumMaxUpRate();
 	$sumMaxDownRate = getSumMaxDownRate();
 	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
-	
-	
-	
-	
-	
-
 	$tmpl->setvar('downloadspeed1', number_format($cfg["total_download"], 2));
 	$tmpl->setvar('downloadspeed11', number_format($sumMaxDownRate, 2));
 	$tmpl->setvar('uploadspeed1', number_format($cfg["total_upload"], 2));

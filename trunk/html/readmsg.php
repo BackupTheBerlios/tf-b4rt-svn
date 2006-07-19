@@ -108,5 +108,5 @@ if (!empty($mid)) {
         echo "<div align=\"center\"><strong>-- "._NORECORDSFOUND." --</strong></div>";
 } // end the else
 
-DisplayFoot();
+echo DisplayFoot();
 ?>

@@ -822,27 +822,23 @@ return $DisplayHead;
 // Display the footer portion
 function DisplayFoot($showReturn=true, $showVersionLink = false) {
 	global $cfg;
-	?>
-	 </td></tr>
-	</table>
-<?php
+	$DisplayFoot = "</td></tr>";
+	$DisplayFoot .= "</table>";
 	if ($showReturn)
-		echo "[<a href=\"index.php\">"._RETURNTOTORRENTS."</a>]";
-?>
-	</div>
-	</td>
-	</tr>
-	</table>
-<?php
-	echo DisplayTorrentFluxLink($showVersionLink);
-?>
-		</td>
+		$DisplayFoot .= "[<a href=\"index.php\">"._RETURNTOTORRENTS."</a>]";
+	$DisplayFoot .= "</div>";
+	$DisplayFoot .= "</td>";
+	$DisplayFoot .= "</tr>";
+	$DisplayFoot .= "</table>";
+	$DisplayFoot .=  DisplayTorrentFluxLink($showVersionLink);
+		$DisplayFoot .= "</td>
 	</tr>
 	</table>
 	</div>
    </body>
   </html>
-	<?php
+";
+return $DisplayFoot;
 }
 
 // ***************************************************************************

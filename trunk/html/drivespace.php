@@ -48,6 +48,6 @@ echo $result2;
 echo "</pre>";
 echo "</div>";
 
-DisplayFoot();
+echo DisplayFoot();
 
 ?>

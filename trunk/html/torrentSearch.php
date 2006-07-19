@@ -191,6 +191,6 @@ include_once("searchEngines/SearchEngineBase.php");
         echo "</table></div>";
     }
 
-    DisplayFoot();
+    echo DisplayFoot();
 
 ?>

@@ -58,6 +58,6 @@ if (IsAdmin())
 
 echo "</div>";
 
-DisplayFoot();
+echo DisplayFoot();
 
 ?>

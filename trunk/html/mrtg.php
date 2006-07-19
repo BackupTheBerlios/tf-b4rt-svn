@@ -77,5 +77,5 @@ echo $cfg["main_bgcolor"];
 echo 'position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 echo $htmlGraph;
 echo '</div>';
-DisplayFoot();
+echo DisplayFoot();
 ?>

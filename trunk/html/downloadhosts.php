@@ -130,6 +130,6 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 </td></tr></table>
 <?php
 
-DisplayFoot(false,false);
+echo DisplayFoot(false,false);
 
 ?>

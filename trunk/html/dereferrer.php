@@ -31,7 +31,7 @@ if (isset($_REQUEST["u"])) {
     echo '<br><br><strong>';
     echo 'forwarding to <a href="'.$_REQUEST["u"].'">'.$_REQUEST["u"].'</a> ...';
     echo '</strong><br><br>';
-    DisplayFoot(false,false);
+    echo DisplayFoot(false,false);
 } else {
     header("location: index.php");
     exit();

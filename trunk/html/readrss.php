@@ -138,7 +138,7 @@ if (isset($rssfeed) && is_array($rssfeed)) {
         displayNews($title, $pageUrl, $content, $rid);
     }
 }
-DisplayFoot();
+echo DisplayFoot();
 
 
 

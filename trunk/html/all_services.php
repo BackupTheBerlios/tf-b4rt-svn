@@ -68,6 +68,6 @@ echo "</pre>";
 echo "</div>";
 
 
-DisplayFoot();
+echo DisplayFoot();
 
 ?>

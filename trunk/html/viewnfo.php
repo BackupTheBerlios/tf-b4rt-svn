@@ -49,5 +49,5 @@ if( ( $output = @file_get_contents( $cfg["path"] . $file ) ) === false )
 ?>
 </pre>
 <?php
-DisplayFoot();
+echo DisplayFoot();
 ?>

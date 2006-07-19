@@ -29,5 +29,5 @@ if ($cfg['enable_xfer'] == 1) {
     if (($cfg['enable_public_xfer'] == 1 ) || IsAdmin())
         displayXfer();
 }
-DisplayFoot();
+echo DisplayFoot();
 ?>

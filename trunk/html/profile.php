@@ -535,7 +535,7 @@ function showIndex() {
     echo "</td></tr>";
     echo "</table></div><br><br>";
 
-    DisplayFoot();
+    echo DisplayFoot();
 }
 
 
@@ -568,7 +568,7 @@ function updateProfile($pass1, $pass2, $hideOffline, $theme, $language)
     echo "</td></tr>";
     echo "</table></div><br><br>";
 
-    DisplayFoot();
+    echo DisplayFoot();
 }
 
 
@@ -708,7 +708,7 @@ function ShowCookies()
     <br />
     <br />
 <?php
-    DisplayFoot();
+    echo DisplayFoot();
 }
 
 //******************************************************************************

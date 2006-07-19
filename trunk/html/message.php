@@ -101,7 +101,7 @@ if (!empty($message)) {
 
 <?php
 
-    DisplayFoot();
+    echo DisplayFoot();
 
 } // end the else
 

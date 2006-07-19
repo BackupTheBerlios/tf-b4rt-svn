@@ -98,5 +98,5 @@ www.host.com/
 <BR />
 </div>
 <?php
-DisplayFoot(false);
+echo DisplayFoot(false);
 ?>

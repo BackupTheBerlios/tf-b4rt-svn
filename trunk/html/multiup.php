@@ -158,4 +158,4 @@ if ((isset($messages)) && ($messages != ""))
   </td>
  </tr>
 </table>
-<?php DisplayFoot(); ?>
+<?php echo DisplayFoot(); ?>

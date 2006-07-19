@@ -36,7 +36,7 @@ function showIndex($min)
     // Display Activity
     displayActivity($min);
 
-    DisplayFoot();
+    echo DisplayFoot();
 }
 
 

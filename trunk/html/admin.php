@@ -124,7 +124,7 @@ function addUser($newUser, $pass1, $userType)
 
 		echo "<br><div align=\"center\">"._TRYDIFFERENTUSERID."<br><strong>".$newUser."</strong> "._HASBEENUSED."</div><br><br><br>";
 
-		DisplayFoot(true,true); // b4rt-62
+		echo DisplayFoot(true,true); // b4rt-62
 	}
 	else
 	{
@@ -152,7 +152,7 @@ function updateUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 
 		echo "[<a href=\"admin.php?op=editUser&user_id=".$org_user_id."\">"._RETURNTOEDIT." ".$org_user_id."</a>]</div><br><br><br>";
 
-		DisplayFoot(true,true); // b4rt-62
+		echo DisplayFoot(true,true); // b4rt-62
 	}
 	else
 	{
@@ -228,7 +228,7 @@ function showIndex($min = 0)
 	// Display Activity
 	displayActivity($min);
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 
 }
 
@@ -248,7 +248,7 @@ function showUserActivity($min=0, $user_id="", $srchFile="", $srchAction="")
 	// display Activity for user
 	displayActivity($min, $user_id, $srchFile, $srchAction);
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 
 }
 
@@ -874,7 +874,7 @@ function editUser($user_id)
 
 	echo "<br><br>";
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 }
 
 
@@ -987,7 +987,7 @@ function CreateUser()
 
 	echo "<br><br>";
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 }
 
 //****************************************************************************
@@ -1083,7 +1083,7 @@ function editLinks()
 
 	echo "</table></div><br><br><br>";
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 
 }
 
@@ -1123,7 +1123,7 @@ function editRSS()
 
 	echo "</table></div><br><br><br>";
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 
 }
 
@@ -2313,7 +2313,7 @@ function configSettings()
 	echo "</td></tr>";
 	echo "</table></div>";
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 }
 
 
@@ -2896,7 +2896,7 @@ function queueSettings() {
 
 	}
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 }
 
 
@@ -3033,7 +3033,7 @@ function searchSettings()
 	</table></div>
 <?php
 
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 }
 
 //****************************************************************************
@@ -3349,7 +3349,7 @@ function uiSettings() {
 </td></tr>
 </table></div>
 <?php
-	DisplayFoot(true,true); // b4rt-62
+	echo DisplayFoot(true,true); // b4rt-62
 }
 
 //******************************************************************************
@@ -3396,7 +3396,7 @@ switch ($op)
 			getDirList($cfg["torrent_file_path"],0);
 			displayXfer();
 		}
-		DisplayFoot(true,true); // b4rt-62
+		echo DisplayFoot(true,true); // b4rt-62
 	break;
 
 	case "backupDatabase":
