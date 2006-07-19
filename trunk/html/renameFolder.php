@@ -63,7 +63,7 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
     </td>
     </tr>
     </table>
-<?php DisplayTorrentFluxLink(); ?>
+<?php echo DisplayTorrentFluxLink(); ?>
    </body>
   </html>
 </html>

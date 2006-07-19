@@ -851,12 +851,13 @@ function DisplayFoot($showReturn=true, $showVersionLink = false) {
 function DisplayTorrentFluxLink($showVersionLink = false) {
 	global $cfg;
 	if ($cfg["ui_displayfluxlink"] != 0) {
-		echo "<div align=\"right\">";
-		echo "<a href=\"http://www.torrentflux.com\" target=\"_blank\"><font class=\"tinywhite\">TorrentFlux ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
+		$DisplayTorrentFluxLink = "<div align=\"right\">";
+		$DisplayTorrentFluxLink .= "<a href=\"http://www.torrentflux.com\" target=\"_blank\"><font class=\"tinywhite\">TorrentFlux ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
 		if ($showVersionLink)
-			printSuperAdminLink('?a=0','');
-		echo "</div>";
+			$DisplayTorrentFluxLink .= printSuperAdminLink('?a=0','');
+		$DisplayTorrentFluxLink .= "</div>";
 	}
+return $DisplayTorrentFluxLink;
 }
 
 // ***************************************************************************

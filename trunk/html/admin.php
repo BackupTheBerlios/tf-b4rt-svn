@@ -335,7 +335,7 @@ function displayMenu()
 	if ($cfg['enable_xfer'] == 1) echo "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a> | ";
 	echo "<a href=\"admin.php?op=backupDatabase\"><font class=\"adminlink\">"._BACKUP_MENU."</font></a> | ";
 	echo "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | "; // b4rt-8
-	printSuperAdminLink('','<font class="adminlink">superadmin</font>'); // b4rt-7
+	echo printSuperAdminLink('','<font class="adminlink">superadmin</font>'); // b4rt-7
 	echo "</div></td></tr>";
 	echo "</table><br>";
 }
@@ -2657,14 +2657,14 @@ function queueSettings() {
 			  <strong>tfqmgr</strong>&nbsp;
 			  <?php
 				echo '(';
-				printSuperAdminLink('?q=1','log');
+				echo printSuperAdminLink('?q=1','log');
 				echo ' | ';
-				printSuperAdminLink('?q=2','ps');
+				echo printSuperAdminLink('?q=2','ps');
 				if ((isset($shutdown)) && ($shutdown == "1")) {
 				} else {
 					if ($queueManagerRunning && ($queueManager->managerName == "tfqmgr")) {
 						echo ' | ';
-						printSuperAdminLink('?q=3','status');
+						echo printSuperAdminLink('?q=3','status');
 					}
 				}
 				echo ' )';

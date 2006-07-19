@@ -74,7 +74,7 @@ if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
     </td>
     </tr>
     </table>
-<?php DisplayTorrentFluxLink(); ?>
+<?php echo DisplayTorrentFluxLink(); ?>
    </body>
   </html>
 </html>

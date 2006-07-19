@@ -424,6 +424,7 @@ $tmpl->setvar('_SERVERXFERSTATS', _SERVERXFERSTATS);
 $tmpl->setvar('_ADMINMESSAGE', _ADMINMESSAGE);
 $tmpl->setvar('DisplayTitleBar', DisplayTitleBar($cfg["pagetitle"]));
 $tmpl->setvar('displayDriveSpaceBar', displayDriveSpaceBar($drivespace));
+$tmpl->setvar('DisplayTorrentFluxLink', DisplayTorrentFluxLink(true));
 
 $tmpl->pparse();
 ?>
