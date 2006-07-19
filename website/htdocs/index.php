@@ -52,6 +52,7 @@ function getDataFromFile($file) {
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="keywords" content="PHP, free, open, source, torrent, torrentflux, bittornado, transmission, b4rt" />
    <title>TorrentFlux-b4rt</title>
    <link rel="stylesheet" type="text/css" href="/css/default.css">
    <link rel="alternate" title="News - RSS 0.91" href="http://developer.berlios.de/export/rss_bsnews.php?group_id=7000" type="application/rss+xml">
@@ -76,27 +77,34 @@ function getDataFromFile($file) {
 </table>
 <hr class="header">
 <br>
-<a href="http://developer.berlios.de/project/showfiles.php?group_id=7000" target="_blank"
+<a href="http://developer.berlios.de/project/showfiles.php?group_id=7000"
 	onmouseover="status='Releases'; return true;"
 	onmouseout="status=location.hostname; return true;" class="nav">
 	<img src="/images/hand.right.gif" align="absmiddle" />
 	Releases
 </a>
 <br>
-<a href="http://developer.berlios.de/projects/tf-b4rt/" target="_blank"
+<a href="/forum/""
+	onmouseover="status='Forum'; return true;"
+	onmouseout="status=location.hostname; return true;" class="nav">
+	<img src="/images/hand.right.gif" align="absmiddle" />
+	Forum
+</a>
+<br><br>
+<a href="http://developer.berlios.de/projects/tf-b4rt/"
 	onmouseover="status='BerliOS Developer Project'; return true;"
 	onmouseout="status=location.hostname; return true;" class="nav">
 	<img src="/images/hand.right.gif" align="absmiddle" />
 	BerliOS Developer Project
 </a>
 <br>
-<a href="ftp://ftp.berlios.de/pub/tf-b4rt/misc/" target="_blank"
+<a href="ftp://ftp.berlios.de/pub/tf-b4rt/misc/"
 	onmouseover="status='misc Files'; return true;"
 	onmouseout="status=location.hostname; return true;" class="nav">
 	<img src="/images/hand.right.gif" align="absmiddle" />
 	misc Files
 </a>
-<br>
+<br><br>
 <a href="http://www.torrentflux.com/forum/index.php/topic,1265.0.html" target="_blank"
 	onmouseover="status='Thread on TorrentFlux-Forum'; return true;"
 	onmouseout="status=location.hostname; return true;" class="nav">
@@ -119,9 +127,11 @@ function getDataFromFile($file) {
 
 <!-- footer -->
 <hr class="header">
-<a href="http://developer.berlios.de" title="BerliOS Developer" target="_blank">
- <img src="http://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo">
-</a>
+<table class="std"><tr><td><div align="center">
+ <a href="http://developer.berlios.de" title="BerliOS Developer" target="_blank">
+  <img src="http://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo">
+ </a>
+</div></td></tr></table>
 <!-- end footer -->
 
 </body>
