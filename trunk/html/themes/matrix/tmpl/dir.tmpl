@@ -1,0 +1,198 @@
+<tmpl_var name="DisplayHead">
+<script language="JavaScript">
+function MakeTorrent(name_file) {
+	window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
+}
+function ConfirmDelete(file) {
+	return confirm("<tmpl_var name="_ABOUTTODELETE">: " + file)
+}
+function checkCheck(thisIn) {
+	var form = thisIn.form, i = 0;
+	for(i=0; i < form.length; i++)
+	{
+		if( form[i].type == 'checkbox' && form[i].name != 'checkall')
+		{
+			form[i].checked = thisIn.checked;
+		}
+	}
+}
+<!-- R.D. Robust UnRAR/UnZip hack -->
+function UncompDetails(URL) {
+	window.open (URL,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=300');
+}
+</script>
+<tmpl_var name="displayDriveSpaceBar">
+<br>
+<a href="<tmpl_var name="parentURL">"><img src="images/up_dir.gif" width=16 height=16 title="<tmpl_var name="_BACKTOPARRENT">" border=0>[<tmpl_var name="_BACKTOPARRENT">]</a>
+<table cellpadding="2"" width="740">
+	<form action="multi.php" method="post" name="multidir">
+		<tmpl_loop name="dirlist1">
+			<tmpl_if name="is_dir">
+				<tr bgcolor="<tmpl_var name="bg">">
+					<td>
+						<a href="dir.php?dir=<tmpl_var name="urlencode1">">
+							<img src="images/folder2.gif" width="16" height="16" title="<tmpl_var name="entry">" border="0" align="absmiddle"><tmpl_var name="entry"></a>
+					</td>
+					<tmpl_if name="enable_dirstats">
+						<td align="right"><tmpl_var name="dusize0">B</td>
+						<td width=140><tmpl_var name="date1"></td>
+					<tmpl_else>
+						<td>&nbsp;</td>
+						<td>&nbsp;</td>
+					</tmpl_if>
+					<td align="right" nowrap>
+						<!-- rename hack -->
+						<tmpl_if name="enable_rename">
+							<script type="text/javascript" language="JavaScript">
+								var popUpWin=0;
+								function renameFolder(name_file) {
+									if(popUpWin) {
+										if(!popUpWin.closed) popUpWin.close();
+									}
+									popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
+								}
+							</script>
+							<a href="JavaScript:renameFolder('renameFolder.php?dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
+						</tmpl_if>
+						<!-- move hack -->
+						<tmpl_if name="enable_move">
+							<script type="text/javascript" language="JavaScript">
+								var popUpWin=0;
+								function moveFile(name_file) {
+									if(popUpWin) {
+										if(!popUpWin.closed) popUpWin.close();
+									}
+									popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
+								}
+							</script>
+							<a href="JavaScript:moveFile('move.php?path=<tmpl_var name="urlencode1">&start=true')\"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
+						</tmpl_if>
+						<tmpl_if name="enable_sfvcheck">
+							<tmpl_if name="enable_sfvcheck" value="2">
+								<a href="javascript:CheckSFV('<tmpl_var name="sfvdir">','<tmpl_var name="sfvsfv"')">
+									<img src="images/sfv_enabled.gif" border="0" width="16" height="16" alt="sfv check torrent">
+								</a>
+							<tmpl_else>
+								<img src="images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">
+							</tmpl_if>
+						</tmpl_if>
+						<a href="JavaScript:MakeTorrent('maketorrent.php?path=<tmpl_var name="urlencode1">')">
+							<img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0>
+						</a>
+						<a href="dir.php?tar=<tmpl_var name="urlencode1">">
+							<img src="images/tar_down.gif" width=16 height=16 title="Download as <tmpl_var name="package_type">" border=0>
+						</a>
+						<tmpl_if name="IsAdmin1">
+							<a href="dir.php?del=<tmpl_var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')">
+								<img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0>
+							</a>
+							<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
+						<tmpl_else>
+							&nbsp;
+						</tmpl_if>
+					</td>
+				</tr>
+			</tmpl_if>
+		</tmpl_loop>
+		<tmpl_loop name="dirlist2">
+			<tr bgcolor="<tmpl_var name="bg">">
+				<td>
+					<tmpl_if name="enable_file_download">
+						<a href="dir.php?down=<tmpl_var name="urlencode1">">
+							<img src="<tmpl_var name="image">" width="16" height="16" alt="<tmpl_var name="entry">" border="0"></a>
+						<a href="dir.php?down=<tmpl_var name="urlencode1">">
+							<tmpl_var name="entry"></a>
+					<tmpl_else>
+						<img src="<tmpl_var name="image">" width="16" height="16" alt="<tmpl_var name="entry">" border="0">
+						<tmpl_var name="entry">
+					</tmpl_if>
+				</td>
+				<td align="right">
+					<tmpl_var name="fileSize"> KB</td>
+				<tmpl_if name="enable_dirstats">
+					<td width=140><tmpl_var name="date"></td>
+				<tmpl_else>
+					<td><tmpl_var name="date"></td>
+				</tmpl_if>
+				<td align="right" nowrap>
+				<!-- rename hack -->
+					<tmpl_if name="enable_rename">
+						<script type="text/javascript" language="JavaScript">
+							var popUpWin=0;
+							function renameFolder(name_file) {
+								if(popUpWin) {
+									if(!popUpWin.closed) popUpWin.close();
+								}
+								popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
+							}
+						</script>
+						<a href="JavaScript:renameFolder('renameFolder.php?dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
+					</tmpl_if>
+					<!-- move hack -->
+					<tmpl_if name="enable_move">
+						<script type="text/javascript" language="JavaScript">
+							var popUpWin=0;
+							function moveFile(name_file) {
+								if(popUpWin) {
+									if(!popUpWin.closed) popUpWin.close();
+								}
+								popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
+							}
+						</script>
+						<a href="JavaScript:moveFile('move.php?path=<tmpl_var name="urlencode1">&start=true')\"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
+					</tmpl_if>
+					<tmpl_if name="enable_rar" value="1">
+						<a href="javascript:UncompDetails('uncomp.php?file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')">
+							<img src="images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0>
+						</a>
+					<tmpl_elseif value="2">
+						<a href="javascript:UncompDetails('uncomp.php?file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')">
+							<img src="images/zip.png" width=16 height=16 title="Unzip" border=0>
+						</a>
+					</tmpl_if>
+					<tmpl_if name="enable_view_nfo">
+						<a href="viewnfo.php?path="<tmpl_var name="urlencode4">">
+							<img src="images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0>
+						</a>
+					</tmpl_if>
+					<tmpl_if name="enable_maketorrent">
+						<a href="JavaScript:MakeTorrent('maketorrent.php?path=<tmpl_var name="urlencode1">')">
+							<img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0>
+						</a>
+					</tmpl_if>
+					<tmpl_if name="enable_file_download">
+						<a href="dir.php?down=<tmpl_var name="urlencode1">">
+							<img src="images/download_owner.gif" width=16 height=16 title="Download" border=0>
+						</a>
+					</tmpl_if>
+					<tmpl_if name="admin1">
+						<a href="dir.php?del=<tmpl_Var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')">
+							<img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0>
+						</a>
+						<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
+					<tmpl_else>
+						&nbsp;
+					</tmpl_if>
+				</td>
+			</tr>
+		</tmpl_loop>
+		<input type="hidden" name="action" value="fileDelete" />
+		<tr>
+			<td align="right" colspan="4">
+				<a href="javascript:document.multidir.submit()" onclick="return ConfirmDelete('Multiple Files')">
+					<img src="images/delete_on.gif" title="Delete" border="0" height="16" width="16">
+				</a>
+				<input type="checkbox" onclick="checkCheck(this);" />
+			</td>
+		</tr>
+	</form>
+</table>
+<tmpl_if name="enable_dirstats">
+	<table cellpadding="0" width="740">
+		<tr bgcolor=#ececec>
+			<td align="center">
+				<tmpl_var name="_TDDU"> <tmpl_var name="du2">B</td>
+		</tr>
+	</table>
+</tmpl_if>
+<tmpl_var name="DisplayFoot">
