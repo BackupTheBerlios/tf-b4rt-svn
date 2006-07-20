@@ -2412,13 +2412,15 @@ function updateQueueSettings() {
 		$_POST["tfqmgr_path_fluxcli"] != $cfg["tfqmgr_path_fluxcli"] ||
 		$_POST["tfqmgr_limit_global"] != $cfg["tfqmgr_limit_global"] ||
 		$_POST["tfqmgr_limit_user"] != $cfg["tfqmgr_limit_user"] ||
+		$_POST["tfqmgr_loglevel"] != $cfg["tfqmgr_loglevel"] ||
 		$_POST["Qmgr_path"] != $cfg["Qmgr_path"] ||
 		$_POST["Qmgr_maxUserTorrents"] != $cfg["Qmgr_maxUserTorrents"] ||
 		$_POST["Qmgr_maxTotalTorrents"] != $cfg["Qmgr_maxTotalTorrents"] ||
 		$_POST["Qmgr_perl"] != $cfg["Qmgr_perl"] ||
 		$_POST["Qmgr_fluxcli"] != $cfg["Qmgr_fluxcli"] ||
 		$_POST["Qmgr_host"] != $cfg["Qmgr_host"] ||
-		$_POST["Qmgr_port"] != $cfg["Qmgr_port"] )
+		$_POST["Qmgr_port"] != $cfg["Qmgr_port"] ||
+		$_POST["Qmgr_loglevel"] != $cfg["Qmgr_loglevel"])
 	{
 		$message = '<br>Settings changed.<br>';
 		if ($cfg["AllowQueing"] != 0) {
@@ -2435,6 +2437,8 @@ function updateQueueSettings() {
 						$needsRestart = true;
 					if ($_POST["tfqmgr_path_fluxcli"] != $cfg["tfqmgr_path_fluxcli"])
 						$needsRestart = true;
+					if ($_POST["tfqmgr_loglevel"] != $cfg["tfqmgr_loglevel"])
+						$needsRestart = true;
 					//
 					if ($_POST["Qmgr_path"] != $cfg["Qmgr_path"])
 						$needsRestart = true;
@@ -2445,6 +2449,8 @@ function updateQueueSettings() {
 					if ($_POST["Qmgr_host"] != $cfg["Qmgr_host"])
 						$needsRestart = true;
 					if ($_POST["Qmgr_port"] != $cfg["Qmgr_port"])
+						$needsRestart = true;
+					if ($_POST["Qmgr_loglevel"] != $cfg["Qmgr_loglevel"])
 						$needsRestart = true;
 					//
 					if ($needsRestart)
@@ -2459,6 +2465,8 @@ function updateQueueSettings() {
 							if ($_POST["tfqmgr_limit_user"] != $cfg["tfqmgr_limit_user"]) {
 							   $queueManager->setConfig('MAX_TORRENTS_PER_USER',$_POST["tfqmgr_limit_user"]);
 							}
+							if ($_POST["tfqmgr_loglevel"] != $cfg["tfqmgr_loglevel"]) {
+							   $queueManager->setConfig('LOGLEVEL',$_POST["tfqmgr_loglevel"]);						
 							break;
 						case "Qmgr":
 							if ($_POST["Qmgr_maxUserTorrents"] != $cfg["Qmgr_maxUserTorrents"]) {
@@ -2467,6 +2475,9 @@ function updateQueueSettings() {
 							}
 							if ($_POST["Qmgr_maxTotalTorrents"] != $cfg["Qmgr_maxTotalTorrents"]) {
 								$queueManager->setConfig('MAX_TORRENTS_SYS',$_POST["Qmgr_maxTotalTorrents"]);
+							}
+							if ($_POST["Qmgr_loglevel"] != $cfg["Qmgr_loglevel"]) {
+								$queueManager->setConfig('LOGLEVEL',$_POST["Qmgr_loglevel"]);
 							}
 							break;
 					}
@@ -2711,63 +2722,79 @@ function queueSettings() {
 					<input name="tfqmgr_limit_user" type="Text" maxlength="3" value="<?php echo($cfg["tfqmgr_limit_user"]); ?>" size="3">
 				</td>
 			</tr>
+			<tr>
+				<td align="left" width="350" valign="top"><strong>Loglevel</strong><br>
+				Specify the level of logging (default is 0):
+				</td>
+				<td valign="top">
+					<input name="tfqmgr_loglevel" type="Text" maxlength="2" value="<?php echo($cfg["tfqmgr_loglevel"]); ?>" size="5">
+				</td>
+			</tr>			
 
 			<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Qmgr</strong></td></tr>
 			<tr>
-			   <td align="left" width="350" valign="top"><strong>Path to Qmgr scripts</strong><br>
-			   Specify the path to the Qmgr.pl and Qmgrd.pl scripts:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_path" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_path"]); ?>" size="55"><?php echo validateFile($cfg["Qmgr_path"]."/Qmgrd.pl") ?>
-			   </td>
+			  	 <td align="left" width="350" valign="top"><strong>Path to Qmgr scripts</strong><br>
+				   Specify the path to the Qmgr.pl and Qmgrd.pl scripts:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_path" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_path"]); ?>" size="55"><?php echo validateFile($cfg["Qmgr_path"]."/Qmgrd.pl") ?>
+				   </td>
 			</tr>
 			<tr>
-			   <td align="left" width="350" valign="top"><strong>Max User Torrents</strong><br>
-			   Total number of torrents to allow a single user at once:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<?php echo($cfg["Qmgr_maxUserTorrents"]); ?>" size="3">
-			   </td>
+				   <td align="left" width="350" valign="top"><strong>Max User Torrents</strong><br>
+				   Total number of torrents to allow a single user at once:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<?php echo($cfg["Qmgr_maxUserTorrents"]); ?>" size="3">
+				   </td>
 			</tr>
 			<tr>
-			   <td align="left" width="350" valign="top"><strong>Max Total Torrents</strong><br>
-			   Total number of torrents the server will run at once:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<?php echo($cfg["Qmgr_maxTotalTorrents"]); ?>" size="3">
-			   </td>
+				   <td align="left" width="350" valign="top"><strong>Max Total Torrents</strong><br>
+				   Total number of torrents the server will run at once:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<?php echo($cfg["Qmgr_maxTotalTorrents"]); ?>" size="3">
+				   </td>
 			</tr>
 			<tr>
-			   <td align="left" width="350" valign="top"><strong>Perl's Path</strong><br>
-			   Specify the path to perl:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_perl" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_perl"]); ?>" size="55"><?php echo validateFile($cfg["Qmgr_perl"]); ?>
-			   </td>
+				   <td align="left" width="350" valign="top"><strong>Perl's Path</strong><br>
+				   Specify the path to perl:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_perl" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_perl"]); ?>" size="55"><?php echo validateFile($cfg["Qmgr_perl"]); ?>
+				   </td>
 			</tr>
 			<tr>
-			   <td align="left" width="350" valign="top"><strong>Fluxcli.php path</strong><br>
-			   Specify the path to the fluxcli executable:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_fluxcli" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_fluxcli"]); ?>" size="55"><?php echo validateFile($cfg["Qmgr_fluxcli"]."/fluxcli.php") ?>
-			   </td>
+				   <td align="left" width="350" valign="top"><strong>Fluxcli.php path</strong><br>
+				   Specify the path to the fluxcli executable:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_fluxcli" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_fluxcli"]); ?>" size="55"><?php echo validateFile($cfg["Qmgr_fluxcli"]."/fluxcli.php") ?>
+				   </td>
 			</tr>
 			<tr>
-			   <td align="left" width="350" valign="top"><strong>Qmgrd host</strong><br>
-			   The host running the Qmgrd.pl script, probably localhost:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_host" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_host"]); ?>" size="15">
-			   </td>
+				   <td align="left" width="350" valign="top"><strong>Qmgrd host</strong><br>
+				   The host running the Qmgrd.pl script, probably localhost:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_host" type="Text" maxlength="254" value="<?php echo($cfg["Qmgr_host"]); ?>" size="15">
+				   </td>
 			</tr>
 			<tr>
-			   <td align="left" width="250" valign="top"><strong>Qmgrd port</strong><br>
-			   the port number to run the Qmgrd.pl script on:
-			   </td>
-			   <td valign="top">
-				   <input name="Qmgr_port" type="Text" maxlength="5" value="<?php echo($cfg["Qmgr_port"]); ?>" size="5">
-			   </td>
+				   <td align="left" width="250" valign="top"><strong>Qmgrd port</strong><br>
+				   the port number to run the Qmgrd.pl script on:
+				   </td>
+				   <td valign="top">
+					   <input name="Qmgr_port" type="Text" maxlength="5" value="<?php echo($cfg["Qmgr_port"]); ?>" size="5">
+				   </td>
+			</tr>
+			<tr>
+				   <td align="left" width="250" valign="top"><strong><Qmgrd Loglevel</strong><br>
+				   Level of logging (default to 0):
+				   </td>
+				   <td valign="top>
+					   <input name="Qmgr_loglevel" type="Text" maxlength="2" value="<?php echo($cfg["Qmgr_loglevel"]); ?>" size="5">
+				   </td>
 			</tr>
 
 			<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>tfQManager</strong></td></tr>
