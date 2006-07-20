@@ -187,16 +187,10 @@ while($entry = readdir($handle))
 	$entrys[] = $entry;
 natsort($entrys);
 $dirlist1 = array();
-
-
-# SETLOOP!!!!
-
-
 foreach($entrys as $entry) {
 	if (($entry != ".") && ($entry != "..") && (substr($entry, 0, 1) != ".") && ($entry != "lost+found")) {
 		if (@is_dir($dirName.$entry)) {
 			$is_dir = 1;
-			$urlencode1 = urlencode($dir.$entry);
 			// Some Stats dir hack
 			// b4rt-5
 			if ($cfg['enable_dirstats'] == 1) {
@@ -210,8 +204,6 @@ foreach($entrys as $entry) {
 			}
 			if ($cfg["enable_rename"] == 1) {
 				$enable_rename = 1;
-				$urlencode2 = urlencode($dir);
-				$urlencode3 = urlencode($entry);
 			}
 			if ($cfg["enable_move"] == 1) {
 				$enable_move = 1;
@@ -225,9 +217,6 @@ foreach($entrys as $entry) {
 					$sfvsfv = $sfv[sfv];
 				}
 			}
-			$enable_maketorrent = 1;
-			$enable_file_download =1;
-			$package_type = $cfg["package_type"];
 			// The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
 			// this is so only the owner of the file(s) or admin can delete
 			// only give admins and users who "own" this directory
@@ -240,7 +229,10 @@ foreach($entrys as $entry) {
 				
 				/* --- Multi Delete Hack --- */
 			}
-			
+			$urlencode1 = urlencode($dir.$entry);
+			$package_type = $cfg["package_type"];
+			$urlencode2 = urlencode($dir);
+			$urlencode3 = urlencode($entry);
 			array_push($dirlist1, array(
 				'is_dir' => $is_dir,
 				'urlencode1' => $urlencode1,
@@ -258,15 +250,14 @@ foreach($entrys as $entry) {
 				'enable_sfvcheck' => $enable_sfvcheck,
 				'sfvdir' => $sfvdir,
 				'sfvsfv' => $sfvsfv,
-				'enable_maketorrent' => $enable_maketorrent,
-				'enable_file_download' => $enable_file_download,
+				'enable_maketorrent' => $cfg["enable_maketorrent"],
+				'enable_file_download' => $cfg["enable_file_download"],
 				'package_type' => $package_type,
 				'IsAdmin1' => $IsAdmin1,
 				'addslashes1' => addslashes($entry),
 				'_DELETE' => _DELETE,
 				)
 			);
-			
 			if ($bg == $bgLight)
 				$bg = $bgDark;
 			else
@@ -303,7 +294,6 @@ foreach($entrys as $entry) {
 			if ($cfg["enable_file_download"]) {
 				// Yes, let them download
 				$enable_file_download = 1;
-				$urlencode1 = urlencode($dir.$entry);
 			}
 			if ($cfg['enable_dirstats'] == 1) {
 				$enable_dirstats = 1;
@@ -311,8 +301,6 @@ foreach($entrys as $entry) {
 			}
 			if ($cfg["enable_rename"] == 1) {
 				$enable_rename = 1;
-				$urlencode2 = urlencode($dir);
-				$urlencode3 = urlencode($entry);
 			}
 			if ($cfg["enable_move"] == 1) {
 				$enable_move = 1;
@@ -338,6 +326,9 @@ foreach($entrys as $entry) {
 				$admin1 = 1;
 				/* --- Multi Delete Hack --- */
 			}
+			$urlencode1 = urlencode($dir.$entry);
+			$urlencode2 = urlencode($dir);
+			$urlencode3 = urlencode($entry);
 			array_push($dirlist2, array(
 				'bg' => $bg,
 				'enable_file_download' => $enable_file_download,
