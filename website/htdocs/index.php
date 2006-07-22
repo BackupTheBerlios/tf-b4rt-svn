@@ -136,9 +136,9 @@ function printPageHead() {
 			<li><a href="about.html" title="About">About</a></li>
 			<li><a href="features.html" title="Features">Features</a></li>
 			<li><a href="news.html" title="News">News</a></li>
-			<li><a href="http://tf-b4rt.berlios.de/downloads" title="Downloads">Downloads</a></li>
-			<li><a href="http://tf-b4rt.berlios.de/faq" title="Faq">Faq</a></li>
-			<li><a href="http://tf-b4rt.berlios.de/forum" title="Forum">Forum</a></li>
+			<li><a href="downloads" title="Downloads">Downloads</a></li>
+			<li><a href="faq" title="Faq">Faq</a></li>
+			<li><a href="forum" title="Forum">Forum</a></li>
 		</ul>
 	</div>
 	<div id="content">
@@ -215,7 +215,7 @@ function printPageAbout() {
 			The problems/bugs some hacks had were fixed and there are also some rewrites to have hacks "work together".
 			Some hacks i rewrote simply because i wanted them to behave/work different or because it was needed
 			for some of my new designs.
-			Full list can be found in the <a href="http://tf-b4rt.berlios.de/changelog" title="Changelog">Changelog</a>
+			Full list can be found in the <a href="changelog" title="Changelog">Changelog</a>
 			and it is not a bad idea to read it at least once so you know what you get, what it can do and what it cant.
 		</p>
 <?php
@@ -234,7 +234,7 @@ function printPageFeatures() {
 			Transmission and wget (wget still hacked in without handler and is in a very messy state).</li>
 			<li>Multi-QueueManager-Support. Class-Design and implementations to transparently choose and use a
 			QueueManager for queueing of transfers. Included are 3 different implementations of a QueueManager-daemon.
-			For details about differences in the daemons read <a href="http://tf-b4rt.berlios.de/changelog" title="Changelog">Changelog</a>.</li>
+			For details about differences in the daemons read <a href="changelog" title="Changelog">Changelog</a>.</li>
 			<li>Persistent settings for torrent-clients. Settings (savepath, rates and limits...) for clients are stored in
 			the database and persistent over client-restarts.</li>
 			<li>Persistent totals for all torrent-clients. Up- and down-totals are persistent
@@ -255,7 +255,7 @@ function printPageFeatures() {
 			<li>Some hacks from the TorrentFlux-forum included.</li>
 			<li>Many improvements and cleanups in the codebase. Much is rewritten to be more convenient, more generic
 			and more modular.</li>
-			<li>Much more... see <a href="http://tf-b4rt.berlios.de/changelog" title="Changelog">Changelog</a>.</li>
+			<li>Much more... see <a href="changelog" title="Changelog">Changelog</a>.</li>
 		</ul>
 		<p>
 			<a href="http://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94 : Index-Page" target="_blank">
