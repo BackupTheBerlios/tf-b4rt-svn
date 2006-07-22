@@ -36,7 +36,6 @@ define('_UPDATE_INDEX','update.txt');
 define('_UPDATE_DB','db.txt');
 define('_UPDATE_MYSQL','mysql.txt');
 define('_UPDATE_SQLITE','sqlite.txt');
-//define('_FILESDIR','files');
 
 // -----------------------------------------------------------------------------
 // Main
@@ -168,7 +167,7 @@ switch($action) {
     //break;
     case "0": // news
     default:
-        outputData(getDataFromFile(_FILE_NEWS));
+        outputData(rewriteNews(getDataFromFile(_FILE_NEWS)));
         exit;
 }
 
@@ -273,5 +272,28 @@ function getReleaseList() {
     }
 }
 */
+
+/**
+ * rewrite berliOS-news-export-HTML to fitting xhtml
+ *
+ * @param $string string with berliOS-news-export
+ * @return string with news
+ */
+function rewriteNews($string) {
+	// remove <hr>-tags
+	$retVal = eregi_replace("<hr[[:space:]]*([^>]*)[[:space:]]*>", '', $string);
+	// create list-elements from news-entries
+	$retVal = eregi_replace("<a[[:space:]]*", '<li><a ', $retVal);
+	$retVal = eregi_replace("<b>", '', $retVal);
+	$retVal = eregi_replace("</b>", '', $retVal);
+	$retVal = eregi_replace("<i>", '<em>', $retVal);
+	$retVal = eregi_replace("</i>", '</em></li>', $retVal);
+	// spacer
+	$retVal = eregi_replace("&nbsp;&nbsp;&nbsp;", '&nbsp;&nbsp;', $retVal);
+	// remove news-archive-link
+	$retVal = eregi_replace("<div.*</div>", '', $retVal);
+	// return
+	return $retVal;
+}
 
 ?>
