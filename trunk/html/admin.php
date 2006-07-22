@@ -2466,7 +2466,8 @@ function updateQueueSettings() {
 							   $queueManager->setConfig('MAX_TORRENTS_PER_USER',$_POST["tfqmgr_limit_user"]);
 							}
 							if ($_POST["tfqmgr_loglevel"] != $cfg["tfqmgr_loglevel"]) {
-							   $queueManager->setConfig('LOGLEVEL',$_POST["tfqmgr_loglevel"]);						
+							   $queueManager->setConfig('LOGLEVEL',$_POST["tfqmgr_loglevel"]);
+							}
 							break;
 						case "Qmgr":
 							if ($_POST["Qmgr_maxUserTorrents"] != $cfg["Qmgr_maxUserTorrents"]) {
@@ -2729,7 +2730,7 @@ function queueSettings() {
 				<td valign="top">
 					<input name="tfqmgr_loglevel" type="Text" maxlength="2" value="<?php echo($cfg["tfqmgr_loglevel"]); ?>" size="5">
 				</td>
-			</tr>			
+			</tr>
 
 			<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Qmgr</strong></td></tr>
 			<tr>
