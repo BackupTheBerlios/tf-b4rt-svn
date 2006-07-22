@@ -2793,11 +2793,10 @@ function queueSettings() {
 				   <td align="left" width="250" valign="top"><strong><Qmgrd Loglevel</strong><br>
 				   Level of logging (default to 0):
 				   </td>
-				   <td valign="top>
+				   <td valign="top">
 					   <input name="Qmgr_loglevel" type="Text" maxlength="2" value="<?php echo($cfg["Qmgr_loglevel"]); ?>" size="5">
 				   </td>
 			</tr>
-
 			<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>tfQManager</strong></td></tr>
 			<tr>
 				<td align="left" width="350" valign="top"><strong>tfQManager Path</strong><br>
