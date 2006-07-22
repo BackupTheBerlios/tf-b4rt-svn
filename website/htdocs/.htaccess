@@ -6,6 +6,7 @@ RewriteRule ^index\.html$ /index.php?s=index
 RewriteRule ^about\.html$ /index.php?s=about
 RewriteRule ^features\.html$ /index.php?s=features
 RewriteRule ^news\.html$ /index.php?s=news
+RewriteRule ^changelog\.html$ /index.php?s=changelog
 RewriteRule ^version$ http://tf-b4rt.berlios.de/version.txt [R]
 RewriteRule ^changelog$ http://tf-b4rt.berlios.de/changelog.txt [R]
 RewriteRule ^faq$ http://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
