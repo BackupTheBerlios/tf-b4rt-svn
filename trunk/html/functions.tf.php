@@ -848,7 +848,7 @@ function DisplayTorrentFluxLink($showVersionLink = false) {
 	global $cfg;
 	if ($cfg["ui_displayfluxlink"] != 0) {
 		$DisplayTorrentFluxLink = "<div align=\"right\">";
-		$DisplayTorrentFluxLink .= "<a href=\"http://http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
+		$DisplayTorrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
 		if ($showVersionLink)
 			$DisplayTorrentFluxLink .= printSuperAdminLink('?a=0','');
 		$DisplayTorrentFluxLink .= "</div>";
