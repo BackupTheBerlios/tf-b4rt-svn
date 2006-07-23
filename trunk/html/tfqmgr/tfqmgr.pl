@@ -31,9 +31,6 @@ use strict;
 # Config-Vars
 #-------------------------------------------------------------------------------
 
-# loglevel # (0|1|2)
-my $LOGLEVEL = 0;
-
 # sys-bins
 my %BINS = (
 	'mkfifo'  => 'mkfifo',
@@ -82,7 +79,7 @@ SWITCH: {
 	/^start$/ && do {
 		# load modules + start
 		if (loadModules() == 1) {
-			startDaemon(shift,shift,shift,shift,shift);
+			startDaemon(shift,shift,shift,shift,shift,shift);
 		}
 	};
 	/^stop$/ && do {
@@ -131,36 +128,47 @@ SWITCH: {
 
 #-------------------------------------------------------------------------------
 # Sub: startDaemon
-# Parameters:	$pathArg,$MAX_TORRENTS,$MAX_TORRENTS_PER_USER,$pathToPHP
+# Parameters:	pathArg,MAX_TORRENTS,MAX_TORRENTS_PER_USER,pathToPHP,loglevel
 # Return:		-
 #-------------------------------------------------------------------------------
 sub startDaemon {
 
 	# check args + init vars
+	# path
 	my $argTemp = shift;
 	if (!(defined $argTemp)) {
 		printUsage();
 		exit;
 	}
 	initPaths($argTemp);
+	# max torrents
 	$argTemp = shift;
 	if (!(defined $argTemp)) {
 		printUsage();
 		exit;
 	}
 	my $MAX_TORRENTS = $argTemp;
+	# max torrents per user
 	$argTemp = shift;
 	if (!(defined $argTemp)) {
 		printUsage();
 		exit;
 	}
 	my $MAX_TORRENTS_PER_USER = $argTemp;
+	# php-path
 	$argTemp = shift;
 	if (!(defined $argTemp)) {
 		printUsage();
 		exit;
 	}
 	$BIN_PHP = $argTemp;
+	# loglevel
+	$argTemp = shift;
+	if (!(defined $argTemp)) {
+		printUsage();
+		exit;
+	}
+	my $LOGLEVEL = $argTemp;
 
 	# sanity-checks to prevent double-start
 	if (-f $PIDFILE) {
@@ -180,24 +188,10 @@ sub startDaemon {
 	$time_human = localtime;
 	$time_unix = time;
 
-	# lets go
-	doLog("START : MAIN");
-	print "Starting tfqmgr...\n";
-
-	# write out pid-file
-	doLog("MAIN : writing pid ".$parentPid." into pid-file ".$PIDFILE);
-	writePidFile();
-
 	# init var-handles
 	$handleJobs = tie %jobs, 'IPC::Shareable', undef, { destroy => 1};
 	$handleQueue = tie @queue, 'IPC::Shareable', undef, { destroy => 1};
 	$handleGlobals = tie %globals, 'IPC::Shareable', undef, { destroy => 1};
-
-	# sigs
-	# INT
-	$SIG{INT} = \&gotSigInt;
-	# QUIT
-	$SIG{QUIT} = \&gotSigQuit;
 
 	# init globals
 	$handleGlobals->shlock();
@@ -205,9 +199,18 @@ sub startDaemon {
 	$globals{"started"} = 0;
 	$globals{"worker_running"} = 1;
 	$globals{"reader_running"} = 1;
+	$globals{"loglevel"} = $LOGLEVEL;
 	$globals{"max_torrents"} = $MAX_TORRENTS;
 	$globals{"max_torrents_per_user"} = $MAX_TORRENTS_PER_USER;
 	$handleGlobals->shunlock();
+
+	# lets go
+	doLog("START : MAIN");
+	print "Starting tfqmgr...\n";
+
+	# write out pid-file
+	doLog("MAIN : writing pid ".$parentPid." into pid-file ".$PIDFILE);
+	writePidFile();
 
 	# init queue
 	if (-f $PATH_QUEUE_FILE) {
@@ -225,6 +228,12 @@ sub startDaemon {
 	# transport-fifo
 	doLog("MAIN : creating transport-fifo $PATH_TRANSPORT_FIFO");
 	system($BINS{'mkfifo'},$PATH_TRANSPORT_FIFO);
+
+	# sigs
+	# INT
+	$SIG{INT} = \&gotSigInt;
+	# QUIT
+	$SIG{QUIT} = \&gotSigQuit;
 
 	## fork here ##
 
@@ -367,7 +376,7 @@ sub parentMain {
 				# running. this may be after a restart or torrent was started outside.
 				if (exists $jobs{"running"}{$nextTorrent}) { # torrent already running
 					# remove job from queue
-					if ($LOGLEVEL > 0) {
+					if ($globals{"loglevel"} > 0) {
 						doLog("MAIN : removing already running job from queue : ".$nextTorrent." (".$nextUser.")");
 					}
 					$handleQueue->shlock();
@@ -386,7 +395,7 @@ sub parentMain {
 					}
 					$handleQueue->shunlock();
 					# remove job from jobs
-					if ($LOGLEVEL > 0) {
+					if ($globals{"loglevel"} > 0) {
 						doLog("MAIN : removing already running job from jobs queued : ".$nextTorrent." (".$nextUser.")");
 					}
 					$handleJobs->shlock();
@@ -394,12 +403,12 @@ sub parentMain {
 					$handleJobs->shunlock();
 					#
 					if ($queueIdx < (countQueue()-1)) { # there is a next entry
-						if ($LOGLEVEL > 1) {
+						if ($globals{"loglevel"} > 1) {
 							doLog("MAIN : next queue-entry");
 						}
 						$queueIdx++;
 					} else { # no more in queue
-						if ($LOGLEVEL > 1) {
+						if ($globals{"loglevel"} > 1) {
 							doLog("MAIN : last queue-entry");
 						}
 						$notDoneProcessingQueue = 0;
@@ -428,7 +437,7 @@ sub parentMain {
                   				$startTry = 0;
 
 								# remove job from queue
-								if ($LOGLEVEL > 0) {
+								if ($globals{"loglevel"} > 0) {
 									doLog("MAIN : removing job from queue : ".$nextTorrent." (".$nextUser.")");
 								}
 								$handleQueue->shlock();
@@ -448,7 +457,7 @@ sub parentMain {
 								$handleQueue->shunlock();
 
 								# remove job from jobs
-								if ($LOGLEVEL > 0) {
+								if ($globals{"loglevel"} > 0) {
 									doLog("MAIN : removing job from jobs queued : ".$nextTorrent." (".$nextUser.")");
 								}
 								$handleJobs->shlock();
@@ -456,7 +465,7 @@ sub parentMain {
 								$handleJobs->shunlock();
 
 								# add job to jobs running (not nec. is don in-loop anyway)
-								if ($LOGLEVEL > 0) {
+								if ($globals{"loglevel"} > 0) {
 									doLog("MAIN : adding job to jobs running : ".$nextTorrent." (".$nextUser.")");
 								}
 								$handleJobs->shlock();
@@ -472,20 +481,20 @@ sub parentMain {
 								} else { # nothing more in queue
 									$notDoneProcessingQueue = 0;
 								}
-								
+
 							} else { # start torrent failed
-							
+
 								# already tried max-times to start this thing ?
 								if ($startTry == $MAX_START_TRIES) {
 									$startTry = 0;
 									# TODO : give an option to remove bogus torrents
 									if ($queueIdx < (countQueue()-1)) { # there is a next entry
-										if ($LOGLEVEL > 0) {
+										if ($globals{"loglevel"} > 0) {
 											doLog("MAIN : $MAX_START_TRIES errors when starting, skipping job : ".$nextTorrent." (".$nextUser.") (next queue-entry)");
 										}
 										$queueIdx++;
 									} else { # no more in queue
-										if ($LOGLEVEL > 0) {
+										if ($globals{"loglevel"} > 0) {
 											doLog("MAIN : $MAX_START_TRIES errors when starting, skipping job : ".$nextTorrent." (".$nextUser.") (last queue-entry)");
 										}
 										$notDoneProcessingQueue = 0;
@@ -499,29 +508,29 @@ sub parentMain {
 
 						} else { # user-limit for this user applies, check next queue-entry if one exists
 							if ($queueIdx < (countQueue()-1)) { # there is a next entry
-								if ($LOGLEVEL > 0) {
+								if ($globals{"loglevel"} > 0) {
 									doLog("MAIN : user limit applies, skipping job : ".$nextTorrent." (".$nextUser.") (next queue-entry)");
 								}
 								$queueIdx++;
 							} else { # no more in queue
-								if ($LOGLEVEL > 0) {
+								if ($globals{"loglevel"} > 0) {
 									doLog("MAIN : user limit applies, skipping job : ".$nextTorrent." (".$nextUser.") (last queue-entry)");
 								}
 								$notDoneProcessingQueue = 0;
 							}
 						}
-            
+
 					} else { # max limit does apply
-						if ($LOGLEVEL > 0) {
+						if ($globals{"loglevel"} > 0) {
 							doLog("MAIN : max limit applies, skipping job : ".$nextTorrent." (".$nextUser.")");
 						}
 						$notDoneProcessingQueue = 0;
 					}
-					
+
 				} # else already runnin
 
 			} else { # no queued jobs
-				if ($LOGLEVEL > 1) {
+				if ($globals{"loglevel"} > 1) {
 					doLog("MAIN : empty queue... sleeping...");
 				}
 				$notDoneProcessingQueue = 0;
@@ -552,7 +561,7 @@ sub parentMain {
 
 	# we are going down !
 	parentStop();
-	
+
 } # end sub
 
 #-------------------------------------------------------------------------------
@@ -577,7 +586,7 @@ sub childReaderMain {
 		my $command = <COMMAND>;
 		next unless defined $command;
 		chomp $command;
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("CHILD - READER : read command from fifo : ".$command);
 		}
 
@@ -591,7 +600,7 @@ sub childReaderMain {
 
 	# we are going down !
 	childReaderStop();
-	
+
 } # end sub
 
 #-------------------------------------------------------------------------------
@@ -682,7 +691,7 @@ sub daemonStartTorrent {
 	}
 	# start torrent
 	my $startCommand = $BIN_PHP." ".$BIN_FLUXCLI." start ".$torrent.".torrent &> /dev/null";
-	if ($LOGLEVEL > 1) {
+	if ($globals{"loglevel"} > 1) {
 		doLog("MAIN : start-command : ".$startCommand);
 	}
 	eval { system($startCommand); };
@@ -816,7 +825,7 @@ sub daemonDumpQueue {
 sub processCommand {
 	my $command = shift;
 	my ($tempo1, $tempo2, $tempo3) = split(/:/,$command);
-  
+
 	if ("add" eq $tempo1) {
 		my $addIt = 0;
 		$handleJobs->shlock();
@@ -825,7 +834,7 @@ sub processCommand {
 			doLog("CHILD - READER : adding job to jobs queued : ".$tempo2." (".$tempo3.")");
 			$jobs{"queued"}{$tempo2} = $tempo3;
 		} else {
-			if ($LOGLEVEL > 0) {
+			if ($globals{"loglevel"} > 0) {
 				doLog("CHILD - READER : job already present in jobs : ".$tempo2." (".$tempo3.")");
 			}
 		}
@@ -863,7 +872,6 @@ sub processCommand {
 			shift @queue;
 		}
 		$handleQueue->shunlock();
-    
 	} elsif ("set" eq $tempo1) {
 		doLog("CHILD - READER : reconf setting : ".$tempo2." : ".$tempo3);
 		if ("MAX_TORRENTS" eq $tempo2) {
@@ -874,18 +882,20 @@ sub processCommand {
 			$handleGlobals->shlock();
 			$globals{"max_torrents_per_user"} = $tempo3;
 			$handleGlobals->shunlock();
+		} elsif ("LOGLEVEL" eq $tempo2) {
+			$handleGlobals->shlock();
+			$globals{"loglevel"} = $tempo3;
+			$handleGlobals->shunlock();
 		}
-    
 	} elsif ("!" eq $tempo1) {
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("CHILD - READER : got internal command : ".$command);
 		}
 		processInternalCommand($command);
-    
 	} else {
 		doLog("CHILD - READER : got bogus command : ".$command);
 	}
-  
+
 }
 
 #-------------------------------------------------------------------------------
@@ -897,27 +907,27 @@ sub processInternalCommand {
 	my $command = shift;
 	my (@commandAry)=split(/:/,$command);
 	if ("status" eq $commandAry[1]) {
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("exec internal command : status");
 		}
 		internalCommandStatus();
 	} elsif ("stop" eq $commandAry[1]) {
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("exec internal command : stop");
 		}
 		internalCommandStop();
 	} elsif ("count-jobs" eq $commandAry[1]) {
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("exec internal command : count-jobs");
 		}
 		internalCommandJobcount();
 	} elsif ("count-queue" eq $commandAry[1]) {
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("exec internal command : count-queue");
 		}
 		internalCommandQueuecount();
 	} elsif ("list-queue" eq $commandAry[1]) {
-		if ($LOGLEVEL > 0) {
+		if ($globals{"loglevel"} > 0) {
 			doLog("exec internal command : list-queue");
 		}
 		internalCommandQueuelist();
@@ -1018,12 +1028,13 @@ sub internalCommandStatus {
 	my $countJobs = $countQueue + $countRunning;
 
 	# some vars
-	print TRANSPORT "min sleep-time worker \t: $SLEEP_MIN s \n";
-	print TRANSPORT "max sleep-time worker \t: $SLEEP_MAX s \n";
+	print TRANSPORT "loglevel            \t: ".$globals{"loglevel"}."\n";
+	print TRANSPORT "min sleep-time worker \t: ".$SLEEP_MIN." s \n";
+	print TRANSPORT "max sleep-time worker \t: ".$SLEEP_MAX." s \n";
 	print TRANSPORT "max torrents global \t: ".$globals{"max_torrents"}."\n";
 	print TRANSPORT "max torrents per user \t: ".$globals{"max_torrents_per_user"}."\n";
-	print TRANSPORT "max start-tries    \t: $MAX_START_TRIES \n";
-	print TRANSPORT "start-try-extra-sleep \t: $START_TRIES_SLEEP s\n\n";
+	print TRANSPORT "max start-tries    \t: ".$MAX_START_TRIES." \n";
+	print TRANSPORT "start-try-extra-sleep \t: ".$START_TRIES_SLEEP." s\n\n";
 
 	# jobs total
 	print TRANSPORT "jobs total \t: ".$countJobs."\n";
@@ -1050,7 +1061,7 @@ sub internalCommandStatus {
 	print TRANSPORT "tfqmgr started ".$globals{"started"}." torrents \n\n";
 
 	# dump path vars on debug
-	if ($LOGLEVEL > 1) {
+	if ($globals{"loglevel"} > 1) {
 		print TRANSPORT "BIN_PHP : ".$BIN_PHP."\n";
 		print TRANSPORT "PATH_DATADIR : ".$PATH_DATADIR."\n";
 		print TRANSPORT "PATH_COMMAND_FIFO : ".$PATH_COMMAND_FIFO."\n";
@@ -1183,7 +1194,7 @@ sub countRunning {
 #-------------------------------------------------------------------------------
 sub doSysCall {
 	my $doCall = shift;
-	#if ($LOGLEVEL > 1) { doLog($doCall); }
+	#if ($globals{"loglevel"} > 1) { doLog($doCall); }
 	system($doCall);
 }
 
@@ -1320,7 +1331,7 @@ sub cleanupSharedMem {
 			$result = `$BINS{'ipcrm'} sem $id 2> /dev/null`;
 		};
 		chomp $result;
-		if ($LOGLEVEL > 1) { doLog("MAIN : removing sem : $id : $result"); }
+		if ($globals{"loglevel"} > 1) { doLog("MAIN : removing sem : $id : $result"); }
 	}
 	# shm
 	$qCall = $BINS{'ipcs'} . " -m";
@@ -1329,7 +1340,7 @@ sub cleanupSharedMem {
 		chomp $id;
 		my $result = `$BINS{'ipcrm'} shm $id 2> /dev/null`;
 		chomp $result;
-		if ($LOGLEVEL > 1) { doLog("MAIN : removing shm : $id : $result"); }
+		if ($globals{"loglevel"} > 1) { doLog("MAIN : removing shm : $id : $result"); }
 	}
 }
 
@@ -1443,11 +1454,13 @@ $PROG.$EXTENSION Revision $REVISION
 Usage: $PROG.$EXTENSION <start|stop|status|count-jobs|count-queue|list-queue|set> PATH [extra-args]
        $PROG.$EXTENSION <check>
        $PROG.$EXTENSION <cleanup> USERNAME
+       $PROG.$EXTENSION <-h|--help>
 
        <start>         : start daemon. extra-args :
                          1. max running torrents
                          2. max running torrents per user
                          3. path to php-binary
+                         4. loglevel of daemon (0|1|2)
 
        <stop>          : stop daemon.
        <status>        : shows status of running daemon.
@@ -1456,7 +1469,7 @@ Usage: $PROG.$EXTENSION <start|stop|status|count-jobs|count-queue|list-queue|set
        <list-queue>    : shows list of queued jobs.
 
        <set>           : change a daemon-setting. extra-args :
-                         1. setting-key (MAX_TORRENTS|MAX_TORRENTS_PER_USER)
+                         1. setting-key (LOGLEVEL|MAX_TORRENTS|MAX_TORRENTS_PER_USER)
                          2. setting-value
 
        <check>         : check Requirements.
@@ -1475,12 +1488,13 @@ communicates with 2 different processes (of itself) in that case)
 Programs should not use this proxy but read/write directly from/to the fifos.
 
 Examples:
-$PROG.$EXTENSION start /usr/local/torrent 5 2 /usr/bin/php
+$PROG.$EXTENSION start /usr/local/torrent 5 2 /usr/bin/php 0
 $PROG.$EXTENSION stop /usr/local/torrent
 $PROG.$EXTENSION status /usr/local/torrent
 $PROG.$EXTENSION count-jobs /usr/local/torrent
 $PROG.$EXTENSION count-queue /usr/local/torrent
 $PROG.$EXTENSION list-queue /usr/local/torrent
+$PROG.$EXTENSION set /usr/local/torrent LOGLEVEL 0
 $PROG.$EXTENSION set /usr/local/torrent MAX_TORRENTS 5
 $PROG.$EXTENSION set /usr/local/torrent MAX_TORRENTS_PER_USER 2
 $PROG.$EXTENSION check

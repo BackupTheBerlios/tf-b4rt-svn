@@ -25,6 +25,7 @@ class QueueManager
     var $managerName = "";
     var $version = "";
 
+    var $loglevel; // loglevel of daemon
     var $limitGlobal; // torrent limit global
     var $limitUser; // torrent limit user
 
