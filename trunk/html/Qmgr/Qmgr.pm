@@ -31,6 +31,9 @@ our %QmgrVars = (
 	select			=> undef
 );
 
+# revision in a var
+our $REVISION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+
 #-----------------------------------------------------------------------------#
 # Sub: Set                                                                    #
 # Arguments: $Key, [$Value]                                                   #
@@ -156,7 +159,7 @@ sub ProcessQueue {
 	# hold cycle-start-time
 	my $timeStart = time;
 
-	## queue-loop  
+	## queue-loop
 	my $queueIdx = 0;
 	my $notDoneProcessingQueue = 1;
 	my $startTry = 0;
@@ -165,7 +168,7 @@ sub ProcessQueue {
 		# update running torrents
 		UpdateRunningTorrents();
 
-		# process queue 
+		# process queue
 		my $jobcountq = Queue();
 		$notDoneProcessingQueue = 1;
 		if ($jobcountq > 0) { # we have queued jobs
@@ -355,7 +358,6 @@ sub PrintUsage {
 my $PROG = "Qmgr";
 my $DAEMON = "Qmgrd";
 my $EXTENSION = "pl";
-my $REVISION = "v1.0";
 
 	print <<"USAGE";
 
@@ -373,15 +375,15 @@ Usage:
 	<jobs>		: Print the total number of jobs
 	<queue>		: Print the number of queued jobs
 	<list>		: List queued jobs
-	<add>		: Add a torrent to the queue, required args - 
+	<add>		: Add a torrent to the queue, required args -
 				torrent id
 				user name to run torent as
 	<remove>	: Remove a torrent from the queue, required args -
 				torrent id
-	<worker>	: returns a boolean to determine if the daemon script is 
+	<worker>	: returns a boolean to determine if the daemon script is
 			  still running as normal (true) or is trying to shut down (false)
 	<set>		: Allows you to set certain config variables witout restarting the
-			  daemon. Required args - 
+			  daemon. Required args -
 				Key (variable name to change)
 				[Value] Optional - value to set variable to. If left out
 					will just return the current value.
@@ -393,11 +395,11 @@ Note: Both scripts can take optional arguments for host and port to bind to (in 
       must be the last two arguments passed in, meaning that if you wanted to start a Qmgr
       at 192.168.2.250:9999, you'd issue the command
 	$DAEMON.$EXTENSION /path/to/downloads int int 192.168.2.250 9999
-      if you wanted to add add foo.toorent to that server you'd use 
+      if you wanted to add add foo.toorent to that server you'd use
 	$PROG.$EXTENSION add foo.toorent user 192.168.2.250 9999
-      However, neither of these are working as of yet. The default is to bind to 
+      However, neither of these are working as of yet. The default is to bind to
       127.0.0.1:2606. You can change the default by editing the new{ ... } sub in Qmgr.pm
-      to change the daemon's binding. Remember to also edit the $PROG.$EXTENSION script to 
+      to change the daemon's binding. Remember to also edit the $PROG.$EXTENSION script to
       change where it looks for connections
 
 Examples:
@@ -620,7 +622,7 @@ sub Remove {
 	my $torrent = $temp;
 	#$torrent = StripTorrentName();
 
-	my $user = getTorrentOwner($torrent); 
+	my $user = getTorrentOwner($torrent);
 
 	WriteLog("Remove : Removing from queue : ".$torrent." (".$user.")");
 	delete($QmgrVars{'jobs'}{'queued'}{$torrent});
@@ -750,7 +752,7 @@ sub ProcessRequest {
 
 	split(/ /, $temp);
 
-	my $temp = shift;
+	$temp = shift;
 	if (!(defined $temp)) {
 		PrintUsage();
 		return;
@@ -870,7 +872,7 @@ sub getTorrentOwner {
 	if (!(defined $torrent)) {
 		return undef;
 	}
-	my $statFile = $QmgrVars{'PATH_TORRENT_DIR'}.$torrent.".stat";        
+	my $statFile = $QmgrVars{'PATH_TORRENT_DIR'}.$torrent.".stat";
 	if (-f $statFile) {
 		open(STATFILE,"< $statFile");
 		while (<STATFILE>) {
@@ -880,7 +882,7 @@ sub getTorrentOwner {
 				return $_;
 			}
 		}
-		close STATFILE;  
+		close STATFILE;
 	}
 	return undef;
 }
@@ -1049,7 +1051,7 @@ sub MoveTop {
 		print ${$QmgrVars{'queue'}}[0]."\n";
 		print $torrent."\n";
 	}
-}	
+}
 
 #-----------------------------------------------------------------------------#
 # Sub: MoveBottom                                                             #
