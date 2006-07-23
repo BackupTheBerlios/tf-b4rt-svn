@@ -40,6 +40,9 @@ if ($bail > 0) {
 // init
 // -----------------------------------------------------------------------------
 
+// hold revision-number in a var
+$REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+
 include_once('db.php');
 include_once("settingsfunctions.php");
 // tf-functions
@@ -65,6 +68,7 @@ $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 // config
 include_once("config.php");
 $cfg["ip"] = '127.0.0.1';
+$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
 // client-handler-"interfaces"
 include_once("ClientHandler.php");
@@ -122,6 +126,12 @@ if ((isset($action)) && ($action != "")) {
         	echo "done\n";
         	exit;
 		break;
+		case "version":
+		case "-version":
+		case "--version":
+		case "-v":
+			printVersion();
+		break;
 		default:
 			printUsage();
 		break;
@@ -143,6 +153,9 @@ exit();
  * @return boolean if the settings could be loaded (were existent in db already)
  */
 function printUsage() {
+	global $REVISION_FLUXCLI;
+	echo "\n";
+    echo "fluxcli.php Revision ".$REVISION_FLUXCLI."\n";
 	echo "\n";
 	echo "Usage: fluxcli.php action [extra-args]\n";
 	echo "\naction: \n";
@@ -187,6 +200,16 @@ function printUsage() {
     echo "fluxcli.php watch /bar/foo/ fluxuser\n";
 	echo "fluxcli.php repair\n";
 	echo "\n";
+}
+
+// -----------------------------------------------------------------------------
+/*
+ * printVersion
+ *
+ */
+function printVersion() {
+	global $REVISION_FLUXCLI;
+    echo "fluxcli.php Revision ".$REVISION_FLUXCLI."\n";
 }
 
 // -----------------------------------------------------------------------------
