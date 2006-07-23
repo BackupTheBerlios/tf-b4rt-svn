@@ -2128,8 +2128,6 @@ function updateQueueSettings() {
 						$needsRestart = true;
 					if ($_POST["tfqmgr_path_fluxcli"] != $cfg["tfqmgr_path_fluxcli"])
 						$needsRestart = true;
-					if ($_POST["tfqmgr_loglevel"] != $cfg["tfqmgr_loglevel"])
-						$needsRestart = true;
 					//
 					if ($_POST["Qmgr_path"] != $cfg["Qmgr_path"])
 						$needsRestart = true;
@@ -2140,8 +2138,6 @@ function updateQueueSettings() {
 					if ($_POST["Qmgr_host"] != $cfg["Qmgr_host"])
 						$needsRestart = true;
 					if ($_POST["Qmgr_port"] != $cfg["Qmgr_port"])
-						$needsRestart = true;
-					if ($_POST["Qmgr_loglevel"] != $cfg["Qmgr_loglevel"])
 						$needsRestart = true;
 					//
 					if ($needsRestart)
@@ -2155,6 +2151,7 @@ function updateQueueSettings() {
 							}
 							if ($_POST["tfqmgr_limit_user"] != $cfg["tfqmgr_limit_user"]) {
 							   $queueManager->setConfig('MAX_TORRENTS_PER_USER',$_POST["tfqmgr_limit_user"]);
+							   sleep(1);
 							}
 							if ($_POST["tfqmgr_loglevel"] != $cfg["tfqmgr_loglevel"]) {
 							   $queueManager->setConfig('LOGLEVEL',$_POST["tfqmgr_loglevel"]);
@@ -2167,6 +2164,7 @@ function updateQueueSettings() {
 							}
 							if ($_POST["Qmgr_maxTotalTorrents"] != $cfg["Qmgr_maxTotalTorrents"]) {
 								$queueManager->setConfig('MAX_TORRENTS_SYS',$_POST["Qmgr_maxTotalTorrents"]);
+								sleep(1);
 							}
 							if ($_POST["Qmgr_loglevel"] != $cfg["Qmgr_loglevel"]) {
 								$queueManager->setConfig('LOGLEVEL',$_POST["Qmgr_loglevel"]);
