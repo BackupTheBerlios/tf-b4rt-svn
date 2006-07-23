@@ -209,6 +209,8 @@ foreach($entrys as $entry) {
 				$enable_move = 1;
 			}
 			// b4rt-5 : SFV Check
+			$sfvdir = "";
+			$sfvsfv = "";
 			if ($cfg['enable_sfvcheck'] == 1) {
 				$enable_sfvcheck = 1;
 				if(false !== ($sfv = findSFV($dirName.$entry))) {
@@ -226,7 +228,7 @@ foreach($entrys as $entry) {
 				/* --- Multi Delete Hack --- */
 				/* checkbox appended to line */
 				$IsAdmin1 = 1;
-				
+
 				/* --- Multi Delete Hack --- */
 			}
 			$urlencode1 = urlencode($dir.$entry);

@@ -29,17 +29,13 @@ require_once("lib/vlib/vlibTemplate.php");
 # create new template
 $tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/history.tmpl");
 
-
-
-
-
 $offset = 50;
 $inx = 0;
+$min = 0;
 $max = $min+$offset;
 $output = "";
 $morelink = "";
 
-// b4rt-62
 // "Only Admin can see other user torrents"
 $sql = "";
 if ($cfg['enable_restrictivetview'] == 0) {
@@ -51,7 +47,7 @@ if ($cfg['enable_restrictivetview'] == 0) {
 		$sql = "SELECT user_id, file, time FROM tf_log WHERE user_id='".$cfg['user']."' AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
 }
 // "Only Admin can see other user torrents"
-// b4rt-62
+
 $result = $db->SelectLimit($sql, $offset, $min);
 $file_result = array();
 while(list($user_id, $file, $time) = $result->FetchRow()) {
@@ -94,7 +90,6 @@ if(!empty($prevlink)) {
 if(!empty($morelink)) {
 	$tmpl->setvar('empty', 3);
 }
-
 
 # define some things
 $tmpl->setvar('DisplayHead', DisplayHead(_UPLOADHISTORY));
