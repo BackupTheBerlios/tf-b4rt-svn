@@ -34,7 +34,7 @@ class QueueManager_Qmgr extends QueueManager
      */
     function QueueManager_Qmgr($cfg) {
         $this->managerName = "Qmgr";
-        $this->version = "1.00";
+        $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         $this->Initialize($cfg);
         //
         $this->limitGlobal = $this->cfg["Qmgr_maxTotalTorrents"];

@@ -28,7 +28,7 @@ class QueueManager_tfQManager extends QueueManager
      */
     function QueueManager_tfQManager($cfg) {
         $this->managerName = "tfQManager";
-        $this->version = "1.00";
+        $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         $this->Initialize($cfg);
         //
         $this->limitGlobal = $this->cfg["maxServerThreads"];
