@@ -192,7 +192,6 @@ foreach($entrys as $entry) {
 		if (@is_dir($dirName.$entry)) {
 			$is_dir = 1;
 			// Some Stats dir hack
-			// b4rt-5
 			if ($cfg['enable_dirstats'] == 1) {
 				$enable_dirstats = 1;
 				$dudir = shell_exec($cfg['bin_du']." -sk -h ".correctFileName($dirName.$entry));
@@ -201,14 +200,11 @@ foreach($entrys as $entry) {
 				$timeStamp = @filemtime($dirName.$entry); //$timeStamp = $arStat[10];
 				$dusize0 = $dusize[0];
 				$date1 = @date("m-d-Y h:i a", $timeStamp);
+			} else {
+				$enable_dirstats = 0;
 			}
-			if ($cfg["enable_rename"] == 1) {
-				$enable_rename = 1;
-			}
-			if ($cfg["enable_move"] == 1) {
-				$enable_move = 1;
-			}
-			// b4rt-5 : SFV Check
+			$enable_rename = $cfg["enable_rename"];
+			$enable_move = $cfg["enable_move"];
 			$sfvdir = "";
 			$sfvsfv = "";
 			if ($cfg['enable_sfvcheck'] == 1) {
@@ -218,6 +214,8 @@ foreach($entrys as $entry) {
 					$sfvdir = $sfv[dir];
 					$sfvsfv = $sfv[sfv];
 				}
+			} else {
+				$enable_sfvcheck = 0;
 			}
 			// The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
 			// this is so only the owner of the file(s) or admin can delete
@@ -228,8 +226,9 @@ foreach($entrys as $entry) {
 				/* --- Multi Delete Hack --- */
 				/* checkbox appended to line */
 				$IsAdmin1 = 1;
-
 				/* --- Multi Delete Hack --- */
+			} else {
+				$IsAdmin1 = 0;
 			}
 			$urlencode1 = urlencode($dir.$entry);
 			$package_type = $cfg["package_type"];
@@ -293,20 +292,16 @@ foreach($entrys as $entry) {
 			if (file_exists("./".$imageOption))
 				$image = $imageOption;
 			// Can users download files?
-			if ($cfg["enable_file_download"]) {
-				// Yes, let them download
-				$enable_file_download = 1;
-			}
-			if ($cfg['enable_dirstats'] == 1) {
-				$enable_dirstats = 1;
+			// Yes, let them download
+			$enable_file_download = $cfg["enable_file_download"];
+			//
+			$enable_dirstats = $cfg['enable_dirstats'];
+			if ($enable_dirstats == 1)
 				$date = @date("m-d-Y h:i a", $timeStamp);
-			}
-			if ($cfg["enable_rename"] == 1) {
-				$enable_rename = 1;
-			}
-			if ($cfg["enable_move"] == 1) {
-				$enable_move = 1;
-			}
+			else
+				$date = "";
+			$enable_rename = $cfg["enable_rename"];
+			$enable_move = $cfg["enable_move"];
 			if ($cfg['enable_rar'] == 1) {
 				// R.D. - Display links for unzip/unrar
 				if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
@@ -317,16 +312,22 @@ foreach($entrys as $entry) {
 						$enable_rar = 2;
 					}
 				}
+			} else {
+				$enable_rar = 0;
 			}
 			// nfo
 			if ($cfg["enable_view_nfo"] && ((substr(strtolower($entry), -4 ) == ".nfo" ) || (substr(strtolower($entry), -4 ) == ".txt" ) || (substr(strtolower($entry), -4 ) == ".log" ))) {
 				$enable_view_nfo = 1;
+			} else {
+				$enable_view_nfo = 0;
 			}
 			if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
 				/* --- Multi Delete Hack --- */
 				/* checkbox appended to line */
 				$admin1 = 1;
 				/* --- Multi Delete Hack --- */
+			} else {
+				$admin1 = 0;
 			}
 			$urlencode1 = urlencode($dir.$entry);
 			$urlencode2 = urlencode($dir);
