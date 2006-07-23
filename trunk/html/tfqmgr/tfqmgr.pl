@@ -118,6 +118,10 @@ SWITCH: {
 		printUsage();
 		exit;
 	};
+	/.*(version|-v).*/ && do {
+		printVersion();
+		exit;
+	};
 	printUsage();
 	exit;
 }
@@ -1440,6 +1444,14 @@ sub checkRequirements {
 	print "looks good. \n\n";
 }
 
+#-------------------------------------------------------------------------------
+# Sub: printVersion
+# Parameters:	-
+# Return:		-
+#-------------------------------------------------------------------------------
+sub printVersion {
+	print $PROG.".".$EXTENSION." Revision ".$REVISION."\n";
+}
 
 #-------------------------------------------------------------------------------
 # Sub: printUsage
@@ -1455,6 +1467,7 @@ Usage: $PROG.$EXTENSION <start|stop|status|count-jobs|count-queue|list-queue|set
        $PROG.$EXTENSION <check>
        $PROG.$EXTENSION <cleanup> USERNAME
        $PROG.$EXTENSION <-h|--help>
+       $PROG.$EXTENSION <-v|--version>
 
        <start>         : start daemon. extra-args :
                          1. max running torrents

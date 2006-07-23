@@ -2,7 +2,14 @@
 use strict;
 use Qmgr;
 
-my $queue = Qmgr->new(shift, shift, shift);
+my $Command = shift;
+
+if ($Command =~ /.*(version|-v).*/) {
+	Qmgr::printVersion();
+	exit;
+}
+
+my $queue = Qmgr->new($Command, shift, shift);
 
 while ( 1 ) {
 	$queue->ProcessQueue();

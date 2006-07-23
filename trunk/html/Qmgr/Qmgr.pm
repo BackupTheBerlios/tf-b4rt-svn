@@ -348,6 +348,15 @@ sub ProcessQueue {
 	$QmgrVars{'globals'}{'main'} += 1;
 }
 
+#-------------------------------------------------------------------------------
+# Sub: printVersion
+# Parameters:	-
+# Return:		-
+#-------------------------------------------------------------------------------
+sub printVersion {
+	print "Qmgr.pm Revision ".$REVISION."\n";
+}
+
 #-----------------------------------------------------------------------------#
 # Sub: PrintUsage                                                             #
 # Arguments: Null                                                             #

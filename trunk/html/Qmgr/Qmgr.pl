@@ -15,6 +15,11 @@ if (!(defined $Command)) {
 	exit;
 }
 
+if ($Command =~ /.*(version|-v).*/) {
+	Qmgr::printVersion();
+	exit;
+}
+
 if ( $Command !~/^stop$|^status$|^jobs$|^queue$|^list$|^add$|^remove$|^set$|^worker$|^move-(?:up$|down$|top$|bottom$)/ ) {
 	Qmgr::PrintUsage();
 	exit;
