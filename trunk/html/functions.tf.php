@@ -902,16 +902,17 @@ return $DisplayTitleBar;
 function DisplayMessageList() {
 	global $cfg;
 	$users = GetUsers();
-	echo '<div align="center">'.
+	$DisplayMessageList = '<div align="center">'.
 	'<table border="0" cellpadding="0" cellspacing="0">'.
 	'<form name="formMessage" action="message.php" method="post">'.
 	'<tr><td>' . _SENDMESSAGETO ;
-	echo '<select name="to_user">';
+	$DisplayMessageList .= '<select name="to_user">';
 	for($inx = 0; $inx < sizeof($users); $inx++)
-		echo '<option>'.$users[$inx].'</option>';
-	echo '</select>';
-	echo '<input type="Submit" value="' . _COMPOSE .'">';
-	echo '</td></tr></form></table></div>';
+		$DisplayMessageList .= '<option>'.$users[$inx].'</option>';
+	$DisplayMessageList .= '</select>';
+	$DisplayMessageList .= '<input type="Submit" value="' . _COMPOSE .'">';
+	$DisplayMessageList .= '</td></tr></form></table></div>';
+	return $DisplayMessageList;
 }
 
 // ***************************************************************************
