@@ -192,8 +192,8 @@ foreach($entrys as $entry) {
 		if (@is_dir($dirName.$entry)) {
 			$is_dir = 1;
 			// Some Stats dir hack
-			if ($cfg['enable_dirstats'] == 1) {
-				$enable_dirstats = 1;
+			$enable_dirstats = $cfg['enable_dirstats'];
+			if ($enable_dirstats == 1) {
 				$dudir = shell_exec($cfg['bin_du']." -sk -h ".correctFileName($dirName.$entry));
 				$dusize = explode("\t", $dudir);
 				$arStat = @lstat($dirName.$entry);
@@ -201,15 +201,15 @@ foreach($entrys as $entry) {
 				$dusize0 = $dusize[0];
 				$date1 = @date("m-d-Y h:i a", $timeStamp);
 			} else {
-				$enable_dirstats = 0;
 				$dusize0 = 0;
 				$date1 = "";
 			}
 			$enable_rename = $cfg["enable_rename"];
 			$enable_move = $cfg["enable_move"];
+			$enable_sfvcheck = $cfg['enable_sfvcheck'];
 			$sfvdir = "";
 			$sfvsfv = "";
-			if ($cfg['enable_sfvcheck'] == 1) {
+			if ($enable_sfvcheck == 1) {
 				$enable_sfvcheck = 1;
 				if(false !== ($sfv = findSFV($dirName.$entry))) {
 					$enable_sfvcheck = 2;
@@ -223,14 +223,13 @@ foreach($entrys as $entry) {
 			// this is so only the owner of the file(s) or admin can delete
 			// only give admins and users who "own" this directory
 			// the ability to delete sub directories
+			$IsAdmin1 = 0;
 			if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
 				//echo "<a href=\"dir.php?del=".urlencode($dir.$entry)."\" onclick=\"return ConfirmDelete('".addslashes($entry)."')\"><img src=\"images/delete_on.gif\" width=16 height=16 title=\""._DELETE."\" border=0></a>";
 				/* --- Multi Delete Hack --- */
 				/* checkbox appended to line */
 				$IsAdmin1 = 1;
 				/* --- Multi Delete Hack --- */
-			} else {
-				$IsAdmin1 = 0;
 			}
 			$urlencode1 = urlencode($dir.$entry);
 			$package_type = $cfg["package_type"];
@@ -283,10 +282,9 @@ foreach($entrys as $entry) {
 			$no_dir = 1;
 			$arStat = @lstat($dirName.$entry);
 			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
+			$timeStamp = "";
 			if (array_key_exists(10,$arStat))
 				$timeStamp = @filemtime($dirName.$entry); // $timeStamp = $arStat[10];
-			else
-				$timeStamp = "";
 			$fileSize = number_format(($arStat[7])/1024);
 			// Code added by Remko Jantzen to assign an icon per file-type. But when not
 			// available all stays the same.
@@ -299,13 +297,13 @@ foreach($entrys as $entry) {
 			$enable_file_download = $cfg["enable_file_download"];
 			//
 			$enable_dirstats = $cfg['enable_dirstats'];
+			$date = "";
 			if ($enable_dirstats == 1)
 				$date = @date("m-d-Y h:i a", $timeStamp);
-			else
-				$date = "";
 			$enable_rename = $cfg["enable_rename"];
 			$enable_move = $cfg["enable_move"];
-			if ($cfg['enable_rar'] == 1) {
+			$enable_rar = $cfg["enable_rar"];
+			if ($enable_rar == 1) {
 				// R.D. - Display links for unzip/unrar
 				if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
 					if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE )) {
@@ -315,8 +313,6 @@ foreach($entrys as $entry) {
 						$enable_rar = 2;
 					}
 				}
-			} else {
-				$enable_rar = 0;
 			}
 			// nfo
 			if ($cfg["enable_view_nfo"] && ((substr(strtolower($entry), -4 ) == ".nfo" ) || (substr(strtolower($entry), -4 ) == ".txt" ) || (substr(strtolower($entry), -4 ) == ".log" ))) {
@@ -324,13 +320,12 @@ foreach($entrys as $entry) {
 			} else {
 				$enable_view_nfo = 0;
 			}
+			$admin1 = 0;
 			if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
 				/* --- Multi Delete Hack --- */
 				/* checkbox appended to line */
 				$admin1 = 1;
 				/* --- Multi Delete Hack --- */
-			} else {
-				$admin1 = 0;
 			}
 			$urlencode1 = urlencode($dir.$entry);
 			$urlencode2 = urlencode($dir);
@@ -380,11 +375,6 @@ if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('du2', $du2);
 } else {
 	$tmpl->setvar('enable_dirstats', 0);
-	$cmd = $cfg['bin_du']." -ch \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
-	$du = shell_exec($cmd);
-	$du2 = substr($du, 0, -7);
-	$tmpl->setvar('_TDDU', _TDDU);
-	$tmpl->setvar('du2', $du2);
 }
 
 // ***************************************************************************
