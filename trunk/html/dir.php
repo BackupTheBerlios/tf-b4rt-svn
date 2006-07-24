@@ -202,6 +202,8 @@ foreach($entrys as $entry) {
 				$date1 = @date("m-d-Y h:i a", $timeStamp);
 			} else {
 				$enable_dirstats = 0;
+				$dusize0 = 0;
+				$date1 = "";
 			}
 			$enable_rename = $cfg["enable_rename"];
 			$enable_move = $cfg["enable_move"];
@@ -371,6 +373,13 @@ closedir($handle);
 
 if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('enable_dirstats', 1);
+	$cmd = $cfg['bin_du']." -ch \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
+	$du = shell_exec($cmd);
+	$du2 = substr($du, 0, -7);
+	$tmpl->setvar('_TDDU', _TDDU);
+	$tmpl->setvar('du2', $du2);
+} else {
+	$tmpl->setvar('enable_dirstats', 0);
 	$cmd = $cfg['bin_du']." -ch \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
 	$du = shell_exec($cmd);
 	$du2 = substr($du, 0, -7);
