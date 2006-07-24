@@ -2122,32 +2122,33 @@ function checkDirPathString($dirPath) {
 function printGoodLookingStatsForm() {
 	global $cfg;
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
-	echo '<table>';
-	echo '<tr><td align="right" nowrap>Download Speed: <input name="hack_goodlookstats_settings_0" type="Checkbox" value="1"';
+	$printGoodLookingStatsForm = '<table>';
+	$printGoodLookingStatsForm .= '<tr><td align="right" nowrap>Download Speed: <input name="hack_goodlookstats_settings_0" type="Checkbox" value="1"';
 	if ($settingsHackStats[0] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Upload Speed: <input name="hack_goodlookstats_settings_1" type="Checkbox" value="1"';
+		$printGoodLookingStatsForm .= ' checked';
+	$printGoodLookingStatsForm .= '></td>';
+	$printGoodLookingStatsForm .= '<td align="right" nowrap>Upload Speed: <input name="hack_goodlookstats_settings_1" type="Checkbox" value="1"';
 	if ($settingsHackStats[1] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Total Speed: <input name="hack_goodlookstats_settings_2" type="Checkbox" value="1"';
+		$printGoodLookingStatsForm .= ' checked';
+	$printGoodLookingStatsForm .= '></td>';
+	$printGoodLookingStatsForm .= '<td align="right" nowrap>Total Speed: <input name="hack_goodlookstats_settings_2" type="Checkbox" value="1"';
 	if ($settingsHackStats[2] == 1)
-		echo ' checked';
-	echo '></td></tr>';
-	echo '<tr><td align="right" nowrap>Connections: <input name="hack_goodlookstats_settings_3" type="Checkbox" value="1"';
+		$printGoodLookingStatsForm .= ' checked';
+	$printGoodLookingStatsForm .= '></td></tr>';
+	$printGoodLookingStatsForm .= '<tr><td align="right" nowrap>Connections: <input name="hack_goodlookstats_settings_3" type="Checkbox" value="1"';
 	if ($settingsHackStats[3] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Drive Space: <input name="hack_goodlookstats_settings_4" type="Checkbox" value="1"';
+		$printGoodLookingStatsForm .= ' checked';
+	$printGoodLookingStatsForm .= '></td>';
+	$printGoodLookingStatsForm .= '<td align="right" nowrap>Drive Space: <input name="hack_goodlookstats_settings_4" type="Checkbox" value="1"';
 	if ($settingsHackStats[4] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Server Load: <input name="hack_goodlookstats_settings_5" type="Checkbox" value="1"';
+		$printGoodLookingStatsForm .= ' checked';
+	$printGoodLookingStatsForm .= '></td>';
+	$printGoodLookingStatsForm .= '<td align="right" nowrap>Server Load: <input name="hack_goodlookstats_settings_5" type="Checkbox" value="1"';
 	if ($settingsHackStats[5] == 1)
-		echo ' checked';
-	echo '></td></tr>';
-	echo '</table>';
+		$printGoodLookingStatsForm .= ' checked';
+	$printGoodLookingStatsForm .= '></td></tr>';
+	$printGoodLookingStatsForm .= '</table>';
+	return $printGoodLookingStatsForm;
 }
 
 /**
@@ -2175,62 +2176,63 @@ function printGoodLookingStatsForm() {
 function printIndexPageSettingsForm() {
 	global $cfg;
 	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
-	echo '<table>';
-	echo '<tr>';
-	echo '<td align="right" nowrap>Owner: <input name="index_page_settings_0" type="Checkbox" value="1"';
+	$printIndexPageSettingsForm = '<table>';
+	$printIndexPageSettingsForm .= '<tr>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Owner: <input name="index_page_settings_0" type="Checkbox" value="1"';
 	if ($settingsIndexPage[0] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Size: <input name="index_page_settings_1" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Size: <input name="index_page_settings_1" type="Checkbox" value="1"';
 	if ($settingsIndexPage[1] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Total Down: <input name="index_page_settings_2" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Total Down: <input name="index_page_settings_2" type="Checkbox" value="1"';
 	if ($settingsIndexPage[2] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Total Up: <input name="index_page_settings_3" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Total Up: <input name="index_page_settings_3" type="Checkbox" value="1"';
 	if ($settingsIndexPage[3] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '</tr>';
-	echo '<tr>';
-	echo '<td align="right" nowrap>Status : <input name="index_page_settings_4" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '</tr>';
+	$printIndexPageSettingsForm .= '<tr>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Status : <input name="index_page_settings_4" type="Checkbox" value="1"';
 	if ($settingsIndexPage[4] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Progress : <input name="index_page_settings_5" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Progress : <input name="index_page_settings_5" type="Checkbox" value="1"';
 	if ($settingsIndexPage[5] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Down-Speed : <input name="index_page_settings_6" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Down-Speed : <input name="index_page_settings_6" type="Checkbox" value="1"';
 	if ($settingsIndexPage[6] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Up-Speed : <input name="index_page_settings_7" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Up-Speed : <input name="index_page_settings_7" type="Checkbox" value="1"';
 	if ($settingsIndexPage[7] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '</tr>';
-	echo '<tr>';
-	echo '<td align="right" nowrap>Seeds : <input name="index_page_settings_8" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '</tr>';
+	$printIndexPageSettingsForm .= '<tr>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Seeds : <input name="index_page_settings_8" type="Checkbox" value="1"';
 	if ($settingsIndexPage[8] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Peers : <input name="index_page_settings_9" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Peers : <input name="index_page_settings_9" type="Checkbox" value="1"';
 	if ($settingsIndexPage[9] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Estimated Time : <input name="index_page_settings_10" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Estimated Time : <input name="index_page_settings_10" type="Checkbox" value="1"';
 	if ($settingsIndexPage[10] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '<td align="right" nowrap>Client : <input name="index_page_settings_11" type="Checkbox" value="1"';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '<td align="right" nowrap>Client : <input name="index_page_settings_11" type="Checkbox" value="1"';
 	if ($settingsIndexPage[11] == 1)
-		echo ' checked';
-	echo '></td>';
-	echo '</tr>';
-	echo '</table>';
+		$printIndexPageSettingsForm .= ' checked';
+	$printIndexPageSettingsForm .= '></td>';
+	$printIndexPageSettingsForm .= '</tr>';
+	$printIndexPageSettingsForm .= '</table>';
+	return $printIndexPageSettingsForm;
 }
 
 /**
@@ -2239,32 +2241,33 @@ function printIndexPageSettingsForm() {
  */
 function printMoveSettingsForm() {
 	global $cfg;
-	echo '<table>';
-	echo '<tr>';
-	echo '<td valign="top" align="left">Target-Dirs:</td>';
-	echo '<td valign="top" align="left">';
-	echo '<select name="categorylist" size="5">';
+	$printMoveSettingsForm = '<table>';
+	$printMoveSettingsForm .= '<tr>';
+	$printMoveSettingsForm .= '<td valign="top" align="left">Target-Dirs:</td>';
+	$printMoveSettingsForm .= '<td valign="top" align="left">';
+	$printMoveSettingsForm .= '<select name="categorylist" size="5">';
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$dirs = split(":", trim($cfg["move_paths"]));
 		foreach ($dirs as $dir) {
 			$target = trim($dir);
 			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
-				echo "<option value=\"$target\">".$target."</option>\n";
+				$printMoveSettingsForm .= "<option value=\"$target\">".$target."</option>\n";
 		}
 	}
-	echo '</select>';
-	echo '<input type="button" name="remCatButton" value="remove" onclick="removeEntry()">';
-	echo '</td>';
-	echo '</tr>';
-	echo '<tr>';
-	echo '<td valign="top" align="left">New Target-Dir:</td>';
-	echo '<td valign="top" align="left">';
-	echo '<input type="text" name="category" size="30">';
-	echo '<input type="button" name="addCatButton" value="add" onclick="addEntry()" size="30">';
-	echo '<input type="hidden" name="move_paths" value="'.$cfg["move_paths"].'">';
-	echo '</td>';
-	echo '</tr>';
-	echo '</table>';
+	$printMoveSettingsForm .= '</select>';
+	$printMoveSettingsForm .= '<input type="button" name="remCatButton" value="remove" onclick="removeEntry()">';
+	$printMoveSettingsForm .= '</td>';
+	$printMoveSettingsForm .= '</tr>';
+	$printMoveSettingsForm .= '<tr>';
+	$printMoveSettingsForm .= '<td valign="top" align="left">New Target-Dir:</td>';
+	$printMoveSettingsForm .= '<td valign="top" align="left">';
+	$printMoveSettingsForm .= '<input type="text" name="category" size="30">';
+	$printMoveSettingsForm .= '<input type="button" name="addCatButton" value="add" onclick="addEntry()" size="30">';
+	$printMoveSettingsForm .= '<input type="hidden" name="move_paths" value="'.$cfg["move_paths"].'">';
+	$printMoveSettingsForm .= '</td>';
+	$printMoveSettingsForm .= '</tr>';
+	$printMoveSettingsForm .= '</table>';
+	return $printMoveSettingsForm;
 }
 
 /**
@@ -2273,24 +2276,25 @@ function printMoveSettingsForm() {
  */
 function printSortOrderSettingsForm() {
 	global $cfg;
-	echo '<select name="index_page_sortorder">';
-	echo '<option value="da"';
+	$printSortOrderSettingsForm = '<select name="index_page_sortorder">';
+	$printSortOrderSettingsForm .= '<option value="da"';
 	if ($cfg['index_page_sortorder'] == "da")
-		echo " selected";
-	echo '>Date - Ascending</option>';
-	echo '<option value="dd"';
+		$printSortOrderSettingsForm .= " selected";
+	$printSortOrderSettingsForm .= '>Date - Ascending</option>';
+	$printSortOrderSettingsForm .= '<option value="dd"';
 	if ($cfg['index_page_sortorder'] == "dd")
-		echo " selected";
-	echo '>Date - Descending</option>';
-	echo '<option value="na"';
+		$printSortOrderSettingsForm .= " selected";
+	$printSortOrderSettingsForm .= '>Date - Descending</option>';
+	$printSortOrderSettingsForm .= '<option value="na"';
 	if ($cfg['index_page_sortorder'] == "na")
-		echo " selected";
-	echo '>Name - Ascending</option>';
-	echo '<option value="nd"';
+		$printSortOrderSettingsForm .= " selected";
+	$printSortOrderSettingsForm .= '>Name - Ascending</option>';
+	$printSortOrderSettingsForm .= '<option value="nd"';
 	if ($cfg['index_page_sortorder'] == "nd")
-		echo " selected";
-	echo '>Name - Descending</option>';
-	echo '</select>';
+		$printSortOrderSettingsForm .= " selected";
+	$printSortOrderSettingsForm .= '>Name - Descending</option>';
+	$printSortOrderSettingsForm .= '</select>';
+	return $printSortOrderSettingsForm;
 }
 
 ?>
