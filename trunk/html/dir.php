@@ -278,6 +278,7 @@ $dirlist2 = array();
 foreach($entrys as $entry) {
 	if ($entry != "." && $entry != "..") {
 		if (!@is_dir($dirName.$entry)) {
+			$no_dir = 1;
 			$arStat = @lstat($dirName.$entry);
 			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
 			if (array_key_exists(10,$arStat))
@@ -333,6 +334,7 @@ foreach($entrys as $entry) {
 			$urlencode2 = urlencode($dir);
 			$urlencode3 = urlencode($entry);
 			array_push($dirlist2, array(
+				'no_dir' => $no_dir,
 				'bg' => $bg,
 				'enable_file_download' => $enable_file_download,
 				'urlencode1' => $urlencode1,
