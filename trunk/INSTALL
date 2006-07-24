@@ -37,7 +37,7 @@ System Requirements
    TorrentFlux to work with files in the application Path.
 
 -- Safe Mode must be turned off in the php.ini file. TorrentFlux 
-   reads, writes files that Safe Mode will restrict.
+   reads and writes files that Safe Mode will restrict.
 
 -----------------------------------------------------------------
 Installing 

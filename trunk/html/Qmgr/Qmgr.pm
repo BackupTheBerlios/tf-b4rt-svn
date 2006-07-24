@@ -11,6 +11,7 @@ our %QmgrVars = (
 	PATH_QUEUE_FILE		=> "Qmgr.queue",
 	PATH_PID_FILE		=> "Qmgr.pid",
 	PATH_LOG_FILE		=> "Qmgr.log",
+	PATH_PHP		=> "/usr/bin/php",
 	MAX_TORRENTS_USR	=> 2,
 	MAX_TORRENTS_SYS	=> 5,
 	MAX_START_TRIES		=> 5,
@@ -67,7 +68,7 @@ sub Set {
 
 #-----------------------------------------------------------------------------#
 # Constructor Method                                                          #
-# Arguments: path, MAX_TORRENTS_SYS, MAX_TORRENTS_USR, [host], [port]         #
+# Arguments: path, MAX_TORRENTS_SYS, MAX_TORRENTS_USR, LOGLEVEL, php-path, [host], [port] #
 # Returns: Object                                                             #
 #-----------------------------------------------------------------------------#
 sub new {
@@ -98,6 +99,20 @@ sub new {
 		exit;
 	}
 	$QmgrVars{'MAX_TORRENTS_USR'} = $Temp;
+
+	$Temp = shift;
+	if (!(defined $Temp)) {
+		PrintUsage();
+		exit;
+	}
+	$QmgrVars{'LOGLEVEL'} = $Temp;
+
+	$Temp = shift;
+	if(!(defined $Temp)) {
+		PrintUsage();
+		exit;
+	}
+	$QmgrVars{'PATH_PHP'} = $Temp;
 
 	$QmgrVars{'host'} = shift if @_;
 	$QmgrVars{'port'} = shift if @_;
@@ -705,7 +720,7 @@ sub StartTorrent {
 	if (!(defined $torrent)) {
 		return 0;
 	}
-	my $StartCommand = "./".$QmgrVars{'FLUXCLI'}." start ".$torrent.".torrent &> /dev/null";
+	my $StartCommand = $QmgrVars{'PATH_PHP'}." ".$QmgrVars{'FLUXCLI'}." start ".$torrent.".torrent &> /dev/null";
 	if ($QmgrVars{'LOGLEVEL'} > 2) {
 		WriteLog("StartTorrent : start-command : ".$StartCommand);
 	}

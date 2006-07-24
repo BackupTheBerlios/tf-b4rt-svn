@@ -9,7 +9,7 @@ if ($Command =~ /.*(version|-v).*/) {
 	exit;
 }
 
-my $queue = Qmgr->new($Command, shift, shift);
+my $queue = Qmgr->new($Command, shift, shift, shift, shift);
 
 while ( 1 ) {
 	$queue->ProcessQueue();
