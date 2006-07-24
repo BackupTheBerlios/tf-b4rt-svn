@@ -309,6 +309,13 @@ switch ($op) {
 		header("location: profile.php?op=showCookies");
 	break;
 }
+
+#some good looking vars
+$tmpl->setvar('printIndexPageSettingsForm', printIndexPageSettingsForm());
+$tmpl->setvar('printSortOrderSettingsForm', printSortOrderSettingsForm());
+$tmpl->setvar('printGoodLookingStatsForm', printGoodLookingStatsForm());
+$tmpl->setvar('printMoveSettingsForm', printMoveSettingsForm());
+
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

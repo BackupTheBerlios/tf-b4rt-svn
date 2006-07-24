@@ -156,8 +156,7 @@
 												<strong>index-page settings</strong><br>Select the columns in transfer-list on index-Page.<br>(only for b4rt-index-page)
 											</td>
 											<td valign="top">
-												<!-- TODO!!!! -->
-												<?php printIndexPageSettingsForm(); ?>
+												<tmpl_var name="printIndexPageSettingsForm">
 											</td>
 										</tr>
 										<tr>
@@ -258,7 +257,7 @@
 												<strong>Select Sort-Order</strong><br>Select default Sort-Order of transfers on index-Page.
 											</td>
 											<td valign="top">
-												<?php printSortOrderSettingsForm(); ?>
+												<tmpl_var name="printSortOrderSettingsForm">
 											</td>
 										</tr>
 										<tr>
@@ -288,7 +287,7 @@
 												<strong>Good looking statistics settings</strong><br>Configure Settings of "Good looking statistics" :
 											</td>
 											<td valign="top">
-												<?php printGoodLookingStatsForm(); ?>
+												<tmpl_var name="printGoodLookingStatsForm">
 											</td>
 										</tr>
 										<tr>
@@ -343,7 +342,7 @@
 													<u>Note :</u> The created dirs will not be deleted after removing a entry from the List.
 												</td>
 												<td valign="top">
-													<?php printMoveSettingsForm(); ?>
+													<tmpl_var name="printMoveSettingsForm">
 												</td>
 											</tr>
 										</tmpl_if>
