@@ -207,13 +207,13 @@ function printPageAbout() {
 			<strong>torrentflux-b4rt</strong> is a web-based frontend for command line bit-torrent clients. It is based on TorrentFlux
 			2.1 written by Qrome, which can be found at <a href="http://www.torrentflux.com" title="www.torrentflux.com" target="_blank">www.torrentflux.com</a>.
 			<p>
-			<strong>torrentflux-b4rt</strong> started as an enhancement to the base TorrentFlux 2.1 installation with things 
-			I felt that were missing, needed rewriting and things that annoyed me. This resulted in major redesigns and rewrites 
-			in many parts and even larger enhancements over the later months.  As torrentflux-b4rt grew in popularity, it's 
+			<strong>torrentflux-b4rt</strong> started as an enhancement to the base TorrentFlux 2.1 installation with things
+			I felt that were missing, needed rewriting and things that annoyed me. This resulted in major redesigns and rewrites
+			in many parts and even larger enhancements over the later months.  As torrentflux-b4rt grew in popularity, it's
 			complexity of the whole project became more apparent. v94 has about twice the lines of 2.1 final.
-			
-			User-submitted hacks/mods for TorrentFlux 2.1 that were posted in the official TorrentFlux forum that were considered to be 
-			useful features have been included, all have been modified, simplfied and integrated to be configurable via the admin page.
+
+			User-submitted hacks/mods for TorrentFlux 2.1 that were posted in the official TorrentFlux forum that were considered to be
+			useful features have been included, all have been modified, simplified and integrated to be configurable via the admin page.
 			The problems/bugs that some hacks had were fixed and there are also some rewrites to have hacks "work together".
 			Some hacks were re-written simply because I wanted them to behave/work differently or because it was needed
 			for some of my new designs.
