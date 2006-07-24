@@ -34,7 +34,6 @@ $inx = 0;
 $min = 0;
 $max = $min+$offset;
 $output = "";
-$morelink = "";
 
 // "Only Admin can see other user torrents"
 $sql = "";
@@ -74,22 +73,26 @@ $prev = ($min-$offset);
 if ($prev>=0) {
 	$tmpl->setvar('prevlink', 1);
 	$prevlink = 1;
+} else {
+	$tmpl->setvar('prevlink', 0);
+	$prevlink = 0;
 }
 $next=$min+$offset;
 if ($inx>=$offset) {
 	$tmpl->setvar('morelink', 1);
 	$morelink = 1;
+} else {
+	$tmpl->setvar('morelink', 0);
+	$morelink = 0;
 }
 
-if(!empty($prevlink) && !empty($morelink)) {
+$tmpl->setvar('empty', 0);
+if(!empty($prevlink) && !empty($morelink))
 	$tmpl->setvar('empty', 1);
-}
-if(!empty($prevlink)) {
+elseif ((!empty($prevlink)) && (empty($morelink)))
 	$tmpl->setvar('empty', 2);
-}
-if(!empty($morelink)) {
+elseif ((!empty($morelink)) && (empty($prevlink)))
 	$tmpl->setvar('empty', 3);
-}
 
 # define some things
 $tmpl->setvar('DisplayHead', DisplayHead(_UPLOADHISTORY));

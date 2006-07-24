@@ -14,13 +14,13 @@
 <font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font></a></td>
 				</tr>
 			</table>
-			<tmpl_elseif value="2">
+			<tmpl_elseif name="empty" value="2">
 					</td>
 						<td align="right">history.php?min=<tmpl_var name="prev">>
 							<font class="TinyWhite">&lt;&lt;<tmpl_var name="min"> <tmpl_var name="_SHOWPREVIOUS">]</font></a> &nbsp;</td>
 				</tr>
 			</table>
-			<tmpl_elseif value="3">
+			<tmpl_elseif name="empty" value="3">
 					</td>
 					<td align="right"><a href="history.php?min=<tmpl_var name="max">">
 <font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font></a></td>
@@ -84,7 +84,7 @@
 							</tmpl_if>
 						</td>
 						<td align="right">
-							
+
 							<tmpl_if name="empty" value="3">
 								<a href="history.php?min=<tmpl_var name="max">">
 									<font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font></a>

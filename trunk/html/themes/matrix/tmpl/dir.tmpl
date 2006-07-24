@@ -145,7 +145,7 @@ function UncompDetails(URL) {
 						<a href="javascript:UncompDetails('uncomp.php?file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')">
 							<img src="images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0>
 						</a>
-					<tmpl_elseif value="2">
+					<tmpl_elseif name="enable_rar" value="2">
 						<a href="javascript:UncompDetails('uncomp.php?file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')">
 							<img src="images/zip.png" width=16 height=16 title="Unzip" border=0>
 						</a>
