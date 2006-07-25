@@ -32,7 +32,7 @@ displayMenu();
 		Select the columns in transfer-list on index-Page.<br>(only for b4rt-index-page)
 		</td>
 		<td valign="top">
-			<?php echo printIndexPageSettingsForm(); ?>
+			<?php echo getIndexPageSettingsForm(); ?>
 		</td>
 	</tr>
 
@@ -153,7 +153,7 @@ displayMenu();
 		Select default Sort-Order of transfers on index-Page.
 		</td>
 		<td valign="top">
-			<?php echo printSortOrderSettingsForm(); ?>
+			<?php echo getSortOrderSettingsForm(); ?>
 		</td>
 	</tr>
 	<tr>
@@ -191,7 +191,7 @@ displayMenu();
 		Configure Settings of "Good looking statistics" :
 		</td>
 		<td valign="top">
-		<?php echo printGoodLookingStatsForm(); ?>
+		<?php echo getGoodLookingStatsForm(); ?>
 		</td>
 	</tr>
 

@@ -48,12 +48,12 @@ switch ($op) {
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('user', $cfg["user"]);
 		$tmpl->setvar('_PROFILE', _PROFILE);
-		
+
 		$total_activity = GetActivityCount();
-	
+
 		$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 		list($user_id, $hits, $last_visit, $time_created, $user_level) = $db->GetRow($sql);
-	
+
 		$user_type = _NORMALUSER;
 		if (IsAdmin()) {
 			$user_type = _ADMINISTRATOR;
@@ -61,9 +61,9 @@ switch ($op) {
 		if (IsSuperAdmin()) {
 			$user_type = _SUPERADMIN;
 		}
-	
+
 		$user_activity = GetActivityCount($cfg["user"]);
-	
+
 		if ($user_activity == 0) {
 			$user_percent = 0;
 		} else {
@@ -108,7 +108,7 @@ switch ($op) {
 		}
 		$tmpl->setloop('theme_list', $theme_list);
 		$tmpl->setvar('_LANGUAGE', _LANGUAGE);
-		
+
 		$arLanguage = GetLanguages();
 		$language_list = array();
 		for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
@@ -131,16 +131,16 @@ switch ($op) {
 		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 		$tmpl->setvar('index_page', $cfg["index_page"]);
 		$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
-	
+
 		if (!$cfg["ui_displaylinks"]) {
 			$tmpl->setvar('no_ui_displaylinks', 1);
 		}
 		if (!$cfg["ui_displayusers"]) {
 			$tmpl->setvar('no_ui_displayusers', 1);
 		}
-	
+
 		$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
-	
+
 		if (!$cfg["index_page_stats"]) {
 			$tmpl->setvar('no_index_page_stats', 1);
 		}
@@ -179,14 +179,14 @@ switch ($op) {
 		$language = getRequestVar('language');
 		global $cfg;
 		$tmpl->setvar('updateProfile', 1);
-	
+
 		if ($pass1 != "")
 		{
 			$_SESSION['user'] = md5($cfg["pagetitle"]);
 		}
-	
+
 		UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);
-	
+
 		$tmpl->setvar('DisplayHead', DisplayHead($cfg["user"]."'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
@@ -204,11 +204,11 @@ switch ($op) {
 	case "editCookies":
 		global $cfg, $db;
 		$tmpl->setvar('ShowCookies', 1);
-		
+
 		$tmpl->setvar('DisplayHead', DisplayHead($cfg["user"] . "'s "._PROFILE));
-	
+
 		$cid = @ $_GET["cid"]; // Cookie ID
-	
+
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
 		if( !empty( $cid ) ) {
@@ -217,7 +217,7 @@ switch ($op) {
 			$hostvalue = " value=\"" . $cookie['host'] . "\"";
 			$datavalue = " value=\"" . $cookie['data'] . "\"";
 		}
-	
+
 		(!empty( $cid )) ? $op2 = "modCookie" : $op2 = "addCookie";
 		$tmpl->setvar('op', $op2);
 		$tmpl->setvar('cid', $cid);
@@ -229,7 +229,7 @@ switch ($op) {
 		$tmpl->setvar('datavalue', $datavalue);
 		(!empty( $cid )) ? $add1 = "_UPDATE" : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
-	
+
 		// We are editing a cookie, so have a link back to cookie list
 		if( !empty( $cid ) ) {
 			$tmpl->setvar('empty_cid', 1);
@@ -311,10 +311,10 @@ switch ($op) {
 }
 
 #some good looking vars
-$tmpl->setvar('printIndexPageSettingsForm', printIndexPageSettingsForm());
-$tmpl->setvar('printSortOrderSettingsForm', printSortOrderSettingsForm());
-$tmpl->setvar('printGoodLookingStatsForm', printGoodLookingStatsForm());
-$tmpl->setvar('printMoveSettingsForm', printMoveSettingsForm());
+$tmpl->setvar('indexPageSettingsForm', getIndexPageSettingsForm());
+$tmpl->setvar('sortOrderSettingsForm', getSortOrderSettingsForm());
+$tmpl->setvar('goodLookingStatsForm', getGoodLookingStatsForm());
+$tmpl->setvar('moveSettingsForm', getMoveSettingsForm());
 
 # lets parse the hole thing
 $tmpl->pparse();

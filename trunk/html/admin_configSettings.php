@@ -909,7 +909,7 @@ for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 		  <u>Note :</u> The created dirs will not be deleted after removing a entry from the List.
 		</td>
 		<td valign="top">
-		 <?php echo printMoveSettingsForm(); ?>
+		 <?php echo getMoveSettingsForm(); ?>
 		  </td>
 	</tr>
 
