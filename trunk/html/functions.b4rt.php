@@ -2271,6 +2271,24 @@ function printMoveSettingsForm() {
 }
 
 /**
+ * print form of index-page-selection
+ *
+ */
+function printIndexPageSelectForm() {
+	global $cfg;
+	echo '<select name="index_page">';
+	echo '<option value="tf"';
+	if ($cfg["index_page"] == "tf")
+		echo " selected";
+	echo '>tf</option>';
+	echo '<option value="b4rt"';
+	if ($cfg["index_page"] == "b4rt")
+		echo " selected";
+	echo '>b4rt</option>';
+	echo '</select>';
+}
+
+/**
  * print form of sort-order-settings
  *
  */
@@ -2295,6 +2313,24 @@ function printSortOrderSettingsForm() {
 	$printSortOrderSettingsForm .= '>Name - Descending</option>';
 	$printSortOrderSettingsForm .= '</select>';
 	return $printSortOrderSettingsForm;
+}
+
+/**
+ * print form of drivespacebar-selection
+ *
+ */
+function printDrivespacebarSelectForm() {
+	global $cfg;
+	echo '<select name="drivespacebar">';
+	echo '<option value="tf"';
+	if ($cfg["drivespacebar"] == "tf")
+		echo " selected";
+	echo '>tf</option>';
+	echo '<option value="xfer"';
+	if ($cfg["drivespacebar"] == "xfer")
+		echo " selected";
+	echo '>xfer</option>';
+	echo '</select>';
 }
 
 ?>

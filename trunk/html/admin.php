@@ -1859,7 +1859,7 @@ function configSettings() {
 			  <u>Note :</u> The created dirs will not be deleted after removing a entry from the List.
 			</td>
 			<td valign="top">
-			 <?php printMoveSettingsForm(); ?>
+			 <?php echo printMoveSettingsForm(); ?>
 			  </td>
 		</tr>
 
@@ -2752,7 +2752,7 @@ function uiSettings() {
 			Select the columns in transfer-list on index-Page.<br>(only for b4rt-index-page)
 			</td>
 			<td valign="top">
-				<?php printIndexPageSettingsForm(); ?>
+				<?php echo printIndexPageSettingsForm(); ?>
 			</td>
 		</tr>
 
@@ -2873,7 +2873,7 @@ function uiSettings() {
 			Select default Sort-Order of transfers on index-Page.
 			</td>
 			<td valign="top">
-				<?php printSortOrderSettingsForm(); ?>
+				<?php echo printSortOrderSettingsForm(); ?>
 			</td>
 		</tr>
 		<tr>
@@ -2911,7 +2911,7 @@ function uiSettings() {
 			Configure Settings of "Good looking statistics" :
 			</td>
 			<td valign="top">
-			<?php printGoodLookingStatsForm(); ?>
+			<?php echo printGoodLookingStatsForm(); ?>
 			</td>
 		</tr>
 
