@@ -121,7 +121,7 @@ class ClientHandler
     function Initialize($cfg) {
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
-            $this->msg = "Config not passed";
+            $this->messages = "Config not passed";
             $this->status = -1;
             return;
         }
