@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 echo DisplayHead(_ADMINUSERACTIVITY);
 // Admin Menu
 displayMenu();

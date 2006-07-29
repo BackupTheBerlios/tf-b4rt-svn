@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 // "Backup Database SQLITE HACK"
 //$file = $cfg["db_name"]."_".date("Ymd").".tar.gz";
 $file = $cfg["db_name"]."_".$cfg["db_type"]."_".date("Ymd").".tar.gz";

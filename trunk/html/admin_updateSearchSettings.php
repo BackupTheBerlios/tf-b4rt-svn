@@ -1,4 +1,5 @@
 <?
+/* $Id$ */
 foreach ($_POST as $key => $value) {
 	if ($key != "searchEngine")
 		$settings[$key] = $value;

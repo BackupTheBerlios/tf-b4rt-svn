@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 if (!isset($lid) && !isset($direction)&& $direction !== "up" && $direction !== "down" ) {
 	header("location: admin.php?op=editLinks");
 }

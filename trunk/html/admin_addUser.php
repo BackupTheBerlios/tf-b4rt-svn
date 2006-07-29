@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {
 	echo DisplayHead(_ADMINISTRATION);

@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 $user_id = strtolower($user_id);
 if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	echo DisplayHead(_ADMINISTRATION);

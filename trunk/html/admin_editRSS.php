@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 echo DisplayHead("Administration - RSS");
 // Admin Menu
 displayMenu();

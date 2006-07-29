@@ -1,3 +1,4 @@
+# $Id$
 package Qmgr;
 use strict;
 no strict "refs";

@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 /*************************************************************
 *  TorrentFlux PHP Torrent Manager
 *  www.torrentflux.com
@@ -121,8 +123,6 @@ define('_REN_ERROR', 'An error accured, please try again!');
 define('_REN_ERR_ARG', 'Wrong argument supplied!');
 define('_REN_TITLE', 'Rename Folder');
 
-// <b4rt>
-
 // TorrentFlux Version
 $cfg["version"] = getLocalVersion();
 
@@ -174,8 +174,5 @@ if (isset($osString)) {
     //if ($osFound == 0)
     //    die("unkown os\n");
 }
-
-
-// </b4rt>
 
 ?>

@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager
 *  www.torrentflux.com
@@ -53,7 +55,7 @@ if (!empty($mid)) {
 	//$message = check_html($message, "nohtml");
 	$message = check_html($message, "a");
 	$message = str_replace("\n", "<br>", $message);
-	
+
 	if (IsUser($from_user)) {
 		$tmpl->setvar('IsUser'. 1);
 	}

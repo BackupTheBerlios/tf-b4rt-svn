@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 // load global settings + overwrite per-user settings
 loadSettings();
 // display

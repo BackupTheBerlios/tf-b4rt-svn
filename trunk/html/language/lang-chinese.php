@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 /**************************************************************************/
 /* TorrentFlux - PHP Torrent Client
 /* ============================================
@@ -103,10 +105,10 @@ define("_USERSACTIVITY","活动记录"); // used for popup to display Activity next 
 define("_NORMALUSER","基础用户"); // used to describe a normal user's account type
 define("_ADMINISTRATOR","管理员"); // used to describe an administrator's account type
 define("_SUPERADMIN","超级管理员"); // used to describe Super Admin's account type
-define("_EDIT","编辑"); 
-define("_USERADMIN","管理 - 管理用户"); // title of page for user administration 
-define("_EDITUSER","编辑用户"); 
-define("_UPLOADPARTICIPATION","上传的参与度"); 
+define("_EDIT","编辑");
+define("_USERADMIN","管理 - 管理用户"); // title of page for user administration
+define("_EDITUSER","编辑用户");
+define("_UPLOADPARTICIPATION","上传的参与度");
 define("_UPLOADS","上传总数"); // Number of uploads a user has contributed
 define("_PERCENTPARTICIPATION","参与度百分比");
 define("_PARTICIPATIONSTATEMENT","参与度以及上传数量的计算天数:"); // ends with 15 Days
@@ -121,28 +123,28 @@ define("_USERIDREQUIRED","需要用户 ID.");
 define("_PASSWORDLENGTH","密码必须是六位数长.");
 define("_PASSWORDNOTMATCH","密码不符合");
 define("_PLEASECHECKFOLLOWING","请确认以下问题"); // Displays errors after this statement
-define("_NEWUSER","新的用户"); 
-define("_PASSWORD","密码"); 
+define("_NEWUSER","新的用户");
+define("_PASSWORD","密码");
 define("_CREATE","新增"); // button text to create a new user
-define("_ADMINEDITLINKS","管理 - 编辑连结"); 
-define("_FULLURLLINK","完整连结"); 
+define("_ADMINEDITLINKS","管理 - 编辑连结");
+define("_FULLURLLINK","完整连结");
 define("_BACKTOPARRENT","回到上一个目录");  // indicates going back to parent directory
 define("_DOWNLOADDETAILS","下载资讯");
 define("_PERCENTDONE","完成百分比");
 define("_RETURNTOTORRENTS","回到 Torrents"); // Link at the bottom of each page
-define("_DATE","日期"); 
+define("_DATE","日期");
 define("_WROTE","写到");  // Used in a reply to tag what the user had writen
 define("_SENDMESSAGETITLE","送出一个讯息");  // Title of page
-define("_TO","寄给"); 
-define("_FROM","来自"); 
-define("_YOURMESSAGE","你的讯息"); 
-define("_SENDTOALLUSERS","传送给所有用户"); 
+define("_TO","寄给");
+define("_FROM","来自");
+define("_YOURMESSAGE","你的讯息");
+define("_SENDTOALLUSERS","传送给所有用户");
 define("_FORCEUSERSTOREAD","强制会员阅读"); // Admin option in messaging
 define("_SEND","传送");  // Button to send private message
 define("_PROFILE","个人资料");
 define("_PROFILEUPDATEDFOR","此会员的资料已经编辑完成: ");  // Profile updated for 'username'
 define("_REPLY","回覆");  // popup text for reply button
-define("_MESSAGE","讯息"); 
+define("_MESSAGE","讯息");
 define("_MESSAGES","讯息");  // plural (more than one)
 define("_RETURNTOMESSAGES","回到讯息");
 define("_COMPOSE","编写");  // As in 'Compose a message' for button

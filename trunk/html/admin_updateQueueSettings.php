@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 if ($_POST["AllowQueing"] != $cfg["AllowQueing"] ||
 	$_POST["maxServerThreads"] != $cfg["maxServerThreads"] ||
 	$_POST["maxUserThreads"] != $cfg["maxUserThreads"] ||

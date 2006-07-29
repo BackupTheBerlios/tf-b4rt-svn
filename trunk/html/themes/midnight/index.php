@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 $cfg["main_bgcolor"] = "#000000";
 $cfg["table_data_bg"] = "#000000";
 $cfg["table_border_dk"] = "#0802FF";

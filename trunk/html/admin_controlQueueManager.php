@@ -1,4 +1,5 @@
 <?php
+/* $Id$ */
 $message = "";
 $action = getRequestVar('a');
 switch($action) {

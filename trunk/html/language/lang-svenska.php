@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 /**************************************************************************/
 /* TorrentFlux - PHP Torrent Client
 /* ============================================
@@ -95,10 +97,10 @@ define("_USERSACTIVITY","Aktivitet"); // used for popup to display Activity next
 define("_NORMALUSER","Normal användare"); // used to describe a normal user's account type
 define("_ADMINISTRATOR","Administratör"); // used to describe an administrator's account type
 define("_SUPERADMIN","Super Admin"); // used to describe Super Admin's account type
-define("_EDIT","Redigera"); 
-define("_USERADMIN","Administrering - Användaradministrering"); // title of page for user administration 
-define("_EDITUSER","Redigera användare"); 
-define("_UPLOADPARTICIPATION","Uppladdningsdeltagande"); 
+define("_EDIT","Redigera");
+define("_USERADMIN","Administrering - Användaradministrering"); // title of page for user administration
+define("_EDITUSER","Redigera användare");
+define("_UPLOADPARTICIPATION","Uppladdningsdeltagande");
 define("_UPLOADS","Antal uppladdningar"); // Number of uploads a user has contributed
 define("_PERCENTPARTICIPATION","Procentuellt deltagande");
 define("_PARTICIPATIONSTATEMENT","Deltagande och uppladdningar de senaste"); // ends with 15 Days
@@ -113,28 +115,28 @@ define("_USERIDREQUIRED","Användar-ID måste anges.");
 define("_PASSWORDLENGTH","Lösenordet måste innehålla minst 6 tecken.");
 define("_PASSWORDNOTMATCH","Lösenorden matchar inte varandra.");
 define("_PLEASECHECKFOLLOWING","Kontrollera följande"); // Displays errors after this statement
-define("_NEWUSER","Ny användare"); 
-define("_PASSWORD","Lösenord"); 
+define("_NEWUSER","Ny användare");
+define("_PASSWORD","Lösenord");
 define("_CREATE","Skapa"); // button text to create a new user
-define("_ADMINEDITLINKS","Administring - Redigera länkar"); 
-define("_FULLURLLINK","Full URL"); 
+define("_ADMINEDITLINKS","Administring - Redigera länkar");
+define("_FULLURLLINK","Full URL");
 define("_BACKTOPARRENT","Upp en katalog");  // indicates going back to parent directory
 define("_DOWNLOADDETAILS","Nedladdningsdetaljer");
 define("_PERCENTDONE","Procent klar");
 define("_RETURNTOTORRENTS","Åter till Torrents"); // Link at the bottom of each page
-define("_DATE","Datum"); 
+define("_DATE","Datum");
 define("_WROTE","skrev");  // Used in a reply to tag what the user had writen
 define("_SENDMESSAGETITLE","Skicka ett meddelande");  // Title of page
-define("_TO","Till"); 
-define("_FROM","Från"); 
-define("_YOURMESSAGE","Ditt meddelande"); 
-define("_SENDTOALLUSERS","Skicka till alla användare"); 
+define("_TO","Till");
+define("_FROM","Från");
+define("_YOURMESSAGE","Ditt meddelande");
+define("_SENDTOALLUSERS","Skicka till alla användare");
 define("_FORCEUSERSTOREAD","Tvinga användare att läsa"); // Admin option in messaging
 define("_SEND","Skicka");  // Button to send private message
 define("_PROFILE","profil");
 define("_PROFILEUPDATEDFOR","Profilen uppdaterad för");  // Profile updated for 'username'
 define("_REPLY","Svara");  // popup text for reply button
-define("_MESSAGE","Meddelande"); 
+define("_MESSAGE","Meddelande");
 define("_MESSAGES","Meddelanden");  // plural (more than one)
 define("_RETURNTOMESSAGES","Åter till meddelanden");
 define("_COMPOSE","Nytt meddelande");  // As in 'Compose a message' for button
