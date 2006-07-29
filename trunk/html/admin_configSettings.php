@@ -480,6 +480,7 @@ function isNumber(sText) {
 			</select>
 		</td>
 	</tr>
+
 	<tr>
 		<td align="left" width="350" valign="top"><strong>Enable File Download</strong><br>
 		When enabled, users will be allowed to download from the directory view:
@@ -489,20 +490,6 @@ function isNumber(sText) {
 					<option value="1">true</option>
 					<option value="0" <?php
 					if (!$cfg["enable_file_download"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Enable Text/NFO Viewer</strong><br>
-		When enabled, users will be allowed to view Text/NFO files from the directory listing:
-		</td>
-		<td valign="top">
-			<select name="enable_view_nfo">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["enable_view_nfo"])
 						echo "selected";
 					?>>false</option>
 			</select>
@@ -524,6 +511,48 @@ function isNumber(sText) {
 		</td>
 	</tr>
 
+		<tr>
+		<td align="left" width="350" valign="top"><strong>Enable Text/NFO Viewer</strong><br>
+		When enabled, users will be allowed to view Text/NFO files from the directory listing:
+		</td>
+		<td valign="top">
+			<select name="enable_view_nfo">
+					<option value="1">true</option>
+					<option value="0" <?php
+					if (!$cfg["enable_view_nfo"])
+						echo "selected";
+					?>>false</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td align="left" width="350" valign="top"><strong>Enable MRTG-Integration</strong><br>
+		Enable/Disable MRTG-Graphs-Integration. :
+		</td>
+		<td valign="top">
+			<select name="enable_mrtg">
+					<option value="1">true</option>
+					<option value="0" <?php
+					if (!$cfg["enable_mrtg"])
+						echo "selected";
+					?>>false</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td align="left" width="350" valign="top"><strong>Download-Hosts</strong><br>
+		Show IPs or Hostnames in Download-Hosts of a torrent :
+		</td>
+		<td valign="top">
+			<select name="downloadhosts">
+					<option value="1">Hostnames</option>
+					<option value="0" <?php
+					if (!$cfg["downloadhosts"])
+						echo "selected";
+					?>>IPs</option>
+			</select>
+		</td>
+	</tr>
 	<tr>
 		<td align="left" width="350" valign="top"><strong>Days to keep Audit Actions in the Log</strong><br>
 		Number of days that audit actions will be held in the database:
@@ -601,21 +630,6 @@ for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 	</tr>
 
 	<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Hacks</strong></td></tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Enable MRTG-Integration</strong><br>
-		Enable/Disable MRTG-Graphs-Integration. :
-		</td>
-		<td valign="top">
-			<select name="enable_mrtg">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["enable_mrtg"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
 
 	<tr>
 		<td align="left" width="350" valign="top"><strong>Enable xfer</strong><br>

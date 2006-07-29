@@ -55,7 +55,7 @@ if(strlen($torrentLabel) >= 39)
 
 $hd = getStatusImage($af);
 
-echo DisplayHead(_ID_HOSTS, false, "15", $af->percent_done."% ");
+echo DisplayHead(_ID_HOSTS, false, "30", $af->percent_done."% ");
 
 ?>
     <div align="center">
@@ -77,11 +77,11 @@ echo DisplayHead(_ID_HOSTS, false, "15", $af->percent_done."% ");
         </td>
     </tr>
     </table>
-    <table bgcolor="<?php echo $cfg["table_header_bg"] ?>" width=352 cellpadding=1>
+    <table bgcolor="<?php echo $cfg["table_header_bg"] ?>" width="352" cellpadding="1">
 
      <tr><td>
         <div align="center">
-        <table border="0" cellpadding="2" cellspacing="2" width="70%">
+        <table border="0" cellpadding="2" cellspacing="2" width="90%">
 
 <?php
 
@@ -96,14 +96,17 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 	echo '</tr>';
 	$hostAry = array_keys($torrent_hosts);
 	foreach ($hostAry as $host) {
-		$host = trim($host);
+		$host = @trim($host);
+		$port = @trim($torrent_hosts[$host]);
+		if ($cfg["downloadhosts"] == 1)
+			$host = @gethostbyaddr($host);
 		if ($host != "") {
 			echo '<tr>';
-			echo '<td bgcolor="'.$cfg["body_data_bg"].'"><div class="tiny">';
+			echo '<td bgcolor="'.$cfg["body_data_bg"].'" nowrap><div class="tiny">';
 			echo $host;
 			echo '</div></td>';
-			echo '<td bgcolor="'.$cfg["body_data_bg"].'"><div class="tiny">';
-			echo $torrent_hosts[$host];
+			echo '<td bgcolor="'.$cfg["body_data_bg"].'" nowrap><div class="tiny">';
+			echo $port;
 			echo '</div></td>';
 			echo "</tr>\n";
 		}
