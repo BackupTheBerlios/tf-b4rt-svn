@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+/*
+ $Id$
+*/
+
 /*******************************************************************************
 
  LICENSE
@@ -18,7 +22,6 @@
  To read the license please visit http://www.gnu.org/copyleft/gpl.html
 
 *******************************************************************************/
-
 
 // -----------------------------------------------------------------------------
 // pre-check
@@ -120,6 +123,9 @@ if ((isset($action)) && ($action != "")) {
 		case "watch":
 			cliWatchDir(@$argv[2],@$argv[3]);
 		break;
+		case "ebreak":
+			cliEmergencyBreak(@$argv[2]);
+		break;
 		case "repair":
 		    echo "Repairing TorrentFlux-Installation...";
 			repairTorrentflux();
@@ -132,6 +138,9 @@ if ((isset($action)) && ($action != "")) {
 		case "-v":
 			printVersion();
 		break;
+		case "help":
+		case "--help":
+		case "-h":
 		default:
 			printUsage();
 		break;
@@ -159,30 +168,32 @@ function printUsage() {
 	echo "\n";
 	echo "Usage: fluxcli.php action [extra-args]\n";
 	echo "\naction: \n";
-	echo " <torrents> : print torrents. \n";
-	echo " <status>   : print status. \n";
-	echo " <netstat>  : print netstat. \n";
-	echo " <start>    : start a torrent. \n";
-	echo "              extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <stop>     : stop a torrent. \n";
-	echo "              extra-arg : name of torrent as known inside torrentflux \n";
-    echo " <start-all> : start all torrents. \n";
+	echo " <torrents>   : print torrents. \n";
+	echo " <status>     : print status. \n";
+	echo " <netstat>    : print netstat. \n";
+	echo " <start>      : start a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <stop>       : stop a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+    echo " <start-all>  : start all torrents. \n";
     echo " <resume-all> : resume all torrents. \n";
-	echo " <stop-all> : stop all running torrents. \n";
-	echo " <reset>    : reset totals of a torrent. \n";
-	echo "              extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <delete>   : delete a torrent. \n";
-	echo "              extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <wipe>     : reset totals, delete torrent, delete torrent-data. \n";
-	echo "              extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <inject>   : injects a torrent-file into tflux. \n";
-	echo "              extra-arg 1 : path to torrent-meta-file \n";
-	echo "              extra-arg 2 : username of fluxuser \n";
-	echo " <watch>    : watch a dir and inject+start torrents into tflux. \n";
-	echo "              extra-arg 1 : path to users watch-dir \n";
-	echo "              extra-arg 2 : username of fluxuser \n";
-	echo " <repair>   : repair of torrentflux. DONT do this unless you have to. \n";
-	echo "              Doing this on a running ok flux _will_ screw up things. \n";
+	echo " <stop-all>   : stop all running torrents. \n";
+	echo " <reset>      : reset totals of a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <delete>     : delete a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <wipe>       : reset totals, delete torrent, delete torrent-data. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <inject>     : injects a torrent-file into tflux. \n";
+	echo "                extra-arg 1 : path to torrent-meta-file \n";
+	echo "                extra-arg 2 : username of fluxuser \n";
+	echo " <watch>      : watch a dir and inject+start torrents into tflux. \n";
+	echo "                extra-arg 1 : path to users watch-dir \n";
+	echo "                extra-arg 2 : username of fluxuser \n";
+	echo " <ebreak>     : Emergency-Break. stop all torrents if xfer-limit is met.\n";
+	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
+	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
+	echo "                Doing this on a running ok flux _will_ screw up things. \n";
 	echo "\n";
 	echo "examples: \n";
 	echo "fluxcli.php torrents\n";
@@ -198,6 +209,7 @@ function printUsage() {
 	echo "fluxcli.php wipe foo.torrent\n";
 	echo "fluxcli.php inject /bar/foo.torrent fluxuser\n";
     echo "fluxcli.php watch /bar/foo/ fluxuser\n";
+    echo "fluxcli.php ebreak month\n";
 	echo "fluxcli.php repair\n";
 	echo "\n";
 }
@@ -621,5 +633,79 @@ function cliWatchDir($tpath = "", $username = "") {
 	}
 	exit;
 }
+
+/**
+ * cliEmergencyBreak
+ *
+ * @param string $delta
+ */
+function cliEmergencyBreak($delta = '') {
+	global $cfg, $xfer_total;
+	if ($cfg['enable_xfer'] != 1) {
+		echo "Error, xfer-Hack must be enabled. \n";
+		return;
+	}
+	if ((isset($delta)) && ($delta != "")) {
+		// getDirList to update xfer-stats
+		$cfg['xfer_realtime'] = 1;
+		$dirList = @getDirList($cfg["torrent_file_path"]);
+		// check if break needed
+		// total
+		if (($delta == "all") || ($delta == "total")) {
+			// only do if a limit is set
+			if ($cfg["xfer_total"] > 0) {
+				if ($xfer_total['total']['total'] >= $cfg["xfer_total"]) {
+					// limit met, stop all torrents now.
+					echo 'Limit met for "total" : '.formatFreeSpace($xfer_total['total']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_total"]/(1048576))."\n";
+					echo "Stopping all torrents...\n";
+					cliStopTorrents();
+					return;
+				}
+			}
+		}
+		// month
+		if (($delta == "all") || ($delta == "month")) {
+			// only do if a limit is set
+			if ($cfg["xfer_month"] > 0) {
+				if ($xfer_total['month']['total'] >= $cfg["xfer_month"]) {
+					// limit met, stop all torrents now.
+					echo 'Limit met for "month" : '.formatFreeSpace($xfer_total['month']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_month"]/(1048576))."\n";
+					echo "Stopping all torrents...\n";
+					cliStopTorrents();
+					return;
+				}
+			}
+		}
+		// week
+		if (($delta == "all") || ($delta == "week")) {
+			// only do if a limit is set
+			if ($cfg["xfer_week"] > 0) {
+				if ($xfer_total['week']['total'] >= $cfg["xfer_week"]) {
+					// limit met, stop all torrents now.
+					echo 'Limit met for "week" : '.formatFreeSpace($xfer_total['week']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_week"]/(1048576))."\n";
+					echo "Stopping all torrents...\n";
+					cliStopTorrents();
+					return;
+				}
+			}
+		}
+		// day
+		if (($delta == "all") || ($delta == "day")) {
+			// only do if a limit is set
+			if ($cfg["xfer_day"] > 0) {
+				if ($xfer_total['day']['total'] >= $cfg["xfer_day"]) {
+					// limit met, stop all torrents now.
+					echo 'Limit met for "day" : '.formatFreeSpace($xfer_total['day']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_day"]/(1048576))."\n";
+					echo "Stopping all torrents...\n";
+					cliStopTorrents();
+					return;
+				}
+			}
+		}
+	} else {
+		printUsage();
+	}
+}
+
 
 ?>
