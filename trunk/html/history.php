@@ -32,6 +32,8 @@ $tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/history.tmpl");
 $offset = 50;
 $inx = 0;
 $min = 0;
+if (isset($_REQUEST['min']))
+	$min = $_REQUEST['min'];
 $max = $min+$offset;
 $output = "";
 
