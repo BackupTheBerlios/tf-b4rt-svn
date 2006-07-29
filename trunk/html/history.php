@@ -65,7 +65,7 @@ while(list($user_id, $file, $time) = $result->FetchRow()) {
 }
 if($inx == 0) {
 	$tmpl->setvar('inx', 1);
-	$tmpl->setvar('_NORECORDSFOUND', _NORECORDSFOUND());
+	$tmpl->setvar('_NORECORDSFOUND', _NORECORDSFOUND);
 }
 $tmpl->setloop('file_result', $file_result);
 
