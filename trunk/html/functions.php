@@ -33,7 +33,6 @@ else
 include_once('db.php');
 include_once("settingsfunctions.php");
 
-
 //******************************************************************************
 // include functions
 //******************************************************************************
@@ -63,7 +62,24 @@ $cfg["free_space"] = @disk_free_space($cfg["path"])/(1024*1024);
 $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
 // authenticate
-Authenticate();
+if (isAuthenticated() != 1) {
+	// try to auth with supplied credentials
+	$credentials = getCredentials();
+	if (isset($credentials)) {
+		if (performAuthentication($credentials['username'],$credentials['password']) == 1) {
+			if (isAuthenticated() != 1) {
+				header('location: login.php');
+				exit();
+			}
+		} else {
+			header('location: login.php');
+			exit();
+		}
+	} else {
+		header('location: login.php');
+		exit();
+	}
+}
 
 // load per user settings
 loadUserSettingsToConfig($cfg["uid"]);

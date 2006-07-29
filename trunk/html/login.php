@@ -29,6 +29,7 @@ session_start("TorrentFlux");
 require_once("config.php");
 require_once('db.php');
 require_once("settingsfunctions.php");
+require_once("functions.b4rt.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # get connected
@@ -77,8 +78,8 @@ switch ($cfg['auth_type']) {
 			$user = strtolower($username);
 			$iamhim = addslashes($password);
 		}
-		$tmpl->setvar('username', $username);
-		$tmpl->setvar('password', $password);
+		$tmpl->setvar('username', $user);
+		$tmpl->setvar('password', $iamhim);
 		$tmpl->setvar('check', $check);
 		break;
 	case 0: /* Form-Based Auth Standard */
@@ -88,89 +89,22 @@ switch ($cfg['auth_type']) {
 		break;
 }
 
-# time
-$create_time = time();
 // Check for user
 if(!empty($user) && !empty($iamhim)) {
-	/* First User check */
+	// First User check
 	$next_loc = "index.php";
 	$sql = "SELECT count(*) FROM tf_users";
 	$user_count = $db->GetOne($sql);
 	if($user_count == 0) {
-		// This user is first in DB.  Make them super admin.
-		// this is The Super USER, add them to the user table
-		$record = array(
-						'user_id'=>$user,
-						'password'=>md5($iamhim),
-						'hits'=>1,
-						'last_visit'=>$create_time,
-						'time_created'=>$create_time,
-						'user_level'=>2,
-						'hide_offline'=>0,
-						'theme'=>$cfg["default_theme"],
-						'language_file'=>$cfg["default_language"]
-						);
-		$sTable = 'tf_users';
-		$sql = $db->GetInsertSql($sTable, $record);
-		$result = $db->Execute($sql);
-		showError($db,$sql);
-		// Test and setup some paths for the TF settings
-		$pythonCmd = $cfg["pythonCmd"];
-		$btphpbin = getcwd() . "/TF_BitTornado/btphptornado.py";
-		$tfQManager = getcwd() . "/TF_BitTornado/tfQManager.py";
-		$maketorrent = getcwd() . "/TF_BitTornado/btmakemetafile.py";
-		$btshowmetainfo = getcwd() . "/TF_BitTornado/btshowmetainfo.py";
-		$tfPath = getcwd() . "/downloads/";
-		if (!isFile($cfg["pythonCmd"])) {
-			$pythonCmd = trim(shell_exec("which python"));
-			if ($pythonCmd == "")
-				$pythonCmd = $cfg["pythonCmd"];
-		}
-		$settings = array(
-							"pythonCmd" => $pythonCmd,
-							"btphpbin" => $btphpbin,
-							"tfQManager" => $tfQManager,
-							"btmakemetafile" => $maketorrent,
-							"btshowmetainfo" => $btshowmetainfo,
-							"path" => $tfPath,
-							"btclient_tornado_bin" => $btphpbin
-						);
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["update"], "Initial Settings Updated for first login.");
+		firstLogin($user,$iamhim);
 		$next_loc = "admin.php?op=configSettings";
 	}
-	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($user)." AND password=".$db->qstr(md5($iamhim));
-	$result = $db->Execute($sql);
-	showError($db,$sql);
-	list($uid,$hits,$cfg["hide_offline"],$cfg["theme"],$cfg["language_file"]) = $result->FetchRow();
-	if(!array_key_exists("shutdown",$cfg))
-		$cfg['shutdown'] = '';
-	if(!array_key_exists("upload_rate",$cfg))
-		$cfg['upload_rate'] = '';
-	if($result->RecordCount() == 1) { // suc. auth.
-		// Add a hit to the user
-		$hits++;
-		$sql = 'select * from tf_users where uid = '.$uid;
-		$rs = $db->Execute($sql);
-		showError($db, $sql);
-		$rec = array(
-						'hits'=>$hits,
-						'last_visit'=>$db->DBDate($create_time),
-						'theme'=>$cfg['theme'],
-						'language_file'=>$cfg['language_file'],
-						'shutdown'=>$cfg['shutdown'],
-						'upload_rate'=>$cfg['upload_rate']
-					);
-		$sql = $db->GetUpdateSQL($rs, $rec);
-		$result = $db->Execute($sql);
-		showError($db, $sql);
-		$_SESSION['user'] = $user;
-		session_write_close();
+	// perform auth
+	if (performAuthentication($user,$iamhim) == 1) {
 		header("location: ".$next_loc);
 		exit();
-	} else { // wrong credentials
+	} else {
 		$tmpl->setvar('login_failed', 1);
-		AuditAction($cfg["constants"]["access_denied"], "FAILED AUTH: ".$user);
 	}
 }
 

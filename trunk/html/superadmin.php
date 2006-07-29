@@ -49,7 +49,7 @@ $htmlMain = "";
 // -----------------------------------------------------------------------------
 
 // authenticate first
-performAuthentication();
+superadminAuthentication();
 
 // get + define this version (is done in config.php but we dont want that here)
 define('_VERSION_THIS',trim(getDataFromFile(_VERSION_LOCAL)));
@@ -681,10 +681,10 @@ exit;
 // -----------------------------------------------------------------------------
 
 /**
- * performAuthentication
+ * superadminAuthentication
  *
  */
-function performAuthentication($message = "") {
+function superadminAuthentication($message = "") {
 	if (! IsSuperAdmin()) {
 		header("Content-Type: text/plain");
 		echo "\nAccess Error"."\n\n";

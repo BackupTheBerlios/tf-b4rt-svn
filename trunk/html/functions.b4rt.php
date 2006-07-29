@@ -18,6 +18,224 @@
 
 *******************************************************************************/
 
+/**
+ * getCredentials
+ *
+ * @return array with credentials or null if no credentials found.
+ */
+function getCredentials() {
+	global $cfg, $db;
+	$retVal = array();
+
+	// check for basic-auth-supplied credentials (only if activated or there may
+	// be wrong credentials fetched)
+	if (($cfg['auth_type'] == 2) || ($cfg['auth_type'] == 3)) {
+		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
+			$retVal['username'] = strtolower($_SERVER['PHP_AUTH_USER']);
+			$retVal['password'] = addslashes($_SERVER['PHP_AUTH_PW']);
+			return $retVal;
+		}
+	}
+
+	// check for http-post/get-supplied credentials
+	if ((isset($_REQUEST['username'])) && (isset($_REQUEST['iamhim']))) {
+		$retVal['username'] = strtolower($_REQUEST['username']);
+		$retVal['password'] = addslashes($_REQUEST['iamhim']);
+		return $retVal;
+	}
+
+	// check for cookie-supplied credentials (only if activated)
+	if ($cfg['auth_type'] == 1) {
+		if ((isset($HTTP_COOKIE_VARS['username'])) && (isset($HTTP_COOKIE_VARS['iamhim']))) {
+			$retVal['username'] = strtolower($HTTP_COOKIE_VARS['username']);
+			$retVal['password'] = addslashes($HTTP_COOKIE_VARS['iamhim']);
+			return $retVal;
+		}
+	}
+
+	// no credentials found, return null
+	return null;
+}
+
+/**
+ * perform Authentication
+ *
+ * @param $username
+ * @param $password
+ * @return int with :
+ *                     1 : user authenticated
+ *                     0 : user not authenticated
+ */
+function performAuthentication($username = '', $password = '') {
+	global $cfg, $db;
+	if (! isset($username))
+		return 0;
+	if (! isset($password))
+		return 0;
+	if ($username == '')
+		return 0;
+	if ($password == '')
+		return 0;
+	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($username)." AND password=".$db->qstr(md5($password));
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	list($uid,$hits,$cfg["hide_offline"],$cfg["theme"],$cfg["language_file"]) = $result->FetchRow();
+	if(!array_key_exists("shutdown",$cfg))
+		$cfg['shutdown'] = '';
+	if(!array_key_exists("upload_rate",$cfg))
+		$cfg['upload_rate'] = '';
+	if($result->RecordCount() == 1) { // suc. auth.
+		// Add a hit to the user
+		$hits++;
+		$sql = 'select * from tf_users where uid = '.$uid;
+		$rs = $db->Execute($sql);
+		showError($db, $sql);
+		$rec = array(
+						'hits'=>$hits,
+						'last_visit'=>$db->DBDate(time()),
+						'theme'=>$cfg['theme'],
+						'language_file'=>$cfg['language_file'],
+						'shutdown'=>$cfg['shutdown'],
+						'upload_rate'=>$cfg['upload_rate']
+					);
+		$sql = $db->GetUpdateSQL($rs, $rec);
+		$result = $db->Execute($sql);
+		showError($db, $sql);
+		$_SESSION['user'] = $username;
+		$_SESSION['uid'] = $uid;
+		$cfg["user"] = strtolower($_SESSION['user']);
+		$cfg['uid'] = $uid;
+		@session_write_close();
+		return 1;
+	} else { // wrong credentials
+		AuditAction($cfg["constants"]["access_denied"], "FAILED AUTH: ".$username);
+		unset($_SESSION['user']);
+		unset($_SESSION['uid']);
+		unset($cfg["user"]);
+		return 0;
+	}
+	return 0;
+}
+
+/**
+ * check if user authenticated
+ *
+ * @return int with :
+ *                     1 : user authenticated
+ *                     0 : user not authenticated
+ */
+function isAuthenticated() {
+	global $cfg, $db;
+	$create_time = time();
+	if(!isset($_SESSION['user'])) {
+		return 0;
+	}
+	if ($_SESSION['user'] == md5($cfg["pagetitle"])) {
+		// user changed password and needs to login again
+		return 0;
+	}
+	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg['user']);
+	$recordset = $db->Execute($sql);
+	showError($db, $sql);
+	if($recordset->RecordCount() != 1) {
+		AuditAction($cfg["constants"]["error"], "FAILED AUTH: ".$cfg['user']);
+		@session_destroy();
+		return 0;
+	}
+	list($uid, $hits, $cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
+	// hold the uid in cfg-array
+	$cfg["uid"] = $uid;
+	// Check for valid theme
+	if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg['user']);
+		$cfg["theme"] = $cfg["default_theme"];
+	}
+	// Check for valid language file
+	if(!ereg('^[^./][^/]*$', $cfg["language_file"])) {
+		AuditAction($cfg["constants"]["error"], "LANGUAGE VARIABLE CHANGE ATTEMPT: ".$cfg["language_file"]." from ".$cfg['user']);
+		$cfg["language_file"] = $cfg["default_language"];
+	}
+	if (!is_dir("themes/".$cfg["theme"]))
+		$cfg["theme"] = $cfg["default_theme"];
+	// Check for valid language file
+	if (!is_file("language/".$cfg["language_file"]))
+		$cfg["language_file"] = $cfg["default_language"];
+	$hits++;
+	$sql = 'select * from tf_users where uid = '.$uid;
+	$rs = $db->Execute($sql);
+	showError($db, $sql);
+	$rec = array(
+					'hits' => $hits,
+					'last_visit' => $create_time,
+					'theme' => $cfg['theme'],
+					'language_file' => $cfg['language_file']
+				);
+	$sql = $db->GetUpdateSQL($rs, $rec);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	return 1;
+}
+
+/**
+ * firstLogin
+ *
+ * @param $username
+ * @param $password
+ */
+function firstLogin($username = '', $password = '') {
+	global $cfg, $db;
+	if (! isset($username))
+		return 0;
+	if (! isset($password))
+		return 0;
+	if ($username == '')
+		return 0;
+	if ($password == '')
+		return 0;
+	$create_time = time();
+	// This user is first in DB.  Make them super admin.
+	// this is The Super USER, add them to the user table
+	$record = array(
+					'user_id'=>$username,
+					'password'=>md5($password),
+					'hits'=>1,
+					'last_visit'=>$create_time,
+					'time_created'=>$create_time,
+					'user_level'=>2,
+					'hide_offline'=>0,
+					'theme'=>$cfg["default_theme"],
+					'language_file'=>$cfg["default_language"]
+					);
+	$sTable = 'tf_users';
+	$sql = $db->GetInsertSql($sTable, $record);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	// Test and setup some paths for the TF settings
+	$pythonCmd = $cfg["pythonCmd"];
+	$btphpbin = getcwd() . "/TF_BitTornado/btphptornado.py";
+	$tfQManager = getcwd() . "/TF_BitTornado/tfQManager.py";
+	$maketorrent = getcwd() . "/TF_BitTornado/btmakemetafile.py";
+	$btshowmetainfo = getcwd() . "/TF_BitTornado/btshowmetainfo.py";
+	$tfPath = getcwd() . "/downloads/";
+	if (!isFile($cfg["pythonCmd"])) {
+		$pythonCmd = trim(shell_exec("which python"));
+		if ($pythonCmd == "")
+			$pythonCmd = $cfg["pythonCmd"];
+	}
+	$settings = array(
+						"pythonCmd" => $pythonCmd,
+						"btphpbin" => $btphpbin,
+						"tfQManager" => $tfQManager,
+						"btmakemetafile" => $maketorrent,
+						"btshowmetainfo" => $btshowmetainfo,
+						"path" => $tfPath,
+						"btclient_tornado_bin" => $btphpbin
+					);
+	saveSettings($settings);
+	AuditAction($cfg["constants"]["update"], "Initial Settings Updated for first login.");
+}
+
+/* ************************************************************************** */
 
 /*
  * netstatConnectionsSum
@@ -199,6 +417,8 @@ function netstatHostsByPid($torrentPid) {
 	return $hostHash;
 }
 
+/* ************************************************************************** */
+
 /*
  * getTorrentPid
  */
@@ -206,6 +426,8 @@ function getTorrentPid($torrentAlias) {
 	global $cfg;
 	return trim(shell_exec($cfg['bin_cat']." ".$cfg["torrent_file_path"].$torrentAlias.".pid"));
 }
+
+/* ************************************************************************** */
 
 /**
  * Returns sum of max numbers of connections of all running torrents.
@@ -248,6 +470,8 @@ function getSumMaxDownRate() {
   else
 	return 0;
 }
+
+/* ************************************************************************** */
 
 /*
  * Function to delete saved Torrent Settings
@@ -366,6 +590,8 @@ function stopTorrentSettings($torrent) {
   return true;
 }
 
+/* ************************************************************************** */
+
 /**
  * gets the running flag of the torrent out of the the db.
  *
@@ -390,6 +616,8 @@ function isTorrentRunning($torrent) {
 	else
 		return 0;
 }
+
+/* ************************************************************************** */
 
 /**
  * gets the btclient of the torrent out of the the db.
@@ -451,7 +679,7 @@ function getTorrentHash($torrent) {
 	}
 }
 
-// TOTALS =======================================================================================================================
+/* ************************************************************************** */
 
 /**
  * updates totals of a torrent
@@ -588,8 +816,6 @@ function getTorrentTotalsCurrentOP($torrent,$btclient,$afu,$afd) {
 	return $clientHandler->getTorrentTransferCurrentOP($torrent,$afu,$afd);
 }
 
-// TOTALS =======================================================================================================================
-
 /**
  * resets totals of a torrent
  *
@@ -627,6 +853,8 @@ function resetTorrentTotals($torrent, $delete = false) {
 	return true;
 }
 
+/* ************************************************************************** */
+
 /**
  * deletes a torrent
  *
@@ -647,11 +875,8 @@ function deleteTorrent($torrent,$alias_file) {
 			// this is a torrent-client
 			$btclient = getTorrentClient($delfile);
 			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $torrentowner, $cfg, $btclient);
-// TOTALS =======================================================================================================================
 			// update totals for this torrent
-			//updateTorrentTotals($delfile, $af->uptotal+0, $af->downtotal+0);
 			updateTorrentTotals($delfile);
-// TOTALS =======================================================================================================================
 			// remove torrent-settings from db
 			deleteTorrentSettings($delfile);
 			// client-proprietary leftovers
@@ -666,15 +891,9 @@ function deleteTorrent($torrent,$alias_file) {
 			// this is "something else". use tornado statfile as default
 			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
 		}
-
-// TOTALS =======================================================================================================================
 		//XFER: before torrent deletion save upload/download xfer data to SQL
-		//if ($af->downtotal || $af->uptotal)
-		//	  saveXfer($af->torrentowner,$af->downtotal,$af->uptotal);
 		$torrentTotals = getTorrentTotalsCurrent($delfile);
 		saveXfer($torrentowner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
-// TOTALS =======================================================================================================================
-
 		// torrent+stat
 		@unlink($cfg["torrent_file_path"].$delfile);
 		@unlink($cfg["torrent_file_path"].$alias_file);
@@ -732,6 +951,8 @@ function deleteTorrentData($torrent) {
 	}
 }
 
+/* ************************************************************************** */
+
 /**
  * gets size of data of a torrent
  *
@@ -764,6 +985,8 @@ function getTorrentDataSize($torrent) {
 	}
 	return -1;
 }
+
+/* ************************************************************************** */
 
 /**
  * deletes a dir-entry. recursive process via avddelete
@@ -802,7 +1025,12 @@ function delDirEntry($del) {
 	return $current;
 }
 
-//******************************************************************************
+/* ************************************************************************** */
+
+/**
+ * RunningProcessInfo
+ *
+ */
 function RunningProcessInfo() {
 	global $cfg;
 	include_once("ClientHandler.php");
@@ -821,7 +1049,11 @@ function RunningProcessInfo() {
 	echo "\n\n --- Process-List --- \n\n".$pinfo;
 }
 
-//******************************************************************************
+/**
+ * getRunningTorrentCount
+ *
+ * @return int with number of running torrents
+ */
 function getRunningTorrentCount() {
 	global $cfg;
 	/*
@@ -851,7 +1083,12 @@ function getRunningTorrentCount() {
 	}
 }
 
-//******************************************************************************
+/**
+ * getRunningTorrents
+ *
+ * @param $clientType
+ * @return array
+ */
 function getRunningTorrents($clientType = '') {
 	global $cfg;
 	include_once("ClientHandler.php");
@@ -875,6 +1112,8 @@ function getRunningTorrents($clientType = '') {
 		array_push($retAry,$val);
 	return $retAry;
 }
+
+/* ************************************************************************** */
 
 /**
  * prints btclient-select-form-snip. messy but too lazy until now to make
@@ -916,6 +1155,8 @@ function printSuperAdminLink($param = "", $linkText = "") {
 	$printSuperAdminLink .= '</a>';
 return $printSuperAdminLink;
 }
+
+/* ************************************************************************** */
 
 /**
  * gets metainfo of a torrent as string
@@ -984,6 +1225,8 @@ function getTorrentListFromDB() {
 		array_push($retVal, $torrent);
 	return $retVal;
 }
+
+/* ************************************************************************** */
 
 /*
  * Function for saving user Settings
@@ -1069,6 +1312,8 @@ function loadUserSettingsToConfig($uid) {
 	return true;
 }
 
+/* ************************************************************************** */
+
 /*
  * Function to convert bit-array to (unsigned) byte
  *
@@ -1128,6 +1373,8 @@ function convertIntegerToArray($dataInt) {
    $bitArray = explode(":",chunk_split($binString, 1, ":"));
    return $bitArray;
 }
+
+/* ************************************************************************** */
 
 /*
  * Function with which torrents are started in index-page
@@ -1323,6 +1570,8 @@ function indexProcessUpload() {
 		exit();
 	}
 }
+
+/* ************************************************************************** */
 
 /*
  * This method gets transfers in an array
@@ -1923,6 +2172,8 @@ function addTransferTableHead(&$output, &$settings, $sortOrder = '', $nPrefix = 
 	$output .= "</tr>\n";
 }
 
+/* ************************************************************************** */
+
 /**
  * checks a dir. recursive process to emulate "mkdir -p" if dir not present
  *
@@ -1937,6 +2188,8 @@ function checkDirectory($dir, $mode = 0755) {
 	return false;
   return @mkdir($dir,$mode);
 }
+
+/* ************************************************************************** */
 
 /*
  * repairTorrentflux
@@ -1985,6 +2238,8 @@ function repairTorrentflux() {
 	}
 }
 
+/* ************************************************************************** */
+
 /**
  * getLoadAverageString
  *
@@ -2011,6 +2266,8 @@ function getLoadAverageString() {
 	return 'n/a';
 }
 
+/* ************************************************************************** */
+
 /**
  * injects a atorrent
  *
@@ -2026,6 +2283,8 @@ function injectTorrent($torrent) {
 	$af->WriteFile();
 	return true;
 }
+
+/* ************************************************************************** */
 
 /**
  * process post-params on config-update and init settings-array
@@ -2103,6 +2362,8 @@ function processSettingsParams() {
 	return $settings;
 }
 
+/* ************************************************************************** */
+
 /**
  * checks if a path-string has a trailing slash. concat if it hasnt
  *
@@ -2115,8 +2376,10 @@ function checkDirPathString($dirPath) {
 	return $dirPath;
 }
 
+/* ************************************************************************** */
+
 /**
- * print form of good looking stats hack (0-63)
+ * get form of good looking stats hack (0-63)
  *
  */
 function getGoodLookingStatsForm() {
@@ -2152,7 +2415,7 @@ function getGoodLookingStatsForm() {
 }
 
 /**
- * print form of index page settings (0-2047)
+ * get form of index page settings (0-2047)
  *
  * #
  * Torrent
@@ -2236,7 +2499,7 @@ function getIndexPageSettingsForm() {
 }
 
 /**
- * print form of move-settings
+ * get form of move-settings
  *
  */
 function getMoveSettingsForm() {

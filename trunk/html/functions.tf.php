@@ -41,6 +41,11 @@ function avddelete($file) {
 
 //*********************************************************
 // Authenticate()
+/**
+ * @deprecated not used anymore.
+ *
+ */
+/*
 function Authenticate() {
 	global $cfg, $db;
 	$create_time = time();
@@ -94,6 +99,7 @@ function Authenticate() {
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 }
+*/
 
 //*********************************************************
 // SaveMessage
