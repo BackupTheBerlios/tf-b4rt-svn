@@ -9,7 +9,7 @@ RewriteRule ^news\.html$ /index.php?s=news
 RewriteRule ^changelog\.html$ /index.php?s=changelog
 RewriteRule ^version$ http://tf-b4rt.berlios.de/version.txt [R]
 RewriteRule ^changelog$ http://tf-b4rt.berlios.de/changelog.txt [R]
-RewriteRule ^faq$ http://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
+RewriteRule ^faq$ http://tf-b4rt.berlios.de/forum/index.php/topic,42.0.html [R]
 RewriteRule ^downloads$ http://developer.berlios.de/project/showfiles.php?group_id=7000 [R]
 RewriteRule ^current$ http://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=10567 [R]
 RewriteRule ^wsvn-website$ http://svn.berlios.de/wsvn/tf-b4rt/website/htdocs/index.php?op=file&rev=0&sc=0 [R]
