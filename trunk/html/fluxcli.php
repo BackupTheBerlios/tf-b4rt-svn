@@ -121,8 +121,8 @@ if ((isset($action)) && ($action != "")) {
 		case "watch":
 			cliWatchDir(@$argv[2],@$argv[3]);
 		break;
-		case "ebreak":
-			cliEmergencyBreak(@$argv[2]);
+		case "xfer":
+			cliXferShutdown(@$argv[2]);
 		break;
 		case "repair":
 		    echo "Repairing TorrentFlux-Installation...";
@@ -188,7 +188,7 @@ function printUsage() {
 	echo " <watch>      : watch a dir and inject+start torrents into tflux. \n";
 	echo "                extra-arg 1 : path to users watch-dir \n";
 	echo "                extra-arg 2 : username of fluxuser \n";
-	echo " <ebreak>     : Emergency-Break. stop all torrents if xfer-limit is met.\n";
+	echo " <xfer>       : xfer-Limit-Shutdown. stop all torrents if xfer-limit is met.\n";
 	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
 	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
 	echo "                Doing this on a running ok flux _will_ screw up things. \n";
@@ -207,7 +207,7 @@ function printUsage() {
 	echo "fluxcli.php wipe foo.torrent\n";
 	echo "fluxcli.php inject /bar/foo.torrent fluxuser\n";
     echo "fluxcli.php watch /bar/foo/ fluxuser\n";
-    echo "fluxcli.php ebreak month\n";
+    echo "fluxcli.php xfer month\n";
 	echo "fluxcli.php repair\n";
 	echo "\n";
 }
@@ -633,11 +633,11 @@ function cliWatchDir($tpath = "", $username = "") {
 }
 
 /**
- * cliEmergencyBreak
+ * cliXferShutdown
  *
  * @param string $delta
  */
-function cliEmergencyBreak($delta = '') {
+function cliXferShutdown($delta = '') {
 	global $cfg, $xfer_total;
 	if ($cfg['enable_xfer'] != 1) {
 		echo "Error, xfer-Hack must be enabled. \n";
