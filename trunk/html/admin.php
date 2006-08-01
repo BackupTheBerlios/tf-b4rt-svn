@@ -272,10 +272,12 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	if(!empty($prevlink) || !empty($morelink)) {
 		$activity .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\">";
 		$activity .= "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td align=\"left\">";
-		if(!empty($prevlink)) echo $prevlink;
-			$activity .= "</td><td align=\"right\">";
-		if(!empty($morelink)) echo $morelink;
-			$activity .= "</td></tr></table>";
+		if(!empty($prevlink))
+			$activity .= $prevlink;
+		$activity .= "</td><td align=\"right\">";
+		if(!empty($morelink))
+			$activity .= $morelink;
+		$activity .= "</td></tr></table>";
 		$activity .= "</td></tr>";
 	}
 	$activity .= "</table>";
