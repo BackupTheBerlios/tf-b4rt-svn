@@ -1,0 +1,87 @@
+<tmpl_var name="DisplayHead">
+<tmpl_var name="displayMenu">
+<div align="center">
+	<table border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+		<tr>
+			<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<img src="images/user.gif" width=17 height=14 border=0>&nbsp;&nbsp;&nbsp;<font class="title"><tmpl_var name="_NEWUSER"></font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<div align="center">
+					<table cellpadding="5" cellspacing="0" border="0">
+						<form name="theForm" action="admin.php?op=addUser" method="post" onsubmit="return validateProfile()">
+							<tr>
+								<td align="right"><tmpl_var name="_USER">:</td>
+								<td>
+								<input name="newUser" type="Text" value="" size="15">
+								</td>
+							</tr>
+							<tr>
+								<td align="right"><tmpl_var name="_PASSWORD">:</td>
+								<td>
+								<input name="pass1" type="Password" value="" size="15">
+								</td>
+							</tr>
+							<tr>
+								<td align="right"><tmpl_var name="_CONFIRMPASSWORD">:</td>
+								<td>
+								<input name="pass2" type="Password" value="" size="15">
+								</td>
+							</tr>
+							<tr>
+								<td align="right"><tmpl_var name="_USERTYPE">:</td>
+								<td>
+								<select name="userType">
+									<option value="0"><tmpl_var name="_NORMALUSER"></option>
+									<option value="1"><tmpl_var name="_ADMINISTRATOR"></option>
+								</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="center" colspan="2">
+								<input type="Submit" value="<tmpl_var name="_CREATE">">
+								</td>
+							</tr>
+						</form>
+					</table>
+				</div>
+				<br>
+				<script language="JavaScript">
+					function validateProfile() {
+						var msg = ""
+						if (theForm.newUser.value == "") {
+							msg = msg + "* <tmpl_var name="_USERIDREQUIRED">\n";
+							theForm.newUser.focus();
+						}
+						if (theForm.pass1.value != "" || theForm.pass2.value != "") {
+							if (theForm.pass1.value.length <= 5 || theForm.pass2.value.length <= 5) {
+								msg = msg + "* <tmpl_var name="_PASSWORDLENGTH">\n";
+								theForm.pass1.focus();
+							}
+							if (theForm.pass1.value != theForm.pass2.value) {
+								msg = msg + "* <tmpl_var name="_PASSWORDNOTMATCH">\n";
+								theForm.pass1.value = "";
+								theForm.pass2.value = "";
+								theForm.pass1.focus();
+							}
+						} else {
+							msg = msg + "* <tmpl_var name="_PASSWORDLENGTH">\n";
+							theForm.pass1.focus();
+						}
+						if (msg != "") {
+							alert("<tmpl_var name="_PLEASECHECKFOLLOWING">:\n\n" + msg);
+							return false;
+						} else {
+							return true;
+						}
+					}
+				</script>
+			</td>
+		</tr>
+	</table>
+</div>
+<tmpl_var name="displayUserSection">
+<br><br>
+<tmpl_var name="DisplayFoot">

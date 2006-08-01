@@ -1,11 +1,11 @@
 <?php
-/* $Id$ */
+/* $Id: admin_uiSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 // load global settings + overwrite per-user settings
 loadSettings();
 // display
 echo DisplayHead("Administration - UI Settings");
 // Admin Menu
-displayMenu();
+echo displayMenu();
 // Main Settings Section
 ?>
 <div align="center">

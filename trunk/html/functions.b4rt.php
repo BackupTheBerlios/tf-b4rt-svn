@@ -1118,26 +1118,6 @@ function getRunningTorrents($clientType = '') {
 /* ************************************************************************** */
 
 /**
- * prints btclient-select-form-snip. messy but too lazy until now to make
- * clienthandler-integration easier by reading in all available handlers from
- * filesystem
- *
- */
-function printBTClientSelect($btclient = 'tornado') {
-	global $cfg;
-	echo '<select name="btclient">';
-	echo '<option value="tornado"';
-	if ($btclient == "tornado")
-		echo " selected";
-	echo '>tornado</option>';
-	echo '<option value="transmission"';
-	if ($btclient == "transmission")
-		echo " selected";
-	echo '>transmission</option>';
-	echo '</select>';
-}
-
-/**
  * prints superadmin-popup-link-html-snip.
  *
  */

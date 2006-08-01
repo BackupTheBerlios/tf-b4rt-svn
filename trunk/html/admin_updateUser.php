@@ -1,11 +1,11 @@
 <?php
-/* $Id$ */
+/* $Id: admin_updateUser.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 $user_id = strtolower($user_id);
 if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	echo DisplayHead(_ADMINISTRATION);
 
 	// Admin Menu
-	displayMenu();
+	echo displayMenu();
 
 	echo "<br><div align=\"center\">"._TRYDIFFERENTUSERID."<br><strong>".$user_id."</strong> "._HASBEENUSED."<br><br><br>";
 

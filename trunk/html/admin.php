@@ -26,6 +26,7 @@
 
 require_once("config.php");
 require_once("functions.php");
+require_once("lib/vlib/vlibTemplate.php");
 
 if(!IsAdmin()) {
 	 // the user probably hit this page direct
@@ -38,39 +39,40 @@ if(!IsAdmin()) {
 //****************************************************************************
 function displayMenu() {
 	global $cfg;
-	echo "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
-	echo "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
-	echo "<a href=\"admin.php\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
-	echo "<a href=\"admin.php?op=CreateUser\"><font class=\"adminlink\">"._NEWUSER_MENU."</font></a> | ";
+	$displayMenu = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
+	$displayMenu .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
+	$displayMenu .= "<a href=\"admin.php\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=CreateUser\"><font class=\"adminlink\">"._NEWUSER_MENU."</font></a> | ";
 	//XFER
-	if ($cfg['enable_xfer'] == 1) echo "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a> | ";
-	echo "<a href=\"admin.php?op=backupDatabase\"><font class=\"adminlink\">"._BACKUP_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
-	echo printSuperAdminLink('','<font class="adminlink">superadmin</font>');
-	echo "</div></td></tr>";
-	echo "</table><br>";
+	if ($cfg['enable_xfer'] == 1) $displayMenu .= "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=backupDatabase\"><font class=\"adminlink\">"._BACKUP_MENU."</font></a> | ";
+	$displayMenu .= "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
+	$displayMenu .= printSuperAdminLink('','<font class="adminlink">superadmin</font>');
+	$displayMenu .= "</div></td></tr>";
+	$displayMenu .= "</table><br>";
+	return $displayMenu;
 }
 //****************************************************************************
 // displayUserSection -- displays the user section
 //****************************************************************************
 function displayUserSection() {
 	global $cfg, $db;
-	echo "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
-	echo "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><img src=\"images/user_group.gif\" width=17 height=14 border=0>&nbsp;&nbsp;<font class=\"title\">"._USERDETAILS."</font></div></td></tr>";
-	echo "<tr>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._USER."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"6%\"><div align=center class=\"title\">"._HITS."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._UPLOADACTIVITY." (".$cfg["days_to_keep"]." "._DAYS.")</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"6%\"><div align=center class=\"title\">"._JOINED."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._LASTVISIT."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"8%\"><div align=center class=\"title\">"._ADMIN."</div></td>";
-	echo "</tr>";
+	$displayUserSection = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
+	$displayUserSection .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><img src=\"images/user_group.gif\" width=17 height=14 border=0>&nbsp;&nbsp;<font class=\"title\">"._USERDETAILS."</font></div></td></tr>";
+	$displayUserSection .= "<tr>";
+	$displayUserSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._USER."</div></td>";
+	$displayUserSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"6%\"><div align=center class=\"title\">"._HITS."</div></td>";
+	$displayUserSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._UPLOADACTIVITY." (".$cfg["days_to_keep"]." "._DAYS.")</div></td>";
+	$displayUserSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"6%\"><div align=center class=\"title\">"._JOINED."</div></td>";
+	$displayUserSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._LASTVISIT."</div></td>";
+	$displayUserSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"8%\"><div align=center class=\"title\">"._ADMIN."</div></td>";
+	$displayUserSection .= "</tr>";
 	$total_activity = GetActivityCount();
 	$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users ORDER BY user_id";
 	$result = $db->Execute($sql);
@@ -83,34 +85,35 @@ function displayUserSection() {
 		$user_icon = "images/user_offline.gif";
 		if (IsOnline($user_id))
 			$user_icon = "images/user.gif";
-		echo "<tr>";
+		$displayUserSection .= "<tr>";
 		if (IsUser($user_id))
-			echo "<td><a href=\"message.php?to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
+			$displayUserSection .= "<td><a href=\"message.php?to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
 		else
-			echo "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."</td>";
-		echo "<td><div class=\"tiny\" align=\"right\">".$hits."</div></td>";
-		echo "<td><div align=center>";
-?>
-		<table width="310" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-		<td width="200">
-			<table width="200" border="0" cellpadding="0" cellspacing="0">
-			<tr>
-				<td background="themes/<?php echo $cfg["theme"] ?>/images/proglass.gif" width="<?php echo $user_percent*2 ?>"><img src="images/blank.gif" width="1" height="12" border="0"></td>
-				<td background="themes/<?php echo $cfg["theme"] ?>/images/noglass.gif" width="<?php echo (200 - ($user_percent*2)) ?>"><img src="images/blank.gif" width="1" height="12" border="0"></td>
-			</tr>
-			</table>
-		</td>
-		<td align="right" width="40"><div class="tiny" align="right"><?php echo $user_activity ?></div></td>
-		<td align="right" width="40"><div class="tiny" align="right"><?php echo $user_percent ?>%</div></td>
-		<td align="right"><a href="admin.php?op=showUserActivity&user_id=<?php echo $user_id ?>"><img src="images/properties.png" width="18" height="13" title="<?php echo $user_id."'s "._USERSACTIVITY ?>" border="0"></a></td>
-		</tr>
-		</table>
-<?php
-		echo "</td>";
-		echo "<td><div class=\"tiny\" align=\"center\">".date(_DATEFORMAT, $time_created)."</div></td>";
-		echo "<td><div class=\"tiny\" align=\"center\">".date(_DATETIMEFORMAT, $last_visit)."</div></td>";
-		echo "<td><div align=\"right\" class=\"tiny\">";
+			$displayUserSection .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."</td>";
+		$displayUserSection .= "<td><div class=\"tiny\" align=\"right\">".$hits."</div></td>";
+		$displayUserSection .= "<td><div align=center>";
+		$displayUserSection .= '<table width="310" border="0" cellpadding="0" cellspacing="0">';
+		$displayUserSection .= '<tr>';
+		$displayUserSection .= '<td width="200">';
+			$displayUserSection .= '<table width="200" border="0" cellpadding="0" cellspacing="0">';
+			$displayUserSection .= '<tr>';
+				$user_percent2 = $user_percent*2;
+				$displayUserSection .= '<td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$user_percent2.'"><img src="images/blank.gif" width="1" height="12" border="0"></td>';
+				$user_percent3 = (200 - ($user_percent*2));
+				$displayUserSection .= '<td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.$user_percent3.'"><img src="images/blank.gif" width="1" height="12" border="0"></td>';
+			$displayUserSection .= '</tr>';
+			$displayUserSection .= '</table>';
+		$displayUserSection .= '</td>';
+		$displayUserSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_activity.'</div></td>';
+		$displayUserSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_percent.'%</div></td>';
+		$displayUserSection .= '<td align="right"><a href="admin.php?op=showUserActivity&user_id='.$user_id.'">';
+		$displayUserSection .= '<img src="images/properties.png" width="18" height="13" title="'.$user_id.'\'s '._USERSACTIVITY.'" border="0"></a></td>';
+		$displayUserSection .= '</tr>';
+		$displayUserSection .= '</table>';
+		$displayUserSection .= "</td>";
+		$displayUserSection .= "<td><div class=\"tiny\" align=\"center\">".date(_DATEFORMAT, $time_created)."</div></td>";
+		$displayUserSection .= "<td><div class=\"tiny\" align=\"center\">".date(_DATETIMEFORMAT, $last_visit)."</div></td>";
+		$displayUserSection .= "<td><div align=\"right\" class=\"tiny\">";
 		$user_image = "images/user.gif";
 		$type_user = _NORMALUSER;
 		if ($user_level == 1) {
@@ -122,23 +125,22 @@ function displayUserSection() {
 			$type_user = _SUPERADMIN;
 		}
 		if ($user_level <= 1 || IsSuperAdmin())
-			echo "<a href=\"admin.php?op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
-		echo "<img src=\"".$user_image."\" title=\"".$user_id." - ".$type_user."\">";
+			$displayUserSection .= "<a href=\"admin.php?op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
+		$displayUserSection .= "<img src=\"".$user_image."\" title=\"".$user_id." - ".$type_user."\">";
 		if ($user_level <= 1)
-			echo "<a href=\"admin.php?op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
+			$displayUserSection .= "<a href=\"admin.php?op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
 		else
-			echo "<img src=\"images/delete_off.gif\" width=16 height=16 title=\"n/a\">";
-		echo "</div></td>";
-		echo "</tr>";
+			$displayUserSection .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\"n/a\">";
+		$displayUserSection .= "</div></td>";
+		$displayUserSection .= "</tr>";
 	}
-	echo "</table>";
-?>
-	<script language="JavaScript">
-	function ConfirmDeleteUser(user) {
-		return confirm("<?php echo _WARNING.": "._ABOUTTODELETE ?>: " + user)
-	}
-	</script>
-<?php
+	$displayUserSection .= "</table>";
+	$displayUserSection .= '<script language="JavaScript">';
+	$displayUserSection .= 'function ConfirmDeleteUser(user) {';
+		$displayUserSection .= 'return confirm("'._WARNING.': '._ABOUTTODELETE.': " + user)';
+	$displayUserSection .= '}';
+	$displayUserSection .= '</script>';
+return $displayUserSection;
 }
 //****************************************************************************
 // displayActivity -- displays Activity
@@ -193,95 +195,89 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$morelink = "<a href=\"admin.php?op=showUserActivity&min=".$max."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
 		$morelink .= "<font class=\"TinyWhite\">["._SHOWMORE."&gt;&gt;</font></a>";
 	}
-?>
-	<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>
-	<script language="JavaScript">
-		var ol_closeclick = "1";
-		var ol_close = "<font color=#ffffff><b>X</b></font>";
-		var ol_fgclass = "fg";
-		var ol_bgclass = "bg";
-		var ol_captionfontclass = "overCaption";
-		var ol_closefontclass = "overClose";
-		var ol_textfontclass = "overBody";
-		var ol_cap = "&nbsp;IP Info";
-	</script>
-	<script src="overlib.js" type="text/javascript"></script>
-	<div align="center">
-	<table>
-	<form action="admin.php?op=showUserActivity" name="searchForm" method="post">
-	<tr>
-		<td>
-		<strong><?php echo _ACTIVITYSEARCH ?></strong>&nbsp;&nbsp;&nbsp;
-		<?php echo _FILE ?>:
-		<input type="Text" name="srchFile" value="<?php echo $srchFile ?>" width="30"> &nbsp;&nbsp;
-		<?php echo _ACTION ?>:
-		<select name="srchAction">
-		<option value="">-- <?php echo _ALL ?> --</option>
-<?php
+	$displayActivity = '<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>';
+	$displayActivity .= '<script language="JavaScript">';
+		$displayActivity .= 'var ol_closeclick = "1";';
+		$displayActivity .= 'var ol_close = "<font color=#ffffff><b>X</b></font>";';
+		$displayActivity .= 'var ol_fgclass = "fg";';
+		$displayActivity .= 'var ol_bgclass = "bg";';
+		$displayActivity .= 'var ol_captionfontclass = "overCaption";';
+		$displayActivity .= 'var ol_closefontclass = "overClose";';
+		$displayActivity .= 'var ol_textfontclass = "overBody";';
+		$displayActivity .= 'var ol_cap = "&nbsp;IP Info";';
+	$displayActivity .= '</script>';
+	$displayActivity .= '<script src="overlib.js" type="text/javascript"></script>';
+	$displayActivity .= '<div align="center">';
+	$displayActivity .= '<table>';
+	$displayActivity .= '<form action="admin.php?op=showUserActivity" name="searchForm" method="post">';
+	$displayActivity .= '<tr>';
+		$displayActivity .= '<td>';
+		$displayActivity .= '<strong>'._ACTIVITYSEARCH.'</strong>&nbsp;&nbsp;&nbsp;';
+		$displayActivity .= _FILE;
+		$displayActivity .= '<input type="Text" name="srchFile" value="'.$srchFile.'" width="30"> &nbsp;&nbsp;';
+		$displayActivity .= _ACTION;
+		$displayActivity .= '<select name="srchAction">';
+		$displayActivity .= '<option value="">-- '._ALL.' --</option>';
 		$selected = "";
 		foreach ($cfg["constants"] as $action) {
 			$selected = "";
 			if($action != $cfg["constants"]["hit"]) {
 				if($srchAction == $action)
 					$selected = "selected";
-				echo "<option value=\"".$action."\" ".$selected.">".$action."</option>";
+				$displayActivity .= "<option value=\"".$action."\" ".$selected.">".$action."</option>";
 			}
 		}
-?>
-		</select>&nbsp;&nbsp;
-		<?php echo _USER ?>:
-		<select name="user_id">
-		<option value="">-- <?php echo _ALL ?> --</option>
-<?php
+		$displayActivity .= '</select>&nbsp;&nbsp;';
+		$displayActivity .= _USER.':';
+		$displayActivity .= '<select name="user_id">';
+		$displayActivity .= '<option value="">-- '._ALL.' --</option>';
 		$users = GetUsers();
 		$selected = "";
 		for($inx = 0; $inx < sizeof($users); $inx++) {
 			$selected = "";
 			if($user == $users[$inx])
 				$selected = "selected";
-			echo "<option value=\"".$users[$inx]."\" ".$selected.">".$users[$inx]."</option>";
+			$displayActivity .= "<option value=\"".$users[$inx]."\" ".$selected.">".$users[$inx]."</option>";
 		}
-?>
-		</select>
-		<input type="Submit" value="<?php echo _SEARCH ?>">
-		</td>
-	</tr>
-	</form>
-	</table>
-	</div>
-
-<?php
-	echo "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
-	echo "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
-	echo "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td>";
-	echo "<img src=\"images/properties.png\" width=18 height=13 border=0>&nbsp;&nbsp;<font class=\"title\">"._ACTIVITYLOG." ".$cfg["days_to_keep"]." "._DAYS." (".$userdisplay.")</font>";
+		$displayActivity .= '</select>';
+		$displayActivity .= '<input type="Submit" value="'._SEARCH.'">';
+		$displayActivity .= '</td>';
+	$displayActivity .= '</tr>';
+	$displayActivity .= '</form>';
+	$displayActivity .= '</table>';
+	$displayActivity .= '</div>';
+	$displayActivity .= "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
+	$displayActivity .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
+	$displayActivity .= "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td>";
+	$displayActivity .= "<img src=\"images/properties.png\" width=18 height=13 border=0>&nbsp;&nbsp;<font class=\"title\">"._ACTIVITYLOG." ".$cfg["days_to_keep"]." "._DAYS." (".$userdisplay.")</font>";
 	if(!empty($prevlink) && !empty($morelink))
-		echo "</td><td align=\"right\">".$prevlink.$morelink."</td></tr></table>";
+		$displayActivity .= "</td><td align=\"right\">".$prevlink.$morelink."</td></tr></table>";
 	elseif(!empty($prevlink))
-		echo "</td><td align=\"right\">".$prevlink."</td></tr></table>";
+		$displayActivity .= "</td><td align=\"right\">".$prevlink."</td></tr></table>";
 	elseif(!empty($prevlink))
-		echo "</td><td align=\"right\">".$morelink."</td></tr></table>";
+		$displayActivity .= "</td><td align=\"right\">".$morelink."</td></tr></table>";
 	else
-		echo "</td><td align=\"right\"></td></tr></table>";
-	echo "</td></tr>";
-	echo "<tr>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._USER."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ACTION."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._FILE."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"13%\"><div align=center class=\"title\">"._IP."</div></td>";
-	echo "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._TIMESTAMP."</div></td>";
-	echo "</tr>";
-	echo $output;
+		$displayActivity .= "</td><td align=\"right\"></td></tr></table>";
+	$displayActivity .= "</td></tr>";
+	$displayActivity .= "<tr>";
+	$displayActivity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._USER."</div></td>";
+	$displayActivity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ACTION."</div></td>";
+	$displayActivity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._FILE."</div></td>";
+	$displayActivity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"13%\"><div align=center class=\"title\">"._IP."</div></td>";
+	$displayActivity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._TIMESTAMP."</div></td>";
+	$displayActivity .= "</tr>";
+	$displayActivity .= $output;
 	if(!empty($prevlink) || !empty($morelink)) {
-		echo "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\">";
-		echo "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td align=\"left\">";
+		$displayActivity .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\">";
+		$displayActivity .= "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td align=\"left\">";
 		if(!empty($prevlink)) echo $prevlink;
-			echo "</td><td align=\"right\">";
+			$displayActivity .= "</td><td align=\"right\">";
 		if(!empty($morelink)) echo $morelink;
-			echo "</td></tr></table>";
-		echo "</td></tr>";
+			$displayActivity .= "</td></tr></table>";
+		$displayActivity .= "</td></tr>";
 	}
-	echo "</table>";
+	$displayActivity .= "</table>";
+	return $displayActivity;
 }
 //****************************************************************************
 // validatePath -- Validates TF Path and Permissions

@@ -1,9 +1,9 @@
 <?php
-/* $Id$ */
+/* $Id: admin_showUserActivity.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 echo DisplayHead(_ADMINUSERACTIVITY);
 // Admin Menu
-displayMenu();
+echo displayMenu();
 // display Activity for user
-displayActivity($min, $user_id, $srchFile, $srchAction);
+echo displayActivity($min, $user_id, $srchFile, $srchAction);
 echo DisplayFoot(true,true);
 ?>

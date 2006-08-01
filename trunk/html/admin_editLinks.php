@@ -1,8 +1,8 @@
 <?php
-/* $Id$ */
+/* $Id: admin_editLinks.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 echo DisplayHead(_ADMINEDITLINKS);
 // Admin Menu
-displayMenu();
+echo displayMenu();
 echo "<div align=\"center\">";
 echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
 // Link Mod

@@ -1,11 +1,11 @@
 <?php
-/* $Id$ */
+/* $Id: admin_searchSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
 require_once("searchEngines/SearchEngineBase.php");
 echo DisplayHead("Administration - Search Settings");
 // Admin Menu
-displayMenu();
+echo displayMenu();
 // Main Settings Section
 echo "<div align=\"center\">";
 echo "<table width=\"100%\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";

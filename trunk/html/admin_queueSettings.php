@@ -1,5 +1,5 @@
 <?php
-/* $Id$ */
+/* $Id: admin_queueSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
 require_once("QueueManager.php");
@@ -27,7 +27,7 @@ if ((isset($shutdown)) && ($shutdown == "1")) {
 // head
 echo DisplayHead("Administration - Queue Settings");
 // Admin Menu
-displayMenu();
+echo displayMenu();
 // message section
 $message = getRequestVar('m');
 if ((isset($message)) && ($message != "")) {
