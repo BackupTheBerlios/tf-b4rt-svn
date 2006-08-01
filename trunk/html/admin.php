@@ -59,7 +59,7 @@ function getMenu() {
 	return $displayMenu;
 }
 //****************************************************************************
-// displayUserSection -- displays the user section
+// getUserSection -- displays the user section
 //****************************************************************************
 function getUserSection() {
 	global $cfg, $db;

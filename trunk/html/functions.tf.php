@@ -780,8 +780,8 @@ function getEngineLink($searchEngine) {
 
 // ***************************************************************************
 // ***************************************************************************
-// Display the header portion of admin views
-function DisplayHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
+// get the header portion of admin views
+function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	global $cfg;
 	$DisplayHead = '
 	<html>
@@ -827,8 +827,8 @@ return $DisplayHead;
 
 // ***************************************************************************
 // ***************************************************************************
-// Display the footer portion
-function DisplayFoot($showReturn=true, $showVersionLink = false) {
+// get the footer portion
+function getFoot($showReturn=true, $showVersionLink = false) {
 	global $cfg;
 	$DisplayFoot = "</td></tr>";
 	$DisplayFoot .= "</table>";
