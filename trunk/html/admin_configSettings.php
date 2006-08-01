@@ -162,16 +162,22 @@ $tmpl->setvar('validate_cksfv', validateFile($cfg["bin_cksfv"]));
 $tmpl->setvar('php_uname1', php_uname('s'));
 $tmpl->setvar('php_uname2', php_uname('r'));
 $tmpl->setvar('_OS', _OS);
-$tmpl->setvar('loadavg_path', $cfg["loadavg_path"]);
-$tmpl->setvar('validate_loadavg', validateFile($cfg["loadavg_path"]));
-$tmpl->setvar('bin_netstat', $cfg["bin_netstat"]);
-$tmpl->setvar('validate_netstat', validateFile($cfg["bin_netstat"]));
 $tmpl->setvar('bin_unrar', $cfg["bin_unrar"]);
 $tmpl->setvar('validate_unrar', validateFile($cfg["bin_unrar"]));
-$tmpl->setvar('bin_fstat', $cfg["bin_fstat"]);
-$tmpl->setvar('validate_fstat', validateFile($cfg["bin_fstat"]));
-$tmpl->setvar('bin_sockstat', $cfg["bin_sockstat"]);
-$tmpl->setvar('validate_sockstat', validateFile($cfg["bin_sockstat"]));
+switch (_OS) {
+case 1:
+	$tmpl->setvar('loadavg_path', $cfg["loadavg_path"]);
+	$tmpl->setvar('validate_loadavg', validateFile($cfg["loadavg_path"]));
+	$tmpl->setvar('bin_netstat', $cfg["bin_netstat"]);
+	$tmpl->setvar('validate_netstat', validateFile($cfg["bin_netstat"]));
+break;
+case 2:
+	$tmpl->setvar('bin_fstat', $cfg["bin_fstat"]);
+	$tmpl->setvar('validate_fstat', validateFile($cfg["bin_fstat"]));
+	$tmpl->setvar('bin_sockstat', $cfg["bin_sockstat"]);
+	$tmpl->setvar('validate_sockstat', validateFile($cfg["bin_sockstat"]));
+break;
+}
 $tmpl->setvar('foot', getFoot(true,true));
 
 $tmpl->pparse();
