@@ -1,79 +1,56 @@
 <?php
 /* $Id: admin_editLinks.php 102 2006-07-31 05:01:28Z msn_exploder $ */
-echo getHead(_ADMINEDITLINKS);
-// Admin Menu
-echo getMenu();
-echo "<div align=\"center\">";
-echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
-// Link Mod
-//echo "<tr><td bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
-//echo "<img src=\"images/properties.png\" width=18 height=13 border=0>&nbsp;&nbsp;<font class=\"title\">"._ADMINEDITLINKS."</font>";
-echo "<tr><td colspan=\"2\" bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
-echo "<img src=\"images/properties.png\" width=18 height=13 border=0>&nbsp;&nbsp;<font class=\"title\">"._ADMINEDITLINKS."</font>";
-//echo "</td></tr><tr><td align=\"center\">";
-echo "</td></tr><tr><td colspan=2 align=\"center\">";
-// Link Mod
-?>
-<form action="admin.php?op=addLink" method="post">
-<?php echo _FULLURLLINK ?>:
-<!-- Link Mod -->
-<!-- <input type="Text" size="50" maxlength="255" name="newLink"> -->
-<input type="Text" size="30" maxlength="255" name="newLink">
-<?php echo _FULLSITENAME ?>:
-<input type="Text" size="30" maxlength="255" name="newSite">
-<!-- Link Mod -->
-<input type="Submit" value="<?php echo _UPDATE ?>"><br>
-</form>
-<?php
-echo "</td></tr>";
+
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_editLinks.tmpl");
+$tmpl->setvar('head', getHead(_ADMINEDITLINKS));
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('_ADMINEDITLINKS', _ADMINEDITLINKS);
+$tmpl->setvar('_FULLURLLINK', _FULLURLLINK);
+$tmpl->setvar('_FULLSITENAME', _FULLSITENAME);
+$tmpl->setvar('_UPDATE', _UPDATE);
+$tmpl->setvar('_DELETE', _DELETE);
+$tmpl->setvar('_EDIT', _EDIT);
+
 $arLinks = GetLinks();
 $arLid = Array_Keys($arLinks);
 $inx = 0;
-// Link Mod
 $link_count = count($arLinks);
-// Link Mod
+$link_list = array();
 foreach($arLinks as $link) {
 	$lid = $arLid[$inx++];
-	// Link Mod
-	//echo "<tr><td><a href=\"admin.php?op=deleteLink&lid=".$lid."\"><img src=\"images/delete_on.gif\" width=16 height=16 border=0 title=\""._DELETE." ".$lid."\" align=\"absmiddle\"></a>&nbsp;";
-	//echo "<a href=\"".$link."\" target=\"_blank\">".$link."</a></td></tr>\n";
 	if ( isset($_GET["edit"]) && $_GET["edit"] == $link['lid']) {
-		echo "<tr><td colspan=\"2\">";
-?>
-<form action="admin.php?op=editLink" method="post">
-<?php echo _FULLURLLINK ?>:
-<input type="Text" size="30" maxlength="255" name="editLink" value="<?php echo $link['url'] ?>">
-<?php echo _FULLSITENAME ?>:
-<input type="Text" size="30" maxlength="255" name="editSite" value="<?php echo $link['sitename'] ?>">
-<input type="hidden" name="lid" value="<?php echo $lid ?>">
-<input type="Submit" value="<?php echo _UPDATE ?>"><br>
-</form>
-<?php
+		$is_edit = 1;
 	} else {
-		echo "<tr><td>";
-		echo "<a href=\"admin.php?op=deleteLink&lid=".$lid."\"><img src=\"images/delete_on.gif\" width=16 height=16 border=0 title=\""._DELETE." ".$lid."\" align=\"absmiddle\"></a>&nbsp;";
-		echo "<a href=\"admin.php?op=editLinks&edit=".$lid."\"><img src=\"images/edit.gif\" width=16 height=16 border=0 title=\""._EDIT." ".$lid."\" align=\"absmiddle\"></a>&nbsp;";
-		echo "<a href=\"".$link['url']."\" target=\"_blank\">".$link['sitename']."</a></td>\n";
-		echo "<td align=right width='36'>";
-		if ($inx > 1 ){
-			// Only put an 'up' arrow if this isn't the first entry:
-			echo "<a href='admin.php?op=moveLink&amp;direction=up&amp;lid=".$lid."'>";
-			echo "<img src='images/uparrow.png' width='16' height='16' ";
-			echo "border='0' title='Move link up' align='absmiddle' alt='Up'></a>";
+		$is_edit = 0;
+		if ($inx > 1 ) {
+			$counter = 2;
 		}
-		// If only one link, just put in a space in each cell:
-		echo ($inx==1 ? "<img src='images/blank.gif' width='16' align='absmiddle'>" : "");
-		echo "&nbsp;";
+		if ( $inx == 1 ) {
+			$counter = 1;
+		}
 		if ($inx != count($arLinks)) {
-			// Only put a 'down' arrow if this isn't the last item:
-			echo "<a href='admin.php?op=moveLink&amp;direction=down&amp;lid=".$lid."'>";
-			echo "<img src='images/downarrow.png' width='16' height='16' ";
-			echo "border='0' title='Move link down' align='absmiddle' alt='Down'></a>";
+			$counter2 = 1;
 		}
-		echo "</td></tr>";
+		else {
+			$counter2 = 0;
+		}
 	}
-	// Link Mod
+	array_push($link_list, array(
+		'is_edit' => $is_edit,
+		'url' => $link['url'],
+		'sitename' => $link['sitename'],
+		'lid' => $lid,
+		'counter' => $counter,
+		'counter2' => $counter2,
+		)
+	);
 }
-echo "</table></div><br><br><br>";
-echo getFoot(true,true);
+$tmpl->setloop('link_list', $link_list);
+$tmpl->setvar('foot', getFoot(true,true));
+
+$tmpl->pparse();
 ?>
