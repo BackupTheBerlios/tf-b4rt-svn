@@ -3,9 +3,9 @@
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
 require_once("searchEngines/SearchEngineBase.php");
-echo DisplayHead("Administration - Search Settings");
+echo getHead("Administration - Search Settings");
 // Admin Menu
-echo displayMenu();
+echo getMenu();
 // Main Settings Section
 echo "<div align=\"center\">";
 echo "<table width=\"100%\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
@@ -111,5 +111,5 @@ if (is_file('searchEngines/'.$searchEngine.'Engine.php')) {
 	</td></tr>
 </table></div>
 <?php
-echo DisplayFoot(true,true);
+echo getFoot(true,true);
 ?>

@@ -4,8 +4,8 @@ require_once("AliasFile.php");
 require_once("RunningTorrent.php");
 $tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_configSettings.tmpl");
 
-$tmpl->setvar('DisplayHead', DisplayHead("Administration - Settings"));
-$tmpl->setvar('displayMenu', displayMenu());
+$tmpl->setvar('head', getHead("Administration - Settings"));
+$tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -172,7 +172,7 @@ $tmpl->setvar('bin_fstat', $cfg["bin_fstat"]);
 $tmpl->setvar('validate_fstat', validateFile($cfg["bin_fstat"]));
 $tmpl->setvar('bin_sockstat', $cfg["bin_sockstat"]);
 $tmpl->setvar('validate_sockstat', validateFile($cfg["bin_sockstat"]));
-$tmpl->setvar('DisplayFoot', DisplayFoot(true,true));
+$tmpl->setvar('foot', getFoot(true,true));
 
 $tmpl->pparse();
 ?>

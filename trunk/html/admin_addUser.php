@@ -5,12 +5,12 @@
 $tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_addUser.tmpl");
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {
-	$tmpl->setvar('DisplayHead', DisplayHead(_ADMINISTRATION));
-	$tmpl->setvar('displayMenu', displayMenu());
+	$tmpl->setvar('head', getHead(_ADMINISTRATION));
+	$tmpl->setvar('menu', getMenu());
 	$tmpl->setvar('_TRYDIFFERENTUSERID', _TRYDIFFERENTUSERID);
 	$tmpl->setvar('newUser', $newUser);
 	$tmpl->setvar('_HASBEENUSED', _HASBEENUSED);
-	$tmpl->setvar('DisplayFoot', DisplayFoot(true,true));
+	$tmpl->setvar('foot', getFoot(true,true));
 } else {
 	addNewUser($newUser, $pass1, $userType);
 	AuditAction($cfg["constants"]["admin"], _NEWUSER.": ".$newUser);

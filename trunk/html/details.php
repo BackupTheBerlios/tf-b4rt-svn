@@ -33,11 +33,11 @@ global $cfg;
 
 $torrent = getRequestVar('torrent');
 
-echo DisplayHead(_TORRENTDETAILS);
+echo getHead(_TORRENTDETAILS);
 
 echo "<table width=\"740\" border=0 cellpadding=0 cellspacing=0><tr><td>";
 
-echo displayDriveSpaceBar(getDriveSpace($cfg["path"]));
+echo getDriveSpaceBar(getDriveSpace($cfg["path"]));
 
 echo "</td></tr></table>";
 echo "<br>";
@@ -47,25 +47,19 @@ echo "; position:relative; width:740; height:500; padding-left: 5px; padding-rig
 
 $als = getRequestVar('als');
 if($als == "false")
-{
-       showMetaInfo($torrent,false);
-}
+	showMetaInfo($torrent,false);
 else
-{
-    showMetaInfo($torrent,true);
-}
+	showMetaInfo($torrent,true);
 
-// b4rt-7
 switch ($cfg["metainfoclient"]) {
     case "transmissioncli":
        echo '<br><br><strong>Scrape Info : </strong><br><br>';
        echo(getTorrentScrapeInfo($torrent));
     break;
 }
-// b4rt-7
 
 echo "</div>";
 
-echo DisplayFoot();
+echo getFoot();
 
 ?>

@@ -414,10 +414,10 @@ function getExtension($fileName) {
 }
 
 # define some things
-$tmpl->setvar('DisplayHead', DisplayHead(_DIRECTORYLIST));
+$tmpl->setvar('head', getHead(_DIRECTORYLIST));
 $tmpl->setvar('_ABOUTTODELETE', _ABOUTTODELETE);
-$tmpl->setvar('displayDriveSpaceBar', displayDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('DisplayFoot', DisplayFoot());
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
+$tmpl->setvar('foot', getFoot());
 
 # lets parse the hole thing
 $tmpl->pparse();

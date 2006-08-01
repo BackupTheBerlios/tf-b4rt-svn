@@ -1,12 +1,12 @@
 <?php
 /* $Id: admin_editUser.php 102 2006-07-31 05:01:28Z msn_exploder $ */
-echo DisplayHead(_USERADMIN);
+echo getHead(_USERADMIN);
 $editUserImage = "images/user.gif";
 $selected_n = "selected";
 $selected_a = "";
 $hide_checked = "";
 // Admin Menu
-echo displayMenu();
+echo getMenu();
 $total_activity = GetActivityCount();
 $sql= "SELECT user_id, hits, last_visit, time_created, user_level, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($user_id);
 list($user_id, $hits, $last_visit, $time_created, $user_level, $hide_offline, $theme, $language_file) = $db->GetRow($sql);
@@ -181,7 +181,7 @@ echo "</td></tr>";
 echo "</table></div>";
 echo "<br><br>";
 // Show User Section
-echo displayUserSection();
+echo getUserSection();
 echo "<br><br>";
-echo DisplayFoot(true,true);
+echo getFoot(true,true);
 ?>

@@ -24,7 +24,7 @@
 include("config.php");
 include("functions.php");
 
-echo DisplayHead(_REN_TITLE, false);
+echo getHead(_REN_TITLE, false);
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 ?>
@@ -65,7 +65,7 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
     </td>
     </tr>
     </table>
-<?php echo DisplayTorrentFluxLink(); ?>
+<?php echo getTorrentFluxLink(); ?>
    </body>
   </html>
 </html>

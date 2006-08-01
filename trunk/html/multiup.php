@@ -100,7 +100,7 @@ if (!empty($_FILES['upload_files'])) {
         exit();
     }
 }
-echo displayHead(_MULTIPLE_UPLOAD);
+echo getHead(_MULTIPLE_UPLOAD);
 ?>
 
 <?php
@@ -160,4 +160,4 @@ if ((isset($messages)) && ($messages != ""))
   </td>
  </tr>
 </table>
-<?php echo DisplayFoot(); ?>
+<?php echo getFoot(); ?>

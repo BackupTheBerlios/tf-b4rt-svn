@@ -66,7 +66,7 @@ if (!defined("ENT_COMPAT")) define("ENT_COMPAT", 2);
 if (!defined("ENT_NOQUOTES")) define("ENT_NOQUOTES", 0);
 if (!defined("ENT_QUOTES")) define("ENT_QUOTES", 3);
 
-$tmpl->setvar('DisplayHead', DisplayHead("RSS Torrents"));
+$tmpl->setvar('head', getHead("RSS Torrents"));
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 
 // Get RSS feeds from Database
@@ -147,7 +147,7 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 	}
 }
 $tmpl->setloop('news_list', $news_list);
-$tmpl->setvar('DisplayFoot', DisplayFoot());
+$tmpl->setvar('foot', getFoot());
 
 $tmpl->setvar('rid', $rid);
 $tmpl->setvar('pageUrl', $pageUrl);

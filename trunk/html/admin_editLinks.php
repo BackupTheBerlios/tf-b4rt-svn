@@ -1,8 +1,8 @@
 <?php
 /* $Id: admin_editLinks.php 102 2006-07-31 05:01:28Z msn_exploder $ */
-echo DisplayHead(_ADMINEDITLINKS);
+echo getHead(_ADMINEDITLINKS);
 // Admin Menu
-echo displayMenu();
+echo getMenu();
 echo "<div align=\"center\">";
 echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
 // Link Mod
@@ -75,5 +75,5 @@ foreach($arLinks as $link) {
 	// Link Mod
 }
 echo "</table></div><br><br><br>";
-echo DisplayFoot(true,true);
+echo getFoot(true,true);
 ?>

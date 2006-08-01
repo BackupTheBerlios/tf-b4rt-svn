@@ -57,7 +57,7 @@ if(strlen($torrentLabel) >= 39)
 
 $hd = getStatusImage($af);
 
-echo DisplayHead(_ID_HOSTS, false, "30", $af->percent_done."% ");
+echo getHead(_ID_HOSTS, false, "30", $af->percent_done."% ");
 
 ?>
     <div align="center">
@@ -135,6 +135,6 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 </td></tr></table>
 <?php
 
-echo DisplayFoot(false,false);
+echo getFoot(false,false);
 
 ?>

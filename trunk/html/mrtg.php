@@ -71,7 +71,7 @@ if (file_exists($filename)) {
 }
 
 // render page content
-echo DisplayHead(_ID_MRTG);
+echo getHead(_ID_MRTG);
 if ((count($mrtgTargets)) > 0)
   echo $htmlTargets;
 echo '<div align="center" id="BodyLayer" name="BodyLayer" style="border: thin solid ';
@@ -79,5 +79,5 @@ echo $cfg["main_bgcolor"];
 echo 'position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 echo $htmlGraph;
 echo '</div>';
-echo DisplayFoot();
+echo getFoot();
 ?>

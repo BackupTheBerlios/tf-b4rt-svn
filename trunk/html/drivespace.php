@@ -35,12 +35,12 @@ $result = shell_exec("df -h ".$cfg["path"]);
 $result2 = shell_exec("du -sh ".$cfg["path"]."*");
 
 # Nothing without set some vars
-$tmpl->setvar('displayDriveSpaceBar', displayDriveSpaceBar(getDriveSpace($cfg["path"])));
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('result', $result);
 $tmpl->setvar('result2', $result2);
-$tmpl->setvar('DisplayHead', DisplayHead(_DRIVESPACE));
-$tmpl->setvar('DisplayFoot', DisplayFoot());
+$tmpl->setvar('head', getHead(_DRIVESPACE));
+$tmpl->setvar('foot', getFoot());
 
 # lets parse the hole thing
 $tmpl->pparse();

@@ -450,7 +450,7 @@
                 <table border="1" bordercolor="<?php echo $cfg["table_border_dk"] ?>" cellpadding="4" cellspacing="0">
                     <tr>
                         <td bgcolor="<?php echo $cfg["main_bgcolor"] ?>" background="themes/<?php echo $cfg["theme"] ?>/images/bar.gif">
-                            <?php DisplayTitleBar($cfg["pagetitle"]." - Torrent Maker", false); ?>
+                            <?php getTitleBar($cfg["pagetitle"]." - Torrent Maker", false); ?>
                         </td>
                     </tr>
                     <tr>
@@ -528,7 +528,7 @@
                     </tr>
                 </table>
 <?php
-                echo DisplayTorrentFluxLink();
+                echo getTorrentFluxLink();
 ?>
             </td>
         </tr>

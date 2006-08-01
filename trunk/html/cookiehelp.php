@@ -27,7 +27,7 @@
 include_once("config.php");
 include_once("functions.php");
 
-echo DisplayHead("Cookie Help", false);
+echo getHead("Cookie Help", false);
 ?>
 <script language="JavaScript">
     function closeme()
@@ -100,5 +100,5 @@ www.host.com/
 <BR />
 </div>
 <?php
-echo DisplayFoot(false);
+echo getFoot(false);
 ?>

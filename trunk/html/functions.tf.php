@@ -783,7 +783,7 @@ function getEngineLink($searchEngine) {
 // get the header portion of admin views
 function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	global $cfg;
-	$DisplayHead = '
+	$head = '
 	<html>
 	<HEAD>
 		<TITLE>'.$percentdone.' '.$cfg["pagetitle"].'</TITLE>
@@ -793,9 +793,9 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 		<META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset=ISO-8859-1">
 	';
 	if ($refresh != "") {
-		$DisplayHead .= "<meta http-equiv=\"REFRESH\" content=\"".$refresh."\">";
+		$head .= "<meta http-equiv=\"REFRESH\" content=\"".$refresh."\">";
 	}
-	$DisplayHead .= '
+	$head .= '
 		<script type="text/javascript">
 		function CheckSFV(dir,file) {
 				var width = screen.width/2-300;
@@ -812,7 +812,7 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	<table border="1" bordercolor="'.$cfg["table_border_dk"].'" cellpadding="4" cellspacing="0">
 	<tr>
 		<td bgcolor="'.$cfg["main_bgcolor"].'" background="themes/'.$cfg["theme"].'/images/bar.gif">
-		'.DisplayTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons).'
+		'.getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons).'
 		</td>
 	</tr>
 	<tr>
@@ -821,67 +821,65 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	<table width="100%" bgcolor="'.$cfg["body_data_bg"].'">
 	 <tr><td>
 	 ';
-return $DisplayHead;
+	return $head;
 }
-
 
 // ***************************************************************************
 // ***************************************************************************
 // get the footer portion
 function getFoot($showReturn=true, $showVersionLink = false) {
 	global $cfg;
-	$DisplayFoot = "</td></tr>";
-	$DisplayFoot .= "</table>";
+	$foot = "</td></tr>";
+	$foot .= "</table>";
 	if ($showReturn)
-		$DisplayFoot .= "[<a href=\"index.php\">"._RETURNTOTORRENTS."</a>]";
-	$DisplayFoot .= "</div>";
-	$DisplayFoot .= "</td>";
-	$DisplayFoot .= "</tr>";
-	$DisplayFoot .= "</table>";
-	$DisplayFoot .=  DisplayTorrentFluxLink($showVersionLink);
-		$DisplayFoot .= "</td>
+		$foot .= "[<a href=\"index.php\">"._RETURNTOTORRENTS."</a>]";
+	$foot .= "</div>";
+	$foot .= "</td>";
+	$foot .= "</tr>";
+	$foot .= "</table>";
+	$foot .=  getTorrentFluxLink($showVersionLink);
+		$foot .= "</td>
 	</tr>
 	</table>
 	</div>
    </body>
   </html>
-";
-return $DisplayFoot;
+	";
+	return $foot;
 }
 
 // ***************************************************************************
 // ***************************************************************************
-// Dipslay TF Link and Version
-function DisplayTorrentFluxLink($showVersionLink = false) {
+// get TF Link and Version
+function getTorrentFluxLink($showVersionLink = false) {
 	global $cfg;
 	if ($cfg["ui_displayfluxlink"] != 0) {
-		$DisplayTorrentFluxLink = "<div align=\"right\">";
-		$DisplayTorrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
+		$torrentFluxLink = "<div align=\"right\">";
+		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
 		if ($showVersionLink)
-			$DisplayTorrentFluxLink .= printSuperAdminLink('?a=0','');
-		$DisplayTorrentFluxLink .= "</div>";
+			$torrentFluxLink .= getSuperAdminLink('?a=0','');
+		$torrentFluxLink .= "</div>";
 	}
-	return $DisplayTorrentFluxLink;
+	return $torrentFluxLink;
 }
 
 // ***************************************************************************
 // ***************************************************************************
-// Dipslay Title Bar
+// get Title Bar
 // 2004-12-09 PFM: now using adodb.
-function DisplayTitleBar($pageTitleText, $showButtons=true) {
+function getTitleBar($pageTitleText, $showButtons=true) {
 	global $cfg, $db;
-		$DisplayTitleBar = '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
-		$DisplayTitleBar .= '<tr>';
-			$DisplayTitleBar .= '<td align="left"><font class="title">'.$pageTitleText.'</font></td>';
-	if ($showButtons)
-	{
-		$DisplayTitleBar .= "<td align=right>";
+	$titleBar = '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
+	$titleBar .= '<tr>';
+	$titleBar .= '<td align="left"><font class="title">'.$pageTitleText.'</font></td>';
+	if ($showButtons) {
+		$titleBar .= "<td align=right>";
 		// Top Buttons
-		$DisplayTitleBar .= "&nbsp;&nbsp;";
-		$DisplayTitleBar .=	 "<a href=\"index.php\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
-		$DisplayTitleBar .=	 "<a href=\"dir.php\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
-		$DisplayTitleBar .=	 "<a href=\"history.php\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
-		$DisplayTitleBar .=	 "<a href=\"profile.php\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
+		$titleBar .= "&nbsp;&nbsp;";
+		$titleBar .=	 "<a href=\"index.php\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"dir.php\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"history.php\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"profile.php\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
 		// Does the user have messages?
 		$sql = "select count(*) from tf_messages where to_user='".$cfg['user']."' and IsNew=1";
 		$number_messages = $db->GetOne($sql);
@@ -893,34 +891,34 @@ function DisplayTitleBar($pageTitleText, $showButtons=true) {
 			// No messages
 			$message_image = "themes/".$cfg["theme"]."/images/messages_off.gif";
 		}
-		$DisplayTitleBar .=	 "<a href=\"readmsg.php\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
+		$titleBar .= "<a href=\"readmsg.php\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
 		if(IsAdmin())
-			$DisplayTitleBar .=	 "&nbsp;<a href=\"admin.php\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
-		$DisplayTitleBar .=	 "&nbsp;<a href=\"logout.php\"><img src=\"images/logout.gif\" width=13 height=12 title=\"Logout\" border=0></a>";
+			$titleBar .= "&nbsp;<a href=\"admin.php\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
+		$titleBar .= "&nbsp;<a href=\"logout.php\"><img src=\"images/logout.gif\" width=13 height=12 title=\"Logout\" border=0></a>";
 	}
-			$DisplayTitleBar .= '</td>';
-		$DisplayTitleBar .= '</tr>';
-		$DisplayTitleBar .= '</table>';
-return $DisplayTitleBar;
+	$titleBar .= '</td>';
+	$titleBar .= '</tr>';
+	$titleBar .= '</table>';
+	return $titleBar;
 }
 
 // ***************************************************************************
 // ***************************************************************************
-// Dipslay dropdown list to send message to a user
-function DisplayMessageList() {
+// get dropdown list to send message to a user
+function getMessageList() {
 	global $cfg;
 	$users = GetUsers();
-	$DisplayMessageList = '<div align="center">'.
+	$messageList = '<div align="center">'.
 	'<table border="0" cellpadding="0" cellspacing="0">'.
 	'<form name="formMessage" action="message.php" method="post">'.
 	'<tr><td>' . _SENDMESSAGETO ;
-	$DisplayMessageList .= '<select name="to_user">';
+	$messageList .= '<select name="to_user">';
 	for($inx = 0; $inx < sizeof($users); $inx++)
-		$DisplayMessageList .= '<option>'.$users[$inx].'</option>';
-	$DisplayMessageList .= '</select>';
-	$DisplayMessageList .= '<input type="Submit" value="' . _COMPOSE .'">';
-	$DisplayMessageList .= '</td></tr></form></table></div>';
-	return $DisplayMessageList;
+		$messageList .= '<option>'.$users[$inx].'</option>';
+	$messageList .= '</select>';
+	$messageList .= '<input type="Submit" value="' . _COMPOSE .'">';
+	$messageList .= '</td></tr></form></table></div>';
+	return $messageList;
 }
 
 // ***************************************************************************
@@ -1006,27 +1004,27 @@ function getDriveSpace($drive) {
 
 // ***************************************************************************
 // ***************************************************************************
-// Display the Drive Space Graphical Bar
-function displayDriveSpaceBar($drivespace) {
+// get the Drive Space Graphical Bar
+function getDriveSpaceBar($drivespace) {
 	global $cfg;
 	switch ($cfg['drivespacebar']) {
 		case "tf":
 			$freeSpace = "";
 			if ($drivespace > 20)
 				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
-			$displayDriveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			$displayDriveSpaceBar .= '<tr nowrap>';
-				$displayDriveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
-				$displayDriveSpaceBar .= '<td width="80%">';
-				   $displayDriveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-					$displayDriveSpaceBar .= '<tr>';
-						$displayDriveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$drivespace.'%"><div class="tinypercent" align="center">'.$drivespace.'%'.$freeSpace.'</div></td>';
-						$displayDriveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $drivespace).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
-					$displayDriveSpaceBar .= '</tr>';
-					$displayDriveSpaceBar .= '</table>';
-				$displayDriveSpaceBar .= '</td>';
-			$displayDriveSpaceBar .= '</tr>';
-			$displayDriveSpaceBar .= '</table>';
+			$driveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+			$driveSpaceBar .= '<tr nowrap>';
+				$driveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
+				$driveSpaceBar .= '<td width="80%">';
+				   $driveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+					$driveSpaceBar .= '<tr>';
+						$driveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$drivespace.'%"><div class="tinypercent" align="center">'.$drivespace.'%'.$freeSpace.'</div></td>';
+						$driveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $drivespace).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
+					$driveSpaceBar .= '</tr>';
+					$driveSpaceBar .= '</table>';
+				$driveSpaceBar .= '</td>';
+			$driveSpaceBar .= '</tr>';
+			$driveSpaceBar .= '</table>';
 			break;
 		case "xfer":
 			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
@@ -1035,40 +1033,40 @@ function displayDriveSpaceBar($drivespace) {
 			$bgcolor .= str_pad(dechex(256-256*($drivespace/100)),2,0,STR_PAD_LEFT);
 			$bgcolor .= str_pad(dechex(256*($drivespace/100)),2,0,STR_PAD_LEFT);
 			$bgcolor .= '00';
-			$displayDriveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			  $displayDriveSpaceBar .= '<tr nowrap>';
-				$displayDriveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
-				$displayDriveSpaceBar .= '<td width="92%">';
-				  $displayDriveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>';
-					$displayDriveSpaceBar .= '<td bgcolor="'.$bgcolor.'" width="'.$drivespace.'%">';
+			$driveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+			  $driveSpaceBar .= '<tr nowrap>';
+				$driveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
+				$driveSpaceBar .= '<td width="92%">';
+				  $driveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>';
+					$driveSpaceBar .= '<td bgcolor="'.$bgcolor.'" width="'.$drivespace.'%">';
 					if ($drivespace >= 50) {
-						$displayDriveSpaceBar .= '<div class="tinypercent" align="center"';
+						$driveSpaceBar .= '<div class="tinypercent" align="center"';
 						if ($drivespace == 100)
-							$displayDriveSpaceBar .= ' style="background:#ffffff;">';
+							$driveSpaceBar .= ' style="background:#ffffff;">';
 						else
-							$displayDriveSpaceBar .= '>';
-						$displayDriveSpaceBar .= $drivespace.'%'.$freeSpace;
-						$displayDriveSpaceBar .= '</div>';
+							$driveSpaceBar .= '>';
+						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
+						$driveSpaceBar .= '</div>';
 					}
-					$displayDriveSpaceBar .= '</td>';
-					$displayDriveSpaceBar .= '<td bgcolor="#000000" width="'.(100-$drivespace).'%">';
+					$driveSpaceBar .= '</td>';
+					$driveSpaceBar .= '<td bgcolor="#000000" width="'.(100-$drivespace).'%">';
 					if ($drivespace < 50) {
-						$displayDriveSpaceBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
+						$driveSpaceBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
 						if ($drivespace == 0)
-							$displayDriveSpaceBar .= '; background:#ffffff;">';
+							$driveSpaceBar .= '; background:#ffffff;">';
 						else
-							$displayDriveSpaceBar .= ';">';
-						$displayDriveSpaceBar .= $drivespace.'%'.$freeSpace;
-						$displayDriveSpaceBar .= '</div>';
+							$driveSpaceBar .= ';">';
+						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
+						$driveSpaceBar .= '</div>';
 					}
-					$displayDriveSpaceBar .= '</td>';
-				  $displayDriveSpaceBar .= '</tr></table>';
-				$displayDriveSpaceBar .= '</td>';
-			  $displayDriveSpaceBar .= '</tr>';
-			$displayDriveSpaceBar .= '</table>';
+					$driveSpaceBar .= '</td>';
+				  $driveSpaceBar .= '</tr></table>';
+				$driveSpaceBar .= '</td>';
+			  $driveSpaceBar .= '</tr>';
+			$driveSpaceBar .= '</table>';
 		break;
 	}
-	return $displayDriveSpaceBar;
+	return $driveSpaceBar;
 }
 
 // ***************************************************************************

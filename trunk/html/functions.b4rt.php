@@ -1118,24 +1118,24 @@ function getRunningTorrents($clientType = '') {
 /* ************************************************************************** */
 
 /**
- * prints superadmin-popup-link-html-snip.
+ * get superadmin-popup-link-html-snip.
  *
  */
-function printSuperAdminLink($param = "", $linkText = "") {
+function getSuperAdminLink($param = "", $linkText = "") {
 	global $cfg;
-	$printSuperAdminLink = '
+	$superAdminLink = '
 	<script language="JavaScript">
 	function SuperAdmin(name_file) {
 			window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width='.$cfg["ui_dim_superadmin_w"].',height='.$cfg["ui_dim_superadmin_h"].'")
 	}
 	</script>';
-	$printSuperAdminLink .= "<a href=\"JavaScript:SuperAdmin('superadmin.php".$param."')\">";
+	$superAdminLink .= "<a href=\"JavaScript:SuperAdmin('superadmin.php".$param."')\">";
 	if ((isset($linkText)) && ($linkText != ""))
-		$printSuperAdminLink .= $linkText;
+		$superAdminLink .= $linkText;
 	else
-		$printSuperAdminLink .= '<img src="images/arrow.gif" width="9" height="9" title="Version" border="0">';
-	$printSuperAdminLink .= '</a>';
-return $printSuperAdminLink;
+		$superAdminLink .= '<img src="images/arrow.gif" width="9" height="9" title="Version" border="0">';
+	$superAdminLink .= '</a>';
+	return $superAdminLink;
 }
 
 /* ************************************************************************** */
@@ -2516,21 +2516,22 @@ function getMoveSettingsForm() {
 }
 
 /**
- * print form of index-page-selection
+ * get form of index-page-selection
  *
  */
-function printIndexPageSelectForm() {
+function getIndexPageSelectForm() {
 	global $cfg;
-	echo '<select name="index_page">';
-	echo '<option value="tf"';
+	$retVal = '<select name="index_page">';
+	$retVal .= '<option value="tf"';
 	if ($cfg["index_page"] == "tf")
-		echo " selected";
-	echo '>tf</option>';
-	echo '<option value="b4rt"';
+		$retVal .= " selected";
+	$retVal .= '>tf</option>';
+	$retVal .= '<option value="b4rt"';
 	if ($cfg["index_page"] == "b4rt")
-		echo " selected";
-	echo '>b4rt</option>';
-	echo '</select>';
+		$retVal .= " selected";
+	$retVal .= '>b4rt</option>';
+	$retVal .= '</select>';
+	return $retVal;
 }
 
 /**
@@ -2561,21 +2562,22 @@ function getSortOrderSettingsForm() {
 }
 
 /**
- * print form of drivespacebar-selection
+ * get form of drivespacebar-selection
  *
  */
-function printDrivespacebarSelectForm() {
+function getDrivespacebarSelectForm() {
 	global $cfg;
-	echo '<select name="drivespacebar">';
-	echo '<option value="tf"';
+	$retVal = '<select name="drivespacebar">';
+	$retVal .= '<option value="tf"';
 	if ($cfg["drivespacebar"] == "tf")
-		echo " selected";
-	echo '>tf</option>';
-	echo '<option value="xfer"';
+		$retVal .=  " selected";
+	$retVal .= '>tf</option>';
+	$retVal .= '<option value="xfer"';
 	if ($cfg["drivespacebar"] == "xfer")
-		echo " selected";
-	echo '>xfer</option>';
-	echo '</select>';
+		$retVal .= " selected";
+	$retVal .= '>xfer</option>';
+	$retVal .= '</select>';
+	return $retVal;
 }
 
 ?>

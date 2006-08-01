@@ -32,9 +32,9 @@ $result = shell_exec("w");
 $result2 = shell_exec("free -mo");
 
 
-echo DisplayHead(_SERVERSTATS);
+echo getHead(_SERVERSTATS);
 echo "<table width=\"740\" border=0 cellpadding=0 cellspacing=0><tr><td>";
-echo displayDriveSpaceBar(getDriveSpace($cfg["path"]));
+echo getDriveSpaceBar(getDriveSpace($cfg["path"]));
 echo "</td></tr></table>";
 ?>
 
@@ -60,6 +60,6 @@ if (IsAdmin())
 
 echo "</div>";
 
-echo DisplayFoot();
+echo getFoot();
 
 ?>

@@ -25,9 +25,9 @@ if ((isset($shutdown)) && ($shutdown == "1")) {
 	}
 }
 // head
-echo DisplayHead("Administration - Queue Settings");
+echo getHead("Administration - Queue Settings");
 // Admin Menu
-echo displayMenu();
+echo getMenu();
 // message section
 $message = getRequestVar('m');
 if ((isset($message)) && ($message != "")) {
@@ -145,14 +145,14 @@ function isNumber(sText) {
 		  <strong>tfqmgr</strong>&nbsp;
 		  <?php
 			echo '(';
-			echo printSuperAdminLink('?q=1','log');
+			echo getSuperAdminLink('?q=1','log');
 			echo ' | ';
-			echo printSuperAdminLink('?q=2','ps');
+			echo getSuperAdminLink('?q=2','ps');
 			if ((isset($shutdown)) && ($shutdown == "1")) {
 			} else {
 				if ($queueManagerRunning && ($queueManager->managerName == "tfqmgr")) {
 					echo ' | ';
-					echo printSuperAdminLink('?q=3','status');
+					echo getSuperAdminLink('?q=3','status');
 				}
 			}
 			echo ' )';
@@ -381,5 +381,5 @@ if ($displayRunningTorrents) {
 	echo $output;
 	echo "</table>";
 }
-echo DisplayFoot(true,true);
+echo getFoot(true,true);
 ?>

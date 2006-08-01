@@ -1,8 +1,8 @@
 <?php
 /* $Id: admin_editRSS.php 102 2006-07-31 05:01:28Z msn_exploder $ */
-echo DisplayHead("Administration - RSS");
+echo getHead("Administration - RSS");
 // Admin Menu
-echo displayMenu();
+echo getMenu();
 echo "<div align=\"center\">";
 echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
 echo "<tr><td bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
@@ -25,5 +25,5 @@ foreach($arLinks as $link) {
 	echo "<a href=\"".$link."\" target=\"_blank\">".$link."</a></td></tr>\n";
 }
 echo "</table></div><br><br><br>";
-echo DisplayFoot(true,true);
+echo getFoot(true,true);
 ?>

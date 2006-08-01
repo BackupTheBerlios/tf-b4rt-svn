@@ -2,8 +2,8 @@
 /* $Id: admin_CreateUser.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 
 $tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_CreateUser.tmpl");
-$tmpl->setvar('DisplayHead', DisplayHead(_USERADMIN));
-$tmpl->setvar('displayMenu', displayMenu());
+$tmpl->setvar('head', getHead(_USERADMIN));
+$tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -20,8 +20,8 @@ $tmpl->setvar('_USERIDREQUIRED', _USERIDREQUIRED);
 $tmpl->setvar('_PASSWORDLENGTH', _PASSWORDLENGTH);
 $tmpl->setvar('_PASSWORDNOTMATCH', _PASSWORDNOTMATCH);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', _PLEASECHECKFOLLOWING);
-$tmpl->setvar('displayUserSection', displayUserSection());
-$tmpl->setvar('DisplayFoot', DisplayFoot(true,true));
+$tmpl->setvar('userSection', getUserSection());
+$tmpl->setvar('foot', getFoot(true,true));
 
 $tmpl->pparse();
 ?>

@@ -29,7 +29,7 @@
 include_once("config.php");
 include_once("functions.php");
 
-echo DisplayHead("View NFO");
+echo getHead("View NFO");
 
 $file = $_GET["path"];
 $folder = htmlspecialchars( substr( $file, 0, strrpos( $file, "/" ) ) );
@@ -51,5 +51,5 @@ if( ( $output = @file_get_contents( $cfg["path"] . $file ) ) === false )
 ?>
 </pre>
 <?php
-echo DisplayFoot();
+echo getFoot();
 ?>

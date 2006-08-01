@@ -24,7 +24,7 @@
 include("config.php");
 include("functions.php");
 
-echo DisplayHead('Uncompressing File', false);
+echo getHead('Uncompressing File', false);
 echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";
 
 if((isset($_GET['file'])) && ($_GET['file'] != "")) {
@@ -76,7 +76,7 @@ if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
     </td>
     </tr>
     </table>
-<?php echo DisplayTorrentFluxLink(); ?>
+<?php echo getTorrentFluxLink(); ?>
    </body>
   </html>
 </html>

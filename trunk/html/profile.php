@@ -44,7 +44,7 @@ switch ($op) {
 		if ($cfg["hide_offline"] == 1) {
 			$hideChecked = "checked";
 		}
-		$tmpl->setvar('DisplayHead', DisplayHead($cfg["user"]."'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"]."'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 		$tmpl->setvar('theme', $cfg["theme"]);
@@ -167,7 +167,7 @@ switch ($op) {
 		$tmpl->setvar('_PASSWORDLENGTH', _PASSWORDLENGTH);
 		$tmpl->setvar('_PASSWORDNOTMATCH', _PASSWORDNOTMATCH);
 		$tmpl->setvar('_PLEASECHECKFOLLOWING', _PLEASECHECKFOLLOWING);
-		$tmpl->setvar('DisplayFoot', DisplayFoot());
+		$tmpl->setvar('foot', getFoot());
 	break;
 
 //******************************************************************************
@@ -189,14 +189,14 @@ switch ($op) {
 
 		UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);
 
-		$tmpl->setvar('DisplayHead', DisplayHead($cfg["user"]."'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"]."'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('user', $cfg["user"]);
 		$tmpl->setvar('_PROFILE', _PROFILE);
 		$tmpl->setvar('_PROFILEUPDATEDFOR', _PROFILEUPDATEDFOR);
-		$tmpl->setvar('DisplayFoot', DisplayFoot());
+		$tmpl->setvar('foot', getFoot());
 	break;
 
 //******************************************************************************
@@ -207,7 +207,7 @@ switch ($op) {
 		global $cfg, $db;
 		$tmpl->setvar('ShowCookies', 1);
 
-		$tmpl->setvar('DisplayHead', DisplayHead($cfg["user"] . "'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
 
 		$cid = @ $_GET["cid"]; // Cookie ID
 
@@ -258,7 +258,7 @@ switch ($op) {
 			$tmpl->setloop('cookie_data', $cookie_data);
 			}
 		}
-		$tmpl->setvar('DisplayFoot', DisplayFoot());
+		$tmpl->setvar('foot', getFoot());
 	break;
 
 //******************************************************************************

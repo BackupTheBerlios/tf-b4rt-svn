@@ -102,8 +102,8 @@ if (!empty($mid)) {
 } // end the else
 
 # a page is nothing without vars
-$tmpl->setvar('DisplayHead', DisplayHead(_MESSAGES));
-$tmpl->setvar('DisplayFoot', DisplayFoot());
+$tmpl->setvar('head', getHead(_MESSAGES));
+$tmpl->setvar('foot', getFoot());
 $tmpl->setvar('_RETURNTOMESSAGES', _RETURNTOMESSAGES);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -117,7 +117,7 @@ $tmpl->setvar('date1', date(_DATETIMEFORMAT, $time));
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('_MESSAGE', _MESSAGE);
 $tmpl->setvar('message', $message);
-$tmpl->setvar('DisplayMessageList', DisplayMessageList());
+$tmpl->setvar('messageList', getMessageList());
 $tmpl->setvar('_ADMIN', _ADMIN);
 
 # lets parse the hole thing

@@ -3,9 +3,9 @@
 // load global settings + overwrite per-user settings
 loadSettings();
 // display
-echo DisplayHead("Administration - UI Settings");
+echo getHead("Administration - UI Settings");
 // Admin Menu
-echo displayMenu();
+echo getMenu();
 // Main Settings Section
 ?>
 <div align="center">
@@ -24,7 +24,7 @@ echo displayMenu();
 		Select the index-Page.
 		</td>
 		<td valign="top">
-			<?php printIndexPageSelectForm(); ?>
+			<?php echo getIndexPageSelectForm(); ?>
 		</td>
 	</tr>
 
@@ -78,7 +78,7 @@ echo displayMenu();
 		Select Style of Drivespace-Bar on index-Page.
 		</td>
 		<td valign="top">
-			<?php printDrivespacebarSelectForm(); ?>
+			<?php echo getDrivespacebarSelectForm(); ?>
 		</td>
 	</tr>
 	<tr>
@@ -259,5 +259,5 @@ echo displayMenu();
 </td></tr>
 </table></div>
 <?php
-echo DisplayFoot(true,true);
+echo getFoot(true,true);
 ?>

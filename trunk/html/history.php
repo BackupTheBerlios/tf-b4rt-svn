@@ -99,8 +99,8 @@ elseif ((!empty($morelink)) && (empty($prevlink)))
 	$tmpl->setvar('empty', 3);
 
 # define some things
-$tmpl->setvar('DisplayHead', DisplayHead(_UPLOADHISTORY));
-$tmpl->setvar('DisplayFoot', DisplayFoot());
+$tmpl->setvar('head', getHead(_UPLOADHISTORY));
+$tmpl->setvar('foot', getFoot());
 $tmpl->setvar('_SHOWPREVIOUS', _SHOWPREVIOUS);
 $tmpl->setvar('_SHOWMORE', _SHOWMORE);
 $tmpl->setvar('prev', $prev);

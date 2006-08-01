@@ -57,7 +57,7 @@ if (!empty($message)) {
         $message = ">".str_replace("\n", "\n>", $message);
         $message = "\n\n\n".$message;
     }
-    echo DisplayHead(_SENDMESSAGETITLE);
+    echo getHead(_SENDMESSAGETITLE);
 ?>
 
 <form name="theForm" method="post" action="message.php">
@@ -103,7 +103,7 @@ if (!empty($message)) {
 
 <?php
 
-    echo DisplayFoot();
+    echo getFoot();
 
 } // end the else
 

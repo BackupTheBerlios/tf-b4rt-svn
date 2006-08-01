@@ -115,7 +115,7 @@ if(strlen($torrentLabel) >= 39)
 
 $hd = getStatusImage($af);
 
-echo DisplayHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% ");
+echo getHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% ");
 
 ?>
     <div align="center">
@@ -219,6 +219,6 @@ echo DisplayHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% ");
 </td></tr></table>
 <?php
 
-echo DisplayFoot(false);
+echo getFoot(false);
 
 ?>

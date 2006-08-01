@@ -24,7 +24,7 @@
 include("config.php");
 include("functions.php");
 
-echo DisplayHead(_MOVE_FILE_TITLE, false);
+echo getHead(_MOVE_FILE_TITLE, false);
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 ?>
@@ -107,7 +107,7 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
     </td>
     </tr>
     </table>
-<?php echo DisplayTorrentFluxLink(); ?>
+<?php echo getTorrentFluxLink(); ?>
    </body>
   </html>
 </html>

@@ -265,28 +265,21 @@ function displayXferList()
 }
 
 // Link Mod
-function getLinkSortOrder($lid)
-{
+function getLinkSortOrder($lid) {
     global $db;
-
     // Get Current sort order index of link with this link id:
     $sql="SELECT sort_order FROM tf_links WHERE lid=$lid";
     $rtnValue=$db->GetOne($sql);
     showError($db,$sql);
-
     return $rtnValue;
 }
 
 //*********************************************************
-function getSite($lid)
-{
+function getSite($lid) {
     global $cfg, $db;
-
     $rtnValue = "";
-
     $sql = "SELECT sitename FROM tf_links WHERE lid=".$lid;
     $rtnValue = $db->GetOne($sql);
-
     return $rtnValue;
 }
 // Link Mod
@@ -296,8 +289,7 @@ function getSite($lid)
 // correctFileName()
 // Adds backslashes above special characters to obtain attainable directory
 // names for disk usage
-function correctFileName ($inName)
-{
+function correctFileName ($inName) {
        $replaceItems = array("'", ",", "#", "%", "!", "+", ":", "/", " ", "@", "$", "&", "?", "\"", "(", ")");
        $replacedItems = array("\'", "\,", "\#", "\%", "\!", "\+", "\:", "\/", "\ ", "\@", "\$", "\&", "\?", "\\\"", "\(", "\)");
        $cleanName = str_replace($replaceItems, $replacedItems, $inName);
