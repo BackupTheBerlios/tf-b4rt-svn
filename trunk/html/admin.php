@@ -35,9 +35,9 @@ if(!IsAdmin()) {
 }
 
 //****************************************************************************
-// displayMenu -- displays Admin Menu
+// getMenu -- displays Admin Menu
 //****************************************************************************
-function displayMenu() {
+function getMenu() {
 	global $cfg;
 	$displayMenu = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
 	$displayMenu .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
@@ -61,7 +61,7 @@ function displayMenu() {
 //****************************************************************************
 // displayUserSection -- displays the user section
 //****************************************************************************
-function displayUserSection() {
+function getUserSection() {
 	global $cfg, $db;
 	$displayUserSection = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
 	$displayUserSection .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><img src=\"images/user_group.gif\" width=17 height=14 border=0>&nbsp;&nbsp;<font class=\"title\">"._USERDETAILS."</font></div></td></tr>";
@@ -143,9 +143,9 @@ function displayUserSection() {
 return $displayUserSection;
 }
 //****************************************************************************
-// displayActivity -- displays Activity
+// getActivity -- displays Activity
 //****************************************************************************
-function displayActivity($min=0, $user="", $srchFile="", $srchAction="") {
+function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	global $cfg, $db;
 	$sqlForSearch = "";
 	$userdisplay = $user;
@@ -329,7 +329,7 @@ switch ($op) {
 	//XFER
 	case "xfer":
 		echo DisplayHead(_XFER);
-		displayMenu();
+		echo getMenu();
 		if ($cfg['enable_xfer'] == 1) {
 			getDirList($cfg["torrent_file_path"],0);
 			displayXfer();

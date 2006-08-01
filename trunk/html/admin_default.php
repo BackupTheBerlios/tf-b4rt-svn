@@ -3,9 +3,9 @@
 $tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_default.tmpl");
 
 $tmpl->setvar('DisplayHead', DisplayHead(_ADMINISTRATION));
-$tmpl->setvar('displayMenu', displayMenu());
-$tmpl->setvar('displayUserSection', displayUserSection());
-$tmpl->setvar('displayActivity', displayActivity($min));
+$tmpl->setvar('getMenu', getMenu());
+$tmpl->setvar('getUserSection', getUserSection());
+$tmpl->setvar('getActivity', getActivity($min));
 $tmpl->setvar('DisplayFoot', DisplayFoot(true,true));
 
 $tmpl->pparse();
