@@ -41,19 +41,17 @@ function getMenu() {
 	global $cfg;
 	$menu = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
 	$menu .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
-	$menu .= "<a href=\"admin.php\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
+	$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>');
+	$menu .= " | <a href=\"admin.php\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	$menu .= "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
 	$menu .= "<a href=\"admin.php?op=CreateUser\"><font class=\"adminlink\">"._NEWUSER_MENU."</font></a> | ";
-	//XFER
-	if ($cfg['enable_xfer'] == 1) $menu .= "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=backupDatabase\"><font class=\"adminlink\">"._BACKUP_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
-	$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>');
+	if ($cfg['enable_xfer'] == 1) $menu .= "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a>";
 	$menu .= "</div></td></tr>";
 	$menu .= "</table><br>";
 	return $menu;
