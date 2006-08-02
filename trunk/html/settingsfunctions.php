@@ -50,7 +50,7 @@ function AuditAction($action, $file="") {
 	if (isset($_SERVER['HTTP_USER_AGENT']))
 	   $user_agent = $_SERVER['HTTP_USER_AGENT'];
 	if ((! isset($user_agent)) || ($user_agent == ""))
-			$user_agent = "fluxcli.php/0.1";
+			$user_agent = "fluxcli.php/unknown";
 	if ((! isset($action)) || ($action == ""))
 			$action = "unset";
     $rec = array(
