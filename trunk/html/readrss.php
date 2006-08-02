@@ -146,12 +146,16 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 		);
 	}
 }
-$tmpl->setloop('news_list', $news_list);
+if (isset($news_list))
+	$tmpl->setloop('news_list', $news_list);
 $tmpl->setvar('foot', getFoot());
+if (isset($rid))
+	$tmpl->setvar('rid', $rid);
+if (isset($pageUrl))
+	$tmpl->setvar('pageUrl', $pageUrl);
+if (isset($title))
+	$tmpl->setvar('title', $title);
 
-$tmpl->setvar('rid', $rid);
-$tmpl->setvar('pageUrl', $pageUrl);
-$tmpl->setvar('title', $title);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
