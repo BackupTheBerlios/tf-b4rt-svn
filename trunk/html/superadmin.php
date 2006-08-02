@@ -23,6 +23,7 @@
 // defines
 define('_DIR_BACKUP','.backup');
 define('_URL_HOME','http://tf-b4rt.berlios.de/');
+define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
 define('_VERSION_LOCAL','version');
 define('_VERSION_REMOTE','version.txt');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
@@ -803,11 +804,14 @@ function buildPage($action) {
     					$htmlMain .= '<br><br>';
     					$htmlMain .= '<strong><font color="red">There is a new Version available !</font></strong>';
     					$htmlMain .= '<br><br>';
+    					$htmlMain .= '<strong>Current Release : </strong>';
+    					$htmlMain .= '<br>';
+    					$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
+    					$htmlMain .= '<br><br>';
     					$htmlMain .= '<strong>Homepage : </strong>';
     					$htmlMain .= '<br>';
-    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
-    					//$htmlMain .= '<br><br>';
-    					//$htmlMain .= getReleaseList();
+    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+    					$htmlMain .= '<br>';
     				} else {
     					$htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
     					$htmlMain .= '<br><br>';
@@ -824,9 +828,13 @@ function buildPage($action) {
 				$htmlMain = '<br>';
 				$htmlMain .= '<font color="red">Error getting available version.</font>';
 				$htmlMain .= '<br><br>';
+    			$htmlMain .= '<strong>Current Release : </strong>';
+    			$htmlMain .= '<br>';
+    			$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
+				$htmlMain .= '<br><br>';
 				$htmlMain .= '<strong>Homepage : </strong>';
 				$htmlMain .= '<br>';
-				$htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
+				$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
 				$htmlMain .= '<br>';
 			}
 		break;
@@ -872,13 +880,18 @@ function buildPage($action) {
 					$htmlMain .= '<input type="Hidden" name="u" value="0">';
 					$htmlMain .= '<input type="submit" value="Update to Version '.$versionAvailable.'">';
 					$htmlMain .= '</form><p>';
+				} else {
+					$htmlMain .= '<p><font color="blue">No Update available.</font></p>';
 				}
 			}
-			$htmlMain .= '<strong>Homepage : </strong>';
+    		$htmlMain .= '<strong>Current Release : </strong>';
+    		$htmlMain .= '<br>';
+    		$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
+			$htmlMain .= '<br><br>';
+    		$htmlMain .= '<strong>Homepage : </strong>';
 			$htmlMain .= '<br>';
 			$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
-			//$htmlMain .= '<br><br>';
-			//$htmlMain .= getReleaseList();
+			$htmlMain .= '<br>';
 		break;
 		case "5": // news
 			$htmlTitle = "News";
