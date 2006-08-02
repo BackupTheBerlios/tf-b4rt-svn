@@ -47,8 +47,6 @@ require_once('config.db.php');
 // ***************************************************************************
 // ***************************************************************************
 
-$cfg["pagetitle"] = "torrentflux-b4rt";
-
 // CONSTANTS
 $cfg["constants"] = array();
 $cfg["constants"]["url_upload"] = "URL Upload";

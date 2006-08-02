@@ -33,6 +33,7 @@ CREATE TABLE tf_trprofiles (
 INSERT INTO tf_settings VALUES ('tfqmgr_loglevel','0');
 INSERT INTO tf_settings VALUES ('Qmgr_loglevel','0');
 INSERT INTO tf_settings VALUES ('downloadhosts','0');
+INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 
 --
 -- commit

@@ -233,8 +233,17 @@ echo getMenu();
 	<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Misc</strong></td></tr>
 
 	<tr>
-		<td align="left" width="350" valign="top"><strong>Display TorrentFlux Link</strong><br>
-		Display TorrentFlux Link at bottom of pages. (true):
+		<td align="left" width="350" valign="top"><strong>Page-Title</strong><br>
+		Specify the Page-Title. :
+		</td>
+		<td valign="bottom">
+			<input name="pagetitle" type="Text" maxlength="64" value="<?php echo($cfg["pagetitle"]); ?>" size="30">
+		</td>
+	</tr>
+
+	<tr>
+		<td align="left" width="350" valign="top"><strong>Display Bottom-Link</strong><br>
+		Display Link at bottom of pages. (true):
 		</td>
 		<td valign="bottom">
 			<select name="ui_displayfluxlink">
