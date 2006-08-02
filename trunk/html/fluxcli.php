@@ -125,7 +125,7 @@ if ((isset($action)) && ($action != "")) {
 			cliXferShutdown(@$argv[2]);
 		break;
 		case "repair":
-		    echo "Repairing TorrentFlux-Installation...";
+		    echo "Repairing torrentflux-b4rt Installation...";
 			repairTorrentflux();
         	echo "done\n";
         	exit;

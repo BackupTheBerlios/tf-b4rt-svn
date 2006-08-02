@@ -559,7 +559,7 @@ if (isset($_REQUEST["m"])) {
 			case "3": // Maintenance : repair
 				$htmlTitle = "Maintenance-repair";
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Repairing TorrentFlux-Installation...';
+				$htmlMain .= 'Repairing torrentflux-b4rt Installation...';
 				repairTorrentflux();
 				$htmlMain .= ' <font color="green">done.</font>';
 			break;
@@ -931,7 +931,7 @@ function printPageStart($echoMode = 0) {
 	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
 	doEcho('<HTML>',$echoMode);
 	doEcho('<HEAD>',$echoMode);
-	doEcho('<TITLE>TorrentFlux - SuperAdmin</TITLE>',$echoMode);
+	doEcho('<TITLE>torrentflux-b4rt - SuperAdmin</TITLE>',$echoMode);
 	doEcho('<link rel="icon" href="images/favicon.ico" type="image/x-icon" />',$echoMode);
 	doEcho('<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />',$echoMode);
 	doEcho('<LINK REL="StyleSheet" HREF="themes/'.$cfg["theme"].'/style.css" TYPE="text/css">',$echoMode);
@@ -1074,7 +1074,7 @@ function getDataFromFile($file) {
  */
 function getDataFromUrl($url) {
 	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", "TorrentFlux/". _VERSION_THIS);
+	ini_set("user_agent", "torrentflux-b4rt/". _VERSION_THIS);
 	if($fileHandle = @fopen($url,'r')) {
 		$data = null;
 		while (!@feof($fileHandle))

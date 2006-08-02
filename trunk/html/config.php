@@ -47,7 +47,7 @@ require_once('config.db.php');
 // ***************************************************************************
 // ***************************************************************************
 
-$cfg["pagetitle"] = "TorrentFlux";
+$cfg["pagetitle"] = "torrentflux-b4rt";
 
 // CONSTANTS
 $cfg["constants"] = array();
@@ -123,7 +123,7 @@ define('_REN_ERROR', 'An error accured, please try again!');
 define('_REN_ERR_ARG', 'Wrong argument supplied!');
 define('_REN_TITLE', 'Rename Folder');
 
-// TorrentFlux Version
+// torrentflux-b4rt Version
 $cfg["version"] = getLocalVersion();
 
 // string-constants
@@ -138,7 +138,7 @@ define('_ID_MRTG','Graph');
 define('_URL_DEREFERRER','dereferrer.php?u=');
 
 // auth-constants
-define('_AUTH_BASIC_REALM','TorrentFlux');
+define('_AUTH_BASIC_REALM','torrentflux-b4rt');
 
 // public stats (xml|rss)
 define('_PUBLIC_STATS',0);
