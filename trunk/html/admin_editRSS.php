@@ -1,29 +1,32 @@
 <?php
 /* $Id: admin_editRSS.php 102 2006-07-31 05:01:28Z msn_exploder $ */
-echo getHead("Administration - RSS");
-// Admin Menu
-echo getMenu();
-echo "<div align=\"center\">";
-echo "<table border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
-echo "<tr><td bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
-echo "<img src=\"images/properties.png\" width=18 height=13 border=0>&nbsp;&nbsp;<font class=\"title\">RSS Feeds</font>";
-echo "</td></tr><tr><td align=\"center\">";
-?>
-<form action="admin.php?op=addRSS" method="post">
-<?php echo _FULLURLLINK ?>:
-<input type="Text" size="50" maxlength="255" name="newRSS">
-<input type="Submit" value="<?php echo _UPDATE ?>"><br>
-</form>
-<?php
-echo "</td></tr>";
+
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_editRSS.tmpl");
+$tmpl->setvar('head', getHead("Administration - RSS"));
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('_FULLURLLINK', _FULLURLLINK);
+$tmpl->setvar('_UPDATE', _UPDATE);
+$tmpl->setvar('_DELETE', _DELETE);
+
 $arLinks = GetRSSLinks();
 $arRid = Array_Keys($arLinks);
 $inx = 0;
+$link_rss = array();
 foreach($arLinks as $link) {
 	$rid = $arRid[$inx++];
-	echo "<tr><td><a href=\"admin.php?op=deleteRSS&rid=".$rid."\"><img src=\"images/delete_on.gif\" width=16 height=16 border=0 title=\""._DELETE." ".$rid."\" align=\"absmiddle\"></a>&nbsp;";
-	echo "<a href=\"".$link."\" target=\"_blank\">".$link."</a></td></tr>\n";
+	array_push($link_rss, array(
+		'true' => true,
+		'rid' => $rid,
+		'link' => $link,
+		)
+	);
 }
-echo "</table></div><br><br><br>";
-echo getFoot(true,true);
+$tmpl->setloop('link_rss', $link_rss);
+$tmpl->setvar('foot', getFoot(true,true));
+
+$tmpl->pparse();
 ?>
