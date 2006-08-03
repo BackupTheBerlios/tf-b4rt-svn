@@ -24,7 +24,7 @@
 define('_DIR_BACKUP','.backup');
 define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
-define('_VERSION_LOCAL','version');
+define('_VERSION_LOCAL','.version');
 define('_VERSION_REMOTE','version.txt');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','superadminProxy.php');

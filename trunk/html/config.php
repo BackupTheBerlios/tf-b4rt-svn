@@ -148,7 +148,7 @@ define('_PUBLIC_STATS',0);
  */
 function getLocalVersion() {
     $data = "";
-    if($fileHandle = @fopen('version','r')) {
+    if($fileHandle = @fopen('.version','r')) {
         while (!@feof($fileHandle))
             $data .= @fgets($fileHandle, 4096);
         @fclose ($fileHandle);
