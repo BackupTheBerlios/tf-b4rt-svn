@@ -627,7 +627,7 @@ function isTorrentRunning($torrent) {
  * @param $torrent name of the torrent
  * @return btclient
  */
-function getTorrentClient($torrent) {
+function getTransferClient($torrent) {
   //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
   //  return 0;
   global $db;
@@ -684,56 +684,30 @@ function getTorrentHash($torrent) {
 /* ************************************************************************** */
 
 /**
- * updates totals of a torrent
+ * updates totals of a transfer
  *
- * @param $torrent name of the torrent
- * @param $uptotal uptotal of the torrent
- * @param $downtotal downtotal of the torrent
+ * @param $transfer name of the transfer
+ * @param $uptotal uptotal of the transfer
+ * @param $downtotal downtotal of the transfer
  */
-function updateTorrentTotals($torrent) {
+function updateTransferTotals($transfer) {
 	global $cfg, $db;
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	  return;
-	/*
-	$torrentId = getTorrentHash($torrent);
-	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
-	$result = $db->Execute($sql);
-		showError($db, $sql);
-	$row = $result->FetchRow();
-	if (!empty($row)) {
-		$currentUp			 = $row["uptotal"];
-		$currentDown		 = $row["downtotal"];
-		$upSum = $currentUp + $uptotal;
-		$downSum = $currentDown + $downtotal;
-		$sql = "UPDATE tf_torrent_totals SET uptotal = '".($upSum+0)."', downtotal = '".($downSum+0)."' WHERE tid = '".$torrentId."'";
-		$db->Execute($sql);
-	} else {
-		$sql = "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal )
-					VALUES (
-					'".$torrentId."',
-					'".$uptotal."',
-					'".$downtotal."'
-				   )";
-		$db->Execute($sql);
-	}
-	showError($db, $sql);
-	*/
-	$torrentId = getTorrentHash($torrent);
-	$torrentTotals = getTorrentTotals($torrent);
+	$torrentId = getTorrentHash($transfer);
+	$transferTotals = getTransferTotals($transfer);
 	// very ugly exists check... too lazy now
 	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
 	$result = $db->Execute($sql);
 		showError($db, $sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
-		$sql = "UPDATE tf_torrent_totals SET uptotal = '".($torrentTotals["uptotal"]+0)."', downtotal = '".($torrentTotals["downtotal"]+0)."' WHERE tid = '".$torrentId."'";
+		$sql = "UPDATE tf_torrent_totals SET uptotal = '".($transferTotals["uptotal"]+0)."', downtotal = '".($transferTotals["downtotal"]+0)."' WHERE tid = '".$torrentId."'";
 		$db->Execute($sql);
 	} else {
 		$sql = "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal )
 					VALUES (
 					'".$torrentId."',
-					'".($torrentTotals["uptotal"]+0)."',
-					'".($torrentTotals["downtotal"]+0)."'
+					'".($transferTotals["uptotal"]+0)."',
+					'".($transferTotals["downtotal"]+0)."'
 				   )";
 		$db->Execute($sql);
 	}
@@ -741,87 +715,69 @@ function updateTorrentTotals($torrent) {
 }
 
 /**
- * gets totals of a torrent
+ * gets totals of a transfer
  *
- * @param $torrent name of the torrent
- * @return array with torrent-totals
+ * @param $transfer name of the transfer
+ * @return array with transfer-totals
  */
-function getTorrentTotals($torrent) {
+function getTransferTotals($transfer) {
 	global $cfg, $db;
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	  return;
-	/*
-	$torrentId = getTorrentHash($torrent);
-	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
-	$result = $db->Execute($sql);
-		showError($db, $sql);
-	$row = $result->FetchRow();
-	$retVal = array();
-	if (!empty($row)) {
-		$retVal["uptotal"] = $row["uptotal"];
-		$retVal["downtotal"] = $row["downtotal"];
-	} else {
-		$retVal["uptotal"] = 0;
-		$retVal["downtotal"] = 0;
-	}
-	return $retVal;
-	*/
-	$btclient = getTorrentClient($torrent);
+	$btclient = getTransferClient($transfer);
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTorrentTransferTotal(&$db,$torrent);
+	return $clientHandler->getTransferTotal(&$db,$transfer);
 }
 
 /**
- * gets totals of a torrent
+ * gets totals of a transfer
  *
- * @param $torrent name of the torrent
- * @param $btclient client of the torrent
- * @param $afu alias-file-uptotal of the torrent
- * @param $afd alias-file-downtotal of the torrent
- * @return array with torrent-totals
+ * @param $transfer name of the transfer
+ * @param $btclient client of the transfer
+ * @param $afu alias-file-uptotal of the transfer
+ * @param $afd alias-file-downtotal of the transfer
+ * @return array with transfer-totals
  */
-function getTorrentTotalsOP($torrent,$btclient,$afu,$afd) {
+function getTransferTotalsOP($transfer,$btclient,$afu,$afd) {
 	global $cfg;
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTorrentTransferTotalOP($torrent,$afu,$afd);
+	return $clientHandler->getTransferTotalOP($transfer,$afu,$afd);
 }
 
 /**
- * gets current totals of a torrent
+ * gets current totals of a transfer
  *
- * @param $torrent name of the torrent
- * @return array with torrent-totals
+ * @param $transfer name of the transfer
+ * @return array with transfer-totals
  */
-function getTorrentTotalsCurrent($torrent) {
+function getTransferTotalsCurrent($transfer) {
 	global $cfg, $db;
-	$btclient = getTorrentClient($torrent);
+	$btclient = getTransferClient($transfer);
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTorrentTransferCurrent(&$db,$torrent);
+	return $clientHandler->getTransferCurrent(&$db,$transfer);
 }
 
 /**
- * gets current totals of a torrent
+ * gets current totals of a transfer
  *
- * @param $torrent name of the torrent
- * @param $btclient client of the torrent
- * @param $afu alias-file-uptotal of the torrent
- * @param $afd alias-file-downtotal of the torrent
- * @return array with torrent-totals
+ * @param $transfer name of the transfer
+ * @param $btclient client of the transfer
+ * @param $afu alias-file-uptotal of the transfer
+ * @param $afd alias-file-downtotal of the transfer
+ * @return array with transfer-totals
  */
-function getTorrentTotalsCurrentOP($torrent,$btclient,$afu,$afd) {
+function getTransferTotalsCurrentOP($transfer,$btclient,$afu,$afd) {
 	global $cfg;
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTorrentTransferCurrentOP($torrent,$afu,$afd);
+	return $clientHandler->getTransferCurrentOP($transfer,$afu,$afd);
 }
 
 /**
  * resets totals of a torrent
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @param $delete boolean if to delete torrent-file
  * @return boolean of success
  */
@@ -875,16 +831,16 @@ function deleteTorrent($torrent,$alias_file) {
 		//$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, 0, $cfg);
 		if ((substr( strtolower($torrent),-8 ) == ".torrent")) {
 			// this is a torrent-client
-			$btclient = getTorrentClient($delfile);
+			$btclient = getTransferClient($delfile);
 			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $torrentowner, $cfg, $btclient);
 			// update totals for this torrent
-			updateTorrentTotals($delfile);
+			updateTransferTotals($delfile);
 			// remove torrent-settings from db
 			deleteTorrentSettings($delfile);
 			// client-proprietary leftovers
 			include_once("ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->deleteTorrentCache($torrent);
+			$clientHandler->deleteCache($torrent);
 		} else if ((substr( strtolower($torrent),-4 ) == ".url")) {
 			// this is wget. use tornado statfile
 			$alias_file = str_replace(".url", "", $alias_file);
@@ -894,7 +850,7 @@ function deleteTorrent($torrent,$alias_file) {
 			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
 		}
 		//XFER: before torrent deletion save upload/download xfer data to SQL
-		$torrentTotals = getTorrentTotalsCurrent($delfile);
+		$torrentTotals = getTransferTotals($delfile);
 		saveXfer($torrentowner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
 		// torrent+stat
 		@unlink($cfg["torrent_file_path"].$delfile);
@@ -1052,11 +1008,11 @@ function RunningProcessInfo() {
 }
 
 /**
- * getRunningTorrentCount
+ * getRunningTransferCount
  *
- * @return int with number of running torrents
+ * @return int with number of running transfers
  */
-function getRunningTorrentCount() {
+function getRunningTransferCount() {
 	global $cfg;
 	/*
 	include_once("ClientHandler.php");
@@ -1086,12 +1042,12 @@ function getRunningTorrentCount() {
 }
 
 /**
- * getRunningTorrents
+ * getRunningTransfers
  *
  * @param $clientType
  * @return array
  */
-function getRunningTorrents($clientType = '') {
+function getRunningTransfers($clientType = '') {
 	global $cfg;
 	include_once("ClientHandler.php");
 	// get only torrents of a particular client
@@ -1374,7 +1330,7 @@ function indexStartTorrent($torrent,$interactive) {
 	switch ($interactive) {
 		case 0:
 			include_once("ClientHandler.php");
-			$btclient = getTorrentClient($torrent);
+			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->startTorrentClient($torrent, 0);
 			// just 2 sec..
@@ -1658,7 +1614,7 @@ function getTransferList() {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
-			$btclient = getTorrentClient($entry);
+			$btclient = getTransferClient($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
 			// this is wget. use tornado statfile
@@ -1682,7 +1638,7 @@ function getTransferList() {
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
 			if (($btclient) != "wget") {
-				$torrentTotalsCurrent = getTorrentTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
+				$torrentTotalsCurrent = getTransferTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
 			} else {
 				$torrentTotalsCurrent["uptotal"] = $af->uptotal;
 				$torrentTotalsCurrent["downtotal"] = $af->downtotal;
@@ -1781,7 +1737,7 @@ function getTransferList() {
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
 			if (($btclient) != "wget") {
-				$torrentTotals = getTorrentTotalsOP($entry,$btclient,$af->uptotal,$af->downtotal);
+				$torrentTotals = getTransferTotalsOP($entry,$btclient,$af->uptotal,$af->downtotal);
 			} else {
 				$torrentTotals["uptotal"] = $af->uptotal;
 				$torrentTotals["downtotal"] = $af->downtotal;
@@ -2193,7 +2149,7 @@ function repairTorrentflux() {
 	foreach ($torrents as $torrent) {
 		$alias = getAliasName($torrent);
 		$owner = getOwner($torrent);
-		$btclient = getTorrentClient($torrent);
+		$btclient = getTransferClient($torrent);
 		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $owner, $cfg, $btclient);
 		if (isset($af)) {
 			$af->running = 0;

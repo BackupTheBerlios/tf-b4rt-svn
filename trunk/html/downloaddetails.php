@@ -48,8 +48,8 @@ if (!empty($alias)) {
 loadTorrentSettingsToConfig($torrent);
 
 // TOTALS =======================================================================================================================
-$torrentTotals = getTorrentTotals($torrent);
-$torrentTotalsCurrent = getTorrentTotalsCurrent($torrent);
+$torrentTotals = getTransferTotals($torrent);
+$torrentTotalsCurrent = getTransferTotalsCurrent($torrent);
 $upTotalCurrent = ($torrentTotalsCurrent["uptotal"]+0);
 $downTotalCurrent = ($torrentTotalsCurrent["downtotal"]+0);
 $upTotal =($torrentTotals["uptotal"]+0);

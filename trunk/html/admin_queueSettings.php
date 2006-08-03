@@ -91,24 +91,17 @@ $tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
 $tmpl->setvar('formattedQueueList', $queueManager->formattedQueueList());
 $tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",_FORCESTOP));
 
-$displayQueue = True;
-$displayRunningTorrents = True;
-// Its a timming thing.
-if ($displayRunningTorrents) {
-	// get Running Torrents.
-	$runningTorrents = getRunningTorrents();
-}
 // really messy
 $output = "";
 // get running tornado torrents and List them out.
-$runningTorrents = getRunningTorrents("tornado");
-foreach ($runningTorrents as $key => $value) {
+$running = getRunningTransfers("tornado");
+foreach ($running as $key => $value) {
 	$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg,"tornado");
 	$output .= $rt->BuildAdminOutput();
 }
 // get running transmission torrents and List them out.
-$runningTorrents = getRunningTorrents("transmission");
-foreach ($runningTorrents as $key => $value) {
+$running = getRunningTransfers("transmission");
+foreach ($running as $key => $value) {
 	$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg,"transmission");
 	$output .= $rt->BuildAdminOutput();
 }

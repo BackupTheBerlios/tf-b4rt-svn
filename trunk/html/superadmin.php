@@ -589,7 +589,7 @@ if (isset($_REQUEST["t"])) {
 					$torrentRunningFlag = isTorrentRunning($torrent);
 					if ($torrentRunningFlag != 0) {
 						$alias = getAliasName($torrent).".stat";
-						$btclient = getTorrentClient($torrent);
+						$btclient = getTransferClient($torrent);
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 						$clientHandler->stopTorrentClient($torrent, $alias);
 						$htmlMain .=  ' - '.$torrent."";
@@ -610,7 +610,7 @@ if (isset($_REQUEST["t"])) {
 				foreach ($torrents as $torrent) {
 					$torrentRunningFlag = isTorrentRunning($torrent);
 					if ($torrentRunningFlag == 0) {
-						$btclient = getTorrentClient($torrent);
+						$btclient = getTransferClient($torrent);
 						if ($cfg["enable_file_priority"]) {
 							include_once("setpriority.php");
 							// Process setPriority Request.
@@ -636,7 +636,7 @@ if (isset($_REQUEST["t"])) {
 				foreach ($torrents as $torrent) {
 					$torrentRunningFlag = isTorrentRunning($torrent);
 					if ($torrentRunningFlag == 0) {
-						$btclient = getTorrentClient($torrent);
+						$btclient = getTransferClient($torrent);
 						if ($cfg["enable_file_priority"]) {
 							include_once("setpriority.php");
 							// Process setPriority Request.

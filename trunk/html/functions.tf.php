@@ -1474,7 +1474,7 @@ function getDirList($dirName) {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
-			$btclient = getTorrentClient($entry);
+			$btclient = getTransferClient($entry);
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $torrentowner, $cfg, $btclient);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
 			// this is wget. use tornado statfile
@@ -1486,7 +1486,7 @@ function getDirList($dirName) {
 		}
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-		  $torrentTotalsCurrent = getTorrentTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
+		  $torrentTotalsCurrent = getTransferTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
 		  $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
 		  $newday = !$db->GetOne($sql);
 		  showError($db,$sql);

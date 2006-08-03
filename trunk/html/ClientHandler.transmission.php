@@ -46,11 +46,11 @@ class ClientHandlerTransmission extends ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * starts a bittorrent-client
-     * @param $torrent name of the torrent
+     * starts a client
+     * @param $transfer name of the transfer
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
      */
-    function startTorrentClient($torrent, $interactive) {
+    function startClient($transfer, $interactive) {
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
@@ -61,17 +61,17 @@ class ClientHandlerTransmission extends ClientHandler
                 header("location: admin.php?op=configSettings");
                 return;
             } else {
-                $this->messages .= "<b>Error</b> TorrentFlux settings are not correct (path to transmission-bin is not valid) -- please contact an admin.<br>";
+                $this->messages .= "Error TorrentFlux settings are not correct (path to transmission-bin is not valid) -- please contact an admin.";
                 return;
             }
         }
 
         // prepare starting of client
-        parent::prepareStartTorrentClient($torrent, $interactive);
+        parent::prepareStartClient($transfer, $interactive);
         // prepare succeeded ?
         if ($this->status != 2) {
             $this->status = -1;
-            $this->messages .= "<b>Error</b> parent::prepareStartTorrentClient(".$torrent.",".$interactive.") failed<br>";
+            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.") failed";
             return;
         }
 
@@ -90,7 +90,7 @@ class ClientHandlerTransmission extends ClientHandler
         // "new" transmission-patch has pid-file included
         $this->command .= " -z ". $this->pidFile; /* - bsd-workaround */
         $this->command .= " -e 5 -p ".$this->port ." -u ".$this->rate ." -c ". $this->sharekill_param ." -d ".$this->drate;
-        $this->command .= " ".$this->cfg["btclient_transmission_options"]. "\"". $this->cfg["torrent_file_path"]. $this->torrent;
+        $this->command .= " ".$this->cfg["btclient_transmission_options"]. "\"". $this->cfg["torrent_file_path"]. $this->transfer;
         // standard, no shell trickery ("new" transmission-patch has pid-file included) :
         $this->command .= '" &> /dev/null &'; /* - bsd-workaround */
         // <begin shell-trickery> to write the pid of the client into the pid-file
@@ -106,22 +106,22 @@ class ClientHandlerTransmission extends ClientHandler
             $this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $this->cfg["btclient_transmission_bin"] . " " . $this->command;
         }
         // start the client
-        parent::doStartTorrentClient();
+        parent::doStartClient();
     }
 
     //--------------------------------------------------------------------------
     /**
-     * stops a bittorrent-client
+     * stops a client
      *
-     * @param $torrent name of the torrent
-     * @param $aliasFile alias-file of the torrent
-     * @param $torrentPid torrent Pid (optional)
+     * @param $transfer name of the transfer
+     * @param $aliasFile alias-file of the transfer
+     * @param $transferPid transfer Pid (optional)
      * @param $return return-param (optional)
      */
-    function stopTorrentClient($torrent, $aliasFile, $torrentPid = "", $return = "") {
+    function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
         $this->pidFile = $this->cfg["torrent_file_path"].$aliasFile.".pid";
         // stop the client
-        parent::doStopTorrentClient($torrent, $aliasFile, $torrentPid, $return);
+        parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
         // delete the pid file
         // included in transmissioncli
         @unlink($this->pidFile);
@@ -129,7 +129,7 @@ class ClientHandlerTransmission extends ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * print info of running bittorrent-clients
+     * print info of running clients
      *
      */
     function printRunningClientsInfo()  {
@@ -138,7 +138,7 @@ class ClientHandlerTransmission extends ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * gets count of running bittorrent-clients
+     * gets count of running clients
      *
      * @return client-count
      */
@@ -148,7 +148,7 @@ class ClientHandlerTransmission extends ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * gets ary of running bittorrent-clients
+     * gets ary of running clients
      *
      * @return client-ary
      */
@@ -158,34 +158,34 @@ class ClientHandlerTransmission extends ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * deletes cache of a torrent
+     * deletes cache of a transfer
      *
-     * @param $torrent
+     * @param $transfer
      */
-    function deleteTorrentCache($torrent) {
-        $torrentId = getTorrentHash($torrent);
+    function deleteCache($transfer) {
+        $torrentId = getTorrentHash($transfer);
         @unlink($this->cfg["path"].".transmission/cache/resume.".$torrentId);
         return;
     }
 
     //--------------------------------------------------------------------------
     /**
-     * gets current transfer-vals of a torrent
+     * gets current transfer-vals of a transfer
      *
      * @param $db ref to db-object
-     * @param $torrent
+     * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrent(&$db, $torrent) {
+    function getTransferCurrent(&$db, $transfer) {
         $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($torrent);
-        $owner = getOwner($torrent);
+        $aliasName = getAliasName($transfer);
+        $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         // transfer from db
-        $torrentId = getTorrentHash($torrent);
+        $torrentId = getTorrentHash($transfer);
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
         $result = $db->Execute($sql);
     	showError($db, $sql);
@@ -198,21 +198,21 @@ class ClientHandlerTransmission extends ClientHandler
     }
 
     /**
-     * gets current transfer-vals of a torrent. optimized index-page-version
+     * gets current transfer-vals of a transfer. optimized index-page-version
      *
-     * @param $torrent
-     * @param $afu alias-file-uptotal of the torrent
-     * @param $afd alias-file-downtotal of the torrent
+     * @param $transfer
+     * @param $afu alias-file-uptotal of the transfer
+     * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrentOP($torrent,$afu,$afd)  {
+    function getTransferCurrentOP($transfer,$afu,$afd)  {
         global $db;
         $retVal = array();
         // transfer from stat-file
         $retVal["uptotal"] = $afu;
         $retVal["downtotal"] = $afd;
         // transfer from db
-        $torrentId = getTorrentHash($torrent);
+        $torrentId = getTorrentHash($transfer);
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
         $result = $db->Execute($sql);
     	showError($db, $sql);
@@ -226,17 +226,17 @@ class ClientHandlerTransmission extends ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * gets total transfer-vals of a torrent
+     * gets total transfer-vals of a transfer
      *
      * @param $db ref to db-object
-     * @param $torrent
+     * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotal(&$db, $torrent) {
+    function getTransferTotal(&$db, $transfer) {
         $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($torrent);
-        $owner = getOwner($torrent);
+        $aliasName = getAliasName($transfer);
+        $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
@@ -244,14 +244,14 @@ class ClientHandlerTransmission extends ClientHandler
     }
 
     /**
-     * gets total transfer-vals of a torrent. optimized index-page-version
+     * gets total transfer-vals of a transfer. optimized index-page-version
      *
-     * @param $torrent
-     * @param $afu alias-file-uptotal of the torrent
-     * @param $afd alias-file-downtotal of the torrent
+     * @param $transfer
+     * @param $afu alias-file-uptotal of the transfer
+     * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotalOP($torrent,$afu,$afd) {
+    function getTransferTotalOP($transfer,$afu,$afd) {
         $retVal = array();
         // transfer from stat-file
         $retVal["uptotal"] = $afu;

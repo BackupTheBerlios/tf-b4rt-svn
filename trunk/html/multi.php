@@ -49,7 +49,7 @@ switch ($action) {
                 $owner = getOwner($torrent);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $alias = getAliasName($torrent).".stat";
-                    $btclient = getTorrentClient($torrent);
+                    $btclient = getTransferClient($torrent);
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                     $clientHandler->stopTorrentClient($torrent, $alias);
                     // just 2 sec..
@@ -65,7 +65,7 @@ switch ($action) {
             if ($torrentRunningFlag == 0) {
                 $owner = getOwner($torrent);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $btclient = getTorrentClient($torrent);
+                    $btclient = getTransferClient($torrent);
                     if ($cfg["enable_file_priority"]) {
                         include_once("setpriority.php");
                         // Process setPriority Request.
@@ -86,7 +86,7 @@ switch ($action) {
             if ($torrentRunningFlag == 0) {
                 $owner = getOwner($torrent);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $btclient = getTorrentClient($torrent);
+                    $btclient = getTransferClient($torrent);
                     if ($cfg["enable_file_priority"]) {
                         include_once("setpriority.php");
                         // Process setPriority Request.

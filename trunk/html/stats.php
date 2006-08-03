@@ -122,12 +122,12 @@ function sendXML() {
     // transfer-list
     foreach($arList as $entry) {
         $torrentowner = getOwner($entry);
-        $torrentTotals = getTorrentTotals($entry);
+        $torrentTotals = getTransferTotals($entry);
         // alias / stat
         $alias = getAliasName($entry).".stat";
         if ((substr( strtolower($entry),-8 ) == ".torrent")) {
             // this is a torrent-client
-            $btclient = getTorrentClient($entry);
+            $btclient = getTransferClient($entry);
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
         } else if ((substr( strtolower($entry),-4 ) == ".url")) {
             // this is wget. use tornado statfile
@@ -194,12 +194,12 @@ function sendRss() {
     // transfer-list
     foreach($arList as $entry) {
         $torrentowner = getOwner($entry);
-        $torrentTotals = getTorrentTotals($entry);
+        $torrentTotals = getTransferTotals($entry);
         // alias / stat
         $alias = getAliasName($entry).".stat";
         if ((substr( strtolower($entry),-8 ) == ".torrent")) {
             // this is a torrent-client
-            $btclient = getTorrentClient($entry);
+            $btclient = getTransferClient($entry);
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
         } else if ((substr( strtolower($entry),-4 ) == ".url")) {
             // this is wget. use tornado statfile

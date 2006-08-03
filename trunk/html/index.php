@@ -122,7 +122,7 @@ $killTorrent = getRequestVar('kill_torrent');
 if(! $killTorrent == '') {
 	$return = getRequestVar('return');
 	include_once("ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTorrentClient($killTorrent));
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($killTorrent));
 	$clientHandler->stopTorrentClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
 	if (!empty($return))
 		header("location: ".$return.".php?op=queueSettings");
@@ -312,9 +312,9 @@ if ($cfg['index_page_stats'] != 0) {
 		$queueManager = QueueManager::getQueueManagerInstance($cfg);
 		$tmpl->setvar('_QUEUEMANAGER', $_QUEUEMANAGER);
 		$tmpl->setvar('managerName', $queueManager->managerName);
-		$getRunningTorrentCount = strval(getRunningTorrentCount());
+		$runningTransferCount = strval(getRunningTransferCount());
 		$countQueuedTorrents = strval($queueManager->countQueuedTorrents());
-		$tmpl->setvar('getRunningTorrentCount', $getRunningTorrentCount);
+		$tmpl->setvar('runningTransferCount', $runningTransferCount);
 		$tmpl->setvar('countQueuedTorrents', $countQueuedTorrents);
 		$tmpl->setvar('limitGlobal', $queueManager->limitGlobal);
 		$tmpl->setvar('limitUser', $queueManager->limitUser);

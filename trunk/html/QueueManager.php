@@ -166,7 +166,7 @@ class QueueManager
     function updateStatFile($torrent,$alias_file) {
         include_once("AliasFile.php");
         $the_user = getOwner($torrent);
-        $btclient = getTorrentClient($torrent);
+        $btclient = getTransferClient($torrent);
         $modded = 0;
         // create AliasFile object
         $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$alias_file, $the_user, $this->cfg, $btclient);

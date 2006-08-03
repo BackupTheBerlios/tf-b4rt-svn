@@ -306,7 +306,7 @@ function cliStartTorrent($torrent = "") {
 	if ((isset($torrent)) && ($torrent != "")) {
 		$torrentRunningFlag = isTorrentRunning($torrent);
 		if ($torrentRunningFlag == 0) {
-			$btclient = getTorrentClient($torrent);
+			$btclient = getTransferClient($torrent);
 			$cfg["user"] = getOwner($torrent);
 			echo "Starting ".$torrent." ...";
 			if ($cfg["enable_file_priority"]) {
@@ -348,7 +348,7 @@ function cliStartTorrents() {
         if ($torrentRunningFlag == 0) {
             echo " - ".$torrent."...";
             $cfg["user"] = getOwner($torrent);
-            $btclient = getTorrentClient($torrent);
+            $btclient = getTransferClient($torrent);
             if ($cfg["enable_file_priority"]) {
                 include_once("setpriority.php");
                 // Process setPriority Request.
@@ -383,7 +383,7 @@ function cliResumeTorrents() {
         if ($torrentRunningFlag == 0) {
             echo " - ".$torrent."...";
             $cfg["user"] = getOwner($torrent);
-            $btclient = getTorrentClient($torrent);
+            $btclient = getTransferClient($torrent);
             if ($cfg["enable_file_priority"]) {
                 include_once("setpriority.php");
                 // Process setPriority Request.
@@ -430,7 +430,7 @@ function cliStopTorrent($torrent = "") {
 			echo "Torrent not running.\n";
 		} else {
 			echo "Stopping ".$torrent." ...";
-			$btclient = getTorrentClient($torrent);
+			$btclient = getTransferClient($torrent);
 			$cfg["user"] = getOwner($torrent);
 			$alias = getAliasName($torrent).".stat";
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
@@ -473,7 +473,7 @@ function cliDeleteTorrent($torrent = "") {
 	if ((isset($torrent)) && ($torrent != "")) {
 		echo "Deleting ".$torrent." ...";
         $torrentRunningFlag = isTorrentRunning($torrent);
-        $btclient = getTorrentClient($torrent);
+        $btclient = getTransferClient($torrent);
     	$cfg["user"] = getOwner($torrent);
     	$alias = getAliasName($torrent).".stat";
 		if ($torrentRunningFlag == 1) {
@@ -502,7 +502,7 @@ function cliWipeTorrent($torrent = "") {
 	if ((isset($torrent)) && ($torrent != "")) {
 		echo "Wipe ".$torrent." ...";
         $torrentRunningFlag = isTorrentRunning($torrent);
-        $btclient = getTorrentClient($torrent);
+        $btclient = getTransferClient($torrent);
 		$cfg["user"] = getOwner($torrent);
 		$alias = getAliasName($torrent).".stat";
 		if ($torrentRunningFlag == 1) {

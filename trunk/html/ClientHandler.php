@@ -32,7 +32,7 @@ class ClientHandler
     var $binSocket = ""; // the binary this client uses for socket-connections
                          // used in netstat hack to identify connections
 
-    // generic vars for a torrent-start
+    // generic vars for a transfer-start
     var $rate = "";
     var $drate = "";
     var $superseeder = "";
@@ -50,7 +50,7 @@ class ClientHandler
     //
     var $queue = "";
     //
-    var $torrent = "";
+    var $transfer = "";
     var $alias = "";
     var $owner = "";
     // alias-file (object)
@@ -75,7 +75,7 @@ class ClientHandler
                         //  0 : not initialized
                         //  1 : initialized
                         //  2 : ready to start
-                        //  3 : torrent-client started successfull
+                        //  3 : transfer-client started successfull
                         // -1 : error
 
     //--------------------------------------------------------------------------
@@ -140,12 +140,12 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * prepares start of a bittorrent-client.
+     * prepares start of a client.
      * prepares vars and other generic stuff
-     * @param $torrent name of the torrent
+     * @param $transfer name of the transfer
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
      */
-    function prepareStartTorrentClient($torrent, $interactive) {
+    function prepareStartClient($transfer, $interactive) {
         if ($this->status < 1) {
             $this->status = -1;
             $this->messages .= "Error. ClientHandler in wrong state on prepare-request.";
@@ -200,7 +200,7 @@ class ClientHandler
             $this->skip_hash_check = $this->cfg["skiphashcheck"];
             $this->superseeder = 0;
             // load settings
-            $settingsAry = loadTorrentSettings(urldecode($torrent));
+            $settingsAry = loadTorrentSettings(urldecode($transfer));
             $this->rate = $settingsAry["max_upload_rate"];
             $this->drate = $settingsAry["max_download_rate"];
             $this->runtime = $settingsAry["torrent_dies_when_done"];
@@ -210,7 +210,7 @@ class ClientHandler
             $this->maxcons = $settingsAry["maxcons"];
             $this->sharekill = $settingsAry["sharekill"];
             $this->savepath = $settingsAry["savepath"];
-            // fallback-values if fresh-torrent is started non-interactive or
+            // fallback-values if fresh-transfer is started non-interactive or
             // something else strange happened
             if ($this->rate == '') $this->rate = $this->cfg["max_upload_rate"];
             if ($this->drate == '') $this->drate = $this->cfg["max_download_rate"];
@@ -236,9 +236,9 @@ class ClientHandler
             $this->queue = "0";
         }
         //
-        $this->torrent = urldecode($torrent);
-        $this->alias = getAliasName($this->torrent);
-        $this->owner = getOwner($this->torrent);
+        $this->transfer = urldecode($transfer);
+        $this->alias = getAliasName($this->transfer);
+        $this->owner = getOwner($this->transfer);
         if (empty($this->savepath))
           $this->savepath = $this->cfg['path'].$this->owner."/";
         // ensure path has trailing slash
@@ -264,25 +264,25 @@ class ClientHandler
         // create AliasFile object and write out the stat file
         include_once("AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
-        //XFER: before a torrent start/restart save upload/download xfer to SQL
-        $torrentTotals = getTorrentTotalsCurrent($this->torrent);
-        saveXfer($this->owner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
-        // update totals for this torrent
-        updateTorrentTotals($this->torrent);
+        //XFER: before a transfer start/restart save upload/download xfer to SQL
+        $transferTotals = getTransferTotals($this->transfer);
+        saveXfer($this->owner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
+        // update totals for this transfer
+        updateTransferTotals($this->transfer);
         // set param for sharekill
         if ($this->sharekill <= 0) { // nice, we seed forever
             $this->sharekill_param = 0;
         } else { // recalc sharekill
-            $totalAry = getTorrentTotals(urldecode($torrent));
+            $totalAry = getTransferTotals(urldecode($transfer));
             $upTotal = $totalAry["uptotal"]+0;
-            $torrentSize = $this->af->size+0;
-            $upWanted = ($this->sharekill / 100) * $torrentSize;
+            $transferSize = $this->af->size+0;
+            $upWanted = ($this->sharekill / 100) * $transferSize;
             if ($upTotal >= $upWanted) { // we already have seeded at least
                                          // wanted percentage. continue to seed
                                          // forever is suitable in this case ~~
                 $this->sharekill_param = 0;
             } else { // not done seeding wanted percentage
-                $this->sharekill_param = (int) ($this->sharekill - (($upTotal / $torrentSize) * 100));
+                $this->sharekill_param = (int) ($this->sharekill - (($upTotal / $transferSize) * 100));
                 // the type-cast may have floored the value. (tornado lacks
                 // precision because only (really?) accepting percentage-values)
                 // better to seed more than less so we add a percent in case ;)
@@ -295,16 +295,16 @@ class ClientHandler
         }
         if ($this->cfg["AllowQueing"]) {
             if($this->queue == "1") {
-                $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start torrent)
+                $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start transfer)
             } else {
                 if ($this->setClientPort() === false)
                     return;
-                $this->af->StartTorrentFile();  // this only writes out the stat file (does not start torrent)
+                $this->af->StartTorrentFile();  // this only writes out the stat file (does not start transfer)
             }
         } else {
             if ($this->setClientPort() === false)
                 return;
-            $this->af->StartTorrentFile();  // this only writes out the stat file (does not start torrent)
+            $this->af->StartTorrentFile();  // this only writes out the stat file (does not start transfer)
 
         }
         $this->status = 2;
@@ -312,9 +312,9 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * do start of a bittorrent-client.
+     * do start of a client.
      */
-    function doStartTorrentClient() {
+    function doStartClient() {
         include_once("AliasFile.php");
         if ($this->status != 2) {
             $this->status = -1;
@@ -323,30 +323,30 @@ class ClientHandler
         }
         // write the session to close so older version of PHP will not hang
         session_write_close("TorrentFlux");
-        $torrentRunningFlag = 1;
+        $transferRunningFlag = 1;
         if($this->af->running == "3") {
             // _queue_
             //writeQinfo($this->cfg["torrent_file_path"]."queue/".$this->alias.".stat",$this->command);
             include_once("QueueManager.php");
             $queueManager = QueueManager::getQueueManagerInstance($this->cfg);
             $queueManager->command = $this->command; // tfQmanager...
-            $queueManager->enqueueTorrent($this->torrent);
-            AuditAction($this->cfg["constants"]["queued_torrent"], $this->torrent ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+            $queueManager->enqueueTorrent($this->transfer);
+            AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
             AuditAction($this->cfg["constants"]["queued_torrent"], $this->command);
-            $torrentRunningFlag = 0;
+            $transferRunningFlag = 0;
         } else {
-            // The following command starts the torrent running! w00t!
+            // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/fluxi.debug; echo "'. $this->command .'" >> /tmp/fluxi.debug');
             $this->callResult = exec($this->command);
-            AuditAction($this->cfg["constants"]["start_torrent"], $this->torrent. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+            AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
             // slow down and wait for thread to kick off.
             // otherwise on fast servers it will kill stop it before it gets a chance to run.
             sleep(1);
-            $torrentRunningFlag = 1;
+            $transferRunningFlag = 1;
         }
         if ($this->messages == "") {
-            // Save torrent settings
-            saveTorrentSettings($this->torrent, $torrentRunningFlag, $this->rate, $this->drate, $this->maxuploads, $this->runtime, $this->sharekill, $this->minport, $this->maxport, $this->maxcons, $this->savepath, $this->handlerName);
+            // Save transfer settings
+            saveTorrentSettings($this->transfer, $transferRunningFlag, $this->rate, $this->drate, $this->maxuploads, $this->runtime, $this->sharekill, $this->minport, $this->maxport, $this->maxcons, $this->savepath, $this->handlerName);
             $this->status = 3;
         } else {
             AuditAction($this->cfg["constants"]["error"], $this->messages);
@@ -356,42 +356,42 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * stops a bittorrent-client
+     * stops a client
      *
-     * @param $torrent name of the torrent
-     * @param $aliasFile alias-file of the torrent
+     * @param $transfer name of the transfer
+     * @param $aliasFile alias-file of the transfer
      * @param $kill kill-param
      * @param $return return-param
      */
-    function doStopTorrentClient($torrent, $aliasFile, $torrentPid = "", $return = "") {
+    function doStopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
         // set some vars
-        $this->torrent = $torrent;
+        $this->transfer = $transfer;
         $this->alias = $aliasFile;
         // set pidfile
         if ($this->pidFile == "") // pid-file not set in subclass. use a default
             $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
         // We are going to write a '0' on the front of the stat file so that
         // the BT client will no to stop -- this will report stats when it dies
-        $this->owner = getOwner($this->torrent);
+        $this->owner = getOwner($this->transfer);
         include_once("AliasFile.php");
         // read the alias file + create AliasFile object
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias, $this->owner, $this->cfg, $this->handlerName);
         if($this->af->percent_done < 100) {
-            // The torrent is being stopped but is not completed dowloading
+            // The transfer is being stopped but is not completed dowloading
             $this->af->percent_done = ($this->af->percent_done + 100)*-1;
             $this->af->running = "0";
             $this->af->time_left = "Torrent Stopped";
         } else {
-            // Torrent was seeding and is now being stopped
+            // transfer was seeding and is now being stopped
             $this->af->percent_done = 100;
             $this->af->running = "0";
             $this->af->time_left = "Download Succeeded!";
         }
         include_once("RunningTorrent.php");
-        // see if the torrent process is hung.
+        // see if the transfer process is hung.
         if (!is_file($this->pidFile)) {
-            $runningTorrents = getRunningTorrents();
-            foreach ($runningTorrents as $key => $value) {
+            $running = getRunningTransfers();
+            foreach ($running as $key => $value) {
                 $rt = RunningTorrent::getRunningTorrentInstance($value,$this->cfg,$this->handlerName);
                 if ($rt->statFile == $this->alias) {
                     AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
@@ -401,17 +401,17 @@ class ClientHandler
         }
         // Write out the new Stat File
         $this->af->WriteFile();
-        // flag the torrent as stopped (in db)
+        // flag the transfer as stopped (in db)
         // blame me for this dirty shit, i am lazy. of course this should be
         // hooked into the place where client really dies.
-        stopTorrentSettings($this->torrent);
+        stopTorrentSettings($this->transfer);
         //
-        AuditAction($this->cfg["constants"]["kill_torrent"], $this->torrent);
+        AuditAction($this->cfg["constants"]["kill_torrent"], $this->transfer);
         if (!empty($return)) {
             sleep(3);
             // set pid
-            if ((isset($torrentPid)) && ($torrentPid != ""))
-                $this->pid = $torrentPid;
+            if ((isset($transferPid)) && ($transferPid != ""))
+                $this->pid = $transferPid;
             else
                 $this->pid = trim(shell_exec($this->cfg['bin_cat']." ".$this->pidFile));
             // kill it
@@ -423,7 +423,7 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * print info of running bittorrent-clients
+     * print info of running clients
      *
      */
     function printRunningClientsInfo() {
@@ -480,7 +480,7 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * gets count of running bittorrent-clients
+     * gets count of running clients
      *
      * @return client-count
      */
@@ -490,7 +490,7 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * gets ary of running bittorrent-clients
+     * gets ary of running clients
      *
      * @return client-ary
      */
@@ -503,20 +503,20 @@ class ClientHandler
             array_push($arScreen, $tok);
             $tok = strtok("\n");
         }
-        $artorrent = array();
+        $artransfer = array();
         for($i = 0; $i < sizeof($arScreen); $i++) {
             if(strpos($arScreen[$i], $this->binClient) !== false) {
                 $pinfo = new ProcessInfo($arScreen[$i]);
                 if (intval($pinfo->ppid) == 1) {
                      if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
                          if(!strpos($pinfo->cmdline, "ps x") > 0) {
-                             array_push($artorrent,$pinfo->pid . " " . $pinfo->cmdline);
+                             array_push($artransfer,$pinfo->pid . " " . $pinfo->cmdline);
                          }
                      }
                 }
             }
         }
-        return $artorrent;
+        return $artransfer;
     }
 
     //--------------------------------------------------------------------------
@@ -545,51 +545,51 @@ class ClientHandler
 
     //--------------------------------------------------------------------------
     /**
-     * deletes cache of a torrent
+     * deletes cache of a transfer
      *
-     * @param $torrent
+     * @param $transfer
      */
-    function deleteTorrentCache($torrent) { return; }
+    function deleteCache($transfer) { return; }
 
     //--------------------------------------------------------------------------
     /**
-     * gets current transfer-vals of a torrent
+     * gets current transfer-vals of a transfer
      *
      * @param $db ref to db-object
-     * @param $torrent
+     * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrent(&$db, $torrent)  { return; }
+    function getTransferCurrent(&$db, $transfer)  { return; }
 
     /**
-     * gets current transfer-vals of a torrent. optimized index-page-version
+     * gets current transfer-vals of a transfer. optimized index-page-version
      *
-     * @param $torrent
-     * @param $afu alias-file-uptotal of the torrent
-     * @param $afd alias-file-downtotal of the torrent
+     * @param $transfer
+     * @param $afu alias-file-uptotal of the transfer
+     * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrentOP($torrent,$afu,$afd)  { return; }
+    function getTransferCurrentOP($transfer,$afu,$afd)  { return; }
 
     //--------------------------------------------------------------------------
     /**
-     * gets total transfer-vals of a torrent
+     * gets total transfer-vals of a transfer
      *
      * @param $db ref to db-object
-     * @param $torrent
+     * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotal(&$db, $torrent) { return; }
+    function getTransferTotal(&$db, $transfer) { return; }
 
     /**
-     * gets total transfer-vals of a torrent. optimized index-page-version
+     * gets total transfer-vals of a transfer. optimized index-page-version
      *
-     * @param $torrent
-     * @param $afu alias-file-uptotal of the torrent
-     * @param $afd alias-file-downtotal of the torrent
+     * @param $transfer
+     * @param $afu alias-file-uptotal of the transfer
+     * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotalOP($torrent,$afu,$afd) { return; }
+    function getTransferTotalOP($transfer,$afu,$afd) { return; }
 
 
 } // end class
