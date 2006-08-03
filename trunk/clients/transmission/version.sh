@@ -19,6 +19,10 @@ replace_if_differs ()
     fi
 }
 
+# print out found revisions
+echo "Transmission : $REV_TR"
+echo "CLI : $REV_CLI"
+
 # Generate version.mk
 cp -f mk/version.mk.in mk/version.mk.new
 echo "VERSION_REVISION = $REV_TR" >> mk/version.mk.new
