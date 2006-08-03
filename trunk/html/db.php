@@ -7,101 +7,54 @@
 *  www.torrentflux.com
 **************************************************************/
 /*
-    This file is part of TorrentFlux.
+	This file is part of TorrentFlux.
 
-    TorrentFlux is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	TorrentFlux is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
 
-    TorrentFlux is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	TorrentFlux is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with TorrentFlux; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	You should have received a copy of the GNU General Public License
+	along with TorrentFlux; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 // will need include of config.php
-include_once('config.php');
-include_once('lib/adodb/adodb.inc.php');
+require_once('config.php');
+require_once('lib/adodb/adodb.inc.php');
+require_once("lib/vlib/vlibTemplate.php");
+
+$tmpl = new vlibTemplate("themes/matrix/tmpl/db.tmpl");
 
 function getdb() {
-    global $cfg;
-    // 2004-12-09 PFM: connect to database.
-    $db = NewADOConnection($cfg["db_type"]);
-    $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-    if(!$db)
-        die ('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.php file.');
-    return $db;
+	global $cfg;
+	// 2004-12-09 PFM: connect to database.
+	$db = NewADOConnection($cfg["db_type"]);
+	$db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+	if(!$db)
+		die ('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.php file.');
+	return $db;
 }
 
 function showError($db, $sql) {
-    global $cfg;
-    if($db->ErrorNo() != 0) {
-        include("themes/matrix/index.php");
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title><?php echo $cfg["pagetitle"] ?></title>
-    <link rel="StyleSheet" href="themes/matrix/style.css" type="text/css" />
-    <meta http-equiv="pragma" content="no-cache" />
-    <meta content="charset=iso-8859-1" />
-</head>
-<body bgcolor="<?php echo $cfg["main_bgcolor"] ?>">
-<br /><br /><br />
-<div align="center">
-    <table border="1" bordercolor="<?php echo $cfg["table_border_dk"] ?>" cellpadding="0" cellspacing="0">
-    <tr>
-        <td>
-        <table border="0" cellpadding="4" cellspacing="0" width="100%">
-            <tr>
-                    <td align="left" background="themes/matrix/images/bar.gif" bgcolor="<?php echo $cfg["main_bgcolor"] ?>">
-                    <font class="title"><?php echo $cfg["pagetitle"] ?> Database/SQL Error</font>
-                    </td>
-            </tr>
-        </table>
-        </td>
-    </tr>
-    <tr>
-        <td bgcolor="<?php echo $cfg["table_header_bg"] ?>">
-        <div align="center">
-        <table width="100%" bgcolor="<?php echo $cfg["body_data_bg"] ?>">
-         <tr>
-             <td>
-             <table bgcolor="<?php echo $cfg["body_data_bg"] ?>" width="740 pixels" cellpadding="1">
-             <tr>
-                 <td>
-                    <div align="center">
-                     <table border="0" cellpadding="4" cellspacing="0" width="90%">
-                     <tr>
-                     <td>
-<?php
-                    if ($cfg["debug_sql"])
-                        echo "Debug SQL is on. <br><br>SQL: <strong>".$sql."</strong><br><br><br>";
-                    echo "Database error: <strong>".$db->ErrorMsg()."</strong><br><br>";
-                    echo "Always check your database variables in the config.php file.<br><br>"
-?>
-                    </td>
-                    </tr>
-                    </table>
-                    </div>
-                </td>
-            </tr>
-            </table>
-            </td>
-        </tr>
-        </table>
-        </div>
-        </td>
-    </tr>
-    </table>
-</div>
-<?php
-        exit();
-    }
+	global $cfg;
+	if($db->ErrorNo() != 0) {
+		$tmpl->setvar('error', 1);
+		include("themes/matrix/index.php");
+		$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+		$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+		$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+		$tmpl->setvar('debug_sql', $cfg["debug_sql"]);
+		$tmpl->setvar('sql', $sql);
+		$tmpl->setvar('ErrorMsg', $db->ErrorMsg());
+	}
 }
+$tmpl->pparse();
 ?>
