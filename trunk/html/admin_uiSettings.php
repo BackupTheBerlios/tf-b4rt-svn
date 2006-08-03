@@ -2,271 +2,35 @@
 /* $Id: admin_uiSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 // load global settings + overwrite per-user settings
 loadSettings();
-// display
-echo getHead("Administration - UI Settings");
-// Admin Menu
-echo getMenu();
-// Main Settings Section
-?>
-<div align="center">
-<table width="100%" border="1" bordercolor="<?php echo $cfg["table_admin_border"] ?>" cellpadding="2" cellspacing="0" bgcolor="<?php echo $cfg["table_data_bg"] ?>">
-<tr><td bgcolor="<?php echo $cfg["table_header_bg"] ?>" background="themes/<?php echo $cfg["theme"] ?>/images/bar.gif">
-<img src="images/properties.png" width="18" height="13" border="0">&nbsp;&nbsp;<font class="title">UI Settings</font>
-</td></tr><tr><td align="center">
-<div align="center">
-	 <table cellpadding="5" cellspacing="0" border="0" width="100%">
-		<form name="theForm" action="admin.php?op=updateUiSettings" method="post">
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_uiSettings.tmpl");
 
-	<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Index-Page</strong></td></tr>
+$tmpl->setvar('head', getHead("Administration - UI Settings"));
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('getIndexPageSelectForm', getIndexPageSelectForm());
+$tmpl->setvar('getIndexPageSettingsForm', getIndexPageSettingsForm());
+$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
+$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
+$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
+$tmpl->setvar('getDrivespacebarSelectForm', getDrivespacebarSelectForm());
+$tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
+$tmpl->setvar('show_server_load', $cfg["show_server_load"]);
+$tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
+$tmpl->setvar('ui_indexrefresh', $cfg["ui_indexrefresh"]);
+$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+$tmpl->setvar('getSortOrderSettingsForm', getSortOrderSettingsForm());
+$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+$tmpl->setvar('getGoodLookingStatsForm', getGoodLookingStatsForm());
+$tmpl->setvar('enable_bigboldwarning', $cfg["enable_bigboldwarning"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
+$tmpl->setvar('foot', getFoot(true,true));
 
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Select index-page</strong><br>
-		Select the index-Page.
-		</td>
-		<td valign="top">
-			<?php echo getIndexPageSelectForm(); ?>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>index-page settings</strong><br>
-		Select the columns in transfer-list on index-Page.<br>(only for b4rt-index-page)
-		</td>
-		<td valign="top">
-			<?php echo getIndexPageSettingsForm(); ?>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Width</strong><br>
-		Specify the width of the index-page. (780):
-		</td>
-		<td valign="bottom">
-			<input name="ui_dim_main_w" type="Text" maxlength="5" value="<?php echo($cfg["ui_dim_main_w"]); ?>" size="5">
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Display Links</strong><br>
-		Display Links on the index-page. (true):
-		</td>
-		<td valign="bottom">
-			<select name="ui_displaylinks">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["ui_displaylinks"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Display Users</strong><br>
-		Display Users on the index-page. (true):
-		</td>
-		<td valign="bottom">
-			<select name="ui_displayusers">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["ui_displayusers"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Select Drivespace-Bar</strong><br>
-		Select Style of Drivespace-Bar on index-Page.
-		</td>
-		<td valign="top">
-			<?php echo getDrivespacebarSelectForm(); ?>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Show Server Stats</strong><br>
-		Enable showing the server stats at the bottom:
-		</td>
-		<td valign="top">
-			<select name="index_page_stats">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["index_page_stats"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Show Server Load</strong><br>
-		Enable showing the average server load over the last 15 minutes:
-		</td>
-		<td valign="top">
-			<select name="show_server_load">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["show_server_load"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Show Connections</strong><br>
-		Enable showing the Sum of TCP-Connections:
-		</td>
-		<td valign="top">
-			<select name="index_page_connections">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["index_page_connections"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Use Refresh</strong><br>
-		Use meta-refresh on index-page. (true):
-		</td>
-		<td valign="bottom">
-			<select name="ui_indexrefresh">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["ui_indexrefresh"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Page Refresh (in seconds)</strong><br>
-		Number of seconds before the torrent list page refreshes:
-		</td>
-		<td valign="top">
-			<input name="page_refresh" type="Text" maxlength="3" value="<?php echo($cfg["page_refresh"]); ?>" size="3">
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Select Sort-Order</strong><br>
-		Select default Sort-Order of transfers on index-Page.
-		</td>
-		<td valign="top">
-			<?php echo getSortOrderSettingsForm(); ?>
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Enable sorttable</strong><br>
-		Enable Client-Side sorting of Transfer-Table:
-		</td>
-		<td valign="top">
-			<select name="enable_sorttable">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["enable_sorttable"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Enable Good looking statistics</strong><br>
-		Enable/Disable "Good looking statistics" :
-		</td>
-		<td valign="top">
-			<select name="enable_goodlookstats">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["enable_goodlookstats"])
-						echo "selected";
-					?>>false</option>
-		   </select>
-	   </td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Good looking statistics settings</strong><br>
-		Configure Settings of "Good looking statistics" :
-		</td>
-		<td valign="top">
-		<?php echo getGoodLookingStatsForm(); ?>
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Enable Big bold drivespace warning</strong><br>
-		Enable/Disable "Big bold drivespace warning" :
-		</td>
-		<td valign="top">
-			<select name="enable_bigboldwarning">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["enable_bigboldwarning"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-
-
-	<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Download-Details</strong></td></tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Width</strong><br>
-		Specify the width of the details-popup. (450):
-		</td>
-		<td valign="bottom">
-			<input name="ui_dim_details_w" type="Text" maxlength="5" value="<?php echo($cfg["ui_dim_details_w"]); ?>" size="5">
-		</td>
-	</tr>
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Height</strong><br>
-		Specify the height of the details-popup. (290):
-		</td>
-		<td valign="bottom">
-			<input name="ui_dim_details_h" type="Text" maxlength="5" value="<?php echo($cfg["ui_dim_details_h"]); ?>" size="5">
-		</td>
-	</tr>
-
-	<tr><td colspan="2" align="center" bgcolor="<?php echo($cfg["table_header_bg"]); ?>"><strong>Misc</strong></td></tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Page-Title</strong><br>
-		Specify the Page-Title. :
-		</td>
-		<td valign="bottom">
-			<input name="pagetitle" type="Text" maxlength="64" value="<?php echo($cfg["pagetitle"]); ?>" size="30">
-		</td>
-	</tr>
-
-	<tr>
-		<td align="left" width="350" valign="top"><strong>Display Bottom-Link</strong><br>
-		Display Link at bottom of pages. (true):
-		</td>
-		<td valign="bottom">
-			<select name="ui_displayfluxlink">
-					<option value="1">true</option>
-					<option value="0" <?php
-					if (!$cfg["ui_displayfluxlink"])
-						echo "selected";
-					?>>false</option>
-			</select>
-		</td>
-	</tr>
-
-		<tr><td colspan="2"><hr noshade></td></tr>
-		<tr>
-			<td align="center" colspan="2">
-			<input type="Submit" value="Update Settings">
-			</td>
-		</tr>
-		</form>
-	</table>
-</div>
-</td></tr>
-</table></div>
-<?php
-echo getFoot(true,true);
+$tmpl->pparse();
 ?>

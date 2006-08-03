@@ -72,6 +72,7 @@ $tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 $tmpl->setvar('minutes_to_keep', $cfg["minutes_to_keep"]);
 $tmpl->setvar('rss_cache_min', $cfg["rss_cache_min"]);
+$tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 
 $theme_list = array();
 $arThemes = GetThemes();

@@ -309,7 +309,7 @@
 									<select name="enable_file_priority">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_file_priority">
+										<tmpl_if name="enable_file_priority" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -324,7 +324,7 @@
 									<select name="skiphashcheck">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="skiphashcheck">
+										<tmpl_if name="skiphashcheck" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -340,7 +340,7 @@
 									<select name="enable_umask">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_umask">
+										<tmpl_if name="enable_umask" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -355,7 +355,7 @@
 									<select name="nice_adjust">
 										<tmpl_loop name="nice_list">
 											<option value="<tmpl_var name="i">"
-												<tmpl_if name="nice_adjust_true">
+												<tmpl_if name="nice_adjust_true" value="0">
 													 selected
 												</tmpl_if>
 											>
@@ -377,7 +377,7 @@
 									<select name="advanced_start">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="advanced_start">
+										<tmpl_if name="advanced_start" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -392,7 +392,7 @@
 									<select name="enable_multiops">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_multiops">
+										<tmpl_if name="enable_multiops" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -407,7 +407,7 @@
 									<select name="enable_bulkops">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_bulkops">
+										<tmpl_if name="enable_bulkops" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -422,7 +422,7 @@
 									<select name="enable_dereferrer">
 											<option value="1">true</option>
 											<option value="0"
-										<tmpl_if name="enable_dereferrer">
+										<tmpl_if name="enable_dereferrer" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -437,7 +437,7 @@
 									<select name="enable_search">
 											<option value="1">true</option>
 											<option value="0"
-										<tmpl_if name="enable_search">
+										<tmpl_if name="enable_search" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -460,7 +460,7 @@
 									<select name="enable_maketorrent">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_maketorrent">
+										<tmpl_if name="enable_maketorrent" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -483,7 +483,7 @@
 									<select name="enable_torrent_download">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_torrent_download">
+										<tmpl_if name="enable_torrent_download" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -498,7 +498,7 @@
 									<select name="enable_file_download">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_file_download">
+										<tmpl_if name="enable_file_download" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -529,7 +529,7 @@
 									<select name="enable_view_nfo">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_view_nfo">
+										<tmpl_if name="enable_view_nfo" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -544,7 +544,7 @@
 									<select name="enable_mrtg">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_mrtg">
+										<tmpl_if name="enable_mrtg" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -559,7 +559,7 @@
 									<select name="downloadhosts">
 										<option value="1">Hostnames</option>
 										<option value="0"
-										<tmpl_if name="downloadhosts">
+										<tmpl_if name="downloadhosts" value="0">
 											 selected
 										</tmpl_if>
 										>IPs</option>
@@ -623,7 +623,7 @@
 									<select name="debug_sql">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="debug_sql">
+										<tmpl_if name="debug_sql" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -639,7 +639,7 @@
 									<select name="enable_xfer">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_xfer">
+										<tmpl_if name="enable_xfer" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -654,7 +654,7 @@
 									<select name="xfer_realtime">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="xfer_realtime">
+										<tmpl_if name="xfer_realtime" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -669,7 +669,7 @@
 									<select name="enable_public_xfer">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_public_xfer">
+										<tmpl_if name="enable_public_xfer" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -760,7 +760,7 @@
 									<select name="month_start">
 										<tmpl_loop name="month_list">
 											<option value="<tmpl_var name="i">"
-												<tmpl_if name="month_start_true">
+												<tmpl_if name="month_start_true" value="0">
 													 selected
 												</tmpl_if>
 											><tmpl_var name="i"></option>
@@ -776,7 +776,7 @@
 									<select name="enable_multiupload">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_multiupload">
+										<tmpl_if name="enable_multiupload" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -799,7 +799,7 @@
 									<select name="enable_dirstats">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_dirstats">
+										<tmpl_if name="enable_dirstats" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -814,7 +814,7 @@
 									<select name="enable_rar">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_rar">
+										<tmpl_if name="enable_rar" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -829,7 +829,7 @@
 									<select name="enable_sfvcheck">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_sfvcheck">
+										<tmpl_if name="enable_sfvcheck" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -844,7 +844,7 @@
 									<select name="enable_wget">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_wget">
+										<tmpl_if name="enable_wget" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -861,7 +861,7 @@
 									<select name="showdirtree">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="showdirtree">
+										<tmpl_if name="showdirtree" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -886,7 +886,7 @@
 									<select name="enable_restrictivetview">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name=enable_restrictivetview">
+										<tmpl_if name="enable_restrictivetview" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -900,10 +900,11 @@
 								<td valign="top">
 									<select name="enable_rename">
 										<option value="1">true</option>
-										<option value="0" <?php
-										if (!$cfg["enable_rename"])
-											echo "selected";
-										?>>false</option>
+										<option value="0"
+										<tmpl_if name="enable_rename" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
 									</select>
 								</td>
 							</tr>
@@ -915,7 +916,7 @@
 									<select name="enable_move">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_move">
+										<tmpl_if name="enable_move" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
