@@ -332,6 +332,7 @@ foreach($entrys as $entry) {
 			$urlencode1 = urlencode($dir.$entry);
 			$urlencode2 = urlencode($dir);
 			$urlencode3 = urlencode($entry);
+			$urlencode4 = urlencode(addslashes($dir.$entry));
 			array_push($dirlist2, array(
 				'no_dir' => $no_dir,
 				'bg' => $bg,
@@ -350,7 +351,7 @@ foreach($entrys as $entry) {
 				'_DIR_MOVE_LINK' => _DIR_MOVE_LINK,
 				'enable_rar' => $enable_rar,
 				'enable_view_nfo' => $enable_view_nfo,
-				'urlencode4' => urlencode(addslashes($dir.$entry)),
+				'urlencode4' => $urlencode4,
 				'enable_maketorrent' => $cfg["enable_maketorrent"],
 				'enable_file_download' => $cfg["enable_file_download"],
 				'addslashes1' => addslashes($entry),
