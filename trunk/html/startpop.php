@@ -176,9 +176,9 @@ function isNumber(sText)
         <?php
         echo '<tr><td align="center" colspan="4">BitTorrent-Client : ';
         if ($torrentExists)
-            printBTClientSelect($cfg["btclient"]);
+            getBTClientSelect($cfg["btclient"]);
         else
-            printBTClientSelect($btclient_default);
+            getBTClientSelect($btclient_default);
         echo '</td></tr>';
         ?>
         <tr>

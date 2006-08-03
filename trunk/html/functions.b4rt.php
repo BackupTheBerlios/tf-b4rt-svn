@@ -2534,6 +2534,20 @@ function getIndexPageSelectForm() {
 	return $retVal;
 }
 
+function getBTClientSelect($btclient = 'tornado') {
+	global $cfg;
+	echo '<select name="btclient">';
+	echo '<option value="tornado"';
+	if ($btclient == "tornado")
+		echo " selected";
+	echo '>tornado</option>';
+	echo '<option value="transmission"';
+	if ($btclient == "transmission")
+		echo " selected";
+	echo '>transmission</option>';
+	echo '</select>';
+}
+
 /**
  * get form of sort-order-settings
  *
