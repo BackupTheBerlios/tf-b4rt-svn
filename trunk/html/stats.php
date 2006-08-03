@@ -188,7 +188,6 @@ function sendRss() {
     $run = 0;
     // build content
     $content .= "<?xml version='1.0' ?>\n\n";
-    //$content .= '<!DOCTYPE rss PUBLIC "-//Netscape Communications//DTD RSS 0.91//EN" "http://my.netscape.com/publish/formats/rss-0.91.dtd">'."\n";
     $content .= "<rss version=\"0.91\">\n";
     $content .= "<channel>\n";
     $content .= "<title>TorrentFlux Status</title>\n";
