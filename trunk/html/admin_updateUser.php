@@ -21,7 +21,5 @@ if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	AuditAction($cfg["constants"]["admin"], _EDITUSER.": ".$user_id);
 	header("location: admin.php");
 }
-
-
 $tmpl->pparse();
 ?>
