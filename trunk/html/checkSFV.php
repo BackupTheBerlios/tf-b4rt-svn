@@ -20,32 +20,26 @@
 
 *******************************************************************************/
 
-	include("config.php");
-	include("functions.php");
+require_once("config.php");
+require_once("functions.php");
+require_once("settingsfunctions.php");
+require_once("lib/vlib/vlibTemplate.php");
+loadSettings();
 
-	// load settings for bin-path
-	include_once("settingsfunctions.php");
-	loadSettings();
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/checkSFV.tmpl");
 
-	echo getHead('sfv check', false);
+$tmpl->setvar('head', getHead('sfv check', false));
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 
-	// Main BG
-	echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";
-	// CHECK SFV
+$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
 
-	$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
+$handle = popen($cmd . ' 2>&1', 'r' );
 
-	$handle = popen($cmd . ' 2>&1', 'r' );
+$buff = fgets($handle);
+$tmpl->setvar('buff', nl2br($buff));
+ob_flush();
+flush();
 
-	while(!feof($handle))
-	{
-		$buff = fgets($handle,30);
-		echo nl2br($buff) ;
-		ob_flush();
-		flush();
-	}
-	pclose($handle);
-	echo "done";
-	echo "</body>";
-
+pclose($handle);
+$tmpl->pparse();
 ?>
