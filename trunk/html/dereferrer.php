@@ -21,21 +21,21 @@
 *******************************************************************************/
 
 // includes
-include_once("config.php");
-include_once("functions.php");
+require_once("config.php");
+require_once("functions.php");
+require_once("lib/vlib/vlibTemplate.php");
+
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/dereferrer.tmpl");
 
 if (isset($_REQUEST["u"])) {
-    echo getHead("dereferrer",false,'0;URL='.$_REQUEST["u"]);
-    ?>
-    <br>
-    <div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid <?php echo $cfg["main_bgcolor"] ?>; position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
-    <?php
-    echo '<br><br><strong>';
-    echo 'forwarding to <a href="'.$_REQUEST["u"].'">'.$_REQUEST["u"].'</a> ...';
-    echo '</strong><br><br>';
-    echo getFoot(false,false);
+	$tmpl->setvar('set', 1);
+	$tmpl->setvar('head', getHead("dereferrer",false,'0;URL='.$_REQUEST["u"]));
+	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+	$tmpl->setvar('_REQUEST', $_REQUEST["u"]);
+	$tmpl->setvar('foot', getFoot(false,false));
 } else {
-    header("location: index.php");
-    exit();
+	header("location: index.php");
+	exit();
 }
+$tmpl->pparse();
 ?>
