@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: inout.h 346 2006-06-13 00:28:03Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *

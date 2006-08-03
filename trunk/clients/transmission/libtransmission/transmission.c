@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: transmission.c 679 2006-07-23 19:39:02Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -609,8 +609,10 @@ static void downloadLoop( void * _tor )
 			tor->finished = 1;
             tr_trackerCompleted( tor->tracker );
             tr_ioSaveResume( tor->io );
+#ifndef __AMIGAOS4__ 
             sync(); /* KLUDGE: all files should be closed and
                        re-opened in read-only mode instead */
+#endif
         }
 
         /* Receive/send messages */

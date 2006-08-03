@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: utils.c 626 2006-07-16 23:40:22Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -23,6 +23,13 @@
  *****************************************************************************/
 
 #include "transmission.h"
+
+static void (*errorFunc)( const char * );
+
+void tr_setErrorFunction( void (*func)( const char * ) )
+{
+    errorFunc = func;
+}
 
 void tr_msg( int level, char * msg, ... )
 {
@@ -50,7 +57,15 @@ void tr_msg( int level, char * msg, ... )
     va_start( args, msg );
     vsnprintf( string, sizeof( string ), msg, args );
     va_end( args );
-    fprintf( stderr, "%s\n", string );
+
+    if( NULL == errorFunc )
+    {
+        fprintf( stderr, "%s\n", string );
+    }
+    else
+    {
+        errorFunc( string );
+    }
 }
 
 int tr_rand( int sup )

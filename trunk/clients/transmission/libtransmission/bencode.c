@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: bencode.c 543 2006-07-07 16:21:30Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *

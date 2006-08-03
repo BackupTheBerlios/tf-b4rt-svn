@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: internal.h 679 2006-07-23 19:39:02Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -40,7 +40,9 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef __AMIGAOS4__ 
 #include <sys/resource.h>
+#endif
 #include <netdb.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

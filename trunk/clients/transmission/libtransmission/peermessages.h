@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: peermessages.h 261 2006-05-29 21:27:31Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *

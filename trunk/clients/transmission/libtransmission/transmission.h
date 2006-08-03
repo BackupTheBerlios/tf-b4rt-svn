@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: transmission.h 626 2006-07-16 23:40:22Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -55,6 +55,16 @@ extern "C" {
  **********************************************************************/
 typedef struct tr_handle_s tr_handle_t;
 tr_handle_t * tr_init();
+
+/***********************************************************************
+ * tr_setErrorFunction
+ ***********************************************************************
+ * Sets the function used to display libtransmission errors.  A NULL
+ * function means to use the default, which simple prints the message
+ * to stderr.  The function's prototype should look like this:
+ * void myErrFunc( const char * errstr );
+ **********************************************************************/
+void tr_setErrorFunction( void (*func)( const char * ) );
 
 /***********************************************************************
  * tr_getPrefsDirectory

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: fastresume.h 326 2006-06-11 04:32:41Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *

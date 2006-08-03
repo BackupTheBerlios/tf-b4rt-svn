@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: utils.h 310 2006-06-09 19:53:35Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
