@@ -4,7 +4,7 @@ use IO::Socket;
 use IO::Select;
 
 my $port = 3150;
-my ( $SERVER, $READSET );
+my ( $SERVER, $Select );
 
 #------------------------------------------------------------------------------#
 # Sub: New                                                                     #
@@ -13,7 +13,7 @@ my ( $SERVER, $READSET );
 #------------------------------------------------------------------------------#
 sub New {
 	# Create the read set
-	$READSET = new IO::Select();
+	$Select = new IO::Select();
 
 	# Create the server socket
 	$SERVER = IO::Socket::INET->new(
@@ -22,36 +22,52 @@ sub New {
 		Listen          => 16,
 		Reuse           => 1);
 	die "Could not create server socket: $!\n" unless $SERVER;
-	$READSET->add($SERVER);
+	$Select->add($SERVER);
+
+	# Create the object
+	my $self = {};
+	bless $self;
+	return $self;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: CheckConns                                                              #
+# Sub: Main                                                                    #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub CheckConns {
-        SOCKET: while ( my @ready = $READSET->can_read(Fluxd::SleepDelta())) {
-                foreach my $socket (@ready) {
-                        if ($socket == $SERVER) {
-                                # Create a new socket
-                                my $new = $SERVER->accept;
-                                $READSET->add($new);
-                        } else {
-                                # Process the socket
-                                my $buf = <$socket>;
-                                if($buf) {
-                                        my $return = Fluxd::ProcessRequest($buf);
-                                        send($socket, $return, 0);
-                                        $READSET->remove($socket);
-                                        $socket->close;
-                                } else {
-                                        # Client has closed connection
-                                        $READSET->remove($socket);
-                                        $socket->close;
-                                }
-                                last SOCKET;
-                        }       
+sub Main {
+        # Get the readable handles. timeout is 0, only process stuff that can be
+        # read NOW.
+        my $return = "";
+        my @ready = $Select->can_read(0);
+        foreach my $socket (@ready) {
+                if ($socket == $SERVER) {
+                        my $new = $socket->accept();
+                        $Select->add($new);
+                } else {
+                        my $buf = "";
+                        my $char = getc($socket);
+                        while ($char ne "\n") {
+                                $buf .= $char;
+                                $char = getc($socket);
+                        }
+                        $return = Fluxd::ProcessRequest($buf);
+                        $socket->send($return);
+                        $Select->remove($socket);
+                        close($socket);
                 }
         }
 }
+
+#------------------------------------------------------------------------------#
+# Sub: Destroy                                                                 #
+# Arguments: Null                                                              #
+# Returns: Info String                                                         #
+#------------------------------------------------------------------------------#
+sub Destroy {
+	foreach my $handle ($Select->handles) {
+		$Select->remove($handle);
+		$handle->close;
+	}
+}
+1;

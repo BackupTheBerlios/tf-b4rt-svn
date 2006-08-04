@@ -97,7 +97,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -e 5 -p ".$this->port ." -u ".$this->rate ." -c ". $this->sharekill_param ." -d ".$this->drate;
         $this->command .= " ".$this->cfg["btclient_transmission_options"]. "\"". $this->cfg["torrent_file_path"]. $this->transfer;
         // standard, no shell trickery ("new" transmission-patch has pid-file included) :
-        $this->command .= '" &> /dev/null &'; /* - bsd-workaround */
+        $this->command .= '" > /dev/null &'; /* - bsd-workaround */
         // <begin shell-trickery> to write the pid of the client into the pid-file
         // * b4rt :
         //$this->command .= '" &> /dev/null & echo $! > "'. $this->pidFile .'"';

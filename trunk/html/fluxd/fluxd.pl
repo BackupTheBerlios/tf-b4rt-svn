@@ -34,7 +34,7 @@ use POSIX qw(setsid);
 my ( $DB_TYPE, $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS );
 use vars qw( @users %names);
 my $BIN_PHP = "/usr/bin/php";
-my $BIN_FLUXDCLI = "fluxdcli.php";
+my $BIN_FLUXCLI = "fluxcli.php";
 my $PATH_TORRENT_DIR = ".torrents";
 my $PATH_DATA_DIR = "fluxd";
 my $PATH_SOCKET = "fluxd.sock";
@@ -77,6 +77,11 @@ $loop = 0;
 # Here we go! The main loop!
 while ( 1 ) {
 	CheckConnections();
+	$Qmgr->Main if(defined $Qmgr);
+	$Fluxinet->Main if(defined $Fluxinet);
+	$Watch->Main if(defined $Watch);
+	$Clientmaint->Main if(defined $Clientmaint);
+	$Trigger->Main if(defined $Trigger);
 }
 
 #------------------------------------------------------------------------------#
@@ -163,30 +168,30 @@ sub Fluxcli {
 	my $Arg2 = shift;
 	my $return;
 
-	if ($Command ~/^torrents|^netstat|^\w+-all|^repair/) {
+	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
 		if ( (defined $Arg1) || (defined $Arg2) ) {
 			$return = PrintUsage();
 			next;
 		} else {
-			$return = `$PATH_PHP /usr/local/www/trunk/html/fluxcli.php $Command`;
+			$return = `$PATH_PHP $BIN_FLUXCLI $Command`;
 			next;
 		}
 	}
-	if ($Command ~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
 		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
 			$return = PrintUsage();
 			next;
 		} else {
-			$return = `$PATH_PHP /usr/local/www/trunk/html/fluxcli.php $Command $Arg1`;
+			$return = `$PATH_PHP $BIN_FLUXCLI $Command $Arg1`;
 			next;
 		}
 	}
-	if ($Command ~/^inject/) {
+	if ($Command =~/^inject/) {
 		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
 			$return = PrintUsage();
 			next;
 		} else {
-			$return = `$PATH_PHP /usr/local/www/trunk/html/fluxcli.php $Command $Arg1 $Arg2`;
+			$return = `$PATH_PHP $BIN_FLUXCLI $Command $Arg1 $Arg2`;
 			next;
 		}
 	}
@@ -199,6 +204,28 @@ sub Fluxcli {
 # Returns: info on system requirements                                         #
 #------------------------------------------------------------------------------#
 sub Check {
+	print "Checking requirements\n";
+	# checking modules
+	my $return = 0;
+	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol qw(delete_package)', 'POSIX qw(setsid)');
+	foreach my $mod (@mods) {
+		if (eval "require $mod")  {
+			$return = 1;
+			next;
+		} else {
+			print "Fatal Error : cant load module \"".$mod."\"\n";
+			# Turn on Autoflush;
+			$| = 1;
+			print "Should we try to install the module with CPAN ? (y|n) ";
+			my $answer = "";
+			chomp($answer=<STDIN>);
+			$answer = lc($answer);
+			if ($answer eq "y") {
+				exec('perl -MCPAN -e "install '.$mod.'"');
+			}
+			exit;
+		}
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -223,11 +250,34 @@ sub Set {
 	my $value = shift;
 	my $return;
 
-	if ($variable ~/::/) {
+	if ($variable =~/::/) {
 		# setting/getting package variable
 		my @pair = split(/::/, $variable);
-		next if ($pair[0] !/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
-		
+		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
+		SWITCH: {
+			$_ = $pair[0];
+			/Qmgr/ && do { 
+				$return = $Qmgr->Set($pair[1], $value) if (defined $Qmgr);
+				last SWITCH; 
+			};
+			/Fluxinet/ && do { 
+				$return = $Fluxinet->Set($pair[1], $value) if(defined $Fluxinet);
+				last SWITCH; 
+			};
+			/Trigger/ && do { 
+				$return = $Trigger->Set($pair[1], $value) if(defined $Trigger);
+				last SWITCH; 
+			};
+			/Watch/ && do { 
+				$return = $Watch->Set($pair[1], $value) if(defined $Watch);
+				last SWITCH; 
+			};
+			/Clientmaint/ && do { 
+				$return = $Clientmaint->Set($pair[1], $value) if(defined $Clientmaint);
+				last SWITCH; 
+			};
+			$return = "Unknown package\n";
+		}
 	} else {
 		# setting/getting internal variable
 	}
@@ -334,7 +384,7 @@ sub InitPaths {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub Daemonize {
-	chdir '/'			or die "Can't chdir to /: $!";
+	#chdir '/'			or die "Can't chdir to /: $!";
 	umask 0;			# sets our umask
 	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
 	open STDOUT, ">>$LOG"		or die "Can't Write to $LOG: $!";
@@ -342,6 +392,11 @@ sub Daemonize {
 	defined(my $pid = fork)		or die "Can't fork: $!";
 	exit if $pid;
 	setsid				or die "Can't start a new session: $!";
+
+	# check requirements, die if they aren't there
+	#if (!(Check())) {
+	#	exit;
+	#}
 
 	# set up daemon stuff...
         # set up server socket   
@@ -466,76 +521,88 @@ sub PrintVersion {
 sub Config {
 	open(CONFIG, "/usr/local/www/trunk/html/fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
 	while (<CONFIG>) {
-		SWITCH: {
-			if(/^INCLUDE/) {
+		# I checked $/ and it's set to \n, but <CONFIG> reads the whole file.
+		# any ideas why?
+		my @lines = split(/\n/, $_);
+		foreach $_ (@lines) {
+			SWITCH: {
 				# Load up modules, unless they're already
-				# loaded.
-				/Qmgr\.pm$/ && do {
+				# loaded
+				/^INCLUDE\sQmgr\.pm$/ && do {
 					if (!(exists &Qmgr::New)) {
 						require Qmgr;
-						$Queue = Qmgr->New();
+						$Qmgr = Qmgr->New();
 						last SWITCH;
 					}
 				};
-				/Fluxinet\.pm$/ && do {
+				/^INCLUDE\sFluxinet\.pm$/ && do {
 					if (!(exists &Fluxinet::New)) {
+						print "requireing fluxinet\n";
 						require Fluxinet;
-						$Socket = Fluxinet->New();
+						$Fluxinet = Fluxinet->New();
 						last SWITCH;
 					}
 				};
-				/Watch\.pm$/ && do {
+				/^INCLUDE\sWatch\.pm$/ && do {
 					if (!(exists &Watch::New)) {
 						require Watch;
 						$Watch = Watch->New();
 						last SWITCH;
 					}
 				};
-				/Clientmaint\.pm$/ && do {
+				/^INCLUDE\sClientmaint\.pm$/ && do {
 					if (!(exists &Clientmaint::New)) {
 						require Clientmaint;
-						$Client = Clientmaint->New();
+						$Clientmaint = Clientmaint->New();
 						last SWITCH;
 					}
 				};
-				/Trigger\.pm$/ && do {
+				/^INCLUDE\sTrigger\.pm$/ && do {
 					if (!(exists &Trigger::New)) {
 						require Trigger;
 						$Trigger = Trigger->New();
 						last SWITCH;
 					}
 				};
-			}
-			if (/^#INCLUDE/) {
-				# Load up modules, as long as they aren't
-				# already loaded.
-				/Qmgr\.pm$/ && do {
+	
+				# Unload modules, if they are loaded
+				/^#INCLUDE\sQmgr\.pm$/ && do {
 					if(exists &Qmgr::New) {
+						$Qmgr->Destroy();
 						delete_package('Qmgr');
+						undef $Qmgr;
 						last SWITCH;
 					}
 				};
-				/Fluxinet\.pm$/ && do {
+				/^#INCLUDE\sFluxinet\.pm$/ && do {
 					if (exists &Fluxinet::New) {
+						$Fluxinet->Destroy();
 						delete_package('Fluxinet');
+						undef $Fluxinet;
 						last SWITCH;
 					}
 				};
-				/Watch\.pm$/ && do {
+				/^#INCLUDE\sWatch\.pm$/ && do {
 					if (exists &Watch::New) {
+						$Watch->Destroy();
 						delete_package('Watch');
+						undef $Watch;
 						last SWITCH;
 					}
 				};
-				/Clientmaint\.pm$/ && do {
+				/^#INCLUDE\sClientmaint\.pm$/ && do {
 					if (exists &Clientmaint::New) {
+						$Clientmaint->Destroy();
 						delete_package('Clientmaint');
+						undef $Clientmaint;
 						last SWITCH;
 					}
 				};
-				/Trigger\.pm$/ && do {
+				/^#INCLUDE\sTrigger\.pm$/ && do {
 					if (exists &Trigger::New) {
+						$Trigger->Destroy;
 						delete_package('Trigger');
+						undef $Trigger;
 						last SWITCH;
 					}
 				};
@@ -543,14 +610,13 @@ sub Config {
 		}
 	}
 }
-
 #------------------------------------------------------------------------------#
 # Sub: GotSigHup                                                               #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub GotSigHup {
-	print "Got SIGHUP, rea-reading config...";
+	print "Got SIGHUP, re-reading config...";
 	Config();
 	print "done.\n";
 }
@@ -583,4 +649,3 @@ sub CheckConnections {
 		}
 	}
 }
-
