@@ -330,6 +330,12 @@ sub ProcessArguments {
 		exit;
 	};
 
+	# debug
+	if ($temp =~ /debug/) {
+		Debug();
+		exit;
+	};
+
 	# $MAX_SYS
 	if ($temp !~/\d+/) {
 		PrintUsage();
@@ -702,4 +708,29 @@ sub CheckConnections {
 			close($socket);
 		}
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: Debug                                                                   #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
+sub Debug {
+	my $debug = shift @ARGV;
+
+	# first arg is debug-operation.
+	if (!(defined $debug)) {
+		print "debug is missing an operation.\n";
+		exit;
+	}
+
+	# database
+	if ($debug =~ /db/) {
+		# TODO : debug database
+		print "debugging database...\n";
+		exit;
+	}
+
+	print "debug is missing an operation.\n";
+	exit;
 }
