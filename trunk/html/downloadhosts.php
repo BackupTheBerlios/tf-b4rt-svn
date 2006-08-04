@@ -20,9 +20,12 @@
 
 *******************************************************************************/
 
-include_once("config.php");
-include_once("functions.php");
-include_once("AliasFile.php");
+require_once("config.php");
+require_once("functions.php");
+require_once("AliasFile.php");
+require_once("lib/vlib/vlibTemplate.php");
+
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/downloadhosts.tmpl");
 
 $torrent = getRequestVar('torrent');
 $error = "";
@@ -30,111 +33,60 @@ $torrentowner = getOwner($torrent);
 $background = "#000000";
 $alias = getRequestVar('alias');
 if (!empty($alias)) {
-    // read the alias file
-    // create AliasFile object
+	// read the alias file
+	// create AliasFile object
 		// b4rt-61
-    //$af = new AliasFile($cfg["torrent_file_path"].$alias, $torrentowner);
+	//$af = new AliasFile($cfg["torrent_file_path"].$alias, $torrentowner);
 		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg);
-    for ($inx = 0; $inx < sizeof($af->errors); $inx++)
-    {
-        $error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
-    }
+	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
+	{
+		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
+	}
 } else {
-    die("fatal error torrent file not specified");
+	die("fatal error torrent file not specified");
 }
-
 $torrent_cons = "";
 if (($af->running == 1) && ($alias != "")) {
 	$torrent_pid = getTorrentPid($alias);
 	$torrent_cons = netstatConnectionsByPid($torrent_pid);
 	$torrent_hosts = netstatHostsByPid($torrent_pid);
 }
-
 $torrentLabel = $torrent;
 if(strlen($torrentLabel) >= 39)
-  $torrentLabel = substr($torrent, 0, 35)."...";
-
-
+	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
+$tmpl->setvar(_ID_HOSTS, false, "30", $af->percent_done."% ");
 
-echo getHead(_ID_HOSTS, false, "30", $af->percent_done."% ");
-
-?>
-    <div align="center">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tr>
-        <td align="center">
-<?php
-    if ($error != "")
-    {
-        echo "<img src=\"images/error.gif\" width=16 height=16 border=0 title=\"ERROR\" align=\"absmiddle\">";
-    }
-    echo $torrentLabel."<font class=\"tiny\"> (".$torrent_cons." "._ID_HOSTS.")</font>";
-?>
-        </td>
-        <td align="right" width="16">
-        	<a href="downloaddetails.php?torrent=<?php echo $torrent ?>&alias=<?php echo $alias ?>">
-        	 <img src="images/<?php echo $hd->image ?>" width=16 height=16 border=0 title="<?php echo $hd->title ?>">
-        	</a>
-        </td>
-    </tr>
-    </table>
-    <table bgcolor="<?php echo $cfg["table_header_bg"] ?>" width="352" cellpadding="1">
-
-     <tr><td>
-        <div align="center">
-        <table border="0" cellpadding="2" cellspacing="2" width="90%">
-
-<?php
-
+if ($error != ""){
+	$tmpl->setvar('is_error', 1);
+	$tmpl->setvar('error', $error);
+}
+$tmpl->setvar('torrentLabel', $torrentLabel);
+$tmpl->setvar('cons_hosts', $torrent_cons." "._ID_HOSTS);
+$tmpl->setvar('torrent', $torrent);
+$tmpl->setvar('alias', $alias);
+$tmpl->setvar('hd_image', $hd->image);
+$tmpl->setvar('hd_title', $hd->title);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 if (($torrent_hosts != null) && ($torrent_hosts != "")) {
-	echo '<tr>';
-	echo '<td><div class="tiny"><strong>';
-	echo _ID_HOST;
-	echo '</strong></div></td>';
-	echo '<td><div class="tiny"><strong>';
-	echo _ID_PORT;
-	echo '</strong></div></td>';
-	echo '</tr>';
+	$tmpl->setvar('torrent_hosts_aval', 1);
+	$tmpl->setvar('_ID_HOST', _ID_HOST);
+	$tmpl->setvar('_ID_PORT', _ID_PORT);
 	$hostAry = array_keys($torrent_hosts);
 	foreach ($hostAry as $host) {
 		$host = @trim($host);
 		$port = @trim($torrent_hosts[$host]);
-		if ($cfg["downloadhosts"] == 1)
+		if ($cfg["downloadhosts"] == 1) {
 			$host = @gethostbyaddr($host);
+		}
 		if ($host != "") {
-			echo '<tr>';
-			echo '<td bgcolor="'.$cfg["body_data_bg"].'" nowrap><div class="tiny">';
-			echo $host;
-			echo '</div></td>';
-			echo '<td bgcolor="'.$cfg["body_data_bg"].'" nowrap><div class="tiny">';
-			echo $port;
-			echo '</div></td>';
-			echo "</tr>\n";
+			$tmpl->setvar('hosts', 1);
+			$tmpl->setvar('host', $host);
+			$tmpl->setvar('port', $port);
 		}
 	}
 }
-
-?>
-
-
-
-<?php
-    if ($error != "")
-    {
-?>
-        <tr>
-            <td align="right" valign="top"><div class="tiny">Error(s):</div></td>
-            <td colspan="3" width="66%"><div class="tiny"><?php echo "<strong class=\"tiny\">".$error."</strong>" ?></div></td>
-        </tr>
-<?php
-    }
-?>
-        </table>
-    </div>
-</td></tr></table>
-<?php
-
-echo getFoot(false,false);
-
+$tmpl->setvar('foot', getFoot(false,false));
+$tmpl->pparse();
 ?>

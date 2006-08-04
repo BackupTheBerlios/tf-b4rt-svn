@@ -1,0 +1,48 @@
+<tmpl_var name="head">
+<div align="center">
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td align="center">
+				<tmpl_if name="is_error">
+					<img src="images/error.gif" width=16 height=16 border=0 title="ERROR" align="absmiddle">
+				</tmpl_if>
+				<tmpl_var name="torrentLabel"><font class="tiny"> (<tmpl_var name="cons_hosts">)</font>
+			</td>
+			<td align="right" width="16">
+				<a href="downloaddetails.php?torrent=<tmpl_var name="torrent">&alias=<tmpl_var name="alias">">
+					<img src="images/<tmpl_var name="hd_image">" width=16 height=16 border=0 title="<tmpl_var name="hd_title">">
+				</a>
+			</td>
+		</tr>
+	</table>
+	<table bgcolor="<tmpl_var name="table_header_bg">" width="352" cellpadding="1">
+		<tr>
+			<td>
+				<div align="center">
+					<table border="0" cellpadding="2" cellspacing="2" width="90%">
+						<tmpl_if name="torrent_hosts_aval">
+							<tr>
+								<td><div class="tiny"><strong><tmpl_var name="_ID_HOST"></strong></div></td>
+								<td><div class="tiny"><strong><tmpl_var name="_ID_PORT"></strong></div></td>
+							</tr>
+							<tmpl_var name="hosts">
+							<tmpl_if name="hosts">
+								<tr>
+									<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="host"></div></td>
+									<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="port"></div></td>
+								</tr>
+							</tmpl_if>
+						</tmpl_if>
+						<tmpl_if name="error">
+							<tr>
+								<td align="right" valign="top"><div class="tiny">Error(s):</div></td>
+								<td colspan="3" width="66%"><div class="tiny"><strong class="tiny"><tmpl_var name="error"></strong></div></td>
+							</tr>
+						</tmpl_if>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<tmpl_var name="foot">
