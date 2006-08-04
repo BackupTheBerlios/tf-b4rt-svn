@@ -9,7 +9,7 @@ my ( $time, $localtime, %globals );
 my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 
 # revision in a var
-our $REVISION = do { my @r = (q$Revision: 72 $ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+our $REVISION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
 #-----------------------------------------------------------------------------#
 # Sub: New (Constructor Method)                                               #

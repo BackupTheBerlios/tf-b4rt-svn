@@ -299,7 +299,7 @@ sub Initialize {
 		exit;
 	}
 	# initialize some variables
-	$REVISION = do { my @r = (q$Revision: 1 $ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+	$REVISION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 	($DIR=$0) =~ s/([^\/\\]*)$//;
 	($PROG=$1) =~ s/\.([^\.]*)$//;
 	$EXTENSION=$1;
