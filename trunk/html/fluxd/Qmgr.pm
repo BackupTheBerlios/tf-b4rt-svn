@@ -5,7 +5,6 @@
 ################################################################################
 package Qmgr;
 use strict;
-no strict "refs";
 ################################################################################
 
 #------------------------------------------------------------------------------#
@@ -26,17 +25,16 @@ my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 sub New {
 
 	my $objclass = shift;
-	# Initialize the server
 	# check arguments
 
-	Fluxd::WriteLog("Qmgr : Initializing Qmgr");
+	print "Qmgr : Initializing Qmgr";
 
 	# Create some time vars
 	$time = time();
 	$localtime = localtime();
 
 	# Create and start the log file
-	Fluxd::WriteLog("Qmgr : Starting : Qmgr");
+	print "Qmgr : Starting : Qmgr";
 
 	# Initialize our globals hash
 	$globals{'main'} = 0;
@@ -44,11 +42,11 @@ sub New {
 
 	#Initialize the queue
 	if (-f $PATH_QUEUE_FILE) {
-		Fluxd::WriteLog("Qmgr : Loading Queue-file");
+		print "Qmgr : Loading Queue-file";
 		# actually load the queue
 		LoadQueue();
 	} else {
-		Fluxd::WriteLog("Qmgr : Creating empty queue");
+		print "Qmgr : Creating empty queue";
 		foreach my $user (@users) {
 			$user{"queue"} = ();
 			$user{"running"} = ();

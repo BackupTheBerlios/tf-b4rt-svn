@@ -239,7 +239,6 @@ sub Check {
 sub Status {
 	my $retval = "";
 	$retval .= "Fluxd has been up since $start_time\n";
-	print "Retval is $retval\n";
 	return $retval;
 }
 
@@ -434,6 +433,9 @@ sub Daemonize {
 	#	exit;
 	#}
 
+	# Set up our signal handler
+	$SIG{HUP} = \&GotSigHup;
+
 	# set up daemon stuff...
         # set up server socket
         $SERVER = IO::Socket::UNIX->new(
@@ -574,7 +576,6 @@ sub Config {
 				};
 				/^INCLUDE\sFluxinet\.pm$/ && do {
 					if (!(exists &Fluxinet::New)) {
-						print "requireing fluxinet\n";
 						require Fluxinet;
 						$Fluxinet = Fluxinet->New();
 						last SWITCH;
