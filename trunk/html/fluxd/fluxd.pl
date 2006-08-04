@@ -51,7 +51,7 @@ my $start_time = time();
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw( $Queue $Socket $Watch $Client $Trigger);
+use vars qw( $Qmgr $Fluxinet $Watch $Clientmaint $Trigger);
 
 #------------------------------------------------------------------------------#
 # Main                                                                         #
@@ -94,161 +94,103 @@ sub ProcessRequest {
 	SWITCH: {
 		$_ = shift;
 
+		# Actual fluxd subroutine calls
 		/^die/ && do {
 			$return = StopServer();
 			last SWITCH;
 		};
-		/^stop/ && do {
-			$return = Qmgr::StopTorrent(shift);
-			last SWITCH;
-		};
-		/^start/ && do {
-			$return = StartTorrent(shift);
-			last SWITCH;
-		};
-		/^count-jobs/ && do {
-			$return = CountJobs();
-			last SWITCH;
-		};
-		/^count-queue/ && do {
-			$return = CountQueue();
-			last SWITCH;
-		};
-		/^list-queue/ && do {
-			$return = ListQueue();
-			last SWITCH;
-		};
-		/^watch/ && do {
-			$return = Watch(shift, shift);
-			last SWITCH;
-		};
-		/^trigger/ && do {
-			$return = Trigger(shift, shift);
-			last SWITCH;
-		};
 		/^status/ && do {
-			$return .= Status();
-			last SWITCH;
-		};
-		/^set/ && do {
-			$return = Set(shift, shift);
+			$return = Status();
 			last SWITCH;
 		};
 		/^check/ && do {
 			$return = Check();
 			last SWITCH;
 		};
-		/^torrents/ && do {
-			$return = Torrents();
+		/^set/ && do {
+			$return = Set(shift, shift);
 			last SWITCH;
 		};
-		/^netstat/ && do {
-			$return = Netstat();
+
+		# fluxcli.php calls
+		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat/ && do {
+			$return = Fluxcli($_, shift, shift);
 			last SWITCH;
 		};
-		/^start-all/ && do {
-			$return = StartAll();
-			last SWITCH;
-		};
-		/^stop-all/ && do {
-			$return = StopAll();
-			last SWITCH;
-		};
-		/^resume-all/ && do {
-			$return = ResumeAll();
-			last SWITCH;
-		};
-		/^reset/ && do {
-			$return = Reset(shift);
-			last SWITCH;
-		};
-		/^delete/ && do {
-			$return = Delete(shift);
-			last SWITCH;
-		};
-		/^wipe/ && do {
-			$return = Wipe(shift);
-			last SWITCH;
-		};
-		/^inject/ && do {
-			$return = Inject(shift, shift);
-			last SWITCH;
-		};
+
+		# Package calls
+		if (exists &Qmgr::Main) {
+			/^count-jobs/ && do {
+				$return = Qmgr::CountJobs();
+				last SWITCH;
+			};
+			/^count-queue/ && do {
+				$return = Qmgr::CountQueue();
+				last SWITCH;
+			};
+			/^list-queue/ && do {
+				$return = Qmgr::ListQueue();
+				last SWITCH;
+			};
+		}
+		if (exists &Watch::SetWatch) {
+			/^watch/ && do {
+				$return = Watch::SetWatch(shift, shift);
+				last SWITCH;
+			};
+		}
+		if (exists &Trigger::SetTrigger) {
+			/^trigger/ && do {
+				$return = Trigger::SetTrigger(shift, shift);
+				last SWITCH;
+			};
+		}
+
+		# Default case.
 		$return = PrintUsage();
 	}
 	return $return;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Inject                                                                  #
-# Arguments: /path/to/foo.torrent, username                                    #
-# Returns: info string                                                         #
+# Sub: Fluxcli                                                                 #
+# Arguments: Command [Arg1, [Arg2]]                                            #
+# Returns: Info string                                                         #
 #------------------------------------------------------------------------------#
-sub Inject {
-}
+sub Fluxcli {
+	my $Command = shift;
+	my $Arg1 = shift;
+	my $Arg2 = shift;
+	my $return;
 
-#------------------------------------------------------------------------------#
-# Sub: Wipe                                                                    #
-# Arguments: torrent name                                                      #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub Wipe {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: Delete                                                                  #
-# Arguments: torrent name                                                      #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub Delete {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: Reset                                                                   #
-# Arguments: torrent name                                                      #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub Reset {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: ResumeAll                                                               #
-# Arguments: Null                                                              #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub ResumeAll {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: StopAll                                                                 #
-# Arguments: Null                                                              #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub StopAll {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: StartAll                                                                #
-# Arguments: Null                                                              #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub StartAll {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: Netstat                                                                 #
-# Arguments:                                                                   #
-# Returns: list of open connections (port and host)                            #
-#------------------------------------------------------------------------------#
-sub Netstat {
-}
-
-#------------------------------------------------------------------------------#
-# Sub: Torrents                                                                #
-# Arguments: Null                                                              #
-# Returns: information on torrents and speed                                   #
-#------------------------------------------------------------------------------#
-sub Torrents {
+	if ($Command ~/^torrents|^netstat|^\w+-all|^repair/) {
+		if ( (defined $Arg1) || (defined $Arg2) ) {
+			$return = PrintUsage();
+			next;
+		} else {
+			$return = `$PATH_PHP /usr/local/www/trunk/html/fluxcli.php $Command`;
+			next;
+		}
+	}
+	if ($Command ~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
+			$return = PrintUsage();
+			next;
+		} else {
+			$return = `$PATH_PHP /usr/local/www/trunk/html/fluxcli.php $Command $Arg1`;
+			next;
+		}
+	}
+	if ($Command ~/^inject/) {
+		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
+			$return = PrintUsage();
+			next;
+		} else {
+			$return = `$PATH_PHP /usr/local/www/trunk/html/fluxcli.php $Command $Arg1 $Arg2`;
+			next;
+		}
+	}
+	return $return;
 }
 
 #------------------------------------------------------------------------------#
@@ -277,6 +219,19 @@ sub Status {
 # Returns: info string                                                         #
 #------------------------------------------------------------------------------#
 sub Set {
+	my $variable = shift;
+	my $value = shift;
+	my $return;
+
+	if ($variable ~/::/) {
+		# setting/getting package variable
+		my @pair = split(/::/, $variable);
+		next if ($pair[0] !/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
+		
+	} else {
+		# setting/getting internal variable
+	}
+	return $return;
 }
 
 #------------------------------------------------------------------------------#
