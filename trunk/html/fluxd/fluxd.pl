@@ -62,11 +62,11 @@ use vars qw( $Qmgr $Fluxinet $Watch $Clientmaint $Trigger);
 # flush the buffer
 $| = 1;
 
-# Verify that we have been started in a valid way
-VerifyArguments();
-
 # Intialize
 Initialize();
+
+# Verify that we have been started in a valid way
+VerifyArguments();
 
 # Daemonise the script
 &Daemonize;
@@ -258,25 +258,25 @@ sub Set {
 		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
 		SWITCH: {
 			$_ = $pair[0];
-			/Qmgr/ && do { 
+			/Qmgr/ && do {
 				$return = $Qmgr->Set($pair[1], $value) if (defined $Qmgr);
-				last SWITCH; 
+				last SWITCH;
 			};
-			/Fluxinet/ && do { 
+			/Fluxinet/ && do {
 				$return = $Fluxinet->Set($pair[1], $value) if(defined $Fluxinet);
-				last SWITCH; 
+				last SWITCH;
 			};
-			/Trigger/ && do { 
+			/Trigger/ && do {
 				$return = $Trigger->Set($pair[1], $value) if(defined $Trigger);
-				last SWITCH; 
+				last SWITCH;
 			};
-			/Watch/ && do { 
+			/Watch/ && do {
 				$return = $Watch->Set($pair[1], $value) if(defined $Watch);
-				last SWITCH; 
+				last SWITCH;
 			};
-			/Clientmaint/ && do { 
+			/Clientmaint/ && do {
 				$return = $Clientmaint->Set($pair[1], $value) if(defined $Clientmaint);
-				last SWITCH; 
+				last SWITCH;
 			};
 			$return = "Unknown package\n";
 		}
@@ -304,14 +304,14 @@ sub StopServer {
 #------------------------------------------------------------------------------#
 sub VerifyArguments {
 	my $temp = shift @ARGV;
-	if ( (!(defined $temp)) && ($temp !~/\d+/) ) {
+	if ( (!(defined $temp)) || ($temp !~/\d+/) ) {
 		PrintUsage();
 		exit;
 	}
 	$MAX_SYS = $temp;
 
 	$temp = shift @ARGV;
-	if ( (!(defined $temp)) && ($temp !~/\d+/) ) {
+	if ( (!(defined $temp)) || ($temp !~/\d+/) ) {
 		PrintUsage();
 		exit;
 	}
@@ -401,8 +401,8 @@ sub Daemonize {
 	#}
 
 	# set up daemon stuff...
-        # set up server socket   
-        $SERVER = IO::Socket::UNIX->new(  
+        # set up server socket
+        $SERVER = IO::Socket::UNIX->new(
                 Type    => SOCK_STREAM,
                 Local   => $PATH_SOCKET,
                 Listen  => 16,
@@ -444,6 +444,7 @@ sub Daemonize {
 #------------------------------------------------------------------------------#
 sub PrintUsage {
 	print <<"USAGE";
+
 $PROG.$EXTENSION Revision $REVISION
 
 Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
@@ -467,7 +468,7 @@ Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
        $PROG.$EXTENSION stop
                         stops the fluxd server
        $PROG.$EXTENSION <count-jobs|count-queue|list-queue|check>
-                        returns the number of jobs, number of entries in the 
+                        returns the number of jobs, number of entries in the
                         queue, list entries in the queue, or check to ensure
                         that this computer has everything fluxd needs.
        $PROG.$EXTENSION repair
@@ -475,6 +476,15 @@ Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
                         is running as it should. You WILL break something.
 
 USAGE
+}
+
+#------------------------------------------------------------------------------#
+# Sub: PrintVersion                                                            #
+# Arguments: Null                                                              #
+# Returns: Version Information                                                 #
+#------------------------------------------------------------------------------#
+sub PrintVersion {
+	print $PROG.$EXTENSION." Revision ".$REVISION."\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -504,15 +514,6 @@ sub GetDBInfo {
 		}
 	}
 	$/ = '\n';
-}
-
-#------------------------------------------------------------------------------#
-# Sub: PrintVersion                                                            #
-# Arguments: Null                                                              #
-# Returns: Null                                                                #
-#------------------------------------------------------------------------------#
-sub PrintVersion {
-        print "fluxd.pl Revision ".$REVISION."\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -566,7 +567,7 @@ sub Config {
 						last SWITCH;
 					}
 				};
-	
+
 				# Unload modules, if they are loaded
 				/^#INCLUDE\sQmgr\.pm$/ && do {
 					if(exists &Qmgr::New) {
