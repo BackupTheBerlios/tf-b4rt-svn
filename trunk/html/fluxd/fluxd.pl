@@ -207,16 +207,18 @@ sub Fluxcli {
 # Returns: info on system requirements                                         #
 #------------------------------------------------------------------------------#
 sub Check {
-	print "Checking requirements\n";
-	# checking modules
+	print "Checking requirements...\n";
 	my $return = 0;
-	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol qw(delete_package)', 'POSIX qw(setsid)');
+	# check modules
+	print "1. modules\n";
+	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			$return = 1;
+			print " - ".$mod."\n";
 			next;
 		} else {
-			print "Fatal Error : cant load module \"".$mod."\"\n";
+			print "Fatal Error : cant load module ".$mod."\n";
 			# Turn on Autoflush;
 			$| = 1;
 			print "Should we try to install the module with CPAN ? (y|n) ";
@@ -229,6 +231,8 @@ sub Check {
 			exit;
 		}
 	}
+	# check database
+	print "2. database\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -318,6 +322,11 @@ sub ProcessArguments {
 	# version
 	if ($temp =~ /.*(version|-v).*/) {
 		PrintVersion();
+		exit;
+	};
+	# check
+	if ($temp =~ /check/) {
+		Check();
 		exit;
 	};
 
@@ -510,6 +519,13 @@ Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
        $PROG.$EXTENSION repair
                         repairs torrentflux. DO NOT DO THIS if your system
                         is running as it should. You WILL break something.
+
+       $PROG.$EXTENSION check
+                        checks for requirements.
+       $PROG.$EXTENSION <-h|--help>
+                        print out help screen.
+       $PROG.$EXTENSION <-v|--version>
+                        print out version-info
 
 USAGE
 }
