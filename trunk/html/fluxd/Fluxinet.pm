@@ -12,6 +12,10 @@ use IO::Select;
 #------------------------------------------------------------------------------#
 # Internal Variables                                                           #
 #------------------------------------------------------------------------------#
+# revision in a var
+our $REVISION = do {
+	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+
 my $port = 3150;
 my ( $SERVER, $Select );
 
