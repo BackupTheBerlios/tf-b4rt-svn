@@ -318,7 +318,7 @@ function cliStartTorrent($torrent = "") {
 			$cfg["AllowQueing"] = 0;
 			// start
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->startTorrentClient($torrent, 0);
+			$clientHandler->startClient($torrent, 0);
 			if ($clientHandler->status == 3) { // hooray
 				echo "done\n";
 			} else { // start failed
@@ -355,7 +355,7 @@ function cliStartTorrents() {
                 setPriority($torrent);
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-            $clientHandler->startTorrentClient($torrent, 0);
+            $clientHandler->startClient($torrent, 0);
             // just 2 sec..
             sleep(2);
             //
@@ -390,7 +390,7 @@ function cliResumeTorrents() {
                 setPriority($torrent);
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-            $clientHandler->startTorrentClient($torrent, 0);
+            $clientHandler->startClient($torrent, 0);
             // just 2 sec..
             sleep(2);
             //
@@ -434,7 +434,7 @@ function cliStopTorrent($torrent = "") {
 			$cfg["user"] = getOwner($torrent);
 			$alias = getAliasName($torrent).".stat";
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-            $clientHandler->stopTorrentClient($torrent,$alias);
+            $clientHandler->stopClient($torrent,$alias);
 			// give the torrent some time to die
             sleep(2);
 			echo "done\n";
@@ -479,7 +479,7 @@ function cliDeleteTorrent($torrent = "") {
 		if ($torrentRunningFlag == 1) {
 			// stop torrent first
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->stopTorrentClient($torrent, $alias);
+			$clientHandler->stopClient($torrent, $alias);
 			// give the torrent some time to die
 			sleep(8);
         }
@@ -508,7 +508,7 @@ function cliWipeTorrent($torrent = "") {
 		if ($torrentRunningFlag == 1) {
 			// stop torrent first
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->stopTorrentClient($torrent, $alias);
+			$clientHandler->stopClient($torrent, $alias);
 			// give the torrent some time to die
 			sleep(6);
         }
@@ -608,7 +608,7 @@ function cliWatchDir($tpath = "", $username = "") {
                             // start
                             include_once("ClientHandler.php");
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-                            $clientHandler->startTorrentClient($file_name, 0);
+                            $clientHandler->startClient($file_name, 0);
                             // just 2 secs..
                             sleep(2);
                             if ($clientHandler->status == 3) // hooray

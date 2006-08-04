@@ -1332,7 +1332,7 @@ function indexStartTorrent($torrent,$interactive) {
 			include_once("ClientHandler.php");
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->startTorrentClient($torrent, 0);
+			$clientHandler->startClient($torrent, 0);
 			// just 2 sec..
 			sleep(2);
 			// header + out
@@ -1346,7 +1346,7 @@ function indexStartTorrent($torrent,$interactive) {
 			} else {
 				include_once("ClientHandler.php");
 				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
-				$clientHandler->startTorrentClient($torrent, 1);
+				$clientHandler->startClient($torrent, 1);
 				if ($clientHandler->status == 3) { // hooray
 					// wait another sec
 					sleep(1);
@@ -1437,7 +1437,7 @@ function indexProcessDownload($url_upload) {
 				   }
 				   include_once("ClientHandler.php");
 				   $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-				   $clientHandler->startTorrentClient($file_name, 0);
+				   $clientHandler->startClient($file_name, 0);
 				   // just a sec..
 				   sleep(1);
 				   break;
@@ -1485,7 +1485,7 @@ function indexProcessUpload() {
 							   }
 							   include_once("ClientHandler.php");
 							   $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-							   $clientHandler->startTorrentClient($file_name, 0);
+							   $clientHandler->startClient($file_name, 0);
 							   // just a sec..
 							   sleep(1);
 							   break;

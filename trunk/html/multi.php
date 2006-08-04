@@ -51,7 +51,7 @@ switch ($action) {
                     $alias = getAliasName($torrent).".stat";
                     $btclient = getTransferClient($torrent);
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->stopTorrentClient($torrent, $alias);
+                    $clientHandler->stopClient($torrent, $alias);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -72,7 +72,7 @@ switch ($action) {
                         setPriority($torrent);
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startTorrentClient($torrent, 0);
+                    $clientHandler->startClient($torrent, 0);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -93,7 +93,7 @@ switch ($action) {
                         setPriority($torrent);
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startTorrentClient($torrent, 0);
+                    $clientHandler->startClient($torrent, 0);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -116,7 +116,7 @@ switch ($action) {
                        setPriority(urldecode($element));
                    }
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->startTorrentClient(urldecode($element), 0);
+                   $clientHandler->startClient(urldecode($element), 0);
                    // just 2 sec..
                    sleep(2);
                 }
@@ -124,7 +124,7 @@ switch ($action) {
              case "torrentStop": /* torrentStop */
                 if ($torrentRunningFlag != 0) {
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->stopTorrentClient(urldecode($element), $alias);
+                   $clientHandler->stopClient(urldecode($element), $alias);
                    // just 2 sec..
                    sleep(2);
                 }
@@ -141,7 +141,7 @@ switch ($action) {
                     }
                     include_once("ClientHandler.php");
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startTorrentClient(urldecode($element), 0);
+                    $clientHandler->startClient(urldecode($element), 0);
                     // just a sec..
                     sleep(1);
                 }
@@ -165,7 +165,7 @@ switch ($action) {
                 if ($torrentRunningFlag != 0) {
                    // stop torrent first
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->stopTorrentClient(urldecode($element), $alias);
+                   $clientHandler->stopClient(urldecode($element), $alias);
                    // give the torrent some time to die
                    sleep(8);
                 }

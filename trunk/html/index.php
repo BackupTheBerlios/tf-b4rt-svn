@@ -123,7 +123,7 @@ if(! $killTorrent == '') {
 	$return = getRequestVar('return');
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($killTorrent));
-	$clientHandler->stopTorrentClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
+	$clientHandler->stopClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
 	if (!empty($return))
 		header("location: ".$return.".php?op=queueSettings");
 	else

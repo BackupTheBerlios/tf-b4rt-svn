@@ -591,7 +591,7 @@ if (isset($_REQUEST["t"])) {
 						$alias = getAliasName($torrent).".stat";
 						$btclient = getTransferClient($torrent);
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-						$clientHandler->stopTorrentClient($torrent, $alias);
+						$clientHandler->stopClient($torrent, $alias);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
 						// just 2 sec..
@@ -617,7 +617,7 @@ if (isset($_REQUEST["t"])) {
 							setPriority($torrent);
 						}
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-						$clientHandler->startTorrentClient($torrent, 0);
+						$clientHandler->startClient($torrent, 0);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
 						// just 2 sec..
@@ -643,7 +643,7 @@ if (isset($_REQUEST["t"])) {
 							setPriority($torrent);
 						}
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-						$clientHandler->startTorrentClient($torrent, 0);
+						$clientHandler->startClient($torrent, 0);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
 						// just 2 sec..

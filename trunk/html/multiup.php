@@ -87,7 +87,7 @@ if (!empty($_FILES['upload_files'])) {
                         setPriority(urldecode($torrent));
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-                    $clientHandler->startTorrentClient($torrent, 0);
+                    $clientHandler->startClient($torrent, 0);
                     // just a sec..
                     sleep(1);
             	}
