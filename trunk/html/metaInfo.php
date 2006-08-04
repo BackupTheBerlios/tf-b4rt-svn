@@ -7,260 +7,261 @@
 *  www.torrentflux.com
 **************************************************************/
 /*
-    This file is part of TorrentFlux.
+	This file is part of TorrentFlux.
 
-    TorrentFlux is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	TorrentFlux is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
 
-    TorrentFlux is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	TorrentFlux is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with TorrentFlux; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+	You should have received a copy of the GNU General Public License
+	along with TorrentFlux; if not, write to the Free Software
+	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 class dir
 {
-    var $name;
-    var $subdirs;
-    var $files;
-    var $num;
-    var $prio;
+	var $name;
+	var $subdirs;
+	var $files;
+	var $num;
+	var $prio;
 
-    function dir($name,$num,$prio)
-    {
-        $this->name = $name;
-        $this->num = $num;
-        $this->prio = $prio;
-        $this->files = array();
-        $this->subdirs = array();
-    }
+	function dir($name,$num,$prio)
+	{
+		$this->name = $name;
+		$this->num = $num;
+		$this->prio = $prio;
+		$this->files = array();
+		$this->subdirs = array();
+	}
 
-    function &addFile($file)
-    {
-        $this->files[] =& $file;
-        return $file;
-    }
+	function &addFile($file)
+	{
+		$this->files[] =& $file;
+		return $file;
+	}
 
-    function &addDir($dir)
-    {
-        $this->subdirs[] =& $dir;
-        return $dir;
-    }
+	function &addDir($dir)
+	{
+		$this->subdirs[] =& $dir;
+		return $dir;
+	}
 
-    // code changed to support php4
-    // thx to Mistar Muffin
-    function &findDir($name)
-    {
-        foreach (array_keys($this->subdirs) as $v)
-        {
-            $dir =& $this->subdirs[$v];
-            if($dir->name == $name)
-            {
-                return $dir;
-            }
-        }
-        $retVal = false;
-        return $retVal;
-    }
+	// code changed to support php4
+	// thx to Mistar Muffin
+	function &findDir($name)
+	{
+		foreach (array_keys($this->subdirs) as $v)
+		{
+			$dir =& $this->subdirs[$v];
+			if($dir->name == $name)
+			{
+				return $dir;
+			}
+		}
+		$retVal = false;
+		return $retVal;
+	}
 
-    function draw($parent)
-    {
-        echo("d.add(".$this->num.",".$parent.",\"".$this->name."\",".$this->prio.",0);\n");
+	function draw($parent)
+	{
+		$draw = ("d.add(".$this->num.",".$parent.",\"".$this->name."\",".$this->prio.",0);\n");
 
-        foreach($this->subdirs as $v)
-        {
-            $v->draw($this->num);
-        }
-
-        foreach($this->files as $v)
-        {
-            if(is_object($v))
-            {
-              echo("d.add(".$v->num.",".$this->num.",\"".$v->name."\",".$v->prio.",".$v->size.");\n");
-            }
-        }
-    }
+		foreach($this->subdirs as $v)
+		{
+			$draw .= $v->draw($this->num);
+		}
+		foreach($this->files as $v)
+		{
+			if(is_object($v))
+			{
+			  $draw .= ("d.add(".$v->num.",".$this->num.",\"".$v->name."\",".$v->prio.",".$v->size.");\n");
+			}
+		}
+		return $draw;
+	}
 
 }
 
 class file {
 
-    var $name;
-    var $prio;
-    var $size;
-    var $num;
+	var $name;
+	var $prio;
+	var $size;
+	var $num;
 
-    function file($name,$num,$size,$prio)
-    {
-        $this->name = $name;
-        $this->num  = $num;
-        $this->size = $size;
-        $this->prio = $prio;
-    }
+	function file($name,$num,$size,$prio)
+	{
+		$this->name = $name;
+		$this->num	= $num;
+		$this->size = $size;
+		$this->prio = $prio;
+	}
 }
 
 function showMetaInfo($torrent, $allowSave=false)
 {
-    global $cfg;
+	global $cfg;
 
-    if (empty($torrent))
-    {
-        echo _NORECORDSFOUND;
-    }
-    elseif ($cfg["enable_file_priority"])
-    {
+	if (empty($torrent))
+	{
+		$showMetaInfo = _NORECORDSFOUND;
+	}
+	elseif ($cfg["enable_file_priority"])
+	{
 
-        $prioFileName = $cfg["torrent_file_path"].getAliasName($torrent).".prio";
+		$prioFileName = $cfg["torrent_file_path"].getAliasName($torrent).".prio";
 
-        require_once('BDecode.php');
+		require_once('BDecode.php');
 
-        echo '<link rel="StyleSheet" href="dtree.css" type="text/css" /><script type="text/javascript" src="dtree.js"></script>';
+		$showMetaInfo = '<link rel="StyleSheet" href="dtree.css" type="text/css" /><script type="text/javascript" src="dtree.js"></script>';
 
-        $ftorrent=$cfg["torrent_file_path"].$torrent;
+		$ftorrent=$cfg["torrent_file_path"].$torrent;
 
-        $fp = fopen($ftorrent, "rd");
-        $alltorrent = fread($fp, filesize($ftorrent));
-        fclose($fp);
+		$fp = fopen($ftorrent, "rd");
+		$alltorrent = fread($fp, filesize($ftorrent));
+		fclose($fp);
 
-        $btmeta = BDecode($alltorrent);
+		$btmeta = BDecode($alltorrent);
 
-        // b4rt-62
-        // b4rt-4.1
-        //if (!(is_array ($btmeta))) {
-        //  echo '<strong><font color="red">Error</font> Cant decode torrent ('.$torrent.')</strong><br>';
-        //  return 0;
-        //}
-        // b4rt-4.1
-        // b4rt-62
+		// b4rt-62
+		// b4rt-4.1
+		//if (!(is_array ($btmeta))) {
+		//	echo '<strong><font color="red">Error</font> Cant decode torrent ('.$torrent.')</strong><br>';
+		//	return 0;
+		//}
+		// b4rt-4.1
+		// b4rt-62
 
-        $torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
+		$torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
 
-        if (array_key_exists('files',$btmeta['info']))
-        {
-            $dirnum = count($btmeta['info']['files']);
-        }
-        else
-        {
-            $dirnum = 0;
-        }
+		if (array_key_exists('files',$btmeta['info']))
+		{
+			$dirnum = count($btmeta['info']['files']);
+		}
+		else
+		{
+			$dirnum = 0;
+		}
 
-        if ( is_readable($prioFileName))
-        {
-            $prio = split(',',file_get_contents($prioFileName));
-            $prio = array_splice($prio,1);
-        }
-        else
-        {
-            $prio = array();
-            for($i=0;$i<$dirnum;$i++)
-            {
-                $prio[$i] = -1;
-            }
-        }
+		if ( is_readable($prioFileName))
+		{
+			$prio = split(',',file_get_contents($prioFileName));
+			$prio = array_splice($prio,1);
+		}
+		else
+		{
+			$prio = array();
+			for($i=0;$i<$dirnum;$i++)
+			{
+				$prio[$i] = -1;
+			}
+		}
 
-        $tree = new dir("/",$dirnum,isset($prio[$dirnum])?$prio[$dirnum]:-1);
+		$tree = new dir("/",$dirnum,isset($prio[$dirnum])?$prio[$dirnum]:-1);
 
-        if (array_key_exists('files',$btmeta['info']))
-        {
-            foreach( $btmeta['info']['files'] as $filenum => $file)
-            {
+		if (array_key_exists('files',$btmeta['info']))
+		{
+			foreach( $btmeta['info']['files'] as $filenum => $file)
+			{
 
-                $depth = count($file['path']);
-                $branch =& $tree;
+				$depth = count($file['path']);
+				$branch =& $tree;
 
-                for($i=0; $i < $depth; $i++)
-                {
-                    if ($i != $depth-1)
-                    {
-                        $d =& $branch->findDir($file['path'][$i]);
+				for($i=0; $i < $depth; $i++)
+				{
+					if ($i != $depth-1)
+					{
+						$d =& $branch->findDir($file['path'][$i]);
 
-                        if($d)
-                        {
-                            $branch =& $d;
-                        }
-                        else
-                        {
-                            $dirnum++;
-                            $d =& $branch->addDir(new dir($file['path'][$i], $dirnum, (isset($prio[$dirnum])?$prio[$dirnum]:-1)));
-                            $branch =& $d;
-                        }
-                    }
-                    else
-                    {
-                        $branch->addFile(new file($file['path'][$i]." (".$file['length'].")",$filenum,$file['length'],$prio[$filenum]));
-                    }
+						if($d)
+						{
+							$branch =& $d;
+						}
+						else
+						{
+							$dirnum++;
+							$d =& $branch->addDir(new dir($file['path'][$i], $dirnum, (isset($prio[$dirnum])?$prio[$dirnum]:-1)));
+							$branch =& $d;
+						}
+					}
+					else
+					{
+						$branch->addFile(new file($file['path'][$i]." (".$file['length'].")",$filenum,$file['length'],$prio[$filenum]));
+					}
 
-                }
-            }
-        }
+				}
+			}
+		}
 
-        echo "<table><tr>";
-        echo "<tr><td width=\"110\">Metainfo File:</td><td>".$torrent."</td></tr>";
-        echo "<tr><td>Directory Name:</td><td>".$btmeta['info']['name']."</td></tr>";
-        echo "<tr><td>Announce URL:</td><td>".$btmeta['announce']."</td></tr>";
+		$showMetaInfo .= "<table><tr>";
+		$showMetaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$torrent."</td></tr>";
+		$showMetaInfo .= "<tr><td>Directory Name:</td><td>".$btmeta['info']['name']."</td></tr>";
+		$showMetaInfo .= "<tr><td>Announce URL:</td><td>".$btmeta['announce']."</td></tr>";
 
-        if(array_key_exists('comment',$btmeta))
-        {
-            echo "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
-        }
+		if(array_key_exists('comment',$btmeta))
+		{
+			$showMetaInfo .= "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
+		}
 
-        echo "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
-        echo "<tr><td>Torrent Size:</td><td>".$torrent_size." (".formatBytesToKBMGGB($torrent_size).")</td></tr>";
-        echo "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".formatBytesToKBMGGB($btmeta['info']['piece length']).")</td></tr>";
+		$showMetaInfo .= "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
+		$showMetaInfo .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".formatBytesToKBMGGB($torrent_size).")</td></tr>";
+		$showMetaInfo .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".formatBytesToKBMGGB($btmeta['info']['piece length']).")</td></tr>";
 
-        if (array_key_exists('files',$btmeta['info']))
-        {
+		if (array_key_exists('files',$btmeta['info']))
+		{
 
-            echo "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
-            echo "</table><br>\n";
+			$showMetaInfo .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
+			$showMetaInfo .= "</table><br>\n";
 
-            if ($allowSave)
-            {
-                echo "<form name=\"priority\" action=\"index.php\" method=\"POST\" >";
-                echo "<input type=\"hidden\" name=\"torrent\" value=\"".$torrent."\" >";
-                echo "<input type=\"hidden\" name=\"setPriorityOnly\" value=\"true\" >";
-            }
+			if ($allowSave)
+			{
+				$showMetaInfo .= "<form name=\"priority\" action=\"index.php\" method=\"POST\" >";
+				$showMetaInfo .= "<input type=\"hidden\" name=\"torrent\" value=\"".$torrent."\" >";
+				$showMetaInfo .= "<input type=\"hidden\" name=\"setPriorityOnly\" value=\"true\" >";
+			}
 
-            echo "<script type=\"text/javascript\">\n";
-            echo "var sel = 0;\n";
-            echo "d = new dTree('d');\n";
+			$showMetaInfo .= "<script type=\"text/javascript\">\n";
+			$showMetaInfo .= "var sel = 0;\n";
+			$showMetaInfo .= "d = new dTree('d');\n";
 
-            $tree->draw(-1);
+			$showMetaInfo .= $tree->draw(-1);
 
-            echo "document.write(d);\n";
-            echo "sel = getSizes();\n";
-            echo "drawSel();\n";
-            echo "</script>\n";
+			$showMetaInfo .= "document.write(d);\n";
+			$showMetaInfo .= "sel = getSizes();\n";
+			$showMetaInfo .= "drawSel();\n";
+			$showMetaInfo .= "</script>\n";
 
-            echo "<input type=\"hidden\" name=\"filecount\" value=\"".count($btmeta['info']['files'])."\">";
-            echo "<input type=\"hidden\" name=\"count\" value=\"".$dirnum."\">";
-            echo "<br>";
-            if ($allowSave)
-            {
-                echo '<input type="submit" value="Save" >';
-                echo "<br>";
-            }
-            echo "</form>";
-        }
-        else
-        {
-            echo "</table><br>";
-            echo $btmeta['info']['name'].$torrent_size." (".formatBytesToKBMGGB($torrent_size).")";
-        }
-    }
-    else
-    {
-        // b4rt-62
-        //$result = shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
-        $result = getTorrentMetaInfo($torrent);
-        echo "<pre>".$result."</pre>";
-        // b4rt-62
-    }
+			$showMetaInfo .= "<input type=\"hidden\" name=\"filecount\" value=\"".count($btmeta['info']['files'])."\">";
+			$showMetaInfo .= "<input type=\"hidden\" name=\"count\" value=\"".$dirnum."\">";
+			$showMetaInfo .= "<br>";
+			if ($allowSave)
+			{
+				$showMetaInfo .= '<input type="submit" value="Save" >';
+				$showMetaInfo .= "<br>";
+			}
+			$showMetaInfo .= "</form>";
+		}
+		else
+		{
+			$showMetaInfo .= "</table><br>";
+			$showMetaInfo .= $btmeta['info']['name'].$torrent_size." (".formatBytesToKBMGGB($torrent_size).")";
+		}
+	}
+	else
+	{
+		// b4rt-62
+		//$result = shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
+		$result = getTorrentMetaInfo($torrent);
+		$showMetaInfo .= "<pre>".$result."</pre>";
+		// b4rt-62
+	}
+	return $showMetaInfo;
 }
 ?>

@@ -278,7 +278,7 @@ function isNumber(sText)
 <div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid <?php echo $cfg["main_bgcolor"] ?>; background-color: <?php echo $cfg["bgLight"] ?>; position:relative; width:650; height:290; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
 <br>
 <?php
-    showMetaInfo($torrent,false);
+    echo showMetaInfo($torrent,false);
 ?>
 </div>
 <br>
