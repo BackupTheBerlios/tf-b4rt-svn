@@ -37,6 +37,7 @@ my ( $DB_TYPE, $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS );
 use vars qw( @users %names);
 my $BIN_PHP = "/usr/bin/php";
 my $BIN_FLUXCLI = "fluxcli.php";
+my $PATH_DOCROOT = "/var/www/";
 my $PATH_TORRENT_DIR = ".torrents";
 my $PATH_DATA_DIR = "fluxd";
 my $PATH_SOCKET = "fluxd.sock";
@@ -66,7 +67,7 @@ $| = 1;
 Initialize();
 
 # Verify that we have been started in a valid way
-VerifyArguments();
+ProcessArguments();
 
 # Daemonise the script
 &Daemonize;
@@ -298,18 +299,37 @@ sub StopServer {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: VerifyArguments                                                         #
+# Sub: ProcessArguments                                                        #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub VerifyArguments {
+sub ProcessArguments {
 	my $temp = shift @ARGV;
-	if ( (!(defined $temp)) || ($temp !~/\d+/) ) {
+
+	# first arg may be operation.
+	if (!(defined $temp)) {
+		PrintUsage();
+		exit;
+	}
+	# help
+	if ($temp =~ /.*(help|-h).*/) {
+		PrintUsage();
+		exit;
+	}
+	# version
+	if ($temp =~ /.*(version|-v).*/) {
+		PrintVersion();
+		exit;
+	};
+
+	# $MAX_SYS
+	if ($temp !~/\d+/) {
 		PrintUsage();
 		exit;
 	}
 	$MAX_SYS = $temp;
 
+	# $MAX_USER
 	$temp = shift @ARGV;
 	if ( (!(defined $temp)) || ($temp !~/\d+/) ) {
 		PrintUsage();
@@ -317,6 +337,7 @@ sub VerifyArguments {
 	}
 	$MAX_USER = $temp;
 
+	# $PATH_PHP
 	$temp = shift @ARGV;
 	if (!(defined $temp)) {
 		PrintUsage();
@@ -324,6 +345,7 @@ sub VerifyArguments {
 	}
 	$PATH_PHP = $temp;
 
+	# path to home
 	$temp = shift @ARGV;
 	if (!(defined $temp)) {
 		PrintUsage();
@@ -331,6 +353,18 @@ sub VerifyArguments {
 	}
 	InitPaths($temp);
 
+	# $PATH_DOCROOT
+	$temp = shift @ARGV;
+	if (!(defined $temp)) {
+		PrintUsage();
+		exit;
+	}
+	if (!((substr $temp, -1) eq "/")) {
+		$temp .= "/";
+	}
+	$PATH_DOCROOT = $temp;
+
+	# $LOGLEVEL
 	$temp = shift @ARGV;
 	if ( (!(defined $temp)) && ($temp !~/\d+/) ) {
 		PrintUsage();
@@ -448,7 +482,7 @@ sub PrintUsage {
 $PROG.$EXTENSION Revision $REVISION
 
 Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
-                              path-to-download, loglevel
+                              path-to-download, path-to-docroot, loglevel
                         starts fluxd
        $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
                         starts, stops, resets totals, deletes, or deletes
@@ -484,7 +518,7 @@ USAGE
 # Returns: Version Information                                                 #
 #------------------------------------------------------------------------------#
 sub PrintVersion {
-	print $PROG.$EXTENSION." Revision ".$REVISION."\n";
+	print $PROG.".".$EXTENSION." Revision ".$REVISION."\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -522,7 +556,7 @@ sub GetDBInfo {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub Config {
-	open(CONFIG, "/usr/local/www/trunk/html/fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
+	open(CONFIG, $PATH_DOCROOT."fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
 	while (<CONFIG>) {
 		# I checked $/ and it's set to \n, but <CONFIG> reads the whole file.
 		# any ideas why?
