@@ -44,6 +44,8 @@ my $dbPersConn = 1;
 # flux-config-hash
 my %fluxConf = undef;
 
+# users + usernames
+use vars qw( @users %names );
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -55,22 +57,10 @@ my %fluxConf = undef;
 # Returns: object reference                                                    #
 #------------------------------------------------------------------------------#
 sub new {
+
 	# class
 	my $class = shift;
-	# db-config
-	$dbConfig = shift;
-	if (!(defined $dbConfig)) {
-		# message
-		$message = "arg-error";
-		# set state
-		$state = -1;
-	}
-	if (!(-f $dbConfig)) {
-		# message
-		$message = "no file";
-		# set state
-		$state = -1;
-	}
+
 	# return
 	my $self = bless {}, $class;
 	return $self;
@@ -92,6 +82,8 @@ sub destroy {
 	# undef
 	undef $dbHandle;
 	undef %fluxConf;
+	undef @users;
+	undef %names;
 }
 
 ################################################################################
@@ -105,6 +97,27 @@ sub destroy {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
+
+	shift; # class
+
+	# db-config
+	$dbConfig = shift;
+	if (!(defined $dbConfig)) {
+		# message
+		$message = "db-config not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	if (!(-f $dbConfig)) {
+		# message
+		$message = "no file";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
 
 	# load Database-Config
 	if (loadDatabaseConfig($dbConfig) == 0) {
@@ -124,6 +137,12 @@ sub initialize {
 
 	# load config
 	if (loadFluxConfig() == 0) {
+		# return
+		return 0;
+	}
+
+	# load users
+	if (loadFluxUsers() == 0) {
 		# return
 		return 0;
 	}
@@ -231,6 +250,7 @@ sub getDatabaseHandle {
 # Returns: conf-value                                                          #
 #------------------------------------------------------------------------------#
 sub getFluxConfig {
+	shift; # class
 	my $key = shift;
 	return $fluxConf{$key};
 }
@@ -241,6 +261,7 @@ sub getFluxConfig {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub setFluxConfig {
+	shift; # class
 	my $key = shift;
 	$fluxConf{$key} = shift;
 }
@@ -251,6 +272,14 @@ sub setFluxConfig {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub loadFluxConfig {
+	my $sth = $dbHandle->prepare(q{ SELECT tf_key, tf_value FROM tf_settings });
+	$sth->execute();
+	my ($tfKey, $tfValue);
+	my $rv = $sth->bind_columns(undef, \$tfKey, \$tfValue);
+	while ($sth->fetch()) {
+		$fluxConf{$tfKey} = $tfValue;
+	}
+	$sth->finish();
 	return 1;
 }
 
@@ -260,6 +289,29 @@ sub loadFluxConfig {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub saveFluxConfig {
+	return 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadFluxUsers                                                           #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub loadFluxUsers {
+	my $sth = $dbHandle->prepare(q{ SELECT uid, user_id FROM tf_users });
+	$sth->execute();
+	my ($uid, $userid);
+	my $rv = $sth->bind_columns(undef, \$uid, \$userid);
+	my $index = 0;
+	while ($sth->fetch()) {
+		$users[$index] = {
+			uid => $uid,
+			username => $userid,
+		};
+		$names{$userid} = $uid;
+		$index++;
+	}
+	$sth->finish();
 	return 1;
 }
 
