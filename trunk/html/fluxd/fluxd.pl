@@ -33,26 +33,29 @@ use POSIX qw(setsid);
 #------------------------------------------------------------------------------#
 # Internal Variables                                                           #
 #------------------------------------------------------------------------------#
+
 my $BIN_PHP = "/usr/bin/php"; # TODO : use value from db-bean
-my $BIN_FLUXCLI = "fluxcli.php";
+my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL ); # TODO : use value from db-bean
+
+my ( $VERSION, $DIR, $PROG, $EXTENSION );
 my $PATH_DOCROOT = "/var/www/";
-my $PATH_TORRENT_DIR = ".torrents"; # TODO : use value from db-bean
+my $BIN_FLUXCLI = "fluxcli.php";
+my $FILE_DBCONF = "config.db.php";
+my $PATH_TORRENT_DIR = ".torrents";
 my $PATH_DATA_DIR = "fluxd";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
 my $PATH_QUEUE_FILE = "fluxd.queue";
-my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL ); # TODO : use value from db-bean
 my $SERVER;
 my $Select = new IO::Select();
-my ( $VERSION, $DIR, $PROG, $EXTENSION );
 my $start_time = time();
 
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw( $qmgr $fluxinet $watch $clientmaint $trigger $fluxDB);
+use vars qw( $fluxDB $qmgr $fluxinet $watch $clientmaint $trigger );
 
 #------------------------------------------------------------------------------#
 # main                                                                         #
@@ -293,7 +296,16 @@ sub set {
 #------------------------------------------------------------------------------#
 sub stopServer {
 	print "Shutting down!\n";
+
+	# remove socket
 	unlink($PATH_SOCKET);
+
+	# destroy db-bean
+	if (defined($fluxDB)) {
+		$fluxDB->destroy();
+	}
+
+	# get out here
 	exit;
 }
 
@@ -332,6 +344,8 @@ sub processArguments {
 		exit;
 	};
 
+	# TODO : rewrite due to db-bean
+
 	# $MAX_SYS
 	if ($temp !~/\d+/) {
 		printUsage();
@@ -363,6 +377,8 @@ sub processArguments {
 	}
 	initPaths($temp);
 
+	# TODO : rewrite due to db-bean
+
 	# $PATH_DOCROOT
 	$temp = shift @ARGV;
 	if (!(defined $temp)) {
@@ -373,6 +389,8 @@ sub processArguments {
 		$temp .= "/";
 	}
 	$PATH_DOCROOT = $temp;
+
+	# TODO : rewrite due to db-bean
 
 	# $LOGLEVEL
 	$temp = shift @ARGV;
@@ -447,17 +465,35 @@ sub daemonize {
 	# set up our signal handler
 	$SIG{HUP} = \&gotSigHup;
 
+	# initialize db-bean
+
+	# require
+	require FluxDB;
+	# create instance
+	$fluxDB = FluxDB->new();
+	if ($fluxDB->getState() == -1) {
+		print "Error creating FluxDB: ".$fluxDB->getMessage()."\n";
+		exit;
+	}
+	# initialize
+	$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
+	if ($fluxDB->getState() < 1) {
+		print "Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
+		exit;
+	}
+
 	# set up daemon stuff...
-        # set up server socket
-        $SERVER = IO::Socket::UNIX->new(
-                Type    => SOCK_STREAM,
-                Local   => $PATH_SOCKET,
-                Listen  => 16,
-                Reuse   => 1,
-                );
-        die "Couldn't create socket: $!\n" unless $SERVER;
-        # Add our server socket to the select read set.
-        $Select->add($SERVER);
+
+	# set up server socket
+	$SERVER = IO::Socket::UNIX->new(
+			Type    => SOCK_STREAM,
+			Local   => $PATH_SOCKET,
+			Listen  => 16,
+			Reuse   => 1,
+			);
+	die "Couldn't create socket: $!\n" unless $SERVER;
+	# Add our server socket to the select read set.
+	$Select->add($SERVER);
 
 }
 
@@ -471,8 +507,7 @@ sub printUsage {
 
 $PROG.$EXTENSION Revision $VERSION
 
-Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
-                              path-to-download, path-to-docroot, loglevel
+Usage: $PROG.$EXTENSION <begin> path-to-docroot
                         starts fluxd
        $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
                         starts, stops, resets totals, deletes, or deletes
@@ -549,6 +584,11 @@ sub printVersion {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub config {
+
+	# TODO : move this configuration to database
+
+	# TODO : rewrite this method to "loadModules"
+
 	open(CONFIG, $PATH_DOCROOT."fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
 	while (<CONFIG>) {
 		# I checked $/ and it's set to \n, but <CONFIG> reads the whole file.
