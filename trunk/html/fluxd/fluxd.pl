@@ -30,9 +30,9 @@ use Symbol qw(delete_package);
 use POSIX qw(setsid);
 ################################################################################
 
-#------------------------------------------------------------------------------#
-# Internal Variables                                                           #
-#------------------------------------------------------------------------------#
+################################################################################
+# fields                                                                       #
+################################################################################
 
 my $BIN_PHP = "/usr/bin/php"; # TODO : use value from db-bean
 my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL ); # TODO : use value from db-bean
@@ -57,9 +57,10 @@ my $start_time = time();
 #------------------------------------------------------------------------------#
 use vars qw( $fluxDB $qmgr $fluxinet $watch $clientmaint $trigger );
 
-#------------------------------------------------------------------------------#
+
+################################################################################
 # main                                                                         #
-#------------------------------------------------------------------------------#
+################################################################################
 
 # flush the buffer
 $| = 1;
@@ -492,9 +493,9 @@ sub daemonize {
 			Reuse   => 1,
 			);
 	die "Couldn't create socket: $!\n" unless $SERVER;
+
 	# Add our server socket to the select read set.
 	$Select->add($SERVER);
-
 }
 
 #------------------------------------------------------------------------------#
@@ -588,6 +589,8 @@ sub config {
 	# TODO : move this configuration to database
 
 	# TODO : rewrite this method to "loadModules"
+
+	# TODO : call initialize on created modules
 
 	open(CONFIG, $PATH_DOCROOT."fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
 	while (<CONFIG>) {

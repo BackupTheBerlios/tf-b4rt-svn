@@ -272,6 +272,9 @@ sub setFluxConfig {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub loadFluxConfig {
+	# undef first
+	undef %fluxConf;
+	# load from db
 	my $sth = $dbHandle->prepare(q{ SELECT tf_key, tf_value FROM tf_settings });
 	$sth->execute();
 	my ($tfKey, $tfValue);
@@ -280,6 +283,7 @@ sub loadFluxConfig {
 		$fluxConf{$tfKey} = $tfValue;
 	}
 	$sth->finish();
+	# return
 	return 1;
 }
 
@@ -298,6 +302,10 @@ sub saveFluxConfig {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub loadFluxUsers {
+	# undef first
+	undef @users;
+	undef %names;
+	# load from db
 	my $sth = $dbHandle->prepare(q{ SELECT uid, user_id FROM tf_users });
 	$sth->execute();
 	my ($uid, $userid);
@@ -312,6 +320,7 @@ sub loadFluxUsers {
 		$index++;
 	}
 	$sth->finish();
+	# return
 	return 1;
 }
 
@@ -333,9 +342,6 @@ sub reload {
 		# return
 		return 0;
 	}
-
-	# set state
-	$state = 1;
 
 	# return
 	return 1;
