@@ -43,7 +43,7 @@ INSERT INTO tf_settings VALUES ('fluxd_Trigger_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
-INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/foo/bar/admin;fluxuser:/foo/bar/fluxuser');
+INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 
 --
 -- commit

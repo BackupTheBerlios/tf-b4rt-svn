@@ -85,27 +85,27 @@ while ( 1 ) {
 
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		eval { $qmgr->main; };
+		eval { $qmgr->main(); };
 	}
 
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		eval { $fluxinet->main; };
+		eval { $fluxinet->main(); };
 	}
 
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
-		eval { $watch->main; };
+		eval { $watch->main(); };
 	}
 
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		eval { $clientmaint->main; };
+		eval { $clientmaint->main(); };
 	}
 
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		eval { $trigger->main; };
+		eval { $trigger->main(); };
 	}
 
 	# TODO : sleep-code                                                         /* TODO */
@@ -801,6 +801,7 @@ sub printVersion {
 	# Qmgr                                                                      /* TODO */
 	#require Qmgr;
 	#print "Qmgr Version ".Qmgr->getVersion()."\n";
+	print "Qmgr Version ?\n";
 
 	# Trigger
 	require Trigger;

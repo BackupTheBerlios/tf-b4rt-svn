@@ -103,7 +103,9 @@ sub initialize {
 		chomp $user;
 		my $dir = shift @jobAry;
 		chomp $dir;
-		$jobs{$user} = $dir;
+		if ((!($user eq "")) && (-d $dir)) {
+			$jobs{$user} = $dir;
+		}
 	}
 
 	# set state
@@ -154,10 +156,13 @@ sub set {
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
 sub main {
-	
+
 	# watch in dirs for dropped meta-files
 	foreach my $user (sort keys %jobs) {
-		print "Watch::main : username \"".$user."\" ; dir \"".$jobs{$user}."\"\n"; # DEBUG
+		my $dir = $jobs{$user};
+		if ((!($user eq "")) && (-d $dir)) {
+			print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
+		}
 	}
 
 }
