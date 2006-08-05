@@ -63,20 +63,22 @@ use vars qw( $fluxDB $qmgr $fluxinet $watch $clientmaint $trigger );
 # flush the buffer
 $| = 1;
 
-# Intialize
+# intialize
 initialize();
 
 # Verify that we have been started in a valid way
 processArguments();
 
-# Daemonise the script
-&daemonize;
+# daemonise the script
+&daemonize();
 
 # load flux-service-modules
 loadServiceModules();
 
 # Here we go! The main loop!
+
 # TODO : define timers to let jobs be processed at different intervalls         /* TODO */
+
 use vars qw( $loop );
 $loop = 0;
 while ( 1 ) {
@@ -109,9 +111,8 @@ while ( 1 ) {
 		eval { $trigger->main; };
 	}
 
-	# DEBUG
-	sleep 2;
-	# DEBUG
+	# TODO : sleep-code                                                         /* TODO */
+	sleep 2; # DEBUG
 
 	# increment loop-counter
 	$loop++;
@@ -177,8 +178,8 @@ sub processArguments {
 
 	# daemon-stop
 	if ($temp =~ /daemon-stop/) {
-		# TODO : stop daemon
-		print "stopping daemon.... \n";
+		# TODO : stop daemon                                                    /* TODO */
+		print "Stopping daemon...\n";
 		exit;
 	};
 
@@ -194,6 +195,7 @@ sub processArguments {
 			$temp .= "/";
 		}
 		$PATH_DOCROOT = $temp;
+		print "Starting up daemon with docroot ".$PATH_DOCROOT."\n"; # DEBUG
 		# return
 		return 1;
 	};
@@ -209,22 +211,6 @@ sub processArguments {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub daemonize {
-	#chdir '/'			or die "Can't chdir to /: $!";
-	umask 0;			# sets our umask
-	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
-	open STDOUT, ">>$LOG"		or die "Can't Write to $LOG: $!";
-	open STDERR, ">>$ERROR_LOG"	or die "Can't Write to error $ERROR_LOG: $!";
-	defined(my $pid = fork)		or die "Can't fork: $!";
-	exit if $pid;
-	setsid				or die "Can't start a new session: $!";
-
-	# check requirements, die if they aren't there
-	#if (!(check())) {
-	#	exit;
-	#}
-
-	# set up our signal handler
-	$SIG{HUP} = \&gotSigHup;
 
 	# initialize db-bean
 
@@ -246,7 +232,28 @@ sub daemonize {
 	# init paths
 	initPaths($fluxDB->getFluxConfig("path"));
 
+	#chdir '/'			or die "Can't chdir to /: $!";
+	umask 0;			# sets our umask
+	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
+	open STDOUT, ">>$LOG"		or die "Can't Write to $LOG: $!";
+	open STDERR, ">>$ERROR_LOG"	or die "Can't Write to error $ERROR_LOG: $!";
+	defined(my $pid = fork)		or die "Can't fork: $!";
+	exit if $pid;
+	setsid				or die "Can't start a new session: $!";
+
+	# check requirements, die if they aren't there
+	#if (!(check())) {
+	#	exit;
+	#}
+
+	# set up our signal handler
+	$SIG{HUP} = \&gotSigHup;
+
+	# TODO set up signal-handler for sig-quit                                   /* TODO */
+
 	# set up daemon stuff...
+
+	# TODO : check for socket : if exists bail out nice                         /* TODO */
 
 	# set up server socket
 	$SERVER = IO::Socket::UNIX->new(
@@ -262,11 +269,11 @@ sub daemonize {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: stopServer                                                              #
+# Sub: daemonShutdown                                                          #
 # Arguments: Null                                                              #
 # Returns: Info string                                                         #
 #------------------------------------------------------------------------------#
-sub stopServer {
+sub daemonShutdown {
 	print "Shutting down!\n";
 
 	# remove socket
@@ -318,6 +325,11 @@ sub loadServiceModules {
 			require Qmgr;
 			$qmgr = Qmgr->new();
 			$qmgr->initialize();
+			if ($qmgr->getState() < 1) {
+				print STDERR "error initializing service-module Qmgr :\n";
+				print STDERR $qmgr->getMessage()."\n";
+				# TODO : handle this                                            /* TODO */
+			}
 		}
 	} else {
 		# Unload module, if it is loaded
@@ -334,7 +346,12 @@ sub loadServiceModules {
 		if (!(exists &Fluxinet::new)) {
 			require Fluxinet;
 			$fluxinet = Fluxinet->new();
-			$fluxinet->initialize();
+			$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+			if ($fluxinet->getState() < 1) {
+				print STDERR "error initializing service-module Fluxinet :\n";
+				print STDERR $fluxinet->getMessage()."\n";
+				# TODO : handle this                                            /* TODO */
+			}
 		}
 	} else {
 		# Unload module, if it is loaded
@@ -352,6 +369,11 @@ sub loadServiceModules {
 			require Watch;
 			$watch = Watch->new();
 			$watch->initialize();
+			if ($watch->getState() < 1) {
+				print STDERR "error initializing service-module Watch :\n";
+				print STDERR $watch->getMessage()."\n";
+				# TODO : handle this                                            /* TODO */
+			}
 		}
 	} else {
 		# Unload module, if it is loaded
@@ -369,6 +391,11 @@ sub loadServiceModules {
 			require Clientmaint;
 			$clientmaint = Clientmaint->new();
 			$clientmaint->initialize();
+			if ($clientmaint->getState() < 1) {
+				print STDERR "error initializing service-module Clientmaint :\n";
+				print STDERR $clientmaint->getMessage()."\n";
+				# TODO : handle this                                            /* TODO */
+			}
 		}
 	} else {
 		# Unload module, if it is loaded
@@ -386,6 +413,11 @@ sub loadServiceModules {
 			require Trigger;
 			$trigger = Trigger->new();
 			$trigger->initialize();
+			if ($trigger->getState() < 1) {
+				print STDERR "error initializing service-module Trigger :\n";
+				print STDERR $trigger->getMessage()."\n";
+				# TODO : handle this                                            /* TODO */
+			}
 		}
 	} else {
 		# Unload module, if it is loaded
@@ -404,8 +436,8 @@ sub loadServiceModules {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub gotSigHup {
-	print "Got SIGHUP, re-reading config...";
-	config();
+	print "Got SIGHUP, re-loading service-modules...";
+	loadServiceModules();
 	print "done.\n";
 }
 
@@ -455,7 +487,7 @@ sub processRequest {
 
 		# Actual fluxd subroutine calls
 		/^die/ && do {
-			$return = stopServer();
+			$return = daemonShutdown();
 			last SWITCH;
 		};
 		/^status/ && do {

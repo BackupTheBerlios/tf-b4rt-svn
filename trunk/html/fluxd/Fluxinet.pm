@@ -43,7 +43,10 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
-my $port = 3150; # TODO : use value from db-bean
+# port
+my $port = 3150;
+
+# server-socket
 my ( $SERVER, $Select );
 
 ################################################################################
@@ -81,10 +84,25 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: null                                                              #
+# Arguments: port                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
+
+	shift; # class
+
+	# db-config
+	$port = shift;
+	if (!(defined $port)) {
+		# message
+		$message = "$port not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	print "initializing Fluxinet (port: ".$port.")\n"; # DEBUG
 
 	# Create the read set
 	$Select = new IO::Select();
@@ -95,7 +113,7 @@ sub initialize {
 		Proto           => 'tcp',
 		Listen          => 16,
 		Reuse           => 1);
-	return 0 unless $SERVER;
+	return 0 unless $SERVER; # TODO : set state + message
 	$Select->add($SERVER);
 
 	# set state
