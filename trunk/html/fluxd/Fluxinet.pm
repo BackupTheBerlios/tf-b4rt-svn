@@ -17,7 +17,7 @@ use IO::Select;
 my $VERSION = do {
 	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
-my $port = 3150;
+my $port = 3150; # TODO : use value from db-bean
 my ( $SERVER, $Select );
 
 #------------------------------------------------------------------------------#

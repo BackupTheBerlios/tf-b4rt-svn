@@ -33,18 +33,17 @@ use POSIX qw(setsid);
 #------------------------------------------------------------------------------#
 # Internal Variables                                                           #
 #------------------------------------------------------------------------------#
-my ( $DB_TYPE, $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS );
-my $BIN_PHP = "/usr/bin/php";
+my $BIN_PHP = "/usr/bin/php"; # TODO : use value from db-bean
 my $BIN_FLUXCLI = "fluxcli.php";
 my $PATH_DOCROOT = "/var/www/";
-my $PATH_TORRENT_DIR = ".torrents";
+my $PATH_TORRENT_DIR = ".torrents"; # TODO : use value from db-bean
 my $PATH_DATA_DIR = "fluxd";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
 my $PATH_QUEUE_FILE = "fluxd.queue";
-my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL );
+my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL ); # TODO : use value from db-bean
 my $SERVER;
 my $Select = new IO::Select();
 my ( $VERSION, $DIR, $PROG, $EXTENSION );
@@ -732,6 +731,7 @@ sub Debug {
 		print "FluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
 		# something from the bean
 		print "fluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
+		print "fluxDB->getFluxConfig(\"bin_php\") : \"".$fluxDB->getFluxConfig("bin_php")."\"\n";
 		# destroy
 		print "destroying FluxDB\n";
 		$fluxDB->destroy();
