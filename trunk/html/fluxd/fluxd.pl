@@ -48,13 +48,13 @@ my $PATH_QUEUE_FILE = "fluxd.queue";
 my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL );
 my $SERVER;
 my $Select = new IO::Select();
-my ( $REVISION, $DIR, $PROG, $EXTENSION );
+my ( $VERSION, $DIR, $PROG, $EXTENSION );
 my $start_time = time();
 
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw( $Qmgr $Fluxinet $Watch $Clientmaint $Trigger);
+use vars qw( $Qmgr $Fluxinet $Watch $Clientmaint $Trigger $fluxDB);
 
 #------------------------------------------------------------------------------#
 # Main                                                                         #
@@ -211,7 +211,7 @@ sub Check {
 	my $return = 0;
 	# check modules
 	print "1. modules\n";
-	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX');
+	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX', 'DBI');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			$return = 1;
@@ -231,8 +231,6 @@ sub Check {
 			exit;
 		}
 	}
-	# check database
-	print "2. database\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -399,7 +397,7 @@ sub Initialize {
 		exit;
 	}
 	# initialize some variables
-	$REVISION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+	$VERSION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 	($DIR=$0) =~ s/([^\/\\]*)$//;
 	($PROG=$1) =~ s/\.([^\.]*)$//;
 	$EXTENSION=$1;
@@ -496,7 +494,7 @@ sub Daemonize {
 sub PrintUsage {
 	print <<"USAGE";
 
-$PROG.$EXTENSION Revision $REVISION
+$PROG.$EXTENSION Revision $VERSION
 
 Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
                               path-to-download, path-to-docroot, loglevel
@@ -542,7 +540,38 @@ USAGE
 # Returns: Version Information                                                 #
 #------------------------------------------------------------------------------#
 sub PrintVersion {
-	print $PROG.".".$EXTENSION." Revision ".$REVISION."\n";
+	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
+
+	# Clientmaint
+	require Clientmaint;
+	my $clientmaint = Clientmaint->New();
+	print "Clientmaint Version ".$clientmaint->getVersion()."\n";
+
+	# FluxDB
+	require FluxDB;
+	my $fluxDB = FluxDB->new();
+	print "FluxDB Version ".$fluxDB->getVersion()."\n";
+
+	# Fluxinet # TODO : dont do this, ctor starts up things
+	#require Fluxinet;
+	#my $fluxinet = Fluxinet->new();
+	#print "Fluxinet Version ".$fluxinet->getVersion()."\n";
+
+	# Qmgr # TODO : dont do this, ctor starts up things
+	#require Qmgr;
+	#my $qmgr = Qmgr->new();
+	#print "Qmgr Version ".$qmgr->getVersion()."\n";
+
+	# Trigger
+	require Trigger;
+	my $trigger = Trigger->New();
+	print "Trigger Version ".$trigger->getVersion()."\n";
+
+	# Watch
+	require Watch;
+	my $watch = Watch->New();
+	print "Watch Version ".$watch->getVersion()."\n";
+
 }
 
 #------------------------------------------------------------------------------#
@@ -551,7 +580,7 @@ sub PrintVersion {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub GetDBInfo {
-	my $file='/usr/local/www/trunk/html/config.db.php';
+	my $file=$PATH_DOCROOT.'config.db.php';
 	open(CONFIG, $file) || die("Cannot open $file for read: $!");
 	undef $/;
 	while (<CONFIG>) {
@@ -726,8 +755,43 @@ sub Debug {
 
 	# database
 	if ($debug =~ /db/) {
-		# TODO : debug database
+		my $dbcfg = shift @ARGV;
+		if (!(defined $dbcfg)) {
+			print "debug database is missing an argument.\n";
+			exit;
+		}
 		print "debugging database...\n";
+		# require
+		require FluxDB;
+		# create instance
+		print "creating FluxDB (\"".$dbcfg."\")\n";
+		$fluxDB = FluxDB->new($dbcfg);
+		if ($fluxDB->getState() == -1) {
+			print " error : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# initialize
+		print "initializing FluxDB\n";
+		$fluxDB->initialize();
+		if ($fluxDB->getState() == -1) {
+			print " error : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# db-settings
+		print "FluxDB->getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+		print "FluxDB->getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+		print "FluxDB->getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+		print "FluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+		print "FluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+		print "FluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+		# hmm
+		if ($fluxDB->getState() == 0) {
+			print " hmm, FluxDB has state 0 : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# destroy
+		print "destroying FluxDB\n";
+		$fluxDB->destroy();
 		exit;
 	}
 
