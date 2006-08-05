@@ -34,7 +34,6 @@ use POSIX qw(setsid);
 # Internal Variables                                                           #
 #------------------------------------------------------------------------------#
 my ( $DB_TYPE, $DB_HOST, $DB_NAME, $DB_USER, $DB_PASS );
-use vars qw( @users %names);
 my $BIN_PHP = "/usr/bin/php";
 my $BIN_FLUXCLI = "fluxcli.php";
 my $PATH_DOCROOT = "/var/www/";
@@ -461,29 +460,6 @@ sub Daemonize {
         # Add our server socket to the select read set.
         $Select->add($SERVER);
 
-        # First, get our DB info
-        GetDBInfo();
-
-        # Now execute the SQL and get the user list
-        my @tempary;
-        if ($DB_TYPE eq "mysql") {
-                @tempary = split(/\n/, `echo "select uid, user_id FROM tf_users" | mysql -u $DB_USER -h $DB_HOST -p$DB_PASS $DB_NAME`);
-        }
-        my $index = 0;
-        foreach (@tempary) {
-                if (!/^uid\suser_id/) {
-                        my @array = split;
-                        @_ = @array;
-                        my $uid = shift || die("Can't get uid from DB, dying: $!");
-                        my $user_id = shift || die("Can't get user_id from DB, dying: $!");
-                        $users[$index] = {
-                                uid             => $uid,
-                                username        => $user_id,
-                                        };
-                        $names{$user_id} = $uid;
-                }
-                $index++;
-        }
 }
 
 #------------------------------------------------------------------------------#
@@ -566,35 +542,6 @@ sub PrintVersion {
 	require Watch;
 	print "Watch Version ".Watch->getVersion()."\n";
 
-}
-
-#------------------------------------------------------------------------------#
-# Sub: GetDBInfo                                                               #
-# Arguments: Null                                                              #
-# Returns: Null                                                                #
-#------------------------------------------------------------------------------#
-sub GetDBInfo {
-	my $file=$PATH_DOCROOT.'config.db.php';
-	open(CONFIG, $file) || die("Cannot open $file for read: $!");
-	undef $/;
-	while (<CONFIG>) {
-		if (/db_type.*[^\[]\"(\w+)\"[^\]]/) {
-			$DB_TYPE = $1;
-		}
-		if (/db_host.*[^\[]\"(\w+)\"[^\]]/) {
-			$DB_HOST = $1;
-		}
-		if (/db_name.*[^\[]\"(\w+)\"[^\]]/) {
-			$DB_NAME = $1;
-		}
-		if (/db_user.*[^\[]\"(\w+)\"[^\]]/) {
-			$DB_USER = $1;
-		}
-		if (/db_pass.*[^\[]\"(\w+)\"[^\]]/) {
-			$DB_PASS = $1;
-		}
-	}
-	$/ = '\n';
 }
 
 #------------------------------------------------------------------------------#
@@ -758,17 +705,22 @@ sub Debug {
 		# require
 		require FluxDB;
 		# create instance
-		print "creating FluxDB (\"".$dbcfg."\")\n";
-		$fluxDB = FluxDB->new($dbcfg);
+		print "creating FluxDB\n";
+		$fluxDB = FluxDB->new();
 		if ($fluxDB->getState() == -1) {
 			print " error : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# initialize
-		print "initializing FluxDB\n";
-		$fluxDB->initialize();
+		print "initializing FluxDB( \"".$dbcfg."\")\n";
+		$fluxDB->initialize($dbcfg);
 		if ($fluxDB->getState() == -1) {
 			print " error : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# hmm
+		if ($fluxDB->getState() == 0) {
+			print " hmm, FluxDB has state 0 : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# db-settings
@@ -778,11 +730,8 @@ sub Debug {
 		print "FluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
 		print "FluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
 		print "FluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-		# hmm
-		if ($fluxDB->getState() == 0) {
-			print " hmm, FluxDB has state 0 : ".$fluxDB->getMessage()."\n";
-			exit;
-		}
+		# something from the bean
+		print "fluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
 		# destroy
 		print "destroying FluxDB\n";
 		$fluxDB->destroy();
