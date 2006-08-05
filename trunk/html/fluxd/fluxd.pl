@@ -52,45 +52,45 @@ my $start_time = time();
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw( $Qmgr $Fluxinet $Watch $Clientmaint $Trigger $fluxDB);
+use vars qw( $qmgr $fluxinet $watch $clientmaint $trigger $fluxDB);
 
 #------------------------------------------------------------------------------#
-# Main                                                                         #
+# main                                                                         #
 #------------------------------------------------------------------------------#
 
 # flush the buffer
 $| = 1;
 
 # Intialize
-Initialize();
+initialize();
 
 # Verify that we have been started in a valid way
-ProcessArguments();
+processArguments();
 
 # Daemonise the script
-&Daemonize;
+&daemonize;
 
 # Read config and load modules
-Config();
+config();
 
 use vars qw( $loop );
 $loop = 0;
 # Here we go! The main loop!
 while ( 1 ) {
-	CheckConnections();
-	$Qmgr->Main if(defined $Qmgr);
-	$Fluxinet->Main if(defined $Fluxinet);
-	$Watch->Main if(defined $Watch);
-	$Clientmaint->Main if(defined $Clientmaint);
-	$Trigger->Main if(defined $Trigger);
+	checkConnections();
+	$qmgr->main if(defined $qmgr);
+	$fluxinet->main if(defined $fluxinet);
+	$watch->main if(defined $watch);
+	$clientmaint->main if(defined $clientmaint);
+	$trigger->main if(defined $trigger);
 }
 
 #------------------------------------------------------------------------------#
-# Sub: ProcessRequest                                                          #
+# Sub: processRequest                                                          #
 # Arguments: Command                                                           #
 # Returns: String info on command success/failure                              #
 #------------------------------------------------------------------------------#
-sub ProcessRequest {
+sub processRequest {
 	my @array = ();
 	my $temp = shift;
 	@array = split (/ /, $temp);
@@ -102,30 +102,30 @@ sub ProcessRequest {
 
 		# Actual fluxd subroutine calls
 		/^die/ && do {
-			$return = StopServer();
+			$return = stopServer();
 			last SWITCH;
 		};
 		/^status/ && do {
-			$return = Status();
+			$return = status();
 			last SWITCH;
 		};
 		/^check/ && do {
-			$return = Check();
+			$return = check();
 			last SWITCH;
 		};
 		/^set/ && do {
-			$return = Set(shift, shift);
+			$return = set(shift, shift);
 			last SWITCH;
 		};
 
 		# fluxcli.php calls
 		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat/ && do {
-			$return = Fluxcli($_, shift, shift);
+			$return = fluxcli($_, shift, shift);
 			last SWITCH;
 		};
 
 		# Package calls
-		if (exists &Qmgr::Main) {
+		if (exists &Qmgr::main) {
 			/^count-jobs/ && do {
 				$return = Qmgr::CountJobs();
 				last SWITCH;
@@ -139,31 +139,31 @@ sub ProcessRequest {
 				last SWITCH;
 			};
 		}
-		if (exists &Watch::SetWatch) {
+		if (exists &Watch::setWatch) {
 			/^watch/ && do {
-				$return = Watch::SetWatch(shift, shift);
+				$return = Watch::setWatch(shift, shift);
 				last SWITCH;
 			};
 		}
-		if (exists &Trigger::SetTrigger) {
+		if (exists &Trigger::setTrigger) {
 			/^trigger/ && do {
-				$return = Trigger::SetTrigger(shift, shift);
+				$return = Trigger::setTrigger(shift, shift);
 				last SWITCH;
 			};
 		}
 
 		# Default case.
-		$return = PrintUsage();
+		$return = printUsage();
 	}
 	return $return;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Fluxcli                                                                 #
+# Sub: fluxcli                                                                 #
 # Arguments: Command [Arg1, [Arg2]]                                            #
 # Returns: Info string                                                         #
 #------------------------------------------------------------------------------#
-sub Fluxcli {
+sub fluxcli {
 	my $Command = shift;
 	my $Arg1 = shift;
 	my $Arg2 = shift;
@@ -171,7 +171,7 @@ sub Fluxcli {
 
 	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
 		if ( (defined $Arg1) || (defined $Arg2) ) {
-			$return = PrintUsage();
+			$return = printUsage();
 			next;
 		} else {
 			$return = `$PATH_PHP $BIN_FLUXCLI $Command`;
@@ -180,7 +180,7 @@ sub Fluxcli {
 	}
 	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
 		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
-			$return = PrintUsage();
+			$return = printUsage();
 			next;
 		} else {
 			$return = `$PATH_PHP $BIN_FLUXCLI $Command $Arg1`;
@@ -189,7 +189,7 @@ sub Fluxcli {
 	}
 	if ($Command =~/^inject/) {
 		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
-			$return = PrintUsage();
+			$return = printUsage();
 			next;
 		} else {
 			$return = `$PATH_PHP $BIN_FLUXCLI $Command $Arg1 $Arg2`;
@@ -200,11 +200,11 @@ sub Fluxcli {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Check                                                                   #
+# Sub: check                                                                   #
 # Arguments: Null                                                              #
 # Returns: info on system requirements                                         #
 #------------------------------------------------------------------------------#
-sub Check {
+sub check {
 	print "Checking requirements...\n";
 	my $return = 0;
 	# check modules
@@ -232,22 +232,22 @@ sub Check {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Status                                                                  #
+# Sub: status                                                                  #
 # Arguments: Null                                                              #
 # Returns: Server information page                                             #
 #------------------------------------------------------------------------------#
-sub Status {
+sub status {
 	my $retval = "";
 	$retval .= "Fluxd has been up since $start_time\n";
 	return $retval;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Set                                                                     #
+# Sub: set                                                                     #
 # Arguments: Variable, [Value]                                                 #
 # Returns: info string                                                         #
 #------------------------------------------------------------------------------#
-sub Set {
+sub set {
 	my $variable = shift;
 	my $value = shift;
 	my $return;
@@ -259,23 +259,23 @@ sub Set {
 		SWITCH: {
 			$_ = $pair[0];
 			/Qmgr/ && do {
-				$return = $Qmgr->Set($pair[1], $value) if (defined $Qmgr);
+				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
 				last SWITCH;
 			};
 			/Fluxinet/ && do {
-				$return = $Fluxinet->Set($pair[1], $value) if(defined $Fluxinet);
+				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
 				last SWITCH;
 			};
 			/Trigger/ && do {
-				$return = $Trigger->Set($pair[1], $value) if(defined $Trigger);
+				$return = $trigger->set($pair[1], $value) if(defined $trigger);
 				last SWITCH;
 			};
 			/Watch/ && do {
-				$return = $Watch->Set($pair[1], $value) if(defined $Watch);
+				$return = $watch->set($pair[1], $value) if(defined $watch);
 				last SWITCH;
 			};
 			/Clientmaint/ && do {
-				$return = $Clientmaint->Set($pair[1], $value) if(defined $Clientmaint);
+				$return = $clientmaint->set($pair[1], $value) if(defined $clientmaint);
 				last SWITCH;
 			};
 			$return = "Unknown package\n";
@@ -287,54 +287,54 @@ sub Set {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: StopServer                                                              #
+# Sub: stopServer                                                              #
 # Arguments: Null                                                              #
 # Returns: Info string                                                         #
 #------------------------------------------------------------------------------#
-sub StopServer {
+sub stopServer {
 	print "Shutting down!\n";
 	unlink($PATH_SOCKET);
 	exit;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: ProcessArguments                                                        #
+# Sub: processArguments                                                        #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub ProcessArguments {
+sub processArguments {
 	my $temp = shift @ARGV;
 
 	# first arg may be operation.
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	# help
 	if ($temp =~ /.*(help|-h).*/) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	# version
 	if ($temp =~ /.*(version|-v).*/) {
-		PrintVersion();
+		printVersion();
 		exit;
 	};
 	# check
 	if ($temp =~ /check/) {
-		Check();
+		check();
 		exit;
 	};
 
 	# debug
 	if ($temp =~ /debug/) {
-		Debug();
+		debug();
 		exit;
 	};
 
 	# $MAX_SYS
 	if ($temp !~/\d+/) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	$MAX_SYS = $temp;
@@ -342,7 +342,7 @@ sub ProcessArguments {
 	# $MAX_USER
 	$temp = shift @ARGV;
 	if ( (!(defined $temp)) || ($temp !~/\d+/) ) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	$MAX_USER = $temp;
@@ -350,7 +350,7 @@ sub ProcessArguments {
 	# $PATH_PHP
 	$temp = shift @ARGV;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	$PATH_PHP = $temp;
@@ -358,15 +358,15 @@ sub ProcessArguments {
 	# path to home
 	$temp = shift @ARGV;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
-	InitPaths($temp);
+	initPaths($temp);
 
 	# $PATH_DOCROOT
 	$temp = shift @ARGV;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	if (!((substr $temp, -1) eq "/")) {
@@ -377,18 +377,18 @@ sub ProcessArguments {
 	# $LOGLEVEL
 	$temp = shift @ARGV;
 	if ( (!(defined $temp)) && ($temp !~/\d+/) ) {
-		PrintUsage();
+		printUsage();
 		exit;
 	}
 	$LOGLEVEL = $temp;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Initialize                                                              #
+# Sub: initialize                                                              #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub Initialize {
+sub initialize {
 	# Windows is not supported
 	if ("$^0" =~ /win32/i) {
 		print "\r\nWin32 not supported.\r\n";
@@ -402,11 +402,11 @@ sub Initialize {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: InitPaths                                                               #
+# Sub: initPaths                                                               #
 # Arguments: base path for t-flux                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub InitPaths {
+sub initPaths {
 	my $path = shift;
 	if (!((substr $path, -1) eq "/")) {
 		$path .= "/";
@@ -425,11 +425,11 @@ sub InitPaths {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Daemonize                                                               #
+# Sub: daemonize                                                               #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub Daemonize {
+sub daemonize {
 	#chdir '/'			or die "Can't chdir to /: $!";
 	umask 0;			# sets our umask
 	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
@@ -440,12 +440,12 @@ sub Daemonize {
 	setsid				or die "Can't start a new session: $!";
 
 	# check requirements, die if they aren't there
-	#if (!(Check())) {
+	#if (!(check())) {
 	#	exit;
 	#}
 
-	# Set up our signal handler
-	$SIG{HUP} = \&GotSigHup;
+	# set up our signal handler
+	$SIG{HUP} = \&gotSigHup;
 
 	# set up daemon stuff...
         # set up server socket
@@ -462,11 +462,11 @@ sub Daemonize {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: PrintUsage                                                              #
+# Sub: printUsage                                                              #
 # Arguments: Null                                                              #
 # Returns: Usage Information                                                   #
 #------------------------------------------------------------------------------#
-sub PrintUsage {
+sub printUsage {
 	print <<"USAGE";
 
 $PROG.$EXTENSION Revision $VERSION
@@ -479,7 +479,7 @@ Usage: $PROG.$EXTENSION <begin> max-running, max-user, path-to-php,
                         and resets totals for a torrent, as well as removing
                         all data downloaded for that torrent
        $PROG.$EXTENSION <torrents|status|netstat|start-all|stop-all|resume-all>
-                        lists info about the selected aspect. Status shows all
+                        lists info about the selected aspect. status shows all
        $PROG.$EXTENSION inject /path/to/foo.torrent user
                         injects a torrent file into flux as the specified user
        $PROG.$EXTENSION watch /path/to/watch/dir user
@@ -510,11 +510,11 @@ USAGE
 }
 
 #------------------------------------------------------------------------------#
-# Sub: PrintVersion                                                            #
+# Sub: printVersion                                                            #
 # Arguments: Null                                                              #
 # Returns: Version Information                                                 #
 #------------------------------------------------------------------------------#
-sub PrintVersion {
+sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
 
 	# Clientmaint
@@ -544,11 +544,11 @@ sub PrintVersion {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Config                                                                  #
+# Sub: config                                                                  #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub Config {
+sub config {
 	open(CONFIG, $PATH_DOCROOT."fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
 	while (<CONFIG>) {
 		# I checked $/ and it's set to \n, but <CONFIG> reads the whole file.
@@ -559,79 +559,79 @@ sub Config {
 				# Load up modules, unless they're already
 				# loaded
 				/^INCLUDE\sQmgr\.pm$/ && do {
-					if (!(exists &Qmgr::New)) {
+					if (!(exists &Qmgr::new)) {
 						require Qmgr;
-						$Qmgr = Qmgr->New();
+						$qmgr = Qmgr->new();
 						last SWITCH;
 					}
 				};
 				/^INCLUDE\sFluxinet\.pm$/ && do {
-					if (!(exists &Fluxinet::New)) {
+					if (!(exists &Fluxinet::new)) {
 						require Fluxinet;
-						$Fluxinet = Fluxinet->New();
+						$fluxinet = Fluxinet->new();
 						last SWITCH;
 					}
 				};
 				/^INCLUDE\sWatch\.pm$/ && do {
-					if (!(exists &Watch::New)) {
+					if (!(exists &Watch::new)) {
 						require Watch;
-						$Watch = Watch->New();
+						$watch = Watch->new();
 						last SWITCH;
 					}
 				};
 				/^INCLUDE\sClientmaint\.pm$/ && do {
-					if (!(exists &Clientmaint::New)) {
+					if (!(exists &Clientmaint::new)) {
 						require Clientmaint;
-						$Clientmaint = Clientmaint->New();
+						$clientmaint = Clientmaint->new();
 						last SWITCH;
 					}
 				};
 				/^INCLUDE\sTrigger\.pm$/ && do {
-					if (!(exists &Trigger::New)) {
+					if (!(exists &Trigger::new)) {
 						require Trigger;
-						$Trigger = Trigger->New();
+						$trigger = Trigger->new();
 						last SWITCH;
 					}
 				};
 
 				# Unload modules, if they are loaded
 				/^#INCLUDE\sQmgr\.pm$/ && do {
-					if(exists &Qmgr::New) {
-						$Qmgr->Destroy();
+					if(exists &Qmgr::new) {
+						$qmgr->destroy();
 						delete_package('Qmgr');
-						undef $Qmgr;
+						undef $qmgr;
 						last SWITCH;
 					}
 				};
 				/^#INCLUDE\sFluxinet\.pm$/ && do {
-					if (exists &Fluxinet::New) {
-						$Fluxinet->Destroy();
+					if (exists &Fluxinet::new) {
+						$fluxinet->destroy();
 						delete_package('Fluxinet');
-						undef $Fluxinet;
+						undef $fluxinet;
 						last SWITCH;
 					}
 				};
 				/^#INCLUDE\sWatch\.pm$/ && do {
-					if (exists &Watch::New) {
-						$Watch->Destroy();
+					if (exists &Watch::new) {
+						$watch->destroy();
 						delete_package('Watch');
-						undef $Watch;
+						undef $watch;
 						last SWITCH;
 					}
 				};
 				/^#INCLUDE\sClientmaint\.pm$/ && do {
-					if (exists &Clientmaint::New) {
-						$Clientmaint->Destroy();
+					if (exists &Clientmaint::new) {
+						$clientmaint->destroy();
 						delete_package('Clientmaint');
-						undef $Clientmaint;
+						undef $clientmaint;
 						last SWITCH;
 					}
 				};
 				/^#INCLUDE\sTrigger\.pm$/ && do {
-					if (exists &Trigger::New) {
-						$Trigger->Destroy;
+					if (exists &Trigger::new) {
+						$trigger->destroy;
 						delete_package('Trigger');
-						undef $Trigger;
+						undef $trigger;
 						last SWITCH;
 					}
 				};
@@ -640,22 +640,22 @@ sub Config {
 	}
 }
 #------------------------------------------------------------------------------#
-# Sub: GotSigHup                                                               #
+# Sub: gotSigHup                                                               #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub GotSigHup {
+sub gotSigHup {
 	print "Got SIGHUP, re-reading config...";
-	Config();
+	config();
 	print "done.\n";
 }
 
 #------------------------------------------------------------------------------#
-# Sub: CheckConnections                                                        #
+# Sub: checkConnections                                                        #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub CheckConnections {
+sub checkConnections {
 	# Get the readable handles. timeout is 0, only process stuff that can be
 	# read NOW.
 	my $return = "";
@@ -671,7 +671,7 @@ sub CheckConnections {
 				$buf .= $char;
 				$char = getc($socket);
 			}
-			$return = ProcessRequest($buf);
+			$return = processRequest($buf);
 			$socket->send($return);
 			$Select->remove($socket);
 			close($socket);
@@ -680,11 +680,11 @@ sub CheckConnections {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Debug                                                                   #
+# Sub: debug                                                                   #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub Debug {
+sub debug {
 	my $debug = shift @ARGV;
 
 	# first arg is debug-operation.

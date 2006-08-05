@@ -21,11 +21,11 @@ my $port = 3150; # TODO : use value from db-bean
 my ( $SERVER, $Select );
 
 #------------------------------------------------------------------------------#
-# Sub: New                                                                     #
+# Sub: new                                                                     #
 # Arguments: Null                                                              #
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
-sub New {
+sub new {
 	# Create the read set
 	$Select = new IO::Select();
 
@@ -54,11 +54,11 @@ sub getVersion {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Main                                                                    #
+# Sub: main                                                                    #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub Main {
+sub main {
         # Get the readable handles. timeout is 0, only process stuff that can be
         # read NOW.
         my $return = "";
@@ -74,7 +74,7 @@ sub Main {
                                 $buf .= $char;
                                 $char = getc($socket);
                         }
-                        $return = Fluxd::ProcessRequest($buf);
+                        $return = Fluxd::processRequest($buf);
                         $socket->send($return);
                         $Select->remove($socket);
                         close($socket);
@@ -83,11 +83,11 @@ sub Main {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: Destroy                                                                 #
+# Sub: destroy                                                                 #
 # Arguments: Null                                                              #
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
-sub Destroy {
+sub destroy {
 	foreach my $handle ($Select->handles) {
 		$Select->remove($handle);
 		$handle->close;

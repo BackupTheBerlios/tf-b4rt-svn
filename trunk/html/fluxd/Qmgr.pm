@@ -19,11 +19,11 @@ my ( $time, $localtime, %globals );
 my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 
 #-----------------------------------------------------------------------------#
-# Sub: New (Constructor Method)                                               #
+# Sub: new (Constructor Method)                                               #
 # Arguments: Null                                                             #
 # Returns: Object                                                             #
 #-----------------------------------------------------------------------------#
-sub New {
+sub new {
 
 	my $objclass = shift;
 	# check arguments
@@ -37,11 +37,11 @@ sub New {
 	# Create and start the log file
 	print "Qmgr : Starting : Qmgr";
 
-	# Initialize our globals hash
+	# initialize our globals hash
 	$globals{'main'} = 0;
 	$globals{'started'} = 0;
 
-	#Initialize the queue
+	#initialize the queue
 	if (-f $PATH_QUEUE_FILE) {
 		print "Qmgr : Loading Queue-file";
 		# actually load the queue
@@ -262,11 +262,11 @@ sub printVersion {
 }
 
 #-----------------------------------------------------------------------------#
-# Sub: PrintUsage                                                             #
+# Sub: printUsage                                                             #
 # Arguments: Null                                                             #
 # Returns: Null                                                               #
 #-----------------------------------------------------------------------------#
-sub PrintUsage {
+sub printUsage {
 
 my $PROG = "Qmgr";
 my $DAEMON = "Qmgrd";
@@ -369,12 +369,12 @@ sub SaveQueue {
 }
 
 #-----------------------------------------------------------------------------#
-# Sub: Status                                                                 #
+# Sub: status                                                                 #
 # Arguments: Null                                                             #
-# Returns: Status string                                                      #
+# Returns: status string                                                      #
 #-----------------------------------------------------------------------------#
-sub Status {
-	my $return = "Status info\n";
+sub status {
+	my $return = "status info\n";
 	$return .= "\n-= Qmgrd Revision ".$QmgrVars{'REVISION'}." =-\n\n";
 
 	# get count-vars
@@ -481,7 +481,7 @@ sub Add {
 	# Verify that the arguments look good
 	my $temp = shift;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	my $torrent = $temp;
@@ -489,7 +489,7 @@ sub Add {
 
 	$temp = shift;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	my $user = $temp;
@@ -497,11 +497,11 @@ sub Add {
 	# Looks good, add it to the queue.
 	if ((! exists $QmgrVars{'jobs'}{'queued'}{$torrent}) && (! exists $QmgrVars{'jobs'}{'running'}{$torrent})) {
 		$AddIt = 1;
-		WriteLog("Main : Adding job to queue : ".$torrent." (".$user.")");
+		WriteLog("main : Adding job to queue : ".$torrent." (".$user.")");
 		$QmgrVars{'jobs'}{'queued'}{$torrent} = $user;
 	} else {
 		if ($QmgrVars{'LOGLEVEL'} > 1) {
-			WriteLog("Main : Job already exists : ".$torrent." (".$user.")");
+			WriteLog("main : Job already exists : ".$torrent." (".$user.")");
 		}
 	}
 
@@ -521,7 +521,7 @@ sub Remove {
 	# Check arguments
 	my $temp = shift;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	my $torrent = $temp;
@@ -614,11 +614,11 @@ sub StartTorrent {
 }
 
 #-----------------------------------------------------------------------------#
-# Sub: ProcessRequest                                                         #
+# Sub: processRequest                                                         #
 # Arguments: Command, [torrent, [user] ] [host, port]                         #
 # Returns: Return value from called sub                                       #
 #-----------------------------------------------------------------------------#
-sub ProcessRequest {
+sub processRequest {
 	# verify that arguments look right
 
 	my $temp = shift;
@@ -628,7 +628,7 @@ sub ProcessRequest {
 
 	$temp = shift;
 	if (!(defined $temp)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	my $Command = $temp;
@@ -650,7 +650,7 @@ sub ProcessRequest {
 			last SWITCH;
 		};
 		/^status$/ && do {
-			$return = Status();
+			$return = status();
                         last SWITCH;
 		};
 		/^jobs$/ && do {
@@ -674,7 +674,7 @@ sub ProcessRequest {
                         last SWITCH;
 		};
 		/^set$/ && do {
-			$return = Set($torrent, $user);
+			$return = set($torrent, $user);
 			last SWITCH;
 		};
 		/^move-up$/ && do {
@@ -702,11 +702,11 @@ sub ProcessRequest {
 }
 
 #-----------------------------------------------------------------------------#
-# Sub: InitPaths                                                              #
+# Sub: initPaths                                                              #
 # Agruments: Path                                                             #
 # Returns: Null                                                               #
 #-----------------------------------------------------------------------------#
-sub InitPaths {
+sub initPaths {
 	my $pathVar = shift;
 	if (!((substr $pathVar, -1) eq "/")) {
 		$pathVar .= "/";
@@ -720,7 +720,7 @@ sub InitPaths {
 	if (! -d $QmgrVars{'PATH_DATA_DIR'}) {
 		mkdir($QmgrVars{'PATH_DATA_DIR'},0700);
 	}
-	WriteLog("InitPaths : Paths initialized");
+	WriteLog("initPaths : Paths initialized");
 }
 
 #-----------------------------------------------------------------------------#
@@ -837,7 +837,7 @@ sub WritePid {
 sub MoveUp {
 	my $torrent = shift;
 	if (!(defined $torrent)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	my $index = 0;
@@ -865,7 +865,7 @@ sub MoveUp {
 sub MoveDown {
 	my $torrent = shift;
 	if (!(defined $torrent)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	my $index = 0;
@@ -894,7 +894,7 @@ sub MoveDown {
 sub MoveTop {
 	my $torrent = shift;
 	if (!(defined $torrent)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	while ( ${$QmgrVars{'queue'}}[0] ne $torrent ) {
@@ -912,7 +912,7 @@ sub MoveTop {
 sub MoveBottom {
 	my $torrent = shift;
 	if (!(defined $torrent)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 	while ( ${$QmgrVars{'queue'}}[Queue()] ne $torrent ) {
@@ -928,7 +928,7 @@ sub MoveBottom {
 sub StripTorrentName {
 	my $torrent = shift;
 	if (!(defined $torrent)) {
-		PrintUsage();
+		printUsage();
 		return;
 	}
 
