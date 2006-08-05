@@ -76,9 +76,6 @@ processArguments();
 loadServiceModules();
 
 # Here we go! The main loop!
-
-# TODO : define timers to let jobs be processed at different intervalls         /* TODO */
-
 use vars qw( $loop );
 $loop = 0;
 while ( 1 ) {
@@ -112,7 +109,7 @@ while ( 1 ) {
 	}
 
 	# TODO : sleep-code                                                         /* TODO */
-	sleep 2; # DEBUG
+	sleep 1; # DEBUG
 
 	# increment loop-counter
 	$loop++;
@@ -195,18 +192,22 @@ sub processArguments {
 		# initialize
 		$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
 		if ($fluxDB->getState() < 1) {
-			print "Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
+			print "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# init paths
 		initPaths($fluxDB->getFluxConfig("path"));
-		# get pid
-		open(PIDFILE,"< $PID_FILE");
-		my $daemonPid = <PIDFILE>;
-		close(PIDFILE);
-		chomp $daemonPid;
-		# send QUIT to daemon
-		kill 'SIGQUIT', $daemonPid;
+		if (-f $PID_FILE) {
+			# get pid
+			open(PIDFILE,"< $PID_FILE");
+			my $daemonPid = <PIDFILE>;
+			close(PIDFILE);
+			chomp $daemonPid;
+			# send QUIT to daemon
+			kill 'SIGQUIT', $daemonPid;
+		} else {
+			print "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n";
+		}
 		# exit
 		exit;
 	};
@@ -240,27 +241,39 @@ sub processArguments {
 #------------------------------------------------------------------------------#
 sub daemonize {
 
-	# initialize db-bean
+	# db-bean
 
 	# require
 	require FluxDB;
+
 	# create instance
 	$fluxDB = FluxDB->new();
 	if ($fluxDB->getState() == -1) {
-		print "Error creating FluxDB: ".$fluxDB->getMessage()."\n";
+		print "Error : creating FluxDB: ".$fluxDB->getMessage()."\n";
 		exit;
 	}
+
 	# initialize
 	$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
 	if ($fluxDB->getState() < 1) {
-		print "Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
+		print "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
 		exit;
 	}
 
 	# init paths
 	initPaths($fluxDB->getFluxConfig("path"));
 
-	# TODO : check for pid-file : if exists bail out nice                       /* TODO */
+	# check for pid-file : if exists bail out
+	if (-f $PID_FILE) {
+		print "Error : pid-file (".$PID_FILE.") exists. daemon running ?\n";
+		exit;
+	}
+
+	# check for socket : if exists bail out
+	if (-r $PATH_SOCKET) {
+		print "Error : socket (".$PATH_SOCKET.") exists. daemon running ?\n";
+		exit;
+	}
 
 	#chdir '/'			or die "Can't chdir to /: $!";
 	umask 0;			# sets our umask
@@ -272,7 +285,7 @@ sub daemonize {
 	setsid				or die "Can't start a new session: $!";
 
 	# log
-	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT.". (pid: ".$$.")\n"; # DEBUG
+	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$.")\n"; # DEBUG
 
 	# write out pid-file
 	writePidFile($$);
@@ -288,8 +301,6 @@ sub daemonize {
 
 	# set up daemon stuff...
 
-	# TODO : check for socket : if exists bail out nice                         /* TODO */
-
 	# set up server socket
 	$SERVER = IO::Socket::UNIX->new(
 			Type    => SOCK_STREAM,
@@ -298,6 +309,7 @@ sub daemonize {
 			Reuse   => 1,
 			);
 	die "Couldn't create socket: $!\n" unless $SERVER;
+	print STDOUT "created socket ".$PATH_SOCKET."\n"; # DEBUG
 
 	# Add our server socket to the select read set.
 	$Select->add($SERVER);
@@ -312,6 +324,7 @@ sub daemonShutdown {
 	print "Shutting down!\n";
 
 	# remove socket
+	print STDOUT "deleting socket ".$PATH_SOCKET."\n"; # DEBUG
 	unlink($PATH_SOCKET);
 
 	# destroy db-bean
@@ -406,7 +419,7 @@ sub loadServiceModules {
 		if (!(exists &Watch::new)) {
 			require Watch;
 			$watch = Watch->new();
-			$watch->initialize();
+			$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
 			if ($watch->getState() < 1) {
 				print STDERR "error initializing service-module Watch :\n";
 				print STDERR $watch->getMessage()."\n";
@@ -844,7 +857,7 @@ sub debug {
 		exit;
 	}
 
-	# database
+	# database-debug
 	if ($debug =~ /db/) {
 		my $dbcfg = shift @ARGV;
 		if (!(defined $dbcfg)) {
@@ -895,6 +908,7 @@ sub debug {
 		exit;
 	}
 
+	# bail out
 	print "debug is missing an operation.\n";
 	exit;
 }

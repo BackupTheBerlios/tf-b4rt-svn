@@ -91,11 +91,11 @@ sub initialize {
 
 	shift; # class
 
-	# db-config
+	# $port
 	$port = shift;
 	if (!(defined $port)) {
 		# message
-		$message = "$port not defined";
+		$message = "port not defined";
 		# set state
 		$state = -1;
 		# return
@@ -113,7 +113,7 @@ sub initialize {
 		Proto           => 'tcp',
 		Listen          => 16,
 		Reuse           => 1);
-	return 0 unless $SERVER; # TODO : set state + message
+	return 0 unless $SERVER; # TODO : set state + message                       /* TODO */
 	$Select->add($SERVER);
 
 	# set state

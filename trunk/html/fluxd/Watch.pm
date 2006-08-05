@@ -41,6 +41,9 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# jobs-hash
+my %jobs = undef;
+
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -75,6 +78,23 @@ sub destroy {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
+
+	shift; # class
+
+	# jobs
+	my $jobs = shift;
+	if (!(defined $jobs)) {
+		# message
+		$message = "jobs not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	print "initializing Watch (jobs: ".$jobs.")\n"; # DEBUG
+
+	# TODO : parse $jobs                                                        /* TODO */
 
 	# set state
 	$state = 1;
