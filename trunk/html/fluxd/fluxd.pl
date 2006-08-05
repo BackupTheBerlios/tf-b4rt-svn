@@ -713,13 +713,8 @@ sub debug {
 		# initialize
 		print "initializing FluxDB( \"".$dbcfg."\")\n";
 		$fluxDB->initialize($dbcfg);
-		if ($fluxDB->getState() == -1) {
-			print " error : ".$fluxDB->getMessage()."\n";
-			exit;
-		}
-		# hmm
-		if ($fluxDB->getState() == 0) {
-			print " hmm, FluxDB has state 0 : ".$fluxDB->getMessage()."\n";
+		if ($fluxDB->getState() < 1) {
+			print " hmm : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# db-settings
@@ -730,8 +725,15 @@ sub debug {
 		print "FluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
 		print "FluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
 		# something from the bean
-		print "fluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
-		print "fluxDB->getFluxConfig(\"bin_php\") : \"".$fluxDB->getFluxConfig("bin_php")."\"\n";
+		print "FluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
+		print "FluxDB->getFluxConfig(\"bin_php\") : \"".$fluxDB->getFluxConfig("bin_php")."\"\n";
+		# test to set a val
+		print "FluxDB->getFluxConfig(\"default_theme\") : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		$fluxDB->setFluxConfig("default_theme","foo");
+		print "FluxDB->getFluxConfig(\"default_theme\") after set : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		# now reload and check again
+		$fluxDB->reload();
+		print "FluxDB->getFluxConfig(\"default_theme\") after reload : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
 		# destroy
 		print "destroying FluxDB\n";
 		$fluxDB->destroy();
