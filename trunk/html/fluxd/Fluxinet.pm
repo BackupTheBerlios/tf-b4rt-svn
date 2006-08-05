@@ -30,18 +30,6 @@ my ( $SERVER, $Select );
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
 sub new {
-	# Create the read set
-	$Select = new IO::Select();
-
-	# Create the server socket
-	$SERVER = IO::Socket::INET->new(
-		LocalPort       => $port,
-		Proto           => 'tcp',
-		Listen          => 16,
-		Reuse           => 1);
-	die "Could not create server socket: $!\n" unless $SERVER;
-	$Select->add($SERVER);
-
 	# Create the object
 	my $self = {};
 	bless $self;
@@ -71,6 +59,20 @@ sub destroy {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
+
+	# Create the read set
+	$Select = new IO::Select();
+
+	# Create the server socket
+	$SERVER = IO::Socket::INET->new(
+		LocalPort       => $port,
+		Proto           => 'tcp',
+		Listen          => 16,
+		Reuse           => 1);
+	return 0 unless $SERVER;
+	$Select->add($SERVER);
+
+	# return
 	return 1;
 }
 #------------------------------------------------------------------------------#
@@ -88,27 +90,27 @@ sub getVersion {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub main {
-        # Get the readable handles. timeout is 0, only process stuff that can be
-        # read NOW.
-        my $return = "";
-        my @ready = $Select->can_read(0);
-        foreach my $socket (@ready) {
-                if ($socket == $SERVER) {
-                        my $new = $socket->accept();
-                        $Select->add($new);
-                } else {
-                        my $buf = "";
-                        my $char = getc($socket);
-                        while ($char ne "\n") {
-                                $buf .= $char;
-                                $char = getc($socket);
-                        }
-                        $return = Fluxd::processRequest($buf);
-                        $socket->send($return);
-                        $Select->remove($socket);
-                        close($socket);
-                }
-        }
+	# Get the readable handles. timeout is 0, only process stuff that can be
+	# read NOW.
+	my $return = "";
+	my @ready = $Select->can_read(0);
+	foreach my $socket (@ready) {
+		if ($socket == $SERVER) {
+			my $new = $socket->accept();
+			$Select->add($new);
+		} else {
+			my $buf = "";
+			my $char = getc($socket);
+			while ($char ne "\n") {
+					$buf .= $char;
+					$char = getc($socket);
+			}
+			$return = Fluxd::processRequest($buf);
+			$socket->send($return);
+			$Select->remove($socket);
+			close($socket);
+		}
+	}
 }
 
 

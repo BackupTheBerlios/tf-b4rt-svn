@@ -28,36 +28,7 @@ my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 # Returns: Object                                                             #
 #-----------------------------------------------------------------------------#
 sub new {
-
 	my $objclass = shift;
-	# check arguments
-
-	print "Qmgr : Initializing Qmgr";
-
-	# Create some time vars
-	$time = time();
-	$localtime = localtime();
-
-	# Create and start the log file
-	print "Qmgr : Starting : Qmgr";
-
-	# initialize our globals hash
-	$globals{'main'} = 0;
-	$globals{'started'} = 0;
-
-	#initialize the queue
-	if (-f $PATH_QUEUE_FILE) {
-		print "Qmgr : Loading Queue-file";
-		# actually load the queue
-		LoadQueue();
-	} else {
-		print "Qmgr : Creating empty queue";
-		foreach my $user (@users) {
-			$user{"queue"} = ();
-			$user{"running"} = ();
-		}
-	}
-
 	my $self = {};
 	bless ($self, $objclass);
 	return $self;
@@ -82,6 +53,32 @@ sub destroy {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
+
+	print "Qmgr : Initializing Qmgr";
+
+	# Create some time vars
+	$time = time();
+	$localtime = localtime();
+
+	# Create and start the log file
+	print "Qmgr : Starting : Qmgr";
+
+	# initialize our globals hash
+	$globals{'main'} = 0;
+	$globals{'started'} = 0;
+
+	#initialize the queue
+	if (-f $PATH_QUEUE_FILE) {
+		print "Qmgr : Loading Queue-file";
+		# actually load the queue
+		LoadQueue();
+	} else {
+		print "Qmgr : Creating empty queue";
+		#foreach my $user (@users) {
+		#	$user{"queue"} = ();
+		#	$user{"running"} = ();
+		#}
+	}
 	return 1;
 }
 
