@@ -33,10 +33,6 @@ use POSIX qw(setsid);
 ################################################################################
 # fields                                                                       #
 ################################################################################
-
-my $BIN_PHP = "/usr/bin/php"; # TODO : use value from db-bean
-my ( $MAX_SYS, $MAX_USER, $PATH_PHP, $LOGLEVEL ); # TODO : use value from db-bean
-
 my ( $VERSION, $DIR, $PROG, $EXTENSION );
 my $PATH_DOCROOT = "/var/www/";
 my $BIN_FLUXCLI = "fluxcli.php";
@@ -74,8 +70,8 @@ processArguments();
 # Daemonise the script
 &daemonize;
 
-# Read config and load modules
-config();
+# load flux-modules
+loadFluxModules();
 
 use vars qw( $loop );
 $loop = 0;
@@ -178,7 +174,9 @@ sub fluxcli {
 			$return = printUsage();
 			next;
 		} else {
-			$return = `$PATH_PHP $BIN_FLUXCLI $Command`;
+			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command;
+			$return = `$shellCmd`;
 			next;
 		}
 	}
@@ -187,7 +185,9 @@ sub fluxcli {
 			$return = printUsage();
 			next;
 		} else {
-			$return = `$PATH_PHP $BIN_FLUXCLI $Command $Arg1`;
+			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			$return = `$shellCmd`;
 			next;
 		}
 	}
@@ -196,7 +196,9 @@ sub fluxcli {
 			$return = printUsage();
 			next;
 		} else {
-			$return = `$PATH_PHP $BIN_FLUXCLI $Command $Arg1 $Arg2`;
+			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
+			$return = `$shellCmd`;
 			next;
 		}
 	}
@@ -318,7 +320,7 @@ sub stopServer {
 sub processArguments {
 	my $temp = shift @ARGV;
 
-	# first arg may be operation.
+	# first arg is operation.
 	if (!(defined $temp)) {
 		printUsage();
 		exit;
@@ -345,61 +347,41 @@ sub processArguments {
 		exit;
 	};
 
-	# TODO : rewrite due to db-bean
+	# TODO : inject
 
-	# $MAX_SYS
-	if ($temp !~/\d+/) {
-		printUsage();
+	# TODO : watch
+
+	# TODO : repair
+
+	# TODO : more ops
+
+
+	# daemon-stop
+	if ($temp =~ /daemon-stop/) {
+		# TODO : stop daemon
+		print "stopping daemon.... \n";
 		exit;
-	}
-	$MAX_SYS = $temp;
+	};
 
-	# $MAX_USER
-	$temp = shift @ARGV;
-	if ( (!(defined $temp)) || ($temp !~/\d+/) ) {
-		printUsage();
-		exit;
-	}
-	$MAX_USER = $temp;
+	# daemon-start
+	if ($temp =~ /daemon-start/) {
+		# $PATH_DOCROOT
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
+		}
+		$PATH_DOCROOT = $temp;
+		# return
+		return 1;
+	};
 
-	# $PATH_PHP
-	$temp = shift @ARGV;
-	if (!(defined $temp)) {
-		printUsage();
-		exit;
-	}
-	$PATH_PHP = $temp;
-
-	# path to home
-	$temp = shift @ARGV;
-	if (!(defined $temp)) {
-		printUsage();
-		exit;
-	}
-	initPaths($temp);
-
-	# TODO : rewrite due to db-bean
-
-	# $PATH_DOCROOT
-	$temp = shift @ARGV;
-	if (!(defined $temp)) {
-		printUsage();
-		exit;
-	}
-	if (!((substr $temp, -1) eq "/")) {
-		$temp .= "/";
-	}
-	$PATH_DOCROOT = $temp;
-
-	# TODO : rewrite due to db-bean
-
-	# $LOGLEVEL
-	$temp = shift @ARGV;
-	if ( (!(defined $temp)) && ($temp !~/\d+/) ) {
-		printUsage();
-		exit;
-	}
-	$LOGLEVEL = $temp;
+	# hmmm dont know this arg, print usage screen
+	printUsage();
+	exit;
 }
 
 #------------------------------------------------------------------------------#
@@ -483,6 +465,9 @@ sub daemonize {
 		exit;
 	}
 
+	# init paths
+	initPaths($fluxDB->getFluxConfig("path"));
+
 	# set up daemon stuff...
 
 	# set up server socket
@@ -508,8 +493,10 @@ sub printUsage {
 
 $PROG.$EXTENSION Revision $VERSION
 
-Usage: $PROG.$EXTENSION <begin> path-to-docroot
-                        starts fluxd
+Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
+                        starts fluxd daemon
+       $PROG.$EXTENSION <daemon-stop>
+                        stops fluxd daemon
        $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
                         starts, stops, resets totals, deletes, or deletes
                         and resets totals for a torrent, as well as removing
@@ -525,8 +512,6 @@ Usage: $PROG.$EXTENSION <begin> path-to-docroot
                         if given without a value argument, returns current
                         value of the given variable. If given with a value
                         argument, sets the given variable to that value
-       $PROG.$EXTENSION stop
-                        stops the fluxd server
        $PROG.$EXTENSION <count-jobs|count-queue|list-queue|check>
                         returns the number of jobs, number of entries in the
                         queue, list entries in the queue, or check to ensure
@@ -576,6 +561,25 @@ sub printVersion {
 	# Watch
 	require Watch;
 	print "Watch Version ".Watch->getVersion()."\n";
+
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadFluxModules                                                         #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadFluxModules {
+
+	# Qmgr
+
+	# Fluxinet
+
+	# Watch
+
+	# Clientmaint
+
+	# Trigger
 
 }
 
@@ -682,6 +686,7 @@ sub config {
 		}
 	}
 }
+
 #------------------------------------------------------------------------------#
 # Sub: gotSigHup                                                               #
 # Arguments: Null                                                              #
@@ -740,9 +745,13 @@ sub debug {
 	if ($debug =~ /db/) {
 		my $dbcfg = shift @ARGV;
 		if (!(defined $dbcfg)) {
-			print "debug database is missing an argument.\n";
+			print "debug database is missing an argument : path to docroot\n";
 			exit;
 		}
+		if (!((substr $dbcfg, -1) eq "/")) {
+			$dbcfg .= "/";
+		}
+		$dbcfg .= $FILE_DBCONF;
 		print "debugging database...\n";
 		# require
 		require FluxDB;
