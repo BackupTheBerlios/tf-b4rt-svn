@@ -34,6 +34,15 @@ use IO::Select;
 my $VERSION = do {
 	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
+# state
+# -1 error
+#  0 not initialized (null)
+#  1 initialized
+my $state = 0;
+
+# message, error etc. keep it in one string for simplicity atm.
+my $message = "";
+
 my $port = 3150; # TODO : use value from db-bean
 my ( $SERVER, $Select );
 
@@ -89,9 +98,13 @@ sub initialize {
 	return 0 unless $SERVER;
 	$Select->add($SERVER);
 
+	# set state
+	$state = 1;
+
 	# return
 	return 1;
 }
+
 #------------------------------------------------------------------------------#
 # Sub: getVersion                                                              #
 # Arguments: null                                                              #
@@ -99,6 +112,24 @@ sub initialize {
 #------------------------------------------------------------------------------#
 sub getVersion {
 	return $VERSION;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getState                                                                #
+# Arguments: null                                                              #
+# Returns: state                                                               #
+#------------------------------------------------------------------------------#
+sub getState {
+	return $state;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getMessage                                                              #
+# Arguments: null                                                              #
+# Returns: message                                                             #
+#------------------------------------------------------------------------------#
+sub getMessage {
+	return $message;
 }
 
 #------------------------------------------------------------------------------#

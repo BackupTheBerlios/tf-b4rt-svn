@@ -33,17 +33,19 @@ use POSIX qw(setsid);
 ################################################################################
 # fields                                                                       #
 ################################################################################
-my ( $VERSION, $DIR, $PROG, $EXTENSION );
-my $PATH_DOCROOT = "/var/www/";
+#
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
 my $PATH_TORRENT_DIR = ".torrents";
-my $PATH_DATA_DIR = "fluxd";
+my $PATH_DATA_DIR = ".fluxd";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
 my $PATH_QUEUE_FILE = "fluxd.queue";
+#
+my ( $VERSION, $DIR, $PROG, $EXTENSION );
+my $PATH_DOCROOT;
 my $SERVER;
 my $Select = new IO::Select();
 my $start_time = time();
@@ -73,19 +75,46 @@ processArguments();
 # load flux-service-modules
 loadServiceModules();
 
+# Here we go! The main loop!
+# TODO : define timers to let jobs be processed at different intervalls         /* TODO */
 use vars qw( $loop );
 $loop = 0;
-# Here we go! The main loop!
-
-# TODO : define timers to let jobs be processed at different intervalls
-
 while ( 1 ) {
+
+	# check Connections
 	checkConnections();
-	$qmgr->main if(defined $qmgr);
-	$fluxinet->main if(defined $fluxinet);
-	$watch->main if(defined $watch);
-	$clientmaint->main if(defined $clientmaint);
-	$trigger->main if(defined $trigger);
+
+	# Qmgr
+	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		eval { $qmgr->main; };
+	}
+
+	# Fluxinet
+	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+		eval { $fluxinet->main; };
+	}
+
+	# Watch
+	if ((defined $watch) && ($watch->getState() == 1)) {
+		eval { $watch->main; };
+	}
+
+	# Clientmaint
+	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+		eval { $clientmaint->main; };
+	}
+
+	# Trigger
+	if ((defined $trigger) && ($trigger->getState() == 1)) {
+		eval { $trigger->main; };
+	}
+
+	# DEBUG
+	sleep 2;
+	# DEBUG
+
+	# increment loop-counter
+	$loop++;
 }
 
 #------------------------------------------------------------------------------#
@@ -100,7 +129,8 @@ sub initialize {
 		exit;
 	}
 	# initialize some variables
-	$VERSION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+	$VERSION = do {
+		my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 	($DIR=$0) =~ s/([^\/\\]*)$//;
 	($PROG=$1) =~ s/\.([^\.]*)$//;
 	$EXTENSION=$1;
@@ -142,7 +172,7 @@ sub processArguments {
 	};
 
 
-	# TODO : more ops
+	# TODO : more ops                                                           /* TODO */
 
 
 	# daemon-stop
@@ -650,7 +680,7 @@ sub printVersion {
 	require Fluxinet;
 	print "Fluxinet Version ".Fluxinet->getVersion()."\n";
 
-	# Qmgr
+	# Qmgr                                                                      /* TODO */
 	#require Qmgr;
 	#print "Qmgr Version ".Qmgr->getVersion()."\n";
 
@@ -726,38 +756,38 @@ sub debug {
 		# require
 		require FluxDB;
 		# create instance
-		print "creating FluxDB\n";
+		print "creating \$fluxDB\n";
 		$fluxDB = FluxDB->new();
 		if ($fluxDB->getState() == -1) {
 			print " error : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# initialize
-		print "initializing FluxDB( \"".$dbcfg."\")\n";
+		print "initializing \$fluxDB(\"".$dbcfg."\")\n";
 		$fluxDB->initialize($dbcfg);
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# db-settings
-		print "FluxDB->getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-		print "FluxDB->getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-		print "FluxDB->getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-		print "FluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-		print "FluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-		print "FluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+		print "\$fluxDB->getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+		print "\$fluxDB->getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+		print "\$fluxDB->getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+		print "\$fluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+		print "\$fluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+		print "\$fluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
 		# something from the bean
-		print "FluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
-		print "FluxDB->getFluxConfig(\"bin_php\") : \"".$fluxDB->getFluxConfig("bin_php")."\"\n";
+		print "\$fluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
+		print "\$fluxDB->getFluxConfig(\"bin_php\") : \"".$fluxDB->getFluxConfig("bin_php")."\"\n";
 		# test to set a val
-		print "FluxDB->getFluxConfig(\"default_theme\") : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		print "\$fluxDB->getFluxConfig(\"default_theme\") : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print "FluxDB->getFluxConfig(\"default_theme\") after set : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		print "\$fluxDB->getFluxConfig(\"default_theme\") after set : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print "FluxDB->getFluxConfig(\"default_theme\") after reload : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		print "\$fluxDB->getFluxConfig(\"default_theme\") after reload : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
 		# destroy
-		print "destroying FluxDB\n";
+		print "destroying \$fluxDB\n";
 		$fluxDB->destroy();
 		exit;
 	}

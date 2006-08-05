@@ -32,6 +32,15 @@ use strict;
 my $VERSION = do {
 	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
+# state
+# -1 error
+#  0 not initialized (null)
+#  1 initialized
+my $state = 0;
+
+# message, error etc. keep it in one string for simplicity atm.
+my $message = "";
+
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -66,6 +75,11 @@ sub destroy {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
+
+	# set state
+	$state = 1;
+
+	# return
 	return 1;
 }
 
@@ -76,6 +90,24 @@ sub initialize {
 #------------------------------------------------------------------------------#
 sub getVersion {
 	return $VERSION;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getState                                                                #
+# Arguments: null                                                              #
+# Returns: state                                                               #
+#------------------------------------------------------------------------------#
+sub getState {
+	return $state;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getMessage                                                              #
+# Arguments: null                                                              #
+# Returns: message                                                             #
+#------------------------------------------------------------------------------#
+sub getMessage {
+	return $message;
 }
 
 #------------------------------------------------------------------------------#
