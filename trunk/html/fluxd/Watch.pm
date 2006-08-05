@@ -94,7 +94,17 @@ sub initialize {
 
 	print "initializing Watch (jobs: ".$jobs.")\n"; # DEBUG
 
-	# TODO : parse $jobs                                                        /* TODO */
+	# parse jobs
+	my (@jobsAry) = split(/;/,$jobs);
+	foreach my $jobEntry (@jobsAry) {
+		chomp $jobEntry;
+		my (@jobAry) = split(/:/,$jobEntry);
+		my $user = shift @jobAry;
+		chomp $user;
+		my $dir = shift @jobAry;
+		chomp $dir;
+		$jobs{$user} = $dir;
+	}
 
 	# set state
 	$state = 1;
@@ -144,6 +154,12 @@ sub set {
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
 sub main {
+	
+	# watch in dirs for dropped meta-files
+	foreach my $user (sort keys %jobs) {
+		print "Watch::main : username \"".$user."\" ; dir \"".$jobs{$user}."\"\n"; # DEBUG
+	}
+
 }
 
 
