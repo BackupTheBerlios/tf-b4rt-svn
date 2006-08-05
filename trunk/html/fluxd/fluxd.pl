@@ -172,14 +172,42 @@ sub processArguments {
 		exit;
 	};
 
-
 	# TODO : more ops                                                           /* TODO */
-
 
 	# daemon-stop
 	if ($temp =~ /daemon-stop/) {
-		# TODO : stop daemon                                                    /* TODO */
+		# $PATH_DOCROOT
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
+		}
+		$PATH_DOCROOT = $temp;
 		print "Stopping daemon...\n";
+		# db-bean
+		# require
+		require FluxDB;
+		# create instance
+		$fluxDB = FluxDB->new();
+		# initialize
+		$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
+		if ($fluxDB->getState() < 1) {
+			print "Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# init paths
+		initPaths($fluxDB->getFluxConfig("path"));
+		# get pid
+		open(PIDFILE,"< $PID_FILE");
+		my $daemonPid = <PIDFILE>;
+		close(PIDFILE);
+		chomp $daemonPid;
+		# send QUIT to daemon
+		kill 'SIGQUIT', $daemonPid;
+		# exit
 		exit;
 	};
 
@@ -232,6 +260,8 @@ sub daemonize {
 	# init paths
 	initPaths($fluxDB->getFluxConfig("path"));
 
+	# TODO : check for pid-file : if exists bail out nice                       /* TODO */
+
 	#chdir '/'			or die "Can't chdir to /: $!";
 	umask 0;			# sets our umask
 	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
@@ -241,15 +271,20 @@ sub daemonize {
 	exit if $pid;
 	setsid				or die "Can't start a new session: $!";
 
+	# log
+	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT.". (pid: ".$$.")\n"; # DEBUG
+
+	# write out pid-file
+	writePidFile($$);
+
 	# check requirements, die if they aren't there
 	#if (!(check())) {
 	#	exit;
 	#}
 
-	# set up our signal handler
+	# set up our signal handlers
 	$SIG{HUP} = \&gotSigHup;
-
-	# TODO set up signal-handler for sig-quit                                   /* TODO */
+	$SIG{QUIT} = \&gotSigQuit;
 
 	# set up daemon stuff...
 
@@ -270,8 +305,8 @@ sub daemonize {
 
 #------------------------------------------------------------------------------#
 # Sub: daemonShutdown                                                          #
-# Arguments: Null                                                              #
-# Returns: Info string                                                         #
+# Arguments: null                                                              #
+# Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub daemonShutdown {
 	print "Shutting down!\n";
@@ -283,6 +318,9 @@ sub daemonShutdown {
 	if (defined($fluxDB)) {
 		$fluxDB->destroy();
 	}
+
+	# remove pid-file
+	deletePidFile();
 
 	# get out here
 	exit;
@@ -442,9 +480,18 @@ sub gotSigHup {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: gotSigHup                                                               #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigQuit {
+	daemonShutdown();
+}
+
+#------------------------------------------------------------------------------#
 # Sub: checkConnections                                                        #
-# Arguments: Null                                                              #
-# Returns: Null                                                                #
+# Arguments: null                                                              #
+# Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub checkConnections {
 	# Get the readable handles. timeout is 0, only process stuff that can be
@@ -544,9 +591,53 @@ sub processRequest {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: set                                                                     #
+# Arguments: Variable, [Value]                                                 #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub set {
+	my $variable = shift;
+	my $value = shift;
+	my $return;
+
+	if ($variable =~/::/) {
+		# setting/getting package variable
+		my @pair = split(/::/, $variable);
+		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
+		SWITCH: {
+			$_ = $pair[0];
+			/Qmgr/ && do {
+				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
+				last SWITCH;
+			};
+			/Fluxinet/ && do {
+				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
+				last SWITCH;
+			};
+			/Trigger/ && do {
+				$return = $trigger->set($pair[1], $value) if(defined $trigger);
+				last SWITCH;
+			};
+			/Watch/ && do {
+				$return = $watch->set($pair[1], $value) if(defined $watch);
+				last SWITCH;
+			};
+			/Clientmaint/ && do {
+				$return = $clientmaint->set($pair[1], $value) if(defined $clientmaint);
+				last SWITCH;
+			};
+			$return = "Unknown package\n";
+		}
+	} else {
+		# setting/getting internal variable
+	}
+	return $return;
+}
+
+#------------------------------------------------------------------------------#
 # Sub: fluxcli                                                                 #
 # Arguments: Command [Arg1, [Arg2]]                                            #
-# Returns: Info string                                                         #
+# Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub fluxcli {
 	my $Command = shift;
@@ -591,47 +682,29 @@ sub fluxcli {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: set                                                                     #
-# Arguments: Variable, [Value]                                                 #
-# Returns: info string                                                         #
+# Sub: writePidFile                                                            #
+# Arguments: int with pid                                                      #
+# Returns: null                                                                #
 #------------------------------------------------------------------------------#
-sub set {
-	my $variable = shift;
-	my $value = shift;
-	my $return;
-
-	if ($variable =~/::/) {
-		# setting/getting package variable
-		my @pair = split(/::/, $variable);
-		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
-		SWITCH: {
-			$_ = $pair[0];
-			/Qmgr/ && do {
-				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
-				last SWITCH;
-			};
-			/Fluxinet/ && do {
-				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
-				last SWITCH;
-			};
-			/Trigger/ && do {
-				$return = $trigger->set($pair[1], $value) if(defined $trigger);
-				last SWITCH;
-			};
-			/Watch/ && do {
-				$return = $watch->set($pair[1], $value) if(defined $watch);
-				last SWITCH;
-			};
-			/Clientmaint/ && do {
-				$return = $clientmaint->set($pair[1], $value) if(defined $clientmaint);
-				last SWITCH;
-			};
-			$return = "Unknown package\n";
-		}
-	} else {
-		# setting/getting internal variable
+sub writePidFile {
+	my $pid = shift;
+	if (!(defined $pid)) {
+		$pid = $$;
 	}
-	return $return;
+	print STDOUT "writing pid-file ".$PID_FILE." (pid: ".$pid.")\n"; # DEBUG
+	open(PIDFILE,">$PID_FILE");
+	print PIDFILE $pid."\n";
+	close(PIDFILE);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: deletePidFile                                                           #
+# Arguments: null                                                              #
+# Returns: return-val of delete                                                #
+#------------------------------------------------------------------------------#
+sub deletePidFile {
+	print STDOUT "deleting pid-file ".$PID_FILE."\n"; # DEBUG
+	return unlink($PID_FILE);
 }
 
 #------------------------------------------------------------------------------#
@@ -657,7 +730,7 @@ $PROG.$EXTENSION Revision $VERSION
 
 Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
                         starts fluxd daemon
-       $PROG.$EXTENSION <daemon-stop>
+       $PROG.$EXTENSION <daemon-stop> path-to-docroot
                         stops fluxd daemon
        $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
                         starts, stops, resets totals, deletes, or deletes
@@ -723,9 +796,7 @@ sub printVersion {
 	# Watch
 	require Watch;
 	print "Watch Version ".Watch->getVersion()."\n";
-
 }
-
 
 #------------------------------------------------------------------------------#
 # Sub: check                                                                   #
