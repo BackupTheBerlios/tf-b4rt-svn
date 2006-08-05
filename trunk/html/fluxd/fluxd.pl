@@ -544,33 +544,27 @@ sub PrintVersion {
 
 	# Clientmaint
 	require Clientmaint;
-	my $clientmaint = Clientmaint->New();
-	print "Clientmaint Version ".$clientmaint->getVersion()."\n";
+	print "Clientmaint Version ".Clientmaint->getVersion()."\n";
 
 	# FluxDB
 	require FluxDB;
-	my $fluxDB = FluxDB->new();
-	print "FluxDB Version ".$fluxDB->getVersion()."\n";
+	print "FluxDB Version ".FluxDB->getVersion()."\n";
 
-	# Fluxinet # TODO : dont do this, ctor starts up things
-	#require Fluxinet;
-	#my $fluxinet = Fluxinet->new();
-	#print "Fluxinet Version ".$fluxinet->getVersion()."\n";
+	# Fluxinet
+	require Fluxinet;
+	print "Fluxinet Version ".Fluxinet->getVersion()."\n";
 
-	# Qmgr # TODO : dont do this, ctor starts up things
+	# Qmgr
 	#require Qmgr;
-	#my $qmgr = Qmgr->new();
-	#print "Qmgr Version ".$qmgr->getVersion()."\n";
+	#print "Qmgr Version ".Qmgr->getVersion()."\n";
 
 	# Trigger
 	require Trigger;
-	my $trigger = Trigger->New();
-	print "Trigger Version ".$trigger->getVersion()."\n";
+	print "Trigger Version ".Trigger->getVersion()."\n";
 
 	# Watch
 	require Watch;
-	my $watch = Watch->New();
-	print "Watch Version ".$watch->getVersion()."\n";
+	print "Watch Version ".Watch->getVersion()."\n";
 
 }
 
