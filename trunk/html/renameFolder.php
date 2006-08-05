@@ -21,51 +21,40 @@
 *******************************************************************************/
 
 
-include("config.php");
-include("functions.php");
+require_once("config.php");
+require_once("functions.php");
+require_once("lib/vlib/vlibTemplate.php");
 
-echo getHead(_REN_TITLE, false);
+# create new template
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/renameFolder.tmpl");
 
+$tmpl->setvar('head', getHead(_REN_TITLE, false));
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
-?>
-    <form method="POST" action="renameFolder.php" name="move_form">
-    <p><?php echo _REN_FILE; ?><input disabled="true" type="text" name="fileFromDis" size="91" value="<?php echo $_GET['file']; ?>"></p>
-    <p><?php echo _REN_STRING; ?><input type="text" name="fileTo" size="91" value="<?php echo $_GET['file']; ?>"></p>
-    <p><input type="submit" value="   OK   " name="OK">
-    <input type="hidden" name="dir" value="<?php echo $_GET['dir']; ?>"/>
-    <input type="hidden" name="fileFrom" value="<?php echo $_GET['file']; ?>"/>
-    </p>
-    </form>
-<?php
-} else {
-    $cmd = "mv \"".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."\" \"".$cfg["path"].$_POST['dir'].$_POST['fileTo']."\"";
-    $cmd .= ' 2>&1';
-	$handle = popen($cmd, 'r' );
-    // get the output and print it.
-    $gotError = -1;
-    while(!feof($handle)) {
-        $buff = fgets($handle,30);
-        echo nl2br($buff) ;
-        @ob_flush();
-        @flush();
-        $gotError = $gotError + 1;
-    }
-    pclose($handle);
-    if($gotError <= 0) {
-        echo _REN_DONE ."<br>";
-        echo 'renamed <em>'.$_POST['fileFrom'].'</em> to <em>'.$_POST['fileTo'].'</em>';
-    } else {
-        echo _REN_ERROR;
-    }
+	$tmpl->setvar('is_start', 1);
+	$tmpl->setvar('_REN_FILE', _REN_FILE);
+	$tmpl->setvar('file', $_GET['file']);
+	$tmpl->setvar('_REN_STRING', _REN_STRING);
+	$tmpl->setvar('dir', $_GET['dir']);
 }
+else {
+	$cmd = "mv \"".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."\" \"".$cfg["path"].$_POST['dir'].$_POST['fileTo']."\"";
+	$cmd .= ' 2>&1';
+	$handle = popen($cmd, 'r' );
+	// get the output and print it.
+	$gotError = -1;
+	$buff = fgets($handle);
+	$tmpl->setvar('buff', nl2br($buff));
+	$gotError = $gotError + 1;
+	pclose($handle);
+	if($gotError <= 0) {
+		$tmpl->setvar('no_error', 1);
+		$tmpl->setvar('_REN_DONE', _REN_DONE);
+		$tmpl->setvar('fileFrom', $_POST['fileFrom']);
+		$tmpl->setvar('fileTo', $_POST['fileTo']);
+	}
+	$tmpl->setvar('_REN_ERROR', _REN_ERROR);
+}
+$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+# lets parse the hole thing
+$tmpl->pparse();
 ?>
-     </td></tr>
-    </table>
-[<a href="#" onclick="window.opener.location.reload();window.close();">Close Window</a>]
-    </td>
-    </tr>
-    </table>
-<?php echo getTorrentFluxLink(); ?>
-   </body>
-  </html>
-</html>
