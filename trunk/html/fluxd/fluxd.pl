@@ -76,6 +76,9 @@ loadServiceModules();
 use vars qw( $loop );
 $loop = 0;
 # Here we go! The main loop!
+
+# TODO : define timers to let jobs be processed at different intervalls
+
 while ( 1 ) {
 	checkConnections();
 	$qmgr->main if(defined $qmgr);
@@ -86,230 +89,21 @@ while ( 1 ) {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: processRequest                                                          #
-# Arguments: Command                                                           #
-# Returns: String info on command success/failure                              #
-#------------------------------------------------------------------------------#
-sub processRequest {
-	my @array = ();
-	my $temp = shift;
-	@array = split (/ /, $temp);
-	@_ = @array;
-	my $return;
-
-	SWITCH: {
-		$_ = shift;
-
-		# Actual fluxd subroutine calls
-		/^die/ && do {
-			$return = stopServer();
-			last SWITCH;
-		};
-		/^status/ && do {
-			$return = status();
-			last SWITCH;
-		};
-		/^check/ && do {
-			$return = check();
-			last SWITCH;
-		};
-		/^set/ && do {
-			$return = set(shift, shift);
-			last SWITCH;
-		};
-
-		# fluxcli.php calls
-		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat/ && do {
-			$return = fluxcli($_, shift, shift);
-			last SWITCH;
-		};
-
-		# Package calls
-		if (exists &Qmgr::main) {
-			/^count-jobs/ && do {
-				$return = Qmgr::CountJobs();
-				last SWITCH;
-			};
-			/^count-queue/ && do {
-				$return = Qmgr::CountQueue();
-				last SWITCH;
-			};
-			/^list-queue/ && do {
-				$return = Qmgr::ListQueue();
-				last SWITCH;
-			};
-		}
-		if (exists &Watch::setWatch) {
-			/^watch/ && do {
-				$return = Watch::setWatch(shift, shift);
-				last SWITCH;
-			};
-		}
-		if (exists &Trigger::setTrigger) {
-			/^trigger/ && do {
-				$return = Trigger::setTrigger(shift, shift);
-				last SWITCH;
-			};
-		}
-
-		# Default case.
-		$return = printUsage();
-	}
-	return $return;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: fluxcli                                                                 #
-# Arguments: Command [Arg1, [Arg2]]                                            #
-# Returns: Info string                                                         #
-#------------------------------------------------------------------------------#
-sub fluxcli {
-	my $Command = shift;
-	my $Arg1 = shift;
-	my $Arg2 = shift;
-	my $return;
-
-	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
-		if ( (defined $Arg1) || (defined $Arg2) ) {
-			$return = printUsage();
-			next;
-		} else {
-			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command;
-			$return = `$shellCmd`;
-			next;
-		}
-	}
-	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
-		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
-			$return = printUsage();
-			next;
-		} else {
-			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1;
-			$return = `$shellCmd`;
-			next;
-		}
-	}
-	if ($Command =~/^inject/) {
-		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
-			$return = printUsage();
-			next;
-		} else {
-			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
-			$return = `$shellCmd`;
-			next;
-		}
-	}
-	return $return;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: check                                                                   #
+# Sub: initialize                                                              #
 # Arguments: Null                                                              #
-# Returns: info on system requirements                                         #
+# Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub check {
-	print "Checking requirements...\n";
-	my $return = 0;
-	# check modules
-	print "1. modules\n";
-	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX', 'DBI');
-	foreach my $mod (@mods) {
-		if (eval "require $mod")  {
-			$return = 1;
-			print " - ".$mod."\n";
-			next;
-		} else {
-			print "Fatal Error : cant load module ".$mod."\n";
-			# Turn on Autoflush;
-			$| = 1;
-			print "Should we try to install the module with CPAN ? (y|n) ";
-			my $answer = "";
-			chomp($answer=<STDIN>);
-			$answer = lc($answer);
-			if ($answer eq "y") {
-				exec('perl -MCPAN -e "install '.$mod.'"');
-			}
-			exit;
-		}
+sub initialize {
+	# Windows is not supported
+	if ("$^0" =~ /win32/i) {
+		print "\r\nWin32 not supported.\r\n";
+		exit;
 	}
-}
-
-#------------------------------------------------------------------------------#
-# Sub: status                                                                  #
-# Arguments: Null                                                              #
-# Returns: Server information page                                             #
-#------------------------------------------------------------------------------#
-sub status {
-	my $retval = "";
-	$retval .= "Fluxd has been up since $start_time\n";
-	return $retval;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: set                                                                     #
-# Arguments: Variable, [Value]                                                 #
-# Returns: info string                                                         #
-#------------------------------------------------------------------------------#
-sub set {
-	my $variable = shift;
-	my $value = shift;
-	my $return;
-
-	if ($variable =~/::/) {
-		# setting/getting package variable
-		my @pair = split(/::/, $variable);
-		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
-		SWITCH: {
-			$_ = $pair[0];
-			/Qmgr/ && do {
-				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
-				last SWITCH;
-			};
-			/Fluxinet/ && do {
-				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
-				last SWITCH;
-			};
-			/Trigger/ && do {
-				$return = $trigger->set($pair[1], $value) if(defined $trigger);
-				last SWITCH;
-			};
-			/Watch/ && do {
-				$return = $watch->set($pair[1], $value) if(defined $watch);
-				last SWITCH;
-			};
-			/Clientmaint/ && do {
-				$return = $clientmaint->set($pair[1], $value) if(defined $clientmaint);
-				last SWITCH;
-			};
-			$return = "Unknown package\n";
-		}
-	} else {
-		# setting/getting internal variable
-	}
-	return $return;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: stopServer                                                              #
-# Arguments: Null                                                              #
-# Returns: Info string                                                         #
-#------------------------------------------------------------------------------#
-sub stopServer {
-	print "Shutting down!\n";
-
-	# remove socket
-	unlink($PATH_SOCKET);
-
-	# destroy db-bean
-	if (defined($fluxDB)) {
-		$fluxDB->destroy();
-	}
-
-	# get out here
-	exit;
+	# initialize some variables
+	$VERSION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+	($DIR=$0) =~ s/([^\/\\]*)$//;
+	($PROG=$1) =~ s/\.([^\.]*)$//;
+	$EXTENSION=$1;
 }
 
 #------------------------------------------------------------------------------#
@@ -380,47 +174,6 @@ sub processArguments {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: initialize                                                              #
-# Arguments: Null                                                              #
-# Returns: Null                                                                #
-#------------------------------------------------------------------------------#
-sub initialize {
-	# Windows is not supported
-	if ("$^0" =~ /win32/i) {
-		print "\r\nWin32 not supported.\r\n";
-		exit;
-	}
-	# initialize some variables
-	$VERSION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
-	($DIR=$0) =~ s/([^\/\\]*)$//;
-	($PROG=$1) =~ s/\.([^\.]*)$//;
-	$EXTENSION=$1;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: initPaths                                                               #
-# Arguments: base path for t-flux                                              #
-# Returns: Null                                                                #
-#------------------------------------------------------------------------------#
-sub initPaths {
-	my $path = shift;
-	if (!((substr $path, -1) eq "/")) {
-		$path .= "/";
-	}
-	$PATH_TORRENT_DIR = $path.$PATH_TORRENT_DIR."/";
-	$PATH_DATA_DIR = $path.$PATH_DATA_DIR."/";
-	$PATH_QUEUE_FILE = $PATH_DATA_DIR.$PATH_QUEUE_FILE;
-	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
-	$LOG = $PATH_DATA_DIR.$LOG;
-	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
-	$PID_FILE = $PATH_DATA_DIR.$PID_FILE;
-	# check if our main-dir exists. try to create if it doesnt
-	if (! -d $PATH_DATA_DIR) {
-		mkdir($PATH_DATA_DIR,0700);
-	}
-}
-
-#------------------------------------------------------------------------------#
 # Sub: daemonize                                                               #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
@@ -479,84 +232,46 @@ sub daemonize {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: printUsage                                                              #
+# Sub: stopServer                                                              #
 # Arguments: Null                                                              #
-# Returns: Usage Information                                                   #
+# Returns: Info string                                                         #
 #------------------------------------------------------------------------------#
-sub printUsage {
-	print <<"USAGE";
+sub stopServer {
+	print "Shutting down!\n";
 
-$PROG.$EXTENSION Revision $VERSION
+	# remove socket
+	unlink($PATH_SOCKET);
 
-Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
-                        starts fluxd daemon
-       $PROG.$EXTENSION <daemon-stop>
-                        stops fluxd daemon
-       $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
-                        starts, stops, resets totals, deletes, or deletes
-                        and resets totals for a torrent, as well as removing
-                        all data downloaded for that torrent
-       $PROG.$EXTENSION <torrents|status|netstat|start-all|stop-all|resume-all>
-                        lists info about the selected aspect. status shows all
-       $PROG.$EXTENSION inject /path/to/foo.torrent user
-                        injects a torrent file into flux as the specified user
-       $PROG.$EXTENSION watch /path/to/watch/dir user
-                        sets fluxd to watch the specified directory and upload
-                        torrents entered in it as the specified user
-       $PROG.$EXTENSION set <LOGLEVEL|MAX_USR|MAX_SYS> [VALUE]
-                        if given without a value argument, returns current
-                        value of the given variable. If given with a value
-                        argument, sets the given variable to that value
-       $PROG.$EXTENSION <count-jobs|count-queue|list-queue|check>
-                        returns the number of jobs, number of entries in the
-                        queue, list entries in the queue, or check to ensure
-                        that this computer has everything fluxd needs.
-       $PROG.$EXTENSION repair
-                        repairs torrentflux. DO NOT DO THIS if your system
-                        is running as it should. You WILL break something.
+	# destroy db-bean
+	if (defined($fluxDB)) {
+		$fluxDB->destroy();
+	}
 
-       $PROG.$EXTENSION check
-                        checks for requirements.
-       $PROG.$EXTENSION <-h|--help>
-                        print out help screen.
-       $PROG.$EXTENSION <-v|--version>
-                        print out version-info
-
-USAGE
+	# get out here
+	exit;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: printVersion                                                            #
-# Arguments: Null                                                              #
-# Returns: Version Information                                                 #
+# Sub: initPaths                                                               #
+# Arguments: base path for t-flux                                              #
+# Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub printVersion {
-	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
-
-	# FluxDB
-	require FluxDB;
-	print "FluxDB Version ".FluxDB->getVersion()."\n";
-
-	# Clientmaint
-	require Clientmaint;
-	print "Clientmaint Version ".Clientmaint->getVersion()."\n";
-
-	# Fluxinet
-	require Fluxinet;
-	print "Fluxinet Version ".Fluxinet->getVersion()."\n";
-
-	# Qmgr
-	#require Qmgr;
-	#print "Qmgr Version ".Qmgr->getVersion()."\n";
-
-	# Trigger
-	require Trigger;
-	print "Trigger Version ".Trigger->getVersion()."\n";
-
-	# Watch
-	require Watch;
-	print "Watch Version ".Watch->getVersion()."\n";
-
+sub initPaths {
+	my $path = shift;
+	if (!((substr $path, -1) eq "/")) {
+		$path .= "/";
+	}
+	$PATH_TORRENT_DIR = $path.$PATH_TORRENT_DIR."/";
+	$PATH_DATA_DIR = $path.$PATH_DATA_DIR."/";
+	$PATH_QUEUE_FILE = $PATH_DATA_DIR.$PATH_QUEUE_FILE;
+	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
+	$LOG = $PATH_DATA_DIR.$LOG;
+	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
+	$PID_FILE = $PATH_DATA_DIR.$PID_FILE;
+	# check if our main-dir exists. try to create if it doesnt
+	if (! -d $PATH_DATA_DIR) {
+		mkdir($PATH_DATA_DIR,0700);
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -689,6 +404,295 @@ sub checkConnections {
 			$socket->send($return);
 			$Select->remove($socket);
 			close($socket);
+		}
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: processRequest                                                          #
+# Arguments: Command                                                           #
+# Returns: String info on command success/failure                              #
+#------------------------------------------------------------------------------#
+sub processRequest {
+	my @array = ();
+	my $temp = shift;
+	@array = split (/ /, $temp);
+	@_ = @array;
+	my $return;
+
+	SWITCH: {
+		$_ = shift;
+
+		# Actual fluxd subroutine calls
+		/^die/ && do {
+			$return = stopServer();
+			last SWITCH;
+		};
+		/^status/ && do {
+			$return = status();
+			last SWITCH;
+		};
+		/^check/ && do {
+			$return = check();
+			last SWITCH;
+		};
+		/^set/ && do {
+			$return = set(shift, shift);
+			last SWITCH;
+		};
+
+		# fluxcli.php calls
+		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat/ && do {
+			$return = fluxcli($_, shift, shift);
+			last SWITCH;
+		};
+
+		# Package calls
+		if (exists &Qmgr::main) {
+			/^count-jobs/ && do {
+				$return = Qmgr::CountJobs();
+				last SWITCH;
+			};
+			/^count-queue/ && do {
+				$return = Qmgr::CountQueue();
+				last SWITCH;
+			};
+			/^list-queue/ && do {
+				$return = Qmgr::ListQueue();
+				last SWITCH;
+			};
+		}
+		if (exists &Watch::setWatch) {
+			/^watch/ && do {
+				$return = Watch::setWatch(shift, shift);
+				last SWITCH;
+			};
+		}
+		if (exists &Trigger::setTrigger) {
+			/^trigger/ && do {
+				$return = Trigger::setTrigger(shift, shift);
+				last SWITCH;
+			};
+		}
+
+		# Default case.
+		$return = printUsage();
+	}
+	return $return;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: fluxcli                                                                 #
+# Arguments: Command [Arg1, [Arg2]]                                            #
+# Returns: Info string                                                         #
+#------------------------------------------------------------------------------#
+sub fluxcli {
+	my $Command = shift;
+	my $Arg1 = shift;
+	my $Arg2 = shift;
+	my $return;
+
+	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
+		if ( (defined $Arg1) || (defined $Arg2) ) {
+			$return = printUsage();
+			next;
+		} else {
+			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command;
+			$return = `$shellCmd`;
+			next;
+		}
+	}
+	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
+			$return = printUsage();
+			next;
+		} else {
+			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			$return = `$shellCmd`;
+			next;
+		}
+	}
+	if ($Command =~/^inject/) {
+		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
+			$return = printUsage();
+			next;
+		} else {
+			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
+			$return = `$shellCmd`;
+			next;
+		}
+	}
+	return $return;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: set                                                                     #
+# Arguments: Variable, [Value]                                                 #
+# Returns: info string                                                         #
+#------------------------------------------------------------------------------#
+sub set {
+	my $variable = shift;
+	my $value = shift;
+	my $return;
+
+	if ($variable =~/::/) {
+		# setting/getting package variable
+		my @pair = split(/::/, $variable);
+		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
+		SWITCH: {
+			$_ = $pair[0];
+			/Qmgr/ && do {
+				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
+				last SWITCH;
+			};
+			/Fluxinet/ && do {
+				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
+				last SWITCH;
+			};
+			/Trigger/ && do {
+				$return = $trigger->set($pair[1], $value) if(defined $trigger);
+				last SWITCH;
+			};
+			/Watch/ && do {
+				$return = $watch->set($pair[1], $value) if(defined $watch);
+				last SWITCH;
+			};
+			/Clientmaint/ && do {
+				$return = $clientmaint->set($pair[1], $value) if(defined $clientmaint);
+				last SWITCH;
+			};
+			$return = "Unknown package\n";
+		}
+	} else {
+		# setting/getting internal variable
+	}
+	return $return;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: status                                                                  #
+# Arguments: Null                                                              #
+# Returns: Server information page                                             #
+#------------------------------------------------------------------------------#
+sub status {
+	my $retval = "";
+	$retval .= "Fluxd has been up since $start_time\n";
+	return $retval;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printUsage                                                              #
+# Arguments: Null                                                              #
+# Returns: Usage Information                                                   #
+#------------------------------------------------------------------------------#
+sub printUsage {
+	print <<"USAGE";
+
+$PROG.$EXTENSION Revision $VERSION
+
+Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
+                        starts fluxd daemon
+       $PROG.$EXTENSION <daemon-stop>
+                        stops fluxd daemon
+       $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
+                        starts, stops, resets totals, deletes, or deletes
+                        and resets totals for a torrent, as well as removing
+                        all data downloaded for that torrent
+       $PROG.$EXTENSION <torrents|status|netstat|start-all|stop-all|resume-all>
+                        lists info about the selected aspect. status shows all
+       $PROG.$EXTENSION inject /path/to/foo.torrent user
+                        injects a torrent file into flux as the specified user
+       $PROG.$EXTENSION watch /path/to/watch/dir user
+                        sets fluxd to watch the specified directory and upload
+                        torrents entered in it as the specified user
+       $PROG.$EXTENSION set <LOGLEVEL|MAX_USR|MAX_SYS> [VALUE]
+                        if given without a value argument, returns current
+                        value of the given variable. If given with a value
+                        argument, sets the given variable to that value
+       $PROG.$EXTENSION <count-jobs|count-queue|list-queue|check>
+                        returns the number of jobs, number of entries in the
+                        queue, list entries in the queue, or check to ensure
+                        that this computer has everything fluxd needs.
+       $PROG.$EXTENSION repair
+                        repairs torrentflux. DO NOT DO THIS if your system
+                        is running as it should. You WILL break something.
+
+       $PROG.$EXTENSION check
+                        checks for requirements.
+       $PROG.$EXTENSION <-h|--help>
+                        print out help screen.
+       $PROG.$EXTENSION <-v|--version>
+                        print out version-info
+
+USAGE
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printVersion                                                            #
+# Arguments: Null                                                              #
+# Returns: Version Information                                                 #
+#------------------------------------------------------------------------------#
+sub printVersion {
+	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
+
+	# FluxDB
+	require FluxDB;
+	print "FluxDB Version ".FluxDB->getVersion()."\n";
+
+	# Clientmaint
+	require Clientmaint;
+	print "Clientmaint Version ".Clientmaint->getVersion()."\n";
+
+	# Fluxinet
+	require Fluxinet;
+	print "Fluxinet Version ".Fluxinet->getVersion()."\n";
+
+	# Qmgr
+	#require Qmgr;
+	#print "Qmgr Version ".Qmgr->getVersion()."\n";
+
+	# Trigger
+	require Trigger;
+	print "Trigger Version ".Trigger->getVersion()."\n";
+
+	# Watch
+	require Watch;
+	print "Watch Version ".Watch->getVersion()."\n";
+
+}
+
+
+#------------------------------------------------------------------------------#
+# Sub: check                                                                   #
+# Arguments: Null                                                              #
+# Returns: info on system requirements                                         #
+#------------------------------------------------------------------------------#
+sub check {
+	print "Checking requirements...\n";
+	my $return = 0;
+	# check modules
+	print "1. modules\n";
+	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX', 'DBI');
+	foreach my $mod (@mods) {
+		if (eval "require $mod")  {
+			$return = 1;
+			print " - ".$mod."\n";
+			next;
+		} else {
+			print "Fatal Error : cant load module ".$mod."\n";
+			# Turn on Autoflush;
+			$| = 1;
+			print "Should we try to install the module with CPAN ? (y|n) ";
+			my $answer = "";
+			chomp($answer=<STDIN>);
+			$answer = lc($answer);
+			if ($answer eq "y") {
+				exec('perl -MCPAN -e "install '.$mod.'"');
+			}
+			exit;
 		}
 	}
 }
