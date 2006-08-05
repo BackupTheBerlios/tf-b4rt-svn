@@ -2492,16 +2492,17 @@ function getIndexPageSelectForm() {
 
 function getBTClientSelect($btclient = 'tornado') {
 	global $cfg;
-	echo '<select name="btclient">';
-	echo '<option value="tornado"';
+	$getBTClientSelect = '<select name="btclient">';
+	$getBTClientSelect .= '<option value="tornado"';
 	if ($btclient == "tornado")
-		echo " selected";
-	echo '>tornado</option>';
-	echo '<option value="transmission"';
+		$getBTClientSelect .= " selected";
+	$getBTClientSelect .= '>tornado</option>';
+	$getBTClientSelect .= '<option value="transmission"';
 	if ($btclient == "transmission")
-		echo " selected";
-	echo '>transmission</option>';
-	echo '</select>';
+		$getBTClientSelect .= " selected";
+	$getBTClientSelect .= '>transmission</option>';
+	$getBTClientSelect .= '</select>';
+	return $getBTClientSelect;
 }
 
 /**

@@ -299,7 +299,7 @@ function correctFileName ($inName) {
 // Specific save path
 function dirTree2($dir, $maxdepth)
 {
-        echo "<option value=\"".$dir."\">".$dir."</option>\n" ;
+        $dirTree2 = "<option value=\"".$dir."\">".$dir."</option>\n" ;
         if (is_numeric ($maxdepth))
         {
                 if ($maxdepth == 0)
@@ -308,7 +308,7 @@ function dirTree2($dir, $maxdepth)
                         $last = exec ("find ".$dir." -type d | sort", $retval);
                         for ($i = 1; $i < (count ($retval) - 1); $i++)
                         {
-                                echo "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
+                                $dirTree2 .= "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
                         }
                 }
                 else if ($maxdepth > 0)
@@ -317,19 +317,19 @@ function dirTree2($dir, $maxdepth)
                         $last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort", $retval);
                         for ($i = 1; $i < (count ($retval) - 1); $i++)
                         {
-                                echo "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
+                                $dirTree2 .= "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
                         }
                 }
                 else
                 {
-                        echo "<option value=\"".$dir."\">".$dir."</option>\n" ;
+                        $dirTree2 .= "<option value=\"".$dir."\">".$dir."</option>\n" ;
                 }
         }
         else
         {
-                echo "<option value=\"".$dir."\">".$dir."</option>\n" ;
+                $dirTree2 .= "<option value=\"".$dir."\">".$dir."</option>\n" ;
         }
-        return $retval ;
+        return $dirTree2;
 }
 
 // SFV Check hack
