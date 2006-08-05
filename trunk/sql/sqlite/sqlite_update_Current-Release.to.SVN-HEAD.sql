@@ -35,6 +35,11 @@ INSERT INTO tf_settings VALUES ('Qmgr_loglevel','0');
 INSERT INTO tf_settings VALUES ('downloadhosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
+INSERT INTO tf_settings VALUES ('fluxd_Qmgr_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Watch_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Trigger_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 

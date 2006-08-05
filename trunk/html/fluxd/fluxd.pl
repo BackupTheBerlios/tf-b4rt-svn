@@ -70,8 +70,8 @@ processArguments();
 # Daemonise the script
 &daemonize;
 
-# load flux-modules
-loadFluxModules();
+# load flux-service-modules
+loadServiceModules();
 
 use vars qw( $loop );
 $loop = 0;
@@ -347,11 +347,6 @@ sub processArguments {
 		exit;
 	};
 
-	# TODO : inject
-
-	# TODO : watch
-
-	# TODO : repair
 
 	# TODO : more ops
 
@@ -538,13 +533,13 @@ USAGE
 sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
 
-	# Clientmaint
-	require Clientmaint;
-	print "Clientmaint Version ".Clientmaint->getVersion()."\n";
-
 	# FluxDB
 	require FluxDB;
 	print "FluxDB Version ".FluxDB->getVersion()."\n";
+
+	# Clientmaint
+	require Clientmaint;
+	print "Clientmaint Version ".Clientmaint->getVersion()."\n";
 
 	# Fluxinet
 	require Fluxinet;
@@ -565,126 +560,97 @@ sub printVersion {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: loadFluxModules                                                         #
+# Sub: loadServiceModules                                                      #
 # Arguments: null                                                              #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
-sub loadFluxModules {
+sub loadServiceModules {
 
 	# Qmgr
-
-	# Fluxinet
-
-	# Watch
-
-	# Clientmaint
-
-	# Trigger
-
-}
-
-#------------------------------------------------------------------------------#
-# Sub: config                                                                  #
-# Arguments: Null                                                              #
-# Returns: Null                                                                #
-#------------------------------------------------------------------------------#
-sub config {
-
-	# TODO : move this configuration to database
-
-	# TODO : rewrite this method to "loadModules"
-
-	# TODO : call initialize on created modules
-
-	open(CONFIG, $PATH_DOCROOT."fluxd/fluxd.conf") || die("Can't open fluxd.conf: $!");
-	while (<CONFIG>) {
-		# I checked $/ and it's set to \n, but <CONFIG> reads the whole file.
-		# any ideas why?
-		my @lines = split(/\n/, $_);
-		foreach $_ (@lines) {
-			SWITCH: {
-				# Load up modules, unless they're already
-				# loaded
-				/^INCLUDE\sQmgr\.pm$/ && do {
-					if (!(exists &Qmgr::new)) {
-						require Qmgr;
-						$qmgr = Qmgr->new();
-						last SWITCH;
-					}
-				};
-				/^INCLUDE\sFluxinet\.pm$/ && do {
-					if (!(exists &Fluxinet::new)) {
-						require Fluxinet;
-						$fluxinet = Fluxinet->new();
-						last SWITCH;
-					}
-				};
-				/^INCLUDE\sWatch\.pm$/ && do {
-					if (!(exists &Watch::new)) {
-						require Watch;
-						$watch = Watch->new();
-						last SWITCH;
-					}
-				};
-				/^INCLUDE\sClientmaint\.pm$/ && do {
-					if (!(exists &Clientmaint::new)) {
-						require Clientmaint;
-						$clientmaint = Clientmaint->new();
-						last SWITCH;
-					}
-				};
-				/^INCLUDE\sTrigger\.pm$/ && do {
-					if (!(exists &Trigger::new)) {
-						require Trigger;
-						$trigger = Trigger->new();
-						last SWITCH;
-					}
-				};
-
-				# Unload modules, if they are loaded
-				/^#INCLUDE\sQmgr\.pm$/ && do {
-					if(exists &Qmgr::new) {
-						$qmgr->destroy();
-						delete_package('Qmgr');
-						undef $qmgr;
-						last SWITCH;
-					}
-				};
-				/^#INCLUDE\sFluxinet\.pm$/ && do {
-					if (exists &Fluxinet::new) {
-						$fluxinet->destroy();
-						delete_package('Fluxinet');
-						undef $fluxinet;
-						last SWITCH;
-					}
-				};
-				/^#INCLUDE\sWatch\.pm$/ && do {
-					if (exists &Watch::new) {
-						$watch->destroy();
-						delete_package('Watch');
-						undef $watch;
-						last SWITCH;
-					}
-				};
-				/^#INCLUDE\sClientmaint\.pm$/ && do {
-					if (exists &Clientmaint::new) {
-						$clientmaint->destroy();
-						delete_package('Clientmaint');
-						undef $clientmaint;
-						last SWITCH;
-					}
-				};
-				/^#INCLUDE\sTrigger\.pm$/ && do {
-					if (exists &Trigger::new) {
-						$trigger->destroy;
-						delete_package('Trigger');
-						undef $trigger;
-						last SWITCH;
-					}
-				};
-			}
+	if ($fluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(exists &Qmgr::new)) {
+			require Qmgr;
+			$qmgr = Qmgr->new();
+			$qmgr->initialize();
+		}
+	} else {
+		# Unload module, if it is loaded
+		if(exists &Qmgr::new) {
+			$qmgr->destroy();
+			delete_package('Qmgr');
+			undef $qmgr;
 		}
 	}
+
+	# Fluxinet
+	if ($fluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(exists &Fluxinet::new)) {
+			require Fluxinet;
+			$fluxinet = Fluxinet->new();
+			$fluxinet->initialize();
+		}
+	} else {
+		# Unload module, if it is loaded
+		if (exists &Fluxinet::new) {
+			$fluxinet->destroy();
+			delete_package('Fluxinet');
+			undef $fluxinet;
+		}
+	}
+
+	# Watch
+	if ($fluxDB->getFluxConfig("fluxd_Watch_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(exists &Watch::new)) {
+			require Watch;
+			$watch = Watch->new();
+			$watch->initialize();
+		}
+	} else {
+		# Unload module, if it is loaded
+		if (exists &Watch::new) {
+			$watch->destroy();
+			delete_package('Watch');
+			undef $watch;
+		}
+	}
+
+	# Clientmaint
+	if ($fluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(exists &Clientmaint::new)) {
+			require Clientmaint;
+			$clientmaint = Clientmaint->new();
+			$clientmaint->initialize();
+		}
+	} else {
+		# Unload module, if it is loaded
+		if (exists &Clientmaint::new) {
+			$clientmaint->destroy();
+			delete_package('Clientmaint');
+			undef $clientmaint;
+		}
+	}
+
+	# Trigger
+	if ($fluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(exists &Trigger::new)) {
+			require Trigger;
+			$trigger = Trigger->new();
+			$trigger->initialize();
+		}
+	} else {
+		# Unload module, if it is loaded
+		if (exists &Trigger::new) {
+			$trigger->destroy;
+			delete_package('Trigger');
+			undef $trigger;
+		}
+	}
+
 }
 
 #------------------------------------------------------------------------------#
