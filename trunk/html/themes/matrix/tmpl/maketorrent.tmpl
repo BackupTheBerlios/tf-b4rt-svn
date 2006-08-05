@@ -1,0 +1,252 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<HEAD>
+	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1" />
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
+	<TITLE><tmpl_var name="pagetitle"> - Torrent Maker</TITLE>
+	<LINK REL="icon" HREF="images/favicon.ico" TYPE="image/x-icon" />
+	<LINK REL="shortcut icon" HREF="images/favicon.ico" TYPE="image/x-icon" />
+	<LINK REL="StyleSheet" HREF="themes/<tmpl_var name="theme">/style.css" TYPE="text/css" />
+</HEAD>
+<SCRIPT SRC="tooltip.js" TYPE="text/javascript"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript">
+	function doSubmit( obj )
+	{
+		// Basic check to see if maketorrent is already running
+		if( obj.value === "Creating..." )
+			return false;
+
+		// Run some basic validation
+		var valid = true;
+		var tlength = document.maketorrent.torrent.value.length - 8;
+		var torrent = document.maketorrent.torrent.value.substr( tlength );
+		document.getElementById('output').innerHTML = "";
+		document.getElementById('ttag').innerHTML	= "";
+		document.getElementById('atag').innerHTML	= "";
+
+		if( torrent !== ".torrent" )
+		{
+			document.getElementById('ttag').innerHTML	 = "<b style=\"color: #990000;\">*</b>";
+			document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Torrent file must end in .torrent</b><BR />";
+			valid = false;
+		}
+
+		if( document.maketorrent.announce.value === "http://" )
+		{
+			document.getElementById('atag').innerHTML	 = "<b style=\"color: #990000;\">*</b>";
+			document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid announce URL.</b><BR />";
+			valid = false;
+		}
+
+		// For saftely reason, let's force the property to false if it's disabled (private tracker)
+		if( document.maketorrent.DHT.disabled )
+		{
+			document.maketorrent.DHT.checked = false;
+		}
+
+		// If validation passed, submit form
+		if( valid === true )
+		{
+			disableForm();
+			toggleLayer('progress');
+
+			document.getElementById('output').innerHTML += "<b>Creating torrent...</b><BR /><BR />";
+			document.getElementById('output').innerHTML += "<i>* Note that larger folder/files will take some time to process,</i><BR />";
+			document.getElementById('output').innerHTML += "<i>&nbsp;&nbsp;&nbsp;do not close the window until it has been completed.</i><BR /><BR />";
+			document.getElementById('output').innerHTML += "&nbsp;&nbsp;&nbsp;When completed, the torrent will show in your list<BR />";
+			document.getElementById('output').innerHTML += "&nbsp;&nbsp;&nbsp;and a download link will be provided.<BR />";
+
+			return true;
+		}
+		return false;
+	}
+
+	function disableForm()
+	{
+		// Because of IE issue of disabling the submit button,
+		// we change the text and don't allow resubmitting
+		document.maketorrent.tsubmit.value = "Creating...";
+		document.maketorrent.torrent.readOnly = true;
+		document.maketorrent.announce.readOnly = true;
+	}
+
+	function ToggleDHT( dhtstatus )
+	{
+		document.maketorrent.DHT.disabled = dhtstatus;
+	}
+
+	function toggleLayer( whichLayer )
+	{
+		if( document.getElementById )
+		{
+			// This is the way the standards work
+			var style2 = document.getElementById(whichLayer).style;
+			style2.display = style2.display ? "" : "block";
+		}
+		else if( document.all )
+		{
+			// This is the way old msie versions work
+			var style2 = document.all[whichLayer].style;
+			style2.display = style2.display ? "" : "block";
+		}
+		else if( document.layers )
+		{
+			// This is the way nn4 works
+			var style2 = document.layers[whichLayer].style;
+			style2.display = style2.display ? "" : "block";
+		}
+	}
+
+	function completed( downpath, alertme, timetaken )
+	{
+		document.getElementById('output').innerHTML	 = "<b style='color: #005500;'>Creation completed!</b><BR />";
+		document.getElementById('output').innerHTML += "Time taken: <i>" + timetaken + "</i><BR />";
+		document.getElementById('output').innerHTML += "The new torrent has been added to your list.<BR /><BR />"
+		document.getElementById('output').innerHTML += "<img src='images/green.gif' border='0' title='Torrent Created' align='absmiddle'> You can download the <a style='font-weight: bold;' href='?download=" + downpath + "'>torrent here</a><BR />";
+		if( alertme === 1 )
+			alert( 'Creation of torrent completed!' );
+	}
+
+	function failed( downpath, alertme )
+	{
+		document.getElementById('output').innerHTML	 = "<b style='color: #AA0000;'>Creation failed!</b><BR /><BR />";
+		document.getElementById('output').innerHTML += "An error occured while trying to create the torrent.<BR />";
+		if( alertme === 1 )
+			alert( 'Creation of torrent failed!' );
+	}
+
+	var anlst  = "(optional) announce_list = list of tracker URLs<BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>url[,url...][|url[,url...]...]</i><BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URLs separated by commas are tried first<BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before URLs separated by the pipe is checked.<BR />\n";
+		anlst += "Examples:<BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>|</strong>http://b.com<strong>|</strong>http://c.com</i><BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a-c</b> in order)<BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>,</strong>http://b.com<strong>,</strong>http://c.com</i><BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a-c</b> in a randomly selected order)<BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>|</strong>http://b.com<strong>,</strong>http://c.com</i><BR />\n";
+		anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a</b> first, then tries <b>b-c</b> randomly)<BR />\n";
+
+	var annce  = "tracker announce URL.<BR /><BR />\n";
+		annce += "Example:<BR />\n";
+		annce += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://tracker.com/announce</i><BR />\n";
+
+	var tornt  = "torrent name to be saved as<BR /><BR />\n";
+		tornt += "Example:<BR />\n";
+		tornt += "&nbsp;&nbsp;&nbsp;&nbsp;<i>gnome-livecd-2.10.torrent</i><BR />\n";
+
+	var comnt  = "add a comment to your torrent file (optional)<BR />\n";
+		comnt += "";
+
+	var piece  = "data piece size for torrent<BR />\n";
+		piece += "power of 2 value to set the piece size to<BR />\n";
+		piece += "(0 = automatic) (0 only option in this version)<BR />\n";
+
+	var prvte  = "private tracker support<BR />\n";
+		prvte += "(disallows DHT if enabled)<BR />\n";
+
+	var dhtbl  = "DHT (Distributed Hash Table)<BR /><BR />\n";
+		dhtbl += "can only be set abled if private flag is not set true<BR />\n";
+</SCRIPT>
+<body topmargin="8" leftmargin="5" bgcolor="<tmpl_var name="main_bgcolor">" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="
+<tmpl_if name="is_private">
+	ToggleDHT(true);
+<tmpl_else>
+	ToggleDHT(false);
+</tmpl_if>
+<tmpl_if name="onLoad">
+	<tmpl_var name="onLoad">
+</tmpl_if>
+">
+<div align="center">
+	<table border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+				<table border="1" bordercolor="<tmpl_var name="table_border_dk">" cellpadding="4" cellspacing="0">
+					<tr>
+						<td bgcolor="<tmpl_var name="main_bgcolor">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+							<tmpl_var name="getTitleBar">
+						</td>
+					</tr>
+					<tr>
+						<td bgcolor="<tmpl_var name="table_header_bg">">
+							<div align="left">
+								<table width="100%" bgcolor="<tmpl_var name="body_data_bg">">
+									<tr>
+										<td>
+											<form action="<tmpl_var name="REQUEST_URI">" method="post" id="maketorrent" name="maketorrent">
+												<table>
+													<tr>
+														<td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(tornt);" hspace="1" />Torrent name:</td>
+														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
+													</tr>
+													<tr>
+														<td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(annce);" hspace="1" />Announcement URL:</td>
+														<td><input type="text" id="announce" name="announce" size="55" value="<tmpl_var name="announce">" /> <label id="atag"></label></td>
+													</tr>
+													<tr>
+														<td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(anlst);" hspace="1" />Announce List:</td>
+														<td><input type="text" id="announcelist" name="announcelist" size="55" value="<tmpl_var name="ancelist">" /> <label id="altag"></label></td>
+													</tr>
+													<tr>
+														<td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(piece);" hspace="1" />Piece size:</td>
+														<td><select id="piecesize" name="piecesize">
+															<option id="0" value="0" selected>0 (Auto)</option>
+															<!-- Removed for now as it doesn't seem to be working with creating torrents (??) -->
+															<!--
+															<option id="256" value="256">256</option>
+															<option id="512" value="512">512</option>
+															<option id="1024" value="1024">1024</option>
+															<option id="2048" value="2048">2048</option>
+															-->
+														</select> bytes</td>
+													</tr>
+													<tr>
+														<td valign="top"><img align="absmiddle" src="images/info.gif" onmouseover="return escape(comnt);" hspace="1" />Comments:</td>
+														<td><textarea cols="50" rows="3" id="comments" name="comments"><tmpl_var name="comment"></textarea></td>
+													</tr>
+													<tr>
+														<td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(prvte);" hspace="1" />Private Torrent:</td>
+														<td>
+															<input type="radio" id="Private" name="Private" value="Private" onClick="ToggleDHT(true);"<tmpl_if name="is_private"> checked</tmpl_if>>Yes</input>
+															<input type="radio" id="Private" name="Private" value="NotPrivate" onClick="ToggleDHT(false);"<tmpl_if name="is_private value="0"> checked</tmpl_if>>No</input>
+														</td>
+													</tr>
+													<tr>
+														<td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(dhtbl);" hspace="1" />DHT Support:</td>
+														<td><input type="checkbox" id="DHT" name="DHT"<tmpl_if name="dht"> checked</tmpl_if> value="DHT"></input></td>
+														</tr>
+													<tr>
+														<td>&nbsp;</td>
+														<td>
+															<input type="submit" id="tsubmit" name="tsubmit" onClick="return doSubmit(this);" value="Create" />
+															<input type="button" id="Cancel" name="close" value="Close" onClick="window.close();" />
+															<label for="alert" title="Send alert message box when torrent has been completed.">
+															<input type="checkbox" id="alert" name="alert"<tmpl_if name="alert"> checked</tmpl_if> value="AlertMe" />
+																Notify me of completion
+															</label>
+														</td>
+													</tr>
+													<tr>
+														<td colspan="2">
+															<div id="progress" name="progress" align="center" style="display: none;"><img src="images/progress_bar.gif" width="200" height="20" /></div>
+															<label id="output"></label>
+														</td>
+													</tr>
+												</table>
+											</form>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<tmpl_var name="getTorrentFluxLink">
+			</td>
+		</tr>
+	</table>
+</div>
+<script language="javascript">tt_Init();</script>
+</body>
+</html>
