@@ -21,93 +21,77 @@
 *******************************************************************************/
 
 
-include("config.php");
-include("functions.php");
+require_once("config.php");
+require_once("functions.php");
+require_once("lib/vlib/vlibTemplate.php");
 
-echo getHead(_MOVE_FILE_TITLE, false);
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/move.tmpl");
+
+$tmpl->setvar('head', getHead(_MOVE_FILE_TITLE, false));
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
-?>
-    <form method="POST" action="move.php" name="move_form">
-    <p><?php echo _MOVE_FILE; ?><input disabled="true" type="text" name="T1" size="91" value="<?php echo $_GET['path']; ?>"></p>
-    <p>
-    <?php echo _MOVE_STRING; ?>
-    <br>
-    <?php
-    if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
-        echo '<select size="1" name="selector">';
-        $dirs = split(":", trim($cfg["move_paths"]));
-        foreach ($dirs as $dir) {
-            $target = trim($dir);
-            if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
-                echo "<option value=\"$target\">".$target."</option>\n";
-        }
-        echo '</select>';
-        echo '<br>/<br>';
-    }
-    ?>
-    <input name="dest" type="Text" maxlength="254" value="" size="55">
-    <br><br>
-    <input type="submit" value="   OK   " name="OK">
-    <input type="hidden" name="file" value="<?php echo $_GET['path']; ?>"/>
-    </p>
-    </form>
-<?php
-} else {
-	$targetDir = "";
-	if (isset($_POST['dest'])) {
-	    $tempDir = trim(urldecode($_POST['dest']));
-	    if (strlen($tempDir) > 0)
-	       $targetDir = $tempDir;
-	}
-    if (($targetDir == "") && (isset($_POST['selector'])))
-	    $targetDir = trim(urldecode($_POST['selector']));
-	$dirValid = true;
-	if (strlen($targetDir) <= 0) {
-	    $dirValid = false;
-	} else {
-        // we need absolute paths or stuff will end up in docroot
-        // inform user .. dont move it into a fallback-dir which may be a hastle
-        if ($targetDir{0} != '/') {
-            echo "Target-dirs must be specified with absolute and not relative paths. <br>";
-            $dirValid = false;
-        }
-	}
-	// check dir
-	if (($dirValid) && (checkDirectory($targetDir,0777))) {
-	    $targetDir = checkDirPathString($targetDir);
-    	// move
-    	$cmd = "mv \"".$cfg["path"].$_POST['file']."\" ".$targetDir."";
-        $cmd .= ' 2>&1';
-    	$handle = popen($cmd, 'r' );
-    	// get the output and print it.
-    	$gotError = -1;
-    	while(!feof($handle)) {
-    		$buff = fgets($handle,30);
-    		echo nl2br($buff) ;
-    		@ob_flush();
-    		@flush();
-    		$gotError = $gotError + 1;
-    	}
-    	pclose($handle);
-        if($gotError <= 0) {
-            echo "Done<br>";
-            echo 'moved <em>'.$_POST['file'].'</em> to <em>'.$targetDir.'</em>';
-        } else {
-            echo "An error accured.";
-        }
-	} else {
-	   echo "Invalid Target-dir : ".$targetDir;
+	$tmpl->setvar('is_start', 1);
+	$tmpl->setvar('_MOVE_FILE', _MOVE_FILE);
+	$tmpl->setvar('path', $_GET['path']);
+	$tmpl->setvar('_MOVE_STRING', _MOVE_STRING);
+	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
+		$tmpl->setvar('move_start', 1);
+		$dirs = split(":", trim($cfg["move_paths"]));
+		$dir_list = array();
+		foreach ($dirs as $dir) {
+			$target = trim($dir);
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
+				array_push($dir_list, array(
+					'target' => $target,
+					)
+				);
+			}
+		}
 	}
 }
+else {
+	$targetDir = "";
+	if (isset($_POST['dest'])) {
+		 $tempDir = trim(urldecode($_POST['dest']));
+		 if (strlen($tempDir) > 0)
+			$targetDir = $tempDir;
+	}
+	if (($targetDir == "") && (isset($_POST['selector'])))
+		 $targetDir = trim(urldecode($_POST['selector']));
+	$dirValid = true;
+	if (strlen($targetDir) <= 0) {
+		 $dirValid = false;
+	}
+	else {
+		// we need absolute paths or stuff will end up in docroot
+		// inform user .. dont move it into a fallback-dir which may be a hastle
+		if ($targetDir{0} != '/') {
+			$tmpl->setvar('not_absolute', 1);
+			$dirValid = false;
+		}
+	}
+	$tmpl->setvar('targetDir', $targetDir);
+	// check dir
+	if (($dirValid) && (checkDirectory($targetDir,0777))) {
+		$tmpl->setvar('is_valid', 1);
+		 $targetDir = checkDirPathString($targetDir);
+		// move
+		$cmd = "mv \"".$cfg["path"].$_POST['file']."\" ".$targetDir."";
+		$cmd .= ' 2>&1';
+		$handle = popen($cmd, 'r' );
+		// get the output and print it.
+		$gotError = -1;
+		$buff = fgets($handle);
+		$tmpl->setvar('buff', nl2br($buff));
+		$gotError = $gotError + 1;
+		pclose($handle);
+		if($gotError <= 0) {
+			$tmpl->setvar('got_no_error', 1);
+			$tmpl->setvar('file', $_POST['file']);
+		}
+	}
+}
+$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+
+$tmpl->pparse();
 ?>
-     </td></tr>
-    </table>
-[<a href="#" onclick="window.opener.location.reload();window.close();">Close Window</a>]
-    </td>
-    </tr>
-    </table>
-<?php echo getTorrentFluxLink(); ?>
-   </body>
-  </html>
-</html>

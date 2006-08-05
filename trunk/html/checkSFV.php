@@ -37,8 +37,6 @@ $handle = popen($cmd . ' 2>&1', 'r' );
 
 $buff = fgets($handle);
 $tmpl->setvar('buff', nl2br($buff));
-ob_flush();
-flush();
 
 pclose($handle);
 $tmpl->pparse();
