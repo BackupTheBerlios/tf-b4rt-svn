@@ -2,11 +2,11 @@
 RewriteEngine On
 RewriteBase /
 RewriteCond !^usage [NC]
-RewriteRule ([0-9a-z]+)\.html$ /index.php?s=$1
 RewriteRule ^index\.html$ /index.php?s=index
-RewriteRule ^about\.html$ /index.php?s=about
+RewriteRule ^home\.html$ /index.php?s=home
 RewriteRule ^features\.html$ /index.php?s=features
 RewriteRule ^news\.html$ /index.php?s=news
+RewriteRule ^about\.html$ /index.php?s=about
 RewriteRule ^changelog\.html$ /index.php?s=changelog
 RewriteRule ^version$ http://tf-b4rt.berlios.de/version.txt [R]
 RewriteRule ^changelog$ http://tf-b4rt.berlios.de/changelog.txt [R]

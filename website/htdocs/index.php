@@ -24,7 +24,7 @@ $version = trim(getDataFromFile(_FILE_VERSION));
 if (isset($_REQUEST["s"]))
 	$site = $_REQUEST["s"];
 else
-	$site = "index";
+	$site = "home";
 
 // print page
 printPageHead();
@@ -35,13 +35,16 @@ switch($site) {
 	case "news":
 		printPageNews();
 	break;
+	case "about":
+		printPageAbout();
+	break;
 	case "changelog":
 		printPageChangelog();
 	break;
 	case "index":
-	case "about":
+	case "home":
 	default:
-		printPageAbout();
+		printPageHome();
 	break;
 }
 printPageFoot();
@@ -130,8 +133,9 @@ function printPageHead() {
 	</div>
 	<div id="navi">
 		<ul>
-			<li><a href="about.html" title="About">About</a></li>
+			<li><a href="home.html" title="Home">Home</a></li>
 			<li><a href="features.html" title="Features">Features</a></li>
+			<li><a href="about.html" title="About">About</a></li>
 			<li><a href="news.html" title="News">News</a></li>
 			<li><a href="downloads" title="Downloads">Downloads</a></li>
 			<li><a href="faq" title="Faq">Faq</a></li>
@@ -169,54 +173,32 @@ function printPageFoot() {
 }
 
 /**
- * prints page "news"
+ * prints page "home"
  *
  */
-function printPageNews() {
+function printPageHome() {
 ?>
-		<h1 id="news">News</h1>
-		<ul>
-			<?php echo(rewriteNews(trim(getDataFromFile(_FILE_NEWS)))); ?>
-		</ul>
-		<p>More detailed <a href="http://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="http://tf-b4rt.berlios.de/forum" title="Forum">Forum</a>.</p>
-		<h2 id="feeds">Feeds</h2>
-		<ul>
-			<li>News (<a href="http://developer.berlios.de/export/rss_bsnews.php?group_id=7000" title="News - RSS 0.91">RSS 0.91</a>/<a href="http://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" title="News - RSS 2.0">RSS 2.0</a>)</li>
-			<li>Downloads (<a href="http://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" title="Downloads - RSS 0.91">RSS 0.91</a>/<a href="http://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" title="Downloads - RSS 2.0">RSS 2.0</a>)</li>
-			<li>Forum (<a href="http://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" title="Forum - RSS 0.92">RSS 0.92</a>)</li>
-		</ul>
-<?php
-}
-
-/**
- * prints page "about"
- *
- */
-function printPageAbout() {
-?>
-		<h1 id="about">About torrentflux-b4rt</h1>
+		<h1 id="home">Home</h1>
 		<p>
-			<a href="http://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94 : Admin-Settings" target="_blank">
-				<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94 : Admin-Settings" align="right" class="img_right" />
+			<a href="http://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94 : Index-Page" target="_blank">
+				<img src="images/v94-index_mini.png" width="334px" height="165px" border="0" alt="torrentflux 2.1-b4rt-94 : Index-Page" align="right" class="img_right" />
 			</a>
 		</p>
 		<p>
-			<strong>torrentflux-b4rt</strong> is a web-based frontend for command line bit-torrent clients. It is based on TorrentFlux
+			<strong>torrentflux-b4rt</strong> is a web-based frontend for command-line bit-torrent clients. It is based on TorrentFlux
 			2.1 written by Qrome, which can be found at <a href="http://www.torrentflux.com" title="www.torrentflux.com" target="_blank">www.torrentflux.com</a>.
-			<p>
-			<strong>torrentflux-b4rt</strong> started as an enhancement to the base TorrentFlux 2.1 installation with things
-			I felt that were missing, needed rewriting and things that annoyed me. This resulted in major redesigns and rewrites
-			in many parts and even larger enhancements over the later months.  As torrentflux-b4rt grew in popularity, it's
-			complexity of the whole project became more apparent. v94 has about twice the lines of 2.1 final.
-
-			User-submitted hacks/mods for TorrentFlux 2.1 that were posted in the official TorrentFlux forum that were considered to be
-			useful features have been included, all have been modified, simplified and integrated to be configurable via the admin page.
-			The problems/bugs that some hacks had were fixed and there are also some rewrites to have hacks "work together".
-			Some hacks were re-written simply because I wanted them to behave/work differently or because it was needed
-			for some of my new designs.
-			A Full list can be found in the <a href="changelog" title="Changelog">Changelog</a>
-			and it is not a bad idea to read it at least once, so you know what you get, what it can do and what it cant.
+			torrentflux-b4rt is multi-user-enabled and has user-manager and authentication-system integrated.
 		</p>
+		<h2 id="requirements">Requirements</h2>
+		<ul>
+			<li>A Linux or FreeBSD Box installed and working properly.</li>
+			<li>Web Server. (eg <a href="http://httpd.apache.org/" title="Apache HTTP Server" target="_blank">Apache</a>)</li>
+			<li>SQL-Database. Supported are <a href="http://www.mysql.com" title="MySQL" target="_blank">MySQL</a> and <a href="http://www.sqlite.org" title="SQLite" target="_blank">SQLite</a>.</li>
+			<li><a href="http://www.php.net" title="PHP" target="_blank">PHP</a> 4.3.x or higher.</li>
+			<li><a href="http://www.python.org" title="Python" target="_blank">Python</a> 2.2 or higher.</li>
+			<li><a href="http://www.perl.com" title="Perl" target="_blank">Perl</a> 5.6 or higher.</li>
+		</ul>
+		More details can be found in the file INSTALL which is included in the release-tarballs.
 <?php
 }
 
@@ -228,7 +210,7 @@ function printPageFeatures() {
 ?>
 		<h1 id="features">Features</h1>
 		<ul>
-			<li>Multi-Client-Support via "ClientHandler-API" which is basically some class-design and implementations
+			<li>Multi-Client-Support via ClientHandlers. This is basically some class-design and implementations
 			to operate transparent on different transfer-clients at the same time. Atm supported are BitTornado,
 			Transmission and wget (wget still hacked in without handler and is in a very messy state).</li>
 			<li>Multi-QueueManager-Support. Class-Design and implementations to transparently choose and use a
@@ -284,6 +266,55 @@ function printPageFeatures() {
 			Note that users settings are only saved on a submit of the profile-page when they are different from the
 			defaults. After that is done there is no way anymore for admins to change users personalized
 			settings within admin-pages.
+		</p>
+<?php
+}
+
+/**
+ * prints page "news"
+ *
+ */
+function printPageNews() {
+?>
+		<h1 id="news">News</h1>
+		<ul>
+			<?php echo(rewriteNews(trim(getDataFromFile(_FILE_NEWS)))); ?>
+		</ul>
+		<p>More detailed <a href="http://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="http://tf-b4rt.berlios.de/forum" title="Forum">Forum</a>.</p>
+		<h2 id="feeds">Feeds</h2>
+		<ul>
+			<li>News (<a href="http://developer.berlios.de/export/rss_bsnews.php?group_id=7000" title="News - RSS 0.91">RSS 0.91</a>/<a href="http://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" title="News - RSS 2.0">RSS 2.0</a>)</li>
+			<li>Downloads (<a href="http://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" title="Downloads - RSS 0.91">RSS 0.91</a>/<a href="http://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" title="Downloads - RSS 2.0">RSS 2.0</a>)</li>
+			<li>Forum (<a href="http://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" title="Forum - RSS 0.92">RSS 0.92</a>)</li>
+		</ul>
+<?php
+}
+
+/**
+ * prints page "about"
+ *
+ */
+function printPageAbout() {
+?>
+		<h1 id="about">About</h1>
+		<p>
+			<a href="http://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94 : Admin-Settings" target="_blank">
+				<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94 : Admin-Settings" align="right" class="img_right" />
+			</a>
+		</p>
+		<p>
+			<strong>torrentflux-b4rt</strong> started as an enhancement to the base TorrentFlux 2.1 installation with things
+			I felt that were missing, needed rewriting and things that annoyed me. This resulted in major redesigns and rewrites
+			in many parts and even larger enhancements over the later months.  As torrentflux-b4rt grew in popularity, it's
+			complexity of the whole project became more apparent. v94 has about twice the lines of 2.1 final.
+
+			User-submitted hacks/mods for TorrentFlux 2.1 that were posted in the official TorrentFlux forum that were considered to be
+			useful features have been included, all have been modified, simplified and integrated to be configurable via the admin page.
+			The problems/bugs that some hacks had were fixed and there are also some rewrites to have hacks "work together".
+			Some hacks were re-written simply because I wanted them to behave/work differently or because it was needed
+			for some of my new designs.
+			A Full list can be found in the <a href="changelog" title="Changelog">Changelog</a>
+			and it is not a bad idea to read it at least once, so you know what you get, what it can do and what it cant.
 		</p>
 <?php
 }
