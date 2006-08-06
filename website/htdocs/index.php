@@ -191,7 +191,7 @@ function printPageHome() {
 		</p>
 		<h2 id="requirements">Requirements</h2>
 		<ul>
-			<li>A Linux or FreeBSD Box installed and working properly.</li>
+			<li>Linux or FreeBSD.</li>
 			<li>Web Server. (eg <a href="http://httpd.apache.org/" title="Apache HTTP Server" target="_blank">Apache</a>)</li>
 			<li>SQL-Database. Supported are <a href="http://www.mysql.com" title="MySQL" target="_blank">MySQL</a> and <a href="http://www.sqlite.org" title="SQLite" target="_blank">SQLite</a>.</li>
 			<li><a href="http://www.php.net" title="PHP" target="_blank">PHP</a> 4.3.x or higher.</li>
