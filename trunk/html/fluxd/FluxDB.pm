@@ -20,6 +20,13 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
+#                                                                              #
+#  Requirements :                                                              #
+#   * DBI                      ( perl -MCPAN -e "install Bundle::DBI" )        #
+#   * DBD::mysql for MySQL     ( perl -MCPAN -e "install DBD::mysql" )         #
+#   * DBD::SQLite for SQLite   ( perl -MCPAN -e "install DBD::SQLite" )        #
+#                                                                              #
+################################################################################
 package FluxDB;
 use DBI;
 use strict;
@@ -405,6 +412,8 @@ sub loadDatabaseConfig {
 #------------------------------------------------------------------------------#
 sub dbConnect {
 	# build dsn
+	# TODO : SQLite
+	# my $dbh = DBI->connect("dbi:SQLite:dbname=dbfile","","");
 	my $dsn = "DBI:".$dbType.":".$dbName.":".$dbHost;
 	if ($dbPort > 0) {
 		$dsn .= $dbPort;
