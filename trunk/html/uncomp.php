@@ -21,28 +21,26 @@
 *******************************************************************************/
 
 
-include("config.php");
-include("functions.php");
+require_once("config.php");
+require_once("functions.php");
+require_once("lib/vlib/vlibTemplate.php");
 
-echo getHead('Uncompressing File', false);
-echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";
+$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/uncomp.tmpl");
 
+$tmpl->setvar('head', getHead('Uncompressing File', false));
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 if((isset($_GET['file'])) && ($_GET['file'] != "")) {
-    echo '<form method="POST" name="pass_form">';
-    echo '<p>Please enter password for the file: <input type="text" name="passwd" size="60"></p>';
-    echo '<p><input type="submit" value="   OK   " name="OK"></p>';
-	echo '<input type="hidden" name="file" value="'. str_replace('%2F', '/', urlencode($cfg['path'].$_GET['file'])).'">';
-	echo '<input type="hidden" name="dir" value="'. str_replace('%2F', '/',urlencode($cfg['path'].$_GET['dir'])) .'">';
-	echo '<input type="hidden" name="type" value="'. $_GET['type'] .'">';
-	echo '<input type="hidden" name="exec" value="true">';
-    echo '</form>';
+	$tmpl->setvar('is_file', 1);
+	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg['path'].$_GET['file'])));
+	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg['path'].$_GET['dir'])));
+	$tmpl->setvar('type', $_GET['type']);
 }
 if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 	$passwd = $_POST['passwd'];
 	if( $passwd == "") {
 		$passwd = "-";
 	}
-	// @usage	  ./uncompress.php "pathtofile" "extractdir" "typeofcompression" "uncompressor-bin" "password"
+	// @usage		 ./uncompress.php "pathtofile" "extractdir" "typeofcompression" "uncompressor-bin" "password"
 	$cmd = $cfg['bin_php']." uncompress.php " .$_POST['file'] ." ". $_POST['dir'] ." ". $_POST['type'];
 	if (strcasecmp('rar', $_GET['type']) == 0) {
 		$cmd .= " ". $cfg['bin_unrar'];
@@ -50,33 +48,21 @@ if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 		$cmd .= " ". $cfg['bin_unzip'];
 	}
 	$cmd .= " ". $passwd;
-
 	// os-switch
 	switch (_OS) {
-        case 1: // linux
-            $cmd .= ' 2>&1';
-        break;
-        case 2: // bsd (snip from khr0n0s)
-            $cmd .= ' 2>&1 &';
-        break;
+		case 1: // linux
+			$cmd .= ' 2>&1';
+		break;
+		case 2: // bsd (snip from khr0n0s)
+			$cmd .= ' 2>&1 &';
+		break;
 	}
 	$handle = popen($cmd, 'r' );
-	while(!feof($handle)) {
-	    $buff = fgets($handle,30);
-	    echo nl2br($buff) ;
-	    @ob_flush();
-	    @flush();
-	}
+	$buff = fgets($handle);
+	$tmpl->setvar('buff', nl2br($buff));
 	pclose($handle);
 }
+$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+
+$tmpl->pparse();
 ?>
-     </td></tr>
-    </table>
-[<a href="#" onclick="window.opener.location.reload();window.close();">Close Window</a>]
-    </td>
-    </tr>
-    </table>
-<?php echo getTorrentFluxLink(); ?>
-   </body>
-  </html>
-</html>
