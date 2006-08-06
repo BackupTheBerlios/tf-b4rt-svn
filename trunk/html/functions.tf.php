@@ -406,7 +406,7 @@ function GetThemes() {
 	$dir = "themes/";
 	$handle = opendir($dir);
 	while($entry = readdir($handle)) {
-		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS"))
+		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "old_style_themes"))
 			array_push($arThemes, $entry);
 	}
 	closedir($handle);
