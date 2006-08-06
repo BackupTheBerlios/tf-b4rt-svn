@@ -82,35 +82,36 @@ function displayXferBar($total, $used, $title)
     $bgcolor .= str_pad(dechex(255-255*($percent/150)),2,0,STR_PAD_LEFT);
     $bgcolor .= str_pad(dechex(255*($percent/150)),2,0,STR_PAD_LEFT);
     $bgcolor .='00';
-    echo '<tr>';
-      echo '<td width="2%" nowrap align="right"><div class="tiny">'.$title.'</div></td>';
-      echo '<td width="92%">';
-        echo '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
-        echo '<td bgcolor="'.$bgcolor.'" width="'.($percent+1).'%">';
+    $displayXferBar = '<tr>';
+      $displayXferBar .= '<td width="2%" nowrap align="right"><div class="tiny">'.$title.'</div></td>';
+      $displayXferBar .= '<td width="92%">';
+        $displayXferBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
+        $displayXferBar .= '<td bgcolor="'.$bgcolor.'" width="'.($percent+1).'%">';
         if ($percent >= 50) {
-            echo '<div class="tinypercent" align="center"';
+            $displayXferBar .= '<div class="tinypercent" align="center"';
             if ($percent == 100)
-                echo ' style="background:#ffffff;">';
-            else
-                echo '>';
-            echo $percent.'%'.$text;
-            echo '</div>';
+                $displayXferBar .= ' style="background:#ffffff;">';
+            $displayXferBar .=
+                $displayXferBar .= '>';
+            $displayXferBar .= $percent.'%'.$text;
+            $displayXferBar .= '</div>';
         }
-        echo '</td>';
-        echo '<td bgcolor="#000000" width="'.(100-$percent).'%" height="100%">';
+        $displayXferBar .= '</td>';
+        $displayXferBar .= '<td bgcolor="#000000" width="'.(100-$percent).'%" height="100%">';
         if ($percent < 50) {
-            echo '<div class="tinypercent" align="center" style="color:'.$bgcolor;
+            $displayXferBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
             if ($percent == 0)
-                echo '; background:#ffffff;">';
+                $displayXferBar .= '; background:#ffffff;">';
             else
-                echo ';">';
-            echo $percent.'%'.$text;
-            echo '</div>';
+                $displayXferBar .= ';">';
+            $displayXferBar .= $percent.'%'.$text;
+            $displayXferBar .= '</div>';
         }
-        echo '</td>';
-        echo '</tr></table>';
-      echo '</td>';
-    echo '</tr>';
+        $displayXferBar .= '</td>';
+        $displayXferBar .= '</tr></table>';
+      $displayXferBar .= '</td>';
+    $displayXferBar .= '</tr>';
+    return $displayXferBar;
 }
 
 //XFER:****************************************************
@@ -119,11 +120,11 @@ function displayXferBar($total, $used, $title)
 function displayXfer()
 {
   global $cfg;
-  displayXferList();
+  $displayXferList = displayXferList();
   if (isset($_GET['user'])) {
-    echo '<br><b>';
-      echo ($_GET['user'] == '%') ? _SERVERXFERSTATS : _USERDETAILS.': '.$_GET['user'];
-    echo '</b><br>';
+    $displayXferList .= '<br><b>';
+      $displayXferList .= ($_GET['user'] == '%') ? _SERVERXFERSTATS : _USERDETAILS.': '.$_GET['user'];
+    $displayXferList .= '</b><br>';
     displayXferDetail($_GET['user'],_MONTHSTARTING,0,0);
     if (isset($_GET['month'])) {
       $mstart = $_GET['month'].'-'.$cfg['month_start'];
@@ -139,9 +140,10 @@ function displayXfer()
       $wstart = $mstart;
       $wend = $mend;
     }
-    displayXferDetail($_GET['user'],_WEEKSTARTING,$mstart,$mend);
-    displayXferDetail($_GET['user'],_DAY,$wstart,$wend);
+    $displayXferList .= displayXferDetail($_GET['user'],_WEEKSTARTING,$mstart,$mend);
+    $displayXferList .= displayXferDetail($_GET['user'],_DAY,$wstart,$wend);
   }
+  return $displayXferList;
 }
 
 //XFER:****************************************************
@@ -154,13 +156,13 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
   $sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$user_id.'" '.$period_query.' GROUP BY date ORDER BY date';
   $rtnValue = $db->GetAll($sql);
   showError($db,$sql);
-  echo "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
-    echo '<tr>';
-      echo "<td bgcolor='$cfg[table_header_bg]' width='20%'><div align=center class='title'>$period</div></td>";
-      echo "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._TOTAL.'</div></td>';
-      echo "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._DOWNLOAD.'</div></td>';
-      echo "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._UPLOAD.'</div></td>';
-    echo '</tr>';
+  $displayXferDetail = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
+    $displayXferDetail .= '<tr>';
+      $displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='20%'><div align=center class='title'>$period</div></td>";
+      $displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._TOTAL.'</div></td>';
+      $displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._DOWNLOAD.'</div></td>';
+      $displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._UPLOAD.'</div></td>';
+    $displayXferDetail .= '</tr>';
     $start = '';
     $download = 0;
     $upload = 0;
@@ -185,15 +187,15 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
       }
       if ($start != $newstart) {
         if ($upload + $download != 0) {
-          echo '<tr>';
-            echo "<td>$rowstr</td>";
+          $displayXferDetail .= '<tr>';
+            $displayXferDetail .= "<td>$rowstr</td>";
             $downloadstr = formatFreeSpace($download/(1024*1024));
             $uploadstr = formatFreeSpace($upload/(1024*1024));
             $totalstr = formatFreeSpace(($download+$upload)/(1024*1024));
-            echo "<td><div class='tiny' align='center'><b>$totalstr</b></div></td>";
-            echo "<td><div class='tiny' align='center'>$downloadstr</div></td>";
-            echo "<td><div class='tiny' align='center'>$uploadstr</div></td>";
-          echo '</tr>';
+            $displayXferDetail .= "<td><div class='tiny' align='center'><b>$totalstr</b></div></td>";
+            $displayXferDetail .= "<td><div class='tiny' align='center'>$downloadstr</div></td>";
+            $displayXferDetail .= "<td><div class='tiny' align='center'>$uploadstr</div></td>";
+          $displayXferDetail .= '</tr>';
         }
         $download = $row[0];
         $upload = $row[1];
@@ -209,17 +211,18 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
       }
     }
     if ($upload + $download != 0) {
-      echo '<tr>';
-        echo "<td>$rowstr</td>";
+      $displayXferDetail .= '<tr>';
+        $displayXferDetail .= "<td>$rowstr</td>";
         $downloadstr = formatFreeSpace($download/(1024*1024));
         $uploadstr = formatFreeSpace($upload/(1024*1024));
         $totalstr = formatFreeSpace(($download+$upload)/(1024*1024));
-        echo "<td><div class='tiny' align='center'><b>$totalstr</b></div></td>";
-        echo "<td><div class='tiny' align='center'>$downloadstr</div></td>";
-        echo "<td><div class='tiny' align='center'>$uploadstr</div></td>";
-      echo '</tr>';
+        $displayXferDetail .= "<td><div class='tiny' align='center'><b>$totalstr</b></div></td>";
+        $displayXferDetail .= "<td><div class='tiny' align='center'>$downloadstr</div></td>";
+        $displayXferDetail .= "<td><div class='tiny' align='center'>$uploadstr</div></td>";
+      $displayXferDetail .= '</tr>';
     }
-  echo '</table><br>';
+  $displayXferDetail .= '</table><br>';
+  return $displayXferDetail;
 }
 
 //XFER:****************************************************
@@ -228,40 +231,41 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
 function displayXferList()
 {
   global $cfg, $xfer, $xfer_total, $db;
-    echo "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
-      echo '<tr>';
-        echo "<td bgcolor='$cfg[table_header_bg]' width='15%'><div align=center class='title'>"._USER.'</div></td>';
-        echo "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._TOTALXFER.'</div></td>';
-        echo "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._MONTHXFER.'</div></td>';
-        echo "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._WEEKXFER.'</div></td>';
-        echo "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._DAYXFER.'</div></td>';
-      echo '</tr>';
+    $displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
+      $displayXferList .= '<tr>';
+        $displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='15%'><div align=center class='title'>"._USER.'</div></td>';
+        $displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._TOTALXFER.'</div></td>';
+        $displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._MONTHXFER.'</div></td>';
+        $displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._WEEKXFER.'</div></td>';
+        $displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._DAYXFER.'</div></td>';
+      $displayXferList .= '</tr>';
       $sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
       $rtnValue = $db->GetCol($sql);
       showError($db,$sql);
       foreach ($rtnValue as $user_id) {
-        echo '<tr>';
-          echo '<td><a href="?op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
+        $displayXferList .= '<tr>';
+          $displayXferList .= '<td><a href="?op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
           $total = formatFreeSpace($xfer[$user_id]['total']['total']/(1024*1024));
           $month = formatFreeSpace(@ $xfer[$user_id]['month']['total']/(1024*1024));
           $week = formatFreeSpace(@ $xfer[$user_id]['week']['total']/(1024*1024));
           $day = formatFreeSpace(@ $xfer[$user_id]['day']['total']/(1024*1024));
-          echo '<td><div class="tiny" align="center">'.$total.'</div></td>';
-          echo '<td><div class="tiny" align="center">'.$month.'</div></td>';
-          echo '<td><div class="tiny" align="center">'.$week.'</div></td>';
-          echo '<td><div class="tiny" align="center">'.$day.'</div></td>';
-        echo '</tr>';
+          $displayXferList .= '<td><div class="tiny" align="center">'.$total.'</div></td>';
+          $displayXferList .= '<td><div class="tiny" align="center">'.$month.'</div></td>';
+          $displayXferList .= '<td><div class="tiny" align="center">'.$week.'</div></td>';
+          $displayXferList .= '<td><div class="tiny" align="center">'.$day.'</div></td>';
+        $displayXferList .= '</tr>';
       }
-      echo '<td><a href="?op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
+      $displayXferList .= '<td><a href="?op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
       $total = formatFreeSpace($xfer_total['total']['total']/(1024*1024));
       $month = formatFreeSpace($xfer_total['month']['total']/(1024*1024));
       $week = formatFreeSpace($xfer_total['week']['total']/(1024*1024));
       $day = formatFreeSpace($xfer_total['day']['total']/(1024*1024));
-      echo '<td><div class="tiny" align="center"><b>'.$total.'</b></div></td>';
-      echo '<td><div class="tiny" align="center"><b>'.$month.'</b></div></td>';
-      echo '<td><div class="tiny" align="center"><b>'.$week.'</b></div></td>';
-      echo '<td><div class="tiny" align="center"><b>'.$day.'</b></div></td>';
-    echo '</table>';
+      $displayXferList .= '<td><div class="tiny" align="center"><b>'.$total.'</b></div></td>';
+      $displayXferList .= '<td><div class="tiny" align="center"><b>'.$month.'</b></div></td>';
+      $displayXferList .= '<td><div class="tiny" align="center"><b>'.$week.'</b></div></td>';
+      $displayXferList .= '<td><div class="tiny" align="center"><b>'.$day.'</b></div></td>';
+    $displayXferList .= '</table>';
+    return $displayXferList;
 }
 
 // Link Mod

@@ -335,7 +335,7 @@ switch ($op) {
 		echo getMenu();
 		if ($cfg['enable_xfer'] == 1) {
 			getDirList($cfg["torrent_file_path"],0);
-			displayXfer();
+			echo displayXfer();
 		}
 		echo getFoot(true,true);
 	break;
