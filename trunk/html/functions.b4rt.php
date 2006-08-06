@@ -993,18 +993,19 @@ function RunningProcessInfo() {
 	global $cfg;
 	include_once("ClientHandler.php");
 	// messy...
-	echo " ---=== tornado ===---\n\n";
+	$RunningProcessInfo = " ---=== tornado ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 	$clientHandler->printRunningClientsInfo();
 	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -v ".$cfg["tfQManager"]);
-	echo "\n\n --- Process-List --- \n\n".$pinfo;
+	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
 	unset($clientHandler);
 	unset($pinfo);
-	echo "\n\n ---=== transmission ===---\n\n";
+	$RunningProcessInfo .= "\n\n ---=== transmission ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
 	$clientHandler->printRunningClientsInfo();
 	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binSystem ." | ".$cfg['bin_grep']." -v grep");
-	echo "\n\n --- Process-List --- \n\n".$pinfo;
+	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
+	return $RunningProcessInfo;
 }
 
 /**

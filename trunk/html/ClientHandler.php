@@ -464,18 +464,19 @@ class ClientHandler
                 }
             }
         }
-        echo " --- Running Processes ---\n";
-        echo " Parents  : " . count($pProcess) . "\n";
-        echo " Children : " . count($cProcess) . "\n";
-        echo "\n";
-        echo " PID \tOwner\tTorrent File\n";
+        $printRunningClientsInfo = " --- Running Processes ---\n";
+        $printRunningClientsInfo .= " Parents  : " . count($pProcess) . "\n";
+        $printRunningClientsInfo .= " Children : " . count($cProcess) . "\n";
+        $printRunningClientsInfo .= "\n";
+        $printRunningClientsInfo .= " PID \tOwner\tTorrent File\n";
         foreach($pProcess as $key => $value) {
-            echo " " . $value . "\t" . $ProcessCmd[$key] . "\n";
+            $printRunningClientsInfo .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
             foreach($cpProcess as $cKey => $cValue)
                 if (intval($value) == intval($cValue))
-                    echo "\t" . $cProcess[$cKey] . "\n";
+                    $printRunningClientsInfo .= "\t" . $cProcess[$cKey] . "\n";
         }
-        echo "\n";
+        $printRunningClientsInfo .= "\n";
+        return $printRunningClientsInfo;
     }
 
     //--------------------------------------------------------------------------
