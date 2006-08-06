@@ -2,7 +2,7 @@
 /* $Id: admin_configSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_configSettings.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_configSettings.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - Settings"));
 $tmpl->setvar('menu', getMenu());

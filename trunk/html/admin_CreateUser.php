@@ -1,7 +1,7 @@
 <?php
 /* $Id: admin_CreateUser.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/admin_CreateUser.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_CreateUser.tmpl");
 $tmpl->setvar('head', getHead(_USERADMIN));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);

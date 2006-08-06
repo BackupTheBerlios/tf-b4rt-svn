@@ -29,7 +29,7 @@ require_once("functions.php");
 require_once("searchEngines/SearchEngineBase.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/torrentSearch.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/torrentSearch.tmpl");
 
 // Go get the if this is a search request. go get the data and produce output.
 

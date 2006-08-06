@@ -39,7 +39,7 @@ $dir = stripslashes(urldecode(getRequestVar('dir')));
 // -----------------------------------------------------------------------------
 
 # create new template
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/dir.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dir.tmpl");
 
 // Are we to delete something?
 if ($del != "") {

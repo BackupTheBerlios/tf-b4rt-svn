@@ -29,7 +29,7 @@ require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/profile.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/profile.tmpl");
 
 $op = getRequestVar('op');
 

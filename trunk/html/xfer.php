@@ -17,7 +17,7 @@ require_once('config.php');
 require_once('functions.php');
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/xfer.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/xfer.tmpl");
 
 $tmpl->setvar('head', getHead(_XFER));
 if ($cfg['enable_xfer'] == 1) {

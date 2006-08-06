@@ -26,7 +26,7 @@ require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/renameFolder.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/renameFolder.tmpl");
 
 $tmpl->setvar('head', getHead(_REN_TITLE, false));
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {

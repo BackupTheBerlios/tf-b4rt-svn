@@ -26,7 +26,7 @@ require_once("settingsfunctions.php");
 require_once("lib/vlib/vlibTemplate.php");
 loadSettings();
 
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/checkSFV.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/checkSFV.tmpl");
 
 $tmpl->setvar('head', getHead('sfv check', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

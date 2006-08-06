@@ -25,7 +25,7 @@ require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/uncomp.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/uncomp.tmpl");
 
 $tmpl->setvar('head', getHead('Uncompressing File', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

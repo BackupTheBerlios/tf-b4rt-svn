@@ -25,7 +25,7 @@ require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/multiup.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/multiup.tmpl");
 
 if (!empty($_FILES['upload_files'])) {
 	//echo '<pre>'; var_dump($_FILES); echo '</pre>';

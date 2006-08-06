@@ -29,7 +29,7 @@ require_once('config.php');
 require_once('lib/adodb/adodb.inc.php');
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/matrix/tmpl/db.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/db.tmpl");
 
 function getdb() {
 	global $cfg;

@@ -29,7 +29,7 @@ require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/drivespace.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/drivespace.tmpl");
 
 $result = shell_exec("df -h ".$cfg["path"]);
 $result2 = shell_exec("du -sh ".$cfg["path"]."*");
