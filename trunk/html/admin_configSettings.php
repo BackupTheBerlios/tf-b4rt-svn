@@ -11,7 +11,12 @@ $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('path', $cfg["path"]);
-$tmpl->setvar('validatePath', validatePath($cfg["path"]));
+if (is_dir($cfg["path"])) {
+	$tmpl->setvar('is_path', 1);
+	if (is_writable($cfg["path"])) {
+		$tmpl->setvar('is_writable', 1);
+	}
+}
 $tmpl->setvar('_AUTH_BASIC_REALM', _AUTH_BASIC_REALM);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('btclient', $cfg["btclient"]);
