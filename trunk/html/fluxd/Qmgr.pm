@@ -48,11 +48,11 @@ my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 # constructor + destructor                                                     #
 ################################################################################
 
-#-----------------------------------------------------------------------------#
-# Sub: new (Constructor Method)                                               #
-# Arguments: Null                                                             #
-# Returns: Object                                                             #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: new (Constructor Method)                                                #
+# Arguments: Null                                                              #
+# Returns: Object                                                              #
+#------------------------------------------------------------------------------#
 sub new {
 	my $objclass = shift;
 	my $self = {};
@@ -80,7 +80,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 sub initialize {
 
-	print "Qmgr : Initializing Qmgr";
+	print "initializing Qmgr\n"; # DEBUG
 
 	# Create some time vars
 	$time = time();

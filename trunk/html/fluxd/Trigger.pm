@@ -76,6 +76,8 @@ sub destroy {
 #------------------------------------------------------------------------------#
 sub initialize {
 
+	print "initializing Trigger\n"; # DEBUG
+
 	# set state
 	$state = 1;
 

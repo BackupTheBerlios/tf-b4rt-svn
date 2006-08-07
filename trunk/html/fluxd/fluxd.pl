@@ -768,7 +768,7 @@ Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
                         repairs torrentflux. DO NOT DO THIS if your system
                         is running as it should. You WILL break something.
 
-       $PROG.$EXTENSION check
+       $PROG.$EXTENSION check path-to-docroot
                         checks for requirements.
        $PROG.$EXTENSION <-h|--help>
                         print out help screen.
@@ -820,8 +820,20 @@ sub printVersion {
 sub check {
 	print "Checking requirements...\n";
 	my $return = 0;
-	# check modules
-	print "1. modules\n";
+
+	# $PATH_DOCROOT
+	my $temp = shift @ARGV;
+	if (!(defined $temp)) {
+		printUsage();
+		exit;
+	}
+	if (!((substr $temp, -1) eq "/")) {
+		$temp .= "/";
+	}
+	$PATH_DOCROOT = $temp;
+
+	# 1. perl-modules
+	print "1. perl-modules\n";
 	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX', 'DBI');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
@@ -842,6 +854,116 @@ sub check {
 			exit;
 		}
 	}
+
+	# 2. required files
+	print "2. required files\n";
+	print " - ".$FILE_DBCONF." : ";
+	if (-f $PATH_DOCROOT.$FILE_DBCONF) {
+		print $PATH_DOCROOT.$FILE_DBCONF."\n";
+	} else {
+		print "Error : cant find database-config ".$FILE_DBCONF." in ".$PATH_DOCROOT."\n";
+	}
+	print " - ".$BIN_FLUXCLI." : ";
+	if (-f $PATH_DOCROOT.$BIN_FLUXCLI) {
+		print $PATH_DOCROOT.$BIN_FLUXCLI."\n";
+	} else {
+		print "\nError : cant find fluxcli ".$BIN_FLUXCLI." in ".$PATH_DOCROOT."\n";
+	}
+
+	# 3. db-bean
+	print "3. database\n";
+
+	# require
+	require FluxDB;
+
+	# create instance
+	$fluxDB = FluxDB->new();
+	if ($fluxDB->getState() == -1) {
+		print "Error : creating FluxDB: ".$fluxDB->getMessage()."\n";
+		exit;
+	}
+
+	# initialize
+	$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
+	if ($fluxDB->getState() < 1) {
+		print "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
+		exit;
+	}
+
+	# db-settings
+	print " - Type : ".$fluxDB->getDatabaseType()."\n";
+	print " - Name : ".$fluxDB->getDatabaseName()."\n";
+	print " - Host : ".$fluxDB->getDatabaseHost()."\n";
+
+	# init paths
+	initPaths($fluxDB->getFluxConfig("path"));
+
+	# 4. paths
+	print "4. paths\n";
+	print " - flux-data-dir : ".$fluxDB->getFluxConfig("path")."\n";
+	print " - PATH_TORRENT_DIR : ".$PATH_TORRENT_DIR."\n";
+	print " - PATH_DATA_DIR : ".$PATH_DATA_DIR."\n";
+	print " - PATH_SOCKET : ".$PATH_SOCKET."\n";
+	print " - ERROR_LOG : ".$ERROR_LOG."\n";
+	print " - LOG : ".$LOG."\n";
+	print " - PID_FILE : ".$PID_FILE."\n";
+	print " - PATH_QUEUE_FILE : ".$PATH_QUEUE_FILE."\n";
+
+	# 5. service-modules
+	print "5. service-modules\n";
+
+	# Qmgr
+	#print " - Qmgr : ";
+	#require Qmgr;
+	#$qmgr = Qmgr->new();
+	#$qmgr->initialize();
+	#if ($qmgr->getState() < 1) {
+	#	print STDERR "error initializing service-module Qmgr :\n";
+	#	print STDERR $qmgr->getMessage()."\n";
+	#}
+
+	# Fluxinet
+	print " - Fluxinet : ";
+	require Fluxinet;
+	$fluxinet = Fluxinet->new();
+	$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+	if ($fluxinet->getState() < 1) {
+		print STDERR "error initializing service-module Fluxinet :\n";
+		print STDERR $fluxinet->getMessage()."\n";
+	}
+
+	# Watch
+	print " - Watch : ";
+	require Watch;
+	$watch = Watch->new();
+	$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
+	if ($watch->getState() < 1) {
+		print STDERR "error initializing service-module Watch :\n";
+		print STDERR $watch->getMessage()."\n";
+	}
+
+	# Clientmaint
+	print " - Clientmaint : ";
+	require Clientmaint;
+	$clientmaint = Clientmaint->new();
+	$clientmaint->initialize();
+	if ($clientmaint->getState() < 1) {
+		print STDERR "error initializing service-module Clientmaint :\n";
+		print STDERR $clientmaint->getMessage()."\n";
+	}
+
+	# Trigger
+	print " - Trigger : ";
+	require Trigger;
+	$trigger = Trigger->new();
+	$trigger->initialize();
+	if ($trigger->getState() < 1) {
+		print STDERR "error initializing service-module Trigger :\n";
+		print STDERR $trigger->getMessage()."\n";
+	}
+
+	# destroy fluxDB
+	$fluxDB->destroy();
 }
 
 #------------------------------------------------------------------------------#
