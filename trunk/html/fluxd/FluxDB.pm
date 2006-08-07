@@ -412,17 +412,43 @@ sub loadDatabaseConfig {
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub dbConnect {
+
 	# build dsn
-	# TODO : SQLite
-	# my $dbh = DBI->connect("dbi:SQLite:dbname=dbfile","","");
-	my $dsn = "DBI:".$dbType.":".$dbName.":".$dbHost;
-	if ($dbPort > 0) {
-		$dsn .= $dbPort;
+	my $dsn = "DBI:";
+	SWITCH: {
+		$_ = $dbType;
+
+		# MySQL
+		/^mysql/i && do {
+			$dsn .= "mysql:".$dbName.":".$dbHost;
+			if ($dbPort > 0) {
+				$dsn .= $dbPort;
+			}
+			last SWITCH;
+		};
+
+		# SQLite
+		/^sqlite/i && do {
+			$dsn .= "SQLite:dbname=".$dbHost;
+			$dbUser = "";
+			$dbPass = "";
+			last SWITCH;
+		};
+
+		# no valid db-type. bail out
+		# message
+		$message = "no valid db-type : ".$dbType;
+		# set state
+		$state = -1;
+		# return
+		return 0;
 	}
+
 	# connect
 	$dbHandle = DBI->connect(
 		$dsn, $dbUser, $dbPass, { PrintError => 0, AutoCommit => 1 }
 	);
+
 	# check
 	if (!(defined $dbHandle)) {
 		# message
