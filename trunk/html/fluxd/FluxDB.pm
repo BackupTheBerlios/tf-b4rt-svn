@@ -402,6 +402,7 @@ sub loadDatabaseConfig {
 		}
 	}
 	$/ = '\n';
+	close(CONFIG);
 	return 1;
 }
 
