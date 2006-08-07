@@ -2533,23 +2533,4 @@ function getSortOrderSettingsForm() {
 	return $sortOrderSettingsForm;
 }
 
-/**
- * get form of drivespacebar-selection
- *
- */
-function getDrivespacebarSelectForm() {
-	global $cfg;
-	$retVal = '<select name="drivespacebar">';
-	$retVal .= '<option value="tf"';
-	if ($cfg["drivespacebar"] == "tf")
-		$retVal .=  " selected";
-	$retVal .= '>tf</option>';
-	$retVal .= '<option value="xfer"';
-	if ($cfg["drivespacebar"] == "xfer")
-		$retVal .= " selected";
-	$retVal .= '>xfer</option>';
-	$retVal .= '</select>';
-	return $retVal;
-}
-
 ?>
