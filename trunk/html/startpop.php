@@ -75,7 +75,7 @@ if ($cfg["torrent_dies_when_done"] == "False") {
 $tmpl->setvar('selected', $selected);
 $tmpl->setvar('minport', $cfg["minport"]);
 $tmpl->setvar('maxport', $cfg["maxport"]);
-$tmpl->setvar('sharekill', $sharekill);
+$tmpl->setvar('sharekill', $cfg["sharekill"]);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('savepath', $cfg["savepath"]);
 $tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
