@@ -7,7 +7,7 @@
 	<link rel="alternate" title="Transfer-Stats" href="stats.php?f=rss" type="application/rss+xml">
 	<META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset=ISO-8859-1">
 	<tmpl_if name="page_refresh">
-		<meta http-equiv="REFRESH" content="<tmpl_var name="page_refresh">;URL=index.php">
+		<meta http-equiv="REFRESH" content="<tmpl_var name="page_refresh">;URL=index.php?page=index">
 		<script language="JavaScript">
 			var var_refresh = <tmpl_var name="page_refresh">;
 			function UpdateRefresh() {
@@ -88,7 +88,7 @@
 						<td bgcolor="<tmpl_var name="table_header_bg">">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="index.php" method="post" enctype="multipart/form-data">
+									<form name="form_file" action="index.php?page=index" method="post" enctype="multipart/form-data">
 										<td>
 										<tmpl_var name="_SELECTFILE">:<br>
 										<input type="File" name="upload_file" size="30">
@@ -115,7 +115,7 @@
 								</form>
 							</tr>
 							<tr>
-								<form name="form_url" action="index.php" method="post">
+								<form name="form_url" action="index.php?page=index" method="post">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
@@ -139,7 +139,7 @@
 							</tr>
 							<tmpl_if name="enable_wget">
 								<tr>
-									<form name="form_wget" action="index.php" method="post">
+									<form name="form_wget" action="index.php?page=index" method="post">
 										<td>
 											<hr>
 											URL for the File to wget :<br>

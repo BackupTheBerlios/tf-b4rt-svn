@@ -34,7 +34,7 @@ if (isset($_REQUEST["u"])) {
 	$tmpl->setvar('_REQUEST', $_REQUEST["u"]);
 	$tmpl->setvar('foot', getFoot(false,false));
 } else {
-	header("location: index.php");
+	header("location: index.php?page=index");
 	exit();
 }
 $tmpl->pparse();

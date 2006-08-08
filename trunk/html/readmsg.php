@@ -33,7 +33,7 @@ $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/readmsg.tmpl");
 
 if(empty($cfg['user'])) {
 	 // the user probably hit this page direct
-	header("location: index.php");
+	header("location: index.php?page=index");
 	exit;
 }
 

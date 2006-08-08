@@ -188,6 +188,6 @@ switch ($action) {
 if (isset($_SERVER["HTTP_REFERER"]))
 	header("location: ".$_SERVER["HTTP_REFERER"]);
 else
-	header("location: index.php");
+	header("location: index.php?page=index");
 
 ?>

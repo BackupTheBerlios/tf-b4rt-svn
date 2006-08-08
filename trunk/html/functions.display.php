@@ -285,7 +285,7 @@ function getFoot($showReturn=true, $showVersionLink = false) {
 	$foot = "</td></tr>";
 	$foot .= "</table>";
 	if ($showReturn)
-		$foot .= "[<a href=\"index.php\">"._RETURNTOTORRENTS."</a>]";
+		$foot .= "[<a href=\"index.php?page=index\">"._RETURNTOTORRENTS."</a>]";
 	$foot .= "</div>";
 	$foot .= "</td>";
 	$foot .= "</tr>";
@@ -330,7 +330,7 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 		$titleBar .= "<td align=right>";
 		// Top Buttons
 		$titleBar .= "&nbsp;&nbsp;";
-		$titleBar .=	 "<a href=\"index.php\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?page=index\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
 		$titleBar .=	 "<a href=\"dir.php\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
 		$titleBar .=	 "<a href=\"history.php\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
 		$titleBar .=	 "<a href=\"profile.php\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
@@ -1012,7 +1012,7 @@ function getTransferList() {
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 		if ($owner || IsAdmin($cfg["user"])) {
 			if($percentDone >= 0 && $transferRunning == 1) {
-				$output .= "<a href=\"index.php?alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
+				$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
 				$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
 				if ($cfg['enable_multiops'] != 0)
 					$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
@@ -1021,7 +1021,7 @@ function getTransferList() {
 					$output .= "<img src=\"images/run_off.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 				} else {
 					if ($transferRunning == 3) {
-						$output .= "<a href=\"index.php?alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
+						$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
 					} else {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
 							// Allow Avanced start popup?

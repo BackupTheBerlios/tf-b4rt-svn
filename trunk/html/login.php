@@ -44,7 +44,7 @@ $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/login.tmpl");
 include("themes/".$cfg["default_theme"]."/index.php");
 global $cfg;
 if(isset($_SESSION['user'])) {
-	header("location: index.php");
+	header("location: index.php?page=index");
 	exit();
 }
 ob_start();
@@ -94,7 +94,7 @@ switch ($cfg['auth_type']) {
 // Check for user
 if(!empty($user) && !empty($iamhim)) {
 	// First User check
-	$next_loc = "index.php";
+	$next_loc = "index.php?page=index";
 	$sql = "SELECT count(*) FROM tf_users";
 	$user_count = $db->GetOne($sql);
 	if($user_count == 0) {

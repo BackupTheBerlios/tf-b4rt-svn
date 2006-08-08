@@ -1513,7 +1513,7 @@ function getDirList($dirName) {
 			//if($kill_id != "" && $af->percent_done >= 0 && $af->running == 1)
 			// messy
 			if($af->percent_done >= 0 && $af->running == 1) {
-				$output .= "<a href=\"index.php?alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
+				$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
 				$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
 				if ($cfg['enable_multiops'] == 1)
 					$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
@@ -1522,7 +1522,7 @@ function getDirList($dirName) {
 					$output .= "<img src=\"images/run_off.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 				} else {
 					if ($af->running == "3") {
-						$output .= "<a href=\"index.php?alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
+						$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
 					} else {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
 							// Allow Avanced start popup?
