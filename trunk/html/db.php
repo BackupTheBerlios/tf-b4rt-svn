@@ -42,7 +42,7 @@ function getdb() {
 }
 
 function showError($db, $sql) {
-	global $cfg;
+	global $cfg, $tmpl;
 	if($db->ErrorNo() != 0) {
 		$tmpl->setvar('error', 1);
 		include("themes/matrix/index.php");
