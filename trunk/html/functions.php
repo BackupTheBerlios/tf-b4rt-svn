@@ -49,6 +49,13 @@ include_once('functions.hacks.php');
 include_once('functions.b4rt.php');
 
 //******************************************************************************
+// require functions
+//******************************************************************************
+
+// display-functions
+require_once('functions.display.php');
+
+//******************************************************************************
 
 // Create Connection.
 $db = getdb();
