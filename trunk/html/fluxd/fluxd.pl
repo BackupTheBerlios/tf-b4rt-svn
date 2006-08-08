@@ -441,7 +441,7 @@ sub loadServiceModules {
 		if (!(exists &Clientmaint::new)) {
 			require Clientmaint;
 			$clientmaint = Clientmaint->new();
-			$clientmaint->initialize();
+			$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
 			if ($clientmaint->getState() < 1) {
 				print STDERR "error initializing service-module Clientmaint :\n";
 				print STDERR $clientmaint->getMessage()."\n";
@@ -921,6 +921,11 @@ sub check {
 	#	print STDERR "error initializing service-module Qmgr :\n";
 	#	print STDERR $qmgr->getMessage()."\n";
 	#}
+	#if(exists &Qmgr::new) {
+	#	$qmgr->destroy();
+	#	delete_package('Qmgr');
+	#	undef $qmgr;
+	#}
 
 	# Fluxinet
 	print " - Fluxinet : ";
@@ -930,6 +935,11 @@ sub check {
 	if ($fluxinet->getState() < 1) {
 		print STDERR "error initializing service-module Fluxinet :\n";
 		print STDERR $fluxinet->getMessage()."\n";
+	}
+	if (exists &Fluxinet::new) {
+		$fluxinet->destroy();
+		delete_package('Fluxinet');
+		undef $fluxinet;
 	}
 
 	# Watch
@@ -941,15 +951,25 @@ sub check {
 		print STDERR "error initializing service-module Watch :\n";
 		print STDERR $watch->getMessage()."\n";
 	}
+	if (exists &Watch::new) {
+		$watch->destroy();
+		delete_package('Watch');
+		undef $watch;
+	}
 
 	# Clientmaint
 	print " - Clientmaint : ";
 	require Clientmaint;
 	$clientmaint = Clientmaint->new();
-	$clientmaint->initialize();
+	$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
 	if ($clientmaint->getState() < 1) {
 		print STDERR "error initializing service-module Clientmaint :\n";
 		print STDERR $clientmaint->getMessage()."\n";
+	}
+	if (exists &Clientmaint::new) {
+		$clientmaint->destroy();
+		delete_package('Clientmaint');
+		undef $clientmaint;
 	}
 
 	# Trigger
@@ -960,6 +980,11 @@ sub check {
 	if ($trigger->getState() < 1) {
 		print STDERR "error initializing service-module Trigger :\n";
 		print STDERR $trigger->getMessage()."\n";
+	}
+	if (exists &Trigger::new) {
+		$trigger->destroy;
+		delete_package('Trigger');
+		undef $trigger;
 	}
 
 	# destroy fluxDB
