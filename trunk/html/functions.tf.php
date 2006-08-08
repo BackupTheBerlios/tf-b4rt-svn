@@ -690,31 +690,6 @@ function GetRSSLinks() {
 }
 
 // ***************************************************************************
-// Build Search Engine Drop Down List
-function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
-	$output = "<select name=\"searchEngine\" ";
-	if ($autoSubmit)
-		 $output .= "onchange=\"this.form.submit();\" ";
-	$output .= " STYLE=\"width: 125px\">";
-	$handle = opendir("./searchEngines");
-	while($entry = readdir($handle))
-		$entrys[] = $entry;
-	natcasesort($entrys);
-	foreach($entrys as $entry) {
-		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != ".")
-			if(strpos($entry,"Engine.php")) {
-				$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-				$output .= "<option";
-				if ($selectedEngine == $tmpEngine)
-					$output .= " selected";
-				$output .= ">".str_replace("Engine",'',substr($entry,0,strpos($entry,".")))."</option>";
-			}
-	}
-	$output .= "</select>\n";
-	return $output;
-}
-
-// ***************************************************************************
 // Build Search Engine Links
 function buildSearchEngineLinks($selectedEngine = 'TorrentSpy') {
 	global $cfg;
@@ -756,22 +731,6 @@ function buildSearchEngineLinks($selectedEngine = 'TorrentSpy') {
 		saveSettings($settings);
 	}
 	return $output;
-}
-function getEngineLink($searchEngine) {
-	$tmpLink = '';
-	$engineFile = 'searchEngines/'.$searchEngine.'Engine.php';
-	if (is_file($engineFile)) {
-		$fp = @fopen($engineFile,'r');
-		if ($fp) {
-			$tmp = fread($fp, filesize($engineFile));
-			@fclose( $fp );
-			$tmp = substr($tmp,strpos($tmp,'$this->mainURL'),100);
-			$tmp = substr($tmp,strpos($tmp,"=")+1);
-			$tmp = substr($tmp,0,strpos($tmp,";"));
-			$tmpLink = trim(str_replace(array("'","\""),"",$tmp));
-		}
-	}
-	return $tmpLink;
 }
 
 // Removes HTML from Messages

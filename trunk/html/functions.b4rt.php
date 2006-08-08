@@ -1075,29 +1075,6 @@ function getRunningTransfers($clientType = '') {
 /* ************************************************************************** */
 
 /**
- * get superadmin-popup-link-html-snip.
- *
- */
-function getSuperAdminLink($param = "", $linkText = "") {
-	global $cfg;
-	$superAdminLink = '
-	<script language="JavaScript">
-	function SuperAdmin(name_file) {
-			window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width='.$cfg["ui_dim_superadmin_w"].',height='.$cfg["ui_dim_superadmin_h"].'")
-	}
-	</script>';
-	$superAdminLink .= "<a href=\"JavaScript:SuperAdmin('superadmin.php".$param."')\">";
-	if ((isset($linkText)) && ($linkText != ""))
-		$superAdminLink .= $linkText;
-	else
-		$superAdminLink .= '<img src="images/arrow.gif" width="9" height="9" title="Version" border="0">';
-	$superAdminLink .= '</a>';
-	return $superAdminLink;
-}
-
-/* ************************************************************************** */
-
-/**
  * gets metainfo of a torrent as string
  *
  * @param $torrent name of the torrent
