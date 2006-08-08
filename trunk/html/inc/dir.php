@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* $Id: dir.php 189 2006-08-06 20:03:40Z msn_exploder $ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager
@@ -44,7 +44,7 @@ $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dir.tmpl");
 // Are we to delete something?
 if ($del != "") {
 	$current = delDirEntry($del);
-	header("Location: dir.php?dir=".urlencode($current));
+	header("Location: index.php?page=dir&dir=".urlencode($current));
 }
 
 // Are we to download something?
@@ -89,7 +89,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg['user']." tried to download ".$down);
 	}
-	header("Location: dir.php?dir=".urlencode($current));
+	header("Location: index.php?page=dir&dir=".urlencode($current));
 }
 
 // Are we to download something?
@@ -148,7 +148,7 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg['user']." tried to download ".$tar);
 	}
-	header("Location: dir.php?dir=".urlencode($current));
+	header("Location: index.php?page=dir&dir=".urlencode($current));
 }
 
 // -----------------------------------------------------------------------------
@@ -176,10 +176,10 @@ $bg = $bgLight;
 $dirName = stripslashes($dirName);
 if (isset($dir)) {
 	//setup default parent directory URL
-	$parentURL = "dir.php";
+	$parentURL = "index.php?page=dir";
 	//get the real parentURL
 	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1) {
-		$parentURL="dir.php?dir=" . urlencode($matches[1]);
+		$parentURL="index.php?page=dir$dir=" . urlencode($matches[1]);
 	}
 	$tmpl->setvar('parentURL', $parentURL);
 	$tmpl->setvar('_BACKTOPARRENT', _BACKTOPARRENT);
