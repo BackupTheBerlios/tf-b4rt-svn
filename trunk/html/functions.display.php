@@ -253,7 +253,7 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 		function CheckSFV(dir,file) {
 			var width = screen.width/2-300;
 			var height = screen.height/2-110;
-			var InfoWin = window.open("checkSFV.php?dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
+			var InfoWin = window.open("index.php?page=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
 		}
 		</script>
 	</HEAD>

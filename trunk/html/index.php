@@ -99,6 +99,15 @@ if(isset($_GET['page'])) {
 		case "drivespace":
 			require_once("inc/drivespace.php");
 		break;
+		case "cookiehelp":
+			require_once("inc/cookiehelp.php");
+		break;
+		case "checkSFV":
+			require_once("inc/checkSFV.php");
+		break;
+		case "all_services":
+			require_once("inc/all_services.php");
+		break;
 	}
 }
 else {
