@@ -753,7 +753,7 @@ sub status {
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
 		$retval .= eval { $trigger->status(); };
 	}
-	
+
 	return $retval;
 }
 
@@ -900,7 +900,10 @@ sub check {
 	print "3. database\n";
 
 	# require
-	require FluxDB;
+	if (!(eval "require FluxDB")) {
+		print "Error : cant load database-module FluxDB\n";
+		exit;
+	}
 
 	# create instance
 	$fluxDB = FluxDB->new();
@@ -939,78 +942,128 @@ sub check {
 	print "5. service-modules\n";
 
 	# Qmgr
-	#print " - Qmgr : ";
-	#require Qmgr;
-	#$qmgr = Qmgr->new();
-	#$qmgr->initialize();
-	#if ($qmgr->getState() < 1) {
-	#	print STDERR "error initializing service-module Qmgr :\n";
-	#	print STDERR $qmgr->getMessage()."\n";
-	#}
-	#if(exists &Qmgr::new) {
-	#	$qmgr->destroy();
-	#	delete_package('Qmgr');
-	#	undef $qmgr;
-	#}
+	print " - Qmgr : ";
+	if (eval "require Qmgr") {
+		eval {
+			$qmgr = Qmgr->new();
+			$qmgr->initialize();
+			if ($qmgr->getState() < 1) {
+				print "error initializing service-module Qmgr :\n";
+				print $qmgr->getMessage()."\n";
+			}
+			if (exists &Qmgr::new) {
+				$qmgr->destroy();
+				delete_package('Qmgr');
+				undef $qmgr;
+			}
+		};
+		if ($@) {
+			print "\n $@\n";
+		} else {
+			# everything ok
+		}
+	} else {
+		print "Error : cant load service-module Qmgr\n";
+	}
 
 	# Fluxinet
 	print " - Fluxinet : ";
-	require Fluxinet;
-	$fluxinet = Fluxinet->new();
-	$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
-	if ($fluxinet->getState() < 1) {
-		print STDERR "error initializing service-module Fluxinet :\n";
-		print STDERR $fluxinet->getMessage()."\n";
-	}
-	if (exists &Fluxinet::new) {
-		$fluxinet->destroy();
-		delete_package('Fluxinet');
-		undef $fluxinet;
+	if (eval "require Fluxinet") {
+		eval {
+			$fluxinet = Fluxinet->new();
+			$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+			if ($fluxinet->getState() < 1) {
+				print "error initializing service-module Fluxinet :\n";
+				print $fluxinet->getMessage()."\n";
+			}
+			if (exists &Fluxinet::new) {
+				$fluxinet->destroy();
+				delete_package('Fluxinet');
+				undef $fluxinet;
+			}
+		};
+		if ($@) {
+			print "\n $@\n";
+		} else {
+			# everything ok
+		}
+	} else {
+		print "Error : cant load service-module Fluxinet\n";
 	}
 
 	# Watch
 	print " - Watch : ";
-	require Watch;
-	$watch = Watch->new();
-	$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
-	if ($watch->getState() < 1) {
-		print STDERR "error initializing service-module Watch :\n";
-		print STDERR $watch->getMessage()."\n";
-	}
-	if (exists &Watch::new) {
-		$watch->destroy();
-		delete_package('Watch');
-		undef $watch;
+	if (eval "require Watch") {
+		eval {
+			$watch = Watch->new();
+			$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
+			if ($watch->getState() < 1) {
+				print "error initializing service-module Watch :\n";
+				print $watch->getMessage()."\n";
+			}
+			if (exists &Watch::new) {
+				$watch->destroy();
+				delete_package('Watch');
+				undef $watch;
+			}
+		};
+		if ($@) {
+			print "\n $@\n";
+		} else {
+			# everything ok
+		}
+	} else {
+		print "Error : cant load service-module Watch\n";
 	}
 
 	# Clientmaint
 	print " - Clientmaint : ";
-	require Clientmaint;
-	$clientmaint = Clientmaint->new();
-	$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
-	if ($clientmaint->getState() < 1) {
-		print STDERR "error initializing service-module Clientmaint :\n";
-		print STDERR $clientmaint->getMessage()."\n";
-	}
-	if (exists &Clientmaint::new) {
-		$clientmaint->destroy();
-		delete_package('Clientmaint');
-		undef $clientmaint;
+	if (eval "require Clientmaint") {
+		eval {
+			$clientmaint = Clientmaint->new();
+			$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
+			if ($clientmaint->getState() < 1) {
+				print "error initializing service-module Clientmaint :\n";
+				print $clientmaint->getMessage()."\n";
+			}
+			if (exists &Clientmaint::new) {
+				$clientmaint->destroy();
+				delete_package('Clientmaint');
+				undef $clientmaint;
+			}
+		};
+		if ($@) {
+			print "\n $@\n";
+		} else {
+			# everything ok
+		}
+	} else {
+		print "Error : cant load service-module Clientmaint\n";
 	}
 
 	# Trigger
 	print " - Trigger : ";
-	require Trigger;
-	$trigger = Trigger->new();
-	$trigger->initialize();
-	if ($trigger->getState() < 1) {
-		print STDERR "error initializing service-module Trigger :\n";
-		print STDERR $trigger->getMessage()."\n";
-	}
-	if (exists &Trigger::new) {
-		$trigger->destroy;
-		delete_package('Trigger');
-		undef $trigger;
+	if (eval "require Trigger") {
+		eval {
+			$trigger = Trigger->new();
+			$trigger->initialize();
+			if ($trigger->getState() < 1) {
+				print "error initializing service-module Trigger :\n";
+				print $trigger->getMessage()."\n";
+			}
+			if (exists &Trigger::new) {
+				$trigger->destroy();
+				delete_package('Trigger');
+				undef $trigger;
+			}
+		};
+		if ($@) {
+			print "\n $@\n";
+		} else {
+			# everything ok
+		}
+	} else {
+		print "Error : cant load service-module Trigger\n";
 	}
 
 	# destroy fluxDB
