@@ -54,6 +54,9 @@ if(isset($_GET['page'])) {
 		case "startpop":
 			require_once("inc/startpop.php");
 		break;
+		case "renameFolder":
+			require_once("inc/renameFolder.php");
+		break;
 	}
 }
 else {
