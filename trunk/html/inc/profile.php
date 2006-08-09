@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* $Id: profile.php 189 2006-08-06 20:03:40Z msn_exploder $ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager
@@ -269,7 +269,7 @@ switch ($op) {
 		$settings = processSettingsParams();
 		saveUserSettings($cfg["uid"],$settings);
 		AuditAction( $cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
-		header( "location: profile.php" );
+		header( "location: index.php?page=profile" );
 	break;
 
 //******************************************************************************
@@ -283,7 +283,7 @@ switch ($op) {
 			AddCookieInfo( $newCookie );
 			AuditAction( $cfg["constants"]["admin"], "New Cookie: " . $newCookie["host"] . " | " . $newCookie["data"] );
 		}
-		header( "location: profile.php?op=showCookies" );
+		header( "location: index.php?page=profile&op=showCookies" );
 	break;
 
 //******************************************************************************
@@ -295,7 +295,7 @@ switch ($op) {
 		$cookie = getCookie( $cid );
 		deleteCookieInfo( $cid );
 		AuditAction( $cfg["constants"]["admin"], _DELETE . " Cookie: " . $cookie["host"] );
-		header( "location: profile.php?op=showCookies" );
+		header( "location: index.php?page=profile&op=showCookies" );
 	break;
 
 //******************************************************************************
@@ -308,7 +308,7 @@ switch ($op) {
 		global $cfg;
 		modCookieInfo($cid,$newCookie);
 		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
-		header("location: profile.php?op=showCookies");
+		header("location: index.php?page=profile&op=showCookies");
 	break;
 }
 

@@ -63,6 +63,12 @@ if(isset($_GET['page'])) {
 		case "readmsg":
 			require_once("inc/readmsg.php");
 		break;
+		case "profile":
+			require_once("inc/profile.php");
+		break;
+		case "multiup":
+			require_once("inc/multiup.php");
+		break;
 	}
 }
 else {
