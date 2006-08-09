@@ -133,7 +133,7 @@ define('_ID_HOSTS','Hosts');
 define('_ID_MRTG','Graph');
 
 // url constants
-define('_URL_DEREFERRER','dereferrer.php?u=');
+define('_URL_DEREFERRER','index.php?page=dereferrer&u=');
 
 // auth-constants
 define('_AUTH_BASIC_REALM','torrentflux-b4rt');

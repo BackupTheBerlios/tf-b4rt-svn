@@ -84,6 +84,21 @@ if(isset($_GET['page'])) {
 		case "login":
 			require_once("inc/login.php");
 		break;
+		case "dereferrer":
+			require_once("inc/dereferrer.php");
+		break;
+		case "details":
+			require_once("inc/details.php");
+		break;
+		case "downloaddetails":
+			require_once("inc/downloaddetails.php");
+		break;
+		case "downloadhosts":
+			require_once("inc/downloadhosts.php");
+		break;
+		case "drivespace":
+			require_once("inc/drivespace.php");
+		break;
 	}
 }
 else {

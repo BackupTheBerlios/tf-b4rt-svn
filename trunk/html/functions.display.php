@@ -721,7 +721,7 @@ function getTransferList() {
 		$percentDone = $af->percent_done;
 
 		// more vars
-		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('downloaddetails.php?alias=".$alias."&torrent=".urlencode($entry)."')\">";
+		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
@@ -842,7 +842,7 @@ function getTransferList() {
 		// led
 		$hd = getStatusImage($af);
 		if ($transferRunning == 1)
-			$output .= "<a href=\"JavaScript:ShowDetails('downloadhosts.php?alias=".$alias."&torrent=".urlencode($entry)."')\">";
+			$output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 		$output .= "<img src=\"images/".$hd->image."\" width=\"16\" height=\"16\" title=\"".$hd->title.$entry."\" border=\"0\" align=\"absmiddle\">";
 		if ($transferRunning == 1)
 			$output .= "</a>";
@@ -1006,7 +1006,7 @@ function getTransferList() {
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
-		$output .= "<a href=\"details.php?torrent=".urlencode($entry);
+		$output .= "<a href=\"index.php?page=details&torrent=".urlencode($entry);
 		if($transferRunning == 1)
 			$output .= "&als=false";
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";

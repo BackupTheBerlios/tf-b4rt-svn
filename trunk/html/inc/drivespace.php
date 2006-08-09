@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* $Id: drivespace.php 189 2006-08-06 20:03:40Z msn_exploder $ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager
@@ -26,33 +26,22 @@
 
 require_once("config.php");
 require_once("functions.php");
-require_once("metaInfo.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-global $cfg;
+# create new template
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/drivespace.tmpl");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/details.tmpl");
-$tmpl->setvar('head', getHead(_TORRENTDETAILS));
-$tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
+$result = shell_exec("df -h ".$cfg["path"]);
+$result2 = shell_exec("du -sh ".$cfg["path"]."*");
+
+# Nothing without set some vars
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-
-$torrent = getRequestVar('torrent');
-
-$als = getRequestVar('als');
-if($als == "false") {
-	$tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
-}
-else {
-	$tmpl->setvar('showMetaInfo', showMetaInfo($torrent,true));
-}
-
-switch ($cfg["metainfoclient"]) {
-	case "transmissioncli":
-		$tmpl->setvar('transmissioncli', 1);
-		$tmpl->setvar('getTorrentScrapeInfo', getTorrentScrapeInfo($torrent));
-	break;
-}
-
+$tmpl->setvar('result', $result);
+$tmpl->setvar('result2', $result2);
+$tmpl->setvar('head', getHead(_DRIVESPACE));
 $tmpl->setvar('foot', getFoot());
+
+# lets parse the hole thing
 $tmpl->pparse();
 ?>
