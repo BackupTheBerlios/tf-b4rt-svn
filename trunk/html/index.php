@@ -42,6 +42,9 @@ if(isset($_GET['page'])) {
 		case "who":
 			require_once("inc/who.php");
 		break;
+		case "viewnfo":
+			require_once("inc/viewnfo.php");
+		break;
 	}
 }
 else {
