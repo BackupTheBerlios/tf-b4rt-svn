@@ -728,6 +728,32 @@ sub deletePidFile {
 sub status {
 	my $retval = "";
 	$retval .= "Fluxd has been up since $start_time\n";
+
+	# Qmgr
+	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		$retval .= eval { $qmgr->status(); };
+	}
+
+	# Fluxinet
+	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+		$retval .= eval { $fluxinet->status(); };
+	}
+
+	# Clientmaint
+	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+		$retval .= eval { $clientmaint->status(); };
+	}
+
+	# Watch
+	if ((defined $watch) && ($watch->getState() == 1)) {
+		$retval .= eval { $watch->status(); };
+	}
+
+	# Trigger
+	if ((defined $trigger) && ($trigger->getState() == 1)) {
+		$retval .= eval { $trigger->status(); };
+	}
+	
 	return $retval;
 }
 

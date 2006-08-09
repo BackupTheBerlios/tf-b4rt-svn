@@ -340,7 +340,7 @@ sub loadFluxUsers {
 			uid => $uid,
 			username => $userid,
 		};
-		$names{$userid} = $uid;
+		$names{$userid} = $index;
 		$index++;
 	}
 	$sth->finish();

@@ -250,7 +250,7 @@ sub LoadQueue {
 	while (<QUEUEFILE>) {
 		chomp;
 		my ( $torrent, $username ) = split;
-		push($users[$names{$username}]{queue}, $torrent);
+		push($users[$names{$username}]{'queue'}, $torrent);
 	}
 	close QUEUEFILE;
 	# done loading, delete queue-file
