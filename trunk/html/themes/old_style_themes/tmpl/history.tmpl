@@ -9,10 +9,10 @@
 			<tmpl_if name="empty" value="1">
 					</td>
 					<td align="right">
-						<a href="history.php?min=<tmpl_var name="prev">">
+						<a href="index.php?page=history&min=<tmpl_var name="prev">">
 							<font class="TinyWhite">&lt;&lt;<tmpl_var name="min"> <tmpl_var name="_SHOWPREVIOUS">]</font>
 						</a> &nbsp;
-						<a href="history.php?min=<tmpl_var name="max">">
+						<a href="index.php?page=history&min=<tmpl_var name="max">">
 							<font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font>
 						</a>
 					</td>
@@ -21,7 +21,7 @@
 			<tmpl_elseif name="empty" value="2">
 					</td>
 					<td align="right">
-						<a href="history.php?min=<tmpl_var name="prev">">
+						<a href="index.php?page=history&min=<tmpl_var name="prev">">
 							<font class="TinyWhite">&lt;&lt;<tmpl_var name="min"> <tmpl_var name="_SHOWPREVIOUS">]</font>
 						</a> &nbsp;
 					</td>
@@ -30,7 +30,7 @@
 			<tmpl_elseif name="empty" value="3">
 					</td>
 					<td align="right">
-						<a href="history.php?min=<tmpl_var name="max">">
+						<a href="index.php?page=history&min=<tmpl_var name="max">">
 							<font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font>
 						</a>
 					</td>
@@ -89,14 +89,14 @@
 					<tr>
 						<td align="left">
 							<tmpl_if name="empty" value="2">
-								<a href="history.php?min=<tmpl_var name="prev">">
+								<a href="index.php?page=history&min=<tmpl_var name="prev">">
 									<font class="TinyWhite">&lt;&lt;<tmpl_var name="min"> <tmpl_var name="_SHOWPREVIOUS">]</font></a> &nbsp;
 							</tmpl_if>
 						</td>
 						<td align="right">
 
 							<tmpl_if name="empty" value="3">
-								<a href="history.php?min=<tmpl_var name="max">">
+								<a href="index.php?page=history&min=<tmpl_var name="max">">
 									<font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font></a>
 							</tmpl_if>
 						</td>

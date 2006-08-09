@@ -33,6 +33,9 @@ if(isset($_GET['page'])) {
 		case "dir":
 			require_once("inc/dir.php");
 		break;
+		case "history":
+			require_once("inc/history.php");
+		break;
 	}
 }
 else {
