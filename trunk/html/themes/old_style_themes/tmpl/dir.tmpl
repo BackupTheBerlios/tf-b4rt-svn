@@ -143,16 +143,16 @@ function UncompDetails(URL) {
 							<a href="JavaScript:moveFile('move.php?path=<tmpl_var name="urlencode1">&start=true')"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_rar" value="1">
-							<a href="javascript:UncompDetails('uncomp.php?file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')">
+							<a href="javascript:UncompDetails('index.php?page=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')">
 								<img src="images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0>
 							</a>
 						<tmpl_elseif name="enable_rar" value="2">
-							<a href="javascript:UncompDetails('uncomp.php?file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')">
+							<a href="javascript:UncompDetails('index.php?page=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')">
 								<img src="images/zip.png" width=16 height=16 title="Unzip" border=0>
 							</a>
 						</tmpl_if>
 						<tmpl_if name="enable_view_nfo">
-							<a href="index.php?page= viewnfo&path=<tmpl_var name="urlencode4">">
+							<a href="index.php?page=viewnfo&path=<tmpl_var name="urlencode4">">
 								<img src="images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0>
 							</a>
 						</tmpl_if>

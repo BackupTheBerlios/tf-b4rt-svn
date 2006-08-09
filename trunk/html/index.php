@@ -45,6 +45,9 @@ if(isset($_GET['page'])) {
 		case "viewnfo":
 			require_once("inc/viewnfo.php");
 		break;
+		case "uncomp":
+			require_once("inc/uncomp.php");
+		break;
 	}
 }
 else {
