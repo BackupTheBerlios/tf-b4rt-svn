@@ -69,6 +69,12 @@ if(isset($_GET['page'])) {
 		case "multiup":
 			require_once("inc/multiup.php");
 		break;
+		case "move":
+			require_once("inc/move.php");
+		break;
+		case "mrtg":
+			require_once("inc/mrtg.php");
+		break;
 	}
 }
 else {
