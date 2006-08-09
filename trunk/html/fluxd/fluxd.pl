@@ -373,13 +373,15 @@ sub loadServiceModules {
 	if ($fluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Qmgr::new)) {
-			require Qmgr;
-			$qmgr = Qmgr->new();
-			$qmgr->initialize();
-			if ($qmgr->getState() < 1) {
-				print STDERR "error initializing service-module Qmgr :\n";
-				print STDERR $qmgr->getMessage()."\n";
-				# TODO : handle this                                            /* TODO */
+			if (eval "require Qmgr") {
+				$qmgr = Qmgr->new();
+				$qmgr->initialize();
+				if ($qmgr->getState() < 1) {
+					print STDERR "error initializing service-module Qmgr :\n";
+					print STDERR $qmgr->getMessage()."\n";
+				}
+			} else {
+				print STDERR "error loading service-module Qmgr :\n";
 			}
 		}
 	} else {
@@ -395,13 +397,15 @@ sub loadServiceModules {
 	if ($fluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Fluxinet::new)) {
-			require Fluxinet;
-			$fluxinet = Fluxinet->new();
-			$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
-			if ($fluxinet->getState() < 1) {
-				print STDERR "error initializing service-module Fluxinet :\n";
-				print STDERR $fluxinet->getMessage()."\n";
-				# TODO : handle this                                            /* TODO */
+			if (eval "require Fluxinet") {
+				$fluxinet = Fluxinet->new();
+				$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+				if ($fluxinet->getState() < 1) {
+					print STDERR "error initializing service-module Fluxinet :\n";
+					print STDERR $fluxinet->getMessage()."\n";
+				}
+			} else {
+				print STDERR "error loading service-module Fluxinet :\n";
 			}
 		}
 	} else {
@@ -417,13 +421,15 @@ sub loadServiceModules {
 	if ($fluxDB->getFluxConfig("fluxd_Watch_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Watch::new)) {
-			require Watch;
-			$watch = Watch->new();
-			$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
-			if ($watch->getState() < 1) {
-				print STDERR "error initializing service-module Watch :\n";
-				print STDERR $watch->getMessage()."\n";
-				# TODO : handle this                                            /* TODO */
+			if (eval "require Watch") {
+				$watch = Watch->new();
+				$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
+				if ($watch->getState() < 1) {
+					print STDERR "error initializing service-module Watch :\n";
+					print STDERR $watch->getMessage()."\n";
+				}
+			} else {
+				print STDERR "error loading service-module Watch :\n";
 			}
 		}
 	} else {
@@ -439,13 +445,15 @@ sub loadServiceModules {
 	if ($fluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Clientmaint::new)) {
-			require Clientmaint;
-			$clientmaint = Clientmaint->new();
-			$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
-			if ($clientmaint->getState() < 1) {
-				print STDERR "error initializing service-module Clientmaint :\n";
-				print STDERR $clientmaint->getMessage()."\n";
-				# TODO : handle this                                            /* TODO */
+			if (eval "require Clientmaint") {
+				$clientmaint = Clientmaint->new();
+				$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
+				if ($clientmaint->getState() < 1) {
+					print STDERR "error initializing service-module Clientmaint :\n";
+					print STDERR $clientmaint->getMessage()."\n";
+				}
+			} else {
+				print STDERR "error loading service-module Clientmaint :\n";
 			}
 		}
 	} else {
@@ -461,13 +469,15 @@ sub loadServiceModules {
 	if ($fluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Trigger::new)) {
-			require Trigger;
-			$trigger = Trigger->new();
-			$trigger->initialize();
-			if ($trigger->getState() < 1) {
-				print STDERR "error initializing service-module Trigger :\n";
-				print STDERR $trigger->getMessage()."\n";
-				# TODO : handle this                                            /* TODO */
+			if (eval "require Trigger") {
+				$trigger = Trigger->new();
+				$trigger->initialize();
+				if ($trigger->getState() < 1) {
+					print STDERR "error initializing service-module Trigger :\n";
+					print STDERR $trigger->getMessage()."\n";
+				}
+			} else {
+				print STDERR "error loading service-module Trigger :\n";
 			}
 		}
 	} else {
@@ -813,29 +823,53 @@ sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
 
 	# FluxDB
-	require FluxDB;
-	print "FluxDB Version ".FluxDB->getVersion()."\n";
+	print "FluxDB Version : ";
+	if (eval "require FluxDB") {
+		print FluxDB->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
 
 	# Clientmaint
-	require Clientmaint;
-	print "Clientmaint Version ".Clientmaint->getVersion()."\n";
+	print "Clientmaint Version : ";
+	if (eval "require Clientmaint") {
+		print Clientmaint->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
 
 	# Fluxinet
-	require Fluxinet;
-	print "Fluxinet Version ".Fluxinet->getVersion()."\n";
+	print "Fluxinet Version : ";
+	if (eval "require Fluxinet") {
+		print Fluxinet->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
 
-	# Qmgr                                                                      /* TODO */
-	#require Qmgr;
-	#print "Qmgr Version ".Qmgr->getVersion()."\n";
-	print "Qmgr Version ?\n";
+	# Qmgr
+	print "Qmgr Version : ";
+	if (eval "require Qmgr") {
+		print Qmgr->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
 
 	# Trigger
-	require Trigger;
-	print "Trigger Version ".Trigger->getVersion()."\n";
+	print "Trigger Version : ";
+	if (eval "require Trigger") {
+		print Trigger->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
 
 	# Watch
-	require Watch;
-	print "Watch Version ".Watch->getVersion()."\n";
+	print "Watch Version : ";
+	if (eval "require Watch") {
+		print Watch->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
+
 }
 
 #------------------------------------------------------------------------------#
