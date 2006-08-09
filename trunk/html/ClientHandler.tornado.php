@@ -56,7 +56,7 @@ class ClientHandlerTornado extends ClientHandler
             AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->cfg["btclient_tornado_bin"]." is not valid");
             if (IsAdmin()) {
                 $this->status = -1;
-                header("location: admin.php?op=configSettings");
+                header("location: index.php?page=admin&op=configSettings");
                 return;
             } else {
                 $this->status = -1;

@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* $Id: admin.php 225 2006-08-09 19:14:50Z msn_exploder $ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager
@@ -42,16 +42,16 @@ function getMenu() {
 	$menu = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
 	$menu .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
 	$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>');
-	$menu .= " | <a href=\"admin.php\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
-	$menu .= "<a href=\"admin.php?op=CreateUser\"><font class=\"adminlink\">"._NEWUSER_MENU."</font></a> | ";
-	if ($cfg['enable_xfer'] == 1) $menu .= "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a>";
+	$menu .= " | <a href=\"index.php?page=admin\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=CreateUser\"><font class=\"adminlink\">"._NEWUSER_MENU."</font></a> | ";
+	if ($cfg['enable_xfer'] == 1) $menu .= "<a href=\"index.php?page=admin&op=xfer\"><font class=\"adminlink\">"._XFER."</font></a>";
 	$menu .= "</div></td></tr>";
 	$menu .= "</table><br>";
 	return $menu;
@@ -105,7 +105,7 @@ function getUserSection() {
 		$userSection .= '</td>';
 		$userSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_activity.'</div></td>';
 		$userSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_percent.'%</div></td>';
-		$userSection .= '<td align="right"><a href="admin.php?op=showUserActivity&user_id='.$user_id.'">';
+		$userSection .= '<td align="right"><a href="index.php?page=admin&op=showUserActivity&user_id='.$user_id.'">';
 		$userSection .= '<img src="images/properties.png" width="18" height="13" title="'.$user_id.'\'s '._USERSACTIVITY.'" border="0"></a></td>';
 		$userSection .= '</tr>';
 		$userSection .= '</table>';
@@ -124,10 +124,10 @@ function getUserSection() {
 			$type_user = _SUPERADMIN;
 		}
 		if ($user_level <= 1 || IsSuperAdmin())
-			$userSection .= "<a href=\"admin.php?op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
+			$userSection .= "<a href=\"index.php?page=admin&op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
 		$userSection .= "<img src=\"".$user_image."\" title=\"".$user_id." - ".$type_user."\">";
 		if ($user_level <= 1)
-			$userSection .= "<a href=\"admin.php?op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
+			$userSection .= "<a href=\"index.php?page=admin&op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
 		else
 			$userSection .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\"n/a\">";
 		$userSection .= "</div></td>";
@@ -188,11 +188,11 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$output = "<tr><td colspan=6><center><strong>-- "._NORECORDSFOUND." --</strong></center></td></tr>";
 	$prev = ($min-$offset);
 	if ($prev >= 0) {
-		$prevlink = "<a href=\"admin.php?op=showUserActivity&min=".$prev."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
+		$prevlink = "<a href=\"index.php?page=admin&op=showUserActivity&min=".$prev."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
 		$prevlink .= "<font class=\"TinyWhite\">&lt;&lt;".$min." "._SHOWPREVIOUS."]</font></a> &nbsp;";
 	}
 	if ($inx>=$offset) {
-		$morelink = "<a href=\"admin.php?op=showUserActivity&min=".$max."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
+		$morelink = "<a href=\"index.php?page=admin&op=showUserActivity&min=".$max."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
 		$morelink .= "<font class=\"TinyWhite\">["._SHOWMORE."&gt;&gt;</font></a>";
 	}
 	$activity = '<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>';
@@ -209,7 +209,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$activity .= '<script src="overlib.js" type="text/javascript"></script>';
 	$activity .= '<div align="center">';
 	$activity .= '<table>';
-	$activity .= '<form action="admin.php?op=showUserActivity" name="searchForm" method="post">';
+	$activity .= '<form action="index.php?page=admin&op=showUserActivity" name="searchForm" method="post">';
 	$activity .= '<tr>';
 		$activity .= '<td>';
 		$activity .= '<strong>'._ACTIVITYSEARCH.'</strong>&nbsp;&nbsp;&nbsp;';
@@ -340,14 +340,14 @@ switch ($op) {
 			addNewRSS($newRSS);
 			AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
 		}
-		header("location: admin.php?op=editRSS");
+		header("location: index.php?page=admin&op=editRSS");
 	break;
 
 	case "deleteRSS":
 		$rid = getRequestVar('rid');
 		AuditAction($cfg["constants"]["admin"], _DELETE." RSS: ".getRSS($rid));
 		deleteOldRSS($rid);
-		header("location: admin.php?op=editRSS");
+		header("location: index.php?page=admin&op=editRSS");
 	break;
 
 	// Link Mod
@@ -379,7 +379,7 @@ switch ($op) {
 		$lid = getRequestVar('lid');
 		AuditAction($cfg["constants"]["admin"], _DELETE." Link: ".getSite($lid)." [".getLink($lid)."]");
 		deleteOldLink($lid);
-		header("location: admin.php?op=editLinks");
+		header("location: index.php?page=admin&op=editLinks");
 	break;
 
 	case "CreateUser":
@@ -399,7 +399,7 @@ switch ($op) {
 			DeleteThisUser($user_id);
 			AuditAction($cfg["constants"]["admin"], _DELETE." "._USER.": ".$user_id);
 		}
-		header("location: admin.php");
+		header("location: index.php?page=admin");
 	break;
 
 	case "editUser":
@@ -427,7 +427,7 @@ switch ($op) {
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
 		$continue = getRequestVar('continue');
-		header("Location: admin.php?op=".$continue);
+		header("Location: index.php?page=admin&op=".$continue);
 	break;
 
 	case "updateQueueSettings":
@@ -452,7 +452,7 @@ switch ($op) {
 		$settings = processSettingsParams();
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux UI Settings");
-		header("location: admin.php?op=uiSettings");
+		header("location: index.php?page=admin&op=uiSettings");
 	break;
 
 	case "searchSettings":

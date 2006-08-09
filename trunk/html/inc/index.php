@@ -61,7 +61,7 @@ if ($cfg["AllowQueing"]) {
 		} else {
 			AuditAction($cfg["constants"]["error"], "Error starting Queue Manager");
 			if (IsAdmin())
-				header("location: admin.php?op=queueSettings");
+				header("location: index.php?page=admin&op=queueSettings");
 			else
 				header("location: index.php?page=index");
 			exit();

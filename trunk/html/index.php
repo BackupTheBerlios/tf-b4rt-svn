@@ -108,6 +108,9 @@ if(isset($_GET['page'])) {
 		case "all_services":
 			require_once("inc/all_services.php");
 		break;
+		case "admin":
+			require_once("inc/admin.php");
+		break;
 	}
 }
 else {

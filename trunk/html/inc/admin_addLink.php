@@ -10,5 +10,5 @@ if(!empty($newLink)){
 	addNewLink($newLink,$newSite);
 	AuditAction($cfg["constants"]["admin"], "New "._LINKS_MENU.": ".$newSite." [".$newLink."]");
 }
-header("location: admin.php?op=editLinks");
+header("location: index.php?page=admin&op=editLinks");
 ?>

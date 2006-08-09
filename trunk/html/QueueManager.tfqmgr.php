@@ -202,7 +202,7 @@ class QueueManager_tfqmgr extends QueueManager
                 // log
                 AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent);
             } else {
-                header("location: admin.php?op=queueSettings");
+                header("location: index.php?page=admin&op=queueSettings");
                 exit;
             }
         }

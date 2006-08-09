@@ -19,7 +19,7 @@ if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	}
 	updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline);
 	AuditAction($cfg["constants"]["admin"], _EDITUSER.": ".$user_id);
-	header("location: admin.php");
+	header("location: index.php?page=admin");
 }
 $tmpl->pparse();
 ?>

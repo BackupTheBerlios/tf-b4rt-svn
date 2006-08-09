@@ -91,11 +91,11 @@ if ($_POST["AllowQueing"] != $cfg["AllowQueing"] ||
 	$settings = $_POST;
 	saveSettings($settings);
 	AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Queue Settings");
-	header("Location: admin.php?op=queueSettings&m=".urlencode($message));
+	header("Location: index.php?page=admin&op=queueSettings&m=".urlencode($message));
 } else {
 	$settings = $_POST;
 	saveSettings($settings);
 	AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Queue Settings");
-	header("Location: admin.php?op=queueSettings");
+	header("Location: index.php?page=admin&op=queueSettings");
 }
 ?>

@@ -253,7 +253,7 @@ class ClientHandler
                 AuditAction($this->cfg["constants"]["error"], "Error -- " . $this->cfg["path"] . " is not writable.");
                 if (IsAdmin()) {
                     $this->status = -1;
-                    header("location: admin.php?op=configSettings");
+                    header("location: index.php?page=admin&op=configSettings");
                     return;
                 } else {
                     $this->status = -1;

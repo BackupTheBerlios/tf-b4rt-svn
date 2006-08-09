@@ -347,7 +347,7 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 		}
 		$titleBar .= "<a href=\"index.php?page=readmsg\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
 		if(IsAdmin()) {
-			$titleBar .= "&nbsp;<a href=\"admin.php\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
+			$titleBar .= "&nbsp;<a href=\"index.php?page=admin\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
 		}
 		$titleBar .= "&nbsp;<a href=\"logout.php\"><img src=\"images/logout.gif\" width=13 height=12 title=\"Logout\" border=0></a>";
 	}

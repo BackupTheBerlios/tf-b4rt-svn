@@ -99,7 +99,7 @@ if(!empty($user) && !empty($iamhim)) {
 	$user_count = $db->GetOne($sql);
 	if($user_count == 0) {
 		firstLogin($user,$iamhim);
-		$next_loc = "admin.php?op=configSettings";
+		$next_loc = "index.php?page=admin&op=configSettings";
 	}
 	// perform auth
 	if (performAuthentication($user,$iamhim) == 1) {
