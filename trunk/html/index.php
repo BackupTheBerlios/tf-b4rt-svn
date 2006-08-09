@@ -36,10 +36,16 @@ if(isset($_GET['page'])) {
 		case "history":
 			require_once("inc/history.php");
 		break;
+		case "xfer":
+			require_once("inc/xfer.php");
+		break;
+		case "who":
+			require_once("inc/who.php");
+		break;
 	}
 }
 else {
-# use "old" style
+# use "old" style not to break tools
 	require_once("inc/index.php");
 }
 ?>
