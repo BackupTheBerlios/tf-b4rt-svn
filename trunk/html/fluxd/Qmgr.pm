@@ -43,6 +43,7 @@ my $message = "";
 
 my ( $time, $localtime, %globals );
 my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
+my ( $MAX_TORRENTS_SYS, $MAX_TORRENTS_USR );
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -100,10 +101,10 @@ sub initialize {
 		LoadQueue();
 	} else {
 		print "Qmgr : Creating empty queue";
-		#foreach my $user (@users) {
-		#	$user{"queue"} = ();
-		#	$user{"running"} = ();
-		#}
+		foreach my $user (@FluxDB::users) {
+			$user{"queue"} = ();
+			$user{"running"} = ();
+		}
 	}
 
 	# set state
@@ -149,179 +150,84 @@ sub ProcessQueue {
 	# hold cycle-start-time
 	my $timeStart = time();
 
-	## queue-loop
-	my $queueIdx = 0;
-	my $notDoneProcessingQueue = 1;
-	my $startTry = 0;
-	while ($notDoneProcessingQueue) {
+	# update running torrents
+	UpdateRunningTorrents();
 
-		# update running torrents
-		UpdateRunningTorrents();
+	# process queue
+	my $jobcountq = Queue();
+	$notDoneProcessingQueue = 1;
+	if ($jobcountq > 0) { # we have queued jobs
 
-		# process queue
-		my $jobcountq = Queue();
-		$notDoneProcessingQueue = 1;
-		if ($jobcountq > 0) { # we have queued jobs
+	USER: foreach my $user (@FluxDB::users) {
+		# initilize some variables for this user
+		my $queueId = 0
+		my $startTry = 0;
 
+		# Grab the next torrent
+		my $nextTorrent = $user{'queue'}[queueId];
+		my $nextUser = $user{'username'};
 
-	# major re-write!!!#
-			# next job
-			my $nextTorrent = $QmgrVars{'queue'}[$queueIdx];
-			my $nextUser = $QmgrVars{'jobs'}{'queued'}{$nextTorrent};
+		# check to ensure that we aren't already running this torrent
+		foreach my $torrent ($user{'Running'} {
+			if ($torrent eq $nextTorrent) {
+				print "Qmgr : removing already running job from queue $nextTorrent ($nextUser)\n";
+				stack($queueId, \@{user{'queue'}});
 
-			# check if this queue-entry exists in running-jobs. dont start what is
-			# running. this may be after a restart or torrent was started outside.
-			if (exists $QmgrVars{'jobs'}{'running'}{$nextTorrent}) { # torrent already running
-				# remove job from queue
-				if ($QmgrVars{'LOGLEVEL'} > 1) {
-					WriteLog("MAIN : removing already running job from queue : ".$nextTorrent." (".$nextUser.")");
+				if ($queueId < (Queue()-1)) {
+					# there is a next entry
+					print "Qmgr : next queue-entry\n" if ($Fluxd::LOGLEVEL > 2);
+					$queueId++;
+				} else {
+					# queue is empty
+					print "Qmgr : last queue-entry for $nextUser\n" if ($Fluxd::LOGLEVEL > 2);
+					next USER;
 				}
-				if ($queueIdx > 0) { # not first entry, stack-action
-					my @stack;
-					for (my $i = 0; $i < $queueIdx; $i++) {
-						push(@stack,(shift @{$QmgrVars{'queue'}}));
-					}
-					shift @{$QmgrVars{'queue'}};
-					for (my $i = 0; $i < $queueIdx; $i++) {
-						push(@{$QmgrVars{'queue'}}, (shift @stack));
-					}
-					$queueIdx--;
-				} else { # first entry, just shift
-					shift @{$QmgrVars{'queue'}};
-				}
-				# remove job from jobs
-				if ($QmgrVars{'LOGLEVEL'} > 1) {
-					WriteLog("MAIN : removing already running job from jobs queued : ".$nextTorrent." (".$nextUser.")");
-				}
-				delete($QmgrVars{'jobs'}{'queued'}{$nextTorrent});
-				#
-				if ($queueIdx < (countQueue()-1)) { # there is a next entry
-					if ($QmgrVars{'LOGLEVEL'} > 2) {
-						WriteLog("MAIN : next queue-entry");
-					}
-					$queueIdx++;
-				} else { # no more in queue
-					if ($QmgrVars{'LOGLEVEL'} > 2) {
-						WriteLog("MAIN : last queue-entry");
-					}
-					$notDoneProcessingQueue = 0;
-				}
-			} else {
-
-				my @jobAry = (keys %{$QmgrVars{'jobs'}{'running'}});
-				my $jobcount = scalar(@jobAry);
-
-				# lets see if max limit applies
-				if ($jobcount < $QmgrVars{'MAX_TORRENTS_SYS'}) { # max limit does not apply
-					# lets see if per user limit applies
-					my $userCtr = 0;
-					foreach my $anJob (@jobAry) {
-						if ($QmgrVars{'jobs'}{'running'}{$anJob} eq $nextUser) {
-							$userCtr++;
-						}
-					}
-					sleep 1;
-					if ($userCtr < $QmgrVars{'MAX_TORRENTS_USR'}) { # user limit does not apply
-						# startup the thing
-						WriteLog("MAIN : starting torrent : ".$nextTorrent." (".$nextUser.")");
-						if (StartTorrent($nextTorrent) == 1) { # start torrent succeeded
-
-							# reset start-counter-var
-							$startTry = 0;
-
-							# remove job from queue
-							if ($QmgrVars{'LOGLEVEL'} > 1) {
-								WriteLog("MAIN : removing job from queue : ".$nextTorrent." (".$nextUser.")");
-							}
-							if ($queueIdx > 0) { # not first entry, stack-action
-								my @stack;
-								for (my $i = 0; $i < $queueIdx; $i++) {
-									push(@stack,(shift @{$QmgrVars{'queue'}}));
-								}
-								shift @{$QmgrVars{'queue'}};
-								for (my $i = 0; $i < $queueIdx; $i++) {
-									push(@{$QmgrVars{'queue'}}, (shift @stack));
-								}
-								$queueIdx--;
-							} else { # first entry, just shift
-								shift @{$QmgrVars{'queue'}};
-							}
-
-							# remove job from jobs
-							if ($QmgrVars{'LOGLEVEL'} > 1) {
-								WriteLog("MAIN : removing job from jobs queued : ".$nextTorrent." (".$nextUser.")");
-							}
-							delete($QmgrVars{'jobs'}{'queued'}{$nextTorrent});
-
-							# add job to jobs running (not nec. is don in-loop anyway)
-							if ($QmgrVars{'LOGLEVEL'} > 1) {
-								WriteLog("MAIN : adding job to jobs running : ".$nextTorrent." (".$nextUser.")");
-							}
-							sleep 1;
-							$QmgrVars{'jobs'}{'running'}{$nextTorrent} = $nextUser;
-
-							# done with queue ?
-							$jobcountq = scalar(@{$QmgrVars{'queue'}});
-							if ($jobcountq > 0) { # more jobs in queue
-								$queueIdx = 0;
-								# dont hurry too much when processing queue
-								sleep 1;
-							} else { # nothing more in queue
-								$notDoneProcessingQueue = 0;
-							}
-						} else { # start torrent failed
-							# already tried max-times to start this thing ?
-							if ($startTry == $QmgrVars{'MAX_START_TRIES'}) {
-								$startTry = 0;
-								# TODO : give an option to remove bogus torrents
-								if ($queueIdx < (countQueue()-1)) { # there is a next entry
-									if ($QmgrVars{'LOGLEVEL'} > 1) {
-										WriteLog("MAIN : $QmgrVars{'MAX_START_TRIES'} errors when starting, skipping job : ".$nextTorrent." (".$nextUser.")");
-									}
-								$queueIdx++;
-								} else { # no more in queue
-									if ($QmgrVars{'LOGLEVEL'} > 1) {
-										WriteLog("MAIN : $QmgrVars{'MAX_START_TRIES'} errors when starting, skipping job : ".$nextTorrent." (".$nextUser.")");
-									}
-									$notDoneProcessingQueue = 0;
-								}
-							} else {
-								$startTry++;
-								sleep $QmgrVars{'START_TRIES_SLEEP'};
-							}
-						}
-
-					} else { # user-limit for this user applies, check next queue-entry if one exists
-						if ($queueIdx < (Queue()-1)) { # there is a next entry
-							if ($QmgrVars{'LOGLEVEL'} > 1) {
-								WriteLog("MAIN : user limit applies, skipping job : ".$nextTorrent." (".$nextUser.") (next queue-entry)");
-							}
-							$queueIdx++;
-						} else { # no more in queue
-							if ($QmgrVars{'LOGLEVEL'} > 1) {
-								WriteLog("MAIN : user limit applies, skipping job : ".$nextTorrent." (".$nextUser.") (last queue-entry)");
-							}
-							$notDoneProcessingQueue = 0;
-						}
-					}
-				} else { # max limit does apply
-					if ($QmgrVars{'LOGLEVEL'} > 1) {
-						WriteLog("MAIN : max limit applies, skipping job : ".$nextTorrent." (".$nextUser.")");
-					}
-					$notDoneProcessingQueue = 0;
-				}
-
-			} # else already runnin
-
-		} else { # no queued jobs
-			if ($QmgrVars{'LOGLEVEL'} > 2) {
-				WriteLog("MAIN : empty queue... sleeping...");
 			}
-			$notDoneProcessingQueue = 0;
 		}
-	} # queue-while-loop
 
-	$QmgrVars{'globals'}{'main'} += 1;
+		# ok, torrent isn't running, try to start it up
+
+		# check to see if system max applies
+		my $jobCount = Running();
+		if ($jobCount >= $MAX_SYS) {
+			# Can't start it now.
+			print "Qmgr : Max limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($Fluxd::LOGLEVEL);
+			last USER;
+		}
+
+		# check to see if user max applies
+		if (scalar($user{'Running'} >= $MAX_USR) {
+			# Can't start it now.
+			print "Qmgr : User limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($Fluxd::LOGLEVEL);
+			next USER;
+		}
+
+		# Neither limit applies, we can try to start the torrent
+		print "Qmgr : starting torrent $nextTorrent ($nextUser)\n";
+		if (Fluxd::fluxcli("start", $nextTorrent) == 1) {
+			# reset start-tries counter
+			$startTry = 0;
+
+			# remove torrent from queue
+			print "Qmgr : Removing $nextTorrent from queue\n" if ($Fluxd::LOGLEVEL);
+			stack($queueId, \@{user{'queue'}});
+
+			# slow it down now!
+			sleep 1;
+		} else {
+			# how many times have we tried to start this thing?
+			if ($startTry >= $MAX_START_TRIES) {
+				# TODO : provide option to remove bogus torrents
+				print "Qmgr : tried $MAX_START_TRIES to start $nextTorrent, skipping\n" if ($Fluxd::LOGLEVEL);
+				next USER;
+			} else {
+				$startTry++;
+				sleep $START_TRIES_SLEEP;
+			}
+		}
+	} # USER
+
+	$globals{'main'} += 1;
 }
 
 #-------------------------------------------------------------------------------
@@ -334,77 +240,6 @@ sub printVersion {
 }
 
 #-----------------------------------------------------------------------------#
-# Sub: printUsage                                                             #
-# Arguments: Null                                                             #
-# Returns: Null                                                               #
-#-----------------------------------------------------------------------------#
-sub printUsage {
-
-my $PROG = "Qmgr";
-my $DAEMON = "Qmgrd";
-my $EXTENSION = "pl";
-
-	print <<"USAGE";
-
-$DAEMON.$EXTENSION Revision $REVISION
-
-Usage:
-  To start the Qmgr Daemon:
-	$DAEMON.$EXTENSION </path/to/downloads> <Max torrents> <Max user torrents>
-
-  To run the client script:
-	$PROG.$EXTENSION <stop|status|jobs|queue|list|add|remove|worker>
-
-	<stop>		: Stop the Daemon
-	<status>	: Print Status information
-	<jobs>		: Print the total number of jobs
-	<queue>		: Print the number of queued jobs
-	<list>		: List queued jobs
-	<add>		: Add a torrent to the queue, required args -
-				torrent id
-				user name to run torent as
-	<remove>	: Remove a torrent from the queue, required args -
-				torrent id
-	<worker>	: returns a boolean to determine if the daemon script is
-			  still running as normal (true) or is trying to shut down (false)
-	<set>		: Allows you to set certain config variables witout restarting the
-			  daemon. Required args -
-				Key (variable name to change)
-				[Value] Optional - value to set variable to. If left out
-					will just return the current value.
-
-	Anything else given as an initial arguement will dislpay his help page
-
-Note: Both scripts can take optional arguments for host and port to bind to (in the case
-      of the daemon script) or connect to (for the client script). However, these arguments
-      must be the last two arguments passed in, meaning that if you wanted to start a Qmgr
-      at 192.168.2.250:9999, you'd issue the command
-	$DAEMON.$EXTENSION /path/to/downloads int int 192.168.2.250 9999
-      if you wanted to add add foo.toorent to that server you'd use
-	$PROG.$EXTENSION add foo.toorent user 192.168.2.250 9999
-      However, neither of these are working as of yet. The default is to bind to
-      127.0.0.1:2606. You can change the default by editing the new{ ... } sub in Qmgr.pm
-      to change the daemon's binding. Remember to also edit the $PROG.$EXTENSION script to
-      change where it looks for connections
-
-Examples:
-$DAEMON.$EXTENSION /usr/local/torrent 5 2
-
-$PROG.$EXTENSION  stop
-$PROG.$EXTENSION  status
-$PROG.$EXTENSION  jobs
-$PROG.$EXTENSION  queue
-$PROG.$EXTENSION  list
-$PROG.$EXTENSION  add foo.torrent username
-$PROG.$EXTENSION  remove foo.torrent
-$PROG.$EXTENSION  worker
-$PROG.$EXTENSION  set MAX_TORRENTS_USR 5
-$PROG.$EXTENSION  set LOGLEVEL 1
-
-USAGE
-}
-
-#-----------------------------------------------------------------------------#
 # Sub: LoadQueue                                                              #
 # Arguments: Null                                                             #
 # Returns: Null                                                               #
@@ -414,8 +249,7 @@ sub LoadQueue {
 	open(QUEUEFILE,"< $PATH_QUEUE_FILE");
 	while (<QUEUEFILE>) {
 		chomp;
-		my $torrent = shift;
-		my $username = shift;
+		my ( $torrent, $username ) = split;
 		push($users[$names{$username}]{queue}, $torrent);
 	}
 	close QUEUEFILE;
@@ -432,9 +266,10 @@ sub SaveQueue {
 	# open queue-file
 	open(QUEUEFILE,">$PATH_QUEUE_FILE");
 	# queued torrents
-	foreach my $user (@users) {
-		foreach my $torrent (@{
-		print QUEUEFILE $queueEntry."\n";
+	foreach my $user (@FluxDB::users) {
+		foreach my $torrent (@{user{'queue'}}) {
+			print QUEUEFILE $torrent." ".$user{"username"}."\n";
+		}
 	}
 	# close queue-file
 	close(QUEUEFILE);
@@ -515,7 +350,11 @@ sub Jobs {
 # Returns: Number of queued jobs                                              #
 #-----------------------------------------------------------------------------#
 sub Queue {
-	return scalar((keys %{$QmgrVars{'jobs'}{'queued'}}));
+	my $return = 0;
+	foreach my $user (@FluxDB::users) {
+		return += scalar($user{'queue'});
+	}
+	return $return;
 }
 
 #-----------------------------------------------------------------------------#
@@ -524,7 +363,11 @@ sub Queue {
 # Returns: Number of running jobs                                             #
 #-----------------------------------------------------------------------------#
 sub Running{
-	return scalar((keys %{$QmgrVars{'jobs'}{'running'}}));
+	my $return = 0;
+	foreach my $user (@FluxDB::users) {
+		return += scalar($user{'running'});
+	}
+	return $return;
 }
 
 #-----------------------------------------------------------------------------#
@@ -535,8 +378,10 @@ sub Running{
 sub List {
 	my $return = "";
 	# return list
-	foreach my $queueEntry (@{$QmgrVars{'queue'}}) {
-		$return .= $queueEntry.".torrent\n";
+	foreach my $user (@FluxDB::users) {
+		foreach my $queueEntry (@{user{'queue'}}) {
+			$return .= $queueEntry.".torrent\n";
+		}
 	}
 	return $return;
 }
@@ -660,29 +505,6 @@ sub UpdateRunningTorrents {
 			}
 		}
 	}
-}
-
-#-----------------------------------------------------------------------------#
-# Sub: StartTorrent                                                           #
-# Arguments: torrent                                                          #
-# Returns: Bool on if the torrent started                                     #
-#-----------------------------------------------------------------------------#
-sub StartTorrent {
-	# Start a torrent
-	my $torrent = shift;
-	if (!(defined $torrent)) {
-		return 0;
-	}
-	my $StartCommand = $QmgrVars{'PATH_PHP'}." ".$QmgrVars{'FLUXCLI'}." start ".$torrent.".torrent &> /dev/null";
-	if ($QmgrVars{'LOGLEVEL'} > 2) {
-		WriteLog("StartTorrent : start-command : ".$StartCommand);
-	}
-	eval { system($StartCommand); };
-	if ($@) {
-		return 0;
-	}
-	$QmgrVars{'globals'}{'started'} += 1;
-	return 1;
 }
 
 #-----------------------------------------------------------------------------#
@@ -853,6 +675,30 @@ sub StripTorrentName {
 		$torrent = substr($torrent, 0, -8);
 	}
 	return $torrent;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: stack                                                                   #
+# Arguments: integer, array ref                                                #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
+sub stack {
+	my $index = shift;
+	my @array = @{shift};
+
+	if ($index) {
+		my @stack;
+		for (my $i = 0; $i < $index; $i++) {
+			push(@stack, (shift @array));
+		}
+		shift @array;
+		for (my $i = 0; $i < $index; $i++) {
+			push(@array, (shift@stack));
+		}
+		$index--;
+	} else {
+		shift @array;
+	}
 }
 
 ################################################################################
