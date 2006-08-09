@@ -1528,9 +1528,9 @@ function getDirList($dirName) {
 							// Allow Avanced start popup?
 							if ($cfg["advanced_start"] != 0) {
 								if($show_run)
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('startpop.php?torrent=".urlencode($entry)."')\"><img src=\"images/run_on.gif\" width=16 height=16 title=\""._RUNTORRENT."\" border=0></a>";
+									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?page=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/run_on.gif\" width=16 height=16 title=\""._RUNTORRENT."\" border=0></a>";
 								else
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('startpop.php?torrent=".urlencode($entry)."')\"><img src=\"images/seed_on.gif\" width=16 height=16 title=\""._SEEDTORRENT."\" border=0></a>";
+									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?page=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/seed_on.gif\" width=16 height=16 title=\""._SEEDTORRENT."\" border=0></a>";
 							} else {
 								// Quick Start
 								if($show_run)

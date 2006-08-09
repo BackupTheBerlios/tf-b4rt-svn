@@ -51,6 +51,9 @@ if(isset($_GET['page'])) {
 		case "torrentSearch":
 			require_once("inc/torrentSearch.php");
 		break;
+		case "startpop":
+			require_once("inc/startpop.php");
+		break;
 	}
 }
 else {
