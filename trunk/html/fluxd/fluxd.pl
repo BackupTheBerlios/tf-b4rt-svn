@@ -76,9 +76,8 @@ processArguments();
 loadServiceModules();
 
 # Here we go! The main loop!
-use vars qw( $loop );
-$loop = 0;
-while ( 1 ) {
+my $loop = 1;
+while ( $loop ) {
 
 	# check Connections
 	checkConnections();
@@ -110,9 +109,6 @@ while ( 1 ) {
 
 	# TODO : sleep-code                                                         /* TODO */
 	sleep 1; # DEBUG
-
-	# increment loop-counter
-	$loop++;
 }
 
 #------------------------------------------------------------------------------#
@@ -322,6 +318,9 @@ sub daemonize {
 #------------------------------------------------------------------------------#
 sub daemonShutdown {
 	print "Shutting down!\n";
+
+	# set main-loop-flag
+	$loop = 0;
 
 	# remove socket
 	print STDOUT "deleting socket ".$PATH_SOCKET."\n"; # DEBUG
@@ -901,7 +900,7 @@ sub check {
 			print " - ".$mod."\n";
 			next;
 		} else {
-			print "Fatal Error : cant load module ".$mod."\n";
+			print "Error : cant load module ".$mod."\n";
 			# Turn on Autoflush;
 			$| = 1;
 			print "Should we try to install the module with CPAN ? (y|n) ";
@@ -997,7 +996,7 @@ sub check {
 			# everything ok
 		}
 	} else {
-		print "Error : cant load service-module Qmgr\n";
+		print "cant load service-module Qmgr\n";
 	}
 
 	# Fluxinet
@@ -1022,7 +1021,7 @@ sub check {
 			# everything ok
 		}
 	} else {
-		print "Error : cant load service-module Fluxinet\n";
+		print "cant load service-module Fluxinet\n";
 	}
 
 	# Watch
@@ -1047,7 +1046,7 @@ sub check {
 			# everything ok
 		}
 	} else {
-		print "Error : cant load service-module Watch\n";
+		print "cant load service-module Watch\n";
 	}
 
 	# Clientmaint
@@ -1072,7 +1071,7 @@ sub check {
 			# everything ok
 		}
 	} else {
-		print "Error : cant load service-module Clientmaint\n";
+		print "cant load service-module Clientmaint\n";
 	}
 
 	# Trigger
@@ -1097,7 +1096,7 @@ sub check {
 			# everything ok
 		}
 	} else {
-		print "Error : cant load service-module Trigger\n";
+		print "cant load service-module Trigger\n";
 	}
 
 	# destroy fluxDB
