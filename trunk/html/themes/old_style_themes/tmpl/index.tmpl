@@ -369,9 +369,9 @@
 									</form>
 									<tmpl_if name="page_refresh">
 										*** <tmpl_var name="_PAGEWILLREFRESH"> <span id='span_refresh'><tmpl_var name="page_refresh"></span> <tmpl_var name="_SECONDS"> ***<br>
-										<a href="?pagerefresh=false"><font class="tiny"><tmpl_var name="_TURNOFFREFRESH"></font></a>
+										<a href="index.php?page=index&pagerefresh=false"><font class="tiny"><tmpl_var name="_TURNOFFREFRESH"></font></a>
 									<tmpl_else>
-										<a href="?pagerefresh=true"><font class="tiny"><tmpl_var name="_TURNONREFRESH"></font></a>
+										<a href="index.php?page=index&pagerefresh=true"><font class="tiny"><tmpl_var name="_TURNONREFRESH"></font></a>
 									</tmpl_if>
 									<tmpl_if name="no_bigboldwarning">
 										<script language="JavaScript">
