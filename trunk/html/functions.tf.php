@@ -52,7 +52,7 @@ function Authenticate() {
 	global $cfg, $db;
 	$create_time = time();
 	if(!isset($_SESSION['user'])) {
-		header('location: login.php');
+		header('location: index.php?page=login');
 		exit();
 	}
 	if ($_SESSION['user'] == md5($cfg["pagetitle"])) {
@@ -66,7 +66,7 @@ function Authenticate() {
 	if($recordset->RecordCount() != 1) {
 		AuditAction($cfg["constants"]["error"], "FAILED AUTH: ".$cfg['user']);
 		session_destroy();
-		header('location: login.php');
+		header('location: index.php?page=login');
 		exit();
 	}
 	list($uid, $hits, $cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
@@ -1383,7 +1383,7 @@ function getDirList($dirName) {
 		}
 		*/
 		if ($cfg["enable_torrent_download"])
-			$torrentfilelink = "<a href=\"maketorrent.php?download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
+			$torrentfilelink = "<a href=\"index.php?page=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		//
 		$hd = getStatusImage($af);
 		//$output .= "<tr><td class=\"tiny\"><img src=\"images/".$hd->image."\" width=16 height=16 title=\"".$hd->title.$entry."\" border=0 align=\"absmiddle\">".$torrentfilelink.$displayname."</td>";
@@ -1420,7 +1420,7 @@ function getDirList($dirName) {
 		$output .= "</td>";
 
 		$output .= "<td align=\"right\"><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
-		$output .= "<td align=\"center\"><a href=\"message.php?to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+		$output .= "<td align=\"center\"><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
 		$output .= "<td valign=\"bottom\"><div align=\"center\">";
 		if ($af->running == "2") {
 			$output .= "<i><font color=\"#32cd32\">"._NEW."</font></i>";

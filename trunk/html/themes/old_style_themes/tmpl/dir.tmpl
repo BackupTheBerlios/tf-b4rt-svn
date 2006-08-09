@@ -76,7 +76,7 @@ function UncompDetails(URL) {
 								<img src="images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">
 							</tmpl_if>
 						</tmpl_if>
-						<a href="JavaScript:MakeTorrent('maketorrent.php?path=<tmpl_var name="urlencode1">')">
+						<a href="JavaScript:MakeTorrent('index.php?page=maketorrent&path=<tmpl_var name="urlencode1">')">
 							<img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0>
 						</a>
 						<a href="index.php?page=dir&tar=<tmpl_var name="urlencode1">">
@@ -157,7 +157,7 @@ function UncompDetails(URL) {
 							</a>
 						</tmpl_if>
 						<tmpl_if name="enable_maketorrent">
-							<a href="JavaScript:MakeTorrent('maketorrent.php?path=<tmpl_var name="urlencode1">')">
+							<a href="JavaScript:MakeTorrent('index.php?page=maketorrent&path=<tmpl_var name="urlencode1">')">
 								<img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0>
 							</a>
 						</tmpl_if>

@@ -11,7 +11,7 @@
 						</td>
 						<td align="right">
 							<tmpl_if name="IsUser">
-								<a href="message.php?to_user=<tmpl_var name="from_user">&rmid=<tmpl_var name="mid">"><img src="images/reply.gif" width=16 height=16 title="<tmpl_var name="_REPLY">" border=0></a>
+								<a href="index.php?page=message&to_user=<tmpl_var name="from_user">&rmid=<tmpl_var name="mid">"><img src="images/reply.gif" width=16 height=16 title="<tmpl_var name="_REPLY">" border=0></a>
 							</tmpl_if>
 							<a href="index.php?page=readmsg&delete=<tmpl_var name="mid">"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 						</td>
@@ -48,7 +48,7 @@
 						<img src="images/delete_off.gif" width=16 height=16 title="" border=0>
 					<tmpl_else>
 						<tmpl_if name="IsUser2">
-							<a href="message.php?to_user=<tmpl_var name="from_user">&rmid=<tmpl_var name="mid">"><img src="images/reply.gif" width=16 height=16 title="<tmpl_var name="_REPLY">" border=0></a>
+							<a href="index.php?page=message&to_user=<tmpl_var name="from_user">&rmid=<tmpl_var name="mid">"><img src="images/reply.gif" width=16 height=16 title="<tmpl_var name="_REPLY">" border=0></a>
 						</tmpl_if>
 						<a href="index.php?page=readmsg&delete=<tmpl_var name="mid">"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 					</tmpl_if>

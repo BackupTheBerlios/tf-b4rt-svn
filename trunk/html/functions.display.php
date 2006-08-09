@@ -365,7 +365,7 @@ function getMessageList() {
 	$users = GetUsers();
 	$messageList = '<div align="center">'.
 	'<table border="0" cellpadding="0" cellspacing="0">'.
-	'<form name="formMessage" action="message.php" method="post">'.
+	'<form name="formMessage" action="index.php?page=message" method="post">'.
 	'<tr><td>' . _SENDMESSAGETO ;
 	$messageList .= '<select name="to_user">';
 	for($inx = 0; $inx < sizeof($users); $inx++) {
@@ -694,7 +694,7 @@ function getTransferList() {
 			$displayname .= "...";
 		}
 		if ($cfg["enable_torrent_download"])
-			$torrentfilelink = "<a href=\"maketorrent.php?download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
+			$torrentfilelink = "<a href=\"index.php?page=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		else
 			$torrentfilelink = "";
 
@@ -855,7 +855,7 @@ function getTransferList() {
 
 		// =============================================================== owner
 		if ($settings[0] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\"><a href=\"message.php?to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+			$output .= "<td valign=\"bottom\" align=\"center\"><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
 
 		// ================================================================ size
 		if ($settings[1] != 0)

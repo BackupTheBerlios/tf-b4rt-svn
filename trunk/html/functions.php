@@ -77,15 +77,15 @@ if (isAuthenticated() != 1) {
 	if (isset($credentials)) {
 		if (performAuthentication($credentials['username'],$credentials['password']) == 1) {
 			if (isAuthenticated() != 1) {
-				header('location: login.php');
+				header('location: index.php?page=login');
 				exit();
 			}
 		} else {
-			header('location: login.php');
+			header('location: index.php?page=login');
 			exit();
 		}
 	} else {
-		header('location: login.php');
+		header('location: index.php?page=login');
 		exit();
 	}
 }

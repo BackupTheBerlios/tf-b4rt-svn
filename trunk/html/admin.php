@@ -86,7 +86,7 @@ function getUserSection() {
 			$user_icon = "images/user.gif";
 		$userSection .= "<tr>";
 		if (IsUser($user_id))
-			$userSection .= "<td><a href=\"message.php?to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
+			$userSection .= "<td><a href=\"index.php?page=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
 		else
 			$userSection .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."</td>";
 		$userSection .= "<td><div class=\"tiny\" align=\"right\">".$hits."</div></td>";
@@ -172,7 +172,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$ip_info = $ip_resolved."<br>".$user_agent;
 		$output .= "<tr>";
 		if (IsUser($user_id))
-			$output .= "<td><a href=\"message.php?to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a>&nbsp;&nbsp;</td>";
+			$output .= "<td><a href=\"index.php?page=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a>&nbsp;&nbsp;</td>";
 		else
 			$output .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."&nbsp;&nbsp;</td>";
 		$output .= "<td><div class=\"tiny\">".$action."</div></td>";

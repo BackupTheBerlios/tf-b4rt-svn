@@ -75,6 +75,15 @@ if(isset($_GET['page'])) {
 		case "mrtg":
 			require_once("inc/mrtg.php");
 		break;
+		case "message":
+			require_once("inc/message.php");
+		break;
+		case "maketorrent":
+			require_once("inc/maketorrent.php");
+		break;
+		case "login":
+			require_once("inc/login.php");
+		break;
 	}
 }
 else {

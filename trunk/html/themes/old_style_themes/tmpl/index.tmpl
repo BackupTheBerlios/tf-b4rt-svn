@@ -208,13 +208,13 @@
 								<tmpl_if name="ui_displayusers">
 								    <b><tmpl_var name="_ONLINE">:</b><br>
 								    <tmpl_loop name="arOnlineUsers">
-									   <a href="message.php?to_user="<tmpl_var name="user">">
+									   <a href="index.php?page=message&to_user="<tmpl_var name="user">">
 									   <img src="images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 								    </tmpl_loop>
     								<tmpl_if name="hide_offline" value="0">
     									<b><tmpl_var name="_OFFLINE">:</b></br>
     									<tmpl_loop name="arOfflineUsers">
-    									   <a href="message.php?to_user="<tmpl_var name="user">">
+    									   <a href="index.php?page=message&to_user="<tmpl_var name="user">">
     									   <img src="images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
     								    </tmpl_loop>
     								</tmpl_if>

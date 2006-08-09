@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* $Id: login.php 206 2006-08-08 23:39:50Z msn_exploder $ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager

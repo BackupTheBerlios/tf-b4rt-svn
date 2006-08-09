@@ -161,7 +161,7 @@ if ($cfg["show_server_load"] != 0)
 // =============================================================================
 
 if(! isset($_SESSION['user'])) {
-	header('location: login.php');
+	header('location: index.php?page=login');
 	exit();
 }
 

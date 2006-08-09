@@ -64,7 +64,7 @@ if ($cfg["auth_type"] == 2) { /* Basic-Auth */
     header('HTTP/1.0 401 Unauthorized');
     @ob_end_clean();
 } else {
-    header('location: login.php');
+    header('location: index.php?page=login');
 }
 exit();
 
