@@ -1,6 +1,6 @@
 <?php
 
-/* $Id$ */
+/* $Id: torrentSearch.php 189 2006-08-06 20:03:40Z msn_exploder $ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager
@@ -80,7 +80,7 @@ if (is_file('searchEngines/'.$searchEngine.'Engine.php')) {
 				$mainStart = true;
 			}
 			if ($mainStart == false) $tmpCatLinks .= " | ";
-			$tmpCatLinks .= "<a href=\"torrentSearch.php?searchEngine=".$searchEngine."&mainGenre=".$mainId."\">".$mainName."</a>";
+			$tmpCatLinks .= "<a href=\"index.php?page=torrentSearch&searchEngine=".$searchEngine."&mainGenre=".$mainId."\">".$mainName."</a>";
 			$mainStart = false;
 		}
 		$tmpl->setvar('links_list', $catLinks.$tmpCatLinks);

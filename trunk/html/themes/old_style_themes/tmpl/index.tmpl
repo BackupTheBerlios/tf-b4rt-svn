@@ -151,7 +151,8 @@
 							</tmpl_if>
 							<tmpl_if name="enable_search">
 								<tr>
-									<form name="form_search" action="torrentSearch.php" method="get">
+									<form name="form_search" action="index.php" method="get">
+										<input type="hidden" name="page" value="torrentSearch">
 										<td>
 											<hr>
 											Torrent <tmpl_var name="_SEARCH">:<br>

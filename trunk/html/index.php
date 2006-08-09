@@ -48,6 +48,9 @@ if(isset($_GET['page'])) {
 		case "uncomp":
 			require_once("inc/uncomp.php");
 		break;
+		case "torrentSearch":
+			require_once("inc/torrentSearch.php");
+		break;
 	}
 }
 else {
