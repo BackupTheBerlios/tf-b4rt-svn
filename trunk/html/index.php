@@ -57,6 +57,12 @@ if(isset($_GET['page'])) {
 		case "renameFolder":
 			require_once("inc/renameFolder.php");
 		break;
+		case "readrss":
+			require_once("inc/readrss.php");
+		break;
+		case "readmsg":
+			require_once("inc/readmsg.php");
+		break;
 	}
 }
 else {

@@ -229,7 +229,7 @@
 				<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
 					<div align="center">
 						<font face="Arial" size="2">
-							<a href="readrss.php">
+							<a href="index.php?page=readrss">
 								<img src="images/download_owner.gif" width="16" height="16" border="0" title="RSS Torrents" align="absmiddle">RSS Torrents</a>
 							|
 							<a href="drivespace.php">
@@ -448,7 +448,7 @@
 		<tmpl_if name="IsForceReadMsg">
 			<script language="JavaScript">
 				if (confirm("tmpl_if name="_ADMINMESSAGE">")) {
-					document.location = "readmsg.php";
+					document.location = "index.php?page=readmsg";
 				}
 			</script>
 		</tmpl_if>

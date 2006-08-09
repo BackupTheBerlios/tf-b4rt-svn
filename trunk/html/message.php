@@ -51,7 +51,7 @@ if (!empty($message)) {
 		$force_read = 0;
 	$message = check_html($message, "nohtml");
 	SaveMessage($to_user, $cfg['user'], $message, $to_all, $force_read);
-	header("location: readmsg.php");
+	header("location: index.php?page=readmsg");
 } else {
 	$rmid = getRequestVar('rmid');
 	if(!empty($rmid)) {
