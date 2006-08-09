@@ -109,6 +109,24 @@ switch ($op) {
 			);
 		}
 		$tmpl->setloop('theme_list', $theme_list);
+		
+		# Old style themes
+		$arThemes = Get_old_Themes();
+		$old_theme_list = array();
+		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
+			$selected = "";
+			$arThemes2[$inx] = "old_style_themes/".$arThemes[$inx];
+			if ($cfg["theme"] == $arThemes2[$inx]) {
+				$selected = "selected";
+			}
+			array_push($old_theme_list, array(
+				'arThemes' => $arThemes[$inx],
+				'arThemes2' => $arThemes2[$inx],
+				'selected' => $selected,
+				)
+			);
+		}
+		$tmpl->setloop('old_theme_list', $old_theme_list);
 		$tmpl->setvar('_LANGUAGE', _LANGUAGE);
 
 		$arLanguage = GetLanguages();

@@ -148,7 +148,7 @@ function isAuthenticated() {
 	// hold the uid in cfg-array
 	$cfg["uid"] = $uid;
 	// Check for valid theme
-	if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "old_style_themes")) {
 		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg['user']);
 		$cfg["theme"] = $cfg["default_theme"];
 	}
