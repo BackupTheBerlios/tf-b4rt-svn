@@ -3,7 +3,11 @@
 # $Id$
 
 # get transmission-revision from transmission.revision
-REV_TR=`cat transmission.revision`
+if [ -f transmission.revision ]; then
+	REV_TR=`cat transmission.revision`
+else
+	REV_TR=0
+fi
 
 # get cli-revision from id in transmissioncli.c
 REV_CLI=`sed -e '/\$Id:/!d' -e 's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' cli/transmissioncli.c`

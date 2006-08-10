@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 626 2006-07-16 23:40:22Z joshe $
+ * $Id: inout.c 723 2006-08-06 17:16:15Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -417,7 +417,7 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
     {
         /* Should not happen */
         tr_err( "readOrWriteBytes: offset out of range (%lld, %d, %d)",
-                offset, size, write );
+                offset, size, isWrite );
         goto fail;
     }
 

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 679 2006-07-23 19:39:02Z titer $
+ * $Id: transmission.c 751 2006-08-09 22:53:27Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -386,10 +386,11 @@ int tr_torrentCount( tr_handle_t * h )
 
 void tr_torrentIterate( tr_handle_t * h, tr_callback_t func, void * d )
 {
-    tr_torrent_t * tor;
+    tr_torrent_t * tor, * next;
 
-    for( tor = h->torrentList; tor; tor = tor->next )
+    for( tor = h->torrentList; tor; tor = next )
     {
+        next = tor->next;
         func( tor, d );
     }
 }
