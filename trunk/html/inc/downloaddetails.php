@@ -27,7 +27,7 @@
 require_once("config.php");
 require_once("functions.php");
 require_once("AliasFile.php");
-require_once("lib/vlib/vlibTemplate.php");
+
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

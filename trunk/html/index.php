@@ -19,6 +19,8 @@
  To read the license please visit http://www.gnu.org/copyleft/gpl.html
 
 *******************************************************************************/
+# require same global things
+require_once("lib/vlib/vlibTemplate.php");
 
 # really messy
 # but have to do it slowly not to mess everything

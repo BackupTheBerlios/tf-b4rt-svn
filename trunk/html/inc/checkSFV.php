@@ -23,7 +23,7 @@
 require_once("config.php");
 require_once("functions.php");
 require_once("settingsfunctions.php");
-require_once("lib/vlib/vlibTemplate.php");
+
 loadSettings();
 
 # create new template

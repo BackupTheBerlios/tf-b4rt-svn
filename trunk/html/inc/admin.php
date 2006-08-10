@@ -26,7 +26,7 @@
 
 require_once("config.php");
 require_once("functions.php");
-require_once("lib/vlib/vlibTemplate.php");
+
 
 if(!IsAdmin()) {
 	 // the user probably hit this page direct

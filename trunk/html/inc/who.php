@@ -26,7 +26,7 @@
 
 include_once("config.php");
 include_once("functions.php");
-require_once("lib/vlib/vlibTemplate.php");
+
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
