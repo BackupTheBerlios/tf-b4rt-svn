@@ -1,6 +1,12 @@
 <?php
 /* $Id: admin_updateUser.php 102 2006-07-31 05:01:28Z msn_exploder $ */
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_updateUser.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_updateUser.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_updateUser.tmpl");
+}
 $user_id = strtolower($user_id);
 if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	$tmpl->setvar('head', getHead(_ADMINISTRATION));

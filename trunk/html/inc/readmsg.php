@@ -29,7 +29,12 @@ require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/readmsg.tmpl");
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/readmsg.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/readmsg.tmpl");
+}
 
 if(empty($cfg['user'])) {
 	 // the user probably hit this page direct

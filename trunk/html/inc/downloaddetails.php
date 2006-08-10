@@ -29,7 +29,13 @@ require_once("functions.php");
 require_once("AliasFile.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/downloaddetails.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/downloaddetails.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/downloaddetails.tmpl");
+}
 
 $torrent = getRequestVar('torrent');
 $error = "";

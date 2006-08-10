@@ -2,8 +2,13 @@
 /* $Id: admin_uiSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
 // load global settings + overwrite per-user settings
 loadSettings();
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_uiSettings.tmpl");
-
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_uiSettings.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_uiSettings.tmpl");
+}
 $tmpl->setvar('head', getHead("Administration - UI Settings"));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);

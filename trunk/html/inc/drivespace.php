@@ -29,7 +29,12 @@ require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/drivespace.tmpl");
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/drivespace.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/drivespace.tmpl");
+}
 
 $result = shell_exec("df -h ".$cfg["path"]);
 $result2 = shell_exec("du -sh ".$cfg["path"]."*");

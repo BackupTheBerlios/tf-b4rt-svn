@@ -28,7 +28,13 @@ require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/cookiehelp.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/cookiehelp.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/cookiehelp.tmpl");
+}
 
 $tmpl->setvar('head', getHead("Cookie Help", false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

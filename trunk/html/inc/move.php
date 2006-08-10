@@ -25,7 +25,13 @@ require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/move.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/move.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/move.tmpl");
+}
 
 $tmpl->setvar('head', getHead(_MOVE_FILE_TITLE, false));
 

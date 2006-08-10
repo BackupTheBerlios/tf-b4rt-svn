@@ -29,7 +29,13 @@ require_once("functions.php");
 require_once("searchEngines/SearchEngineBase.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/torrentSearch.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/torrentSearch.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/torrentSearch.tmpl");
+}
 
 // Go get the if this is a search request. go get the data and produce output.
 

@@ -31,7 +31,13 @@ require_once("lib/vlib/vlibTemplate.php");
 
 global $cfg;
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/details.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/details.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/details.tmpl");
+}
 $tmpl->setvar('head', getHead(_TORRENTDETAILS));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

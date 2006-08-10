@@ -26,7 +26,13 @@ require_once("settingsfunctions.php");
 require_once("lib/vlib/vlibTemplate.php");
 loadSettings();
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/checkSFV.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/checkSFV.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/checkSFV.tmpl");
+}
 
 $tmpl->setvar('head', getHead('sfv check', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

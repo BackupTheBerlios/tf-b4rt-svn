@@ -29,7 +29,13 @@ require_once("functions.php");
 require_once("metaInfo.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/startpop.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/startpop.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/startpop.tmpl");
+}
 
 $torrent = getRequestVar('torrent');
 // Load saved settings

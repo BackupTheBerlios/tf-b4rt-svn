@@ -5,7 +5,12 @@ require_once("RunningTorrent.php");
 require_once("searchEngines/SearchEngineBase.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_searchSettings.tmpl");
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_searchSettings.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_searchSettings.tmpl");
+}
 $tmpl->setvar('head', getHead("Administration - Search Settings"));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);

@@ -30,7 +30,12 @@ require_once("lastRSS.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/readrss.tmpl");
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/readrss.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/readrss.tmpl");
+}
 
 // check http://varchars.com/rss/ for feeds
 

@@ -25,7 +25,13 @@ require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dereferrer.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dereferrer.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dereferrer.tmpl");
+}
 
 if (isset($_REQUEST["u"])) {
 	$tmpl->setvar('set', 1);

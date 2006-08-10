@@ -25,7 +25,13 @@ require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/uncomp.tmpl");
+# create new template
+if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dir.tmpl");
+}
+else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dir.tmpl");
+}
 
 $tmpl->setvar('head', getHead('Uncompressing File', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
