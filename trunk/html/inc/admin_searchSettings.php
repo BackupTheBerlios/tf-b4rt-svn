@@ -1,5 +1,5 @@
 <?php
-/* $Id: admin_searchSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
+/* $Id$ */
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
 require_once("searchEngines/SearchEngineBase.php");

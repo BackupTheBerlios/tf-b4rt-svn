@@ -1,5 +1,5 @@
 <?php
-/* $Id: admin_default.php 102 2006-07-31 05:01:28Z msn_exploder $ */
+/* $Id$ */
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_default.tmpl");

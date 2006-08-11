@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: admin.php 225 2006-08-09 19:14:50Z msn_exploder $ */
+/* $Id$ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager

@@ -1,5 +1,5 @@
 <?php
-/* $Id: admin_editRSS.php 102 2006-07-31 05:01:28Z msn_exploder $ */
+/* $Id$ */
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

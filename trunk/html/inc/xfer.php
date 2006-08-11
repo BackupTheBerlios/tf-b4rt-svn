@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: xfer.php 189 2006-08-06 20:03:40Z msn_exploder $ */
+/* $Id$ */
 
 /*************************************************************
 *  TorrentFlux xfer Statistics hack

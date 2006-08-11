@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: message.php 216 2006-08-09 10:25:28Z msn_exploder $ */
+/* $Id$ */
 
 /*************************************************************
 *  TorrentFlux - PHP Torrent Manager

@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: QueueManager.Qmgr.php 231 2006-08-09 20:47:39Z msn_exploder $ */
+/* $Id$ */
 
 /*******************************************************************************
 
@@ -34,7 +34,7 @@ class Fluxd
      */
     function getFluxdInstance($cfg) {
         $managerName = "Fluxd";
-        $version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision: 231 $')))));
+        $version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         //Initialize($cfg);
         //
         $pathDataDir = $cfg["path"] . '.fluxd/';

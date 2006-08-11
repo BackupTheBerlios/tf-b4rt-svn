@@ -1,5 +1,5 @@
 <?php
-/* $Id: admin_uiSettings.php 102 2006-07-31 05:01:28Z msn_exploder $ */
+/* $Id$ */
 // load global settings + overwrite per-user settings
 loadSettings();
 # create new template
