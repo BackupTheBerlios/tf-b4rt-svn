@@ -149,6 +149,7 @@ define("_FREESPACE","Ledigt utrymme");
 define("_UPLOADED", "Uppladdat");
 
 define("_QMANAGER_MENU","kösystem");
+define("_FLUXD_MENU","fluxd");
 define("_SETTINGS_MENU","inställningar");
 define("_SEARCHSETTINGS_MENU","sökinställningar");
 define("_ERRORSREPORTED","Fel");

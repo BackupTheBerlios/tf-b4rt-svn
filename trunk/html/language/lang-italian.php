@@ -150,6 +150,7 @@ define("_FREESPACE","Free Space");
 define("_UPLOADED", "Uploaded");
 
 define("_QMANAGER_MENU","queue");
+define("_FLUXD_MENU","fluxd");
 define("_SETTINGS_MENU","settings");
 define("_SEARCHSETTINGS_MENU","search settings");
 define("_ERRORSREPORTED","Errors");

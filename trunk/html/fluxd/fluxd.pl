@@ -385,7 +385,7 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if(exists &Qmgr::new) {
+		if( (exists &Qmgr::new) && (defined $qmgr) ){
 			$qmgr->destroy();
 			delete_package('Qmgr');
 			undef $qmgr;
@@ -409,7 +409,7 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if (exists &Fluxinet::new) {
+		if ( (exists &Fluxinet::new) && (defined $fluxinet) ){
 			$fluxinet->destroy();
 			delete_package('Fluxinet');
 			undef $fluxinet;
@@ -433,7 +433,7 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if (exists &Watch::new) {
+		if ( (exists &Watch::new) && (defined $watch) ) {
 			$watch->destroy();
 			delete_package('Watch');
 			undef $watch;
@@ -457,7 +457,7 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if (exists &Clientmaint::new) {
+		if ( (exists &Clientmaint::new) && (defined $clientmaint) ){
 			$clientmaint->destroy();
 			delete_package('Clientmaint');
 			undef $clientmaint;
@@ -481,7 +481,7 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if (exists &Trigger::new) {
+		if ( (exists &Trigger::new) && (defined $trigger) ) {
 			$trigger->destroy;
 			delete_package('Trigger');
 			undef $trigger;
@@ -497,8 +497,15 @@ sub loadServiceModules {
 #------------------------------------------------------------------------------#
 sub gotSigHup {
 	print "Got SIGHUP, re-loading service-modules...";
-	loadServiceModules();
-	print "done.\n";
+	# have FluxDB reload the DB first, so we can see the changes
+	if ($fluxDB->loadFluxConfig()) {
+		loadServiceModules();
+		print "done.\n";
+	} else {
+		print "Error\n";
+		print STDERR "Error connecting to DB to read changes\n";
+		print STDERR $fluxDB->getMessage()."\n";
+	}
 }
 
 #------------------------------------------------------------------------------#

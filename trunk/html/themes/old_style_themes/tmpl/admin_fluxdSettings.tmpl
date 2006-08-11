@@ -1,0 +1,336 @@
+<tmpl_var name="head">
+<tmpl_var name="menu">
+<tmpl_if name="new_msg">
+	<table cellpadding="5" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td align="center" bgcolor="<tmpl_var name="table_header_bg">">
+				<strong><tmpl_var name="message"></strong>
+			</td>
+		</tr>
+	</table>
+</tmpl_if>
+<div align="center">
+	<a name="Fluxd" id="Fluxd"></a>
+	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+		<tr>
+			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<font class="title">
+					<tmpl_if name="fluxdRunning">
+						&nbsp;&nbsp;<img src="images/green.gif" align="absmiddle" align="absmiddle"> Fluxd Running (pid: <tmpl_var name="fluxdPid">)
+					<tmpl_else>
+						&nbsp;&nbsp;<img src="images/black.gif" align="absmiddle"> Fluxd Off
+					</tmpl_if>
+				</font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<script language="JavaScript">
+					function validateSettings() {
+						var rtnValue = true;
+						var msg = "";
+						<tmpl_if name="fluxd_Qmgr_enabled">
+							if (isNumber(document.theForm.fluxd_Qmgr_maxTotalTorrents.value) == false) {
+								msg = msg + "* Max Total Threads must be a valid number.\n";
+								document.theForm.fluxd_Qmgr_maxTotalTorrents.focus();
+							}
+							if (isNumber(document.theForm.fluxd_Qmgr_maxUserTorrents.value) == false) {
+								msg = msg + "* Max User Threads must be a valid number.\n";
+								document.theForm.fluxd_Qmgr_maxUserTorrents.focus();
+							}
+						</tmpl_if>
+						<tmpl_if name="fluxd_Clientmaint_enabled">
+							if (isNumber(document.theForm.fluxd_Clientmaint_interval.value) == false) {
+								msg = msg + "* Clientmaint Interval must be a valid number.\n";
+								document.theForm.fluxd_Clientmaint_interval.focus();
+							}
+						</tmpl_if>
+						<tmpl_if name="fluxd_Fluxinet_enabled">
+							if (isNumber(document.theForm.fluxd_Fluxinet_port.value) == false ) {
+								msg = msg + "* Fluxinet port must be a valid number.\n";
+								document.theForm.fluxd_Fluxinet_port.focus();
+							}
+						</tmpl_if>
+						if (msg != "") {
+							rtnValue = false;
+							alert("Please check the following:\n\n" + msg);
+						}
+						return rtnValue;
+					}
+					function isNumber(sText) {
+						var ValidChars = "0123456789.";
+						var IsNumber = true;
+						var Char;
+						for (i = 0; i < sText.length && IsNumber == true; i++) {
+							Char = sText.charAt(i);
+							if (ValidChars.indexOf(Char) == -1) {
+								IsNumber = false;
+							}
+						}
+						return IsNumber;
+					}
+				</script>
+				<div align="center">
+					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+							<tmpl_if name="shutdown">
+								<tr><br>
+									<td align="center" colspan="2">
+										Fluxd going down... Please Wait.
+									<br><br></td>
+								</tr>
+							<tmpl_else>
+								<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
+									<tmpl_if name="fluxdRunning">
+										<input type="Hidden" name="a" value="stop">
+										<tr><br>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Stop Fluxd">
+											<br><br></td>
+										</tr>
+										<tmpl_else>
+										<input type="Hidden" name="a" value="start">
+										<tr>
+											<td align="left" width="350" valign="top"><strong>Start Fluxd:</strong><br></td>
+										</tr>
+										<tr>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Start Fluxd">
+											<br><br></td>
+										</tr>
+									</tmpl_if>
+								</form>
+							</tmpl_if>
+							<form name="theForm" action="index.php?page=admin&op=updateFluxdSettings" method="post" onsubmit="return validateSettings()">
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Fluxd</strong>&nbsp;
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>perl Path</strong><br>
+										Specify the path to perl (/usr/bin/perl):
+									</td>
+									<td valign="top">
+										<input name="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="55"><tmpl_var name="validateCmd">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>fluxd Path</strong><br>
+									Specify the path of fluxd (/var/www/fluxd):
+									</td>
+									<td valign="top">
+										<input name="fluxd_path" type="Text" maxlength="254" value="<tmpl_var name="fluxd_path">" size="55"><tmpl_var name="validatefluxd">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>fluxcli Path</strong><br>
+									Specify the path where fluxcli.php is. (/var/www):
+									</td>
+									<td valign="top">
+										<input name="fluxd_path_fluxcli" type="Text" maxlength="254" value="<tmpl_var name="fluxd_path_fluxcli">" size="55"><tmpl_var name="validate_fluxd_path_fluxcli">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Loglevel</strong><br>
+									Specify the level of logging (default is 0):
+									</td>
+									<td valign="top">
+										<input name="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Qmgr enabled</strong><br>
+									Specify whether or not to load the Qmgr module
+									</td>
+									<td valign="top">
+										<select name="fluxd_Qmgr_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Qmgr_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Qmgr_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Fluxinet enabled</strong><br>
+									Specify whether or not to load the Fluxinet module
+									</td>
+									<td valign="top">
+										<select name="fluxd_Fluxinet_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Fluxinet_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Fluxinet_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Watch enabled</strong><br>
+									Specify whether or not to load the Watch module
+									</td>
+									<td valign="top">
+										<select name="fluxd_Watch_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Watch_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Watch_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Clientmaint enabled</strong><br>
+									Specify whether or not to load the Client Maintainance module
+									</td>
+									<td valign="top">
+										<select name="fluxd_Clientmaint_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Clientmaint_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Clientmaint_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Trigger enabled</strong><br>
+									Specify whether or not to load the Triggers module
+									</td>
+									<td valign="top"
+										<select name="fluxd_Trigger_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Trigger_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Trigger_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								
+								<tmpl_if name="fluxd_Qmgr_enabled">
+									<tr>
+										<td align="left" width="350" valign="top"><strong>Limit Torrent Global</strong><br>
+										Specify the maximum number of torrents the server will allow to run at one time (admins may override this):
+										</td>
+										<td valign="top">
+											<input name="fluxd_Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxTotalTorrents">" size="3">
+										</td>
+									</tr>
+									<tr>
+										<td align="left" width="350" valign="top"><strong>Limit Torrent Per User</strong><br>
+										Specify the maximum number of torrents a single user may run at one time:
+										</td>
+										<td valign="top">
+											<input name="fluxd_Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxUserTorrents">" size="3">
+										</td>
+									</tr>
+								</tmpl_if>
+								<tmpl_if name="fluxd_Fluxinet_enabled">
+									<tr>
+										<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
+											the port number to run the Fluxinet socket on:
+										</td>
+										<td valign="top">
+											<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="Fluxinet_port">" size="5">
+										</td>
+									</tr>
+								</tmpl_if>
+								<tmpl_if name="fluxd_Watch_enabled">
+									<tr>
+										<td align="left" width="350" valign="top"><strong>Watch jobs</strong><br>
+											The string to describe where to watch
+										</td>
+										<td valign="top">
+											<input name="fluxd_Watch_jobs" type="Text" maxlength="55" value="<tmpl_var name="fluxd_Watch_jobs">" size="55">
+										</td>
+									</tr>
+								</tmpl_if>
+								<tmpl_if name="fluxd_Clientmaint_enabled">
+									<tr>
+										<td align="left" width="350" valign="top"><strong>Clientmaint interval</strong><br>
+											Interval in seconds to have run Client maintainance
+										</td>
+										<td valign="top">
+											<input name="fluxd_Clientmaint_interval" type="Text" maxlength="3" value="tmpl_var name="fluxd_Clientmaint_interval">" size="3">
+										</td>
+									</tr>
+								</tmpl_if>
+								<tr><td colspan="2"><hr noshade></td></tr>
+								<tr>
+									<td align="center" colspan="2">
+									<input type="Submit" value="Update Settings">
+									</td>
+								</tr>
+							</form>
+						</table>
+					</div>
+					<br>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<tmpl_if name="fluxd_Qmgr_enabled" value="true">
+		<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+			<tr>
+				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background=\"themes/<tmpl_var name="theme">/images/bar.gif">
+					<table width="100%" cellpadding=0 cellspacing=0 border=0>
+						<tr>
+							<td><img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Queued Items </font></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+				<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
+				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
+			</tr>
+			<tmpl_var name="formattedQueueList">
+			</table>
+			<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+			<tr>
+				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+					<table width="100%" cellpadding=0 cellspacing=0 border=0>
+						<tr>
+							<td><img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Running Items </font></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+				<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
+				<td bgcolor="<tmpl_var name="table_header_bg">" width="1%"><div align=center class="title"><tmpl_var name="_FORCESTOP"></div></td>
+			</tr>
+			<tmpl_var name="output">
+		</table>
+	</tmpl_if>
+</div>
+<tmpl_var name="foot">

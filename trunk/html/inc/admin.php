@@ -45,6 +45,7 @@ function getMenu() {
 	$menu .= " | <a href=\"index.php?page=admin\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
 	$menu .= "<a href=\"index.php?page=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
 	$menu .= "<a href=\"index.php?page=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?page=admin&op=fluxdSettings\"><font class=\"adminlink\">"._FLUXD_MENU."</font></a> | ";
 	$menu .= "<a href=\"index.php?page=admin&op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
 	$menu .= "<a href=\"index.php?page=admin&op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
 	$menu .= "<a href=\"index.php?page=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
@@ -443,6 +444,23 @@ switch ($op) {
 	case "queueSettings":
 		require_once("admin_queueSettings.php");
 	break;
+
+	// Fluxd
+	case "fluxdSettings":
+		require_once("admin_fluxdSettings.php");
+	break;
+
+	case "controlFluxd":
+		require_once("admin_controlFluxd.php");
+	break;
+
+	case "updateFluxdSettings":
+		if (! array_key_exists("debugTorrents", $_REQUEST)) {
+			$_REQUEST["debugTorrents"] = false;
+		}
+		require_once("admin_updateFluxdSettings.php");
+	break;
+	// End Fluxd
 
 	case "uiSettings":
 		require_once("admin_uiSettings.php");
