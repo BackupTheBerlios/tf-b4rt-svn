@@ -55,6 +55,7 @@ $cfg["constants"]["start_torrent"] = "Started Torrent";
 $cfg["constants"]["queued_torrent"] = "Queued Torrent";
 $cfg["constants"]["unqueued_torrent"] = "Removed from Queue";
 $cfg["constants"]["QManager"] = "QManager";
+$cfg["constants"]["Fluxd"] = "Fluxd";
 $cfg["constants"]["access_denied"] = "ACCESS DENIED";
 $cfg["constants"]["delete_torrent"] = "Delete Torrent";
 $cfg["constants"]["fm_delete"] = "File Manager Delete";

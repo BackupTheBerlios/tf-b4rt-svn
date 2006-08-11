@@ -67,7 +67,7 @@ class Fluxd
      */
     function stopFluxd() {
         AuditAction($cfg["constants"]["Fluxd"], "Stopping Fluxd");
-        if ($isFluxdRunning()) {
+        if (isFluxdRunning()) {
             $sendCommand('die');
         }
     }
@@ -104,12 +104,12 @@ class Fluxd
      * isFluxdRunning
      * @return boolean
      */
-    function isFluxdRunning()  {
-        if (isset($pathPidFile) && ($pathPidFile != "")) {
+    function isFluxdRunning() {
+        if ( isset($pathPidFile) && ($pathPidFile != "") ) {
             return file_exists($pathPidFile);
         } else {
             return false;
-      }
+        }
     }
 
     /**
@@ -134,10 +134,6 @@ class Fluxd
            sendCommand('set '.$key.' '.$value);
        }
     }
-
-    /**
-     * initialize
-     * @param
 
     // private meths
 
