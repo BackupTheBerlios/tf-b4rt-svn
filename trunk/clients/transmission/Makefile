@@ -17,14 +17,9 @@ mk/version.mk: FORCE
 FORCE:
 
 # Now call the Makefile that'll really build
-# OS X has its special Makefile that wraps to Xcode
 
 -include mk/config.mk
-ifneq ($(SYSTEM),Darwin)
 REALMAKE = $(MAKE) -f mk/default.mk
-else
-REALMAKE = $(MAKE) -f mk/osx.mk
-endif
 
 all: required
 	@$(REALMAKE) all

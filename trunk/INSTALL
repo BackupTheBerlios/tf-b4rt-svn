@@ -39,6 +39,10 @@ System Requirements
 -- Safe Mode must be turned off in the php.ini file.
    torrentflux-b4rt reads and writes files that Safe Mode will restrict.
 
+-- To use wget on Mac OS X install. http://www.statusq.org/images/wget.zip
+
+-- to compile transmission on Mac OS X you need the Developer Tools from Apple.
+
 -----------------------------------------------------------------
 Installing
 -----------------------------------------------------------------
