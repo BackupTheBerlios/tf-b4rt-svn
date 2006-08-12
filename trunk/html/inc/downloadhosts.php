@@ -40,14 +40,9 @@ $background = "#000000";
 $alias = getRequestVar('alias');
 if (!empty($alias)) {
 	// read the alias file
-	// create AliasFile object
-		// b4rt-61
-	//$af = new AliasFile($cfg["torrent_file_path"].$alias, $torrentowner);
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg);
+	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg);
 	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
-	{
 		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
-	}
 } else {
 	die("fatal error torrent file not specified");
 }
@@ -62,6 +57,7 @@ if(strlen($torrentLabel) >= 39)
 	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
 $tmpl->setvar(_ID_HOSTS, false, "30", $af->percent_done."% ");
+$tmpl->setvar('head', getHead(_ID_HOSTS, false, "15", ""));
 
 if ($error != ""){
 	$tmpl->setvar('is_error', 1);
