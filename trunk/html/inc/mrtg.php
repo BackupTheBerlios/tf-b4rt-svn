@@ -45,7 +45,8 @@ $mrtgTargets = null;
 $htmlTargets = "";
 if ($dirHandle = opendir('./mrtg')) {
   $htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
-  $htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="post">';
+  $htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="get">';
+  $htmlTargets .= '<input type="hidden" name="page" value="mrtg">';
   $htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
   $idx = 0;
   while (false !== ($file = readdir($dirHandle))) {
