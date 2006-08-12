@@ -52,8 +52,7 @@ $nice_list = array();
 for ($i = 0; $i < 20 ; $i++) {
 	if ($cfg["nice_adjust"] == $i) {
 		$nice_adjust_true = 1;
-	}
-	else {
+	} else {
 		$nice_adjust_true = 0;
 	}
 	array_push($nice_list, array(

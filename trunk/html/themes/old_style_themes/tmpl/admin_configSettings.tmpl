@@ -364,7 +364,7 @@
 									<select name="nice_adjust">
 										<tmpl_loop name="nice_list">
 											<option value="<tmpl_var name="i">"
-												<tmpl_if name="nice_adjust_true" value="0">
+												<tmpl_if name="nice_adjust_true" value="1">
 													 selected
 												</tmpl_if>
 											>
@@ -609,8 +609,10 @@
 											<option value="<tmpl_var name="arThemes">" <tmpl_var name="selected">><tmpl_var name="arThemes"></option>
 										</tmpl_loop>
 										<optgroup label="Old Themes" style="background-color: #00EC00">
-											<tmpl_loop name="old_theme_list">												<option value="<tmpl_var name="arThemes2">" <tmpl_var name="selected"> style="background-color: #FFFFFF"><tmpl_var name="arThemes"></option>
-											</tmpl_loop>										</optgroup>
+											<tmpl_loop name="old_theme_list">
+												<option value="<tmpl_var name="arThemes2">" <tmpl_var name="selected"> style="background-color: #FFFFFF"><tmpl_var name="arThemes"></option>
+											</tmpl_loop>
+										</optgroup>
 									</select>
 								</td>
 							</tr>
