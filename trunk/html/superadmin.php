@@ -385,37 +385,43 @@ if (isset($_REQUEST["u"])) {
 	}
 }
 
-// queue
-if (isset($_REQUEST["q"])) {
-	$queueAction = trim($_REQUEST["q"]);
+// fluxd
+if (isset($_REQUEST["f"])) {
+	$queueAction = trim($_REQUEST["f"]);
 	if ($queueAction != "") {
-		buildPage("q");
+		buildPage("f");
 		switch($queueAction) {
-			case "0": // tfqmgr-main
-				$htmlTitle = "tfqmgr";
+			case "0": // fluxd-main
+				$htmlTitle = "fluxd";
 			break;
-			case "1": // tfqmgr-log
-				$htmlTitle = "tfqmgr-log";
+			case "1": // fluxd-log
+				$htmlTitle = "fluxd-log";
 				$htmlMain .= '<pre>';
-				$htmlMain .= getDataFromFile($cfg["path"].'.tfqmgr/tfqmgr.log');
+				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd.log');
 				$htmlMain .= '</pre>';
 			break;
-			case "2": // tfqmgr-ps
-				$htmlTitle = "tfqmgr-ps";
+			case "2": // fluxd-error-log
+				$htmlTitle = "fluxd-error-log";
 				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." tfqmgr.pl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd-error.log');
 				$htmlMain .= '</pre>';
 			break;
-			case "3": // tfqmgr-status
-				$htmlTitle = "tfqmgr-status";
-				include_once("QueueManager.php");
-				$queueManager = QueueManager::getQueueManagerInstance($cfg);
-				if (($queueManager->isQueueManagerRunning()) && ($queueManager->managerName == "tfqmgr")) {
+			case "3": // fluxd-ps
+				$htmlTitle = "fluxd-ps";
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+			break;
+			case "4": // fluxd-status
+				$htmlTitle = "fluxd-status";
+				include_once("Fluxd.php");
+				$fluxd = new Fluxd(serialize($cfg));
+				if ($fluxd->isFluxdRunning()) {
 					$htmlMain .= '<br><pre>';
-					$htmlMain .= $queueManager->statusQueueManager();
+					$htmlMain .= $fluxd->statusFluxd();
 					$htmlMain .= '</pre>';
 				} else {
-					$htmlMain .= '<br><strong>tfqmgr not running</strong>';
+					$htmlMain .= '<br><strong>fluxd not running</strong>';
 				}
 			break;
 		}
@@ -707,7 +713,7 @@ function buildPage($action) {
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?m=0">Maintenance</a>';
 	$htmlTop .= ' | ';
-	$htmlTop .= '<a href="' . _FILE_THIS . '?q=0">tfqmgr</a>';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?f=0">fluxd</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?a=1">Help</a>';
 	$htmlTop .= ' | ';
@@ -738,19 +744,21 @@ function buildPage($action) {
 			//$htmlMain .= '<br><br>';
 			//$htmlMain .= getReleaseList();
 		break;
-		case "q": // queue passthru
+		case "f": // fluxd passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?q=1">log</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?f=1">log</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?q=2">ps</a>';
-			include_once("QueueManager.php");
-			$queueManager = QueueManager::getQueueManagerInstance($cfg);
-			if (($queueManager->isQueueManagerRunning()) && ($queueManager->managerName == "tfqmgr")) {
+			$htmlMain .= '<a href="' . _FILE_THIS . '?f=2">error-log</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?f=3">ps</a>';
+			include_once("Fluxd.php");
+			$fluxd = new Fluxd(serialize($cfg));
+			if ($fluxd->isFluxdRunning()) {
 				$htmlMain .= ' | ';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?q=3">status</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=4">status</a>';
 			}
-			$htmlMain .= '</td><td align="right"><strong>tfqmgr</td>';
+			$htmlMain .= '</td><td align="right"><strong>fluxd</td>';
 			$htmlMain .= '</td></tr></table>';
 		break;
 		case "m": // maintenance passthru

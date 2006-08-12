@@ -7,14 +7,19 @@ include_once('Fluxd.php');
 switch($action) {
 	case "start":
 		// save settings
-		$settings = array();
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
+		//$settings = array();
+		//saveSettings($settings);
+		//AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
 		// start Fluxd
 		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdReadyToStart()) {
 			$fluxd->startFluxd();
-			$message = '<br><strong>Fluxd started.</strong><br><br>';
+			if ($fluxd->state == 2) {
+				$message = '<br><strong>Fluxd started.</strong><br><br>';
+			} else {
+				$message = '<br><font color="red">Error starting fluxd</font><br>';
+				$message .= 'Error : '.$fluxd->messages . '<br>';
+			}
 			break;
 		}
 		$message = '<br><font color="red">Error starting fluxd</font><br><br>';

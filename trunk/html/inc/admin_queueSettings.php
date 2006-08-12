@@ -53,9 +53,6 @@ if ($queueManagerRunning) {
 }
 
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?q=1','log'));
-$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?q=2','ps'));
-$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?q=3','status'));
 
 if ((isset($shutdown)) && ($shutdown == "1")) {
 	$tmpl->setvar('shutdown', 1);

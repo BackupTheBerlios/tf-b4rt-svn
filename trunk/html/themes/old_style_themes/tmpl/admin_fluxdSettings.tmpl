@@ -10,15 +10,15 @@
 	</table>
 </tmpl_if>
 <div align="center">
-	<a name="Fluxd" id="Fluxd"></a>
+	<a name="fluxd" id="fluxd"></a>
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
 			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
 				<font class="title">
 					<tmpl_if name="fluxdRunning">
-						&nbsp;&nbsp;<img src="images/green.gif" align="absmiddle" align="absmiddle"> Fluxd Running (pid: <tmpl_var name="fluxdPid">)
+						&nbsp;&nbsp;<img src="images/green.gif" align="absmiddle" align="absmiddle"> fluxd Running (pid: <tmpl_var name="fluxdPid">)
 					<tmpl_else>
-						&nbsp;&nbsp;<img src="images/black.gif" align="absmiddle"> Fluxd Off
+						&nbsp;&nbsp;<img src="images/black.gif" align="absmiddle"> fluxd Off
 					</tmpl_if>
 				</font>
 			</td>
@@ -75,7 +75,7 @@
 							<tmpl_if name="shutdown">
 								<tr><br>
 									<td align="center" colspan="2">
-										Fluxd going down... Please Wait.
+										fluxd going down... Please Wait.
 									<br><br></td>
 								</tr>
 							<tmpl_else>
@@ -84,17 +84,17 @@
 										<input type="Hidden" name="a" value="stop">
 										<tr><br>
 											<td align="center" colspan="2">
-												<input type="Submit" value="Stop Fluxd">
+												<input type="Submit" value="Stop fluxd">
 											<br><br></td>
 										</tr>
 										<tmpl_else>
 										<input type="Hidden" name="a" value="start">
 										<tr>
-											<td align="left" width="350" valign="top"><strong>Start Fluxd:</strong><br></td>
+											<td align="left" width="350" valign="top"><strong>Start fluxd:</strong><br></td>
 										</tr>
 										<tr>
 											<td align="center" colspan="2">
-												<input type="Submit" value="Start Fluxd">
+												<input type="Submit" value="Start fluxd">
 											<br><br></td>
 										</tr>
 									</tmpl_if>
@@ -102,8 +102,9 @@
 							</tmpl_if>
 							<form name="theForm" action="index.php?page=admin&op=updateFluxdSettings" method="post" onsubmit="return validateSettings()">
 								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Fluxd</strong>&nbsp;
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
+										<strong>fluxd</strong>
+										(<tmpl_var name="SuperAdminLink1"> | <tmpl_var name="SuperAdminLink2"> | <tmpl_var name="SuperAdminLink3"><tmpl_if name="fluxdRunning"> | <tmpl_var name="SuperAdminLink4"></tmpl_if>)
 									</td>
 								</tr>
 								<tr>
@@ -138,6 +139,18 @@
 										<input name="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
 									</td>
 								</tr>
+
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
+										<strong>service-modules</strong>
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Qmgr</strong>
+									</td>
+								</tr>
 								<tr>
 									<td align="left" width="350" valign="top"><strong>Qmgr enabled</strong><br>
 									Specify whether or not to load the Qmgr module
@@ -155,6 +168,28 @@
 											</tmpl_if>
 											>False</option>
 										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Limit Torrent Global</strong><br>
+									Specify the maximum number of torrents the server will allow to run at one time (admins may override this):
+									</td>
+									<td valign="top">
+										<input name="fluxd_Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxTotalTorrents">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Limit Torrent Per User</strong><br>
+									Specify the maximum number of torrents a single user may run at one time:
+									</td>
+									<td valign="top">
+										<input name="fluxd_Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxUserTorrents">" size="3">
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Fluxinet</strong>
 									</td>
 								</tr>
 								<tr>
@@ -177,6 +212,20 @@
 									</td>
 								</tr>
 								<tr>
+									<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
+										the port number to run the Fluxinet socket on:
+									</td>
+									<td valign="top">
+										<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="Fluxinet_port">" size="5">
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Watch</strong>
+									</td>
+								</tr>
+								<tr>
 									<td align="left" width="350" valign="top"><strong>Watch enabled</strong><br>
 									Specify whether or not to load the Watch module
 									</td>
@@ -193,6 +242,20 @@
 											</tmpl_if>
 											>False</option>
 										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Watch jobs</strong><br>
+										The string to describe where to watch
+									</td>
+									<td valign="top">
+										<input name="fluxd_Watch_jobs" type="Text" maxlength="55" value="<tmpl_var name="fluxd_Watch_jobs">" size="55">
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Clientmaint</strong>
 									</td>
 								</tr>
 								<tr>
@@ -215,6 +278,20 @@
 									</td>
 								</tr>
 								<tr>
+									<td align="left" width="350" valign="top"><strong>Clientmaint interval</strong><br>
+										Interval in seconds to have run Client maintainance
+									</td>
+									<td valign="top">
+										<input name="fluxd_Clientmaint_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Clientmaint_interval">" size="3">
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Trigger</strong>
+									</td>
+								</tr>
+								<tr>
 									<td align="left" width="350" valign="top"><strong>Trigger enabled</strong><br>
 									Specify whether or not to load the Triggers module
 									</td>
@@ -234,60 +311,13 @@
 									</td>
 								</tr>
 
-								<tmpl_if name="fluxd_Qmgr_enabled">
-									<tr>
-										<td align="left" width="350" valign="top"><strong>Limit Torrent Global</strong><br>
-										Specify the maximum number of torrents the server will allow to run at one time (admins may override this):
-										</td>
-										<td valign="top">
-											<input name="fluxd_Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxTotalTorrents">" size="3">
-										</td>
-									</tr>
-									<tr>
-										<td align="left" width="350" valign="top"><strong>Limit Torrent Per User</strong><br>
-										Specify the maximum number of torrents a single user may run at one time:
-										</td>
-										<td valign="top">
-											<input name="fluxd_Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxUserTorrents">" size="3">
-										</td>
-									</tr>
-								</tmpl_if>
-								<tmpl_if name="fluxd_Fluxinet_enabled">
-									<tr>
-										<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
-											the port number to run the Fluxinet socket on:
-										</td>
-										<td valign="top">
-											<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="Fluxinet_port">" size="5">
-										</td>
-									</tr>
-								</tmpl_if>
-								<tmpl_if name="fluxd_Watch_enabled">
-									<tr>
-										<td align="left" width="350" valign="top"><strong>Watch jobs</strong><br>
-											The string to describe where to watch
-										</td>
-										<td valign="top">
-											<input name="fluxd_Watch_jobs" type="Text" maxlength="55" value="<tmpl_var name="fluxd_Watch_jobs">" size="55">
-										</td>
-									</tr>
-								</tmpl_if>
-								<tmpl_if name="fluxd_Clientmaint_enabled">
-									<tr>
-										<td align="left" width="350" valign="top"><strong>Clientmaint interval</strong><br>
-											Interval in seconds to have run Client maintainance
-										</td>
-										<td valign="top">
-											<input name="fluxd_Clientmaint_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Clientmaint_interval">" size="3">
-										</td>
-									</tr>
-								</tmpl_if>
 								<tr><td colspan="2"><hr noshade></td></tr>
 								<tr>
 									<td align="center" colspan="2">
 									<input type="Submit" value="Update Settings">
 									</td>
 								</tr>
+
 							</form>
 						</table>
 					</div>

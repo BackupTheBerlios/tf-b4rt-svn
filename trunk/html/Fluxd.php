@@ -24,6 +24,8 @@
 // class Fluxd for managing the Fluxd Daemon
 class Fluxd
 {
+	// fields
+
 	// version
     var $version = "";
 
@@ -36,38 +38,31 @@ class Fluxd
     // messages-string
     var $messages = "";
 
-    // fluxd-state
-    var $state = 0;    // state of the manager
-                        //  0 : not initialized
-                        //  1 : initialized
-                        //  2 : started/running
-                        // -1 : error
+    // state
+    //  0 : not initialized
+    //  1 : initialized
+    //  2 : started/running
+    // -1 : error
+    var $state = 0;
 
     // some path-vars for Fluxd
     var $pathDataDir = "";
     var $pathPidFile = "";
     var $pathSocket = "";
 
+
+    // ctor
+
     /**
      * ctor
      */
     function Fluxd($cfg) {
-        $this->version = array_shift(
-        	explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-        $this->initialize($cfg);
-    }
-
-    /**
-     * initialize this object
-     *
-     * @param $cfg
-     */
-    function initialize($cfg) {
+    	$this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
             $this->state = -1;
-            return;
+            return null;
         }
         $this->pathDataDir = $this->cfg["path"] . '.fluxd/';
         $this->pathPidFile = $this->pathDataDir . 'fluxd.pid';
@@ -75,12 +70,8 @@ class Fluxd
         $this->state = 1;
     }
 
-    /**
-     * factory
-     */
-    function getFluxdInstance($cfg) {
-        return new Fluxd($cfg);
-    }
+
+    // public meths
 
     /**
      * startFluxd
@@ -88,17 +79,30 @@ class Fluxd
      */
     function startFluxd() {
         if ($this->isFluxdRunning()) {
-            AuditAction($this->cfg["constants"]["Fluxd"], "Fluxd already started");
+            AuditAction($this->cfg["constants"]["fluxd"], "fluxd already started");
             return true;
         } else {
             $fluxd = "cd ".$this->cfg["fluxd_path_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup " . $this->cfg["perlCmd"] . " -I " .$this->cfg["fluxd_path"] ." ".$this->cfg["fluxd_path"] . "/fluxd.pl ";
-            $startCommand = $fluxd . "daemon-start" . $this->cfg["fluxd_path_fluxcli"] . " > /dev/null &";
+            $startCommand = $fluxd . "daemon-start " . $this->cfg["fluxd_path_fluxcli"] . " > /dev/null &";
             $result = exec($startCommand);
-            sleep(1);
-            AuditAction($this->cfg["constants"]["Fluxd"], "Fluxd started");
-            // Set the state
-            $state = 2;
-            return true;
+            // give fluxd some time
+            sleep(2);
+            // check if started
+            if ($this->isFluxdRunning()) {
+            	AuditAction($this->cfg["constants"]["fluxd"], "fluxd started");
+            	// Set the state
+            	$this->state = 2;
+            	// return
+            	return true;
+            } else {
+            	AuditAction($this->cfg["constants"]["fluxd"], "errors starting fluxd");
+            	// set messages to startcommand for debug
+            	$this->messages = $startCommand;
+            	// Set the state
+            	$this->state = -1;
+            	// return
+            	return false;
+            }
         }
     }
 
@@ -106,7 +110,7 @@ class Fluxd
      * stopFluxd
      */
     function stopFluxd() {
-        AuditAction($this->cfg["constants"]["Fluxd"], "Stopping Fluxd");
+        AuditAction($this->cfg["constants"]["fluxd"], "Stopping fluxd");
         if ($this->isFluxdRunning())
             $this->sendCommand('die');
     }
@@ -170,6 +174,7 @@ class Fluxd
        if ($this->isFluxdRunning())
            $this->sendCommand('set '.$key.' '.$value);
     }
+
 
     // private meths
 

@@ -4,7 +4,6 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	$_POST["fluxd_path"] != $cfg["fluxd_path"] ||
 	$_POST["fluxd_path_fluxcli"] != $cfg["fluxd_path_fluxcli"] ||
 	$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
-	$_POST["debugTorrents"] != $cfg["debugTorrents"] ||
 	$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 	$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
 	$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
@@ -57,19 +56,19 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 			   $fluxd->setConfig('Qmgr::MAX_USER',$_POST["fluxd_Qmgr_maxUserTorrents"]);
 			}
 		} else {
-		   $message .= 'Fluxd is not currently running.<br><br>';
+		   $message .= 'fluxd is not currently running.<br><br>';
 		}
 	} else {
 		$message .= '<br><br>';
 	}
 	$settings = $_POST;
 	saveSettings($settings);
-	AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
+	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	header("Location: index.php?page=admin&op=fluxdSettings&m=".urlencode($message));
 } else {
 	$settings = $_POST;
 	saveSettings($settings);
-	AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
+	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	header("Location: index.php?page=admin&op=fluxdSettings");
 }
 ?>

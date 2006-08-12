@@ -12,6 +12,7 @@ $fluxdRunning = $fluxd->isFluxdRunning();
 // some template vars
 $tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
 $tmpl->setvar('menu', getMenu());
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
@@ -32,27 +33,32 @@ if ($fluxdRunning) {
 
 $tmpl->setvar('theme', $cfg["theme"]);
 
-if ((isset($shutdown)) && ($shutdown == "1")) {
+if ((isset($shutdown)) && ($shutdown == "1"))
 	$tmpl->setvar('shutdown', 1);
-}
 
-// more template vars
+$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','log'));
+$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?f=2','error-log'));
+$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3','ps'));
+$tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4','status'));
+
 $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
 $tmpl->setvar('validateCmd', validateFile($cfg["perlCmd"]));
 $tmpl->setvar('fluxd_path', $cfg["fluxd_path"]);
 $tmpl->setvar('validatefluxd', validateFile($cfg["fluxd_path"]."/fluxd.pl"));
 $tmpl->setvar('fluxd_path_fluxcli', $cfg["fluxd_path_fluxcli"]);
 $tmpl->setvar('validate_fluxd_path_fluxcli', validateFile($cfg["fluxd_path_fluxcli"]."/fluxcli.php"));
-$tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
-$tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
+$tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
+$tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
+$tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
 $tmpl->setvar('fluxd_Watch_enabled', $cfg["fluxd_Watch_enabled"]);
+// TODO : process watch-jobs-settings-string
+$tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 $tmpl->setvar('fluxd_Clientmaint_enabled', $cfg["fluxd_Clientmaint_enabled"]);
 $tmpl->setvar('fluxd_Clientmaint_interval', $cfg["fluxd_Clientmaint_interval"]);
 $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
-$tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
 $tmpl->setvar('_USER', _USER);
 $tmpl->setvar('_FILE', _FILE);
 $tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
