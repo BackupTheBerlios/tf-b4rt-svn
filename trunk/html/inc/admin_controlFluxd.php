@@ -28,7 +28,7 @@ switch($action) {
 		if ($fluxd->isFluxdRunning()) {
 			$fluxd->stopFluxd();
 			$message = '<br><strong>Stop-Command sent. Wait until shutdown and dont click stop again now !</strong><br><br>';
-			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message).'&s=1');
+			header("Location: index.php?page=admin&op=fluxdSettings&m=".urlencode($message).'&s=1');
 			exit;
 		}
 	break;

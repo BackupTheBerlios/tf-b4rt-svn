@@ -112,7 +112,7 @@ class Fluxd
     function stopFluxd() {
         AuditAction($this->cfg["constants"]["fluxd"], "Stopping fluxd");
         if ($this->isFluxdRunning())
-            $this->sendCommand('die');
+            $this->sendCommand('die', 0);
     }
 
     /**
@@ -138,7 +138,7 @@ class Fluxd
      */
     function statusFluxd() {
         if ($this->isFluxdRunning())
-            return $this->sendCommand('status');
+            return $this->sendCommand('status', 1);
         else
             return "";
     }
@@ -162,7 +162,7 @@ class Fluxd
         if ($this->isFluxdRunning() != 0)
             return false;
         else # pid-file exists, but is the daemon trying to shut down?
-            return (!($this->sendCommand('worker')));
+            return (!($this->sendCommand('worker', 1)));
     }
 
     /**
@@ -172,7 +172,7 @@ class Fluxd
      */
     function setConfig($key, $value) {
        if ($this->isFluxdRunning())
-           $this->sendCommand('set '.$key.' '.$value);
+           $this->sendCommand('set '.$key.' '.$value, 0);
     }
 
 	/**
@@ -180,9 +180,8 @@ class Fluxd
 	 *
 	 */
     function reloadModules() {
-    	// TODO
-		//if ($this->isFluxdRunning())
-		//	$this->sendCommand('?');
+		if ($this->isFluxdRunning())
+			$this->sendCommand('reloadModules', 0);
     }
 
     // private meths
@@ -190,17 +189,20 @@ class Fluxd
     /**
      * send command
      * @param $command
+     * @param $read does this command return something ?
      * @return string with retval or null if error
      */
-    function sendCommand($command) {
+    function sendCommand($command, $read = 0) {
         if ($this->isFluxdRunning()) {
+
         	// create socket
-            $socket = socket_create(AF_UNIX, SOCK_STREAM);
+            $socket = socket_create(AF_UNIX, SOCK_STREAM, 0);
             if ($socket < 0) {
             	$this->messages = "socket_create() failed: reason: " . socket_strerror($socket);
             	$this->state = -1;
                 return null;
             }
+
             // connect
             $result = socket_connect($socket, $this->pathSocket);
             if ($result < 0) {
@@ -208,14 +210,18 @@ class Fluxd
             	$this->state = -1;
                 return null;
             }
+
             // write command
             socket_write($socket, $command, strlen($command));
+
             // read retval
             $return = "";
-            while ($out = socket_read($socket, 2048))
-                $return .= $out;
+            if ($read != 0)
+				$return = socket_read($socket, 1024, PHP_NORMAL_READ);
+
             // close socket
             socket_close($socket);
+
             // return
             return $return;
         }
