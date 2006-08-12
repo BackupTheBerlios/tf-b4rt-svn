@@ -24,21 +24,62 @@
 // class Fluxd for managing the Fluxd Daemon
 class Fluxd
 {
-    // some vars for Fluxd
+	// version
+    var $version = "";
+
+    // pid
+    var $pid;
+
+    // config-array
+    var $cfg = array();
+
+    // messages-string
+    var $messages = "";
+
+    // fluxd-state
+    var $state = 0;    // state of the manager
+                        //  0 : not initialized
+                        //  1 : initialized
+                        //  2 : started/running
+                        // -1 : error
+
+    // some path-vars for Fluxd
     var $pathDataDir = "";
     var $pathPidFile = "";
+    var $pathSocket = "";
 
-    //--------------------------------------------------------------------------
     /**
      * ctor
      */
+    function Fluxd($cfg) {
+        $this->version = array_shift(
+        	explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+        $this->initialize($cfg);
+    }
+
+    /**
+     * initialize this object
+     *
+     * @param $cfg
+     */
+    function initialize($cfg) {
+        $this->cfg = unserialize($cfg);
+        if (empty($this->cfg)) {
+            $this->messages = "Config not passed";
+            $this->state = -1;
+            return;
+        }
+        $this->pathDataDir = $this->cfg["path"] . '.fluxd/';
+        $this->pathPidFile = $this->pathDataDir . 'fluxd.pid';
+        $this->pathSocket = $this->pathDataDir . 'fluxd.sock';
+        $this->state = 1;
+    }
+
+    /**
+     * factory
+     */
     function getFluxdInstance($cfg) {
-        $managerName = "Fluxd";
-        $version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-        //Initialize($cfg);
-        //
-        $pathDataDir = $cfg["path"] . '.fluxd/';
-        $pathPidFile = $pathDataDir . 'fluxd.pid';
+        return new Fluxd($cfg);
     }
 
     /**
@@ -46,18 +87,17 @@ class Fluxd
      * @return boolean
      */
     function startFluxd() {
-        if (isFluxdRunning()) {
-            AuditAction($cfg["constants"]["Fluxd"], "Fluxd already started");
+        if ($this->isFluxdRunning()) {
+            AuditAction($this->cfg["constants"]["Fluxd"], "Fluxd already started");
             return true;
         } else {
-            $fluxd = "cd ".$cfg["fluxd_path_fluxcli"]."; HOME=".$cfg["path"]."; export HOME; nohup " . $cfg["perlCmd"] . " -I " .$cfg["fluxd_path"] ." ".$cfg["fluxd_path"] . "/fluxd.pl ";
-            $startCommand = $fluxd . "daemon-start" . $cfg["fluxd_path_fluxcli"] . " > /dev/null &";
-            //echo $startCommand;
+            $fluxd = "cd ".$this->cfg["fluxd_path_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup " . $this->cfg["perlCmd"] . " -I " .$this->cfg["fluxd_path"] ." ".$this->cfg["fluxd_path"] . "/fluxd.pl ";
+            $startCommand = $fluxd . "daemon-start" . $this->cfg["fluxd_path_fluxcli"] . " > /dev/null &";
             $result = exec($startCommand);
             sleep(1);
-            AuditAction($cfg["constants"]["Fluxd"], "Fluxd started");
-            // Set the status
-            $status = 2;
+            AuditAction($this->cfg["constants"]["Fluxd"], "Fluxd started");
+            // Set the state
+            $state = 2;
             return true;
         }
     }
@@ -66,10 +106,9 @@ class Fluxd
      * stopFluxd
      */
     function stopFluxd() {
-        AuditAction($cfg["constants"]["Fluxd"], "Stopping Fluxd");
-        if (isFluxdRunning()) {
-            $sendCommand('die');
-        }
+        AuditAction($this->cfg["constants"]["Fluxd"], "Stopping Fluxd");
+        if ($this->isFluxdRunning())
+            $this->sendCommand('die');
     }
 
     /**
@@ -82,8 +121,8 @@ class Fluxd
             while (!@feof($fileHandle))
                 $data .= @fgets($fileHandle, 1024);
             @fclose ($fileHandle);
-            $pid = $data;
-            return $pid;
+            $this->pid = $data;
+            return $this->pid;
         } else {
             return "";
         }
@@ -94,8 +133,8 @@ class Fluxd
      * @return string
      */
     function statusFluxd() {
-        if (isFluxdRunning())
-            return sendCommand('status');
+        if ($this->isFluxdRunning())
+            return $this->sendCommand('status');
         else
             return "";
     }
@@ -105,11 +144,10 @@ class Fluxd
      * @return boolean
      */
     function isFluxdRunning() {
-        if ( isset($pathPidFile) && ($pathPidFile != "") ) {
-            return file_exists($pathPidFile);
-        } else {
+        if (isset($this->pathPidFile) && ($this->pathPidFile != ""))
+            return file_exists($this->pathPidFile);
+        else
             return false;
-        }
     }
 
     /**
@@ -117,11 +155,10 @@ class Fluxd
      * @return boolean
      */
     function isFluxdReadyToStart() {
-        if (isFluxdRunning() != 0) {
+        if ($this->isFluxdRunning() != 0)
             return false;
-        } else { # pid-file exists, but is the daemon trying to shut down?
-            return (!(sendCommand('worker') ));
-        }
+        else # pid-file exists, but is the daemon trying to shut down?
+            return (!($this->sendCommand('worker')));
     }
 
     /**
@@ -130,9 +167,8 @@ class Fluxd
      * @return Null
      */
     function setConfig($key, $value) {
-       if (isFluxdRunning()) {
-           sendCommand('set '.$key.' '.$value);
-       }
+       if ($this->isFluxdRunning())
+           $this->sendCommand('set '.$key.' '.$value);
     }
 
     // private meths
@@ -140,22 +176,33 @@ class Fluxd
     /**
      * send command
      * @param $command
-     * @return string
+     * @return string with retval or null if error
      */
     function sendCommand($command) {
-        if (isFluxdRunning()) {
+        if ($this->isFluxdRunning()) {
+        	// create socket
             $socket = socket_create(AF_UNIX, SOCK_STREAM);
             if ($socket < 0) {
-                echo "socket_create() failed: reason: " . socket_strerror($socket) . "\n";
+            	$this->messages = "socket_create() failed: reason: " . socket_strerror($socket);
+            	$this->state = -1;
+                return null;
             }
-            $result = socket_connect($socket, '/download/torrents/.fluxd/fluxd.sock');
+            // connect
+            $result = socket_connect($socket, $this->pathSocket);
             if ($result < 0) {
-                echo "socket_connect() failed: reason: " . socket_strerror($result) . "\n";
+            	$this->messages = "socket_connect() failed: reason: " . socket_strerror($result);
+            	$this->state = -1;
+                return null;
             }
+            // write command
             socket_write($socket, $command, strlen($command));
-            while ($out = socket_read($socket, 2048)) {
+            // read retval
+            $return = "";
+            while ($out = socket_read($socket, 2048))
                 $return .= $out;
-            }
+            // close socket
+            socket_close($socket);
+            // return
             return $return;
         }
     }

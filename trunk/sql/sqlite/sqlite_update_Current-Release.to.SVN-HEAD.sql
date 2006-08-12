@@ -41,6 +41,7 @@ INSERT INTO tf_settings VALUES ('downloadhosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
 INSERT INTO tf_settings VALUES ('fluxd_path', '/var/www/fluxd');
+INSERT INTO tf_settings VALUES ('fluxd_path_fluxcli', '/var/www');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_enabled','0');

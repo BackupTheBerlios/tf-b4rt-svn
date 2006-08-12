@@ -218,7 +218,7 @@
 									<td align="left" width="350" valign="top"><strong>Trigger enabled</strong><br>
 									Specify whether or not to load the Triggers module
 									</td>
-									<td valign="top"
+									<td valign="top">
 										<select name="fluxd_Trigger_enabled">
 											<option value="1"
 											<tmpl_if name="fluxd_Trigger_enabled" value="1">
@@ -233,7 +233,7 @@
 										</select>
 									</td>
 								</tr>
-								
+
 								<tmpl_if name="fluxd_Qmgr_enabled">
 									<tr>
 										<td align="left" width="350" valign="top"><strong>Limit Torrent Global</strong><br>
@@ -278,7 +278,7 @@
 											Interval in seconds to have run Client maintainance
 										</td>
 										<td valign="top">
-											<input name="fluxd_Clientmaint_interval" type="Text" maxlength="3" value="tmpl_var name="fluxd_Clientmaint_interval">" size="3">
+											<input name="fluxd_Clientmaint_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Clientmaint_interval">" size="3">
 										</td>
 									</tr>
 								</tmpl_if>

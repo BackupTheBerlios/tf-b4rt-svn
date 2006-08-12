@@ -1,32 +1,15 @@
 <?php
-
+/* $Id$ */
 $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_fluxdSettings.tmpl");
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
-//require_once("QueueManager.php");
-//$queueManager = QueueManager::getQueueManagerInstance($cfg);
-// QueueManager Running ?
-//$queueManagerRunning = false;
-//$shutdown = getRequestVar('s');
-/*
-if ((isset($shutdown)) && ($shutdown == "1")) {
-	$queueManagerRunning = false;
-} else {
-	if ($queueManager->isQueueManagerRunning()) {
-		$queueManagerRunning = true;
-	} else {
-		if ($queueManager->managerName == "tfqmgr") {
-			if ($queueManager->isQueueManagerReadyToStart()) {
-				$queueManagerRunning = false;
-			} else {
-				$queueManagerRunning = true;
-			}
-		} else {
-			$queueManagerRunning = false;
-		}
-	}
-}
-*/
+require_once('Fluxd.php');
+
+// fluxd
+$fluxd = new Fluxd(serialize($cfg));
+$fluxdRunning = $fluxd->isFluxdRunning();
+
+// some template vars
 $tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -43,7 +26,8 @@ if ((isset($message)) && ($message != "")) {
 }
 // fluxd Section
 if ($fluxdRunning) {
-	$tmpl->setvar('fluxdPid', fluxdPid);
+	$fluxdPid = $fluxd->getFluxdPid();
+	$tmpl->setvar('fluxdPid', $fluxdPid);
 }
 
 $tmpl->setvar('theme', $cfg["theme"]);
@@ -52,6 +36,7 @@ if ((isset($shutdown)) && ($shutdown == "1")) {
 	$tmpl->setvar('shutdown', 1);
 }
 
+// more template vars
 $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
 $tmpl->setvar('validateCmd', validateFile($cfg["perlCmd"]));
 $tmpl->setvar('fluxd_path', $cfg["fluxd_path"]);
@@ -65,6 +50,7 @@ $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
 $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
 $tmpl->setvar('fluxd_Watch_enabled', $cfg["fluxd_Watch_enabled"]);
 $tmpl->setvar('fluxd_Clientmaint_enabled', $cfg["fluxd_Clientmaint_enabled"]);
+$tmpl->setvar('fluxd_Clientmaint_interval', $cfg["fluxd_Clientmaint_interval"]);
 $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
 $tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
 $tmpl->setvar('_USER', _USER);

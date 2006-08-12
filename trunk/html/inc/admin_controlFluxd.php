@@ -11,7 +11,7 @@ switch($action) {
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
 		// start Fluxd
-		$fluxd = new Fluxd($cfg);
+		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdReadyToStart()) {
 			$fluxd->startFluxd();
 			$message = '<br><strong>Fluxd started.</strong><br><br>';
@@ -26,7 +26,7 @@ switch($action) {
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
 		// kill Fluxd
-		$fluxd = new Fluxd($cfg);
+		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdRunning()) {
 			$fluxd->stopFluxd();
 			$message = '<br><strong>Stop-Command sent. Wait until shutdown and dont click stop again now !</strong><br><br>';

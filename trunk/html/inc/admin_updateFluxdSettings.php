@@ -1,6 +1,6 @@
 <?php
 /* $Id$ */
-if (    $_POST["perlCmd"] != $cfg["perlCmd"] ||
+if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	$_POST["fluxd_path"] != $cfg["fluxd_path"] ||
 	$_POST["fluxd_path_fluxcli"] != $cfg["fluxd_path_fluxcli"] ||
 	$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
@@ -25,12 +25,12 @@ if (    $_POST["perlCmd"] != $cfg["perlCmd"] ||
 			$needsRestart = false;
 			$needsHUP = false;
 			$needsInit = false;
-			if (	$_POST["perlCmd"] != $cfg["perlCmd"] ||
+			if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 				$_POST["fluxd_path_fluxcli"] != $cfg["fluxd_path_fluxcli"] ||
 				$_POST["fluxd_path"] != $cfg["fluxd_path"]) {
 					$needsRestart = true;
 			}
-			if (	$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
+			if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 				$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
 				$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
 				$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
