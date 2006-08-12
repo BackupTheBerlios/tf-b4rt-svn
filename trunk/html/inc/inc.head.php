@@ -41,6 +41,7 @@ if ($cfg['ui_indexrefresh'] != "0") {
 	}
 }
 $tmpl->setvar('index_page', $cfg["index_page"]);
-
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->pparse();
 ?>
