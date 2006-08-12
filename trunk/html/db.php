@@ -29,8 +29,6 @@ require_once('config.php');
 require_once('lib/adodb/adodb.inc.php');
 require_once('lib/vlib/vlibTemplate.php');
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/db.tmpl");
-
 function getdb() {
 	global $cfg;
 	// 2004-12-09 PFM: connect to database.
@@ -44,6 +42,7 @@ function getdb() {
 function showError($db, $sql) {
 	global $cfg, $tmpl;
 	if($db->ErrorNo() != 0) {
+		$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/db.tmpl");
 		$tmpl->setvar('error', 1);
 		include("themes/matrix/index.php");
 		$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
@@ -54,7 +53,8 @@ function showError($db, $sql) {
 		$tmpl->setvar('debug_sql', $cfg["debug_sql"]);
 		$tmpl->setvar('sql', $sql);
 		$tmpl->setvar('ErrorMsg', $db->ErrorMsg());
+		$tmpl->pparse();
 	}
 }
-$tmpl->pparse();
+
 ?>
