@@ -13,4 +13,4 @@ $cfg["body_data_bg"] = "#ffffff";
 $cfg["bgLight"] = "#ffffff";
 $cfg["bgDark"] = "#e0e0e0";
 
-
+?>
