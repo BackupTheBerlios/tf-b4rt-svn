@@ -50,7 +50,6 @@ class Fluxd
     var $pathPidFile = "";
     var $pathSocket = "";
 
-
     // ctor
 
     /**
@@ -162,7 +161,7 @@ class Fluxd
         if ($this->isFluxdRunning() != 0)
             return false;
         else # pid-file exists, but is the daemon trying to shut down?
-            return (!($this->sendCommand('worker', 1)));
+            return (!($this->sendCommand('worker', 0)));
     }
 
     /**
@@ -173,6 +172,15 @@ class Fluxd
     function setConfig($key, $value) {
        if ($this->isFluxdRunning())
            $this->sendCommand('set '.$key.' '.$value, 0);
+    }
+
+	/**
+	 * reloadDBCache
+	 *
+	 */
+    function reloadDBCache() {
+		if ($this->isFluxdRunning())
+			$this->sendCommand('reloadDBCache', 0);
     }
 
 	/**
@@ -216,14 +224,29 @@ class Fluxd
 
             // read retval
             $return = "";
-            if ($read != 0)
-				$return = socket_read($socket, 1024, PHP_NORMAL_READ);
+            if ($read != 0) {
+	            // read data
+	            /*
+				$data = socket_read($socket, 1024, PHP_BINARY_READ);
+				while (isset($data) && ($data != "")) {
+					$return .= $data;
+					$data = socket_read($socket, 1024, PHP_BINARY_READ);
+				}
+				*/
+				if(!socket_last_error($socket)){
+					if ($buffer = socket_read($socket, 512, PHP_NORMAL_READ))
+						$return .= $buffer;
+				}
+            }
 
             // close socket
             socket_close($socket);
 
             // return
             return $return;
+
+        } else { // fluxd not running
+        	return null;
         }
     }
 }

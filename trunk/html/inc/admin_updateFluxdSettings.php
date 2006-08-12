@@ -20,7 +20,8 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	// fluxd Running?
 	include_once("Fluxd.php");
 	$fluxd = new Fluxd(serialize($cfg));
-	if ($fluxd->isFluxdRunning()) {
+	$fluxRunning = $fluxd->isFluxdRunning();
+	if ($fluxRunning) {
 		$needsRestart = false;
 		$reloadModules = false;
 		$needsInit = false;
@@ -29,44 +30,51 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 			$_POST["fluxd_path"] != $cfg["fluxd_path"]) {
 			$needsRestart = true;
 		}
+		// TODO : add module-configs to trigger reload on config-change
 		if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 			$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
 			$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
 			$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
-			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"]) {
+			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
+			$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
+			$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"]
+			) {
 			$reloadModules = true;
 		}
 		if ($needsRestart) {
 			$needsHUP = false;
 			$message .= 'You have to restart fluxd to use the new settings.<br><br>';
 		}
-		if ($reloadModules) {
-			$fluxd->reloadModules();
-		}
-		// reconfig of running daemon
+		// reconfig of running daemon :
 		if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
 			$fluxd->setConfig('LOGLEVEL',$_POST["fluxd_loglevel"]);
 			sleep(1);
 		}
-		if ($_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"]) {
-		   $fluxd->setConfig('Qmgr::MAX_TORRENTS',$_POST["fluxd_Qmgr_maxTotalTorrents"]);
-		   sleep(1);
-		}
-		if ($_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"]) {
-		   $fluxd->setConfig('Qmgr::MAX_USER',$_POST["fluxd_Qmgr_maxUserTorrents"]);
-		}
+		// save settings
+		$settings = $_POST;
+		saveSettings($settings);
+		// reload fluxd-database-cache
+		$fluxd->reloadDBCache();
+		// reload fluxd-modules
+		if ($reloadModules)
+			$fluxd->reloadModules();
 	} else {
-	   $message .= 'fluxd is not currently running.<br><br>';
+		// save settings
+		$settings = $_POST;
+		saveSettings($settings);
+		$message .= 'fluxd is not currently running.<br><br>';
 	}
-
-	$settings = $_POST;
-	saveSettings($settings);
+	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
+	// redir
 	header("Location: index.php?page=admin&op=fluxdSettings&m=".urlencode($message));
 } else {
+	// save settings
 	$settings = $_POST;
 	saveSettings($settings);
+	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
+	// redir
 	header("Location: index.php?page=admin&op=fluxdSettings");
 }
 ?>

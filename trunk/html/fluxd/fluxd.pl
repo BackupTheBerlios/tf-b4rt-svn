@@ -561,6 +561,8 @@ sub processRequest {
 	SWITCH: {
 		$_ = shift;
 
+		print "processing request ".$_."\n"; # DEBUG
+
 		# Actual fluxd subroutine calls
 		/^die/ && do {
 			$return = daemonShutdown();
@@ -576,6 +578,14 @@ sub processRequest {
 		};
 		/^set/ && do {
 			$return = set(shift, shift);
+			last SWITCH;
+		};
+		/^reloadDBCache/ && do {
+			$return = $fluxDB->reload();
+			last SWITCH;
+		};
+		/^reloadModules/ && do {
+			$return = loadServiceModules();
 			last SWITCH;
 		};
 
