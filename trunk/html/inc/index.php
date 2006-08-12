@@ -176,7 +176,6 @@ if ($cfg["index_page"] == "b4rt") {
 }
 elseif ($cfg["index_page"] == "tf") {
 	$transferList = getDirList($cfg["torrent_file_path"]);
-
 }
 
 if ($cfg['ui_indexrefresh'] != "0") {
@@ -355,7 +354,6 @@ if (IsForceReadMsg()) {
 }
 
 # define some things
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);

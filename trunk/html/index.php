@@ -27,9 +27,11 @@ require_once("lib/vlib/vlibTemplate.php");
 if(isset($_GET['page'])) {
 	switch($_GET['page']) {
 		default:
+			require_once("inc/inc.head.php");
 			require_once("inc/index.php");
 		break;
 		case "index":
+			require_once("inc/inc.head.php");
 			require_once("inc/index.php");
 		break;
 		case "dir":
@@ -117,6 +119,7 @@ if(isset($_GET['page'])) {
 }
 else {
 # use "old" style not to break tools
+	require_once("inc/inc.head.php");
 	require_once("inc/index.php");
 }
 ?>
