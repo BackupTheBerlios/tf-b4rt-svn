@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 626 2006-07-16 23:40:22Z joshe $
+ * $Id: transmission.h 754 2006-08-12 00:38:26Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -196,6 +196,15 @@ void tr_torrentStop( tr_torrent_t * );
  * in other cases.
  **********************************************************************/
 int tr_getFinished( tr_torrent_t * );
+
+/***********************************************************************
+ * tr_getPeer
+ ***********************************************************************
+ * Returns the peer at peerNum. Returns NULL if peerNum is not greater
+ * than 0 and less than peerCount.
+ **********************************************************************/
+typedef struct tr_peer_s tr_peer_t;
+tr_peer_t * tr_getPeer( tr_torrent_t *, int peerNum );
 
 /***********************************************************************
  * tr_torrentStat

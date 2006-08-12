@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 751 2006-08-09 22:53:27Z livings124 $
+ * $Id: transmission.c 754 2006-08-12 00:38:26Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -403,6 +403,13 @@ int tr_getFinished( tr_torrent_t * tor )
         return 1;
     }
     return 0;
+}
+
+tr_peer_t * tr_getPeer( tr_torrent_t * tor, int peerNum)
+{
+    if (peerNum < 0 || peerNum >= tor->peerCount)
+        return NULL;
+    return tor->peers[peerNum];
 }
 
 tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
