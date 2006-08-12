@@ -120,12 +120,12 @@ class Fluxd
      * @return int with pid
      */
     function getFluxdPid() {
-        if($fileHandle = @fopen($pathPidFile,'r')) {
+        if($fileHandle = @fopen($this->pathPidFile,'r')) {
             $data = "";
             while (!@feof($fileHandle))
                 $data .= @fgets($fileHandle, 1024);
             @fclose ($fileHandle);
-            $this->pid = $data;
+            $this->pid = trim($data);
             return $this->pid;
         } else {
             return "";
@@ -175,6 +175,15 @@ class Fluxd
            $this->sendCommand('set '.$key.' '.$value);
     }
 
+	/**
+	 * reloadModules
+	 *
+	 */
+    function reloadModules() {
+    	// TODO
+		//if ($this->isFluxdRunning())
+		//	$this->sendCommand('?');
+    }
 
     // private meths
 

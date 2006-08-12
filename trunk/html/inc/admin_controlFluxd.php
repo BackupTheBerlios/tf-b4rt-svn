@@ -1,21 +1,18 @@
 <?php
 /* $Id$ */
+
 $message = "";
 $action = getRequestVar('a');
 include_once('Fluxd.php');
 
 switch($action) {
 	case "start":
-		// save settings
-		//$settings = array();
-		//saveSettings($settings);
-		//AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
-		// start Fluxd
+		// start fluxd
 		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdReadyToStart()) {
 			$fluxd->startFluxd();
 			if ($fluxd->state == 2) {
-				$message = '<br><strong>Fluxd started.</strong><br><br>';
+				$message = '<br><strong>fluxd started.</strong><br><br>';
 			} else {
 				$message = '<br><font color="red">Error starting fluxd</font><br>';
 				$message .= 'Error : '.$fluxd->messages . '<br>';
@@ -26,11 +23,7 @@ switch($action) {
 	break;
 
 	case "stop":
-		// save settings
-		$settings = array();
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating Fluxd Settings");
-		// kill Fluxd
+		// kill fluxd
 		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdRunning()) {
 			$fluxd->stopFluxd();
