@@ -35,7 +35,7 @@ else {
 # define some vars
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-if ($cfg['ui_indexrefresh'] != "0") {
+if ($cfg['ui_indexrefresh'] != "0" && $_GET['page'] == "index") {
 	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
 		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	}

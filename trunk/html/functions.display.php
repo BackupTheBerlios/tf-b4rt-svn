@@ -236,27 +236,7 @@ $displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_bo
 // get the header portion of admin views
 function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	global $cfg;
-	$head = '
-	<html>
-	<HEAD>
-		<TITLE>'.$percentdone.' '.$cfg["pagetitle"].'</TITLE>
-		<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
-		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-		<LINK REL="StyleSheet" HREF="themes/'.$cfg["theme"].'/style.css" TYPE="text/css">
-		<META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset=ISO-8859-1">
-	';
-	if ($refresh != "") {
-		$head .= "<meta http-equiv=\"REFRESH\" content=\"".$refresh."\">";
-	}
 	$head .= '
-		<script type="text/javascript">
-		function CheckSFV(dir,file) {
-			var width = screen.width/2-300;
-			var height = screen.height/2-110;
-			var InfoWin = window.open("index.php?page=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
-		}
-		</script>
-	</HEAD>
 	<body topmargin="8" leftmargin="5" bgcolor="'.$cfg["main_bgcolor"].'">
 	<div align="center">
 	<table border="0" cellpadding="0" cellspacing="0">
