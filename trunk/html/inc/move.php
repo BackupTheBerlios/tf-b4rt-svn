@@ -97,6 +97,7 @@ else {
 		}
 	}
 }
+$tmpl->setloop('dir_list', $dir_list);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
