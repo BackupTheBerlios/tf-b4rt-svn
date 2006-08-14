@@ -40,15 +40,10 @@
 					</td>
 					<td align=right width='36'>
 						<tmpl_if name="counter" value="2">
-							<a href='index.php?page=admin&op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'>
-							<img src='images/uparrow.png' width='16' height='16' border='0' title='Move link up' align='absmiddle' alt='Up'></a>
-						<tmpl_elseif name="counter" value="1">
+<a href='index.php?page=admin&op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='images/uparrow.png' width='16' height='16' border='0' title='Move link up' align='absmiddle' alt='Up'></a><tmpl_elseif name="counter" value="1">
 							<img src='images/blank.gif' width='16' align='absmiddle'>
-						</tmpl_if>&nbsp;
-						<tmpl_if name="counter2">
-							<a href='index.php?page=admin&op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'>
-							<img src='images/downarrow.png' width='16' height='16' border='0' title='Move link down' align='absmiddle' alt='Down'></a>
-						</tmpl_if>
+						</tmpl_if><tmpl_if name="counter2">
+<a href='index.php?page=admin&op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='images/downarrow.png' width='16' height='16' border='0' title='Move link down' align='absmiddle' alt='Down'></a></tmpl_if>
 					</td>
 				</tmpl_if>
 			</tr>
