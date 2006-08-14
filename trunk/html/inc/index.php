@@ -181,7 +181,7 @@ elseif ($cfg["index_page"] == "tf") {
 if ($cfg['ui_indexrefresh'] != "0") {
 	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
 		$tmpl->setvar('refresh', 1);
-		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+		$tmpl->setvar('pagerefresh', $cfg["page_refresh"]);
 	}
 }
 
@@ -427,11 +427,6 @@ $tmpl->setvar('_TOTALXFER', _TOTALXFER);
 $tmpl->setvar('_MONTHXFER', _MONTHXFER);
 $tmpl->setvar('_WEEKXFER', _WEEKXFER);
 $tmpl->setvar('_DAYXFER', _DAYXFER);
-if ($cfg['ui_indexrefresh'] != "0" && $_GET['page'] == "index") {
-	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
-		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
-	}
-}
 $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->pparse();
