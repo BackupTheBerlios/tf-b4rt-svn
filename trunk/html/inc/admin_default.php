@@ -13,6 +13,10 @@ $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('activity', getActivity($min));
 $tmpl->setvar('foot', getFoot(true,true));
-
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('index_page', $cfg["index_page"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->pparse();
 ?>

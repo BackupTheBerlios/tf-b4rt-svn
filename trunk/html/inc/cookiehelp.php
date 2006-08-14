@@ -39,6 +39,11 @@ else {
 $tmpl->setvar('head', getHead("Cookie Help", false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('foot', getFoot(false));
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('index_page', $cfg["index_page"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 
 $tmpl->pparse();
 ?>

@@ -340,7 +340,11 @@ $tmpl->setvar('indexPageSettingsForm', getIndexPageSettingsForm());
 $tmpl->setvar('sortOrderSettingsForm', getSortOrderSettingsForm());
 $tmpl->setvar('goodLookingStatsForm', getGoodLookingStatsForm());
 $tmpl->setvar('moveSettingsForm', getMoveSettingsForm());
-
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('index_page', $cfg["index_page"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

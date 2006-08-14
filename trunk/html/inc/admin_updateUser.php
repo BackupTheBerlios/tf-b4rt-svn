@@ -27,5 +27,10 @@ if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	AuditAction($cfg["constants"]["admin"], _EDITUSER.": ".$user_id);
 	header("location: index.php?page=admin");
 }
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('index_page', $cfg["index_page"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->pparse();
 ?>

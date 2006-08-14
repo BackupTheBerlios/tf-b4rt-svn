@@ -59,6 +59,11 @@ switch ($cfg["metainfoclient"]) {
 	break;
 }
 
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('index_page', $cfg["index_page"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('foot', getFoot());
 $tmpl->pparse();
 ?>

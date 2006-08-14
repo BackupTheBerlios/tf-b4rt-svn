@@ -427,6 +427,11 @@ $tmpl->setvar('_TOTALXFER', _TOTALXFER);
 $tmpl->setvar('_MONTHXFER', _MONTHXFER);
 $tmpl->setvar('_WEEKXFER', _WEEKXFER);
 $tmpl->setvar('_DAYXFER', _DAYXFER);
+if ($cfg['ui_indexrefresh'] != "0" && $_GET['page'] == "index") {
+	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
+		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+	}
+}
 
 $tmpl->pparse();
 ?>

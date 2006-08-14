@@ -318,13 +318,7 @@ switch ($op) {
 
 	//XFER
 	case "xfer":
-		echo getHead(_XFER);
-		echo getMenu();
-		if ($cfg['enable_xfer'] == 1) {
-			getDirList($cfg["torrent_file_path"],0);
-			echo displayXfer();
-		}
-		echo getFoot(true,true);
+		require_once("admin_xfer.php");
 	break;
 
 	case "backupDatabase":
