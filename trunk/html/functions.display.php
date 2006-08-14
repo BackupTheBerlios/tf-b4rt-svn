@@ -166,10 +166,10 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
 		}
 		switch ($period) {
 			case 'Month Starting':
-				$rowstr = "<a href='?op=xfer&user=$user_id&month=".date('Y-m',strtotime($start))."'>$start</a>";
+				$rowstr = "<a href='index.php?page=xfer&op=xfer&user=$user_id&month=".date('Y-m',strtotime($start))."'>$start</a>";
 			break;
 			case 'Week Starting':
-				$rowstr = "<a href='?op=xfer&user=$user_id&month=". @ $_GET[month] . "&week=".date('Y-m-d',strtotime($start))."'>$start</a>";
+				$rowstr = "<a href='index.php?page=xfer&op=xfer&user=$user_id&month=". @ $_GET[month] . "&week=".date('Y-m-d',strtotime($start))."'>$start</a>";
 			break;
 			case 'Day':
 				$rowstr = $start;
@@ -209,7 +209,7 @@ $displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_bo
 	showError($db,$sql);
 	foreach ($rtnValue as $user_id) {
 		$displayXferList .= '<tr>';
-		$displayXferList .= '<td><a href="?op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
+		$displayXferList .= '<td><a href="index.php?page=xfer&op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
 		$total = formatFreeSpace($xfer[$user_id]['total']['total']/(1024*1024));
 		$month = formatFreeSpace(@ $xfer[$user_id]['month']['total']/(1024*1024));
 		$week = formatFreeSpace(@ $xfer[$user_id]['week']['total']/(1024*1024));
@@ -220,7 +220,7 @@ $displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_bo
 		$displayXferList .= '<td><div class="tiny" align="center">'.$day.'</div></td>';
 		$displayXferList .= '</tr>';
 	}
-	$displayXferList .= '<td><a href="?op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
+	$displayXferList .= '<td><a href="index.php?page=xfer&op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
 	$total = formatFreeSpace($xfer_total['total']['total']/(1024*1024));
 	$month = formatFreeSpace($xfer_total['month']['total']/(1024*1024));
 	$week = formatFreeSpace($xfer_total['week']['total']/(1024*1024));
