@@ -192,7 +192,7 @@ sub processArguments {
 			exit;
 		}
 		# init paths
-		initPaths($fluxDB->getFluxConfig("path"));
+		initPaths(FluxDB->getFluxConfig("path"));
 		if (-f $PID_FILE) {
 			# get pid
 			open(PIDFILE,"< $PID_FILE");
@@ -257,7 +257,7 @@ sub daemonize {
 	}
 
 	# init paths
-	initPaths($fluxDB->getFluxConfig("path"));
+	initPaths(FluxDB->getFluxConfig("path"));
 
 	# check for pid-file : if exists bail out
 	if (-f $PID_FILE) {
@@ -369,7 +369,7 @@ sub initPaths {
 sub loadServiceModules {
 
 	# Qmgr
-	if ($fluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
+	if (FluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Qmgr::new)) {
 			if (eval "require Qmgr") {
@@ -393,12 +393,12 @@ sub loadServiceModules {
 	}
 
 	# Fluxinet
-	if ($fluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
+	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Fluxinet::new)) {
 			if (eval "require Fluxinet") {
 				$fluxinet = Fluxinet->new();
-				$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+				$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
 				if ($fluxinet->getState() < 1) {
 					print STDERR "error initializing service-module Fluxinet :\n";
 					print STDERR $fluxinet->getMessage()."\n";
@@ -417,12 +417,12 @@ sub loadServiceModules {
 	}
 
 	# Watch
-	if ($fluxDB->getFluxConfig("fluxd_Watch_enabled") == 1) {
+	if (FluxDB->getFluxConfig("fluxd_Watch_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Watch::new)) {
 			if (eval "require Watch") {
 				$watch = Watch->new();
-				$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
+				$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_jobs"));
 				if ($watch->getState() < 1) {
 					print STDERR "error initializing service-module Watch :\n";
 					print STDERR $watch->getMessage()."\n";
@@ -441,12 +441,12 @@ sub loadServiceModules {
 	}
 
 	# Clientmaint
-	if ($fluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
+	if (FluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Clientmaint::new)) {
 			if (eval "require Clientmaint") {
 				$clientmaint = Clientmaint->new();
-				$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
+				$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
 				if ($clientmaint->getState() < 1) {
 					print STDERR "error initializing service-module Clientmaint :\n";
 					print STDERR $clientmaint->getMessage()."\n";
@@ -465,7 +465,7 @@ sub loadServiceModules {
 	}
 
 	# Trigger
-	if ($fluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
+	if (FluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
 		# Load up module, unless it is already
 		if (!(exists &Trigger::new)) {
 			if (eval "require Trigger") {
@@ -689,7 +689,7 @@ sub fluxcli {
 			$return = printUsage();
 			next;
 		} else {
-			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			my $shellCmd = FluxDB->getFluxConfig("bin_php");
 			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command;
 			$return = `$shellCmd`;
 			next;
@@ -700,7 +700,7 @@ sub fluxcli {
 			$return = printUsage();
 			next;
 		} else {
-			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			my $shellCmd = FluxDB->getFluxConfig("bin_php");
 			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1;
 			$return = `$shellCmd`;
 			next;
@@ -711,7 +711,7 @@ sub fluxcli {
 			$return = printUsage();
 			next;
 		} else {
-			my $shellCmd = $fluxDB->getFluxConfig("bin_php");
+			my $shellCmd = FluxDB->getFluxConfig("bin_php");
 			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
 			$return = `$shellCmd`;
 			next;
@@ -975,11 +975,11 @@ sub check {
 	print " - Host : ".$fluxDB->getDatabaseHost()."\n";
 
 	# init paths
-	initPaths($fluxDB->getFluxConfig("path"));
+	initPaths(FluxDB->getFluxConfig("path"));
 
 	# 4. paths
 	print "4. paths\n";
-	print " - flux-data-dir : ".$fluxDB->getFluxConfig("path")."\n";
+	print " - flux-data-dir : ".FluxDB->getFluxConfig("path")."\n";
 	print " - PATH_TORRENT_DIR : ".$PATH_TORRENT_DIR."\n";
 	print " - PATH_DATA_DIR : ".$PATH_DATA_DIR."\n";
 	print " - PATH_SOCKET : ".$PATH_SOCKET."\n";
@@ -1021,7 +1021,7 @@ sub check {
 	if (eval "require Fluxinet") {
 		eval {
 			$fluxinet = Fluxinet->new();
-			$fluxinet->initialize($fluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+			$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
 			if ($fluxinet->getState() < 1) {
 				print "error initializing service-module Fluxinet :\n";
 				print $fluxinet->getMessage()."\n";
@@ -1046,7 +1046,7 @@ sub check {
 	if (eval "require Watch") {
 		eval {
 			$watch = Watch->new();
-			$watch->initialize($fluxDB->getFluxConfig("fluxd_Watch_jobs"));
+			$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_jobs"));
 			if ($watch->getState() < 1) {
 				print "error initializing service-module Watch :\n";
 				print $watch->getMessage()."\n";
@@ -1071,7 +1071,7 @@ sub check {
 	if (eval "require Clientmaint") {
 		eval {
 			$clientmaint = Clientmaint->new();
-			$clientmaint->initialize($fluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
+			$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
 			if ($clientmaint->getState() < 1) {
 				print "error initializing service-module Clientmaint :\n";
 				print $clientmaint->getMessage()."\n";
@@ -1170,15 +1170,19 @@ sub debug {
 		print "\$fluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
 		print "\$fluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
 		# something from the bean
-		print "\$fluxDB->getFluxConfig(\"path\") : \"".$fluxDB->getFluxConfig("path")."\"\n";
-		print "\$fluxDB->getFluxConfig(\"bin_php\") : \"".$fluxDB->getFluxConfig("bin_php")."\"\n";
+		print "FluxDB->getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print "FluxDB->getFluxConfig(\"bin_php\") : \"".FluxDB->getFluxConfig("bin_php")."\"\n";
+		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_enabled")."\"\n";
+		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_port\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_port")."\"\n";
 		# test to set a val
-		print "\$fluxDB->getFluxConfig(\"default_theme\") : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		print "FluxDB->getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print "\$fluxDB->getFluxConfig(\"default_theme\") after set : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		print "FluxDB->getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print "\$fluxDB->getFluxConfig(\"default_theme\") after reload : \"".$fluxDB->getFluxConfig("default_theme")."\"\n";
+		print "FluxDB->getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_enabled")."\"\n";
+		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_port\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_port")."\"\n";
 		# destroy
 		print "destroying \$fluxDB\n";
 		$fluxDB->destroy();
