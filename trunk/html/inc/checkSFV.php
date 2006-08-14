@@ -40,10 +40,11 @@ $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
 
 $handle = popen($cmd . ' 2>&1', 'r' );
-
-$buff = fgets($handle);
+$buff= "";
+while(!feof($handle)) {
+	$buff .= fgets($handle,30);
+}
 $tmpl->setvar('buff', nl2br($buff));
-
 pclose($handle);
 
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
