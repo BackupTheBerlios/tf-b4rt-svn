@@ -432,6 +432,7 @@ if ($cfg['ui_indexrefresh'] != "0" && $_GET['page'] == "index") {
 		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	}
 }
-
+$tmpl->setvar('index_page', $cfg["index_page"]);
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->pparse();
 ?>

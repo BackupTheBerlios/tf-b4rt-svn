@@ -184,7 +184,7 @@ if (isset($dir)) {
 	$parentURL = "index.php?page=dir";
 	//get the real parentURL
 	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1) {
-		$parentURL="index.php?page=dir$dir=" . urlencode($matches[1]);
+		$parentURL="index.php?page=dir&dir=" . urlencode($matches[1]);
 	}
 	$tmpl->setvar('parentURL', $parentURL);
 	$tmpl->setvar('_BACKTOPARRENT', _BACKTOPARRENT);
