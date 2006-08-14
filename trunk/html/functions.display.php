@@ -236,7 +236,7 @@ $displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_bo
 // get the header portion of admin views
 function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	global $cfg;
-	$head .= '
+	$head = '
 	<body topmargin="8" leftmargin="5" bgcolor="'.$cfg["main_bgcolor"].'">
 	<div align="center">
 	<table border="0" cellpadding="0" cellspacing="0">
