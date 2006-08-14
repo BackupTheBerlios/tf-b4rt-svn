@@ -311,13 +311,14 @@ foreach($entrys as $entry) {
 			$enable_move = $cfg["enable_move"];
 			$enable_rar = $cfg["enable_rar"];
 			if ($enable_rar == 1) {
+				$enable_rar2 = 0;
 				// R.D. - Display links for unzip/unrar
 				if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
 					if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE )) {
-						$enable_rar = 1;
+						$enable_rar2 = 1;
 					}
 					if (strpos($dir.$entry, '.zip') !== FALSE) {
-						$enable_rar = 2;
+						$enable_rar2 = 2;
 					}
 				}
 			}
@@ -354,7 +355,7 @@ foreach($entrys as $entry) {
 				'_DIR_REN_LINK' => _DIR_REN_LINK,
 				'enable_move' => $enable_move,
 				'_DIR_MOVE_LINK' => _DIR_MOVE_LINK,
-				'enable_rar' => $enable_rar,
+				'enable_rar2' => $enable_rar2,
 				'enable_view_nfo' => $enable_view_nfo,
 				'urlencode4' => $urlencode4,
 				'enable_maketorrent' => $cfg["enable_maketorrent"],
