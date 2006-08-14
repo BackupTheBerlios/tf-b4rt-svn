@@ -16,6 +16,9 @@
 			}
 		</script>
 	</tmpl_if>
+	<tmpl_if name="deref">
+		<meta http-equiv="REFRESH" content="0;URL=<tmpl_var name="_REQUEST">" />
+	</tmpl_if>
 	<tmpl_if name="index_page" value="tf">
 		<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>
 		<script language="JavaScript">

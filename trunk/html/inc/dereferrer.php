@@ -37,6 +37,7 @@ if (isset($_REQUEST["u"])) {
 	$tmpl->setvar('set', 1);
 	$tmpl->setvar('head', getHead("dereferrer",false,'0;URL='.$_REQUEST["u"]));
 	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+	$tmpl->setvar('deref', 1);
 	$tmpl->setvar('_REQUEST', $_REQUEST["u"]);
 	$tmpl->setvar('foot', getFoot(false,false));
 } else {
