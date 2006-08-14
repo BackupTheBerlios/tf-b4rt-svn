@@ -524,7 +524,7 @@
 									<select name="package_type">
 										<option value="tar" selected>tar</option>
 										<option value="zip"
-										<tmpl_if name="enable_file_download" value="zip">
+										<tmpl_if name="package_type" value="zip">
 											 selected
 										</tmpl_if>
 										>zip</option>
@@ -775,7 +775,7 @@
 									<select name="month_start">
 										<tmpl_loop name="month_list">
 											<option value="<tmpl_var name="i">"
-												<tmpl_if name="month_start_true" value="0">
+												<tmpl_if name="month_start_true" value="1">
 													 selected
 												</tmpl_if>
 											><tmpl_var name="i"></option>
