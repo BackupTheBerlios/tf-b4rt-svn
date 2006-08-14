@@ -42,6 +42,7 @@ $tmpl->setvar('head', getHead("View NFO"));
 
 $file = $_GET["path"];
 $folder = htmlspecialchars( substr( $file, 0, strrpos( $file, "/" ) ) );
+$tmpl->setvar('folder', $folder);
 
 if( ( $output = @file_get_contents( $cfg["path"] . $file ) ) === false ) {
 	$output = "Error opening NFO File.";
