@@ -178,7 +178,7 @@
 											<td valign="bottom">
 												<select name="ui_displaylinks">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_ui_displaylinks">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="ui_displaylinks" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -189,7 +189,7 @@
 											<td valign="bottom">
 												<select name="ui_displayusers">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_ui_displayusers">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="ui_displayusers" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -211,7 +211,7 @@
 											<td valign="top">
 												<select name="index_page_stats">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_index_page_stats">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="index_page_stats" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -222,7 +222,7 @@
 											<td valign="top">
 												<select name="show_server_load">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_show_server_load">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="show_server_load" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -233,7 +233,7 @@
 											<td valign="top">
 												<select name="index_page_connections">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_index_page_connections">selected</tmpl_if>false</option>
+													<option value="0" <tmpl_if name="index_page_connections" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -244,7 +244,7 @@
 											<td valign="bottom">
 												<select name="ui_indexrefresh">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_ui_indexrefresh">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="ui_indexrefresh" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -253,7 +253,7 @@
 												<strong>Page Refresh (in seconds)</strong><br>Number of seconds before the torrent list page refreshes:
 											</td>
 											<td valign="top">
-												<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
+												<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="pagerefresh">" size="3">
 											</td>
 										</tr>
 										<tr>
@@ -271,7 +271,7 @@
 											<td valign="top">
 												<select name="enable_sorttable">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_enable_sorttable">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="enable_sorttable" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -282,7 +282,7 @@
 											<td valign="top">
 												<select name="enable_goodlookstats">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_enable_goodlookstats">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="enable_goodlookstats" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -301,7 +301,7 @@
 											<td valign="top">
 												<select name="enable_bigboldwarning">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_enable_bigboldwarning">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="enable_bigboldwarning" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>
@@ -357,7 +357,7 @@
 											<td valign="bottom">
 												<select name="ui_displayfluxlink">
 													<option value="1">true</option>
-													<option value="0" <tmpl_if name="no_ui_displayfluxlink">selected</tmpl_if>>false</option>
+													<option value="0" <tmpl_if name="ui_displayfluxlink" value="0">selected</tmpl_if>>false</option>
 												</select>
 											</td>
 										</tr>

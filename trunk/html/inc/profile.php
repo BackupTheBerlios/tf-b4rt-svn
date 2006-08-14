@@ -156,35 +156,17 @@ switch ($op) {
 		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 		$tmpl->setvar('index_page', $cfg["index_page"]);
 		$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
-
-		if (!$cfg["ui_displaylinks"]) {
-			$tmpl->setvar('no_ui_displaylinks', 1);
-		}
-		if (!$cfg["ui_displayusers"]) {
-			$tmpl->setvar('no_ui_displayusers', 1);
-		}
-
+		$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
+		$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 		$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
-
-		if (!$cfg["index_page_stats"]) {
-			$tmpl->setvar('no_index_page_stats', 1);
-		}
-		if (!$cfg["show_server_load"]) {
-			$tmpl->setvar('no_show_server_load', 1);
-		}
-		if (!$cfg["index_page_connections"]) {
-			$tmpl->setvar('no_index_page_connections', 1);
-		}
-		if (!$cfg["ui_indexrefresh"]) {
-			$tmpl->setvar('no_ui_indexrefresh', 1);
-		}
-		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
-		if (!$cfg["enable_sorttable"]) {
-			$tmpl->setvar('no_enable_sorttable', 1);
-		}
-		if (!$cfg["enable_bigboldwarning"]) {
-			$tmpl->setvar('no_enable_bigboldwarning', 1);
-		}
+		$tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
+		$tmpl->setvar('show_server_load', $cfg["show_server_load"]);
+		$tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
+		$tmpl->setvar('ui_indexrefresh', $cfg["ui_indexrefresh"]);
+		$tmpl->setvar('pagerefresh', $cfg["page_refresh"]);
+		$tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
+		$tmpl->setvar('enable_bigboldwarning', $cfg["enable_bigboldwarning"]);
+		$tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
 		$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
 		$tmpl->setvar('enable_move', $cfg["enable_move"]);
 		$tmpl->setvar('_PASSWORDLENGTH', _PASSWORDLENGTH);
@@ -340,6 +322,7 @@ $tmpl->setvar('indexPageSettingsForm', getIndexPageSettingsForm());
 $tmpl->setvar('sortOrderSettingsForm', getSortOrderSettingsForm());
 $tmpl->setvar('goodLookingStatsForm', getGoodLookingStatsForm());
 $tmpl->setvar('moveSettingsForm', getMoveSettingsForm());
+$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('index_page', $cfg["index_page"]);
