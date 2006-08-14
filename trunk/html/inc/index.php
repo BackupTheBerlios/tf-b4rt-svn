@@ -251,18 +251,20 @@ if ($cfg["ui_displayusers"] != "0") {
 		if(IsOnline($arUsers[$inx])) {
 			array_push($arOnlineUsers, array(
 				'user' => $arUsers[$inx],
+				'is_on' => 1,
 				)
 			);
-			$tmpl->setloop('arOnlineUsers', $arOnlineUsers);
 		}
 		else {
 			array_push($arOfflineUsers, array(
 				'user' => $arUsers[$inx],
+				'is_off' => 1,
 				)
 			);
-			$tmpl->setloop('arOfflineUsers', $arOfflineUsers);
 		}
 	}
+	$tmpl->setloop('arOnlineUsers', $arOnlineUsers);
+	$tmpl->setloop('arOfflineUsers', $arOfflineUsers);
 }
 
 if (($cfg['enable_xfer'] == 1) && ($cfg['enable_public_xfer'] == 1)) {
@@ -396,7 +398,7 @@ $tmpl->setvar('_ID_MRTG', _ID_MRTG);
 $tmpl->setvar('_SERVERSTATS', _SERVERSTATS);
 $tmpl->setvar('_ALL', _ALL);
 $tmpl->setvar('_DIRECTORYLIST', _DIRECTORYLIST);
-$tmpl->setvar('user', $cfg["user"]);
+$tmpl->setvar('user2', $cfg["user"]);
 $tmpl->setvar('formatFreeSpace', formatFreeSpace($cfg["free_space"]));
 $tmpl->setvar('transferList', $transferList);
 $tmpl->setvar('_TORRENTDETAILS', _TORRENTDETAILS);

@@ -144,14 +144,18 @@
 								<tmpl_if name="ui_displayusers">
 								    <b><tmpl_var name="_ONLINE">:</b><br>
 								    <tmpl_loop name="arOnlineUsers">
-									   <a href="index.php?page=message&to_user="<tmpl_var name="user">">
-									   <img src="images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+										<tmpl_if name="is_on">
+											<a href="index.php?page=message&to_user=<tmpl_var name="user">">
+											<img src="images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+										</tmpl_if>
 								    </tmpl_loop>
     								<tmpl_if name="hide_offline" value="0">
     									<b><tmpl_var name="_OFFLINE">:</b></br>
     									<tmpl_loop name="arOfflineUsers">
-    									   <a href="index.php?page=message&to_user="<tmpl_var name="user">">
-    									   <img src="images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+											<tmpl_if name="is_off">
+    											<a href="index.php?page=message&to_user=<tmpl_var name="user">">
+    											<img src="images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+											</tmpl_if>
     								    </tmpl_loop>
     								</tmpl_if>
 								</tmpl_if>
@@ -190,7 +194,7 @@
 							<a href="index.php?page=dir">
 								<img src="images/folder.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_DIRECTORYLIST"></a>
 							|
-							<a href="index.php?page=dir&dir=<tmpl_var name="user">">
+							<a href="index.php?page=dir&dir=<tmpl_var name="user2">">
 								<img src="images/folder.gif" width="16" height="16" title="My Directory" border="0" align="absmiddle">My Directory</a>
 							|
 							<a href="stats.php?f=rss" title="RSS - Stats" target="_blank">
