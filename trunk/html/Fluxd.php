@@ -211,6 +211,9 @@ class Fluxd
                 return null;
             }
 
+            //timeout after 3 seconds
+    		socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>3,'usec'=>0));
+
             // connect
             $result = socket_connect($socket, $this->pathSocket);
             if ($result < 0) {
@@ -220,22 +223,16 @@ class Fluxd
             }
 
             // write command
-            socket_write($socket, $command, strlen($command));
+            socket_write($socket, $command."\n");
 
             // read retval
             $return = "";
             if ($read != 0) {
 	            // read data
-	            /*
-				$data = socket_read($socket, 1024, PHP_BINARY_READ);
+				$data = socket_read($socket, 4096, PHP_BINARY_READ);
 				while (isset($data) && ($data != "")) {
 					$return .= $data;
-					$data = socket_read($socket, 1024, PHP_BINARY_READ);
-				}
-				*/
-				if(!socket_last_error($socket)){
-					if ($buffer = socket_read($socket, 512, PHP_NORMAL_READ))
-						$return .= $buffer;
+					$data = socket_read($socket, 4096, PHP_BINARY_READ);
 				}
             }
 
