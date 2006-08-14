@@ -27,10 +27,10 @@ require_once("functions.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dir.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/uncomp.tmpl");
 }
 else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dir.tmpl");
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/uncomp.tmpl");
 }
 
 $tmpl->setvar('head', getHead('Uncompressing File', false));
