@@ -289,12 +289,14 @@ function getTorrentFluxLink($showVersionLink = false) {
 	if ($cfg["ui_displayfluxlink"] != 0) {
 		$torrentFluxLink = "<div align=\"right\">";
 		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
-		if ($showVersionLink) {
+		if ($showVersionLink)
 			$torrentFluxLink .= getSuperAdminLink('?a=0','');
-		}
 		$torrentFluxLink .= "</div>";
+		return $torrentFluxLink;
+	} else {
+		return "";
 	}
-	return $torrentFluxLink;
+
 }
 
 // ***************************************************************************

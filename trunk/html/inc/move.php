@@ -53,9 +53,9 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 				);
 			}
 		}
+		$tmpl->setloop('dir_list', $dir_list);
 	}
-}
-else {
+} else {
 	$targetDir = "";
 	if (isset($_POST['dest'])) {
 		 $tempDir = trim(urldecode($_POST['dest']));
@@ -67,8 +67,7 @@ else {
 	$dirValid = true;
 	if (strlen($targetDir) <= 0) {
 		 $dirValid = false;
-	}
-	else {
+	} else {
 		// we need absolute paths or stuff will end up in docroot
 		// inform user .. dont move it into a fallback-dir which may be a hastle
 		if ($targetDir{0} != '/') {
@@ -97,7 +96,7 @@ else {
 		}
 	}
 }
-$tmpl->setloop('dir_list', $dir_list);
+// $tmpl->setloop('dir_list', $dir_list);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
