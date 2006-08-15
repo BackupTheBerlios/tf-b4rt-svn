@@ -624,8 +624,9 @@ sub processRequest {
 		}
 
 		# Default case.
-		$return = printUsage();
+		$return = printUsage(1);
 	}
+	print $return."\n";
 	return $return;
 }
 
@@ -785,12 +786,12 @@ sub status {
 
 #------------------------------------------------------------------------------#
 # Sub: printUsage                                                              #
-# Arguments: Null                                                              #
+# Arguments: bool (or undefined)                                               #
 # Returns: Usage Information                                                   #
 #------------------------------------------------------------------------------#
 sub printUsage {
-	print <<"USAGE";
-
+	my $return = shift;
+	my $data = <<"USAGE";
 $PROG.$EXTENSION Revision $VERSION
 
 Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
@@ -828,6 +829,12 @@ Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
                         print out version-info
 
 USAGE
+
+	if ($return) {
+		return $data;
+	} else {
+		print $data;
+	}
 }
 
 #------------------------------------------------------------------------------#
