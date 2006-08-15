@@ -11,9 +11,6 @@ switch($action) {
 		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdReadyToStart()) {
 			$fluxd->startFluxd();
-			// give fluxd some time
-			sleep(3);
-			//
 			if ($fluxd->state == 2) {
 				$message = '<br><strong>fluxd started.</strong><br><br>';
 			} else {
@@ -30,9 +27,6 @@ switch($action) {
 		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdRunning()) {
 			$fluxd->stopFluxd();
-			// give fluxd some time
-			sleep(3);
-			//
 			if ($fluxd->isFluxdRunning())
 				$message = '<br><strong>Stop-Command sent.</strong><br><br>';
 			else

@@ -85,7 +85,7 @@ class Fluxd
             $startCommand = $fluxd . "daemon-start " . $this->cfg["fluxd_path_fluxcli"] . " > /dev/null &";
             $result = exec($startCommand);
             // give fluxd some time
-            sleep(2);
+            sleep(5);
             // check if started
             if ($this->isFluxdRunning()) {
             	AuditAction($this->cfg["constants"]["fluxd"], "fluxd started");
@@ -110,8 +110,11 @@ class Fluxd
      */
     function stopFluxd() {
         AuditAction($this->cfg["constants"]["fluxd"], "Stopping fluxd");
-        if ($this->isFluxdRunning())
+        if ($this->isFluxdRunning()) {
             $this->sendCommand('die', 0);
+            // give fluxd some time
+            sleep(5);
+        }
     }
 
     /**
