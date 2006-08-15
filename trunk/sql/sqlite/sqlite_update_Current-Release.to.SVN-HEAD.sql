@@ -39,8 +39,8 @@ CREATE TABLE tf_dlprofiles (
   max_download_rate INT( 11 ) NOT NULL,
   dont_stop INT( 11 ) NOT NULL,
   share_kill INT( 11 ) NOT NULL,
-  btclient VARCHAR(32) NOT NULL,
-) TYPE = MYISAM ;
+  btclient VARCHAR(32) NOT NULL
+) ;
 
 --
 -- updates
