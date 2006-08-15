@@ -754,7 +754,13 @@ sub deletePidFile {
 #------------------------------------------------------------------------------#
 sub status {
 	my $retval = "";
-	$retval .= "Fluxd has been up since $start_time\n";
+	$retval .= "Fluxd has been up since $start_time\n\n";
+	$retval .= " Loaded Modules :\n";
+	$retval .= "  * Qmgr.pm\n" if ((defined $qmgr) && ($qmgr->getState() == 1));
+	$retval .= "  * Fluxinet.pm\n" if ((defined $fluxinet) && ($fluxinet->getState() == 1));
+	$retval .= "  * Clientmaint.pm\n" if ((defined $qmgr) && ($clientmaint->getState() == 1));
+	$retval .= "  * Watch.pm\n" if ((defined $watch) && ($watch->getState() == 1));
+	$retval .= "  * Trigger.pm\n\n" if ((defined $trigger) && ($trigger->getState() == 1));
 
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
