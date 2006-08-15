@@ -96,5 +96,22 @@ $tmpl->setvar('bgLight', $cfg["bgLight"]);
 $tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 
+# profiles
+if ($cfg["with_profiles"] == "1") {
+	$profile = getRequestVar('profile');
+	if(isset($profile) && $profile != "") {
+		//load custom settings
+	}
+	// load profile list
+	$profiles = GetProfiles($cfg["user"]);
+	if (count($profiles)) {
+		$tmpl->setloop('profiles', $profiles);
+	}
+	else {
+		$cfg["with_profiles"] = "0";
+	}
+}
+$tmpl->setvar('with_profiles', $cfg["with_profiles"]);
+
 $tmpl->pparse();
 ?>

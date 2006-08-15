@@ -647,6 +647,22 @@
 							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Hacks</strong></td></tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable profiles</strong><br>
+								Enable/Disable Download-Profiles :
+								</td>
+								<td valign="top">
+									<select name="with_profiles">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="with_profiles" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable xfer</strong><br>
 								Enable/Disable xfer-hack :
 								</td>

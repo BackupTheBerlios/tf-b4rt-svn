@@ -121,14 +121,30 @@ function isNumber(sText)
 <div align="center">
 	<strong><tmpl_var name="displayName"></strong><br>
 	<table width="98%" border="0" cellpadding="0" cellspacing="0">
-		<tr><form name="theForm" target="_parent" action="index.php?page=index" method="POST">
-			<input type="hidden" name="interactive" value="true">
-			<input type="hidden" name="closeme" value="true">
-			<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+		<tr>
 			<td>
 				<table width="100%" cellpadding="2" cellspacing="0" border="0">
-					<tr><td align="center" colspan="4">BitTorrent-Client : <tmpl_var name="bt_client">
-					</td></tr>
+					<tr>
+						<tmpl_if name="with_profiles">
+							<form name="profile" action="index.php?page=startpop" method="POST">
+								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+								<td align="center" colspan="2">Profile:
+									<select name="profile" size="1" onChange="javascript:submit();">
+										<option value="">default</option>
+										<tmpl_loop name="profiles">
+											<option value="<tmpl_var name="title">"><tmpl_var name="title"></option>
+										</tmpl_loop>
+									</select>
+								</td>
+							</form>
+						</tmpl_if>
+						<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+							<input type="hidden" name="interactive" value="true">
+							<input type="hidden" name="closeme" value="true">
+							<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+						<td align="center" colspan="2">BitTorrent-Client : <tmpl_var name="bt_client">
+						</td>
+					</tr>
 					<tr>
 						<td align="right">Max Upload Rate:</td>
 						<td><input type="Text" name="rate" maxlength="4" size="4" value="<tmpl_var name="max_upload_rate">"> kB/s</td>
@@ -195,7 +211,7 @@ function isNumber(sText)
 					</tmpl_if>
 					<table>
 						<tr>
-							<td aligh="right">Dont check hashes :</td>
+							<td align="right">Dont check hashes :</td>
 							<tmpl_if name="torrent_exists">
 								<td colspan="3"><input type="checkbox" name="skiphashcheck"
 								<tmpl_if name="is_skip">

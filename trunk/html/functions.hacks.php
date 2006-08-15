@@ -161,5 +161,16 @@ function findSFV($dirName) {
 	$d->close();
 	return $sfv;
 }
+// Profiles hack
+//*************************************************************************
+// GetProfiles()
+// This method Gets Download profiles for the actual user
+
+function GetProfiles($user) {
+	global $cfg, $db;
+	$profiles_array = array();
+	$profiles_array = $db->GetArray("select title from tf_dlprofiles where user_id like '".$user."'");
+	return $profiles_array;
+}
 
 ?>

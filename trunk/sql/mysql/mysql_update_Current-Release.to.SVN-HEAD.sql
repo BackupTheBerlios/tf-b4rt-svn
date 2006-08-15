@@ -23,6 +23,11 @@ CREATE TABLE tf_trprofiles (
   PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
+CREATE TABLE tf_dlprofiles (
+  user_id VARCHAR(32) NOT NULL,
+  title VARCHAR(32) NOT NULL,
+) TYPE = MYISAM ;
+
 --
 -- updates
 --
@@ -48,3 +53,4 @@ INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
+INSERT INTO tf_settings VALUES ('with_profiles','1');
