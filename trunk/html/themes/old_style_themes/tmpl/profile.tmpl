@@ -62,7 +62,7 @@
 												<table>
 													<tr>
 														<td align="center">
-															<br />[ <a href="?op=showCookies">Cookie Management</a> ]
+															<br />[ <a href="index.php?page=profile&op=showCookies">Cookie Management</a> ]
 														</td>
 													</tr>
 												</table>
@@ -444,7 +444,7 @@
 	<div align="center">[<a href="?">Return to Profile</a>]</div>
 	<br />
 	<div align="center">
-		<form action="?op=<tmpl_var name="op">" method="post">
+		<form action="index.php?page=profile&op=<tmpl_var name="op">" method="post">
 			<input type="hidden" name="cid" value="<tmpl_var name="cid">" />
 			<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 				<tr>
@@ -479,7 +479,7 @@
 				<tmpl_if name="empty_cid">
 					<tr>
 						<td colspan="3">
-							<center>[ <a href="?op=editCookies">back</a> ]</center>
+							<center>[ <a href="index.php?page=profile&op=editCookies">back</a> ]</center>
 						</td>
 					</tr>
 				<tmpl_else>
