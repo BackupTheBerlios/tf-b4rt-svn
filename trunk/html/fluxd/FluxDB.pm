@@ -62,8 +62,7 @@ my $dbHost = "";
 my $dbPort = 0;
 my $dbUser = "";
 my $dbPass = "";
-# do we use persistent connection ? (yes we do and var is not used (yet))
-my $dbPersConn = 1;
+my $dbDSN = "";
 
 # flux-config-hash
 my %fluxConf = undef;
@@ -124,6 +123,8 @@ sub initialize {
 
 	shift; # class
 
+	print "initializing FluxDB\n"; # DEBUG
+
 	# db-config
 	$dbConfig = shift;
 	if (!(defined $dbConfig)) {
@@ -145,31 +146,36 @@ sub initialize {
 
 	# load Database-Config
 	if (loadDatabaseConfig($dbConfig) == 0) {
-		# message
-		$message = "error loading database-config";
-		# set state
-		$state = -1;
 		# return
 		return 0;
 	}
 
 	# connect
 	if (dbConnect() == 0) {
+		# close connection
+		dbDisconnect();
 		# return
 		return 0;
 	}
 
 	# load config
 	if (loadFluxConfig() == 0) {
+		# close connection
+		dbDisconnect();
 		# return
 		return 0;
 	}
 
 	# load users
 	if (loadFluxUsers() == 0) {
+		# close connection
+		dbDisconnect();
 		# return
 		return 0;
 	}
+
+	# close connection
+	dbDisconnect();
 
 	# set state
 	$state = 1;
@@ -260,12 +266,12 @@ sub getDatabasePassword {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: getDatabaseHandle                                                       #
+# Sub: getDatabaseDSN                                                          #
 # Arguments: null                                                              #
-# Returns: database-handle                                                     #
+# Returns: Database-DSN                                                        #
 #------------------------------------------------------------------------------#
-sub getDatabaseHandle {
-	return $dbHandle;
+sub getDatabaseDSN {
+	return $dbDSN;
 }
 
 #------------------------------------------------------------------------------#
@@ -291,81 +297,38 @@ sub setFluxConfig {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: loadFluxConfig                                                          #
-# Arguments: null                                                              #
-# Returns: 0|1                                                                 #
-#------------------------------------------------------------------------------#
-sub loadFluxConfig {
-	# undef first
-	undef %fluxConf;
-	# load from db
-	my $sth = $dbHandle->prepare(q{ SELECT tf_key, tf_value FROM tf_settings });
-	$sth->execute();
-	my ($tfKey, $tfValue);
-	my $rv = $sth->bind_columns(undef, \$tfKey, \$tfValue);
-	while ($sth->fetch()) {
-		$fluxConf{$tfKey} = $tfValue;
-	}
-	$sth->finish();
-	# return
-	return 1;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: saveFluxConfig                                                          #
-# Arguments: null                                                              #
-# Returns: 0|1                                                                 #
-#------------------------------------------------------------------------------#
-sub saveFluxConfig {
-	return 1;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: loadFluxUsers                                                           #
-# Arguments: null                                                              #
-# Returns: 0|1                                                                 #
-#------------------------------------------------------------------------------#
-sub loadFluxUsers {
-	# undef first
-	undef @users;
-	undef %names;
-	# load from db
-	my $sth = $dbHandle->prepare(q{ SELECT uid, user_id FROM tf_users });
-	$sth->execute();
-	my ($uid, $userid);
-	my $rv = $sth->bind_columns(undef, \$uid, \$userid);
-	my $index = 0;
-	while ($sth->fetch()) {
-		$users[$index] = {
-			uid => $uid,
-			username => $userid,
-		};
-		$names{$userid} = $index;
-		$index++;
-	}
-	$sth->finish();
-	# return
-	return 1;
-}
-
-#------------------------------------------------------------------------------#
 # Sub: reload                                                                  #
 # Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub reload {
 
+	# connect
+	if (dbConnect() == 0) {
+		# close connection
+		dbDisconnect();
+		# return
+		return 0;
+	}
+
 	# load config
 	if (loadFluxConfig() == 0) {
+		# close connection
+		dbDisconnect();
 		# return
 		return 0;
 	}
 
 	# load users
 	if (loadFluxUsers() == 0) {
+		# close connection
+		dbDisconnect();
 		# return
 		return 0;
 	}
+
+	# close connection
+	dbDisconnect();
 
 	# return
 	return 1;
@@ -403,33 +366,24 @@ sub loadDatabaseConfig {
 	}
 	$/ = '\n';
 	close(CONFIG);
-	return 1;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: dbConnect                                                               #
-# Arguments: null                                                              #
-# Returns: 0|1                                                                 #
-#------------------------------------------------------------------------------#
-sub dbConnect {
 
 	# build dsn
-	my $dsn = "DBI:";
+	$dbDSN = "DBI:";
 	SWITCH: {
 		$_ = $dbType;
 
 		# MySQL
 		/^mysql/i && do {
-			$dsn .= "mysql:".$dbName.":".$dbHost;
+			$dbDSN .= "mysql:".$dbName.":".$dbHost;
 			if ($dbPort > 0) {
-				$dsn .= $dbPort;
+				$dbDSN .= $dbPort;
 			}
 			last SWITCH;
 		};
 
 		# SQLite
 		/^sqlite/i && do {
-			$dsn .= "SQLite:dbname=".$dbHost;
+			$dbDSN .= "SQLite:dbname=".$dbHost;
 			$dbUser = "";
 			$dbPass = "";
 			last SWITCH;
@@ -444,9 +398,19 @@ sub dbConnect {
 		return 0;
 	}
 
+	return 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: dbConnect                                                               #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub dbConnect {
+
 	# connect
 	$dbHandle = DBI->connect(
-		$dsn, $dbUser, $dbPass, { PrintError => 0, AutoCommit => 1 }
+		$dbDSN, $dbUser, $dbPass, { PrintError => 0, AutoCommit => 1 }
 	);
 
 	# check
@@ -471,6 +435,74 @@ sub dbDisconnect {
 	if (defined $dbHandle) {
 		$dbHandle->disconnect();
 		undef $dbHandle;
+	}
+}
+
+
+#------------------------------------------------------------------------------#
+# Sub: loadFluxConfig                                                          #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub loadFluxConfig {
+	if (defined $dbHandle) {
+		# undef first
+		undef %fluxConf;
+		# load from db
+		my $sth = $dbHandle->prepare(q{ SELECT tf_key, tf_value FROM tf_settings });
+		$sth->execute();
+		my ($tfKey, $tfValue);
+		my $rv = $sth->bind_columns(undef, \$tfKey, \$tfValue);
+		while ($sth->fetch()) {
+			#print STDERR "fluxconf : ".$tfKey."=".$tfValue."\n"; # DEBUG
+			$fluxConf{$tfKey} = $tfValue;
+		}
+		$sth->finish();
+		# return
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: saveFluxConfig                                                          #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub saveFluxConfig {
+	return 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadFluxUsers                                                           #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub loadFluxUsers {
+	if (defined $dbHandle) {
+		# undef first
+		undef @users;
+		undef %names;
+		# load from db
+		my $sth = $dbHandle->prepare(q{ SELECT uid, user_id FROM tf_users });
+		$sth->execute();
+		my ($uid, $userid);
+		my $rv = $sth->bind_columns(undef, \$uid, \$userid);
+		my $index = 0;
+		while ($sth->fetch()) {
+			$users[$index] = {
+				uid => $uid,
+				username => $userid,
+			};
+			$names{$userid} = $index;
+			$index++;
+		}
+		$sth->finish();
+		# return
+		return 1;
+	} else {
+		return 0;
 	}
 }
 
