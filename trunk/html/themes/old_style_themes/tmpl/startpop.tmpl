@@ -132,18 +132,25 @@ function isNumber(sText)
 									<select name="profile" size="1" onChange="javascript:submit();">
 										<option value="">default</option>
 										<tmpl_loop name="profiles">
-											<option value="<tmpl_var name="title">"><tmpl_var name="title"></option>
+											<option value="<tmpl_var name="title">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="title"></option>
 										</tmpl_loop>
 									</select>
 								</td>
 							</form>
+							<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<input type="hidden" name="interactive" value="true">
+								<input type="hidden" name="closeme" value="true">
+								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+							<td align="center" colspan="2">BitTorrent-Client : <tmpl_var name="bt_client">
+							</td>
+						<tmpl_else>
+							<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<input type="hidden" name="interactive" value="true">
+								<input type="hidden" name="closeme" value="true">
+								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+							<td align="center" colspan="4">BitTorrent-Client : <tmpl_var name="bt_client">
+							</td>
 						</tmpl_if>
-						<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
-							<input type="hidden" name="interactive" value="true">
-							<input type="hidden" name="closeme" value="true">
-							<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
-						<td align="center" colspan="2">BitTorrent-Client : <tmpl_var name="bt_client">
-						</td>
 					</tr>
 					<tr>
 						<td align="right">Max Upload Rate:</td>

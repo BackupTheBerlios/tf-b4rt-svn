@@ -166,11 +166,40 @@ function findSFV($dirName) {
 // GetProfiles()
 // This method Gets Download profiles for the actual user
 
-function GetProfiles($user) {
+function GetProfiles($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$profiles_array = $db->GetArray("select title from tf_dlprofiles where user_id like '".$user."'");
+	$sql = "select title from tf_dlprofiles where user_id like '".$user."'";
+	$rs = $db->GetCol($sql);
+	if ($rs) {
+		foreach($rs as $arr) {
+				if($arr == $profile) {
+				$is_select = 1;
+			}
+			else {
+				$is_select = 0;
+			}
+			array_push($profiles_array, array(
+				'title' => $arr,
+				'is_selected' => $is_select,
+				)
+			);
+		}
+	}
+	showError($db,$sql);
 	return $profiles_array;
+}
+// Profiles hack
+//*************************************************************************
+// GetProfileSettings()
+// This method fetch settings for an specific profile
+
+function GetProfileSettings($profile) {
+	global $cfg, $db;
+	$sql = "select minport, maxport, maxcons, rerequest_interval, max_upload_rate, max_uploads, max_download_rate, dont_stop, sharekill, btclient from tf_dlprofiles where title like '".$profile."'";
+	$settings = $db->GetRow($sql);
+	showError($db,$sql);
+	return $settings;
 }
 
 ?>
