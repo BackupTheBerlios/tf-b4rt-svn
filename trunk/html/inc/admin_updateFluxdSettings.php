@@ -56,8 +56,10 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 		// reload fluxd-database-cache
 		$fluxd->reloadDBCache();
 		// reload fluxd-modules
-		if ($reloadModules)
+		if ($reloadModules) {
+			sleep(1);
 			$fluxd->reloadModules();
+		}
 	} else {
 		// save settings
 		$settings = $_POST;
