@@ -329,7 +329,7 @@ sub status {
 		$return .= "PID_FILE : ".$QmgrVars{'PATH_PID_FILE'}."\n";
 		$return .= "PATH_TORRENT_DIR : ".$QmgrVars{'PATH_TORRENT_DIR'}."\n\n";
 	}
-	return $return
+	return $return;
 }
 
 #-----------------------------------------------------------------------------#

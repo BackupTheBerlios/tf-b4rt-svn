@@ -380,7 +380,7 @@ sub loadServiceModules {
 					print STDERR $qmgr->getMessage()."\n";
 				}
 			} else {
-				print STDERR "error loading service-module Qmgr :\n";
+				print STDERR "error loading service-module Qmgr :$@\n";
 			}
 		}
 	} else {
@@ -404,7 +404,7 @@ sub loadServiceModules {
 					print STDERR $fluxinet->getMessage()."\n";
 				}
 			} else {
-				print STDERR "error loading service-module Fluxinet :\n";
+				print STDERR "error loading service-module Fluxinet :$@\n";
 			}
 		}
 	} else {
@@ -428,7 +428,7 @@ sub loadServiceModules {
 					print STDERR $watch->getMessage()."\n";
 				}
 			} else {
-				print STDERR "error loading service-module Watch :\n";
+				print STDERR "error loading service-module Watch :$@\n";
 			}
 		}
 	} else {
@@ -452,7 +452,7 @@ sub loadServiceModules {
 					print STDERR $clientmaint->getMessage()."\n";
 				}
 			} else {
-				print STDERR "error loading service-module Clientmaint :\n";
+				print STDERR "error loading service-module Clientmaint :$@\n";
 			}
 		}
 	} else {
@@ -476,7 +476,7 @@ sub loadServiceModules {
 					print STDERR $trigger->getMessage()."\n";
 				}
 			} else {
-				print STDERR "error loading service-module Trigger :\n";
+				print STDERR "error loading service-module Trigger :$@\n";
 			}
 		}
 	} else {
@@ -487,7 +487,6 @@ sub loadServiceModules {
 			undef $trigger;
 		}
 	}
-
 }
 
 #------------------------------------------------------------------------------#
