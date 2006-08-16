@@ -97,7 +97,22 @@ $tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 
 # profiles
-if ($cfg["with_profiles"] == "1") {
+if ($cfg["enable_transfer_profile"] == "1") {
+	if($cfg['transfer_profile_level'] == "2") {
+		$with_profiles = 1;
+	}
+	elseif($user_level >= "1") {
+		$with_profiles = 1;
+	}
+	else {
+		$with_profiles = 0;
+	}
+}
+else {
+	$with_profiles = 0;
+}
+$tmpl->setvar('with_profiles', $with_profiles);
+if ($with_profiles == "1") {
 	$profile = getRequestVar('profile');
 	if(isset($profile) && $profile != "") {
 		//load custom settings
@@ -105,19 +120,19 @@ if ($cfg["with_profiles"] == "1") {
 		$tmpl->setvar('minport', $settings["minport"]);
 		$tmpl->setvar('maxport', $settings["maxport"]);
 		$tmpl->setvar('maxcons', $settings["maxcons"]);
-		$tmpl->setvar('rerequest_interval', $settings["rerequest_interval"]);
-		$tmpl->setvar('max_upload_rate', $settings["max_upload_rate"]);
-		$tmpl->setvar('max_uploads', $settings["max_uploads"]);
-		$tmpl->setvar('max_download_rate', $settings["max_download_rate"]);
-		if ($settings["dont_stop"] == "1") {
+		$tmpl->setvar('rerequest_interval', $settings["rerequest"]);
+		$tmpl->setvar('max_upload_rate', $settings["rate"]);
+		$tmpl->setvar('max_uploads', $settings["maxuploads"]);
+		$tmpl->setvar('max_download_rate', $settings["drate"]);
+		$selected = "";
+		if ($settings["runtime"] == "False") {
 			$selected = "selected";
 		}
 		$tmpl->setvar('selected', $selected);
 		$tmpl->setvar('sharekill', $settings["sharekill"]);
-		$tmpl->setvar('bt_client', getBTClientSelect($settings["btclient"]));
 	}
 	// load profile list
-	$profiles = GetProfiles($cfg["user"], $profile);
+	$profiles = GetProfiles($cfg["uid"], $profile);
 	if (count($profiles)) {
 		$tmpl->setloop('profiles', $profiles);
 	}
@@ -125,7 +140,6 @@ if ($cfg["with_profiles"] == "1") {
 		$cfg["with_profiles"] = "0";
 	}
 }
-$tmpl->setvar('with_profiles', $cfg["with_profiles"]);
 
 $tmpl->pparse();
 ?>

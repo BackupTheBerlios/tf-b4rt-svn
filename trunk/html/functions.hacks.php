@@ -169,7 +169,7 @@ function findSFV($dirName) {
 function GetProfiles($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
-	$sql = "select title from tf_dlprofiles where user_id like '".$user."'";
+	$sql = "select name from tf_trprofiles where owner like '".$user."'";
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
@@ -180,7 +180,7 @@ function GetProfiles($user, $profile) {
 				$is_select = 0;
 			}
 			array_push($profiles_array, array(
-				'title' => $arr,
+				'name' => $arr,
 				'is_selected' => $is_select,
 				)
 			);
@@ -196,7 +196,7 @@ function GetProfiles($user, $profile) {
 
 function GetProfileSettings($profile) {
 	global $cfg, $db;
-	$sql = "select minport, maxport, maxcons, rerequest_interval, max_upload_rate, max_uploads, max_download_rate, dont_stop, sharekill, btclient from tf_dlprofiles where title like '".$profile."'";
+	$sql = "select minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill  from tf_trprofiles where name like '".$profile."'";
 	$settings = $db->GetRow($sql);
 	showError($db,$sql);
 	return $settings;
@@ -206,8 +206,7 @@ function GetProfileSettings($profile) {
 // addProfileInfo - Add New Profile Information
 function AddProfileInfo( $newProfile ) {
 	global $db, $cfg;
-	$sql ="INSERT INTO tf_dlprofiles ( user_id , title , minport , maxport , maxcons , rerequest_interval , max_upload_rate , max_uploads , max_download_rate , dont_stop , sharekill , btclient )
-	VALUES ('".$cfg['user']."', '".$newProfile["title"]."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest_interval"]."', '".$newProfile["max_upload_rate"]."', '".$newProfile["max_uploads"]."', '".$newProfile["max_download_rate"]."', '".$newProfile["dont_stop"]."', '".$newProfile["sharekill"]."', '".$newProfile["btclient"]."')";
+	$sql ="INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill ) VALUES ('".$newProfile["name"]."', '".$cfg['uid']."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest"]."', '".$newProfile["rate"]."', '".$newProfile["maxuploads"]."', '".$newProfile["drate"]."', '".$newProfile["runtime"]."', '".$newProfile["sharekill"]."')";
 	$db->Execute( $sql );
 	showError( $db, $sql );
 }
@@ -216,8 +215,7 @@ function AddProfileInfo( $newProfile ) {
 function getProfile($pid) {
 	global $cfg, $db;
 	$rtnValue = "";
-	$sql = "SELECT user_id , title , minport , maxport , maxcons , rerequest_interval , max_upload_rate , max_uploads , max_download_rate , dont_stop , sharekill , btclient FROM tf_dlprofiles WHERE id LIKE 
-	'".$pid."'";
+	$sql = "SELECT id , name , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill FROM tf_trprofiles WHERE id LIKE '".$pid."'";
 	$rtnValue = $db->GetAll($sql);
 	return $rtnValue[0];
 }
@@ -225,7 +223,7 @@ function getProfile($pid) {
 // modProfileInfo - Modify Profile Information
 function modProfileInfo($pid, $newProfile) {
 	global $cfg, $db;
-	$sql = "UPDATE `tf_dlprofiles` SET `user_id` = '".$cfg['user']."', `title` = '".$newProfile["title"]."', `minport` = '".$newProfile["minport"]."', `maxport` = '".$newProfile["maxport"]."', `maxcons` = '".$newProfile["maxcons"]."', `rerequest_interval` = '".$newProfile["rerequest_interval"]."', `max_upload_rate` = '".$newProfile["max_upload_rate"]."', `max_uploads` = '".$newProfile["max_uploads"]."', `max_download_rate` = '".$newProfile["max_download_rate"]."', `dont_stop` = '".$newProfile["dont_stop"]."', `sharekill` = '".$newProfile["sharekill"]."', `btclient` = '".$newProfile["btclient"]."' WHERE id ='".$pid."'";
+	$sql = "UPDATE `tf_trprofiles` SET `owner` = '".$cfg['uid']."', `name` = '".$newProfile["name"]."', `minport` = '".$newProfile["minport"]."', `maxport` = '".$newProfile["maxport"]."', `maxcons` = '".$newProfile["maxcons"]."', `rerequest` = '".$newProfile["rerequest"]."', `rate` = '".$newProfile["rate"]."', `maxuploads` = '".$newProfile["maxuploads"]."', `drate` = '".$newProfile["drate"]."', `runtime` = '".$newProfile["runtime"]."', `sharekill` = '".$newProfile["sharekill"]."' WHERE id ='".$pid."'";
 	$db->Execute($sql);
 	showError($db,$sql);
 }
@@ -233,7 +231,7 @@ function modProfileInfo($pid, $newProfile) {
 // Delete Profile Information
 function deleteProfileInfo($pid) {
 	global $db;
-	$sql = "delete from tf_dlprofiles where id=".$pid;
+	$sql = "delete from tf_trprofiles where id=".$pid;
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 }

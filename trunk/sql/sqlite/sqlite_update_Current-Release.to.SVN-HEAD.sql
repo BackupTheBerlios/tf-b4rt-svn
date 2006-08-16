@@ -27,22 +27,6 @@ CREATE TABLE tf_trprofiles (
   rerequest INTEGER(8) NOT NULL default '0'
 ) ;
 
-CREATE TABLE tf_dlprofiles (
-  id INTEGER PRIMARY KEY,
-  user_id VARCHAR(32) NOT NULL,
-  title VARCHAR(32) NOT NULL,
-  minport INT( 11 ) NOT NULL,
-  maxport INT( 11 ) NOT NULL,
-  maxcons INT( 11 ) NOT NULL,
-  rerequest_interval INT( 11 ) NOT NULL,
-  max_upload_rate INT( 11 ) NOT NULL,
-  max_uploads INT( 11 ) NOT NULL,
-  max_download_rate INT( 11 ) NOT NULL,
-  dont_stop INT( 11 ) NOT NULL,
-  sharekill INT( 11 ) NOT NULL,
-  btclient VARCHAR(32) NOT NULL
-) ;
-
 --
 -- updates
 --

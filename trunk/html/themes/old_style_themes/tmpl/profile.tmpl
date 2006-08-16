@@ -550,7 +550,7 @@
 				<tr>
 					<td width="80" align="right">&nbsp;Name:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="title"<tmpl_var name="name">><br />
+						<input type="Text" size="45" maxlength="255" name="name"<tmpl_var name="name">><br />
 					</td>
 					<td width="150">
 					</td>
@@ -558,19 +558,19 @@
 				<tr>
 					<td width="80" align="right">&nbsp;Uploadrate:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="max_upload_rate"<tmpl_var name="max_upload_rate">><br />
+						<input type="Text" size="45" maxlength="255" name="rate"<tmpl_var name="rate">><br />
 					</td>
 					<td width="150">
-						(default: <tmpl_var name="default_max_upload_rate">)
+						(default: <tmpl_var name="default_rate">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Downloadrate:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="max_download_rate"<tmpl_var name="max_download_rate">><br />
+						<input type="Text" size="45" maxlength="255" name="drate"<tmpl_var name="drate">><br />
 					</td>
 					<td width="150">
-						(default: <tmpl_var name="default_max_download_rate">)
+						(default: <tmpl_var name="default_drate">)
 					</td>
 				</tr>
 				<tr>
@@ -603,19 +603,19 @@
 				<tr>
 					<td width="80" align="right">&nbsp;Rerequest Interval:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="rerequest_interval"<tmpl_var name="rerequest_interval">><br />
+						<input type="Text" size="45" maxlength="255" name="rerequest"<tmpl_var name="rerequest">><br />
 					</td>
 					<td width="150">
-						(default: <tmpl_var name="default_rerequest_interval">)
+						(default: <tmpl_var name="default_rerequest">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Max. Uploads:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="max_uploads"<tmpl_var name="max_uploads">><br />
+						<input type="Text" size="45" maxlength="255" name="maxuploads"<tmpl_var name="maxuploads">><br />
 					</td>
 					<td width="150">
-						(default: <tmpl_var name="default_max_uploads">)
+						(default: <tmpl_var name="default_maxuploads">)
 					</td>
 				</tr>
 				<tr>
@@ -630,37 +630,17 @@
 				<tr>
 					<td align="left" width="80" valign="top">&nbsp;Die when done:</td>
 					<td>
-						<select name="dont_stop">
-							<option value="0">true</option>
-							<option value="1"
-							<tmpl_if name="dont_stop" value="1">
+						<select name="runtime">
+							<option value="True">true</option>
+							<option value="False"
+							<tmpl_if name="runtime" value="False">
 								 selected
 							</tmpl_if>
 							>false</option>
 						</select>
 					</td>
 					<td width="150">
-						(default: <tmpl_var name="default_dont_stop">)
-					</td>
-				</tr>
-				<tr>
-					<td align="left" width="80" valign="top">&nbsp;BitTorrent-Client:</td>
-					<td>
-						<select name="btclient">
-							<option value="tornado"
-							<tmpl_if name="btclient" value="tornado">
-								 selected
-							</tmpl_if>
-							>tornado</option>
-							<option value="transmission"
-							<tmpl_if name="btclient" value="transmission">
-								 selected
-							</tmpl_if>
-							>transmission</option>
-						</select>
-					</td>
-					<td width="150">
-						(default: <tmpl_var name="default_btclient">)
+						(default: <tmpl_var name="default_runtime">)
 					</td>
 				</tr>
 				<tr>
@@ -691,10 +671,10 @@
 									<tmpl_loop name="profile_data">
 										<tr>
 											<td>
-												<a href="index.php?page=profile&op=deleteProfile&pid=<tmpl_var name="pid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="host">" align="absmiddle"></a>
-												<a href="index.php?page=profile&op=editProfiles&pid=<tmpl_var name="pid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> " . <tmpl_var name="host">" align="absmiddle"></a>
+												<a href="index.php?page=profile&op=deleteProfile&pid=<tmpl_var name="pid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="name">" align="absmiddle"></a>
+												<a href="index.php?page=profile&op=editProfiles&pid=<tmpl_var name="pid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="name">" align="absmiddle"></a>
 											</td>
-											<td><tmpl_var name="title"></td>
+											<td><tmpl_var name="name"></td>
 										</tr>
 									</tmpl_loop>
 								</tmpl_if>

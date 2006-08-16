@@ -132,7 +132,7 @@ function isNumber(sText)
 									<select name="profile" size="1" onChange="javascript:submit();">
 										<option value="">default</option>
 										<tmpl_loop name="profiles">
-											<option value="<tmpl_var name="title">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="title"></option>
+											<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
 										</tmpl_loop>
 									</select>
 								</td>
