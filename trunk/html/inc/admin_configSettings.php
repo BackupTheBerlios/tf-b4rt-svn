@@ -22,9 +22,14 @@ if (is_dir($cfg["path"])) {
 		$tmpl->setvar('is_writable', 1);
 	}
 }
+$enableBtclientChooser = "";
+if ($cfg["enable_btclient_chooser"] == 1) {
+	$enableBtclientChooser = "checked";
+}
 $tmpl->setvar('_AUTH_BASIC_REALM', _AUTH_BASIC_REALM);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('btclient', $cfg["btclient"]);
+$tmpl->setvar('enableBtclientChooser', $enableBtclientChooser);
 $tmpl->setvar('metainfoclient', $cfg["metainfoclient"]);
 $tmpl->setvar('btclient_tornado_bin', $cfg["btclient_tornado_bin"]);
 $tmpl->setvar('validate_tornado_bin', validateFile($cfg["btclient_tornado_bin"]));
