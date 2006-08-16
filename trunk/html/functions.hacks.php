@@ -202,4 +202,40 @@ function GetProfileSettings($profile) {
 	return $settings;
 }
 
+// ***************************************************************************
+// addProfileInfo - Add New Profile Information
+function AddProfileInfo( $newProfile ) {
+	global $db, $cfg;
+	$sql ="INSERT INTO tf_dlprofiles ( user_id , title , minport , maxport , maxcons , rerequest_interval , max_upload_rate , max_uploads , max_download_rate , dont_stop , sharekill , btclient )
+	VALUES ('".$cfg['user']."', '".$newProfile["title"]."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest_interval"]."', '".$newProfile["max_upload_rate"]."', '".$newProfile["max_uploads"]."', '".$newProfile["max_download_rate"]."', '".$newProfile["dont_stop"]."', '".$newProfile["sharekill"]."', '".$newProfile["btclient"]."')";
+	$db->Execute( $sql );
+	showError( $db, $sql );
+}
+
+//*********************************************************
+function getProfile($pid) {
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql = "SELECT user_id , title , minport , maxport , maxcons , rerequest_interval , max_upload_rate , max_uploads , max_download_rate , dont_stop , sharekill , btclient FROM tf_dlprofiles WHERE id LIKE 
+	'".$pid."'";
+	$rtnValue = $db->GetAll($sql);
+	return $rtnValue[0];
+}
+// ***************************************************************************
+// modProfileInfo - Modify Profile Information
+function modProfileInfo($pid, $newProfile) {
+	global $cfg, $db;
+	$sql = "UPDATE `tf_dlprofiles` SET `user_id` = '".$cfg['user']."', `title` = '".$newProfile["title"]."', `minport` = '".$newProfile["minport"]."', `maxport` = '".$newProfile["maxport"]."', `maxcons` = '".$newProfile["maxcons"]."', `rerequest_interval` = '".$newProfile["rerequest_interval"]."', `max_upload_rate` = '".$newProfile["max_upload_rate"]."', `max_uploads` = '".$newProfile["max_uploads"]."', `max_download_rate` = '".$newProfile["max_download_rate"]."', `dont_stop` = '".$newProfile["dont_stop"]."', `sharekill` = '".$newProfile["sharekill"]."', `btclient` = '".$newProfile["btclient"]."' WHERE id ='".$pid."'";
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+// ***************************************************************************
+// Delete Profile Information
+function deleteProfileInfo($pid) {
+	global $db;
+	$sql = "delete from tf_dlprofiles where id=".$pid;
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
 ?>

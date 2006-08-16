@@ -315,6 +315,141 @@ switch ($op) {
 		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
 		header("location: index.php?page=profile&op=showCookies");
 	break;
+
+//******************************************************************************
+// ShowProfiles -- show cookies for user
+//******************************************************************************
+	case "showProfiles":
+	case "editProfiles":
+		global $cfg, $db;
+		$tmpl->setvar('ShowProfiles', 1);
+		
+		$pid = @ $_GET["pid"];
+		
+		(!empty( $pid )) ? $add1 = "_UPDATE" : $add1 = "Add";
+		$tmpl->setvar('add1', $add1);
+		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
+		$tmpl->setvar('op', $op2);
+		
+		$title = $minport = $maxport = $maxcons = $rerequest_interval = $max_upload_rate = $max_uploads = $max_download_rate = $dont_stop = $sharekill = $btclient = "";
+		if( !empty( $pid ) ) {
+			$profile = getProfile( $pid );
+			$title = " value=\"" . $profile['title'] . "\"";
+			$minport = " value=\"" . $profile['minport'] . "\"";
+			$maxport = " value=\"" . $profile['maxport'] . "\"";
+			$maxcons = " value=\"" . $profile['maxcons'] . "\"";
+			$rerequest_interval = " value=\"" . $profile['rerequest_interval'] . "\"";
+			$max_upload_rate = " value=\"" . $profile['max_upload_rate'] . "\"";
+			$max_uploads = " value=\"" . $profile['max_uploads'] . "\"";
+			$max_download_rate = " value=\"" . $profile['max_download_rate'] . "\"";
+			$dont_stop = $profile['dont_stop'];
+			$sharekill = " value=\"" . $profile['sharekill'] . "\"";
+			$btclient = $profile['btclient'];
+		}
+		$tmpl->setvar('title', $title);
+		$tmpl->setvar('minport', $minport);
+		$tmpl->setvar('maxport', $maxport);
+		$tmpl->setvar('maxcons', $maxcons);
+		$tmpl->setvar('rerequest_interval', $rerequest_interval);
+		$tmpl->setvar('max_upload_rate', $max_upload_rate);
+		$tmpl->setvar('max_uploads', $max_uploads);
+		$tmpl->setvar('max_download_rate', $max_download_rate);
+		$tmpl->setvar('dont_stop', $dont_stop);
+		$tmpl->setvar('sharekill', $sharekill);
+		$tmpl->setvar('btclient', $btclient);
+
+		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
+		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+		$tmpl->setvar('theme', $cfg["theme"]);
+		$tmpl->setvar('pid', $pid);
+		if( !empty( $pid ) ) {
+			$tmpl->setvar('empty_pid', 1);
+		}
+		else {
+			// Output the list of profiles in the database
+			$sql = "SELECT id, title FROM tf_dlprofiles WHERE user_id LIKE '" . $cfg["user"] . "'";
+			$dat = $db->GetAll( $sql );
+			if( empty( $dat ) ) {
+				$tmpl->setvar('empty_dat', 1);
+			}
+			else {
+				$profile_data = array();
+				$tmpl->setvar('_DELETE', _DELETE);
+				$tmpl->setvar('_EDIT', _EDIT);
+				foreach( $dat as $profile ) {
+					array_push($profile_data, array(
+						'pid' => $profile["id"],
+						'title' => $profile["title"],
+						)
+					);
+				}
+				$tmpl->setloop('profile_data', $profile_data);
+			}
+		}
+		$tmpl->setvar('pid', $pid);
+		$tmpl->setvar('foot', getFoot());
+	break;
+	
+//******************************************************************************
+// addProfile -- adding a Profile Information
+//******************************************************************************
+	case "addProfile":
+		$newProfile["title"] = getRequestVar('title');
+		$newProfile["minport"] = getRequestVar('minport');
+		$newProfile["maxport"] = getRequestVar('maxport');
+		$newProfile["maxcons"] = getRequestVar('maxcons');
+		$newProfile["rerequest_interval"] = getRequestVar('rerequest_interval');
+		$newProfile["max_upload_rate"] = getRequestVar('max_upload_rate');
+		$newProfile["max_uploads"] = getRequestVar('max_uploads');
+		$newProfile["max_download_rate"] = getRequestVar('max_download_rate');
+		$newProfile["dont_stop"] = getRequestVar('dont_stop');
+		$newProfile["sharekill"] = getRequestVar('sharekill');
+		$newProfile["btclient"] = getRequestVar('btclient');
+		if( !empty( $newProfile ) ) {
+			global $cfg;
+			AddProfileInfo( $newProfile );
+			AuditAction( $cfg["constants"]["admin"], "New Profile: " . $newProfile["title"] );
+		}
+		header( "location: index.php?page=profile&op=showProfiles" );
+	break;
+	
+//******************************************************************************
+// modProfile -- edit Profile Information
+//******************************************************************************
+	case "modProfile":
+		$newProfile["title"] = getRequestVar('title');
+		$newProfile["minport"] = getRequestVar('minport');
+		$newProfile["maxport"] = getRequestVar('maxport');
+		$newProfile["maxcons"] = getRequestVar('maxcons');
+		$newProfile["rerequest_interval"] = getRequestVar('rerequest_interval');
+		$newProfile["max_upload_rate"] = getRequestVar('max_upload_rate');
+		$newProfile["max_uploads"] = getRequestVar('max_uploads');
+		$newProfile["max_download_rate"] = getRequestVar('max_download_rate');
+		$newProfile["dont_stop"] = getRequestVar('dont_stop');
+		$newProfile["sharekill"] = getRequestVar('sharekill');
+		$newProfile["btclient"] = getRequestVar('btclient');
+		$pid = getRequestVar('pid');
+		global $cfg;
+		modProfileInfo($pid,$newProfile);
+		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["title"]);
+		header("location: index.php?page=profile&op=showProfiles");
+	break;
+	
+//******************************************************************************
+// deleteProfile -- delete a Profile Information
+//******************************************************************************
+	case "deleteProfile":
+		$pid = $_GET["pid"];
+		global $cfg;
+		$profile = getProfile( $pid );
+		deleteProfileInfo( $pid );
+		AuditAction( $cfg["constants"]["admin"], _DELETE . " Profile: " . $profile["title"] );
+		header( "location: index.php?page=profile&op=showProfiles" );
+	break;
+
+
 }
 
 #some good looking vars

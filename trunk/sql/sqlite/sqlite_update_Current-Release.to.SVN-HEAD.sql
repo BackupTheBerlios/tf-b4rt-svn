@@ -28,6 +28,7 @@ CREATE TABLE tf_trprofiles (
 ) ;
 
 CREATE TABLE tf_dlprofiles (
+  id INTEGER PRIMARY KEY,
   user_id VARCHAR(32) NOT NULL,
   title VARCHAR(32) NOT NULL,
   minport INT( 11 ) NOT NULL,

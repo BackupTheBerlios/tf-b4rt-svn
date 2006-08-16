@@ -65,6 +65,11 @@
 															<br />[ <a href="index.php?page=profile&op=showCookies">Cookie Management</a> ]
 														</td>
 													</tr>
+													<tr>
+														<td align="center">
+															<br />[ <a href="index.php?page=profile&op=showProfiles">Download Profiles Management</a> ]
+														</td>
+													</tr>
 												</table>
 											</td>
 										</tr>
@@ -441,7 +446,7 @@
 	}
 	// End -->
 	</script>
-	<div align="center">[<a href="?">Return to Profile</a>]</div>
+	<div align="center">[<a href="index.php?page=profile">Return to Profile</a>]</div>
 	<br />
 	<div align="center">
 		<form action="index.php?page=profile&op=<tmpl_var name="op">" method="post">
@@ -525,5 +530,166 @@
 	<br />
 	<br />
 	<br />
+	<tmpl_var name="foot">
+</tmpl_if>
+<tmpl_if name="ShowProfiles">
+	<tmpl_var name="head>
+	<div align="center">[<a href="index.php?page=profile">Return to Profile</a>]</div>
+	<br />
+	<div align="center">
+		<form action="index.php?page=profile&op=<tmpl_var name="op">" method="post">
+			<input type="hidden" name="pid" value="<tmpl_var name="pid">" />
+			<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+				<tr>
+					<td colspan="3" bgcolor="<tmpl_var name="table_header_bg">" background="themes/theme<tmpl_var name="theme">/images/bar.gif">
+						<img src="images/properties.png" width=18 height=13 border=0 align="absbottom">&nbsp;<font class="title">Transfer Profiles Management</font>
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Title:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="title"<tmpl_var name="title">><br />
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Uploadrate:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="max_upload_rate"<tmpl_var name="max_upload_rate">><br />
+					</td>
+					<td>
+						KB/second
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Downloadrate:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="max_download_rate"<tmpl_var name="max_download_rate">><br />
+					</td>
+					<td>
+						KB/second
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Min-Port:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="minport"<tmpl_var name="minport">><br />
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Max-Port:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="maxport"<tmpl_var name="maxport">><br />
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Max Cons:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="maxcons"<tmpl_var name="maxcons">><br />
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Rerequest Interval:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="rerequest_interval"<tmpl_var name="rerequest_interval">><br />
+					</td>
+					<td>
+						seconds
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Max. Uploads:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="max_uploads"<tmpl_var name="max_uploads">><br />
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td width="80" align="right">&nbsp;Sharekill:</td>
+					<td>
+						<input type="Text" size="50" maxlength="255" name="sharekill"<tmpl_var name="sharekill">><br />
+					</td>
+					<td>
+					</td>
+				</tr>
+				<tr>
+					<td align="left" width="80" valign="top">&nbsp;Die when done:</td>
+					<td>
+						<select name="dont_stop">
+							<option value="0">true</option>
+							<option value="1"
+							<tmpl_if name="dont_stop" value="1">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td align="left" width="80" valign="top">&nbsp;BitTorrent-Client:</td>
+					<td>
+						<select name="btclient">
+							<option value="tornado"
+							<tmpl_if name="btclient" value="tornado">
+								 selected
+							</tmpl_if>
+							>tornado</option>
+							<option value="transmission"
+							<tmpl_if name="btclient" value="transmission">
+								 selected
+							</tmpl_if>
+							>transmission</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td colspan="2">
+						<input type="Submit" value="<tmpl_var name="add1">">
+					</td>
+				</tr>
+				<tmpl_if name="empty_pid">
+					<tr>
+						<td colspan="3">
+							<center>[ <a href="index.php?page=profile&op=editProfiles">back</a> ]</center>
+						</td>
+					</tr>
+				<tmpl_else>
+					<tr>
+						<td colspan="3">
+							<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+								<tr>
+									<td style="font-weight: bold; padding-left: 3px;" width="50">Action</td>
+									<td style="font-weight: bold; padding-left: 3px;">Title</td>
+								</tr>
+								<tmpl_if name="empty_dat">
+									<tr>
+										<td colspan="3">No profile entries exist.</td>
+									</tr>
+								<tmpl_else>
+									<tmpl_loop name="profile_data">
+										<tr>
+											<td>
+												<a href="index.php?page=profile&op=deleteProfile&pid=<tmpl_var name="pid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="host">" align="absmiddle"></a>
+												<a href="index.php?page=profile&op=editProfiles&pid=<tmpl_var name="pid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> " . <tmpl_var name="host">" align="absmiddle"></a>
+											</td>
+											<td><tmpl_var name="title"></td>
+										</tr>
+									</tmpl_loop>
+								</tmpl_if>
+							</table>
+						</td>
+					</tr>
+				</tmpl_if>
+			</table>
+		</form>
 	<tmpl_var name="foot">
 </tmpl_if>
