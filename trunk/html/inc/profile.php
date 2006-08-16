@@ -357,6 +357,23 @@ switch ($op) {
 		$tmpl->setvar('dont_stop', $dont_stop);
 		$tmpl->setvar('sharekill', $sharekill);
 		$tmpl->setvar('btclient', $btclient);
+		
+		$tmpl->setvar('default_title', $cfg['title']);
+		$tmpl->setvar('default_minport', $cfg['minport']);
+		$tmpl->setvar('default_maxport', $cfg['maxport']);
+		$tmpl->setvar('default_maxcons', $cfg['maxcons']);
+		$tmpl->setvar('default_rerequest_interval', $cfg['rerequest_interval']);
+		$tmpl->setvar('default_max_upload_rate', $cfg['max_upload_rate']);
+		$tmpl->setvar('default_max_uploads', $cfg['max_uploads']);
+		$tmpl->setvar('default_max_download_rate', $cfg['max_download_rate']);
+		if($cfg['die_when_done'] == "False") {
+			$tmpl->setvar('default_dont_stop', "True");
+		}
+		else {
+			$tmpl->setvar('default_dont_stop', "False");
+		}
+		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
+		$tmpl->setvar('default_btclient', $cfg['btclient']);
 
 		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
@@ -463,6 +480,7 @@ $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
+$tmpl->setvar('with_profiles', $cfg["with_profiles"]);
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

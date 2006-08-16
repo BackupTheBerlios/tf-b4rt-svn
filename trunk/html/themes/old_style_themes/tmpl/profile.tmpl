@@ -65,11 +65,13 @@
 															<br />[ <a href="index.php?page=profile&op=showCookies">Cookie Management</a> ]
 														</td>
 													</tr>
-													<tr>
-														<td align="center">
-															<br />[ <a href="index.php?page=profile&op=showProfiles">Download Profiles Management</a> ]
-														</td>
-													</tr>
+													<tmpl_if name="with_profiles">
+														<tr>
+															<td align="center">
+																<br />[ <a href="index.php?page=profile&op=showProfiles">Download Profiles Management</a> ]
+															</td>
+														</tr>
+													</tmpl_if>
 												</table>
 											</td>
 										</tr>
@@ -548,76 +550,81 @@
 				<tr>
 					<td width="80" align="right">&nbsp;Title:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="title"<tmpl_var name="title">><br />
+						<input type="Text" size="45" maxlength="255" name="title"<tmpl_var name="title">><br />
 					</td>
-					<td>
+					<td width="150">
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Uploadrate:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="max_upload_rate"<tmpl_var name="max_upload_rate">><br />
+						<input type="Text" size="45" maxlength="255" name="max_upload_rate"<tmpl_var name="max_upload_rate">><br />
 					</td>
-					<td>
-						KB/second
+					<td width="150">
+						(default: <tmpl_var name="default_max_upload_rate">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Downloadrate:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="max_download_rate"<tmpl_var name="max_download_rate">><br />
+						<input type="Text" size="45" maxlength="255" name="max_download_rate"<tmpl_var name="max_download_rate">><br />
 					</td>
-					<td>
-						KB/second
+					<td width="150">
+						(default: <tmpl_var name="default_max_download_rate">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Min-Port:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="minport"<tmpl_var name="minport">><br />
+						<input type="Text" size="45" maxlength="255" name="minport"<tmpl_var name="minport">><br />
 					</td>
-					<td>
+					<td width="150">
+						(default: <tmpl_var name="default_minport">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Max-Port:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="maxport"<tmpl_var name="maxport">><br />
+						<input type="Text" size="45" maxlength="255" name="maxport"<tmpl_var name="maxport">><br />
 					</td>
-					<td>
+					<td width="150">
+						(default: <tmpl_var name="default_maxport">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Max Cons:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="maxcons"<tmpl_var name="maxcons">><br />
+						<input type="Text" size="45" maxlength="255" name="maxcons"<tmpl_var name="maxcons">><br />
 					</td>
-					<td>
+					<td width="150">
+						(default: <tmpl_var name="default_maxcons">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Rerequest Interval:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="rerequest_interval"<tmpl_var name="rerequest_interval">><br />
+						<input type="Text" size="45" maxlength="255" name="rerequest_interval"<tmpl_var name="rerequest_interval">><br />
 					</td>
-					<td>
-						seconds
+					<td width="150">
+						(default: <tmpl_var name="default_rerequest_interval">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Max. Uploads:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="max_uploads"<tmpl_var name="max_uploads">><br />
+						<input type="Text" size="45" maxlength="255" name="max_uploads"<tmpl_var name="max_uploads">><br />
 					</td>
-					<td>
+					<td width="150">
+						(default: <tmpl_var name="default_max_uploads">)
 					</td>
 				</tr>
 				<tr>
 					<td width="80" align="right">&nbsp;Sharekill:</td>
 					<td>
-						<input type="Text" size="50" maxlength="255" name="sharekill"<tmpl_var name="sharekill">><br />
+						<input type="Text" size="45" maxlength="255" name="sharekill"<tmpl_var name="sharekill">><br />
 					</td>
-					<td>
+					<td width="150">
+						(default: <tmpl_var name="default_sharekill">)
 					</td>
 				</tr>
 				<tr>
@@ -631,6 +638,9 @@
 							</tmpl_if>
 							>false</option>
 						</select>
+					</td>
+					<td width="150">
+						(default: <tmpl_var name="default_dont_stop">)
 					</td>
 				</tr>
 				<tr>
@@ -648,6 +658,9 @@
 							</tmpl_if>
 							>transmission</option>
 						</select>
+					</td>
+					<td width="150">
+						(default: <tmpl_var name="default_btclient">)
 					</td>
 				</tr>
 				<tr>
