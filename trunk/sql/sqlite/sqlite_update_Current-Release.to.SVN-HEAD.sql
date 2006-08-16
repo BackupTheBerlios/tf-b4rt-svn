@@ -51,6 +51,7 @@ UPDATE tf_settings SET tf_value = 'old_style_themes/matrix' WHERE tf_key = 'defa
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('enable_transfer_profile','0');
 INSERT INTO tf_settings VALUES ('transfer_profile_level','2');
 INSERT INTO tf_settings VALUES ('tfqmgr_loglevel','0');
 INSERT INTO tf_settings VALUES ('Qmgr_loglevel','0');
