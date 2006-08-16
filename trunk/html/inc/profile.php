@@ -480,7 +480,21 @@ $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-$tmpl->setvar('with_profiles', $cfg["with_profiles"]);
+if ($cfg["enable_transfer_profile"] == "1") {
+	if($cfg['transfer_profile_level'] == "2") {
+		$with_profiles = 1;
+	}
+	elseif($user_level >= "1") {
+		$with_profiles = 1;
+	}
+	else {
+		$with_profiles = 0;
+	}
+}
+else {
+	$with_profiles = 0;
+}
+$tmpl->setvar('with_profiles', $with_profiles);
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

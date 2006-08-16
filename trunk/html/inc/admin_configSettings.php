@@ -52,7 +52,8 @@ $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('skiphashcheck', $cfg["skiphashcheck"]);
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
-$tmpl->setvar('with_profiles', $cfg["with_profiles"]);
+$tmpl->setvar('enable_transfer_profile', $cfg["enable_transfer_profile"]);
+$tmpl->setvar('transfer_profile_level', $cfg["transfer_profile_level"]);
 
 $nice_list = array();
 for ($i = 0; $i < 20 ; $i++) {

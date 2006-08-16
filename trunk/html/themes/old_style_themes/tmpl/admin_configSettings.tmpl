@@ -648,17 +648,37 @@
 							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Hacks</strong></td></tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable profiles</strong><br>
-								Enable/Disable Download-Profiles :
+								<td align="left" width="350" valign="top"><strong>Enable Transfer profiles</strong><br>
+								Enable/Disable Transfer Profiles :
 								</td>
 								<td valign="top">
-									<select name="with_profiles">
+									<select name="enable_transfer_profile">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="with_profiles" value="0">
+										<tmpl_if name="enable_transfer_profile" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>User profiles</strong><br>
+								 Define who can use Transfer Profiles :
+								</td>
+								<td valign="top">
+									<select name="transfer_profile_level">
+										<option value="2">All Users</option>
+										<option value="1"
+										<tmpl_if name="transfer_profile_level" value="1">
+											 selected
+										</tmpl_if>
+										>Only Predefined</option>
+										<option value="0"
+										<tmpl_if name="transfer_profile_level" value="0">
+											 selected
+										</tmpl_if>
+										>Only Admins</option>
 									</select>
 								</td>
 							</tr>
