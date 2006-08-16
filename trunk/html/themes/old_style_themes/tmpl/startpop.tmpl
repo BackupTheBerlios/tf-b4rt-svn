@@ -132,8 +132,17 @@ function isNumber(sText)
 									<select name="profile" size="1" onChange="javascript:submit();">
 										<option value="">default</option>
 										<tmpl_loop name="profiles">
-											<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+											<tmpl_if name="profiles">
+												<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+												</tmpl_if>
 										</tmpl_loop>
+										<tmpl_if name="public_profiles">
+											<optgroup label="Public" style="background-color: #00EC00">
+												<tmpl_loop name="public_profiles">
+													<option style="background-color: #FFFFFF" value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+												</tmpl_loop>
+											</optgroup>
+										</tmpl_if>
 									</select>
 								</td>
 							</form>
@@ -167,7 +176,7 @@ function isNumber(sText)
 					<tr>
 						<td align="right" valign="top">Rerequest Interval:</td>
 						<td valign="top"><input type="Text" name="rerequest" maxlength="5" size="5" value="<tmpl_var name="rerequest_interval">"></td>
-						<td align="right" valign="top"><input type="Checkbox" name="superseeder" value="1">Super Seeder<font class="tiny"> (dedicated seed only)</font></td>
+						<td align="right" valign="top"><input type="Checkbox" name="superseeder" value="1" <tmpl_var name="superseeder">>Super Seeder<font class="tiny"> (dedicated seed only)</font></td>
 						<td align="Left" valign="top">
 							<tmpl_if name="is_queue">
 								<tmpl_if name="is_admin">

@@ -331,7 +331,7 @@ switch ($op) {
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
 		$tmpl->setvar('op', $op2);
 		
-		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = "";
+		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = $superseeder = $btclient = $public = "";
 		if( !empty( $pid ) ) {
 			$profile = getProfile( $pid );
 			$name = " value=\"" . $profile['name'] . "\"";
@@ -344,6 +344,12 @@ switch ($op) {
 			$drate = " value=\"" . $profile['drate'] . "\"";
 			$runtime = $profile['runtime'];
 			$sharekill = " value=\"" . $profile['sharekill'] . "\"";
+			if ($profile['superseeder'] == 1) {
+				$superseeder = "checked";
+			}
+			if ($profile['public'] == 1) {
+				$public = "checked";
+			}
 		}
 		$tmpl->setvar('name', $name);
 		$tmpl->setvar('minport', $minport);
@@ -355,6 +361,9 @@ switch ($op) {
 		$tmpl->setvar('drate', $drate);
 		$tmpl->setvar('runtime', $runtime);
 		$tmpl->setvar('sharekill', $sharekill);
+		$tmpl->setvar('superseeder', $superseeder);
+		$tmpl->setvar('public', $public);
+		$tmpl->setvar('btclient', $profile['btclient']);
 		
 		$tmpl->setvar('default_name', $cfg['title']);
 		$tmpl->setvar('default_minport', $cfg['minport']);
@@ -364,14 +373,8 @@ switch ($op) {
 		$tmpl->setvar('default_rate', $cfg['max_upload_rate']);
 		$tmpl->setvar('default_maxuploads', $cfg['max_uploads']);
 		$tmpl->setvar('default_drate', $cfg['max_download_rate']);
-		$tmpl->setvar('runtime', $cfg['die_when_done']);
-		if($cfg['die_when_done'] == "False") {
-			$tmpl->setvar('default_runtime', "False");
-		}
-		else {
-			$tmpl->setvar('default_runtime', "True");
-		}
 		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
+		$tmpl->setvar('default_btclient', $cfg['btclient']);
 
 		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
@@ -421,6 +424,20 @@ switch ($op) {
 		$newProfile["drate"] = getRequestVar('drate');
 		$newProfile["runtime"] = getRequestVar('runtime');
 		$newProfile["sharekill"] = getRequestVar('sharekill');
+		if (getRequestVar('superseeder') == "") {
+			$newProfile["superseeder"] = 0;
+		}
+		else {
+			$newProfile["superseeder"] = getRequestVar('superseeder');
+		}
+		if (getRequestVar('public') == "") {
+			$newProfile["public"] = 0;
+		}
+		else {
+			$newProfile["public"] = getRequestVar('public');
+		}
+		$newProfile["btclient"] = "";
+		$newProfile["btclient"] = getRequestVar('btclient');
 		if( !empty( $newProfile ) ) {
 			global $cfg;
 			AddProfileInfo( $newProfile );
@@ -443,6 +460,20 @@ switch ($op) {
 		$newProfile["drate"] = getRequestVar('drate');
 		$newProfile["runtime"] = getRequestVar('runtime');
 		$newProfile["sharekill"] = getRequestVar('sharekill');
+		if (getRequestVar('superseeder') == "") {
+			$newProfile["superseeder"] = 0;
+		}
+		else {
+			$newProfile["superseeder"] = getRequestVar('superseeder');
+		}
+		if (getRequestVar('public') == "") {
+			$newProfile["public"] = 0;
+		}
+		else {
+			$newProfile["public"] = getRequestVar('public');
+		}
+		$newProfile["btclient"] = "";
+		$newProfile["btclient"] = getRequestVar('btclient');
 		$pid = getRequestVar('pid');
 		global $cfg;
 		modProfileInfo($pid,$newProfile);
@@ -465,6 +496,9 @@ switch ($op) {
 
 }
 
+$sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
+list($user_level) = $db->GetRow($sql);
+
 #some good looking vars
 $tmpl->setvar('indexPageSettingsForm', getIndexPageSettingsForm());
 $tmpl->setvar('sortOrderSettingsForm', getSortOrderSettingsForm());
@@ -477,10 +511,7 @@ $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 if ($cfg["enable_transfer_profile"] == "1") {
-	if($cfg['transfer_profile_level'] == "2") {
-		$with_profiles = 1;
-	}
-	elseif($user_level >= "1") {
+	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1") {
 		$with_profiles = 1;
 	}
 	else {
@@ -490,7 +521,11 @@ if ($cfg["enable_transfer_profile"] == "1") {
 else {
 	$with_profiles = 0;
 }
+if ($user_level >= "1") {
+	$tmpl->setvar('is_admin', 1);
+}
 $tmpl->setvar('with_profiles', $with_profiles);
+$tmpl->setvar('enable_btclient_chooser', $cfg['enable_btclient_chooser']);
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

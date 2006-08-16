@@ -97,11 +97,12 @@ $tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 
 # profiles
+
+$sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
+list($user_level) = $db->GetRow($sql);
+
 if ($cfg["enable_transfer_profile"] == "1") {
-	if($cfg['transfer_profile_level'] == "2") {
-		$with_profiles = 1;
-	}
-	elseif($user_level >= "1") {
+	if($cfg['transfer_profile_level'] >= "1" || $user_level >= "1") {
 		$with_profiles = 1;
 	}
 	else {
@@ -124,20 +125,34 @@ if ($with_profiles == "1") {
 		$tmpl->setvar('max_upload_rate', $settings["rate"]);
 		$tmpl->setvar('max_uploads', $settings["maxuploads"]);
 		$tmpl->setvar('max_download_rate', $settings["drate"]);
+		if($cfg['enable_btclient_chooser'] == 1) {
+			$tmpl->setvar('bt_client', getBTClientSelect($settings["btclient"]));
+		}
 		$selected = "";
 		if ($settings["runtime"] == "False") {
 			$selected = "selected";
 		}
 		$tmpl->setvar('selected', $selected);
 		$tmpl->setvar('sharekill', $settings["sharekill"]);
+		$superseeder = "";
+		if ($settings['superseeder'] == 1) {
+			$superseeder = "checked";
+		}
+		$tmpl->setvar('superseeder', $superseeder);
 	}
 	// load profile list
-	$profiles = GetProfiles($cfg["uid"], $profile);
-	if (count($profiles)) {
+	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1") {
+		$profiles = GetProfiles($cfg["uid"], $profile);
+	}
+	if($cfg['transfer_profile_level'] >= "1") {
+		$public_profiles = GetPublicProfiles($profile);
+	}
+	if (count($profiles) || count($public_profiles)) {
 		$tmpl->setloop('profiles', $profiles);
+		$tmpl->setloop('public_profiles', $public_profiles);
 	}
 	else {
-		$cfg["with_profiles"] = "0";
+		$tmpl->setvar('with_profiles', 0);
 	}
 }
 
