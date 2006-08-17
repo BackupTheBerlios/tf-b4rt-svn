@@ -123,8 +123,6 @@ sub initialize {
 
 	shift; # class
 
-	print "initializing FluxDB\n"; # DEBUG
-
 	# db-config
 	$dbConfig = shift;
 	if (!(defined $dbConfig)) {

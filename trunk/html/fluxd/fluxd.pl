@@ -109,7 +109,8 @@ while ( $loop ) {
 	}
 
 	# TODO : sleep-code                                                         /* TODO */
-	sleep 1; # DEBUG
+	#sleep 1; # DEBUG
+	select undef, undef, undef, 0.1;
 }
 
 ################################################################################
@@ -761,7 +762,6 @@ sub deletePidFile {
 #------------------------------------------------------------------------------#
 sub status {
 	my $retval = "";
-	#$retval .= "fluxd has been up since ".$start_time_local." (".niceTimeString($start_time).")\n\n";
 	$retval .= "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
 	$retval .= "Loaded Modules :\n";
 	# Qmgr
