@@ -1525,7 +1525,9 @@ function getDirList($dirName) {
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 
 		// link to datapath
-
+		$output .= '<a href="index.php?page=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
+		$output .= '<img src="images/datadir.gif" title="'.$settingsAry['datapath'].'" border="0">';
+		$output .= '</a>';
 
 		if ($owner || IsAdmin($cfg["user"])) {
 			// messy

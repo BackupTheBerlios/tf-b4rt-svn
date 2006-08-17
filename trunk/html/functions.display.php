@@ -986,7 +986,7 @@ function getTransferList() {
 		}
 
 		// =============================================================== admin
-		$output .= "<td><div align=center>";
+		$output .= '<td><div align="center">';
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
@@ -996,6 +996,9 @@ function getTransferList() {
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 
 		// link to datapath
+		$output .= '<a href="index.php?page=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
+		$output .= '<img src="images/datadir.gif" title="'.$settingsAry['datapath'].'" border="0">';
+		$output .= '</a>';
 
 		if ($owner || IsAdmin($cfg["user"])) {
 			if($percentDone >= 0 && $transferRunning == 1) {
