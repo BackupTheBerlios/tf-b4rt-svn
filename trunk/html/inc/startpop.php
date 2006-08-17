@@ -56,12 +56,11 @@ $tmpl->setvar('displayName', $displayName);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('torrent', $torrent);
-if ($torrentExists) {
-	$tmpl->setvar('bt_client', getBTClientSelect($cfg["btclient"]));
-}
-else {
-	$tmpl->setvar('bt_client', getBTClientSelect($btclient_default));
-}
+$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
+if ($cfg["enable_btclient_chooser"] != 0)
+	$tmpl->setvar('btClientSelect', getBTClientSelect($btclient_default));
+else
+	$tmpl->setvar('btclientDefault', $btclient_default);
 $tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 $tmpl->setvar('max_uploads', $cfg["max_uploads"]);
 $tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);

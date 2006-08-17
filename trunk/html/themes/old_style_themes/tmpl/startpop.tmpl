@@ -126,32 +126,37 @@ function isNumber(sText)
 				<table width="100%" cellpadding="2" cellspacing="0" border="0">
 						<tmpl_if name="with_profiles">
 						    <tr>
-							<form name="profile" action="index.php?page=startpop" method="POST">
-								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
-								<td align="center" colspan="2">Profile:
-									<select name="profile" size="1" onChange="javascript:submit();">
-										<option value="">default</option>
-										<tmpl_loop name="profiles">
-											<tmpl_if name="profiles">
-												<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
-												</tmpl_if>
-										</tmpl_loop>
-										<tmpl_if name="public_profiles">
-											<optgroup label="Public" style="background-color: #00EC00">
-												<tmpl_loop name="public_profiles">
-													<option style="background-color: #FFFFFF" value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
-												</tmpl_loop>
-											</optgroup>
-										</tmpl_if>
-									</select>
-								</td>
-							</form>
-							<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<form name="profile" action="index.php?page=startpop" method="POST">
+									<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+									<td align="center" colspan="2">Profile:
+										<select name="profile" size="1" onChange="javascript:submit();">
+											<option value="">default</option>
+											<tmpl_loop name="profiles">
+												<tmpl_if name="profiles">
+													<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+													</tmpl_if>
+											</tmpl_loop>
+											<tmpl_if name="public_profiles">
+												<optgroup label="Public" style="background-color: #00EC00">
+													<tmpl_loop name="public_profiles">
+														<option style="background-color: #FFFFFF" value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+													</tmpl_loop>
+												</optgroup>
+											</tmpl_if>
+										</select>
+									</td>
+								</form>
+								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
 								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
-							  <td align="center" colspan="2">BitTorrent-Client : <tmpl_var name="bt_client">
-							  </td>
+								<td align="center" colspan="2">
+									<tmpl_if name="enableBtclientChooser">
+										BitTorrent-Client : <tmpl_var name="btClientSelect">
+									<tmpl_else>
+										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
+									</tmpl_if>
+								</td>
 						    </tr>
 						    <input type="hidden" name="rate" value="<tmpl_var name="max_upload_rate">">
 						    <input type="hidden" name="maxuploads" value="<tmpl_var name="max_uploads">">
@@ -165,12 +170,17 @@ function isNumber(sText)
 						    <input type="hidden" name="sharekill" value="<tmpl_var name="sharekill">">
 						<tmpl_else>
 						    <tr>
-							<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
 								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
-							  <td align="center" colspan="4">BitTorrent-Client : <tmpl_var name="bt_client">
-							  </td>
+								<td align="center" colspan="4">
+									<tmpl_if name="enableBtclientChooser">
+										BitTorrent-Client : <tmpl_var name="btClientSelect">
+									<tmpl_else>
+										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
+									</tmpl_if>
+								</td>
 						    </tr>
 							<tr>
 								<td align="right">Max Upload Rate:</td>
