@@ -479,8 +479,6 @@ function getSumMaxDownRate() {
  * Function to delete saved Torrent Settings
  */
 function deleteTorrentSettings($torrent) {
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	  return false;
 	global $db;
 	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$db->Execute($sql);
@@ -495,7 +493,12 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
 	// Messy - a not exists would prob work better
 	deleteTorrentSettings($torrent);
 	global $db;
-	$sql = "INSERT INTO tf_torrents ( torrent , running ,rate , drate, maxuploads , runtime , sharekill , minport , maxport, maxcons , savepath , btclient)
+	// get hash
+	$tHash = getTorrentHash($torrent);
+	// get datapath
+	$tDatapath = getTorrentDatapath($torrent);
+	//
+	$sql = "INSERT INTO tf_torrents ( torrent , running ,rate , drate, maxuploads , runtime , sharekill , minport , maxport, maxcons , savepath , btclient, hash, datapath )
 			VALUES (
 					'".$torrent."',
 					'".$running."',
@@ -508,7 +511,9 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
 					'".$maxport."',
 					'".$maxcons."',
 					'".$savepath."',
-					'".$btclient."'
+					'".$btclient."',
+					'".$tHash."',
+					'".$tDatapath."'
 				   )";
 	$db->Execute($sql);
 		showError($db, $sql);
@@ -520,26 +525,25 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
  */
 function loadTorrentSettings($torrent) {
 	global $cfg, $db;
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	  return;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$result = $db->Execute($sql);
 		showError($db, $sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$retAry = array();
-		$retAry["running"]				   = $row["running"];
-		$retAry["max_upload_rate"]		   = $row["rate"];
-		$retAry["max_download_rate"]	   = $row["drate"];
-		$retAry["torrent_dies_when_done"]  = $row["runtime"];
-		$retAry["max_uploads"]			   = $row["maxuploads"];
-		$retAry["minport"]				   = $row["minport"];
-		$retAry["maxport"]				   = $row["maxport"];
-		$retAry["sharekill"]			   = $row["sharekill"];
-		$retAry["maxcons"]				   = $row["maxcons"];
-		$retAry["savepath"]				   = $row["savepath"];
-		$retAry["btclient"]				   = $row["btclient"];
-		$retAry["hash"]					   = $row["hash"];
+		$retAry["running"]					= $row["running"];
+		$retAry["max_upload_rate"]			= $row["rate"];
+		$retAry["max_download_rate"]		= $row["drate"];
+		$retAry["torrent_dies_when_done"]	= $row["runtime"];
+		$retAry["max_uploads"]				= $row["maxuploads"];
+		$retAry["minport"]					= $row["minport"];
+		$retAry["maxport"]					= $row["maxport"];
+		$retAry["sharekill"]				= $row["sharekill"];
+		$retAry["maxcons"]					= $row["maxcons"];
+		$retAry["savepath"]					= $row["savepath"];
+		$retAry["btclient"]					= $row["btclient"];
+		$retAry["hash"]						= $row["hash"];
+		$retAry["datapath"]					= $row["datapath"];
 		return $retAry;
 	}
 	return;
@@ -553,8 +557,6 @@ function loadTorrentSettings($torrent) {
  */
 function loadTorrentSettingsToConfig($torrent) {
 	global $cfg, $db, $superseeder;
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	  return false;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$result = $db->Execute($sql);
 		showError($db, $sql);
@@ -572,6 +574,7 @@ function loadTorrentSettingsToConfig($torrent) {
 		$cfg["savepath"]				= $row["savepath"];
 		$cfg["btclient"]				= $row["btclient"];
 		$cfg["hash"]					= $row["hash"];
+		$cfg["datapath"]				= $row["datapath"];
 		return true;
 	} else {
 		return false;
@@ -584,8 +587,6 @@ function loadTorrentSettingsToConfig($torrent) {
  * @param $torrent name of the torrent
  */
 function stopTorrentSettings($torrent) {
-  //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-  //  return false;
   global $db;
   $sql = "UPDATE tf_torrents SET running = '0' WHERE torrent = '".$torrent."'";
   $db->Execute($sql);
@@ -601,9 +602,6 @@ function stopTorrentSettings($torrent) {
  * @return value of running-flag in db
  */
 function isTorrentRunning($torrent) {
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	return 0;
-	// b4rt-8: make this pid-file-parsed.. maybe we got some "zombies" (torrents that stopped themselves)
 	/*
 	global $db;
 	$retVal = $db->GetOne("SELECT running FROM tf_torrents WHERE torrent = '".$torrent."'");
@@ -628,14 +626,14 @@ function isTorrentRunning($torrent) {
  * @return btclient
  */
 function getTransferClient($torrent) {
-  //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-  //  return 0;
   global $db;
   return $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$torrent."'");
 }
 
 /**
  * gets hash of a torrent
+ * this should not be called external if its no must, use cached value in
+ * tf_torrents if possible.
  *
  * @param $torrent name of the torrent
  * @return var with torrent-hash
@@ -645,40 +643,49 @@ function getTorrentHash($torrent) {
 	//info_hash = sha(bencode(info))
 	//print 'metainfo file.: %s' % basename(metainfo_name)
 	//print 'info hash.....: %s' % info_hash.hexdigest()
-	global $cfg, $db;
-	// check if we got a cached value in the db
-	$tHash = $db->GetOne("SELECT hash FROM tf_torrents WHERE torrent = '".$torrent."'");
-	if (isset($tHash) && $tHash != "") { // hash already in db
-		return $tHash;
-	} else { // hash is not in db
-		// get hash via metainfoclient-call
-		$result = getTorrentMetaInfo($torrent);
-		if (! isset($result))
-			return "";
-		$resultAry = explode("\n",$result);
-		$hashAry = array();
-		switch ($cfg["metainfoclient"]) {
-			case "transmissioncli":
-				//$hashAry = explode(":",trim($resultAry[2]));
-				// transmissioncli Revision 1.4 or higher does not print out
-				// version-string on meta-info.
-				$hashAry = explode(":",trim($resultAry[0]));
-			break;
-			case "btshowmetainfo.py":
-			default:
-				$hashAry = explode(":",trim($resultAry[3]));
-			break;
-		}
-		$tHash = @trim($hashAry[1]);
-		// insert hash into db
-		if (isset($tHash) && $tHash != "") {
-			$db->Execute("UPDATE tf_torrents SET hash = '".$tHash."' WHERE torrent = '".$torrent."'");
-			// return hash
-			return $tHash;
-		} else {
-			return "";
-		}
+	global $cfg;
+	$result = getTorrentMetaInfo($torrent);
+	if (! isset($result))
+		return "";
+	$resultAry = explode("\n",$result);
+	$hashAry = array();
+	switch ($cfg["metainfoclient"]) {
+		case "transmissioncli":
+			$hashAry = explode(":",trim($resultAry[0]));
+		break;
+		case "btshowmetainfo.py":
+		default:
+			$hashAry = explode(":",trim($resultAry[3]));
+		break;
 	}
+	$tHash = @trim($hashAry[1]);
+	// return
+	if (isset($tHash) && $tHash != "")
+		return $tHash;
+	else
+		return "";
+}
+
+/**
+ * gets datapath of a torrent.
+ * this should not be called external if its no must, use cached value in
+ * tf_torrents if possible.
+ *
+ * @param $torrent name of the torrent
+ * @return var with torrent-datapath or empty string on error
+ */
+function getTorrentDatapath($torrent) {
+	global $cfg;
+    require_once('BDecode.php');
+    $ftorrent=$cfg["torrent_file_path"].$torrent;
+    $fd = fopen($ftorrent, "rd");
+    $alltorrent = fread($fd, filesize($ftorrent));
+    $btmeta = BDecode($alltorrent);
+    $data = $btmeta['info']['name'];
+    if(trim($data) != "")
+        return $data;
+    else
+    	return "";
 }
 
 /* ************************************************************************** */
@@ -732,16 +739,17 @@ function getTransferTotals($transfer) {
  * gets totals of a transfer
  *
  * @param $transfer name of the transfer
+ * @param $tid of the transfer
  * @param $btclient client of the transfer
  * @param $afu alias-file-uptotal of the transfer
  * @param $afd alias-file-downtotal of the transfer
  * @return array with transfer-totals
  */
-function getTransferTotalsOP($transfer,$btclient,$afu,$afd) {
+function getTransferTotalsOP($transfer, $tid, $btclient, $afu, $afd) {
 	global $cfg;
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTransferTotalOP($transfer,$afu,$afd);
+	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
 }
 
 /**
@@ -762,16 +770,17 @@ function getTransferTotalsCurrent($transfer) {
  * gets current totals of a transfer
  *
  * @param $transfer name of the transfer
+ * @param $tid of the transfer
  * @param $btclient client of the transfer
  * @param $afu alias-file-uptotal of the transfer
  * @param $afd alias-file-downtotal of the transfer
  * @return array with transfer-totals
  */
-function getTransferTotalsCurrentOP($transfer,$btclient,$afu,$afd) {
+function getTransferTotalsCurrentOP($transfer, $tid, $btclient, $afu, $afd) {
 	global $cfg;
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTransferCurrentOP($transfer,$afu,$afd);
+	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
 }
 
 /**

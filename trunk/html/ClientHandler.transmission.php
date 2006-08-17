@@ -206,19 +206,19 @@ class ClientHandlerTransmission extends ClientHandler
      * gets current transfer-vals of a transfer. optimized index-page-version
      *
      * @param $transfer
+     * @param $tid of the transfer
      * @param $afu alias-file-uptotal of the transfer
      * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer,$afu,$afd)  {
+    function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
         global $db;
         $retVal = array();
         // transfer from stat-file
         $retVal["uptotal"] = $afu;
         $retVal["downtotal"] = $afd;
         // transfer from db
-        $torrentId = getTorrentHash($transfer);
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
+        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
         $result = $db->Execute($sql);
     	showError($db, $sql);
         $row = $result->FetchRow();
@@ -252,11 +252,12 @@ class ClientHandlerTransmission extends ClientHandler
      * gets total transfer-vals of a transfer. optimized index-page-version
      *
      * @param $transfer
+     * @param $tid of the transfer
      * @param $afu alias-file-uptotal of the transfer
      * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer,$afu,$afd) {
+    function getTransferTotalOP($transfer, $tid, $afu, $afd) {
         $retVal = array();
         // transfer from stat-file
         $retVal["uptotal"] = $afu;

@@ -685,15 +685,17 @@ function getTransferList() {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
-			$btclient = getTransferClient($entry);
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
+			$settingsAry = loadTorrentSettings($entry);
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
 			// this is wget. use tornado statfile
-			$btclient = "wget";
+			$settingsAry = array();
+			$settingsAry['btclient'] = "wget";
 			$alias = str_replace(".url", "", $alias);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
 		} else {
-			$btclient = "tornado";
+			$settingsAry = array();
+			$settingsAry['btclient'] = "tornado";
 			// this is "something else". use tornado statfile as default
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
 		}
@@ -708,8 +710,8 @@ function getTransferList() {
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-			if (($btclient) != "wget") {
-				$torrentTotalsCurrent = getTransferTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
+			if (($settingsAry['btclient']) != "wget") {
+				$torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 			} else {
 				$torrentTotalsCurrent["uptotal"] = $af->uptotal;
 				$torrentTotalsCurrent["downtotal"] = $af->downtotal;
@@ -807,8 +809,8 @@ function getTransferList() {
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-			if (($btclient) != "wget") {
-				$torrentTotals = getTransferTotalsOP($entry,$btclient,$af->uptotal,$af->downtotal);
+			if (($settingsAry['btclient']) != "wget") {
+				$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 			} else {
 				$torrentTotals["uptotal"] = $af->uptotal;
 				$torrentTotals["downtotal"] = $af->downtotal;
@@ -968,7 +970,7 @@ function getTransferList() {
 
 		// ============================================================== client
 		if ($settings[11] != 0) {
-			switch ($btclient) {
+			switch ($settingsAry['btclient']) {
 				case "tornado":
 					$output .= "<td valign=\"bottom\" align=\"center\">B</a></td>";
 				break;
@@ -992,6 +994,9 @@ function getTransferList() {
 		if($transferRunning == 1)
 			$output .= "&als=false";
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
+
+		// link to datapath
+
 		if ($owner || IsAdmin($cfg["user"])) {
 			if($percentDone >= 0 && $transferRunning == 1) {
 				$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";

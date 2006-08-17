@@ -566,11 +566,12 @@ class ClientHandler
      * gets current transfer-vals of a transfer. optimized index-page-version
      *
      * @param $transfer
+     * @param $tid of the transfer
      * @param $afu alias-file-uptotal of the transfer
      * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer,$afu,$afd)  { return; }
+    function getTransferCurrentOP($transfer, $tid, $afu, $afd)  { return; }
 
     //--------------------------------------------------------------------------
     /**
@@ -586,11 +587,12 @@ class ClientHandler
      * gets total transfer-vals of a transfer. optimized index-page-version
      *
      * @param $transfer
+     * @param $tid of the transfer
      * @param $afu alias-file-uptotal of the transfer
      * @param $afd alias-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer,$afu,$afd) { return; }
+    function getTransferTotalOP($transfer, $tid, $afu, $afd) { return; }
 
 
 } // end class

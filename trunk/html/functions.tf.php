@@ -1298,19 +1298,23 @@ function getDirList($dirName) {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
-			$btclient = getTransferClient($entry);
-			$af = AliasFile::getAliasFileInstance($dirName.$alias, $torrentowner, $cfg, $btclient);
+			$settingsAry = loadTorrentSettings($entry);
+			$af = AliasFile::getAliasFileInstance($dirName.$alias, $torrentowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
 			// this is wget. use tornado statfile
+			$settingsAry = array();
+			$settingsAry['btclient'] = "wget";
 			$alias = str_replace(".url", "", $alias);
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
 		} else {
 			// this is "something else". use tornado statfile as default
+			$settingsAry = array();
+			$settingsAry['btclient'] = "tornado";
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
 		}
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-		  $torrentTotalsCurrent = getTransferTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
+		  $torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 		  $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
 		  $newday = !$db->GetOne($sql);
 		  showError($db,$sql);
@@ -1512,19 +1516,18 @@ function getDirList($dirName) {
 		$output .= "</div></td>";
 		$output .= "<td><div class=\"tiny\" align=\"center\">".$estTime."</div></td>";
 		$output .= "<td><div align=center>";
-
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
-
 		$output .= "<a href=\"index.php?page=details&torrent=".urlencode($entry);
 		if($af->running == 1)
 			$output .= "&als=false";
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 
+		// link to datapath
+
+
 		if ($owner || IsAdmin($cfg["user"])) {
-			// b4rt-61
-			//if($kill_id != "" && $af->percent_done >= 0 && $af->running == 1)
 			// messy
 			if($af->percent_done >= 0 && $af->running == 1) {
 				$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
