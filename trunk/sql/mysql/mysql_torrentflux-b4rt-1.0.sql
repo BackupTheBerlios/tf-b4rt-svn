@@ -72,6 +72,95 @@ CREATE TABLE tf_rss (
 ) TYPE=MyISAM;
 
 --
+-- tf_users
+--
+CREATE TABLE tf_users (
+  uid int(10) NOT NULL auto_increment,
+  user_id VARCHAR(32) NOT NULL default '',
+  password VARCHAR(34) NOT NULL default '',
+  hits int(10) NOT NULL default '0',
+  last_visit VARCHAR(14) NOT NULL default '0',
+  time_created VARCHAR(14) NOT NULL default '0',
+  user_level TINYINT(1) NOT NULL default '0',
+  hide_offline TINYINT(1) NOT NULL default '0',
+  theme VARCHAR(100) NOT NULL default 'mint',
+  language_file VARCHAR(60) default 'lang-english.php',
+  PRIMARY KEY  (uid)
+) TYPE=MyISAM;
+
+--
+-- tf_torrents
+--
+CREATE TABLE tf_torrents (
+  torrent VARCHAR(255) NOT NULL default '',
+  running ENUM('0','1') NOT NULL default '0',
+  rate SMALLINT(4) unsigned NOT NULL default '0',
+  drate SMALLINT(4) unsigned NOT NULL default '0',
+  maxuploads TINYINT(3) unsigned NOT NULL default '0',
+  superseeder ENUM('0','1') NOT NULL default '0',
+  runtime ENUM('True','False') NOT NULL default 'False',
+  sharekill SMALLINT(4) unsigned NOT NULL default '0',
+  minport SMALLINT(5) unsigned NOT NULL default '0',
+  maxport SMALLINT(5) unsigned NOT NULL default '0',
+  maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  savepath VARCHAR(255) NOT NULL default '',
+  btclient VARCHAR(32) NOT NULL default 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  PRIMARY KEY  (torrent)
+) TYPE=MyISAM;
+
+--
+-- tf_trprofiles
+--
+CREATE TABLE tf_trprofiles (
+  id MEDIUMINT(8) NOT NULL auto_increment,
+  name VARCHAR(255) NOT NULL default '',
+  owner INT(10) NOT NULL default '0',
+  public ENUM('0','1') NOT NULL default '0',
+  rate SMALLINT(4) unsigned NOT NULL default '0',
+  drate SMALLINT(4) unsigned NOT NULL default '0',
+  maxuploads TINYINT(3) unsigned NOT NULL default '0',
+  superseeder ENUM('0','1') NOT NULL default '0',
+  runtime ENUM('True','False') NOT NULL default 'False',
+  sharekill SMALLINT(4) unsigned NOT NULL default '0',
+  minport SMALLINT(5) unsigned NOT NULL default '0',
+  maxport SMALLINT(5) unsigned NOT NULL default '0',
+  maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id)
+) TYPE=MyISAM;
+
+--
+-- tf_torrent_totals
+--
+CREATE TABLE tf_torrent_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
+) TYPE=MyISAM;
+
+--
+-- tf_xfer
+--
+CREATE TABLE tf_xfer (
+  user VARCHAR(32) NOT NULL default '',
+  date DATE NOT NULL default '0000-00-00',
+  download BIGINT(80) NOT NULL default '0',
+  upload BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (user,date)
+) TYPE=MyISAM;
+
+--
+-- tf_settings_user
+--
+CREATE TABLE tf_settings_user (
+  uid INT(10) NOT NULL,
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL
+) TYPE=MyISAM;
+
+--
 -- tf_settings
 --
 CREATE TABLE tf_settings (
@@ -80,9 +169,6 @@ CREATE TABLE tf_settings (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM;
 
---
--- tf_settings
---
 INSERT INTO tf_settings VALUES ('path','/usr/local/torrent/');
 INSERT INTO tf_settings VALUES ('btphpbin','/var/www/TF_BitTornado/btphptornado.py');
 INSERT INTO tf_settings VALUES ('btshowmetainfo','/var/www/TF_BitTornado/btshowmetainfo.py');
@@ -104,16 +190,12 @@ INSERT INTO tf_settings VALUES ('days_to_keep','30');
 INSERT INTO tf_settings VALUES ('minutes_to_keep','3');
 INSERT INTO tf_settings VALUES ('rss_cache_min','20');
 INSERT INTO tf_settings VALUES ('page_refresh','60');
-INSERT INTO tf_settings VALUES ('default_theme','matrix');
+INSERT INTO tf_settings VALUES ('default_theme','old_style_themes/matrix');
 INSERT INTO tf_settings VALUES ('default_language','lang-english.php');
 INSERT INTO tf_settings VALUES ('debug_sql','1');
 INSERT INTO tf_settings VALUES ('torrent_dies_when_done','False');
 INSERT INTO tf_settings VALUES ('sharekill','0');
-INSERT INTO tf_settings VALUES ('tfQManager','/var/www/TF_BitTornado/tfQManager.py');
 INSERT INTO tf_settings VALUES ('AllowQueing','0');
-INSERT INTO tf_settings VALUES ('maxServerThreads','5');
-INSERT INTO tf_settings VALUES ('maxUserThreads','2');
-INSERT INTO tf_settings VALUES ('sleepInterval','10');
 INSERT INTO tf_settings VALUES ('debugTorrents','0');
 INSERT INTO tf_settings VALUES ('pythonCmd','/usr/bin/python');
 INSERT INTO tf_settings VALUES ('searchEngine','TorrentSpy');
@@ -155,12 +237,7 @@ INSERT INTO tf_settings VALUES ('btclient_transmission_bin','/usr/local/bin/tran
 INSERT INTO tf_settings VALUES ('btclient_transmission_options','');
 INSERT INTO tf_settings VALUES ('metainfoclient','btshowmetainfo.py');
 INSERT INTO tf_settings VALUES ('enable_restrictivetview','1');
-INSERT INTO tf_settings VALUES ('queuemanager','tfqmgr');
 INSERT INTO tf_settings VALUES ('perlCmd','/usr/bin/perl');
-INSERT INTO tf_settings VALUES ('tfqmgr_path','/var/www/tfqmgr');
-INSERT INTO tf_settings VALUES ('tfqmgr_path_fluxcli','/var/www');
-INSERT INTO tf_settings VALUES ('tfqmgr_limit_global','5');
-INSERT INTO tf_settings VALUES ('tfqmgr_limit_user','2');
 INSERT INTO tf_settings VALUES ('ui_displayfluxlink','1');
 INSERT INTO tf_settings VALUES ('ui_dim_main_w','780');
 INSERT INTO tf_settings VALUES ('ui_dim_details_w','450');
@@ -183,13 +260,6 @@ INSERT INTO tf_settings VALUES ('hack_goodlookstats_settings','63');
 INSERT INTO tf_settings VALUES ('ui_indexrefresh','1');
 INSERT INTO tf_settings VALUES ('bin_fstat','/usr/bin/fstat');
 INSERT INTO tf_settings VALUES ('enable_dereferrer','1');
-INSERT INTO tf_settings VALUES ('Qmgr_path','/var/www/Qmgr');
-INSERT INTO tf_settings VALUES ('Qmgr_maxUserTorrents','2');
-INSERT INTO tf_settings VALUES ('Qmgr_maxTotalTorrents','5');
-INSERT INTO tf_settings VALUES ('Qmgr_perl','/usr/bin/perl');
-INSERT INTO tf_settings VALUES ('Qmgr_fluxcli','/var/www');
-INSERT INTO tf_settings VALUES ('Qmgr_host','localhost');
-INSERT INTO tf_settings VALUES ('Qmgr_port','2606');
 INSERT INTO tf_settings VALUES ('auth_type','0');
 INSERT INTO tf_settings VALUES ('index_page_connections','1');
 INSERT INTO tf_settings VALUES ('index_page_stats','1');
@@ -206,71 +276,22 @@ INSERT INTO tf_settings VALUES ('skiphashcheck','0');
 INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
-
---
--- tf_users
---
-CREATE TABLE tf_users (
-  uid int(10) NOT NULL auto_increment,
-  user_id VARCHAR(32) NOT NULL default '',
-  password VARCHAR(34) NOT NULL default '',
-  hits int(10) NOT NULL default '0',
-  last_visit VARCHAR(14) NOT NULL default '0',
-  time_created VARCHAR(14) NOT NULL default '0',
-  user_level TINYINT(1) NOT NULL default '0',
-  hide_offline TINYINT(1) NOT NULL default '0',
-  theme VARCHAR(100) NOT NULL default 'mint',
-  language_file VARCHAR(60) default 'lang-english.php',
-  PRIMARY KEY  (uid)
-) TYPE=MyISAM;
-
---
--- tf_torrents
---
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
-  running ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  PRIMARY KEY  (torrent)
-) TYPE=MyISAM;
-
---
--- tf_torrent_totals
---
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
-) TYPE=MyISAM;
-
---
--- tf_xfer
---
-CREATE TABLE tf_xfer (
-  user VARCHAR(32) NOT NULL default '',
-  date DATE NOT NULL default '0000-00-00',
-  download BIGINT(80) NOT NULL default '0',
-  upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user,date)
-) TYPE=MyISAM;
-
---
--- tf_settings_user
---
-CREATE TABLE tf_settings_user (
-  uid INT(10) NOT NULL,
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL
-) TYPE=MyISAM;
+INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
+INSERT INTO tf_settings VALUES ('enable_transfer_profile','0');
+INSERT INTO tf_settings VALUES ('transfer_profile_level','2');
+INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
+INSERT INTO tf_settings VALUES ('downloadhosts','0');
+INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
+INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
+INSERT INTO tf_settings VALUES ('fluxd_path', '/var/www/fluxd');
+INSERT INTO tf_settings VALUES ('fluxd_path_fluxcli', '/var/www');
+INSERT INTO tf_settings VALUES ('fluxd_Qmgr_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Watch_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Trigger_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5');
+INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
+INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
+INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
+INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
