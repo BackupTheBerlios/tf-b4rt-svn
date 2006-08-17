@@ -1,27 +1,35 @@
 -- -----------------------------------------------------------------------------
 -- $Id$
 -- -----------------------------------------------------------------------------
+--
+-- This Stuff is provided 'as-is'. In no way will the authors be held
+-- liable for any damages to your soft- or hardware from this.
+-- -----------------------------------------------------------------------------
+
+--
+-- begin transaction
+--
+BEGIN TRANSACTION;
 
 --
 -- tf_trprofiles
 --
 CREATE TABLE tf_trprofiles (
-  id MEDIUMINT(8) NOT NULL auto_increment,
+  id INTEGER PRIMARY KEY,
   name VARCHAR(255) NOT NULL default '',
-  owner INT(10) NOT NULL default '0',
-  public ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
-) TYPE=MyISAM;
+  owner INTEGER(10) NOT NULL default '0',
+  public INTEGER(1) NOT NULL default '0',
+  rate INTEGER(4) NOT NULL default '0',
+  drate INTEGER(4) NOT NULL default '0',
+  maxuploads INTEGER(3) NOT NULL default '0',
+  superseeder INTEGER(1) NOT NULL default '0',
+  runtime VARCHAR(5) NOT NULL default 'False',
+  sharekill INTEGER(4) NOT NULL default '0',
+  minport INTEGER(5) NOT NULL default '0',
+  maxport INTEGER(5) NOT NULL default '0',
+  maxcons INTEGER(4) NOT NULL default '0',
+  rerequest INTEGER(8) NOT NULL default '0'
+) ;
 
 --
 -- updates
@@ -52,3 +60,8 @@ INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
 INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
+
+--
+-- commit
+--
+COMMIT;
