@@ -225,7 +225,7 @@ switch ($op) {
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('hostvalue', $hostvalue);
 		$tmpl->setvar('datavalue', $datavalue);
-		(!empty( $cid )) ? $add1 = "_UPDATE" : $add1 = "Add";
+		(!empty( $cid )) ? $add1 = _UPDATE : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		// We are editing a cookie, so have a link back to cookie list
 		if( !empty( $cid ) ) {
@@ -312,7 +312,7 @@ switch ($op) {
 		global $cfg, $db;
 		$tmpl->setvar('ShowProfiles', 1);
 		$pid = @ $_GET["pid"];
-		(!empty( $pid )) ? $add1 = "_UPDATE" : $add1 = "Add";
+		(!empty( $pid )) ? $add1 = _UPDATE : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
 		$tmpl->setvar('op', $op2);

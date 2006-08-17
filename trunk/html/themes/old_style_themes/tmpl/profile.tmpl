@@ -550,87 +550,98 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Name:</td>
+					<td width="120" align="right">&nbsp;Name:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="name"<tmpl_var name="name">><br />
+						<input type="Text" size="45" maxlength="255" name="name" <tmpl_var name="name">><br />
 					</td>
 					<td width="150">
 					</td>
 				</tr>
+				<tmpl_if name="is_admin">
 				<tr>
-					<td width="80" align="right">&nbsp;Uploadrate:</td>
+					<td width="120" align="right">&nbsp;Public Profile:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="rate"<tmpl_var name="rate">><br />
+						<input name="public" type="Checkbox" value="1" <tmpl_var name="public">> <br />
+					</td>
+					<td width="150">
+						&nbsp;
+					</td>
+				</tr>
+				</tmpl_if>
+				<tr>
+					<td width="120" align="right">&nbsp;Uploadrate:</td>
+					<td>
+						<input type="Text" size="45" maxlength="255" name="rate" <tmpl_var name="rate">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_rate">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Downloadrate:</td>
+					<td width="120" align="right">&nbsp;Downloadrate:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="drate"<tmpl_var name="drate">><br />
+						<input type="Text" size="45" maxlength="255" name="drate" <tmpl_var name="drate">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_drate">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Min-Port:</td>
+					<td width="120" align="right">&nbsp;Min-Port:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="minport"<tmpl_var name="minport">><br />
+						<input type="Text" size="45" maxlength="255" name="minport" <tmpl_var name="minport">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_minport">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Max-Port:</td>
+					<td width="120" align="right">&nbsp;Max-Port:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="maxport"<tmpl_var name="maxport">><br />
+						<input type="Text" size="45" maxlength="255" name="maxport" <tmpl_var name="maxport">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_maxport">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Max Cons:</td>
+					<td width="120" align="right">&nbsp;Max Cons:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="maxcons"<tmpl_var name="maxcons">><br />
+						<input type="Text" size="45" maxlength="255" name="maxcons" <tmpl_var name="maxcons">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_maxcons">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Rerequest Interval:</td>
+					<td width="120" align="right">&nbsp;Rerequest Interval:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="rerequest"<tmpl_var name="rerequest">><br />
+						<input type="Text" size="45" maxlength="255" name="rerequest" <tmpl_var name="rerequest">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_rerequest">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Max. Uploads:</td>
+					<td width="120" align="right">&nbsp;Max. Uploads:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="maxuploads"<tmpl_var name="maxuploads">><br />
+						<input type="Text" size="45" maxlength="255" name="maxuploads" <tmpl_var name="maxuploads">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_maxuploads">)
 					</td>
 				</tr>
 				<tr>
-					<td width="80" align="right">&nbsp;Sharekill:</td>
+					<td width="120" align="right">&nbsp;Sharekill:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="sharekill"<tmpl_var name="sharekill">><br />
+						<input type="Text" size="45" maxlength="255" name="sharekill" <tmpl_var name="sharekill">><br />
 					</td>
 					<td width="150">
 						(default: <tmpl_var name="default_sharekill">)
 					</td>
 				</tr>
 				<tr>
-					<td align="left" width="80" valign="top">&nbsp;Die when done:</td>
+					<td align="right" width="120" valign="top">&nbsp;Die when done:</td>
 					<td>
 						<select name="runtime">
 							<option value="True">true</option>
@@ -639,13 +650,22 @@
 								 selected
 							</tmpl_if>
 							>false</option>
-							<input name="superseeder" type="Checkbox" value="1" <tmpl_var name="superseeder">> Enable Superseeder
 							<tmpl_if name="is_admin">
-								<input name="public" type="Checkbox" value="1" <tmpl_var name="public">> Make public
+
 							</tmpl_if>
 						</select>
 					</td>
 					<td width="150">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td width="120" align="right">&nbsp;Enable Superseeder:</td>
+					<td>
+						<input name="superseeder" type="Checkbox" value="1" <tmpl_var name="superseeder">> <br />
+					</td>
+					<td width="150">
+						&nbsp;
 					</td>
 				</tr>
 				<tr>
