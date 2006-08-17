@@ -683,6 +683,26 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Customize profiles</strong><br>
+								 Define who can customize settings in the Torrentstart Popup :
+								</td>
+								<td valign="top">
+									<select name="transfer_customize_settings">
+										<option value="2">All Users</option>
+										<option value="1"
+										<tmpl_if name="transfer_customize_settings" value="1">
+											 selected
+										</tmpl_if>
+										>Only Admins</option>
+										<option value="0"
+										<tmpl_if name="transfer_customize_settings" value="0">
+											 selected
+										</tmpl_if>
+										>Disabled</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable xfer</strong><br>
 								Enable/Disable xfer-hack :

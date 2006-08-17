@@ -157,17 +157,63 @@ function isNumber(sText)
 										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
 									</tmpl_if>
 								</td>
-						    </tr>
-						    <input type="hidden" name="rate" value="<tmpl_var name="max_upload_rate">">
-						    <input type="hidden" name="maxuploads" value="<tmpl_var name="max_uploads">">
-						    <input type="hidden" name="drate" value="<tmpl_var name="max_download_rate">">
-						    <input type="hidden" name="maxcons" value="<tmpl_var name="maxcons">">
-						    <input type="hidden" name="rerequest" value="<tmpl_var name="rerequest_interval">">
-						    <input type="hidden" name="superseeder" value="<tmpl_var name="superseederValue">">
-						    <input type="hidden" name="runtime" value="<tmpl_var name="runtimeValue">">
-						    <input type="hidden" name="minport" value="<tmpl_var name="minport">">
-						    <input type="hidden" name="maxport" value="<tmpl_var name="maxport">">
-						    <input type="hidden" name="sharekill" value="<tmpl_var name="sharekill">">
+							</tr>
+							<tmpl_if name="customize_settings">
+								<tr>
+									<td align="right">Max Upload Rate:</td>
+									<td><input type="Text" name="rate" maxlength="4" size="4" value="<tmpl_var name="max_upload_rate">"> kB/s</td>
+									<td align="right">Max # Uploads:</td>
+									<td><input type="Text" name="maxuploads" maxlength="2" size="2" value="<tmpl_var name="max_uploads">"></td>
+								</tr>
+								<tr>
+									<td align="right" valign="top">Max Download Rate:</td>
+									<td valign="top"><input type="Text" name="drate" maxlength="4" size="4" value="<tmpl_var name="max_download_rate">"> kB/s<font class="tiny"> (0 = max)</font></td>
+									<td align="right" valign="top">Max Connections:</td>
+									<td align="left"><input type="Text" name="maxcons" maxlength="4" size="4" value="<tmpl_var name="maxcons">"></td>
+								</tr>
+								<tr>
+									<td align="right" valign="top">Rerequest Interval:</td>
+									<td valign="top"><input type="Text" name="rerequest" maxlength="5" size="5" value="<tmpl_var name="rerequest_interval">"></td>
+									<td align="right" valign="top"><input type="Checkbox" name="superseeder" value="1" <tmpl_var name="superseeder">>Super Seeder<font class="tiny"> (dedicated seed only)</font></td>
+									<td align="Left" valign="top">
+										&nbsp;
+									</td>
+								</tr>
+								<tr>
+									<td align="right">Completion:</td>
+									<td>
+										<select name="runtime" onchange="CheckShareState()">
+											<option value="True">Die When Done</option>
+											<option value="False" <tmpl_var name="selected">>Keep Seeding</option>
+										</select>
+									</td>
+									<td align="right">Port Range:</td>
+									<td>
+										<input type="Text" name="minport" maxlength="5" size="5" value="<tmpl_var name="minport">">
+										-
+										<input type="Text" name="maxport" maxlength="5" size="5" value="<tmpl_var name="maxport">">
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4" align="center">
+										<div ID="sharekiller" align="center" style="visibility:hidden;">
+											Keep seeding until Sharing is: <input type="Text" name="sharekill" maxlength="4" size="4" value="<tmpl_var name="sharekill">">%<font class="tiny">  (0% will keep seeding)</font>
+											&nbsp;
+										</div>
+									</td>
+								</tr>
+							<tmpl_else>
+								<input type="hidden" name="rate" value="<tmpl_var name="max_upload_rate">">
+								<input type="hidden" name="maxuploads" value="<tmpl_var name="max_uploads">">
+					 			<input type="hidden" name="drate" value="<tmpl_var name="max_download_rate">">
+					 			<input type="hidden" name="maxcons" value="<tmpl_var name="maxcons">">
+								<input type="hidden" name="rerequest" value="<tmpl_var name="rerequest_interval">">
+								<input type="hidden" name="superseeder" value="<tmpl_var name="superseederValue">">
+								<input type="hidden" name="runtime" value="<tmpl_var name="runtimeValue">">
+								<input type="hidden" name="minport" value="<tmpl_var name="minport">">
+								<input type="hidden" name="maxport" value="<tmpl_var name="maxport">">
+								<input type="hidden" name="sharekill" value="<tmpl_var name="sharekill">">
+							</tmpl_if>
 						<tmpl_else>
 						    <tr>
 								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">

@@ -54,6 +54,7 @@ $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $tmpl->setvar('enable_transfer_profile', $cfg["enable_transfer_profile"]);
 $tmpl->setvar('transfer_profile_level', $cfg["transfer_profile_level"]);
+$tmpl->setvar('transfer_customize_settings', $cfg["transfer_customize_settings"]);
 
 $nice_list = array();
 for ($i = 0; $i < 20 ; $i++) {

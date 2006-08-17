@@ -152,6 +152,13 @@ if ($with_profiles == "1") {
 	else {
 		$tmpl->setvar('with_profiles', 0);
 	}
+	// customize settings	
+	if($cfg['transfer_customize_settings'] == "2") {
+		$tmpl->setvar('customize_settings', 1);
+	}
+	elseif($cfg['transfer_customize_settings'] == "1" && $user_level >= "1") {
+		$tmpl->setvar('customize_settings', 1);
+	}
 }
 
 $tmpl->pparse();
