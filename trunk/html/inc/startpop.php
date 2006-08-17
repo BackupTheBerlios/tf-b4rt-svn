@@ -125,20 +125,19 @@ if ($with_profiles == "1") {
 		$tmpl->setvar('max_upload_rate', $settings["rate"]);
 		$tmpl->setvar('max_uploads', $settings["maxuploads"]);
 		$tmpl->setvar('max_download_rate', $settings["drate"]);
-		if($cfg['enable_btclient_chooser'] == 1) {
-			$tmpl->setvar('bt_client', getBTClientSelect($settings["btclient"]));
-		}
 		$selected = "";
 		if ($settings["runtime"] == "False") {
 			$selected = "selected";
 		}
 		$tmpl->setvar('selected', $selected);
+		$tmpl->setvar('runtimeValue', $settings["runtime"]);
 		$tmpl->setvar('sharekill', $settings["sharekill"]);
 		$superseeder = "";
 		if ($settings['superseeder'] == 1) {
 			$superseeder = "checked";
 		}
 		$tmpl->setvar('superseeder', $superseeder);
+		$tmpl->setvar('superseederValue', $settings['superseeder']);
 	}
 	// load profile list
 	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1") {
