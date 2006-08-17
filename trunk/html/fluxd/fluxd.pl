@@ -1181,6 +1181,7 @@ sub debug {
 		print "\$fluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
 		print "\$fluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
 		print "\$fluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+		print "\$fluxDB->getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 		# something from the bean
 		print "FluxDB->getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
 		print "FluxDB->getFluxConfig(\"bin_php\") : \"".FluxDB->getFluxConfig("bin_php")."\"\n";
