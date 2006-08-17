@@ -109,8 +109,10 @@
 															<option value="<tmpl_var name="arThemes">" <tmpl_var name="selected">><tmpl_var name="arThemes"></option>
 														</tmpl_loop>
 														<optgroup label="Old Themes" style="background-color: #00EC00">
-															<tmpl_loop name="old_theme_list">																<option value="<tmpl_var name="arThemes2">" <tmpl_var name="selected"> style="background-color: #FFFFFF"><tmpl_var name="arThemes"></option>
-															</tmpl_loop>														</optgroup>
+															<tmpl_loop name="old_theme_list">
+																<option value="<tmpl_var name="arThemes2">" <tmpl_var name="selected"> style="background-color: #FFFFFF"><tmpl_var name="arThemes"></option>
+															</tmpl_loop>
+														</optgroup>
 													</select>
 												</td>
 											</tr>
@@ -627,28 +629,6 @@
 						(default: <tmpl_var name="default_sharekill">)
 					</td>
 				</tr>
-				<tmpl_if name="enable_btclient_chooser">
-					<tr>
-						<td align="left" width="80" valign="top">&nbsp;BitTorrent-Client:</td>
-						<td>
-							<select name="btclient">
-								<option value="tornado"
-								<tmpl_if name="btclient" value="tornado">
-									 selected
-								</tmpl_if>
-								>tornado</option>
-								<option value="transmission"
-								<tmpl_if name="btclient" value="transmission">
-									 selected
-								</tmpl_if>
-								>transmission</option>
-							</select>
-						</td>
-						<td width="150">
-							(default: <tmpl_var name="default_btclient">)
-						</td>
-					</tr>
-				</tmpl_if>
 				<tr>
 					<td align="left" width="80" valign="top">&nbsp;Die when done:</td>
 					<td>

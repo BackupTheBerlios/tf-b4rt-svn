@@ -25,7 +25,6 @@ CREATE TABLE tf_trprofiles (
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
   rerequest INTEGER(8) NOT NULL default '0'
-  btclient VARCHAR(32) NOT NULL default '',
 ) ;
 
 --

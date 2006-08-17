@@ -114,7 +114,7 @@ switch ($op) {
 			);
 		}
 		$tmpl->setloop('theme_list', $theme_list);
-		
+
 		# Old style themes
 		$arThemes = Get_old_Themes();
 		$old_theme_list = array();
@@ -186,14 +186,9 @@ switch ($op) {
 		$language = getRequestVar('language');
 		global $cfg;
 		$tmpl->setvar('updateProfile', 1);
-
 		if ($pass1 != "")
-		{
 			$_SESSION['user'] = md5($cfg["pagetitle"]);
-		}
-
 		UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);
-
 		$tmpl->setvar('head', getHead($cfg["user"]."'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
@@ -211,11 +206,8 @@ switch ($op) {
 	case "editCookies":
 		global $cfg, $db;
 		$tmpl->setvar('ShowCookies', 1);
-
 		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
-
 		$cid = @ $_GET["cid"]; // Cookie ID
-
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
 		if( !empty( $cid ) ) {
@@ -224,7 +216,6 @@ switch ($op) {
 			$hostvalue = " value=\"" . $cookie['host'] . "\"";
 			$datavalue = " value=\"" . $cookie['data'] . "\"";
 		}
-
 		(!empty( $cid )) ? $op2 = "modCookie" : $op2 = "addCookie";
 		$tmpl->setvar('op', $op2);
 		$tmpl->setvar('cid', $cid);
@@ -236,19 +227,16 @@ switch ($op) {
 		$tmpl->setvar('datavalue', $datavalue);
 		(!empty( $cid )) ? $add1 = "_UPDATE" : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
-
 		// We are editing a cookie, so have a link back to cookie list
 		if( !empty( $cid ) ) {
 			$tmpl->setvar('empty_cid', 1);
-		}
-		else {
+		} else {
 			// Output the list of cookies in the database
 			$sql = "SELECT c.cid, c.host, c.data FROM tf_cookies AS c, tf_users AS u WHERE u.uid=c.uid AND u.user_id='" . $cfg["user"] . "'";
 			$dat = $db->GetAll( $sql );
 			if( empty( $dat ) ) {
 				$tmpl->setvar('empty_dat', 1);
-			}
-			else {
+			} else {
 				$cookie_data = array();
 				$tmpl->setvar('_DELETE', _DELETE);
 				$tmpl->setvar('_EDIT', _EDIT);
@@ -260,7 +248,7 @@ switch ($op) {
 						)
 					);
 				}
-			$tmpl->setloop('cookie_data', $cookie_data);
+				$tmpl->setloop('cookie_data', $cookie_data);
 			}
 		}
 		$tmpl->setvar('foot', getFoot());
@@ -323,15 +311,12 @@ switch ($op) {
 	case "editProfiles":
 		global $cfg, $db;
 		$tmpl->setvar('ShowProfiles', 1);
-		
 		$pid = @ $_GET["pid"];
-		
 		(!empty( $pid )) ? $add1 = "_UPDATE" : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
 		$tmpl->setvar('op', $op2);
-		
-		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = $superseeder = $btclient = $public = "";
+		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = $superseeder = $public = "";
 		if( !empty( $pid ) ) {
 			$profile = getProfile( $pid );
 			$name = " value=\"" . $profile['name'] . "\"";
@@ -347,9 +332,8 @@ switch ($op) {
 			if ($profile['superseeder'] == 1) {
 				$superseeder = "checked";
 			}
-			if ($profile['public'] == 1) {
+			if ($profile['public'] == 1)
 				$public = "checked";
-			}
 		}
 		$tmpl->setvar('name', $name);
 		$tmpl->setvar('minport', $minport);
@@ -363,9 +347,7 @@ switch ($op) {
 		$tmpl->setvar('sharekill', $sharekill);
 		$tmpl->setvar('superseeder', $superseeder);
 		$tmpl->setvar('public', $public);
-		$tmpl->setvar('btclient', $profile['btclient']);
-		
-		$tmpl->setvar('default_name', $cfg['title']);
+		$tmpl->setvar('default_name', "TransferProfile");
 		$tmpl->setvar('default_minport', $cfg['minport']);
 		$tmpl->setvar('default_maxport', $cfg['maxport']);
 		$tmpl->setvar('default_maxcons', $cfg['maxcons']);
@@ -375,7 +357,6 @@ switch ($op) {
 		$tmpl->setvar('default_drate', $cfg['max_download_rate']);
 		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
 		$tmpl->setvar('default_btclient', $cfg['btclient']);
-
 		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
@@ -384,8 +365,7 @@ switch ($op) {
 		$tmpl->setvar('pid', $pid);
 		if( !empty( $pid ) ) {
 			$tmpl->setvar('empty_pid', 1);
-		}
-		else {
+		} else {
 			// Output the list of profiles in the database
 			$sql = "SELECT id, name FROM tf_trprofiles WHERE owner LIKE '" . $cfg["uid"] . "'";
 			$dat = $db->GetAll( $sql );
@@ -409,7 +389,7 @@ switch ($op) {
 		$tmpl->setvar('pid', $pid);
 		$tmpl->setvar('foot', getFoot());
 	break;
-	
+
 //******************************************************************************
 // addProfile -- adding a Profile Information
 //******************************************************************************
@@ -429,15 +409,11 @@ switch ($op) {
 		}
 		else {
 			$newProfile["superseeder"] = getRequestVar('superseeder');
-		}
-		if (getRequestVar('public') == "") {
+		} if (getRequestVar('public') == "") {
 			$newProfile["public"] = 0;
-		}
-		else {
+		} else {
 			$newProfile["public"] = getRequestVar('public');
 		}
-		$newProfile["btclient"] = "";
-		$newProfile["btclient"] = getRequestVar('btclient');
 		if( !empty( $newProfile ) ) {
 			global $cfg;
 			AddProfileInfo( $newProfile );
@@ -445,7 +421,7 @@ switch ($op) {
 		}
 		header( "location: index.php?page=profile&op=showProfiles" );
 	break;
-	
+
 //******************************************************************************
 // modProfile -- edit Profile Information
 //******************************************************************************
@@ -462,25 +438,21 @@ switch ($op) {
 		$newProfile["sharekill"] = getRequestVar('sharekill');
 		if (getRequestVar('superseeder') == "") {
 			$newProfile["superseeder"] = 0;
-		}
-		else {
+		} else {
 			$newProfile["superseeder"] = getRequestVar('superseeder');
 		}
 		if (getRequestVar('public') == "") {
 			$newProfile["public"] = 0;
-		}
-		else {
+		} else {
 			$newProfile["public"] = getRequestVar('public');
 		}
-		$newProfile["btclient"] = "";
-		$newProfile["btclient"] = getRequestVar('btclient');
 		$pid = getRequestVar('pid');
 		global $cfg;
 		modProfileInfo($pid,$newProfile);
 		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
 		header("location: index.php?page=profile&op=showProfiles");
 	break;
-	
+
 //******************************************************************************
 // deleteProfile -- delete a Profile Information
 //******************************************************************************
@@ -492,7 +464,6 @@ switch ($op) {
 		AuditAction( $cfg["constants"]["admin"], _DELETE . " Profile: " . $profile["name"] );
 		header( "location: index.php?page=profile&op=showProfiles" );
 	break;
-
 
 }
 
