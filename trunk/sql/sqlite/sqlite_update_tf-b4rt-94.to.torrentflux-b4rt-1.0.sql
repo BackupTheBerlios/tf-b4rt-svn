@@ -32,6 +32,11 @@ CREATE TABLE tf_trprofiles (
 ) ;
 
 --
+-- alter
+--
+ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL;
+
+--
 -- updates
 --
 UPDATE tf_settings SET tf_value = 'old_style_themes/matrix' WHERE tf_key = 'default_theme';

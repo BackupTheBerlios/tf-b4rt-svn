@@ -106,6 +106,7 @@ CREATE TABLE tf_torrents (
   savepath VARCHAR(255) NOT NULL default '',
   btclient VARCHAR(32) NOT NULL default 'tornado',
   hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL default '',
   PRIMARY KEY  (torrent)
 ) TYPE=MyISAM;
 
