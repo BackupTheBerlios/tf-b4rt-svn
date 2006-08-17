@@ -49,6 +49,7 @@ my $PATH_DOCROOT;
 my $SERVER;
 my $Select = new IO::Select();
 my $start_time = time();
+my $start_time_local = localtime();
 
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
@@ -560,7 +561,7 @@ sub processRequest {
 	SWITCH: {
 		$_ = shift;
 
-		print "processing request ".$_."\n"; # DEBUG
+		#print "processing request ".$_."\n"; # DEBUG
 
 		# Actual fluxd subroutine calls
 		/^die/ && do {
@@ -625,7 +626,10 @@ sub processRequest {
 		# Default case.
 		$return = printUsage(1);
 	}
-	print $return."\n";
+
+	#print $return."\n"; # DEBUG
+
+	# return
 	return $return;
 }
 
@@ -753,39 +757,33 @@ sub deletePidFile {
 #------------------------------------------------------------------------------#
 sub status {
 	my $retval = "";
-	$retval .= "Fluxd has been up since $start_time\n\n";
-	$retval .= " Loaded Modules :\n";
-	$retval .= "  * Qmgr.pm\n" if ((defined $qmgr) && ($qmgr->getState() == 1));
-	$retval .= "  * Fluxinet.pm\n" if ((defined $fluxinet) && ($fluxinet->getState() == 1));
-	$retval .= "  * Clientmaint.pm\n" if ((defined $qmgr) && ($clientmaint->getState() == 1));
-	$retval .= "  * Watch.pm\n" if ((defined $watch) && ($watch->getState() == 1));
-	$retval .= "  * Trigger.pm\n\n" if ((defined $trigger) && ($trigger->getState() == 1));
-
+	$retval .= "fluxd has been up since ".$start_time_local." (".niceTimeString($start_time).")\n\n";
+	$retval .= "Loaded Modules :\n";
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		$retval .= "  * Qmgr.pm : ";
 		$retval .= eval { $qmgr->status(); };
 	}
-
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+		$retval .= "  * Fluxinet.pm : ";
 		$retval .= eval { $fluxinet->status(); };
 	}
-
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+		$retval .= "  * Clientmaint.pm : ";
 		$retval .= eval { $clientmaint->status(); };
 	}
-
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
+		$retval .= "  * Watch.pm : ";
 		$retval .= eval { $watch->status(); };
 	}
-
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
+		$retval .= "  * Trigger.pm : ";
 		$retval .= eval { $trigger->status(); };
 	}
-
 	return $retval;
 }
 
@@ -1205,4 +1203,37 @@ sub debug {
 	# bail out
 	print "debug is missing an operation.\n";
 	exit;
+}
+
+#-------------------------------------------------------------------------------
+# Sub: niceTimeString
+# Arguments: start-time
+# Return: nice Time String
+#-------------------------------------------------------------------------------
+sub niceTimeString {
+	my $startTime = shift;
+	my ($dura,$duration,$days,$hours,$mins,$secs,$rest);
+	$dura = ((time)-$startTime);
+	$rest = $dura;
+	$days = $hours = $mins = $secs = 0;
+	$duration = "";
+	if ($dura >= (24*60*60)) { # days
+		$days = int((($rest/60)/60)/24);
+		$duration .= $days."d ";
+		$rest = ($dura-($days*60*60*24));
+	}
+	if ($dura >= (60*60)) { # hours
+		$hours = int(($rest/60)/60);
+		$duration .= $hours."h ";
+		$rest = ($dura-($hours*60*60)-($days*60*60*24));
+	}
+	if ($rest >= 60) { # mins
+		$mins = int($rest/60);
+		$duration .= $mins."m ";
+		$rest = ($dura-($mins*60)-($hours*60*60)-($days*60*60*24));
+	}
+	if ($rest > 0) { # secs
+		$duration .= $rest."s";
+	}
+	return $duration;
 }
