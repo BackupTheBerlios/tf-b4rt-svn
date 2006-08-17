@@ -28,6 +28,7 @@ use IO::Socket::UNIX;
 use IO::Select;
 use Symbol qw(delete_package);
 use POSIX qw(setsid);
+use FluxdCommon;
 ################################################################################
 
 ################################################################################
@@ -55,7 +56,6 @@ my $start_time_local = localtime();
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
 use vars qw( $fluxDB $qmgr $fluxinet $watch $clientmaint $trigger );
-
 
 ################################################################################
 # main                                                                         #
@@ -111,6 +111,10 @@ while ( $loop ) {
 	# TODO : sleep-code                                                         /* TODO */
 	sleep 1; # DEBUG
 }
+
+################################################################################
+# subs                                                                         #
+################################################################################
 
 #------------------------------------------------------------------------------#
 # Sub: initialize                                                              #
@@ -757,7 +761,8 @@ sub deletePidFile {
 #------------------------------------------------------------------------------#
 sub status {
 	my $retval = "";
-	$retval .= "fluxd has been up since ".$start_time_local." (".niceTimeString($start_time).")\n\n";
+	#$retval .= "fluxd has been up since ".$start_time_local." (".niceTimeString($start_time).")\n\n";
+	$retval .= "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
 	$retval .= "Loaded Modules :\n";
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
@@ -847,6 +852,10 @@ USAGE
 #------------------------------------------------------------------------------#
 sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
+
+	# FluxdCommon
+	print "FluxdCommon Version : ";
+	print FluxdCommon::getVersion()."\n";
 
 	# FluxDB
 	print "FluxDB Version : ";
@@ -1203,37 +1212,4 @@ sub debug {
 	# bail out
 	print "debug is missing an operation.\n";
 	exit;
-}
-
-#-------------------------------------------------------------------------------
-# Sub: niceTimeString
-# Arguments: start-time
-# Return: nice Time String
-#-------------------------------------------------------------------------------
-sub niceTimeString {
-	my $startTime = shift;
-	my ($dura,$duration,$days,$hours,$mins,$secs,$rest);
-	$dura = ((time)-$startTime);
-	$rest = $dura;
-	$days = $hours = $mins = $secs = 0;
-	$duration = "";
-	if ($dura >= (24*60*60)) { # days
-		$days = int((($rest/60)/60)/24);
-		$duration .= $days."d ";
-		$rest = ($dura-($days*60*60*24));
-	}
-	if ($dura >= (60*60)) { # hours
-		$hours = int(($rest/60)/60);
-		$duration .= $hours."h ";
-		$rest = ($dura-($hours*60*60)-($days*60*60*24));
-	}
-	if ($rest >= 60) { # mins
-		$mins = int($rest/60);
-		$duration .= $mins."m ";
-		$rest = ($dura-($mins*60)-($hours*60*60)-($days*60*60*24));
-	}
-	if ($rest > 0) { # secs
-		$duration .= $rest."s";
-	}
-	return $duration;
 }
