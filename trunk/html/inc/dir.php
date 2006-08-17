@@ -228,6 +228,16 @@ $bgDark = $cfg["bgDark"];
 $entrys = array();
 $bg = $bgLight;
 $dirName = stripslashes($dirName);
+if (!(@is_dir($dirName))) {
+	// our dir is no dir but a file. use parent-directory.
+	// setup default parent directory URL
+	$parentURL = "index.php?page=dir";
+	// get the real parentURL
+	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1)
+		$parentURL="index.php?page=dir&dir=" . urlencode($matches[1]);
+	header("Location: ".$parentURL);
+	exit();
+}
 if (isset($dir)) {
 	//setup default parent directory URL
 	$parentURL = "index.php?page=dir";
