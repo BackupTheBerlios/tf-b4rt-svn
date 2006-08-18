@@ -40,6 +40,7 @@ UPDATE tf_settings SET tf_value = 'old_style_themes/matrix' WHERE tf_key = 'defa
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('webapp_locked','0');
 INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
 INSERT INTO tf_settings VALUES ('enable_transfer_profile','0');
 INSERT INTO tf_settings VALUES ('transfer_profile_level','2');

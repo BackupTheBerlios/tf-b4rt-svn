@@ -277,6 +277,8 @@ INSERT INTO tf_settings VALUES ('skiphashcheck','0');
 INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
+--
+INSERT INTO tf_settings VALUES ('webapp_locked','0');
 INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
 INSERT INTO tf_settings VALUES ('enable_transfer_profile','0');
 INSERT INTO tf_settings VALUES ('transfer_profile_level','2');

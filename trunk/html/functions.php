@@ -71,7 +71,16 @@ $cfg["free_space"] = @disk_free_space($cfg["path"])/(1024*1024);
 $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
 // authenticate
-if (isAuthenticated() != 1) {
+if (isAuthenticated() == 1) {
+	// check if we are locked
+	if ($cfg["webapp_locked"] == 1) {
+	// only superadmin can login when we are locked
+		if (! IsSuperAdmin()) {
+			header('location: index.php?page=locked');
+			exit();
+		}
+	}
+} else {
 	// try to auth with supplied credentials
 	$credentials = getCredentials();
 	if (isset($credentials)) {
@@ -93,10 +102,16 @@ if (isAuthenticated() != 1) {
 // load per user settings
 loadUserSettingsToConfig($cfg["uid"]);
 
-//
+// language and theme
 include_once("language/".$cfg["language_file"]);
 include_once("themes/".$cfg["theme"]."/index.php");
+
+// log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
+
+
+
+// prune db
 PruneDB();
 
 // is there a stat and torrent dir?  If not then it will create it.

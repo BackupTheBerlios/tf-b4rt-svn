@@ -113,6 +113,9 @@ if(isset($_GET['page'])) {
 		case "admin":
 			require_once("inc/admin.php");
 		break;
+		case "locked":
+			require_once("inc/locked.php");
+		break;
 	}
 }
 else {
