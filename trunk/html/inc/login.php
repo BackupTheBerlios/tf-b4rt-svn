@@ -38,19 +38,21 @@ $db = getdb();
 loadSettings();
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
+if (!ereg('^[^./][^/]*$', $cfg["default_theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/login.tmpl");
-}
-else {
+} else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/login.tmpl");
 }
 
 include("themes/".$cfg["default_theme"]."/index.php");
-global $cfg;
+
+// already got a session ?
 if(isset($_SESSION['user'])) {
 	header("location: index.php?page=index");
 	exit();
 }
+
+// start ob
 ob_start();
 
 # authentication
