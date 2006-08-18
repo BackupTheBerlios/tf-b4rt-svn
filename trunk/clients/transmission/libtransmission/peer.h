@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.h 754 2006-08-12 00:38:26Z livings124 $
+ * $Id: peer.h 774 2006-08-14 22:42:32Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -24,6 +24,8 @@
 
 #ifndef TR_PEER_H
 #define TR_PEER_H 1
+
+typedef struct tr_peer_s tr_peer_t; 
 
 void        tr_peerAddOld        ( tr_torrent_t *, char *, int );
 void        tr_peerAddCompact    ( tr_torrent_t *, struct in_addr, in_port_t );
@@ -50,5 +52,6 @@ void        tr_peerSetOptimistic ( tr_peer_t *, int );
 int         tr_peerIsOptimistic  ( tr_peer_t * );
 void        tr_peerBlame         ( tr_torrent_t *, tr_peer_t *,
                                    int piece, int success );
+struct in_addr * tr_peerAddress  ( tr_peer_t * );
 
 #endif

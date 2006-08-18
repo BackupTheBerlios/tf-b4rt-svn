@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 679 2006-07-23 19:39:02Z titer $
+ * $Id: internal.h 788 2006-08-16 19:21:09Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -127,6 +127,7 @@ struct tr_torrent_s
     tr_ratecontrol_t * globalDownload;
     tr_ratecontrol_t * upload;
     tr_ratecontrol_t * download;
+    tr_ratecontrol_t * swarmspeed;
     tr_fd_t          * fdlimit;
 
     int               status;

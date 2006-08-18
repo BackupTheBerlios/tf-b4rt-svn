@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.c 626 2006-07-16 23:40:22Z joshe $
+ * $Id: metainfo.c 786 2006-08-15 21:38:36Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -219,7 +219,11 @@ int tr_metainfoParse( tr_info_t * inf, const char * path,
         /* Multi-file mode */
         int j;
 
-        val = tr_bencDictFind( beInfo, "name" );
+        val = tr_bencDictFind( beInfo, "name.utf-8" );
+        if( NULL == val )
+        {
+            val = tr_bencDictFind( beInfo, "name" );
+        }
         strcatUTF8( inf->name, val->val.s.s );
 
         inf->multifile = 1;
@@ -228,7 +232,11 @@ int tr_metainfoParse( tr_info_t * inf, const char * path,
 
         for( i = 0; i < list->val.l.count; i++ )
         {
-            val = tr_bencDictFind( &list->val.l.vals[i], "path" );
+            val = tr_bencDictFind( &list->val.l.vals[i], "path.utf-8" );
+            if( NULL == val )
+            {
+                val = tr_bencDictFind( &list->val.l.vals[i], "path" );
+            }
             strcatUTF8( inf->files[i].name, inf->name );
             for( j = 0; j < val->val.l.count; j++ )
             {
@@ -249,7 +257,11 @@ int tr_metainfoParse( tr_info_t * inf, const char * path,
         inf->fileCount = 1;
         inf->files     = calloc( sizeof( tr_file_t ), 1 );
 
-        val = tr_bencDictFind( beInfo, "name" );
+        val = tr_bencDictFind( beInfo, "name.utf-8" );
+        if( NULL == val )
+        {
+            val = tr_bencDictFind( beInfo, "name" );
+        }
         strcatUTF8( inf->files[0].name, val->val.s.s );
         strcatUTF8( inf->name, val->val.s.s );
         

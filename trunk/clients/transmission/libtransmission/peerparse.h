@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerparse.h 261 2006-05-29 21:27:31Z titer $
+ * $Id: peerparse.h 788 2006-08-16 19:21:09Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -108,6 +108,8 @@ static inline int parseHave( tr_torrent_t * tor, tr_peer_t * peer,
     }
     tr_bitfieldAdd( peer->bitfield, piece );
     updateInterest( tor, peer );
+
+    tr_rcTransferred( tor->swarmspeed, tor->info.pieceSize );
 
     return 0;
 }

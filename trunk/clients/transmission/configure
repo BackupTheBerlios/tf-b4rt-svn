@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# $Id: configure 620 2006-07-16 19:39:23Z titer $
+# $Id: configure 755 2006-08-12 20:06:12Z titer $
 
 #
 # Default settings
@@ -274,7 +274,7 @@ EOF
     PTHREAD=yes
     ;;
 
-  FreeBSD|NetBSD|OpenBSD|Linux)
+  FreeBSD|NetBSD|OpenBSD|Linux|skyos)
     PTHREAD=yes
     ;;
 

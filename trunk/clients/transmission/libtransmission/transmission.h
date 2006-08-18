@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 754 2006-08-12 00:38:26Z livings124 $
+ * $Id: transmission.h 788 2006-08-16 19:21:09Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -42,6 +42,10 @@ extern "C" {
 # define MAX_PATH_LENGTH  B_FILE_NAME_LENGTH
 #else
 # define MAX_PATH_LENGTH  1024
+#endif
+
+#ifndef INET_ADDRSTRLEN
+#define INET_ADDRSTRLEN 16
 #endif
 
 #define TR_DEFAULT_PORT   9090
@@ -198,15 +202,6 @@ void tr_torrentStop( tr_torrent_t * );
 int tr_getFinished( tr_torrent_t * );
 
 /***********************************************************************
- * tr_getPeer
- ***********************************************************************
- * Returns the peer at peerNum. Returns NULL if peerNum is not greater
- * than 0 and less than peerCount.
- **********************************************************************/
-typedef struct tr_peer_s tr_peer_t;
-tr_peer_t * tr_getPeer( tr_torrent_t *, int peerNum );
-
-/***********************************************************************
  * tr_torrentStat
  ***********************************************************************
  * Returns a pointer to an tr_stat_t structure with updated information
@@ -218,6 +213,13 @@ tr_peer_t * tr_getPeer( tr_torrent_t *, int peerNum );
  **********************************************************************/
 typedef struct tr_stat_s tr_stat_t;
 tr_stat_t * tr_torrentStat( tr_torrent_t * );
+
+/***********************************************************************
+ * tr_torrentPeers
+ ***********************************************************************/
+typedef struct tr_peer_stat_s tr_peer_stat_t;
+tr_peer_stat_t * tr_torrentPeers( tr_torrent_t *, int * peerCount );
+void tr_torrentPeersFree( tr_peer_stat_t *, int peerCount );
 
 /***********************************************************************
  * tr_torrentAvailability
@@ -300,25 +302,36 @@ struct tr_stat_s
 
 #define TR_STATUS_ACTIVE   (TR_STATUS_CHECK|TR_STATUS_DOWNLOAD|TR_STATUS_SEED)
 #define TR_STATUS_INACTIVE (TR_STATUS_STOPPING|TR_STATUS_STOPPED|TR_STATUS_PAUSE)
-    int         status;
+    int                 status;
 
 #define TR_ETRACKER 1
 #define TR_EINOUT   2
-    int         error;
-    char        trackerError[128];
+    int                 error;
+    char                trackerError[128];
 
-    float       progress;
-    float       rateDownload;
-    float       rateUpload;
-    int         eta;
-    int         peersTotal;
-    int         peersUploading;
-    int         peersDownloading;
-    int         seeders;
-    int         leechers;
+    float               progress;
+    float               rateDownload;
+    float               rateUpload;
+    int                 eta;
+    int                 peersTotal;
+    int                 peersUploading;
+    int                 peersDownloading;
+    int                 seeders;
+    int                 leechers;
 
-    uint64_t    downloaded;
-    uint64_t    uploaded;
+    uint64_t            downloaded;
+    uint64_t            uploaded;
+    float               swarmspeed;
+};
+
+struct tr_peer_stat_s
+{
+    char    addr[INET_ADDRSTRLEN];
+    char *  client;
+    
+    int     isConnected;
+    int     isDownloading;
+    int     isUploading;
 };
 
 #ifdef __TRANSMISSION__

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: net.c 261 2006-05-29 21:27:31Z titer $
+ * $Id: net.c 791 2006-08-18 08:46:19Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -402,4 +402,13 @@ void tr_netClose( int s )
 #else
     close( s );
 #endif
+}
+
+void tr_netNtop( const struct in_addr * addr, char * buf, int len )
+{
+    const uint8_t * cast;
+
+    cast = (const uint8_t *)addr;
+    snprintf( buf, len, "%hhu.%hhu.%hhu.%hhu",
+              cast[0], cast[1], cast[2], cast[3] );
 }

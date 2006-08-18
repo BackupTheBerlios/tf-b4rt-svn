@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 754 2006-08-12 00:38:26Z livings124 $
+ * $Id: transmission.c 791 2006-08-18 08:46:19Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -282,6 +282,7 @@ static tr_torrent_t * torrentRealInit( tr_handle_t * h, tr_torrent_t * tor,
     tor->fdlimit        = h->fdlimit;
     tor->upload         = tr_rcInit();
     tor->download       = tr_rcInit();
+    tor->swarmspeed     = tr_rcInit();
  
     /* We have a new torrent */
     tr_lockLock( &h->acceptLock );
@@ -349,6 +350,7 @@ void tr_torrentStop( tr_torrent_t * tor )
     tr_trackerStopped( tor->tracker );
     tr_rcReset( tor->download );
     tr_rcReset( tor->upload );
+    tr_rcReset( tor->swarmspeed );
     tor->status = TR_STATUS_STOPPING;
     tor->stopDate = tr_date();
     tr_lockUnlock( &tor->lock );
@@ -405,16 +407,10 @@ int tr_getFinished( tr_torrent_t * tor )
     return 0;
 }
 
-tr_peer_t * tr_getPeer( tr_torrent_t * tor, int peerNum)
-{
-    if (peerNum < 0 || peerNum >= tor->peerCount)
-        return NULL;
-    return tor->peers[peerNum];
-}
-
 tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
 {
     tr_stat_t * s;
+    tr_peer_t * peer;
     tr_info_t * inf = &tor->info;
     int i;
 
@@ -439,17 +435,19 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
     s->peersTotal       = 0;
     s->peersUploading   = 0;
     s->peersDownloading = 0;
-
+    
     for( i = 0; i < tor->peerCount; i++ )
     {
-        if( tr_peerIsConnected( tor->peers[i] ) )
+        peer = tor->peers[i];
+    
+        if( tr_peerIsConnected( peer ) )
         {
             (s->peersTotal)++;
-            if( tr_peerIsUploading( tor->peers[i] ) )
+            if( tr_peerIsUploading( peer ) )
             {
                 (s->peersUploading)++;
             }
-            if( tr_peerIsDownloading( tor->peers[i] ) )
+            if( tr_peerIsDownloading( peer ) )
             {
                 (s->peersDownloading)++;
             }
@@ -458,17 +456,23 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
 
     s->progress = tr_cpCompletionAsFloat( tor->completion );
     if( tor->status & TR_STATUS_DOWNLOAD )
+    {
         s->rateDownload = tr_rcRate( tor->download );
+    }
     else
+    {
         /* tr_rcRate() doesn't make the difference between 'piece'
            messages and other messages, which causes a non-zero
            download rate even tough we are not downloading. So we
            force it to zero not to confuse the user. */
         s->rateDownload = 0.0;
+    }
     s->rateUpload = tr_rcRate( tor->upload );
     
     s->seeders  = tr_trackerSeeders(tor->tracker);
-	s->leechers = tr_trackerLeechers(tor->tracker);
+    s->leechers = tr_trackerLeechers(tor->tracker);
+
+    s->swarmspeed = tr_rcRate( tor->swarmspeed );
 
     if( s->rateDownload < 0.1 )
     {
@@ -486,6 +490,57 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
     tr_lockUnlock( &tor->lock );
 
     return s;
+}
+
+tr_peer_stat_t * tr_torrentPeers( tr_torrent_t * tor, int * peerCount )
+{
+    tr_peer_stat_t * peers;
+
+    tr_lockLock( &tor->lock );
+
+    *peerCount = tor->peerCount;
+    
+    peers = (tr_peer_stat_t *) calloc( tor->peerCount, sizeof( tr_peer_stat_t ) );
+    if (peers != NULL)
+    {
+        tr_peer_t * peer;
+        struct in_addr * addr;
+        int i = 0;
+        for( i = 0; i < tor->peerCount; i++ )
+        {
+            peer = tor->peers[i];
+            
+            addr = tr_peerAddress( peer );
+            if( NULL != addr )
+            {
+                tr_netNtop( addr, peers[i].addr,
+                           sizeof( peers[i].addr ) );
+            }
+            
+            peers[i].client = tr_clientForId(tr_peerId(peer));
+            
+            peers[i].isConnected = tr_peerIsConnected(peer);
+            peers[i].isDownloading = tr_peerIsDownloading(peer);
+            peers[i].isUploading = tr_peerIsUploading(peer);
+        }
+    }
+    
+    tr_lockUnlock( &tor->lock );
+    
+    return peers;
+}
+
+void tr_torrentPeersFree( tr_peer_stat_t * peers, int peerCount )
+{
+    int i;
+
+    if (peers == NULL)
+        return;
+
+    for (i = 0; i < peerCount; i++)
+        free( peers[i].client );
+
+    free( peers );
 }
 
 void tr_torrentAvailability( tr_torrent_t * tor, int8_t * tab, int size )
@@ -544,6 +599,7 @@ void tr_torrentClose( tr_handle_t * h, tr_torrent_t * tor )
 
     tr_rcClose( tor->upload );
     tr_rcClose( tor->download );
+    tr_rcClose( tor->swarmspeed );
 
     if( tor->destination )
     {

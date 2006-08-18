@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 261 2006-05-29 21:27:31Z titer $
+ * $Id: clients.c 787 2006-08-16 01:52:20Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -57,6 +57,16 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "Shareaza %c.%c.%c.%c",
                       id[3], id[4], id[5], id[6] );
         }
+        else if( !memcmp( &id[1], "UT", 2 ) )
+        {
+            asprintf( &ret, "\xc2\xb5Torrent %c.%d", id[3],
+                      ( id[4] - '0' ) * 10 + ( id[5] - '0' )  );
+        }
+        else if( !memcmp( &id[1], "BOW", 3 ) )
+        {
+            asprintf( &ret, "Bits on Wheels (%c%c)",
+                      id[5], id[6] );
+        }
     }
     else if( !memcmp( &id[4], "----", 4 ) )
     {
@@ -75,6 +85,12 @@ char * tr_clientForId( uint8_t * id )
     {
         asprintf( &ret, "BitTorrent %c.%c.%c", id[1], id[3], id[5] );
     }
+    
+    else if( id[0] == 'M' && id[2] == '-' &&
+             id[5] == '-' && id[7] == '-' )
+    {
+        asprintf( &ret, "BitTorrent %c.%c%c.%c", id[1], id[3], id[4], id[6] );
+    }
     else if( !memcmp( id, "exbc", 4 ) )
     {
         asprintf( &ret, "BitComet %d.%02d", id[4], id[5] );
@@ -82,8 +98,15 @@ char * tr_clientForId( uint8_t * id )
 
     if( !ret )
     {
-        asprintf( &ret, "Unknown client (%c%c%c%c%c%c%c%c)",
+        if (id[0] != 0)
+        {
+            asprintf( &ret, "unknown client (%c%c%c%c%c%c%c%c)",
                   id[0], id[1], id[2], id[3], id[4], id[5], id[6], id[7] );
+        }
+        else
+        {
+            asprintf( &ret, "unknown client" );
+        }
     }
 
     return ret;
