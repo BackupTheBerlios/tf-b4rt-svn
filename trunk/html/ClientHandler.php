@@ -556,11 +556,10 @@ class ClientHandler
     /**
      * gets current transfer-vals of a transfer
      *
-     * @param $db ref to db-object
      * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrent(&$db, $transfer)  { return; }
+    function getTransferCurrent($transfer)  { return; }
 
     /**
      * gets current transfer-vals of a transfer. optimized index-page-version
@@ -577,11 +576,10 @@ class ClientHandler
     /**
      * gets total transfer-vals of a transfer
      *
-     * @param $db ref to db-object
      * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotal(&$db, $transfer) { return; }
+    function getTransferTotal($transfer) { return; }
 
     /**
      * gets total transfer-vals of a transfer. optimized index-page-version

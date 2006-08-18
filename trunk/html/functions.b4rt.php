@@ -728,11 +728,11 @@ function updateTransferTotals($transfer) {
  * @return array with transfer-totals
  */
 function getTransferTotals($transfer) {
-	global $cfg, $db;
+	global $cfg;
 	$btclient = getTransferClient($transfer);
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTransferTotal(&$db,$transfer);
+	return $clientHandler->getTransferTotal($transfer);
 }
 
 /**
@@ -759,11 +759,11 @@ function getTransferTotalsOP($transfer, $tid, $btclient, $afu, $afd) {
  * @return array with transfer-totals
  */
 function getTransferTotalsCurrent($transfer) {
-	global $cfg, $db;
+	global $cfg;
 	$btclient = getTransferClient($transfer);
 	include_once("ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	return $clientHandler->getTransferCurrent(&$db,$transfer);
+	return $clientHandler->getTransferCurrent($transfer);
 }
 
 /**

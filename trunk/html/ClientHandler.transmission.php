@@ -75,14 +75,6 @@ class ClientHandlerTransmission extends ClientHandler
             return;
         }
 
-        // included in transmissioncli
-        // quick-hack for transmission--1
-        //if ($this->rate == 0)
-        //    $this->rate = -1;
-        //if ($this->drate == 0)
-        //    $this->drate = -1;
-        // included in transmissioncli
-
         // pid-file
         $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
 
@@ -177,11 +169,11 @@ class ClientHandlerTransmission extends ClientHandler
     /**
      * gets current transfer-vals of a transfer
      *
-     * @param $db ref to db-object
      * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrent(&$db, $transfer) {
+    function getTransferCurrent($transfer) {
+    	global $db;
         $retVal = array();
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
@@ -233,11 +225,10 @@ class ClientHandlerTransmission extends ClientHandler
     /**
      * gets total transfer-vals of a transfer
      *
-     * @param $db ref to db-object
      * @param $transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotal(&$db, $transfer) {
+    function getTransferTotal($transfer) {
         $retVal = array();
         // transfer from stat-file
         $aliasName = getAliasName($transfer);

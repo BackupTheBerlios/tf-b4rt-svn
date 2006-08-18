@@ -1083,7 +1083,7 @@ function getTransferList() {
 	// build output-string
 	$output = '<table bgcolor="'.$cfg["table_data_bg"].'" width="100%" bordercolor="'.$cfg["table_border_dk"].'" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">';
 	if (sizeof($arUserTorrent) > 0) {
-		addTransferTableHead(&$output, &$settings, $sortOrder, $cfg["user"]." : ");
+		$output .= getTransferTableHead($settings, $sortOrder, $cfg["user"]." : ");
 		foreach($arUserTorrent as $torrentrow)
 			$output .= $torrentrow;
 	}
@@ -1091,7 +1091,7 @@ function getTransferList() {
 	if ($cfg['enable_restrictivetview'] == 1)
 		$boolCond = IsAdmin();
 	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
-		addTransferTableHead(&$output, &$settings, $sortOrder);
+		$output .= getTransferTableHead($settings, $sortOrder);
 		foreach($arListTorrent as $torrentrow)
 			$output .= $torrentrow;
 	}
@@ -1100,17 +1100,16 @@ function getTransferList() {
 }
 
 /*
- * This method adds html-snip of table-head to content-string
+ * This method gets html-snip of table-head
  *
- * @param &$output ref to string holding content where to add.
- * @param &$settings ref to array holding index-page-settings
+ * @param $settings ref to array holding index-page-settings
  * @param $sortOrder
  * @param $nPrefix prefix of name-column
- * @return array with transfers
+ * @return string with head-row
  */
-function addTransferTableHead(&$output, &$settings, $sortOrder = '', $nPrefix = '') {
+function getTransferTableHead($settings, $sortOrder = '', $nPrefix = '') {
 	global $cfg;
-	$output .= "<tr>";
+	$output = "<tr>";
 	//
 	// ============================================================== led + meta
 	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">";
@@ -1188,5 +1187,8 @@ function addTransferTableHead(&$output, &$settings, $sortOrder = '', $nPrefix = 
 	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._ADMIN."</div></td>";
 	//
 	$output .= "</tr>\n";
+	// return
+	return $output;
 }
+
 ?>
