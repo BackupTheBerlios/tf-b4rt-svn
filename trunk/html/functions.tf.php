@@ -1316,6 +1316,7 @@ function getDirList($dirName) {
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
 		  $torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 		  $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+		  $newday = 0;
 		  $newday = !$db->GetOne($sql);
 		  showError($db,$sql);
 		  sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');

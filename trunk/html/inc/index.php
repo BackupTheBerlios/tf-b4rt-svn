@@ -218,15 +218,15 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
 	if ($settingsHackStats[0] == 1) {
 		$tmpl->setvar('settingsHackStats1', 1);
-		$tmpl->setvar('settingsHackStats11', number_format($cfg["total_download"], 2));
+		$tmpl->setvar('settingsHackStats11', @number_format($cfg["total_download"], 2));
 	}
 	if ($settingsHackStats[1] == 1) {
 		$tmpl->setvar('settingsHackStats2', 1);
-		$tmpl->setvar('settingsHackStats22', number_format($cfg["total_upload"], 2));
+		$tmpl->setvar('settingsHackStats22', @number_format($cfg["total_upload"], 2));
 	}
 	if ($settingsHackStats[2] == 1) {
 		$tmpl->setvar('settingsHackStats3', 1);
-		$tmpl->setvar('settingsHackStats33', number_format($cfg["total_download"]+$cfg["total_upload"], 2));
+		$tmpl->setvar('settingsHackStats33', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
 	}
 	if ($settingsHackStats[3] == 1) {
 		$tmpl->setvar('settingsHackStats4', 1);

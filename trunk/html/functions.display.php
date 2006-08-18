@@ -717,6 +717,7 @@ function getTransferList() {
 				$torrentTotalsCurrent["downtotal"] = $af->downtotal;
 			}
 			$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+			$newday = 0;
 			$newday = !$db->GetOne($sql);
 			showError($db,$sql);
 			sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');
