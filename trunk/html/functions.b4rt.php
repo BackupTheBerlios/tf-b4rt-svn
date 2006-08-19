@@ -2100,7 +2100,58 @@ function getTransferListArray() {
 	return $retVal;
 }
 
-
+/**
+ * This method gets the head of the transfer-list
+ *
+ * @param $settings
+ * @return transfer-list-head array
+ */
+function getTransferListHeadArray($settings = null) {
+	global $cfg;
+	// settings
+	if (!(isset($settings)))
+		$settings = convertIntegerToArray($cfg["index_page_settings"]);
+	// retval
+	$retVal = array();
+	// =================================================================== owner
+	if ($settings[0] != 0)
+		array_push($retVal, _USER);
+	// ==================================================================== size
+	if ($settings[1] != 0)
+		array_push($retVal, "Size");
+	// =============================================================== downtotal
+	if ($settings[2] != 0)
+		array_push($retVal, "T. Down");
+	// ================================================================= uptotal
+	if ($settings[3] != 0)
+		array_push($retVal, "T. Up");
+	// ================================================================== status
+	if ($settings[4] != 0)
+		array_push($retVal, _STATUS);
+	// ================================================================ progress
+	if ($settings[5] != 0)
+		array_push($retVal, "Progress");
+	// ==================================================================== down
+	if ($settings[6] != 0)
+		array_push($retVal, "Down");
+	// ====================================================================== up
+	if ($settings[7] != 0)
+		array_push($retVal, "Up");
+	// =================================================================== seeds
+	if ($settings[8] != 0)
+		array_push($retVal, "Seeds");
+	// =================================================================== peers
+	if ($settings[9] != 0)
+		array_push($retVal, "Peers");
+	// ===================================================================== ETA
+	if ($settings[10] != 0)
+		array_push($retVal, _ESTIMATEDTIME);
+	// ================================================================== client
+	if ($settings[11] != 0)
+		array_push($retVal, "Client");
+	// return
+	return $retVal;
+}
 
 /* ************************************************************************** */
 

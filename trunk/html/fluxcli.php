@@ -44,7 +44,11 @@ if ($bail > 0) {
 // hold revision-number in a var
 $REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
 
+// will need include of config.php
+require_once('config.php');
+// db
 include_once('db.php');
+// settings-functions
 include_once("settingsfunctions.php");
 // tf-functions
 include_once('functions.tf.php');
@@ -270,8 +274,11 @@ function printTorrents() {
     echo "----------------------------------------\n";
     echo "\n";
 	global $cfg, $db;
+	// we are missing lang-files.. define some missing strings
 	define("_DOWNLOADSPEED","Download Speed");
 	define("_UPLOADSPEED","Upload Speed");
+	define("_STATUS","Status");
+	define("_ESTIMATEDTIME","ETA");
 	// show all .. we set the user to superadmin
     $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
     if($db->ErrorNo() != 0) {
@@ -285,6 +292,12 @@ function printTorrents() {
         exit();
     }
 	// print out transfers
+	$transferHeads = getTransferListHeadArray();
+	foreach ($transferHeads as $transferHead) {
+		echo " * ";
+		echo $transferHead;
+	}
+	echo "\n\n";
 	$transferList = getTransferListArray();
 	foreach ($transferList as $transferAry) {
 		foreach ($transferAry as $transfer) {
