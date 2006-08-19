@@ -1313,48 +1313,12 @@ function getDirList($dirName) {
 			$settingsAry['btclient'] = "tornado";
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
 		}
+
+		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
-		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-		  $torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
-		  $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
-		  $newday = 0;
-		  $newday = !$db->GetOne($sql);
-		  showError($db,$sql);
-		  sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');
-		  sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'month');
-		  sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'week');
-		  sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'day');
-		  //XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
-		  if ($newday) {
-			$newday = 2;
-			$sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
-			$lastDate = $db->GetOne($sql);
-			showError($db,$sql);
-			// MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
-			$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
-			if ($db->GetOne($sql)) {
-				$sql = 'UPDATE tf_xfer SET download = download+'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload+'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
-				$db->Execute($sql);
-				showError($db,$sql);
-			} else {
-				showError($db,$sql);
-				$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($torrentTotalsCurrent["downtotal"]+0).','.($torrentTotalsCurrent["uptotal"]+0).')';
-				$db->Execute($sql);
-				showError($db,$sql);
-			}
-			$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
-			if ($db->GetOne($sql)) {
-			  $sql = 'UPDATE tf_xfer SET download = download-'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload-'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
-			  $db->Execute($sql);
-			  showError($db,$sql);
-			} else {
-			  showError($db,$sql);
-				$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($torrentTotalsCurrent["downtotal"]+0).',-'.($torrentTotalsCurrent["uptotal"]+0).')';
-				$db->Execute($sql);
-				showError($db,$sql);
-			}
-		  }
-		}
+		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+			$newday = transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry);
+
 		$timeStarted = "";
 		$torrentfilelink = "";
 		if(! file_exists($dirName.$alias)) {
@@ -1367,55 +1331,10 @@ function getDirList($dirName) {
 			$displayname = substr($entry, 0, 44);
 			$displayname .= "...";
 		}
-		/*
-		// find out if any screens are running and take their PID and make a KILL option
-		foreach ($runningTorrents as $key => $value) {
-			// b4rt-61
-			//$rt = new RunningTorrent($value);
-			//$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg);
-			if ($rt->statFile == $alias) {
-				if ($kill_id == "") {
-					$kill_id = $rt->processId;
-				} else {
-					// there is more than one PID for this torrent
-					// Add it so it can be killed as well.
-					$kill_id .= "|".$rt->processId;
-				}
-			}
-		}
-		*/
-		// b4rt-61 : this shoots my multi-clients as not all (mixed ones) are in process-list yet
-		// Check to see if we have a pid without a process.
-		/*
-		if (is_file($cfg["torrent_file_path"].$alias.".pid") && empty($kill_id)) {
-			// died outside of tf and pid still exists.
-			@unlink($cfg["torrent_file_path"].$alias.".pid");
-			if(($af->percent_done < 100) && ($af->percent_done >= 0)) {
-				// The file is not running and the percent done needs to be changed
-				$af->percent_done = ($af->percent_done+100)*-1;
-			}
-			$af->running = "0";
-			$af->time_left = "Torrent Died";
-			$af->up_speed = "";
-			$af->down_speed = "";
-			// write over the status file so that we can display a new status
-			$af->WriteFile();
-		}
-		*/
 		if ($cfg["enable_torrent_download"])
 			$torrentfilelink = "<a href=\"index.php?page=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		//
 		$hd = getStatusImage($af);
-		//$output .= "<tr><td class=\"tiny\"><img src=\"images/".$hd->image."\" width=16 height=16 title=\"".$hd->title.$entry."\" border=0 align=\"absmiddle\">".$torrentfilelink.$displayname."</td>";
-		/*
-		$output .= "<tr><td class=\"tiny\">";
-		if ($af->running == 1)
-		  $output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
-		$output .= "<img src=\"images/".$hd->image."\" width=16 height=16 title=\"".$hd->title.$entry."\" border=0 align=\"absmiddle\">";
-		if ($af->running == 1)
-		  $output .= "</a>";
-		$output .= $torrentfilelink.$displayname."</td>";
-		*/
 		$output .= "<tr>";
 		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
@@ -1568,25 +1487,19 @@ function getDirList($dirName) {
 				if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
 					$deletelink = $_SERVER['PHP_SELF']."?alias_file=".$alias."&delfile=".urlencode($entry);
 					$output .= "<a href=\"".$deletelink."\" onclick=\"return ConfirmDelete('".$entry."')\"><img src=\"images/delete_on.gif\" width=16 height=16 title=\""._DELETE."\" border=0></a>";
-					// b4rt-3 + 5
 					if ($cfg['enable_multiops'] == 1)
 						$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
-					// b4rt-3 + 5
 				} else {
 					// pid file present so process may be still running. don't allow deletion.
 					$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\""._STOPPING."\" border=0>";
-					// b4rt-3 + 5
 					if ($cfg['enable_multiops'] == 1)
 						$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
-					// b4rt-3 + 5
 				}
 			}
 		} else {
 			$output .= "<img src=\"images/locked.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 			$output .= "<img src=\"images/locked.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
-			// b4rt-3
 			$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
-			// b4rt-3
 		}
 		$output .= "</div>";
 		$output .= "</td>";
@@ -1599,24 +1512,12 @@ function getDirList($dirName) {
 			array_push($arListTorrent, $output);
 	}
 
-	//XFER: if a new day but no .stat files where found put blank entry into the DB for today to indicate accounting has been done for the new day
-	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-	  if ($newday == 1) {
-		$sql = 'INSERT INTO tf_xfer (user,date) values ( "",'.$db->DBDate(time()).')';
-		$db->Execute($sql);
-		showError($db,$sql);
-	  }
-	  getUsage(0, 'total');
-	  $month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];
-	  getUsage($month_start, 'month');
-	  $week_start = date('Y-m-d',strtotime('last '.$cfg['week_start']));
-	  getUsage($week_start, 'week');
-	  $day_start = date('Y-m-d');
-	  getUsage($day_start, 'day');
-	}
+	//XFER: if a new day but no .stat files where found put blank entry into the
+	//      DB for today to indicate accounting has been done for the new day
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		transferListXferUpdate2($newday);
 
-	// Now spit out the junk
-	//XFER: return the junk as a string instead
+	// build output string
 	$output = '<table bgcolor="'.$cfg["table_data_bg"].'" width="100%" bordercolor="'.$cfg["table_border_dk"].'" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">';
 
 	if (sizeof($arUserTorrent) > 0) {

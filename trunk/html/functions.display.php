@@ -645,9 +645,9 @@ function getGoodLookingStatsForm() {
 /*
  * This method Builds the Transfers Section of the Index Page
  *
- * @return transfer-list as string
+ * @return transfer-list as html-string
  */
-function getTransferList() {
+function getTransferListString() {
 	global $cfg, $db;
 	include_once("AliasFile.php");
 	$kill_id = "";
@@ -709,52 +709,8 @@ function getTransferList() {
 
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
-		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-			if (($settingsAry['btclient']) != "wget") {
-				$torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
-			} else {
-				$torrentTotalsCurrent["uptotal"] = $af->uptotal;
-				$torrentTotalsCurrent["downtotal"] = $af->downtotal;
-			}
-			$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
-			$newday = 0;
-			$newday = !$db->GetOne($sql);
-			showError($db,$sql);
-			sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');
-			sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'month');
-			sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'week');
-			sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'day');
-			//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
-			if ($newday) {
-				$newday = 2;
-				$sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
-				$lastDate = $db->GetOne($sql);
-				showError($db,$sql);
-				// MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
-				$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
-				if ($db->GetOne($sql)) {
-					$sql = 'UPDATE tf_xfer SET download = download+'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload+'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
-					$db->Execute($sql);
-					showError($db,$sql);
-				} else {
-					showError($db,$sql);
-					$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($torrentTotalsCurrent["downtotal"]+0).','.($torrentTotalsCurrent["uptotal"]+0).')';
-					$db->Execute($sql);
-					showError($db,$sql);
-				}
-				$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
-				if ($db->GetOne($sql)) {
-					$sql = 'UPDATE tf_xfer SET download = download-'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload-'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
-					$db->Execute($sql);
-					showError($db,$sql);
-				} else {
-					showError($db,$sql);
-					$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($torrentTotalsCurrent["downtotal"]+0).',-'.($torrentTotalsCurrent["uptotal"]+0).')';
-					$db->Execute($sql);
-					showError($db,$sql);
-				}
-			}
-		}
+		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+			$newday = transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry);
 
 		// ---------------------------------------------------------------------
 		// injects
@@ -771,13 +727,10 @@ function getTransferList() {
 		$statusStr = "&nbsp;";
 		switch ($transferRunning) {
 			case 2: // new
-				// $statusStr
 				$statusStr = $detailsLinkString."<font color=\"#32cd32\">New</font></a>";
 				break;
 			case 3: // queued
-				// $statusStr
 				$statusStr = $detailsLinkString."Queued</a>";
-				// $estTime
 				$estTime = "Waiting...";
 				break;
 			default: // running
@@ -1063,21 +1016,10 @@ function getTransferList() {
 			array_push($arListTorrent, $output);
 	}
 
-	//XFER: if a new day but no .stat files where found put blank entry into the DB for today to indicate accounting has been done for the new day
-	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
-	  if ($newday == 1) {
-		$sql = 'INSERT INTO tf_xfer (user,date) values ( "",'.$db->DBDate(time()).')';
-		$db->Execute($sql);
-		showError($db,$sql);
-	  }
-	  getUsage(0, 'total');
-	  $month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];
-	  getUsage($month_start, 'month');
-	  $week_start = date('Y-m-d',strtotime('last '.$cfg['week_start']));
-	  getUsage($week_start, 'week');
-	  $day_start = date('Y-m-d');
-	  getUsage($day_start, 'day');
-	}
+	//XFER: if a new day but no .stat files where found put blank entry into the
+	//      DB for today to indicate accounting has been done for the new day
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		transferListXferUpdate2($newday);
 
 	// -------------------------------------------------------------------------
 	// build output-string

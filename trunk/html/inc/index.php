@@ -31,8 +31,7 @@ require_once("functions.php");
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/index.tmpl");
-}
-else {
+} else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/index.tmpl");
 }
 
@@ -172,9 +171,8 @@ if(! isset($_SESSION['user'])) {
 
 $tmpl->setvar('index_page', $cfg["index_page"]);
 if ($cfg["index_page"] == "b4rt") {
-	$transferList = getTransferList();
-}
-elseif ($cfg["index_page"] == "tf") {
+	$transferList = getTransferListString();
+} elseif ($cfg["index_page"] == "tf") {
 	$transferList = getDirList($cfg["torrent_file_path"]);
 }
 

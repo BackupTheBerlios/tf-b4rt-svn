@@ -1499,68 +1499,6 @@ function indexProcessUpload() {
 
 /* ************************************************************************** */
 
-/*
- * This method gets transfers in an array
- *
- * @param $sortOrder
- * @return array with transfers
- */
-function getTransferArray($sortOrder = '') {
-	global $cfg;
-	$arList = array();
-	$file_filter = getFileFilter($cfg["file_types_array"]);
-	if (is_dir($cfg["torrent_file_path"]))
-		$handle = opendir($cfg["torrent_file_path"]);
-	else
-		return null;
-	while($entry = readdir($handle)) {
-		if ($entry != "." && $entry != "..") {
-			if (is_dir($cfg["torrent_file_path"]."/".$entry)) {
-				// don''t do a thing
-			} else {
-				if (ereg($file_filter, $entry)) {
-					$key = filemtime($cfg["torrent_file_path"]."/".$entry).md5($entry);
-					$arList[$key] = $entry;
-				}
-			}
-		}
-	}
-	closedir($handle);
-	// sort transfer-array
-	$sortId = "";
-	if ((isset($sortOrder)) && ($sortOrder != ""))
-		$sortId = $sortOrder;
-	else
-		$sortId = $cfg["index_page_sortorder"];
-	switch ($sortId) {
-		case 'da': // sort by date ascending
-			ksort($arList);
-			break;
-		case 'dd': // sort by date descending
-			krsort($arList);
-			break;
-		case 'na': // sort alphabetically by name ascending
-			natcasesort($arList);
-			break;
-		case 'nd': // sort alphabetically by name descending
-			rnatcasesort($arList);
-			break;
-	}
-	return $arList;
-}
-
-/*
- * rnatcasesort
- *
- * @param &$a ref to array to sort
- */
-function rnatcasesort(&$a){
-   natcasesort($a);
-   $a = array_reverse($a, true);
-}
-
-/* ************************************************************************** */
-
 /**
  * checks a dir. recursive process to emulate "mkdir -p" if dir not present
  *
@@ -1765,6 +1703,404 @@ function checkDirPathString($dirPath) {
 		$dirPath .= "/";
 	return $dirPath;
 }
+
+/* ************************************************************************** */
+
+/**
+ * transferListXferUpdate1
+ *
+ * @param $entry
+ * @param $torrentowner
+ * @param $af
+ * @param $settingsAry
+ * @return unknown
+ */
+function transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry) {
+	global $cfg, $db;
+	if (($settingsAry['btclient']) != "wget") {
+		$torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+	} else {
+		$torrentTotalsCurrent["uptotal"] = $af->uptotal;
+		$torrentTotalsCurrent["downtotal"] = $af->downtotal;
+	}
+	$newday = 0;
+	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+	$newday = !$db->GetOne($sql);
+	showError($db,$sql);
+	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');
+	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'month');
+	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'week');
+	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'day');
+	//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
+	if ($newday) {
+		$newday = 2;
+		$sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
+		$lastDate = $db->GetOne($sql);
+		showError($db,$sql);
+		// MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
+		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+		if ($db->GetOne($sql)) {
+			$sql = 'UPDATE tf_xfer SET download = download+'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload+'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+			$db->Execute($sql);
+			showError($db,$sql);
+		} else {
+			showError($db,$sql);
+			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($torrentTotalsCurrent["downtotal"]+0).','.($torrentTotalsCurrent["uptotal"]+0).')';
+			$db->Execute($sql);
+			showError($db,$sql);
+		}
+		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+		if ($db->GetOne($sql)) {
+			$sql = 'UPDATE tf_xfer SET download = download-'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload-'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+			$db->Execute($sql);
+			showError($db,$sql);
+		} else {
+			showError($db,$sql);
+			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($torrentTotalsCurrent["downtotal"]+0).',-'.($torrentTotalsCurrent["uptotal"]+0).')';
+			$db->Execute($sql);
+			showError($db,$sql);
+		}
+	}
+	return $newday;
+}
+
+/**
+ * transferListXferUpdate2
+ *
+ * @param $newday
+ */
+function transferListXferUpdate2($newday) {
+	global $cfg, $db;
+	if ($newday == 1) {
+		$sql = 'INSERT INTO tf_xfer (user,date) values ( "",'.$db->DBDate(time()).')';
+		$db->Execute($sql);
+		showError($db,$sql);
+	}
+	getUsage(0, 'total');
+	$month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];
+	getUsage($month_start, 'month');
+	$week_start = date('Y-m-d',strtotime('last '.$cfg['week_start']));
+	getUsage($week_start, 'week');
+	$day_start = date('Y-m-d');
+	getUsage($day_start, 'day');
+}
+
+/*
+ * rnatcasesort
+ *
+ * @param &$a ref to array to sort
+ */
+function rnatcasesort(&$a){
+   natcasesort($a);
+   $a = array_reverse($a, true);
+}
+
+/*
+ * This method gets transfers in an array
+ *
+ * @param $sortOrder
+ * @return array with transfers
+ */
+function getTransferArray($sortOrder = '') {
+	global $cfg;
+	$arList = array();
+	$file_filter = getFileFilter($cfg["file_types_array"]);
+	if (is_dir($cfg["torrent_file_path"]))
+		$handle = opendir($cfg["torrent_file_path"]);
+	else
+		return null;
+	while($entry = readdir($handle)) {
+		if ($entry != "." && $entry != "..") {
+			if (is_dir($cfg["torrent_file_path"]."/".$entry)) {
+				// don''t do a thing
+			} else {
+				if (ereg($file_filter, $entry)) {
+					$key = filemtime($cfg["torrent_file_path"]."/".$entry).md5($entry);
+					$arList[$key] = $entry;
+				}
+			}
+		}
+	}
+	closedir($handle);
+	// sort transfer-array
+	$sortId = "";
+	if ((isset($sortOrder)) && ($sortOrder != ""))
+		$sortId = $sortOrder;
+	else
+		$sortId = $cfg["index_page_sortorder"];
+	switch ($sortId) {
+		case 'da': // sort by date ascending
+			ksort($arList);
+			break;
+		case 'dd': // sort by date descending
+			krsort($arList);
+			break;
+		case 'na': // sort alphabetically by name ascending
+			natcasesort($arList);
+			break;
+		case 'nd': // sort alphabetically by name descending
+			rnatcasesort($arList);
+			break;
+	}
+	return $arList;
+}
+
+/*
+ * This method gets the list of transfer
+ *
+ * @return transfer-list 2-dim array
+ */
+function getTransferListArray() {
+	global $cfg, $db;
+	include_once("AliasFile.php");
+	$kill_id = "";
+	$lastUser = "";
+	$arUserTorrent = array();
+	$arListTorrent = array();
+	// settings
+	$settings = convertIntegerToArray($cfg["index_page_settings"]);
+	// sortOrder
+	$sortOrder = getRequestVar("so");
+	if ($sortOrder == "")
+		$sortOrder = $cfg["index_page_sortorder"];
+	// t-list
+	$arList = getTransferArray($sortOrder);
+	foreach($arList as $entry) {
+
+		// ---------------------------------------------------------------------
+		// init some vars
+		$displayname = $entry;
+		$show_run = true;
+		$torrentowner = getOwner($entry);
+		$owner = IsOwner($cfg["user"], $torrentowner);
+
+		// ---------------------------------------------------------------------
+		// alias / stat
+		$alias = getAliasName($entry).".stat";
+		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
+			// this is a torrent-client
+			$settingsAry = loadTorrentSettings($entry);
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $settingsAry['btclient']);
+		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
+			// this is wget. use tornado statfile
+			$settingsAry = array();
+			$settingsAry['btclient'] = "wget";
+			$alias = str_replace(".url", "", $alias);
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+		} else {
+			$settingsAry = array();
+			$settingsAry['btclient'] = "tornado";
+			// this is "something else". use tornado statfile as default
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+		}
+		// cache running-flag in local var. we will access that often
+		$transferRunning = (int) $af->running;
+		// cache percent-done in local var. ...
+		$percentDone = $af->percent_done;
+
+		// ---------------------------------------------------------------------
+		//XFER: add upload/download stats to the xfer array
+		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+			$newday = transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry);
+
+		// ---------------------------------------------------------------------
+		// injects
+		if(! file_exists($cfg["torrent_file_path"].$alias)) {
+			$transferRunning = 2;
+			$af->running = "2";
+			$af->size = getDownloadSize($cfg["torrent_file_path"].$entry);
+			$af->WriteFile();
+		}
+
+		// ---------------------------------------------------------------------
+		// preprocess alias-file and get some vars
+		$estTime = "";
+		$statusStr = "";
+		switch ($transferRunning) {
+			case 2: // new
+				$statusStr = 'New';
+				break;
+			case 3: // queued
+				$statusStr = 'Queued';
+				$estTime = 'Waiting';
+				break;
+			default: // running
+				// increment the totals
+				if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
+				if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
+				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
+				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
+				// $estTime
+				if ($af->time_left != "" && $af->time_left != "0")
+					$estTime = $af->time_left;
+				// $lastUser
+				$lastUser = $torrentowner;
+				// $show_run + $statusStr
+				if($percentDone >= 100) {
+					if(trim($af->up_speed) != "" && $transferRunning == 1) {
+						$statusStr = 'Seeding';
+					} else {
+						$statusStr = 'Done';
+					}
+					$show_run = false;
+				} else if ($percentDone < 0) {
+					$statusStr = 'Stopped';
+					$show_run = true;
+				} else {
+					$statusStr = 'Leeching';
+				}
+				break;
+		}
+		// totals-preparation
+		// if downtotal + uptotal + progress > 0
+		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
+			if (($settingsAry['btclient']) != "wget") {
+				$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+			} else {
+				$torrentTotals["uptotal"] = $af->uptotal;
+				$torrentTotals["downtotal"] = $af->downtotal;
+			}
+		}
+
+		// ---------------------------------------------------------------------
+		// fill temp array
+		$transferAry = array();
+
+		// ================================================================ name
+		array_push($transferAry, $entry);
+
+		// =============================================================== owner
+		if ($settings[0] != 0)
+			array_push($transferAry, $torrentowner);
+
+		// ================================================================ size
+		if ($settings[1] != 0)
+			array_push($transferAry, formatBytesToKBMGGB($af->size));
+
+		// =========================================================== downtotal
+		if ($settings[2] != 0)
+			array_push($transferAry, formatBytesToKBMGGB($torrentTotals["downtotal"]+0));
+
+		// ============================================================= uptotal
+		if ($settings[3] != 0)
+			array_push($transferAry, formatBytesToKBMGGB($torrentTotals["uptotal"]+0));
+
+		// ============================================================== status
+		if ($settings[4] != 0)
+			array_push($transferAry, $statusStr);
+
+		// ============================================================ progress
+		if ($settings[5] != 0) {
+			$percentage = "";
+			if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
+				$percentage = @number_format((($torrentTotals["uptotal"] / $af->size) * 100), 2) . '%';
+			} else {
+				if ($percentDone >= 1) {
+
+					$percentage = $percentDone . '%';
+				} else if ($percentDone < 0) {
+
+					$percentage = round(($percentDone*-1)-100,1) . '%';
+				} else {
+
+					$percentage = '0%';
+				}
+			}
+			array_push($transferAry, $percentage);
+		}
+
+		// ================================================================ down
+		if ($settings[6] != 0) {
+			$down = "";
+			if ($transferRunning == 1) {
+				if (trim($af->down_speed) != "")
+					$down = $af->down_speed;
+				else
+					$down = '0.0 kB/s';
+			}
+			array_push($transferAry, $down);
+		}
+
+		// ================================================================== up
+		if ($settings[7] != 0) {
+			$up = "";
+			if ($transferRunning == 1) {
+				if (trim($af->up_speed) != "")
+					$up = $af->up_speed;
+				else
+					$up = '0.0 kB/s';
+			}
+			array_push($transferAry, $up);
+		}
+
+		// =============================================================== seeds
+		if ($settings[8] != 0) {
+			$seeds = "";
+			if ($transferRunning == 1)
+				$seeds = $af->seeds;
+			array_push($transferAry, $seeds);
+		}
+
+		// =============================================================== peers
+		if ($settings[9] != 0) {
+			$peers = "";
+			if ($transferRunning == 1)
+				$peers = $af->peers;
+			array_push($transferAry, $peers);
+		}
+
+		// ================================================================= ETA
+		if ($settings[10] != 0)
+			array_push($transferAry, $estTime);
+
+		// ============================================================== client
+		if ($settings[11] != 0) {
+			switch ($settingsAry['btclient']) {
+				case "tornado":
+					array_push($transferAry, "B");
+				break;
+				case "transmission":
+					array_push($transferAry, "T");
+				break;
+				case "wget":
+					array_push($transferAry, "W");
+				break;
+				default:
+					array_push($transferAry, "U");
+			}
+		}
+
+		// ---------------------------------------------------------------------
+		// Is this torrent for the user list or the general list?
+		if ($cfg["user"] == getOwner($entry))
+			array_push($arUserTorrent, $transferAry);
+		else
+			array_push($arListTorrent, $transferAry);
+	}
+
+	//XFER: if a new day but no .stat files where found put blank entry into the
+	//      DB for today to indicate accounting has been done for the new day
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		transferListXferUpdate2($newday);
+
+	// -------------------------------------------------------------------------
+	// build output-array
+	$retVal = array();
+	if (sizeof($arUserTorrent) > 0) {
+		foreach($arUserTorrent as $torrentrow)
+			array_push($retVal, $torrentrow);
+	}
+	$boolCond = true;
+	if ($cfg['enable_restrictivetview'] == 1)
+		$boolCond = IsAdmin();
+	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
+		foreach($arListTorrent as $torrentrow)
+			array_push($retVal, $torrentrow);
+	}
+	return $retVal;
+}
+
+
 
 /* ************************************************************************** */
 

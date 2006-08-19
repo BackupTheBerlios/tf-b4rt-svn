@@ -28,8 +28,9 @@ else {
 $tmpl->setvar('head', getHead(_XFER));
 if ($cfg['enable_xfer'] == 1) {
 	$tmpl->setvar('is_xfer', 1);
+	// getTransferListArray to update xfer-stats
 	$cfg['xfer_realtime'] = 1;
-	getDirList($cfg['torrent_file_path']);
+	@getTransferListArray();
 	if ($cfg['xfer_day']) {
 		$tmpl->setvar('xfer_day', displayXferBar($cfg['xfer_day'],$xfer_total['day']['total'],_XFERTHRU.' Today:'));
 	}

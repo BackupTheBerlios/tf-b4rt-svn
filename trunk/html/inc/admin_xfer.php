@@ -12,8 +12,9 @@ $tmpl->setvar('head', getHead(_XFER));
 $tmpl->setvar('menu', getMenu());
 if ($cfg['enable_xfer'] == 1) {
 	$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
+	// getTransferListArray to update xfer-stats
 	$cfg['xfer_realtime'] = 1;
-	getDirList($cfg["torrent_file_path"],0);
+	@getTransferListArray();
 	$tmpl->setvar('displayXfer', displayXfer());
 }
 $tmpl->setvar('foot', getFoot(true,true));
