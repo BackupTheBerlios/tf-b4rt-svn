@@ -23,7 +23,7 @@
 // defines
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
 define('_URL_THIS','http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
-define('_URL_DTD_XML','http://'.$_SERVER['SERVER_NAME'].'/tf_xml.dtd');
+define('_URL_DTD_XMLOLD','http://'.$_SERVER['SERVER_NAME'].'/tf_xml.dtd');
 
 // -----------------------------------------------------------------------------
 // init
@@ -89,10 +89,12 @@ if (isset($_REQUEST["a"]))
     $sendAsAttachment = (int) trim($_REQUEST["a"]);
 
 // action
-$arList = getTransferArray($cfg["index_page_sortorder"]);
 switch ($format) {
     case "rss":
         sendRss();
+        break;
+    case "xml_old":
+        sendXmlOld();
         break;
     case "xml":
     default:
@@ -105,21 +107,82 @@ exit();
 // functions
 // -----------------------------------------------------------------------------
 
+/**
+ * This method sends transfer-list and stats as xml
+ * xml-schema defined in tfbstats.xsd.
+ *
+ */
+function sendXML() {
+    global $cfg, $sendAsAttachment;
+    // prepare some vars
+    // lists
+    $transferHeads = getTransferListHeadArray();
+    $transferList = getTransferListArray();
+    // server-stats
+    $speedDown = "";
+	$speedDown = @number_format($cfg["total_download"], 2);
+    $speedUp = "";
+	$speedUp =  @number_format($cfg["total_upload"], 2);
+    $speedTotal = "";
+	$speedTotal = @number_format($cfg["total_download"]+$cfg["total_upload"], 2);
+    $netstatConnectionsSum = "";
+	$netstatConnectionsSum = @netstatConnectionsSum();
+    $freeSpace = "";
+	$freeSpace = @formatFreeSpace($cfg["free_space"]);
+	$loadavgString = "";
+	$loadavgString = @getLoadAverageString();
+    // build content
+    $content = "";
+	$content .= '<?xml version="1.0" encoding="utf-8"?>'."\n";
+	$content .= '<tfb>'."\n";
+	// server stats
+	$content .= ' <server>'."\n";
+	$content .= '  <serverStat name="speedDown">'.$speedDown.'</serverStat>'."\n";
+	$content .= '  <serverStat name="speedUp">'.$speedUp.'</serverStat>'."\n";
+	$content .= '  <serverStat name="speedTotal">'.$speedTotal.'</serverStat>'."\n";
+	$content .= '  <serverStat name="connections">'.$netstatConnectionsSum.'</serverStat>'."\n";
+	$content .= '  <serverStat name="freeSpace">'.$freeSpace.'</serverStat>'."\n";
+	$content .= '  <serverStat name="loadavg">'.$loadavgString.'</serverStat>'."\n";
+	$content .= ' </server>'."\n";
+    // transfer-list
+    $content .= ' <transfers>'."\n";
+	foreach ($transferList as $transferAry) {
+		$content .= '  <transfer name="'.$transferAry[0].'">'."\n";
+		$size = count($transferAry);
+		for ($i = 1; $i < $size; $i++)
+			$content .= '   <transferStat name="'.$transferHeads[$i-1].'">'.$transferAry[$i].'</transferStat>'."\n";
+		$content .= '  </transfer>'."\n";
+	}
+    $content .= ' </transfers>'."\n";
+    // end document
+    $content .= '</tfb>'."\n";
+    // send content
+    header("Cache-Control: ");
+    header("Pragma: ");
+    header("Content-Type: text/xml");
+    if ($sendAsAttachment != 0) {
+        header("Content-Length: ".strlen($content));
+        header('Content-Disposition: attachment; filename="stats.xml"');
+    }
+    echo $content;
+}
+
 /*
  * This method sends transfer-list and stats as xml
  * xml-format and dtd from IHateMyISP
  *
  */
-function sendXML() {
-    global $cfg, $sendAsAttachment, $arList;
+function sendXmlOld() {
+    global $cfg, $sendAsAttachment;
     $content = "";
     // build content
 	$content .= "<?xml version='1.0' ?>\n\n";
-	$content .= "<!DOCTYPE rss SYSTEM \"". _URL_DTD_XML ."\">\n";
+	$content .= "<!DOCTYPE rss SYSTEM \"". _URL_DTD_XMLOLD ."\">\n";
 	$content .= "<rss version=\"0.91\">\n";
 	$content .= "<torrent_flux>\n";
 	$content .= "<torrents>\n";
     // transfer-list
+    $arList = getTransferArray($cfg["index_page_sortorder"]);
     foreach($arList as $entry) {
         $torrentowner = getOwner($entry);
         $torrentTotals = getTransferTotals($entry);
@@ -183,7 +246,7 @@ function sendXML() {
  *
  */
 function sendRss() {
-    global $cfg, $sendAsAttachment, $arList;
+    global $cfg, $sendAsAttachment;
     $content = "";
     $run = 0;
     // build content
@@ -192,6 +255,7 @@ function sendRss() {
     $content .= "<channel>\n";
     $content .= "<title>TorrentFlux Status</title>\n";
     // transfer-list
+    $arList = getTransferArray($cfg["index_page_sortorder"]);
     foreach($arList as $entry) {
         $torrentowner = getOwner($entry);
         $torrentTotals = getTransferTotals($entry);

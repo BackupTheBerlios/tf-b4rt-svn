@@ -279,6 +279,7 @@ function printTorrents() {
 	define("_UPLOADSPEED","Upload Speed");
 	define("_STATUS","Status");
 	define("_ESTIMATEDTIME","ETA");
+	define("_USER","User");
 	// show all .. we set the user to superadmin
     $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
     if($db->ErrorNo() != 0) {
@@ -293,6 +294,7 @@ function printTorrents() {
     }
 	// print out transfers
 	$transferHeads = getTransferListHeadArray();
+	echo " * Name";
 	foreach ($transferHeads as $transferHead) {
 		echo " * ";
 		echo $transferHead;
