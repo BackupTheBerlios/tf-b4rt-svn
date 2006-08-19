@@ -134,7 +134,7 @@ function sendXML() {
     // build content
     $content = "";
 	$content .= '<?xml version="1.0" encoding="utf-8"?>'."\n";
-	$content .= '<tfb>'."\n";
+	$content .= '<tfbstats>'."\n";
 	// server stats
 	$content .= ' <server>'."\n";
 	$content .= '  <serverStat name="speedDown">'.$speedDown.'</serverStat>'."\n";
@@ -155,7 +155,7 @@ function sendXML() {
 	}
     $content .= ' </transfers>'."\n";
     // end document
-    $content .= '</tfb>'."\n";
+    $content .= '</tfbstats>'."\n";
     // send content
     header("Cache-Control: ");
     header("Pragma: ");
