@@ -177,7 +177,7 @@ define("_UPLOADED", "Uploaded");
 define("_QMANAGER_MENU","queue");
 define("_FLUXD_MENU","fluxd");
 define("_SETTINGS_MENU","settings");
-define("_SEARCHSETTINGS_MENU","search settings");
+define("_SEARCHSETTINGS_MENU","search");
 define("_ERRORSREPORTED","Errors");
 define("_STARTED", "Started");
 define("_ENDED", "Ended");

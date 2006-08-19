@@ -41,18 +41,28 @@ function getMenu() {
 	global $cfg;
 	$menu = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
 	$menu .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
-	$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>');
-	$menu .= " | <a href=\"index.php?page=admin\"><font class=\"adminlink\">"._ADMIN_MENU."</font></a> | ";
+	// superadmin
+	if (IsSuperAdmin())
+		$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>')." | ";
+	// settings
 	$menu .= "<a href=\"index.php?page=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
-	$menu .= "<a href=\"index.php?page=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	// deprecated : queue : delete soon (hopefully ~)
+	//$menu .= "<a href=\"index.php?page=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	// fluxd
 	$menu .= "<a href=\"index.php?page=admin&op=fluxdSettings\"><font class=\"adminlink\">"._FLUXD_MENU."</font></a> | ";
+	// ui
 	$menu .= "<a href=\"index.php?page=admin&op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
+	// search
 	$menu .= "<a href=\"index.php?page=admin&op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
-	$menu .= "<a href=\"index.php?page=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a> | ";
+	// links
 	$menu .= "<a href=\"index.php?page=admin&op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
+	// rss
 	$menu .= "<a href=\"index.php?page=admin&op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
-	$menu .= "<a href=\"index.php?page=admin&op=CreateUser\"><font class=\"adminlink\">"._NEWUSER_MENU."</font></a> | ";
-	if ($cfg['enable_xfer'] == 1) $menu .= "<a href=\"index.php?page=admin&op=xfer\"><font class=\"adminlink\">"._XFER."</font></a>";
+	// users
+	$menu .= "<a href=\"index.php?page=admin&op=showUsers\"><font class=\"adminlink\">users</font></a> | ";
+	// activity
+	$menu .= "<a href=\"index.php?page=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a>";
+	//
 	$menu .= "</div></td></tr>";
 	$menu .= "</table><br>";
 	return $menu;
@@ -74,9 +84,9 @@ function getUserSection() {
 	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"8%\"><div align=center class=\"title\">"._ADMIN."</div></td>";
 	$userSection .= "</tr>";
 	$total_activity = GetActivityCount();
-	$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users ORDER BY user_id";
+	$sql= "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
 	$result = $db->Execute($sql);
-	while(list($user_id, $hits, $last_visit, $time_created, $user_level) = $result->FetchRow()) {
+	while(list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
 		$user_activity = GetActivityCount($user_id);
 		if ($user_activity == 0)
 			$user_percent = 0;
@@ -111,9 +121,9 @@ function getUserSection() {
 		$userSection .= '</tr>';
 		$userSection .= '</table>';
 		$userSection .= "</td>";
-		$userSection .= "<td><div class=\"tiny\" align=\"center\">".date(_DATEFORMAT, $time_created)."</div></td>";
-		$userSection .= "<td><div class=\"tiny\" align=\"center\">".date(_DATETIMEFORMAT, $last_visit)."</div></td>";
-		$userSection .= "<td><div align=\"right\" class=\"tiny\">";
+		$userSection .= "<td><div class=\"tiny\" align=\"center\" nowrap>".date(_DATEFORMAT, $time_created)."</div></td>";
+		$userSection .= "<td><div class=\"tiny\" align=\"center\" nowrap>".date(_DATETIMEFORMAT, $last_visit)."</div></td>";
+		$userSection .= "<td><div align=\"right\" class=\"tiny\" nowrap>";
 		$user_image = "images/user.gif";
 		$type_user = _NORMALUSER;
 		if ($user_level == 1) {
@@ -124,13 +134,30 @@ function getUserSection() {
 			$user_image = "images/superadmin.gif";
 			$type_user = _SUPERADMIN;
 		}
+		// user-type-pic
+		$userSection .= "<img src=\"".$user_image."\" title=\"".$user_id." - ".$type_user."\">";
+		$userSection .= "&nbsp;";
+		// state
+		if ($user_level <= 1) {
+			if ($user_state == 1)
+				$userSection .= "<a href=\"index.php?page=admin&op=setUserState&user_id=".$user_id."&state=0\"><img src=\"images/green.gif\" width=\"13\" height=\"13\" title=\"deactivate ".$user_id."\" border=\"0\"></a>";
+			else
+				$userSection .= "<a href=\"index.php?page=admin&op=setUserState&user_id=".$user_id."&state=1\"><img src=\"images/red.gif\" width=\"13\" height=\"13\" title=\"activate ".$user_id."\" border=\"0\"></a>";
+		} else {
+			$userSection .= "<img src=\"images/black.gif\" width=\"13\" height=\"13\" title=\"superadmin always activated\">";
+		}
+		$userSection .= "&nbsp;";
+		// edit
 		if ($user_level <= 1 || IsSuperAdmin())
 			$userSection .= "<a href=\"index.php?page=admin&op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
-		$userSection .= "<img src=\"".$user_image."\" title=\"".$user_id." - ".$type_user."\">";
+		$userSection .= "&nbsp;";
+		// delete
 		if ($user_level <= 1)
 			$userSection .= "<a href=\"index.php?page=admin&op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
 		else
 			$userSection .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\"n/a\">";
+		$userSection .= "&nbsp;";
+		//
 		$userSection .= "</div></td>";
 		$userSection .= "</tr>";
 	}
@@ -293,6 +320,41 @@ function validateFile($the_file) {
 	return $msg;
 }
 
+/**
+ * setUserState
+ *
+ */
+function setUserState() {
+	global $cfg, $db;
+	$user_id = getRequestVar('user_id');
+	$user_state = getRequestVar('state');
+	// check params
+	if (! (isset($user_id)) && (isset($user_state)))
+		return false;
+	// sanity-check, dont allow setting state of superadmin to 0
+	if (($user_state == 0) && (IsSuperAdmin($user_id))) {
+		AuditAction($cfg["constants"]["error"], "Invalid try to deactivate superadmin account.");
+		return false;
+	}
+	// set new state
+	$sql='SELECT * FROM tf_users WHERE user_id = '.$db->qstr($user_id);
+	$rs = $db->Execute($sql);
+	showError($db,$sql);
+	$rec = array('state'=>$user_state);
+	$sql = $db->GetUpdateSQL($rs, $rec);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	switch ($user_state) {
+		case 0:
+			AuditAction($cfg["constants"]["admin"], "User ".$user_id." deactivated.");
+			break;
+		case 1:
+			AuditAction($cfg["constants"]["admin"], "User ".$user_id." activated.");
+			break;
+	}
+	return true;
+}
+
 //******************************************************************************
 // TRAFFIC CONTROLER
 //******************************************************************************
@@ -301,10 +363,22 @@ $op = getRequestVar('op');
 
 switch ($op) {
 
+	case "configSettings":
 	default:
-		$min = getRequestVar('min');
-		if(empty($min)) $min=0;
-		require_once("admin_default.php");
+		require_once("admin_configSettings.php");
+		//$min = getRequestVar('min');
+		//if(empty($min)) $min=0;
+		//require_once("admin_default.php");
+	break;
+
+	case "updateConfigSettings":
+		if (! array_key_exists("debugTorrents", $_REQUEST))
+			$_REQUEST["debugTorrents"] = false;
+		$settings = processSettingsParams();
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
+		$continue = getRequestVar('continue');
+		header("Location: index.php?page=admin&op=".$continue);
 	break;
 
 	case "showUserActivity":
@@ -377,6 +451,10 @@ switch ($op) {
 		header("location: index.php?page=admin&op=editLinks");
 	break;
 
+	case "showUsers":
+		require_once("admin_showUsers.php");
+	break;
+
 	case "CreateUser":
 		require_once("admin_CreateUser.php");
 	break;
@@ -411,18 +489,9 @@ switch ($op) {
 		require_once("admin_updateUser.php");
 	break;
 
-	case "configSettings":
-		require_once("admin_configSettings.php");
-	break;
-
-	case "updateConfigSettings":
-		if (! array_key_exists("debugTorrents", $_REQUEST))
-			$_REQUEST["debugTorrents"] = false;
-		$settings = processSettingsParams();
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
-		$continue = getRequestVar('continue');
-		header("Location: index.php?page=admin&op=".$continue);
+	case "setUserState":
+		setUserState();
+		header("location: index.php?page=admin&op=showUsers");
 	break;
 
 	case "updateQueueSettings":
@@ -449,9 +518,6 @@ switch ($op) {
 	break;
 
 	case "updateFluxdSettings":
-		if (! array_key_exists("debugTorrents", $_REQUEST)) {
-			$_REQUEST["debugTorrents"] = false;
-		}
 		require_once("admin_updateFluxdSettings.php");
 	break;
 	// End Fluxd

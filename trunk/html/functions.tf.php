@@ -161,7 +161,8 @@ function addNewUser($newUser, $pass1, $userType) {
 					'user_level'=>$userType,
 					'hide_offline'=>"0",
 					'theme'=>$cfg["default_theme"],
-					'language_file'=>$cfg["default_language"]
+					'language_file'=>$cfg["default_language"],
+					'state'=>1
 					);
 	$sTable = 'tf_users';
 	$sql = $db->GetInsertSql($sTable, $record);
