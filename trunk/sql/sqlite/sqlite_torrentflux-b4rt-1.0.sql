@@ -84,7 +84,8 @@ CREATE TABLE tf_users (
   user_level TINYINT(1) NOT NULL default '0',
   hide_offline TINYINT(1) NOT NULL default '0',
   theme VARCHAR(100) NOT NULL default 'mint',
-  language_file VARCHAR(60) default 'lang-english.php'
+  language_file VARCHAR(60) default 'lang-english.php',
+  state TINYINT(1) NOT NULL default '1',
 ) ;
 
 --

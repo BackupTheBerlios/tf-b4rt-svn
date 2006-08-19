@@ -35,6 +35,7 @@ CREATE TABLE tf_trprofiles (
 -- alter
 --
 ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL;
+ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
 
 --
 -- updates
