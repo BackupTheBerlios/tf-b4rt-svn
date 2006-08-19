@@ -78,7 +78,7 @@ function performAuthentication($username = '', $password = '') {
 		return 0;
 	if ($password == '')
 		return 0;
-	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($username)." AND password=".$db->qstr(md5($password));
+	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE state = 1 AND user_id=".$db->qstr($username)." AND password=".$db->qstr(md5($password));
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 	list($uid,$hits,$cfg["hide_offline"],$cfg["theme"],$cfg["language_file"]) = $result->FetchRow();
@@ -206,7 +206,8 @@ function firstLogin($username = '', $password = '') {
 					'user_level'=>2,
 					'hide_offline'=>0,
 					'theme'=>$cfg["default_theme"],
-					'language_file'=>$cfg["default_language"]
+					'language_file'=>$cfg["default_language"],
+					'state'=>1
 					);
 	$sTable = 'tf_users';
 	$sql = $db->GetInsertSql($sTable, $record);
