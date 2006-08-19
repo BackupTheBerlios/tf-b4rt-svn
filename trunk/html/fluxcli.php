@@ -269,25 +269,39 @@ function printTorrents() {
 	echo "          TorrentFlux-Torrents          \n";
     echo "----------------------------------------\n";
     echo "\n";
-	global $cfg;
-	$torrents = getTorrentListFromFS();
-    foreach ($torrents as $torrent) {
-        echo ' - '.$torrent;
-        if (isTorrentRunning($torrent))
-            echo " (running)";
-        echo "\n";
-    }
-	echo "\n";
+	global $cfg, $db;
 	define("_DOWNLOADSPEED","Download Speed");
 	define("_UPLOADSPEED","Upload Speed");
-	$dirList = @getDirList($cfg["torrent_file_path"]);
-    if (! array_key_exists("total_download",$cfg))
+	// show all .. we set the user to superadmin
+    $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
+    if($db->ErrorNo() != 0) {
+        @ob_end_clean();
+        exit();
+    }
+    if ((isset($superAdm)) && ($superAdm != "")) {
+        $cfg["user"] = $superAdm;
+    } else {
+        @ob_end_clean();
+        exit();
+    }
+	// print out transfers
+	$transferList = getTransferListArray();
+	foreach ($transferList as $transferAry) {
+		foreach ($transferAry as $transfer) {
+			echo " - ";
+			echo $transfer;
+		}
+		echo "\n";
+	}
+	// print out stats
+    if (! array_key_exists("total_download", $cfg))
         $cfg["total_download"] = 0;
-    if (! array_key_exists("total_upload",$cfg))
+    if (! array_key_exists("total_upload", $cfg))
         $cfg["total_upload"] = 0;
 	$sumMaxUpRate = getSumMaxUpRate();
 	$sumMaxDownRate = getSumMaxDownRate();
 	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
+	echo "\n";
 	echo _DOWNLOADSPEED."\t".': '.number_format($cfg["total_download"], 2).' ('.number_format($sumMaxDownRate, 2).') kB/s'."\n";
 	echo _UPLOADSPEED."\t".': '.number_format($cfg["total_upload"], 2).' ('.number_format($sumMaxUpRate, 2).') kB/s'."\n";
 	echo _TOTALSPEED."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' ('.number_format($sumMaxRate, 2).') kB/s'."\n";
@@ -644,9 +658,9 @@ function cliXferShutdown($delta = '') {
 		return;
 	}
 	if ((isset($delta)) && ($delta != "")) {
-		// getDirList to update xfer-stats
+		// getTransferListArray to update xfer-stats
 		$cfg['xfer_realtime'] = 1;
-		$dirList = @getDirList($cfg["torrent_file_path"]);
+		$dirList = @getTransferListArray();
 		// check if break needed
 		// total
 		if (($delta == "all") || ($delta == "total")) {
