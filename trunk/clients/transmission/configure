@@ -1,12 +1,13 @@
 #! /bin/sh
 #
-# $Id: configure 755 2006-08-12 20:06:12Z titer $
+# $Id: configure 795 2006-08-20 02:22:48Z titer $
 
 #
 # Default settings
 #
 SYSTEM=
 BEOS_NETSERVER=no
+BEOS_OLDCC=no
 MATH=no
 PTHREAD=no
 OPENSSL=
@@ -256,6 +257,18 @@ case $SYSTEM in
         exit 1 
         ;;
     esac
+    GCCVER=`$CC -dumpversion`
+    case $GCCVER in
+      2.95.3*|3*|4*)
+        ;;
+      2.9*)
+      	BEOS_OLDCC=yes
+      	;;
+      *)
+        echo "Unsupported gcc version"
+        exit 1
+        ;;
+    esac
     ;;
 
   Darwin)
@@ -301,6 +314,11 @@ if [ "$OPENSSL" = no ]; then
 else
   openssl_test
 fi 
+if [ "$OPENSSL" = no ] && [ "$BEOS_OLDCC" = yes ]; then
+  echo "built-in SHA1 implementation not supported with your gcc version"
+  echo "you must either install OpenSSL or gcc 2.95.3 or newer"
+  exit 1
+fi
 
 #
 # GTK+ settings
