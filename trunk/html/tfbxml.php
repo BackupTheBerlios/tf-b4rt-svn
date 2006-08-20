@@ -49,7 +49,7 @@ if (isset($_REQUEST["g"]))
 if (isset($_REQUEST["a"]))
     $sendAsAttachment = (int) trim($_REQUEST["a"]);
 
-// action
+// get-action
 switch ($getType) {
     case "server":
         sendServer();
@@ -108,7 +108,7 @@ function sendServer() {
     header("Content-Type: text/xml");
     if ($sendAsAttachment != 0) {
         header("Content-Length: ".strlen($content));
-        header('Content-Disposition: attachment; filename="stats.xml"');
+        header('Content-Disposition: attachment; filename="server.xml"');
     }
     echo $content;
 }
@@ -143,7 +143,7 @@ function sendTransfers() {
     header("Content-Type: text/xml");
     if ($sendAsAttachment != 0) {
         header("Content-Length: ".strlen($content));
-        header('Content-Disposition: attachment; filename="stats.xml"');
+        header('Content-Disposition: attachment; filename="transfers.xml"');
     }
     echo $content;
 }
