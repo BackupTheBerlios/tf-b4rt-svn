@@ -135,7 +135,7 @@ sub main {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Trigger.pm Revision ".$REVISION."=-\n\n";
+	$return .= "\n-= Trigger.pm Revision ".$VERSION."=-\n\n";
 	$return .= "Trigger.pm is currently running\n";
 	return $return;
 }

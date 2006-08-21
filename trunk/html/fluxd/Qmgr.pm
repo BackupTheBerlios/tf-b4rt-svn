@@ -30,7 +30,7 @@ no strict "refs";
 ################################################################################
 
 # version in a var
-my $REVISION = do {
+my $VERSION = do {
 	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
 # state
@@ -134,7 +134,7 @@ sub initialize {
 # Returns: VERSION                                                             #
 #------------------------------------------------------------------------------#
 sub getVersion {
-	return $REVISION;
+	return $VERSION;
 }
 
 #------------------------------------------------------------------------------#
@@ -251,7 +251,7 @@ sub processQueue {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub printVersion {
-	print "Qmgr.pm Revision ".$REVISION."\n";
+	print "Qmgr.pm Revision ".$VERSION."\n";
 }
 
 #-----------------------------------------------------------------------------#
@@ -299,7 +299,7 @@ sub saveQueue {
 #-----------------------------------------------------------------------------#
 sub status {
 	my $return = "status info\n";
-	$return .= "\n-= Qmgr.pm Revision ".$REVISION." =-\n\n";
+	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n\n";
 
 	# get count-vars
 	my $countQueue = queue();
