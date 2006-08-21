@@ -164,7 +164,10 @@ sub set {
 # Returns: Status information                                                  #
 #------------------------------------------------------------------------------#
 sub status {
-	return "Clientmaint is currently running\n";
+	my $return = "";
+	$return .= "\n-= Clientmaint.pm Revision ".$REVISION."=-\n\n";
+	$return .= "Clientmaint is currently running\n";
+	return $return;
 }
 
 ################################################################################

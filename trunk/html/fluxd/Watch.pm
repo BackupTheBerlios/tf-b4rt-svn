@@ -173,7 +173,10 @@ sub main {
 # Returns: Status information                                                  #
 #------------------------------------------------------------------------------#
 sub status {
-	return "Watch.pm is currently running\n";
+	my $return = "";
+	$return .= "\n-= Watch.pm Revision ".$REVISION."=-\n\n";
+	$return .= "Watch.pm is currently running\n";
+	return $return;
 }
 
 ################################################################################

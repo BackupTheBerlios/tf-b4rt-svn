@@ -768,7 +768,7 @@ sub status {
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
 		$modules .= "  * Qmgr.pm : \n";
-		$status .= eval { $qmgr->status(); };
+		$status .= $qmgr->status();
 	}
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {

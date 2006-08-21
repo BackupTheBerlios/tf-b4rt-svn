@@ -185,7 +185,10 @@ sub main {
 # Returns: Status information                                                  #
 #------------------------------------------------------------------------------#
 sub status {
-	return "Fluxinet is currently running.\n";
+	my $return = "";
+	$return .= "\n-= Fluxinet.pm Revision ".$REVISION."=-\n\n";
+	$return .= "Fluxinet is currently running.\n";
+	return $return;
 }
 
 ################################################################################

@@ -22,7 +22,7 @@
 ################################################################################
 package Qmgr;
 use strict;
-use warnings;
+no strict "refs";
 ################################################################################
 
 ################################################################################
@@ -299,7 +299,7 @@ sub saveQueue {
 #-----------------------------------------------------------------------------#
 sub status {
 	my $return = "status info\n";
-	$return .= "\n-= Qmgrd Revision ".$REVISION." =-\n\n";
+	$return .= "\n-= Qmgr.pm Revision ".$REVISION." =-\n\n";
 
 	# get count-vars
 	my $countQueue = queue();
@@ -337,7 +337,7 @@ sub status {
 
 	# misc stats
 	$return .= "\nQmgr Daemon up since $localtime (";
-	my $tempiStringy = niceTimeString(FluxdCommon::niceTimeString($time));
+	my $tempiStringy = FluxdCommon::niceTimeString($time);
 	$return .= $tempiStringy.") ";
 	$return .= "(".$globals{'main'}." cycles) \n";
 	$return .= "Qmgr Daemon started ".$globals{'started'}." torrents \n\n";
@@ -365,7 +365,7 @@ sub jobs {
 sub queue {
 	my $return = 0;
 	foreach my $user (@{$users}) {
-		$return += scalar($user->{'queue'});
+		$return += scalar(@{$user->{'queue'}});
 	}
 	return $return;
 }
@@ -378,7 +378,7 @@ sub queue {
 sub running{
 	my $return = 0;
 	foreach my $user (@{$users}) {
-		$return += scalar($user->{'running'});
+		$return += scalar(@{$user->{'running'}});
 	}
 	return $return;
 }
