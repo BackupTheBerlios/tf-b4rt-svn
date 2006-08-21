@@ -1339,7 +1339,7 @@ function getDirList($dirName) {
 		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
 		// ========================================================== led + meta
-		$output .= '<td valign="bottom" align="center">';
+		$output .= '<td valign="bottom" align="center" nowrap>';
 		// led
 		$hd = getStatusImage($af);
 		if ($af->running == 1)
@@ -1352,15 +1352,15 @@ function getDirList($dirName) {
 		$output .= "</td>";
 
 		// ================================================================ name
-		$output .= "<td valign=\"bottom\">";
+		$output .= "<td valign=\"bottom\" nowrap>";
 		$output .= $detailsLinkString;
 		$output .= $displayname;
 		$output .= "</a>";
 		$output .= "</td>";
 
-		$output .= "<td align=\"right\"><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
-		$output .= "<td align=\"center\"><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
-		$output .= "<td valign=\"bottom\"><div align=\"center\">";
+		$output .= "<td align=\"right\" nowrap><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
+		$output .= "<td align=\"center\" nowrap><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+		$output .= "<td valign=\"bottom\" nowrap><div align=\"center\">";
 		if ($af->running == "2") {
 			$output .= "<i><font color=\"#32cd32\">"._NEW."</font></i>";
 		} elseif ($af->running == "3" ) {
@@ -1435,8 +1435,8 @@ function getDirList($dirName) {
 		}
 
 		$output .= "</div></td>";
-		$output .= "<td><div class=\"tiny\" align=\"center\">".$estTime."</div></td>";
-		$output .= "<td><div align=center>";
+		$output .= "<td nowrap><div class=\"tiny\" align=\"center\">".$estTime."</div></td>";
+		$output .= "<td nowrap><div align=center>";
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
@@ -1523,7 +1523,7 @@ function getDirList($dirName) {
 	if (sizeof($arUserTorrent) > 0) {
 		$output .= "<tr>";
 		// first
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
 		switch ($sortOrder) {
 			case 'da': // sort by date ascending
 				$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
@@ -1541,7 +1541,7 @@ function getDirList($dirName) {
 		}
 		$output .= "</div></td>";
 		// name
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
 		switch ($sortOrder) {
 			case 'na': // sort alphabetically by name ascending
 				$output .= '<a href="?so=nd"><font class="adminlink">' .$cfg["user"].": ". _TORRENTFILE .'</font></a>';
@@ -1558,11 +1558,11 @@ function getDirList($dirName) {
 				break;
 		}
 		$output .= "</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">Size</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._USER."</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._STATUS."</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ESTIMATEDTIME."</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ADMIN."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">Size</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._USER."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._STATUS."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ESTIMATEDTIME."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ADMIN."</div></td>";
 		$output .= "</tr>\n";
 		foreach($arUserTorrent as $torrentrow)
 			$output .= $torrentrow;
@@ -1576,7 +1576,7 @@ function getDirList($dirName) {
 	// "Only Admin can see other user torrents"
 		$output .= "<tr>";
 		// first
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
 		switch ($sortOrder) {
 			case 'da': // sort by date ascending
 				$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
@@ -1594,7 +1594,7 @@ function getDirList($dirName) {
 		}
 		$output .= "</div></td>";
 		// name
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
 		switch ($sortOrder) {
 			case 'na': // sort alphabetically by name ascending
 				$output .= '<a href="?so=nd"><font class="adminlink">' ._TORRENTFILE .'</font></a>';
@@ -1611,11 +1611,11 @@ function getDirList($dirName) {
 				break;
 		}
 		$output .= "</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">Size</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._USER."</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._STATUS."</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ESTIMATEDTIME."</div></td>";
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ADMIN."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">Size</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._USER."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._STATUS."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ESTIMATEDTIME."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ADMIN."</div></td>";
 		$output .= "</tr>\n";
 		foreach($arListTorrent as $torrentrow)
 			$output .= $torrentrow;

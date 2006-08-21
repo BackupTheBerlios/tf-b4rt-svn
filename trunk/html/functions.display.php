@@ -776,7 +776,7 @@ function getTransferListString() {
 		$output = "<tr>";
 
 		// ========================================================== led + meta
-		$output .= '<td valign="bottom" align="center">';
+		$output .= '<td valign="bottom" align="center" nowrap>';
 		// led
 		$hd = getStatusImage($af);
 		if ($transferRunning == 1)
@@ -789,11 +789,11 @@ function getTransferListString() {
 		$output .= "</td>";
 
 		// ================================================================ name
-		$output .= "<td valign=\"bottom\">".$detailsLinkString.$displayname."</a></td>";
+		$output .= "<td valign=\"bottom\" nowrap>".$detailsLinkString.$displayname."</a></td>";
 
 		// =============================================================== owner
 		if ($settings[0] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\"><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
 
 		// ================================================================ size
 		if ($settings[1] != 0)
@@ -809,7 +809,7 @@ function getTransferListString() {
 
 		// ============================================================== status
 		if ($settings[4] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\">".$detailsLinkString.$statusStr."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>".$detailsLinkString.$statusStr."</a></td>";
 
 		// ============================================================ progress
 		if ($settings[5] != 0) {
@@ -920,7 +920,7 @@ function getTransferListString() {
 
 		// ================================================================= ETA
 		if ($settings[10] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\">".$detailsLinkString.$estTime."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>".$detailsLinkString.$estTime."</a></td>";
 
 		// ============================================================== client
 		if ($settings[11] != 0) {
@@ -940,7 +940,7 @@ function getTransferListString() {
 		}
 
 		// =============================================================== admin
-		$output .= '<td><div align="center">';
+		$output .= '<td nowrap><div align="center">';
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
