@@ -378,7 +378,8 @@ switch ($op) {
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
 		$continue = getRequestVar('continue');
-		header("Location: index.php?page=admin&op=".$continue);
+		require_once("admin_".$continue.".php");
+	
 	break;
 
 	case "showUserActivity":
