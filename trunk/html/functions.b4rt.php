@@ -1625,9 +1625,6 @@ function processSettingsParams() {
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
-	// bt-client-chooser
-	if (!(isset($_POST['enable_btclient_chooser'])))
-		$_POST['enable_btclient_chooser'] = 0;
 	// good-look-stats
 	$hackStatsPrefix = "hack_goodlookstats_settings_";
 	$hackStatsStringLen = strlen($hackStatsPrefix);
