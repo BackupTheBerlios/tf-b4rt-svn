@@ -464,12 +464,19 @@ sub remove {
 	my $torrent = $temp;
 	#$torrent = StripTorrentName();
 
-	my $user = getTorrentOwner($torrent);
+	my $username = getTorrentOwner($torrent);
 
-	print "Qmgr : Remove : Removing from queue : ".$torrent." (".$user.")";
+	print "Qmgr : Remove : Removing from queue : ".$torrent." (".$username.")";
 
 	# Remove from queue stack
-	## TODO ##
+	my $index = 0;
+	REMOVE: foreach my $entry (@{$users->[$names->{$username}]->{'queue'}}) {
+		if ($torrent eq $entry) {
+			stack($index, \@{$users->[$names->{$username}]->{'queue'}});
+			last REMOVE;
+		}
+		$index++;
+	}
 }
 
 #-----------------------------------------------------------------------------#
