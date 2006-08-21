@@ -110,10 +110,24 @@ function display_results($title, $result) {
 #################################################################################
 ## end functions
 #################################################################################
-
-if(!isset($_POST['op'])) {
-?>
-<form action="setup.php" method="post">
+if(!isset($_POST['page']) || $_POST['page'] == 1) {
+	# first page, check some basics
+	?>
+	<form action="setup.php" method="post">
+	<table>
+	<tr>
+		<td>
+			<u><b>Step one: Check some Basics</b></u>
+		</td>
+	</tr>
+	<?php
+	display_results("PHP Session Support:", check_extension("session", 1));
+	display_results("PHP PCRE Support:", check_extension("pcre", 1));
+	display_results("Safe Mode:", check_config("safe_mode", 1));
+	?>
+	</table>
+	<br>
+	<input type="hidden" name="page" value="2">
 	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td>Select type of Database:</td>
@@ -121,60 +135,33 @@ if(!isset($_POST['op'])) {
 			<td><input type="radio" name="db_type" value="sqlite" />Sqlite</td>
 		</tr>
 		<tr>
-			<td>Name of the Database:</td>
-			<td colspan="2"><input type="text" name="db_name"></td>
-		</tr>
-		<tr>
-			<td>Database Host (usually localhost):</td>
-			<td colspan="2"><input type="text" name="db_host"></td>
-		</tr>
-		<tr>
-			<td>Database Username (only MySQL):</td>
-			<td colspan="2"><input type="text" name="db_user"></td>
-		</tr>
-		<tr>
-			<td>Database Password (only MySQL):</td>
-			<td colspan="2"><input type="password" name="db_pass"></td>
-		</tr>
-		<tr>
 			<td>Install or just check?</td>
 			<td><input type="radio" name="op" value="1" checked="checked"> only check</td>
-			<td><input type="radio" name="op" value="2"> install</td>
+		<!--not used now	<td><input type="radio" name="op" value="2"> install</td> -->
 		</tr>
 		<tr>
-			<td colspan="3" align="center"><input type="submit" value="Go..."></td>
+			<td colspan="3" align="center"><input type="submit" value="Next"></td>
 		</tr>
 	</table>
-</form>
-
-<?php
+	</form>
+	<?php
 }
-else {
-# only check
-?>
-<table>
+elseif($_POST['page'] == 2) {
+	?>
+	<form action="setup.php" method="post">
+	<table>
 	<tr>
 		<td>
-			<u><b>Check Requirements:</b></u>
+			<u><b>Step two: Check some more Settings</b></u>
 		</td>
 	</tr>
-<?php
-	# first check php extensions
-	display_results("PHP Session Support:", check_extension("session", 1));
-	display_results("PHP PCRE Support:", check_extension("pcre", 1));
-	# now check settings
-	display_results("Safe Mode:", check_config("safe_mode", 1));
-	# next check binaries
-	display_results("check for grep:", check_binary("grep", 1));
-	display_results("check for cat:", check_binary("cat", 1));
-	display_results("check for php:", check_binary("php", 1));
-	display_results("check for python:", check_binary("python", 1));
-	display_results("check for awk:", check_binary("awk", 1));
-	display_results("check for du:", check_binary("du", 1));
-	display_results("check for wget:", check_binary("wget", 0));
-	display_results("check for unzip:", check_binary("unzip", 0));
-	display_results("check for cksfv:", check_binary("cksfv", 0));
-	# OS depending things
+	<?php
+	if($_POST['db_type'] == "mysql") {
+		display_results("PHP MySQL Support:", check_extension("mysql", 1));
+	}
+	elseif($_POST['db_type'] == "sqlite") {
+		display_results("PHP SQLite Support:", check_extension("SQLite", 1));
+	}
 	$osString = php_uname('s');
 	if(isset($osString)) {
 		if(!(stristr($osString, 'linux') === false)) { // linux
@@ -186,9 +173,107 @@ else {
 			display_results("check for sockstat:", check_binary("sockstat", 1));
 		}
 	}
-	# Database depending things
+	display_results("check for grep:", check_binary("grep", 1));
+	display_results("check for cat:", check_binary("cat", 1));
+	display_results("check for php:", check_binary("php", 1));
+	display_results("check for python:", check_binary("python", 1));
+	display_results("check for awk:", check_binary("awk", 1));
+	display_results("check for du:", check_binary("du", 1));
+	display_results("check for wget:", check_binary("wget", 0));
+	display_results("check for unzip:", check_binary("unzip", 0));
+	display_results("check for cksfv:", check_binary("cksfv", 0));
+	?>
+	</table>
+	<br>
+	<input type="hidden" name="page" value="3">
+	<input type="hidden" name="db_type" value="<?php echo $_POST['db_type'] ?>">
+	<input type="hidden" name="op" value="<?php echo $_POST['op'] ?>">
+	<table border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td>Also check Database connection? (optional)</td>
+			<td><input type="radio" name="check_db" value="1" checked="checked"> Don't check</td>
+			<td><input type="radio" name="check_db" value="2"> check</td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center"><input type="submit" value="Next"></td>
+		</tr>
+	</table>
+	</form>
+	<?php
+}
+elseif($_POST['page'] == 3) {
+	if($_POST['check_db'] == 1) {
+	?>
+		<table>
+		<tr>
+			<td>
+				<u><b>Finished!!!!</b></u>
+			</td>
+		</tr>
+		</table>
+	<?php
+	}
+	elseif($_POST['check_db'] == 2) {
+			?>
+	<form action="setup.php" method="post">
+	<table>
+	<tr>
+		<td>
+			<u><b>Step three: Provide Database Informations:</b></u>
+		</td>
+	</tr>
+	<?php
 	if($_POST['db_type'] == "mysql") {
-		display_results("PHP MySQL Support:", check_extension("mysql", 1));
+	?>
+		<tr>
+			<td>Name of the Database:</td>
+			<td colspan="2"><input type="text" name="db_name"></td>
+		</tr>
+		<tr>
+			<td>Database Host (usually localhost):</td>
+			<td colspan="2"><input type="text" name="db_host"></td>
+		</tr>
+		<tr>
+			<td>Database Username:</td>
+			<td colspan="2"><input type="text" name="db_user"></td>
+		</tr>
+		<tr>
+			<td>Database Password:</td>
+			<td colspan="2"><input type="password" name="db_pass"></td>
+		</tr>
+	<?php
+	}
+	elseif($_POST['db_type'] == "sqlite") {
+	?>
+		<tr>
+			<td>Path to Database:</td>
+			<td colspan="2"><input type="text" name="db_name"></td>
+		</tr>
+	<?php
+	}
+	?>
+	<input type="hidden" name="page" value="4">
+	<input type="hidden" name="db_type" value="<?php echo $_POST['db_type'] ?>">
+	<input type="hidden" name="op" value="<?php echo $_POST['op'] ?>">
+	<tr>
+		<td colspan="3" align="center"><input type="submit" value="Next"></td>
+	</tr>
+	</table>
+	</form>
+	<?php
+	}
+}
+elseif($_POST['page'] == 4) {
+?>
+	<form action="setup.php" method="post">
+	<table>
+	<tr>
+		<td>
+			<u><b>Step four: Check Database</b></u>
+		</td>
+	</tr>
+	<?php
+	if($_POST['db_type'] == "mysql") {
 		$load_ext = get_loaded_extensions();
 		if (in_array("mysql", $load_ext)) {
 			$link = mysql_connect($_POST['db_host'], $_POST['db_user'], $_POST['db_pass']);
@@ -223,7 +308,6 @@ else {
 		}
 	}
 	elseif($_POST['db_type'] == "sqlite") {
-		display_results("PHP SQLite Support:", check_extension("SQLite", 1));
 		$load_ext = get_loaded_extensions();
 		if (in_array("SQLite", $load_ext)) {
 			if(is_file($_POST['db_name'])) {
@@ -252,14 +336,25 @@ else {
 			}
 		}
 	}
-
+	?>
+	<input type="hidden" name="page" value="5">
+	<input type="hidden" name="db_type" value="<?php echo $_POST['db_type'] ?>">
+	<input type="hidden" name="op" value="<?php echo $_POST['op'] ?>">
+	<tr>
+		<td colspan="3" align="center"><input type="submit" value="Next"></td>
+	</tr>
+	</table>
+	<?php
+}
+elseif($_POST['page'] == 5) {
 ?>
-</table>
+	<table>
+	<tr>
+		<td>
+			<u><b>Finished!!!!</b></u>
+		</td>
+	</tr>
+	</table>
 <?php
-if ($_POST['op'] == "2") {
-# install
-
 }
-}
-
 ?>
