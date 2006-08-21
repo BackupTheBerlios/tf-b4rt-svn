@@ -196,6 +196,7 @@ else {
 				display_results("check MySQL Connection:", array(
 					'title' => "Successfully connected.",
 					'status' => 1,
+					'fatal' => 0,
 				));
 			}
 			else {
@@ -209,6 +210,7 @@ else {
 				display_results("check MySQL Database:", array(
 					'title' => "Successfully selected Database.",
 					'status' => 1,
+					'fatal' => 0,
 				));
 			}
 			else {
@@ -238,6 +240,7 @@ else {
 				display_results("check SQLite Database:", array(
 					'title' => "Database exists.",
 					'status' => 1,
+					'fatal' => 0,
 				));
 			}
 			else {
