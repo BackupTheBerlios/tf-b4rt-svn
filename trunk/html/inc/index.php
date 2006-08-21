@@ -169,6 +169,7 @@ if(! isset($_SESSION['user'])) {
 	exit();
 }
 
+// index-page-selection
 $tmpl->setvar('index_page', $cfg["index_page"]);
 if ($cfg["index_page"] == "b4rt") {
 	$transferList = getTransferListString();
@@ -176,6 +177,7 @@ if ($cfg["index_page"] == "b4rt") {
 	$transferList = getDirList($cfg["torrent_file_path"]);
 }
 
+// refresh
 if ($cfg['ui_indexrefresh'] != "0") {
 	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
 		$tmpl->setvar('refresh', 1);
@@ -183,19 +185,20 @@ if ($cfg['ui_indexrefresh'] != "0") {
 	}
 }
 
+// messages
 if ($messages != "") {
 	$tmpl->setvar('messages', $messages);
 }
 
+// queue
 if(! $queueActive) {
 	$tmpl->setvar('queueActive', 1);
-}
-else {
-	if ( IsAdmin() ) {
+} else {
+	if (IsAdmin())
 		$tmpl->setvar('queueActive', 2);
-	}
 }
 
+// links
 if ($cfg["ui_displaylinks"] != "0") {
 	$arLinks = array();
 	$arLinks = GetLinks();
@@ -212,6 +215,7 @@ if ($cfg["ui_displaylinks"] != "0") {
 	}
 }
 
+// goodlookingstats
 if ($cfg["enable_goodlookstats"] != "0") {
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
 	if ($settingsHackStats[0] == 1) {
@@ -265,10 +269,10 @@ if ($cfg["ui_displayusers"] != "0") {
 	$tmpl->setloop('arOfflineUsers', $arOfflineUsers);
 }
 
+// xfer
 if (($cfg['enable_xfer'] == 1) && ($cfg['enable_public_xfer'] == 1)) {
 	$tmpl->setvar('enable_xfer', 1);
 }
-
 if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 	$tmpl->setvar('xfer_realtime', 1);
 	if ($cfg['xfer_day']) {
@@ -286,20 +290,21 @@ if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('xfer_month', displayXferBar($cfg['xfer_total'],$xfer_total['total']['total'],_TOTALXFER.':'));
 	}
 }
+
+// bigboldwarning
 if ($cfg['enable_bigboldwarning'] != "0") {
 	//Big bold warning hack by FLX
 	if($drivespace >= 98) {
 		$tmpl->setvar('enable_bigboldwarning', 1);
 	}
 }
-
-// bigboldwarning
 if ($cfg['enable_bigboldwarning'] != "1") {
 	if($drivespace >= 98) {
 		$tmpl->setvar('no_bigboldwarning', 1);
 	}
 }
 
+// bottom stats
 if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('index_page_stats', 1);
 	if (!array_key_exists("total_download",$cfg)) $cfg["total_download"] = 0;
@@ -349,8 +354,16 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg['user']]['day']['total']/(1024*1024)));
 	}
 }
-if (IsForceReadMsg()) {
+
+// pm
+if (IsForceReadMsg())
 	$tmpl->setvar('IsForceReadMsg', 1);
+
+// Graphical Bandwidth Bar
+$tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
+if ($cfg["ui_displaybandwidthbars"] != 0) {
+	$tmpl->setvar('bandwidthbarDown', getDownloadBar());
+	$tmpl->setvar('bandwidthbarUp', getUploadBar());
 }
 
 # define some things

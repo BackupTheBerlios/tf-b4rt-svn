@@ -278,6 +278,9 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('ui_displaybandwidthbars','1');
+INSERT INTO tf_settings VALUES ('bandwidth_down','10240');
+INSERT INTO tf_settings VALUES ('bandwidth_up','10240');
 INSERT INTO tf_settings VALUES ('webapp_locked','0');
 INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
 INSERT INTO tf_settings VALUES ('enable_transfer_profile','0');

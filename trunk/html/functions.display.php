@@ -196,7 +196,7 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
 //XFER: show top summary table of xfer usage page
 function displayXferList() {
 	global $cfg, $xfer, $xfer_total, $db;
-$displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
+	$displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
 	$displayXferList .= '<tr>';
 	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='15%'><div align=center class='title'>"._USER.'</div></td>';
 	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._TOTALXFER.'</div></td>';
@@ -1131,6 +1131,61 @@ function getTransferTableHead($settings, $sortOrder = '', $nPrefix = '') {
 	$output .= "</tr>\n";
 	// return
 	return $output;
+}
+
+/**
+ * get the Upload Graphical Bar
+ *
+ * @return string with upload-bar
+ */
+function getUploadBar() {
+	global $cfg;
+	$max_upload = $cfg["bandwidth_up"] / 8 * 0.9;
+	$inner_message = "";
+	$percent = number_format($cfg["total_upload"] / $max_upload * 100,0);
+	if ($percent > 0)
+		$inner_message = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
+    return getBandwidthBar($percent, $inner_message);
+}
+
+/**
+ * get the Download Graphical Bar
+ *
+ * @return string with download-bar
+ */
+function getDownloadBar() {
+	global $cfg;
+	$max_download = $cfg["bandwidth_down"] / 8 * 0.9;
+	$inner_message = "";
+	$percent = number_format($cfg["total_download"] / $max_download * 100,0);
+	if ($percent > 0)
+		$inner_message = " (".number_format($cfg["total_download"], 2)." Kb/s)";
+	return getBandwidthBar($percent, $inner_message);
+}
+
+/**
+ * get a Bandwidth Graphical Bar
+ *
+ * @param $percent
+ * @param $inner_message
+ * @return string with bandwith-bar
+ */
+function getBandwidthBar($percent, $inner_message) {
+	global $cfg;
+	$retVal = "";
+    $retVal .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+    $retVal .= ' <tr nowrap>';
+    $retVal .= '  <td width="80%">';
+    $retVal .= '   <table width="100%" border="0" cellpadding="0" cellspacing="0">';
+    $retVal .= '    <tr>';
+    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$percent.'%"><div class="tinypercent" align="center">'.$percent.'%'.$inner_message.'</div></td>';
+    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $percent).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
+    $retVal .= '    </tr>';
+    $retVal .= '   </table>';
+    $retVal .= '  </td>';
+    $retVal .= ' </tr>';
+    $retVal .= '</table>';
+	return $retVal;
 }
 
 ?>

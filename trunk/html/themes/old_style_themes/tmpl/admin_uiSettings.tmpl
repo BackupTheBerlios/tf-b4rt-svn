@@ -42,7 +42,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Display Links</strong><br>
-								Display Links on the index-page. (true):
+								Display Links on the index-page :
 								</td>
 								<td valign="bottom">
 									<select name="ui_displaylinks">
@@ -57,7 +57,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Display Users</strong><br>
-								Display Users on the index-page. (true):
+								Display Users on the index-page :
 								</td>
 								<td valign="bottom">
 									<select name="ui_displayusers">
@@ -72,7 +72,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Select Drivespace-Bar</strong><br>
-								Select Style of Drivespace-Bar on index-Page.
+								Select Style of Drivespace-Bar on index-Page :
 								</td>
 								<td valign="top">
 									<select name="drivespacebar">
@@ -90,8 +90,23 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Display Bandwidth-Bars</strong><br>
+								Display Bandwidth-Bars on the index-page :
+								</td>
+								<td valign="bottom">
+									<select name="ui_displaybandwidthbars">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="ui_displaybandwidthbars" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Show Server Stats</strong><br>
-								Enable showing the server stats at the bottom:
+								Enable showing the server stats at the bottom :
 								</td>
 								<td valign="top">
 									<select name="index_page_stats">
@@ -104,7 +119,7 @@
 									</select>
 								</td>
 							</tr>
-						
+
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Show Server Load</strong><br>
 								Enable showing the average server load over the last 15 minutes:
@@ -181,7 +196,7 @@
 									</select>
 								</td>
 							</tr>
-						
+
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable Good looking statistics</strong><br>
 								Enable/Disable "Good looking statistics" :
@@ -205,7 +220,7 @@
 								<tmpl_var name="getGoodLookingStatsForm">
 								</td>
 							</tr>
-						
+
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable Big bold drivespace warning</strong><br>
 								Enable/Disable "Big bold drivespace warning" :

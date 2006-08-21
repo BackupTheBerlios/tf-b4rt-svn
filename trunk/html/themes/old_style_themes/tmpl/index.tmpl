@@ -218,6 +218,28 @@
 					</tmpl_if>
 				</td>
 			</tr>
+			<tmpl_if name="ui_displaybandwidthbars">
+				<tr><td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
+					<table width="100%">
+						<tr>
+							<td width="10%">
+								<div class="tiny">Upload :</div>
+							</td>
+							<td width="90%">
+								<tmpl_var name="bandwidthbarUp">
+							</td>
+						</tr>
+						<tr>
+							<td width="10%">
+								<div class="tiny">Download :</div>
+							</td>
+							<td width="90%">
+								<tmpl_var name="bandwidthbarDown">
+							</td>
+						</tr>
+				</table>
+				</td></tr>
+			</tmpl_if>
 			<tmpl_if name="enable_bigboldwarning">
 				<tr>
 					<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
@@ -231,7 +253,6 @@
 			</tmpl_if>
 		</table>
 		<form action="multi.php" method="POST">
-			<!-- todo -->
 			<tmpl_var name="transferList">
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>
 				<tr>
@@ -343,9 +364,6 @@
 												</tmpl_if>
 												<td class="tiny" align="center" valign="bottom">
 													<b><tmpl_var name="_OTHERSERVERSTATS"></b><br>
-
-
-
 													<tmpl_var name="_DOWNLOADSPEED">: <strong><tmpl_var name="downloadspeed1"> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
 													<tmpl_var name="_UPLOADSPEED">: <strong><tmpl_var name="uploadspeed1"> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
 													<tmpl_var name="_TOTALSPEED">: <strong><tmpl_var name="totalspeed1"> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>

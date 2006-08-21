@@ -21,6 +21,7 @@ $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 $tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
+$tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
 $tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
 $tmpl->setvar('show_server_load', $cfg["show_server_load"]);
 $tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);

@@ -50,6 +50,8 @@ $tmpl->setvar('torrent_dies_when_done', $cfg["torrent_dies_when_done"]);
 $tmpl->setvar('sharekill', $cfg["sharekill"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('skiphashcheck', $cfg["skiphashcheck"]);
+$tmpl->setvar('bandwidth_up', $cfg["bandwidth_up"]);
+$tmpl->setvar('bandwidth_down', $cfg["bandwidth_down"]);
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $tmpl->setvar('enable_transfer_profile', $cfg["enable_transfer_profile"]);
@@ -70,7 +72,6 @@ for ($i = 0; $i < 20 ; $i++) {
 	);
 }
 $tmpl->setloop('nice_list', $nice_list);
-
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
@@ -139,7 +140,6 @@ for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 	);
 }
 $tmpl->setloop('lang_list', $lang_list);
-
 $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 $tmpl->setvar('xfer_realtime', $cfg["xfer_realtime"]);
