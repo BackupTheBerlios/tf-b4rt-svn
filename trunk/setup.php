@@ -24,7 +24,7 @@
 # checks if an binary exists
 # op: name of the binary
 function check_binary($binary) {
-	$paths = array("/bin/", "/usr/bin/", "/usr/local/bin");
+	$paths = array("/bin/", "/usr/bin/", "/usr/local/bin/", "/proc/");
 	foreach($paths as $path) {
 		if (is_file($path.$binary)) {
 			return array(
@@ -103,14 +103,40 @@ function display_results($title, $result) {
 ## end functions
 #################################################################################
 
-# not used now
-$_POST['op'] = 1;
 if(!isset($_POST['op'])) {
 ?>
-<form action="install.php" method="post">
-	<input type="radio" name="op" value="1" checked="checked"> only check
-	<input type="radio" name="op" value="2"> install
-	<input type="submit" value="Go...">
+<form action="setup.php" method="post">
+	<table border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td>Select type of Database:</td>
+			<td><input type="radio" name="db_type" value="mysql" checked="checked" />Mysql</td>
+			<td><input type="radio" name="db_type" value="sqlite" />Sqlite</td>
+		</tr>
+		<tr>
+			<td>Name of the Database:</td>
+			<td colspan="2"><input type="text" name="db_name"></td>
+		</tr>
+		<tr>
+			<td>Database Host (usually localhost):</td>
+			<td colspan="2"><input type="text" name="db_host"></td>
+		</tr>
+		<tr>
+			<td>Database Username (only MySQL):</td>
+			<td colspan="2"><input type="text" name="db_user"></td>
+		</tr>
+		<tr>
+			<td>Database Password (only MySQL):</td>
+			<td colspan="2"><input type="password" name="db_pass"></td>
+		</tr>
+		<tr>
+			<td>Install or just check?</td>
+			<td><input type="radio" name="op" value="1" checked="checked"> only check</td>
+			<td><input type="radio" name="op" value="2"> install</td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center"><input type="submit" value="Go..."></td>
+		</tr>
+	</table>
 </form>
 
 <?php
@@ -140,6 +166,73 @@ else {
 	display_results("check for wget:", check_binary("wget"));
 	display_results("check for unzip:", check_binary("unzip"));
 	display_results("check for cksfv:", check_binary("cksfv"));
+	# OS depending things
+	$osString = php_uname('s');
+	if(isset($osString)) {
+		if(!(stristr($osString, 'linux') === false)) { // linux
+			display_results("check for loadavg:", check_binary("loadavg"));
+			display_results("check for netstat:", check_binary("netstat"));
+		}
+		elseif(!(stristr($osString, 'bsd') === false)) { // bsd
+			display_results("check for fstat:", check_binary("fstat"));
+			display_results("check for sockstat:", check_binary("sockstat"));
+		}
+	}
+	# Database depending things
+	if($_POST['db_type'] == "mysql") {
+		display_results("PHP MySQL Support:", check_extension("mysql"));
+		$link = mysql_connect($_POST['db_host'], $_POST['db_user'], $_POST['db_pass']);
+		if($link) {
+			display_results("check MySQL Connection:", array(
+				'title' => "Successfully connected.",
+				'status' => 1,
+			));
+		}
+		else {
+			display_results("check MySQL Connection:", array(
+				'title' => "Connection failed.",
+				'status' => 0,
+			));
+		}
+		if(mysql_select_db($_POST['db_name'])) {
+			display_results("check MySQL Database:", array(
+				'title' => "Successfully selected Database.",
+				'status' => 1,
+			));
+		}
+		else {
+			display_results("check MySQL Database:", array(
+				'title' => "Selecting Database failed.",
+				'status' => 0,
+			));
+		}
+	}
+	elseif($_POST['db_type'] == "sqlite") {
+		display_results("PHP SQLite Support:", check_extension("SQLite"));
+		if(is_file($_POST['db_name'])) {
+			$exists = 1;
+		}
+		else {
+			$exists = 0;
+		}
+		if(sqlite_open($_POST['db_name'])) {
+			# delete database if not needed
+			if ($exists == "0" && $_POST['op'] == "1") {
+				unlink($_POST['db_name']);
+			}
+			display_results("check SQLite Database:", array(
+				'title' => "Database exists.",
+				'status' => 1,
+			));
+		}
+		else {
+			display_results("check SQLite Database:", array(
+				'title' => "No Database exists.",
+				'status' => 0,
+			));
+		}
+	}
+
 ?>
 </table>
 <?php
