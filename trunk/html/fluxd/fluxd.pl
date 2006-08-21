@@ -767,27 +767,27 @@ sub status {
 
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		$modules .= "  * Qmgr.pm : \n";
+		$modules .= "  * Qmgr.pm\n";
 		$status .= $qmgr->status();
 	}
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		$modules .= "  * Fluxinet.pm : \n";
+		$modules .= "  * Fluxinet.pm\n";
 		$status .= eval { $fluxinet->status(); };
 	}
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		$modules .= "  * Clientmaint.pm : \n";
+		$modules .= "  * Clientmaint.pm\n";
 		$status .= eval { $clientmaint->status(); };
 	}
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
-		$modules .= "  * Watch.pm : \n";
+		$modules .= "  * Watch.pm\n";
 		$status .= eval { $watch->status(); };
 	}
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		$modules .= "  * Trigger.pm : \n";
+		$modules .= "  * Trigger.pm\n";
 		$status .= eval { $trigger->status(); };
 	}
 	return "$status $modules";
