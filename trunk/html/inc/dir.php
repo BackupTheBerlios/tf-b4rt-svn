@@ -24,10 +24,24 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+// -----------------------------------------------------------------------------
+
+// restricted file-entries
+$restrictedFileEntries = array(
+	"lost+found",
+	"CVS",
+	"Temporary Items",
+	"Network Trash Folder",
+	"TheVolumeSettingsFolder"
+);
+
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 require_once("config.php");
 require_once("functions.php");
 
-
+// check user path
 checkUserPath();
 
 // Setup some defaults if they are not set.
@@ -47,8 +61,8 @@ if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 
 // Are we to delete something?
 if ($del != "") {
-	// only do if no dot-file
-	if (substr(basename($del), 0, 1) != ".") {
+	// only valid entry
+	if (isValidEntry(basename($del))) {
 		$current = delDirEntry($del);
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg['user']." tried to delete ".$del);
@@ -68,8 +82,8 @@ if ($del != "") {
 
 // Are we to download something?
 if ($down != "" && $cfg["enable_file_download"]) {
-	// only do if no dot-file
-	if (substr(basename($down), 0, 1) != ".") {
+	// only valid entry
+	if (isValidEntry(basename($down))) {
 		$current = "";
 		// Yes, then download it
 		// we need to strip slashes twice in some circumstances
@@ -133,8 +147,8 @@ if ($down != "" && $cfg["enable_file_download"]) {
 
 // Are we to download something as archive ?
 if ($tar != "" && $cfg["enable_file_download"]) {
-	// only do if no dot-file
-	if (substr(basename($tar), 0, 1) != ".") {
+	// only valid entry
+	if (isValidEntry(basename($tar))) {
 		$current = "";
 		// Yes, then tar and download it
 		// we need to strip slashes twice in some circumstances
@@ -254,7 +268,8 @@ while($entry = readdir($handle))
 natsort($entrys);
 $dirlist1 = array();
 foreach($entrys as $entry) {
-	if ((substr($entry, 0, 1) != ".") && ($entry != "lost+found")) {
+	// only valid entry
+	if (isValidEntry($entry)) {
 		if (@is_dir($dirName.$entry)) {
 			$is_dir = 1;
 			// Some Stats dir hack
@@ -343,7 +358,8 @@ while($entry = readdir($handle))
 natsort($entrys);
 $dirlist2 = array();
 foreach($entrys as $entry) {
-	if (substr($entry, 0, 1) != ".") {
+	// only valid entry
+	if (isValidEntry($entry)) {
 		if (!@is_dir($dirName.$entry)) {
 			$no_dir = 1;
 			$arStat = @lstat($dirName.$entry);
@@ -477,6 +493,27 @@ function getExtension($fileName) {
 	if (substr($ext,0,1)==".") {$ext = substr($ext,((-1 * strlen($ext))+1)); } else {$ext = $noExtensionFile;}
 	//Return the extension
 	return strtolower($ext);
+}
+
+/**
+ * checks if file/dir is valid.
+ *
+ * @param $fileEntry
+ * @return true/false
+ */
+function isValidEntry($entry) {
+	global $restrictedFileEntries;
+	// check if dot-entry
+	if (substr($entry, 0, 1) == ".")
+		return false;
+	// check if weirdo macos-entry
+	if (substr($entry, 0, 1) == ":")
+		return false;
+	// check if in restricted array
+	if (in_array($entry, $restrictedFileEntries))
+		return false;
+	// entry ok
+	return true;
 }
 
 # define some things
