@@ -81,14 +81,17 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 		$tmpl->setvar('is_valid', 1);
 		 $targetDir = checkDirPathString($targetDir);
 		// move
-		$cmd = "mv \"".$cfg["path"].$_POST['file']."\" ".$targetDir."";
+		$cmd = "mv \"".$cfg["path"].$_POST['file']."\" \"".$targetDir."\"";
 		$cmd .= ' 2>&1';
 		$handle = popen($cmd, 'r' );
 		// get the output and print it.
 		$gotError = -1;
-		$buff = fgets($handle);
+		$buff= "";
+		while(!feof($handle)) {
+			$buff .= fgets($handle,30);
+			$gotError = $gotError + 1;
+		}
 		$tmpl->setvar('buff', nl2br($buff));
-		$gotError = $gotError + 1;
 		pclose($handle);
 		if($gotError <= 0) {
 			$tmpl->setvar('got_no_error', 1);
