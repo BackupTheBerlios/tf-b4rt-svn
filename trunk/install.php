@@ -27,10 +27,16 @@ function check_binary($binary) {
 	$paths = array("/bin/", "/usr/bin/", "/usr/local/bin");
 	foreach($paths as $path) {
 		if (is_file($path.$binary)) {
-			return $binary." found in ".$path.$binary;
+			return array(
+				'title' => $binary." found in ".$path.$binary.".",
+				'status' => 1,
+			);
 		}
 	}
-	return $binary." not found";
+	return array(
+		'title' => $binary." NOT found.",
+		'status' => 0,
+	);
 }
 
 # check_extension
@@ -39,11 +45,15 @@ function check_binary($binary) {
 function check_extension($extension) {
 	$load_ext = get_loaded_extensions();
 	if (in_array($extension, $load_ext)) {
-		return "php extension ".$extension." found.";
+		return array(
+			'title' => "php extension ".$extension." found.",
+			'status' => 1,
+		);
 	}
-	else {
-		return "php extension ".$extension." NOT found.";
-	}
+	return array(
+		'title' => "php extension ".$extension." NOT found.",
+		'status' => 0,
+	);
 }
 
 # check_config
@@ -51,11 +61,15 @@ function check_extension($extension) {
 # op: name of the setting
 function check_config($config) {
 	if(!ini_get($config)) {
-		return "Setting ".$config." is proper set.";
+		return array(
+			'title' => "Setting ".$config." is proper set.",
+			'status' => 1,
+		);
 	}
-	else {
-		return "Setting ".$config." is not proper set.";
-	}
+	return array(
+		'title' => "Setting ".$config." is NOT proper set.",
+		'status' => 0,
+	);
 }
 
 # display_results
@@ -70,7 +84,15 @@ function display_results($title, $result) {
 	$return .= "</b>";
 	$return .= "</td>";
 	$return .= "<td>";
-	$return .= $result;
+	$return .= $result['title'];
+	$return .= "</td>";
+	$return .= "<td>";
+	if ($result['status'] == 1) {
+		$return .= "Done";
+	}
+	else {
+		$return .= "<b>Failed!</b>";
+	}
 	$return .= "</td>";
 	$return .= "</tr>";
 	echo $return;
