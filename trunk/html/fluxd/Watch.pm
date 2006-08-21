@@ -174,7 +174,7 @@ sub main {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Watch.pm Revision ".$VERSION."=-\n\n";
+	$return .= "\n-= Watch.pm Revision ".$VERSION." =-\n\n";
 	$return .= "Watch.pm is currently running\n";
 	return $return;
 }
