@@ -38,7 +38,7 @@ use FluxdCommon;
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
 my $PATH_TORRENT_DIR = ".torrents";
-my $PATH_DATA_DIR = ".fluxd";
+our $PATH_DATA_DIR = ".fluxd";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
@@ -452,7 +452,7 @@ sub loadServiceModules {
 		if (!(exists &Clientmaint::new)) {
 			if (eval "require Clientmaint") {
 				$clientmaint = Clientmaint->new();
-				$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
+				$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_interval"));
 				if ($clientmaint->getState() < 1) {
 					print STDERR "error initializing service-module Clientmaint :\n";
 					print STDERR $clientmaint->getMessage()."\n";
@@ -761,35 +761,36 @@ sub deletePidFile {
 # Returns: Server information page                                             #
 #------------------------------------------------------------------------------#
 sub status {
-	my $retval = "";
-	$retval .= "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
-	$retval .= "Loaded Modules :\n";
+	my $status = "";
+	my $modules = "\nLoaded Modules :\n";
+	$status .= "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
+
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		$retval .= "  * Qmgr.pm : ";
-		$retval .= eval { $qmgr->status(); };
+		$modules .= "  * Qmgr.pm : \n";
+		$status .= eval { $qmgr->status(); };
 	}
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		$retval .= "  * Fluxinet.pm : ";
-		$retval .= eval { $fluxinet->status(); };
+		$modules .= "  * Fluxinet.pm : \n";
+		$status .= eval { $fluxinet->status(); };
 	}
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		$retval .= "  * Clientmaint.pm : ";
-		$retval .= eval { $clientmaint->status(); };
+		$modules .= "  * Clientmaint.pm : \n";
+		$status .= eval { $clientmaint->status(); };
 	}
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
-		$retval .= "  * Watch.pm : ";
-		$retval .= eval { $watch->status(); };
+		$modules .= "  * Watch.pm : \n";
+		$status .= eval { $watch->status(); };
 	}
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		$retval .= "  * Trigger.pm : ";
-		$retval .= eval { $trigger->status(); };
+		$modules .= "  * Trigger.pm : \n";
+		$status .= eval { $trigger->status(); };
 	}
-	return $retval;
+	return "$status $modules";
 }
 
 #------------------------------------------------------------------------------#
@@ -1090,7 +1091,7 @@ sub check {
 	if (eval "require Clientmaint") {
 		eval {
 			$clientmaint = Clientmaint->new();
-			$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_intervall"));
+			$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_interval"));
 			if ($clientmaint->getState() < 1) {
 				print "error initializing service-module Clientmaint :\n";
 				print $clientmaint->getMessage()."\n";

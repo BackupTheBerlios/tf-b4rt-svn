@@ -41,8 +41,8 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
-# run-intervall
-my $intervall;
+# run-interval
+my $interval;
 
 # time of last run
 my $time_last_run = 0;
@@ -85,17 +85,17 @@ sub initialize {
 	shift; # class
 
 	# $port
-	$intervall = shift;
-	if (!(defined $intervall)) {
+	$interval = shift;
+	if (!(defined $interval)) {
 		# message
-		$message = "intervall not defined";
+		$message = "interval not defined";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 
-	print "initializing Clientmaint (intervall: ".$intervall.")\n"; # DEBUG
+	print "initializing Clientmaint (interval: ".$interval.")\n"; # DEBUG
 
 	# reset last run time
 	$time_last_run = 0;
@@ -141,7 +141,7 @@ sub getMessage {
 #------------------------------------------------------------------------------#
 sub main {
 	my $now = time();
-	if (($now - $time_last_run) >= $intervall) {
+	if (($now - $time_last_run) >= $interval) {
 
 		print "Clientmaint::main : now \"".$now."\" ; time_last_run \"".$time_last_run."\"\n"; # DEBUG
 
@@ -164,6 +164,7 @@ sub set {
 # Returns: Status information                                                  #
 #------------------------------------------------------------------------------#
 sub status {
+	return "Clientmaint is currently running\n";
 }
 
 ################################################################################
