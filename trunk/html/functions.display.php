@@ -24,6 +24,7 @@
 //XFER: displayXferBar(max_bytes, used_bytes, title)
 //XFER: displays xfer percentage bar
 function displayXferBar($total, $used, $title) {
+	
 	global $cfg;
 	$remaining = max(0,$total-$used/(1024*1024));
 	$percent = round($remaining/$total*100,0);
@@ -33,36 +34,33 @@ function displayXferBar($total, $used, $title) {
 	$bgcolor .= str_pad(dechex(255*($percent/150)),2,0,STR_PAD_LEFT);
 	$bgcolor .='00';
 	$displayXferBar = '<tr>';
-	$displayXferBar .= '<td width="2%" nowrap align="right"><div class="tiny">'.$title.'</div></td>';
-	$displayXferBar .= '<td width="92%">';
-	$displayXferBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
-	$displayXferBar .= '<td bgcolor="'.$bgcolor.'" width="'.($percent+1).'%">';
-	if ($percent >= 50) {
-		$displayXferBar .= '<div class="tinypercent" align="center"';
-		if ($percent == 100) {
-			$displayXferBar .= ' style="background:#ffffff;">';
+	  $displayXferBar .= '<td width="2%" nowrap align="right"><div class="tiny">'.$title.'</div></td>';
+	  $displayXferBar .= '<td width="92%">';
+		$displayXferBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
+		$displayXferBar .= '<td bgcolor="'.$bgcolor.'" width="'.($percent+1).'%">';
+		if ($percent >= 50) {
+			$displayXferBar .= '<div class="tinypercent" align="center"';
+			if ($percent == 100)
+				$displayXferBar .= ' style="background:#ffffff;">';
+			else
+				$displayXferBar .= '>';
+			$displayXferBar .= $percent.'%'.$text;
+			$displayXferBar .= '</div>';
 		}
-		$displayXferBar .=
-		$displayXferBar .= '>';
-		$displayXferBar .= $percent.'%'.$text;
-		$displayXferBar .= '</div>';
-	}
-	$displayXferBar .= '</td>';
-	$displayXferBar .= '<td bgcolor="#000000" width="'.(100-$percent).'%" height="100%">';
-	if ($percent < 50) {
-		$displayXferBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
-		if ($percent == 0) {
-			$displayXferBar .= '; background:#ffffff;">';
+		$displayXferBar .= '</td>';
+		$displayXferBar .= '<td bgcolor="#000000" width="'.(100-$percent).'%" height="100%">';
+		if ($percent < 50) {
+			$displayXferBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
+			if ($percent == 0)
+				$displayXferBar .= '; background:#ffffff;">';
+			else
+				$displayXferBar .= ';">';
+			$displayXferBar .= $percent.'%'.$text;
+			$displayXferBar .= '</div>';
 		}
-		else {
-			$displayXferBar .= ';">';
-		}
-		$displayXferBar .= $percent.'%'.$text;
-		$displayXferBar .= '</div>';
-	}
-	$displayXferBar .= '</td>';
-	$displayXferBar .= '</tr></table>';
-	$displayXferBar .= '</td>';
+		$displayXferBar .= '</td>';
+		$displayXferBar .= '</tr></table>';
+	  $displayXferBar .= '</td>';
 	$displayXferBar .= '</tr>';
 	return $displayXferBar;
 }

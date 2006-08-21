@@ -287,7 +287,7 @@ if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('xfer_month', displayXferBar($cfg['xfer_month'],$xfer_total['month']['total'],_XFERTHRU.' '.$monthText.':'));
 	}
 	if ($cfg['xfer_total']) {
-		$tmpl->setvar('xfer_month', displayXferBar($cfg['xfer_total'],$xfer_total['total']['total'],_TOTALXFER.':'));
+		$tmpl->setvar('xfer_total', displayXferBar($cfg['xfer_total'],$xfer_total['total']['total'],_TOTALXFER.':'));
 	}
 }
 
