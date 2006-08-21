@@ -28,8 +28,7 @@ require_once("functions.php");
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/renameFolder.tmpl");
-}
-else {
+} else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/renameFolder.tmpl");
 }
 
