@@ -27,10 +27,12 @@
 								<td><div class="tiny"><strong><tmpl_var name="_ID_PORT"></strong></div></td>
 							</tr>
 							<tmpl_if name="hosts">
-								<tr>
-									<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="host"></div></td>
-									<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="port"></div></td>
-								</tr>
+								<tmpl_loop name="list_host">
+									<tr>
+										<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="host"></div></td>
+										<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="port"></div></td>
+									</tr>
+								</tmpl_loop>
 							</tmpl_if>
 						</tmpl_if>
 						<tmpl_if name="error">

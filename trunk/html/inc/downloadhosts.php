@@ -76,6 +76,7 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 	$tmpl->setvar('_ID_HOST', _ID_HOST);
 	$tmpl->setvar('_ID_PORT', _ID_PORT);
 	$hostAry = array_keys($torrent_hosts);
+	$list_host = array();
 	foreach ($hostAry as $host) {
 		$host = @trim($host);
 		$port = @trim($torrent_hosts[$host]);
@@ -84,10 +85,14 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 		}
 		if ($host != "") {
 			$tmpl->setvar('hosts', 1);
-			$tmpl->setvar('host', $host);
-			$tmpl->setvar('port', $port);
+			array_push($list_host, array(
+				'host' => $host,
+				'port' => $port,
+				)
+			);
 		}
 	}
+	$tmpl->setloop('list_host', $list_host);
 }
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
