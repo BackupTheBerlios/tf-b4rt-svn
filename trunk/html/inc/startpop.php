@@ -28,61 +28,42 @@ require_once("config.php");
 require_once("functions.php");
 require_once("metaInfo.php");
 
-
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/startpop.tmpl");
-}
-else {
+} else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/startpop.tmpl");
 }
 
-$torrent = getRequestVar('torrent');
-// Load saved settings
+// default bt-client
 $btclient_default = $cfg["btclient"];
-$torrentExists = loadTorrentSettingsToConfig($torrent);
-// savepath
-if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
-	$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+
+// get torren-param
+$torrent = getRequestVar('torrent');
+
 // torrent exists ?
 $torrentExists = (getTorrentDataSize($torrent) > 0);
+
 // display name
 $displayName = $torrent;
 if(strlen($displayName) >= 55) {
 	$displayName = substr($displayName, 0, 52)."...";
 }
+
+// set some template-vars
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 $tmpl->setvar('displayName', $displayName);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('torrent', $torrent);
+$tmpl->setvar('torrentExists', $torrentExists);
 $tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 if ($cfg["enable_btclient_chooser"] != 0)
 	$tmpl->setvar('btClientSelect', getBTClientSelect($btclient_default));
 else
 	$tmpl->setvar('btclientDefault', $btclient_default);
-$tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
-$tmpl->setvar('max_uploads', $cfg["max_uploads"]);
-$tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
-$tmpl->setvar('maxcons', $cfg["maxcons"]);
-$tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
-if($cfg["AllowQueing"] == true) {
-	$tmpl->setvar('is_queue', 1);
-// Force Queuing if not an admin.
-	if (IsAdmin()) {
-		$tmpl->setvar('is_admin', 1);
-	}
-}
-$selected = "";
-if ($cfg["torrent_dies_when_done"] == "False") {
-	$selected = "selected";
-}
-$tmpl->setvar('selected', $selected);
-$tmpl->setvar('minport', $cfg["minport"]);
-$tmpl->setvar('maxport', $cfg["maxport"]);
-$tmpl->setvar('sharekill', $cfg["sharekill"]);
+
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-$tmpl->setvar('savepath', $cfg["savepath"]);
 $tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
 if ($torrentExists) {
 	$tmpl->setvar('torrent_exists', 1);
@@ -96,25 +77,22 @@ $tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 
 # profiles
-
 $sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 list($user_level) = $db->GetRow($sql);
-
 if ($cfg["enable_transfer_profile"] == "1") {
 	if($cfg['transfer_profile_level'] >= "1" || $user_level >= "1") {
 		$with_profiles = 1;
-	}
-	else {
+	} else {
 		$with_profiles = 0;
 	}
-}
-else {
+} else {
 	$with_profiles = 0;
 }
 $tmpl->setvar('with_profiles', $with_profiles);
 if ($with_profiles == "1") {
 	$profile = getRequestVar('profile');
-	if(isset($profile) && $profile != "") {
+	if(isset($profile) && $profile != "" && $profile != "last_used") {
+		$tmpl->setvar('useLastSettings', 0);
 		//load custom settings
 		$settings = GetProfileSettings($profile);
 		$tmpl->setvar('minport', $settings["minport"]);
@@ -137,6 +115,15 @@ if ($with_profiles == "1") {
 		}
 		$tmpl->setvar('superseeder', $superseeder);
 		$tmpl->setvar('superseederValue', $settings['superseeder']);
+		// Load saved settings
+		loadTorrentSettingsToConfig($torrent);
+		// savepath
+		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
+			$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+		$tmpl->setvar('savepath', $cfg["savepath"]);
+	} else {
+		$tmpl->setvar('useLastSettings', 1);
+		setVarsFromPersistentSettings();
 	}
 	// load profile list
 	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1") {
@@ -152,14 +139,57 @@ if ($with_profiles == "1") {
 	else {
 		$tmpl->setvar('with_profiles', 0);
 	}
-	// customize settings	
+	// customize settings
 	if($cfg['transfer_customize_settings'] == "2") {
 		$tmpl->setvar('customize_settings', 1);
 	}
 	elseif($cfg['transfer_customize_settings'] == "1" && $user_level >= "1") {
 		$tmpl->setvar('customize_settings', 1);
 	}
+} else {
+	setVarsFromPersistentSettings();
 }
 
+// parse template
 $tmpl->pparse();
+
+
+/**
+ * setVarsFromPersistentSettings
+ *
+ */
+function setVarsFromPersistentSettings() {
+	global $cfg, $tmpl, $torrent;
+
+	// Load saved settings
+	loadTorrentSettingsToConfig($torrent);
+
+	// set settings
+	$tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
+	$tmpl->setvar('max_uploads', $cfg["max_uploads"]);
+	$tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
+	$tmpl->setvar('maxcons', $cfg["maxcons"]);
+	$tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
+	if($cfg["AllowQueing"] == true) {
+		$tmpl->setvar('is_queue', 1);
+		// Force Queuing if not an admin.
+		if (IsAdmin()) {
+			$tmpl->setvar('is_admin', 1);
+		}
+	}
+	$selected = "";
+	if ($cfg["torrent_dies_when_done"] == "False") {
+		$selected = "selected";
+	}
+	$tmpl->setvar('selected', $selected);
+	$tmpl->setvar('minport', $cfg["minport"]);
+	$tmpl->setvar('maxport', $cfg["maxport"]);
+	$tmpl->setvar('sharekill', $cfg["sharekill"]);
+
+	// savepath
+	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
+		$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+	$tmpl->setvar('savepath', $cfg["savepath"]);
+}
+
 ?>

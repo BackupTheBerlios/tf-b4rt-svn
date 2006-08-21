@@ -130,11 +130,15 @@ function isNumber(sText)
 									<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
 									<td align="center" colspan="2">Profile:
 										<select name="profile" size="1" onChange="javascript:submit();">
-											<option value="">default</option>
+											<tmpl_if name="torrentExists">
+												<option value="last_used" selected>Last used Settings</option>
+											<tmpl_else>
+												<option value="">default</option>
+											</tmpl_if>
 											<tmpl_loop name="profiles">
 												<tmpl_if name="profiles">
 													<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
-													</tmpl_if>
+												</tmpl_if>
 											</tmpl_loop>
 											<tmpl_if name="public_profiles">
 												<optgroup label="Public" style="background-color: #00EC00">
