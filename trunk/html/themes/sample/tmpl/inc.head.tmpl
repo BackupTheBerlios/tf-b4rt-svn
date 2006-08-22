@@ -1,0 +1,78 @@
+<html>
+<head>
+	<title><tmpl_var name="pagetitle"></title>
+	<link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+	<link rel="StyleSheet" href="themes/<tmpl_var name="theme">/css/style.css" TYPE="text/css" />
+	<link rel="alternate" title="Transfer-Stats" href="stats.php?f=rss" type="application/rss+xml" />
+	<meta http-equiv="Pragma" content="no-cache; charset=ISO-8859-1" />
+	<tmpl_if name="page_refresh">
+		<meta http-equiv="REFRESH" content="<tmpl_var name="page_refresh">;URL=index.php?page=index" />
+		<script language="JavaScript">
+			var var_refresh = <tmpl_var name="page_refresh">;
+			function UpdateRefresh() {
+				document.getElementById("span_refresh").innerHTML = String(var_refresh--);
+				setTimeout("UpdateRefresh();", 1000);
+			}
+		</script>
+	</tmpl_if>
+	<tmpl_if name="deref">
+		<meta http-equiv="REFRESH" content="0;URL=<tmpl_var name="_REQUEST">" />
+	</tmpl_if>
+	<tmpl_if name="refresh_details">
+		<meta http-equiv="REFRESH" content="5">
+	</tmpl_if>
+	<tmpl_if name="index_page" value="tf">
+		<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>
+		<script language="JavaScript">
+			var ol_closeclick = "1";
+			var ol_close = "<font color=#ffffff><b>X</b></font>";
+			var ol_fgclass = "fg";
+			var ol_bgclass = "bg";
+			var ol_captionfontclass = "overCaption";
+			var ol_closefontclass = "overClose";
+			var ol_textfontclass = "overBody";
+			var ol_cap = "&nbsp;Torrent Status";
+		</script>
+		<script src="overlib.js" type="text/javascript"></script>
+	</tmpl_if>
+	<script language="JavaScript">
+		function ShowDetails(name_file) {
+			window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=<tmpl_var name="ui_dim_details_w">,height=<tmpl_var name="ui_dim_details_h">')
+		}
+		function StartTorrent(name_file) {
+			<tmpl_if name="showdirtree">
+				window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=700,height=675')
+			<tmpl_else>
+				window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=700,height=555')
+			</tmpl_if>
+		}
+		function ConfirmDelete(file) {
+			return confirm("<tmpl_var name="_ABOUTTODELETE">: " + file)
+		}
+	</script>
+	<style>
+		form {margin: 0px; padding: 0px; display: inline;}
+	</style>
+	<tmpl_if name="enable_sorttable">
+		<script src="sorttable.js" type="text/javascript"></script>
+		<style type="text/css">
+			table.sortable a.sortheader {
+				color: white;
+				text-decoration: none;
+				font-weight: bold;
+			}
+			table.sortable span.sortarrow {
+				color: white;
+				text-decoration: none;
+			}
+		</style>
+	</tmpl_if>
+	<script type="text/javascript">
+	function CheckSFV(dir,file) {
+		var width = screen.width/2-300;
+		var height = screen.height/2-110;
+		var InfoWin = window.open("index.php?page=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
+	}
+	</script>
+</head>

@@ -1,0 +1,339 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+<head>
+	<title><tmpl_var name="_RUNTORRENT"> - <tmpl_var name="displayName"></title>
+	<LINK REL="StyleSheet" HREF="themes/<tmpl_var name="theme">/css/style.css" TYPE="text/css" />
+	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<script language="JavaScript">
+function StartTorrent()
+{
+
+	if (ValidateValues())
+	{
+		document.theForm.submit();
+	}
+}
+function ValidateValues()
+{
+
+	var rtnValue = true;
+	var msg = "";
+	if (isNumber(document.theForm.rate.value) == false)
+	{
+		msg = msg + "* Max Upload Rate must be a valid number.\n";
+		document.theForm.rate.focus();
+	}
+	if (isNumber(document.theForm.drate.value) == false)
+	{
+		msg = msg + "* Max Download Rate must be a valid number.\n";
+		document.theForm.drate.focus();
+	}
+	if (isNumber(document.theForm.maxuploads.value) == false)
+	{
+		msg = msg + "* Max # Uploads must be a valid number.\n";
+		document.theForm.maxuploads.focus();
+	}
+	if ((isNumber(document.theForm.minport.value) == false) || (isNumber(document.theForm.maxport.value) == false))
+	{
+		msg = msg + "* Port Range must have valid numbers.\n";
+		document.theForm.minport.focus();
+	}
+	if (isNumber(document.theForm.rerequest.value) == false)
+	{
+		msg = msg + "* Rerequest Interval must be a valid number.\n";
+		document.theForm.rerequest.focus();
+	}
+	if (document.theForm.rerequest.value < 10)
+	{
+		msg = msg + "* Rerequest Interval must be 10 or greater.\n";
+		document.theForm.rerequest.focus();
+	}
+	if (isNumber(document.theForm.sharekill.value) == false)
+	{
+		msg = msg + "* Keep seeding until Sharing % must be a valid number.\n";
+		document.theForm.sharekill.focus();
+	}
+	if ((document.theForm.maxport.value > 65535) || (document.theForm.minport.value > 65535))
+	{
+		msg = msg + "* Port can not be higher than 65535.\n";
+		document.theForm.minport.focus();
+	}
+	if ((document.theForm.maxport.value < 0) || (document.theForm.minport.value < 0))
+	{
+		msg = msg + "* Can not have a negative number for port value.\n";
+		document.theForm.minport.focus();
+	}
+	if (document.theForm.maxport.value < document.theForm.minport.value)
+	{
+		msg = msg + "* Port Range is not valid.\n";
+		document.theForm.minport.focus();
+	}
+	// b4rt-2
+	if (isNumber(document.theForm.maxcons.value) == false) {
+		msg = msg + "* Max # Connections must be a valid number.\n";
+		document.theForm.maxcons.focus();
+	}
+	// b4rt-2
+	if (msg != "")
+	{
+		rtnValue = false;
+		alert("Please check the following:\n\n" + msg);
+	}
+
+	return rtnValue;
+}
+
+function CheckShareState()
+{
+
+	var obj = document.getElementById('sharekiller');
+	if (document.theForm.runtime.value == "True")
+	{
+		obj.style.visibility = "hidden";
+	}
+	else
+	{
+		obj.style.visibility = "visible";
+	}
+}
+
+function isNumber(sText)
+{
+	var ValidChars = "-0123456789";
+	var IsNumber = true;
+	var Char;
+
+	for (i = 0; i < sText.length && IsNumber == true; i++)
+	{
+		Char = sText.charAt(i);
+		if (ValidChars.indexOf(Char) == -1)
+		{
+			IsNumber = false;
+		}
+	}
+
+	return IsNumber;
+}
+</script>
+</head>
+<body bgcolor="#d6dfe6">
+<div align="center">
+	<strong><tmpl_var name="displayName"></strong><br>
+	<table width="98%" border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<td>
+				<table width="100%" cellpadding="2" cellspacing="0" border="0">
+						<tmpl_if name="with_profiles">
+						    <tr>
+								<form name="profile" action="index.php?page=startpop" method="POST">
+									<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+									<td align="center" colspan="2">Profile:
+										<select name="profile" size="1" onChange="javascript:submit();">
+											<tmpl_if name="torrentExists">
+												<option value="last_used" selected>Last used Settings</option>
+											<tmpl_else>
+												<option value="">default</option>
+											</tmpl_if>
+											<tmpl_loop name="profiles">
+												<tmpl_if name="profiles">
+													<option value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+												</tmpl_if>
+											</tmpl_loop>
+											<tmpl_if name="public_profiles">
+												<optgroup label="Public" style="background-color: #00EC00">
+													<tmpl_loop name="public_profiles">
+														<option style="background-color: #FFFFFF" value="<tmpl_var name="name">"<tmpl_if name="is_selected"> selected</tmpl_if>><tmpl_var name="name"></option>
+													</tmpl_loop>
+												</optgroup>
+											</tmpl_if>
+										</select>
+									</td>
+								</form>
+								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<input type="hidden" name="interactive" value="true">
+								<input type="hidden" name="closeme" value="true">
+								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+								<td align="center" colspan="2">
+									<tmpl_if name="enableBtclientChooser">
+										BitTorrent-Client : <tmpl_var name="btClientSelect">
+									<tmpl_else>
+										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
+									</tmpl_if>
+								</td>
+							</tr>
+							<tmpl_if name="customize_settings">
+								<tr>
+									<td align="right">Max Upload Rate:</td>
+									<td><input type="Text" name="rate" maxlength="4" size="4" value="<tmpl_var name="max_upload_rate">"> kB/s</td>
+									<td align="right">Max # Uploads:</td>
+									<td><input type="Text" name="maxuploads" maxlength="2" size="2" value="<tmpl_var name="max_uploads">"></td>
+								</tr>
+								<tr>
+									<td align="right" valign="top">Max Download Rate:</td>
+									<td valign="top"><input type="Text" name="drate" maxlength="4" size="4" value="<tmpl_var name="max_download_rate">"> kB/s<font class="tiny"> (0 = max)</font></td>
+									<td align="right" valign="top">Max Connections:</td>
+									<td align="left"><input type="Text" name="maxcons" maxlength="4" size="4" value="<tmpl_var name="maxcons">"></td>
+								</tr>
+								<tr>
+									<td align="right" valign="top">Rerequest Interval:</td>
+									<td valign="top"><input type="Text" name="rerequest" maxlength="5" size="5" value="<tmpl_var name="rerequest_interval">"></td>
+									<td align="right" valign="top"><input type="Checkbox" name="superseeder" value="1" <tmpl_var name="superseeder">>Super Seeder<font class="tiny"> (dedicated seed only)</font></td>
+									<td align="Left" valign="top">
+										&nbsp;
+									</td>
+								</tr>
+								<tr>
+									<td align="right">Completion:</td>
+									<td>
+										<select name="runtime" onchange="CheckShareState()">
+											<option value="True">Die When Done</option>
+											<option value="False" <tmpl_var name="selected">>Keep Seeding</option>
+										</select>
+									</td>
+									<td align="right">Port Range:</td>
+									<td>
+										<input type="Text" name="minport" maxlength="5" size="5" value="<tmpl_var name="minport">">
+										-
+										<input type="Text" name="maxport" maxlength="5" size="5" value="<tmpl_var name="maxport">">
+									</td>
+								</tr>
+								<tr>
+									<td colspan="4" align="center">
+										<div ID="sharekiller" align="center" style="visibility:hidden;">
+											Keep seeding until Sharing is: <input type="Text" name="sharekill" maxlength="4" size="4" value="<tmpl_var name="sharekill">">%<font class="tiny">  (0% will keep seeding)</font>
+											&nbsp;
+										</div>
+									</td>
+								</tr>
+							<tmpl_else>
+								<input type="hidden" name="rate" value="<tmpl_var name="max_upload_rate">">
+								<input type="hidden" name="maxuploads" value="<tmpl_var name="max_uploads">">
+					 			<input type="hidden" name="drate" value="<tmpl_var name="max_download_rate">">
+					 			<input type="hidden" name="maxcons" value="<tmpl_var name="maxcons">">
+								<input type="hidden" name="rerequest" value="<tmpl_var name="rerequest_interval">">
+								<input type="hidden" name="superseeder" value="<tmpl_var name="superseederValue">">
+								<input type="hidden" name="runtime" value="<tmpl_var name="runtimeValue">">
+								<input type="hidden" name="minport" value="<tmpl_var name="minport">">
+								<input type="hidden" name="maxport" value="<tmpl_var name="maxport">">
+								<input type="hidden" name="sharekill" value="<tmpl_var name="sharekill">">
+							</tmpl_if>
+						<tmpl_else>
+						    <tr>
+								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<input type="hidden" name="interactive" value="true">
+								<input type="hidden" name="closeme" value="true">
+								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+								<td align="center" colspan="4">
+									<tmpl_if name="enableBtclientChooser">
+										BitTorrent-Client : <tmpl_var name="btClientSelect">
+									<tmpl_else>
+										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
+									</tmpl_if>
+								</td>
+						    </tr>
+							<tr>
+								<td align="right">Max Upload Rate:</td>
+								<td><input type="Text" name="rate" maxlength="4" size="4" value="<tmpl_var name="max_upload_rate">"> kB/s</td>
+								<td align="right">Max # Uploads:</td>
+								<td><input type="Text" name="maxuploads" maxlength="2" size="2" value="<tmpl_var name="max_uploads">"></td>
+							</tr>
+							<tr>
+								<td align="right" valign="top">Max Download Rate:</td>
+								<td valign="top"><input type="Text" name="drate" maxlength="4" size="4" value="<tmpl_var name="max_download_rate">"> kB/s<font class="tiny"> (0 = max)</font></td>
+								<td align="right" valign="top">Max Connections:</td>
+								<td align="left"><input type="Text" name="maxcons" maxlength="4" size="4" value="<tmpl_var name="maxcons">"></td>
+							</tr>
+							<tr>
+								<td align="right" valign="top">Rerequest Interval:</td>
+								<td valign="top"><input type="Text" name="rerequest" maxlength="5" size="5" value="<tmpl_var name="rerequest_interval">"></td>
+								<td align="right" valign="top"><input type="Checkbox" name="superseeder" value="1" <tmpl_var name="superseeder">>Super Seeder<font class="tiny"> (dedicated seed only)</font></td>
+								<td align="Left" valign="top">
+									&nbsp;
+								</td>
+							</tr>
+							<tr>
+								<td align="right">Completion:</td>
+								<td>
+									<select name="runtime" onchange="CheckShareState()">
+										<option value="True">Die When Done</option>
+										<option value="False" <tmpl_var name="selected">>Keep Seeding</option>
+									</select>
+								</td>
+								<td align="right">Port Range:</td>
+								<td>
+									<input type="Text" name="minport" maxlength="5" size="5" value="<tmpl_var name="minport">">
+									-
+									<input type="Text" name="maxport" maxlength="5" size="5" value="<tmpl_var name="maxport">">
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4" align="center">
+									<div ID="sharekiller" align="center" style="visibility:hidden;">
+										Keep seeding until Sharing is: <input type="Text" name="sharekill" maxlength="4" size="4" value="<tmpl_var name="sharekill">">%<font class="tiny">  (0% will keep seeding)</font>
+										&nbsp;
+									</div>
+								</td>
+							</tr>
+						</tmpl_if>
+					</table>
+					<tmpl_if name="showdirtree">
+						<table>
+							<tr>
+								<td aligh="right">Save Path:</td>
+								<td colspan="3"><input type="text" name="savepath" size="45" value="<tmpl_var name="savepath">"></td>
+							</tr>
+							<tr>
+								<td align="right">Or use this path:</td>
+								<td colspan="3"><SELECT width="45" size="6" ONCHANGE="savepath.value= this.options[this.selectedIndex].value;"><tmpl_var name="arDirTree"></SELECT></td>
+							</tr>
+						</table>
+					</tmpl_if>
+					<table>
+						<tr>
+							<td align="right">Dont check hashes :</td>
+							<tmpl_if name="torrent_exists">
+								<td colspan="3"><input type="checkbox" name="skiphashcheck"
+								<tmpl_if name="is_skip">
+									 checked
+								</tmpl_if>
+								></td>
+							<tmpl_else>
+								<td colspan="3"><input type="checkbox" name="skiphashcheck" disabled></td>
+							</tmpl_if>
+						</tr>
+					</table>
+					Torrent Meta Data / Priority Selection:
+				</td>
+			</tr>
+		</table>
+		<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid #829FB5; background-color: #ececec; position:relative; width:650; height:290; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
+			<br>
+			<tmpl_var name="showMetaInfo">
+		</div>
+		<br>
+			<table border="0" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<tmpl_if name="is_queue">
+							<tmpl_if name="is_admin">
+								<input type='Checkbox' name='queue'>Enqueue
+							<tmpl_else>
+								<input type='hidden' name='queue' value=1>
+							</tmpl_if>
+						<tmpl_else>
+							&nbsp;
+						</tmpl_if>
+						<input type="button" id="startbtn" name="startbtn" value="<tmpl_var name="_RUNTORRENT">" onclick="StartTorrent();">&nbsp;&nbsp;
+						<input type="button" value="Cancel" onclick="window.close()">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<script language="JavaScript">
+		CheckShareState();
+		document.getElementById('startbtn').focus();
+	</script>
+</body>
+</html>

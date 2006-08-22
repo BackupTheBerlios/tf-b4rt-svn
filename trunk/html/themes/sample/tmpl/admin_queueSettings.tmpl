@@ -1,0 +1,318 @@
+<tmpl_include name="inc.head.tmpl">
+<tmpl_var name="head">
+<tmpl_var name="menu">
+<tmpl_if name="new_msg">
+	<table cellpadding="5" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td align="center" bgcolor="#d6dfe6">
+				<strong><tmpl_var name="message"></strong>
+			</td>
+		</tr>
+	</table>
+</tmpl_if>
+<div align="center">
+	<a name="QManager" id="QManager"></a>
+	<table width="100%" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
+		<tr>
+			<td bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<font class="title">
+					<tmpl_if name="queueManagerRunning">
+						&nbsp;&nbsp;<img src="images/green.gif" align="absmiddle" align="absmiddle"> Queue Manager Running (<tmpl_var name="managerName">; pid: <tmpl_var name="managerPid">)
+					<tmpl_else>
+						&nbsp;&nbsp;<img src="images/black.gif" align="absmiddle"> Queue Manager Off
+					</tmpl_if>
+				</font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<script language="JavaScript">
+					function validateSettings() {
+						var rtnValue = true;
+						var msg = "";
+						if (isNumber(document.theForm.maxServerThreads.value) == false) {
+							msg = msg + "* Max Server Threads must be a valid number.\n";
+							document.theForm.maxServerThreads.focus();
+						}
+						if (isNumber(document.theForm.maxUserThreads.value) == false) {
+							msg = msg + "* Max User Threads must be a valid number.\n";
+							document.theForm.maxUserThreads.focus();
+						}
+						if (isNumber(document.theForm.sleepInterval.value) == false) {
+							msg = msg + "* Sleep Interval must be a valid number.\n";
+							document.theForm.sleepInterval.focus();
+						}
+						if (msg != "") {
+							rtnValue = false;
+							alert("Please check the following:\n\n" + msg);
+						}
+						return rtnValue;
+					}
+					function isNumber(sText) {
+						var ValidChars = "0123456789.";
+						var IsNumber = true;
+						var Char;
+						for (i = 0; i < sText.length && IsNumber == true; i++) {
+							Char = sText.charAt(i);
+							if (ValidChars.indexOf(Char) == -1) {
+								IsNumber = false;
+							}
+						}
+						return IsNumber;
+					}
+				</script>
+				<div align="center">
+					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+							<tmpl_if name="shutdown">
+								<tr><br>
+									<td align="center" colspan="2">
+										QueueManager going down... Please Wait.
+									<br><br></td>
+								</tr>
+							<tmpl_else>
+								<form name="controlForm" action="index.php?page=admin&op=controlQueueManager" method="post">
+									<tmpl_if name="queueManagerRunning">
+										<input type="Hidden" name="a" value="stop">
+										<tr><br>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Stop QueueManager">
+											<br><br></td>
+										</tr>
+									<tmpl_else>
+										<input type="Hidden" name="a" value="start">
+										<tr>
+											<td align="left" width="350" valign="top"><strong>Choose Queue Manager</strong><br>
+												<u>Note</u> : tfQManager only supports tornado-clients.
+											</td>
+											<td>
+												<select name="queuemanager">
+													<option value="tfqmgr"
+													<tmpl_if name="queuemanager" value="tfqmgr">
+														 selected
+													</tmpl_if>
+													>tfqmgr</option>
+													<option value="Qmgr"
+													<tmpl_if name="queuemanager" value="Qmgr">
+														 selected
+													</tmpl_if>
+													>Qmgr</option>
+													<option value="tfQManager"
+													<tmpl_if name="queuemanager" value="tfQManager">
+														 selected
+													</tmpl_if>
+													>tfQManager</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Start QueueManager">
+											<br><br></td>
+										</tr>
+									</tmpl_if>
+								</form>
+							</tmpl_if>
+							<form name="theForm" action="index.php?page=admin&op=updateQueueSettings" method="post" onsubmit="return validateSettings()">
+								<tr>
+									<td colspan="2" align="center" bgcolor="#d6dfe6">
+										<strong>tfqmgr</strong>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>perl Path</strong><br>
+										Specify the path to perl (/usr/bin/perl):
+									</td>
+									<td valign="top">
+										<input name="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="55"><tmpl_var name="validateCmd">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>tfqmgr Path</strong><br>
+									Specify the path of tfqmgr (/var/www/tfqmgr):
+									</td>
+									<td valign="top">
+										<input name="tfqmgr_path" type="Text" maxlength="254" value="<tmpl_var name="tfqmgr_path">" size="55"><tmpl_var name="validatetfqmgr">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>fluxcli Path</strong><br>
+									Specify the path where fluxcli.php is. (/var/www):
+									</td>
+									<td valign="top">
+										<input name="tfqmgr_path_fluxcli" type="Text" maxlength="254" value="<tmpl_var name="tfqmgr_path_fluxcli">" size="55"><tmpl_var name="validate_tfqmgr_fluxcli">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Limit Torrent Global</strong><br>
+									Specify the maximum number of torrents the server will allow to run at one time (admins may override this):
+									</td>
+									<td valign="top">
+										<input name="tfqmgr_limit_global" type="Text" maxlength="3" value="<tmpl_var name="tfqmgr_limit_global">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Limit Torrent Per User</strong><br>
+									Specify the maximum number of torrents a single user may run at one time:
+									</td>
+									<td valign="top">
+										<input name="tfqmgr_limit_user" type="Text" maxlength="3" value="<tmpl_var name="tfqmgr_limit_user">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Loglevel</strong><br>
+									Specify the level of logging (default is 0):
+									</td>
+									<td valign="top">
+										<input name="tfqmgr_loglevel" type="Text" maxlength="2" value="<tmpl_var name="tfqmgr_loglevel">" size="5">
+									</td>
+								</tr>
+								<tr><td colspan="2" align="center" bgcolor="#d6dfe6"><strong>Qmgr</strong></td></tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Path to Qmgr scripts</strong><br>
+										Specify the path to the Qmgr.pl and Qmgrd.pl scripts:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_path" type="Text" maxlength="254" value="<tmpl_var name="Qmgr_path">" size="55"><tmpl_var name="validateQmgrd">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Max User Torrents</strong><br>
+										Total number of torrents to allow a single user at once:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxUserTorrents">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Max Total Torrents</strong><br>
+										Total number of torrents the server will run at once:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<tmpl_var name="Qmgr_maxTotalTorrents">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Perl's Path</strong><br>
+										Specify the path to perl:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_perl" type="Text" maxlength="254" value="<tmpl_var name="Qmgr_perl">" size="55"><tmpl_var name="validate_Qmgr_perl">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Fluxcli.php path</strong><br>
+										Specify the path to the fluxcli executable:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_fluxcli" type="Text" maxlength="254" value="<tmpl_var name="Qmgr_fluxcli">" size="55"><tmpl_var name="validate_Qmgr_fluxcli">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Qmgrd host</strong><br>
+										The host running the Qmgrd.pl script, probably localhost:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_host" type="Text" maxlength="254" value="<tmpl_var name="Qmgr_host">" size="15">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="250" valign="top"><strong>Qmgrd port</strong><br>
+										the port number to run the Qmgrd.pl script on:
+									</td>
+									<td valign="top">
+										<input name="Qmgr_port" type="Text" maxlength="5" value="<tmpl_var name="Qmgr_port">" size="5">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="250" valign="top"><strong><Qmgrd Loglevel</strong><br>
+										Level of logging (default to 0):
+									</td>
+									<td valign="top">
+										<input name="Qmgr_loglevel" type="Text" maxlength="2" value="<tmpl_var name="Qmgr_loglevel">" size="5">
+									</td>
+								</tr>
+								<tr><td colspan="2" align="center" bgcolor="#d6dfe6"><strong>tfQManager</strong></td></tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>tfQManager Path</strong><br>
+									Specify the path to the tfQManager.py python script:
+									</td>
+									<td valign="top">
+										<input name="tfQManager" type="Text" maxlength="254" value="<tmpl_var name="tfQManager">" size="55"><tmpl_var name="validatetfQManager">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Max Server Threads</strong><br>
+									Specify the maximum number of torrents the server will allow to run at
+									one time (admins may override this):
+									</td>
+									<td valign="top">
+										<input name="maxServerThreads" type="Text" maxlength="3" value="<tmpl_var name="maxServerThreads">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Max User Threads</strong><br>
+									Specify the maximum number of torrents a single user may run at
+									one time:
+									</td>
+									<td valign="top">
+										<input name="maxUserThreads" type="Text" maxlength="3" value="<tmpl_var name="maxUserThreads">" size="3">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Polling Interval</strong><br>
+									Number of seconds the Queue Manager will sleep before checking for new torrents to run:
+									</td>
+									<td valign="top">
+										<input name="sleepInterval" type="Text" maxlength="3" value="<tmpl_var name="sleepInterval">" size="3">
+									</td>
+								</tr>
+								<tr><td colspan="2"><hr noshade></td></tr>
+								<tr>
+									<td align="center" colspan="2">
+									<input type="Submit" value="Update Settings">
+									</td>
+								</tr>
+							</form>
+						</table>
+					</div>
+					<br>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
+		<tr>
+			<td colspan=6 bgcolor="#d6dfe6" background=\"themes/<tmpl_var name="theme">/images/bar.gif">
+				<table width="100%" cellpadding=0 cellspacing=0 border=0>
+					<tr>
+						<td><img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Queued Items </font></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+			<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
+			<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
+		</tr>
+		<tmpl_var name="formattedQueueList">
+	</table>
+	<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
+		<tr>
+			<td colspan=6 bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<table width="100%" cellpadding=0 cellspacing=0 border=0>
+					<tr>
+						<td><img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Running Items </font></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+			<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
+			<td bgcolor="#d6dfe6" width="1%"><div align=center class="title"><tmpl_var name="_FORCESTOP"></div></td>
+		</tr>
+		<tmpl_var name="output">
+	</table>
+</div>
+<tmpl_var name="foot">

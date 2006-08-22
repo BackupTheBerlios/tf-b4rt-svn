@@ -1,0 +1,54 @@
+<tmpl_include name="inc.head.tmpl">
+<tmpl_var name="head">
+<tmpl_var name="menu">
+<div align="center">
+	<table border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
+		<tr>
+			<td colspan="2" bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"><tmpl_var name="_ADMINEDITLINKS"></font>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=2 align="center">
+				<form action="index.php?page=admin&op=addLink" method="post">
+					<tmpl_var name="_FULLURLLINK">:
+					<input type="Text" size="30" maxlength="255" name="newLink">
+					<tmpl_var name="_FULLSITENAME">:
+					<input type="Text" size="30" maxlength="255" name="newSite">
+					<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
+				</form>
+			</td>
+		</tr>
+		<tmpl_loop name="link_list">
+			<tr>
+				<tmpl_if name="is_edit">
+					<td colspan="2">
+						<form action="index.php?page=admin&op=editLink" method="post">
+							<tmpl_var name="FULLURLLINK">
+							<input type="Text" size="30" maxlength="255" name="editLink" value="<tmpl_var name="url">">
+							<tmpl_var name="_FULLSITENAME">
+							<input type="Text" size="30" maxlength="255" name="editSite" value="<tmpl_var name="sitename">">
+							<input type="hidden" name="lid" value="<tmpl_var name="lid">">
+							<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
+						</form>
+					</td>
+				</tmpl_else>
+					<td>
+						<a href="index.php?page=admin&op=deleteLink&lid=<tmpl_var name="lid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
+						<a href="index.php?page=admin&op=editLinks&edit=<tmpl_var name="lid">"><img src="images/edit.gif" width=16 height=16 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
+						<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+					</td>
+					<td align=right width='36'>
+						<tmpl_if name="counter" value="2">
+<a href='index.php?page=admin&op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='images/uparrow.png' width='16' height='16' border='0' title='Move link up' align='absmiddle' alt='Up'></a><tmpl_elseif name="counter" value="1">
+							<img src='images/blank.gif' width='16' align='absmiddle'>
+						</tmpl_if><tmpl_if name="counter2">
+<a href='index.php?page=admin&op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='images/downarrow.png' width='16' height='16' border='0' title='Move link down' align='absmiddle' alt='Down'></a></tmpl_if>
+					</td>
+				</tmpl_if>
+			</tr>
+		</tmpl_loop>
+	</table>
+</div>
+<br><br><br>
+<tmpl_var name="foot">
