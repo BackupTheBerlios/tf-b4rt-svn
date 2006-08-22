@@ -1,5 +1,5 @@
 <?php
-/* $Id: admin_xfer.php 242 2006-08-11 18:26:19Z msn_exploder $ */
+/* $Id$ */
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

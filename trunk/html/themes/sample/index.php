@@ -5,7 +5,7 @@
 # and then this file will be obsolete
 # now styles should use css files
 
-/* $Id: index.php 232 2006-08-09 23:33:48Z msn_exploder $ */
+/* $Id$ */
 
 $cfg["main_bgcolor"] = "#829FB5";
 $cfg["table_data_bg"] = "#EEEEEE";
