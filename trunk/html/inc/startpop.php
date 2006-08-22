@@ -35,9 +35,6 @@ if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/startpop.tmpl");
 }
 
-// default bt-client
-$btclient_default = $cfg["btclient"];
-
 // get torren-param
 $torrent = getRequestVar('torrent');
 
@@ -59,9 +56,9 @@ $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('torrentExists', $torrentExists);
 $tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 if ($cfg["enable_btclient_chooser"] != 0)
-	$tmpl->setvar('btClientSelect', getBTClientSelect($btclient_default));
+	$tmpl->setvar('btClientSelect', getBTClientSelect($cfg["btclient"]));
 else
-	$tmpl->setvar('btclientDefault', $btclient_default);
+	$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
@@ -177,6 +174,10 @@ function setVarsFromPersistentSettings() {
 			$tmpl->setvar('is_admin', 1);
 		}
 	}
+	if ($cfg["enable_btclient_chooser"] != 0)
+		$tmpl->setvar('btClientSelect', getBTClientSelect($cfg["btclient"]));
+	else
+		$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 	$selected = "";
 	if ($cfg["torrent_dies_when_done"] == "False") {
 		$selected = "selected";
