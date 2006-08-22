@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.c 626 2006-07-16 23:40:22Z joshe $
+ * $Id: utils.c 817 2006-08-22 02:32:46Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -24,48 +24,118 @@
 
 #include "transmission.h"
 
-static void (*errorFunc)( const char * );
+static tr_lock_t      * messageLock = NULL;
+static int              messageLevel = 0;
+static int              messageQueuing = 0;
+static tr_msg_list_t *  messageQueue = NULL;
+static tr_msg_list_t ** messageQueueTail = &messageQueue;
 
-void tr_setErrorFunction( void (*func)( const char * ) )
+void tr_msgInit( void )
 {
-    errorFunc = func;
+    if( NULL == messageLock )
+    {
+        messageLock = calloc( 1, sizeof( *messageLock ) );
+        tr_lockInit( messageLock );
+    }
+}
+
+void tr_setMessageLevel( int level )
+{
+    tr_lockLock( messageLock );
+    messageLevel = MAX( 0, level );
+    tr_lockUnlock( messageLock );
+}
+
+int tr_getMessageLevel( void )
+{
+    int ret;
+
+    tr_lockLock( messageLock );
+    ret = messageLevel;
+    tr_lockUnlock( messageLock );
+
+    return ret;
+}
+
+void tr_setMessageQueuing( int enabled )
+{
+    tr_lockLock( messageLock );
+    messageQueuing = enabled;
+    tr_lockUnlock( messageLock );
+}
+
+tr_msg_list_t * tr_getQueuedMessages( void )
+{
+    tr_msg_list_t * ret;
+
+    tr_lockLock( messageLock );
+    ret = messageQueue;
+    messageQueue = NULL;
+    messageQueueTail = &messageQueue;
+    tr_lockUnlock( messageLock );
+
+    return ret;
+}
+
+void tr_freeMessageList( tr_msg_list_t * list )
+{
+    tr_msg_list_t * next;
+
+    while( NULL != list )
+    {
+        next = list->next;
+        free( list->message );
+        free( list );
+        list = next;
+    }
 }
 
 void tr_msg( int level, char * msg, ... )
 {
-    char         string[256];
-    va_list      args;
-    static int   verboseLevel = 0;
+    va_list          args;
+    tr_msg_list_t * newmsg;
 
-    if( !verboseLevel )
+    tr_lockLock( messageLock );
+
+    if( !messageLevel )
     {
         char * env;
         env          = getenv( "TR_DEBUG" );
-        verboseLevel = env ? atoi( env ) : -1;
-        verboseLevel = verboseLevel ? verboseLevel : -1;
+        messageLevel = ( env ? atoi( env ) : 0 ) + 1;
+        messageLevel = MAX( 1, messageLevel );
     }
 
-    if( verboseLevel < 1 && level > TR_MSG_ERR )
+    if( messageLevel >= level )
     {
-        return;
-    }
-    if( verboseLevel < 2 && level > TR_MSG_INF )
-    {
-        return;
+        va_start( args, msg );
+        if( messageQueuing )
+        {
+            newmsg = calloc( 1, sizeof( *newmsg ) );
+            if( NULL != newmsg )
+            {
+                newmsg->level = level;
+                newmsg->when = time( NULL );
+                vasprintf( &newmsg->message, msg, args );
+                if( NULL == newmsg->message )
+                {
+                    free( newmsg );
+                }
+                else
+                {
+                    *messageQueueTail = newmsg;
+                    messageQueueTail = &newmsg->next;
+                }
+            }
+        }
+        else
+        {
+            vfprintf( stderr, msg, args );
+            fputc( '\n', stderr );
+        }
+        va_end( args );
     }
 
-    va_start( args, msg );
-    vsnprintf( string, sizeof( string ), msg, args );
-    va_end( args );
-
-    if( NULL == errorFunc )
-    {
-        fprintf( stderr, "%s\n", string );
-    }
-    else
-    {
-        errorFunc( string );
-    }
+    tr_lockUnlock( messageLock );
 }
 
 int tr_rand( int sup )

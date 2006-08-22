@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.h 310 2006-06-09 19:53:35Z joshe $
+ * $Id: utils.h 815 2006-08-22 02:12:58Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -25,9 +25,8 @@
 #ifndef TR_UTILS_H
 #define TR_UTILS_H 1
 
-#define TR_MSG_ERR 1
-#define TR_MSG_INF 2
-#define TR_MSG_DBG 4
+void tr_msgInit( void );
+
 #define tr_err( a... ) tr_msg( TR_MSG_ERR, ## a )
 #define tr_inf( a... ) tr_msg( TR_MSG_INF, ## a )
 #define tr_dbg( a... ) tr_msg( TR_MSG_DBG, ## a )

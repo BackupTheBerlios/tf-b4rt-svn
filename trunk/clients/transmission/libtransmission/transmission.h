@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 788 2006-08-16 19:21:09Z joshe $
+ * $Id: transmission.h 817 2006-08-22 02:32:46Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -35,6 +35,7 @@ extern "C" {
 #ifndef PRIu64
 # define PRIu64 "lld"
 #endif
+#include <time.h>
 
 #define SHA_DIGEST_LENGTH 20
 #ifdef __BEOS__
@@ -61,14 +62,31 @@ typedef struct tr_handle_s tr_handle_t;
 tr_handle_t * tr_init();
 
 /***********************************************************************
- * tr_setErrorFunction
+ * tr_setMessageLevel
  ***********************************************************************
- * Sets the function used to display libtransmission errors.  A NULL
- * function means to use the default, which simple prints the message
- * to stderr.  The function's prototype should look like this:
- * void myErrFunc( const char * errstr );
+ * Set the level of messages to be output or queued
  **********************************************************************/
-void tr_setErrorFunction( void (*func)( const char * ) );
+#define TR_MSG_ERR 1
+#define TR_MSG_INF 2
+#define TR_MSG_DBG 3
+void tr_setMessageLevel( int );
+int tr_getMessageLevel( void );
+
+/***********************************************************************
+ * tr_setMessageQueuing
+ ***********************************************************************
+ * Enable or disable message queuing
+ **********************************************************************/
+typedef struct tr_msg_list_s tr_msg_list_t;
+void tr_setMessageQueuing( int );
+
+/***********************************************************************
+ * tr_getQueuedMessages
+ ***********************************************************************
+ * Return a list of queued messages
+ **********************************************************************/
+tr_msg_list_t * tr_getQueuedMessages( void );
+void tr_freeMessageList( tr_msg_list_t * list );
 
 /***********************************************************************
  * tr_getPrefsDirectory
@@ -81,8 +99,7 @@ char * tr_getPrefsDirectory();
 /***********************************************************************
  * tr_setBindPort
  ***********************************************************************
- * Sets a "start" port: everytime we start a torrent, we try to bind
- * this port, then the next one and so on until we are successful.
+ * Sets the port to listen for incoming peer connections
  **********************************************************************/
 void tr_setBindPort( tr_handle_t *, int );
 
@@ -332,6 +349,14 @@ struct tr_peer_stat_s
     int     isConnected;
     int     isDownloading;
     int     isUploading;
+};
+
+struct tr_msg_list_s
+{
+    int                    level;
+    time_t                 when;
+    char                 * message;
+    struct tr_msg_list_s * next;
 };
 
 #ifdef __TRANSMISSION__

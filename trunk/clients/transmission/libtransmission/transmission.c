@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 791 2006-08-18 08:46:19Z joshe $
+ * $Id: transmission.c 815 2006-08-22 02:12:58Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -44,6 +44,7 @@ tr_handle_t * tr_init()
     tr_handle_t * h;
     int           i, r;
 
+    tr_msgInit();
     tr_netResolveThreadInit();
 
     h = calloc( sizeof( tr_handle_t ), 1 );
