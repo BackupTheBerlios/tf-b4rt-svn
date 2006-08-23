@@ -222,7 +222,7 @@ function showMetaInfo($torrent, $allowSave=false)
 
 			if ($allowSave)
 			{
-				$showMetaInfo .= "<form name=\"priority\" action=\"index.php?page=index\" method=\"POST\" >";
+				$showMetaInfo .= "<form name=\"priority\" action=\"index.php?iid=index\" method=\"POST\" >";
 				$showMetaInfo .= "<input type=\"hidden\" name=\"torrent\" value=\"".$torrent."\" >";
 				$showMetaInfo .= "<input type=\"hidden\" name=\"setPriorityOnly\" value=\"true\" >";
 			}

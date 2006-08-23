@@ -1324,7 +1324,7 @@ function indexStartTorrent($torrent,$interactive) {
 			// just 2 sec..
 			sleep(2);
 			// header + out
-			header("location: index.php?page=index");
+			header("location: index.php?iid=index");
 			exit();
 		break;
 		case 1:
@@ -1344,7 +1344,7 @@ function indexStartTorrent($torrent,$interactive) {
 						echo ' window.close();';
 						echo '</script>';
 					} else {
-						header("location: index.php?page=index");
+						header("location: index.php?iid=index");
 					}
 				} else { // start failed
 					echo $clientHandler->messages;
@@ -1431,7 +1431,7 @@ function indexProcessDownload($url_upload) {
 				   break;
 			}
 		}
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 		exit();
 	}
 }
@@ -1492,7 +1492,7 @@ function indexProcessUpload() {
 	if($messages != "") { // there was an error
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
 	} else {
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 		exit();
 	}
 }

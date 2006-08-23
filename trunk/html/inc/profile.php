@@ -262,7 +262,7 @@ switch ($op) {
 		$settings = processSettingsParams();
 		saveUserSettings($cfg["uid"],$settings);
 		AuditAction( $cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
-		header( "location: index.php?page=profile" );
+		header( "location: index.php?iid=profile" );
 	break;
 
 //******************************************************************************
@@ -276,7 +276,7 @@ switch ($op) {
 			AddCookieInfo( $newCookie );
 			AuditAction( $cfg["constants"]["admin"], "New Cookie: " . $newCookie["host"] . " | " . $newCookie["data"] );
 		}
-		header( "location: index.php?page=profile&op=showCookies" );
+		header( "location: index.php?iid=profile&op=showCookies" );
 	break;
 
 //******************************************************************************
@@ -288,7 +288,7 @@ switch ($op) {
 		$cookie = getCookie( $cid );
 		deleteCookieInfo( $cid );
 		AuditAction( $cfg["constants"]["admin"], _DELETE . " Cookie: " . $cookie["host"] );
-		header( "location: index.php?page=profile&op=showCookies" );
+		header( "location: index.php?iid=profile&op=showCookies" );
 	break;
 
 //******************************************************************************
@@ -301,7 +301,7 @@ switch ($op) {
 		global $cfg;
 		modCookieInfo($cid,$newCookie);
 		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
-		header("location: index.php?page=profile&op=showCookies");
+		header("location: index.php?iid=profile&op=showCookies");
 	break;
 
 //******************************************************************************
@@ -419,7 +419,7 @@ switch ($op) {
 			AddProfileInfo( $newProfile );
 			AuditAction( $cfg["constants"]["admin"], "New Profile: " . $newProfile["name"] );
 		}
-		header( "location: index.php?page=profile&op=showProfiles" );
+		header( "location: index.php?iid=profile&op=showProfiles" );
 	break;
 
 //******************************************************************************
@@ -450,7 +450,7 @@ switch ($op) {
 		global $cfg;
 		modProfileInfo($pid,$newProfile);
 		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
-		header("location: index.php?page=profile&op=showProfiles");
+		header("location: index.php?iid=profile&op=showProfiles");
 	break;
 
 //******************************************************************************
@@ -462,7 +462,7 @@ switch ($op) {
 		$profile = getProfile( $pid );
 		deleteProfileInfo( $pid );
 		AuditAction( $cfg["constants"]["admin"], _DELETE . " Profile: " . $profile["name"] );
-		header( "location: index.php?page=profile&op=showProfiles" );
+		header( "location: index.php?iid=profile&op=showProfiles" );
 	break;
 
 }

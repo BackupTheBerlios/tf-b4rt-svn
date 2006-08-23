@@ -164,10 +164,10 @@ function getXferDetail($user_id,$period,$period_start,$period_end)
 		}
 		switch ($period) {
 			case 'Month Starting':
-				$rowstr = "<a href='index.php?page=xfer&op=xfer&user=$user_id&month=".date('Y-m',strtotime($start))."'>$start</a>";
+				$rowstr = "<a href='index.php?iid=xfer&op=xfer&user=$user_id&month=".date('Y-m',strtotime($start))."'>$start</a>";
 			break;
 			case 'Week Starting':
-				$rowstr = "<a href='index.php?page=xfer&op=xfer&user=$user_id&month=". @ $_GET[month] . "&week=".date('Y-m-d',strtotime($start))."'>$start</a>";
+				$rowstr = "<a href='index.php?iid=xfer&op=xfer&user=$user_id&month=". @ $_GET[month] . "&week=".date('Y-m-d',strtotime($start))."'>$start</a>";
 			break;
 			case 'Day':
 				$rowstr = $start;
@@ -207,7 +207,7 @@ function getXferList() {
 	showError($db,$sql);
 	foreach ($rtnValue as $user_id) {
 		$displayXferList .= '<tr>';
-		$displayXferList .= '<td><a href="index.php?page=xfer&op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
+		$displayXferList .= '<td><a href="index.php?iid=xfer&op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
 		$total = formatFreeSpace($xfer[$user_id]['total']['total']/(1024*1024));
 		$month = formatFreeSpace(@ $xfer[$user_id]['month']['total']/(1024*1024));
 		$week = formatFreeSpace(@ $xfer[$user_id]['week']['total']/(1024*1024));
@@ -218,7 +218,7 @@ function getXferList() {
 		$displayXferList .= '<td><div class="tiny" align="center">'.$day.'</div></td>';
 		$displayXferList .= '</tr>';
 	}
-	$displayXferList .= '<td><a href="index.php?page=xfer&op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
+	$displayXferList .= '<td><a href="index.php?iid=xfer&op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
 	$total = formatFreeSpace($xfer_total['total']['total']/(1024*1024));
 	$month = formatFreeSpace($xfer_total['month']['total']/(1024*1024));
 	$week = formatFreeSpace($xfer_total['week']['total']/(1024*1024));
@@ -263,7 +263,7 @@ function getFoot($showReturn=true, $showVersionLink = false) {
 	$foot = "</td></tr>";
 	$foot .= "</table>";
 	if ($showReturn)
-		$foot .= "[<a href=\"index.php?page=index\">"._RETURNTOTORRENTS."</a>]";
+		$foot .= "[<a href=\"index.php?iid=index\">"._RETURNTOTORRENTS."</a>]";
 	$foot .= "</div>";
 	$foot .= "</td>";
 	$foot .= "</tr>";
@@ -310,10 +310,10 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 		$titleBar .= "<td align=right>";
 		// Top Buttons
 		$titleBar .= "&nbsp;&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?page=index\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?page=dir\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?page=history\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?page=profile\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=index\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=dir\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=history\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=profile\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
 		// Does the user have messages?
 		$sql = "select count(*) from tf_messages where to_user='".$cfg['user']."' and IsNew=1";
 		$number_messages = $db->GetOne($sql);
@@ -325,9 +325,9 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 			// No messages
 			$message_image = "themes/".$cfg["theme"]."/images/messages_off.gif";
 		}
-		$titleBar .= "<a href=\"index.php?page=readmsg\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
+		$titleBar .= "<a href=\"index.php?iid=readmsg\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
 		if(IsAdmin()) {
-			$titleBar .= "&nbsp;<a href=\"index.php?page=admin\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
+			$titleBar .= "&nbsp;<a href=\"index.php?iid=admin\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
 		}
 		$titleBar .= "&nbsp;<a href=\"logout.php\"><img src=\"images/logout.gif\" width=13 height=12 title=\"Logout\" border=0></a>";
 	}
@@ -345,7 +345,7 @@ function getMessageList() {
 	$users = GetUsers();
 	$messageList = '<div align="center">'.
 	'<table border="0" cellpadding="0" cellspacing="0">'.
-	'<form name="formMessage" action="index.php?page=message" method="post">'.
+	'<form name="formMessage" action="index.php?iid=message" method="post">'.
 	'<tr><td>' . _SENDMESSAGETO ;
 	$messageList .= '<select name="to_user">';
 	for($inx = 0; $inx < sizeof($users); $inx++) {
@@ -674,7 +674,7 @@ function getTransferListString() {
 			$displayname .= "...";
 		}
 		if ($cfg["enable_torrent_download"])
-			$torrentfilelink = "<a href=\"index.php?page=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
+			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		else
 			$torrentfilelink = "";
 
@@ -703,7 +703,7 @@ function getTransferListString() {
 		$percentDone = $af->percent_done;
 
 		// more vars
-		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
@@ -778,7 +778,7 @@ function getTransferListString() {
 		// led
 		$hd = getStatusImage($af);
 		if ($transferRunning == 1)
-			$output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+			$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 		$output .= "<img src=\"images/".$hd->image."\" width=\"16\" height=\"16\" title=\"".$hd->title.$entry."\" border=\"0\" align=\"absmiddle\">";
 		if ($transferRunning == 1)
 			$output .= "</a>";
@@ -791,7 +791,7 @@ function getTransferListString() {
 
 		// =============================================================== owner
 		if ($settings[0] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
 
 		// ================================================================ size
 		if ($settings[1] != 0)
@@ -942,19 +942,19 @@ function getTransferListString() {
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
-		$output .= "<a href=\"index.php?page=details&torrent=".urlencode($entry);
+		$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
 		if($transferRunning == 1)
 			$output .= "&als=false";
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 
 		// link to datapath
-		$output .= '<a href="index.php?page=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
+		$output .= '<a href="index.php?iid=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
 		$output .= '<img src="images/datadir.gif" title="'.$settingsAry['datapath'].'" border="0">';
 		$output .= '</a>';
 
 		if ($owner || IsAdmin($cfg["user"])) {
 			if($percentDone >= 0 && $transferRunning == 1) {
-				$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
+				$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
 				$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
 				if ($cfg['enable_multiops'] != 0)
 					$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
@@ -963,15 +963,15 @@ function getTransferListString() {
 					$output .= "<img src=\"images/run_off.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 				} else {
 					if ($transferRunning == 3) {
-						$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
+						$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
 					} else {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
 							// Allow Avanced start popup?
 							if ($cfg["advanced_start"] != 0) {
 								if($show_run)
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?page=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/run_on.gif\" width=16 height=16 title=\""._RUNTORRENT."\" border=0></a>";
+									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/run_on.gif\" width=16 height=16 title=\""._RUNTORRENT."\" border=0></a>";
 								else
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?page=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/seed_on.gif\" width=16 height=16 title=\""._SEEDTORRENT."\" border=0></a>";
+									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/seed_on.gif\" width=16 height=16 title=\""._SEEDTORRENT."\" border=0></a>";
 							} else {
 								// Quick Start
 								if($show_run)

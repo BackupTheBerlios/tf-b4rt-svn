@@ -43,12 +43,12 @@ $messages = "";
 if(array_key_exists("pagerefresh", $_GET)) {
 	if($_GET["pagerefresh"] == "false") {
 		$_SESSION['prefresh'] = false;
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 		exit();
 	}
 	if($_GET["pagerefresh"] == "true") {
 		$_SESSION["prefresh"] = true;
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 		exit();
 	}
 }
@@ -65,9 +65,9 @@ if ($cfg["AllowQueing"]) {
 		} else {
 			AuditAction($cfg["constants"]["error"], "Error starting Queue Manager");
 			if (IsAdmin())
-				header("location: index.php?page=admin&op=queueSettings");
+				header("location: index.php?iid=admin&op=queueSettings");
 			else
-				header("location: index.php?page=index");
+				header("location: index.php?iid=index");
 			exit();
 		}
 	} else {
@@ -94,7 +94,7 @@ if ($cfg['enable_wget'] == 1) {
 	if(! $url_wget == '') {
 		exec("nohup ".$cfg['bin_php']." -f wget.php ".$url_wget." ".$cfg['user']." > /dev/null &");
 		sleep(2); //sleep so that hopefully the other script has time to write out the stat files.
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 		exit();
 	}
 	// </DD32>
@@ -116,7 +116,7 @@ if(!empty($_FILES['upload_file']['name']))
 $delfile = getRequestVar('delfile');
 if(! $delfile == '') {
 	deleteTorrent($delfile, getRequestVar('alias_file'));
-	header("location: index.php?page=index");
+	header("location: index.php?iid=index");
 	exit();
 }
 
@@ -131,7 +131,7 @@ if(! $killTorrent == '') {
 	if (!empty($return))
 		header("location: ".$return.".php?op=queueSettings");
 	else
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 	exit();
 }
 
@@ -142,7 +142,7 @@ if(isset($_REQUEST["dQueue"])) {
 	include_once("QueueManager.php");
 	$queueManager = QueueManager::getQueueManagerInstance($cfg);
 	$queueManager->dequeueTorrent($QEntry);
-	header("location: index.php?page=index");
+	header("location: index.php?iid=index");
 	exit();
 }
 
@@ -165,7 +165,7 @@ if ($cfg["show_server_load"] != 0)
 // =============================================================================
 
 if(! isset($_SESSION['user'])) {
-	header('location: index.php?page=login');
+	header('location: index.php?iid=login');
 	exit();
 }
 
@@ -442,9 +442,9 @@ $tmpl->setvar('_WEEKXFER', _WEEKXFER);
 $tmpl->setvar('_DAYXFER', _DAYXFER);
 $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-if (isset($_GET["page"]))
-	$tmpl->setvar('page', $_GET["page"]);
+if (isset($_GET["iid"]))
+	$tmpl->setvar('iid', $_GET["iid"]);
 else
-	$tmpl->setvar('page', 'index');
+	$tmpl->setvar('iid', 'index');
 $tmpl->pparse();
 ?>

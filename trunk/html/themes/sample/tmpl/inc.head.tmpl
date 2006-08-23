@@ -8,7 +8,7 @@
 	<link rel="alternate" title="Transfer-Stats" href="stats.php?f=rss" type="application/rss+xml" />
 	<meta http-equiv="Pragma" content="no-cache; charset=ISO-8859-1" />
 	<tmpl_if name="page_refresh">
-		<meta http-equiv="REFRESH" content="<tmpl_var name="page_refresh">;URL=index.php?page=index" />
+		<meta http-equiv="REFRESH" content="<tmpl_var name="page_refresh">;URL=index.php?iid=index" />
 		<script language="JavaScript">
 			var var_refresh = <tmpl_var name="page_refresh">;
 			function UpdateRefresh() {
@@ -73,7 +73,7 @@
 	function CheckSFV(dir,file) {
 		var width = screen.width/2-300;
 		var height = screen.height/2-110;
-		var InfoWin = window.open("index.php?page=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
+		var InfoWin = window.open("index.php?iid=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
 	}
 	</script>
 </head>

@@ -19,7 +19,7 @@ if (IsUser($newUser)) {
 } else {
 	addNewUser($newUser, $pass1, $userType);
 	AuditAction($cfg["constants"]["admin"], _NEWUSER.": ".$newUser);
-	header("location: index.php?page=admin&op=CreateUser");
+	header("location: index.php?iid=admin&op=CreateUser");
 }
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);

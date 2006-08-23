@@ -105,7 +105,7 @@ if (!empty($_FILES['upload_files'])) {
 	}
 	// back to index if no errors
 	if ((isset($messages)) && ($messages == "")) {
-		header("location: index.php?page=index");
+		header("location: index.php?iid=index");
 		exit();
 	}
 }

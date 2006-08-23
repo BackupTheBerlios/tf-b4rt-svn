@@ -62,13 +62,13 @@
 												<table>
 													<tr>
 														<td align="center">
-															<br />[ <a href="index.php?page=profile&op=showCookies">Cookie Management</a> ]
+															<br />[ <a href="index.php?iid=profile&op=showCookies">Cookie Management</a> ]
 														</td>
 													</tr>
 													<tmpl_if name="with_profiles">
 														<tr>
 															<td align="center">
-																<br />[ <a href="index.php?page=profile&op=showProfiles">Transfer Profiles Management</a> ]
+																<br />[ <a href="index.php?iid=profile&op=showProfiles">Transfer Profiles Management</a> ]
 															</td>
 														</tr>
 													</tmpl_if>
@@ -82,7 +82,7 @@
 							<td valign="top">
 								<div align="center">
 									<table cellpadding="5" cellspacing="0" border="0">
-										<form name="theForm" action="index.php?page=profile&op=updateProfile" method="post" onsubmit="return validateProfile()">
+										<form name="theForm" action="index.php?iid=profile&op=updateProfile" method="post" onsubmit="return validateProfile()">
 											<tr>
 												<td align="right"><tmpl_var name="_USER">:</td>
 												<td>
@@ -148,7 +148,7 @@
 						<tr><td colspan="2"><br></td></tr>
 						<tr>
 							<td colspan="2">
-								<form name="settingsForm" action="index.php?page=profile&op=updateSettingsUser" method="post">
+								<form name="settingsForm" action="index.php?iid=profile&op=updateSettingsUser" method="post">
 									<table border="0" cellpadding="3" cellspacing="0" width="100%">
 										<tr>
 											<td colspan="2" align="center" bgcolor="#d6dfe6"><strong>Index-Page</strong></td>
@@ -450,10 +450,10 @@
 	}
 	// End -->
 	</script>
-	<div align="center">[<a href="index.php?page=profile">Return to Profile</a>]</div>
+	<div align="center">[<a href="index.php?iid=profile">Return to Profile</a>]</div>
 	<br />
 	<div align="center">
-		<form action="index.php?page=profile&op=<tmpl_var name="op">" method="post">
+		<form action="index.php?iid=profile&op=<tmpl_var name="op">" method="post">
 			<input type="hidden" name="cid" value="<tmpl_var name="cid">" />
 			<table border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 				<tr>
@@ -488,7 +488,7 @@
 				<tmpl_if name="empty_cid">
 					<tr>
 						<td colspan="3">
-							<center>[ <a href="index.php?page=profile&op=editCookies">back</a> ]</center>
+							<center>[ <a href="index.php?iid=profile&op=editCookies">back</a> ]</center>
 						</td>
 					</tr>
 				<tmpl_else>
@@ -508,8 +508,8 @@
 									<tmpl_loop name="cookie_data">
 										<tr>
 											<td>
-												<a href="index.php?page=profile&op=deleteCookie&cid=<tmpl_var name="cid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="host">" align="absmiddle"></a>
-												<a href="index.php?page=profile&op=editCookies&cid=<tmpl_var name="cid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> " . <tmpl_var name="host">" align="absmiddle"></a>
+												<a href="index.php?iid=profile&op=deleteCookie&cid=<tmpl_var name="cid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="host">" align="absmiddle"></a>
+												<a href="index.php?iid=profile&op=editCookies&cid=<tmpl_var name="cid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> " . <tmpl_var name="host">" align="absmiddle"></a>
 											</td>
 											<td><tmpl_var name="host"></td>
 											<td><tmpl_var name="data"></td>
@@ -524,7 +524,7 @@
 					<td colspan="3">
 						<br>
 						<div align="center">
-							<A HREF="javascript:popUp('index.php?page=cookiehelp')">How to get cookie information....</A>
+							<A HREF="javascript:popUp('index.php?iid=cookiehelp')">How to get cookie information....</A>
 						</div>
 					</td>
 				</tr>
@@ -538,10 +538,10 @@
 </tmpl_if>
 <tmpl_if name="ShowProfiles">
 	<tmpl_var name="head>
-	<div align="center">[<a href="index.php?page=profile">Return to Profile</a>]</div>
+	<div align="center">[<a href="index.php?iid=profile">Return to Profile</a>]</div>
 	<br />
 	<div align="center">
-		<form action="index.php?page=profile&op=<tmpl_var name="op">" method="post">
+		<form action="index.php?iid=profile&op=<tmpl_var name="op">" method="post">
 			<input type="hidden" name="pid" value="<tmpl_var name="pid">" />
 			<table border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 				<tr>
@@ -677,7 +677,7 @@
 				<tmpl_if name="empty_pid">
 					<tr>
 						<td colspan="3">
-							<center>[ <a href="index.php?page=profile&op=editProfiles">back</a> ]</center>
+							<center>[ <a href="index.php?iid=profile&op=editProfiles">back</a> ]</center>
 						</td>
 					</tr>
 				<tmpl_else>
@@ -696,8 +696,8 @@
 									<tmpl_loop name="profile_data">
 										<tr>
 											<td>
-												<a href="index.php?page=profile&op=deleteProfile&pid=<tmpl_var name="pid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="name">" align="absmiddle"></a>
-												<a href="index.php?page=profile&op=editProfiles&pid=<tmpl_var name="pid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="name">" align="absmiddle"></a>
+												<a href="index.php?iid=profile&op=deleteProfile&pid=<tmpl_var name="pid">"><img src="images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="name">" align="absmiddle"></a>
+												<a href="index.php?iid=profile&op=editProfiles&pid=<tmpl_var name="pid">"><img src="images/properties.png" width=18 height=13 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="name">" align="absmiddle"></a>
 											</td>
 											<td><tmpl_var name="name"></td>
 										</tr>

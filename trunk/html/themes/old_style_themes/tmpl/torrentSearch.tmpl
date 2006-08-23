@@ -17,7 +17,7 @@
 							{
 								var selectedItem = document.searchForm.searchEngine.selectedIndex;
 								document.searchForm.searchterm.value = '';
-								document.location.href = 'index.php?page=torrentSearch&searchEngine='+document.searchForm.searchEngine.options[selectedItem].value+'&LATEST=1';
+								document.location.href = 'index.php?iid=torrentSearch&searchEngine='+document.searchForm.searchEngine.options[selectedItem].value+'&LATEST=1';
 								return true;
 							}
 						</script>
@@ -46,7 +46,7 @@
 									<form method=get id="subLatest" name="subLatest" action=index.php>
 										<input type=hidden name="page" value="torrentSearch">
 										<input type=hidden name="searchEngine" value="<tmpl_var name="searchEngine">">
-										Category: <b><tmpl_var name="mainGenreName"></a></b> -> 
+										Category: <b><tmpl_var name="mainGenreName"></a></b> ->
 										<select name=subGenre>
 											<tmpl_loop name=list_cats">
 												<option value=<tmpl_var name="subId">><tmpl_var name="subName"></option>

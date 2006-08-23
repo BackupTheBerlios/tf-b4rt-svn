@@ -31,7 +31,7 @@ switch($action) {
 				$message = '<br><strong>Stop-Command sent.</strong><br><br>';
 			else
 				$message = '<br><strong>fluxd stopped.</strong><br><br>';
-			header("Location: index.php?page=admin&op=fluxdSettings&m=".urlencode($message).'&s=1');
+			header("Location: index.php?iid=admin&op=fluxdSettings&m=".urlencode($message).'&s=1');
 			exit;
 		}
 	break;
@@ -41,7 +41,7 @@ switch($action) {
 	break;
 }
 if ($message != "")
-	header("Location: index.php?page=admin&op=fluxdSettings&m=".urlencode($message));
+	header("Location: index.php?iid=admin&op=fluxdSettings&m=".urlencode($message));
 else
-header("Location: index.php?page=admin&op=fluxdSettings");
+header("Location: index.php?iid=admin&op=fluxdSettings");
 ?>

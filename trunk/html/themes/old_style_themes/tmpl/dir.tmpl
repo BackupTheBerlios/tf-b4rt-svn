@@ -31,7 +31,7 @@ function UncompDetails(URL) {
 			<tmpl_if name="is_dir">
 				<tr bgcolor="<tmpl_var name="bg">">
 					<td>
-						<a href="index.php?page=dir&dir=<tmpl_var name="urlencode1">">
+						<a href="index.php?iid=dir&dir=<tmpl_var name="urlencode1">">
 							<img src="images/folder2.gif" width="16" height="16" title="<tmpl_var name="entry">" border="0" align="absmiddle"><tmpl_var name="entry"></a>
 					</td>
 					<tmpl_if name="enable_dirstats">
@@ -53,7 +53,7 @@ function UncompDetails(URL) {
 									popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
 								}
 							</script>
-							<a href="JavaScript:renameFolder('index.php?page=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
+							<a href="JavaScript:renameFolder('index.php?iid=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
 						<!-- move hack -->
 						<tmpl_if name="enable_move">
@@ -66,7 +66,7 @@ function UncompDetails(URL) {
 									popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
 								}
 							</script>
-							<a href="JavaScript:moveFile('index.php?page=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
+							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_sfvcheck">
 							<tmpl_if name="enable_sfvcheck" value="2">
@@ -77,14 +77,14 @@ function UncompDetails(URL) {
 								<img src="images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">
 							</tmpl_if>
 						</tmpl_if>
-						<a href="JavaScript:MakeTorrent('index.php?page=maketorrent&path=<tmpl_var name="urlencode1">')">
+						<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')">
 							<img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0>
 						</a>
-						<a href="index.php?page=dir&tar=<tmpl_var name="urlencode1">">
+						<a href="index.php?iid=dir&tar=<tmpl_var name="urlencode1">">
 							<img src="images/tar_down.gif" width=16 height=16 title="Download as <tmpl_var name="package_type">" border=0>
 						</a>
 						<tmpl_if name="IsAdmin1">
-							<a href="index.php?page=dir&del=<tmpl_var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')">
+							<a href="index.php?iid=dir&del=<tmpl_var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')">
 								<img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0>
 							</a>
 							<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
@@ -100,9 +100,9 @@ function UncompDetails(URL) {
 				<tr bgcolor="<tmpl_var name="bg">">
 					<td>
 						<tmpl_if name="enable_file_download">
-							<a href="index.php?page=dir&down=<tmpl_var name="urlencode1">">
+							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">">
 								<img src="<tmpl_var name="image">" width="16" height="16" alt="<tmpl_var name="entry">" border="0"></a>
-							<a href="index.php?page=dir&down=<tmpl_var name="urlencode1">">
+							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">">
 								<tmpl_var name="entry"></a>
 						<tmpl_else>
 							<img src="<tmpl_var name="image">" width="16" height="16" alt="<tmpl_var name="entry">" border="0">
@@ -128,7 +128,7 @@ function UncompDetails(URL) {
 									popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
 								}
 							</script>
-							<a href="JavaScript:renameFolder('index.php?page=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
+							<a href="JavaScript:renameFolder('index.php?iid=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
 						<!-- move hack -->
 						<tmpl_if name="enable_move">
@@ -141,34 +141,34 @@ function UncompDetails(URL) {
 									popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
 								}
 							</script>
-							<a href="JavaScript:moveFile('index.php?page=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
+							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_rar2" value="1">
-							<a href="javascript:UncompDetails('index.php?page=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')">
+							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')">
 								<img src="images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0>
 							</a>
 						<tmpl_elseif name="enable_rar2" value="2">
-							<a href="javascript:UncompDetails('index.php?page=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')">
+							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')">
 								<img src="images/zip.png" width=16 height=16 title="Unzip" border=0>
 							</a>
 						</tmpl_if>
 						<tmpl_if name="enable_view_nfo">
-							<a href="index.php?page=viewnfo&path=<tmpl_var name="urlencode4">">
+							<a href="index.php?iid=viewnfo&path=<tmpl_var name="urlencode4">">
 								<img src="images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0>
 							</a>
 						</tmpl_if>
 						<tmpl_if name="enable_maketorrent">
-							<a href="JavaScript:MakeTorrent('index.php?page=maketorrent&path=<tmpl_var name="urlencode1">')">
+							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')">
 								<img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0>
 							</a>
 						</tmpl_if>
 						<tmpl_if name="enable_file_download">
-							<a href="index.php?page=dir&down=<tmpl_var name="urlencode1">">
+							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">">
 								<img src="images/download_owner.gif" width=16 height=16 title="Download" border=0>
 							</a>
 						</tmpl_if>
 						<tmpl_if name="admin1">
-							<a href="index.php?page=dir&del=<tmpl_Var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')">
+							<a href="index.php?iid=dir&del=<tmpl_Var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')">
 								<img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0>
 							</a>
 							<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">

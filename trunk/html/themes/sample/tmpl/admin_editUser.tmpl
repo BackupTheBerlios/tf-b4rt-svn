@@ -65,7 +65,7 @@
 								<td valign="top"><strong><tmpl_var name="user_type"></strong><br></td>
 							</tr>
 							<tr>
-								<td colspan="2" align="center"><div align="center">[<a href="index.php?page=admin&op=showUserActivity&user_id=<tmpl_var name="user_id">"><tmpl_var name="_USERSACTIVITY"></a>]</div></td>
+								<td colspan="2" align="center"><div align="center">[<a href="index.php?iid=admin&op=showUserActivity&user_id=<tmpl_var name="user_id">"><tmpl_var name="_USERSACTIVITY"></a>]</div></td>
 							</tr>
 						</table>
 					</div>
@@ -73,7 +73,7 @@
 				<td valign="top" bgcolor="#d6dfe6">
 					<div align="center">
 						<table cellpadding="5" cellspacing="0" border="0">
-							<form name="theForm" action="index.php?page=admin&op=updateUser" method="post" onsubmit="return validateUser()">
+							<form name="theForm" action="index.php?iid=admin&op=updateUser" method="post" onsubmit="return validateUser()">
 								<tr>
 									<td align="right"><tmpl_var name="_USER">:</td>
 									<td>

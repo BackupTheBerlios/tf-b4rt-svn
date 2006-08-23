@@ -39,7 +39,7 @@ else {
 $to_user = getRequestVar('to_user');
 if(empty($to_user) or empty($cfg['user'])) {
 	 // the user probably hit this page direct
-	header("location: index.php?page=index");
+	header("location: index.php?iid=index");
 	exit;
 }
 
@@ -57,7 +57,7 @@ if (!empty($message)) {
 		$force_read = 0;
 	$message = check_html($message, "nohtml");
 	SaveMessage($to_user, $cfg['user'], $message, $to_all, $force_read);
-	header("location: index.php?page=readmsg");
+	header("location: index.php?iid=readmsg");
 } else {
 	$rmid = getRequestVar('rmid');
 	if(!empty($rmid)) {

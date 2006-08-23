@@ -48,7 +48,7 @@ include("themes/".$cfg["default_theme"]."/index.php");
 
 // already got a session ?
 if(isset($_SESSION['user'])) {
-	header("location: index.php?page=index");
+	header("location: index.php?iid=index");
 	exit();
 }
 
@@ -100,12 +100,12 @@ switch ($cfg['auth_type']) {
 // Check for user
 if(!empty($user) && !empty($iamhim)) {
 	// First User check
-	$next_loc = "index.php?page=index";
+	$next_loc = "index.php?iid=index";
 	$sql = "SELECT count(*) FROM tf_users";
 	$user_count = $db->GetOne($sql);
 	if($user_count == 0) {
 		firstLogin($user,$iamhim);
-		$next_loc = "index.php?page=admin&op=configSettings";
+		$next_loc = "index.php?iid=admin&op=configSettings";
 	}
 	// perform auth
 	if (performAuthentication($user,$iamhim) == 1) {

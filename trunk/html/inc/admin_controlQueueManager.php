@@ -39,7 +39,7 @@ switch($action) {
 		if ($queueManager->isQueueManagerRunning()) {
 			$queueManager->stopQueueManager();
 			$message = '<br><strong>Stop-Command sent. Wait until shutdown and dont click stop again now !</strong><br><br>';
-			header("Location: index.php?page=admin&op=queueSettings&m=".urlencode($message).'&s=1');
+			header("Location: index.php?iid=admin&op=queueSettings&m=".urlencode($message).'&s=1');
 			exit;
 		}
 	break;
@@ -48,7 +48,7 @@ switch($action) {
 	break;
 }
 if ($message != "")
-	header("Location: index.php?page=admin&op=queueSettings&m=".urlencode($message));
+	header("Location: index.php?iid=admin&op=queueSettings&m=".urlencode($message));
 else
-header("Location: index.php?page=admin&op=queueSettings");
+header("Location: index.php?iid=admin&op=queueSettings");
 ?>

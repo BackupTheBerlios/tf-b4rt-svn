@@ -126,7 +126,7 @@ function isNumber(sText)
 				<table width="100%" cellpadding="2" cellspacing="0" border="0">
 						<tmpl_if name="with_profiles">
 						    <tr>
-								<form name="profile" action="index.php?page=startpop" method="POST">
+								<form name="profile" action="index.php?iid=startpop" method="POST">
 									<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
 									<td align="center" colspan="2">Profile:
 										<select name="profile" size="1" onChange="javascript:submit();">
@@ -150,7 +150,7 @@ function isNumber(sText)
 										</select>
 									</td>
 								</form>
-								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<form name="theForm" target="_parent" action="index.php?iid=index" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
 								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
@@ -220,7 +220,7 @@ function isNumber(sText)
 							</tmpl_if>
 						<tmpl_else>
 						    <tr>
-								<form name="theForm" target="_parent" action="index.php?page=index" method="POST">
+								<form name="theForm" target="_parent" action="index.php?iid=index" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
 								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">

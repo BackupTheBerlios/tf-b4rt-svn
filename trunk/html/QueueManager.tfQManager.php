@@ -193,7 +193,7 @@ class QueueManager_tfQManager extends QueueManager
         } else {
             // torrent has been started... try and kill it.
             AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent . "has been started -- TRY TO KILL IT");
-            header("location: index.php?page=index&alias_file=".$alias_file."&kill=true&kill_torrent=".urlencode($torrent));
+            header("location: index.php?iid=index&alias_file=".$alias_file."&kill=true&kill_torrent=".urlencode($torrent));
             exit();
         }
     }

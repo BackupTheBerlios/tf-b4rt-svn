@@ -69,7 +69,7 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	// redir
-	header("Location: index.php?page=admin&op=fluxdSettings&m=".urlencode($message));
+	header("Location: index.php?iid=admin&op=fluxdSettings&m=".urlencode($message));
 } else {
 	// save settings
 	$settings = $_POST;
@@ -77,6 +77,6 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	// redir
-	header("Location: index.php?page=admin&op=fluxdSettings");
+	header("Location: index.php?iid=admin&op=fluxdSettings");
 }
 ?>

@@ -31,7 +31,7 @@ require_once("functions.php");
 if(!IsAdmin()) {
 	 // the user probably hit this page direct
 	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);
-	header("location: index.php?page=index");
+	header("location: index.php?iid=index");
 }
 
 //****************************************************************************
@@ -45,23 +45,23 @@ function getMenu() {
 	if (IsSuperAdmin())
 		$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>')." | ";
 	// settings
-	$menu .= "<a href=\"index.php?page=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
 	// deprecated : queue : delete soon (hopefully ~)
-	//$menu .= "<a href=\"index.php?page=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
+	//$menu .= "<a href=\"index.php?iid=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
 	// fluxd
-	$menu .= "<a href=\"index.php?page=admin&op=fluxdSettings\"><font class=\"adminlink\">"._FLUXD_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=fluxdSettings\"><font class=\"adminlink\">"._FLUXD_MENU."</font></a> | ";
 	// ui
-	$menu .= "<a href=\"index.php?page=admin&op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
 	// search
-	$menu .= "<a href=\"index.php?page=admin&op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
 	// links
-	$menu .= "<a href=\"index.php?page=admin&op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
 	// rss
-	$menu .= "<a href=\"index.php?page=admin&op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
 	// users
-	$menu .= "<a href=\"index.php?page=admin&op=showUsers\"><font class=\"adminlink\">users</font></a> | ";
+	$menu .= "<a href=\"index.php?iid=admin&op=showUsers\"><font class=\"adminlink\">users</font></a> | ";
 	// activity
-	$menu .= "<a href=\"index.php?page=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a>";
+	$menu .= "<a href=\"index.php?iid=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a>";
 	//
 	$menu .= "</div></td></tr>";
 	$menu .= "</table><br>";
@@ -97,7 +97,7 @@ function getUserSection() {
 			$user_icon = "images/user.gif";
 		$userSection .= "<tr>";
 		if (IsUser($user_id))
-			$userSection .= "<td><a href=\"index.php?page=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
+			$userSection .= "<td><a href=\"index.php?iid=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
 		else
 			$userSection .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."</td>";
 		$userSection .= "<td><div class=\"tiny\" align=\"right\">".$hits."</div></td>";
@@ -116,7 +116,7 @@ function getUserSection() {
 		$userSection .= '</td>';
 		$userSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_activity.'</div></td>';
 		$userSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_percent.'%</div></td>';
-		$userSection .= '<td align="right"><a href="index.php?page=admin&op=showUserActivity&user_id='.$user_id.'">';
+		$userSection .= '<td align="right"><a href="index.php?iid=admin&op=showUserActivity&user_id='.$user_id.'">';
 		$userSection .= '<img src="images/properties.png" width="18" height="13" title="'.$user_id.'\'s '._USERSACTIVITY.'" border="0"></a></td>';
 		$userSection .= '</tr>';
 		$userSection .= '</table>';
@@ -140,20 +140,20 @@ function getUserSection() {
 		// state
 		if ($user_level <= 1) {
 			if ($user_state == 1)
-				$userSection .= "<a href=\"index.php?page=admin&op=setUserState&user_id=".$user_id."&state=0\"><img src=\"images/green.gif\" width=\"13\" height=\"13\" title=\"deactivate ".$user_id."\" border=\"0\"></a>";
+				$userSection .= "<a href=\"index.php?iid=admin&op=setUserState&user_id=".$user_id."&state=0\"><img src=\"images/green.gif\" width=\"13\" height=\"13\" title=\"deactivate ".$user_id."\" border=\"0\"></a>";
 			else
-				$userSection .= "<a href=\"index.php?page=admin&op=setUserState&user_id=".$user_id."&state=1\"><img src=\"images/red.gif\" width=\"13\" height=\"13\" title=\"activate ".$user_id."\" border=\"0\"></a>";
+				$userSection .= "<a href=\"index.php?iid=admin&op=setUserState&user_id=".$user_id."&state=1\"><img src=\"images/red.gif\" width=\"13\" height=\"13\" title=\"activate ".$user_id."\" border=\"0\"></a>";
 		} else {
 			$userSection .= "<img src=\"images/black.gif\" width=\"13\" height=\"13\" title=\"superadmin always activated\">";
 		}
 		$userSection .= "&nbsp;";
 		// edit
 		if ($user_level <= 1 || IsSuperAdmin())
-			$userSection .= "<a href=\"index.php?page=admin&op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
+			$userSection .= "<a href=\"index.php?iid=admin&op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
 		$userSection .= "&nbsp;";
 		// delete
 		if ($user_level <= 1)
-			$userSection .= "<a href=\"index.php?page=admin&op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
+			$userSection .= "<a href=\"index.php?iid=admin&op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
 		else
 			$userSection .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\"n/a\">";
 		$userSection .= "&nbsp;";
@@ -200,7 +200,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$ip_info = $ip_resolved."<br>".$user_agent;
 		$output .= "<tr>";
 		if (IsUser($user_id))
-			$output .= "<td><a href=\"index.php?page=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a>&nbsp;&nbsp;</td>";
+			$output .= "<td><a href=\"index.php?iid=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a>&nbsp;&nbsp;</td>";
 		else
 			$output .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."&nbsp;&nbsp;</td>";
 		$output .= "<td><div class=\"tiny\">".$action."</div></td>";
@@ -216,11 +216,11 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$output = "<tr><td colspan=6><center><strong>-- "._NORECORDSFOUND." --</strong></center></td></tr>";
 	$prev = ($min-$offset);
 	if ($prev >= 0) {
-		$prevlink = "<a href=\"index.php?page=admin&op=showUserActivity&min=".$prev."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
+		$prevlink = "<a href=\"index.php?iid=admin&op=showUserActivity&min=".$prev."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
 		$prevlink .= "<font class=\"TinyWhite\">&lt;&lt;".$min." "._SHOWPREVIOUS."]</font></a> &nbsp;";
 	}
 	if ($inx>=$offset) {
-		$morelink = "<a href=\"index.php?page=admin&op=showUserActivity&min=".$max."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
+		$morelink = "<a href=\"index.php?iid=admin&op=showUserActivity&min=".$max."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
 		$morelink .= "<font class=\"TinyWhite\">["._SHOWMORE."&gt;&gt;</font></a>";
 	}
 	$activity = '<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>';
@@ -237,7 +237,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$activity .= '<script src="overlib.js" type="text/javascript"></script>';
 	$activity .= '<div align="center">';
 	$activity .= '<table>';
-	$activity .= '<form action="index.php?page=admin&op=showUserActivity" name="searchForm" method="post">';
+	$activity .= '<form action="index.php?iid=admin&op=showUserActivity" name="searchForm" method="post">';
 	$activity .= '<tr>';
 		$activity .= '<td>';
 		$activity .= '<strong>'._ACTIVITYSEARCH.'</strong>&nbsp;&nbsp;&nbsp;';
@@ -379,7 +379,7 @@ switch ($op) {
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
 		$continue = getRequestVar('continue');
 		require_once("admin_".$continue.".php");
-	
+
 	break;
 
 	case "showUserActivity":
@@ -410,14 +410,14 @@ switch ($op) {
 			addNewRSS($newRSS);
 			AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
 		}
-		header("location: index.php?page=admin&op=editRSS");
+		header("location: index.php?iid=admin&op=editRSS");
 	break;
 
 	case "deleteRSS":
 		$rid = getRequestVar('rid');
 		AuditAction($cfg["constants"]["admin"], _DELETE." RSS: ".getRSS($rid));
 		deleteOldRSS($rid);
-		header("location: index.php?page=admin&op=editRSS");
+		header("location: index.php?iid=admin&op=editRSS");
 	break;
 
 	// Link Mod
@@ -449,7 +449,7 @@ switch ($op) {
 		$lid = getRequestVar('lid');
 		AuditAction($cfg["constants"]["admin"], _DELETE." Link: ".getSite($lid)." [".getLink($lid)."]");
 		deleteOldLink($lid);
-		header("location: index.php?page=admin&op=editLinks");
+		header("location: index.php?iid=admin&op=editLinks");
 	break;
 
 	case "showUsers":
@@ -473,7 +473,7 @@ switch ($op) {
 			DeleteThisUser($user_id);
 			AuditAction($cfg["constants"]["admin"], _DELETE." "._USER.": ".$user_id);
 		}
-		header("location: index.php?page=admin");
+		header("location: index.php?iid=admin");
 	break;
 
 	case "editUser":
@@ -492,7 +492,7 @@ switch ($op) {
 
 	case "setUserState":
 		setUserState();
-		header("location: index.php?page=admin&op=showUsers");
+		header("location: index.php?iid=admin&op=showUsers");
 	break;
 
 	case "updateQueueSettings":
@@ -531,7 +531,7 @@ switch ($op) {
 		$settings = processSettingsParams();
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux UI Settings");
-		header("location: index.php?page=admin&op=uiSettings");
+		header("location: index.php?iid=admin&op=uiSettings");
 	break;
 
 	case "searchSettings":

@@ -86,7 +86,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 				$mainStart = true;
 			}
 			if ($mainStart == false) $tmpCatLinks .= " | ";
-			$tmpCatLinks .= "<a href=\"index.php?page=torrentSearch&searchEngine=".$searchEngine."&mainGenre=".$mainId."\">".$mainName."</a>";
+			$tmpCatLinks .= "<a href=\"index.php?iid=torrentSearch&searchEngine=".$searchEngine."&mainGenre=".$mainId."\">".$mainName."</a>";
 			$mainStart = false;
 		}
 		$tmpl->setvar('links_list', $catLinks.$tmpCatLinks);

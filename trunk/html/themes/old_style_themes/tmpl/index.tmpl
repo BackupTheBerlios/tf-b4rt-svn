@@ -24,7 +24,7 @@
 						<td bgcolor="<tmpl_var name="table_header_bg">">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="index.php?page=index" method="post" enctype="multipart/form-data">
+									<form name="form_file" action="index.php?iid=index" method="post" enctype="multipart/form-data">
 										<td>
 										<tmpl_var name="_SELECTFILE">:<br>
 										<input type="File" name="upload_file" size="30">
@@ -44,14 +44,14 @@
 										<input type="Submit" value="Go">
 										<br>
 										<tmpl_if name="enable_multiupload">
-											&nbsp;<a href="index.php?page=multiup"><img src="images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
-											<a href="index.php?page=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
+											&nbsp;<a href="index.php?iid=multiup"><img src="images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
+											<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
 										</tmpl_if>
 									</td>
 								</form>
 							</tr>
 							<tr>
-								<form name="form_url" action="index.php?page=index" method="post">
+								<form name="form_url" action="index.php?iid=index" method="post">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
@@ -75,7 +75,7 @@
 							</tr>
 							<tmpl_if name="enable_wget">
 								<tr>
-									<form name="form_wget" action="index.php?page=index" method="post">
+									<form name="form_wget" action="index.php?iid=index" method="post">
 										<td>
 											<hr>
 											URL for the File to wget :<br>
@@ -88,7 +88,7 @@
 							<tmpl_if name="enable_search">
 								<tr>
 									<form name="form_search" action="index.php" method="get">
-										<input type="hidden" name="page" value="torrentSearch">
+										<input type="hidden" name="iid" value="torrentSearch">
 										<td>
 											<hr>
 											Torrent <tmpl_var name="_SEARCH">:<br>
@@ -119,33 +119,33 @@
 								<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 								<tmpl_if name="settingsHackStats1">
 									<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
-									<a href="index.php?page=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats11"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats11"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats2">
 									<b><tmpl_var name="_UPLOADSPEED">:</b><br>
-									<a href="index.php?page=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats22"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats22"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats3">
 									<b><tmpl_var name="_TOTALSPEED">:</b><br>
-									<a href="index.php?page=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats33"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats33"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats4">
 									<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
-									<a href="index.php?page=all_services"><img src="images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats44"></a><br>
+									<a href="index.php?iid=all_services"><img src="images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats44"></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats5">
 									<b><tmpl_var name="_DRIVESPACE">:</b><br>
-									<a href="index.php?page=drivespace"><img src="images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats55"></a><br>
+									<a href="index.php?iid=drivespace"><img src="images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats55"></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats6">
 									<b><tmpl_var name="_SERVERLOAD">:</b><br>
-									<a href="index.php?page=who"><img src="images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats66"></a><br>
+									<a href="index.php?iid=who"><img src="images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats66"></a><br>
 								</tmpl_if>
 								<tmpl_if name="ui_displayusers">
 								    <b><tmpl_var name="_ONLINE">:</b><br>
 								    <tmpl_loop name="arOnlineUsers">
 										<tmpl_if name="is_on">
-											<a href="index.php?page=message&to_user=<tmpl_var name="user">">
+											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
 											<img src="images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 										</tmpl_if>
 								    </tmpl_loop>
@@ -153,7 +153,7 @@
     									<b><tmpl_var name="_OFFLINE">:</b></br>
     									<tmpl_loop name="arOfflineUsers">
 											<tmpl_if name="is_off">
-    											<a href="index.php?page=message&to_user=<tmpl_var name="user">">
+    											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
     											<img src="images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 											</tmpl_if>
     								    </tmpl_loop>
@@ -169,32 +169,32 @@
 				<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
 					<div align="center">
 						<font face="Arial" size="2">
-							<a href="index.php?page=readrss">
+							<a href="index.php?iid=readrss">
 								<img src="images/download_owner.gif" width="16" height="16" border="0" title="RSS Torrents" align="absmiddle">RSS Torrents</a>
 							|
-							<a href="index.php?page=drivespace">
+							<a href="index.php?iid=drivespace">
 								<img src="images/hdd.gif" width="16" height="16" border="0" title="<tmpl_var name="drivespace">% Used" align="absmiddle"><tmpl_var name="_DRIVESPACE"></a>
 							|
 							<tmpl_if name="enable_xfer">
-								<a href="index.php?page=xfer">
+								<a href="index.php?iid=xfer">
 									<img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="_XFER_USAGE"></a>
 								|
 							</tmpl_if>
 							<tmpl_if name="enable_mrtg">
-								<a href="index.php?page=mrtg">
+								<a href="index.php?iid=mrtg">
 									<img src="images/mrtg.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_ID_MRTG"></a>
 								|
 							</tmpl_if>
-							<a href="index.php?page=who">
+							<a href="index.php?iid=who">
 								<img src="images/who.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_SERVERSTATS"></a>
 							|
-							<a href="index.php?page=all_services">
+							<a href="index.php?iid=all_services">
 								<img src="images/all.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_Var name="_ALL"></a>
 							|
-							<a href="index.php?page=dir">
+							<a href="index.php?iid=dir">
 								<img src="images/folder.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_DIRECTORYLIST"></a>
 							|
-							<a href="index.php?page=dir&dir=<tmpl_var name="user2">">
+							<a href="index.php?iid=dir&dir=<tmpl_var name="user2">">
 								<img src="images/folder.gif" width="16" height="16" title="My Directory" border="0" align="absmiddle">My Directory</a>
 							|
 							<a href="stats.php?f=rss" title="RSS - Stats" target="_blank">
@@ -331,9 +331,9 @@
 									</form>
 									<tmpl_if name="page_refresh">
 										*** <tmpl_var name="_PAGEWILLREFRESH"> <span id='span_refresh'><tmpl_var name="page_refresh"></span> <tmpl_var name="_SECONDS"> ***<br>
-										<a href="index.php?page=index&pagerefresh=false"><font class="tiny"><tmpl_var name="_TURNOFFREFRESH"></font></a>
+										<a href="index.php?iid=index&pagerefresh=false"><font class="tiny"><tmpl_var name="_TURNOFFREFRESH"></font></a>
 									<tmpl_else>
-										<a href="index.php?page=index&pagerefresh=true"><font class="tiny"><tmpl_var name="_TURNONREFRESH"></font></a>
+										<a href="index.php?iid=index&pagerefresh=true"><font class="tiny"><tmpl_var name="_TURNONREFRESH"></font></a>
 									</tmpl_if>
 									<tmpl_if name="no_bigboldwarning">
 										<script language="JavaScript">
@@ -406,7 +406,7 @@
 		<tmpl_if name="IsForceReadMsg">
 			<script language="JavaScript">
 				if (confirm("tmpl_if name="_ADMINMESSAGE">")) {
-					document.location = "index.php?page=readmsg";
+					document.location = "index.php?iid=readmsg";
 				}
 			</script>
 		</tmpl_if>

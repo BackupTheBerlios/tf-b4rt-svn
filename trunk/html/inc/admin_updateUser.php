@@ -25,7 +25,7 @@ if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	}
 	updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline);
 	AuditAction($cfg["constants"]["admin"], _EDITUSER.": ".$user_id);
-	header("location: index.php?page=admin");
+	header("location: index.php?iid=admin");
 }
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);

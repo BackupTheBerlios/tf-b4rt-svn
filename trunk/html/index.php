@@ -24,8 +24,8 @@ require_once("lib/vlib/vlibTemplate.php");
 
 # really messy
 # but have to do it slowly not to mess everything
-if(isset($_GET['page'])) {
-	switch($_GET['page']) {
+if(isset($_GET['iid'])) {
+	switch($_GET['iid']) {
 		default:
 			require_once("inc/index.php");
 		break;
@@ -117,9 +117,8 @@ if(isset($_GET['page'])) {
 			require_once("inc/locked.php");
 		break;
 	}
-}
-else {
-# use "old" style not to break tools
+} else {
+	// use "old" style not to break tools
 	require_once("inc/index.php");
 }
 ?>

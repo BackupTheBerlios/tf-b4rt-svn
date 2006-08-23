@@ -1270,18 +1270,18 @@ function getDirList($dirName) {
 			$displayname .= "...";
 		}
 		if ($cfg["enable_torrent_download"])
-			$torrentfilelink = "<a href=\"index.php?page=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
+			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		//
 		$hd = getStatusImage($af);
 		$output .= "<tr>";
-		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
 		// ========================================================== led + meta
 		$output .= '<td valign="bottom" align="center" nowrap>';
 		// led
 		$hd = getStatusImage($af);
 		if ($af->running == 1)
-		  $output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+		  $output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 		$output .= "<img src=\"images/".$hd->image."\" width=\"16\" height=\"16\" title=\"".$hd->title.$entry."\" border=\"0\" align=\"absmiddle\">";
 		if ($af->running == 1)
 		  $output .= "</a>";
@@ -1297,7 +1297,7 @@ function getDirList($dirName) {
 		$output .= "</td>";
 
 		$output .= "<td align=\"right\" nowrap><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
-		$output .= "<td align=\"center\" nowrap><a href=\"index.php?page=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+		$output .= "<td align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
 		$output .= "<td valign=\"bottom\" nowrap><div align=\"center\">";
 		if ($af->running == "2") {
 			$output .= "<i><font color=\"#32cd32\">"._NEW."</font></i>";
@@ -1347,15 +1347,15 @@ function getDirList($dirName) {
 			if($af->percent_done >= 100) {
 				if(trim($af->up_speed) != "" && $af->running == "1") {
 					$popup_msg .= $timeStarted;
-					$output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" style=\"font-size:7pt;\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\">seeding (".$af->up_speed.") ".$sharing."</a>";
+					$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" style=\"font-size:7pt;\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\">seeding (".$af->up_speed.") ".$sharing."</a>";
 				} else {
 					$popup_msg .= "<br>"._ENDED.": ".date("m/d/Y H:i:s",  strval(filemtime($dirName.$alias)));
-					$output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><i><font color=red>"._DONE."</font></i></a>";
+					$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><i><font color=red>"._DONE."</font></i></a>";
 				}
 				$show_run = false;
 			} else if ($af->percent_done < 0) {
 				$popup_msg .= $timeStarted;
-				$output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><i><font color=\"#989898\">"._INCOMPLETE."</font></i></a>";
+				$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><i><font color=\"#989898\">"._INCOMPLETE."</font></i></a>";
 				$show_run = true;
 			} else {
 				$popup_msg .= $timeStarted;
@@ -1363,7 +1363,7 @@ function getDirList($dirName) {
 					$graph_width = $af->percent_done;
 				if($graph_width == 100)
 					$background = $progress_color;
-				$output .= "<a href=\"JavaScript:ShowDetails('index.php?page=downloaddetails&lias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\">";
+				$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&lias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\">";
 				$output .= "<font class=\"tiny\"><strong>".$af->percent_done."%</strong> @ ".$af->down_speed."</font></a><br>";
 				$output .= "<table width=\"100\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">";
 				$output .= "<tr><td background=\"themes/".$cfg["theme"]."/images/progressbar.gif\" bgcolor=\"".$progress_color."\"><img src=\"images/blank.gif\" width=\"".$graph_width."\" height=\"".$bar_width."\" border=\"0\"></td>";
@@ -1378,20 +1378,20 @@ function getDirList($dirName) {
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
-		$output .= "<a href=\"index.php?page=details&torrent=".urlencode($entry);
+		$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
 		if($af->running == 1)
 			$output .= "&als=false";
 		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 
 		// link to datapath
-		$output .= '<a href="index.php?page=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
+		$output .= '<a href="index.php?iid=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
 		$output .= '<img src="images/datadir.gif" title="'.$settingsAry['datapath'].'" border="0">';
 		$output .= '</a>';
 
 		if ($owner || IsAdmin($cfg["user"])) {
 			// messy
 			if($af->percent_done >= 0 && $af->running == 1) {
-				$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
+				$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
 				$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
 				if ($cfg['enable_multiops'] == 1)
 					$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
@@ -1400,15 +1400,15 @@ function getDirList($dirName) {
 					$output .= "<img src=\"images/run_off.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 				} else {
 					if ($af->running == "3") {
-						$output .= "<a href=\"index.php?page=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
+						$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=16 height=16 title=\""._DELQUEUE."\" border=0></a>";
 					} else {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
 							// Allow Avanced start popup?
 							if ($cfg["advanced_start"] != 0) {
 								if($show_run)
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?page=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/run_on.gif\" width=16 height=16 title=\""._RUNTORRENT."\" border=0></a>";
+									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/run_on.gif\" width=16 height=16 title=\""._RUNTORRENT."\" border=0></a>";
 								else
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?page=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/seed_on.gif\" width=16 height=16 title=\""._SEEDTORRENT."\" border=0></a>";
+									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\"><img src=\"images/seed_on.gif\" width=16 height=16 title=\""._SEEDTORRENT."\" border=0></a>";
 							} else {
 								// Quick Start
 								if($show_run)

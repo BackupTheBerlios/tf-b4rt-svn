@@ -38,7 +38,7 @@ else {
 
 if(empty($cfg['user'])) {
 	 // the user probably hit this page direct
-	header("location: index.php?page=index");
+	header("location: index.php?iid=index");
 	exit;
 }
 

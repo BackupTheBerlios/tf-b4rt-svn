@@ -80,7 +80,7 @@
 									<br><br></td>
 								</tr>
 							<tmpl_else>
-								<form name="controlForm" action="index.php?page=admin&op=controlFluxd" method="post">
+								<form name="controlForm" action="index.php?iid=admin&op=controlFluxd" method="post">
 									<tmpl_if name="fluxdRunning">
 										<input type="Hidden" name="a" value="stop">
 										<tr><br>
@@ -101,7 +101,7 @@
 									</tmpl_if>
 								</form>
 							</tmpl_if>
-							<form name="theForm" action="index.php?page=admin&op=updateFluxdSettings" method="post" onsubmit="return validateSettings()">
+							<form name="theForm" action="index.php?iid=admin&op=updateFluxdSettings" method="post" onsubmit="return validateSettings()">
 								<tr>
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
 										<strong>fluxd</strong>

@@ -58,7 +58,7 @@ class ClientHandlerTransmission extends ClientHandler
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["btclient_transmission_bin"]." is not valid");
             $this->status = -1;
             if (IsAdmin()) {
-                header("location: index.php?page=admin&op=configSettings");
+                header("location: index.php?iid=admin&op=configSettings");
                 return;
             } else {
                 $this->messages .= "Error TorrentFlux settings are not correct (path to transmission-bin is not valid) -- please contact an admin.";

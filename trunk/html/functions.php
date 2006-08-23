@@ -76,7 +76,7 @@ if (isAuthenticated() == 1) {
 	if ($cfg["webapp_locked"] == 1) {
 	// only superadmin can login when we are locked
 		if (! IsSuperAdmin()) {
-			header('location: index.php?page=locked');
+			header('location: index.php?iid=locked');
 			exit();
 		}
 	}
@@ -86,15 +86,15 @@ if (isAuthenticated() == 1) {
 	if (isset($credentials)) {
 		if (performAuthentication($credentials['username'],$credentials['password']) == 1) {
 			if (isAuthenticated() != 1) {
-				header('location: index.php?page=login');
+				header('location: index.php?iid=login');
 				exit();
 			}
 		} else {
-			header('location: index.php?page=login');
+			header('location: index.php?iid=login');
 			exit();
 		}
 	} else {
-		header('location: index.php?page=login');
+		header('location: index.php?iid=login');
 		exit();
 	}
 }

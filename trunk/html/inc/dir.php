@@ -76,7 +76,7 @@ if ($del != "") {
 			}
 		}
 	}
-	header("Location: index.php?page=dir&dir=".urlencode($current));
+	header("Location: index.php?iid=dir&dir=".urlencode($current));
 	exit();
 }
 
@@ -141,7 +141,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
 			}
 		}
 	}
-	header("Location: index.php?page=dir&dir=".urlencode($current));
+	header("Location: index.php?iid=dir&dir=".urlencode($current));
 	exit();
 }
 
@@ -215,7 +215,7 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 			}
 		}
 	}
-	header("Location: index.php?page=dir&dir=".urlencode($current));
+	header("Location: index.php?iid=dir&dir=".urlencode($current));
 	exit();
 }
 
@@ -245,19 +245,19 @@ $dirName = stripslashes($dirName);
 if (!(@is_dir($dirName))) {
 	// our dir is no dir but a file. use parent-directory.
 	// setup default parent directory URL
-	$parentURL = "index.php?page=dir";
+	$parentURL = "index.php?iid=dir";
 	// get the real parentURL
 	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1)
-		$parentURL="index.php?page=dir&dir=" . urlencode($matches[1]);
+		$parentURL="index.php?iid=dir&dir=" . urlencode($matches[1]);
 	header("Location: ".$parentURL);
 	exit();
 }
 if (isset($dir)) {
 	//setup default parent directory URL
-	$parentURL = "index.php?page=dir";
+	$parentURL = "index.php?iid=dir";
 	//get the real parentURL
 	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1) {
-		$parentURL="index.php?page=dir&dir=" . urlencode($matches[1]);
+		$parentURL="index.php?iid=dir&dir=" . urlencode($matches[1]);
 	}
 	$tmpl->setvar('parentURL', $parentURL);
 	$tmpl->setvar('_BACKTOPARRENT', _BACKTOPARRENT);

@@ -12,7 +12,7 @@
 			<td align="center">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<form name="theForm" action="index.php?page=admin&op=searchSettings" method="post">
+						<form name="theForm" action="index.php?iid=admin&op=searchSettings" method="post">
 							<tr>
 								<td align="right" width="350" valign="top"><strong>Select Search Engine</strong><br>
 								</td>
@@ -23,7 +23,7 @@
 						</form>
 					</table>
 					<tmpl_if name="is_file">
-						<form name="theSearchEngineSettings" action="index.php?page=admin&op=updateSearchSettings" method="post">
+						<form name="theSearchEngineSettings" action="index.php?iid=admin&op=updateSearchSettings" method="post">
 							<input type="hidden" name="searchEngine" value="<tmpl_var name="searchEngine">">
 							<table cellpadding="0" cellspacing="0" border="0" width="100%">
 								<tr>
