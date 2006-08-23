@@ -256,11 +256,8 @@ function showMetaInfo($torrent, $allowSave=false)
 	}
 	else
 	{
-		// b4rt-62
-		//$result = shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
 		$result = getTorrentMetaInfo($torrent);
-		$showMetaInfo .= "<pre>".$result."</pre>";
-		// b4rt-62
+		$showMetaInfo = "<pre>".$result."</pre>";
 	}
 	return $showMetaInfo;
 }
