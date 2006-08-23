@@ -194,9 +194,8 @@ class SearchEngineBase
 
     //----------------------------------------------------------------
     // Function to return the URL needed by tf
-    function searchURL()
-    {
-        return "torrentSearch.php?searchEngine=".$this->engineName;
+    function searchURL() {
+        return "index.php?page=torrentSearch&searchEngine=".$this->engineName;
     }
 
     //----------------------------------------------------------------
