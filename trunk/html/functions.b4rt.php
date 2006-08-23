@@ -652,6 +652,7 @@ function getTorrentHash($torrent) {
 	$hashAry = array();
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
+		case "showmetainfo.pl":
 			$hashAry = explode(":",trim($resultAry[0]));
 		break;
 		case "btshowmetainfo.py":
@@ -1096,9 +1097,12 @@ function getTorrentMetaInfo($torrent) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["torrent_file_path"].$torrent."\"");
 		break;
+		case "showmetainfo.pl":
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["ttools_path"].'" "'.$cfg["ttools_path"].'/showmetainfo.pl" "'.$cfg["torrent_file_path"].$torrent.'"');
+		break;
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
 	}
 }
 
@@ -1114,7 +1118,6 @@ function getTorrentScrapeInfo($torrent) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["torrent_file_path"].$torrent."\"");
 		break;
-		case "btshowmetainfo.py":
 		default:
 			return "error. torrent-scrape needs transmissioncli.";
 	}

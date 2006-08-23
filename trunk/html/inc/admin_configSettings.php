@@ -39,6 +39,8 @@ $tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmiss
 $tmpl->setvar('btclient_transmission_options', $cfg["btclient_transmission_options"]);
 $tmpl->setvar('btshowmetainfo', $cfg["btshowmetainfo"]);
 $tmpl->setvar('validate_btshowmetainfo', validateFile($cfg["btshowmetainfo"]));
+$tmpl->setvar('ttools_path', $cfg["ttools_path"]);
+$tmpl->setvar('validate_ttools_path', validateFile($cfg["ttools_path"]."/showmetainfo.pl"));
 $tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 $tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
 $tmpl->setvar('max_uploads', $cfg["max_uploads"]);
@@ -57,7 +59,6 @@ $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $tmpl->setvar('enable_transfer_profile', $cfg["enable_transfer_profile"]);
 $tmpl->setvar('transfer_profile_level', $cfg["transfer_profile_level"]);
 $tmpl->setvar('transfer_customize_settings', $cfg["transfer_customize_settings"]);
-
 $nice_list = array();
 for ($i = 0; $i < 20 ; $i++) {
 	if ($cfg["nice_adjust"] == $i) {
@@ -107,7 +108,7 @@ for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 }
 $tmpl->setloop('theme_list', $theme_list);
 
-# Old style themes
+// Old style themes
 $arThemes = Get_old_Themes();
 $old_theme_list = array();
 for($inx = 0; $inx < sizeof($arThemes); $inx++) {
@@ -124,7 +125,7 @@ for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	);
 }
 $tmpl->setloop('old_theme_list', $old_theme_list);
-
+// languages
 $lang_list = array();
 $arLanguage = GetLanguages();
 for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
@@ -149,13 +150,11 @@ $tmpl->setvar('xfer_month', $cfg["xfer_month"]);
 $tmpl->setvar('xfer_week', $cfg["xfer_week"]);
 $tmpl->setvar('xfer_day', $cfg["xfer_day"]);
 $tmpl->setvar('week_start', $cfg["week_start"]);
-
 $month_list = array();
 for ($i = 1; $i <= 31 ; $i++) {
 	if ($cfg["month_start"] == $i) {
 		$month_start_true = 1;
-	}
-	else {
+	} else {
 		$month_start_true = 0;
 	}
 	array_push($month_list, array(
@@ -165,7 +164,6 @@ for ($i = 1; $i <= 31 ; $i++) {
 	);
 }
 $tmpl->setloop('month_list', $month_list);
-
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);
 $tmpl->setvar('enable_dirstats', $cfg["enable_dirstats"]);
