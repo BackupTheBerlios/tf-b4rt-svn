@@ -160,7 +160,7 @@ function isAuthenticated() {
 	if (!is_dir("themes/".$cfg["theme"]))
 		$cfg["theme"] = $cfg["default_theme"];
 	// Check for valid language file
-	if (!is_file("language/".$cfg["language_file"]))
+	if (!is_file("inc/language/".$cfg["language_file"]))
 		$cfg["language_file"] = $cfg["default_language"];
 	$hits++;
 	$sql = 'select * from tf_users where uid = '.$uid;
@@ -215,10 +215,10 @@ function firstLogin($username = '', $password = '') {
 	showError($db,$sql);
 	// Test and setup some paths for the TF settings
 	$pythonCmd = $cfg["pythonCmd"];
-	$btphpbin = getcwd() . "/TF_BitTornado/btphptornado.py";
-	$tfQManager = getcwd() . "/TF_BitTornado/tfQManager.py";
-	$maketorrent = getcwd() . "/TF_BitTornado/btmakemetafile.py";
-	$btshowmetainfo = getcwd() . "/TF_BitTornado/btshowmetainfo.py";
+	$btphpbin = getcwd() . "/bin/TF_BitTornado/btphptornado.py";
+	$tfQManager = getcwd() . "/bin/TF_BitTornado/tfQManager.py";
+	$maketorrent = getcwd() . "/bin/TF_BitTornado/btmakemetafile.py";
+	$btshowmetainfo = getcwd() . "/bin/TF_BitTornado/btshowmetainfo.py";
 	$tfPath = getcwd() . "/downloads/";
 	if (!isFile($cfg["pythonCmd"])) {
 		$pythonCmd = trim(shell_exec("which python"));

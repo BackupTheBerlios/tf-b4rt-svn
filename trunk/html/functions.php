@@ -103,13 +103,11 @@ if (isAuthenticated() == 1) {
 loadUserSettingsToConfig($cfg["uid"]);
 
 // language and theme
-include_once("language/".$cfg["language_file"]);
+include_once("inc/language/".$cfg["language_file"]);
 include_once("themes/".$cfg["theme"]."/index.php");
 
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
-
-
 
 // prune db
 PruneDB();
