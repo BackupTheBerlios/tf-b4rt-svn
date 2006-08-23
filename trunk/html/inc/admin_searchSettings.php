@@ -2,7 +2,7 @@
 /* $Id$ */
 require_once("AliasFile.php");
 require_once("RunningTorrent.php");
-require_once("searchEngines/SearchEngineBase.php");
+require_once("inc/searchEngines/SearchEngineBase.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
@@ -24,8 +24,8 @@ if (empty($searchEngine)) {
 }
 $tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($searchEngine,true));
 
-if (is_file('searchEngines/'.$searchEngine.'Engine.php')) {
-	include_once('searchEngines/'.$searchEngine.'Engine.php');
+if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
+	include_once('inc/searchEngines/'.$searchEngine.'Engine.php');
 	$sEngine = new SearchEngine(serialize($cfg));
 	if ($sEngine->initialized) {
 		$tmpl->setvar('is_file', 1);

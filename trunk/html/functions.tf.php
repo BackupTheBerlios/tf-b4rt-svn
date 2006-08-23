@@ -651,7 +651,7 @@ function buildSearchEngineLinks($selectedEngine = 'TorrentSpy') {
 	$output = '';
 	if( (!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
 		saveSettings($settings);
-	$handle = opendir("./searchEngines");
+	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle))
 		$entrys[] = $entry;
 	natcasesort($entrys);

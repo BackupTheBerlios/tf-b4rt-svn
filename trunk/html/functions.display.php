@@ -24,7 +24,7 @@
 //XFER: displayXferBar(max_bytes, used_bytes, title)
 //XFER: displays xfer percentage bar
 function displayXferBar($total, $used, $title) {
-	
+
 	global $cfg;
 	$remaining = max(0,$total-$used/(1024*1024));
 	$percent = round($remaining/$total*100,0);
@@ -365,7 +365,7 @@ function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fals
 		 $output .= "onchange=\"this.form.submit();\" ";
 	}
 	$output .= " STYLE=\"width: 125px\">";
-	$handle = opendir("./searchEngines");
+	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle)) {
 		$entrys[] = $entry;
 	}
@@ -386,7 +386,7 @@ function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fals
 
 function getEngineLink($searchEngine) {
 	$tmpLink = '';
-	$engineFile = 'searchEngines/'.$searchEngine.'Engine.php';
+	$engineFile = 'inc/searchEngines/'.$searchEngine.'Engine.php';
 	if (is_file($engineFile)) {
 		$fp = @fopen($engineFile,'r');
 		if ($fp) {

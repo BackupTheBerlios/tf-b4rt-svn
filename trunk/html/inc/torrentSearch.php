@@ -26,7 +26,7 @@
 
 require_once("config.php");
 require_once("functions.php");
-require_once("searchEngines/SearchEngineBase.php");
+require_once("inc/searchEngines/SearchEngineBase.php");
 
 
 # create new template
@@ -69,9 +69,9 @@ $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
 $tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($searchEngine));
 $tmpl->setvar('buildSearchEngineLinks', buildSearchEngineLinks($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
-if (is_file('searchEngines/'.$searchEngine.'Engine.php')) {
+if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 	$tmpl->setvar('is_searchEngine', 1);
-	include_once('searchEngines/'.$searchEngine.'Engine.php');
+	include_once('inc/searchEngines/'.$searchEngine.'Engine.php');
 	$sEngine = new SearchEngine(serialize($cfg));
 	if ($sEngine->initialized) {
 		$tmpl->setvar('is_initialized', 1);
