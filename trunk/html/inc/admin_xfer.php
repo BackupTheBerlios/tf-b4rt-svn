@@ -15,7 +15,7 @@ if ($cfg['enable_xfer'] == 1) {
 	// getTransferListArray to update xfer-stats
 	$cfg['xfer_realtime'] = 1;
 	@getTransferListArray();
-	$tmpl->setvar('displayXfer', displayXfer());
+	$tmpl->setvar('displayXfer', getXfer());
 }
 $tmpl->setvar('foot', getFoot(true,true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

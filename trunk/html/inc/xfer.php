@@ -32,21 +32,21 @@ if ($cfg['enable_xfer'] == 1) {
 	$cfg['xfer_realtime'] = 1;
 	@getTransferListArray();
 	if ($cfg['xfer_day']) {
-		$tmpl->setvar('xfer_day', displayXferBar($cfg['xfer_day'],$xfer_total['day']['total'],_XFERTHRU.' Today:'));
+		$tmpl->setvar('xfer_day', getXferBar($cfg['xfer_day'],$xfer_total['day']['total'],_XFERTHRU.' Today:'));
 	}
 	if ($cfg['xfer_week']) {
-		$tmpl->setvar('xfer_week', displayXferBar($cfg['xfer_week'],$xfer_total['week']['total'],_XFERTHRU.' '.$cfg['week_start'].':'));
+		$tmpl->setvar('xfer_week', getXferBar($cfg['xfer_week'],$xfer_total['week']['total'],_XFERTHRU.' '.$cfg['week_start'].':'));
 	}
 	$monthStart = strtotime(date('Y-m-').$cfg['month_start']);
 	$monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
 	if ($cfg['xfer_month']) {
-		$tmpl->setvar('xfer_month', displayXferBar($cfg['xfer_month'],$xfer_total['month']['total'],_XFERTHRU.' '.$monthText.':'));
+		$tmpl->setvar('xfer_month', getXferBar($cfg['xfer_month'],$xfer_total['month']['total'],_XFERTHRU.' '.$monthText.':'));
 	}
 	if ($cfg['xfer_total']) {
-		$tmpl->setvar('xfer_total', displayXferBar($cfg['xfer_total'],$xfer_total['total']['total'],_TOTALXFER.':'));
+		$tmpl->setvar('xfer_total', getXferBar($cfg['xfer_total'],$xfer_total['total']['total'],_TOTALXFER.':'));
 	}
 	if (($cfg['enable_public_xfer'] == 1 ) || IsAdmin()) {
-		$tmpl->setvar('displayXfer', displayXfer());
+		$tmpl->setvar('displayXfer', getXfer());
 	}
 }
 $tmpl->setvar('foot', getFoot());

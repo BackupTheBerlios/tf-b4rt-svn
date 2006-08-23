@@ -21,9 +21,9 @@
 *******************************************************************************/
 
 //XFER:****************************************************
-//XFER: displayXferBar(max_bytes, used_bytes, title)
-//XFER: displays xfer percentage bar
-function displayXferBar($total, $used, $title) {
+//XFER: getXferBar(max_bytes, used_bytes, title)
+//XFER: gets xfer percentage bar
+function getXferBar($total, $used, $title) {
 
 	global $cfg;
 	$remaining = max(0,$total-$used/(1024*1024));
@@ -66,16 +66,16 @@ function displayXferBar($total, $used, $title) {
 }
 
 //XFER:****************************************************
-//XFER: displayXfer()
-//XFER: displays xfer usage page
-function displayXfer() {
+//XFER: getXfer()
+//XFER: gets xfer usage page
+function getXfer() {
 	global $cfg;
-	$displayXferList = displayXferList();
+	$displayXferList = getXferList();
 	if (isset($_GET['user'])) {
 		$displayXferList .= '<br><b>';
 		$displayXferList .= ($_GET['user'] == '%') ? _SERVERXFERSTATS : _USERDETAILS.': '.$_GET['user'];
 		$displayXferList .= '</b><br>';
-		displayXferDetail($_GET['user'],_MONTHSTARTING,0,0);
+		getXferDetail($_GET['user'],_MONTHSTARTING,0,0);
 		if (isset($_GET['month'])) {
 			$mstart = $_GET['month'].'-'.$cfg['month_start'];
 			$mend = date('Y-m-d',strtotime('+1 Month',strtotime($mstart)));
@@ -92,16 +92,16 @@ function displayXfer() {
 			$wstart = $mstart;
 			$wend = $mend;
 		}
-		$displayXferList .= displayXferDetail($_GET['user'],_WEEKSTARTING,$mstart,$mend);
-		$displayXferList .= displayXferDetail($_GET['user'],_DAY,$wstart,$wend);
+		$displayXferList .= getXferDetail($_GET['user'],_WEEKSTARTING,$mstart,$mend);
+		$displayXferList .= getXferDetail($_GET['user'],_DAY,$wstart,$wend);
 	}
 	return $displayXferList;
 }
 
 //XFER:****************************************************
-//XFER: displayXferDetail(user, period_title, start_timestamp, end_timestamp)
-//XFER: display table of month/week/day's usage for user
-function displayXferDetail($user_id,$period,$period_start,$period_end)
+//XFER: getXferDetail(user, period_title, start_timestamp, end_timestamp)
+//XFER: get table of month/week/day's usage for user
+function getXferDetail($user_id,$period,$period_start,$period_end)
 {
 	global $cfg, $xfer, $xfer_total, $db;
 	$period_query = ($period_start) ? 'and date >= "'.$period_start.'" and date < "'.$period_end.'"' : '';
@@ -190,9 +190,9 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
 }
 
 //XFER:****************************************************
-//XFER: dixpayXferList()
-//XFER: show top summary table of xfer usage page
-function displayXferList() {
+//XFER: getXferList()
+//XFER: get top summary table of xfer usage page
+function getXferList() {
 	global $cfg, $xfer, $xfer_total, $db;
 	$displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
 	$displayXferList .= '<tr>';
