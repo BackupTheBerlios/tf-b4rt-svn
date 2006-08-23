@@ -46,7 +46,7 @@ $htmlTargets = "";
 if ($dirHandle = opendir('./mrtg')) {
   $htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
   $htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="get">';
-  $htmlTargets .= '<input type="hidden" name="page" value="mrtg">';
+  $htmlTargets .= '<input type="hidden" name="iid" value="mrtg">';
   $htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
   $idx = 0;
   while (false !== ($file = readdir($dirHandle))) {
@@ -93,6 +93,6 @@ $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-$tmpl->setvar('page', $_GET["page"]);
+$tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 ?>

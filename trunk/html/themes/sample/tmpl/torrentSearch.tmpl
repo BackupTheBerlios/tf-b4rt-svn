@@ -7,7 +7,7 @@
 			<tr>
 				<td bgcolor="#d6dfe6">
 					<form id="searchForm" name="searchForm" action="index.php" method="get">
-						<input type="hidden" name="page" value="torrentSearch">
+						<input type="hidden" name="iid" value="torrentSearch">
 						<tmpl_var name="_SEARCH"> Torrents:<br>
 						<input type="text" name="searchterm" value="<tmpl_var name="searchterm">" size=30 maxlength=50>&nbsp;
 						<tmpl_var name="buildSearchEngineDDL">
@@ -44,7 +44,7 @@
 							<tr bgcolor="#d6dfe6">
 								<td colspan=6>
 									<form method=get id="subLatest" name="subLatest" action=index.php>
-										<input type=hidden name="page" value="torrentSearch">
+										<input type=hidden name="iid" value="torrentSearch">
 										<input type=hidden name="searchEngine" value="<tmpl_var name="searchEngine">">
 										Category: <b><tmpl_var name="mainGenreName"></a></b> ->
 										<select name=subGenre>

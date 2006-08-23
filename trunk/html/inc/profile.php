@@ -497,7 +497,7 @@ if ($user_level >= "1") {
 }
 $tmpl->setvar('with_profiles', $with_profiles);
 $tmpl->setvar('enable_btclient_chooser', $cfg['enable_btclient_chooser']);
-$tmpl->setvar('page', $_GET["page"]);
+$tmpl->setvar('iid', $_GET["iid"]);
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

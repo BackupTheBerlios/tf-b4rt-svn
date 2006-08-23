@@ -62,6 +62,6 @@ $tmpl->setvar('netstatPortList', netstatPortList());
 $tmpl->setvar('_ID_HOSTS', _ID_HOSTS);
 $tmpl->setvar('netstatHostList', netstatHostList());
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('page', $_GET["page"]);
+$tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 ?>

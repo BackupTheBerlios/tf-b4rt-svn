@@ -17,6 +17,6 @@ $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
-$tmpl->setvar('page', $_GET["page"]);
+$tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 ?>
