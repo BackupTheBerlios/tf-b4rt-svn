@@ -442,5 +442,6 @@ $tmpl->setvar('_WEEKXFER', _WEEKXFER);
 $tmpl->setvar('_DAYXFER', _DAYXFER);
 $tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('page', $_GET["page"]);
 $tmpl->pparse();
 ?>

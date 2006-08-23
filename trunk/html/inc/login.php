@@ -124,7 +124,7 @@ $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
-
+$tmpl->setvar('page', $_GET["page"]);
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

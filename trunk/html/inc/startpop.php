@@ -146,7 +146,7 @@ if ($with_profiles == "1") {
 } else {
 	setVarsFromPersistentSettings();
 }
-
+$tmpl->setvar('page', $_GET["page"]);
 // parse template
 $tmpl->pparse();
 

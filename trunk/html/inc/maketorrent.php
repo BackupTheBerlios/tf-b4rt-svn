@@ -316,5 +316,6 @@ $tmpl->setvar('comment', $comment);
 $tmpl->setvar('dht', $dht);
 $tmpl->setvar('alert', $alert);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+$tmpl->setvar('page', $_GET["page"]);
 $tmpl->pparse();
 ?>
