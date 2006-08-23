@@ -196,7 +196,7 @@ function printPageHome() {
 			<li>SQL-Database. Supported are <a href="http://www.mysql.com" title="MySQL" target="_blank">MySQL</a> and <a href="http://www.sqlite.org" title="SQLite" target="_blank">SQLite</a>.</li>
 			<li><a href="http://www.php.net" title="PHP" target="_blank">PHP</a> 4.3.x or higher.</li>
 			<li><a href="http://www.python.org" title="Python" target="_blank">Python</a> 2.2 or higher.</li>
-			<li><a href="http://www.perl.org" title="Perl" target="_blank">Perl</a> 5.6 or higher. (only for tfqmgr/Qmgr)</li>
+			<li><a href="http://www.perl.org" title="Perl" target="_blank">Perl</a> 5.6 or higher. (only for tfqmgr/Qmgr/fluxpoller)</li>
 		</ul>
 		More details can be found in the file INSTALL which is included in the release-tarballs.
 <?php
