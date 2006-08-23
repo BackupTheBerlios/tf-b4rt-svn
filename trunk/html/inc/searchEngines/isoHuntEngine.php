@@ -1,7 +1,5 @@
 <?php
 
-/* $Id$ */
-
 /*************************************************************
 *  TorrentFlux PHP Torrent Manager
 *  www.torrentflux.com
@@ -24,6 +22,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
+    v 1.02 - Aug 23, 06 - fix ISOHunt changed there site alittle.
     v 1.01 - Jun 30, 06 - fix to Search..
 */
 
@@ -39,7 +38,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "isoHunt";
 
         $this->author = "kboy";
-        $this->version = "1.01";
+        $this->version = "1.02";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,878.0.html";
 
         $this->Initialize($cfg);
@@ -124,7 +123,7 @@ class SearchEngine extends SearchEngineBase
             $thing = substr($thing,strpos($thing,"</tr>"));
             $tmpList = substr($thing,0,strpos($thing,"</table>"));
 
-            if (is_integer(strpos($tmpList,"btDetails.php")))
+            if (is_integer(strpos($tmpList,"/download/")))
             {
                 // ok so now we have the listing.
                 $tmpListArr = split("</tr>",$tmpList);
@@ -137,7 +136,7 @@ class SearchEngine extends SearchEngineBase
                 {
                     //echo $value;
                     $buildLine = true;
-                    if (strpos($value,"id="))
+                    if (strpos($value,"/download/"))
                     {
                         $ts = new isoHunt($value,$latest);
 
@@ -200,7 +199,7 @@ class SearchEngine extends SearchEngineBase
             foreach($tmpPageArr as $key => $value)
             {
                 $value .= "</a> &nbsp;";
-                $tmpVal = substr($value,strpos($value,"/torrents.php"),strpos($value,"\>")-1);
+                $tmpVal = substr($value,strpos($value,"/torrents/"),strpos($value,"\>")-1);
                 $pgNum = substr($tmpVal,strpos($tmpVal,"ihp=")+strlen("ihp="));
                 $pagesout .= str_replace($tmpVal,"XXXURLXXX".$pgNum,$value);
             }
