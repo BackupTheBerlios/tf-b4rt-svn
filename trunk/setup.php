@@ -169,7 +169,6 @@ elseif($_POST['page'] == 2) {
 			display_results("check for netstat:", check_binary("netstat", 1));
 		}
 		elseif(!(stristr($osString, 'bsd') === false)) { // bsd
-			display_results("check for fstat:", check_binary("fstat", 1));
 			display_results("check for sockstat:", check_binary("sockstat", 1));
 		}
 	}

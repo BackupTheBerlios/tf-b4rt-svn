@@ -206,8 +206,6 @@ case 1:
 	$tmpl->setvar('validate_netstat', validateFile($cfg["bin_netstat"]));
 break;
 case 2:
-	$tmpl->setvar('bin_fstat', $cfg["bin_fstat"]);
-	$tmpl->setvar('validate_fstat', validateFile($cfg["bin_fstat"]));
 	$tmpl->setvar('bin_sockstat', $cfg["bin_sockstat"]);
 	$tmpl->setvar('validate_sockstat', validateFile($cfg["bin_sockstat"]));
 break;

@@ -260,10 +260,10 @@ function netstatConnectionsSum() {
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$nCount += (int) trim(shell_exec($cfg['bin_fstat']." -u ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
+			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
 			unset($clientHandler);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$nCount += (int) trim(shell_exec($cfg['bin_fstat']." -u ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
+			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
 		break;
 	}
 	return $nCount;
@@ -288,10 +288,7 @@ function netstatConnectionsByPid($torrentPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			// lord_nor :
-			//return trim(shell_exec($cfg['bin_fstat']." -u ".$webserverUser." | ".$cfg['bin_grep']." -c \"".$torrentPid ."\""));
-			// khr0n0s :
-			$netcon = (int) trim(shell_exec($cfg['bin_fstat']." -u ".$webserverUser." | ".$cfg['bin_grep']." tcp | ".$cfg['bin_grep']." -c \"".$torrentPid ."\""));
+			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -Eu".$webserverUser.".+".$torrentPid.".+tcp"));
 			$netcon--;
 			return $netcon;
 		break;
