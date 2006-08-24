@@ -150,9 +150,14 @@ switch ($action) {
                     // set request var
                     $_REQUEST['alias_file'] = getAliasName($element).".stat";;
                     // dequeue it
+
+                    // TODO : QUEUE
+
+                    /*
                     include_once("QueueManager.php");
                     $queueManager = QueueManager::getQueueManagerInstance($cfg);
                     $queueManager->dequeueTorrent($element);
+                    */
                     // just a sec..
                     sleep(1);
                 }

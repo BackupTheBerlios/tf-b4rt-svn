@@ -326,11 +326,16 @@ class ClientHandler
         $transferRunningFlag = 1;
         if($this->af->running == "3") {
             // _queue_
-            //writeQinfo($this->cfg["torrent_file_path"]."queue/".$this->alias.".stat",$this->command);
+
+            // TODO : QUEUE
+
+            /*
             include_once("QueueManager.php");
             $queueManager = QueueManager::getQueueManagerInstance($this->cfg);
             $queueManager->command = $this->command; // tfQmanager...
             $queueManager->enqueueTorrent($this->transfer);
+            */
+
             AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
             AuditAction($this->cfg["constants"]["queued_torrent"], $this->command);
             $transferRunningFlag = 0;

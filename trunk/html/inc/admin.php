@@ -495,20 +495,6 @@ switch ($op) {
 		header("location: index.php?iid=admin&op=showUsers");
 	break;
 
-	case "updateQueueSettings":
-		if (! array_key_exists("debugTorrents", $_REQUEST))
-			$_REQUEST["debugTorrents"] = false;
-		require_once("admin_updateQueueSettings.php");
-	break;
-
-	case "controlQueueManager":
-		require_once("admin_controlQueueManager.php");
-	break;
-
-	case "queueSettings":
-		require_once("admin_queueSettings.php");
-	break;
-
 	// Fluxd
 	case "fluxdSettings":
 		require_once("admin_fluxdSettings.php");

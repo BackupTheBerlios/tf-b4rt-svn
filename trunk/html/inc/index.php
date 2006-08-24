@@ -55,7 +55,12 @@ if(array_key_exists("pagerefresh", $_GET)) {
 
 // =============================================================================
 // queue-check
+
 $queueActive = false;
+
+// TODO : QUEUE
+
+/*
 if ($cfg["AllowQueing"]) {
 	include_once("QueueManager.php");
 	$queueManager = QueueManager::getQueueManagerInstance($cfg);
@@ -74,6 +79,7 @@ if ($cfg["AllowQueing"]) {
 		$queueActive = true;
 	}
 }
+*/
 
 // =============================================================================
 // start
@@ -139,9 +145,14 @@ if(! $killTorrent == '') {
 // Did the user select the option to remove a torrent from the Queue?
 if(isset($_REQUEST["dQueue"])) {
 	$QEntry = getRequestVar('QEntry');
+
+	// TODO : QUEUE
+
+	/*
 	include_once("QueueManager.php");
 	$queueManager = QueueManager::getQueueManagerInstance($cfg);
 	$queueManager->dequeueTorrent($QEntry);
+	*/
 	header("location: index.php?iid=index");
 	exit();
 }
@@ -317,6 +328,11 @@ if ($cfg['index_page_stats'] != 0) {
 	}
 	if ($queueActive) {
 		$tmpl->setvar('queueActive2', 1);
+
+		// TODO : QUEUE
+
+		/*
+
 		include_once("QueueManager.php");
 		$queueManager = QueueManager::getQueueManagerInstance($cfg);
 		$tmpl->setvar('_QUEUEMANAGER', $_QUEUEMANAGER);
@@ -327,6 +343,8 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('countQueuedTorrents', $countQueuedTorrents);
 		$tmpl->setvar('limitGlobal', $queueManager->limitGlobal);
 		$tmpl->setvar('limitUser', $queueManager->limitUser);
+
+		*/
 	}
 	$tmpl->setvar('_OTHERSERVERSTATS', _OTHERSERVERSTATS);
 	$sumMaxUpRate = getSumMaxUpRate();
