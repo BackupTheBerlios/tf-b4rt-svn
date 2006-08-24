@@ -117,6 +117,17 @@ class FluxdServiceMod
     }
 
     /**
+     * setConfig
+     *
+     * @param $key
+     * @param $val
+     */
+    function setConfig($key, $val) {
+    	// send command to Qmgr
+    	$this->sendServiceCommand("set;".$key.";".$val, 0);
+    }
+
+    /**
      * send service command
      * @param $command
      * @param $read does this command return something ?

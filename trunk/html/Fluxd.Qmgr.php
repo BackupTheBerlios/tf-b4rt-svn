@@ -61,7 +61,7 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function enqueueTorrent($torrent, $user) {
     	$torrent = urldecode($torrent);
-    	// TODO
+    	// send command to Qmgr
     	parent::sendServiceCommand("enqueue;".$torrent.";".$user, 0);
     }
 
@@ -80,8 +80,8 @@ class FluxdQmgr extends FluxdServiceMod
             header("location: index.php?iid=index&alias_file=".$alias_file."&kill=true&kill_torrent=".urlencode($torrent));
             exit();
         } else {
-            // send command to daemon
-            parent::sendServiceCommand("dequeue;".$torrent.";".$user, 0); // TODO
+            // send command to Qmgr
+            parent::sendServiceCommand("dequeue;".$torrent.";".$user, 0);
             // flag the torrent as stopped (in db)
             stopTorrentSettings($torrent);
             // update the stat file.
@@ -89,26 +89,6 @@ class FluxdQmgr extends FluxdServiceMod
             // log
             AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent);
         }
-    }
-
-    /**
-     * setConfig
-     *
-     * @param $key
-     * @param $val
-     */
-    function setConfig($key,$val) {
-    	// TODO
-    	return;
-    }
-
-    /**
-     * formattedQueueList : do we really want this (here) ? :)
-     *
-     */
-    function formattedQueueList() {
-    	// TODO
-    	return;
     }
 
     /**

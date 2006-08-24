@@ -201,6 +201,10 @@ sub command {
 			#return remove($1,$2);
 			return 1;
 		};
+		/^set;(.*);(.*)/ && do {
+			print "Qmgr : set : \"".$1."\"->\"".$2."\")\n"; # DEBUG
+			return set($1,$2);
+		};
 	}
 	return "Unknown command";
 }
