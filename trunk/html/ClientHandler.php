@@ -333,7 +333,7 @@ class ClientHandler
         // write the session to close so older version of PHP will not hang
         session_write_close("TorrentFlux");
         $transferRunningFlag = 1;
-        if ($this->queue == "1") // queue
+        if ($this->queue == "1") { // queue
         	if($cfg["fluxd_Qmgr_enabled"] == 1) {
 				require_once("Fluxd.php");
 				require_once("Fluxd.ServiceMod.php");
@@ -511,7 +511,7 @@ class ClientHandler
      */
     function getRunningClients() {
         // ps-string
-        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep | ".$this->cfg['bin_grep']." -v ".$this->cfg['tfQManager']);
+        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();
         $tok = strtok($screenStatus, "\n");
         while ($tok) {

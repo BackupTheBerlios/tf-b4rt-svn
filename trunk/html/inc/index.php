@@ -24,9 +24,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once("config.php");
-require_once("functions.php");
-
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/index.tmpl");
@@ -381,7 +378,6 @@ $tmpl->setvar('transferList', $transferList);
 $tmpl->setvar('_TORRENTDETAILS', _TORRENTDETAILS);
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 $tmpl->setvar('_STOPDOWNLOAD', _STOPDOWNLOAD);
-$tmpl->setvar('queueActive', $queueActive);
 $tmpl->setvar('_DELQUEUE', _DELQUEUE);
 $tmpl->setvar('_SEEDTORRENT', _SEEDTORRENT);
 $tmpl->setvar('_DELETE', _DELETE);

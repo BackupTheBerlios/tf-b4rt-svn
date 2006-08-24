@@ -20,6 +20,8 @@
 
 *******************************************************************************/
 # require same global things
+require_once("config.php");
+require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
 
 // =============================================================================
