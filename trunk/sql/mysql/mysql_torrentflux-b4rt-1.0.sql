@@ -172,7 +172,6 @@ CREATE TABLE tf_settings (
 ) TYPE=MyISAM;
 
 INSERT INTO tf_settings VALUES ('path','/usr/local/torrent/');
-INSERT INTO tf_settings VALUES ('btphpbin','/var/www/bin/TF_BitTornado/btphptornado.py');
 INSERT INTO tf_settings VALUES ('btshowmetainfo','/var/www/bin/TF_BitTornado/btshowmetainfo.py');
 INSERT INTO tf_settings VALUES ('advanced_start','1');
 INSERT INTO tf_settings VALUES ('max_upload_rate','10');
@@ -197,7 +196,6 @@ INSERT INTO tf_settings VALUES ('default_language','lang-english.php');
 INSERT INTO tf_settings VALUES ('debug_sql','1');
 INSERT INTO tf_settings VALUES ('torrent_dies_when_done','False');
 INSERT INTO tf_settings VALUES ('sharekill','0');
-INSERT INTO tf_settings VALUES ('AllowQueing','0');
 INSERT INTO tf_settings VALUES ('debugTorrents','0');
 INSERT INTO tf_settings VALUES ('pythonCmd','/usr/bin/python');
 INSERT INTO tf_settings VALUES ('searchEngine','TorrentSpy');
@@ -260,7 +258,6 @@ INSERT INTO tf_settings VALUES ('month_start','1');
 INSERT INTO tf_settings VALUES ('hack_multiupload_rows','6');
 INSERT INTO tf_settings VALUES ('hack_goodlookstats_settings','63');
 INSERT INTO tf_settings VALUES ('ui_indexrefresh','1');
-INSERT INTO tf_settings VALUES ('bin_fstat','/usr/bin/fstat');
 INSERT INTO tf_settings VALUES ('enable_dereferrer','1');
 INSERT INTO tf_settings VALUES ('auth_type','0');
 INSERT INTO tf_settings VALUES ('index_page_connections','1');
