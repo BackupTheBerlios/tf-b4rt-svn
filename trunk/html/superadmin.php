@@ -829,6 +829,7 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
 				$htmlMain .= '</pre>';
 				break;
+			/*
 			case "4": // Issues
 				$issueText = "Error getting issues";
 				$issueText = gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
@@ -836,6 +837,7 @@ if (isset($_REQUEST["z"])) {
 				echo $issueText;
 				exit();
 				break;
+			*/
 		}
 		printPage();
 		exit();
@@ -949,8 +951,10 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2">News</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3">Changelog</a>';
+			/*
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=4" target="_blank">Issues</a>';
+			*/
 			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</td>';
 			$htmlMain .= '</td></tr></table>';
 			break;
