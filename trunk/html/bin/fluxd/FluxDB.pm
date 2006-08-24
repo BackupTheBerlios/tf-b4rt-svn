@@ -346,19 +346,19 @@ sub loadDatabaseConfig {
 	open(CONFIG, $file) || return 0;
 	undef $/;
 	while (<CONFIG>) {
-		if (/db_type.*[^\[]\"(\w+)\"[^\]]/) {
+		if (/db_type.*[^\[]\"(.*)\"[^\]]/) {
 			$dbType = $1;
 		}
-		if (/db_host.*[^\[]\"(\w+)\"[^\]]/) {
+		if (/db_host.*[^\[]\"(.*)\"[^\]]/) {
 			$dbHost = $1;
 		}
-		if (/db_name.*[^\[]\"(\w+)\"[^\]]/) {
+		if (/db_name.*[^\[]\"(.*)\"[^\]]/) {
 			$dbName = $1;
 		}
-		if (/db_user.*[^\[]\"(\w+)\"[^\]]/) {
+		if (/db_user.*[^\[]\"(.*)\"[^\]]/) {
 			$dbUser = $1;
 		}
-		if (/db_pass.*[^\[]\"(\w+)\"[^\]]/) {
+		if (/db_pass.*[^\[]\"(.*)\"[^\]]/) {
 			$dbPass = $1;
 		}
 	}

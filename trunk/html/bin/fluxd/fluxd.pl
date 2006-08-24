@@ -1237,6 +1237,14 @@ sub debug {
 		$fluxDB->initialize($dbcfg);
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
+			# db-settings
+			print "\$fluxDB->getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+			print "\$fluxDB->getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+			print "\$fluxDB->getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+			print "\$fluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+			print "\$fluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+			print "\$fluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+			print "\$fluxDB->getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 			exit;
 		}
 		# db-settings
