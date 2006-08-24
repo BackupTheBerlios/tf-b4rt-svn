@@ -577,6 +577,10 @@ sub processRequest {
 			$return = status();
 			last SWITCH;
 		};
+		/^modstate/ && do {
+			$return = modState(shift);
+			last SWITCH;
+		};
 		/^check/ && do {
 			$return = check();
 			last SWITCH;
@@ -791,6 +795,59 @@ sub status {
 		$status .= eval { $trigger->status(); };
 	}
 	return "$status $modules";
+}
+
+#------------------------------------------------------------------------------#
+# Sub: modState                                                                #
+# Arguments: name of service-module                                            #
+# Returns: state of service-module                                             #
+#------------------------------------------------------------------------------#
+sub modState {
+	$_ = shift;
+	if (!(defined $_)) {
+		return 0;
+	} else {
+		/Qmgr/ && do {
+			if (defined $qmgr) {
+				return $qmgr->getState();
+			} else {
+				return 0;
+			}
+			last SWITCH;
+		};
+		/Fluxinet/ && do {
+			if (defined $fluxinet) {
+				return $fluxinet->getState();
+			} else {
+				return 0;
+			}
+			last SWITCH;
+		};
+		/Trigger/ && do {
+			if (defined $trigger) {
+				return $trigger->getState();
+			} else {
+				return 0;
+			}
+			last SWITCH;
+		};
+		/Watch/ && do {
+			if (defined $watch) {
+				return $watch->getState();
+			} else {
+				return 0;
+			}
+			last SWITCH;
+		};
+		/Clientmaint/ && do {
+			if (defined $clientmaint) {
+				return $clientmaint->getState();
+			} else {
+				return 0;
+			}
+			last SWITCH;
+		};
+	}
 }
 
 #------------------------------------------------------------------------------#

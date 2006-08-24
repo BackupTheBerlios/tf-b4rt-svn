@@ -48,22 +48,48 @@ $tmpl->setvar('validatefluxd', validateFile($cfg["fluxd_path"]."/fluxd.pl"));
 $tmpl->setvar('fluxd_path_fluxcli', $cfg["fluxd_path_fluxcli"]);
 $tmpl->setvar('validate_fluxd_path_fluxcli', validateFile($cfg["fluxd_path_fluxcli"]."/fluxcli.php"));
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
+// Qmgr
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
+if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
+	$tmpl->setvar('fluxd_Qmgr_state', $fluxd->modState('Qmgr'));
+else
+	$tmpl->setvar('fluxd_Qmgr_state', 0);
 $tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
 $tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
+// Fluxinet
 $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
+if (($cfg["fluxd_Fluxinet_enabled"] == 1) && ($fluxdRunning))
+	$tmpl->setvar('fluxd_Fluxinet_state', $fluxd->modState('Fluxinet'));
+else
+	$tmpl->setvar('fluxd_Fluxinet_state', 0);
 $tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
+// Watch
 $tmpl->setvar('fluxd_Watch_enabled', $cfg["fluxd_Watch_enabled"]);
+if (($cfg["fluxd_Watch_enabled"] == 1) && ($fluxdRunning))
+	$tmpl->setvar('fluxd_Watch_state', $fluxd->modState('Watch'));
+else
+	$tmpl->setvar('fluxd_Watch_state', 0);
 // TODO : process watch-jobs-settings-string
 $tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
+// Clientmaint
 $tmpl->setvar('fluxd_Clientmaint_enabled', $cfg["fluxd_Clientmaint_enabled"]);
+if (($cfg["fluxd_Clientmaint_enabled"] == 1) && ($fluxdRunning))
+	$tmpl->setvar('fluxd_Clientmaint_state', $fluxd->modState('Clientmaint'));
+else
+	$tmpl->setvar('fluxd_Clientmaint_state', 0);
 $tmpl->setvar('fluxd_Clientmaint_interval', $cfg["fluxd_Clientmaint_interval"]);
+// Trigger
 $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
+if (($cfg["fluxd_Trigger_enabled"] == 1) && ($fluxdRunning))
+	$tmpl->setvar('fluxd_Trigger_state', $fluxd->modState('Trigger'));
+else
+	$tmpl->setvar('fluxd_Trigger_state', 0);
 $tmpl->setvar('_USER', _USER);
 $tmpl->setvar('_FILE', _FILE);
 $tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
 //$tmpl->setvar('formattedQueueList', $queueManager->formattedQueueList());
 $tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",_FORCESTOP));
+
 
 // really messy
 $output = "";
@@ -83,6 +109,7 @@ if( strlen($output) == 0 ) {
 	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Torrents</div></td></tr>";
 }
 
+// more template vars
 $tmpl->setvar('output', $output);
 $tmpl->setvar('foot', getFoot(true,true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

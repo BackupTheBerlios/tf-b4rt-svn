@@ -146,6 +146,18 @@ class Fluxd
     }
 
     /**
+     * modState
+     * @param name of service-module (Qmgr|Fluxinet|Trigger|Watch|Clientmaint)
+     * @return int with mod-state
+     */
+    function modState($mod) {
+        if ($this->isFluxdRunning())
+            return (int) $this->sendCommand('modstate '.$mod, 1);
+        else
+            return 0;
+    }
+
+    /**
      * isFluxdRunning
      * @return boolean
      */
