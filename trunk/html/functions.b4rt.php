@@ -1000,7 +1000,7 @@ function RunningProcessInfo() {
 	$RunningProcessInfo = " ---=== tornado ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
-	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -v ".$cfg["tfQManager"]);
+	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep");
 	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
 	unset($clientHandler);
 	unset($pinfo);

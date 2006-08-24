@@ -442,7 +442,7 @@ class ClientHandler
         // action
         include_once("RunningTorrent.php");
         // ps-string
-        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep | ".$this->cfg['bin_grep']." -v ".$this->cfg['tfQManager']);
+        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();
         $tok = strtok($screenStatus, "\n");
         while ($tok) {
