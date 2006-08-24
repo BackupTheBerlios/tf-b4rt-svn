@@ -22,6 +22,28 @@
 # require same global things
 require_once("lib/vlib/vlibTemplate.php");
 
+// =============================================================================
+// fluxd
+//
+// allways use this instance of Fluxd in included pages.
+// allways use this boolean for "is fluxd up and running" in included pages.
+// allways use this instance of FluxdQmgr in included pages.
+// allways use this boolean for "is queue up and running" in included pages.
+//
+require_once("Fluxd.php");
+require_once("Fluxd.ServiceMod.php");
+$fluxd = new Fluxd(serialize($cfg));
+$fluxdRunning = $fluxd->isFluxdRunning();
+$fluxdQmgr = null;
+$queueActive = false;
+if($cfg["fluxd_Qmgr_enabled"] == 1) {
+	if ($fluxd->modState('Qmgr') == 1) {
+		$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
+		$queueActive = true;
+	}
+}
+
+// =============================================================================
 # really messy
 # but have to do it slowly not to mess everything
 if(isset($_GET['iid'])) {
@@ -121,4 +143,5 @@ if(isset($_GET['iid'])) {
 	// use "old" style not to break tools
 	require_once("inc/index.php");
 }
+
 ?>

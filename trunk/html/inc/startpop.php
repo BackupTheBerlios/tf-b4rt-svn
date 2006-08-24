@@ -59,7 +59,6 @@ if ($cfg["enable_btclient_chooser"] != 0)
 	$tmpl->setvar('btClientSelect', getBTClientSelect($cfg["btclient"]));
 else
 	$tmpl->setvar('btclientDefault', $cfg["btclient"]);
-
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
 if ($torrentExists) {
@@ -118,6 +117,14 @@ if ($with_profiles == "1") {
 		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
 			$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
 		$tmpl->setvar('savepath', $cfg["savepath"]);
+		// Force Queuing if not an admin.
+		if($queueActive)
+			$tmpl->setvar('is_queue', 1);
+		else
+			$tmpl->setvar('is_queue', 0);
+		// admin
+		if (IsAdmin())
+			$tmpl->setvar('is_admin', 1);
 	} else {
 		$tmpl->setvar('useLastSettings', 1);
 		setVarsFromPersistentSettings();
@@ -156,28 +163,21 @@ $tmpl->pparse();
  *
  */
 function setVarsFromPersistentSettings() {
-	global $cfg, $tmpl, $torrent;
-
+	global $cfg, $tmpl, $torrent, $queueActive;
 	// Load saved settings
 	loadTorrentSettingsToConfig($torrent);
-
 	// set settings
 	$tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 	$tmpl->setvar('max_uploads', $cfg["max_uploads"]);
 	$tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
 	$tmpl->setvar('maxcons', $cfg["maxcons"]);
 	$tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
-	if($cfg["AllowQueing"] == true) {
-		$tmpl->setvar('is_queue', 1);
-		// Force Queuing if not an admin.
-		if (IsAdmin()) {
-			$tmpl->setvar('is_admin', 1);
-		}
-	}
+	// btclient-chooser
 	if ($cfg["enable_btclient_chooser"] != 0)
 		$tmpl->setvar('btClientSelect', getBTClientSelect($cfg["btclient"]));
 	else
 		$tmpl->setvar('btclientDefault', $cfg["btclient"]);
+	// more vars
 	$selected = "";
 	if ($cfg["torrent_dies_when_done"] == "False") {
 		$selected = "selected";
@@ -186,11 +186,18 @@ function setVarsFromPersistentSettings() {
 	$tmpl->setvar('minport', $cfg["minport"]);
 	$tmpl->setvar('maxport', $cfg["maxport"]);
 	$tmpl->setvar('sharekill', $cfg["sharekill"]);
-
 	// savepath
 	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
 		$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
 	$tmpl->setvar('savepath', $cfg["savepath"]);
+	// Force Queuing if not an admin.
+	if($queueActive)
+		$tmpl->setvar('is_queue', 1);
+	else
+		$tmpl->setvar('is_queue', 0);
+	// admin
+	if (IsAdmin())
+		$tmpl->setvar('is_admin', 1);
 }
 
 ?>

@@ -24,6 +24,28 @@ include_once("config.php");
 include_once("functions.php");
 include_once("ClientHandler.php");
 
+// =============================================================================
+// fluxd
+//
+// allways use this instance of Fluxd in included pages.
+// allways use this boolean for "is fluxd up and running" in included pages.
+// allways use this instance of FluxdQmgr in included pages.
+// allways use this boolean for "is queue up and running" in included pages.
+//
+require_once("Fluxd.php");
+require_once("Fluxd.ServiceMod.php");
+$fluxd = new Fluxd(serialize($cfg));
+$fluxdRunning = $fluxd->isFluxdRunning();
+$fluxdQmgr = null;
+$queueActive = false;
+if($cfg["fluxd_Qmgr_enabled"] == 1) {
+	if ($fluxd->modState('Qmgr') == 1) {
+		$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
+		$queueActive = true;
+	}
+}
+
+// =============================================================================
 /* action */
 $action = "---";
 if (isset($_REQUEST["action"]))
@@ -49,7 +71,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $alias = getAliasName($torrent).".stat";
                     $btclient = getTransferClient($torrent);
-                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+                    $clientHandler ler::getClientHandlerInstance($cfg,$btclient);
                     $clientHandler->stopClient($torrent, $alias);
                     // just 2 sec..
                     sleep(2);
@@ -71,7 +93,7 @@ switch ($action) {
                         setPriority($torrent);
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startClient($torrent, 0);
+                    $clientHandler->startClient($torrent, 0, false);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -92,7 +114,7 @@ switch ($action) {
                         setPriority($torrent);
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startClient($torrent, 0);
+                    $clientHandler->startClient($torrent, 0, false);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -115,7 +137,7 @@ switch ($action) {
                        setPriority(urldecode($element));
                    }
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->startClient(urldecode($element), 0);
+                   $clientHandler->startClient(urldecode($element), 0, $queueActive);
                    // just 2 sec..
                    sleep(2);
                 }
@@ -130,8 +152,6 @@ switch ($action) {
              	break;
              case "torrentEnQueue": /* torrentEnQueue */
                 if ($torrentRunningFlag == 0) {
-                    // set queueing active
-                    $_REQUEST['queue'] = 'on';
                     // enqueue it
                     if ($cfg["enable_file_priority"]) {
                         include_once("setpriority.php");
@@ -140,7 +160,7 @@ switch ($action) {
                     }
                     include_once("ClientHandler.php");
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startClient(urldecode($element), 0);
+                    $clientHandler->startClient(urldecode($element), 0, true);
                     // just a sec..
                     sleep(1);
                 }
@@ -150,14 +170,7 @@ switch ($action) {
                     // set request var
                     $_REQUEST['alias_file'] = getAliasName($element).".stat";;
                     // dequeue it
-
-                    // TODO : QUEUE
-
-                    /*
-                    include_once("QueueManager.php");
-                    $queueManager = QueueManager::getQueueManagerInstance($cfg);
-                    $queueManager->dequeueTorrent($element);
-                    */
+					$fluxdQmgr->dequeueTorrent($element, $cfg['user']);
                     // just a sec..
                     sleep(1);
                 }

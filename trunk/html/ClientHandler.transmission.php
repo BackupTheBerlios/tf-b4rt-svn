@@ -49,8 +49,9 @@ class ClientHandlerTransmission extends ClientHandler
      * starts a client
      * @param $transfer name of the transfer
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
+     * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive) {
+    function startClient($transfer, $interactive, $enqueue = false) {
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
@@ -67,11 +68,11 @@ class ClientHandlerTransmission extends ClientHandler
         }
 
         // prepare starting of client
-        parent::prepareStartClient($transfer, $interactive);
+        parent::prepareStartClient($transfer, $interactive, $enqueue);
         // prepare succeeded ?
         if ($this->status != 2) {
             $this->status = -1;
-            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.") failed";
+            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.") failed";
             return;
         }
 
@@ -83,7 +84,6 @@ class ClientHandlerTransmission extends ClientHandler
 
         // build the command-string
         $this->command = "-t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\" -w ".$this->owner;
-
         // "new" transmission-patch has pid-file included
         $this->command .= " -z ". $this->pidFile; /* - bsd-workaround */
         $this->command .= " -e 5 -p ".$this->port ." -u ".$this->rate ." -c ". $this->sharekill_param ." -d ".$this->drate;
@@ -96,12 +96,8 @@ class ClientHandlerTransmission extends ClientHandler
         // * lord_nor :
         //$this->command .= '" > /dev/null & echo $! & > "'. $this->pidFile .'"'; /* + bsd-workaround */
         // <end shell-trickery>
-        if (($this->cfg["AllowQueing"]) && ($this->queue == "1")) {
-            //  This file is queued.
-		} else {
-            // This file is started manually.
-            $this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $this->cfg["btclient_transmission_bin"] . " " . $this->command;
-        }
+        // build the command-string
+        $this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $this->cfg["btclient_transmission_bin"] . " " . $this->command;
         // start the client
         parent::doStartClient();
     }

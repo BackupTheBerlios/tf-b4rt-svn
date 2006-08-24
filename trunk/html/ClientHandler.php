@@ -144,14 +144,16 @@ class ClientHandler
      * prepares vars and other generic stuff
      * @param $transfer name of the transfer
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
+     * @param $enqueue (boolean) : enqueue ?
      */
-    function prepareStartClient($transfer, $interactive) {
+    function prepareStartClient($transfer, $interactive, $enqueue = false) {
         if ($this->status < 1) {
             $this->status = -1;
             $this->messages .= "Error. ClientHandler in wrong state on prepare-request.";
             return;
         }
-        $this->skip_hash_check = "";
+
+
         if ($interactive == 1) { // interactive, get vars from request vars
             $this->rate = getRequestVar('rate');
             if (empty($this->rate)) {
@@ -195,10 +197,37 @@ class ClientHandler
             }
             $this->savepath = getRequestVar('savepath') ;
             $this->skip_hash_check = getRequestVar('skiphashcheck');
+	        // queue
+	        if ($enqueue) {
+	            if(IsAdmin()) {
+	                $this->queue = getRequestVar('queue');
+	                if($this->queue == 'on')
+	                    $this->queue = "1";
+	                else
+	                    $this->queue = "0";
+	            } else {
+	                $this->queue = "1";
+	            }
+	        } else {
+	            $this->queue = "0";
+	        }
         } else { // non-interactive, load settings from db and set vars
             $this->rerequest = $this->cfg["rerequest_interval"];
             $this->skip_hash_check = $this->cfg["skiphashcheck"];
             $this->superseeder = 0;
+			// queue
+	        if ($enqueue) {
+	            if(IsAdmin()) {
+	                if($enqueue)
+	                    $this->queue = "1";
+	                else
+	                    $this->queue = "0";
+	            } else {
+	                $this->queue = "1";
+	            }
+	        } else {
+	            $this->queue = "0";
+	        }
             // load settings
             $settingsAry = loadTorrentSettings(urldecode($transfer));
             $this->rate = $settingsAry["max_upload_rate"];
@@ -221,21 +250,6 @@ class ClientHandler
             if ($this->maxcons == '') $this->maxcons = $this->cfg["maxcons"];
             if ($this->sharekill == '') $this->sharekill = $this->cfg["sharekill"];
         }
-        // queue
-        if ($this->cfg["AllowQueing"]) {
-            if(IsAdmin()) {
-                $this->queue = getRequestVar('queue');
-                if($this->queue == 'on')
-                    $this->queue = "1";
-                else
-                    $this->queue = "0";
-            } else {
-                $this->queue = "1";
-            }
-        } else {
-            $this->queue = "0";
-        }
-        //
         $this->transfer = urldecode($transfer);
         $this->alias = getAliasName($this->transfer);
         $this->owner = getOwner($this->transfer);
@@ -293,20 +307,15 @@ class ClientHandler
                     $this->sharekill_param = 0;
             }
         }
-        if ($this->cfg["AllowQueing"]) {
-            if($this->queue == "1") {
-                $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start transfer)
-            } else {
-                if ($this->setClientPort() === false)
-                    return;
-                $this->af->StartTorrentFile();  // this only writes out the stat file (does not start transfer)
-            }
+        // write stat-file
+        if($this->queue == "1") {
+            $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start transfer)
         } else {
             if ($this->setClientPort() === false)
                 return;
             $this->af->StartTorrentFile();  // this only writes out the stat file (does not start transfer)
-
         }
+        // set status
         $this->status = 2;
     }
 
@@ -324,22 +333,22 @@ class ClientHandler
         // write the session to close so older version of PHP will not hang
         session_write_close("TorrentFlux");
         $transferRunningFlag = 1;
-        if($this->af->running == "3") {
-            // _queue_
-
-            // TODO : QUEUE
-
-            /*
-            include_once("QueueManager.php");
-            $queueManager = QueueManager::getQueueManagerInstance($this->cfg);
-            $queueManager->command = $this->command; // tfQmanager...
-            $queueManager->enqueueTorrent($this->transfer);
-            */
-
-            AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
-            AuditAction($this->cfg["constants"]["queued_torrent"], $this->command);
+        if ($this->queue == "1") // queue
+        	if($cfg["fluxd_Qmgr_enabled"] == 1) {
+				require_once("Fluxd.php");
+				require_once("Fluxd.ServiceMod.php");
+				$fluxd = new Fluxd(serialize($cfg));
+				$fluxdRunning = $fluxd->isFluxdRunning();
+				if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {
+					$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
+					$queueManager->enqueueTorrent($this->transfer, $this->cfg['user']);
+					AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+				} else {
+					$this->messages = "Qmgr not active";
+				}
+    		}
             $transferRunningFlag = 0;
-        } else {
+        } else { // start
             // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/fluxi.debug; echo "'. $this->command .'" >> /tmp/fluxi.debug');
             $this->callResult = exec($this->command);

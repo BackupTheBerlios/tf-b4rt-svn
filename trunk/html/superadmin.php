@@ -686,7 +686,7 @@ if (isset($_REQUEST["t"])) {
 							setPriority($torrent);
 						}
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-						$clientHandler->startClient($torrent, 0);
+						$clientHandler->startClient($torrent, 0, false);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
 						// just 2 sec..
@@ -712,7 +712,7 @@ if (isset($_REQUEST["t"])) {
 							setPriority($torrent);
 						}
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-						$clientHandler->startClient($torrent, 0);
+						$clientHandler->startClient($torrent, 0, false);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
 						// just 2 sec..

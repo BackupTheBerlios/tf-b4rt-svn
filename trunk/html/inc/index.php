@@ -27,7 +27,6 @@
 require_once("config.php");
 require_once("functions.php");
 
-
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/index.tmpl");
@@ -52,34 +51,6 @@ if(array_key_exists("pagerefresh", $_GET)) {
 		exit();
 	}
 }
-
-// =============================================================================
-// queue-check
-
-$queueActive = false;
-
-// TODO : QUEUE
-
-/*
-if ($cfg["AllowQueing"]) {
-	include_once("QueueManager.php");
-	$queueManager = QueueManager::getQueueManagerInstance($cfg);
-	if (! $queueManager->isQueueManagerRunning()) {
-		if (($queueManager->prepareQueueManager()) && ($queueManager->startQueueManager())) {
-			$queueActive = true;
-		} else {
-			AuditAction($cfg["constants"]["error"], "Error starting Queue Manager");
-			if (IsAdmin())
-				header("location: index.php?iid=admin&op=queueSettings");
-			else
-				header("location: index.php?iid=index");
-			exit();
-		}
-	} else {
-		$queueActive = true;
-	}
-}
-*/
 
 // =============================================================================
 // start
@@ -145,14 +116,7 @@ if(! $killTorrent == '') {
 // Did the user select the option to remove a torrent from the Queue?
 if(isset($_REQUEST["dQueue"])) {
 	$QEntry = getRequestVar('QEntry');
-
-	// TODO : QUEUE
-
-	/*
-	include_once("QueueManager.php");
-	$queueManager = QueueManager::getQueueManagerInstance($cfg);
-	$queueManager->dequeueTorrent($QEntry);
-	*/
+	$fluxdQmgr->dequeueTorrent($QEntry, $cfg['user']);
 	header("location: index.php?iid=index");
 	exit();
 }
@@ -182,11 +146,10 @@ if(! isset($_SESSION['user'])) {
 
 // index-page-selection
 $tmpl->setvar('index_page', $cfg["index_page"]);
-if ($cfg["index_page"] == "b4rt") {
+if ($cfg["index_page"] == "b4rt")
 	$transferList = getTransferListString();
-} elseif ($cfg["index_page"] == "tf") {
+elseif ($cfg["index_page"] == "tf")
 	$transferList = getDirList($cfg["torrent_file_path"]);
-}
 
 // refresh
 if ($cfg['ui_indexrefresh'] != "0") {
@@ -197,12 +160,11 @@ if ($cfg['ui_indexrefresh'] != "0") {
 }
 
 // messages
-if ($messages != "") {
+if ($messages != "")
 	$tmpl->setvar('messages', $messages);
-}
 
 // queue
-if(! $queueActive) {
+if(!$queueActive) {
 	$tmpl->setvar('queueActive', 1);
 } else {
 	if (IsAdmin())
@@ -267,8 +229,7 @@ if ($cfg["ui_displayusers"] != "0") {
 				'is_on' => 1,
 				)
 			);
-		}
-		else {
+		} else {
 			array_push($arOfflineUsers, array(
 				'user' => $arUsers[$inx],
 				'is_off' => 1,
@@ -281,9 +242,8 @@ if ($cfg["ui_displayusers"] != "0") {
 }
 
 // xfer
-if (($cfg['enable_xfer'] == 1) && ($cfg['enable_public_xfer'] == 1)) {
+if (($cfg['enable_xfer'] == 1) && ($cfg['enable_public_xfer'] == 1))
 	$tmpl->setvar('enable_xfer', 1);
-}
 if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 	$tmpl->setvar('xfer_realtime', 1);
 	if ($cfg['xfer_day']) {
@@ -305,14 +265,12 @@ if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 // bigboldwarning
 if ($cfg['enable_bigboldwarning'] != "0") {
 	//Big bold warning hack by FLX
-	if($drivespace >= 98) {
+	if($drivespace >= 98)
 		$tmpl->setvar('enable_bigboldwarning', 1);
-	}
 }
 if ($cfg['enable_bigboldwarning'] != "1") {
-	if($drivespace >= 98) {
+	if($drivespace >= 98)
 		$tmpl->setvar('no_bigboldwarning', 1);
-	}
 }
 
 // bottom stats
@@ -328,23 +286,13 @@ if ($cfg['index_page_stats'] != 0) {
 	}
 	if ($queueActive) {
 		$tmpl->setvar('queueActive2', 1);
-
-		// TODO : QUEUE
-
-		/*
-
-		include_once("QueueManager.php");
-		$queueManager = QueueManager::getQueueManagerInstance($cfg);
-		$tmpl->setvar('_QUEUEMANAGER', $_QUEUEMANAGER);
-		$tmpl->setvar('managerName', $queueManager->managerName);
+		$tmpl->setvar('_QUEUEMANAGER', _QUEUEMANAGER);
 		$runningTransferCount = strval(getRunningTransferCount());
-		$countQueuedTorrents = strval($queueManager->countQueuedTorrents());
 		$tmpl->setvar('runningTransferCount', $runningTransferCount);
+		$countQueuedTorrents = strval($fluxdQmgr->countQueuedTorrents());
 		$tmpl->setvar('countQueuedTorrents', $countQueuedTorrents);
-		$tmpl->setvar('limitGlobal', $queueManager->limitGlobal);
-		$tmpl->setvar('limitUser', $queueManager->limitUser);
-
-		*/
+		$tmpl->setvar('limitGlobal', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
+		$tmpl->setvar('limitUser', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 	}
 	$tmpl->setvar('_OTHERSERVERSTATS', _OTHERSERVERSTATS);
 	$sumMaxUpRate = getSumMaxUpRate();
@@ -433,7 +381,7 @@ $tmpl->setvar('transferList', $transferList);
 $tmpl->setvar('_TORRENTDETAILS', _TORRENTDETAILS);
 $tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
 $tmpl->setvar('_STOPDOWNLOAD', _STOPDOWNLOAD);
-$tmpl->setvar('AllowQueing', $cfg["AllowQueing"]);
+$tmpl->setvar('queueActive', $queueActive);
 $tmpl->setvar('_DELQUEUE', _DELQUEUE);
 $tmpl->setvar('_SEEDTORRENT', _SEEDTORRENT);
 $tmpl->setvar('_DELETE', _DELETE);

@@ -343,11 +343,10 @@ function cliStartTorrent($torrent = "") {
 				// Process setPriority Request.
 				setPriority($torrent);
 			}
-			// force start, dont queue
-			$cfg["AllowQueing"] = 0;
-			// start
+			// clientHandler
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->startClient($torrent, 0);
+			// force start, dont queue
+			$clientHandler->startClient($torrent, 0, false);
 			if ($clientHandler->status == 3) { // hooray
 				echo "done\n";
 			} else { // start failed
@@ -384,7 +383,7 @@ function cliStartTorrents() {
                 setPriority($torrent);
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-            $clientHandler->startClient($torrent, 0);
+            $clientHandler->startClient($torrent, 0, false);
             // just 2 sec..
             sleep(2);
             //
@@ -419,7 +418,7 @@ function cliResumeTorrents() {
                 setPriority($torrent);
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-            $clientHandler->startClient($torrent, 0);
+            $clientHandler->startClient($torrent, 0, false);
             // just 2 sec..
             sleep(2);
             //
@@ -629,15 +628,10 @@ function cliWatchDir($tpath = "", $username = "") {
                                 // Process setPriority Request.
                                 setPriority($file_name);
                             }
-                            // queue
-                            if ($cfg["AllowQueing"])
-                                $_REQUEST['queue'] = 'on';
-                            else
-                                $_REQUEST['queue'] = 'off';
                             // start
                             include_once("ClientHandler.php");
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-                            $clientHandler->startClient($file_name, 0);
+                            $clientHandler->startClient($file_name, 0, false);
                             // just 2 secs..
                             sleep(2);
                             if ($clientHandler->status == 3) // hooray

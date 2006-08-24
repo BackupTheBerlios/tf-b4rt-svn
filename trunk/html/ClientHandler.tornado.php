@@ -47,8 +47,9 @@ class ClientHandlerTornado extends ClientHandler
      * starts a client
      * @param $transfer name of the transfer
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
+     * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive) {
+    function startClient($transfer, $interactive, $enqueue = false) {
 
         // do tornado special-pre-start-checks
         // check to see if the path to the python script is valid
@@ -66,11 +67,11 @@ class ClientHandlerTornado extends ClientHandler
         }
 
         // prepare starting of client
-        parent::prepareStartClient($transfer, $interactive);
+        parent::prepareStartClient($transfer, $interactive, $enqueue);
         // prepare succeeded ?
         if ($this->status != 2) {
             $this->status = -1;
-            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.") failed";
+            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.") failed";
             return;
         }
 
@@ -85,24 +86,21 @@ class ClientHandlerTornado extends ClientHandler
             $this->command .= " --priority ".$priolist;
         }
         $this->command .= " ".$this->cfg["btclient_tornado_options"]." > /dev/null &";
-        if (($this->cfg["AllowQueing"]) && ($this->queue == "1")) {
-            //  This file is queued.
-        } else {
-    		// This file is started manually.
-    		if (! array_key_exists("pythonCmd", $this->cfg)) {
-    				insertSetting("pythonCmd","/usr/bin/python");
-    		}
-    		if (! array_key_exists("debugTorrents", $this->cfg)) {
-    				insertSetting("debugTorrents", "0");
-    		}
-            $pyCmd = "";
-			if (!$this->cfg["debugTorrents"]) {
-					$pyCmd = $this->cfg["pythonCmd"] . " -OO";
-			} else {
-					$pyCmd = $this->cfg["pythonCmd"];
-			}
-			$this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $pyCmd . " " .$this->cfg["btclient_tornado_bin"] . " " . $this->command;
-		}
+
+		// check for some settings
+		if (! array_key_exists("pythonCmd", $this->cfg))
+			insertSetting("pythonCmd","/usr/bin/python");
+		if (! array_key_exists("debugTorrents", $this->cfg))
+			insertSetting("debugTorrents", "0");
+        $pyCmd = "";
+		if (!$this->cfg["debugTorrents"])
+			$pyCmd = $this->cfg["pythonCmd"] . " -OO";
+		else
+			$pyCmd = $this->cfg["pythonCmd"];
+
+		// build the command-string
+		$this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $pyCmd . " " .$this->cfg["btclient_tornado_bin"] . " " . $this->command;
+
         // start the client
         parent::doStartClient();
     }

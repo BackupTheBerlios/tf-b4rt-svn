@@ -35,9 +35,11 @@ else {
 
 if (!empty($_FILES['upload_files'])) {
 	//echo '<pre>'; var_dump($_FILES); echo '</pre>';
-	// instant action ?
+	// action-id
 	$actionId = getRequestVar('aid');
+	// stack
 	$tStack = array();
+	// process upload
 	foreach($_FILES['upload_files']['size'] as $id => $size) {
 		if ($size == 0) {
 			//no or empty file, skip it
@@ -81,26 +83,27 @@ if (!empty($_FILES['upload_files'])) {
 
 	// instant action ?
 	if (isset($actionId)) {
-		switch ($actionId) {
-			case 3:
-				$_REQUEST['queue'] = 'on';
-			case 2:
-				include_once("ClientHandler.php");
-				foreach ($tStack as $torrent) {
-					// init stat-file
-					injectTorrent($torrent);
-					//
-					if ($cfg["enable_file_priority"]) {
-					include_once("setpriority.php");
-						// Process setPriority Request.
-						setPriority(urldecode($torrent));
-					}
-					$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-					$clientHandler->startClient($torrent, 0);
-					// just a sec..
-					sleep(1);
-				}
-				break;
+		include_once("ClientHandler.php");
+		foreach ($tStack as $torrent) {
+			// init stat-file
+			injectTorrent($torrent);
+			// file prio
+			if ($cfg["enable_file_priority"]) {
+				include_once("setpriority.php");
+				// Process setPriority Request.
+				setPriority(urldecode($torrent));
+			}
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+			switch ($actionId) {
+				case 3:
+					$clientHandler->startClient($torrent, 0, true);
+					break;
+				case 2:
+					$clientHandler->startClient($torrent, 0, false);
+					break;
+			}
+			// just a sec..
+			sleep(1);
 		}
 	}
 	// back to index if no errors
@@ -109,6 +112,7 @@ if (!empty($_FILES['upload_files'])) {
 		exit();
 	}
 }
+
 $tmpl->setvar('head', getHead(_MULTIPLE_UPLOAD));
 if ((isset($messages)) && ($messages != "")) {
 	$tmpl->setvar('messages', $messages);
@@ -122,7 +126,7 @@ for($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j) {
 }
 $tmpl->setloop('row_list', $row_list);
 $tmpl->setvar('_UPLOAD', _UPLOAD);
-$tmpl->setvar('AllowQueing', $cfg["AllowQueing"]);
+$tmpl->setvar('queueActive', $queueActive);
 $tmpl->setvar('IsAdmin', IsAdmin());
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

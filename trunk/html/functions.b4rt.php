@@ -1305,7 +1305,7 @@ function convertIntegerToArray($dataInt) {
  * @param $interactive (1|0) : is this a interactive startup with dialog ?
  */
 function indexStartTorrent($torrent,$interactive) {
-	global $cfg;
+	global $cfg, $queueActive;
 	if ($cfg["enable_file_priority"]) {
 		include_once("setpriority.php");
 		// Process setPriority Request.
@@ -1316,13 +1316,13 @@ function indexStartTorrent($torrent,$interactive) {
 			include_once("ClientHandler.php");
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->startClient($torrent, 0);
+			$clientHandler->startClient($torrent, 0, $queueActive);
 			// just 2 sec..
 			sleep(2);
 			// header + out
 			header("location: index.php?iid=index");
 			exit();
-		break;
+			break;
 		case 1:
 			$spo = getRequestVar('setPriorityOnly');
 			if (!empty($spo)){
@@ -1330,7 +1330,7 @@ function indexStartTorrent($torrent,$interactive) {
 			} else {
 				include_once("ClientHandler.php");
 				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
-				$clientHandler->startClient($torrent, 1);
+				$clientHandler->startClient($torrent, 1, $queueActive);
 				if ($clientHandler->status == 3) { // hooray
 					// wait another sec
 					sleep(1);
@@ -1347,7 +1347,7 @@ function indexStartTorrent($torrent,$interactive) {
 				}
 				exit();
 			}
-		break;
+			break;
 	}
 }
 
@@ -1357,7 +1357,7 @@ function indexStartTorrent($torrent,$interactive) {
  * @param $url_upload url of torrent to download
  */
 function indexProcessDownload($url_upload) {
-	global $cfg, $messages;
+	global $cfg, $messages, $queueActive;
 	$arURL = explode("/", $url_upload);
 	$file_name = urldecode($arURL[count($arURL)-1]); // get the file name
 	$file_name = str_replace(array("'",","), "", $file_name);
@@ -1410,22 +1410,23 @@ function indexProcessDownload($url_upload) {
 		// instant action ?
 		$actionId = getRequestVar('aid');
 		if (isset($actionId)) {
+			if ($cfg["enable_file_priority"]) {
+				include_once("setpriority.php");
+				// Process setPriority Request.
+				setPriority(urldecode($file_name));
+			}
+			include_once("ClientHandler.php");
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 			switch ($actionId) {
 				case 3:
-				   $_REQUEST['queue'] = 'on';
+					$clientHandler->startClient($file_name, 0, true);
+					break;
 				case 2:
-				   if ($cfg["enable_file_priority"]) {
-					   include_once("setpriority.php");
-					   // Process setPriority Request.
-					   setPriority(urldecode($file_name));
-				   }
-				   include_once("ClientHandler.php");
-				   $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-				   $clientHandler->startClient($file_name, 0);
-				   // just a sec..
-				   sleep(1);
-				   break;
+					$clientHandler->startClient($file_name, 0, false);
+					break;
 			}
+			// just a sec..
+			sleep(1);
 		}
 		header("location: index.php?iid=index");
 		exit();
@@ -1458,22 +1459,23 @@ function indexProcessUpload() {
 					// instant action ?
 					$actionId = getRequestVar('aid');
 					if (isset($actionId)) {
+						if ($cfg["enable_file_priority"]) {
+							include_once("setpriority.php");
+							// Process setPriority Request.
+							setPriority(urldecode($file_name));
+						}
+						include_once("ClientHandler.php");
+						$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 						switch ($actionId) {
 							case 3:
-							   $_REQUEST['queue'] = 'on';
+								$clientHandler->startClient($file_name, 0, true);
+								break;
 							case 2:
-							   if ($cfg["enable_file_priority"]) {
-								   include_once("setpriority.php");
-								   // Process setPriority Request.
-								   setPriority(urldecode($file_name));
-							   }
-							   include_once("ClientHandler.php");
-							   $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-							   $clientHandler->startClient($file_name, 0);
-							   // just a sec..
-							   sleep(1);
-							   break;
+								$clientHandler->startClient($file_name, 0, false);
+								break;
 						}
+						// just a sec..
+						sleep(1);
 					}
 				} else {
 					$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["torrent_file_path"] . $file_name."</font><br>";
