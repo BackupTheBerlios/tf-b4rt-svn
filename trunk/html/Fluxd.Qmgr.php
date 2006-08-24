@@ -60,8 +60,9 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $user
      */
     function enqueueTorrent($torrent, $user) {
+    	$torrent = urldecode($torrent);
     	// TODO
-    	parent::sendServiceCommand("enqueue", 0);
+    	parent::sendServiceCommand("enqueue;".$torrent.";".$user, 0);
     }
 
     /**
@@ -71,8 +72,23 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $user
      */
     function dequeueTorrent($torrent, $user) {
-    	// TODO
-    	parent::sendServiceCommand("dequeue", 0);
+    	$torrent = urldecode($torrent);
+        $alias_file = getRequestVar('alias_file');
+        if (isTorrentRunning($torrent)) {
+            // torrent has been started... try and kill it.
+            AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent . "has been started -- TRY TO KILL IT");
+            header("location: index.php?iid=index&alias_file=".$alias_file."&kill=true&kill_torrent=".urlencode($torrent));
+            exit();
+        } else {
+            // send command to daemon
+            parent::sendServiceCommand("dequeue;".$torrent.";".$user, 0); // TODO
+            // flag the torrent as stopped (in db)
+            stopTorrentSettings($torrent);
+            // update the stat file.
+            $this->updateStatFile($torrent, $alias_file);
+            // log
+            AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent);
+        }
     }
 
     /**

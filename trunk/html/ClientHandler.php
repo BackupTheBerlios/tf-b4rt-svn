@@ -334,19 +334,17 @@ class ClientHandler
         session_write_close("TorrentFlux");
         $transferRunningFlag = 1;
         if ($this->queue == "1") { // queue
-        	if($cfg["fluxd_Qmgr_enabled"] == 1) {
-				require_once("Fluxd.php");
-				require_once("Fluxd.ServiceMod.php");
-				$fluxd = new Fluxd(serialize($cfg));
-				$fluxdRunning = $fluxd->isFluxdRunning();
-				if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {
-					$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
-					$queueManager->enqueueTorrent($this->transfer, $this->cfg['user']);
-					AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
-				} else {
-					$this->messages = "Qmgr not active";
-				}
-    		}
+			require_once("Fluxd.php");
+			require_once("Fluxd.ServiceMod.php");
+			$fluxd = new Fluxd(serialize($this->cfg));
+			$fluxdRunning = $fluxd->isFluxdRunning();
+			if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {
+				$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($this->cfg, $fluxd, 'Qmgr');
+				$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
+				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+			} else {
+				$this->messages = "Qmgr not active";
+			}
             $transferRunningFlag = 0;
         } else { // start
             // The following command starts the transfer running! w00t!

@@ -191,10 +191,12 @@ sub command {
 		};
 		/^enqueue.*/ && do {
 			# TODO
+			print $_."\n"; # DEBUG
 			return "enqueue";
 		};
 		/^dequeue.*/ && do {
 			# TODO
+			print $_."\n"; # DEBUG
 			return "dequeue";
 		};
 	}

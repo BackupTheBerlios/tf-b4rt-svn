@@ -71,7 +71,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $alias = getAliasName($torrent).".stat";
                     $btclient = getTransferClient($torrent);
-                    $clientHandler ler::getClientHandlerInstance($cfg,$btclient);
+                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                     $clientHandler->stopClient($torrent, $alias);
                     // just 2 sec..
                     sleep(2);
