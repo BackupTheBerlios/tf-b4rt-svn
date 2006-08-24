@@ -260,10 +260,10 @@ function netstatConnectionsSum() {
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
+			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$clientHandler->binSocket.".+tcp"));
 			unset($clientHandler);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
+			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$clientHandler->binSocket.".+tcp"));
 		break;
 	}
 	return $nCount;
@@ -288,7 +288,7 @@ function netstatConnectionsByPid($torrentPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -Eu".$webserverUser.".+".$torrentPid.".+tcp"));
+			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE".$webserverUser.".+".$torrentPid.".+tcp"));
 			$netcon--;
 			return $netcon;
 		break;
@@ -315,10 +315,10 @@ function netstatPortList() {
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".substr($clientHandler->binSocket, 0, 9)." | ". $cfg['bin_awk']." '/tcp/ {print \$6}' | ".$cfg['bin_awk']." -F \":\" '{print \$2}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".substr($clientHandler->binSocket, 0, 9).".+tcp/ {split (\$6, a, \":\");print a[2]}'");
 			unset($clientHandler);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".substr($clientHandler->binSocket, 0, 9)." | ". $cfg['bin_awk']." '/tcp/ {print \$6}' | ".$cfg['bin_awk']." -F \":\" '{print \$2}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".substr($clientHandler->binSocket, 0, 9).".+tcp/ {split (\$6, a, \":\");print a[2]}'");
 		break;
 	}
 	return $retStr;
@@ -368,10 +368,10 @@ function netstatHostList() {
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -v '*.*' | ".$cfg['bin_awk']." '/".$webserverUser.".*".substr($clientHandler->binSocket, 0, 9).".*tcp/ {print \$7}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E ".$webserverUser.".+".substr($clientHandler->binSocket, 0, 9).".+tcp.+[0-9]+\.[0-9]+\.[0-9]+\.[0-9]:[0-9].+[0-9]:[0-9]");
 			unset($clientHandler);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -v '*.*' | ".$cfg['bin_awk']." '/".$webserverUser.".*".substr($clientHandler->binSocket, 0, 9).".*tcp/ {print \$7}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E ".$webserverUser.".+".substr($clientHandler->binSocket, 0, 9).".+tcp.+[0-9]+\.[0-9]+\.[0-9]+\.[0-9]:[0-9].+[0-9]:[0-9]");
 		break;
 	}
 	return $retStr;
@@ -402,15 +402,11 @@ function netstatHostsByPid($torrentPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			// lord_nor :
-			//$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." '*.*' | ".$cfg['bin_awk']." '/".$webserverUser.".*".$torrentPid.".*tcp/ {print \$7}'");
-			// khr0n0s :
-			$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." 'tcp4' | ".$cfg['bin_awk']." '/".$webserverUser.".*".$torrentPid.".*tcp/ {print \$7}'");
+			$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".+".$torrentPid.".+tcp.+[0-9]:[0-9].+[0-9]:[0-9]/ {print \$7}'");
 			$hostAry = explode("\n",$hostList);
 			foreach ($hostAry as $line) {
 				$hostLineAry = explode(':',trim($line));
-				if ((trim($hostLineAry[0])) != "*") /* exclude non wanted entry */
-					$hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
+				$hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
 			}
 		break;
 	}
