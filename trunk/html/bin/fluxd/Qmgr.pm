@@ -189,15 +189,17 @@ sub command {
 		/^list-queue/ && do {
 			return list();
 		};
-		/^enqueue.*/ && do {
+		/^enqueue;(.*);(.*)/ && do {
+			print "Qmgr : enqueue : \"".$1."\" (user : ".$2.")\n"; # DEBUG
 			# TODO
-			print $_."\n"; # DEBUG
-			return "enqueue";
+			#return add($1,$2);
+			return 1;
 		};
-		/^dequeue.*/ && do {
+		/^dequeue;(.*);(.*)/ && do {
+			print "Qmgr : dequeue : \"".$1."\" (user : ".$2.")\n"; # DEBUG
 			# TODO
-			print $_."\n"; # DEBUG
-			return "dequeue";
+			#return remove($1,$2);
+			return 1;
 		};
 	}
 	return "Unknown command";
