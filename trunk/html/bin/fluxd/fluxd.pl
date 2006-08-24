@@ -604,33 +604,45 @@ sub processRequest {
 			last SWITCH;
 		};
 
-		# Package calls
-		if (exists &Qmgr::main) {
-			/^count-jobs/ && do {
-				$return = Qmgr::CountJobs();
-				last SWITCH;
-			};
-			/^count-queue/ && do {
-				$return = Qmgr::CountQueue();
-				last SWITCH;
-			};
-			/^list-queue/ && do {
-				$return = Qmgr::ListQueue();
-				last SWITCH;
-			};
-		}
-		if (exists &Watch::setWatch) {
-			/^watch/ && do {
-				$return = Watch::setWatch(shift, shift);
-				last SWITCH;
-			};
-		}
-		if (exists &Trigger::setTrigger) {
-			/^trigger/ && do {
-				$return = Trigger::setTrigger(shift, shift);
-				last SWITCH;
-			};
-		}
+		# module-calls
+		/^!(.+):(.+)/ && do {
+			my $mod = $1;
+			my $command = $2;
+			$return = "";
+			$_ = $mod;
+			MODCALL: {
+				/Qmgr/ && do {
+					if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+						$return = $qmgr->command($command);
+					}
+					last SWITCH;
+				};
+				/Fluxinet/ && do {
+					if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+						$return = $fluxinet->command($command);
+					}
+					last SWITCH;
+				};
+				/Trigger/ && do {
+					if ((defined $trigger) && ($trigger->getState() == 1)) {
+						$return = $trigger->command($command);
+					}
+					last SWITCH;
+				};
+				/Watch/ && do {
+					if ((defined $watch) && ($watch->getState() == 1)) {
+						$return = $watch->command($command);
+					}
+					last SWITCH;
+				};
+				/Clientmaint/ && do {
+					if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+						$return = $clientmaint->command($command);
+					}
+					last SWITCH;
+				};
+			}
+		};
 
 		# Default case.
 		$return = printUsage(1);
@@ -813,7 +825,6 @@ sub modState {
 			} else {
 				return 0;
 			}
-			last SWITCH;
 		};
 		/Fluxinet/ && do {
 			if (defined $fluxinet) {
@@ -821,7 +832,6 @@ sub modState {
 			} else {
 				return 0;
 			}
-			last SWITCH;
 		};
 		/Trigger/ && do {
 			if (defined $trigger) {
@@ -829,7 +839,6 @@ sub modState {
 			} else {
 				return 0;
 			}
-			last SWITCH;
 		};
 		/Watch/ && do {
 			if (defined $watch) {
@@ -837,7 +846,6 @@ sub modState {
 			} else {
 				return 0;
 			}
-			last SWITCH;
 		};
 		/Clientmaint/ && do {
 			if (defined $clientmaint) {
@@ -845,7 +853,6 @@ sub modState {
 			} else {
 				return 0;
 			}
-			last SWITCH;
 		};
 	}
 }

@@ -47,7 +47,7 @@ my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 my ( $MAX_SYS, $MAX_USR );
 my $MAX_START_TRIES = 5;
 my $START_TRIES_SLEEP = 10;
-my $SLEEP_MIN = 5; 
+my $SLEEP_MIN = 5;
 my $SLEEP_MAX = 20;
 
 # references to the FluxDB @users and %names for use internally. Just makes
@@ -154,6 +154,53 @@ sub getState {
 sub getMessage {
 	return $message;
 }
+
+#------------------------------------------------------------------------------#
+# Sub: set                                                                     #
+# Arguments: Variable [value]                                                  #
+# Returns:                                                                     #
+#------------------------------------------------------------------------------#
+sub set {
+}
+
+#------------------------------------------------------------------------------#
+# Sub: main                                                                    #
+# Arguments: Null                                                              #
+# Returns:                                                                     #
+#------------------------------------------------------------------------------#
+sub main {
+}
+
+#------------------------------------------------------------------------------#
+# Sub: command                                                                 #
+# Arguments: command-string                                                    #
+# Returns: result-string                                                       #
+#------------------------------------------------------------------------------#
+sub command {
+	shift; # class
+	$_= shift;
+	SWITCH: {
+		/^count-jobs/ && do {
+			return jobs();
+		};
+		/^count-queue/ && do {
+			return queue();
+		};
+		/^list-queue/ && do {
+			return list();
+		};
+		/^enqueue.*/ && do {
+			# TODO
+			return "enqueue";
+		};
+		/^dequeue.*/ && do {
+			# TODO
+			return "dequeue";
+		};
+	}
+	return "Unknown command";
+}
+
 
 #-------------------------------------------------------------------------------#
 # Sub: processQueue                                                             #
@@ -441,7 +488,7 @@ sub add {
 	}
 	$AddIt = 1;
 	print "Qmgr: Adding job to queue : ".$torrent." (".$username.")";
-	
+
 	if ($AddIt == 1) {
 		push (@{$users->[$names->{$username}]->{'queue'}}, $torrent);
 	}
