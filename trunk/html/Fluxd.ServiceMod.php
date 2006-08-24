@@ -123,7 +123,8 @@ class FluxdServiceMod
      * @return string with retval or null if error
      */
     function sendServiceCommand($command, $read = 0) {
-    	// TODO
+        $this->callResult = $this->fluxd->sendCommand('!'.$this->moduleName.':'.$command, $read);
+        return $this->callResult;
     }
 
 }
