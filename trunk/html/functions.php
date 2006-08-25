@@ -76,7 +76,7 @@ if (isAuthenticated() == 1) {
 	if ($cfg["webapp_locked"] == 1) {
 	// only superadmin can login when we are locked
 		if (! IsSuperAdmin()) {
-			header('location: index.php?iid=locked');
+			header('location: locked.php');
 			exit();
 		}
 	}

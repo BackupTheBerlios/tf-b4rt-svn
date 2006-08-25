@@ -54,7 +54,7 @@ $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', 'locked');
 # lets parse the hole thing
 $tmpl->pparse();
 ?>
