@@ -122,9 +122,6 @@ define('_REN_ERROR', 'An error accured, please try again!');
 define('_REN_ERR_ARG', 'Wrong argument supplied!');
 define('_REN_TITLE', 'Rename Folder');
 
-// torrentflux-b4rt Version
-$cfg["version"] = getLocalVersion();
-
 // string-constants
 define('_ID_PORT','Port');
 define('_ID_PORTS','Ports');
@@ -141,6 +138,19 @@ define('_AUTH_BASIC_REALM','torrentflux-b4rt');
 
 // public stats (xml|rss)
 define('_PUBLIC_STATS',0);
+
+// torrentflux-b4rt Version
+$cfg["version"] = getLocalVersion();
+
+// DEBUG --------------------------------
+if ($cfg["version"] != "svn") {
+	// turn off error_reporting
+	error_reporting(0);
+} else {
+	// turn on error_reporting
+	error_reporting(E_ALL);
+}
+// DEBUG --------------------------------
 
 /**
  * gets version-info of local version
