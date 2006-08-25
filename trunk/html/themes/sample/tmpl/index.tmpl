@@ -295,34 +295,29 @@
 													<td class="tiny">
 														Download Torrent</td>
 												</tmpl_if>
+												<tmpl_if name="enable_bulkops">
+													<td class="tiny" align="right" nowrap>
+														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+														<a href="multi.php?action=bulkStart"><img src="images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
+														<a href="multi.php?action=bulkResume"><img src="images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
+														<a href="multi.php?action=bulkStop"><img src="images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
+													</td>
+												</tmpl_if>
 												<tmpl_if name="enable_multiops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 														<select name="action" size="1">
 															<option value="---" selected>---</option>
-															<optgroup label="Selected" style="background-color: #00EC00">
-																<option value="torrentStart" style="background-color: #FFFFFF">Start Torrents</option>
-																<option value="torrentStop" style="background-color: #FFFFFF">Stop Torrents</option>
-															</optgroup>
+															<option value="torrentStart" style="background-color: #00EC00">Start Torrents</option>
+															<option value="torrentStop" style="background-color: #94ABC0">Stop Torrents</option>
 															<tmpl_if name="queueActive2">
-																<optgroup label="Selected" style="background-color: #FFFC00">
-																	<option value="torrentEnQueue" style="background-color: #FFFFFF">EnQueue Torrents</option>
-																	<option value="torrentDeQueue" style="background-color: #FFFFFF">DeQueue Torrents</option>
-																</optgroup>
+																<option value="torrentEnQueue" style="background-color: #FFFC00">EnQueue Torrents</option>
+																<option value="torrentDeQueue" style="background-color: #FFFC00">DeQueue Torrents</option>
 															</tmpl_if>
-															<optgroup label="Selected" style="background-color: #DDAAAA">
-																<option value="torrentResetTotals" style="background-color: #FFFFFF">Reset Torrents Totals</option>
-																<option value="torrent" style="background-color: #FFFFFF">Delete Torrents</option>
-																<option value="torrentData" style="background-color: #FFFFFF">Delete Torrents + Data</option>
-																<option value="torrentWipe" style="background-color: #FFFFFF">Wipe Torrents</option>
-															</optgroup>
-															<tmpl_if name="enable_bulkops">
-																<optgroup label="All" style="background-color: #94ABC0">
-																	<option value="bulkStart" style="background-color: #FFFFFF">Start All Torrents</option>
-																	<option value="bulkStop" style="background-color: #FFFFFF">Stop All Torrents</option>
-																	<option value="bulkResume" style="background-color: #FFFFFF">Resume All Torrents</option>
-																</optgroup>
-															</tmpl_if>
+															<option value="torrentResetTotals" style="background-color: #DDAAAA">Reset Torrents Totals</option>
+															<option value="torrent" style="background-color: #DDAAAA">Delete Torrents</option>
+															<option value="torrentData" style="background-color: #DDAAAA">Delete Torrents + Data</option>
+															<option value="torrentWipe" style="background-color: #DDAAAA">Wipe Torrents</option>
 														</select>
 														<input type="submit" value="Go">
 													</td>
