@@ -1034,6 +1034,21 @@
 									<tmpl_var name="getMoveSettingsForm">
 								</td>
 							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Estimated Time to Seed</strong><br>
+									Display the estimated time until your seeding reaches the cutoff you set
+								</td>
+								<td valign="top">
+									<select name="display_seeding_time">
+                                                                                <option value="1">true</option>  
+                                                                                <option value="0"
+                                                                                <tmpl_if name="display_seeding_time" value="0">
+                                                                                         selected
+                                                                                </tmpl_if>
+                                                                                >false</option>
+                                                                        </select>
+								</td>
+							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Bins</strong></td></tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Path : grep</strong><br>

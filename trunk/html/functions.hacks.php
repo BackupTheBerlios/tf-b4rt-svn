@@ -252,5 +252,50 @@ function deleteProfileInfo($pid) {
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 }
+// ****************************************************************************
+// Estimated time left to seed
+function GetSpeedInBytes($inValue)
+{
+	$rtnValue = 0;
+	$arTemp = split(" ", trim($inValue));
+	if ($arTemp[1] == "kB/s")
+		$rtnValue = $arTemp[0] * 1024;
+	else
+		$rtnValue = $arTemp[0];
+	return $rtnValue;
+}
 
+function SecondsToDate($seconds)
+{
+      $periods = array (
+                    'years'     => 31556926,
+                    'months'    => 2629743,
+                    'weeks'     => 604800,
+                    'days'      => 86400,
+                    'hours'     => 3600,
+                    'minutes'   => 60,
+                    'seconds'   => 1
+      );
+      $seconds = (float) $seconds;
+      foreach ($periods as $period => $value) {
+          $count = floor($seconds / $value);  
+          if ($count == 0) {
+              continue;
+          }
+          $values[$period] = $count;
+          $seconds = $seconds % $value;
+      }
+      if (empty($values)) {
+          $values = null;
+      }
+      foreach ($values as $key => $value) {
+          $segment_name = substr($key, 0, -1);
+          $segment = $value . ' ' . $segment_name; 
+          if ($value != 1) {
+              $segment .= 's';
+          }
+          $array[] = $segment;
+      }
+      return implode(', ', $array);
+}
 ?>

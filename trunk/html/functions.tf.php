@@ -1281,7 +1281,6 @@ function getDirList($dirName) {
 		if ($cfg["enable_torrent_download"])
 			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		//
-		$hd = getStatusImage($af);
 		$output .= "<tr>";
 		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 

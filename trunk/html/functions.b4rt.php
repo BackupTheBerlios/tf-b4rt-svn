@@ -286,7 +286,7 @@ function netstatConnectionsByPid($torrentPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE".$webserverUser.".+".$torrentPid.".+tcp"));
+			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$torrentPid.".+tcp"));
 			$netcon--;
 			return $netcon;
 		break;

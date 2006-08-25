@@ -752,7 +752,11 @@ function getTransferListString() {
 				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
 				// $estTime
 				if ($af->time_left != "" && $af->time_left != "0")
-					$estTime = $af->time_left;
+					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
+						$estTime = SecondsToDate(((($af->seedlimit)/100 * $af->size) - $af->uptotal)/GetSpeedInBytes($af->up_speed)) . " left";
+					} else {
+						$estTime = $af->time_left;
+					}
 				// $lastUser
 				$lastUser = $transferowner;
 				// $show_run + $statusStr

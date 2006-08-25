@@ -175,6 +175,7 @@ $tmpl->setvar('maxdepth', $cfg["maxdepth"]);
 $tmpl->setvar('enable_restrictivetview', $cfg["enable_restrictivetview"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);
 $tmpl->setvar('getMoveSettingsForm', getMoveSettingsForm());
+$tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
 $tmpl->setvar('bin_grep', $cfg["bin_grep"]);
 $tmpl->setvar('validate_grep', validateFile($cfg["bin_grep"]));
 $tmpl->setvar('bin_cat', $cfg["bin_cat"]);
