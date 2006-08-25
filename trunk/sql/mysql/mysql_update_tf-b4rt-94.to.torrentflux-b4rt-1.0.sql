@@ -36,7 +36,8 @@ ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
 --
 -- updates
 --
-UPDATE tf_settings SET tf_value = 'old_style_themes/matrix' WHERE tf_key = 'default_theme';
+UPDATE tf_settings SET tf_value = 'default' WHERE tf_key = 'default_theme';
+UPDATE tf_users SET theme = 'default';
 
 --
 -- inserts

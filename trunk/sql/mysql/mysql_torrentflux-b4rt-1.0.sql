@@ -83,7 +83,7 @@ CREATE TABLE tf_users (
   time_created VARCHAR(14) NOT NULL default '0',
   user_level TINYINT(1) NOT NULL default '0',
   hide_offline TINYINT(1) NOT NULL default '0',
-  theme VARCHAR(100) NOT NULL default 'mint',
+  theme VARCHAR(100) NOT NULL default 'default',
   language_file VARCHAR(60) default 'lang-english.php',
   state TINYINT(1) NOT NULL default '1',
   PRIMARY KEY  (uid)
@@ -191,7 +191,7 @@ INSERT INTO tf_settings VALUES ('days_to_keep','30');
 INSERT INTO tf_settings VALUES ('minutes_to_keep','3');
 INSERT INTO tf_settings VALUES ('rss_cache_min','20');
 INSERT INTO tf_settings VALUES ('page_refresh','60');
-INSERT INTO tf_settings VALUES ('default_theme','old_style_themes/matrix');
+INSERT INTO tf_settings VALUES ('default_theme','default');
 INSERT INTO tf_settings VALUES ('default_language','lang-english.php');
 INSERT INTO tf_settings VALUES ('debug_sql','1');
 INSERT INTO tf_settings VALUES ('torrent_dies_when_done','False');
