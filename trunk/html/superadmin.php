@@ -417,7 +417,7 @@ if (isset($_REQUEST["f"])) {
 			case "3": // fluxd-ps
 				$htmlTitle = "fluxd - ps";
 				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep");
 				$htmlMain .= '</pre>';
 				break;
 			case "4": // fluxd-status
@@ -431,6 +431,18 @@ if (isset($_REQUEST["f"])) {
 				} else {
 					$htmlMain .= '<br><strong>fluxd not running</strong>';
 				}
+				break;
+			case "5": // fluxd-check
+				$htmlTitle = "fluxd - check";
+				$htmlMain .= '<pre>';
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["fluxd_path"]." ".$cfg["fluxd_path"]."/fluxd.pl check ".$cfg["fluxd_path_fluxcli"]);
+				$htmlMain .= '</pre>';
+				break;
+			case "6": // fluxd-db-debug
+				$htmlTitle = "fluxd - db-debug";
+				$htmlMain .= '<pre>';
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["fluxd_path"]." ".$cfg["fluxd_path"]."/fluxd.pl debug db ".$cfg["fluxd_path_fluxcli"]);
+				$htmlMain .= '</pre>';
 				break;
 		}
 		printPage();
@@ -923,6 +935,11 @@ function buildPage($action) {
 			if ($fluxd->isFluxdRunning()) {
 				$htmlMain .= ' | ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=4">status</a>';
+			} else {
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=5">check</a>';
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=6">db-debug</a>';
 			}
 			$htmlMain .= '</td><td align="right"><strong>fluxd</td>';
 			$htmlMain .= '</td></tr></table>';

@@ -36,10 +36,12 @@ $tmpl->setvar('theme', $cfg["theme"]);
 if ((isset($shutdown)) && ($shutdown == "1"))
 	$tmpl->setvar('shutdown', 1);
 
-$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','log'));
-$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?f=2','error-log'));
-$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3','ps'));
-$tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4','status'));
+$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','<font class="adminlink">log</font>'));
+$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?f=2','<font class="adminlink">error-log</font>'));
+$tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3','<font class="adminlink">ps</font>'));
+$tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4','<font class="adminlink">status</font>'));
+$tmpl->setvar('SuperAdminLink5', getSuperAdminLink('?f=5','<font class="adminlink">check</font>'));
+$tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6','<font class="adminlink">db-debug</font>'));
 
 $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
 $tmpl->setvar('validateCmd', validateFile($cfg["perlCmd"]));
