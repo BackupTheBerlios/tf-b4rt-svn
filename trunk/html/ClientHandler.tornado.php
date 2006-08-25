@@ -75,18 +75,6 @@ class ClientHandlerTornado extends ClientHandler
             return;
         }
 
-        // build the command-string
-        $skipHashCheck = "";
-        if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
-            $skipHashCheck = " --check_hashes 0";
-        $this->command = $this->runtime ." ".$this->sharekill_param ." ".$this->cfg["torrent_file_path"].$this->alias .".stat ".$this->owner ." --responsefile '".$this->cfg["torrent_file_path"].$this->transfer ."' --display_interval 5 --max_download_rate ".$this->drate ." --max_upload_rate ".$this->rate ." --max_uploads ".$this->maxuploads ." --minport ".$this->port ." --maxport ".$this->maxport ." --rerequest_interval ".$this->rerequest ." --super_seeder ".$this->superseeder ." --max_initiate ".$this->maxcons .$skipHashCheck;
-        if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
-            $priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
-            $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
-            $this->command .= " --priority ".$priolist;
-        }
-        $this->command .= " ".$this->cfg["btclient_tornado_options"]." > /dev/null &";
-
 		// check for some settings
 		if (! array_key_exists("pythonCmd", $this->cfg))
 			insertSetting("pythonCmd","/usr/bin/python");
@@ -98,8 +86,40 @@ class ClientHandlerTornado extends ClientHandler
 		else
 			$pyCmd = $this->cfg["pythonCmd"];
 
-		// build the command-string
-		$this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $pyCmd . " " .$this->cfg["btclient_tornado_bin"] . " " . $this->command;
+        // build the command-string
+        $skipHashCheck = "";
+        if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
+            $skipHashCheck = " --check_hashes 0";
+        $filePrio = "";
+        if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
+            $priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
+            $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
+            $filePrio = " --priority ".$priolist;
+        }
+		$this->command = "cd " . $this->savepath .";";
+		$this->command .= " HOME=".$this->cfg["path"];
+		$this->command .= "; export HOME;";
+		$this->command .= $this->umask;
+		$this->command .= " nohup ";
+		$this->command .= $this->nice;
+		$this->command .= $pyCmd . " " .$this->cfg["btclient_tornado_bin"];
+        $this->command .= $this->runtime;
+        $this->command .= " ".$this->sharekill_param;
+        $this->command .= " ".$this->cfg["torrent_file_path"].$this->alias .".stat";
+        $this->command .= " ".$this->owner;
+        $this->command .= " --responsefile \"".$this->cfg["torrent_file_path"].$this->transfer ."\"";
+        $this->command .= " --display_interval 5";
+        $this->command .= " --max_download_rate ".$this->drate;
+        $this->command .= " --max_upload_rate ".$this->rate;
+        $this->command .= " --max_uploads ".$this->maxuploads;
+        $this->command .= " --minport ".$this->port;
+        $this->command .= " --maxport ".$this->maxport;
+        $this->command .= " --rerequest_interval ".$this->rerequest;
+        $this->command .= " --super_seeder ".$this->superseeder;
+        $this->command .= " --max_initiate ".$this->maxcons;
+        $this->command .= $skipHashCheck;
+		$this->command .= $filePrio;
+        $this->command .= " ".$this->cfg["btclient_tornado_options"]." > /dev/null &";
 
         // start the client
         parent::doStartClient();

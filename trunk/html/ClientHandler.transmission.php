@@ -83,21 +83,30 @@ class ClientHandlerTransmission extends ClientHandler
         shell_exec("touch ".$this->cfg["torrent_file_path"].$this->pidFile);
 
         // build the command-string
-        $this->command = "-t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\" -w ".$this->owner;
-        // "new" transmission-patch has pid-file included
-        $this->command .= " -z ". $this->pidFile; /* - bsd-workaround */
-        $this->command .= " -e 5 -p ".$this->port ." -u ".$this->rate ." -c ". $this->sharekill_param ." -d ".$this->drate;
-        $this->command .= " ".$this->cfg["btclient_transmission_options"]. "\"". $this->cfg["torrent_file_path"]. $this->transfer;
+        $this->command = "cd " . $this->savepath .";";
+        $this->command .= " HOME=".$this->cfg["path"]."; export HOME;".
+        $this->command .= $this->umask;
+        $this->command .= " nohup ";
+        $this->command .= $this->nice;
+        $this->command .= $this->cfg["btclient_transmission_bin"];
+        $this->command .= " -t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\"";
+        $this->command .= " -w ".$this->owner;
+        $this->command .= " -z ". $this->pidFile;
+        $this->command .= " -e 5";
+        $this->command .= " -p ".$this->port;
+        $this->command .= " -u ".$this->rate;
+        $this->command .= " -c ". $this->sharekill_param;
+        $this->command .= " -d ".$this->drate;
+        $this->command .= " ".$this->cfg["btclient_transmission_options"];
+        $this->command .= "\"". $this->cfg["torrent_file_path"].$this->transfer;
         // standard, no shell trickery ("new" transmission-patch has pid-file included) :
-        $this->command .= '" > /dev/null &'; /* - bsd-workaround */
+        $this->command .= '" > /dev/null &';
         // <begin shell-trickery> to write the pid of the client into the pid-file
         // * b4rt :
         //$this->command .= '" &> /dev/null & echo $! > "'. $this->pidFile .'"';
         // * lord_nor :
         //$this->command .= '" > /dev/null & echo $! & > "'. $this->pidFile .'"'; /* + bsd-workaround */
         // <end shell-trickery>
-        // build the command-string
-        $this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $this->cfg["btclient_transmission_bin"] . " " . $this->command;
         // start the client
         parent::doStartClient();
     }

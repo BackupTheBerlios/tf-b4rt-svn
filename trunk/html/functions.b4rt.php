@@ -1029,14 +1029,6 @@ function RunningProcessInfo() {
  */
 function getRunningTransferCount() {
 	global $cfg;
-	/*
-	// messy...
-	include_once("ClientHandler.php");
-	$tCount = 0;
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-	$tCount += $clientHandler->getRunningClientCount();
-	unset($clientHandler);
-	*/
 	// use pid-files-direct-access for now because all clients of currently
 	// available handlers write one. then its faster and correct meanwhile.
 	if ($dirHandle = opendir($cfg["torrent_file_path"])) {

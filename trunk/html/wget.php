@@ -81,7 +81,7 @@ if ($cfg["nice_adjust"] != 0)
 // command-string
 $command = "cd ".$cfg["path"].$_OWNER."/; HOME=".$cfg["path"].$_OWNER."/; export HOME;".$umask.$nice." ".$cfg['bin_wget']." -i ".$cfg["torrent_file_path"].getAliasName($_NAME).".url";
 $command .= " 2>&1"; // will direct STDERR to STDOUT
-$command .= " & echo $! > ".$_PID; // will write pid-file
+// $command .= " & echo $! > ".$_PID; // will write pid-file
 
 // start process
 $wget = popen($command,'r');
@@ -89,7 +89,7 @@ do {
 	$read = @fread($wget, 2096);
 	new_data($read);
 	write_stat_file();
-	sleep(2);
+	sleep(5);
 } while (!feof($wget));
 pclose($wget);
 
@@ -100,11 +100,11 @@ $_STATUS = '0';
 write_stat_file();
 
 // update xfer
-//if ($cfg['enable_xfer'] == 1)
-//	saveXfer($_OWNER, 0, $_SIZE);
+if ($cfg['enable_xfer'] == 1)
+	saveXfer($_OWNER, 0, $_SIZE);
 
 // delete pid-file
-@unlink($_PID);
+// @unlink($_PID);
 
 // exit
 exit();
@@ -149,7 +149,7 @@ function convert_time($seconds){
  *
  */
 function write_stat_file(){
-	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_REAL_NAME,$cfg,$_INT_SPEED,$_OWNER, $alias;
+	global $cfg,$_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_REAL_NAME,$_INT_SPEED,$_OWNER, $alias;
     $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $_OWNER, $cfg, 'wget');
 	$af->running = $_STATUS;
 	$af->percent_done = $_PERCENTAGE;
@@ -184,7 +184,7 @@ function write_stat_file(){
  * @param $data
  */
 function new_data($data){
-	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_INT_SPEED; //$_INT_SPEED
+	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_INT_SPEED;
 	//Check if they are set first, if they're not its pointless wasting cycles on them as they wont change during the run. Comparisons use less CPU than a Regex
 	//if( ($_REAL_NAME == '') && preg_match("/=> `(.*?)'/i",$data,$reg)){
 	//	$_REAL_NAME = $reg[1];

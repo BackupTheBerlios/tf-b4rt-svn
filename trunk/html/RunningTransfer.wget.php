@@ -31,32 +31,24 @@ class RunningTransferWget extends RunningTransfer
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         // init conf
         $this->Initialize($cfg);
-        //
+        // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0) {
                 $psLine = str_replace("  ",' ',trim($psLine));
             }
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
+            $this->transferFile = str_replace($this->filePath,'',$arr[(count($arr) - 1)]);
             foreach($arr as $key =>$value) {
-                if ($key == 0) {
+                if ($key == 0)
                     $startArgs = false;
+                if ($value == '-t') {
+                    $this->filePath = substr($arr[$key+1],0,strrpos($arr[$key+1],"/")+1);
+                    $this->statFile = str_replace($this->filePath,'',$arr[$key+1]);
                 }
-                if ($value == $this->cfg["bin_wget"]) {
-                    $offset = 2;
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0) {
-                        $offset += 1;
-                    }
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0) {
-                        $offset += 1;
-                    }
-                    $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
-                    $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
-                    $this->transferowner = $arr[$key+$offset+1];
-                }
-                if ($value == '--display_interval') {
+				//$this->transferowner = $arr[$key+1];
+                if ($value == '-i')
                     $startArgs = true;
-                }
                 if ($startArgs) {
                     if (!empty($value)) {
                         if (strpos($value,"-",1) > 0) {
@@ -72,11 +64,8 @@ class RunningTransferWget extends RunningTransfer
                         }
                     }
                 }
-                if ($value == '--responsefile') {
-                    $this->transferFile = str_replace($this->filePath,'',$arr[$key+1]);
-                }
             }
-            $this->args = str_replace("--","",$this->args);
+            $this->args = str_replace("-","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));
         }
     }

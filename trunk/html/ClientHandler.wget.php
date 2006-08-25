@@ -72,15 +72,24 @@ class ClientHandlerWget extends ClientHandler
         $this->alias = getAliasName($this->transfer).".stat";
         $this->alias = str_replace(".url", "", $this->alias);
         $this->owner = $this->cfg['user'];
-
-        // pid-file
         $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".pid\"";
+        $urlFile = $this->cfg["torrent_file_path"].$this->alias.".url";
+
+		// write url-file
+		$fp = fopen($urlFile, 'w');
+		fwrite($fp, $this->transfer);
+		fclose($fp);
 
         // start it
-        exec("nohup ".$this->cfg['bin_php']." -f wget.php ". urlencode($transfer) ." ". $this->owner ." ". escapeshellarg($this->pidFile) ." > /dev/null &");
+        $this->command = "nohup ".$this->cfg['bin_php']." -f wget.php";
+        $this->command .= " " . escapeshellarg($urlFile);
+        $this->command .= " " . $this->owner;
+        $this->command .= " " . escapeshellarg($this->pidFile);
+        $this->command .= " > /dev/null &";
+        exec($this->command);
 
-        //sleep so that hopefully the other script has time to write out the stat files.
-		sleep(3);
+        //sleep so that hopefully the other script has time to write out the stat file.
+		sleep(5);
     }
 
     //--------------------------------------------------------------------------
