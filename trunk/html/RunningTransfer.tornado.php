@@ -52,7 +52,7 @@ class RunningTransferTornado extends RunningTransfer
                     }
                     $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
                     $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
-                    $this->torrentOwner = $arr[$key+$offset+1];
+                    $this->transferowner = $arr[$key+$offset+1];
                 }
                 if ($value == '--display_interval') {
                     $startArgs = true;

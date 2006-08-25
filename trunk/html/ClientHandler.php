@@ -310,11 +310,11 @@ class ClientHandler
         }
         // write stat-file
         if($this->queue == "1") {
-            $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start transfer)
+            $this->af->QueueTransferFile();  // this only writes out the stat file (does not start transfer)
         } else {
             if ($this->setClientPort() === false)
                 return;
-            $this->af->StartTorrentFile();  // this only writes out the stat file (does not start transfer)
+            $this->af->StartTransferFile();  // this only writes out the stat file (does not start transfer)
         }
         // set status
         $this->status = 2;
@@ -384,7 +384,7 @@ class ClientHandler
         if ($this->pidFile == "") // pid-file not set in subclass. use a default
             $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
         // We are going to write a '0' on the front of the stat file so that
-        // the BT client will no to stop -- this will report stats when it dies
+        // the client will no to stop -- this will report stats when it dies
         $this->owner = getOwner($this->transfer);
         include_once("AliasFile.php");
         // read the alias file + create AliasFile object
@@ -462,8 +462,7 @@ class ClientHandler
                         if(!strpos($pinfo->cmdline, "ps x") > 0) {
                             array_push($pProcess,$pinfo->pid);
                             $rt = RunningTransfer::getRunningTransferInstance($pinfo->pid . " " . $pinfo->cmdline, $this->cfg, $this->handlerName);
-                            //array_push($ProcessCmd,$pinfo->cmdline);
-                            array_push($ProcessCmd,$rt->torrentOwner . "\t". str_replace(array(".stat"),"",$rt->statFile));
+                            array_push($ProcessCmd,$rt->transferowner . "\t". str_replace(array(".stat"),"",$rt->statFile));
                         }
                     }
                 } else {

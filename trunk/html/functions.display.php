@@ -666,8 +666,6 @@ function getTransferListString() {
 		// init some vars
 		$displayname = $entry;
 		$show_run = true;
-		$torrentowner = getOwner($entry);
-		$owner = IsOwner($cfg["user"], $torrentowner);
 		if(strlen($entry) >= 47) {
 			// needs to be trimmed
 			$displayname = substr($entry, 0, 44);
@@ -683,18 +681,26 @@ function getTransferListString() {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
+			$transferowner = getOwner($entry);
+			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
-			// this is wget. use wget statfile
+			// this is wget.
+			$transferowner = $cfg["user"];
+			$owner = true;
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
+			$settingsAry['hash'] = $entry;
 			$alias = str_replace(".url", "", $alias);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
 		} else {
+			// this is "something else". use tornado statfile as default
+			$transferowner = $cfg["user"];
+			$owner = true;
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
-			// this is "something else". use tornado statfile as default
+			$settingsAry['hash'] = $entry;
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
 		}
 		// cache running-flag in local var. we will access that often
@@ -708,7 +714,7 @@ function getTransferListString() {
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			$newday = transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry);
+			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
 
 		// ---------------------------------------------------------------------
 		// injects
@@ -741,7 +747,7 @@ function getTransferListString() {
 				if ($af->time_left != "" && $af->time_left != "0")
 					$estTime = $af->time_left;
 				// $lastUser
-				$lastUser = $torrentowner;
+				$lastUser = $transferowner;
 				// $show_run + $statusStr
 				if($percentDone >= 100) {
 					if(trim($af->up_speed) != "" && $transferRunning == 1) {
@@ -785,7 +791,7 @@ function getTransferListString() {
 
 		// =============================================================== owner
 		if ($settings[0] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$transferowner."\"><font class=\"tiny\">".$transferowner."</font></a></td>";
 
 		// ================================================================ size
 		if ($settings[1] != 0)
@@ -953,7 +959,7 @@ function getTransferListString() {
 				if ($cfg['enable_multiops'] != 0)
 					$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
 			} else {
-				if($torrentowner == "n/a") {
+				if($transferowner == "n/a") {
 					$output .= "<img src=\"images/run_off.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 				} else {
 					if ($transferRunning == 3) {

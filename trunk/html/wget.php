@@ -86,7 +86,7 @@ function write_stat_file(){
 	}
 	$af->up_speed = "N/a";
 	$af->sharing = "0";
-	$af->torrentowner = $_OWNER;
+	$af->transferowner = $_OWNER;
 	$af->seeds = "1+0.00";
 	$af->peers = "1+0.00";
 	$af->seedlimit = "0";

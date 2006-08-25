@@ -171,10 +171,10 @@ function resetOwner($file) {
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
 	if(file_exists($cfg["torrent_file_path"].$alias)) {
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg);
-		if (IsUser($af->torrentowner)) {
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg);
+		if (IsUser($af->transferowner)) {
 			// We have an owner!
-			$rtnValue = $af->torrentowner;
+			$rtnValue = $af->transferowner;
 		} else {
 			// no owner found, so the super admin will now own it
 			$rtnValue = GetSuperAdmin();
@@ -1228,8 +1228,6 @@ function getDirList($dirName) {
 		$output = "";
 		$displayname = $entry;
 		$show_run = true;
-		$torrentowner = getOwner($entry);
-		$owner = IsOwner($cfg["user"], $torrentowner);
 		$kill_id = "";
 		$estTime = "&nbsp;";
 
@@ -1237,25 +1235,33 @@ function getDirList($dirName) {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
+			$transferowner = getOwner($entry);
+			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
-			$af = AliasFile::getAliasFileInstance($dirName.$alias, $torrentowner, $cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($dirName.$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
-			// this is wget. use wget statfile
+			// this is wget.
+			$transferowner = $cfg["user"];
+			$owner = true;
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
+			$settingsAry['hash'] = $entry;
 			$alias = str_replace(".url", "", $alias);
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
+			$transferowner = $cfg["user"];
+			$owner = true;
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
+			$settingsAry['hash'] = $entry;
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
 		}
 
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			$newday = transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry);
+			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
 
 		$timeStarted = "";
 		$torrentfilelink = "";
@@ -1297,7 +1303,7 @@ function getDirList($dirName) {
 		$output .= "</td>";
 
 		$output .= "<td align=\"right\" nowrap><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
-		$output .= "<td align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$torrentowner."\"><font class=\"tiny\">".$torrentowner."</font></a></td>";
+		$output .= "<td align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$transferowner."\"><font class=\"tiny\">".$transferowner."</font></a></td>";
 		$output .= "<td valign=\"bottom\" nowrap><div align=\"center\">";
 		if ($af->running == "2") {
 			$output .= "<i><font color=\"#32cd32\">"._NEW."</font></i>";
@@ -1310,7 +1316,7 @@ function getDirList($dirName) {
 			$sql_search_time = "Select time from tf_log where action like '%Upload' and file like '".$entry."%'";
 			$result_search_time = $db->Execute($sql_search_time);
 			list($uploaddate) = $result_search_time->FetchRow();
-			$lastUser = $torrentowner;
+			$lastUser = $transferowner;
 			$sharing = $af->sharing."%";
 			$graph_width = 1;
 			$progress_color = "#00ff00";
@@ -1322,7 +1328,7 @@ function getDirList($dirName) {
 			$popup_msg .= "<br>". _SHARING .": ".$sharing;
 			$popup_msg .= "<br>Seeds: ".$af->seeds;
 			$popup_msg .= "<br>Peers: ".$af->peers;
-			$popup_msg .= "<br>". _USER .": ".$torrentowner;
+			$popup_msg .= "<br>". _USER .": ".$transferowner;
 			$eCount = 0;
 			foreach ($af->errors as $key => $value) {
 				if(strpos($value," (x")) {
@@ -1393,7 +1399,7 @@ function getDirList($dirName) {
 				if ($cfg['enable_multiops'] == 1)
 					$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
 			} else {
-				if($torrentowner == "n/a") {
+				if($transferowner == "n/a") {
 					$output .= "<img src=\"images/run_off.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
 				} else {
 					if ($af->running == "3") {

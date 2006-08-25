@@ -184,19 +184,21 @@ function sendXmlOld() {
     // transfer-list
     $arList = getTransferArray($cfg["index_page_sortorder"]);
     foreach($arList as $entry) {
-        $torrentowner = getOwner($entry);
-        $torrentTotals = getTransferTotals($entry);
+		$transferTotals = getTransferTotals($entry);
         // alias / stat
         $alias = getAliasName($entry).".stat";
         if ((substr( strtolower($entry),-8 ) == ".torrent")) {
             // this is a torrent-client
             $btclient = getTransferClient($entry);
-            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
+            $transferowner = getOwner($entry);
+            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $btclient);
         } else if ((substr( strtolower($entry),-4 ) == ".url")) {
-            // this is wget. use wget statfile
+            // this is wget.
             $alias = str_replace(".url", "", $alias);
+            $transferowner = $cfg["user"];
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
         } else {
+        	$transferowner = $cfg["user"];
             // this is "something else". use tornado statfile as default
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
         }
@@ -211,7 +213,7 @@ function sendXmlOld() {
             $speed = $af->down_speed." - ".$af->up_speed;
     	else
             $speed = "Torrent Not Running";
-        $sharing = number_format((($torrentTotals['uptotal'] / ($af->size+0)) * 100), 2);
+        $sharing = number_format((($transferTotals['uptotal'] / ($af->size+0)) * 100), 2);
 		$content .= "<torrent>\n";
 		$content .= "<name><![CDATA[".$entry."]]></name>\n";
 		$content .= "<speeds><![CDATA[".$speed."]]></speeds>\n";
@@ -219,7 +221,7 @@ function sendXmlOld() {
 		$content .= "<percent><![CDATA[".$af->percent_done."]]></percent>\n";
 		$content .= "<sharing><![CDATA[". $sharing ."]]></sharing>\n";
 		$content .= "<remaining><![CDATA[".str_replace('&#8734', 'Unknown', $af->time_left)."]]></remaining>\n";
-		$content .= "<transfered><![CDATA[".formatBytesToKBMGGB($torrentTotals['downtotal'])." - ".formatBytesToKBMGGB($torrentTotals['uptotal'])."]]></transfered>\n";
+		$content .= "<transfered><![CDATA[".formatBytesToKBMGGB($transferTotals['downtotal'])." - ".formatBytesToKBMGGB($transferTotals['uptotal'])."]]></transfered>\n";
 		$content .= "</torrent>\n";
     }
 	$content .= "</torrents>\n";
@@ -257,20 +259,23 @@ function sendRss() {
     // transfer-list
     $arList = getTransferArray($cfg["index_page_sortorder"]);
     foreach($arList as $entry) {
-        $torrentowner = getOwner($entry);
-        $torrentTotals = getTransferTotals($entry);
+        $transferTotals = getTransferTotals($entry);
         // alias / stat
         $alias = getAliasName($entry).".stat";
         if ((substr( strtolower($entry),-8 ) == ".torrent")) {
             // this is a torrent-client
+            $alias = getAliasName($entry).".stat";
             $btclient = getTransferClient($entry);
-            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
+            $transferowner = getOwner($entry);
+            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $btclient);
         } else if ((substr( strtolower($entry),-4 ) == ".url")) {
             // this is wget. use wget statfile
             $alias = str_replace(".url", "", $alias);
+            $transferowner = $cfg["user"];
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
         } else {
             // this is "something else". use tornado statfile as default
+            $transferowner = $cfg["user"];
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
         }
         // increment the totals
@@ -284,10 +289,10 @@ function sendRss() {
             $run++;
         else
             $remaining = "Torrent Not Running";
-        $sharing = number_format(($torrentTotals['uptotal'] / ($af->size+0)), 2);
+        $sharing = number_format(($transferTotals['uptotal'] / ($af->size+0)), 2);
         $content .= "<item>\n";
         $content .= "<title>".$entry." (".$remaining.")</title>\n";
-        $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".formatBytesToKBMGGB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".formatBytesToKBMGGB($torrentTotals['downtotal'])." || Transfered Up: ".formatBytesToKBMGGB($torrentTotals['uptotal'])."</description>\n";
+        $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".formatBytesToKBMGGB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".formatBytesToKBMGGB($transferTotals['downtotal'])." || Transfered Up: ".formatBytesToKBMGGB($transferTotals['uptotal'])."</description>\n";
         $content .= "</item>\n";
     }
     $content .= "<item>\n";

@@ -89,7 +89,6 @@ else
 $tmpl->setvar('_USER', _USER);
 $tmpl->setvar('_FILE', _FILE);
 $tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
-//$tmpl->setvar('formattedQueueList', $queueManager->formattedQueueList());
 $tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",_FORCESTOP));
 
 
@@ -105,6 +104,12 @@ foreach ($running as $key => $value) {
 $running = getRunningTransfers("transmission");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"transmission");
+	$output .= $rt->BuildAdminOutput();
+}
+// get running wget clients and List them out.
+$running = getRunningTransfers("wget");
+foreach ($running as $key => $value) {
+	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"wget");
 	$output .= $rt->BuildAdminOutput();
 }
 if( strlen($output) == 0 ) {

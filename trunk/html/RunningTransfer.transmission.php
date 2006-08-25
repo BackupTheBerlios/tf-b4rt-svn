@@ -47,7 +47,7 @@ class RunningTransferTransmission extends RunningTransfer
                     $this->statFile = str_replace($this->filePath,'',$arr[$key+1]);
                 }
                 if ($value == '-w')
-                    $this->torrentOwner = $arr[$key+1];
+                    $this->transferowner = $arr[$key+1];
                 if ($value == '-e')
                     $startArgs = true;
                 if ($startArgs) {

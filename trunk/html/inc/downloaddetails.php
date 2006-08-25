@@ -39,13 +39,13 @@ else {
 
 $torrent = getRequestVar('torrent');
 $error = "";
-$torrentowner = getOwner($torrent);
+$transferowner = getOwner($torrent);
 $graph_width = "";
 $background = "#000000";
 $alias = getRequestVar('alias');
 if (!empty($alias)) {
 	// create AliasFile object
-	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg);
+	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg);
 	for ($inx = 0; $inx < sizeof($af->errors); $inx++) {
 		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
 	}
@@ -143,7 +143,7 @@ $tmpl->setvar('time_left', $af->time_left);
 $tmpl->setvar('_PERCENTDONE', _PERCENTDONE);
 $tmpl->setvar('percent_done', $af->percent_done);
 $tmpl->setvar('_USER', _USER);
-$tmpl->setvar('torrentowner', $torrentowner);
+$tmpl->setvar('transferowner', $transferowner);
 $tmpl->setvar('_DOWNLOADSPEED', _DOWNLOADSPEED);
 $tmpl->setvar('down_speed', $af->down_speed.$label_max_download_rate);
 $tmpl->setvar('_UPLOADSPEED', _UPLOADSPEED);

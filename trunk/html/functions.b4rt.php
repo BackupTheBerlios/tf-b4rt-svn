@@ -714,9 +714,17 @@ function updateTransferTotals($transfer) {
  */
 function getTransferTotals($transfer) {
 	global $cfg;
-	$btclient = getTransferClient($transfer);
 	include_once("ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
+		// this is a torrent-client
+		$btclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	} else if ((substr( strtolower($entry),-4 ) == ".url")) {
+		// this is wget.
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+	} else {
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+	}
 	return $clientHandler->getTransferTotal($transfer);
 }
 
@@ -725,15 +733,15 @@ function getTransferTotals($transfer) {
  *
  * @param $transfer name of the transfer
  * @param $tid of the transfer
- * @param $btclient client of the transfer
+ * @param $tclient client of the transfer
  * @param $afu alias-file-uptotal of the transfer
  * @param $afd alias-file-downtotal of the transfer
  * @return array with transfer-totals
  */
-function getTransferTotalsOP($transfer, $tid, $btclient, $afu, $afd) {
+function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
 	include_once("ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
 }
 
@@ -745,9 +753,17 @@ function getTransferTotalsOP($transfer, $tid, $btclient, $afu, $afd) {
  */
 function getTransferTotalsCurrent($transfer) {
 	global $cfg;
-	$btclient = getTransferClient($transfer);
 	include_once("ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
+		// this is a torrent-client
+		$btclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	} else if ((substr( strtolower($entry),-4 ) == ".url")) {
+		// this is wget.
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+	} else {
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+	}
 	return $clientHandler->getTransferCurrent($transfer);
 }
 
@@ -756,15 +772,15 @@ function getTransferTotalsCurrent($transfer) {
  *
  * @param $transfer name of the transfer
  * @param $tid of the transfer
- * @param $btclient client of the transfer
+ * @param $tclient client of the transfer
  * @param $afu alias-file-uptotal of the transfer
  * @param $afd alias-file-downtotal of the transfer
  * @return array with transfer-totals
  */
-function getTransferTotalsCurrentOP($transfer, $tid, $btclient, $afu, $afd) {
+function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
 	include_once("ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
 }
 
@@ -996,6 +1012,13 @@ function RunningProcessInfo() {
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
 	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binSystem ." | ".$cfg['bin_grep']." -v grep");
 	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
+	unset($clientHandler);
+	unset($pinfo);
+	$RunningProcessInfo .= "\n\n ---=== wget ===---\n\n";
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"wget");
+	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
+	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binSystem ." | ".$cfg['bin_grep']." -v grep");
+	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
 	return $RunningProcessInfo;
 }
 
@@ -1007,15 +1030,12 @@ function RunningProcessInfo() {
 function getRunningTransferCount() {
 	global $cfg;
 	/*
-	include_once("ClientHandler.php");
 	// messy...
+	include_once("ClientHandler.php");
 	$tCount = 0;
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 	$tCount += $clientHandler->getRunningClientCount();
 	unset($clientHandler);
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-	$tCount += $clientHandler->getRunningClientCount();
-	return $tCount;
 	*/
 	// use pid-files-direct-access for now because all clients of currently
 	// available handlers write one. then its faster and correct meanwhile.
@@ -1050,13 +1070,22 @@ function getRunningTransfers($clientType = '') {
 	// get torrents of all clients
 	// messy...
 	$retAry = array();
+	// tornado
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 	$tempAry = $clientHandler->getRunningClients();
 	foreach ($tempAry as $val)
 		array_push($retAry,$val);
 	unset($clientHandler);
 	unset($tempAry);
+	// transmission
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
+	$tempAry = $clientHandler->getRunningClients();
+	foreach ($tempAry as $val)
+		array_push($retAry,$val);
+	unset($clientHandler);
+	unset($tempAry);
+	// wget
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"wget");
 	$tempAry = $clientHandler->getRunningClients();
 	foreach ($tempAry as $val)
 		array_push($retAry,$val);
@@ -1697,22 +1726,22 @@ function checkDirPathString($dirPath) {
  * transferListXferUpdate1
  *
  * @param $entry
- * @param $torrentowner
+ * @param $transferowner
  * @param $af
  * @param $settingsAry
  * @return unknown
  */
-function transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry) {
+function transferListXferUpdate1($entry, $transferowner, $af, $settingsAry) {
 	global $cfg, $db;
 	$transferTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 	$newday = 0;
 	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
 	$newday = !$db->GetOne($sql);
 	showError($db,$sql);
-	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'total');
-	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'month');
-	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'week');
-	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'day');
+	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'total');
+	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'month');
+	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'week');
+	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'day');
 	//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
 	if ($newday) {
 		$newday = 2;
@@ -1720,25 +1749,25 @@ function transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry) {
 		$lastDate = $db->GetOne($sql);
 		showError($db,$sql);
 		// MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
-		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$transferowner.'" AND date = "'.$lastDate.'"';
 		if ($db->GetOne($sql)) {
-			$sql = 'UPDATE tf_xfer SET download = download+'.($transferTotalsCurrent["downtotal"]+0).', upload = upload+'.($transferTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+			$sql = 'UPDATE tf_xfer SET download = download+'.($transferTotalsCurrent["downtotal"]+0).', upload = upload+'.($transferTotalsCurrent["uptotal"]+0).' WHERE user = "'.$transferowner.'" AND date = "'.$lastDate.'"';
 			$db->Execute($sql);
 			showError($db,$sql);
 		} else {
 			showError($db,$sql);
-			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($transferTotalsCurrent["downtotal"]+0).','.($transferTotalsCurrent["uptotal"]+0).')';
+			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$transferowner.'","'.$lastDate.'",'.($transferTotalsCurrent["downtotal"]+0).','.($transferTotalsCurrent["uptotal"]+0).')';
 			$db->Execute($sql);
 			showError($db,$sql);
 		}
-		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$transferowner.'" AND date = '.$db->DBDate(time());
 		if ($db->GetOne($sql)) {
-			$sql = 'UPDATE tf_xfer SET download = download-'.($transferTotalsCurrent["downtotal"]+0).', upload = upload-'.($transferTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+			$sql = 'UPDATE tf_xfer SET download = download-'.($transferTotalsCurrent["downtotal"]+0).', upload = upload-'.($transferTotalsCurrent["uptotal"]+0).' WHERE user = "'.$transferowner.'" AND date = '.$db->DBDate(time());
 			$db->Execute($sql);
 			showError($db,$sql);
 		} else {
 			showError($db,$sql);
-			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($transferTotalsCurrent["downtotal"]+0).',-'.($transferTotalsCurrent["uptotal"]+0).')';
+			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$transferowner.'",'.$db->DBDate(time()).',-'.($transferTotalsCurrent["downtotal"]+0).',-'.($transferTotalsCurrent["uptotal"]+0).')';
 			$db->Execute($sql);
 			showError($db,$sql);
 		}
@@ -1853,26 +1882,32 @@ function getTransferListArray() {
 		// init some vars
 		$displayname = $entry;
 		$show_run = true;
-		$torrentowner = getOwner($entry);
-		$owner = IsOwner($cfg["user"], $torrentowner);
 
 		// ---------------------------------------------------------------------
 		// alias / stat
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
+			$transferowner = getOwner($entry);
+			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
-			// this is wget. use tornado statfile
+			// this is wget.
+			$transferowner = $cfg["user"];
+			$owner = true;
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
+			$settingsAry['hash'] = $entry;
 			$alias = str_replace(".url", "", $alias);
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
 		} else {
+			// this is "something else". use tornado statfile as default
+			$transferowner = $cfg["user"];
+			$owner = true;
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
-			// this is "something else". use tornado statfile as default
+			$settingsAry['hash'] = $entry;
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
 		}
 		// cache running-flag in local var. we will access that often
@@ -1883,7 +1918,7 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			$newday = transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry);
+			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
 
 		// ---------------------------------------------------------------------
 		// injects
@@ -1916,7 +1951,7 @@ function getTransferListArray() {
 				if ($af->time_left != "" && $af->time_left != "0")
 					$estTime = $af->time_left;
 				// $lastUser
-				$lastUser = $torrentowner;
+				$lastUser = $transferowner;
 				// $show_run + $statusStr
 				if($percentDone >= 100) {
 					if(trim($af->up_speed) != "" && $transferRunning == 1) {
@@ -1947,7 +1982,7 @@ function getTransferListArray() {
 
 		// =============================================================== owner
 		if ($settings[0] != 0)
-			array_push($transferAry, $torrentowner);
+			array_push($transferAry, $transferowner);
 
 		// ================================================================ size
 		if ($settings[1] != 0)

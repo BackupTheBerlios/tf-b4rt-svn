@@ -72,7 +72,6 @@ class ClientHandlerWget extends ClientHandler
         // pid-file
         $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
 
-
         // build the command-string
         $this->command = "-t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\" -w ".$this->owner;
 
@@ -149,16 +148,6 @@ class ClientHandlerWget extends ClientHandler
         $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
-        // transfer from db
-        $torrentId = getTorrentHash($transfer);
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
-        $result = $db->Execute($sql);
-    	showError($db, $sql);
-        $row = $result->FetchRow();
-        if (! empty($row)) {
-            $retVal["uptotal"] -= $row["uptotal"];
-            $retVal["downtotal"] -= $row["downtotal"];
-        }
         return $retVal;
     }
 
@@ -177,15 +166,6 @@ class ClientHandlerWget extends ClientHandler
         // transfer from stat-file
         $retVal["uptotal"] = $afu;
         $retVal["downtotal"] = $afd;
-        // transfer from db
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
-        $result = $db->Execute($sql);
-    	showError($db, $sql);
-        $row = $result->FetchRow();
-        if (! empty($row)) {
-            $retVal["uptotal"] -= $row["uptotal"];
-            $retVal["downtotal"] -= $row["downtotal"];
-        }
         return $retVal;
     }
 

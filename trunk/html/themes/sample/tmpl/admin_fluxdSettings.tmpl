@@ -398,7 +398,9 @@
 			</tr>
 		</table>
 	</div>
-	<tmpl_if name="fluxd_Qmgr_enabled" value="true">
+
+
+	<tmpl_if name="fluxd_Qmgr_enabled">
 		<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 			<tr>
 				<td colspan=6 bgcolor="#d6dfe6" background=\"themes/<tmpl_var name="theme">/images/bar.gif">
@@ -414,7 +416,6 @@
 				<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
 				<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
 			</tr>
-			<tmpl_var name="formattedQueueList">
 			</table>
 			<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 			<tr>
@@ -434,5 +435,7 @@
 			<tmpl_var name="output">
 		</table>
 	</tmpl_if>
+
+
 </div>
 <tmpl_var name="foot">

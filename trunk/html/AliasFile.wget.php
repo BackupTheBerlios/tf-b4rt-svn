@@ -35,7 +35,7 @@ class AliasFileWget extends AliasFile
         $this->percent_done = "0.0";
         $this->theFile = $inFile;
         if ($user != "") {
-            $this->torrentowner = $user;
+            $this->transferowner = $user;
         }
         if(file_exists($inFile)) {
             // read the alias file
@@ -45,7 +45,7 @@ class AliasFileWget extends AliasFile
             $this->time_left = trim($arStatus[2]);
             $this->down_speed = trim($arStatus[3]);
             $this->up_speed = trim($arStatus[4]);
-            $this->torrentowner = trim($arStatus[5]);
+            $this->transferowner = trim($arStatus[5]);
             $this->seeds = trim($arStatus[6]);
             $this->peers = trim($arStatus[7]);
             $this->sharing = trim($arStatus[8]);
@@ -65,8 +65,8 @@ class AliasFileWget extends AliasFile
 
     //----------------------------------------------------------------
     // Call this when wanting to create a new alias and/or starting it
-    function StartTorrentFile() {
-        // Reset all the var to new state (all but torrentowner)
+    function StartTransferFile() {
+        // Reset all the var to new state (all but transferowner)
         $this->running = "1";
         $this->percent_done = "0.0";
         $this->time_left = "Starting...";
@@ -85,8 +85,8 @@ class AliasFileWget extends AliasFile
 
     //----------------------------------------------------------------
     // Call this when wanting to create a new alias and/or starting it
-    function QueueTorrentFile() {
-        // Reset all the var to new state (all but torrentowner)
+    function QueueTransferFile() {
+        // Reset all the var to new state (all but transferowner)
         $this->running = "3";
         $this->time_left = "Waiting...";
         $this->down_speed = "";
@@ -117,7 +117,7 @@ class AliasFileWget extends AliasFile
         $output .= $this->time_left."\n";
         $output .= $this->down_speed."\n";
         $output .= $this->up_speed."\n";
-        $output .= $this->torrentowner."\n";
+        $output .= $this->transferowner."\n";
         $output .= $this->seeds."\n";
         $output .= $this->peers."\n";
         $output .= $this->sharing."\n";

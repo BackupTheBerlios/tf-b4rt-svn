@@ -38,7 +38,7 @@ class AliasFile
     var $down_speed = "";
     var $up_speed = "";
     var $sharing = "";
-    var $torrentowner = "";
+    var $transferowner = "";
     var $seeds = "";
     var $peers = "";
     var $seedlimit = "";
@@ -99,14 +99,14 @@ class AliasFile
     }
 
     //--------------------------------------------------------------------------
-    // abstract method : StartTorrentFile
+    // abstract method : StartTransferFile
     // Call this when wanting to create a new alias and/or starting it
-    function StartTorrentFile() { return; }
+    function StartTransferFile() { return; }
 
     //--------------------------------------------------------------------------
-    // abstract method : QueueTorrentFile
+    // abstract method : QueueTransferFile
     // Call this when wanting to create a new alias and/or starting it
-    function QueueTorrentFile() { return; }
+    function QueueTransferFile() { return; }
 
     //--------------------------------------------------------------------------
     // abstract method : WriteFile

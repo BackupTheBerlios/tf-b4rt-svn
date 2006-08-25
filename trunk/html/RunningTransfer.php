@@ -33,7 +33,7 @@ class RunningTransfer
     var $statFile = "";
     var $transferFile = "";
     var $filePath = "";
-    var $torrentOwner = "";
+    var $transferowner = "";
     var $processId = "";
     var $args = "";
     // config-array
@@ -92,7 +92,7 @@ class RunningTransfer
     function BuildAdminOutput() {
         $output = "<tr>";
         $output .= "<td><div class=\"tiny\">";
-        $output .= $this->torrentOwner;
+        $output .= $this->transferowner;
         $output .= "</div></td>";
         $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
         $output .= str_replace(array(".stat"),"",$this->statFile);
