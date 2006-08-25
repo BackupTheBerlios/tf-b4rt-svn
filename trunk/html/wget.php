@@ -90,7 +90,7 @@ do {
 	new_data($read);
 	write_stat_file();
 	sleep(2);
-}while(!feof($wget));
+} while (!feof($wget));
 pclose($wget);
 
 // Run again afterwards just to make sure it finished writing the file.
@@ -100,8 +100,8 @@ $_STATUS = '0';
 write_stat_file();
 
 // update xfer
-if ($cfg['enable_xfer'] == 1)
-	saveXfer($_OWNER, 0, $_SIZE);
+//if ($cfg['enable_xfer'] == 1)
+//	saveXfer($_OWNER, 0, $_SIZE);
 
 // delete pid-file
 @unlink($_PID);

@@ -100,7 +100,18 @@ $killTorrent = getRequestVar('kill_torrent');
 if(! $killTorrent == '') {
 	$return = getRequestVar('return');
 	include_once("ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($killTorrent));
+	if ((substr(strtolower($killTorrent),-8 ) == ".torrent")) {
+		// this is a torrent-client
+		$tclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+	} else if ((substr(strtolower($killTorrent),-4 ) == ".url")) {
+		// this is wget.
+		$tclient = 'wget';
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+	} else {
+		$tclient = 'tornado';
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+	}
 	$clientHandler->stopClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
 	if (!empty($return))
 		header("location: ".$return.".php?op=queueSettings");

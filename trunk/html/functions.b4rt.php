@@ -715,11 +715,11 @@ function updateTransferTotals($transfer) {
 function getTransferTotals($transfer) {
 	global $cfg;
 	include_once("ClientHandler.php");
-	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
+	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	} else if ((substr( strtolower($entry),-4 ) == ".url")) {
+	} else if ((substr(strtolower($transfer),-4 ) == ".url")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
@@ -758,7 +758,7 @@ function getTransferTotalsCurrent($transfer) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	} else if ((substr( strtolower($entry),-4 ) == ".url")) {
+	} else if ((substr(strtolower($transfer),-4 ) == ".url")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
@@ -1888,12 +1888,14 @@ function getTransferListArray() {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
+			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
 			// this is wget.
+			$isTorrent = false;
 			$transferowner = $cfg["user"];
 			$owner = true;
 			$settingsAry = array();
@@ -1903,6 +1905,7 @@ function getTransferListArray() {
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
+			$isTorrent = false;
 			$transferowner = $cfg["user"];
 			$owner = true;
 			$settingsAry = array();
@@ -2083,7 +2086,7 @@ function getTransferListArray() {
 
 		// ---------------------------------------------------------------------
 		// Is this torrent for the user list or the general list?
-		if ($cfg["user"] == getOwner($entry))
+		if ($owner)
 			array_push($arUserTorrent, $transferAry);
 		else
 			array_push($arListTorrent, $transferAry);

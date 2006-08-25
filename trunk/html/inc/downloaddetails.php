@@ -67,7 +67,10 @@ $downTotal = ($torrentTotals["downtotal"]+0);
 
 // seeding-%
 $torrentSize = $af->size+0;
-$sharing = number_format((($upTotal / $torrentSize) * 100), 2);
+if ($torrentSize == 0)
+	$sharing = 0;
+else
+	$sharing = number_format((($upTotal / $torrentSize) * 100), 2);
 $torrent_port = "";
 $torrent_cons = "";
 $label_max_download_rate = "";

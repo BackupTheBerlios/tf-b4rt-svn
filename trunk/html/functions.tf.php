@@ -171,7 +171,7 @@ function resetOwner($file) {
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
 	if(file_exists($cfg["torrent_file_path"].$alias)) {
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg);
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg);
 		if (IsUser($af->transferowner)) {
 			// We have an owner!
 			$rtnValue = $af->transferowner;
@@ -1235,12 +1235,14 @@ function getDirList($dirName) {
 		$alias = getAliasName($entry).".stat";
 		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
+			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
 			// this is wget.
+			$isTorrent = false;
 			$transferowner = $cfg["user"];
 			$owner = true;
 			$settingsAry = array();
@@ -1250,6 +1252,7 @@ function getDirList($dirName) {
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
+			$isTorrent = false;
 			$transferowner = $cfg["user"];
 			$owner = true;
 			$settingsAry = array();
@@ -1378,13 +1381,20 @@ function getDirList($dirName) {
 		$output .= "</div></td>";
 		$output .= "<td nowrap><div class=\"tiny\" align=\"center\">".$estTime."</div></td>";
 		$output .= "<td nowrap><div align=center>";
+
+		// torrentdetails
 		$torrentDetails = _TORRENTDETAILS;
 		if ($lastUser != "")
 			$torrentDetails .= "\n"._USER.": ".$lastUser;
-		$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
-		if($af->running == 1)
-			$output .= "&als=false";
-		$output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
+		if ($isTorrent) {
+			$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
+			if($transferRunning == 1)
+				$output .= "&als=false";
+			$output .= "\">";
+		}
+		$output .= "<img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=\"0\">";
+		if ($isTorrent)
+			$output .= "</a>";
 
 		// link to datapath
 		$output .= '<a href="index.php?iid=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
@@ -1447,7 +1457,7 @@ function getDirList($dirName) {
 		$output .= "</tr>\n";
 
 		// Is this torrent for the user list or the general list?
-		if ($cfg["user"] == getOwner($entry))
+		if ($owner)
 			array_push($arUserTorrent, $output);
 		else
 			array_push($arListTorrent, $output);
