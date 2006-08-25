@@ -21,12 +21,12 @@
 *******************************************************************************/
 
 
-// class RunningTorrentTornado for tornado-client
-class RunningTorrentTornado extends RunningTorrent
+// class RunningTransferTornado for tornado-client
+class RunningTransferTornado extends RunningTransfer
 {
     //--------------------------------------------------------------------------
     // ctor
-    function RunningTorrentTornado($psLine,$cfg) {
+    function RunningTransferTornado($psLine,$cfg) {
         // version
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         // init conf
@@ -73,7 +73,7 @@ class RunningTorrentTornado extends RunningTorrent
                     }
                 }
                 if ($value == '--responsefile') {
-                    $this->torrentFile = str_replace($this->filePath,'',$arr[$key+1]);
+                    $this->transferFile = str_replace($this->filePath,'',$arr[$key+1]);
                 }
             }
             $this->args = str_replace("--","",$this->args);

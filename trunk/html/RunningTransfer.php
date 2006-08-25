@@ -24,14 +24,14 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// base class RunningTorrent
-class RunningTorrent
+// base class RunningTransfer
+class RunningTransfer
 {
     // common fields
     var $version = "";
-    // running torrent fields
+    // running transfer fields
     var $statFile = "";
-    var $torrentFile = "";
+    var $transferFile = "";
     var $filePath = "";
     var $torrentOwner = "";
     var $processId = "";
@@ -41,21 +41,21 @@ class RunningTorrent
 
     //--------------------------------------------------------------------------
     // ctor
-    function RunningTorrent() {
+    function RunningTransfer() {
         die('base class -- dont do this');
     }
 
     //--------------------------------------------------------------------------
     // factory
     /**
-     * get RunningTorrent-instance
+     * get RunningTransfer-instance
      *
      * @param $psLine ps-line
      * @param $fluxCfg torrent-flux config-array
      * @param $clientType client-type
-     * @return $runningTorrentInstance RunningTorrent-instance
+     * @return $runningTorrentInstance RunningTransfer-instance
      */
-    function getRunningTorrentInstance($psLine, $fluxCfg, $clientType = '') {
+    function getRunningTransferInstance($psLine, $fluxCfg, $clientType = '') {
         // damn dirty but does php (< 5) have reflection or something like
         // class-by-name ?
         if ((isset($clientType)) && ($clientType != '')) {
@@ -64,22 +64,25 @@ class RunningTorrent
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'RunningTorrent.'.$clientClass.'.php';
+        $classFile = 'RunningTransfer.'.$clientClass.'.php';
         if (is_file($classFile)) {
             include_once($classFile);
             switch ($clientClass) {
                 case "tornado":
-                    return new RunningTorrentTornado($psLine,serialize($fluxCfg));
+                    return new RunningTransferTornado($psLine,serialize($fluxCfg));
                 break;
                 case "transmission":
-                    return new RunningTorrentTransmission($psLine,serialize($fluxCfg));
+                    return new RunningTransferTransmission($psLine,serialize($fluxCfg));
+                break;
+                case "wget":
+                    return new RunningTransferWget($psLine,serialize($fluxCfg));
                 break;
             }
         }
     }
 
     //--------------------------------------------------------------------------
-    // Initialize the RunningTorrent.
+    // Initialize the RunningTransfer.
     function Initialize($cfg) {
         $this->cfg = unserialize($cfg);
     }
@@ -96,7 +99,7 @@ class RunningTorrent
         $output .= "<br>".$this->args."</div></td>";
         $output .= "<td><a href=\"index.php?iid=index&alias_file=".$this->statFile;
         $output .= "&kill=".$this->processId;
-        $output .= "&kill_torrent=".urlencode($this->torrentFile);
+        $output .= "&kill_torrent=".urlencode($this->transferFile);
         $output .= "&return=admin\">";
         $output .= "<img src=\"images/kill.gif\" width=16 height=16 title=\""._FORCESTOP."\" border=0></a></td>";
         $output .= "</tr>";

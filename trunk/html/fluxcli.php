@@ -78,7 +78,7 @@ $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 // client-handler-"interfaces"
 include_once("ClientHandler.php");
 include_once("AliasFile.php");
-include_once("RunningTorrent.php");
+include_once("RunningTransfer.php");
 
 // -----------------------------------------------------------------------------
 // Main

@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 require_once("AliasFile.php");
-require_once("RunningTorrent.php");
+require_once("RunningTransfer.php");
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 # create new template

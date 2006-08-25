@@ -1,7 +1,7 @@
 <?php
 /* $Id$ */
 require_once("AliasFile.php");
-require_once("RunningTorrent.php");
+require_once("RunningTransfer.php");
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_configSettings.tmpl");

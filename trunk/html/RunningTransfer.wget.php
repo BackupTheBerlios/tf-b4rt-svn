@@ -21,35 +21,46 @@
 *******************************************************************************/
 
 
-// class RunningTorrentTransmission for transmission-client
-class RunningTorrentTransmission extends RunningTorrent
+// class RunningTransferTornado for wget-client
+class RunningTransferWget extends RunningTransfer
 {
     //--------------------------------------------------------------------------
     // ctor
-    function RunningTorrentTransmission($psLine,$cfg) {
+    function RunningTransferWget($psLine,$cfg) {
         // version
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         // init conf
         $this->Initialize($cfg);
         //
         if (strlen($psLine) > 0) {
+
+        	// TODO
+
+        	/*
             while (strpos($psLine,"  ") > 0) {
                 $psLine = str_replace("  ",' ',trim($psLine));
             }
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
-            $this->torrentFile = str_replace($this->filePath,'',$arr[(count($arr) - 1)]);
             foreach($arr as $key =>$value) {
-                if ($key == 0)
+                if ($key == 0) {
                     $startArgs = false;
-                if ($value == '-t') {
-                    $this->filePath = substr($arr[$key+1],0,strrpos($arr[$key+1],"/")+1);
-                    $this->statFile = str_replace($this->filePath,'',$arr[$key+1]);
                 }
-                if ($value == '-w')
-                    $this->torrentOwner = $arr[$key+1];
-                if ($value == '-e')
+                if ($value == $this->cfg["btclient_tornado_bin"]) {
+                    $offset = 2;
+                    if(! @strpos($arr[$key+$offset],"/",1) > 0) {
+                        $offset += 1;
+                    }
+                    if(! @strpos($arr[$key+$offset],"/",1) > 0) {
+                        $offset += 1;
+                    }
+                    $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
+                    $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
+                    $this->torrentOwner = $arr[$key+$offset+1];
+                }
+                if ($value == '--display_interval') {
                     $startArgs = true;
+                }
                 if ($startArgs) {
                     if (!empty($value)) {
                         if (strpos($value,"-",1) > 0) {
@@ -65,9 +76,13 @@ class RunningTorrentTransmission extends RunningTorrent
                         }
                     }
                 }
+                if ($value == '--responsefile') {
+                    $this->transferFile = str_replace($this->filePath,'',$arr[$key+1]);
+                }
             }
-            $this->args = str_replace("-","",$this->args);
+            $this->args = str_replace("--","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));
+            */
         }
     }
 

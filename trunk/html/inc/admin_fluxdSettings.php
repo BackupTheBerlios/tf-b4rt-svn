@@ -2,7 +2,7 @@
 /* $Id$ */
 $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_fluxdSettings.tmpl");
 require_once("AliasFile.php");
-require_once("RunningTorrent.php");
+require_once("RunningTransfer.php");
 require_once('Fluxd.php');
 
 // fluxd
@@ -98,13 +98,13 @@ $output = "";
 // get running tornado torrents and List them out.
 $running = getRunningTransfers("tornado");
 foreach ($running as $key => $value) {
-	$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg,"tornado");
+	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"tornado");
 	$output .= $rt->BuildAdminOutput();
 }
 // get running transmission torrents and List them out.
 $running = getRunningTransfers("transmission");
 foreach ($running as $key => $value) {
-	$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg,"transmission");
+	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"transmission");
 	$output .= $rt->BuildAdminOutput();
 }
 if( strlen($output) == 0 ) {

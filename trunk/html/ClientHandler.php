@@ -114,6 +114,9 @@ class ClientHandler
                 case "transmission":
                     return new ClientHandlerTransmission(serialize($fluxCfg));
                 break;
+                case "wget":
+                    return new ClientHandlerWget(serialize($fluxCfg));
+                break;
             }
         }
     }
@@ -152,8 +155,6 @@ class ClientHandler
             $this->messages .= "Error. ClientHandler in wrong state on prepare-request.";
             return;
         }
-
-
         if ($interactive == 1) { // interactive, get vars from request vars
             $this->rate = getRequestVar('rate');
             if (empty($this->rate)) {
@@ -399,12 +400,12 @@ class ClientHandler
             $this->af->running = "0";
             $this->af->time_left = "Download Succeeded!";
         }
-        include_once("RunningTorrent.php");
+        include_once("RunningTransfer.php");
         // see if the transfer process is hung.
         if (!is_file($this->pidFile)) {
             $running = getRunningTransfers();
             foreach ($running as $key => $value) {
-                $rt = RunningTorrent::getRunningTorrentInstance($value,$this->cfg,$this->handlerName);
+                $rt = RunningTransfer::getRunningTransferInstance($value,$this->cfg,$this->handlerName);
                 if ($rt->statFile == $this->alias) {
                     AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
                 //    $callResult = exec("kill ".$rt->processId);
@@ -440,7 +441,7 @@ class ClientHandler
      */
     function printRunningClientsInfo() {
         // action
-        include_once("RunningTorrent.php");
+        include_once("RunningTransfer.php");
         // ps-string
         $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();
@@ -453,7 +454,6 @@ class ClientHandler
         $cpProcess = array();
         $pProcess = array();
         $ProcessCmd = array();
-        // $QLine = "";
         for($i = 0; $i < sizeof($arScreen); $i++) {
             if(strpos($arScreen[$i], $this->binClient) !== false) {
                 $pinfo = new ProcessInfo($arScreen[$i]);
@@ -461,7 +461,7 @@ class ClientHandler
                     if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
                         if(!strpos($pinfo->cmdline, "ps x") > 0) {
                             array_push($pProcess,$pinfo->pid);
-                            $rt = RunningTorrent::getRunningTorrentInstance($pinfo->pid . " " . $pinfo->cmdline, $this->cfg, $this->handlerName);
+                            $rt = RunningTransfer::getRunningTransferInstance($pinfo->pid . " " . $pinfo->cmdline, $this->cfg, $this->handlerName);
                             //array_push($ProcessCmd,$pinfo->cmdline);
                             array_push($ProcessCmd,$rt->torrentOwner . "\t". str_replace(array(".stat"),"",$rt->statFile));
                         }
