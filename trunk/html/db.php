@@ -42,9 +42,9 @@ function getdb() {
 function showError($db, $sql) {
 	global $cfg, $tmpl;
 	if($db->ErrorNo() != 0) {
-		$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/db.tmpl");
+		$tmpl = new vlibTemplate("themes/default/tmpl/db.tmpl");
 		$tmpl->setvar('error', 1);
-		include("themes/old_style_themes/matrix/index.php");
+		include("themes/default/index.php");
 		$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 		$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
