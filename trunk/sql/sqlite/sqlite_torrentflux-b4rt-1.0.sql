@@ -275,6 +275,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('display_seeding_time','0');
 INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
 INSERT INTO tf_settings VALUES ('ui_displaybandwidthbars','1');
 INSERT INTO tf_settings VALUES ('bandwidth_down','10240');
@@ -299,7 +300,6 @@ INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
-INSERT INTO tf_settings VALUES ('display_seeding_time','0');
 
 --
 -- commit

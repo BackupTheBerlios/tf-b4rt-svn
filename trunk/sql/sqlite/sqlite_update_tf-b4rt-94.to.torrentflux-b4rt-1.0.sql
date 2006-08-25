@@ -45,6 +45,7 @@ UPDATE tf_settings SET tf_value = 'old_style_themes/matrix' WHERE tf_key = 'defa
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('display_seeding_time','0');
 INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
 INSERT INTO tf_settings VALUES ('ui_displaybandwidthbars','1');
 INSERT INTO tf_settings VALUES ('bandwidth_down','10240');
