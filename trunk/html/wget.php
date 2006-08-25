@@ -31,9 +31,6 @@ $db = getdb();
 loadSettings();
 $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
-// alias-file
-include_once('AliasFile.php');
-
 // some vars
 $_STATUS = 1;
 $_SIZE = 0;
@@ -41,33 +38,22 @@ $_COMPLETED = 0;
 $_PERCENTAGE = 0;
 $_SPEED = "0.00 kB/s";
 $_INT_SPEED = 0.00;
-$_NAME = '';
+$_URL = '';
 $_REAL_NAME = '';
 $_OWNER = '';
 
 // check args
-if (!(isset($argv[1])))
-	die('argv[1] not set');
-if (!(isset($argv[2])))
-	die('argv[2] not set');
-if (!(isset($argv[3])))
-	die('argv[3] not set');
+//if (count($argv) != 4)
+//	die('arg error');
 
 // args
-$_URL = urldecode($argv[1]);
-$_OWNER = $argv[2];
+$_URL = $argv[1];
+$_ALIAS = $argv[2];
 $_PID = $argv[3];
-
-// name + alias
-$_NAME = strrchr($_URL,'/');
-$alias = getAliasName($_NAME);
-
-// write url-file
-$fp = fopen($cfg["torrent_file_path"].$alias.".url",'w');
-fwrite($fp,$_URL);
-fclose($fp);
+$_OWNER = $argv[4];
 
 // write out stat-file now
+include_once('AliasFile.php');
 write_stat_file();
 
 // umask
@@ -79,7 +65,11 @@ $nice = "";
 if ($cfg["nice_adjust"] != 0)
     $nice = " nice -n ".$cfg["nice_adjust"];
 // command-string
-$command = "cd ".$cfg["path"].$_OWNER."/; HOME=".$cfg["path"].$_OWNER."/; export HOME;".$umask.$nice." ".$cfg['bin_wget']." -i ".$cfg["torrent_file_path"].getAliasName($_NAME).".url";
+$command = "cd ".$cfg["path"].$_OWNER.";";
+$command .= " HOME=".$cfg["path"].$_OWNER."/; export HOME;";
+$command .= $umask;
+$command .= $nice;
+$command .= " ".$cfg['bin_wget']." -i ".$_URL;
 $command .= " 2>&1"; // will direct STDERR to STDOUT
 // $command .= " & echo $! > ".$_PID; // will write pid-file
 
@@ -88,20 +78,19 @@ $wget = popen($command,'r');
 do {
 	$read = @fread($wget, 2096);
 	new_data($read);
-	write_stat_file();
+	write_stat_file(false);
 	sleep(5);
 } while (!feof($wget));
 pclose($wget);
 
 // Run again afterwards just to make sure it finished writing the file.
 $_PERCENTAGE = 100;
-$_COMPLETED = $_SIZE;
 $_STATUS = '0';
-write_stat_file();
+write_stat_file(true);
 
 // update xfer
 if ($cfg['enable_xfer'] == 1)
-	saveXfer($_OWNER, 0, $_SIZE);
+	saveXfer($_OWNER, 0, $_COMPLETED);
 
 // delete pid-file
 // @unlink($_PID);
@@ -137,40 +126,39 @@ function convert_time($seconds){
 	} else {
 		$minutes = "00";
 	}
-	if($days > 0){
+	if($days > 0)
 		return "$days:$hours:$minutes:$seconds";
-	} else {
+	else
 		return "$hours:$minutes:$seconds";
-	}
 }
 
 /**
  * write_stat_file
  *
  */
-function write_stat_file(){
-	global $cfg,$_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_REAL_NAME,$_INT_SPEED,$_OWNER, $alias;
-    $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $_OWNER, $cfg, 'wget');
+function write_stat_file($completed = false) {
+	global $cfg, $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_REAL_NAME, $_INT_SPEED, $_OWNER, $_ALIAS;
+    $af = AliasFile::getAliasFileInstance($_ALIAS, $_OWNER, $cfg, 'wget');
 	$af->running = $_STATUS;
 	$af->percent_done = $_PERCENTAGE;
-	if ($_COMPLETED == $_SIZE){
+	if ($completed) {
 		$af->time_left = "Download Succeeded!";
-		$af->down_speed = "0 kB/s";
+		$af->down_speed = "0.00 kB/s";
 	} else {
 		if($_INT_SPEED > 0){
 		    // because size is 0 this wont work so lets put a fallback here now
-			//$af->time_left = convert_time( (($_SIZE-$_COMPLETED)/1024)/$_INT_SPEED);
-			$af->time_left = '?';
+			//$af->time_left = convert_time((($_SIZE-$_COMPLETED)/1024)/$_INT_SPEED);
+			$af->time_left = '-';
 		} else {
 			$af->time_left = "Inf".$_INT_SPEED;
 		}
 		$af->down_speed = $_SPEED;
 	}
-	$af->up_speed = "N/a";
+	$af->up_speed = "0.00 kB/s";
 	$af->sharing = "0";
 	$af->transferowner = $_OWNER;
-	$af->seeds = "1+0.00";
-	$af->peers = "1+0.00";
+	$af->seeds = "1";
+	$af->peers = "0";
 	$af->seedlimit = "0";
 	$af->uptotal = "0";
 	$af->downtotal = $_COMPLETED;
@@ -184,17 +172,17 @@ function write_stat_file(){
  * @param $data
  */
 function new_data($data){
-	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_INT_SPEED;
-	//Check if they are set first, if they're not its pointless wasting cycles on them as they wont change during the run. Comparisons use less CPU than a Regex
+	global $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_INT_SPEED;
+	// Check if they are set first, if they're not its pointless wasting cycles
+	// on them as they wont change during the run. Comparisons use less CPU
+	// than a Regex
 	//if( ($_REAL_NAME == '') && preg_match("/=> `(.*?)'/i",$data,$reg)){
 	//	$_REAL_NAME = $reg[1];
 	//} else
-	if( ($_SIZE == '') && preg_match("/Length: (.*?) \(/i",$data,$reg)){
+	if(($_SIZE == '') && preg_match("/Length: (.*?) \(/i",$data,$reg))
 		$_SIZE = str_replace(',','',$reg[1]);
-	}
-	if( preg_match("/(\d*)K \./i",$data,$reg)){
+	if( preg_match("/(\d*)K \./i",$data,$reg))
 		$_COMPLETED = $reg[1]*1024;
-	}
 	if( preg_match("/(\d*)%(\s*)(.*)\/s/i",$data,$reg)){
 		$_PERCENTAGE = $reg[1];
 		if ($_PERCENTAGE == 100){
@@ -216,6 +204,8 @@ function new_data($data){
 		$_PERCENTAGE = '100';
 		$_STATUS = '0';
 	}
+	// well it better than nothing for now. have to check parsing code.
+	$_SIZE = $_COMPLETED;
 }
 
 

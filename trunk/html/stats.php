@@ -192,9 +192,8 @@ function sendXmlOld() {
             $btclient = getTransferClient($entry);
             $transferowner = getOwner($entry);
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $btclient);
-        } else if ((substr( strtolower($entry),-4 ) == ".url")) {
+        } else if ((substr( strtolower($entry),-5 ) == ".wget")) {
             // this is wget.
-            $alias = str_replace(".url", "", $alias);
             $transferowner = $cfg["user"];
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
         } else {
@@ -268,9 +267,8 @@ function sendRss() {
             $btclient = getTransferClient($entry);
             $transferowner = getOwner($entry);
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $btclient);
-        } else if ((substr( strtolower($entry),-4 ) == ".url")) {
-            // this is wget. use wget statfile
-            $alias = str_replace(".url", "", $alias);
+        } else if ((substr( strtolower($entry),-5 ) == ".wget")) {
+            // this is wget.
             $transferowner = $cfg["user"];
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
         } else {

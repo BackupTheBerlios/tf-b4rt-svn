@@ -69,9 +69,7 @@ $cfg["constants"]["admin"] = "ADMIN";
 asort($cfg["constants"]);
 
 // Add file extensions here that you will allow to be uploaded
-// torrent : torrent
-// url     : wget
-$cfg["file_types_array"] = array("torrent","url");
+$cfg["file_types_array"] = array("torrent","wget");
 
 // Capture username
 $cfg["user"] = "";

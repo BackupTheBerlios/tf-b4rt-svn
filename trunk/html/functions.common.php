@@ -719,7 +719,7 @@ function getTransferTotals($transfer) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	} else if ((substr(strtolower($transfer),-4 ) == ".url")) {
+	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
@@ -758,7 +758,7 @@ function getTransferTotalsCurrent($transfer) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	} else if ((substr(strtolower($transfer),-4 ) == ".url")) {
+	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
@@ -848,9 +848,8 @@ function deleteTransfer($transfer, $alias_file) {
 			include_once("ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->deleteCache($transfer);
-		} else if ((substr( strtolower($transfer),-4 ) == ".url")) {
-			// this is wget. use wget statfile
-			$alias_file = str_replace(".url", "", $alias_file);
+		} else if ((substr( strtolower($transfer),-5 ) == ".wget")) {
+			// this is wget.
 			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
@@ -1885,7 +1884,7 @@ function getTransferListArray() {
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
-		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
+		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
 			$transferowner = $cfg["user"];
@@ -1893,7 +1892,6 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
-			$alias = str_replace(".url", "", $alias);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
@@ -2002,13 +2000,10 @@ function getTransferListArray() {
 				$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
 			} else {
 				if ($percentDone >= 1) {
-
 					$percentage = $percentDone . '%';
 				} else if ($percentDone < 0) {
-
 					$percentage = round(($percentDone*-1)-100,1) . '%';
 				} else {
-
 					$percentage = '0%';
 				}
 			}

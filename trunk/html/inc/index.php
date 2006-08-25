@@ -65,7 +65,6 @@ if(! empty($torrent)) {
 if ($cfg['enable_wget'] == 1) {
 	$url_wget = getRequestVar('url_wget');
 	if(! $url_wget == '') {
-		//exec("nohup ".$cfg['bin_php']." -f wget.php ".$url_wget." ".$cfg['user']." > /dev/null &");
 		include_once("ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 		$clientHandler->startClient($url_wget, 0, false);
@@ -102,14 +101,11 @@ if(! $killTorrent == '') {
 	include_once("ClientHandler.php");
 	if ((substr(strtolower($killTorrent),-8 ) == ".torrent")) {
 		// this is a torrent-client
-		$tclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-	} else if ((substr(strtolower($killTorrent),-4 ) == ".url")) {
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($killTorrent));
+	} else if ((substr(strtolower($killTorrent),-5 ) == ".wget")) {
 		// this is wget.
-		$tclient = 'wget';
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
-		$tclient = 'tornado';
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
 	}
 	$clientHandler->stopClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);

@@ -103,7 +103,7 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $pyCmd . " " .$this->cfg["btclient_tornado_bin"];
-        $this->command .= $this->runtime;
+        $this->command .= " ".$this->runtime;
         $this->command .= " ".$this->sharekill_param;
         $this->command .= " ".$this->cfg["torrent_file_path"].$this->alias .".stat";
         $this->command .= " ".$this->owner;

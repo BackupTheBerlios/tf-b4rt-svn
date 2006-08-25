@@ -69,23 +69,27 @@ class ClientHandlerWget extends ClientHandler
 
         // set some vars
         $this->transfer = strrchr($transfer,'/');
-        $this->alias = getAliasName($this->transfer).".stat";
-        $this->alias = str_replace(".url", "", $this->alias);
+        if ($this->transfer{0} == '/')
+        	$this->transfer = substr($this->transfer, 1);
+        $aliasName = getAliasName($this->transfer);
+        $urlFile = $this->cfg["torrent_file_path"].$aliasName.".wget";
+        $this->alias = $aliasName.".stat";
         $this->owner = $this->cfg['user'];
-        $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".pid\"";
-        $urlFile = $this->cfg["torrent_file_path"].$this->alias.".url";
+        $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
 
 		// write url-file
 		$fp = fopen($urlFile, 'w');
-		fwrite($fp, $this->transfer);
+		fwrite($fp, $transfer);
 		fclose($fp);
 
         // start it
         $this->command = "nohup ".$this->cfg['bin_php']." -f wget.php";
         $this->command .= " " . escapeshellarg($urlFile);
-        $this->command .= " " . $this->owner;
+        $this->command .= " " . escapeshellarg($this->cfg["torrent_file_path"].$this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
+        $this->command .= " " . $this->owner;
         $this->command .= " > /dev/null &";
+        //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
         exec($this->command);
 
         //sleep so that hopefully the other script has time to write out the stat file.
