@@ -86,15 +86,15 @@ if (isAuthenticated() == 1) {
 	if (isset($credentials)) {
 		if (performAuthentication($credentials['username'],$credentials['password']) == 1) {
 			if (isAuthenticated() != 1) {
-				header('location: index.php?iid=login');
+				header('location: login.php');
 				exit();
 			}
 		} else {
-			header('location: index.php?iid=login');
+			header('location: login.php');
 			exit();
 		}
 	} else {
-		header('location: index.php?iid=login');
+		header('location: login.php');
 		exit();
 	}
 }

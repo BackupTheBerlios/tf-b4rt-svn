@@ -136,11 +136,6 @@ if ($cfg["show_server_load"] != 0)
 // output
 // =============================================================================
 
-if(! isset($_SESSION['user'])) {
-	header('location: index.php?iid=login');
-	exit();
-}
-
 // index-page-selection
 $tmpl->setvar('index_page', $cfg["index_page"]);
 if ($cfg["index_page"] == "b4rt")

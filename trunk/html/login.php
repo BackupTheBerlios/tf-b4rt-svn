@@ -44,6 +44,7 @@ if (!ereg('^[^./][^/]*$', $cfg["default_theme"])) {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/login.tmpl");
 }
 
+// include default theme
 include("themes/".$cfg["default_theme"]."/index.php");
 
 // already got a session ?
@@ -124,7 +125,7 @@ $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', 'login');
 # lets parse the hole thing
 $tmpl->pparse();
 ?>

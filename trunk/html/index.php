@@ -20,8 +20,8 @@
 
 *******************************************************************************/
 
-
-# require same global things
+// =============================================================================
+// require same global things
 require_once("config.php");
 require_once("functions.php");
 require_once("lib/vlib/vlibTemplate.php");
@@ -48,8 +48,7 @@ if($cfg["fluxd_Qmgr_enabled"] == 1) {
 }
 
 // =============================================================================
-# really messy
-# but have to do it slowly not to mess everything
+// iid-switch
 if(isset($_GET['iid'])) {
 	switch($_GET['iid']) {
 		default:
