@@ -216,7 +216,6 @@ function firstLogin($username = '', $password = '') {
 	// Test and setup some paths for the TF settings
 	$pythonCmd = $cfg["pythonCmd"];
 	$btphpbin = getcwd() . "/bin/TF_BitTornado/btphptornado.py";
-	$tfQManager = getcwd() . "/bin/TF_BitTornado/tfQManager.py";
 	$maketorrent = getcwd() . "/bin/TF_BitTornado/btmakemetafile.py";
 	$btshowmetainfo = getcwd() . "/bin/TF_BitTornado/btshowmetainfo.py";
 	$tfPath = getcwd() . "/downloads/";
@@ -228,7 +227,6 @@ function firstLogin($username = '', $password = '') {
 	$settings = array(
 						"pythonCmd" => $pythonCmd,
 						"btphpbin" => $btphpbin,
-						"tfQManager" => $tfQManager,
 						"btmakemetafile" => $maketorrent,
 						"btshowmetainfo" => $btshowmetainfo,
 						"path" => $tfPath,
