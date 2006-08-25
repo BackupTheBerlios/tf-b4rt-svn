@@ -64,14 +64,14 @@ if(! empty($torrent)) {
 // wget
 if ($cfg['enable_wget'] == 1) {
 	$url_wget = getRequestVar('url_wget');
-	// <DD32>:
 	if(! $url_wget == '') {
-		exec("nohup ".$cfg['bin_php']." -f wget.php ".$url_wget." ".$cfg['user']." > /dev/null &");
-		sleep(3); //sleep so that hopefully the other script has time to write out the stat files.
+		//exec("nohup ".$cfg['bin_php']." -f wget.php ".$url_wget." ".$cfg['user']." > /dev/null &");
+		include_once("ClientHandler.php");
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+		$clientHandler->startClient($url_wget, 0, false);
 		header("location: index.php?iid=index");
 		exit();
 	}
-	// </DD32>
 }
 
 // =============================================================================

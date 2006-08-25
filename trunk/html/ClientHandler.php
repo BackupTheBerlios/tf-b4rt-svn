@@ -279,9 +279,10 @@ class ClientHandler
         // create AliasFile object and write out the stat file
         include_once("AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
-        //XFER: before a transfer start/restart save upload/download xfer to SQL
         $transferTotals = getTransferTotals($this->transfer);
-        saveXfer($this->owner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
+        //XFER: before a transfer start/restart save upload/download xfer to SQL
+        if ($this->cfg['enable_xfer'] == 1)
+        	saveXfer($this->owner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
         // update totals for this transfer
         updateTransferTotals($this->transfer);
         // set param for sharekill
@@ -408,7 +409,7 @@ class ClientHandler
                 $rt = RunningTransfer::getRunningTransferInstance($value,$this->cfg,$this->handlerName);
                 if ($rt->statFile == $this->alias) {
                     AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
-                //    $callResult = exec("kill ".$rt->processId);
+                	// $callResult = exec("kill ".$rt->processId);
                 }
             }
         }

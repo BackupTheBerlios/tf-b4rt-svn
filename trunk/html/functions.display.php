@@ -692,6 +692,8 @@ function getTransferListString() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
+			$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+			$settingsAry['datapath'] = $settingsAry['savepath'];
 			$alias = str_replace(".url", "", $alias);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
 		} else {
@@ -701,6 +703,8 @@ function getTransferListString() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
 			$settingsAry['hash'] = $entry;
+			$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+			$settingsAry['datapath'] = $settingsAry['savepath'];
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
 		}
 		// cache running-flag in local var. we will access that often

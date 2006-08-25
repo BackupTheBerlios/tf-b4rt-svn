@@ -67,14 +67,20 @@ class ClientHandlerWget extends ClientHandler
             }
         }
 
-        // prepare starting of client
+        // set some vars
+        $this->transfer = strrchr($transfer,'/');
+        $this->alias = getAliasName($this->transfer).".stat";
+        $this->alias = str_replace(".url", "", $this->alias);
+        $this->owner = $this->cfg['user'];
 
         // pid-file
-        $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
+        $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".pid\"";
 
-        // build the command-string
-        $this->command = "-t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\" -w ".$this->owner;
+        // start it
+        exec("nohup ".$this->cfg['bin_php']." -f wget.php ". urlencode($transfer) ." ". $this->owner ." ". escapeshellarg($this->pidFile) ." > /dev/null &");
 
+        //sleep so that hopefully the other script has time to write out the stat files.
+		sleep(3);
     }
 
     //--------------------------------------------------------------------------
@@ -87,10 +93,7 @@ class ClientHandlerWget extends ClientHandler
      * @param $return return-param (optional)
      */
     function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
-        $this->pidFile = $this->cfg["torrent_file_path"].$aliasFile.".pid";
         // stop the client
-        // delete the pid file
-        @unlink($this->pidFile);
     }
 
     //--------------------------------------------------------------------------

@@ -61,18 +61,18 @@ switch ($action) {
     		delDirEntry($element);
     	}
     	break;
-    /* --------------------------------------------------------- all torrents */
+    /* -------------------------------------------------------- all transfers */
     case "bulkStop": /* bulkStop */
-    	$torrents = getTorrentListFromFS();
-    	foreach ($torrents as $torrent) {
-            $tRunningFlag = isTransferRunning($torrent);
+    	$transfers = getTorrentListFromFS();
+    	foreach ($transfers as $transfer) {
+            $tRunningFlag = isTransferRunning($transfer);
             if ($tRunningFlag != 0) {
-                $owner = getOwner($torrent);
+                $owner = getOwner($transfer);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $alias = getAliasName($torrent).".stat";
-                    $btclient = getTransferClient($torrent);
+                    $alias = getAliasName($transfer).".stat";
+                    $btclient = getTransferClient($transfer);
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->stopClient($torrent, $alias);
+                    $clientHandler->stopClient($transfer, $alias);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -80,20 +80,20 @@ switch ($action) {
     	}
     	break;
     case "bulkResume": /* bulkResume */
-    	$torrents = getTorrentListFromDB();
-    	foreach ($torrents as $torrent) {
-            $tRunningFlag = isTransferRunning($torrent);
+    	$transfers = getTorrentListFromDB();
+    	foreach ($transfers as $transfer) {
+            $tRunningFlag = isTransferRunning($transfer);
             if ($tRunningFlag == 0) {
-                $owner = getOwner($torrent);
+                $owner = getOwner($transfer);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $btclient = getTransferClient($torrent);
+                    $btclient = getTransferClient($transfer);
                     if ($cfg["enable_file_priority"]) {
                         include_once("setpriority.php");
                         // Process setPriority Request.
-                        setPriority($torrent);
+                        setPriority($transfer);
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startClient($torrent, 0, false);
+                    $clientHandler->startClient($transfer, 0, false);
                     // just 2 sec..
                     sleep(2);
                 }
@@ -101,27 +101,27 @@ switch ($action) {
     	}
     	break;
     case "bulkStart": /* bulkStart */
-    	$torrents = getTorrentListFromFS();
-    	foreach ($torrents as $torrent) {
-            $tRunningFlag = isTransferRunning($torrent);
+    	$transfers = getTorrentListFromFS();
+    	foreach ($transfers as $transfer) {
+            $tRunningFlag = isTransferRunning($transfer);
             if ($tRunningFlag == 0) {
-                $owner = getOwner($torrent);
+                $owner = getOwner($transfer);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $btclient = getTransferClient($torrent);
+                    $btclient = getTransferClient($transfer);
                     if ($cfg["enable_file_priority"]) {
                         include_once("setpriority.php");
                         // Process setPriority Request.
-                        setPriority($torrent);
+                        setPriority($transfer);
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startClient($torrent, 0, false);
+                    $clientHandler->startClient($transfer, 0, false);
                     // just 2 sec..
                     sleep(2);
                 }
             }
     	}
     	break;
-    /* ---------------------------------------------------- selected torrents */
+    /* --------------------------------------------------- selected transfers */
     default:
        foreach($_POST['torrent'] as $key => $element) {
           $alias = getAliasName($element).".stat";

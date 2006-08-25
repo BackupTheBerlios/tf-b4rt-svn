@@ -33,10 +33,6 @@ class RunningTransferWget extends RunningTransfer
         $this->Initialize($cfg);
         //
         if (strlen($psLine) > 0) {
-
-        	// TODO
-
-        	/*
             while (strpos($psLine,"  ") > 0) {
                 $psLine = str_replace("  ",' ',trim($psLine));
             }
@@ -46,7 +42,7 @@ class RunningTransferWget extends RunningTransfer
                 if ($key == 0) {
                     $startArgs = false;
                 }
-                if ($value == $this->cfg["btclient_tornado_bin"]) {
+                if ($value == $this->cfg["bin_wget"]) {
                     $offset = 2;
                     if(! @strpos($arr[$key+$offset],"/",1) > 0) {
                         $offset += 1;
@@ -82,7 +78,6 @@ class RunningTransferWget extends RunningTransfer
             }
             $this->args = str_replace("--","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));
-            */
         }
     }
 

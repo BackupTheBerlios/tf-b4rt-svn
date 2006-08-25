@@ -58,12 +58,7 @@ function saveXfer($user, $down, $up) {
     showError($db,$sql);
   } else {
     showError($db,$sql);
-    // b4rt-8
-    // blackwidow :
-    //$sql = 'INSERT INTO tf_xfer SET user = "'.$user.'", date = '.$db->DBDate(time()).', download = '.($down+0).', upload = '.($up+0);
-    // carlo1234 :
     $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
-    // b4rt-8
     $db->Execute($sql);
     showError($db,$sql);
   }

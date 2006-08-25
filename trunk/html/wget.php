@@ -20,25 +20,103 @@
 
 *******************************************************************************/
 
-
 include_once('config.php');
 include_once('db.php');
 include_once("settingsfunctions.php");
 include_once("functions.tf.php");
+include_once("functions.hacks.php");
 
-// Create Connection.
+// Create Connection + load settings
 $db = getdb();
-
 loadSettings();
-
-
 $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
-
+// alias-file
 include_once('AliasFile.php');
 
-error_reporting(E_ALL);
+// some vars
+$_STATUS = 1;
+$_SIZE = 0;
+$_COMPLETED = 0;
+$_PERCENTAGE = 0;
+$_SPEED = "0.00 kB/s";
+$_INT_SPEED = 0.00;
+$_NAME = '';
+$_REAL_NAME = '';
+$_OWNER = '';
 
+// check args
+if (!(isset($argv[1])))
+	die('argv[1] not set');
+if (!(isset($argv[2])))
+	die('argv[2] not set');
+if (!(isset($argv[3])))
+	die('argv[3] not set');
+
+// args
+$_URL = urldecode($argv[1]);
+$_OWNER = $argv[2];
+$_PID = $argv[3];
+
+// name + alias
+$_NAME = strrchr($_URL,'/');
+$alias = getAliasName($_NAME);
+
+// write url-file
+$fp = fopen($cfg["torrent_file_path"].$alias.".url",'w');
+fwrite($fp,$_URL);
+fclose($fp);
+
+// write out stat-file now
+write_stat_file();
+
+// umask
+$umask = "";
+if ($cfg["enable_umask"] != 0)
+    $umask = " umask 0000;";
+// nice
+$nice = "";
+if ($cfg["nice_adjust"] != 0)
+    $nice = " nice -n ".$cfg["nice_adjust"];
+// command-string
+$command = "cd ".$cfg["path"].$_OWNER."/; HOME=".$cfg["path"].$_OWNER."/; export HOME;".$umask.$nice." ".$cfg['bin_wget']." -i ".$cfg["torrent_file_path"].getAliasName($_NAME).".url";
+$command .= " 2>&1"; // will direct STDERR to STDOUT
+$command .= " & echo $! > ".$_PID; // will write pid-file
+
+// start process
+$wget = popen($command,'r');
+do {
+	$read = @fread($wget, 2096);
+	new_data($read);
+	write_stat_file();
+	sleep(2);
+}while(!feof($wget));
+pclose($wget);
+
+// Run again afterwards just to make sure it finished writing the file.
+$_PERCENTAGE = 100;
+$_COMPLETED = $_SIZE;
+$_STATUS = '0';
+write_stat_file();
+
+// update xfer
+if ($cfg['enable_xfer'] == 1)
+	saveXfer($_OWNER, 0, $_SIZE);
+
+// delete pid-file
+@unlink($_PID);
+
+// exit
+exit();
+
+/* -------------------------------------------------------------------------- */
+
+/**
+ * convert_time
+ *
+ * @param $seconds
+ * @return
+ */
 function convert_time($seconds){
 	$seconds = round($seconds,0);
 	if($seconds > 361440){
@@ -60,15 +138,19 @@ function convert_time($seconds){
 		$minutes = "00";
 	}
 	if($days > 0){
-		return $days."d $hours:$minutes:$seconds";
+		return "$days:$hours:$minutes:$seconds";
 	} else {
 		return "$hours:$minutes:$seconds";
 	}
 }
 
+/**
+ * write_stat_file
+ *
+ */
 function write_stat_file(){
-	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_REAL_NAME,$cfg,$_INT_SPEED,$_OWNER;
-    $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($_NAME).".stat", $_OWNER, $cfg, 'wget');
+	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_REAL_NAME,$cfg,$_INT_SPEED,$_OWNER, $alias;
+    $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $_OWNER, $cfg, 'wget');
 	$af->running = $_STATUS;
 	$af->percent_done = $_PERCENTAGE;
 	if ($_COMPLETED == $_SIZE){
@@ -96,6 +178,11 @@ function write_stat_file(){
 	$af->WriteFile();
 }
 
+/**
+ * new_data
+ *
+ * @param $data
+ */
 function new_data($data){
 	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_INT_SPEED; //$_INT_SPEED
 	//Check if they are set first, if they're not its pointless wasting cycles on them as they wont change during the run. Comparisons use less CPU than a Regex
@@ -131,53 +218,5 @@ function new_data($data){
 	}
 }
 
-$_STATUS = 1;
-$_SIZE = 0;
-$_COMPLETED = 0;
-$_PERCENTAGE = 0;
-$_SPEED = "0.00 kB/s";
-$_INT_SPEED = 0.00;
-$_NAME = '';
-$_REAL_NAME = '';
-$_OWNER = '';
-
-if( !isset($_SERVER["argv"][1]) || !isset($_SERVER["argv"][2]) ){
-	die('No Args');
-}
-
-/* -------------------------------------------------------------------------- */
-
-$_URL = urldecode($argv[1]);
-$_OWNER = urldecode($argv[2]);
-
-
-$_NAME = strrchr($_URL,'/');
-
-$fp = fopen($cfg["torrent_file_path"].getAliasName($_NAME).".url",'w');
-fwrite($fp,$_URL);
-fclose($fp);
-//
-
-// write out stat-file now
-write_stat_file();
-
-$nice = "";
-if ($cfg["nice_adjust"] != 0)
-    $nice = "nice -n ".$cfg["nice_adjust"]." ";
-$command = "cd ".$cfg["path"].$_OWNER."/; HOME=".$cfg["path"].$_OWNER."/; export HOME; ".$nice.$cfg['bin_wget']." -i ".$cfg["torrent_file_path"].getAliasName($_NAME).".url 2>&1"; //2>&1 will direct STDERR to STDOUT
-
-$wget = popen($command,'r');
-do {
-	$read = @fread($wget, 2096);
-	new_data($read);
-	write_stat_file();
-	sleep(2);
-}while(!feof($wget));
-pclose($wget);
-
-$_PERCENTAGE = 100;
-$_COMPLETED = $_SIZE;
-$_STATUS = '0';
-write_stat_file(); //Run again afterwards just to make sure it finished writing the file.
 
 ?>
