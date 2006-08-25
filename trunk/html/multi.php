@@ -195,7 +195,7 @@ switch ($action) {
                    case "torrentData": /* torrentData */
                       deleteTorrentData(urldecode($element));
                    case "torrent": /* torrent */
-                      deleteTorrent(urldecode($element), $alias);
+                      deleteTransfer(urldecode($element), $alias);
                 }
           }
        }

@@ -193,9 +193,9 @@ function sendXmlOld() {
             $btclient = getTransferClient($entry);
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
         } else if ((substr( strtolower($entry),-4 ) == ".url")) {
-            // this is wget. use tornado statfile
+            // this is wget. use wget statfile
             $alias = str_replace(".url", "", $alias);
-            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
         } else {
             // this is "something else". use tornado statfile as default
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
@@ -266,9 +266,9 @@ function sendRss() {
             $btclient = getTransferClient($entry);
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $btclient);
         } else if ((substr( strtolower($entry),-4 ) == ".url")) {
-            // this is wget. use tornado statfile
+            // this is wget. use wget statfile
             $alias = str_replace(".url", "", $alias);
-            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+            $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
         } else {
             // this is "something else". use tornado statfile as default
             $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');

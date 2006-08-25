@@ -67,7 +67,7 @@ if ($cfg['enable_wget'] == 1) {
 	// <DD32>:
 	if(! $url_wget == '') {
 		exec("nohup ".$cfg['bin_php']." -f wget.php ".$url_wget." ".$cfg['user']." > /dev/null &");
-		sleep(2); //sleep so that hopefully the other script has time to write out the stat files.
+		sleep(3); //sleep so that hopefully the other script has time to write out the stat files.
 		header("location: index.php?iid=index");
 		exit();
 	}
@@ -89,7 +89,7 @@ if(!empty($_FILES['upload_file']['name']))
 // if a file was set to be deleted then delete it
 $delfile = getRequestVar('delfile');
 if(! $delfile == '') {
-	deleteTorrent($delfile, getRequestVar('alias_file'));
+	deleteTransfer($delfile, getRequestVar('alias_file'));
 	header("location: index.php?iid=index");
 	exit();
 }

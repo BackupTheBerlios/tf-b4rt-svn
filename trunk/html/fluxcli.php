@@ -511,7 +511,7 @@ function cliDeleteTorrent($torrent = "") {
 			// give the torrent some time to die
 			sleep(8);
         }
-        deleteTorrent($torrent, $alias);
+        deleteTransfer($torrent, $alias);
 		echo "done\n";
 	} else {
 		printUsage();
@@ -540,7 +540,7 @@ function cliWipeTorrent($torrent = "") {
 			// give the torrent some time to die
 			sleep(6);
         }
-        deleteTorrentData($torrent);
+        deleteTransfer($torrent);
         resetTorrentTotals($torrent, true);
 		echo "done\n";
 	} else {

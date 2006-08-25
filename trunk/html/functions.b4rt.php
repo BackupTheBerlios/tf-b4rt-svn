@@ -785,7 +785,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 	$owner = getOwner($torrent);
 	// delete torrent
 	if ($delete == true) {
-		deleteTorrent($torrent, $alias);
+		deleteTransfer($torrent, $alias);
 		// delete the stat file. shouldnt be there.. but...
 		@unlink($cfg["torrent_file_path"].$alias.".stat");
 	} else {
@@ -808,25 +808,22 @@ function resetTorrentTotals($torrent, $delete = false) {
 /* ************************************************************************** */
 
 /**
- * deletes a torrent
+ * deletes a transfer
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @param $alias_file alias-file of the torrent
  * @return boolean of success
  */
-function deleteTorrent($torrent,$alias_file) {
-	$delfile = $torrent;
+function deleteTransfer($transfer, $alias_file) {
+	$delfile = $transfer;
 	global $cfg;
-	//$alias_file = getRequestVar('alias_file');
-	$torrentowner = getOwner($delfile);
-	if (($cfg["user"] == $torrentowner) || IsAdmin()) {
+	$transferowner = getOwner($delfile);
+	if (($cfg["user"] == $transferowner) || IsAdmin()) {
 		include_once("AliasFile.php");
-		// we have more meta-files than .torrent. handle this.
-		//$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, 0, $cfg);
-		if ((substr( strtolower($torrent),-8 ) == ".torrent")) {
+		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($delfile);
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $torrentowner, $cfg, $btclient);
+			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $transferowner, $cfg, $btclient);
 			// update totals for this torrent
 			updateTransferTotals($delfile);
 			// remove torrent-settings from db
@@ -834,18 +831,18 @@ function deleteTorrent($torrent,$alias_file) {
 			// client-proprietary leftovers
 			include_once("ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->deleteCache($torrent);
-		} else if ((substr( strtolower($torrent),-4 ) == ".url")) {
-			// this is wget. use tornado statfile
+			$clientHandler->deleteCache($transfer);
+		} else if ((substr( strtolower($transfer),-4 ) == ".url")) {
+			// this is wget. use wget statfile
 			$alias_file = str_replace(".url", "", $alias_file);
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
 		}
 		//XFER: before torrent deletion save upload/download xfer data to SQL
-		$torrentTotals = getTransferTotals($delfile);
-		saveXfer($torrentowner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
+		$transferTotals = getTransferTotals($delfile);
+		saveXfer($transferowner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
 		// torrent+stat
 		@unlink($cfg["torrent_file_path"].$delfile);
 		@unlink($cfg["torrent_file_path"].$alias_file);
@@ -1707,20 +1704,15 @@ function checkDirPathString($dirPath) {
  */
 function transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry) {
 	global $cfg, $db;
-	if (($settingsAry['btclient']) != "wget") {
-		$torrentTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
-	} else {
-		$torrentTotalsCurrent["uptotal"] = $af->uptotal;
-		$torrentTotalsCurrent["downtotal"] = $af->downtotal;
-	}
+	$transferTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 	$newday = 0;
 	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
 	$newday = !$db->GetOne($sql);
 	showError($db,$sql);
-	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');
-	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'month');
-	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'week');
-	sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'day');
+	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'total');
+	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'month');
+	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'week');
+	sumUsage($torrentowner, ($transferTotalsCurrent["downtotal"]+0), ($transferTotalsCurrent["uptotal"]+0), 'day');
 	//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
 	if ($newday) {
 		$newday = 2;
@@ -1730,23 +1722,23 @@ function transferListXferUpdate1($entry, $torrentowner, $af, $settingsAry) {
 		// MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
 		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
 		if ($db->GetOne($sql)) {
-			$sql = 'UPDATE tf_xfer SET download = download+'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload+'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+			$sql = 'UPDATE tf_xfer SET download = download+'.($transferTotalsCurrent["downtotal"]+0).', upload = upload+'.($transferTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
 			$db->Execute($sql);
 			showError($db,$sql);
 		} else {
 			showError($db,$sql);
-			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($torrentTotalsCurrent["downtotal"]+0).','.($torrentTotalsCurrent["uptotal"]+0).')';
+			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($transferTotalsCurrent["downtotal"]+0).','.($transferTotalsCurrent["uptotal"]+0).')';
 			$db->Execute($sql);
 			showError($db,$sql);
 		}
 		$sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
 		if ($db->GetOne($sql)) {
-			$sql = 'UPDATE tf_xfer SET download = download-'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload-'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+			$sql = 'UPDATE tf_xfer SET download = download-'.($transferTotalsCurrent["downtotal"]+0).', upload = upload-'.($transferTotalsCurrent["uptotal"]+0).' WHERE user = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
 			$db->Execute($sql);
 			showError($db,$sql);
 		} else {
 			showError($db,$sql);
-			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($torrentTotalsCurrent["downtotal"]+0).',-'.($torrentTotalsCurrent["uptotal"]+0).')';
+			$sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($transferTotalsCurrent["downtotal"]+0).',-'.($transferTotalsCurrent["uptotal"]+0).')';
 			$db->Execute($sql);
 			showError($db,$sql);
 		}
@@ -1943,14 +1935,8 @@ function getTransferListArray() {
 		}
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
-		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-			if (($settingsAry['btclient']) != "wget") {
-				$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
-			} else {
-				$torrentTotals["uptotal"] = $af->uptotal;
-				$torrentTotals["downtotal"] = $af->downtotal;
-			}
-		}
+		if (($settings[2] + $settings[3] + $settings[5]) > 0)
+			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
 		// fill temp array
@@ -1969,11 +1955,11 @@ function getTransferListArray() {
 
 		// =========================================================== downtotal
 		if ($settings[2] != 0)
-			array_push($transferAry, formatBytesToKBMGGB($torrentTotals["downtotal"]+0));
+			array_push($transferAry, formatBytesToKBMGGB($transferTotals["downtotal"]+0));
 
 		// ============================================================= uptotal
 		if ($settings[3] != 0)
-			array_push($transferAry, formatBytesToKBMGGB($torrentTotals["uptotal"]+0));
+			array_push($transferAry, formatBytesToKBMGGB($transferTotals["uptotal"]+0));
 
 		// ============================================================== status
 		if ($settings[4] != 0)
@@ -1983,7 +1969,7 @@ function getTransferListArray() {
 		if ($settings[5] != 0) {
 			$percentage = "";
 			if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
-				$percentage = @number_format((($torrentTotals["uptotal"] / $af->size) * 100), 2) . '%';
+				$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
 			} else {
 				if ($percentDone >= 1) {
 

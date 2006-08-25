@@ -66,11 +66,11 @@ $cfg["constants"]["error"] = "ERROR";
 $cfg["constants"]["hit"] = "HIT";
 $cfg["constants"]["update"] = "UPDATE";
 $cfg["constants"]["admin"] = "ADMIN";
-
 asort($cfg["constants"]);
 
 // Add file extensions here that you will allow to be uploaded
-// wget Support V0.1
+// torrent : torrent
+// url     : wget
 $cfg["file_types_array"] = array("torrent","url");
 
 // Capture username

@@ -1240,11 +1240,11 @@ function getDirList($dirName) {
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $torrentowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
-			// this is wget. use tornado statfile
+			// this is wget. use wget statfile
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$alias = str_replace(".url", "", $alias);
-			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$settingsAry = array();
@@ -1303,10 +1303,7 @@ function getDirList($dirName) {
 			$output .= "<i><font color=\"#32cd32\">"._NEW."</font></i>";
 		} elseif ($af->running == "3" ) {
 			$estTime = "Waiting...";
-			$qDateTime = '';
-			if(is_file($dirName."queue/".$alias.".Qinfo"))
-				$qDateTime = date("m/d/Y H:i:s", strval(filectime($dirName."queue/".$alias.".Qinfo")));
-			$output .= "<i><font color=\"#000000\" onmouseover=\"return overlib('"._QUEUED.": ".$qDateTime."<br>', CSSCLASS);\" onmouseout=\"return nd();\">"._QUEUED."</font></i>";
+			$output .= "<i><font color=\"#000000\" onmouseover=\"return overlib('"._QUEUED."<br>', CSSCLASS);\" onmouseout=\"return nd();\">"._QUEUED."</font></i>";
 		} else {
 			if ($af->time_left != "" && $af->time_left != "0")
 				$estTime = $af->time_left;

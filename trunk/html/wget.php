@@ -24,27 +24,16 @@
 include_once('config.php');
 include_once('db.php');
 include_once("settingsfunctions.php");
+include_once("functions.tf.php");
 
 // Create Connection.
 $db = getdb();
 
 loadSettings();
 
-//__________________________________________________________________________________________________
-// The lines between these ___ are from functions.php, function.php contains some auth. code which i didnt feel would add much to this, so have decided to leave out.
-//
+
 $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
-//**************************************************************************
-// getAliasName()
-// Create Alias name for Text file and Screen Alias
-function getAliasName($inName) {
-    $alias = str_replace("/",'', $inName);
-    $alias = preg_replace("/[^0-9a-z.]+/i",'_', $alias);
-    $alias = str_replace(".url", "", $alias);
-    return $alias;
-}
-//__________________________________________________________________________________________________
 
 include_once('AliasFile.php');
 
@@ -79,8 +68,7 @@ function convert_time($seconds){
 
 function write_stat_file(){
 	global $_NAME,$_SIZE,$_COMPLETED,$_PERCENTAGE,$_SPEED,$_STATUS,$_REAL_NAME,$cfg,$_INT_SPEED,$_OWNER;
-    // this is "something else" (wget). use tornado statfile
-    $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($_NAME).".stat", $_OWNER, $cfg, 'tornado');
+    $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($_NAME).".stat", $_OWNER, $cfg, 'wget');
 	$af->running = $_STATUS;
 	$af->percent_done = $_PERCENTAGE;
 	if ($_COMPLETED == $_SIZE){

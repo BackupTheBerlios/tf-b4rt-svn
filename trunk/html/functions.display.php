@@ -686,11 +686,11 @@ function getTransferListString() {
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr( strtolower($entry),-4 ) == ".url")) {
-			// this is wget. use tornado statfile
+			// this is wget. use wget statfile
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$alias = str_replace(".url", "", $alias);
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
 		} else {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
@@ -760,14 +760,8 @@ function getTransferListString() {
 		}
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
-		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-			if (($settingsAry['btclient']) != "wget") {
-				$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
-			} else {
-				$torrentTotals["uptotal"] = $af->uptotal;
-				$torrentTotals["downtotal"] = $af->downtotal;
-			}
-		}
+		if (($settings[2] + $settings[3] + $settings[5]) > 0)
+			$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
 		// output-string
