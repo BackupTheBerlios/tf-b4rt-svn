@@ -588,22 +588,14 @@ function stopTorrentSettings($torrent) {
 /* ************************************************************************** */
 
 /**
- * gets the running flag of the torrent out of the the db.
+ * checks if torrent is running by checking for existencte of pid-file.
  *
- * @param $torrent name of the torrent
- * @return value of running-flag in db
+ * @param $transfer name of the transfer
+ * @return 1|0
  */
-function isTorrentRunning($torrent) {
-	/*
-	global $db;
-	$retVal = $db->GetOne("SELECT running FROM tf_torrents WHERE torrent = '".$torrent."'");
-	if ($retVal > 0)
-		return $retVal;
-	else
-		return 0;
-	*/
+function isTransferRunning($transfer) {
 	global $cfg;
-	if (file_exists($cfg["torrent_file_path"].substr($torrent,0,-8).'.stat.pid'))
+	if (file_exists($cfg["torrent_file_path"].substr($transfer,0,-8).'.stat.pid'))
 		return 1;
 	else
 		return 0;

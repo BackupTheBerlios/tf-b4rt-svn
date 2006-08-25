@@ -333,8 +333,8 @@ function printTorrents() {
 function cliStartTorrent($torrent = "") {
 	global $cfg;
 	if ((isset($torrent)) && ($torrent != "")) {
-		$torrentRunningFlag = isTorrentRunning($torrent);
-		if ($torrentRunningFlag == 0) {
+		$tRunningFlag = isTransferRunning($torrent);
+		if ($tRunningFlag == 0) {
 			$btclient = getTransferClient($torrent);
 			$cfg["user"] = getOwner($torrent);
 			echo "Starting ".$torrent." ...";
@@ -372,8 +372,8 @@ function cliStartTorrents() {
     echo "Starting all torrents ...\n";
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
-        $torrentRunningFlag = isTorrentRunning($torrent);
-        if ($torrentRunningFlag == 0) {
+        $tRunningFlag = isTransferRunning($torrent);
+        if ($tRunningFlag == 0) {
             echo " - ".$torrent."...";
             $cfg["user"] = getOwner($torrent);
             $btclient = getTransferClient($torrent);
@@ -407,8 +407,8 @@ function cliResumeTorrents() {
     echo "Resuming all torrents ...\n";
 	$torrents = getTorrentListFromDB();
 	foreach ($torrents as $torrent) {
-        $torrentRunningFlag = isTorrentRunning($torrent);
-        if ($torrentRunningFlag == 0) {
+        $tRunningFlag = isTransferRunning($torrent);
+        if ($tRunningFlag == 0) {
             echo " - ".$torrent."...";
             $cfg["user"] = getOwner($torrent);
             $btclient = getTransferClient($torrent);
@@ -439,7 +439,7 @@ function cliResumeTorrents() {
 function cliStopTorrents() {
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
-		if (isTorrentRunning($torrent))
+		if (isTransferRunning($torrent))
 			cliStopTorrent($torrent);
 	}
 }
@@ -453,8 +453,8 @@ function cliStopTorrents() {
 function cliStopTorrent($torrent = "") {
 	global $cfg;
 	if ((isset($torrent)) && ($torrent != "")) {
-		$torrentRunningFlag = isTorrentRunning($torrent);
-		if ($torrentRunningFlag == 0) {
+		$tRunningFlag = isTransferRunning($torrent);
+		if ($tRunningFlag == 0) {
 			echo "Torrent not running.\n";
 		} else {
 			echo "Stopping ".$torrent." ...";
@@ -500,11 +500,11 @@ function cliDeleteTorrent($torrent = "") {
 	global $cfg;
 	if ((isset($torrent)) && ($torrent != "")) {
 		echo "Deleting ".$torrent." ...";
-        $torrentRunningFlag = isTorrentRunning($torrent);
+        $tRunningFlag = isTransferRunning($torrent);
         $btclient = getTransferClient($torrent);
     	$cfg["user"] = getOwner($torrent);
     	$alias = getAliasName($torrent).".stat";
-		if ($torrentRunningFlag == 1) {
+		if ($tRunningFlag == 1) {
 			// stop torrent first
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->stopClient($torrent, $alias);
@@ -529,11 +529,11 @@ function cliWipeTorrent($torrent = "") {
 	global $cfg;
 	if ((isset($torrent)) && ($torrent != "")) {
 		echo "Wipe ".$torrent." ...";
-        $torrentRunningFlag = isTorrentRunning($torrent);
+        $tRunningFlag = isTransferRunning($torrent);
         $btclient = getTransferClient($torrent);
 		$cfg["user"] = getOwner($torrent);
 		$alias = getAliasName($torrent).".stat";
-		if ($torrentRunningFlag == 1) {
+		if ($tRunningFlag == 1) {
 			// stop torrent first
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->stopClient($torrent, $alias);

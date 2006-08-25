@@ -65,8 +65,8 @@ switch ($action) {
     case "bulkStop": /* bulkStop */
     	$torrents = getTorrentListFromFS();
     	foreach ($torrents as $torrent) {
-            $torrentRunningFlag = isTorrentRunning($torrent);
-            if ($torrentRunningFlag != 0) {
+            $tRunningFlag = isTransferRunning($torrent);
+            if ($tRunningFlag != 0) {
                 $owner = getOwner($torrent);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $alias = getAliasName($torrent).".stat";
@@ -82,8 +82,8 @@ switch ($action) {
     case "bulkResume": /* bulkResume */
     	$torrents = getTorrentListFromDB();
     	foreach ($torrents as $torrent) {
-            $torrentRunningFlag = isTorrentRunning($torrent);
-            if ($torrentRunningFlag == 0) {
+            $tRunningFlag = isTransferRunning($torrent);
+            if ($tRunningFlag == 0) {
                 $owner = getOwner($torrent);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $btclient = getTransferClient($torrent);
@@ -103,8 +103,8 @@ switch ($action) {
     case "bulkStart": /* bulkStart */
     	$torrents = getTorrentListFromFS();
     	foreach ($torrents as $torrent) {
-            $torrentRunningFlag = isTorrentRunning($torrent);
-            if ($torrentRunningFlag == 0) {
+            $tRunningFlag = isTransferRunning($torrent);
+            if ($tRunningFlag == 0) {
                 $owner = getOwner($torrent);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $btclient = getTransferClient($torrent);
@@ -126,11 +126,11 @@ switch ($action) {
        foreach($_POST['torrent'] as $key => $element) {
           $alias = getAliasName($element).".stat";
           $settingsAry = loadTorrentSettings(urldecode($element));
-          $torrentRunningFlag = isTorrentRunning(urldecode($element));
+          $tRunningFlag = isTransferRunning(urldecode($element));
           $btclient = $settingsAry["btclient"];
           switch ($action) {
              case "torrentStart": /* torrentStart */
-                if ($torrentRunningFlag == 0) {
+                if ($tRunningFlag == 0) {
                    if ($cfg["enable_file_priority"]) {
                        include_once("setpriority.php");
                        // Process setPriority Request.
@@ -143,7 +143,7 @@ switch ($action) {
                 }
              	break;
              case "torrentStop": /* torrentStop */
-                if ($torrentRunningFlag != 0) {
+                if ($tRunningFlag != 0) {
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                    $clientHandler->stopClient(urldecode($element), $alias);
                    // just 2 sec..
@@ -151,7 +151,7 @@ switch ($action) {
                 }
              	break;
              case "torrentEnQueue": /* torrentEnQueue */
-                if ($torrentRunningFlag == 0) {
+                if ($tRunningFlag == 0) {
                     // enqueue it
                     if ($cfg["enable_file_priority"]) {
                         include_once("setpriority.php");
@@ -166,7 +166,7 @@ switch ($action) {
                 }
              	break;
              case "torrentDeQueue": /* torrentDeQueue */
-                if ($torrentRunningFlag == 0) {
+                if ($tRunningFlag == 0) {
                     // set request var
                     $_REQUEST['alias_file'] = getAliasName($element).".stat";;
                     // dequeue it
@@ -179,7 +179,7 @@ switch ($action) {
                 resetTorrentTotals(urldecode($element), false);
              	break;
              default:
-                if ($torrentRunningFlag != 0) {
+                if ($tRunningFlag != 0) {
                    // stop torrent first
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                    $clientHandler->stopClient(urldecode($element), $alias);
