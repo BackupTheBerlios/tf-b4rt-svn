@@ -20,10 +20,8 @@
 
 *******************************************************************************/
 
-require_once("config.php");
-require_once("functions.php");
+// require
 require_once("AliasFile.php");
-
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

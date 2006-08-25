@@ -24,10 +24,6 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once("config.php");
-require_once("functions.php");
-
-
 if(!IsAdmin()) {
 	 // the user probably hit this page direct
 	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);

@@ -13,10 +13,6 @@
 	(at your option) any later version.
 */
 
-require_once('config.php');
-require_once('functions.php');
-
-
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/xfer.tmpl");

@@ -20,18 +20,13 @@
 
 *******************************************************************************/
 
-
+// default-target
 define('_DEFAULT_TARGET','traffic');
-
-require_once("config.php");
-require_once("functions.php");
-
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/mrtg.tmpl");
-}
-else {
+} else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/mrtg.tmpl");
 }
 

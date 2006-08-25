@@ -24,10 +24,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once("config.php");
-require_once("functions.php");
+// require
 require_once("inc/searchEngines/SearchEngineBase.php");
-
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

@@ -24,12 +24,8 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-require_once("config.php");
-require_once("functions.php");
+// requires
 require_once("metaInfo.php");
-
-
-global $cfg;
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

@@ -36,10 +36,6 @@ $restrictedFileEntries = array(
 );
 
 // -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
-require_once("config.php");
-require_once("functions.php");
 
 // check user path
 checkUserPath();
