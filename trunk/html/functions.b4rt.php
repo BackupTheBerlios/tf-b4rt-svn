@@ -1518,6 +1518,7 @@ function checkDirectory($dir, $mode = 0755) {
  */
 function repairTorrentflux() {
 	global $cfg, $db;
+
 	// delete pid-files of torrent-clients
 	if ($dirHandle = opendir($cfg["torrent_file_path"])) {
 		while (false !== ($file = readdir($dirHandle))) {
@@ -1526,6 +1527,7 @@ function repairTorrentflux() {
 		}
 		closedir($dirHandle);
 	}
+
 	// rewrite stat-files
 	include_once("AliasFile.php");
 	$torrents = getTorrentListFromFS();
@@ -1545,18 +1547,21 @@ function repairTorrentflux() {
 			$af->WriteFile();
 		}
 	}
+
 	// set flags in db
 	$db->Execute("UPDATE tf_torrents SET running = '0'");
-	// delete leftovers of tfqmgr.pl (only do this if daemon is not running)
-	$tfqmgrRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c tfqmgr.pl"));
-	if ($tfqmgrRunning == "0") {
-		if (file_exists($cfg["path"].'.tfqmgr/tfqmgr.pid'))
-			@unlink($cfg["path"].'.tfqmgr/tfqmgr.pid');
-		if (file_exists($cfg["path"].'.tfqmgr/COMMAND'))
-			@unlink($cfg["path"].'.tfqmgr/COMMAND');
-		if (file_exists($cfg["path"].'.tfqmgr/TRANSPORT'))
-			@unlink($cfg["path"].'.tfqmgr/TRANSPORT');
+
+	// delete leftovers of fluxd (only do this if daemon is not running)
+	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c fluxd.pl"));
+	if ($fluxdRunning == "0") {
+		// pid
+		if (file_exists($cfg["path"].'.fluxd/fluxd.pid'))
+			@unlink($cfg["path"].'.fluxd/fluxd.pid');
+		// socket
+		if (file_exists($cfg["path"].'.fluxd/fluxd.sock'))
+			@unlink($cfg["path"].'.fluxd/fluxd.sock');
 	}
+
 }
 
 /* ************************************************************************** */
