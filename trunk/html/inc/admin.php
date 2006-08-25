@@ -42,8 +42,6 @@ function getMenu() {
 		$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>')." | ";
 	// settings
 	$menu .= "<a href=\"index.php?iid=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
-	// deprecated : queue : delete soon (hopefully ~)
-	//$menu .= "<a href=\"index.php?iid=admin&op=queueSettings\"><font class=\"adminlink\">"._QMANAGER_MENU."</font></a> | ";
 	// fluxd
 	$menu .= "<a href=\"index.php?iid=admin&op=fluxdSettings\"><font class=\"adminlink\">"._FLUXD_MENU."</font></a> | ";
 	// ui

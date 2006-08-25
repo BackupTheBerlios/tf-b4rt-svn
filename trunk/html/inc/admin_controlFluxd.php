@@ -3,12 +3,10 @@
 
 $message = "";
 $action = getRequestVar('a');
-include_once('Fluxd.php');
 
 switch($action) {
 	case "start":
 		// start fluxd
-		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdReadyToStart()) {
 			$fluxd->startFluxd();
 			if ($fluxd->state == 2) {
@@ -24,7 +22,6 @@ switch($action) {
 
 	case "stop":
 		// kill fluxd
-		$fluxd = new Fluxd(serialize($cfg));
 		if ($fluxd->isFluxdRunning()) {
 			$fluxd->stopFluxd();
 			if ($fluxd->isFluxdRunning())

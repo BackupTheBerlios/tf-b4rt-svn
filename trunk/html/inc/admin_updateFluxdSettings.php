@@ -18,10 +18,7 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	$message = '<br>Settings changed.<br>';
 
 	// fluxd Running?
-	include_once("Fluxd.php");
-	$fluxd = new Fluxd(serialize($cfg));
-	$fluxRunning = $fluxd->isFluxdRunning();
-	if ($fluxRunning) {
+	if ($fluxdRunning) {
 		$needsRestart = false;
 		$reloadModules = false;
 		$needsInit = false;

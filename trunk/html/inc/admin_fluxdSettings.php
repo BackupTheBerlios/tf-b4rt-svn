@@ -3,11 +3,6 @@
 $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_fluxdSettings.tmpl");
 require_once("AliasFile.php");
 require_once("RunningTransfer.php");
-require_once('Fluxd.php');
-
-// fluxd
-$fluxd = new Fluxd(serialize($cfg));
-$fluxdRunning = $fluxd->isFluxdRunning();
 
 // some template vars
 $tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
