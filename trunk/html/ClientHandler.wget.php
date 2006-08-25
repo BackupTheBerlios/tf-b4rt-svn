@@ -91,9 +91,6 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " > /dev/null &";
         //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
         exec($this->command);
-
-        //sleep so that hopefully the other script has time to write out the stat file.
-		sleep(5);
     }
 
     //--------------------------------------------------------------------------

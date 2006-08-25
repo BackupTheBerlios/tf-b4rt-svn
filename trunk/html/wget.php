@@ -37,7 +37,8 @@ $_SIZE = 0;
 $_COMPLETED = 0;
 $_PERCENTAGE = 0;
 $_SPEED = "0.00 kB/s";
-$_INT_SPEED = 0.00;
+//$_INT_SPEED = 0.00;
+$_INT_SPEED = 0;
 $_URL = '';
 $_REAL_NAME = '';
 $_OWNER = '';
@@ -54,7 +55,7 @@ $_OWNER = $argv[4];
 
 // write out stat-file now
 include_once('AliasFile.php');
-write_stat_file();
+write_stat_file(false);
 
 // umask
 $umask = "";
@@ -71,7 +72,7 @@ $command .= $umask;
 $command .= $nice;
 $command .= " ".$cfg['bin_wget']." -i ".$_URL;
 $command .= " 2>&1"; // will direct STDERR to STDOUT
-// $command .= " & echo $! > ".$_PID; // will write pid-file
+$command .= " & echo $! > ".$_PID; // will write pid-file
 
 // start process
 $wget = popen($command,'r');
@@ -93,7 +94,7 @@ if ($cfg['enable_xfer'] == 1)
 	saveXfer($_OWNER, 0, $_COMPLETED);
 
 // delete pid-file
-// @unlink($_PID);
+@unlink($_PID);
 
 // exit
 exit();
@@ -145,6 +146,7 @@ function write_stat_file($completed = false) {
 		$af->time_left = "Download Succeeded!";
 		$af->down_speed = "0.00 kB/s";
 	} else {
+		/*
 		if($_INT_SPEED > 0){
 		    // because size is 0 this wont work so lets put a fallback here now
 			//$af->time_left = convert_time((($_SIZE-$_COMPLETED)/1024)/$_INT_SPEED);
@@ -152,6 +154,8 @@ function write_stat_file($completed = false) {
 		} else {
 			$af->time_left = "Inf".$_INT_SPEED;
 		}
+		*/
+		$af->time_left = '-';
 		$af->down_speed = $_SPEED;
 	}
 	$af->up_speed = "0.00 kB/s";

@@ -68,6 +68,7 @@ if ($cfg['enable_wget'] == 1) {
 		include_once("ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 		$clientHandler->startClient($url_wget, 0, false);
+		sleep(5);
 		header("location: index.php?iid=index");
 		exit();
 	}
