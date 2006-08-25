@@ -31,7 +31,7 @@ session_start("TorrentFlux");
 require_once("config.php");
 require_once('db.php');
 require_once("settingsfunctions.php");
-require_once("functions.b4rt.php");
+require_once("functions.common.php");
 
 # get connected
 $db = getdb();

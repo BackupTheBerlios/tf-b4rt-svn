@@ -42,8 +42,8 @@ switch (_PUBLIC_STATS) {
         include_once('functions.tf.php');
         // hacks-functions
         include_once('functions.hacks.php');
-        // b4rt-functions
-        include_once('functions.b4rt.php');
+        // common-functions
+        include_once('functions.common.php');
         // Create Connection.
         $db = getdb();
         // load settings
