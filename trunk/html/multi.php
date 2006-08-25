@@ -121,7 +121,7 @@ switch ($action) {
             }
     	}
     	break;
-    /* --------------------------------------------------- selected transfers */
+    /* --------------------------------------------------- selected torrents */
     default:
        foreach($_POST['torrent'] as $key => $element) {
           $alias = getAliasName($element).".stat";

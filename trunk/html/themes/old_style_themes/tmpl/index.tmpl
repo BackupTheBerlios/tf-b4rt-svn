@@ -260,7 +260,7 @@
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 								<td valign="top">
-									<div align="center">
+									<div align="right">
 										<table>
 											<tr>
 												<td>
@@ -296,7 +296,8 @@
 														Download Torrent</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
-													<td class="tiny" nowrap>
+													<td class="tiny" align="right" nowrap>
+														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 														<select name="action" size="1">
 															<option value="---" selected>---</option>
 															<optgroup label="Selected" style="background-color: #00EC00">
@@ -329,6 +330,8 @@
 											</tr>
 										</table>
 									</form>
+								</div>
+								<div align="center">
 									<tmpl_if name="page_refresh">
 										*** <tmpl_var name="_PAGEWILLREFRESH"> <span id='span_refresh'><tmpl_var name="page_refresh"></span> <tmpl_var name="_SECONDS"> ***<br>
 										<a href="index.php?iid=index&pagerefresh=false"><font class="tiny"><tmpl_var name="_TURNOFFREFRESH"></font></a>
@@ -340,7 +343,9 @@
 											alert(<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">)
 										</script>
 									</tmpl_if>
-									<tmpl_if name="index_page_stats">
+								</div>
+								<tmpl_if name="index_page_stats">
+									<div align="center">
 										<table width="100%">
 											<tr>
 												<tmpl_if name="xfer_realtime">
@@ -356,9 +361,9 @@
 													<td align="center" valign="bottom">
 														<div class="tiny">
 															<b><tmpl_var name="_QUEUEMANAGER"></b><br>
-															<strong><tmpl_var name="runningTransferCount"></strong> torrent(s) running and <strong><tmpl_var name="countQueuedTorrents"></strong> queued.<br>
-															Total torrents server will run: <strong><tmpl_var name="limitGlobal"></strong><br>
-															Total torrents a user may run: <strong><tmpl_var name="limitUser"></strong><br>
+															<strong><tmpl_var name="runningTransferCount"></strong> transfer(s) running and <strong><tmpl_var name="countQueuedTorrents"></strong> queued.<br>
+															Total transfers server will run: <strong><tmpl_var name="limitGlobal"></strong><br>
+															Total transfers a user may run: <strong><tmpl_var name="limitUser"></strong><br>
 														</div>
 													</td>
 												</tmpl_if>
@@ -382,8 +387,8 @@
 												</tmpl_if>
 											</tr>
 										</table>
-									</tmpl_if>
-								</div>
+									</div>
+								</tmpl_if>
 							</td>
 						</tr>
 					</table>

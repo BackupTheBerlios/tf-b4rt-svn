@@ -948,14 +948,16 @@ function getTransferListString() {
 		$output .= '<td nowrap><div align="center">';
 
 		// torrentdetails
-		$torrentDetails = _TORRENTDETAILS;
-		if ($lastUser != "")
-			$torrentDetails .= "\n"._USER.": ".$lastUser;
 		if ($isTorrent) {
+			$torrentDetails = _TORRENTDETAILS;
+			if ($lastUser != "")
+				$torrentDetails .= "\n"._USER.": ".$lastUser;
 			$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
 			if($transferRunning == 1)
 				$output .= "&als=false";
 			$output .= "\">";
+		} else {
+			$torrentDetails = $entry;
 		}
 		$output .= "<img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=\"0\">";
 		if ($isTorrent)
@@ -1002,13 +1004,15 @@ function getTransferListString() {
 				if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
 					$deletelink = $_SERVER['PHP_SELF']."?alias_file=".$alias."&delfile=".urlencode($entry);
 					$output .= "<a href=\"".$deletelink."\" onclick=\"return ConfirmDelete('".$entry."')\"><img src=\"images/delete_on.gif\" width=16 height=16 title=\""._DELETE."\" border=0></a>";
-					if ($cfg['enable_multiops'] != 0)
-						$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
 				} else {
 					// pid file present so process may be still running. don't allow deletion.
 					$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\""._STOPPING."\" border=0>";
-					if ($cfg['enable_multiops'] != 0)
+				}
+				if ($cfg['enable_multiops'] == 1) {
+					if ($isTorrent)
 						$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
+					else
+						$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
 				}
 			}
 		} else {
