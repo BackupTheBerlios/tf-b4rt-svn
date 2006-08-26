@@ -23,7 +23,7 @@
 // config
 require_once('inc/config/config.php');
 // main
-require_once("main.php");
+require_once("inc/main.php");
 // vlib
 require_once("lib/vlib/vlibTemplate.php");
 

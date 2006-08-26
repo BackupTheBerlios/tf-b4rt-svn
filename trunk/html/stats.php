@@ -34,7 +34,7 @@ require_once("inc/config/config.php");
 switch (_PUBLIC_STATS) {
     case 0:
         // includes
-        require_once("main.php");
+        require_once("inc/main.php");
         break;
     case 1:
 		// db

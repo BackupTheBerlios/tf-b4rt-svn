@@ -30,7 +30,7 @@ define('_URL_THIS','http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 
 // includes
 require_once("inc/config/config.php");
-require_once("main.php");
+require_once("inc/main.php");
 require_once("inc/classes/AliasFile.php");
 
 // -----------------------------------------------------------------------------
