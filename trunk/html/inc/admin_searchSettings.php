@@ -20,7 +20,7 @@
 
 *******************************************************************************/
 
-require_once("inc/class/AliasFile.php");
+require_once("inc/classes/AliasFile.php");
 require_once("RunningTransfer.php");
 require_once("inc/searchEngines/SearchEngineBase.php");
 

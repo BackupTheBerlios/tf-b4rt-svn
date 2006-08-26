@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // require
-require_once("inc/class/AliasFile.php");
+require_once("inc/classes/AliasFile.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {

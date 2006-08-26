@@ -58,7 +58,7 @@ if(!empty($transfer)) {
 			indexStartTorrent($transfer, 0);
 	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 		// this is wget.
-		include_once("ClientHandler.php");
+		include_once("inc/classes/ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 		$clientHandler->startClient($transfer, 0, false);
 		//sleep(5);
@@ -73,7 +73,7 @@ if(!empty($transfer)) {
 if ($cfg['enable_wget'] == 1) {
 	$url_wget = getRequestVar('url_wget');
 	if(! $url_wget == '') {
-		include_once("ClientHandler.php");
+		include_once("inc/classes/ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 		$clientHandler->inject($url_wget);
 		header("location: index.php?iid=index");
@@ -106,7 +106,7 @@ if(! $delfile == '') {
 $killTorrent = getRequestVar('kill_torrent');
 if(! $killTorrent == '') {
 	$return = getRequestVar('return');
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	if ((substr(strtolower($killTorrent),-8 ) == ".torrent")) {
 		// this is a torrent-client
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($killTorrent));

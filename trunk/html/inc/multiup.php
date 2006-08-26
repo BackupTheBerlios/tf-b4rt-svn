@@ -78,7 +78,7 @@ if (!empty($_FILES['upload_files'])) {
 
 	// instant action ?
 	if (isset($actionId)) {
-		include_once("ClientHandler.php");
+		include_once("inc/classes/ClientHandler.php");
 		foreach ($tStack as $torrent) {
 			// init stat-file
 			injectTorrent($torrent);

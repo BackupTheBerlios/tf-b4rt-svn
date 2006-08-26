@@ -101,7 +101,7 @@ class ClientHandler
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'ClientHandler.'.$clientClass.'.php';
+        $classFile = 'inc/classes/ClientHandler.'.$clientClass.'.php';
         if (is_file($classFile)) {
             include_once($classFile);
             switch ($clientClass) {
@@ -276,7 +276,7 @@ class ClientHandler
             }
         }
         // create AliasFile object and write out the stat file
-        require_once("inc/class/AliasFile.php");
+        require_once("inc/classes/AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
         $transferTotals = getTransferTotals($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
@@ -324,7 +324,7 @@ class ClientHandler
      * do start of a client.
      */
     function doStartClient() {
-        require_once("inc/class/AliasFile.php");
+        require_once("inc/classes/AliasFile.php");
         if ($this->status != 2) {
             $this->status = -1;
             $this->messages .= "Error. ClientHandler in wrong state on execStart-request.";
@@ -384,7 +384,7 @@ class ClientHandler
         // We are going to write a '0' on the front of the stat file so that
         // the client will no to stop -- this will report stats when it dies
         $this->owner = getOwner($this->transfer);
-        require_once("inc/class/AliasFile.php");
+        require_once("inc/classes/AliasFile.php");
         // read the alias file + create AliasFile object
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias, $this->owner, $this->cfg, $this->handlerName);
         if($this->af->percent_done < 100) {

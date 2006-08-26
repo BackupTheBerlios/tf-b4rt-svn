@@ -49,7 +49,7 @@ if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 	}
 } else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 	// this is wget.
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	$clientHandler->setVarsFromFile($transfer);
 	$showMetaInfo = "<table>";

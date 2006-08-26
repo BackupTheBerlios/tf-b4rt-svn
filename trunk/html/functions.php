@@ -243,7 +243,7 @@ function firstLogin($username = '', $password = '') {
  */
 function netstatConnectionsSum() {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	// messy...
 	$nCount = 0;
 	switch (_OS) {
@@ -298,7 +298,7 @@ function netstatConnectionsByPid($torrentPid) {
  */
 function netstatPortList() {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	// messy...
 	$retStr = "";
 	switch (_OS) {
@@ -351,7 +351,7 @@ function netstatPortByPid($torrentPid) {
  */
 function netstatHostList() {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	// messy...
 	$retStr = "";
 	switch (_OS) {
@@ -725,7 +725,7 @@ function updateTransferTotals($transfer) {
  */
 function getTransferTotals($transfer) {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
@@ -751,7 +751,7 @@ function getTransferTotals($transfer) {
  */
 function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
 }
@@ -764,7 +764,7 @@ function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
  */
 function getTransferTotalsCurrent($transfer) {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
@@ -790,7 +790,7 @@ function getTransferTotalsCurrent($transfer) {
  */
 function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
 }
@@ -817,7 +817,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 		@unlink($cfg["torrent_file_path"].$alias.".stat");
 	} else {
 		// reset in stat-file
-		require_once("inc/class/AliasFile.php");
+		require_once("inc/classes/AliasFile.php");
 		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $owner, $cfg);
 		if (isset($af)) {
 			$af->uptotal = 0;
@@ -846,7 +846,7 @@ function deleteTransfer($transfer, $alias_file) {
 	global $cfg;
 	$transferowner = getOwner($delfile);
 	if (($cfg["user"] == $transferowner) || IsAdmin()) {
-		require_once("inc/class/AliasFile.php");
+		require_once("inc/classes/AliasFile.php");
 		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($delfile);
@@ -856,7 +856,7 @@ function deleteTransfer($transfer, $alias_file) {
 			// remove torrent-settings from db
 			deleteTorrentSettings($delfile);
 			// client-proprietary leftovers
-			include_once("ClientHandler.php");
+			include_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->deleteCache($transfer);
 		} else if ((substr( strtolower($transfer),-5 ) == ".wget")) {
@@ -1008,7 +1008,7 @@ function delDirEntry($del) {
  */
 function RunningProcessInfo() {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	// messy...
 	$RunningProcessInfo = " ---=== tornado ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
@@ -1063,7 +1063,7 @@ function getRunningTransferCount() {
  */
 function getRunningTransfers($clientType = '') {
 	global $cfg;
-	include_once("ClientHandler.php");
+	include_once("inc/classes/ClientHandler.php");
 	// get only torrents of a particular client
 	if ((isset($clientType)) && ($clientType != '')) {
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$clientType);
@@ -1331,7 +1331,7 @@ function indexStartTorrent($torrent,$interactive) {
 	}
 	switch ($interactive) {
 		case 0:
-			include_once("ClientHandler.php");
+			include_once("inc/classes/ClientHandler.php");
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->startClient($torrent, 0, $queueActive);
@@ -1346,7 +1346,7 @@ function indexStartTorrent($torrent,$interactive) {
 			if (!empty($spo)){
 				// This is a setPriorityOnly Request.
 			} else {
-				include_once("ClientHandler.php");
+				include_once("inc/classes/ClientHandler.php");
 				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
 				$clientHandler->startClient($torrent, 1, $queueActive);
 				if ($clientHandler->status == 3) { // hooray
@@ -1433,7 +1433,7 @@ function indexProcessDownload($url_upload) {
 				// Process setPriority Request.
 				setPriority(urldecode($file_name));
 			}
-			include_once("ClientHandler.php");
+			include_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 			switch ($actionId) {
 				case 3:
@@ -1482,7 +1482,7 @@ function indexProcessUpload() {
 							// Process setPriority Request.
 							setPriority(urldecode($file_name));
 						}
-						include_once("ClientHandler.php");
+						include_once("inc/classes/ClientHandler.php");
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 						switch ($actionId) {
 							case 3:
@@ -1549,7 +1549,7 @@ function repairTorrentflux() {
 	}
 
 	// rewrite stat-files
-	require_once("inc/class/AliasFile.php");
+	require_once("inc/classes/AliasFile.php");
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
 		$alias = getAliasName($torrent);
@@ -1622,7 +1622,7 @@ function getLoadAverageString() {
  */
 function injectTorrent($torrent) {
 	global $cfg;
-	require_once("inc/class/AliasFile.php");
+	require_once("inc/classes/AliasFile.php");
 	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($torrent).".stat",	 $cfg['user'], $cfg);
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["torrent_file_path"].$torrent);
@@ -1865,7 +1865,7 @@ function getTransferArray($sortOrder = '') {
  */
 function getTransferListArray() {
 	global $cfg, $db;
-	require_once("inc/class/AliasFile.php");
+	require_once("inc/classes/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
 	$arUserTorrent = array();
@@ -2796,7 +2796,7 @@ function getGoodLookingStatsForm() {
  */
 function getTransferListString() {
 	global $cfg, $db;
-	require_once("inc/class/AliasFile.php");
+	require_once("inc/classes/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
 	$arUserTorrent = array();
@@ -3570,7 +3570,7 @@ function getOwner($file) {
 //*********************************************************
 function resetOwner($file) {
 	global $cfg, $db;
-	require_once("inc/class/AliasFile.php");
+	require_once("inc/classes/AliasFile.php");
 	// log entry has expired so we must renew it
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
@@ -4610,7 +4610,7 @@ function file_size($file) {
 // This method Builds the Torrent Section of the Index Page
 function getDirList($dirName) {
 	global $cfg, $db;
-	require_once("inc/class/AliasFile.php");
+	require_once("inc/classes/AliasFile.php");
 	$lastUser = "";
 	$arUserTorrent = array();
 	$arListTorrent = array();

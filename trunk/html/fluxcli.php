@@ -69,8 +69,8 @@ $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
 // client-handler-"interfaces"
-include_once("ClientHandler.php");
-require_once("inc/class/AliasFile.php");
+include_once("inc/classes/ClientHandler.php");
+require_once("inc/classes/AliasFile.php");
 include_once("RunningTransfer.php");
 
 // -----------------------------------------------------------------------------
@@ -361,7 +361,7 @@ function cliStartTorrent($torrent = "") {
  */
 function cliStartTorrents() {
     global $cfg;
-    include_once("ClientHandler.php");
+    include_once("inc/classes/ClientHandler.php");
     echo "Starting all torrents ...\n";
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
@@ -396,7 +396,7 @@ function cliStartTorrents() {
  */
 function cliResumeTorrents() {
     global $cfg;
-    include_once("ClientHandler.php");
+    include_once("inc/classes/ClientHandler.php");
     echo "Resuming all torrents ...\n";
 	$torrents = getTorrentListFromDB();
 	foreach ($torrents as $torrent) {
@@ -622,7 +622,7 @@ function cliWatchDir($tpath = "", $username = "") {
                                 setPriority($file_name);
                             }
                             // start
-                            include_once("ClientHandler.php");
+                            include_once("inc/classes/ClientHandler.php");
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
                             $clientHandler->startClient($file_name, 0, false);
                             // just 2 secs..
