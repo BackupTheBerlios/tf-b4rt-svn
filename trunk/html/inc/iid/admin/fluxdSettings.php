@@ -61,8 +61,6 @@ $tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6','<font class="adminlin
 
 $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
 $tmpl->setvar('validateCmd', validateFile($cfg["perlCmd"]));
-$tmpl->setvar('fluxd_path', $cfg["fluxd_path"]);
-$tmpl->setvar('validatefluxd', validateFile($cfg["fluxd_path"]."/fluxd.pl"));
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
 // Qmgr
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);

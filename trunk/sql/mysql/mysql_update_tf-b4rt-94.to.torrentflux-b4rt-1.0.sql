@@ -66,7 +66,6 @@ INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.wa
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
 
 
-INSERT INTO tf_settings VALUES ('fluxd_path', '/var/www/bin/fluxd');
 INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
 
 

@@ -438,13 +438,14 @@ if (isset($_REQUEST["f"])) {
 			case "5": // fluxd-check
 				$htmlTitle = "fluxd - check";
 				$htmlMain .= '<pre>';
-				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["fluxd_path"]." ".$cfg["fluxd_path"]."/fluxd.pl check ".dirname($_SERVER["SCRIPT_FILENAME"]));
+				$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$fluxDocRoot."/bin/fluxd ".$fluxDocRoot."/bin/fluxd/fluxd.pl check ".$fluxDocRoot);
 				$htmlMain .= '</pre>';
 				break;
 			case "6": // fluxd-db-debug
 				$htmlTitle = "fluxd - db-debug";
 				$htmlMain .= '<pre>';
-				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["fluxd_path"]." ".$cfg["fluxd_path"]."/fluxd.pl debug db ".dirname($_SERVER["SCRIPT_FILENAME"]));
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$fluxDocRoot."/bin/fluxd ".$fluxDocRoot."/bin/fluxd/fluxd.pl debug db ".$fluxDocRoot);
 				$htmlMain .= '</pre>';
 				break;
 		}

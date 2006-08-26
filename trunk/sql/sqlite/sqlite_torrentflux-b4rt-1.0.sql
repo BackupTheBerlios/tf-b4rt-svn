@@ -297,7 +297,6 @@ INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
 
 
 
-INSERT INTO tf_settings VALUES ('fluxd_path', '/var/www/bin/fluxd');
 INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
 
 INSERT INTO tf_settings VALUES ('btmakemetafile','/var/www/bin/TF_BitTornado/btmakemetafile.py');
