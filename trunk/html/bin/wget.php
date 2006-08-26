@@ -27,6 +27,8 @@ require_once('inc/config/config.php');
 require_once('inc/db.php');
 // functions
 require_once("inc/functions/functions.php");
+// af
+require_once('inc/classes/AliasFile.php');
 
 // Create Connection + load settings
 $db = getdb();
@@ -54,7 +56,6 @@ $_PID = $argv[3];
 $_OWNER = $argv[4];
 
 // write out stat-file now
-require_once('inc/classes/AliasFile.php');
 write_stat_file(false);
 
 // umask

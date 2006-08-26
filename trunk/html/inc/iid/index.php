@@ -60,7 +60,7 @@ if(!empty($transfer)) {
 		require_once("inc/classes/ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 		$clientHandler->startClient($transfer, 0, false);
-		//sleep(5);
+		sleep(5);
 		header("location: index.php?iid=index");
 	} else {
 		return;

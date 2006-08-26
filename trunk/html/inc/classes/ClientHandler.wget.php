@@ -133,7 +133,7 @@ class ClientHandlerWget extends ClientHandler
 		$this->setVarsFromFile($transfer);
 
         // start it
-        $this->command = "nohup ".$this->cfg['bin_php']." -f wget.php";
+        $this->command = "nohup ".$this->cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
         $this->command .= " " . escapeshellarg($this->cfg["torrent_file_path"].$this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
