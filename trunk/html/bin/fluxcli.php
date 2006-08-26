@@ -44,12 +44,19 @@ if ($bail > 0) {
 // hold revision-number in a var
 $REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
 
+// include path
+ini_set('include_path', ini_get('include_path').':../:');
+
 // config
 require_once('inc/config/config.php');
 // db
 require_once('inc/db.php');
 // functions
 require_once("inc/functions/functions.php");
+// client-handler-"interfaces"
+require_once("inc/classes/ClientHandler.php");
+require_once("inc/classes/AliasFile.php");
+require_once("inc/classes/RunningTransfer.php");
 
 // Create Connection.
 $db = getdb();
@@ -68,11 +75,6 @@ $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
-// client-handler-"interfaces"
-require_once("inc/classes/ClientHandler.php");
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
@@ -81,64 +83,64 @@ if ((isset($action)) && ($action != "")) {
 	switch ($action) {
 		case "torrents":
 			printTorrents();
-		break;
+			break;
 		case "status":
 			printStatus();
-		break;
+			break;
 		case "netstat":
 			printNetStat();
-		break;
+			break;
 		case "start":
 			cliStartTorrent(@$argv[2]);
-		break;
+			break;
 		case "stop":
 			cliStopTorrent(@$argv[2]);
-		break;
+			break;
 		case "start-all":
 			cliStartTorrents();
-		break;
+			break;
 		case "resume-all":
 			cliResumeTorrents();
-		break;
+			break;
 		case "stop-all":
 			cliStopTorrents();
-		break;
+			break;
 		case "reset":
 			cliResetTorrent(@$argv[2]);
-		break;
+			break;
 		case "delete":
 			cliDeleteTorrent(@$argv[2]);
-		break;
+			break;
 		case "wipe":
 			cliWipeTorrent(@$argv[2]);
-		break;
+			break;
 		case "inject":
 			cliInjectTorrent(@$argv[2],@$argv[3]);
-		break;
+			break;
 		case "watch":
 			cliWatchDir(@$argv[2],@$argv[3]);
-		break;
+			break;
 		case "xfer":
 			cliXferShutdown(@$argv[2]);
-		break;
+			break;
 		case "repair":
 		    echo "Repairing torrentflux-b4rt Installation...";
 			repairTorrentflux();
         	echo "done\n";
         	exit;
-		break;
+			break;
 		case "version":
 		case "-version":
 		case "--version":
 		case "-v":
 			printVersion();
-		break;
+			break;
 		case "help":
 		case "--help":
 		case "-h":
 		default:
 			printUsage();
-		break;
+			break;
 	}
 } else {
 	printUsage();
@@ -361,7 +363,6 @@ function cliStartTorrent($torrent = "") {
  */
 function cliStartTorrents() {
     global $cfg;
-    require_once("inc/classes/ClientHandler.php");
     echo "Starting all torrents ...\n";
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
@@ -396,7 +397,6 @@ function cliStartTorrents() {
  */
 function cliResumeTorrents() {
     global $cfg;
-    require_once("inc/classes/ClientHandler.php");
     echo "Resuming all torrents ...\n";
 	$torrents = getTorrentListFromDB();
 	foreach ($torrents as $torrent) {
@@ -622,7 +622,6 @@ function cliWatchDir($tpath = "", $username = "") {
                                 setPriority($file_name);
                             }
                             // start
-                            require_once("inc/classes/ClientHandler.php");
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
                             $clientHandler->startClient($file_name, 0, false);
                             // just 2 secs..

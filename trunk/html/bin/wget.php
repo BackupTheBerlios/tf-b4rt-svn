@@ -21,6 +21,9 @@
 
 *******************************************************************************/
 
+// include path
+ini_set('include_path', ini_get('include_path').':../:');
+
 // config
 require_once('inc/config/config.php');
 // db

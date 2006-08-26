@@ -49,6 +49,9 @@ $htmlMain = "";
 // authenticate first
 superadminAuthentication();
 
+// fopen
+ini_set("allow_url_fopen", "1");
+
 // get + define this version (is done in config.php but we dont want that here)
 define('_VERSION_THIS',trim(getDataFromFile(_VERSION_LOCAL)));
 

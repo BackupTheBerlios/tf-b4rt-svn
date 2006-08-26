@@ -21,7 +21,6 @@
 
 *******************************************************************************/
 
-
 /**
  * @author    R.D. Damron
  * @name      rar/zip uncompression
@@ -36,22 +35,6 @@ $arg2 = urldecode($argv[2]);
 $arg3 = $argv[3];
 $arg4 = $argv[4];
 $arg5 = $argv[5];
-
-// functions
-function is_running($PID){
-    exec("ps $PID", $ProcessState);
-    return(count($ProcessState) >= 2);
-}
-
-function kill($PID){
-    exec("kill -KILL $PID");
-    return true;
-}
-
-function del($file){
-    exec("rm -rf $file");
-    return true;
-}
 
 // unrar file
 if(strcasecmp('rar', $arg3) == 0){
@@ -88,21 +71,20 @@ if(strcasecmp('rar', $arg3) == 0){
 			}
 		}
 	}
-	if(file_exists($arg2.$logfile)) {
+	if (file_exists($arg2.$logfile)) {
 		$lines = file($arg2.$logfile);
 		foreach($lines as $chkline) {
 			if(strpos($chkline, 'All OK') !== FALSE){
 				echo 'File has successfully been extracted!';
-				if(file_exists($arg2.$logfile)) {
+				if (file_exists($arg2.$logfile))
 					del($arg2.$logfile);
-				}
 			}
 		}
 	}
 }
 
 // unzip
-if(strcasecmp('zip', $arg3) == 0){
+if (strcasecmp('zip', $arg3) == 0) {
 	if(file_exists($arg2.$logfile))
 		del($arg2.$logfile);
     $Command = escapeshellarg($arg4).' ' . escapeshellarg($arg1) . ' -d ' . escapeshellarg($arg2);
@@ -114,11 +96,45 @@ if(strcasecmp('zip', $arg3) == 0){
 }
 
 //debug: echo variables
-if(strcasecmp('debug', $arg3) == 0){
+if (strcasecmp('debug', $arg3) == 0) {
 	echo $arg1 . '<BR>';
 	echo $arg2 . '<BR>';
 	echo $arg3 . '<BR>';
 	echo $arg4 . '<BR>';
 	echo $arg5 . '<BR>';
 }
+
+/**
+ * is_running
+ *
+ * @param $PID
+ * @return
+ */
+function is_running($PID){
+    exec("ps $PID", $ProcessState);
+    return(count($ProcessState) >= 2);
+}
+
+/**
+ * kill
+ *
+ * @param $PID
+ * @return
+ */
+function kill($PID){
+    exec("kill -KILL $PID");
+    return true;
+}
+
+/**
+ * del
+ *
+ * @param $file
+ * @return
+ */
+function del($file){
+    exec("rm -rf $file");
+    return true;
+}
+
 ?>
