@@ -64,12 +64,10 @@ httpseeds = optional list of http-seed URLs, in the format:
 */
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/maketorrent.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/maketorrent.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/maketorrent.tmpl");
 
 // Variable information
 $tpath	  = $cfg["torrent_file_path"];

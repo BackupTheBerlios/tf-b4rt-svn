@@ -21,12 +21,10 @@
 *******************************************************************************/
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/multiup.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/multiup.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/multiup.tmpl");
 
 if (!empty($_FILES['upload_files'])) {
 	//echo '<pre>'; var_dump($_FILES); echo '</pre>';

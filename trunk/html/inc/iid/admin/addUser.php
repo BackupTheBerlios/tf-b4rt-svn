@@ -21,11 +21,11 @@
 *******************************************************************************/
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/addUser.tmpl");
-} else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/addUser.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/addUser.tmpl");
+
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {
 	$tmpl->setvar('head', getHead(_ADMINISTRATION));

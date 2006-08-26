@@ -20,14 +20,11 @@
 
 *******************************************************************************/
 
-
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/history.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/history.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/history.tmpl");
 
 $offset = 50;
 $inx = 0;

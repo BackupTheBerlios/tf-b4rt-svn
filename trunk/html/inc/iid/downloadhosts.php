@@ -24,12 +24,10 @@
 require_once("inc/classes/AliasFile.php");
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/downloadhosts.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/downloadhosts.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/downloadhosts.tmpl");
 
 $torrent = getRequestVar('torrent');
 $error = "";

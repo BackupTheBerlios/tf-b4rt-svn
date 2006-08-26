@@ -21,11 +21,11 @@
 *******************************************************************************/
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/editRSS.tmpl");
-} else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/editRSS.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/editRSS.tmpl");
+
 $tmpl->setvar('head', getHead("Administration - RSS"));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);

@@ -21,11 +21,11 @@
 *******************************************************************************/
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/xfer.tmpl");
-} else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/xfer.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/xfer.tmpl");
+
 $tmpl->setvar('head', getHead(_XFER));
 $tmpl->setvar('menu', getMenu());
 if ($cfg['enable_xfer'] == 1) {

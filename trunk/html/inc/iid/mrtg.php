@@ -24,11 +24,10 @@
 define('_DEFAULT_TARGET','traffic');
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/mrtg.tmpl");
-} else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/mrtg.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/mrtg.tmpl");
 
 // request-vars
 $mrtgTarget = getRequestVar('mrtg_target');

@@ -23,12 +23,10 @@
 // contributed by NovaKing -- thanks duder!
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/viewnfo.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/viewnfo.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/viewnfo.tmpl");
 
 $tmpl->setvar('head', getHead("View NFO"));
 

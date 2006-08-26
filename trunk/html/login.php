@@ -35,11 +35,10 @@ $db = getdb();
 loadSettings();
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["default_theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/login.tmpl");
-} else {
+if ((strpos($cfg['default_theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/login.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/login.tmpl");
 
 // include default theme
 include("themes/".$cfg["default_theme"]."/index.php");

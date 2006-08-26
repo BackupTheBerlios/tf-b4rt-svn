@@ -20,14 +20,11 @@
 
 *******************************************************************************/
 
-
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/message.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/message.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/message.tmpl");
 
 $to_user = getRequestVar('to_user');
 if(empty($to_user) or empty($cfg['user'])) {

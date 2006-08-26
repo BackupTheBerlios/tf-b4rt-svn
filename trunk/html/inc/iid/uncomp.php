@@ -21,12 +21,10 @@
 *******************************************************************************/
 
 # create new template
-if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/uncomp.tmpl");
-}
-else {
+if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/uncomp.tmpl");
-}
+else
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/uncomp.tmpl");
 
 $tmpl->setvar('head', getHead('Uncompressing File', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
