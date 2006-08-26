@@ -24,7 +24,6 @@
 //XFER: getXferBar(max_bytes, used_bytes, title)
 //XFER: gets xfer percentage bar
 function getXferBar($total, $used, $title) {
-
 	global $cfg;
 	$remaining = max(0,$total-$used/(1024*1024));
 	$percent = round($remaining/$total*100,0);
@@ -1023,17 +1022,17 @@ function getTransferTableHead($settings, $sortOrder = '', $nPrefix = '') {
 	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">";
 	switch ($sortOrder) {
 		case 'na': // sort alphabetically by name ascending
-			$output .= '<a href="?so=nd"><font class="adminlink">' .$nPrefix. _TORRENTFILE .'</font></a>';
+			$output .= '<a href="?so=nd"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
 			$output .= '&nbsp;';
 			$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
 			break;
 		case 'nd': // sort alphabetically by name descending
-			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TORRENTFILE .'</font></a>';
+			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
 			$output .= '&nbsp;';
 			$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
 			break;
 		default:
-			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TORRENTFILE .'</font></a>';
+			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
 			break;
 	}
 	$output .= "</div></td>";

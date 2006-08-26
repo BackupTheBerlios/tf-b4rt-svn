@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title><tmpl_var name="_RUNTORRENT"> - <tmpl_var name="displayName"></title>
+	<title><tmpl_var name="_RUNTRANSFER"> - <tmpl_var name="displayName"></title>
 	<LINK REL="StyleSheet" HREF="themes/<tmpl_var name="theme">/css/style.css" TYPE="text/css" />
 	<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 <script language="JavaScript">
@@ -324,7 +324,7 @@ function isNumber(sText)
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
-						<input type="button" id="startbtn" name="startbtn" value="<tmpl_var name="_RUNTORRENT">" onclick="StartTorrent();">&nbsp;&nbsp;
+						<input type="button" id="startbtn" name="startbtn" value="<tmpl_var name="_RUNTRANSFER">" onclick="StartTorrent();">&nbsp;&nbsp;
 						<input type="button" value="Cancel" onclick="window.close()">
 					</td>
 				</tr>

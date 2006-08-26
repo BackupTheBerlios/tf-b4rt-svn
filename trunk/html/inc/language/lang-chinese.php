@@ -52,7 +52,7 @@ define("_UPLOADHISTORY","上传纪录");
 define("_MYPROFILE","编辑我的个人资料");
 define("_ADMINISTRATION","管理控制台");
 define("_SENDMESSAGETO","传送讯息给");
-define("_TORRENTFILE","Torrent 档案");
+define("_TRANSFERFILE","Transfer 档案");
 define("_FILESIZE","档案大小");
 define("_STATUS","状态");
 define("_ADMIN","管理");
@@ -67,10 +67,10 @@ define("_USER","用户");
 define("_DONE","已结束");
 define("_INCOMPLETE","未完成");
 define("_NEW","新增");
-define("_TORRENTDETAILS","Torrent 的详细资讯");
-define("_STOPDOWNLOAD","停止 Torrent");
-define("_RUNTORRENT","启动 Torrent");
-define("_SEEDTORRENT","Seed Torrent"); // No Official Chinese translation for "seed"
+define("_TRANSFERDETAILS","Transfer 的详细资讯");
+define("_STOPTRANSFER","停止 Transfer");
+define("_RUNTRANSFER","启动 Transfer");
+define("_SEEDTRANSFER","Seed Transfer"); // No Official Chinese translation for "seed"
 define("_DELETE","删除");
 define("_ABOUTTODELETE","你将要删除");
 define("_NOTOWNER","你不是这个 Torrent 档的上传者");
@@ -166,7 +166,7 @@ define("_STARTED", "Started");
 define("_ENDED", "Ended");
 define("_QUEUED","Queued");
 define("_DELQUEUE","Remove from Queue");
-define("_FORCESTOP","Kill Torrent");
+define("_FORCESTOP","Kill Transfer");
 define("_STOPPING","Stopping");
 define("_COOKIE_MENU","cookies");
 

@@ -34,7 +34,7 @@ if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/details.tmpl");
 }
-$tmpl->setvar('head', getHead(_TORRENTDETAILS));
+$tmpl->setvar('head', getHead(_TRANSFERDETAILS));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 

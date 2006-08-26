@@ -47,7 +47,7 @@ if(strlen($displayName) >= 55) {
 }
 
 // set some template-vars
-$tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
+$tmpl->setvar('_RUNTRANSFER', _RUNTRANSFER);
 $tmpl->setvar('displayName', $displayName);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
@@ -69,7 +69,7 @@ if ($torrentExists) {
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('bgLight', $cfg["bgLight"]);
 $tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
-$tmpl->setvar('_RUNTORRENT', _RUNTORRENT);
+$tmpl->setvar('_RUNTRANSFER', _RUNTRANSFER);
 
 # profiles
 $sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);

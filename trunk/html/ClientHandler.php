@@ -420,7 +420,7 @@ class ClientHandler
         // hooked into the place where client really dies.
         stopTorrentSettings($this->transfer);
         //
-        AuditAction($this->cfg["constants"]["kill_torrent"], $this->transfer);
+        AuditAction($this->cfg["constants"]["kill_transfer"], $this->transfer);
         if (!empty($return)) {
             sleep(3);
             // set pid

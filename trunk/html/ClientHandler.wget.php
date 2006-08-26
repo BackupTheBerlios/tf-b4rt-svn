@@ -23,6 +23,9 @@
 // class ClientHandler for wget-client
 class ClientHandlerWget extends ClientHandler
 {
+	var $url = "";
+	var $urlFile = "";
+
     //--------------------------------------------------------------------------
     /**
      * ctor
@@ -42,6 +45,23 @@ class ClientHandlerWget extends ClientHandler
         $bin = array_pop($uselessVar);
         //
         $this->binSystem = $bin;
+    }
+
+    /**
+     * setVarsFromUrl
+     *
+     * @param $transferUrl
+     */
+    function setVarsFromUrl($transferUrl) {
+    	$this->url = $transferUrl;
+        $this->transfer = strrchr($transferUrl,'/');
+        if ($this->transfer{0} == '/')
+        	$this->transfer = substr($this->transfer, 1);
+        $aliasName = getAliasName($this->transfer);
+        $this->urlFile = $this->cfg["torrent_file_path"].$aliasName.".wget";
+        $this->alias = $aliasName.".stat";
+        $this->owner = $this->cfg['user'];
+        $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
     }
 
     //--------------------------------------------------------------------------
@@ -67,24 +87,17 @@ class ClientHandlerWget extends ClientHandler
             }
         }
 
-        // set some vars
-        $this->transfer = strrchr($transfer,'/');
-        if ($this->transfer{0} == '/')
-        	$this->transfer = substr($this->transfer, 1);
-        $aliasName = getAliasName($this->transfer);
-        $urlFile = $this->cfg["torrent_file_path"].$aliasName.".wget";
-        $this->alias = $aliasName.".stat";
-        $this->owner = $this->cfg['user'];
-        $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
+        // set some vars from the url
+		$this->setVarsFromUrl($transfer);
 
 		// write url-file
-		$fp = fopen($urlFile, 'w');
-		fwrite($fp, $transfer);
+		$fp = fopen($this->urlFile, 'w');
+		fwrite($fp, $this->url);
 		fclose($fp);
 
         // start it
         $this->command = "nohup ".$this->cfg['bin_php']." -f wget.php";
-        $this->command .= " " . escapeshellarg($urlFile);
+        $this->command .= " " . escapeshellarg($this->urlFile);
         $this->command .= " " . escapeshellarg($this->cfg["torrent_file_path"].$this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
         $this->command .= " " . $this->owner;

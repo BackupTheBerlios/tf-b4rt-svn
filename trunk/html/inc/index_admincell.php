@@ -1,11 +1,11 @@
 <?php
 /* $Id$ */
 
-$output .= '<div align="center">';
+$output .= '<div align="center" class="admincell">';
 
 // torrentdetails
 if ($isTorrent) {
-	$torrentDetails = _TORRENTDETAILS;
+	$torrentDetails = _TRANSFERDETAILS;
 	if ($lastUser != "")
 		$torrentDetails .= "\n"._USER.": ".$lastUser;
 	$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
@@ -27,10 +27,10 @@ $output .= '</a>';
 if ($owner || IsAdmin($cfg["user"])) {
 	if($percentDone >= 0 && $transferRunning == 1) {
 		if ($isTorrent) {
-			$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._STOPDOWNLOAD."\"></a>";
+			$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._STOPTRANSFER."\"></a>";
 			$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
 			if ($cfg['enable_multiops'] != 0)
-				$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
+				$output .= "<input type=\"checkbox\" name=\"transfer[]\" value=\"".urlencode($entry)."\">";
 		} else {
 			$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"-\">";
 			$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
@@ -50,9 +50,9 @@ if ($owner || IsAdmin($cfg["user"])) {
 						if ($isTorrent) {
 							$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\">";
 							if ($show_run)
-								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTORRENT."\" border=\"0\">";
+								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
 							else
-								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTORRENT."\" border=\"0\">";
+								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
 							$output .= "</a>";
 						} else {
 							$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"-\">";
@@ -62,9 +62,9 @@ if ($owner || IsAdmin($cfg["user"])) {
 						if ($isTorrent) {
 							$output .= "<a href=\"".$_SERVER['PHP_SELF']."?torrent=".urlencode($entry)."\">";
 							if ($show_run) {
-								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTORRENT."\" border=\"0\">";
+								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
 							} else{
-								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTORRENT."\" border=\"0\">";
+								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
 							}
 							$output .= "</a>";
 						} else {
@@ -84,12 +84,8 @@ if ($owner || IsAdmin($cfg["user"])) {
 			// pid file present so process may be still running. don't allow deletion.
 			$output .= "<img src=\"images/delete_off.gif\" width=\"16\" height=\"16\" title=\""._STOPPING."\" border=0>";
 		}
-		if ($cfg['enable_multiops'] == 1) {
-			if ($isTorrent)
-				$output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
-			else
-				$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
-		}
+		if ($cfg['enable_multiops'] == 1)
+			$output .= "<input type=\"checkbox\" name=\"transfer[]\" value=\"".urlencode($entry)."\">";
 	}
 } else {
 	$output .= "<img src=\"images/locked.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._NOTOWNER."\">";
@@ -97,6 +93,6 @@ if ($owner || IsAdmin($cfg["user"])) {
 	$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
 }
 
-$output .= "</div>";
+$output .= '</div>';
 
 ?>

@@ -1420,17 +1420,17 @@ function getDirList($dirName) {
 		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
 		switch ($sortOrder) {
 			case 'na': // sort alphabetically by name ascending
-				$output .= '<a href="?so=nd"><font class="adminlink">' .$cfg["user"].": ". _TORRENTFILE .'</font></a>';
+				$output .= '<a href="?so=nd"><font class="adminlink">' .$cfg["user"].": ". _TRANSFERFILE .'</font></a>';
 				$output .= '&nbsp;';
 				$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
 				break;
 			case 'nd': // sort alphabetically by name descending
-				$output .= '<a href="?so=na"><font class="adminlink">' .$cfg["user"].": ". _TORRENTFILE .'</font></a>';
+				$output .= '<a href="?so=na"><font class="adminlink">' .$cfg["user"].": ". _TRANSFERFILE .'</font></a>';
 				$output .= '&nbsp;';
 				$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
 				break;
 			default:
-				$output .= '<a href="?so=na"><font class="adminlink">' .$cfg["user"].": ". _TORRENTFILE .'</font></a>';
+				$output .= '<a href="?so=na"><font class="adminlink">' .$cfg["user"].": ". _TRANSFERFILE .'</font></a>';
 				break;
 		}
 		$output .= "</div></td>";
@@ -1473,17 +1473,17 @@ function getDirList($dirName) {
 		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
 		switch ($sortOrder) {
 			case 'na': // sort alphabetically by name ascending
-				$output .= '<a href="?so=nd"><font class="adminlink">' ._TORRENTFILE .'</font></a>';
+				$output .= '<a href="?so=nd"><font class="adminlink">' ._TRANSFERFILE .'</font></a>';
 				$output .= '&nbsp;';
 				$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
 				break;
 			case 'nd': // sort alphabetically by name descending
-				$output .= '<a href="?so=na"><font class="adminlink">' ._TORRENTFILE .'</font></a>';
+				$output .= '<a href="?so=na"><font class="adminlink">' ._TRANSFERFILE .'</font></a>';
 				$output .= '&nbsp;';
 				$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
 				break;
 			default:
-				$output .= '<a href="?so=na"><font class="adminlink">' ._TORRENTFILE .'</font></a>';
+				$output .= '<a href="?so=na"><font class="adminlink">' ._TRANSFERFILE .'</font></a>';
 				break;
 		}
 		$output .= "</div></td>";

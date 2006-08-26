@@ -125,84 +125,117 @@ switch ($action) {
     	}
     	break;
 
-    /* ---------------------------------------------------- selected torrents */
+    /* --------------------------------------------------- selected transfers */
     default:
-       foreach($_POST['torrent'] as $key => $element) {
-          $alias = getAliasName($element).".stat";
-          $settingsAry = loadTorrentSettings(urldecode($element));
-          $tRunningFlag = isTransferRunning(urldecode($element));
-          $btclient = $settingsAry["btclient"];
-          switch ($action) {
-             case "torrentStart": /* torrentStart */
-                if ($tRunningFlag == 0) {
-                   if ($cfg["enable_file_priority"]) {
-                       include_once("setpriority.php");
-                       // Process setPriority Request.
-                       setPriority(urldecode($element));
-                   }
-                   $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->startClient(urldecode($element), 0, $queueActive);
-                   // just 2 sec..
-                   sleep(2);
-                }
-             	break;
-             case "torrentStop": /* torrentStop */
-                if ($tRunningFlag != 0) {
-                   $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->stopClient(urldecode($element), $alias);
-                   // just 2 sec..
-                   sleep(2);
-                }
-             	break;
-             case "torrentEnQueue": /* torrentEnQueue */
-                if ($tRunningFlag == 0) {
-                    // enqueue it
-                    if ($cfg["enable_file_priority"]) {
-                        include_once("setpriority.php");
-                        // Process setPriority Request.
-                        setPriority(urldecode($element));
-                    }
-                    include_once("ClientHandler.php");
-                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startClient(urldecode($element), 0, true);
-                    // just a sec..
-                    sleep(1);
-                }
-             	break;
-             case "torrentDeQueue": /* torrentDeQueue */
-                if ($tRunningFlag == 0) {
-                    // set request var
-                    $_REQUEST['alias_file'] = getAliasName($element).".stat";;
-                    // dequeue it
-					$fluxdQmgr->dequeueTorrent($element, $cfg['user']);
-                    // just a sec..
-                    sleep(1);
-                }
-             	break;
-             case "torrentResetTotals": /* torrentResetTotals */
-                resetTorrentTotals(urldecode($element), false);
-             	break;
-             default:
-                if ($tRunningFlag != 0) {
-                   // stop torrent first
-                   $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->stopClient(urldecode($element), $alias);
-                   // give the torrent some time to die
-                   sleep(8);
-                }
-                // if it was running... hope the thing is down... rock on
-                switch ($action) {
-                   case "torrentWipe": /* torrentWipe */
-                      deleteTorrentData(urldecode($element));
-                      resetTorrentTotals(urldecode($element), true);
-                      break;
-                   case "torrentData": /* torrentData */
-                      deleteTorrentData(urldecode($element));
-                   case "torrent": /* torrent */
-                      deleteTransfer(urldecode($element), $alias);
-                }
-          }
-       }
+
+		foreach($_POST['transfer'] as $key => $element) {
+
+			// alias
+			$alias = getAliasName($element).".stat";
+			if ((substr(strtolower($element),-8 ) == ".torrent")) {
+				// this is a torrent-client
+				$isTorrent = true;
+				$tclient = getTransferClient(urldecode($element));
+			} else if ((substr(strtolower($element),-5 ) == ".wget")) {
+				// this is wget.
+				$isTorrent = false;
+				$tclient = "wget";
+			} else {
+				// this is "something else". use tornado statfile as default
+				$isTorrent = false;
+				$tclient = "tornado";
+			}
+
+			// is transfer running ?
+			$tRunningFlag = isTransferRunning(urldecode($element));
+
+			// action switch
+			switch ($action) {
+
+				case "transferStart": /* transferStart */
+					if (($isTorrent) && ($tRunningFlag == 0)) {
+						if ($cfg["enable_file_priority"]) {
+							include_once("setpriority.php");
+							// Process setPriority Request.
+							setPriority(urldecode($element));
+						}
+						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler->startClient(urldecode($element), 0, $queueActive);
+						// just 2 sec..
+						sleep(2);
+					}
+					break;
+
+				case "transferStop": /* transferStop */
+					if (($isTorrent) && ($tRunningFlag != 0)) {
+						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler->stopClient(urldecode($element), $alias);
+						// just 2 sec..
+						sleep(2);
+					}
+					break;
+
+				case "transferEnQueue": /* transferEnQueue */
+					if (($isTorrent) && ($tRunningFlag == 0)) {
+						// enqueue it
+						if ($cfg["enable_file_priority"]) {
+							include_once("setpriority.php");
+							// Process setPriority Request.
+							setPriority(urldecode($element));
+						}
+						include_once("ClientHandler.php");
+						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler->startClient(urldecode($element), 0, true);
+						// just a sec..
+						sleep(1);
+					}
+					break;
+
+				case "transferDeQueue": /* transferDeQueue */
+					if (($isTorrent) && ($tRunningFlag == 0)) {
+						// set request var
+						$_REQUEST['alias_file'] = getAliasName($element).".stat";;
+						// dequeue it
+						$fluxdQmgr->dequeueTorrent($element, $cfg['user']);
+						// just a sec..
+						sleep(1);
+					}
+					break;
+
+				case "transferResetTotals": /* transferResetTotals */
+					resetTorrentTotals(urldecode($element), false);
+					break;
+
+				default:
+					if (($isTorrent) && ($tRunningFlag != 0)) {
+						// stop torrent first
+						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler->stopClient(urldecode($element), $alias);
+						// give the torrent some time to die
+						sleep(8);
+						// is transfer running ?
+						$tRunningFlag = isTransferRunning(urldecode($element));
+					}
+					// if it was running... hope the thing is down...
+					// only continue if it is
+					if ($tRunningFlag == 0) {
+						switch ($action) {
+							case "transferWipe": /* transferWipe */
+								if ($isTorrent) {
+									deleteTorrentData(urldecode($element));
+									resetTorrentTotals(urldecode($element), true);
+								}
+								break;
+							case "transferData": /* transferData */
+								if ($isTorrent)
+									deleteTorrentData(urldecode($element));
+							case "transfer": /* transfer */
+								deleteTransfer(urldecode($element), $alias);
+						}
+					}
+
+			} // end switch
+		} // end loop
 }
 
 /* redirect */

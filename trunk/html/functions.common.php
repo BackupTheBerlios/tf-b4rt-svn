@@ -588,17 +588,28 @@ function stopTorrentSettings($torrent) {
 /* ************************************************************************** */
 
 /**
- * checks if torrent is running by checking for existencte of pid-file.
+ * checks if transfer is running by checking for existencte of pid-file.
  *
  * @param $transfer name of the transfer
  * @return 1|0
  */
 function isTransferRunning($transfer) {
 	global $cfg;
-	if (file_exists($cfg["torrent_file_path"].substr($transfer,0,-8).'.stat.pid'))
-		return 1;
-	else
+	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+		// this is a torrent-client
+		if (file_exists($cfg["torrent_file_path"].substr($transfer,0,-8).'.stat.pid'))
+			return 1;
+		else
+			return 0;
+	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+		// this is wget.
+		if (file_exists($cfg["torrent_file_path"].substr($transfer,0,-5).'.stat.pid'))
+			return 1;
+		else
+			return 0;
+	} else {
 		return 0;
+	}
 }
 
 /* ************************************************************************** */
@@ -1603,8 +1614,38 @@ function getLoadAverageString() {
 
 /* ************************************************************************** */
 
+
 /**
  * injects a atorrent
+ *
+ * @param $url
+ * @return boolean
+ */
+function injectWget($url) {
+	global $cfg;
+	include_once("AliasFile.php");
+/*
+    $this->transfer = strrchr($transfer,'/');
+    if ($this->transfer{0} == '/')
+    	$this->transfer = substr($this->transfer, 1);
+    $aliasName = getAliasName($this->transfer);
+    $urlFile = $this->cfg["torrent_file_path"].$aliasName.".wget";
+    $this->alias = $aliasName.".stat";
+    $this->owner = $this->cfg['user'];
+    $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
+
+	$afile = $cfg["torrent_file_path"].getAliasName($torrent).".stat";
+
+	$af = AliasFile::getAliasFileInstance($afile,	 $cfg['user'], $cfg);
+	$af->running = "2"; // file is new
+	$af->size = 0;
+	$af->WriteFile();
+	return true;
+*/
+}
+
+/**
+ * injects a torrent
  *
  * @param $torrent
  * @return boolean
@@ -1877,14 +1918,14 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		// alias / stat
 		$alias = getAliasName($entry).".stat";
-		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
+		if ((substr(strtolower($entry),-8 ) == ".torrent")) {
 			// this is a torrent-client
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
-		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
+		} else if ((substr(strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
 			$transferowner = $cfg["user"];
