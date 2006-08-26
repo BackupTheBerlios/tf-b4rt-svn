@@ -215,9 +215,6 @@ function firstLogin($username = '', $password = '') {
 	showError($db,$sql);
 	// Test and setup some paths for the TF settings
 	$pythonCmd = $cfg["pythonCmd"];
-	$btphpbin = getcwd() . "/bin/TF_BitTornado/btphptornado.py";
-	$maketorrent = getcwd() . "/bin/TF_BitTornado/btmakemetafile.py";
-	$btshowmetainfo = getcwd() . "/bin/TF_BitTornado/btshowmetainfo.py";
 	$tfPath = getcwd() . "/downloads/";
 	if (!isFile($cfg["pythonCmd"])) {
 		$pythonCmd = trim(shell_exec("which python"));
@@ -226,11 +223,7 @@ function firstLogin($username = '', $password = '') {
 	}
 	$settings = array(
 						"pythonCmd" => $pythonCmd,
-						"btphpbin" => $btphpbin,
-						"btmakemetafile" => $maketorrent,
-						"btshowmetainfo" => $btshowmetainfo,
-						"path" => $tfPath,
-						"btclient_tornado_bin" => $btphpbin
+						"path" => $tfPath
 					);
 	saveSettings($settings);
 	AuditAction($cfg["constants"]["update"], "Initial Settings Updated for first login.");
@@ -1114,7 +1107,8 @@ function getTorrentMetaInfo($torrent) {
 			break;
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
+			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
+			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
 	}
 }
 

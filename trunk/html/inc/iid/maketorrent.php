@@ -98,7 +98,7 @@ if( !empty( $announce ) && $announce != "http://" )
 	}
 
 	// This is the command to execute
-	$app = "nohup " . $cfg["pythonCmd"] . " -OO " . $cfg["btmakemetafile"] . " " . $announce . " " . escapeshellarg( $cfg['path'] . $file ) . " ";
+	$app = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg['path'].$file)." ";
 
 	// Is there comments to add?
 	if( !empty( $comment ) )

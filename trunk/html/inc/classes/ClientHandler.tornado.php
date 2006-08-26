@@ -23,6 +23,9 @@
 // class ClientHandler for tornado-client
 class ClientHandlerTornado extends ClientHandler
 {
+	// tornado-bin
+	var $tornadoBin = "";
+
     /**
      * ctor
      */
@@ -32,13 +35,10 @@ class ClientHandlerTornado extends ClientHandler
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
+        $this->binClient = "btphptornado.py";
+        $this->tornadoBin = dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btphptornado.py";
         //
         $this->initialize($cfg);
-        // efficient code :
-        //$this->binClient = array_pop(explode("/",$this->cfg["btclient_tornado_bin"]));
-        // compatible code (should work on flawed phps like 5.0.5+) :
-        $uselessVar = explode("/",$this->cfg["btclient_tornado_bin"]);
-        $this->binClient = array_pop($uselessVar);
     }
 
     /**
@@ -51,8 +51,8 @@ class ClientHandlerTornado extends ClientHandler
 
         // do tornado special-pre-start-checks
         // check to see if the path to the python script is valid
-        if (!is_file($this->cfg["btclient_tornado_bin"])) {
-            AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->cfg["btclient_tornado_bin"]." is not valid");
+        if (!is_file($this->tornadoBin)) {
+            AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->tornadoBin." is not valid");
             if (IsAdmin()) {
                 $this->status = -1;
                 header("location: index.php?iid=admin&op=configSettings");
@@ -100,7 +100,7 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $pyCmd . " " .$this->cfg["btclient_tornado_bin"];
+		$this->command .= $pyCmd . " " .$this->tornadoBin;
         $this->command .= " ".$this->runtime;
         $this->command .= " ".$this->sharekill_param;
         $this->command .= " ".$this->cfg["torrent_file_path"].$this->alias .".stat";

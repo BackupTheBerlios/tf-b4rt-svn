@@ -203,14 +203,6 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>tornado : btphptornado.py Path</strong><br>
-									Specify the path to the btphptornado.py python script:
-								</td>
-								<td valign="top">
-									<input name="btclient_tornado_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_tornado_bin">" size="55"><tmpl_var name="validate_tornado_bin">
-								</td>
-							</tr>
-							<tr>
 								<td align="left" width="350" valign="top"><strong>tornado : Extra Commandline Options</strong><br>
 									DO NOT include --max_upload_rate, --minport, --maxport, --max_uploads , --max_initiate here.
 								</td>
@@ -231,14 +223,6 @@
 								</td>
 								<td valign="top">
 									<input name="btclient_transmission_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_options">" size="55">
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>btshowmetainfo.py Path</strong><br>
-									Specify the path to the btshowmetainfo.py python script:
-								</td>
-								<td valign="top">
-									<input name="btshowmetainfo" type="Text" maxlength="254" value="<tmpl_var name="btshowmetainfo">" size="55"><tmpl_var name="validate_btshowmetainfo">
 								</td>
 							</tr>
 							<tr><td colspan="2"><hr noshade></td></tr>
@@ -383,7 +367,7 @@
 								<td align="left" width="350" valign="top"><strong>nice</strong><br>
 									nice clients and increment priority by given adjustment first:
 								</td>
-								<td valign="bottom">
+								<td valign="top">
 									<select name="nice_adjust">
 										<tmpl_loop name="nice_list">
 											<option value="<tmpl_var name="i">"
@@ -497,14 +481,6 @@
 										</tmpl_if>
 										>false</option>
 									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>btmakemetafile.py Path</strong><br>
-									Specify the path to the btmakemetafile.py python script (used for making torrents):
-								</td>
-								<td valign="top">
-									<input name="btmakemetafile" type="Text" maxlength="254" value="<tmpl_var name="btmakemetafile">" size="55"><tmpl_var name="validate_btmakemetafile">
 								</td>
 							</tr>
 							<tr>

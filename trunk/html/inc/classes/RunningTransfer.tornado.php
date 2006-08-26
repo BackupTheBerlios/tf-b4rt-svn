@@ -24,6 +24,9 @@
 // class RunningTransferTornado for tornado-client
 class RunningTransferTornado extends RunningTransfer
 {
+	// tornado-bin
+	var $tornadoBin = "";
+
     //--------------------------------------------------------------------------
     // ctor
     function RunningTransferTornado($psLine,$cfg) {
@@ -31,6 +34,8 @@ class RunningTransferTornado extends RunningTransfer
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         // init conf
         $this->Initialize($cfg);
+        //
+        $this->tornadoBin = dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btphptornado.py";
         //
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
@@ -40,7 +45,7 @@ class RunningTransferTornado extends RunningTransfer
             foreach($arr as $key =>$value) {
                 if ($key == 0)
                     $startArgs = false;
-                if ($value == $this->cfg["btclient_tornado_bin"]) {
+                if ($value == $this->tornadoBin) {
                     $offset = 2;
                     if(! @strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
