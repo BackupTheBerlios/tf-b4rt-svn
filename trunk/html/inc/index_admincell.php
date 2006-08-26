@@ -4,20 +4,12 @@
 $output .= '<div align="center" class="admincell">';
 
 // torrentdetails
-if ($isTorrent) {
-	$torrentDetails = _TRANSFERDETAILS;
-	if ($lastUser != "")
-		$torrentDetails .= "\n"._USER.": ".$lastUser;
-	$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
-	if($transferRunning == 1)
-		$output .= "&als=false";
-	$output .= "\">";
-} else {
-	$torrentDetails = $entry;
-}
+$torrentDetails = _TRANSFERDETAILS;
+$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
+if($transferRunning == 1)
+	$output .= "&als=false";
+$output .= "\">";
 $output .= "<img src=\"images/properties.png\" width=\"18\" height=\"13\" title=\"".$torrentDetails."\" border=\"0\">";
-if ($isTorrent)
-	$output .= "</a>";
 
 // link to datapath
 $output .= '<a href="index.php?iid=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';

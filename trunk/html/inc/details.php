@@ -24,35 +24,46 @@
 	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// requires
-require_once("metaInfo.php");
-
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/details.tmpl");
-}
-else {
+} else {
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/details.tmpl");
 }
 $tmpl->setvar('head', getHead(_TRANSFERDETAILS));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 
-$torrent = getRequestVar('torrent');
-
-$als = getRequestVar('als');
-if($als == "false") {
-	$tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
-}
-else {
-	$tmpl->setvar('showMetaInfo', showMetaInfo($torrent,true));
-}
-
-switch ($cfg["metainfoclient"]) {
-	case "transmissioncli":
-		$tmpl->setvar('transmissioncli', 1);
-		$tmpl->setvar('getTorrentScrapeInfo', getTorrentScrapeInfo($torrent));
-	break;
+$transfer = getRequestVar('torrent');
+if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+	// this is a torrent-client
+	require_once("metaInfo.php");
+	$als = getRequestVar('als');
+	if($als == "false") {
+		$tmpl->setvar('showMetaInfo', showMetaInfo($transfer, false));
+	} else {
+		$tmpl->setvar('showMetaInfo', showMetaInfo($transfer, true));
+	}
+	switch ($cfg["metainfoclient"]) {
+		case "transmissioncli":
+			$tmpl->setvar('scrape', 1);
+			$tmpl->setvar('getTorrentScrapeInfo', getTorrentScrapeInfo($transfer));
+		break;
+	}
+} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+	// this is wget.
+	include_once("ClientHandler.php");
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+	$clientHandler->setVarsFromFile($transfer);
+	$showMetaInfo = "<table>";
+	$showMetaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
+	$showMetaInfo .= "<tr><td>URL:</td><td>".$clientHandler->url."</td></tr>";
+	$showMetaInfo .= "</table>";
+	$tmpl->setvar('showMetaInfo', $showMetaInfo);
+	$tmpl->setvar('scrape', 0);
+} else {
+	$tmpl->setvar('showMetaInfo', "");
+	$tmpl->setvar('scrape', 0);
 }
 
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
