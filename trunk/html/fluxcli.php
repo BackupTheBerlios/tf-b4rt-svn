@@ -47,7 +47,7 @@ $REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revisio
 // config
 require_once('inc/config/config.php');
 // db
-require_once('db.php');
+require_once('inc/db.php');
 // functions
 require_once("inc/functions/functions.php");
 

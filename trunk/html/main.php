@@ -33,7 +33,7 @@ else
 require_once('inc/functions/functions.php');
 
 // Create Connection.
-require_once('db.php');
+require_once('inc/db.php');
 $db = getdb();
 
 // load global settings

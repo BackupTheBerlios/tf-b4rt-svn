@@ -38,7 +38,7 @@ switch (_PUBLIC_STATS) {
         break;
     case 1:
 		// db
-		require_once('db.php');
+		require_once('inc/db.php');
 		// functions
 		require_once("inc/functions/functions.php");
         // Create Connection.
