@@ -335,7 +335,7 @@ class ClientHandler
         $transferRunningFlag = 1;
         if ($this->queue == "1") { // queue
 			require_once("inc/classes/Fluxd.php");
-			require_once("Fluxd.ServiceMod.php");
+			require_once("inc/classes/Fluxd.ServiceMod.php");
 			$fluxd = new Fluxd(serialize($this->cfg));
 			$fluxdRunning = $fluxd->isFluxdRunning();
 			if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {

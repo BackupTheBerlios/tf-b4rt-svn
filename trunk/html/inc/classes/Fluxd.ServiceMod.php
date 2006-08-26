@@ -68,7 +68,7 @@ class FluxdServiceMod
     function getFluxdServiceModInstance($fluxCfg, $fluxd, $moduleType) {
         // damn dirty but does php (< 5) have reflection or something like
         // class-by-name ?
-        $classFile = 'Fluxd.'.$moduleType.'.php';
+        $classFile = 'inc/classes/Fluxd.'.$moduleType.'.php';
         if (is_file($classFile)) {
             include_once($classFile);
             switch ($moduleType) {
