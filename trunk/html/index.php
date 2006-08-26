@@ -51,99 +51,93 @@ if($cfg["fluxd_Qmgr_enabled"] == 1) {
 if(isset($_GET['iid'])) {
 	switch($_GET['iid']) {
 		default:
-			require_once("inc/index.php");
+			require_once("inc/iid/index.php");
 		break;
 		case "index":
-			require_once("inc/index.php");
+			require_once("inc/iid/index.php");
 		break;
 		case "dir":
-			require_once("inc/dir.php");
+			require_once("inc/iid/dir.php");
 		break;
 		case "history":
-			require_once("inc/history.php");
+			require_once("inc/iid/history.php");
 		break;
 		case "xfer":
-			require_once("inc/xfer.php");
+			require_once("inc/iid/xfer.php");
 		break;
 		case "who":
-			require_once("inc/who.php");
+			require_once("inc/iid/who.php");
 		break;
 		case "viewnfo":
-			require_once("inc/viewnfo.php");
+			require_once("inc/iid/viewnfo.php");
 		break;
 		case "uncomp":
-			require_once("inc/uncomp.php");
+			require_once("inc/iid/uncomp.php");
 		break;
 		case "torrentSearch":
-			require_once("inc/torrentSearch.php");
+			require_once("inc/iid/torrentSearch.php");
 		break;
 		case "startpop":
-			require_once("inc/startpop.php");
+			require_once("inc/iid/startpop.php");
 		break;
 		case "renameFolder":
-			require_once("inc/renameFolder.php");
+			require_once("inc/iid/renameFolder.php");
 		break;
 		case "readrss":
-			require_once("inc/readrss.php");
+			require_once("inc/iid/readrss.php");
 		break;
 		case "readmsg":
-			require_once("inc/readmsg.php");
+			require_once("inc/iid/readmsg.php");
 		break;
 		case "profile":
-			require_once("inc/profile.php");
+			require_once("inc/iid/profile.php");
 		break;
 		case "multiup":
-			require_once("inc/multiup.php");
+			require_once("inc/iid/multiup.php");
 		break;
 		case "move":
-			require_once("inc/move.php");
+			require_once("inc/iid/move.php");
 		break;
 		case "mrtg":
-			require_once("inc/mrtg.php");
+			require_once("inc/iid/mrtg.php");
 		break;
 		case "message":
-			require_once("inc/message.php");
+			require_once("inc/iid/message.php");
 		break;
 		case "maketorrent":
-			require_once("inc/maketorrent.php");
-		break;
-		case "login":
-			require_once("inc/login.php");
+			require_once("inc/iid/maketorrent.php");
 		break;
 		case "dereferrer":
-			require_once("inc/dereferrer.php");
+			require_once("inc/iid/dereferrer.php");
 		break;
 		case "details":
-			require_once("inc/details.php");
+			require_once("inc/iid/details.php");
 		break;
 		case "downloaddetails":
-			require_once("inc/downloaddetails.php");
+			require_once("inc/iid/downloaddetails.php");
 		break;
 		case "downloadhosts":
-			require_once("inc/downloadhosts.php");
+			require_once("inc/iid/downloadhosts.php");
 		break;
 		case "drivespace":
-			require_once("inc/drivespace.php");
+			require_once("inc/iid/drivespace.php");
 		break;
 		case "cookiehelp":
-			require_once("inc/cookiehelp.php");
+			require_once("inc/iid/cookiehelp.php");
 		break;
 		case "checkSFV":
-			require_once("inc/checkSFV.php");
+			require_once("inc/iid/checkSFV.php");
 		break;
 		case "all_services":
-			require_once("inc/all_services.php");
+			require_once("inc/iid/all_services.php");
 		break;
 		case "admin":
-			require_once("inc/admin.php");
-		break;
-		case "locked":
-			require_once("inc/locked.php");
+			require_once("inc/iid/admin.php");
 		break;
 	}
 } else {
 	// use "old" style not to break tools
-	require_once("inc/index.php");
+	require_once("inc/iid/index.php");
 }
 
 ?>
