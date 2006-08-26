@@ -93,7 +93,7 @@ class ClientHandlerWget extends ClientHandler
 
 		// write out aliasfile
 		include_once("AliasFile.php");
-		$af = AliasFile::getAliasFileInstance($this->alias,	$this->cfg['user'], $this->cfg);
+		$af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias,	$this->cfg['user'], $this->cfg);
 		$af->running = "2"; // file is new
 		$af->size = 0;
 		$af->WriteFile();

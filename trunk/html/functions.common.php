@@ -2165,6 +2165,3020 @@ function getTransferListHeadArray($settings = null) {
 	return $retVal;
 }
 
+
+/* ************************************************************************** */
+
+
+
+//XFER:****************************************************
+//XFER: getXferBar(max_bytes, used_bytes, title)
+//XFER: gets xfer percentage bar
+function getXferBar($total, $used, $title) {
+	global $cfg;
+	$remaining = max(0,$total-$used/(1024*1024));
+	$percent = round($remaining/$total*100,0);
+	$text = ' ('.formatFreeSpace($remaining).') '._REMAINING;
+	$bgcolor = '#';
+	$bgcolor .= str_pad(dechex(255-255*($percent/150)),2,0,STR_PAD_LEFT);
+	$bgcolor .= str_pad(dechex(255*($percent/150)),2,0,STR_PAD_LEFT);
+	$bgcolor .='00';
+	$displayXferBar = '<tr>';
+	  $displayXferBar .= '<td width="2%" nowrap align="right"><div class="tiny">'.$title.'</div></td>';
+	  $displayXferBar .= '<td width="92%">';
+		$displayXferBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
+		$displayXferBar .= '<td bgcolor="'.$bgcolor.'" width="'.($percent+1).'%">';
+		if ($percent >= 50) {
+			$displayXferBar .= '<div class="tinypercent" align="center"';
+			if ($percent == 100)
+				$displayXferBar .= ' style="background:#ffffff;">';
+			else
+				$displayXferBar .= '>';
+			$displayXferBar .= $percent.'%'.$text;
+			$displayXferBar .= '</div>';
+		}
+		$displayXferBar .= '</td>';
+		$displayXferBar .= '<td bgcolor="#000000" width="'.(100-$percent).'%" height="100%">';
+		if ($percent < 50) {
+			$displayXferBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
+			if ($percent == 0)
+				$displayXferBar .= '; background:#ffffff;">';
+			else
+				$displayXferBar .= ';">';
+			$displayXferBar .= $percent.'%'.$text;
+			$displayXferBar .= '</div>';
+		}
+		$displayXferBar .= '</td>';
+		$displayXferBar .= '</tr></table>';
+	  $displayXferBar .= '</td>';
+	$displayXferBar .= '</tr>';
+	return $displayXferBar;
+}
+
+//XFER:****************************************************
+//XFER: getXfer()
+//XFER: gets xfer usage page
+function getXfer() {
+	global $cfg;
+	$displayXferList = getXferList();
+	if (isset($_GET['user'])) {
+		$displayXferList .= '<br><b>';
+		$displayXferList .= ($_GET['user'] == '%') ? _SERVERXFERSTATS : _USERDETAILS.': '.$_GET['user'];
+		$displayXferList .= '</b><br>';
+		getXferDetail($_GET['user'],_MONTHSTARTING,0,0);
+		if (isset($_GET['month'])) {
+			$mstart = $_GET['month'].'-'.$cfg['month_start'];
+			$mend = date('Y-m-d',strtotime('+1 Month',strtotime($mstart)));
+		}
+		else {
+			$mstart = 0;
+			$mend = 0;
+		}
+		if (isset($_GET['week'])) {
+			$wstart = $_GET['week'];
+			$wend = date('Y-m-d',strtotime('+1 Week',strtotime($_GET['week'])));
+		}
+		else {
+			$wstart = $mstart;
+			$wend = $mend;
+		}
+		$displayXferList .= getXferDetail($_GET['user'],_WEEKSTARTING,$mstart,$mend);
+		$displayXferList .= getXferDetail($_GET['user'],_DAY,$wstart,$wend);
+	}
+	return $displayXferList;
+}
+
+//XFER:****************************************************
+//XFER: getXferDetail(user, period_title, start_timestamp, end_timestamp)
+//XFER: get table of month/week/day's usage for user
+function getXferDetail($user_id,$period,$period_start,$period_end)
+{
+	global $cfg, $xfer, $xfer_total, $db;
+	$period_query = ($period_start) ? 'and date >= "'.$period_start.'" and date < "'.$period_end.'"' : '';
+	$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$user_id.'" '.$period_query.' GROUP BY date ORDER BY date';
+	$rtnValue = $db->GetAll($sql);
+	showError($db,$sql);
+	$displayXferDetail = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
+	$displayXferDetail .= '<tr>';
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='20%'><div align=center class='title'>$period</div></td>";
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._TOTAL.'</div></td>';
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._DOWNLOAD.'</div></td>';
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._UPLOAD.'</div></td>';
+	$displayXferDetail .= '</tr>';
+	$start = '';
+	$download = 0;
+	$upload = 0;
+	foreach ($rtnValue as $row) {
+		$rtime = strtotime($row[2]);
+		switch ($period) {
+			case 'Month Starting':
+				$newstart = $cfg['month_start'].' ';
+				$newstart .= (date('j',$rtime) < $cfg['month_start']) ? date('M Y',strtotime('-1 Month',$rtime)) : date('M Y',$rtime);
+			break;
+			case 'Week Starting':
+				$newstart = date('d M Y',strtotime('+1 Day last '.$cfg['week_start'],$rtime));
+			break;
+			case 'Day':
+				$newstart = $row[2];
+			break;
+		}
+		if ($row[2] == date('Y-m-d')) {
+			if ($user_id == '%') {
+				$row[0] = $xfer_total['day']['download'];
+				$row[1] = $xfer_total['day']['upload'];
+			}
+			else {
+				$row[0] = $xfer[$user_id]['day']['download'];
+				$row[1] = $xfer[$user_id]['day']['upload'];
+			}
+		}
+		if ($start != $newstart) {
+			if ($upload + $download != 0) {
+				$displayXferDetail .= '<tr>';
+					$displayXferDetail .= "<td>$rowstr</td>";
+					$downloadstr = formatFreeSpace($download/(1024*1024));
+					$uploadstr = formatFreeSpace($upload/(1024*1024));
+					$totalstr = formatFreeSpace(($download+$upload)/(1024*1024));
+					$displayXferDetail .= "<td><div class='tiny' align='center'><b>$totalstr</b></div></td>";
+					$displayXferDetail .= "<td><div class='tiny' align='center'>$downloadstr</div></td>";
+					$displayXferDetail .= "<td><div class='tiny' align='center'>$uploadstr</div></td>";
+				$displayXferDetail .= '</tr>';
+			}
+			$download = $row[0];
+			$upload = $row[1];
+			$start = $newstart;
+		}
+		else {
+			$download += $row[0];
+			$upload += $row[1];
+		}
+		switch ($period) {
+			case 'Month Starting':
+				$rowstr = "<a href='index.php?iid=xfer&op=xfer&user=$user_id&month=".date('Y-m',strtotime($start))."'>$start</a>";
+			break;
+			case 'Week Starting':
+				$rowstr = "<a href='index.php?iid=xfer&op=xfer&user=$user_id&month=". @ $_GET[month] . "&week=".date('Y-m-d',strtotime($start))."'>$start</a>";
+			break;
+			case 'Day':
+				$rowstr = $start;
+			break;
+		}
+	}
+	if ($upload + $download != 0) {
+		$displayXferDetail .= '<tr>';
+		$displayXferDetail .= "<td>$rowstr</td>";
+		$downloadstr = formatFreeSpace($download/(1024*1024));
+		$uploadstr = formatFreeSpace($upload/(1024*1024));
+		$totalstr = formatFreeSpace(($download+$upload)/(1024*1024));
+		$displayXferDetail .= "<td><div class='tiny' align='center'><b>$totalstr</b></div></td>";
+		$displayXferDetail .= "<td><div class='tiny' align='center'>$downloadstr</div></td>";
+		$displayXferDetail .= "<td><div class='tiny' align='center'>$uploadstr</div></td>";
+		$displayXferDetail .= '</tr>';
+	}
+	$displayXferDetail .= '</table><br>';
+	return $displayXferDetail;
+}
+
+//XFER:****************************************************
+//XFER: getXferList()
+//XFER: get top summary table of xfer usage page
+function getXferList() {
+	global $cfg, $xfer, $xfer_total, $db;
+	$displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
+	$displayXferList .= '<tr>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='15%'><div align=center class='title'>"._USER.'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._TOTALXFER.'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._MONTHXFER.'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._WEEKXFER.'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._DAYXFER.'</div></td>';
+	$displayXferList .= '</tr>';
+	$sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
+	$rtnValue = $db->GetCol($sql);
+	showError($db,$sql);
+	foreach ($rtnValue as $user_id) {
+		$displayXferList .= '<tr>';
+		$displayXferList .= '<td><a href="index.php?iid=xfer&op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
+		$total = formatFreeSpace($xfer[$user_id]['total']['total']/(1024*1024));
+		$month = formatFreeSpace(@ $xfer[$user_id]['month']['total']/(1024*1024));
+		$week = formatFreeSpace(@ $xfer[$user_id]['week']['total']/(1024*1024));
+		$day = formatFreeSpace(@ $xfer[$user_id]['day']['total']/(1024*1024));
+		$displayXferList .= '<td><div class="tiny" align="center">'.$total.'</div></td>';
+		$displayXferList .= '<td><div class="tiny" align="center">'.$month.'</div></td>';
+		$displayXferList .= '<td><div class="tiny" align="center">'.$week.'</div></td>';
+		$displayXferList .= '<td><div class="tiny" align="center">'.$day.'</div></td>';
+		$displayXferList .= '</tr>';
+	}
+	$displayXferList .= '<td><a href="index.php?iid=xfer&op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
+	$total = formatFreeSpace($xfer_total['total']['total']/(1024*1024));
+	$month = formatFreeSpace($xfer_total['month']['total']/(1024*1024));
+	$week = formatFreeSpace($xfer_total['week']['total']/(1024*1024));
+	$day = formatFreeSpace($xfer_total['day']['total']/(1024*1024));
+	$displayXferList .= '<td><div class="tiny" align="center"><b>'.$total.'</b></div></td>';
+	$displayXferList .= '<td><div class="tiny" align="center"><b>'.$month.'</b></div></td>';
+	$displayXferList .= '<td><div class="tiny" align="center"><b>'.$week.'</b></div></td>';
+	$displayXferList .= '<td><div class="tiny" align="center"><b>'.$day.'</b></div></td>';
+	$displayXferList .= '</table>';
+	return $displayXferList;
+}
+
+// get the header portion of admin views
+function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
+	global $cfg;
+	$head = '
+	<body topmargin="8" leftmargin="5" bgcolor="'.$cfg["main_bgcolor"].'">
+	<div align="center">
+	<table border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
+	<table border="1" bordercolor="'.$cfg["table_border_dk"].'" cellpadding="4" cellspacing="0">
+	<tr>
+		<td bgcolor="'.$cfg["main_bgcolor"].'" background="themes/'.$cfg["theme"].'/images/bar.gif">
+		'.getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons).'
+		</td>
+	</tr>
+	<tr>
+	<td bgcolor="'.$cfg["table_header_bg"].'">
+	<div align="center">
+	<table width="100%" bgcolor="'.$cfg["body_data_bg"].'">
+	<tr><td>
+	';
+	return $head;
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// get the footer portion
+function getFoot($showReturn=true, $showVersionLink = false) {
+	global $cfg;
+	$foot = "</td></tr>";
+	$foot .= "</table>";
+	if ($showReturn)
+		$foot .= "[<a href=\"index.php?iid=index\">"._RETURNTOTORRENTS."</a>]";
+	$foot .= "</div>";
+	$foot .= "</td>";
+	$foot .= "</tr>";
+	$foot .= "</table>";
+	$foot .=  getTorrentFluxLink($showVersionLink);
+		$foot .= "</td>
+	</tr>
+	</table>
+	</div>
+	</body>
+	</html>
+	";
+	return $foot;
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// get TF Link and Version
+function getTorrentFluxLink($showVersionLink = false) {
+	global $cfg;
+	if ($cfg["ui_displayfluxlink"] != 0) {
+		$torrentFluxLink = "<div align=\"right\">";
+		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
+		if ($showVersionLink)
+			$torrentFluxLink .= getSuperAdminLink('?z=1','');
+		$torrentFluxLink .= "</div>";
+		return $torrentFluxLink;
+	} else {
+		return "";
+	}
+
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// get Title Bar
+// 2004-12-09 PFM: now using adodb.
+function getTitleBar($pageTitleText, $showButtons=true) {
+	global $cfg, $db;
+	$titleBar = '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
+	$titleBar .= '<tr>';
+	$titleBar .= '<td align="left"><font class="title">'.$pageTitleText.'</font></td>';
+	if ($showButtons) {
+		$titleBar .= "<td align=right>";
+		// Top Buttons
+		$titleBar .= "&nbsp;&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=index\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=dir\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=history\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
+		$titleBar .=	 "<a href=\"index.php?iid=profile\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
+		// Does the user have messages?
+		$sql = "select count(*) from tf_messages where to_user='".$cfg['user']."' and IsNew=1";
+		$number_messages = $db->GetOne($sql);
+		showError($db,$sql);
+		if ($number_messages > 0) {
+			// We have messages
+			$message_image = "themes/".$cfg["theme"]."/images/messages_on.gif";
+		} else {
+			// No messages
+			$message_image = "themes/".$cfg["theme"]."/images/messages_off.gif";
+		}
+		$titleBar .= "<a href=\"index.php?iid=readmsg\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
+		if(IsAdmin()) {
+			$titleBar .= "&nbsp;<a href=\"index.php?iid=admin\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
+		}
+		$titleBar .= "&nbsp;<a href=\"logout.php\"><img src=\"images/logout.gif\" width=13 height=12 title=\"Logout\" border=0></a>";
+	}
+	$titleBar .= '</td>';
+	$titleBar .= '</tr>';
+	$titleBar .= '</table>';
+	return $titleBar;
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// get dropdown list to send message to a user
+function getMessageList() {
+	global $cfg;
+	$users = GetUsers();
+	$messageList = '<div align="center">'.
+	'<table border="0" cellpadding="0" cellspacing="0">'.
+	'<form name="formMessage" action="index.php?iid=message" method="post">'.
+	'<tr><td>' . _SENDMESSAGETO ;
+	$messageList .= '<select name="to_user">';
+	for($inx = 0; $inx < sizeof($users); $inx++) {
+		$messageList .= '<option>'.$users[$inx].'</option>';
+	}
+	$messageList .= '</select>';
+	$messageList .= '<input type="Submit" value="' . _COMPOSE .'">';
+	$messageList .= '</td></tr></form></table></div>';
+	return $messageList;
+}
+
+// ***************************************************************************
+// Build Search Engine Drop Down List
+function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
+	$output = "<select name=\"searchEngine\" ";
+	if ($autoSubmit) {
+		 $output .= "onchange=\"this.form.submit();\" ";
+	}
+	$output .= " STYLE=\"width: 125px\">";
+	$handle = opendir("./inc/searchEngines");
+	while($entry = readdir($handle)) {
+		$entrys[] = $entry;
+	}
+	natcasesort($entrys);
+	foreach($entrys as $entry) {
+		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
+			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
+			$output .= "<option";
+			if ($selectedEngine == $tmpEngine) {
+				$output .= " selected";
+			}
+			$output .= ">".str_replace("Engine",'',substr($entry,0,strpos($entry,".")))."</option>";
+		}
+	}
+	$output .= "</select>\n";
+	return $output;
+}
+
+function getEngineLink($searchEngine) {
+	$tmpLink = '';
+	$engineFile = 'inc/searchEngines/'.$searchEngine.'Engine.php';
+	if (is_file($engineFile)) {
+		$fp = @fopen($engineFile,'r');
+		if ($fp) {
+			$tmp = fread($fp, filesize($engineFile));
+			@fclose( $fp );
+			$tmp = substr($tmp,strpos($tmp,'$this->mainURL'),100);
+			$tmp = substr($tmp,strpos($tmp,"=")+1);
+			$tmp = substr($tmp,0,strpos($tmp,";"));
+			$tmpLink = trim(str_replace(array("'","\""),"",$tmp));
+		}
+	}
+	return $tmpLink;
+}
+
+/* ************************************************************************** */
+
+/**
+ * get superadmin-popup-link-html-snip.
+ *
+ */
+function getSuperAdminLink($param = "", $linkText = "") {
+	global $cfg;
+	$superAdminLink = '
+	<script language="JavaScript">
+	function SuperAdmin(name_file) {
+			window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width='.$cfg["ui_dim_superadmin_w"].',height='.$cfg["ui_dim_superadmin_h"].'")
+	}
+	</script>';
+	$superAdminLink .= "<a href=\"JavaScript:SuperAdmin('superadmin.php".$param."')\">";
+	if ((isset($linkText)) && ($linkText != ""))
+		$superAdminLink .= $linkText;
+	else
+		$superAdminLink .= '<img src="images/arrow.gif" width="9" height="9" title="Version" border="0">';
+	$superAdminLink .= '</a>';
+	return $superAdminLink;
+}
+
+/**
+ * get form of index-page-selection
+ *
+ */
+function getIndexPageSelectForm() {
+	global $cfg;
+	$retVal = '<select name="index_page">';
+	$retVal .= '<option value="tf"';
+	if ($cfg["index_page"] == "tf")
+		$retVal .= " selected";
+	$retVal .= '>tf</option>';
+	$retVal .= '<option value="b4rt"';
+	if ($cfg["index_page"] == "b4rt")
+		$retVal .= " selected";
+	$retVal .= '>b4rt</option>';
+	$retVal .= '</select>';
+	return $retVal;
+}
+
+function getBTClientSelect($btclient = 'tornado') {
+	global $cfg;
+	$getBTClientSelect = '<select name="btclient">';
+	$getBTClientSelect .= '<option value="tornado"';
+	if ($btclient == "tornado")
+		$getBTClientSelect .= " selected";
+	$getBTClientSelect .= '>tornado</option>';
+	$getBTClientSelect .= '<option value="transmission"';
+	if ($btclient == "transmission")
+		$getBTClientSelect .= " selected";
+	$getBTClientSelect .= '>transmission</option>';
+	$getBTClientSelect .= '</select>';
+	return $getBTClientSelect;
+}
+
+/**
+ * get form of sort-order-settings
+ *
+ */
+function getSortOrderSettingsForm() {
+	global $cfg;
+	$sortOrderSettingsForm = '<select name="index_page_sortorder">';
+	$sortOrderSettingsForm .= '<option value="da"';
+	if ($cfg['index_page_sortorder'] == "da")
+		$sortOrderSettingsForm .= " selected";
+	$sortOrderSettingsForm .= '>Date - Ascending</option>';
+	$sortOrderSettingsForm .= '<option value="dd"';
+	if ($cfg['index_page_sortorder'] == "dd")
+		$sortOrderSettingsForm .= " selected";
+	$sortOrderSettingsForm .= '>Date - Descending</option>';
+	$sortOrderSettingsForm .= '<option value="na"';
+	if ($cfg['index_page_sortorder'] == "na")
+		$sortOrderSettingsForm .= " selected";
+	$sortOrderSettingsForm .= '>Name - Ascending</option>';
+	$sortOrderSettingsForm .= '<option value="nd"';
+	if ($cfg['index_page_sortorder'] == "nd")
+		$sortOrderSettingsForm .= " selected";
+	$sortOrderSettingsForm .= '>Name - Descending</option>';
+	$sortOrderSettingsForm .= '</select>';
+	return $sortOrderSettingsForm;
+}
+
+/**
+ * get form of move-settings
+ *
+ */
+function getMoveSettingsForm() {
+	global $cfg;
+	$moveSettingsForm = '<table>';
+	$moveSettingsForm .= '<tr>';
+	$moveSettingsForm .= '<td valign="top" align="left">Target-Dirs:</td>';
+	$moveSettingsForm .= '<td valign="top" align="left">';
+	$moveSettingsForm .= '<select name="categorylist" size="5">';
+	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
+		$dirs = split(":", trim($cfg["move_paths"]));
+		foreach ($dirs as $dir) {
+			$target = trim($dir);
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
+				$moveSettingsForm .= "<option value=\"$target\">".$target."</option>\n";
+		}
+	}
+	$moveSettingsForm .= '</select>';
+	$moveSettingsForm .= '<input type="button" name="remCatButton" value="remove" onclick="removeEntry()">';
+	$moveSettingsForm .= '</td>';
+	$moveSettingsForm .= '</tr>';
+	$moveSettingsForm .= '<tr>';
+	$moveSettingsForm .= '<td valign="top" align="left">New Target-Dir:</td>';
+	$moveSettingsForm .= '<td valign="top" align="left">';
+	$moveSettingsForm .= '<input type="text" name="category" size="30">';
+	$moveSettingsForm .= '<input type="button" name="addCatButton" value="add" onclick="addEntry()" size="30">';
+	$moveSettingsForm .= '<input type="hidden" name="move_paths" value="'.$cfg["move_paths"].'">';
+	$moveSettingsForm .= '</td>';
+	$moveSettingsForm .= '</tr>';
+	$moveSettingsForm .= '</table>';
+	return $moveSettingsForm;
+}
+
+/**
+ * get form of index page settings (0-2047)
+ *
+ * #
+ * Torrent
+ *
+ * User			  [0]
+ * Size			  [1]
+ * DLed			  [2]
+ * ULed			  [3]
+ *
+ * Status		  [4]
+ * Progress		  [5]
+ * DL Speed		  [6]
+ * UL Speed		  [7]
+ *
+ * Seeds		  [8]
+ * Peers		  [9]
+ * ETA			 [10]
+ * TorrentClient [11]
+ *
+ */
+function getIndexPageSettingsForm() {
+	global $cfg;
+	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
+	$indexPageSettingsForm = '<table>';
+	$indexPageSettingsForm .= '<tr>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Owner: <input name="index_page_settings_0" type="Checkbox" value="1"';
+	if ($settingsIndexPage[0] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Size: <input name="index_page_settings_1" type="Checkbox" value="1"';
+	if ($settingsIndexPage[1] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Total Down: <input name="index_page_settings_2" type="Checkbox" value="1"';
+	if ($settingsIndexPage[2] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Total Up: <input name="index_page_settings_3" type="Checkbox" value="1"';
+	if ($settingsIndexPage[3] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '</tr>';
+	$indexPageSettingsForm .= '<tr>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Status : <input name="index_page_settings_4" type="Checkbox" value="1"';
+	if ($settingsIndexPage[4] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Progress : <input name="index_page_settings_5" type="Checkbox" value="1"';
+	if ($settingsIndexPage[5] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Down-Speed : <input name="index_page_settings_6" type="Checkbox" value="1"';
+	if ($settingsIndexPage[6] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Up-Speed : <input name="index_page_settings_7" type="Checkbox" value="1"';
+	if ($settingsIndexPage[7] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '</tr>';
+	$indexPageSettingsForm .= '<tr>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Seeds : <input name="index_page_settings_8" type="Checkbox" value="1"';
+	if ($settingsIndexPage[8] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Peers : <input name="index_page_settings_9" type="Checkbox" value="1"';
+	if ($settingsIndexPage[9] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Estimated Time : <input name="index_page_settings_10" type="Checkbox" value="1"';
+	if ($settingsIndexPage[10] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '<td align="right" nowrap>Client : <input name="index_page_settings_11" type="Checkbox" value="1"';
+	if ($settingsIndexPage[11] == 1)
+		$indexPageSettingsForm .= ' checked';
+	$indexPageSettingsForm .= '></td>';
+	$indexPageSettingsForm .= '</tr>';
+	$indexPageSettingsForm .= '</table>';
+	return $indexPageSettingsForm;
+}
+
+/**
+ * get form of good looking stats hack (0-63)
+ *
+ */
+function getGoodLookingStatsForm() {
+	global $cfg;
+	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
+	$goodLookingStatsForm = '<table>';
+	$goodLookingStatsForm .= '<tr><td align="right" nowrap>Download Speed: <input name="hack_goodlookstats_settings_0" type="Checkbox" value="1"';
+	if ($settingsHackStats[0] == 1)
+		$goodLookingStatsForm .= ' checked';
+	$goodLookingStatsForm .= '></td>';
+	$goodLookingStatsForm .= '<td align="right" nowrap>Upload Speed: <input name="hack_goodlookstats_settings_1" type="Checkbox" value="1"';
+	if ($settingsHackStats[1] == 1)
+		$goodLookingStatsForm .= ' checked';
+	$goodLookingStatsForm .= '></td>';
+	$goodLookingStatsForm .= '<td align="right" nowrap>Total Speed: <input name="hack_goodlookstats_settings_2" type="Checkbox" value="1"';
+	if ($settingsHackStats[2] == 1)
+		$goodLookingStatsForm .= ' checked';
+	$goodLookingStatsForm .= '></td></tr>';
+	$goodLookingStatsForm .= '<tr><td align="right" nowrap>Connections: <input name="hack_goodlookstats_settings_3" type="Checkbox" value="1"';
+	if ($settingsHackStats[3] == 1)
+		$goodLookingStatsForm .= ' checked';
+	$goodLookingStatsForm .= '></td>';
+	$goodLookingStatsForm .= '<td align="right" nowrap>Drive Space: <input name="hack_goodlookstats_settings_4" type="Checkbox" value="1"';
+	if ($settingsHackStats[4] == 1)
+		$goodLookingStatsForm .= ' checked';
+	$goodLookingStatsForm .= '></td>';
+	$goodLookingStatsForm .= '<td align="right" nowrap>Server Load: <input name="hack_goodlookstats_settings_5" type="Checkbox" value="1"';
+	if ($settingsHackStats[5] == 1)
+		$goodLookingStatsForm .= ' checked';
+	$goodLookingStatsForm .= '></td></tr>';
+	$goodLookingStatsForm .= '</table>';
+	return $goodLookingStatsForm;
+}
+
+/*
+ * This method Builds the Transfers Section of the Index Page
+ *
+ * @return transfer-list as html-string
+ */
+function getTransferListString() {
+	global $cfg, $db;
+	include_once("AliasFile.php");
+	$kill_id = "";
+	$lastUser = "";
+	$arUserTorrent = array();
+	$arListTorrent = array();
+	// settings
+	$settings = convertIntegerToArray($cfg["index_page_settings"]);
+	// sortOrder
+	$sortOrder = getRequestVar("so");
+	if ($sortOrder == "")
+		$sortOrder = $cfg["index_page_sortorder"];
+	// t-list
+	$arList = getTransferArray($sortOrder);
+	foreach($arList as $entry) {
+
+		// ---------------------------------------------------------------------
+		// init some vars
+		$displayname = $entry;
+		$show_run = true;
+		if(strlen($entry) >= 47) {
+			// needs to be trimmed
+			$displayname = substr($entry, 0, 44);
+			$displayname .= "...";
+		}
+		if ($cfg["enable_torrent_download"])
+			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
+		else
+			$torrentfilelink = "";
+
+		// ---------------------------------------------------------------------
+		// alias / stat
+		$alias = getAliasName($entry).".stat";
+		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
+			// this is a torrent-client
+			$isTorrent = true;
+			$transferowner = getOwner($entry);
+			$owner = IsOwner($cfg["user"], $transferowner);
+			$settingsAry = loadTorrentSettings($entry);
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
+			// this is wget.
+			$isTorrent = false;
+			$transferowner = $cfg["user"];
+			$owner = true;
+			$settingsAry = array();
+			$settingsAry['btclient'] = "wget";
+			$settingsAry['hash'] = $entry;
+			$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+			$settingsAry['datapath'] = "";
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
+		} else {
+			// this is "something else". use tornado statfile as default
+			$isTorrent = false;
+			$transferowner = $cfg["user"];
+			$owner = true;
+			$settingsAry = array();
+			$settingsAry['btclient'] = "tornado";
+			$settingsAry['hash'] = $entry;
+			$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+			$settingsAry['datapath'] = "";
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+		}
+		// cache running-flag in local var. we will access that often
+		$transferRunning = (int) $af->running;
+		// cache percent-done in local var. ...
+		$percentDone = $af->percent_done;
+
+		// more vars
+		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+
+		// ---------------------------------------------------------------------
+		//XFER: add upload/download stats to the xfer array
+		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
+
+		// ---------------------------------------------------------------------
+		// injects
+		if(! file_exists($cfg["torrent_file_path"].$alias)) {
+			$transferRunning = 2;
+			$af->running = "2";
+			$af->size = getDownloadSize($cfg["torrent_file_path"].$entry);
+			$af->WriteFile();
+		}
+
+		// ---------------------------------------------------------------------
+		// preprocess alias-file and get some vars
+		$estTime = "&nbsp;";
+		$statusStr = "&nbsp;";
+		switch ($transferRunning) {
+			case 2: // new
+				$statusStr = $detailsLinkString."<font color=\"#32cd32\">New</font></a>";
+				break;
+			case 3: // queued
+				$statusStr = $detailsLinkString."Queued</a>";
+				$estTime = "Waiting...";
+				break;
+			default: // running
+				// increment the totals
+				if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
+				if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
+				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
+				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
+				// $estTime
+				if ($af->time_left != "" && $af->time_left != "0")
+					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
+
+						// TODO : fix
+
+						$estTime = SecondsToDate(((($af->seedlimit)/100 * $af->size) - $af->uptotal)/GetSpeedInBytes($af->up_speed)) . " left";
+					} else {
+						$estTime = $af->time_left;
+					}
+				// $lastUser
+				$lastUser = $transferowner;
+				// $show_run + $statusStr
+				if($percentDone >= 100) {
+					if(trim($af->up_speed) != "" && $transferRunning == 1) {
+						$statusStr = $detailsLinkString.'Seeding</a>';
+					} else {
+						$statusStr = $detailsLinkString.'Done</a>';
+					}
+					$show_run = false;
+				} else if ($percentDone < 0) {
+					$statusStr = $detailsLinkString."Stopped</a>";
+					$show_run = true;
+				} else {
+					$statusStr = $detailsLinkString."Leeching</a>";
+				}
+				break;
+		}
+		// totals-preparation
+		// if downtotal + uptotal + progress > 0
+		if (($settings[2] + $settings[3] + $settings[5]) > 0)
+			$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+
+		// ---------------------------------------------------------------------
+		// output-string
+		$output = "<tr>";
+
+		// ========================================================== led + meta
+		$output .= '<td valign="bottom" align="center" nowrap>';
+		// led
+		$hd = getStatusImage($af);
+		if ($transferRunning == 1)
+			$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+		$output .= "<img src=\"images/".$hd->image."\" width=\"16\" height=\"16\" title=\"".$hd->title.$entry."\" border=\"0\" align=\"absmiddle\">";
+		if ($transferRunning == 1)
+			$output .= "</a>";
+		// meta
+		$output .= $torrentfilelink;
+		$output .= "</td>";
+
+		// ================================================================ name
+		$output .= "<td valign=\"bottom\" nowrap>".$detailsLinkString.$displayname."</a></td>";
+
+		// =============================================================== owner
+		if ($settings[0] != 0)
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$transferowner."\"><font class=\"tiny\">".$transferowner."</font></a></td>";
+
+		// ================================================================ size
+		if ($settings[1] != 0)
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesToKBMGGB($af->size)."</a></td>";
+
+		// =========================================================== downtotal
+		if ($settings[2] != 0)
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesToKBMGGB($torrentTotals["downtotal"]+0)."</a></td>";
+
+		// ============================================================= uptotal
+		if ($settings[3] != 0)
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesToKBMGGB($torrentTotals["uptotal"]+0)."</a></td>";
+
+		// ============================================================== status
+		if ($settings[4] != 0)
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>".$detailsLinkString.$statusStr."</a></td>";
+
+		// ============================================================ progress
+		if ($settings[5] != 0) {
+			$graph_width = 1;
+			$progress_color = "#00ff00";
+			$background = "#000000";
+			$bar_width = "4";
+			$percentage = "";
+			if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
+				$graph_width = -1;
+				$percentage = @number_format((($torrentTotals["uptotal"] / $af->size) * 100), 2) . '%';
+			} else {
+				if ($percentDone >= 1) {
+					$graph_width = $percentDone;
+					$percentage = $graph_width . '%';
+				} else if ($percentDone < 0) {
+					$graph_width = round(($percentDone*-1)-100,1);
+					$percentage = $graph_width . '%';
+				} else {
+					$graph_width = 0;
+					$percentage = '0%';
+				}
+			}
+			if($graph_width == 100)
+				$background = $progress_color;
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>";
+			if ($graph_width == -1) {
+				$output .= $detailsLinkString.'<strong>'.$percentage.'</strong></a>';
+			} else if ($graph_width > 0) {
+				$output .= $detailsLinkString.'<strong>'.$percentage.'</strong></a>';
+				$output .= "<br>";
+				$output .= "<table width=\"100\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>";
+				$output .= "<td background=\"themes/".$cfg["theme"]."/images/progressbar.gif\" bgcolor=\"".$progress_color."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".$graph_width."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
+				$output .= "<td bgcolor=\"".$background."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".(100 - $graph_width)."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
+				$output .= "</tr></table>";
+			} else {
+				if ($transferRunning == 2) {
+					$output .= '&nbsp;';
+				} else {
+					$output .= $detailsLinkString.'<strong>'.$percentage.'</strong></a>';
+					$output .= "<br>";
+					$output .= "<table width=\"100\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>";
+					$output .= "<td background=\"themes/".$cfg["theme"]."/images/progressbar.gif\" bgcolor=\"".$progress_color."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".$graph_width."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
+					$output .= "<td bgcolor=\"".$background."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".(100 - $graph_width)."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
+					$output .= "</tr></table>";
+				}
+			}
+			$output .= "</td>";
+		}
+
+		// ================================================================ down
+		if ($settings[6] != 0) {
+			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
+			if ($transferRunning == 1) {
+				$output .= $detailsLinkString;
+				if (trim($af->down_speed) != "")
+					$output .= $af->down_speed;
+				else
+					$output .= '0.0 kB/s';
+				$output .= '</a>';
+			} else {
+				 $output .= '&nbsp;';
+			}
+			$output .= '</td>';
+		}
+
+		// ================================================================== up
+		if ($settings[7] != 0) {
+			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
+			if ($transferRunning == 1) {
+				$output .= $detailsLinkString;
+				if (trim($af->up_speed) != "")
+					$output .= $af->up_speed;
+				else
+					$output .= '0.0 kB/s';
+				$output .= '</a>';
+			} else {
+				 $output .= '&nbsp;';
+			}
+			$output .= '</td>';
+		}
+
+		// =============================================================== seeds
+		if ($settings[8] != 0) {
+			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
+			if ($transferRunning == 1) {
+				$output .= $detailsLinkString;
+				$output .= $af->seeds;
+				$output .= '</a>';
+			} else {
+				 $output .= '&nbsp;';
+			}
+			$output .= '</td>';
+		}
+
+		// =============================================================== peers
+		if ($settings[9] != 0) {
+			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
+			if ($transferRunning == 1) {
+				$output .= $detailsLinkString;
+				$output .= $af->peers;
+				$output .= '</a>';
+			} else {
+				 $output .= '&nbsp;';
+			}
+			$output .= '</td>';
+		}
+
+		// ================================================================= ETA
+		if ($settings[10] != 0)
+			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>".$detailsLinkString.$estTime."</a></td>";
+
+		// ============================================================== client
+		if ($settings[11] != 0) {
+			switch ($settingsAry['btclient']) {
+				case "tornado":
+					$output .= "<td valign=\"bottom\" align=\"center\">B</a></td>";
+				break;
+				case "transmission":
+					$output .= "<td valign=\"bottom\" align=\"center\">T</a></td>";
+				break;
+				case "wget":
+					$output .= "<td valign=\"bottom\" align=\"center\">W</a></td>";
+				break;
+				default:
+					$output .= "<td valign=\"bottom\" align=\"center\">U</a></td>";
+			}
+		}
+
+		// =============================================================== admin
+		$output .= '<td nowrap>';
+		include('inc/index_admincell.php');
+		$output .= "</td>";
+		$output .= "</tr>\n";
+
+		// ---------------------------------------------------------------------
+		// Is this torrent for the user list or the general list?
+		if ($owner)
+			array_push($arUserTorrent, $output);
+		else
+			array_push($arListTorrent, $output);
+	}
+
+	//XFER: if a new day but no .stat files where found put blank entry into the
+	//      DB for today to indicate accounting has been done for the new day
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		transferListXferUpdate2($newday);
+
+	// -------------------------------------------------------------------------
+	// build output-string
+	$output = '<table bgcolor="'.$cfg["table_data_bg"].'" width="100%" bordercolor="'.$cfg["table_border_dk"].'" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">';
+	if (sizeof($arUserTorrent) > 0) {
+		$output .= getTransferTableHead($settings, $sortOrder, $cfg["user"]." : ");
+		foreach($arUserTorrent as $torrentrow)
+			$output .= $torrentrow;
+	}
+	$boolCond = true;
+	if ($cfg['enable_restrictivetview'] == 1)
+		$boolCond = IsAdmin();
+	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
+		$output .= getTransferTableHead($settings, $sortOrder);
+		foreach($arListTorrent as $torrentrow)
+			$output .= $torrentrow;
+	}
+	$output .= "</tr></table>\n";
+	return $output;
+}
+
+/*
+ * This method gets html-snip of table-head
+ *
+ * @param $settings ref to array holding index-page-settings
+ * @param $sortOrder
+ * @param $nPrefix prefix of name-column
+ * @return string with head-row
+ */
+function getTransferTableHead($settings, $sortOrder = '', $nPrefix = '') {
+	global $cfg;
+	$output = "<tr>";
+	//
+	// ============================================================== led + meta
+	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">";
+	switch ($sortOrder) {
+		case 'da': // sort by date ascending
+			$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
+			$output .= '&nbsp;';
+			$output .= '<a href="?so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
+			break;
+		case 'dd': // sort by date descending
+			$output .= '<a href="?so=da"><font class="adminlink">#</font></a>';
+			$output .= '&nbsp;';
+			$output .= '<a href="?so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
+			break;
+		default:
+			$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
+			break;
+	}
+	$output .= "</div></td>";
+	// ==================================================================== name
+	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">";
+	switch ($sortOrder) {
+		case 'na': // sort alphabetically by name ascending
+			$output .= '<a href="?so=nd"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
+			$output .= '&nbsp;';
+			$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
+			break;
+		case 'nd': // sort alphabetically by name descending
+			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
+			$output .= '&nbsp;';
+			$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
+			break;
+		default:
+			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
+			break;
+	}
+	$output .= "</div></td>";
+	// =================================================================== owner
+	if ($settings[0] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._USER."</div></td>";
+	// ==================================================================== size
+	if ($settings[1] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Size</div></td>";
+	// =============================================================== downtotal
+	if ($settings[2] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">T. Down</div></td>";
+	// ================================================================= uptotal
+	if ($settings[3] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">T. Up</div></td>";
+	// ================================================================== status
+	if ($settings[4] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._STATUS."</div></td>";
+	// ================================================================ progress
+	if ($settings[5] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Progress</div></td>";
+	// ==================================================================== down
+	if ($settings[6] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Down</div></td>";
+	// ====================================================================== up
+	if ($settings[7] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Up</div></td>";
+	// =================================================================== seeds
+	if ($settings[8] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Seeds</div></td>";
+	// =================================================================== peers
+	if ($settings[9] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Peers</div></td>";
+	// ===================================================================== ETA
+	if ($settings[10] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._ESTIMATEDTIME."</div></td>";
+	// ================================================================== client
+	if ($settings[11] != 0)
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">C</div></td>";
+	// =================================================================== admin
+	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._ADMIN."</div></td>";
+	//
+	$output .= "</tr>\n";
+	// return
+	return $output;
+}
+
+/**
+ * get the Upload Graphical Bar
+ *
+ * @return string with upload-bar
+ */
+function getUploadBar() {
+	global $cfg;
+	$max_upload = $cfg["bandwidth_up"] / 8 * 0.9;
+	$inner_message = "";
+	$percent = number_format($cfg["total_upload"] / $max_upload * 100,0);
+	if ($percent > 0)
+		$inner_message = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
+    return getBandwidthBar($percent, $inner_message);
+}
+
+/**
+ * get the Download Graphical Bar
+ *
+ * @return string with download-bar
+ */
+function getDownloadBar() {
+	global $cfg;
+	$max_download = $cfg["bandwidth_down"] / 8 * 0.9;
+	$inner_message = "";
+	$percent = number_format($cfg["total_download"] / $max_download * 100,0);
+	if ($percent > 0)
+		$inner_message = " (".number_format($cfg["total_download"], 2)." Kb/s)";
+	return getBandwidthBar($percent, $inner_message);
+}
+
+/**
+ * get a Bandwidth Graphical Bar
+ *
+ * @param $percent
+ * @param $inner_message
+ * @return string with bandwith-bar
+ */
+function getBandwidthBar($percent, $inner_message) {
+	global $cfg;
+	$retVal = "";
+    $retVal .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+    $retVal .= ' <tr nowrap>';
+    $retVal .= '  <td width="80%">';
+    $retVal .= '   <table width="100%" border="0" cellpadding="0" cellspacing="0">';
+    $retVal .= '    <tr>';
+    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$percent.'%"><div class="tinypercent" align="center">'.$percent.'%'.$inner_message.'</div></td>';
+    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $percent).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
+    $retVal .= '    </tr>';
+    $retVal .= '   </table>';
+    $retVal .= '  </td>';
+    $retVal .= ' </tr>';
+    $retVal .= '</table>';
+	return $retVal;
+}
+
+
+/* ************************************************************************** */
+
+
+//******************************************************************************
+// getRequestVar
+//******************************************************************************
+function getRequestVar($varName) {
+    if (array_key_exists($varName,$_REQUEST))
+        return trim($_REQUEST[$varName]);
+    else
+        return '';
+}
+
+//******************************************************************************
+// AuditAction
+//******************************************************************************
+function AuditAction($action, $file="") {
+    global $_SERVER, $cfg, $db;
+    $host_resolved = gethostbyaddr($cfg['ip']);
+    $create_time = time();
+	if (isset($_SERVER['HTTP_USER_AGENT']))
+	   $user_agent = $_SERVER['HTTP_USER_AGENT'];
+	if ((! isset($user_agent)) || ($user_agent == ""))
+			$user_agent = "fluxcli.php/unknown";
+	if ((! isset($action)) || ($action == ""))
+			$action = "unset";
+    $rec = array(
+    	'user_id' => $cfg['user'],
+    	'file' => $file,
+    	'action' => $action,
+    	'ip' => $cfg['ip'],
+    	'ip_resolved' => $host_resolved,
+    	'user_agent' => $user_agent,
+    	'time' => $create_time
+        );
+    $sTable = 'tf_log';
+    $sql = $db->GetInsertSql($sTable, $rec);
+    // add record to the log
+    //$result = $db->Execute($sql);
+    $db->Execute($sql);
+    showError($db,$sql);
+}
+
+//******************************************************************************
+// loadSettings
+//******************************************************************************
+function loadSettings() {
+    global $cfg, $db;
+    // pull the config params out of the db
+    $sql = "SELECT tf_key, tf_value FROM tf_settings";
+    $recordset = $db->Execute($sql);
+    showError($db, $sql);
+    while(list($key, $value) = $recordset->FetchRow()) {
+        $tmpValue = '';
+		if (strpos($key,"Filter")>0) {
+		  $tmpValue = unserialize($value);
+		} elseif ($key == 'searchEngineLinks') {
+            $tmpValue = unserialize($value);
+    	}
+    	if(is_array($tmpValue))
+            $value = $tmpValue;
+        $cfg[$key] = $value;
+    }
+}
+
+//******************************************************************************
+// insertSetting
+//******************************************************************************
+function insertSetting($key,$value) {
+    global $cfg, $db;
+    $update_value = $value;
+    if (is_array($value))
+        $update_value = serialize($value);
+    $sql = "INSERT INTO tf_settings VALUES ('".$key."', '".$update_value."')";
+    if ( $sql != "" ) {
+        //$result = $db->Execute($sql);
+        $db->Execute($sql);
+        showError($db,$sql);
+        // update the Config.
+        $cfg[$key] = $value;
+    }
+}
+
+//******************************************************************************
+// updateSetting
+//******************************************************************************
+function updateSetting($key,$value) {
+    global $cfg, $db;
+    $update_value = $value;
+	if (is_array($value))
+        $update_value = serialize($value);
+    $sql = "UPDATE tf_settings SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
+    if ( $sql != "" ) {
+        //$result = $db->Execute($sql);
+        $db->Execute($sql);
+        showError($db,$sql);
+        // update the Config.
+        $cfg[$key] = $value;
+    }
+}
+
+//******************************************************************************
+// saveSettings
+//******************************************************************************
+function saveSettings($settings) {
+    global $cfg, $db;
+    foreach ($settings as $key => $value) {
+        if (array_key_exists($key, $cfg)) {
+            if(is_array($cfg[$key]) || is_array($value)) {
+                if(serialize($cfg[$key]) != serialize($value)) {
+                    updateSetting($key, $value);
+                }
+            } elseif ($cfg[$key] != $value) {
+                updateSetting($key, $value);
+            } else {
+                // Nothing has Changed..
+            }
+        } else {
+            insertSetting($key,$value);
+        }
+    }
+}
+
+//******************************************************************************
+// isFile
+//******************************************************************************
+function isFile($file) {
+    $rtnValue = False;
+    if (is_file($file)) {
+        $rtnValue = True;
+    } else {
+        if ($file == trim(shell_exec("ls ".$file))) {
+            $rtnValue = True;
+        }
+    }
+    return $rtnValue;
+}
+
+
+/* ************************************************************************** */
+
+
+//*********************************************************
+// avddelete()
+function avddelete($file) {
+	@chmod($file,0777);
+	if (@is_dir($file)) {
+		$handle = @opendir($file);
+		while($filename = readdir($handle)) {
+			if ($filename != "." && $filename != "..")
+				avddelete($file."/".$filename);
+		}
+		closedir($handle);
+		@rmdir($file);
+	} else {
+		@unlink($file);
+	}
+}
+
+//*********************************************************
+// SaveMessage
+function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
+	global $_SERVER, $cfg, $db;
+	$message = str_replace(array("'"), "", $message);
+	$create_time = time();
+	$sTable = 'tf_messages';
+	if($to_all == 1) {
+		$message .= "\n\n__________________________________\n*** "._MESSAGETOALL." ***";
+		$sql = 'select user_id from tf_users';
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+		while($row = $result->FetchRow())
+		{
+			$rec = array(
+						'to_user' => $row['user_id'],
+						'from_user' => $from_user,
+						'message' => $message,
+						'IsNew' => 1,
+						'ip' => $cfg['ip'],
+						'time' => $create_time,
+						'force_read' => $force_read
+						);
+
+			$sql = $db->GetInsertSql($sTable, $rec);
+			$result2 = $db->Execute($sql);
+			showError($db,$sql);
+		}
+	} else {
+		// Only Send to one Person
+		$rec = array(
+					'to_user' => $to_user,
+					'from_user' => $from_user,
+					'message' => $message,
+					'IsNew' => 1,
+					'ip' => $cfg['ip'],
+					'time' => $create_time,
+					'force_read' => $force_read
+					);
+		$sql = $db->GetInsertSql($sTable, $rec);
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+	}
+}
+
+//*********************************************************
+function addNewUser($newUser, $pass1, $userType) {
+	global $cfg, $db;
+	$create_time = time();
+	$record = array(
+					'user_id'=>strtolower($newUser),
+					'password'=>md5($pass1),
+					'hits'=>0,
+					'last_visit'=>$create_time,
+					'time_created'=>$create_time,
+					'user_level'=>$userType,
+					'hide_offline'=>"0",
+					'theme'=>$cfg["default_theme"],
+					'language_file'=>$cfg["default_language"],
+					'state'=>1
+					);
+	$sTable = 'tf_users';
+	$sql = $db->GetInsertSql($sTable, $record);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+//*********************************************************
+function PruneDB() {
+	global $cfg, $db;
+	// Prune LOG
+	$testTime = time()-($cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
+	$sql = "delete from tf_log where time < " . $db->qstr($testTime);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	unset($result);
+	$testTime = time()-($cfg['minutes_to_keep'] * 60);
+	$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($cfg["constants"]["hit"]);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	unset($result);
+}
+
+//*********************************************************
+function IsOnline($user) {
+	global $cfg, $db;
+	$online = false;
+	$sql = "SELECT count(*) FROM tf_log WHERE user_id=" . $db->qstr($user)." AND action=".$db->qstr($cfg["constants"]["hit"]);
+	$number_hits = $db->GetOne($sql);
+	showError($db,$sql);
+	if ($number_hits > 0)
+		$online = true;
+	return $online;
+}
+
+//*********************************************************
+function IsUser($user) {
+	global $cfg, $db;
+	$isUser = false;
+	$sql = "SELECT count(*) FROM tf_users WHERE user_id=".$db->qstr($user);
+	$number_users = $db->GetOne($sql);
+	if ($number_users > 0)
+		$isUser = true;
+	return $isUser;
+}
+
+//*********************************************************
+function getOwner($file) {
+	global $cfg, $db;
+	$rtnValue = "n/a";
+	// Check log to see what user has a history with this file
+	$sql = "SELECT user_id FROM tf_log WHERE file=".$db->qstr($file)." AND (action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["reset_owner"]).") ORDER  BY time DESC";
+	$user_id = $db->GetOne($sql);
+	if($user_id != "") {
+		$rtnValue = $user_id;
+	} else {
+		// try and get the owner from the stat file
+		$rtnValue = resetOwner($file);
+	}
+	return $rtnValue;
+}
+
+//*********************************************************
+function resetOwner($file) {
+	global $cfg, $db;
+	include_once("AliasFile.php");
+	// log entry has expired so we must renew it
+	$rtnValue = "";
+	$alias = getAliasName($file).".stat";
+	if(file_exists($cfg["torrent_file_path"].$alias)) {
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg);
+		if (IsUser($af->transferowner)) {
+			// We have an owner!
+			$rtnValue = $af->transferowner;
+		} else {
+			// no owner found, so the super admin will now own it
+			$rtnValue = GetSuperAdmin();
+		}
+		$host_resolved = gethostbyaddr($cfg['ip']);
+		$create_time = time();
+		$rec = array(
+						'user_id' => $rtnValue,
+						'file' => $file,
+						'action' => $cfg["constants"]["reset_owner"],
+						'ip' => $cfg['ip'],
+						'ip_resolved' => $host_resolved,
+						'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+						'time' => $create_time
+					);
+		$sTable = 'tf_log';
+		$sql = $db->GetInsertSql($sTable, $rec);
+		// add record to the log
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+	}
+	return $rtnValue;
+}
+
+//*********************************************************
+function getCookie($cid) {
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql = "SELECT host, data FROM tf_cookies WHERE cid=".$cid;
+	$rtnValue = $db->GetAll($sql);
+	return $rtnValue[0];
+}
+
+// ***************************************************************************
+// Delete Cookie Host Information
+function deleteCookieInfo($cid) {
+	global $db;
+	$sql = "delete from tf_cookies where cid=".$cid;
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// addCookieInfo - Add New Cookie Host Information
+function addCookieInfo( $newCookie ) {
+	global $db, $cfg;
+	// Get uid of user
+	$sql = "SELECT uid FROM tf_users WHERE user_id = '" . $cfg["user"] . "'";
+	$uid = $db->GetOne( $sql );
+	$sql = "INSERT INTO tf_cookies ( cid, uid, host, data ) VALUES ( '', '" . $uid . "', '" . $newCookie["host"] . "', '" . $newCookie["data"] . "' )";
+	$db->Execute( $sql );
+	showError( $db, $sql );
+}
+
+// ***************************************************************************
+// modCookieInfo - Modify Cookie Host Information
+function modCookieInfo($cid, $newCookie) {
+	global $db;
+	$sql = "UPDATE tf_cookies SET host='" . $newCookie["host"] . "', data='" . $newCookie["data"] . "' WHERE cid='" . $cid . "'";
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+
+//*********************************************************
+function getLink($lid) {
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql = "SELECT url FROM tf_links WHERE lid=".$lid;
+	$rtnValue = $db->GetOne($sql);
+	return $rtnValue;
+}
+
+//*********************************************************
+function getRSS($rid) {
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql = "SELECT url FROM tf_rss WHERE rid=".$rid;
+	$rtnValue = $db->GetOne($sql);
+	return $rtnValue;
+}
+
+//*********************************************************
+function IsOwner($user, $owner) {
+	$rtnValue = false;
+	if (strtolower($user) == strtolower($owner))
+		$rtnValue = true;
+	return $rtnValue;
+}
+
+//*********************************************************
+function GetActivityCount($user="") {
+	global $cfg, $db;
+	$count = 0;
+	$for_user = "";
+	if ($user != "")
+		$for_user = "user_id=".$db->qstr($user)." AND ";
+	$sql = "SELECT count(*) FROM tf_log WHERE ".$for_user."(action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"]).")";
+	$count = $db->GetOne($sql);
+	return $count;
+}
+
+//*********************************************************
+function GetSpeedValue($inValue) {
+	$rtnValue = 0;
+	$arTemp = split(" ", trim($inValue));
+	if (is_numeric($arTemp[0]))
+		$rtnValue = $arTemp[0];
+	return $rtnValue;
+}
+
+// ***************************************************************************
+// Is User Admin
+// user is Admin if level is 1 or higher
+function IsAdmin($user="") {
+	global $cfg, $db;
+	$isAdmin = false;
+	if($user == "")
+		$user = $cfg["user"];
+	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
+	$user_level = $db->GetOne($sql);
+	if ($user_level >= 1)
+		$isAdmin = true;
+	return $isAdmin;
+}
+
+// ***************************************************************************
+// Is User SUPER Admin
+// user is Super Admin if level is higher than 1
+function IsSuperAdmin($user="") {
+	global $cfg, $db;
+	$isAdmin = false;
+	if($user == "")
+		$user = $cfg["user"];
+	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
+	$user_level = $db->GetOne($sql);
+	if ($user_level > 1)
+		$isAdmin = true;
+	return $isAdmin;
+}
+
+// ***************************************************************************
+// Returns true if user has message from admin with force_read
+function IsForceReadMsg() {
+	global $cfg, $db;
+	$rtnValue = false;
+	$sql = "SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1";
+	$count = $db->GetOne($sql);
+	showError($db,$sql);
+	if ($count >= 1)
+		$rtnValue = true;
+	return $rtnValue;
+}
+
+// ***************************************************************************
+// Get Message data in an array
+function GetMessage($mid) {
+	global $cfg, $db;
+	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg['user']);
+	$rtnValue = $db->GetRow($sql);
+	showError($db,$sql);
+	return $rtnValue;
+}
+
+// ***************************************************************************
+// Get Themes data in an array
+function GetThemes() {
+	$arThemes = array();
+	$dir = "themes/";
+	$handle = opendir($dir);
+	while($entry = readdir($handle)) {
+		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "old_style_themes"))
+			array_push($arThemes, $entry);
+	}
+	closedir($handle);
+	sort($arThemes);
+	return $arThemes;
+}
+// ***************************************************************************
+// Get Themes data in an array
+function Get_old_Themes() {
+	$arThemes = array();
+	$dir = "themes/old_style_themes/";
+	$handle = opendir($dir);
+	while($entry = readdir($handle)) {
+		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "css" && $entry != "tmpl" && $entry != "scripts"))
+			array_push($arThemes, $entry);
+	}
+	closedir($handle);
+	sort($arThemes);
+	return $arThemes;
+}
+
+// ***************************************************************************
+// Get Languages in an array
+function GetLanguages() {
+	$arLanguages = array();
+	$dir = "inc/language/";
+	$handle = opendir($dir);
+	while($entry = readdir($handle)) {
+		if (is_file($dir.$entry) && (strcmp(strtolower(substr($entry, strlen($entry)-4, 4)), ".php") == 0))
+			array_push($arLanguages, $entry);
+	}
+	closedir($handle);
+	sort($arLanguages);
+	return $arLanguages;
+}
+
+// ***************************************************************************
+// Get Language name from file name
+function GetLanguageFromFile($inFile) {
+	$rtnValue = "";
+	$rtnValue = str_replace("lang-", "", $inFile);
+	$rtnValue = str_replace(".php", "", $rtnValue);
+	return $rtnValue;
+}
+
+// ***************************************************************************
+// Delete Message
+function DeleteMessage($mid) {
+	global $cfg, $db;
+	$sql = "delete from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg['user']);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+
+// ***************************************************************************
+// Delete Link
+function deleteOldLink($lid) {
+	global $db;
+	// Link Mod
+	//$sql = "delete from tf_links where lid=".$lid;
+	// Get Current sort order index of link with this link id:
+	$idx=getLinkSortOrder($lid);
+	// Fetch all link ids and their sort orders where the sort order is greater
+	// than the one we're removing - we need to shuffle each sort order down
+	// one:
+	$sql="SELECT sort_order, lid FROM tf_links ";
+	$sql.="WHERE sort_order > $idx ORDER BY sort_order ASC";
+	$result=$db->Execute($sql);
+	showError($db,$sql);
+	$arLinks=$result->GetAssoc();
+	// Decrement the sort order of each link:
+	foreach($arLinks as $sid=>$this_lid){
+		$sql="UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=$this_lid";
+		$db->Execute($sql);
+		showError($db,$sql);
+	}
+	// Finally delete the link:
+	$sql = "DELETE FROM tf_links WHERE lid=".$lid;
+	// Link Mod
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// Delete RSS
+function deleteOldRSS($rid) {
+	global $db;
+	$sql = "delete from tf_rss where rid=".$rid;
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// Delete User
+function DeleteThisUser($user_id) {
+	global $db;
+	$sql = "SELECT uid FROM tf_users WHERE user_id = ".$db->qstr($user_id);
+	$uid = $db->GetOne( $sql );
+	showError($db,$sql);
+	// delete any cookies this user may have had
+	//$sql = "DELETE tf_cookies FROM tf_cookies, tf_users WHERE (tf_users.uid = tf_cookies.uid) AND tf_users.user_id=".$db->qstr($user_id);
+	$sql = "DELETE FROM tf_cookies WHERE uid=".$uid;
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	// Now cleanup any message this person may have had
+	$sql = "DELETE FROM tf_messages WHERE to_user=".$db->qstr($user_id);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	// now delete the user from the table
+	$sql = "DELETE FROM tf_users WHERE user_id=".$db->qstr($user_id);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// Update User -- used by admin
+function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline) {
+	global $db;
+	if ($hideOffline == "")
+		$hideOffline = 0;
+	$sql = 'select * from tf_users where user_id = '.$db->qstr($org_user_id);
+	$rs = $db->Execute($sql);
+	showError($db,$sql);
+	$rec = array();
+	$rec['user_id'] = $user_id;
+	$rec['user_level'] = $userType;
+	$rec['hide_offline'] = $hideOffline;
+	if ($pass1 != "")
+		$rec['password'] = md5($pass1);
+	$sql = $db->GetUpdateSQL($rs, $rec);
+	if ($sql != "") {
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+	}
+	// if the original user id and the new id do not match, we need to update messages and log
+	if ($user_id != $org_user_id) {
+		$sql = "UPDATE tf_messages SET to_user=".$db->qstr($user_id)." WHERE to_user=".$db->qstr($org_user_id);
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+		$sql = "UPDATE tf_messages SET from_user=".$db->qstr($user_id)." WHERE from_user=".$db->qstr($org_user_id);
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+		$sql = "UPDATE tf_log SET user_id=".$db->qstr($user_id)." WHERE user_id=".$db->qstr($org_user_id);
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+	}
+}
+
+// ***************************************************************************
+// changeUserLevel Changes the Users Level
+function changeUserLevel($user_id, $level) {
+	global $db;
+	$sql='select * from tf_users where user_id = '.$db->qstr($user_id);
+	$rs = $db->Execute($sql);
+	showError($db,$sql);
+	$rec = array('user_level'=>$level);
+	$sql = $db->GetUpdateSQL($rs, $rec);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// Mark Message as Read
+function MarkMessageRead($mid) {
+	global $cfg, $db;
+	$sql = 'select * from tf_messages where mid = '.$mid;
+	$rs = $db->Execute($sql);
+	showError($db,$sql);
+	$rec = array('IsNew'=>0,
+			 'force_read'=>0);
+	$sql = $db->GetUpdateSQL($rs, $rec);
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+
+// Link Mod
+//**************************************************************************
+// alterLink()
+// This function updates the database and alters the selected links values
+function alterLink($lid,$newLink,$newSite) {
+	global $cfg, $db;
+	$sql = "UPDATE tf_links SET url='".$newLink."',`sitename`='".$newSite."' WHERE `lid` = ".$lid." LIMIT 1";
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// addNewLink - Add New Link
+//function addNewLink($newLink)
+function addNewLink($newLink,$newSite) {
+	global $db;
+	//$rec = array('url'=>$newLink);
+	// Link sort order index:
+	$idx=-1;
+	// Get current highest link index:
+	$sql="SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
+	$result=$db->SelectLimit($sql, 1);
+	showError($db, $sql);
+	if($result->fields === false){
+		// No links currently in db:
+		$idx=0;
+	} else {
+		$idx=$result->fields["sort_order"]+1;
+	}
+	$rec = array(
+		'url'=>$newLink,
+		'sitename'=>$newSite,
+		'sort_order'=>$idx
+	);
+	$sTable = 'tf_links';
+	$sql = $db->GetInsertSql($sTable, $rec);
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+// Link Mod
+
+// ***************************************************************************
+// addNewRSS - Add New RSS Link
+function addNewRSS($newRSS) {
+	global $db;
+	$rec = array('url'=>$newRSS);
+	$sTable = 'tf_rss';
+	$sql = $db->GetInsertSql($sTable, $rec);
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// UpdateUserProfile
+function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
+	global $cfg, $db;
+	if (empty($hideOffline) || $hideOffline == "" || !isset($hideOffline))
+		$hideOffline = "0";
+	// update values
+	$rec = array();
+	if ($pass1 != "") {
+		$rec['password'] = md5($pass1);
+		AuditAction($cfg["constants"]["update"], _PASSWORD);
+	}
+	$sql = 'select * from tf_users where user_id = '.$db->qstr($user_id);
+	$rs = $db->Execute($sql);
+	showError($db,$sql);
+	$rec['hide_offline'] = $hideOffline;
+	$rec['theme'] = $theme;
+	$rec['language_file'] = $language;
+	$sql = $db->GetUpdateSQL($rs, $rec);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// Get Users in an array
+function GetUsers() {
+	global $cfg, $db;
+	$user_array = array();
+	$sql = "select user_id from tf_users order by user_id";
+	$user_array = $db->GetCol($sql);
+	showError($db,$sql);
+	return $user_array;
+}
+
+// ***************************************************************************
+// Get Super Admin User ID as a String
+function GetSuperAdmin() {
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql = "select user_id from tf_users WHERE user_level=2";
+	$rtnValue = $db->GetOne($sql);
+	showError($db,$sql);
+	return $rtnValue;
+}
+
+// ***************************************************************************
+// Get Links in an array
+function GetLinks() {
+	global $cfg, $db;
+	$link_array = array();
+	// Link Mod
+	//$link_array = $db->GetAssoc("SELECT lid, url FROM tf_links ORDER BY lid");
+	$link_array = $db->GetAssoc("SELECT lid, url, sitename, sort_order FROM tf_links ORDER BY sort_order");
+	// Link Mod
+	return $link_array;
+}
+
+// ***************************************************************************
+// Get RSS Links in an array
+function GetRSSLinks() {
+	global $cfg, $db;
+	$link_array = array();
+	$sql = "SELECT rid, url FROM tf_rss ORDER BY rid";
+	$link_array = $db->GetAssoc($sql);
+	showError($db,$sql);
+	return $link_array;
+}
+
+// ***************************************************************************
+// Build Search Engine Links
+function buildSearchEngineLinks($selectedEngine = 'TorrentSpy') {
+	global $cfg;
+	$settingsNeedsSaving = false;
+	$settings['searchEngineLinks'] = Array();
+	$output = '';
+	if( (!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
+		saveSettings($settings);
+	$handle = opendir("./inc/searchEngines");
+	while($entry = readdir($handle))
+		$entrys[] = $entry;
+	natcasesort($entrys);
+	foreach($entrys as $entry) {
+		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != ".")
+			if(strpos($entry,"Engine.php")) {
+				$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
+				if(array_key_exists($tmpEngine,$cfg['searchEngineLinks'])) {
+					$hreflink = $cfg['searchEngineLinks'][$tmpEngine];
+					$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
+				} else {
+					$hreflink = getEngineLink($tmpEngine);
+					$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
+					$settingsNeedsSaving = true;
+				}
+				if (strlen($hreflink) > 0) {
+					$output .=	"<a href=\"http://".$hreflink."/\" target=\"_blank\">";
+					if ($selectedEngine == $tmpEngine)
+						$output .= "<b>".$hreflink."</b>";
+					else
+						$output .= $hreflink;
+					$output .= "</a><br>\n";
+				}
+			}
+	}
+	if ( count($settings['searchEngineLinks'],COUNT_RECURSIVE) <> count($cfg['searchEngineLinks'],COUNT_RECURSIVE))
+		$settingsNeedsSaving = true;
+	if ($settingsNeedsSaving) {
+		natcasesort($settings['searchEngineLinks']);
+		saveSettings($settings);
+	}
+	return $output;
+}
+
+// Removes HTML from Messages
+function check_html ($str, $strip="") {
+	/* The core of this code has been lifted from phpslash */
+	/* which is licenced under the GPL. */
+	if ($strip == "nohtml")
+		$AllowableHTML = array('');
+	$str = stripslashes($str);
+	$str = eregi_replace("<[[:space:]]*([^>]*)[[:space:]]*>",'<\\1>', $str);
+	// Delete all spaces from html tags .
+	$str = eregi_replace("<a[^>]*href[[:space:]]*=[[:space:]]*\"?[[:space:]]*([^\" >]*)[[:space:]]*\"?[^>]*>",'<a href="\\1">', $str);
+	// Delete all attribs from Anchor, except an href, double quoted.
+	$str = eregi_replace("<[[:space:]]* img[[:space:]]*([^>]*)[[:space:]]*>", '', $str);
+	// Delete all img tags
+	$str = eregi_replace("<a[^>]*href[[:space:]]*=[[:space:]]*\"?javascript[[:punct:]]*\"?[^>]*>", '', $str);
+	// Delete javascript code from a href tags -- Zhen-Xjell @ http://nukecops.com
+	$tmp = "";
+	while (ereg("<(/?[[:alpha:]]*)[[:space:]]*([^>]*)>",$str,$reg)) {
+		$i = strpos($str,$reg[0]);
+		$l = strlen($reg[0]);
+		if ($reg[1][0] == "/")
+			$tag = strtolower(substr($reg[1],1));
+		else
+			$tag = strtolower($reg[1]);
+		if ($a = $AllowableHTML[$tag]) {
+			if ($reg[1][0] == "/") {
+				$tag = "</$tag>";
+			} elseif (($a == 1) || ($reg[2] == "")) {
+				$tag = "<$tag>";
+			} else {
+			  # Place here the double quote fix function.
+			  $attrb_list=delQuotes($reg[2]);
+			  // A VER
+			  $attrb_list = ereg_replace("&","&amp;",$attrb_list);
+			  $tag = "<$tag" . $attrb_list . ">";
+			} # Attribs in tag allowed
+		} else {
+			$tag = "";
+		}
+		$tmp .= substr($str,0,$i) . $tag;
+		$str = substr($str,$i+$l);
+	}
+	$str = $tmp . $str;
+	// parse for strings starting with http:// and subst em with hyperlinks.
+	if ($strip != "nohtml") {
+		global $cfg;
+		if ($cfg["enable_dereferrer"] != "0")
+			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="'. _URL_DEREFERRER .'${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
+		else
+			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
+	}
+	return $str;
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// Checks for the location of the torrents
+// If it does not exist, then it creates it.
+function checkTorrentPath() {
+	global $cfg;
+	// is there a stat and torrent dir?
+	if (!@is_dir($cfg["torrent_file_path"]) && is_writable($cfg["path"])) {
+		//Then create it
+		@mkdir($cfg["torrent_file_path"], 0777);
+	}
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// Returns the drive space used as a percentage i.e 85 or 95
+function getDriveSpace($drive) {
+	$percent = 0;
+	if (is_dir($drive)) {
+		$dt = disk_total_space($drive);
+		$df = disk_free_space($drive);
+		$percent = round((($dt - $df)/$dt) * 100);
+	}
+	return $percent;
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// get the Drive Space Graphical Bar
+function getDriveSpaceBar($drivespace) {
+	global $cfg;
+	switch ($cfg['drivespacebar']) {
+		case "tf":
+			$freeSpace = "";
+			if ($drivespace > 20)
+				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
+			$driveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+			$driveSpaceBar .= '<tr nowrap>';
+				$driveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
+				$driveSpaceBar .= '<td width="80%">';
+				   $driveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+					$driveSpaceBar .= '<tr>';
+						$driveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$drivespace.'%"><div class="tinypercent" align="center">'.$drivespace.'%'.$freeSpace.'</div></td>';
+						$driveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $drivespace).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
+					$driveSpaceBar .= '</tr>';
+					$driveSpaceBar .= '</table>';
+				$driveSpaceBar .= '</td>';
+			$driveSpaceBar .= '</tr>';
+			$driveSpaceBar .= '</table>';
+			break;
+		case "xfer":
+			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
+			$drivespace = 100 - $drivespace;
+			$bgcolor = '#';
+			$bgcolor .= str_pad(dechex(256-256*($drivespace/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256*($drivespace/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= '00';
+			$driveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+			  $driveSpaceBar .= '<tr nowrap>';
+				$driveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
+				$driveSpaceBar .= '<td width="92%">';
+				  $driveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>';
+					$driveSpaceBar .= '<td bgcolor="'.$bgcolor.'" width="'.$drivespace.'%">';
+					if ($drivespace >= 50) {
+						$driveSpaceBar .= '<div class="tinypercent" align="center"';
+						if ($drivespace == 100)
+							$driveSpaceBar .= ' style="background:#ffffff;">';
+						else
+							$driveSpaceBar .= '>';
+						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
+						$driveSpaceBar .= '</div>';
+					}
+					$driveSpaceBar .= '</td>';
+					$driveSpaceBar .= '<td bgcolor="#000000" width="'.(100-$drivespace).'%">';
+					if ($drivespace < 50) {
+						$driveSpaceBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
+						if ($drivespace == 0)
+							$driveSpaceBar .= '; background:#ffffff;">';
+						else
+							$driveSpaceBar .= ';">';
+						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
+						$driveSpaceBar .= '</div>';
+					}
+					$driveSpaceBar .= '</td>';
+				  $driveSpaceBar .= '</tr></table>';
+				$driveSpaceBar .= '</td>';
+			  $driveSpaceBar .= '</tr>';
+			$driveSpaceBar .= '</table>';
+		break;
+	}
+	return $driveSpaceBar;
+}
+
+// ***************************************************************************
+// ***************************************************************************
+// Convert free space to GB or MB depending on size
+function formatFreeSpace($freeSpace) {
+	$rtnValue = "";
+	if ($freeSpace > 1024)
+		$rtnValue = number_format($freeSpace/1024, 2)." GB";
+	else
+		$rtnValue = number_format($freeSpace, 2)." MB";
+	return $rtnValue;
+}
+
+//**************************************************************************
+// getFileFilter()
+// Returns a string used as a file filter.
+// Takes in an array of file types.
+function getFileFilter($inArray) {
+	$filter = "(\.".strtolower($inArray[0]).")|"; // used to hold the file type filter
+	$filter .= "(\.".strtoupper($inArray[0]).")";
+	// Build the file filter
+	for($inx = 1; $inx < sizeof($inArray); $inx++) {
+		$filter .= "|(\.".strtolower($inArray[$inx]).")";
+		$filter .= "|(\.".strtoupper($inArray[$inx]).")";
+	}
+	$filter .= "$";
+	return $filter;
+}
+
+
+//**************************************************************************
+// getAliasName()
+// Create Alias name for Text file and Screen Alias
+function getAliasName($inName) {
+	$alias = preg_replace("/[^0-9a-z.]+/i",'_', $inName);
+	$alias = str_replace(".torrent", "", $alias);
+	$alias = str_replace(".wget", "", $alias);
+	return $alias;
+}
+
+//**************************************************************************
+// cleanFileName()
+// Remove bad characters that cause problems
+function cleanFileName($inName) {
+	$replaceItems = array("?", "&", "'", "\"", "+", "@");
+	$cleanName = str_replace($replaceItems, "", $inName);
+	$cleanName = ltrim($cleanName, "-");
+	$cleanName = preg_replace("/[^0-9a-z.]+/i",'_', $cleanName);
+	return $cleanName;
+}
+
+//**************************************************************************
+// cleanURL()
+// split on the "*" coming from Varchar URL
+function cleanURL($url) {
+	$rtnValue = $url;
+	$arURL = explode("*", $url);
+	if (sizeof($arURL) > 1)
+		$rtnValue = $arURL[1];
+	return $rtnValue;
+}
+
+// -------------------------------------------------------------------
+// FetchTorrent() method to get data from URL
+// Has support for specific sites
+// -------------------------------------------------------------------
+function FetchTorrent($url) {
+	global $cfg, $db;
+	ini_set("allow_url_fopen", "1");
+	ini_set("user_agent", $_SERVER["HTTP_USER_AGENT"]);
+	$domain	 = parse_url( $url );
+	if( strtolower( substr( $domain["path"], -8 ) ) != ".torrent" ) {
+		// Check know domain types
+		if( strpos( strtolower ( $domain["host"] ), "mininova" ) !== false ) {
+			// Sample (http://www.mininova.org/rss.xml):
+			// http://www.mininova.org/tor/2254847
+			// <a href="/get/2281554">FreeLinux.ISO.iso.torrent</a>
+			// If received a /tor/ get the required information
+			if( strpos( $url, "/tor/" ) !== false ) {
+				// Get the contents of the /tor/ to find the real torrent name
+				$html = FetchHTML( $url );
+				// Check for the tag used on mininova.org
+				if( preg_match( "/<a href=\"\/get\/[0-9].[^\"]+\">(.[^<]+)<\/a>/i", $html, $html_preg_match ) ) {
+					// This is the real torrent filename
+					$cfg["save_torrent_name"] = $html_preg_match[1];
+				}
+				// Change to GET torrent url
+				$url = str_replace( "/tor/", "/get/", $url );
+			}
+			// Now fetch the torrent file
+			$html = FetchHTML( $url );
+			// This usually gets triggered if the original URL was /get/ instead of /tor/
+			if( strlen( $cfg["save_torrent_name"] ) == 0 ) {
+				// Get the name of the torrent, and make it the filename
+				if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
+					$filelength = $html_preg_match[1];
+					$filename = $html_preg_match[2];
+					$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+				}
+			}
+			// Make sure we have a torrent file
+			if( strpos( $html, "d8:" ) === false )	{
+				// We don't have a Torrent File... it is something else
+				AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html );
+				$html = "";
+			}
+			return $html;
+		} elseif( strpos( strtolower ( $domain["host"] ), "isohunt" ) !== false ) {
+			// Sample (http://isohunt.com/js/rss.php):
+			// http://isohunt.com/download.php?mode=bt&id=8837938
+			// http://isohunt.com/btDetails.php?ihq=&id=8464972
+			$referer = "http://" . $domain["host"] . "/btDetails.php?id=";
+			// If the url points to the details page, change it to the download url
+			if( strpos( strtolower( $url ), "/btdetails.php?" ) !== false ) {
+				$url = str_replace( "/btDetails.php?", "/download.php?", $url ) . "&mode=bt"; // Need to make it grab the torrent
+			}
+			// Grab contents of details page
+			$html = FetchHTML( $url, $referer );
+			// Get the name of the torrent, and make it the filename
+			if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
+				$filelength = $html_preg_match[1];
+				$filename = $html_preg_match[2];
+				$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+			}
+			// Make sure we have a torrent file
+			if( strpos( $html, "d8:" ) === false ) {
+				// We don't have a Torrent File... it is something else
+				AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html );
+				$html = "";
+			}
+			return $html;
+		} elseif( strpos( strtolower( $url ), "details.php?" ) !== false ) {
+			// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
+			// http://www.bitmetv.org/details.php?id=18435&hit=1
+			$referer = "http://" . $domain["host"] . "/details.php?id=";
+			$html = FetchHTML( $url, $referer );
+			// Sample (http://www.bitmetv.org/details.php?id=18435)
+			// download.php/18435/SpiderMan%20Season%204.torrent
+			if( preg_match( "/(download.php.[^\"]+)/i", $html, $html_preg_match ) ) {
+				$torrent = str_replace( " ", "%20", substr( $html_preg_match[0], 0, -1 ) );
+				$url2 = "http://" . $domain["host"] . "/" . $torrent;
+				$html2 = FetchHTML( $url2 );
+				// Make sure we have a torrent file
+				if (strpos($html2, "d8:") === false) {
+					// We don't have a Torrent File... it is something else
+					AuditAction($cfg["constants"]["error"], "BAD TORRENT for: ".$url."\n".$html2);
+					$html2 = "";
+				}
+				return $html2;
+			} else {
+				return "";
+			}
+		} elseif( strpos( strtolower( $url ), "download.asp?" ) !== false ) {
+			// Sample (TF's TorrenySpy Search):
+			// http://www.torrentspy.com/download.asp?id=519793
+			$referer = "http://" . $domain["host"] . "/download.asp?id=";
+			$html = FetchHTML( $url, $referer );
+			// Get the name of the torrent, and make it the filename
+			if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
+				$filelength = $html_preg_match[1];
+				$filename = $html_preg_match[2];
+				$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+			}
+			if( !empty( $html ) ) {
+				// Make sure we have a torrent file
+				if( strpos( $html, "d8:" ) === false ) {
+					// We don't have a Torrent File... it is something else
+					AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html );
+					$html = "";
+				}
+				return $html;
+			} else {
+				return "";
+			}
+		}
+	}
+	$html = FetchHTML( $url );
+	// Make sure we have a torrent file
+	if( strpos( $html, "d8:" ) === false ) {
+		// We don't have a Torrent File... it is something else
+		AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url.  "\n" . $html );
+		$html = "";
+	} else {
+		// Get the name of the torrent, and make it the filename
+		if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) )
+		{
+			$filelength = $html_preg_match[1];
+			$filename = $html_preg_match[2];
+			$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+		}
+	}
+	return $html;
+}
+
+// -------------------------------------------------------------------
+// FetchHTML() method to get data from URL -- uses timeout and user agent
+// -------------------------------------------------------------------
+function FetchHTML( $url, $referer = "" ) {
+	global $cfg, $db;
+	ini_set("allow_url_fopen", "1");
+	ini_set("user_agent", $_SERVER["HTTP_USER_AGENT"]);
+	//$url = cleanURL( $url );
+	$domain = parse_url( $url );
+	$getcmd	 = $domain["path"];
+	if(!array_key_exists("query", $domain))
+		$domain["query"] = "";
+	$getcmd .= ( !empty( $domain["query"] ) ) ? "?" . $domain["query"] : "";
+	$cookie = "";
+	$rtnValue = "";
+	// If the url already doesn't contain a passkey, then check
+	// to see if it has cookies set to the domain name.
+	if( ( strpos( $domain["query"], "passkey=" ) ) === false ) {
+		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
+		$cookie = $db->GetOne( $sql );
+		showError( $db, $sql );
+	}
+	if( !array_key_exists("port", $domain) )
+		$domain["port"] = 80;
+	// Check to see if this site requires the use of cookies
+	if( !empty( $cookie ) ) {
+		$socket = @fsockopen( $domain["host"], $domain["port"], $errno, $errstr, 30 ); //connect to server
+		if( !empty( $socket ) ) {
+			// Write the outgoing header packet
+			// Using required cookie information
+			$packet	 = "GET " . $url . "\r\n";
+			$packet .= ( !empty( $referer ) ) ? "Referer: " . $referer . "\r\n" : "";
+			$packet .= "Accept: */*\r\n";
+			$packet .= "Accept-Language: en-us\r\n";
+			$packet .= "User-Agent: ".$_SERVER["HTTP_USER_AGENT"]."\r\n";
+			$packet .= "Host: " . $_SERVER["SERVER_NAME"] . "\r\n";
+			$packet .= "Connection: Close\r\n";
+			$packet .= "Cookie: " . $cookie . "\r\n\r\n";
+			// Send header packet information to server
+			@fputs( $socket, $packet );
+			// Initialize variable, make sure null until we add too it.
+			$rtnValue = null;
+			// If http 1.0 just take it all as 1 chunk (Much easier, but for old servers)
+			while( !@feof( $socket ) )
+				$rtnValue .= @fgets( $socket, 500000 );
+			@fclose( $socket ); // Close our connection
+		}
+	} else {
+		if( $fp = @fopen( $url, 'r' ) ) {
+			$rtnValue = "";
+			while( !@feof( $fp ) )
+				$rtnValue .= @fgets( $fp, 4096 );
+			@fclose( $fp );
+		}
+	}
+	// If the HTML is still empty, then try CURL
+	if (($rtnValue == "" && function_exists("curl_init")) || (strpos($rtnValue, "HTTP/1.1 302") > 0 && function_exists("curl_init"))) {
+		// Give CURL a Try
+		$ch = curl_init();
+		if ($cookie != "")
+			curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+		curl_setopt($ch, CURLOPT_PORT, $domain["port"]);
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
+		curl_setopt($ch, CURLOPT_HEADER, TRUE);
+		curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		$response = curl_exec($ch);
+		curl_close($ch);
+		$rtnValue = substr($response, strpos($response, "d8:"));
+		$rtnValue = rtrim($rtnValue, "\r\n");
+	}
+	return $rtnValue;
+}
+
+//**************************************************************************
+// getDownloadSize()
+// Grab the full size of the download from the torrent metafile
+function getDownloadSize($torrent) {
+	$rtnValue = "";
+	if (file_exists($torrent)) {
+		include_once("BDecode.php");
+		$fd = fopen($torrent, "rd");
+		$alltorrent = fread($fd, filesize($torrent));
+		$array = BDecode($alltorrent);
+		fclose($fd);
+		$rtnValue = $array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20);
+	}
+	return $rtnValue;
+}
+
+//**************************************************************************
+// formatBytesToKBMGGB()
+// Returns a string in format of GB, MB, or kB depending on the size for display
+function formatBytesToKBMGGB($inBytes) {
+	$rsize = "";
+	if ($inBytes > (1024 * 1024 * 1024)) {
+		$rsize = round($inBytes / (1024 * 1024 * 1024), 2) . " GB";
+	} elseif ($inBytes < 1024 * 1024) {
+		$rsize = round($inBytes / 1024, 1) . " kB";
+	} else {
+		$rsize = round($inBytes / (1024 * 1024), 1) . " MB";
+	}
+	return $rsize;
+}
+
+//**************************************************************************
+// HealthData
+// Stores the image and title of for the health of a file.
+class HealthData {
+	var $image = "";
+	var $title = "";
+}
+
+//**************************************************************************
+// getStatusImage() Takes in an AliasFile object
+// Returns a string "file name" of the status image icon
+function getStatusImage($af) {
+	$hd = new HealthData();
+	$hd->image = "black.gif";
+	$hd->title = "";
+	if ($af->running == "1") {
+		// torrent is running
+		if ($af->seeds < 2)
+			$hd->image = "yellow.gif";
+		if ($af->seeds == 0)
+			$hd->image = "red.gif";
+		if ($af->seeds >= 2)
+			$hd->image = "green.gif";
+	}
+	if ($af->percent_done >= 100) {
+		if(trim($af->up_speed) != "" && $af->running == "1") {
+			// is seeding
+			$hd->image = "green.gif";
+		} else {
+			// the torrent is finished
+			$hd->image = "black.gif";
+		}
+	}
+	if ($hd->image != "black.gif")
+		$hd->title = "S:".$af->seeds." P:".$af->peers." ";
+	if ($af->running == "3") {
+		// torrent is queued
+		$hd->image = "black.gif";
+	}
+	return $hd;
+}
+
+//**************************************************************************
+class ProcessInfo {
+	var $pid = "";
+	var $ppid = "";
+	var $cmdline = "";
+	function ProcessInfo($psLine) {
+		$psLine = trim($psLine);
+		if (strlen($psLine) > 12) {
+			$this->pid = trim(substr($psLine, 0, 5));
+			$this->ppid = trim(substr($psLine, 5, 6));
+			$this->cmdline = trim(substr($psLine, 12));
+		}
+	}
+}
+
+//**************************************************************************
+// file_size()
+// Returns file size... overcomes PHP limit of 2.0GB
+function file_size($file) {
+	$size = @filesize($file);
+	if ( $size == 0)
+		$size = exec("ls -l \"".$file."\" | awk '{print $5}'");
+	return $size;
+}
+
+//**************************************************************************
+// getDirList()
+// This method Builds the Torrent Section of the Index Page
+function getDirList($dirName) {
+	global $cfg, $db;
+	include_once("AliasFile.php");
+	$lastUser = "";
+	$arUserTorrent = array();
+	$arListTorrent = array();
+	// sortOrder
+	$sortOrder = getRequestVar("so");
+	if ($sortOrder == "")
+		$sortOrder = $cfg["index_page_sortorder"];
+	// t-list
+	$arList = getTransferArray($sortOrder);
+	foreach($arList as $entry) {
+		$output = "";
+		$displayname = $entry;
+		$show_run = true;
+		$kill_id = "";
+		$estTime = "&nbsp;";
+
+		// alias / stat
+		$alias = getAliasName($entry).".stat";
+		if ((substr( strtolower($entry),-8 ) == ".torrent")) {
+			// this is a torrent-client
+			$isTorrent = true;
+			$transferowner = getOwner($entry);
+			$owner = IsOwner($cfg["user"], $transferowner);
+			$settingsAry = loadTorrentSettings($entry);
+			$af = AliasFile::getAliasFileInstance($dirName.$alias, $transferowner, $cfg, $settingsAry['btclient']);
+		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
+			// this is wget.
+			$isTorrent = false;
+			$transferowner = $cfg["user"];
+			$owner = true;
+			$settingsAry = array();
+			$settingsAry['btclient'] = "wget";
+			$settingsAry['hash'] = $entry;
+			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'wget');
+		} else {
+			// this is "something else". use tornado statfile as default
+			$isTorrent = false;
+			$transferowner = $cfg["user"];
+			$owner = true;
+			$settingsAry = array();
+			$settingsAry['btclient'] = "tornado";
+			$settingsAry['hash'] = $entry;
+			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
+		}
+		// cache running-flag in local var. we will access that often
+		$transferRunning = (int) $af->running;
+		// cache percent-done in local var. ...
+		$percentDone = $af->percent_done;
+
+		// ---------------------------------------------------------------------
+		//XFER: add upload/download stats to the xfer array
+		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
+
+		$timeStarted = "";
+		$torrentfilelink = "";
+		if(! file_exists($dirName.$alias)) {
+			$af->running = "2"; // file is new
+			$af->size = getDownloadSize($dirName.$entry);
+			$af->WriteFile();
+		}
+		if(strlen($entry) >= 47) {
+			// needs to be trimmed
+			$displayname = substr($entry, 0, 44);
+			$displayname .= "...";
+		}
+		if ($cfg["enable_torrent_download"])
+			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
+		//
+		$output .= "<tr>";
+		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+
+		// ========================================================== led + meta
+		$output .= '<td valign="bottom" align="center" nowrap>';
+		// led
+		$hd = getStatusImage($af);
+		if ($af->running == 1)
+		  $output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+		$output .= "<img src=\"images/".$hd->image."\" width=\"16\" height=\"16\" title=\"".$hd->title.$entry."\" border=\"0\" align=\"absmiddle\">";
+		if ($af->running == 1)
+		  $output .= "</a>";
+		// meta
+		$output .= $torrentfilelink;
+		$output .= "</td>";
+
+		// ================================================================ name
+		$output .= "<td valign=\"bottom\" nowrap>";
+		$output .= $detailsLinkString;
+		$output .= $displayname;
+		$output .= "</a>";
+		$output .= "</td>";
+
+		$output .= "<td align=\"right\" nowrap><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
+		$output .= "<td align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$transferowner."\"><font class=\"tiny\">".$transferowner."</font></a></td>";
+		$output .= "<td valign=\"bottom\" nowrap><div align=\"center\">";
+		if ($af->running == "2") {
+			$output .= "<i><font color=\"#32cd32\">"._NEW."</font></i>";
+		} elseif ($af->running == "3" ) {
+			$estTime = "Waiting...";
+			$output .= "<i><font color=\"#000000\" onmouseover=\"return overlib('"._QUEUED."<br>', CSSCLASS);\" onmouseout=\"return nd();\">"._QUEUED."</font></i>";
+		} else {
+			if ($af->time_left != "" && $af->time_left != "0")
+				$estTime = $af->time_left;
+			$sql_search_time = "Select time from tf_log where action like '%Upload' and file like '".$entry."%'";
+			$result_search_time = $db->Execute($sql_search_time);
+			list($uploaddate) = $result_search_time->FetchRow();
+			$lastUser = $transferowner;
+			$sharing = $af->sharing."%";
+			$graph_width = 1;
+			$progress_color = "#00ff00";
+			$background = "#000000";
+			$bar_width = "4";
+			$popup_msg = _ESTIMATEDTIME.": ".$af->time_left;
+			$popup_msg .= "<br>". _DOWNLOADSPEED .": ".$af->down_speed;
+			$popup_msg .= "<br>". _UPLOADSPEED .": ".$af->up_speed;
+			$popup_msg .= "<br>". _SHARING .": ".$sharing;
+			$popup_msg .= "<br>Seeds: ".$af->seeds;
+			$popup_msg .= "<br>Peers: ".$af->peers;
+			$popup_msg .= "<br>". _USER .": ".$transferowner;
+			$eCount = 0;
+			foreach ($af->errors as $key => $value) {
+				if(strpos($value," (x")) {
+					$curEMsg = substr($value,strpos($value," (x")+3);
+					$eCount += substr($curEMsg,0,strpos($curEMsg,")"));
+				} else {
+					$eCount += 1;
+				}
+			}
+			$popup_msg .= "<br>"._ERRORSREPORTED.": ".strval($eCount);
+			$popup_msg .= "<br>"._UPLOADED.": ".date("m/d/Y H:i:s", $uploaddate);
+			if (is_file($dirName.$alias.".pid"))
+				$timeStarted = "<br>"._STARTED.": ".date("m/d/Y H:i:s",	 strval(filectime($dirName.$alias.".pid")));
+			// incriment the totals
+			if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
+			if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
+			$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
+			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
+			if($af->percent_done >= 100) {
+				if(trim($af->up_speed) != "" && $af->running == "1") {
+					$popup_msg .= $timeStarted;
+					$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" style=\"font-size:7pt;\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\">seeding (".$af->up_speed.") ".$sharing."</a>";
+				} else {
+					$popup_msg .= "<br>"._ENDED.": ".date("m/d/Y H:i:s",  strval(filemtime($dirName.$alias)));
+					$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><i><font color=red>"._DONE."</font></i></a>";
+				}
+				$show_run = false;
+			} else if ($af->percent_done < 0) {
+				$popup_msg .= $timeStarted;
+				$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><i><font color=\"#989898\">"._INCOMPLETE."</font></i></a>";
+				$show_run = true;
+			} else {
+				$popup_msg .= $timeStarted;
+				if($af->percent_done > 1)
+					$graph_width = $af->percent_done;
+				if($graph_width == 100)
+					$background = $progress_color;
+				$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&lias=".$alias."&torrent=".urlencode($entry)."')\" onmouseover=\"return overlib('".$popup_msg."<br>', CSSCLASS);\" onmouseout=\"return nd();\">";
+				$output .= "<font class=\"tiny\"><strong>".$af->percent_done."%</strong> @ ".$af->down_speed."</font></a><br>";
+				$output .= "<table width=\"100\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">";
+				$output .= "<tr><td background=\"themes/".$cfg["theme"]."/images/progressbar.gif\" bgcolor=\"".$progress_color."\"><img src=\"images/blank.gif\" width=\"".$graph_width."\" height=\"".$bar_width."\" border=\"0\"></td>";
+				$output .= "<td bgcolor=\"".$background."\"><img src=\"images/blank.gif\" width=\"".(100 - $graph_width)."\" height=\"".$bar_width."\" border=\"0\"></td>";
+				$output .= "</tr></table>";
+			}
+		}
+
+		$output .= "</div></td>";
+		$output .= "<td nowrap><div class=\"tiny\" align=\"center\">".$estTime."</div></td>";
+
+		// =============================================================== admin
+		$output .= '<td nowrap>';
+		include('inc/index_admincell.php');
+		$output .= "</td>";
+		$output .= "</tr>\n";
+
+		// Is this torrent for the user list or the general list?
+		if ($owner)
+			array_push($arUserTorrent, $output);
+		else
+			array_push($arListTorrent, $output);
+	}
+
+	//XFER: if a new day but no .stat files where found put blank entry into the
+	//      DB for today to indicate accounting has been done for the new day
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		transferListXferUpdate2($newday);
+
+	// build output string
+	$output = '<table bgcolor="'.$cfg["table_data_bg"].'" width="100%" bordercolor="'.$cfg["table_border_dk"].'" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">';
+
+	if (sizeof($arUserTorrent) > 0) {
+		$output .= "<tr>";
+		// first
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
+		switch ($sortOrder) {
+			case 'da': // sort by date ascending
+				$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
+				break;
+			case 'dd': // sort by date descending
+				$output .= '<a href="?so=da"><font class="adminlink">#</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
+				break;
+			default:
+				$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
+				break;
+		}
+		$output .= "</div></td>";
+		// name
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
+		switch ($sortOrder) {
+			case 'na': // sort alphabetically by name ascending
+				$output .= '<a href="?so=nd"><font class="adminlink">' .$cfg["user"].": ". _TRANSFERFILE .'</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
+				break;
+			case 'nd': // sort alphabetically by name descending
+				$output .= '<a href="?so=na"><font class="adminlink">' .$cfg["user"].": ". _TRANSFERFILE .'</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
+				break;
+			default:
+				$output .= '<a href="?so=na"><font class="adminlink">' .$cfg["user"].": ". _TRANSFERFILE .'</font></a>';
+				break;
+		}
+		$output .= "</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">Size</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._USER."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._STATUS."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ESTIMATEDTIME."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ADMIN."</div></td>";
+		$output .= "</tr>\n";
+		foreach($arUserTorrent as $torrentrow)
+			$output .= $torrentrow;
+	}
+
+	// "Only Admin can see other user torrents"
+	$boolCond = true;
+	if ($cfg['enable_restrictivetview'] == 1)
+		$boolCond = IsAdmin();
+	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
+	// "Only Admin can see other user torrents"
+		$output .= "<tr>";
+		// first
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
+		switch ($sortOrder) {
+			case 'da': // sort by date ascending
+				$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
+				break;
+			case 'dd': // sort by date descending
+				$output .= '<a href="?so=da"><font class="adminlink">#</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
+				break;
+			default:
+				$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
+				break;
+		}
+		$output .= "</div></td>";
+		// name
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">";
+		switch ($sortOrder) {
+			case 'na': // sort alphabetically by name ascending
+				$output .= '<a href="?so=nd"><font class="adminlink">' ._TRANSFERFILE .'</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
+				break;
+			case 'nd': // sort alphabetically by name descending
+				$output .= '<a href="?so=na"><font class="adminlink">' ._TRANSFERFILE .'</font></a>';
+				$output .= '&nbsp;';
+				$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
+				break;
+			default:
+				$output .= '<a href="?so=na"><font class="adminlink">' ._TRANSFERFILE .'</font></a>';
+				break;
+		}
+		$output .= "</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">Size</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._USER."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._STATUS."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ESTIMATEDTIME."</div></td>";
+		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=center class=\"title\">"._ADMIN."</div></td>";
+		$output .= "</tr>\n";
+		foreach($arListTorrent as $torrentrow)
+			$output .= $torrentrow;
+	}
+	return $output;
+}
+
+
+/* ************************************************************************** */
+
+
+//XFER:****************************************************
+//XFER: getUsage(timestamp, usage_array)
+//XFER: Gets upload/download usage for all users starting at timestamp from SQL
+function getUsage($start, $period) {
+  global $xfer, $xfer_total, $db;
+  $sql = 'SELECT user, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= "'.$start.'" AND user != "" GROUP BY user';
+  $rtnValue = $db->GetAll($sql);
+  showError($db,$sql);
+  foreach ($rtnValue as $row) sumUsage($row[0], $row[1], $row[2], $period);
+}
+
+//XFER:****************************************************
+//XFER: sumUsage(user, downloaded, uploaded, usage_array)
+//XFER: Adds download/upload into correct usage_array (total, month, etc)
+function sumUsage($user, $download, $upload, $period) {
+  global $xfer, $xfer_total;
+  @ $xfer[$user][$period]['download'] += $download;
+  @ $xfer[$user][$period]['upload'] += $upload;
+  @ $xfer[$user][$period]['total'] += $download + $upload;
+  @ $xfer_total[$period]['download'] += $download;
+  @ $xfer_total[$period]['upload'] += $upload;
+  @ $xfer_total[$period]['total'] += $download + $upload;
+}
+
+//XFER:****************************************************
+//XFER: saveXfer(user, download, upload)
+//XFER: Inserts or updates SQL upload/download for user
+function saveXfer($user, $down, $up) {
+  global $db;
+  $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$user.'" AND date = '.$db->DBDate(time());
+  if ($db->GetRow($sql)) {
+    $sql = 'UPDATE tf_xfer SET download = download+'.($down+0).', upload = upload+'.($up+0).' WHERE user = "'.$user.'" AND date = '.$db->DBDate(time());
+    $db->Execute($sql);
+    showError($db,$sql);
+  } else {
+    showError($db,$sql);
+    $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
+    $db->Execute($sql);
+    showError($db,$sql);
+  }
+}
+
+// Link Mod
+function getLinkSortOrder($lid) {
+    global $db;
+    // Get Current sort order index of link with this link id:
+    $sql="SELECT sort_order FROM tf_links WHERE lid=$lid";
+    $rtnValue=$db->GetOne($sql);
+    showError($db,$sql);
+    return $rtnValue;
+}
+
+//*********************************************************
+function getSite($lid) {
+    global $cfg, $db;
+    $rtnValue = "";
+    $sql = "SELECT sitename FROM tf_links WHERE lid=".$lid;
+    $rtnValue = $db->GetOne($sql);
+    return $rtnValue;
+}
+// Link Mod
+
+// Some Stats dir hack
+//*************************************************************************
+// correctFileName()
+// Adds backslashes above special characters to obtain attainable directory
+// names for disk usage
+function correctFileName ($inName) {
+       $replaceItems = array("'", ",", "#", "%", "!", "+", ":", "/", " ", "@", "$", "&", "?", "\"", "(", ")");
+       $replacedItems = array("\'", "\,", "\#", "\%", "\!", "\+", "\:", "\/", "\ ", "\@", "\$", "\&", "\?", "\\\"", "\(", "\)");
+       $cleanName = str_replace($replaceItems, $replacedItems, $inName);
+       return $cleanName;
+}
+
+/**
+ * Specific save path
+ *
+ * @param $dir
+ * @param $maxdepth
+ * @return unknown
+ */
+function dirTree2($dir, $maxdepth) {
+        $dirTree2 = "<option value=\"".$dir."\">".$dir."</option>\n" ;
+        if (is_numeric ($maxdepth)) {
+                if ($maxdepth == 0) {
+                        //$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
+                        $last = exec ("find ".$dir." -type d | sort", $retval);
+                        for ($i = 1; $i < (count ($retval) - 1); $i++)
+                        {
+                                $dirTree2 .= "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
+                        }
+                } else if ($maxdepth > 0) {
+                        //$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
+                        $last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort", $retval);
+                        for ($i = 1; $i < (count ($retval) - 1); $i++)
+                                $dirTree2 .= "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
+                } else {
+                        $dirTree2 .= "<option value=\"".$dir."\">".$dir."</option>\n" ;
+                }
+        } else {
+                $dirTree2 .= "<option value=\"".$dir."\">".$dir."</option>\n" ;
+        }
+        return $dirTree2;
+}
+
+// SFV Check hack
+//*************************************************************************
+// findSVF()
+// This method Builds and displays the Torrent Section of the Index Page
+function findSFV($dirName) {
+	$sfv = false;
+	$d = dir($dirName);
+	while (false !== ($entry = $d->read())) {
+   		if($entry != '.' && $entry != '..' && !empty($entry) ) {
+			if((is_file($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
+				$sfv[dir] = $dirName;
+				$sfv[sfv] = $dirName.'/'.$entry;
+			}
+	   	}
+	}
+	$d->close();
+	return $sfv;
+}
+// Profiles hack
+//*************************************************************************
+// GetProfiles()
+// This method Gets Download profiles for the actual user
+
+function GetProfiles($user, $profile) {
+	global $cfg, $db;
+	$profiles_array = array();
+	$sql = "SELECT name FROM tf_trprofiles WHERE owner LIKE '".$user."' AND public='0'";
+	$rs = $db->GetCol($sql);
+	if ($rs) {
+		foreach($rs as $arr) {
+			if($arr == $profile)
+				$is_select = 1;
+			else
+				$is_select = 0;
+			array_push($profiles_array, array(
+				'name' => $arr,
+				'is_selected' => $is_select,
+				)
+			);
+		}
+	}
+	showError($db,$sql);
+	return $profiles_array;
+}
+
+//*************************************************************************
+// GetPublicProfiles()
+// This method Gets public Download profiles
+function GetPublicProfiles($profile) {
+	global $cfg, $db;
+	$profiles_array = array();
+	$sql = "SELECT name FROM tf_trprofiles WHERE public= '1'";
+	$rs = $db->GetCol($sql);
+	if ($rs) {
+		foreach($rs as $arr) {
+			if($arr == $profile)
+				$is_select = 1;
+			else
+				$is_select = 0;
+			array_push($profiles_array, array(
+				'name' => $arr,
+				'is_selected' => $is_select,
+				)
+			);
+		}
+	}
+	showError($db,$sql);
+	return $profiles_array;
+}
+
+// Profiles hack
+//*************************************************************************
+// GetProfileSettings()
+// This method fetch settings for an specific profile
+function GetProfileSettings($profile) {
+	global $cfg, $db;
+	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name like '".$profile."'";
+	$settings = $db->GetRow($sql);
+	showError($db,$sql);
+	return $settings;
+}
+
+// ***************************************************************************
+// addProfileInfo - Add New Profile Information
+function AddProfileInfo( $newProfile ) {
+	global $db, $cfg;
+	$sql ="INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public ) VALUES ('".$newProfile["name"]."', '".$cfg['uid']."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest"]."', '".$newProfile["rate"]."', '".$newProfile["maxuploads"]."', '".$newProfile["drate"]."', '".$newProfile["runtime"]."', '".$newProfile["sharekill"]."', '".$newProfile["superseeder"]."', '".$newProfile["public"]."')";
+	$db->Execute( $sql );
+	showError( $db, $sql );
+}
+
+//*********************************************************
+function getProfile($pid) {
+	global $cfg, $db;
+	$rtnValue = "";
+	$sql = "SELECT id , name , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public FROM tf_trprofiles WHERE id LIKE '".$pid."'";
+	$rtnValue = $db->GetAll($sql);
+	return $rtnValue[0];
+}
+
+// ***************************************************************************
+// modProfileInfo - Modify Profile Information
+function modProfileInfo($pid, $newProfile) {
+	global $cfg, $db;
+	$sql = "UPDATE tf_trprofiles SET owner = '".$cfg['uid']."', name = '".$newProfile["name"]."', minport = '".$newProfile["minport"]."', maxport = '".$newProfile["maxport"]."', maxcons = '".$newProfile["maxcons"]."', rerequest = '".$newProfile["rerequest"]."', rate = '".$newProfile["rate"]."', maxuploads = '".$newProfile["maxuploads"]."', drate = '".$newProfile["drate"]."', runtime = '".$newProfile["runtime"]."', sharekill = '".$newProfile["sharekill"]."', superseeder = '".$newProfile["superseeder"]."', public = '".$newProfile["public"]."' WHERE id = '".$pid."'";
+	$db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ***************************************************************************
+// Delete Profile Information
+function deleteProfileInfo($pid) {
+	global $db;
+	$sql = "DELETE FROM tf_trprofiles WHERE id=".$pid;
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+}
+
+// ****************************************************************************
+// Estimated time left to seed
+function GetSpeedInBytes($inValue) {
+	$rtnValue = 0;
+	$arTemp = split(" ", trim($inValue));
+	if ($arTemp[1] == "kB/s")
+		$rtnValue = $arTemp[0] * 1024;
+	else
+		$rtnValue = $arTemp[0];
+	return $rtnValue;
+}
+
+/**
+ * SecondsToDate
+ *
+ * @param $seconds
+ * @return
+ */
+function SecondsToDate($seconds) {
+      $periods = array (
+                    'years'     => 31556926,
+                    'months'    => 2629743,
+                    'weeks'     => 604800,
+                    'days'      => 86400,
+                    'hours'     => 3600,
+                    'minutes'   => 60,
+                    'seconds'   => 1
+      );
+      $seconds = (float) $seconds;
+      foreach ($periods as $period => $value) {
+          $count = floor($seconds / $value);
+          if ($count == 0)
+              continue;
+          $values[$period] = $count;
+          $seconds = $seconds % $value;
+      }
+      if (empty($values))
+          $values = null;
+      foreach ($values as $key => $value) {
+          $segment_name = substr($key, 0, -1);
+          $segment = $value . ' ' . $segment_name;
+          if ($value != 1)
+              $segment .= 's';
+          $array[] = $segment;
+      }
+      return implode(', ', $array);
+}
+
+
 /* ************************************************************************** */
 
 ?>

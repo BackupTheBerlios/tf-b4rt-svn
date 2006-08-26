@@ -278,7 +278,7 @@ function SecondsToDate($seconds)
       );
       $seconds = (float) $seconds;
       foreach ($periods as $period => $value) {
-          $count = floor($seconds / $value);  
+          $count = floor($seconds / $value);
           if ($count == 0) {
               continue;
           }
@@ -290,7 +290,7 @@ function SecondsToDate($seconds)
       }
       foreach ($values as $key => $value) {
           $segment_name = substr($key, 0, -1);
-          $segment = $value . ' ' . $segment_name; 
+          $segment = $value . ' ' . $segment_name;
           if ($value != 1) {
               $segment .= 's';
           }
@@ -298,4 +298,5 @@ function SecondsToDate($seconds)
       }
       return implode(', ', $array);
 }
+
 ?>
