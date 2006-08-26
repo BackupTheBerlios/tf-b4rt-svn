@@ -24,7 +24,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-include_once("functions.php");
+include_once("main.php");
 
 // -------------------------------------------------------------------
 // FetchHTML() method to get data from URL -- uses timeout and user agent

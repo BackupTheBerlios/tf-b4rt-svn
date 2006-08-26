@@ -32,7 +32,7 @@ define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
 
 // includes
 require_once("config.php");
-require_once("functions.php");
+require_once("main.php");
 
 // global fields
 $error = "";

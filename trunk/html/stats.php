@@ -33,7 +33,7 @@ include_once("config.php");
 switch (_PUBLIC_STATS) {
     case 0:
         // includes
-        include_once("functions.php");
+        include_once("main.php");
         break;
     case 1:
         include_once('db.php');
