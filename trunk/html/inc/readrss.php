@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // require
-require_once("lastRSS.php");
+require_once("inc/classes/lastRSS.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
