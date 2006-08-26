@@ -29,21 +29,18 @@ define('_URL_DTD_XMLOLD','http://'.$_SERVER['SERVER_NAME'].'/tf_xml.dtd');
 // init
 // -----------------------------------------------------------------------------
 
-include_once("config.php");
+// config
+require_once("config.php");
 switch (_PUBLIC_STATS) {
     case 0:
         // includes
-        include_once("main.php");
+        require_once("main.php");
         break;
     case 1:
-        include_once('db.php');
-        include_once("settingsfunctions.php");
-        // tf-functions
-        include_once('functions.tf.php');
-        // hacks-functions
-        include_once('functions.hacks.php');
-        // common-functions
-        include_once('functions.common.php');
+		// db
+		require_once('db.php');
+		// functions
+		require_once("functions.php");
         // Create Connection.
         $db = getdb();
         // load settings

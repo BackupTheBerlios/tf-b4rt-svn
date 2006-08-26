@@ -20,14 +20,19 @@
 
 *******************************************************************************/
 
-foreach ($_POST as $key => $value) {
-	if ($key != "searchEngine")
-		$settings[$key] = $value;
-}
-saveSettings($settings);
-AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Search Settings");
-$searchEngine = getRequestVar('searchEngine');
-if (empty($searchEngine)) $searchEngine = $cfg["searchEngine"];
-header("location: index.php?iid=admin&op=searchSettings&searchEngine=".$searchEngine);
+// settingsfunctions
+require_once("settingsfunctions.php");
+
+// tf-functions
+require_once('functions.tf.php');
+
+// hacks-functions
+require_once('functions.hacks.php');
+
+// common-functions
+require_once('functions.common.php');
+
+// display-functions
+require_once('functions.display.php');
 
 ?>

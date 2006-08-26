@@ -2,62 +2,38 @@
 
 /* $Id$ */
 
-/*************************************************************
-*  TorrentFlux - PHP Torrent Manager
-*  www.torrentflux.com
-**************************************************************/
-/*
-    This file is part of TorrentFlux.
+/*******************************************************************************
 
-    TorrentFlux is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+ LICENSE
 
-    TorrentFlux is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License (GPL)
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with TorrentFlux; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ To read the license please visit http://www.gnu.org/copyleft/gpl.html
+
+*******************************************************************************/
 
 // Start Session and grab user
 session_start("TorrentFlux");
 
+// user
 if(isset($_SESSION['user']))
     $cfg["user"] = strtolower($_SESSION['user']);
 else
     $cfg["user"] = "";
 
-include_once('db.php');
-include_once("settingsfunctions.php");
-
-//******************************************************************************
-// include functions
-//******************************************************************************
-
-// tf-functions
-include_once('functions.tf.php');
-
-// hacks-functions
-include_once('functions.hacks.php');
-
-// common-functions
-include_once('functions.common.php');
-
-//******************************************************************************
-// require functions
-//******************************************************************************
-
-// display-functions
-require_once('functions.display.php');
-
-//******************************************************************************
+// functions
+require_once('functions.php');
 
 // Create Connection.
+require_once('db.php');
 $db = getdb();
 
 // load global settings
@@ -121,10 +97,10 @@ checkTorrentPath();
 *  blackwidow - matt@mattjanssen.net
 **************************************************************/
 /*
-    TorrentFlux xfer Statistics hack is free code; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+	TorrentFlux xfer Statistics hack is free code; you can redistribute it
+	and/or modify it under the terms of the GNU General Public License as
+	published by the Free Software Foundation; either version 2 of the License,
+	or (at your option) any later version.
 */
 
 //XFER: create tf_xfer if it doesn't already exist. if xfer is empty, insert a zero record for today

@@ -44,18 +44,12 @@ if ($bail > 0) {
 // hold revision-number in a var
 $REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
 
-// will need include of config.php
+// config
 require_once('config.php');
 // db
-include_once('db.php');
-// settings-functions
-include_once("settingsfunctions.php");
-// tf-functions
-include_once('functions.tf.php');
-// hacks-functions
-include_once('functions.hacks.php');
-// common-functions
-include_once('functions.common.php');
+require_once('db.php');
+// functions
+require_once("functions.php");
 
 // Create Connection.
 $db = getdb();
@@ -71,7 +65,6 @@ $cfg["free_space"] = @disk_free_space($cfg["path"])/(1024*1024);
 $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
 // config
-include_once("config.php");
 $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 

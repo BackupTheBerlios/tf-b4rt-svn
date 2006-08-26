@@ -20,13 +20,13 @@
 
 *******************************************************************************/
 
-// =============================================================================
-// require same global things
-require_once("config.php");
+// config
+require_once('config.php');
+// main
 require_once("main.php");
+// vlib
 require_once("lib/vlib/vlibTemplate.php");
 
-// =============================================================================
 // fluxd
 //
 // allways use this instance of Fluxd in included pages.
@@ -47,7 +47,6 @@ if($cfg["fluxd_Qmgr_enabled"] == 1) {
 	}
 }
 
-// =============================================================================
 // iid-switch
 if(isset($_GET['iid'])) {
 	switch($_GET['iid']) {

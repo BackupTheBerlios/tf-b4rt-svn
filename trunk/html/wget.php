@@ -20,11 +20,12 @@
 
 *******************************************************************************/
 
-include_once('config.php');
-include_once('db.php');
-include_once("settingsfunctions.php");
-include_once("functions.tf.php");
-include_once("functions.hacks.php");
+// config
+require_once('config.php');
+// db
+require_once('db.php');
+// functions
+require_once("functions.php");
 
 // Create Connection + load settings
 $db = getdb();

@@ -24,7 +24,6 @@ include_once("config.php");
 include_once("main.php");
 include_once("ClientHandler.php");
 
-// =============================================================================
 // fluxd
 //
 // allways use this instance of Fluxd in included pages.
@@ -45,7 +44,6 @@ if($cfg["fluxd_Qmgr_enabled"] == 1) {
 	}
 }
 
-// =============================================================================
 /* action */
 $action = "---";
 if (isset($_REQUEST["action"]))
