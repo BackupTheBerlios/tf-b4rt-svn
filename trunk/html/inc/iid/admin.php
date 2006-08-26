@@ -26,6 +26,171 @@ if(!IsAdmin()) {
 	header("location: index.php?iid=index");
 }
 
+// op-switch
+$op = getRequestVar('op');
+switch ($op) {
+
+	default:
+		//require_once("admin/default.php");
+		//break;
+	case "configSettings":
+		require_once("admin/configSettings.php");
+		break;
+
+	case "updateConfigSettings":
+		$settings = processSettingsParams();
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
+		$continue = getRequestVar('continue');
+		require_once("admin_".$continue.".php");
+		break;
+
+	case "showUserActivity":
+		$min = getRequestVar('min');
+		if(empty($min)) $min=0;
+		$user_id = getRequestVar('user_id');
+		$srchFile = getRequestVar('srchFile');
+		$srchAction = getRequestVar('srchAction');
+		require_once("admin/showUserActivity.php");
+		break;
+
+	case "xfer":
+		require_once("admin/xfer.php");
+		break;
+
+	case "backupDatabase":
+		require_once("admin_backupDatabase.php");
+		break;
+
+	case "editRSS":
+		require_once("admin/editRSS.php");
+		break;
+
+	case "addRSS":
+		$newRSS = getRequestVar('newRSS');
+		if(!empty($newRSS)){
+			addNewRSS($newRSS);
+			AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
+		}
+		header("location: index.php?iid=admin&op=editRSS");
+		break;
+
+	case "deleteRSS":
+		$rid = getRequestVar('rid');
+		AuditAction($cfg["constants"]["admin"], _DELETE." RSS: ".getRSS($rid));
+		deleteOldRSS($rid);
+		header("location: index.php?iid=admin&op=editRSS");
+		break;
+
+	case "editLink":
+		$lid = getRequestVar('lid');
+		$editLink = getRequestVar('editLink');
+		$editSite = getRequestVar('editSite');
+		require_once("admin/editLink.php");
+		break;
+
+	case "editLinks":
+		require_once("admin/editLinks.php");
+		break;
+
+	case "addLink":
+		$newLink = getRequestVar('newLink');
+		$newSite = getRequestVar('newSite');
+		require_once("admin/addLink.php");
+		break;
+
+	case "moveLink":
+		$lid = getRequestVar('lid');
+		$direction = getRequestVar('direction');
+		require_once("admin/moveLink.php");
+		break;
+
+	case "deleteLink":
+		$lid = getRequestVar('lid');
+		AuditAction($cfg["constants"]["admin"], _DELETE." Link: ".getSite($lid)." [".getLink($lid)."]");
+		deleteOldLink($lid);
+		header("location: index.php?iid=admin&op=editLinks");
+		break;
+
+	case "showUsers":
+		require_once("admin/showUsers.php");
+		break;
+
+	case "CreateUser":
+		require_once("admin/CreateUser.php");
+		break;
+
+	case "addUser":
+		$newUser = getRequestVar('newUser');
+		$pass1 = getRequestVar('pass1');
+		$userType = getRequestVar('userType');
+		require_once("admin/addUser.php");
+		break;
+
+	case "deleteUser":
+		$user_id = getRequestVar('user_id');
+		if (!IsSuperAdmin($user_id)) {
+			DeleteThisUser($user_id);
+			AuditAction($cfg["constants"]["admin"], _DELETE." "._USER.": ".$user_id);
+		}
+		header("location: index.php?iid=admin");
+		break;
+
+	case "editUser":
+		$user_id = getRequestVar('user_id');
+		require_once("admin/editUser.php");
+		break;
+
+	case "updateUser":
+		$user_id = getRequestVar('user_id');
+		$org_user_id = getRequestVar('org_user_id');
+		$pass1 = getRequestVar('pass1');
+		$userType = getRequestVar('userType');
+		$hideOffline = getRequestVar('hideOffline');
+		require_once("admin/updateUser.php");
+		break;
+
+	case "setUserState":
+		setUserState();
+		header("location: index.php?iid=admin&op=showUsers");
+		break;
+
+	case "fluxdSettings":
+		require_once("admin/fluxdSettings.php");
+		break;
+
+	case "controlFluxd":
+		require_once("admin/controlFluxd.php");
+		break;
+
+	case "updateFluxdSettings":
+		require_once("admin/updateFluxdSettings.php");
+		break;
+
+	case "uiSettings":
+		require_once("admin/uiSettings.php");
+		break;
+
+	case "updateUiSettings":
+		$settings = processSettingsParams();
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux UI Settings");
+		header("location: index.php?iid=admin&op=uiSettings");
+		break;
+
+	case "searchSettings":
+		require_once("admin/searchSettings.php");
+		break;
+
+	case "updateSearchSettings":
+		require_once("admin/updateSearchSettings.php");
+		break;
+
+}
+
+//******************************************************************************
+
+
 //****************************************************************************
 // getMenu -- displays Admin Menu
 //****************************************************************************
@@ -344,181 +509,5 @@ function setUserState() {
 	}
 	return true;
 }
-
-//******************************************************************************
-// TRAFFIC CONTROLER
-//******************************************************************************
-
-$op = getRequestVar('op');
-
-switch ($op) {
-
-	case "configSettings":
-	default:
-		require_once("admin_configSettings.php");
-		//$min = getRequestVar('min');
-		//if(empty($min)) $min=0;
-		//require_once("admin_default.php");
-	break;
-
-	case "updateConfigSettings":
-		if (! array_key_exists("debugTorrents", $_REQUEST))
-			$_REQUEST["debugTorrents"] = false;
-		$settings = processSettingsParams();
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
-		$continue = getRequestVar('continue');
-		require_once("admin_".$continue.".php");
-
-	break;
-
-	case "showUserActivity":
-		$min = getRequestVar('min');
-		if(empty($min)) $min=0;
-		$user_id = getRequestVar('user_id');
-		$srchFile = getRequestVar('srchFile');
-		$srchAction = getRequestVar('srchAction');
-		require_once("admin_showUserActivity.php");
-	break;
-
-	//XFER
-	case "xfer":
-		require_once("admin_xfer.php");
-	break;
-
-	case "backupDatabase":
-		require_once("admin_backupDatabase.php");
-	break;
-
-	case "editRSS":
-		require_once("admin_editRSS.php");
-	break;
-
-	case "addRSS":
-		$newRSS = getRequestVar('newRSS');
-		if(!empty($newRSS)){
-			addNewRSS($newRSS);
-			AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
-		}
-		header("location: index.php?iid=admin&op=editRSS");
-	break;
-
-	case "deleteRSS":
-		$rid = getRequestVar('rid');
-		AuditAction($cfg["constants"]["admin"], _DELETE." RSS: ".getRSS($rid));
-		deleteOldRSS($rid);
-		header("location: index.php?iid=admin&op=editRSS");
-	break;
-
-	// Link Mod
-	case "editLink":
-		$lid = getRequestVar('lid');
-		$editLink = getRequestVar('editLink');
-		$editSite = getRequestVar('editSite');
-		require_once("admin_editLink.php");
-	break;
-	// Link Mod
-
-	case "editLinks":
-		require_once("admin_editLinks.php");
-	break;
-
-	case "addLink":
-		$newLink = getRequestVar('newLink');
-		$newSite = getRequestVar('newSite');
-		require_once("admin_addLink.php");
-	break;
-
-	case "moveLink":
-		$lid = getRequestVar('lid');
-		$direction = getRequestVar('direction');
-		require_once("admin_moveLink.php");
-	break;
-
-	case "deleteLink":
-		$lid = getRequestVar('lid');
-		AuditAction($cfg["constants"]["admin"], _DELETE." Link: ".getSite($lid)." [".getLink($lid)."]");
-		deleteOldLink($lid);
-		header("location: index.php?iid=admin&op=editLinks");
-	break;
-
-	case "showUsers":
-		require_once("admin_showUsers.php");
-	break;
-
-	case "CreateUser":
-		require_once("admin_CreateUser.php");
-	break;
-
-	case "addUser":
-		$newUser = getRequestVar('newUser');
-		$pass1 = getRequestVar('pass1');
-		$userType = getRequestVar('userType');
-		require_once("admin_addUser.php");
-	break;
-
-	case "deleteUser":
-		$user_id = getRequestVar('user_id');
-		if (!IsSuperAdmin($user_id)) {
-			DeleteThisUser($user_id);
-			AuditAction($cfg["constants"]["admin"], _DELETE." "._USER.": ".$user_id);
-		}
-		header("location: index.php?iid=admin");
-	break;
-
-	case "editUser":
-		$user_id = getRequestVar('user_id');
-		require_once("admin_editUser.php");
-	break;
-
-	case "updateUser":
-		$user_id = getRequestVar('user_id');
-		$org_user_id = getRequestVar('org_user_id');
-		$pass1 = getRequestVar('pass1');
-		$userType = getRequestVar('userType');
-		$hideOffline = getRequestVar('hideOffline');
-		require_once("admin_updateUser.php");
-	break;
-
-	case "setUserState":
-		setUserState();
-		header("location: index.php?iid=admin&op=showUsers");
-	break;
-
-	// Fluxd
-	case "fluxdSettings":
-		require_once("admin_fluxdSettings.php");
-	break;
-
-	case "controlFluxd":
-		require_once("admin_controlFluxd.php");
-	break;
-
-	case "updateFluxdSettings":
-		require_once("admin_updateFluxdSettings.php");
-	break;
-	// End Fluxd
-
-	case "uiSettings":
-		require_once("admin_uiSettings.php");
-	break;
-
-	case "updateUiSettings":
-		$settings = processSettingsParams();
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux UI Settings");
-		header("location: index.php?iid=admin&op=uiSettings");
-	break;
-
-	case "searchSettings":
-		require_once("admin_searchSettings.php");
-	break;
-
-	case "updateSearchSettings":
-		require_once("admin_updateSearchSettings.php");
-	break;
-
-}
-//******************************************************************************
 
 ?>
