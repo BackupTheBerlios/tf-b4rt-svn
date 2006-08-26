@@ -389,7 +389,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$activity .= 'var ol_textfontclass = "overBody";';
 	$activity .= 'var ol_cap = "&nbsp;IP Info";';
 	$activity .= '</script>';
-	$activity .= '<script src="overlib.js" type="text/javascript"></script>';
+	$activity .= '<script src="js/overlib.js" type="text/javascript"></script>';
 	$activity .= '<div align="center">';
 	$activity .= '<table>';
 	$activity .= '<form action="index.php?iid=admin&op=showUserActivity" name="searchForm" method="post">';
