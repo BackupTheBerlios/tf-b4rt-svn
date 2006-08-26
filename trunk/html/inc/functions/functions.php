@@ -1107,10 +1107,11 @@ function getTorrentMetaInfo($torrent) {
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["torrent_file_path"].$torrent."\"");
-		break;
+			break;
 		case "ttools":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["ttools_path"].'" "'.$cfg["ttools_path"].'/showmetainfo.pl" "'.$cfg["torrent_file_path"].$torrent.'"');
-		break;
+			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
+			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/showmetainfo.pl" "'.$cfg["torrent_file_path"].$torrent.'"');
+			break;
 		case "btshowmetainfo.py":
 		default:
 			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
@@ -1128,7 +1129,7 @@ function getTorrentScrapeInfo($torrent) {
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["torrent_file_path"].$torrent."\"");
-		break;
+			break;
 		default:
 			return "error. torrent-scrape needs transmissioncli.";
 	}

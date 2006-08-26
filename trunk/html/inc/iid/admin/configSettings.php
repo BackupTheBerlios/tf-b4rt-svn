@@ -59,8 +59,6 @@ $tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmiss
 $tmpl->setvar('btclient_transmission_options', $cfg["btclient_transmission_options"]);
 $tmpl->setvar('btshowmetainfo', $cfg["btshowmetainfo"]);
 $tmpl->setvar('validate_btshowmetainfo', validateFile($cfg["btshowmetainfo"]));
-$tmpl->setvar('ttools_path', $cfg["ttools_path"]);
-$tmpl->setvar('validate_ttools_path', validateFile($cfg["ttools_path"]."/showmetainfo.pl"));
 $tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 $tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
 $tmpl->setvar('max_uploads', $cfg["max_uploads"]);

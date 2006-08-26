@@ -69,10 +69,6 @@ INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
 
-
-INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
-
-
 --
 -- commit
 --
