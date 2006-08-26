@@ -30,7 +30,6 @@
     v 1.02 - Apr 07, 06 - Added Wait Column.
     v 1.01 - Apr 05, 06 - page was not parsing correctly everytime and updated pageing.
 */
-include_once("SearchEngineBase.php");
 
 class SearchEngine extends SearchEngineBase
 {

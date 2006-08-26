@@ -62,7 +62,7 @@ class RunningTransfer
         }
         $classFile = 'inc/classes/RunningTransfer.'.$clientClass.'.php';
         if (is_file($classFile)) {
-            include_once($classFile);
+            require_once($classFile);
             switch ($clientClass) {
                 case "tornado":
                     return new RunningTransferTornado($psLine,serialize($fluxCfg));

@@ -243,7 +243,7 @@ function firstLogin($username = '', $password = '') {
  */
 function netstatConnectionsSum() {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$nCount = 0;
 	switch (_OS) {
@@ -298,7 +298,7 @@ function netstatConnectionsByPid($torrentPid) {
  */
 function netstatPortList() {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$retStr = "";
 	switch (_OS) {
@@ -351,7 +351,7 @@ function netstatPortByPid($torrentPid) {
  */
 function netstatHostList() {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$retStr = "";
 	switch (_OS) {
@@ -725,7 +725,7 @@ function updateTransferTotals($transfer) {
  */
 function getTransferTotals($transfer) {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
@@ -751,7 +751,7 @@ function getTransferTotals($transfer) {
  */
 function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
 }
@@ -764,7 +764,7 @@ function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
  */
 function getTransferTotalsCurrent($transfer) {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
 		$btclient = getTransferClient($transfer);
@@ -790,7 +790,7 @@ function getTransferTotalsCurrent($transfer) {
  */
 function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
 }
@@ -856,7 +856,7 @@ function deleteTransfer($transfer, $alias_file) {
 			// remove torrent-settings from db
 			deleteTorrentSettings($delfile);
 			// client-proprietary leftovers
-			include_once("inc/classes/ClientHandler.php");
+			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->deleteCache($transfer);
 		} else if ((substr( strtolower($transfer),-5 ) == ".wget")) {
@@ -1008,7 +1008,7 @@ function delDirEntry($del) {
  */
 function RunningProcessInfo() {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$RunningProcessInfo = " ---=== tornado ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
@@ -1063,7 +1063,7 @@ function getRunningTransferCount() {
  */
 function getRunningTransfers($clientType = '') {
 	global $cfg;
-	include_once("inc/classes/ClientHandler.php");
+	require_once("inc/classes/ClientHandler.php");
 	// get only torrents of a particular client
 	if ((isset($clientType)) && ($clientType != '')) {
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$clientType);
@@ -1331,7 +1331,7 @@ function indexStartTorrent($torrent,$interactive) {
 	}
 	switch ($interactive) {
 		case 0:
-			include_once("inc/classes/ClientHandler.php");
+			require_once("inc/classes/ClientHandler.php");
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->startClient($torrent, 0, $queueActive);
@@ -1346,7 +1346,7 @@ function indexStartTorrent($torrent,$interactive) {
 			if (!empty($spo)){
 				// This is a setPriorityOnly Request.
 			} else {
-				include_once("inc/classes/ClientHandler.php");
+				require_once("inc/classes/ClientHandler.php");
 				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
 				$clientHandler->startClient($torrent, 1, $queueActive);
 				if ($clientHandler->status == 3) { // hooray
@@ -1433,7 +1433,7 @@ function indexProcessDownload($url_upload) {
 				// Process setPriority Request.
 				setPriority(urldecode($file_name));
 			}
-			include_once("inc/classes/ClientHandler.php");
+			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 			switch ($actionId) {
 				case 3:
@@ -1482,7 +1482,7 @@ function indexProcessUpload() {
 							// Process setPriority Request.
 							setPriority(urldecode($file_name));
 						}
-						include_once("inc/classes/ClientHandler.php");
+						require_once("inc/classes/ClientHandler.php");
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 						switch ($actionId) {
 							case 3:
@@ -4513,7 +4513,7 @@ function FetchHTML( $url, $referer = "" ) {
 function getDownloadSize($torrent) {
 	$rtnValue = "";
 	if (file_exists($torrent)) {
-		include_once("inc/classes/BDecode.php");
+		require_once("inc/classes/BDecode.php");
 		$fd = fopen($torrent, "rd");
 		$alltorrent = fread($fd, filesize($torrent));
 		$array = BDecode($alltorrent);

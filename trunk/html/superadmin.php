@@ -661,7 +661,7 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<br><br>';
 				break;
 			case "1": // Torrents-Stop
-				include_once("inc/classes/ClientHandler.php");
+				require_once("inc/classes/ClientHandler.php");
 				$htmlTitle = "Torrents - Stop";
 				$htmlMain .= '<br><strong>Torrents Stopped :</strong><br>';
 				$htmlMain .= '<pre>';
@@ -683,7 +683,7 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<hr><br>';
 				break;
 			case "2": // Torrents-Start
-				include_once("inc/classes/ClientHandler.php");
+				require_once("inc/classes/ClientHandler.php");
 				$htmlTitle = "Torrents - Start";
 				$htmlMain .= '<br><strong>Torrents Started :</strong><br>';
 				$htmlMain .= '<pre>';
@@ -709,7 +709,7 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<hr><br>';
 				break;
 			case "3": // Torrents-Resume
-				include_once("inc/classes/ClientHandler.php");
+				require_once("inc/classes/ClientHandler.php");
 				$htmlTitle = "Torrents - Resume";
 				$htmlMain .= '<br><strong>Torrents Resumed :</strong><br>';
 				$htmlMain .= '<pre>';

@@ -20,9 +20,9 @@
 
 *******************************************************************************/
 
-include_once("config.php");
-include_once("main.php");
-include_once("inc/classes/ClientHandler.php");
+require_once("config.php");
+require_once("main.php");
+require_once("inc/classes/ClientHandler.php");
 
 // fluxd
 //
@@ -186,7 +186,7 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority(urldecode($element));
 						}
-						include_once("inc/classes/ClientHandler.php");
+						require_once("inc/classes/ClientHandler.php");
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 						$clientHandler->startClient(urldecode($element), 0, true);
 						// just a sec..

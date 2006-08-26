@@ -73,7 +73,7 @@ class AliasFile
         }
         $classFile = 'inc/classes/AliasFile.'.$clientClass.'.php';
         if (is_file($classFile)) {
-            include_once($classFile);
+            require_once($classFile);
             switch ($clientClass) {
                 case "tornado":
                     return new AliasFileTornado($inFile, $user, serialize($fluxCfg));

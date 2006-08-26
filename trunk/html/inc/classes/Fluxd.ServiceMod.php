@@ -70,7 +70,7 @@ class FluxdServiceMod
         // class-by-name ?
         $classFile = 'inc/classes/Fluxd.'.$moduleType.'.php';
         if (is_file($classFile)) {
-            include_once($classFile);
+            require_once($classFile);
             switch ($moduleType) {
                 case "Qmgr":
                     return new FluxdQmgr(serialize($fluxCfg), $fluxd);

@@ -361,7 +361,7 @@ function cliStartTorrent($torrent = "") {
  */
 function cliStartTorrents() {
     global $cfg;
-    include_once("inc/classes/ClientHandler.php");
+    require_once("inc/classes/ClientHandler.php");
     echo "Starting all torrents ...\n";
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
@@ -396,7 +396,7 @@ function cliStartTorrents() {
  */
 function cliResumeTorrents() {
     global $cfg;
-    include_once("inc/classes/ClientHandler.php");
+    require_once("inc/classes/ClientHandler.php");
     echo "Resuming all torrents ...\n";
 	$torrents = getTorrentListFromDB();
 	foreach ($torrents as $torrent) {
@@ -622,7 +622,7 @@ function cliWatchDir($tpath = "", $username = "") {
                                 setPriority($file_name);
                             }
                             // start
-                            include_once("inc/classes/ClientHandler.php");
+                            require_once("inc/classes/ClientHandler.php");
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
                             $clientHandler->startClient($file_name, 0, false);
                             // just 2 secs..
