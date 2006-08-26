@@ -3101,7 +3101,7 @@ function getTransferListString() {
 
 		// =============================================================== admin
 		$output .= '<td nowrap>';
-		include('inc/index_admincell.php');
+		include('inc/iid/index/admincell.php');
 		$output .= "</td>";
 		$output .= "</tr>\n";
 
@@ -4781,7 +4781,7 @@ function getDirList($dirName) {
 
 		// =============================================================== admin
 		$output .= '<td nowrap>';
-		include('inc/index_admincell.php');
+		include('inc/iid/index/admincell.php');
 		$output .= "</td>";
 		$output .= "</tr>\n";
 
