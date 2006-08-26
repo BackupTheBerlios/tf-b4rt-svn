@@ -70,7 +70,7 @@ $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
 // client-handler-"interfaces"
 include_once("ClientHandler.php");
-include_once("AliasFile.php");
+require_once("inc/class/AliasFile.php");
 include_once("RunningTransfer.php");
 
 // -----------------------------------------------------------------------------

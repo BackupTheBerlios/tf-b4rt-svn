@@ -817,7 +817,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 		@unlink($cfg["torrent_file_path"].$alias.".stat");
 	} else {
 		// reset in stat-file
-		include_once("AliasFile.php");
+		require_once("inc/class/AliasFile.php");
 		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $owner, $cfg);
 		if (isset($af)) {
 			$af->uptotal = 0;
@@ -846,7 +846,7 @@ function deleteTransfer($transfer, $alias_file) {
 	global $cfg;
 	$transferowner = getOwner($delfile);
 	if (($cfg["user"] == $transferowner) || IsAdmin()) {
-		include_once("AliasFile.php");
+		require_once("inc/class/AliasFile.php");
 		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($delfile);
@@ -1549,7 +1549,7 @@ function repairTorrentflux() {
 	}
 
 	// rewrite stat-files
-	include_once("AliasFile.php");
+	require_once("inc/class/AliasFile.php");
 	$torrents = getTorrentListFromFS();
 	foreach ($torrents as $torrent) {
 		$alias = getAliasName($torrent);
@@ -1622,7 +1622,7 @@ function getLoadAverageString() {
  */
 function injectTorrent($torrent) {
 	global $cfg;
-	include_once("AliasFile.php");
+	require_once("inc/class/AliasFile.php");
 	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($torrent).".stat",	 $cfg['user'], $cfg);
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["torrent_file_path"].$torrent);
@@ -1865,7 +1865,7 @@ function getTransferArray($sortOrder = '') {
  */
 function getTransferListArray() {
 	global $cfg, $db;
-	include_once("AliasFile.php");
+	require_once("inc/class/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
 	$arUserTorrent = array();
@@ -2796,7 +2796,7 @@ function getGoodLookingStatsForm() {
  */
 function getTransferListString() {
 	global $cfg, $db;
-	include_once("AliasFile.php");
+	require_once("inc/class/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
 	$arUserTorrent = array();
@@ -3570,7 +3570,7 @@ function getOwner($file) {
 //*********************************************************
 function resetOwner($file) {
 	global $cfg, $db;
-	include_once("AliasFile.php");
+	require_once("inc/class/AliasFile.php");
 	// log entry has expired so we must renew it
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
@@ -4610,7 +4610,7 @@ function file_size($file) {
 // This method Builds the Torrent Section of the Index Page
 function getDirList($dirName) {
 	global $cfg, $db;
-	include_once("AliasFile.php");
+	require_once("inc/class/AliasFile.php");
 	$lastUser = "";
 	$arUserTorrent = array();
 	$arListTorrent = array();

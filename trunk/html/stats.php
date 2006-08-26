@@ -67,7 +67,7 @@ switch (_PUBLIC_STATS) {
 	   exit();
 }
 // client-handler-"interfaces"
-include_once("AliasFile.php");
+require_once("inc/class/AliasFile.php");
 
 // -----------------------------------------------------------------------------
 // Main

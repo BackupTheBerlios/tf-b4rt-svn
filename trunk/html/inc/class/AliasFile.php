@@ -71,7 +71,7 @@ class AliasFile
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'AliasFile.'.$clientClass.'.php';
+        $classFile = 'inc/class/AliasFile.'.$clientClass.'.php';
         if (is_file($classFile)) {
             include_once($classFile);
             switch ($clientClass) {

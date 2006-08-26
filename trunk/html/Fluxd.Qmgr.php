@@ -97,7 +97,7 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $alias_file alias_file of the torrent
      */
     function updateStatFile($torrent, $alias_file) {
-        include_once("AliasFile.php");
+        require_once("inc/class/AliasFile.php");
         $the_user = getOwner($torrent);
         $btclient = getTransferClient($torrent);
         $modded = 0;

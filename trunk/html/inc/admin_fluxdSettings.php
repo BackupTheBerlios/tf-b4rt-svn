@@ -22,7 +22,7 @@
 
 $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_fluxdSettings.tmpl");
 
-require_once("AliasFile.php");
+require_once("inc/class/AliasFile.php");
 require_once("RunningTransfer.php");
 
 // some template vars

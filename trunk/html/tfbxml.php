@@ -31,7 +31,7 @@ define('_URL_THIS','http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 // includes
 include_once("config.php");
 include_once("main.php");
-include_once("AliasFile.php");
+require_once("inc/class/AliasFile.php");
 
 // -----------------------------------------------------------------------------
 // Main

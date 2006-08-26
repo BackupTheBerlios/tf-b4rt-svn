@@ -53,7 +53,7 @@ $_PID = $argv[3];
 $_OWNER = $argv[4];
 
 // write out stat-file now
-include_once('AliasFile.php');
+require_once('inc/class/AliasFile.php');
 write_stat_file(false);
 
 // umask
