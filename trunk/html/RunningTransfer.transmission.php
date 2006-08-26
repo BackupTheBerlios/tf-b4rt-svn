@@ -33,9 +33,8 @@ class RunningTransferTransmission extends RunningTransfer
         $this->Initialize($cfg);
         //
         if (strlen($psLine) > 0) {
-            while (strpos($psLine,"  ") > 0) {
+            while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
-            }
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
             $this->transferFile = str_replace($this->filePath,'',$arr[(count($arr) - 1)]);
@@ -54,11 +53,10 @@ class RunningTransferTransmission extends RunningTransfer
                     if (!empty($value)) {
                         if (strpos($value,"-",1) > 0) {
                             if(array_key_exists($key+1,$arr)) {
-                                if(strpos($value,"priority") > 0) {
+                                if (strpos($value,"priority") > 0)
                                     $this->args .= "\n file ".$value." set";
-                                } else {
+                                else
                                     $this->args .= $value.":".$arr[$key+1].",";
-                                }
                             } else {
                                 $this->args .= "";
                             }

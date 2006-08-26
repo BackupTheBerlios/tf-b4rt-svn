@@ -39,8 +39,6 @@ require_once('config.db.php');
             as of a flowing stream; constant succession; change.
 *****************************************************************************/
 
-
-
 // ***************************************************************************
 // ***************************************************************************
 // DO NOT Edit below this line unless you know what you're doing.
@@ -170,16 +168,14 @@ function getLocalVersion() {
 // get os
 $osString = php_uname('s');
 if (isset($osString)) {
-    //$osFound = 0;
-    if (!(stristr($osString, 'linux') === false)) { // linux
+    if (!(stristr($osString, 'linux') === false)) /* linux */
         define('_OS',1);
-        //$osFound++;
-    } else if (!(stristr($osString, 'bsd') === false)) { // bsd
+    else if (!(stristr($osString, 'bsd') === false)) /* bsd */
         define('_OS',2);
-        //$osFound++;
-    }
-    //if ($osFound == 0)
-    //    die("unkown os\n");
+    else /* well... linux ;) */
+    	define('_OS',1);
+} else { /* well... linux ;) */
+	define('_OS',1);
 }
 
 ?>

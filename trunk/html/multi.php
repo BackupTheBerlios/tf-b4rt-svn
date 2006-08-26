@@ -51,9 +51,11 @@ $action = "---";
 if (isset($_REQUEST["action"]))
     $action = $_REQUEST["action"];
 switch ($action) {
+
     /* ---------------------------------------------------------------- dummy */
     case "---":
     	break;
+
     /* ---------------------------------------------------------- dir-methods */
     case "fileDelete": /* fileDelete */
     	foreach($_POST['file'] as $key => $element) {
@@ -61,7 +63,8 @@ switch ($action) {
     		delDirEntry($element);
     	}
     	break;
-    /* -------------------------------------------------------- all transfers */
+
+    /* --------------------------------------------------------- all torrents */
     case "bulkStop": /* bulkStop */
     	$transfers = getTorrentListFromFS();
     	foreach ($transfers as $transfer) {
@@ -121,7 +124,8 @@ switch ($action) {
             }
     	}
     	break;
-    /* --------------------------------------------------- selected torrents */
+
+    /* ---------------------------------------------------- selected torrents */
     default:
        foreach($_POST['torrent'] as $key => $element) {
           $alias = getAliasName($element).".stat";

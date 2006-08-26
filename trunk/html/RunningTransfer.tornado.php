@@ -33,48 +33,41 @@ class RunningTransferTornado extends RunningTransfer
         $this->Initialize($cfg);
         //
         if (strlen($psLine) > 0) {
-            while (strpos($psLine,"  ") > 0) {
+            while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
-            }
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
             foreach($arr as $key =>$value) {
-                if ($key == 0) {
+                if ($key == 0)
                     $startArgs = false;
-                }
                 if ($value == $this->cfg["btclient_tornado_bin"]) {
                     $offset = 2;
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0) {
+                    if(! @strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
-                    }
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0) {
+                    if(! @strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
-                    }
                     $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
                     $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
                     $this->transferowner = $arr[$key+$offset+1];
                 }
-                if ($value == '--display_interval') {
+                if ($value == '--display_interval')
                     $startArgs = true;
-                }
                 if ($startArgs) {
                     if (!empty($value)) {
                         if (strpos($value,"-",1) > 0) {
                             if(array_key_exists($key+1,$arr)) {
-                                if(strpos($value,"priority") > 0) {
+                                if (strpos($value,"priority") > 0)
                                     $this->args .= "\n file ".$value." set";
-                                } else {
+                                else
                                     $this->args .= $value.":".$arr[$key+1].",";
-                                }
                             } else {
                                 $this->args .= "";
                             }
                         }
                     }
                 }
-                if ($value == '--responsefile') {
+                if ($value == '--responsefile')
                     $this->transferFile = str_replace($this->filePath,'',$arr[$key+1]);
-                }
             }
             $this->args = str_replace("--","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));

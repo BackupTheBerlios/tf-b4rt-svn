@@ -32,6 +32,7 @@ class ClientHandlerWget extends ClientHandler
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         //
         $this->binSocket = "wget";
+        $this->binClient = "wget.php";
         //
         $this->Initialize($cfg);
         // efficient code :
@@ -41,7 +42,6 @@ class ClientHandlerWget extends ClientHandler
         $bin = array_pop($uselessVar);
         //
         $this->binSystem = $bin;
-        $this->binClient = $bin;
     }
 
     //--------------------------------------------------------------------------

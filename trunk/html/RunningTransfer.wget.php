@@ -33,40 +33,16 @@ class RunningTransferWget extends RunningTransfer
         $this->Initialize($cfg);
         // ps-parse
         if (strlen($psLine) > 0) {
-            while (strpos($psLine,"  ") > 0) {
+            while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
-            }
             $arr = split(' ',$psLine);
+            $count = count($arr);
             $this->processId = $arr[0];
-            $this->transferFile = str_replace($this->filePath,'',$arr[(count($arr) - 1)]);
-            foreach($arr as $key =>$value) {
-                if ($key == 0)
-                    $startArgs = false;
-                if ($value == '-t') {
-                    $this->filePath = substr($arr[$key+1],0,strrpos($arr[$key+1],"/")+1);
-                    $this->statFile = str_replace($this->filePath,'',$arr[$key+1]);
-                }
-				//$this->transferowner = $arr[$key+1];
-                if ($value == '-i')
-                    $startArgs = true;
-                if ($startArgs) {
-                    if (!empty($value)) {
-                        if (strpos($value,"-",1) > 0) {
-                            if(array_key_exists($key+1,$arr)) {
-                                if(strpos($value,"priority") > 0) {
-                                    $this->args .= "\n file ".$value." set";
-                                } else {
-                                    $this->args .= $value.":".$arr[$key+1].",";
-                                }
-                            } else {
-                                $this->args .= "";
-                            }
-                        }
-                    }
-                }
-            }
-            $this->args = str_replace("-","",$this->args);
-            $this->args = substr($this->args,0,strlen($this->args));
+            $this->args = "";
+            $this->transferowner = $arr[($count - 1)];
+            $this->filePath = substr($arr[($count - 3)], 0, strrpos($arr[($count - 3)], "/")+1);
+            $this->statFile = str_replace($this->filePath,'',$arr[($count - 4)]);
+            $this->transferFile = str_replace($this->filePath,'',$arr[($count - 4)]);
         }
     }
 

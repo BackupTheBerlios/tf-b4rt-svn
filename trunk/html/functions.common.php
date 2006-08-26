@@ -1003,21 +1003,21 @@ function RunningProcessInfo() {
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
 	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep");
-	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
+	$RunningProcessInfo .= "\n --- Process-List --- \n".$pinfo;
 	unset($clientHandler);
 	unset($pinfo);
 	$RunningProcessInfo .= "\n\n ---=== transmission ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
 	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binSystem ." | ".$cfg['bin_grep']." -v grep");
-	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
+	$RunningProcessInfo .= "\n --- Process-List --- \n".$pinfo;
 	unset($clientHandler);
 	unset($pinfo);
 	$RunningProcessInfo .= "\n\n ---=== wget ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"wget");
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
 	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binSystem ." | ".$cfg['bin_grep']." -v grep");
-	$RunningProcessInfo .= "\n\n --- Process-List --- \n\n".$pinfo;
+	$RunningProcessInfo .= "\n --- Process-List --- \n".$pinfo;
 	return $RunningProcessInfo;
 }
 

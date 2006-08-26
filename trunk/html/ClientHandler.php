@@ -480,7 +480,7 @@ class ClientHandler
         $printRunningClientsInfo .= " Parents  : " . count($pProcess) . "\n";
         $printRunningClientsInfo .= " Children : " . count($cProcess) . "\n";
         $printRunningClientsInfo .= "\n";
-        $printRunningClientsInfo .= " PID \tOwner\tTorrent File\n";
+        $printRunningClientsInfo .= " PID \tOwner\tTransfer File\n";
         foreach($pProcess as $key => $value) {
             $printRunningClientsInfo .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
             foreach($cpProcess as $cKey => $cValue)

@@ -44,8 +44,6 @@ $_REAL_NAME = '';
 $_OWNER = '';
 
 // check args
-//if (count($argv) != 4)
-//	die('arg error');
 
 // args
 $_URL = $argv[1];
@@ -71,8 +69,8 @@ $command .= " HOME=".$cfg["path"].$_OWNER."/; export HOME;";
 $command .= $umask;
 $command .= $nice;
 $command .= " ".$cfg['bin_wget']." -i ".$_URL;
-$command .= " 2>&1"; // will direct STDERR to STDOUT
-$command .= " & echo $! > ".$_PID; // will write pid-file
+$command .= " 2>&1"; // direct STDERR to STDOUT
+$command .= " & echo $! > ".$_PID; // write pid-file
 
 // start process
 $wget = popen($command,'r');
