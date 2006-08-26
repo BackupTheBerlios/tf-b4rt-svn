@@ -63,8 +63,6 @@ $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
 $tmpl->setvar('validateCmd', validateFile($cfg["perlCmd"]));
 $tmpl->setvar('fluxd_path', $cfg["fluxd_path"]);
 $tmpl->setvar('validatefluxd', validateFile($cfg["fluxd_path"]."/fluxd.pl"));
-$tmpl->setvar('fluxd_path_fluxcli', $cfg["fluxd_path_fluxcli"]);
-$tmpl->setvar('validate_fluxd_path_fluxcli', validateFile($cfg["fluxd_path_fluxcli"]."/fluxcli.php"));
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
 // Qmgr
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);

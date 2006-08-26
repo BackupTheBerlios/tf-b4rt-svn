@@ -36,7 +36,7 @@ use FluxdCommon;
 ################################################################################
 #
 my $BIN_FLUXCLI = "fluxcli.php";
-my $FILE_DBCONF = "inc/config/config.db.php";
+my $FILE_DBCONF = "config.db.php";
 my $PATH_TORRENT_DIR = ".torrents";
 our $PATH_DATA_DIR = ".fluxd";
 my $PATH_SOCKET = "fluxd.sock";
@@ -192,7 +192,7 @@ sub processArguments {
 		# create instance
 		$fluxDB = FluxDB->new();
 		# initialize
-		$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
+		$fluxDB->initialize($PATH_DOCROOT."inc/config/".$FILE_DBCONF);
 		if ($fluxDB->getState() < 1) {
 			print "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
 			exit;
@@ -256,7 +256,7 @@ sub daemonize {
 	}
 
 	# initialize
-	$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
+	$fluxDB->initialize($PATH_DOCROOT."inc/config/".$FILE_DBCONF);
 	if ($fluxDB->getState() < 1) {
 		print "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
 		exit;
@@ -1018,16 +1018,16 @@ sub check {
 	# 2. required files
 	print "2. required files\n";
 	print " - ".$FILE_DBCONF." : ";
-	if (-f $PATH_DOCROOT.$FILE_DBCONF) {
-		print $PATH_DOCROOT.$FILE_DBCONF."\n";
+	if (-f $PATH_DOCROOT."inc/config/".$FILE_DBCONF) {
+		print $PATH_DOCROOT."inc/config/".$FILE_DBCONF."\n";
 	} else {
-		print "Error : cant find database-config ".$FILE_DBCONF." in ".$PATH_DOCROOT."\n";
+		print "Error : cant find database-config ".$FILE_DBCONF." in ".$PATH_DOCROOT."inc/config/"."\n";
 	}
 	print " - ".$BIN_FLUXCLI." : ";
-	if (-f $PATH_DOCROOT.$BIN_FLUXCLI) {
-		print $PATH_DOCROOT.$BIN_FLUXCLI."\n";
+	if (-f $PATH_DOCROOT."bin/".$BIN_FLUXCLI) {
+		print $PATH_DOCROOT."bin/".$BIN_FLUXCLI."\n";
 	} else {
-		print "\nError : cant find fluxcli ".$BIN_FLUXCLI." in ".$PATH_DOCROOT."\n";
+		print "\nError : cant find fluxcli ".$BIN_FLUXCLI." in ".$PATH_DOCROOT."bin/"."\n";
 	}
 
 	# 3. db-bean
@@ -1047,7 +1047,7 @@ sub check {
 	}
 
 	# initialize
-	$fluxDB->initialize($PATH_DOCROOT . $FILE_DBCONF);
+	$fluxDB->initialize($PATH_DOCROOT."inc/config/".$FILE_DBCONF);
 	if ($fluxDB->getState() < 1) {
 		print "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
 		exit;
@@ -1228,7 +1228,7 @@ sub debug {
 		if (!((substr $dbcfg, -1) eq "/")) {
 			$dbcfg .= "/";
 		}
-		$dbcfg .= $FILE_DBCONF;
+		$dbcfg .= "inc/config/".$FILE_DBCONF;
 		print "debugging database...\n";
 		# require
 		require FluxDB;

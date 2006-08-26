@@ -171,8 +171,8 @@ CREATE TABLE tf_settings (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM;
 
+
 INSERT INTO tf_settings VALUES ('path','/usr/local/torrent/');
-INSERT INTO tf_settings VALUES ('btshowmetainfo','/var/www/bin/TF_BitTornado/btshowmetainfo.py');
 INSERT INTO tf_settings VALUES ('advanced_start','1');
 INSERT INTO tf_settings VALUES ('max_upload_rate','10');
 INSERT INTO tf_settings VALUES ('max_download_rate','0');
@@ -203,7 +203,6 @@ INSERT INTO tf_settings VALUES ('TorrentSpyGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('TorrentBoxGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('TorrentPortalGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('enable_maketorrent','1');
-INSERT INTO tf_settings VALUES ('btmakemetafile','/var/www/bin/TF_BitTornado/btmakemetafile.py');
 INSERT INTO tf_settings VALUES ('enable_torrent_download','1');
 INSERT INTO tf_settings VALUES ('enable_file_priority','1');
 INSERT INTO tf_settings VALUES ('continue','configSettings');
@@ -231,7 +230,6 @@ INSERT INTO tf_settings VALUES ('bin_unrar','/usr/bin/unrar');
 INSERT INTO tf_settings VALUES ('bin_unzip','/usr/bin/unzip');
 INSERT INTO tf_settings VALUES ('bin_cksfv','/usr/bin/cksfv');
 INSERT INTO tf_settings VALUES ('btclient','tornado');
-INSERT INTO tf_settings VALUES ('btclient_tornado_bin','/var/www/bin/TF_BitTornado/btphptornado.py');
 INSERT INTO tf_settings VALUES ('btclient_tornado_options','--upnp_nat_access 0');
 INSERT INTO tf_settings VALUES ('btclient_transmission_bin','/usr/local/bin/transmissioncli');
 INSERT INTO tf_settings VALUES ('btclient_transmission_options','');
@@ -277,7 +275,6 @@ INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
 INSERT INTO tf_settings VALUES ('display_seeding_time','0');
-INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
 INSERT INTO tf_settings VALUES ('ui_displaybandwidthbars','1');
 INSERT INTO tf_settings VALUES ('bandwidth_down','10240');
 INSERT INTO tf_settings VALUES ('bandwidth_up','10240');
@@ -289,8 +286,6 @@ INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
 INSERT INTO tf_settings VALUES ('downloadhosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
-INSERT INTO tf_settings VALUES ('fluxd_path', '/var/www/bin/fluxd');
-INSERT INTO tf_settings VALUES ('fluxd_path_fluxcli', '/var/www');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_enabled','0');
@@ -301,4 +296,13 @@ INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
+
+
+
+INSERT INTO tf_settings VALUES ('fluxd_path', '/var/www/bin/fluxd');
+INSERT INTO tf_settings VALUES ('ttools_path', '/var/www/bin/ttools');
+
+INSERT INTO tf_settings VALUES ('btmakemetafile','/var/www/bin/TF_BitTornado/btmakemetafile.py');
+INSERT INTO tf_settings VALUES ('btclient_tornado_bin','/var/www/bin/TF_BitTornado/btphptornado.py');
+INSERT INTO tf_settings VALUES ('btshowmetainfo','/var/www/bin/TF_BitTornado/btshowmetainfo.py');
 

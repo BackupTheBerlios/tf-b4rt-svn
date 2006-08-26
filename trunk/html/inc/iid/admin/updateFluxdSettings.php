@@ -22,7 +22,6 @@
 
 if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	$_POST["fluxd_path"] != $cfg["fluxd_path"] ||
-	$_POST["fluxd_path_fluxcli"] != $cfg["fluxd_path_fluxcli"] ||
 	$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 	$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 	$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
@@ -43,7 +42,6 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 		$reloadModules = false;
 		$needsInit = false;
 		if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
-			$_POST["fluxd_path_fluxcli"] != $cfg["fluxd_path_fluxcli"] ||
 			$_POST["fluxd_path"] != $cfg["fluxd_path"]) {
 			$needsRestart = true;
 		}
