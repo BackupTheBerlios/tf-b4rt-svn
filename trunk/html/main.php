@@ -30,7 +30,7 @@ else
     $cfg["user"] = "";
 
 // functions
-require_once('functions.php');
+require_once('inc/functions/functions.php');
 
 // Create Connection.
 require_once('db.php');

@@ -26,7 +26,7 @@ require_once('config.php');
 // db
 require_once('db.php');
 // functions
-require_once("functions.php");
+require_once("inc/functions/functions.php");
 
 // Create Connection + load settings
 $db = getdb();
