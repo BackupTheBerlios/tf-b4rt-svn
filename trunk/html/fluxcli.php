@@ -69,9 +69,9 @@ $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
 // client-handler-"interfaces"
-include_once("inc/classes/ClientHandler.php");
+require_once("inc/classes/ClientHandler.php");
 require_once("inc/classes/AliasFile.php");
-include_once("RunningTransfer.php");
+require_once("inc/classes/RunningTransfer.php");
 
 // -----------------------------------------------------------------------------
 // Main

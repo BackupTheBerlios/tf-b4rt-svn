@@ -398,7 +398,7 @@ class ClientHandler
             $this->af->running = "0";
             $this->af->time_left = "Download Succeeded!";
         }
-        include_once("RunningTransfer.php");
+        require_once("inc/classes/RunningTransfer.php");
         // see if the transfer process is hung.
         if (!is_file($this->pidFile)) {
             $running = getRunningTransfers();
@@ -438,7 +438,7 @@ class ClientHandler
      */
     function printRunningClientsInfo() {
         // action
-        include_once("RunningTransfer.php");
+        require_once("inc/classes/RunningTransfer.php");
         // ps-string
         $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();

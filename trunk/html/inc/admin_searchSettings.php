@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 require_once("inc/classes/AliasFile.php");
-require_once("RunningTransfer.php");
+require_once("inc/classes/RunningTransfer.php");
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 # create new template

@@ -23,7 +23,7 @@
 $tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_fluxdSettings.tmpl");
 
 require_once("inc/classes/AliasFile.php");
-require_once("RunningTransfer.php");
+require_once("inc/classes/RunningTransfer.php");
 
 // some template vars
 $tmpl->setvar('head', getHead("Administration - Fluxd Settings"));

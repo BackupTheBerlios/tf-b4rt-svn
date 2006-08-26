@@ -60,7 +60,7 @@ class RunningTransfer
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'RunningTransfer.'.$clientClass.'.php';
+        $classFile = 'inc/classes/RunningTransfer.'.$clientClass.'.php';
         if (is_file($classFile)) {
             include_once($classFile);
             switch ($clientClass) {
