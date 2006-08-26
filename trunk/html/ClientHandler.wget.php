@@ -26,7 +26,6 @@ class ClientHandlerWget extends ClientHandler
 	var $url = "";
 	var $urlFile = "";
 
-    //--------------------------------------------------------------------------
     /**
      * ctor
      */
@@ -37,7 +36,7 @@ class ClientHandlerWget extends ClientHandler
         $this->binSocket = "wget";
         $this->binClient = "wget.php";
         //
-        $this->Initialize($cfg);
+        $this->initialize($cfg);
         // efficient code :
         //$bin = array_pop(explode("/",$this->cfg["btclient_transmission_bin"]));
         // compatible code (should work on flawed phps like 5.0.5+) :
@@ -64,7 +63,50 @@ class ClientHandlerWget extends ClientHandler
         $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
     }
 
-    //--------------------------------------------------------------------------
+    /**
+     * setVarsFromFile
+     *
+     * @param $transfer
+     */
+    function setVarsFromFile($transfer) {
+    	$aliasName = getAliasName($transfer);
+    	$uf = $this->cfg["torrent_file_path"].$aliasName.".wget";
+	    $data = "";
+	    if($fileHandle = @fopen($uf,'r')) {
+	        while (!@feof($fileHandle))
+	            $data .= @fgets($fileHandle, 2048);
+	        @fclose ($fileHandle);
+	        $this->setVarsFromUrl(trim($data));
+	    }
+    }
+
+	/**
+	 * injects a atorrent
+	 *
+	 * @param $url
+	 * @return boolean
+	 */
+	function inject($url) {
+
+		// set vars from the url
+		$this->setVarsFromUrl($url);
+
+		// write out aliasfile
+		include_once("AliasFile.php");
+		$af = AliasFile::getAliasFileInstance($this->alias,	$this->cfg['user'], $this->cfg);
+		$af->running = "2"; // file is new
+		$af->size = 0;
+		$af->WriteFile();
+
+		// write wget-file
+		$fp = fopen($this->urlFile, 'w');
+		fwrite($fp, $this->url);
+		fclose($fp);
+
+		// return
+		return true;
+	}
+
     /**
      * starts a client
      * @param $transfer name of the transfer
@@ -87,13 +129,8 @@ class ClientHandlerWget extends ClientHandler
             }
         }
 
-        // set some vars from the url
-		$this->setVarsFromUrl($transfer);
-
-		// write url-file
-		$fp = fopen($this->urlFile, 'w');
-		fwrite($fp, $this->url);
-		fclose($fp);
+        // set vars from the wget-file
+		$this->setVarsFromFile($transfer);
 
         // start it
         $this->command = "nohup ".$this->cfg['bin_php']." -f wget.php";
@@ -106,7 +143,6 @@ class ClientHandlerWget extends ClientHandler
         exec($this->command);
     }
 
-    //--------------------------------------------------------------------------
     /**
      * stops a client
      *
@@ -119,7 +155,6 @@ class ClientHandlerWget extends ClientHandler
         // stop the client
     }
 
-    //--------------------------------------------------------------------------
     /**
      * print info of running clients
      *
@@ -128,7 +163,6 @@ class ClientHandlerWget extends ClientHandler
         return parent::printRunningClientsInfo();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets count of running clients
      *
@@ -138,7 +172,6 @@ class ClientHandlerWget extends ClientHandler
         return parent::getRunningClientCount();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets ary of running clients
      *
@@ -148,7 +181,6 @@ class ClientHandlerWget extends ClientHandler
         return parent::getRunningClients();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * deletes cache of a transfer
      *
@@ -158,7 +190,6 @@ class ClientHandlerWget extends ClientHandler
         return;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets current transfer-vals of a transfer
      *
@@ -195,7 +226,6 @@ class ClientHandlerWget extends ClientHandler
         return $retVal;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets total transfer-vals of a transfer
      *

@@ -44,10 +44,10 @@ if ($owner || IsAdmin($cfg["user"])) {
 				$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._DELQUEUE."\"></a>";
 			} else {
 				if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
-					// Allow Avanced start popup?
-					if ($cfg["advanced_start"] != 0) {
-						// Avanced start popup
-						if ($isTorrent) {
+					if ($isTorrent) {
+						// Allow Avanced start popup?
+						if ($cfg["advanced_start"] != 0) {
+							// Avanced start popup
 							$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\">";
 							if ($show_run)
 								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
@@ -55,20 +55,21 @@ if ($owner || IsAdmin($cfg["user"])) {
 								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
 							$output .= "</a>";
 						} else {
-							$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"-\">";
+							// Quick Start
+							$output .= "<a href=\"".$_SERVER['PHP_SELF']."?torrent=".urlencode($entry)."\">";
+							if ($show_run)
+								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
+							else
+								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
+							$output .= "</a>";
 						}
 					} else {
-						// Quick Start
-						if ($isTorrent) {
+						if ($show_run) {
 							$output .= "<a href=\"".$_SERVER['PHP_SELF']."?torrent=".urlencode($entry)."\">";
-							if ($show_run) {
-								$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
-							} else{
-								$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
-							}
+							$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
 							$output .= "</a>";
 						} else {
-							$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"-\">";
+							$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"Done\">";
 						}
 					}
 				} else {

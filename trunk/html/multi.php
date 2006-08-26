@@ -153,14 +153,19 @@ switch ($action) {
 			switch ($action) {
 
 				case "transferStart": /* transferStart */
-					if (($isTorrent) && ($tRunningFlag == 0)) {
-						if ($cfg["enable_file_priority"]) {
-							include_once("setpriority.php");
-							// Process setPriority Request.
-							setPriority(urldecode($element));
+					if ($tRunningFlag == 0) {
+						if ($isTorrent) {
+							if ($cfg["enable_file_priority"]) {
+								include_once("setpriority.php");
+								// Process setPriority Request.
+								setPriority(urldecode($element));
+							}
+							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+							$clientHandler->startClient(urldecode($element), 0, $queueActive);
+						} else {
+							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+							$clientHandler->startClient(urldecode($element), 0, false);
 						}
-						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
-						$clientHandler->startClient(urldecode($element), 0, $queueActive);
 						// just 2 sec..
 						sleep(2);
 					}

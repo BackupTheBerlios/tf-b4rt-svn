@@ -1614,36 +1614,6 @@ function getLoadAverageString() {
 
 /* ************************************************************************** */
 
-
-/**
- * injects a atorrent
- *
- * @param $url
- * @return boolean
- */
-function injectWget($url) {
-	global $cfg;
-	include_once("AliasFile.php");
-/*
-    $this->transfer = strrchr($transfer,'/');
-    if ($this->transfer{0} == '/')
-    	$this->transfer = substr($this->transfer, 1);
-    $aliasName = getAliasName($this->transfer);
-    $urlFile = $this->cfg["torrent_file_path"].$aliasName.".wget";
-    $this->alias = $aliasName.".stat";
-    $this->owner = $this->cfg['user'];
-    $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
-
-	$afile = $cfg["torrent_file_path"].getAliasName($torrent).".stat";
-
-	$af = AliasFile::getAliasFileInstance($afile,	 $cfg['user'], $cfg);
-	$af->running = "2"; // file is new
-	$af->size = 0;
-	$af->WriteFile();
-	return true;
-*/
-}
-
 /**
  * injects a torrent
  *

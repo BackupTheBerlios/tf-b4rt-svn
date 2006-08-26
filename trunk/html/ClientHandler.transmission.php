@@ -23,7 +23,6 @@
 // class ClientHandler for transmission-client
 class ClientHandlerTransmission extends ClientHandler
 {
-    //--------------------------------------------------------------------------
     /**
      * ctor
      */
@@ -33,7 +32,7 @@ class ClientHandlerTransmission extends ClientHandler
         //
         $this->binSocket = "transmissionc";
         //
-        $this->Initialize($cfg);
+        $this->initialize($cfg);
         // efficient code :
         //$bin = array_pop(explode("/",$this->cfg["btclient_transmission_bin"]));
         // compatible code (should work on flawed phps like 5.0.5+) :
@@ -44,7 +43,6 @@ class ClientHandlerTransmission extends ClientHandler
         $this->binClient = $bin;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * starts a client
      * @param $transfer name of the transfer
@@ -111,7 +109,6 @@ class ClientHandlerTransmission extends ClientHandler
         parent::doStartClient();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * stops a client
      *
@@ -129,7 +126,6 @@ class ClientHandlerTransmission extends ClientHandler
         @unlink($this->pidFile);
     }
 
-    //--------------------------------------------------------------------------
     /**
      * print info of running clients
      *
@@ -138,7 +134,6 @@ class ClientHandlerTransmission extends ClientHandler
         return parent::printRunningClientsInfo();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets count of running clients
      *
@@ -148,7 +143,6 @@ class ClientHandlerTransmission extends ClientHandler
         return parent::getRunningClientCount();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets ary of running clients
      *
@@ -158,7 +152,6 @@ class ClientHandlerTransmission extends ClientHandler
         return parent::getRunningClients();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * deletes cache of a transfer
      *
@@ -170,7 +163,6 @@ class ClientHandlerTransmission extends ClientHandler
         return;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets current transfer-vals of a transfer
      *
@@ -226,7 +218,6 @@ class ClientHandlerTransmission extends ClientHandler
         return $retVal;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets total transfer-vals of a transfer
      *

@@ -51,13 +51,25 @@ if(array_key_exists("pagerefresh", $_GET)) {
 
 // =============================================================================
 // start
-$torrent = getRequestVar('torrent');
-if(! empty($torrent)) {
-	$interactiveStart = getRequestVar('interactive');
-	if ((isset($interactiveStart)) && ($interactiveStart)) /* interactive */
-		indexStartTorrent($torrent,1);
-	else /* silent */
-		indexStartTorrent($torrent,0);
+$transfer = getRequestVar('torrent');
+if(!empty($transfer)) {
+	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+		// this is a torrent-client
+		$interactiveStart = getRequestVar('interactive');
+		if ((isset($interactiveStart)) && ($interactiveStart)) /* interactive */
+			indexStartTorrent($transfer, 1);
+		else /* silent */
+			indexStartTorrent($transfer, 0);
+	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+		// this is wget.
+		include_once("ClientHandler.php");
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+		$clientHandler->startClient($transfer, 0, false);
+		//sleep(5);
+		header("location: index.php?iid=index");
+	} else {
+		return;
+	}
 }
 
 // =============================================================================
@@ -67,8 +79,7 @@ if ($cfg['enable_wget'] == 1) {
 	if(! $url_wget == '') {
 		include_once("ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-		$clientHandler->startClient($url_wget, 0, false);
-		sleep(5);
+		$clientHandler->inject($url_wget);
 		header("location: index.php?iid=index");
 		exit();
 	}

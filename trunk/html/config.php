@@ -172,6 +172,8 @@ if (isset($osString)) {
         define('_OS',1);
     else if (!(stristr($osString, 'bsd') === false)) /* bsd */
         define('_OS',2);
+    //else if (!(stristr($osString, 'darwin') === false)) /* darwin */
+    //    define('_OS',3);
     else /* well... linux ;) */
     	define('_OS',1);
 } else { /* well... linux ;) */

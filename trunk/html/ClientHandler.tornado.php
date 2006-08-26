@@ -23,7 +23,6 @@
 // class ClientHandler for tornado-client
 class ClientHandlerTornado extends ClientHandler
 {
-    //--------------------------------------------------------------------------
     /**
      * ctor
      */
@@ -34,7 +33,7 @@ class ClientHandlerTornado extends ClientHandler
         $this->binSystem = "python";
         $this->binSocket = "python";
         //
-        $this->Initialize($cfg);
+        $this->initialize($cfg);
         // efficient code :
         //$this->binClient = array_pop(explode("/",$this->cfg["btclient_tornado_bin"]));
         // compatible code (should work on flawed phps like 5.0.5+) :
@@ -42,7 +41,6 @@ class ClientHandlerTornado extends ClientHandler
         $this->binClient = array_pop($uselessVar);
     }
 
-    //--------------------------------------------------------------------------
     /**
      * starts a client
      * @param $transfer name of the transfer
@@ -125,7 +123,6 @@ class ClientHandlerTornado extends ClientHandler
         parent::doStartClient();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * stops a client
      *
@@ -140,7 +137,6 @@ class ClientHandlerTornado extends ClientHandler
         parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
     }
 
-    //--------------------------------------------------------------------------
     /**
      * print info of running clients
      *
@@ -149,7 +145,6 @@ class ClientHandlerTornado extends ClientHandler
         return parent::printRunningClientsInfo();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets count of running clients
      *
@@ -159,7 +154,6 @@ class ClientHandlerTornado extends ClientHandler
         return parent::getRunningClientCount();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets ary of running clients
      *
@@ -169,7 +163,6 @@ class ClientHandlerTornado extends ClientHandler
         return parent::getRunningClients();
     }
 
-    //--------------------------------------------------------------------------
     /**
      * deletes cache of a transfer
      *
@@ -179,7 +172,6 @@ class ClientHandlerTornado extends ClientHandler
         return;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets current transfer-vals of a transfer
      *
@@ -214,7 +206,6 @@ class ClientHandlerTornado extends ClientHandler
         return $retVal;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets total transfer-vals of a transfer
      *

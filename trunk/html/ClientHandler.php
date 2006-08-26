@@ -78,7 +78,6 @@ class ClientHandler
                         //  3 : transfer-client started successfull
                         // -1 : error
 
-    //--------------------------------------------------------------------------
     /**
      * ctor
      */
@@ -87,8 +86,6 @@ class ClientHandler
         die('base class -- dont do this');
     }
 
-    //--------------------------------------------------------------------------
-    // factory
     /**
      * get ClientHandler-instance
      *
@@ -121,9 +118,12 @@ class ClientHandler
         }
     }
 
-    //--------------------------------------------------------------------------
-    // Initialize the Client Handler.
-    function Initialize($cfg) {
+    /**
+     * initialize the Client Handler.
+     *
+     * @param $cfg
+     */
+    function initialize($cfg) {
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
@@ -141,7 +141,6 @@ class ClientHandler
         $this->status = 1;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * prepares start of a client.
      * prepares vars and other generic stuff
@@ -321,7 +320,6 @@ class ClientHandler
         $this->status = 2;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * do start of a client.
      */
@@ -368,7 +366,6 @@ class ClientHandler
         }
     }
 
-    //--------------------------------------------------------------------------
     /**
      * stops a client
      *
@@ -435,7 +432,6 @@ class ClientHandler
         }
     }
 
-    //--------------------------------------------------------------------------
     /**
      * print info of running clients
      *
@@ -491,7 +487,6 @@ class ClientHandler
         return $printRunningClientsInfo;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets count of running clients
      *
@@ -501,7 +496,6 @@ class ClientHandler
         return count($this->getRunningClients());
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets ary of running clients
      *
@@ -532,7 +526,6 @@ class ClientHandler
         return $artransfer;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * gets available port and sets field port
      *
@@ -556,7 +549,6 @@ class ClientHandler
         return false;
     }
 
-    //--------------------------------------------------------------------------
     /**
      * deletes cache of a transfer
      *
@@ -564,7 +556,6 @@ class ClientHandler
      */
     function deleteCache($transfer) { return; }
 
-    //--------------------------------------------------------------------------
     /**
      * gets current transfer-vals of a transfer
      *
@@ -584,7 +575,6 @@ class ClientHandler
      */
     function getTransferCurrentOP($transfer, $tid, $afu, $afd)  { return; }
 
-    //--------------------------------------------------------------------------
     /**
      * gets total transfer-vals of a transfer
      *

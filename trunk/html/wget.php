@@ -71,6 +71,7 @@ $command .= $nice;
 $command .= " ".$cfg['bin_wget']." -i ".$_URL;
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$_PID; // write pid-file
+//system('echo command >> /tmp/tflux.debug; echo "'. $command .'" >> /tmp/tflux.debug')
 
 // start process
 $wget = popen($command,'r');
