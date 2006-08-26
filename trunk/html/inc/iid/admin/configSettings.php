@@ -25,10 +25,9 @@ require_once("inc/classes/RunningTransfer.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_configSettings.tmpl");
-}
-else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_configSettings.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/configSettings.tmpl");
+} else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/configSettings.tmpl");
 }
 $tmpl->setvar('head', getHead("Administration - Settings"));
 $tmpl->setvar('menu', getMenu());

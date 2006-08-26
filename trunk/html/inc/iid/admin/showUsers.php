@@ -22,9 +22,9 @@
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_showUsers.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/showUsers.tmpl");
 } else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_showUsers.tmpl");
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/showUsers.tmpl");
 }
 
 $tmpl->setvar('head', getHead(_ADMINISTRATION));

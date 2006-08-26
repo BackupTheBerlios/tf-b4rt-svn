@@ -22,10 +22,9 @@
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_addUser.tmpl");
-}
-else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_addUser.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/addUser.tmpl");
+} else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/addUser.tmpl");
 }
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {

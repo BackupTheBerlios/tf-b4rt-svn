@@ -24,10 +24,9 @@
 loadSettings();
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_uiSettings.tmpl");
-}
-else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_uiSettings.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/uiSettings.tmpl");
+} else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/uiSettings.tmpl");
 }
 $tmpl->setvar('head', getHead("Administration - UI Settings"));
 $tmpl->setvar('menu', getMenu());

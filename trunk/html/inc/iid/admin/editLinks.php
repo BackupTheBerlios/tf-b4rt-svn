@@ -22,10 +22,9 @@
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_editLinks.tmpl");
-}
-else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_editLinks.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/editLinks.tmpl");
+} else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/editLinks.tmpl");
 }
 $tmpl->setvar('head', getHead(_ADMINEDITLINKS));
 $tmpl->setvar('menu', getMenu());

@@ -21,10 +21,9 @@
 *******************************************************************************/
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_CreateUser.tmpl");
-}
-else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_CreateUser.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/CreateUser.tmpl");
+} else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/CreateUser.tmpl");
 }
 $tmpl->setvar('head', getHead(_USERADMIN));
 $tmpl->setvar('menu', getMenu());

@@ -20,7 +20,7 @@
 
 *******************************************************************************/
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_fluxdSettings.tmpl");
+$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/fluxdSettings.tmpl");
 
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");

@@ -26,10 +26,9 @@ require_once("inc/searchEngines/SearchEngineBase.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin_searchSettings.tmpl");
-}
-else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin_searchSettings.tmpl");
+	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/searchSettings.tmpl");
+} else {
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/searchSettings.tmpl");
 }
 $tmpl->setvar('head', getHead("Administration - Search Settings"));
 $tmpl->setvar('menu', getMenu());
