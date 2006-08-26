@@ -672,7 +672,7 @@ function getTorrentHash($torrent) {
  */
 function getTorrentDatapath($torrent) {
 	global $cfg;
-    require_once('BDecode.php');
+    require_once('inc/classes/BDecode.php');
     $ftorrent=$cfg["torrent_file_path"].$torrent;
     $fd = fopen($ftorrent, "rd");
     $alltorrent = fread($fd, filesize($ftorrent));
@@ -895,7 +895,7 @@ function deleteTorrentData($torrent) {
 	global $cfg;
 	if (($cfg["user"] == getOwner($element)) || IsAdmin()) {
 		# the user is the owner of the torrent -> delete it
-		require_once('BDecode.php');
+		require_once('inc/classes/BDecode.php');
 		$ftorrent=$cfg["torrent_file_path"].$element;
 		$fd = fopen($ftorrent, "rd");
 		$alltorrent = fread($fd, filesize($ftorrent));
@@ -939,7 +939,7 @@ function deleteTorrentData($torrent) {
  */
 function getTorrentDataSize($torrent) {
 	global $cfg;
-	require_once('BDecode.php');
+	require_once('inc/classes/BDecode.php');
 	$ftorrent=$cfg["torrent_file_path"].$torrent;
 	$fd = fopen($ftorrent, "rd");
 	$alltorrent = fread($fd, filesize($ftorrent));
@@ -4513,7 +4513,7 @@ function FetchHTML( $url, $referer = "" ) {
 function getDownloadSize($torrent) {
 	$rtnValue = "";
 	if (file_exists($torrent)) {
-		include_once("BDecode.php");
+		include_once("inc/classes/BDecode.php");
 		$fd = fopen($torrent, "rd");
 		$alltorrent = fread($fd, filesize($torrent));
 		$array = BDecode($alltorrent);

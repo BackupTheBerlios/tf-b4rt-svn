@@ -92,7 +92,7 @@ function showMetaInfo($torrent, $allowSave=false) {
 		$showMetaInfo = _NORECORDSFOUND;
 	} elseif ($cfg["enable_file_priority"]) {
 		$prioFileName = $cfg["torrent_file_path"].getAliasName($torrent).".prio";
-		require_once('BDecode.php');
+		require_once('inc/classes/BDecode.php');
 		$showMetaInfo = '<link rel="StyleSheet" href="dtree.css" type="text/css" /><script type="text/javascript" src="dtree.js"></script>';
 		$ftorrent=$cfg["torrent_file_path"].$torrent;
 		$fp = fopen($ftorrent, "rd");
