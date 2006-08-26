@@ -20,6 +20,8 @@
 
 *******************************************************************************/
 
+// require
+require_once("inc/metaInfo.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
@@ -34,7 +36,6 @@ $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $transfer = getRequestVar('torrent');
 if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 	// this is a torrent-client
-	require_once("metaInfo.php");
 	$als = getRequestVar('als');
 	if($als == "false") {
 		$tmpl->setvar('showMetaInfo', showMetaInfo($transfer, false));

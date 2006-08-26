@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // require
-require_once("metaInfo.php");
+require_once("inc/metaInfo.php");
 
 # create new template
 if (!ereg('^[^./][^/]*$', $cfg["theme"])) {
