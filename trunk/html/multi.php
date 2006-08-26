@@ -31,7 +31,7 @@ include_once("inc/classes/ClientHandler.php");
 // allways use this instance of FluxdQmgr in included pages.
 // allways use this boolean for "is queue up and running" in included pages.
 //
-require_once("Fluxd.php");
+require_once("inc/classes/Fluxd.php");
 require_once("Fluxd.ServiceMod.php");
 $fluxd = new Fluxd(serialize($cfg));
 $fluxdRunning = $fluxd->isFluxdRunning();

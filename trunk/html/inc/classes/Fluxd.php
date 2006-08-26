@@ -69,7 +69,6 @@ class Fluxd
         $this->state = 1;
     }
 
-
     // public meths
 
     /**

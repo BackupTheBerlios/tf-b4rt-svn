@@ -422,7 +422,7 @@ if (isset($_REQUEST["f"])) {
 				break;
 			case "4": // fluxd-status
 				$htmlTitle = "fluxd - status";
-				include_once("Fluxd.php");
+				require_once("inc/classes/Fluxd.php");
 				$fluxd = new Fluxd(serialize($cfg));
 				if ($fluxd->isFluxdRunning()) {
 					$htmlMain .= '<br><pre>';
@@ -930,7 +930,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=2">error-log</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=3">ps</a>';
-			include_once("Fluxd.php");
+			require_once("inc/classes/Fluxd.php");
 			$fluxd = new Fluxd(serialize($cfg));
 			if ($fluxd->isFluxdRunning()) {
 				$htmlMain .= ' | ';

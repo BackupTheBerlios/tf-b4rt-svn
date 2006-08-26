@@ -334,7 +334,7 @@ class ClientHandler
         session_write_close("TorrentFlux");
         $transferRunningFlag = 1;
         if ($this->queue == "1") { // queue
-			require_once("Fluxd.php");
+			require_once("inc/classes/Fluxd.php");
 			require_once("Fluxd.ServiceMod.php");
 			$fluxd = new Fluxd(serialize($this->cfg));
 			$fluxdRunning = $fluxd->isFluxdRunning();
