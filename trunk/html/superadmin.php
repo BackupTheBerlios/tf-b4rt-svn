@@ -31,7 +31,7 @@ define('_SUPERADMIN_PROXY','superadminProxy.php');
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
 
 // includes
-require_once("config.php");
+require_once("inc/config/config.php");
 require_once("main.php");
 
 // global fields

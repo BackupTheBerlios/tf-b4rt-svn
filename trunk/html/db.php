@@ -20,8 +20,7 @@
 
 *******************************************************************************/
 
-// will need include of config.php
-require_once('config.php');
+require_once('inc/config/config.php');
 require_once('lib/adodb/adodb.inc.php');
 require_once('lib/vlib/vlibTemplate.php');
 

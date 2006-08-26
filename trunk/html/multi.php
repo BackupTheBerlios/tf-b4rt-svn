@@ -20,7 +20,7 @@
 
 *******************************************************************************/
 
-require_once("config.php");
+require_once("inc/config/config.php");
 require_once("main.php");
 require_once("inc/classes/ClientHandler.php");
 

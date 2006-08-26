@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // config
-require_once('config.php');
+require_once('inc/config/config.php');
 // main
 require_once("main.php");
 // vlib

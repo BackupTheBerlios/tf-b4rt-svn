@@ -25,7 +25,7 @@
 // is now in the file config.db.php !
 /******************************************************************************/
 // we want to die when db-conf-file is missing. so lets use require on this
-require_once('config.db.php');
+require_once('inc/config/config.db.php');
 
 /*****************************************************************************
     TorrentFlux

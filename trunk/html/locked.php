@@ -24,7 +24,7 @@
 session_start("TorrentFlux");
 
 // config
-require_once('config.php');
+require_once('inc/config/config.php');
 // db
 require_once('db.php');
 // functions

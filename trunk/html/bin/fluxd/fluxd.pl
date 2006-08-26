@@ -36,7 +36,7 @@ use FluxdCommon;
 ################################################################################
 #
 my $BIN_FLUXCLI = "fluxcli.php";
-my $FILE_DBCONF = "config.db.php";
+my $FILE_DBCONF = "inc/config/config.db.php";
 my $PATH_TORRENT_DIR = ".torrents";
 our $PATH_DATA_DIR = ".fluxd";
 my $PATH_SOCKET = "fluxd.sock";

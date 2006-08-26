@@ -45,7 +45,7 @@ if ($bail > 0) {
 $REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
 
 // config
-require_once('config.php');
+require_once('inc/config/config.php');
 // db
 require_once('db.php');
 // functions

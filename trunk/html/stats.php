@@ -30,7 +30,7 @@ define('_URL_DTD_XMLOLD','http://'.$_SERVER['SERVER_NAME'].'/tf_xml.dtd');
 // -----------------------------------------------------------------------------
 
 // config
-require_once("config.php");
+require_once("inc/config/config.php");
 switch (_PUBLIC_STATS) {
     case 0:
         // includes
