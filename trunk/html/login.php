@@ -41,7 +41,7 @@ loadSettings();
 if (!ereg('^[^./][^/]*$', $cfg["default_theme"])) {
 	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/login.tmpl");
 } else {
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/login.tmpl");
+	$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/login.tmpl");
 }
 
 // include default theme
