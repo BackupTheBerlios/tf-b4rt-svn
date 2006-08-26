@@ -332,7 +332,7 @@ function cliStartTorrent($torrent = "") {
 			$cfg["user"] = getOwner($torrent);
 			echo "Starting ".$torrent." ...";
 			if ($cfg["enable_file_priority"]) {
-				include_once("setpriority.php");
+				include_once("inc/setpriority.php");
 				// Process setPriority Request.
 				setPriority($torrent);
 			}
@@ -371,7 +371,7 @@ function cliStartTorrents() {
             $cfg["user"] = getOwner($torrent);
             $btclient = getTransferClient($torrent);
             if ($cfg["enable_file_priority"]) {
-                include_once("setpriority.php");
+                include_once("inc/setpriority.php");
                 // Process setPriority Request.
                 setPriority($torrent);
             }
@@ -406,7 +406,7 @@ function cliResumeTorrents() {
             $cfg["user"] = getOwner($torrent);
             $btclient = getTransferClient($torrent);
             if ($cfg["enable_file_priority"]) {
-                include_once("setpriority.php");
+                include_once("inc/setpriority.php");
                 // Process setPriority Request.
                 setPriority($torrent);
             }
@@ -617,7 +617,7 @@ function cliWatchDir($tpath = "", $username = "") {
                             injectTorrent($file_name);
                             // file-prio
                             if ($cfg["enable_file_priority"]) {
-                                include_once("setpriority.php");
+                                include_once("inc/setpriority.php");
                                 // Process setPriority Request.
                                 setPriority($file_name);
                             }

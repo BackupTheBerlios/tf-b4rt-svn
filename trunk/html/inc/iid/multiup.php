@@ -84,7 +84,7 @@ if (!empty($_FILES['upload_files'])) {
 			injectTorrent($torrent);
 			// file prio
 			if ($cfg["enable_file_priority"]) {
-				include_once("setpriority.php");
+				include_once("inc/setpriority.php");
 				// Process setPriority Request.
 				setPriority(urldecode($torrent));
 			}

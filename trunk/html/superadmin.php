@@ -693,7 +693,7 @@ if (isset($_REQUEST["t"])) {
 					if ($tRunningFlag == 0) {
 						$btclient = getTransferClient($torrent);
 						if ($cfg["enable_file_priority"]) {
-							include_once("setpriority.php");
+							include_once("inc/setpriority.php");
 							// Process setPriority Request.
 							setPriority($torrent);
 						}
@@ -719,7 +719,7 @@ if (isset($_REQUEST["t"])) {
 					if ($tRunningFlag == 0) {
 						$btclient = getTransferClient($torrent);
 						if ($cfg["enable_file_priority"]) {
-							include_once("setpriority.php");
+							include_once("inc/setpriority.php");
 							// Process setPriority Request.
 							setPriority($torrent);
 						}

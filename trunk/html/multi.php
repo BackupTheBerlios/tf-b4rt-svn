@@ -89,7 +89,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $btclient = getTransferClient($transfer);
                     if ($cfg["enable_file_priority"]) {
-                        include_once("setpriority.php");
+                        include_once("inc/setpriority.php");
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
@@ -110,7 +110,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $btclient = getTransferClient($transfer);
                     if ($cfg["enable_file_priority"]) {
-                        include_once("setpriority.php");
+                        include_once("inc/setpriority.php");
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
@@ -154,7 +154,7 @@ switch ($action) {
 					if ($tRunningFlag == 0) {
 						if ($isTorrent) {
 							if ($cfg["enable_file_priority"]) {
-								include_once("setpriority.php");
+								include_once("inc/setpriority.php");
 								// Process setPriority Request.
 								setPriority(urldecode($element));
 							}
@@ -182,7 +182,7 @@ switch ($action) {
 					if (($isTorrent) && ($tRunningFlag == 0)) {
 						// enqueue it
 						if ($cfg["enable_file_priority"]) {
-							include_once("setpriority.php");
+							include_once("inc/setpriority.php");
 							// Process setPriority Request.
 							setPriority(urldecode($element));
 						}

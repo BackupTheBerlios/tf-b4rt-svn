@@ -1325,7 +1325,7 @@ function convertIntegerToArray($dataInt) {
 function indexStartTorrent($torrent,$interactive) {
 	global $cfg, $queueActive;
 	if ($cfg["enable_file_priority"]) {
-		include_once("setpriority.php");
+		include_once("inc/setpriority.php");
 		// Process setPriority Request.
 		setPriority($torrent);
 	}
@@ -1429,7 +1429,7 @@ function indexProcessDownload($url_upload) {
 		$actionId = getRequestVar('aid');
 		if (isset($actionId)) {
 			if ($cfg["enable_file_priority"]) {
-				include_once("setpriority.php");
+				include_once("inc/setpriority.php");
 				// Process setPriority Request.
 				setPriority(urldecode($file_name));
 			}
@@ -1478,7 +1478,7 @@ function indexProcessUpload() {
 					$actionId = getRequestVar('aid');
 					if (isset($actionId)) {
 						if ($cfg["enable_file_priority"]) {
-							include_once("setpriority.php");
+							include_once("inc/setpriority.php");
 							// Process setPriority Request.
 							setPriority(urldecode($file_name));
 						}
