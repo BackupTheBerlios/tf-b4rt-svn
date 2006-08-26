@@ -73,16 +73,10 @@ class ClientHandlerTornado extends ClientHandler
             return;
         }
 
-		// check for some settings
+		// check for pythonCmd
 		if (! array_key_exists("pythonCmd", $this->cfg))
 			insertSetting("pythonCmd","/usr/bin/python");
-		if (! array_key_exists("debugTorrents", $this->cfg))
-			insertSetting("debugTorrents", "0");
-        $pyCmd = "";
-		if (!$this->cfg["debugTorrents"])
-			$pyCmd = $this->cfg["pythonCmd"] . " -OO";
-		else
-			$pyCmd = $this->cfg["pythonCmd"];
+		$pyCmd = $this->cfg["pythonCmd"] . " -OO";
 
         // build the command-string
         $skipHashCheck = "";
