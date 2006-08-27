@@ -44,7 +44,6 @@ $_SIZE = 0;
 $_COMPLETED = 0;
 $_PERCENTAGE = 0;
 $_SPEED = "0.00 kB/s";
-//$_INT_SPEED = 0.00;
 $_INT_SPEED = 0;
 $_URL = '';
 $_REAL_NAME = '';
@@ -52,6 +51,14 @@ $_OWNER = '';
 $_ETA = '-';
 
 // check args
+if (!isset($argv[1]))
+	die('Arg Error');
+if (!isset($argv[2]))
+	die('Arg Error');
+if (!isset($argv[3]))
+	die('Arg Error');
+if (!isset($argv[4]))
+	die('Arg Error');
 
 // args
 $_URL = $argv[1];
@@ -60,82 +67,85 @@ $_PID = $argv[3];
 $_OWNER = $argv[4];
 
 // write out stat-file now
-writeStatFile(false);
-
-// umask
-$umask = "";
-if ($cfg["enable_umask"] != 0)
-    $umask = " umask 0000;";
-// nice
-$nice = "";
-if ($cfg["nice_adjust"] != 0)
-    $nice = " nice -n ".$cfg["nice_adjust"];
+writeStatFile();
 
 /*
-	-i,  	--input-file=FILE		download URLs found in FILE.
 
-	-c,  	--continue				resume getting a partially-downloaded file.
+-i,  	--input-file=FILE		download URLs found in FILE.
 
-			--limit-rate=RATE		limit download rate to RATE.
+-c,  	--continue				resume getting a partially-downloaded file.
 
-			--http-user=USER		set http user to USER.
-			--http-passwd=PASS		set http password to PASS.
+		--limit-rate=RATE		limit download rate to RATE.
 
-			--passive-ftp			use the "passive" transfer mode.
+		--http-user=USER		set http user to USER.
+		--http-passwd=PASS		set http password to PASS.
 
-	--limit-rate=amount
-	   Limit the download speed to amount bytes per second.  Amount may be expressed in bytes, kilobytes with the k suf­
-	   fix, or megabytes with the m suffix.  For example, --limit-rate=20k will limit the retrieval rate to 20KB/s.
-	   This kind of thing is useful when, for whatever reason, you don't want Wget to consume the entire available band­
-	   width.
+		--passive-ftp			use the "passive" transfer mode.
+
+		--limit-rate=amount
+		   Limit the download speed to amount bytes per second.
+		   Amount may be expressed in bytes, kilobytes with the k suf­
+		   fix, or megabytes with the m suffix.  For example, --limit-rate=20k
+		   will limit the retrieval rate to 20KB/s.
+		   This kind of thing is useful when, for whatever reason, you don't
+		   want Wget to consume the entire available band­width.
+
 */
 
 // command-string
 $command = "cd ".$cfg["path"].$_OWNER.";";
 $command .= " HOME=".$cfg["path"].$_OWNER."/; export HOME;";
-$command .= $umask;
-$command .= $nice;
+if ($cfg["enable_umask"] != 0)
+    $command .= " umask 0000;";
+if ($cfg["nice_adjust"] != 0)
+    $command .= " nice -n ".$cfg["nice_adjust"];
 $command .= " ".$cfg['bin_wget']." -i ".$_URL;
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$_PID; // write pid-file
-system('echo command >> /tmp/tflux.debug; echo "'. $command .'" >> /tmp/tflux.debug');
 
 // start process
 $header = true;
 $wget = popen($command,'r');
+// wait for 0.25 seconds
+usleep(250000);
 do {
 	// read header
 	while ($header) {
-		$line = @fread($wget, 80);
-		//echo $line."\n";
-		if (!(stristr($line, 'Length:') === false)) {
+		// read
+		$read = @fread($wget, 160);
+		// look for size-string
+		if (!(stristr($read, 'Length:') === false)) {
 			$header = false;
-			$sizeLine = explode(':',trim($line));
-			$_SIZE = @trim(array_shift(explode(' ',trim($sizeLine[1]))));
+			$sizeRead = explode(':',trim($read));
+			$_SIZE = @trim(array_shift(explode(' ', trim($sizeRead[1]))));
+			$_SIZE = @str_replace(",", "", $_SIZE);
+			// wait for 0.25 seconds
+			usleep(250000);
 		}
 	}
 	// read
-	$read = @fread($wget, 80);
-	// debug
-	//echo $read."\n";
-	// process new data
+	$read = @fread($wget, 2048);
+	// process data
 	processData($read);
 	// write stat file
-	writeStatFile(false);
+	writeStatFile();
 	// sleep
-	sleep(1);
+	sleep(5);
 
 } while (!feof($wget));
 pclose($wget);
 
 // Run again afterwards just to make sure it finished writing the file.
-$_PERCENTAGE = 100;
 $_STATUS = '0';
-writeStatFile(true);
+$_SPEED = "0.00 kB/s";
+$_PERCENTAGE = 100;
+$_COMPLETED = $_SIZE;
+$_ETA = "Download Succeeded!";
+writeStatFile();
 
 // update xfer
 if ($cfg['enable_xfer'] == 1)
-	saveXfer($_OWNER, 0, $_COMPLETED);
+	saveXfer($_OWNER, $_SIZE, 0);
 
 // delete pid-file
 @unlink($_PID);
@@ -151,57 +161,57 @@ exit();
  * @param $seconds
  * @return
  */
-function convertTime($seconds){
-	$seconds = round($seconds,0);
-	if($seconds > 361440){
-		$days = $seconds % 361440;
-		$seconds -= $days*361440;
-	} else {
-		$days = "0";
+function convertTime($seconds) {
+	$seconds = round($seconds, 0);
+	$stringDays = "";
+	$stringHours = "";
+	$stringMinutes = "";
+	$stringSeconds = "";
+	// days
+	if ($seconds > 361440) {
+		$days = floor($seconds / 361440);
+		$seconds -= $days * 361440;
+		if ($days < 10)
+			$stringDays .= "0";
+		$stringDays .= $days.":";
 	}
-	if($seconds > 3600){
-		$hours = $seconds % 3600;
-		$seconds -= $days*3600;
-	} else {
-		$hours = "00";
+	// hours
+	if ($seconds > 3600) {
+		$hours = floor($seconds / 3600);
+		$seconds -= $hours * 3600;
+		if ($hours < 10)
+			$stringHours .= "0";
+		$stringHours .= $hours.":";
 	}
-	if($seconds > 60){
-		$minutes = $seconds % 60;
-		$seconds -= $days*60;
-	} else {
-		$minutes = "00";
+	// minutes
+	if ($seconds > 60) {
+		$minutes = floor($seconds / 60);
+		$seconds -= $minutes * 60;
+		if ($minutes < 10)
+			$stringMinutes .= "0";
+		$stringMinutes .= $minutes.":";
 	}
-	if($days > 0)
-		return "$days:$hours:$minutes:$seconds";
-	else
-		return "$hours:$minutes:$seconds";
+	// seconds
+	if ($seconds >= 0) {
+		if ($seconds < 10)
+			$stringSeconds .= "0";
+		$stringSeconds .= $seconds;
+	}
+	// return
+	return $stringDays.$stringHours.$stringMinutes.$stringSeconds;
 }
 
 /**
  * writeStatFile
  *
  */
-function writeStatFile($completed = false) {
+function writeStatFile() {
 	global $cfg, $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_REAL_NAME, $_INT_SPEED, $_OWNER, $_ALIAS, $_ETA;
     $af = AliasFile::getAliasFileInstance($_ALIAS, $_OWNER, $cfg, 'wget');
 	$af->running = $_STATUS;
 	$af->percent_done = $_PERCENTAGE;
-	if ($completed) {
-		$af->time_left = "Download Succeeded!";
-		$af->down_speed = "0.00 kB/s";
-	} else {
-		/*
-		if($_INT_SPEED > 0){
-		    // because size is 0 this wont work so lets put a fallback here now
-			//$af->time_left = convertTime((($_SIZE-$_COMPLETED)/1024)/$_INT_SPEED);
-			$af->time_left = '-';
-		} else {
-			$af->time_left = "Inf".$_INT_SPEED;
-		}
-		*/
-		$af->time_left = $_ETA;
-		$af->down_speed = $_SPEED;
-	}
+	$af->down_speed = $_SPEED;
+	$af->time_left = $_ETA;
 	$af->up_speed = "0.00 kB/s";
 	$af->sharing = "0";
 	$af->transferowner = $_OWNER;
@@ -221,40 +231,40 @@ function writeStatFile($completed = false) {
  */
 function processData($data){
 	global $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_INT_SPEED, $_ETA;
-	// Check if they are set first, if they're not its pointless wasting cycles
-	// on them as they wont change during the run. Comparisons use less CPU
-	// than a Regex
-	//if( ($_REAL_NAME == '') && preg_match("/=> `(.*?)'/i",$data,$reg)){
-	//	$_REAL_NAME = $reg[1];
-	//} else
-	//if(($_SIZE == '') && preg_match("/Length: (.*?) \(/i",$data,$reg))
-	//	$_SIZE = str_replace(',','',$reg[1]);
-	if( preg_match("/(\d*)K \./i",$data,$reg))
-		$_COMPLETED = $reg[1]*1024;
-	if( preg_match("/(\d*)%(\s*)(.*)\/s/i",$data,$reg)){
+	// completed
+	if(preg_match("/(\d*)K \./i", $data, $reg))
+		$_COMPLETED = $reg[1] << 10;
+	// sanity-check
+	if ((!(isset($_SIZE))) || ($_SIZE <= 0))
+		$_SIZE = $_COMPLETED;
+	// percentage + speed
+	if(preg_match("/(\d*)%(\s*)(.*)\/s/i", $data, $reg)) {
+		// percentage
 		$_PERCENTAGE = $reg[1];
-		if ($_PERCENTAGE == 100){
-			$_COMPLETED = $_SIZE;
-			$_STATUS = '0';
-		}
+		// speed
 		$_SPEED = $reg[3]."/s";
-		if(substr($_SPEED,-4) == "KB/s"){
-			$_INT_SPEED = substr($_SPEED,0,strlen($_SPEED)-5);
-		} elseif(substr($_SPEED,-4) == "MB/s"){
-			$_INT_SPEED = substr($_SPEED,0,strlen($_SPEED)-5);
-			$_INT_SPEED = $_INT_SPEED*1024;
+		// we dont want upper-case k
+		$_SPEED = str_replace("KB/s", "kB/s", $_SPEED);
+		if (substr($_SPEED, -4) == "kB/s") {
+			$_INT_SPEED = substr($_SPEED, 0, strlen($_SPEED) - 5);
+		} elseif (substr($_SPEED, -4) == "MB/s"){
+			$_INT_SPEED = substr($_SPEED, 0, strlen($_SPEED) - 5);
+			$_INT_SPEED = $_INT_SPEED >> 10;
 		}
+		// ETA
+		if($_INT_SPEED > 0)
+			$_ETA = convertTime((($_SIZE - $_COMPLETED) >> 10) / $_INT_SPEED);
+		else
+			$_ETA = '-';
 	}
-	if( preg_match("/- `(.*)' saved [(\d*)\/(\d*)]/",$data,$reg)){
-		//var_export($reg);
-		//$_SIZE = $reg[2];
-		$_COMPLETED = $reg[1];
-		$_PERCENTAGE = '100';
+	// download done
+	if (preg_match("/.*saved [.*/", $data)) {
 		$_STATUS = '0';
+		$_SPEED = "0.00 kB/s";
+		$_PERCENTAGE = 100;
+		$_COMPLETED = $_SIZE;
+		$_ETA = "Download Succeeded!";
 	}
-	// well it better than nothing for now. have to check parsing code.
-	//$_SIZE = $_COMPLETED;
 }
-
 
 ?>
