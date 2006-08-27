@@ -228,11 +228,10 @@ function getUserSection() {
 	global $cfg, $db;
 	# create new template
 	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.menu.tmpl");
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.users.tmpl");
 	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.menu.tmpl");
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.users.tmpl");
 	# define vars
-	$tmpl->setvar('function', "getUserSection");
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -258,11 +257,11 @@ function getUserSection() {
 			$user_percent = 0;
 		}
 		else {
-			$user_percent = number_format(($user_activity/$total_activity)*100);	
+			$user_percent = number_format(($user_activity/$total_activity)*100);
 		}
 		$user_icon = "images/user_offline.gif";
 		if (IsOnline($user_id)) {
-			$user_icon = "images/user.gif";	
+			$user_icon = "images/user.gif";
 		}
 		$user_image = "images/user.gif";
 		$type_user = _NORMALUSER;
