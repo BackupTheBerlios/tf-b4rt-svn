@@ -262,11 +262,12 @@ foreach($entrys as $entry) {
 			// Some Stats dir hack
 			$enable_dirstats = $cfg['enable_dirstats'];
 			if ($enable_dirstats == 1) {
-				$dudir = shell_exec($cfg['bin_du']." -sk -h ".correctFileName($dirName.$entry));
-				$dusize = explode("\t", $dudir);
+				$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($dirName.$entry));
+				$dusize = @explode("\t", $dudir);
+				//$dusize0 = $dusize[0];
+				$dusize0 = @array_shift($dusize);
 				$arStat = @lstat($dirName.$entry);
 				$timeStamp = @filemtime($dirName.$entry); //$timeStamp = $arStat[10];
-				$dusize0 = $dusize[0];
 				$date1 = @date("m-d-Y h:i a", $timeStamp);
 			} else {
 				$dusize0 = 0;
@@ -439,7 +440,7 @@ closedir($handle);
 
 if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('enable_dirstats', 1);
-	$cmd = $cfg['bin_du']." -ch \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
+	$cmd = $cfg['bin_du']." -ch -D \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
 	$du = shell_exec($cmd);
 	$du2 = substr($du, 0, -7);
 	$tmpl->setvar('_TDDU', _TDDU);
