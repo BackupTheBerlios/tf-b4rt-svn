@@ -226,57 +226,44 @@ function getMenu() {
 //****************************************************************************
 function getUserSection() {
 	global $cfg, $db;
-	$userSection = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
-	$userSection .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><img src=\"images/user_group.gif\" width=17 height=14 border=0>&nbsp;&nbsp;<font class=\"title\">"._USERDETAILS."</font></div></td></tr>";
-	$userSection .= "<tr>";
-	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._USER."</div></td>";
-	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"6%\"><div align=center class=\"title\">"._HITS."</div></td>";
-	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._UPLOADACTIVITY." (".$cfg["days_to_keep"]." "._DAYS.")</div></td>";
-	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"6%\"><div align=center class=\"title\">"._JOINED."</div></td>";
-	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._LASTVISIT."</div></td>";
-	$userSection .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"8%\"><div align=center class=\"title\">"._ADMIN."</div></td>";
-	$userSection .= "</tr>";
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.menu.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.menu.tmpl");
+	# define vars
+	$tmpl->setvar('function', "getUserSection");
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('_USERDETAILS', _USERDETAILS);
+	$tmpl->setvar('_USER', _USER);
+	$tmpl->setvar('_HITS', _HITS);
+	$tmpl->setvar('_UPLOADACTIVITY', _UPLOADACTIVITY);
+	$tmpl->setvar('_JOINED', _JOINED);
+	$tmpl->setvar('_LASTVISIT', _LASTVISIT);
+	$tmpl->setvar('_ADMIN', _ADMIN);
+	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
+	$tmpl->setvar('_DAYS', _DAYS);
+	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
+	// activity
 	$total_activity = GetActivityCount();
 	$sql= "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
 	$result = $db->Execute($sql);
+	$user_activity_list = array();
 	while(list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
 		$user_activity = GetActivityCount($user_id);
-		if ($user_activity == 0)
+		if ($user_activity == 0) {
 			$user_percent = 0;
-		else
-			$user_percent = number_format(($user_activity/$total_activity)*100);
+		}
+		else {
+			$user_percent = number_format(($user_activity/$total_activity)*100);	
+		}
 		$user_icon = "images/user_offline.gif";
-		if (IsOnline($user_id))
-			$user_icon = "images/user.gif";
-		$userSection .= "<tr>";
-		if (IsUser($user_id))
-			$userSection .= "<td><a href=\"index.php?iid=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a></td>";
-		else
-			$userSection .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."</td>";
-		$userSection .= "<td><div class=\"tiny\" align=\"right\">".$hits."</div></td>";
-		$userSection .= "<td><div align=center>";
-		$userSection .= '<table width="310" border="0" cellpadding="0" cellspacing="0">';
-		$userSection .= '<tr>';
-		$userSection .= '<td width="200">';
-			$userSection .= '<table width="200" border="0" cellpadding="0" cellspacing="0">';
-			$userSection .= '<tr>';
-				$user_percent2 = $user_percent*2;
-				$userSection .= '<td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$user_percent2.'"><img src="images/blank.gif" width="1" height="12" border="0"></td>';
-				$user_percent3 = (200 - ($user_percent*2));
-				$userSection .= '<td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.$user_percent3.'"><img src="images/blank.gif" width="1" height="12" border="0"></td>';
-			$userSection .= '</tr>';
-			$userSection .= '</table>';
-		$userSection .= '</td>';
-		$userSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_activity.'</div></td>';
-		$userSection .= '<td align="right" width="40"><div class="tiny" align="right">'.$user_percent.'%</div></td>';
-		$userSection .= '<td align="right"><a href="index.php?iid=admin&op=showUserActivity&user_id='.$user_id.'">';
-		$userSection .= '<img src="images/properties.png" width="18" height="13" title="'.$user_id.'\'s '._USERSACTIVITY.'" border="0"></a></td>';
-		$userSection .= '</tr>';
-		$userSection .= '</table>';
-		$userSection .= "</td>";
-		$userSection .= "<td><div class=\"tiny\" align=\"center\" nowrap>".date(_DATEFORMAT, $time_created)."</div></td>";
-		$userSection .= "<td><div class=\"tiny\" align=\"center\" nowrap>".date(_DATETIMEFORMAT, $last_visit)."</div></td>";
-		$userSection .= "<td><div align=\"right\" class=\"tiny\" nowrap>";
+		if (IsOnline($user_id)) {
+			$user_icon = "images/user.gif";	
+		}
 		$user_image = "images/user.gif";
 		$type_user = _NORMALUSER;
 		if ($user_level == 1) {
@@ -287,40 +274,37 @@ function getUserSection() {
 			$user_image = "images/superadmin.gif";
 			$type_user = _SUPERADMIN;
 		}
-		// user-type-pic
-		$userSection .= "<img src=\"".$user_image."\" title=\"".$user_id." - ".$type_user."\">";
-		$userSection .= "&nbsp;";
-		// state
-		if ($user_level <= 1) {
-			if ($user_state == 1)
-				$userSection .= "<a href=\"index.php?iid=admin&op=setUserState&user_id=".$user_id."&state=0\"><img src=\"images/green.gif\" width=\"13\" height=\"13\" title=\"deactivate ".$user_id."\" border=\"0\"></a>";
-			else
-				$userSection .= "<a href=\"index.php?iid=admin&op=setUserState&user_id=".$user_id."&state=1\"><img src=\"images/red.gif\" width=\"13\" height=\"13\" title=\"activate ".$user_id."\" border=\"0\"></a>";
-		} else {
-			$userSection .= "<img src=\"images/black.gif\" width=\"13\" height=\"13\" title=\"superadmin always activated\">";
+		if ($user_level <= 1 || IsSuperAdmin()) {
+			$is_superadmin = 1;
 		}
-		$userSection .= "&nbsp;";
-		// edit
-		if ($user_level <= 1 || IsSuperAdmin())
-			$userSection .= "<a href=\"index.php?iid=admin&op=editUser&user_id=".$user_id."\"><img src=\"images/edit.png\" width=12 height=13 title=\""._EDIT." ".$user_id."\" border=0></a>";
-		$userSection .= "&nbsp;";
-		// delete
-		if ($user_level <= 1)
-			$userSection .= "<a href=\"index.php?iid=admin&op=deleteUser&user_id=".$user_id."\"><img src=\"images/delete_on.gif\" border=0 width=16 height=16 title=\""._DELETE." ".$user_id."\" onclick=\"return ConfirmDeleteUser('".$user_id."')\"></a>";
-		else
-			$userSection .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\"n/a\">";
-		$userSection .= "&nbsp;";
-		//
-		$userSection .= "</div></td>";
-		$userSection .= "</tr>";
+		array_push($user_activity_list, array(
+			'is_user' => IsUser($user_id),
+			'user_id' => $user_id,
+			'user_icon' => $user_icon,
+			'hits' => $hits,
+			'user_percent' => $user_percent,
+			'user_percent2' => $user_percent*2,
+			'user_percent3' => (200 - ($user_percent*2)),
+			'hits' => $hits,
+			'time_created' => date(_DATEFORMAT, $time_created),
+			'last_visit' => date(_DATETIMEFORMAT, $last_visit),
+			'user_image' => $user_image,
+			'type_user' => $type_user,
+			'user_level' => $user_level,
+			'user_state' => $user_state,
+			'is_superadmin' => $is_superadmin,
+			)
+		);
 	}
-	$userSection .= "</table>";
-	$userSection .= '<script language="JavaScript">';
-	$userSection .= 'function ConfirmDeleteUser(user) {';
-		$userSection .= 'return confirm("'._WARNING.': '._ABOUTTODELETE.': " + user)';
-	$userSection .= '}';
-	$userSection .= '</script>';
-	return $userSection;
+	$tmpl->setloop('user_activity_list', $user_activity_list);
+	$tmpl->setvar('_WARNING', _WARNING);
+	$tmpl->setvar('_ABOUTTODELETE', _ABOUTTODELETE);
+	$tmpl->setvar('_USERSACTIVITY', _USERSACTIVITY);
+	$tmpl->setvar('_EDIT', _EDIT);
+	$tmpl->setvar('_DELETE', _DELETE);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 //****************************************************************************
