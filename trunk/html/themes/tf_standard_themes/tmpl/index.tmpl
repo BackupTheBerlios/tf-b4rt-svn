@@ -299,9 +299,9 @@
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="multi.php?action=bulkStart"><img src="images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
-														<a href="multi.php?action=bulkResume"><img src="images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
-														<a href="multi.php?action=bulkStop"><img src="images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
+														<a href="multi.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
+														<a href="multi.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
+														<a href="multi.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
@@ -321,6 +321,7 @@
 															<option value="transferWipe" style="background-color: #DDAAAA">Wipe [BT]</option>
 														</select>
 														<input type="submit" value="Go">
+														<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);">
 													</td>
 												</tmpl_if>
 											</tr>

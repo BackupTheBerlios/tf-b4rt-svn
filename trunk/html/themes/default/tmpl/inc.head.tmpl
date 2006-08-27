@@ -75,5 +75,13 @@
 		var height = screen.height/2-110;
 		var InfoWin = window.open("index.php?iid=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
 	}
+	function bulkCheck(thisIn) {
+		var form = thisIn.form, i = 0;
+		for(i = 0; i < form.length; i++) {
+			if( form[i].type == 'checkbox' && form[i].name != 'bulkBox') {
+				form[i].checked = thisIn.checked;
+			}
+		}
+	}
 	</script>
 </head>
