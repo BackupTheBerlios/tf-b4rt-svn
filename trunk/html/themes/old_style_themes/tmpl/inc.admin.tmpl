@@ -1,0 +1,19 @@
+<tmpl_if name="function" value="getMenu">
+	<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
+		<tr>
+			<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif"><div align="center">
+				<tmpl_if name="is_superadmin">
+					<tmpl_var name="superAdminLink">
+				</tmpl_if>
+				<a href="index.php?iid=admin&op=configSettings"><font class="adminlink"><tmpl_var name="_SETTINGS_MENU"></font></a> | 
+				<a href="index.php?iid=admin&op=fluxdSettings"><font class="adminlink"><tmpl_var name="_FLUXD_MENU"></font></a> | 
+				<a href="index.php?iid=admin&op=uiSettings"><font class="adminlink">ui</font></a> | 
+				<a href="index.php?iid=admin&op=searchSettings"><font class="adminlink"><tmpl_var name="_SEARCHSETTINGS_MENU"></font></a> | 
+				<a href="index.php?iid=admin&op=editLinks"><font class="adminlink"><tmpl_var name="_LINKS_MENU"></font></a> | 
+				<a href="index.php?iid=admin&op=editRSS"><font class="adminlink">rss</font></a> | 
+				<a href="index.php?iid=admin&op=showUsers"><font class="adminlink">users</font></a> | 
+				<a href="index.php?iid=admin&op=showUserActivity"><font class="adminlink"><tmpl_var name="_ACTIVITY_MENU"></font></a>
+			</div></td>
+		</tr>
+	</table><br>
+</tmpl_if>

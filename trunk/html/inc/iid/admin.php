@@ -196,31 +196,29 @@ switch ($op) {
 //****************************************************************************
 function getMenu() {
 	global $cfg;
-	$menu = "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\">";
-	$menu .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\"><div align=\"center\">";
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.admin.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/inc.admin.tmpl");
+	# define vars
+	$tmpl->setvar('function', "getMenu");
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+	$tmpl->setvar('theme', $cfg["theme"]);
 	// superadmin
-	if (IsSuperAdmin())
-		$menu .= getSuperAdminLink('','<font class="adminlink">superadmin</font>')." | ";
-	// settings
-	$menu .= "<a href=\"index.php?iid=admin&op=configSettings\"><font class=\"adminlink\">"._SETTINGS_MENU."</font></a> | ";
-	// fluxd
-	$menu .= "<a href=\"index.php?iid=admin&op=fluxdSettings\"><font class=\"adminlink\">"._FLUXD_MENU."</font></a> | ";
-	// ui
-	$menu .= "<a href=\"index.php?iid=admin&op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
-	// search
-	$menu .= "<a href=\"index.php?iid=admin&op=searchSettings\"><font class=\"adminlink\">"._SEARCHSETTINGS_MENU."</font></a> | ";
-	// links
-	$menu .= "<a href=\"index.php?iid=admin&op=editLinks\"><font class=\"adminlink\">"._LINKS_MENU."</font></a> | ";
-	// rss
-	$menu .= "<a href=\"index.php?iid=admin&op=editRSS\"><font class=\"adminlink\">rss</font></a> | ";
-	// users
-	$menu .= "<a href=\"index.php?iid=admin&op=showUsers\"><font class=\"adminlink\">users</font></a> | ";
-	// activity
-	$menu .= "<a href=\"index.php?iid=admin&op=showUserActivity\"><font class=\"adminlink\">"._ACTIVITY_MENU."</font></a>";
-	//
-	$menu .= "</div></td></tr>";
-	$menu .= "</table><br>";
-	return $menu;
+	if (IsSuperAdmin()) {
+		$tmpl->setvar('is_superadmin', 1);
+		$tmpl->setvar('superAdminLink', getSuperAdminLink('','<font class="adminlink">superadmin</font>')." | ");
+	}
+	$tmpl->setvar('_SETTINGS_MENU', _SETTINGS_MENU);
+	$tmpl->setvar('_FLUXD_MENU', _FLUXD_MENU);
+	$tmpl->setvar('_SEARCHSETTINGS_MENU', _SEARCHSETTINGS_MENU);
+	$tmpl->setvar('_LINKS_MENU', _LINKS_MENU);
+	$tmpl->setvar('_ACTIVITY_MENU', _ACTIVITY_MENU);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 //****************************************************************************
