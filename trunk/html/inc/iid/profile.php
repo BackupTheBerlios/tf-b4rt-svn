@@ -107,21 +107,21 @@ switch ($op) {
 
 		# tf standard themes
 		$arThemes = GetThemesStandard();
-		$old_theme_list = array();
+		$tfstandard_theme_list = array();
 		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 			$selected = "";
 			$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
 			if ($cfg["theme"] == $arThemes2[$inx]) {
 				$selected = "selected";
 			}
-			array_push($old_theme_list, array(
+			array_push($tfstandard_theme_list, array(
 				'arThemes' => $arThemes[$inx],
 				'arThemes2' => $arThemes2[$inx],
 				'selected' => $selected,
 				)
 			);
 		}
-		$tmpl->setloop('old_theme_list', $old_theme_list);
+		$tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
 		$tmpl->setvar('_LANGUAGE', _LANGUAGE);
 
 		$arLanguage = GetLanguages();
