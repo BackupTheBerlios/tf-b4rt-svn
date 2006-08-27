@@ -28,7 +28,7 @@ require_once("inc/searchEngines/SearchEngineBase.php");
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/searchSettings.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/searchSettings.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/searchSettings.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - Search Settings"));
 $tmpl->setvar('menu', getMenu());

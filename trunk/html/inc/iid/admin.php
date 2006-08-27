@@ -200,7 +200,7 @@ function getMenu() {
 	if ((strpos($cfg['theme'], '/')) === false)
 		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.menu.tmpl");
 	else
-		$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/inc.menu.tmpl");
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.menu.tmpl");
 	# define vars
 	$tmpl->setvar('function', "getMenu");
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);

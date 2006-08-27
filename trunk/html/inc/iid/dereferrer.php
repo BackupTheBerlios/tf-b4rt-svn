@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dereferrer.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dereferrer.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/dereferrer.tmpl");
 
 if (isset($_REQUEST["u"])) {
 	$tmpl->setvar('set', 1);

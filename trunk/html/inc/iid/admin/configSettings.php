@@ -27,7 +27,7 @@ require_once("inc/classes/RunningTransfer.php");
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/configSettings.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/configSettings.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/configSettings.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - Settings"));
 $tmpl->setvar('menu', getMenu());
@@ -120,12 +120,12 @@ for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 }
 $tmpl->setloop('theme_list', $theme_list);
 
-// Old style themes
-$arThemes = Get_old_Themes();
+// tf standard themes
+$arThemes = GetThemesStandard();
 $old_theme_list = array();
 for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	$selected = "";
-	$arThemes2[$inx] = "old_style_themes/".$arThemes[$inx];
+	$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
 	if ($cfg["theme"] == $arThemes2[$inx]) {
 		$selected = "selected";
 	}

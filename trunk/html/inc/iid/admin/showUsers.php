@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/showUsers.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/showUsers.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/showUsers.tmpl");
 
 $tmpl->setvar('head', getHead(_ADMINISTRATION));
 $tmpl->setvar('menu', getMenu());

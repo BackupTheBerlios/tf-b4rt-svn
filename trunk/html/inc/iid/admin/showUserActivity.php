@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/showUserActivity.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/showUserActivity.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/showUserActivity.tmpl");
 
 $tmpl->setvar('head', getHead(_ADMINUSERACTIVITY));
 $tmpl->setvar('menu', getMenu());

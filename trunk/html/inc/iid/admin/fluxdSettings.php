@@ -20,7 +20,11 @@
 
 *******************************************************************************/
 
-$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/fluxdSettings.tmpl");
+# create new template
+if ((strpos($cfg['theme'], '/')) === false)
+	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/fluxdSettings.tmpl");
+else
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/fluxdSettings.tmpl");
 
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");

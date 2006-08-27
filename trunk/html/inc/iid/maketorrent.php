@@ -67,7 +67,7 @@ httpseeds = optional list of http-seed URLs, in the format:
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/maketorrent.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/maketorrent.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/maketorrent.tmpl");
 
 // Variable information
 $tpath	  = $cfg["torrent_file_path"];

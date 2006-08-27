@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/checkSFV.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/checkSFV.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/checkSFV.tmpl");
 
 $tmpl->setvar('head', getHead('sfv check', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

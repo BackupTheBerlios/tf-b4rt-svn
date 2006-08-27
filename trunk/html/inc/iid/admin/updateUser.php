@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/updateUser.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/updateUser.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/updateUser.tmpl");
 
 $user_id = strtolower($user_id);
 if (IsUser($user_id) && ($user_id != $org_user_id)) {

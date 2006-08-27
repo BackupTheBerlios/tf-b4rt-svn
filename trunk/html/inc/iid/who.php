@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/who.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/who.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/who.tmpl");
 
 $result = shell_exec("w");
 $result2 = shell_exec("free -mo");

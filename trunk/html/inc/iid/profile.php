@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/profile.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/profile.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/profile.tmpl");
 
 $op = getRequestVar('op');
 
@@ -105,12 +105,12 @@ switch ($op) {
 		}
 		$tmpl->setloop('theme_list', $theme_list);
 
-		# Old style themes
-		$arThemes = Get_old_Themes();
+		# tf standard themes
+		$arThemes = GetThemesStandard();
 		$old_theme_list = array();
 		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 			$selected = "";
-			$arThemes2[$inx] = "old_style_themes/".$arThemes[$inx];
+			$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
 			if ($cfg["theme"] == $arThemes2[$inx]) {
 				$selected = "selected";
 			}

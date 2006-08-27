@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/addUser.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/addUser.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/addUser.tmpl");
 
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {

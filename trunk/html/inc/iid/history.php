@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/history.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/history.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/history.tmpl");
 
 $offset = 50;
 $inx = 0;

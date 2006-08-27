@@ -27,7 +27,7 @@ require_once("inc/classes/AliasFile.php");
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/downloadhosts.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/downloadhosts.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/downloadhosts.tmpl");
 
 $torrent = getRequestVar('torrent');
 $error = "";

@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/move.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/move.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/move.tmpl");
 
 $tmpl->setvar('head', getHead(_MOVE_FILE_TITLE, false));
 

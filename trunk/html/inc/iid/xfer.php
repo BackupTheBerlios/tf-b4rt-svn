@@ -35,7 +35,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/xfer.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/xfer.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/xfer.tmpl");
 
 $tmpl->setvar('head', getHead(_XFER));
 if ($cfg['enable_xfer'] == 1) {

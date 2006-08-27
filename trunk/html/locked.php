@@ -38,7 +38,7 @@ loadSettings();
 if ((strpos($cfg['default_theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/locked.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/locked.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/locked.tmpl");
 
 // include theme
 include("themes/".$cfg["default_theme"]."/index.php");

@@ -27,7 +27,7 @@ require_once("inc/metaInfo.php");
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/details.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/details.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/details.tmpl");
 
 $tmpl->setvar('head', getHead(_TRANSFERDETAILS));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));

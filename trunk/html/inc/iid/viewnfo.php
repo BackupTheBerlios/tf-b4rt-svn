@@ -26,7 +26,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/viewnfo.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/viewnfo.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/viewnfo.tmpl");
 
 $tmpl->setvar('head', getHead("View NFO"));
 

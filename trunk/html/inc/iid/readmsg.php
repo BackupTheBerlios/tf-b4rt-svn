@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/readmsg.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/readmsg.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/readmsg.tmpl");
 
 if(empty($cfg['user'])) {
 	 // the user probably hit this page direct

@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/editUser.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/admin/editUser.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/editUser.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - RSS"));
 $tmpl->setvar('menu', getMenu());

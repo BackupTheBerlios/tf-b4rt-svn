@@ -44,7 +44,7 @@ $dir = stripslashes(urldecode(getRequestVar('dir')));
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dir.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/dir.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/dir.tmpl");
 
 // Are we to delete something?
 if ($del != "") {

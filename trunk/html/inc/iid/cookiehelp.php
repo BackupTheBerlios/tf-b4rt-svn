@@ -24,7 +24,7 @@
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/cookiehelp.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/cookiehelp.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/cookiehelp.tmpl");
 
 $tmpl->setvar('head', getHead("Cookie Help", false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

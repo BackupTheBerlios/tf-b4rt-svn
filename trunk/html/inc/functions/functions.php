@@ -148,7 +148,7 @@ function isAuthenticated() {
 	// hold the uid in cfg-array
 	$cfg["uid"] = $uid;
 	// Check for valid theme
-	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "old_style_themes")) {
+	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) {
 		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg['user']);
 		$cfg["theme"] = $cfg["default_theme"];
 	}
@@ -3744,7 +3744,7 @@ function GetThemes() {
 	$dir = "themes/";
 	$handle = opendir($dir);
 	while($entry = readdir($handle)) {
-		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "old_style_themes"))
+		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "tf_standard_themes"))
 			array_push($arThemes, $entry);
 	}
 	closedir($handle);
@@ -3753,9 +3753,9 @@ function GetThemes() {
 }
 // ***************************************************************************
 // Get Themes data in an array
-function Get_old_Themes() {
+function GetThemesStandard() {
 	$arThemes = array();
-	$dir = "themes/old_style_themes/";
+	$dir = "themes/tf_standard_themes/";
 	$handle = opendir($dir);
 	while($entry = readdir($handle)) {
 		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "css" && $entry != "tmpl" && $entry != "scripts"))

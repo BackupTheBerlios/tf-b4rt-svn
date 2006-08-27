@@ -27,7 +27,7 @@ define('_DEFAULT_TARGET','traffic');
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/mrtg.tmpl");
 else
-	$tmpl = new vlibTemplate("themes/old_style_themes/tmpl/mrtg.tmpl");
+	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/mrtg.tmpl");
 
 // request-vars
 $mrtgTarget = getRequestVar('mrtg_target');
