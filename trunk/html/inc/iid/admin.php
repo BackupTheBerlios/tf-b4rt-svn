@@ -282,13 +282,8 @@ function getUserSection() {
 			showError($db, $sql2);
 			$row = $result2->FetchRow();
 			if (!empty($row)) {
-				//$xfer_usage = "";
-				//$xfer_usage .= formatFreeSpace($row["download"] / (1024 * 1024));
-				//$xfer_usage .= " / ";
-				//$xfer_usage .= formatFreeSpace($row["upload"] / (1024 * 1024));
 				$xfer_usage = formatFreeSpace(($row["download"] / (1024 * 1024)) + ($row["upload"] / (1024 * 1024)));
 			} else {
-				//$xfer_usage = "0 / 0";
 				$xfer_usage = "0";
 			}
 		}
@@ -347,6 +342,14 @@ function getUserSection() {
 //****************************************************************************
 function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	global $cfg, $db;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.activity.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.activity.tmpl");
+	
+	
+	
 	$sqlForSearch = "";
 	$userdisplay = $user;
 	if($user != "")
@@ -361,111 +364,110 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$inx = 0;
 	if (!isset($min)) $min=0;
 	$max = $min+$offset;
-	$output = "";
-	$morelink = "";
 	$sql = "SELECT user_id, file, action, ip, ip_resolved, user_agent, time FROM tf_log WHERE ".$sqlForSearch."action!=".$db->qstr($cfg["constants"]["hit"])." ORDER BY time desc";
 	$result = $db->SelectLimit($sql, $offset, $min);
+	$act_list = array();
 	while(list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
 		$user_icon = "images/user_offline.gif";
 		if (IsOnline($user_id))
 			$user_icon = "images/user.gif";
-		$ip_info = $ip_resolved."<br>".$user_agent;
-		$output .= "<tr>";
-		if (IsUser($user_id))
-			$output .= "<td><a href=\"index.php?iid=message&to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\""._SENDMESSAGETO." ".$user_id."\" border=0 align=\"bottom\">".$user_id."</a>&nbsp;&nbsp;</td>";
-		else
-			$output .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."&nbsp;&nbsp;</td>";
-		$output .= "<td><div class=\"tiny\">".$action."</div></td>";
-		$output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
-		$output .= $file;
-		$output .= "</div></td>";
-		$output .= "<td><div class=\"tiny\" align=\"left\"><a href=\"javascript:void(0)\" onclick=\"return overlib('".$ip_info."<br>', STICKY, CSSCLASS);\" onmouseover=\"return overlib('".$ip_info."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><img src=\"images/properties.png\" width=\"18\" height=\"13\" border=\"0\"><font class=tiny>".$ip."</font></a></div></td>";
-		$output .= "<td><div class=\"tiny\" align=\"center\">".date(_DATETIMEFORMAT, $time)."</div></td>";
-		$output .= "</tr>";
+		$is_superuser = 0;
+		if (IsUser($user_id)) {
+			$is_superuser = 1;
+		}
+		array_push($act_list, array(
+			'is_superuser' => $is_superuser,
+			'user_id' => $user_id,
+			'user_icon' => $user_icon,
+			'action' => $action,
+			'file' => $file,
+			'ip_resolved' => $ip_resolved,
+			'user_agent' => $user_agent,
+			'ip' => $ip,
+			'date' => date(_DATETIMEFORMAT, $time),
+			)
+		);
 		$inx++;
 	}
-	if($inx == 0)
-		$output = "<tr><td colspan=6><center><strong>-- "._NORECORDSFOUND." --</strong></center></td></tr>";
+	$tmpl->setloop('act_list', $act_list);
 	$prev = ($min-$offset);
-	if ($prev >= 0) {
-		$prevlink = "<a href=\"index.php?iid=admin&op=showUserActivity&min=".$prev."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
-		$prevlink .= "<font class=\"TinyWhite\">&lt;&lt;".$min." "._SHOWPREVIOUS."]</font></a> &nbsp;";
-	}
-	if ($inx>=$offset) {
-		$morelink = "<a href=\"index.php?iid=admin&op=showUserActivity&min=".$max."&user_id=".$user."&srchFile=".$srchFile."&srchAction=".$srchAction."\">";
-		$morelink .= "<font class=\"TinyWhite\">["._SHOWMORE."&gt;&gt;</font></a>";
-	}
-	$activity = '<div id="overDiv" style="position:absolute;visibility:hidden;z-index:1000;"></div>';
-	$activity .= '<script language="JavaScript">';
-	$activity .= 'var ol_closeclick = "1";';
-	$activity .= 'var ol_close = "<font color=#ffffff><b>X</b></font>";';
-	$activity .= 'var ol_fgclass = "fg";';
-	$activity .= 'var ol_bgclass = "bg";';
-	$activity .= 'var ol_captionfontclass = "overCaption";';
-	$activity .= 'var ol_closefontclass = "overClose";';
-	$activity .= 'var ol_textfontclass = "overBody";';
-	$activity .= 'var ol_cap = "&nbsp;IP Info";';
-	$activity .= '</script>';
-	$activity .= '<script src="js/overlib.js" type="text/javascript"></script>';
-	$activity .= '<div align="center">';
-	$activity .= '<table>';
-	$activity .= '<form action="index.php?iid=admin&op=showUserActivity" name="searchForm" method="post">';
-	$activity .= '<tr>';
-		$activity .= '<td>';
-		$activity .= '<strong>'._ACTIVITYSEARCH.'</strong>&nbsp;&nbsp;&nbsp;';
-		$activity .= _FILE;
-		$activity .= '<input type="Text" name="srchFile" value="'.$srchFile.'" width="30"> &nbsp;&nbsp;';
-		$activity .= _ACTION;
-		$activity .= '<select name="srchAction">';
-		$activity .= '<option value="">-- '._ALL.' --</option>';
+	# define vars
+	$tmpl->setvar('_NORECORDSFOUND', _NORECORDSFOUND);
+	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	$tmpl->setvar('inx', $inx);
+	$tmpl->setvar('_ACTIVITYSEARCH', _ACTIVITYSEARCH);
+	$tmpl->setvar('_FILE', _FILE);
+	$tmpl->setvar('srchFile', $srchFile);
+	$tmpl->setvar('prev', $prev);
+	$tmpl->setvar('user', $user);
+	$tmpl->setvar('min', $min);
+	$tmpl->setvar('max', $max);
+	$tmpl->setvar('srchAction', $srchAction);
+	$tmpl->setvar('_SHOWPREVIOUS', _SHOWPREVIOUS);
+	$tmpl->setvar('_SHOWMORE', _SHOWMORE);
+	$tmpl->setvar('_ACTION', _ACTION);
+	$tmpl->setvar('_ALL', _ALL);
+	$selected = "";
+	$action_list = array();
+	foreach ($cfg["constants"] as $action) {
 		$selected = "";
-		foreach ($cfg["constants"] as $action) {
-			$selected = "";
-			if($action != $cfg["constants"]["hit"]) {
-				if($srchAction == $action)
-					$selected = "selected";
-				$activity .= "<option value=\"".$action."\" ".$selected.">".$action."</option>";
-			}
-		}
-		$activity .= '</select>&nbsp;&nbsp;';
-		$activity .= _USER.':';
-		$activity .= '<select name="user_id">';
-		$activity .= '<option value="">-- '._ALL.' --</option>';
-		$users = GetUsers();
-		$selected = "";
-		for($inx = 0; $inx < sizeof($users); $inx++) {
-			$selected = "";
-			if($user == $users[$inx])
+		if($action != $cfg["constants"]["hit"]) {
+			if($srchAction == $action) {
 				$selected = "selected";
-			$activity .= "<option value=\"".$users[$inx]."\" ".$selected.">".$users[$inx]."</option>";
+			}
+			array_push($action_list, array(
+				'action' => $action,
+				'selected' => $selected,
+				)
+			);
 		}
-		$activity .= '</select>';
-		$activity .= '<input type="Submit" value="'._SEARCH.'">';
-		$activity .= '</td>';
-	$activity .= '</tr>';
-	$activity .= '</form>';
-	$activity .= '</table>';
-	$activity .= '</div>';
-	$activity .= "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
-	$activity .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
-	$activity .= "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td>";
-	$activity .= "<img src=\"images/properties.png\" width=18 height=13 border=0>&nbsp;&nbsp;<font class=\"title\">"._ACTIVITYLOG." ".$cfg["days_to_keep"]." "._DAYS." (".$userdisplay.")</font>";
-	if(!empty($prevlink) && !empty($morelink))
-		$activity .= "</td><td align=\"right\">".$prevlink.$morelink."</td></tr></table>";
-	elseif(!empty($prevlink))
-		$activity .= "</td><td align=\"right\">".$prevlink."</td></tr></table>";
-	elseif(!empty($prevlink))
-		$activity .= "</td><td align=\"right\">".$morelink."</td></tr></table>";
-	else
-		$activity .= "</td><td align=\"right\"></td></tr></table>";
-	$activity .= "</td></tr>";
-	$activity .= "<tr>";
-	$activity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._USER."</div></td>";
-	$activity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._ACTION."</div></td>";
-	$activity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\"><div align=center class=\"title\">"._FILE."</div></td>";
-	$activity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"13%\"><div align=center class=\"title\">"._IP."</div></td>";
-	$activity .= "<td bgcolor=\"".$cfg["table_header_bg"]."\" width=\"15%\"><div align=center class=\"title\">"._TIMESTAMP."</div></td>";
-	$activity .= "</tr>";
+	}
+	$tmpl->setloop('action_list', $action_list);
+	$tmpl->setvar('_USER', _USER);
+	$user_list = array();
+	$users = GetUsers();
+	$selected = "";
+	for($inx = 0; $inx < sizeof($users); $inx++) {
+		$selected = "";
+		if($user == $users[$inx]) {
+			$selected = "selected";
+		}
+		array_push($user_list, array(
+			'user' => $users[$inx],
+			'selected' => $selected,
+			)
+		);
+	}
+	$tmpl->setloop('user_list', $user_list);
+	$tmpl->setvar('_SEARCH', _SEARCH);
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('_ACTIVITYLOG', _ACTIVITYLOG);
+	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
+	$tmpl->setvar('_DAYS', _DAYS);
+	$tmpl->setvar('userdisplay', $userdisplay);
+	if($prev >= 0) {
+		$tmpl->setvar('prev', 1);
+	}
+	if($inx>=$offset) {
+		$tmpl->setvar('more', 1);
+	}
+	$tmpl->setvar('_USER', _USER);
+	$tmpl->setvar('_ACTION', _ACTION);
+	$tmpl->setvar('_FILE', _FILE);
+	$tmpl->setvar('_IP', _IP);
+	$tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
+	
+	
+	
+	
+	
+	
+	
+
 	$activity .= $output;
 	if(!empty($prevlink) || !empty($morelink)) {
 		$activity .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\">";
@@ -478,8 +480,9 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$activity .= "</td></tr></table>";
 		$activity .= "</td></tr>";
 	}
-	$activity .= "</table>";
-	return $activity;
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 //****************************************************************************
