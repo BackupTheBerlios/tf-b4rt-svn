@@ -512,7 +512,7 @@ function loadTorrentSettings($torrent) {
 	global $cfg, $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$result = $db->Execute($sql);
-		showError($db, $sql);
+	showError($db, $sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$retAry = array();
@@ -544,7 +544,7 @@ function loadTorrentSettingsToConfig($torrent) {
 	global $cfg, $db, $superseeder;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$result = $db->Execute($sql);
-		showError($db, $sql);
+	showError($db, $sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$cfg["running"]					= $row["running"];
@@ -2245,8 +2245,7 @@ function getXfer() {
 //XFER:****************************************************
 //XFER: getXferDetail(user, period_title, start_timestamp, end_timestamp)
 //XFER: get table of month/week/day's usage for user
-function getXferDetail($user_id,$period,$period_start,$period_end)
-{
+function getXferDetail($user_id,$period,$period_start,$period_end) {
 	global $cfg, $xfer, $xfer_total, $db;
 	$period_query = ($period_start) ? 'and date >= "'.$period_start.'" and date < "'.$period_end.'"' : '';
 	$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$user_id.'" '.$period_query.' GROUP BY date ORDER BY date';

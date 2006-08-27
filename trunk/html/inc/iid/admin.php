@@ -236,6 +236,7 @@ function getUserSection() {
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 	$tmpl->setvar('_USERDETAILS', _USERDETAILS);
 	$tmpl->setvar('_USER', _USER);
 	$tmpl->setvar('_HITS', _HITS);
@@ -243,26 +244,65 @@ function getUserSection() {
 	$tmpl->setvar('_JOINED', _JOINED);
 	$tmpl->setvar('_LASTVISIT', _LASTVISIT);
 	$tmpl->setvar('_ADMIN', _ADMIN);
-	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 	$tmpl->setvar('_DAYS', _DAYS);
 	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
-	// activity
+	$tmpl->setvar('_WARNING', _WARNING);
+	$tmpl->setvar('_ABOUTTODELETE', _ABOUTTODELETE);
+	$tmpl->setvar('_USERSACTIVITY', _USERSACTIVITY);
+	$tmpl->setvar('_EDIT', _EDIT);
+	$tmpl->setvar('_DELETE', _DELETE);
+	// xfer-prepare
+	$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
+	if ($cfg['enable_xfer'] == 1) {
+		$tmpl->setvar('colspan', 8);
+		// getTransferListArray to update xfer-stats
+		$cfg['xfer_realtime'] = 1;
+		@getTransferListArray();
+	} else {
+		$tmpl->setvar('colspan', 8);
+		$xfer_usage = "";
+	}
+	// activity-prepare
 	$total_activity = GetActivityCount();
-	$sql= "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
+	$sql = "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
 	$result = $db->Execute($sql);
-	$user_activity_list = array();
-	while(list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
+	showError($db, $sql);
+	// user-details
+	$user_details_list = array();
+	while (list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
+		// disk-usage
+		$disk_usage = "0";
+		$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($cfg["path"].$user_id."/"));
+		$dusize = @explode("\t", $dudir);
+		$disk_usage = @array_shift($dusize);
+		// xfer-usage
+		if ($cfg['enable_xfer'] == 1) {
+			$sql2 = 'SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user LIKE "'.$user_id.'"';
+			$result2 = $db->Execute($sql2);
+			showError($db, $sql2);
+			$row = $result2->FetchRow();
+			if (!empty($row)) {
+				//$xfer_usage = "";
+				//$xfer_usage .= formatFreeSpace($row["download"] / (1024 * 1024));
+				//$xfer_usage .= " / ";
+				//$xfer_usage .= formatFreeSpace($row["upload"] / (1024 * 1024));
+				$xfer_usage = formatFreeSpace(($row["download"] / (1024 * 1024)) + ($row["upload"] / (1024 * 1024)));
+			} else {
+				//$xfer_usage = "0 / 0";
+				$xfer_usage = "0";
+			}
+		}
+		// activity
 		$user_activity = GetActivityCount($user_id);
-		if ($user_activity == 0) {
+		if ($user_activity == 0)
 			$user_percent = 0;
-		}
-		else {
-			$user_percent = number_format(($user_activity/$total_activity)*100);
-		}
+		else
+			$user_percent = number_format(($user_activity / $total_activity)*100);
+		// online
 		$user_icon = "images/user_offline.gif";
-		if (IsOnline($user_id)) {
+		if (IsOnline($user_id))
 			$user_icon = "images/user.gif";
-		}
+		// level
 		$user_image = "images/user.gif";
 		$type_user = _NORMALUSER;
 		if ($user_level == 1) {
@@ -273,18 +313,19 @@ function getUserSection() {
 			$user_image = "images/superadmin.gif";
 			$type_user = _SUPERADMIN;
 		}
-		if ($user_level <= 1 || IsSuperAdmin()) {
+		if ($user_level <= 1 || IsSuperAdmin())
 			$is_superadmin = 1;
-		}
-		array_push($user_activity_list, array(
+		// add to list
+		array_push($user_details_list, array(
 			'is_user' => IsUser($user_id),
 			'user_id' => $user_id,
 			'user_icon' => $user_icon,
 			'hits' => $hits,
+			'disk_usage' => $disk_usage,
+			'xfer_usage' => $xfer_usage,
 			'user_percent' => $user_percent,
 			'user_percent2' => $user_percent*2,
 			'user_percent3' => (200 - ($user_percent*2)),
-			'hits' => $hits,
 			'time_created' => date(_DATEFORMAT, $time_created),
 			'last_visit' => date(_DATETIMEFORMAT, $last_visit),
 			'user_image' => $user_image,
@@ -295,12 +336,7 @@ function getUserSection() {
 			)
 		);
 	}
-	$tmpl->setloop('user_activity_list', $user_activity_list);
-	$tmpl->setvar('_WARNING', _WARNING);
-	$tmpl->setvar('_ABOUTTODELETE', _ABOUTTODELETE);
-	$tmpl->setvar('_USERSACTIVITY', _USERSACTIVITY);
-	$tmpl->setvar('_EDIT', _EDIT);
-	$tmpl->setvar('_DELETE', _DELETE);
+	$tmpl->setloop('user_details_list', $user_details_list);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;

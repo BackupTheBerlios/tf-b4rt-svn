@@ -1,19 +1,31 @@
 <table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
-	<tr><td colspan=6 bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif"><img src="images/user_group.gif" width=17 height=14 border=0><font class="title"><tmpl_var name="_USERDETAILS"></font></div></td></tr>
+	<tr><td colspan="<tmpl_var name="colspan">" bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif"><img src="images/user_group.gif" width=17 height=14 border=0><font class="title"><tmpl_var name="_USERDETAILS"></font></div></td></tr>
 	<tr>
 		<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+		<td bgcolor="#d6dfe6" width="6%"><div align=center class="title">Disk</div></td>
+		<tmpl_if name="enable_xfer">
+			<td bgcolor="#d6dfe6" width="6%"><div align=center class="title">xfer</div></td>
+		</tmpl_if>
 		<td bgcolor="#d6dfe6" width="6%"><div align=center class="title"><tmpl_var name="_HITS"></div></td>
 		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_UPLOADACTIVITY"> (<tmpl_var name="days_to_keep"> <tmpl_var name="_DAYS">)</div></td>
 		<td bgcolor="#d6dfe6" width="6%"><div align=center class="title"><tmpl_var name="_JOINED"></div></td>
 		<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_LASTVISIT"></div></td>
 		<td bgcolor="#d6dfe6" width="8%"><div align=center class="title"><tmpl_var name="_ADMIN"></div></td>
 	</tr>
-	<tmpl_loop name="user_activity_list">
+	<tmpl_loop name="user_details_list">
 		<tr>
 			<tmpl_if name="is_user">
 				<td><a href="index.php?iid=message&to_user=<tmpl_var name="user_id">"><img src="<tmpl_var name="user_icon">" width=17 height=14 title="<tmpl_var name="_SENDMESSAGETO"> <tmpl_var name="user_id">" border=0 align="bottom"><tmpl_var name="user_id"></a></td>
 			<tmpl_else>
 				<td><img src="<tmpl_var name="user_icon">" width=17 height=14 title="n/a" border=0 align="bottom"><tmpl_var name="user_id"></td>
+			</tmpl_if>
+			<td align="right" nowrap>
+				<a href="index.php?iid=dir&dir=<tmpl_var name="user_id">"><tmpl_var name="disk_usage"></a>
+			</td>
+			<tmpl_if name="enable_xfer">
+				<td align="right" nowrap>
+					<a href="index.php?iid=xfer&op=xfer&user=<tmpl_var name="user_id">"><tmpl_var name="xfer_usage"></a>
+				</td>
 			</tmpl_if>
 			<td><div class="tiny" align="right"><tmpl_var name="hits"></div></td>
 			<td><div align=center>
