@@ -150,14 +150,14 @@ Params :
       "transfers" : transfer-stats
 "f" : format : optional, default is "'._DEFAULT_FORMAT.'".
       "xml" : new xml-formats, see xml-schemas in dir "xml".
-      "rss" : rss 0.91.
-      "txt" : csv-formatted text.
+      "rss" : rss 0.91
+      "txt" : csv-formatted text
 "a" : send as attachment : optional, default is "'._DEFAULT_SEND_AS_ATTACHMENT.'".
-      0 = dont send as attachment
-      1 = send as attachment
+      "0" : dont send as attachment
+      "1" : send as attachment
 "c" : send compressed (deflate) : optional, default is "'._DEFAULT_COMPRESSED.'".
-      0 = dont send compressed
-      1 = send compressed (deflate)
+      "0" : dont send compressed
+      "1" : send compressed (deflate)
 
 Examples :
 
