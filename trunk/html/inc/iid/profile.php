@@ -144,7 +144,6 @@ switch ($op) {
 		$tmpl->setvar('_UPDATE', _UPDATE);
 		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-		$tmpl->setvar('index_page', $cfg["index_page"]);
 		$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 		$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 		$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
@@ -468,7 +467,6 @@ $tmpl->setvar('moveSettingsForm', getMoveSettingsForm());
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 if ($cfg["enable_transfer_profile"] == "1") {

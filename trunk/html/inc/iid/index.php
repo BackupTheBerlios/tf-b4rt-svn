@@ -156,9 +156,6 @@ if ($cfg["show_server_load"] != 0)
 // output
 // =============================================================================
 
-// index-page
-$tmpl->setvar('index_page', $cfg["index_page"]);
-
 // transfer-list
 $tmpl->setvar('transferList', getTransferListString());
 
@@ -415,7 +412,6 @@ $tmpl->setvar('_TOTALXFER', _TOTALXFER);
 $tmpl->setvar('_MONTHXFER', _MONTHXFER);
 $tmpl->setvar('_WEEKXFER', _WEEKXFER);
 $tmpl->setvar('_DAYXFER', _DAYXFER);
-$tmpl->setvar('index_page', $cfg["index_page"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 if (isset($_GET["iid"]))
 	$tmpl->setvar('iid', $_GET["iid"]);

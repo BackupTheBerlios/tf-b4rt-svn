@@ -256,7 +256,6 @@ INSERT INTO tf_settings VALUES ('auth_type','0');
 INSERT INTO tf_settings VALUES ('index_page_connections','1');
 INSERT INTO tf_settings VALUES ('index_page_stats','1');
 INSERT INTO tf_settings VALUES ('index_page_sortorder','dd');
-INSERT INTO tf_settings VALUES ('index_page','b4rt');
 INSERT INTO tf_settings VALUES ('index_page_settings','1266');
 INSERT INTO tf_settings VALUES ('enable_move','0');
 INSERT INTO tf_settings VALUES ('enable_rename','1');
