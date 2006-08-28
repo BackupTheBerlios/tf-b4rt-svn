@@ -156,12 +156,11 @@ if ($cfg["show_server_load"] != 0)
 // output
 // =============================================================================
 
-// index-page-selection
+// index-page
 $tmpl->setvar('index_page', $cfg["index_page"]);
-if ($cfg["index_page"] == "b4rt")
-	$transferList = getTransferListString();
-elseif ($cfg["index_page"] == "tf")
-	$transferList = getDirList($cfg["torrent_file_path"]);
+
+// transfer-list
+$tmpl->setvar('transferList', getTransferListString());
 
 // refresh
 if ($cfg['ui_indexrefresh'] != "0") {
@@ -389,7 +388,6 @@ $tmpl->setvar('_ALL', _ALL);
 $tmpl->setvar('_DIRECTORYLIST', _DIRECTORYLIST);
 $tmpl->setvar('user2', $cfg["user"]);
 $tmpl->setvar('formatFreeSpace', formatFreeSpace($cfg["free_space"]));
-$tmpl->setvar('transferList', $transferList);
 $tmpl->setvar('_TRANSFERDETAILS', _TRANSFERDETAILS);
 $tmpl->setvar('_RUNTRANSFER', _RUNTRANSFER);
 $tmpl->setvar('_STOPTRANSFER', _STOPTRANSFER);
