@@ -40,7 +40,7 @@ $db = getdb();
 loadSettings();
 
 // Free space in MB
-$cfg["free_space"] = @disk_free_space($cfg["path"])/(1024*1024);
+$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
 
 // Path to where the torrent meta files will be stored... usually a sub of $cfg["path"]
 // also, not the '.' to make this a hidden directory

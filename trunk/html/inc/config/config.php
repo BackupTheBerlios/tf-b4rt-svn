@@ -128,9 +128,6 @@ define('_URL_DEREFERRER','index.php?iid=dereferrer&u=');
 // auth-constants
 define('_AUTH_BASIC_REALM','torrentflux-b4rt');
 
-// public stats (xml|rss)
-define('_PUBLIC_STATS',0);
-
 // torrentflux-b4rt Version
 $cfg["version"] = getLocalVersion();
 
