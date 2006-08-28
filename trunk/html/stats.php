@@ -50,11 +50,7 @@ switch (_PUBLIC_STATS) {
         // Path to where the torrent meta files will be stored.
         $cfg["torrent_file_path"] = $cfg["path"].".torrents/";
         // public stats... show all .. we set the user to superadmin
-        $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
-        if($db->ErrorNo() != 0) {
-            @ob_end_clean();
-            exit();
-        }
+        $superAdm = GetSuperAdmin();
         if ((isset($superAdm)) && ($superAdm != "")) {
             $cfg["user"] = $superAdm;
         } else {
