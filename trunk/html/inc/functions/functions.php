@@ -1933,25 +1933,21 @@ function getXferList() {
 // get the header portion of admin views
 function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	global $cfg;
-	$head = '
-	<body topmargin="8" leftmargin="5" bgcolor="'.$cfg["main_bgcolor"].'">
-	<div align="center">
-	<table border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td>
-	<table border="1" bordercolor="'.$cfg["table_border_dk"].'" cellpadding="4" cellspacing="0">
-	<tr>
-		<td bgcolor="'.$cfg["main_bgcolor"].'" background="themes/'.$cfg["theme"].'/images/bar.gif">
-		'.getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons).'
-		</td>
-	</tr>
-	<tr>
-	<td bgcolor="'.$cfg["table_header_bg"].'">
-	<div align="center">
-	<table width="100%" bgcolor="'.$cfg["body_data_bg"].'">
-	<tr><td>
-	';
-	return $head;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getHead.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getHead.tmpl");
+	//set some vars
+	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('TitleBar', getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons));
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 // ***************************************************************************
