@@ -112,7 +112,7 @@ do {
 	// read header
 	while ($header) {
 		// read
-		$read = @fread($wget, 160);
+		$read = @fread($wget, 80);
 		// look for size-string
 		if (!(stristr($read, 'Length:') === false)) {
 			$header = false;
@@ -154,52 +154,6 @@ if ($cfg['enable_xfer'] == 1)
 exit();
 
 /* -------------------------------------------------------------------------- */
-
-/**
- * convertTime
- *
- * @param $seconds
- * @return
- */
-function convertTime($seconds) {
-	$seconds = round($seconds, 0);
-	$stringDays = "";
-	$stringHours = "";
-	$stringMinutes = "";
-	$stringSeconds = "";
-	// days
-	if ($seconds > 361440) {
-		$days = floor($seconds / 361440);
-		$seconds -= $days * 361440;
-		if ($days < 10)
-			$stringDays .= "0";
-		$stringDays .= $days.":";
-	}
-	// hours
-	if ($seconds > 3600) {
-		$hours = floor($seconds / 3600);
-		$seconds -= $hours * 3600;
-		if ($hours < 10)
-			$stringHours .= "0";
-		$stringHours .= $hours.":";
-	}
-	// minutes
-	if ($seconds > 60) {
-		$minutes = floor($seconds / 60);
-		$seconds -= $minutes * 60;
-		if ($minutes < 10)
-			$stringMinutes .= "0";
-		$stringMinutes .= $minutes.":";
-	}
-	// seconds
-	if ($seconds >= 0) {
-		if ($seconds < 10)
-			$stringSeconds .= "0";
-		$stringSeconds .= $seconds;
-	}
-	// return
-	return $stringDays.$stringHours.$stringMinutes.$stringSeconds;
-}
 
 /**
  * writeStatFile

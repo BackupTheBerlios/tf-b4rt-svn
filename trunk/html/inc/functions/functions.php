@@ -2601,6 +2601,11 @@ function getTransferListArray() {
 			$af->WriteFile();
 		}
 
+		// totals-preparation
+		// if downtotal + uptotal + progress $cfg["display_seeding_time"] > 0
+		if (($settings[2] + $settings[3] + $settings[5] + $cfg["display_seeding_time"]) > 0)
+			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+
 		// ---------------------------------------------------------------------
 		// preprocess alias-file and get some vars
 		$estTime = "";
@@ -2620,8 +2625,16 @@ function getTransferListArray() {
 				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
 				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
 				// $estTime
-				if ($af->time_left != "" && $af->time_left != "0")
-					$estTime = $af->time_left;
+				if ($af->time_left != "" && $af->time_left != "0") {
+					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
+						if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
+							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $transferTotals["uptotal"]) / GetSpeedInBytes($af->up_speed)) . " left";
+						else
+							$estTime = '-';
+					} else {
+						$estTime = $af->time_left;
+					}
+				}
 				// $lastUser
 				$lastUser = $transferowner;
 				// $show_run + $statusStr
@@ -2640,10 +2653,6 @@ function getTransferListArray() {
 				}
 				break;
 		}
-		// totals-preparation
-		// if downtotal + uptotal + progress > 0
-		if (($settings[2] + $settings[3] + $settings[5]) > 0)
-			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
 		// fill temp array
@@ -2796,7 +2805,7 @@ function getTransferListString() {
 	}
 }
 
-/*
+/**
  * This method Builds the Transfers Section of the Index Page
  *
  * @return transfer-list as html-string
@@ -2887,6 +2896,11 @@ function getTransferListString_b4rt() {
 			$af->WriteFile();
 		}
 
+		// totals-preparation
+		// if downtotal + uptotal + progress $cfg["display_seeding_time"] > 0
+		if (($settings[2] + $settings[3] + $settings[5] + $cfg["display_seeding_time"]) > 0)
+			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+
 		// ---------------------------------------------------------------------
 		// preprocess alias-file and get some vars
 		$estTime = "&nbsp;";
@@ -2908,10 +2922,10 @@ function getTransferListString_b4rt() {
 				// $estTime
 				if ($af->time_left != "" && $af->time_left != "0")
 					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
-
-						// TODO : fix
-
-						$estTime = SecondsToDate(((($af->seedlimit)/100 * $af->size) - $af->uptotal)/GetSpeedInBytes($af->up_speed)) . " left";
+						if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
+							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $transferTotals["uptotal"]) / GetSpeedInBytes($af->up_speed)) . " left";
+						else
+							$estTime = '&#8734';
 					} else {
 						$estTime = $af->time_left;
 					}
@@ -2933,10 +2947,6 @@ function getTransferListString_b4rt() {
 				}
 				break;
 		}
-		// totals-preparation
-		// if downtotal + uptotal + progress > 0
-		if (($settings[2] + $settings[3] + $settings[5]) > 0)
-			$torrentTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
 		// output-string
@@ -2968,11 +2978,11 @@ function getTransferListString_b4rt() {
 
 		// =========================================================== downtotal
 		if ($settings[2] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($torrentTotals["downtotal"]+0)."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($transferTotals["downtotal"]+0)."</a></td>";
 
 		// ============================================================= uptotal
 		if ($settings[3] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($torrentTotals["uptotal"]+0)."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($transferTotals["uptotal"]+0)."</a></td>";
 
 		// ============================================================== status
 		if ($settings[4] != 0)
@@ -2987,7 +2997,7 @@ function getTransferListString_b4rt() {
 			$percentage = "";
 			if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
 				$graph_width = -1;
-				$percentage = @number_format((($torrentTotals["uptotal"] / $af->size) * 100), 2) . '%';
+				$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
 			} else {
 				if ($percentDone >= 1) {
 					$graph_width = $percentDone;
@@ -3198,23 +3208,35 @@ function getTransferListString_tf($dirName) {
 			$settingsAry['hash'] = $entry;
 			$af = AliasFile::getAliasFileInstance($dirName.$alias, $cfg['user'], $cfg, 'tornado');
 		}
+
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
 		// cache percent-done in local var. ...
 		$percentDone = $af->percent_done;
+
+		// more vars
+		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
 			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
 
-		$timeStarted = "";
-		$torrentfilelink = "";
-		if(! file_exists($dirName.$alias)) {
-			$af->running = "2"; // file is new
-			$af->size = getDownloadSize($dirName.$entry);
+		// ---------------------------------------------------------------------
+		// injects
+		if(! file_exists($cfg["torrent_file_path"].$alias)) {
+			$transferRunning = 2;
+			$af->running = "2";
+			$af->size = getDownloadSize($cfg["torrent_file_path"].$entry);
 			$af->WriteFile();
 		}
+
+		// totals-preparation
+		if ($cfg["display_seeding_time"] > 0)
+			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+
+		//
+		$timeStarted = "";
 		if(strlen($entry) >= 47) {
 			// needs to be trimmed
 			$displayname = substr($entry, 0, 44);
@@ -3224,7 +3246,6 @@ function getTransferListString_tf($dirName) {
 			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
 		//
 		$output .= "<tr>";
-		$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
 		// ========================================================== led + meta
 		$output .= '<td valign="bottom" align="center" nowrap>';
@@ -3255,8 +3276,16 @@ function getTransferListString_tf($dirName) {
 			$estTime = "Waiting...";
 			$output .= "<i><font color=\"#000000\" onmouseover=\"return overlib('"._QUEUED."<br>', CSSCLASS);\" onmouseout=\"return nd();\">"._QUEUED."</font></i>";
 		} else {
-			if ($af->time_left != "" && $af->time_left != "0")
-				$estTime = $af->time_left;
+			if ($af->time_left != "" && $af->time_left != "0") {
+				if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
+					if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
+						$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $transferTotals["uptotal"]) / GetSpeedInBytes($af->up_speed)) . " left";
+					else
+						$estTime = '&#8734';
+				} else {
+					$estTime = $af->time_left;
+				}
+			}
 			$sql_search_time = "Select time from tf_log where action like '%Upload' and file like '".$entry."%'";
 			$result_search_time = $db->Execute($sql_search_time);
 			list($uploaddate) = $result_search_time->FetchRow();
@@ -5162,41 +5191,38 @@ function GetSpeedInBytes($inValue) {
 }
 
 /**
- * SecondsToDate
+ * convertTime
  *
  * @param $seconds
- * @return
+ * @return common time-delta-string
  */
-function SecondsToDate($seconds) {
-      $periods = array (
-                    'years'     => 31556926,
-                    'months'    => 2629743,
-                    'weeks'     => 604800,
-                    'days'      => 86400,
-                    'hours'     => 3600,
-                    'minutes'   => 60,
-                    'seconds'   => 1
-      );
-      $seconds = (float) $seconds;
-      foreach ($periods as $period => $value) {
-          $count = floor($seconds / $value);
-          if ($count == 0)
-              continue;
-          $values[$period] = $count;
-          $seconds = $seconds % $value;
-      }
-      if (empty($values))
-          $values = null;
-      foreach ($values as $key => $value) {
-          $segment_name = substr($key, 0, -1);
-          $segment = $value . ' ' . $segment_name;
-          if ($value != 1)
-              $segment .= 's';
-          $array[] = $segment;
-      }
-      return implode(', ', $array);
+function convertTime($seconds) {
+	$periods = array (
+		31556926,
+		2629743,
+		604800,
+		86400,
+		3600,
+		60,
+		1
+	);
+	$seconds = (float) $seconds;
+	$values = array();
+	foreach ($periods as $period) {
+		$count = floor($seconds / $period);
+		if ($count == 0)
+		continue;
+		if ($count < 10)
+			array_push($values, "0".$count);
+		else
+			array_push($values, $count);
+		$seconds = $seconds % $period;
+	}
+	if (empty($values))
+		return "?";
+	else
+		return implode(':', $values);
 }
-
 
 /* ************************************************************************** */
 
