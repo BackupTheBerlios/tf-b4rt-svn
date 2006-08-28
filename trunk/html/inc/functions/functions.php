@@ -2573,8 +2573,8 @@ function getTransferListArray() {
 		}
 
 		// totals-preparation
-		// if downtotal + uptotal + progress $cfg["display_seeding_time"] > 0
-		if (($settings[2] + $settings[3] + $settings[5] + $cfg["display_seeding_time"]) > 0)
+		// if downtotal + uptotal + progress > 0
+		if (($settings[2] + $settings[3] + $settings[5]) > 0)
 			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
@@ -2599,7 +2599,7 @@ function getTransferListArray() {
 				if ($af->time_left != "" && $af->time_left != "0") {
 					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
 						if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
-							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $transferTotals["uptotal"]) / GetSpeedInBytes($af->up_speed)) . " left";
+							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
 						else
 							$estTime = '-';
 					} else {
@@ -2852,8 +2852,8 @@ function getTransferListString() {
 		}
 
 		// totals-preparation
-		// if downtotal + uptotal + progress $cfg["display_seeding_time"] > 0
-		if (($settings[2] + $settings[3] + $settings[5] + $cfg["display_seeding_time"]) > 0)
+		// if downtotal + uptotal + progress > 0
+		if (($settings[2] + $settings[3] + $settings[5]) > 0)
 			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
@@ -2878,7 +2878,7 @@ function getTransferListString() {
 				if ($af->time_left != "" && $af->time_left != "0")
 					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
 						if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
-							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $transferTotals["uptotal"]) / GetSpeedInBytes($af->up_speed)) . " left";
+							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
 						else
 							$estTime = '&#8734';
 					} else {
