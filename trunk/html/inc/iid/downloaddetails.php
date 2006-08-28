@@ -117,7 +117,7 @@ if ($error != "") {
 	$tmpl->setvar('error', $error);
 }
 $tmpl->setvar('torrentLabel', $torrentLabel);
-$tmpl->setvar('formatBytesToKBMGGB', formatBytesToKBMGGB($af->size));
+$tmpl->setvar('formatBytesTokBMBGBTB', formatBytesTokBMBGBTB($af->size));
 if ($af->running == 1) {
 	$tmpl->setvar('running', 1);
 	$tmpl->setvar('torrent', $torrent);

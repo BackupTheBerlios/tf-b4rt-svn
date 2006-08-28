@@ -203,7 +203,7 @@ class gOOGLE
             {
 
                 $array = BDecode($html);
-                $this->torrentSize = formatBytesToKBMGGB($array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20));
+                $this->torrentSize = formatBytesTokBMBGBTB($array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20));
                 $this->torrentName = $array['info']['name'];
                 $this->fileCount = count($array['info']['files']);
                 $this->torrentDisplayName = $array['info']['name'];

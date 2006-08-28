@@ -1985,15 +1985,15 @@ function getTransferListArray() {
 
 		// ================================================================ size
 		if ($settings[1] != 0)
-			array_push($transferAry, formatBytesToKBMGGB($af->size));
+			array_push($transferAry, formatBytesTokBMBGBTB($af->size));
 
 		// =========================================================== downtotal
 		if ($settings[2] != 0)
-			array_push($transferAry, formatBytesToKBMGGB($transferTotals["downtotal"]+0));
+			array_push($transferAry, formatBytesTokBMBGBTB($transferTotals["downtotal"]+0));
 
 		// ============================================================= uptotal
 		if ($settings[3] != 0)
-			array_push($transferAry, formatBytesToKBMGGB($transferTotals["uptotal"]+0));
+			array_push($transferAry, formatBytesTokBMBGBTB($transferTotals["uptotal"]+0));
 
 		// ============================================================== status
 		if ($settings[4] != 0)
@@ -2951,15 +2951,15 @@ function getTransferListString() {
 
 		// ================================================================ size
 		if ($settings[1] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesToKBMGGB($af->size)."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($af->size)."</a></td>";
 
 		// =========================================================== downtotal
 		if ($settings[2] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesToKBMGGB($torrentTotals["downtotal"]+0)."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($torrentTotals["downtotal"]+0)."</a></td>";
 
 		// ============================================================= uptotal
 		if ($settings[3] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesToKBMGGB($torrentTotals["uptotal"]+0)."</a></td>";
+			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($torrentTotals["uptotal"]+0)."</a></td>";
 
 		// ============================================================== status
 		if ($settings[4] != 0)
@@ -4230,18 +4230,6 @@ function getDriveSpaceBar($drivespace) {
 	return $driveSpaceBar;
 }
 
-// ***************************************************************************
-// ***************************************************************************
-// Convert free space to GB or MB depending on size
-function formatFreeSpace($freeSpace) {
-	$rtnValue = "";
-	if ($freeSpace > 1024)
-		$rtnValue = number_format($freeSpace/1024, 2)." GB";
-	else
-		$rtnValue = number_format($freeSpace, 2)." MB";
-	return $rtnValue;
-}
-
 //**************************************************************************
 // getFileFilter()
 // Returns a string used as a file filter.
@@ -4517,19 +4505,40 @@ function getDownloadSize($torrent) {
 	return $rtnValue;
 }
 
-//**************************************************************************
-// formatBytesToKBMGGB()
-// Returns a string in format of GB, MB, or kB depending on the size for display
-function formatBytesToKBMGGB($inBytes) {
+/**
+ * Returns a string in format of TB, GB, MB, or kB depending on the size
+ *
+ * @param $inBytes
+ * @return string
+ */
+function formatBytesTokBMBGBTB($inBytes) {
 	$rsize = "";
-	if ($inBytes > (1024 * 1024 * 1024)) {
-		$rsize = round($inBytes / (1024 * 1024 * 1024), 2) . " GB";
-	} elseif ($inBytes < 1024 * 1024) {
+	if ($inBytes > 1099511627776)
+		$rsize = round($inBytes / 1099511627776, 2) . " TB";
+	elseif ($inBytes > 1073741824)
+		$rsize = round($inBytes / 1073741824, 2) . " GB";
+	elseif ($inBytes < 1048576)
 		$rsize = round($inBytes / 1024, 1) . " kB";
-	} else {
-		$rsize = round($inBytes / (1024 * 1024), 1) . " MB";
-	}
+	else
+		$rsize = round($inBytes / 1048576, 1) . " MB";
 	return $rsize;
+}
+
+/**
+ * Convert free space to TB, GB or MB depending on size
+ *
+ * @param $freeSpace
+ * @return string
+ */
+function formatFreeSpace($freeSpace) {
+	$rtnValue = "";
+	if ($freeSpace > 1048576)
+		$rtnValue = number_format($freeSpace / 1048576, 2)." TB";
+	elseif ($freeSpace > 1024)
+		$rtnValue = number_format($freeSpace / 1024, 2)." GB";
+	else
+		$rtnValue = number_format($freeSpace, 2)." MB";
+	return $rtnValue;
 }
 
 //**************************************************************************
@@ -4697,7 +4706,7 @@ function getDirList($dirName) {
 		$output .= "</a>";
 		$output .= "</td>";
 
-		$output .= "<td align=\"right\" nowrap><font class=\"tiny\">".formatBytesToKBMGGB($af->size)."</font></td>";
+		$output .= "<td align=\"right\" nowrap><font class=\"tiny\">".formatBytesTokBMBGBTB($af->size)."</font></td>";
 		$output .= "<td align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$transferowner."\"><font class=\"tiny\">".$transferowner."</font></a></td>";
 		$output .= "<td valign=\"bottom\" nowrap><div align=\"center\">";
 		if ($af->running == "2") {

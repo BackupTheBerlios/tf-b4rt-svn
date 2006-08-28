@@ -140,8 +140,8 @@ function showMetaInfo($torrent, $allowSave=false) {
 		if(array_key_exists('comment',$btmeta))
 			$showMetaInfo .= "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
 		$showMetaInfo .= "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
-		$showMetaInfo .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".formatBytesToKBMGGB($torrent_size).")</td></tr>";
-		$showMetaInfo .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".formatBytesToKBMGGB($btmeta['info']['piece length']).")</td></tr>";
+		$showMetaInfo .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".formatBytesTokBMBGBTB($torrent_size).")</td></tr>";
+		$showMetaInfo .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".formatBytesTokBMBGBTB($btmeta['info']['piece length']).")</td></tr>";
 		if (array_key_exists('files',$btmeta['info'])) {
 			$showMetaInfo .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
 			$showMetaInfo .= "</table><br>\n";
@@ -168,7 +168,7 @@ function showMetaInfo($torrent, $allowSave=false) {
 			$showMetaInfo .= "</form>";
 		} else {
 			$showMetaInfo .= "</table><br>";
-			$showMetaInfo .= $btmeta['info']['name'].$torrent_size." (".formatBytesToKBMGGB($torrent_size).")";
+			$showMetaInfo .= $btmeta['info']['name'].$torrent_size." (".formatBytesTokBMBGBTB($torrent_size).")";
 		}
 	} else {
 		$result = getTorrentMetaInfo($torrent);

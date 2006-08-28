@@ -213,11 +213,11 @@ function sendXmlOld() {
 		$content .= "<torrent>\n";
 		$content .= "<name><![CDATA[".$entry."]]></name>\n";
 		$content .= "<speeds><![CDATA[".$speed."]]></speeds>\n";
-		$content .= "<size><![CDATA[".formatBytesToKBMGGB($af->size)."]]></size>\n";
+		$content .= "<size><![CDATA[".formatBytesTokBMBGBTB($af->size)."]]></size>\n";
 		$content .= "<percent><![CDATA[".$af->percent_done."]]></percent>\n";
 		$content .= "<sharing><![CDATA[". $sharing ."]]></sharing>\n";
 		$content .= "<remaining><![CDATA[".str_replace('&#8734', 'Unknown', $af->time_left)."]]></remaining>\n";
-		$content .= "<transfered><![CDATA[".formatBytesToKBMGGB($transferTotals['downtotal'])." - ".formatBytesToKBMGGB($transferTotals['uptotal'])."]]></transfered>\n";
+		$content .= "<transfered><![CDATA[".formatBytesTokBMBGBTB($transferTotals['downtotal'])." - ".formatBytesTokBMBGBTB($transferTotals['uptotal'])."]]></transfered>\n";
 		$content .= "</torrent>\n";
     }
 	$content .= "</torrents>\n";
@@ -287,7 +287,7 @@ function sendRss() {
         $sharing = number_format(($transferTotals['uptotal'] / ($af->size+0)), 2);
         $content .= "<item>\n";
         $content .= "<title>".$entry." (".$remaining.")</title>\n";
-        $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".formatBytesToKBMGGB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".formatBytesToKBMGGB($transferTotals['downtotal'])." || Transfered Up: ".formatBytesToKBMGGB($transferTotals['uptotal'])."</description>\n";
+        $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".formatBytesTokBMBGBTB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".formatBytesTokBMBGBTB($transferTotals['downtotal'])." || Transfered Up: ".formatBytesTokBMBGBTB($transferTotals['uptotal'])."</description>\n";
         $content .= "</item>\n";
     }
     $content .= "<item>\n";
