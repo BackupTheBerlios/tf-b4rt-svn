@@ -38,26 +38,26 @@
 		</form>
 	</table>
 </div>
-<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
-	<tr><td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
+	<tr><td colspan=6 bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif">
 		<table width="100%" cellpadding=0 cellspacing=0 border=0><tr><td>
 			<img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"><tmpl_var name="_ACTIVITYLOG"> <tmpl_var name="days_to_keep"> <tmpl_var name="_DAYS"> (<tmpl_var name="userdisplay">)</font>
 		</td>
 		<td align="right">
-			<tmpl_if name="prev">
+			<tmpl_if name="is_prev">
 				<a href="index.php?iid=admin&op=showUserActivity&min=<tmpl_var name="prev">&user_id=<tmpl_var name="user">&srchFile=<tmpl_var name="srchFile">&srchAction=<tmpl_var name="srchAction">"><font class="TinyWhite">&lt;&lt;<tmpl_var name="min"> <tmpl_var name="_SHOWPREVIOUS">]</font></a> &nbsp;
 			</tmpl_if>
-			<tmpl_if name="more">
+			<tmpl_if name="is_more">
 				<a href="index.php?iid=admin&op=showUserActivity&min=<tmpl_var name="max">&user_id=<tmpl_var name="user">&srchFile=<tmpl_var name="srchFile">&srchAction=<tmpl_var name="srchAction">"><font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font></a>
 			</tmpl_if>
 		</td></tr></table>
 	</td></tr>
 	<tr>
-		<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_USER"></div></td>
-		<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_ACTION"></div></td>
-		<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
-		<td bgcolor="<tmpl_var name="table_header_bg">" width="13%"><div align=center class="title"><tmpl_var name="_IP"></div></td>
-		<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
+		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_ACTION"></div></td>
+		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
+		<td bgcolor="#d6dfe6" width="13%"><div align=center class="title"><tmpl_var name="_IP"></div></td>
+		<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
 	</tr>
 	<tmpl_loop name="act_list">
 		<tmpl_if name="act_list">
@@ -78,4 +78,17 @@
 			<tr><td colspan=6><center><strong>-- <tmpl_var name="_NORECORDSFOUND"> --</strong></center></td></tr>
 		</tmpl_if>
 	</tmpl_loop>
+	<tmpl_if name="both_set">
+		<tr><td colspan=6 bgcolor="#d6dfe6">
+			<table width="100%" cellpadding=0 cellspacing=0 border=0><tr><td align="left">
+				<tmpl_if name="is_prev">
+					<a href="index.php?iid=admin&op=showUserActivity&min=<tmpl_var name="prev">&user_id=<tmpl_var name="user">&srchFile=<tmpl_var name="srchFile">&srchAction=<tmpl_var name="srchAction">"><font class="TinyWhite">&lt;&lt;<tmpl_var name="min"> <tmpl_var name="_SHOWPREVIOUS">]</font></a> &nbsp;
+				</tmpl_if>
+				</td><td align="right">
+				<tmpl_if name="is_more">
+					<a href="index.php?iid=admin&op=showUserActivity&min=<tmpl_var name="max">&user_id=<tmpl_var name="user">&srchFile=<tmpl_var name="srchFile">&srchAction=<tmpl_var name="srchAction">"><font class="TinyWhite">[<tmpl_var name="_SHOWMORE">&gt;&gt;</font></a>
+				</tmpl_if>
+			</td></tr></table>
+		</td></tr>
+	</tmpl_if>
 </table>

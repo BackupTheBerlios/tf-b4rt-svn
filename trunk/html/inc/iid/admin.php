@@ -347,9 +347,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.activity.tmpl");
 	else
 		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.activity.tmpl");
-	
-	
-	
+
 	$sqlForSearch = "";
 	$userdisplay = $user;
 	if($user != "")
@@ -450,35 +448,18 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$tmpl->setvar('_DAYS', _DAYS);
 	$tmpl->setvar('userdisplay', $userdisplay);
 	if($prev >= 0) {
-		$tmpl->setvar('prev', 1);
+		$tmpl->setvar('is_prev', 1);
 	}
 	if($inx>=$offset) {
-		$tmpl->setvar('more', 1);
+		$tmpl->setvar('is_more', 1);
 	}
 	$tmpl->setvar('_USER', _USER);
 	$tmpl->setvar('_ACTION', _ACTION);
 	$tmpl->setvar('_FILE', _FILE);
 	$tmpl->setvar('_IP', _IP);
 	$tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
-	
-	
-	
-	
-	
-	
-	
-
-	$activity .= $output;
-	if(!empty($prevlink) || !empty($morelink)) {
-		$activity .= "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\">";
-		$activity .= "<table width=\"100%\" cellpadding=0 cellspacing=0 border=0><tr><td align=\"left\">";
-		if(!empty($prevlink))
-			$activity .= $prevlink;
-		$activity .= "</td><td align=\"right\">";
-		if(!empty($morelink))
-			$activity .= $morelink;
-		$activity .= "</td></tr></table>";
-		$activity .= "</td></tr>";
+	if($prev >= 0 || $inx>=$offset) {
+		$tmpl->setvar('both_set', 1);
 	}
 	// grab the template
 	$output = $tmpl->grab();
