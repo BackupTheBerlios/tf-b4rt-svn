@@ -426,13 +426,13 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$user_list = array();
 	$users = GetUsers();
 	$selected = "";
-	for($inx = 0; $inx < sizeof($users); $inx++) {
+	for($inx2 = 0; $inx2 < sizeof($users); $inx2++) {
 		$selected = "";
-		if($user == $users[$inx]) {
+		if($user == $users[$inx2]) {
 			$selected = "selected";
 		}
 		array_push($user_list, array(
-			'user' => $users[$inx],
+			'user' => $users[$inx2],
 			'selected' => $selected,
 			)
 		);
