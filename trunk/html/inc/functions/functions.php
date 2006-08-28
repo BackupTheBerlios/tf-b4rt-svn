@@ -1998,38 +1998,32 @@ function getTorrentFluxLink($showVersionLink = false) {
 // 2004-12-09 PFM: now using adodb.
 function getTitleBar($pageTitleText, $showButtons=true) {
 	global $cfg, $db;
-	$titleBar = '<table width="100%" cellpadding="0" cellspacing="0" border="0">';
-	$titleBar .= '<tr>';
-	$titleBar .= '<td align="left"><font class="title">'.$pageTitleText.'</font></td>';
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getTitleBar.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getTitleBar.tmpl");
+	
+	$tmpl->setvar('pageTitleText', $pageTitleText);
+	$tmpl->setvar('showButtons', $showButtons);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('_TORRENTS', _TORRENTS);
+	$tmpl->setvar('_DIRECTORYLIST', _DIRECTORYLIST);
+	$tmpl->setvar('_UPLOADHISTORY', _UPLOADHISTORY);
+	$tmpl->setvar('_MYPROFILE', _MYPROFILE);
+	$tmpl->setvar('_MESSAGES', _MESSAGES);
+	$tmpl->setvar('_ADMINISTRATION', _ADMINISTRATION);
 	if ($showButtons) {
-		$titleBar .= "<td align=right>";
-		// Top Buttons
-		$titleBar .= "&nbsp;&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?iid=index\"><img src=\"themes/".$cfg["theme"]."/images/home.gif\" width=49 height=13 title=\""._TORRENTS."\" border=0></a>&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?iid=dir\"><img src=\"themes/".$cfg["theme"]."/images/directory.gif\" width=49 height=13 title=\""._DIRECTORYLIST."\" border=0></a>&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?iid=history\"><img src=\"themes/".$cfg["theme"]."/images/history.gif\" width=49 height=13 title=\""._UPLOADHISTORY."\" border=0></a>&nbsp;";
-		$titleBar .=	 "<a href=\"index.php?iid=profile\"><img src=\"themes/".$cfg["theme"]."/images/profile.gif\" width=49 height=13 title=\""._MYPROFILE."\" border=0></a>&nbsp;";
 		// Does the user have messages?
 		$sql = "select count(*) from tf_messages where to_user='".$cfg['user']."' and IsNew=1";
 		$number_messages = $db->GetOne($sql);
 		showError($db,$sql);
-		if ($number_messages > 0) {
-			// We have messages
-			$message_image = "themes/".$cfg["theme"]."/images/messages_on.gif";
-		} else {
-			// No messages
-			$message_image = "themes/".$cfg["theme"]."/images/messages_off.gif";
-		}
-		$titleBar .= "<a href=\"index.php?iid=readmsg\"><img src=\"".$message_image."\" width=49 height=13 title=\""._MESSAGES."\" border=0></a>";
-		if(IsAdmin()) {
-			$titleBar .= "&nbsp;<a href=\"index.php?iid=admin\"><img src=\"themes/".$cfg["theme"]."/images/admin.gif\" width=49 height=13 title=\""._ADMINISTRATION."\" border=0></a>";
-		}
-		$titleBar .= "&nbsp;<a href=\"logout.php\"><img src=\"images/logout.gif\" width=13 height=12 title=\"Logout\" border=0></a>";
+		$tmpl->setvar('number_messages', $number_messages);
+		$tmpl->setvar('is_admin', IsAdmin());
 	}
-	$titleBar .= '</td>';
-	$titleBar .= '</tr>';
-	$titleBar .= '</table>';
-	return $titleBar;
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 // ***************************************************************************
