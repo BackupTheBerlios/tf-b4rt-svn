@@ -216,11 +216,10 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>transmission : transmissioncli Path</strong><br>
-									Specify the path to the transmission binary (transmissioncli):
+								<td align="left" width="350" valign="top"><strong>mainline : Extra Commandline Options</strong><br>
 								</td>
 								<td valign="top">
-									<input name="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="55"><tmpl_var name="validate_transmission_bin">
+									<input name="btclient_mainline_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_mainline_options">" size="55">
 								</td>
 							</tr>
 							<tr>
@@ -230,7 +229,14 @@
 									<input name="btclient_transmission_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_options">" size="55">
 								</td>
 							</tr>
-							<tr>								<td align="left" width="350" valign="top"><strong>mainline : Extra Commandline Options</strong><br>								</td>								<td valign="top">									<input name="btclient_mainline_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_mainline_options">" size="55">								</td>							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>transmission : transmissioncli Path</strong><br>
+									Specify the path to the transmission binary (transmissioncli):
+								</td>
+								<td valign="top">
+									<input name="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="55"><tmpl_var name="validate_transmission_bin">
+								</td>
+							</tr>
 							<tr><td colspan="2"><hr noshade></td></tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Max Upload Rate (B+T)</strong><br>
