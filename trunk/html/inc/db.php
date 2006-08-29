@@ -20,10 +20,16 @@
 
 *******************************************************************************/
 
-require_once('inc/config/config.php');
+// ADODB
 require_once('lib/adodb/adodb.inc.php');
-require_once('lib/vlib/vlibTemplate.php');
 
+/* -------------------------------------------------------------------------- */
+
+/**
+ * get ado-connection
+ *
+ * @return ado-connection
+ */
 function getdb() {
 	global $cfg;
 	// 2004-12-09 PFM: connect to database.
@@ -34,9 +40,17 @@ function getdb() {
 	return $db;
 }
 
+/**
+ * prints nice db-error
+ *
+ * @param $db
+ * @param $sql
+ */
 function showError($db, $sql) {
 	global $cfg, $tmpl;
 	if($db->ErrorNo() != 0) {
+		// vlib
+		require_once("lib/vlib/vlibTemplate.php");
 		$tmpl = new vlibTemplate("themes/default/tmpl/db.tmpl");
 		$tmpl->setvar('error', 1);
 		include("themes/default/index.php");

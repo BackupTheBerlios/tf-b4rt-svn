@@ -26,24 +26,15 @@ define('_TXT_DELIM', ';');
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
 define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 
-// configs
-require_once("inc/config/config.php");
+// config
 require_once("inc/config/config.stats.php");
-// main or functions + db only
+// public-stats-switch
 switch (_PUBLIC_STATS) {
 	case 1:
-		// functions
-		require_once("inc/functions/functions.php");
-		// db
-		require_once('inc/db.php');
-		// Create Connection.
-		$db = getdb();
-		// load settings
-		loadSettings();
-		// Free space in MB
-		$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
-		// Path to where the torrent meta files will be stored.
-		$cfg["torrent_file_path"] = $cfg["path"].".torrents/";
+		// main.common
+		require_once('inc/main.common.php');
+		// default-language
+		require_once("inc/language/".$cfg["default_language"]);
 		// public stats... show all .. we set the user to superadmin
 		$superAdm = GetSuperAdmin();
 		if ((isset($superAdm)) && ($superAdm != "")) {
@@ -55,12 +46,12 @@ switch (_PUBLIC_STATS) {
 		break;
 	case 0:
 	default:
-		// main
-		require_once("inc/main.php");
+		// main.webapp
+		require_once("inc/main.webapp.php");
 }
+
 // AliasFile
 require_once("inc/classes/AliasFile.php");
-
 
 // -----------------------------------------------------------------------------
 // Main
@@ -100,20 +91,20 @@ if ((_SHOW_USAGE == 1) && ($gotParams == 0))
 	sendUsage();
 
 // init some global vars
-$transferList = getTransferListArray();
+$transferList = @getTransferListArray();
 switch ($type) {
     case "all":
     	$indent = " ";
-    	$transferHeads = getTransferListHeadArray();
-    	initServerStats();
+    	$transferHeads = @getTransferListHeadArray();
+    	@initServerStats();
     	break;
     case "server":
     	$indent = "";
-    	initServerStats();
+    	@initServerStats();
     	break;
     case "transfers":
     	$indent = "";
-    	$transferHeads = getTransferListHeadArray();
+    	$transferHeads = @getTransferListHeadArray();
     	break;
 }
 

@@ -20,123 +20,101 @@
 
 *******************************************************************************/
 
-// config
-require_once('inc/config/config.php');
-// main
-require_once("inc/main.php");
-// vlib
-require_once("lib/vlib/vlibTemplate.php");
+// main.webapp
+require_once("inc/main.webapp.php");
 
-// fluxd
-//
-// allways use this instance of Fluxd in included pages.
-// allways use this boolean for "is fluxd up and running" in included pages.
-// allways use this instance of FluxdQmgr in included pages.
-// allways use this boolean for "is queue up and running" in included pages.
-//
-require_once("inc/classes/Fluxd.php");
-require_once("inc/classes/Fluxd.ServiceMod.php");
-$fluxd = new Fluxd(serialize($cfg));
-$fluxdRunning = $fluxd->isFluxdRunning();
-$fluxdQmgr = null;
-$queueActive = false;
-if($cfg["fluxd_Qmgr_enabled"] == 1) {
-	if ($fluxd->modState('Qmgr') == 1) {
-		$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
-		$queueActive = true;
-	}
-}
+/* -------------------------------------------------------------------------- */
 
 // iid-switch
 if(isset($_GET['iid'])) {
 	switch($_GET['iid']) {
 		default:
 			require_once("inc/iid/index.php");
-		break;
+			break;
 		case "index":
 			require_once("inc/iid/index.php");
-		break;
+			break;
 		case "dir":
 			require_once("inc/iid/dir.php");
-		break;
+			break;
 		case "history":
 			require_once("inc/iid/history.php");
-		break;
+			break;
 		case "xfer":
 			require_once("inc/iid/xfer.php");
-		break;
+			break;
 		case "who":
 			require_once("inc/iid/who.php");
-		break;
+			break;
 		case "viewnfo":
 			require_once("inc/iid/viewnfo.php");
-		break;
+			break;
 		case "uncomp":
 			require_once("inc/iid/uncomp.php");
-		break;
+			break;
 		case "torrentSearch":
 			require_once("inc/iid/torrentSearch.php");
-		break;
+			break;
 		case "startpop":
 			require_once("inc/iid/startpop.php");
-		break;
+			break;
 		case "renameFolder":
 			require_once("inc/iid/renameFolder.php");
-		break;
+			break;
 		case "readrss":
 			require_once("inc/iid/readrss.php");
-		break;
+			break;
 		case "readmsg":
 			require_once("inc/iid/readmsg.php");
-		break;
+			break;
 		case "profile":
 			require_once("inc/iid/profile.php");
-		break;
+			break;
 		case "multiup":
 			require_once("inc/iid/multiup.php");
-		break;
+			break;
 		case "move":
 			require_once("inc/iid/move.php");
-		break;
+			break;
 		case "mrtg":
 			require_once("inc/iid/mrtg.php");
-		break;
+			break;
 		case "message":
 			require_once("inc/iid/message.php");
-		break;
+			break;
 		case "maketorrent":
 			require_once("inc/iid/maketorrent.php");
-		break;
+			break;
 		case "dereferrer":
 			require_once("inc/iid/dereferrer.php");
-		break;
+			break;
 		case "details":
 			require_once("inc/iid/details.php");
-		break;
+			break;
 		case "downloaddetails":
 			require_once("inc/iid/downloaddetails.php");
-		break;
+			break;
 		case "downloadhosts":
 			require_once("inc/iid/downloadhosts.php");
-		break;
+			break;
 		case "drivespace":
 			require_once("inc/iid/drivespace.php");
-		break;
+			break;
 		case "cookiehelp":
 			require_once("inc/iid/cookiehelp.php");
-		break;
+			break;
 		case "checkSFV":
 			require_once("inc/iid/checkSFV.php");
-		break;
+			break;
 		case "all_services":
 			require_once("inc/iid/all_services.php");
-		break;
+			break;
 		case "admin":
 			require_once("inc/iid/admin.php");
-		break;
+			break;
 	}
 } else {
-	// use "old" style not to break tools
+	// use "old" style to stay flux-compatible as good as possible
 	require_once("inc/iid/index.php");
 }
 

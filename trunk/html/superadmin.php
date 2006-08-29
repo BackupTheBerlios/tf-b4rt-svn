@@ -20,6 +20,11 @@
 
 *******************************************************************************/
 
+// main.webapp
+require_once("inc/main.webapp.php");
+
+/* -------------------------------------------------------------------------- */
+
 // defines
 define('_DIR_BACKUP','.backup');
 define('_URL_HOME','http://tf-b4rt.berlios.de/');
@@ -29,10 +34,6 @@ define('_VERSION_REMOTE','version.txt');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','superadminProxy.php');
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
-
-// includes
-require_once("inc/config/config.php");
-require_once("inc/main.php");
 
 // global fields
 $error = "";
@@ -425,9 +426,7 @@ if (isset($_REQUEST["f"])) {
 				break;
 			case "4": // fluxd-status
 				$htmlTitle = "fluxd - status";
-				require_once("inc/classes/Fluxd.php");
-				$fluxd = new Fluxd(serialize($cfg));
-				if ($fluxd->isFluxdRunning()) {
+				if ($fluxdRunning) {
 					$htmlMain .= '<br><pre>';
 					$htmlMain .= $fluxd->statusFluxd();
 					$htmlMain .= '</pre>';
@@ -933,9 +932,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=2">error-log</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=3">ps</a>';
-			require_once("inc/classes/Fluxd.php");
-			$fluxd = new Fluxd(serialize($cfg));
-			if ($fluxd->isFluxdRunning()) {
+			if ($fluxdRunning) {
 				$htmlMain .= ' | ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=4">status</a>';
 			} else {

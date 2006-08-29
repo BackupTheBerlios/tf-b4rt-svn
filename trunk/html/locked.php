@@ -20,28 +20,25 @@
 
 *******************************************************************************/
 
-# always good to have a session started
-session_start("TorrentFlux");
+// main.common
+require_once('inc/main.common.php');
 
-// config
-require_once('inc/config/config.php');
-// db
-require_once('inc/db.php');
-// functions
-require_once("inc/functions/functions.php");
+/* -------------------------------------------------------------------------- */
 
-# get connected
-$db = getdb();
-loadSettings();
+// default-language
+require_once("inc/language/".$cfg["default_language"]);
+
+// default-theme
+include("themes/".$cfg["default_theme"]."/index.php");
+
+// vlib
+require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
 if ((strpos($cfg['default_theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/locked.tmpl");
 else
 	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/locked.tmpl");
-
-// include theme
-include("themes/".$cfg["default_theme"]."/index.php");
 
 # define some things
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
@@ -53,4 +50,5 @@ $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('iid', 'locked');
 # lets parse the hole thing
 $tmpl->pparse();
+
 ?>

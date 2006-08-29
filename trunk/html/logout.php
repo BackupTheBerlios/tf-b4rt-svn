@@ -20,27 +20,18 @@
 
 *******************************************************************************/
 
-// config
-require_once('inc/config/config.php');
-// db
-require_once('inc/db.php');
-// functions
-require_once("inc/functions/functions.php");
+// main.webapp
+require_once("inc/main.webapp.php");
 
-// Start Session and grab user
-session_start("TorrentFlux");
+/* -------------------------------------------------------------------------- */
+
+// grab user
 if (! isset($_SESSION['user'])) {
     @ob_end_clean();
     exit();
 } else {
     $cfg["user"] = strtolower($_SESSION['user']);
 }
-
-// Create Connection.
-$db = getdb();
-
-// load settings
-loadSettings();
 
 // somehow there is a bug when disabling rememberme-hack while cookie is set.
 // (auto-login and cookie cant be deleted)
@@ -74,4 +65,5 @@ function logoutUser() {
     $result = $db->Execute($sql);
     showError($db, $sql);
 }
+
 ?>

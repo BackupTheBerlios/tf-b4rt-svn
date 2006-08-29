@@ -21,22 +21,21 @@
 
 *******************************************************************************/
 
+// -----------------------------------------------------------------------------
+// init
+// -----------------------------------------------------------------------------
+
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
-// config
-require_once('inc/config/config.php');
-// db
-require_once('inc/db.php');
-// functions
-require_once("inc/functions/functions.php");
+// main.common
+require_once('inc/main.common.php');
+
+// default-language
+require_once("inc/language/".$cfg["default_language"]);
+
 // af
 require_once('inc/classes/AliasFile.php');
-
-// Create Connection + load settings
-$db = getdb();
-loadSettings();
-$cfg["torrent_file_path"] = $cfg["path"].".torrents/";
 
 // some vars
 $_STATUS = 1;
@@ -49,6 +48,10 @@ $_URL = '';
 $_REAL_NAME = '';
 $_OWNER = '';
 $_ETA = '-';
+
+// -----------------------------------------------------------------------------
+// Main
+// -----------------------------------------------------------------------------
 
 // check args
 if (!isset($argv[1]))

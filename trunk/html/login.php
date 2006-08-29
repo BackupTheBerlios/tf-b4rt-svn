@@ -20,19 +20,19 @@
 
 *******************************************************************************/
 
-# always good to have a session started
-session_start("TorrentFlux");
+// main.common
+require_once('inc/main.common.php');
 
-// config
-require_once('inc/config/config.php');
-// db
-require_once('inc/db.php');
-// functions
-require_once("inc/functions/functions.php");
+/* -------------------------------------------------------------------------- */
 
-# get connected
-$db = getdb();
-loadSettings();
+// default-language
+require_once("inc/language/".$cfg["default_language"]);
+
+// default-theme
+include("themes/".$cfg["default_theme"]."/index.php");
+
+// vlib
+require_once("lib/vlib/vlibTemplate.php");
 
 # create new template
 if ((strpos($cfg['default_theme'], '/')) === false)
@@ -40,8 +40,8 @@ if ((strpos($cfg['default_theme'], '/')) === false)
 else
 	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/login.tmpl");
 
-// include default theme
-include("themes/".$cfg["default_theme"]."/index.php");
+# start session
+@session_start();
 
 // already got a session ?
 if(isset($_SESSION['user'])) {
@@ -124,4 +124,5 @@ $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('iid', 'login');
 # lets parse the hole thing
 $tmpl->pparse();
+
 ?>

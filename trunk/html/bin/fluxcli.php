@@ -41,43 +41,31 @@ if ($bail > 0) {
 // init
 // -----------------------------------------------------------------------------
 
-// hold revision-number in a var
-$REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
-// config
-require_once('inc/config/config.php');
-// db
-require_once('inc/db.php');
-// functions
-require_once("inc/functions/functions.php");
+// main.common
+require_once('inc/main.common.php');
+
+// default-language
+require_once("inc/language/".$cfg["default_language"]);
+
 // client-handler-"interfaces"
 require_once("inc/classes/ClientHandler.php");
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
-// Create Connection.
-$db = getdb();
-
-// load settings
-loadSettings();
-
-// Free space in MB
-$cfg["free_space"] = @disk_free_space($cfg["path"])/(1024*1024);
-
-// Path to where the torrent meta files will be stored... usually a sub of $cfg["path"]
-// also, not the '.' to make this a hidden directory
-$cfg["torrent_file_path"] = $cfg["path"].".torrents/";
-
 // config
 $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
+// hold revision-number in a var
+$REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
+
 $action = @$argv[1];
 if ((isset($action)) && ($action != "")) {
 	switch ($action) {
@@ -269,12 +257,6 @@ function printTorrents() {
     echo "----------------------------------------\n";
     echo "\n";
 	global $cfg, $db;
-	// we are missing lang-files.. define some missing strings
-	define("_DOWNLOADSPEED","Download Speed");
-	define("_UPLOADSPEED","Upload Speed");
-	define("_STATUS","Status");
-	define("_ESTIMATEDTIME","ETA");
-	define("_USER","User");
 	// show all .. we set the user to superadmin
     $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
     if($db->ErrorNo() != 0) {
@@ -719,6 +701,5 @@ function cliXferShutdown($delta = '') {
 		printUsage();
 	}
 }
-
 
 ?>
