@@ -28,7 +28,7 @@ require_once('inc/main.common.php');
 
 /* -------------------------------------------------------------------------- */
 
-# start session
+// start session
 @session_start();
 
 // user

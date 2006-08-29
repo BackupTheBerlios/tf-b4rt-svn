@@ -891,7 +891,7 @@ function superadminAuthentication($message = "") {
  *
  */
 function buildPage($action) {
-	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
+	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain, $fluxd, $fluxdRunning;
 	// navi
 	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Torrents</a>';
 	$htmlTop .= ' | ';
