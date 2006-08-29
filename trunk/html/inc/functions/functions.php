@@ -2146,62 +2146,50 @@ function getBTClientSelect($btclient = 'tornado') {
  * get form of sort-order-settings
  *
  */
-function getSortOrderSettingsForm() {
+function getSortOrderSettings() {
 	global $cfg;
-	$sortOrderSettingsForm = '<select name="index_page_sortorder">';
-	$sortOrderSettingsForm .= '<option value="da"';
-	if ($cfg['index_page_sortorder'] == "da")
-		$sortOrderSettingsForm .= " selected";
-	$sortOrderSettingsForm .= '>Date - Ascending</option>';
-	$sortOrderSettingsForm .= '<option value="dd"';
-	if ($cfg['index_page_sortorder'] == "dd")
-		$sortOrderSettingsForm .= " selected";
-	$sortOrderSettingsForm .= '>Date - Descending</option>';
-	$sortOrderSettingsForm .= '<option value="na"';
-	if ($cfg['index_page_sortorder'] == "na")
-		$sortOrderSettingsForm .= " selected";
-	$sortOrderSettingsForm .= '>Name - Ascending</option>';
-	$sortOrderSettingsForm .= '<option value="nd"';
-	if ($cfg['index_page_sortorder'] == "nd")
-		$sortOrderSettingsForm .= " selected";
-	$sortOrderSettingsForm .= '>Name - Descending</option>';
-	$sortOrderSettingsForm .= '</select>';
-	return $sortOrderSettingsForm;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getSortOrderSettings.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getSortOrderSettings.tmpl");
+	//set some vars
+	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**
  * get form of move-settings
  *
  */
-function getMoveSettingsForm() {
+function getMoveSettings() {
 	global $cfg;
-	$moveSettingsForm = '<table>';
-	$moveSettingsForm .= '<tr>';
-	$moveSettingsForm .= '<td valign="top" align="left">Target-Dirs:</td>';
-	$moveSettingsForm .= '<td valign="top" align="left">';
-	$moveSettingsForm .= '<select name="categorylist" size="5">';
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getMoveSettings.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getMoveSettings.tmpl");
+	//set some vars
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$dirs = split(":", trim($cfg["move_paths"]));
+		$dir_list = array();
 		foreach ($dirs as $dir) {
 			$target = trim($dir);
-			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
-				$moveSettingsForm .= "<option value=\"$target\">".$target."</option>\n";
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
+				array_push($dir_list, array(
+					'target' => $target,
+					)
+				);
+			}
 		}
+		$tmpl->setloop('dir_list', $dir_list);
 	}
-	$moveSettingsForm .= '</select>';
-	$moveSettingsForm .= '<input type="button" name="remCatButton" value="remove" onclick="removeEntry()">';
-	$moveSettingsForm .= '</td>';
-	$moveSettingsForm .= '</tr>';
-	$moveSettingsForm .= '<tr>';
-	$moveSettingsForm .= '<td valign="top" align="left">New Target-Dir:</td>';
-	$moveSettingsForm .= '<td valign="top" align="left">';
-	$moveSettingsForm .= '<input type="text" name="category" size="30">';
-	$moveSettingsForm .= '<input type="button" name="addCatButton" value="add" onclick="addEntry()" size="30">';
-	$moveSettingsForm .= '<input type="hidden" name="move_paths" value="'.$cfg["move_paths"].'">';
-	$moveSettingsForm .= '</td>';
-	$moveSettingsForm .= '</tr>';
-	$moveSettingsForm .= '</table>';
-	return $moveSettingsForm;
+	$tmpl->setvar('move_paths', $cfg["move_paths"]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**

@@ -463,9 +463,9 @@ list($user_level) = $db->GetRow($sql);
 
 #some good looking vars
 $tmpl->setvar('indexPageSettingsForm', getIndexPageSettingsForm());
-$tmpl->setvar('sortOrderSettingsForm', getSortOrderSettingsForm());
+$tmpl->setvar('sortOrderSettingsForm', getSortOrderSettings());
 $tmpl->setvar('goodLookingStatsForm', getGoodLookingStatsForm());
-$tmpl->setvar('moveSettingsForm', getMoveSettingsForm());
+$tmpl->setvar('moveSettingsForm', getMoveSettings());
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);

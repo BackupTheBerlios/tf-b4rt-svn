@@ -174,11 +174,6 @@
 											 selected
 										</tmpl_if>
 										>transmission</option>
-										<option value="mainline"
-										<tmpl_if name="btclient" value="mainline">
-											selected
-										</tmpl_if>
-										>mainline</option>
 									</select>
 									&nbsp;<input name="enable_btclient_chooser" type="Checkbox" value="1" <tmpl_var name="enableBtclientChooser">> Enable Client-Chooser
 								</td>
@@ -228,13 +223,6 @@
 								</td>
 								<td valign="top">
 									<input name="btclient_transmission_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_options">" size="55">
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>mainline : Extra Commandline Options</strong><br>
-								</td>
-								<td valign="top">
-									<input name="btclient_mainline_options" type="Text" maxlength="254" value="<tmpl_var name="btclient_mainline_options">" size="55">
 								</td>
 							</tr>
 							<tr><td colspan="2"><hr noshade></td></tr>
@@ -1011,7 +999,7 @@
 									<u>Note :</u> The created dirs will not be deleted after removing a entry from the List.
 								</td>
 								<td valign="top">
-									<tmpl_var name="getMoveSettingsForm">
+									<tmpl_var name="getMoveSettings">
 								</td>
 							</tr>
 							<tr>

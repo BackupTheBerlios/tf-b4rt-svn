@@ -47,7 +47,7 @@ $tmpl->setvar('show_server_load', $cfg["show_server_load"]);
 $tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
 $tmpl->setvar('ui_indexrefresh', $cfg["ui_indexrefresh"]);
 $tmpl->setvar('pagerefresh', $cfg["page_refresh"]);
-$tmpl->setvar('getSortOrderSettingsForm', getSortOrderSettingsForm());
+$tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
 $tmpl->setvar('getGoodLookingStatsForm', getGoodLookingStatsForm());
