@@ -2598,7 +2598,7 @@ function getTransferListArray() {
 				// $estTime
 				if ($af->time_left != "" && $af->time_left != "0") {
 					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
-						if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
+						if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
 							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
 						else
 							$estTime = '-';
@@ -2877,7 +2877,7 @@ function getTransferListString() {
 				// $estTime
 				if ($af->time_left != "" && $af->time_left != "0")
 					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
-						if (($af->seedlimit > 0) && ((int) ($af->up_speed{0}) > 0))
+						if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
 							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
 						else
 							$estTime = '&#8734';
