@@ -81,6 +81,9 @@ class AliasFile
                 case "transmission":
                     return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
                 break;
+                case "mainline":
+                    return new AliasFileMainline($inFile, $user, serialize($fluxCfg));
+                break;
                 case "wget":
                     return new AliasFileWget($inFile, $user, serialize($fluxCfg));
                 break;

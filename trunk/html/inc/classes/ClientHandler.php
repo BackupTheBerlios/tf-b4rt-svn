@@ -111,6 +111,9 @@ class ClientHandler
                 case "transmission":
                     return new ClientHandlerTransmission(serialize($fluxCfg));
                 break;
+                case "mainline":
+                    return new ClientHandlerMainline(serialize($fluxCfg));
+                break;
                 case "wget":
                     return new ClientHandlerWget(serialize($fluxCfg));
                 break;
@@ -348,7 +351,7 @@ class ClientHandler
             $transferRunningFlag = 0;
         } else { // start
             // The following command starts the transfer running! w00t!
-            // system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
+            //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
             $this->callResult = exec($this->command);
             AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
             // slow down and wait for thread to kick off.

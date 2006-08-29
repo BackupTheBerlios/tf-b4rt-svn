@@ -1010,6 +1010,7 @@ function RunningProcessInfo() {
 	$RunningProcessInfo .= "\n --- Process-List --- \n".$pinfo;
 	unset($clientHandler);
 	unset($pinfo);
+
 	$RunningProcessInfo .= "\n\n ---=== transmission ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
@@ -1017,6 +1018,15 @@ function RunningProcessInfo() {
 	$RunningProcessInfo .= "\n --- Process-List --- \n".$pinfo;
 	unset($clientHandler);
 	unset($pinfo);
+
+	$RunningProcessInfo .= "\n\n ---=== mainline ===---\n\n";
+	$clientHandler = ClientHandler::getClienthandlerInstance($cfg,"mainline");
+	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
+	$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ".$clientHandler->binSystem." | ".$cfg['bin_grep']." -v grep");
+	$RunningProcessInfo .= "\n --- Process-List --- \n".$pinfo;
+	unset($clientHandler);
+	unset($pinfo);
+
 	$RunningProcessInfo .= "\n\n ---=== wget ===---\n\n";
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"wget");
 	$RunningProcessInfo .= $clientHandler->printRunningClientsInfo();
@@ -2124,6 +2134,10 @@ function getBTClientSelect($btclient = 'tornado') {
 	if ($btclient == "transmission")
 		$getBTClientSelect .= " selected";
 	$getBTClientSelect .= '>transmission</option>';
+	$getBTClientSelect .= '<option value="mainline"';
+	if ($btclient == "mainline")
+		$getBTClientSelect .= " selected";
+	$getBTClientSelect .= '>mainline</option>';
 	$getBTClientSelect .= '</select>';
 	return $getBTClientSelect;
 }
