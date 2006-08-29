@@ -1075,6 +1075,13 @@ function getRunningTransfers($clientType = '') {
 		array_push($retAry,$val);
 	unset($clientHandler);
 	unset($tempAry);
+	// mainline
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"mainline");
+	$tempAry = $clientHandler->getRunningClients();
+	foreach ($tempAry as $val)
+		array_push($retAry,$val);
+	unset($clientHandler);
+	unset($tempAry);
 	// transmission
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
 	$tempAry = $clientHandler->getRunningClients();
@@ -1994,7 +2001,6 @@ function getTorrentFluxLink($showVersionLink = false) {
 	} else {
 		return "";
 	}
-
 }
 
 // ***************************************************************************
@@ -4184,8 +4190,8 @@ function checkTorrentPath() {
 	global $cfg;
 	// is there a stat and torrent dir?
 	if (!@is_dir($cfg["torrent_file_path"]) && is_writable($cfg["path"])) {
-		//Then create it
-		@mkdir($cfg["torrent_file_path"], 0777);
+		// Then create it
+		@checkDirectory($cfg["torrent_file_path"], 0777);
 	}
 }
 
