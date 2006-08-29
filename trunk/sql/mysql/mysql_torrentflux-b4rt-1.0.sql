@@ -227,7 +227,7 @@ INSERT INTO tf_settings VALUES ('bin_unrar','/usr/bin/unrar');
 INSERT INTO tf_settings VALUES ('bin_unzip','/usr/bin/unzip');
 INSERT INTO tf_settings VALUES ('bin_cksfv','/usr/bin/cksfv');
 INSERT INTO tf_settings VALUES ('btclient','tornado');
-INSERT INTO tf_settings VALUES ('btclient_tornado_options','--upnp_nat_access 0');
+INSERT INTO tf_settings VALUES ('btclient_tornado_options','');
 INSERT INTO tf_settings VALUES ('btclient_transmission_bin','/usr/local/bin/transmissioncli');
 INSERT INTO tf_settings VALUES ('btclient_transmission_options','');
 INSERT INTO tf_settings VALUES ('metainfoclient','btshowmetainfo.py');
@@ -270,6 +270,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('btclient_mainline_options','');
 INSERT INTO tf_settings VALUES ('bandwidthbar','xfer');
 INSERT INTO tf_settings VALUES ('display_seeding_time','0');
 INSERT INTO tf_settings VALUES ('ui_displaybandwidthbars','1');
