@@ -48,7 +48,7 @@ if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 	}
 	$cmd .= " ". $passwd;
 	// os-switch
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$cmd .= ' 2>&1';
 		break;

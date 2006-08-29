@@ -20,22 +20,34 @@
 
 *******************************************************************************/
 
-// vlib
-require_once("lib/vlib/vlibTemplate.php");
-
-// main.common
-require_once('inc/main.common.php');
-
-/* -------------------------------------------------------------------------- */
-
 // start session
 @session_start();
 
-// user
-if(isset($_SESSION['user']))
-    $cfg["user"] = strtolower($_SESSION['user']);
-else
+// init
+if (isset($_SESSION['user'])) {
+	$currentUser = strtolower($_SESSION['user']);
+	if (isset($_SESSION['cache'][$currentUser])) {
+		// set cfg-array from session-cache
+		$cfg = $_SESSION['cache'][$currentUser];
+		// include defines
+		require_once('inc/config/defines.php');
+		// functions
+		require_once('inc/functions/functions.php');
+		// db
+		require_once('inc/db.php');
+		// Create Connection.
+		$db = getdb();
+	} else {
+		// main.common
+		require_once('inc/main.common.php');
+	}
+    $cfg["user"] = $currentUser;
+} else {
+	// main.common
+	require_once('inc/main.common.php');
+	// reset user
     $cfg["user"] = "";
+}
 
 // authenticate
 if (isAuthenticated() == 1) {
@@ -69,18 +81,32 @@ if (isAuthenticated() == 1) {
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
-// prune db
-PruneDB();
+// load last things to config and cache if not already done.
+// prune db and perform path-check
+if (!(isset($_SESSION['cache'][$currentUser]))) {
 
-// is there a stat and torrent dir?  If not then it will create it.
-checkTorrentPath();
+	// load per user settings
+	loadUserSettingsToConfig($cfg["uid"]);
 
-// load per user settings
-loadUserSettingsToConfig($cfg["uid"]);
+	// theme
+	require_once("themes/".$cfg["theme"]."/index.php");
 
-// language and theme
+	// add cfg-array to session-cache
+	$_SESSION['cache'][$currentUser] = $cfg;
+
+	// prune db
+	PruneDB();
+
+	// is there a stat and torrent dir?  If not then it will create it.
+	checkTorrentPath();
+
+}
+
+// language
 require_once("inc/language/".$cfg["language_file"]);
-require_once("themes/".$cfg["theme"]."/index.php");
+
+// vlib
+require_once("lib/vlib/vlibTemplate.php");
 
 /*******************************************************************************
  *  TorrentFlux xfer Statistics hack
@@ -93,7 +119,8 @@ require_once("themes/".$cfg["theme"]."/index.php");
 	or (at your option) any later version.
 */
 
-//XFER: create tf_xfer if it doesn't already exist. if xfer is empty, insert a zero record for today
+// create tf_xfer if it doesn't already exist. if xfer is empty,
+// insert a zero record for today
 if ($cfg['enable_xfer'] == 1) {
 	if (($xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer")) === false) {
 		if ($db->Execute('CREATE TABLE tf_xfer (user varchar(32) NOT NULL default "", date date NOT NULL default "0000-00-00", download bigint(20) NOT NULL default "0", upload bigint(20) NOT NULL default "0", PRIMARY KEY (user,date))') === false) {
@@ -142,6 +169,17 @@ if($cfg["fluxd_Qmgr_enabled"] == 1) {
 		$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
 		$queueActive = true;
 	}
+}
+
+/*******************************************************************************
+ *  DEBUG
+ ******************************************************************************/
+if ($cfg["version"] != "svn") {
+	// turn off error_reporting
+	error_reporting(0);
+} else {
+	// turn on error_reporting
+	error_reporting(E_ALL);
 }
 
 ?>

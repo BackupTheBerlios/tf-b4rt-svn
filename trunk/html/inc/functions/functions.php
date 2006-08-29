@@ -239,7 +239,7 @@ function netstatConnectionsSum() {
 	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$nCount = 0;
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 			$nCount += (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c ". $clientHandler->binSocket));
@@ -272,7 +272,7 @@ function netstatConnections($torrentAlias) {
  */
 function netstatConnectionsByPid($torrentPid) {
 	global $cfg;
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			return trim(shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c \"".$torrentPid ."/\""));
 		break;
@@ -294,7 +294,7 @@ function netstatPortList() {
 	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$retStr = "";
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 			$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
@@ -327,7 +327,7 @@ function netstatPort($torrentAlias) {
  */
 function netstatPortByPid($torrentPid) {
 	global $cfg;
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			return trim(shell_exec($cfg['bin_netstat']." -l -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." \"".$torrentPid ."/\" | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'"));
 		break;
@@ -347,7 +347,7 @@ function netstatHostList() {
 	require_once("inc/classes/ClientHandler.php");
 	// messy...
 	$retStr = "";
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 			$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
@@ -381,7 +381,7 @@ function netstatHosts($torrentAlias) {
 function netstatHostsByPid($torrentPid) {
 	global $cfg;
 	$hostHash = null;
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$hostList = shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." \"".$torrentPid."/\" | ".$cfg['bin_awk']." '{print \$5}'");
 			$hostAry = explode("\n",$hostList);
@@ -1211,13 +1211,13 @@ function insertUserSettingPair($uid,$key,$value) {
 		if ($cfg[$key] == $value)
 			return true;
 	}
+	// flush session-cache
+	unset($_SESSION['cache'][$cfg["user"]]);
 	$sql = "INSERT INTO tf_settings_user VALUES ('".$uid."', '".$key."', '".$update_value."')";
-	if ( $sql != "" ) {
-		$result = $db->Execute($sql);
-		showError($db,$sql);
-		// update the Config.
-		$cfg[$key] = $value;
-	}
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	// update the Config.
+	$cfg[$key] = $value;
 	return true;
 }
 
@@ -1230,6 +1230,8 @@ function deleteUserSettings($uid) {
 	if ( !isset($uid))
 		return false;
 	global $db;
+	// flush session-cache
+	unset($_SESSION['cache'][$cfg["user"]]);
 	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
 	$db->Execute($sql);
 		showError($db, $sql);
@@ -1598,7 +1600,7 @@ function repairTorrentflux() {
  */
 function getLoadAverageString() {
 	global $cfg;
-	switch (_OS) {
+	switch ($cfg["_OS"]) {
 		case 1: // linux
 			if (isFile($cfg["loadavg_path"])) {
 				$loadavg_array = explode(" ", exec($cfg['bin_cat']." ".$cfg["loadavg_path"]));
@@ -3390,6 +3392,8 @@ function loadSettings() {
 //******************************************************************************
 function insertSetting($key,$value) {
     global $cfg, $db;
+	// flush session-cache
+	unset($_SESSION['cache']);
     $update_value = $value;
     if (is_array($value))
         $update_value = serialize($value);
@@ -3408,6 +3412,8 @@ function insertSetting($key,$value) {
 //******************************************************************************
 function updateSetting($key,$value) {
     global $cfg, $db;
+	// flush session-cache
+	unset($_SESSION['cache']);
     $update_value = $value;
 	if (is_array($value))
         $update_value = serialize($value);

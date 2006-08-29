@@ -35,11 +35,8 @@ require_once('inc/config/config.db.php');
             as of a flowing stream; constant succession; change.
 *****************************************************************************/
 
-// ***************************************************************************
-// ***************************************************************************
-// DO NOT Edit below this line unless you know what you're doing.
-// ***************************************************************************
-// ***************************************************************************
+// include defines
+require_once('inc/config/defines.php');
 
 // CONSTANTS
 $cfg["constants"] = array();
@@ -70,76 +67,8 @@ $cfg["user"] = "";
 // Capture ip
 @ $cfg["ip"] = $_SERVER['REMOTE_ADDR'];
 
-//XFER: LANGUAGE CONSTANTS
-define('_TOTALXFER','Total Transfer');
-define('_MONTHXFER','Month\'s Transfer');
-define('_WEEKXFER','Week\'s Transfer');
-define('_DAYXFER','Today\'s Transfer');
-define('_XFERTHRU','Transfer thru');
-define('_REMAINING','Remaining');
-define('_TOTALSPEED','Total Speed');
-define('_SERVERXFERSTATS','Server Transfer Stats');
-define('_YOURXFERSTATS','Your Transfer Stats');
-define('_OTHERSERVERSTATS','Other Server Stats');
-define('_TOTAL','Total');
-define('_DOWNLOAD','Download');
-define('_MONTHSTARTING','Month Starting');
-define('_WEEKSTARTING','Week Starting');
-define('_DAY','Day');
-define('_XFER','transfer');
-define('_XFER_USAGE','Transfer Usage');
-define('_QUEUEMANAGER','Queue Manager');
-
-// multiple Upload
-define('_MULTIPLE_UPLOAD','Multiple Upload');
-
-# Some Stats dir hack
-define('_TDDU','Directory Size:');
-
-// Link Mod
-define("_FULLSITENAME", "Site Name");
-
-// Move Hack
-define('_MOVE_STRING','Move File/Folder to: ');
-define('_DIR_MOVE_LINK', 'Move File/Folder');
-define('_MOVE_FILE', 'File/Folder: ');
-define('_MOVE_FILE_TITLE', 'Move Data...');
-
-// Rename Hack
-define('_REN_STRING','Rename File/Folder to: ');
-define('_DIR_REN_LINK', 'Rename File/Folder');
-define('_REN_FILE', 'File/Folder: ');
-define('_REN_DONE', 'Done!');
-define('_REN_ERROR', 'An error accured, please try again!');
-define('_REN_ERR_ARG', 'Wrong argument supplied!');
-define('_REN_TITLE', 'Rename Folder');
-
-// string-constants
-define('_ID_PORT','Port');
-define('_ID_PORTS','Ports');
-define('_ID_CONNECTIONS','Connections');
-define('_ID_HOST','Host');
-define('_ID_HOSTS','Hosts');
-define('_ID_MRTG','Graph');
-
-// url constants
-define('_URL_DEREFERRER','index.php?iid=dereferrer&u=');
-
-// auth-constants
-define('_AUTH_BASIC_REALM','torrentflux-b4rt');
-
 // torrentflux-b4rt Version
 $cfg["version"] = getLocalVersion();
-
-// DEBUG --------------------------------
-if ($cfg["version"] != "svn") {
-	// turn off error_reporting
-	error_reporting(0);
-} else {
-	// turn on error_reporting
-	error_reporting(E_ALL);
-}
-// DEBUG --------------------------------
 
 /**
  * gets version-info of local version
@@ -162,15 +91,15 @@ function getLocalVersion() {
 $osString = php_uname('s');
 if (isset($osString)) {
     if (!(stristr($osString, 'linux') === false)) /* linux */
-        define('_OS',1);
+    	$cfg["_OS"] = 1;
     else if (!(stristr($osString, 'bsd') === false)) /* bsd */
-        define('_OS',2);
+    	$cfg["_OS"] = 2;
     //else if (!(stristr($osString, 'darwin') === false)) /* darwin */
-    //    define('_OS',3);
+    //    $cfg["_OS"] = 3;
     else /* well... linux ;) */
     	define('_OS',1);
 } else { /* well... linux ;) */
-	define('_OS',1);
+	$cfg["_OS"] = 1;
 }
 
 ?>
