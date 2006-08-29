@@ -97,6 +97,25 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Select Bandwidth-Bars</strong><br>
+								Select Style of Bandwidth-Bars on index-Page :
+								</td>
+								<td valign="top">
+									<select name="bandwidthbar">
+										<option value="tf"
+										<tmpl_if name="bandwidthbar" value="tf">
+											 selected
+										</tmpl_if>
+										>tf</option>
+										<option value="xfer"
+										<tmpl_if name="bandwidthbar" value="xfer">
+											 selected
+										</tmpl_if>
+										>xfer</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Show Server Stats</strong><br>
 								Enable showing the server stats at the bottom :
 								</td>

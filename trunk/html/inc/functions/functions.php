@@ -1741,7 +1741,7 @@ function getXferBar($total, $used, $title) {
 		if ($percent >= 50) {
 			$displayXferBar .= '<div class="tinypercent" align="center"';
 			if ($percent == 100)
-				$displayXferBar .= ' style="background:#ffffff;">';
+				$displayXferBar .= ' style="background:#FF0000;">';
 			else
 				$displayXferBar .= '>';
 			$displayXferBar .= $percent.'%'.$text;
@@ -1752,7 +1752,7 @@ function getXferBar($total, $used, $title) {
 		if ($percent < 50) {
 			$displayXferBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
 			if ($percent == 0)
-				$displayXferBar .= '; background:#ffffff;">';
+				$displayXferBar .= '; background:#00FF00;">';
 			else
 				$displayXferBar .= ';">';
 			$displayXferBar .= $percent.'%'.$text;
@@ -3209,12 +3209,21 @@ function getTransferTableHead($settings, $sortOrder = '', $nPrefix = '') {
  */
 function getUploadBar() {
 	global $cfg;
-	$max_upload = $cfg["bandwidth_up"] / 8 * 0.9;
-	$inner_message = "";
-	$percent = number_format($cfg["total_upload"] / $max_upload * 100,0);
+	$max_upload = $cfg["bandwidth_up"] / 8;
+	if ($max_upload > 0)
+		$percent = number_format(($cfg["total_upload"] / $max_upload) * 100, 0);
+	else
+		$percent = 0;
 	if ($percent > 0)
-		$inner_message = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
-    return getBandwidthBar($percent, $inner_message);
+		$text = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
+	else
+		$text = "";
+	switch ($cfg['bandwidthbar']) {
+		case "tf":
+			return getBandwidthBar_tf($percent, $text);
+		case "xfer":
+			return getBandwidthBar_xfer($percent, $text);
+	}
 }
 
 /**
@@ -3224,22 +3233,31 @@ function getUploadBar() {
  */
 function getDownloadBar() {
 	global $cfg;
-	$max_download = $cfg["bandwidth_down"] / 8 * 0.9;
-	$inner_message = "";
-	$percent = number_format($cfg["total_download"] / $max_download * 100,0);
+	$max_download = $cfg["bandwidth_down"] / 8;
+	if ($max_download > 0)
+		$percent = number_format(($cfg["total_download"] / $max_download) * 100, 0);
+	else
+		$percent = 0;
 	if ($percent > 0)
-		$inner_message = " (".number_format($cfg["total_download"], 2)." Kb/s)";
-	return getBandwidthBar($percent, $inner_message);
+		$text = " (".number_format($cfg["total_download"], 2)." Kb/s)";
+	else
+		$text = "";
+	switch ($cfg['bandwidthbar']) {
+		case "tf":
+			return getBandwidthBar_tf($percent, $text);
+		case "xfer":
+			return getBandwidthBar_xfer($percent, $text);
+	}
 }
 
 /**
- * get a Bandwidth Graphical Bar
+ * get a Bandwidth Graphical Bar in tf-style
  *
  * @param $percent
- * @param $inner_message
+ * @param $text
  * @return string with bandwith-bar
  */
-function getBandwidthBar($percent, $inner_message) {
+function getBandwidthBar_tf($percent, $text) {
 	global $cfg;
 	$retVal = "";
     $retVal .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
@@ -3247,13 +3265,55 @@ function getBandwidthBar($percent, $inner_message) {
     $retVal .= '  <td width="80%">';
     $retVal .= '   <table width="100%" border="0" cellpadding="0" cellspacing="0">';
     $retVal .= '    <tr>';
-    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$percent.'%"><div class="tinypercent" align="center">'.$percent.'%'.$inner_message.'</div></td>';
+    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$percent.'%"><div class="tinypercent" align="center">'.$percent.'%'.$text.'</div></td>';
     $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $percent).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
     $retVal .= '    </tr>';
     $retVal .= '   </table>';
     $retVal .= '  </td>';
     $retVal .= ' </tr>';
     $retVal .= '</table>';
+	return $retVal;
+}
+
+/**
+ * get a Bandwidth Graphical Bar in xfer-style
+ *
+ * @param $percent
+ * @param $text
+ * @return string with bandwith-bar
+ */
+function getBandwidthBar_xfer($percent, $text) {
+	global $cfg;
+	//$percent = 0;
+	$bgcolor = '#';
+	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
+	$bgcolor .= str_pad(dechex(255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
+	$bgcolor .='00';
+	$retVal = "";
+	$retVal .= '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
+	$retVal .= '<td bgcolor="'.$bgcolor.'" width="'.($percent).'%">';
+	if ($percent >= 50) {
+		$retVal .= '<div class="tinypercent" align="center"';
+		if ($percent == 100)
+			$retVal .= ' style="background:#FF0000;">';
+		else
+			$retVal .= '>';
+		$retVal .= $percent.'%'.$text;
+		$retVal .= '</div>';
+	}
+	$retVal .= '</td>';
+	$retVal .= '<td bgcolor="#000000" width="'.(100 - $percent).'%" height="100%">';
+	if ($percent < 50) {
+		$retVal .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
+		if ($percent == 0)
+			$retVal .= '; background:#000000;">';
+		else
+			$retVal .= ';">';
+		$retVal .= $percent.'%'.$text;
+		$retVal .= '</div>';
+	}
+	$retVal .= '</td>';
+	$retVal .= '</tr></table>';
 	return $retVal;
 }
 
@@ -4181,7 +4241,7 @@ function getDriveSpaceBar($drivespace) {
 					if ($drivespace >= 50) {
 						$driveSpaceBar .= '<div class="tinypercent" align="center"';
 						if ($drivespace == 100)
-							$driveSpaceBar .= ' style="background:#ffffff;">';
+							$driveSpaceBar .= ' style="background:#00FF00;">';
 						else
 							$driveSpaceBar .= '>';
 						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
@@ -4192,7 +4252,7 @@ function getDriveSpaceBar($drivespace) {
 					if ($drivespace < 50) {
 						$driveSpaceBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
 						if ($drivespace == 0)
-							$driveSpaceBar .= '; background:#ffffff;">';
+							$driveSpaceBar .= '; background:#FF0000;">';
 						else
 							$driveSpaceBar .= ';">';
 						$driveSpaceBar .= $drivespace.'%'.$freeSpace;

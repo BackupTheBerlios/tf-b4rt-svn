@@ -204,6 +204,40 @@
 											</td>
 										</tr>
 										<tr>
+											<td align="left" width="350" valign="top"><strong>Display Bandwidth-Bars</strong><br>
+											Display Bandwidth-Bars on the index-page :
+											</td>
+											<td valign="bottom">
+												<select name="ui_displaybandwidthbars">
+													<option value="1">true</option>
+													<option value="0"
+													<tmpl_if name="ui_displaybandwidthbars" value="0">
+														 selected
+													</tmpl_if>
+													>false</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td align="left" width="350" valign="top"><strong>Select Bandwidth-Bars</strong><br>
+											Select Style of Bandwidth-Bars on index-Page :
+											</td>
+											<td valign="top">
+												<select name="bandwidthbar">
+													<option value="tf"
+													<tmpl_if name="bandwidthbar" value="tf">
+														 selected
+													</tmpl_if>
+													>tf</option>
+													<option value="xfer"
+													<tmpl_if name="bandwidthbar" value="xfer">
+														 selected
+													</tmpl_if>
+													>xfer</option>
+												</select>
+											</td>
+										</tr>
+										<tr>
 											<td align="left" width="350" valign="top">
 												<strong>Show Server Stats</strong><br>Enable showing the server stats at the bottom:
 											</td>

@@ -268,6 +268,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('bandwidthbar','xfer');
 INSERT INTO tf_settings VALUES ('display_seeding_time','0');
 INSERT INTO tf_settings VALUES ('ui_displaybandwidthbars','1');
 INSERT INTO tf_settings VALUES ('bandwidth_down','10240');
