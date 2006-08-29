@@ -73,57 +73,57 @@ class ClientHandlerMainline extends ClientHandler
             return;
         }
 
-	// check for pythonCmd
-	if (! array_key_exists("pythonCmd", $this->cfg))
-		insertSetting("pythonCmd","/usr/bin/python");
-	$pyCmd = $this->cfg["pythonCmd"] . " -OO";
+		// check for pythonCmd
+		if (! array_key_exists("pythonCmd", $this->cfg))
+			insertSetting("pythonCmd","/usr/bin/python");
+		$pyCmd = $this->cfg["pythonCmd"] . " -OO";
 
-        // build the command-string
-        $skipHashCheck = "";
-        if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
-            $skipHashCheck = " --no_check_hashes ";
+		// build the command-string
+		$skipHashCheck = "";
+		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
+			$skipHashCheck = " --no_check_hashes ";
 
-        /* Skip file priority stuff, as its not in the CL client, that I can see
-        $filePrio = "";
-        if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
-            $priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
-            $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
-            $filePrio = " --priority ".$priolist;
-        }
-        <-- end file priority --> */
-	
-	$this->command = "cd " . $this->savepath .";";
-	$this->command .= " HOME=".$this->cfg["path"];
-	$this->command .= "; export HOME;";
-	$this->command .= $this->umask;
-	$this->command .= " nohup ";
-	$this->command .= $this->nice;
-	$this->command .= $pyCmd . " " .$this->mainlineBin;
-        //$this->command .= " --die_when_done ".$this->runtime;
-        $this->command .= " --seed_limit ".$this->sharekill_param;
-        $this->command .= " --stat_file ".$this->cfg["torrent_file_path"].$this->alias .".stat";
-        $this->command .= " --tf_owner ".$this->owner;
-        $this->command .= " --display_interval 5";
-	if ($this->drate != 0)
-	        $this->command .= " --max_download_rate ".$this->drate;
-	if ($this->rate != 0)
-		$this->command .= " --max_upload_rate ".$this->rate;
-        $this->command .= " --max_uploads ".$this->maxuploads;
-        $this->command .= " --minport ".$this->port;
-        $this->command .= " --maxport ".$this->maxport;
-        $this->command .= " --rerequest_interval ".$this->rerequest;
-        //$this->command .= " --super_seeder ".$this->superseeder;
-        $this->command .= " --max_initiate ".$this->maxcons;
-        $this->command .= $skipHashCheck;
-	//$this->command .= $filePrio;
-	$this->command .= " --save_incomplete_in ".$this->savepath;
-        $this->command .= " ".$this->cfg["btclient_mainline_options"];
-	$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
-	$this->command .= " > /dev/null &";
+		/* Skip file priority stuff, as its not in the CL client, that I can see
+		$filePrio = "";
+		if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
+		$priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
+		$priolist = implode(',',array_slice($priolist,1,$priolist[0]));
+		$filePrio = " --priority ".$priolist;
+		}
+		<-- end file priority --> */
 
-        // start the client
-        parent::doStartClient();
-	//print $this->command;
+		$this->command = "cd " . $this->savepath .";";
+		$this->command .= " HOME=".$this->cfg["path"];
+		$this->command .= "; export HOME;";
+		$this->command .= $this->umask;
+		$this->command .= " nohup ";
+		$this->command .= $this->nice;
+		$this->command .= $pyCmd . " " .$this->mainlineBin;
+		//$this->command .= " --die_when_done ".$this->runtime;
+		$this->command .= " --seed_limit ".$this->sharekill_param;
+		$this->command .= " --stat_file ".$this->cfg["torrent_file_path"].$this->alias .".stat";
+		$this->command .= " --tf_owner ".$this->owner;
+		$this->command .= " --display_interval 5";
+		if ($this->drate != 0)
+			$this->command .= " --max_download_rate ".$this->drate;
+		if ($this->rate != 0)
+			$this->command .= " --max_upload_rate ".$this->rate;
+		$this->command .= " --max_uploads ".$this->maxuploads;
+		$this->command .= " --minport ".$this->port;
+		$this->command .= " --maxport ".$this->maxport;
+		$this->command .= " --rerequest_interval ".$this->rerequest;
+		//$this->command .= " --super_seeder ".$this->superseeder;
+		$this->command .= " --max_initiate ".$this->maxcons;
+		$this->command .= $skipHashCheck;
+		//$this->command .= $filePrio;
+		$this->command .= " --save_incomplete_in ".$this->savepath;
+		$this->command .= " ".$this->cfg["btclient_mainline_options"];
+		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
+		$this->command .= " > /dev/null &";
+
+		// start the client
+		parent::doStartClient();
+		//print $this->command;
     }
 
     /**
