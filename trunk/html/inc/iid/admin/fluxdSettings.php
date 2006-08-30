@@ -20,14 +20,14 @@
 
 *******************************************************************************/
 
+require_once("inc/classes/AliasFile.php");
+require_once("inc/classes/RunningTransfer.php");
+
 # create new template
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/fluxdSettings.tmpl");
 else
 	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/fluxdSettings.tmpl");
-
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
 
 // some template vars
 $tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
@@ -120,6 +120,12 @@ foreach ($running as $key => $value) {
 $running = getRunningTransfers("transmission");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"transmission");
+	$output .= $rt->BuildAdminOutput();
+}
+// get running mainline torrents and List them out.
+$running = getRunningTransfers("transmission");
+foreach ($running as $key => $value) {
+	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"mainline");
 	$output .= $rt->BuildAdminOutput();
 }
 // get running wget clients and List them out.
