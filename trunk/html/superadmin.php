@@ -489,9 +489,13 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= 'use this to kill all python processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
 				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>perl</strong><br>';
+				$htmlMain .= 'use this to kill all perl processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
+				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmissioncli</strong><br>';
 				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "11": // Maintenance-Kill : python
@@ -518,7 +522,31 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "12": // Maintenance-Kill : transmissioncli
+			case "12": // Maintenance-Kill : perl
+				$htmlTitle = "Maintenance - Kill - perl";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all perl processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 perl 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "13": // Maintenance-Kill : transmissioncli
 				$htmlTitle = "Maintenance - Kill - transmissioncli";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all transmissioncli processes" done.';
