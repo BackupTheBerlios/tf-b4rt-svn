@@ -22,6 +22,9 @@
 
 // contributed by NovaKing -- thanks duder!
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 # create new template
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/viewnfo.tmpl");
@@ -53,4 +56,5 @@ $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
+
 ?>

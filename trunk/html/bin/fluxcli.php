@@ -44,6 +44,9 @@ if ($bail > 0) {
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
+// all functions
+require_once('inc/functions/functions.all.php');
+
 // main.common
 require_once('inc/main.common.php');
 
@@ -71,9 +74,6 @@ if ((isset($action)) && ($action != "")) {
 	switch ($action) {
 		case "torrents":
 			printTorrents();
-			break;
-		case "status":
-			printStatus();
 			break;
 		case "netstat":
 			printNetStat();
@@ -154,7 +154,6 @@ function printUsage() {
 	echo "Usage: fluxcli.php action [extra-args]\n";
 	echo "\naction: \n";
 	echo " <torrents>   : print torrents. \n";
-	echo " <status>     : print status. \n";
 	echo " <netstat>    : print netstat. \n";
 	echo " <start>      : start a torrent. \n";
 	echo "                extra-arg : name of torrent as known inside torrentflux \n";
@@ -207,20 +206,6 @@ function printUsage() {
 function printVersion() {
 	global $REVISION_FLUXCLI;
     echo "fluxcli.php Revision ".$REVISION_FLUXCLI."\n";
-}
-
-// -----------------------------------------------------------------------------
-/*
- * printStatus
- *
- */
-function printStatus() {
-	echo "\n";
-    echo "--------------------------------------\n";
-	echo "          TorrentFlux-Status          \n";
-    echo "--------------------------------------\n";
-    echo "\n";
-	RunningProcessInfo();
 }
 
 // -----------------------------------------------------------------------------

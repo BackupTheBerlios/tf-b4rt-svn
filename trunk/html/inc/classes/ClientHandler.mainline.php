@@ -73,9 +73,7 @@ class ClientHandlerMainline extends ClientHandler
             return;
         }
 
-		// check for pythonCmd
-		if (! array_key_exists("pythonCmd", $this->cfg))
-			insertSetting("pythonCmd","/usr/bin/python");
+		// pythonCmd
 		$pyCmd = $this->cfg["pythonCmd"] . " -OO";
 
 		// build the command-string

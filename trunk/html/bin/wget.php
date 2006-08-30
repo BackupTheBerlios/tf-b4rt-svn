@@ -28,6 +28,9 @@
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
+// all functions
+require_once('inc/functions/functions.all.php');
+
 // main.common
 require_once('inc/main.common.php');
 

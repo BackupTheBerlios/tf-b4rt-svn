@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 // require
 require_once("inc/classes/lastRSS.php");
 

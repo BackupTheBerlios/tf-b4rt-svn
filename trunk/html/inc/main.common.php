@@ -23,8 +23,11 @@
 // configs
 require_once("inc/config/config.php");
 
-// functions
-require_once('inc/functions/functions.php');
+// core functions
+require_once('inc/functions/functions.core.php');
+
+// common functions
+require_once('inc/functions/functions.common.php');
 
 // db
 require_once('inc/db.php');

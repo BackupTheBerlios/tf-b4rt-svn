@@ -20,23 +20,22 @@
 
 *******************************************************************************/
 
-// common functions
-require_once('inc/functions/functions.common.php');
+// core
+require_once("inc/functions/functions.core.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/cookiehelp.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/cookiehelp.tmpl");
+// common
+require_once("inc/functions/functions.common.php");
 
-$tmpl->setvar('head', getHead("Cookie Help", false));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('foot', getFoot(false));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-$tmpl->setvar('iid', $_GET["iid"]);
-$tmpl->pparse();
+// admin
+require_once("inc/functions/functions.admin.php");
+
+// index
+require_once("inc/functions/functions.index.php");
+
+// dir
+require_once("inc/functions/functions.dir.php");
+
+// xfer
+require_once('inc/functions/functions.xfer.php');
 
 ?>

@@ -26,8 +26,12 @@ define('_TXT_DELIM', ';');
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
 define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 
+// all functions
+require_once('inc/functions/functions.all.php');
+
 // config
 require_once("inc/config/config.stats.php");
+
 // public-stats-switch
 switch (_PUBLIC_STATS) {
 	case 1:

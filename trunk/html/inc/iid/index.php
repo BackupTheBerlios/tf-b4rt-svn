@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// index functions
+require_once("inc/functions/functions.index.php");
+
 # create new template
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/index.tmpl");

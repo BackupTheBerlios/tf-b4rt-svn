@@ -20,16 +20,14 @@
 
 *******************************************************************************/
 
-// restricted file-entries
-$restrictedFileEntries = array(
-	"lost+found",
-	"CVS",
-	"Temporary Items",
-	"Network Trash Folder",
-	"TheVolumeSettingsFolder"
-);
+// common functions
+require_once('inc/functions/functions.common.php');
 
-// -----------------------------------------------------------------------------
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
+// config
+require_once("inc/config/config.dir.php");
 
 // check user path
 checkUserPath();
@@ -447,61 +445,6 @@ if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('du2', $du2);
 } else {
 	$tmpl->setvar('enable_dirstats', 0);
-}
-
-// ***************************************************************************
-// ***************************************************************************
-// Checks for the location of the users directory
-// If it does not exist, then it creates it.
-function checkUserPath() {
-	global $cfg;
-	// is there a user dir?
-	if (!is_dir($cfg["path"].$cfg["user"])) {
-		//Then create it
-		mkdir($cfg["path"].$cfg["user"], 0777);
-	}
-}
-
-// This function returns the extension of a given file.
-// Where the extension is the part after the last dot.
-// When no dot is found the noExtensionFile string is
-// returned. This should point to a 'unknown-type' image
-// time by default. This string is also returned when the
-// file starts with an dot.
-function getExtension($fileName) {
-	$noExtensionFile="unknown"; // The return when no extension is found
-	//Prepare the loop to find an extension
-	$length = -1*(strlen($fileName)); // The maximum negative value for $i
-	$i=-1; //The counter which counts back to $length
-	//Find the last dot in an string
-	while (substr($fileName,$i,1) != "." && $i > $length) {$i -= 1; }
-	//Get the extension (with dot)
-	$ext = substr($fileName,$i);
-	//Decide what to return.
-	if (substr($ext,0,1)==".") {$ext = substr($ext,((-1 * strlen($ext))+1)); } else {$ext = $noExtensionFile;}
-	//Return the extension
-	return strtolower($ext);
-}
-
-/**
- * checks if file/dir is valid.
- *
- * @param $fileEntry
- * @return true/false
- */
-function isValidEntry($entry) {
-	global $restrictedFileEntries;
-	// check if dot-entry
-	if (substr($entry, 0, 1) == ".")
-		return false;
-	// check if weirdo macos-entry
-	if (substr($entry, 0, 1) == ":")
-		return false;
-	// check if in restricted array
-	if (in_array($entry, $restrictedFileEntries))
-		return false;
-	// entry ok
-	return true;
 }
 
 # define some things

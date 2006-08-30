@@ -63,6 +63,9 @@ httpseeds = optional list of http-seed URLs, in the format:
 		url[|url...]
 */
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 # create new template
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/maketorrent.tmpl");

@@ -31,8 +31,8 @@ if (isset($_SESSION['user'])) {
 		$cfg = $_SESSION['cache'][$currentUser];
 		// include defines
 		require_once('inc/config/defines.php');
-		// functions
-		require_once('inc/functions/functions.php');
+		// core functions
+		require_once('inc/functions/functions.core.php');
 		// db
 		require_once('inc/db.php');
 		// Create Connection.
@@ -108,6 +108,7 @@ require_once("inc/language/".$cfg["language_file"]);
 // vlib
 require_once("lib/vlib/vlibTemplate.php");
 
+
 /*******************************************************************************
  *  TorrentFlux xfer Statistics hack
  *  blackwidow - matt@mattjanssen.net
@@ -122,19 +123,11 @@ require_once("lib/vlib/vlibTemplate.php");
 // create tf_xfer if it doesn't already exist. if xfer is empty,
 // insert a zero record for today
 if ($cfg['enable_xfer'] == 1) {
-	if (($xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer")) === false) {
-		if ($db->Execute('CREATE TABLE tf_xfer (user varchar(32) NOT NULL default "", date date NOT NULL default "0000-00-00", download bigint(20) NOT NULL default "0", upload bigint(20) NOT NULL default "0", PRIMARY KEY (user,date))') === false) {
-			if (IsAdmin()) echo '<b>ERROR:</b> tf_xfer table is missing. Trying to create the table for you <b>FAILED</b>.<br>Create using:<br>CREATE TABLE tf_xfer (<br>user varchar(32) NOT NULL default "",<br>date date NOT NULL default "0000-00-00",<br>download bigint(20) NOT NULL default "0",<br>upload bigint(20) NOT NULL default "0",<br>PRIMARY KEY  (user,date)<br>);<br>';
-			else echo '<b>ERROR:</b> Contact an admin: tf_xfer table is missing.<br>';
-			$cfg['enable_xfer'] = 0;
-		} else {
-			$rec = array('user'=>'', 'date'=>$db->DBDate(time()));
-			$sTable = 'tf_xfer';
-			$sql = $db->GetInsertSql($sTable, $rec);
-			$db->Execute($sql);
-			showError($db,$sql);
-		}
-	} elseif (empty($xferRecord)) {
+	// xfer functions
+	require_once('inc/functions/functions.xfer.php');
+	// xfer-init
+	$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
+	if (empty($xferRecord)) {
 		$rec = array('user'=>'', 'date'=>$db->DBDate(time()));
 		$sTable = 'tf_xfer';
 		$sql = $db->GetInsertSql($sTable, $rec);

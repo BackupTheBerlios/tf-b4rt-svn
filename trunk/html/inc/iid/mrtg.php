@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 // default-target
 define('_DEFAULT_TARGET','traffic');
 

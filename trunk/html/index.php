@@ -29,19 +29,23 @@ require_once("inc/main.webapp.php");
 if(isset($_GET['iid'])) {
 	switch($_GET['iid']) {
 		default:
-			require_once("inc/iid/index.php");
-			break;
 		case "index":
 			require_once("inc/iid/index.php");
+			break;
+		case "admin":
+			require_once("inc/iid/admin.php");
 			break;
 		case "dir":
 			require_once("inc/iid/dir.php");
 			break;
-		case "history":
-			require_once("inc/iid/history.php");
-			break;
 		case "xfer":
 			require_once("inc/iid/xfer.php");
+			break;
+		case "profile":
+			require_once("inc/iid/profile.php");
+			break;
+		case "history":
+			require_once("inc/iid/history.php");
 			break;
 		case "who":
 			require_once("inc/iid/who.php");
@@ -66,9 +70,6 @@ if(isset($_GET['iid'])) {
 			break;
 		case "readmsg":
 			require_once("inc/iid/readmsg.php");
-			break;
-		case "profile":
-			require_once("inc/iid/profile.php");
 			break;
 		case "multiup":
 			require_once("inc/iid/multiup.php");
@@ -109,12 +110,8 @@ if(isset($_GET['iid'])) {
 		case "all_services":
 			require_once("inc/iid/all_services.php");
 			break;
-		case "admin":
-			require_once("inc/iid/admin.php");
-			break;
 	}
-} else {
-	// use "old" style to stay flux-compatible as good as possible
+} else { // use "old" style to stay flux-compatible as good as possible
 	require_once("inc/iid/index.php");
 }
 

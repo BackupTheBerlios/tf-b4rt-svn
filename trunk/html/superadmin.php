@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// all functions
+require_once('inc/functions/functions.all.php');
+
 // main.webapp
 require_once("inc/main.webapp.php");
 

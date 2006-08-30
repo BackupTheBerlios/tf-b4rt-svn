@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 # create new template
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/who.tmpl");
@@ -45,5 +48,38 @@ $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
+
+/**
+ * RunningProcessInfo
+ *
+ */
+function RunningProcessInfo() {
+	global $cfg;
+	require_once("inc/classes/ClientHandler.php");
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.RunningProcessInfo.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.RunningProcessInfo.tmpl");
+	// first we need an array with all clients
+	$clients = array('tornado', 'transmission', 'mainline', 'wget');
+	// get informations
+	$process_list = array();
+	foreach($clients as $client) {
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$client);
+		$RunningProcessInfo = $clientHandler->printRunningClientsInfo();
+		$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep");
+		array_push($process_list, array(
+			'client' => $client,
+			'RunningProcessInfo' => $RunningProcessInfo,
+			'pinfo' => $pinfo,
+			)
+		);
+	}
+	$tmpl->setloop('process_list', $process_list);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
 
 ?>

@@ -31,6 +31,12 @@
 	or (at your option) any later version.
 */
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
+// xfer functions
+require_once('inc/functions/functions.xfer.php');
+
 # create new template
 if ((strpos($cfg['theme'], '/')) === false)
 	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/xfer.tmpl");

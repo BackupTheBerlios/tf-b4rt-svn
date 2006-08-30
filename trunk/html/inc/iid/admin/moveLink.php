@@ -22,7 +22,6 @@
 
 if (!isset($lid) && !isset($direction)&& $direction !== "up" && $direction !== "down" )
 	header("location: index.php?iid=admin&op=editLinks");
-}
 
 $idx=getLinkSortOrder($lid);
 $position=array("up"=>-1, "down"=>1);

@@ -20,7 +20,10 @@
 
 *******************************************************************************/
 
-// require
+// common functions
+require_once('inc/functions/functions.common.php');
+
+// metainfo
 require_once("inc/metaInfo.php");
 
 # create new template
