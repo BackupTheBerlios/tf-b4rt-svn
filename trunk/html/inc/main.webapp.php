@@ -37,6 +37,8 @@ if (isset($_SESSION['user'])) {
 		require_once('inc/db.php');
 		// Create Connection.
 		$db = getdb();
+		// Free space in MB
+		$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
 	} else {
 		// main.common
 		require_once('inc/main.common.php');
