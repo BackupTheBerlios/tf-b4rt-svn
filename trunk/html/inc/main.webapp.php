@@ -108,7 +108,7 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 require_once("inc/language/".$cfg["language_file"]);
 
 // vlib
-require_once("lib/vlib/vlibTemplate.php");
+require_once("inc/lib/vlib/vlibTemplate.php");
 
 
 /*******************************************************************************

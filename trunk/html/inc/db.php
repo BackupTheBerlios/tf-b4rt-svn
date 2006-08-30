@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // ADODB
-require_once('lib/adodb/adodb.inc.php');
+require_once('inc/lib/adodb/adodb.inc.php');
 
 /* -------------------------------------------------------------------------- */
 
@@ -50,7 +50,7 @@ function showError($db, $sql) {
 	global $cfg, $tmpl;
 	if($db->ErrorNo() != 0) {
 		// vlib
-		require_once("lib/vlib/vlibTemplate.php");
+		require_once("inc/lib/vlib/vlibTemplate.php");
 		$tmpl = new vlibTemplate("themes/default/tmpl/db.tmpl");
 		$tmpl->setvar('error', 1);
 		include("themes/default/index.php");

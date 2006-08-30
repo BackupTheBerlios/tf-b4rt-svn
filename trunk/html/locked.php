@@ -32,7 +32,7 @@ require_once("inc/language/".$cfg["default_language"]);
 include("themes/".$cfg["default_theme"]."/index.php");
 
 // vlib
-require_once("lib/vlib/vlibTemplate.php");
+require_once("inc/lib/vlib/vlibTemplate.php");
 
 # create new template
 if ((strpos($cfg['default_theme'], '/')) === false)
