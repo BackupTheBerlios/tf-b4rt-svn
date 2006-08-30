@@ -411,44 +411,56 @@ if (isset($_REQUEST["f"])) {
 				break;
 			case "1": // fluxd-log
 				$htmlTitle = "fluxd - log";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
 				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd.log');
 				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
 				break;
 			case "2": // fluxd-error-log
 				$htmlTitle = "fluxd - error-log";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
 				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd-error.log');
 				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
 				break;
 			case "3": // fluxd-ps
 				$htmlTitle = "fluxd - ps";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
 				$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep");
 				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
 				break;
 			case "4": // fluxd-status
 				$htmlTitle = "fluxd - status";
 				if ($fluxdRunning) {
-					$htmlMain .= '<br><pre>';
+					$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+					$htmlMain .= '<pre>';
 					$htmlMain .= $fluxd->statusFluxd();
 					$htmlMain .= '</pre>';
+					$htmlMain .= '</div>';
 				} else {
 					$htmlMain .= '<br><strong>fluxd not running</strong>';
 				}
 				break;
 			case "5": // fluxd-check
 				$htmlTitle = "fluxd - check";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
 				$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
 				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$fluxDocRoot."/bin/fluxd ".$fluxDocRoot."/bin/fluxd/fluxd.pl check ".$fluxDocRoot);
 				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
 				break;
 			case "6": // fluxd-db-debug
 				$htmlTitle = "fluxd - db-debug";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
 				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$fluxDocRoot."/bin/fluxd ".$fluxDocRoot."/bin/fluxd/fluxd.pl debug db ".$fluxDocRoot);
 				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
 				break;
 		}
 		printPage();
@@ -838,19 +850,21 @@ if (isset($_REQUEST["z"])) {
 			case "2": // News
 				$htmlTitle = "tf-b4rt - News";
 				$htmlMain .= '<br>';
-				$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
+				$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
 				$htmlMain .= '<br><br>';
 				break;
 			case "3": // Changelog;
 				$htmlTitle = "tf-b4rt - Changelog";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
+				$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
+				$htmlMain .= '</pre>';
 				$htmlMain .= '</pre>';
 				break;
 			/*
 			case "4": // Issues
 				$issueText = "Error getting issues";
-				$issueText = gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
+				$issueText = @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
 				header("Content-Type: text/plain");
 				echo $issueText;
 				exit();
@@ -1226,7 +1240,7 @@ function setWebappLock($lock) {
 function getReleaseList() {
 	global $cfg, $error;
 	$retVal = "";
-	$releaseList = gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=3"));
+	$releaseList = @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=3"));
 	if ((isset($releaseList)) && ($releaseList != "")) {
 		$retVal .= '<strong>Available Tarballs : </strong>';
 		$retVal .= '<br>';

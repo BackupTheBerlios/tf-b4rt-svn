@@ -1314,7 +1314,7 @@ function getSuperAdminLink($param = "", $linkText = "") {
 	$superAdminLink = '
 	<script language="JavaScript">
 	function SuperAdmin(name_file) {
-			window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width='.$cfg["ui_dim_superadmin_w"].',height='.$cfg["ui_dim_superadmin_h"].'")
+			window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600")
 	}
 	</script>';
 	$superAdminLink .= "<a href=\"JavaScript:SuperAdmin('superadmin.php".$param."')\">";

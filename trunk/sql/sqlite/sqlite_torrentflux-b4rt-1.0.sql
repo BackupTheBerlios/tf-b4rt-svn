@@ -235,8 +235,6 @@ INSERT INTO tf_settings VALUES ('ui_displayfluxlink','1');
 INSERT INTO tf_settings VALUES ('ui_dim_main_w','780');
 INSERT INTO tf_settings VALUES ('ui_dim_details_w','450');
 INSERT INTO tf_settings VALUES ('ui_dim_details_h','290');
-INSERT INTO tf_settings VALUES ('ui_dim_superadmin_w','800');
-INSERT INTO tf_settings VALUES ('ui_dim_superadmin_h','600');
 INSERT INTO tf_settings VALUES ('enable_bigboldwarning','1');
 INSERT INTO tf_settings VALUES ('enable_goodlookstats','1');
 INSERT INTO tf_settings VALUES ('ui_displaylinks','1');

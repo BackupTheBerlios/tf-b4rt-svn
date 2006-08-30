@@ -409,8 +409,6 @@ $tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('version', $cfg["version"]);
-$tmpl->setvar('ui_dim_superadmin_w', $cfg["ui_dim_superadmin_w"]);
-$tmpl->setvar('ui_dim_superadmin_h', $cfg["ui_dim_superadmin_h"]);
 $tmpl->setvar('_TOTALXFER', _TOTALXFER);
 $tmpl->setvar('_MONTHXFER', _MONTHXFER);
 $tmpl->setvar('_WEEKXFER', _WEEKXFER);
