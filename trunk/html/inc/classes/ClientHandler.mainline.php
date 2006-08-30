@@ -114,7 +114,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --max_initiate ".$this->maxcons;
 		$this->command .= $skipHashCheck;
 		//$this->command .= $filePrio;
-		$this->command .= " --save_incomplete_in ".$this->savepath;
+		//$this->command .= " --save_incomplete_in ".$this->savepath;
 		$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
 		$this->command .= " > /dev/null &";
