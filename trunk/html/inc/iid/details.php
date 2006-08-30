@@ -45,12 +45,8 @@ if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 	} else {
 		$tmpl->setvar('showMetaInfo', showMetaInfo($transfer, true));
 	}
-	switch ($cfg["metainfoclient"]) {
-		case "transmissioncli":
-			$tmpl->setvar('scrape', 1);
-			$tmpl->setvar('getTorrentScrapeInfo', getTorrentScrapeInfo($transfer));
-		break;
-	}
+	$tmpl->setvar('getTorrentScrapeInfo', getTorrentScrapeInfo($transfer));
+	$tmpl->setvar('scrape', 1);
 } else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 	// this is wget.
 	require_once("inc/classes/ClientHandler.php");

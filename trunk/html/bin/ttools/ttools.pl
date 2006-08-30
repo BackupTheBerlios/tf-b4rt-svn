@@ -22,9 +22,14 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
+use Convert::Bencode;
 use Net::BitTorrent::File;
+use LWP::UserAgent;
 use strict;
 ################################################################################
+
+# timeout for url-get
+my $TIMEOUT = 5;
 
 # Internal Vars
 my ($VERSION, $DIR, $PROG, $EXTENSION, $USAGE);
@@ -43,12 +48,19 @@ $EXTENSION=$1;
 # main-"switch"
 SWITCH: {
 	$_ = shift @ARGV;
+	/info|.*-i/ && do { # --- info ---
+		torrentInfo(shift @ARGV);
+		exit;
+	};
+	/scrape|.*-s/ && do { # --- scrape ---
+		torrentScrape(shift @ARGV);
+		exit;
+	};
 	/.*(help|-h).*/ && do { # --- help ---
 		printUsage();
 		exit;
 	};
-	# decode torrent
-	decodeTorrent($_);
+	printUsage();
 	exit;
 }
 
@@ -57,11 +69,11 @@ SWITCH: {
 #===============================================================================
 
 #-------------------------------------------------------------------------------
-# Sub: decodeTorrent
+# Sub: torrentInfo
 # Parameters: string with path to torrent-meta-file
 # Return: -
 #-------------------------------------------------------------------------------
-sub decodeTorrent {
+sub torrentInfo {
 	my $torrentFile = shift;
 	if (!(defined $torrentFile)) {
 		printUsage();
@@ -105,6 +117,98 @@ sub decodeTorrent {
 }
 
 #-------------------------------------------------------------------------------
+# Sub: torrentScrape
+# Parameters: string with path to torrent-meta-file
+# Return: -
+#-------------------------------------------------------------------------------
+sub torrentScrape {
+	my $torrentFile = shift;
+	if (!(defined $torrentFile)) {
+		printUsage();
+		exit;
+	}
+	if (!(-f $torrentFile)) {
+		print "Error : ".$torrentFile." is no file\n";
+		exit;
+	}
+	my $torrent = new Net::BitTorrent::File($torrentFile);
+	if (!(defined $torrent)) {
+		print "Error loading torrent-meta-file ".$torrentFile."\n";
+		exit;
+	}
+	# get hash
+	my $hash = $torrent->info_hash();
+	$hash =~ s/(.)/sprintf("%02x",ord($1))/egs;
+	$hash = lc($hash);
+	# get scrape url
+	my $scrapeUrl;
+	if ((index($torrent->announce(), "/announce")) > 0) {
+		$scrapeUrl = $torrent->announce();
+		$scrapeUrl =~ s#/announce#/scrape#ig;
+	} else {
+		print "Error : could not get scrape-url\n";
+		exit;
+	}
+	# get scrape info
+	my $res = getUrl($scrapeUrl);
+	if (!($res->is_success)) {
+		print "Error : could not fetch scrape-infos : ".$res->status_line()."\n";
+		exit;
+	}
+	# decode data
+	my $info;
+	eval {
+		$info = Convert::Bencode::bdecode($res->content);
+	};
+	if ($@) {
+		print "Error : cant decode info-data : ".$@."\n";
+		exit;
+	}
+	# check result
+	if (!(defined $info)) {
+		print "Error in tracker-response.\n";
+		exit;
+	}
+	if (ref($info) eq 'ARRAY') {
+		print "Error in tracker-response.\n";
+		exit;
+	}
+	if (!(exists($info->{'files'}))) {
+		print "Error : tracker-response did not contain files.\n";
+		exit;
+	}
+	# process response
+	foreach my $fileEntry (%{$info->{'files'}}) {
+		my $t = $info->{'files'}{$fileEntry};
+		my $fileHash = $fileEntry;
+		$fileHash =~ s/(.)/sprintf("%02x",ord($1))/egs;
+		$fileHash = lc($fileHash);
+		if ($fileHash eq $hash) {
+			print $t->{'complete'}." seeder(s), ";
+			print $t->{'incomplete'}." leecher(s).\n";
+			exit;
+		}
+	}
+	# error
+	print "Error : tracker-response did not contain requested info.\n";
+	exit;
+}
+
+#-------------------------------------------------------------------------------
+# Sub: getUrl
+# Parameters: string with url
+# Return: res
+#-------------------------------------------------------------------------------
+sub getUrl() {
+	my $url = shift;
+	my $ua = LWP::UserAgent->new(
+		'agent'		 => $PROG.$EXTENSION."/".$VERSION,
+		'timeout'	 => $TIMEOUT
+	);
+	return $ua->get($url);
+}
+
+#-------------------------------------------------------------------------------
 # Sub: printUsage
 # Parameters:	-
 # Return:		-
@@ -114,12 +218,16 @@ sub printUsage {
 
 $PROG.$EXTENSION (Revision $VERSION)
 
-Usage: $PROG.$EXTENSION path-to-torrent-meta-file
+Usage: $PROG.$EXTENSION operation path-to-torrent-meta-file
+
+Operations :
+ -i  : decode and print out torrent-info.
+ -s  : get scrape-info and print out seeders + leechers.
 
 Example:
 
-$PROG.$EXTENSION /foo/bar.torrent
-
+$PROG.$EXTENSION -i /foo/bar.torrent
+$PROG.$EXTENSION -s /foo/bar.torrent
 
 USAGE
 
