@@ -1,0 +1,14 @@
+<div align="center">
+	<table border="0" cellpadding="0" cellspacing="0">
+		<form name="formMessage" action="index.php?iid=message" method="post">
+			<tr><td><tmpl_var name="_SENDMESSAGETO">
+				<select name="to_user">
+					<tmpl_loop name="user">
+						<option><tmpl_var name="user"></option>
+					</tmpl_loop>
+				</select>
+				<input type="Submit" value="<tmpl_var name="_COMPOSE">">
+			</td></tr>
+		</form>
+	</table>
+</div>

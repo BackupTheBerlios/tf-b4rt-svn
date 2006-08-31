@@ -57,7 +57,7 @@
 						<a href="index.php?iid=admin&op=setUserState&user_id=<tmpl_var name="user_id">&state=1"><img src="themes/<tmpl_var name="theme">/images/red.gif" width="13" height="13" title="activate <tmpl_var name="user_id">" border="0"></a>
 					</tmpl_if>
 				<tmpl_else>
-					<img src="images/black.gif" width="13" height="13" title="superadmin always activated">
+					<img src="themes/'.$cfg['theme'].'/images/black.gif" width="13" height="13" title="superadmin always activated">
 				</tmpl_if>
 				<tmpl_if name="is_superadmin">
 					<a href="index.php?iid=admin&op=editUser&user_id=<tmpl_var name="user_id">"><img src="images/edit.png" width=12 height=13 title="<tmpl_var name="_EDIT"> <tmpl_var name="user_id">" border=0></a>

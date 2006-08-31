@@ -465,9 +465,9 @@ $sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 list($user_level) = $db->GetRow($sql);
 
 #some good looking vars
-$tmpl->setvar('indexPageSettingsForm', getIndexPageSettingsForm());
+$tmpl->setvar('indexPageSettingsForm', IndexPageSettingsForm());
 $tmpl->setvar('sortOrderSettingsForm', getSortOrderSettings());
-$tmpl->setvar('goodLookingStatsForm', getGoodLookingStatsForm());
+$tmpl->setvar('goodLookingStatsForm', GoodLookingStatsForm());
 $tmpl->setvar('moveSettingsForm', getMoveSettings());
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

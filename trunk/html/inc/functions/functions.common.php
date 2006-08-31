@@ -492,102 +492,54 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
  * TorrentClient [11]
  *
  */
-function getIndexPageSettingsForm() {
+function IndexPageSettingsForm() {
 	global $cfg;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.IndexPageSettingsForm.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.IndexPageSettingsForm.tmpl");
+	# some vars
 	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
-	$indexPageSettingsForm = '<table>';
-	$indexPageSettingsForm .= '<tr>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Owner: <input name="index_page_settings_0" type="Checkbox" value="1"';
-	if ($settingsIndexPage[0] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Size: <input name="index_page_settings_1" type="Checkbox" value="1"';
-	if ($settingsIndexPage[1] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Total Down: <input name="index_page_settings_2" type="Checkbox" value="1"';
-	if ($settingsIndexPage[2] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Total Up: <input name="index_page_settings_3" type="Checkbox" value="1"';
-	if ($settingsIndexPage[3] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '</tr>';
-	$indexPageSettingsForm .= '<tr>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Status : <input name="index_page_settings_4" type="Checkbox" value="1"';
-	if ($settingsIndexPage[4] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Progress : <input name="index_page_settings_5" type="Checkbox" value="1"';
-	if ($settingsIndexPage[5] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Down-Speed : <input name="index_page_settings_6" type="Checkbox" value="1"';
-	if ($settingsIndexPage[6] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Up-Speed : <input name="index_page_settings_7" type="Checkbox" value="1"';
-	if ($settingsIndexPage[7] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '</tr>';
-	$indexPageSettingsForm .= '<tr>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Seeds : <input name="index_page_settings_8" type="Checkbox" value="1"';
-	if ($settingsIndexPage[8] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Peers : <input name="index_page_settings_9" type="Checkbox" value="1"';
-	if ($settingsIndexPage[9] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Estimated Time : <input name="index_page_settings_10" type="Checkbox" value="1"';
-	if ($settingsIndexPage[10] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '<td align="right" nowrap>Client : <input name="index_page_settings_11" type="Checkbox" value="1"';
-	if ($settingsIndexPage[11] == 1)
-		$indexPageSettingsForm .= ' checked';
-	$indexPageSettingsForm .= '></td>';
-	$indexPageSettingsForm .= '</tr>';
-	$indexPageSettingsForm .= '</table>';
-	return $indexPageSettingsForm;
+	$tmpl->setvar('settings_0', $settingsIndexPage[0]);
+	$tmpl->setvar('settings_1', $settingsIndexPage[1]);
+	$tmpl->setvar('settings_2', $settingsIndexPage[2]);
+	$tmpl->setvar('settings_3', $settingsIndexPage[3]);
+	$tmpl->setvar('settings_4', $settingsIndexPage[4]);
+	$tmpl->setvar('settings_5', $settingsIndexPage[5]);
+	$tmpl->setvar('settings_6', $settingsIndexPage[6]);
+	$tmpl->setvar('settings_7', $settingsIndexPage[7]);
+	$tmpl->setvar('settings_8', $settingsIndexPage[8]);
+	$tmpl->setvar('settings_9', $settingsIndexPage[9]);
+	$tmpl->setvar('settings_10', $settingsIndexPage[10]);
+	$tmpl->setvar('settings_11', $settingsIndexPage[11]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**
  * get form of good looking stats hack (0-63)
  *
  */
-function getGoodLookingStatsForm() {
+function GoodLookingStatsForm() {
 	global $cfg;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.GoodLookingStatsForm.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.GoodLookingStatsForm.tmpl");
+	# some vars
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
-	$goodLookingStatsForm = '<table>';
-	$goodLookingStatsForm .= '<tr><td align="right" nowrap>Download Speed: <input name="hack_goodlookstats_settings_0" type="Checkbox" value="1"';
-	if ($settingsHackStats[0] == 1)
-		$goodLookingStatsForm .= ' checked';
-	$goodLookingStatsForm .= '></td>';
-	$goodLookingStatsForm .= '<td align="right" nowrap>Upload Speed: <input name="hack_goodlookstats_settings_1" type="Checkbox" value="1"';
-	if ($settingsHackStats[1] == 1)
-		$goodLookingStatsForm .= ' checked';
-	$goodLookingStatsForm .= '></td>';
-	$goodLookingStatsForm .= '<td align="right" nowrap>Total Speed: <input name="hack_goodlookstats_settings_2" type="Checkbox" value="1"';
-	if ($settingsHackStats[2] == 1)
-		$goodLookingStatsForm .= ' checked';
-	$goodLookingStatsForm .= '></td></tr>';
-	$goodLookingStatsForm .= '<tr><td align="right" nowrap>Connections: <input name="hack_goodlookstats_settings_3" type="Checkbox" value="1"';
-	if ($settingsHackStats[3] == 1)
-		$goodLookingStatsForm .= ' checked';
-	$goodLookingStatsForm .= '></td>';
-	$goodLookingStatsForm .= '<td align="right" nowrap>Drive Space: <input name="hack_goodlookstats_settings_4" type="Checkbox" value="1"';
-	if ($settingsHackStats[4] == 1)
-		$goodLookingStatsForm .= ' checked';
-	$goodLookingStatsForm .= '></td>';
-	$goodLookingStatsForm .= '<td align="right" nowrap>Server Load: <input name="hack_goodlookstats_settings_5" type="Checkbox" value="1"';
-	if ($settingsHackStats[5] == 1)
-		$goodLookingStatsForm .= ' checked';
-	$goodLookingStatsForm .= '></td></tr>';
-	$goodLookingStatsForm .= '</table>';
-	return $goodLookingStatsForm;
+	$tmpl->setvar('settings_0', $settingsHackStats[0]);
+	$tmpl->setvar('settings_1', $settingsHackStats[1]);
+	$tmpl->setvar('settings_2', $settingsHackStats[2]);
+	$tmpl->setvar('settings_3', $settingsHackStats[3]);
+	$tmpl->setvar('settings_4', $settingsHackStats[4]);
+	$tmpl->setvar('settings_5', $settingsHackStats[5]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 // ***************************************************************************
@@ -682,19 +634,26 @@ function GetMessage($mid) {
  */
 function getMessageList() {
 	global $cfg;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getMessageList.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getMessageList.tmpl");
+	# some vars
 	$users = GetUsers();
-	$messageList = '<div align="center">'.
-	'<table border="0" cellpadding="0" cellspacing="0">'.
-	'<form name="formMessage" action="index.php?iid=message" method="post">'.
-	'<tr><td>' . _SENDMESSAGETO ;
-	$messageList .= '<select name="to_user">';
+	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
+	$tmpl->setvar('_COMPOSE', _COMPOSE);
+	$user = array();
 	for($inx = 0; $inx < sizeof($users); $inx++) {
-		$messageList .= '<option>'.$users[$inx].'</option>';
+		array_push('$user', array(
+			'user' => $users[$inx],
+			)
+		);
 	}
-	$messageList .= '</select>';
-	$messageList .= '<input type="Submit" value="' . _COMPOSE .'">';
-	$messageList .= '</td></tr></form></table></div>';
-	return $messageList;
+	$tmpl->setloop('user', $user);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 // ***************************************************************************
