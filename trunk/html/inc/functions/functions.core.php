@@ -2014,10 +2014,14 @@ function TransferListString() {
 	
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 	$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 	$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
+	$tmpl->setvar('user', $cfg["user"]);
+	$tmpl->setvar('sortOrder', $sortOrder);
+	
 	
 	$tmpl->setvar('settings_0', $settings[0]);
 	$tmpl->setvar('settings_1', $settings[1]);
@@ -2039,118 +2043,23 @@ function TransferListString() {
 	$tmpl->setvar('_SEEDTRANSFER', _SEEDTRANSFER);
 	$tmpl->setvar('_STOPPING', _STOPPING);
 	$tmpl->setvar('_DELETE', _DELETE);
+	$tmpl->setvar('_TRANSFERFILE', _TRANSFERFILE);
+	$tmpl->setvar('_USER', _USER);
+	$tmpl->setvar('_STATUS', _STATUS);
+	$tmpl->setvar('_ESTIMATEDTIME', _ESTIMATEDTIME);
+	$tmpl->setvar('_ADMIN', _ADMIN);
 	
-	
-
 	if (sizeof($arUserTorrent) > 0) {
 		$tmpl->setvar('are_user_torrent', 1);
-		$head = getTransferTableHead($settings, $sortOrder, $cfg["user"]." : ");
-		//messy
-		$tmpl->setvar('head', $head);
 	}
 	$boolCond = true;
 	if ($cfg['enable_restrictivetview'] == 1)
 		$boolCond = IsAdmin();
 	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
 		$tmpl->setvar('are_torrent', 1);
-		$head2 = getTransferTableHead($settings, $sortOrder);
-		//messy
-		$tmpl->setvar('head2', $head2);
 	}
 	// grab the template
 	$output = $tmpl->grab();
-	return $output;
-}
-
-/*
- * This method gets html-snip of table-head
- *
- * @param $settings ref to array holding index-page-settings
- * @param $sortOrder
- * @param $nPrefix prefix of name-column
- * @return string with head-row
- */
-function getTransferTableHead($settings, $sortOrder = '', $nPrefix = '') {
-	global $cfg;
-	$output = "<tr>";
-	//
-	// ============================================================== led + meta
-	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">";
-	switch ($sortOrder) {
-		case 'da': // sort by date ascending
-			$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
-			$output .= '&nbsp;';
-			$output .= '<a href="?so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
-			break;
-		case 'dd': // sort by date descending
-			$output .= '<a href="?so=da"><font class="adminlink">#</font></a>';
-			$output .= '&nbsp;';
-			$output .= '<a href="?so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
-			break;
-		default:
-			$output .= '<a href="?so=dd"><font class="adminlink">#</font></a>';
-			break;
-	}
-	$output .= "</div></td>";
-	// ==================================================================== name
-	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">";
-	switch ($sortOrder) {
-		case 'na': // sort alphabetically by name ascending
-			$output .= '<a href="?so=nd"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
-			$output .= '&nbsp;';
-			$output .= '<a href="?so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>';
-			break;
-		case 'nd': // sort alphabetically by name descending
-			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
-			$output .= '&nbsp;';
-			$output .= '<a href="?so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>';
-			break;
-		default:
-			$output .= '<a href="?so=na"><font class="adminlink">' .$nPrefix. _TRANSFERFILE .'</font></a>';
-			break;
-	}
-	$output .= "</div></td>";
-	// =================================================================== owner
-	if ($settings[0] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._USER."</div></td>";
-	// ==================================================================== size
-	if ($settings[1] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Size</div></td>";
-	// =============================================================== downtotal
-	if ($settings[2] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">T. Down</div></td>";
-	// ================================================================= uptotal
-	if ($settings[3] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">T. Up</div></td>";
-	// ================================================================== status
-	if ($settings[4] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._STATUS."</div></td>";
-	// ================================================================ progress
-	if ($settings[5] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Progress</div></td>";
-	// ==================================================================== down
-	if ($settings[6] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Down</div></td>";
-	// ====================================================================== up
-	if ($settings[7] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Up</div></td>";
-	// =================================================================== seeds
-	if ($settings[8] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Seeds</div></td>";
-	// =================================================================== peers
-	if ($settings[9] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">Peers</div></td>";
-	// ===================================================================== ETA
-	if ($settings[10] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._ESTIMATEDTIME."</div></td>";
-	// ================================================================== client
-	if ($settings[11] != 0)
-		$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">C</div></td>";
-	// =================================================================== admin
-	$output .= "<td background=\"themes/".$cfg["theme"]."/images/bar.gif\" bgcolor=\"".$cfg["table_header_bg"]."\" nowrap><div align=\"center\" class=\"title\">"._ADMIN."</div></td>";
-	//
-	$output .= "</tr>\n";
-	// return
 	return $output;
 }
 

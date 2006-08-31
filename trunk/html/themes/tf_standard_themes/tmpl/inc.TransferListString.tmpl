@@ -1,6 +1,66 @@
 <table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">
-	<tmpl_var name="head">
 	<tmpl_if name="are_user_torrent">
+	<tr>
+		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
+			<tmpl_if name="sortOrder" value="da">
+				<a href="index.php?iid=index&so=dd"><font class="adminlink">#</font></a>
+				<a href="index.php?iid=index&so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+			<tmpl_elseif name="sortOrder" value="dd">
+				<a href="index.php?iid=index&so=da"><font class="adminlink">#</font></a>
+				<a href="index.php?iid=index&so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
+			<tmpl_else>
+				<a href="index.php?iid=index&so=dd"><font class="adminlink">#</font></a>
+			</tmpl_if>
+		</div></td>
+		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
+			<tmpl_if name="sortOrder" value="na">
+				<a href="index.php?iid=index&so=nd"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
+				<a href="index.php?iid=index&so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+			<tmpl_elseif name="sortOrder" value="nd">
+				<a href="index.php?iid=index&so=na"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
+				<a href="index.php?iid=index&so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
+			<tmpl_else>
+				<a href="index.php?iid=index&so=na"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
+			</tmpl_if>
+		</div></td>
+		<tmpl_if name="settings_0">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_USER"></div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_1">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Size</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_2">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">T. Down</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_3">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">T. Up</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_4">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_STATUS"></div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_5">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Progress</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_6">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Down</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_7">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Up</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_8">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Seeds</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_9">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Peers</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_10">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_ESTIMATEDTIME"></div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_11">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">C</div></td>
+		</tmpl_if>
+		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_ADMIN"></div></td>
+	</tr>
 		<tmpl_loop name="arUserTorrent">
 			<tr>
 				<td valign="bottom" align="center" nowrap>
@@ -173,8 +233,68 @@
 			</tr>
 		</tmpl_loop>
 	</tmpl_if>
-	<tmpl_var name="head2">
 	<tmpl_if name="are_torrent">
+		<tr>
+		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
+			<tmpl_if name="sortOrder" value="da">
+				<a href="index.php?iid=index&so=dd"><font class="adminlink">#</font></a>
+				<a href="index.php?iid=index&so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+			<tmpl_elseif name="sortOrder" value="dd">
+				<a href="index.php?iid=index&so=da"><font class="adminlink">#</font></a>
+				<a href="index.php?iid=index&so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
+			<tmpl_else>
+				<a href="index.php?iid=index&so=dd"><font class="adminlink">#</font></a>
+			</tmpl_if>
+		</div></td>
+		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
+			<tmpl_if name="sortOrder" value="na">
+				<a href="index.php?iid=index&so=nd"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
+				<a href="index.php?iid=index&so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+			<tmpl_elseif name="sortOrder" value="nd">
+				<a href="index.php?iid=index&so=na"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
+				<a href="index.php?iid=index&so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
+			<tmpl_else>
+				<a href="index.php?iid=index&so=na"><font class="adminlink"><tmpl_var name="_TRANSFERFILE"></font></a>
+			</tmpl_if>
+		</div></td>
+		<tmpl_if name="settings_0">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_USER"></div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_1">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Size</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_2">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">T. Down</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_3">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">T. Up</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_4">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_STATUS"></div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_5">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Progress</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_6">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Down</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_7">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Up</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_8">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Seeds</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_9">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">Peers</div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_10">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_ESTIMATEDTIME"></div></td>
+		</tmpl_if>
+		<tmpl_if name="settings_11">
+			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">C</div></td>
+		</tmpl_if>
+		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_ADMIN"></div></td>
+	</tr>
 		<tmpl_loop name="arListTorrent">
 			<tr>
 				<td valign="bottom" align="center" nowrap>
