@@ -645,7 +645,7 @@ function getMessageList() {
 	$tmpl->setvar('_COMPOSE', _COMPOSE);
 	$user = array();
 	for($inx = 0; $inx < sizeof($users); $inx++) {
-		array_push('$user', array(
+		array_push($user, array(
 			'user' => $users[$inx],
 			)
 		);
@@ -717,21 +717,29 @@ function GetLanguageFromFile($inFile) {
  */
 function getBTClientSelect($btclient = 'tornado') {
 	global $cfg;
-	$getBTClientSelect = '<select name="btclient">';
-	$getBTClientSelect .= '<option value="tornado"';
-	if ($btclient == "tornado")
-		$getBTClientSelect .= " selected";
-	$getBTClientSelect .= '>tornado</option>';
-	$getBTClientSelect .= '<option value="transmission"';
-	if ($btclient == "transmission")
-		$getBTClientSelect .= " selected";
-	$getBTClientSelect .= '>transmission</option>';
-	$getBTClientSelect .= '<option value="mainline"';
-	if ($btclient == "mainline")
-		$getBTClientSelect .= " selected";
-	$getBTClientSelect .= '>mainline</option>';
-	$getBTClientSelect .= '</select>';
-	return $getBTClientSelect;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBTClientSelect.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBTClientSelect.tmpl");
+	//set some vars
+	$btclients = array("tornado", "transmission", "mainline");
+	$client_list = array();
+	foreach($btclients as $client) {
+		$selected = 0;
+		if($btclient == $client) {
+			$selected = 1;
+		}
+		array_push($client_list, array(
+			'client' => $client,
+			'selected' => $selected,
+			)
+		);
+	}
+	$tmpl->setloop('client_list', $client_list);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**
@@ -792,27 +800,40 @@ function getMoveSettings() {
  * @return unknown
  */
 function dirTree2($dir, $maxdepth) {
-        $dirTree2 = "<option value=\"".$dir."\">".$dir."</option>\n" ;
-        if (is_numeric ($maxdepth)) {
-                if ($maxdepth == 0) {
-                        //$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
-                        $last = exec ("find ".$dir." -type d | sort", $retval);
-                        for ($i = 1; $i < (count ($retval) - 1); $i++)
-                        {
-                                $dirTree2 .= "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
-                        }
-                } else if ($maxdepth > 0) {
-                        //$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
-                        $last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort", $retval);
-                        for ($i = 1; $i < (count ($retval) - 1); $i++)
-                                $dirTree2 .= "<option value=\"".$retval[$i]."\">".$retval[$i]."</option>\n" ;
-                } else {
-                        $dirTree2 .= "<option value=\"".$dir."\">".$dir."</option>\n" ;
-                }
-        } else {
-                $dirTree2 .= "<option value=\"".$dir."\">".$dir."</option>\n" ;
-        }
-        return $dirTree2;
+	global $cfg;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.dirTree2.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.dirTree2.tmpl");
+	//set some vars
+	$tmpl->setvar('dir', $dir);
+	if (is_numeric ($maxdepth)) {
+		if ($maxdepth == 0) {
+			$retvar_list = array();
+			//$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
+			$last = exec ("find ".$dir." -type d | sort", $retval);
+			for ($i = 1; $i < (count ($retval) - 1); $i++){
+				array_push($retvar_list, array(
+					'retval' => $retval[$i],
+					)
+				);
+			}
+		} elseif ($maxdepth > 0) {
+			//$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
+			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort", $retval);
+			for ($i = 1; $i < (count ($retval) - 1); $i++){
+				array_push($retvar_list, array(
+					'retval' => $retval[$i],
+					)
+				);
+			}
+		}
+		$tmpl->setloop('retvar_list', $retvar_list);
+	}
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 //*********************************************************
