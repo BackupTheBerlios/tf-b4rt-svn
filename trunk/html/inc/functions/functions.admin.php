@@ -312,9 +312,10 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
  * @return string
  */
 function validateFile($the_file) {
-	$msg = "<img src=\"images/red.gif\" align=\"absmiddle\" title=\"Path is not Valid\"><br><font color=\"#ff0000\">Path is not Valid</font>";
+	global $cfg;
+	$msg = '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
 	if (isFile($the_file))
-		$msg = "<img src=\"images/green.gif\" align=\"absmiddle\" title=\"Valid\">";
+		$msg = '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">';
 	return $msg;
 }
 

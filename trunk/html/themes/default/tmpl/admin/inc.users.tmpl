@@ -52,9 +52,9 @@
 				<img src="<tmpl_var name="user_image">" title="<tmpl_var name="user_id"> - <tmpl_var name="type_user">">
 				<tmpl_if name="user_level" op="<=" value="1">
 					<tmpl_if name="user_state" value="1">
-						<a href="index.php?iid=admin&op=setUserState&user_id=<tmpl_var name="user_id">&state=0"><img src="images/green.gif" width="13" height="13" title="deactivate <tmpl_var name="user_id">" border="0"></a>
+						<a href="index.php?iid=admin&op=setUserState&user_id=<tmpl_var name="user_id">&state=0"><img src="themes/<tmpl_var name="theme">/images/green.gif" width="13" height="13" title="deactivate <tmpl_var name="user_id">" border="0"></a>
 					<tmpl_else>
-						<a href="index.php?iid=admin&op=setUserState&user_id=<tmpl_var name="user_id">&state=1"><img src="images/red.gif" width="13" height="13" title="activate <tmpl_var name="user_id">" border="0"></a>
+						<a href="index.php?iid=admin&op=setUserState&user_id=<tmpl_var name="user_id">&state=1"><img src="themes/<tmpl_var name="theme">/images/red.gif" width="13" height="13" title="activate <tmpl_var name="user_id">" border="0"></a>
 					</tmpl_if>
 				<tmpl_else>
 					<img src="images/black.gif" width="13" height="13" title="superadmin always activated">

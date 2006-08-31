@@ -111,9 +111,9 @@
 									<input name="path" type="Text" maxlength="254" value="<tmpl_var name="path">" size="55"
 									<tmpl_if name="is_path">
 										<tmpl_if name="is_writable">
-											<img src="images/green.gif" align="absmiddle" title="Valid">
+											<img src="themes/<tmpl_var name="theme">/images/green.gif" align="absmiddle" title="Valid">
 										<tmpl_else>
-											<img src="images/red.gif" align="absmiddle" title="Path is not Writable"><br><font color="#ff0000">Path is not Writable -- make sure you chmod +w this path</font>
+											<img src="themes/<tmpl_var name="theme">/images/red.gif" align="absmiddle" title="Path is not Writable"><br><font color="#ff0000">Path is not Writable -- make sure you chmod +w this path</font>
 										</tmpl_if>
 									<tmpl_else>
 										<img src="images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>
