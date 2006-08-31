@@ -1707,8 +1707,13 @@ function getTransferListArray() {
  *
  * @return transfer-list as html-string
  */
-function getTransferListString() {
+function TransferListString() {
 	global $cfg, $db;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.TransferListString.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.TransferListString.tmpl");
 	require_once("inc/classes/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
@@ -1723,20 +1728,16 @@ function getTransferListString() {
 	// t-list
 	$arList = getTransferArray($sortOrder);
 	foreach($arList as $entry) {
-
 		// ---------------------------------------------------------------------
 		// init some vars
 		$displayname = $entry;
-		$show_run = true;
 		if(strlen($entry) >= 47) {
 			// needs to be trimmed
 			$displayname = substr($entry, 0, 44);
 			$displayname .= "...";
 		}
-		if ($cfg["enable_torrent_download"])
-			$torrentfilelink = "<a href=\"index.php?iid=maketorrent&download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
-		else
-			$torrentfilelink = "";
+		$show_run = true;
+		$hd = getStatusImage($af);
 
 		// ---------------------------------------------------------------------
 		// alias / stat
@@ -1845,46 +1846,6 @@ function getTransferListString() {
 				break;
 		}
 
-		// ---------------------------------------------------------------------
-		// output-string
-		$output = "<tr>";
-
-		// ========================================================== led + meta
-		$output .= '<td valign="bottom" align="center" nowrap>';
-		// led
-		$hd = getStatusImage($af);
-		if ($transferRunning == 1)
-			$output .= "<a href=\"JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=".$alias."&torrent=".urlencode($entry)."')\">";
-		$output .= "<img src=\"images/".$hd->image."\" width=\"16\" height=\"16\" title=\"".$hd->title.$entry."\" border=\"0\" align=\"absmiddle\">";
-		if ($transferRunning == 1)
-			$output .= "</a>";
-		// meta
-		$output .= $torrentfilelink;
-		$output .= "</td>";
-
-		// ================================================================ name
-		$output .= "<td valign=\"bottom\" nowrap>".$detailsLinkString.$displayname."</a></td>";
-
-		// =============================================================== owner
-		if ($settings[0] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\" nowrap><a href=\"index.php?iid=message&to_user=".$transferowner."\"><font class=\"tiny\">".$transferowner."</font></a></td>";
-
-		// ================================================================ size
-		if ($settings[1] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($af->size)."</a></td>";
-
-		// =========================================================== downtotal
-		if ($settings[2] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($transferTotals["downtotal"]+0)."</a></td>";
-
-		// ============================================================= uptotal
-		if ($settings[3] != 0)
-			$output .= "<td valign=\"bottom\" align=\"right\" nowrap>".$detailsLinkString.formatBytesTokBMBGBTB($transferTotals["uptotal"]+0)."</a></td>";
-
-		// ============================================================== status
-		if ($settings[4] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>".$detailsLinkString.$statusStr."</a></td>";
-
 		// ============================================================ progress
 		if ($settings[5] != 0) {
 			$graph_width = 1;
@@ -1909,208 +1870,138 @@ function getTransferListString() {
 			}
 			if($graph_width == 100)
 				$background = $progress_color;
-			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>";
-			if ($graph_width == -1) {
-				$output .= $detailsLinkString.'<strong>'.$percentage.'</strong></a>';
-			} else if ($graph_width > 0) {
-				$output .= $detailsLinkString.'<strong>'.$percentage.'</strong></a>';
-				$output .= "<br>";
-				$output .= "<table width=\"100\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>";
-				$output .= "<td background=\"themes/".$cfg["theme"]."/images/progressbar.gif\" bgcolor=\"".$progress_color."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".$graph_width."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
-				$output .= "<td bgcolor=\"".$background."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".(100 - $graph_width)."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
-				$output .= "</tr></table>";
-			} else {
-				if ($transferRunning == 2) {
-					$output .= '&nbsp;';
-				} else {
-					$output .= $detailsLinkString.'<strong>'.$percentage.'</strong></a>';
-					$output .= "<br>";
-					$output .= "<table width=\"100\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr>";
-					$output .= "<td background=\"themes/".$cfg["theme"]."/images/progressbar.gif\" bgcolor=\"".$progress_color."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".$graph_width."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
-					$output .= "<td bgcolor=\"".$background."\">".$detailsLinkString."<img src=\"images/blank.gif\" width=\"".(100 - $graph_width)."\" height=\"".$bar_width."\" border=\"0\"></a></td>";
-					$output .= "</tr></table>";
-				}
-			}
-			$output .= "</td>";
 		}
 
 		// ================================================================ down
 		if ($settings[6] != 0) {
-			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
 			if ($transferRunning == 1) {
-				$output .= $detailsLinkString;
 				if (trim($af->down_speed) != "")
-					$output .= $af->down_speed;
+					$down_speed = $af->down_speed;
 				else
-					$output .= '0.0 kB/s';
-				$output .= '</a>';
-			} else {
-				 $output .= '&nbsp;';
+					$down_speed = '0.0 kB/s';
 			}
-			$output .= '</td>';
 		}
 
 		// ================================================================== up
 		if ($settings[7] != 0) {
-			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
 			if ($transferRunning == 1) {
-				$output .= $detailsLinkString;
 				if (trim($af->up_speed) != "")
-					$output .= $af->up_speed;
+					$up_speed = $af->up_speed;
 				else
-					$output .= '0.0 kB/s';
-				$output .= '</a>';
-			} else {
-				 $output .= '&nbsp;';
+					$up_speed = '0.0 kB/s';
 			}
-			$output .= '</td>';
 		}
-
-		// =============================================================== seeds
-		if ($settings[8] != 0) {
-			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
-			if ($transferRunning == 1) {
-				$output .= $detailsLinkString;
-				$output .= $af->seeds;
-				$output .= '</a>';
-			} else {
-				 $output .= '&nbsp;';
-			}
-			$output .= '</td>';
-		}
-
-		// =============================================================== peers
-		if ($settings[9] != 0) {
-			$output .= '<td valign="bottom" align="right" class="tiny" nowrap>';
-			if ($transferRunning == 1) {
-				$output .= $detailsLinkString;
-				$output .= $af->peers;
-				$output .= '</a>';
-			} else {
-				 $output .= '&nbsp;';
-			}
-			$output .= '</td>';
-		}
-
-		// ================================================================= ETA
-		if ($settings[10] != 0)
-			$output .= "<td valign=\"bottom\" align=\"center\" nowrap>".$detailsLinkString.$estTime."</a></td>";
 
 		// ============================================================== client
 		if ($settings[11] != 0) {
 			switch ($settingsAry['btclient']) {
 				case "tornado":
-					$output .= "<td valign=\"bottom\" align=\"center\">B</a></td>";
+					$client = "B";
 				break;
 				case "transmission":
-					$output .= "<td valign=\"bottom\" align=\"center\">T</a></td>";
+					$client = "T";
+				break;
+				case "mainline":
+					$client = "M";
 				break;
 				case "wget":
-					$output .= "<td valign=\"bottom\" align=\"center\">W</a></td>";
+					$client = "W";
 				break;
 				default:
-					$output .= "<td valign=\"bottom\" align=\"center\">U</a></td>";
+					$client = "U";
 			}
 		}
-
-		// =============================================================== admin
-		$output .= '<td nowrap>';
-		$output .= '<div align="center" class="admincell">';
-
-		// torrentdetails
-		$torrentDetails = _TRANSFERDETAILS;
-		$output .= "<a href=\"index.php?iid=details&torrent=".urlencode($entry);
-		if($transferRunning == 1)
-			$output .= "&als=false";
-		$output .= "\">";
-		$output .= "<img src=\"images/properties.png\" width=\"18\" height=\"13\" title=\"".$torrentDetails."\" border=\"0\">";
-
-		// link to datapath
-		$output .= '<a href="index.php?iid=dir&dir='.urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']).'">';
-		$output .= '<img src="images/datadir.gif" title="'.$settingsAry['datapath'].'" border="0">';
-		$output .= '</a>';
-
 		if ($owner || IsAdmin($cfg["user"])) {
+			$is_owner = 1;
 			if($percentDone >= 0 && $transferRunning == 1) {
-				if ($isTorrent) {
-					$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._STOPTRANSFER."\"></a>";
-					$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
-					if ($cfg['enable_multiops'] != 0)
-						$output .= "<input type=\"checkbox\" name=\"transfer[]\" value=\"".urlencode($entry)."\">";
-				} else {
-					$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"-\">";
-					$output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
-					$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
-				}
+				$is_running = 1;
 			} else {
-				if($transferowner == "n/a") {
-					$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._NOTOWNER."\">";
-				} else {
-					if ($transferRunning == 3) {
-						$output .= "<a href=\"index.php?iid=index&alias_file=".$alias."&dQueue=".$kill_id."&QEntry=".urlencode($entry)."\"><img src=\"images/queued.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._DELQUEUE."\"></a>";
-					} else {
+				if($transferowner != "n/a") {
+					if ($transferRunning != 3) {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
-							if ($isTorrent) {
-								// Allow Avanced start popup?
-								if ($cfg["advanced_start"] != 0) {
-									// Avanced start popup
-									$output .= "<a href=\"#\" onclick=\"StartTorrent('index.php?iid=startpop&torrent=".urlencode($entry)."')\">";
-									if ($show_run)
-										$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
-									else
-										$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
-									$output .= "</a>";
-								} else {
-									// Quick Start
-									$output .= "<a href=\"".$_SERVER['PHP_SELF']."?torrent=".urlencode($entry)."\">";
-									if ($show_run)
-										$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
-									else
-										$output .= "<img src=\"images/seed_on.gif\" width=\"16\" height=\"16\" title=\""._SEEDTRANSFER."\" border=\"0\">";
-									$output .= "</a>";
-								}
-							} else {
-								if ($show_run) {
-									$output .= "<a href=\"".$_SERVER['PHP_SELF']."?torrent=".urlencode($entry)."\">";
-									$output .= "<img src=\"images/run_on.gif\" width=\"16\" height=\"16\" title=\""._RUNTRANSFER."\" border=\"0\">";
-									$output .= "</a>";
-								} else {
-									$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\"Done\">";
-								}
-							}
-						} else {
-							// pid file exists so this may still be running or dieing.
-							$output .= "<img src=\"images/run_off.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._STOPPING."\">";
+							$is_file = 1;
 						}
 					}
 				}
-				if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
-					$deletelink = $_SERVER['PHP_SELF']."?alias_file=".$alias."&delfile=".urlencode($entry);
-					$output .= "<a href=\"".$deletelink."\" onclick=\"return ConfirmDelete('".$entry."')\"><img src=\"images/delete_on.gif\" width=16 height=16 title=\""._DELETE."\" border=0></a>";
-				} else {
-					// pid file present so process may be still running. don't allow deletion.
-					$output .= "<img src=\"images/delete_off.gif\" width=\"16\" height=\"16\" title=\""._STOPPING."\" border=0>";
-				}
-				if ($cfg['enable_multiops'] == 1)
-					$output .= "<input type=\"checkbox\" name=\"transfer[]\" value=\"".urlencode($entry)."\">";
 			}
-		} else {
-			$output .= "<img src=\"images/locked.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._NOTOWNER."\">";
-			$output .= "<img src=\"images/locked.gif\" width=\"16\" height=\"16\" border=\"0\" title=\""._NOTOWNER."\">";
-			$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
 		}
-
-		$output .= '</div>';
-		$output .= "</td>";
-		$output .= "</tr>\n";
-
 		// ---------------------------------------------------------------------
 		// Is this torrent for the user list or the general list?
 		if ($owner)
-			array_push($arUserTorrent, $output);
+			array_push($arUserTorrent, array(
+				'transferRunning' => $transferRunning,
+				'alias' => $alias,
+				'url_entry' => urlencode($entry),
+				'hd_image' => $hd->image,
+				'hd_title' => $hd->title,
+				'displayname' => $displayname,
+				'transferowner' => $transferowner,
+				'format_af_size' => formatBytesTokBMBGBTB($af->size),
+				'format_downtotal' => formatBytesTokBMBGBTB($transferTotals["downtotal"]+0),
+				'format_uptotal' => formatBytesTokBMBGBTB($transferTotals["uptotal"]+0),
+				'statusStr' => $statusStr,
+				'graph_width' => $graph_width,
+				'percentage' => $percentage,
+				'progress_color' => $progress_color,
+				'bar_width' => $bar_width,
+				'background' => $background,
+				'100_graph_width' => (100 - $graph_width),
+				'down_speed' => $down_speed,
+				'up_speed' => $up_speed,
+				'seeds' => $af->seeds,
+				'peers' => $af->peers,
+				'estTime' => $estTime,
+				'client' => $client,
+				'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
+				'datapath' => $settingsAry['datapath'],
+				'is_owner' => $is_owner,
+				'is_running' => $is_running,
+				'isTorrent' => $isTorrent,
+				'kill_id' => $kill_id,
+				'is_file' => $is_file,
+				'show_run' => $show_run,
+				'entry' => $entry,
+				)
+			);
 		else
-			array_push($arListTorrent, $output);
+			array_push($arListTorrent, array(
+				'transferRunning' => $transferRunning,
+				'alias' => $alias,
+				'url_entry' => urlencode($entry),
+				'hd_image' => $hd->image,
+				'hd_title' => $hd->title,
+				'displayname' => $displayname,
+				'transferowner' => $transferowner,
+				'format_af_size' => formatBytesTokBMBGBTB($af->size),
+				'format_downtotal' => formatBytesTokBMBGBTB($transferTotals["downtotal"]+0),
+				'format_uptotal' => formatBytesTokBMBGBTB($transferTotals["uptotal"]+0),
+				'statusStr' => $statusStr,
+				'graph_width' => $graph_width,
+				'percentage' => $percentage,
+				'progress_color' => $progress_color,
+				'bar_width' => $bar_width,
+				'background' => $background,
+				'100_graph_width' => (100 - $graph_width),
+				'down_speed' => $down_speed,
+				'up_speed' => $up_speed,
+				'seeds' => $af->seeds,
+				'peers' => $af->peers,
+				'estTime' => $estTime,
+				'client' => $client,
+				'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
+				'datapath' => $settingsAry['datapath'],
+				'is_owner' => $is_owner,
+				'is_running' => $is_running,
+				'isTorrent' => $isTorrent,
+				'kill_id' => $kill_id,
+				'is_file' => $is_file,
+				'show_run' => $show_run,
+				'entry' => $entry,
+				)
+			);
 	}
+	$tmpl->setloop('arUserTorrent', $arUserTorrent);
+	$tmpl->setloop('arListTorrent', $arListTorrent);
 
 	//XFER: if a new day but no .stat files where found put blank entry into the
 	//      DB for today to indicate accounting has been done for the new day
@@ -2119,21 +2010,55 @@ function getTransferListString() {
 
 	// -------------------------------------------------------------------------
 	// build output-string
-	$output = '<table bgcolor="'.$cfg["table_data_bg"].'" width="100%" bordercolor="'.$cfg["table_border_dk"].'" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">';
+	
+	
+	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+	$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
+	$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
+	
+	$tmpl->setvar('settings_0', $settings[0]);
+	$tmpl->setvar('settings_1', $settings[1]);
+	$tmpl->setvar('settings_2', $settings[2]);
+	$tmpl->setvar('settings_3', $settings[3]);
+	$tmpl->setvar('settings_4', $settings[4]);
+	$tmpl->setvar('settings_5', $settings[5]);
+	$tmpl->setvar('settings_6', $settings[6]);
+	$tmpl->setvar('settings_7', $settings[7]);
+	$tmpl->setvar('settings_8', $settings[8]);
+	$tmpl->setvar('settings_9', $settings[9]);
+	$tmpl->setvar('settings_10', $settings[10]);
+	$tmpl->setvar('settings_11', $settings[11]);
+	$tmpl->setvar('_TRANSFERDETAILS', _TRANSFERDETAILS);
+	$tmpl->setvar('_STOPTRANSFER', _STOPTRANSFER);
+	$tmpl->setvar('_NOTOWNER', _NOTOWNER);
+	$tmpl->setvar('_DELQUEUE', _DELQUEUE);
+	$tmpl->setvar('_RUNTRANSFER', _RUNTRANSFER);
+	$tmpl->setvar('_SEEDTRANSFER', _SEEDTRANSFER);
+	$tmpl->setvar('_STOPPING', _STOPPING);
+	$tmpl->setvar('_DELETE', _DELETE);
+	
+	
+
 	if (sizeof($arUserTorrent) > 0) {
-		$output .= getTransferTableHead($settings, $sortOrder, $cfg["user"]." : ");
-		foreach($arUserTorrent as $torrentrow)
-			$output .= $torrentrow;
+		$tmpl->setvar('are_user_torrent', 1);
+		$head = getTransferTableHead($settings, $sortOrder, $cfg["user"]." : ");
+		//messy
+		$tmpl->setvar('head', $head);
 	}
 	$boolCond = true;
 	if ($cfg['enable_restrictivetview'] == 1)
 		$boolCond = IsAdmin();
 	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
-		$output .= getTransferTableHead($settings, $sortOrder);
-		foreach($arListTorrent as $torrentrow)
-			$output .= $torrentrow;
+		$tmpl->setvar('are_torrent', 1);
+		$head2 = getTransferTableHead($settings, $sortOrder);
+		//messy
+		$tmpl->setvar('head2', $head2);
 	}
-	$output .= "</tr></table>\n";
+	// grab the template
+	$output = $tmpl->grab();
 	return $output;
 }
 

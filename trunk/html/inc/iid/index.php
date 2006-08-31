@@ -160,7 +160,7 @@ if ($cfg["show_server_load"] != 0)
 // =============================================================================
 
 // transfer-list
-$tmpl->setvar('transferList', getTransferListString());
+$tmpl->setvar('transferList', TransferListString());
 
 // refresh
 if ($cfg['ui_indexrefresh'] != "0") {
