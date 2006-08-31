@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface Package Interfaces
 
-$Id: interfaces.py 27082 2004-08-12 20:03:58Z srichter $
+$Id$
 """
 
 from zope.interface import Interface

@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface-specific exceptions
 
-$Id: exceptions.py 27082 2004-08-12 20:03:58Z srichter $
+$Id$
 """
 
 class Invalid(Exception):

@@ -13,7 +13,7 @@
 ##############################################################################
 """Interface object implementation
 
-$Id: interface.py 27081 2004-08-12 19:56:31Z srichter $
+$Id$
 """
 
 from __future__ import generators

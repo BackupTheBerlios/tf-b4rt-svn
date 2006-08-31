@@ -48,7 +48,7 @@ The package has several public modules:
 
 See the module doc strings for more information.
 
-$Id: __init__.py 27056 2004-08-12 16:09:51Z srichter $
+$Id$
 """
 
 from zope.interface.interface import Interface, _wire

@@ -24,7 +24,7 @@ not require) Zope 3 and Twisted.  It provides tools for manipulating UML
 models, object-relational persistence, aspect-oriented programming, and more.
 Visit the PEAK home page at http://peak.telecommunity.com for more information.
 
-$Id: advice.py 25177 2004-06-02 13:17:31Z jim $
+$Id$
 """
 
 from types import ClassType, FunctionType

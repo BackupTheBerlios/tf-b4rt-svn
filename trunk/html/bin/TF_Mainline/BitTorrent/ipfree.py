@@ -14,7 +14,7 @@ module is derived from the free database in the Perl module Geo::IPfree."""
 
 __author__ = 'Ka-Ping Yee'
 __date__ = '2005-04-14'
-__version__ = '$Revision: 1.3 $'
+__version__ = '$Revision$'
 
 
 countries = {

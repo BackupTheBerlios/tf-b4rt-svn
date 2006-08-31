@@ -24,7 +24,7 @@ There are three flavors of declarations:
     provided by objects.
     
 
-$Id: declarations.py 27081 2004-08-12 19:56:31Z srichter $
+$Id$
 """
 import sys
 import weakref

@@ -15,7 +15,7 @@
 
 This implementation is based on a notion of "surrogate" interfaces.
 
-$Id: adapter.py 28828 2005-01-13 17:13:22Z jim $
+$Id$
 """
 
 # Implementation notes
