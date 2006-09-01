@@ -2427,11 +2427,11 @@ function GetRSSLinks() {
 
 // ***************************************************************************
 // Build Search Engine Links
-function buildSearchEngineLinks($selectedEngine = 'TorrentSpy') {
+function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 	global $cfg;
 	$settingsNeedsSaving = false;
 	$settings['searchEngineLinks'] = Array();
-	$output = '';
+	$output = array();
 	if( (!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
 		saveSettings($settings);
 	$handle = opendir("./inc/searchEngines");
@@ -2451,12 +2451,20 @@ function buildSearchEngineLinks($selectedEngine = 'TorrentSpy') {
 					$settingsNeedsSaving = true;
 				}
 				if (strlen($hreflink) > 0) {
-					$output .=	"<a href=\"http://".$hreflink."/\" target=\"_blank\">";
-					if ($selectedEngine == $tmpEngine)
-						$output .= "<b>".$hreflink."</b>";
-					else
-						$output .= $hreflink;
-					$output .= "</a><br>\n";
+					if ($selectedEngine == $tmpEngine) {
+						array_push($output, array(
+							'hreflink' => $hreflink,
+							'selected' => 1,
+							)
+						);
+					}
+					else {
+						array_push($output, array(
+							'hreflink' => $hreflink,
+							'selected' => 0,
+							)
+						);
+					}
 				}
 			}
 	}

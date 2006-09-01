@@ -25,7 +25,17 @@
 					</form>
 					* Click on Torrent Links to add them to the Torrent Download List
 				</td>
-				<td bgcolor="#d6dfe6" align=right valign=top>Visit: &nbsp; &nbsp;<tmpl_var name="buildSearchEngineLinks"></td>
+				<td bgcolor="#d6dfe6" align=right valign=top>Visit:<br>
+					<tmpl_loop name="buildSearchEngineArray">
+						<a href="http://<tmpl_var name="hreflink">" target="_blank">
+							<tmpl_if name="selected">
+								<b><tmpl_var name="hreflink"></b>
+							<tmpl_else>
+								<tmpl_var name="hreflink">
+							</tmpl_if>
+						</a><br>
+					</tmpl_loop>
+				</td>
 			</tr>
 			<tr>
 				<td>

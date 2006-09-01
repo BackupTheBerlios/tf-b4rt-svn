@@ -62,7 +62,7 @@ $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('_SEARCH', _SEARCH);
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
 $tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($searchEngine));
-$tmpl->setvar('buildSearchEngineLinks', buildSearchEngineLinks($searchEngine));
+$tmpl->setloop('buildSearchEngineArray', buildSearchEngineArray($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 	$tmpl->setvar('is_searchEngine', 1);
