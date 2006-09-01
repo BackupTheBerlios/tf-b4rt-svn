@@ -2124,20 +2124,18 @@ function getDownloadBar() {
  */
 function getBandwidthBar_tf($percent, $text) {
 	global $cfg;
-	$retVal = "";
-    $retVal .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-    $retVal .= ' <tr nowrap>';
-    $retVal .= '  <td width="80%">';
-    $retVal .= '   <table width="100%" border="0" cellpadding="0" cellspacing="0">';
-    $retVal .= '    <tr>';
-    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$percent.'%"><div class="tinypercent" align="center">'.$percent.'%'.$text.'</div></td>';
-    $retVal .= '     <td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $percent).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
-    $retVal .= '    </tr>';
-    $retVal .= '   </table>';
-    $retVal .= '  </td>';
-    $retVal .= ' </tr>';
-    $retVal .= '</table>';
-	return $retVal;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBandwidthBar_tf.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBandwidthBar_tf.tmpl");
+	$tmpl->setvar('theme', $theme);
+	$tmpl->setvar('percent', $percent);
+	$tmpl->setvar('text', $text);
+	$tmpl->setvar('100_percent', (100 - $percent));
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**
@@ -2149,37 +2147,21 @@ function getBandwidthBar_tf($percent, $text) {
  */
 function getBandwidthBar_xfer($percent, $text) {
 	global $cfg;
-	//$percent = 0;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBandwidthBar_xfer.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBandwidthBar_xfer.tmpl");
 	$bgcolor = '#';
 	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
 	$bgcolor .= str_pad(dechex(255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
 	$bgcolor .='00';
-	$retVal = "";
-	$retVal .= '<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;"><tr>';
-	$retVal .= '<td bgcolor="'.$bgcolor.'" width="'.($percent).'%">';
-	if ($percent >= 50) {
-		$retVal .= '<div class="tinypercent" align="center"';
-		if ($percent == 100)
-			$retVal .= ' style="background:#FF0000;">';
-		else
-			$retVal .= '>';
-		$retVal .= $percent.'%'.$text;
-		$retVal .= '</div>';
-	}
-	$retVal .= '</td>';
-	$retVal .= '<td bgcolor="#000000" width="'.(100 - $percent).'%" height="100%">';
-	if ($percent < 50) {
-		$retVal .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
-		if ($percent == 0)
-			$retVal .= '; background:#000000;">';
-		else
-			$retVal .= ';">';
-		$retVal .= $percent.'%'.$text;
-		$retVal .= '</div>';
-	}
-	$retVal .= '</td>';
-	$retVal .= '</tr></table>';
-	return $retVal;
+	$tmpl->setvar('bgcolor', $bgcolor);
+	$tmpl->setvar('percent', $percent);
+	$tmpl->setvar('100_percent', (100 - $percent));
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**
