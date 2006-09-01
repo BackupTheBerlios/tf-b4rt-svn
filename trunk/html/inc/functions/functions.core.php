@@ -1737,7 +1737,6 @@ function TransferListString() {
 			$displayname .= "...";
 		}
 		$show_run = true;
-		$hd = getStatusImage($af);
 
 		// ---------------------------------------------------------------------
 		// alias / stat
@@ -1749,6 +1748,7 @@ function TransferListString() {
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+			$hd = getStatusImage($af);
 		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
@@ -1910,11 +1910,14 @@ function TransferListString() {
 				default:
 					$client = "U";
 			}
+		} else {
+			$client = "U";
 		}
 		if ($owner || IsAdmin($cfg["user"])) {
 			$is_owner = 1;
 			if($percentDone >= 0 && $transferRunning == 1) {
 				$is_running = 1;
+				$is_no_file = 0;
 			} else {
 				if($transferowner != "n/a") {
 					if ($transferRunning != 3) {
