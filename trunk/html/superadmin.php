@@ -1102,7 +1102,7 @@ function printPageStart($echoMode = 0) {
 	doEcho('<td align="right" width="16">',$echoMode);
 	if ($statusImage != "yellow.gif")
 		doEcho('<a href="' . _FILE_THIS . '">',$echoMode);
-	doEcho('<img src="images/'.$statusImage.'" width="16" height="16" border="0" title="'.$statusMessage.'">',$echoMode);
+	doEcho('<img src="themes/'.$cfg["theme"].'/images/'.$statusImage.'" width="16" height="16" border="0" title="'.$statusMessage.'">',$echoMode);
 	if ($statusImage != "yellow.gif")
 		doEcho('</a>',$echoMode);
 	doEcho('</td>',$echoMode);
