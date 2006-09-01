@@ -1741,7 +1741,6 @@ function TransferListString() {
 			$displayname .= "...";
 		}
 		$show_run = true;
-		$hd = getStatusImage($af);
 
 		// ---------------------------------------------------------------------
 		// alias / stat
@@ -1753,6 +1752,7 @@ function TransferListString() {
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+			$hd = getStatusImage($af);
 		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
@@ -1764,6 +1764,7 @@ function TransferListString() {
 			$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
 			$settingsAry['datapath'] = "";
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
+			$hd = getStatusImage($af);
 		} else {
 			// this is "something else". use tornado statfile as default
 			$isTorrent = false;
@@ -1775,6 +1776,7 @@ function TransferListString() {
 			$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
 			$settingsAry['datapath'] = "";
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+			$hd = getStatusImage($af);
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -1883,6 +1885,8 @@ function TransferListString() {
 					$down_speed = $af->down_speed;
 				else
 					$down_speed = '0.0 kB/s';
+			} else {
+				$down_speed = '';
 			}
 		}
 
@@ -1893,6 +1897,8 @@ function TransferListString() {
 					$up_speed = $af->up_speed;
 				else
 					$up_speed = '0.0 kB/s';
+			} else {
+				$up_speed = '';
 			}
 		}
 
@@ -1914,12 +1920,16 @@ function TransferListString() {
 				default:
 					$client = "U";
 			}
-		}
+		} else {
+			$client = "";
+		}		
 		if ($owner || IsAdmin($cfg["user"])) {
 			$is_owner = 1;
 			if($percentDone >= 0 && $transferRunning == 1) {
 				$is_running = 1;
+				$is_no_file = 0;
 			} else {
+				$is_running = 0;
 				if($transferowner != "n/a") {
 					if ($transferRunning != 3) {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
@@ -2129,7 +2139,7 @@ function getBandwidthBar_tf($percent, $text) {
 		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBandwidthBar_tf.tmpl");
 	else
 		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBandwidthBar_tf.tmpl");
-	$tmpl->setvar('theme', $theme);
+	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('percent', $percent);
 	$tmpl->setvar('text', $text);
 	$tmpl->setvar('100_percent', (100 - $percent));

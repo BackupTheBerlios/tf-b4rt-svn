@@ -63,13 +63,14 @@ def fmttime(n):
     return _("finishing in %s") % (str(Duration(n)))
 
 def fmtsize(n):
-    s = str(n)
-    size = s[-3:]
-    while len(s) > 3:
-        s = s[:-3]
-        size = '%s,%s' % (s[-3:], size)
-    size = '%s (%s)' % (size, str(Size(n)))
-    return size
+    #s = str(n)
+    #size = s[-3:]
+    #while len(s) > 3:
+    #    s = s[:-3]
+    #    size = '%s,%s' % (s[-3:], size)
+    #size = '%s (%s)' % (size, str(Size(n)))
+    #return size
+    return int(n)
 
 
 class HeadlessDisplayer(object):
@@ -88,7 +89,7 @@ class HeadlessDisplayer(object):
         self.errors = []
         self.file = ''
         self.downloadTo = ''
-        self.fileSize = ''
+        self.fileSize = 0
         self.numpieces = 0
         self.seedLimit = config['seed_limit']
         self.statFile = config['stat_file']
@@ -189,7 +190,7 @@ class HeadlessDisplayer(object):
         FILE.write(self.seedLimit+"\n")
         FILE.write(repr(self.upTotal)+"\n")
         FILE.write(repr(self.downTotal)+"\n")
-        FILE.write(repr(self.fileSize))
+        FILE.write(repr(self.fileSize)[:-1])
         FILE.close()
 
         """print    
