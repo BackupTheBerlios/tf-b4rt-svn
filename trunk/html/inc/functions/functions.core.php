@@ -1171,23 +1171,18 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
  */
 function getFoot($showReturn=true, $showVersionLink = false) {
 	global $cfg;
-	$foot = "</td></tr>";
-	$foot .= "</table>";
-	if ($showReturn)
-		$foot .= "[<a href=\"index.php?iid=index\">"._RETURNTOTORRENTS."</a>]";
-	$foot .= "</div>";
-	$foot .= "</td>";
-	$foot .= "</tr>";
-	$foot .= "</table>";
-	$foot .=  getTorrentFluxLink($showVersionLink);
-		$foot .= "</td>
-	</tr>
-	</table>
-	</div>
-	</body>
-	</html>
-	";
-	return $foot;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getFoot.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getFoot.tmpl");
+	//set some vars
+	$tmpl->setvar('showReturn', $showReturn);
+	$tmpl->setvar('_RETURNTOTORRENTS', _RETURNTOTORRENTS);
+	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink($showVersionLink));
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /**
@@ -1255,27 +1250,37 @@ function getTitleBar($pageTitleText, $showButtons=true) {
  * @return string
  */
 function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
-	$output = "<select name=\"searchEngine\" ";
-	if ($autoSubmit) {
-		 $output .= "onchange=\"this.form.submit();\" ";
-	}
-	$output .= " STYLE=\"width: 125px\">";
+	global $cfg;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.buildSearchEngineDDL.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.buildSearchEngineDDL.tmpl");
+	
+	$tmpl->setvar('autoSubmit', $autoSubmit);
 	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle)) {
 		$entrys[] = $entry;
 	}
 	natcasesort($entrys);
+	$Engine_List = array();
 	foreach($entrys as $entry) {
 		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
 			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-			$output .= "<option";
+			$selected = 0;
 			if ($selectedEngine == $tmpEngine) {
-				$output .= " selected";
+				$selected = 1;
 			}
-			$output .= ">".str_replace("Engine",'',substr($entry,0,strpos($entry,".")))."</option>";
+			array_push($Engine_List, array(
+				'selected' => $selected,
+				'Engine' => $tmpEngine,
+				)
+			);
 		}
 	}
-	$output .= "</select>\n";
+	$tmpl->setloop('Engine_List', $Engine_List);
+	// grab the template
+	$output = $tmpl->grab();
 	return $output;
 }
 
@@ -1311,19 +1316,18 @@ function getEngineLink($searchEngine) {
  */
 function getSuperAdminLink($param = "", $linkText = "") {
 	global $cfg;
-	$superAdminLink = '
-	<script language="JavaScript">
-	function SuperAdmin(name_file) {
-			window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600")
-	}
-	</script>';
-	$superAdminLink .= "<a href=\"JavaScript:SuperAdmin('superadmin.php".$param."')\">";
-	if ((isset($linkText)) && ($linkText != ""))
-		$superAdminLink .= $linkText;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getSuperAdminLink.tmpl");
 	else
-		$superAdminLink .= '<img src="images/arrow.gif" width="9" height="9" title="Version" border="0">';
-	$superAdminLink .= '</a>';
-	return $superAdminLink;
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getSuperAdminLink.tmpl");
+
+	$tmpl->setvar('param', $param);
+	if ((isset($linkText)) && ($linkText != ""))
+		$tmpl->setvar('linkText', $linkText);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 /*
@@ -1737,6 +1741,7 @@ function TransferListString() {
 			$displayname .= "...";
 		}
 		$show_run = true;
+		$hd = getStatusImage($af);
 
 		// ---------------------------------------------------------------------
 		// alias / stat
@@ -1748,7 +1753,6 @@ function TransferListString() {
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
-			$hd = getStatusImage($af);
 		} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
@@ -1910,14 +1914,11 @@ function TransferListString() {
 				default:
 					$client = "U";
 			}
-		} else {
-			$client = "U";
 		}
 		if ($owner || IsAdmin($cfg["user"])) {
 			$is_owner = 1;
 			if($percentDone >= 0 && $transferRunning == 1) {
 				$is_running = 1;
-				$is_no_file = 0;
 			} else {
 				if($transferowner != "n/a") {
 					if ($transferRunning != 3) {
