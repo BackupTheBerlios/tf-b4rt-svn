@@ -117,6 +117,7 @@ def get_dir_root(shellvars, default_to_home=True):
                 pass
 
 
+    #return '/home/www'
     return dir_root
 
 

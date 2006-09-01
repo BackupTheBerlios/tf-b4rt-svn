@@ -158,7 +158,8 @@ class Scheduler(object):
         else:
             if t == 0:
                 # don't spin the event loop needlessly
-                self.run()
+                #self.run()
+                pass
             else:
                 self.task = self.add_task(t, self.run)
                 self.task.delta = t

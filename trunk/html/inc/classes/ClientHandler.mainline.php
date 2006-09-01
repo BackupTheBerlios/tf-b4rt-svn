@@ -94,7 +94,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " HOME=".$this->cfg["path"];
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
-		$this->command .= " nohup ";
+		//$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $pyCmd . " " .$this->mainlineBin;
 		//$this->command .= " --die_when_done ".$this->runtime;
@@ -118,10 +118,10 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
 		$this->command .= " > /dev/null &";
+                //$this->command .= " &";
 
 		// start the client
 		parent::doStartClient();
-		//print $this->command;
     }
 
     /**

@@ -76,10 +76,11 @@ class HeadlessDisplayer(object):
 
     def __init__(self):
         self.done = '0'
+        self.state = 1
         self.percentDone = ''
-        self.timeEst = ''
-        self.downRate = '---'
-        self.upRate = '---'
+        self.timeEst = 'Starting ...'
+        self.downRate = '0.0 KB/s'
+        self.upRate = '0.0 KB/s'
         self.tfOwner = config['tf_owner']
         self.shareRating = ''
         self.seeds = "0"
@@ -102,7 +103,7 @@ class HeadlessDisplayer(object):
 
     def finished(self):
         self.done = '1'
-        self.downRate = '---'
+        self.downRate = '0.0 KB/s'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
 
     def error(self, errormsg):
@@ -163,8 +164,20 @@ class HeadlessDisplayer(object):
         for err in self.errors[-4:]:
             print err """
 
+        FILE = open(self.statFile,"r")
+        self.state = int(FILE.readline(1))
+        #self.state = int(self.state[-1])
+        FILE.close()
+
+        if not self.state:
+            #df = self.multitorrent.shutdown()
+            #stop_rawserver = lambda *a : rawserver.stop()
+            #df.addCallbacks(stop_rawserver, stop_rawserver)            
+            rawserver = RawServer(Preferences().initWithDict(config))
+            rawserver.stop()
+
         FILE = open(self.statFile,"w")
-        FILE.write(self.done+"\n")
+        FILE.write(repr(self.state)+"\n")
         FILE.write(self.percentDone+"\n")
         FILE.write(self.timeEst+"\n")
         FILE.write(self.downRate+"\n")
@@ -177,6 +190,7 @@ class HeadlessDisplayer(object):
         FILE.write(repr(self.upTotal)+"\n")
         FILE.write(repr(self.downTotal)+"\n")
         FILE.write(repr(self.fileSize))
+        FILE.close()
 
         """print    
         print _("saving:        "), self.file
@@ -281,7 +295,7 @@ class TorrentApp(object):
     def start_torrent(self,metainfo,save_incomplete_as,save_as):
         """Tells the MultiTorrent to begin downloading."""
         try:
-            self.d.display({'activity':_("initializing"), 
+            self.d.display({'activity':_("Starting ..."), 
                                'fractionDone':0})
             multitorrent = self.multitorrent
             df = multitorrent.create_torrent(metainfo, save_incomplete_as,

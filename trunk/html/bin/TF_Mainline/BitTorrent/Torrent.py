@@ -595,7 +595,7 @@ class Torrent(object):
 
         self.state = "running"
         if not self.finflag.isSet():
-            self._activity = (_("downloading"), 0)
+            self._activity = (_("Starting ..."), 0)
 
         self.feedback.started(self)
 
