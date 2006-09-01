@@ -1919,7 +1919,7 @@ function TransferListString() {
 				if($transferowner != "n/a") {
 					if ($transferRunning != 3) {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
-							$is_file = 1;
+							$is_no_file = 1;
 						}
 					}
 				}
@@ -1958,7 +1958,7 @@ function TransferListString() {
 				'is_running' => $is_running,
 				'isTorrent' => $isTorrent,
 				'kill_id' => $kill_id,
-				'is_file' => $is_file,
+				'is_no_file' => $is_no_file,
 				'show_run' => $show_run,
 				'entry' => $entry,
 				)
@@ -1994,7 +1994,7 @@ function TransferListString() {
 				'is_running' => $is_running,
 				'isTorrent' => $isTorrent,
 				'kill_id' => $kill_id,
-				'is_file' => $is_file,
+				'is_no_file' => $is_no_file,
 				'show_run' => $show_run,
 				'entry' => $entry,
 				)

@@ -182,7 +182,7 @@
 									<tmpl_if name="transferRunning" value="3">
 										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
-										<tmpl_if name="is_file">
+										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
 													<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')">
@@ -215,8 +215,8 @@
 										</tmpl_if>
 									</tmpl_if>
 								</tmpl_if>
-							<tmpl_if name="is_file" value="0">
-								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">"&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+							<tmpl_if name="is_no_file">
+								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<tmpl_else>
 								<img src="images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
@@ -416,7 +416,7 @@
 									<tmpl_if name="transferRunning" value="3">
 										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
-										<tmpl_if name="is_file">
+										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
 													<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')">
@@ -449,8 +449,8 @@
 										</tmpl_if>
 									</tmpl_if>
 								</tmpl_if>
-							<tmpl_if name="is_file" value="0">
-								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">"&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+							<tmpl_if name="is_no_file">
+								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<tmpl_else>
 								<img src="images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
