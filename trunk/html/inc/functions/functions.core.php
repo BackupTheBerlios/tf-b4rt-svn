@@ -2098,6 +2098,8 @@ function getUploadBar() {
 			return getBandwidthBar_tf($percent, $text);
 		case "xfer":
 			return getBandwidthBar_xfer($percent, $text);
+		default:
+			return getBandwidthBar_xfer($percent, $text);
 	}
 }
 
@@ -2122,6 +2124,8 @@ function getDownloadBar() {
 			return getBandwidthBar_tf($percent, $text);
 		case "xfer":
 			return getBandwidthBar_xfer($percent, $text);
+		default:
+			return getBandwidthBar_xfer($percent, $text);
 	}
 }
 
@@ -2142,7 +2146,8 @@ function getBandwidthBar_tf($percent, $text) {
 	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('percent', $percent);
 	$tmpl->setvar('text', $text);
-	$tmpl->setvar('100_percent', (100 - $percent));
+	$percent2 = (100 - $percent);
+	$tmpl->setvar('percent2', $percent2);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
@@ -2168,7 +2173,8 @@ function getBandwidthBar_xfer($percent, $text) {
 	$bgcolor .='00';
 	$tmpl->setvar('bgcolor', $bgcolor);
 	$tmpl->setvar('percent', $percent);
-	$tmpl->setvar('100_percent', (100 - $percent));
+	$percent2 = (100 - $percent);
+	$tmpl->setvar('percent2', $percent2);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
@@ -2548,66 +2554,38 @@ function getDriveSpace($drive) {
 // get the Drive Space Graphical Bar
 function getDriveSpaceBar($drivespace) {
 	global $cfg;
+	# create new template
+	if ((strpos($cfg['theme'], '/')) === false)
+		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getDriveSpaceBar.tmpl");
+	else
+		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getDriveSpaceBar.tmpl");
+	# some vars
+	$tmpl->setvar('drivespacebar', $cfg['drivespacebar']);
+	$tmpl->setvar('_STORAGE', _STORAGE);
+	$tmpl->setvar('drivespace', $drivespace);
+	$drivespace2 = (100-$drivespace);
+	$tmpl->setvar('drivespace2', $drivespace2);
 	switch ($cfg['drivespacebar']) {
 		case "tf":
 			$freeSpace = "";
 			if ($drivespace > 20)
 				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
-			$driveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			$driveSpaceBar .= '<tr nowrap>';
-				$driveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
-				$driveSpaceBar .= '<td width="80%">';
-				   $driveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-					$driveSpaceBar .= '<tr>';
-						$driveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/proglass.gif" width="'.$drivespace.'%"><div class="tinypercent" align="center">'.$drivespace.'%'.$freeSpace.'</div></td>';
-						$driveSpaceBar .= '<td background="themes/'.$cfg["theme"].'/images/noglass.gif" width="'.(100 - $drivespace).'%"><img src="images/blank.gif" width="1" height="3" border="0"></td>';
-					$driveSpaceBar .= '</tr>';
-					$driveSpaceBar .= '</table>';
-				$driveSpaceBar .= '</td>';
-			$driveSpaceBar .= '</tr>';
-			$driveSpaceBar .= '</table>';
+			$tmpl->setvar('theme', $cfg["theme"]);
+			$tmpl->setvar('freeSpace', $freeSpace);
 			break;
 		case "xfer":
 			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
-			$drivespace = 100 - $drivespace;
 			$bgcolor = '#';
 			$bgcolor .= str_pad(dechex(256-256*($drivespace/100)),2,0,STR_PAD_LEFT);
 			$bgcolor .= str_pad(dechex(256*($drivespace/100)),2,0,STR_PAD_LEFT);
 			$bgcolor .= '00';
-			$driveSpaceBar = '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
-			  $driveSpaceBar .= '<tr nowrap>';
-				$driveSpaceBar .= '<td width="2%"><div class="tiny">'._STORAGE.':</div></td>';
-				$driveSpaceBar .= '<td width="92%">';
-				  $driveSpaceBar .= '<table width="100%" border="0" cellpadding="0" cellspacing="0"><tr>';
-					$driveSpaceBar .= '<td bgcolor="'.$bgcolor.'" width="'.$drivespace.'%">';
-					if ($drivespace >= 50) {
-						$driveSpaceBar .= '<div class="tinypercent" align="center"';
-						if ($drivespace == 100)
-							$driveSpaceBar .= ' style="background:#00FF00;">';
-						else
-							$driveSpaceBar .= '>';
-						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
-						$driveSpaceBar .= '</div>';
-					}
-					$driveSpaceBar .= '</td>';
-					$driveSpaceBar .= '<td bgcolor="#000000" width="'.(100-$drivespace).'%">';
-					if ($drivespace < 50) {
-						$driveSpaceBar .= '<div class="tinypercent" align="center" style="color:'.$bgcolor;
-						if ($drivespace == 0)
-							$driveSpaceBar .= '; background:#FF0000;">';
-						else
-							$driveSpaceBar .= ';">';
-						$driveSpaceBar .= $drivespace.'%'.$freeSpace;
-						$driveSpaceBar .= '</div>';
-					}
-					$driveSpaceBar .= '</td>';
-				  $driveSpaceBar .= '</tr></table>';
-				$driveSpaceBar .= '</td>';
-			  $driveSpaceBar .= '</tr>';
-			$driveSpaceBar .= '</table>';
+			$tmpl->setvar('bgcolor', $bgcolor);
+			$tmpl->setvar('freeSpace', $freeSpace);
 		break;
 	}
-	return $driveSpaceBar;
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 //**************************************************************************
