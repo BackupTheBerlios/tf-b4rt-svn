@@ -90,6 +90,63 @@ class ClientHandlerMainline extends ClientHandler
 		}
 		<-- end file priority --> */
 
+		/*
+
+		some args :
+
+--max_upload_rate <arg>
+          maximum B/s to upload at (defaults to 125000000)
+
+--max_download_rate <arg>
+          average maximum B/s to download at (defaults to 125000000)
+
+
+--max_files_open <arg>
+          the maximum number of files in a multifile torrent to keep open at a
+          time, 0 means no limit. Used to avoid running out of file
+          descriptors. (defaults to 50)
+
+--start_trackerless_client, --no_start_trackerless_client
+          Initialize a trackerless client. This must be enabled in order to
+          download trackerless torrents. (defaults to True)
+
+--upnp, --no_upnp
+          Enable automatic port mapping (UPnP) (defaults to True)
+
+--xmlrpc_port <arg>
+          Start the XMLRPC interface on the specified port. This XML-RPC-based
+          RPC allows a remote program to control the client to enable automated
+          hosting, conformance testing, and benchmarking. (defaults to -1)
+
+--save_in <arg>
+          local directory where the torrent contents will be saved. The file
+          (single-file torrents) or directory (batch torrents) will be created
+          under this directory using the default name specified in the .torrent
+          file. See also --save_as. (defaults to u'')
+
+--save_incomplete_in <arg>
+          local directory where the incomplete torrent downloads will be stored
+          until completion. Upon completion, downloads will be moved to the
+          directory specified by --save_in. (defaults to u'')
+
+--save_as <arg>
+          file name (for single-file torrents) or directory name (for batch
+          torrents) to save the torrent as, overriding the default name in the
+          torrent. See also --save_in (defaults to u'')
+
+
+--bad_libc_workaround, --no_bad_libc_workaround
+          enable workaround for a bug in BSD libc that makes file reads very
+          slow. (defaults to False)
+
+
+--twisted <arg>
+          Use Twisted network libraries for network connections. 1 means use
+          twisted, 0 means do not use twisted, -1 means autodetect, and prefer
+          twisted (defaults to -1)
+
+		*/
+
 		$this->command = "cd " . $this->savepath .";";
 		$this->command .= " HOME=".$this->cfg["path"];
 		$this->command .= "; export HOME;";
@@ -97,6 +154,7 @@ class ClientHandlerMainline extends ClientHandler
 		//$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $pyCmd . " " .$this->mainlineBin;
+		$this->command .= " --language en";
 		//$this->command .= " --die_when_done ".$this->runtime;
 		$this->command .= " --seed_limit ".$this->sharekill_param;
 		$this->command .= " --stat_file ".$this->cfg["torrent_file_path"].$this->alias .".stat";
@@ -104,8 +162,12 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --display_interval 5";
 		if ($this->drate != 0)
 			$this->command .= " --max_download_rate ".$this->drate;
+		else
+			$this->command .= " --max_download_rate -1";
 		if ($this->rate != 0)
 			$this->command .= " --max_upload_rate ".$this->rate;
+		else
+			$this->command .= " --max_upload_rate -1";
 		$this->command .= " --max_uploads ".$this->maxuploads;
 		$this->command .= " --minport ".$this->port;
 		$this->command .= " --maxport ".$this->maxport;
@@ -114,11 +176,12 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --max_initiate ".$this->maxcons;
 		$this->command .= $skipHashCheck;
 		//$this->command .= $filePrio;
-		//$this->command .= " --save_incomplete_in ".$this->savepath;
+		$this->command .= " --save_incomplete_in ".$this->savepath;
+		$this->command .= " --save_in ".$this->savepath;
 		$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
 		$this->command .= " > /dev/null &";
-                //$this->command .= " &";
+        //$this->command .= " &";
 
 		// start the client
 		parent::doStartClient();
