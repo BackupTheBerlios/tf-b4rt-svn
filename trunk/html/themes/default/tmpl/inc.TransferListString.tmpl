@@ -110,7 +110,7 @@
 								<br>
 								<table width="100" cellpadding="0" cellspacing="0" border="0"><tr>
 									<td background="themes/<tmpl_var name="theme">/images/progressbar.gif\" bgcolor="<tmpl_var name="progress_color">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="images/blank.gif" width="<tmpl_var name="graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
-									<td bgcolor=<tmpl_var name="background">><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="images/blank.gif" width="<tmpl_var name="100_graph_width"" height="<tmpl_var name="bar_width">" border="0"></a></td>
+									<td bgcolor="<tmpl_var name="background">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="images/blank.gif" width="<tmpl_var name="100_graph_width"" height="<tmpl_var name="bar_width">" border="0"></a></td>
 								</tr></table>
 							</tmpl_if>
 						</tmpl_if>
@@ -185,27 +185,21 @@
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
-													<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')">
-														<tmpl_if name="show_run">
-															<img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0">
-														<tmpl_else>
-															<img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0">
-														</tmpl_if>
-													</a>
+													<tmpl_if name="show_run">
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<tmpl_else>
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													</tmpl_if>
 												<tmpl_else>
-													<a href=index.php?iid=index&torrent=<tmpl_var name="url_entry">>
-														<tmpl_if name="show_run">
-															<img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0">
-														<tmpl_else>
-															<img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0">
-														</tmpl_if>
-													</a>
+													<tmpl_if name="show_run">
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<tmpl_else>
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													</tmpl_if>
 												</tmpl_if>
 											<tmpl_else>
 												<tmpl_if name="show_run">
-													<a href=index.php?iid=index&torrent=<tmpl_var name="url_entry">>
-														<img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0">
-													</a>
+													<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
 													<img src="images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
@@ -344,7 +338,7 @@
 								<br>
 								<table width="100" cellpadding="0" cellspacing="0" border="0"><tr>
 									<td background="themes/<tmpl_var name="theme">/images/progressbar.gif\" bgcolor="<tmpl_var name="progress_color">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="images/blank.gif" width="<tmpl_var name="graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
-									<td bgcolor=<tmpl_var name="background">><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="images/blank.gif" width="<tmpl_var name="100_graph_width"" height="<tmpl_var name="bar_width">" border="0"></a></td>
+									<td bgcolor="<tmpl_var name="background">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="images/blank.gif" width="<tmpl_var name="100_graph_width"" height="<tmpl_var name="bar_width">" border="0"></a></td>
 								</tr></table>
 							</tmpl_if>
 						</tmpl_if>
@@ -419,27 +413,21 @@
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
-													<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')">
-														<tmpl_if name="show_run">
-															<img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0">
-														<tmpl_else>
-															<img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0">
-														</tmpl_if>
-													</a>
+													<tmpl_if name="show_run">
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<tmpl_else>
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													</tmpl_if>
 												<tmpl_else>
-													<a href=index.php?iid=index&torrent=<tmpl_var name="url_entry">>
-														<tmpl_if name="show_run">
-															<img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0">
-														<tmpl_else>
-															<img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0">
-														</tmpl_if>
-													</a>
+													<tmpl_if name="show_run">
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<tmpl_else>
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													</tmpl_if>
 												</tmpl_if>
 											<tmpl_else>
 												<tmpl_if name="show_run">
-													<a href=index.php?iid=index&torrent=<tmpl_var name="url_entry">>
-														<img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0">
-													</a>
+													<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
 													<img src="images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
