@@ -65,11 +65,9 @@
 			<tr>
 				<td valign="bottom" align="center" nowrap>
 					<tmpl_if name="transferRunning">
-						<a href="JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')">
-					</tmpl_if>
-					<img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle">
-					<tmpl_if name="transferRunning">
-						</a>
+						<a href="JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle"></a>
+					<tmpl_else>
+						<img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle">
 					</tmpl_if>
 					<tmpl_if name="enable_torrent_download">
 						<a href="index.php?iid=maketorrent&download=<tmpl_var name="url_entry">"><img src="images/down.gif" width=9 height=9 title="Download Torrent File" border=0 align="absmiddle"></a>
@@ -293,11 +291,9 @@
 			<tr>
 				<td valign="bottom" align="center" nowrap>
 					<tmpl_if name="transferRunning">
-						<a href="JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')">
-					</tmpl_if>
-					<img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle">
-					<tmpl_if name="transferRunning">
-						</a>
+						<a href="JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle"></a>
+					<tmpl_else>
+						<img src="themes/<tmpl_var name="theme">/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle">
 					</tmpl_if>
 					<tmpl_if name="enable_torrent_download">
 						<a href="index.php?iid=maketorrent&download=<tmpl_var name="url_entry">"><img src="images/down.gif" width=9 height=9 title="Download Torrent File" border=0 align="absmiddle"></a>
