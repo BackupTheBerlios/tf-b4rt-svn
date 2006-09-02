@@ -121,7 +121,6 @@ class HeadlessDisplayer(object):
         upRate = statistics.get('upRate')
         spew = statistics.get('spew')
 
-
         if spew is not None:
             self.print_spew(spew)
 
@@ -166,19 +165,7 @@ class HeadlessDisplayer(object):
         for err in self.errors[-4:]:
             print err """
 
-        """
-        FILE = open(self.statFile,"r")
-        self.state = int(FILE.readline(1))
-        #self.state = int(self.state[-1])
-
-        if not self.state:
-            #df = self.multitorrent.shutdown()
-            #stop_rawserver = lambda *a : rawserver.stop()
-            #df.addCallbacks(stop_rawserver, stop_rawserver)
-            rawserver = RawServer(Preferences().initWithDict(config))
-            rawserver.stop()
-        """
-
+        # read state from stat-file
         running = 0
         try:
             FILE = open(self.statFile, 'r')
@@ -187,6 +174,7 @@ class HeadlessDisplayer(object):
         except:
             running = 0
 
+        # shutdown or write stat-file
         if running == '0':
             app.logger.error( "shutting down..." )
             self.state = 0
@@ -194,23 +182,27 @@ class HeadlessDisplayer(object):
             stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
             df.addCallbacks(stop_rawserver, stop_rawserver)
         else:
-            FILE = open(self.statFile,"w")
-            FILE.write(repr(self.state)+"\n")
-            FILE.write(self.percentDone+"\n")
-            FILE.write(self.timeEst+"\n")
-            FILE.write(self.downRate+"\n")
-            FILE.write(self.upRate+"\n")
-            FILE.write(self.tfOwner+"\n")
-            FILE.write(self.seeds+"\n")
-            FILE.write(self.peers+"\n")
-            FILE.write(self.shareRating+"\n")
-            FILE.write(self.seedLimit+"\n")
-            FILE.write(repr(self.upTotal)+"\n")
-            FILE.write(repr(self.downTotal)+"\n")
-            FILE.write(repr(self.fileSize)[:-1])
-            # TODO : write errors to stat-file
-            FILE.flush()
-            FILE.close()
+            try:
+                FILE = open(self.statFile,"w")
+                # write stats to stat-file
+                FILE.write(repr(self.state)+"\n")
+                FILE.write(self.percentDone+"\n")
+                FILE.write(self.timeEst+"\n")
+                FILE.write(self.downRate+"\n")
+                FILE.write(self.upRate+"\n")
+                FILE.write(self.tfOwner+"\n")
+                FILE.write(self.seeds+"\n")
+                FILE.write(self.peers+"\n")
+                FILE.write(self.shareRating+"\n")
+                FILE.write(self.seedLimit+"\n")
+                FILE.write(repr(self.upTotal)+"\n")
+                FILE.write(repr(self.downTotal)+"\n")
+                FILE.write(repr(self.fileSize))
+                # TODO : write errors to stat-file
+                FILE.flush()
+                FILE.close()
+            except:
+                pass
 
         """print
         print _("saving:        "), self.file
@@ -438,7 +430,6 @@ class TorrentApp(object):
         """Called by the logger via LogHandler to display error messages in the
            curses window."""
         self.d.error(text)
-
 
 
 if __name__ == '__main__':
