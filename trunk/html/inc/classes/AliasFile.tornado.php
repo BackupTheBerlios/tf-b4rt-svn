@@ -136,7 +136,7 @@ class AliasFileTornado extends AliasFile
     //----------------------------------------------------------------
     // Public Function to display real total download in MB
     function GetRealDownloadTotal() {
-        return (($this->percent_done * $this->size)/100)/(1024*1024);
+        return (($this->percent_done * $this->size) / 100) / (1048576);
     }
 }
 

@@ -66,13 +66,16 @@ class RunningTransfer
             switch ($clientClass) {
                 case "tornado":
                     return new RunningTransferTornado($psLine,serialize($fluxCfg));
-                break;
+                	break;
                 case "transmission":
                     return new RunningTransferTransmission($psLine,serialize($fluxCfg));
-                break;
+                	break;
+                case "mainline":
+                    return new RunningTransferMainline($psLine,serialize($fluxCfg));
+                	break;
                 case "wget":
                     return new RunningTransferWget($psLine,serialize($fluxCfg));
-                break;
+                	break;
             }
         }
     }
@@ -103,6 +106,5 @@ class RunningTransfer
         return $output;
     }
 }
-
 
 ?>

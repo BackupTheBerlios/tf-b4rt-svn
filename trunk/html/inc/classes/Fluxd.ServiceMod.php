@@ -74,19 +74,19 @@ class FluxdServiceMod
             switch ($moduleType) {
                 case "Qmgr":
                     return new FluxdQmgr(serialize($fluxCfg), $fluxd);
-                break;
+                	break;
                 case "Fluxinet":
                     return new FluxdFluxinet(serialize($fluxCfg), $fluxd);
-                break;
+                	break;
                 case "Trigger":
                     return new FluxdTrigger(serialize($fluxCfg), $fluxd);
-                break;
+                	break;
                 case "Watch":
                     return new FluxdWatch(serialize($fluxCfg), $fluxd);
-                break;
+                	break;
                 case "Clientmaint":
                     return new FluxdClientmaint(serialize($fluxCfg), $fluxd);
-                break;
+                	break;
             }
         }
     }

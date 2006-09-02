@@ -147,19 +147,25 @@ class ClientHandlerMainline extends ClientHandler
 
 		*/
 
+		// note :
+		// order of args must not change for ps-parsing-code in
+		// RunningTransferMainline
+
 		$this->command = "cd " . $this->savepath .";";
 		$this->command .= " HOME=".$this->cfg["path"];
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
-		//$this->command .= " nohup ";
+		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $pyCmd . " " .$this->mainlineBin;
+		$this->command .= " --display_interval 5";
+		$this->command .= " --tf_owner ".$this->owner;
+		$this->command .= " --stat_file ".$this->cfg["torrent_file_path"].$this->alias .".stat";
+		$this->command .= " --save_incomplete_in ".$this->savepath;
+		$this->command .= " --save_in ".$this->savepath;
 		$this->command .= " --language en";
 		//$this->command .= " --die_when_done ".$this->runtime;
 		$this->command .= " --seed_limit ".$this->sharekill_param;
-		$this->command .= " --stat_file ".$this->cfg["torrent_file_path"].$this->alias .".stat";
-		$this->command .= " --tf_owner ".$this->owner;
-		$this->command .= " --display_interval 5";
 		if ($this->drate != 0)
 			$this->command .= " --max_download_rate ".$this->drate;
 		else
@@ -176,8 +182,6 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --max_initiate ".$this->maxcons;
 		$this->command .= $skipHashCheck;
 		//$this->command .= $filePrio;
-		$this->command .= " --save_incomplete_in ".$this->savepath;
-		$this->command .= " --save_in ".$this->savepath;
 		$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
 		$this->command .= " > /dev/null &";

@@ -107,16 +107,16 @@ class ClientHandler
             switch ($clientClass) {
                 case "tornado":
                     return new ClientHandlerTornado(serialize($fluxCfg));
-                break;
+                	break;
                 case "transmission":
                     return new ClientHandlerTransmission(serialize($fluxCfg));
-                break;
+                	break;
                 case "mainline":
                     return new ClientHandlerMainline(serialize($fluxCfg));
-                break;
+                	break;
                 case "wget":
                     return new ClientHandlerWget(serialize($fluxCfg));
-                break;
+                	break;
             }
         }
     }

@@ -61,12 +61,12 @@ function RunningProcessInfo() {
 		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.RunningProcessInfo.tmpl");
 	else
 		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.RunningProcessInfo.tmpl");
-	// first we need an array with all clients
+	// array with all clients
 	$clients = array('tornado', 'transmission', 'mainline', 'wget');
 	// get informations
 	$process_list = array();
 	foreach($clients as $client) {
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$client);
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
 		$RunningProcessInfo = $clientHandler->printRunningClientsInfo();
 		$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep");
 		array_push($process_list, array(
@@ -75,6 +75,7 @@ function RunningProcessInfo() {
 			'pinfo' => $pinfo,
 			)
 		);
+		unset($clientHandler);
 	}
 	$tmpl->setloop('process_list', $process_list);
 	// grab the template

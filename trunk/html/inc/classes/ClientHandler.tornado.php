@@ -86,6 +86,11 @@ class ClientHandlerTornado extends ClientHandler
             $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
             $filePrio = " --priority ".$priolist;
         }
+
+		// note :
+		// order of args must not change for ps-parsing-code in
+		// RunningTransferTornado
+
 		$this->command = "cd " . $this->savepath .";";
 		$this->command .= " HOME=".$this->cfg["path"];
 		$this->command .= "; export HOME;";

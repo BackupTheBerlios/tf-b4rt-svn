@@ -77,16 +77,16 @@ class AliasFile
             switch ($clientClass) {
                 case "tornado":
                     return new AliasFileTornado($inFile, $user, serialize($fluxCfg));
-                break;
+                	break;
                 case "transmission":
                     return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
-                break;
+                	break;
                 case "mainline":
                     return new AliasFileMainline($inFile, $user, serialize($fluxCfg));
-                break;
+                	break;
                 case "wget":
                     return new AliasFileWget($inFile, $user, serialize($fluxCfg));
-                break;
+                	break;
             }
         }
     }
@@ -122,6 +122,5 @@ class AliasFile
     // Public Function to display real total download in MB
     function GetRealDownloadTotal() { return; }
 }
-
 
 ?>

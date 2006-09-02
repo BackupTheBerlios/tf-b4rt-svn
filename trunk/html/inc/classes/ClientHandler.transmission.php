@@ -80,6 +80,10 @@ class ClientHandlerTransmission extends ClientHandler
         // workaround for bsd-pid-file-problem : touch file first
         shell_exec("touch ".$this->pidFile);
 
+		// note :
+		// order of args must not change for ps-parsing-code in
+		// RunningTransferTransmission
+
         // build the command-string
         $this->command = "cd " . $this->savepath .";";
         $this->command .= " HOME=".$this->cfg["path"]."; export HOME;".
