@@ -18,6 +18,7 @@ from __future__ import division
 from BitTorrent.translation import _
 
 import sys
+from os import getpid, remove
 import os
 from cStringIO import StringIO
 import logging
@@ -176,6 +177,12 @@ class HeadlessDisplayer(object):
 
         # shutdown or write stat-file
         if running == '0':
+            # hmm :
+            """
+            app.logger.info( "shutting down..." )
+            app.logger.log(logging.INFO, "log.INFO : shutting down..." )
+            """
+            # then use this now :
             app.logger.error( "shutting down..." )
             self.state = 0
             df = app.multitorrent.shutdown()
@@ -330,6 +337,16 @@ class TorrentApp(object):
             return
 
     def run(self):
+
+        # write pid-file
+        try:
+            pidFile = open(self.config['stat_file'] + ".pid", 'w')
+            pidFile.write(str(getpid()).strip() + "\n")
+            pidFile.flush()
+            pidFile.close()
+        except Exception, e:
+            self.logger.error( "Failed to write pid-file", exc_info = e )
+
         self.core_doneflag = DeferredEvent()
         rawserver = RawServer(self.config)
         self.d = HeadlessDisplayer()
@@ -355,7 +372,6 @@ class TorrentApp(object):
             lambda r: rawserver.external_add_task(0, shutdown))
 
         rawserver.install_sigint_handler(self.core_doneflag)
-
 
         # semantics for --save_in vs --save_as:
         #   save_in specifies the directory in which torrent is written.
@@ -418,6 +434,12 @@ class TorrentApp(object):
         # always make sure events get processed even if only for
         # shutting down.
         rawserver.listen_forever()
+
+        # remove pid-file
+        try:
+            remove(self.config['stat_file'] + ".pid")
+        except Exception, e:
+            self.logger.error( "Failed to remove pid-file", exc_info = e )
 
     def get_status(self):
         self.multitorrent.rawserver.add_task(self.config['display_interval'],
