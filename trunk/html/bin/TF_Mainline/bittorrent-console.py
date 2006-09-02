@@ -48,7 +48,7 @@ from BitTorrent import console
 from BitTorrent import stderr_console  # must import after inject_main_logfile
                                        # because import is really a copy.
                                        # If imported earlier, stderr_console
-                                       # doesn't reflect the changes made in 
+                                       # doesn't reflect the changes made in
                                        # inject_main_logfile!!  BAAAHHHH!!
 
 def wrap_log(context_string, logger):
@@ -60,7 +60,7 @@ def wrap_log(context_string, logger):
 def fmttime(n):
     if n == 0:
         return _("download complete!")
-    return _("finishing in %s") % (str(Duration(n)))
+    return _("%s") % (str(Duration(n)))
 
 def fmtsize(n):
     #s = str(n)
@@ -173,7 +173,7 @@ class HeadlessDisplayer(object):
         if not self.state:
             #df = self.multitorrent.shutdown()
             #stop_rawserver = lambda *a : rawserver.stop()
-            #df.addCallbacks(stop_rawserver, stop_rawserver)            
+            #df.addCallbacks(stop_rawserver, stop_rawserver)
             rawserver = RawServer(Preferences().initWithDict(config))
             rawserver.stop()
 
@@ -193,7 +193,7 @@ class HeadlessDisplayer(object):
         FILE.write(repr(self.fileSize)[:-1])
         FILE.close()
 
-        """print    
+        """print
         print _("saving:        "), self.file
         print _("file size:     "), self.fileSize
         print _("percent done:  "), self.percentDone
@@ -256,11 +256,11 @@ class TorrentApp(object):
         def __init__(self, app, level=logging.NOTSET):
             logging.Handler.__init__(self,level)
             self.app = app
-      
+
         def emit(self, record):
-            self.app.display_error(record.getMessage() ) 
+            self.app.display_error(record.getMessage() )
             if record.exc_info is not None:
-                self.app.display_error( " %s: %s" % 
+                self.app.display_error( " %s: %s" %
                     ( str(record.exc_info[0]), str(record.exc_info[1])))
                 tb = record.exc_info[2]
                 stack = traceback.extract_tb(tb)
@@ -296,7 +296,7 @@ class TorrentApp(object):
     def start_torrent(self,metainfo,save_incomplete_as,save_as):
         """Tells the MultiTorrent to begin downloading."""
         try:
-            self.d.display({'activity':_("Starting ..."), 
+            self.d.display({'activity':_("Starting ..."),
                                'fractionDone':0})
             multitorrent = self.multitorrent
             df = multitorrent.create_torrent(metainfo, save_incomplete_as,
@@ -317,7 +317,7 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "Failed to create torrent", exc_info = e )
             return
-        
+
     def run(self):
         self.core_doneflag = DeferredEvent()
         rawserver = RawServer(self.config)
@@ -327,7 +327,7 @@ class TorrentApp(object):
         # can throw exceptions.
         def shutdown():
             print "shutdown."
-            self.d.display({'activity':_("shutting down"), 
+            self.d.display({'activity':_("shutting down"),
                             'fractionDone':0})
             if self.multitorrent:
                 df = self.multitorrent.shutdown()
@@ -342,7 +342,7 @@ class TorrentApp(object):
         # between core_doneflag's callback and addCallback.
         self.core_doneflag.addCallback(
             lambda r: rawserver.external_add_task(0, shutdown))
-        
+
         rawserver.install_sigint_handler(self.core_doneflag)
 
 
@@ -381,21 +381,21 @@ class TorrentApp(object):
             save_incomplete_as = os.path.join(save_incomplete_in,torrent_name)
         else:
             save_incomplete_as = os.path.join(savein,torrent_name)
-    
+
         data_dir,bad = platform.encode_for_filesystem(config['data_dir'])
         if bad:
             raise BTFailure(_("Invalid path encoding."))
 
-        try: 
+        try:
             self.multitorrent = \
                 MultiTorrent(self.config, rawserver, data_dir,
                              is_single_torrent = True,
                              resume_from_torrent_config = False)
-                
+
             self.d.set_torrent_values(metainfo.name, os.path.abspath(saveas),
                                 metainfo.total_bytes, len(metainfo.hashes))
             self.start_torrent(self.metainfo, save_incomplete_as, saveas)
-        
+
             self.get_status()
         except UserFailure, e:
             self.logger.error( unicode(e.args[0]) )
@@ -403,7 +403,7 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "", exc_info = e )
             rawserver.add_task(0, self.core_doneflag.set)
-            
+
         # always make sure events get processed even if only for
         # shutting down.
         rawserver.listen_forever()

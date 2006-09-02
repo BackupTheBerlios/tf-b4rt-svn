@@ -1770,7 +1770,7 @@ msgstr ""
 
 #: bittorrent-console.py:62 bittorrent-curses.py:79
 #, python-format
-msgid "finishing in %d:%02d:%02d"
+msgid "%d:%02d:%02d"
 msgstr ""
 
 #: bittorrent-console.py:109 bittorrent-curses.py:185

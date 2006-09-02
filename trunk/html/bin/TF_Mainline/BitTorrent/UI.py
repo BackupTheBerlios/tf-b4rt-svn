@@ -150,17 +150,17 @@ class Duration(float):
         if self.empty or self > 365 * 24 * 60 * 60:
             return ''
         elif self >= 172800:
-            return _("%d days") % round(self/86400) # 2 days or longer
+            return _("%d") % round(self/86400) # 2 days or longer
         elif self >= 86400:
-            return _("1 day %d hours") % ((self-86400)//3600) # 1-2 days
+            return _("01:%d") % ((self-86400)//3600) # 1-2 days
         elif self >= 3600:
-            return _("%d:%02d hours") % (self//3600, (self%3600)//60) # 1 h - 1 day
+            return _("%d:%02d") % (self//3600, (self%3600)//60) # 1 h - 1 day
         elif self >= 60:
-            return _("%d:%02d minutes") % (self//60, self%60) # 1 minute to 1 hour
+            return _("%d:%02d") % (self//60, self%60) # 1 minute to 1 hour
         elif self >= 0:
-            return _("%d seconds") % int(self)
+            return _("%d") % int(self)
         else:
-            return _("0 seconds")
+            return _("0")
 
 
 def ip_sort(a_str,b_str):
@@ -711,7 +711,7 @@ class BasicApp(object):
             df = self.multitorrent.set_torrent_policy(infohash, "auto")
             yield df
             df.getResult()
-                
+
             torrent.pending = None
             yield True
 
