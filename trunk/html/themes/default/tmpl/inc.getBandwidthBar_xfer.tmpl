@@ -3,8 +3,10 @@
 <tmpl_if name="percent" op=">" value="50">
 	<div class="tinypercent" align="center"
 		<tmpl_if name="percent" value="100">
-			 style="background:#FF0000;"
-		</tmpl_if>>
+			 style="background:#FF0000;">
+		<tmpl_else>
+			>
+		</tmpl_if>
 		<tmpl_var name="percent">%<tmpl_var name="text">
 	</div>
 </tmpl_if>
@@ -13,8 +15,10 @@
 	<tmpl_if name="percent" op="<" value="50">
 		<div class="tinypercent" align="center" style="color:<tmpl_var name="bgcolor">
 			<tmpl_if name="percent" value="0">
-				; background:#000000;"
-			</tmpl_if>>
+				; background:#000000;">
+			<tmpl_else>
+				;>
+			</tmpl_if>
 			<tmpl_var name="percent">%<tmpl_var name="text">
 		</div>
 	</tmpl_if>
