@@ -146,16 +146,17 @@ class HeadlessDisplayer(object):
             #numCopies = statistics['numCopies']
             #nextCopies = ', '.join(["%d:%.1f%%" % (a,int(b*1000)/10) for a,b in
             #        zip(xrange(numCopies+1, 1000), statistics['numCopyList'])])
-            if not self.done:
-                self.seeds = _("%d") % statistics['numSeeds']
+            #if not self.done:
+            #    self.seeds = _("%d") % statistics['numSeeds']
             #    self.seedStatus = _("%d seen now, plus %d distributed copies"
             #                        "(%s)") % (statistics['numSeeds' ],
             #                                   statistics['numCopies'],
             #                                   nextCopies)
-            else:
-                self.seeds = ""
+            #else:
+            #    self.seeds = ""
             #    self.seedStatus = _("%d distributed copies (next: %s)") % (
             #        statistics['numCopies'], nextCopies)
+            self.seeds = _("%d") % statistics['numSeeds']
             self.peers = _("%d") % statistics['numPeers']
 
         """if not self.errors:
@@ -165,10 +166,10 @@ class HeadlessDisplayer(object):
         for err in self.errors[-4:]:
             print err """
 
+        """
         FILE = open(self.statFile,"r")
         self.state = int(FILE.readline(1))
         #self.state = int(self.state[-1])
-        FILE.close()
 
         if not self.state:
             #df = self.multitorrent.shutdown()
@@ -176,22 +177,40 @@ class HeadlessDisplayer(object):
             #df.addCallbacks(stop_rawserver, stop_rawserver)
             rawserver = RawServer(Preferences().initWithDict(config))
             rawserver.stop()
+        """
 
-        FILE = open(self.statFile,"w")
-        FILE.write(repr(self.state)+"\n")
-        FILE.write(self.percentDone+"\n")
-        FILE.write(self.timeEst+"\n")
-        FILE.write(self.downRate+"\n")
-        FILE.write(self.upRate+"\n")
-        FILE.write(self.tfOwner+"\n")
-        FILE.write(self.seeds+"\n")
-        FILE.write(self.peers+"\n")
-        FILE.write(self.shareRating+"\n")
-        FILE.write(self.seedLimit+"\n")
-        FILE.write(repr(self.upTotal)+"\n")
-        FILE.write(repr(self.downTotal)+"\n")
-        FILE.write(repr(self.fileSize)[:-1])
-        FILE.close()
+        running = 0
+        try:
+            FILE = open(self.statFile, 'r')
+            running = FILE.read(1)
+            FILE.close()
+        except:
+            running = 0
+
+        if running == '0':
+            app.logger.error( "shutting down..." )
+            self.state = 0
+            df = app.multitorrent.shutdown()
+            stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
+            df.addCallbacks(stop_rawserver, stop_rawserver)
+        else:
+            FILE = open(self.statFile,"w")
+            FILE.write(repr(self.state)+"\n")
+            FILE.write(self.percentDone+"\n")
+            FILE.write(self.timeEst+"\n")
+            FILE.write(self.downRate+"\n")
+            FILE.write(self.upRate+"\n")
+            FILE.write(self.tfOwner+"\n")
+            FILE.write(self.seeds+"\n")
+            FILE.write(self.peers+"\n")
+            FILE.write(self.shareRating+"\n")
+            FILE.write(self.seedLimit+"\n")
+            FILE.write(repr(self.upTotal)+"\n")
+            FILE.write(repr(self.downTotal)+"\n")
+            FILE.write(repr(self.fileSize)[:-1])
+            # TODO : write errors to stat-file
+            FILE.flush()
+            FILE.close()
 
         """print
         print _("saving:        "), self.file
