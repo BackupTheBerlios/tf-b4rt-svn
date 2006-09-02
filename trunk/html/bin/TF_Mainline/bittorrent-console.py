@@ -178,12 +178,11 @@ class HeadlessDisplayer(object):
         # shutdown or write stat-file
         if running == '0':
             # hmm :
-            """
-            app.logger.info( "shutting down..." )
-            app.logger.log(logging.INFO, "log.INFO : shutting down..." )
-            """
-            # then use this now :
+            #app.logger.info( "shutting down..." )
+            #app.logger.log(logging.INFO, "shutting down..." )
+            # then use error now :
             app.logger.error( "shutting down..." )
+            # shutdown
             self.state = 0
             df = app.multitorrent.shutdown()
             stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
@@ -208,8 +207,8 @@ class HeadlessDisplayer(object):
                 # TODO : write errors to stat-file
                 FILE.flush()
                 FILE.close()
-            except:
-                pass
+            except Exception, e:
+                app.logger.error( "Failed to write stat-file", exc_info = e )
 
         """print
         print _("saving:        "), self.file
@@ -434,6 +433,29 @@ class TorrentApp(object):
         # always make sure events get processed even if only for
         # shutting down.
         rawserver.listen_forever()
+
+        # overwrite stat-file in "Torrent Stopped" format.
+        try:
+            FILE = open(self.d.statFile,"w")
+            # write stopped stats to stat-file
+            FILE.write("0\n")
+            FILE.write(self.d.percentDone+"\n")
+            FILE.write("Torrent Stopped\n")
+            FILE.write("\n")
+            FILE.write("\n")
+            FILE.write(self.d.tfOwner+"\n")
+            FILE.write("\n")
+            FILE.write("\n")
+            FILE.write(self.d.shareRating+"\n")
+            FILE.write(self.d.seedLimit+"\n")
+            FILE.write(repr(self.d.upTotal)+"\n")
+            FILE.write(repr(self.d.downTotal)+"\n")
+            FILE.write(repr(self.d.fileSize))
+            # TODO : write errors to stat-file
+            FILE.flush()
+            FILE.close()
+        except Exception, e:
+            self.logger.error( "Failed to write stat-file", exc_info = e )
 
         # remove pid-file
         try:
