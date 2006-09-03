@@ -159,13 +159,6 @@ class HeadlessDisplayer(object):
             self.seeds = _("%d") % statistics['numSeeds']
             self.peers = _("%d") % statistics['numPeers']
 
-        """if not self.errors:
-            print _("Log: none")
-        else:
-            print _("Log:")
-        for err in self.errors[-4:]:
-            print err """
-
         # read state from stat-file
         running = 0
         try:
@@ -204,7 +197,13 @@ class HeadlessDisplayer(object):
                 FILE.write(repr(self.upTotal)+"\n")
                 FILE.write(repr(self.downTotal)+"\n")
                 FILE.write(repr(self.fileSize))
-                # TODO : write errors to stat-file
+                # write errors to stat-file
+                # this is
+                if self.errors:
+                    FILE.write("\n")
+                    #for err in self.errors[-4:]:
+                    for err in self.errors[0:]:
+                        FILE.write(err)
                 FILE.flush()
                 FILE.close()
             except Exception, e:
@@ -455,7 +454,6 @@ class TorrentApp(object):
             FILE.write(repr(self.d.upTotal)+"\n")
             FILE.write(repr(self.d.downTotal)+"\n")
             FILE.write(repr(self.d.fileSize))
-            # TODO : write errors to stat-file
             FILE.flush()
             FILE.close()
         except Exception, e:
