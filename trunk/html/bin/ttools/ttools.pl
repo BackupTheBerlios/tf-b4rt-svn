@@ -169,7 +169,7 @@ sub torrentScrape {
 		print "Error in tracker-response.\n";
 		exit;
 	}
-	if (ref($info) eq 'ARRAY') {
+	if (!(ref($info) eq 'HASH')) {
 		print "Error in tracker-response.\n";
 		exit;
 	}
