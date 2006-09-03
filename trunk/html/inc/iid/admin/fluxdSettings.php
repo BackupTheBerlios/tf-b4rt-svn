@@ -123,7 +123,7 @@ foreach ($running as $key => $value) {
 	$output .= $rt->BuildAdminOutput();
 }
 // get running mainline torrents and List them out.
-$running = getRunningTransfers("transmission");
+$running = getRunningTransfers("mainline");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"mainline");
 	$output .= $rt->BuildAdminOutput();
