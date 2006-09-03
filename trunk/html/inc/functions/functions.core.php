@@ -1256,7 +1256,7 @@ function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fals
 		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.buildSearchEngineDDL.tmpl");
 	else
 		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.buildSearchEngineDDL.tmpl");
-	
+
 	$tmpl->setvar('autoSubmit', $autoSubmit);
 	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle)) {
@@ -1922,7 +1922,7 @@ function TransferListString() {
 			}
 		} else {
 			$client = "";
-		}		
+		}
 		if ($owner || IsAdmin($cfg["user"])) {
 			$is_owner = 1;
 			if($percentDone >= 0 && $transferRunning == 1) {
@@ -1930,6 +1930,7 @@ function TransferListString() {
 				$is_no_file = 0;
 			} else {
 				$is_running = 0;
+				$is_no_file = 0;
 				if($transferowner != "n/a") {
 					if ($transferRunning != 3) {
 						if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
@@ -2024,8 +2025,8 @@ function TransferListString() {
 
 	// -------------------------------------------------------------------------
 	// build output-string
-	
-	
+
+
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -2035,8 +2036,8 @@ function TransferListString() {
 	$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 	$tmpl->setvar('user', $cfg["user"]);
 	$tmpl->setvar('sortOrder', $sortOrder);
-	
-	
+
+
 	$tmpl->setvar('settings_0', $settings[0]);
 	$tmpl->setvar('settings_1', $settings[1]);
 	$tmpl->setvar('settings_2', $settings[2]);
@@ -2062,7 +2063,7 @@ function TransferListString() {
 	$tmpl->setvar('_STATUS', _STATUS);
 	$tmpl->setvar('_ESTIMATEDTIME', _ESTIMATEDTIME);
 	$tmpl->setvar('_ADMIN', _ADMIN);
-	
+
 	if (sizeof($arUserTorrent) > 0) {
 		$tmpl->setvar('are_user_torrent', 1);
 	}
