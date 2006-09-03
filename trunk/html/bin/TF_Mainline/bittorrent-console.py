@@ -159,6 +159,12 @@ class HeadlessDisplayer(object):
             self.seeds = _("%d") % statistics['numSeeds']
             self.peers = _("%d") % statistics['numPeers']
 
+        # set some fields in app which we need in shutdown
+        app.percentDone = self.percentDone
+        app.shareRating = self.shareRating
+        app.upTotal = self.upTotal
+        app.downTotal = self.downTotal
+
         # read state from stat-file
         running = 0
         try:
@@ -302,6 +308,12 @@ class TorrentApp(object):
         logger = logging.getLogger()
         logger.addHandler(log_handler)
 
+        # some fields we need in shutdown
+        self.percentDone = "0"
+        self.shareRating = "0"
+        self.upTotal = "0"
+        self.downTotal = "0"
+
         # disable stdout and stderr error reporting to stderr.
         global stderr_console
         logging.getLogger('').removeHandler(console)
@@ -438,7 +450,7 @@ class TorrentApp(object):
             FILE = open(self.d.statFile,"w")
             # write stopped stats to stat-file
             FILE.write("0\n")
-            pcts = "-"+self.d.percentDone
+            pcts = "-"+self.percentDone
             pctf = float(pcts)
             pctf -= 100
             FILE.write(str(pctf))
@@ -449,10 +461,10 @@ class TorrentApp(object):
             FILE.write(self.d.tfOwner+"\n")
             FILE.write("\n")
             FILE.write("\n")
-            FILE.write(self.d.shareRating+"\n")
+            FILE.write(self.shareRating+"\n")
             FILE.write(self.d.seedLimit+"\n")
-            FILE.write(repr(self.d.upTotal)+"\n")
-            FILE.write(repr(self.d.downTotal)+"\n")
+            FILE.write(repr(self.upTotal)+"\n")
+            FILE.write(repr(self.downTotal)+"\n")
             FILE.write(repr(self.d.fileSize))
             FILE.flush()
             FILE.close()
