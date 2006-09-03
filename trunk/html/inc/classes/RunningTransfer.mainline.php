@@ -29,7 +29,7 @@ class RunningTransferMainline extends RunningTransfer
 
     //--------------------------------------------------------------------------
     // ctor
-    function RunningTransferTornado($psLine,$cfg) {
+    function RunningTransferMainline($psLine,$cfg) {
         // version
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         // init conf

@@ -436,10 +436,10 @@ class ClientHandler
     }
 
     /**
-     * print info of running clients
+     * get info of running clients
      *
      */
-    function printRunningClientsInfo() {
+    function getRunningClientsInfo() {
         // action
         require_once("inc/classes/RunningTransfer.php");
         // ps-string
@@ -475,19 +475,19 @@ class ClientHandler
                 }
             }
         }
-        $printRunningClientsInfo = " --- Running Processes ---\n";
-        $printRunningClientsInfo .= " Parents  : " . count($pProcess) . "\n";
-        $printRunningClientsInfo .= " Children : " . count($cProcess) . "\n";
-        $printRunningClientsInfo .= "\n";
-        $printRunningClientsInfo .= " PID \tOwner\tTransfer File\n";
+        $runningClientsInfo = " --- Running Processes ---\n";
+        $runningClientsInfo .= " Parents  : " . count($pProcess) . "\n";
+        $runningClientsInfo .= " Children : " . count($cProcess) . "\n";
+        $runningClientsInfo .= "\n";
+        $runningClientsInfo .= " PID \tOwner\tTransfer File\n";
         foreach($pProcess as $key => $value) {
-            $printRunningClientsInfo .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
+            $runningClientsInfo .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
             foreach($cpProcess as $cKey => $cValue)
                 if (intval($value) == intval($cValue))
-                    $printRunningClientsInfo .= "\t" . $cProcess[$cKey] . "\n";
+                    $runningClientsInfo .= "\t" . $cProcess[$cKey] . "\n";
         }
-        $printRunningClientsInfo .= "\n";
-        return $printRunningClientsInfo;
+        $runningClientsInfo .= "\n";
+        return $runningClientsInfo;
     }
 
     /**

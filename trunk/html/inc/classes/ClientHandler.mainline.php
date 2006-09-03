@@ -35,7 +35,7 @@ class ClientHandlerMainline extends ClientHandler
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
-        $this->binClient = "bittorent-console.py";
+        $this->binClient = "bittorrent-console.py";
         $this->mainlineBin = dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_Mainline/bittorrent-console.py";
         //
         $this->initialize($cfg);
@@ -77,9 +77,6 @@ class ClientHandlerMainline extends ClientHandler
 		$pyCmd = $this->cfg["pythonCmd"] . " -OO";
 
 		// build the command-string
-		$skipHashCheck = "";
-		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
-			$skipHashCheck = " --no_check_hashes ";
 
 		/* Skip file priority stuff, as its not in the CL client, that I can see
 		$filePrio = "";
@@ -166,26 +163,27 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --language en";
 		//$this->command .= " --die_when_done ".$this->runtime;
 		$this->command .= " --seed_limit ".$this->sharekill_param;
-		if ($this->drate != 0)
-			$this->command .= " --max_download_rate ".$this->drate;
-		else
+		if ($this->drate != 0) {
+			$this->command .= " --max_download_rate " . $this->drate * 1024;
+		} else {
 			$this->command .= " --max_download_rate -1";
-		if ($this->rate != 0)
-			$this->command .= " --max_upload_rate ".$this->rate;
-		else
+		}
+		if ($this->rate != 0) {
+			$this->command .= " --max_upload_rate " . $this->rate * 1024;
+		} else {
 			$this->command .= " --max_upload_rate -1";
+		}
 		$this->command .= " --max_uploads ".$this->maxuploads;
 		$this->command .= " --minport ".$this->port;
 		$this->command .= " --maxport ".$this->maxport;
 		$this->command .= " --rerequest_interval ".$this->rerequest;
 		//$this->command .= " --super_seeder ".$this->superseeder;
 		$this->command .= " --max_initiate ".$this->maxcons;
-		$this->command .= $skipHashCheck;
-		//$this->command .= $filePrio;
+		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
+			$this->command .= " --no_check_hashes";
 		$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
 		$this->command .= " > /dev/null &";
-        //$this->command .= " &";
 
 		// start the client
 		parent::doStartClient();
@@ -203,14 +201,16 @@ class ClientHandlerMainline extends ClientHandler
         $this->pidFile = $this->cfg["torrent_file_path"].$aliasFile.".pid";
         // stop the client
         parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
+        // give it some extra time, it needs it.
+        sleep(2);
     }
 
     /**
-     * print info of running clients
+     * get info of running clients
      *
      */
-    function printRunningClientsInfo()  {
-        return parent::printRunningClientsInfo();
+    function getRunningClientsInfo()  {
+        return parent::getRunningClientsInfo();
     }
 
     /**

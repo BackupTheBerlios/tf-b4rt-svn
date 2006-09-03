@@ -131,11 +131,11 @@ class ClientHandlerTransmission extends ClientHandler
     }
 
     /**
-     * print info of running clients
+     * get info of running clients
      *
      */
-    function printRunningClientsInfo()  {
-        return parent::printRunningClientsInfo();
+    function getRunningClientsInfo()  {
+        return parent::getRunningClientsInfo();
     }
 
     /**

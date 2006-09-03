@@ -67,15 +67,17 @@ function RunningProcessInfo() {
 	$process_list = array();
 	foreach($clients as $client) {
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
-		$RunningProcessInfo = $clientHandler->printRunningClientsInfo();
+		$runningProcessInfo = $clientHandler->getRunningClientsInfo();
 		$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep");
 		array_push($process_list, array(
 			'client' => $client,
-			'RunningProcessInfo' => $RunningProcessInfo,
+			'RunningProcessInfo' => $runningProcessInfo,
 			'pinfo' => $pinfo,
 			)
 		);
 		unset($clientHandler);
+		unset($runningProcessInfo);
+		unset($pinfo);
 	}
 	$tmpl->setloop('process_list', $process_list);
 	// grab the template
