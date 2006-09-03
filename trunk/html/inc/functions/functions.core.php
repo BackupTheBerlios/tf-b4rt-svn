@@ -518,11 +518,12 @@ function getTorrentHash($torrent) {
 		case "transmissioncli":
 		case "ttools":
 			$hashAry = explode(":",trim($resultAry[0]));
-		break;
+			break;
 		case "btshowmetainfo.py":
+		case "torrentinfo-console.py":
 		default:
 			$hashAry = explode(":",trim($resultAry[3]));
-		break;
+			break;
 	}
 	$tHash = @trim($hashAry[1]);
 	// return
@@ -874,7 +875,6 @@ function getRunningTransferCount() {
 	if ($dirHandle = opendir($cfg["torrent_file_path"])) {
 		$tCount = 0;
 		while (false !== ($file = readdir($dirHandle))) {
-			//if ((substr($file, -1, 1)) == "d")
 			if ((substr($file, -4, 4)) == ".pid")
 				$tCount++;
 		}
@@ -945,6 +945,9 @@ function getTorrentMetaInfo($torrent) {
 		case "ttools.pl":
 			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
 			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -i "'.$cfg["torrent_file_path"].$torrent.'"');
+		case "torrentinfo-console.py":
+			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
+			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
 		case "btshowmetainfo.py":
 		default:
 			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
@@ -968,6 +971,8 @@ function getTorrentScrapeInfo($torrent) {
 			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -s "'.$cfg["torrent_file_path"].$torrent.'"');
 		case "btshowmetainfo.py":
 			return "not supported by btshowmetainfo.py.";
+		case "torrentinfo-console.py":
+			return "not supported by torrentinfo-console.py.";
 		default:
 			return "error.";
 	}
