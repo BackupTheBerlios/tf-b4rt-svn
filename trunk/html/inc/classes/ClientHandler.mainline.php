@@ -161,7 +161,6 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --save_incomplete_in ".$this->savepath;
 		$this->command .= " --save_in ".$this->savepath;
 		$this->command .= " --language en";
-		//$this->command .= " --die_when_done ".$this->runtime;
 		$this->command .= " --seed_limit ".$this->sharekill_param;
 		if ($this->drate != 0) {
 			$this->command .= " --max_download_rate " . $this->drate * 1024;
@@ -177,7 +176,6 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --minport ".$this->port;
 		$this->command .= " --maxport ".$this->maxport;
 		$this->command .= " --rerequest_interval ".$this->rerequest;
-		//$this->command .= " --super_seeder ".$this->superseeder;
 		$this->command .= " --max_initiate ".$this->maxcons;
 		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
 			$this->command .= " --no_check_hashes";
