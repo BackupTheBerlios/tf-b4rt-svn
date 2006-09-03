@@ -2179,6 +2179,7 @@ function getBandwidthBar_xfer($percent, $text) {
 	$bgcolor .='00';
 	$tmpl->setvar('bgcolor', $bgcolor);
 	$tmpl->setvar('percent', $percent);
+	$tmpl->setvar('text', $text);
 	$percent2 = (100 - $percent);
 	$tmpl->setvar('percent2', $percent2);
 	// grab the template
