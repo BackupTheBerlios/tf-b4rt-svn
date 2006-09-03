@@ -42,23 +42,14 @@ class RunningTransferMainline extends RunningTransfer
                 $psLine = str_replace("  ",' ',trim($psLine));
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
+            $arrC = count($arr);
             foreach($arr as $key =>$value) {
                 if ($key == 0)
                     $startArgs = false;
                 if ($value == $this->mainlineBin) {
-                	$this->transferowner = $arr[4];
-                	$this->filePath = substr($arr[6], 0, strrpos($arr[6], "/") + 1);
-                	$this->statFile = str_replace($this->filePath,'',$arr[5]);
-                	/*
-                    $offset = 2;
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0)
-                        $offset += 1;
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0)
-                        $offset += 1;
-                    $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
-                    $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
-                    $this->transferowner = $arr[$key+$offset+1];
-                    */
+                	$this->transferowner = $arr[7];
+                	$this->filePath = substr($arr[$arrC - 1], 0, strrpos($arr[$arrC - 1], "/") + 1);
+                	$this->statFile = str_replace($this->filePath,'', $arr[9]);
                 }
                 if ($value == '--language')
                     $startArgs = true;
@@ -71,14 +62,11 @@ class RunningTransferMainline extends RunningTransfer
                                 else
                                     $this->args .= $value.":".$arr[$key+1].",";
                             } else {
-                                //$this->args .= "";
                             	$this->transferFile = str_replace($this->filePath,'',$value);
                             }
                         }
                     }
                 }
-                //if ($value == '--responsefile')
-                //    $this->transferFile = str_replace($this->filePath,'',$arr[$key+1]);
             }
             $this->args = str_replace("--","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));
