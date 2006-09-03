@@ -439,7 +439,11 @@ class TorrentApp(object):
             FILE = open(self.d.statFile,"w")
             # write stopped stats to stat-file
             FILE.write("0\n")
-            FILE.write(self.d.percentDone+"\n")
+            pcts = "-"+self.d.percentDone
+            pctf = float(pcts)
+            pctf -= 100
+            FILE.write(str(pctf))
+            FILE.write("\n")
             FILE.write("Torrent Stopped\n")
             FILE.write("\n")
             FILE.write("\n")
