@@ -41,7 +41,7 @@
 <table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 	<tr><td colspan=6 bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif">
 		<table width="100%" cellpadding=0 cellspacing=0 border=0><tr><td>
-			<img src="images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"><tmpl_var name="_ACTIVITYLOG"> <tmpl_var name="days_to_keep"> <tmpl_var name="_DAYS"> (<tmpl_var name="userdisplay">)</font>
+			<img src="themes/<tmpl_var name="theme">/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"><tmpl_var name="_ACTIVITYLOG"> <tmpl_var name="days_to_keep"> <tmpl_var name="_DAYS"> (<tmpl_var name="userdisplay">)</font>
 		</td>
 		<td align="right">
 			<tmpl_if name="is_prev">
@@ -71,7 +71,7 @@
 				<td><div align=center><div class="tiny" align="left">
 					<tmpl_var name="file">
 				</div></td>
-				<td><div class="tiny" align="left"><a href="javascript:void(0)" onclick="return overlib('<tmpl_var name="ip_resolved"><br><tmpl_var name="user_agent"><br>', STICKY, CSSCLASS);" onmouseover="return overlib('<tmpl_var name="ip_resolved"><br><tmpl_var name="user_agent"><br>', CSSCLASS);" onmouseout="return nd();"><img src="images/properties.png" width="18" height="13" border="0"><font class=tiny><tmpl_var name="ip"></font></a></div></td>
+				<td><div class="tiny" align="left"><a href="javascript:void(0)" onclick="return overlib('<tmpl_var name="ip_resolved"><br><tmpl_var name="user_agent"><br>', STICKY, CSSCLASS);" onmouseover="return overlib('<tmpl_var name="ip_resolved"><br><tmpl_var name="user_agent"><br>', CSSCLASS);" onmouseout="return nd();"><img src="themes/<tmpl_var name="theme">/images/properties.png" width="18" height="13" border="0"><font class=tiny><tmpl_var name="ip"></font></a></div></td>
 				<td><div class="tiny" align="center"><tmpl_var name="date"></div></td>
 			</tr>
 		<tmpl_else>

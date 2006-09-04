@@ -487,15 +487,15 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>python</strong><br>';
 				$htmlMain .= 'use this to kill all python processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>perl</strong><br>';
 				$htmlMain .= 'use this to kill all perl processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmissioncli</strong><br>';
 				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "11": // Maintenance-Kill : python
@@ -575,11 +575,11 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$htmlMain .= '<strong>pid-file-leftovers</strong><br>';
 				$htmlMain .= 'use this to delete pid-file-leftovers of deleted torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmission-cache</strong><br>';
 				$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "21": // Maintenance-Clean : pid-file-clean
@@ -636,7 +636,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$htmlMain .= '<font color="red"><strong>DONT</strong> do this if your system is running as it should. You WILL break something.</font>';
 				$htmlMain .= '<br>use this after server-reboot, if torrents were killed or if there are other problems with the webapp.';
-				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=31"><img src="images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
+				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=31"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "31": // Maintenance : Repair
@@ -660,7 +660,7 @@ if (isset($_REQUEST["m"])) {
 				}
 				$htmlMain .= '<p>';
 				$htmlMain .= 'Use this to lock/unlock your webapp. only superadmin can access locked webapp.';
-				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
+				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
 				if ($cfg['webapp_locked'] == 1)
 					$htmlMain .= 'un';
 				$htmlMain .= 'lock</a>';
@@ -699,11 +699,11 @@ if (isset($_REQUEST["t"])) {
 				$htmlTitle = "Torrents";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?t=1"><img src="images/arrow.gif" width="9" height="9" title="Stop All Torrents" border="0"> Stop All Torrents</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?t=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Stop All Torrents" border="0"> Stop All Torrents</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?t=2"><img src="images/arrow.gif" width="9" height="9" title="Start All Torrents" border="0"> Start All Torrents</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?t=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Start All Torrents" border="0"> Start All Torrents</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?t=3"><img src="images/arrow.gif" width="9" height="9" title="Resume All Torrents" border="0"> Resume All Torrents</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?t=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Resume All Torrents" border="0"> Resume All Torrents</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "1": // Torrents-Stop
@@ -843,11 +843,11 @@ if (isset($_REQUEST["z"])) {
 	    					//$htmlMain .= '<br>';
 	    					$htmlMain .= '<strong>Current Release : </strong>';
 	    					$htmlMain .= '<br>';
-	    					$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
+	    					$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<strong>Homepage : </strong>';
 	    					$htmlMain .= '<br>';
-	    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+	    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
 	    					$htmlMain .= '<br>';
 	    				} else {
 	    					$htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
@@ -867,11 +867,11 @@ if (isset($_REQUEST["z"])) {
 					$htmlMain .= '<br><br>';
 	    			$htmlMain .= '<strong>Current Release : </strong>';
 	    			$htmlMain .= '<br>';
-	    			$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
+	    			$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
 					$htmlMain .= '<br><br>';
 					$htmlMain .= '<strong>Homepage : </strong>';
 					$htmlMain .= '<br>';
-					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
+					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
 					$htmlMain .= '<br>';
 				}
 				break;
@@ -1066,8 +1066,8 @@ function printPageStart($echoMode = 0) {
 	doEcho('<HTML>',$echoMode);
 	doEcho('<HEAD>',$echoMode);
 	doEcho('<TITLE>torrentflux-b4rt - SuperAdmin</TITLE>',$echoMode);
-	doEcho('<link rel="icon" href="images/favicon.ico" type="image/x-icon" />',$echoMode);
-	doEcho('<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />',$echoMode);
+	doEcho('<link rel="icon" href="themes/'.$cfg["theme"].'/images/favicon.ico" type="image/x-icon" />',$echoMode);
+	doEcho('<link rel="shortcut icon" href="themes/'.$cfg["theme"].'/images/favicon.ico" type="image/x-icon" />',$echoMode);
 	doEcho('<LINK REL="StyleSheet" HREF="themes/'.$cfg["theme"].'/style.css" TYPE="text/css">',$echoMode);
 	doEcho('<META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset='. _CHARSET .'">',$echoMode);
 	doEcho('</HEAD>',$echoMode);
@@ -1436,7 +1436,7 @@ function backupListDisplay() {
 				$retVal .= '</a>';
 				$retVal .= '&nbsp;&nbsp;';
 				$retVal .= '<a href="'. _FILE_THIS .'?b=5&f='.$backup.'">';
-				$retVal .= '<img src="images/delete.png" title="Delete" border="0">';
+				$retVal .= '<img src="themes/'.$cfg["theme"].'/images/delete.png" title="Delete" border="0">';
 				$retVal .= '</a>';
 				$retVal .= '</td>';
 				$retVal .= '</tr>';
