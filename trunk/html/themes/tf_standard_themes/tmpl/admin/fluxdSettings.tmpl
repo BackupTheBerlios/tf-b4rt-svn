@@ -14,12 +14,12 @@
 	<a name="fluxd" id="fluxd"></a>
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
-			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/tf_standard_themes/images/bar.gif">
 				<font class="title">
 					<tmpl_if name="fluxdRunning">
 						&nbsp;&nbsp;<img src="images/green.gif" align="absmiddle" align="absmiddle"> fluxd Running (pid: <tmpl_var name="fluxdPid">)
 					<tmpl_else>
-						&nbsp;&nbsp;<img src="themes/<tmpl_var name="theme">/images/black.gif" align="absmiddle"> fluxd Off
+						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/black.gif" align="absmiddle"> fluxd Off
 					</tmpl_if>
 				</font>
 			</td>
@@ -105,7 +105,7 @@
 									<td align="center" colspan="2">
 										<table width="100%" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
 											<tr>
-												<td colspan="6" bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+												<td colspan="6" bgcolor="<tmpl_var name="table_header_bg">" background="themes/tf_standard_themes/images/bar.gif">
 													<div align="center">
 														<tmpl_var name="SuperAdminLink1">
 														 |
@@ -159,13 +159,13 @@
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Qmgr</strong>&nbsp;
 										<tmpl_if name="fluxd_Qmgr_state" value="0">
-											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Qmgr not loaded.">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Qmgr not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Qmgr_state" value="1">
-											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Qmgr loaded.">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Qmgr loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Qmgr_state" value="-1">
-											<img src="themes/<tmpl_var name="theme">/images/red.gif" title="Qmgr error.">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Qmgr error.">
 										</tmpl_if>
 									</td>
 								</tr>
@@ -209,13 +209,13 @@
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Fluxinet</strong>&nbsp;
 										<tmpl_if name="fluxd_Fluxinet_state" value="0">
-											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Fluxinet not loaded.">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Fluxinet not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Fluxinet_state" value="1">
-											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Fluxinet loaded.">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Fluxinet loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Fluxinet_state" value="-1">
-											<img src="themes/<tmpl_var name="theme">/images/red.gif" title="Fluxinet error.">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Fluxinet error.">
 										</tmpl_if>
 									</td>
 								</tr>
@@ -251,13 +251,13 @@
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Watch</strong>&nbsp;
 										<tmpl_if name="fluxd_Watch_state" value="0">
-											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Watch not loaded.">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Watch not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Watch_state" value="1">
-											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Watch loaded.">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Watch loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Watch_state" value="-1">
-											<img src="themes/<tmpl_var name="theme">/images/red.gif" title="Watch error.">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Watch error.">
 										</tmpl_if>
 									</td>
 								</tr>
@@ -293,13 +293,13 @@
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Clientmaint</strong>&nbsp;
 										<tmpl_if name="fluxd_Clientmaint_state" value="0">
-											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Clientmaint not loaded.">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Clientmaint not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Clientmaint_state" value="1">
-											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Clientmaint loaded.">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Clientmaint loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Clientmaint_state" value="-1">
-											<img src="themes/<tmpl_var name="theme">/images/red.gif" title="Clientmaint error.">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Clientmaint error.">
 										</tmpl_if>
 									</td>
 								</tr>
@@ -335,13 +335,13 @@
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Trigger</strong>&nbsp;
 										<tmpl_if name="fluxd_Trigger_state" value="0">
-											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Trigger not loaded.">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Trigger not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Trigger_state" value="1">
-											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Trigger loaded.">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Trigger loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Trigger_state" value="-1">
-											<img src="themes/<tmpl_var name="theme">/images/red.gif" title="Trigger error.">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Trigger error.">
 										</tmpl_if>
 									</td>
 								</tr>
@@ -385,10 +385,10 @@
 	<tmpl_if name="fluxd_Qmgr_enabled">
 		<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 			<tr>
-				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/tf_standard_themes/images/bar.gif">
 					<table width="100%" cellpadding=0 cellspacing=0 border=0>
 						<tr>
-							<td><img src="themes/<tmpl_var name="theme">/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Queued Items </font></td>
+							<td><img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Queued Items </font></td>
 						</tr>
 					</table>
 				</td>
@@ -401,10 +401,10 @@
 			</table>
 			<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 			<tr>
-				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/tf_standard_themes/images/bar.gif">
 					<table width="100%" cellpadding=0 cellspacing=0 border=0>
 						<tr>
-							<td><img src="themes/<tmpl_var name="theme">/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Running Items </font></td>
+							<td><img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Running Items </font></td>
 						</tr>
 					</table>
 				</td>

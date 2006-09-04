@@ -16,7 +16,7 @@
 			<td>
 				<table border="1" bordercolor="<tmpl_var name="table_border_dk">" cellpadding="4" cellspacing="0" width="100%">
 					<tr>
-						<td colspan="2" background="themes/<tmpl_var name="theme">/images/bar.gif">
+						<td colspan="2" background="themes/tf_standard_themes/images/bar.gif">
 							<tmpl_var name="titleBar">
 						</td>
 					</tr>
@@ -44,7 +44,7 @@
 										<input type="Submit" value="Go">
 										<br>
 										<tmpl_if name="enable_multiupload">
-											&nbsp;<a href="index.php?iid=multiup"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
+											&nbsp;<a href="index.php?iid=multiup"><img src="themes/tf_standard_themes/images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
 											<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
 										</tmpl_if>
 									</td>
@@ -110,9 +110,9 @@
 										<b><tmpl_var name="_TORRENTLINKS">:</b><br>
 										<tmpl_loop name="linklist">
 											<tmpl_if name="enable_dereferrer">
-												<a href="<tmpl_var name="_URL_DEREFERRER"><tmpl_var name="link_url">" target="_blank"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
+												<a href="<tmpl_var name="_URL_DEREFERRER"><tmpl_var name="link_url">" target="_blank"><img src="themes/tf_standard_themes/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
 											<tmpl_else>
-												<a href="<tmpl_var name="link_url">" target="_blank"><img src="themes/<tmpl_var name="theme">/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
+												<a href="<tmpl_var name="link_url">" target="_blank"><img src="themes/tf_standard_themes/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
 											</tmpl_if>
 										</tmpl_loop>
 									</td>
@@ -120,34 +120,34 @@
 								<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 								<tmpl_if name="settingsHackStats1">
 									<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats11"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats11"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats2">
 									<b><tmpl_var name="_UPLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats22"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats22"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats3">
 									<b><tmpl_var name="_TOTALSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats33"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats33"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats4">
 									<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
-									<a href="index.php?iid=all_services"><img src="themes/<tmpl_var name="theme">/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats44"></a><br>
+									<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats44"></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats5">
 									<b><tmpl_var name="_DRIVESPACE">:</b><br>
-									<a href="index.php?iid=drivespace"><img src="themes/<tmpl_var name="theme">/images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats55"></a><br>
+									<a href="index.php?iid=drivespace"><img src="themes/tf_standard_themes/images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats55"></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats6">
 									<b><tmpl_var name="_SERVERLOAD">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats66"></a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats66"></a><br>
 								</tmpl_if>
 								<tmpl_if name="ui_displayusers">
 								    <b><tmpl_var name="_ONLINE">:</b><br>
 								    <tmpl_loop name="arOnlineUsers">
 										<tmpl_if name="is_on">
 											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-											<img src="themes/<tmpl_var name="theme">/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+											<img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 										</tmpl_if>
 								    </tmpl_loop>
     								<tmpl_if name="hide_offline" value="0">
@@ -155,7 +155,7 @@
     									<tmpl_loop name="arOfflineUsers">
 											<tmpl_if name="is_off">
     											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-    											<img src="themes/<tmpl_var name="theme">/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+    											<img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 											</tmpl_if>
     								    </tmpl_loop>
     								</tmpl_if>
@@ -171,35 +171,35 @@
 					<div align="center">
 						<font face="Arial" size="2">
 							<a href="index.php?iid=readrss">
-								<img src="themes/<tmpl_var name="theme">/images/download_owner.gif" width="16" height="16" border="0" title="RSS Torrents" align="absmiddle">RSS Torrents</a>
+								<img src="themes/tf_standard_themes/images/download_owner.gif" width="16" height="16" border="0" title="RSS Torrents" align="absmiddle">RSS Torrents</a>
 							|
 							<a href="index.php?iid=drivespace">
-								<img src="themes/<tmpl_var name="theme">/images/hdd.gif" width="16" height="16" border="0" title="<tmpl_var name="drivespace">% Used" align="absmiddle"><tmpl_var name="_DRIVESPACE"></a>
+								<img src="themes/tf_standard_themes/images/hdd.gif" width="16" height="16" border="0" title="<tmpl_var name="drivespace">% Used" align="absmiddle"><tmpl_var name="_DRIVESPACE"></a>
 							|
 							<tmpl_if name="enable_xfer">
 								<a href="index.php?iid=xfer">
-									<img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="_XFER_USAGE"></a>
+									<img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="_XFER_USAGE"></a>
 								|
 							</tmpl_if>
 							<tmpl_if name="enable_mrtg">
 								<a href="index.php?iid=mrtg">
-									<img src="themes/<tmpl_var name="theme">/images/mrtg.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_ID_MRTG"></a>
+									<img src="themes/tf_standard_themes/images/mrtg.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_ID_MRTG"></a>
 								|
 							</tmpl_if>
 							<a href="index.php?iid=who">
-								<img src="themes/<tmpl_var name="theme">/images/who.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_SERVERSTATS"></a>
+								<img src="themes/tf_standard_themes/images/who.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_SERVERSTATS"></a>
 							|
 							<a href="index.php?iid=all_services">
-								<img src="themes/<tmpl_var name="theme">/images/all.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_Var name="_ALL"></a>
+								<img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_Var name="_ALL"></a>
 							|
 							<a href="index.php?iid=dir">
-								<img src="themes/<tmpl_var name="theme">/images/folder.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_DIRECTORYLIST"></a>
+								<img src="themes/tf_standard_themes/images/folder.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_DIRECTORYLIST"></a>
 							|
 							<a href="index.php?iid=dir&dir=<tmpl_var name="user2">">
-								<img src="themes/<tmpl_var name="theme">/images/folder.gif" width="16" height="16" title="My Directory" border="0" align="absmiddle">My Directory</a>
+								<img src="themes/tf_standard_themes/images/folder.gif" width="16" height="16" title="My Directory" border="0" align="absmiddle">My Directory</a>
 							|
 							<a href="stats.php?f=rss" title="RSS - Stats" target="_blank">
-								<img src="themes/<tmpl_var name="theme">/images/rss.png" width="14" height="14" border="0" alt="RSS - Stats" title="RSS - Stats" align="absmiddle"></a>
+								<img src="themes/tf_standard_themes/images/rss.png" width="14" height="14" border="0" alt="RSS - Stats" title="RSS - Stats" align="absmiddle"></a>
 						</font>
 					</div>
 				</td>
@@ -265,43 +265,43 @@
 										<table>
 											<tr>
 												<td>
-													<img src="themes/<tmpl_var name="theme">/images/properties.png" width="18" height="13" title="<tmpl_var name="_TRANSFERDETAILS">"></td>
+													<img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" title="<tmpl_var name="_TRANSFERDETAILS">"></td>
 												<td class="tiny">
 													<tmpl_var name="_TRANSFERDETAILS">&nbsp;&nbsp;&nbsp;</td>
 												<td>
-													<img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">"></td>
+													<img src="themes/tf_standard_themes/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">"></td>
 												<td class="tiny">
 													<tmpl_var name="_RUNTRANSFER">&nbsp;&nbsp;&nbsp;</td>
 												<td>
-													<img src="themes/<tmpl_var name="theme">/images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">"></td>
+													<img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">"></td>
 												<td class="tiny">
 													<tmpl_var name="_STOPTRANSFER">&nbsp;&nbsp;&nbsp;</td>
 												<tmpl_if name="queueActive">
 													<td>
-														<img src="themes/<tmpl_var name="theme">/images/queued.gif" width="16" height="16" title="<tmpl_var name="_DELQUEUE">"></td>
+														<img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" title="<tmpl_var name="_DELQUEUE">"></td>
 													<td class="tiny">
 														<tmpl_var name="_DELQUEUE">&nbsp;&nbsp;&nbsp;</td>
 												</tmpl_if>
 												<td>
-													<img src="themes/<tmpl_var name="theme">/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">"></td>
+													<img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">"></td>
 												<td class="tiny">
 													<tmpl_var name="_SEEDTRANSFER">&nbsp;&nbsp;&nbsp;</td>
 												<td>
-													<img src="themes/<tmpl_var name="theme">/images/delete_on.gif" width="16" height="16" title="<tmpl_var name="_DELETE">"></td>
+													<img src="themes/tf_standard_themes/images/delete_on.gif" width="16" height="16" title="<tmpl_var name="_DELETE">"></td>
 												<td class="tiny">
 													<tmpl_var name="_DELETE"></td>
 												<tmpl_if name="enable_torrent_download">
 													<td>
-														&nbsp;&nbsp;&nbsp;<img src="themes/<tmpl_var name="theme">/images/down.gif" width="9" height="9" title="<tmpl_var name="_DELQUEUE">"></td>
+														&nbsp;&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/down.gif" width="9" height="9" title="<tmpl_var name="_DELQUEUE">"></td>
 													<td class="tiny">
 														Download Torrent</td>
 												</tmpl_if>
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="multi.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/<tmpl_var name="theme">/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
-														<a href="multi.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/<tmpl_var name="theme">/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
-														<a href="multi.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/<tmpl_var name="theme">/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
+														<a href="multi.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
+														<a href="multi.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
+														<a href="multi.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
@@ -401,7 +401,7 @@
 					}
 				</script>
 				<a href="JavaScript:SuperAdmin('superadmin.php?z=1')">
-					<img src="themes/<tmpl_var name="theme">/images/arrow.gif" width="9" height="9" title="Version" border="0">
+					<img src="themes/tf_standard_themes/images/arrow.gif" width="9" height="9" title="Version" border="0">
 				</a>
 			</div>
 		</tmpl_if>
