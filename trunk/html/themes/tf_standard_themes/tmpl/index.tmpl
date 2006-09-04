@@ -120,19 +120,19 @@
 								<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 								<tmpl_if name="settingsHackStats1">
 									<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats11"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats11"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats2">
 									<b><tmpl_var name="_UPLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats22"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats22"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats3">
 									<b><tmpl_var name="_TOTALSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats33"> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats33"> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats4">
 									<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
-									<a href="index.php?iid=all_services"><img src="images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats44"></a><br>
+									<a href="index.php?iid=all_services"><img src="themes/<tmpl_var name="theme">/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="settingsHackStats44"></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats5">
 									<b><tmpl_var name="_DRIVESPACE">:</b><br>
@@ -178,7 +178,7 @@
 							|
 							<tmpl_if name="enable_xfer">
 								<a href="index.php?iid=xfer">
-									<img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="_XFER_USAGE"></a>
+									<img src="themes/<tmpl_var name="theme">/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><tmpl_var name="_XFER_USAGE"></a>
 								|
 							</tmpl_if>
 							<tmpl_if name="enable_mrtg">
@@ -190,7 +190,7 @@
 								<img src="images/who.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_SERVERSTATS"></a>
 							|
 							<a href="index.php?iid=all_services">
-								<img src="images/all.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_Var name="_ALL"></a>
+								<img src="themes/<tmpl_var name="theme">/images/all.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_Var name="_ALL"></a>
 							|
 							<a href="index.php?iid=dir">
 								<img src="images/folder.gif" width="16" height="16" title="" border="0" align="absmiddle"><tmpl_var name="_DIRECTORYLIST"></a>
@@ -292,16 +292,16 @@
 													<tmpl_var name="_DELETE"></td>
 												<tmpl_if name="enable_torrent_download">
 													<td>
-														&nbsp;&nbsp;&nbsp;<img src="images/down.gif" width="9" height="9" title="<tmpl_var name="_DELQUEUE">"></td>
+														&nbsp;&nbsp;&nbsp;<img src="themes/<tmpl_var name="theme">/images/down.gif" width="9" height="9" title="<tmpl_var name="_DELQUEUE">"></td>
 													<td class="tiny">
 														Download Torrent</td>
 												</tmpl_if>
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="multi.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
-														<a href="multi.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
-														<a href="multi.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
+														<a href="multi.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/<tmpl_var name="theme">/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
+														<a href="multi.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/<tmpl_var name="theme">/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
+														<a href="multi.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/<tmpl_var name="theme">/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
