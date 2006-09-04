@@ -17,9 +17,9 @@
 			<td bgcolor="#d6dfe6" background="themes/<tmpl_var name="theme">/images/bar.gif">
 				<font class="title">
 					<tmpl_if name="fluxdRunning">
-						&nbsp;&nbsp;<img src="images/green.gif" align="absmiddle" align="absmiddle"> fluxd Running (pid: <tmpl_var name="fluxdPid">)
+						&nbsp;&nbsp;<img src="themes/<tmpl_var name="theme">/images/green.gif" align="absmiddle" align="absmiddle"> fluxd Running (pid: <tmpl_var name="fluxdPid">)
 					<tmpl_else>
-						&nbsp;&nbsp;<img src="themes/'.$cfg['theme'].'/images/black.gif" align="absmiddle"> fluxd Off
+						&nbsp;&nbsp;<img src="themes/<tmpl_var name="theme">/images/black.gif" align="absmiddle"> fluxd Off
 					</tmpl_if>
 				</font>
 			</td>
@@ -159,7 +159,7 @@
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Qmgr</strong>&nbsp;
 										<tmpl_if name="fluxd_Qmgr_state" value="0">
-											<img src="themes/'.$cfg['theme'].'/images/black.gif" title="Qmgr not loaded.">
+											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Qmgr not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Qmgr_state" value="1">
 											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Qmgr loaded.">
@@ -209,7 +209,7 @@
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Fluxinet</strong>&nbsp;
 										<tmpl_if name="fluxd_Fluxinet_state" value="0">
-											<img src="themes/'.$cfg['theme'].'/images/black.gif" title="Fluxinet not loaded.">
+											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Fluxinet not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Fluxinet_state" value="1">
 											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Fluxinet loaded.">
@@ -251,7 +251,7 @@
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Watch</strong>&nbsp;
 										<tmpl_if name="fluxd_Watch_state" value="0">
-											<img src="themes/'.$cfg['theme'].'/images/black.gif" title="Watch not loaded.">
+											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Watch not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Watch_state" value="1">
 											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Watch loaded.">
@@ -293,7 +293,7 @@
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Clientmaint</strong>&nbsp;
 										<tmpl_if name="fluxd_Clientmaint_state" value="0">
-											<img src="themes/'.$cfg['theme'].'/images/black.gif" title="Clientmaint not loaded.">
+											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Clientmaint not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Clientmaint_state" value="1">
 											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Clientmaint loaded.">
@@ -335,7 +335,7 @@
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Trigger</strong>&nbsp;
 										<tmpl_if name="fluxd_Trigger_state" value="0">
-											<img src="themes/'.$cfg['theme'].'/images/black.gif" title="Trigger not loaded.">
+											<img src="themes/<tmpl_var name="theme">/images/black.gif" title="Trigger not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Trigger_state" value="1">
 											<img src="themes/<tmpl_var name="theme">/images/green.gif" title="Trigger loaded.">

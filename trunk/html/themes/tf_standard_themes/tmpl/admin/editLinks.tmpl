@@ -35,15 +35,15 @@
 				</tmpl_else>
 					<td>
 						<a href="index.php?iid=admin&op=deleteLink&lid=<tmpl_var name="lid">"><img src="themes/<tmpl_var name="theme">/images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
-						<a href="index.php?iid=admin&op=editLinks&edit=<tmpl_var name="lid">"><img src="images/edit.gif" width=16 height=16 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
+						<a href="index.php?iid=admin&op=editLinks&edit=<tmpl_var name="lid">"><img src="themes/<tmpl_var name="theme">/images/edit.gif" width=16 height=16 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
 						<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
 					</td>
 					<td align=right width='36'>
 						<tmpl_if name="counter" value="2">
-							<a href='index.php?iid=admin&op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='images/uparrow.png' width='16' height='16' border='0' title='Move link up' align='absmiddle' alt='Up'></a><tmpl_elseif name="counter" value="1">
-							<img src='images/blank.gif' width='16' align='absmiddle'>
+							<a href='index.php?iid=admin&op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='themes/<tmpl_var name="theme">/images/uparrow.png' width='16' height='16' border='0' title='Move link up' align='absmiddle' alt='Up'></a><tmpl_elseif name="counter" value="1">
+							<img src='themes/<tmpl_var name="theme">/images/blank.gif' width='16' align='absmiddle'>
 						</tmpl_if><tmpl_if name="counter2">
-							<a href='index.php?iid=admin&op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='images/downarrow.png' width='16' height='16' border='0' title='Move link down' align='absmiddle' alt='Down'></a></tmpl_if>
+							<a href='index.php?iid=admin&op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='themes/<tmpl_var name="theme">/images/downarrow.png' width='16' height='16' border='0' title='Move link down' align='absmiddle' alt='Down'></a></tmpl_if>
 					</td>
 				</tmpl_if>
 			</tr>
