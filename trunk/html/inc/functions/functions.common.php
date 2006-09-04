@@ -677,7 +677,7 @@ function GetThemesStandard() {
 	$dir = "themes/tf_standard_themes/";
 	$handle = opendir($dir);
 	while($entry = readdir($handle)) {
-		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "css" && $entry != "tmpl" && $entry != "scripts"))
+		if (is_dir($dir.$entry) && ($entry != "." && $entry != ".." && $entry != ".svn" && $entry != "CVS" && $entry != "css" && $entry != "tmpl" && $entry != "scripts" && $entry != "images"))
 			array_push($arThemes, $entry);
 	}
 	closedir($handle);
