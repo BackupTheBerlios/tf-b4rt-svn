@@ -1286,7 +1286,7 @@ function getReleaseList() {
 				$retVal .= '<tr>';
 				$retVal .= '<td align="center">';
 				$retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'">';
-				$retVal .= '<img src="images/download_owner.gif" title="Download '.$releaseVersion.'" border="0">';
+				$retVal .= '<img src="themes/'.$cfg["theme"].'/images/download_owner.gif" title="Download '.$releaseVersion.'" border="0">';
 				$retVal .= '</a>';
 				$retVal .= '</td>';
 				$retVal .= '<td align="right">';
@@ -1432,7 +1432,7 @@ function backupListDisplay() {
 				$retVal .= '<td align="right">'.(string)(formatHumanSize(filesize($backupFile))).'</td>';
 				$retVal .= '<td align="center">';
 				$retVal .= '<a href="'. _FILE_THIS .'?b=4&f='.$backup.'">';
-				$retVal .= '<img src="images/download_owner.gif" title="Download" border="0">';
+				$retVal .= '<img src="themes/'.$cfg["theme"].'/images/download_owner.gif" title="Download" border="0">';
 				$retVal .= '</a>';
 				$retVal .= '&nbsp;&nbsp;';
 				$retVal .= '<a href="'. _FILE_THIS .'?b=5&f='.$backup.'">';

@@ -245,8 +245,9 @@ class gOOGLE
     // Function to build output for the table.
     function BuildOutput($bg,$langFILE, $searchURL = '')
     {
+		global $cfg;
         $output = "<tr>\n";
-        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName." - ".$this->fileCount." ".$langFILE."\" border=0></a></td>\n";
+        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName." - ".$this->fileCount." ".$langFILE."\" border=0></a></td>\n";
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a>";
         $output .= "</td>\n";
         $output .= "    <td bgcolor=\"".$bg."\">&nbsp;</td>\n";

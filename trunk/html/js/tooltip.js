@@ -37,7 +37,7 @@ see http://www.gnu.org/copyleft/lesser.html
 ////////////////  GLOBAL TOOPTIP CONFIGURATION  /////////////////////
 
 var ttBgColor      = "#FFFFE7";
-var ttBgImg        = ""; //images/help.gif";           // path to background image;
+var ttBgImg        = "";           // path to background image;
 var ttBorderColor  = "#000000";
 var ttBorderWidth  = 1;
 var ttDelay        = 250;          // time span until tooltip shows up [milliseconds]

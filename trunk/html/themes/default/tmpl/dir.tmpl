@@ -144,7 +144,7 @@ function UncompDetails(URL) {
 							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_file_download">
-							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><img src="images/download_owner.gif" width=16 height=16 title="Download" border=0></a>
+							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><img src="themes/<tmpl_var name="theme">/images/download_owner.gif" width=16 height=16 title="Download" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="admin1">
 							<a href="index.php?iid=dir&del=<tmpl_Var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')"><img src="themes/<tmpl_var name="theme">/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>

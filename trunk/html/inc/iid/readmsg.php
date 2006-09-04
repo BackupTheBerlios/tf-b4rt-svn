@@ -66,9 +66,9 @@ if (!empty($mid)) {
 	$message_list = array();
 	while(list($mid, $from_user, $message, $new, $ip, $time, $force_read) = $result->FetchRow()) {
 		if($new == 1)
-			$mail_image = "images/new_message.gif";
+			$mail_image = "themes/".cfg['theme']."/images/new_message.gif";
 		else
-			$mail_image = "images/old_message.gif";
+			$mail_image = "themes/".cfg['theme']."/images/old_message.gif";
 		$display_message = check_html($message, "nohtml");
 		if(strlen($display_message) >= 40) { // needs to be trimmed
 			$display_message = substr($display_message, 0, 39);

@@ -93,7 +93,7 @@ function showMetaInfo($torrent, $allowSave=false) {
 	} elseif ($cfg["enable_file_priority"]) {
 		$prioFileName = $cfg["torrent_file_path"].getAliasName($torrent).".prio";
 		require_once('inc/classes/BDecode.php');
-		$showMetaInfo = '<link rel="StyleSheet" href="css/dtree.css" type="text/css" /><script type="text/javascript" src="js/dtree.js"></script>';
+		$showMetaInfo = '<link rel="StyleSheet" href="themes/'.$cfg["theme"].'/css/dtree.css" type="text/css" /><script type="text/javascript" src="themes/'.$cfg["theme"].'/scripts/dtree.js"></script>';
 		$ftorrent=$cfg["torrent_file_path"].$torrent;
 		$fp = fopen($ftorrent, "rd");
 		$alltorrent = fread($fp, filesize($ftorrent));
