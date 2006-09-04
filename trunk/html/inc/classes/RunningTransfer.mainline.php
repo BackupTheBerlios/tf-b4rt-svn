@@ -75,8 +75,8 @@ class RunningTransferMainline extends RunningTransfer
 
     //----------------------------------------------------------------
     // Function to put the variables into a string for writing to file
-    function BuildAdminOutput() {
-        return parent::BuildAdminOutput();
+    function BuildAdminOutput($theme) {
+        return parent::BuildAdminOutput($theme);
     }
 }
 
