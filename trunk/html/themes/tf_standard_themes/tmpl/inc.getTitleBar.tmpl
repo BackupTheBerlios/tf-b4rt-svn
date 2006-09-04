@@ -3,13 +3,13 @@
 		<td align="left"><font class="title"><tmpl_var name="pageTitleText"></font></td>
 		<tmpl_if name="showButtons">
 			<td align=right>
-				<a href="index.php?iid=index"><img src="themes/tf_standard_themes/images/home.gif" width=49 height=13 title="<tmpl_var name="_TORRENTS">" border=0></a>
-				<a href="index.php?iid=dir"><img src="themes/tf_standard_themes/images/directory.gif" width=49 height=13 title="<tmpl_var name="_DIRECTORYLIST">" border=0></a>
-				<a href="index.php?iid=history"><img src="themes/tf_standard_themes/images/history.gif" width=49 height=13 title="<tmpl_var name="_UPLOADHISTORY">" border=0></a>
-				<a href="index.php?iid=profile"><img src="themes/tf_standard_themes/images/profile.gif" width=49 height=13 title="<tmpl_var name="_MYPROFILE">" border=0></a>
-				<a href="index.php?iid=readmsg"><tmpl_if name="number_messages"><img src="themes/tf_standard_themes/images/messages_on.gif" border=0><tmpl_else><img src="themes/tf_standard_themes/images/messages_off.gif" border=0></tmpl_if></a>
+				<a href="index.php?iid=index"><img src="themes/<tmpl_var name="theme">/images/home.gif" width=49 height=13 title="<tmpl_var name="_TORRENTS">" border=0></a>
+				<a href="index.php?iid=dir"><img src="themes/<tmpl_var name="theme">/images/directory.gif" width=49 height=13 title="<tmpl_var name="_DIRECTORYLIST">" border=0></a>
+				<a href="index.php?iid=history"><img src="themes/<tmpl_var name="theme">/images/history.gif" width=49 height=13 title="<tmpl_var name="_UPLOADHISTORY">" border=0></a>
+				<a href="index.php?iid=profile"><img src="themes/<tmpl_var name="theme">/images/profile.gif" width=49 height=13 title="<tmpl_var name="_MYPROFILE">" border=0></a>
+				<a href="index.php?iid=readmsg"><tmpl_if name="number_messages"><img src="themes/<tmpl_var name="theme">/images/messages_on.gif" border=0><tmpl_else><img src="themes/<tmpl_var name="theme">/images/messages_off.gif" border=0></tmpl_if></a>
 				<tmpl_if name="is_admin">
-					<a href="index.php?iid=admin"><img src="themes/tf_standard_themes/images/admin.gif" width=49 height=13 title="<tmpl_var name="_ADMINISTRATION">" border=0></a>
+					<a href="index.php?iid=admin"><img src="themes/<tmpl_var name="theme">/images/admin.gif" width=49 height=13 title="<tmpl_var name="_ADMINISTRATION">" border=0></a>
 				</tmpl_if>
 				<a href="logout.php"><img src="themes/tf_standard_themes/images/logout.gif" width=13 height=12 title="Logout" border=0></a>
 			</td>
