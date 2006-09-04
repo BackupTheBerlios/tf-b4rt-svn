@@ -4,7 +4,7 @@
 		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
 			<tmpl_if name="sortOrder" value="da">
 				<a href="index.php?iid=index&so=dd"><font class="adminlink">#</font></a>
-				<a href="index.php?iid=index&so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+				<a href="index.php?iid=index&so=dd"><img src="themes/<tmpl_var name="theme">/images/s_down.gif" width="9" height="9" border="0"></a>
 			<tmpl_elseif name="sortOrder" value="dd">
 				<a href="index.php?iid=index&so=da"><font class="adminlink">#</font></a>
 				<a href="index.php?iid=index&so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
@@ -15,7 +15,7 @@
 		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
 			<tmpl_if name="sortOrder" value="na">
 				<a href="index.php?iid=index&so=nd"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
-				<a href="index.php?iid=index&so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+				<a href="index.php?iid=index&so=nd"><img src="themes/<tmpl_var name="theme">/images/s_down.gif" width="9" height="9" border="0"></a>
 			<tmpl_elseif name="sortOrder" value="nd">
 				<a href="index.php?iid=index&so=na"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
 				<a href="index.php?iid=index&so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
@@ -169,41 +169,41 @@
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
 									</tmpl_if>
 								<tmpl_else>
-									<img src="images/run_off.gif" width="16" height="16" border="0" title="-">
+									<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="-">
 									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width=16 height=16 border=0>
 									<input type="checkbox" disabled="disabled">
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
-									<img src="images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
+									<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
-										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
 														<tmpl_if name="show_run">
-															<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+															<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 														<tmpl_else>
-															<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+															<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/<tmpl_var name="theme">/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 														</tmpl_if>
 												<tmpl_else>
 													<tmpl_if name="show_run">
-														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 													<tmpl_else>
-														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 													</tmpl_if>
 												</tmpl_if>
 											<tmpl_else>
 												<tmpl_if name="show_run">
-													<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
-													<img src="images/run_off.gif" width="16" height="16" border="0" title="Done">
+													<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
 											</tmpl_if>
 										<tmpl_else>
-											<img src="images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPPING">">
+											<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPPING">">
 										</tmpl_if>
 									</tmpl_if>
 								</tmpl_if>
@@ -217,8 +217,8 @@
 							</tmpl_if>
 						</tmpl_if>
 					<tmpl_else>
-						<img src="images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
-						<img src="images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
+						<img src="themes/<tmpl_var name="theme">/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
+						<img src="themes/<tmpl_var name="theme">/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<input type="checkbox" disabled="disabled">
 					</tmpl_if>
 				</div></td>
@@ -230,7 +230,7 @@
 		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
 			<tmpl_if name="sortOrder" value="da">
 				<a href="index.php?iid=index&so=dd"><font class="adminlink">#</font></a>
-				<a href="index.php?iid=index&so=dd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+				<a href="index.php?iid=index&so=dd"><img src="themes/<tmpl_var name="theme">/images/s_down.gif" width="9" height="9" border="0"></a>
 			<tmpl_elseif name="sortOrder" value="dd">
 				<a href="index.php?iid=index&so=da"><font class="adminlink">#</font></a>
 				<a href="index.php?iid=index&so=da"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
@@ -241,7 +241,7 @@
 		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title">
 			<tmpl_if name="sortOrder" value="na">
 				<a href="index.php?iid=index&so=nd"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
-				<a href="index.php?iid=index&so=nd"><img src="images/s_down.gif" width="9" height="9" border="0"></a>
+				<a href="index.php?iid=index&so=nd"><img src="themes/<tmpl_var name="theme">/images/s_down.gif" width="9" height="9" border="0"></a>
 			<tmpl_elseif name="sortOrder" value="nd">
 				<a href="index.php?iid=index&so=na"><font class="adminlink"><tmpl_var name="user">: <tmpl_var name="_TRANSFERFILE"></font></a>
 				<a href="index.php?iid=index&so=na"><img src="images/s_up.gif" width="9" height="9" border="0"></a>
@@ -395,41 +395,41 @@
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
 									</tmpl_if>
 								<tmpl_else>
-									<img src="images/run_off.gif" width="16" height="16" border="0" title="-">
+									<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="-">
 									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width=16 height=16 border=0>
 									<input type="checkbox" disabled="disabled">
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
-									<img src="images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
+									<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
-										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
 													<tmpl_if name="show_run">
-														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 													<tmpl_else>
-														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/<tmpl_var name="theme">/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 													</tmpl_if>
 												<tmpl_else>
 													<tmpl_if name="show_run">
-														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 													<tmpl_else>
-														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+														<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 													</tmpl_if>
 												</tmpl_if>
 											<tmpl_else>
 												<tmpl_if name="show_run">
-													<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<a href="index.php?iid=index&torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
-													<img src="images/run_off.gif" width="16" height="16" border="0" title="Done">
+													<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
 											</tmpl_if>
 										<tmpl_else>
-											<img src="images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPPING">">
+											<img src="themes/<tmpl_var name="theme">/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPPING">">
 										</tmpl_if>
 									</tmpl_if>
 								</tmpl_if>
@@ -443,8 +443,8 @@
 							</tmpl_if>
 						</tmpl_if>
 					<tmpl_else>
-						<img src="images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
-						<img src="images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
+						<img src="themes/<tmpl_var name="theme">/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
+						<img src="themes/<tmpl_var name="theme">/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<input type="checkbox" disabled="disabled">
 					</tmpl_if>
 				</div></td>
