@@ -355,8 +355,8 @@ foreach($entrys as $entry) {
 			$fileSize = number_format(($arStat[7])/1024);
 			// Code added by Remko Jantzen to assign an icon per file-type. But when not
 			// available all stays the same.
-			$image="images/time.gif";
-			$imageOption="images/files/".getExtension($entry).".png";
+			$image="themes/".$cfg['theme']."/images/time.gif";
+			$imageOption="themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
 			if (file_exists("./".$imageOption))
 				$image = $imageOption;
 			// Can users download files?
