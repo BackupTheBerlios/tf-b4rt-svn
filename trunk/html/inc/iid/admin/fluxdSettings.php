@@ -114,25 +114,25 @@ $output = "";
 $running = getRunningTransfers("tornado");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"tornado");
-	$output .= $rt->BuildAdminOutput();
+	$output .= $rt->BuildAdminOutput($cfg['theme']);
 }
 // get running transmission torrents and List them out.
 $running = getRunningTransfers("transmission");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"transmission");
-	$output .= $rt->BuildAdminOutput();
+	$output .= $rt->BuildAdminOutput($cfg['theme']);
 }
 // get running mainline torrents and List them out.
 $running = getRunningTransfers("mainline");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"mainline");
-	$output .= $rt->BuildAdminOutput();
+	$output .= $rt->BuildAdminOutput($cfg['theme']);
 }
 // get running wget clients and List them out.
 $running = getRunningTransfers("wget");
 foreach ($running as $key => $value) {
 	$rt = RunningTransfer::getRunningTransferInstance($value,$cfg,"wget");
-	$output .= $rt->BuildAdminOutput();
+	$output .= $rt->BuildAdminOutput($cfg['theme']);
 }
 if( strlen($output) == 0 ) {
 	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Torrents</div></td></tr>";

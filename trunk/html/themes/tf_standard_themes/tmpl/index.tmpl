@@ -147,7 +147,7 @@
 								    <tmpl_loop name="arOnlineUsers">
 										<tmpl_if name="is_on">
 											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-											<img src="images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+											<img src="themes/<tmpl_var name="theme">/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 										</tmpl_if>
 								    </tmpl_loop>
     								<tmpl_if name="hide_offline" value="0">
@@ -155,7 +155,7 @@
     									<tmpl_loop name="arOfflineUsers">
 											<tmpl_if name="is_off">
     											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-    											<img src="images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+    											<img src="themes/<tmpl_var name="theme">/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 											</tmpl_if>
     								    </tmpl_loop>
     								</tmpl_if>
@@ -273,7 +273,7 @@
 												<td class="tiny">
 													<tmpl_var name="_RUNTRANSFER">&nbsp;&nbsp;&nbsp;</td>
 												<td>
-													<img src="images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">"></td>
+													<img src="themes/<tmpl_var name="theme">/images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">"></td>
 												<td class="tiny">
 													<tmpl_var name="_STOPTRANSFER">&nbsp;&nbsp;&nbsp;</td>
 												<tmpl_if name="queueActive">
@@ -287,7 +287,7 @@
 												<td class="tiny">
 													<tmpl_var name="_SEEDTRANSFER">&nbsp;&nbsp;&nbsp;</td>
 												<td>
-													<img src="images/delete_on.gif" width="16" height="16" title="<tmpl_var name="_DELETE">"></td>
+													<img src="themes/<tmpl_var name="theme">/images/delete_on.gif" width="16" height="16" title="<tmpl_var name="_DELETE">"></td>
 												<td class="tiny">
 													<tmpl_var name="_DELETE"></td>
 												<tmpl_if name="enable_torrent_download">

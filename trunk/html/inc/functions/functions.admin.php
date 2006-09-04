@@ -127,18 +127,18 @@ function getUserSection() {
 		else
 			$user_percent = number_format(($user_activity / $total_activity)*100);
 		// online
-		$user_icon = "images/user_offline.gif";
+		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
 		if (IsOnline($user_id))
-			$user_icon = "images/user.gif";
+			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
 		// level
-		$user_image = "images/user.gif";
+		$user_image = "themes/".$cfg['theme']."/images/user.gif";
 		$type_user = _NORMALUSER;
 		if ($user_level == 1) {
-			$user_image = "images/admin_user.gif";
+			$user_image = "themes/".$cfg['theme']."/images/admin_user.gif";
 			$type_user = _ADMINISTRATOR;
 		}
 		if ($user_level == 2) {
-			$user_image = "images/superadmin.gif";
+			$user_image = "themes/".$cfg['theme']."/images/superadmin.gif";
 			$type_user = _SUPERADMIN;
 		}
 		if ($user_level <= 1 || IsSuperAdmin())
@@ -205,9 +205,9 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$result = $db->SelectLimit($sql, $offset, $min);
 	$act_list = array();
 	while(list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
-		$user_icon = "images/user_offline.gif";
+		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
 		if (IsOnline($user_id))
-			$user_icon = "images/user.gif";
+			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
 		$is_superuser = 0;
 		if (IsUser($user_id)) {
 			$is_superuser = 1;

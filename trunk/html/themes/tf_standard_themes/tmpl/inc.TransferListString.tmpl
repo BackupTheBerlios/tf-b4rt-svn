@@ -163,14 +163,14 @@
 						<tmpl_if name="is_owner">
 							<tmpl_if name="is_running">
 								<tmpl_if name="isTorrent">
-									<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill=<tmpl_var name="kill_id">&kill_torrent=<tmpl_var name="url_entry">"><img src="images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
-									<img src="images/delete_off.gif" width=16 height=16 border=0>
+									<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill=<tmpl_var name="kill_id">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
 									</tmpl_if>
 								<tmpl_else>
 									<img src="images/run_off.gif" width="16" height="16" border="0" title="-">
-									<img src="images/delete_off.gif" width=16 height=16 border=0>
+									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width=16 height=16 border=0>
 									<input type="checkbox" disabled="disabled">
 								</tmpl_if>
 							<tmpl_else>
@@ -208,9 +208,9 @@
 									</tmpl_if>
 								</tmpl_if>
 							<tmpl_if name="is_no_file">
-								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="themes/<tmpl_var name="theme">/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<tmpl_else>
-								<img src="images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
+								<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
 							<tmpl_if name="enable_multiops">
 								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
@@ -389,14 +389,14 @@
 						<tmpl_if name="is_owner">
 							<tmpl_if name="is_running">
 								<tmpl_if name="isTorrent">
-									<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill=<tmpl_var name="kill_id">&kill_torrent=<tmpl_var name="url_entry">"><img src="images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
-									<img src="images/delete_off.gif" width=16 height=16 border=0>
+									<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill=<tmpl_var name="kill_id">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/<tmpl_var name="theme">/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
 									</tmpl_if>
 								<tmpl_else>
 									<img src="images/run_off.gif" width="16" height="16" border="0" title="-">
-									<img src="images/delete_off.gif" width=16 height=16 border=0>
+									<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width=16 height=16 border=0>
 									<input type="checkbox" disabled="disabled">
 								</tmpl_if>
 							<tmpl_else>
@@ -434,9 +434,9 @@
 									</tmpl_if>
 								</tmpl_if>
 							<tmpl_if name="is_no_file">
-								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+								<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="themes/<tmpl_var name="theme">/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<tmpl_else>
-								<img src="images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
+								<img src="themes/<tmpl_var name="theme">/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
 							<tmpl_if name="enable_multiops">
 								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">

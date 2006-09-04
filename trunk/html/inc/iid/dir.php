@@ -292,7 +292,6 @@ foreach($entrys as $entry) {
 			// the ability to delete sub directories
 			$IsAdmin1 = 0;
 			if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
-				//echo "<a href=\"dir.php?del=".urlencode($dir.$entry)."\" onclick=\"return ConfirmDelete('".addslashes($entry)."')\"><img src=\"images/delete_on.gif\" width=16 height=16 title=\""._DELETE."\" border=0></a>";
 				/* --- Multi Delete Hack --- */
 				/* checkbox appended to line */
 				$IsAdmin1 = 1;

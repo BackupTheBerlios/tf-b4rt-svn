@@ -29,7 +29,7 @@ else
 $tmpl->setvar('head', getHead("Administration - RSS"));
 $tmpl->setvar('menu', getMenu());
 
-$editUserImage = "images/user.gif";
+$editUserImage = "themes/".$cfg['theme']."/images/user.gif";
 $selected_n = "selected";
 $selected_a = "";
 $hide_checked = "";
@@ -42,11 +42,11 @@ if ($user_level == 1) {
 	$user_type = _ADMINISTRATOR;
 	$selected_n = "";
 	$selected_a = "selected";
-	$editUserImage = "images/admin_user.gif";
+	$editUserImage = "themes/".$cfg['theme']."/images/admin_user.gif";
 }
 if ($user_level >= 2) {
 	$user_type = _SUPERADMIN;
-	$editUserImage = "images/superadmin.gif";
+	$editUserImage = "themes/".$cfg['theme']."/images/superadmin.gif";
 }
 if ($hide_offline == 1)
 	$hide_checked = "checked";
