@@ -47,7 +47,7 @@ if (!defined('vlibIniClassLoaded')) {
 
             return array(
 
-                        'TEMPLATE_DIR' => '/usr/local/apache/htdocs/templates',   // Default directory for your template files (full path)
+                        'TEMPLATE_DIR' => '/var/www',   // Default directory for your template files (full path)
                                                                    // leave the '/' or '\' off the end of the directory.
 
                         'MAX_INCLUDES' => 10,                      // Drill depth for tmpl_include's
@@ -84,7 +84,7 @@ if (!defined('vlibIniClassLoaded')) {
 
                         /* the following are only used by the vlibTemplateCache class. */
 
-                        'CACHE_DIRECTORY' => '/usr/local/apache/cgi-bin/vlibTemplateCache',
+                        'CACHE_DIRECTORY' => '/tmp/vlibTemplateCache',
                                                                    // Directory where the cached filesystem
                                                                    // will be set up (full path, and must be writable)
                                                                    // '/' or '\' off the end of the directory.
@@ -103,7 +103,7 @@ if (!defined('vlibIniClassLoaded')) {
         function vlibDate () {
 
             return array(
-                        'DEFAULT_LANG' => 'de'                     // default language for the date displays
+                        'DEFAULT_LANG' => 'en'                     // default language for the date displays
                     );
 
         }// << end function vlibDate
