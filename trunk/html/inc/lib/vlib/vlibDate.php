@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: vlibDate.php,v 1.4 2003/01/02 10:59:20 releasedj Exp $
+// $Id$
 
 // check to avoid multiple including of class
 if (!defined('vlibDateClassLoaded')) {

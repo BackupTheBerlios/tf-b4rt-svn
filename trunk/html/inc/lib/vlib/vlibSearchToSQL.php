@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: vlibSearchToSQL.php,v 1.2 2003/03/03 12:18:22 releasedj Exp $
+// $Id$
 
 // check to avoid multiple including of class
 if (!defined('vlibSearchToSQLClassLoaded')) {

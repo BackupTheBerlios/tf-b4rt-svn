@@ -102,10 +102,10 @@ function getUserSection() {
 		switch ($cfg["_OS"]) {
 			case 1: //Linux
 				$dudir = shell_exec($cfg['bin_du']." -sk -h -D ".($cfg["path"].$user_id."/"));
-			break;
+				break;
 			case 2: //BSD
 				$dudir = shell_exec($cfg['bin_du']." -sk -h -L ".($cfg["path"].$user_id."/"));
-			break;
+				break;
 		}
 		$dusize = explode("\t", $dudir);
 		$disk_usage = array_shift($dusize);

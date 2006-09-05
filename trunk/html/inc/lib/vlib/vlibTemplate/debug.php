@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: debug.php,v 1.5 2003/03/03 13:46:47 releasedj Exp $
+// $Id$
 
 /**
  * Class uses all of vlibTemplate's functionality but debugs the template files.

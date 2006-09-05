@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: error.php,v 1.4 2004/01/07 22:00:20 releasedj Exp $
+// $Id$
 
 if (!defined('FATAL')) 		define('FATAL', E_USER_ERROR);
 if (!defined('WARNING')) 	define('WARNING', E_USER_WARNING);

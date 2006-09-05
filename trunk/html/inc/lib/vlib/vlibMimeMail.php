@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: vlibMimeMail.php,v 1.4 2004/02/10 10:35:57 releasedj Exp $
+// $Id$
 
 // check to avoid multiple including of class
 if (!defined('vlibMimeMailClassLoaded')) {

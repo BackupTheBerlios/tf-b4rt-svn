@@ -29,11 +29,19 @@
  */
 function getTemplateInstance($theme, $template) {
 	global $cfg;
-	# return new template
+	// theme-switch
 	if ((strpos($theme, '/')) === false)
-		return new vlibTemplate("themes/".$theme."/tmpl/".$template);
+		$path = "themes/".$theme."/tmpl/";
 	else
-		return new vlibTemplate("themes/tf_standard_themes/tmpl/".$template);
+		$path = "themes/tf_standard_themes/tmpl/";
+	// template-cache-switch
+	switch ($cfg['enable_tmpl_cache']) {
+		case 1:
+			return new vlibTemplateCache($path.$template);
+		case 0:
+		default:
+			return new vlibTemplate($path.$template);
+	}
 }
 
 /**

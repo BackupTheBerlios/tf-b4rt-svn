@@ -580,6 +580,10 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<strong>transmission-cache</strong><br>';
 				$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>template-cache</strong><br>';
+				$htmlMain .= 'use this to delete the template-cache.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> template-cache-clean</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "21": // Maintenance-Clean : pid-file-clean
@@ -587,7 +591,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$result = "";
 				$torrents = getTorrentListFromDB();
-				if ($dirHandle = opendir($cfg["torrent_file_path"])) {
+				if ($dirHandle = @opendir($cfg["torrent_file_path"])) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ((substr($file, -1, 1)) == "d") {
 							$tname = substr($file,0,-9).'.torrent';
@@ -601,7 +605,7 @@ if (isset($_REQUEST["m"])) {
 					closedir($dirHandle);
 				}
 				if (strlen($result) > 0)
-					$htmlMain .= '<br>Deleted pid-leftovers : <pre>'.$result.'</pre><br>';
+					$htmlMain .= '<br>Deleted pid-leftovers : <br><pre>'.$result.'</pre><br>';
 				else
 					$htmlMain .= '<br>No pid-leftovers found.<br><br>';
 				break;
@@ -613,7 +617,7 @@ if (isset($_REQUEST["m"])) {
 				$hashes = array();
 				foreach ($torrents as $torrent)
 					array_push($hashes, getTorrentHash($torrent));
-				if ($dirHandle = opendir($cfg["path"].".transmission/cache/")) {
+				if ($dirHandle = @opendir($cfg["path"].".transmission/cache/")) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ($file{0} == "r") {
 							$thash = substr($file,-40);
@@ -627,9 +631,27 @@ if (isset($_REQUEST["m"])) {
 					closedir($dirHandle);
 				}
 				if (strlen($result) > 0)
-					$htmlMain .= '<br>Deleted cache-leftovers : <pre>'.$result.'</pre><br>';
+					$htmlMain .= '<br>Deleted cache-leftovers : <br><pre>'.$result.'</pre><br>';
 				else
 					$htmlMain .= '<br>No cache-leftovers found.<br><br>';
+				break;
+			case "23": // Maintenance-Clean :template-cache-clean
+				$htmlTitle = "Maintenance - Clean - template-cache";
+				$htmlMain .= '<br>';
+				$result = "";
+				if ($dirHandle = @opendir($cfg["path"].'.templateCache')) {
+					while (false !== ($file = readdir($dirHandle))) {
+						if ((substr($file, 0, 1)) != ".") {
+							$result .= $file."\n";
+							@unlink($cfg["path"].'.templateCache/'.$file);
+						}
+					}
+					closedir($dirHandle);
+				}
+				if (strlen($result) > 0)
+					$htmlMain .= '<br>Deleted compiled templates : <br><pre>'.$result.'</pre><br>';
+				else
+					$htmlMain .= '<br>No compiled templates found.<br><br>';
 				break;
 			case "3": // Maintenance : Repair
 				$htmlTitle = "Maintenance - Repair";

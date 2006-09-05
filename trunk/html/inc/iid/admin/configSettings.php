@@ -173,6 +173,10 @@ for ($i = 1; $i <= 31 ; $i++) {
 		)
 	);
 }
+// template-cache
+$tmpl->setvar('enable_tmpl_cache', $cfg["enable_tmpl_cache"]);
+$tmpl->setvar('SuperAdminLink_tmplCache', getSuperAdminLink('?m=23','clean template-cache'));
+//
 $tmpl->setloop('month_list', $month_list);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);

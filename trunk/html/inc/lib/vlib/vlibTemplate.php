@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: vlibTemplate.php,v 1.22 2004/02/12 09:22:39 releasedj Exp $
+// $Id$
 
 // check to avoid multiple including of class
 if (!defined('vlibTemplateClassLoaded')) {

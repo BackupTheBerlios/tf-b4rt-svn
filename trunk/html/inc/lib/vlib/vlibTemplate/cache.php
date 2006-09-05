@@ -8,7 +8,7 @@
 // | Authors: Kelvin Jones <kelvin@kelvinjones.co.uk>                     |
 // +----------------------------------------------------------------------+
 //
-// $Id: cache.php,v 1.4 2003/05/15 14:17:41 releasedj Exp $
+// $Id$
 
 /**
  * Class uses all of vlibTemplate's functionality but caches the template files.
