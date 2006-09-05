@@ -60,8 +60,20 @@ def wrap_log(context_string, logger):
 
 def fmttime(n):
     if n == 0:
-        return _("download complete!")
-    return _("%s") % (str(Duration(n)))
+        return 'complete!'
+    try:
+        n = int(n)
+        assert n >= 0 and n < 5184000  # 60 days
+    except:
+        return '<unknown>'
+    m, s = divmod(n, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    if d > 0:
+        return '%dd %02d:%02d:%02d' % (d, h, m, s)
+    else:
+        return '%02d:%02d:%02d' % (h, m, s)
+
 
 def fmtsize(n):
     #s = str(n)
