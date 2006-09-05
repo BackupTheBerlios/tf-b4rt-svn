@@ -105,9 +105,9 @@ function getUserSection() {
 	while (list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
 		// disk-usage
 		$disk_usage = "0";
-		$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($cfg["path"].$user_id."/"));
-		$dusize = @explode("\t", $dudir);
-		$disk_usage = @array_shift($dusize);
+		$dudir = shell_exec($cfg['bin_du']." -sk -h -D ".($cfg["path"].$user_id."/"));
+		$dusize = explode("\t", $dudir);
+		$disk_usage = array_shift($dusize);
 		// xfer-usage
 		if ($cfg['enable_xfer'] == 1) {
 			$sql2 = 'SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user LIKE "'.$user_id.'"';
