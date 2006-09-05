@@ -257,7 +257,14 @@ foreach($entrys as $entry) {
 			// Some Stats dir hack
 			$enable_dirstats = $cfg['enable_dirstats'];
 			if ($enable_dirstats == 1) {
-				$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($dirName.$entry));
+				switch ($cfg["_OS"]) {
+					case 1: //Linux
+						$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($dirName.$entry));
+					break;
+					case 2: //BSD
+						$dudir = @shell_exec($cfg['bin_du']." -sk -h -L ".correctFileName($dirName.$entry));
+					break;
+				}
 				$dusize = @explode("\t", $dudir);
 				//$dusize0 = $dusize[0];
 				$dusize0 = @array_shift($dusize);
