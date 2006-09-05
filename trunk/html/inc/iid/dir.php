@@ -260,10 +260,10 @@ foreach($entrys as $entry) {
 				switch ($cfg["_OS"]) {
 					case 1: //Linux
 						$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($dirName.$entry));
-					break;
+						break;
 					case 2: //BSD
 						$dudir = @shell_exec($cfg['bin_du']." -sk -h -L ".correctFileName($dirName.$entry));
-					break;
+						break;
 				}
 				$dusize = @explode("\t", $dudir);
 				//$dusize0 = $dusize[0];
@@ -441,8 +441,15 @@ closedir($handle);
 
 if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('enable_dirstats', 1);
-	$cmd = $cfg['bin_du']." -ch -D \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
-	$du = shell_exec($cmd);
+	switch ($cfg["_OS"]) {
+		case 1: //Linux
+			$dudir = $cfg['bin_du']." -ch -D \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
+			break;
+		case 2: //BSD
+			$dudir = $cfg['bin_du']." -ch -L \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
+			break;
+	}
+	$du = shell_exec($dudir);
 	$du2 = substr($du, 0, -7);
 	$tmpl->setvar('_TDDU', _TDDU);
 	$tmpl->setvar('du2', $du2);
