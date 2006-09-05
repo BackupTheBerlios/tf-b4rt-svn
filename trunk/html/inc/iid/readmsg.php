@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/readmsg.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/readmsg.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "readmsg.tmpl");
 
 if(empty($cfg['user'])) {
 	 // the user probably hit this page direct

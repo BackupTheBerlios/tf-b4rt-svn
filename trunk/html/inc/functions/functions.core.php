@@ -21,6 +21,22 @@
 *******************************************************************************/
 
 /**
+ * vlib-template-factory.
+ *
+ * @param $theme
+ * @param $template
+ * @return vlib-template-instance
+ */
+function getTemplateInstance($theme, $template) {
+	global $cfg;
+	# return new template
+	if ((strpos($theme, '/')) === false)
+		return new vlibTemplate("themes/".$theme."/tmpl/".$template);
+	else
+		return new vlibTemplate("themes/tf_standard_themes/tmpl/".$template);
+}
+
+/**
  * getCredentials
  *
  * @return array with credentials or null if no credentials found.
@@ -1150,12 +1166,9 @@ function checkDirPathString($dirPath) {
  */
 function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getHead.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getHead.tmpl");
-	//set some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getHead.tmpl");
+	// set some vars
 	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 	$tmpl->setvar('theme', $cfg["theme"]);
@@ -1176,12 +1189,9 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
  */
 function getFoot($showReturn=true, $showVersionLink = false) {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getFoot.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getFoot.tmpl");
-	//set some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getFoot.tmpl");
+	// set some vars
 	$tmpl->setvar('showReturn', $showReturn);
 	$tmpl->setvar('_RETURNTOTORRENTS', _RETURNTOTORRENTS);
 	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink($showVersionLink));
@@ -1219,12 +1229,9 @@ function getTorrentFluxLink($showVersionLink = false) {
  */
 function getTitleBar($pageTitleText, $showButtons=true) {
 	global $cfg, $db;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getTitleBar.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getTitleBar.tmpl");
-
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getTitleBar.tmpl");
+	// set some vars
 	$tmpl->setvar('pageTitleText', $pageTitleText);
 	$tmpl->setvar('showButtons', $showButtons);
 	$tmpl->setvar('theme', $cfg["theme"]);
@@ -1256,12 +1263,9 @@ function getTitleBar($pageTitleText, $showButtons=true) {
  */
 function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.buildSearchEngineDDL.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.buildSearchEngineDDL.tmpl");
-
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.buildSearchEngineDDL.tmpl");
+	// set some vars
 	$tmpl->setvar('autoSubmit', $autoSubmit);
 	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle)) {
@@ -1321,12 +1325,8 @@ function getEngineLink($searchEngine) {
  */
 function getSuperAdminLink($param = "", $linkText = "") {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getSuperAdminLink.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getSuperAdminLink.tmpl");
-
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getSuperAdminLink.tmpl");
 	$tmpl->setvar('param', $param);
 	if ((isset($linkText)) && ($linkText != ""))
 		$tmpl->setvar('linkText', $linkText);
@@ -1718,11 +1718,8 @@ function getTransferListArray() {
  */
 function TransferListString() {
 	global $cfg, $db;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.TransferListString.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.TransferListString.tmpl");
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.TransferListString.tmpl");
 	require_once("inc/classes/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
@@ -2144,11 +2141,9 @@ function getDownloadBar() {
  */
 function getBandwidthBar_tf($percent, $text) {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBandwidthBar_tf.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBandwidthBar_tf.tmpl");
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getBandwidthBar_tf.tmpl");
+	// set some vars
 	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('percent', $percent);
 	$tmpl->setvar('text', $text);
@@ -2168,11 +2163,9 @@ function getBandwidthBar_tf($percent, $text) {
  */
 function getBandwidthBar_xfer($percent, $text) {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBandwidthBar_xfer.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBandwidthBar_xfer.tmpl");
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getBandwidthBar_xfer.tmpl");
+	// set some vars
 	$bgcolor = '#';
 	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
 	$bgcolor .= str_pad(dechex(255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
@@ -2561,12 +2554,9 @@ function getDriveSpace($drive) {
 // get the Drive Space Graphical Bar
 function getDriveSpaceBar($drivespace) {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getDriveSpaceBar.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getDriveSpaceBar.tmpl");
-	# some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar.tmpl");
+	// set some vars
 	$tmpl->setvar('drivespacebar', $cfg['drivespacebar']);
 	$tmpl->setvar('_STORAGE', _STORAGE);
 	$tmpl->setvar('drivespace', $drivespace);

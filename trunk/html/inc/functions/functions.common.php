@@ -494,12 +494,9 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
  */
 function IndexPageSettingsForm() {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.IndexPageSettingsForm.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.IndexPageSettingsForm.tmpl");
-	# some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.IndexPageSettingsForm.tmpl");
+	// some vars
 	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
 	$tmpl->setvar('settings_0', $settingsIndexPage[0]);
 	$tmpl->setvar('settings_1', $settingsIndexPage[1]);
@@ -524,12 +521,9 @@ function IndexPageSettingsForm() {
  */
 function GoodLookingStatsForm() {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.GoodLookingStatsForm.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.GoodLookingStatsForm.tmpl");
-	# some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.GoodLookingStatsForm.tmpl");
+	// some vars
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
 	$tmpl->setvar('settings_0', $settingsHackStats[0]);
 	$tmpl->setvar('settings_1', $settingsHackStats[1]);
@@ -634,12 +628,9 @@ function GetMessage($mid) {
  */
 function getMessageList() {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getMessageList.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getMessageList.tmpl");
-	# some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getMessageList.tmpl");
+	// some vars
 	$users = GetUsers();
 	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
 	$tmpl->setvar('_COMPOSE', _COMPOSE);
@@ -717,12 +708,9 @@ function GetLanguageFromFile($inFile) {
  */
 function getBTClientSelect($btclient = 'tornado') {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getBTClientSelect.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getBTClientSelect.tmpl");
-	//set some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getBTClientSelect.tmpl");
+	// set some vars
 	$btclients = array("tornado", "transmission", "mainline");
 	$client_list = array();
 	foreach($btclients as $client) {
@@ -748,12 +736,9 @@ function getBTClientSelect($btclient = 'tornado') {
  */
 function getSortOrderSettings() {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getSortOrderSettings.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getSortOrderSettings.tmpl");
-	//set some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getSortOrderSettings.tmpl");
+	// set some vars
 	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
 	// grab the template
 	$output = $tmpl->grab();
@@ -766,12 +751,9 @@ function getSortOrderSettings() {
  */
 function getMoveSettings() {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.getMoveSettings.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.getMoveSettings.tmpl");
-	//set some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getMoveSettings.tmpl");
+	// set some vars
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$dirs = split(":", trim($cfg["move_paths"]));
 		$dir_list = array();
@@ -801,12 +783,9 @@ function getMoveSettings() {
  */
 function dirTree2($dir, $maxdepth) {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.dirTree2.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.dirTree2.tmpl");
-	//set some vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.dirTree2.tmpl");
+	// set some vars
 	$tmpl->setvar('dir', $dir);
 	if (is_numeric ($maxdepth)) {
 		if ($maxdepth == 0) {

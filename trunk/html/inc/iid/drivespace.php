@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/drivespace.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/drivespace.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "drivespace.tmpl");
 
 $result = shell_exec("df -h ".$cfg["path"]);
 $result2 = shell_exec("du -sh ".$cfg["path"]."*");

@@ -27,12 +27,9 @@
  */
 function getMenu() {
 	global $cfg;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.menu.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.menu.tmpl");
-	# define vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "admin/inc.menu.tmpl");
+	// set some vars
 	$tmpl->setvar('function', "getMenu");
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -59,12 +56,9 @@ function getMenu() {
  */
 function getUserSection() {
 	global $cfg, $db;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.users.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.users.tmpl");
-	# define vars
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "admin/inc.users.tmpl");
+	// set some vars
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -181,12 +175,8 @@ function getUserSection() {
  */
 function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	global $cfg, $db;
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/inc.activity.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/inc.activity.tmpl");
-
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "admin/inc.activity.tmpl");
 	$sqlForSearch = "";
 	$userdisplay = $user;
 	if($user != "")

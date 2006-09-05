@@ -23,11 +23,8 @@
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/configSettings.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/configSettings.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/configSettings.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - Settings"));
 $tmpl->setvar('menu', getMenu());

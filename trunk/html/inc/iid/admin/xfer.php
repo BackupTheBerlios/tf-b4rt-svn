@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/xfer.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/xfer.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/xfer.tmpl");
 
 $tmpl->setvar('head', getHead(_XFER));
 $tmpl->setvar('menu', getMenu());

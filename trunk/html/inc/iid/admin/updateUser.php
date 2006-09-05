@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/updateUser.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/updateUser.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/updateUser.tmpl");
 
 $user_id = strtolower($user_id);
 if (IsUser($user_id) && ($user_id != $org_user_id)) {

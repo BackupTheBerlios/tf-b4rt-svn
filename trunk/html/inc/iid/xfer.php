@@ -37,11 +37,8 @@ require_once('inc/functions/functions.common.php');
 // xfer functions
 require_once('inc/functions/functions.xfer.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/xfer.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/xfer.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "xfer.tmpl");
 
 $tmpl->setvar('head', getHead(_XFER));
 if ($cfg['enable_xfer'] == 1) {

@@ -24,11 +24,8 @@ require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 require_once("inc/searchEngines/SearchEngineBase.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/searchSettings.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/searchSettings.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/searchSettings.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - Search Settings"));
 $tmpl->setvar('menu', getMenu());

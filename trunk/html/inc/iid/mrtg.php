@@ -26,11 +26,8 @@ require_once('inc/functions/functions.common.php');
 // default-target
 define('_DEFAULT_TARGET','traffic');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/mrtg.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/mrtg.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "mrtg.tmpl");
 
 // request-vars
 $mrtgTarget = getRequestVar('mrtg_target');

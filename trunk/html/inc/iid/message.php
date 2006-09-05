@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/message.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/message.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "message.tmpl");
 
 $to_user = getRequestVar('to_user');
 if(empty($to_user) or empty($cfg['user'])) {

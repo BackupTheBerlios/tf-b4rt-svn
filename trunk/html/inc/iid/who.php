@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/who.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/who.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "who.tmpl");
 
 $result = shell_exec("w");
 $result2 = shell_exec("free -mo");
@@ -56,11 +53,8 @@ $tmpl->pparse();
 function RunningProcessInfo() {
 	global $cfg;
 	require_once("inc/classes/ClientHandler.php");
-	# create new template
-	if ((strpos($cfg['theme'], '/')) === false)
-		$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/inc.RunningProcessInfo.tmpl");
-	else
-		$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/inc.RunningProcessInfo.tmpl");
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.RunningProcessInfo.tmpl");
 	// array with all clients
 	$clients = array('tornado', 'transmission', 'mainline', 'wget');
 	// get informations

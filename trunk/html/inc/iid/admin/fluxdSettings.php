@@ -23,11 +23,8 @@
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/fluxdSettings.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/fluxdSettings.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/fluxdSettings.tmpl");
 
 // some template vars
 $tmpl->setvar('head', getHead("Administration - Fluxd Settings"));

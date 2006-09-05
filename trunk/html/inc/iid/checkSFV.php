@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/checkSFV.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/checkSFV.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "checkSFV.tmpl");
 
 $tmpl->setvar('head', getHead('sfv check', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

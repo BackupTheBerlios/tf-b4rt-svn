@@ -34,11 +34,8 @@ include("themes/".$cfg["default_theme"]."/index.php");
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
 
-# create new template
-if ((strpos($cfg['default_theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/login.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/login.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["default_theme"], "login.tmpl");
 
 # start session
 @session_start();

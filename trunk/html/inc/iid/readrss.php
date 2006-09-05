@@ -26,11 +26,8 @@ require_once('inc/functions/functions.common.php');
 // require
 require_once("inc/classes/lastRSS.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/readrss.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/readrss.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "readrss.tmpl");
 
 // check http://varchars.com/rss/ for feeds
 

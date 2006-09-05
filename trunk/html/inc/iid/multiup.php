@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/multiup.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/multiup.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "multiup.tmpl");
 
 if (!empty($_FILES['upload_files'])) {
 	//echo '<pre>'; var_dump($_FILES); echo '</pre>';

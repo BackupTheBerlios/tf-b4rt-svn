@@ -23,12 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/renameFolder.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/renameFolder.tmpl");
-
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "renameFolder.tmpl");
 
 $tmpl->setvar('head', getHead(_REN_TITLE, false));
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {

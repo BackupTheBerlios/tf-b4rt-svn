@@ -26,11 +26,8 @@ require_once('inc/functions/functions.common.php');
 // require
 require_once("inc/searchEngines/SearchEngineBase.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/torrentSearch.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/torrentSearch.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "torrentSearch.tmpl");
 
 // Go get the if this is a search request. go get the data and produce output.
 

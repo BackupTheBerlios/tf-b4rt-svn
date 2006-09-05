@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/editLinks.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/editLinks.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/editLinks.tmpl");
 
 $tmpl->setvar('head', getHead(_ADMINEDITLINKS));
 $tmpl->setvar('menu', getMenu());

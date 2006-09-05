@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/move.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/move.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "move.tmpl");
 
 $tmpl->setvar('head', getHead(_MOVE_FILE_TITLE, false));
 

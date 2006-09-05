@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dereferrer.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/dereferrer.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "dereferrer.tmpl");
 
 if (isset($_REQUEST["u"])) {
 	$tmpl->setvar('set', 1);

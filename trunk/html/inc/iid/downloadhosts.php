@@ -26,11 +26,8 @@ require_once('inc/functions/functions.common.php');
 // require
 require_once("inc/classes/AliasFile.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/downloadhosts.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/downloadhosts.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "downloadhosts.tmpl");
 
 $torrent = getRequestVar('torrent');
 $error = "";

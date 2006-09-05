@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/CreateUser.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/CreateUser.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/CreateUser.tmpl");
 
 $tmpl->setvar('head', getHead(_USERADMIN));
 $tmpl->setvar('menu', getMenu());

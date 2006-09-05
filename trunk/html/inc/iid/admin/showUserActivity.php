@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/showUserActivity.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/showUserActivity.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 
 $tmpl->setvar('head', getHead(_ADMINUSERACTIVITY));
 $tmpl->setvar('menu', getMenu());

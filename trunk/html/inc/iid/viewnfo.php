@@ -25,11 +25,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/viewnfo.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/viewnfo.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "viewnfo.tmpl");
 
 $tmpl->setvar('head', getHead("View NFO"));
 

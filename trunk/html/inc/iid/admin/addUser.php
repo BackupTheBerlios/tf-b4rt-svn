@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/addUser.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/addUser.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/addUser.tmpl");
 
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {

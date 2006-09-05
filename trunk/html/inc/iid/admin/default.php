@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/default.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/default.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/default.tmpl");
 
 $tmpl->setvar('head', getHead(_ADMINISTRATION));
 $tmpl->setvar('menu', getMenu());

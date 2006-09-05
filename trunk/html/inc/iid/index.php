@@ -23,11 +23,8 @@
 // index functions
 require_once("inc/functions/functions.index.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/index.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/index.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "index.tmpl");
 
 // global fields
 $messages = "";

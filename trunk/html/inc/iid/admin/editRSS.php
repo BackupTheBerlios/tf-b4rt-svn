@@ -20,11 +20,8 @@
 
 *******************************************************************************/
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/editRSS.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/editRSS.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/editRSS.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - RSS"));
 $tmpl->setvar('menu', getMenu());

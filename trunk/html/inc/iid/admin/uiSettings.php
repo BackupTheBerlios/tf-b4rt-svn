@@ -23,11 +23,8 @@
 // load global settings + overwrite per-user settings
 loadSettings();
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/admin/uiSettings.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/admin/uiSettings.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/uiSettings.tmpl");
 
 $tmpl->setvar('head', getHead("Administration - UI Settings"));
 $tmpl->setvar('menu', getMenu());

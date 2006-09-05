@@ -26,11 +26,8 @@ require_once('inc/functions/functions.common.php');
 // metainfo
 require_once("inc/metaInfo.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/details.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/details.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "details.tmpl");
 
 $tmpl->setvar('head', getHead(_TRANSFERDETAILS));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));

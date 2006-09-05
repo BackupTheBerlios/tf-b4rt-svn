@@ -38,11 +38,8 @@ $down = getRequestVar('down');
 $tar = getRequestVar('tar');
 $dir = stripslashes(urldecode(getRequestVar('dir')));
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/dir.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/dir.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "dir.tmpl");
 
 // Are we to delete something?
 if ($del != "") {

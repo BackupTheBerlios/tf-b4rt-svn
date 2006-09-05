@@ -34,11 +34,8 @@ include("themes/".$cfg["default_theme"]."/index.php");
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
 
-# create new template
-if ((strpos($cfg['default_theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["default_theme"]."/tmpl/locked.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/locked.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["default_theme"], "cookiehelp.tmpl");
 
 # define some things
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

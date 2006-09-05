@@ -23,11 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/history.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/history.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "history.tmpl");
 
 $offset = 50;
 $inx = 0;

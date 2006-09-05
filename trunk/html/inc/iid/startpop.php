@@ -26,11 +26,8 @@ require_once('inc/functions/functions.common.php');
 // require
 require_once("inc/metaInfo.php");
 
-# create new template
-if ((strpos($cfg['theme'], '/')) === false)
-	$tmpl = new vlibTemplate("themes/".$cfg["theme"]."/tmpl/startpop.tmpl");
-else
-	$tmpl = new vlibTemplate("themes/tf_standard_themes/tmpl/startpop.tmpl");
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "startpop.tmpl");
 
 // get torren-param
 $torrent = getRequestVar('torrent');

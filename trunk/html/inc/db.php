@@ -51,7 +51,7 @@ function showError($db, $sql) {
 	if($db->ErrorNo() != 0) {
 		// vlib
 		require_once("inc/lib/vlib/vlibTemplate.php");
-		$tmpl = new vlibTemplate("themes/default/tmpl/db.tmpl");
+		$tmpl = getTemplateInstance($cfg["default_theme"], "db.tmpl");
 		$tmpl->setvar('error', 1);
 		include("themes/default/index.php");
 		$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
