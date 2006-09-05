@@ -160,13 +160,11 @@ class vlibTemplateCache extends vlibTemplate {
         if (empty($file)) die('no filename'); //do error in future
         $filepath = dirname($file);
         if (is_dir($filepath)) return true;
-
         $dirs = split('[\\/]', $filepath);
-        $currpath;
+        $currpath = "";
         foreach ($dirs as $dir) {
             $currpath .= $dir .'/';
             $type = @filetype($currpath);
-
             ($type=='link') and $type = 'dir';
             if ($type != 'dir' && $type != false && !empty($type)) {
                 vlibTemplateError::raiseError('VT_ERROR_WRONG_CACHE_TYPE',KILL,'directory: '.$currpath.', type: '.$type);
