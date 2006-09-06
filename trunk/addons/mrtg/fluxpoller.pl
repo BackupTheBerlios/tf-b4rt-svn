@@ -201,6 +201,7 @@ sub cactiPrintConnections {
 sub mrtgPrintUptime {
 	# uptime data for mrtg
 	my $uptime = `uptime`;
+	$uptime =~ s/^ //g;
 	my @uptimeAry = split(/\s/, $uptime, 6);
 	(my $timeLabel = $uptimeAry[4]) =~ s/,.*//;
 	print $uptimeAry[3]." ".$timeLabel."\n";
