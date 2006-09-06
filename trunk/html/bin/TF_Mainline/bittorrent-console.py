@@ -93,8 +93,8 @@ class HeadlessDisplayer(object):
         self.state = 1
         self.percentDone = ''
         self.timeEst = 'Starting ...'
-        self.downRate = '0.0 KB/s'
-        self.upRate = '0.0 KB/s'
+        self.downRate = '0.0 kB/s'
+        self.upRate = '0.0 kB/s'
         self.tfOwner = config['tf_owner']
         self.shareRating = ''
         self.seeds = "0"
@@ -117,7 +117,7 @@ class HeadlessDisplayer(object):
 
     def finished(self):
         self.done = '1'
-        self.downRate = '0.0 KB/s'
+        self.downRate = '0.0 kB/s'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
 
     def error(self, errormsg):
@@ -145,12 +145,12 @@ class HeadlessDisplayer(object):
         if fractionDone is not None:
             self.percentDone = str(int(fractionDone * 1000) / 10)
         if downRate is not None:
-            self.downRate = '%.1f KB/s' % (downRate / (1 << 10))
+            self.downRate = '%.1f kB/s' % (downRate / (1 << 10))
         if upRate is not None:
-            self.upRate = '%.1f KB/s' % (upRate / (1 << 10))
+            self.upRate = '%.1f kB/s' % (upRate / (1 << 10))
         self.downTotal = statistics.get('downTotal')
+        self.upTotal = statistics['upTotal']
         if self.downTotal is not None:
-            self.upTotal = statistics['upTotal']
             if self.downTotal == 0:
                 self.shareRating = "oo"
             else:
