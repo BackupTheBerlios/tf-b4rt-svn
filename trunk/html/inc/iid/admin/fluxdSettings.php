@@ -99,10 +99,10 @@ if (($cfg["fluxd_Trigger_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('fluxd_Trigger_state', $fluxd->modState('Trigger'));
 else
 	$tmpl->setvar('fluxd_Trigger_state', 0);
-$tmpl->setvar('_USER', _USER);
-$tmpl->setvar('_FILE', _FILE);
-$tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
-$tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",_FORCESTOP));
+$tmpl->setvar('_USER', $cfg['_USER']);
+$tmpl->setvar('_FILE', $cfg['_FILE']);
+$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
+$tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
 
 
 // really messy

@@ -50,20 +50,20 @@ require_once('inc/functions/functions.all.php');
 // main.common
 require_once('inc/main.common.php');
 
-// default-language
-require_once("inc/language/".$cfg["default_language"]);
+// load default-language
+loadLanguageFile($cfg["default_language"]);
 
 // client-handler-"interfaces"
 require_once("inc/classes/ClientHandler.php");
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
+// hold revision-number in a var
+$REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+
 // config
 $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
-
-// hold revision-number in a var
-$REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
 
 // -----------------------------------------------------------------------------
 // Main
@@ -219,13 +219,13 @@ function printNetStat() {
 	echo "          TorrentFlux-NetStat          \n";
     echo "---------------------------------------\n";
 	echo "\n";
-	echo " --- "._ID_CONNECTIONS." --- \n";
+	echo " --- ".$cfg['_ID_CONNECTIONS']." --- \n";
 	echo netstatConnectionsSum();
 	echo "\n\n";
-	echo " --- "._ID_PORTS." --- \n";
+	echo " --- ".$cfg['_ID_PORTS']." --- \n";
 	echo netstatPortList();
 	echo "\n";
-	echo " --- "._ID_HOSTS." --- \n";
+	echo " --- ".$cfg['_ID_HOSTS']." --- \n";
 	echo netstatHostList();
 	echo "\n";
 }
@@ -241,7 +241,7 @@ function printTorrents() {
 	echo "          TorrentFlux-Torrents          \n";
     echo "----------------------------------------\n";
     echo "\n";
-	global $cfg, $db;
+	global $cfg, $db, $REVISION_FLUXCLI;
 	// show all .. we set the user to superadmin
     $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
     if($db->ErrorNo() != 0) {
@@ -279,10 +279,10 @@ function printTorrents() {
 	$sumMaxDownRate = getSumMaxDownRate();
 	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
 	echo "\n";
-	echo _DOWNLOADSPEED."\t".': '.number_format($cfg["total_download"], 2).' ('.number_format($sumMaxDownRate, 2).') kB/s'."\n";
-	echo _UPLOADSPEED."\t".': '.number_format($cfg["total_upload"], 2).' ('.number_format($sumMaxUpRate, 2).') kB/s'."\n";
-	echo _TOTALSPEED."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' ('.number_format($sumMaxRate, 2).') kB/s'."\n";
-	echo _ID_CONNECTIONS."\t".': '.netstatConnectionsSum().' ('.getSumMaxCons().')'."\n";
+	echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format($cfg["total_download"], 2).' ('.number_format($sumMaxDownRate, 2).') kB/s'."\n";
+	echo $cfg['_UPLOADSPEED']."\t".': '.number_format($cfg["total_upload"], 2).' ('.number_format($sumMaxUpRate, 2).') kB/s'."\n";
+	echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' ('.number_format($sumMaxRate, 2).') kB/s'."\n";
+	echo $cfg['_ID_CONNECTIONS']."\t".': '.netstatConnectionsSum().' ('.getSumMaxCons().')'."\n";
 	echo "\n";
 }
 

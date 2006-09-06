@@ -89,6 +89,7 @@ class RunningTransfer
     //--------------------------------------------------------------------------
     // Function to put the variables into a string for writing to file
     function BuildAdminOutput($theme) {
+    	global $cfg;
         $output = "<tr>";
         $output .= "<td><div class=\"tiny\">";
         $output .= $this->transferowner;
@@ -100,7 +101,7 @@ class RunningTransfer
         $output .= "&kill=".$this->processId;
         $output .= "&kill_torrent=".urlencode($this->transferFile);
         $output .= "&return=admin\">";
-        $output .= "<img src=\"themes/".$theme."/images/kill.gif\" width=16 height=16 title=\""._FORCESTOP."\" border=0></a></td>";
+        $output .= "<img src=\"themes/".$theme."/images/kill.gif\" width=16 height=16 title=\"".$cfg['_FORCESTOP']."\" border=0></a></td>";
         $output .= "</tr>";
         $output .= "\n";
         return $output;

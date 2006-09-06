@@ -81,6 +81,7 @@ class SearchEngine extends SearchEngineBase
     // Function to parse the response.
     function parseResponse()
     {
+    	global $cfg;
         $output = $this->tableHeader();
 
         $output .= "\n<!-- Begin Response --> \n";
@@ -113,7 +114,7 @@ class SearchEngine extends SearchEngineBase
             // ok so now we have the listing.
             $tmpListArr = split("</a>",strip_tags($tmpList,$allowedTags));
 
-            $langFile = _FILE;
+            $langFile = $cfg['_FILE'];
 
             $bg = $this->cfg["bgLight"];
 

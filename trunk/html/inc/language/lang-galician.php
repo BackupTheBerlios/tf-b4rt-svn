@@ -39,8 +39,6 @@
 /*
 /**************************************************************************/
 
-
-
 define("_CHARSET","iso-8859-1");  // if you don't know... then leave this as is.
 define("_SELECTFILE","Seleccione un Torrent para subir");
 define("_URLFILE","URL do arquivo Torrent");
@@ -145,7 +143,7 @@ define("_FULLURLLINK","URL Compreto do Enlace");
 define("_BACKTOPARRENT","Voltar o Directorio anterior");  // indicates going back to parent directory
 define("_DOWNLOADDETAILS","Detalles da Baixada");
 define("_PERCENTDONE","% acabado");
-define("_RETURNTOTORRENTS","Voltar os Torrentes"); // Link at the bottom of each page
+define("_RETURNTOTRANSFERS","Voltar os Transfers"); // Link at the bottom of each page
 define("_DATE","Fecha");
 define("_WROTE","Escribíu");  // Used in a reply to tag what the user had writen
 define("_SENDMESSAGETITLE","Enviar Mesaxe");  // Title of page
@@ -163,14 +161,11 @@ define("_MESSAGES","Mesaxes");  // plural (more than one)
 define("_RETURNTOMESSAGES","Voltar as Mesaxes");
 define("_COMPOSE","Compoñer");  // As in 'Compose a message' for button
 define("_LANGUAGE","Idioma"); // label
-
-
 define("_CURRENTDOWNLOAD","Current Download");
 define("_CURRENTUPLOAD","Current Upload");
 define("_SERVERLOAD","Server Load");
 define("_FREESPACE","Free Space");
 define("_UPLOADED", "Uploaded");
-
 define("_QMANAGER_MENU","queue");
 define("_FLUXD_MENU","fluxd");
 define("_SETTINGS_MENU","settings");
@@ -183,5 +178,43 @@ define("_DELQUEUE","Remove from Queue");
 define("_FORCESTOP","Kill Transfer");
 define("_STOPPING","Stopping");
 define("_COOKIE_MENU","cookies");
+define('_TOTALXFER','Total Transfer');
+define('_MONTHXFER','Month\'s Transfer');
+define('_WEEKXFER','Week\'s Transfer');
+define('_DAYXFER','Today\'s Transfer');
+define('_XFERTHRU','Transfer thru');
+define('_REMAINING','Remaining');
+define('_TOTALSPEED','Total Speed');
+define('_SERVERXFERSTATS','Server Transfer Stats');
+define('_YOURXFERSTATS','Your Transfer Stats');
+define('_OTHERSERVERSTATS','Other Server Stats');
+define('_TOTAL','Total');
+define('_DOWNLOAD','Download');
+define('_MONTHSTARTING','Month Starting');
+define('_WEEKSTARTING','Week Starting');
+define('_DAY','Day');
+define('_XFER','transfer');
+define('_XFER_USAGE','Transfer Usage');
+define('_QUEUEMANAGER','Queue Manager');
+define('_MULTIPLE_UPLOAD','Multiple Upload');
+define('_TDDU','Directory Size:');
+define("_FULLSITENAME", "Site Name");
+define('_MOVE_STRING','Move File/Folder to: ');
+define('_DIR_MOVE_LINK', 'Move File/Folder');
+define('_MOVE_FILE', 'File/Folder: ');
+define('_MOVE_FILE_TITLE', 'Move Data...');
+define('_REN_STRING','Rename File/Folder to: ');
+define('_DIR_REN_LINK', 'Rename File/Folder');
+define('_REN_FILE', 'File/Folder: ');
+define('_REN_DONE', 'Done!');
+define('_REN_ERROR', 'An error accured, please try again!');
+define('_REN_ERR_ARG', 'Wrong argument supplied!');
+define('_REN_TITLE', 'Rename Folder');
+define('_ID_PORT','Port');
+define('_ID_PORTS','Ports');
+define('_ID_CONNECTIONS','Connections');
+define('_ID_HOST','Host');
+define('_ID_HOSTS','Hosts');
+define('_ID_MRTG','Graph');
 
 ?>

@@ -39,24 +39,24 @@ switch ($op) {
 		if ($cfg["hide_offline"] == 1) {
 			$hideChecked = "checked";
 		}
-		$tmpl->setvar('head', getHead($cfg["user"]."'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('user', $cfg["user"]);
-		$tmpl->setvar('_PROFILE', _PROFILE);
+		$tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
 
 		$total_activity = GetActivityCount();
 
 		$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 		list($user_id, $hits, $last_visit, $time_created, $user_level) = $db->GetRow($sql);
 
-		$user_type = _NORMALUSER;
+		$user_type = $cfg['_NORMALUSER'];
 		if (IsAdmin()) {
-			$user_type = _ADMINISTRATOR;
+			$user_type = $cfg['_ADMINISTRATOR'];
 		}
 		if (IsSuperAdmin()) {
-			$user_type = _SUPERADMIN;
+			$user_type = $cfg['_SUPERADMIN'];
 		}
 
 		$user_activity = GetActivityCount($cfg["user"]);
@@ -66,27 +66,27 @@ switch ($op) {
 		} else {
 			$user_percent = number_format(($user_activity/$total_activity)*100);
 		}
-		$tmpl->setvar('_JOINED', _JOINED);
-		$tmpl->setvar('time_created1', date(_DATETIMEFORMAT, $time_created));
-		$tmpl->setvar('_UPLOADPARTICIPATION', _UPLOADPARTICIPATION);
+		$tmpl->setvar('_JOINED', $cfg['_JOINED']);
+		$tmpl->setvar('time_created1', date($cfg['_DATETIMEFORMAT'], $time_created));
+		$tmpl->setvar('_UPLOADPARTICIPATION', $cfg['_UPLOADPARTICIPATION']);
 		$tmpl->setvar('width1', $user_percent*2);
 		$tmpl->setvar('width2', (200 - ($user_percent*2)));
-		$tmpl->setvar('_UPLOADS', _UPLOADS);
+		$tmpl->setvar('_UPLOADS', $cfg['_UPLOADS']);
 		$tmpl->setvar('user_activity', $user_activity);
-		$tmpl->setvar('_PERCENTPARTICIPATION', _PERCENTPARTICIPATION);
+		$tmpl->setvar('_PERCENTPARTICIPATION', $cfg['_PERCENTPARTICIPATION']);
 		$tmpl->setvar('user_percent', $user_percent);
-		$tmpl->setvar('_PARTICIPATIONSTATEMENT', _PARTICIPATIONSTATEMENT);
+		$tmpl->setvar('_PARTICIPATIONSTATEMENT', $cfg['_PARTICIPATIONSTATEMENT']);
 		$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-		$tmpl->setvar('_DAYS', _DAYS);
-		$tmpl->setvar('_TOTALPAGEVIEWS', _TOTALPAGEVIEWS);
+		$tmpl->setvar('_DAYS', $cfg['_DAYS']);
+		$tmpl->setvar('_TOTALPAGEVIEWS', $cfg['_TOTALPAGEVIEWS']);
 		$tmpl->setvar('hits', $hits);
-		$tmpl->setvar('_USERTYPE', _USERTYPE);
+		$tmpl->setvar('_USERTYPE', $cfg['_USERTYPE']);
 		$tmpl->setvar('user_type', $user_type);
-		$tmpl->setvar('_USER', _USER);
+		$tmpl->setvar('_USER', $cfg['_USER']);
 		$tmpl->setvar('user', $cfg["user"]);
-		$tmpl->setvar('_NEWPASSWORD', _NEWPASSWORD);
-		$tmpl->setvar('_CONFIRMPASSWORD', _CONFIRMPASSWORD);
-		$tmpl->setvar('_THEME', _THEME);
+		$tmpl->setvar('_NEWPASSWORD', $cfg['_NEWPASSWORD']);
+		$tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
+		$tmpl->setvar('_THEME', $cfg['_THEME']);
 		$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 		$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 
@@ -122,7 +122,7 @@ switch ($op) {
 			);
 		}
 		$tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
-		$tmpl->setvar('_LANGUAGE', _LANGUAGE);
+		$tmpl->setvar('_LANGUAGE', $cfg['_LANGUAGE']);
 
 		$arLanguage = GetLanguages();
 		$language_list = array();
@@ -140,8 +140,8 @@ switch ($op) {
 		}
 		$tmpl->setloop('language_list', $language_list);
 		$tmpl->setvar('hideChecked', $hideChecked);
-		$tmpl->setvar('_HIDEOFFLINEUSERS', _HIDEOFFLINEUSERS);
-		$tmpl->setvar('_UPDATE', _UPDATE);
+		$tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
+		$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
 		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 		$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
@@ -160,9 +160,9 @@ switch ($op) {
 		$tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
 		$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
 		$tmpl->setvar('enable_move', $cfg["enable_move"]);
-		$tmpl->setvar('_PASSWORDLENGTH', _PASSWORDLENGTH);
-		$tmpl->setvar('_PASSWORDNOTMATCH', _PASSWORDNOTMATCH);
-		$tmpl->setvar('_PLEASECHECKFOLLOWING', _PLEASECHECKFOLLOWING);
+		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
+		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
+		$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 		$tmpl->setvar('foot', getFoot());
 	break;
 
@@ -180,13 +180,13 @@ switch ($op) {
 		if ($pass1 != "")
 			$_SESSION['user'] = md5($cfg["pagetitle"]);
 		UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);
-		$tmpl->setvar('head', getHead($cfg["user"]."'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('user', $cfg["user"]);
-		$tmpl->setvar('_PROFILE', _PROFILE);
-		$tmpl->setvar('_PROFILEUPDATEDFOR', _PROFILEUPDATEDFOR);
+		$tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
+		$tmpl->setvar('_PROFILEUPDATEDFOR', $cfg['_PROFILEUPDATEDFOR']);
 		$tmpl->setvar('foot', getFoot());
 	break;
 
@@ -197,7 +197,7 @@ switch ($op) {
 	case "editCookies":
 		global $cfg, $db;
 		$tmpl->setvar('ShowCookies', 1);
-		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"] . "'s ".$cfg['_PROFILE']));
 		$cid = @ $_GET["cid"]; // Cookie ID
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
@@ -216,7 +216,7 @@ switch ($op) {
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('hostvalue', $hostvalue);
 		$tmpl->setvar('datavalue', $datavalue);
-		(!empty( $cid )) ? $add1 = _UPDATE : $add1 = "Add";
+		(!empty( $cid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		// We are editing a cookie, so have a link back to cookie list
 		if( !empty( $cid ) ) {
@@ -229,8 +229,8 @@ switch ($op) {
 				$tmpl->setvar('empty_dat', 1);
 			} else {
 				$cookie_data = array();
-				$tmpl->setvar('_DELETE', _DELETE);
-				$tmpl->setvar('_EDIT', _EDIT);
+				$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+				$tmpl->setvar('_EDIT', $cfg['_EDIT']);
 				foreach( $dat as $cookie ) {
 					array_push($cookie_data, array(
 						'cid' => $cookie["cid"],
@@ -278,7 +278,7 @@ switch ($op) {
 		global $cfg;
 		$cookie = getCookie( $cid );
 		deleteCookieInfo( $cid );
-		AuditAction( $cfg["constants"]["admin"], _DELETE . " Cookie: " . $cookie["host"] );
+		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Cookie: " . $cookie["host"] );
 		header( "location: index.php?iid=profile&op=showCookies" );
 	break;
 
@@ -303,7 +303,7 @@ switch ($op) {
 		global $cfg, $db;
 		$tmpl->setvar('ShowProfiles', 1);
 		$pid = @ $_GET["pid"];
-		(!empty( $pid )) ? $add1 = _UPDATE : $add1 = "Add";
+		(!empty( $pid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
 		$tmpl->setvar('op', $op2);
@@ -348,7 +348,7 @@ switch ($op) {
 		$tmpl->setvar('default_drate', $cfg['max_download_rate']);
 		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
 		$tmpl->setvar('default_btclient', $cfg['btclient']);
-		$tmpl->setvar('head', getHead($cfg["user"] . "'s "._PROFILE));
+		$tmpl->setvar('head', getHead($cfg["user"] . "'s ".$cfg['_PROFILE']));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
@@ -365,8 +365,8 @@ switch ($op) {
 			}
 			else {
 				$profile_data = array();
-				$tmpl->setvar('_DELETE', _DELETE);
-				$tmpl->setvar('_EDIT', _EDIT);
+				$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+				$tmpl->setvar('_EDIT', $cfg['_EDIT']);
 				foreach( $dat as $profile ) {
 					array_push($profile_data, array(
 						'pid' => $profile["id"],
@@ -452,7 +452,7 @@ switch ($op) {
 		global $cfg;
 		$profile = getProfile( $pid );
 		deleteProfileInfo( $pid );
-		AuditAction( $cfg["constants"]["admin"], _DELETE . " Profile: " . $profile["name"] );
+		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Profile: " . $profile["name"] );
 		header( "location: index.php?iid=profile&op=showProfiles" );
 	break;
 

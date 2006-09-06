@@ -52,25 +52,25 @@ if (!empty($message)) {
 	$rmid = getRequestVar('rmid');
 	if(!empty($rmid)) {
 		list($from_user, $message, $ip, $time) = GetMessage($rmid);
-		$message = _DATE.": ".date(_DATETIMEFORMAT, $time)."\n".$from_user." "._WROTE.":\n\n".$message;
+		$message = $cfg['_DATE'].": ".date($cfg['_DATETIMEFORMAT'], $time)."\n".$from_user." ".$cfg['_WROTE'].":\n\n".$message;
 		$message = ">".str_replace("\n", "\n>", $message);
 		$message = "\n\n\n".$message;
 	}
 	$tmpl->setvar('no_message', 1);
-	$tmpl->setvar('head', getHead(_SENDMESSAGETITLE));
+	$tmpl->setvar('head', getHead($cfg['_SENDMESSAGETITLE']));
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-	$tmpl->setvar('_TO', _TO);
+	$tmpl->setvar('_TO', $cfg['_TO']);
 	$tmpl->setvar('to_user', $to_user);
 	$tmpl->setvar('user', $cfg['user']);
-	$tmpl->setvar('_FROM', _FROM);
-	$tmpl->setvar('_YOURMESSAGE', _YOURMESSAGE);
+	$tmpl->setvar('_FROM', $cfg['_FROM']);
+	$tmpl->setvar('_YOURMESSAGE', $cfg['_YOURMESSAGE']);
 	$tmpl->setvar('message', $message);
-	$tmpl->setvar('_SENDTOALLUSERS', _SENDTOALLUSERS);
-	$tmpl->setvar('_FORCEUSERSTOREAD', _FORCEUSERSTOREAD);
+	$tmpl->setvar('_SENDTOALLUSERS', $cfg['_SENDTOALLUSERS']);
+	$tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
 	if (IsAdmin()) {
 		$tmpl->setvar('is_admin',1);
 	}
-	$tmpl->setvar('_SEND', _SEND);
+	$tmpl->setvar('_SEND', $cfg['_SEND']);
 	$tmpl->setvar('foot', getFoot());
 } // end the else
 

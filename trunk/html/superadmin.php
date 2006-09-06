@@ -1091,7 +1091,7 @@ function printPageStart($echoMode = 0) {
 	doEcho('<link rel="icon" href="themes/'.$cfg["theme"].'/images/favicon.ico" type="image/x-icon" />',$echoMode);
 	doEcho('<link rel="shortcut icon" href="themes/'.$cfg["theme"].'/images/favicon.ico" type="image/x-icon" />',$echoMode);
 	doEcho('<LINK REL="StyleSheet" HREF="themes/'.$cfg["theme"].'/style.css" TYPE="text/css">',$echoMode);
-	doEcho('<META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset='. _CHARSET .'">',$echoMode);
+	doEcho('<META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset='. $cfg['_CHARSET'] .'">',$echoMode);
 	doEcho('</HEAD>',$echoMode);
 	doEcho('<BODY topmargin="8" leftmargin="5" bgcolor="'.$cfg["main_bgcolor"].'">',$echoMode);
 	doEcho('<div align="center">',$echoMode);

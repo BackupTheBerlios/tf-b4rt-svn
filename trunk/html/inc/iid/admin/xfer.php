@@ -23,7 +23,7 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/xfer.tmpl");
 
-$tmpl->setvar('head', getHead(_XFER));
+$tmpl->setvar('head', getHead($cfg['_XFER']));
 $tmpl->setvar('menu', getMenu());
 if ($cfg['enable_xfer'] == 1) {
 	$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);

@@ -25,13 +25,13 @@ $tmpl = getTemplateInstance($cfg["theme"], "admin/updateUser.tmpl");
 
 $user_id = strtolower($user_id);
 if (IsUser($user_id) && ($user_id != $org_user_id)) {
-	$tmpl->setvar('head', getHead(_ADMINISTRATION));
+	$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 	$tmpl->setvar('menu', getMenu());
-	$tmpl->setvar('_TRYDIFFERENTUSERID', _TRYDIFFERENTUSERID);
+	$tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
 	$tmpl->setvar('user_id', $user_id);
-	$tmpl->setvar('_HASBEENUSED', _HASBEENUSED);
+	$tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 	$tmpl->setvar('org_user_id', $org_user_id);
-	$tmpl->setvar('_RETURNTOEDIT', _RETURNTOEDIT);
+	$tmpl->setvar('_RETURNTOEDIT', $cfg['_RETURNTOEDIT']);
 	$tmpl->setvar('foot', getFoot(true,true));
 } else {
 	// Admin is changing id or password through edit screen
@@ -40,7 +40,7 @@ if (IsUser($user_id) && ($user_id != $org_user_id)) {
 		$_SESSION['user'] = md5($cfg["pagetitle"]);
 	}
 	updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline);
-	AuditAction($cfg["constants"]["admin"], _EDITUSER.": ".$user_id);
+	AuditAction($cfg["constants"]["admin"], $cfg['_EDITUSER'].": ".$user_id);
 	header("location: index.php?iid=admin");
 }
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

@@ -75,7 +75,7 @@ if (file_exists($filename)) {
 }
 
 // render page content
-$tmpl->setvar('head', getHead(_ID_MRTG));
+$tmpl->setvar('head', getHead($cfg['_ID_MRTG']));
 if ((count($mrtgTargets)) > 0) {
 	$tmpl->setvar('htmlTargets', $htmlTargets);
 }

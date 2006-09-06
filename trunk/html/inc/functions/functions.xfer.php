@@ -144,7 +144,7 @@ function getXferBar($total, $used, $title) {
 	global $cfg;
 	$remaining = max(0,$total-$used/(1024*1024));
 	$percent = round($remaining/$total*100,0);
-	$text = ' ('.formatFreeSpace($remaining).') '._REMAINING;
+	$text = ' ('.formatFreeSpace($remaining).') '.$cfg['_REMAINING'];
 	$bgcolor = '#';
 	$bgcolor .= str_pad(dechex(255-255*($percent/150)),2,0,STR_PAD_LEFT);
 	$bgcolor .= str_pad(dechex(255*($percent/150)),2,0,STR_PAD_LEFT);
@@ -189,9 +189,9 @@ function getXfer() {
 	$displayXferList = getXferList();
 	if (isset($_GET['user'])) {
 		$displayXferList .= '<br><b>';
-		$displayXferList .= ($_GET['user'] == '%') ? _SERVERXFERSTATS : _USERDETAILS.': '.$_GET['user'];
+		$displayXferList .= ($_GET['user'] == '%') ? $cfg['_SERVERXFERSTATS'] : $cfg['_USERDETAILS'].': '.$_GET['user'];
 		$displayXferList .= '</b><br>';
-		getXferDetail($_GET['user'],_MONTHSTARTING,0,0);
+		getXferDetail($_GET['user'],$cfg['_MONTHSTARTING'],0,0);
 		if (isset($_GET['month'])) {
 			$mstart = $_GET['month'].'-'.$cfg['month_start'];
 			$mend = date('Y-m-d',strtotime('+1 Month',strtotime($mstart)));
@@ -206,8 +206,8 @@ function getXfer() {
 			$wstart = $mstart;
 			$wend = $mend;
 		}
-		$displayXferList .= getXferDetail($_GET['user'],_WEEKSTARTING,$mstart,$mend);
-		$displayXferList .= getXferDetail($_GET['user'],_DAY,$wstart,$wend);
+		$displayXferList .= getXferDetail($_GET['user'],$cfg['_WEEKSTARTING'],$mstart,$mend);
+		$displayXferList .= getXferDetail($_GET['user'],$cfg['_DAY'],$wstart,$wend);
 	}
 	return $displayXferList;
 }
@@ -224,9 +224,9 @@ function getXferDetail($user_id,$period,$period_start,$period_end) {
 	$displayXferDetail = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
 	$displayXferDetail .= '<tr>';
 	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='20%'><div align=center class='title'>$period</div></td>";
-	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._TOTAL.'</div></td>';
-	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._DOWNLOAD.'</div></td>';
-	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>"._UPLOAD.'</div></td>';
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>".$cfg['_TOTAL'].'</div></td>';
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>".$cfg['_DOWNLOAD'].'</div></td>';
+	$displayXferDetail .= "<td bgcolor='$cfg[table_header_bg]' width='27%'><div align=center class='title'>".$cfg['_UPLOAD'].'</div></td>';
 	$displayXferDetail .= '</tr>';
 	$start = '';
 	$download = 0;
@@ -308,11 +308,11 @@ function getXferList() {
 	global $cfg, $xfer, $xfer_total, $db;
 	$displayXferList = "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
 	$displayXferList .= '<tr>';
-	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='15%'><div align=center class='title'>"._USER.'</div></td>';
-	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._TOTALXFER.'</div></td>';
-	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._MONTHXFER.'</div></td>';
-	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._WEEKXFER.'</div></td>';
-	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>"._DAYXFER.'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='15%'><div align=center class='title'>".$cfg['_USER'].'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>".$cfg['_TOTALXFER'].'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>".$cfg['_MONTHXFER'].'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>".$cfg['_WEEKXFER'].'</div></td>';
+	$displayXferList .= "<td bgcolor='$cfg[table_header_bg]' width='22%'><div align=center class='title'>".$cfg['_DAYXFER'].'</div></td>';
 	$displayXferList .= '</tr>';
 	$sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
 	$rtnValue = $db->GetCol($sql);
@@ -330,7 +330,7 @@ function getXferList() {
 		$displayXferList .= '<td><div class="tiny" align="center">'.$day.'</div></td>';
 		$displayXferList .= '</tr>';
 	}
-	$displayXferList .= '<td><a href="index.php?iid=xfer&op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
+	$displayXferList .= '<td><a href="index.php?iid=xfer&op=xfer&user=%"><b>'.$cfg['_TOTAL'].'</b></a></td>';
 	$total = formatFreeSpace($xfer_total['total']['total']/(1024*1024));
 	$month = formatFreeSpace($xfer_total['month']['total']/(1024*1024));
 	$week = formatFreeSpace($xfer_total['week']['total']/(1024*1024));

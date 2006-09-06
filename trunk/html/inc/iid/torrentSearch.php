@@ -54,9 +54,9 @@ if (strlen($searchterm) == 0) {
 		$_REQUEST["LATEST"] = "1";
 	}
 }
-$tmpl->setvar('head', getHead("TorrentSearch "._SEARCH));
+$tmpl->setvar('head', getHead("TorrentSearch ".$cfg['_SEARCH']));
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('_SEARCH', _SEARCH);
+$tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
 $tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($searchEngine));
 $tmpl->setloop('buildSearchEngineArray', buildSearchEngineArray($searchEngine));

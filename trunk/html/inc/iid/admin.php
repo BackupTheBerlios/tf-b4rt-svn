@@ -84,7 +84,7 @@ switch ($op) {
 
 	case "deleteRSS":
 		$rid = getRequestVar('rid');
-		AuditAction($cfg["constants"]["admin"], _DELETE." RSS: ".getRSS($rid));
+		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." RSS: ".getRSS($rid));
 		deleteOldRSS($rid);
 		header("location: index.php?iid=admin&op=editRSS");
 		break;
@@ -114,7 +114,7 @@ switch ($op) {
 
 	case "deleteLink":
 		$lid = getRequestVar('lid');
-		AuditAction($cfg["constants"]["admin"], _DELETE." Link: ".getSite($lid)." [".getLink($lid)."]");
+		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
 		deleteOldLink($lid);
 		header("location: index.php?iid=admin&op=editLinks");
 		break;
@@ -138,7 +138,7 @@ switch ($op) {
 		$user_id = getRequestVar('user_id');
 		if (!IsSuperAdmin($user_id)) {
 			DeleteThisUser($user_id);
-			AuditAction($cfg["constants"]["admin"], _DELETE." "._USER.": ".$user_id);
+			AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." ".$cfg['_USER'].": ".$user_id);
 		}
 		header("location: index.php?iid=admin");
 		break;

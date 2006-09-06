@@ -97,7 +97,7 @@ if (($af->running == 1) && ($alias != "")) {
 }
 if ($af->percent_done < 0) {
 	$af->percent_done = round(($af->percent_done*-1)-100,1);
-	$af->time_left = _INCOMPLETE;
+	$af->time_left = $cfg['_INCOMPLETE'];
 }
 if($af->percent_done < 1)
 	$graph_width = "1";
@@ -111,7 +111,7 @@ $torrentLabel = $torrent;
 if(strlen($torrentLabel) >= 39)
 	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
-$tmpl->setvar('head', getHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% "));
+$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false, "5", $af->percent_done."% "));
 if ($error != "") {
 	$tmpl->setvar('is_error', 1);
 	$tmpl->setvar('error', $error);
@@ -130,16 +130,16 @@ $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('background', $background);
 $tmpl->setvar('graph_width1', $graph_width * 3.5);
 $tmpl->setvar('graph_width2', (100 - $graph_width) * 3.5);
-$tmpl->setvar('_ESTIMATEDTIME', _ESTIMATEDTIME);
+$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('time_left', $af->time_left);
-$tmpl->setvar('_PERCENTDONE', _PERCENTDONE);
+$tmpl->setvar('_PERCENTDONE', $cfg['_PERCENTDONE']);
 $tmpl->setvar('percent_done', $af->percent_done);
-$tmpl->setvar('_USER', _USER);
+$tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('transferowner', $transferowner);
-$tmpl->setvar('_DOWNLOADSPEED', _DOWNLOADSPEED);
+$tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('down_speed', $af->down_speed.$label_max_download_rate);
-$tmpl->setvar('_UPLOADSPEED', _UPLOADSPEED);
+$tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('up_speed', $af->up_speed.$label_max_upload_rate);
 $tmpl->setvar('downTotalCurrent', $label_downTotalCurrent);
 $tmpl->setvar('upTotalCurrent', $label_upTotalCurrent);
@@ -147,11 +147,11 @@ $tmpl->setvar('downTotal', $label_downTotal);
 $tmpl->setvar('upTotal', $label_upTotal);
 $tmpl->setvar('seeds', $label_seeds);
 $tmpl->setvar('peers', $label_peers);
-$tmpl->setvar('_ID_PORT', _ID_PORT);
+$tmpl->setvar('_ID_PORT', $cfg['_ID_PORT']);
 $tmpl->setvar('port', $torrent_port);
-$tmpl->setvar('_ID_CONNECTIONS', _ID_CONNECTIONS);
+$tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('cons', $torrent_cons.$label_maxcons);
-$tmpl->setvar('_SHARING', _SHARING);
+$tmpl->setvar('_SHARING', $cfg['_SHARING']);
 $tmpl->setvar('label_sharing', $label_sharing);
 $tmpl->setvar('label_sharekill', $label_sharekill);
 $tmpl->setvar('foot', getFoot(false));

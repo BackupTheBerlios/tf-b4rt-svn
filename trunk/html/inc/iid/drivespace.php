@@ -34,7 +34,7 @@ $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('result', $result);
 $tmpl->setvar('result2', $result2);
-$tmpl->setvar('head', getHead(_DRIVESPACE));
+$tmpl->setvar('head', getHead($cfg['_DRIVESPACE']));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);

@@ -37,13 +37,13 @@ function getMenu() {
 	// superadmin
 	if (IsSuperAdmin()) {
 		$tmpl->setvar('is_superadmin', 1);
-		$tmpl->setvar('superAdminLink', getSuperAdminLink('','<font class="adminlink">superadmin</font>')." | ");
+		$tmpl->setvar('superAdminLink', getSuperAdminLink('','<font class="adminlink">superadmin</font></a>'));
 	}
-	$tmpl->setvar('_SETTINGS_MENU', _SETTINGS_MENU);
-	$tmpl->setvar('_FLUXD_MENU', _FLUXD_MENU);
-	$tmpl->setvar('_SEARCHSETTINGS_MENU', _SEARCHSETTINGS_MENU);
-	$tmpl->setvar('_LINKS_MENU', _LINKS_MENU);
-	$tmpl->setvar('_ACTIVITY_MENU', _ACTIVITY_MENU);
+	$tmpl->setvar('_SETTINGS_MENU', $cfg['_SETTINGS_MENU']);
+	$tmpl->setvar('_FLUXD_MENU', $cfg['_FLUXD_MENU']);
+	$tmpl->setvar('_SEARCHSETTINGS_MENU', $cfg['_SEARCHSETTINGS_MENU']);
+	$tmpl->setvar('_LINKS_MENU', $cfg['_LINKS_MENU']);
+	$tmpl->setvar('_ACTIVITY_MENU', $cfg['_ACTIVITY_MENU']);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
@@ -64,20 +64,20 @@ function getUserSection() {
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-	$tmpl->setvar('_USERDETAILS', _USERDETAILS);
-	$tmpl->setvar('_USER', _USER);
-	$tmpl->setvar('_HITS', _HITS);
-	$tmpl->setvar('_UPLOADACTIVITY', _UPLOADACTIVITY);
-	$tmpl->setvar('_JOINED', _JOINED);
-	$tmpl->setvar('_LASTVISIT', _LASTVISIT);
-	$tmpl->setvar('_ADMIN', _ADMIN);
-	$tmpl->setvar('_DAYS', _DAYS);
-	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
-	$tmpl->setvar('_WARNING', _WARNING);
-	$tmpl->setvar('_ABOUTTODELETE', _ABOUTTODELETE);
-	$tmpl->setvar('_USERSACTIVITY', _USERSACTIVITY);
-	$tmpl->setvar('_EDIT', _EDIT);
-	$tmpl->setvar('_DELETE', _DELETE);
+	$tmpl->setvar('_USERDETAILS', $cfg['_USERDETAILS']);
+	$tmpl->setvar('_USER', $cfg['_USER']);
+	$tmpl->setvar('_HITS', $cfg['_HITS']);
+	$tmpl->setvar('_UPLOADACTIVITY', $cfg['_UPLOADACTIVITY']);
+	$tmpl->setvar('_JOINED', $cfg['_JOINED']);
+	$tmpl->setvar('_LASTVISIT', $cfg['_LASTVISIT']);
+	$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
+	$tmpl->setvar('_DAYS', $cfg['_DAYS']);
+	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
+	$tmpl->setvar('_WARNING', $cfg['_WARNING']);
+	$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
+	$tmpl->setvar('_USERSACTIVITY', $cfg['_USERSACTIVITY']);
+	$tmpl->setvar('_EDIT', $cfg['_EDIT']);
+	$tmpl->setvar('_DELETE', $cfg['_DELETE']);
 	// xfer-prepare
 	$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 	if ($cfg['enable_xfer'] == 1) {
@@ -133,14 +133,14 @@ function getUserSection() {
 			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
 		// level
 		$user_image = "themes/".$cfg['theme']."/images/user.gif";
-		$type_user = _NORMALUSER;
+		$type_user = $cfg['_NORMALUSER'];
 		if ($user_level == 1) {
 			$user_image = "themes/".$cfg['theme']."/images/admin_user.gif";
-			$type_user = _ADMINISTRATOR;
+			$type_user = $cfg['_ADMINISTRATOR'];
 		}
 		if ($user_level == 2) {
 			$user_image = "themes/".$cfg['theme']."/images/superadmin.gif";
-			$type_user = _SUPERADMIN;
+			$type_user = $cfg['_SUPERADMIN'];
 		}
 		if ($user_level <= 1 || IsSuperAdmin())
 			$is_superadmin = 1;
@@ -155,8 +155,8 @@ function getUserSection() {
 			'user_percent' => $user_percent,
 			'user_percent2' => $user_percent*2,
 			'user_percent3' => (200 - ($user_percent*2)),
-			'time_created' => date(_DATEFORMAT, $time_created),
-			'last_visit' => date(_DATETIMEFORMAT, $last_visit),
+			'time_created' => date($cfg['_DATEFORMAT'], $time_created),
+			'last_visit' => date($cfg['_DATETIMEFORMAT'], $last_visit),
 			'user_image' => $user_image,
 			'type_user' => $type_user,
 			'user_level' => $user_level,
@@ -189,7 +189,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	if($user != "")
 		$sqlForSearch .= "user_id='".$user."' AND ";
 	else
-		$userdisplay = _ALLUSERS;
+		$userdisplay = $cfg['_ALLUSERS'];
 	if($srchFile != "")
 		$sqlForSearch .= "file like '%".$srchFile."%' AND ";
 	if($srchAction != "")
@@ -218,7 +218,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 			'ip_resolved' => $ip_resolved,
 			'user_agent' => $user_agent,
 			'ip' => $ip,
-			'date' => date(_DATETIMEFORMAT, $time),
+			'date' => date($cfg['_DATETIMEFORMAT'], $time),
 			)
 		);
 		$inx++;
@@ -226,22 +226,22 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	$tmpl->setloop('act_list', $act_list);
 	$prev = ($min-$offset);
 	# define vars
-	$tmpl->setvar('_NORECORDSFOUND', _NORECORDSFOUND);
-	$tmpl->setvar('_SENDMESSAGETO', _SENDMESSAGETO);
+	$tmpl->setvar('_NORECORDSFOUND', $cfg['_NORECORDSFOUND']);
+	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 	$tmpl->setvar('inx', $inx);
-	$tmpl->setvar('_ACTIVITYSEARCH', _ACTIVITYSEARCH);
-	$tmpl->setvar('_FILE', _FILE);
+	$tmpl->setvar('_ACTIVITYSEARCH', $cfg['_ACTIVITYSEARCH']);
+	$tmpl->setvar('_FILE', $cfg['_FILE']);
 	$tmpl->setvar('srchFile', $srchFile);
 	$tmpl->setvar('prev', $prev);
 	$tmpl->setvar('user', $user);
 	$tmpl->setvar('min', $min);
 	$tmpl->setvar('max', $max);
 	$tmpl->setvar('srchAction', $srchAction);
-	$tmpl->setvar('_SHOWPREVIOUS', _SHOWPREVIOUS);
-	$tmpl->setvar('_SHOWMORE', _SHOWMORE);
-	$tmpl->setvar('_ACTION', _ACTION);
-	$tmpl->setvar('_ALL', _ALL);
+	$tmpl->setvar('_SHOWPREVIOUS', $cfg['_SHOWPREVIOUS']);
+	$tmpl->setvar('_SHOWMORE', $cfg['_SHOWMORE']);
+	$tmpl->setvar('_ACTION', $cfg['_ACTION']);
+	$tmpl->setvar('_ALL', $cfg['_ALL']);
 	$selected = "";
 	$action_list = array();
 	foreach ($cfg["constants"] as $action) {
@@ -258,7 +258,7 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		}
 	}
 	$tmpl->setloop('action_list', $action_list);
-	$tmpl->setvar('_USER', _USER);
+	$tmpl->setvar('_USER', $cfg['_USER']);
 	$user_list = array();
 	$users = GetUsers();
 	$selected = "";
@@ -274,14 +274,14 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 		);
 	}
 	$tmpl->setloop('user_list', $user_list);
-	$tmpl->setvar('_SEARCH', _SEARCH);
+	$tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('_ACTIVITYLOG', _ACTIVITYLOG);
+	$tmpl->setvar('_ACTIVITYLOG', $cfg['_ACTIVITYLOG']);
 	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-	$tmpl->setvar('_DAYS', _DAYS);
+	$tmpl->setvar('_DAYS', $cfg['_DAYS']);
 	$tmpl->setvar('userdisplay', $userdisplay);
 	if($prev >= 0) {
 		$tmpl->setvar('is_prev', 1);
@@ -289,11 +289,11 @@ function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	if($inx>=$offset) {
 		$tmpl->setvar('is_more', 1);
 	}
-	$tmpl->setvar('_USER', _USER);
-	$tmpl->setvar('_ACTION', _ACTION);
-	$tmpl->setvar('_FILE', _FILE);
-	$tmpl->setvar('_IP', _IP);
-	$tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
+	$tmpl->setvar('_USER', $cfg['_USER']);
+	$tmpl->setvar('_ACTION', $cfg['_ACTION']);
+	$tmpl->setvar('_FILE', $cfg['_FILE']);
+	$tmpl->setvar('_IP', $cfg['_IP']);
+	$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 	if($prev >= 0 || $inx>=$offset) {
 		$tmpl->setvar('both_set', 1);
 	}

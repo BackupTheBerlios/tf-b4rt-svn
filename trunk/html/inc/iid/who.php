@@ -29,7 +29,7 @@ $tmpl = getTemplateInstance($cfg["theme"], "who.tmpl");
 $result = shell_exec("w");
 $result2 = shell_exec("free -mo");
 
-$tmpl->setvar('head', getHead(_SERVERSTATS));
+$tmpl->setvar('head', getHead($cfg['_SERVERSTATS']));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('result', $result);

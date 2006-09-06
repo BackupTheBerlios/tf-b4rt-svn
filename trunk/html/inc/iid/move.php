@@ -26,13 +26,13 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "move.tmpl");
 
-$tmpl->setvar('head', getHead(_MOVE_FILE_TITLE, false));
+$tmpl->setvar('head', getHead($cfg['_MOVE_FILE_TITLE'], false));
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('_MOVE_FILE', _MOVE_FILE);
+	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
 	$tmpl->setvar('path', $_GET['path']);
-	$tmpl->setvar('_MOVE_STRING', _MOVE_STRING);
+	$tmpl->setvar('_MOVE_STRING', $cfg['_MOVE_STRING']);
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$tmpl->setvar('move_start', 1);
 		$dirs = split(":", trim($cfg["move_paths"]));

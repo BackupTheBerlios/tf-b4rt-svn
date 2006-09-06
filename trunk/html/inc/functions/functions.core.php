@@ -1201,7 +1201,7 @@ function getFoot($showReturn=true, $showVersionLink = false) {
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.getFoot.tmpl");
 	// set some vars
 	$tmpl->setvar('showReturn', $showReturn);
-	$tmpl->setvar('_RETURNTOTORRENTS', _RETURNTOTORRENTS);
+	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
 	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink($showVersionLink));
 	// grab the template
 	$output = $tmpl->grab();
@@ -1243,12 +1243,12 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 	$tmpl->setvar('pageTitleText', $pageTitleText);
 	$tmpl->setvar('showButtons', $showButtons);
 	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('_TORRENTS', _TORRENTS);
-	$tmpl->setvar('_DIRECTORYLIST', _DIRECTORYLIST);
-	$tmpl->setvar('_UPLOADHISTORY', _UPLOADHISTORY);
-	$tmpl->setvar('_MYPROFILE', _MYPROFILE);
-	$tmpl->setvar('_MESSAGES', _MESSAGES);
-	$tmpl->setvar('_ADMINISTRATION', _ADMINISTRATION);
+	$tmpl->setvar('_TORRENTS', $cfg['_TORRENTS']);
+	$tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
+	$tmpl->setvar('_UPLOADHISTORY', $cfg['_UPLOADHISTORY']);
+	$tmpl->setvar('_MYPROFILE', $cfg['_MYPROFILE']);
+	$tmpl->setvar('_MESSAGES', $cfg['_MESSAGES']);
+	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
 	if ($showButtons) {
 		// Does the user have messages?
 		$sql = "select count(*) from tf_messages where to_user='".$cfg['user']."' and IsNew=1";
@@ -1418,7 +1418,7 @@ function getTransferListHeadArray($settings = null) {
 	$retVal = array();
 	// =================================================================== owner
 	if ($settings[0] != 0)
-		array_push($retVal, _USER);
+		array_push($retVal, $cfg['_USER']);
 	// ==================================================================== size
 	if ($settings[1] != 0)
 		array_push($retVal, "Size");
@@ -1430,7 +1430,7 @@ function getTransferListHeadArray($settings = null) {
 		array_push($retVal, "T. Up");
 	// ================================================================== status
 	if ($settings[4] != 0)
-		array_push($retVal, _STATUS);
+		array_push($retVal, $cfg['_STATUS']);
 	// ================================================================ progress
 	if ($settings[5] != 0)
 		array_push($retVal, "Progress");
@@ -1448,7 +1448,7 @@ function getTransferListHeadArray($settings = null) {
 		array_push($retVal, "Peers");
 	// ===================================================================== ETA
 	if ($settings[10] != 0)
-		array_push($retVal, _ESTIMATEDTIME);
+		array_push($retVal, $cfg['_ESTIMATEDTIME']);
 	// ================================================================== client
 	if ($settings[11] != 0)
 		array_push($retVal, "Client");
@@ -2060,19 +2060,19 @@ function TransferListString() {
 	$tmpl->setvar('settings_9', $settings[9]);
 	$tmpl->setvar('settings_10', $settings[10]);
 	$tmpl->setvar('settings_11', $settings[11]);
-	$tmpl->setvar('_TRANSFERDETAILS', _TRANSFERDETAILS);
-	$tmpl->setvar('_STOPTRANSFER', _STOPTRANSFER);
-	$tmpl->setvar('_NOTOWNER', _NOTOWNER);
-	$tmpl->setvar('_DELQUEUE', _DELQUEUE);
-	$tmpl->setvar('_RUNTRANSFER', _RUNTRANSFER);
-	$tmpl->setvar('_SEEDTRANSFER', _SEEDTRANSFER);
-	$tmpl->setvar('_STOPPING', _STOPPING);
-	$tmpl->setvar('_DELETE', _DELETE);
-	$tmpl->setvar('_TRANSFERFILE', _TRANSFERFILE);
-	$tmpl->setvar('_USER', _USER);
-	$tmpl->setvar('_STATUS', _STATUS);
-	$tmpl->setvar('_ESTIMATEDTIME', _ESTIMATEDTIME);
-	$tmpl->setvar('_ADMIN', _ADMIN);
+	$tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
+	$tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
+	$tmpl->setvar('_NOTOWNER', $cfg['_NOTOWNER']);
+	$tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
+	$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
+	$tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
+	$tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
+	$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+	$tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
+	$tmpl->setvar('_USER', $cfg['_USER']);
+	$tmpl->setvar('_STATUS', $cfg['_STATUS']);
+	$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
+	$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 
 	if (sizeof($arUserTorrent) > 0) {
 		$tmpl->setvar('are_user_torrent', 1);
@@ -2537,7 +2537,7 @@ function check_html ($str, $strip="") {
 	if ($strip != "nohtml") {
 		global $cfg;
 		if ($cfg["enable_dereferrer"] != "0")
-			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="'. _URL_DEREFERRER .'${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
+			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="'. $cfg["_URL_DEREFERRER"] .'${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
 		else
 			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
 	}
@@ -2566,7 +2566,7 @@ function getDriveSpaceBar($drivespace) {
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar.tmpl");
 	// set some vars
 	$tmpl->setvar('drivespacebar', $cfg['drivespacebar']);
-	$tmpl->setvar('_STORAGE', _STORAGE);
+	$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
 	$tmpl->setvar('drivespace', $drivespace);
 	$drivespace2 = (100-$drivespace);
 	$tmpl->setvar('drivespace2', $drivespace2);

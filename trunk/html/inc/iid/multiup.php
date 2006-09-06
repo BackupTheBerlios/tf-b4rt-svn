@@ -106,19 +106,19 @@ if (!empty($_FILES['upload_files'])) {
 	}
 }
 
-$tmpl->setvar('head', getHead(_MULTIPLE_UPLOAD));
+$tmpl->setvar('head', getHead($cfg['_MULTIPLE_UPLOAD']));
 if ((isset($messages)) && ($messages != "")) {
 	$tmpl->setvar('messages', $messages);
 }
 $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('_SELECTFILE', _SELECTFILE);
+$tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 $row_list = array();
 for($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j) {
 	array_push($row_list, array());
 }
 $tmpl->setloop('row_list', $row_list);
-$tmpl->setvar('_UPLOAD', _UPLOAD);
+$tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('queueActive', $queueActive);
 $tmpl->setvar('IsAdmin', IsAdmin());
 $tmpl->setvar('foot', getFoot());

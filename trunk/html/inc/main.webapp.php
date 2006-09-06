@@ -29,8 +29,6 @@ if (isset($_SESSION['user'])) {
 	if (isset($_SESSION['cache'][$currentUser])) {
 		// set cfg-array from session-cache
 		$cfg = $_SESSION['cache'][$currentUser];
-		// include defines
-		require_once('inc/config/defines.php');
 		// core functions
 		require_once('inc/functions/functions.core.php');
 		// db
@@ -93,6 +91,9 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	// theme
 	require_once("themes/".$cfg["theme"]."/index.php");
 
+	// load language
+	loadLanguageFile($cfg["language_file"]);
+
 	// add cfg-array to session-cache
 	$_SESSION['cache'][$currentUser] = $cfg;
 
@@ -104,12 +105,8 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 
 }
 
-// language
-require_once("inc/language/".$cfg["language_file"]);
-
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
-
 
 /*******************************************************************************
  *  TorrentFlux xfer Statistics hack

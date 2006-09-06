@@ -25,8 +25,8 @@ require_once('inc/main.common.php');
 
 /* -------------------------------------------------------------------------- */
 
-// default-language
-require_once("inc/language/".$cfg["default_language"]);
+// load default-language
+loadLanguageFile($cfg["default_language"]);
 
 // default-theme
 include("themes/".$cfg["default_theme"]."/index.php");

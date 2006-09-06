@@ -57,14 +57,14 @@ while(list($user_id, $file, $time) = $result->FetchRow()) {
 		'user_id' => $user_id,
 		'user_icon' => $user_icon,
 		'file' => $file,
-		'date' => date(_DATETIMEFORMAT, $time),
+		'date' => date($cfg['_DATETIMEFORMAT'], $time),
 		)
 	);
 	$inx++;
 }
 if($inx == 0) {
 	$tmpl->setvar('inx', 1);
-	$tmpl->setvar('_NORECORDSFOUND', _NORECORDSFOUND);
+	$tmpl->setvar('_NORECORDSFOUND', $cfg['_NORECORDSFOUND']);
 }
 $tmpl->setloop('file_result', $file_result);
 
@@ -94,10 +94,10 @@ elseif ((!empty($morelink)) && (empty($prevlink)))
 	$tmpl->setvar('empty', 3);
 
 # define some things
-$tmpl->setvar('head', getHead(_UPLOADHISTORY));
+$tmpl->setvar('head', getHead($cfg['_UPLOADHISTORY']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('_SHOWPREVIOUS', _SHOWPREVIOUS);
-$tmpl->setvar('_SHOWMORE', _SHOWMORE);
+$tmpl->setvar('_SHOWPREVIOUS', $cfg['_SHOWPREVIOUS']);
+$tmpl->setvar('_SHOWMORE', $cfg['_SHOWMORE']);
 $tmpl->setvar('prev', $prev);
 $tmpl->setvar('min', $min);
 $tmpl->setvar('max', $max);
@@ -105,12 +105,12 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_UPLOADACTIVITY', _UPLOADACTIVITY);
+$tmpl->setvar('_UPLOADACTIVITY', $cfg['_UPLOADACTIVITY']);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-$tmpl->setvar('_DAYS', _DAYS);
-$tmpl->setvar('_USER', _USER);
-$tmpl->setvar('_FILE', _FILE);
-$tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
+$tmpl->setvar('_DAYS', $cfg['_DAYS']);
+$tmpl->setvar('_USER', $cfg['_USER']);
+$tmpl->setvar('_FILE', $cfg['_FILE']);
+$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);

@@ -25,15 +25,15 @@ $tmpl = getTemplateInstance($cfg["theme"], "admin/addUser.tmpl");
 
 $newUser = strtolower($newUser);
 if (IsUser($newUser)) {
-	$tmpl->setvar('head', getHead(_ADMINISTRATION));
+	$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 	$tmpl->setvar('menu', getMenu());
-	$tmpl->setvar('_TRYDIFFERENTUSERID', _TRYDIFFERENTUSERID);
+	$tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
 	$tmpl->setvar('newUser', $newUser);
-	$tmpl->setvar('_HASBEENUSED', _HASBEENUSED);
+	$tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 	$tmpl->setvar('foot', getFoot(true,true));
 } else {
 	addNewUser($newUser, $pass1, $userType);
-	AuditAction($cfg["constants"]["admin"], _NEWUSER.": ".$newUser);
+	AuditAction($cfg["constants"]["admin"], $cfg['_NEWUSER'].": ".$newUser);
 	header("location: index.php?iid=admin&op=CreateUser");
 }
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

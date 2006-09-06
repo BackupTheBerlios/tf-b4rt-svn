@@ -23,7 +23,7 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/default.tmpl");
 
-$tmpl->setvar('head', getHead(_ADMINISTRATION));
+$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('activity', getActivity($min));

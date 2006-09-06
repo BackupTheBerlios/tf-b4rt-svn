@@ -23,18 +23,18 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/editLinks.tmpl");
 
-$tmpl->setvar('head', getHead(_ADMINEDITLINKS));
+$tmpl->setvar('head', getHead($cfg['_ADMINEDITLINKS']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_ADMINEDITLINKS', _ADMINEDITLINKS);
-$tmpl->setvar('_FULLURLLINK', _FULLURLLINK);
-$tmpl->setvar('_FULLSITENAME', _FULLSITENAME);
-$tmpl->setvar('_UPDATE', _UPDATE);
-$tmpl->setvar('_DELETE', _DELETE);
-$tmpl->setvar('_EDIT', _EDIT);
+$tmpl->setvar('_ADMINEDITLINKS', $cfg['_ADMINEDITLINKS']);
+$tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
+$tmpl->setvar('_FULLSITENAME', $cfg['_FULLSITENAME']);
+$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+$tmpl->setvar('_EDIT', $cfg['_EDIT']);
 
 $arLinks = GetLinks();
 $arLid = Array_Keys($arLinks);

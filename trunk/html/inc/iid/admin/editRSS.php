@@ -29,9 +29,9 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_FULLURLLINK', _FULLURLLINK);
-$tmpl->setvar('_UPDATE', _UPDATE);
-$tmpl->setvar('_DELETE', _DELETE);
+$tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
+$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
 
 $arLinks = GetRSSLinks();
 $arRid = Array_Keys($arLinks);

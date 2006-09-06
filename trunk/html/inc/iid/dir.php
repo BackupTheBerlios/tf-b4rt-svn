@@ -242,7 +242,7 @@ if (isset($dir)) {
 		$parentURL="index.php?iid=dir&dir=" . urlencode($matches[1]);
 	}
 	$tmpl->setvar('parentURL', $parentURL);
-	$tmpl->setvar('_BACKTOPARRENT', _BACKTOPARRENT);
+	$tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
 }
 $handle = opendir($dirName);
 while($entry = readdir($handle))
@@ -316,9 +316,9 @@ foreach($entrys as $entry) {
 				'enable_rename' => $enable_rename,
 				'urlencode2' => $urlencode2,
 				'urlencode3' => $urlencode3,
-				'_DIR_REN_LINK' => _DIR_REN_LINK,
+				'_DIR_REN_LINK' => $cfg['_DIR_REN_LINK'],
 				'enable_move' => $enable_move,
-				'_DIR_MOVE_LINK' => _DIR_MOVE_LINK,
+				'_DIR_MOVE_LINK' => $cfg['_DIR_MOVE_LINK'],
 				'enable_sfvcheck' => $enable_sfvcheck,
 				'sfvdir' => $sfvdir,
 				'sfvsfv' => $sfvsfv,
@@ -327,7 +327,7 @@ foreach($entrys as $entry) {
 				'package_type' => $package_type,
 				'IsAdmin1' => $IsAdmin1,
 				'addslashes1' => addslashes($entry),
-				'_DELETE' => _DELETE,
+				'_DELETE' => $cfg['_DELETE'],
 				)
 			);
 			if ($bg == $bgLight)
@@ -416,16 +416,16 @@ foreach($entrys as $entry) {
 				'enable_rename' => $enable_rename,
 				'urlencode2' => $urlencode2,
 				'urlencode3' => $urlencode3,
-				'_DIR_REN_LINK' => _DIR_REN_LINK,
+				'_DIR_REN_LINK' => $cfg['_DIR_REN_LINK'],
 				'enable_move' => $enable_move,
-				'_DIR_MOVE_LINK' => _DIR_MOVE_LINK,
+				'_DIR_MOVE_LINK' => $cfg['_DIR_MOVE_LINK'],
 				'enable_rar2' => $enable_rar2,
 				'enable_view_nfo' => $enable_view_nfo,
 				'urlencode4' => $urlencode4,
 				'enable_maketorrent' => $cfg["enable_maketorrent"],
 				'enable_file_download' => $cfg["enable_file_download"],
 				'addslashes1' => addslashes($entry),
-				'_DELETE' => _DELETE,
+				'_DELETE' => $cfg['_DELETE'],
 				'admin1' => $admin1,
 				)
 			);
@@ -451,15 +451,15 @@ if ($cfg['enable_dirstats'] == 1) {
 	}
 	$du = shell_exec($dudir);
 	$du2 = substr($du, 0, -7);
-	$tmpl->setvar('_TDDU', _TDDU);
+	$tmpl->setvar('_TDDU', $cfg['_TDDU']);
 	$tmpl->setvar('du2', $du2);
 } else {
 	$tmpl->setvar('enable_dirstats', 0);
 }
 
 # define some things
-$tmpl->setvar('head', getHead(_DIRECTORYLIST));
-$tmpl->setvar('_ABOUTTODELETE', _ABOUTTODELETE);
+$tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
+$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

@@ -29,7 +29,7 @@ require_once("inc/metaInfo.php");
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "details.tmpl");
 
-$tmpl->setvar('head', getHead(_TRANSFERDETAILS));
+$tmpl->setvar('head', getHead($cfg['_TRANSFERDETAILS']));
 $tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 

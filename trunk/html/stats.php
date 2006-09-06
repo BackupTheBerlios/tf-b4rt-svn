@@ -37,8 +37,8 @@ switch (_PUBLIC_STATS) {
 	case 1:
 		// main.common
 		require_once('inc/main.common.php');
-		// default-language
-		require_once("inc/language/".$cfg["default_language"]);
+		// load default-language
+		loadLanguageFile($cfg["default_language"]);
 		// public stats... show all .. we set the user to superadmin
 		$superAdm = GetSuperAdmin();
 		if ((isset($superAdm)) && ($superAdm != "")) {

@@ -157,8 +157,8 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_TRANSFERFILE',_TRANSFERFILE);
-$tmpl->setvar('_TIMESTAMP', _TIMESTAMP);
+$tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
+$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 
 // Scrub the description to take out the ugly long URLs
 function ScrubDescription($desc, $title) {

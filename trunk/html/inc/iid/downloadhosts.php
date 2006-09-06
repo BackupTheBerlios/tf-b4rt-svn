@@ -52,15 +52,15 @@ $torrentLabel = $torrent;
 if(strlen($torrentLabel) >= 39)
 	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
-$tmpl->setvar(_ID_HOSTS, false, "30", $af->percent_done."% ");
-$tmpl->setvar('head', getHead(_ID_HOSTS, false, "15", ""));
+$tmpl->setvar($cfg['_ID_HOSTS'], false, "30", $af->percent_done."% ");
+$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false, "15", ""));
 
 if ($error != ""){
 	$tmpl->setvar('is_error', 1);
 	$tmpl->setvar('error', $error);
 }
 $tmpl->setvar('torrentLabel', $torrentLabel);
-$tmpl->setvar('cons_hosts', $torrent_cons." "._ID_HOSTS);
+$tmpl->setvar('cons_hosts', $torrent_cons." ".$cfg['_ID_HOSTS']);
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('alias', $alias);
 $tmpl->setvar('hd_image', $hd->image);
@@ -69,8 +69,8 @@ $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 	$tmpl->setvar('torrent_hosts_aval', 1);
-	$tmpl->setvar('_ID_HOST', _ID_HOST);
-	$tmpl->setvar('_ID_PORT', _ID_PORT);
+	$tmpl->setvar('_ID_HOST', $cfg['_ID_HOST']);
+	$tmpl->setvar('_ID_PORT', $cfg['_ID_PORT']);
 	$hostAry = array_keys($torrent_hosts);
 	$list_host = array();
 	foreach ($hostAry as $host) {

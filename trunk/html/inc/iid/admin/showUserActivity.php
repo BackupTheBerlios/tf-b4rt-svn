@@ -23,7 +23,7 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 
-$tmpl->setvar('head', getHead(_ADMINUSERACTIVITY));
+$tmpl->setvar('head', getHead($cfg['_ADMINUSERACTIVITY']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('Activity', getActivity($min, $user_id, $srchFile, $srchAction));
 $tmpl->setvar('foot', getFoot(true,true));

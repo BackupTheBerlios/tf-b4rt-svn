@@ -43,7 +43,7 @@ $enableBtclientChooser = "";
 if ($cfg["enable_btclient_chooser"] == 1) {
 	$enableBtclientChooser = "checked";
 }
-$tmpl->setvar('_AUTH_BASIC_REALM', _AUTH_BASIC_REALM);
+$tmpl->setvar('_AUTH_BASIC_REALM', $cfg["_AUTH_BASIC_REALM"]);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('btclient', $cfg["btclient"]);
 $tmpl->setvar('enableBtclientChooser', $enableBtclientChooser);

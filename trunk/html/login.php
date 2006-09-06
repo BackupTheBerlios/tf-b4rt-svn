@@ -25,8 +25,8 @@ require_once('inc/main.common.php');
 
 /* -------------------------------------------------------------------------- */
 
-// default-language
-require_once("inc/language/".$cfg["default_language"]);
+// load default-language
+loadLanguageFile($cfg["default_language"]);
 
 // default-theme
 include("themes/".$cfg["default_theme"]."/index.php");
@@ -57,7 +57,7 @@ switch ($cfg['auth_type']) {
 			$user = strtolower($_SERVER['PHP_AUTH_USER']);
 			$iamhim = addslashes($_SERVER['PHP_AUTH_PW']);
 		} else {
-			header('WWW-Authenticate: Basic realm="'. _AUTH_BASIC_REALM .'"');
+			header('WWW-Authenticate: Basic realm="'. $cfg["_AUTH_BASIC_REALM"] .'"');
 			header('HTTP/1.0 401 Unauthorized');
 			@ob_end_clean();
 			exit();

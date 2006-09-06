@@ -26,12 +26,12 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "renameFolder.tmpl");
 
-$tmpl->setvar('head', getHead(_REN_TITLE, false));
+$tmpl->setvar('head', getHead($cfg['_REN_TITLE'], false));
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('_REN_FILE', _REN_FILE);
+	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
 	$tmpl->setvar('file', $_GET['file']);
-	$tmpl->setvar('_REN_STRING', _REN_STRING);
+	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 	$tmpl->setvar('dir', $_GET['dir']);
 }
 else {
@@ -46,11 +46,11 @@ else {
 	pclose($handle);
 	if($gotError <= 0) {
 		$tmpl->setvar('no_error', 1);
-		$tmpl->setvar('_REN_DONE', _REN_DONE);
+		$tmpl->setvar('_REN_DONE', $cfg['_REN_DONE']);
 		$tmpl->setvar('fileFrom', $_POST['fileFrom']);
 		$tmpl->setvar('fileTo', $_POST['fileTo']);
 	}
-	$tmpl->setvar('_REN_ERROR', _REN_ERROR);
+	$tmpl->setvar('_REN_ERROR', $cfg['_REN_ERROR']);
 }
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

@@ -35,8 +35,11 @@ require_once('inc/config/config.db.php');
             as of a flowing stream; constant succession; change.
 *****************************************************************************/
 
-// include defines
-require_once('inc/config/defines.php');
+// url constants
+$cfg["_URL_DEREFERRER"] = 'index.php?iid=dereferrer&u=';
+
+// auth-constants
+$cfg["_AUTH_BASIC_REALM"] = 'torrentflux-b4rt';
 
 // CONSTANTS
 $cfg["constants"] = array();

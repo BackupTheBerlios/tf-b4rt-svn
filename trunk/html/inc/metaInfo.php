@@ -89,7 +89,7 @@ class file {
 function showMetaInfo($torrent, $allowSave=false) {
 	global $cfg;
 	if (empty($torrent)) {
-		$showMetaInfo = _NORECORDSFOUND;
+		$showMetaInfo = $cfg['_NORECORDSFOUND'];
 	} elseif ($cfg["enable_file_priority"]) {
 		$prioFileName = $cfg["torrent_file_path"].getAliasName($torrent).".prio";
 		require_once('inc/classes/BDecode.php');

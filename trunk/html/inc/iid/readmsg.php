@@ -80,7 +80,7 @@ if (!empty($mid)) {
 			'mail_image' => $mail_image,
 			'from_user' => $from_user,
 			'display_message' => $display_message,
-			'date2' => date(_DATETIMEFORMAT, $time),
+			'date2' => date($cfg['_DATETIMEFORMAT'], $time),
 			'force_read' => $force_read,
 			'IsUser2' => $IsUser2,
 			)
@@ -89,7 +89,7 @@ if (!empty($mid)) {
 	} // End While
 	if($inx == 0) {
 		$tmpl->setvar('no_inx', 1);
-		$tmpl->setvar('_NORECORDSFOUND', _NORECORDSFOUND);
+		$tmpl->setvar('_NORECORDSFOUND', $cfg['_NORECORDSFOUND']);
 	}
 	else {
 		$tmpl->setloop('message_list', $message_list);
@@ -97,23 +97,23 @@ if (!empty($mid)) {
 } // end the else
 
 # a page is nothing without vars
-$tmpl->setvar('head', getHead(_MESSAGES));
+$tmpl->setvar('head', getHead($cfg['_MESSAGES']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('_RETURNTOMESSAGES', _RETURNTOMESSAGES);
+$tmpl->setvar('_RETURNTOMESSAGES', $cfg['_RETURNTOMESSAGES']);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('_FROM', _FROM);
+$tmpl->setvar('_FROM', $cfg['_FROM']);
 $tmpl->setvar('from_user', $from_user);
 $tmpl->setvar('mid', $mid);
-$tmpl->setvar('_REPLY', _REPLY);
-$tmpl->setvar('_DELETE', _DELETE);
-$tmpl->setvar('_DATE', _DATE);
-$tmpl->setvar('date1', date(_DATETIMEFORMAT, $time));
+$tmpl->setvar('_REPLY', $cfg['_REPLY']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+$tmpl->setvar('_DATE', $cfg['_DATE']);
+$tmpl->setvar('date1', date($cfg['_DATETIMEFORMAT'], $time));
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('_MESSAGE', _MESSAGE);
+$tmpl->setvar('_MESSAGE', $cfg['_MESSAGE']);
 $tmpl->setvar('message', $message);
 $tmpl->setvar('messageList', getMessageList());
-$tmpl->setvar('_ADMIN', _ADMIN);
+$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);

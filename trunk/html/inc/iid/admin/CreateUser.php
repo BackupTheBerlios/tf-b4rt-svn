@@ -23,24 +23,24 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/CreateUser.tmpl");
 
-$tmpl->setvar('head', getHead(_USERADMIN));
+$tmpl->setvar('head', getHead($cfg['_USERADMIN']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_NEWUSER', _NEWUSER);
-$tmpl->setvar('_USER', _USER);
-$tmpl->setvar('_PASSWORD', _PASSWORD);
-$tmpl->setvar('_CONFIRMPASSWORD', _CONFIRMPASSWORD);
-$tmpl->setvar('_USERTYPE', _USERTYPE);
-$tmpl->setvar('_NORMALUSER', _NORMALUSER);
-$tmpl->setvar('_ADMINISTRATOR', _ADMINISTRATOR);
-$tmpl->setvar('_CREATE', _CREATE);
-$tmpl->setvar('_USERIDREQUIRED', _USERIDREQUIRED);
-$tmpl->setvar('_PASSWORDLENGTH', _PASSWORDLENGTH);
-$tmpl->setvar('_PASSWORDNOTMATCH', _PASSWORDNOTMATCH);
-$tmpl->setvar('_PLEASECHECKFOLLOWING', _PLEASECHECKFOLLOWING);
+$tmpl->setvar('_NEWUSER', $cfg['_NEWUSER']);
+$tmpl->setvar('_USER', $cfg['_USER']);
+$tmpl->setvar('_PASSWORD', $cfg['_PASSWORD']);
+$tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
+$tmpl->setvar('_USERTYPE', $cfg['_USERTYPE']);
+$tmpl->setvar('_NORMALUSER', $cfg['_NORMALUSER']);
+$tmpl->setvar('_ADMINISTRATOR', $cfg['_ADMINISTRATOR']);
+$tmpl->setvar('_CREATE', $cfg['_CREATE']);
+$tmpl->setvar('_USERIDREQUIRED', $cfg['_USERIDREQUIRED']);
+$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
+$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
+$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('foot', getFoot(true,true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
