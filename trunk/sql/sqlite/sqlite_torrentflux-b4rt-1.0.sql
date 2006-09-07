@@ -215,7 +215,6 @@ INSERT INTO tf_settings VALUES ('enable_xfer','1');
 INSERT INTO tf_settings VALUES ('enable_public_xfer','1');
 INSERT INTO tf_settings VALUES ('enable_sfvcheck','1');
 INSERT INTO tf_settings VALUES ('bin_grep','/bin/grep');
-INSERT INTO tf_settings VALUES ('bin_cat','/bin/cat');
 INSERT INTO tf_settings VALUES ('bin_netstat','/bin/netstat');
 INSERT INTO tf_settings VALUES ('bin_php','/usr/bin/php');
 INSERT INTO tf_settings VALUES ('bin_awk','/usr/bin/awk');

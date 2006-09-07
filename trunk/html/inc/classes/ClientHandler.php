@@ -424,10 +424,17 @@ class ClientHandler
         if (!empty($return)) {
             sleep(3);
             // set pid
-            if ((isset($transferPid)) && ($transferPid != ""))
+            if ((isset($transferPid)) && ($transferPid != "")) {
                 $this->pid = $transferPid;
-            else
-                $this->pid = trim(shell_exec($this->cfg['bin_cat']." ".$this->pidFile));
+            } else {
+            	$data = "";
+				if ($fileHandle = @fopen($this->pidFile,'r')) {
+					while (!@feof($fileHandle))
+						$data .= @fgets($fileHandle, 64);
+					@fclose ($fileHandle);
+				}
+                $this->pid = trim($data);
+            }
             // kill it
             $this->callResult = exec("kill ".$this->pid);
             // try to remove the pid file

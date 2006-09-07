@@ -44,7 +44,7 @@ if (!empty($alias)) {
 }
 $torrent_cons = "";
 if (($af->running == 1) && ($alias != "")) {
-	$torrent_pid = getTorrentPid($alias);
+	$torrent_pid = getTransferPid($alias);
 	$torrent_cons = netstatConnectionsByPid($torrent_pid);
 	$torrent_hosts = netstatHostsByPid($torrent_pid);
 }

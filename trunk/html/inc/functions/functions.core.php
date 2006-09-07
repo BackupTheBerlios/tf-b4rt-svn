@@ -174,23 +174,23 @@ function netstatConnectionsSum() {
 /*
  * netstatConnections
  */
-function netstatConnections($torrentAlias) {
-	return netstatConnectionsByPid(getTorrentPid($torrentAlias));
+function netstatConnections($transferAlias) {
+	return netstatConnectionsByPid(getTransferPid($transferAlias));
 }
 
 /*
  * netstatConnectionsByPid
  */
-function netstatConnectionsByPid($torrentPid) {
+function netstatConnectionsByPid($transferPid) {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			return trim(shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c \"".$torrentPid ."/\""));
+			return trim(shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c \"".$transferPid ."/\""));
 			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$torrentPid.".+tcp"));
+			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid.".+tcp"));
 			$netcon--;
 			return $netcon;
 			break;
@@ -229,23 +229,23 @@ function netstatPortList() {
 /*
  * netstatPort
  */
-function netstatPort($torrentAlias) {
-	return netstatPortByPid(getTorrentPid($torrentAlias));
+function netstatPort($transferAlias) {
+	return netstatPortByPid(getTransferPid($transferAlias));
 }
 
 /*
  * netstatPortByPid
  */
-function netstatPortByPid($torrentPid) {
+function netstatPortByPid($transferPid) {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			return trim(shell_exec($cfg['bin_netstat']." -l -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." \"".$torrentPid ."/\" | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'"));
+			return trim(shell_exec($cfg['bin_netstat']." -l -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." \"".$transferPid ."/\" | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'"));
 			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return (shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$torrentPid.".*tcp.*(\*:\*|[[:digit:]]:(21|80))/ {split(\$6, a, \":\");print a[2]}'"));
+			return (shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$transferPid.".*tcp.*(\*:\*|[[:digit:]]:(21|80))/ {split(\$6, a, \":\");print a[2]}'"));
 			break;
 	}
 }
@@ -282,19 +282,19 @@ function netstatHostList() {
 /*
  * netstatHosts
  */
-function netstatHosts($torrentAlias) {
-	return netstatHostsByPid(getTorrentPid($torrentAlias));
+function netstatHosts($transferAlias) {
+	return netstatHostsByPid(getTransferPid($transferAlias));
 }
 
 /*
  * netstatHostsByPid
  */
-function netstatHostsByPid($torrentPid) {
+function netstatHostsByPid($transferPid) {
 	global $cfg;
 	$hostHash = null;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			$hostList = shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." \"".$torrentPid."/\" | ".$cfg['bin_awk']." '{print \$5}'");
+			$hostList = shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." \"".$transferPid."/\" | ".$cfg['bin_awk']." '{print \$5}'");
 			$hostAry = explode("\n",$hostList);
 			foreach ($hostAry as $line) {
 				$hostLineAry = explode(':',trim($line));
@@ -304,7 +304,7 @@ function netstatHostsByPid($torrentPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".+".$torrentPid.".+tcp.+[0-9]:[0-9].+[0-9]:[0-9]/ {print \$7}'");
+			$hostList = shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".+".$transferPid.".+tcp.+[0-9]:[0-9].+[0-9]:[0-9]/ {print \$7}'");
 			$hostAry = explode("\n",$hostList);
 			foreach ($hostAry as $line) {
 				$hostLineAry = explode(':',trim($line));
@@ -316,12 +316,12 @@ function netstatHostsByPid($torrentPid) {
 }
 
 /*
- * getTorrentPid
+ * getTransferPid
  */
-function getTorrentPid($torrentAlias) {
+function getTransferPid($transferAlias) {
 	global $cfg;
 	$data = "";
-	if ($fileHandle = @fopen($cfg["torrent_file_path"].$torrentAlias.".pid",'r')) {
+	if ($fileHandle = @fopen($cfg["torrent_file_path"].$transferAlias.".pid",'r')) {
 		while (!@feof($fileHandle))
 			$data .= @fgets($fileHandle, 64);
 		@fclose ($fileHandle);

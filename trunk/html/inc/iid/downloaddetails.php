@@ -82,7 +82,7 @@ if (($af->running == 1) && ($alias != "")) {
 	$label_upTotalCurrent = formatFreeSpace($upTotalCurrent / 1048576);
 	$label_seeds = $af->seeds;
 	$label_peers = $af->peers;
-	$torrent_pid = getTorrentPid($alias);
+	$torrent_pid = getTransferPid($alias);
 	$torrent_port = netstatPortByPid($torrent_pid);
 	$torrent_cons = netstatConnectionsByPid($torrent_pid);
 	if ($cfg["max_download_rate"] != 0)

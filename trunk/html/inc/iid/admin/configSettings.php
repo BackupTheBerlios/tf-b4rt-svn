@@ -192,8 +192,6 @@ $tmpl->setvar('getMoveSettings', getMoveSettings());
 $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
 $tmpl->setvar('bin_grep', $cfg["bin_grep"]);
 $tmpl->setvar('validate_grep', validateFile($cfg["bin_grep"]));
-$tmpl->setvar('bin_cat', $cfg["bin_cat"]);
-$tmpl->setvar('validate_cat', validateFile($cfg["bin_cat"]));
 $tmpl->setvar('bin_php', $cfg["bin_php"]);
 $tmpl->setvar('validate_php', validateFile($cfg["bin_php"]));
 $tmpl->setvar('pythonCmd', $cfg["pythonCmd"]);
