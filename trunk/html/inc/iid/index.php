@@ -139,10 +139,12 @@ if(isset($_REQUEST["dQueue"])) {
 }
 
 // =============================================================================
-// init some vars
+// init vars
 // =============================================================================
+
 // drivespace
 $drivespace = getDriveSpace($cfg["path"]);
+$formatFreeSpace = formatFreeSpace($cfg["free_space"]);
 // connections
 $netstatConnectionsSum = "n/a";
 if ($cfg["index_page_connections"] != 0)
@@ -151,10 +153,6 @@ if ($cfg["index_page_connections"] != 0)
 $loadavgString = "n/a";
 if ($cfg["show_server_load"] != 0)
 	$loadavgString = @getLoadAverageString();
-
-// =============================================================================
-// output
-// =============================================================================
 
 // transfer-list
 $tmpl->setvar('transferList', TransferListString());
@@ -217,7 +215,7 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	}
 	if ($settingsHackStats[4] == 1) {
 		$tmpl->setvar('settingsHackStats5', 1);
-		$tmpl->setvar('settingsHackStats55', formatFreeSpace($cfg["free_space"]));
+		$tmpl->setvar('settingsHackStats55', $formatFreeSpace);
 	}
 	if ($settingsHackStats[5] == 1) {
 		$tmpl->setvar('settingsHackStats6', 1);
@@ -225,7 +223,7 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	}
 }
 
-# users
+// users
 if ($cfg["ui_displayusers"] != "0") {
 	$arUsers = GetUsers();
 	$arOnlineUsers = array();
@@ -275,8 +273,7 @@ if ($cfg['enable_bigboldwarning'] != "0") {
 	//Big bold warning hack by FLX
 	if($drivespace >= 98)
 		$tmpl->setvar('enable_bigboldwarning', 1);
-}
-if ($cfg['enable_bigboldwarning'] != "1") {
+} else {
 	if($drivespace >= 98)
 		$tmpl->setvar('no_bigboldwarning', 1);
 }
@@ -284,13 +281,15 @@ if ($cfg['enable_bigboldwarning'] != "1") {
 // bottom stats
 if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('index_page_stats', 1);
-	if (!array_key_exists("total_download",$cfg)) $cfg["total_download"] = 0;
-	if (!array_key_exists("total_upload",$cfg)) $cfg["total_upload"] = 0;
+	if (!array_key_exists("total_download",$cfg))
+		$cfg["total_download"] = 0;
+	if (!array_key_exists("total_upload",$cfg))
+		$cfg["total_upload"] = 0;
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
-		$tmpl->setvar('totalxfer1', formatFreeSpace($xfer_total['total']['total']/(1024*1024)));
-		$tmpl->setvar('monthxfer1', formatFreeSpace($xfer_total['month']['total']/(1024*1024)));
-		$tmpl->setvar('weekxfer1', formatFreeSpace($xfer_total['week']['total']/(1024*1024)));
-		$tmpl->setvar('dayxfer1', formatFreeSpace($xfer_total['day']['total']/(1024*1024)));
+		$tmpl->setvar('totalxfer1', formatFreeSpace($xfer_total['total']['total'] / 1048576));
+		$tmpl->setvar('monthxfer1', formatFreeSpace($xfer_total['month']['total'] / 1048576));
+		$tmpl->setvar('weekxfer1', formatFreeSpace($xfer_total['week']['total'] / 1048576));
+		$tmpl->setvar('dayxfer1', formatFreeSpace($xfer_total['day']['total'] / 1048576));
 	}
 	if ($queueActive) {
 		$tmpl->setvar('queueActive2', 1);
@@ -306,26 +305,25 @@ if ($cfg['index_page_stats'] != 0) {
 	$sumMaxUpRate = getSumMaxUpRate();
 	$sumMaxDownRate = getSumMaxDownRate();
 	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
-	$tmpl->setvar('downloadspeed1', number_format($cfg["total_download"], 2));
-	$tmpl->setvar('downloadspeed11', number_format($sumMaxDownRate, 2));
-	$tmpl->setvar('uploadspeed1', number_format($cfg["total_upload"], 2));
-	$tmpl->setvar('uploadspeed11', number_format($sumMaxUpRate, 2));
-	$tmpl->setvar('totalspeed1', number_format($cfg["total_download"]+$cfg["total_upload"], 2));
-	$tmpl->setvar('totalspeed11', number_format($sumMaxRate, 2));
+	$tmpl->setvar('downloadspeed1', @number_format($cfg["total_download"], 2));
+	$tmpl->setvar('downloadspeed11', @number_format($sumMaxDownRate, 2));
+	$tmpl->setvar('uploadspeed1', @number_format($cfg["total_upload"], 2));
+	$tmpl->setvar('uploadspeed11', @number_format($sumMaxUpRate, 2));
+	$tmpl->setvar('totalspeed1', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
+	$tmpl->setvar('totalspeed11', @number_format($sumMaxRate, 2));
 	if ($cfg["index_page_connections"] != 0) {
 		$tmpl->setvar('id_connections1', $netstatConnectionsSum);
 		$tmpl->setvar('id_connections11', getSumMaxCons());
 	}
-	$tmpl->setvar('drivespace1', formatFreeSpace($cfg["free_space"]));
-	if ($cfg["show_server_load"] != 0) {
+	$tmpl->setvar('drivespace1', $formatFreeSpace);
+	if ($cfg["show_server_load"] != 0)
 		$tmpl->setvar('serverload1', $loadavgString);
-	}
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
-		$tmpl->setvar('total2', formatFreeSpace($xfer[$cfg['user']]['total']['total']/(1024*1024)));
-		$tmpl->setvar('month2', formatFreeSpace($xfer[$cfg['user']]['month']['total']/(1024*1024)));
-		$tmpl->setvar('week2', formatFreeSpace($xfer[$cfg['user']]['week']['total']/(1024*1024)));
-		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg['user']]['day']['total']/(1024*1024)));
+		$tmpl->setvar('total2', formatFreeSpace($xfer[$cfg['user']]['total']['total'] / 1048576));
+		$tmpl->setvar('month2', formatFreeSpace($xfer[$cfg['user']]['month']['total'] / 1048576));
+		$tmpl->setvar('week2', formatFreeSpace($xfer[$cfg['user']]['week']['total'] / 1048576));
+		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg['user']]['day']['total'] / 1048576));
 	}
 }
 
@@ -340,60 +338,66 @@ if ($cfg["ui_displaybandwidthbars"] != 0) {
 	$tmpl->setvar('bandwidthbarUp', getUploadBar());
 }
 
-# define some things
+// define some things
+$tmpl->setvar('version', $cfg["version"]);
+$tmpl->setvar('user2', $cfg["user"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
-$tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
+$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
+$tmpl->setvar('enable_wget', $cfg["enable_wget"]);
+$tmpl->setvar('enable_search', $cfg["enable_search"]);
+$tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
+$tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
+$tmpl->setvar('enable_mrtg', $cfg["enable_mrtg"]);
+$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
+$tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
+$tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
+$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
+$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
+$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
+$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
+$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
+$tmpl->setvar('drivespace', $drivespace);
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
+$tmpl->setvar('formatFreeSpace', $formatFreeSpace);
+$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
+//
+$tmpl->setvar('_URL_DEREFERRER', $cfg["_URL_DEREFERRER"]);
+$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
-$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('_MULTIPLE_UPLOAD', $cfg['_MULTIPLE_UPLOAD']);
 $tmpl->setvar('_URLFILE', $cfg['_URLFILE']);
 $tmpl->setvar('_GETFILE', $cfg['_GETFILE']);
-$tmpl->setvar('enable_wget', $cfg["enable_wget"]);
-$tmpl->setvar('enable_search', $cfg["enable_search"]);
 $tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
-$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('_TORRENTLINKS', $cfg['_TORRENTLINKS']);
-$tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
-$tmpl->setvar('_URL_DEREFERRER', $cfg["_URL_DEREFERRER"]);
 $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_TOTALSPEED', $cfg['_TOTALSPEED']);
 $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
-$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 $tmpl->setvar('_ONLINE', $cfg['_ONLINE']);
 $tmpl->setvar('_OFFLINE', $cfg['_OFFLINE']);
-$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
-$tmpl->setvar('drivespace', $drivespace);
-$tmpl->setvar('enable_mrtg', $cfg["enable_mrtg"]);
 $tmpl->setvar('_XFER_USAGE', $cfg['_XFER_USAGE']);
 $tmpl->setvar('_ID_MRTG', $cfg['_ID_MRTG']);
 $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 $tmpl->setvar('_ALL', $cfg['_ALL']);
 $tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
-$tmpl->setvar('user2', $cfg["user"]);
-$tmpl->setvar('formatFreeSpace', formatFreeSpace($cfg["free_space"]));
 $tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 $tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
 $tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
 $tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
-$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
-$tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
-$tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('_PAGEWILLREFRESH', $cfg['_PAGEWILLREFRESH']);
 $tmpl->setvar('_TURNOFFREFRESH', $cfg['_TURNOFFREFRESH']);
 $tmpl->setvar('_TURNONREFRESH', $cfg['_TURNONREFRESH']);
@@ -402,19 +406,17 @@ $tmpl->setvar('_WARNING', $cfg['_WARNING']);
 $tmpl->setvar('_DRIVESPACEUSED', $cfg['_DRIVESPACEUSED']);
 $tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
 $tmpl->setvar('_ADMINMESSAGE', $cfg['_ADMINMESSAGE']);
-$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
-$tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
-$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
-$tmpl->setvar('version', $cfg["version"]);
 $tmpl->setvar('_TOTALXFER', $cfg['_TOTALXFER']);
 $tmpl->setvar('_MONTHXFER', $cfg['_MONTHXFER']);
 $tmpl->setvar('_WEEKXFER', $cfg['_WEEKXFER']);
 $tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+//
 if (isset($_GET["iid"]))
 	$tmpl->setvar('iid', $_GET["iid"]);
 else
 	$tmpl->setvar('iid', 'index');
+
+// parse template
 $tmpl->pparse();
 
 ?>
