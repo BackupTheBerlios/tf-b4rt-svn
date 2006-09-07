@@ -168,12 +168,13 @@ function getXferBar($total, $used, $title) {
 //XFER: gets xfer usage page
 function getXfer() {
 	global $cfg;
-	$displayXferList = getXferList();
+	// create template-instance
+	$tmpl = getTemplateInstance($cfg["theme"], "inc.getXfer.tmpl");
+	$tmpl->setvar('XferList', getXferList());
 	if (isset($_GET['user'])) {
-		$displayXferList .= '<br><b>';
-		$displayXferList .= ($_GET['user'] == '%') ? $cfg['_SERVERXFERSTATS'] : $cfg['_USERDETAILS'].': '.$_GET['user'];
-		$displayXferList .= '</b><br>';
-		getXferDetail($_GET['user'],$cfg['_MONTHSTARTING'],0,0);
+		$tmpl->setvar('user', $_GET['user']);
+		$tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
+		$tmpl->setvar('_USERDETAILS', $cfg['_USERDETAILS']);
 		if (isset($_GET['month'])) {
 			$mstart = $_GET['month'].'-'.$cfg['month_start'];
 			$mend = date('Y-m-d',strtotime('+1 Month',strtotime($mstart)));
@@ -188,10 +189,13 @@ function getXfer() {
 			$wstart = $mstart;
 			$wend = $mend;
 		}
-		$displayXferList .= getXferDetail($_GET['user'],$cfg['_WEEKSTARTING'],$mstart,$mend);
-		$displayXferList .= getXferDetail($_GET['user'],$cfg['_DAY'],$wstart,$wend);
+		$tmpl->setvar('xferDetailMonth', getXferDetail($_GET['user'],$cfg['_MONTHSTARTING'],0,0));
+		$tmpl->setvar('xferDetailWeek', getXferDetail($_GET['user'],$cfg['_WEEKSTARTING'],$mstart,$mend));
+		$tmpl->setvar('xferDetailDay', getXferDetail($_GET['user'],$cfg['_DAY'],$wstart,$wend));
 	}
-	return $displayXferList;
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
 }
 
 //XFER:****************************************************

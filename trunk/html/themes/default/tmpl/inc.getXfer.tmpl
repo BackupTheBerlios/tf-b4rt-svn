@@ -1,0 +1,13 @@
+<tmpl_var name="XferList">
+<tmpl_if name="user">
+	<br><b>
+		<tmpl_if name="user" value="%">
+			<tmpl_var name="_SERVERXFERSTATS">
+		<tmpl_else>
+			<tmpl_var name="_USERDETAILS">: <tmpl_var name="user">
+		</tmpl_if>
+	</b><br>
+	<tmpl_var name="xferDetailMonth">
+	<tmpl_var name="xferDetailWeek">
+	<tmpl_var name="xferDetailDay">
+</tmpl_if>
