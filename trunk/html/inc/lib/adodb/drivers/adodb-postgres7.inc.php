@@ -1,6 +1,6 @@
 <?php
 /*
- V4.90 8 June 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.92a 29 Aug 2006  (c) 2000-2006 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -29,6 +29,12 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 			$this->rsPrefix .= 'assoc_';
 		}
 		$this->_bindInputArray = PHP_VERSION >= 5.1;
+		
+		$info = $this->ServerInfo();
+		$this->pgVersion = (float) substr($info['version'],0,3);
+		if ($this->pgVersion >= 7.1) { // good till version 999
+			$this->_nestedSQL = true;
+		}
 	}
 
 	
@@ -74,21 +80,21 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 		
 		$rs =& $this->Execute($sql);
 		
-		if ($rs && !$rs->EOF) {
-			$arr =& $rs->GetArray();
-			$a = array();
-			foreach($arr as $v)
-			{
-				$data = explode(chr(0), $v['args']);
-				if ($upper) {
-					$a[strtoupper($data[2])][] = strtoupper($data[4].'='.$data[5]);
-				} else {
-				$a[$data[2]][] = $data[4].'='.$data[5];
-				}
+		if (!$rs || $rs->EOF) return false;
+		
+		$arr =& $rs->GetArray();
+		$a = array();
+		foreach($arr as $v) {
+			$data = explode(chr(0), $v['args']);
+			$size = count($data)-1; //-1 because the last node is empty
+			for($i = 4; $i < $size; $i++) {
+				if ($upper) 
+					$a[strtoupper($data[2])][] = strtoupper($data[$i].'='.$data[++$i]);
+				else 
+					$a[$data[2]][] = $data[$i].'='.$data[++$i];
 			}
-			return $a;
 		}
-		return false;
+		return $a;
 	}
 
 	function _query($sql,$inputarr)
