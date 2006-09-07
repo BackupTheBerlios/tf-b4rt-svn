@@ -320,7 +320,13 @@ function netstatHostsByPid($torrentPid) {
  */
 function getTorrentPid($torrentAlias) {
 	global $cfg;
-	return trim(shell_exec($cfg['bin_cat']." ".$cfg["torrent_file_path"].$torrentAlias.".pid"));
+	$data = "";
+	if ($fileHandle = @fopen($cfg["torrent_file_path"].$torrentAlias.".pid",'r')) {
+		while (!@feof($fileHandle))
+			$data .= @fgets($fileHandle, 512);
+		@fclose ($fileHandle);
+	}
+	return trim($data);
 }
 
 /**
