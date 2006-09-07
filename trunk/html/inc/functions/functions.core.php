@@ -152,17 +152,21 @@ function netstatConnectionsSum() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$nCount += (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c ". $clientHandler->binSocket));
-			unset($clientHandler);
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$nCount += (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c ". $clientHandler->binSocket));
-		break;
+			// very ugly and needs smart rewrite :
+			// array with all clients
+			$clients = array('tornado', 'transmission', 'wget');
+			// get informations
+			foreach($clients as $client) {
+				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
+				$nCount += (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c ". $clientHandler->binSocket));
+				unset($clientHandler);
+			}
+			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'"));
-		break;
+			break;
 	}
 	return $nCount;
 }
@@ -182,14 +186,14 @@ function netstatConnectionsByPid($torrentPid) {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			return trim(shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c \"".$torrentPid ."/\""));
-		break;
+			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$torrentPid.".+tcp"));
 			$netcon--;
 			return $netcon;
-		break;
+			break;
 	}
 }
 
@@ -203,17 +207,21 @@ function netstatPortList() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
-			unset($clientHandler);
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
-		break;
+			// very ugly and needs smart rewrite :
+			// array with all clients
+			$clients = array('tornado', 'transmission', 'wget');
+			// get informations
+			foreach($clients as $client) {
+				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
+				$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
+				unset($clientHandler);
+			}
+			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/(python|transmis|wget).+tcp/ {split(\$6, a, \":\");print a[2]}'");
-		break;
+			break;
 	}
 	return $retStr;
 }
@@ -222,7 +230,7 @@ function netstatPortList() {
  * netstatPort
  */
 function netstatPort($torrentAlias) {
-  return netstatPortByPid(getTorrentPid($torrentAlias));
+	return netstatPortByPid(getTorrentPid($torrentAlias));
 }
 
 /*
@@ -233,12 +241,12 @@ function netstatPortByPid($torrentPid) {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			return trim(shell_exec($cfg['bin_netstat']." -l -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." \"".$torrentPid ."/\" | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'"));
-		break;
+			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			return (shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$torrentPid.".*tcp.*(\*:\*|[[:digit:]]:(21|80))/ {split(\$6, a, \":\");print a[2]}'"));
-		break;
+			break;
 	}
 }
 
@@ -252,17 +260,21 @@ function netstatHostList() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
-			$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
-			unset($clientHandler);
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
-			$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
-		break;
+			// very ugly and needs smart rewrite :
+			// array with all clients
+			$clients = array('tornado', 'transmission', 'wget');
+			// get informations
+			foreach($clients as $client) {
+				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
+				$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
+				unset($clientHandler);
+			}
+			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E \"".$webserverUser.".+(python|transmis|wget).+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:[[:digit:]]\"");
-		break;
+			break;
 	}
 	return $retStr;
 }
@@ -271,7 +283,7 @@ function netstatHostList() {
  * netstatHosts
  */
 function netstatHosts($torrentAlias) {
-  return netstatHostsByPid(getTorrentPid($torrentAlias));
+	return netstatHostsByPid(getTorrentPid($torrentAlias));
 }
 
 /*
@@ -288,7 +300,7 @@ function netstatHostsByPid($torrentPid) {
 				$hostLineAry = explode(':',trim($line));
 				$hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
 			}
-		break;
+			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
@@ -298,7 +310,7 @@ function netstatHostsByPid($torrentPid) {
 				$hostLineAry = explode(':',trim($line));
 				$hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
 			}
-		break;
+			break;
 	}
 	return $hostHash;
 }
