@@ -173,10 +173,14 @@ function PruneDB() {
  */
 function processSettingsParams() {
 	// move hack
-	unset($_POST['addCatButton']);
-	unset($_POST['remCatButton']);
-	unset($_POST['categorylist']);
-	unset($_POST['category']);
+	if (isset($_POST['addCatButton']))
+		unset($_POST['addCatButton']);
+	if (isset($_POST['remCatButton']))
+		unset($_POST['remCatButton']);
+	if (isset($_POST['categorylist']))
+		unset($_POST['categorylist']);
+	if (isset($_POST['category']))
+		unset($_POST['category']);
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
@@ -186,14 +190,12 @@ function processSettingsParams() {
 	$settingsHackAry = array();
 	for ($i = 0; $i <= 5; $i++)
 		$settingsHackAry[$i] = 0;
-	$hackStatsUpdate = false;
 	// index-page
 	$indexPageSettingsPrefix = "index_page_settings_";
 	$indexPageSettingsPrefixLen = strlen($indexPageSettingsPrefix);
 	$settingsIndexPageAry = array();
-	for ($j = 0; $j <= 10; $j++)
+	for ($j = 0; $j <= 11; $j++)
 		$settingsIndexPageAry[$j] = 0;
-	$indexPageSettingsUpdate = false;
 	//
 	foreach ($_POST as $key => $value) {
 		if ((substr($key, 0, $hackStatsStringLen)) == $hackStatsPrefix) {
@@ -203,7 +205,6 @@ function processSettingsParams() {
 				$settingsHackAry[$idx] = 1;
 			else
 				$settingsHackAry[$idx] = 0;
-			$hackStatsUpdate = true;
 		} else if ((substr($key, 0, $indexPageSettingsPrefixLen)) == $indexPageSettingsPrefix) {
 			// index-page
 			$idx = (int) substr($key, ($indexPageSettingsPrefixLen - (strlen($key))));
@@ -211,7 +212,6 @@ function processSettingsParams() {
 				$settingsIndexPageAry[$idx] = 1;
 			else
 				$settingsIndexPageAry[$idx] = 0;
-			$indexPageSettingsUpdate = true;
 		} else {
 			switch ($key) {
 				case "path": // tf-path
@@ -233,11 +233,9 @@ function processSettingsParams() {
 		}
 	}
 	// good-look-stats
-	if ($hackStatsUpdate)
-		$settings['hack_goodlookstats_settings'] = convertArrayToByte($settingsHackAry);
+	$settings['hack_goodlookstats_settings'] = convertArrayToByte($settingsHackAry);
 	// index-page
-	if ($indexPageSettingsUpdate)
-		$settings['index_page_settings'] = convertArrayToInteger($settingsIndexPageAry);
+	$settings['index_page_settings'] = convertArrayToInteger($settingsIndexPageAry);
 	// return
 	return $settings;
 }
@@ -482,12 +480,10 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
  * Size			  [1]
  * DLed			  [2]
  * ULed			  [3]
- *
  * Status		  [4]
  * Progress		  [5]
  * DL Speed		  [6]
  * UL Speed		  [7]
- *
  * Seeds		  [8]
  * Peers		  [9]
  * ETA			 [10]
@@ -500,18 +496,18 @@ function IndexPageSettingsForm() {
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.IndexPageSettingsForm.tmpl");
 	// some vars
 	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
-	$tmpl->setvar('settings_0', $settingsIndexPage[0]);
-	$tmpl->setvar('settings_1', $settingsIndexPage[1]);
-	$tmpl->setvar('settings_2', $settingsIndexPage[2]);
-	$tmpl->setvar('settings_3', $settingsIndexPage[3]);
-	$tmpl->setvar('settings_4', $settingsIndexPage[4]);
-	$tmpl->setvar('settings_5', $settingsIndexPage[5]);
-	$tmpl->setvar('settings_6', $settingsIndexPage[6]);
-	$tmpl->setvar('settings_7', $settingsIndexPage[7]);
-	$tmpl->setvar('settings_8', $settingsIndexPage[8]);
-	$tmpl->setvar('settings_9', $settingsIndexPage[9]);
-	$tmpl->setvar('settings_10', $settingsIndexPage[10]);
-	$tmpl->setvar('settings_11', $settingsIndexPage[11]);
+	$tmpl->setvar('index_page_settings_0', $settingsIndexPage[0]);
+	$tmpl->setvar('index_page_settings_1', $settingsIndexPage[1]);
+	$tmpl->setvar('index_page_settings_2', $settingsIndexPage[2]);
+	$tmpl->setvar('index_page_settings_3', $settingsIndexPage[3]);
+	$tmpl->setvar('index_page_settings_4', $settingsIndexPage[4]);
+	$tmpl->setvar('index_page_settings_5', $settingsIndexPage[5]);
+	$tmpl->setvar('index_page_settings_6', $settingsIndexPage[6]);
+	$tmpl->setvar('index_page_settings_7', $settingsIndexPage[7]);
+	$tmpl->setvar('index_page_settings_8', $settingsIndexPage[8]);
+	$tmpl->setvar('index_page_settings_9', $settingsIndexPage[9]);
+	$tmpl->setvar('index_page_settings_10', $settingsIndexPage[10]);
+	$tmpl->setvar('index_page_settings_11', $settingsIndexPage[11]);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
@@ -527,12 +523,12 @@ function GoodLookingStatsForm() {
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.GoodLookingStatsForm.tmpl");
 	// some vars
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
-	$tmpl->setvar('settings_0', $settingsHackStats[0]);
-	$tmpl->setvar('settings_1', $settingsHackStats[1]);
-	$tmpl->setvar('settings_2', $settingsHackStats[2]);
-	$tmpl->setvar('settings_3', $settingsHackStats[3]);
-	$tmpl->setvar('settings_4', $settingsHackStats[4]);
-	$tmpl->setvar('settings_5', $settingsHackStats[5]);
+	$tmpl->setvar('hack_goodlookstats_settings_0', $settingsHackStats[0]);
+	$tmpl->setvar('hack_goodlookstats_settings_1', $settingsHackStats[1]);
+	$tmpl->setvar('hack_goodlookstats_settings_2', $settingsHackStats[2]);
+	$tmpl->setvar('hack_goodlookstats_settings_3', $settingsHackStats[3]);
+	$tmpl->setvar('hack_goodlookstats_settings_4', $settingsHackStats[4]);
+	$tmpl->setvar('hack_goodlookstats_settings_5', $settingsHackStats[5]);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
