@@ -2180,16 +2180,14 @@ function getDriveSpace($drive) {
 // get the Drive Space Graphical Bar
 function getDriveSpaceBar($drivespace) {
 	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar.tmpl");
-	// set some vars
-	$tmpl->setvar('drivespacebar', $cfg['drivespacebar']);
-	$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
-	$tmpl->setvar('drivespace', $drivespace);
-	$drivespace2 = (100-$drivespace);
-	$tmpl->setvar('drivespace2', $drivespace2);
 	switch ($cfg['drivespacebar']) {
 		case "tf":
+			// create template-instance
+			$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar_tf.tmpl");
+			// set some vars
+			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
+			$tmpl->setvar('drivespace', $drivespace);
+			$tmpl->setvar('drivespace2', (100-$drivespace));
 			$freeSpace = "";
 			if ($drivespace > 20)
 				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
@@ -2197,6 +2195,12 @@ function getDriveSpaceBar($drivespace) {
 			$tmpl->setvar('freeSpace', $freeSpace);
 			break;
 		case "xfer":
+			// create template-instance
+			$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar_xfer.tmpl");
+			// set some vars
+			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
+			$tmpl->setvar('drivespace', $drivespace);
+			$tmpl->setvar('drivespace2', (100-$drivespace));
 			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
 			$bgcolor = '#';
 			$bgcolor .= str_pad(dechex(256-256*($drivespace/100)),2,0,STR_PAD_LEFT);
