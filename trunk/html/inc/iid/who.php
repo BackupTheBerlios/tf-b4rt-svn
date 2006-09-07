@@ -36,25 +36,7 @@ $tmpl->setvar('result', $result);
 $tmpl->setvar('result2', $result2);
 if (IsAdmin()) {
 	$tmpl->setvar('is_admin', 1);
-	$tmpl->setvar('RunningProcessInfo', RunningProcessInfo());
-}
-$tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-$tmpl->setvar('iid', $_GET["iid"]);
-$tmpl->pparse();
-
-/**
- * RunningProcessInfo
- *
- */
-function RunningProcessInfo() {
-	global $cfg;
 	require_once("inc/classes/ClientHandler.php");
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.RunningProcessInfo.tmpl");
 	// array with all clients
 	$clients = array('tornado', 'transmission', 'mainline', 'wget');
 	// get informations
@@ -74,9 +56,13 @@ function RunningProcessInfo() {
 		unset($pinfo);
 	}
 	$tmpl->setloop('process_list', $process_list);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
+$tmpl->setvar('foot', getFoot());
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
+$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->pparse();
 
 ?>
