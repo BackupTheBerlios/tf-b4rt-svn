@@ -323,7 +323,7 @@ function getTorrentPid($torrentAlias) {
 	$data = "";
 	if ($fileHandle = @fopen($cfg["torrent_file_path"].$torrentAlias.".pid",'r')) {
 		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 512);
+			$data .= @fgets($fileHandle, 64);
 		@fclose ($fileHandle);
 	}
 	return trim($data);
@@ -1124,17 +1124,21 @@ function getLoadAverageString() {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			if (isFile($cfg["loadavg_path"])) {
-				$loadavg_array = explode(" ", exec($cfg['bin_cat']." ".$cfg["loadavg_path"]));
+			$data = "";
+			if ($fileHandle = @fopen($cfg["loadavg_path"],'r')) {
+				while (!@feof($fileHandle))
+					$data .= @fgets($fileHandle, 128);
+				@fclose ($fileHandle);
+				$loadavg_array = explode(" ", $data);
 				return $loadavg_array[2];
 			} else {
 				return 'n/a';
 			}
-		break;
+			break;
 		case 2: // bsd
 			$loadavg = preg_replace("/.*load averages:(.*)/", "$1", exec("uptime"));
 			return $loadavg;
-		break;
+			break;
 		default:
 			return 'n/a';
 	}
@@ -2114,7 +2118,6 @@ function getUploadBar() {
 		case "tf":
 			return getBandwidthBar_tf($percent, $text);
 		case "xfer":
-			return getBandwidthBar_xfer($percent, $text);
 		default:
 			return getBandwidthBar_xfer($percent, $text);
 	}
@@ -2140,7 +2143,6 @@ function getDownloadBar() {
 		case "tf":
 			return getBandwidthBar_tf($percent, $text);
 		case "xfer":
-			return getBandwidthBar_xfer($percent, $text);
 		default:
 			return getBandwidthBar_xfer($percent, $text);
 	}
