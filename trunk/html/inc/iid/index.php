@@ -719,8 +719,7 @@ $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
 $tmpl->setvar('formatFreeSpace', $formatFreeSpace);
-$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
-//
+fillSearchEngineDDL($cfg["searchEngine"]);
 $tmpl->setvar('_URL_DEREFERRER', $cfg["_URL_DEREFERRER"]);
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

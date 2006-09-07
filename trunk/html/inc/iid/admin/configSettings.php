@@ -90,7 +90,7 @@ $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);
-$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
+fillSearchEngineDDL($cfg["searchEngine"]);
 $tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 $tmpl->setvar('enable_file_download', $cfg["enable_file_download"]);

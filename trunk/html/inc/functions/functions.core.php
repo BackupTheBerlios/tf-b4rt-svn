@@ -1262,16 +1262,13 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 }
 
 /**
- * Build Search Engine Drop Down List
+ * fill Search Engine Drop Down List
  *
  * @param $selectedEngine
  * @param $autoSubmit
- * @return string
  */
-function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
-	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.buildSearchEngineDDL.tmpl");
+function fillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
+	global $cfg, $tmpl;
 	// set some vars
 	$tmpl->setvar('autoSubmit', $autoSubmit);
 	$handle = opendir("./inc/searchEngines");
@@ -1295,9 +1292,6 @@ function buildSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fals
 		}
 	}
 	$tmpl->setloop('Engine_List', $Engine_List);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**

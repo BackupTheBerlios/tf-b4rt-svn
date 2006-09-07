@@ -158,7 +158,7 @@ switch ($op) {
 		$tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 		$tmpl->setvar('enable_bigboldwarning', $cfg["enable_bigboldwarning"]);
 		$tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
-		$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($cfg["searchEngine"]));
+		fillSearchEngineDDL($cfg["searchEngine"]);
 		$tmpl->setvar('enable_move', $cfg["enable_move"]);
 		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);

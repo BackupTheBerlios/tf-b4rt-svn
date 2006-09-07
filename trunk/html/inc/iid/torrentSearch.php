@@ -58,7 +58,7 @@ $tmpl->setvar('head', getHead("TorrentSearch ".$cfg['_SEARCH']));
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
-$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($searchEngine));
+fillSearchEngineDDL($searchEngine);
 $tmpl->setloop('buildSearchEngineArray', buildSearchEngineArray($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {

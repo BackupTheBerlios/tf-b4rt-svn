@@ -38,7 +38,7 @@ $searchEngine = getRequestVar('searchEngine');
 if (empty($searchEngine)) {
 	$searchEngine = $cfg["searchEngine"];
 }
-$tmpl->setvar('buildSearchEngineDDL', buildSearchEngineDDL($searchEngine,true));
+fillSearchEngineDDL($searchEngine,true);
 
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 	include_once('inc/searchEngines/'.$searchEngine.'Engine.php');
