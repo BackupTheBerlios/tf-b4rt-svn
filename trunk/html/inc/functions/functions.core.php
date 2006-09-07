@@ -2206,8 +2206,8 @@ function getDriveSpaceBar($drivespace) {
 			$tmpl->setvar('drivespace2', (100-$drivespace));
 			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
 			$bgcolor = '#';
-			$bgcolor .= str_pad(dechex(256-256*($drivespace/100)),2,0,STR_PAD_LEFT);
-			$bgcolor .= str_pad(dechex(256*($drivespace/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256-256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
 			$bgcolor .= '00';
 			$tmpl->setvar('bgcolor', $bgcolor);
 			$tmpl->setvar('freeSpace', $freeSpace);
