@@ -1666,13 +1666,16 @@ function getTransferListArray() {
 			switch ($settingsAry['btclient']) {
 				case "tornado":
 					array_push($transferAry, "B");
-				break;
+					break;
 				case "transmission":
 					array_push($transferAry, "T");
-				break;
+					break;
+				case "mainline":
+					array_push($transferAry, "M");
+					break;
 				case "wget":
 					array_push($transferAry, "W");
-				break;
+					break;
 				default:
 					array_push($transferAry, "U");
 			}

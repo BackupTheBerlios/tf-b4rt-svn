@@ -265,15 +265,19 @@ foreach($arList as $entry) {
 	switch ($transferRunning) {
 		case 2: // new
 			$statusStr = $detailsLinkString."<font color=\"#32cd32\">New</font></a>";
+			$is_no_file = 1;
 			break;
 		case 3: // queued
 			$statusStr = $detailsLinkString."Queued</a>";
 			$estTime = "Waiting...";
+			$is_no_file = 1;
 			break;
 		default: // running
 			// increment the totals
-			if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
-			if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
+			if(!isset($cfg["total_upload"]))
+				$cfg["total_upload"] = 0;
+			if(!isset($cfg["total_download"]))
+				 $cfg["total_download"] = 0;
 			$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
 			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
 			// $estTime
@@ -289,12 +293,11 @@ foreach($arList as $entry) {
 			// $lastUser
 			$lastUser = $transferowner;
 			// $show_run + $statusStr
-			if($percentDone >= 100) {
-				if(trim($af->up_speed) != "" && $transferRunning == 1) {
+			if ($percentDone >= 100) {
+				if(trim($af->up_speed) != "" && $transferRunning == 1)
 					$statusStr = $detailsLinkString.'Seeding</a>';
-				} else {
+				else
 					$statusStr = $detailsLinkString.'Done</a>';
-				}
 				$show_run = false;
 			} else if ($percentDone < 0) {
 				$statusStr = $detailsLinkString."Stopped</a>";
@@ -302,10 +305,39 @@ foreach($arList as $entry) {
 			} else {
 				$statusStr = $detailsLinkString."Leeching</a>";
 			}
+			// pid-file
+			if (!is_file($cfg["torrent_file_path"].$alias.".pid"))
+				$is_no_file = 1;
+			else
+				$is_no_file = 0;
 			break;
 	}
 
-	// ============================================================ progress
+	// ==================================================================== name
+
+	// =================================================================== owner
+
+	// ==================================================================== size
+	if ($settings[1] != 0)
+		$format_af_size = formatBytesTokBMBGBTB($af->size);
+	else
+		$format_af_size = "";
+
+	// =============================================================== downtotal
+	if ($settings[2] != 0)
+		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]+0);
+	else
+		$format_downtotal = "";
+
+	// ================================================================= uptotal
+	if ($settings[3] != 0)
+		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]+0);
+	else
+		$format_uptotal = "";
+
+	// ================================================================== status
+
+	// ================================================================ progress
 	if ($settings[5] != 0) {
 		$graph_width = 1;
 		$progress_color = "#00ff00";
@@ -329,9 +361,15 @@ foreach($arList as $entry) {
 		}
 		if($graph_width == 100)
 			$background = $progress_color;
+	} else {
+		$graph_width = 0;
+		$progress_color = "";
+		$background = "";
+		$bar_width = "";
+		$percentage = "";
 	}
 
-	// ================================================================ down
+	// ==================================================================== down
 	if ($settings[6] != 0) {
 		if ($transferRunning == 1) {
 			if (trim($af->down_speed) != "")
@@ -339,11 +377,13 @@ foreach($arList as $entry) {
 			else
 				$down_speed = '0.0 kB/s';
 		} else {
-			$down_speed = '';
+			$down_speed = "";
 		}
+	} else {
+		$down_speed = "";
 	}
 
-	// ================================================================== up
+	// ====================================================================== up
 	if ($settings[7] != 0) {
 		if ($transferRunning == 1) {
 			if (trim($af->up_speed) != "")
@@ -351,25 +391,47 @@ foreach($arList as $entry) {
 			else
 				$up_speed = '0.0 kB/s';
 		} else {
-			$up_speed = '';
+			$up_speed = "";
 		}
+	} else {
+		$up_speed = "";
 	}
 
-	// ============================================================== client
+	// =================================================================== seeds
+	if ($settings[8] != 0) {
+		$seeds = "";
+		if ($transferRunning == 1)
+			$seeds = $af->seeds;
+	} else {
+		$seeds = "";
+	}
+
+	// =================================================================== peers
+	if ($settings[9] != 0) {
+		$peers = "";
+		if ($transferRunning == 1)
+			$peers = $af->peers;
+	} else {
+		$peers = "";
+	}
+
+	// ===================================================================== ETA
+
+	// ================================================================== client
 	if ($settings[11] != 0) {
 		switch ($settingsAry['btclient']) {
 			case "tornado":
 				$client = "B";
-			break;
+				break;
 			case "transmission":
 				$client = "T";
-			break;
+				break;
 			case "mainline":
 				$client = "M";
-			break;
+				break;
 			case "wget":
 				$client = "W";
-			break;
+				break;
 			default:
 				$client = "U";
 		}
@@ -377,28 +439,11 @@ foreach($arList as $entry) {
 		$client = "";
 	}
 
-
-	if ($owner || IsAdmin($cfg["user"])) {
-		$is_owner = 1;
-		if($percentDone >= 0 && $transferRunning == 1) {
-			$is_running = 1;
-			$is_no_file = 0;
-		} else {
-			$is_running = 0;
-			$is_no_file = 0;
-			if($transferowner != "n/a") {
-				if ($transferRunning != 3) {
-					if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
-						$is_no_file = 1;
-					}
-				}
-			}
-		}
-	}
-	// ---------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	// Is this torrent for the user list or the general list?
 	if ($owner)
 		array_push($arUserTorrent, array(
+			'is_owner' => 1,
 			'transferRunning' => $transferRunning,
 			'alias' => $alias,
 			'url_entry' => urlencode($entry),
@@ -406,9 +451,9 @@ foreach($arList as $entry) {
 			'hd_title' => $hd->title,
 			'displayname' => $displayname,
 			'transferowner' => $transferowner,
-			'format_af_size' => formatBytesTokBMBGBTB($af->size),
-			'format_downtotal' => formatBytesTokBMBGBTB($transferTotals["downtotal"]+0),
-			'format_uptotal' => formatBytesTokBMBGBTB($transferTotals["uptotal"]+0),
+			'format_af_size' => $format_af_size,
+			'format_downtotal' => $format_downtotal,
+			'format_uptotal' => $format_uptotal,
 			'statusStr' => $statusStr,
 			'graph_width' => $graph_width,
 			'percentage' => $percentage,
@@ -418,23 +463,22 @@ foreach($arList as $entry) {
 			'100_graph_width' => (100 - $graph_width),
 			'down_speed' => $down_speed,
 			'up_speed' => $up_speed,
-			'seeds' => $af->seeds,
-			'peers' => $af->peers,
+			'seeds' => $seeds,
+			'peers' => $peers,
 			'estTime' => $estTime,
 			'client' => $client,
 			'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
 			'datapath' => $settingsAry['datapath'],
-			'is_owner' => $is_owner,
-			'is_running' => $is_running,
+			'is_no_file' => $is_no_file,
 			'isTorrent' => $isTorrent,
 			'kill_id' => $kill_id,
-			'is_no_file' => $is_no_file,
 			'show_run' => $show_run,
 			'entry' => $entry,
 			)
 		);
 	else
 		array_push($arListTorrent, array(
+			'is_owner' => 0,
 			'transferRunning' => $transferRunning,
 			'alias' => $alias,
 			'url_entry' => urlencode($entry),
@@ -442,9 +486,9 @@ foreach($arList as $entry) {
 			'hd_title' => $hd->title,
 			'displayname' => $displayname,
 			'transferowner' => $transferowner,
-			'format_af_size' => formatBytesTokBMBGBTB($af->size),
-			'format_downtotal' => formatBytesTokBMBGBTB($transferTotals["downtotal"]+0),
-			'format_uptotal' => formatBytesTokBMBGBTB($transferTotals["uptotal"]+0),
+			'format_af_size' => $format_af_size,
+			'format_downtotal' => $format_downtotal,
+			'format_uptotal' => $format_uptotal,
 			'statusStr' => $statusStr,
 			'graph_width' => $graph_width,
 			'percentage' => $percentage,
@@ -454,17 +498,15 @@ foreach($arList as $entry) {
 			'100_graph_width' => (100 - $graph_width),
 			'down_speed' => $down_speed,
 			'up_speed' => $up_speed,
-			'seeds' => $af->seeds,
-			'peers' => $af->peers,
+			'seeds' => $seeds,
+			'peers' => $peers,
 			'estTime' => $estTime,
 			'client' => $client,
 			'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
 			'datapath' => $settingsAry['datapath'],
-			'is_owner' => $is_owner,
-			'is_running' => $is_running,
+			'is_no_file' => $is_no_file,
 			'isTorrent' => $isTorrent,
 			'kill_id' => $kill_id,
-			'is_no_file' => $is_no_file,
 			'show_run' => $show_run,
 			'entry' => $entry,
 			)
@@ -598,20 +640,16 @@ if (($cfg['enable_xfer'] == 1) && ($cfg['enable_public_xfer'] == 1))
 	$tmpl->setvar('enable_xfer', 1);
 if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 	$tmpl->setvar('xfer_realtime', 1);
-	if ($cfg['xfer_day']) {
+	if ($cfg['xfer_day'])
 		$tmpl->setvar('xfer_day', getXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
-	}
-	if ($cfg['xfer_week']) {
+	if ($cfg['xfer_week'])
 		$tmpl->setvar('xfer_week', getXferBar($cfg['xfer_week'],$xfer_total['week']['total'],$cfg['_XFERTHRU'].' '.$cfg['week_start'].':'));
-	}
 	$monthStart = strtotime(date('Y-m-').$cfg['month_start']);
 	$monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
-	if ($cfg['xfer_month']) {
+	if ($cfg['xfer_month'])
 		$tmpl->setvar('xfer_month', getXferBar($cfg['xfer_month'],$xfer_total['month']['total'],$cfg['_XFERTHRU'].' '.$monthText.':'));
-	}
-	if ($cfg['xfer_total']) {
+	if ($cfg['xfer_total'])
 		$tmpl->setvar('xfer_total', getXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
-	}
 }
 
 // bigboldwarning
