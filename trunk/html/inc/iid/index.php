@@ -23,14 +23,12 @@
 // index functions
 require_once("inc/functions/functions.index.php");
 
-// create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "index.tmpl");
-
 // global fields
 $messages = "";
 
-// =============================================================================
-// set refresh option into the session cookie
+/*******************************************************************************
+ * set refresh option into the session cookie
+ ******************************************************************************/
 if(array_key_exists("pagerefresh", $_GET)) {
 	if($_GET["pagerefresh"] == "false") {
 		$_SESSION['prefresh'] = false;
@@ -44,8 +42,9 @@ if(array_key_exists("pagerefresh", $_GET)) {
 	}
 }
 
-// =============================================================================
-// start
+/*******************************************************************************
+ * transfer-start
+ ******************************************************************************/
 $transfer = getRequestVar('torrent');
 if(!empty($transfer)) {
 	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
@@ -67,8 +66,9 @@ if(!empty($transfer)) {
 	}
 }
 
-// =============================================================================
-// wget
+/*******************************************************************************
+ * wget-inject
+ ******************************************************************************/
 if ($cfg['enable_wget'] == 1) {
 	$url_wget = getRequestVar('url_wget');
 	if(! $url_wget == '') {
@@ -86,19 +86,22 @@ if ($cfg['enable_wget'] == 1) {
 	}
 }
 
-// =============================================================================
-// Do they want us to get a torrent via a URL?
+/*******************************************************************************
+ * get torrent via url
+ ******************************************************************************/
 $url_upload = getRequestVar('url_upload');
 if(! $url_upload == '')
 	indexProcessDownload($url_upload);
 
-// =============================================================================
-// Handle the file upload if there is one
+/*******************************************************************************
+ * file upload
+ ******************************************************************************/
 if(!empty($_FILES['upload_file']['name']))
 	indexProcessUpload();
 
-// =============================================================================
-// if a file was set to be deleted then delete it
+/*******************************************************************************
+ * del file
+ ******************************************************************************/
 $delfile = getRequestVar('delfile');
 if(! $delfile == '') {
 	deleteTransfer($delfile, getRequestVar('alias_file'));
@@ -106,8 +109,9 @@ if(! $delfile == '') {
 	exit();
 }
 
-// =============================================================================
-// Did the user select the option to kill a running torrent?
+/*******************************************************************************
+ * kill
+ ******************************************************************************/
 $killTorrent = getRequestVar('kill_torrent');
 if(! $killTorrent == '') {
 	$return = getRequestVar('return');
@@ -129,8 +133,10 @@ if(! $killTorrent == '') {
 	exit();
 }
 
-// =============================================================================
-// Did the user select the option to remove a torrent from the Queue?
+
+/*******************************************************************************
+ * deQueue
+ ******************************************************************************/
 if(isset($_REQUEST["dQueue"])) {
 	$QEntry = getRequestVar('QEntry');
 	$fluxdQmgr->dequeueTorrent($QEntry, $cfg['user']);
@@ -138,9 +144,16 @@ if(isset($_REQUEST["dQueue"])) {
 	exit();
 }
 
+/*******************************************************************************
+ * index-page
+ ******************************************************************************/
+
 // =============================================================================
 // init vars
 // =============================================================================
+
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "index.tmpl");
 
 // drivespace
 $drivespace = getDriveSpace($cfg["path"]);
@@ -154,8 +167,341 @@ $loadavgString = "n/a";
 if ($cfg["show_server_load"] != 0)
 	$loadavgString = @getLoadAverageString();
 
+// =============================================================================
 // transfer-list
-$tmpl->setvar('transferList', TransferListString());
+// =============================================================================
+
+require_once("inc/classes/AliasFile.php");
+$kill_id = "";
+$lastUser = "";
+$arUserTorrent = array();
+$arListTorrent = array();
+// settings
+$settings = convertIntegerToArray($cfg["index_page_settings"]);
+// sortOrder
+$sortOrder = getRequestVar("so");
+if ($sortOrder == "")
+	$sortOrder = $cfg["index_page_sortorder"];
+// t-list
+$arList = getTransferArray($sortOrder);
+foreach($arList as $entry) {
+	// ---------------------------------------------------------------------
+	// init some vars
+	$displayname = $entry;
+	if(strlen($entry) >= 47) {
+		// needs to be trimmed
+		$displayname = substr($entry, 0, 44);
+		$displayname .= "...";
+	}
+	$show_run = true;
+
+	// ---------------------------------------------------------------------
+	// alias / stat
+	$alias = getAliasName($entry).".stat";
+	if ((substr( strtolower($entry),-8 ) == ".torrent")) {
+		// this is a torrent-client
+		$isTorrent = true;
+		$transferowner = getOwner($entry);
+		$owner = IsOwner($cfg["user"], $transferowner);
+		$settingsAry = loadTorrentSettings($entry);
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+		$hd = getStatusImage($af);
+	} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
+		// this is wget.
+		$isTorrent = false;
+		$transferowner = $cfg["user"];
+		$owner = true;
+		$settingsAry = array();
+		$settingsAry['btclient'] = "wget";
+		$settingsAry['hash'] = $entry;
+		$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+		$settingsAry['datapath'] = "";
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
+		$hd = getStatusImage($af);
+	} else {
+		// this is "something else". use tornado statfile as default
+		$isTorrent = false;
+		$transferowner = $cfg["user"];
+		$owner = true;
+		$settingsAry = array();
+		$settingsAry['btclient'] = "tornado";
+		$settingsAry['hash'] = $entry;
+		$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+		$settingsAry['datapath'] = "";
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+		$hd = getStatusImage($af);
+	}
+	// cache running-flag in local var. we will access that often
+	$transferRunning = (int) $af->running;
+	// cache percent-done in local var. ...
+	$percentDone = $af->percent_done;
+
+	// more vars
+	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+
+	// ---------------------------------------------------------------------
+	//XFER: add upload/download stats to the xfer array
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
+
+	// ---------------------------------------------------------------------
+	// injects
+	if(! file_exists($cfg["torrent_file_path"].$alias)) {
+		$transferRunning = 2;
+		$af->running = "2";
+		$af->size = getDownloadSize($cfg["torrent_file_path"].$entry);
+		$af->WriteFile();
+	}
+
+	// totals-preparation
+	// if downtotal + uptotal + progress > 0
+	if (($settings[2] + $settings[3] + $settings[5]) > 0)
+		$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+
+	// ---------------------------------------------------------------------
+	// preprocess alias-file and get some vars
+	$estTime = "&nbsp;";
+	$statusStr = "&nbsp;";
+	switch ($transferRunning) {
+		case 2: // new
+			$statusStr = $detailsLinkString."<font color=\"#32cd32\">New</font></a>";
+			break;
+		case 3: // queued
+			$statusStr = $detailsLinkString."Queued</a>";
+			$estTime = "Waiting...";
+			break;
+		default: // running
+			// increment the totals
+			if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
+			if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
+			$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
+			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
+			// $estTime
+			if ($af->time_left != "" && $af->time_left != "0")
+				if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
+					if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
+						$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
+					else
+						$estTime = '&#8734';
+				} else {
+					$estTime = $af->time_left;
+				}
+			// $lastUser
+			$lastUser = $transferowner;
+			// $show_run + $statusStr
+			if($percentDone >= 100) {
+				if(trim($af->up_speed) != "" && $transferRunning == 1) {
+					$statusStr = $detailsLinkString.'Seeding</a>';
+				} else {
+					$statusStr = $detailsLinkString.'Done</a>';
+				}
+				$show_run = false;
+			} else if ($percentDone < 0) {
+				$statusStr = $detailsLinkString."Stopped</a>";
+				$show_run = true;
+			} else {
+				$statusStr = $detailsLinkString."Leeching</a>";
+			}
+			break;
+	}
+
+	// ============================================================ progress
+	if ($settings[5] != 0) {
+		$graph_width = 1;
+		$progress_color = "#00ff00";
+		$background = "#000000";
+		$bar_width = "4";
+		$percentage = "";
+		if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
+			$graph_width = -1;
+			$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
+		} else {
+			if ($percentDone >= 1) {
+				$graph_width = $percentDone;
+				$percentage = $graph_width . '%';
+			} else if ($percentDone < 0) {
+				$graph_width = round(($percentDone*-1)-100,1);
+				$percentage = $graph_width . '%';
+			} else {
+				$graph_width = 0;
+				$percentage = '0%';
+			}
+		}
+		if($graph_width == 100)
+			$background = $progress_color;
+	}
+
+	// ================================================================ down
+	if ($settings[6] != 0) {
+		if ($transferRunning == 1) {
+			if (trim($af->down_speed) != "")
+				$down_speed = $af->down_speed;
+			else
+				$down_speed = '0.0 kB/s';
+		} else {
+			$down_speed = '';
+		}
+	}
+
+	// ================================================================== up
+	if ($settings[7] != 0) {
+		if ($transferRunning == 1) {
+			if (trim($af->up_speed) != "")
+				$up_speed = $af->up_speed;
+			else
+				$up_speed = '0.0 kB/s';
+		} else {
+			$up_speed = '';
+		}
+	}
+
+	// ============================================================== client
+	if ($settings[11] != 0) {
+		switch ($settingsAry['btclient']) {
+			case "tornado":
+				$client = "B";
+			break;
+			case "transmission":
+				$client = "T";
+			break;
+			case "mainline":
+				$client = "M";
+			break;
+			case "wget":
+				$client = "W";
+			break;
+			default:
+				$client = "U";
+		}
+	} else {
+		$client = "";
+	}
+
+
+	if ($owner || IsAdmin($cfg["user"])) {
+		$is_owner = 1;
+		if($percentDone >= 0 && $transferRunning == 1) {
+			$is_running = 1;
+			$is_no_file = 0;
+		} else {
+			$is_running = 0;
+			$is_no_file = 0;
+			if($transferowner != "n/a") {
+				if ($transferRunning != 3) {
+					if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
+						$is_no_file = 1;
+					}
+				}
+			}
+		}
+	}
+	// ---------------------------------------------------------------------
+	// Is this torrent for the user list or the general list?
+	if ($owner)
+		array_push($arUserTorrent, array(
+			'transferRunning' => $transferRunning,
+			'alias' => $alias,
+			'url_entry' => urlencode($entry),
+			'hd_image' => $hd->image,
+			'hd_title' => $hd->title,
+			'displayname' => $displayname,
+			'transferowner' => $transferowner,
+			'format_af_size' => formatBytesTokBMBGBTB($af->size),
+			'format_downtotal' => formatBytesTokBMBGBTB($transferTotals["downtotal"]+0),
+			'format_uptotal' => formatBytesTokBMBGBTB($transferTotals["uptotal"]+0),
+			'statusStr' => $statusStr,
+			'graph_width' => $graph_width,
+			'percentage' => $percentage,
+			'progress_color' => $progress_color,
+			'bar_width' => $bar_width,
+			'background' => $background,
+			'100_graph_width' => (100 - $graph_width),
+			'down_speed' => $down_speed,
+			'up_speed' => $up_speed,
+			'seeds' => $af->seeds,
+			'peers' => $af->peers,
+			'estTime' => $estTime,
+			'client' => $client,
+			'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
+			'datapath' => $settingsAry['datapath'],
+			'is_owner' => $is_owner,
+			'is_running' => $is_running,
+			'isTorrent' => $isTorrent,
+			'kill_id' => $kill_id,
+			'is_no_file' => $is_no_file,
+			'show_run' => $show_run,
+			'entry' => $entry,
+			)
+		);
+	else
+		array_push($arListTorrent, array(
+			'transferRunning' => $transferRunning,
+			'alias' => $alias,
+			'url_entry' => urlencode($entry),
+			'hd_image' => $hd->image,
+			'hd_title' => $hd->title,
+			'displayname' => $displayname,
+			'transferowner' => $transferowner,
+			'format_af_size' => formatBytesTokBMBGBTB($af->size),
+			'format_downtotal' => formatBytesTokBMBGBTB($transferTotals["downtotal"]+0),
+			'format_uptotal' => formatBytesTokBMBGBTB($transferTotals["uptotal"]+0),
+			'statusStr' => $statusStr,
+			'graph_width' => $graph_width,
+			'percentage' => $percentage,
+			'progress_color' => $progress_color,
+			'bar_width' => $bar_width,
+			'background' => $background,
+			'100_graph_width' => (100 - $graph_width),
+			'down_speed' => $down_speed,
+			'up_speed' => $up_speed,
+			'seeds' => $af->seeds,
+			'peers' => $af->peers,
+			'estTime' => $estTime,
+			'client' => $client,
+			'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
+			'datapath' => $settingsAry['datapath'],
+			'is_owner' => $is_owner,
+			'is_running' => $is_running,
+			'isTorrent' => $isTorrent,
+			'kill_id' => $kill_id,
+			'is_no_file' => $is_no_file,
+			'show_run' => $show_run,
+			'entry' => $entry,
+			)
+		);
+}
+$tmpl->setloop('arUserTorrent', $arUserTorrent);
+$tmpl->setloop('arListTorrent', $arListTorrent);
+
+//XFER: if a new day but no .stat files where found put blank entry into the
+//      DB for today to indicate accounting has been done for the new day
+if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+	transferListXferUpdate2($newday);
+
+$tmpl->setvar('settings_0', $settings[0]);
+$tmpl->setvar('settings_1', $settings[1]);
+$tmpl->setvar('settings_2', $settings[2]);
+$tmpl->setvar('settings_3', $settings[3]);
+$tmpl->setvar('settings_4', $settings[4]);
+$tmpl->setvar('settings_5', $settings[5]);
+$tmpl->setvar('settings_6', $settings[6]);
+$tmpl->setvar('settings_7', $settings[7]);
+$tmpl->setvar('settings_8', $settings[8]);
+$tmpl->setvar('settings_9', $settings[9]);
+$tmpl->setvar('settings_10', $settings[10]);
+$tmpl->setvar('settings_11', $settings[11]);
+
+if (sizeof($arUserTorrent) > 0)
+	$tmpl->setvar('are_user_torrent', 1);
+$boolCond = true;
+if ($cfg['enable_restrictivetview'] == 1)
+	$boolCond = IsAdmin();
+if (($boolCond) && (sizeof($arListTorrent) > 0))
+	$tmpl->setvar('are_torrent', 1);
+
+// =============================================================================
+// set vars
+// =============================================================================
 
 // refresh
 if ($cfg['ui_indexrefresh'] != "0") {
@@ -338,9 +684,12 @@ if ($cfg["ui_displaybandwidthbars"] != 0) {
 	$tmpl->setvar('bandwidthbarUp', getUploadBar());
 }
 
-// define some things
+// =============================================================================
+// set more vars
+// =============================================================================
+
 $tmpl->setvar('version', $cfg["version"]);
-$tmpl->setvar('user2', $cfg["user"]);
+$tmpl->setvar('user', $cfg["user"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
@@ -363,6 +712,8 @@ $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
+$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
+$tmpl->setvar('sortOrder', $sortOrder);
 $tmpl->setvar('drivespace', $drivespace);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
@@ -410,6 +761,13 @@ $tmpl->setvar('_TOTALXFER', $cfg['_TOTALXFER']);
 $tmpl->setvar('_MONTHXFER', $cfg['_MONTHXFER']);
 $tmpl->setvar('_WEEKXFER', $cfg['_WEEKXFER']);
 $tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
+$tmpl->setvar('_STATUS', $cfg['_STATUS']);
+$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
+$tmpl->setvar('_NOTOWNER', $cfg['_NOTOWNER']);
+$tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
+$tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
+$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
+$tmpl->setvar('_USER', $cfg['_USER']);
 //
 if (isset($_GET["iid"]))
 	$tmpl->setvar('iid', $_GET["iid"]);
