@@ -27,7 +27,7 @@ $tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('activity', getActivity($min));
-$tmpl->setvar('foot', getFoot(true,true));
+$tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);

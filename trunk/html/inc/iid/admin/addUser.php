@@ -30,7 +30,7 @@ if (IsUser($newUser)) {
 	$tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
 	$tmpl->setvar('newUser', $newUser);
 	$tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
-	$tmpl->setvar('foot', getFoot(true,true));
+	$tmpl->setvar('foot', getFoot(true));
 } else {
 	addNewUser($newUser, $pass1, $userType);
 	AuditAction($cfg["constants"]["admin"], $cfg['_NEWUSER'].": ".$newUser);

@@ -26,7 +26,7 @@ $tmpl = getTemplateInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 $tmpl->setvar('head', getHead($cfg['_ADMINUSERACTIVITY']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('Activity', getActivity($min, $user_id, $srchFile, $srchAction));
-$tmpl->setvar('foot', getFoot(true,true));
+$tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);

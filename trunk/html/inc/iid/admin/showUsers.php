@@ -26,7 +26,7 @@ $tmpl = getTemplateInstance($cfg["theme"], "admin/showUsers.tmpl");
 $tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('userSection', getUserSection());
-$tmpl->setvar('foot', getFoot(true,true));
+$tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);

@@ -102,7 +102,7 @@ $tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 $tmpl->setvar('getUserSection', getUserSection());
-$tmpl->setvar('foot', getFoot(true,true));
+$tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);

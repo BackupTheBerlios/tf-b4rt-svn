@@ -32,7 +32,7 @@ if (isset($_REQUEST["u"])) {
 	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 	$tmpl->setvar('deref', 1);
 	$tmpl->setvar('_REQUEST', $_REQUEST["u"]);
-	$tmpl->setvar('foot', getFoot(false,false));
+	$tmpl->setvar('foot', getFoot(false));
 } else {
 	header("location: index.php?iid=index");
 	exit();

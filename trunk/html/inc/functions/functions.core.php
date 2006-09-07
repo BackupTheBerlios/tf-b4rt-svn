@@ -1191,17 +1191,16 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
  * get the footer portion
  *
  * @param $showReturn
- * @param $showVersionLink
  * @return string
  */
-function getFoot($showReturn=true, $showVersionLink = false) {
+function getFoot($showReturn=true) {
 	global $cfg;
 	// create template-instance
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.getFoot.tmpl");
 	// set some vars
 	$tmpl->setvar('showReturn', $showReturn);
 	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
-	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink($showVersionLink));
+	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
@@ -1210,16 +1209,13 @@ function getFoot($showReturn=true, $showVersionLink = false) {
 /**
  * get TF Link and Version
  *
- * @param $showVersionLink
  * @return string
  */
-function getTorrentFluxLink($showVersionLink = false) {
+function getTorrentFluxLink() {
 	global $cfg;
 	if ($cfg["ui_displayfluxlink"] != 0) {
 		$torrentFluxLink = "<div align=\"right\">";
 		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
-		if ($showVersionLink)
-			$torrentFluxLink .= getSuperAdminLink('?z=1','');
 		$torrentFluxLink .= "</div>";
 		return $torrentFluxLink;
 	} else {

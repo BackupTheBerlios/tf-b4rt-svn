@@ -32,7 +32,7 @@ if (IsUser($user_id) && ($user_id != $org_user_id)) {
 	$tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 	$tmpl->setvar('org_user_id', $org_user_id);
 	$tmpl->setvar('_RETURNTOEDIT', $cfg['_RETURNTOEDIT']);
-	$tmpl->setvar('foot', getFoot(true,true));
+	$tmpl->setvar('foot', getFoot(true));
 } else {
 	// Admin is changing id or password through edit screen
 	if(($user_id == $cfg["user"] || $cfg["user"] == $org_user_id) && $pass1 != "") {
