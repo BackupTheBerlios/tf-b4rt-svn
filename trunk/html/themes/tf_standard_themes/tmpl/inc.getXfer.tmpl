@@ -1,4 +1,26 @@
-<tmpl_var name="XferList">
+<table width='760' border=1 bordercolor='<tmpl_var name="table_admin_border">' cellpadding='2' cellspacing='0' bgcolor='<tmpl_var name="table_data_bg">'>
+	<tr>
+		<td bgcolor='<tmpl_var name="table_header_bg">' width='15%'><div align=center class='title'><tmpl_var name="_USER"></div></td>
+		<td bgcolor='<tmpl_var name="table_header_bg">' width='22%'><div align=center class='title'><tmpl_var name="_TOTALXFER"></div></td>
+		<td bgcolor='<tmpl_var name="table_header_bg">' width='22%'><div align=center class='title'><tmpl_var name="_MONTHXFER"></div></td>
+		<td bgcolor='<tmpl_var name="table_header_bg">' width='22%'><div align=center class='title'><tmpl_var name="_WEEKXFER"></div></td>
+		<td bgcolor='<tmpl_var name="table_header_bg">' width='22%'><div align=center class='title'><tmpl_var name="_DAYXFER"></div></td>
+	</tr>
+	<tmpl_loop name="user_list">
+		<tr>
+			<td><a href="index.php?iid=xfer&op=xfer&user=<tmpl_var name="user_id">"><tmpl_var name="user_id"></a></td>
+			<td><div class="tiny" align="center"><tmpl_var name="total"></div></td>
+			<td><div class="tiny" align="center"><tmpl_var name="month"></div></td>
+			<td><div class="tiny" align="center"><tmpl_var name="week"></div></td>
+			<td><div class="tiny" align="center"><tmpl_var name="day"></div></td>
+		</tr>
+	</tmpl_loop>
+	<td><a href="index.php?iid=xfer&op=xfer&user=%"><b><tmpl_var name="_TOTAL"></b></a></td>
+	<td><div class="tiny" align="center"><b><tmpl_var name="total_total"></b></div></td>
+	<td><div class="tiny" align="center"><b><tmpl_var name="total_month"></b></div></td>
+	<td><div class="tiny" align="center"><b><tmpl_var name="total_week"></b></div></td>
+	<td><div class="tiny" align="center"><b><tmpl_var name="total_day"></b></div></td>
+</table>
 <tmpl_if name="user">
 	<br><b>
 		<tmpl_if name="user" value="%">
