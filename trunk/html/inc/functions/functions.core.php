@@ -147,28 +147,15 @@ function isAuthenticated() {
  */
 function netstatConnectionsSum() {
 	global $cfg;
-	// messy...
-	$nCount = 0;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			require_once("inc/classes/ClientHandler.php");
-			// very ugly and needs smart rewrite :
-			// array with all clients
-			$clients = array('tornado', 'transmission', 'wget');
-			// get informations
-			foreach($clients as $client) {
-				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
-				$nCount += (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c ". $clientHandler->binSocket));
-				unset($clientHandler);
-			}
-			break;
+			return (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmission|wget).*'"));
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$nCount += (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'"));
-			break;
+			return (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'"));
 	}
-	return $nCount;
+	return 0;
 }
 
 /*
@@ -207,7 +194,8 @@ function netstatPortList() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			// very ugly and needs smart rewrite :
+			// not time-critical (only used on all_services-page), use the
+			// generic and correct way :
 			// array with all clients
 			$clients = array('tornado', 'transmission', 'wget');
 			// get informations
@@ -260,7 +248,8 @@ function netstatHostList() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			// very ugly and needs smart rewrite :
+			// not time-critical (only used on all_services-page), use the
+			// generic and correct way :
 			// array with all clients
 			$clients = array('tornado', 'transmission', 'wget');
 			// get informations
