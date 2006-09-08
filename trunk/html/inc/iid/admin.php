@@ -142,10 +142,6 @@ switch ($op) {
 		header("location: index.php?iid=admin&op=xferSettings");
 		break;
 
-	case "xfer":
-		require_once("admin/xfer.php");
-		break;
-
 	case "editRSS":
 		require_once("admin/editRSS.php");
 		break;
