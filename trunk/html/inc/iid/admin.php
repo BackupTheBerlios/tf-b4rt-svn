@@ -38,18 +38,99 @@ $op = getRequestVar('op');
 switch ($op) {
 
 	default:
-		//require_once("admin/default.php");
-		//break;
-	case "configSettings":
-		require_once("admin/configSettings.php");
+		require_once("admin/default.php");
 		break;
 
-	case "updateConfigSettings":
-		$settings = processSettingsParams();
+	case "serverSettings":
+		require_once("admin/serverSettings.php");
+		break;
+
+	case "transferSettings":
+		require_once("admin/transferSettings.php");
+		break;
+
+	case "webappSettings":
+		require_once("admin/webappSettings.php");
+		break;
+
+	case "indexSettings":
+		require_once("admin/indexSettings.php");
+		break;
+
+	case "startpopSettings":
+		require_once("admin/startpopSettings.php");
+		break;
+
+	case "dirSettings":
+		require_once("admin/dirSettings.php");
+		break;
+
+	case "fluxdSettings":
+		require_once("admin/fluxdSettings.php");
+		break;
+
+	case "xferSettings":
+		require_once("admin/xferSettings.php");
+		break;
+
+	case "updateServerSettings":
+		$settings = processSettingsParams(false,false);
 		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Settings");
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Server Settings");
 		$continue = getRequestVar('continue');
-		require_once("admin/".$continue.".php");
+		header("location: index.php?iid=admin&op=serverSettings");
+		break;
+
+	case "updateTransferSettings":
+		$settings = processSettingsParams(false,false);
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Transfer Settings");
+		$continue = getRequestVar('continue');
+		header("location: index.php?iid=admin&op=transferSettings");
+		break;
+
+	case "updateWebappSettings":
+		$settings = processSettingsParams(false,false);
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux WebApp Settings");
+		$continue = getRequestVar('continue');
+		header("location: index.php?iid=admin&op=webappSettings");
+		break;
+
+	case "updateIndexSettings":
+		$settings = processSettingsParams(true,true);
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Index Settings");
+		header("location: index.php?iid=admin&op=indexSettings");
+		break;
+
+	case "updateStartpopSettings":
+		$settings = processSettingsParams(false,false);
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux StartPop Settings");
+		header("location: index.php?iid=admin&op=startpopSettings");
+		break;
+
+	case "updateDirSettings":
+		$settings = processSettingsParams(false,false);
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Dir Settings");
+		header("location: index.php?iid=admin&op=dirSettings");
+		break;
+
+	case "controlFluxd":
+		require_once("admin/controlFluxd.php");
+		break;
+
+	case "updateFluxdSettings":
+		require_once("admin/updateFluxdSettings.php");
+		break;
+
+	case "updateXferSettings":
+		$settings = processSettingsParams(false,false);
+		saveSettings($settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Xfer Settings");
+		header("location: index.php?iid=admin&op=xferSettings");
 		break;
 
 	case "showUserActivity":
@@ -63,10 +144,6 @@ switch ($op) {
 
 	case "xfer":
 		require_once("admin/xfer.php");
-		break;
-
-	case "backupDatabase":
-		require_once("admin_backupDatabase.php");
 		break;
 
 	case "editRSS":
@@ -160,29 +237,6 @@ switch ($op) {
 	case "setUserState":
 		setUserState();
 		header("location: index.php?iid=admin&op=showUsers");
-		break;
-
-	case "fluxdSettings":
-		require_once("admin/fluxdSettings.php");
-		break;
-
-	case "controlFluxd":
-		require_once("admin/controlFluxd.php");
-		break;
-
-	case "updateFluxdSettings":
-		require_once("admin/updateFluxdSettings.php");
-		break;
-
-	case "uiSettings":
-		require_once("admin/uiSettings.php");
-		break;
-
-	case "updateUiSettings":
-		$settings = processSettingsParams();
-		saveSettings($settings);
-		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux UI Settings");
-		header("location: index.php?iid=admin&op=uiSettings");
 		break;
 
 	case "searchSettings":

@@ -250,7 +250,7 @@ switch ($op) {
 //******************************************************************************
 	case "updateSettingsUser":
 		global $cfg;
-		$settings = processSettingsParams();
+		$settings = processSettingsParams(true,true);
 		saveUserSettings($cfg["uid"],$settings);
 		AuditAction( $cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
 		header( "location: index.php?iid=profile" );

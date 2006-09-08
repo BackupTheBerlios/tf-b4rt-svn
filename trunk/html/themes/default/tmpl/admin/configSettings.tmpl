@@ -104,11 +104,10 @@
 							<input type="Hidden" name="continue" value="configSettings">
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Path</strong><br>
-									Define the PATH where the downloads will go <br>(make sure it ends with a / [slash]).
-									It must be chmod'd to 777:
+									Define the PATH where the downloads will go <br> It must be chmod'd to 777:
 								</td>
 								<td valign="top">
-									<input name="path" type="Text" maxlength="254" value="<tmpl_var name="path">" size="55"
+									<input name="path" type="Text" maxlength="254" value="<tmpl_var name="path">" size="55">
 									<tmpl_if name="is_path">
 										<tmpl_if name="is_writable">
 											<img src="themes/default/images/green.gif" align="absmiddle" title="Valid">
@@ -1005,7 +1004,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Move Settings</strong><br>
+								<td align="left" width="350" valign="top"><strong>Enable Move</strong><br>
 								Enable/Disable Moving Files into a specified dir:
 								</td>
 								<td valign="top">

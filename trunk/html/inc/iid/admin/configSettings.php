@@ -35,14 +35,16 @@ $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('path', $cfg["path"]);
 if (is_dir($cfg["path"])) {
 	$tmpl->setvar('is_path', 1);
-	if (is_writable($cfg["path"])) {
+	if (is_writable($cfg["path"]))
 		$tmpl->setvar('is_writable', 1);
-	}
+	else
+		$tmpl->setvar('is_writable', 0);
+} else {
+	$tmpl->setvar('is_path', 0);
 }
 $enableBtclientChooser = "";
-if ($cfg["enable_btclient_chooser"] == 1) {
+if ($cfg["enable_btclient_chooser"] == 1)
 	$enableBtclientChooser = "checked";
-}
 $tmpl->setvar('_AUTH_BASIC_REALM', $cfg["_AUTH_BASIC_REALM"]);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('btclient', $cfg["btclient"]);
@@ -102,7 +104,7 @@ $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 $tmpl->setvar('minutes_to_keep', $cfg["minutes_to_keep"]);
 $tmpl->setvar('rss_cache_min', $cfg["rss_cache_min"]);
 $tmpl->setvar('enable_rename', $cfg["enable_rename"]);
-
+// themes
 $theme_list = array();
 $arThemes = GetThemes();
 for($inx = 0; $inx < sizeof($arThemes); $inx++) {
@@ -117,7 +119,6 @@ for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	);
 }
 $tmpl->setloop('theme_list', $theme_list);
-
 // tf standard themes
 $arThemes = GetThemesStandard();
 $tfstandard_theme_list = array();

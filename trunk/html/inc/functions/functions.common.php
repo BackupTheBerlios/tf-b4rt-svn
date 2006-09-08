@@ -169,9 +169,11 @@ function PruneDB() {
 /**
  * process post-params on config-update and init settings-array
  *
+ * @param $updateIndexSettings
+ * @param $updateGoodlookinSettings
  * @return array with settings
  */
-function processSettingsParams() {
+function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSettings = true) {
 	// move hack
 	if (isset($_POST['addCatButton']))
 		unset($_POST['addCatButton']);
@@ -184,28 +186,32 @@ function processSettingsParams() {
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
-	// good-look-stats
-	$hackStatsPrefix = "hack_goodlookstats_settings_";
-	$hackStatsStringLen = strlen($hackStatsPrefix);
-	$settingsHackAry = array();
-	for ($i = 0; $i <= 5; $i++)
-		$settingsHackAry[$i] = 0;
 	// index-page
-	$indexPageSettingsPrefix = "index_page_settings_";
-	$indexPageSettingsPrefixLen = strlen($indexPageSettingsPrefix);
-	$settingsIndexPageAry = array();
-	for ($j = 0; $j <= 11; $j++)
-		$settingsIndexPageAry[$j] = 0;
+	if ($updateIndexSettings) {
+		$indexPageSettingsPrefix = "index_page_settings_";
+		$indexPageSettingsPrefixLen = strlen($indexPageSettingsPrefix);
+		$settingsIndexPageAry = array();
+		for ($j = 0; $j <= 11; $j++)
+			$settingsIndexPageAry[$j] = 0;
+	}
+	// good-look-stats
+	if ($updateGoodlookinSettings) {
+		$hackStatsPrefix = "hack_goodlookstats_settings_";
+		$hackStatsStringLen = strlen($hackStatsPrefix);
+		$settingsHackAry = array();
+		for ($i = 0; $i <= 5; $i++)
+			$settingsHackAry[$i] = 0;
+	}
 	//
 	foreach ($_POST as $key => $value) {
-		if ((substr($key, 0, $hackStatsStringLen)) == $hackStatsPrefix) {
+		if (($updateIndexSettings) && ((substr($key, 0, $hackStatsStringLen)) == $hackStatsPrefix)) {
 			// good-look-stats
 			$idx = (int) substr($key, -1, 1);
 			if ($value != "0")
 				$settingsHackAry[$idx] = 1;
 			else
 				$settingsHackAry[$idx] = 0;
-		} else if ((substr($key, 0, $indexPageSettingsPrefixLen)) == $indexPageSettingsPrefix) {
+		} else if (($updateGoodlookinSettings) && ((substr($key, 0, $indexPageSettingsPrefixLen)) == $indexPageSettingsPrefix)) {
 			// index-page
 			$idx = (int) substr($key, ($indexPageSettingsPrefixLen - (strlen($key))));
 			if ($value != "0")
@@ -232,10 +238,12 @@ function processSettingsParams() {
 			}
 		}
 	}
-	// good-look-stats
-	$settings['hack_goodlookstats_settings'] = convertArrayToByte($settingsHackAry);
 	// index-page
-	$settings['index_page_settings'] = convertArrayToInteger($settingsIndexPageAry);
+	if ($updateIndexSettings)
+		$settings['index_page_settings'] = convertArrayToInteger($settingsIndexPageAry);
+	// good-look-stats
+	if ($updateGoodlookinSettings)
+		$settings['hack_goodlookstats_settings'] = convertArrayToByte($settingsHackAry);
 	// return
 	return $settings;
 }

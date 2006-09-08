@@ -1,0 +1,176 @@
+<tmpl_include name="../inc.head.tmpl">
+<tmpl_var name="head">
+<tmpl_var name="menu">
+<div align="center">
+	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+		<tr>
+			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/default/images/bar.gif">
+				<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Dir Settings</font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<script src="js/adminSettings.js" type="text/javascript"></script>
+				<div align="center">
+					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+						<form name="theForm" action="index.php?iid=admin&op=updateDirSettings" method="post" onsubmit="return validateSettings()">
+
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable dir-stats</strong><br>
+								Enable/Disable dir-stats-hack :
+								</td>
+								<td valign="top">
+									<select name="enable_dirstats">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_dirstats" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Make Torrent</strong><br>
+									When enabled, users will be allowed to make torrent files from the directory view:
+								</td>
+								<td valign="top">
+									<select name="enable_maketorrent">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_maketorrent" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable File Download</strong><br>
+								When enabled, users will be allowed to download from the directory view:
+								</td>
+								<td valign="top">
+									<select name="enable_file_download">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_file_download" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Download Package Type</strong><br>
+								When File Download is enabled, users will be allowed download from the directory view using
+								a packaging system.	 Make sure your server supports the package type you select:
+								</td>
+								<td valign="top">
+									<select name="package_type">
+										<option value="tar" selected>tar</option>
+										<option value="zip"
+										<tmpl_if name="package_type" value="zip">
+											 selected
+										</tmpl_if>
+										>zip</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Text/NFO Viewer</strong><br>
+								When enabled, users will be allowed to view Text/NFO files from the directory listing:
+								</td>
+								<td valign="top">
+									<select name="enable_view_nfo">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_view_nfo" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable unrar</strong><br>
+								Enable/Disable unrar-hack :
+								</td>
+								<td valign="top">
+									<select name="enable_rar">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_rar" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable sfv-check</strong><br>
+								Enable/Disable SFV Check-hack :
+								</td>
+								<td valign="top">
+									<select name="enable_sfvcheck">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_sfvcheck" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Rename Files</strong><br>
+									Enable/Disable Rename Files or Folders:
+								</td>
+								<td valign="top">
+									<select name="enable_rename">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_rename" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Move</strong><br>
+								Enable/Disable Moving Files into a specified dir:
+								</td>
+								<td valign="top">
+									<select name="enable_move">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_move" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<script src="js/move_extensionSettings.js" type="text/javascript"></script>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Move Paths</strong><br>
+									<u>Note :</u> You must specify absolute paths here. relative paths are not valid.<br>
+									<u>Note :</u> The created dirs will not be deleted after removing a entry from the List.
+								</td>
+								<td valign="top">
+									<tmpl_var name="getMoveSettings">
+								</td>
+							</tr>
+
+						</table>
+						<br>
+						<input type="Submit" value="Update Settings">
+					</form>
+				</div>
+				<br>
+			</td>
+		</tr>
+	</table>
+</div>
+<tmpl_var name="foot">
