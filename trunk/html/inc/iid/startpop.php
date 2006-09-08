@@ -54,7 +54,16 @@ if ($cfg["enable_btclient_chooser"] != 0)
 else
 	$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-$tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
+
+switch ($cfg["enable_home_dirs"]) {
+    case 1:
+    default:
+    	$tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
+		break;
+    case 0:
+    	$tmpl->setvar('arDirTree', dirTree2($cfg["path"].$cfg["path_incoming"].'/', $cfg["maxdepth"]));
+    	break;
+}
 if ($torrentExists) {
 	$tmpl->setvar('torrent_exists', 1);
 	if ($cfg["skiphashcheck"] != 0) {
@@ -70,11 +79,10 @@ $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 $sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 list($user_level) = $db->GetRow($sql);
 if ($cfg["enable_transfer_profile"] == "1") {
-	if($cfg['transfer_profile_level'] >= "1" || $user_level >= "1") {
+	if($cfg['transfer_profile_level'] >= "1" || $user_level >= "1")
 		$with_profiles = 1;
-	} else {
+	else
 		$with_profiles = 0;
-	}
 } else {
 	$with_profiles = 0;
 }
