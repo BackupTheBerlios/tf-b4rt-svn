@@ -131,6 +131,9 @@ function getExtension($fileName) {
  */
 function isValidEntry($entry) {
 	global $restrictedFileEntries;
+	// check if empty
+	if ($entry == "")
+		return false;
 	// check if dot-entry
 	if (substr($entry, 0, 1) == ".")
 		return false;
@@ -154,8 +157,8 @@ function findSFV($dirName) {
 	while (false !== ($entry = $d->read())) {
    		if($entry != '.' && $entry != '..' && !empty($entry) ) {
 			if((is_file($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
-				$sfv[dir] = $dirName;
-				$sfv[sfv] = $dirName.'/'.$entry;
+				$sfv['dir'] = $dirName;
+				$sfv['sfv'] = $dirName.'/'.$entry;
 			}
 	   	}
 	}
