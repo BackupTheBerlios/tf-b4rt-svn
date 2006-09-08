@@ -42,6 +42,8 @@ switch ($op) {
 		$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
 		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('user', $cfg["user"]);
 		$tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
@@ -87,9 +89,12 @@ switch ($op) {
 		$tmpl->setvar('_NEWPASSWORD', $cfg['_NEWPASSWORD']);
 		$tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
 		$tmpl->setvar('_THEME', $cfg['_THEME']);
-		$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-		$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-
+		$tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
+		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
+		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
+		$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
+		$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
+		// themes
 		$arThemes = GetThemes();
 		$theme_list = array();
 		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
@@ -104,8 +109,7 @@ switch ($op) {
 			);
 		}
 		$tmpl->setloop('theme_list', $theme_list);
-
-		# tf standard themes
+		// tf standard themes
 		$arThemes = GetThemesStandard();
 		$tfstandard_theme_list = array();
 		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
@@ -123,7 +127,7 @@ switch ($op) {
 		}
 		$tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
 		$tmpl->setvar('_LANGUAGE', $cfg['_LANGUAGE']);
-
+		// languages
 		$arLanguage = GetLanguages();
 		$language_list = array();
 		for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
@@ -140,29 +144,7 @@ switch ($op) {
 		}
 		$tmpl->setloop('language_list', $language_list);
 		$tmpl->setvar('hideChecked', $hideChecked);
-		$tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
-		$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
-		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-		$tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
-		$tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
-		$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
-		$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
-		$tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
-		$tmpl->setvar('bandwidthbar', $cfg["bandwidthbar"]);
-		$tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
-		$tmpl->setvar('show_server_load', $cfg["show_server_load"]);
-		$tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
-		$tmpl->setvar('ui_indexrefresh', $cfg["ui_indexrefresh"]);
-		$tmpl->setvar('pagerefresh', $cfg["page_refresh"]);
-		$tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
-		$tmpl->setvar('enable_bigboldwarning', $cfg["enable_bigboldwarning"]);
-		$tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
-		fillSearchEngineDDL($cfg["searchEngine"]);
-		$tmpl->setvar('enable_move', $cfg["enable_move"]);
-		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
-		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
-		$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
+
 		$tmpl->setvar('foot', getFoot());
 	break;
 
@@ -250,8 +232,9 @@ switch ($op) {
 //******************************************************************************
 	case "updateSettingsUser":
 		global $cfg;
-		$settings = processSettingsParams(true,true);
-		saveUserSettings($cfg["uid"],$settings);
+		// TODO
+		//$settings = processSettingsParams(true,true);
+		//saveUserSettings($cfg["uid"],$settings);
 		AuditAction( $cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
 		header( "location: index.php?iid=profile" );
 	break;
@@ -461,32 +444,20 @@ switch ($op) {
 $sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 list($user_level) = $db->GetRow($sql);
 
-#some good looking vars
-$tmpl->setvar('indexPageSettingsForm', IndexPageSettingsForm());
-$tmpl->setvar('sortOrderSettingsForm', getSortOrderSettings());
-$tmpl->setvar('goodLookingStatsForm', GoodLookingStatsForm());
-$tmpl->setvar('moveSettingsForm', getMoveSettings());
-$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 if ($cfg["enable_transfer_profile"] == "1") {
-	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1") {
+	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1")
 		$with_profiles = 1;
-	}
-	else {
+	else
 		$with_profiles = 0;
-	}
-}
-else {
+} else {
 	$with_profiles = 0;
 }
 if ($user_level >= "1") {
 	$tmpl->setvar('is_admin', 1);
 }
 $tmpl->setvar('with_profiles', $with_profiles);
-$tmpl->setvar('enable_btclient_chooser', $cfg['enable_btclient_chooser']);
 $tmpl->setvar('iid', $_GET["iid"]);
 # lets parse the hole thing
 $tmpl->pparse();
