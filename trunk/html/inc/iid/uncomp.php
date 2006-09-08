@@ -30,8 +30,8 @@ $tmpl->setvar('head', getHead('Uncompressing File', false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 if((isset($_GET['file'])) && ($_GET['file'] != "")) {
 	$tmpl->setvar('is_file', 1);
-	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg['path'].$_GET['file'])));
-	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg['path'].$_GET['dir'])));
+	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['file'])));
+	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['dir'])));
 	$tmpl->setvar('type', $_GET['type']);
 }
 if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {

@@ -139,7 +139,7 @@ if(! $killTorrent == '') {
  ******************************************************************************/
 if(isset($_REQUEST["dQueue"])) {
 	$QEntry = getRequestVar('QEntry');
-	$fluxdQmgr->dequeueTorrent($QEntry, $cfg['user']);
+	$fluxdQmgr->dequeueTorrent($QEntry, $cfg["user"]);
 	header("location: index.php?iid=index");
 	exit();
 }
@@ -214,9 +214,17 @@ foreach($arList as $entry) {
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
 		$settingsAry['hash'] = $entry;
-		$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+	    switch ($cfg["enable_home_dirs"]) {
+	        case 1:
+	        default:
+	            $settingsAry['savepath'] = $cfg["path"].$transferowner."/";
+	            break;
+	        case 0:
+	        	$settingsAry['savepath'] = $cfg["path"].$cfg["path_incoming"]."/";
+	            break;
+	    }
 		$settingsAry['datapath'] = "";
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'wget');
 		$hd = getStatusImage($af);
 	} else {
 		// this is "something else". use tornado statfile as default
@@ -226,9 +234,17 @@ foreach($arList as $entry) {
 		$settingsAry = array();
 		$settingsAry['btclient'] = "tornado";
 		$settingsAry['hash'] = $entry;
-		$settingsAry['savepath'] = $cfg['path'].$transferowner."/";;
+	    switch ($cfg["enable_home_dirs"]) {
+	        case 1:
+	        default:
+	            $settingsAry['savepath'] = $cfg["path"].$transferowner."/";
+	            break;
+	        case 0:
+	        	$settingsAry['savepath'] = $cfg["path"].$cfg["path_incoming"]."/";
+	            break;
+	    }
 		$settingsAry['datapath'] = "";
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
 		$hd = getStatusImage($af);
 	}
 	// cache running-flag in local var. we will access that often
@@ -704,10 +720,10 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('serverload1', $loadavgString);
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
-		$tmpl->setvar('total2', formatFreeSpace($xfer[$cfg['user']]['total']['total'] / 1048576));
-		$tmpl->setvar('month2', formatFreeSpace($xfer[$cfg['user']]['month']['total'] / 1048576));
-		$tmpl->setvar('week2', formatFreeSpace($xfer[$cfg['user']]['week']['total'] / 1048576));
-		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg['user']]['day']['total'] / 1048576));
+		$tmpl->setvar('total2', formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576));
+		$tmpl->setvar('month2', formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576));
+		$tmpl->setvar('week2', formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576));
+		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576));
 	}
 }
 

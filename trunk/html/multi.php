@@ -183,7 +183,7 @@ switch ($action) {
 						// set request var
 						$_REQUEST['alias_file'] = getAliasName($element).".stat";;
 						// dequeue it
-						$fluxdQmgr->dequeueTorrent($element, $cfg['user']);
+						$fluxdQmgr->dequeueTorrent($element, $cfg["user"]);
 						// just a sec..
 						sleep(1);
 					}

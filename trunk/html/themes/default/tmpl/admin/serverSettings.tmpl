@@ -31,6 +31,35 @@
 									</tmpl_if>
 								</td>
 							</tr>
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Homedirs</strong></td></tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Homedirs</strong><br>
+								Enable/Disable Homedirs. If disabled all downloads are saved to the incoming-directory.
+								</td>
+								<td valign="top">
+									<select name="enable_home_dirs">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_home_dirs" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Incoming</strong><br>
+									Define the incoming PATH where downloads are saved when Homedirs are turned off :
+								</td>
+								<td valign="top">
+									<input name="path_incoming" type="Text" maxlength="254" value="<tmpl_var name="path_incoming">" size="55">
+									<tmpl_if name="path_incoming_ok">
+										<img src="themes/default/images/green.gif" align="absmiddle" title="Valid">
+									<tmpl_else>
+										<img src="themes/default/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>
+									</tmpl_if>
+								</td>
+							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Bins</strong></td></tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Path : transmissioncli</strong><br>

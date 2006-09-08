@@ -65,12 +65,15 @@ if (!isset($argv[3]))
 	die('Arg Error');
 if (!isset($argv[4]))
 	die('Arg Error');
+if (!isset($argv[5]))
+	die('Arg Error');
 
 // args
 $_URL = $argv[1];
 $_ALIAS = $argv[2];
 $_PID = $argv[3];
 $_OWNER = $argv[4];
+$_PATH = $argv[5];
 
 // write out stat-file now
 writeStatFile();
@@ -99,8 +102,8 @@ writeStatFile();
 */
 
 // command-string
-$command = "cd ".$cfg["path"].$_OWNER.";";
-$command .= " HOME=".$cfg["path"].$_OWNER."/; export HOME;";
+$command = "cd ".$cfg["path"].$_PATH.";";
+$command .= " HOME=".$cfg["path"].$_PATH."/; export HOME;";
 if ($cfg["enable_umask"] != 0)
     $command .= " umask 0000;";
 if ($cfg["nice_adjust"] != 0)

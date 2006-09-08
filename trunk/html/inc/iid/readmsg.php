@@ -26,7 +26,7 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "readmsg.tmpl");
 
-if(empty($cfg['user'])) {
+if(empty($cfg["user"])) {
 	 // the user probably hit this page direct
 	header("location: index.php?iid=index");
 	exit;
@@ -57,7 +57,7 @@ if (!empty($mid)) {
 } else {
 	// read and display all messages in a list.
 	$inx = 0;
-	$sql = "SELECT mid, from_user, message, IsNew, ip, time, force_read FROM tf_messages WHERE to_user=".$db->qstr($cfg['user'])." ORDER BY time";
+	$sql = "SELECT mid, from_user, message, IsNew, ip, time, force_read FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." ORDER BY time";
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 	$message_list = array();

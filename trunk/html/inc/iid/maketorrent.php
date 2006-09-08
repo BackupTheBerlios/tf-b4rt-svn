@@ -85,11 +85,8 @@ $dht	  = @ ( $_POST['DHT'] == "DHT" ) ? true : false;
 // Let's create the torrent
 if( !empty( $announce ) && $announce != "http://" )
 {
-	// Create maketorrent directory if it doesn't exist
-	if( !is_dir( $tpath ) )
-	{
-		@mkdir( $tpath );
-	}
+	// check dir
+	checkDirectory($tpath);
 
 	// Clean up old files
 	if( @file_exists( $tpath . $tfile ) )
@@ -98,7 +95,7 @@ if( !empty( $announce ) && $announce != "http://" )
 	}
 
 	// This is the command to execute
-	$app = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg['path'].$file)." ";
+	$app = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg["path"].$file)." ";
 
 	// Is there comments to add?
 	if( !empty( $comment ) )
@@ -227,12 +224,12 @@ if( !empty( $_GET["download"] ) )
 		}
 		else
 		{
-			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg['user']." tried to download ".$tfile);
+			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg["user"]." tried to download ".$tfile);
 		}
 	}
 	else
 	{
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg['user']." tried to download ".$tfile);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$tfile);
 	}
 	exit();
 }

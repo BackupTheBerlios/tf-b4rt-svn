@@ -42,7 +42,7 @@ if ($cfg['enable_restrictivetview'] == 0) {
 	if (IsAdmin() == true)
 		$sql = "SELECT user_id, file, time FROM tf_log WHERE action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ORDER BY time desc";
 	else
-		$sql = "SELECT user_id, file, time FROM tf_log WHERE user_id='".$cfg['user']."' AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
+		$sql = "SELECT user_id, file, time FROM tf_log WHERE user_id='".$cfg["user"]."' AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
 }
 // "Only Admin can see other user torrents"
 

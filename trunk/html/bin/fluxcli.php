@@ -243,11 +243,7 @@ function printTorrents() {
     echo "\n";
 	global $cfg, $db, $REVISION_FLUXCLI;
 	// show all .. we set the user to superadmin
-    $superAdm = $db->GetOne("SELECT user_id FROM tf_users WHERE uid = '1'");
-    if($db->ErrorNo() != 0) {
-        @ob_end_clean();
-        exit();
-    }
+    $superAdm = GetSuperAdmin();
     if ((isset($superAdm)) && ($superAdm != "")) {
         $cfg["user"] = $superAdm;
     } else {
@@ -519,7 +515,7 @@ function cliWipeTorrent($torrent = "") {
 function cliInjectTorrent($tpath = "", $username = "") {
 	global $cfg;
 	if ((isset($tpath)) && ($tpath != "") && (isset($username)) && ($username != "")) {
-	    $cfg['user'] = $username;
+	    $cfg["user"] = $username;
 	    $file_name = basename($tpath);
         $file_name = stripslashes($file_name);
         $file_name = str_replace(array("'",","), "", $file_name);
@@ -548,7 +544,7 @@ function cliInjectTorrent($tpath = "", $username = "") {
             AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
             echo $messages;
         } else {
-            echo "Injected ".$tpath." as ".$file_name." for user ".$cfg['user']."\n";
+            echo "Injected ".$tpath." as ".$file_name." for user ".$cfg["user"]."\n";
         }
 	} else {
 		printUsage();
@@ -567,7 +563,7 @@ function cliWatchDir($tpath = "", $username = "") {
 	global $cfg;
 	if ((isset($tpath)) && ($tpath != "") && (isset($username)) && ($username != "")) {
 	    if (is_dir($tpath)) {
-            $cfg['user'] = $username;
+            $cfg["user"] = $username;
             $watchDir = checkDirPathString($tpath);
             if ($dirHandle = opendir($tpath)) {
                 while (false !== ($file = readdir($dirHandle))) {
@@ -575,7 +571,7 @@ function cliWatchDir($tpath = "", $username = "") {
                         $file_name = stripslashes($file);
                         $file_name = str_replace(array("'",","), "", $file_name);
                         $file_name = cleanFileName($file_name);
-                        echo "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg['user']."...";
+                        echo "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...";
                         if ((is_file($watchDir.$file)) && (copy($watchDir.$file, $cfg["torrent_file_path"].$file_name))) {
                             @unlink($watchDir.$file);
                             chmod($cfg["torrent_file_path"].$file_name, 0644);

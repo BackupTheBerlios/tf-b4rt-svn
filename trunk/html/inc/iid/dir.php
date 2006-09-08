@@ -30,8 +30,8 @@ require_once('inc/functions/functions.dir.php');
 loadSettings('tf_settings_dir');
 initRestrictedDirEntries();
 
-// check user path
-checkUserPath();
+// check incoming path
+checkIncomingPath();
 
 // Setup some defaults if they are not set.
 $del = getRequestVar('del');
@@ -48,7 +48,7 @@ if ($del != "") {
 	if (isValidEntry(basename($del))) {
 		$current = delDirEntry($del);
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg['user']." tried to delete ".$del);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
 		$current = $del;
 		$del = stripslashes(stripslashes($del));
 		if (!ereg("(\.\.\/)", $del)) {
@@ -102,13 +102,13 @@ if ($down != "" && $cfg["enable_file_download"]) {
 				AuditAction($cfg["constants"]["fm_download"], $down);
 				exit();
 			} else {
-				AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg['user']." tried to download ".$down);
+				AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg["user"]." tried to download ".$down);
 			}
 		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg['user']." tried to download ".$down);
+			AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg['user']." tried to download ".$down);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
 		$current = $down;
 		$down = stripslashes(stripslashes($down));
 		if (!ereg("(\.\.\/)", $down)) {
@@ -181,13 +181,13 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 				AuditAction($cfg["constants"]["fm_download"], $sendname.".".$cfg["package_type"]);
 				exit();
 			} else {
-				AuditAction($cfg["constants"]["error"], "Illegal download: ".$cfg['user']." tried to download ".$tar);
+				AuditAction($cfg["constants"]["error"], "Illegal download: ".$cfg["user"]." tried to download ".$tar);
 			}
 		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg['user']." tried to download ".$tar);
+			AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg['user']." tried to download ".$tar);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
 		$current = $tar;
 		$del = stripslashes(stripslashes($tar));
 		if (!ereg("(\.\.\/)", $tar)) {

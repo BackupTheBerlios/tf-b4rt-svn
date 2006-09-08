@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 $tmpl = getTemplateInstance($cfg["theme"], "message.tmpl");
 
 $to_user = getRequestVar('to_user');
-if(empty($to_user) or empty($cfg['user'])) {
+if(empty($to_user) or empty($cfg["user"])) {
 	 // the user probably hit this page direct
 	header("location: index.php?iid=index");
 	exit;
@@ -46,7 +46,7 @@ if (!empty($message)) {
 	else
 		$force_read = 0;
 	$message = check_html($message, "nohtml");
-	SaveMessage($to_user, $cfg['user'], $message, $to_all, $force_read);
+	SaveMessage($to_user, $cfg["user"], $message, $to_all, $force_read);
 	header("location: index.php?iid=readmsg");
 } else {
 	$rmid = getRequestVar('rmid');
@@ -61,7 +61,7 @@ if (!empty($message)) {
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 	$tmpl->setvar('_TO', $cfg['_TO']);
 	$tmpl->setvar('to_user', $to_user);
-	$tmpl->setvar('user', $cfg['user']);
+	$tmpl->setvar('user', $cfg["user"]);
 	$tmpl->setvar('_FROM', $cfg['_FROM']);
 	$tmpl->setvar('_YOURMESSAGE', $cfg['_YOURMESSAGE']);
 	$tmpl->setvar('message', $message);

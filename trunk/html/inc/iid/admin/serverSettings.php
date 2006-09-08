@@ -43,6 +43,13 @@ if (is_dir($cfg["path"])) {
 } else {
 	$tmpl->setvar('is_path', 0);
 }
+// homedirs + incoming
+$tmpl->setvar('enable_home_dirs', $cfg["enable_home_dirs"]);
+$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
+if (checkDirectory($cfg["path"].$cfg["path_incoming"], 0777))
+	$tmpl->setvar('path_incoming_ok', 1);
+else
+	$tmpl->setvar('path_incoming_ok', 0);
 // bins
 $tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
 $tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmission_bin"]));

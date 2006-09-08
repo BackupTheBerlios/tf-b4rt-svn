@@ -32,14 +32,20 @@ function initRestrictedDirEntries() {
 		$restrictedFileEntries = array();
 }
 
-// Checks for the location of the users directory
+// Checks for the location of the incoming directory
 // If it does not exist, then it creates it.
-function checkUserPath() {
+function checkIncomingPath() {
 	global $cfg;
-	// is there a user dir?
-	if (!is_dir($cfg["path"].$cfg["user"])) {
-		//Then create it
-		mkdir($cfg["path"].$cfg["user"], 0777);
+	switch ($cfg["enable_home_dirs"]) {
+	    case 1:
+	    default:
+			// is there a user dir?
+			checkDirectory($cfg["path"].$cfg["user"], 0777);
+	        break;
+	    case 0:
+			// is there a incoming dir?
+			checkDirectory($cfg["path"].$cfg["path_incoming"], 0777);
+	        break;
 	}
 }
 

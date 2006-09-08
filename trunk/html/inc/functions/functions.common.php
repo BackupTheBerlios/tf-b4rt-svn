@@ -141,10 +141,7 @@ function firstLogin($username = '', $password = '') {
 function checkTorrentPath() {
 	global $cfg;
 	// is there a stat and torrent dir?
-	if (!@is_dir($cfg["torrent_file_path"]) && is_writable($cfg["path"])) {
-		// Then create it
-		@checkDirectory($cfg["torrent_file_path"], 0777);
-	}
+	@checkDirectory($cfg["torrent_file_path"], 0777);
 }
 
 /**
@@ -550,7 +547,7 @@ function GoodLookingStatsForm() {
 // Delete Message
 function DeleteMessage($mid) {
 	global $cfg, $db;
-	$sql = "delete from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg['user']);
+	$sql = "delete from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 }
@@ -625,7 +622,7 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 // Get Message data in an array
 function GetMessage($mid) {
 	global $cfg, $db;
-	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg['user']);
+	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
 	$rtnValue = $db->GetRow($sql);
 	showError($db,$sql);
 	return $rtnValue;

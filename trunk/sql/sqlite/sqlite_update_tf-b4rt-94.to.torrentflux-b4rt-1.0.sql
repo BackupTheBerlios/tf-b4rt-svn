@@ -85,6 +85,8 @@ UPDATE tf_users SET theme = 'default';
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('enable_home_dirs','1');
+INSERT INTO tf_settings VALUES ('path_incoming','incoming');
 INSERT INTO tf_settings VALUES ('enable_tmpl_cache','0');
 INSERT INTO tf_settings VALUES ('btclient_mainline_options','');
 INSERT INTO tf_settings VALUES ('bandwidthbar','xfer');

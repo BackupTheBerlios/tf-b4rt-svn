@@ -138,6 +138,15 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . escapeshellarg($this->cfg["torrent_file_path"].$this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
         $this->command .= " " . $this->owner;
+        switch ($this->cfg["enable_home_dirs"]) {
+        	case 1:
+        	default:
+        		$this->command .= " " . $this->owner;
+        		break;
+        	case 0:
+        		$this->command .= " " . escapeshellarg($this->cfg["path_incoming"]);
+        		break;
+        }
         $this->command .= " > /dev/null &";
         //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
         exec($this->command);

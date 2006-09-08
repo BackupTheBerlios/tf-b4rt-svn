@@ -100,11 +100,11 @@ function isAuthenticated() {
 		// user changed password and needs to login again
 		return 0;
 	}
-	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg['user']);
+	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 	$recordset = $db->Execute($sql);
 	showError($db, $sql);
 	if($recordset->RecordCount() != 1) {
-		AuditAction($cfg["constants"]["error"], "FAILED AUTH: ".$cfg['user']);
+		AuditAction($cfg["constants"]["error"], "FAILED AUTH: ".$cfg["user"]);
 		@session_destroy();
 		return 0;
 	}
@@ -113,12 +113,12 @@ function isAuthenticated() {
 	$cfg["uid"] = $uid;
 	// Check for valid theme
 	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) {
-		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg['user']);
+		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
 		$cfg["theme"] = $cfg["default_theme"];
 	}
 	// Check for valid language file
 	if(!ereg('^[^./][^/]*$', $cfg["language_file"])) {
-		AuditAction($cfg["constants"]["error"], "LANGUAGE VARIABLE CHANGE ATTEMPT: ".$cfg["language_file"]." from ".$cfg['user']);
+		AuditAction($cfg["constants"]["error"], "LANGUAGE VARIABLE CHANGE ATTEMPT: ".$cfg["language_file"]." from ".$cfg["user"]);
 		$cfg["language_file"] = $cfg["default_language"];
 	}
 	if (!is_dir("themes/".$cfg["theme"]))
@@ -747,10 +747,10 @@ function deleteTransfer($transfer, $alias_file) {
 			$clientHandler->deleteCache($transfer);
 		} else if ((substr( strtolower($transfer),-5 ) == ".wget")) {
 			// this is wget.
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg["user"], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
 		}
 		//XFER: before torrent deletion save upload/download xfer data to SQL
 		$transferTotals = getTransferTotals($delfile);
@@ -758,8 +758,6 @@ function deleteTransfer($transfer, $alias_file) {
 		// torrent+stat
 		@unlink($cfg["torrent_file_path"].$delfile);
 		@unlink($cfg["torrent_file_path"].$alias_file);
-		// try to remove the QInfo if in case it was queued.
-		@unlink($cfg["torrent_file_path"]."queue/".$alias_file.".Qinfo");
 		// try to remove the pid file
 		@unlink($cfg["torrent_file_path"].$alias_file.".pid");
 		@unlink($cfg["torrent_file_path"].getAliasName($delfile).".prio");
@@ -790,8 +788,17 @@ function deleteTorrentData($torrent) {
 		if(trim($delete) != "") {
 			// load torrent-settings from db to get data-location
 			loadTorrentSettingsToConfig(urldecode($torrent));
-			if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
-				$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+			if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+				switch ($cfg["enable_home_dirs"]) {
+				    case 1:
+				    default:
+						$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+						break;
+				    case 0:
+				    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
+				    	break;
+				}
+			}
 			$delete = $cfg["savepath"].$delete;
 			# this is from dir.php - its not a function, and we need to call it several times
 			$del = stripslashes(stripslashes($delete));
@@ -804,7 +811,7 @@ function deleteTorrentData($torrent) {
 				 }
 				 AuditAction($cfg["constants"]["fm_delete"], $del);
 			} else {
-				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg['user']." tried to delete ".$del);
+				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
 			}
 		}
 	} else {
@@ -832,8 +839,17 @@ function getTorrentDataSize($torrent) {
 	if(trim($name) != "") {
 		// load torrent-settings from db to get data-location
 		loadTorrentSettingsToConfig($torrent);
-		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
-			$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+			switch ($cfg["enable_home_dirs"]) {
+			    case 1:
+			    default:
+					$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+					break;
+			    case 0:
+			    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
+			    	break;
+			}
+		}
 		$name = $cfg["savepath"].$name;
 		# this is from dir.php - its not a function, and we need to call it several times
 		$tData = stripslashes(stripslashes($name));
@@ -874,10 +890,10 @@ function delDirEntry($del) {
 			}
 			AuditAction($cfg["constants"]["fm_delete"], $del);
 		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg['user']." tried to delete ".$del);
+			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg['user']." tried to delete ".$del);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
 	}
 	return $current;
 }
@@ -1143,7 +1159,7 @@ function getLoadAverageString() {
 function injectTorrent($torrent) {
 	global $cfg;
 	require_once("inc/classes/AliasFile.php");
-	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($torrent).".stat",	 $cfg['user'], $cfg);
+	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($torrent).".stat",	 $cfg["user"], $cfg);
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["torrent_file_path"].$torrent);
 	$af->WriteFile();
@@ -1246,7 +1262,7 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
 	if ($showButtons) {
 		// Does the user have messages?
-		$sql = "select count(*) from tf_messages where to_user='".$cfg['user']."' and IsNew=1";
+		$sql = "select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew=1";
 		$number_messages = $db->GetOne($sql);
 		showError($db,$sql);
 		$tmpl->setvar('number_messages', $number_messages);
@@ -1490,7 +1506,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$isTorrent = false;
@@ -1499,7 +1515,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg['user'], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -1839,7 +1855,7 @@ function AuditAction($action, $file="") {
 	if ((! isset($action)) || ($action == ""))
 			$action = "unset";
     $rec = array(
-    	'user_id' => $cfg['user'],
+    	'user_id' => $cfg["user"],
     	'file' => $file,
     	'action' => $action,
     	'ip' => $cfg['ip'],
@@ -1850,7 +1866,6 @@ function AuditAction($action, $file="") {
     $sTable = 'tf_log';
     $sql = $db->GetInsertSql($sTable, $rec);
     // add record to the log
-    //$result = $db->Execute($sql);
     $db->Execute($sql);
     showError($db,$sql);
 }

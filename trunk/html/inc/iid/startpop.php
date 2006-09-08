@@ -108,8 +108,17 @@ if ($with_profiles == "1") {
 		// Load saved settings
 		loadTorrentSettingsToConfig($torrent);
 		// savepath
-		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
-			$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+			switch ($cfg["enable_home_dirs"]) {
+			    case 1:
+			    default:
+					$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+					break;
+			    case 0:
+			    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
+			    	break;
+			}
+		}
 		$tmpl->setvar('savepath', $cfg["savepath"]);
 		// Force Queuing if not an admin.
 		if($queueActive)
@@ -181,8 +190,17 @@ function setVarsFromPersistentSettings() {
 	$tmpl->setvar('maxport', $cfg["maxport"]);
 	$tmpl->setvar('sharekill', $cfg["sharekill"]);
 	// savepath
-	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
-		$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+		switch ($cfg["enable_home_dirs"]) {
+		    case 1:
+		    default:
+				$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
+				break;
+		    case 0:
+		    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
+		    	break;
+		}
+	}
 	$tmpl->setvar('savepath', $cfg["savepath"]);
 	// Force Queuing if not an admin.
 	if($queueActive)

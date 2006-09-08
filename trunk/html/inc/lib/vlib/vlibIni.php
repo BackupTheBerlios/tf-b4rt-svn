@@ -72,7 +72,7 @@ if (!defined('vlibIniClassLoaded')) {
                         /* the following are only used by the vlibTemplateCache class. */
 
                         /* 'CACHE_DIRECTORY' => '/tmp/tfluxTemplateCache', */
-                        'CACHE_DIRECTORY' => $cfg['path'].'.templateCache',
+                        'CACHE_DIRECTORY' => $cfg["path"].'.templateCache',
                                                                    // Directory where the cached filesystem
                                                                    // will be set up (full path, and must be writable)
                                                                    // '/' or '\' off the end of the directory.

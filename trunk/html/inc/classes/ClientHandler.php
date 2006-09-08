@@ -256,28 +256,31 @@ class ClientHandler
         $this->transfer = urldecode($transfer);
         $this->alias = getAliasName($this->transfer);
         $this->owner = getOwner($this->transfer);
-        if (empty($this->savepath))
-          $this->savepath = $this->cfg['path'].$this->owner."/";
+        if (empty($this->savepath)) {
+	        switch ($this->cfg["enable_home_dirs"]) {
+	        	case 1:
+	        	default:
+	        		$this->savepath = $this->cfg['path'].$this->owner."/";
+	        		break;
+	        	case 0:
+	        		$this->savepath = $this->cfg['path'].$this->cfg["path_incoming"]."/";
+	        		break;
+	        }
+        }
         // ensure path has trailing slash
         $this->savepath = checkDirPathString($this->savepath);
-        // The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
-        // This is to help manage user downloads by their user names
-        // if the user's path doesnt exist, create it
-        if (!is_dir($this->cfg["path"]."/".$this->owner)) {
-            if (is_writable($this->cfg["path"])) {
-                mkdir($this->cfg["path"]."/".$this->owner, 0777);
+        // check target-directory, create if not present
+		if (!(checkDirectory($this->savepath, 0777))) {
+            AuditAction($this->cfg["constants"]["error"], "Error checking " . $this->savepath . ".");
+            if (IsAdmin()) {
+                $this->status = -1;
+                header("location: index.php?iid=admin&op=configSettings");
+                return;
             } else {
-                AuditAction($this->cfg["constants"]["error"], "Error -- " . $this->cfg["path"] . " is not writable.");
-                if (IsAdmin()) {
-                    $this->status = -1;
-                    header("location: index.php?iid=admin&op=configSettings");
-                    return;
-                } else {
-                    $this->status = -1;
-                    $this->messages .= "Error. TorrentFlux settings are not correct (path is not writable) -- please contact an admin.";
-                }
+                $this->status = -1;
+                $this->messages .= "Error. TorrentFlux settings are not correct (path is not writable) -- please contact an admin.";
             }
-        }
+		}
         // create AliasFile object and write out the stat file
         require_once("inc/classes/AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
