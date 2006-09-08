@@ -38,9 +38,18 @@ $del = getRequestVar('del');
 $down = getRequestVar('down');
 $tar = getRequestVar('tar');
 $dir = stripslashes(urldecode(getRequestVar('dir')));
+$multidel = getRequestVar('multidel');
 
-// create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "dir.tmpl");
+
+// multi-del ?
+if ($multidel != "") {
+	foreach($_POST['file'] as $key => $element) {
+		$element = urldecode($element);
+		delDirEntry($element);
+	}
+	header("Location: index.php?iid=dir&dir=".urlencode($dir));
+	exit();
+}
 
 // Are we to delete something?
 if ($del != "") {
@@ -214,11 +223,16 @@ if (isset($dir)) {
 		$dir = $dir."/";
 }
 
-if(!isset($dir)) $dir = "";
+if(!isset($dir))
+	$dir = "";
+
 $dirName = $cfg["path"].$dir;
 
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
+
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "dir.tmpl");
 
 $bgLight = $cfg["bgLight"];
 $bgDark = $cfg["bgDark"];
@@ -245,9 +259,12 @@ if (isset($dir)) {
 	$tmpl->setvar('parentURL', $parentURL);
 	$tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
 }
+
+// read in dir-entries
 $handle = opendir($dirName);
 while($entry = readdir($handle))
 	$entrys[] = $entry;
+closedir($handle);
 natsort($entrys);
 $dirlist1 = array();
 foreach($entrys as $entry) {
@@ -256,8 +273,7 @@ foreach($entrys as $entry) {
 		if (@is_dir($dirName.$entry)) {
 			$is_dir = 1;
 			// Some Stats dir hack
-			$enable_dirstats = $cfg['enable_dirstats'];
-			if ($enable_dirstats == 1) {
+			if ($cfg['enable_dirstats'] == 1) {
 				switch ($cfg["_OS"]) {
 					case 1: //Linux
 						$dudir = @shell_exec($cfg['bin_du']." -sk -h -D ".correctFileName($dirName.$entry));
@@ -276,8 +292,6 @@ foreach($entrys as $entry) {
 				$dusize0 = 0;
 				$date1 = "";
 			}
-			$enable_rename = $cfg["enable_rename"];
-			$enable_move = $cfg["enable_move"];
 			$enable_sfvcheck = $cfg['enable_sfvcheck'];
 			$sfvdir = "";
 			$sfvsfv = "";
@@ -311,14 +325,14 @@ foreach($entrys as $entry) {
 				'urlencode1' => $urlencode1,
 				'entry' => $entry,
 				'bg' => $bg,
-				'enable_dirstats' => $enable_dirstats,
+				'enable_dirstats' => $cfg['enable_dirstats'],
 				'dusize0' => $dusize0,
 				'date1' => $date1,
-				'enable_rename' => $enable_rename,
+				'enable_rename' => $cfg["enable_rename"],
 				'urlencode2' => $urlencode2,
 				'urlencode3' => $urlencode3,
 				'_DIR_REN_LINK' => $cfg['_DIR_REN_LINK'],
-				'enable_move' => $enable_move,
+				'enable_move' => $cfg["enable_move"],
 				'_DIR_MOVE_LINK' => $cfg['_DIR_MOVE_LINK'],
 				'enable_sfvcheck' => $enable_sfvcheck,
 				'sfvdir' => $sfvdir,
@@ -340,11 +354,12 @@ foreach($entrys as $entry) {
 }
 $tmpl->setloop('dirlist1', $dirlist1);
 
-closedir($handle);
+// read in file-entries
 $entrys = array();
 $handle = opendir($dirName);
 while($entry = readdir($handle))
 	$entrys[] = $entry;
+closedir($handle);
 natsort($entrys);
 $dirlist2 = array();
 foreach($entrys as $entry) {
@@ -358,24 +373,16 @@ foreach($entrys as $entry) {
 			if (array_key_exists(10,$arStat))
 				$timeStamp = @filemtime($dirName.$entry); // $timeStamp = $arStat[10];
 			$fileSize = number_format(($arStat[7])/1024);
-			// Code added by Remko Jantzen to assign an icon per file-type. But when not
-			// available all stays the same.
+			// Code added by Remko Jantzen to assign an icon per file-type.
+			// But when not available all stays the same.
 			$image="themes/".$cfg['theme']."/images/time.gif";
 			$imageOption="themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
 			if (file_exists("./".$imageOption))
 				$image = $imageOption;
-			// Can users download files?
-			// Yes, let them download
-			$enable_file_download = $cfg["enable_file_download"];
-			//
-			$enable_dirstats = $cfg['enable_dirstats'];
 			$date = "";
-			if ($enable_dirstats == 1)
+			if ($cfg['enable_dirstats'] == 1)
 				$date = @date("m-d-Y h:i a", $timeStamp);
-			$enable_rename = $cfg["enable_rename"];
-			$enable_move = $cfg["enable_move"];
-			$enable_rar = $cfg["enable_rar"];
-			if ($enable_rar == 1) {
+			if ($cfg["enable_rar"] == 1) {
 				$enable_rar2 = 0;
 				// R.D. - Display links for unzip/unrar
 				if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir)) {
@@ -407,18 +414,18 @@ foreach($entrys as $entry) {
 			array_push($dirlist2, array(
 				'no_dir' => $no_dir,
 				'bg' => $bg,
-				'enable_file_download' => $enable_file_download,
+				'enable_file_download' => $cfg["enable_file_download"],
 				'urlencode1' => $urlencode1,
 				'entry' => $entry,
 				'image' => $image,
 				'fileSize' => $fileSize,
-				'enable_dirstats' => $enable_dirstats,
+				'enable_dirstats' => $cfg['enable_dirstats'],
 				'date' => $date,
-				'enable_rename' => $enable_rename,
+				'enable_rename' => $cfg["enable_rename"],
 				'urlencode2' => $urlencode2,
 				'urlencode3' => $urlencode3,
 				'_DIR_REN_LINK' => $cfg['_DIR_REN_LINK'],
-				'enable_move' => $enable_move,
+				'enable_move' => $cfg["enable_move"],
 				'_DIR_MOVE_LINK' => $cfg['_DIR_MOVE_LINK'],
 				'enable_rar2' => $enable_rar2,
 				'enable_view_nfo' => $enable_view_nfo,
@@ -438,7 +445,7 @@ foreach($entrys as $entry) {
 	}
 }
 $tmpl->setloop('dirlist2', $dirlist2);
-closedir($handle);
+
 
 if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('enable_dirstats', 1);
@@ -458,17 +465,18 @@ if ($cfg['enable_dirstats'] == 1) {
 	$tmpl->setvar('enable_dirstats', 0);
 }
 
-# define some things
+// define some things
 $tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
+$tmpl->setvar('dir', $dir);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-# lets parse the hole thing
+// lets parse the hole thing
 $tmpl->pparse();
 
 ?>

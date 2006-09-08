@@ -862,43 +862,6 @@ function getTorrentDataSize($torrent) {
 }
 
 /**
- * deletes a dir-entry. recursive process via avddelete
- *
- * @param $del entry to delete
- * @return string with current
- */
-function delDirEntry($del) {
-	global $cfg;
-	$current = "";
-	// The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
-	// this is so only the owner of the file(s) or admin can delete
-	if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$del)) {
-		// Yes, then delete it
-		// we need to strip slashes twice in some circumstances
-		// Ex.	If we are trying to delete test/tester's file/test.txt
-		//	  $del will be "test/tester\\\'s file/test.txt"
-		//	  one strip will give us "test/tester\'s file/test.txt
-		//	  the second strip will give us the correct
-		//		  "test/tester's file/test.txt"
-		$del = stripslashes(stripslashes($del));
-		if (!ereg("(\.\.\/)", $del)) {
-			avddelete($cfg["path"].$del);
-			$arTemp = explode("/", $del);
-			if (count($arTemp) > 1) {
-				array_pop($arTemp);
-				$current = implode("/", $arTemp);
-			}
-			AuditAction($cfg["constants"]["fm_delete"], $del);
-		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
-		}
-	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
-	}
-	return $current;
-}
-
-/**
  * getRunningTransferCount
  *
  * @return int with number of running transfers
@@ -1881,9 +1844,8 @@ function isFile($file) {
     if (is_file($file)) {
         $rtnValue = True;
     } else {
-        if ($file == trim(shell_exec("ls ".$file))) {
+        if ($file == trim(shell_exec("ls 2>/dev/null ".$file)))
             $rtnValue = True;
-        }
     }
     return $rtnValue;
 }

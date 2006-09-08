@@ -26,7 +26,7 @@ function UncompDetails(URL) {
 <br>
 <a href="<tmpl_var name="parentURL">"><img src="themes/default/images/up_dir.gif" width=16 height=16 title="<tmpl_var name="_BACKTOPARRENT">" border=0>[<tmpl_var name="_BACKTOPARRENT">]</a>
 <table cellpadding="2"" width="740">
-	<form action="multi.php" method="post" name="multidir">
+	<form action="index.php?iid=dir&dir=<tmpl_var name="dir">&multidel=1" method="post" name="multidir">
 		<tmpl_loop name="dirlist1">
 			<tmpl_if name="is_dir">
 				<tr bgcolor="<tmpl_var name="bg">">
@@ -41,7 +41,6 @@ function UncompDetails(URL) {
 						<td></td>
 					</tmpl_if>
 					<td align="right" nowrap>
-						<!-- rename hack -->
 						<tmpl_if name="enable_rename">
 							<script type="text/javascript" language="JavaScript">
 								var popUpWin=0;
@@ -54,7 +53,6 @@ function UncompDetails(URL) {
 							</script>
 							<a href="JavaScript:renameFolder('index.php?iid=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/default/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
-						<!-- move hack -->
 						<tmpl_if name="enable_move">
 							<script type="text/javascript" language="JavaScript">
 								var popUpWin=0;
@@ -106,7 +104,6 @@ function UncompDetails(URL) {
 						<td><tmpl_var name="date"></td>
 					</tmpl_if>
 					<td align="right" nowrap>
-					<!-- rename hack -->
 						<tmpl_if name="enable_rename">
 							<script type="text/javascript" language="JavaScript">
 								var popUpWin=0;
@@ -119,7 +116,7 @@ function UncompDetails(URL) {
 							</script>
 							<a href="JavaScript:renameFolder('index.php?iid=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/default/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
-						<!-- move hack -->
+
 						<tmpl_if name="enable_move">
 							<script type="text/javascript" language="JavaScript">
 								var popUpWin=0;

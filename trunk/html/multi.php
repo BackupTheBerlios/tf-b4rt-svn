@@ -38,14 +38,6 @@ switch ($action) {
     case "---":
     	break;
 
-    /* ---------------------------------------------------------- dir-methods */
-    case "fileDelete": /* fileDelete */
-    	foreach($_POST['file'] as $key => $element) {
-    		$element = urldecode($element);
-    		delDirEntry($element);
-    	}
-    	break;
-
     /* --------------------------------------------------------- all torrents */
     case "bulkStop": /* bulkStop */
     	$transfers = getTorrentListFromFS();
