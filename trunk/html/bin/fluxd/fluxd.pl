@@ -85,27 +85,82 @@ while ( $loop ) {
 
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		eval { $qmgr->main(); };
+		eval { 
+			local $SIG{ALRM} = sub { die "alarm\n" };
+			alarm 5;
+			$qmgr->main(); 
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			die('Unknown value for $@') unless $@ eq "alarm\n";
+			print "Qmgr : Timed out\n";
+		}
 	}
 
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		eval { $fluxinet->main(); };
+		eval { 
+			local $SIG{ALRM} = sub {die "alarm\n"};
+			alarm 5;
+			$fluxinet->main(); 
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			die('Unknown value for $@') unless $@ eq "alarm\n";
+			print "Fluxinet : Timed out\n";
+		}
 	}
 
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
-		eval { $watch->main(); };
+		eval { 
+			local $SIG{ALRM} = sub {die "alarm\n"};
+			alarm 5;
+			$watch->main(); 
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			die('Unknown value for $@') unless $@ eq "alarm\n";
+			print "Watch : Timed out\n";
+		}
 	}
 
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		eval { $clientmaint->main(); };
+		eval { 
+			local $SIG{ALRM} = sub {die "alarm\n"};
+			alarm 5;
+			$clientmaint->main(); 
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			die('Unknown value for $@') unless $@ eq "alarm\n";
+			print "Clientmaint : Timed out\n";
+		}
 	}
 
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		eval { $trigger->main(); };
+		eval { 
+			local $SIG{ALRM} = sub {die "alarm\n"};
+			alarm 5;
+			$trigger->main(); 
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			die('Unkown value for $@') unless $@ eq "alarm\n";
+			print "Trigger : Timed out\n";
+		}
 	}
 
 	# TODO : sleep-code                                                         /* TODO */

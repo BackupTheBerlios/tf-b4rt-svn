@@ -20,8 +20,7 @@
 
 *******************************************************************************/
 
-if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
-	$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
+if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 	$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 	$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
 	$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
@@ -40,8 +39,6 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 		$needsRestart = false;
 		$reloadModules = false;
 		$needsInit = false;
-		if ($_POST["perlCmd"] != $cfg["perlCmd"])
-			$needsRestart = true;
 		// TODO : add module-configs to trigger reload on config-change
 		if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 			$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||

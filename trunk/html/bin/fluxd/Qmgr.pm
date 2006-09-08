@@ -364,7 +364,7 @@ sub status {
 	# some vars
 	$return .= "min sleep-time worker \t: $SLEEP_MIN s \n";
 	$return .= "max sleep-time worker \t: $SLEEP_MAX s \n";
-	$return .= "max torrents global \t: $MAX_SYS' \n";
+	$return .= "max torrents global \t: $MAX_SYS \n";
 	$return .= "max torrents per user \t: $MAX_USR \n";
 	$return .= "max start-tries    \t: $MAX_START_TRIES \n";
 	$return .= "start-try-extra-sleep \t: $START_TRIES_SLEEP s\n\n";
