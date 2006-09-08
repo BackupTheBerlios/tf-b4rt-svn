@@ -61,6 +61,10 @@ switch ($op) {
 		require_once("admin/dirSettings.php");
 		break;
 
+	case "statsSettings":
+		require_once("admin/statsSettings.php");
+		break;
+
 	case "fluxdSettings":
 		require_once("admin/fluxdSettings.php");
 		break;
@@ -113,6 +117,14 @@ switch ($op) {
 		saveSettings('tf_settings_dir', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Dir Settings");
 		header("location: index.php?iid=admin&op=dirSettings");
+		break;
+
+	case "updateStatsSettings":
+		$settings = processSettingsParams(false,false);
+		loadSettings('tf_settings_stats');
+		saveSettings('tf_settings_stats', $settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Stats Settings");
+		header("location: index.php?iid=admin&op=statsSettings");
 		break;
 
 	case "controlFluxd":

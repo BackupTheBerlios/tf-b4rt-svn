@@ -304,3 +304,21 @@ INSERT INTO tf_settings_dir VALUES ('enable_rename','1');
 INSERT INTO tf_settings_dir VALUES ('move_paths','');
 INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder');
 
+--
+-- tf_settings_stats
+--
+CREATE TABLE tf_settings_stats (
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL,
+  PRIMARY KEY  (tf_key)
+) TYPE=MyISAM;
+
+INSERT INTO tf_settings_stats VALUES ('stats_enable_public','0');
+INSERT INTO tf_settings_stats VALUES ('stats_show_usage','1');
+INSERT INTO tf_settings_stats VALUES ('stats_deflate_level','9');
+INSERT INTO tf_settings_stats VALUES ('stats_txt_delim',';');
+INSERT INTO tf_settings_stats VALUES ('stats_default_type','all');
+INSERT INTO tf_settings_stats VALUES ('stats_default_format','xml');
+INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0');
+INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
+

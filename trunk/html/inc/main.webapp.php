@@ -68,6 +68,7 @@ if (isAuthenticated() == 1) {
 				header('location: login.php');
 				exit();
 			}
+			$currentUser = $cfg["user"];
 		} else {
 			header('location: login.php');
 			exit();

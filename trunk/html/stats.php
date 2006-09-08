@@ -21,22 +21,21 @@
 *******************************************************************************/
 
 // defines
-define('_DEFLATE_LEVEL', 9);
-define('_TXT_DELIM', ';');
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
 define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 
-// all functions
-require_once('inc/functions/functions.all.php');
+// main.common
+require_once('inc/main.common.php');
 
 // config
-require_once("inc/config/config.stats.php");
+loadSettings('tf_settings_stats');
 
 // public-stats-switch
-switch (_PUBLIC_STATS) {
+switch ($cfg['stats_enable_public']) {
 	case 1:
-		// main.common
-		require_once('inc/main.common.php');
+		// xfer functions
+		if ($cfg['enable_xfer'] == 1)
+			require_once('inc/functions/functions.xfer.php');
 		// load default-language
 		loadLanguageFile($cfg["default_language"]);
 		// public stats... show all .. we set the user to superadmin
@@ -52,6 +51,8 @@ switch (_PUBLIC_STATS) {
 	default:
 		// main.webapp
 		require_once("inc/main.webapp.php");
+		// config
+		loadSettings('tf_settings_stats');
 }
 
 // AliasFile
@@ -62,16 +63,16 @@ require_once("inc/classes/AliasFile.php");
 // -----------------------------------------------------------------------------
 
 // type (default)
-$type = _DEFAULT_TYPE;
+$type = $cfg['stats_default_type'];
 
 // format (default)
-$format = _DEFAULT_FORMAT;
+$format = $cfg['stats_default_format'];
 
 // send as attachment ? (default)
-$sendAsAttachment = _DEFAULT_SEND_AS_ATTACHMENT;
+$sendAsAttachment = $cfg['stats_default_attach'];
 
 // send compressed ? (default)
-$sendCompressed = _DEFAULT_COMPRESSED;
+$sendCompressed = $cfg['stats_default_compress'];
 
 // read params
 $gotParams = 0;
@@ -91,24 +92,24 @@ if (isset($_REQUEST["c"])) {
     $sendCompressed = (int) trim($_REQUEST["c"]);
     $gotParams++;
 }
-if ((_SHOW_USAGE == 1) && ($gotParams == 0))
+if (($cfg['stats_show_usage'] == 1) && ($gotParams == 0))
 	sendUsage();
 
 // init some global vars
-$transferList = @getTransferListArray();
+$transferList = getTransferListArray();
 switch ($type) {
     case "all":
     	$indent = " ";
-    	$transferHeads = @getTransferListHeadArray();
-    	@initServerStats();
+    	$transferHeads = getTransferListHeadArray();
+    	initServerStats();
     	break;
     case "server":
     	$indent = "";
-    	@initServerStats();
+    	initServerStats();
     	break;
     case "transfers":
     	$indent = "";
-    	$transferHeads = @getTransferListHeadArray();
+    	$transferHeads = getTransferListHeadArray();
     	break;
 }
 
@@ -139,18 +140,18 @@ function sendUsage() {
 
 Params :
 
-"t" : type : optional, default is "'._DEFAULT_TYPE.'".
+"t" : type : optional, default is "'.$cfg['stats_default_type'].'".
       "all" : server-stats + transfer-stats
       "server" : server-stats
       "transfers" : transfer-stats
-"f" : format : optional, default is "'._DEFAULT_FORMAT.'".
+"f" : format : optional, default is "'.$cfg['stats_default_format'].'".
       "xml" : new xml-formats, see xml-schemas in dir "xml".
       "rss" : rss 0.91
       "txt" : csv-formatted text
-"a" : send as attachment : optional, default is "'._DEFAULT_SEND_AS_ATTACHMENT.'".
+"a" : send as attachment : optional, default is "'.$cfg['stats_default_attach'].'".
       "0" : dont send as attachment
       "1" : send as attachment
-"c" : send compressed (deflate) : optional, default is "'._DEFAULT_COMPRESSED.'".
+"c" : send compressed (deflate) : optional, default is "'.$cfg['stats_default_compress'].'".
       "0" : dont send compressed
       "1" : send compressed (deflate)
 
@@ -184,7 +185,7 @@ function sendContent($content, $contentType, $fileName) {
     header("Cache-Control: ");
     header("Pragma: ");
     if ($sendCompressed != 0) {
-    	$contentCompressed = gzdeflate($content, _DEFLATE_LEVEL);
+    	$contentCompressed = gzdeflate($content, $cfg['stats_deflate_level']);
 		header("Content-Type: application/octet-stream");
 		if ($sendAsAttachment != 0) {
 			header("Content-Length: " .(string)(strlen($contentCompressed)) );
@@ -321,18 +322,18 @@ function sendTXT($type) {
 	switch ($type) {
 	    case "all":
 	    case "server":
-			$content .= 'speedDown' . _TXT_DELIM;
-			$content .= 'speedUp' . _TXT_DELIM;
-			$content .= 'speedTotal' . _TXT_DELIM;
-			$content .= 'connections' . _TXT_DELIM;
-			$content .= 'freeSpace' . _TXT_DELIM;
+			$content .= 'speedDown' . $cfg['stats_txt_delim'];
+			$content .= 'speedUp' . $cfg['stats_txt_delim'];
+			$content .= 'speedTotal' . $cfg['stats_txt_delim'];
+			$content .= 'connections' . $cfg['stats_txt_delim'];
+			$content .= 'freeSpace' . $cfg['stats_txt_delim'];
 			$content .= 'loadavg';
 			$content .= "\n";
-			$content .= $serverStats['speedDown'] . _TXT_DELIM;
-			$content .= $serverStats['speedUp'] . _TXT_DELIM;
-			$content .= $serverStats['speedTotal'] . _TXT_DELIM;
-			$content .= $serverStats['connections'] . _TXT_DELIM;
-			$content .= $serverStats['freeSpace'] . _TXT_DELIM;
+			$content .= $serverStats['speedDown'] . $cfg['stats_txt_delim'];
+			$content .= $serverStats['speedUp'] . $cfg['stats_txt_delim'];
+			$content .= $serverStats['speedTotal'] . $cfg['stats_txt_delim'];
+			$content .= $serverStats['connections'] . $cfg['stats_txt_delim'];
+			$content .= $serverStats['freeSpace'] . $cfg['stats_txt_delim'];
 			$content .= $serverStats['loadavg'];
 			$content .= "\n";
 	}
@@ -340,12 +341,12 @@ function sendTXT($type) {
 	switch ($type) {
 	    case "all":
 	    case "transfers":
-	    	$content .= "Name" . _TXT_DELIM;
+	    	$content .= "Name" . $cfg['stats_txt_delim'];
 	    	$sizeHead = count($transferHeads);
 			for ($j = 0; $j < $sizeHead; $j++) {
 				$content .= $transferHeads[$j];
 				if ($j < ($sizeHead - 1))
-					$content .= _TXT_DELIM;
+					$content .= $cfg['stats_txt_delim'];
 			}
 	    	$content .= "\n";
 			foreach ($transferList as $transferAry) {
@@ -353,7 +354,7 @@ function sendTXT($type) {
 				for ($i = 0; $i < $size; $i++) {
 					$content .= $transferAry[$i];
 					if ($i < ($size - 1))
-						$content .= _TXT_DELIM;
+						$content .= $cfg['stats_txt_delim'];
 				}
 				$content .= "\n";
 			}
