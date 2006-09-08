@@ -179,9 +179,6 @@ INSERT INTO tf_settings VALUES ('minport','49160');
 INSERT INTO tf_settings VALUES ('maxport','49300');
 INSERT INTO tf_settings VALUES ('rerequest_interval','1800');
 INSERT INTO tf_settings VALUES ('enable_search','1');
-INSERT INTO tf_settings VALUES ('enable_file_download','1');
-INSERT INTO tf_settings VALUES ('enable_view_nfo','1');
-INSERT INTO tf_settings VALUES ('package_type','zip');
 INSERT INTO tf_settings VALUES ('show_server_load','1');
 INSERT INTO tf_settings VALUES ('loadavg_path','/proc/loadavg');
 INSERT INTO tf_settings VALUES ('days_to_keep','30');
@@ -198,22 +195,18 @@ INSERT INTO tf_settings VALUES ('searchEngine','TorrentSpy');
 INSERT INTO tf_settings VALUES ('TorrentSpyGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('TorrentBoxGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('TorrentPortalGenreFilter','a:1:{i:0;s:0:\"\";}');
-INSERT INTO tf_settings VALUES ('enable_maketorrent','1');
 INSERT INTO tf_settings VALUES ('enable_torrent_download','1');
 INSERT INTO tf_settings VALUES ('enable_file_priority','1');
 INSERT INTO tf_settings VALUES ('searchEngineLinks','a:5:{s:7:\"isoHunt\";s:11:\"isohunt.com\";s:7:\"NewNova\";s:11:\"newnova.org\";s:10:\"TorrentBox\";s:14:\"torrentbox.com\";s:13:\"TorrentPortal\";s:17:\"torrentportal.com\";s:10:\"TorrentSpy\";s:14:\"torrentspy.com\";}');
 INSERT INTO tf_settings VALUES ('maxcons','40');
 INSERT INTO tf_settings VALUES ('enable_mrtg','1');
-INSERT INTO tf_settings VALUES ('enable_rar','1');
 INSERT INTO tf_settings VALUES ('showdirtree','1');
 INSERT INTO tf_settings VALUES ('maxdepth','0');
 INSERT INTO tf_settings VALUES ('enable_multiops','1');
 INSERT INTO tf_settings VALUES ('enable_wget','1');
-INSERT INTO tf_settings VALUES ('enable_dirstats','1');
 INSERT INTO tf_settings VALUES ('enable_multiupload','1');
 INSERT INTO tf_settings VALUES ('enable_xfer','1');
 INSERT INTO tf_settings VALUES ('enable_public_xfer','1');
-INSERT INTO tf_settings VALUES ('enable_sfvcheck','1');
 INSERT INTO tf_settings VALUES ('bin_grep','/bin/grep');
 INSERT INTO tf_settings VALUES ('bin_netstat','/bin/netstat');
 INSERT INTO tf_settings VALUES ('bin_php','/usr/bin/php');
@@ -254,9 +247,6 @@ INSERT INTO tf_settings VALUES ('index_page_connections','1');
 INSERT INTO tf_settings VALUES ('index_page_stats','1');
 INSERT INTO tf_settings VALUES ('index_page_sortorder','dd');
 INSERT INTO tf_settings VALUES ('index_page_settings','1266');
-INSERT INTO tf_settings VALUES ('enable_move','0');
-INSERT INTO tf_settings VALUES ('enable_rename','1');
-INSERT INTO tf_settings VALUES ('move_paths','');
 INSERT INTO tf_settings VALUES ('bin_sockstat','/usr/bin/sockstat');
 INSERT INTO tf_settings VALUES ('nice_adjust','0');
 INSERT INTO tf_settings VALUES ('xfer_realtime','1');
@@ -290,6 +280,28 @@ INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
+
+--
+-- tf_settings_dir
+--
+CREATE TABLE tf_settings_dir (
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL,
+  PRIMARY KEY  (tf_key)
+) ;
+
+INSERT INTO tf_settings_dir VALUES ('enable_dirstats','1');
+INSERT INTO tf_settings_dir VALUES ('enable_maketorrent','1');
+INSERT INTO tf_settings_dir VALUES ('enable_file_download','1');
+INSERT INTO tf_settings_dir VALUES ('enable_view_nfo','1');
+INSERT INTO tf_settings_dir VALUES ('package_type','zip');
+INSERT INTO tf_settings_dir VALUES ('enable_sfvcheck','1');
+INSERT INTO tf_settings_dir VALUES ('enable_rar','1');
+INSERT INTO tf_settings_dir VALUES ('enable_move','0');
+INSERT INTO tf_settings_dir VALUES ('enable_rename','1');
+INSERT INTO tf_settings_dir VALUES ('move_paths','');
+INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder');
+
 
 --
 -- commit

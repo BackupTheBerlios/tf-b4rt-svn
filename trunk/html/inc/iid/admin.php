@@ -109,7 +109,8 @@ switch ($op) {
 
 	case "updateDirSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings('tf_settings', $settings);
+		loadSettings('tf_settings_dir');
+		saveSettings('tf_settings_dir', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Dir Settings");
 		header("location: index.php?iid=admin&op=dirSettings");
 		break;

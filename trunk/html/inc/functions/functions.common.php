@@ -174,15 +174,16 @@ function PruneDB() {
  * @return array with settings
  */
 function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSettings = true) {
-	// move hack
-	if (isset($_POST['addCatButton']))
-		unset($_POST['addCatButton']);
-	if (isset($_POST['remCatButton']))
-		unset($_POST['remCatButton']);
+	// move
 	if (isset($_POST['categorylist']))
 		unset($_POST['categorylist']);
 	if (isset($_POST['category']))
 		unset($_POST['category']);
+	// res-dir
+	if (isset($_POST['resdirlist']))
+		unset($_POST['resdirlist']);
+	if (isset($_POST['resdirentry']))
+		unset($_POST['resdirentry']);
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
@@ -964,7 +965,7 @@ function getMoveSettings() {
 				);
 			}
 		}
-		$tmpl->setloop('dir_list', $dir_list);
+		$tmpl->setloop('move_list', $dir_list);
 	}
 	$tmpl->setvar('move_paths', $cfg["move_paths"]);
 	// grab the template

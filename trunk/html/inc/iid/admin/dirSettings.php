@@ -20,27 +20,45 @@
 
 *******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
+// config
+loadSettings('tf_settings_dir');
+initRestrictedDirEntries();
 
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/dirSettings.tmpl");
 
+//
 $tmpl->setvar('head', getHead("Administration - Dir Settings"));
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+// restricted entries
+$dir_list = array();
+foreach ($restrictedFileEntries as $entry) {
+	$target = trim($entry);
+	if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
+		array_push($dir_list, array(
+			'target' => $target,
+			)
+		);
+	}
+}
+$tmpl->setloop('dir_restricted_list', $dir_list);
+$tmpl->setvar('dir_restricted', $cfg["dir_restricted"]);
 //
 $tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
 $tmpl->setvar('enable_file_download', $cfg["enable_file_download"]);
 $tmpl->setvar('package_type', $cfg["package_type"]);
 $tmpl->setvar('enable_view_nfo', $cfg["enable_view_nfo"]);
-$tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_dirstats', $cfg["enable_dirstats"]);
 $tmpl->setvar('enable_rar', $cfg["enable_rar"]);
 $tmpl->setvar('enable_sfvcheck', $cfg["enable_sfvcheck"]);
+$tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);
 $tmpl->setvar('getMoveSettings', getMoveSettings());
 //

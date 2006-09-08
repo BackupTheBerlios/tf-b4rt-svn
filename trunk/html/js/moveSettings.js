@@ -1,6 +1,15 @@
-// Enable the textfield if Moving shall be anabled.
+function mytrim(value) {
+	var trimmedVal = "";
+	for (var i=0; i<value.length; i++) {
+		if (value.charCodeAt(i) != 32) {
+			trimmedVal = trimmedVal + value.charAt(i);
+		}
+	}
+	return trimmedVal;
+}
+
 function enableMoveElements(form, dropDownField) {
-	if(dropDownField.value == "0") {
+	if (dropDownField.value == "0") {
 		form.move_path.disabled = true;
 		form.categorylist.disabled = true;
 		form.category.disabled = true;
@@ -15,7 +24,7 @@ function enableMoveElements(form, dropDownField) {
 	}
 }
 
-function addEntry () {
+function addMoveEntry () {
     var catliststr = document.theForm.move_paths;
     var catliste = document.theForm.categorylist;
     var newentry = document.createElement("option");
@@ -25,12 +34,12 @@ function addEntry () {
         // empty the new category field
         document.theForm.category.value = "";
         newentry.value = catliste.length;
-        if(navigator.appName == "Netscape") {
+        if (navigator.appName == "Netscape") {
         	catliste.add(newentry, null);
         } else {
         	catliste.add(newentry);
         }
-        if( catliststr.value == "" ) {
+        if (catliststr.value == "") {
         	catliststr.value = newentry.text;
         } else {
         	catliststr.value = catliststr.value + ":" + newentry.text;
@@ -40,19 +49,9 @@ function addEntry () {
 	}
 }
 
-function mytrim(value) {
-	var trimmedVal = "";
-	for(var i=0; i<value.length; i++) {
-		if(value.charCodeAt(i) != 32) {
-			trimmedVal = trimmedVal + value.charAt(i);
-		}
-	}
-	return trimmedVal;
-}
-
-function removeEntry() {
+function removeMoveEntry() {
 	var catliststr = document.theForm.move_paths;
-	if(document.theForm.categorylist.selectedIndex != -1) {
+	if (document.theForm.categorylist.selectedIndex != -1) {
 		document.theForm.categorylist.remove(document.theForm.categorylist.selectedIndex);
 		var newValue = "";
 		for (var j = 0; j < document.theForm.categorylist.options.length; j++) {

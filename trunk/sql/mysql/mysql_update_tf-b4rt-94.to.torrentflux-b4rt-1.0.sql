@@ -28,6 +28,27 @@ CREATE TABLE tf_trprofiles (
 ) TYPE=MyISAM;
 
 --
+-- tf_settings_dir
+--
+CREATE TABLE tf_settings_dir (
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL,
+  PRIMARY KEY  (tf_key)
+) TYPE=MyISAM;
+
+INSERT INTO tf_settings_dir VALUES ('enable_dirstats','1');
+INSERT INTO tf_settings_dir VALUES ('enable_maketorrent','1');
+INSERT INTO tf_settings_dir VALUES ('enable_file_download','1');
+INSERT INTO tf_settings_dir VALUES ('enable_view_nfo','1');
+INSERT INTO tf_settings_dir VALUES ('package_type','zip');
+INSERT INTO tf_settings_dir VALUES ('enable_sfvcheck','1');
+INSERT INTO tf_settings_dir VALUES ('enable_rar','1');
+INSERT INTO tf_settings_dir VALUES ('enable_move','0');
+INSERT INTO tf_settings_dir VALUES ('enable_rename','1');
+INSERT INTO tf_settings_dir VALUES ('move_paths','');
+INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder');
+
+--
 -- alter
 --
 ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL;

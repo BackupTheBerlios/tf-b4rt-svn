@@ -27,7 +27,8 @@ require_once('inc/functions/functions.common.php');
 require_once('inc/functions/functions.dir.php');
 
 // config
-require_once("inc/config/config.dir.php");
+loadSettings('tf_settings_dir');
+initRestrictedDirEntries();
 
 // check user path
 checkUserPath();

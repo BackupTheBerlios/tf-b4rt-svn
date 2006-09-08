@@ -20,6 +20,18 @@
 
 *******************************************************************************/
 
+/**
+ * inits restricted entries array.
+ *
+ */
+function initRestrictedDirEntries() {
+	global $cfg, $restrictedFileEntries;
+	if ((isset($cfg["dir_restricted"])) && (strlen($cfg["dir_restricted"]) > 0))
+		$restrictedFileEntries = split(":", trim($cfg["dir_restricted"]));
+	else
+		$restrictedFileEntries = array();
+}
+
 // Checks for the location of the users directory
 // If it does not exist, then it creates it.
 function checkUserPath() {

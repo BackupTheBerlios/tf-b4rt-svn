@@ -1,22 +1,22 @@
 <table>
 	<tr>
-		<td valign="top" align="left">Target-Dirs:</td>
+		<td valign="top" align="left">Target-Dirs : </td>
 		<td valign="top" align="left">
-			<select name="categorylist" size="5">
-				<tmpl_if name="dir_list">
-					<tmpl_loop name="dir_list">
+			<select name="categorylist" size="3">
+				<tmpl_if name="move_list">
+					<tmpl_loop name="move_list">
 						<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
 						</tmpl_loop>
 				</tmpl_if>
 			</select>
-			<input type="button" name="remCatButton" value="remove" onclick="removeEntry()">
+			<input type="button" name="remCatButton" value="remove" onclick="removeMoveEntry()">
 		</td>
 	</tr>
 	<tr>
-		<td valign="top" align="left">New Target-Dir:</td>
+		<td valign="top" align="left">New Target-Dir : </td>
 		<td valign="top" align="left">
 			<input type="text" name="category" size="30">
-			<input type="button" name="addCatButton" value="add" onclick="addEntry()" size="30">
+			<input type="button" name="addCatButton" value="add" onclick="addMoveEntry()" size="30">
 			<input type="hidden" name="move_paths" value="<tmpl_var name="move_paths">">
 		</td>
 	</tr>
