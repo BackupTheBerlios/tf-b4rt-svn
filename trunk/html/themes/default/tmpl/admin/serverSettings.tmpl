@@ -41,11 +41,11 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Path : grep</strong><br>
-								Specify the path to the grep binary (/bin/grep):
+								<td align="left" width="350" valign="top"><strong>Path : wget</strong><br>
+								Specify the path to the wget binary (/usr/bin/wget):
 								</td>
 								<td valign="top">
-									<input name="bin_grep" type="Text" maxlength="254" value="<tmpl_var name="bin_grep">" size="55"><tmpl_var name="validate_grep">
+									<input name="bin_wget" type="Text" maxlength="254" value="<tmpl_var name="bin_wget">" size="55"><tmpl_var name="validate_wget">
 								</td>
 							</tr>
 							<tr>
@@ -65,6 +65,22 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Path : perl</strong><br>
+									Specify the path to perl (/usr/bin/perl):
+								</td>
+								<td valign="top">
+									<input name="perlCmd" type="Text" maxlength="254" value="<tmpl_var name="perlCmd">" size="55"><tmpl_var name="validate_perl">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Path : grep</strong><br>
+								Specify the path to the grep binary (/bin/grep):
+								</td>
+								<td valign="top">
+									<input name="bin_grep" type="Text" maxlength="254" value="<tmpl_var name="bin_grep">" size="55"><tmpl_var name="validate_grep">
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Path : awk</strong><br>
 								Specify the path to the awk binary (/usr/bin/awk):
 								</td>
@@ -78,14 +94,6 @@
 								</td>
 								<td valign="top">
 									<input name="bin_du" type="Text" maxlength="254" value="<tmpl_var name="bin_du">" size="55"><tmpl_var name="validate_du">
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Path : wget</strong><br>
-								Specify the path to the wget binary (/usr/bin/wget):
-								</td>
-								<td valign="top">
-									<input name="bin_wget" type="Text" maxlength="254" value="<tmpl_var name="bin_wget">" size="55"><tmpl_var name="validate_wget">
 								</td>
 							</tr>
 							<tr>
@@ -107,7 +115,7 @@
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>OS-specific</strong> <em>(<tmpl_var name="php_uname1"> <tmpl_var name="php_uname2">)</em></td></tr>
 							<tmpl_if name="_OS" value="1">
 								<tr>
-									<td align="left" width="350" valign="top"><strong>loadavg Path</strong><br>
+									<td align="left" width="350" valign="top"><strong>Path : loadavg</strong><br>
 									Path to the loadavg file (/proc/loadavg):
 									</td>
 									<td valign="top">

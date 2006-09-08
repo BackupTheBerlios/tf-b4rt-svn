@@ -46,6 +46,8 @@ if (is_dir($cfg["path"])) {
 // bins
 $tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
 $tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmission_bin"]));
+$tmpl->setvar('perlCmd', $cfg["perlCmd"]);
+$tmpl->setvar('validate_perl', validateFile($cfg["perlCmd"]));
 $tmpl->setvar('bin_grep', $cfg["bin_grep"]);
 $tmpl->setvar('validate_grep', validateFile($cfg["bin_grep"]));
 $tmpl->setvar('bin_php', $cfg["bin_php"]);
