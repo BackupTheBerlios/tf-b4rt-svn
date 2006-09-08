@@ -120,7 +120,7 @@ function firstLogin($username = '', $password = '') {
 	// Test and setup some paths for the TF settings
 	$pythonCmd = $cfg["pythonCmd"];
 	$tfPath = getcwd() . "/downloads/";
-	if (!isFile($cfg["pythonCmd"])) {
+	if (! is_file($cfg["pythonCmd"])) {
 		$pythonCmd = trim(shell_exec("which python"));
 		if ($pythonCmd == "")
 			$pythonCmd = $cfg["pythonCmd"];
@@ -987,7 +987,7 @@ function dirTree2($dir, $maxdepth) {
 		if ($maxdepth == 0) {
 			$retvar_list = array();
 			//$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
-			$last = exec ("find ".$dir." -type d | sort", $retval);
+			$last = exec ("find ".$dir." -type d | sort && echo", $retval);
 			for ($i = 1; $i < (count ($retval) - 1); $i++){
 				array_push($retvar_list, array(
 					'retval' => $retval[$i],
@@ -996,7 +996,7 @@ function dirTree2($dir, $maxdepth) {
 			}
 		} elseif ($maxdepth > 0) {
 			//$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
-			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort", $retval);
+			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort && echo", $retval);
 			for ($i = 1; $i < (count ($retval) - 1); $i++){
 				array_push($retvar_list, array(
 					'retval' => $retval[$i],
