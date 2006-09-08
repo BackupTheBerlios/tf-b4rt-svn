@@ -37,10 +37,6 @@ if(!IsAdmin()) {
 $op = getRequestVar('op');
 switch ($op) {
 
-	default:
-		require_once("admin/default.php");
-		break;
-
 	case "serverSettings":
 		require_once("admin/serverSettings.php");
 		break;
@@ -131,15 +127,6 @@ switch ($op) {
 		saveSettings($settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Xfer Settings");
 		header("location: index.php?iid=admin&op=xferSettings");
-		break;
-
-	case "showUserActivity":
-		$min = getRequestVar('min');
-		if(empty($min)) $min=0;
-		$user_id = getRequestVar('user_id');
-		$srchFile = getRequestVar('srchFile');
-		$srchAction = getRequestVar('srchAction');
-		require_once("admin/showUserActivity.php");
 		break;
 
 	case "xfer":
@@ -247,6 +234,19 @@ switch ($op) {
 		require_once("admin/updateSearchSettings.php");
 		break;
 
+	default:
+		//require_once("admin/default.php");
+		//break;
+
+	case "showUserActivity":
+		$min = getRequestVar('min');
+		if (empty($min))
+			$min=0;
+		$user_id = getRequestVar('user_id');
+		$srchFile = getRequestVar('srchFile');
+		$srchAction = getRequestVar('srchAction');
+		require_once("admin/showUserActivity.php");
+		break;
 }
 
 ?>
