@@ -129,7 +129,7 @@ function firstLogin($username = '', $password = '') {
 						"pythonCmd" => $pythonCmd,
 						"path" => $tfPath
 					);
-	saveSettings($settings);
+	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["update"], "Initial Settings Updated for first login.");
 }
 
@@ -251,11 +251,12 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 /**
  * load Settings
  *
+ * @param $dbTable
  */
-function loadSettings() {
+function loadSettings($dbTable) {
     global $cfg, $db;
     // pull the config params out of the db
-    $sql = "SELECT tf_key, tf_value FROM tf_settings";
+    $sql = "SELECT tf_key, tf_value FROM ".$dbTable;
     $recordset = $db->Execute($sql);
     showError($db, $sql);
     while(list($key, $value) = $recordset->FetchRow()) {
@@ -274,17 +275,18 @@ function loadSettings() {
 /**
  * insert Setting
  *
+ * @param $dbTable
  * @param $key
  * @param $value
  */
-function insertSetting($key,$value) {
+function insertSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
 	unset($_SESSION['cache']);
     $update_value = $value;
     if (is_array($value))
         $update_value = serialize($value);
-    $sql = "INSERT INTO tf_settings VALUES ('".$key."', '".$update_value."')";
+    $sql = "INSERT INTO ".$dbTable." VALUES ('".$key."', '".$update_value."')";
     if ( $sql != "" ) {
         //$result = $db->Execute($sql);
         $db->Execute($sql);
@@ -297,17 +299,18 @@ function insertSetting($key,$value) {
 /**
  * updateSetting
  *
+ * @param $dbTable
  * @param $key
  * @param $value
  */
-function updateSetting($key,$value) {
+function updateSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
 	unset($_SESSION['cache']);
     $update_value = $value;
 	if (is_array($value))
         $update_value = serialize($value);
-    $sql = "UPDATE tf_settings SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
+    $sql = "UPDATE ".$dbTable." SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
     if ( $sql != "" ) {
         //$result = $db->Execute($sql);
         $db->Execute($sql);
@@ -320,23 +323,23 @@ function updateSetting($key,$value) {
 /**
  * save Settings
  *
+ * @param $dbTable
  * @param $settings
  */
-function saveSettings($settings) {
+function saveSettings($dbTable, $settings) {
     global $cfg, $db;
     foreach ($settings as $key => $value) {
         if (array_key_exists($key, $cfg)) {
-            if(is_array($cfg[$key]) || is_array($value)) {
-                if(serialize($cfg[$key]) != serialize($value)) {
-                    updateSetting($key, $value);
-                }
+            if (is_array($cfg[$key]) || is_array($value)) {
+                if(serialize($cfg[$key]) != serialize($value))
+                    updateSetting($dbTable, $key, $value);
             } elseif ($cfg[$key] != $value) {
-                updateSetting($key, $value);
+                updateSetting($dbTable, $key, $value);
             } else {
                 // Nothing has Changed..
             }
         } else {
-            insertSetting($key,$value);
+            insertSetting($dbTable, $key, $value);
         }
     }
 }
@@ -1160,6 +1163,5 @@ function deleteProfileInfo($pid) {
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 }
-
 
 ?>

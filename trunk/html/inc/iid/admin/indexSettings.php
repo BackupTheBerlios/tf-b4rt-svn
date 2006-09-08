@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // load global settings + overwrite per-user settings
-loadSettings();
+loadSettings('tf_settings');
 
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/indexSettings.tmpl");

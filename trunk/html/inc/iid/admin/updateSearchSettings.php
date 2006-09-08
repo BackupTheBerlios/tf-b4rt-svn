@@ -24,7 +24,7 @@ foreach ($_POST as $key => $value) {
 	if ($key != "searchEngine")
 		$settings[$key] = $value;
 }
-saveSettings($settings);
+saveSettings('tf_settings', $settings);
 AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Search Settings");
 $searchEngine = getRequestVar('searchEngine');
 if (empty($searchEngine)) $searchEngine = $cfg["searchEngine"];

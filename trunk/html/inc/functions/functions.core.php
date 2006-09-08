@@ -2068,7 +2068,7 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 	$settings['searchEngineLinks'] = Array();
 	$output = array();
 	if( (!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle))
 		$entrys[] = $entry;
@@ -2107,7 +2107,7 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 		$settingsNeedsSaving = true;
 	if ($settingsNeedsSaving) {
 		natcasesort($settings['searchEngineLinks']);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 	}
 	return $output;
 }

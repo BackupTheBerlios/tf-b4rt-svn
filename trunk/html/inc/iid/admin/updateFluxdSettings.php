@@ -64,7 +64,7 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 		}
 		// save settings
 		$settings = $_POST;
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		// reload fluxd-database-cache
 		$fluxd->reloadDBCache();
 		// reload fluxd-modules
@@ -75,7 +75,7 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 	} else {
 		// save settings
 		$settings = $_POST;
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		$message .= 'fluxd is not currently running.<br><br>';
 	}
 	// log
@@ -85,7 +85,7 @@ if ($_POST["perlCmd"] != $cfg["perlCmd"] ||
 } else {
 	// save settings
 	$settings = $_POST;
-	saveSettings($settings);
+	saveSettings('tf_settings', $settings);
 	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	// redir

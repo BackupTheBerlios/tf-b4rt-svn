@@ -36,7 +36,7 @@ require_once('inc/db.php');
 $db = getdb();
 
 // load global settings
-loadSettings();
+loadSettings('tf_settings');
 
 // Path to where the torrent meta files will be stored... usually a sub of $cfg["path"]
 // also, not the '.' to make this a hidden directory

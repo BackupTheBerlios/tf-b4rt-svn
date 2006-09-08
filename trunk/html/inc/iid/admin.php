@@ -71,7 +71,7 @@ switch ($op) {
 
 	case "updateServerSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Server Settings");
 		$continue = getRequestVar('continue');
 		header("location: index.php?iid=admin&op=serverSettings");
@@ -79,7 +79,7 @@ switch ($op) {
 
 	case "updateTransferSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Transfer Settings");
 		$continue = getRequestVar('continue');
 		header("location: index.php?iid=admin&op=transferSettings");
@@ -87,7 +87,7 @@ switch ($op) {
 
 	case "updateWebappSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux WebApp Settings");
 		$continue = getRequestVar('continue');
 		header("location: index.php?iid=admin&op=webappSettings");
@@ -95,21 +95,21 @@ switch ($op) {
 
 	case "updateIndexSettings":
 		$settings = processSettingsParams(true,true);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Index Settings");
 		header("location: index.php?iid=admin&op=indexSettings");
 		break;
 
 	case "updateStartpopSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux StartPop Settings");
 		header("location: index.php?iid=admin&op=startpopSettings");
 		break;
 
 	case "updateDirSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Dir Settings");
 		header("location: index.php?iid=admin&op=dirSettings");
 		break;
@@ -124,7 +124,7 @@ switch ($op) {
 
 	case "updateXferSettings":
 		$settings = processSettingsParams(false,false);
-		saveSettings($settings);
+		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Xfer Settings");
 		header("location: index.php?iid=admin&op=xferSettings");
 		break;
