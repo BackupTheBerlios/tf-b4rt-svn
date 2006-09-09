@@ -328,73 +328,70 @@ closedir($handle);
 natsort($entrys);
 
 // process entries and fill dir- + file-array
-$dirlist = array();
+$list = array();
 $filelist = array();
-$dirCtr = 0;
-$fileCtr = 0;
 foreach ($entrys as $entry) {
 	if (@is_dir($dirName.$entry)) { // dir
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
 			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".$duArg." ".correctFileName($dirName.$entry));
-			$dusize = @explode("\t", $dudir);
-			$dusize = @array_shift($dusize);
+			$size = @explode("\t", $dudir);
+			$size = @array_shift($size);
 			$arStat = @lstat($dirName.$entry);
 			$timeStamp = @filemtime($dirName.$entry);
 			$date = @date("m-d-Y h:i a", $timeStamp);
 		} else {
-			$dusize = 0;
+			$size = 0;
 			$date = "";
 		}
 		// sfv
-		$sfvdir = "";
-		$sfvsfv = "";
-		if ($cfg['enable_sfvcheck'] == 1) {
-			if(false !== ($sfv = findSFV($dirName.$entry))) {
-				$is_sfv = 1;
-				$sfvdir = $sfv['dir'];
-				$sfvsfv = $sfv['sfv'];
-			} else {
-				$is_sfv = 0;
-			}
+		if (($cfg['enable_sfvcheck'] == 1) && (false !== ($sfv = findSFV($dirName.$entry)))) {
+			$is_sfv = 1;
+			$sfvdir = $sfv['dir'];
+			$sfvsfv = $sfv['sfv'];
+		} else {
+			$is_sfv = 0;
+			$sfvdir = "";
+			$sfvsfv = "";
 		}
 		// add entry to dir-array
-		array_push($dirlist, array(
+		array_push($list, array(
+			'is_dir' => 1,
 			'entry' => $entry,
 			'urlencode1' => urlencode($dir.$entry),
 			'urlencode2' => urlencode($dir),
 			'urlencode3' => urlencode($entry),
 			'addslashes1' => addslashes($entry),
-			'dusize' => $dusize,
+			'size' => $size,
 			'date' => $date,
 			'is_sfv' => $is_sfv,
 			'sfvdir' => $sfvdir,
 			'sfvsfv' => $sfvsfv
 			)
 		);
-		// ctr
-		$dirCtr++;
+
 	} else if (!@is_dir($dirName.$entry)) { // file
-		// timestamp
-		$arStat = @lstat($dirName.$entry);
-		$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
-		$timeStamp = "";
-		if (array_key_exists(10,$arStat))
-			$timeStamp = @filemtime($dirName.$entry);
-		// size
-		$fileSize = number_format(($arStat[7])/1024);
-		// icon
+		// image
 		$image="themes/".$cfg['theme']."/images/time.gif";
 		$imageOption="themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
 		if (file_exists("./".$imageOption))
 			$image = $imageOption;
 		// dirstats
-		$date = "";
-		if ($cfg['enable_dirstats'] == 1)
+		if ($cfg['enable_dirstats'] == 1) {
+			$arStat = @lstat($dirName.$entry);
+			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
+			$timeStamp = "";
+			if (array_key_exists(10,$arStat))
+				$timeStamp = @filemtime($dirName.$entry);
+			$size = number_format(($arStat[7])/1024);
 			$date = @date("m-d-Y h:i a", $timeStamp);
+		} else {
+			$size = 0;
+			$date = "";
+		}
+		// rar
 		if ($cfg["enable_rar"] == 1) {
 			$is_rar = 0;
-			// R.D. - Display links for unzip/unrar
 			if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE ))
 				$is_rar = 1;
 			if (strpos($dir.$entry, '.zip') !== FALSE)
@@ -409,6 +406,7 @@ foreach ($entrys as $entry) {
 			$is_nfo = 0;
 		// add entry to file-array
 		array_push($filelist, array(
+			'is_dir' => 0,
 			'entry' => $entry,
 			'urlencode1' => urlencode($dir.$entry),
 			'urlencode2' => urlencode($dir),
@@ -416,18 +414,22 @@ foreach ($entrys as $entry) {
 			'urlencode4' => urlencode(addslashes($dir.$entry)),
 			'addslashes1' => addslashes($entry),
 			'image' => $image,
-			'fileSize' => $fileSize,
+			'size' => $size,
 			'date' => $date,
 			'is_rar' => $is_rar,
 			'is_nfo' => $is_nfo
 			)
 		);
-		// ctr
-		$fileCtr++;
+
 	}
 }
-$tmpl->setloop('dirlist', $dirlist);
-$tmpl->setloop('filelist', $filelist);
+
+// add files to list
+foreach ($filelist as $entry)
+	array_push($list, $entry);
+
+// set template-loop
+$tmpl->setloop('list', $list);
 
 // define some things
 $tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
