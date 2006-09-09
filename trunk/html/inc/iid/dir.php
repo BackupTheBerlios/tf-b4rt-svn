@@ -333,13 +333,7 @@ $filelist = array();
 $dirCtr = 0;
 $fileCtr = 0;
 foreach ($entrys as $entry) {
-	//system('echo -n "entry : " >> /tmp/tflux.debug; echo "'. $entry .'" >> /tmp/tflux.debug');
 	if (@is_dir($dirName.$entry)) { // dir
-		// odd/even
-		if (($dirCtr % 2) == 0)
-			$isEven = 1;
-		else
-			$isEven = 0;
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
 			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".$duArg." ".correctFileName($dirName.$entry));
@@ -364,33 +358,23 @@ foreach ($entrys as $entry) {
 				$is_sfv = 0;
 			}
 		}
-		// urlencode
-		$urlencode1 = urlencode($dir.$entry);
-		$urlencode2 = urlencode($dir);
-		$urlencode3 = urlencode($entry);
 		// add entry to dir-array
 		array_push($dirlist, array(
 			'entry' => $entry,
-			'urlencode1' => $urlencode1,
-			'urlencode2' => $urlencode2,
-			'urlencode3' => $urlencode3,
+			'urlencode1' => urlencode($dir.$entry),
+			'urlencode2' => urlencode($dir),
+			'urlencode3' => urlencode($entry),
 			'addslashes1' => addslashes($entry),
 			'dusize' => $dusize,
 			'date' => $date,
 			'is_sfv' => $is_sfv,
 			'sfvdir' => $sfvdir,
-			'sfvsfv' => $sfvsfv,
-			'isEven' => $isEven
+			'sfvsfv' => $sfvsfv
 			)
 		);
 		// ctr
 		$dirCtr++;
 	} else if (!@is_dir($dirName.$entry)) { // file
-		// odd/even
-		if (($fileCtr % 2) == 0)
-			$isEven = 1;
-		else
-			$isEven = 0;
 		// timestamp
 		$arStat = @lstat($dirName.$entry);
 		$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
@@ -423,25 +407,19 @@ foreach ($entrys as $entry) {
 			$is_nfo = 1;
 		else
 			$is_nfo = 0;
-		// urlencode
-		$urlencode1 = urlencode($dir.$entry);
-		$urlencode2 = urlencode($dir);
-		$urlencode3 = urlencode($entry);
-		$urlencode4 = urlencode(addslashes($dir.$entry));
 		// add entry to file-array
 		array_push($filelist, array(
 			'entry' => $entry,
-			'urlencode1' => $urlencode1,
-			'urlencode2' => $urlencode2,
-			'urlencode3' => $urlencode3,
-			'urlencode4' => $urlencode4,
+			'urlencode1' => urlencode($dir.$entry),
+			'urlencode2' => urlencode($dir),
+			'urlencode3' => urlencode($entry),
+			'urlencode4' => urlencode(addslashes($dir.$entry)),
 			'addslashes1' => addslashes($entry),
 			'image' => $image,
 			'fileSize' => $fileSize,
 			'date' => $date,
 			'is_rar' => $is_rar,
-			'is_nfo' => $is_nfo,
-			'isEven' => $isEven
+			'is_nfo' => $is_nfo
 			)
 		);
 		// ctr
