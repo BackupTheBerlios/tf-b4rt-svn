@@ -284,7 +284,8 @@ $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 $tmpl->setvar('_DIR_REN_LINK', $cfg['_DIR_REN_LINK']);
 $tmpl->setvar('_DIR_MOVE_LINK', $cfg['_DIR_MOVE_LINK']);
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
-
+$tmpl->setvar('bgDark', $cfg['bgDark']);
+$tmpl->setvar('bgLight', $cfg['bgLight']);
 
 // The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
 // this is so only the owner of the file(s) or admin can delete
@@ -318,8 +319,11 @@ if ($cfg['enable_dirstats'] == 1) {
 // read in entries
 $entrys = array();
 $handle = opendir($dirName);
-while ($entry = readdir($handle))
-	$entrys[] = $entry;
+while (false !== ($entry = readdir($handle))) {
+	// only valid entries
+	if (isValidEntry($entry))
+		array_push($entrys, $entry);
+}
 closedir($handle);
 natsort($entrys);
 
@@ -329,116 +333,119 @@ $filelist = array();
 $dirCtr = 0;
 $fileCtr = 0;
 foreach ($entrys as $entry) {
-	// only valid entry
-	if (isValidEntry($entry)) {
-		if (@is_dir($dirName.$entry)) { // dir
-			// dirstats
-			if ($cfg['enable_dirstats'] == 1) {
-				$dudir = @shell_exec($cfg['bin_du']." -sk -h ".$duArg." ".correctFileName($dirName.$entry));
-				$dusize = @explode("\t", $dudir);
-				$dusize = @array_shift($dusize);
-				$arStat = @lstat($dirName.$entry);
-				$timeStamp = @filemtime($dirName.$entry);
-				$date = @date("m-d-Y h:i a", $timeStamp);
-			} else {
-				$dusize = 0;
-				$date = "";
-			}
-			// sfv
-			$sfvdir = "";
-			$sfvsfv = "";
-			if ($cfg['enable_sfvcheck'] == 1) {
-				if(false !== ($sfv = findSFV($dirName.$entry))) {
-					$is_sfv = 1;
-					$sfvdir = $sfv['dir'];
-					$sfvsfv = $sfv['sfv'];
-				} else {
-					$is_sfv = 0;
-				}
-			}
-			// urlencode
-			$urlencode1 = urlencode($dir.$entry);
-			$urlencode2 = urlencode($dir);
-			$urlencode3 = urlencode($entry);
-			// bg
-			if (($dirCtr % 2) == 0)
-				$bg = $cfg["bgDark"];
-			else
-				$bg = $cfg["bgLight"];
-			array_push($dirlist, array(
-				'entry' => $entry,
-				'urlencode1' => $urlencode1,
-				'urlencode2' => $urlencode2,
-				'urlencode3' => $urlencode3,
-				'addslashes1' => addslashes($entry),
-				'dusize' => $dusize,
-				'date' => $date,
-				'is_sfv' => $is_sfv,
-				'sfvdir' => $sfvdir,
-				'sfvsfv' => $sfvsfv,
-				'bg' => $bg
-				)
-			);
-			$dirCtr++;
-		} else if (!@is_dir($dirName.$entry)) { // file
+	//system('echo -n "entry : " >> /tmp/tflux.debug; echo "'. $entry .'" >> /tmp/tflux.debug');
+	if (@is_dir($dirName.$entry)) { // dir
+		// odd/even
+		if (($dirCtr % 2) == 0)
+			$isEven = 1;
+		else
+			$isEven = 0;
+		// dirstats
+		if ($cfg['enable_dirstats'] == 1) {
+			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".$duArg." ".correctFileName($dirName.$entry));
+			$dusize = @explode("\t", $dudir);
+			$dusize = @array_shift($dusize);
 			$arStat = @lstat($dirName.$entry);
-			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
-			$timeStamp = "";
-			if (array_key_exists(10,$arStat))
-				$timeStamp = @filemtime($dirName.$entry); // $timeStamp = $arStat[10];
-			$fileSize = number_format(($arStat[7])/1024);
-			// Code added by Remko Jantzen to assign an icon per file-type.
-			// But when not available all stays the same.
-			$image="themes/".$cfg['theme']."/images/time.gif";
-			$imageOption="themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
-			if (file_exists("./".$imageOption))
-				$image = $imageOption;
-			// dirstats
+			$timeStamp = @filemtime($dirName.$entry);
+			$date = @date("m-d-Y h:i a", $timeStamp);
+		} else {
+			$dusize = 0;
 			$date = "";
-			if ($cfg['enable_dirstats'] == 1)
-				$date = @date("m-d-Y h:i a", $timeStamp);
-			if ($cfg["enable_rar"] == 1) {
-				$is_rar = 0;
-				// R.D. - Display links for unzip/unrar
-				if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE ))
-					$is_rar = 1;
-				if (strpos($dir.$entry, '.zip') !== FALSE)
-					$is_rar = 2;
-			} else {
-				$is_rar = 0;
-			}
-			// nfo
-			if ($cfg["enable_view_nfo"] && ((substr(strtolower($entry), -4 ) == ".nfo" ) || (substr(strtolower($entry), -4 ) == ".txt" ) || (substr(strtolower($entry), -4 ) == ".log" )))
-				$is_nfo = 1;
-			else
-				$is_nfo = 0;
-			// urlencode
-			$urlencode1 = urlencode($dir.$entry);
-			$urlencode2 = urlencode($dir);
-			$urlencode3 = urlencode($entry);
-			$urlencode4 = urlencode(addslashes($dir.$entry));
-			// bg
-			if (($fileCtr % 2) == 0)
-				$bg = $cfg["bgDark"];
-			else
-				$bg = $cfg["bgLight"];
-			array_push($filelist, array(
-				'entry' => $entry,
-				'urlencode1' => $urlencode1,
-				'urlencode2' => $urlencode2,
-				'urlencode3' => $urlencode3,
-				'urlencode4' => $urlencode4,
-				'addslashes1' => addslashes($entry),
-				'image' => $image,
-				'fileSize' => $fileSize,
-				'date' => $date,
-				'is_rar' => $is_rar,
-				'is_nfo' => $is_nfo,
-				'bg' => $bg
-				)
-			);
-			$fileCtr++;
 		}
+		// sfv
+		$sfvdir = "";
+		$sfvsfv = "";
+		if ($cfg['enable_sfvcheck'] == 1) {
+			if(false !== ($sfv = findSFV($dirName.$entry))) {
+				$is_sfv = 1;
+				$sfvdir = $sfv['dir'];
+				$sfvsfv = $sfv['sfv'];
+			} else {
+				$is_sfv = 0;
+			}
+		}
+		// urlencode
+		$urlencode1 = urlencode($dir.$entry);
+		$urlencode2 = urlencode($dir);
+		$urlencode3 = urlencode($entry);
+		// add entry to dir-array
+		array_push($dirlist, array(
+			'entry' => $entry,
+			'urlencode1' => $urlencode1,
+			'urlencode2' => $urlencode2,
+			'urlencode3' => $urlencode3,
+			'addslashes1' => addslashes($entry),
+			'dusize' => $dusize,
+			'date' => $date,
+			'is_sfv' => $is_sfv,
+			'sfvdir' => $sfvdir,
+			'sfvsfv' => $sfvsfv,
+			'isEven' => $isEven
+			)
+		);
+		// ctr
+		$dirCtr++;
+	} else if (!@is_dir($dirName.$entry)) { // file
+		// odd/even
+		if (($fileCtr % 2) == 0)
+			$isEven = 1;
+		else
+			$isEven = 0;
+		// timestamp
+		$arStat = @lstat($dirName.$entry);
+		$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
+		$timeStamp = "";
+		if (array_key_exists(10,$arStat))
+			$timeStamp = @filemtime($dirName.$entry);
+		// size
+		$fileSize = number_format(($arStat[7])/1024);
+		// icon
+		$image="themes/".$cfg['theme']."/images/time.gif";
+		$imageOption="themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
+		if (file_exists("./".$imageOption))
+			$image = $imageOption;
+		// dirstats
+		$date = "";
+		if ($cfg['enable_dirstats'] == 1)
+			$date = @date("m-d-Y h:i a", $timeStamp);
+		if ($cfg["enable_rar"] == 1) {
+			$is_rar = 0;
+			// R.D. - Display links for unzip/unrar
+			if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE ))
+				$is_rar = 1;
+			if (strpos($dir.$entry, '.zip') !== FALSE)
+				$is_rar = 2;
+		} else {
+			$is_rar = 0;
+		}
+		// nfo
+		if ($cfg["enable_view_nfo"] && ((substr(strtolower($entry), -4 ) == ".nfo" ) || (substr(strtolower($entry), -4 ) == ".txt" ) || (substr(strtolower($entry), -4 ) == ".log" )))
+			$is_nfo = 1;
+		else
+			$is_nfo = 0;
+		// urlencode
+		$urlencode1 = urlencode($dir.$entry);
+		$urlencode2 = urlencode($dir);
+		$urlencode3 = urlencode($entry);
+		$urlencode4 = urlencode(addslashes($dir.$entry));
+		// add entry to file-array
+		array_push($filelist, array(
+			'entry' => $entry,
+			'urlencode1' => $urlencode1,
+			'urlencode2' => $urlencode2,
+			'urlencode3' => $urlencode3,
+			'urlencode4' => $urlencode4,
+			'addslashes1' => addslashes($entry),
+			'image' => $image,
+			'fileSize' => $fileSize,
+			'date' => $date,
+			'is_rar' => $is_rar,
+			'is_nfo' => $is_nfo,
+			'isEven' => $isEven
+			)
+		);
+		// ctr
+		$fileCtr++;
 	}
 }
 $tmpl->setloop('dirlist', $dirlist);

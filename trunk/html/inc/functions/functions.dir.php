@@ -131,8 +131,11 @@ function getExtension($fileName) {
  */
 function isValidEntry($entry) {
 	global $restrictedFileEntries;
+	// is set
+	if (!(isset($entry)))
+		return false;
 	// check if empty
-	if ($entry == "")
+	if ((strlen($entry)) < 1)
 		return false;
 	// check if dot-entry
 	if (substr($entry, 0, 1) == ".")

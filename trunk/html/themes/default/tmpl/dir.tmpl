@@ -17,11 +17,32 @@ function checkCheck(thisIn) {
 		}
 	}
 }
-<!-- R.D. Robust UnRAR/UnZip hack -->
 function UncompDetails(URL) {
 	window.open (URL,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=300');
 }
 </script>
+<tmpl_if name="enable_rename">
+	<script type="text/javascript" language="JavaScript">
+		var popUpWin=0;
+		function renameFolder(name_file) {
+			if(popUpWin) {
+				if(!popUpWin.closed) popUpWin.close();
+			}
+			popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
+		}
+	</script>
+</tmpl_if>
+<tmpl_if name="enable_move">
+	<script type="text/javascript" language="JavaScript">
+		var popUpWin=0;
+		function moveFile(name_file) {
+			if(popUpWin) {
+				if(!popUpWin.closed) popUpWin.close();
+			}
+			popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
+		}
+	</script>
+</tmpl_if>
 <tmpl_var name="driveSpaceBar">
 <br>
 <a href="<tmpl_var name="parentURL">"><img src="themes/default/images/up_dir.gif" width=16 height=16 title="<tmpl_var name="_BACKTOPARRENT">" border=0>[<tmpl_var name="_BACKTOPARRENT">]</a>
@@ -41,27 +62,9 @@ function UncompDetails(URL) {
 				</tmpl_if>
 				<td align="right" nowrap>
 					<tmpl_if name="enable_rename">
-						<script type="text/javascript" language="JavaScript">
-							var popUpWin=0;
-							function renameFolder(name_file) {
-								if(popUpWin) {
-									if(!popUpWin.closed) popUpWin.close();
-								}
-								popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
-							}
-						</script>
 						<a href="JavaScript:renameFolder('index.php?iid=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/default/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 					</tmpl_if>
 					<tmpl_if name="enable_move">
-						<script type="text/javascript" language="JavaScript">
-							var popUpWin=0;
-							function moveFile(name_file) {
-								if(popUpWin) {
-									if(!popUpWin.closed) popUpWin.close();
-								}
-								popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
-							}
-						</script>
 						<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/default/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 					</tmpl_if>
 					<tmpl_if name="enable_sfvcheck">
@@ -76,7 +79,6 @@ function UncompDetails(URL) {
 					<tmpl_if name="aclDelete">
 						<a href="index.php?iid=dir&del=<tmpl_var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')"><img src="themes/default/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 						<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
-					<tmpl_else>
 					</tmpl_if>
 				</td>
 			</tr>
@@ -102,28 +104,9 @@ function UncompDetails(URL) {
 				</tmpl_if>
 				<td align="right" nowrap>
 					<tmpl_if name="enable_rename">
-						<script type="text/javascript" language="JavaScript">
-							var popUpWin=0;
-							function renameFolder(name_file) {
-								if(popUpWin) {
-									if(!popUpWin.closed) popUpWin.close();
-								}
-								popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430')
-							}
-						</script>
 						<a href="JavaScript:renameFolder('index.php?iid=renameFolder&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/default/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 					</tmpl_if>
-
 					<tmpl_if name="enable_move">
-						<script type="text/javascript" language="JavaScript">
-							var popUpWin=0;
-							function moveFile(name_file) {
-								if(popUpWin) {
-									if(!popUpWin.closed) popUpWin.close();
-								}
-								popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=600,height=430');
-							}
-						</script>
 						<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/default/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 					</tmpl_if>
 					<tmpl_if name="is_rar" value="1">
@@ -143,7 +126,6 @@ function UncompDetails(URL) {
 					<tmpl_if name="aclDelete">
 						<a href="index.php?iid=dir&del=<tmpl_Var name="urlencode1">" onclick="return ConfirmDelete('<tmpl_var name="addslashes1">')"><img src="themes/default/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 						<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
-					<tmpl_else>
 					</tmpl_if>
 				</td>
 			</tr>
@@ -159,9 +141,8 @@ function UncompDetails(URL) {
 </table>
 <tmpl_if name="enable_dirstats">
 	<table cellpadding="0" width="740">
-		<tr bgcolor=#ececec>
-			<td align="center">
-				<tmpl_var name="_TDDU"> <tmpl_var name="duTotal">B</td>
+		<tr bgcolor="#ececec">
+			<td align="center"><tmpl_var name="_TDDU"> <tmpl_var name="duTotal">B</td>
 		</tr>
 	</table>
 </tmpl_if>
