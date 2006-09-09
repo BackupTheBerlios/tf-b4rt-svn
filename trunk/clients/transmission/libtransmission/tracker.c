@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 626 2006-07-16 23:40:22Z joshe $
+ * $Id: tracker.c 854 2006-09-08 23:19:15Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -301,6 +301,7 @@ static void sendQuery( tr_tracker_t * tc )
     uint64_t   down;
     uint64_t   up;
 
+    assert( tor->downloaded >= tc->download && tor->uploaded >= tc->upload );
     down = tor->downloaded - tc->download;
     up = tor->uploaded - tc->upload;
     if( tc->started )

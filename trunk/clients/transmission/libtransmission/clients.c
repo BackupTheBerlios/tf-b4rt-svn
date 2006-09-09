@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 787 2006-08-16 01:52:20Z livings124 $
+ * $Id: clients.c 851 2006-09-07 21:42:41Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -66,6 +66,11 @@ char * tr_clientForId( uint8_t * id )
         {
             asprintf( &ret, "Bits on Wheels (%c%c)",
                       id[5], id[6] );
+        }
+        else if( !memcmp( &id[1], "BR", 2 ) )
+        {
+            asprintf( &ret, "BitRocket %c.%c (%d)",
+                      id[3], id[4], ( id[5] - '0' ) * 10 + ( id[6] - '0' ) );
         }
     }
     else if( !memcmp( &id[4], "----", 4 ) )
