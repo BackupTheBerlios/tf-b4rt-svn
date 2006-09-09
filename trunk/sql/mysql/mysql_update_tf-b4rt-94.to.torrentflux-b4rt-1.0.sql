@@ -36,6 +36,8 @@ CREATE TABLE tf_settings_dir (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM;
 
+INSERT INTO tf_settings_dir VALUES ('dir_public_read','1');
+INSERT INTO tf_settings_dir VALUES ('dir_public_write','0');
 INSERT INTO tf_settings_dir VALUES ('enable_dirstats','1');
 INSERT INTO tf_settings_dir VALUES ('enable_maketorrent','1');
 INSERT INTO tf_settings_dir VALUES ('enable_file_download','1');

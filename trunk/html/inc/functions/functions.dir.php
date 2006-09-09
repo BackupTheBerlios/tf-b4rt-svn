@@ -20,7 +20,6 @@
 
 *******************************************************************************/
 
-
 /**
  * checks if $user has the $permission on $object
  *
@@ -28,9 +27,34 @@
  * @param $user
  * @param $permission
  */
-function dirHasPermission($object, $user, $permission) {
-
-
+function hasPermission($object, $user, $permission) {
+	global $cfg, $isAdmin;
+	// if homedirs disabled return true
+	if ($cfg["enable_home_dirs"] == 0)
+		return true;
+	// check permission
+	switch ($permission) {
+		case 'r':
+			// public read enabled return true
+			if ($cfg["dir_public_read"] == 1)
+				return true;
+			break;
+		case 'w':
+			// public write enabled return true
+			if ($cfg["dir_public_write"] == 1)
+				return true;
+			break;
+		default:
+			return false;
+	}
+	// check if object in users home-dir
+	if (preg_match("/^".$user."/", $object))
+		return true;
+	// only admin has right
+	if (isset($isAdmin))
+		return $isAdmin;
+	else
+		return IsAdmin($user);
 }
 
 /**
@@ -74,40 +98,38 @@ function checkIncomingPath() {
 function delDirEntry($del) {
 	global $cfg;
 	$current = "";
-	// The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
-	// this is so only the owner of the file(s) or admin can delete
-	if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$del)) {
-		// Yes, then delete it
-		// we need to strip slashes twice in some circumstances
-		// Ex.	If we are trying to delete test/tester's file/test.txt
-		//	  $del will be "test/tester\\\'s file/test.txt"
-		//	  one strip will give us "test/tester\'s file/test.txt
-		//	  the second strip will give us the correct
-		//		  "test/tester's file/test.txt"
-		$del = stripslashes(stripslashes($del));
-		if (!ereg("(\.\.\/)", $del)) {
-			avddelete($cfg["path"].$del);
-			$arTemp = explode("/", $del);
-			if (count($arTemp) > 1) {
-				array_pop($arTemp);
-				$current = implode("/", $arTemp);
-			}
-			AuditAction($cfg["constants"]["fm_delete"], $del);
-		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
+	// we need to strip slashes twice in some circumstances
+	// Ex.	If we are trying to delete test/tester's file/test.txt
+	//	  $del will be "test/tester\\\'s file/test.txt"
+	//	  one strip will give us "test/tester\'s file/test.txt
+	//	  the second strip will give us the correct
+	//		  "test/tester's file/test.txt"
+	$del = stripslashes(stripslashes($del));
+	if (!ereg("(\.\.\/)", $del)) {
+		avddelete($cfg["path"].$del);
+		$arTemp = explode("/", $del);
+		if (count($arTemp) > 1) {
+			array_pop($arTemp);
+			$current = implode("/", $arTemp);
 		}
+		AuditAction($cfg["constants"]["fm_delete"], $del);
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
 	}
 	return $current;
 }
 
-// This function returns the extension of a given file.
-// Where the extension is the part after the last dot.
-// When no dot is found the noExtensionFile string is
-// returned. This should point to a 'unknown-type' image
-// time by default. This string is also returned when the
-// file starts with an dot.
+/**
+ * This function returns the extension of a given file.
+ * Where the extension is the part after the last dot.
+ * When no dot is found the noExtensionFile string is
+ * returned. This should point to a 'unknown-type' image
+ * time by default. This string is also returned when the
+ * file starts with an dot.
+ *
+ * @param $fileName
+ * @return
+ */
 function getExtension($fileName) {
 	$noExtensionFile="unknown"; // The return when no extension is found
 	//Prepare the loop to find an extension
@@ -150,10 +172,43 @@ function isValidEntry($entry) {
 	return true;
 }
 
-// SFV Check hack
-//*************************************************************************
-// findSVF()
-// This method Builds and displays the Torrent Section of the Index Page
+/**
+ * checks if file is nfo.
+ *
+ * @param $entry
+ * @return 0|1
+ */
+function isNfo($entry) {
+	$subst = substr(strtolower($entry), -4);
+	if ($subst == ".nfo")
+		return 1;
+	if ($subst == ".txt")
+		return 1;
+	if ($subst == ".log")
+		return 1;
+	return 0;
+}
+
+/**
+ * checks if file is rar.
+ *
+ * @param $entry
+ * @return 0|1|2 ; 0 = no match, 1 = rar-file, 2 = zip-file
+ */
+function isRar($entry) {
+	if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE ))
+		return 1;
+	if (strpos($entry, '.zip') !== FALSE)
+		return 2;
+	return 0;
+}
+
+/**
+ * SFV Check hack
+ *
+ * @param $dirName
+ * @return
+ */
 function findSFV($dirName) {
 	$sfv = false;
 	$d = dir($dirName);
@@ -167,17 +222,6 @@ function findSFV($dirName) {
 	}
 	$d->close();
 	return $sfv;
-}
-
-//*************************************************************************
-// correctFileName()
-// Adds backslashes above special characters to obtain attainable directory
-// names for disk usage
-function correctFileName ($inName) {
-       $replaceItems = array("'", ",", "#", "%", "!", "+", ":", "/", " ", "@", "$", "&", "?", "\"", "(", ")");
-       $replacedItems = array("\'", "\,", "\#", "\%", "\!", "\+", "\:", "\/", "\ ", "\@", "\$", "\&", "\?", "\\\"", "\(", "\)");
-       $cleanName = str_replace($replaceItems, $replacedItems, $inName);
-       return $cleanName;
 }
 
 ?>

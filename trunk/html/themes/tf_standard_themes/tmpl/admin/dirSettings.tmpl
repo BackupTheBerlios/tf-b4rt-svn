@@ -14,47 +14,30 @@
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
 						<form name="theForm" action="index.php?iid=admin&op=updateDirSettings" method="post" onsubmit="return validateSettings()">
-							<script src="js/dirSettings.js" type="text/javascript"></script>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Restricted Entries</strong><br>
-									Set the entries restricted for all dir-operations.<br>
-									<u>Note</u> : dot-entries are always restricted.
+								<td align="left" width="350" valign="top"><strong>Public Read</strong><br>
+								Enable/Disable Public Read. When enabled all users can browse through all folders :
 								</td>
 								<td valign="top">
-									<table>
-										<tr>
-											<td valign="top" align="left">Entries :</td>
-											<td valign="top" align="left">
-												<select name="resdirlist" size="6">
-													<tmpl_if name="dir_restricted_list">
-														<tmpl_loop name="dir_restricted_list">
-															<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
-															</tmpl_loop>
-													</tmpl_if>
-												</select>
-												<input type="button" name="remButton" value="remove" onclick="removeDirEntry()">
-											</td>
-										</tr>
-										<tr>
-											<td valign="top" align="left">New Entry :</td>
-											<td valign="top" align="left">
-												<input type="text" name="resdirentry" size="30">
-												<input type="button" name="addButton" value="add" onclick="addDirEntry()" size="30">
-												<input type="hidden" name="dir_restricted" value="<tmpl_var name="dir_restricted">">
-											</td>
-										</tr>
-									</table>
+									<select name="dir_public_read">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="dir_public_read" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable dir-stats</strong><br>
-								Enable/Disable dir-stats :
+								<td align="left" width="350" valign="top"><strong>Public Write</strong><br>
+								Enable/Disable Public Write. When enabled all users can delete from/write to all folders :
 								</td>
 								<td valign="top">
-									<select name="enable_dirstats">
+									<select name="dir_public_write">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="enable_dirstats" value="0">
+										<tmpl_if name="dir_public_write" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -124,7 +107,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable unrar</strong><br>
-								Enable/Disable unrar-hack :
+								Enable/Disable unrar :
 								</td>
 								<td valign="top">
 									<select name="enable_rar">
@@ -139,7 +122,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable sfv-check</strong><br>
-								Enable/Disable SFV Check-hack :
+								Enable/Disable SFV Check :
 								</td>
 								<td valign="top">
 									<select name="enable_sfvcheck">
@@ -192,7 +175,53 @@
 									<tmpl_var name="getMoveSettings">
 								</td>
 							</tr>
-
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable dir-stats</strong><br>
+								Enable/Disable dir-stats :
+								</td>
+								<td valign="top">
+									<select name="enable_dirstats">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_dirstats" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<script src="js/dirSettings.js" type="text/javascript"></script>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Restricted Entries</strong><br>
+									Set the entries restricted for all dir-operations.<br>
+									<u>Note</u> : dot-entries are always restricted.
+								</td>
+								<td valign="top">
+									<table>
+										<tr>
+											<td valign="top" align="left">Entries :</td>
+											<td valign="top" align="left">
+												<select name="resdirlist" size="3">
+													<tmpl_if name="dir_restricted_list">
+														<tmpl_loop name="dir_restricted_list">
+															<option value="<tmpl_var name="target">"><tmpl_var name="target"></option>
+															</tmpl_loop>
+													</tmpl_if>
+												</select>
+												<input type="button" name="remButton" value="remove" onclick="removeDirEntry()">
+											</td>
+										</tr>
+										<tr>
+											<td valign="top" align="left">New Entry :</td>
+											<td valign="top" align="left">
+												<input type="text" name="resdirentry" size="30">
+												<input type="button" name="addButton" value="add" onclick="addDirEntry()" size="30">
+												<input type="hidden" name="dir_restricted" value="<tmpl_var name="dir_restricted">">
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
 						</table>
 						<br>
 						<input type="Submit" value="Update Settings">

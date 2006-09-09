@@ -40,27 +40,15 @@ $tar = getRequestVar('tar');
 $dir = stripslashes(urldecode(getRequestVar('dir')));
 $multidel = getRequestVar('multidel');
 
-/*******************************************************************************
- * multi-del
- ******************************************************************************/
-if ($multidel != "") {
-	foreach($_POST['file'] as $key => $element) {
-		$element = urldecode($element);
-		if (isValidEntry(basename($element)))
-			delDirEntry($element);
-		else
-			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$element);
-	}
-	header("Location: index.php?iid=dir&dir=".urlencode($dir));
-	exit();
-}
+// check if user is admin, check once use often
+$isAdmin = IsAdmin($cfg["user"]);
 
 /*******************************************************************************
  * delete
  ******************************************************************************/
 if ($del != "") {
-	// only valid entry
-	if (isValidEntry(basename($del))) {
+	// only valid entry with permission
+	if ((isValidEntry(basename($del))) && (hasPermission($del, $cfg["user"], 'w'))) {
 		$current = delDirEntry($del);
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
@@ -79,11 +67,27 @@ if ($del != "") {
 }
 
 /*******************************************************************************
+ * multi-delete
+ ******************************************************************************/
+if ($multidel != "") {
+	foreach($_POST['file'] as $key => $element) {
+		$element = urldecode($element);
+		// only valid entry with permission
+		if ((isValidEntry(basename($element))) && (hasPermission($element, $cfg["user"], 'w')))
+			delDirEntry($element);
+		else
+			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$element);
+	}
+	header("Location: index.php?iid=dir&dir=".urlencode($dir));
+	exit();
+}
+
+/*******************************************************************************
  * download
  ******************************************************************************/
 if ($down != "" && $cfg["enable_file_download"]) {
-	// only valid entry
-	if (isValidEntry(basename($down))) {
+	// only valid entry with permission
+	if ((isValidEntry(basename($down))) && (hasPermission($down, $cfg["user"], 'r'))) {
 		$current = "";
 		// Yes, then download it
 		// we need to strip slashes twice in some circumstances
@@ -149,8 +153,8 @@ if ($down != "" && $cfg["enable_file_download"]) {
  * download as archive
  ******************************************************************************/
 if ($tar != "" && $cfg["enable_file_download"]) {
-	// only valid entry
-	if (isValidEntry(basename($tar))) {
+	// only valid entry with permission
+	if ((isValidEntry(basename($tar))) && (hasPermission($tar, $cfg["user"], 'r'))) {
 		$current = "";
 		// Yes, then tar and download it
 		// we need to strip slashes twice in some circumstances
@@ -225,76 +229,34 @@ if ($tar != "" && $cfg["enable_file_download"]) {
  * dir-page
  ******************************************************************************/
 
-if ($dir == "")
-	unset($dir);
-
+// check dir-var
 if (isset($dir)) {
-	if (ereg("(\.\.)", $dir))
-		unset($dir);
-	else
-		$dir = $dir."/";
+	if ($dir != "") {
+		if (ereg("(\.\.)", $dir))
+			$dir = "";
+		else
+			$dir = $dir."/";
+	}
+} else {
+	$dir = "";
 }
 
-if(!isset($dir))
-	$dir = "";
-
+// dir-name
 $dirName = $cfg["path"].$dir;
 $dirName = stripslashes($dirName);
 
 // dir-check
 if (!(@is_dir($dirName))) {
 	// our dir is no dir but a file. use parent-directory.
-	// setup default parent directory URL
-	$parentURL = "index.php?iid=dir";
-	// get the real parentURL
-	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1)
-		$parentURL="index.php?iid=dir&dir=" . urlencode($matches[1]);
-	header("Location: ".$parentURL);
+	if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
+		header("Location: index.php?iid=dir&dir=".urlencode($matches[1]));
+	else
+		header("Location: index.php?iid=dir");
 	exit();
 }
 
-
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "dir.tmpl");
-
-if (isset($dir)) {
-	//setup default parent directory URL
-	$parentURL = "index.php?iid=dir";
-	//get the real parentURL
-	if (preg_match("/^(.+)\/.+$/",$dir,$matches) == 1) {
-		$parentURL="index.php?iid=dir&dir=" . urlencode($matches[1]);
-	}
-	$tmpl->setvar('parentURL', $parentURL);
-	$tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
-}
-
-// set some template-vars
-$tmpl->setvar('dir', $dir);
-$tmpl->setvar('parentURL', $parentURL);
-$tmpl->setvar('parentURL', $parentURL);
-$tmpl->setvar('enable_rename', $cfg["enable_rename"]);
-$tmpl->setvar('enable_move', $cfg["enable_move"]);
-$tmpl->setvar('enable_sfvcheck',  $cfg['enable_sfvcheck']);
-$tmpl->setvar('enable_rar', $cfg["enable_rar"]);
-$tmpl->setvar('enable_view_nfo', $cfg["enable_view_nfo"]);
-$tmpl->setvar('enable_file_download', $cfg["enable_file_download"]);
-$tmpl->setvar('package_type', $cfg["package_type"]);
-$tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
-$tmpl->setvar('_DELETE', $cfg['_DELETE']);
-$tmpl->setvar('_DIR_REN_LINK', $cfg['_DIR_REN_LINK']);
-$tmpl->setvar('_DIR_MOVE_LINK', $cfg['_DIR_MOVE_LINK']);
-$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
-$tmpl->setvar('bgDark', $cfg['bgDark']);
-$tmpl->setvar('bgLight', $cfg['bgLight']);
-
-// The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
-// this is so only the owner of the file(s) or admin can delete
-// only give admins and users who "own" this directory
-// the ability to delete sub directories
-if(IsAdmin($cfg["user"]) || preg_match("/^" . $cfg["user"] . "/",$dir))
-	$tmpl->setvar('aclDelete', 1);
-else
-	$tmpl->setvar('aclDelete', 0);
 
 // dirstats
 if ($cfg['enable_dirstats'] == 1) {
@@ -307,11 +269,9 @@ if ($cfg['enable_dirstats'] == 1) {
 			$duArg = "-L";
 			break;
 	}
-	$dudir = $cfg['bin_du']." -ch ".$duArg." \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
-	$du = @shell_exec($dudir);
-	$duTotal = @substr($du, 0, -7);
+	$du = @shell_exec($cfg['bin_du']." -ch ".$duArg." ".escapeshellarg($dirName)." | ".$cfg['bin_grep']." \"total\"");
+	$tmpl->setvar('duTotal', @substr($du, 0, -7));
 	$tmpl->setvar('_TDDU', $cfg['_TDDU']);
-	$tmpl->setvar('duTotal', $duTotal);
 } else {
 	$tmpl->setvar('enable_dirstats', 0);
 }
@@ -320,8 +280,7 @@ if ($cfg['enable_dirstats'] == 1) {
 $entrys = array();
 $handle = opendir($dirName);
 while (false !== ($entry = readdir($handle))) {
-	// only valid entries
-	if (isValidEntry($entry))
+	if ((isValidEntry($entry)) && (hasPermission($entry, $cfg["user"], 'r')))
 		array_push($entrys, $entry);
 }
 closedir($handle);
@@ -331,10 +290,15 @@ natsort($entrys);
 $list = array();
 $filelist = array();
 foreach ($entrys as $entry) {
+	// acl-write-check
+	if (hasPermission($entry, $cfg["user"], 'w'))
+		$aclWrite = 1;
+	else
+		$aclWrite = 0;
 	if (@is_dir($dirName.$entry)) { // dir
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
-			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".$duArg." ".correctFileName($dirName.$entry));
+			$dudir = @shell_exec($cfg['bin_du']." -sk -h ".$duArg." ".escapeshellarg($dirName.$entry));
 			$size = @explode("\t", $dudir);
 			$size = @array_shift($size);
 			$arStat = @lstat($dirName.$entry);
@@ -346,17 +310,18 @@ foreach ($entrys as $entry) {
 		}
 		// sfv
 		if (($cfg['enable_sfvcheck'] == 1) && (false !== ($sfv = findSFV($dirName.$entry)))) {
-			$is_sfv = 1;
+			$show_sfv = 1;
 			$sfvdir = $sfv['dir'];
 			$sfvsfv = $sfv['sfv'];
 		} else {
-			$is_sfv = 0;
+			$show_sfv = 0;
 			$sfvdir = "";
 			$sfvsfv = "";
 		}
 		// add entry to dir-array
 		array_push($list, array(
 			'is_dir' => 1,
+			'aclWrite' => $aclWrite,
 			'entry' => $entry,
 			'urlencode1' => urlencode($dir.$entry),
 			'urlencode2' => urlencode($dir),
@@ -364,12 +329,11 @@ foreach ($entrys as $entry) {
 			'addslashes1' => addslashes($entry),
 			'size' => $size,
 			'date' => $date,
-			'is_sfv' => $is_sfv,
+			'show_sfv' => $show_sfv,
 			'sfvdir' => $sfvdir,
 			'sfvsfv' => $sfvsfv
 			)
 		);
-
 	} else if (!@is_dir($dirName.$entry)) { // file
 		// image
 		$image="themes/".$cfg['theme']."/images/time.gif";
@@ -379,34 +343,30 @@ foreach ($entrys as $entry) {
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
 			$arStat = @lstat($dirName.$entry);
-			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry ) : $arStat[7];
+			$arStat[7] = ($arStat[7] == 0) ? @file_size($dirName.$entry) : $arStat[7];
 			$timeStamp = "";
 			if (array_key_exists(10,$arStat))
 				$timeStamp = @filemtime($dirName.$entry);
-			$size = number_format(($arStat[7])/1024);
+			$size = @number_format(($arStat[7]) / 1024);
 			$date = @date("m-d-Y h:i a", $timeStamp);
 		} else {
 			$size = 0;
 			$date = "";
 		}
-		// rar
-		if ($cfg["enable_rar"] == 1) {
-			$is_rar = 0;
-			if ((strpos($entry, '.rar') !== FALSE AND strpos($entry, '.Part') === FALSE) OR (strpos($entry, '.part01.rar') !== FALSE ) OR (strpos($entry, '.part1.rar') !== FALSE ))
-				$is_rar = 1;
-			if (strpos($dir.$entry, '.zip') !== FALSE)
-				$is_rar = 2;
-		} else {
-			$is_rar = 0;
-		}
 		// nfo
-		if ($cfg["enable_view_nfo"] && ((substr(strtolower($entry), -4 ) == ".nfo" ) || (substr(strtolower($entry), -4 ) == ".txt" ) || (substr(strtolower($entry), -4 ) == ".log" )))
-			$is_nfo = 1;
+		if ($cfg["enable_view_nfo"] == 1)
+			$show_nfo = isNfo($entry);
 		else
-			$is_nfo = 0;
+			$show_nfo = 0;
+		// rar
+		if (($cfg["enable_rar"] == 1) && ($aclWrite == 1))
+			$show_rar = isRar($entry);
+		else
+			$show_rar = 0;
 		// add entry to file-array
 		array_push($filelist, array(
 			'is_dir' => 0,
+			'aclWrite' => $aclWrite,
 			'entry' => $entry,
 			'urlencode1' => urlencode($dir.$entry),
 			'urlencode2' => urlencode($dir),
@@ -416,11 +376,10 @@ foreach ($entrys as $entry) {
 			'image' => $image,
 			'size' => $size,
 			'date' => $date,
-			'is_rar' => $is_rar,
-			'is_nfo' => $is_nfo
+			'show_nfo' => $show_nfo,
+			'show_rar' => $show_rar
 			)
 		);
-
 	}
 }
 
@@ -437,6 +396,29 @@ $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+// dir
+$tmpl->setvar('dir', $dir);
+// parent url
+if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
+	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . urlencode($matches[1]));
+else
+	$tmpl->setvar('parentURL', "index.php?iid=dir");
+//
+$tmpl->setvar('enable_rename', $cfg["enable_rename"]);
+$tmpl->setvar('enable_move', $cfg["enable_move"]);
+$tmpl->setvar('enable_sfvcheck',  $cfg['enable_sfvcheck']);
+$tmpl->setvar('enable_rar', $cfg["enable_rar"]);
+$tmpl->setvar('enable_view_nfo', $cfg["enable_view_nfo"]);
+$tmpl->setvar('enable_file_download', $cfg["enable_file_download"]);
+$tmpl->setvar('package_type', $cfg["package_type"]);
+$tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
+$tmpl->setvar('bgDark', $cfg['bgDark']);
+$tmpl->setvar('bgLight', $cfg['bgLight']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+$tmpl->setvar('_DIR_REN_LINK', $cfg['_DIR_REN_LINK']);
+$tmpl->setvar('_DIR_MOVE_LINK', $cfg['_DIR_MOVE_LINK']);
+$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
+$tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);

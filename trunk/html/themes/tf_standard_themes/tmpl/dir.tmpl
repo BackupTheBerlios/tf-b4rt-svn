@@ -29,7 +29,7 @@
 								<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 							</tmpl_if>
 							<tmpl_if name="enable_sfvcheck">
-								<tmpl_if name="is_sfv" value="1">
+								<tmpl_if name="show_sfv" value="1">
 									<a href="javascript:CheckSFV('<tmpl_var name="sfvdir">','<tmpl_var name="sfvsfv"')"><img src="themes/tf_standard_themes/images/sfv_enabled.gif" border="0" width="16" height="16" alt="sfv check torrent"></a>
 								<tmpl_else>
 									<img src="themes/tf_standard_themes/images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">
@@ -37,9 +37,12 @@
 							</tmpl_if>
 							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
 							<a href="index.php?iid=dir&tar=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/tar_down.gif" width=16 height=16 title="Download as <tmpl_var name="package_type">" border=0></a>
-							<tmpl_if name="aclDelete">
+							<tmpl_if name="aclWrite">
 								<a href="index.php?iid=dir&del=<tmpl_var name="urlencode1">" onclick="return confirm('<tmpl_var name="_ABOUTTODELETE"> : <tmpl_var name="addslashes1">')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 								<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
+							<tmpl_else>
+								<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0>
+								<input type="checkbox" name="file[]" disabled>
 							</tmpl_if>
 						</td>
 					<tmpl_else>
@@ -63,12 +66,12 @@
 							<tmpl_if name="enable_move">
 								<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 							</tmpl_if>
-							<tmpl_if name="is_rar" value="1">
+							<tmpl_if name="show_rar" value="1">
 								<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')"><img src="themes/tf_standard_themes/images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0></a>
-							<tmpl_elseif name="is_rar" value="2">
+							<tmpl_elseif name="show_rar" value="2">
 								<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')"><img src="themes/tf_standard_themes/images/zip.png" width=16 height=16 title="Unzip" border=0></a>
 							</tmpl_if>
-							<tmpl_if name="is_nfo">
+							<tmpl_if name="show_nfo">
 								<a href="index.php?iid=viewnfo&path=<tmpl_var name="urlencode4">"><img src="themes/tf_standard_themes/images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0></a>
 							</tmpl_if>
 							<tmpl_if name="enable_maketorrent">
@@ -77,9 +80,12 @@
 							<tmpl_if name="enable_file_download">
 								<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/download_owner.gif" width=16 height=16 title="Download" border=0></a>
 							</tmpl_if>
-							<tmpl_if name="aclDelete">
+							<tmpl_if name="aclWrite" value="1">
 								<a href="index.php?iid=dir&del=<tmpl_var name="urlencode1">" onclick="return confirm('<tmpl_var name="_ABOUTTODELETE"> : <tmpl_var name="addslashes1">')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 								<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
+							<tmpl_else>
+								<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0>
+								<input type="checkbox" name="file[]" disabled>
 							</tmpl_if>
 						</td>
 					</tmpl_if>

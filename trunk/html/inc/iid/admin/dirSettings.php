@@ -51,6 +51,8 @@ foreach ($restrictedFileEntries as $entry) {
 $tmpl->setloop('dir_restricted_list', $dir_list);
 $tmpl->setvar('dir_restricted', $cfg["dir_restricted"]);
 //
+$tmpl->setvar('dir_public_read', $cfg["dir_public_read"]);
+$tmpl->setvar('dir_public_write', $cfg["dir_public_write"]);
 $tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
 $tmpl->setvar('enable_file_download', $cfg["enable_file_download"]);
 $tmpl->setvar('package_type', $cfg["package_type"]);
