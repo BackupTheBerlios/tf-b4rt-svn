@@ -23,6 +23,9 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// config
+loadSettings('tf_settings_dir');
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "move.tmpl");
 
