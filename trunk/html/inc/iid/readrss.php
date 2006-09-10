@@ -29,31 +29,23 @@ require_once("inc/classes/lastRSS.php");
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "readrss.tmpl");
 
-// check http://varchars.com/rss/ for feeds
-
 // The following is for PHP < 4.3
-if (!function_exists('html_entity_decode'))
-{
-	function html_entity_decode($string, $opt = ENT_COMPAT)
-	{
+if (!function_exists('html_entity_decode')) {
+	function html_entity_decode($string, $opt = ENT_COMPAT) {
 		$trans_tbl = get_html_translation_table (HTML_ENTITIES);
 		$trans_tbl = array_flip ($trans_tbl);
 
-		if ($opt & 1)
-		{
+		if ($opt & 1) {
 			// Translating single quotes
 			// Add single quote to translation table;
 			// doesn't appear to be there by default
 			$trans_tbl["&apos;"] = "'";
 		}
-
-		if (!($opt & 2))
-		{
+		if (!($opt & 2)) {
 			// Not translating double quotes
 			// Remove double quote from translation table
 			unset($trans_tbl["&quot;"]);
 		}
-
 		return strtr ($string, $trans_tbl);
 	}
 }
@@ -73,15 +65,17 @@ $arURL = GetRSSLinks();
 $rss = new lastRSS();
 
 // setup transparent cache
-$rss->cache_dir = $cfg["transfer_file_path"];
+$cacheDir = $cfg['path'].".rsscache";
+checkDirectory($cacheDir, 0777);
+$rss->cache_dir = $cacheDir;
 $rss->cache_time = $cfg["rss_cache_min"] * 60; // 1200 = 20 min.  3600 = 1 hour
 $rss->strip_html = false; // don't remove HTML from the description
 
 // Loop through each RSS feed
 $rss_list = array();
-foreach( $arURL as $rid => $url ) {
-	if( $rs = $rss->get( $url ) ) {
-		if( !empty( $rs["items"] ) ) {
+foreach ($arURL as $rid => $url) {
+	if ($rs = $rss->get($url)) {
+		if(!empty( $rs["items"])) {
 			// Cache rss feed so we don't have to call it again
 			$rssfeed[] = $rs;
 			$stat = 1;
@@ -90,8 +84,7 @@ foreach( $arURL as $rid => $url ) {
 			$rssfeed[] = "";
 			$stat = 2;
 		}
-	}
-	else {
+	} else {
 		// Unable to grab RSS feed, must of timed out
 		$rssfeed[] = "";
 		$stat = 3;
@@ -113,7 +106,7 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 		$title = "";
 		$content = "";
 		$pageUrl = "";
-		if( !empty( $rs["items"] ) ) {
+		if (!empty( $rs["items"])) {
 			// get Site title and Page Link
 			$title = $rs["title"];
 			$pageUrl = $rs["link"];
@@ -123,9 +116,9 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 				$title2 = $rs["items"][$i]["title"];
 				$pubDate = (!empty($rs["items"][$i]["pubDate"])) ? $rs["items"][$i]["pubDate"] : "Unknown";
 				// RSS entry needs to have a link, otherwise pointless
-				if( empty( $link ) )
+				if (empty($link))
 					continue;
-				if($link != "" && $title2 !="")
+				if ($link != "" && $title2 !="")
 					$content .= "<tr><td><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$link."\"><a href=\"index.php?iid=index&url_upload=".$link."\">".$title2."</a></td><td> ".$pubDate."</td></tr>\n";
 				else
 					$content .= "<tr><td  class=\"tiny\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\">".ScrubDescription(str_replace("Torrent: <a href=\"", "Torrent: <a href=\"index.php?iid=index&url_upload=", html_entity_decode($rs["items"][$i]["description"])), $title2)."</td><td valign=\"top\">".$pubDate."</td></tr>";
@@ -166,22 +159,16 @@ function ScrubDescription($desc, $title) {
 	$parts = explode("</a>", $desc);
 	$replace = ereg_replace('">.*$', '">'.$title."</a>", $parts[0]);
 	if (strpos($parts[1], "Search:") !== false)
-	{
 		$parts[1] = $parts[1]."</a>\n";
-	}
-	for($inx = 2; $inx < count($parts); $inx++)
-	{
-		if (strpos($parts[$inx], "Info: <a ") !== false)
-		{
+	for ($inx = 2; $inx < count($parts); $inx++) {
+		if (strpos($parts[$inx], "Info: <a ") !== false) {
 			// We have an Info: and URL to clean
 			$parts[$inx] = ereg_replace('">.*$', '" target="_blank">Read More...</a>', $parts[$inx]);
 		}
 	}
 	$rtnValue = $replace;
 	for ($inx = 1; $inx < count($parts); $inx++)
-	{
 		$rtnValue .= $parts[$inx];
-	}
 	return $rtnValue;
 }
 
