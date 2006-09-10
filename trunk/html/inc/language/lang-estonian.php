@@ -144,7 +144,6 @@ define("_RETURNTOMESSAGES","Naase postkasti");  // links to mailbox
 define("_COMPOSE","Koosta");  // As in 'Compose a message' for button
 define("_LANGUAGE","Keel"); // label
 define("_QUEUELIST","Järjekord"); // Queuelist
-define("_MYDIR","Minu kataloog"); // My Directory
 define("_RSSTORRENTS","RSS Torrents"); // RSS Torrents
 define("_SIZE","Suurus"); // File size
 define("_LOGIN","Logi sisse"); // LOGIN button and title at login page

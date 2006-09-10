@@ -170,6 +170,17 @@ $loadavgString = "n/a";
 if ($cfg["show_server_load"] != 0)
 	$loadavgString = @getLoadAverageString();
 
+// incoming-path
+switch ($cfg["enable_home_dirs"]) {
+    case 1:
+    default:
+        $tmpl->setvar('path_incoming', $cfg["user"]);
+        break;
+    case 0:
+    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
+        break;
+}
+
 // =============================================================================
 // transfer-list
 // =============================================================================
