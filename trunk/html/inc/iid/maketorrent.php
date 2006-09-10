@@ -237,7 +237,13 @@ if( !empty( $_GET["download"] ) )
 // Strip the folders from the path
 function StripFolders( $path )
 {
-	$pos = strrpos( $path, "/" ) + 1;
+	$pos = strrpos( $path, "/" );
+	if ($pos === false) {
+		$pos = 0;
+	}
+	else {
+		$pos = $pos +1;
+	}
 	$path = substr( $path, $pos );
 	return $path;
 }
