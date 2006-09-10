@@ -160,8 +160,11 @@ $drivespace = getDriveSpace($cfg["path"]);
 $formatFreeSpace = formatFreeSpace($cfg["free_space"]);
 // connections
 $netstatConnectionsSum = "n/a";
-if ($cfg["index_page_connections"] != 0)
+$netstatConnectionsMax = "";
+if ($cfg["index_page_connections"] != 0) {
 	$netstatConnectionsSum = @netstatConnectionsSum();
+	$netstatConnectionsMax = "(".@getSumMaxCons().")";
+}
 // loadavg
 $loadavgString = "n/a";
 if ($cfg["show_server_load"] != 0)
@@ -205,12 +208,11 @@ foreach($arList as $entry) {
 		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = loadTorrentSettings($entry);
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
-		$hd = getStatusImage($af);
 	} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
 		// this is wget.
 		$isTorrent = false;
-		$transferowner = $cfg["user"];
-		$owner = true;
+		$transferowner = getOwner($entry);
+		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
 		$settingsAry['hash'] = $entry;
@@ -225,7 +227,6 @@ foreach($arList as $entry) {
 	    }
 		$settingsAry['datapath'] = "";
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'wget');
-		$hd = getStatusImage($af);
 	} else {
 		// this is "something else". use tornado statfile as default
 		$isTorrent = false;
@@ -245,12 +246,14 @@ foreach($arList as $entry) {
 	    }
 		$settingsAry['datapath'] = "";
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
-		$hd = getStatusImage($af);
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = (int) $af->running;
 	// cache percent-done in local var. ...
 	$percentDone = $af->percent_done;
+
+	// status-image
+	$hd = getStatusImage($af);
 
 	// more vars
 	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
@@ -686,10 +689,10 @@ if ($cfg['index_page_stats'] != 0) {
 	if (!array_key_exists("total_upload",$cfg))
 		$cfg["total_upload"] = 0;
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
-		$tmpl->setvar('totalxfer1', formatFreeSpace($xfer_total['total']['total'] / 1048576));
-		$tmpl->setvar('monthxfer1', formatFreeSpace($xfer_total['month']['total'] / 1048576));
-		$tmpl->setvar('weekxfer1', formatFreeSpace($xfer_total['week']['total'] / 1048576));
-		$tmpl->setvar('dayxfer1', formatFreeSpace($xfer_total['day']['total'] / 1048576));
+		$tmpl->setvar('totalxfer1', @formatFreeSpace($xfer_total['total']['total'] / 1048576));
+		$tmpl->setvar('monthxfer1', @formatFreeSpace($xfer_total['month']['total'] / 1048576));
+		$tmpl->setvar('weekxfer1', @formatFreeSpace($xfer_total['week']['total'] / 1048576));
+		$tmpl->setvar('dayxfer1', @formatFreeSpace($xfer_total['day']['total'] / 1048576));
 	}
 	if ($queueActive) {
 		$tmpl->setvar('queueActive2', 1);
@@ -711,19 +714,16 @@ if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('uploadspeed11', @number_format($sumMaxUpRate, 2));
 	$tmpl->setvar('totalspeed1', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
 	$tmpl->setvar('totalspeed11', @number_format($sumMaxRate, 2));
-	if ($cfg["index_page_connections"] != 0) {
-		$tmpl->setvar('id_connections1', $netstatConnectionsSum);
-		$tmpl->setvar('id_connections11', getSumMaxCons());
-	}
+	$tmpl->setvar('id_connections1', $netstatConnectionsSum);
+	$tmpl->setvar('id_connections11', $netstatConnectionsMax);
 	$tmpl->setvar('drivespace1', $formatFreeSpace);
-	if ($cfg["show_server_load"] != 0)
-		$tmpl->setvar('serverload1', $loadavgString);
+	$tmpl->setvar('serverload1', $loadavgString);
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
-		$tmpl->setvar('total2', formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576));
-		$tmpl->setvar('month2', formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576));
-		$tmpl->setvar('week2', formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576));
-		$tmpl->setvar('day2', formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576));
+		$tmpl->setvar('total2', @formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576));
+		$tmpl->setvar('month2', @formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576));
+		$tmpl->setvar('week2', @formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576));
+		$tmpl->setvar('day2', @formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576));
 	}
 }
 

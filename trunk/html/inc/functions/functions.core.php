@@ -149,7 +149,7 @@ function netstatConnectionsSum() {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			return (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmission|wget).*'"));
+			return (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget).*'"));
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
@@ -616,8 +616,8 @@ function getTransferTotals($transfer) {
 	require_once("inc/classes/ClientHandler.php");
 	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
-		$btclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+		$tclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
@@ -655,8 +655,8 @@ function getTransferTotalsCurrent($transfer) {
 	require_once("inc/classes/ClientHandler.php");
 	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
-		$btclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
+		$tclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
@@ -1464,8 +1464,8 @@ function getTransferListArray() {
 		} else if ((substr(strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
-			$transferowner = $cfg["user"];
-			$owner = true;
+			$transferowner = getOwner($entry);
+			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
