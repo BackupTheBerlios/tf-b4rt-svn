@@ -36,7 +36,7 @@ $background = "#000000";
 $alias = getRequestVar('alias');
 if (!empty($alias)) {
 	// read the alias file
-	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg);
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
 	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
 		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
 } else {

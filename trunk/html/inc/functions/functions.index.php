@@ -123,13 +123,13 @@ function indexProcessDownload($url_upload) {
 	$file_name = cleanFileName($file_name);
 	// if the output had data then write it to a file
 	if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
-		if (is_file($cfg["torrent_file_path"].$file_name)) {
+		if (is_file($cfg["transfer_file_path"].$file_name)) {
 			// Error
 			$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
 			$ext_msg = "DUPLICATE :: ";
 		} else {
 			// open a file to write to
-			$fw = fopen($cfg["torrent_file_path"].$file_name,'w');
+			$fw = fopen($cfg["transfer_file_path"].$file_name,'w');
 			fwrite($fw, $output);
 			fclose($fw);
 		}
@@ -181,13 +181,13 @@ function indexProcessUpload() {
 	if($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
 		if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
 			//FILE IS BEING UPLOADED
-			if (is_file($cfg["torrent_file_path"].$file_name)) {
+			if (is_file($cfg["transfer_file_path"].$file_name)) {
 				// Error
 				$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
 				$ext_msg = "DUPLICATE :: ";
 			} else {
-				if(move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["torrent_file_path"].$file_name)) {
-					chmod($cfg["torrent_file_path"].$file_name, 0644);
+				if(move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
+					chmod($cfg["transfer_file_path"].$file_name, 0644);
 					AuditAction($cfg["constants"]["file_upload"], $file_name);
 					// init stat-file
 					injectTorrent($file_name);
@@ -213,7 +213,7 @@ function indexProcessUpload() {
 						sleep(1);
 					}
 				} else {
-					$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["torrent_file_path"] . $file_name."</font><br>";
+					$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
 				}
 			}
 		} else {

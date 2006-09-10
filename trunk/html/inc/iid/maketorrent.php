@@ -70,7 +70,7 @@ require_once('inc/functions/functions.common.php');
 $tmpl = getTemplateInstance($cfg["theme"], "maketorrent.tmpl");
 
 // Variable information
-$tpath	  = $cfg["torrent_file_path"];
+$tpath	  = $cfg["transfer_file_path"];
 $tfile	  = @ $_POST['torrent'];
 $file	  = @ $_GET['path'];
 $torrent  = cleanFileName(StripFolders( trim($file) )) . ".torrent";

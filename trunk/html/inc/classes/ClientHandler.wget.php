@@ -57,10 +57,10 @@ class ClientHandlerWget extends ClientHandler
         if ($this->transfer{0} == '/')
         	$this->transfer = substr($this->transfer, 1);
         $aliasName = getAliasName($this->transfer);
-        $this->urlFile = $this->cfg["torrent_file_path"].$aliasName.".wget";
+        $this->urlFile = $this->cfg["transfer_file_path"].$aliasName.".wget";
         $this->alias = $aliasName.".stat";
         $this->owner = $this->cfg['user'];
-        $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
+        $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".pid";
     }
 
     /**
@@ -70,7 +70,7 @@ class ClientHandlerWget extends ClientHandler
      */
     function setVarsFromFile($transfer) {
     	$aliasName = getAliasName($transfer);
-    	$uf = $this->cfg["torrent_file_path"].$aliasName.".wget";
+    	$uf = $this->cfg["transfer_file_path"].$aliasName.".wget";
 	    $data = "";
 	    if($fileHandle = @fopen($uf,'r')) {
 	        while (!@feof($fileHandle))
@@ -93,7 +93,7 @@ class ClientHandlerWget extends ClientHandler
 
 		// write out aliasfile
 		require_once("inc/classes/AliasFile.php");
-		$af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias,	$this->cfg['user'], $this->cfg);
+		$af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$this->alias,	$this->cfg['user'], $this->cfg);
 		$af->running = "2"; // file is new
 		$af->size = 0;
 		$af->WriteFile();
@@ -135,7 +135,7 @@ class ClientHandlerWget extends ClientHandler
         // start it
         $this->command = "nohup ".$this->cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
-        $this->command .= " " . escapeshellarg($this->cfg["torrent_file_path"].$this->alias);
+        $this->command .= " " . escapeshellarg($this->cfg["transfer_file_path"].$this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
         $this->command .= " " . $this->owner;
         switch ($this->cfg["enable_home_dirs"]) {
@@ -211,7 +211,7 @@ class ClientHandlerWget extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         return $retVal;
@@ -246,7 +246,7 @@ class ClientHandlerWget extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         return $retVal;

@@ -362,10 +362,10 @@ function repairTorrentflux() {
 	global $cfg, $db;
 
 	// delete pid-files of torrent-clients
-	if ($dirHandle = opendir($cfg["torrent_file_path"])) {
+	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
 		while (false !== ($file = readdir($dirHandle))) {
 			if ((substr($file, -1, 1)) == "d")
-				@unlink($cfg["torrent_file_path"].$file);
+				@unlink($cfg["transfer_file_path"].$file);
 		}
 		closedir($dirHandle);
 	}
@@ -377,7 +377,7 @@ function repairTorrentflux() {
 		$alias = getAliasName($torrent);
 		$owner = getOwner($torrent);
 		$btclient = getTransferClient($torrent);
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $owner, $cfg, $btclient);
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias.".stat", $owner, $cfg, $btclient);
 		if (isset($af)) {
 			$af->running = 0;
 			$af->percent_done = -100.0;

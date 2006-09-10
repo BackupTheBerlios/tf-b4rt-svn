@@ -38,9 +38,8 @@ $db = getdb();
 // load global settings
 loadSettings('tf_settings');
 
-// Path to where the torrent meta files will be stored... usually a sub of $cfg["path"]
-// also, not the '.' to make this a hidden directory
-$cfg["torrent_file_path"] = $cfg["path"].".torrents/";
+// Path to where the meta files will be stored... usually a sub of $cfg["path"]
+$cfg["transfer_file_path"] = $cfg["path"].".transfers/";
 
 // Free space in MB
 $cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);

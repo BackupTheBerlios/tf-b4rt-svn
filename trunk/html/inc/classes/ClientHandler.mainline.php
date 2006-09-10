@@ -80,8 +80,8 @@ class ClientHandlerMainline extends ClientHandler
 
 		/* Skip file priority stuff, as its not in the CL client, that I can see
 		$filePrio = "";
-		if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
-		$priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
+		if(file_exists($this->cfg["transfer_file_path"].$this->alias.".prio")) {
+		$priolist = explode(',',file_get_contents($this->cfg["transfer_file_path"].$this->alias .".prio"));
 		$priolist = implode(',',array_slice($priolist,1,$priolist[0]));
 		$filePrio = " --priority ".$priolist;
 		}
@@ -157,7 +157,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= $pyCmd . " " .$this->mainlineBin;
 		$this->command .= " --display_interval 5";
 		$this->command .= " --tf_owner ".$this->owner;
-		$this->command .= " --stat_file ".$this->cfg["torrent_file_path"].$this->alias .".stat";
+		$this->command .= " --stat_file ".$this->cfg["transfer_file_path"].$this->alias .".stat";
 		$this->command .= " --save_incomplete_in ".$this->savepath;
 		$this->command .= " --save_in ".$this->savepath;
 		$this->command .= " --language en";
@@ -180,7 +180,7 @@ class ClientHandlerMainline extends ClientHandler
 		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
 			$this->command .= " --no_check_hashes";
 		$this->command .= " ".$this->cfg["btclient_mainline_options"];
-		$this->command .= " ".$this->cfg["torrent_file_path"].$this->transfer;
+		$this->command .= " ".$this->cfg["transfer_file_path"].$this->transfer;
 		$this->command .= " > /dev/null &";
 
 		// start the client
@@ -196,7 +196,7 @@ class ClientHandlerMainline extends ClientHandler
      * @param $return return-param (optional)
      */
     function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
-        $this->pidFile = $this->cfg["torrent_file_path"].$aliasFile.".pid";
+        $this->pidFile = $this->cfg["transfer_file_path"].$aliasFile.".pid";
         // stop the client
         parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
         // give it some extra time, it needs it.
@@ -249,7 +249,7 @@ class ClientHandlerMainline extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         return $retVal;
@@ -297,7 +297,7 @@ class ClientHandlerMainline extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] += ($af->uptotal+0);
         $retVal["downtotal"] += ($af->downtotal+0);
         return $retVal;

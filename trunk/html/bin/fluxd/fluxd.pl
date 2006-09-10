@@ -37,7 +37,7 @@ use FluxdCommon;
 #
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
-my $PATH_TORRENT_DIR = ".torrents";
+my $PATH_TRANSFER_DIR = ".transfers";
 our $PATH_DATA_DIR = ".fluxd";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
@@ -85,10 +85,10 @@ while ( $loop ) {
 
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		eval { 
+		eval {
 			local $SIG{ALRM} = sub { die "alarm\n" };
 			alarm 5;
-			$qmgr->main(); 
+			$qmgr->main();
 			alarm 0;
 		};
 
@@ -101,10 +101,10 @@ while ( $loop ) {
 
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		eval { 
+		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
 			alarm 5;
-			$fluxinet->main(); 
+			$fluxinet->main();
 			alarm 0;
 		};
 
@@ -117,10 +117,10 @@ while ( $loop ) {
 
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
-		eval { 
+		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
 			alarm 5;
-			$watch->main(); 
+			$watch->main();
 			alarm 0;
 		};
 
@@ -133,10 +133,10 @@ while ( $loop ) {
 
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		eval { 
+		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
 			alarm 5;
-			$clientmaint->main(); 
+			$clientmaint->main();
 			alarm 0;
 		};
 
@@ -149,10 +149,10 @@ while ( $loop ) {
 
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		eval { 
+		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
 			alarm 5;
-			$trigger->main(); 
+			$trigger->main();
 			alarm 0;
 		};
 
@@ -409,7 +409,7 @@ sub initPaths {
 	if (!((substr $path, -1) eq "/")) {
 		$path .= "/";
 	}
-	$PATH_TORRENT_DIR = $path.$PATH_TORRENT_DIR."/";
+	$PATH_TRANSFER_DIR = $path.$PATH_TRANSFER_DIR."/";
 	$PATH_DATA_DIR = $path.$PATH_DATA_DIR."/";
 	$PATH_QUEUE_FILE = $PATH_DATA_DIR.$PATH_QUEUE_FILE;
 	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
@@ -1119,7 +1119,7 @@ sub check {
 	# 4. paths
 	print "4. paths\n";
 	print " - flux-data-dir : ".FluxDB->getFluxConfig("path")."\n";
-	print " - PATH_TORRENT_DIR : ".$PATH_TORRENT_DIR."\n";
+	print " - PATH_TRANSFER_DIR : ".$PATH_TRANSFER_DIR."\n";
 	print " - PATH_DATA_DIR : ".$PATH_DATA_DIR."\n";
 	print " - PATH_SOCKET : ".$PATH_SOCKET."\n";
 	print " - ERROR_LOG : ".$ERROR_LOG."\n";

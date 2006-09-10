@@ -523,12 +523,12 @@ function cliInjectTorrent($tpath = "", $username = "") {
         $ext_msg = "";
         $messages = "";
         if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
-            if (is_file($cfg["torrent_file_path"].$file_name)) {
+            if (is_file($cfg["transfer_file_path"].$file_name)) {
                 $messages .= "Error with ".$file_name.", the file already exists on the server.\n";
                 $ext_msg = "DUPLICATE :: ";
             } else {
-                if ((is_file($tpath)) && (copy($tpath, $cfg["torrent_file_path"].$file_name))) {
-                    chmod($cfg["torrent_file_path"].$file_name, 0644);
+                if ((is_file($tpath)) && (copy($tpath, $cfg["transfer_file_path"].$file_name))) {
+                    chmod($cfg["transfer_file_path"].$file_name, 0644);
                     AuditAction($cfg["constants"]["file_upload"], $file_name);
                     // init stat-file
                     injectTorrent($file_name);
@@ -572,9 +572,9 @@ function cliWatchDir($tpath = "", $username = "") {
                         $file_name = str_replace(array("'",","), "", $file_name);
                         $file_name = cleanFileName($file_name);
                         echo "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...";
-                        if ((is_file($watchDir.$file)) && (copy($watchDir.$file, $cfg["torrent_file_path"].$file_name))) {
+                        if ((is_file($watchDir.$file)) && (copy($watchDir.$file, $cfg["transfer_file_path"].$file_name))) {
                             @unlink($watchDir.$file);
-                            chmod($cfg["torrent_file_path"].$file_name, 0644);
+                            chmod($cfg["transfer_file_path"].$file_name, 0644);
                             AuditAction($cfg["constants"]["file_upload"], $file_name);
                             // init stat-file
                             injectTorrent($file_name);

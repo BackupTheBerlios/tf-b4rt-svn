@@ -73,7 +73,7 @@ $arURL = GetRSSLinks();
 $rss = new lastRSS();
 
 // setup transparent cache
-$rss->cache_dir = $cfg["torrent_file_path"];
+$rss->cache_dir = $cfg["transfer_file_path"];
 $rss->cache_time = $cfg["rss_cache_min"] * 60; // 1200 = 20 min.  3600 = 1 hour
 $rss->strip_html = false; // don't remove HTML from the description
 

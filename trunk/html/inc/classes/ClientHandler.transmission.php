@@ -75,7 +75,7 @@ class ClientHandlerTransmission extends ClientHandler
         }
 
         // pid-file
-        $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
+        $this->pidFile = "\"" . $this->cfg["transfer_file_path"].$this->alias .".stat.pid\"";
 
         // workaround for bsd-pid-file-problem : touch file first
         shell_exec("touch ".$this->pidFile);
@@ -91,7 +91,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " nohup ";
         $this->command .= $this->nice;
         $this->command .= $this->cfg["btclient_transmission_bin"];
-        $this->command .= " -t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\"";
+        $this->command .= " -t \"".$this->cfg["transfer_file_path"].$this->alias .".stat\"";
         $this->command .= " -w ".$this->owner;
         $this->command .= " -z ". $this->pidFile;
         $this->command .= " -e 5";
@@ -100,7 +100,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -u ".$this->rate;
         $this->command .= " -p ".$this->port;
         $this->command .= " ".$this->cfg["btclient_transmission_options"];
-        $this->command .= "\"". $this->cfg["torrent_file_path"].$this->transfer;
+        $this->command .= "\"". $this->cfg["transfer_file_path"].$this->transfer;
         // standard, no shell trickery ("new" transmission-patch has pid-file included) :
         $this->command .= '" > /dev/null &';
         // <begin shell-trickery> to write the pid of the client into the pid-file
@@ -122,7 +122,7 @@ class ClientHandlerTransmission extends ClientHandler
      * @param $return return-param (optional)
      */
     function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
-        $this->pidFile = $this->cfg["torrent_file_path"].$aliasFile.".pid";
+        $this->pidFile = $this->cfg["transfer_file_path"].$aliasFile.".pid";
         // stop the client
         parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
         // delete the pid file
@@ -179,7 +179,7 @@ class ClientHandlerTransmission extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         // transfer from db
@@ -233,7 +233,7 @@ class ClientHandlerTransmission extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         return $retVal;

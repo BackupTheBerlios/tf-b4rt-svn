@@ -15,11 +15,11 @@
 use strict;
 
 # should we try to find needed binaries ? (using "whereis" + "awk")
-# use 1 to activate, else "constants" are used (the faster + safer way) 
+# use 1 to activate, else "constants" are used (the faster + safer way)
 my $autoFindBinaries = 0;
 
 # define socket-bins. default : qw( python transmissionc )
-my @BINS_SOCKET = qw( python transmissionc );
+my @BINS_SOCKET = qw( python transmissionc wget );
 
 # Internal Vars
 my ( $REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE );
@@ -85,7 +85,7 @@ SWITCH: {
 #-------------------------------------------------------------------------------
 # Sub: printTraffic
 # Parameters: string with path of flux-dir
-#             string with wanted output-format (mrtg|cacti)     
+#             string with wanted output-format (mrtg|cacti)
 # Return:		-
 #-------------------------------------------------------------------------------
 sub printTraffic {
@@ -94,7 +94,7 @@ sub printTraffic {
 		printUsage();
 		exit;
 	}
-	$fluxDir .= "/.torrents";
+	$fluxDir .= "/.transfers";
 	my $outputFormat = shift;
 	if ($outputFormat eq "mrtg") {
 		mrtgPrintTraffic($fluxDir);
@@ -117,7 +117,7 @@ sub mrtgPrintTraffic {
 	my $fluxDir = shift;
 	# get traffic-vals
 	my @traffic = fluxTraffic($fluxDir);
-	# print down-speed for mrtg 
+	# print down-speed for mrtg
 	print $traffic[0];
 	print "\n";
 	# print up-speed for mrtg
@@ -214,7 +214,7 @@ sub mrtgPrintUptime {
 #-------------------------------------------------------------------------------
 sub mrtgPrintTargetname {
 	# target-name for mrtg
-	my $targetname = `hostname`; 
+	my $targetname = `hostname`;
 	print $targetname;
 }
 
@@ -301,7 +301,7 @@ sub findBinaries {
 # Parameters:	-
 # Return:		-
 #-------------------------------------------------------------------------------
-sub checkEnv {	
+sub checkEnv {
 	## win32 not supported ;)
 	if ("$^O" =~ /win32/i) {
 		print "\r\nWin32 not supported.\r\n";
@@ -347,7 +347,7 @@ $PROG.$EXTENSION connections mrtg
 $PROG.$EXTENSION connections cacti
 
 USAGE
-  
+
 }
 
 # EOF

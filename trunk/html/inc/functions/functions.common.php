@@ -132,17 +132,6 @@ function firstLogin($username = '', $password = '') {
 }
 
 /**
- * Checks for the location of the torrents
- * If it does not exist, then it creates it.
- *
- */
-function checkTorrentPath() {
-	global $cfg;
-	// is there a stat and torrent dir?
-	@checkDirectory($cfg["torrent_file_path"], 0777);
-}
-
-/**
  * Enter description here...
  *
  */

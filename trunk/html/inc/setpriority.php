@@ -46,7 +46,7 @@ function setPriority($torrent)
     {
 
         $alias = getAliasName($torrent);
-        $fileName = $cfg["torrent_file_path"].$alias.".prio";
+        $fileName = $cfg["transfer_file_path"].$alias.".prio";
 
         $result = array();
 

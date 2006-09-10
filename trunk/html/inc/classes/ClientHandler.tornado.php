@@ -81,8 +81,8 @@ class ClientHandlerTornado extends ClientHandler
         if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
             $skipHashCheck = " --check_hashes 0";
         $filePrio = "";
-        if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
-            $priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
+        if(file_exists($this->cfg["transfer_file_path"].$this->alias.".prio")) {
+            $priolist = explode(',',file_get_contents($this->cfg["transfer_file_path"].$this->alias .".prio"));
             $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
             $filePrio = " --priority ".$priolist;
         }
@@ -100,9 +100,9 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $pyCmd . " " .$this->tornadoBin;
         $this->command .= " ".$this->runtime;
         $this->command .= " ".$this->sharekill_param;
-        $this->command .= " ".$this->cfg["torrent_file_path"].$this->alias .".stat";
+        $this->command .= " ".$this->cfg["transfer_file_path"].$this->alias .".stat";
         $this->command .= " ".$this->owner;
-        $this->command .= " --responsefile \"".$this->cfg["torrent_file_path"].$this->transfer ."\"";
+        $this->command .= " --responsefile \"".$this->cfg["transfer_file_path"].$this->transfer ."\"";
         $this->command .= " --display_interval 5";
         $this->command .= " --max_download_rate ".$this->drate;
         $this->command .= " --max_upload_rate ".$this->rate;
@@ -129,7 +129,7 @@ class ClientHandlerTornado extends ClientHandler
      * @param $return return-param (optional)
      */
     function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
-        $this->pidFile = $this->cfg["torrent_file_path"].$aliasFile.".pid";
+        $this->pidFile = $this->cfg["transfer_file_path"].$aliasFile.".pid";
         // stop the client
         parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
     }
@@ -180,7 +180,7 @@ class ClientHandlerTornado extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal+0;
         $retVal["downtotal"] = $af->downtotal+0;
         return $retVal;
@@ -228,7 +228,7 @@ class ClientHandlerTornado extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] += ($af->uptotal+0);
         $retVal["downtotal"] += ($af->downtotal+0);
         return $retVal;

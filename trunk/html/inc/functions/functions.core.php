@@ -310,7 +310,7 @@ function netstatHostsByPid($transferPid) {
 function getTransferPid($transferAlias) {
 	global $cfg;
 	$data = "";
-	if ($fileHandle = @fopen($cfg["torrent_file_path"].$transferAlias.".pid",'r')) {
+	if ($fileHandle = @fopen($cfg["transfer_file_path"].$transferAlias.".pid",'r')) {
 		while (!@feof($fileHandle))
 			$data .= @fgets($fileHandle, 64);
 		@fclose ($fileHandle);
@@ -488,13 +488,13 @@ function isTransferRunning($transfer) {
 	global $cfg;
 	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 		// this is a torrent-client
-		if (file_exists($cfg["torrent_file_path"].substr($transfer,0,-8).'.stat.pid'))
+		if (file_exists($cfg["transfer_file_path"].substr($transfer,0,-8).'.stat.pid'))
 			return 1;
 		else
 			return 0;
 	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 		// this is wget.
-		if (file_exists($cfg["torrent_file_path"].substr($transfer,0,-5).'.stat.pid'))
+		if (file_exists($cfg["transfer_file_path"].substr($transfer,0,-5).'.stat.pid'))
 			return 1;
 		else
 			return 0;
@@ -563,7 +563,7 @@ function getTorrentHash($torrent) {
 function getTorrentDatapath($torrent) {
 	global $cfg;
     require_once('inc/classes/BDecode.php');
-    $ftorrent=$cfg["torrent_file_path"].$torrent;
+    $ftorrent=$cfg["transfer_file_path"].$torrent;
     $fd = fopen($ftorrent, "rd");
     $alltorrent = fread($fd, filesize($ftorrent));
     $btmeta = BDecode($alltorrent);
@@ -702,11 +702,11 @@ function resetTorrentTotals($torrent, $delete = false) {
 	if ($delete == true) {
 		deleteTransfer($torrent, $alias);
 		// delete the stat file. shouldnt be there.. but...
-		@unlink($cfg["torrent_file_path"].$alias.".stat");
+		@unlink($cfg["transfer_file_path"].$alias.".stat");
 	} else {
 		// reset in stat-file
 		require_once("inc/classes/AliasFile.php");
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias.".stat", $owner, $cfg);
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias.".stat", $owner, $cfg);
 		if (isset($af)) {
 			$af->uptotal = 0;
 			$af->downtotal = 0;
@@ -736,7 +736,7 @@ function deleteTransfer($transfer, $alias_file) {
 		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($delfile);
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $transferowner, $cfg, $btclient);
+			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $transferowner, $cfg, $btclient);
 			// update totals for this torrent
 			updateTransferTotals($delfile);
 			// remove torrent-settings from db
@@ -747,20 +747,20 @@ function deleteTransfer($transfer, $alias_file) {
 			$clientHandler->deleteCache($transfer);
 		} else if ((substr( strtolower($transfer),-5 ) == ".wget")) {
 			// this is wget.
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg["user"], $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
-			$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
 		}
 		//XFER: before torrent deletion save upload/download xfer data to SQL
 		$transferTotals = getTransferTotals($delfile);
 		saveXfer($transferowner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
 		// torrent+stat
-		@unlink($cfg["torrent_file_path"].$delfile);
-		@unlink($cfg["torrent_file_path"].$alias_file);
+		@unlink($cfg["transfer_file_path"].$delfile);
+		@unlink($cfg["transfer_file_path"].$alias_file);
 		// try to remove the pid file
-		@unlink($cfg["torrent_file_path"].$alias_file.".pid");
-		@unlink($cfg["torrent_file_path"].getAliasName($delfile).".prio");
+		@unlink($cfg["transfer_file_path"].$alias_file.".pid");
+		@unlink($cfg["transfer_file_path"].getAliasName($delfile).".prio");
 		AuditAction($cfg["constants"]["delete_torrent"], $delfile);
 		return true;
 	} else {
@@ -780,7 +780,7 @@ function deleteTorrentData($torrent) {
 	if (($cfg["user"] == getOwner($element)) || IsAdmin()) {
 		# the user is the owner of the torrent -> delete it
 		require_once('inc/classes/BDecode.php');
-		$ftorrent=$cfg["torrent_file_path"].$element;
+		$ftorrent=$cfg["transfer_file_path"].$element;
 		$fd = fopen($ftorrent, "rd");
 		$alltorrent = fread($fd, filesize($ftorrent));
 		$btmeta = BDecode($alltorrent);
@@ -831,7 +831,7 @@ function deleteTorrentData($torrent) {
 function getTorrentDataSize($torrent) {
 	global $cfg;
 	require_once('inc/classes/BDecode.php');
-	$ftorrent=$cfg["torrent_file_path"].$torrent;
+	$ftorrent=$cfg["transfer_file_path"].$torrent;
 	$fd = fopen($ftorrent, "rd");
 	$alltorrent = fread($fd, filesize($ftorrent));
 	$btmeta = BDecode($alltorrent);
@@ -870,7 +870,7 @@ function getRunningTransferCount() {
 	global $cfg;
 	// use pid-files-direct-access for now because all clients of currently
 	// available handlers write one. then its faster and correct meanwhile.
-	if ($dirHandle = opendir($cfg["torrent_file_path"])) {
+	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
 		$tCount = 0;
 		while (false !== ($file = readdir($dirHandle))) {
 			if ((substr($file, -4, 4)) == ".pid")
@@ -939,17 +939,17 @@ function getTorrentMetaInfo($torrent) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["torrent_file_path"].$torrent."\"");
+			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["transfer_file_path"].$torrent."\"");
 		case "ttools.pl":
 			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -i "'.$cfg["torrent_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -i "'.$cfg["transfer_file_path"].$torrent.'"');
 		case "torrentinfo-console.py":
 			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
 		case "btshowmetainfo.py":
 		default:
 			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec("cd ".$cfg["torrent_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
 	}
 }
 
@@ -963,10 +963,10 @@ function getTorrentScrapeInfo($torrent) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["torrent_file_path"].$torrent."\"");
+			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["transfer_file_path"].$torrent."\"");
 		case "ttools.pl":
 			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -s "'.$cfg["torrent_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -s "'.$cfg["transfer_file_path"].$torrent.'"');
 		case "btshowmetainfo.py":
 			return "not supported by btshowmetainfo.py.";
 		case "torrentinfo-console.py":
@@ -983,7 +983,7 @@ function getTorrentScrapeInfo($torrent) {
 function getTorrentListFromFS() {
 	global $cfg;
 	$retVal = array();
-	if ($dirHandle = opendir($cfg["torrent_file_path"])) {
+	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
 		while (false !== ($file = readdir($dirHandle))) {
 			if ((substr($file, -2)) == "nt")
 				array_push($retVal, $file);
@@ -1122,9 +1122,9 @@ function getLoadAverageString() {
 function injectTorrent($torrent) {
 	global $cfg;
 	require_once("inc/classes/AliasFile.php");
-	$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].getAliasName($torrent).".stat",	 $cfg["user"], $cfg);
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].getAliasName($torrent).".stat",	 $cfg["user"], $cfg);
 	$af->running = "2"; // file is new
-	$af->size = getDownloadSize($cfg["torrent_file_path"].$torrent);
+	$af->size = getDownloadSize($cfg["transfer_file_path"].$torrent);
 	$af->WriteFile();
 	return true;
 }
@@ -1331,17 +1331,17 @@ function getTransferArray($sortOrder = '') {
 	global $cfg;
 	$arList = array();
 	$file_filter = getFileFilter($cfg["file_types_array"]);
-	if (is_dir($cfg["torrent_file_path"]))
-		$handle = opendir($cfg["torrent_file_path"]);
+	if (is_dir($cfg["transfer_file_path"]))
+		$handle = opendir($cfg["transfer_file_path"]);
 	else
 		return null;
 	while($entry = readdir($handle)) {
 		if ($entry != "." && $entry != "..") {
-			if (is_dir($cfg["torrent_file_path"]."/".$entry)) {
+			if (is_dir($cfg["transfer_file_path"]."/".$entry)) {
 				// don''t do a thing
 			} else {
 				if (ereg($file_filter, $entry)) {
-					$key = filemtime($cfg["torrent_file_path"]."/".$entry).md5($entry);
+					$key = filemtime($cfg["transfer_file_path"]."/".$entry).md5($entry);
 					$arList[$key] = $entry;
 				}
 			}
@@ -1460,7 +1460,7 @@ function getTransferListArray() {
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr(strtolower($entry),-5 ) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
@@ -1469,7 +1469,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$isTorrent = false;
@@ -1478,7 +1478,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -1492,10 +1492,10 @@ function getTransferListArray() {
 
 		// ---------------------------------------------------------------------
 		// injects
-		if(! file_exists($cfg["torrent_file_path"].$alias)) {
+		if(! file_exists($cfg["transfer_file_path"].$alias)) {
 			$transferRunning = 2;
 			$af->running = "2";
-			$af->size = getDownloadSize($cfg["torrent_file_path"].$entry);
+			$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
 			$af->WriteFile();
 		}
 
@@ -1916,8 +1916,8 @@ function resetOwner($file) {
 	// log entry has expired so we must renew it
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
-	if(file_exists($cfg["torrent_file_path"].$alias)) {
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg);
+	if(file_exists($cfg["transfer_file_path"].$alias)) {
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg);
 		if (IsUser($af->transferowner)) {
 			// We have an owner!
 			$rtnValue = $af->transferowner;

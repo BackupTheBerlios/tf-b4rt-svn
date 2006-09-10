@@ -204,7 +204,7 @@ foreach($arList as $entry) {
 		$transferowner = getOwner($entry);
 		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = loadTorrentSettings($entry);
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
 		$hd = getStatusImage($af);
 	} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
 		// this is wget.
@@ -224,7 +224,7 @@ foreach($arList as $entry) {
 	            break;
 	    }
 		$settingsAry['datapath'] = "";
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'wget');
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'wget');
 		$hd = getStatusImage($af);
 	} else {
 		// this is "something else". use tornado statfile as default
@@ -244,7 +244,7 @@ foreach($arList as $entry) {
 	            break;
 	    }
 		$settingsAry['datapath'] = "";
-		$af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
 		$hd = getStatusImage($af);
 	}
 	// cache running-flag in local var. we will access that often
@@ -262,10 +262,10 @@ foreach($arList as $entry) {
 
 	// ---------------------------------------------------------------------
 	// injects
-	if(! file_exists($cfg["torrent_file_path"].$alias)) {
+	if(! file_exists($cfg["transfer_file_path"].$alias)) {
 		$transferRunning = 2;
 		$af->running = "2";
-		$af->size = getDownloadSize($cfg["torrent_file_path"].$entry);
+		$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
 		$af->WriteFile();
 	}
 
@@ -322,7 +322,7 @@ foreach($arList as $entry) {
 				$statusStr = $detailsLinkString."Leeching</a>";
 			}
 			// pid-file
-			if (!is_file($cfg["torrent_file_path"].$alias.".pid"))
+			if (!is_file($cfg["transfer_file_path"].$alias.".pid"))
 				$is_no_file = 1;
 			else
 				$is_no_file = 0;

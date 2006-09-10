@@ -591,14 +591,14 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$result = "";
 				$torrents = getTorrentListFromDB();
-				if ($dirHandle = @opendir($cfg["torrent_file_path"])) {
+				if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ((substr($file, -1, 1)) == "d") {
 							$tname = substr($file,0,-9).'.torrent';
 							if (! in_array($tname, $torrents)) {
 								// torrent not in db. delete pid-file.
 								$result .= $file."\n";
-								@unlink($cfg["torrent_file_path"].$file);
+								@unlink($cfg["transfer_file_path"].$file);
 							}
 						}
 					}

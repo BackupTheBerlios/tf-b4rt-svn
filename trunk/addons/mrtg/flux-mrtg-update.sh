@@ -13,7 +13,7 @@
 ################################################################################
 
 # defaults
-FLUXPATH="/usr/local/torrent"
+FLUXPATH="/usr/local/torrentflux"
 CONFFILE="/etc/mrtg/mrtg.flux.cfg"
 BIN_MRTG="/usr/bin/mrtg"
 DEFAULT_CONFFILE="/etc/mrtg/flux-mrtg.conf"

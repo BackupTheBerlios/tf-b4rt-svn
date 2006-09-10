@@ -172,7 +172,7 @@ CREATE TABLE tf_settings (
 ) TYPE=MyISAM;
 
 
-INSERT INTO tf_settings VALUES ('path','/usr/local/torrent/');
+INSERT INTO tf_settings VALUES ('path','/usr/local/torrentflux/');
 INSERT INTO tf_settings VALUES ('advanced_start','1');
 INSERT INTO tf_settings VALUES ('max_upload_rate','10');
 INSERT INTO tf_settings VALUES ('max_download_rate','0');
@@ -282,7 +282,7 @@ INSERT INTO tf_settings VALUES ('fluxd_Trigger_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
-INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrent/.watch/admin;fluxuser:/usr/local/torrent/.watch/fluxuser');
+INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrentflux/.watch/admin;fluxuser:/usr/local/torrentflux/.watch/fluxuser');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
 
 --

@@ -47,19 +47,19 @@ if (!empty($_FILES['upload_files'])) {
 				$_FILES['upload_files']['size'][$id] > 0) {
 			if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
 			//FILE IS BEING UPLOADED
-			if (is_file($cfg["torrent_file_path"].$file_name)) {
+			if (is_file($cfg["transfer_file_path"].$file_name)) {
 				// Error
 				$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
 				$ext_msg = "DUPLICATE :: ";
 			} else {
-				if(move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["torrent_file_path"].$file_name)) {
-				chmod($cfg["torrent_file_path"].$file_name, 0644);
+				if(move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
+				chmod($cfg["transfer_file_path"].$file_name, 0644);
 				AuditAction($cfg["constants"]["file_upload"], $file_name);
 				// instant action ?
 				if ((isset($actionId)) && ($actionId > 1))
 					array_push($tStack,$file_name);
 				} else {
-				$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["torrent_file_path"] . $file_name."</font><br>";
+				$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
 			  }
 			}
 		} else {

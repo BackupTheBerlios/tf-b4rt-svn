@@ -283,7 +283,7 @@ class ClientHandler
 		}
         // create AliasFile object and write out the stat file
         require_once("inc/classes/AliasFile.php");
-        $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
+        $this->af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
         $transferTotals = getTransferTotals($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
         if ($this->cfg['enable_xfer'] == 1)
@@ -386,13 +386,13 @@ class ClientHandler
         $this->alias = $aliasFile;
         // set pidfile
         if ($this->pidFile == "") // pid-file not set in subclass. use a default
-            $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".pid";
+            $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".pid";
         // We are going to write a '0' on the front of the stat file so that
         // the client will no to stop -- this will report stats when it dies
         $this->owner = getOwner($this->transfer);
         require_once("inc/classes/AliasFile.php");
         // read the alias file + create AliasFile object
-        $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias, $this->owner, $this->cfg, $this->handlerName);
+        $this->af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$this->alias, $this->owner, $this->cfg, $this->handlerName);
         if($this->af->percent_done < 100) {
             // The transfer is being stopped but is not completed dowloading
             $this->af->percent_done = ($this->af->percent_done + 100)*-1;
@@ -453,7 +453,7 @@ class ClientHandler
         // action
         require_once("inc/classes/RunningTransfer.php");
         // ps-string
-        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
+        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["transfer_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();
         $tok = strtok($screenStatus, "\n");
         while ($tok) {
@@ -516,7 +516,7 @@ class ClientHandler
      */
     function getRunningClients() {
         // ps-string
-        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["torrent_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
+        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["transfer_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();
         $tok = strtok($screenStatus, "\n");
         while ($tok) {
