@@ -53,6 +53,7 @@ $tmpl->setvar('dir_restricted', $cfg["dir_restricted"]);
 //
 $tmpl->setvar('dir_public_read', $cfg["dir_public_read"]);
 $tmpl->setvar('dir_public_write', $cfg["dir_public_write"]);
+$tmpl->setvar('dir_enable_chmod', $cfg["dir_enable_chmod"]);
 $tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
 $tmpl->setvar('enable_file_download', $cfg["enable_file_download"]);
 $tmpl->setvar('package_type', $cfg["package_type"]);

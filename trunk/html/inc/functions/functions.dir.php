@@ -213,7 +213,7 @@ function findSFV($dirName) {
 	$sfv = false;
 	$d = dir($dirName);
 	while (false !== ($entry = $d->read())) {
-   		if($entry != '.' && $entry != '..' && !empty($entry) ) {
+   		if($entry != '.' && $entry != '..' && !empty($entry)) {
 			if((is_file($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
 				$sfv['dir'] = $dirName;
 				$sfv['sfv'] = $dirName.'/'.$entry;
@@ -223,5 +223,36 @@ function findSFV($dirName) {
 	$d->close();
 	return $sfv;
 }
+
+/**
+ * recursive chmod
+ *
+ * @param $path
+ * @param $mode
+ * @return boolean
+ */
+function chmodRecursive($path, $mode = 0777) {
+	if ((! @is_dir($path)) && (isValidEntry(basename($path))))
+		return @chmod($path, $mode);
+	$dirHandle = opendir($path);
+	while ($file = readdir($dirHandle)) {
+		if (isValidEntry(basename($file))) {
+			$fullpath = $path.'/'.$file;
+			if (! @is_dir($fullpath)) {
+				if (! @chmod($fullpath, $mode))
+					return false;
+			} else {
+				if (! chmodRecursive($fullpath, $mode))
+					return false;
+			}
+		}
+	}
+	closedir($dirHandle);
+	if ((isValidEntry(basename($path))) && (@chmod($path, $mode)))
+		return true;
+	else
+		return false;
+}
+
 
 ?>

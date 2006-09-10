@@ -34,6 +34,7 @@ initRestrictedDirEntries();
 checkIncomingPath();
 
 // Setup some defaults if they are not set.
+$chmod = getRequestVar('chmod');
 $del = getRequestVar('del');
 $down = getRequestVar('down');
 $tar = getRequestVar('tar');
@@ -42,6 +43,19 @@ $multidel = getRequestVar('multidel');
 
 // check if user is admin, check once use often
 $isAdmin = IsAdmin($cfg["user"]);
+
+/*******************************************************************************
+ * chmod
+ ******************************************************************************/
+if ($chmod != "") {
+	// only valid entry with permission
+	if ((isValidEntry(basename($dir))) && (hasPermission($dir, $cfg["user"], 'w')))
+		chmodRecursive($cfg["path"].$dir);
+	else
+		AuditAction($cfg["constants"]["error"], "ILLEGAL CHNOD: ".$cfg["user"]." tried to chmod ".$dir);
+	header("Location: index.php?iid=dir&dir=".urlencode($dir));
+	exit();
+}
 
 /*******************************************************************************
  * delete
@@ -403,6 +417,15 @@ if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
 	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . urlencode($matches[1]));
 else
 	$tmpl->setvar('parentURL', "index.php?iid=dir");
+// chmod, parent-dir cannot be chmodded
+if ($dir == "") {
+	$tmpl->setvar('show_chmod', 0);
+} else {
+	if (($cfg["dir_enable_chmod"] == 1) && (hasPermission($dir, $cfg['user'], 'w')))
+		$tmpl->setvar('show_chmod', 1);
+	else
+		$tmpl->setvar('show_chmod', 0);
+}
 //
 $tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);
