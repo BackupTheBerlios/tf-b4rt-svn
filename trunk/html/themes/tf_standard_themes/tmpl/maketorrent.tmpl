@@ -8,17 +8,22 @@
 	<LINK REL="shortcut icon" HREF="themes/tf_standard_themes/images/favicon.ico" TYPE="image/x-icon" />
 	<LINK REL="StyleSheet" HREF="themes/<tmpl_var name="theme">/style.css" TYPE="text/css" />
 </HEAD>
-<tmpl_if name="client" value="mainline">
-	<body topmargin="8" leftmargin="5" bgcolor="<tmpl_var name="main_bgcolor">" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;">
-<tmpl_else>
+
+<SCRIPT SRC="js/maketorrent.js" TYPE="text/javascript"></SCRIPT>
+<tmpl_if name="client" value="tornado">
 	<SCRIPT SRC="js/tooltip.js" TYPE="text/javascript"></SCRIPT>
-	<SCRIPT SRC="js/maketorrent.js" TYPE="text/javascript"></SCRIPT>
 	<body topmargin="8" leftmargin="5" bgcolor="<tmpl_var name="main_bgcolor">" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="
 	<tmpl_if name="is_private">
 		ToggleDHT(true);
 	<tmpl_else>
 		ToggleDHT(false);
 	</tmpl_if>
+	<tmpl_if name="onLoad">
+		<tmpl_var name="onLoad">
+	</tmpl_if>
+	">
+<tmpl_else>
+	<body topmargin="8" leftmargin="5" bgcolor="<tmpl_var name="main_bgcolor">" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="
 	<tmpl_if name="onLoad">
 		<tmpl_var name="onLoad">
 	</tmpl_if>
@@ -45,7 +50,7 @@
 										<option value="tornado">tornado</option>
 										<option value="mainline"<tmpl_if name="client" value="mainline"> selected</tmpl_if>>mainline</option>
 									</select>
-									<input type="hidden" name="file" value="<tmpl_var name="file">">
+									<input type="hidden" name="path" value="<tmpl_var name="path">">
 								</td>
 							</tr>
 						</table>
@@ -59,14 +64,9 @@
 									<tr>
 										<td>
 											<form action="<tmpl_var name="form_action">" method="post" id="maketorrent" name="maketorrent">
-											<input type="hidden" name="file" value="<tmpl_var name="file">">
+											<input type="hidden" name="path" value="<tmpl_var name="path">">
 												<table>
-												<tmpl_if name="client" value="mainline">
-													<tr>
-														<td>Torrent name:</td>
-														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
-													</tr>
-												<tmpl_else>
+												<tmpl_if name="client" value="tornado">
 													<tr>
 														<td><img align="absmiddle" src="themes/tf_standard_themes/images/info.gif" onmouseover="return escape(tornt);" hspace="1" />Torrent name:</td>
 														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
@@ -106,11 +106,20 @@
 													<tr>
 														<td><img align="absmiddle" src="themes/tf_standard_themes/images/info.gif" onmouseover="return escape(dhtbl);" hspace="1" />DHT Support:</td>
 														<td><input type="checkbox" id="DHT" name="DHT"<tmpl_if name="dht"> checked</tmpl_if> value="DHT"></input></td>
-														</tr>
+													</tr>
+
+												<tmpl_else>
+
+													<tr>
+														<td>Torrent name:</td>
+														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
+													</tr>
+
+												</tmpl_if>
 													<tr>
 														<td>&nbsp;</td>
 														<td>
-															<input type="submit" id="tsubmit" name="tsubmit" onClick="return doSubmit(this);" value="Create" />
+															<input type="submit" id="tsubmit" name="tsubmit" onClick="return doSubmit(this, '<tmpl_var name="client">');" value="Create" />
 															<input type="button" id="Cancel" name="close" value="Close" onClick="window.close();" />
 															<label for="alert" title="Send alert message box when torrent has been completed.">
 															<input type="checkbox" id="alert" name="alert"<tmpl_if name="alert"> checked</tmpl_if> value="AlertMe" />
@@ -120,11 +129,10 @@
 													</tr>
 													<tr>
 														<td colspan="2">
-															<div id="progress" name="progress" align="center" style="display: none;"><img src="themes/<tmpl_var name="theme">/images/progressbar.gif" width="200" height="20" /></div>
+															<div id="progress" name="progress" align="center" style="display: none;"><img src="themes/tf_standard_themes/images/progress_bar.gif" width="200" height="20" /></div>
 															<label id="output"></label>
 														</td>
 													</tr>
-												</tmpl_if>
 												</table>
 											</form>
 										</td>

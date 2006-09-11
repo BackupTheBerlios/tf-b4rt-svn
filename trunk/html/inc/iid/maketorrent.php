@@ -33,14 +33,14 @@ if(!empty($_REQUEST["download"]))
 	downloadTorrent($_REQUEST["download"]);
 
 /*******************************************************************************
- * page + create
+ * create + page
  ******************************************************************************/
 // config
 loadSettings('tf_settings_dir');
 
 // file + torrent vars
-$file = @ $_GET['path'];
-$torrent = @ cleanFileName(StripFolders(trim($file))).".torrent";
+$path = @ $_REQUEST['path'];
+$torrent = @ cleanFileName(StripFolders(trim($path))).".torrent";
 
 // check if there is a var sent for client, if not use default
 if (isset($_REQUEST["client"]))
@@ -48,23 +48,24 @@ if (isset($_REQUEST["client"]))
 else
 	$client = $cfg["dir_maketorrent_default"];
 
+// client-generic vars
+$tfile = @ $_POST['torrent'];
+$comment = @ $_POST['comments'];
+$piece = @ $_POST['piecesize'];
+$alert = @ ($_POST['alert']) ? 1 : "";
+
 // client-switch
 switch ($client) {
 	default:
 	case "tornado":
-		if (isset($_POST['file']))
-			$file = $_POST['file'];
-		$tfile = @ $_POST['torrent'];
 		$announce = @ ($_POST['announce']) ? $_POST['announce'] : "http://";
 		$ancelist = @ $_POST['announcelist'];
-		$comment = @ $_POST['comments'];
-		$piece = @ $_POST['piecesize'];
-		$alert = @ ($_POST['alert']) ? 1 : "";
 		$private = @ ($_POST['Private'] == "Private") ? true : false;
 		$dht = @ ($_POST['DHT'] == "DHT") ? true : false;
 		break;
 	case "mainline":
-		// TODO
+		$use_tracker = @ ($_POST['use_tracker'] == "use_tracker") ? true : false;
+		$tracker_name = @ ($_POST['tracker_name']) ? $_POST['tracker_name'] : "http://";
 		break;
 }
 
@@ -78,7 +79,7 @@ if (!empty($_REQUEST["create"])) {
 			$onLoad = createTorrentTornado();
 			break;
 		case "mainline":
-			// TODO
+			$onLoad = createTorrentMainline();
 			break;
 	}
 }
@@ -97,8 +98,12 @@ $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Torrent Maker", false));
 //
-$tmpl->setvar('file', $file);
+$tmpl->setvar('path', $path);
 $tmpl->setvar('torrent', $torrent);
+$tmpl->setvar('comment', $comment);
+if (!empty($onLoad))
+	$tmpl->setvar('onLoad', $onLoad);
+$tmpl->setvar('alert', $alert);
 // client-specific
 $tmpl->setvar('client', $client);
 $tmpl->setvar('client_select_action', $_SERVER['REQUEST_URI']);
@@ -110,19 +115,20 @@ switch ($client) {
 			$tmpl->setvar('is_private', 1);
 		else
 			$tmpl->setvar('is_private', 0);
-		if (!empty($onLoad))
-			$tmpl->setvar('onLoad', $onLoad);
 		$tmpl->setvar('announce', $announce);
 		$tmpl->setvar('ancelist', $ancelist);
-		$tmpl->setvar('comment', $comment);
 		$tmpl->setvar('dht', $dht);
-		$tmpl->setvar('alert', $alert);
 		break;
 	case "mainline":
 		$tmpl->setvar('form_action', $_SERVER['REQUEST_URI']."&create=mainline");
-		// TODO
+		if ((!empty($use_tracker)) && ($use_tracker))
+			$tmpl->setvar('use_tracker', 1);
+		else
+			$tmpl->setvar('use_tracker', 0);
+		$tmpl->setvar('tracker_name', $tracker_name);
 		break;
 }
+//
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();

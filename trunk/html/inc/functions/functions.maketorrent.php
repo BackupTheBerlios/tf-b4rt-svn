@@ -56,35 +56,38 @@ function downloadTorrent($tfile) {
  * @return string $onLoad
  */
 function createTorrentTornado() {
-	global $cfg, $file, $tfile, $announce, $ancelist, $comment, $piece, $alert, $private, $dht;
+	global $cfg, $path, $tfile, $announce, $ancelist, $comment, $piece, $alert, $private, $dht;
+	// sanity-check
+	if ($announce == "" || $announce == "http://")
+		return;
 	$onLoad = "";
 	// Clean up old files
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// This is the command to execute
-	$app = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg["path"].$file)." ";
+	$command = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg["path"].$path)." ";
 	// Is there comments to add?
 	if (!empty($comment))
-		$app .= "--comment ".escapeshellarg($comment)." ";
+		$command .= "--comment ".escapeshellarg($comment)." ";
 	// Set the piece size
 	if (!empty($piece))
-		$app .= "--piece_size_pow2 ".$piece." ";
+		$command .= "--piece_size_pow2 ".$piece." ";
 	if (!empty($ancelist)) {
 		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
 		// if they didn't add the primary tracker in, we will add it for them
 		if( preg_match( $check, $ancelist, $result ) )
-			$app .= "--announce_list " . escapeshellarg($ancelist) . " ";
+			$command .= "--announce_list " . escapeshellarg($ancelist) . " ";
 		else
-			$app .= "--announce_list " . escapeshellarg ($announce . "," . $ancelist) . " ";
+			$command .= "--announce_list " . escapeshellarg ($announce . "," . $ancelist) . " ";
 	}
 	// Set the target torrent field
-	$app .= "--target " . escapeshellarg($cfg["transfer_file_path"] . $tfile);
+	$command .= "--target " . escapeshellarg($cfg["transfer_file_path"] . $tfile);
 	// Set to never timeout for large torrents
 	set_time_limit(0);
 	// Let's see how long this takes...
 	$time_start = microtime(true);
 	// Execute the command -- w00t!
-	exec($app);
+	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;
 	$raw = @file_get_contents($cfg["transfer_file_path"].$tfile );
@@ -110,6 +113,76 @@ function createTorrentTornado() {
 				@fclose( $fp );
 			}
 		}
+	} else {
+		// Something went wrong, clean up
+		if (@file_exists($cfg["transfer_file_path"].$tfile))
+			@unlink($cfg["transfer_file_path"].$tfile);
+	}
+	// We are done! how long did we take?
+	$time_end = microtime(true);
+	$diff = duration($time_end - $time_start);
+	// make path URL friendly to support non-standard characters
+	$downpath = urlencode($tfile);
+	// Depending if we were successful, display the required information
+	if ($success)
+		$onLoad = "completed( '" . $downpath . "', " . $alert. ", '" . $diff . "' );";
+	else
+		$onLoad = "failed( '" . $downpath . "', " . $alert . " );";
+	return $onLoad;
+}
+
+/**
+ * create torrent with Mainline
+ *
+ * @return string $onLoad
+ */
+function createTorrentMainline() {
+	global $cfg, $path, $tfile, $comment, $piece, $use_tracker, $tracker_name, $alert ;
+	$onLoad = "";
+	// Clean up old files
+	if (@file_exists($cfg["transfer_file_path"].$tfile))
+		@unlink($cfg["transfer_file_path"].$tfile );
+	// build command-string
+	$command = "cd ".$cfg["transfer_file_path"].";";
+	$command .= " HOME=".$cfg["path"];
+	$command .= "; export HOME;";
+	$command .= "nohup ".$cfg["pythonCmd"]." -OO ";
+	$command .= dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_Mainline/maketorrent-console.py";
+	$command .= " --no_verbose";
+	$command .= " --no_debug";
+	$command .= " --language en";
+	// Is there comments to add?
+	if (!empty($comment))
+		$command .= " --comment ".escapeshellarg($comment);
+	// Set the piece size
+	if (!empty($piece))
+		$command .= " --piece_size_pow2 ".$piece;
+	// trackerless / tracker
+	if ((isset($use_tracker)) && ($use_tracker))
+		$command .= " --use_tracker";
+	else
+		$command .= " --no_use_tracker";
+	// tracker-name
+	if (!empty($tracker_name))
+		$command .= " --tracker_name ".escapeshellarg($tracker_name);
+	// Set the target torrent field
+	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
+	// input
+	$command .= " ".escapeshellarg($cfg["path"].$path);
+	// Set to never timeout for large torrents
+	set_time_limit(0);
+	// Let's see how long this takes...
+	$time_start = microtime(true);
+	// Execute the command -- w00t!
+	exec($command);
+	// We want to check to make sure the file was successful
+	$success = false;
+	$raw = @file_get_contents($cfg["transfer_file_path"].$tfile );
+	if (preg_match( "/6:pieces([^:]+):/i", $raw, $results)) {
+		// This means it is a valid torrent
+		$success = true;
+		// Make an entry for the owner
+		AuditAction($cfg["constants"]["file_upload"], $tfile);
 	} else {
 		// Something went wrong, clean up
 		if (@file_exists($cfg["transfer_file_path"].$tfile))

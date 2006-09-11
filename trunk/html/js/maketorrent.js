@@ -1,38 +1,60 @@
 
 
-function doSubmit(obj) {
+function doSubmit(obj, client) {
 	// Basic check to see if maketorrent is already running
-	if( obj.value === "Creating..." )
+	if (obj.value === "Creating...")
 		return false;
 
 	// Run some basic validation
 	var valid = true;
 	var tlength = document.maketorrent.torrent.value.length - 8;
-	var torrent = document.maketorrent.torrent.value.substr( tlength );
+	var torrent = document.maketorrent.torrent.value.substr(tlength);
 	document.getElementById('output').innerHTML = "";
 	document.getElementById('ttag').innerHTML	= "";
 	document.getElementById('atag').innerHTML	= "";
 
-	if( torrent !== ".torrent" ) {
-		document.getElementById('ttag').innerHTML	 = "<b style=\"color: #990000;\">*</b>";
+	// torrent
+	if (torrent !== ".torrent") {
+		document.getElementById('ttag').innerHTML = "<b style=\"color: #990000;\">*</b>";
 		document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Torrent file must end in .torrent</b><BR />";
 		valid = false;
 	}
 
-	if( document.maketorrent.announce.value === "http://" ) {
-		document.getElementById('atag').innerHTML	 = "<b style=\"color: #990000;\">*</b>";
-		document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid announce URL.</b><BR />";
-		valid = false;
-	}
+	// client-specific checks
+	if (client === "tornado") {
 
-	// For saftely reason, let's force the property to false if it's disabled (private tracker)
-	if( document.maketorrent.DHT.disabled ) {
-		document.maketorrent.DHT.checked = false;
+		// tornado-special-checks
+
+		// announce-url
+		if (document.maketorrent.announce.value === "http://") {
+			document.getElementById('atag').innerHTML = "<b style=\"color: #990000;\">*</b>";
+			document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid announce URL.</b><BR />";
+			valid = false;
+		}
+
+		// For safety reason, let's force the property to false if it's disabled (private tracker)
+		if (document.maketorrent.DHT.disabled) {
+			document.maketorrent.DHT.checked = false;
+		}
+
+	} else {
+
+		// mainline-special-checks
+
+		// tracker_name if use_tracker disabled
+		if (document.maketorrent.use_tracker.disabled) {
+			if (document.maketorrent.tracker_name.value === "") {
+				document.getElementById('trtag').innerHTML = "<b style=\"color: #990000;\">*</b>";
+				document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid Tracker.</b><BR />";
+				valid = false;
+			}
+		}
+
 	}
 
 	// If validation passed, submit form
-	if( valid === true ) {
-		disableForm();
+	if (valid === true) {
+		disableForm(client);
 		toggleLayer('progress');
 		document.getElementById('output').innerHTML += "<b>Creating torrent...</b><BR /><BR />";
 		document.getElementById('output').innerHTML += "<i>* Note that larger folder/files will take some time to process,</i><BR />";
@@ -44,12 +66,13 @@ function doSubmit(obj) {
 	return false;
 }
 
-function disableForm() {
+function disableForm(client) {
 	// Because of IE issue of disabling the submit button,
 	// we change the text and don't allow resubmitting
 	document.maketorrent.tsubmit.value = "Creating...";
 	document.maketorrent.torrent.readOnly = true;
-	document.maketorrent.announce.readOnly = true;
+	if (client === "tornado")
+		document.maketorrent.announce.readOnly = true;
 }
 
 function ToggleDHT(dhtstatus) {
@@ -57,36 +80,36 @@ function ToggleDHT(dhtstatus) {
 }
 
 
-function toggleLayer( whichLayer ) {
-	if( document.getElementById ) {
+function toggleLayer(whichLayer) {
+	if (document.getElementById) {
 		// This is the way the standards work
 		var style2 = document.getElementById(whichLayer).style;
 		style2.display = style2.display ? "" : "block";
-	} else if( document.all ) {
+	} else if (document.all) {
 		// This is the way old msie versions work
 		var style2 = document.all[whichLayer].style;
 		style2.display = style2.display ? "" : "block";
-	} else if( document.layers ) {
+	} else if (document.layers) {
 		// This is the way nn4 works
 		var style2 = document.layers[whichLayer].style;
 		style2.display = style2.display ? "" : "block";
 	}
 }
 
-function completed( downpath, alertme, timetaken ) {
+function completed(downpath, alertme, timetaken) {
 	document.getElementById('output').innerHTML	 = "<b style='color: #005500;'>Creation completed!</b><BR />";
 	document.getElementById('output').innerHTML += "Time taken: <i>" + timetaken + "</i><BR />";
 	document.getElementById('output').innerHTML += "The new torrent has been added to your list.<BR /><BR />"
 	document.getElementById('output').innerHTML += "You can download the <a style='font-weight: bold;' href='index.php?iid=maketorrent&download=" + downpath + "'>torrent here</a><BR />";
-	if( alertme === 1 )
-		alert( 'Creation of torrent completed!' );
+	if(alertme === 1)
+		alert('Creation of torrent completed!');
 }
 
-function failed( downpath, alertme ) {
+function failed(downpath, alertme) {
 	document.getElementById('output').innerHTML	 = "<b style='color: #AA0000;'>Creation failed!</b><BR /><BR />";
 	document.getElementById('output').innerHTML += "An error occured while trying to create the torrent.<BR />";
-	if( alertme === 1 )
-		alert( 'Creation of torrent failed!' );
+	if(alertme === 1)
+		alert('Creation of torrent failed!');
 }
 
 var anlst  = "(optional) announce_list = list of tracker URLs<BR />\n";
