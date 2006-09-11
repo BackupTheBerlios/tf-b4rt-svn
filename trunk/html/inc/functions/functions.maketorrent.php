@@ -21,6 +21,114 @@
 *******************************************************************************/
 
 /**
+ * download meta-file
+ *
+ * @param $tfile
+ */
+function downloadTorrent($tfile) {
+	global $cfg;
+	// ../ is not allowed in the file name
+	if (!ereg("(\.\.\/)", $tfile)) {
+		// Does the file exist?
+		if (file_exists($cfg["transfer_file_path"].$tfile)) {
+			// Prompt the user to download the new torrent file.
+			header("Content-type: application/octet-stream\n");
+			header("Content-disposition: attachment; filename=\"".$tfile."\"\n");
+			header("Content-transfer-encoding: binary\n");
+			header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
+			// Send the torrent file
+			$fp = @fopen($cfg["transfer_file_path"].$tfile, "r");
+			@fpassthru($fp);
+			@fclose($fp);
+			AuditAction($cfg["constants"]["fm_download"], $tfile);
+		} else {
+			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg["user"]." tried to download ".$tfile);
+		}
+	} else {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$tfile);
+	}
+	exit();
+}
+
+/**
+ * create torrent with BitTornado
+ *
+ * @return string $onLoad
+ */
+function createTorrentTornado() {
+	global $cfg, $file, $tfile, $announce, $ancelist, $comment, $piece, $alert, $private, $dht;
+	$onLoad = "";
+	// Clean up old files
+	if (@file_exists($cfg["transfer_file_path"].$tfile))
+		@unlink($cfg["transfer_file_path"].$tfile );
+	// This is the command to execute
+	$app = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg["path"].$file)." ";
+	// Is there comments to add?
+	if (!empty($comment))
+		$app .= "--comment ".escapeshellarg($comment)." ";
+	// Set the piece size
+	if (!empty($piece))
+		$app .= "--piece_size_pow2 ".$piece." ";
+	if (!empty($ancelist)) {
+		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
+		// if they didn't add the primary tracker in, we will add it for them
+		if( preg_match( $check, $ancelist, $result ) )
+			$app .= "--announce_list " . escapeshellarg($ancelist) . " ";
+		else
+			$app .= "--announce_list " . escapeshellarg ($announce . "," . $ancelist) . " ";
+	}
+	// Set the target torrent field
+	$app .= "--target " . escapeshellarg($cfg["transfer_file_path"] . $tfile);
+	// Set to never timeout for large torrents
+	set_time_limit(0);
+	// Let's see how long this takes...
+	$time_start = microtime(true);
+	// Execute the command -- w00t!
+	exec($app);
+	// We want to check to make sure the file was successful
+	$success = false;
+	$raw = @file_get_contents($cfg["transfer_file_path"].$tfile );
+	if (preg_match( "/6:pieces([^:]+):/i", $raw, $results)) {
+		// This means it is a valid torrent
+		$success = true;
+		// Make an entry for the owner
+		AuditAction($cfg["constants"]["file_upload"], $tfile);
+		// Check to see if one of the flags were set
+		if ($private || $dht) {
+			// Add private/dht Flags
+			// e7:privatei1e
+			// e17:dht_backup_enablei1e
+			// e20:dht_backup_requestedi1e
+			if(preg_match( "/6:pieces([^:]+):/i", $raw, $results)) {
+				$pos = strpos( $raw, "6:pieces" ) + 9 + strlen( $results[1] ) + $results[1];
+				$fp = @fopen( $cfg["transfer_file_path"] . $tfile, "r+" );
+				@fseek( $fp, $pos, SEEK_SET );
+				if ($private)
+					@fwrite($fp,"7:privatei1eee");
+				else
+					@fwrite($fp,"e7:privatei0e17:dht_backup_enablei1e20:dht_backup_requestedi1eee");
+				@fclose( $fp );
+			}
+		}
+	} else {
+		// Something went wrong, clean up
+		if (@file_exists($cfg["transfer_file_path"].$tfile))
+			@unlink($cfg["transfer_file_path"].$tfile);
+	}
+	// We are done! how long did we take?
+	$time_end = microtime(true);
+	$diff = duration($time_end - $time_start);
+	// make path URL friendly to support non-standard characters
+	$downpath = urlencode($tfile);
+	// Depending if we were successful, display the required information
+	if ($success)
+		$onLoad = "completed( '" . $downpath . "', " . $alert. ", '" . $diff . "' );";
+	else
+		$onLoad = "failed( '" . $downpath . "', " . $alert . " );";
+	return $onLoad;
+}
+
+/**
  * Strip the folders from the path
  *
  * @param $path

@@ -45,6 +45,7 @@ INSERT INTO tf_settings_dir VALUES ('dir_public_write','0');
 INSERT INTO tf_settings_dir VALUES ('dir_enable_chmod','1');
 INSERT INTO tf_settings_dir VALUES ('enable_dirstats','1');
 INSERT INTO tf_settings_dir VALUES ('enable_maketorrent','1');
+INSERT INTO tf_settings_dir VALUES ('dir_maketorrent_default','tornado');
 INSERT INTO tf_settings_dir VALUES ('enable_file_download','1');
 INSERT INTO tf_settings_dir VALUES ('enable_view_nfo','1');
 INSERT INTO tf_settings_dir VALUES ('package_type','zip');

@@ -90,6 +90,21 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Default Make Make Torrent Client</strong><br>
+									Choose the default-client used to create torrent-files :
+								</td>
+								<td valign="top">
+									<select name="dir_maketorrent_default">
+										<option value="tornado">tornado</option>
+										<option value="mainline"
+										<tmpl_if name="dir_maketorrent_default" value="mainline">
+											 selected
+										</tmpl_if>
+										>mainline</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable File Download</strong><br>
 								When enabled, users will be allowed to download from the directory view:
 								</td>
