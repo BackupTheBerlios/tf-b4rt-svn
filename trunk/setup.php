@@ -24,20 +24,20 @@
 # checks if an binary exists
 # op: name of the binary
 function check_binary($binary, $fatal) {
-	$paths = array("/bin/", "/usr/bin/", "/usr/local/bin/", "/proc/");
-	foreach($paths as $path) {
-		if (is_file($path.$binary)) {
-			return array(
-				'title' => $binary." found in ".$path.$binary.".",
-				'status' => 1,
-			);
-		}
+	$shell = shell_exec("which $binary");
+	if (strstr($shell, "no")) {
+		return array(
+			'title' => $binary." NOT found",
+			'status' => 0,
+			'fatal' => $fatal,
+		);
 	}
-	return array(
-		'title' => $binary." NOT found.",
-		'status' => 0,
-		'fatal' => $fatal,
-	);
+	else {
+		return array(
+			'title' => $binary." found in ".$shell,
+			'status' => 1,
+		);
+	}
 }
 
 # check_extension
@@ -47,12 +47,12 @@ function check_extension($extension, $fatal) {
 	$load_ext = get_loaded_extensions();
 	if (in_array($extension, $load_ext)) {
 		return array(
-			'title' => "php extension ".$extension." found.",
+			'title' => "php extension ".$extension." found",
 			'status' => 1,
 		);
 	}
 	return array(
-		'title' => "php extension ".$extension." NOT found.",
+		'title' => "php extension ".$extension." NOT found",
 		'status' => 0,
 		'fatal' => $fatal,
 	);
@@ -98,7 +98,7 @@ function display_results($title, $result) {
 	}
 	$return .= "</td>";
 	$return .= "<td>";
-	if ($result['fatal'] == 1) {
+	if (@ $result['fatal'] == 1) {
 		$return .= "<b>Needed!!!!</b>";
 	}
 	$return .= "</td>";
