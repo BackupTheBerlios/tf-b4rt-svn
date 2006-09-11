@@ -35,7 +35,19 @@ require_once("inc/functions/functions.index.php");
 // dir
 require_once("inc/functions/functions.dir.php");
 
+// stats
+require_once("inc/functions/functions.stats.php");
+
+// maketorrent
+require_once("inc/functions/functions.maketorrent.php");
+
 // xfer
 require_once('inc/functions/functions.xfer.php');
+
+// readrss
+require_once('inc/functions/functions.readrss.php');
+
+// startpop
+require_once('inc/functions/functions.startpop.php');
 
 ?>

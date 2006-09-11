@@ -23,32 +23,14 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// readrss functions
+require_once('inc/functions/functions.readrss.php');
+
 // require
 require_once("inc/classes/lastRSS.php");
 
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "readrss.tmpl");
-
-// The following is for PHP < 4.3
-if (!function_exists('html_entity_decode')) {
-	function html_entity_decode($string, $opt = ENT_COMPAT) {
-		$trans_tbl = get_html_translation_table (HTML_ENTITIES);
-		$trans_tbl = array_flip ($trans_tbl);
-
-		if ($opt & 1) {
-			// Translating single quotes
-			// Add single quote to translation table;
-			// doesn't appear to be there by default
-			$trans_tbl["&apos;"] = "'";
-		}
-		if (!($opt & 2)) {
-			// Not translating double quotes
-			// Remove double quote from translation table
-			unset($trans_tbl["&quot;"]);
-		}
-		return strtr ($string, $trans_tbl);
-	}
-}
 
 // Just to be safe ;o)
 if (!defined("ENT_COMPAT")) define("ENT_COMPAT", 2);
@@ -79,8 +61,7 @@ foreach ($arURL as $rid => $url) {
 			// Cache rss feed so we don't have to call it again
 			$rssfeed[] = $rs;
 			$stat = 1;
-		}
-		else {
+		} else {
 			$rssfeed[] = "";
 			$stat = 2;
 		}
@@ -152,26 +133,6 @@ $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
-
-// Scrub the description to take out the ugly long URLs
-function ScrubDescription($desc, $title) {
-	$rtnValue = "";
-	$parts = explode("</a>", $desc);
-	$replace = ereg_replace('">.*$', '">'.$title."</a>", $parts[0]);
-	if (strpos($parts[1], "Search:") !== false)
-		$parts[1] = $parts[1]."</a>\n";
-	for ($inx = 2; $inx < count($parts); $inx++) {
-		if (strpos($parts[$inx], "Info: <a ") !== false) {
-			// We have an Info: and URL to clean
-			$parts[$inx] = ereg_replace('">.*$', '" target="_blank">Read More...</a>', $parts[$inx]);
-		}
-	}
-	$rtnValue = $replace;
-	for ($inx = 1; $inx < count($parts); $inx++)
-		$rtnValue .= $parts[$inx];
-	return $rtnValue;
-}
-
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);

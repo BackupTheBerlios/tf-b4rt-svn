@@ -42,7 +42,9 @@ setcookie("username", "", $cookieTime);
 setcookie("iamhim", "", $cookieTime);
 
 // logout user
-logoutUser();
+$sql = "DELETE FROM tf_log WHERE user_id=".$db->qstr($cfg["user"])." and action=".$db->qstr($cfg["constants"]["hit"]);
+$result = $db->Execute($sql);
+showError($db, $sql);
 
 // destroy session
 session_destroy();
@@ -56,14 +58,5 @@ if ($cfg["auth_type"] == 2) { /* Basic-Auth */
     header('location: login.php');
 }
 exit();
-
-// Remove history for user so they are logged off from screen
-function logoutUser() {
-    global $cfg, $db;
-    $sql = "DELETE FROM tf_log WHERE user_id=".$db->qstr($cfg["user"])." and action=".$db->qstr($cfg["constants"]["hit"]);
-    // do the SQL
-    $result = $db->Execute($sql);
-    showError($db, $sql);
-}
 
 ?>

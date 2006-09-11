@@ -2019,21 +2019,7 @@ function GetSuperAdmin() {
 function GetLinks() {
 	global $cfg, $db;
 	$link_array = array();
-	// Link Mod
-	//$link_array = $db->GetAssoc("SELECT lid, url FROM tf_links ORDER BY lid");
 	$link_array = $db->GetAssoc("SELECT lid, url, sitename, sort_order FROM tf_links ORDER BY sort_order");
-	// Link Mod
-	return $link_array;
-}
-
-// ***************************************************************************
-// Get RSS Links in an array
-function GetRSSLinks() {
-	global $cfg, $db;
-	$link_array = array();
-	$sql = "SELECT rid, url FROM tf_rss ORDER BY rid";
-	$link_array = $db->GetAssoc($sql);
-	showError($db,$sql);
 	return $link_array;
 }
 

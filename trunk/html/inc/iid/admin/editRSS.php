@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// readrss functions
+require_once('inc/functions/functions.readrss.php');
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/editRSS.tmpl");
 
