@@ -27,11 +27,21 @@ define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 // stats-functions
 require_once('inc/functions/functions.stats.php');
 
-// main.common
-require_once('inc/main.common.php');
-
 // config
-loadSettings('tf_settings_stats');
+if ((isset($_SESSION['user'])) && (isset($_SESSION['cache'][$_SESSION['user']]))) {
+	$cfg = $_SESSION['cache'][$_SESSION['user']];
+	if (!(isset($cfg['stats_enable_public']))) {
+		// load stats-settings
+		loadSettings('tf_settings_stats');
+		// cache config
+		$_SESSION['cache'][$_SESSION['user']] = $cfg;
+	}
+} else {
+	// main.common
+	require_once('inc/main.common.php');
+	// load stats-settings
+	loadSettings('tf_settings_stats');
+}
 
 // public-stats-switch
 switch ($cfg['stats_enable_public']) {
@@ -56,6 +66,13 @@ switch ($cfg['stats_enable_public']) {
 		require_once("inc/main.webapp.php");
 		// config
 		loadSettings('tf_settings_stats');
+		// config
+		if (!(isset($cfg['stats_enable_public']))) {
+			// load stats-settings
+			loadSettings('tf_settings_stats');
+			// cache config
+			$_SESSION['cache'][$_SESSION['user']] = $cfg;
+		}
 }
 
 // AliasFile
