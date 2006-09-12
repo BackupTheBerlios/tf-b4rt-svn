@@ -1076,11 +1076,11 @@ function convertIntegerToArray($dataInt) {
  * @return boolean if dir exists/could be created
  */
 function checkDirectory($dir, $mode = 0755) {
-  if ((is_dir($dir) && is_writable ($dir)) || @mkdir($dir,$mode))
+  if ((is_dir($dir) && is_writable ($dir)) || mkdir($dir,$mode))
 	return true;
   if (! checkDirectory(dirname($dir),$mode))
 	return false;
-  return @mkdir($dir,$mode);
+  return mkdir($dir,$mode);
 }
 
 /**
