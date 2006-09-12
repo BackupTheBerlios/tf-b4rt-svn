@@ -14,16 +14,17 @@
 	<SCRIPT SRC="js/tooltip.js" TYPE="text/javascript"></SCRIPT>
 	<body topmargin="8" leftmargin="5" bgcolor="#829FB5" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="
 	<tmpl_if name="is_private">
-		ToggleDHT(true);
+		toggleDHT(true);
 	<tmpl_else>
-		ToggleDHT(false);
+		toggleDHT(false);
 	</tmpl_if>
 	<tmpl_if name="onLoad">
 		<tmpl_var name="onLoad">
 	</tmpl_if>
 	">
 <tmpl_else>
-	<body topmargin="8" leftmargin="5" bgcolor="#829FB5" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="
+	<body topmargin="8" leftmargin="5" bgcolor="#829FB5" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;"
+	onLoad="toggleTracker(<tmpl_var name="use_tracker">);
 	<tmpl_if name="onLoad">
 		<tmpl_var name="onLoad">
 	</tmpl_if>
@@ -99,8 +100,8 @@
 													<tr>
 														<td><img align="absmiddle" src="themes/default/images/info.gif" onmouseover="return escape(prvte);" hspace="1" />Private Torrent:</td>
 														<td>
-															<input type="radio" id="Private" name="Private" value="Private" onClick="ToggleDHT(true);"<tmpl_if name="is_private"> checked</tmpl_if>>Yes</input>
-															<input type="radio" id="Private" name="Private" value="NotPrivate" onClick="ToggleDHT(false);"<tmpl_if name="is_private value="0"> checked</tmpl_if>>No</input>
+															<input type="radio" id="Private" name="Private" value="Private" onClick="toggleDHT(true);"<tmpl_if name="is_private"> checked</tmpl_if>>Yes</input>
+															<input type="radio" id="Private" name="Private" value="NotPrivate" onClick="toggleDHT(false);"<tmpl_if name="is_private" value="0"> checked</tmpl_if>>No</input>
 														</td>
 													</tr>
 													<tr>
@@ -108,12 +109,29 @@
 														<td><input type="checkbox" id="DHT" name="DHT"<tmpl_if name="dht"> checked</tmpl_if> value="DHT"></input></td>
 													</tr>
 												<tmpl_else>
-
 													<tr>
-														<td>Torrent name:</td>
+														<td>Torrent name :</td>
 														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
 													</tr>
-
+													<tr>
+														<td>Use Tracker :</td>
+														<td>
+															<input type="radio" id="use_tracker" name="use_tracker" value="1" onClick="toggleTracker(1);"<tmpl_if name="use_tracker"> checked</tmpl_if>>Yes</input>
+															<input type="radio" id="use_tracker" name="use_tracker" value="0" onClick="toggleTracker(0);"<tmpl_if name="use_tracker" value="0"> checked</tmpl_if>>No</input>
+														</td>
+													</tr>
+													<tr>
+														<td>Tracker / Node :</td>
+														<td><input type="text" id="tracker_name" name="tracker_name" size="55" value="<tmpl_var name="tracker_name">" /> <label id="trtag"></label></td>
+													</tr>
+													<tr>
+														<td>Piece size :</td>
+														<td><input type="text" id="piecesize" name="piecesize" size="4" value="<tmpl_var name="piecesize">" /> <label id="ptag">(0 = Auto)</label></td>
+													</tr>
+													<tr>
+														<td valign="top">Comments :</td>
+														<td><textarea cols="50" rows="3" id="comments" name="comments"><tmpl_var name="comment"></textarea></td>
+													</tr>
 												</tmpl_if>
 													<tr>
 														<td>&nbsp;</td>

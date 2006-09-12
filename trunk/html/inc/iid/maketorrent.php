@@ -51,7 +51,6 @@ else
 // client-generic vars
 $tfile = @ $_POST['torrent'];
 $comment = @ $_POST['comments'];
-$piece = @ $_POST['piecesize'];
 $alert = @ ($_POST['alert']) ? 1 : "";
 
 // client-switch
@@ -62,10 +61,21 @@ switch ($client) {
 		$ancelist = @ $_POST['announcelist'];
 		$private = @ ($_POST['Private'] == "Private") ? true : false;
 		$dht = @ ($_POST['DHT'] == "DHT") ? true : false;
+		$piece = @ $_POST['piecesize'];
 		break;
 	case "mainline":
-		$use_tracker = @ ($_POST['use_tracker'] == "use_tracker") ? true : false;
-		$tracker_name = @ ($_POST['tracker_name']) ? $_POST['tracker_name'] : "http://";
+		if (isset($_POST['use_tracker']))
+			$use_tracker = $_POST['use_tracker'];
+		else
+			$use_tracker = 1;
+		if (isset($_POST['tracker_name']))
+			$tracker_name = $_POST['tracker_name'];
+		else
+			$tracker_name = "http://";
+		if (isset($_POST['piecesize']))
+			$piece = $_POST['piecesize'];
+		else
+			$piece = 0;
 		break;
 }
 
@@ -121,14 +131,11 @@ switch ($client) {
 		break;
 	case "mainline":
 		$tmpl->setvar('form_action', $_SERVER['REQUEST_URI']."&create=mainline");
-		if ((!empty($use_tracker)) && ($use_tracker))
-			$tmpl->setvar('use_tracker', 1);
-		else
-			$tmpl->setvar('use_tracker', 0);
+		$tmpl->setvar('use_tracker', $use_tracker);
 		$tmpl->setvar('tracker_name', $tracker_name);
+		$tmpl->setvar('piecesize', $piece);
 		break;
 }
-//
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();

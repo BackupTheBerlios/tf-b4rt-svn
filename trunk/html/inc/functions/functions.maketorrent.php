@@ -58,35 +58,38 @@ function downloadTorrent($tfile) {
 function createTorrentTornado() {
 	global $cfg, $path, $tfile, $announce, $ancelist, $comment, $piece, $alert, $private, $dht;
 	// sanity-check
-	if ($announce == "" || $announce == "http://")
+	if ((empty($announce)) || ($announce == "http://"))
 		return;
 	$onLoad = "";
 	// Clean up old files
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// This is the command to execute
-	$command = "nohup ".$cfg["pythonCmd"]." -OO ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py ".$announce." ".escapeshellarg($cfg["path"].$path)." ";
+	$command = "nohup ".$cfg["pythonCmd"]." -OO";
+	$command .= " ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py";
+	$command .= " ".$announce;
+	$command .= " ".escapeshellarg($cfg["path"].$path);
 	// Is there comments to add?
 	if (!empty($comment))
-		$command .= "--comment ".escapeshellarg($comment)." ";
+		$command .= " --comment ".escapeshellarg($comment);
 	// Set the piece size
 	if (!empty($piece))
-		$command .= "--piece_size_pow2 ".$piece." ";
+		$command .= " --piece_size_pow2 ".$piece;
 	if (!empty($ancelist)) {
 		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
 		// if they didn't add the primary tracker in, we will add it for them
 		if( preg_match( $check, $ancelist, $result ) )
-			$command .= "--announce_list " . escapeshellarg($ancelist) . " ";
+			$command .= " --announce_list ".escapeshellarg($ancelist);
 		else
-			$command .= "--announce_list " . escapeshellarg ($announce . "," . $ancelist) . " ";
+			$command .= " --announce_list ".escapeshellarg($announce.",".$ancelist);
 	}
 	// Set the target torrent field
-	$command .= "--target " . escapeshellarg($cfg["transfer_file_path"] . $tfile);
+	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
 	// Set to never timeout for large torrents
 	set_time_limit(0);
 	// Let's see how long this takes...
 	$time_start = microtime(true);
-	// Execute the command -- w00t!
+	// Execute the command
 	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;
@@ -125,9 +128,9 @@ function createTorrentTornado() {
 	$downpath = urlencode($tfile);
 	// Depending if we were successful, display the required information
 	if ($success)
-		$onLoad = "completed( '" . $downpath . "', " . $alert. ", '" . $diff . "' );";
+		$onLoad = "completed('".$downpath."',".$alert.",'".$diff."');";
 	else
-		$onLoad = "failed( '" . $downpath . "', " . $alert . " );";
+		$onLoad = "failed('".$downpath."',".$alert.");";
 	return $onLoad;
 }
 
@@ -137,7 +140,7 @@ function createTorrentTornado() {
  * @return string $onLoad
  */
 function createTorrentMainline() {
-	global $cfg, $path, $tfile, $comment, $piece, $use_tracker, $tracker_name, $alert ;
+	global $cfg, $path, $tfile, $comment, $piece, $use_tracker, $tracker_name, $alert;
 	$onLoad = "";
 	// Clean up old files
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
@@ -158,12 +161,12 @@ function createTorrentMainline() {
 	if (!empty($piece))
 		$command .= " --piece_size_pow2 ".$piece;
 	// trackerless / tracker
-	if ((isset($use_tracker)) && ($use_tracker))
+	if ((isset($use_tracker)) && ($use_tracker == 1))
 		$command .= " --use_tracker";
 	else
 		$command .= " --no_use_tracker";
 	// tracker-name
-	if (!empty($tracker_name))
+	if ((!empty($tracker_name)) && ($tracker_name != "http://"))
 		$command .= " --tracker_name ".escapeshellarg($tracker_name);
 	// Set the target torrent field
 	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
@@ -173,7 +176,7 @@ function createTorrentMainline() {
 	set_time_limit(0);
 	// Let's see how long this takes...
 	$time_start = microtime(true);
-	// Execute the command -- w00t!
+	// Execute the command
 	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;
@@ -195,9 +198,9 @@ function createTorrentMainline() {
 	$downpath = urlencode($tfile);
 	// Depending if we were successful, display the required information
 	if ($success)
-		$onLoad = "completed( '" . $downpath . "', " . $alert. ", '" . $diff . "' );";
+		$onLoad = "completed('".$downpath."',".$alert.",'".$diff."');";
 	else
-		$onLoad = "failed( '" . $downpath . "', " . $alert . " );";
+		$onLoad = "failed('".$downpath."',".$alert.");";
 	return $onLoad;
 }
 

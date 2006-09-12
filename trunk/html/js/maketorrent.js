@@ -1,57 +1,53 @@
 
+var trackerState = 1;
 
 function doSubmit(obj, client) {
 	// Basic check to see if maketorrent is already running
 	if (obj.value === "Creating...")
 		return false;
-
 	// Run some basic validation
 	var valid = true;
 	var tlength = document.maketorrent.torrent.value.length - 8;
 	var torrent = document.maketorrent.torrent.value.substr(tlength);
 	document.getElementById('output').innerHTML = "";
 	document.getElementById('ttag').innerHTML	= "";
-	document.getElementById('atag').innerHTML	= "";
-
 	// torrent
 	if (torrent !== ".torrent") {
 		document.getElementById('ttag').innerHTML = "<b style=\"color: #990000;\">*</b>";
 		document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Torrent file must end in .torrent</b><BR />";
 		valid = false;
 	}
-
 	// client-specific checks
 	if (client === "tornado") {
-
 		// tornado-special-checks
-
+		document.getElementById('atag').innerHTML = "";
 		// announce-url
 		if (document.maketorrent.announce.value === "http://") {
 			document.getElementById('atag').innerHTML = "<b style=\"color: #990000;\">*</b>";
 			document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid announce URL.</b><BR />";
 			valid = false;
 		}
-
 		// For safety reason, let's force the property to false if it's disabled (private tracker)
 		if (document.maketorrent.DHT.disabled) {
 			document.maketorrent.DHT.checked = false;
 		}
-
 	} else {
-
 		// mainline-special-checks
-
-		// tracker_name if use_tracker disabled
-		if (document.maketorrent.use_tracker.disabled) {
-			if (document.maketorrent.tracker_name.value === "") {
+		document.getElementById('trtag').innerHTML = "";
+		if (trackerState == 1) {
+			if ((document.maketorrent.tracker_name.value === "http://") || (document.maketorrent.tracker_name.value === "")) {
 				document.getElementById('trtag').innerHTML = "<b style=\"color: #990000;\">*</b>";
-				document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid Tracker.</b><BR />";
+				document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid Tracker Name.</b><BR />";
+				valid = false;
+			}
+		} else {
+			if (document.maketorrent.tracker_name.value === "http://") {
+				document.getElementById('trtag').innerHTML = "<b style=\"color: #990000;\">*</b>";
+				document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid Node (&lt;ip&gt;:&lt;port&gt;) or an empty to pull some nodes from your routing table.</b><BR />";
 				valid = false;
 			}
 		}
-
 	}
-
 	// If validation passed, submit form
 	if (valid === true) {
 		disableForm(client);
@@ -75,10 +71,17 @@ function disableForm(client) {
 		document.maketorrent.announce.readOnly = true;
 }
 
-function ToggleDHT(dhtstatus) {
+function toggleDHT(dhtstatus) {
 	document.maketorrent.DHT.disabled = dhtstatus;
 }
 
+function toggleTracker(tState) {
+	trackerState = tState;
+	if (trackerState == 1)
+		document.maketorrent.tracker_name.value = "http://";
+	else
+		document.maketorrent.tracker_name.value = "";
+}
 
 function toggleLayer(whichLayer) {
 	if (document.getElementById) {
