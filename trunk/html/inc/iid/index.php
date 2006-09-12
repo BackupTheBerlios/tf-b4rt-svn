@@ -574,15 +574,6 @@ if((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ($_SESSI
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 }
 
-
-
-//if ($cfg['ui_indexrefresh'] != "0") {
-//	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
-//		$tmpl->setvar('refresh', 1);
-//		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
-//	}
-//}
-
 // messages
 if ($messages != "")
 	$tmpl->setvar('messages', $messages);
