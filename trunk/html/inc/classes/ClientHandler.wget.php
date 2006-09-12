@@ -103,6 +103,9 @@ class ClientHandlerWget extends ClientHandler
 		fwrite($fp, $this->url);
 		fclose($fp);
 
+		// Make an entry for the owner
+		AuditAction($this->cfg["constants"]["file_upload"], basename($this->urlFile));
+
 		// return
 		return true;
 	}
