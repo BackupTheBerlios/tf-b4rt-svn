@@ -110,6 +110,9 @@ if(isset($_GET['iid'])) {
 		case "all_services":
 			require_once("inc/iid/all_services.php");
 			break;
+		case "servermon":
+			require_once("inc/iid/servermon.php");
+			break;
 	}
 } else { // use "old" style to stay flux-compatible as good as possible
 	require_once("inc/iid/index.php");
