@@ -30,16 +30,9 @@ $messages = "";
  * set refresh option into the session cookie
  ******************************************************************************/
 if(array_key_exists("pagerefresh", $_GET)) {
-	if($_GET["pagerefresh"] == "false") {
-		$_SESSION['prefresh'] = false;
-		header("location: index.php?iid=index");
-		exit();
-	}
-	if($_GET["pagerefresh"] == "true") {
-		$_SESSION["prefresh"] = true;
-		header("location: index.php?iid=index");
-		exit();
-	}
+	$_SESSION['prefresh'] = $_GET["pagerefresh"];
+	header("location: index.php?iid=index");
+	exit();
 }
 
 /*******************************************************************************
@@ -576,12 +569,19 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 // =============================================================================
 
 // refresh
-if ($cfg['ui_indexrefresh'] != "0") {
-	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
-		$tmpl->setvar('refresh', 1);
-		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
-	}
+if((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ($_SESSION['prefresh'] == "true")) {
+	$tmpl->setvar('refresh', 1);
+	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 }
+
+
+
+//if ($cfg['ui_indexrefresh'] != "0") {
+//	if(!isset($_SESSION['prefresh']) || ($_SESSION['prefresh'] == true)) {
+//		$tmpl->setvar('refresh', 1);
+//		$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+//	}
+//}
 
 // messages
 if ($messages != "")
