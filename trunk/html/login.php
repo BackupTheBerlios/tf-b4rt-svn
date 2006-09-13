@@ -26,7 +26,7 @@ require_once('inc/main.external.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["default_theme"], "login.tmpl");
 
-# start session
+// start session
 @session_start();
 
 // already got a session ?
@@ -38,7 +38,7 @@ if(isset($_SESSION['user'])) {
 // start ob
 ob_start();
 
-# authentication
+// authentication
 switch ($cfg['auth_type']) {
 	case 3: /* Basic-Passthru */
 	case 2: /* Basic-Auth */
@@ -99,7 +99,7 @@ if(!empty($user) && !empty($iamhim)) {
 	}
 }
 
-# define some things
+// defines
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('default_theme', $cfg["default_theme"]);
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
@@ -108,7 +108,8 @@ $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('iid', 'login');
-# lets parse the hole thing
+
+// parse template
 $tmpl->pparse();
 
 ?>
