@@ -569,7 +569,7 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 // =============================================================================
 
 // refresh
-if((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ($_SESSION['prefresh'] == "true")) {
+if((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ((isset($_SESSION['prefresh'])) && ($_SESSION['prefresh'] == "true"))) {
 	$tmpl->setvar('refresh', 1);
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 }
