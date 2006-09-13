@@ -20,19 +20,6 @@
 
 *******************************************************************************/
 
-// main.webapp
-require_once("inc/main.webapp.php");
-
-/* -------------------------------------------------------------------------- */
-
-// grab user
-if (! isset($_SESSION['user'])) {
-    @ob_end_clean();
-    exit();
-} else {
-    $cfg["user"] = strtolower($_SESSION['user']);
-}
-
 // somehow there is a bug when disabling rememberme-hack while cookie is set.
 // (auto-login and cookie cant be deleted)
 // so cookies are deleted always for now .. if remember_me is active or not
@@ -47,7 +34,7 @@ $result = $db->Execute($sql);
 showError($db, $sql);
 
 // destroy session
-session_destroy();
+@session_destroy();
 
 // final logout-step
 if ($cfg["auth_type"] == 2) { /* Basic-Auth */

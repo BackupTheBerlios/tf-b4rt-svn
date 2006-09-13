@@ -116,6 +116,9 @@ if(isset($_GET['iid'])) {
 		case "servermon":
 			require_once("inc/iid/servermon.php");
 			break;
+		case "logout":
+			require_once("inc/iid/logout.php");
+			break;
 	}
 } else { // use "old" style to stay flux-compatible as good as possible
 	require_once("inc/iid/index.php");
