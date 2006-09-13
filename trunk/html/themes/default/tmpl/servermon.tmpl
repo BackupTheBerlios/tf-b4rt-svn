@@ -1,23 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<HEAD>
-	<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1" />
-	<META HTTP-EQUIV="Pragma" CONTENT="no-cache" />
-	<TITLE><tmpl_var name="pagetitle"> - Torrent Maker</TITLE>
-	<LINK REL="icon" HREF="themes/default/images/favicon.ico" TYPE="image/x-icon" />
-	<LINK REL="shortcut icon" HREF="themes/default/images/favicon.ico" TYPE="image/x-icon" />
-	<LINK REL="StyleSheet" HREF="themes/<tmpl_var name="theme">/css/style.css" TYPE="text/css" />
-</HEAD>
-<body topmargin="8" leftmargin="5" bgcolor="#829FB5" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="
-<tmpl_if name="onLoad">
-	<tmpl_var name="onLoad">
-</tmpl_if>
-">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<title><tmpl_var name="pagetitle"> - Server Monitor</title>
+	<link rel="icon" href="themes/default/images/favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="themes/default/images/favicon.ico" type="image/x-icon" />
+	<link rel="StyleSheet" href="themes/<tmpl_var name="theme">/css/style.css" type="text/css" />
+	<script src="js/servermon.js" type="text/javascript"></script>
+</head>
+<body topmargin="8" leftmargin="5" bgcolor="#829FB5" style="font-family:Tahoma, 'Times New Roman'; font-size:12px;" onLoad="<tmpl_var name="onLoad">">
 <div align="center">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<table border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td>
-				<table border="1" bordercolor="#d6dfe6" cellpadding="4" cellspacing="0" width="100%">
+				<table border="1" bordercolor="#d6dfe6" cellpadding="4" cellspacing="0">
 					<tr>
 						<td bgcolor="#829FB5" background="themes/default/images/bar.gif">
 							<tmpl_var name="getTitleBar">
@@ -32,27 +29,27 @@
 											<table width="100%">
 												<tr>
 													<td width="50%" align="right" nowrap><b><tmpl_var name="_DOWNLOADSPEED">:</td>
-													<td width="50%" align="right" nowrap><label id="speedDown"><tmpl_var name="_DOWNLOADSPEED"></label></td>
+													<td width="50%" align="right" nowrap><label id="speedDown">0.00</label> kB/s</td>
 												</tr>
 												<tr>
 													<td width="50%" align="right" nowrap><b><tmpl_var name="_UPLOADSPEED">:</td>
-													<td width="50%" align="right" nowrap><label id="speedUp"><tmpl_var name="_UPLOADSPEED"></label></td>
+													<td width="50%" align="right" nowrap><label id="speedUp">0.00</label> kB/s</td>
 												</tr>
 												<tr>
 													<td width="50%" align="right" nowrap><b><tmpl_var name="_TOTALSPEED">:</td>
-													<td width="50%" align="right" nowrap><label id="speedTotal"><tmpl_var name="_TOTALSPEED"></label></td>
+													<td width="50%" align="right" nowrap><label id="speedTotal">0.00</label> kB/s</td>
 												</tr>
 												<tr>
 													<td width="50%" align="right" nowrap><b><tmpl_var name="_ID_CONNECTIONS">:</td>
-													<td width="50%" align="right" nowrap><label id="connections"><tmpl_var name="_ID_CONNECTIONS"></label></td>
+													<td width="50%" align="right" nowrap><label id="connections">0</label></td>
 												</tr>
 												<tr>
 													<td width="50%" align="right" nowrap><b><tmpl_var name="_DRIVESPACE">:</td>
-													<td width="50%" align="right" nowrap><label id="freeSpace"><tmpl_var name="_DRIVESPACE"></label></td>
+													<td width="50%" align="right" nowrap><label id="freeSpace">0.00</label></td>
 												</tr>
 												<tr>
 													<td width="50%" align="right" nowrap><b><tmpl_var name="_SERVERLOAD">:</td>
-													<td width="50%" align="right" nowrap><label id="loadavg"><tmpl_var name="_SERVERLOAD"></label></td>
+													<td width="50%" align="right" nowrap><label id="loadavg">0.00</label></td>
 												</tr>
 											</table>
 										</td>

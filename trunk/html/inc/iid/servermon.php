@@ -23,8 +23,8 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// require
-require_once("inc/classes/AliasFile.php");
+// load stats-settings
+loadSettings('tf_settings_stats');
 
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "servermon.tmpl");
@@ -37,6 +37,13 @@ $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Server Monitor", false));
+//
+$statsUrl = "http://";
+$statsUrl .= $_SERVER['SERVER_NAME'];
+$statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
+$timer = 5000;
+$tmpl->setvar('onLoad', "initialize('".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
+//
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
