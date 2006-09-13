@@ -41,7 +41,7 @@ $tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Server Monitor", 
 $statsUrl = "http://";
 $statsUrl .= $_SERVER['SERVER_NAME'];
 $statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
-$timer = 5000;
+$timer = ((int) $cfg['servermon_update']) * 1000;
 $tmpl->setvar('onLoad', "initialize('".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
 //
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());

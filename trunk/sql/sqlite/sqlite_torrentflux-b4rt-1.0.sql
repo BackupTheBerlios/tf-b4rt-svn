@@ -255,6 +255,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('servermon_update','5');
 INSERT INTO tf_settings VALUES ('enable_home_dirs','1');
 INSERT INTO tf_settings VALUES ('path_incoming','incoming');
 INSERT INTO tf_settings VALUES ('enable_tmpl_cache','0');

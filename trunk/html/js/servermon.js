@@ -7,7 +7,6 @@ var txtDelim = ";";
 var statsUrl = "";
 var updateTimer = 5000;
 var httpRequest = false;
-
 var spanIds = new Array("speedDown","speedUp","speedTotal","connections","freeSpace","loadavg");
 var idCount = spanIds.length;
 
