@@ -2,7 +2,6 @@
 // fields
 var debug = true;
 var useXML = false;
-//
 var txtDelim = ";";
 var statsUrl = "";
 var updateTimer = 5000;
@@ -15,6 +14,7 @@ var idCount = spanIds.length;
  *
  * @param url
  * @param timer
+ * @param delim
  */
 function initialize(url, timer, delim) {
 	statsUrl = url;
