@@ -971,8 +971,8 @@ function dirTree2($dir, $maxdepth) {
 	// set some vars
 	$tmpl->setvar('dir', $dir);
 	if (is_numeric ($maxdepth)) {
+		$retvar_list = array();
 		if ($maxdepth == 0) {
-			$retvar_list = array();
 			//$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
 			$last = exec ("find ".$dir." -type d | sort && echo", $retval);
 			for ($i = 1; $i < (count ($retval) - 1); $i++){
