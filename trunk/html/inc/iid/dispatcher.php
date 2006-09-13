@@ -20,11 +20,6 @@
 
 *******************************************************************************/
 
-// main.webapp
-require_once("inc/main.webapp.php");
-
-/* -------------------------------------------------------------------------- */
-
 // clienthandler
 require_once("inc/classes/ClientHandler.php");
 

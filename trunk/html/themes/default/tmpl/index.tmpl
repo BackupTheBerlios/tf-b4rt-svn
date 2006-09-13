@@ -260,7 +260,7 @@
 				</tr>
 			</tmpl_if>
 		</table>
-		<form action="multi.php" method="POST">
+		<form action="index.php?iid=dispatcher" method="POST">
 			<table bgcolor="#EEEEEE" width="100%" bordercolor="#d6dfe6" border="1" cellpadding="3" cellspacing="0" class="sortable" id="transfer_table">
 				<tmpl_if name="are_user_torrent">
 					<tr>
@@ -745,9 +745,9 @@
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="multi.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/default/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
-														<a href="multi.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/default/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
-														<a href="multi.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/default/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
+														<a href="index.php?iid=dispatcher&action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/default/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
+														<a href="index.php?iid=dispatcher&action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/default/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
+														<a href="index.php?iid=dispatcher&action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/default/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
