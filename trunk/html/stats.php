@@ -37,8 +37,8 @@ if ((isset($_SESSION['user'])) && (isset($_SESSION['cache'][$_SESSION['user']]))
 		$_SESSION['cache'][$_SESSION['user']] = $cfg;
 	}
 } else {
-	// main.common
-	require_once('inc/main.common.php');
+	// main.core
+	require_once('inc/main.core.php');
 	// load stats-settings
 	loadSettings('tf_settings_stats');
 }
@@ -62,8 +62,8 @@ switch ($cfg['stats_enable_public']) {
 		break;
 	case 0:
 	default:
-		// main.webapp
-		require_once("inc/main.webapp.php");
+		// main.internal
+		require_once("inc/main.internal.php");
 		// config
 		loadSettings('tf_settings_stats');
 		// config

@@ -20,10 +20,8 @@
 
 *******************************************************************************/
 
-// main.webapp
-require_once("inc/main.webapp.php");
-
-/* -------------------------------------------------------------------------- */
+// main.internal
+require_once("inc/main.internal.php");
 
 // iid-switch
 if(isset($_GET['iid'])) {

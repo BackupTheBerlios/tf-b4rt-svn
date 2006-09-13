@@ -23,10 +23,8 @@
 // all functions
 require_once('inc/functions/functions.all.php');
 
-// main.webapp
-require_once("inc/main.webapp.php");
-
-/* -------------------------------------------------------------------------- */
+// main.internal
+require_once("inc/main.internal.php");
 
 // defines
 define('_DIR_BACKUP','.backup');

@@ -20,19 +20,8 @@
 
 *******************************************************************************/
 
-// main.common
-require_once('inc/main.common.php');
-
-/* -------------------------------------------------------------------------- */
-
-// load default-language
-loadLanguageFile($cfg["default_language"]);
-
-// default-theme
-include("themes/".$cfg["default_theme"]."/index.php");
-
-// vlib
-require_once("inc/lib/vlib/vlibTemplate.php");
+// main.external
+require_once('inc/main.external.php');
 
 // create template-instance
 $tmpl = getTemplateInstance($cfg["default_theme"], "login.tmpl");

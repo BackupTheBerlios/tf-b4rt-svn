@@ -38,13 +38,13 @@ if (isset($_SESSION['user'])) {
 		// Free space in MB
 		$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
 	} else {
-		// main.common
-		require_once('inc/main.common.php');
+		// main.core
+		require_once('inc/main.core.php');
 	}
     $cfg["user"] = $currentUser;
 } else {
-	// main.common
-	require_once('inc/main.common.php');
+	// main.core
+	require_once('inc/main.core.php');
 	// reset user
     $cfg["user"] = "";
 }

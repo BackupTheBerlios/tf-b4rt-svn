@@ -31,8 +31,8 @@ ini_set('include_path', ini_get('include_path').':../:');
 // all functions
 require_once('inc/functions/functions.all.php');
 
-// main.common
-require_once('inc/main.common.php');
+// main.core
+require_once('inc/main.core.php');
 
 // default-language
 require_once("inc/language/".$cfg["default_language"]);
