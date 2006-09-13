@@ -23,8 +23,6 @@
 // ADODB
 require_once('inc/lib/adodb/adodb.inc.php');
 
-/* -------------------------------------------------------------------------- */
-
 /**
  * get ado-connection
  *
@@ -36,7 +34,7 @@ function getdb() {
 	$db = NewADOConnection($cfg["db_type"]);
 	$db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
 	if(!$db)
-		die ('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.php file.');
+		die ('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.db.php file.');
 	return $db;
 }
 

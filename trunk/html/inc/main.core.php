@@ -20,14 +20,76 @@
 
 *******************************************************************************/
 
-// configs
-require_once("inc/config/config.php");
-
 // core functions
 require_once('inc/functions/functions.core.php');
 
 // common functions
 require_once('inc/functions/functions.common.php');
+
+// url constants
+$cfg["_URL_DEREFERRER"] = 'index.php?iid=dereferrer&u=';
+
+// auth-constants
+$cfg["_AUTH_BASIC_REALM"] = 'torrentflux-b4rt';
+
+// constants
+$cfg["constants"] = array();
+$cfg["constants"]["url_upload"] = "URL Upload";
+$cfg["constants"]["reset_owner"] = "Reset Owner";
+$cfg["constants"]["start_torrent"] = "Started Torrent";
+$cfg["constants"]["queued_torrent"] = "Queued Torrent";
+$cfg["constants"]["unqueued_torrent"] = "Removed from Queue";
+$cfg["constants"]["QManager"] = "QManager";
+$cfg["constants"]["fluxd"] = "fluxd";
+$cfg["constants"]["access_denied"] = "ACCESS DENIED";
+$cfg["constants"]["delete_torrent"] = "Delete Torrent";
+$cfg["constants"]["fm_delete"] = "File Manager Delete";
+$cfg["constants"]["fm_download"] = "File Download";
+$cfg["constants"]["kill_transfer"] = "Kill Transfer";
+$cfg["constants"]["file_upload"] = "File Upload";
+$cfg["constants"]["error"] = "ERROR";
+$cfg["constants"]["hit"] = "HIT";
+$cfg["constants"]["update"] = "UPDATE";
+$cfg["constants"]["admin"] = "ADMIN";
+asort($cfg["constants"]);
+
+// Add file extensions here that you will allow to be uploaded
+$cfg["file_types_array"] = array("torrent","wget");
+
+// Capture username
+$cfg["user"] = "";
+
+// Capture ip
+@ $cfg["ip"] = $_SERVER['REMOTE_ADDR'];
+
+// torrentflux-b4rt Version
+if ($fileHandle = @fopen('.version','r')) {
+	$data = "";
+    while (!@feof($fileHandle))
+        $data .= @fgets($fileHandle, 64);
+    @fclose ($fileHandle);
+    $cfg["version"] = trim($data);
+} else {
+  $cfg["version"] =  "Error getting local Version";
+}
+
+// get os
+$osString = php_uname('s');
+if (isset($osString)) {
+    if (!(stristr($osString, 'linux') === false)) /* linux */
+    	$cfg["_OS"] = 1;
+    else if (!(stristr($osString, 'bsd') === false)) /* bsd */
+    	$cfg["_OS"] = 2;
+    //else if (!(stristr($osString, 'darwin') === false)) /* darwin */
+    //    $cfg["_OS"] = 3;
+    else /* well... linux ;) */
+    	define('_OS',1);
+} else { /* well... linux ;) */
+	$cfg["_OS"] = 1;
+}
+
+// db-config
+require_once('inc/config/config.db.php');
 
 // db
 require_once('inc/db.php');

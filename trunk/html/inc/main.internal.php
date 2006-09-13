@@ -47,6 +47,7 @@ if (isset($_SESSION['user'])) {
 	require_once('inc/main.core.php');
 	// reset user
     $cfg["user"] = "";
+    $currentUser = "";
 }
 
 // authenticate
