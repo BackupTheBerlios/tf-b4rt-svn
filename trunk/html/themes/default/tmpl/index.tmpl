@@ -755,16 +755,16 @@
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 														<select name="action" size="1">
 															<option value="---" selected>---</option>
-															<option value="transferStart" style="background-color: #00EC00">Start [BTW]</option>
-															<option value="transferStop" style="background-color: #94ABC0">Stop [BT]</option>
+															<option value="transferStart" style="background-color: #00EC00">Start [BTMW]</option>
+															<option value="transferStop" style="background-color: #94ABC0">Stop [BTM]</option>
 															<tmpl_if name="queueActive2">
-																<option value="transferEnQueue" style="background-color: #FFFC00">EnQueue [BT]</option>
-																<option value="transferDeQueue" style="background-color: #FFFC00">DeQueue [BT]</option>
+																<option value="transferEnQueue" style="background-color: #FFFC00">EnQueue [BTM]</option>
+																<option value="transferDeQueue" style="background-color: #FFFC00">DeQueue [BTM]</option>
 															</tmpl_if>
-															<option value="transfer" style="background-color: #DDAAAA">Delete [BTW]</option>
-															<option value="transferData" style="background-color: #DDAAAA">Delete with Data [BT]</option>
-															<option value="transferResetTotals" style="background-color: #DDAAAA">Reset Totals [BT]</option>
-															<option value="transferWipe" style="background-color: #DDAAAA">Wipe [BT]</option>
+															<option value="transfer" style="background-color: #DDAAAA">Delete [BTMW]</option>
+															<option value="transferData" style="background-color: #DDAAAA">Delete with Data [BTM]</option>
+															<option value="transferResetTotals" style="background-color: #DDAAAA">Reset Totals [BTM]</option>
+															<option value="transferWipe" style="background-color: #DDAAAA">Wipe [BTM]</option>
 														</select>
 														<input type="submit" value="Go">
 														<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);">
