@@ -2607,11 +2607,11 @@ function convertTime($seconds) {
 /* ************************************************************************** */
 
 /**
- * prints nice fatal-error-message
+ * prints nice error-page
  *
  * @param $errorMessage
  */
-function showFatalError($errorMessage) {
+function showErrorPage($errorMessage) {
 	global $cfg;
 	require_once("themes/".$cfg["default_theme"]."/index.php");
 	require_once("inc/lib/vlib/vlibTemplate.php");
