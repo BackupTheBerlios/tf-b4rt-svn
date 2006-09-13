@@ -90,6 +90,7 @@ UPDATE tf_users SET theme = 'default';
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('auth_basic_realm','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('servermon_update','5');
 INSERT INTO tf_settings VALUES ('enable_home_dirs','1');
 INSERT INTO tf_settings VALUES ('path_incoming','incoming');

@@ -38,7 +38,7 @@ showError($db, $sql);
 
 // final logout-step
 if ($cfg["auth_type"] == 2) { /* Basic-Auth */
-    header('WWW-Authenticate: Basic realm="'. $cfg["_AUTH_BASIC_REALM"] .'"');
+    header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
     header('HTTP/1.0 401 Unauthorized');
     @ob_end_clean();
 } else {

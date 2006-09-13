@@ -33,8 +33,8 @@ $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 //
-$tmpl->setvar('_AUTH_BASIC_REALM', $cfg["_AUTH_BASIC_REALM"]);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
+$tmpl->setvar('auth_basic_realm', $cfg["auth_basic_realm"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);

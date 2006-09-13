@@ -26,9 +26,6 @@ require_once('inc/functions/functions.core.php');
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// auth-constants
-$cfg["_AUTH_BASIC_REALM"] = 'torrentflux-b4rt';
-
 // constants
 $cfg["constants"] = array();
 $cfg["constants"]["url_upload"] = "URL Upload";

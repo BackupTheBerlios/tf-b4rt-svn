@@ -46,7 +46,7 @@ switch ($cfg['auth_type']) {
 			$user = strtolower($_SERVER['PHP_AUTH_USER']);
 			$iamhim = addslashes($_SERVER['PHP_AUTH_PW']);
 		} else {
-			header('WWW-Authenticate: Basic realm="'. $cfg["_AUTH_BASIC_REALM"] .'"');
+			header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
 			header('HTTP/1.0 401 Unauthorized');
 			@ob_end_clean();
 			exit();
