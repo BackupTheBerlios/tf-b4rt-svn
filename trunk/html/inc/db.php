@@ -45,14 +45,14 @@ function getdb() {
  * @param $sql
  */
 function showError($db, $sql) {
-	global $cfg, $tmpl;
+	global $cfg;
 	if($db->ErrorNo() != 0) {
-		// vlib
+		require_once("themes/".$cfg["default_theme"]."/index.php");
 		require_once("inc/lib/vlib/vlibTemplate.php");
 		$tmpl = getTemplateInstance($cfg["default_theme"], "db.tmpl");
 		$tmpl->setvar('error', 1);
-		include("themes/default/index.php");
 		$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+		$tmpl->setvar('default_theme', $cfg["default_theme"]);
 		$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
