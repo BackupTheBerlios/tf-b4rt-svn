@@ -16,7 +16,8 @@
 						<form name="theForm" action="index.php?iid=admin&op=updateServerSettings" method="post" onsubmit="return validateSettings()">
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Path</strong><br>
-									Define the PATH where the downloads will go <br> It must be chmod'd to 777:
+									Define the main torrentflux parent-PATH : <br>
+									Dir must be writable for the webserver-user.
 								</td>
 								<td valign="top">
 									<input name="path" type="Text" maxlength="254" value="<tmpl_var name="path">" size="55">
@@ -63,7 +64,7 @@
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Bins</strong></td></tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Path : transmissioncli</strong><br>
-									Specify the path to the Transmission binary (transmissioncli):
+									Specify the path to the Transmission binary (/usr/local/bin/transmissioncli):
 								</td>
 								<td valign="top">
 									<input name="btclient_transmission_bin" type="Text" maxlength="254" value="<tmpl_var name="btclient_transmission_bin">" size="55"><tmpl_var name="validate_transmission_bin">
