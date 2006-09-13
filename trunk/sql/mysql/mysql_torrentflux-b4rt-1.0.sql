@@ -323,6 +323,7 @@ INSERT INTO tf_settings_stats VALUES ('stats_enable_public','0');
 INSERT INTO tf_settings_stats VALUES ('stats_show_usage','1');
 INSERT INTO tf_settings_stats VALUES ('stats_deflate_level','9');
 INSERT INTO tf_settings_stats VALUES ('stats_txt_delim',';');
+INSERT INTO tf_settings_stats VALUES ('stats_default_header','0');
 INSERT INTO tf_settings_stats VALUES ('stats_default_type','all');
 INSERT INTO tf_settings_stats VALUES ('stats_default_format','xml');
 INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0');

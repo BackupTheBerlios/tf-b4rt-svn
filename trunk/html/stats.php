@@ -82,6 +82,9 @@ require_once("inc/classes/AliasFile.php");
 // Main
 // -----------------------------------------------------------------------------
 
+// header (default)
+$header = $cfg['stats_default_header'];
+
 // type (default)
 $type = $cfg['stats_default_type'];
 
@@ -96,6 +99,10 @@ $sendCompressed = $cfg['stats_default_compress'];
 
 // read params
 $gotParams = 0;
+if (isset($_REQUEST["h"])) {
+    $header = trim($_REQUEST["h"]);
+    $gotParams++;
+}
 if (isset($_REQUEST["t"])) {
     $type = trim($_REQUEST["t"]);
     $gotParams++;
@@ -120,7 +127,8 @@ $transferList = getTransferListArray();
 switch ($type) {
     case "all":
     	$indent = " ";
-    	$transferHeads = getTransferListHeadArray();
+    	if (!(($format == "txt") && ($header == 0)))
+    		$transferHeads = getTransferListHeadArray();
     	initServerStats();
     	break;
     case "server":
@@ -129,7 +137,8 @@ switch ($type) {
     	break;
     case "transfers":
     	$indent = "";
-    	$transferHeads = getTransferListHeadArray();
+    	if (!(($format == "txt") && ($header == 0)))
+    		$transferHeads = getTransferListHeadArray();
     	break;
 }
 

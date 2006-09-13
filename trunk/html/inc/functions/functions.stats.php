@@ -36,9 +36,12 @@ Params :
       "server" : server-stats
       "transfers" : transfer-stats
 "f" : format : optional, default is "'.$cfg['stats_default_format'].'".
-      "xml" : new xml-formats, see xml-schemas in dir "xml".
+      "xml" : new xml-formats, see xml-schemas in dir "xml"
       "rss" : rss 0.91
       "txt" : csv-formatted text
+"h" : header : optional and only valid for txt-format, default is "'.$cfg['stats_default_header'].'".
+      "0" : send header
+      "1" : dont send header.
 "a" : send as attachment : optional, default is "'.$cfg['stats_default_attach'].'".
       "0" : dont send as attachment
       "1" : send as attachment
@@ -53,6 +56,7 @@ Examples :
 * '._URL_THIS.'?t=transfers&f=xml&c=1  :  transfer stats as xml sent compressed.
 * '._URL_THIS.'?t=all&f=rss            :  all stats sent as rss.
 * '._URL_THIS.'?t=all&f=txt            :  all stats sent as txt.
+* '._URL_THIS.'?t=all&f=txt&h=0        :  all stats sent as txt without headers.
 * '._URL_THIS.'?t=all&f=txt&a=1&c=1    :  all stats as text sent as compressed attachment.
 
 * '._URL_THIS.'?t=all&f=xml&username=admin&iamhim=seceret  :  all stats sent as xml. use auth-credentials "admin/seceret".
@@ -206,20 +210,22 @@ function sendRSS($type) {
  * @param $type
  */
 function sendTXT($type) {
-    global $cfg, $transferList, $transferHeads, $serverStats;
+    global $cfg, $header, $transferList, $transferHeads, $serverStats;
     // build content
     $content = "";
 	// server stats
 	switch ($type) {
 	    case "all":
 	    case "server":
-			$content .= 'speedDown' . $cfg['stats_txt_delim'];
-			$content .= 'speedUp' . $cfg['stats_txt_delim'];
-			$content .= 'speedTotal' . $cfg['stats_txt_delim'];
-			$content .= 'connections' . $cfg['stats_txt_delim'];
-			$content .= 'freeSpace' . $cfg['stats_txt_delim'];
-			$content .= 'loadavg';
-			$content .= "\n";
+	    	if ($header == 1) {
+				$content .= 'speedDown' . $cfg['stats_txt_delim'];
+				$content .= 'speedUp' . $cfg['stats_txt_delim'];
+				$content .= 'speedTotal' . $cfg['stats_txt_delim'];
+				$content .= 'connections' . $cfg['stats_txt_delim'];
+				$content .= 'freeSpace' . $cfg['stats_txt_delim'];
+				$content .= 'loadavg';
+				$content .= "\n";
+	    	}
 			$content .= $serverStats['speedDown'] . $cfg['stats_txt_delim'];
 			$content .= $serverStats['speedUp'] . $cfg['stats_txt_delim'];
 			$content .= $serverStats['speedTotal'] . $cfg['stats_txt_delim'];
@@ -232,14 +238,16 @@ function sendTXT($type) {
 	switch ($type) {
 	    case "all":
 	    case "transfers":
-	    	$content .= "Name" . $cfg['stats_txt_delim'];
-	    	$sizeHead = count($transferHeads);
-			for ($j = 0; $j < $sizeHead; $j++) {
-				$content .= $transferHeads[$j];
-				if ($j < ($sizeHead - 1))
-					$content .= $cfg['stats_txt_delim'];
-			}
-	    	$content .= "\n";
+	    	if ($header == 1) {
+		    	$content .= "Name" . $cfg['stats_txt_delim'];
+		    	$sizeHead = count($transferHeads);
+				for ($j = 0; $j < $sizeHead; $j++) {
+					$content .= $transferHeads[$j];
+					if ($j < ($sizeHead - 1))
+						$content .= $cfg['stats_txt_delim'];
+				}
+		    	$content .= "\n";
+	    	}
 			foreach ($transferList as $transferAry) {
 				$size = count($transferAry);
 				for ($i = 0; $i < $size; $i++) {

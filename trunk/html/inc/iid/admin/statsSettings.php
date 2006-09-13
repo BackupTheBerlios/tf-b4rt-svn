@@ -49,6 +49,7 @@ for ($i = 0; $i <= 9 ; $i++) {
 }
 $tmpl->setloop('deflate_list', $list);
 $tmpl->setvar('stats_txt_delim', $cfg["stats_txt_delim"]);
+$tmpl->setvar('stats_default_header', $cfg["stats_default_header"]);
 $tmpl->setvar('stats_default_type', $cfg["stats_default_type"]);
 $tmpl->setvar('stats_default_format', $cfg["stats_default_format"]);
 $tmpl->setvar('stats_default_compress', $cfg["stats_default_compress"]);
