@@ -81,7 +81,7 @@ function performAuthentication($username = '', $password = '') {
 }
 
 /**
- * firstLogin
+ * first Login
  *
  * @param $username
  * @param $password
@@ -132,7 +132,7 @@ function firstLogin($username = '', $password = '') {
 }
 
 /**
- * Enter description here...
+ * prune db
  *
  */
 function PruneDB() {
@@ -148,6 +148,31 @@ function PruneDB() {
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 	unset($result);
+}
+
+/**
+ * checks main-directories.
+ *
+ * @return boolean
+ */
+function checkMainDirectories() {
+	global $cfg;
+	// main-path
+	if (!(@is_dir($cfg["path"]) === true)) {
+		// dir doesnt exist, try to create
+		if (!((@mkdir($cfg["path"], 0777)) === true))
+			showErrorPage("Main-Path <em>".$cfg["path"]."</em> does not exist and cant be created.");
+	}
+	if (!(@is_writable($cfg["path"]) === true))
+		showErrorPage("Main-Path <em>".$cfg["path"]."</em> is not writable.");
+	// transfer-file-path
+	if (!(@is_dir($cfg["transfer_file_path"]) === true)) {
+		// dir doesnt exist, try to create
+		if (!((@mkdir($cfg["transfer_file_path"], 0777)) === true))
+			showErrorPage("Transfer-File-Path <em>".$cfg["transfer_file_path"]."</em> does not exist and cant be created.");
+	}
+	if (!(@is_writable($cfg["transfer_file_path"]) === true))
+		showErrorPage("Transfer-File-Path <em>".$cfg["transfer_file_path"]."</em> is not writable.");
 }
 
 /**

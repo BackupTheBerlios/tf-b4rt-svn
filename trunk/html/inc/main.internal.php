@@ -102,9 +102,8 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	// prune db
 	PruneDB();
 
-	// is there a stat and meta-file dir?  If not then it will create it.
-	checkDirectory($cfg["transfer_file_path"], 0777);
-
+	// check main-directories.
+	checkMainDirectories();
 }
 
 // vlib
