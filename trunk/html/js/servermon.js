@@ -26,11 +26,7 @@ function initialize(url, timer, delim) {
 	updateTimer = timer;
 	txtDelim = delim;
 	httpRequest = getHttpRequest();
-	if (!httpRequest) {
-		alert('Error : cant initialize');
-	} else {
-		update();
-	}
+	update();
 }
 
 /**
@@ -63,6 +59,8 @@ function getHttpRequest() {
  * update
  */
 function update() {
+	if (window.ActiveXObject) // IE seems to dispose this object.. recreate
+		httpRequest = getHttpRequest();
 	// trigger asynch http-request
 	httpRequest.onreadystatechange = updateCallback;
 	httpRequest.open('GET', statsUrl, true);
