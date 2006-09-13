@@ -26,9 +26,6 @@ require_once('inc/functions/functions.core.php');
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// url constants
-$cfg["_URL_DEREFERRER"] = 'index.php?iid=dereferrer&u=';
-
 // auth-constants
 $cfg["_AUTH_BASIC_REALM"] = 'torrentflux-b4rt';
 

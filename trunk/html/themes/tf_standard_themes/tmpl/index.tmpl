@@ -114,7 +114,7 @@
 										<b><tmpl_var name="_TORRENTLINKS">:</b><br>
 										<tmpl_loop name="linklist">
 											<tmpl_if name="enable_dereferrer">
-												<a href="<tmpl_var name="_URL_DEREFERRER"><tmpl_var name="link_url">" target="_blank"><img src="themes/tf_standard_themes/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
+												<a href="index.php?iid=dereferrer&u=<tmpl_var name="link_url">" target="_blank"><img src="themes/tf_standard_themes/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
 											<tmpl_else>
 												<a href="<tmpl_var name="link_url">" target="_blank"><img src="themes/tf_standard_themes/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
 											</tmpl_if>

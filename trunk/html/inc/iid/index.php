@@ -776,7 +776,6 @@ $tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
 $tmpl->setvar('formatFreeSpace', $formatFreeSpace);
 fillSearchEngineDDL($cfg["searchEngine"]);
-$tmpl->setvar('_URL_DEREFERRER', $cfg["_URL_DEREFERRER"]);
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);

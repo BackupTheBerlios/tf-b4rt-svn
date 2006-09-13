@@ -2121,7 +2121,7 @@ function check_html ($str, $strip="") {
 	if ($strip != "nohtml") {
 		global $cfg;
 		if ($cfg["enable_dereferrer"] != "0")
-			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="'. $cfg["_URL_DEREFERRER"] .'${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
+			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="index.php?iid=dereferrer&u=${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
 		else
 			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
 	}
