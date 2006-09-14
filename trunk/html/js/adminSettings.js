@@ -1,3 +1,4 @@
+
 function validateSettings() {
 	var rtnValue = true;
 	var msg = "";

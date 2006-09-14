@@ -39,24 +39,21 @@ $torrent = getRequestVar('torrent');
 $torrentExists = (getTorrentDataSize($torrent) > 0);
 
 // display name
-$displayName = $torrent;
-if(strlen($displayName) >= 55) {
-	$displayName = substr($displayName, 0, 52)."...";
-}
+if (strlen($torrent) >= 55)
+	$displayName = substr($torrent, 0, 52)."...";
+else
+	$displayName = $torrent;
 
 // set some template-vars
-$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 $tmpl->setvar('displayName', $displayName);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('torrentExists', $torrentExists);
+$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 if ($cfg["enable_btclient_chooser"] != 0)
 	$tmpl->setvar('btClientSelect', getBTClientSelect($cfg["btclient"]));
 else
 	$tmpl->setvar('btclientDefault', $cfg["btclient"]);
-$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 
 switch ($cfg["enable_home_dirs"]) {
     case 1:
@@ -69,30 +66,38 @@ switch ($cfg["enable_home_dirs"]) {
 }
 if ($torrentExists) {
 	$tmpl->setvar('torrent_exists', 1);
-	if ($cfg["skiphashcheck"] != 0) {
+	if ($cfg["skiphashcheck"] != 0)
 		$tmpl->setvar('is_skip', 1);
-	}
-}
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('bgLight', $cfg["bgLight"]);
-$tmpl->setvar('showMetaInfo', showMetaInfo($torrent,false));
-$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
-
-# profiles
-$sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
-list($user_level) = $db->GetRow($sql);
-if ($cfg["enable_transfer_profile"] == "1") {
-	if($cfg['transfer_profile_level'] >= "1" || $user_level >= "1")
-		$with_profiles = 1;
 	else
-		$with_profiles = 0;
+		$tmpl->setvar('is_skip', 0);
+}
+// admin
+$isAdmin = IsAdmin();
+if ($isAdmin)
+	$tmpl->setvar('is_admin', 1);
+else
+	$tmpl->setvar('is_admin', 1);
+// Force Queuing if not an admin.
+if($queueActive)
+	$tmpl->setvar('is_queue', 1);
+else
+	$tmpl->setvar('is_queue', 0);
+// profiles
+if ($cfg["enable_transfer_profile"] == "1") {
+	if ($cfg['transfer_profile_level'] >= "1") {
+		$with_profiles = 1;
+	} else {
+		if ($isAdmin)
+			$with_profiles = 1;
+		else
+			$with_profiles = 0;
+	}
 } else {
 	$with_profiles = 0;
 }
-$tmpl->setvar('with_profiles', $with_profiles);
-if ($with_profiles == "1") {
+if ($with_profiles == 1) {
 	$profile = getRequestVar('profile');
-	if(isset($profile) && $profile != "" && $profile != "last_used") {
+	if (isset($profile) && $profile != "" && $profile != "last_used") {
 		$tmpl->setvar('useLastSettings', 0);
 		//load custom settings
 		$settings = GetProfileSettings($profile);
@@ -103,23 +108,21 @@ if ($with_profiles == "1") {
 		$tmpl->setvar('max_upload_rate', $settings["rate"]);
 		$tmpl->setvar('max_uploads', $settings["maxuploads"]);
 		$tmpl->setvar('max_download_rate', $settings["drate"]);
-		$selected = "";
-		if ($settings["runtime"] == "False") {
-			$selected = "selected";
-		}
-		$tmpl->setvar('selected', $selected);
+		if ($cfg["runtime"] == "False")
+			$tmpl->setvar('selected', "selected");
+		else
+			$tmpl->setvar('selected', "");
 		$tmpl->setvar('runtimeValue', $settings["runtime"]);
 		$tmpl->setvar('sharekill', $settings["sharekill"]);
-		$superseeder = "";
-		if ($settings['superseeder'] == 1) {
-			$superseeder = "checked";
-		}
-		$tmpl->setvar('superseeder', $superseeder);
+		if ($settings['superseeder'] == 1)
+			$tmpl->setvar('superseeder', "checked");
+		else
+			$tmpl->setvar('superseeder', "");
 		$tmpl->setvar('superseederValue', $settings['superseeder']);
 		// Load saved settings
 		loadTorrentSettingsToConfig($torrent);
 		// savepath
-		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 			switch ($cfg["enable_home_dirs"]) {
 			    case 1:
 			    default:
@@ -131,43 +134,43 @@ if ($with_profiles == "1") {
 			}
 		}
 		$tmpl->setvar('savepath', $cfg["savepath"]);
-		// Force Queuing if not an admin.
-		if($queueActive)
-			$tmpl->setvar('is_queue', 1);
-		else
-			$tmpl->setvar('is_queue', 0);
-		// admin
-		if (IsAdmin())
-			$tmpl->setvar('is_admin', 1);
 	} else {
 		$tmpl->setvar('useLastSettings', 1);
 		setVarsFromPersistentSettings();
 	}
 	// load profile list
-	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1") {
+	if ($cfg['transfer_profile_level'] == "2" or $isAdmin)
 		$profiles = GetProfiles($cfg["uid"], $profile);
-	}
-	if($cfg['transfer_profile_level'] >= "1") {
+	if ($cfg['transfer_profile_level'] >= "1")
 		$public_profiles = GetPublicProfiles($profile);
-	}
 	if (count($profiles) || count($public_profiles)) {
 		$tmpl->setloop('profiles', $profiles);
 		$tmpl->setloop('public_profiles', $public_profiles);
-	}
-	else {
-		$tmpl->setvar('with_profiles', 0);
+	} else {
+		$with_profiles = 0;
 	}
 	// customize settings
-	if($cfg['transfer_customize_settings'] == "2") {
-		$tmpl->setvar('customize_settings', 1);
-	}
-	elseif($cfg['transfer_customize_settings'] == "1" && $user_level >= "1") {
-		$tmpl->setvar('customize_settings', 1);
-	}
+	$customize_settings = 0;
+	if ($cfg['transfer_customize_settings'] == "2")
+		$customize_settings = 1;
+	elseif ($cfg['transfer_customize_settings'] == "1" && $isAdmin)
+		$customize_settings = 1;
+	$tmpl->setvar('customize_settings', $customize_settings);
 } else {
 	setVarsFromPersistentSettings();
 }
+$tmpl->setvar('with_profiles', $with_profiles);
+//
+$tmpl->setvar('bgLight', $cfg["bgLight"]);
+$tmpl->setvar('metaInfo', showMetaInfo($torrent,false));
+//
+$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
+//
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
 // parse template
 $tmpl->pparse();
 
