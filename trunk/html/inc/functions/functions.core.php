@@ -88,7 +88,6 @@ function tmplFillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = f
 	$tmpl->setloop('Engine_List', $Engine_List);
 }
 
-
 /**
  * get the header portion
  *
@@ -101,12 +100,7 @@ function getHead($subTopic, $showButtons = true) {
 	// create template-instance
 	$tmpl = tmplGetInstance($cfg["theme"], "inc.getHead.tmpl");
 	// set some vars
-	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('TitleBar', getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons));
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
@@ -144,7 +138,6 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 	// set some vars
 	$tmpl->setvar('pageTitleText', $pageTitleText);
 	$tmpl->setvar('showButtons', $showButtons);
-	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('_TORRENTS', $cfg['_TORRENTS']);
 	$tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
 	$tmpl->setvar('_UPLOADHISTORY', $cfg['_UPLOADHISTORY']);
