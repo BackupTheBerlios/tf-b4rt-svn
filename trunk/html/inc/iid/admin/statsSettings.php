@@ -26,15 +26,7 @@ loadSettings('tf_settings_stats');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/statsSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - Stats Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-//
-$tmpl->setvar('stats_enable_public', $cfg["stats_enable_public"]);
-$tmpl->setvar('stats_show_usage', $cfg["stats_show_usage"]);
+// set vars
 $list = array();
 for ($i = 0; $i <= 9 ; $i++) {
 	if ($cfg["stats_deflate_level"] == $i)
@@ -48,6 +40,8 @@ for ($i = 0; $i <= 9 ; $i++) {
 	);
 }
 $tmpl->setloop('deflate_list', $list);
+$tmpl->setvar('stats_enable_public', $cfg["stats_enable_public"]);
+$tmpl->setvar('stats_show_usage', $cfg["stats_show_usage"]);
 $tmpl->setvar('stats_txt_delim', $cfg["stats_txt_delim"]);
 $tmpl->setvar('stats_default_header', $cfg["stats_default_header"]);
 $tmpl->setvar('stats_default_type', $cfg["stats_default_type"]);
@@ -55,12 +49,20 @@ $tmpl->setvar('stats_default_format', $cfg["stats_default_format"]);
 $tmpl->setvar('stats_default_compress', $cfg["stats_default_compress"]);
 $tmpl->setvar('stats_default_attach', $cfg["stats_default_attach"]);
 //
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - Stats Settings"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
