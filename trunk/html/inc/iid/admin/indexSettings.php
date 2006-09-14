@@ -26,15 +26,9 @@ loadSettings('tf_settings');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/indexSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - Index Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
+// set vars
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);
-$tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
@@ -45,7 +39,6 @@ $tmpl->setvar('bandwidthbar', $cfg["bandwidthbar"]);
 $tmpl->setvar('bandwidth_up', $cfg["bandwidth_up"]);
 $tmpl->setvar('bandwidth_down', $cfg["bandwidth_down"]);
 $tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
-$tmpl->setvar('GoodLookingStatsForm', GoodLookingStatsForm());
 $tmpl->setvar('enable_bigboldwarning', $cfg["enable_bigboldwarning"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);
 fillSearchEngineDDL($cfg["searchEngine"]);
@@ -57,15 +50,26 @@ $tmpl->setvar('pagerefresh', $cfg["page_refresh"]);
 $tmpl->setvar('enable_restrictivetview', $cfg["enable_restrictivetview"]);
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
-$tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
+//
+$tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
+$tmpl->setvar('GoodLookingStatsForm', GoodLookingStatsForm());
+$tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - Index Settings"));
 $tmpl->setvar('foot', getFoot(true));
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
