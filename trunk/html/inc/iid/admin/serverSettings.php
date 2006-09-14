@@ -20,18 +20,10 @@
 
 *******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/serverSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - Server Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
+// set vars
 // path
 $tmpl->setvar('path', $cfg["path"]);
 if (is_dir($cfg["path"])) {
@@ -73,7 +65,6 @@ $tmpl->setvar('bin_cksfv', $cfg["bin_cksfv"]);
 $tmpl->setvar('validate_cksfv', validateFile($cfg["bin_cksfv"]));
 $tmpl->setvar('php_uname1', php_uname('s'));
 $tmpl->setvar('php_uname2', php_uname('r'));
-$tmpl->setvar('_OS', $cfg["_OS"]);
 $tmpl->setvar('bin_unrar', $cfg["bin_unrar"]);
 $tmpl->setvar('validate_unrar', validateFile($cfg["bin_unrar"]));
 switch ($cfg["_OS"]) {
@@ -88,11 +79,22 @@ switch ($cfg["_OS"]) {
 		$tmpl->setvar('validate_sockstat', validateFile($cfg["bin_sockstat"]));
 		break;
 }
+//
+$tmpl->setvar('_OS', $cfg["_OS"]);
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - Server Settings"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
