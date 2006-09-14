@@ -20,19 +20,10 @@
 
 *******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/transferSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - Transfer Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-//
+// set vars
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('btclient', $cfg["btclient"]);
 $tmpl->setvar('metainfoclient', $cfg["metainfoclient"]);
@@ -57,11 +48,10 @@ $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $nice_list = array();
 for ($i = 0; $i < 20 ; $i++) {
-	if ($cfg["nice_adjust"] == $i) {
+	if ($cfg["nice_adjust"] == $i)
 		$nice_adjust_true = 1;
-	} else {
+	else
 		$nice_adjust_true = 0;
-	}
 	array_push($nice_list, array(
 		'i' => $i,
 		'nice_adjust_true' => $nice_adjust_true,
@@ -69,11 +59,20 @@ for ($i = 0; $i < 20 ; $i++) {
 	);
 }
 $tmpl->setloop('nice_list', $nice_list);
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - Transfer Settings"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
