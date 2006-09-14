@@ -38,7 +38,7 @@ else
 	showErrorPage("torrent file not specified");
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "downloaddetails.".$cfg['details_type'].".tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "downloaddetails.".$cfg['details_type'].".tmpl");
 
 // set vars
 $tmpl->setvar('torrent', $torrent);

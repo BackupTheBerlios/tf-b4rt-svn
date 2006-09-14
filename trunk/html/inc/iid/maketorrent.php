@@ -99,7 +99,7 @@ if (!empty($_REQUEST["create"])) {
  ******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "maketorrent.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "maketorrent.tmpl");
 
 // set vars
 $tmpl->setvar('path', $path);

@@ -270,7 +270,7 @@ if (!(@is_dir($dirName))) {
 }
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "dir.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "dir.tmpl");
 
 // dirstats
 if ($cfg['enable_dirstats'] == 1) {

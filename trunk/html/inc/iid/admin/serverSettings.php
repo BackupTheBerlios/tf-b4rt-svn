@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/serverSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/serverSettings.tmpl");
 
 // set vars
 // path

@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "checkSFV.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "checkSFV.tmpl");
 
 $cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
 

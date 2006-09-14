@@ -28,7 +28,7 @@ $srchFile = getRequestVar('srchFile');
 $srchAction = getRequestVar('srchAction');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/showUserActivity.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 
 // set vars
 $tmpl->setvar('Activity', getActivity($min, $user_id, $srchFile, $srchAction));

@@ -24,7 +24,7 @@
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/searchSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/searchSettings.tmpl");
 
 // set vars
 $searchEngine = getRequestVar('searchEngine');
@@ -66,7 +66,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 		$tmpl->setvar('is_file', 0);
 	}
 }
-fillSearchEngineDDL($searchEngine,true);
+tmplFillSearchEngineDDL($searchEngine,true);
 //
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('head', getHead("Administration - Search Settings"));

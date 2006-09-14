@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/startpopSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/startpopSettings.tmpl");
 
 // set vars
 $tmpl->setvar('enable_btclient_chooser', $cfg["enable_btclient_chooser"]);

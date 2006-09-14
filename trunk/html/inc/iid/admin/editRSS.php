@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.readrss.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/editRSS.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/editRSS.tmpl");
 
 // set vars
 $arLinks = GetRSSLinks();

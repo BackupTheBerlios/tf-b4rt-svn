@@ -49,7 +49,7 @@ function showError($db, $sql) {
 	if($db->ErrorNo() != 0) {
 		require_once("themes/".$cfg["default_theme"]."/index.php");
 		require_once("inc/lib/vlib/vlibTemplate.php");
-		$tmpl = getTemplateInstance($cfg["default_theme"], "db.tmpl");
+		$tmpl = tmplGetInstance($cfg["default_theme"], "db.tmpl");
 		$tmpl->setvar('error', 1);
 		$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 		$tmpl->setvar('default_theme', $cfg["default_theme"]);

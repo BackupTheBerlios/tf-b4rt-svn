@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/CreateUser.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/CreateUser.tmpl");
 
 // set vars
 $tmpl->setvar('userSection', getUserSection());

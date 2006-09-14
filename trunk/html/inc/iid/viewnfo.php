@@ -23,7 +23,7 @@
 // contributed by NovaKing -- thanks duder!
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "viewnfo.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "viewnfo.tmpl");
 
 // set vars
 $file = $_REQUEST["path"];

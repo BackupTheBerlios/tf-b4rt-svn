@@ -24,7 +24,7 @@
 loadSettings('tf_settings_stats');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/statsSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/statsSettings.tmpl");
 
 // set vars
 $list = array();

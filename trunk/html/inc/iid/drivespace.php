@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "drivespace.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "drivespace.tmpl");
 
 // set vars
 $tmpl->setvar('result1', shell_exec("df -h ".$cfg["path"]));

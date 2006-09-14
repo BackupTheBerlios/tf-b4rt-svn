@@ -156,7 +156,7 @@ if (isset($_REQUEST["QEntry"])) {
 // =============================================================================
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "index.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "index.tmpl");
 
 // drivespace
 $drivespace = getDriveSpace($cfg["path"]);
@@ -764,7 +764,7 @@ $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('sortOrder', $sortOrder);
 $tmpl->setvar('drivespace', $drivespace);
 $tmpl->setvar('formatFreeSpace', $formatFreeSpace);
-fillSearchEngineDDL($cfg["searchEngine"]);
+tmplFillSearchEngineDDL($cfg["searchEngine"]);
 //
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

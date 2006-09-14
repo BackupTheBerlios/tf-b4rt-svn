@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/editLinks.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/editLinks.tmpl");
 
 // set vars
 $arLinks = GetLinks();

@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/showUsers.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/showUsers.tmpl");
 
 // set vars
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);

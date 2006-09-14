@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "profile.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "profile.tmpl");
 
 // op-switch
 $op = getRequestVar('op');

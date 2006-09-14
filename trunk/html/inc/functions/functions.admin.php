@@ -28,7 +28,7 @@
 function getMenu() {
 	global $cfg;
 	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "admin/inc.menu.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "admin/inc.menu.tmpl");
 	// set some vars
 	$tmpl->setvar('function', "getMenu");
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
@@ -57,7 +57,7 @@ function getMenu() {
 function getUserSection() {
 	global $cfg, $db;
 	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "admin/inc.users.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "admin/inc.users.tmpl");
 	// set some vars
 	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
@@ -186,7 +186,7 @@ function getUserSection() {
 function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
 	global $cfg, $db;
 	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "admin/inc.activity.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "admin/inc.activity.tmpl");
 	$sqlForSearch = "";
 	$userdisplay = $user;
 	if($user != "")

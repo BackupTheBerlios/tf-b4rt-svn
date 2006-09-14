@@ -28,7 +28,7 @@ loadSettings('tf_settings_dir');
 initRestrictedDirEntries();
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/dirSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/dirSettings.tmpl");
 
 // restricted entries
 $dir_list = array();

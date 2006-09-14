@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "history.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "history.tmpl");
 
 // prepare vars
 $offset = 50;

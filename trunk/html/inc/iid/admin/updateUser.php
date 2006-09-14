@@ -40,7 +40,7 @@ if (!(IsUser($user_id) && ($user_id != $org_user_id))) {
 }
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/updateUser.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/updateUser.tmpl");
 
 // set vars
 $tmpl->setvar('user_id', $user_id);

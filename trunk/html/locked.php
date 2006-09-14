@@ -24,7 +24,7 @@
 require_once('inc/main.external.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["default_theme"], "locked.tmpl");
+$tmpl = tmplGetInstance($cfg["default_theme"], "locked.tmpl");
 
 // defines
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);

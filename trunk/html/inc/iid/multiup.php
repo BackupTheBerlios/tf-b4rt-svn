@@ -103,7 +103,7 @@ if (!empty($_FILES['upload_files'])) {
 }
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "multiup.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "multiup.tmpl");
 
 // set vars
 if ((isset($messages)) && ($messages != ""))

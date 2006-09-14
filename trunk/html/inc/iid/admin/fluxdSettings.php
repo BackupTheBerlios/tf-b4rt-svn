@@ -24,7 +24,7 @@ require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/fluxdSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "admin/fluxdSettings.tmpl");
 
 // message section
 $message = getRequestVar('m');

@@ -21,13 +21,13 @@
 *******************************************************************************/
 
 /**
- * vlib-template-factory.
+ * template-factory.
  *
  * @param $theme
  * @param $template
  * @return vlib-template-instance
  */
-function getTemplateInstance($theme, $template) {
+function tmplGetInstance($theme, $template) {
 	global $cfg;
 	// theme-switch
 	if ((strpos($theme, '/')) === false)
@@ -42,6 +42,312 @@ function getTemplateInstance($theme, $template) {
 		default:
 			return new vlibTemplate($path.$template);
 	}
+}
+
+/**
+ * fill Search Engine Drop Down List
+ *
+ * @param $selectedEngine
+ * @param $autoSubmit
+ */
+function tmplFillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
+	global $cfg, $tmpl;
+	// set some vars
+	$tmpl->setvar('autoSubmit', $autoSubmit);
+	$handle = opendir("./inc/searchEngines");
+	while($entry = readdir($handle))
+		$entrys[] = $entry;
+	natcasesort($entrys);
+	$Engine_List = array();
+	foreach($entrys as $entry) {
+		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
+			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
+			$selected = 0;
+			if ($selectedEngine == $tmpEngine) {
+				$selected = 1;
+			}
+			array_push($Engine_List, array(
+				'selected' => $selected,
+				'Engine' => $tmpEngine,
+				)
+			);
+		}
+	}
+	$tmpl->setloop('Engine_List', $Engine_List);
+}
+
+
+/**
+ * get the header portion
+ *
+ * @param $subTopic
+ * @param $showButtons
+ * @return string
+ */
+function getHead($subTopic, $showButtons = true) {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.getHead.tmpl");
+	// set some vars
+	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('TitleBar', getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons));
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+/**
+ * get the footer portion
+ *
+ * @param $showReturn
+ * @return string
+ */
+function getFoot($showReturn = true) {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.getFoot.tmpl");
+	// set some vars
+	$tmpl->setvar('showReturn', $showReturn);
+	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
+	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get Title Bar.
+ *
+ * @param $pageTitleText
+ * @param $showButtons
+ * @return string
+ */
+function getTitleBar($pageTitleText, $showButtons=true) {
+	global $cfg, $db;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.getTitleBar.tmpl");
+	// set some vars
+	$tmpl->setvar('pageTitleText', $pageTitleText);
+	$tmpl->setvar('showButtons', $showButtons);
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('_TORRENTS', $cfg['_TORRENTS']);
+	$tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
+	$tmpl->setvar('_UPLOADHISTORY', $cfg['_UPLOADHISTORY']);
+	$tmpl->setvar('_MYPROFILE', $cfg['_MYPROFILE']);
+	$tmpl->setvar('_MESSAGES', $cfg['_MESSAGES']);
+	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
+	if ($showButtons) {
+		// Does the user have messages?
+		$sql = "select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew=1";
+		$number_messages = $db->GetOne($sql);
+		showError($db,$sql);
+		$tmpl->setvar('number_messages', $number_messages);
+		$tmpl->setvar('is_admin', IsAdmin());
+	}
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * drivespace bar
+ *
+ * @param $drivespace
+ * @return
+ */
+function getDriveSpaceBar($drivespace) {
+	global $cfg;
+	switch ($cfg['drivespacebar']) {
+		case "tf":
+			// create template-instance
+			$tmpl = tmplGetInstance($cfg["theme"], "inc.getDriveSpaceBar_tf.tmpl");
+			// set some vars
+			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
+			$tmpl->setvar('drivespace', $drivespace);
+			$tmpl->setvar('drivespace2', (100-$drivespace));
+			$freeSpace = "";
+			if ($drivespace > 20)
+				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
+			$tmpl->setvar('theme', $cfg["theme"]);
+			$tmpl->setvar('freeSpace', $freeSpace);
+			break;
+		case "xfer":
+			// create template-instance
+			$tmpl = tmplGetInstance($cfg["theme"], "inc.getDriveSpaceBar_xfer.tmpl");
+			// set some vars
+			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
+			$tmpl->setvar('drivespace', $drivespace);
+			$tmpl->setvar('drivespace2', (100-$drivespace));
+			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
+			$bgcolor = '#';
+			$bgcolor .= str_pad(dechex(256-256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= '00';
+			$tmpl->setvar('bgcolor', $bgcolor);
+			$tmpl->setvar('freeSpace', $freeSpace);
+		break;
+	}
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get the Upload Graphical Bar
+ *
+ * @return string with upload-bar
+ */
+function getUploadBar() {
+	global $cfg;
+	$max_upload = $cfg["bandwidth_up"] / 8;
+	if ($max_upload > 0)
+		$percent = number_format(($cfg["total_upload"] / $max_upload) * 100, 0);
+	else
+		$percent = 0;
+	if ($percent > 0)
+		$text = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
+	else
+		$text = "";
+	switch ($cfg['bandwidthbar']) {
+		case "tf":
+			return getBandwidthBar_tf($percent, $text);
+		case "xfer":
+		default:
+			return getBandwidthBar_xfer($percent, $text);
+	}
+}
+
+/**
+ * get the Download Graphical Bar
+ *
+ * @return string with download-bar
+ */
+function getDownloadBar() {
+	global $cfg;
+	$max_download = $cfg["bandwidth_down"] / 8;
+	if ($max_download > 0)
+		$percent = number_format(($cfg["total_download"] / $max_download) * 100, 0);
+	else
+		$percent = 0;
+	if ($percent > 0)
+		$text = " (".number_format($cfg["total_download"], 2)." Kb/s)";
+	else
+		$text = "";
+	switch ($cfg['bandwidthbar']) {
+		case "tf":
+			return getBandwidthBar_tf($percent, $text);
+		case "xfer":
+		default:
+			return getBandwidthBar_xfer($percent, $text);
+	}
+}
+
+/**
+ * get a Bandwidth Graphical Bar in tf-style
+ *
+ * @param $percent
+ * @param $text
+ * @return string with bandwith-bar
+ */
+function getBandwidthBar_tf($percent, $text) {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.getBandwidthBar_tf.tmpl");
+	// set some vars
+	$tmpl->setvar('theme', $cfg["theme"]);
+	$tmpl->setvar('percent', $percent);
+	$tmpl->setvar('text', $text);
+	$percent2 = (100 - $percent);
+	$tmpl->setvar('percent2', $percent2);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get a Bandwidth Graphical Bar in xfer-style
+ *
+ * @param $percent
+ * @param $text
+ * @return string with bandwith-bar
+ */
+function getBandwidthBar_xfer($percent, $text) {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.getBandwidthBar_xfer.tmpl");
+	// set some vars
+	$bgcolor = '#';
+	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
+	$bgcolor .= str_pad(dechex(255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
+	$bgcolor .='00';
+	$tmpl->setvar('bgcolor', $bgcolor);
+	$tmpl->setvar('percent', $percent);
+	$tmpl->setvar('text', $text);
+	$percent2 = (100 - $percent);
+	$tmpl->setvar('percent2', $percent2);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get superadmin-popup-link-html-snip.
+ *
+ * @param $param
+ * @param $linkText
+ * @return string
+ */
+function getSuperAdminLink($param = "", $linkText = "") {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.getSuperAdminLink.tmpl");
+	$tmpl->setvar('param', $param);
+	if ((isset($linkText)) && ($linkText != ""))
+		$tmpl->setvar('linkText', $linkText);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get TF Link and Version
+ *
+ * @return string
+ */
+function getTorrentFluxLink() {
+	global $cfg;
+	if ($cfg["ui_displayfluxlink"] != 0) {
+		$torrentFluxLink = "<div align=\"right\">";
+		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
+		$torrentFluxLink .= "</div>";
+		return $torrentFluxLink;
+	} else {
+		return "";
+	}
+}
+
+/**
+ * prints nice error-page
+ *
+ * @param $errorMessage
+ */
+function showErrorPage($errorMessage) {
+	global $cfg;
+	require_once("themes/".$cfg["default_theme"]."/index.php");
+	require_once("inc/lib/vlib/vlibTemplate.php");
+	$tmpl = tmplGetInstance($cfg["default_theme"], "error.tmpl");
+	$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+	$tmpl->setvar('default_theme', $cfg["default_theme"]);
+	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+	$tmpl->setvar('ErrorMsg', $errorMessage);
+	$tmpl->pparse();
+	exit();
 }
 
 /**
@@ -1142,132 +1448,6 @@ function checkDirPathString($dirPath) {
 }
 
 /**
- * get the header portion
- *
- * @param $subTopic
- * @param $showButtons
- * @return string
- */
-function getHead($subTopic, $showButtons = true) {
-	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getHead.tmpl");
-	// set some vars
-	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('TitleBar', getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons));
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get the footer portion
- *
- * @param $showReturn
- * @return string
- */
-function getFoot($showReturn = true) {
-	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getFoot.tmpl");
-	// set some vars
-	$tmpl->setvar('showReturn', $showReturn);
-	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
-	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get TF Link and Version
- *
- * @return string
- */
-function getTorrentFluxLink() {
-	global $cfg;
-	if ($cfg["ui_displayfluxlink"] != 0) {
-		$torrentFluxLink = "<div align=\"right\">";
-		$torrentFluxLink .= "<a href=\"http://tf-b4rt.berlios.de/\" target=\"_blank\"><font class=\"tinywhite\">torrentflux-b4rt ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
-		$torrentFluxLink .= "</div>";
-		return $torrentFluxLink;
-	} else {
-		return "";
-	}
-}
-
-/**
- * get Title Bar.
- *
- * @param $pageTitleText
- * @param $showButtons
- * @return string
- */
-function getTitleBar($pageTitleText, $showButtons=true) {
-	global $cfg, $db;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getTitleBar.tmpl");
-	// set some vars
-	$tmpl->setvar('pageTitleText', $pageTitleText);
-	$tmpl->setvar('showButtons', $showButtons);
-	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('_TORRENTS', $cfg['_TORRENTS']);
-	$tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
-	$tmpl->setvar('_UPLOADHISTORY', $cfg['_UPLOADHISTORY']);
-	$tmpl->setvar('_MYPROFILE', $cfg['_MYPROFILE']);
-	$tmpl->setvar('_MESSAGES', $cfg['_MESSAGES']);
-	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
-	if ($showButtons) {
-		// Does the user have messages?
-		$sql = "select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew=1";
-		$number_messages = $db->GetOne($sql);
-		showError($db,$sql);
-		$tmpl->setvar('number_messages', $number_messages);
-		$tmpl->setvar('is_admin', IsAdmin());
-	}
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * fill Search Engine Drop Down List
- *
- * @param $selectedEngine
- * @param $autoSubmit
- */
-function fillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
-	global $cfg, $tmpl;
-	// set some vars
-	$tmpl->setvar('autoSubmit', $autoSubmit);
-	$handle = opendir("./inc/searchEngines");
-	while($entry = readdir($handle)) {
-		$entrys[] = $entry;
-	}
-	natcasesort($entrys);
-	$Engine_List = array();
-	foreach($entrys as $entry) {
-		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
-			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-			$selected = 0;
-			if ($selectedEngine == $tmpEngine) {
-				$selected = 1;
-			}
-			array_push($Engine_List, array(
-				'selected' => $selected,
-				'Engine' => $tmpEngine,
-				)
-			);
-		}
-	}
-	$tmpl->setloop('Engine_List', $Engine_List);
-}
-
-/**
  * get Engine Link
  *
  * @param $searchEngine
@@ -1288,25 +1468,6 @@ function getEngineLink($searchEngine) {
 		}
 	}
 	return $tmpLink;
-}
-
-/**
- * get superadmin-popup-link-html-snip.
- *
- * @param $param
- * @param $linkText
- * @return string
- */
-function getSuperAdminLink($param = "", $linkText = "") {
-	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getSuperAdminLink.tmpl");
-	$tmpl->setvar('param', $param);
-	if ((isset($linkText)) && ($linkText != ""))
-		$tmpl->setvar('linkText', $linkText);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /*
@@ -1837,104 +1998,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 }
 
 /**
- * get the Upload Graphical Bar
- *
- * @return string with upload-bar
- */
-function getUploadBar() {
-	global $cfg;
-	$max_upload = $cfg["bandwidth_up"] / 8;
-	if ($max_upload > 0)
-		$percent = number_format(($cfg["total_upload"] / $max_upload) * 100, 0);
-	else
-		$percent = 0;
-	if ($percent > 0)
-		$text = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
-	else
-		$text = "";
-	switch ($cfg['bandwidthbar']) {
-		case "tf":
-			return getBandwidthBar_tf($percent, $text);
-		case "xfer":
-		default:
-			return getBandwidthBar_xfer($percent, $text);
-	}
-}
-
-/**
- * get the Download Graphical Bar
- *
- * @return string with download-bar
- */
-function getDownloadBar() {
-	global $cfg;
-	$max_download = $cfg["bandwidth_down"] / 8;
-	if ($max_download > 0)
-		$percent = number_format(($cfg["total_download"] / $max_download) * 100, 0);
-	else
-		$percent = 0;
-	if ($percent > 0)
-		$text = " (".number_format($cfg["total_download"], 2)." Kb/s)";
-	else
-		$text = "";
-	switch ($cfg['bandwidthbar']) {
-		case "tf":
-			return getBandwidthBar_tf($percent, $text);
-		case "xfer":
-		default:
-			return getBandwidthBar_xfer($percent, $text);
-	}
-}
-
-/**
- * get a Bandwidth Graphical Bar in tf-style
- *
- * @param $percent
- * @param $text
- * @return string with bandwith-bar
- */
-function getBandwidthBar_tf($percent, $text) {
-	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getBandwidthBar_tf.tmpl");
-	// set some vars
-	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('percent', $percent);
-	$tmpl->setvar('text', $text);
-	$percent2 = (100 - $percent);
-	$tmpl->setvar('percent2', $percent2);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get a Bandwidth Graphical Bar in xfer-style
- *
- * @param $percent
- * @param $text
- * @return string with bandwith-bar
- */
-function getBandwidthBar_xfer($percent, $text) {
-	global $cfg;
-	// create template-instance
-	$tmpl = getTemplateInstance($cfg["theme"], "inc.getBandwidthBar_xfer.tmpl");
-	// set some vars
-	$bgcolor = '#';
-	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
-	$bgcolor .= str_pad(dechex(255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
-	$bgcolor .='00';
-	$tmpl->setvar('bgcolor', $bgcolor);
-	$tmpl->setvar('percent', $percent);
-	$tmpl->setvar('text', $text);
-	$percent2 = (100 - $percent);
-	$tmpl->setvar('percent2', $percent2);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
  * get Request Var
  *
  * @param $varName
@@ -2201,8 +2264,7 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 							'selected' => 1,
 							)
 						);
-					}
-					else {
+					} else {
 						array_push($output, array(
 							'hreflink' => $hreflink,
 							'selected' => 0,
@@ -2212,7 +2274,7 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 				}
 			}
 	}
-	if ( count($settings['searchEngineLinks'],COUNT_RECURSIVE) <> count($cfg['searchEngineLinks'],COUNT_RECURSIVE))
+	if (count($settings['searchEngineLinks'],COUNT_RECURSIVE) <> count($cfg['searchEngineLinks'],COUNT_RECURSIVE))
 		$settingsNeedsSaving = true;
 	if ($settingsNeedsSaving) {
 		natcasesort($settings['searchEngineLinks']);
@@ -2285,46 +2347,6 @@ function getDriveSpace($drive) {
 		$percent = round((($dt - $df)/$dt) * 100);
 	}
 	return $percent;
-}
-
-// ***************************************************************************
-// ***************************************************************************
-// get the Drive Space Graphical Bar
-function getDriveSpaceBar($drivespace) {
-	global $cfg;
-	switch ($cfg['drivespacebar']) {
-		case "tf":
-			// create template-instance
-			$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar_tf.tmpl");
-			// set some vars
-			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
-			$tmpl->setvar('drivespace', $drivespace);
-			$tmpl->setvar('drivespace2', (100-$drivespace));
-			$freeSpace = "";
-			if ($drivespace > 20)
-				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
-			$tmpl->setvar('theme', $cfg["theme"]);
-			$tmpl->setvar('freeSpace', $freeSpace);
-			break;
-		case "xfer":
-			// create template-instance
-			$tmpl = getTemplateInstance($cfg["theme"], "inc.getDriveSpaceBar_xfer.tmpl");
-			// set some vars
-			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
-			$tmpl->setvar('drivespace', $drivespace);
-			$tmpl->setvar('drivespace2', (100-$drivespace));
-			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
-			$bgcolor = '#';
-			$bgcolor .= str_pad(dechex(256-256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
-			$bgcolor .= str_pad(dechex(256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
-			$bgcolor .= '00';
-			$tmpl->setvar('bgcolor', $bgcolor);
-			$tmpl->setvar('freeSpace', $freeSpace);
-		break;
-	}
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 //**************************************************************************
@@ -2748,29 +2770,6 @@ function convertTime($seconds) {
 		return "?";
 	else
 		return implode(':', $values);
-}
-
-/* ************************************************************************** */
-
-/**
- * prints nice error-page
- *
- * @param $errorMessage
- */
-function showErrorPage($errorMessage) {
-	global $cfg;
-	require_once("themes/".$cfg["default_theme"]."/index.php");
-	require_once("inc/lib/vlib/vlibTemplate.php");
-	$tmpl = getTemplateInstance($cfg["default_theme"], "error.tmpl");
-	$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-	$tmpl->setvar('default_theme', $cfg["default_theme"]);
-	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-	$tmpl->setvar('ErrorMsg', $errorMessage);
-	$tmpl->pparse();
-	exit();
 }
 
 ?>

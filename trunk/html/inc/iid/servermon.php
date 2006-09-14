@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 loadSettings('tf_settings_stats');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "servermon.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "servermon.tmpl");
 
 // set vars
 $statsUrl = "http://";

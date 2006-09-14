@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 loadSettings('tf_settings_dir');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "move.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "move.tmpl");
 
 // set vars
 if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {

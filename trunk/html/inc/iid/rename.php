@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "rename.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "rename.tmpl");
 
 // process move and set vars
 $tmpl->setvar('head', getHead($cfg['_REN_TITLE'], false));

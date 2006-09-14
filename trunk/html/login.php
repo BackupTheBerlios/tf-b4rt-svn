@@ -24,7 +24,7 @@
 require_once('inc/main.external.php');
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["default_theme"], "login.tmpl");
+$tmpl = tmplGetInstance($cfg["default_theme"], "login.tmpl");
 
 // start session
 @session_start();

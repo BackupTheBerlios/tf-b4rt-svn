@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "torrentSearch.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "torrentSearch.tmpl");
 
 // Go get the if this is a search request. go get the data and produce output.
 $hideSeedless = getRequestVar('hideSeedless');
@@ -51,7 +51,7 @@ if (strlen($searchterm) == 0) {
 		$_REQUEST["LATEST"] = "1";
 }
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
-fillSearchEngineDDL($searchEngine);
+tmplFillSearchEngineDDL($searchEngine);
 $tmpl->setloop('buildSearchEngineArray', buildSearchEngineArray($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {

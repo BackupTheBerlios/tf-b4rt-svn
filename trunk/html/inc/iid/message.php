@@ -62,7 +62,7 @@ if (isset($_REQUEST['rmid'])) {
 }
 
 // create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "message.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "message.tmpl");
 
 // set vars
 $tmpl->setvar('to_user', $to_user);
