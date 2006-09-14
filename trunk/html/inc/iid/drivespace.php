@@ -26,22 +26,21 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "drivespace.tmpl");
 
-$result = shell_exec("df -h ".$cfg["path"]);
-$result2 = shell_exec("du -sh ".$cfg["path"]."*");
-
-# Nothing without set some vars
+// set vars
+$tmpl->setvar('result1', shell_exec("df -h ".$cfg["path"]));
+$tmpl->setvar('result2', shell_exec("du -sh ".$cfg["path"]."*"));
+//
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('result', $result);
-$tmpl->setvar('result2', $result2);
 $tmpl->setvar('head', getHead($cfg['_DRIVESPACE']));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-# lets parse the hole thing
+
+// parse template
 $tmpl->pparse();
 
 ?>
