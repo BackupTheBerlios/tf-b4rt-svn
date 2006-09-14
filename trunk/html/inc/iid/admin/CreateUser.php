@@ -23,12 +23,9 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/CreateUser.tmpl");
 
-$tmpl->setvar('head', getHead($cfg['_USERADMIN']));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
+// set vars
+$tmpl->setvar('userSection', getUserSection());
+//
 $tmpl->setvar('_NEWUSER', $cfg['_NEWUSER']);
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_PASSWORD', $cfg['_PASSWORD']);
@@ -41,13 +38,20 @@ $tmpl->setvar('_USERIDREQUIRED', $cfg['_USERIDREQUIRED']);
 $tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
-$tmpl->setvar('userSection', getUserSection());
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead($cfg['_USERADMIN']));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
