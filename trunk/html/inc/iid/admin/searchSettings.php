@@ -20,26 +20,16 @@
 
 *******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
+// search engine base
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/searchSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - Search Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-
+// set vars
 $searchEngine = getRequestVar('searchEngine');
-if (empty($searchEngine)) {
+if (empty($searchEngine))
 	$searchEngine = $cfg["searchEngine"];
-}
-fillSearchEngineDDL($searchEngine,true);
-
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 	include_once('inc/searchEngines/'.$searchEngine.'Engine.php');
 	$sEngine = new SearchEngine(serialize($cfg));
@@ -50,22 +40,19 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 		$tmpl->setvar('mainURL', $sEngine->mainURL);
 		$tmpl->setvar('author', $sEngine->author);
 		$tmpl->setvar('version', $sEngine->version);
-
-		if(strlen($sEngine->updateURL)>0) {
+		if (strlen($sEngine->updateURL) > 0) {
 			$tmpl->setvar('update_pos', 1);
 			$tmpl->setvar('updateURL', $sEngine->updateURL);
 		}
-		if (! $sEngine->catFilterName == '') {
+		if (!($sEngine->catFilterName == '')) {
 			$tmpl->setvar('cat_pos', 1);
 			$tmpl->setvar('catFilterName', $sEngine->catFilterName);
 			$cats = array();
 			foreach ($sEngine->getMainCategories(false) as $mainId => $mainName) {
-				if (@in_array($mainId, $sEngine->catFilter)) {
+				if (@in_array($mainId, $sEngine->catFilter))
 					$in_array = 1;
-				}
-				else {
+				else
 					$in_array = 0;
-				}
 				array_push($cats, array(
 					'mainId' => $mainId,
 					'in_array' => $in_array,
@@ -75,14 +62,25 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 			}
 			$tmpl->setloop('cats', $cats);
 		}
+	} else {
+		$tmpl->setvar('is_file', 0);
 	}
 }
+fillSearchEngineDDL($searchEngine,true);
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - Search Settings"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
