@@ -80,7 +80,8 @@ if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 	}
 	$tmpl->setloop('list_host', $list_host);
 }
-
+//
+$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&torrent='.$torrent.'&alias='.$alias);
 //
 $tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false));
 $tmpl->setvar('foot', getFoot(false));

@@ -36,6 +36,7 @@ $tmpl = getTemplateInstance($cfg["theme"], "dereferrer.tmpl");
 
 // set vars
 $tmpl->setvar('url', $url);
+$tmpl->setvar('meta_refresh', '0;URL='.$url);
 //
 $tmpl->setvar('head', getHead("dereferrer", false));
 $tmpl->setvar('foot', getFoot(false));
