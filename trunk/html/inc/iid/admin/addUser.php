@@ -20,6 +20,10 @@
 
 *******************************************************************************/
 
+$newUser = getRequestVar('newUser');
+$pass1 = getRequestVar('pass1');
+$userType = getRequestVar('userType');
+
 // new user ?
 $newUser = strtolower($newUser);
 if (!(IsUser($newUser))) {

@@ -20,6 +20,10 @@
 
 *******************************************************************************/
 
+$lid = getRequestVar('lid');
+$editLink = getRequestVar('editLink');
+$editSite = getRequestVar('editSite');
+
 if (!empty($newLink)){
 	if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 		$newLink = "http://".$newLink;

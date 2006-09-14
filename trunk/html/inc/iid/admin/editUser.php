@@ -20,6 +20,8 @@
 
 *******************************************************************************/
 
+$user_id = getRequestVar('user_id');
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/editUser.tmpl");
 

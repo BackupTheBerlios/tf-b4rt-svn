@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+$lid = getRequestVar('lid');
+$direction = getRequestVar('direction');
+
 if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
 	header("location: index.php?iid=admin&op=editLinks");
 	exit();

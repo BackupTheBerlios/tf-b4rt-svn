@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+$newLink = getRequestVar('newLink');
+$newSite = getRequestVar('newSite');
+
 if (!empty($newLink)){
 	if (strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 		$newLink = "http://".$newLink;

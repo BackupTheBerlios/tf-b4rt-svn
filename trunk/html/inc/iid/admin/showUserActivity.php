@@ -20,6 +20,13 @@
 
 *******************************************************************************/
 
+$min = getRequestVar('min');
+if (empty($min))
+	$min=0;
+$user_id = getRequestVar('user_id');
+$srchFile = getRequestVar('srchFile');
+$srchAction = getRequestVar('srchAction');
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 

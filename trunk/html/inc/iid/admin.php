@@ -26,7 +26,6 @@ require_once('inc/functions/functions.common.php');
 // admin functions
 require_once('inc/functions/functions.admin.php');
 
-
 if (!IsAdmin()) {
 	 // the user probably hit this page direct
 	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);
@@ -163,9 +162,6 @@ switch ($op) {
 		break;
 
 	case "editLink":
-		$lid = getRequestVar('lid');
-		$editLink = getRequestVar('editLink');
-		$editSite = getRequestVar('editSite');
 		require_once("admin/editLink.php");
 		break;
 
@@ -174,14 +170,10 @@ switch ($op) {
 		break;
 
 	case "addLink":
-		$newLink = getRequestVar('newLink');
-		$newSite = getRequestVar('newSite');
 		require_once("admin/addLink.php");
 		break;
 
 	case "moveLink":
-		$lid = getRequestVar('lid');
-		$direction = getRequestVar('direction');
 		require_once("admin/moveLink.php");
 		break;
 
@@ -201,9 +193,6 @@ switch ($op) {
 		break;
 
 	case "addUser":
-		$newUser = getRequestVar('newUser');
-		$pass1 = getRequestVar('pass1');
-		$userType = getRequestVar('userType');
 		require_once("admin/addUser.php");
 		break;
 
@@ -217,16 +206,10 @@ switch ($op) {
 		break;
 
 	case "editUser":
-		$user_id = getRequestVar('user_id');
 		require_once("admin/editUser.php");
 		break;
 
 	case "updateUser":
-		$user_id = getRequestVar('user_id');
-		$org_user_id = getRequestVar('org_user_id');
-		$pass1 = getRequestVar('pass1');
-		$userType = getRequestVar('userType');
-		$hideOffline = getRequestVar('hideOffline');
 		require_once("admin/updateUser.php");
 		break;
 
@@ -248,12 +231,6 @@ switch ($op) {
 		//break;
 
 	case "showUserActivity":
-		$min = getRequestVar('min');
-		if (empty($min))
-			$min=0;
-		$user_id = getRequestVar('user_id');
-		$srchFile = getRequestVar('srchFile');
-		$srchAction = getRequestVar('srchAction');
 		require_once("admin/showUserActivity.php");
 		break;
 }
