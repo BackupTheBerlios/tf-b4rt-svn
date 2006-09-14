@@ -460,7 +460,7 @@
 												</tmpl_if>
 											</tmpl_if>
 										<tmpl_if name="is_no_file">
-											<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="themes/default/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+											<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return confirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 										<tmpl_else>
 											<img src="themes/default/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 										</tmpl_if>
@@ -679,7 +679,7 @@
 												</tmpl_if>
 											</tmpl_if>
 										<tmpl_if name="is_no_file">
-											<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return ConfirmDelete('<tmpl_var name="entry">')"><img src="themes/default/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+											<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&delfile=<tmpl_var name="url_entry">" onclick="return confirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 										<tmpl_else>
 											<img src="themes/default/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 										</tmpl_if>
