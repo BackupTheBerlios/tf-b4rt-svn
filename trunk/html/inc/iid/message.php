@@ -23,62 +23,73 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "message.tmpl");
-
+// to-user
 $to_user = getRequestVar('to_user');
-if(empty($to_user) or empty($cfg["user"])) {
+if (empty($to_user) or empty($cfg["user"])) {
 	 // the user probably hit this page direct
 	header("location: index.php?iid=index");
-	exit;
+	exit();
 }
 
+// message
 $message = getRequestVar('message');
 if (!empty($message)) {
 	$to_all = getRequestVar('to_all');
-	if(!empty($to_all))
+	if (!empty($to_all))
 		$to_all = 1;
 	else
 		$to_all = 0;
 	$force_read = getRequestVar('force_read');
-	if(!empty($force_read) && IsAdmin())
+	if (!empty($force_read) && IsAdmin())
 		$force_read = 1;
 	else
 		$force_read = 0;
 	$message = check_html($message, "nohtml");
 	SaveMessage($to_user, $cfg["user"], $message, $to_all, $force_read);
 	header("location: index.php?iid=readmsg");
-} else {
+	exit();
+}
+
+// rmid
+if (isset($_REQUEST['rmid'])) {
 	$rmid = getRequestVar('rmid');
-	if(!empty($rmid)) {
+	if (!empty($rmid)) {
 		list($from_user, $message, $ip, $time) = GetMessage($rmid);
 		$message = $cfg['_DATE'].": ".date($cfg['_DATETIMEFORMAT'], $time)."\n".$from_user." ".$cfg['_WROTE'].":\n\n".$message;
 		$message = ">".str_replace("\n", "\n>", $message);
 		$message = "\n\n\n".$message;
 	}
-	$tmpl->setvar('no_message', 1);
-	$tmpl->setvar('head', getHead($cfg['_SENDMESSAGETITLE']));
-	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-	$tmpl->setvar('_TO', $cfg['_TO']);
-	$tmpl->setvar('to_user', $to_user);
-	$tmpl->setvar('user', $cfg["user"]);
-	$tmpl->setvar('_FROM', $cfg['_FROM']);
-	$tmpl->setvar('_YOURMESSAGE', $cfg['_YOURMESSAGE']);
-	$tmpl->setvar('message', $message);
-	$tmpl->setvar('_SENDTOALLUSERS', $cfg['_SENDTOALLUSERS']);
-	$tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
-	if (IsAdmin()) {
-		$tmpl->setvar('is_admin',1);
-	}
-	$tmpl->setvar('_SEND', $cfg['_SEND']);
-	$tmpl->setvar('foot', getFoot());
-} // end the else
+}
 
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "message.tmpl");
+
+// set vars
+$tmpl->setvar('to_user', $to_user);
+$tmpl->setvar('user', $cfg["user"]);
+$tmpl->setvar('message', $message);
+if (IsAdmin())
+	$tmpl->setvar('is_admin', 1);
+else
+	$tmpl->setvar('is_admin', 0);
+//
+$tmpl->setvar('_TO', $cfg['_TO']);
+$tmpl->setvar('_FROM', $cfg['_FROM']);
+$tmpl->setvar('_YOURMESSAGE', $cfg['_YOURMESSAGE']);
+$tmpl->setvar('_SEND', $cfg['_SEND']);
+$tmpl->setvar('_SENDTOALLUSERS', $cfg['_SENDTOALLUSERS']);
+$tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
+//
+$tmpl->setvar('head', getHead($cfg['_SENDMESSAGETITLE']));
+$tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
