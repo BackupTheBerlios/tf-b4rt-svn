@@ -26,26 +26,23 @@ require_once("inc/classes/RunningTransfer.php");
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/webappSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - WebApp Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 //
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('auth_basic_realm', $cfg["auth_basic_realm"]);
+$tmpl->setvar('enable_tmpl_cache', $cfg["enable_tmpl_cache"]);
+$tmpl->setvar('SuperAdminLink_tmplCache', getSuperAdminLink('?m=23','clean template-cache'));
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
-$tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 $tmpl->setvar('minutes_to_keep', $cfg["minutes_to_keep"]);
 $tmpl->setvar('rss_cache_min', $cfg["rss_cache_min"]);
 $tmpl->setvar('servermon_update', $cfg["servermon_update"]);
 $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
-
-// template-cache
-$tmpl->setvar('enable_tmpl_cache', $cfg["enable_tmpl_cache"]);
-$tmpl->setvar('SuperAdminLink_tmplCache', getSuperAdminLink('?m=23','clean template-cache'));
+$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
+$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
+$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
+$tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
+$tmpl->setvar('details_type', $cfg["details_type"]);
+$tmpl->setvar('details_update', $cfg["details_update"]);
 
 // themes
 $theme_list = array();
@@ -98,13 +95,15 @@ for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 }
 $tmpl->setloop('lang_list', $lang_list);
 
-
 //
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('head', getHead("Administration - WebApp Settings"));
+$tmpl->setvar('menu', getMenu());
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 

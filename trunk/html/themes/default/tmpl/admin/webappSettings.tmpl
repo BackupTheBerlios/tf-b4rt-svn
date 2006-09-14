@@ -185,6 +185,29 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Download-Details Type</strong><br>
+								Choose Type of Download-Details-Popup :
+								</td>
+								<td valign="bottom">
+									<select name="details_type">
+										<option value="standard">standard</option>
+										<option value="ajax"
+										<tmpl_if name="details_type" value="ajax">
+											 selected
+										</tmpl_if>
+										>ajax</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Download-Details Update</strong><br>
+								Specify the update-intervall in seconds of the details-popup :
+								</td>
+								<td valign="bottom">
+									<input name="details_update" type="Text" maxlength="3" value="<tmpl_var name="details_update">" size="3">
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Download-Details Width</strong><br>
 								Specify the width of the details-popup. (450):
 								</td>
