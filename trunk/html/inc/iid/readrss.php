@@ -29,16 +29,10 @@ require_once('inc/functions/functions.readrss.php');
 // require
 require_once("inc/classes/lastRSS.php");
 
-// create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "readrss.tmpl");
-
 // Just to be safe ;o)
 if (!defined("ENT_COMPAT")) define("ENT_COMPAT", 2);
 if (!defined("ENT_NOQUOTES")) define("ENT_NOQUOTES", 0);
 if (!defined("ENT_QUOTES")) define("ENT_QUOTES", 3);
-
-$tmpl->setvar('head', getHead("RSS Torrents"));
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 
 // Get RSS feeds from Database
 $arURL = GetRSSLinks();
@@ -48,11 +42,16 @@ $rss = new lastRSS();
 
 // setup transparent cache
 $cacheDir = $cfg['path'].".rsscache";
-checkDirectory($cacheDir, 0777);
+if (!checkDirectory($cacheDir, 0777))
+	showErrorPage("Error with rss-cache-dir ".$cacheDir);
 $rss->cache_dir = $cacheDir;
 $rss->cache_time = $cfg["rss_cache_min"] * 60; // 1200 = 20 min.  3600 = 1 hour
 $rss->strip_html = false; // don't remove HTML from the description
 
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "readrss.tmpl");
+
+// set vars
 // Loop through each RSS feed
 $rss_list = array();
 foreach ($arURL as $rid => $url) {
@@ -79,7 +78,6 @@ foreach ($arURL as $rid => $url) {
 	);
 }
 $tmpl->setloop('rss_list', $rss_list);
-
 // Parse through cache RSS feed
 if (isset($rssfeed) && is_array($rssfeed)) {
 	$news_list = array();
@@ -87,7 +85,7 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 		$title = "";
 		$content = "";
 		$pageUrl = "";
-		if (!empty( $rs["items"])) {
+		if (!empty($rs["items"])) {
 			// get Site title and Page Link
 			$title = $rs["title"];
 			$pageUrl = $rs["link"];
@@ -119,26 +117,34 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 }
 if (isset($news_list))
 	$tmpl->setloop('news_list', $news_list);
-$tmpl->setvar('foot', getFoot());
-if (isset($rid))
-	$tmpl->setvar('rid', $rid);
 if (isset($pageUrl))
 	$tmpl->setvar('pageUrl', $pageUrl);
+else
+	$tmpl->setvar('pageUrl', "");
 if (isset($title))
 	$tmpl->setvar('title', $title);
-
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
+else
+	$tmpl->setvar('title', "");
+if (isset($rid))
+	$tmpl->setvar('rid', $rid);
+else
+	$tmpl->setvar('rid', "");
+//
 $tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
+//
+$tmpl->setvar('head', getHead("RSS Torrents"));
+$tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-# lets parse the hole thing
+
+// parse template
 $tmpl->pparse();
 
 ?>
