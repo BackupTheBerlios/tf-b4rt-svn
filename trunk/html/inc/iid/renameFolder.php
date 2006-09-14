@@ -26,39 +26,43 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "renameFolder.tmpl");
 
+// process move and set vars
 $tmpl->setvar('head', getHead($cfg['_REN_TITLE'], false));
-if((isset($_GET['start'])) && ($_GET['start'] == true)) {
+if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
+	$tmpl->setvar('file', $_REQUEST['file']);
+	$tmpl->setvar('dir', $_REQUEST['dir']);
 	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
-	$tmpl->setvar('file', $_GET['file']);
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
-	$tmpl->setvar('dir', $_GET['dir']);
-}
-else {
+} else {
+	$tmpl->setvar('is_start', 0);
 	$cmd = "mv \"".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."\" \"".$cfg["path"].$_POST['dir'].$_POST['fileTo']."\"";
 	$cmd .= ' 2>&1';
 	$handle = popen($cmd, 'r' );
-	// get the output and print it.
 	$gotError = -1;
 	$buff = fgets($handle);
-	$tmpl->setvar('buff', nl2br($buff));
 	$gotError = $gotError + 1;
 	pclose($handle);
-	if($gotError <= 0) {
+	$tmpl->setvar('buff', nl2br($buff));
+	if ($gotError <= 0) {
 		$tmpl->setvar('no_error', 1);
-		$tmpl->setvar('_REN_DONE', $cfg['_REN_DONE']);
 		$tmpl->setvar('fileFrom', $_POST['fileFrom']);
 		$tmpl->setvar('fileTo', $_POST['fileTo']);
+		$tmpl->setvar('_REN_DONE', $cfg['_REN_DONE']);
+	} else {
+		$tmpl->setvar('no_error', 0);
+		$tmpl->setvar('_REN_ERROR', $cfg['_REN_ERROR']);
 	}
-	$tmpl->setvar('_REN_ERROR', $cfg['_REN_ERROR']);
 }
+//
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-# lets parse the hole thing
+
+// parse template
 $tmpl->pparse();
 
 ?>
