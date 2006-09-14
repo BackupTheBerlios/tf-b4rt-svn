@@ -37,13 +37,11 @@ $alias = getRequestVar('alias');
 if (!empty($alias)) {
 	// read the alias file
 	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
-	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
-		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
 } else {
 	die("fatal error torrent file not specified");
 }
 $torrent_cons = "";
-if (($af->running == 1) && ($alias != "")) {
+if ($af->running == 1) {
 	$torrent_pid = getTransferPid($alias);
 	$torrent_cons = netstatConnectionsByPid($torrent_pid);
 	$torrent_hosts = netstatHostsByPid($torrent_pid);
@@ -53,21 +51,13 @@ if(strlen($torrentLabel) >= 39)
 	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
 $tmpl->setvar($cfg['_ID_HOSTS'], false, "30", $af->percent_done."% ");
-$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false, "15", ""));
-
-if ($error != ""){
-	$tmpl->setvar('is_error', 1);
-	$tmpl->setvar('error', $error);
-}
 $tmpl->setvar('torrentLabel', $torrentLabel);
 $tmpl->setvar('cons_hosts', $torrent_cons." ".$cfg['_ID_HOSTS']);
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('alias', $alias);
 $tmpl->setvar('hd_image', $hd->image);
 $tmpl->setvar('hd_title', $hd->title);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-if (($torrent_hosts != null) && ($torrent_hosts != "")) {
+if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 	$tmpl->setvar('torrent_hosts_aval', 1);
 	$tmpl->setvar('_ID_HOST', $cfg['_ID_HOST']);
 	$tmpl->setvar('_ID_PORT', $cfg['_ID_PORT']);
@@ -90,8 +80,11 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 	}
 	$tmpl->setloop('list_host', $list_host);
 }
+$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false, "15", ""));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('refresh_details', 1);
