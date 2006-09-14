@@ -23,19 +23,7 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/editLinks.tmpl");
 
-$tmpl->setvar('head', getHead($cfg['_ADMINEDITLINKS']));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_ADMINEDITLINKS', $cfg['_ADMINEDITLINKS']);
-$tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
-$tmpl->setvar('_FULLSITENAME', $cfg['_FULLSITENAME']);
-$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
-$tmpl->setvar('_DELETE', $cfg['_DELETE']);
-$tmpl->setvar('_EDIT', $cfg['_EDIT']);
-
+// set vars
 $arLinks = GetLinks();
 $arLid = Array_Keys($arLinks);
 $inx = 0;
@@ -43,22 +31,18 @@ $link_count = count($arLinks);
 $link_list = array();
 foreach($arLinks as $link) {
 	$lid = $arLid[$inx++];
-	if ( isset($_GET["edit"]) && $_GET["edit"] == $link['lid']) {
+	if (isset($_REQUEST["edit"]) && $_REQUEST["edit"] == $link['lid']) {
 		$is_edit = 1;
 	} else {
 		$is_edit = 0;
-		if ($inx > 1 ) {
+		if ($inx > 1 )
 			$counter = 2;
-		}
-		if ( $inx == 1 ) {
+		if ($inx == 1)
 			$counter = 1;
-		}
-		if ($inx != count($arLinks)) {
+		if ($inx != count($arLinks))
 			$counter2 = 1;
-		}
-		else {
+		else
 			$counter2 = 0;
-		}
 	}
 	array_push($link_list, array(
 		'is_edit' => $is_edit,
@@ -71,12 +55,27 @@ foreach($arLinks as $link) {
 	);
 }
 $tmpl->setloop('link_list', $link_list);
+//
+$tmpl->setvar('_ADMINEDITLINKS', $cfg['_ADMINEDITLINKS']);
+$tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
+$tmpl->setvar('_FULLSITENAME', $cfg['_FULLSITENAME']);
+$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+$tmpl->setvar('_EDIT', $cfg['_EDIT']);
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead($cfg['_ADMINEDITLINKS']));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
