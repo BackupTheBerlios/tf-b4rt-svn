@@ -26,50 +26,54 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "uncomp.tmpl");
 
-$tmpl->setvar('head', getHead('Uncompressing File', false));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-if((isset($_GET['file'])) && ($_GET['file'] != "")) {
-	$tmpl->setvar('is_file', 1);
-	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['file'])));
-	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['dir'])));
-	$tmpl->setvar('type', $_GET['type']);
-}
-if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
-	$passwd = $_POST['passwd'];
-	if( $passwd == "") {
+// process
+if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
+	$passwd = @ $_POST['passwd'];
+	if ($passwd == "")
 		$passwd = "-";
-	}
-	// @usage		 ./uncompress.php "pathtofile" "extractdir" "typeofcompression" "uncompressor-bin" "password"
-	$cmd = $cfg['bin_php']." bin/uncompress.php " .$_POST['file'] ." ". $_POST['dir'] ." ". $_POST['type'];
-	if (strcasecmp('rar', $_GET['type']) == 0) {
+	$cmd = $cfg['bin_php']." bin/uncompress.php " .$_POST['file'] ." ". $_POST['dir'] ." ". $_REQUEST['type'];
+	if (strcasecmp('rar', $_REQUEST['type']) == 0)
 		$cmd .= " ". $cfg['bin_unrar'];
-	} else if (strcasecmp('zip', $_GET['type']) == 0) {
+	else if (strcasecmp('zip', $_REQUEST['type']) == 0)
 		$cmd .= " ". $cfg['bin_unzip'];
-	}
 	$cmd .= " ". $passwd;
 	// os-switch
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			$cmd .= ' 2>&1';
-		break;
+			break;
 		case 2: // bsd (snip from khr0n0s)
 			$cmd .= ' 2>&1 &';
-		break;
+			break;
 	}
 	$handle = popen($cmd, 'r' );
 	$buff= "";
-	while(!feof($handle)) {
+	while (!feof($handle))
 		$buff .= fgets($handle,30);
-	}
 	$tmpl->setvar('buff', nl2br($buff));
 	pclose($handle);
 }
-$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+
+// set vars
+if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
+	$tmpl->setvar('is_file', 1);
+	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['file'])));
+	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['dir'])));
+	$tmpl->setvar('type', $_REQUEST['type']);
+} else {
+	$tmpl->setvar('is_file', 0);
+}
+//
+$tmpl->setvar('head', getHead('Uncompressing File', false));
+$tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
