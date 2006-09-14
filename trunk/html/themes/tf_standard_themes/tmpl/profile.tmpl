@@ -1,6 +1,6 @@
 <tmpl_include name="inc.head.tmpl">
+<tmpl_var name="head">
 <tmpl_if name="showIndex">
-	<tmpl_var name="head">
 	<div align="center">
 		<table border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" width="760">
 			<tr>
@@ -197,10 +197,8 @@
 		</table>
 	</div>
 	<br><br>
-	<tmpl_var name="foot">
 </tmpl_if>
 <tmpl_if name="updateProfile">
-	<tmpl_var name="head">
 	<div align="center">
 		<table border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="760">
 			<tr>
@@ -218,10 +216,8 @@
 		</table>
 	</div>
 	<br><br>
-	<tmpl_var name="foot">
 </tmpl_if>
 <tmpl_if name="ShowCookies">
-	<tmpl_var name="head>
 	<script LANGUAGE="JavaScript">
 	<!-- Begin
 	function popUp(name_file)
@@ -314,10 +310,8 @@
 	<br />
 	<br />
 	<br />
-	<tmpl_var name="foot">
 </tmpl_if>
 <tmpl_if name="ShowProfiles">
-	<tmpl_var name="head>
 	<div align="center">[<a href="index.php?iid=profile">Return to Profile</a>]</div>
 	<br />
 	<div align="center">
@@ -430,9 +424,6 @@
 								 selected
 							</tmpl_if>
 							>false</option>
-							<tmpl_if name="is_admin">
-
-							</tmpl_if>
 						</select>
 					</td>
 					<td width="150">
@@ -489,5 +480,6 @@
 				</tmpl_if>
 			</table>
 		</form>
-	<tmpl_var name="foot">
+	</div>
 </tmpl_if>
+<tmpl_var name="foot">

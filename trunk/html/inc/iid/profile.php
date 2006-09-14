@@ -26,176 +26,160 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "profile.tmpl");
 
+// op-switch
 $op = getRequestVar('op');
-
 switch ($op) {
-	default:
+
 //******************************************************************************
-// showIndex -- main view
+// addProfile -- adding a Profile Information
 //******************************************************************************
-		$tmpl->setvar('showIndex', 1);
-		global $cfg, $db;
-		$hideChecked = "";
-		if ($cfg["hide_offline"] == 1) {
-			$hideChecked = "checked";
+	case "addProfile":
+		$newProfile["name"] = getRequestVar('name');
+		$newProfile["minport"] = getRequestVar('minport');
+		$newProfile["maxport"] = getRequestVar('maxport');
+		$newProfile["maxcons"] = getRequestVar('maxcons');
+		$newProfile["rerequest"] = getRequestVar('rerequest');
+		$newProfile["rate"] = getRequestVar('rate');
+		$newProfile["maxuploads"] = getRequestVar('maxuploads');
+		$newProfile["drate"] = getRequestVar('drate');
+		$newProfile["runtime"] = getRequestVar('runtime');
+		$newProfile["sharekill"] = getRequestVar('sharekill');
+		if (getRequestVar('superseeder') == "")
+			$newProfile["superseeder"] = 0;
+		else
+			$newProfile["superseeder"] = getRequestVar('superseeder');
+		if (getRequestVar('public') == "")
+			$newProfile["public"] = 0;
+		else
+			$newProfile["public"] = getRequestVar('public');
+		if (!empty( $newProfile)) {
+			AddProfileInfo($newProfile);
+			AuditAction( $cfg["constants"]["admin"], "New Profile: " . $newProfile["name"] );
 		}
-		$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
-		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-		$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-		$tmpl->setvar('theme', $cfg["theme"]);
-		$tmpl->setvar('user', $cfg["user"]);
-		$tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
+		header( "location: index.php?iid=profile&op=showProfiles" );
+		exit();
 
-		$total_activity = GetActivityCount();
+//******************************************************************************
+// modProfile -- edit Profile Information
+//******************************************************************************
+	case "modProfile":
+		$newProfile["name"] = getRequestVar('name');
+		$newProfile["minport"] = getRequestVar('minport');
+		$newProfile["maxport"] = getRequestVar('maxport');
+		$newProfile["maxcons"] = getRequestVar('maxcons');
+		$newProfile["rerequest"] = getRequestVar('rerequest');
+		$newProfile["rate"] = getRequestVar('rate');
+		$newProfile["maxuploads"] = getRequestVar('maxuploads');
+		$newProfile["drate"] = getRequestVar('drate');
+		$newProfile["runtime"] = getRequestVar('runtime');
+		$newProfile["sharekill"] = getRequestVar('sharekill');
+		if (getRequestVar('superseeder') == "")
+			$newProfile["superseeder"] = 0;
+		else
+			$newProfile["superseeder"] = getRequestVar('superseeder');
+		if (getRequestVar('public') == "")
+			$newProfile["public"] = 0;
+		else
+			$newProfile["public"] = getRequestVar('public');
+		$pid = getRequestVar('pid');
+		modProfileInfo($pid,$newProfile);
+		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
+		header("location: index.php?iid=profile&op=showProfiles");
+		exit();
 
-		$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
-		list($user_id, $hits, $last_visit, $time_created, $user_level) = $db->GetRow($sql);
+//******************************************************************************
+// deleteProfile -- delete a Profile Information
+//******************************************************************************
+	case "deleteProfile":
+		$pid = $_GET["pid"];
+		$profile = getProfile($pid);
+		deleteProfileInfo($pid);
+		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Profile: " . $profile["name"] );
+		header("location: index.php?iid=profile&op=showProfiles" );
+		exit();
 
-		$user_type = $cfg['_NORMALUSER'];
-		if (IsAdmin()) {
-			$user_type = $cfg['_ADMINISTRATOR'];
-		}
-		if (IsSuperAdmin()) {
-			$user_type = $cfg['_SUPERADMIN'];
-		}
+//******************************************************************************
+// updateSettingsUser -- update per user settings
+//******************************************************************************
+	case "updateSettingsUser":
+		// TODO
+		//$settings = processSettingsParams(true,true);
+		//saveUserSettings($cfg["uid"],$settings);
+		AuditAction($cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
+		header( "location: index.php?iid=profile" );
+		exit();
 
-		$user_activity = GetActivityCount($cfg["user"]);
+//******************************************************************************
+// addCookie -- adding a Cookie Host Information
+//******************************************************************************
+	case "addCookie":
+		$newCookie["host"] = getRequestVar('host');
+		$newCookie["data"] = getRequestVar('data');
+		if (!empty($newCookie)) {
+			AddCookieInfo($newCookie);
+			AuditAction($cfg["constants"]["admin"], "New Cookie: " . $newCookie["host"] . " | " . $newCookie["data"]);
+		}
+		header("location: index.php?iid=profile&op=showCookies");
+		exit();
 
-		if ($user_activity == 0) {
-			$user_percent = 0;
-		} else {
-			$user_percent = number_format(($user_activity/$total_activity)*100);
-		}
-		$tmpl->setvar('_JOINED', $cfg['_JOINED']);
-		$tmpl->setvar('time_created1', date($cfg['_DATETIMEFORMAT'], $time_created));
-		$tmpl->setvar('_UPLOADPARTICIPATION', $cfg['_UPLOADPARTICIPATION']);
-		$tmpl->setvar('width1', $user_percent*2);
-		$tmpl->setvar('width2', (200 - ($user_percent*2)));
-		$tmpl->setvar('_UPLOADS', $cfg['_UPLOADS']);
-		$tmpl->setvar('user_activity', $user_activity);
-		$tmpl->setvar('_PERCENTPARTICIPATION', $cfg['_PERCENTPARTICIPATION']);
-		$tmpl->setvar('user_percent', $user_percent);
-		$tmpl->setvar('_PARTICIPATIONSTATEMENT', $cfg['_PARTICIPATIONSTATEMENT']);
-		$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-		$tmpl->setvar('_DAYS', $cfg['_DAYS']);
-		$tmpl->setvar('_TOTALPAGEVIEWS', $cfg['_TOTALPAGEVIEWS']);
-		$tmpl->setvar('hits', $hits);
-		$tmpl->setvar('_USERTYPE', $cfg['_USERTYPE']);
-		$tmpl->setvar('user_type', $user_type);
-		$tmpl->setvar('_USER', $cfg['_USER']);
-		$tmpl->setvar('user', $cfg["user"]);
-		$tmpl->setvar('_NEWPASSWORD', $cfg['_NEWPASSWORD']);
-		$tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
-		$tmpl->setvar('_THEME', $cfg['_THEME']);
-		$tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
-		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
-		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
-		$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
-		$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
-		// themes
-		$arThemes = GetThemes();
-		$theme_list = array();
-		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-			$selected = "";
-			if ($cfg["theme"] == $arThemes[$inx]) {
-				$selected = "selected";
-			}
-			array_push($theme_list, array(
-				'arThemes' => $arThemes[$inx],
-				'selected' => $selected,
-				)
-			);
-		}
-		$tmpl->setloop('theme_list', $theme_list);
-		// tf standard themes
-		$arThemes = GetThemesStandard();
-		$tfstandard_theme_list = array();
-		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-			$selected = "";
-			$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
-			if ($cfg["theme"] == $arThemes2[$inx]) {
-				$selected = "selected";
-			}
-			array_push($tfstandard_theme_list, array(
-				'arThemes' => $arThemes[$inx],
-				'arThemes2' => $arThemes2[$inx],
-				'selected' => $selected,
-				)
-			);
-		}
-		$tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
-		$tmpl->setvar('_LANGUAGE', $cfg['_LANGUAGE']);
-		// languages
-		$arLanguage = GetLanguages();
-		$language_list = array();
-		for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
-			$selected = "";
-			if ($cfg["language_file"] == $arLanguage[$inx]) {
-				$selected = "selected";
-			}
-			array_push($language_list, array(
-				'arLanguage' => $arLanguage[$inx],
-				'selected' => $selected,
-				'language_file' => GetLanguageFromFile($arLanguage[$inx]),
-				)
-			);
-		}
-		$tmpl->setloop('language_list', $language_list);
-		$tmpl->setvar('hideChecked', $hideChecked);
+//******************************************************************************
+// deleteCookie -- delete a Cookie Host Information
+//******************************************************************************
+	case "deleteCookie":
+		$cid = $_GET["cid"];
+		$cookie = getCookie($cid);
+		deleteCookieInfo($cid);
+		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE'] . " Cookie: " . $cookie["host"]);
+		header("location: index.php?iid=profile&op=showCookies");
+		exit();
 
-		$tmpl->setvar('foot', getFoot());
-	break;
+//******************************************************************************
+// modCookie -- edit a Cookie Host Information
+//******************************************************************************
+	case "modCookie":
+		$newCookie["host"] = getRequestVar('host');
+		$newCookie["data"] = getRequestVar('data');
+		$cid = getRequestVar('cid');
+		modCookieInfo($cid,$newCookie);
+		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
+		header("location: index.php?iid=profile&op=showCookies");
+		exit();
+
 
 //******************************************************************************
 // updateProfile -- update profile
 //******************************************************************************
 	case "updateProfile":
+		$tmpl->setvar('updateProfile', 1);
 		$pass1 = getRequestVar('pass1');
 		$pass2 = getRequestVar('pass2');
 		$hideOffline = getRequestVar('hideOffline');
 		$theme = getRequestVar('theme');
 		$language = getRequestVar('language');
-		global $cfg;
-		$tmpl->setvar('updateProfile', 1);
 		if ($pass1 != "")
 			$_SESSION['user'] = md5($cfg["pagetitle"]);
 		UpdateUserProfile($cfg["user"], $pass1, $hideOffline, $theme, $language);
-		$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
-		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-		$tmpl->setvar('theme', $cfg["theme"]);
-		$tmpl->setvar('user', $cfg["user"]);
-		$tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
 		$tmpl->setvar('_PROFILEUPDATEDFOR', $cfg['_PROFILEUPDATEDFOR']);
-		$tmpl->setvar('foot', getFoot());
-	break;
+		break;
 
 //******************************************************************************
 // ShowCookies -- show cookies for user
 //******************************************************************************
 	case "showCookies":
 	case "editCookies":
-		global $cfg, $db;
 		$tmpl->setvar('ShowCookies', 1);
-		$tmpl->setvar('head', getHead($cfg["user"] . "'s ".$cfg['_PROFILE']));
 		$cid = @ $_GET["cid"]; // Cookie ID
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
-		if( !empty( $cid ) ) {
+		if(!empty($cid)) {
 			// Get cookie information from database
 			$cookie = getCookie( $cid );
 			$hostvalue = " value=\"" . $cookie['host'] . "\"";
 			$datavalue = " value=\"" . $cookie['data'] . "\"";
 		}
-		(!empty( $cid )) ? $op2 = "modCookie" : $op2 = "addCookie";
+		(!empty($cid)) ? $op2 = "modCookie" : $op2 = "addCookie";
 		$tmpl->setvar('op', $op2);
 		$tmpl->setvar('cid', $cid);
-		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('hostvalue', $hostvalue);
 		$tmpl->setvar('datavalue', $datavalue);
 		(!empty( $cid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
@@ -204,12 +188,14 @@ switch ($op) {
 		if( !empty( $cid ) ) {
 			$tmpl->setvar('empty_cid', 1);
 		} else {
+			$tmpl->setvar('empty_cid', 0);
 			// Output the list of cookies in the database
 			$sql = "SELECT c.cid, c.host, c.data FROM tf_cookies AS c, tf_users AS u WHERE u.uid=c.uid AND u.user_id='" . $cfg["user"] . "'";
 			$dat = $db->GetAll( $sql );
 			if( empty( $dat ) ) {
 				$tmpl->setvar('empty_dat', 1);
 			} else {
+				$tmpl->setvar('empty_dat', 0);
 				$cookie_data = array();
 				$tmpl->setvar('_DELETE', $cfg['_DELETE']);
 				$tmpl->setvar('_EDIT', $cfg['_EDIT']);
@@ -224,66 +210,13 @@ switch ($op) {
 				$tmpl->setloop('cookie_data', $cookie_data);
 			}
 		}
-		$tmpl->setvar('foot', getFoot());
-	break;
-
-//******************************************************************************
-// updateSettingsUser -- update per user settings
-//******************************************************************************
-	case "updateSettingsUser":
-		global $cfg;
-		// TODO
-		//$settings = processSettingsParams(true,true);
-		//saveUserSettings($cfg["uid"],$settings);
-		AuditAction( $cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
-		header( "location: index.php?iid=profile" );
-	break;
-
-//******************************************************************************
-// addCookie -- adding a Cookie Host Information
-//******************************************************************************
-	case "addCookie":
-		$newCookie["host"] = getRequestVar('host');
-		$newCookie["data"] = getRequestVar('data');
-		if( !empty( $newCookie ) ) {
-			global $cfg;
-			AddCookieInfo( $newCookie );
-			AuditAction( $cfg["constants"]["admin"], "New Cookie: " . $newCookie["host"] . " | " . $newCookie["data"] );
-		}
-		header( "location: index.php?iid=profile&op=showCookies" );
-	break;
-
-//******************************************************************************
-// deleteCookie -- delete a Cookie Host Information
-//******************************************************************************
-	case "deleteCookie":
-		$cid = $_GET["cid"];
-		global $cfg;
-		$cookie = getCookie( $cid );
-		deleteCookieInfo( $cid );
-		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Cookie: " . $cookie["host"] );
-		header( "location: index.php?iid=profile&op=showCookies" );
-	break;
-
-//******************************************************************************
-// modCookie -- edit a Cookie Host Information
-//******************************************************************************
-	case "modCookie":
-		$newCookie["host"] = getRequestVar( 'host' );
-		$newCookie["data"] = getRequestVar( 'data' );
-		$cid = getRequestVar( 'cid' );
-		global $cfg;
-		modCookieInfo($cid,$newCookie);
-		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
-		header("location: index.php?iid=profile&op=showCookies");
-	break;
+		break;
 
 //******************************************************************************
 // ShowProfiles -- show cookies for user
 //******************************************************************************
 	case "showProfiles":
 	case "editProfiles":
-		global $cfg, $db;
 		$tmpl->setvar('ShowProfiles', 1);
 		$pid = @ $_GET["pid"];
 		(!empty( $pid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
@@ -291,7 +224,7 @@ switch ($op) {
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
 		$tmpl->setvar('op', $op2);
 		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = $superseeder = $public = "";
-		if( !empty( $pid ) ) {
+		if (!empty($pid)) {
 			$profile = getProfile( $pid );
 			$name = " value=\"" . $profile['name'] . "\"";
 			$minport = " value=\"" . $profile['minport'] . "\"";
@@ -303,9 +236,8 @@ switch ($op) {
 			$drate = " value=\"" . $profile['drate'] . "\"";
 			$runtime = $profile['runtime'];
 			$sharekill = " value=\"" . $profile['sharekill'] . "\"";
-			if ($profile['superseeder'] == 1) {
+			if ($profile['superseeder'] == 1)
 				$superseeder = "checked";
-			}
 			if ($profile['public'] == 1)
 				$public = "checked";
 		}
@@ -331,22 +263,18 @@ switch ($op) {
 		$tmpl->setvar('default_drate', $cfg['max_download_rate']);
 		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
 		$tmpl->setvar('default_btclient', $cfg['btclient']);
-		$tmpl->setvar('head', getHead($cfg["user"] . "'s ".$cfg['_PROFILE']));
-		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-		$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-		$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-		$tmpl->setvar('theme', $cfg["theme"]);
 		$tmpl->setvar('pid', $pid);
-		if( !empty( $pid ) ) {
+		if (!empty($pid)) {
 			$tmpl->setvar('empty_pid', 1);
 		} else {
+			$tmpl->setvar('empty_pid', 0);
 			// Output the list of profiles in the database
 			$sql = "SELECT id, name FROM tf_trprofiles WHERE owner LIKE '" . $cfg["uid"] . "'";
 			$dat = $db->GetAll( $sql );
-			if( empty( $dat ) ) {
+			if (empty($dat)) {
 				$tmpl->setvar('empty_dat', 1);
-			}
-			else {
+			} else {
+				$tmpl->setvar('empty_dat', 0);
 				$profile_data = array();
 				$tmpl->setvar('_DELETE', $cfg['_DELETE']);
 				$tmpl->setvar('_EDIT', $cfg['_EDIT']);
@@ -361,105 +289,137 @@ switch ($op) {
 			}
 		}
 		$tmpl->setvar('pid', $pid);
-		$tmpl->setvar('foot', getFoot());
-	break;
+		break;
 
+	default:
 //******************************************************************************
-// addProfile -- adding a Profile Information
+// showIndex -- main view
 //******************************************************************************
-	case "addProfile":
-		$newProfile["name"] = getRequestVar('name');
-		$newProfile["minport"] = getRequestVar('minport');
-		$newProfile["maxport"] = getRequestVar('maxport');
-		$newProfile["maxcons"] = getRequestVar('maxcons');
-		$newProfile["rerequest"] = getRequestVar('rerequest');
-		$newProfile["rate"] = getRequestVar('rate');
-		$newProfile["maxuploads"] = getRequestVar('maxuploads');
-		$newProfile["drate"] = getRequestVar('drate');
-		$newProfile["runtime"] = getRequestVar('runtime');
-		$newProfile["sharekill"] = getRequestVar('sharekill');
-		if (getRequestVar('superseeder') == "") {
-			$newProfile["superseeder"] = 0;
+		$tmpl->setvar('showIndex', 1);
+		$hideChecked = "";
+		if ($cfg["hide_offline"] == 1)
+			$hideChecked = "checked";
+		$total_activity = GetActivityCount();
+		$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
+		list ($user_id, $hits, $last_visit, $time_created, $user_level) = $db->GetRow($sql);
+		$user_type = $cfg['_NORMALUSER'];
+		if (IsAdmin())
+			$user_type = $cfg['_ADMINISTRATOR'];
+		if (IsSuperAdmin())
+			$user_type = $cfg['_SUPERADMIN'];
+		$user_activity = GetActivityCount($cfg["user"]);
+		if ($user_activity == 0)
+			$user_percent = 0;
+		else
+			$user_percent = number_format(($user_activity/$total_activity)*100);
+		$tmpl->setvar('time_created1', date($cfg['_DATETIMEFORMAT'], $time_created));
+		$tmpl->setvar('width1', $user_percent*2);
+		$tmpl->setvar('width2', (200 - ($user_percent*2)));
+		$tmpl->setvar('user_activity', $user_activity);
+		$tmpl->setvar('user_percent', $user_percent);
+		$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
+		$tmpl->setvar('hits', $hits);
+		$tmpl->setvar('user_type', $user_type);
+		$tmpl->setvar('_UPLOADS', $cfg['_UPLOADS']);
+		$tmpl->setvar('_DAYS', $cfg['_DAYS']);
+		$tmpl->setvar('_JOINED', $cfg['_JOINED']);
+		$tmpl->setvar('_UPLOADPARTICIPATION', $cfg['_UPLOADPARTICIPATION']);
+		$tmpl->setvar('_PARTICIPATIONSTATEMENT', $cfg['_PARTICIPATIONSTATEMENT']);
+		$tmpl->setvar('_USERTYPE', $cfg['_USERTYPE']);
+		$tmpl->setvar('_TOTALPAGEVIEWS', $cfg['_TOTALPAGEVIEWS']);
+		$tmpl->setvar('_PERCENTPARTICIPATION', $cfg['_PERCENTPARTICIPATION']);
+		$tmpl->setvar('_USER', $cfg['_USER']);
+		$tmpl->setvar('_NEWPASSWORD', $cfg['_NEWPASSWORD']);
+		$tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
+		$tmpl->setvar('_THEME', $cfg['_THEME']);
+		$tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
+		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
+		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
+		$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
+		$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
+		$tmpl->setvar('_LANGUAGE', $cfg['_LANGUAGE']);
+		// themes
+		$arThemes = GetThemes();
+		$theme_list = array();
+		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
+			$selected = "";
+			if ($cfg["theme"] == $arThemes[$inx])
+				$selected = "selected";
+			array_push($theme_list, array(
+				'arThemes' => $arThemes[$inx],
+				'selected' => $selected,
+				)
+			);
 		}
-		else {
-			$newProfile["superseeder"] = getRequestVar('superseeder');
-		} if (getRequestVar('public') == "") {
-			$newProfile["public"] = 0;
-		} else {
-			$newProfile["public"] = getRequestVar('public');
+		$tmpl->setloop('theme_list', $theme_list);
+		// tf standard themes
+		$arThemes = GetThemesStandard();
+		$tfstandard_theme_list = array();
+		for($inx = 0; $inx < sizeof($arThemes); $inx++) {
+			$selected = "";
+			$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
+			if ($cfg["theme"] == $arThemes2[$inx])
+				$selected = "selected";
+			array_push($tfstandard_theme_list, array(
+				'arThemes' => $arThemes[$inx],
+				'arThemes2' => $arThemes2[$inx],
+				'selected' => $selected,
+				)
+			);
 		}
-		if( !empty( $newProfile ) ) {
-			global $cfg;
-			AddProfileInfo( $newProfile );
-			AuditAction( $cfg["constants"]["admin"], "New Profile: " . $newProfile["name"] );
+		$tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
+		// languages
+		$arLanguage = GetLanguages();
+		$language_list = array();
+		for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
+			$selected = "";
+			if ($cfg["language_file"] == $arLanguage[$inx])
+				$selected = "selected";
+			array_push($language_list, array(
+				'arLanguage' => $arLanguage[$inx],
+				'selected' => $selected,
+				'language_file' => GetLanguageFromFile($arLanguage[$inx]),
+				)
+			);
 		}
-		header( "location: index.php?iid=profile&op=showProfiles" );
-	break;
-
-//******************************************************************************
-// modProfile -- edit Profile Information
-//******************************************************************************
-	case "modProfile":
-		$newProfile["name"] = getRequestVar('name');
-		$newProfile["minport"] = getRequestVar('minport');
-		$newProfile["maxport"] = getRequestVar('maxport');
-		$newProfile["maxcons"] = getRequestVar('maxcons');
-		$newProfile["rerequest"] = getRequestVar('rerequest');
-		$newProfile["rate"] = getRequestVar('rate');
-		$newProfile["maxuploads"] = getRequestVar('maxuploads');
-		$newProfile["drate"] = getRequestVar('drate');
-		$newProfile["runtime"] = getRequestVar('runtime');
-		$newProfile["sharekill"] = getRequestVar('sharekill');
-		if (getRequestVar('superseeder') == "") {
-			$newProfile["superseeder"] = 0;
-		} else {
-			$newProfile["superseeder"] = getRequestVar('superseeder');
-		}
-		if (getRequestVar('public') == "") {
-			$newProfile["public"] = 0;
-		} else {
-			$newProfile["public"] = getRequestVar('public');
-		}
-		$pid = getRequestVar('pid');
-		global $cfg;
-		modProfileInfo($pid,$newProfile);
-		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
-		header("location: index.php?iid=profile&op=showProfiles");
-	break;
-
-//******************************************************************************
-// deleteProfile -- delete a Profile Information
-//******************************************************************************
-	case "deleteProfile":
-		$pid = $_GET["pid"];
-		global $cfg;
-		$profile = getProfile( $pid );
-		deleteProfileInfo( $pid );
-		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Profile: " . $profile["name"] );
-		header( "location: index.php?iid=profile&op=showProfiles" );
-	break;
-
+		$tmpl->setloop('language_list', $language_list);
+		$tmpl->setvar('hideChecked', $hideChecked);
+		break;
 }
 
-$sql= "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
-list($user_level) = $db->GetRow($sql);
-
+// set defines
+$isAdmin = IsAdmin();
+if ($isAdmin)
+	$tmpl->setvar('is_admin', 1);
+else
+	$tmpl->setvar('is_admin', 0);
+if ($cfg["enable_transfer_profile"] == 1) {
+	if ($isAdmin) {
+		$tmpl->setvar('with_profiles', 1);
+	} else {
+		if($cfg['transfer_profile_level'] == 2)
+			$tmpl->setvar('with_profiles', 1);
+		else
+			$tmpl->setvar('with_profiles', 0);
+	}
+} else {
+	$tmpl->setvar('with_profiles', 0);
+}
+$tmpl->setvar('user', $cfg["user"]);
+//
+$tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
+//
+$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
+$tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-if ($cfg["enable_transfer_profile"] == "1") {
-	if($cfg['transfer_profile_level'] == "2" || $user_level >= "1")
-		$with_profiles = 1;
-	else
-		$with_profiles = 0;
-} else {
-	$with_profiles = 0;
-}
-if ($user_level >= "1") {
-	$tmpl->setvar('is_admin', 1);
-}
-$tmpl->setvar('with_profiles', $with_profiles);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-# lets parse the hole thing
+
+// parse template
 $tmpl->pparse();
 
 ?>
