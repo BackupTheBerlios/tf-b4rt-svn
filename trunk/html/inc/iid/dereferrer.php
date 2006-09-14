@@ -40,9 +40,6 @@ $tmpl->setvar('meta_refresh', '0;URL='.$url);
 //
 $tmpl->setvar('head', getHead("dereferrer", false));
 $tmpl->setvar('foot', getFoot(false));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 

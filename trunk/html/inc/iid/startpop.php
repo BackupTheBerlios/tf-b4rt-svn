@@ -166,9 +166,6 @@ $tmpl->setvar('metaInfo', showMetaInfo($torrent,false));
 //
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 //
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

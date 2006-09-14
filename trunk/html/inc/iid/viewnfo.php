@@ -45,8 +45,6 @@ else
 //
 $tmpl->setvar('head', getHead("View NFO"));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

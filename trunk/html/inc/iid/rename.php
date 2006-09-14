@@ -56,8 +56,6 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 }
 //
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

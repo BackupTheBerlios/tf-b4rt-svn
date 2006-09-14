@@ -52,11 +52,6 @@ $tmpl->setvar('stats_default_attach', $cfg["stats_default_attach"]);
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('head', getHead("Administration - Stats Settings"));
 $tmpl->setvar('foot', getFoot(true));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 

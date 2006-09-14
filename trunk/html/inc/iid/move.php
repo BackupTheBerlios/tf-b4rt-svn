@@ -108,8 +108,6 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 $tmpl->setvar('head', getHead($cfg['_MOVE_FILE_TITLE'], false));
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 //
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

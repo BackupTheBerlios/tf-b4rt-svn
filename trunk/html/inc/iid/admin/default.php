@@ -30,8 +30,6 @@ $tmpl->setvar('activity', getActivity());
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 $tmpl->setvar('foot', getFoot(true));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

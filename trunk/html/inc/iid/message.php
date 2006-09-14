@@ -82,9 +82,6 @@ $tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
 //
 $tmpl->setvar('head', getHead($cfg['_SENDMESSAGETITLE']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

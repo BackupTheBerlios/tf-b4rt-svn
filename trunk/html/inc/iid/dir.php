@@ -443,8 +443,6 @@ $tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

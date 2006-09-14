@@ -34,16 +34,14 @@ $tmpl->setvar('result4', shell_exec("free -mo"));
 $tmpl->setvar('netstatConnectionsSum', netstatConnectionsSum());
 $tmpl->setvar('netstatPortList', netstatPortList());
 $tmpl->setvar('netstatHostList', netstatHostList());
+//
 $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 $tmpl->setvar('_ID_HOSTS', $cfg['_ID_HOSTS']);
 $tmpl->setvar('_ID_PORTS', $cfg['_ID_PORTS']);
 $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('head', getHead($cfg['_ALL']));
+//
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();

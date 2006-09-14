@@ -66,9 +66,6 @@ if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 //
 $tmpl->setvar('head', getHead('Uncompressing File', false));
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

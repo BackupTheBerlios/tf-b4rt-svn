@@ -37,11 +37,23 @@ function tmplGetInstance($theme, $template) {
 	// template-cache-switch
 	switch ($cfg['enable_tmpl_cache']) {
 		case 1:
-			return new vlibTemplateCache($path.$template);
+			$tmpl = new vlibTemplateCache($path.$template);
+			break;
 		case 0:
 		default:
-			return new vlibTemplate($path.$template);
+			$tmpl =  new vlibTemplate($path.$template);
+			break;
 	}
+	//  set common template-vars
+	$tmpl->setvar('theme', $theme);
+    $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+    $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+    $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+    $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+    $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+    $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+    // return template-instance
+    return $tmpl;
 }
 
 /**
@@ -339,12 +351,6 @@ function showErrorPage($errorMessage) {
 	require_once("themes/".$cfg["default_theme"]."/index.php");
 	require_once("inc/lib/vlib/vlibTemplate.php");
 	$tmpl = tmplGetInstance($cfg["default_theme"], "error.tmpl");
-	$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-	$tmpl->setvar('default_theme', $cfg["default_theme"]);
-	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-	$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 	$tmpl->setvar('ErrorMsg', $errorMessage);
 	$tmpl->pparse();
 	exit();

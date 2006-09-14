@@ -122,9 +122,6 @@ $tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 //
 $tmpl->setvar('head', getHead("Torrent ".$cfg['_SEARCH']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

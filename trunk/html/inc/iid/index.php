@@ -815,12 +815,6 @@ $tmpl->setvar('_USER', $cfg['_USER']);
 //
 $tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 //
 if (isset($_GET["iid"]))
 	$tmpl->setvar('iid', $_GET["iid"]);

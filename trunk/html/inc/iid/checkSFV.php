@@ -26,8 +26,8 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "checkSFV.tmpl");
 
-$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
-
+// process
+$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_REQUEST['dir']) . ' -f ' . escapeshellarg($_REQUEST['file']);
 $handle = popen($cmd . ' 2>&1', 'r' );
 $buff= "";
 while(!feof($handle))
@@ -35,11 +35,10 @@ while(!feof($handle))
 $tmpl->setvar('buff', nl2br($buff));
 pclose($handle);
 
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('head', getHead('sfv check', false));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+// set vars
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>

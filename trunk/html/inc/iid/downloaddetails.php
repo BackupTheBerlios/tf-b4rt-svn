@@ -58,10 +58,6 @@ $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_PERCENTDONE', $cfg['_PERCENTDONE']);
 $tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
 //
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // include details-type

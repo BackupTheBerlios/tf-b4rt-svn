@@ -100,11 +100,6 @@ $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 //
 $tmpl->setvar('head', getHead($cfg['_UPLOADHISTORY']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

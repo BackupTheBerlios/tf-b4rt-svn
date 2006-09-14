@@ -83,9 +83,6 @@ if (file_exists($filename)) {
 //
 $tmpl->setvar('head', getHead($cfg['_ID_MRTG']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

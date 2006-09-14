@@ -85,10 +85,6 @@ $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&torrent='.$tor
 //
 $tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false));
 $tmpl->setvar('foot', getFoot(false));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

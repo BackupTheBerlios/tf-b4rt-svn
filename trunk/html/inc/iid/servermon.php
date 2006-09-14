@@ -45,12 +45,6 @@ $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
 //
 $tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]." - Server Monitor", false));
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

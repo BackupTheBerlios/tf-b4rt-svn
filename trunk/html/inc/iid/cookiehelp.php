@@ -28,11 +28,10 @@ $tmpl = tmplGetInstance($cfg["theme"], "cookiehelp.tmpl");
 
 // set vars
 $tmpl->setvar('head', getHead("Cookie Help", false));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('foot', getFoot(false));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>

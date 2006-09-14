@@ -126,10 +126,6 @@ $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 //
 $tmpl->setvar('head', getHead($cfg['_MULTIPLE_UPLOAD']));
 $tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template
