@@ -29,43 +29,44 @@ require_once("inc/metaInfo.php");
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "details.tmpl");
 
-$tmpl->setvar('head', getHead($cfg['_TRANSFERDETAILS']));
-$tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-
+// set vars
 $transfer = getRequestVar('torrent');
 if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 	// this is a torrent-client
 	$als = getRequestVar('als');
-	if($als == "false") {
-		$tmpl->setvar('showMetaInfo', showMetaInfo($transfer, false));
-	} else {
-		$tmpl->setvar('showMetaInfo', showMetaInfo($transfer, true));
-	}
-	$tmpl->setvar('getTorrentScrapeInfo', getTorrentScrapeInfo($transfer));
+	if ($als == "false")
+		$tmpl->setvar('metaInfo', showMetaInfo($transfer, false));
+	else
+		$tmpl->setvar('metaInfo', showMetaInfo($transfer, true));
+	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
 	$tmpl->setvar('scrape', 1);
 } else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
 	// this is wget.
 	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	$clientHandler->setVarsFromFile($transfer);
-	$showMetaInfo = "<table>";
-	$showMetaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
-	$showMetaInfo .= "<tr><td>URL:</td><td>".$clientHandler->url."</td></tr>";
-	$showMetaInfo .= "</table>";
-	$tmpl->setvar('showMetaInfo', $showMetaInfo);
+	$metaInfo = "<table>";
+	$metaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
+	$metaInfo .= "<tr><td>URL:</td><td>".$clientHandler->url."</td></tr>";
+	$metaInfo .= "</table>";
+	$tmpl->setvar('metaInfo', $metaInfo);
 	$tmpl->setvar('scrape', 0);
 } else {
-	$tmpl->setvar('showMetaInfo', "");
+	$tmpl->setvar('metaInfo', "");
 	$tmpl->setvar('scrape', 0);
 }
-
+//
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
+$tmpl->setvar('head', getHead($cfg['_TRANSFERDETAILS']));
+$tmpl->setvar('foot', getFoot());
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-$tmpl->setvar('foot', getFoot());
+
+// parse template
 $tmpl->pparse();
 
 ?>
