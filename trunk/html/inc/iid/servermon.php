@@ -30,28 +30,30 @@ loadSettings('tf_settings_stats');
 $tmpl = getTemplateInstance($cfg["theme"], "servermon.tmpl");
 
 // set vars
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-$tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Server Monitor", false));
-//
 $statsUrl = "http://";
 $statsUrl .= $_SERVER['SERVER_NAME'];
 $statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
 $timer = ((int) $cfg['servermon_update']) * 1000;
 $tmpl->setvar('onLoad', "initialize('".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
 //
-$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_TOTALSPEED', $cfg['_TOTALSPEED']);
 $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
+//
+$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]." - Server Monitor", false));
+$tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
