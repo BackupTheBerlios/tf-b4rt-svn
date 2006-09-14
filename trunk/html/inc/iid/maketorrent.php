@@ -29,7 +29,7 @@ require_once("inc/functions/functions.maketorrent.php");
 /*******************************************************************************
  * torrent download
  ******************************************************************************/
-if(!empty($_REQUEST["download"]))
+if ((isset($_REQUEST["download"])) && (!(empty($_REQUEST["download"]))))
 	downloadTorrent($_REQUEST["download"]);
 
 /*******************************************************************************
@@ -40,7 +40,7 @@ loadSettings('tf_settings_dir');
 
 // file + torrent vars
 $path = @ $_REQUEST['path'];
-$torrent = @ cleanFileName(StripFolders(trim($path))).".torrent";
+$torrent = @cleanFileName(StripFolders(trim($path))).".torrent";
 
 // check if there is a var sent for client, if not use default
 if (isset($_REQUEST["client"]))
@@ -97,17 +97,11 @@ if (!empty($_REQUEST["create"])) {
 /*******************************************************************************
  * page
  ******************************************************************************/
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "maketorrent.tmpl");
+
 // set vars
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
-$tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Torrent Maker", false));
-//
 $tmpl->setvar('path', $path);
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('comment', $comment);
@@ -136,8 +130,19 @@ switch ($client) {
 		$tmpl->setvar('piecesize', $piece);
 		break;
 }
+//
+$tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Torrent Maker", false));
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+//
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
