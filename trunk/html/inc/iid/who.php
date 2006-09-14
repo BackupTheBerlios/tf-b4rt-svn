@@ -20,20 +20,12 @@
 
 *******************************************************************************/
 
-// common functions
-require_once('inc/functions/functions.common.php');
-
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "who.tmpl");
 
-$result = shell_exec("w");
-$result2 = shell_exec("free -mo");
-
-$tmpl->setvar('head', getHead($cfg['_SERVERSTATS']));
-$tmpl->setvar('getDriveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('result', $result);
-$tmpl->setvar('result2', $result2);
+// set vars
+$tmpl->setvar('result1', shell_exec("w"));
+$tmpl->setvar('result2', shell_exec("free -mo"));
 if (IsAdmin()) {
 	$tmpl->setvar('is_admin', 1);
 	require_once("inc/classes/ClientHandler.php");
@@ -41,28 +33,32 @@ if (IsAdmin()) {
 	$clients = array('tornado', 'transmission', 'mainline', 'wget');
 	// get informations
 	$process_list = array();
-	foreach($clients as $client) {
+	foreach ($clients as $client) {
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
-		$runningProcessInfo = $clientHandler->getRunningClientsInfo();
-		$pinfo = shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep");
 		array_push($process_list, array(
 			'client' => $client,
-			'RunningProcessInfo' => $runningProcessInfo,
-			'pinfo' => $pinfo,
+			'RunningProcessInfo' => $clientHandler->getRunningClientsInfo(),
+			'pinfo' => shell_exec("ps auxww | ".$cfg['bin_grep']." ". $clientHandler->binClient ." | ".$cfg['bin_grep']." -v grep"),
 			)
 		);
 		unset($clientHandler);
-		unset($runningProcessInfo);
-		unset($pinfo);
 	}
 	$tmpl->setloop('process_list', $process_list);
+} else {
+	$tmpl->setvar('is_admin', 0);
 }
+//
+$tmpl->setvar('head', getHead($cfg['_SERVERSTATS']));
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
