@@ -215,7 +215,7 @@ define('_REN_FILE', 'File/Folder: ');
 define('_REN_DONE', 'Done!');
 define('_REN_ERROR', 'An error accured, please try again!');
 define('_REN_ERR_ARG', 'Wrong argument supplied!');
-define('_REN_TITLE', 'Rename Folder');
+define('_REN_TITLE', 'Rename');
 define('_ID_PORT','Port');
 define('_ID_PORTS','Ports');
 define('_ID_CONNECTIONS','Connections');

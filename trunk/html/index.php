@@ -63,8 +63,8 @@ if(isset($_GET['iid'])) {
 		case "startpop":
 			require_once("inc/iid/startpop.php");
 			break;
-		case "renameFolder":
-			require_once("inc/iid/renameFolder.php");
+		case "rename":
+			require_once("inc/iid/rename.php");
 			break;
 		case "readrss":
 			require_once("inc/iid/readrss.php");

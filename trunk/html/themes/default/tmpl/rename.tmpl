@@ -1,7 +1,7 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_var name="head">
 <tmpl_if name="is_start">
-	<form method="POST" action="index.php?iid=renameFolder" name="move_form">
+	<form method="POST" action="index.php?iid=rename" name="move_form">
 		<p><tmpl_var name="_REN_FILE"><input disabled="true" type="text" name="fileFromDis" size="91" value="<tmpl_var name="file">"></p>
 		<p><tmpl_var name="_REN_STRING"><input type="text" name="fileTo" size="91" value="<tmpl_var name="file">"></p>
 		<p><input type="submit" value="OK" name="OK"></p>
