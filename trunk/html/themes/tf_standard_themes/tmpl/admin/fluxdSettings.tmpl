@@ -10,6 +10,7 @@
 		</tr>
 	</table>
 </tmpl_if>
+<script src="js/fluxdSettings.js" type="text/javascript"></script>
 <div align="center">
 	<a name="fluxd" id="fluxd"></a>
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
@@ -26,51 +27,6 @@
 		</tr>
 		<tr>
 			<td align="center">
-				<script language="JavaScript">
-					function validateSettings() {
-						var rtnValue = true;
-						var msg = "";
-						<tmpl_if name="fluxd_Qmgr_enabled">
-							if (isNumber(document.theForm.fluxd_Qmgr_maxTotalTorrents.value) == false) {
-								msg = msg + "* Max Total Threads must be a valid number.\n";
-								document.theForm.fluxd_Qmgr_maxTotalTorrents.focus();
-							}
-							if (isNumber(document.theForm.fluxd_Qmgr_maxUserTorrents.value) == false) {
-								msg = msg + "* Max User Threads must be a valid number.\n";
-								document.theForm.fluxd_Qmgr_maxUserTorrents.focus();
-							}
-						</tmpl_if>
-						<tmpl_if name="fluxd_Clientmaint_enabled">
-							if (isNumber(document.theForm.fluxd_Clientmaint_interval.value) == false) {
-								msg = msg + "* Clientmaint Interval must be a valid number.\n";
-								document.theForm.fluxd_Clientmaint_interval.focus();
-							}
-						</tmpl_if>
-						<tmpl_if name="fluxd_Fluxinet_enabled">
-							if (isNumber(document.theForm.fluxd_Fluxinet_port.value) == false ) {
-								msg = msg + "* Fluxinet port must be a valid number.\n";
-								document.theForm.fluxd_Fluxinet_port.focus();
-							}
-						</tmpl_if>
-						if (msg != "") {
-							rtnValue = false;
-							alert("Please check the following:\n\n" + msg);
-						}
-						return rtnValue;
-					}
-					function isNumber(sText) {
-						var ValidChars = "0123456789.";
-						var IsNumber = true;
-						var Char;
-						for (i = 0; i < sText.length && IsNumber == true; i++) {
-							Char = sText.charAt(i);
-							if (ValidChars.indexOf(Char) == -1) {
-								IsNumber = false;
-							}
-						}
-						return IsNumber;
-					}
-				</script>
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
 							<tmpl_if name="shutdown">

@@ -26,41 +26,33 @@ require_once("inc/classes/RunningTransfer.php");
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/fluxdSettings.tmpl");
 
-// some template vars
-$tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('fluxdRunning', $fluxdRunning);
-
 // message section
 $message = getRequestVar('m');
 if ((isset($message)) && ($message != "")) {
 	$tmpl->setvar('new_msg', 1);
 	$tmpl->setvar('message', urldecode($message));
+} else {
+	$tmpl->setvar('new_msg', 0);
 }
 // fluxd Section
 if ($fluxdRunning) {
 	$fluxdPid = $fluxd->getFluxdPid();
 	$tmpl->setvar('fluxdPid', $fluxdPid);
 }
-
-$tmpl->setvar('theme', $cfg["theme"]);
-
 if ((isset($shutdown)) && ($shutdown == "1"))
 	$tmpl->setvar('shutdown', 1);
-
+else
+	$tmpl->setvar('shutdown', 0);
+// superadmin-links
 $tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','<font class="adminlink">log</font>'));
 $tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?f=2','<font class="adminlink">error-log</font>'));
 $tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3','<font class="adminlink">ps</font>'));
 $tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4','<font class="adminlink">status</font>'));
 $tmpl->setvar('SuperAdminLink5', getSuperAdminLink('?f=5','<font class="adminlink">check</font>'));
 $tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6','<font class="adminlink">db-debug</font>'));
-
+// loglevel
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
+// MODS
 // Qmgr
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
 if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
@@ -97,18 +89,10 @@ if (($cfg["fluxd_Trigger_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('fluxd_Trigger_state', $fluxd->modState('Trigger'));
 else
 	$tmpl->setvar('fluxd_Trigger_state', 0);
-$tmpl->setvar('_USER', $cfg['_USER']);
-$tmpl->setvar('_FILE', $cfg['_FILE']);
-$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
-$tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
-
-
-// really messy
-$output = "";
-
 // array with all clients
 $clients = array('tornado', 'transmission', 'mainline', 'wget');
 // get informations
+$output = "";
 foreach($clients as $client) {
 	$running = getRunningTransfers($client);
 	foreach ($running as $key => $value) {
@@ -117,17 +101,30 @@ foreach($clients as $client) {
 		unset($rt);
 	}
 }
-if( strlen($output) == 0 )
+if(strlen($output) == 0)
 	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Transfers</div></td></tr>";
-
-// more template vars
 $tmpl->setvar('output', $output);
+$tmpl->setvar('fluxdRunning', $fluxdRunning);
+//
+$tmpl->setvar('_USER', $cfg['_USER']);
+$tmpl->setvar('_FILE', $cfg['_FILE']);
+$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
+$tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
+//
+$tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
+$tmpl->setvar('menu', getMenu());
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
