@@ -23,14 +23,11 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/editUser.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - RSS"));
-$tmpl->setvar('menu', getMenu());
-
+// set vars
 $editUserImage = "themes/".$cfg['theme']."/images/user.gif";
 $selected_n = "selected";
 $selected_a = "";
 $hide_checked = "";
-
 $total_activity = GetActivityCount();
 $sql= "SELECT user_id, hits, last_visit, time_created, user_level, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($user_id);
 list($user_id, $hits, $last_visit, $time_created, $user_level, $hide_offline, $theme, $language_file) = $db->GetRow($sql);
@@ -42,7 +39,7 @@ if ($user_level == 1) {
 	$editUserImage = "themes/".$cfg['theme']."/images/admin_user.gif";
 }
 if ($user_level >= 2) {
-	$user_type = _SUPERADMIN;
+	$user_type = $cfg['_SUPERADMIN'];
 	$editUserImage = "themes/".$cfg['theme']."/images/superadmin.gif";
 }
 if ($hide_offline == 1)
@@ -52,62 +49,64 @@ if ($user_activity == 0)
 	$user_percent = 0;
 else
 	$user_percent = number_format(($user_activity/$total_activity)*100);
-
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('editUserImage', $editUserImage);
-$tmpl->setvar('_EDITUSER', $cfg['_EDITUSER']);
 $tmpl->setvar('user_id', $user_id);
-$tmpl->setvar('_JOINED', $cfg['_JOINED']);
 $tmpl->setvar('time_created', date($cfg['_DATETIMEFORMAT'], $time_created));
-$tmpl->setvar('_LASTVISIT', $cfg['_LASTVISIT']);
 $tmpl->setvar('last_visit', date($cfg['_DATETIMEFORMAT'], $last_visit));
-$tmpl->setvar('_UPLOADPARTICIPATION', $cfg['_UPLOADPARTICIPATION']);
 $tmpl->setvar('percent1', $user_percent*2);
 $tmpl->setvar('percent2', (200 - ($user_percent*2)));
-$tmpl->setvar('_UPLOADS', $cfg['_UPLOADS']);
 $tmpl->setvar('user_activity', $user_activity);
-$tmpl->setvar('_PERCENTPARTICIPATION', $cfg['_PERCENTPARTICIPATION']);
 $tmpl->setvar('user_percent', $user_percent);
-$tmpl->setvar('_PARTICIPATIONSTATEMENT', $cfg['_PARTICIPATIONSTATEMENT']);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
+$tmpl->setvar('hits', $hits);
+$tmpl->setvar('language_file', GetLanguageFromFile($language_file));
+$tmpl->setvar('user_type', $user_type);
+$tmpl->setvar('user_level', $user_level);
+$tmpl->setvar('selected_n', $selected_n);
+$tmpl->setvar('selected_a', $selected_a);
+$tmpl->setvar('hide_checked', $hide_checked);
+//
+$tmpl->setvar('_EDITUSER', $cfg['_EDITUSER']);
+$tmpl->setvar('_LASTVISIT', $cfg['_LASTVISIT']);
+$tmpl->setvar('_JOINED', $cfg['_JOINED']);
+$tmpl->setvar('_UPLOADPARTICIPATION', $cfg['_UPLOADPARTICIPATION']);
+$tmpl->setvar('_UPLOADS', $cfg['_UPLOADS']);
+$tmpl->setvar('_PERCENTPARTICIPATION', $cfg['_PERCENTPARTICIPATION']);
+$tmpl->setvar('_PARTICIPATIONSTATEMENT', $cfg['_PARTICIPATIONSTATEMENT']);
 $tmpl->setvar('_DAYS', $cfg['_DAYS']);
 $tmpl->setvar('_TOTALPAGEVIEWS', $cfg['_TOTALPAGEVIEWS']);
-$tmpl->setvar('hits', $hits);
 $tmpl->setvar('_THEME', $cfg['_THEME']);
-$tmpl->setvar('theme', $theme);
 $tmpl->setvar('_LANGUAGE', $cfg['_LANGUAGE']);
-$tmpl->setvar('language_file', GetLanguageFromFile($language_file));
 $tmpl->setvar('_USERTYPE', $cfg['_USERTYPE']);
-$tmpl->setvar('user_type', $user_type);
 $tmpl->setvar('_USERSACTIVITY', $cfg['_USERSACTIVITY']);
-$tmpl->setvar('user_id', $user_id);
-$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_NEWPASSWORD', $cfg['_NEWPASSWORD']);
 $tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
-$tmpl->setvar('user_level', $user_level);
 $tmpl->setvar('_NORMALUSER', $cfg['_NORMALUSER']);
 $tmpl->setvar('_ADMINISTRATOR', $cfg['_ADMINISTRATOR']);
-$tmpl->setvar('selected_n', $selected_n);
-$tmpl->setvar('selected_a', $selected_a);
 $tmpl->setvar('_SUPERADMIN', $cfg['_SUPERADMIN']);
-$tmpl->setvar('hide_checked', $hide_checked);
 $tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
 $tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
 $tmpl->setvar('_USERIDREQUIRED', $cfg['_USERIDREQUIRED']);
 $tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
+//
 $tmpl->setvar('getUserSection', getUserSection());
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - RSS"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
