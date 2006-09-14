@@ -23,17 +23,21 @@
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/showUsers.tmpl");
 
-$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
-$tmpl->setvar('menu', getMenu());
+// set vars
+$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
+//
 $tmpl->setvar('userSection', getUserSection());
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
