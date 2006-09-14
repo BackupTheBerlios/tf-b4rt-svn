@@ -30,13 +30,6 @@ initRestrictedDirEntries();
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/dirSettings.tmpl");
 
-//
-$tmpl->setvar('head', getHead("Administration - Dir Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
 // restricted entries
 $dir_list = array();
 foreach ($restrictedFileEntries as $entry) {
@@ -50,7 +43,6 @@ foreach ($restrictedFileEntries as $entry) {
 }
 $tmpl->setloop('dir_restricted_list', $dir_list);
 $tmpl->setvar('dir_restricted', $cfg["dir_restricted"]);
-//
 $tmpl->setvar('dir_public_read', $cfg["dir_public_read"]);
 $tmpl->setvar('dir_public_write', $cfg["dir_public_write"]);
 $tmpl->setvar('dir_enable_chmod', $cfg["dir_enable_chmod"]);
@@ -64,14 +56,22 @@ $tmpl->setvar('enable_rar', $cfg["enable_rar"]);
 $tmpl->setvar('enable_sfvcheck', $cfg["enable_sfvcheck"]);
 $tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);
-$tmpl->setvar('getMoveSettings', getMoveSettings());
+$tmpl->setvar('moveSettings', getMoveSettings());
 //
+$tmpl->setvar('menu', getMenu());
 $tmpl->setvar('foot', getFoot(true));
+$tmpl->setvar('head', getHead("Administration - Dir Settings"));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
