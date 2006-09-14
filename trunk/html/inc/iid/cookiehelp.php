@@ -26,6 +26,7 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "cookiehelp.tmpl");
 
+// set vars
 $tmpl->setvar('head', getHead("Cookie Help", false));
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('foot', getFoot(false));
