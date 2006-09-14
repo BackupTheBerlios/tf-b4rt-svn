@@ -130,8 +130,6 @@ $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

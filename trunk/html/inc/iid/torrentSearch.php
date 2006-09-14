@@ -124,8 +124,6 @@ $tmpl->setvar('head', getHead("Torrent ".$cfg['_SEARCH']));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -69,8 +69,6 @@ $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

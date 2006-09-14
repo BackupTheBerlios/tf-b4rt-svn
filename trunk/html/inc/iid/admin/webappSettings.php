@@ -35,8 +35,6 @@ $tmpl->setvar('rss_cache_min', $cfg["rss_cache_min"]);
 $tmpl->setvar('servermon_update', $cfg["servermon_update"]);
 $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('details_type', $cfg["details_type"]);
 $tmpl->setvar('details_update', $cfg["details_update"]);

@@ -759,8 +759,6 @@ $tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('sortOrder', $sortOrder);

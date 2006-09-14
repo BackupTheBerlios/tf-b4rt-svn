@@ -76,8 +76,6 @@ $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
-$tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template
