@@ -29,7 +29,7 @@ $messages = "";
 /*******************************************************************************
  * set refresh option into the session cookie
  ******************************************************************************/
-if(array_key_exists("pagerefresh", $_GET)) {
+if (isset($_GET['pagerefresh'])) {
 	$_SESSION['prefresh'] = $_GET["pagerefresh"];
 	header("location: index.php?iid=index");
 	exit();
@@ -38,33 +38,34 @@ if(array_key_exists("pagerefresh", $_GET)) {
 /*******************************************************************************
  * transfer-start
  ******************************************************************************/
-$transfer = getRequestVar('torrent');
-if(!empty($transfer)) {
-	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
-		// this is a torrent-client
-		$interactiveStart = getRequestVar('interactive');
-		if ((isset($interactiveStart)) && ($interactiveStart)) /* interactive */
-			indexStartTorrent($transfer, 1);
-		else /* silent */
-			indexStartTorrent($transfer, 0);
-	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
-		// this is wget.
-		require_once("inc/classes/ClientHandler.php");
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-		$clientHandler->startClient($transfer, 0, false);
-		sleep(5);
-		header("location: index.php?iid=index");
-	} else {
-		return;
+if (isset($_REQUEST['torrent'])) {
+	$transfer = getRequestVar('torrent');
+	if (!empty($transfer)) {
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$interactiveStart = getRequestVar('interactive');
+			if ((isset($interactiveStart)) && ($interactiveStart)) /* interactive */
+				indexStartTorrent($transfer, 1);
+			else /* silent */
+				indexStartTorrent($transfer, 0);
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			require_once("inc/classes/ClientHandler.php");
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+			$clientHandler->startClient($transfer, 0, false);
+			sleep(5);
+			header("location: index.php?iid=index");
+			exit();
+		}
 	}
 }
 
 /*******************************************************************************
  * wget-inject
  ******************************************************************************/
-if ($cfg['enable_wget'] == 1) {
+if (($cfg['enable_wget'] == 1) && (isset($_REQUEST['url_wget']))) {
 	$url_wget = getRequestVar('url_wget');
-	if(! $url_wget == '') {
+	if (!empty($url_wget)) {
 		require_once("inc/classes/ClientHandler.php");
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 		$clientHandler->inject($url_wget);
@@ -82,59 +83,68 @@ if ($cfg['enable_wget'] == 1) {
 /*******************************************************************************
  * get torrent via url
  ******************************************************************************/
-$url_upload = getRequestVar('url_upload');
-if(! $url_upload == '')
-	indexProcessDownload($url_upload);
+if (isset($_REQUEST['url_upload'])) {
+	$url_upload = getRequestVar('url_upload');
+	if (!empty($url_upload))
+		indexProcessDownload($url_upload);
+}
 
 /*******************************************************************************
  * file upload
  ******************************************************************************/
-if(!empty($_FILES['upload_file']['name']))
-	indexProcessUpload();
+if (isset($_FILES['upload_file'])) {
+	if(!empty($_FILES['upload_file']['name']))
+		indexProcessUpload();
+}
 
 /*******************************************************************************
  * del file
  ******************************************************************************/
-$delfile = getRequestVar('delfile');
-if(! $delfile == '') {
-	deleteTransfer($delfile, getRequestVar('alias_file'));
-	header("location: index.php?iid=index");
-	exit();
+if (isset($_REQUEST['delfile'])) {
+	$transfer = getRequestVar('delfile');
+	if (!empty($transfer)) {
+		deleteTransfer($transfer, getRequestVar('alias_file'));
+		header("location: index.php?iid=index");
+		exit();
+	}
 }
 
 /*******************************************************************************
  * kill
  ******************************************************************************/
-$killTorrent = getRequestVar('kill_torrent');
-if(! $killTorrent == '') {
-	$return = getRequestVar('return');
-	require_once("inc/classes/ClientHandler.php");
-	if ((substr(strtolower($killTorrent),-8 ) == ".torrent")) {
-		// this is a torrent-client
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($killTorrent));
-	} else if ((substr(strtolower($killTorrent),-5 ) == ".wget")) {
-		// this is wget.
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-	} else {
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+if (isset($_REQUEST["kill_torrent"])) {
+	$transfer = getRequestVar('kill_torrent');
+	if (!empty($transfer)) {
+		$return = getRequestVar('return');
+		require_once("inc/classes/ClientHandler.php");
+		if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+			// this is a torrent-client
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
+		} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+			// this is wget.
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+		} else {
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+		}
+		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
+		if (!empty($return))
+			header("location: ".$return.".php?op=queueSettings");
+		else
+			header("location: index.php?iid=index");
+		exit();
 	}
-	$clientHandler->stopClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
-	if (!empty($return))
-		header("location: ".$return.".php?op=queueSettings");
-	else
-		header("location: index.php?iid=index");
-	exit();
 }
-
 
 /*******************************************************************************
  * deQueue
  ******************************************************************************/
-if(isset($_REQUEST["dQueue"])) {
+if (isset($_REQUEST["QEntry"])) {
 	$QEntry = getRequestVar('QEntry');
-	$fluxdQmgr->dequeueTorrent($QEntry, $cfg["user"]);
-	header("location: index.php?iid=index");
-	exit();
+	if (!empty($QEntry)) {
+		$fluxdQmgr->dequeueTorrent($QEntry, $cfg["user"]);
+		header("location: index.php?iid=index");
+		exit();
+	}
 }
 
 /*******************************************************************************
@@ -152,17 +162,18 @@ $tmpl = getTemplateInstance($cfg["theme"], "index.tmpl");
 $drivespace = getDriveSpace($cfg["path"]);
 $formatFreeSpace = formatFreeSpace($cfg["free_space"]);
 // connections
-$netstatConnectionsSum = "n/a";
-$netstatConnectionsMax = "";
 if ($cfg["index_page_connections"] != 0) {
 	$netstatConnectionsSum = @netstatConnectionsSum();
 	$netstatConnectionsMax = "(".@getSumMaxCons().")";
+} else {
+	$netstatConnectionsSum = "n/a";
+	$netstatConnectionsMax = "";
 }
 // loadavg
-$loadavgString = "n/a";
 if ($cfg["show_server_load"] != 0)
 	$loadavgString = @getLoadAverageString();
-
+else
+	$loadavgString = "n/a";
 // incoming-path
 switch ($cfg["enable_home_dirs"]) {
     case 1:
@@ -179,40 +190,37 @@ switch ($cfg["enable_home_dirs"]) {
 // =============================================================================
 
 require_once("inc/classes/AliasFile.php");
-$kill_id = "";
-$lastUser = "";
 $arUserTorrent = array();
 $arListTorrent = array();
 // settings
 $settings = convertIntegerToArray($cfg["index_page_settings"]);
 // sortOrder
 $sortOrder = getRequestVar("so");
-if ($sortOrder == "")
+if (empty($sortOrder))
 	$sortOrder = $cfg["index_page_sortorder"];
 // t-list
 $arList = getTransferArray($sortOrder);
+$progress_color = "#00ff00";
+$bar_width = "4";
 foreach($arList as $entry) {
 	// ---------------------------------------------------------------------
-	// init some vars
-	$displayname = $entry;
-	if(strlen($entry) >= 47) {
-		// needs to be trimmed
-		$displayname = substr($entry, 0, 44);
-		$displayname .= "...";
-	}
-	$show_run = true;
+	// displayname
+	if (strlen($entry) >= 47)
+		$displayname = substr($entry, 0, 44)."...";
+	else
+		$displayname = $entry;
 
 	// ---------------------------------------------------------------------
 	// alias / stat
 	$alias = getAliasName($entry).".stat";
-	if ((substr( strtolower($entry),-8 ) == ".torrent")) {
+	if ((substr( strtolower($entry), -8) == ".torrent")) {
 		// this is a torrent-client
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
 		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = loadTorrentSettings($entry);
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
-	} else if ((substr( strtolower($entry),-5 ) == ".wget")) {
+	} else if ((substr( strtolower($entry), -5) == ".wget")) {
 		// this is wget.
 		$isTorrent = false;
 		$transferowner = getOwner($entry);
@@ -252,7 +260,7 @@ foreach($arList as $entry) {
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
 	}
 	// cache running-flag in local var. we will access that often
-	$transferRunning = (int) $af->running;
+	$transferRunning = $af->running;
 	// cache percent-done in local var. ...
 	$percentDone = $af->percent_done;
 
@@ -283,8 +291,9 @@ foreach($arList as $entry) {
 
 	// ---------------------------------------------------------------------
 	// preprocess alias-file and get some vars
-	$estTime = "&nbsp;";
-	$statusStr = "&nbsp;";
+	$estTime = "";
+	$statusStr = "";
+	$show_run = true;
 	switch ($transferRunning) {
 		case 2: // new
 			$statusStr = $detailsLinkString."<font color=\"#32cd32\">New</font></a>";
@@ -313,8 +322,6 @@ foreach($arList as $entry) {
 				} else {
 					$estTime = $af->time_left;
 				}
-			// $lastUser
-			$lastUser = $transferowner;
 			// $show_run + $statusStr
 			if ($percentDone >= 100) {
 				if(trim($af->up_speed) != "" && $transferRunning == 1)
@@ -348,13 +355,13 @@ foreach($arList as $entry) {
 
 	// =============================================================== downtotal
 	if ($settings[2] != 0)
-		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]+0);
+		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]);
 	else
 		$format_downtotal = "";
 
 	// ================================================================= uptotal
 	if ($settings[3] != 0)
-		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]+0);
+		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]);
 	else
 		$format_uptotal = "";
 
@@ -362,11 +369,6 @@ foreach($arList as $entry) {
 
 	// ================================================================ progress
 	if ($settings[5] != 0) {
-		$graph_width = 1;
-		$progress_color = "#00ff00";
-		$background = "#000000";
-		$bar_width = "4";
-		$percentage = "";
 		if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
 			$graph_width = -1;
 			$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
@@ -382,13 +384,13 @@ foreach($arList as $entry) {
 				$percentage = '0%';
 			}
 		}
-		if($graph_width == 100)
+		if ($graph_width == 100)
 			$background = $progress_color;
+		else
+			$background = "#000000";
 	} else {
 		$graph_width = 0;
-		$progress_color = "";
 		$background = "";
-		$bar_width = "";
 		$percentage = "";
 	}
 
@@ -422,18 +424,20 @@ foreach($arList as $entry) {
 
 	// =================================================================== seeds
 	if ($settings[8] != 0) {
-		$seeds = "";
 		if ($transferRunning == 1)
 			$seeds = $af->seeds;
+		else
+			$seeds = "";
 	} else {
 		$seeds = "";
 	}
 
 	// =================================================================== peers
 	if ($settings[9] != 0) {
-		$peers = "";
 		if ($transferRunning == 1)
 			$peers = $af->peers;
+		else
+			$peers = "";
 	} else {
 		$peers = "";
 	}
@@ -494,7 +498,6 @@ foreach($arList as $entry) {
 			'datapath' => $settingsAry['datapath'],
 			'is_no_file' => $is_no_file,
 			'isTorrent' => $isTorrent,
-			'kill_id' => $kill_id,
 			'show_run' => $show_run,
 			'entry' => $entry,
 			)
@@ -529,7 +532,6 @@ foreach($arList as $entry) {
 			'datapath' => $settingsAry['datapath'],
 			'is_no_file' => $is_no_file,
 			'isTorrent' => $isTorrent,
-			'kill_id' => $kill_id,
 			'show_run' => $show_run,
 			'entry' => $entry,
 			)
@@ -556,11 +558,14 @@ $tmpl->setvar('settings_9', $settings[9]);
 $tmpl->setvar('settings_10', $settings[10]);
 $tmpl->setvar('settings_11', $settings[11]);
 
+$isAdmin = IsAdmin();
+$tmpl->setvar('isAdmin', $isAdmin);
+
 if (sizeof($arUserTorrent) > 0)
 	$tmpl->setvar('are_user_torrent', 1);
 $boolCond = true;
 if ($cfg['enable_restrictivetview'] == 1)
-	$boolCond = IsAdmin();
+	$boolCond = $isAdmin;
 if (($boolCond) && (sizeof($arListTorrent) > 0))
 	$tmpl->setvar('are_torrent', 1);
 
@@ -569,7 +574,7 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 // =============================================================================
 
 // refresh
-if((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ((isset($_SESSION['prefresh'])) && ($_SESSION['prefresh'] == "true"))) {
+if ((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ((isset($_SESSION['prefresh'])) && ($_SESSION['prefresh'] == "true"))) {
 	$tmpl->setvar('refresh', 1);
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 }
@@ -579,12 +584,10 @@ if ($messages != "")
 	$tmpl->setvar('messages', $messages);
 
 // queue
-if(!$queueActive) {
+if ($queueActive)
 	$tmpl->setvar('queueActive', 1);
-} else {
-	if (IsAdmin())
-		$tmpl->setvar('queueActive', 2);
-}
+else
+	$tmpl->setvar('queueActive', 0);
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {
@@ -673,14 +676,12 @@ if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('xfer_total', getXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
 }
 
-// bigboldwarning
-if ($cfg['enable_bigboldwarning'] != "0") {
-	//Big bold warning hack by FLX
-	if($drivespace >= 98)
+// drivespace-warning
+if ($drivespace >= 98) {
+	if ($cfg['enable_bigboldwarning'] != "0")
 		$tmpl->setvar('enable_bigboldwarning', 1);
-} else {
-	if($drivespace >= 98)
-		$tmpl->setvar('no_bigboldwarning', 1);
+	else
+		$tmpl->setvar('enable_bigboldwarning', 0);
 }
 
 // bottom stats
@@ -697,7 +698,6 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('dayxfer1', @formatFreeSpace($xfer_total['day']['total'] / 1048576));
 	}
 	if ($queueActive) {
-		$tmpl->setvar('queueActive2', 1);
 		$tmpl->setvar('_QUEUEMANAGER', $cfg['_QUEUEMANAGER']);
 		$runningTransferCount = strval(getRunningTransferCount());
 		$tmpl->setvar('runningTransferCount', $runningTransferCount);
@@ -746,12 +746,6 @@ if ($cfg["ui_displaybandwidthbars"] != 0) {
 
 $tmpl->setvar('version', $cfg["version"]);
 $tmpl->setvar('user', $cfg["user"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);
@@ -771,11 +765,9 @@ $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('sortOrder', $sortOrder);
 $tmpl->setvar('drivespace', $drivespace);
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
-$tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
 $tmpl->setvar('formatFreeSpace', $formatFreeSpace);
 fillSearchEngineDDL($cfg["searchEngine"]);
+//
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
@@ -822,6 +814,15 @@ $tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
 $tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
 $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_USER', $cfg['_USER']);
+//
+$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
+$tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 //
 if (isset($_GET["iid"]))
 	$tmpl->setvar('iid', $_GET["iid"]);

@@ -31,14 +31,12 @@
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_UPLOAD"></option>
 											<tmpl_if name="queueActive" value="1">
-												<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
-											<tmpl_else>
-												<tmpl_if name="queueActive" value="2">
+												<tmpl_if name="isAdmin" value="1">
 													<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
-													<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
-												<tmpl_else>
-													<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
 												</tmpl_if>
+												<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
+											<tmpl_else>
+												<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
 											</tmpl_if>
 										</select>
 										<input type="Submit" value="Go">
@@ -59,14 +57,12 @@
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_GETFILE"></option>
 											<tmpl_if name="queueActive" value="1">
-												<option value="2"><tmpl_var name="_GETFILE">+Start</option>
-											<tmpl_else>
-												<tmpl_if name="queueActive" value="2">
+												<tmpl_if name="isAdmin" value="1">
 													<option value="2"><tmpl_var name="_GETFILE">+Start</option>
-													<option value="3"><tmpl_var name="_GETFILE">+Queue</option>
-												<tmpl_else>
-													<option value="3"><tmpl_var name="_GETFILE">+Queue</option>
 												</tmpl_if>
+												<option value="3"><tmpl_var name="_GETFILE">+Queue</option>
+											<tmpl_else>
+												<option value="2"><tmpl_var name="_GETFILE">+Start</option>
 											</tmpl_if>
 										</select>
 										<input type="Submit" value="Go">
@@ -248,7 +244,7 @@
 				</table>
 				</td></tr>
 			</tmpl_if>
-			<tmpl_if name="enable_bigboldwarning">
+			<tmpl_if name="enable_bigboldwarning" value="1">
 				<tr>
 					<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
 						<div align="center">
@@ -419,7 +415,7 @@
 									<tmpl_if name="is_owner">
 										<tmpl_if name="transferRunning" value="1">
 											<tmpl_if name="isTorrent">
-												<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill=<tmpl_var name="kill_id">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+												<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 												<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 												<tmpl_if name="enable_multiops">
 													<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
@@ -434,7 +430,7 @@
 												<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 											<tmpl_else>
 												<tmpl_if name="transferRunning" value="3">
-													<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+													<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&QEntry=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 												<tmpl_else>
 													<tmpl_if name="is_no_file">
 														<tmpl_if name="isTorrent">
@@ -638,7 +634,7 @@
 									<tmpl_if name="is_owner">
 										<tmpl_if name="transferRunning" value="1">
 											<tmpl_if name="isTorrent">
-												<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill=<tmpl_var name="kill_id">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+												<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 												<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 												<tmpl_if name="enable_multiops">
 													<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
@@ -653,7 +649,7 @@
 												<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 											<tmpl_else>
 												<tmpl_if name="transferRunning" value="3">
-													<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&dQueue=<tmpl_var name="kill_id">&QEntry=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+													<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&QEntry=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 												<tmpl_else>
 													<tmpl_if name="is_no_file">
 														<tmpl_if name="isTorrent">
@@ -722,7 +718,7 @@
 													<img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">"></td>
 												<td class="tiny">
 													<tmpl_var name="_STOPTRANSFER">&nbsp;&nbsp;&nbsp;</td>
-												<tmpl_if name="queueActive">
+												<tmpl_if name="queueActive" value="1">
 													<td>
 														<img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" title="<tmpl_var name="_DELQUEUE">"></td>
 													<td class="tiny">
@@ -757,7 +753,7 @@
 															<option value="---" selected>---</option>
 															<option value="transferStart" style="background-color: #00EC00">Start [BTMW]</option>
 															<option value="transferStop" style="background-color: #94ABC0">Stop [BTM]</option>
-															<tmpl_if name="queueActive2">
+															<tmpl_if name="queueActive" value="1">
 																<option value="transferEnQueue" style="background-color: #FFFC00">EnQueue [BTM]</option>
 																<option value="transferDeQueue" style="background-color: #FFFC00">DeQueue [BTM]</option>
 															</tmpl_if>
@@ -781,7 +777,7 @@
 									<tmpl_else>
 										<a href="index.php?iid=index&pagerefresh=true"><font class="tiny"><tmpl_var name="_TURNONREFRESH"></font></a>
 									</tmpl_if>
-									<tmpl_if name="no_bigboldwarning">
+									<tmpl_if name="enable_bigboldwarning" value="0">
 										<script language="JavaScript">
 											alert(<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">)
 										</script>
@@ -800,7 +796,7 @@
 														<tmpl_var name="_DAYXFER">: <strong><tmpl_var name="dayxfer1"></strong><br>
 													</td>
 												</tmpl_if>
-												<tmpl_if name="queueActive2">
+												<tmpl_if name="queueActive" value="1">
 													<td align="center" valign="bottom">
 														<div class="tiny">
 															<b><tmpl_var name="_QUEUEMANAGER"></b><br>
