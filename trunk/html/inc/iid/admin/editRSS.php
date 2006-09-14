@@ -26,16 +26,7 @@ require_once('inc/functions/functions.readrss.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/editRSS.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - RSS"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
-$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
-$tmpl->setvar('_DELETE', $cfg['_DELETE']);
-
+// set vars
 $arLinks = GetRSSLinks();
 $arRid = Array_Keys($arLinks);
 $inx = 0;
@@ -50,12 +41,24 @@ foreach($arLinks as $link) {
 	);
 }
 $tmpl->setloop('link_rss', $link_rss);
+//
+$tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
+$tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - RSS"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
