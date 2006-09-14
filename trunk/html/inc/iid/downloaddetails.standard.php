@@ -127,7 +127,8 @@ $tmpl->setvar('cons', $torrent_cons.$label_maxcons);
 $tmpl->setvar('label_sharing', $label_sharing);
 $tmpl->setvar('label_sharekill', $label_sharekill);
 //$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false, $cfg['details_update'], $af->percent_done."% "));
-$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false, "5", $af->percent_done."% "));
+//$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false, "5", $af->percent_done."% "));
+$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false));
 $tmpl->setvar('foot', getFoot(false));
 
 ?>

@@ -80,7 +80,8 @@ if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 	}
 	$tmpl->setloop('list_host', $list_host);
 }
-$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false, "15", ""));
+//$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false, "15", ""));
+$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);

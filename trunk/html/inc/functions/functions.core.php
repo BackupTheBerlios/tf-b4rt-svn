@@ -1146,11 +1146,9 @@ function checkDirPathString($dirPath) {
  *
  * @param $subTopic
  * @param $showButtons
- * @param $refresh
- * @param $percentdone
  * @return string
  */
-function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
+function getHead($subTopic, $showButtons = true) {
 	global $cfg;
 	// create template-instance
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.getHead.tmpl");
@@ -1172,7 +1170,7 @@ function getHead($subTopic, $showButtons=true, $refresh="", $percentdone="") {
  * @param $showReturn
  * @return string
  */
-function getFoot($showReturn=true) {
+function getFoot($showReturn = true) {
 	global $cfg;
 	// create template-instance
 	$tmpl = getTemplateInstance($cfg["theme"], "inc.getFoot.tmpl");
