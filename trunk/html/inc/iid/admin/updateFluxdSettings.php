@@ -33,7 +33,6 @@ if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 	$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"])
 {
 	$message = '<br>Settings changed.<br>';
-
 	// fluxd Running?
 	if ($fluxdRunning) {
 		$needsRestart = false;
