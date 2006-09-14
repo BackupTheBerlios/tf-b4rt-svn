@@ -1691,6 +1691,154 @@ function getTransferListArray() {
 }
 
 /**
+ * gets details of a transfer as array
+ *
+ * @param $transfer
+ * @param $full
+ * @param $alias
+ * @return array with details
+ */
+function getTransferDetails($transfer, $full, $alias = "") {
+	global $cfg;
+	$details = array();
+	// common functions
+	require_once('inc/functions/functions.common.php');
+	// aliasfile
+	require_once("inc/classes/AliasFile.php");
+
+	/* prepare values */
+
+	// Load saved settings
+	loadTorrentSettingsToConfig($transfer);
+	// owner
+	$owner = getOwner($transfer);
+	// alias-file
+	if ((!(isset($alias))) || ($alias == "")) {
+		$aliasName = getAliasName($transfer);
+		$alias = $aliasName.".stat";
+	}
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $owner, $cfg, $cfg['btclient']);
+	// running
+	$running = $af->running;
+	// size
+	$size = $af->size;
+	// totals
+	//$totalsCurrent = getTransferTotalsCurrent($transfer);
+	//$totals = getTransferTotals($transfer);
+	$afu = $af->uptotal;
+	$afd = $af->downtotal;
+	$totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
+	$totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
+	// speed_down + speed_up + seeds + peers + cons
+	if ($running == 1) {
+		$pid = getTransferPid($alias);
+		// speed down
+		$speed_down = "";
+		// speed up
+		$speed_up = "";
+		// seeds
+		$seeds = $af->seeds;
+		// peers
+		$peers = $af->peers;
+		// cons
+		$cons = netstatConnectionsByPid($pid);
+	} else {
+		// speed down
+		$speed_down = "";
+		// speed up
+		$speed_up = "";
+		// seeds
+		$seeds = "";
+		// peers
+		$peers = "";
+		// cons
+		$cons = "";
+	}
+	// percentage
+	$percentage = $af->percent_done;
+	if ($percentage < 0)
+		$percentage = round(($percentage * -1) - 100, 1);
+	if ($percentage > 100)
+		$percentage = 100;
+	// sharing
+	if ($size > 0)
+		$sharing = number_format((($totals["uptotal"] / $size) * 100), 2);
+	else
+		$sharing = 0;
+	// eta
+	$eta = $af->time_left;
+	// errors
+	$errors = array();
+	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
+		array_push($errors, $af->errors[$inx]);
+
+	/* fill array */
+
+	// running
+	$details['running'] = $running;
+	// speed_down
+	$details['speed_down'] = $speed_down;
+	// speed_up
+	$details['speed_up'] = $speed_up;
+	// down_current
+	$details['down_current'] = formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
+	// up_current
+	$details['up_current'] = formatFreeSpace($totalsCurrent["uptotal"] / 1048576);
+	// down_total
+	$details['down_total'] = formatFreeSpace($totals["downtotal"] / 1048576);
+	// up_total
+	$details['up_total'] = formatFreeSpace($totals["uptotal"] / 1048576);
+	// percentage
+	$details['percentage'] = $percentage;
+	// sharing
+	$details['sharing'] = $sharing;
+	// eta
+	$details['eta'] = $eta;
+	// seeds
+	$details['seeds'] = $seeds;
+	// peers
+	$details['peers'] = $peers;
+	// cons
+	$details['cons'] = $cons;
+	// errors
+	$details['errors'] = $errors;
+	// full (including static) details
+	if ($full) {
+		// owner
+		$details['owner'] = $owner;
+		// size
+		$details['size'] = formatBytesTokBMBGBTB($size);
+		if ($running == 1) {
+			// max_download_rate
+			$details['max_download_rate'] = number_format($cfg["max_download_rate"], 2);
+			// max_upload_rate
+			$details['max_upload_rate'] = number_format($cfg["max_upload_rate"], 2);
+			// maxcons
+			$details['maxcons'] = $cfg["maxcons"];
+			// sharekill
+			$details['sharekill'] = $cfg["sharekill"];
+			// port
+			$details['port'] = netstatPortByPid($pid);
+
+		} else {
+			// max_download_rate
+			$details['max_download_rate'] = "";
+			// max_upload_rate
+			$details['max_upload_rate'] = "";
+			// maxcons
+			$details['maxcons'] = "";
+			// sharekill
+			$details['sharekill'] = "";
+			// port
+			$details['port'] = "";
+		}
+	}
+
+	// return
+	return $details;
+}
+
+/**
  * get the Upload Graphical Bar
  *
  * @return string with upload-bar
