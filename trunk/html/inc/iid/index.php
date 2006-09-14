@@ -575,8 +575,8 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 
 // refresh
 if ((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ((isset($_SESSION['prefresh'])) && ($_SESSION['prefresh'] == "true"))) {
-	$tmpl->setvar('refresh', 1);
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+	$tmpl->setvar('meta_refresh', $cfg["page_refresh"].';URL=index.php?iid=index');
 }
 
 // messages
@@ -678,10 +678,10 @@ if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 
 // drivespace-warning
 if ($drivespace >= 98) {
-	if ($cfg['enable_bigboldwarning'] != "0")
+	if ($cfg['enable_bigboldwarning'] != 0)
 		$tmpl->setvar('enable_bigboldwarning', 1);
 	else
-		$tmpl->setvar('enable_bigboldwarning', 0);
+		$tmpl->setvar('enable_jswarning', 1);
 }
 
 // bottom stats

@@ -1,4 +1,19 @@
 
+var varRefresh;
+
+function initRefresh(refresh) {
+	varRefresh = refresh;
+	setTimeout("updateRefresh();", 1000);
+}
+
+function updateRefresh() {
+	varRefresh--;
+	if (varRefresh >= 0) {
+	    document.getElementById("span_refresh").innerHTML = String(varRefresh);
+	    setTimeout("updateRefresh();", 1000);
+	}
+}
+
 function bulkCheck(thisIn) {
 	var form = thisIn.form, i = 0;
 	for(i = 0; i < form.length; i++) {

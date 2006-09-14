@@ -1,5 +1,5 @@
 <tmpl_include name="inc.head.tmpl">
-<body topmargin="8" bgcolor="#829FB5"<tmpl_if name="refresh"> onLoad="UpdateRefresh();" </tmpl_if>>
+<body topmargin="8" bgcolor="#829FB5"<tmpl_if name="page_refresh"> onLoad="initRefresh(<tmpl_var name="page_refresh">);" </tmpl_if>>
 	<div align="center">
 	<tmpl_if name="messages">
 		<table border="1" cellpadding="10" bgcolor="#ff9b9b">
@@ -777,9 +777,9 @@
 									<tmpl_else>
 										<a href="index.php?iid=index&pagerefresh=true"><font class="tiny"><tmpl_var name="_TURNONREFRESH"></font></a>
 									</tmpl_if>
-									<tmpl_if name="enable_bigboldwarning" value="0">
+									<tmpl_if name="enable_jswarning" value="1">
 										<script language="JavaScript">
-											alert(<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">)
+											alert('<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">');
 										</script>
 									</tmpl_if>
 								</div>
