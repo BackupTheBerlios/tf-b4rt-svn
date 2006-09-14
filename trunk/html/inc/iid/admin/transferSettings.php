@@ -24,7 +24,6 @@
 $tmpl = getTemplateInstance($cfg["theme"], "admin/transferSettings.tmpl");
 
 // set vars
-$tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('btclient', $cfg["btclient"]);
 $tmpl->setvar('metainfoclient', $cfg["metainfoclient"]);
 $tmpl->setvar('btclient_tornado_options', $cfg["btclient_tornado_options"]);

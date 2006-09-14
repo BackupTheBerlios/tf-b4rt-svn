@@ -20,19 +20,10 @@
 
 *******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/xferSettings.tmpl");
 
-$tmpl->setvar('head', getHead("Administration - Xfer Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-// xfer
+// set vars
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 $tmpl->setvar('xfer_realtime', $cfg["xfer_realtime"]);
 $tmpl->setvar('enable_public_xfer', $cfg["enable_public_xfer"]);
@@ -56,12 +47,20 @@ for ($i = 1; $i <= 31 ; $i++) {
 }
 $tmpl->setloop('month_list', $month_list);
 //
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - Xfer Settings"));
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>

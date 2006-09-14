@@ -20,13 +20,10 @@
 
 *******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "admin/webappSettings.tmpl");
 
-//
+// set vars
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('auth_basic_realm', $cfg["auth_basic_realm"]);
 $tmpl->setvar('enable_tmpl_cache', $cfg["enable_tmpl_cache"]);
@@ -43,7 +40,6 @@ $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('details_type', $cfg["details_type"]);
 $tmpl->setvar('details_update', $cfg["details_update"]);
-
 // themes
 $theme_list = array();
 $arThemes = GetThemes();
@@ -59,7 +55,6 @@ for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	);
 }
 $tmpl->setloop('theme_list', $theme_list);
-
 // tf standard themes
 $arThemes = GetThemesStandard();
 $tfstandard_theme_list = array();
@@ -77,7 +72,6 @@ for($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	);
 }
 $tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
-
 // languages
 $lang_list = array();
 $arLanguage = GetLanguages();
@@ -94,17 +88,18 @@ for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 	);
 }
 $tmpl->setloop('lang_list', $lang_list);
-
 //
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead("Administration - WebApp Settings"));
+$tmpl->setvar('foot', getFoot(true));
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('theme', $cfg["theme"]);
-$tmpl->setvar('head', getHead("Administration - WebApp Settings"));
-$tmpl->setvar('menu', getMenu());
-$tmpl->setvar('foot', getFoot(true));
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
