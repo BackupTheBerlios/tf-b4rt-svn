@@ -20,19 +20,10 @@
 
 *******************************************************************************/
 
+// errors
 $error = "";
-$transferowner = getOwner($torrent);
-$graph_width = "";
-$background = "#000000";
-if (!empty($alias)) {
-	// create AliasFile object
-	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
-	for ($inx = 0; $inx < sizeof($af->errors); $inx++) {
-		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
-	}
-} else {
-	die("fatal error torrent file not specified");
-}
+for ($inx = 0; $inx < sizeof($af->errors); $inx++)
+	$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
 
 // Load saved settings
 loadTorrentSettingsToConfig($torrent);
@@ -45,12 +36,15 @@ $downTotalCurrent = ($torrentTotalsCurrent["downtotal"]+0);
 $upTotal =($torrentTotals["uptotal"]+0);
 $downTotal = ($torrentTotals["downtotal"]+0);
 
-// seeding-%
-$torrentSize = $af->size+0;
+// sharing
+$torrentSize = $af->size;
 if ($torrentSize == 0)
 	$sharing = 0;
 else
 	$sharing = number_format((($upTotal / $torrentSize) * 100), 2);
+
+// more
+$background = "#000000";
 $torrent_port = "";
 $torrent_cons = "";
 $label_max_download_rate = "";
@@ -89,11 +83,11 @@ if ($af->percent_done < 0) {
 	$af->percent_done = round(($af->percent_done*-1)-100,1);
 	$af->time_left = $cfg['_INCOMPLETE'];
 }
-if($af->percent_done < 1)
+if ($af->percent_done < 1)
 	$graph_width = "1";
 else
 	$graph_width = $af->percent_done;
-if($af->percent_done >= 100) {
+if ($af->percent_done >= 100) {
 	$af->percent_done = 100;
 	$background = "#0000ff";
 }
@@ -101,11 +95,15 @@ $hd = getStatusImage($af);
 if ($error != "") {
 	$tmpl->setvar('is_error', 1);
 	$tmpl->setvar('error', $error);
+} else {
+	$tmpl->setvar('is_error', 0);
 }
-$tmpl->setvar('formatBytesTokBMBGBTB', formatBytesTokBMBGBTB($af->size));
+// set vars
 if ($af->running == 1)
 	$tmpl->setvar('running', 1);
-//
+else
+	$tmpl->setvar('running', 0);
+$tmpl->setvar('size', formatBytesTokBMBGBTB($af->size));
 $tmpl->setvar('hd_image', $hd->image);
 $tmpl->setvar('hd_title', $hd->title);
 $tmpl->setvar('background', $background);
@@ -126,8 +124,8 @@ $tmpl->setvar('port', $torrent_port);
 $tmpl->setvar('cons', $torrent_cons.$label_maxcons);
 $tmpl->setvar('label_sharing', $label_sharing);
 $tmpl->setvar('label_sharekill', $label_sharekill);
-//$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false, $cfg['details_update'], $af->percent_done."% "));
-//$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false, "5", $af->percent_done."% "));
+//
+// $cfg['details_update'], $af->percent_done."% "));
 $tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false));
 $tmpl->setvar('foot', getFoot(false));
 
