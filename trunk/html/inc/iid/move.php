@@ -29,13 +29,12 @@ loadSettings('tf_settings_dir');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "move.tmpl");
 
-$tmpl->setvar('head', getHead($cfg['_MOVE_FILE_TITLE'], false));
-
-if((isset($_GET['start'])) && ($_GET['start'] == true)) {
+// set vars
+if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
-	$tmpl->setvar('path', $_GET['path']);
+	$tmpl->setvar('path', $_REQUEST['path']);
 	$tmpl->setvar('_MOVE_STRING', $cfg['_MOVE_STRING']);
+	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$tmpl->setvar('move_start', 1);
 		$dirs = split(":", trim($cfg["move_paths"]));
@@ -50,8 +49,11 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 			}
 		}
 		$tmpl->setloop('dir_list', $dir_list);
+	} else {
+		$tmpl->setvar('move_start', 0);
 	}
 } else {
+	$tmpl->setvar('is_start', 0);
 	$targetDir = "";
 	if (isset($_POST['dest'])) {
 		 $tempDir = trim(urldecode($_POST['dest']));
@@ -69,11 +71,13 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 		if ($targetDir{0} != '/') {
 			$tmpl->setvar('not_absolute', 1);
 			$dirValid = false;
+		} else {
+			$tmpl->setvar('not_absolute', 0);
 		}
 	}
 	$tmpl->setvar('targetDir', $targetDir);
 	// check dir
-	if (($dirValid) && (checkDirectory($targetDir,0777))) {
+	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
 		$tmpl->setvar('is_valid', 1);
 		 $targetDir = checkDirPathString($targetDir);
 		// move
@@ -84,7 +88,7 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 		$gotError = -1;
 		$buff= "";
 		while(!feof($handle)) {
-			$buff .= fgets($handle,30);
+			$buff .= @fgets($handle,30);
 			$gotError = $gotError + 1;
 		}
 		$tmpl->setvar('buff', nl2br($buff));
@@ -92,16 +96,25 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 		if($gotError <= 0) {
 			$tmpl->setvar('got_no_error', 1);
 			$tmpl->setvar('file', $_POST['file']);
+		} else {
+			$tmpl->setvar('got_no_error', 0);
 		}
+	} else {
+		$tmpl->setvar('is_valid', 1);
 	}
 }
-// $tmpl->setloop('dir_list', $dir_list);
+
+//
+$tmpl->setvar('head', getHead($cfg['_MOVE_FILE_TITLE'], false));
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+//
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
