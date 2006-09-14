@@ -30,63 +30,67 @@ define('_DEFAULT_TARGET','traffic');
 $tmpl = getTemplateInstance($cfg["theme"], "mrtg.tmpl");
 
 // request-vars
-$mrtgTarget = getRequestVar('mrtg_target');
-if($mrtgTarget == '')
-  $mrtgTarget = _DEFAULT_TARGET;
+if (isset($_REQUEST['mrtg_target']))
+	$mrtgTarget = getRequestVar('mrtg_target');
+else
+	$mrtgTarget = _DEFAULT_TARGET;
 
-// get list of available targets
-$mrtgTargets = null;
-$htmlTargets = "";
+// set vars
+$htmlTargetsCount = 0;
 if ($dirHandle = opendir('./mrtg')) {
-  $htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
-  $htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="get">';
-  $htmlTargets .= '<input type="hidden" name="iid" value="mrtg">';
-  $htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
-  $idx = 0;
-  while (false !== ($file = readdir($dirHandle))) {
-	if( preg_match("/.*inc/i", $file) ) {
-	  $mrtgTargets[$idx] = $file;
-	  $targetName = array_shift(explode('.',$file));
-	  $htmlTargets .= '<option value="'.$targetName.'"';
-	  if ($mrtgTarget == $targetName)
-		$htmlTargets .= ' selected';
-	  $htmlTargets .= '>'.$targetName.'</option>';
-	  $idx++;
+	$htmlTargets = "";
+	$htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
+	$htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="get">';
+	$htmlTargets .= '<input type="hidden" name="iid" value="mrtg">';
+	$htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
+	$idx = 0;
+	while (false !== ($file = readdir($dirHandle))) {
+		if( preg_match("/.*inc/i", $file) ) {
+			$htmlTargetsCount++;
+			$targetName = array_shift(explode('.',$file));
+			$htmlTargets .= '<option value="'.$targetName.'"';
+			if ($mrtgTarget == $targetName)
+				$htmlTargets .= ' selected';
+			$htmlTargets .= '>'.$targetName.'</option>';
+			$idx++;
+		}
 	}
-  }
-  closedir($dirHandle);
-  $htmlTargets .= '</select><input type="submit" value="Change Graph">';
-  $htmlTargets .= '</form>';
-  $htmlTargets .= '</td></tr></table>'."\n";
+	closedir($dirHandle);
+	$htmlTargets .= '</select><input type="submit" value="Change Graph">';
+	$htmlTargets .= '</form>';
+	$htmlTargets .= '</td></tr></table>'."\n";
 }
-
-// get content
-$htmlGraph = "";
+if ($htmlTargetsCount > 0)
+	$tmpl->setvar('htmlTargets', $htmlTargets);
+else
+	$tmpl->setvar('htmlTargets', "");
 $filename = "./mrtg/".$mrtgTarget.".inc";
 if (file_exists($filename)) {
-  $fileHandle = fopen ($filename, "r");
-  while (!feof($fileHandle))
-	$htmlGraph .= fgets($fileHandle, 4096);
-  fclose ($fileHandle);
-  // we are only interested in the "real" content
-  $htmlGraph = array_shift(explode("_CONTENT_END_",array_pop(explode("_CONTENT_BEGIN_",$htmlGraph))));
-  // rewrite image-links
-  $htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
+	$htmlGraph = "";
+	$fileHandle = fopen ($filename, "r");
+	while (!feof($fileHandle))
+		$htmlGraph .= fgets($fileHandle, 4096);
+	fclose ($fileHandle);
+	// we are only interested in the "real" content
+	$htmlGraph = array_shift(explode("_CONTENT_END_", array_pop(explode("_CONTENT_BEGIN_", $htmlGraph))));
+	// rewrite image-links
+	$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
+	// set var
+	$tmpl->setvar('htmlGraph', $htmlGraph);
+} else {
+	$tmpl->setvar('htmlGraph', "");
 }
-
-// render page content
+//
 $tmpl->setvar('head', getHead($cfg['_ID_MRTG']));
-if ((count($mrtgTargets)) > 0) {
-	$tmpl->setvar('htmlTargets', $htmlTargets);
-}
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-$tmpl->setvar('htmlGraph', $htmlGraph);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
