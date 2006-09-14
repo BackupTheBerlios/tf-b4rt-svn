@@ -405,11 +405,7 @@ foreach ($filelist as $entry)
 $tmpl->setloop('list', $list);
 
 // define some things
-$tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
-$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('foot', getFoot());
-$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-$tmpl->setvar('theme', $cfg["theme"]);
+
 // dir
 $tmpl->setvar('dir', $dir);
 // parent url
@@ -437,15 +433,23 @@ $tmpl->setvar('package_type', $cfg["package_type"]);
 $tmpl->setvar('enable_maketorrent', $cfg["enable_maketorrent"]);
 $tmpl->setvar('bgDark', $cfg['bgDark']);
 $tmpl->setvar('bgLight', $cfg['bgLight']);
+//
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 $tmpl->setvar('_DIR_REN_LINK', $cfg['_DIR_REN_LINK']);
 $tmpl->setvar('_DIR_MOVE_LINK', $cfg['_DIR_MOVE_LINK']);
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
+//
+$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
+$tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
+$tmpl->setvar('foot', getFoot());
+$tmpl->setvar('pagetitle', $cfg["pagetitle"]);
+$tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
-// lets parse the hole thing
+
+// parse template
 $tmpl->pparse();
 
 ?>
