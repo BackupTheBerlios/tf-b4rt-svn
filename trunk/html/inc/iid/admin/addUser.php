@@ -20,27 +20,34 @@
 
 *******************************************************************************/
 
-// create template-instance
-$tmpl = getTemplateInstance($cfg["theme"], "admin/addUser.tmpl");
-
+// new user ?
 $newUser = strtolower($newUser);
-if (IsUser($newUser)) {
-	$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
-	$tmpl->setvar('menu', getMenu());
-	$tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
-	$tmpl->setvar('newUser', $newUser);
-	$tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
-	$tmpl->setvar('foot', getFoot(true));
-} else {
+if (!(IsUser($newUser))) {
 	addNewUser($newUser, $pass1, $userType);
 	AuditAction($cfg["constants"]["admin"], $cfg['_NEWUSER'].": ".$newUser);
 	header("location: index.php?iid=admin&op=CreateUser");
+	exit();
 }
+
+// create template-instance
+$tmpl = getTemplateInstance($cfg["theme"], "admin/addUser.tmpl");
+
+// set vars
+$tmpl->setvar('newUser', $newUser);
+//
+$tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
+$tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
+//
+$tmpl->setvar('menu', getMenu());
+$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
+$tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>

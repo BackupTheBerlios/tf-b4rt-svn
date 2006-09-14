@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 require_once('inc/functions/functions.admin.php');
 
 
-if(!IsAdmin()) {
+if (!IsAdmin()) {
 	 // the user probably hit this page direct
 	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);
 	header("location: index.php?iid=index");

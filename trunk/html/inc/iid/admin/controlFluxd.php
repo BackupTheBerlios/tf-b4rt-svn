@@ -22,7 +22,6 @@
 
 $message = "";
 $action = getRequestVar('a');
-
 switch($action) {
 	case "start":
 		// start fluxd
@@ -37,8 +36,7 @@ switch($action) {
 			break;
 		}
 		$message = '<br><font color="red">Error starting fluxd</font><br><br>';
-	break;
-
+		break;
 	case "stop":
 		// kill fluxd
 		if ($fluxd->isFluxdRunning()) {
@@ -50,15 +48,14 @@ switch($action) {
 			header("Location: index.php?iid=admin&op=fluxdSettings&m=".urlencode($message).'&s=1');
 			exit;
 		}
-	break;
-
+		break;
 	default:
 		$message = '<br><font color="red">Error : no control-operation.</font><br><br>';
-	break;
+		break;
 }
 if ($message != "")
 	header("Location: index.php?iid=admin&op=fluxdSettings&m=".urlencode($message));
 else
-header("Location: index.php?iid=admin&op=fluxdSettings");
+	header("Location: index.php?iid=admin&op=fluxdSettings");
 
 ?>
