@@ -26,31 +26,32 @@ require_once('inc/functions/functions.common.php');
 // require
 require_once("inc/classes/AliasFile.php");
 
+// request-vars
+$torrent = getRequestVar('torrent');
+$alias = getRequestVar('alias');
+
+// alias
+$transferowner = getOwner($torrent);
+if (!empty($alias))
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
+else
+	showErrorPage("torrent file not specified");
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "downloadhosts.tmpl");
 
-$torrent = getRequestVar('torrent');
-$error = "";
-$transferowner = getOwner($torrent);
-$background = "#000000";
-$alias = getRequestVar('alias');
-if (!empty($alias)) {
-	// read the alias file
-	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
-} else {
-	die("fatal error torrent file not specified");
-}
-$torrent_cons = "";
+// set vars
 if ($af->running == 1) {
 	$torrent_pid = getTransferPid($alias);
 	$torrent_cons = netstatConnectionsByPid($torrent_pid);
 	$torrent_hosts = netstatHostsByPid($torrent_pid);
+} else {
+	$torrent_cons = "";
 }
 $torrentLabel = $torrent;
 if(strlen($torrentLabel) >= 39)
 	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
-$tmpl->setvar($cfg['_ID_HOSTS'], false, "30", $af->percent_done."% ");
 $tmpl->setvar('torrentLabel', $torrentLabel);
 $tmpl->setvar('cons_hosts', $torrent_cons." ".$cfg['_ID_HOSTS']);
 $tmpl->setvar('torrent', $torrent);
@@ -66,9 +67,8 @@ if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 	foreach ($hostAry as $host) {
 		$host = @trim($host);
 		$port = @trim($torrent_hosts[$host]);
-		if ($cfg["downloadhosts"] == 1) {
+		if ($cfg["downloadhosts"] == 1)
 			$host = @gethostbyaddr($host);
-		}
 		if ($host != "") {
 			$tmpl->setvar('hosts', 1);
 			array_push($list_host, array(
@@ -80,16 +80,19 @@ if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 	}
 	$tmpl->setloop('list_host', $list_host);
 }
-//$tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false, "15", ""));
+
+//
 $tmpl->setvar('head', getHead($cfg['_ID_HOSTS'], false));
+$tmpl->setvar('foot', getFoot(false));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
-$tmpl->setvar('refresh_details', 1);
-$tmpl->setvar('foot', getFoot(false));
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
+
 ?>
