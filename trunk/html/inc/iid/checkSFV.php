@@ -26,21 +26,19 @@ require_once('inc/functions/functions.common.php');
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "checkSFV.tmpl");
 
-$tmpl->setvar('head', getHead('sfv check', false));
-$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-
 $cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
 
 $handle = popen($cmd . ' 2>&1', 'r' );
 $buff= "";
-while(!feof($handle)) {
-	$buff .= fgets($handle,30);
-}
+while(!feof($handle))
+	$buff .= @fgets($handle,30);
 $tmpl->setvar('buff', nl2br($buff));
 pclose($handle);
 
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('head', getHead('sfv check', false));
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
