@@ -30,33 +30,26 @@ require_once("inc/searchEngines/SearchEngineBase.php");
 $tmpl = getTemplateInstance($cfg["theme"], "torrentSearch.tmpl");
 
 // Go get the if this is a search request. go get the data and produce output.
-
 $hideSeedless = getRequestVar('hideSeedless');
-if(!empty($hideSeedless)) {
+if (!empty($hideSeedless))
 	$_SESSION['hideSeedless'] = $hideSeedless;
-}
-if (!isset($_SESSION['hideSeedless'])) {
+if (!isset($_SESSION['hideSeedless']))
 	$_SESSION['hideSeedless'] = 'no';
-}
 $hideSeedless = $_SESSION['hideSeedless'];
 $pg = getRequestVar('pg');
 $searchEngine = getRequestVar('searchEngine');
-if (empty($searchEngine)) $searchEngine = $cfg["searchEngine"];
+if (empty($searchEngine))
+	$searchEngine = $cfg["searchEngine"];
 $searchterm = getRequestVar('searchterm');
-if(empty($searchterm)) {
+if (empty($searchterm))
 	$searchterm = getRequestVar('query');
-}
 $searchterm = str_replace(" ", "+",$searchterm);
 // Check to see if there was a searchterm.
 // if not set the get latest flag.
 if (strlen($searchterm) == 0) {
-	if (! array_key_exists("LATEST",$_REQUEST)) {
+	if (! array_key_exists("LATEST",$_REQUEST))
 		$_REQUEST["LATEST"] = "1";
-	}
 }
-$tmpl->setvar('head', getHead("TorrentSearch ".$cfg['_SEARCH']));
-$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-$tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
 fillSearchEngineDDL($searchEngine);
 $tmpl->setloop('buildSearchEngineArray', buildSearchEngineArray($searchEngine));
@@ -77,14 +70,16 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 				$tmpCatLinks = '';
 				$mainStart = true;
 			}
-			if ($mainStart == false) $tmpCatLinks .= " | ";
+			if ($mainStart == false)
+				$tmpCatLinks .= " | ";
 			$tmpCatLinks .= "<a href=\"index.php?iid=torrentSearch&searchEngine=".$searchEngine."&mainGenre=".$mainId."\">".$mainName."</a>";
 			$mainStart = false;
 		}
 		$tmpl->setvar('links_list', $catLinks.$tmpCatLinks);
-		if ($mainStart == false) {
+		if ($mainStart == false)
 			$tmpl->setvar('no_mainStart', 1);
-		}
+		else
+			$tmpl->setvar('no_mainStart', 0);
 		$mainGenre = getRequestVar('mainGenre');
 		if (!empty($mainGenre) && !array_key_exists("subGenre",$_REQUEST)) {
 			$tmpl->setvar('no_empty_genre', 1);
@@ -102,34 +97,39 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 					);
 				}
 				$tmpl->setloop('list_cats', $list_cats);
-			}
-			else {
+			} else {
 				// Set the Sub to equal the main for groups that don't have subs.
 				$_REQUEST["subGenre"] = $mainGenre;
 				$tmpl->setvar('getLatest', $sEngine->getLatest());
 			}
-		}
-		else {
+		} else {
 			if (array_key_exists("LATEST",$_REQUEST) && $_REQUEST["LATEST"] == "1") {
 				$tmpl->setvar('is_latest', 1);
 				$tmpl->setvar('getLatest', $sEngine->getLatest());
-			}
-			else {
+			} else {
+				$tmpl->setvar('is_latest', 0);
 				$tmpl->setvar('performSearch', $sEngine->performSearch($searchterm));
 			}
 		}
-	}
-	else {
+	} else {
+		$tmpl->setvar('is_initialized', 0);
 		// there was an error connecting
 		$tmpl->setvar('sEngine_msg', $sEngine->msg);
 	}
 }
+//
+$tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
+//
+$tmpl->setvar('head', getHead("Torrent ".$cfg['_SEARCH']));
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
+$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
 $tmpl->setvar('iid', $_GET["iid"]);
+
+// parse template
 $tmpl->pparse();
 
 ?>
