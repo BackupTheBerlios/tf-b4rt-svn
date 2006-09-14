@@ -23,23 +23,25 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// check param
+if (!(isset($_REQUEST["u"]))) {
+	header("location: index.php?iid=index");
+	exit();
+} else {
+	$url = $_REQUEST["u"];
+}
+
 // create template-instance
 $tmpl = getTemplateInstance($cfg["theme"], "dereferrer.tmpl");
 
-if (isset($_REQUEST["u"])) {
-	$tmpl->setvar('set', 1);
-	$tmpl->setvar('head', getHead("dereferrer", false));
-	$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-	$tmpl->setvar('deref', 1);
-	$tmpl->setvar('_REQUEST', $_REQUEST["u"]);
-	$tmpl->setvar('foot', getFoot(false));
-} else {
-	header("location: index.php?iid=index");
-	exit();
-}
-
+// set vars
+$tmpl->setvar('url', $url);
+//
+$tmpl->setvar('head', getHead("dereferrer", false));
+$tmpl->setvar('foot', getFoot(false));
 $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
 $tmpl->setvar('theme', $cfg["theme"]);
+$tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
 $tmpl->setvar('ui_dim_details_w', $cfg["ui_dim_details_w"]);
 $tmpl->setvar('ui_dim_details_h', $cfg["ui_dim_details_h"]);
 $tmpl->setvar('iid', $_GET["iid"]);
