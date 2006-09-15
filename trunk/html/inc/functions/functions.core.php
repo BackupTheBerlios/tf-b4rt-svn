@@ -1812,9 +1812,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	require_once('inc/functions/functions.common.php');
 	// aliasfile
 	require_once("inc/classes/AliasFile.php");
-
 	/* prepare values */
-
 	// Load saved settings
 	loadTorrentSettingsToConfig($transfer);
 	// owner
@@ -1878,9 +1876,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	$errors = array();
 	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
 		array_push($errors, $af->errors[$inx]);
-
 	/* fill array */
-
 	// running
 	$details['running'] = $running;
 	// speed_down
@@ -1940,7 +1936,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 			$details['port'] = "";
 		}
 	}
-
 	// return
 	return $details;
 }

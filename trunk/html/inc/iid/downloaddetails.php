@@ -31,11 +31,12 @@ $torrent = getRequestVar('torrent');
 $alias = getRequestVar('alias');
 
 // alias
-$transferowner = getOwner($torrent);
-if (!empty($alias))
+if (!empty($alias)) {
+	$transferowner = getOwner($torrent);
 	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
-else
+} else {
 	showErrorPage("torrent file not specified");
+}
 
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails_".$cfg['details_type'].".tmpl");
@@ -43,6 +44,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails_".$cfg['details_typ
 // set vars
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('alias', $alias);
+$tmpl->setvar('transferowner', $transferowner);
 if (strlen($torrent) >= 39)
 	$tmpl->setvar('torrentLabel', substr($torrent, 0, 35)."...");
 else
@@ -57,11 +59,10 @@ $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_PERCENTDONE', $cfg['_PERCENTDONE']);
 $tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
-//
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // include details-type
-require_once("inc/iid/downloaddetails.".$cfg['details_type'].".php");
+require_once("inc/iid/downloaddetails_".$cfg['details_type'].".php");
 
 // parse template
 $tmpl->pparse();
