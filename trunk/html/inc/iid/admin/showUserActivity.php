@@ -34,7 +34,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 $tmpl->setvar('Activity', getActivity($min, $user_id, $srchFile, $srchAction));
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar($cfg['_ADMINUSERACTIVITY']);
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

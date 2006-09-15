@@ -48,7 +48,7 @@ $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - RSS");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

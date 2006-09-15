@@ -77,7 +77,7 @@ $tmpl->setvar('_SENDTOALLUSERS', $cfg['_SENDTOALLUSERS']);
 $tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_SENDMESSAGETITLE']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

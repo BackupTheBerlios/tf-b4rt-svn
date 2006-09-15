@@ -111,7 +111,7 @@ $tmpl->setvar('_MESSAGE', $cfg['_MESSAGE']);
 $tmpl->setvar('_RETURNTOMESSAGES', $cfg['_RETURNTOMESSAGES']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MESSAGES']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

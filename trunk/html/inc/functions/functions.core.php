@@ -84,6 +84,19 @@ function tmplSetTitleBar($pageTitleText, $showButtons = true) {
 }
 
 /**
+ * set sub-foot vars
+ *
+ * @param $showReturn
+ */
+function tmplSetFoot($showReturn = true) {
+	global $cfg, $tmpl;
+	// set some vars
+	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
+	$tmpl->setvar('subfoot_showReturn', $showReturn);
+	$tmpl->setvar('subfoot_torrentFluxLink', getTorrentFluxLink());
+}
+
+/**
  * fill Search Engine Drop Down List
  *
  * @param $selectedEngine
@@ -113,25 +126,6 @@ function tmplFillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = f
 		}
 	}
 	$tmpl->setloop('Engine_List', $Engine_List);
-}
-
-/**
- * get the footer portion
- *
- * @param $showReturn
- * @return string
- */
-function getFoot($showReturn = true) {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getFoot.tmpl");
-	// set some vars
-	$tmpl->setvar('showReturn', $showReturn);
-	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
-	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**

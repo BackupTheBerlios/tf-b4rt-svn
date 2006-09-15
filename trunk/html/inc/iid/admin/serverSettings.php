@@ -84,7 +84,7 @@ $tmpl->setvar('_OS', $cfg["_OS"]);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Server Settings");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

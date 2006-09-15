@@ -405,7 +405,7 @@ $tmpl->setvar('user', $cfg["user"]);
 $tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
 //
 tmplSetTitleBar($cfg["user"]."'s ".$cfg['_PROFILE']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

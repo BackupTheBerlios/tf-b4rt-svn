@@ -29,7 +29,7 @@ $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Show Users");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

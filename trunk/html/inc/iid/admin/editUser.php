@@ -97,7 +97,7 @@ $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 $tmpl->setvar('getUserSection', getUserSection());
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Edit User");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

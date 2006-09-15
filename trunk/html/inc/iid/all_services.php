@@ -42,7 +42,7 @@ $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 //
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 

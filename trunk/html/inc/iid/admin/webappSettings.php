@@ -89,7 +89,7 @@ $tmpl->setloop('lang_list', $lang_list);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - WebApp Settings");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

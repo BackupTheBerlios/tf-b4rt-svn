@@ -247,7 +247,7 @@ if ($cfg['enable_xfer'] == 1) {
 }
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_XFER']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

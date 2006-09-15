@@ -47,7 +47,7 @@ if ($isAdmin) {
 //
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_SERVERSTATS']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

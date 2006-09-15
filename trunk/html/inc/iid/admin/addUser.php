@@ -44,7 +44,7 @@ $tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Add User");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

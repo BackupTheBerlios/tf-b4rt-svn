@@ -28,7 +28,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "cookiehelp.tmpl");
 
 // set vars
 tmplSetTitleBar("Cookie Help", false);
-$tmpl->setvar('foot', getFoot(false));
+tmplSetFoot(false);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

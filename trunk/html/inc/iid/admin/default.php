@@ -29,7 +29,7 @@ $tmpl->setvar('activity', getActivity());
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

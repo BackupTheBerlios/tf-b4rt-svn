@@ -99,7 +99,7 @@ $tmpl->setvar('_FILE', $cfg['_FILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_UPLOADHISTORY']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

@@ -52,7 +52,7 @@ $tmpl->setvar('_RETURNTOEDIT', $cfg['_RETURNTOEDIT']);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Update User");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

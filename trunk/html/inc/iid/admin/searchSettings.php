@@ -70,7 +70,7 @@ tmplFillSearchEngineDDL($searchEngine,true);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Search Settings");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

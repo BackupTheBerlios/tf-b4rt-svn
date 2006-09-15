@@ -122,7 +122,7 @@ $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MULTIPLE_UPLOAD']);
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

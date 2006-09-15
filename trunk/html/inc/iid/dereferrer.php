@@ -39,7 +39,7 @@ $tmpl->setvar('url', $url);
 $tmpl->setvar('meta_refresh', '0;URL='.$url);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - dereferrer', false);
-$tmpl->setvar('foot', getFoot(false));
+tmplSetFoot(false);
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();
 

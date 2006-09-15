@@ -59,7 +59,7 @@ $tmpl->setvar('GoodLookingStatsForm', GoodLookingStatsForm());
 $tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Index Settings");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

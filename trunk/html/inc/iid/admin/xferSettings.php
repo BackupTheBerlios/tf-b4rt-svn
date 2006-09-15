@@ -49,7 +49,7 @@ $tmpl->setloop('month_list', $month_list);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Xfer Settings");
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 

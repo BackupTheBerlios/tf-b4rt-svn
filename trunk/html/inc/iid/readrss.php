@@ -134,7 +134,7 @@ $tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - RSS Torrents');
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

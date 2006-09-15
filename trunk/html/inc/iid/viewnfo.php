@@ -44,7 +44,7 @@ else
 	$tmpl->setvar('output', htmlentities( $output ));
 //
 tmplSetTitleBar($cfg["pagetitle"].' - View NFO');
-$tmpl->setvar('foot', getFoot());
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

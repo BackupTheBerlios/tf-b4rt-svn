@@ -65,7 +65,7 @@ $tmpl->setvar('_EDIT', $cfg['_EDIT']);
 //
 $tmpl->setvar('menu', getMenu());
 tmplSetTitleBar($cfg['_ADMINEDITLINKS']);
-$tmpl->setvar('foot', getFoot(true));
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template
