@@ -559,7 +559,7 @@ if (sizeof($arUserTorrent) > 0)
 	$tmpl->setvar('are_user_torrent', 1);
 $boolCond = true;
 if ($cfg['enable_restrictivetview'] == 1)
-	$boolCond = $isAdmin;
+	$boolCond = $cfg['isAdmin'];
 if (($boolCond) && (sizeof($arListTorrent) > 0))
 	$tmpl->setvar('are_torrent', 1);
 

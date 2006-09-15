@@ -48,13 +48,12 @@ class ClientHandlerTornado extends ClientHandler
      * @param $enqueue (boolean) : enqueue ?
      */
     function startClient($transfer, $interactive, $enqueue = false) {
-		global $isAdmin;
 
         // do tornado special-pre-start-checks
         // check to see if the path to the python script is valid
         if (!is_file($this->tornadoBin)) {
             AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->tornadoBin." is not valid");
-            if ($isAdmin) {
+            if ($this->cfg['isAdmin']) {
                 $this->status = -1;
                 header("location: index.php?iid=admin&op=configSettings");
                 return;

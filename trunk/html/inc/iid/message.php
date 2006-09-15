@@ -40,7 +40,7 @@ if (!empty($message)) {
 	else
 		$to_all = 0;
 	$force_read = getRequestVar('force_read');
-	if (!empty($force_read) && $isAdmin)
+	if (!empty($force_read) && $cfg['isAdmin'])
 		$force_read = 1;
 	else
 		$force_read = 0;

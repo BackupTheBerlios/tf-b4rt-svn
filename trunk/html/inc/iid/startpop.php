@@ -81,7 +81,7 @@ if ($cfg["enable_transfer_profile"] == "1") {
 	if ($cfg['transfer_profile_level'] >= "1") {
 		$with_profiles = 1;
 	} else {
-		if ($isAdmin)
+		if ($cfg['isAdmin'])
 			$with_profiles = 1;
 		else
 			$with_profiles = 0;
@@ -133,7 +133,7 @@ if ($with_profiles == 1) {
 		setVarsFromPersistentSettings();
 	}
 	// load profile list
-	if ($cfg['transfer_profile_level'] == "2" or $isAdmin)
+	if ($cfg['transfer_profile_level'] == "2" or $cfg['isAdmin'])
 		$profiles = GetProfiles($cfg["uid"], $profile);
 	if ($cfg['transfer_profile_level'] >= "1")
 		$public_profiles = GetPublicProfiles($profile);
@@ -147,7 +147,7 @@ if ($with_profiles == 1) {
 	$customize_settings = 0;
 	if ($cfg['transfer_customize_settings'] == "2")
 		$customize_settings = 1;
-	elseif ($cfg['transfer_customize_settings'] == "1" && $isAdmin)
+	elseif ($cfg['transfer_customize_settings'] == "1" && $cfg['isAdmin'])
 		$customize_settings = 1;
 	$tmpl->setvar('customize_settings', $customize_settings);
 } else {

@@ -28,7 +28,7 @@
  * @param $permission
  */
 function hasPermission($object, $user, $permission) {
-	global $cfg, $isAdmin;
+	global $cfg;
 	// if homedirs disabled return true
 	if ($cfg["enable_home_dirs"] == 0)
 		return true;
@@ -51,10 +51,7 @@ function hasPermission($object, $user, $permission) {
 	if (preg_match("/^".$user."/", $object))
 		return true;
 	// only admin has right
-	if (isset($isAdmin))
-		return $isAdmin;
-	else
-		return IsAdmin($user);
+	return $cfg['isAdmin'];
 }
 
 /**

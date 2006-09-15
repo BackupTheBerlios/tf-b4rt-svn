@@ -26,7 +26,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.who.tmpl");
 // set vars
 $tmpl->setvar('result1', shell_exec("w"));
 $tmpl->setvar('result2', shell_exec("free -mo"));
-if ($isAdmin) {
+if ($cfg['isAdmin']) {
 	require_once("inc/classes/ClientHandler.php");
 	// array with all clients
 	$clients = array('tornado', 'transmission', 'mainline', 'wget');

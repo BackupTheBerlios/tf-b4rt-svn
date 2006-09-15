@@ -28,7 +28,7 @@
  * @return vlib-template-instance
  */
 function tmplGetInstance($theme, $template) {
-	global $cfg, $isAdmin;
+	global $cfg;
 	// theme-switch
 	if ((strpos($theme, '/')) === false)
 		$path = "themes/".$theme."/tmpl/";
@@ -45,7 +45,7 @@ function tmplGetInstance($theme, $template) {
 			break;
 	}
 	//  set common template-vars
-	$tmpl->setvar('isAdmin', $isAdmin);
+	$tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
 	$tmpl->setvar('theme', $theme);
     $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
     $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
@@ -982,10 +982,10 @@ function resetTorrentTotals($torrent, $delete = false) {
  * @return boolean of success
  */
 function deleteTransfer($transfer, $alias_file) {
-	global $cfg, $isAdmin;
+	global $cfg;
 	$delfile = $transfer;
 	$transferowner = getOwner($delfile);
-	if (($cfg["user"] == $transferowner) || $isAdmin) {
+	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
 		require_once("inc/classes/AliasFile.php");
 		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 			// this is a torrent-client
@@ -1029,9 +1029,9 @@ function deleteTransfer($transfer, $alias_file) {
  * @param $torrent name of the torrent
  */
 function deleteTorrentData($torrent) {
-	global $cfg, $isAdmin;
+	global $cfg;
 	$element = $torrent;
-	if (($cfg["user"] == getOwner($element)) || $isAdmin) {
+	if (($cfg["user"] == getOwner($element)) || $cfg['isAdmin']) {
 		# the user is the owner of the torrent -> delete it
 		require_once('inc/classes/BDecode.php');
 		$ftorrent=$cfg["transfer_file_path"].$element;
@@ -1789,7 +1789,7 @@ function getTransferListArray() {
 	}
 	$boolCond = true;
 	if ($cfg['enable_restrictivetview'] == 1)
-		$boolCond = $isAdmin;
+		$boolCond = $cfg['isAdmin'];
 	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
 		foreach($arListTorrent as $torrentrow)
 			array_push($retVal, $torrentrow);

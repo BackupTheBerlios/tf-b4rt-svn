@@ -87,6 +87,9 @@ AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 // prune db and perform path-check
 if (!(isset($_SESSION['cache'][$currentUser]))) {
 
+	// set admin-var
+	$cfg['isAdmin'] = IsAdmin();
+
 	// load per user settings
 	loadUserSettingsToConfig($cfg["uid"]);
 
@@ -105,9 +108,6 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	// check main-directories.
 	checkMainDirectories();
 }
-
-// admin-var
-$isAdmin = IsAdmin();
 
 // drivespace-var
 $driveSpace = getDriveSpace($cfg["path"]);

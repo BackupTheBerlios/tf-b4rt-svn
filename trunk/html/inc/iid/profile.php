@@ -303,7 +303,7 @@ switch ($op) {
 		$sql= "SELECT user_id, hits, last_visit, time_created, user_level FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 		list ($user_id, $hits, $last_visit, $time_created, $user_level) = $db->GetRow($sql);
 		$user_type = $cfg['_NORMALUSER'];
-		if ($isAdmin)
+		if ($cfg['isAdmin'])
 			$user_type = $cfg['_ADMINISTRATOR'];
 		if (IsSuperAdmin())
 			$user_type = $cfg['_SUPERADMIN'];
@@ -389,7 +389,7 @@ switch ($op) {
 
 // set defines
 if ($cfg["enable_transfer_profile"] == 1) {
-	if ($isAdmin) {
+	if ($cfg['isAdmin']) {
 		$tmpl->setvar('with_profiles', 1);
 	} else {
 		if($cfg['transfer_profile_level'] == 2)

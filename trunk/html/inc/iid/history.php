@@ -33,7 +33,7 @@ $max = $min + $offset;
 if ($cfg['enable_restrictivetview'] == 0) {
 	$sql = "SELECT user_id, file, time FROM tf_log WHERE action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ORDER BY time desc";
 } else {
-	if ($isAdmin)
+	if ($cfg['isAdmin'])
 		$sql = "SELECT user_id, file, time FROM tf_log WHERE action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ORDER BY time desc";
 	else
 		$sql = "SELECT user_id, file, time FROM tf_log WHERE user_id='".$cfg["user"]."' AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
