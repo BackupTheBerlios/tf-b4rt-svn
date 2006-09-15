@@ -40,6 +40,121 @@ function tmplSetAdminMenu() {
 }
 
 /**
+ * get Activity
+ *
+ * @param $min
+ * @param $user
+ * @param $srchFile
+ * @param $srchAction
+ * @return string
+ */
+function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "") {
+	global $cfg, $db, $tmpl;
+	$sqlForSearch = "";
+	$userdisplay = $user;
+	if($user != "")
+		$sqlForSearch .= "user_id='".$user."' AND ";
+	else
+		$userdisplay = $cfg['_ALLUSERS'];
+	if($srchFile != "")
+		$sqlForSearch .= "file like '%".$srchFile."%' AND ";
+	if($srchAction != "")
+		$sqlForSearch .= "action like '%".$srchAction."%' AND ";
+	$offset = 50;
+	$inx = 0;
+	if (!isset($min))
+		$min=0;
+	$max = $min + $offset;
+	$sql = "SELECT user_id, file, action, ip, ip_resolved, user_agent, time FROM tf_log WHERE ".$sqlForSearch."action!=".$db->qstr($cfg["constants"]["hit"])." ORDER BY time desc";
+	$result = $db->SelectLimit($sql, $offset, $min);
+	showError($db, $sql);
+	$act_list = array();
+	while(list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
+		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
+		if (IsOnline($user_id))
+			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
+		$is_superuser = 0;
+		if (IsUser($user_id))
+			$is_superuser = 1;
+		array_push($act_list, array(
+			'is_superuser' => $is_superuser,
+			'user_id' => $user_id,
+			'user_icon' => $user_icon,
+			'action' => $action,
+			'file' => $file,
+			'ip_resolved' => $ip_resolved,
+			'user_agent' => $user_agent,
+			'ip' => $ip,
+			'date' => date($cfg['_DATETIMEFORMAT'], $time),
+			)
+		);
+		$inx++;
+	}
+	$prev = ($min - $offset);
+	$selected = "";
+	$action_list = array();
+	foreach ($cfg["constants"] as $action) {
+		$selected = "";
+		if($action != $cfg["constants"]["hit"]) {
+			if ($srchAction == $action)
+				$selected = "selected";
+			array_push($action_list, array(
+				'action' => $action,
+				'selected' => $selected,
+				)
+			);
+		}
+	}
+	$user_list = array();
+	$users = GetUsers();
+	$selected = "";
+	for ($inx2 = 0; $inx2 < sizeof($users); $inx2++) {
+		$selected = "";
+		if ($user == $users[$inx2])
+			$selected = "selected";
+		array_push($user_list, array(
+			'user' => $users[$inx2],
+			'selected' => $selected,
+			)
+		);
+	}
+	// set vars
+	$tmpl->setvar('_USER', $cfg['_USER']);
+	$tmpl->setvar('_ACTION', $cfg['_ACTION']);
+	$tmpl->setvar('_FILE', $cfg['_FILE']);
+	$tmpl->setvar('_IP', $cfg['_IP']);
+	$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
+	$tmpl->setvar('_NORECORDSFOUND', $cfg['_NORECORDSFOUND']);
+	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
+	$tmpl->setvar('_ACTIVITYSEARCH', $cfg['_ACTIVITYSEARCH']);
+	$tmpl->setvar('_FILE', $cfg['_FILE']);
+	$tmpl->setvar('_SHOWPREVIOUS', $cfg['_SHOWPREVIOUS']);
+	$tmpl->setvar('_SHOWMORE', $cfg['_SHOWMORE']);
+	$tmpl->setvar('_ALL', $cfg['_ALL']);
+	$tmpl->setvar('_DAYS', $cfg['_DAYS']);
+	$tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
+	$tmpl->setvar('_ACTIVITYLOG', $cfg['_ACTIVITYLOG']);
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	$tmpl->setloop('activity_act_list', $act_list);
+	$tmpl->setloop('activity_action_list', $action_list);
+	$tmpl->setloop('activity_user_list', $user_list);
+	$tmpl->setvar('activity_srchFile', $srchFile);
+	$tmpl->setvar('activity_srchAction', $srchAction);
+	$tmpl->setvar('activity_prev', $prev);
+	$tmpl->setvar('activity_user', $user);
+	$tmpl->setvar('activity_min', $min);
+	$tmpl->setvar('activity_max', $max);
+	$tmpl->setvar('activity_days_to_keep', $cfg["days_to_keep"]);
+	$tmpl->setvar('activity_userdisplay', $userdisplay);
+	if ($prev >= 0)
+		$tmpl->setvar('activity_is_prev', 1);
+	if ($inx>=$offset)
+		$tmpl->setvar('activity_is_more', 1);
+	if ($prev >= 0 || $inx>=$offset)
+		$tmpl->setvar('activity_both_set', 1);
+}
+
+/**
  * gets the user section
  *
  * @return string
@@ -159,137 +274,6 @@ function getUserSection() {
 		);
 	}
 	$tmpl->setloop('user_details_list', $user_details_list);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get Activity
- *
- * @param $min
- * @param $user
- * @param $srchFile
- * @param $srchAction
- * @return string
- */
-function getActivity($min=0, $user="", $srchFile="", $srchAction="") {
-	global $cfg, $db;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.activity.tmpl");
-	$sqlForSearch = "";
-	$userdisplay = $user;
-	if($user != "")
-		$sqlForSearch .= "user_id='".$user."' AND ";
-	else
-		$userdisplay = $cfg['_ALLUSERS'];
-	if($srchFile != "")
-		$sqlForSearch .= "file like '%".$srchFile."%' AND ";
-	if($srchAction != "")
-		$sqlForSearch .= "action like '%".$srchAction."%' AND ";
-	$offset = 50;
-	$inx = 0;
-	if (!isset($min)) $min=0;
-	$max = $min+$offset;
-	$sql = "SELECT user_id, file, action, ip, ip_resolved, user_agent, time FROM tf_log WHERE ".$sqlForSearch."action!=".$db->qstr($cfg["constants"]["hit"])." ORDER BY time desc";
-	$result = $db->SelectLimit($sql, $offset, $min);
-	$act_list = array();
-	while(list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
-		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
-		if (IsOnline($user_id))
-			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
-		$is_superuser = 0;
-		if (IsUser($user_id)) {
-			$is_superuser = 1;
-		}
-		array_push($act_list, array(
-			'is_superuser' => $is_superuser,
-			'user_id' => $user_id,
-			'user_icon' => $user_icon,
-			'action' => $action,
-			'file' => $file,
-			'ip_resolved' => $ip_resolved,
-			'user_agent' => $user_agent,
-			'ip' => $ip,
-			'date' => date($cfg['_DATETIMEFORMAT'], $time),
-			)
-		);
-		$inx++;
-	}
-	$tmpl->setloop('act_list', $act_list);
-	$prev = ($min-$offset);
-	# define vars
-	$tmpl->setvar('_NORECORDSFOUND', $cfg['_NORECORDSFOUND']);
-	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
-	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-	$tmpl->setvar('inx', $inx);
-	$tmpl->setvar('_ACTIVITYSEARCH', $cfg['_ACTIVITYSEARCH']);
-	$tmpl->setvar('_FILE', $cfg['_FILE']);
-	$tmpl->setvar('srchFile', $srchFile);
-	$tmpl->setvar('prev', $prev);
-	$tmpl->setvar('user', $user);
-	$tmpl->setvar('min', $min);
-	$tmpl->setvar('max', $max);
-	$tmpl->setvar('srchAction', $srchAction);
-	$tmpl->setvar('_SHOWPREVIOUS', $cfg['_SHOWPREVIOUS']);
-	$tmpl->setvar('_SHOWMORE', $cfg['_SHOWMORE']);
-	$tmpl->setvar('_ACTION', $cfg['_ACTION']);
-	$tmpl->setvar('_ALL', $cfg['_ALL']);
-	$selected = "";
-	$action_list = array();
-	foreach ($cfg["constants"] as $action) {
-		$selected = "";
-		if($action != $cfg["constants"]["hit"]) {
-			if($srchAction == $action) {
-				$selected = "selected";
-			}
-			array_push($action_list, array(
-				'action' => $action,
-				'selected' => $selected,
-				)
-			);
-		}
-	}
-	$tmpl->setloop('action_list', $action_list);
-	$tmpl->setvar('_USER', $cfg['_USER']);
-	$user_list = array();
-	$users = GetUsers();
-	$selected = "";
-	for($inx2 = 0; $inx2 < sizeof($users); $inx2++) {
-		$selected = "";
-		if($user == $users[$inx2]) {
-			$selected = "selected";
-		}
-		array_push($user_list, array(
-			'user' => $users[$inx2],
-			'selected' => $selected,
-			)
-		);
-	}
-	$tmpl->setloop('user_list', $user_list);
-	$tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
-	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('_ACTIVITYLOG', $cfg['_ACTIVITYLOG']);
-	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-	$tmpl->setvar('_DAYS', $cfg['_DAYS']);
-	$tmpl->setvar('userdisplay', $userdisplay);
-	if($prev >= 0) {
-		$tmpl->setvar('is_prev', 1);
-	}
-	if($inx>=$offset) {
-		$tmpl->setvar('is_more', 1);
-	}
-	$tmpl->setvar('_USER', $cfg['_USER']);
-	$tmpl->setvar('_ACTION', $cfg['_ACTION']);
-	$tmpl->setvar('_FILE', $cfg['_FILE']);
-	$tmpl->setvar('_IP', $cfg['_IP']);
-	$tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
-	if($prev >= 0 || $inx>=$offset) {
-		$tmpl->setvar('both_set', 1);
-	}
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;

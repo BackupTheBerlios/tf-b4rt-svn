@@ -25,10 +25,10 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.admin.default.tmpl");
 
 // set vars
 $tmpl->setvar('userSection', getUserSection());
-$tmpl->setvar('activity', getActivity());
 //
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
 tmplSetAdminMenu();
+tmplSetActivity();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -227,8 +227,8 @@ switch ($op) {
 		break;
 
 	default:
-		//require_once("admin/default.php");
-		//break;
+		require_once("admin/default.php");
+		break;
 
 	case "showUserActivity":
 		require_once("admin/showUserActivity.php");

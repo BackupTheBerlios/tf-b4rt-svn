@@ -31,9 +31,9 @@ $srchAction = getRequestVar('srchAction');
 $tmpl = tmplGetInstance($cfg["theme"], "page.admin.showUserActivity.tmpl");
 
 // set vars
-$tmpl->setvar('Activity', getActivity($min, $user_id, $srchFile, $srchAction));
 tmplSetTitleBar($cfg['_ADMINUSERACTIVITY']);
 tmplSetAdminMenu();
+tmplSetActivity($min, $user_id, $srchFile, $srchAction);
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
