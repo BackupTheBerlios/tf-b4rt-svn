@@ -756,7 +756,7 @@ $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('sortOrder', $sortOrder);
 $tmpl->setvar('drivespace', $driveSpace);
 $tmpl->setvar('freeSpaceFormatted', $freeSpaceFormatted);
-tmplFillSearchEngineDDL($cfg["searchEngine"]);
+tmplSetSearchEngineDDL($cfg["searchEngine"]);
 //
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

@@ -51,7 +51,7 @@ if (strlen($searchterm) == 0) {
 		$_REQUEST["LATEST"] = "1";
 }
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
-tmplFillSearchEngineDDL($searchEngine);
+tmplSetSearchEngineDDL($searchEngine);
 $tmpl->setloop('buildSearchEngineArray', buildSearchEngineArray($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
 if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {

@@ -53,12 +53,12 @@ $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
 $tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
+tmplSetSearchEngineDDL($cfg["searchEngine"]);
 //
 tmplSetTitleBar("Administration - Index Settings");
 tmplSetAdminMenu();
 tmplSetGoodLookingStatsForm();
 tmplSetIndexPageSettingsForm();
-tmplFillSearchEngineDDL($cfg["searchEngine"]);
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 // parse template

@@ -97,12 +97,12 @@ function tmplSetFoot($showReturn = true) {
 }
 
 /**
- * fill Search Engine Drop Down List
+ * set vars for Search Engine Drop Down List
  *
  * @param $selectedEngine
  * @param $autoSubmit
  */
-function tmplFillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
+function tmplSetSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = false) {
 	global $cfg, $tmpl;
 	// set some vars
 	$tmpl->setvar('autoSubmit', $autoSubmit);

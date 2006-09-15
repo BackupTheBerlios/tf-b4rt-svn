@@ -66,7 +66,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 		$tmpl->setvar('is_file', 0);
 	}
 }
-tmplFillSearchEngineDDL($searchEngine,true);
+tmplSetSearchEngineDDL($searchEngine,true);
 //
 tmplSetTitleBar("Administration - Search Settings");
 tmplSetAdminMenu();
