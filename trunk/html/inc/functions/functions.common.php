@@ -64,24 +64,18 @@ function IndexPageSettingsForm() {
 }
 
 /**
- * get form of good looking stats hack (0-63)
+ * set vars for form of good looking stats (0-63)
  *
  */
-function GoodLookingStatsForm() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.goodLookingStatsForm.tmpl");
-	// some vars
+function tmplSetGoodLookingStatsForm() {
+	global $cfg, $tmpl;
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
-	$tmpl->setvar('hack_goodlookstats_settings_0', $settingsHackStats[0]);
-	$tmpl->setvar('hack_goodlookstats_settings_1', $settingsHackStats[1]);
-	$tmpl->setvar('hack_goodlookstats_settings_2', $settingsHackStats[2]);
-	$tmpl->setvar('hack_goodlookstats_settings_3', $settingsHackStats[3]);
-	$tmpl->setvar('hack_goodlookstats_settings_4', $settingsHackStats[4]);
-	$tmpl->setvar('hack_goodlookstats_settings_5', $settingsHackStats[5]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
+	$tmpl->setvar('goodLookingStatsForm_settings_0', $settingsHackStats[0]);
+	$tmpl->setvar('goodLookingStatsForm_settings_1', $settingsHackStats[1]);
+	$tmpl->setvar('goodLookingStatsForm_settings_2', $settingsHackStats[2]);
+	$tmpl->setvar('goodLookingStatsForm_settings_3', $settingsHackStats[3]);
+	$tmpl->setvar('goodLookingStatsForm_settings_4', $settingsHackStats[4]);
+	$tmpl->setvar('goodLookingStatsForm_settings_5', $settingsHackStats[5]);
 }
 
 /**

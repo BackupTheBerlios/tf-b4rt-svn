@@ -53,12 +53,13 @@ $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
-//
-$tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
-$tmpl->setvar('GoodLookingStatsForm', GoodLookingStatsForm());
+
 $tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
+//
 tmplSetTitleBar("Administration - Index Settings");
 tmplSetAdminMenu();
+tmplSetGoodLookingStatsForm();
+$tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
