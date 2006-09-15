@@ -139,6 +139,7 @@ function tmplSetDriveSpaceBar() {
 	$tmpl->setvar('drivespacebar_space', $driveSpace);
 	$tmpl->setvar('drivespacebar_space2', (100 - $driveSpace));
 	$tmpl->setvar('drivespacebar_freeSpace', " (".$freeSpaceFormatted.") Free");
+	// color for xfer
 	switch ($cfg['drivespacebar']) {
 		case "xfer":
 			$bgcolor = '#';
@@ -151,101 +152,52 @@ function tmplSetDriveSpaceBar() {
 }
 
 /**
- * get the Upload Graphical Bar
+ * bandwidth bars
  *
- * @return string with upload-bar
  */
-function getUploadBar() {
-	global $cfg;
+function tmplSetBandwidthBars() {
+	global $cfg, $tmpl;
+	$tmpl->setvar('bandwidthbars_type', $cfg['bandwidthbar']);
+	// upload
 	$max_upload = $cfg["bandwidth_up"] / 8;
 	if ($max_upload > 0)
-		$percent = number_format(($cfg["total_upload"] / $max_upload) * 100, 0);
+		$percent_upload = number_format(($cfg["total_upload"] / $max_upload) * 100, 0);
 	else
-		$percent = 0;
-	if ($percent > 0)
-		$text = " (".number_format($cfg["total_upload"], 2)." Kb/s)";
+		$percent_upload = 0;
+	if ($percent_upload > 0)
+		$tmpl->setvar('bandwidthbars_upload_text', " (".number_format($cfg["total_upload"], 2)." kb/s)");
 	else
-		$text = "";
-	switch ($cfg['bandwidthbar']) {
-		case "tf":
-			return getBandwidthBar_tf($percent, $text);
-		case "xfer":
-		default:
-			return getBandwidthBar_xfer($percent, $text);
-	}
-}
-
-/**
- * get the Download Graphical Bar
- *
- * @return string with download-bar
- */
-function getDownloadBar() {
-	global $cfg;
+		$tmpl->setvar('bandwidthbars_upload_text', "");
+	$tmpl->setvar('bandwidthbars_upload_percent', $percent_upload);
+	$tmpl->setvar('bandwidthbars_upload_percent2', (100 - $percent_upload));
+	// download
 	$max_download = $cfg["bandwidth_down"] / 8;
 	if ($max_download > 0)
-		$percent = number_format(($cfg["total_download"] / $max_download) * 100, 0);
+		$percent_download = number_format(($cfg["total_download"] / $max_download) * 100, 0);
 	else
-		$percent = 0;
-	if ($percent > 0)
-		$text = " (".number_format($cfg["total_download"], 2)." Kb/s)";
+		$percent_download = 0;
+	if ($percent_download > 0)
+		$tmpl->setvar('bandwidthbars_download_text', " (".number_format($cfg["total_download"], 2)." kb/s)");
 	else
-		$text = "";
+		$tmpl->setvar('bandwidthbars_download_text', "");
+	$tmpl->setvar('bandwidthbars_download_percent', $percent_download);
+	$tmpl->setvar('bandwidthbars_download_percent2', (100 - $percent_download));
+	// colors for xfer
 	switch ($cfg['bandwidthbar']) {
-		case "tf":
-			return getBandwidthBar_tf($percent, $text);
 		case "xfer":
-		default:
-			return getBandwidthBar_xfer($percent, $text);
+			// upload
+			$bgcolor = '#';
+			$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent_upload) / 150)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(255 * ((100 - $percent_upload) / 150)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .='00';
+			$tmpl->setvar('bandwidthbars_upload_bgcolor', $bgcolor);
+			// download
+			$bgcolor = '#';
+			$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent_download) / 150)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(255 * ((100 - $percent_download) / 150)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .='00';
+			$tmpl->setvar('bandwidthbars_download_bgcolor', $bgcolor);
 	}
-}
-
-/**
- * get a Bandwidth Graphical Bar in tf-style
- *
- * @param $percent
- * @param $text
- * @return string with bandwith-bar
- */
-function getBandwidthBar_tf($percent, $text) {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.bandwidthBar_tf.tmpl");
-	// set some vars
-	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('percent', $percent);
-	$tmpl->setvar('text', $text);
-	$percent2 = (100 - $percent);
-	$tmpl->setvar('percent2', $percent2);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get a Bandwidth Graphical Bar in xfer-style
- *
- * @param $percent
- * @param $text
- * @return string with bandwith-bar
- */
-function getBandwidthBar_xfer($percent, $text) {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.bandwidthBar_xfer.tmpl");
-	// set some vars
-	$bgcolor = '#';
-	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
-	$bgcolor .= str_pad(dechex(255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
-	$bgcolor .='00';
-	$tmpl->setvar('bgcolor', $bgcolor);
-	$tmpl->setvar('percent', $percent);
-	$tmpl->setvar('text', $text);
-	$percent2 = (100 - $percent);
-	$tmpl->setvar('percent2', $percent2);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**

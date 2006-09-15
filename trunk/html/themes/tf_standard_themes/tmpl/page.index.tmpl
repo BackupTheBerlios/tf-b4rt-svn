@@ -228,24 +228,11 @@
 			</tr>
 			<tmpl_if name="ui_displaybandwidthbars">
 				<tr><td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
-					<table width="100%">
-						<tr>
-							<td width="10%">
-								<div class="tiny">Upload :</div>
-							</td>
-							<td width="90%">
-								<tmpl_var name="bandwidthbarUp">
-							</td>
-						</tr>
-						<tr>
-							<td width="10%">
-								<div class="tiny">Download :</div>
-							</td>
-							<td width="90%">
-								<tmpl_var name="bandwidthbarDown">
-							</td>
-						</tr>
-				</table>
+					<tmpl_if name="bandwidthbars_type" value="xfer">
+					    <tmpl_include name="inc.bandwidthBars_xfer.tmpl">
+					<tmpl_else>
+					    <tmpl_include name="inc.bandwidthBars_tf.tmpl">
+					</tmpl_if>
 				</td></tr>
 			</tmpl_if>
 			<tmpl_if name="enable_bigboldwarning" value="1">

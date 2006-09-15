@@ -729,10 +729,8 @@ if (IsForceReadMsg())
 
 // Graphical Bandwidth Bar
 $tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
-if ($cfg["ui_displaybandwidthbars"] != 0) {
-	$tmpl->setvar('bandwidthbarDown', getDownloadBar());
-	$tmpl->setvar('bandwidthbarUp', getUploadBar());
-}
+if ($cfg["ui_displaybandwidthbars"] != 0)
+	tmplSetBandwidthBars();
 
 // =============================================================================
 // set more vars
