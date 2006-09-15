@@ -46,7 +46,6 @@ function tmplSetAdminMenu() {
  * @param $user
  * @param $srchFile
  * @param $srchAction
- * @return string
  */
 function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "") {
 	global $cfg, $db, $tmpl;
@@ -155,43 +154,20 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 }
 
 /**
- * gets the user section
+ * sets vars for the user section
  *
- * @return string
  */
-function getUserSection() {
-	global $cfg, $db;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.users.tmpl");
-	// set some vars
-	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-	$tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('theme', $cfg["theme"]);
-	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
-	$tmpl->setvar('_USERDETAILS', $cfg['_USERDETAILS']);
-	$tmpl->setvar('_USER', $cfg['_USER']);
-	$tmpl->setvar('_HITS', $cfg['_HITS']);
-	$tmpl->setvar('_UPLOADACTIVITY', $cfg['_UPLOADACTIVITY']);
-	$tmpl->setvar('_JOINED', $cfg['_JOINED']);
-	$tmpl->setvar('_LASTVISIT', $cfg['_LASTVISIT']);
-	$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
-	$tmpl->setvar('_DAYS', $cfg['_DAYS']);
-	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
-	$tmpl->setvar('_WARNING', $cfg['_WARNING']);
-	$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
-	$tmpl->setvar('_USERSACTIVITY', $cfg['_USERSACTIVITY']);
-	$tmpl->setvar('_EDIT', $cfg['_EDIT']);
-	$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+function tmplSetUserSection() {
+	global $cfg, $db, $tmpl;
 	// xfer-prepare
 	$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 	if ($cfg['enable_xfer'] == 1) {
-		$tmpl->setvar('colspan', 8);
+		$tmpl->setvar('userSection_colspan', 8);
 		// getTransferListArray to update xfer-stats
 		$cfg['xfer_realtime'] = 1;
 		@getTransferListArray();
 	} else {
-		$tmpl->setvar('colspan', 8);
+		$tmpl->setvar('userSection_colspan', 7);
 		$xfer_usage = "";
 	}
 	// activity-prepare
@@ -273,10 +249,24 @@ function getUserSection() {
 			)
 		);
 	}
+	// set vars
+	$tmpl->setvar('_USERDETAILS', $cfg['_USERDETAILS']);
+	$tmpl->setvar('_USER', $cfg['_USER']);
+	$tmpl->setvar('_HITS', $cfg['_HITS']);
+	$tmpl->setvar('_UPLOADACTIVITY', $cfg['_UPLOADACTIVITY']);
+	$tmpl->setvar('_JOINED', $cfg['_JOINED']);
+	$tmpl->setvar('_LASTVISIT', $cfg['_LASTVISIT']);
+	$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
+	$tmpl->setvar('_DAYS', $cfg['_DAYS']);
+	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
+	$tmpl->setvar('_WARNING', $cfg['_WARNING']);
+	$tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
+	$tmpl->setvar('_USERSACTIVITY', $cfg['_USERSACTIVITY']);
+	$tmpl->setvar('_EDIT', $cfg['_EDIT']);
+	$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	$tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 	$tmpl->setloop('user_details_list', $user_details_list);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**

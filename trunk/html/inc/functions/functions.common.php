@@ -100,7 +100,6 @@ function tmplSetClientSelectForm($btclient = 'tornado') {
  *
  * @param $dir
  * @param $maxdepth
- * @return unknown
  */
 function tmplSetDirTree($dir, $maxdepth) {
 	global $cfg, $tmpl;

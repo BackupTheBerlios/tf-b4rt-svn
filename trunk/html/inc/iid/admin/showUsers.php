@@ -25,10 +25,9 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.admin.showUsers.tmpl");
 
 // set vars
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
-//
-$tmpl->setvar('userSection', getUserSection());
 tmplSetTitleBar("Administration - Show Users");
 tmplSetAdminMenu();
+tmplSetUserSection();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

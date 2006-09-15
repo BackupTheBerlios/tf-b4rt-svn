@@ -67,6 +67,7 @@ $tmpl->setvar('user_level', $user_level);
 $tmpl->setvar('selected_n', $selected_n);
 $tmpl->setvar('selected_a', $selected_a);
 $tmpl->setvar('hide_checked', $hide_checked);
+$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 //
 $tmpl->setvar('_EDITUSER', $cfg['_EDITUSER']);
 $tmpl->setvar('_LASTVISIT', $cfg['_LASTVISIT']);
@@ -94,9 +95,9 @@ $tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 //
-$tmpl->setvar('getUserSection', getUserSection());
 tmplSetTitleBar("Administration - Edit User");
 tmplSetAdminMenu();
+tmplSetUserSection();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

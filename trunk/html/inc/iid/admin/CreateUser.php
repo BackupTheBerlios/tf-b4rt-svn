@@ -24,7 +24,7 @@
 $tmpl = tmplGetInstance($cfg["theme"], "page.admin.CreateUser.tmpl");
 
 // set vars
-$tmpl->setvar('userSection', getUserSection());
+$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 //
 $tmpl->setvar('_NEWUSER', $cfg['_NEWUSER']);
 $tmpl->setvar('_USER', $cfg['_USER']);
@@ -41,6 +41,7 @@ $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_USERADMIN']);
 tmplSetAdminMenu();
+tmplSetUserSection();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

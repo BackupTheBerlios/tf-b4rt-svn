@@ -24,11 +24,11 @@
 $tmpl = tmplGetInstance($cfg["theme"], "page.admin.default.tmpl");
 
 // set vars
-$tmpl->setvar('userSection', getUserSection());
-//
+$tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
 tmplSetAdminMenu();
 tmplSetActivity();
+tmplSetUserSection();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
