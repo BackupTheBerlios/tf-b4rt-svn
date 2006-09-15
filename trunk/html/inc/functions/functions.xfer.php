@@ -94,9 +94,12 @@ function transferListXferUpdate2($newday) {
 	getUsage($day_start, 'day');
 }
 
-//XFER:****************************************************
-//XFER: getUsage(timestamp, usage_array)
-//XFER: Gets upload/download usage for all users starting at timestamp from SQL
+/**
+ * Gets upload/download usage for all users starting at timestamp from SQL
+ *
+ * @param $start
+ * @param $period
+ */
 function getUsage($start, $period) {
   global $xfer, $xfer_total, $db;
   $sql = 'SELECT user, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= "'.$start.'" AND user != "" GROUP BY user';
@@ -105,9 +108,14 @@ function getUsage($start, $period) {
   foreach ($rtnValue as $row) sumUsage($row[0], $row[1], $row[2], $period);
 }
 
-//XFER:****************************************************
-//XFER: sumUsage(user, downloaded, uploaded, usage_array)
-//XFER: Adds download/upload into correct usage_array (total, month, etc)
+/**
+ *  Adds download/upload into correct usage_array (total, month, etc)
+ *
+ * @param $user
+ * @param $download
+ * @param $upload
+ * @param $period
+ */
 function sumUsage($user, $download, $upload, $period) {
   global $xfer, $xfer_total;
   @ $xfer[$user][$period]['download'] += $download;
@@ -118,9 +126,13 @@ function sumUsage($user, $download, $upload, $period) {
   @ $xfer_total[$period]['total'] += $download + $upload;
 }
 
-//XFER:****************************************************
-//XFER: saveXfer(user, download, upload)
-//XFER: Inserts or updates SQL upload/download for user
+/**
+ * Inserts or updates SQL upload/download for user
+ *
+ * @param $user
+ * @param $down
+ * @param $up
+ */
 function saveXfer($user, $down, $up) {
   global $db;
   $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$user.'" AND date = '.$db->DBDate(time());
@@ -136,10 +148,14 @@ function saveXfer($user, $down, $up) {
   }
 }
 
-
-//XFER:****************************************************
-//XFER: getXferBar(max_bytes, used_bytes, title)
-//XFER: gets xfer percentage bar
+/**
+ * gets xfer percentage bar
+ *
+ * @param $total
+ * @param $used
+ * @param $title
+ * @return string
+ */
 function getXferBar($total, $used, $title) {
 	global $cfg;
 	// create template-instance

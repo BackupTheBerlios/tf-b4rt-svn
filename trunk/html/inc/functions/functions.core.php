@@ -349,8 +349,10 @@ function isAuthenticated() {
 	return 1;
 }
 
-/*
+/**
  * netstatConnectionsSum
+ *
+ * @return int
  */
 function netstatConnectionsSum() {
 	global $cfg;
@@ -365,15 +367,21 @@ function netstatConnectionsSum() {
 	return 0;
 }
 
-/*
+/**
  * netstatConnections
+ *
+ * @param $transferAlias
+ * @return int
  */
 function netstatConnections($transferAlias) {
 	return netstatConnectionsByPid(getTransferPid($transferAlias));
 }
 
-/*
+/**
  * netstatConnectionsByPid
+ *
+ * @param $transferPid
+ * @return int
  */
 function netstatConnectionsByPid($transferPid) {
 	global $cfg;
@@ -391,8 +399,10 @@ function netstatConnectionsByPid($transferPid) {
 	}
 }
 
-/*
+/**
  * netstatPortList
+ *
+ * @return string
  */
 function netstatPortList() {
 	global $cfg;
@@ -421,15 +431,21 @@ function netstatPortList() {
 	return $retStr;
 }
 
-/*
+/**
  * netstatPort
+ *
+ * @param $transferAlias
+ * @return int
  */
 function netstatPort($transferAlias) {
 	return netstatPortByPid(getTransferPid($transferAlias));
 }
 
-/*
+/**
  * netstatPortByPid
+ *
+ * @param $transferPid
+ * @return int
  */
 function netstatPortByPid($transferPid) {
 	global $cfg;
@@ -445,8 +461,10 @@ function netstatPortByPid($transferPid) {
 	}
 }
 
-/*
+/**
  * netstatHostList
+ *
+ * @return string
  */
 function netstatHostList() {
 	global $cfg;
@@ -475,15 +493,21 @@ function netstatHostList() {
 	return $retStr;
 }
 
-/*
+/**
  * netstatHosts
+ *
+ * @param $transferAlias
+ * @return array
  */
 function netstatHosts($transferAlias) {
 	return netstatHostsByPid(getTransferPid($transferAlias));
 }
 
-/*
+/**
  * netstatHostsByPid
+ *
+ * @param $transferPid
+ * @return array
  */
 function netstatHostsByPid($transferPid) {
 	global $cfg;
@@ -511,8 +535,11 @@ function netstatHostsByPid($transferPid) {
 	return $hostHash;
 }
 
-/*
+/**
  * getTransferPid
+ *
+ * @param $transferAlias
+ * @return int
  */
 function getTransferPid($transferAlias) {
 	global $cfg;
@@ -567,8 +594,11 @@ function getSumMaxDownRate() {
 	return 0;
 }
 
-/*
+/**
  * Function to delete saved Torrent Settings
+ *
+ * @param $torrent
+ * @return boolean
  */
 function deleteTorrentSettings($torrent) {
 	global $db;
@@ -578,8 +608,22 @@ function deleteTorrentSettings($torrent) {
 	return true;
 }
 
-/*
+/**
  * Function for saving Torrent Settings
+ *
+ * @param $torrent
+ * @param $running
+ * @param $rate
+ * @param $drate
+ * @param $maxuploads
+ * @param $runtime
+ * @param $sharekill
+ * @param $minport
+ * @param $maxport
+ * @param $maxcons
+ * @param $savepath
+ * @param $btclient
+ * @return boolean
  */
 function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
 	// Messy - a not exists would prob work better
@@ -612,8 +656,11 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
 	return true;
 }
 
-/*
+/**
  * Function to load the settings for a torrent. returns array with settings
+ *
+ * @param $torrent
+ * @return array
  */
 function loadTorrentSettings($torrent) {
 	global $cfg, $db;
@@ -1215,10 +1262,10 @@ function getTorrentListFromDB() {
 	return $retVal;
 }
 
-/*
+/**
  * Function to convert bit-array to (unsigned) byte
  *
- * @param bit-array
+ * @param $dataArray
  * @return byte
  */
 function convertArrayToByte($dataArray) {
@@ -1232,11 +1279,11 @@ function convertArrayToByte($dataArray) {
    return $bitByte;
 }
 
-/*
+/**
  * Function to convert (unsigned) byte to bit-array
  *
- * @param byte
- * @return bit-array
+ * @param $dataByte
+ * @return array
  */
 function convertByteToArray($dataByte) {
    if (($dataByte > 255) || ($dataByte < 0)) return false;
@@ -1245,11 +1292,11 @@ function convertByteToArray($dataByte) {
    return $bitArray;
 }
 
-/*
+/**
  * Function to convert bit-array to (unsigned) integer
  *
- * @param bit-array
- * @return integer
+ * @param $dataArray
+ * @return int
  */
 function convertArrayToInteger($dataArray) {
    if (count($dataArray) > 31) return false;
@@ -1262,11 +1309,11 @@ function convertArrayToInteger($dataArray) {
    return $bitInteger;
 }
 
-/*
+/**
  * Function to convert (unsigned) integer to bit-array
  *
- * @param integer
- * @return bit-array
+ * @param $dataInt
+ * @return array
  */
 function convertIntegerToArray($dataInt) {
    if (($dataInt > 2147483647) || ($dataInt < 0)) return false;
@@ -1371,21 +1418,21 @@ function getEngineLink($searchEngine) {
 	return $tmpLink;
 }
 
-/*
+/**
  * rnatcasesort
  *
- * @param &$a ref to array to sort
+ * @param &$a
  */
 function rnatcasesort(&$a){
    natcasesort($a);
    $a = array_reverse($a, true);
 }
 
-/*
+/**
  * This method gets transfers in an array
  *
  * @param $sortOrder
- * @return array with transfers
+ * @return array
  */
 function getTransferArray($sortOrder = '') {
 	global $cfg;
@@ -1484,10 +1531,10 @@ function getTransferListHeadArray($settings = null) {
 	return $retVal;
 }
 
-/*
+/**
  * This method gets the list of transfer
  *
- * @return transfer-list 2-dim array
+ * @return array
  */
 function getTransferListArray() {
 	global $cfg, $db;
@@ -1980,7 +2027,12 @@ function avddelete($file) {
 	}
 }
 
-//*********************************************************
+/**
+ * IsOnline
+ *
+ * @param $user
+ * @return boolean
+ */
 function IsOnline($user) {
 	global $cfg, $db;
 	$online = false;
@@ -1992,7 +2044,12 @@ function IsOnline($user) {
 	return $online;
 }
 
-//*********************************************************
+/**
+ * IsUser
+ *
+ * @param $user
+ * @return boolean
+ */
 function IsUser($user) {
 	global $cfg, $db;
 	$isUser = false;
@@ -2003,7 +2060,12 @@ function IsUser($user) {
 	return $isUser;
 }
 
-//*********************************************************
+/**
+ * getOwner
+ *
+ * @param $file
+ * @return string
+ */
 function getOwner($file) {
 	global $cfg, $db;
 	$rtnValue = "n/a";
@@ -2019,7 +2081,12 @@ function getOwner($file) {
 	return $rtnValue;
 }
 
-//*********************************************************
+/**
+ * resetOwner
+ *
+ * @param $file
+ * @return string
+ */
 function resetOwner($file) {
 	global $cfg, $db;
 	require_once("inc/classes/AliasFile.php");
@@ -2055,7 +2122,13 @@ function resetOwner($file) {
 	return $rtnValue;
 }
 
-//*********************************************************
+/**
+ * IsOwner
+ *
+ * @param $user
+ * @param $owner
+ * @return boolean
+ */
 function IsOwner($user, $owner) {
 	$rtnValue = false;
 	if (strtolower($user) == strtolower($owner))
@@ -2063,7 +2136,12 @@ function IsOwner($user, $owner) {
 	return $rtnValue;
 }
 
-//*********************************************************
+/**
+ * GetSpeedValue
+ *
+ * @param $inValue
+ * @return number
+ */
 function GetSpeedValue($inValue) {
 	$rtnValue = 0;
 	$arTemp = split(" ", trim($inValue));
@@ -2072,9 +2150,12 @@ function GetSpeedValue($inValue) {
 	return $rtnValue;
 }
 
-// ***************************************************************************
-// Is User Admin
-// user is Admin if level is 1 or higher
+/**
+ * Is User Admin : user is Admin if level is 1 or higher
+ *
+ * @param $user
+ * @return boolean
+ */
 function IsAdmin($user="") {
 	global $cfg, $db;
 	$isAdmin = false;
@@ -2087,9 +2168,12 @@ function IsAdmin($user="") {
 	return $isAdmin;
 }
 
-// ***************************************************************************
-// Is User SUPER Admin
-// user is Super Admin if level is higher than 1
+/**
+ * Is User SUPER Admin : user is Super Admin if level is higher than 1
+ *
+ * @param $user
+ * @return boolean
+ */
 function IsSuperAdmin($user="") {
 	global $cfg, $db;
 	$isAdmin = false;
@@ -2102,8 +2186,11 @@ function IsSuperAdmin($user="") {
 	return $isAdmin;
 }
 
-// ***************************************************************************
-// Get Users in an array
+/**
+ * Get Users in an array
+ *
+ * @return array
+ */
 function GetUsers() {
 	global $cfg, $db;
 	$user_array = array();
@@ -2113,8 +2200,11 @@ function GetUsers() {
 	return $user_array;
 }
 
-// ***************************************************************************
-// Get Super Admin User ID as a String
+/**
+ * Get Super Admin User ID as a String
+ *
+ * @return string
+ */
 function GetSuperAdmin() {
 	global $cfg, $db;
 	$rtnValue = "";
@@ -2124,8 +2214,11 @@ function GetSuperAdmin() {
 	return $rtnValue;
 }
 
-// ***************************************************************************
-// Get Links in an array
+/**
+ * Get Links in an array
+ *
+ * @return array
+ */
 function GetLinks() {
 	global $cfg, $db;
 	$link_array = array();
@@ -2133,8 +2226,12 @@ function GetLinks() {
 	return $link_array;
 }
 
-// ***************************************************************************
-// Build Search Engine Links
+/**
+ * Build Search Engine Links
+ *
+ * @param $selectedEngine
+ * @return array
+ */
 function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 	global $cfg;
 	$settingsNeedsSaving = false;
@@ -2184,7 +2281,13 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 	return $output;
 }
 
-// Removes HTML from Messages
+/**
+ * Removes HTML from Messages
+ *
+ * @param $str
+ * @param $strip
+ * @return string
+ */
 function check_html ($str, $strip="") {
 	/* The core of this code has been lifted from phpslash */
 	/* which is licenced under the GPL. */
@@ -2237,9 +2340,12 @@ function check_html ($str, $strip="") {
 	return $str;
 }
 
-// ***************************************************************************
-// ***************************************************************************
-// Returns the drive space used as a percentage i.e 85 or 95
+/**
+ * Returns the drive space used as a percentage i.e 85 or 95
+ *
+ * @param $drive
+ * @return int
+ */
 function getDriveSpace($drive) {
 	$percent = 0;
 	if (is_dir($drive)) {
@@ -2250,10 +2356,12 @@ function getDriveSpace($drive) {
 	return $percent;
 }
 
-//**************************************************************************
-// getFileFilter()
-// Returns a string used as a file filter.
-// Takes in an array of file types.
+/**
+ * get File Filter
+ *
+ * @param $inArray
+ * @return string
+ */
 function getFileFilter($inArray) {
 	$filter = "(\.".strtolower($inArray[0]).")|"; // used to hold the file type filter
 	$filter .= "(\.".strtoupper($inArray[0]).")";
@@ -2266,9 +2374,12 @@ function getFileFilter($inArray) {
 	return $filter;
 }
 
-//**************************************************************************
-// getAliasName()
-// Create Alias name for Text file and Screen Alias
+/**
+ * Create Alias name for Text file and Screen Alias
+ *
+ * @param $inName
+ * @return string
+ */
 function getAliasName($inName) {
 	$alias = preg_replace("/[^0-9a-z.]+/i",'_', $inName);
 	$alias = str_replace(".torrent", "", $alias);
@@ -2276,9 +2387,12 @@ function getAliasName($inName) {
 	return $alias;
 }
 
-//**************************************************************************
-// cleanFileName()
-// Remove bad characters that cause problems
+/**
+ * Remove bad characters that cause problems
+ *
+ * @param $inName
+ * @return string
+ */
 function cleanFileName($inName) {
 	$replaceItems = array("?", "&", "'", "\"", "+", "@");
 	$cleanName = str_replace($replaceItems, "", $inName);
@@ -2287,9 +2401,12 @@ function cleanFileName($inName) {
 	return $cleanName;
 }
 
-//**************************************************************************
-// cleanURL()
-// split on the "*" coming from Varchar URL
+/**
+ * split on the "*" coming from Varchar URL
+ *
+ * @param $url
+ * @return string
+ */
 function cleanURL($url) {
 	$rtnValue = $url;
 	$arURL = explode("*", $url);
@@ -2298,10 +2415,12 @@ function cleanURL($url) {
 	return $rtnValue;
 }
 
-// -------------------------------------------------------------------
-// FetchTorrent() method to get data from URL
-// Has support for specific sites
-// -------------------------------------------------------------------
+/**
+ * get data from URL. Has support for specific sites
+ *
+ * @param $url
+ * @return string
+ */
 function FetchTorrent($url) {
 	global $cfg, $db;
 	ini_set("allow_url_fopen", "1");
@@ -2430,10 +2549,14 @@ function FetchTorrent($url) {
 	return $html;
 }
 
-// -------------------------------------------------------------------
-// FetchHTML() method to get data from URL -- uses timeout and user agent
-// -------------------------------------------------------------------
-function FetchHTML( $url, $referer = "" ) {
+/**
+ * method to get data from URL -- uses timeout and user agent
+ *
+ * @param $url
+ * @param $referer
+ * @return string
+ */
+function FetchHTML($url, $referer = "") {
 	global $cfg, $db;
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", $_SERVER["HTTP_USER_AGENT"]);
@@ -2508,9 +2631,12 @@ function FetchHTML( $url, $referer = "" ) {
 	return $rtnValue;
 }
 
-//**************************************************************************
-// getDownloadSize()
-// Grab the full size of the download from the torrent metafile
+/**
+ * Grab the full size of the download from the torrent metafile
+ *
+ * @param $torrent
+ * @return int
+ */
 function getDownloadSize($torrent) {
 	$rtnValue = "";
 	if (file_exists($torrent)) {
@@ -2560,32 +2686,12 @@ function formatFreeSpace($freeSpace) {
 	return $rtnValue;
 }
 
-//**************************************************************************
-class ProcessInfo {
-	var $pid = "";
-	var $ppid = "";
-	var $cmdline = "";
-	function ProcessInfo($psLine) {
-		$psLine = trim($psLine);
-		if (strlen($psLine) > 12) {
-			$this->pid = trim(substr($psLine, 0, 5));
-			$this->ppid = trim(substr($psLine, 5, 6));
-			$this->cmdline = trim(substr($psLine, 12));
-		}
-	}
-}
-
-//**************************************************************************
-// HealthData
-// Stores the image and title of for the health of a file.
-class HealthData {
-	var $image = "";
-	var $title = "";
-}
-
-//**************************************************************************
-// getStatusImage() Takes in an AliasFile object
-// Returns a string "file name" of the status image icon
+/**
+ * Returns a string "file name" of the status image icon
+ *
+ * @param $af
+ * @return string
+ */
 function getStatusImage($af) {
 	$hd = new HealthData();
 	$hd->image = "black.gif";
@@ -2617,18 +2723,25 @@ function getStatusImage($af) {
 	return $hd;
 }
 
-//**************************************************************************
-// file_size()
-// Returns file size... overcomes PHP limit of 2.0GB
+/**
+ * Returns file size... overcomes PHP limit of 2.0GB
+ *
+ * @param $file
+ * @return int
+ */
 function file_size($file) {
 	$size = @filesize($file);
-	if ( $size == 0)
+	if ($size == 0)
 		$size = exec("ls -l \"".$file."\" 2>/dev/null | awk '{print $5}'");
 	return $size;
 }
 
-// ****************************************************************************
-// Estimated time left to seed
+/**
+ * Estimated time left to seed
+ *
+ * @param $inValue
+ * @return string
+ */
 function GetSpeedInBytes($inValue) {
 	$rtnValue = 0;
 	$arTemp = split(" ", trim($inValue));
@@ -2671,6 +2784,33 @@ function convertTime($seconds) {
 		return "?";
 	else
 		return implode(':', $values);
+}
+
+/**
+ * class ProcessInfo
+ *
+ */
+class ProcessInfo {
+	var $pid = "";
+	var $ppid = "";
+	var $cmdline = "";
+	function ProcessInfo($psLine) {
+		$psLine = trim($psLine);
+		if (strlen($psLine) > 12) {
+			$this->pid = trim(substr($psLine, 0, 5));
+			$this->ppid = trim(substr($psLine, 5, 6));
+			$this->cmdline = trim(substr($psLine, 12));
+		}
+	}
+}
+
+/**
+ * class ProcessInfo : Stores the image and title of for the health of a file.
+ *
+ */
+class HealthData {
+	var $image = "";
+	var $title = "";
 }
 
 ?>

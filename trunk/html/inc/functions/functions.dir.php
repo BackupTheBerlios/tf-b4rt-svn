@@ -254,5 +254,4 @@ function chmodRecursive($path, $mode = 0777) {
 		return false;
 }
 
-
 ?>

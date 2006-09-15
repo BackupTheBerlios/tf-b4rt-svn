@@ -21,6 +21,211 @@
 *******************************************************************************/
 
 /**
+ * get form of index page settings (0-2047)
+ *
+ * #
+ * Torrent
+ *
+ * User			  [0]
+ * Size			  [1]
+ * DLed			  [2]
+ * ULed			  [3]
+ * Status		  [4]
+ * Progress		  [5]
+ * DL Speed		  [6]
+ * UL Speed		  [7]
+ * Seeds		  [8]
+ * Peers		  [9]
+ * ETA			 [10]
+ * TorrentClient [11]
+ *
+ */
+function IndexPageSettingsForm() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.indexPageSettingsForm.tmpl");
+	// some vars
+	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
+	$tmpl->setvar('index_page_settings_0', $settingsIndexPage[0]);
+	$tmpl->setvar('index_page_settings_1', $settingsIndexPage[1]);
+	$tmpl->setvar('index_page_settings_2', $settingsIndexPage[2]);
+	$tmpl->setvar('index_page_settings_3', $settingsIndexPage[3]);
+	$tmpl->setvar('index_page_settings_4', $settingsIndexPage[4]);
+	$tmpl->setvar('index_page_settings_5', $settingsIndexPage[5]);
+	$tmpl->setvar('index_page_settings_6', $settingsIndexPage[6]);
+	$tmpl->setvar('index_page_settings_7', $settingsIndexPage[7]);
+	$tmpl->setvar('index_page_settings_8', $settingsIndexPage[8]);
+	$tmpl->setvar('index_page_settings_9', $settingsIndexPage[9]);
+	$tmpl->setvar('index_page_settings_10', $settingsIndexPage[10]);
+	$tmpl->setvar('index_page_settings_11', $settingsIndexPage[11]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get form of good looking stats hack (0-63)
+ *
+ */
+function GoodLookingStatsForm() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.goodLookingStatsForm.tmpl");
+	// some vars
+	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
+	$tmpl->setvar('hack_goodlookstats_settings_0', $settingsHackStats[0]);
+	$tmpl->setvar('hack_goodlookstats_settings_1', $settingsHackStats[1]);
+	$tmpl->setvar('hack_goodlookstats_settings_2', $settingsHackStats[2]);
+	$tmpl->setvar('hack_goodlookstats_settings_3', $settingsHackStats[3]);
+	$tmpl->setvar('hack_goodlookstats_settings_4', $settingsHackStats[4]);
+	$tmpl->setvar('hack_goodlookstats_settings_5', $settingsHackStats[5]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get BTClient Select
+ *
+ * @param $btclient
+ * @return string
+ */
+function getBTClientSelect($btclient = 'tornado') {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.clientSelectForm.tmpl");
+	// set some vars
+	$btclients = array("tornado", "transmission", "mainline");
+	$client_list = array();
+	foreach($btclients as $client) {
+		$selected = 0;
+		if($btclient == $client) {
+			$selected = 1;
+		}
+		array_push($client_list, array(
+			'client' => $client,
+			'selected' => $selected,
+			)
+		);
+	}
+	$tmpl->setloop('client_list', $client_list);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get form of sort-order-settings
+ *
+ */
+function getSortOrderSettings() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.sortOrderSettings.tmpl");
+	// set some vars
+	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get form of move-settings
+ *
+ */
+function getMoveSettings() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.moveSettings.tmpl");
+	// set some vars
+	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
+		$dirs = split(":", trim($cfg["move_paths"]));
+		$dir_list = array();
+		foreach ($dirs as $dir) {
+			$target = trim($dir);
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
+				array_push($dir_list, array(
+					'target' => $target,
+					)
+				);
+			}
+		}
+		$tmpl->setloop('move_list', $dir_list);
+	}
+	$tmpl->setvar('move_paths', $cfg["move_paths"]);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * Specific save path
+ *
+ * @param $dir
+ * @param $maxdepth
+ * @return unknown
+ */
+function dirTree2($dir, $maxdepth) {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.dirTree2.tmpl");
+	// set some vars
+	$tmpl->setvar('dir', $dir);
+	if (is_numeric ($maxdepth)) {
+		$retvar_list = array();
+		if ($maxdepth == 0) {
+			//$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
+			$last = exec ("find ".$dir." -type d | sort && echo", $retval);
+			for ($i = 1; $i < (count ($retval) - 1); $i++){
+				array_push($retvar_list, array(
+					'retval' => $retval[$i],
+					)
+				);
+			}
+		} elseif ($maxdepth > 0) {
+			//$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
+			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort && echo", $retval);
+			for ($i = 1; $i < (count ($retval) - 1); $i++){
+				array_push($retvar_list, array(
+					'retval' => $retval[$i],
+					)
+				);
+			}
+		}
+		$tmpl->setloop('retvar_list', $retvar_list);
+	}
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get dropdown list to send message to a user
+ *
+ * @return string
+ */
+function getMessageList() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.messageList.tmpl");
+	// some vars
+	$users = GetUsers();
+	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
+	$tmpl->setvar('_COMPOSE', $cfg['_COMPOSE']);
+	$user = array();
+	for($inx = 0; $inx < sizeof($users); $inx++) {
+		array_push($user, array(
+			'user' => $users[$inx],
+			)
+		);
+	}
+	$tmpl->setloop('user', $user);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
  * perform Authentication
  *
  * @param $username
@@ -468,8 +673,15 @@ function addNewUser($newUser, $pass1, $userType) {
 	showError($db,$sql);
 }
 
-// ***************************************************************************
-// UpdateUserProfile
+/**
+ * UpdateUserProfile
+ *
+ * @param $user_id
+ * @param $pass1
+ * @param $hideOffline
+ * @param $theme
+ * @param $language
+ */
 function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 	global $cfg, $db;
 	if (empty($hideOffline) || $hideOffline == "" || !isset($hideOffline))
@@ -492,71 +704,10 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 }
 
 /**
- * get form of index page settings (0-2047)
+ * Delete Message
  *
- * #
- * Torrent
- *
- * User			  [0]
- * Size			  [1]
- * DLed			  [2]
- * ULed			  [3]
- * Status		  [4]
- * Progress		  [5]
- * DL Speed		  [6]
- * UL Speed		  [7]
- * Seeds		  [8]
- * Peers		  [9]
- * ETA			 [10]
- * TorrentClient [11]
- *
+ * @param $mid
  */
-function IndexPageSettingsForm() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.indexPageSettingsForm.tmpl");
-	// some vars
-	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
-	$tmpl->setvar('index_page_settings_0', $settingsIndexPage[0]);
-	$tmpl->setvar('index_page_settings_1', $settingsIndexPage[1]);
-	$tmpl->setvar('index_page_settings_2', $settingsIndexPage[2]);
-	$tmpl->setvar('index_page_settings_3', $settingsIndexPage[3]);
-	$tmpl->setvar('index_page_settings_4', $settingsIndexPage[4]);
-	$tmpl->setvar('index_page_settings_5', $settingsIndexPage[5]);
-	$tmpl->setvar('index_page_settings_6', $settingsIndexPage[6]);
-	$tmpl->setvar('index_page_settings_7', $settingsIndexPage[7]);
-	$tmpl->setvar('index_page_settings_8', $settingsIndexPage[8]);
-	$tmpl->setvar('index_page_settings_9', $settingsIndexPage[9]);
-	$tmpl->setvar('index_page_settings_10', $settingsIndexPage[10]);
-	$tmpl->setvar('index_page_settings_11', $settingsIndexPage[11]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get form of good looking stats hack (0-63)
- *
- */
-function GoodLookingStatsForm() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.goodLookingStatsForm.tmpl");
-	// some vars
-	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
-	$tmpl->setvar('hack_goodlookstats_settings_0', $settingsHackStats[0]);
-	$tmpl->setvar('hack_goodlookstats_settings_1', $settingsHackStats[1]);
-	$tmpl->setvar('hack_goodlookstats_settings_2', $settingsHackStats[2]);
-	$tmpl->setvar('hack_goodlookstats_settings_3', $settingsHackStats[3]);
-	$tmpl->setvar('hack_goodlookstats_settings_4', $settingsHackStats[4]);
-	$tmpl->setvar('hack_goodlookstats_settings_5', $settingsHackStats[5]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-// ***************************************************************************
-// Delete Message
 function DeleteMessage($mid) {
 	global $cfg, $db;
 	$sql = "delete from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
@@ -564,8 +715,11 @@ function DeleteMessage($mid) {
 	showError($db,$sql);
 }
 
-// ***************************************************************************
-// Mark Message as Read
+/**
+ * Mark Message as Read
+ *
+ * @param  $mid
+ */
 function MarkMessageRead($mid) {
 	global $cfg, $db;
 	$sql = 'select * from tf_messages where mid = '.$mid;
@@ -630,8 +784,12 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 	}
 }
 
-// ***************************************************************************
-// Get Message data in an array
+/**
+ * Get Message data in an array
+ *
+ * @param $mid
+ * @return array
+ */
 function GetMessage($mid) {
 	global $cfg, $db;
 	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
@@ -641,33 +799,10 @@ function GetMessage($mid) {
 }
 
 /**
- * get dropdown list to send message to a user
+ * Get Themes data in an array
  *
- * @return string
+ * @return array
  */
-function getMessageList() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.messageList.tmpl");
-	// some vars
-	$users = GetUsers();
-	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
-	$tmpl->setvar('_COMPOSE', $cfg['_COMPOSE']);
-	$user = array();
-	for($inx = 0; $inx < sizeof($users); $inx++) {
-		array_push($user, array(
-			'user' => $users[$inx],
-			)
-		);
-	}
-	$tmpl->setloop('user', $user);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-// ***************************************************************************
-// Get Themes data in an array
 function GetThemes() {
 	$arThemes = array();
 	$dir = "themes/";
@@ -680,8 +815,12 @@ function GetThemes() {
 	sort($arThemes);
 	return $arThemes;
 }
-// ***************************************************************************
-// Get Themes data in an array
+
+/**
+ * Get Themes data in an array
+ *
+ * @return array
+ */
 function GetThemesStandard() {
 	$arThemes = array();
 	$dir = "themes/tf_standard_themes/";
@@ -695,8 +834,11 @@ function GetThemesStandard() {
 	return $arThemes;
 }
 
-// ***************************************************************************
-// Get Languages in an array
+/**
+ * Get Languages in an array
+ *
+ * @return array
+ */
 function GetLanguages() {
 	$arLanguages = array();
 	$dir = "inc/language/";
@@ -710,8 +852,12 @@ function GetLanguages() {
 	return $arLanguages;
 }
 
-// ***************************************************************************
-// Get Language name from file name
+/**
+ * Get Language name from file name
+ *
+ * @param $inFile
+ * @return string
+ */
 function GetLanguageFromFile($inFile) {
 	$rtnValue = "";
 	$rtnValue = str_replace("lang-", "", $inFile);
@@ -909,121 +1055,11 @@ function loadLanguageFile($language) {
 }
 
 /**
- * get BTClient Select
+ * get cookie
  *
- * @param $btclient
+ * @param $cid
  * @return string
  */
-function getBTClientSelect($btclient = 'tornado') {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.clientSelectForm.tmpl");
-	// set some vars
-	$btclients = array("tornado", "transmission", "mainline");
-	$client_list = array();
-	foreach($btclients as $client) {
-		$selected = 0;
-		if($btclient == $client) {
-			$selected = 1;
-		}
-		array_push($client_list, array(
-			'client' => $client,
-			'selected' => $selected,
-			)
-		);
-	}
-	$tmpl->setloop('client_list', $client_list);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get form of sort-order-settings
- *
- */
-function getSortOrderSettings() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.sortOrderSettings.tmpl");
-	// set some vars
-	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get form of move-settings
- *
- */
-function getMoveSettings() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.moveSettings.tmpl");
-	// set some vars
-	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
-		$dirs = split(":", trim($cfg["move_paths"]));
-		$dir_list = array();
-		foreach ($dirs as $dir) {
-			$target = trim($dir);
-			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
-				array_push($dir_list, array(
-					'target' => $target,
-					)
-				);
-			}
-		}
-		$tmpl->setloop('move_list', $dir_list);
-	}
-	$tmpl->setvar('move_paths', $cfg["move_paths"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * Specific save path
- *
- * @param $dir
- * @param $maxdepth
- * @return unknown
- */
-function dirTree2($dir, $maxdepth) {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.dirTree2.tmpl");
-	// set some vars
-	$tmpl->setvar('dir', $dir);
-	if (is_numeric ($maxdepth)) {
-		$retvar_list = array();
-		if ($maxdepth == 0) {
-			//$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
-			$last = exec ("find ".$dir." -type d | sort && echo", $retval);
-			for ($i = 1; $i < (count ($retval) - 1); $i++){
-				array_push($retvar_list, array(
-					'retval' => $retval[$i],
-					)
-				);
-			}
-		} elseif ($maxdepth > 0) {
-			//$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
-			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort && echo", $retval);
-			for ($i = 1; $i < (count ($retval) - 1); $i++){
-				array_push($retvar_list, array(
-					'retval' => $retval[$i],
-					)
-				);
-			}
-		}
-		$tmpl->setloop('retvar_list', $retvar_list);
-	}
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-//*********************************************************
 function getCookie($cid) {
 	global $cfg, $db;
 	$rtnValue = "";
@@ -1032,8 +1068,11 @@ function getCookie($cid) {
 	return $rtnValue[0];
 }
 
-// ***************************************************************************
-// Delete Cookie Host Information
+/**
+ * Delete Cookie Host Information
+ *
+ * @param $cid
+ */
 function deleteCookieInfo($cid) {
 	global $db;
 	$sql = "delete from tf_cookies where cid=".$cid;
@@ -1041,8 +1080,11 @@ function deleteCookieInfo($cid) {
 	showError($db,$sql);
 }
 
-// ***************************************************************************
-// addCookieInfo - Add New Cookie Host Information
+/**
+ * Add New Cookie Host Information
+ *
+ * @param $newCookie
+ */
 function addCookieInfo( $newCookie ) {
 	global $db, $cfg;
 	// Get uid of user
@@ -1053,8 +1095,12 @@ function addCookieInfo( $newCookie ) {
 	showError( $db, $sql );
 }
 
-// ***************************************************************************
-// modCookieInfo - Modify Cookie Host Information
+/**
+ * Modify Cookie Host Information
+ *
+ * @param $cid
+ * @param $newCookie
+ */
 function modCookieInfo($cid, $newCookie) {
 	global $db;
 	$sql = "UPDATE tf_cookies SET host='" . $newCookie["host"] . "', data='" . $newCookie["data"] . "' WHERE cid='" . $cid . "'";
@@ -1062,7 +1108,12 @@ function modCookieInfo($cid, $newCookie) {
 	showError($db,$sql);
 }
 
-//*********************************************************
+/**
+ * GetActivityCount
+ *
+ * @param $user
+ * @return int
+ */
 function GetActivityCount($user="") {
 	global $cfg, $db;
 	$count = 0;
@@ -1074,11 +1125,13 @@ function GetActivityCount($user="") {
 	return $count;
 }
 
-// Profiles hack
-//*************************************************************************
-// GetProfiles()
-// This method Gets Download profiles for the actual user
-
+/**
+ * This method Gets Download profiles for the actual user
+ *
+ * @param $user
+ * @param $profile
+ * @return array
+ */
 function GetProfiles($user, $profile) {
 	global $cfg, $db;
 	$profiles_array = array();
@@ -1101,9 +1154,12 @@ function GetProfiles($user, $profile) {
 	return $profiles_array;
 }
 
-//*************************************************************************
-// GetPublicProfiles()
-// This method Gets public Download profiles
+/**
+ * This method Gets public Download profiles
+ *
+ * @param $profile
+ * @return array
+ */
 function GetPublicProfiles($profile) {
 	global $cfg, $db;
 	$profiles_array = array();
@@ -1126,10 +1182,12 @@ function GetPublicProfiles($profile) {
 	return $profiles_array;
 }
 
-// Profiles hack
-//*************************************************************************
-// GetProfileSettings()
-// This method fetch settings for an specific profile
+/**
+ * This method fetch settings for an specific profile
+ *
+ * @param $profile
+ * @return array
+ */
 function GetProfileSettings($profile) {
 	global $cfg, $db;
 	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name like '".$profile."'";
@@ -1138,8 +1196,11 @@ function GetProfileSettings($profile) {
 	return $settings;
 }
 
-// ***************************************************************************
-// addProfileInfo - Add New Profile Information
+/**
+ * Add New Profile Information
+ *
+ * @param $newProfile
+ */
 function AddProfileInfo( $newProfile ) {
 	global $db, $cfg;
 	$sql ="INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public ) VALUES ('".$newProfile["name"]."', '".$cfg['uid']."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest"]."', '".$newProfile["rate"]."', '".$newProfile["maxuploads"]."', '".$newProfile["drate"]."', '".$newProfile["runtime"]."', '".$newProfile["sharekill"]."', '".$newProfile["superseeder"]."', '".$newProfile["public"]."')";
@@ -1147,7 +1208,12 @@ function AddProfileInfo( $newProfile ) {
 	showError( $db, $sql );
 }
 
-//*********************************************************
+/**
+ * getProfile
+ *
+ * @param $pid
+ * @return
+ */
 function getProfile($pid) {
 	global $cfg, $db;
 	$rtnValue = "";
@@ -1156,8 +1222,12 @@ function getProfile($pid) {
 	return $rtnValue[0];
 }
 
-// ***************************************************************************
-// modProfileInfo - Modify Profile Information
+/**
+ * Modify Profile Information
+ *
+ * @param $pid
+ * @param $newProfile
+ */
 function modProfileInfo($pid, $newProfile) {
 	global $cfg, $db;
 	$sql = "UPDATE tf_trprofiles SET owner = '".$cfg['uid']."', name = '".$newProfile["name"]."', minport = '".$newProfile["minport"]."', maxport = '".$newProfile["maxport"]."', maxcons = '".$newProfile["maxcons"]."', rerequest = '".$newProfile["rerequest"]."', rate = '".$newProfile["rate"]."', maxuploads = '".$newProfile["maxuploads"]."', drate = '".$newProfile["drate"]."', runtime = '".$newProfile["runtime"]."', sharekill = '".$newProfile["sharekill"]."', superseeder = '".$newProfile["superseeder"]."', public = '".$newProfile["public"]."' WHERE id = '".$pid."'";
@@ -1165,8 +1235,11 @@ function modProfileInfo($pid, $newProfile) {
 	showError($db,$sql);
 }
 
-// ***************************************************************************
-// Delete Profile Information
+/**
+ * Delete Profile Information
+ *
+ * @param unknown_type $pid
+ */
 function deleteProfileInfo($pid) {
 	global $db;
 	$sql = "DELETE FROM tf_trprofiles WHERE id=".$pid;

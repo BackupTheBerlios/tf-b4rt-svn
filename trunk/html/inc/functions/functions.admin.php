@@ -328,7 +328,7 @@ function setUserState() {
 	return true;
 }
 
-/*
+/**
  * repairTorrentflux
  *
  */
@@ -380,9 +380,12 @@ function repairTorrentflux() {
 
 }
 
-// ***************************************************************************
-// addNewLink - Add New Link
-//function addNewLink($newLink)
+/**
+ * Add New Link
+ *
+ * @param $newLink
+ * @param $newSite
+ */
 function addNewLink($newLink,$newSite) {
 	global $db;
 	//$rec = array('url'=>$newLink);
@@ -409,9 +412,13 @@ function addNewLink($newLink,$newSite) {
 	showError($db,$sql);
 }
 
-//**************************************************************************
-// alterLink()
-// This function updates the database and alters the selected links values
+/**
+ * This function updates the database and alters the selected links values
+ *
+ * @param $lid
+ * @param $newLink
+ * @param $newSite
+ */
 function alterLink($lid,$newLink,$newSite) {
 	global $cfg, $db;
 	$sql = "UPDATE tf_links SET url='".$newLink."',`sitename`='".$newSite."' WHERE `lid` = ".$lid." LIMIT 1";
@@ -419,7 +426,12 @@ function alterLink($lid,$newLink,$newSite) {
 	showError($db,$sql);
 }
 
-//*********************************************************
+/**
+ * get link
+ *
+ * @param $lid
+ * @return string
+ */
 function getLink($lid) {
 	global $cfg, $db;
 	$rtnValue = "";
@@ -428,8 +440,11 @@ function getLink($lid) {
 	return $rtnValue;
 }
 
-// ***************************************************************************
-// Delete Link
+/**
+ * Delete Link
+ *
+ * @param $lid
+ */
 function deleteOldLink($lid) {
 	global $db;
 	// Link Mod
@@ -445,7 +460,7 @@ function deleteOldLink($lid) {
 	showError($db,$sql);
 	$arLinks=$result->GetAssoc();
 	// Decrement the sort order of each link:
-	foreach($arLinks as $sid=>$this_lid){
+	foreach ($arLinks as $sid=>$this_lid) {
 		$sql="UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=$this_lid";
 		$db->Execute($sql);
 		showError($db,$sql);
@@ -458,10 +473,10 @@ function deleteOldLink($lid) {
 }
 
 /**
- * Enter description here...
+ * get Link Sort Order
  *
- * @param unknown_type $lid
- * @return unknown
+ * @param $lid
+ * @return string
  */
 function getLinkSortOrder($lid) {
     global $db;
@@ -473,10 +488,10 @@ function getLinkSortOrder($lid) {
 }
 
 /**
- * Enter description here...
+ * get Site
  *
- * @param unknown_type $lid
- * @return unknown
+ * @param $lid
+ * @return string
  */
 function getSite($lid) {
     global $cfg, $db;
@@ -486,8 +501,11 @@ function getSite($lid) {
     return $rtnValue;
 }
 
-// ***************************************************************************
-// addNewRSS - Add New RSS Link
+/**
+ * Add New RSS Link
+ *
+ * @param $newRSS
+ */
 function addNewRSS($newRSS) {
 	global $db;
 	$rec = array('url'=>$newRSS);
@@ -497,8 +515,11 @@ function addNewRSS($newRSS) {
 	showError($db,$sql);
 }
 
-// ***************************************************************************
-// Delete RSS
+/**
+ * Delete RSS
+ *
+ * @param $rid
+ */
 function deleteOldRSS($rid) {
 	global $db;
 	$sql = "delete from tf_rss where rid=".$rid;
@@ -506,7 +527,12 @@ function deleteOldRSS($rid) {
 	showError($db,$sql);
 }
 
-//*********************************************************
+/**
+ * get RSS
+ *
+ * @param $rid
+ * @return string
+ */
 function getRSS($rid) {
 	global $cfg, $db;
 	$rtnValue = "";
@@ -515,8 +541,11 @@ function getRSS($rid) {
 	return $rtnValue;
 }
 
-// ***************************************************************************
-// Delete User
+/**
+ * Delete User
+ *
+ * @param $user_id
+ */
 function DeleteThisUser($user_id) {
 	global $db;
 	$sql = "SELECT uid FROM tf_users WHERE user_id = ".$db->qstr($user_id);
@@ -537,8 +566,15 @@ function DeleteThisUser($user_id) {
 	showError($db,$sql);
 }
 
-// ***************************************************************************
-// Update User -- used by admin
+/**
+ * Update User -- used by admin
+ *
+ * @param $user_id
+ * @param $org_user_id
+ * @param $pass1
+ * @param $userType
+ * @param $hideOffline
+ */
 function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline) {
 	global $db;
 	if ($hideOffline == "")
@@ -571,8 +607,12 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 	}
 }
 
-// ***************************************************************************
-// changeUserLevel Changes the Users Level
+/**
+ * Change User Level
+ *
+ * @param $user_id
+ * @param $level
+ */
 function changeUserLevel($user_id, $level) {
 	global $db;
 	$sql='select * from tf_users where user_id = '.$db->qstr($user_id);

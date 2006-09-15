@@ -20,8 +20,11 @@
 
 *******************************************************************************/
 
-// ***************************************************************************
-// Returns true if user has message from admin with force_read
+/**
+ * Returns true if user has message from admin with force_read
+ *
+ * @return boolean
+ */
 function IsForceReadMsg() {
 	global $cfg, $db;
 	$rtnValue = false;
