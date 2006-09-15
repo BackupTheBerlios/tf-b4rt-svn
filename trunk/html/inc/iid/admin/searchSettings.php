@@ -69,7 +69,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 tmplFillSearchEngineDDL($searchEngine,true);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - Search Settings"));
+tmplSetTitleBar("Administration - Search Settings");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

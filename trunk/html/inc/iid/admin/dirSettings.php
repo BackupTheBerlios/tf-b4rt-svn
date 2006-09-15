@@ -60,7 +60,7 @@ $tmpl->setvar('moveSettings', getMoveSettings());
 //
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('foot', getFoot(true));
-$tmpl->setvar('head', getHead("Administration - Dir Settings"));
+tmplSetTitleBar("Administration - Dir Settings");
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 

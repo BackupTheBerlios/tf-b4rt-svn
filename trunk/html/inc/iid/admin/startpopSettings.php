@@ -33,7 +33,7 @@ $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('maxdepth', $cfg["maxdepth"]);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - StartPop Settings"));
+tmplSetTitleBar("Administration - StartPop Settings");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);

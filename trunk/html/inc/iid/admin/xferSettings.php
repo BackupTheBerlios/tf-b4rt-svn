@@ -48,7 +48,7 @@ for ($i = 1; $i <= 31 ; $i++) {
 $tmpl->setloop('month_list', $month_list);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - Xfer Settings"));
+tmplSetTitleBar("Administration - Xfer Settings");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);

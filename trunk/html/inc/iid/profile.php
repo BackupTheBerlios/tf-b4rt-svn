@@ -404,7 +404,7 @@ $tmpl->setvar('user', $cfg["user"]);
 //
 $tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
 //
-$tmpl->setvar('head', getHead($cfg["user"]."'s ".$cfg['_PROFILE']));
+tmplSetTitleBar($cfg["user"]."'s ".$cfg['_PROFILE']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

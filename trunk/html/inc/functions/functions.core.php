@@ -116,24 +116,6 @@ function tmplFillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = f
 }
 
 /**
- * get the header portion
- *
- * @param $subTopic
- * @param $showButtons
- * @return string
- */
-function getHead($subTopic, $showButtons = true) {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getHead.tmpl");
-	// set some vars
-	tmplSetTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
  * get the footer portion
  *
  * @param $showReturn

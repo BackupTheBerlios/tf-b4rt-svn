@@ -98,7 +98,7 @@ $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_FILE', $cfg['_FILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 //
-$tmpl->setvar('head', getHead($cfg['_UPLOADHISTORY']));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_UPLOADHISTORY']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

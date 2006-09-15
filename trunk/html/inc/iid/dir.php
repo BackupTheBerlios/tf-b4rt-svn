@@ -438,7 +438,7 @@ $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
 //
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('head', getHead($cfg['_DIRECTORYLIST']));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_DIRECTORYLIST']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

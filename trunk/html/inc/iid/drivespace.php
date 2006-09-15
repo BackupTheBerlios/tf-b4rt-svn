@@ -31,7 +31,7 @@ $tmpl->setvar('result1', shell_exec("df -h ".$cfg["path"]));
 $tmpl->setvar('result2', shell_exec("du -sh ".$cfg["path"]."*"));
 //
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
-$tmpl->setvar('head', getHead($cfg['_DRIVESPACE']));
+tmplSetTitleBar($cfg['_DRIVESPACE']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -111,7 +111,7 @@ $tmpl->setvar('_FILE', $cfg['_FILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 $tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
 //
-$tmpl->setvar('head', getHead("Administration - Fluxd Settings"));
+tmplSetTitleBar("Administration - Fluxd Settings");
 $tmpl->setvar('menu', getMenu());
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);

@@ -47,7 +47,7 @@ $tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - RSS"));
+tmplSetTitleBar("Administration - RSS");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

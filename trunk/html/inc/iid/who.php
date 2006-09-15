@@ -45,8 +45,8 @@ if ($isAdmin) {
 	$tmpl->setloop('process_list', $process_list);
 }
 //
-$tmpl->setvar('head', getHead($cfg['_SERVERSTATS']));
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_SERVERSTATS']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -28,7 +28,7 @@ $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('activity', getActivity());
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
+tmplSetTitleBar($cfg['_ADMINISTRATION']);
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -50,7 +50,7 @@ $tmpl->setvar('stats_default_compress', $cfg["stats_default_compress"]);
 $tmpl->setvar('stats_default_attach', $cfg["stats_default_attach"]);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - Stats Settings"));
+tmplSetTitleBar("Administration - Stats Settings");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);

@@ -27,7 +27,6 @@ require_once('inc/functions/functions.common.php');
 $tmpl = tmplGetInstance($cfg["theme"], "rename.tmpl");
 
 // process move and set vars
-$tmpl->setvar('head', getHead($cfg['_REN_TITLE'], false));
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
 	$tmpl->setvar('file', $_REQUEST['file']);
@@ -55,6 +54,7 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	}
 }
 //
+tmplSetTitleBar($cfg['_REN_TITLE'], false);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_GET["iid"]);
 

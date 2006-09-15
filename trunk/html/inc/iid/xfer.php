@@ -246,7 +246,7 @@ if ($cfg['enable_xfer'] == 1) {
 	$tmpl->setvar('is_xfer', 0);
 }
 //
-$tmpl->setvar('head', getHead($cfg['_XFER']));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_XFER']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

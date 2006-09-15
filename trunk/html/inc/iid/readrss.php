@@ -133,7 +133,7 @@ else
 $tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 //
-$tmpl->setvar('head', getHead("RSS Torrents"));
+tmplSetTitleBar($cfg["pagetitle"].' - RSS Torrents');
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

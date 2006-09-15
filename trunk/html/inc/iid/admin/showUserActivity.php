@@ -33,7 +33,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "admin/showUserActivity.tmpl");
 // set vars
 $tmpl->setvar('Activity', getActivity($min, $user_id, $srchFile, $srchAction));
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead($cfg['_ADMINUSERACTIVITY']));
+tmplSetTitleBar($cfg['_ADMINUSERACTIVITY']);
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

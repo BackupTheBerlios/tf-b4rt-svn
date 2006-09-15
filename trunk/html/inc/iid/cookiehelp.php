@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 $tmpl = tmplGetInstance($cfg["theme"], "cookiehelp.tmpl");
 
 // set vars
-$tmpl->setvar('head', getHead("Cookie Help", false));
+tmplSetTitleBar("Cookie Help", false);
 $tmpl->setvar('foot', getFoot(false));
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -110,7 +110,7 @@ $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_MESSAGE', $cfg['_MESSAGE']);
 $tmpl->setvar('_RETURNTOMESSAGES', $cfg['_RETURNTOMESSAGES']);
 //
-$tmpl->setvar('head', getHead($cfg['_MESSAGES']));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MESSAGES']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

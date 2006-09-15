@@ -96,7 +96,7 @@ $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 //
 $tmpl->setvar('getUserSection', getUserSection());
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - RSS"));
+tmplSetTitleBar("Administration - Edit User");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

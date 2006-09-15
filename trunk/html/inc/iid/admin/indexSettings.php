@@ -58,7 +58,7 @@ $tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
 $tmpl->setvar('GoodLookingStatsForm', GoodLookingStatsForm());
 $tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - Index Settings"));
+tmplSetTitleBar("Administration - Index Settings");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

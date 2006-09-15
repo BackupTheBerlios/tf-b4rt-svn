@@ -81,7 +81,7 @@ if (file_exists($filename)) {
 	$tmpl->setvar('htmlGraph', "");
 }
 //
-$tmpl->setvar('head', getHead($cfg['_ID_MRTG']));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_MRTG']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -60,7 +60,7 @@ for ($i = 0; $i < 20 ; $i++) {
 $tmpl->setloop('nice_list', $nice_list);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead("Administration - Transfer Settings"));
+tmplSetTitleBar("Administration - Transfer Settings");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -64,7 +64,7 @@ if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 	$tmpl->setvar('is_file', 0);
 }
 //
-$tmpl->setvar('head', getHead('Uncompressing File', false));
+tmplSetTitleBar('Uncompressing File', false]);
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_GET["iid"]);
 

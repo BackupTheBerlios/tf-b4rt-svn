@@ -127,7 +127,7 @@ $tmpl->setvar('label_sharekill', $label_sharekill);
 //
 $tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&torrent='.$torrent.'&alias='.$alias);
 //
-$tmpl->setvar('head', getHead($cfg['_DOWNLOADDETAILS'], false));
+tmplSetTitleBar($cfg['_DOWNLOADDETAILS'], false);
 $tmpl->setvar('foot', getFoot(false));
 
 ?>

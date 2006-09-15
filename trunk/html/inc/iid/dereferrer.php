@@ -38,7 +38,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "dereferrer.tmpl");
 $tmpl->setvar('url', $url);
 $tmpl->setvar('meta_refresh', '0;URL='.$url);
 //
-$tmpl->setvar('head', getHead("dereferrer", false));
+tmplSetTitleBar($cfg["pagetitle"].' - dereferrer', false);
 $tmpl->setvar('foot', getFoot(false));
 $tmpl->setvar('iid', $_GET["iid"]);
 $tmpl->pparse();

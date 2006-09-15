@@ -43,7 +43,7 @@ $tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
 $tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
+tmplSetTitleBar("Administration - Add User");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

@@ -76,7 +76,7 @@ $tmpl->setvar('_SEND', $cfg['_SEND']);
 $tmpl->setvar('_SENDTOALLUSERS', $cfg['_SENDTOALLUSERS']);
 $tmpl->setvar('_FORCEUSERSTOREAD', $cfg['_FORCEUSERSTOREAD']);
 //
-$tmpl->setvar('head', getHead($cfg['_SENDMESSAGETITLE']));
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_SENDMESSAGETITLE']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

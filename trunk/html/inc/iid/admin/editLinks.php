@@ -64,7 +64,7 @@ $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 $tmpl->setvar('_EDIT', $cfg['_EDIT']);
 //
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead($cfg['_ADMINEDITLINKS']));
+tmplSetTitleBar($cfg['_ADMINEDITLINKS']);
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 

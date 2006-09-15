@@ -43,7 +43,7 @@ if ((empty($_REQUEST["dos"]) && empty($_REQUEST["win"])) || !empty($_REQUEST["do
 else
 	$tmpl->setvar('output', htmlentities( $output ));
 //
-$tmpl->setvar('head', getHead("View NFO"));
+tmplSetTitleBar($cfg["pagetitle"].' - View NFO');
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

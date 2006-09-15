@@ -120,7 +120,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 //
 $tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 //
-$tmpl->setvar('head', getHead("Torrent ".$cfg['_SEARCH']));
+tmplSetTitleBar("Torrent ".$cfg['_SEARCH']);
 $tmpl->setvar('foot', getFoot());
 $tmpl->setvar('iid', $_GET["iid"]);
 

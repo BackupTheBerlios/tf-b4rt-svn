@@ -28,7 +28,7 @@ $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 //
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('menu', getMenu());
-$tmpl->setvar('head', getHead($cfg['_ADMINISTRATION']));
+tmplSetTitleBar("Administration - Show Users");
 $tmpl->setvar('foot', getFoot(true));
 $tmpl->setvar('iid', $_GET["iid"]);
 
