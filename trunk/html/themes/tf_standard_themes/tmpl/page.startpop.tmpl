@@ -46,7 +46,7 @@
 								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
 								<td align="center" colspan="2">
 									<tmpl_if name="enableBtclientChooser">
-										BitTorrent-Client : <tmpl_var name="btClientSelect">
+										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
 									<tmpl_else>
 										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
 									</tmpl_if>
@@ -116,7 +116,7 @@
 								<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
 								<td align="center" colspan="4">
 									<tmpl_if name="enableBtclientChooser">
-										BitTorrent-Client : <tmpl_var name="btClientSelect">
+										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
 									<tmpl_else>
 										<input type="hidden" name="btclient" value="<tmpl_var name="btclientDefault">">
 									</tmpl_if>

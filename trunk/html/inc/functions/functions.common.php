@@ -85,33 +85,26 @@ function GoodLookingStatsForm() {
 }
 
 /**
- * get BTClient Select
+ * Set Client Select Form vars
  *
  * @param $btclient
- * @return string
  */
-function getBTClientSelect($btclient = 'tornado') {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.clientSelectForm.tmpl");
-	// set some vars
+function tmplSetClientSelectForm($btclient = 'tornado') {
+	global $cfg, $tmpl;
 	$btclients = array("tornado", "transmission", "mainline");
 	$client_list = array();
-	foreach($btclients as $client) {
-		$selected = 0;
-		if($btclient == $client) {
+	foreach ($btclients as $client) {
+		if ($btclient == $client)
 			$selected = 1;
-		}
+		else
+			$selected = 0;
 		array_push($client_list, array(
 			'client' => $client,
 			'selected' => $selected,
 			)
 		);
 	}
-	$tmpl->setloop('client_list', $client_list);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
+	$tmpl->setloop('clientSelectForm_client_list', $client_list);
 }
 
 /**

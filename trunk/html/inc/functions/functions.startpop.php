@@ -43,7 +43,7 @@ function setVarsFromPersistentSettings() {
 		$tmpl->setvar('selected', "");
 	// btclient-chooser
 	if ($cfg["enable_btclient_chooser"] != 0)
-		$tmpl->setvar('btClientSelect', getBTClientSelect($cfg["btclient"]));
+		tmplSetClientSelectForm($cfg["btclient"]);
 	else
 		$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 	// savepath
