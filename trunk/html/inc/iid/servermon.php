@@ -43,7 +43,7 @@ $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
 //
-$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]." - Server Monitor", false));
+tmplSetTitleBar($cfg["pagetitle"]." - Server Monitor", false);
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_GET["iid"]);
 

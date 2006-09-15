@@ -810,7 +810,7 @@ $tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
 $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_USER', $cfg['_USER']);
 //
-$tmpl->setvar('titleBar', getTitleBar($cfg["pagetitle"]));
+tmplSetTitleBar($cfg["pagetitle"]);
 $tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
 //
 if (isset($_GET["iid"]))

@@ -131,8 +131,9 @@ switch ($client) {
 		break;
 }
 //
-$tmpl->setvar('getTitleBar', getTitleBar($cfg["pagetitle"]." - Torrent Maker", false));
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
+//
+tmplSetTitleBar($cfg["pagetitle"]." - Torrent Maker", false);
 //
 $tmpl->setvar('iid', $_GET["iid"]);
 

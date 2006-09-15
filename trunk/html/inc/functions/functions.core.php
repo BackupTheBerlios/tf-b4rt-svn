@@ -58,6 +58,32 @@ function tmplGetInstance($theme, $template) {
 }
 
 /**
+ * set Title Bar vars.
+ *
+ * @param $pageTitleText
+ * @param $showButtons
+ */
+function tmplSetTitleBar($pageTitleText, $showButtons = true) {
+	global $cfg, $db, $tmpl;
+	// set some vars
+	$tmpl->setvar('titleBar_title', $pageTitleText);
+	$tmpl->setvar('titleBar_showButtons', $showButtons);
+	$tmpl->setvar('_TORRENTS', $cfg['_TORRENTS']);
+	$tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
+	$tmpl->setvar('_UPLOADHISTORY', $cfg['_UPLOADHISTORY']);
+	$tmpl->setvar('_MYPROFILE', $cfg['_MYPROFILE']);
+	$tmpl->setvar('_MESSAGES', $cfg['_MESSAGES']);
+	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
+	if ($showButtons) {
+		// Does the user have messages?
+		$sql = "select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew = 1";
+		$number_messages = $db->GetOne($sql);
+		showError($db,$sql);
+		$tmpl->setvar('titleBar_number_messages', $number_messages);
+	}
+}
+
+/**
  * fill Search Engine Drop Down List
  *
  * @param $selectedEngine
@@ -101,11 +127,12 @@ function getHead($subTopic, $showButtons = true) {
 	// create template-instance
 	$tmpl = tmplGetInstance($cfg["theme"], "inc.getHead.tmpl");
 	// set some vars
-	$tmpl->setvar('TitleBar', getTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons));
+	tmplSetTitleBar($cfg["pagetitle"].' - '.$subTopic, $showButtons);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
 }
+
 /**
  * get the footer portion
  *
@@ -120,38 +147,6 @@ function getFoot($showReturn = true) {
 	$tmpl->setvar('showReturn', $showReturn);
 	$tmpl->setvar('_RETURNTOTRANSFERS', $cfg['_RETURNTOTRANSFERS']);
 	$tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
- * get Title Bar.
- *
- * @param $pageTitleText
- * @param $showButtons
- * @return string
- */
-function getTitleBar($pageTitleText, $showButtons=true) {
-	global $cfg, $db;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getTitleBar.tmpl");
-	// set some vars
-	$tmpl->setvar('pageTitleText', $pageTitleText);
-	$tmpl->setvar('showButtons', $showButtons);
-	$tmpl->setvar('_TORRENTS', $cfg['_TORRENTS']);
-	$tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
-	$tmpl->setvar('_UPLOADHISTORY', $cfg['_UPLOADHISTORY']);
-	$tmpl->setvar('_MYPROFILE', $cfg['_MYPROFILE']);
-	$tmpl->setvar('_MESSAGES', $cfg['_MESSAGES']);
-	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
-	if ($showButtons) {
-		// Does the user have messages?
-		$sql = "select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew=1";
-		$number_messages = $db->GetOne($sql);
-		showError($db,$sql);
-		$tmpl->setvar('number_messages', $number_messages);
-	}
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
