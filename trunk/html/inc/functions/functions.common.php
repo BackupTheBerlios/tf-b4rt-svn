@@ -152,21 +152,6 @@ function tmplSetMoveSettings() {
 }
 
 /**
- * get form of sort-order-settings
- *
- */
-function getSortOrderSettings() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.sortOrderSettings.tmpl");
-	// set some vars
-	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
  * perform Authentication
  *
  * @param $username
