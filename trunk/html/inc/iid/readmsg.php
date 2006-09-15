@@ -96,7 +96,17 @@ if (isset($_REQUEST['mid'])) {
 		$tmpl->setvar('no_inx', 0);
 		$tmpl->setloop('message_list', $message_list);
 	}
-	$tmpl->setvar('messageList', getMessageList());
+	$users = GetUsers();
+	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
+	$tmpl->setvar('_COMPOSE', $cfg['_COMPOSE']);
+	$user = array();
+	for($inx = 0; $inx < sizeof($users); $inx++) {
+		array_push($user, array(
+			'user' => $users[$inx],
+			)
+		);
+	}
+	$tmpl->setloop('messageList_user', $user);
 }
 
 // set vars

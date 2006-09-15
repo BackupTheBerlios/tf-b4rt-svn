@@ -129,32 +129,6 @@ function tmplSetDirTree($dir, $maxdepth) {
 }
 
 /**
- * get dropdown list to send message to a user
- *
- * @return string
- */
-function getMessageList() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.messageList.tmpl");
-	// some vars
-	$users = GetUsers();
-	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
-	$tmpl->setvar('_COMPOSE', $cfg['_COMPOSE']);
-	$user = array();
-	for($inx = 0; $inx < sizeof($users); $inx++) {
-		array_push($user, array(
-			'user' => $users[$inx],
-			)
-		);
-	}
-	$tmpl->setloop('user', $user);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
  * get form of move-settings
  *
  */

@@ -28,7 +28,20 @@
 		</tr>
 	</table>
 <tmpl_else>
-	<tmpl_var name="messageList">
+	<div align="center">
+		<table border="0" cellpadding="0" cellspacing="0">
+			<form name="formMessage" action="index.php?iid=message" method="post">
+				<tr><td><tmpl_var name="_SENDMESSAGETO">
+					<select name="to_user">
+						<tmpl_loop name="messageList_user">
+							<option><tmpl_var name="user"></option>
+						</tmpl_loop>
+					</select>
+					<input type="Submit" value="<tmpl_var name="_COMPOSE">">
+				</td></tr>
+			</form>
+		</table>
+	</div>
 	<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 		<tr>
 			<td bgcolor="#d6dfe6" width="20%"><div align=center class="title"><tmpl_var name="_FROM"></div></td>
