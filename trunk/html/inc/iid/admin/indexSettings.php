@@ -41,7 +41,6 @@ $tmpl->setvar('bandwidth_down', $cfg["bandwidth_down"]);
 $tmpl->setvar('enable_goodlookstats', $cfg["enable_goodlookstats"]);
 $tmpl->setvar('enable_bigboldwarning', $cfg["enable_bigboldwarning"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);
-tmplFillSearchEngineDDL($cfg["searchEngine"]);
 $tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
 $tmpl->setvar('show_server_load', $cfg["show_server_load"]);
 $tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
@@ -59,10 +58,10 @@ $tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
 tmplSetTitleBar("Administration - Index Settings");
 tmplSetAdminMenu();
 tmplSetGoodLookingStatsForm();
-$tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
+tmplSetIndexPageSettingsForm();
+tmplFillSearchEngineDDL($cfg["searchEngine"]);
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
-
 // parse template
 $tmpl->pparse();
 

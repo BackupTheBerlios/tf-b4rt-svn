@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 /**
- * get form of index page settings (0-2047)
+ * set vars for form of index page settings (0-2047)
  *
  * #
  * Torrent
@@ -40,27 +40,21 @@
  * TorrentClient [11]
  *
  */
-function IndexPageSettingsForm() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.indexPageSettingsForm.tmpl");
-	// some vars
+function tmplSetIndexPageSettingsForm() {
+	global $cfg, $tmpl;
 	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
-	$tmpl->setvar('index_page_settings_0', $settingsIndexPage[0]);
-	$tmpl->setvar('index_page_settings_1', $settingsIndexPage[1]);
-	$tmpl->setvar('index_page_settings_2', $settingsIndexPage[2]);
-	$tmpl->setvar('index_page_settings_3', $settingsIndexPage[3]);
-	$tmpl->setvar('index_page_settings_4', $settingsIndexPage[4]);
-	$tmpl->setvar('index_page_settings_5', $settingsIndexPage[5]);
-	$tmpl->setvar('index_page_settings_6', $settingsIndexPage[6]);
-	$tmpl->setvar('index_page_settings_7', $settingsIndexPage[7]);
-	$tmpl->setvar('index_page_settings_8', $settingsIndexPage[8]);
-	$tmpl->setvar('index_page_settings_9', $settingsIndexPage[9]);
-	$tmpl->setvar('index_page_settings_10', $settingsIndexPage[10]);
-	$tmpl->setvar('index_page_settings_11', $settingsIndexPage[11]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
+	$tmpl->setvar('indexPageSettingsForm_settings_0', $settingsIndexPage[0]);
+	$tmpl->setvar('indexPageSettingsForm_settings_1', $settingsIndexPage[1]);
+	$tmpl->setvar('indexPageSettingsForm_settings_2', $settingsIndexPage[2]);
+	$tmpl->setvar('indexPageSettingsForm_settings_3', $settingsIndexPage[3]);
+	$tmpl->setvar('indexPageSettingsForm_settings_4', $settingsIndexPage[4]);
+	$tmpl->setvar('indexPageSettingsForm_settings_5', $settingsIndexPage[5]);
+	$tmpl->setvar('indexPageSettingsForm_settings_6', $settingsIndexPage[6]);
+	$tmpl->setvar('indexPageSettingsForm_settings_7', $settingsIndexPage[7]);
+	$tmpl->setvar('indexPageSettingsForm_settings_8', $settingsIndexPage[8]);
+	$tmpl->setvar('indexPageSettingsForm_settings_9', $settingsIndexPage[9]);
+	$tmpl->setvar('indexPageSettingsForm_settings_10', $settingsIndexPage[10]);
+	$tmpl->setvar('indexPageSettingsForm_settings_11', $settingsIndexPage[11]);
 }
 
 /**
@@ -99,35 +93,6 @@ function tmplSetClientSelectForm($btclient = 'tornado') {
 		);
 	}
 	$tmpl->setloop('clientSelectForm_client_list', $client_list);
-}
-
-/**
- * get form of move-settings
- *
- */
-function getMoveSettings() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.moveSettings.tmpl");
-	// set some vars
-	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
-		$dirs = split(":", trim($cfg["move_paths"]));
-		$dir_list = array();
-		foreach ($dirs as $dir) {
-			$target = trim($dir);
-			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
-				array_push($dir_list, array(
-					'target' => $target,
-					)
-				);
-			}
-		}
-		$tmpl->setloop('move_list', $dir_list);
-	}
-	$tmpl->setvar('move_paths', $cfg["move_paths"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**
@@ -184,6 +149,35 @@ function getMessageList() {
 		);
 	}
 	$tmpl->setloop('user', $user);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get form of move-settings
+ *
+ */
+function getMoveSettings() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.moveSettings.tmpl");
+	// set some vars
+	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
+		$dirs = split(":", trim($cfg["move_paths"]));
+		$dir_list = array();
+		foreach ($dirs as $dir) {
+			$target = trim($dir);
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
+				array_push($dir_list, array(
+					'target' => $target,
+					)
+				);
+			}
+		}
+		$tmpl->setloop('move_list', $dir_list);
+	}
+	$tmpl->setvar('move_paths', $cfg["move_paths"]);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
