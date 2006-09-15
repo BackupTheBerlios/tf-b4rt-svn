@@ -129,14 +129,11 @@ function tmplSetDirTree($dir, $maxdepth) {
 }
 
 /**
- * get form of move-settings
+ * set vars for form of move-settings
  *
  */
-function getMoveSettings() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.moveSettings.tmpl");
-	// set some vars
+function tmplSetMoveSettings() {
+	global $cfg, $tmpl;
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$dirs = split(":", trim($cfg["move_paths"]));
 		$dir_list = array();
@@ -149,12 +146,9 @@ function getMoveSettings() {
 				);
 			}
 		}
-		$tmpl->setloop('move_list', $dir_list);
+		$tmpl->setloop('moveSettings_move_list', $dir_list);
 	}
-	$tmpl->setvar('move_paths', $cfg["move_paths"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
+	$tmpl->setvar('moveSettings_move_paths', $cfg["move_paths"]);
 }
 
 /**

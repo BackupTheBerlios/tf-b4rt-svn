@@ -56,7 +56,7 @@ $tmpl->setvar('enable_rar', $cfg["enable_rar"]);
 $tmpl->setvar('enable_sfvcheck', $cfg["enable_sfvcheck"]);
 $tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);
-$tmpl->setvar('moveSettings', getMoveSettings());
+tmplSetMoveSettings();
 //
 tmplSetTitleBar("Administration - Dir Settings");
 tmplSetAdminMenu();
