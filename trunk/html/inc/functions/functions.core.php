@@ -28,7 +28,7 @@
  * @return vlib-template-instance
  */
 function tmplGetInstance($theme, $template) {
-	global $cfg;
+	global $cfg, $isAdmin;
 	// theme-switch
 	if ((strpos($theme, '/')) === false)
 		$path = "themes/".$theme."/tmpl/";
@@ -45,6 +45,7 @@ function tmplGetInstance($theme, $template) {
 			break;
 	}
 	//  set common template-vars
+	$tmpl->setvar('isAdmin', $isAdmin);
 	$tmpl->setvar('theme', $theme);
     $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
     $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
@@ -150,7 +151,6 @@ function getTitleBar($pageTitleText, $showButtons=true) {
 		$number_messages = $db->GetOne($sql);
 		showError($db,$sql);
 		$tmpl->setvar('number_messages', $number_messages);
-		$tmpl->setvar('is_admin', IsAdmin());
 	}
 	// grab the template
 	$output = $tmpl->grab();
@@ -1033,10 +1033,10 @@ function resetTorrentTotals($torrent, $delete = false) {
  * @return boolean of success
  */
 function deleteTransfer($transfer, $alias_file) {
+	global $cfg, $isAdmin;
 	$delfile = $transfer;
-	global $cfg;
 	$transferowner = getOwner($delfile);
-	if (($cfg["user"] == $transferowner) || IsAdmin()) {
+	if (($cfg["user"] == $transferowner) || $isAdmin) {
 		require_once("inc/classes/AliasFile.php");
 		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
 			// this is a torrent-client
@@ -1080,9 +1080,9 @@ function deleteTransfer($transfer, $alias_file) {
  * @param $torrent name of the torrent
  */
 function deleteTorrentData($torrent) {
+	global $cfg, $isAdmin;
 	$element = $torrent;
-	global $cfg;
-	if (($cfg["user"] == getOwner($element)) || IsAdmin()) {
+	if (($cfg["user"] == getOwner($element)) || $isAdmin) {
 		# the user is the owner of the torrent -> delete it
 		require_once('inc/classes/BDecode.php');
 		$ftorrent=$cfg["transfer_file_path"].$element;
@@ -1840,7 +1840,7 @@ function getTransferListArray() {
 	}
 	$boolCond = true;
 	if ($cfg['enable_restrictivetview'] == 1)
-		$boolCond = IsAdmin();
+		$boolCond = $isAdmin;
 	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
 		foreach($arListTorrent as $torrentrow)
 			array_push($retVal, $torrentrow);
@@ -2176,7 +2176,7 @@ function GetSpeedValue($inValue) {
 function IsAdmin($user="") {
 	global $cfg, $db;
 	$isAdmin = false;
-	if($user == "")
+	if ($user == "")
 		$user = $cfg["user"];
 	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
 	$user_level = $db->GetOne($sql);

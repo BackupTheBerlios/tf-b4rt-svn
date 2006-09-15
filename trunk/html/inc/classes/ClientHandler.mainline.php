@@ -48,12 +48,13 @@ class ClientHandlerMainline extends ClientHandler
      * @param $enqueue (boolean) : enqueue ?
      */
     function startClient($transfer, $interactive, $enqueue = false) {
+		global $isAdmin;
 
         // do mainline special-pre-start-checks
         // check to see if the path to the python script is valid
         if (!is_file($this->mainlineBin)) {
             AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->mainlineBin." is not valid");
-            if (IsAdmin()) {
+            if ($isAdmin) {
                 $this->status = -1;
                 header("location: index.php?iid=admin&op=configSettings");
                 return;

@@ -558,9 +558,6 @@ $tmpl->setvar('settings_9', $settings[9]);
 $tmpl->setvar('settings_10', $settings[10]);
 $tmpl->setvar('settings_11', $settings[11]);
 
-$isAdmin = IsAdmin();
-$tmpl->setvar('isAdmin', $isAdmin);
-
 if (sizeof($arUserTorrent) > 0)
 	$tmpl->setvar('are_user_torrent', 1);
 $boolCond = true;

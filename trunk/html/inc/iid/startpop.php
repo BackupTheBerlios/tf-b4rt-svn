@@ -71,14 +71,8 @@ if ($torrentExists) {
 	else
 		$tmpl->setvar('is_skip', 0);
 }
-// admin
-$isAdmin = IsAdmin();
-if ($isAdmin)
-	$tmpl->setvar('is_admin', 1);
-else
-	$tmpl->setvar('is_admin', 1);
 // Force Queuing if not an admin.
-if($queueActive)
+if ($queueActive)
 	$tmpl->setvar('is_queue', 1);
 else
 	$tmpl->setvar('is_queue', 0);

@@ -152,6 +152,7 @@ class ClientHandler
      * @param $enqueue (boolean) : enqueue ?
      */
     function prepareStartClient($transfer, $interactive, $enqueue = false) {
+    	global $isAdmin;
         if ($this->status < 1) {
             $this->status = -1;
             $this->messages .= "Error. ClientHandler in wrong state on prepare-request.";
@@ -202,7 +203,7 @@ class ClientHandler
             $this->skip_hash_check = getRequestVar('skiphashcheck');
 	        // queue
 	        if ($enqueue) {
-	            if(IsAdmin()) {
+	            if($isAdmin) {
 	                $this->queue = getRequestVar('queue');
 	                if($this->queue == 'on')
 	                    $this->queue = "1";
@@ -220,7 +221,7 @@ class ClientHandler
             $this->superseeder = 0;
 			// queue
 	        if ($enqueue) {
-	            if(IsAdmin()) {
+	            if($isAdmin) {
 	                if($enqueue)
 	                    $this->queue = "1";
 	                else
@@ -272,7 +273,7 @@ class ClientHandler
         // check target-directory, create if not present
 		if (!(checkDirectory($this->savepath, 0777))) {
             AuditAction($this->cfg["constants"]["error"], "Error checking " . $this->savepath . ".");
-            if (IsAdmin()) {
+            if ($isAdmin) {
                 $this->status = -1;
                 header("location: index.php?iid=admin&op=configSettings");
                 return;

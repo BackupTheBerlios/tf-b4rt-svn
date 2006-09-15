@@ -41,9 +41,6 @@ $tar = getRequestVar('tar');
 $dir = stripslashes(urldecode(getRequestVar('dir')));
 $multidel = getRequestVar('multidel');
 
-// check if user is admin, check once use often
-$isAdmin = IsAdmin($cfg["user"]);
-
 /*******************************************************************************
  * chmod
  ******************************************************************************/

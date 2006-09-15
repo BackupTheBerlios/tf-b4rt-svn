@@ -26,8 +26,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "who.tmpl");
 // set vars
 $tmpl->setvar('result1', shell_exec("w"));
 $tmpl->setvar('result2', shell_exec("free -mo"));
-if (IsAdmin()) {
-	$tmpl->setvar('is_admin', 1);
+if ($isAdmin) {
 	require_once("inc/classes/ClientHandler.php");
 	// array with all clients
 	$clients = array('tornado', 'transmission', 'mainline', 'wget');
@@ -44,8 +43,6 @@ if (IsAdmin()) {
 		unset($clientHandler);
 	}
 	$tmpl->setloop('process_list', $process_list);
-} else {
-	$tmpl->setvar('is_admin', 0);
 }
 //
 $tmpl->setvar('head', getHead($cfg['_SERVERSTATS']));

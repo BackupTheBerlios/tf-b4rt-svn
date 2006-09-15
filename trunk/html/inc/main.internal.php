@@ -106,6 +106,9 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	checkMainDirectories();
 }
 
+// set admin-var
+$isAdmin = IsAdmin();
+
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
 

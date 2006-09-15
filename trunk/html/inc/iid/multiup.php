@@ -117,9 +117,6 @@ if ($queueActive)
 	$tmpl->setvar('queueActive', 1);
 else
 	$tmpl->setvar('queueActive', 0);
-// admin
-$isAdmin = IsAdmin();
-$tmpl->setvar('isAdmin', $isAdmin);
 //
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

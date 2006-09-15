@@ -51,12 +51,14 @@ class ClientHandlerTransmission extends ClientHandler
      */
     function startClient($transfer, $interactive, $enqueue = false) {
 
+    	global $isAdmin;
+
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
         if (!is_file($this->cfg["btclient_transmission_bin"])) {
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["btclient_transmission_bin"]." is not valid");
             $this->status = -1;
-            if (IsAdmin()) {
+            if ($isAdmin) {
                 header("location: index.php?iid=admin&op=configSettings");
                 return;
             } else {

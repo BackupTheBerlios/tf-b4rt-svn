@@ -65,6 +65,9 @@ $REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revisio
 $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
+// set admin-var
+$isAdmin = IsAdmin();
+
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------

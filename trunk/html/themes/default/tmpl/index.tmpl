@@ -31,7 +31,7 @@
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_UPLOAD"></option>
 											<tmpl_if name="queueActive" value="1">
-												<tmpl_if name="isAdmin" value="1">
+												<tmpl_if name="isAdmin">
 													<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
 												</tmpl_if>
 												<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
@@ -57,7 +57,7 @@
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_GETFILE"></option>
 											<tmpl_if name="queueActive" value="1">
-												<tmpl_if name="isAdmin" value="1">
+												<tmpl_if name="isAdmin">
 													<option value="2"><tmpl_var name="_GETFILE">+Start</option>
 												</tmpl_if>
 												<option value="3"><tmpl_var name="_GETFILE">+Queue</option>

@@ -56,7 +56,7 @@ if ($cfg['enable_xfer'] == 1) {
 		$tmpl->setvar('xfer_month', getXferBar($cfg['xfer_month'],$xfer_total['month']['total'],$cfg['_XFERTHRU'].' '.$monthText.':'));
 	if ($cfg['xfer_total'])
 		$tmpl->setvar('xfer_total', getXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
-	if (($cfg['enable_public_xfer'] == 1 ) || IsAdmin()) {
+	if (($cfg['enable_public_xfer'] == 1 ) || $isAdmin) {
 		$tmpl->setvar('show_xfer', 1);
 		$sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
 		$rtnValue = $db->GetCol($sql);

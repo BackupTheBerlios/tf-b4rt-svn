@@ -19,7 +19,7 @@
 								<font size=2 face=Arial><tmpl_var name="_YOURMESSAGE">:<br>
 								<textarea cols="72" rows="10" name="message" wrap="hard" tabindex="1"><tmpl_var name="message"></textarea><br>
 								<input type="Checkbox" name="to_all" value=1><tmpl_var name="_SENDTOALLUSERS">
-								<tmpl_if name="is_admin">
+								<tmpl_if name="isAdmin">
 									&nbsp;&nbsp;&nbsp;&nbsp;
 									<input type="Checkbox" name="force_read" value=1><tmpl_var name="_FORCEUSERSTOREAD">
 								</tmpl_if>

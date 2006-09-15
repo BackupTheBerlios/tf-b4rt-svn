@@ -40,7 +40,7 @@ if (!empty($message)) {
 	else
 		$to_all = 0;
 	$force_read = getRequestVar('force_read');
-	if (!empty($force_read) && IsAdmin())
+	if (!empty($force_read) && $isAdmin)
 		$force_read = 1;
 	else
 		$force_read = 0;
@@ -68,10 +68,6 @@ $tmpl = tmplGetInstance($cfg["theme"], "message.tmpl");
 $tmpl->setvar('to_user', $to_user);
 $tmpl->setvar('user', $cfg["user"]);
 $tmpl->setvar('message', $message);
-if (IsAdmin())
-	$tmpl->setvar('is_admin', 1);
-else
-	$tmpl->setvar('is_admin', 0);
 //
 $tmpl->setvar('_TO', $cfg['_TO']);
 $tmpl->setvar('_FROM', $cfg['_FROM']);
