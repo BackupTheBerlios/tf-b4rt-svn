@@ -58,10 +58,10 @@ else
 switch ($cfg["enable_home_dirs"]) {
     case 1:
     default:
-    	$tmpl->setvar('arDirTree', dirTree2($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]));
+    	tmplSetDirTree($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]);
 		break;
     case 0:
-    	$tmpl->setvar('arDirTree', dirTree2($cfg["path"].$cfg["path_incoming"].'/', $cfg["maxdepth"]));
+    	tmplSetDirTree($cfg["path"].$cfg["path_incoming"].'/', $cfg["maxdepth"]);
     	break;
 }
 if ($torrentExists) {

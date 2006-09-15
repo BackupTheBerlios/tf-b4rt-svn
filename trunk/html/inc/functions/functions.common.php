@@ -108,21 +108,6 @@ function tmplSetClientSelectForm($btclient = 'tornado') {
 }
 
 /**
- * get form of sort-order-settings
- *
- */
-function getSortOrderSettings() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.sortOrderSettings.tmpl");
-	// set some vars
-	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
-}
-
-/**
  * get form of move-settings
  *
  */
@@ -152,44 +137,36 @@ function getMoveSettings() {
 }
 
 /**
- * Specific save path
+ * set dir tree vars
  *
  * @param $dir
  * @param $maxdepth
  * @return unknown
  */
-function dirTree2($dir, $maxdepth) {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.dirTree2.tmpl");
-	// set some vars
-	$tmpl->setvar('dir', $dir);
+function tmplSetDirTree($dir, $maxdepth) {
+	global $cfg, $tmpl;
+	$tmpl->setvar('dirtree_dir', $dir);
 	if (is_numeric ($maxdepth)) {
 		$retvar_list = array();
 		if ($maxdepth == 0) {
-			//$last = exec ("du ".$dir." | cut -f 2- | sort", $retval);
 			$last = exec ("find ".$dir." -type d | sort && echo", $retval);
-			for ($i = 1; $i < (count ($retval) - 1); $i++){
+			for ($i = 1; $i < (count ($retval) - 1); $i++) {
 				array_push($retvar_list, array(
 					'retval' => $retval[$i],
 					)
 				);
 			}
 		} elseif ($maxdepth > 0) {
-			//$last = exec ("du --max-depth=".$maxdepth." ".$dir." | cut -f 2- | sort", $retval);
 			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort && echo", $retval);
-			for ($i = 1; $i < (count ($retval) - 1); $i++){
+			for ($i = 1; $i < (count ($retval) - 1); $i++) {
 				array_push($retvar_list, array(
 					'retval' => $retval[$i],
 					)
 				);
 			}
 		}
-		$tmpl->setloop('retvar_list', $retvar_list);
+		$tmpl->setloop('dirtree_retvar_list', $retvar_list);
 	}
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**
@@ -213,6 +190,21 @@ function getMessageList() {
 		);
 	}
 	$tmpl->setloop('user', $user);
+	// grab the template
+	$output = $tmpl->grab();
+	return $output;
+}
+
+/**
+ * get form of sort-order-settings
+ *
+ */
+function getSortOrderSettings() {
+	global $cfg;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "component.sortOrderSettings.tmpl");
+	// set some vars
+	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
 	// grab the template
 	$output = $tmpl->grab();
 	return $output;
