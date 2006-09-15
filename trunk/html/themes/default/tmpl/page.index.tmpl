@@ -209,7 +209,11 @@
 			</tr>
 			<tr>
 				<td bgcolor="#d6dfe6" colspan="2">
-					<tmpl_var name="driveSpaceBar">
+					<tmpl_if name="drivespacebar_type" value="xfer">
+					    <tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
+					<tmpl_else>
+					    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
+					</tmpl_if>
 					<tmpl_if name="xfer_realtime">
 						<table width="100%" border="0" cellpadding="0" cellspacing="0">
 							<tr>
@@ -249,7 +253,7 @@
 					<td bgcolor="#EEEEEE" colspan="2" nowrap>
 						<div align="center">
 							<font face="Arial" size="2" color="red"><strong>
-								Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="formatFreeSpace"> left!
+								Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
 							</strong></font>
 						</div>
 					</td>

@@ -56,8 +56,8 @@ if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 	$tmpl->setvar('scrape', 0);
 }
 //
-$tmpl->setvar('driveSpaceBar', getDriveSpaceBar(getDriveSpace($cfg["path"])));
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_TRANSFERDETAILS']);
+tmplSetDriveSpaceBar();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

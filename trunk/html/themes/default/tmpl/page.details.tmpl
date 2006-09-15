@@ -3,7 +3,11 @@
 <table width="740" border=0 cellpadding=0 cellspacing=0>
 	<tr>
 		<td>
-			<tmpl_var name="driveSpaceBar">
+			<tmpl_if name="drivespacebar_type" value="xfer">
+			    <tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
+			<tmpl_else>
+			    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
+			</tmpl_if>
 		</td>
 	</tr>
 </table>

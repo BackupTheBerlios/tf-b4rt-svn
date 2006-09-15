@@ -158,9 +158,6 @@ if (isset($_REQUEST["QEntry"])) {
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.index.tmpl");
 
-// drivespace
-$drivespace = getDriveSpace($cfg["path"]);
-$formatFreeSpace = formatFreeSpace($cfg["free_space"]);
 // connections
 if ($cfg["index_page_connections"] != 0) {
 	$netstatConnectionsSum = @netstatConnectionsSum();
@@ -624,7 +621,7 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	}
 	if ($settingsHackStats[4] == 1) {
 		$tmpl->setvar('settingsHackStats5', 1);
-		$tmpl->setvar('settingsHackStats55', $formatFreeSpace);
+		$tmpl->setvar('settingsHackStats55', $freeSpaceFormatted);
 	}
 	if ($settingsHackStats[5] == 1) {
 		$tmpl->setvar('settingsHackStats6', 1);
@@ -674,7 +671,7 @@ if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 }
 
 // drivespace-warning
-if ($drivespace >= 98) {
+if ($driveSpace >= 98) {
 	if ($cfg['enable_bigboldwarning'] != 0)
 		$tmpl->setvar('enable_bigboldwarning', 1);
 	else
@@ -715,7 +712,7 @@ if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('totalspeed11', @number_format($sumMaxRate, 2));
 	$tmpl->setvar('id_connections1', $netstatConnectionsSum);
 	$tmpl->setvar('id_connections11', $netstatConnectionsMax);
-	$tmpl->setvar('drivespace1', $formatFreeSpace);
+	$tmpl->setvar('drivespace1', $freeSpaceFormatted);
 	$tmpl->setvar('serverload1', $loadavgString);
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
@@ -759,8 +756,8 @@ $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('sortOrder', $sortOrder);
-$tmpl->setvar('drivespace', $drivespace);
-$tmpl->setvar('formatFreeSpace', $formatFreeSpace);
+$tmpl->setvar('drivespace', $driveSpace);
+$tmpl->setvar('freeSpaceFormatted', $freeSpaceFormatted);
 tmplFillSearchEngineDDL($cfg["searchEngine"]);
 //
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
@@ -811,7 +808,7 @@ $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_USER', $cfg['_USER']);
 //
 tmplSetTitleBar($cfg["pagetitle"]);
-$tmpl->setvar('driveSpaceBar', getDriveSpaceBar($drivespace));
+tmplSetDriveSpaceBar();
 //
 if (isset($_GET["iid"]))
 	$tmpl->setvar('iid', $_GET["iid"]);

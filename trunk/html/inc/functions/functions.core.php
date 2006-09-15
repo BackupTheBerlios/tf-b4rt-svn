@@ -131,44 +131,23 @@ function tmplFillSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = f
 /**
  * drivespace bar
  *
- * @param $drivespace
- * @return
  */
-function getDriveSpaceBar($drivespace) {
-	global $cfg;
+function tmplSetDriveSpaceBar() {
+	global $cfg, $tmpl, $driveSpace, $freeSpaceFormatted;
+	$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
+	$tmpl->setvar('drivespacebar_type', $cfg['drivespacebar']);
+	$tmpl->setvar('drivespacebar_space', $driveSpace);
+	$tmpl->setvar('drivespacebar_space2', (100 - $driveSpace));
+	$tmpl->setvar('drivespacebar_freeSpace', " (".$freeSpaceFormatted.") Free");
 	switch ($cfg['drivespacebar']) {
-		case "tf":
-			// create template-instance
-			$tmpl = tmplGetInstance($cfg["theme"], "component.driveSpaceBar_tf.tmpl");
-			// set some vars
-			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
-			$tmpl->setvar('drivespace', $drivespace);
-			$tmpl->setvar('drivespace2', (100-$drivespace));
-			$freeSpace = "";
-			if ($drivespace > 20)
-				$freeSpace = " (".formatFreeSpace($cfg["free_space"])." Free)";
-			$tmpl->setvar('theme', $cfg["theme"]);
-			$tmpl->setvar('freeSpace', $freeSpace);
-			break;
 		case "xfer":
-			// create template-instance
-			$tmpl = tmplGetInstance($cfg["theme"], "component.driveSpaceBar_xfer.tmpl");
-			// set some vars
-			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
-			$tmpl->setvar('drivespace', $drivespace);
-			$tmpl->setvar('drivespace2', (100-$drivespace));
-			$freeSpace = ($drivespace) ? ' ('.formatFreeSpace($cfg['free_space']).') Free' : '';
 			$bgcolor = '#';
-			$bgcolor .= str_pad(dechex(256-256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
-			$bgcolor .= str_pad(dechex(256*((100-$drivespace)/100)),2,0,STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256 - 256*((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256 * ((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
 			$bgcolor .= '00';
-			$tmpl->setvar('bgcolor', $bgcolor);
-			$tmpl->setvar('freeSpace', $freeSpace);
-		break;
+			$tmpl->setvar('drivespacebar_bgcolor', $bgcolor);
+			break;
 	}
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
 }
 
 /**

@@ -54,7 +54,7 @@ if (isset($_SESSION['user'])) {
 if (isAuthenticated() == 1) {
 	// check if we are locked
 	if ($cfg["webapp_locked"] == 1) {
-	// only superadmin can login when we are locked
+		// only superadmin can login when we are locked
 		if (! IsSuperAdmin()) {
 			header('location: locked.php');
 			exit();
@@ -106,8 +106,14 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	checkMainDirectories();
 }
 
-// set admin-var
+// admin-var
 $isAdmin = IsAdmin();
+
+// drivespace-var
+$driveSpace = getDriveSpace($cfg["path"]);
+
+// free space-var
+$freeSpaceFormatted = formatFreeSpace($cfg["free_space"]);
 
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
