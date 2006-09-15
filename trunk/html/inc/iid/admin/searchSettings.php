@@ -24,7 +24,7 @@
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "admin/searchSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.admin.searchSettings.tmpl");
 
 // set vars
 $searchEngine = getRequestVar('searchEngine');

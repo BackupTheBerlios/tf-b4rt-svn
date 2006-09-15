@@ -49,7 +49,7 @@ function showError($db, $sql) {
 	if ($db->ErrorNo() != 0) {
 		require_once("themes/".$cfg["default_theme"]."/index.php");
 		require_once("inc/lib/vlib/vlibTemplate.php");
-		$tmpl = tmplGetInstance($cfg["default_theme"], "db.tmpl");
+		$tmpl = tmplGetInstance($cfg["default_theme"], "page.db.tmpl");
 		$tmpl->setvar('debug_sql', $cfg["debug_sql"]);
 		$tmpl->setvar('sql', $sql);
 		$tmpl->setvar('ErrorMsg', $db->ErrorMsg());

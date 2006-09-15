@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 define('_DEFAULT_TARGET','traffic');
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "mrtg.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.mrtg.tmpl");
 
 // request-vars
 if (isset($_REQUEST['mrtg_target']))

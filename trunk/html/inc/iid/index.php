@@ -156,7 +156,7 @@ if (isset($_REQUEST["QEntry"])) {
 // =============================================================================
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "index.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.index.tmpl");
 
 // drivespace
 $drivespace = getDriveSpace($cfg["path"]);

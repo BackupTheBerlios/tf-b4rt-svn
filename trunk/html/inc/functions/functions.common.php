@@ -514,7 +514,7 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 function IndexPageSettingsForm() {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.IndexPageSettingsForm.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.indexPageSettingsForm.tmpl");
 	// some vars
 	$settingsIndexPage = convertIntegerToArray($cfg["index_page_settings"]);
 	$tmpl->setvar('index_page_settings_0', $settingsIndexPage[0]);
@@ -541,7 +541,7 @@ function IndexPageSettingsForm() {
 function GoodLookingStatsForm() {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.GoodLookingStatsForm.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.goodLookingStatsForm.tmpl");
 	// some vars
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
 	$tmpl->setvar('hack_goodlookstats_settings_0', $settingsHackStats[0]);
@@ -648,7 +648,7 @@ function GetMessage($mid) {
 function getMessageList() {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getMessageList.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.messageList.tmpl");
 	// some vars
 	$users = GetUsers();
 	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
@@ -917,7 +917,7 @@ function loadLanguageFile($language) {
 function getBTClientSelect($btclient = 'tornado') {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getBTClientSelect.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.clientSelectForm.tmpl");
 	// set some vars
 	$btclients = array("tornado", "transmission", "mainline");
 	$client_list = array();
@@ -945,7 +945,7 @@ function getBTClientSelect($btclient = 'tornado') {
 function getSortOrderSettings() {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getSortOrderSettings.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.sortOrderSettings.tmpl");
 	// set some vars
 	$tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
 	// grab the template
@@ -960,7 +960,7 @@ function getSortOrderSettings() {
 function getMoveSettings() {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getMoveSettings.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.moveSettings.tmpl");
 	// set some vars
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
 		$dirs = split(":", trim($cfg["move_paths"]));
@@ -992,7 +992,7 @@ function getMoveSettings() {
 function dirTree2($dir, $maxdepth) {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.dirTree2.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.dirTree2.tmpl");
 	// set some vars
 	$tmpl->setvar('dir', $dir);
 	if (is_numeric ($maxdepth)) {

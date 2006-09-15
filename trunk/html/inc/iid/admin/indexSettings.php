@@ -24,7 +24,7 @@
 loadSettings('tf_settings');
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "admin/indexSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.admin.indexSettings.tmpl");
 
 // set vars
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);

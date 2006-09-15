@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "uncomp.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.uncomp.tmpl");
 
 // process
 if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {

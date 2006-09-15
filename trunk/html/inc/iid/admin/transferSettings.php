@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "admin/transferSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.admin.transferSettings.tmpl");
 
 // set vars
 $tmpl->setvar('btclient', $cfg["btclient"]);

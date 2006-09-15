@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "cookiehelp.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.cookiehelp.tmpl");
 
 // set vars
 tmplSetTitleBar("Cookie Help", false);

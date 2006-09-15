@@ -139,7 +139,7 @@ function getDriveSpaceBar($drivespace) {
 	switch ($cfg['drivespacebar']) {
 		case "tf":
 			// create template-instance
-			$tmpl = tmplGetInstance($cfg["theme"], "inc.getDriveSpaceBar_tf.tmpl");
+			$tmpl = tmplGetInstance($cfg["theme"], "component.driveSpaceBar_tf.tmpl");
 			// set some vars
 			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
 			$tmpl->setvar('drivespace', $drivespace);
@@ -152,7 +152,7 @@ function getDriveSpaceBar($drivespace) {
 			break;
 		case "xfer":
 			// create template-instance
-			$tmpl = tmplGetInstance($cfg["theme"], "inc.getDriveSpaceBar_xfer.tmpl");
+			$tmpl = tmplGetInstance($cfg["theme"], "component.driveSpaceBar_xfer.tmpl");
 			// set some vars
 			$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
 			$tmpl->setvar('drivespace', $drivespace);
@@ -231,7 +231,7 @@ function getDownloadBar() {
 function getBandwidthBar_tf($percent, $text) {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getBandwidthBar_tf.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.bandwidthBar_tf.tmpl");
 	// set some vars
 	$tmpl->setvar('theme', $cfg["theme"]);
 	$tmpl->setvar('percent', $percent);
@@ -253,7 +253,7 @@ function getBandwidthBar_tf($percent, $text) {
 function getBandwidthBar_xfer($percent, $text) {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getBandwidthBar_xfer.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.bandwidthBar_xfer.tmpl");
 	// set some vars
 	$bgcolor = '#';
 	$bgcolor .= str_pad(dechex(255 - 255 * ((100 - $percent) / 150)), 2, 0, STR_PAD_LEFT);
@@ -279,7 +279,7 @@ function getBandwidthBar_xfer($percent, $text) {
 function getSuperAdminLink($param = "", $linkText = "") {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.getSuperAdminLink.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.superAdminLink.tmpl");
 	$tmpl->setvar('param', $param);
 	if ((isset($linkText)) && ($linkText != ""))
 		$tmpl->setvar('linkText', $linkText);
@@ -314,7 +314,7 @@ function showErrorPage($errorMessage) {
 	global $cfg;
 	require_once("themes/".$cfg["default_theme"]."/index.php");
 	require_once("inc/lib/vlib/vlibTemplate.php");
-	$tmpl = tmplGetInstance($cfg["default_theme"], "error.tmpl");
+	$tmpl = tmplGetInstance($cfg["default_theme"], "page.error.tmpl");
 	$tmpl->setvar('ErrorMsg', $errorMessage);
 	$tmpl->pparse();
 	exit();

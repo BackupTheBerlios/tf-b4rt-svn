@@ -24,7 +24,7 @@
 require_once('inc/functions/functions.common.php');
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "rename.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.rename.tmpl");
 
 // process move and set vars
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {

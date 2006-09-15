@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 require_once("inc/searchEngines/SearchEngineBase.php");
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "torrentSearch.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.torrentSearch.tmpl");
 
 // Go get the if this is a search request. go get the data and produce output.
 $hideSeedless = getRequestVar('hideSeedless');

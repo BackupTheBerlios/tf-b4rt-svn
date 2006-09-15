@@ -143,7 +143,7 @@ function saveXfer($user, $down, $up) {
 function getXferBar($total, $used, $title) {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.xferBar.tmpl");
+	$tmpl = tmplGetInstance($cfg["theme"], "component.xferBar.tmpl");
 	$remaining = max(0,$total-$used/(1024*1024));
 	$percent = round($remaining/$total*100,0);
 	$text = ' ('.formatFreeSpace($remaining).') '.$cfg['_REMAINING'];

@@ -24,7 +24,7 @@
 require_once('inc/main.external.php');
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["default_theme"], "locked.tmpl");
+$tmpl = tmplGetInstance($cfg["default_theme"], "page.locked.tmpl");
 
 // defines
 $tmpl->setvar('iid', 'locked');

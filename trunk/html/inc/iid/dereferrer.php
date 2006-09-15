@@ -32,7 +32,7 @@ if (!(isset($_REQUEST["u"]))) {
 }
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "dereferrer.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.dereferrer.tmpl");
 
 // set vars
 $tmpl->setvar('url', $url);

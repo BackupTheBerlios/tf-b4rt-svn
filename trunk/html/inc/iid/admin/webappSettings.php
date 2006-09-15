@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "admin/webappSettings.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.admin.webappSettings.tmpl");
 
 // set vars
 $tmpl->setvar('auth_type', $cfg["auth_type"]);

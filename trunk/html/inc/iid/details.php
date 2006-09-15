@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 require_once("inc/metaInfo.php");
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "details.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.details.tmpl");
 
 // set vars
 $transfer = getRequestVar('torrent');

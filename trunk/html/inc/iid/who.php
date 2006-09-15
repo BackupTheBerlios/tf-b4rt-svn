@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "who.tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.who.tmpl");
 
 // set vars
 $tmpl->setvar('result1', shell_exec("w"));
