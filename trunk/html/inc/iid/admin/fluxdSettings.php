@@ -112,7 +112,7 @@ $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 $tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
 //
 tmplSetTitleBar("Administration - Fluxd Settings");
-$tmpl->setvar('menu', getMenu());
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

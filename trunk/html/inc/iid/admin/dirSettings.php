@@ -58,10 +58,9 @@ $tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);
 $tmpl->setvar('moveSettings', getMoveSettings());
 //
-$tmpl->setvar('menu', getMenu());
-tmplSetFoot();
 tmplSetTitleBar("Administration - Dir Settings");
-$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
+tmplSetAdminMenu();
+tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

@@ -49,10 +49,9 @@ $tmpl->setvar('stats_default_format', $cfg["stats_default_format"]);
 $tmpl->setvar('stats_default_compress', $cfg["stats_default_compress"]);
 $tmpl->setvar('stats_default_attach', $cfg["stats_default_attach"]);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Stats Settings");
+tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

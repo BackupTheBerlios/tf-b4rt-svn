@@ -63,8 +63,8 @@ $tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 $tmpl->setvar('_EDIT', $cfg['_EDIT']);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar($cfg['_ADMINEDITLINKS']);
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

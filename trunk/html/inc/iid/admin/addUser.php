@@ -42,8 +42,8 @@ $tmpl->setvar('newUser', $newUser);
 $tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
 $tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Add User");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

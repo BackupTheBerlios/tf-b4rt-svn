@@ -46,8 +46,8 @@ $tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
 $tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - RSS");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

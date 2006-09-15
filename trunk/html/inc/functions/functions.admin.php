@@ -21,32 +21,22 @@
 *******************************************************************************/
 
 /**
- * get Admin Menu
+ * admin menu
  *
- * @return string
  */
-function getMenu() {
-	global $cfg;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.adminmenu.tmpl");
-	// set some vars
-	$tmpl->setvar('function', "getMenu");
-	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
-	$tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-	$tmpl->setvar('theme', $cfg["theme"]);
-	// superadmin
-	if (IsSuperAdmin()) {
-		$tmpl->setvar('is_superadmin', 1);
-		$tmpl->setvar('superAdminLink', getSuperAdminLink('','<font class="adminlink">superadmin</font></a>'));
-	}
+function tmplSetAdminMenu() {
+	global $cfg, $tmpl;
 	$tmpl->setvar('_SETTINGS_MENU', $cfg['_SETTINGS_MENU']);
 	$tmpl->setvar('_FLUXD_MENU', $cfg['_FLUXD_MENU']);
 	$tmpl->setvar('_SEARCHSETTINGS_MENU', $cfg['_SEARCHSETTINGS_MENU']);
 	$tmpl->setvar('_LINKS_MENU', $cfg['_LINKS_MENU']);
 	$tmpl->setvar('_ACTIVITY_MENU', $cfg['_ACTIVITY_MENU']);
-	// grab the template
-	$output = $tmpl->grab();
-	return $output;
+	$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+	// superadmin
+	if (IsSuperAdmin()) {
+		$tmpl->setvar('is_superadmin', 1);
+		$tmpl->setvar('adminmenu_superAdminLink', getSuperAdminLink('','<font class="adminlink">superadmin</font></a>'));
+	}
 }
 
 /**

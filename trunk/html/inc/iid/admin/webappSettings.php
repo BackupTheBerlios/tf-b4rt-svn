@@ -87,8 +87,8 @@ for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 }
 $tmpl->setloop('lang_list', $lang_list);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - WebApp Settings");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

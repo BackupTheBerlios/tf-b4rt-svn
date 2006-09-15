@@ -95,8 +95,8 @@ $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 //
 $tmpl->setvar('getUserSection', getUserSection());
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Edit User");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

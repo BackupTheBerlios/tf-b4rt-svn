@@ -82,8 +82,8 @@ switch ($cfg["_OS"]) {
 //
 $tmpl->setvar('_OS', $cfg["_OS"]);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Server Settings");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

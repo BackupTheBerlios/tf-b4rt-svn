@@ -50,8 +50,8 @@ $tmpl->setvar('_TRYDIFFERENTUSERID', $cfg['_TRYDIFFERENTUSERID']);
 $tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 $tmpl->setvar('_RETURNTOEDIT', $cfg['_RETURNTOEDIT']);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Update User");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

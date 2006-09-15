@@ -57,8 +57,8 @@ $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
 $tmpl->setvar('IndexPageSettingsForm', IndexPageSettingsForm());
 $tmpl->setvar('GoodLookingStatsForm', GoodLookingStatsForm());
 $tmpl->setvar('getSortOrderSettings', getSortOrderSettings());
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Index Settings");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

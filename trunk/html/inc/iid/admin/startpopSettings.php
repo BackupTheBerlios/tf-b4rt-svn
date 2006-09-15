@@ -32,10 +32,9 @@ $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('maxdepth', $cfg["maxdepth"]);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - StartPop Settings");
+tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template

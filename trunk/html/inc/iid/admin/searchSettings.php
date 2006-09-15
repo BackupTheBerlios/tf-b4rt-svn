@@ -68,8 +68,8 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 }
 tmplFillSearchEngineDDL($searchEngine,true);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar("Administration - Search Settings");
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

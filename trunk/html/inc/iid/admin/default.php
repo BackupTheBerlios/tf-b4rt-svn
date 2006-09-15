@@ -27,8 +27,8 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.admin.default.tmpl");
 $tmpl->setvar('userSection', getUserSection());
 $tmpl->setvar('activity', getActivity());
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 

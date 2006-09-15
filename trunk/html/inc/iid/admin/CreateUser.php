@@ -39,8 +39,8 @@ $tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 //
-$tmpl->setvar('menu', getMenu());
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_USERADMIN']);
+tmplSetAdminMenu();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
 
