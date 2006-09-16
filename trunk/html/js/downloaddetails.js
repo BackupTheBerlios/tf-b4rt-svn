@@ -7,12 +7,19 @@ var statsUrl = "";
 var updateTimer = 5000;
 var httpRequest = false;
 var fieldIds = new Array(
+	"running",
 	"speedDown",
 	"speedUp",
-	"speedTotal",
-	"connections",
-	"freeSpace",
-	"loadavg"
+	"downCurrent",
+	"upCurrent",
+	"downTotal",
+	"upTotal",
+	"percentDone",
+	"sharing",
+	"eta",
+	"seeds",
+	"peers",
+	"cons"
 );
 var idCount = fieldIds.length;
 
@@ -32,7 +39,7 @@ function initialize(url, timer, delim) {
 	updateTimer = timer;
 	txtDelim = delim;
 	httpRequest = getHttpRequest();
-	update();
+	// setTimeout("update();", updateTimer);
 }
 
 /**

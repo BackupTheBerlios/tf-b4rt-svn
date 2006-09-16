@@ -1812,7 +1812,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	require_once('inc/functions/functions.common.php');
 	// aliasfile
 	require_once("inc/classes/AliasFile.php");
-	/* prepare values */
 	// Load saved settings
 	loadTorrentSettingsToConfig($transfer);
 	// owner
@@ -1823,8 +1822,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$alias = $aliasName.".stat";
 	}
 	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $owner, $cfg, $cfg['btclient']);
-	// running
-	$running = $af->running;
 	// size
 	$size = $af->size;
 	// totals
@@ -1832,55 +1829,35 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	$afd = $af->downtotal;
 	$totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
 	$totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
+	// running
+	$running = $af->running;
+	$details['running'] = $running;
 	// speed_down + speed_up + seeds + peers + cons
 	if ($running == 1) {
+		// pid
 		$pid = getTransferPid($alias);
-		// speed down
-		$speed_down = "";
-		// speed up
-		$speed_up = "";
+		// speed_down
+		$details['down_speed'] = $af->down_speed;
+		// speed_up
+		$details['up_speed'] = $af->up_speed;
 		// seeds
-		$seeds = $af->seeds;
+		$details['seeds'] = $af->seeds;
 		// peers
-		$peers = $af->peers;
+		$details['peers'] = $af->peers;
 		// cons
-		$cons = netstatConnectionsByPid($pid);
+		$details['cons'] = netstatConnectionsByPid($pid);
 	} else {
-		// speed down
-		$speed_down = "";
-		// speed up
-		$speed_up = "";
+		// speed_down
+		$details['down_speed'] = "";
+		// speed_up
+		$details['up_speed'] = "";
 		// seeds
-		$seeds = "";
+		$details['seeds'] = "";
 		// peers
-		$peers = "";
+		$details['peers'] = "";
 		// cons
-		$cons = "";
+		$details['cons'] = "";
 	}
-	// percentage
-	$percentage = $af->percent_done;
-	if ($percentage < 0)
-		$percentage = round(($percentage * -1) - 100, 1);
-	if ($percentage > 100)
-		$percentage = 100;
-	// sharing
-	if ($size > 0)
-		$sharing = number_format((($totals["uptotal"] / $size) * 100), 2);
-	else
-		$sharing = 0;
-	// eta
-	$eta = $af->time_left;
-	// errors
-	$errors = array();
-	for ($inx = 0; $inx < sizeof($af->errors); $inx++)
-		array_push($errors, $af->errors[$inx]);
-	/* fill array */
-	// running
-	$details['running'] = $running;
-	// speed_down
-	$details['speed_down'] = $speed_down;
-	// speed_up
-	$details['speed_up'] = $speed_up;
 	// down_current
 	$details['down_current'] = formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
 	// up_current
@@ -1890,19 +1867,21 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// up_total
 	$details['up_total'] = formatFreeSpace($totals["uptotal"] / 1048576);
 	// percentage
-	$details['percentage'] = $percentage;
+	$percentage = $af->percent_done;
+	if ($percentage < 0)
+		$percentage = round(($percentage * -1) - 100, 1);
+	elseif ($percentage > 100)
+		$percentage = 100;
+	$details['percent_done'] = $percentage;
 	// sharing
-	$details['sharing'] = $sharing;
+	if ($size > 0)
+		$details['sharing'] = number_format((($totals["uptotal"] / $size) * 100), 2);
+	else
+		$details['sharing'] = 0;
 	// eta
-	$details['eta'] = $eta;
-	// seeds
-	$details['seeds'] = $seeds;
-	// peers
-	$details['peers'] = $peers;
-	// cons
-	$details['cons'] = $cons;
+	$details['time_left'] = $af->time_left;
 	// errors
-	$details['errors'] = $errors;
+	$details['errors'] = $af->errors;
 	// full (including static) details
 	if ($full) {
 		// owner

@@ -182,20 +182,28 @@ if ($errorCount > 0) {
 }
 
 // standard / ajax switch
+$tmpl->setvar('details_type', $cfg['details_type']);
 switch ($cfg['details_type']) {
 	default:
 	case "standard":
 		// refresh
 		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&torrent='.$transfer.'&alias='.$alias);
-		// title + foot
-		tmplSetTitleBar($cfg['_DOWNLOADDETAILS'], false);
-		tmplSetFoot(false);
 		break;
 	case "ajax":
+		// load stats-settings
+		loadSettings('tf_settings_stats');
+		//
+		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);
+		// onload
+		$statsUrl = "http://";
+		$statsUrl .= $_SERVER['SERVER_NAME'];
+		$statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
+		$timer = ((int) $cfg['details_update']) * 1000;
+		$tmpl->setvar('onLoad', "initialize('".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
 		break;
 }
 
-// set common vars
+// language vars
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_SHARING', $cfg['_SHARING']);
 $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
@@ -204,6 +212,12 @@ $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_PERCENTDONE', $cfg['_PERCENTDONE']);
 $tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
+
+// title + foot
+tmplSetFoot(false);
+tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_DOWNLOADDETAILS'], false);
+
+// iid
 $tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template
