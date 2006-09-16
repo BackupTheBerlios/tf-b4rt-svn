@@ -20,6 +20,23 @@
 
 *******************************************************************************/
 
+// field-ids of transfer-details
+$transferFieldIds = array(
+	"running",
+	"speedDown",
+	"speedUp",
+	"downCurrent",
+	"upCurrent",
+	"downTotal",
+	"upTotal",
+	"percentDone",
+	"sharing",
+	"eta",
+	"seeds",
+	"peers",
+	"cons"
+);
+
 /**
  * sends usage to client.
  *
@@ -35,6 +52,8 @@ Params :
       "all" : server-stats + transfer-stats
       "server" : server-stats
       "transfers" : transfer-stats
+      "transfer" : transfer-stats of a single transfer. needs extra-param "i" with the
+                   name of the transfer.
 "f" : format : optional, default is "'.$cfg['stats_default_format'].'".
       "xml" : new xml-formats, see xml-schemas in dir "xml"
       "rss" : rss 0.91
@@ -51,16 +70,19 @@ Params :
 
 Examples :
 
-* '._URL_THIS.'?t=all&f=xml            :  all stats sent as xml.
-* '._URL_THIS.'?t=server&f=xml&a=1     :  server stats as xml sent as attachment.
-* '._URL_THIS.'?t=transfers&f=xml&c=1  :  transfer stats as xml sent compressed.
-* '._URL_THIS.'?t=all&f=rss            :  all stats sent as rss.
-* '._URL_THIS.'?t=all&f=txt            :  all stats sent as txt.
-* '._URL_THIS.'?t=all&f=txt&h=0        :  all stats sent as txt without headers.
-* '._URL_THIS.'?t=all&f=txt&a=1&c=1    :  all stats as text sent as compressed attachment.
+* '._URL_THIS.'?t=all&f=xml              :  all stats sent as xml.
+* '._URL_THIS.'?t=server&f=xml&a=1       :  server stats as xml sent as attachment.
+* '._URL_THIS.'?t=transfers&f=xml&c=1    :  transfer stats as xml sent compressed.
+* '._URL_THIS.'?t=all&f=rss              :  all stats sent as rss.
+* '._URL_THIS.'?t=all&f=txt              :  all stats sent as txt.
+* '._URL_THIS.'?t=all&f=txt&h=0          :  all stats sent as txt without headers.
+* '._URL_THIS.'?t=all&f=txt&a=1&c=1      :  all stats as text sent as compressed attachment.
+
+* '._URL_THIS.'?t=transfer&i=foo.torrent        :  transfer-stats of foo sent in default-format.
+* '._URL_THIS.'?t=transfer&i=bar.torrent&f=xml  :  transfer-stats of bar sent as xml.
 
 * '._URL_THIS.'?t=all&f=xml&username=admin&iamhim=seceret  :  all stats sent as xml. use auth-credentials "admin/seceret".
-* '._URL_THIS.'?t=all&f=rss&username=admin&iamhim=seceret  :  all stats sent as rss.  use auth-credentials "admin/seceret".
+* '._URL_THIS.'?t=all&f=rss&username=admin&iamhim=seceret  :  all stats sent as rss. use auth-credentials "admin/seceret".
 
 	';
     // send content
@@ -101,15 +123,14 @@ function sendContent($content, $contentType, $fileName) {
 
 /**
  * This method sends stats as xml.
- * xml-schema defined in tfbstats.xsd/tfbserver.xsd/tdbtransfers.xsd
+ * xml-schema defined in tfbstats.xsd/tfbserver.xsd/tfbtransfers.xsd/tfbtransfer.xsd
  *
  * @param $type
  */
 function sendXML($type) {
-	global $cfg, $transferList, $transferHeads, $serverStats, $indent;
+	global $cfg, $transferList, $transferHeads, $serverStats, $transferID, $transferFieldIds, $transferDetails, $indent;
     // build content
-    $content = "";
-	$content .= '<?xml version="1.0" encoding="utf-8"?>'."\n";
+	$content = '<?xml version="1.0" encoding="utf-8"?>'."\n";
 	switch ($type) {
 		case "all":
 			$content .= '<tfbstats>'."\n";
@@ -140,7 +161,16 @@ function sendXML($type) {
 				$content .= $indent.' </transfer>'."\n";
 			}
 		    $content .= $indent.'</transfers>'."\n";
-	    }
+	}
+	// transfer-details
+	switch ($type) {
+	    case "transfer":
+			$content .= $indent.'<transfer name="'.$transferID.'">'."\n";
+	    	$size = count($transferFieldIds);
+			for ($i = 0; $i < $size; $i++)
+				$content .= $indent.' <transferStat name="'.$transferFieldIds[$i].'">'.$transferDetails[$transferFieldIds[$i]].'</transferStat>'."\n";
+			$content .= $indent.'</transfer>'."\n";
+	}
     // end document
 	switch ($type) {
 		case "all":
@@ -156,10 +186,9 @@ function sendXML($type) {
  * @param $type
  */
 function sendRSS($type) {
-    global $cfg, $transferList, $transferHeads, $serverStats;
+    global $cfg, $transferList, $transferHeads, $serverStats, $transferID, $transferFieldIds, $transferDetails;
     // build content
-    $content = "";
-    $content .= "<?xml version='1.0' ?>\n\n";
+    $content = "<?xml version='1.0' ?>\n\n";
     $content .= "<rss version=\"0.91\">\n";
     $content .= " <channel>\n";
     $content .= "  <title>torrentflux Stats</title>\n";
@@ -197,6 +226,21 @@ function sendRSS($type) {
 				$content .= "   </item>\n";
 			}
 	}
+	// transfer-details
+	switch ($type) {
+	    case "transfer":
+			$content .= "   <item>\n";
+			$content .= "    <title>Transfer: ".$transferID."</title>\n";
+			$content .= "    <description>";
+	    	$size = count($transferFieldIds);
+			for ($i = 0; $i < $size; $i++) {
+				$content .= $transferFieldIds[$i].': '.$transferDetails[$transferFieldIds[$i]];
+				if ($i < ($size - 1))
+					$content .= " || ";
+			}
+			$content .= "    </description>\n";
+			$content .= "   </item>\n";
+	}
     // end document
     $content .= " </channel>\n";
     $content .= "</rss>";
@@ -210,7 +254,7 @@ function sendRSS($type) {
  * @param $type
  */
 function sendTXT($type) {
-    global $cfg, $header, $transferList, $transferHeads, $serverStats;
+    global $cfg, $header, $transferList, $transferHeads, $serverStats, $transferID, $transferFieldIds, $transferDetails;
     // build content
     $content = "";
 	// server stats
@@ -257,7 +301,26 @@ function sendTXT($type) {
 				}
 				$content .= "\n";
 			}
-	    }
+	}
+	// transfer-details
+	switch ($type) {
+	    case "transfer":
+	    	$size = count($transferFieldIds);
+	    	if ($header == 1) {
+				for ($j = 0; $j < $size; $j++) {
+					$content .= $transferFieldIds[$j];
+					if ($j < ($size - 1))
+						$content .= $cfg['stats_txt_delim'];
+				}
+		    	$content .= "\n";
+	    	}
+			for ($i = 0; $i < $size; $i++) {
+				$content .= $transferDetails[$transferFieldIds[$i]];
+				if ($i < ($size - 1))
+					$content .= $cfg['stats_txt_delim'];
+			}
+			$content .= "\n";
+	}
     // send content
     sendContent($content, "text/plain", "stats.txt");
 }

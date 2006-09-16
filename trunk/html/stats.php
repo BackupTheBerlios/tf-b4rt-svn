@@ -123,22 +123,31 @@ if (($cfg['stats_show_usage'] == 1) && ($gotParams == 0))
 	sendUsage();
 
 // init some global vars
-$transferList = getTransferListArray();
 switch ($type) {
     case "all":
     	$indent = " ";
+    	$transferList = getTransferListArray();
     	if (!(($format == "txt") && ($header == 0)))
     		$transferHeads = getTransferListHeadArray();
     	initServerStats();
     	break;
     case "server":
     	$indent = "";
+    	$transferList = getTransferListArray();
     	initServerStats();
     	break;
     case "transfers":
     	$indent = "";
+    	$transferList = getTransferListArray();
     	if (!(($format == "txt") && ($header == 0)))
     		$transferHeads = getTransferListHeadArray();
+    	break;
+    case "transfer":
+		if (! isset($_REQUEST["i"]))
+			sendUsage();
+		$transferID = trim($_REQUEST["i"]);
+    	$indent = "";
+    	$transferDetails = getTransferDetails($transferID, false);
     	break;
 }
 

@@ -1804,6 +1804,32 @@ function getTransferListArray() {
  * @param $full
  * @param $alias
  * @return array with details
+ *
+ * array-keys :
+ *
+ * running
+ * speedDown
+ * speedUp
+ * downCurrent
+ * upCurrent
+ * downTotal
+ * upTotal
+ * percentDone
+ * sharing
+ * timeLeft
+ * seeds
+ * peers
+ * cons
+ * errors
+ *
+ * owner
+ * size
+ * maxSpeedDown
+ * maxSpeedUp
+ * maxcons
+ * sharekill
+ * port
+ *
  */
 function getTransferDetails($transfer, $full, $alias = "") {
 	global $cfg;
@@ -1837,9 +1863,19 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		// pid
 		$pid = getTransferPid($alias);
 		// speed_down
-		$details['down_speed'] = $af->down_speed;
+		if (trim($af->down_speed) != "")
+			$details['speedDown'] = $af->down_speed;
+		else
+			$details['speedDown'] = '0.0 kB/s';
 		// speed_up
-		$details['up_speed'] = $af->up_speed;
+		if (trim($af->up_speed) != "")
+			$details['speedUp'] = $af->up_speed;
+		else
+			$details['speedUp'] = '0.0 kB/s';
+		// down_current
+		$details['downCurrent'] = formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
+		// up_current
+		$details['upCurrent'] = formatFreeSpace($totalsCurrent["uptotal"] / 1048576);
 		// seeds
 		$details['seeds'] = $af->seeds;
 		// peers
@@ -1848,9 +1884,13 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$details['cons'] = netstatConnectionsByPid($pid);
 	} else {
 		// speed_down
-		$details['down_speed'] = "";
+		$details['speedDown'] = "";
 		// speed_up
-		$details['up_speed'] = "";
+		$details['speedUp'] = "";
+		// down_current
+		$details['downCurrent'] = "";
+		// up_current
+		$details['upCurrent'] = "";
 		// seeds
 		$details['seeds'] = "";
 		// peers
@@ -1858,28 +1898,24 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		// cons
 		$details['cons'] = "";
 	}
-	// down_current
-	$details['down_current'] = formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
-	// up_current
-	$details['up_current'] = formatFreeSpace($totalsCurrent["uptotal"] / 1048576);
 	// down_total
-	$details['down_total'] = formatFreeSpace($totals["downtotal"] / 1048576);
+	$details['downTotal'] = formatFreeSpace($totals["downtotal"] / 1048576);
 	// up_total
-	$details['up_total'] = formatFreeSpace($totals["uptotal"] / 1048576);
+	$details['upTotal'] = formatFreeSpace($totals["uptotal"] / 1048576);
 	// percentage
 	$percentage = $af->percent_done;
 	if ($percentage < 0)
 		$percentage = round(($percentage * -1) - 100, 1);
 	elseif ($percentage > 100)
 		$percentage = 100;
-	$details['percent_done'] = $percentage;
+	$details['percentDone'] = $percentage;
 	// sharing
 	if ($size > 0)
 		$details['sharing'] = number_format((($totals["uptotal"] / $size) * 100), 2);
 	else
 		$details['sharing'] = 0;
 	// eta
-	$details['time_left'] = $af->time_left;
+	$details['eta'] = $af->time_left;
 	// errors
 	$details['errors'] = $af->errors;
 	// full (including static) details
@@ -1890,21 +1926,20 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$details['size'] = formatBytesTokBMBGBTB($size);
 		if ($running == 1) {
 			// max_download_rate
-			$details['max_download_rate'] = number_format($cfg["max_download_rate"], 2);
+			$details['maxSpeedDown'] = number_format($cfg["max_download_rate"], 2);
 			// max_upload_rate
-			$details['max_upload_rate'] = number_format($cfg["max_upload_rate"], 2);
+			$details['maxSpeedUp'] = number_format($cfg["max_upload_rate"], 2);
 			// maxcons
 			$details['maxcons'] = $cfg["maxcons"];
 			// sharekill
 			$details['sharekill'] = $cfg["sharekill"];
 			// port
 			$details['port'] = netstatPortByPid($pid);
-
 		} else {
 			// max_download_rate
-			$details['max_download_rate'] = "";
+			$details['maxSpeedDown'] = "";
 			// max_upload_rate
-			$details['max_upload_rate'] = "";
+			$details['maxSpeedUp'] = "";
 			// maxcons
 			$details['maxcons'] = "";
 			// sharekill

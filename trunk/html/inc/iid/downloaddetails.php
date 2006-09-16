@@ -101,19 +101,28 @@ if ($af->running == 1) {
 	// port + cons
 	$torrent_pid = getTransferPid($alias);
 	$tmpl->setvar('port', netstatPortByPid($torrent_pid));
-	$tmpl->setvar('cons', netstatConnectionsByPid($torrent_pid)." (".$cfg["maxcons"].")");
+	$tmpl->setvar('cons', netstatConnectionsByPid($torrent_pid));
+	$tmpl->setvar('maxcons', $cfg["maxcons"]);
 
 	// down speed
-	if ($cfg["max_download_rate"] != 0)
-		$tmpl->setvar('down_speed', $af->down_speed." (".number_format($cfg["max_download_rate"], 2).")");
+	if (trim($af->down_speed) != "")
+		$tmpl->setvar('down_speed', $af->down_speed);
 	else
-		$tmpl->setvar('down_speed', $af->down_speed.' (&#8734)');
+		$tmpl->setvar('down_speed', '0.0 kB/s');
+	if ($cfg["max_download_rate"] != 0)
+		$tmpl->setvar('max_download_rate', number_format($cfg["max_download_rate"], 2));
+	else
+		$tmpl->setvar('max_download_rate', '&#8734');
 
 	// up speed
-	if ($cfg["max_upload_rate"] != 0)
-		$tmpl->setvar('up_speed', $af->up_speed." (".number_format($cfg["max_upload_rate"], 2).")");
+	if (trim($af->up_speed) != "")
+		$tmpl->setvar('up_speed', $af->up_speed);
 	else
-		$tmpl->setvar('up_speed', $af->up_speed.' (&#8734)');
+		$tmpl->setvar('up_speed', '0.0 kB/s');
+	if ($cfg["max_upload_rate"] != 0)
+		$tmpl->setvar('max_upload_rate', number_format($cfg["max_upload_rate"], 2));
+	else
+		$tmpl->setvar('max_upload_rate', '&#8734');
 
 } else {
 
@@ -131,12 +140,15 @@ if ($af->running == 1) {
 	// port + cons
 	$tmpl->setvar('port', "");
 	$tmpl->setvar('cons', "");
+	$tmpl->setvar('maxcons', "");
 
 	// down speed
 	$tmpl->setvar('down_speed', "");
+	$tmpl->setvar('max_download_rate', "");
 
 	// up speed
 	$tmpl->setvar('up_speed', "");
+	$tmpl->setvar('max_upload_rate', "");
 }
 
 // percent and eta

@@ -57,7 +57,7 @@ define("_UPLOADSPEED","Upload Speed");
 define("_SHARING","Sharing");
 define("_USER","User");
 define("_DONE","DONE");
-define("_INCOMPLETE","INCOMPLETE");
+define("_INCOMPLETE","Incomplete");
 define("_NEW","NEW");
 define("_TRANSFERDETAILS","Transfer Details");
 define("_STOPTRANSFER","Stop Transfer");
