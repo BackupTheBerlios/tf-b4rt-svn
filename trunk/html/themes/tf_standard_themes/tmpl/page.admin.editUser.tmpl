@@ -1,6 +1,7 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_include name="inc.adminmenu.tmpl">
+<script src="js/userSettings.js" type="text/javascript"></script>
 <div align="center">
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
@@ -73,7 +74,7 @@
 				<td valign="top" bgcolor="<tmpl_var name="body_data_bg">">
 					<div align="center">
 						<table cellpadding="5" cellspacing="0" border="0">
-							<form name="theForm" action="index.php?iid=admin&op=updateUser" method="post" onsubmit="return validateUser()">
+							<form name="theForm" action="index.php?iid=admin&op=updateUser" method="post" onsubmit="return validateUser('<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
 								<tr>
 									<td align="right"><tmpl_var name="_USER">:</td>
 									<td>
@@ -120,33 +121,6 @@
 							</form>
 						</table>
 					</div>
-					<script language="JavaScript">
-						function validateUser() {
-							var msg = ""
-							if (theForm.user_id.value == "") {
-								msg = msg + "* <tmpl_var name="_USERIDREQUIRED">\n";
-								theForm.user_id.focus();
-							}
-							if (theForm.pass1.value != "" || theForm.pass2.value != "") {
-								if (theForm.pass1.value.length <= 5 || theForm.pass2.value.length <= 5) {
-									msg = msg + "* <tmpl_var name="_PASSWORDLENGTH">\n";
-									theForm.pass1.focus();
-								}
-								if (theForm.pass1.value != theForm.pass2.value) {
-									msg = msg + "* <tmpl_var name="_PASSWORDNOTMATCH">\n";
-									theForm.pass1.value = "";
-									theForm.pass2.value = "";
-									theForm.pass1.focus();
-								}
-							}
-							if (msg != "") {
-								alert("<tmpl_var name="_PLEASECHECKFOLLOWING">:\n\n" + msg);
-								return false;
-							} else {
-								return true;
-							}
-						}
-					</script>
 				</table>
 			</td>
 		</tr>

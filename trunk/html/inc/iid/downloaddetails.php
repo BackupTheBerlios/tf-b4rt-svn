@@ -39,7 +39,7 @@ if ((!empty($transfer)) && (!empty($alias))) {
 }
 
 // create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails_".$cfg['details_type'].".tmpl");
+$tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
 // set vars
 $tmpl->setvar('torrent', $transfer);

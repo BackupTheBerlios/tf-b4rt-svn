@@ -120,6 +120,8 @@ $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_MESSAGE', $cfg['_MESSAGE']);
 $tmpl->setvar('_RETURNTOMESSAGES', $cfg['_RETURNTOMESSAGES']);
 //
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
+//
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MESSAGES']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);

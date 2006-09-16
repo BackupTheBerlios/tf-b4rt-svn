@@ -333,6 +333,7 @@ switch ($op) {
 		$tmpl->setvar('_CONFIRMPASSWORD', $cfg['_CONFIRMPASSWORD']);
 		$tmpl->setvar('_THEME', $cfg['_THEME']);
 		$tmpl->setvar('_HIDEOFFLINEUSERS', $cfg['_HIDEOFFLINEUSERS']);
+		$tmpl->setvar('_USERIDREQUIRED', $cfg['_USERIDREQUIRED']);
 		$tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 		$tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 		$tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
@@ -403,6 +404,8 @@ if ($cfg["enable_transfer_profile"] == 1) {
 $tmpl->setvar('user', $cfg["user"]);
 //
 $tmpl->setvar('_PROFILE', $cfg['_PROFILE']);
+//
+$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 //
 tmplSetTitleBar($cfg["user"]."'s ".$cfg['_PROFILE']);
 tmplSetFoot();

@@ -41,6 +41,7 @@ $tmpl->setvar('_ID_PORTS', $cfg['_ID_PORTS']);
 $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
 $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 //
+tmplSetTitleBar($cfg["pagetitle"].' - All Services');
 tmplSetDriveSpaceBar();
 tmplSetFoot();
 $tmpl->setvar('iid', $_GET["iid"]);
