@@ -20,14 +20,18 @@
 
 *******************************************************************************/
 
-// Load saved settings
-loadTorrentSettingsToConfig($torrent);
+// owner
+$transferowner = getOwner($transfer);
+$tmpl->setvar('transferowner', $transferowner);
+
+// alias
+$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $cfg['btclient']);
 
 // totals
 $afu = $af->uptotal;
 $afd = $af->downtotal;
-$totalsCurrent = getTransferTotalsCurrentOP($torrent, $cfg['hash'], $cfg['btclient'], $afu, $afd);
-$totals = getTransferTotalsOP($torrent, $cfg['hash'], $cfg['btclient'], $afu, $afd);
+$totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
+$totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
 
 // set vars
 
@@ -149,7 +153,7 @@ if ($errorCount > 0) {
 }
 
 // refresh
-$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&torrent='.$torrent.'&alias='.$alias);
+$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&torrent='.$transfer.'&alias='.$alias);
 
 // title + foot
 tmplSetTitleBar($cfg['_DOWNLOADDETAILS'], false);

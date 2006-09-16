@@ -1828,8 +1828,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// size
 	$size = $af->size;
 	// totals
-	//$totalsCurrent = getTransferTotalsCurrent($transfer);
-	//$totals = getTransferTotals($transfer);
 	$afu = $af->uptotal;
 	$afd = $af->downtotal;
 	$totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);

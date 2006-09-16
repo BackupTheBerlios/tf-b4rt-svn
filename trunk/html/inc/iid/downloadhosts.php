@@ -32,10 +32,10 @@ $alias = getRequestVar('alias');
 
 // alias
 $transferowner = getOwner($torrent);
-if (!empty($alias))
+if ((!empty($torrent)) && (!empty($alias)))
 	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg);
 else
-	showErrorPage("torrent file not specified");
+	showErrorPage("missing params");
 
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.downloadhosts.tmpl");
