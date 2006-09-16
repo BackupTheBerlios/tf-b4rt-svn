@@ -2,6 +2,7 @@
 // fields
 var debug = true;
 var useXML = false;
+var transferName = "";
 var txtDelim = ";";
 var statsUrl = "";
 var updateTimer = 5000;
@@ -26,20 +27,22 @@ var idCount = fieldIds.length;
 /**
  * initialize
  *
+ * @param name
  * @param url
  * @param timer
  * @param delim
  */
-function initialize(url, timer, delim) {
+function initialize(name, url, timer, delim) {
+	transferName = name;
 	statsUrl = url;
-	if (useXML)
-		statsUrl += '?t=server&f=xml';
-	else
-		statsUrl += '?t=server&f=txt&h=0';
 	updateTimer = timer;
 	txtDelim = delim;
+	if (useXML)
+		statsUrl += '?t=transfer&f=xml&i=' + name;
+	else
+		statsUrl += '?t=transfer&f=txt&h=0&i=' + name;
 	httpRequest = getHttpRequest();
-	// setTimeout("update();", updateTimer);
+	setTimeout("update();", updateTimer);
 }
 
 /**
@@ -123,7 +126,7 @@ function processText(content) {
  * @param content
  */
 function updateContent(content) {
-	for (i = 0; i < idCount; i++) {
+	for (i = 1; i < idCount; i++) {
 		document.getElementById(fieldIds[i]).innerHTML = content[i];
 	}
 }
