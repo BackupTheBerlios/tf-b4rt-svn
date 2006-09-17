@@ -30,31 +30,44 @@ require_once("inc/classes/AliasFile.php");
 $transfer = getRequestVar('torrent');
 $alias = getRequestVar('alias');
 
+// create template-instance
+$tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails.tmpl");
+
 // check
 if ((!empty($transfer)) && (!empty($alias))) {
-	// Load saved settings
-	$transferExists = loadTorrentSettingsToConfig($transfer);
+	$tmpl->setvar('torrent', $transfer);
+	$tmpl->setvar('alias', $alias);
+	if (strlen($transfer) >= 39)
+		$tmpl->setvar('torrentLabel', substr($transfer, 0, 35)."...");
+	else
+		$tmpl->setvar('torrentLabel', $transfer);
 } else {
 	showErrorPage("missing params");
 }
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails.tmpl");
-
-// set vars
-$tmpl->setvar('torrent', $transfer);
-$tmpl->setvar('alias', $alias);
-if (strlen($transfer) >= 39)
-	$tmpl->setvar('torrentLabel', substr($transfer, 0, 35)."...");
-else
-	$tmpl->setvar('torrentLabel', $transfer);
-
-// owner
-$transferowner = getOwner($transfer);
-$tmpl->setvar('transferowner', $transferowner);
-
-// alias
-$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $cfg['btclient']);
+// alias / stat
+if ((substr(strtolower($transfer), -8) == ".torrent")) {
+	// this is a torrent-client
+	$transferowner = getOwner($transfer);
+	$transferExists = loadTorrentSettingsToConfig($transfer);
+	if (!$transferExists) {
+		// new torrent
+		$cfg['hash'] = $transfer;
+	}
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $cfg['btclient']);
+} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+	// this is wget.
+	$transferowner = getOwner($transfer);
+	$cfg['btclient'] = "wget";
+	$cfg['hash'] = $transfer;
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, "wget");
+} else {
+	// this is "something else". use tornado statfile as default
+	$transferowner = $cfg["user"];
+	$cfg['btclient'] = "tornado";
+	$cfg['hash'] = $transfer;
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
+}
 
 // totals
 $afu = $af->uptotal;
@@ -62,7 +75,8 @@ $afd = $af->downtotal;
 $totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
 $totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
 
-// set vars
+// owner
+$tmpl->setvar('transferowner', $transferowner);
 
 // size
 $torrentSize = $af->size;
@@ -153,6 +167,8 @@ if ($af->running == 1) {
 	// sharekill
 	$tmpl->setvar('sharekill', "");
 }
+
+// TODO : substr to get number
 
 // percent and eta
 if ($af->percent_done < 0) {

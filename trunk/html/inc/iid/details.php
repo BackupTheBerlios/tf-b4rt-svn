@@ -31,7 +31,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.details.tmpl");
 
 // set vars
 $transfer = getRequestVar('torrent');
-if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+if ((substr(strtolower($transfer), -8) == ".torrent")) {
 	// this is a torrent-client
 	$als = getRequestVar('als');
 	if ($als == "false")
@@ -40,7 +40,7 @@ if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
 		$tmpl->setvar('metaInfo', showMetaInfo($transfer, true));
 	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
 	$tmpl->setvar('scrape', 1);
-} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 	// this is wget.
 	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');

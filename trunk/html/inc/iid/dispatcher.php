@@ -101,11 +101,11 @@ switch ($action) {
 
 			// alias
 			$alias = getAliasName($element).".stat";
-			if ((substr(strtolower($element),-8 ) == ".torrent")) {
+			if ((substr(strtolower($element), -8) == ".torrent")) {
 				// this is a torrent-client
 				$isTorrent = true;
 				$tclient = getTransferClient(urldecode($element));
-			} else if ((substr(strtolower($element),-5 ) == ".wget")) {
+			} else if ((substr(strtolower($element), -5) == ".wget")) {
 				// this is wget.
 				$isTorrent = false;
 				$tclient = "wget";

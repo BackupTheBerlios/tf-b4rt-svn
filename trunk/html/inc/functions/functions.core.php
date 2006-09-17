@@ -740,15 +740,15 @@ function stopTorrentSettings($torrent) {
  */
 function isTransferRunning($transfer) {
 	global $cfg;
-	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+	if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
-		if (file_exists($cfg["transfer_file_path"].substr($transfer,0,-8).'.stat.pid'))
+		if (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.stat.pid'))
 			return 1;
 		else
 			return 0;
-	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
-		if (file_exists($cfg["transfer_file_path"].substr($transfer,0,-5).'.stat.pid'))
+		if (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid'))
 			return 1;
 		else
 			return 0;
@@ -868,11 +868,11 @@ function updateTransferTotals($transfer) {
 function getTransferTotals($transfer) {
 	global $cfg;
 	require_once("inc/classes/ClientHandler.php");
-	if ((substr(strtolower($transfer),-8 ) == ".torrent")) {
+	if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
 		$tclient = getTransferClient($transfer);
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
-	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
@@ -907,11 +907,11 @@ function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
 function getTransferTotalsCurrent($transfer) {
 	global $cfg;
 	require_once("inc/classes/ClientHandler.php");
-	if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
+	if ((substr( strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
 		$tclient = getTransferClient($transfer);
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
-	} else if ((substr(strtolower($transfer),-5 ) == ".wget")) {
+	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	} else {
@@ -987,7 +987,7 @@ function deleteTransfer($transfer, $alias_file) {
 	$transferowner = getOwner($delfile);
 	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
 		require_once("inc/classes/AliasFile.php");
-		if ((substr( strtolower($transfer),-8 ) == ".torrent")) {
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($delfile);
 			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $transferowner, $cfg, $btclient);
@@ -999,9 +999,9 @@ function deleteTransfer($transfer, $alias_file) {
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->deleteCache($transfer);
-		} else if ((substr( strtolower($transfer),-5 ) == ".wget")) {
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 			// this is wget.
-			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $transferowner, $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
@@ -1561,14 +1561,14 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		// alias / stat
 		$alias = getAliasName($entry).".stat";
-		if ((substr(strtolower($entry),-8 ) == ".torrent")) {
+		if ((substr(strtolower($entry), -8) == ".torrent")) {
 			// this is a torrent-client
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
-		} else if ((substr(strtolower($entry),-5 ) == ".wget")) {
+		} else if ((substr(strtolower($entry), -5) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
 			$transferowner = getOwner($entry);
@@ -1576,7 +1576,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$isTorrent = false;
@@ -1838,16 +1838,34 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	require_once('inc/functions/functions.common.php');
 	// aliasfile
 	require_once("inc/classes/AliasFile.php");
-	// Load saved settings
-	loadTorrentSettingsToConfig($transfer);
-	// owner
-	$owner = getOwner($transfer);
 	// alias-file
 	if ((!(isset($alias))) || ($alias == "")) {
 		$aliasName = getAliasName($transfer);
 		$alias = $aliasName.".stat";
 	}
-	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $owner, $cfg, $cfg['btclient']);
+	// alias / stat
+	if ((substr(strtolower($transfer), -8) == ".torrent")) {
+		// this is a torrent-client
+		$transferowner = getOwner($transfer);
+		$transferExists = loadTorrentSettingsToConfig($transfer);
+		if (!$transferExists) {
+			// new torrent
+			$cfg['hash'] = $transfer;
+		}
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $cfg['btclient']);
+	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+		// this is wget.
+		$transferowner = getOwner($transfer);
+		$cfg['btclient'] = "wget";
+		$cfg['hash'] = $transfer;
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, "wget");
+	} else {
+		// this is "something else". use tornado statfile as default
+		$transferowner = $cfg["user"];
+		$cfg['btclient'] = "tornado";
+		$cfg['hash'] = $transfer;
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
+	}
 	// size
 	$size = $af->size;
 	// totals
@@ -1903,6 +1921,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// up_total
 	$details['upTotal'] = formatFreeSpace($totals["uptotal"] / 1048576);
 	// percentage
+	// TODO : substr to get number
 	$percentage = $af->percent_done;
 	if ($percentage < 0)
 		$percentage = round(($percentage * -1) - 100, 1);
@@ -1921,7 +1940,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// full (including static) details
 	if ($full) {
 		// owner
-		$details['owner'] = $owner;
+		$details['owner'] = $transferowner;
 		// size
 		$details['size'] = formatBytesTokBMBGBTB($size);
 		if ($running == 1) {
@@ -2388,9 +2407,12 @@ function getFileFilter($inArray) {
  * @return string
  */
 function getAliasName($inName) {
+	global $cfg;
 	$alias = preg_replace("/[^0-9a-z.]+/i",'_', $inName);
-	$alias = str_replace(".torrent", "", $alias);
-	$alias = str_replace(".wget", "", $alias);
+	$replaceArray = array();
+	foreach ($cfg['file_types_array'] as $ftype)
+		array_push($replaceArray, ".".$ftype);
+	$alias = str_replace($replaceArray, "", $alias);
 	return $alias;
 }
 
