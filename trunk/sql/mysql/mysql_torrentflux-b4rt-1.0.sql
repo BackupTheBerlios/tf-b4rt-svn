@@ -254,7 +254,8 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
-INSERT INTO tf_settings VALUES ('details_type','standard');
+INSERT INTO tf_settings VALUES ('index_ajax_update','10');
+INSERT INTO tf_settings VALUES ('details_type','ajax');
 INSERT INTO tf_settings VALUES ('details_update','5');
 INSERT INTO tf_settings VALUES ('auth_basic_realm','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('servermon_update','5');

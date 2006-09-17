@@ -45,6 +45,7 @@ $tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
 $tmpl->setvar('show_server_load', $cfg["show_server_load"]);
 $tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
 $tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 $tmpl->setvar('enable_restrictivetview', $cfg["enable_restrictivetview"]);
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);

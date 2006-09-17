@@ -32,7 +32,7 @@ define("_DRIVESPACE","Drive Space");
 define("_SERVERSTATS","Server Stats / Who");
 define("_DIRECTORYLIST","Directory List");
 define("_ALL","All");
-define("_PAGEWILLREFRESH","Next Refresh in");
+define("_PAGEWILLREFRESH","Next Page Refresh in");
 define("_SECONDS","Seconds");
 define("_TURNONREFRESH","Turn ON Page Refresh");
 define("_TURNOFFREFRESH","Turn OFF Page Refresh");
