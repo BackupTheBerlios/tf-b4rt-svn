@@ -33,6 +33,21 @@ switch ($action) {
     case "---":
     	break;
 
+    /* ------------------------------------------------------------------ set */
+    case "set":
+    	$key = getRequestVar('key');
+    	$val = getRequestVar('val');
+    	if (!empty($key)) {
+    		if ($key == "_all_") {
+    			$keys = array_keys($_SESSION['settings']);
+    			foreach ($keys as $settingKey)
+    				$_SESSION['settings'][$settingKey] = $val;
+    		} else {
+    			$_SESSION['settings'][$key] = $val;
+    		}
+    	}
+    	break;
+
     /* --------------------------------------------------------- all torrents */
     case "bulkStop": /* bulkStop */
     	$transfers = getTorrentListFromFS();

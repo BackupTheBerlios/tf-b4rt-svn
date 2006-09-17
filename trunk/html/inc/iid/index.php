@@ -561,15 +561,17 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 $onLoad = "";
 
 // page refresh
-if ($cfg["page_refresh"] > 0) {
+if (($cfg["page_refresh"] > 0) && ($_SESSION['settings']['index_meta_refresh'] != 0)) {
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	$tmpl->setvar('meta_refresh', $cfg["page_refresh"].';URL=index.php?iid=index');
 	$onLoad .= "initRefresh(".$cfg["page_refresh"].");";
 	$tmpl->setvar('_PAGEWILLREFRESH', $cfg['_PAGEWILLREFRESH']);
+} else {
+	$tmpl->setvar('_TURNONREFRESH', $cfg['_TURNONREFRESH']);
 }
 
 // AJAX update
-if ($cfg["index_ajax_update"] > 0) {
+if (($cfg["index_ajax_update"] > 0) && ($_SESSION['settings']['index_ajax_update'] != 0)) {
 	$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 	$onLoad .= "ajax_initialize('".getStatsUrl()."',".(((int) $cfg['index_ajax_update']) * 1000).",'".$cfg['stats_txt_delim']."');";
 }
@@ -578,6 +580,7 @@ if ($cfg["index_ajax_update"] > 0) {
 if ($onLoad != "") {
 	$tmpl->setvar('onLoad', $onLoad);
 	$tmpl->setvar('_SECONDS', $cfg['_SECONDS']);
+	$tmpl->setvar('_TURNOFFREFRESH', $cfg['_TURNOFFREFRESH']);
 }
 
 // messages
