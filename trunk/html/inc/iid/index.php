@@ -288,8 +288,8 @@ foreach ($arList as $entry) {
 
 	// ---------------------------------------------------------------------
 	// preprocess alias-file and get some vars
-	$estTime = "";
-	$statusStr = "";
+	$estTime = "&nbsp;";
+	$statusStr = "&nbsp;";
 	$show_run = true;
 	switch ($transferRunning) {
 		case 2: // new
@@ -348,19 +348,19 @@ foreach ($arList as $entry) {
 	if ($settings[1] != 0)
 		$format_af_size = formatBytesTokBMBGBTB($af->size);
 	else
-		$format_af_size = "";
+		$format_af_size = "&nbsp;";
 
 	// =============================================================== downtotal
 	if ($settings[2] != 0)
 		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]);
 	else
-		$format_downtotal = "";
+		$format_downtotal = "&nbsp;";
 
 	// ================================================================= uptotal
 	if ($settings[3] != 0)
 		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]);
 	else
-		$format_uptotal = "";
+		$format_uptotal = "&nbsp;";
 
 	// ================================================================== status
 
@@ -399,10 +399,10 @@ foreach ($arList as $entry) {
 			else
 				$down_speed = '0.0 kB/s';
 		} else {
-			$down_speed = "";
+			$down_speed = "&nbsp;";
 		}
 	} else {
-		$down_speed = "";
+		$down_speed = "&nbsp;";
 	}
 
 	// ====================================================================== up
@@ -413,10 +413,10 @@ foreach ($arList as $entry) {
 			else
 				$up_speed = '0.0 kB/s';
 		} else {
-			$up_speed = "";
+			$up_speed = "&nbsp;";
 		}
 	} else {
-		$up_speed = "";
+		$up_speed = "&nbsp;";
 	}
 
 	// =================================================================== seeds
@@ -424,9 +424,9 @@ foreach ($arList as $entry) {
 		if ($transferRunning == 1)
 			$seeds = $af->seeds;
 		else
-			$seeds = "";
+			$seeds = "&nbsp;";
 	} else {
-		$seeds = "";
+		$seeds = "&nbsp;";
 	}
 
 	// =================================================================== peers
@@ -434,9 +434,9 @@ foreach ($arList as $entry) {
 		if ($transferRunning == 1)
 			$peers = $af->peers;
 		else
-			$peers = "";
+			$peers = "&nbsp;";
 	} else {
-		$peers = "";
+		$peers = "&nbsp;";
 	}
 
 	// ===================================================================== ETA
@@ -460,7 +460,7 @@ foreach ($arList as $entry) {
 				$client = "U";
 		}
 	} else {
-		$client = "";
+		$client = "&nbsp;";
 	}
 
 	// -------------------------------------------------------------------------

@@ -1921,20 +1921,21 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// up_total
 	$details['upTotal'] = formatFreeSpace($totals["uptotal"] / 1048576);
 	// percentage
-	// TODO : substr to get number
 	$percentage = $af->percent_done;
-	if ($percentage < 0)
+	if ($percentage < 0) {
 		$percentage = round(($percentage * -1) - 100, 1);
-	elseif ($percentage > 100)
+		$af->time_left = $cfg['_INCOMPLETE'];
+	} elseif ($percentage > 100) {
 		$percentage = 100;
+	}
 	$details['percentDone'] = $percentage;
+	// eta
+	$details['eta'] = $af->time_left;
 	// sharing
 	if ($size > 0)
 		$details['sharing'] = number_format((($totals["uptotal"] / $size) * 100), 2);
 	else
 		$details['sharing'] = 0;
-	// eta
-	$details['eta'] = $af->time_left;
 	// errors
 	$details['errors'] = $af->errors;
 	// full (including static) details

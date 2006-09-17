@@ -168,8 +168,6 @@ if ($af->running == 1) {
 	$tmpl->setvar('sharekill', "");
 }
 
-// TODO : substr to get number
-
 // percent and eta
 if ($af->percent_done < 0) {
 	$af->percent_done = round(($af->percent_done*-1)-100,1);

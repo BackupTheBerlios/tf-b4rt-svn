@@ -126,6 +126,11 @@ function processText(content) {
  * @param content
  */
 function updateContent(content) {
+	// progress-bar
+	currentPercentage = content[7];
+	document.barImage1.width = currentPercentage * 3.5;
+	document.barImage2.width = (100 - currentPercentage) * 3.5;
+	// fields
 	for (i = 1; i < idCount; i++) {
 		document.getElementById(fieldIds[i]).innerHTML = content[i];
 	}
