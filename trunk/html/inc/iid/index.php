@@ -27,15 +27,6 @@ require_once("inc/functions/functions.index.php");
 $messages = "";
 
 /*******************************************************************************
- * set refresh option into the session cookie
- ******************************************************************************/
-if (isset($_GET['pagerefresh'])) {
-	$_SESSION['prefresh'] = $_GET["pagerefresh"];
-	header("location: index.php?iid=index");
-	exit();
-}
-
-/*******************************************************************************
  * transfer-start
  ******************************************************************************/
 if (isset($_REQUEST['torrent'])) {
@@ -568,9 +559,11 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 // =============================================================================
 
 // refresh
-if ((!isset($_SESSION['prefresh']) && $cfg['ui_indexrefresh'] != "0") || ((isset($_SESSION['prefresh'])) && ($_SESSION['prefresh'] == "true"))) {
+if ($cfg["page_refresh"] > 0) {
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	$tmpl->setvar('meta_refresh', $cfg["page_refresh"].';URL=index.php?iid=index');
+	$tmpl->setvar('_PAGEWILLREFRESH', $cfg['_PAGEWILLREFRESH']);
+	$tmpl->setvar('_SECONDS', $cfg['_SECONDS']);
 }
 
 // messages
@@ -785,10 +778,6 @@ $tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
 $tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
 $tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
-$tmpl->setvar('_PAGEWILLREFRESH', $cfg['_PAGEWILLREFRESH']);
-$tmpl->setvar('_TURNOFFREFRESH', $cfg['_TURNOFFREFRESH']);
-$tmpl->setvar('_TURNONREFRESH', $cfg['_TURNONREFRESH']);
-$tmpl->setvar('_SECONDS', $cfg['_SECONDS']);
 $tmpl->setvar('_WARNING', $cfg['_WARNING']);
 $tmpl->setvar('_DRIVESPACEUSED', $cfg['_DRIVESPACEUSED']);
 $tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);

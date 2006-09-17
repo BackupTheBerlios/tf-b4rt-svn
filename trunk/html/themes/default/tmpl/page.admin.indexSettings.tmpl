@@ -14,26 +14,11 @@
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
 						<form name="theForm" action="index.php?iid=admin&op=updateIndexSettings" method="post">
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Use Refresh</strong><br>
-								Use meta-refresh on index-page. (true):
-								</td>
-								<td valign="bottom">
-									<select name="ui_indexrefresh">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="ui_indexrefresh" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Page Refresh (in seconds)</strong><br>
-								Number of seconds before the transfer list page refreshes:
+								<td align="left" width="350" valign="top"><strong>Meta Page Refresh</strong><br>
+								Number of seconds before the transfer list page refreshes. (0 = disable meta-refresh).
 								</td>
 								<td valign="top">
-									<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="pagerefresh">" size="3">
+									<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
 								</td>
 							</tr>
 							<tr>
