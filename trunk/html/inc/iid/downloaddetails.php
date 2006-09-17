@@ -228,7 +228,7 @@ switch ($cfg['details_type']) {
 		$statsUrl .= $_SERVER['SERVER_NAME'];
 		$statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
 		$timer = ((int) $cfg['details_update']) * 1000;
-		$tmpl->setvar('onLoad', "initialize('".$transfer."','".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
+		$tmpl->setvar('onLoad', "ajax_initialize('".$transfer."','".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
 		break;
 }
 

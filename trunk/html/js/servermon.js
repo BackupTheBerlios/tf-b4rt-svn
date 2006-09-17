@@ -1,12 +1,6 @@
 
 // fields
-var debug = true;
-var useXML = false;
-var txtDelim = ";";
-var statsUrl = "";
-var updateTimer = 5000;
-var httpRequest = false;
-var fieldIds = new Array(
+var ajax_fieldIds = new Array(
 	"speedDown",
 	"speedUp",
 	"speedTotal",
@@ -14,100 +8,25 @@ var fieldIds = new Array(
 	"freeSpace",
 	"loadavg"
 );
-var idCount = fieldIds.length;
+var ajax_idCount = ajax_fieldIds.length;
 
 /**
- * initialize
+ * ajax_initialize
  *
  * @param url
  * @param timer
  * @param delim
  */
-function initialize(url, timer, delim) {
-	statsUrl = url;
-	if (useXML)
-		statsUrl += '?t=server&f=xml';
+function ajax_initialize(url, timer, delim) {
+	ajax_statsUrl = url;
+	if (ajax_useXML)
+		ajax_statsUrl += '?t=server&f=xml';
 	else
-		statsUrl += '?t=server&f=txt&h=0';
-	updateTimer = timer;
-	txtDelim = delim;
-	httpRequest = getHttpRequest();
-	update();
-}
-
-/**
- * get http-request-instance
- */
-function getHttpRequest() {
-	_httpRequest = false;
-	if (window.XMLHttpRequest) { // Mozilla, Safari,...
-		_httpRequest = new XMLHttpRequest();
-		if (_httpRequest.overrideMimeType)
-			_httpRequest.overrideMimeType('text/xml');
-	} else if (window.ActiveXObject) { // IE
-		try {
-			_httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-		} catch (e) {
-			try {
-				_httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-			} catch (e) {}
-		}
-	}
-	if (!_httpRequest) {
-		if (debug)
-			alert('Error : cant create XMLHTTP-instance');
-		return false;
-	}
-	return _httpRequest;
-}
-
-/**
- * update
- */
-function update() {
-	if (window.ActiveXObject) // IE seems to dispose this object.. recreate
-		httpRequest = getHttpRequest();
-	// trigger asynch http-request
-	httpRequest.onreadystatechange = updateCallback;
-	httpRequest.open('GET', statsUrl, true);
-	httpRequest.send(null);
-	// set timeout
-	setTimeout("update();", updateTimer);
-}
-
-/**
- * update-callback
- */
-function updateCallback() {
-	if (httpRequest.readyState == 4) {
-		if (httpRequest.status == 200) {
-			if (useXML)
-				processXML(httpRequest.responseXML);
-			else
-				processText(httpRequest.responseText);
-		} else {
-			if (debug)
-				alert('Error in Request :'+httpRequest.status);
-		}
-	}
-}
-
-/**
- * process XML-response
- *
- * @param content
- */
-function processXML(content) {
-	alert(content);
-}
-
-/**
- * process text-response
- *
- * @param content
- */
-function processText(content) {
-	updateContent(content.split(txtDelim));
+		ajax_statsUrl += '?t=server&f=txt&h=0';
+	ajax_updateTimer = timer;
+	ajax_txtDelim = delim;
+	ajax_httpRequest = ajax_getHttpRequest();
+	ajax_update();
 }
 
 /**
@@ -115,8 +34,8 @@ function processText(content) {
  *
  * @param content
  */
-function updateContent(content) {
-	for (i = 0; i < idCount; i++) {
-		document.getElementById(fieldIds[i]).innerHTML = content[i];
+function ajax_updateContent(content) {
+	for (i = 0; i < ajax_idCount; i++) {
+		document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];
 	}
 }

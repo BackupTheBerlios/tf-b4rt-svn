@@ -34,7 +34,7 @@ $statsUrl = "http://";
 $statsUrl .= $_SERVER['SERVER_NAME'];
 $statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
 $timer = ((int) $cfg['servermon_update']) * 1000;
-$tmpl->setvar('onLoad', "initialize('".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
+$tmpl->setvar('onLoad', "ajax_initialize('".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
 //
 $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
