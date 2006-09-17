@@ -124,27 +124,27 @@
 								<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 								<tmpl_if name="settingsHackStats1">
 									<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="speedDown"><tmpl_var name="settingsHackStats11"></label> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedDown"><tmpl_var name="settingsHackStats11"></label> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats2">
 									<b><tmpl_var name="_UPLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="speedUp"><tmpl_var name="settingsHackStats22"></label> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedUp"><tmpl_var name="settingsHackStats22"></label> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats3">
 									<b><tmpl_var name="_TOTALSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="speedTotal"><tmpl_var name="settingsHackStats33"></label> kB/s</a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedTotal"><tmpl_var name="settingsHackStats33"></label> kB/s</a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats4">
 									<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
-									<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="connections"><tmpl_var name="settingsHackStats44"></label></a><br>
+									<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_connections"><tmpl_var name="settingsHackStats44"></label></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats5">
 									<b><tmpl_var name="_DRIVESPACE">:</b><br>
-									<a href="index.php?iid=drivespace"><img src="themes/tf_standard_themes/images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="freeSpace"><tmpl_var name="settingsHackStats55"></label></a><br>
+									<a href="index.php?iid=drivespace"><img src="themes/tf_standard_themes/images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_freeSpace"><tmpl_var name="settingsHackStats55"></label></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats6">
 									<b><tmpl_var name="_SERVERLOAD">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="loadavg"><tmpl_var name="settingsHackStats66"></label></a><br>
+									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_loadavg"><tmpl_var name="settingsHackStats66"></label></a><br>
 								</tmpl_if>
 								<tmpl_if name="ui_displayusers">
 								    <b><tmpl_var name="_ONLINE">:</b><br>
@@ -803,12 +803,12 @@
 												</tmpl_if>
 												<td class="tiny" align="center" valign="bottom">
 													<b><tmpl_var name="_OTHERSERVERSTATS"></b><br>
-													<tmpl_var name="_DOWNLOADSPEED">: <strong><tmpl_var name="downloadspeed1"> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_UPLOADSPEED">: <strong><tmpl_var name="uploadspeed1"> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_TOTALSPEED">: <strong><tmpl_var name="totalspeed1"> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_ID_CONNECTIONS">: <strong><tmpl_var name="id_connections1"> <tmpl_var name="id_connections11"></strong><br>
-													<tmpl_var name="_DRIVESPACE">: <strong><tmpl_var name="drivespace1"></strong><br>
-													<tmpl_var name="_SERVERLOAD">: <strong><tmpl_var name="serverload1"></strong>
+													<tmpl_var name="_DOWNLOADSPEED">: <strong><label id="speedDown"><tmpl_var name="downloadspeed1"></label> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
+													<tmpl_var name="_UPLOADSPEED">: <strong><label id="speedUp"><tmpl_var name="uploadspeed1"></label> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
+													<tmpl_var name="_TOTALSPEED">: <strong><label id="speedTotal"><tmpl_var name="totalspeed1"></label> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>
+													<tmpl_var name="_ID_CONNECTIONS">: <strong><label id="connections"><tmpl_var name="id_connections1"></label> <tmpl_var name="id_connections11"></strong><br>
+													<tmpl_var name="_DRIVESPACE">: <strong><label id="freeSpace"><tmpl_var name="drivespace1"></label></strong><br>
+													<tmpl_var name="_SERVERLOAD">: <strong><label id="loadavg"><tmpl_var name="serverload1"></label></strong>
 												</td>
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="right" valign="bottom">

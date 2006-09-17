@@ -1,6 +1,17 @@
 
 // fields
-var ajax_fieldIds = new Array(
+
+var ajax_fieldIds_GLS = new Array(
+	"g_speedDown",
+	"g_speedUp",
+	"g_speedTotal",
+	"g_connections",
+	"g_freeSpace",
+	"g_loadavg"
+);
+var ajax_idCount_GLS = ajax_fieldIds_GLS.length;
+
+var ajax_fieldIds_Bottom = new Array(
 	"speedDown",
 	"speedUp",
 	"speedTotal",
@@ -8,7 +19,7 @@ var ajax_fieldIds = new Array(
 	"freeSpace",
 	"loadavg"
 );
-var ajax_idCount = ajax_fieldIds.length;
+var ajax_idCount_Bottom = ajax_fieldIds_Bottom.length;
 
 /**
  * ajax_initialize
@@ -35,7 +46,12 @@ function ajax_initialize(url, timer, delim) {
  * @param content
  */
 function ajax_updateContent(content) {
-	for (i = 0; i < ajax_idCount; i++) {
-		document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];
+	// good looking stats
+	for (i = 0; i < ajax_idCount_GLS; i++) {
+		document.getElementById(ajax_fieldIds_GLS[i]).innerHTML = content[i];
+	}
+	// bottom stats
+	for (i = 0; i < ajax_idCount_Bottom; i++) {
+		document.getElementById(ajax_fieldIds_Bottom[i]).innerHTML = content[i];
 	}
 }
