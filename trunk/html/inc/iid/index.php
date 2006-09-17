@@ -162,16 +162,6 @@ if ($cfg["show_server_load"] != 0)
 	$loadavgString = @getLoadAverageString();
 else
 	$loadavgString = "n/a";
-// incoming-path
-switch ($cfg["enable_home_dirs"]) {
-    case 1:
-    default:
-        $tmpl->setvar('path_incoming', $cfg["user"]);
-        break;
-    case 0:
-    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
-        break;
-}
 
 // =============================================================================
 // transfer-list
@@ -561,7 +551,7 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 $onLoad = "";
 
 // page refresh
-if (($cfg["page_refresh"] > 0) && ($_SESSION['settings']['index_meta_refresh'] != 0)) {
+if ($_SESSION['settings']['index_meta_refresh'] != 0) {
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	$tmpl->setvar('meta_refresh', $cfg["page_refresh"].';URL=index.php?iid=index');
 	$onLoad .= "initRefresh(".$cfg["page_refresh"].");";
@@ -571,7 +561,7 @@ if (($cfg["page_refresh"] > 0) && ($_SESSION['settings']['index_meta_refresh'] !
 }
 
 // AJAX update
-if (($cfg["index_ajax_update"] > 0) && ($_SESSION['settings']['index_ajax_update'] != 0)) {
+if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 	$onLoad .= "ajax_initialize('".getStatsUrl()."',".(((int) $cfg['index_ajax_update']) * 1000).",'".$cfg['stats_txt_delim']."');";
 }
@@ -581,6 +571,17 @@ if ($onLoad != "") {
 	$tmpl->setvar('onLoad', $onLoad);
 	$tmpl->setvar('_SECONDS', $cfg['_SECONDS']);
 	$tmpl->setvar('_TURNOFFREFRESH', $cfg['_TURNOFFREFRESH']);
+}
+
+// incoming-path
+switch ($cfg["enable_home_dirs"]) {
+    case 1:
+    default:
+        $tmpl->setvar('path_incoming', $cfg["user"]);
+        break;
+    case 0:
+    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
+        break;
 }
 
 // messages
@@ -741,10 +742,6 @@ if (IsForceReadMsg())
 $tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
 if ($cfg["ui_displaybandwidthbars"] != 0)
 	tmplSetBandwidthBars();
-
-// =============================================================================
-// set more vars
-// =============================================================================
 
 $tmpl->setvar('version', $cfg["version"]);
 $tmpl->setvar('user', $cfg["user"]);

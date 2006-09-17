@@ -90,6 +90,8 @@ UPDATE tf_users SET theme = 'default';
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('enable_index_meta_refresh','1');
+INSERT INTO tf_settings VALUES ('enable_index_ajax_update','1');
 INSERT INTO tf_settings VALUES ('index_ajax_update','10');
 INSERT INTO tf_settings VALUES ('details_type','ajax');
 INSERT INTO tf_settings VALUES ('details_update','5');

@@ -109,11 +109,11 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	checkMainDirectories();
 
 	// set session-settings
-	if ($cfg["page_refresh"] > 0)
+	if ($cfg["enable_index_meta_refresh"] != 0)
 		$_SESSION['settings']['index_meta_refresh'] = 1;
 	else
 		$_SESSION['settings']['index_meta_refresh'] = 0;
-	if ($cfg["index_ajax_update"] > 0)
+	if ($cfg["enable_index_ajax_update"] != 0)
 		$_SESSION['settings']['index_ajax_update'] = 1;
 	else
 		$_SESSION['settings']['index_ajax_update'] = 0;

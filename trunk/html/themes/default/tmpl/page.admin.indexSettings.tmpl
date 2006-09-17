@@ -15,7 +15,22 @@
 						<form name="theForm" action="index.php?iid=admin&op=updateIndexSettings" method="post">
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Page Refresh</strong><br>
-								Number of seconds before the page refreshes : <br>(0 = disable Page Refresh).
+								Enable/Disable Page Refresh :
+								</td>
+								<td valign="top">
+									<select name="enable_index_meta_refresh">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_meta_refresh" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Page Refresh Intervall</strong><br>
+								Number of seconds before the page refreshes :
 								</td>
 								<td valign="top">
 									<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
@@ -23,7 +38,22 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>AJAX Update</strong><br>
-								Number of seconds between AJAX-Updates : <br>(0 = disable AJAX-Update).
+								Enable/Disable AJAX Update :
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>AJAX Update Intervall</strong><br>
+								Number of seconds between AJAX-Updates :
 								</td>
 								<td valign="top">
 									<input name="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">

@@ -252,6 +252,8 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('enable_index_meta_refresh','1');
+INSERT INTO tf_settings VALUES ('enable_index_ajax_update','1');
 INSERT INTO tf_settings VALUES ('index_ajax_update','10');
 INSERT INTO tf_settings VALUES ('details_type','ajax');
 INSERT INTO tf_settings VALUES ('details_update','5');
