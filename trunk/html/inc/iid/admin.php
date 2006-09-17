@@ -120,7 +120,6 @@ switch ($op) {
 
 	case "updateStatsSettings":
 		$settings = processSettingsParams(false,false);
-		loadSettings('tf_settings_stats');
 		saveSettings('tf_settings_stats', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Stats Settings");
 		header("location: index.php?iid=admin&op=statsSettings");

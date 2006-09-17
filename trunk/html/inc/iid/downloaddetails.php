@@ -219,9 +219,6 @@ switch ($cfg['details_type']) {
 		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&torrent='.$transfer.'&alias='.$alias);
 		break;
 	case "ajax":
-		// load stats-settings
-		loadSettings('tf_settings_stats');
-		//
 		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);
 		// onload
 		$statsUrl = "http://";

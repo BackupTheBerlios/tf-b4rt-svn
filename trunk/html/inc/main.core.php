@@ -94,6 +94,9 @@ $db = getdb();
 // load global settings
 loadSettings('tf_settings');
 
+// load stats-settings
+loadSettings('tf_settings_stats');
+
 // Path to where the meta files will be stored... usually a sub of $cfg["path"]
 $cfg["transfer_file_path"] = $cfg["path"].".transfers/";
 

@@ -23,9 +23,6 @@
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// load stats-settings
-loadSettings('tf_settings_stats');
-
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.servermon.tmpl");
 

@@ -20,9 +20,6 @@
 
 *******************************************************************************/
 
-// config
-loadSettings('tf_settings_stats');
-
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.admin.statsSettings.tmpl");
 

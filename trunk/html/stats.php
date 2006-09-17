@@ -30,17 +30,9 @@ require_once('inc/functions/functions.stats.php');
 // config
 if ((isset($_SESSION['user'])) && (isset($_SESSION['cache'][$_SESSION['user']]))) {
 	$cfg = $_SESSION['cache'][$_SESSION['user']];
-	if (!(isset($cfg['stats_enable_public']))) {
-		// load stats-settings
-		loadSettings('tf_settings_stats');
-		// cache config
-		$_SESSION['cache'][$_SESSION['user']] = $cfg;
-	}
 } else {
 	// main.core
 	require_once('inc/main.core.php');
-	// load stats-settings
-	loadSettings('tf_settings_stats');
 }
 
 // public-stats-switch
@@ -55,6 +47,7 @@ switch ($cfg['stats_enable_public']) {
 		$superAdm = GetSuperAdmin();
 		if ((isset($superAdm)) && ($superAdm != "")) {
 			$cfg["user"] = $superAdm;
+			$cfg['isAdmin'] = true;
 		} else {
 			@ob_end_clean();
 			exit();
@@ -64,15 +57,6 @@ switch ($cfg['stats_enable_public']) {
 	default:
 		// main.internal
 		require_once("inc/main.internal.php");
-		// config
-		loadSettings('tf_settings_stats');
-		// config
-		if (!(isset($cfg['stats_enable_public']))) {
-			// load stats-settings
-			loadSettings('tf_settings_stats');
-			// cache config
-			$_SESSION['cache'][$_SESSION['user']] = $cfg;
-		}
 }
 
 // AliasFile
