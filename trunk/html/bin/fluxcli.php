@@ -66,7 +66,7 @@ $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
 
 // set admin-var
-$cfg['isAdmin'] = IsAdmin();
+$cfg['isAdmin'] = true;
 
 // -----------------------------------------------------------------------------
 // Main

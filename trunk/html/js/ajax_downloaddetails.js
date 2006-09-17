@@ -40,6 +40,24 @@ function ajax_initialize(name, url, timer, delim) {
 }
 
 /**
+ * process XML-response
+ *
+ * @param content
+ */
+function ajax_processXML(content) {
+	alert(content);
+}
+
+/**
+ * process text-response
+ *
+ * @param content
+ */
+function ajax_processText(content) {
+	ajax_updateContent(content.split(ajax_txtDelim));
+}
+
+/**
  * update page contents from response
  *
  * @param content

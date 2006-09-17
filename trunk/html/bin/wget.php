@@ -75,6 +75,9 @@ $_PID = $argv[3];
 $_OWNER = $argv[4];
 $_PATH = $argv[5];
 
+// set admin-var
+$cfg['isAdmin'] = IsAdmin($_OWNER);
+
 // write out stat-file now
 writeStatFile();
 

@@ -29,6 +29,9 @@ loadLanguageFile($cfg["default_language"]);
 // default-theme
 include("themes/".$cfg["default_theme"]."/index.php");
 
+// set admin-var
+$cfg['isAdmin'] = false;
+
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
 

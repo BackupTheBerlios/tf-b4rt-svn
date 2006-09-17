@@ -63,21 +63,3 @@ function ajax_updateCallback() {
 		}
 	}
 }
-
-/**
- * process XML-response
- *
- * @param content
- */
-function ajax_processXML(content) {
-	alert(content);
-}
-
-/**
- * process text-response
- *
- * @param content
- */
-function ajax_processText(content) {
-	ajax_updateContent(content.split(ajax_txtDelim));
-}
