@@ -562,6 +562,7 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 if ($cfg["page_refresh"] > 0) {
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	$tmpl->setvar('meta_refresh', $cfg["page_refresh"].';URL=index.php?iid=index');
+	$tmpl->setvar('onLoad', "initRefresh(".$cfg["page_refresh"].");");
 	$tmpl->setvar('_PAGEWILLREFRESH', $cfg['_PAGEWILLREFRESH']);
 	$tmpl->setvar('_SECONDS', $cfg['_SECONDS']);
 }

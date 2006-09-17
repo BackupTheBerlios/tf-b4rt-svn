@@ -1,5 +1,5 @@
 <tmpl_include name="inc.head.tmpl">
-<body topmargin="8" bgcolor="<tmpl_var name="main_bgcolor">"<tmpl_if name="page_refresh"> onLoad="initRefresh(<tmpl_var name="page_refresh">);" </tmpl_if>>
+<body topmargin="8" bgcolor="<tmpl_var name="main_bgcolor">"<tmpl_if name="onLoad"> onLoad="<tmpl_var name="onLoad">"</tmpl_if>>
 <div align="center">
 	<tmpl_if name="messages">
 		<table border="1" cellpadding="10" bgcolor="#ff9b9b">
