@@ -221,11 +221,7 @@ switch ($cfg['details_type']) {
 	case "ajax":
 		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);
 		// onload
-		$statsUrl = "http://";
-		$statsUrl .= $_SERVER['SERVER_NAME'];
-		$statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
-		$timer = ((int) $cfg['details_update']) * 1000;
-		$tmpl->setvar('onLoad', "ajax_initialize('".$transfer."','".$statsUrl."',".$timer.",'".$cfg['stats_txt_delim']."');");
+		$tmpl->setvar('onLoad', "ajax_initialize('".$transfer."','".getStatsUrl()."',".(((int) $cfg['details_update']) * 1000).",'".$cfg['stats_txt_delim']."');");
 		break;
 }
 
