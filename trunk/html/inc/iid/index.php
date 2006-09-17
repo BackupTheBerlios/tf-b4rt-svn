@@ -558,12 +558,25 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 // set vars
 // =============================================================================
 
-// refresh
+$onLoad = "";
+
+// page refresh
 if ($cfg["page_refresh"] > 0) {
 	$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 	$tmpl->setvar('meta_refresh', $cfg["page_refresh"].';URL=index.php?iid=index');
-	$tmpl->setvar('onLoad', "initRefresh(".$cfg["page_refresh"].");");
+	$onLoad .= "initRefresh(".$cfg["page_refresh"].");";
 	$tmpl->setvar('_PAGEWILLREFRESH', $cfg['_PAGEWILLREFRESH']);
+}
+
+// AJAX update
+if ($cfg["index_ajax_update"] > 0) {
+	$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
+	$onLoad .= "ajax_initialize('".getStatsUrl()."',".(((int) $cfg['index_ajax_update']) * 1000).",'".$cfg['stats_txt_delim']."');";
+}
+
+// onLoad
+if ($onLoad != "") {
+	$tmpl->setvar('onLoad', $onLoad);
 	$tmpl->setvar('_SECONDS', $cfg['_SECONDS']);
 }
 
