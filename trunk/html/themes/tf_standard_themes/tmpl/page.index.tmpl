@@ -141,7 +141,7 @@
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats4">
 									<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
-									<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_connections"><tmpl_var name="settingsHackStats44"></label></a><br>
+									<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_cons"><tmpl_var name="settingsHackStats44"></label></a><br>
 								</tmpl_if>
 								<tmpl_if name="settingsHackStats5">
 									<b><tmpl_var name="_DRIVESPACE">:</b><br>
@@ -787,7 +787,7 @@
 									</tmpl_if>
 									<tmpl_if name="index_ajax_update">
 										<a href="index.php?iid=dispatcher&action=set&key=index_ajax_update&val=0" style="font-size:10px; text-decoration:none;">
-											AJAX-Update every <span id='span_update'><tmpl_var name="index_ajax_update"></span> <tmpl_var name="_SECONDS">
+											<span id='span_update'>Next AJAX-Update in <tmpl_var name="index_ajax_update"> seconds</span>
 										</a>
 										<br>
 									<tmpl_else>
@@ -831,7 +831,7 @@
 													<tmpl_var name="_DOWNLOADSPEED">: <strong><label id="b_speedDown"><tmpl_var name="downloadspeed1"></label> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
 													<tmpl_var name="_UPLOADSPEED">: <strong><label id="b_speedUp"><tmpl_var name="uploadspeed1"></label> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
 													<tmpl_var name="_TOTALSPEED">: <strong><label id="b_speedTotal"><tmpl_var name="totalspeed1"></label> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>
-													<tmpl_var name="_ID_CONNECTIONS">: <strong><label id="b_connections"><tmpl_var name="id_connections1"></label> <tmpl_var name="id_connections11"></strong><br>
+													<tmpl_var name="_ID_CONNECTIONS">: <strong><label id="b_cons"><tmpl_var name="id_connections1"></label> <tmpl_var name="id_connections11"></strong><br>
 													<tmpl_var name="_DRIVESPACE">: <strong><label id="b_freeSpace"><tmpl_var name="drivespace1"></label></strong><br>
 													<tmpl_var name="_SERVERLOAD">: <strong><label id="b_loadavg"><tmpl_var name="serverload1"></label></strong>
 												</td>

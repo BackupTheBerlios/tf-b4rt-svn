@@ -4,7 +4,7 @@ var ajax_fieldIds = new Array(
 	"speedDown",
 	"speedUp",
 	"speedTotal",
-	"connections",
+	"cons",
 	"freeSpace",
 	"loadavg"
 );
@@ -31,12 +31,22 @@ var driveSpaceBarStyle = "tf";
 var bandwidthBarsEnabled = 0;
 var bandwidthBarsStyle = "tf";
 
+var updateTimeLeft = 0;
+
 /**
  * ajax_initialize
  *
  * @param url
  * @param timer
  * @param delim
+ * @param glsEnabled
+ * @param glsSettings
+ * @param bsEnabled
+ * @param qActive
+ * @param xEnabled
+ * @param dsBarStyle
+ * @param bwBarsEnabled
+ * @param bwBarsStyle
  */
 function ajax_initialize(url, timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_statsUrl = url;
@@ -60,8 +70,11 @@ function ajax_initialize(url, timer, delim, glsEnabled, glsSettings, bsEnabled, 
 		ajax_statsParams += '&f=xml';
 	else
 		ajax_statsParams += '&f=txt&h=0';
+	// http-request
 	ajax_httpRequest = ajax_getHttpRequest();
-	setTimeout("ajax_update();", ajax_updateTimer);
+	// start update-thread
+	updateTimeLeft = ajax_updateTimer / 1000;
+	ajax_indexUpdate();
 }
 
 /**
@@ -85,7 +98,6 @@ function ajax_processText(content) {
 	} else {
 		ajax_updateContent(content.split(ajax_txtDelim), null);
 	}
-
 }
 
 /**
@@ -101,6 +113,17 @@ function ajax_updateContent(statsServer, statsXfer) {
 			if (goodLookingStatsSettings[i] == 1)
 				document.getElementById("g_" + ajax_fieldIds[i]).innerHTML = statsServer[i];
 		}
+	}
+	// drivespace-bar
+	document.getElementById("barFreeSpace").innerHTML = statsServer[4];
+		document.getElementById("barDriveSpacePercent").innerHTML = (100 - statsServer[10]);
+		document.getElementById("barDriveSpace1").width = (statsServer[ajax_idCount + 4]) + "%";
+		document.getElementById("barDriveSpace2").width = (100 - statsServer[ajax_idCount + 4]) + "%";
+	//if (driveSpaceBarStyle == "xfer") {
+	//}
+
+	// bandwidth-bars
+	if (bandwidthBarsEnabled == 1) {
 	}
 	// bottom stats
 	if (bottomStatsEnabled == 1) {
@@ -119,4 +142,24 @@ function ajax_updateContent(statsServer, statsXfer) {
 			}
 		}
 	}
+	// timer
+	updateTimeLeft = ajax_updateTimer / 1000;
+}
+
+/**
+ * index-page ajax-update
+ *
+ */
+function ajax_indexUpdate() {
+	if (updateTimeLeft < 0) {
+		document.getElementById("span_update").innerHTML = "Update in progress...";
+	} else if (updateTimeLeft == 0) {
+		document.getElementById("span_update").innerHTML = "Update in progress...";
+		updateTimeLeft = -1;
+		ajax_update();
+	} else {
+		document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
+	}
+	updateTimeLeft--;
+	setTimeout("ajax_indexUpdate();", 1000);
 }

@@ -4,7 +4,7 @@ var ajax_fieldIds = new Array(
 	"speedDown",
 	"speedUp",
 	"speedTotal",
-	"connections",
+	"cons",
 	"freeSpace",
 	"loadavg",
 	"running",
