@@ -624,8 +624,10 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 	$rec['theme'] = $theme;
 	$rec['language_file'] = $language;
 	$sql = $db->GetUpdateSQL($rs, $rec);
-	$result = $db->Execute($sql);
-	showError($db,$sql);
+	if ($sql != "") {
+		$result = $db->Execute($sql);
+		showError($db,$sql);
+	}
 }
 
 /**
