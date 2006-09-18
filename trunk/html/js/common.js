@@ -32,5 +32,5 @@ function StartTorrent(name_file) {
 }
 
 function openServerMonitor() {
-	window.open('index.php?iid=servermon','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=300,height=190')
+	window.open('index.php?iid=servermon','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=400,height=290')
 }

@@ -29,28 +29,66 @@
 										<td>
 											<table width="100%">
 												<tr>
-													<td width="50%" align="right" nowrap><b><tmpl_var name="_DOWNLOADSPEED">:</td>
-													<td width="50%" align="right" nowrap><label id="speedDown">0.00</label> kB/s</td>
+													<td align="right" rowspan="2" nowrap><strong><tmpl_var name="_DOWNLOADSPEED"> :</strong></td>
+													<td>
+														<table width="200" cellpadding="0" cellspacing="0" border="0">
+															<tr>
+																<td background="themes/default/images/proglass.gif"><img id="barImageSpeedDown1" name="barImageSpeedDown1" src="themes/default/images/blank.gif" width="0" height="13" border="0"></td>
+																<td background="themes/default/images/noglass.gif" bgcolor="#000000"><img id="barImageSpeedDown2" name="barImageSpeedDown2" src="themes/default/images/blank.gif" width="200" height="13" border="0"></td>
+															</tr>
+														</table>
+													</td>
 												</tr>
 												<tr>
-													<td width="50%" align="right" nowrap><b><tmpl_var name="_UPLOADSPEED">:</td>
-													<td width="50%" align="right" nowrap><label id="speedUp">0.00</label> kB/s</td>
+													<td width="200" align="right" nowrap><label id="speedDown">0.00</label> kB/s</td>
 												</tr>
 												<tr>
-													<td width="50%" align="right" nowrap><b><tmpl_var name="_TOTALSPEED">:</td>
-													<td width="50%" align="right" nowrap><label id="speedTotal">0.00</label> kB/s</td>
+													<td align="right" rowspan="2" nowrap><strong><tmpl_var name="_UPLOADSPEED"> :</strong></td>
+													<td>
+														<table width="200" cellpadding="0" cellspacing="0" border="0">
+															<tr>
+																<td background="themes/default/images/proglass.gif"><img id="barImageSpeedUp1" name="barImageSpeedUp1" src="themes/default/images/blank.gif" width="0" height="13" border="0"></td>
+																<td background="themes/default/images/noglass.gif" bgcolor="#000000"><img id="barImageSpeedUp2" name="barImageSpeedUp2" src="themes/default/images/blank.gif" width="200" height="13" border="0"></td>
+															</tr>
+														</table>
+													</td>
 												</tr>
 												<tr>
-													<td width="50%" align="right" nowrap><b><tmpl_var name="_ID_CONNECTIONS">:</td>
-													<td width="50%" align="right" nowrap><label id="connections">0</label></td>
+													<td width="200" align="right" nowrap><label id="speedUp">0.00</label> kB/s</td>
 												</tr>
 												<tr>
-													<td width="50%" align="right" nowrap><b><tmpl_var name="_DRIVESPACE">:</td>
-													<td width="50%" align="right" nowrap><label id="freeSpace">0.00</label></td>
+													<td align="right" nowrap><strong><tmpl_var name="_TOTALSPEED"> :</strong></td>
+													<td width="200" align="right" nowrap><label id="speedTotal">0.00</label> kB/s</td>
 												</tr>
 												<tr>
-													<td width="50%" align="right" nowrap><b><tmpl_var name="_SERVERLOAD">:</td>
-													<td width="50%" align="right" nowrap><label id="loadavg">0.00</label></td>
+													<td align="right" nowrap><strong><tmpl_var name="_ID_CONNECTIONS"> :</strong></td>
+													<td width="200" align="right" nowrap><label id="connections">0</label></td>
+												</tr>
+												<tr>
+													<td align="right" rowspan="2" nowrap><strong><tmpl_var name="_DRIVESPACE"> :</strong></td>
+													<td>
+														<table width="200" cellpadding="0" cellspacing="0" border="0">
+															<tr>
+																<td background="themes/default/images/proglass.gif"><img id="barImageDriveSpace1" name="barImageDriveSpace1" src="themes/default/images/blank.gif" width="0" height="13" border="0"></td>
+																<td background="themes/default/images/noglass.gif" bgcolor="#000000"><img id="barImageDriveSpace2" name="barImageDriveSpace2" src="themes/default/images/blank.gif" width="200" height="13" border="0"></td>
+															</tr>
+														</table>
+													</td>
+												</tr>
+												<tr>
+													<td width="200" align="right" nowrap><label id="freeSpace">0.00</label></td>
+												</tr>
+												<tr>
+													<td align="right" nowrap><strong><tmpl_var name="_SERVERLOAD"> :</strong></td>
+													<td width="200" align="right" nowrap><label id="loadavg">0.00</label></td>
+												</tr>
+												<tr>
+													<td align="right" nowrap><strong>Transfers running :</strong></td>
+													<td width="200" align="right" nowrap><label id="running">0</label></td>
+												</tr>
+												<tr>
+													<td align="right" nowrap><strong>Transfers queued :</strong></td>
+													<td width="200" align="right" nowrap><label id="queued">0</label></td>
 												</tr>
 											</table>
 										</td>

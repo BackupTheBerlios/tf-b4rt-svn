@@ -6,7 +6,9 @@ var ajax_fieldIds = new Array(
 	"speedTotal",
 	"connections",
 	"freeSpace",
-	"loadavg"
+	"loadavg",
+	"running",
+	"queued"
 );
 var ajax_idCount = ajax_fieldIds.length;
 
@@ -19,12 +21,12 @@ var ajax_idCount = ajax_fieldIds.length;
  */
 function ajax_initialize(url, timer, delim) {
 	ajax_statsUrl = url;
-	if (ajax_useXML)
-		ajax_statsUrl += '?t=server&f=xml';
-	else
-		ajax_statsUrl += '?t=server&f=txt&h=0';
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
+	if (ajax_useXML)
+		ajax_statsParams = '?t=server&f=xml';
+	else
+		ajax_statsParams = '?t=server&f=txt&h=0';
 	ajax_httpRequest = ajax_getHttpRequest();
 	ajax_update();
 }
@@ -56,4 +58,16 @@ function ajax_updateContent(content) {
 	for (i = 0; i < ajax_idCount; i++) {
 		document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];
 	}
+	// download-bar
+	currentPercentage = content[ajax_idCount];
+	document.barImageSpeedDown1.width = currentPercentage * 2;
+	document.barImageSpeedDown2.width = (100 - currentPercentage) * 2;
+	// upload-bar
+	currentPercentage = content[ajax_idCount + 1];
+	document.barImageSpeedUp1.width = currentPercentage * 2;
+	document.barImageSpeedUp2.width = (100 - currentPercentage) * 2;
+	// drivespace-bar
+	currentPercentage = content[ajax_idCount + 2];
+	document.barImageDriveSpace1.width = (100 - currentPercentage) * 2;
+	document.barImageDriveSpace2.width = currentPercentage * 2;
 }

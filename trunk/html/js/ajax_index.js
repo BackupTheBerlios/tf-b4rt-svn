@@ -19,12 +19,12 @@ var ajax_idCount = ajax_fieldIds.length;
  */
 function ajax_initialize(url, timer, delim) {
 	ajax_statsUrl = url;
-	if (ajax_useXML)
-		ajax_statsUrl += '?t=server&f=xml';
-	else
-		ajax_statsUrl += '?t=server&f=txt&h=0';
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
+	if (ajax_useXML)
+		ajax_statsParams = '?t=server&f=xml';
+	else
+		ajax_statsParams = '?t=server&f=txt&h=0';
 	ajax_httpRequest = ajax_getHttpRequest();
 	setTimeout("ajax_update();", ajax_updateTimer);
 }

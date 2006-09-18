@@ -4,6 +4,7 @@ var ajax_debug = true;
 var ajax_useXML = false;
 var ajax_txtDelim = ";";
 var ajax_statsUrl = "";
+var ajax_statsParams = "";
 var ajax_updateTimer = 5000;
 var ajax_httpRequest = false;
 
@@ -41,7 +42,7 @@ function ajax_update() {
 		ajax_httpRequest = ajax_getHttpRequest();
 	// trigger asynch http-request
 	ajax_httpRequest.onreadystatechange = ajax_updateCallback;
-	ajax_httpRequest.open('GET', ajax_statsUrl, true);
+	ajax_httpRequest.open('GET', ajax_statsUrl + ajax_statsParams, true);
 	ajax_httpRequest.send(null);
 	// set timeout
 	setTimeout("ajax_update();", ajax_updateTimer);

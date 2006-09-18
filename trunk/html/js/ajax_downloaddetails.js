@@ -26,15 +26,15 @@ var ajax_idCount = ajax_fieldIds.length;
  * @param timer
  * @param delim
  */
-function ajax_initialize(name, url, timer, delim) {
-	ajax_transferName = name;
+function ajax_initialize(url, timer, delim, name) {
 	ajax_statsUrl = url;
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
+	ajax_transferName = name;
 	if (ajax_useXML)
-		ajax_statsUrl += '?t=transfer&f=xml&i=' + name;
+		ajax_statsParams = '?t=transfer&f=xml&i=' + name;
 	else
-		ajax_statsUrl += '?t=transfer&f=txt&h=0&i=' + name;
+		ajax_statsParams = '?t=transfer&f=txt&h=0&i=' + name;
 	ajax_httpRequest = ajax_getHttpRequest();
 	setTimeout("ajax_update();", ajax_updateTimer);
 }
