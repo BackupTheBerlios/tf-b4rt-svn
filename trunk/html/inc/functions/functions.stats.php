@@ -20,8 +20,53 @@
 
 *******************************************************************************/
 
-// field-ids of transfer-details
-$transferFieldIds = array(
+// ids of server-details
+$serverIds = array(
+	"speedDown",
+	"speedUp",
+	"speedTotal",
+	"cons",
+	"freeSpace",
+	"loadavg",
+	"running",
+	"queued",
+	"speedDownPercent",
+	"speedUpPercent",
+	"driveSpacePercent"
+);
+$serverIdCount = count($serverIds);
+
+// labels of server-details
+$serverLabels = array(
+	"Speed Down",
+	"Speed Up",
+	"Speed Total",
+	"Connections",
+	"Free Space",
+	"Load",
+	"Running",
+	"Queued",
+	"Speed Down (Percent)",
+	"Speed Up (Percent)",
+	"Drive Space (Percent)"
+);
+
+// ids of xfer-details
+$xferIds = array(
+	"xferGlobalTotal",
+	"xferGlobalMonth",
+	"xferGlobalWeek",
+	"xferGlobalDay",
+	"xferUserTotal",
+	"xferUserMonth",
+	"percentDone",
+	"xferUserWeek",
+	"xferUserDay"
+);
+$xferIdCount = count($xferIds);
+
+// ids of transfer-details
+$transferIds = array(
 	"running",
 	"speedDown",
 	"speedUp",
@@ -36,6 +81,7 @@ $transferFieldIds = array(
 	"peers",
 	"cons"
 );
+$transferIdCount = count($transferIds);
 
 /**
  * sends usage to client.
@@ -50,8 +96,10 @@ Params :
 
 "t" : type : optional, default is "'.$cfg['stats_default_type'].'".
       "all" : server-stats + transfer-stats
+      "home" : server-stats + xfer-stats
       "server" : server-stats
       "transfers" : transfer-stats
+      "xfer" : xfer-stats
       "transfer" : transfer-stats of a single transfer. needs extra-param "i" with the
                    name of the transfer.
 "f" : format : optional, default is "'.$cfg['stats_default_format'].'".
@@ -128,7 +176,7 @@ function sendContent($content, $contentType, $fileName) {
  * @param $type
  */
 function sendXML($type) {
-	global $cfg, $transferList, $transferHeads, $serverStats, $transferID, $transferFieldIds, $transferDetails, $indent;
+	global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $indent;
     // build content
 	$content = '<?xml version="1.0" encoding="utf-8"?>'."\n";
 	switch ($type) {
@@ -139,13 +187,9 @@ function sendXML($type) {
 	switch ($type) {
 	    case "all":
 	    case "server":
-			$content .= $indent.'<server>'."\n";
-			$content .= $indent.' <serverStat name="speedDown">'.$serverStats['speedDown'].'</serverStat>'."\n";
-			$content .= $indent.' <serverStat name="speedUp">'.$serverStats['speedUp'].'</serverStat>'."\n";
-			$content .= $indent.' <serverStat name="speedTotal">'.$serverStats['speedTotal'].'</serverStat>'."\n";
-			$content .= $indent.' <serverStat name="connections">'.$serverStats['connections'].'</serverStat>'."\n";
-			$content .= $indent.' <serverStat name="freeSpace">'.$serverStats['freeSpace'].'</serverStat>'."\n";
-			$content .= $indent.' <serverStat name="loadavg">'.$serverStats['loadavg'].'</serverStat>'."\n";
+	    	$content .= $indent.'<server>'."\n";
+			for ($i = 0; $i < $serverIdCount; $i++)
+				$content .= $indent.' <serverStat name="'.$serverIds[$i].'">'.$serverStats[$serverIds[$i]].'</serverStat>'."\n";
 			$content .= $indent.'</server>'."\n";
 	}
     // transfer-list
@@ -166,9 +210,8 @@ function sendXML($type) {
 	switch ($type) {
 	    case "transfer":
 			$content .= $indent.'<transfer name="'.$transferID.'">'."\n";
-	    	$size = count($transferFieldIds);
-			for ($i = 0; $i < $size; $i++)
-				$content .= $indent.' <transferStat name="'.$transferFieldIds[$i].'">'.$transferDetails[$transferFieldIds[$i]].'</transferStat>'."\n";
+			for ($i = 0; $i < $transferIdCount; $i++)
+				$content .= $indent.' <transferStat name="'.$transferIds[$i].'">'.$transferDetails[$transferIds[$i]].'</transferStat>'."\n";
 			$content .= $indent.'</transfer>'."\n";
 	}
     // end document
@@ -186,7 +229,7 @@ function sendXML($type) {
  * @param $type
  */
 function sendRSS($type) {
-    global $cfg, $transferList, $transferHeads, $serverStats, $transferID, $transferFieldIds, $transferDetails;
+    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
     // build content
     $content = "<?xml version='1.0' ?>\n\n";
     $content .= "<rss version=\"0.91\">\n";
@@ -199,12 +242,11 @@ function sendRSS($type) {
 		    $content .= "   <item>\n";
 		    $content .= "    <title>Server Stats</title>\n";
 		    $content .= "    <description>";
-		    $content .= "Speed Down: ".$serverStats['speedDown']." || ";
-		    $content .= "Speed Up: ".$serverStats['speedUp']." || ";
-		    $content .= "Speed Total: ".$serverStats['speedTotal']." || ";
-		    $content .= "Connections: ".$serverStats['connections']." || ";
-		    $content .= "Free Space: ".$serverStats['freeSpace']." || ";
-		    $content .= "Load: ".$serverStats['loadavg'];
+			for ($i = 0; $i < $serverIdCount; $i++) {
+				$content .= $serverLabels[$i].": ".$serverStats[$serverIds[$i]];
+				if ($i < ($serverIdCount - 1))
+					$content .= " || ";
+			}
 		    $content .= "    </description>\n";
 		    $content .= "   </item>\n";
 	}
@@ -232,10 +274,9 @@ function sendRSS($type) {
 			$content .= "   <item>\n";
 			$content .= "    <title>Transfer: ".$transferID."</title>\n";
 			$content .= "    <description>";
-	    	$size = count($transferFieldIds);
-			for ($i = 0; $i < $size; $i++) {
-				$content .= $transferFieldIds[$i].': '.$transferDetails[$transferFieldIds[$i]];
-				if ($i < ($size - 1))
+			for ($i = 0; $i < $transferIdCount; $i++) {
+				$content .= $transferIds[$i].': '.$transferDetails[$transferIds[$i]];
+				if ($i < ($transferIdCount - 1))
 					$content .= " || ";
 			}
 			$content .= "    </description>\n";
@@ -254,7 +295,7 @@ function sendRSS($type) {
  * @param $type
  */
 function sendTXT($type) {
-    global $cfg, $header, $transferList, $transferHeads, $serverStats, $transferID, $transferFieldIds, $transferDetails;
+    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $transferIds, $header, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
     // build content
     $content = "";
 	// server stats
@@ -262,20 +303,18 @@ function sendTXT($type) {
 	    case "all":
 	    case "server":
 	    	if ($header == 1) {
-				$content .= 'speedDown' . $cfg['stats_txt_delim'];
-				$content .= 'speedUp' . $cfg['stats_txt_delim'];
-				$content .= 'speedTotal' . $cfg['stats_txt_delim'];
-				$content .= 'connections' . $cfg['stats_txt_delim'];
-				$content .= 'freeSpace' . $cfg['stats_txt_delim'];
-				$content .= 'loadavg';
+				for ($j = 0; $j < $serverIdCount; $j++) {
+					$content .= $serverLabels[$j];
+					if ($j < ($serverIdCount - 1))
+						$content .= $cfg['stats_txt_delim'];
+				}
 				$content .= "\n";
 	    	}
-			$content .= $serverStats['speedDown'] . $cfg['stats_txt_delim'];
-			$content .= $serverStats['speedUp'] . $cfg['stats_txt_delim'];
-			$content .= $serverStats['speedTotal'] . $cfg['stats_txt_delim'];
-			$content .= $serverStats['connections'] . $cfg['stats_txt_delim'];
-			$content .= $serverStats['freeSpace'] . $cfg['stats_txt_delim'];
-			$content .= $serverStats['loadavg'];
+			for ($i = 0; $i < $serverIdCount; $i++) {
+				$content .= $serverStats[$serverIds[$i]];
+				if ($i < ($serverIdCount - 1))
+					$content .= $cfg['stats_txt_delim'];
+			}
 			$content .= "\n";
 	}
     // transfer-list
@@ -305,18 +344,17 @@ function sendTXT($type) {
 	// transfer-details
 	switch ($type) {
 	    case "transfer":
-	    	$size = count($transferFieldIds);
 	    	if ($header == 1) {
-				for ($j = 0; $j < $size; $j++) {
-					$content .= $transferFieldIds[$j];
-					if ($j < ($size - 1))
+				for ($j = 0; $j < $transferIdCount; $j++) {
+					$content .= $transferIds[$j];
+					if ($j < ($transferIdCount - 1))
 						$content .= $cfg['stats_txt_delim'];
 				}
 		    	$content .= "\n";
 	    	}
-			for ($i = 0; $i < $size; $i++) {
-				$content .= $transferDetails[$transferFieldIds[$i]];
-				if ($i < ($size - 1))
+			for ($i = 0; $i < $transferIdCount; $i++) {
+				$content .= $transferDetails[$transferIds[$i]];
+				if ($i < ($transferIdCount - 1))
 					$content .= $cfg['stats_txt_delim'];
 			}
 			$content .= "\n";
@@ -330,34 +368,73 @@ function sendTXT($type) {
  * note : this can only be used after a call to update transfer-values in cfg-
  *        array (eg by getTransferListArray)
  *
+
  */
 function initServerStats() {
-	global $cfg, $serverStats;
+	global $cfg, $serverIds, $serverStats;
 	$serverStats = array();
 	// speedDown
     $speedDown = "n/a";
 	$speedDown = @number_format($cfg["total_download"], 2);
-	$serverStats['speedDown'] = $speedDown;
+	$serverStats[$serverIds[0]] = $speedDown;
 	// speedUp
     $speedUp = "n/a";
 	$speedUp =  @number_format($cfg["total_upload"], 2);
-	$serverStats['speedUp'] = $speedUp;
+	$serverStats[$serverIds[1]] = $speedUp;
 	// speedTotal
     $speedTotal = "n/a";
 	$speedTotal = @number_format($cfg["total_download"] + $cfg["total_upload"], 2);
-	$serverStats['speedTotal'] = $speedTotal;
-	// connections
-    $connections = "n/a";
-	$connections = @netstatConnectionsSum();
-	$serverStats['connections'] = $connections;
+	$serverStats[$serverIds[2]] = $speedTotal;
+	// cons
+    $cons = "n/a";
+	$cons = @netstatConnectionsSum();
+	$serverStats[$serverIds[3]] = $cons;
 	// freeSpace
     $freeSpace = "n/a";
 	$freeSpace = @formatFreeSpace($cfg["free_space"]);
-	$serverStats['freeSpace'] = $freeSpace;
+	$serverStats[$serverIds[4]] = $freeSpace;
 	// loadavg
 	$loadavg = "n/a";
 	$loadavg = @getLoadAverageString();
-	$serverStats['loadavg'] = $loadavg;
+	$serverStats[$serverIds[5]] = $loadavg;
+	// running
+	$serverStats[$serverIds[6]] = getRunningTransferCount();
+	// queued
+	if ((isset($queueActive)) && ($queueActive) && (isset($fluxdQmgr)))
+	    $serverStats[$serverIds[7]] = $fluxdQmgr->countQueuedTorrents();
+	else
+		$serverStats[$serverIds[7]] = "0";
+	// speedDownPercent
+	$percentDownload = 0;
+	$maxDownload = $cfg["bandwidth_down"] / 8;
+	if ($maxDownload > 0)
+		$percentDownload = @number_format(($cfg["total_download"] / $maxDownload) * 100, 0);
+	else
+		$percentDownload = 0;
+	$serverStats[$serverIds[8]] = $percentDownload;
+	// speedUpPercent
+	$percentUpload = 0;
+	$maxUpload = $cfg["bandwidth_up"] / 8;
+	if ($maxUpload > 0)
+		$percentUpload = @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0);
+	else
+		$percentUpload = 0;
+	$serverStats[$serverIds[9]] = $percentUpload;
+	// driveSpacePercent
+    $driveSpacePercent = 0;
+	$driveSpacePercent = @getDriveSpace($cfg["path"]);
+	$serverStats[$serverIds[10]] = $driveSpacePercent;
+}
+
+/**
+ * init xfer stats
+ * note : this can only be used after a call to update transfer-values in cfg-
+ *        array (eg by getTransferListArray)
+ *
+ */
+function initXferStats() {
+	global $cfg, $xferIds, $xferStats, $xfer_total;
+	$xferStats = array();
 }
 
 ?>
