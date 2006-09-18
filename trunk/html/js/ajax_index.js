@@ -116,14 +116,27 @@ function ajax_updateContent(statsServer, statsXfer) {
 	}
 	// drivespace-bar
 	document.getElementById("barFreeSpace").innerHTML = statsServer[4];
-		document.getElementById("barDriveSpacePercent").innerHTML = (100 - statsServer[10]);
-		document.getElementById("barDriveSpace1").width = (statsServer[ajax_idCount + 4]) + "%";
-		document.getElementById("barDriveSpace2").width = (100 - statsServer[ajax_idCount + 4]) + "%";
+	document.getElementById("barDriveSpacePercent").innerHTML = (100 - statsServer[10]);
+	document.getElementById("barDriveSpace1").width = (statsServer[ajax_idCount + 4]) + "%";
+	document.getElementById("barDriveSpace2").width = (100 - statsServer[ajax_idCount + 4]) + "%";
 	//if (driveSpaceBarStyle == "xfer") {
+	// set color
 	//}
-
 	// bandwidth-bars
 	if (bandwidthBarsEnabled == 1) {
+		// up
+		document.getElementById("barSpeedUpPercent").innerHTML = statsServer[ajax_idCount + 3];
+		document.getElementById("barSpeedUp").innerHTML = statsServer[1];
+		document.getElementById("barSpeedUp1").width = (statsServer[ajax_idCount + 3]) + "%";
+		document.getElementById("barSpeedUp2").width = (100 - statsServer[ajax_idCount + 3]) + "%";
+		// down
+		document.getElementById("barSpeedDownPercent").innerHTML = statsServer[ajax_idCount + 2];
+		document.getElementById("barSpeedDown").innerHTML = statsServer[0];
+		document.getElementById("barSpeedDown1").width = (statsServer[ajax_idCount + 2]) + "%";
+		document.getElementById("barSpeedDown2").width = (100 - statsServer[ajax_idCount + 2]) + "%";
+		//if (bandwidthBarsStyle == "xfer") {
+		// set color
+		//}
 	}
 	// bottom stats
 	if (bottomStatsEnabled == 1) {

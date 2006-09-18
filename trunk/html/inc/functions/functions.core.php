@@ -143,7 +143,7 @@ function tmplSetDriveSpaceBar() {
 	switch ($cfg['drivespacebar']) {
 		case "xfer":
 			$bgcolor = '#';
-			$bgcolor .= str_pad(dechex(256 - 256*((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256 - 256 * ((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
 			$bgcolor .= str_pad(dechex(256 * ((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
 			$bgcolor .= '00';
 			$tmpl->setvar('drivespacebar_bgcolor', $bgcolor);
@@ -165,9 +165,9 @@ function tmplSetBandwidthBars() {
 	else
 		$percent_upload = 0;
 	if ($percent_upload > 0)
-		$tmpl->setvar('bandwidthbars_upload_text', number_format($cfg["total_upload"], 2)." kb/s");
+		$tmpl->setvar('bandwidthbars_upload_text', number_format($cfg["total_upload"], 2));
 	else
-		$tmpl->setvar('bandwidthbars_upload_text', "0.0 kb/s");
+		$tmpl->setvar('bandwidthbars_upload_text', "0.0");
 	$tmpl->setvar('bandwidthbars_upload_percent', $percent_upload);
 	$tmpl->setvar('bandwidthbars_upload_percent2', (100 - $percent_upload));
 	// download
@@ -177,9 +177,9 @@ function tmplSetBandwidthBars() {
 	else
 		$percent_download = 0;
 	if ($percent_download > 0)
-		$tmpl->setvar('bandwidthbars_download_text', number_format($cfg["total_download"], 2)." kb/s");
+		$tmpl->setvar('bandwidthbars_download_text', number_format($cfg["total_download"], 2));
 	else
-		$tmpl->setvar('bandwidthbars_download_text', "0.0 kb/s");
+		$tmpl->setvar('bandwidthbars_download_text', "0.0");
 	$tmpl->setvar('bandwidthbars_download_percent', $percent_download);
 	$tmpl->setvar('bandwidthbars_download_percent2', (100 - $percent_download));
 	// colors for xfer
