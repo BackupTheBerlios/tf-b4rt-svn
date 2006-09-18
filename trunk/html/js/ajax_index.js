@@ -92,6 +92,9 @@ function ajax_processXML(content) {
  * @param content
  */
 function ajax_processText(content) {
+	// timer
+	updateTimeLeft = ajax_updateTimer / 1000;
+	// content
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1)) {
 		tempAry = content.split("\n");
 		ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim));
@@ -177,8 +180,6 @@ function ajax_updateContent(statsServer, statsXfer) {
 			}
 		}
 	}
-	// timer
-	updateTimeLeft = ajax_updateTimer / 1000;
 }
 
 /**
