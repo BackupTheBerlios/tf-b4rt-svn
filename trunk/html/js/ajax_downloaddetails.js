@@ -65,8 +65,14 @@ function ajax_processText(content) {
 function ajax_updateContent(content) {
 	// progress-bar
 	currentPercentage = content[7];
-	document.barImage1.width = currentPercentage * 3.5;
-	document.barImage2.width = (100 - currentPercentage) * 3.5;
+	if (currentPercentage == 0)
+		document.barImage1.width = 1;
+	else
+		document.barImage1.width = currentPercentage * 3.5;
+	if (currentPercentage == 100)
+		document.barImage2.width = 1;
+	else
+		document.barImage2.width = (100 - currentPercentage) * 3.5;
 	// fields
 	for (i = 1; i < ajax_idCount; i++) {
 		document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];

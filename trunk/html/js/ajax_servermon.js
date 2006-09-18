@@ -60,14 +60,32 @@ function ajax_updateContent(content) {
 	}
 	// download-bar
 	currentPercentage = content[ajax_idCount];
-	document.barImageSpeedDown1.width = currentPercentage * 2;
-	document.barImageSpeedDown2.width = (100 - currentPercentage) * 2;
+	if (currentPercentage == 0)
+		document.barImageSpeedDown1.width = 1;
+	else
+		document.barImageSpeedDown1.width = currentPercentage * 2;
+	if (currentPercentage == 100)
+		document.barImageSpeedDown2.width = 1;
+	else
+		document.barImageSpeedDown2.width = (100 - currentPercentage) * 2;
 	// upload-bar
 	currentPercentage = content[ajax_idCount + 1];
-	document.barImageSpeedUp1.width = currentPercentage * 2;
-	document.barImageSpeedUp2.width = (100 - currentPercentage) * 2;
+	if (currentPercentage == 0)
+		document.barImageSpeedUp1.width = 1;
+	else
+		document.barImageSpeedUp1.width = currentPercentage * 2;
+	if (currentPercentage == 100)
+		document.barImageSpeedUp2.width = 1;
+	else
+		document.barImageSpeedUp2.width = (100 - currentPercentage) * 2;
 	// drivespace-bar
 	currentPercentage = content[ajax_idCount + 2];
-	document.barImageDriveSpace1.width = (100 - currentPercentage) * 2;
-	document.barImageDriveSpace2.width = currentPercentage * 2;
+	if (currentPercentage == 0)
+		document.barImageDriveSpace1.width = 1;
+	else
+		document.barImageDriveSpace1.width = (100 - currentPercentage) * 2;
+	if (currentPercentage == 100)
+		document.barImageDriveSpace2.width = 1;
+	else
+		document.barImageDriveSpace2.width = currentPercentage * 2;
 }

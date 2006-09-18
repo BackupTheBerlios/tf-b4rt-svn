@@ -115,27 +115,49 @@ function ajax_updateContent(statsServer, statsXfer) {
 		}
 	}
 	// drivespace-bar
+	dSpace = statsServer[10];
 	document.getElementById("barFreeSpace").innerHTML = statsServer[4];
-	document.getElementById("barDriveSpacePercent").innerHTML = (100 - statsServer[10]);
-	document.getElementById("barDriveSpace1").width = (statsServer[ajax_idCount + 4]) + "%";
-	document.getElementById("barDriveSpace2").width = (100 - statsServer[ajax_idCount + 4]) + "%";
+	document.getElementById("barDriveSpacePercent").innerHTML = (100 - dSpace);
+	if (dSpace == 0)
+		document.getElementById("barDriveSpace1").width = 1;
+	else
+		document.getElementById("barDriveSpace1").width = dSpace + "%";
+	if (dSpace == 100)
+		document.getElementById("barDriveSpace2").width = 1;
+	else
+		document.getElementById("barDriveSpace2").width = (100 - dSpace) + "%";
 	//if (driveSpaceBarStyle == "xfer") {
-	// set color
+		// set color
 	//}
 	// bandwidth-bars
 	if (bandwidthBarsEnabled == 1) {
 		// up
-		document.getElementById("barSpeedUpPercent").innerHTML = statsServer[ajax_idCount + 3];
+		upPer = statsServer[9];
+		document.getElementById("barSpeedUpPercent").innerHTML = upPer;
 		document.getElementById("barSpeedUp").innerHTML = statsServer[1];
-		document.getElementById("barSpeedUp1").width = (statsServer[ajax_idCount + 3]) + "%";
-		document.getElementById("barSpeedUp2").width = (100 - statsServer[ajax_idCount + 3]) + "%";
+		if (upPer == 0)
+			document.getElementById("barSpeedUp1").width = 1;
+		else
+			document.getElementById("barSpeedUp1").width = upPer + "%";
+
+		if (upPer == 100)
+			document.getElementById("barSpeedUp2").width = 1;
+		else
+			document.getElementById("barSpeedUp2").width = (100 - upPer) + "%";
 		// down
-		document.getElementById("barSpeedDownPercent").innerHTML = statsServer[ajax_idCount + 2];
+		downPer = statsServer[8];
+		document.getElementById("barSpeedDownPercent").innerHTML = downPer;
 		document.getElementById("barSpeedDown").innerHTML = statsServer[0];
-		document.getElementById("barSpeedDown1").width = (statsServer[ajax_idCount + 2]) + "%";
-		document.getElementById("barSpeedDown2").width = (100 - statsServer[ajax_idCount + 2]) + "%";
+		if (downPer == 0)
+			document.getElementById("barSpeedDown1").width = 1;
+		else
+			document.getElementById("barSpeedDown1").width = downPer + "%";
+		if (downPer == 100)
+			document.getElementById("barSpeedDown2").width = 1;
+		else
+			document.getElementById("barSpeedDown2").width = (100 - downPer) + "%";
 		//if (bandwidthBarsStyle == "xfer") {
-		// set color
+			// set color
 		//}
 	}
 	// bottom stats
