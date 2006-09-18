@@ -21,10 +21,10 @@ var ajax_idCount = ajax_fieldIds.length;
 /**
  * ajax_initialize
  *
- * @param name
  * @param url
  * @param timer
  * @param delim
+ * @param name
  */
 function ajax_initialize(url, timer, delim, name) {
 	ajax_statsUrl = url;

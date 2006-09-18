@@ -548,6 +548,10 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 // set vars
 // =============================================================================
 
+// goodlookingstats-init
+if ($cfg["enable_goodlookstats"] != "0")
+	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
+
 $onLoad = "";
 
 // page refresh
@@ -563,7 +567,23 @@ if ($_SESSION['settings']['index_meta_refresh'] != 0) {
 // AJAX update
 if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
-	$onLoad .= "ajax_initialize('".getStatsUrl()."',".(((int) $cfg['index_ajax_update']) * 1000).",'".$cfg['stats_txt_delim']."');";
+	$ajaxInit = "ajax_initialize(";
+	$ajaxInit .= "'".getStatsUrl()."'";
+	$ajaxInit .= ",".(((int) $cfg['index_ajax_update']) * 1000);
+	$ajaxInit .= ",'".$cfg['stats_txt_delim']."'";
+	$ajaxInit .= ",".$cfg["enable_goodlookstats"];
+	$ajaxInit .= ",'".$settingsHackStats[0].':'.$settingsHackStats[1].':'.$settingsHackStats[2].':'.$settingsHackStats[3].':'.$settingsHackStats[4].':'.$settingsHackStats[5]."'";
+	$ajaxInit .= ",".$cfg["index_page_stats"];
+	if ($queueActive)
+		$ajaxInit .= ",1";
+	else
+		$ajaxInit .= ",0";
+	$ajaxInit .= ",".$cfg["enable_xfer"];
+	$ajaxInit .= ",'".$cfg['drivespacebar']."'";
+	$ajaxInit .= ",".$cfg["ui_displaybandwidthbars"];
+	$ajaxInit .= ",'".$cfg['bandwidthbar']."'";
+	$ajaxInit .= ");";
+	$onLoad .= $ajaxInit;
 }
 
 // onLoad
@@ -613,7 +633,6 @@ if ($cfg["ui_displaylinks"] != "0") {
 
 // goodlookingstats
 if ($cfg["enable_goodlookstats"] != "0") {
-	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
 	if ($settingsHackStats[0] == 1) {
 		$tmpl->setvar('settingsHackStats1', 1);
 		$tmpl->setvar('settingsHackStats11', @number_format($cfg["total_download"], 2));

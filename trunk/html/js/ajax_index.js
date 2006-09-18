@@ -10,6 +10,27 @@ var ajax_fieldIds = new Array(
 );
 var ajax_idCount = ajax_fieldIds.length;
 
+var ajax_fieldIdsXfer = new Array(
+	"xferGlobalTotal",
+	"xferGlobalMonth",
+	"xferGlobalWeek",
+	"xferGlobalDay",
+	"xferUserTotal",
+	"xferUserMonth",
+	"xferUserWeek",
+	"xferUserDay"
+);
+var ajax_idCountXfer = ajax_fieldIdsXfer.length;
+
+var goodLookingStatsEnabled = 0;
+var goodLookingStatsSettings = null;
+var bottomStatsEnabled = 0;
+var queueActive = 0;
+var xferEnabled = 0;
+var driveSpaceBarStyle = "tf";
+var bandwidthBarsEnabled = 0;
+var bandwidthBarsStyle = "tf";
+
 /**
  * ajax_initialize
  *
@@ -17,14 +38,28 @@ var ajax_idCount = ajax_fieldIds.length;
  * @param timer
  * @param delim
  */
-function ajax_initialize(url, timer, delim) {
+function ajax_initialize(url, timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_statsUrl = url;
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
-	if (ajax_useXML)
-		ajax_statsParams = '?t=server&f=xml';
+	goodLookingStatsEnabled = glsEnabled;
+	if (goodLookingStatsEnabled == 1)
+		goodLookingStatsSettings = glsSettings.split(":");
+	bottomStatsEnabled = bsEnabled;
+	queueActive = qActive;
+	xferEnabled = xEnabled;
+	driveSpaceBarStyle = dsBarStyle;
+	bandwidthBarsEnabled = bwBarsEnabled;
+	bandwidthBarsStyle = bwBarsStyle;
+	ajax_statsParams = "";
+	if ((bottomStatsEnabled == 1) && (xferEnabled == 1))
+		ajax_statsParams += '?t=home';
 	else
-		ajax_statsParams = '?t=server&f=txt&h=0';
+		ajax_statsParams += '?t=server';
+	if (ajax_useXML)
+		ajax_statsParams += '&f=xml';
+	else
+		ajax_statsParams += '&f=txt&h=0';
 	ajax_httpRequest = ajax_getHttpRequest();
 	setTimeout("ajax_update();", ajax_updateTimer);
 }
@@ -44,20 +79,44 @@ function ajax_processXML(content) {
  * @param content
  */
 function ajax_processText(content) {
-	ajax_updateContent(content.split(ajax_txtDelim));
+	if ((bottomStatsEnabled == 1) && (xferEnabled == 1)) {
+		tempAry = content.split("\n");
+		ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim));
+	} else {
+		ajax_updateContent(content.split(ajax_txtDelim), null);
+	}
+
 }
 
 /**
  * update page contents from response
  *
- * @param content
+ * @param statsServer
+ * @param statsXfer
  */
-function ajax_updateContent(content) {
-	// stats
-	for (i = 0; i < ajax_idCount; i++) {
-		// good looking
-		document.getElementById("g_" + ajax_fieldIds[i]).innerHTML = content[i];
-		// bottom
-		document.getElementById("b_" + ajax_fieldIds[i]).innerHTML = content[i];
+function ajax_updateContent(statsServer, statsXfer) {
+	// good looking stats
+	if (goodLookingStatsEnabled == 1) {
+		for (i = 0; i < ajax_idCount; i++) {
+			if (goodLookingStatsSettings[i] == 1)
+				document.getElementById("g_" + ajax_fieldIds[i]).innerHTML = statsServer[i];
+		}
+	}
+	// bottom stats
+	if (bottomStatsEnabled == 1) {
+		for (i = 0; i < ajax_idCount; i++) {
+			document.getElementById("b_" + ajax_fieldIds[i]).innerHTML = statsServer[i];
+		}
+		// running + queued
+		if (queueActive == 1) {
+			document.getElementById("running").innerHTML = statsServer[ajax_idCount];
+			document.getElementById("queued").innerHTML = statsServer[ajax_idCount + 1];
+		}
+		// xfer
+		if (xferEnabled == 1) {
+			for (i = 0; i < ajax_idCountXfer; i++) {
+				document.getElementById(ajax_fieldIdsXfer[i]).innerHTML = statsXfer[i];
+			}
+		}
 	}
 }

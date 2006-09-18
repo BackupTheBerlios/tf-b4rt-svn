@@ -810,17 +810,17 @@
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="left" valign="bottom">
 														<b><tmpl_var name="_SERVERXFERSTATS"></b><br>
-														<tmpl_var name="_TOTALXFER">: <strong><tmpl_var name="totalxfer1"></strong><br>
-														<tmpl_var name="_MONTHXFER">: <strong><tmpl_var name="monthxfer1"></strong><br>
-														<tmpl_var name="_WEEKXFER">: <strong><tmpl_var name="weekxfer1"></strong><br>
-														<tmpl_var name="_DAYXFER">: <strong><tmpl_var name="dayxfer1"></strong><br>
+														<tmpl_var name="_TOTALXFER">: <strong><label id="xferGlobalTotal"><tmpl_var name="totalxfer1"></label></strong><br>
+														<tmpl_var name="_MONTHXFER">: <strong><label id="xferGlobalMonth"><tmpl_var name="monthxfer1"></label></strong><br>
+														<tmpl_var name="_WEEKXFER">: <strong><label id="xferGlobalWeek"><tmpl_var name="weekxfer1"></label></strong><br>
+														<tmpl_var name="_DAYXFER">: <strong><label id="xferGlobalDay"><tmpl_var name="dayxfer1"></label></strong><br>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="queueActive" value="1">
 													<td align="center" valign="bottom">
 														<div class="tiny">
 															<b><tmpl_var name="_QUEUEMANAGER"></b><br>
-															<strong><tmpl_var name="runningTransferCount"></strong> transfer(s) running and <strong><tmpl_var name="countQueuedTorrents"></strong> queued.<br>
+															<strong><label id="running"><tmpl_var name="runningTransferCount"></label></strong> transfer(s) running and <strong><label id="queued"><tmpl_var name="countQueuedTorrents"></label></strong> queued.<br>
 															Total transfers server will run: <strong><tmpl_var name="limitGlobal"></strong><br>
 															Total transfers a user may run: <strong><tmpl_var name="limitUser"></strong><br>
 														</div>
@@ -838,10 +838,10 @@
 												<tmpl_if name="xfer_realtime">
 													<td class="tiny" align="right" valign="bottom">
 														<b><tmpl_var name="_YOURXFERSTATS"></b><br>
-														<tmpl_var name="_TOTALXFER">: <strong><tmpl_var name="total2"></strong><br>
-														<tmpl_var name="_MONTHXFER">: <strong><tmpl_var name="month2"></strong><br>
-														<tmpl_var name="_WEEKXFER">: <strong><tmpl_var name="week2"></strong><br>
-														<tmpl_var name="_DAYXFER">: <strong><tmpl_var name="day2"></strong><br>
+														<tmpl_var name="_TOTALXFER">: <strong><label id="xferUserTotal"><tmpl_var name="total2"></label></strong><br>
+														<tmpl_var name="_MONTHXFER">: <strong><label id="xferUserMonth"><tmpl_var name="month2"></label></strong><br>
+														<tmpl_var name="_WEEKXFER">: <strong><label id="xferUserWeek"><tmpl_var name="week2"></label></strong><br>
+														<tmpl_var name="_DAYXFER">: <strong><label id="xferUserDay"><tmpl_var name="day2"></label></strong><br>
 													</td>
 												</tmpl_if>
 											</tr>
