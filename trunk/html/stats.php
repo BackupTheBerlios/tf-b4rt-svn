@@ -78,6 +78,10 @@ $sendAsAttachment = $cfg['stats_default_attach'];
 // send compressed ? (default)
 $sendCompressed = $cfg['stats_default_compress'];
 
+// showUsage-request ?
+if (isset($_REQUEST["usage"]))
+	sendUsage();
+
 // read params
 $gotParams = 0;
 if (isset($_REQUEST["h"])) {
@@ -106,19 +110,11 @@ if (($cfg['stats_show_usage'] == 1) && ($gotParams == 0))
 // init global vars
 switch ($type) {
     case "all":
-    	$indent = " ";
-		if ($cfg['enable_xfer'] == 1)
-			$cfg['xfer_realtime'] = 1;
-    	$transferList = getTransferListArray();
     	if (!(($format == "txt") && ($header == 0)))
     		$transferHeads = getTransferListHeadArray();
-    	initServerStats();
-    	initXferStats();
-    	break;
     case "home":
     	$indent = " ";
-		if ($cfg['enable_xfer'] == 1)
-			$cfg['xfer_realtime'] = 1;
+		$cfg['xfer_realtime'] = 1;
     	$transferList = getTransferListArray();
     	initServerStats();
     	initXferStats();
@@ -130,8 +126,7 @@ switch ($type) {
     	break;
     case "xfer":
     	$indent = "";
-		if ($cfg['enable_xfer'] == 1)
-			$cfg['xfer_realtime'] = 1;
+		$cfg['xfer_realtime'] = 1;
     	$transferList = getTransferListArray();
     	initXferStats();
     	break;

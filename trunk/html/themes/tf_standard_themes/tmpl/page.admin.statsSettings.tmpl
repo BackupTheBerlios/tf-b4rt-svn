@@ -31,7 +31,11 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Show Usage</strong><br>
-								Show Usage when stats is called without arguments.
+								Show Usage when stats is called without arguments.<br>
+								<a href="stats.php?usage" target="_blank">
+									<img src="themes/tf_standard_themes/images/arrow.gif" width="9" height="9" title="Show Usage" border="0">
+									Show Usage
+								</a>
 								</td>
 								<td valign="top">
 									<select name="stats_show_usage">
@@ -94,11 +98,21 @@
 											 selected
 										</tmpl_if>
 										>all</option>
+										<option value="home"
+										<tmpl_if name="stats_default_type" value="home">
+											 selected
+										</tmpl_if>
+										>home</option>
 										<option value="server"
 										<tmpl_if name="stats_default_type" value="server">
 											 selected
 										</tmpl_if>
 										>server</option>
+										<option value="xfer"
+										<tmpl_if name="stats_default_type" value="xfer">
+											 selected
+										</tmpl_if>
+										>xfer</option>
 										<option value="transfers"
 										<tmpl_if name="stats_default_type" value="transfers">
 											 selected

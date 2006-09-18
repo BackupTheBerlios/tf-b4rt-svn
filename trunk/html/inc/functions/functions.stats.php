@@ -79,18 +79,18 @@ function sendUsage() {
 Params :
 
 "t" : type : optional, default is "'.$cfg['stats_default_type'].'".
-      "all" : server-stats + xfer-stats + transfer-stats
-      "home" : server-stats + xfer-stats
+      "all" : server + xfer + transfers
+      "home" : server + xfer
       "server" : server-stats
-      "transfers" : transfer-stats
       "xfer" : xfer-stats
+      "transfers" : transfer-stats
       "transfer" : transfer-stats of a single transfer. needs extra-param "i" with the
                    name of the transfer.
 "f" : format : optional, default is "'.$cfg['stats_default_format'].'".
       "xml" : new xml-formats, see xml-schemas in dir "xml"
       "rss" : rss 0.91
       "txt" : csv-formatted text
-"h" : header : optional and only valid for txt-format, default is "'.$cfg['stats_default_header'].'".
+"h" : header : optional, only used in txt-format, default is "'.$cfg['stats_default_header'].'".
       "0" : send header
       "1" : dont send header.
 "a" : send as attachment : optional, default is "'.$cfg['stats_default_attach'].'".
@@ -106,9 +106,9 @@ Examples :
 * '._URL_THIS.'?t=server&f=xml&a=1       :  server stats as xml sent as attachment.
 * '._URL_THIS.'?t=transfers&f=xml&c=1    :  transfer stats as xml sent compressed.
 * '._URL_THIS.'?t=all&f=rss              :  all stats sent as rss.
-* '._URL_THIS.'?t=all&f=txt              :  all stats sent as txt.
-* '._URL_THIS.'?t=all&f=txt&h=0          :  all stats sent as txt without headers.
-* '._URL_THIS.'?t=all&f=txt&a=1&c=1      :  all stats as text sent as compressed attachment.
+* '._URL_THIS.'?t=all&f=txt&h=1          :  all stats sent as txt with headers.
+* '._URL_THIS.'?t=home&f=txt&h=0         :  home stats sent as txt without headers.
+* '._URL_THIS.'?t=xfer&f=txt&a=1&c=1     :  xfer stats as text sent as compressed attachment.
 
 * '._URL_THIS.'?t=transfer&i=foo.torrent        :  transfer-stats of foo sent in default-format.
 * '._URL_THIS.'?t=transfer&i=bar.torrent&f=xml  :  transfer-stats of bar sent as xml.
@@ -166,10 +166,15 @@ function sendXML($type) {
 	switch ($type) {
 		case "all":
 			$content .= '<tfbstats>'."\n";
+			break;
+		case "home":
+			$content .= '<tfbhome>'."\n";
+			break;
 	}
 	// server stats
 	switch ($type) {
 	    case "all":
+	    case "home":
 	    case "server":
 	    	$content .= $indent.'<server>'."\n";
 			for ($i = 0; $i < $serverIdCount; $i++)
@@ -179,6 +184,7 @@ function sendXML($type) {
 	// xfer stats
 	switch ($type) {
 	    case "all":
+	    case "home":
 	    case "xfer":
 	    	$content .= $indent.'<xfer>'."\n";
 			for ($i = 0; $i < $xferIdCount; $i++)
@@ -211,6 +217,10 @@ function sendXML($type) {
 	switch ($type) {
 		case "all":
 			$content .= '</tfbstats>'."\n";
+			break;
+		case "home":
+			$content .= '</tfbhome>'."\n";
+			break;
 	}
     // send content
     sendContent($content, "text/xml", "stats.xml");
@@ -231,6 +241,7 @@ function sendRSS($type) {
     // server stats
 	switch ($type) {
 	    case "all":
+	    case "home":
 	    case "server":
 		    $content .= "   <item>\n";
 		    $content .= "    <title>Server Stats</title>\n";
@@ -246,6 +257,7 @@ function sendRSS($type) {
 	// xfer stats
 	switch ($type) {
 	    case "all":
+	    case "home":
 	    case "xfer":
 		    $content .= "   <item>\n";
 		    $content .= "    <title>Xfer Stats</title>\n";
@@ -309,6 +321,7 @@ function sendTXT($type) {
 	// server stats
 	switch ($type) {
 	    case "all":
+	    case "home":
 	    case "server":
 	    	if ($header == 1) {
 				for ($j = 0; $j < $serverIdCount; $j++) {
@@ -328,6 +341,7 @@ function sendTXT($type) {
 	// xfer stats
 	switch ($type) {
 	    case "all":
+	    case "home":
 	    case "xfer":
 	    	if ($header == 1) {
 				for ($j = 0; $j < $xferIdCount; $j++) {
@@ -394,8 +408,6 @@ function sendTXT($type) {
  * init server stats
  * note : this can only be used after a call to update transfer-values in cfg-
  *        array (eg by getTransferListArray)
- *
-
  */
 function initServerStats() {
 	global $cfg, $serverIds, $serverLabels, $serverStats;
@@ -473,7 +485,6 @@ function initServerStats() {
  * init xfer stats
  * note : this can only be used after a call to update transfer-values in cfg-
  *        array (eg by getTransferListArray)
- *
  */
 function initXferStats() {
 	global $cfg, $xferIds, $xferLabels, $xferStats, $xfer_total, $xfer;
