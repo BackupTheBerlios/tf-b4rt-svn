@@ -59,9 +59,6 @@ switch ($cfg['stats_enable_public']) {
 		require_once("inc/main.internal.php");
 }
 
-// AliasFile
-require_once("inc/classes/AliasFile.php");
-
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
@@ -106,19 +103,37 @@ if (isset($_REQUEST["c"])) {
 if (($cfg['stats_show_usage'] == 1) && ($gotParams == 0))
 	sendUsage();
 
-// init some global vars
+// init global vars
 switch ($type) {
     case "all":
     	$indent = " ";
+		if ($cfg['enable_xfer'] == 1)
+			$cfg['xfer_realtime'] = 1;
     	$transferList = getTransferListArray();
     	if (!(($format == "txt") && ($header == 0)))
     		$transferHeads = getTransferListHeadArray();
     	initServerStats();
+    	initXferStats();
+    	break;
+    case "home":
+    	$indent = " ";
+		if ($cfg['enable_xfer'] == 1)
+			$cfg['xfer_realtime'] = 1;
+    	$transferList = getTransferListArray();
+    	initServerStats();
+    	initXferStats();
     	break;
     case "server":
     	$indent = "";
     	$transferList = getTransferListArray();
     	initServerStats();
+    	break;
+    case "xfer":
+    	$indent = "";
+		if ($cfg['enable_xfer'] == 1)
+			$cfg['xfer_realtime'] = 1;
+    	$transferList = getTransferListArray();
+    	initXferStats();
     	break;
     case "transfers":
     	$indent = "";

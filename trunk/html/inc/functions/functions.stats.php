@@ -36,21 +36,6 @@ $serverIds = array(
 );
 $serverIdCount = count($serverIds);
 
-// labels of server-details
-$serverLabels = array(
-	"Speed Down",
-	"Speed Up",
-	"Speed Total",
-	"Connections",
-	"Free Space",
-	"Load",
-	"Running",
-	"Queued",
-	"Speed Down (Percent)",
-	"Speed Up (Percent)",
-	"Drive Space (Percent)"
-);
-
 // ids of xfer-details
 $xferIds = array(
 	"xferGlobalTotal",
@@ -59,7 +44,6 @@ $xferIds = array(
 	"xferGlobalDay",
 	"xferUserTotal",
 	"xferUserMonth",
-	"percentDone",
 	"xferUserWeek",
 	"xferUserDay"
 );
@@ -95,7 +79,7 @@ function sendUsage() {
 Params :
 
 "t" : type : optional, default is "'.$cfg['stats_default_type'].'".
-      "all" : server-stats + transfer-stats
+      "all" : server-stats + xfer-stats + transfer-stats
       "home" : server-stats + xfer-stats
       "server" : server-stats
       "transfers" : transfer-stats
@@ -171,12 +155,12 @@ function sendContent($content, $contentType, $fileName) {
 
 /**
  * This method sends stats as xml.
- * xml-schema defined in tfbstats.xsd/tfbserver.xsd/tfbtransfers.xsd/tfbtransfer.xsd
+ * xml-schema defined in tfbstats.xsd/tfbhome.xsd/tfbserver.xsd/tfbxfer.xsd/tfbtransfers.xsd/tfbtransfer.xsd
  *
  * @param $type
  */
 function sendXML($type) {
-	global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $indent;
+	global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $indent;
     // build content
 	$content = '<?xml version="1.0" encoding="utf-8"?>'."\n";
 	switch ($type) {
@@ -189,8 +173,17 @@ function sendXML($type) {
 	    case "server":
 	    	$content .= $indent.'<server>'."\n";
 			for ($i = 0; $i < $serverIdCount; $i++)
-				$content .= $indent.' <serverStat name="'.$serverIds[$i].'">'.$serverStats[$serverIds[$i]].'</serverStat>'."\n";
+				$content .= $indent.' <serverStat name="'.$serverIds[$i].'">'.$serverStats[$i].'</serverStat>'."\n";
 			$content .= $indent.'</server>'."\n";
+	}
+	// xfer stats
+	switch ($type) {
+	    case "all":
+	    case "xfer":
+	    	$content .= $indent.'<xfer>'."\n";
+			for ($i = 0; $i < $xferIdCount; $i++)
+				$content .= $indent.' <xferStat name="'.$xferIds[$i].'">'.$xferStats[$i].'</xferStat>'."\n";
+			$content .= $indent.'</xfer>'."\n";
 	}
     // transfer-list
 	switch ($type) {
@@ -229,7 +222,7 @@ function sendXML($type) {
  * @param $type
  */
 function sendRSS($type) {
-    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
+    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
     // build content
     $content = "<?xml version='1.0' ?>\n\n";
     $content .= "<rss version=\"0.91\">\n";
@@ -243,8 +236,23 @@ function sendRSS($type) {
 		    $content .= "    <title>Server Stats</title>\n";
 		    $content .= "    <description>";
 			for ($i = 0; $i < $serverIdCount; $i++) {
-				$content .= $serverLabels[$i].": ".$serverStats[$serverIds[$i]];
+				$content .= $serverLabels[$i].": ".$serverStats[$i];
 				if ($i < ($serverIdCount - 1))
+					$content .= " || ";
+			}
+		    $content .= "    </description>\n";
+		    $content .= "   </item>\n";
+	}
+	// xfer stats
+	switch ($type) {
+	    case "all":
+	    case "xfer":
+		    $content .= "   <item>\n";
+		    $content .= "    <title>Xfer Stats</title>\n";
+		    $content .= "    <description>";
+			for ($i = 0; $i < $xferIdCount; $i++) {
+				$content .= $xferLabels[$i].": ".$xferStats[$i];
+				if ($i < ($xferIdCount - 1))
 					$content .= " || ";
 			}
 		    $content .= "    </description>\n";
@@ -295,7 +303,7 @@ function sendRSS($type) {
  * @param $type
  */
 function sendTXT($type) {
-    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $transferIds, $header, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
+    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $header, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
     // build content
     $content = "";
 	// server stats
@@ -311,8 +319,27 @@ function sendTXT($type) {
 				$content .= "\n";
 	    	}
 			for ($i = 0; $i < $serverIdCount; $i++) {
-				$content .= $serverStats[$serverIds[$i]];
+				$content .= $serverStats[$i];
 				if ($i < ($serverIdCount - 1))
+					$content .= $cfg['stats_txt_delim'];
+			}
+			$content .= "\n";
+	}
+	// xfer stats
+	switch ($type) {
+	    case "all":
+	    case "xfer":
+	    	if ($header == 1) {
+				for ($j = 0; $j < $xferIdCount; $j++) {
+					$content .= $xferLabels[$j];
+					if ($j < ($xferIdCount - 1))
+						$content .= $cfg['stats_txt_delim'];
+				}
+				$content .= "\n";
+	    	}
+			for ($i = 0; $i < $xferIdCount; $i++) {
+				$content .= $xferStats[$i];
+				if ($i < ($xferIdCount - 1))
 					$content .= $cfg['stats_txt_delim'];
 			}
 			$content .= "\n";
@@ -371,39 +398,55 @@ function sendTXT($type) {
 
  */
 function initServerStats() {
-	global $cfg, $serverIds, $serverStats;
+	global $cfg, $serverIds, $serverLabels, $serverStats;
+	// init labels
+	$serverLabels = array(
+		"Speed Down",
+		"Speed Up",
+		"Speed Total",
+		"Connections",
+		"Free Space",
+		"Load",
+		"Running",
+		"Queued",
+		"Speed Down (Percent)",
+		"Speed Up (Percent)",
+		"Drive Space (Percent)"
+	);
 	$serverStats = array();
 	// speedDown
     $speedDown = "n/a";
 	$speedDown = @number_format($cfg["total_download"], 2);
-	$serverStats[$serverIds[0]] = $speedDown;
+	array_push($serverStats, $speedDown);
 	// speedUp
     $speedUp = "n/a";
 	$speedUp =  @number_format($cfg["total_upload"], 2);
-	$serverStats[$serverIds[1]] = $speedUp;
+	array_push($serverStats, $speedUp);
 	// speedTotal
     $speedTotal = "n/a";
 	$speedTotal = @number_format($cfg["total_download"] + $cfg["total_upload"], 2);
-	$serverStats[$serverIds[2]] = $speedTotal;
+	array_push($serverStats, $speedTotal);
 	// cons
     $cons = "n/a";
 	$cons = @netstatConnectionsSum();
-	$serverStats[$serverIds[3]] = $cons;
+	array_push($serverStats, $cons);
 	// freeSpace
     $freeSpace = "n/a";
 	$freeSpace = @formatFreeSpace($cfg["free_space"]);
-	$serverStats[$serverIds[4]] = $freeSpace;
+	array_push($serverStats, $freeSpace);
 	// loadavg
 	$loadavg = "n/a";
 	$loadavg = @getLoadAverageString();
-	$serverStats[$serverIds[5]] = $loadavg;
+	array_push($serverStats, $loadavg);
 	// running
-	$serverStats[$serverIds[6]] = getRunningTransferCount();
+	$running = "n/a";
+	$running = @getRunningTransferCount();
+	array_push($serverStats, $running);
 	// queued
+	$queued = "n/a";
 	if ((isset($queueActive)) && ($queueActive) && (isset($fluxdQmgr)))
-	    $serverStats[$serverIds[7]] = $fluxdQmgr->countQueuedTorrents();
-	else
-		$serverStats[$serverIds[7]] = "0";
+	    $queued = @ $fluxdQmgr->countQueuedTorrents();
+	array_push($serverStats, $queued);
 	// speedDownPercent
 	$percentDownload = 0;
 	$maxDownload = $cfg["bandwidth_down"] / 8;
@@ -411,7 +454,7 @@ function initServerStats() {
 		$percentDownload = @number_format(($cfg["total_download"] / $maxDownload) * 100, 0);
 	else
 		$percentDownload = 0;
-	$serverStats[$serverIds[8]] = $percentDownload;
+	array_push($serverStats, $percentDownload);
 	// speedUpPercent
 	$percentUpload = 0;
 	$maxUpload = $cfg["bandwidth_up"] / 8;
@@ -419,11 +462,11 @@ function initServerStats() {
 		$percentUpload = @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0);
 	else
 		$percentUpload = 0;
-	$serverStats[$serverIds[9]] = $percentUpload;
+	array_push($serverStats, $percentUpload);
 	// driveSpacePercent
     $driveSpacePercent = 0;
 	$driveSpacePercent = @getDriveSpace($cfg["path"]);
-	$serverStats[$serverIds[10]] = $driveSpacePercent;
+	array_push($serverStats, $driveSpacePercent);
 }
 
 /**
@@ -433,8 +476,45 @@ function initServerStats() {
  *
  */
 function initXferStats() {
-	global $cfg, $xferIds, $xferStats, $xfer_total;
+	global $cfg, $xferIds, $xferLabels, $xferStats, $xfer_total, $xfer;
+	// init labels
+	$xferLabels = array(
+		'Server : '.$cfg['_TOTALXFER'],
+		'Server : '.$cfg['_MONTHXFER'],
+		'Server : '.$cfg['_WEEKXFER'],
+		'Server : '.$cfg['_DAYXFER'],
+		'User : '.$cfg['_TOTALXFER'],
+		'User : '.$cfg['_MONTHXFER'],
+		'User : '.$cfg['_WEEKXFER'],
+		'User : '.$cfg['_DAYXFER']
+	);
 	$xferStats = array();
+	// global
+    $xferGlobalTotal = "n/a";
+	$xferGlobalTotal =  @formatFreeSpace($xfer_total['total']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalTotal);
+    $xferGlobalMonth = "n/a";
+	$xferGlobalMonth =  @formatFreeSpace($xfer_total['month']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalMonth);
+    $xferGlobalWeek = "n/a";
+	$xferGlobalWeek =  @formatFreeSpace($xfer_total['week']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalWeek);
+    $xferGlobalDay = "n/a";
+	$xferGlobalDay =  @formatFreeSpace($xfer_total['day']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalDay);
+	// user
+    $xferUserTotal = "n/a";
+	$xferUserTotal =  @formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576);
+	array_push($xferStats, $xferUserTotal);
+    $xferUserMonth = "n/a";
+	$xferUserMonth =  @formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576);
+	array_push($xferStats, $xferUserMonth);
+    $xferUserWeek = "n/a";
+	$xferUserWeek =  @formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576);
+	array_push($xferStats, $xferUserWeek);
+    $xferUserDay = "n/a";
+	$xferUserDay =  @formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576);
+	array_push($xferStats, $xferUserDay);
 }
 
 ?>
