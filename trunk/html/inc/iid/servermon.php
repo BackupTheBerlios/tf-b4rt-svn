@@ -27,7 +27,7 @@ require_once('inc/functions/functions.common.php');
 $tmpl = tmplGetInstance($cfg["theme"], "page.servermon.tmpl");
 
 // set vars
-$tmpl->setvar('onLoad', "ajax_initialize('".getStatsUrl()."',".(((int) $cfg['servermon_update']) * 1000).",'".$cfg['stats_txt_delim']."');");
+$tmpl->setvar('onLoad', "ajax_initialize(".(((int) $cfg['servermon_update']) * 1000).",'".$cfg['stats_txt_delim']."');");
 //
 $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);

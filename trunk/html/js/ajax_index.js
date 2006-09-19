@@ -36,7 +36,6 @@ var updateTimeLeft = 0;
 /**
  * ajax_initialize
  *
- * @param url
  * @param timer
  * @param delim
  * @param glsEnabled
@@ -48,8 +47,7 @@ var updateTimeLeft = 0;
  * @param bwBarsEnabled
  * @param bwBarsStyle
  */
-function ajax_initialize(url, timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
-	ajax_statsUrl = url;
+function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	goodLookingStatsEnabled = glsEnabled;
@@ -70,11 +68,31 @@ function ajax_initialize(url, timer, delim, glsEnabled, glsSettings, bsEnabled, 
 		ajax_statsParams += '&f=xml';
 	else
 		ajax_statsParams += '&f=txt&h=0';
+	// state
+	ajax_updateState = 1;
 	// http-request
 	ajax_httpRequest = ajax_getHttpRequest();
 	// start update-thread
 	updateTimeLeft = ajax_updateTimer / 1000;
-	ajax_indexUpdate();
+	ajax_pageUpdate();
+}
+
+/**
+ * page ajax-update
+ *
+ */
+function ajax_pageUpdate() {
+	if (updateTimeLeft < 0) {
+		document.getElementById("span_update").innerHTML = "Update in progress...";
+	} else if (updateTimeLeft == 0) {
+		document.getElementById("span_update").innerHTML = "Update in progress...";
+		updateTimeLeft = -1;
+		setTimeout("ajax_update();", 100);
+	} else {
+		document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
+	}
+	updateTimeLeft--;
+	setTimeout("ajax_pageUpdate();", 1000);
 }
 
 /**
@@ -92,8 +110,6 @@ function ajax_processXML(content) {
  * @param content
  */
 function ajax_processText(content) {
-	// timer
-	updateTimeLeft = ajax_updateTimer / 1000;
 	// content
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1)) {
 		tempAry = content.split("\n");
@@ -101,6 +117,8 @@ function ajax_processText(content) {
 	} else {
 		ajax_updateContent(content.split(ajax_txtDelim), null);
 	}
+	// timer
+	updateTimeLeft = ajax_updateTimer / 1000;
 }
 
 /**
@@ -180,22 +198,4 @@ function ajax_updateContent(statsServer, statsXfer) {
 			}
 		}
 	}
-}
-
-/**
- * index-page ajax-update
- *
- */
-function ajax_indexUpdate() {
-	if (updateTimeLeft < 0) {
-		document.getElementById("span_update").innerHTML = "Update in progress...";
-	} else if (updateTimeLeft == 0) {
-		document.getElementById("span_update").innerHTML = "Update in progress...";
-		updateTimeLeft = -1;
-		ajax_update();
-	} else {
-		document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
-	}
-	updateTimeLeft--;
-	setTimeout("ajax_indexUpdate();", 1000);
 }

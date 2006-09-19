@@ -252,18 +252,6 @@ function showErrorPage($errorMessage) {
 }
 
 /**
- * gets url of stats.php
- *
- * @return string
- */
-function getStatsUrl() {
-	$statsUrl = "http://";
-	$statsUrl .= $_SERVER['SERVER_NAME'];
-	$statsUrl .= preg_replace('/index\.php.*/', 'stats.php', $_SERVER['REQUEST_URI']);
-	return $statsUrl;
-}
-
-/**
  * getCredentials
  *
  * @return array with credentials or null if no credentials found.

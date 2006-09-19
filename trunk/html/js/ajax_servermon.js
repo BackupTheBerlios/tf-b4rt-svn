@@ -15,19 +15,21 @@ var ajax_idCount = ajax_fieldIds.length;
 /**
  * ajax_initialize
  *
- * @param url
  * @param timer
  * @param delim
  */
-function ajax_initialize(url, timer, delim) {
-	ajax_statsUrl = url;
+function ajax_initialize(timer, delim) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	if (ajax_useXML)
 		ajax_statsParams = '?t=server&f=xml';
 	else
 		ajax_statsParams = '?t=server&f=txt&h=0';
+	// state
+	ajax_updateState = 1;
+	// http-request
 	ajax_httpRequest = ajax_getHttpRequest();
+	// start update-thread
 	ajax_update();
 }
 
@@ -47,6 +49,8 @@ function ajax_processXML(content) {
  */
 function ajax_processText(content) {
 	ajax_updateContent(content.split(ajax_txtDelim));
+	// set timeout
+	setTimeout("ajax_update();", ajax_updateTimer);
 }
 
 /**

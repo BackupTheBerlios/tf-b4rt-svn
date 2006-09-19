@@ -21,13 +21,11 @@ var ajax_idCount = ajax_fieldIds.length;
 /**
  * ajax_initialize
  *
- * @param url
  * @param timer
  * @param delim
  * @param name
  */
-function ajax_initialize(url, timer, delim, name) {
-	ajax_statsUrl = url;
+function ajax_initialize(timer, delim, name) {;
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	ajax_transferName = name;
@@ -35,7 +33,11 @@ function ajax_initialize(url, timer, delim, name) {
 		ajax_statsParams = '?t=transfer&f=xml&i=' + name;
 	else
 		ajax_statsParams = '?t=transfer&f=txt&h=0&i=' + name;
+	// state
+	ajax_updateState = 1;
+	// http-request
 	ajax_httpRequest = ajax_getHttpRequest();
+	// start update-thread
 	setTimeout("ajax_update();", ajax_updateTimer);
 }
 
@@ -55,6 +57,8 @@ function ajax_processXML(content) {
  */
 function ajax_processText(content) {
 	ajax_updateContent(content.split(ajax_txtDelim));
+	// set timeout
+	setTimeout("ajax_update();", ajax_updateTimer);
 }
 
 /**

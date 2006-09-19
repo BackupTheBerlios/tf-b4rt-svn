@@ -568,8 +568,7 @@ if ($_SESSION['settings']['index_meta_refresh'] != 0) {
 if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 	$ajaxInit = "ajax_initialize(";
-	$ajaxInit .= "'".getStatsUrl()."'";
-	$ajaxInit .= ",".(((int) $cfg['index_ajax_update']) * 1000);
+	$ajaxInit .= (((int) $cfg['index_ajax_update']) * 1000);
 	$ajaxInit .= ",'".$cfg['stats_txt_delim']."'";
 	$ajaxInit .= ",".$cfg["enable_goodlookstats"];
 	$ajaxInit .= ",'".$settingsHackStats[0].':'.$settingsHackStats[1].':'.$settingsHackStats[2].':'.$settingsHackStats[3].':'.$settingsHackStats[4].':'.$settingsHackStats[5]."'";
