@@ -173,6 +173,9 @@ $tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
 $tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
 $tmpl->setvar('_USER', $cfg['_USER']);
 
+// username
+$tmpl->setvar('user', $cfg["user"]);
+
 // queue
 if ($queueActive)
 	$tmpl->setvar('queueActive', 1);
@@ -589,7 +592,7 @@ if ($isAjaxUpdate) {
 	}
 	// xfer
 	if ($ajaxUpdateParams{1} == "1") {
-		$content .= "\n";
+		$content .= "|";
 		$xferStats = getXferStats();
 		$xferCount = count($xferStats);
 		for ($i = 0; $i < $xferCount; $i++) {
@@ -600,7 +603,7 @@ if ($isAjaxUpdate) {
 	}
 	// transfer list
 	if ($ajaxUpdateParams{2} == "1") {
-		$content .= "\n";
+		$content .= "|";
 		$content .= $tmpl->grab();
 	}
 	// send and out
@@ -645,7 +648,7 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	else
 		$ajaxInit .= ",0";
 	$ajaxInit .= ",".$cfg["enable_xfer"];
-	$ajaxInit .= ",0"; // $ajaxInit .= ",".$cfg["index_ajax_update_list"];
+	$ajaxInit .= ",".$cfg["enable_index_ajax_update_list"];
 	$ajaxInit .= ",'".$cfg['drivespacebar']."'";
 	$ajaxInit .= ",".$cfg["ui_displaybandwidthbars"];
 	$ajaxInit .= ",'".$cfg['bandwidthbar']."'";
@@ -827,7 +830,6 @@ if ($cfg["ui_displaybandwidthbars"] != 0)
 	tmplSetBandwidthBars();
 
 $tmpl->setvar('version', $cfg["version"]);
-$tmpl->setvar('user', $cfg["user"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);

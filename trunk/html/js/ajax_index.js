@@ -109,21 +109,20 @@ function ajax_processXML(content) {
  */
 function ajax_processText(content) {
 	// content
-	statsServer = null;
-	statsXfer = null;
-	transferList = null;
-	/*
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1)) {
-		tempAry = content.split("\n");
-		ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim));
+		tempAry = content.split("|");
+		if (transferListEnabled == 1)
+			ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim), tempAry[2]);
+		else
+			ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim), null);
 	} else {
-		ajax_updateContent(content.split(ajax_txtDelim), null);
+		if (transferListEnabled == 1) {
+			tempAry = content.split("|");
+			ajax_updateContent(tempAry[0].split(ajax_txtDelim), null, tempAry[1]);
+		} else {
+			ajax_updateContent(content.split(ajax_txtDelim), null, null);
+		}
 	}
-	*/
-
-
-	// update content
-	ajax_updateContent(statsServer, statsXfer, transferList);
 	// timer
 	updateTimeLeft = ajax_updateTimer / 1000;
 }
@@ -205,4 +204,7 @@ function ajax_updateContent(statsServer, statsXfer, transferList) {
 			}
 		}
 	}
+	// transfer-list
+	if (transferListEnabled == 1)
+		document.getElementById("transferList").innerHTML = transferList;
 }

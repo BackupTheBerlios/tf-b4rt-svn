@@ -27,6 +27,11 @@ loadSettings('tf_settings');
 $tmpl = tmplGetInstance($cfg["theme"], "page.admin.indexSettings.tmpl");
 
 // set vars
+$tmpl->setvar('enable_index_meta_refresh', $cfg["enable_index_meta_refresh"]);
+$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
+$tmpl->setvar('enable_index_ajax_update', $cfg["enable_index_ajax_update"]);
+$tmpl->setvar('enable_index_ajax_update_list', $cfg["enable_index_ajax_update_list"]);
+$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
@@ -44,10 +49,6 @@ $tmpl->setvar('enable_search', $cfg["enable_search"]);
 $tmpl->setvar('index_page_stats', $cfg["index_page_stats"]);
 $tmpl->setvar('show_server_load', $cfg["show_server_load"]);
 $tmpl->setvar('index_page_connections', $cfg["index_page_connections"]);
-$tmpl->setvar('enable_index_meta_refresh', $cfg["enable_index_meta_refresh"]);
-$tmpl->setvar('page_refresh', $cfg["page_refresh"]);
-$tmpl->setvar('enable_index_ajax_update', $cfg["enable_index_ajax_update"]);
-$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 $tmpl->setvar('enable_restrictivetview', $cfg["enable_restrictivetview"]);
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
