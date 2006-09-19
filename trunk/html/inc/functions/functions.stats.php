@@ -36,19 +36,6 @@ $serverIds = array(
 );
 $serverIdCount = count($serverIds);
 
-// ids of xfer-details
-$xferIds = array(
-	"xferGlobalTotal",    /* 0 */
-	"xferGlobalMonth",    /* 1 */
-	"xferGlobalWeek",     /* 2 */
-	"xferGlobalDay",      /* 3 */
-	"xferUserTotal",      /* 4 */
-	"xferUserMonth",      /* 5 */
-	"xferUserWeek",       /* 6 */
-	"xferUserDay"         /* 7 */
-);
-$xferIdCount = count($xferIds);
-
 // ids of transfer-details
 $transferIds = array(
 	"running",            /*  0 */
@@ -66,6 +53,20 @@ $transferIds = array(
 	"cons"                /* 12 */
 );
 $transferIdCount = count($transferIds);
+
+// ids of xfer-details
+$xferIds = array(
+	"xferGlobalTotal",    /* 0 */
+	"xferGlobalMonth",    /* 1 */
+	"xferGlobalWeek",     /* 2 */
+	"xferGlobalDay",      /* 3 */
+	"xferUserTotal",      /* 4 */
+	"xferUserMonth",      /* 5 */
+	"xferUserWeek",       /* 6 */
+	"xferUserDay"         /* 7 */
+);
+$xferIdCount = count($xferIds);
+
 
 /**
  * sends usage to client.
