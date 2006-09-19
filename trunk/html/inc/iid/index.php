@@ -144,6 +144,7 @@ if (isset($_REQUEST["QEntry"])) {
 
 if (isset($_REQUEST['ajax_update'])) {
 	$isAjaxUpdate = true;
+	$ajaxUpdateParams = $_REQUEST['ajax_update'];
 	// create template-instance
 	$tmpl = tmplGetInstance($cfg["theme"], "inc.transferList.tmpl");
 } else {
@@ -152,7 +153,42 @@ if (isset($_REQUEST['ajax_update'])) {
 	$tmpl = tmplGetInstance($cfg["theme"], "page.index.tmpl");
 }
 
+// =============================================================================
+// set common vars
+// =============================================================================
 
+// language
+$tmpl->setvar('_STATUS', $cfg['_STATUS']);
+$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
+$tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
+$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
+$tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
+$tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
+$tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+$tmpl->setvar('_WARNING', $cfg['_WARNING']);
+$tmpl->setvar('_NOTOWNER', $cfg['_NOTOWNER']);
+$tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
+$tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
+$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
+$tmpl->setvar('_USER', $cfg['_USER']);
+
+// queue
+if ($queueActive)
+	$tmpl->setvar('queueActive', 1);
+else
+	$tmpl->setvar('queueActive', 0);
+
+// incoming-path
+switch ($cfg["enable_home_dirs"]) {
+    case 1:
+    default:
+        $tmpl->setvar('path_incoming', $cfg["user"]);
+        break;
+    case 0:
+    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
+        break;
+}
 
 // =============================================================================
 // transfer-list
@@ -536,60 +572,43 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 	$tmpl->setvar('are_torrent', 1);
 
 // =============================================================================
-// set common vars
-// =============================================================================
-
-// language
-$tmpl->setvar('_STATUS', $cfg['_STATUS']);
-$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
-$tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
-$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
-$tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
-$tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
-$tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
-$tmpl->setvar('_DELETE', $cfg['_DELETE']);
-$tmpl->setvar('_WARNING', $cfg['_WARNING']);
-$tmpl->setvar('_NOTOWNER', $cfg['_NOTOWNER']);
-$tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
-$tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
-$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
-$tmpl->setvar('_USER', $cfg['_USER']);
-
-// queue
-if ($queueActive)
-	$tmpl->setvar('queueActive', 1);
-else
-	$tmpl->setvar('queueActive', 0);
-
-// incoming-path
-switch ($cfg["enable_home_dirs"]) {
-    case 1:
-    default:
-        $tmpl->setvar('path_incoming', $cfg["user"]);
-        break;
-    case 0:
-    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
-        break;
-}
-
-// =============================================================================
 // ajax-index
 // =============================================================================
 
 if ($isAjaxUpdate) {
-	$tmpl->setvar('ajax_update', '1');
-	$output = "";
+	$content = "";
 	// server stats
-
+	if ($ajaxUpdateParams{0} == "1") {
+		$serverStats = getServerStats();
+		$serverCount = count($serverStats);
+		for ($i = 0; $i < $serverCount; $i++) {
+			$content .= $serverStats[$i];
+			if ($i < ($serverCount - 1))
+				$content .= $cfg['stats_txt_delim'];
+		}
+	}
 	// xfer
-
+	if ($ajaxUpdateParams{1} == "1") {
+		$content .= "\n";
+		$xferStats = getXferStats();
+		$xferCount = count($xferStats);
+		for ($i = 0; $i < $xferCount; $i++) {
+			$content .= $xferStats[$i];
+			if ($i < ($xferCount - 1))
+				$content .= $cfg['stats_txt_delim'];
+		}
+	}
 	// transfer list
-	$output .= $tmpl->grab();
-	// echo and out
-	echo $output;
+	if ($ajaxUpdateParams{2} == "1") {
+		$content .= "\n";
+		$content .= $tmpl->grab();
+	}
+	// send and out
+    header("Cache-Control: ");
+    header("Pragma: ");
+	header("Content-Type: text/plain");
+	echo $content;
 	exit();
-} else {
-	$tmpl->setvar('ajax_update', '0');
 }
 
 // =============================================================================
