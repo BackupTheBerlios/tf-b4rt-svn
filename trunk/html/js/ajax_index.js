@@ -31,6 +31,7 @@ var xferEnabled = 0;
 var driveSpaceBarStyle = "tf";
 var bandwidthBarsEnabled = 0;
 var bandwidthBarsStyle = "tf";
+var sortTableEnabled = 0;
 var updateTimeLeft = 0;
 
 /**
@@ -46,11 +47,12 @@ var updateTimeLeft = 0;
  * @param qActive
  * @param xEnabled
  * @param tEnabled
+ * @param sortEnabled
  * @param dsBarStyle
  * @param bwBarsEnabled
  * @param bwBarsStyle
  */
-function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, tEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
+function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, tEnabled, sortEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	titleChangeEnabled = tChangeEnabled;
@@ -62,6 +64,7 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 	queueActive = qActive;
 	xferEnabled = xEnabled;
 	transferListEnabled = tEnabled;
+	sortTableEnabled = sortEnabled;
 	driveSpaceBarStyle = dsBarStyle;
 	bandwidthBarsEnabled = bwBarsEnabled;
 	bandwidthBarsStyle = bwBarsStyle;
@@ -224,6 +227,11 @@ function ajax_updateContent(statsServer, statsXfer, transferList) {
 		}
 	}
 	// transfer-list
-	if (transferListEnabled == 1)
+	if (transferListEnabled == 1) {
+		// update content
 		document.getElementById("transferList").innerHTML = transferList;
+		// re-init sort-table
+		if (sortTableEnabled == 1)
+			sortables_init();
+	}
 }
