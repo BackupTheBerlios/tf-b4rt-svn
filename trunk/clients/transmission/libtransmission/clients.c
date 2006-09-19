@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 851 2006-09-07 21:42:41Z livings124 $
+ * $Id: clients.c 862 2006-09-12 01:41:17Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -99,6 +99,10 @@ char * tr_clientForId( uint8_t * id )
     else if( !memcmp( id, "exbc", 4 ) )
     {
         asprintf( &ret, "BitComet %d.%02d", id[4], id[5] );
+    }
+    else if( !memcmp( id, "OP", 2 ) )
+    {
+        asprintf( &ret, "Opera (%c%c%c%c)", id[2], id[3], id[4], id[5] );
     }
 
     if( !ret )
