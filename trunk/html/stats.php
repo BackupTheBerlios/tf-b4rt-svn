@@ -20,6 +20,53 @@
 
 *******************************************************************************/
 
+// ids of server-details
+$serverIds = array(
+	"speedDown",          /*  0 */
+	"speedUp",            /*  1 */
+	"speedTotal",         /*  2 */
+	"cons",               /*  3 */
+	"freeSpace",          /*  4 */
+	"loadavg",            /*  5 */
+	"running",            /*  6 */
+	"queued",             /*  7 */
+	"speedDownPercent",   /*  8 */
+	"speedUpPercent",     /*  9 */
+	"driveSpacePercent"   /* 10 */
+);
+$serverIdCount = count($serverIds);
+
+// ids of transfer-details
+$transferIds = array(
+	"running",            /*  0 */
+	"speedDown",          /*  1 */
+	"speedUp",            /*  2 */
+	"downCurrent",        /*  3 */
+	"upCurrent",          /*  4 */
+	"downTotal",          /*  5 */
+	"upTotal",            /*  6 */
+	"percentDone",        /*  7 */
+	"sharing",            /*  8 */
+	"eta",                /*  9 */
+	"seeds",              /* 10 */
+	"peers",              /* 11 */
+	"cons"                /* 12 */
+);
+$transferIdCount = count($transferIds);
+
+// ids of xfer-details
+$xferIds = array(
+	"xferGlobalTotal",    /* 0 */
+	"xferGlobalMonth",    /* 1 */
+	"xferGlobalWeek",     /* 2 */
+	"xferGlobalDay",      /* 3 */
+	"xferUserTotal",      /* 4 */
+	"xferUserMonth",      /* 5 */
+	"xferUserWeek",       /* 6 */
+	"xferUserDay"         /* 7 */
+);
+$xferIdCount = count($xferIds);
+
 // defines
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
 define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);

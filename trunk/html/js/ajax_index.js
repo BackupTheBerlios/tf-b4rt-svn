@@ -20,6 +20,8 @@ var ajax_fieldIdsXfer = new Array(
 	"xferUserDay"
 );
 var ajax_idCountXfer = ajax_fieldIdsXfer.length;
+var titleChangeEnabled = 0;
+var pageTitle = "torrentflux-b4rt";
 var goodLookingStatsEnabled = 0;
 var goodLookingStatsSettings = null;
 var bottomStatsEnabled = 0;
@@ -36,6 +38,8 @@ var updateTimeLeft = 0;
  *
  * @param timer
  * @param delim
+ * @param tChangeEnabled
+ * @param pTitle
  * @param glsEnabled
  * @param glsSettings
  * @param bsEnabled
@@ -46,9 +50,11 @@ var updateTimeLeft = 0;
  * @param bwBarsEnabled
  * @param bwBarsStyle
  */
-function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, tEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
+function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, tEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
+	titleChangeEnabled = tChangeEnabled;
+	pageTitle = pTitle;
 	goodLookingStatsEnabled = glsEnabled;
 	if (goodLookingStatsEnabled == 1)
 		goodLookingStatsSettings = glsSettings.split(":");
@@ -82,9 +88,13 @@ function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActi
 function ajax_pageUpdate() {
 	if (updateTimeLeft < 0) {
 		document.getElementById("span_update").innerHTML = "Update in progress...";
+		if (titleChangeEnabled == 1)
+			document.title = "Update in progress... - "+ pageTitle;
 	} else if (updateTimeLeft == 0) {
-		document.getElementById("span_update").innerHTML = "Update in progress...";
 		updateTimeLeft = -1;
+		document.getElementById("span_update").innerHTML = "Update in progress...";
+		if (titleChangeEnabled == 1)
+			document.title = "Update in progress... - "+ pageTitle;
 		setTimeout("ajax_update();", 100);
 	} else {
 		document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
@@ -134,6 +144,15 @@ function ajax_processText(content) {
  * @param statsXfer
  */
 function ajax_updateContent(statsServer, statsXfer, transferList) {
+	// page-title
+	if (titleChangeEnabled == 1) {
+		newTitle = "";
+		for (i = 0; i < 5; i++) {
+			newTitle += statsServer[i] + "|";
+		}
+		newTitle += statsServer[5]+ " - " + pageTitle;
+		document.title = newTitle;
+	}
 	// good looking stats
 	if (goodLookingStatsEnabled == 1) {
 		for (i = 0; i < ajax_idCount; i++) {

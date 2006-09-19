@@ -52,6 +52,21 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Page-Title AJAX Update</strong><br>
+								Enable/Disable update of the Page-Title in AJAX Updates :
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update_title">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update_title" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Transfer List AJAX Update</strong><br>
 								Enable/Disable Transfer List AJAX Update :
 								</td>
