@@ -24,6 +24,7 @@ var goodLookingStatsEnabled = 0;
 var goodLookingStatsSettings = null;
 var bottomStatsEnabled = 0;
 var queueActive = 0;
+var transferListEnabled = 0;
 var xferEnabled = 0;
 var driveSpaceBarStyle = "tf";
 var bandwidthBarsEnabled = 0;
@@ -40,11 +41,12 @@ var updateTimeLeft = 0;
  * @param bsEnabled
  * @param qActive
  * @param xEnabled
+ * @param tEnabled
  * @param dsBarStyle
  * @param bwBarsEnabled
  * @param bwBarsStyle
  */
-function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
+function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, tEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	goodLookingStatsEnabled = glsEnabled;
@@ -53,18 +55,17 @@ function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActi
 	bottomStatsEnabled = bsEnabled;
 	queueActive = qActive;
 	xferEnabled = xEnabled;
+	transferListEnabled = tEnabled;
 	driveSpaceBarStyle = dsBarStyle;
 	bandwidthBarsEnabled = bwBarsEnabled;
 	bandwidthBarsStyle = bwBarsStyle;
-	ajax_updateParams = "";
+	ajax_updateUrl = "index.php?iid=index";
+	ajax_updateParams = "&ajax_update=1";
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1))
-		ajax_updateParams += '?t=home';
+		ajax_updateParams += '1';
 	else
-		ajax_updateParams += '?t=server';
-	if (ajax_useXML)
-		ajax_updateParams += '&f=xml';
-	else
-		ajax_updateParams += '&f=txt&h=0';
+		ajax_updateParams += '0';
+	ajax_updateParams += transferListEnabled;
 	// state
 	ajax_updateState = 1;
 	// http-request
@@ -108,12 +109,21 @@ function ajax_processXML(content) {
  */
 function ajax_processText(content) {
 	// content
+	statsServer = null;
+	statsXfer = null;
+	transferList = null;
+	/*
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1)) {
 		tempAry = content.split("\n");
 		ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim));
 	} else {
 		ajax_updateContent(content.split(ajax_txtDelim), null);
 	}
+	*/
+
+
+	// update content
+	ajax_updateContent(statsServer, statsXfer, transferList);
 	// timer
 	updateTimeLeft = ajax_updateTimer / 1000;
 }
@@ -124,7 +134,7 @@ function ajax_processText(content) {
  * @param statsServer
  * @param statsXfer
  */
-function ajax_updateContent(statsServer, statsXfer) {
+function ajax_updateContent(statsServer, statsXfer, transferList) {
 	// good looking stats
 	if (goodLookingStatsEnabled == 1) {
 		for (i = 0; i < ajax_idCount; i++) {
