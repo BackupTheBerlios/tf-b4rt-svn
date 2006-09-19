@@ -1619,28 +1619,32 @@ function getTransferListArray() {
 				$statusStr = 'Queued';
 				$estTime = 'Waiting';
 				break;
-			default: // running
+			default: // running + stopped
 				// increment the totals
 				if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
 				if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
 				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
 				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
 				// $estTime
-				if ($af->time_left != "" && $af->time_left != "0") {
-					if ( ($cfg["display_seeding_time"]) && ($af->percent_done >= 100) ) {
-						if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
-						else
-							$estTime = '-';
-					} else {
-						$estTime = $af->time_left;
+				if ($transferRunning == 0) {
+					$estTime = $af->time_left;
+				} else {
+					if ($af->time_left != "" && $af->time_left != "0") {
+						if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
+							if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
+								$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
+							else
+								$estTime = '-';
+						} else {
+							$estTime = $af->time_left;
+						}
 					}
 				}
 				// $lastUser
 				$lastUser = $transferowner;
 				// $show_run + $statusStr
 				if($percentDone >= 100) {
-					if(trim($af->up_speed) != "" && $transferRunning == 1) {
+					if (($transferRunning == 1) && (trim($af->up_speed) != "")) {
 						$statusStr = 'Seeding';
 					} else {
 						$statusStr = 'Done';
