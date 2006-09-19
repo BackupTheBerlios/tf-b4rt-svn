@@ -1,40 +1,34 @@
 <table width="100%">
 	<tr>
-		<td width="10%">
+		<td width="1%" style="padding:3px;" nowrap>
 			<div class="tiny">Upload :</div>
 		</td>
-		<td width="90%">
+		<td width="98%">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr nowrap>
-					<td width="80%">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td id="barSpeedUp1" background="themes/<tmpl_var name="theme">/images/proglass.gif" width="<tmpl_var name="bandwidthbars_upload_percent">'%"><div class="tinypercent" align="center"><nobr><label id="barSpeedUpPercent"><tmpl_var name="bandwidthbars_upload_percent"></label>% (<label id="barSpeedUp"><tmpl_var name="bandwidthbars_upload_text"></label> kb/s)</nobr></div></td>
-								<td id="barSpeedUp2" background="themes/<tmpl_var name="theme">/images/noglass.gif" width="<tmpl_var name="bandwidthbars_upload_percent2">%"><img src="themes/tf_standard_themes/images/blank.gif" width="1" height="3" border="0"></td>
-							</tr>
-						</table>
-					</td>
+				<tr>
+					<td id="barSpeedUp1" background="themes/<tmpl_var name="theme">/images/proglass.gif" width="<tmpl_var name="bandwidthbars_upload_percent">'%"></td>
+					<td id="barSpeedUp2" background="themes/<tmpl_var name="theme">/images/noglass.gif" width="<tmpl_var name="bandwidthbars_upload_percent2">%"><img src="themes/tf_standard_themes/images/blank.gif" width="1" height="14" border="0"></td>
 				</tr>
 			</table>
+		</td>
+		<td width="1%" style="padding:3px;" nowrap>
+			<div class="tinypercent" align="center"><nobr><label id="barSpeedUpPercent"><tmpl_var name="bandwidthbars_upload_percent"></label>% (<label id="barSpeedUp"><tmpl_var name="bandwidthbars_upload_text"></label> kb/s)</nobr></div>
 		</td>
 	</tr>
 	<tr>
-		<td width="10%">
+		<td width="1%" style="padding:3px;" nowrap>
 			<div class="tiny">Download :</div>
 		</td>
-		<td width="90%">
+		<td width="98%">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-				<tr nowrap>
-					<td width="80%">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<td id="barSpeedDown1" background="themes/<tmpl_var name="theme">/images/proglass.gif" width="<tmpl_var name="bandwidthbars_download_percent">'%"><div class="tinypercent" align="center"><nobr><label id="barSpeedDownPercent"><tmpl_var name="bandwidthbars_download_percent"></label>% (<label id="barSpeedDown"><tmpl_var name="bandwidthbars_download_text"></label> kb/s)</nobr></div></td>
-								<td id="barSpeedDown2" background="themes/<tmpl_var name="theme">/images/noglass.gif" width="<tmpl_var name="bandwidthbars_download_percent2">%"><img src="themes/tf_standard_themes/images/blank.gif" width="1" height="3" border="0"></td>
-							</tr>
-						</table>
-					</td>
+				<tr>
+					<td id="barSpeedDown1" background="themes/<tmpl_var name="theme">/images/proglass.gif" width="<tmpl_var name="bandwidthbars_download_percent">'%"></td>
+					<td id="barSpeedDown2" background="themes/<tmpl_var name="theme">/images/noglass.gif" width="<tmpl_var name="bandwidthbars_download_percent2">%"><img src="themes/tf_standard_themes/images/blank.gif" width="1" height="14" border="0"></td>
 				</tr>
 			</table>
+		</td>
+		<td width="1%" style="padding:3px;" nowrap>
+			<div class="tinypercent" align="center"><nobr><label id="barSpeedDownPercent"><tmpl_var name="bandwidthbars_download_percent"></label>% (<label id="barSpeedDown"><tmpl_var name="bandwidthbars_download_text"></label> kb/s)</nobr></div>
 		</td>
 	</tr>
 </table>
