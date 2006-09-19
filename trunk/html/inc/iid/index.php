@@ -649,7 +649,10 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 		$ajaxInit .= ",1";
 	else
 		$ajaxInit .= ",0";
-	$ajaxInit .= ",".$cfg["enable_xfer"];
+	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
+		$ajaxInit .= ",1";
+	else
+		$ajaxInit .= ",0";
 	$ajaxInit .= ",".$cfg["enable_index_ajax_update_list"];
 	$ajaxInit .= ",'".$cfg['drivespacebar']."'";
 	$ajaxInit .= ",".$cfg["ui_displaybandwidthbars"];
