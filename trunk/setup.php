@@ -225,11 +225,7 @@ elseif($_POST['page'] == 2) {
 				$exists = 0;
 			}
 			if(sqlite_open($_POST['db_name'])) {
-				# delete database if not needed
-				if ($exists == "0" && $_POST['op'] == "1") {
-					unlink($_POST['db_name']);
-				}
-				display_results("check SQLite Database:", array(
+				results("check SQLite Database:", array(
 					'title' => "Database exists.",
 					'status' => 1,
 				));
@@ -265,6 +261,45 @@ elseif($_POST['page'] == 2) {
 	?>
 </table>
 <?php
+// write config
+$config = fopen( "html/inc/config/config.db.php", "w" );
+$content = '<?php
+
+/* $Id$ */
+
+/*******************************************************************************
+
+ LICENSE
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License (GPL)
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ To read the license please visit http://www.gnu.org/copyleft/gpl.html
+
+*******************************************************************************/
+
+/******************************************************************************/
+// YOUR DATABASE CONNECTION INFORMATION
+/******************************************************************************/
+// Check the adodb/drivers/ directory for support for your database
+// you may choose from many (mysql is the default)
+$cfg["db_type"] = "'.$_POST["db_type"].'";       // mysql, postgres7 view adodb/drivers/
+$cfg["db_host"] = "'.$_POST["db_host"].'";   // DB host computer name or IP
+$cfg["db_name"] = "'.$_POST["db_name"].'"; // Name of the Database
+$cfg["db_user"] = "'.$_POST["db_user"].'";   // username for your MySQL database
+$cfg["db_pass"] = "'.$_POST["db_pass"].'";  // password for database
+/******************************************************************************/
+
+?>';
+fwrite( $config, $content );
+fclose( $config );
 }
 
 /*******************************************************************************
