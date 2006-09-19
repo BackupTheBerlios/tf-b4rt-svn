@@ -149,8 +149,8 @@ class HeadlessDisplayer(object):
         if upRate is not None:
             self.upRate = '%.1f kB/s' % (upRate / (1 << 10))
         self.downTotal = statistics.get('downTotal')
-        self.upTotal = statistics['upTotal']
         if self.downTotal is not None:
+            self.upTotal = statistics['upTotal']
             if self.downTotal == 0:
                 self.shareRating = "oo"
             else:
@@ -170,6 +170,12 @@ class HeadlessDisplayer(object):
             #        statistics['numCopies'], nextCopies)
             self.seeds = _("%d") % statistics['numSeeds']
             self.peers = _("%d") % statistics['numPeers']
+        else:
+            self.upTotal = 0
+            self.downTotal = 0
+            self.shareRating = "oo"
+            self.seeds = "0"
+            self.peers = "0"
 
         # set some fields in app which we need in shutdown
         app.percentDone = self.percentDone
@@ -336,7 +342,7 @@ class TorrentApp(object):
     def start_torrent(self,metainfo,save_incomplete_as,save_as):
         """Tells the MultiTorrent to begin downloading."""
         try:
-            self.d.display({'activity':_("Starting ..."),
+            self.d.display({'activity':_("initializing"),
                                'fractionDone':0})
             multitorrent = self.multitorrent
             df = multitorrent.create_torrent(metainfo, save_incomplete_as,
