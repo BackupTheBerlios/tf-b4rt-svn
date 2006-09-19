@@ -39,12 +39,21 @@ function ajax_getHttpRequest() {
  * ajax_update
  */
 function ajax_update() {
-	if (window.ActiveXObject) // IE seems to dispose this object.. recreate
-		ajax_httpRequest = ajax_getHttpRequest();
-	// trigger asynch http-request
-	ajax_httpRequest.onreadystatechange = ajax_updateCallback;
-	ajax_httpRequest.open('GET', ajax_statsUrl + ajax_statsParams, true);
-	ajax_httpRequest.send(null);
+	if (ajax_updateState == 1) {
+		try {
+		    if (!ajax_httpRequest)
+		        ajax_httpRequest = ajax_getHttpRequest();
+		    else if (ajax_httpRequest.readyState != 0)
+		        ajax_httpRequest.abort();
+			ajax_httpRequest.onreadystatechange = ajax_updateCallback;
+			ajax_httpRequest.open('GET', ajax_statsUrl + ajax_statsParams, true);
+			ajax_httpRequest.send(null);
+		} catch (ajaxception) {
+			if (ajax_debug)
+				alert(ajaxception);
+		    ajax_updateState = 0;
+		}
+	}
 }
 
 /**

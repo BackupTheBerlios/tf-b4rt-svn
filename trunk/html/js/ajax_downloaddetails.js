@@ -1,6 +1,5 @@
 
 // fields
-var ajax_transferName = "";
 var ajax_fieldIds = new Array(
 	"running",
 	"speedDown",
@@ -17,6 +16,8 @@ var ajax_fieldIds = new Array(
 	"cons"
 );
 var ajax_idCount = ajax_fieldIds.length;
+
+var ajax_transferName = "";
 
 /**
  * ajax_initialize

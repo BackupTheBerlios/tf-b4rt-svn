@@ -259,7 +259,6 @@ function showErrorPage($errorMessage) {
 function getCredentials() {
 	global $cfg, $db;
 	$retVal = array();
-
 	// check for basic-auth-supplied credentials (only if activated or there may
 	// be wrong credentials fetched)
 	if (($cfg['auth_type'] == 2) || ($cfg['auth_type'] == 3)) {
@@ -269,14 +268,12 @@ function getCredentials() {
 			return $retVal;
 		}
 	}
-
 	// check for http-post/get-supplied credentials
 	if ((isset($_REQUEST['username'])) && (isset($_REQUEST['iamhim']))) {
 		$retVal['username'] = strtolower($_REQUEST['username']);
 		$retVal['password'] = addslashes($_REQUEST['iamhim']);
 		return $retVal;
 	}
-
 	// check for cookie-supplied credentials (only if activated)
 	if ($cfg['auth_type'] == 1) {
 		if ((isset($HTTP_COOKIE_VARS['username'])) && (isset($HTTP_COOKIE_VARS['iamhim']))) {
@@ -285,7 +282,6 @@ function getCredentials() {
 			return $retVal;
 		}
 	}
-
 	// no credentials found, return null
 	return null;
 }
