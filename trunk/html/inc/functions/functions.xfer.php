@@ -21,6 +21,56 @@
 *******************************************************************************/
 
 /**
+ * get xfer stats
+ * note : this can only be used after a call to update transfer-values in cfg-
+ *        array (eg by getTransferListArray)
+ *
+ * @return array
+ *
+ * "xferGlobalTotal"     0
+ * "xferGlobalMonth"     1
+ * "xferGlobalWeek"      2
+ * "xferGlobalDay"       3
+ * "xferUserTotal"       4
+ * "xferUserMonth"       5
+ * "xferUserWeek"        6
+ * "xferUserDay"         7
+ *
+ */
+function getXferStats() {
+	global $cfg, $xfer_total, $xfer;
+	$xferStats = array();
+	// global
+    $xferGlobalTotal = "n/a";
+	$xferGlobalTotal =  @formatFreeSpace($xfer_total['total']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalTotal);
+    $xferGlobalMonth = "n/a";
+	$xferGlobalMonth =  @formatFreeSpace($xfer_total['month']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalMonth);
+    $xferGlobalWeek = "n/a";
+	$xferGlobalWeek =  @formatFreeSpace($xfer_total['week']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalWeek);
+    $xferGlobalDay = "n/a";
+	$xferGlobalDay =  @formatFreeSpace($xfer_total['day']['total'] / 1048576);
+	array_push($xferStats, $xferGlobalDay);
+	// user
+    $xferUserTotal = "n/a";
+	$xferUserTotal =  @formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576);
+	array_push($xferStats, $xferUserTotal);
+    $xferUserMonth = "n/a";
+	$xferUserMonth =  @formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576);
+	array_push($xferStats, $xferUserMonth);
+    $xferUserWeek = "n/a";
+	$xferUserWeek =  @formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576);
+	array_push($xferStats, $xferUserWeek);
+    $xferUserDay = "n/a";
+	$xferUserDay =  @formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576);
+	array_push($xferStats, $xferUserDay);
+	// return
+	return $xferStats;
+}
+
+/**
  * transferListXferUpdate1
  *
  * @param $entry

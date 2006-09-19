@@ -426,60 +426,7 @@ function initServerStats() {
 		"Speed Up (Percent)",
 		"Drive Space (Percent)"
 	);
-	$serverStats = array();
-	// speedDown
-    $speedDown = "n/a";
-	$speedDown = @number_format($cfg["total_download"], 2);
-	array_push($serverStats, $speedDown);
-	// speedUp
-    $speedUp = "n/a";
-	$speedUp =  @number_format($cfg["total_upload"], 2);
-	array_push($serverStats, $speedUp);
-	// speedTotal
-    $speedTotal = "n/a";
-	$speedTotal = @number_format($cfg["total_download"] + $cfg["total_upload"], 2);
-	array_push($serverStats, $speedTotal);
-	// cons
-    $cons = "n/a";
-	$cons = @netstatConnectionsSum();
-	array_push($serverStats, $cons);
-	// freeSpace
-    $freeSpace = "n/a";
-	$freeSpace = @formatFreeSpace($cfg["free_space"]);
-	array_push($serverStats, $freeSpace);
-	// loadavg
-	$loadavg = "n/a";
-	$loadavg = @getLoadAverageString();
-	array_push($serverStats, $loadavg);
-	// running
-	$running = "n/a";
-	$running = @getRunningTransferCount();
-	array_push($serverStats, $running);
-	// queued
-	$queued = "n/a";
-	if ((isset($queueActive)) && ($queueActive) && (isset($fluxdQmgr)))
-	    $queued = @ $fluxdQmgr->countQueuedTorrents();
-	array_push($serverStats, $queued);
-	// speedDownPercent
-	$percentDownload = 0;
-	$maxDownload = $cfg["bandwidth_down"] / 8;
-	if ($maxDownload > 0)
-		$percentDownload = @number_format(($cfg["total_download"] / $maxDownload) * 100, 0);
-	else
-		$percentDownload = 0;
-	array_push($serverStats, $percentDownload);
-	// speedUpPercent
-	$percentUpload = 0;
-	$maxUpload = $cfg["bandwidth_up"] / 8;
-	if ($maxUpload > 0)
-		$percentUpload = @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0);
-	else
-		$percentUpload = 0;
-	array_push($serverStats, $percentUpload);
-	// driveSpacePercent
-    $driveSpacePercent = 0;
-	$driveSpacePercent = @getDriveSpace($cfg["path"]);
-	array_push($serverStats, $driveSpacePercent);
+	$serverStats = getServerStats();
 }
 
 /**
@@ -500,33 +447,7 @@ function initXferStats() {
 		'User : '.$cfg['_WEEKXFER'],
 		'User : '.$cfg['_DAYXFER']
 	);
-	$xferStats = array();
-	// global
-    $xferGlobalTotal = "n/a";
-	$xferGlobalTotal =  @formatFreeSpace($xfer_total['total']['total'] / 1048576);
-	array_push($xferStats, $xferGlobalTotal);
-    $xferGlobalMonth = "n/a";
-	$xferGlobalMonth =  @formatFreeSpace($xfer_total['month']['total'] / 1048576);
-	array_push($xferStats, $xferGlobalMonth);
-    $xferGlobalWeek = "n/a";
-	$xferGlobalWeek =  @formatFreeSpace($xfer_total['week']['total'] / 1048576);
-	array_push($xferStats, $xferGlobalWeek);
-    $xferGlobalDay = "n/a";
-	$xferGlobalDay =  @formatFreeSpace($xfer_total['day']['total'] / 1048576);
-	array_push($xferStats, $xferGlobalDay);
-	// user
-    $xferUserTotal = "n/a";
-	$xferUserTotal =  @formatFreeSpace($xfer[$cfg["user"]]['total']['total'] / 1048576);
-	array_push($xferStats, $xferUserTotal);
-    $xferUserMonth = "n/a";
-	$xferUserMonth =  @formatFreeSpace($xfer[$cfg["user"]]['month']['total'] / 1048576);
-	array_push($xferStats, $xferUserMonth);
-    $xferUserWeek = "n/a";
-	$xferUserWeek =  @formatFreeSpace($xfer[$cfg["user"]]['week']['total'] / 1048576);
-	array_push($xferStats, $xferUserWeek);
-    $xferUserDay = "n/a";
-	$xferUserDay =  @formatFreeSpace($xfer[$cfg["user"]]['day']['total'] / 1048576);
-	array_push($xferStats, $xferUserDay);
+	$xferStats = getXferStats();
 }
 
 ?>

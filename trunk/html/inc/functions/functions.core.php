@@ -1794,6 +1794,86 @@ function getTransferListArray() {
 }
 
 /**
+ * get server stats
+ * note : this can only be used after a call to update transfer-values in cfg-
+ *        array (eg by getTransferListArray)
+ *
+ * @return array
+ *
+ * "speedDown"            0
+ * "speedUp"              1
+ * "speedTotal"           2
+ * "cons"                 3
+ * "freeSpace"            4
+ * "loadavg"              5
+ * "running"              6
+ * "queued"               7
+ * "speedDownPercent"     8
+ * "speedUpPercent"       9
+ * "driveSpacePercent"   10
+ *
+ */
+function getServerStats() {
+	global $cfg;
+	$serverStats = array();
+	// speedDown
+    $speedDown = "n/a";
+	$speedDown = @number_format($cfg["total_download"], 2);
+	array_push($serverStats, $speedDown);
+	// speedUp
+    $speedUp = "n/a";
+	$speedUp =  @number_format($cfg["total_upload"], 2);
+	array_push($serverStats, $speedUp);
+	// speedTotal
+    $speedTotal = "n/a";
+	$speedTotal = @number_format($cfg["total_download"] + $cfg["total_upload"], 2);
+	array_push($serverStats, $speedTotal);
+	// cons
+    $cons = "n/a";
+	$cons = @netstatConnectionsSum();
+	array_push($serverStats, $cons);
+	// freeSpace
+    $freeSpace = "n/a";
+	$freeSpace = @formatFreeSpace($cfg["free_space"]);
+	array_push($serverStats, $freeSpace);
+	// loadavg
+	$loadavg = "n/a";
+	$loadavg = @getLoadAverageString();
+	array_push($serverStats, $loadavg);
+	// running
+	$running = "n/a";
+	$running = @getRunningTransferCount();
+	array_push($serverStats, $running);
+	// queued
+	$queued = "n/a";
+	if ((isset($queueActive)) && ($queueActive) && (isset($fluxdQmgr)))
+	    $queued = @ $fluxdQmgr->countQueuedTorrents();
+	array_push($serverStats, $queued);
+	// speedDownPercent
+	$percentDownload = 0;
+	$maxDownload = $cfg["bandwidth_down"] / 8;
+	if ($maxDownload > 0)
+		$percentDownload = @number_format(($cfg["total_download"] / $maxDownload) * 100, 0);
+	else
+		$percentDownload = 0;
+	array_push($serverStats, $percentDownload);
+	// speedUpPercent
+	$percentUpload = 0;
+	$maxUpload = $cfg["bandwidth_up"] / 8;
+	if ($maxUpload > 0)
+		$percentUpload = @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0);
+	else
+		$percentUpload = 0;
+	array_push($serverStats, $percentUpload);
+	// driveSpacePercent
+    $driveSpacePercent = 0;
+	$driveSpacePercent = @getDriveSpace($cfg["path"]);
+	array_push($serverStats, $driveSpacePercent);
+	// return
+	return $serverStats;
+}
+
+/**
  * gets details of a transfer as array
  *
  * @param $transfer
