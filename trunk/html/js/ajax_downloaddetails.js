@@ -16,7 +16,6 @@ var ajax_fieldIds = new Array(
 	"cons"
 );
 var ajax_idCount = ajax_fieldIds.length;
-
 var ajax_transferName = "";
 
 /**
@@ -31,9 +30,9 @@ function ajax_initialize(timer, delim, name) {;
 	ajax_txtDelim = delim;
 	ajax_transferName = name;
 	if (ajax_useXML)
-		ajax_statsParams = '?t=transfer&f=xml&i=' + name;
+		ajax_updateParams = '?t=transfer&f=xml&i=' + name;
 	else
-		ajax_statsParams = '?t=transfer&f=txt&h=0&i=' + name;
+		ajax_updateParams = '?t=transfer&f=txt&h=0&i=' + name;
 	// state
 	ajax_updateState = 1;
 	// http-request

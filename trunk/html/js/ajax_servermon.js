@@ -22,9 +22,9 @@ function ajax_initialize(timer, delim) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	if (ajax_useXML)
-		ajax_statsParams = '?t=server&f=xml';
+		ajax_updateParams = '?t=server&f=xml';
 	else
-		ajax_statsParams = '?t=server&f=txt&h=0';
+		ajax_updateParams = '?t=server&f=txt&h=0';
 	// state
 	ajax_updateState = 1;
 	// http-request

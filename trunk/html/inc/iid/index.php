@@ -142,26 +142,17 @@ if (isset($_REQUEST["QEntry"])) {
  * index-page
  ******************************************************************************/
 
-// =============================================================================
-// init vars
-// =============================================================================
-
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.index.tmpl");
-
-// connections
-if ($cfg["index_page_connections"] != 0) {
-	$netstatConnectionsSum = @netstatConnectionsSum();
-	$netstatConnectionsMax = "(".@getSumMaxCons().")";
+if (isset($_REQUEST['ajax_update'])) {
+	$isAjaxUpdate = true;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "inc.transferList.tmpl");
 } else {
-	$netstatConnectionsSum = "n/a";
-	$netstatConnectionsMax = "";
+	$isAjaxUpdate = false;
+	// create template-instance
+	$tmpl = tmplGetInstance($cfg["theme"], "page.index.tmpl");
 }
-// loadavg
-if ($cfg["show_server_load"] != 0)
-	$loadavgString = @getLoadAverageString();
-else
-	$loadavgString = "n/a";
+
+
 
 // =============================================================================
 // transfer-list
@@ -545,7 +536,64 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 	$tmpl->setvar('are_torrent', 1);
 
 // =============================================================================
-// set vars
+// set common vars
+// =============================================================================
+
+// language
+$tmpl->setvar('_STATUS', $cfg['_STATUS']);
+$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
+$tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
+$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
+$tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
+$tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
+$tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
+$tmpl->setvar('_DELETE', $cfg['_DELETE']);
+$tmpl->setvar('_WARNING', $cfg['_WARNING']);
+$tmpl->setvar('_NOTOWNER', $cfg['_NOTOWNER']);
+$tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
+$tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
+$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
+$tmpl->setvar('_USER', $cfg['_USER']);
+
+// queue
+if ($queueActive)
+	$tmpl->setvar('queueActive', 1);
+else
+	$tmpl->setvar('queueActive', 0);
+
+// incoming-path
+switch ($cfg["enable_home_dirs"]) {
+    case 1:
+    default:
+        $tmpl->setvar('path_incoming', $cfg["user"]);
+        break;
+    case 0:
+    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
+        break;
+}
+
+// =============================================================================
+// ajax-index
+// =============================================================================
+
+if ($isAjaxUpdate) {
+	$tmpl->setvar('ajax_update', '1');
+	$output = "";
+	// server stats
+
+	// xfer
+
+	// transfer list
+	$output .= $tmpl->grab();
+	// echo and out
+	echo $output;
+	exit();
+} else {
+	$tmpl->setvar('ajax_update', '0');
+}
+
+// =============================================================================
+// standard-index
 // =============================================================================
 
 // goodlookingstats-init
@@ -592,26 +640,23 @@ if ($onLoad != "") {
 	$tmpl->setvar('_TURNOFFREFRESH', $cfg['_TURNOFFREFRESH']);
 }
 
-// incoming-path
-switch ($cfg["enable_home_dirs"]) {
-    case 1:
-    default:
-        $tmpl->setvar('path_incoming', $cfg["user"]);
-        break;
-    case 0:
-    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
-        break;
+// connections
+if ($cfg["index_page_connections"] != 0) {
+	$netstatConnectionsSum = @netstatConnectionsSum();
+	$netstatConnectionsMax = "(".@getSumMaxCons().")";
+} else {
+	$netstatConnectionsSum = "n/a";
+	$netstatConnectionsMax = "";
 }
+// loadavg
+if ($cfg["show_server_load"] != 0)
+	$loadavgString = @getLoadAverageString();
+else
+	$loadavgString = "n/a";
 
 // messages
 if ($messages != "")
 	$tmpl->setvar('messages', $messages);
-
-// queue
-if ($queueActive)
-	$tmpl->setvar('queueActive', 1);
-else
-	$tmpl->setvar('queueActive', 0);
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {
@@ -804,13 +849,6 @@ $tmpl->setvar('_ID_MRTG', $cfg['_ID_MRTG']);
 $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 $tmpl->setvar('_ALL', $cfg['_ALL']);
 $tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
-$tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
-$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
-$tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
-$tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
-$tmpl->setvar('_SEEDTRANSFER', $cfg['_SEEDTRANSFER']);
-$tmpl->setvar('_DELETE', $cfg['_DELETE']);
-$tmpl->setvar('_WARNING', $cfg['_WARNING']);
 $tmpl->setvar('_DRIVESPACEUSED', $cfg['_DRIVESPACEUSED']);
 $tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
 $tmpl->setvar('_ADMINMESSAGE', $cfg['_ADMINMESSAGE']);
@@ -818,13 +856,6 @@ $tmpl->setvar('_TOTALXFER', $cfg['_TOTALXFER']);
 $tmpl->setvar('_MONTHXFER', $cfg['_MONTHXFER']);
 $tmpl->setvar('_WEEKXFER', $cfg['_WEEKXFER']);
 $tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
-$tmpl->setvar('_STATUS', $cfg['_STATUS']);
-$tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
-$tmpl->setvar('_NOTOWNER', $cfg['_NOTOWNER']);
-$tmpl->setvar('_STOPPING', $cfg['_STOPPING']);
-$tmpl->setvar('_TRANSFERFILE', $cfg['_TRANSFERFILE']);
-$tmpl->setvar('_ADMIN', $cfg['_ADMIN']);
-$tmpl->setvar('_USER', $cfg['_USER']);
 //
 tmplSetTitleBar($cfg["pagetitle"]);
 tmplSetDriveSpaceBar();

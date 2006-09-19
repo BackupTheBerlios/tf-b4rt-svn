@@ -1,13 +1,14 @@
 
 // fields
-var ajax_statsUrl = "stats.php";
 var ajax_debug = true;
 var ajax_useXML = false;
 var ajax_txtDelim = ";";
-var ajax_statsParams = "";
+var ajax_updateUrl = "stats.php";
+var ajax_updateParams = "";
 var ajax_updateTimer = 5000;
-var ajax_httpRequest = false;
 var ajax_updateState = 0; // 0 = update off; 1 = update on
+var ajax_httpRequest = false;
+
 
 /**
  * get http-request-instance
@@ -46,7 +47,7 @@ function ajax_update() {
 		    else if (ajax_httpRequest.readyState != 0)
 		        ajax_httpRequest.abort();
 			ajax_httpRequest.onreadystatechange = ajax_updateCallback;
-			ajax_httpRequest.open('GET', ajax_statsUrl + ajax_statsParams, true);
+			ajax_httpRequest.open('GET', ajax_updateUrl + ajax_updateParams, true);
 			ajax_httpRequest.send(null);
 		} catch (ajaxception) {
 			if (ajax_debug)

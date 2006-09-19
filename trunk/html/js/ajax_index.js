@@ -9,7 +9,6 @@ var ajax_fieldIds = new Array(
 	"loadavg"
 );
 var ajax_idCount = ajax_fieldIds.length;
-
 var ajax_fieldIdsXfer = new Array(
 	"xferGlobalTotal",
 	"xferGlobalMonth",
@@ -21,7 +20,6 @@ var ajax_fieldIdsXfer = new Array(
 	"xferUserDay"
 );
 var ajax_idCountXfer = ajax_fieldIdsXfer.length;
-
 var goodLookingStatsEnabled = 0;
 var goodLookingStatsSettings = null;
 var bottomStatsEnabled = 0;
@@ -30,7 +28,6 @@ var xferEnabled = 0;
 var driveSpaceBarStyle = "tf";
 var bandwidthBarsEnabled = 0;
 var bandwidthBarsStyle = "tf";
-
 var updateTimeLeft = 0;
 
 /**
@@ -59,15 +56,15 @@ function ajax_initialize(timer, delim, glsEnabled, glsSettings, bsEnabled, qActi
 	driveSpaceBarStyle = dsBarStyle;
 	bandwidthBarsEnabled = bwBarsEnabled;
 	bandwidthBarsStyle = bwBarsStyle;
-	ajax_statsParams = "";
+	ajax_updateParams = "";
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1))
-		ajax_statsParams += '?t=home';
+		ajax_updateParams += '?t=home';
 	else
-		ajax_statsParams += '?t=server';
+		ajax_updateParams += '?t=server';
 	if (ajax_useXML)
-		ajax_statsParams += '&f=xml';
+		ajax_updateParams += '&f=xml';
 	else
-		ajax_statsParams += '&f=txt&h=0';
+		ajax_updateParams += '&f=txt&h=0';
 	// state
 	ajax_updateState = 1;
 	// http-request
