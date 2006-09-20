@@ -32,7 +32,7 @@ require_once('inc/functions/functions.common.php');
 // dispatcher functions
 require_once("inc/functions/functions.dispatcher.php");
 
-/* action */
+// action
 $action = "---";
 if (isset($_REQUEST["action"]))
     $action = $_REQUEST["action"];
@@ -54,14 +54,14 @@ switch ($action) {
 		indexProcessDownload(getRequestVar('url'));
     	break;
     case "indexFileUpload":
-		if (isset($_FILES['upload_file'])) {
-			if(!empty($_FILES['upload_file']['name']))
-				indexProcessUpload();
-		}
+		indexProcessUpload();
     	break;
     case "indexDelete":
+    	indexDeleteTransfer(getRequestVar('transfer'));
     	break;
     case "indexStop":
+    	break;
+    case "indexDeQueue":
     	break;
 
 /*******************************************************************************

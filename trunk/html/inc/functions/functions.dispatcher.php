@@ -45,6 +45,7 @@ function indexStartTransfer($transfer) {
 		}
 	}
 }
+
 /*
  * Function with which torrents are started in index-page
  *
@@ -190,60 +191,77 @@ function indexProcessDownload($url_upload) {
  */
 function indexProcessUpload() {
 	global $cfg;
-	$file_name = stripslashes($_FILES['upload_file']['name']);
-	$file_name = str_replace(array("'",","), "", $file_name);
-	$file_name = cleanFileName($file_name);
 	$messages = "";
 	$ext_msg = "";
-	if($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
-		if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
-			//FILE IS BEING UPLOADED
-			if (is_file($cfg["transfer_file_path"].$file_name)) {
-				// Error
-				$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
-				$ext_msg = "DUPLICATE :: ";
-			} else {
-				if(move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
-					chmod($cfg["transfer_file_path"].$file_name, 0644);
-					AuditAction($cfg["constants"]["file_upload"], $file_name);
-					// init stat-file
-					injectTorrent($file_name);
-					// instant action ?
-					$actionId = getRequestVar('aid');
-					if (isset($actionId)) {
-						if ($cfg["enable_file_priority"]) {
-							include_once("inc/setpriority.php");
-							// Process setPriority Request.
-							setPriority(urldecode($file_name));
+	if (isset($_FILES['upload_file'])) {
+		if(!empty($_FILES['upload_file']['name'])) {
+			$file_name = stripslashes($_FILES['upload_file']['name']);
+			$file_name = str_replace(array("'",","), "", $file_name);
+			$file_name = cleanFileName($file_name);
+			if($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
+				if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
+					//FILE IS BEING UPLOADED
+					if (is_file($cfg["transfer_file_path"].$file_name)) {
+						// Error
+						$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
+						$ext_msg = "DUPLICATE :: ";
+					} else {
+						if(move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
+							chmod($cfg["transfer_file_path"].$file_name, 0644);
+							AuditAction($cfg["constants"]["file_upload"], $file_name);
+							// init stat-file
+							injectTorrent($file_name);
+							// instant action ?
+							$actionId = getRequestVar('aid');
+							if (isset($actionId)) {
+								if ($cfg["enable_file_priority"]) {
+									include_once("inc/setpriority.php");
+									// Process setPriority Request.
+									setPriority(urldecode($file_name));
+								}
+								require_once("inc/classes/ClientHandler.php");
+								$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+								switch ($actionId) {
+									case 3:
+										$clientHandler->startClient($file_name, 0, true);
+										break;
+									case 2:
+										$clientHandler->startClient($file_name, 0, false);
+										break;
+								}
+								// just a sec..
+								sleep(1);
+							}
+						} else {
+							$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
 						}
-						require_once("inc/classes/ClientHandler.php");
-						$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-						switch ($actionId) {
-							case 3:
-								$clientHandler->startClient($file_name, 0, true);
-								break;
-							case 2:
-								$clientHandler->startClient($file_name, 0, false);
-								break;
-						}
-						// just a sec..
-						sleep(1);
 					}
 				} else {
-					$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
+					$messages .= "<font color=\"#ff0000\" size=3>ERROR: The type of file you are uploading is not allowed.</font><br>";
 				}
+			} else {
+				$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, check file size limit.</font><br>";
 			}
-		} else {
-			$messages .= "<font color=\"#ff0000\" size=3>ERROR: The type of file you are uploading is not allowed.</font><br>";
 		}
-	} else {
-		$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, check file size limit.</font><br>";
 	}
-	if($messages != "") { // there was an error
+	if ($messages != "") { // there was an error
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
 		header("location: index.php?iid=index&messages=".urlencode($messages));
 		exit();
 	} else {
+		header("location: index.php?iid=index");
+		exit();
+	}
+}
+
+/**
+ * indexStartTransfer
+ *
+ * @param $transfer
+ */
+function indexDeleteTransfer($transfer) {
+	if (!empty($transfer)) {
+		deleteTransfer($transfer, getRequestVar('alias_file'));
 		header("location: index.php?iid=index");
 		exit();
 	}

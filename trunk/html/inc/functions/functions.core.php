@@ -979,18 +979,17 @@ function resetTorrentTotals($torrent, $delete = false) {
  */
 function deleteTransfer($transfer, $alias_file) {
 	global $cfg;
-	$delfile = $transfer;
-	$transferowner = getOwner($delfile);
+	$transferowner = getOwner($transfer);
 	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
 		require_once("inc/classes/AliasFile.php");
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
-			$btclient = getTransferClient($delfile);
+			$btclient = getTransferClient($transfer);
 			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $transferowner, $cfg, $btclient);
 			// update totals for this torrent
-			updateTransferTotals($delfile);
+			updateTransferTotals($transfer);
 			// remove torrent-settings from db
-			deleteTorrentSettings($delfile);
+			deleteTorrentSettings($transfer);
 			// client-proprietary leftovers
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
@@ -1003,18 +1002,18 @@ function deleteTransfer($transfer, $alias_file) {
 			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
 		}
 		//XFER: before torrent deletion save upload/download xfer data to SQL
-		$transferTotals = getTransferTotals($delfile);
+		$transferTotals = getTransferTotals($transfer);
 		saveXfer($transferowner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
 		// torrent+stat
-		@unlink($cfg["transfer_file_path"].$delfile);
+		@unlink($cfg["transfer_file_path"].$transfer);
 		@unlink($cfg["transfer_file_path"].$alias_file);
 		// try to remove the pid file
 		@unlink($cfg["transfer_file_path"].$alias_file.".pid");
-		@unlink($cfg["transfer_file_path"].getAliasName($delfile).".prio");
-		AuditAction($cfg["constants"]["delete_torrent"], $delfile);
+		@unlink($cfg["transfer_file_path"].getAliasName($transfer).".prio");
+		AuditAction($cfg["constants"]["delete_torrent"], $transfer);
 		return true;
 	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$delfile);
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
 		return false;
 	}
 }
@@ -1026,11 +1025,10 @@ function deleteTransfer($transfer, $alias_file) {
  */
 function deleteTorrentData($torrent) {
 	global $cfg;
-	$element = $torrent;
-	if (($cfg["user"] == getOwner($element)) || $cfg['isAdmin']) {
+	if (($cfg["user"] == getOwner($torrent)) || $cfg['isAdmin']) {
 		# the user is the owner of the torrent -> delete it
 		require_once('inc/classes/BDecode.php');
-		$ftorrent=$cfg["transfer_file_path"].$element;
+		$ftorrent=$cfg["transfer_file_path"].$torrent;
 		$fd = fopen($ftorrent, "rd");
 		$alltorrent = fread($fd, filesize($ftorrent));
 		$btmeta = BDecode($alltorrent);
@@ -1065,7 +1063,7 @@ function deleteTorrentData($torrent) {
 			}
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$element);
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$torrent);
 	}
 }
 

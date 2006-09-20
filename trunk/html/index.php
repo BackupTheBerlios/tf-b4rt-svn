@@ -24,8 +24,8 @@
 require_once("inc/main.internal.php");
 
 // iid-switch
-if(isset($_GET['iid'])) {
-	switch($_GET['iid']) {
+if (isset($_REQUEST['iid'])) {
+	switch($_REQUEST['iid']) {
 		default:
 		case "index":
 			require_once("inc/iid/index.php");
@@ -166,6 +166,20 @@ if (isset($_REQUEST['url_upload'])) {
 if (isset($_FILES['upload_file'])) {
 	if(!empty($_FILES['upload_file']['name']))
 		indexProcessUpload();
+}
+*/
+
+/*******************************************************************************
+ * del file
+ ******************************************************************************/
+/*
+if (isset($_REQUEST['delfile'])) {
+	$transfer = getRequestVar('delfile');
+	if (!empty($transfer)) {
+		deleteTransfer($transfer, getRequestVar('alias_file'));
+		header("location: index.php?iid=index");
+		exit();
+	}
 }
 */
 
