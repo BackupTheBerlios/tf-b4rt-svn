@@ -208,7 +208,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Limit Download Rate</strong><br>
-									Amount may be expressed in bytes, kilobytes with the k suffix, or megabytes with the m suffix.
+									Rate may be expressed in bytes, kilobytes with the k suffix, or megabytes with the m suffix.
 									(0 for no limit).
 								</td>
 								<td valign="top">
@@ -221,6 +221,21 @@
 								</td>
 								<td valign="top">
 									<input name="wget_limit_retries" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_retries">" size="5">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Passive FTP</strong><br>
+									Enable/Disable the "passive" transfer mode for FTP :
+								</td>
+								<td valign="top">
+									<select name="wget_ftp_pasv">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="wget_ftp_pasv" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
 								</td>
 							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Common</strong></td></tr>

@@ -71,6 +71,8 @@ if (!isset($argv[6]))
 	die('Arg Error');
 if (!isset($argv[7]))
 	die('Arg Error');
+if (!isset($argv[8]))
+	die('Arg Error');
 
 // args
 $_URL = $argv[1];
@@ -80,6 +82,7 @@ $_OWNER = $argv[4];
 $_PATH = $argv[5];
 $_LIMIT_RATE = $argv[6];
 $_LIMIT_RETRIES = $argv[7];
+$_PASV = $argv[8];
 
 // set admin-var
 $cfg['isAdmin'] = IsAdmin($_OWNER);
@@ -110,6 +113,8 @@ if (($_LIMIT_RATE != "") && ($_LIMIT_RATE != "0"))
 	$command .= " --limit-rate=" . $_LIMIT_RATE;
 if ($_LIMIT_RETRIES != "")
 	$command .= " --tries=" . $_LIMIT_RETRIES;
+if ($_PASV == 1)
+	$command .= " --passive-ftp";
 $command .= " -i ".$_URL;
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$_PID; // write pid-file

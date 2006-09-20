@@ -152,6 +152,7 @@ class ClientHandlerWget extends ClientHandler
         }
         $this->command .= " " . $this->cfg["wget_limit_rate"];
         $this->command .= " " . $this->cfg["wget_limit_retries"];
+        $this->command .= " " . $this->cfg["wget_ftp_pasv"];
         $this->command .= " > /dev/null &";
         //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
         exec($this->command);
