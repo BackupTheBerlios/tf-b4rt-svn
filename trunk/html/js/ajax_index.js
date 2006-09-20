@@ -35,8 +35,10 @@ var bandwidthBarsEnabled = 0;
 var bandwidthBarsStyle = "tf";
 var imgSrcDriveSpaceBlank = "themes/default/images/blank.gif";
 var imgHeightDriveSpaceBlank = 12;
-var imgSrcBandwidthBlank = "themes/default/images/blank.gif";
-var imgHeightBandwidthBlank = 12;
+var imgSrcBandwidthUpBlank = "themes/default/images/blank.gif";
+var imgHeightBandwidthUpBlank = 12;
+var imgSrcBandwidthDownBlank = "themes/default/images/blank.gif";
+var imgHeightBandwidthDownBlank = 12;
 //
 var updateTimeLeft = 0;
 
@@ -90,13 +92,14 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 		imgHeightDriveSpaceBlank = elementBlank.height;
 	}
 	// tf-style bandwidth bars init
-	/*
 	if ((bandwidthBarsEnabled == 1) && (bandwidthBarsStyle == "xfer")) {
-		elementBlank = document.getElementById("imgBandwidthBlank");
-		imgSrcBandwidthBlank = elementBlank.src;
-		imgHeightBandwidthBlank = elementBlank.height;
+		elementBlank = document.getElementById("imgBandwidthUpBlank");
+		imgSrcBandwidthUpBlank = elementBlank.src;
+		imgHeightBandwidthUpBlank = elementBlank.height;
+		elementBlank = document.getElementById("imgBandwidthDownBlank");
+		imgSrcBandwidthDownBlank = elementBlank.src;
+		imgHeightBandwidthDownBlank = elementBlank.height;
 	}
-	*/
 	// state
 	ajax_updateState = 1;
 	// http-request
@@ -235,9 +238,27 @@ function ajax_updateContent(statsServer, statsXfer, transferList) {
 			document.getElementById("barSpeedDown2").width = 1;
 		else
 			document.getElementById("barSpeedDown2").width = (100 - downPer) + "%";
-		//if (bandwidthBarsStyle == "xfer") {
+		if (bandwidthBarsStyle == "xfer") {
 			// set color
-		//}
+			// up
+			bwbCol  = 'rgb(';
+			bwbCol += parseInt(255 - 255 * ((100 - upPer) / 150));
+			bwbCol += ',' + parseInt(255 * ((100 - upPer) / 150));
+			bwbCol += ',0)';
+			bwbDiv  = '<div style="background:' + bwbCol + ';">';
+			bwbDiv += '<img id="imgBandwidthUpBlank" src="' + imgSrcBandwidthUpBlank + '" width="1" height="' + imgHeightBandwidthUpBlank + '" border="0">';
+			bwbDiv += '</div>';
+			document.getElementById("barSpeedUp1").innerHTML = bwbDiv;
+			// down
+			bwbCol  = 'rgb(';
+			bwbCol += parseInt(255 - 255 * ((100 - downPer) / 150));
+			bwbCol += ',' + parseInt(255 * ((100 - downPer) / 150));
+			bwbCol += ',0)';
+			bwbDiv  = '<div style="background:' + bwbCol + ';">';
+			bwbDiv += '<img id="imgBandwidthDownBlank" src="' + imgSrcBandwidthDownBlank + '" width="1" height="' + imgHeightBandwidthDownBlank + '" border="0">';
+			bwbDiv += '</div>';
+			document.getElementById("barSpeedDown1").innerHTML = bwbDiv;
+		}
 	}
 	// bottom stats
 	if (bottomStatsEnabled == 1) {
