@@ -193,6 +193,10 @@ switch ($cfg["enable_home_dirs"]) {
         break;
 }
 
+// some configs
+$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
+$tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
+
 // =============================================================================
 // transfer-list
 // =============================================================================
@@ -206,6 +210,7 @@ $settings = convertIntegerToArray($cfg["index_page_settings"]);
 $sortOrder = getRequestVar("so");
 if (empty($sortOrder))
 	$sortOrder = $cfg["index_page_sortorder"];
+$tmpl->setvar('sortOrder', $sortOrder);
 // t-list
 $arList = getTransferArray($sortOrder);
 $progress_color = "#00ff00";
@@ -847,8 +852,6 @@ $tmpl->setvar('enable_search', $cfg["enable_search"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('enable_mrtg', $cfg["enable_mrtg"]);
-$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
-$tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
@@ -856,7 +859,6 @@ $tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
-$tmpl->setvar('sortOrder', $sortOrder);
 $tmpl->setvar('drivespace', $driveSpace);
 $tmpl->setvar('freeSpaceFormatted', $freeSpaceFormatted);
 tmplSetSearchEngineDDL($cfg["searchEngine"]);
