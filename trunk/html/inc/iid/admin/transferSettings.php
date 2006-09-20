@@ -23,7 +23,7 @@
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.admin.transferSettings.tmpl");
 
-// set vars
+// torrent
 $tmpl->setvar('btclient', $cfg["btclient"]);
 $tmpl->setvar('metainfoclient', $cfg["metainfoclient"]);
 $tmpl->setvar('btclient_tornado_options', $cfg["btclient_tornado_options"]);
@@ -31,7 +31,6 @@ $tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
 $tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmission_bin"]));
 $tmpl->setvar('btclient_transmission_options', $cfg["btclient_transmission_options"]);
 $tmpl->setvar('btclient_mainline_options', $cfg["btclient_mainline_options"]);
-$tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 $tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
 $tmpl->setvar('max_uploads', $cfg["max_uploads"]);
@@ -43,6 +42,10 @@ $tmpl->setvar('torrent_dies_when_done', $cfg["torrent_dies_when_done"]);
 $tmpl->setvar('sharekill', $cfg["sharekill"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('skiphashcheck', $cfg["skiphashcheck"]);
+// wget
+$tmpl->setvar('enable_wget', $cfg["enable_wget"]);
+$tmpl->setvar('wget_limit_rate', $cfg["wget_limit_rate"]);
+// common
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $nice_list = array();

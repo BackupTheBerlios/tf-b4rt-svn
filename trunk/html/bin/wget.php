@@ -67,6 +67,8 @@ if (!isset($argv[4]))
 	die('Arg Error');
 if (!isset($argv[5]))
 	die('Arg Error');
+if (!isset($argv[6]))
+	die('Arg Error');
 
 // args
 $_URL = $argv[1];
@@ -74,6 +76,7 @@ $_ALIAS = $argv[2];
 $_PID = $argv[3];
 $_OWNER = $argv[4];
 $_PATH = $argv[5];
+$_LIMIT = $argv[6];
 
 // set admin-var
 $cfg['isAdmin'] = IsAdmin($_OWNER);
@@ -87,20 +90,8 @@ writeStatFile();
 
 -c,  	--continue				resume getting a partially-downloaded file.
 
-		--limit-rate=RATE		limit download rate to RATE.
-
 		--http-user=USER		set http user to USER.
 		--http-passwd=PASS		set http password to PASS.
-
-		--passive-ftp			use the "passive" transfer mode.
-
-		--limit-rate=amount
-		   Limit the download speed to amount bytes per second.
-		   Amount may be expressed in bytes, kilobytes with the k suf­
-		   fix, or megabytes with the m suffix.  For example, --limit-rate=20k
-		   will limit the retrieval rate to 20KB/s.
-		   This kind of thing is useful when, for whatever reason, you don't
-		   want Wget to consume the entire available band­width.
 
 */
 
@@ -111,7 +102,10 @@ if ($cfg["enable_umask"] != 0)
     $command .= " umask 0000;";
 if ($cfg["nice_adjust"] != 0)
     $command .= " nice -n ".$cfg["nice_adjust"];
-$command .= " ".$cfg['bin_wget']." -i ".$_URL;
+$command .= " ".$cfg['bin_wget'];
+if (($_LIMIT != "") && ($_LIMIT != "0"))
+	$command .= " --limit-rate=" . $_LIMIT;
+$command .= " -i ".$_URL;
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$_PID; // write pid-file
 
