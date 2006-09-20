@@ -20,6 +20,7 @@ var ajax_fieldIdsXfer = new Array(
 	"xferUserDay"
 );
 var ajax_idCountXfer = ajax_fieldIdsXfer.length;
+//
 var titleChangeEnabled = 0;
 var pageTitle = "torrentflux-b4rt";
 var goodLookingStatsEnabled = 0;
@@ -28,10 +29,15 @@ var bottomStatsEnabled = 0;
 var queueActive = 0;
 var transferListEnabled = 0;
 var xferEnabled = 0;
+var sortTableEnabled = 0;
 var driveSpaceBarStyle = "tf";
 var bandwidthBarsEnabled = 0;
 var bandwidthBarsStyle = "tf";
-var sortTableEnabled = 0;
+var imgSrcDriveSpaceBlank = "themes/default/images/blank.gif";
+var imgHeightDriveSpaceBlank = 12;
+var imgSrcBandwidthBlank = "themes/default/images/blank.gif";
+var imgHeightBandwidthBlank = 12;
+//
 var updateTimeLeft = 0;
 
 /**
@@ -58,8 +64,6 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 	titleChangeEnabled = tChangeEnabled;
 	pageTitle = pTitle;
 	goodLookingStatsEnabled = glsEnabled;
-	if (goodLookingStatsEnabled == 1)
-		goodLookingStatsSettings = glsSettings.split(":");
 	bottomStatsEnabled = bsEnabled;
 	queueActive = qActive;
 	xferEnabled = xEnabled;
@@ -68,6 +72,7 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 	driveSpaceBarStyle = dsBarStyle;
 	bandwidthBarsEnabled = bwBarsEnabled;
 	bandwidthBarsStyle = bwBarsStyle;
+	// url + params
 	ajax_updateUrl = "index.php?iid=index";
 	ajax_updateParams = "&ajax_update=1";
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1))
@@ -75,6 +80,23 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 	else
 		ajax_updateParams += '0';
 	ajax_updateParams += transferListEnabled;
+	// gls
+	if (goodLookingStatsEnabled == 1)
+		goodLookingStatsSettings = glsSettings.split(":");
+	// tf-style drivespace bar init
+	if (driveSpaceBarStyle == "xfer") {
+		elementBlank = document.getElementById("imgDriveSpaceBlank");
+		imgSrcDriveSpaceBlank = elementBlank.src;
+		imgHeightDriveSpaceBlank = elementBlank.height;
+	}
+	// tf-style bandwidth bars init
+	/*
+	if ((bandwidthBarsEnabled == 1) && (bandwidthBarsStyle == "xfer")) {
+		elementBlank = document.getElementById("imgBandwidthBlank");
+		imgSrcBandwidthBlank = elementBlank.src;
+		imgHeightBandwidthBlank = elementBlank.height;
+	}
+	*/
 	// state
 	ajax_updateState = 1;
 	// http-request
@@ -175,9 +197,17 @@ function ajax_updateContent(statsServer, statsXfer, transferList) {
 		document.getElementById("barDriveSpace2").width = 1;
 	else
 		document.getElementById("barDriveSpace2").width = (100 - dSpace) + "%";
-	//if (driveSpaceBarStyle == "xfer") {
+	if (driveSpaceBarStyle == "xfer") {
 		// set color
-	//}
+		dsbCol = 'rgb(';
+		dsbCol += parseInt(255 - 255 * ((100 - dSpace) / 100));
+		dsbCol += ',' + parseInt(255 * ((100 - dSpace) / 100));
+		dsbCol += ',0)';
+		dsbDiv  = '<div style="background:' + dsbCol + ';">';
+		dsbDiv += '<img id="imgDriveSpaceBlank" src="' + imgSrcDriveSpaceBlank + '" width="1" height="' + imgHeightDriveSpaceBlank + '" border="0">';
+		dsbDiv += '</div>';
+		document.getElementById("barDriveSpace2").innerHTML = dsbDiv;
+	}
 	// bandwidth-bars
 	if (bandwidthBarsEnabled == 1) {
 		// up
