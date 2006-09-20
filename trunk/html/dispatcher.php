@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// main.internal
+require_once("inc/main.internal.php");
+
 // clienthandler
 require_once("inc/classes/ClientHandler.php");
 

@@ -30,9 +30,6 @@ if(isset($_GET['iid'])) {
 		case "index":
 			require_once("inc/iid/index.php");
 			break;
-		case "dispatcher":
-			require_once("inc/iid/dispatcher.php");
-			break;
 		case "admin":
 			require_once("inc/iid/admin.php");
 			break;

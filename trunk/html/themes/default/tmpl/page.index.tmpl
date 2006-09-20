@@ -80,7 +80,7 @@
 							</tr>
 							<tmpl_if name="enable_wget">
 								<tr>
-									<form name="form_wget" action="index.php?iid=dispatcher&action=wget" method="post" onsubmit="ajax_updateState = 0;">
+									<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="ajax_updateState = 0;">
 										<td>
 											<hr>
 											URL for the File to wget :<br>
@@ -256,7 +256,7 @@
 				</tr>
 			</tmpl_if>
 		</table>
-		<form action="index.php?iid=dispatcher" method="POST" onsubmit="ajax_updateState = 0;">
+		<form action="dispatcher.php" method="POST" onsubmit="ajax_updateState = 0;">
 			<div id="transferList"><tmpl_include name="inc.transferList.tmpl"></div>
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>
 				<tr>
@@ -302,9 +302,9 @@
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="index.php?iid=dispatcher&action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/default/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
-														<a href="index.php?iid=dispatcher&action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/default/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
-														<a href="index.php?iid=dispatcher&action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/default/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
+														<a href="dispatcher.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/default/images/bulkstart.png" width="20" height="20" border="0" title="Start All Torrents"></a>
+														<a href="dispatcher.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/default/images/bulkresume.png" width="20" height="20" border="0" title="Resume All Torrents"></a>
+														<a href="dispatcher.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/default/images/bulkstop.png" width="20" height="20" border="0" title="Stop All Torrents"></a>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
@@ -333,29 +333,29 @@
 								</div>
 								<div align="center" class="tiny">
 									<tmpl_if name="page_refresh">
-										<a href="index.php?iid=dispatcher&action=set&key=index_meta_refresh&val=0" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=0" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_PAGEWILLREFRESH"> <span id='span_refresh'><tmpl_var name="page_refresh"></span> <tmpl_var name="_SECONDS">
 										</a>
 										<br>
 									<tmpl_else>
-										<a href="index.php?iid=dispatcher&action=set&key=index_meta_refresh&val=1" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=1" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_TURNONREFRESH">
 										</a>
 										<br>
 									</tmpl_if>
 									<tmpl_if name="index_ajax_update">
-										<a href="index.php?iid=dispatcher&action=set&key=index_ajax_update&val=0" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_ajax_update&val=0" style="font-size:10px; text-decoration:none;">
 											<span id='span_update'>Next AJAX-Update in <tmpl_var name="index_ajax_update"> seconds</span>
 										</a>
 										<br>
 									<tmpl_else>
-										<a href="index.php?iid=dispatcher&action=set&key=index_ajax_update&val=1" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_ajax_update&val=1" style="font-size:10px; text-decoration:none;">
 											Turn ON AJAX-Update
 										</a>
 										<br>
 									</tmpl_if>
 									<tmpl_if name="onLoad">
-										<a href="index.php?iid=dispatcher&action=set&key=_all_&val=0" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=_all_&val=0" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_TURNOFFREFRESH"> AND AJAX-Update
 										</a>
 										<br>
