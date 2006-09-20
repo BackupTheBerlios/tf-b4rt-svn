@@ -1,6 +1,7 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_include name="inc.adminmenu.tmpl">
+<script src="js/adminSettings.js" type="text/javascript"></script>
 <div align="center">
 	<table width="100%" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 		<tr>
@@ -12,7 +13,7 @@
 			<td align="center">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<form name="theForm" action="index.php?iid=admin&op=updateIndexSettings" method="post">
+						<form name="theForm" action="index.php?iid=admin&op=updateIndexSettings" method="post" onsubmit="return validateSettings('index')">
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Page Refresh</strong><br>
 								Enable/Disable Page Refresh :
