@@ -158,6 +158,17 @@ if (isset($_REQUEST['url_upload'])) {
 		indexProcessDownload($url_upload);
 }
 */
+
+/*******************************************************************************
+ * file upload
+ ******************************************************************************/
+/*
+if (isset($_FILES['upload_file'])) {
+	if(!empty($_FILES['upload_file']['name']))
+		indexProcessUpload();
+}
+*/
+
 	require_once("inc/iid/index.php");
 }
 

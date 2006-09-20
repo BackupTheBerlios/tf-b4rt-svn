@@ -33,7 +33,7 @@
 						<td bgcolor="#d6dfe6">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="index.php?iid=index" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
+									<form name="form_file" action="dispatcher.php?action=indexFileUpload" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
 										<td>
 										<tmpl_var name="_SELECTFILE">:<br>
 										<input type="File" name="upload_file" size="30">
@@ -84,7 +84,7 @@
 										<td>
 											<hr>
 											URL for the File to wget :<br>
-											<input type="text" name="url_wget" size="40">
+											<input type="text" name="url" size="40">
 											<input name="wget_start" type="Checkbox" value="1">Start
 											<input type="Submit" value="Go">
 										</td>

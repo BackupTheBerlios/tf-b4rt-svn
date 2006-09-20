@@ -54,6 +54,10 @@ switch ($action) {
 		indexProcessDownload(getRequestVar('url'));
     	break;
     case "indexFileUpload":
+		if (isset($_FILES['upload_file'])) {
+			if(!empty($_FILES['upload_file']['name']))
+				indexProcessUpload();
+		}
     	break;
     case "indexDelete":
     	break;
@@ -64,14 +68,14 @@ switch ($action) {
  * wget
  ******************************************************************************/
     case "wget":
-		$url_wget = getRequestVar('url_wget');
-		if (!empty($url_wget)) {
+		$url = getRequestVar('url');
+		if (!empty($url)) {
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-			$clientHandler->inject($url_wget);
+			$clientHandler->inject($url);
 			$wget_start = getRequestVar('wget_start');
 			if ($wget_start == 1) {
 				sleep(2);
-				$clientHandler->startClient($url_wget, 0, false);
+				$clientHandler->startClient($url, 0, false);
 				sleep(5);
 			}
 		}
