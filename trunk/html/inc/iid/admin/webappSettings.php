@@ -44,6 +44,7 @@ $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('details_type', $cfg["details_type"]);
 $tmpl->setvar('details_update', $cfg["details_update"]);
+$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
 // themes
 $theme_list = array();
 $arThemes = GetThemes();

@@ -114,7 +114,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>multi-upload - rows</strong><br>
-								Specify rows on multi-upload page. (default is "6"):
+								Specify rows on multi-upload page :
 								</td>
 								<td valign="bottom">
 									<input name="hack_multiupload_rows" type="Text" maxlength="2" value="<tmpl_var name="hack_multiupload_rows">" size="2">
@@ -194,7 +194,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Good looking statistics settings</strong><br>
-								Configure Settings of "Good looking statistics" :
+								Select Fields shown in "Good looking statistics" :
 								</td>
 								<td valign="top">
 									<tmpl_include name="inc.goodLookingStatsForm.tmpl">
@@ -216,27 +216,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Select Drivespace-Bar</strong><br>
-								Select Style of Drivespace-Bar on index-Page :
-								</td>
-								<td valign="top">
-									<select name="drivespacebar">
-										<option value="tf"
-										<tmpl_if name="drivespacebar" value="tf">
-											 selected
-										</tmpl_if>
-										>tf</option>
-										<option value="xfer"
-										<tmpl_if name="drivespacebar" value="xfer">
-											 selected
-										</tmpl_if>
-										>xfer</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
 								<td align="left" width="350" valign="top"><strong>Display Bandwidth-Bars</strong><br>
-								Display Bandwidth-Bars on the index-page :
+								Display Bandwidth-Bars :
 								</td>
 								<td valign="bottom">
 									<select name="ui_displaybandwidthbars">
@@ -250,8 +231,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Select Bandwidth-Bars</strong><br>
-								Select Style of Bandwidth-Bars on index-Page :
+								<td align="left" width="350" valign="top"><strong>Bandwidth-Bars Style</strong><br>
+								Select Style of Bandwidth-Bars :
 								</td>
 								<td valign="top">
 									<select name="bandwidthbar">
@@ -421,21 +402,6 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Show Server Load</strong><br>
-								Enable showing the average server load over the last 15 minutes:
-								</td>
-								<td valign="top">
-									<select name="show_server_load">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="show_server_load" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
 								<td align="left" width="350" valign="top"><strong>Show Connections</strong><br>
 								Enable showing the Sum of TCP-Connections:
 								</td>
@@ -444,6 +410,21 @@
 										<option value="1">true</option>
 										<option value="0"
 										<tmpl_if name="index_page_connections" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Server Load</strong><br>
+								Enable showing the average server load over the last 15 minutes:
+								</td>
+								<td valign="top">
+									<select name="show_server_load">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="show_server_load" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>

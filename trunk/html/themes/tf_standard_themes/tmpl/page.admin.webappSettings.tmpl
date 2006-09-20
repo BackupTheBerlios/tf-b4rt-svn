@@ -55,30 +55,91 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Template Cache</strong><br>
-								Enable the Caching of the Templating-System. <br> <tmpl_var name="SuperAdminLink_tmplCache">
+								<td align="left" width="350" valign="top"><strong>Page-Title</strong><br>
+								Specify the Page-Title :
 								</td>
-								<td valign="top">
-									<select name="enable_tmpl_cache">
-										<option value="1">true</option>
-										<option value="0"<tmpl_if name="enable_tmpl_cache" value="0"> selected</tmpl_if>>false</option>
-									</select>
+								<td valign="bottom">
+									<input name="pagetitle" type="Text" maxlength="64" value="<tmpl_var name="pagetitle">" size="30">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Show SQL Debug Statements</strong><br>
-								SQL Errors will always be displayed but when this feature is enabled the SQL Statement
-								that caused the error will be displayed as well:
+								<td align="left" width="350" valign="top"><strong>Display Bottom-Link</strong><br>
+								Display Link at bottom of pages :
 								</td>
-								<td valign="top">
-									<select name="debug_sql">
+								<td valign="bottom">
+									<select name="ui_displayfluxlink">
 										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="debug_sql" value="0">
+										<tmpl_if name="ui_displayfluxlink" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
 									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Drivespace-Bar Style</strong><br>
+								Select Style of Drivespace-Bar :
+								</td>
+								<td valign="top">
+									<select name="drivespacebar">
+										<option value="tf"
+										<tmpl_if name="drivespacebar" value="tf">
+											 selected
+										</tmpl_if>
+										>tf</option>
+										<option value="xfer"
+										<tmpl_if name="drivespacebar" value="xfer">
+											 selected
+										</tmpl_if>
+										>xfer</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Download-Details Type</strong><br>
+								Choose Type of Download-Details-Popup :
+								</td>
+								<td valign="bottom">
+									<select name="details_type">
+										<option value="standard">standard</option>
+										<option value="ajax"
+										<tmpl_if name="details_type" value="ajax">
+											 selected
+										</tmpl_if>
+										>ajax</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Download-Details Update</strong><br>
+								Update-intervall in seconds of the details-popup :
+								</td>
+								<td valign="bottom">
+									<input name="details_update" type="Text" maxlength="3" value="<tmpl_var name="details_update">" size="3">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Download-Hosts</strong><br>
+								Show IPs or Hostnames in Download-Hosts of a client :
+								</td>
+								<td valign="top">
+									<select name="downloadhosts">
+										<option value="1">Hostnames</option>
+										<option value="0"
+										<tmpl_if name="downloadhosts" value="0">
+											 selected
+										</tmpl_if>
+										>IPs</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Server Monitor Update</strong><br>
+								Number of seconds for Server Monitor Update :
+								</td>
+								<td valign="top">
+									<input name="servermon_update" type="Text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
 								</td>
 							</tr>
 							<tr>
@@ -90,29 +151,6 @@
 											<option value="1">true</option>
 											<option value="0"
 										<tmpl_if name="enable_dereferrer" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Page-Title</strong><br>
-								Specify the Page-Title :
-								</td>
-								<td valign="bottom">
-									<input name="pagetitle" type="Text" maxlength="64" value="<tmpl_var name="pagetitle">" size="30">
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Display Bottom-Link</strong><br>
-								Display Link at bottom of pages. (true):
-								</td>
-								<td valign="bottom">
-									<select name="ui_displayfluxlink">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="ui_displayfluxlink" value="0">
 											 selected
 										</tmpl_if>
 										>false</option>
@@ -173,49 +211,30 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Download-Details Type</strong><br>
-								Choose Type of Download-Details-Popup :
+								<td align="left" width="350" valign="top"><strong>Enable Template Cache</strong><br>
+								Enable the Caching of the Templating-System. <br> <tmpl_var name="SuperAdminLink_tmplCache">
 								</td>
-								<td valign="bottom">
-									<select name="details_type">
-										<option value="standard">standard</option>
-										<option value="ajax"
-										<tmpl_if name="details_type" value="ajax">
-											 selected
-										</tmpl_if>
-										>ajax</option>
+								<td valign="top">
+									<select name="enable_tmpl_cache">
+										<option value="1">true</option>
+										<option value="0"<tmpl_if name="enable_tmpl_cache" value="0"> selected</tmpl_if>>false</option>
 									</select>
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Download-Details Update</strong><br>
-								Specify the update-intervall in seconds of the details-popup :
-								</td>
-								<td valign="bottom">
-									<input name="details_update" type="Text" maxlength="3" value="<tmpl_var name="details_update">" size="3">
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Download-Hosts</strong><br>
-								Show IPs or Hostnames in Download-Hosts of a client :
+								<td align="left" width="350" valign="top"><strong>Show SQL Debug Statements</strong><br>
+								SQL Errors will always be displayed but when this feature is enabled the SQL Statement
+								that caused the error will be displayed as well:
 								</td>
 								<td valign="top">
-									<select name="downloadhosts">
-										<option value="1">Hostnames</option>
+									<select name="debug_sql">
+										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="downloadhosts" value="0">
+										<tmpl_if name="debug_sql" value="0">
 											 selected
 										</tmpl_if>
-										>IPs</option>
+										>false</option>
 									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Server Monitor Update</strong><br>
-								Number of seconds for Server Monitor Update :
-								</td>
-								<td valign="top">
-									<input name="servermon_update" type="Text" maxlength="3" value="<tmpl_var name="servermon_update">" size="3">
 								</td>
 							</tr>
 						</table>
