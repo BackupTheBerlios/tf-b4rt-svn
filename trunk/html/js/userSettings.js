@@ -1,4 +1,7 @@
 
+/**
+ * validateUser
+ */
 function validateUser(_USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _PLEASECHECKFOLLOWING) {
 	var msg = ""
 	if (theForm.user_id.value == "") {
@@ -25,6 +28,9 @@ function validateUser(_USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _PLEA
 	}
 }
 
+/**
+ * validateProfile
+ */
 function validateProfile(_USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _PLEASECHECKFOLLOWING) {
 	var msg = ""
 	if (theForm.newUser.value == "") {

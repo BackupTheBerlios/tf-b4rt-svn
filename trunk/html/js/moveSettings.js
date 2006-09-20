@@ -1,3 +1,7 @@
+
+/**
+ * mytrim
+ */
 function mytrim(value) {
 	var trimmedVal = "";
 	for (var i=0; i<value.length; i++) {
@@ -8,6 +12,9 @@ function mytrim(value) {
 	return trimmedVal;
 }
 
+/**
+ * enableMoveElements
+ */
 function enableMoveElements(form, dropDownField) {
 	if (dropDownField.value == "0") {
 		form.move_path.disabled = true;
@@ -24,6 +31,9 @@ function enableMoveElements(form, dropDownField) {
 	}
 }
 
+/**
+ * addMoveEntry
+ */
 function addMoveEntry () {
     var catliststr = document.theForm.move_paths;
     var catliste = document.theForm.categorylist;
@@ -49,6 +59,9 @@ function addMoveEntry () {
 	}
 }
 
+/**
+ * removeMoveEntry
+ */
 function removeMoveEntry() {
 	var catliststr = document.theForm.move_paths;
 	if (document.theForm.categorylist.selectedIndex != -1) {

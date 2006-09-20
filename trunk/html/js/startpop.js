@@ -1,10 +1,16 @@
 
+/**
+ * StartTorrent
+ */
 function StartTorrent() {
 	if (ValidateValues()) {
 		document.theForm.submit();
 	}
 }
 
+/**
+ * ValidateValues
+ */
 function ValidateValues() {
 	var rtnValue = true;
 	var msg = "";
@@ -59,6 +65,9 @@ function ValidateValues() {
 	return rtnValue;
 }
 
+/**
+ * CheckShareState
+ */
 function CheckShareState() {
 	var obj = document.getElementById('sharekiller');
 	if (document.theForm.runtime.value == "True") {
@@ -68,6 +77,9 @@ function CheckShareState() {
 	}
 }
 
+/**
+ * isNumber
+ */
 function isNumber(sText) {
 	var ValidChars = "-0123456789";
 	var IsNumber = true;

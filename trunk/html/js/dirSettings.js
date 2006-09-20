@@ -1,3 +1,7 @@
+
+/**
+ * old meth
+ */
 function mytrim(value) {
 	var trimmedVal = "";
 	for (var i=0; i<value.length; i++) {
@@ -8,6 +12,9 @@ function mytrim(value) {
 	return trimmedVal;
 }
 
+/**
+ * old meth
+ */
 function addDirEntry () {
     var resliststr = document.theForm.dir_restricted;
     var reslist = document.theForm.resdirlist;
@@ -32,6 +39,9 @@ function addDirEntry () {
 	}
 }
 
+/**
+ * old meth
+ */
 function removeDirEntry() {
 	var resliststr = document.theForm.dir_restricted;
 	if (document.theForm.resdirlist.selectedIndex != -1) {

@@ -1,6 +1,42 @@
 
+// fields
 var trackerState = 1;
+var anlst  = "(optional) announce_list = list of tracker URLs<BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>url[,url...][|url[,url...]...]</i><BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URLs separated by commas are tried first<BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before URLs separated by the pipe is checked.<BR />\n";
+	anlst += "Examples:<BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>|</strong>http://b.com<strong>|</strong>http://c.com</i><BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a-c</b> in order)<BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>,</strong>http://b.com<strong>,</strong>http://c.com</i><BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a-c</b> in a randomly selected order)<BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>|</strong>http://b.com<strong>,</strong>http://c.com</i><BR />\n";
+	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a</b> first, then tries <b>b-c</b> randomly)<BR />\n";
 
+var annce  = "tracker announce URL.<BR /><BR />\n";
+	annce += "Example:<BR />\n";
+	annce += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://tracker.com/announce</i><BR />\n";
+
+var tornt  = "torrent name to be saved as<BR /><BR />\n";
+	tornt += "Example:<BR />\n";
+	tornt += "&nbsp;&nbsp;&nbsp;&nbsp;<i>gnome-livecd-2.10.torrent</i><BR />\n";
+
+var comnt  = "add a comment to your torrent file (optional)<BR />\n";
+	comnt += "";
+
+var piece  = "data piece size for torrent<BR />\n";
+	piece += "power of 2 value to set the piece size to<BR />\n";
+	piece += "(0 = automatic) (0 only option in this version)<BR />\n";
+
+var prvte  = "private tracker support<BR />\n";
+	prvte += "(disallows DHT if enabled)<BR />\n";
+
+var dhtbl  = "DHT (Distributed Hash Table)<BR /><BR />\n";
+	dhtbl += "can only be set abled if private flag is not set true<BR />\n";
+
+/**
+ * doSubmit
+ */
 function doSubmit(obj, client) {
 	// Basic check to see if maketorrent is already running
 	if (obj.value === "Creating...")
@@ -62,6 +98,9 @@ function doSubmit(obj, client) {
 	return false;
 }
 
+/**
+ * disableForm
+ */
 function disableForm(client) {
 	// Because of IE issue of disabling the submit button,
 	// we change the text and don't allow resubmitting
@@ -71,10 +110,16 @@ function disableForm(client) {
 		document.maketorrent.announce.readOnly = true;
 }
 
+/**
+ * toggleDHT
+ */
 function toggleDHT(dhtstatus) {
 	document.maketorrent.DHT.disabled = dhtstatus;
 }
 
+/**
+ * toggleTracker
+ */
 function toggleTracker(tState) {
 	trackerState = tState;
 	if (trackerState == 1)
@@ -83,6 +128,9 @@ function toggleTracker(tState) {
 		document.maketorrent.tracker_name.value = "";
 }
 
+/**
+ * toggleLayer
+ */
 function toggleLayer(whichLayer) {
 	if (document.getElementById) {
 		// This is the way the standards work
@@ -99,6 +147,9 @@ function toggleLayer(whichLayer) {
 	}
 }
 
+/**
+ * completed
+ */
 function completed(downpath, alertme, timetaken) {
 	document.getElementById('output').innerHTML	 = "<b style='color: #005500;'>Creation completed!</b><BR />";
 	document.getElementById('output').innerHTML += "Time taken: <i>" + timetaken + "</i><BR />";
@@ -108,42 +159,12 @@ function completed(downpath, alertme, timetaken) {
 		alert('Creation of torrent completed!');
 }
 
+/**
+ * failed
+ */
 function failed(downpath, alertme) {
 	document.getElementById('output').innerHTML	 = "<b style='color: #AA0000;'>Creation failed!</b><BR /><BR />";
 	document.getElementById('output').innerHTML += "An error occured while trying to create the torrent.<BR />";
 	if(alertme === 1)
 		alert('Creation of torrent failed!');
 }
-
-var anlst  = "(optional) announce_list = list of tracker URLs<BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>url[,url...][|url[,url...]...]</i><BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;URLs separated by commas are tried first<BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;before URLs separated by the pipe is checked.<BR />\n";
-	anlst += "Examples:<BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>|</strong>http://b.com<strong>|</strong>http://c.com</i><BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a-c</b> in order)<BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>,</strong>http://b.com<strong>,</strong>http://c.com</i><BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a-c</b> in a randomly selected order)<BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://a.com<strong>|</strong>http://b.com<strong>,</strong>http://c.com</i><BR />\n";
-	anlst += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(tries <b>a</b> first, then tries <b>b-c</b> randomly)<BR />\n";
-
-var annce  = "tracker announce URL.<BR /><BR />\n";
-	annce += "Example:<BR />\n";
-	annce += "&nbsp;&nbsp;&nbsp;&nbsp;<i>http://tracker.com/announce</i><BR />\n";
-
-var tornt  = "torrent name to be saved as<BR /><BR />\n";
-	tornt += "Example:<BR />\n";
-	tornt += "&nbsp;&nbsp;&nbsp;&nbsp;<i>gnome-livecd-2.10.torrent</i><BR />\n";
-
-var comnt  = "add a comment to your torrent file (optional)<BR />\n";
-	comnt += "";
-
-var piece  = "data piece size for torrent<BR />\n";
-	piece += "power of 2 value to set the piece size to<BR />\n";
-	piece += "(0 = automatic) (0 only option in this version)<BR />\n";
-
-var prvte  = "private tracker support<BR />\n";
-	prvte += "(disallows DHT if enabled)<BR />\n";
-
-var dhtbl  = "DHT (Distributed Hash Table)<BR /><BR />\n";
-	dhtbl += "can only be set abled if private flag is not set true<BR />\n";
