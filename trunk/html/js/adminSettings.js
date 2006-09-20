@@ -4,7 +4,6 @@
  * validateSettings
  */
 function validateSettings(section) {
-	var rtnValue = true;
 	var msg = "";
 	switch (section) {
 		case 'dir':
@@ -152,10 +151,11 @@ function validateSettings(section) {
 			break;
 	}
 	if (msg != "") {
-		rtnValue = false;
 		alert("Please check the following:\n\n" + msg);
+		return false;
+	} else {
+		return true;
 	}
-	return rtnValue;
 }
 
 /**
@@ -167,9 +167,8 @@ function isNumber(sText) {
 	var Char;
 	for (i = 0; i < sText.length && IsNumber == true; i++) {
 		Char = sText.charAt(i);
-		if (ValidChars.indexOf(Char) == -1) {
+		if (ValidChars.indexOf(Char) == -1)
 			IsNumber = false;
-		}
 	}
 	return IsNumber;
 }

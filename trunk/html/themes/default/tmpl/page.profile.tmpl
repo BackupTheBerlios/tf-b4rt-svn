@@ -83,7 +83,7 @@
 							<td valign="top">
 								<div align="center">
 									<table cellpadding="5" cellspacing="0" border="0">
-										<form name="theForm" action="index.php?iid=profile&op=updateProfile" method="post" onsubmit="return validateProfile('<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
+										<form name="theForm" action="index.php?iid=profile&op=updateProfile" method="post" onsubmit="return validateProfile(0, '<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
 											<tr>
 												<td align="right"><tmpl_var name="_USER">:</td>
 												<td>
@@ -151,9 +151,6 @@
 							<td colspan="2">
 								<form name="settingsForm" action="index.php?iid=profile&op=updateSettingsUser" method="post">
 									<table border="0" cellpadding="3" cellspacing="0" width="100%">
-
-
-
 										<tr>
 											<td align="center" colspan="2">
 												<input type="Submit" value="Update Settings">

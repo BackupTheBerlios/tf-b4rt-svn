@@ -12,7 +12,6 @@ function StartTorrent() {
  * ValidateValues
  */
 function ValidateValues() {
-	var rtnValue = true;
 	var msg = "";
 	if (isNumber(document.theForm.rate.value) == false) {
 		msg = msg + "* Max Upload Rate must be a valid number.\n";
@@ -59,10 +58,11 @@ function ValidateValues() {
 		document.theForm.maxcons.focus();
 	}
 	if (msg != "") {
-		rtnValue = false;
 		alert("Please check the following:\n\n" + msg);
+		return false;
+	} else {
+		return true;
 	}
-	return rtnValue;
 }
 
 /**
@@ -86,9 +86,8 @@ function isNumber(sText) {
 	var Char;
 	for (i = 0; i < sText.length && IsNumber == true; i++) {
 		Char = sText.charAt(i);
-		if (ValidChars.indexOf(Char) == -1) {
+		if (ValidChars.indexOf(Char) == -1)
 			IsNumber = false;
-		}
 	}
 	return IsNumber;
 }

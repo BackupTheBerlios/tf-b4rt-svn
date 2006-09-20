@@ -31,11 +31,13 @@ function validateUser(_USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _PLEA
 /**
  * validateProfile
  */
-function validateProfile(_USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _PLEASECHECKFOLLOWING) {
+function validateProfile(isCreate, _USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _PLEASECHECKFOLLOWING) {
 	var msg = ""
-	if (theForm.newUser.value == "") {
-		msg = msg + "* " + _USERIDREQUIRED + "\n";
-		theForm.newUser.focus();
+	if (isCreate == 1) {
+		if (theForm.newUser.value == "") {
+			msg = msg + "* " + _USERIDREQUIRED + "\n";
+			theForm.newUser.focus();
+		}
 	}
 	if (theForm.pass1.value != "" || theForm.pass2.value != "") {
 		if (theForm.pass1.value.length <= 5 || theForm.pass2.value.length <= 5) {
@@ -49,8 +51,10 @@ function validateProfile(_USERIDREQUIRED, _PASSWORDLENGTH, _PASSWORDNOTMATCH, _P
 			theForm.pass1.focus();
 		}
 	} else {
-		msg = msg + "* " + _PASSWORDLENGTH + "\n";
-		theForm.pass1.focus();
+		if (isCreate == 1) {
+			msg = msg + "* " + _PASSWORDLENGTH + "\n";
+			theForm.pass1.focus();
+		}
 	}
 	if (msg != "") {
 		alert(_PLEASECHECKFOLLOWING + ":\n\n" + msg);
