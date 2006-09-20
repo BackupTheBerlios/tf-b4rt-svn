@@ -29,7 +29,7 @@
 										<td>
 											<table width="100%">
 												<tr>
-													<td align="right" rowspan="2" nowrap><strong><tmpl_var name="_DOWNLOADSPEED"> :</strong></td>
+													<td align="right" nowrap><strong><tmpl_var name="_DOWNLOADSPEED"> :</strong></td>
 													<td>
 														<table width="200" cellpadding="0" cellspacing="0" border="0">
 															<tr>
@@ -38,12 +38,10 @@
 															</tr>
 														</table>
 													</td>
+													<td align="right" nowrap><label id="speedDown">0.00</label> kB/s</td>
 												</tr>
 												<tr>
-													<td width="200" align="right" nowrap><label id="speedDown">0.00</label> kB/s</td>
-												</tr>
-												<tr>
-													<td align="right" rowspan="2" nowrap><strong><tmpl_var name="_UPLOADSPEED"> :</strong></td>
+													<td align="right" nowrap><strong><tmpl_var name="_UPLOADSPEED"> :</strong></td>
 													<td>
 														<table width="200" cellpadding="0" cellspacing="0" border="0">
 															<tr>
@@ -52,20 +50,18 @@
 															</tr>
 														</table>
 													</td>
-												</tr>
-												<tr>
-													<td width="200" align="right" nowrap><label id="speedUp">0.00</label> kB/s</td>
+													<td align="right" nowrap><label id="speedUp">0.00</label> kB/s</td>
 												</tr>
 												<tr>
 													<td align="right" nowrap><strong><tmpl_var name="_TOTALSPEED"> :</strong></td>
-													<td width="200" align="right" nowrap><label id="speedTotal">0.00</label> kB/s</td>
+													<td align="right" colspan="2" nowrap><label id="speedTotal">0.00</label> kB/s</td>
 												</tr>
 												<tr>
 													<td align="right" nowrap><strong><tmpl_var name="_ID_CONNECTIONS"> :</strong></td>
-													<td width="200" align="right" nowrap><label id="cons">0</label></td>
+													<td align="right" colspan="2" nowrap><label id="cons">0</label></td>
 												</tr>
 												<tr>
-													<td align="right" rowspan="2" nowrap><strong><tmpl_var name="_DRIVESPACE"> :</strong></td>
+													<td align="right" nowrap><strong><tmpl_var name="_DRIVESPACE"> :</strong></td>
 													<td>
 														<table width="200" cellpadding="0" cellspacing="0" border="0">
 															<tr>
@@ -74,21 +70,19 @@
 															</tr>
 														</table>
 													</td>
-												</tr>
-												<tr>
-													<td width="200" align="right" nowrap><label id="freeSpace">0.00</label></td>
+													<td align="right" nowrap><label id="freeSpace">0.00</label></td>
 												</tr>
 												<tr>
 													<td align="right" nowrap><strong><tmpl_var name="_SERVERLOAD"> :</strong></td>
-													<td width="200" align="right" nowrap><label id="loadavg">0.00</label></td>
+													<td align="right" colspan="2" nowrap><label id="loadavg">0.00</label></td>
 												</tr>
 												<tr>
 													<td align="right" nowrap><strong>Transfers running :</strong></td>
-													<td width="200" align="right" nowrap><label id="running">0</label></td>
+													<td align="right" colspan="2" nowrap><label id="running">0</label></td>
 												</tr>
 												<tr>
 													<td align="right" nowrap><strong>Transfers queued :</strong></td>
-													<td width="200" align="right" nowrap><label id="queued">0</label></td>
+													<td align="right" colspan="2" nowrap><label id="queued">0</label></td>
 												</tr>
 											</table>
 										</td>
