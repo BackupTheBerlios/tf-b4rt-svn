@@ -97,9 +97,11 @@ class RunningTransfer
         $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
         $output .= str_replace(array(".stat"),"",$this->statFile);
         $output .= "</div></td>";
-        $output .= "<td><a href=\"index.php?iid=index&alias_file=".$this->statFile;
+        $output .= "<td>";
+        $output .= "<a href=\"dispatcher.php?action=indexStop";
+        $output .= "&transfer=".urlencode($this->transferFile);
+        $output .= "&alias_file=".$this->statFile;
         $output .= "&kill=".$this->processId;
-        $output .= "&kill_torrent=".urlencode($this->transferFile);
         $output .= "&return=admin\">";
         $output .= "<img src=\"themes/".$theme."/images/kill.gif\" width=16 height=16 title=\"".$cfg['_FORCESTOP']."\" border=0></a></td>";
         $output .= "</tr>";

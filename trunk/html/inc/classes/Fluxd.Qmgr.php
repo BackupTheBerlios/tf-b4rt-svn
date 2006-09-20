@@ -77,7 +77,7 @@ class FluxdQmgr extends FluxdServiceMod
         if (isTransferRunning($torrent)) {
             // torrent has been started... try and kill it.
             AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent . "has been started -- TRY TO KILL IT");
-            header("location: index.php?iid=index&alias_file=".$alias_file."&kill=true&kill_torrent=".urlencode($torrent));
+            header("location: dispatcher.php?action=indexStop&transfer=".urlencode($torrent)."&alias_file=".$alias_file."&kill=true");
             exit();
         } else {
             // send command to Qmgr

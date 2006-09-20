@@ -157,7 +157,7 @@
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
 								<tmpl_if name="isTorrent">
-									<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">&alias_file=<tmpl_var name="alias">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
@@ -378,7 +378,7 @@
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
 								<tmpl_if name="isTorrent">
-									<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&kill_torrent=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">&alias_file=<tmpl_var name="alias">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">

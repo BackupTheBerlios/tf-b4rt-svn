@@ -60,8 +60,10 @@ switch ($action) {
     	indexDeleteTransfer(getRequestVar('transfer'));
     	break;
     case "indexStop":
+    	indexStopTransfer(getRequestVar('transfer'));
     	break;
     case "indexDeQueue":
+    	//indexDeQueueTransfer(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************

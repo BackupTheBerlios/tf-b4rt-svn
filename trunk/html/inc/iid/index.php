@@ -31,33 +31,6 @@ if (isset($_REQUEST['messages'])) {
 
 
 /*******************************************************************************
- * kill
- ******************************************************************************/
-if (isset($_REQUEST["kill_torrent"])) {
-	$transfer = getRequestVar('kill_torrent');
-	if (!empty($transfer)) {
-		$return = getRequestVar('return');
-		require_once("inc/classes/ClientHandler.php");
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-		} else {
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
-		}
-		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
-		if (!empty($return))
-			header("location: ".$return.".php?op=queueSettings");
-		else
-			header("location: index.php?iid=index");
-		exit();
-	}
-}
-
-
-/*******************************************************************************
  * deQueue
  ******************************************************************************/
 if (isset($_REQUEST["QEntry"])) {

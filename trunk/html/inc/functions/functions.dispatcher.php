@@ -26,6 +26,7 @@
  * @param $transfer
  */
 function indexStartTransfer($transfer) {
+	global $cfg;
 	if (!empty($transfer)) {
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
@@ -52,7 +53,7 @@ function indexStartTransfer($transfer) {
  * @param $torrent torrent-name
  * @param $interactive (1|0) : is this a interactive startup with dialog ?
  */
-function indexStartTorrent($torrent,$interactive) {
+function indexStartTorrent($torrent, $interactive) {
 	global $cfg, $queueActive;
 	if ($cfg["enable_file_priority"]) {
 		include_once("inc/setpriority.php");
@@ -255,7 +256,7 @@ function indexProcessUpload() {
 }
 
 /**
- * indexStartTransfer
+ * indexDeleteTransfer
  *
  * @param $transfer
  */
@@ -263,6 +264,34 @@ function indexDeleteTransfer($transfer) {
 	if (!empty($transfer)) {
 		deleteTransfer($transfer, getRequestVar('alias_file'));
 		header("location: index.php?iid=index");
+		exit();
+	}
+}
+
+/**
+ * indexStopTransfer
+ *
+ * @param $transfer
+ */
+function indexStopTransfer($transfer) {
+	global $cfg;
+	if (!empty($transfer)) {
+		$return = getRequestVar('return');
+		require_once("inc/classes/ClientHandler.php");
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+		} else {
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+		}
+		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
+		if (!empty($return))
+			header("location: index.php?iid=".$return.".php?op=fluxdSettings");
+		else
+			header("location: index.php?iid=index");
 		exit();
 	}
 }

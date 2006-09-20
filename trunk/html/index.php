@@ -117,6 +117,7 @@ if (isset($_REQUEST['iid'])) {
 	}
 } else { // use "old" style to stay flux-compatible as good as possible
 
+	// $_REQUEST['iid'] = "index";
 
 	// dispatcher functions
 	require_once("inc/functions/functions.dispatcher.php");
@@ -178,6 +179,34 @@ if (isset($_REQUEST['delfile'])) {
 	if (!empty($transfer)) {
 		deleteTransfer($transfer, getRequestVar('alias_file'));
 		header("location: index.php?iid=index");
+		exit();
+	}
+}
+*/
+
+/*******************************************************************************
+ * kill
+ ******************************************************************************/
+/*
+if (isset($_REQUEST["kill_torrent"])) {
+	$transfer = getRequestVar('kill_torrent');
+	if (!empty($transfer)) {
+		$return = getRequestVar('return');
+		require_once("inc/classes/ClientHandler.php");
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+		} else {
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+		}
+		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
+		if (!empty($return))
+			header("location: ".$return.".php?op=queueSettings");
+		else
+			header("location: index.php?iid=index");
 		exit();
 	}
 }
