@@ -33,7 +33,7 @@
 						<td bgcolor="#d6dfe6">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="index.php?iid=index" method="post" enctype="multipart/form-data">
+									<form name="form_file" action="index.php?iid=index" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
 										<td>
 										<tmpl_var name="_SELECTFILE">:<br>
 										<input type="File" name="upload_file" size="30">
@@ -58,7 +58,7 @@
 								</form>
 							</tr>
 							<tr>
-								<form name="form_url" action="index.php?iid=index" method="post">
+								<form name="form_url" action="index.php?iid=index" method="post" onsubmit="ajax_updateState = 0;">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
@@ -80,7 +80,7 @@
 							</tr>
 							<tmpl_if name="enable_wget">
 								<tr>
-									<form name="form_wget" action="index.php?iid=index" method="post">
+									<form name="form_wget" action="index.php?iid=index" method="post" onsubmit="ajax_updateState = 0;">
 										<td>
 											<hr>
 											URL for the File to wget :<br>
@@ -93,13 +93,13 @@
 							</tmpl_if>
 							<tmpl_if name="enable_search">
 								<tr>
-									<form name="form_search" action="index.php" method="get">
+									<form name="form_search" action="index.php" method="get" onsubmit="ajax_updateState = 0;">
 										<input type="hidden" name="iid" value="torrentSearch">
 										<td>
 											<hr>
 											Torrent <tmpl_var name="_SEARCH">:<br>
 											<input type="text" name="searchterm" size="30" maxlength="50">
-											<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
+											<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="ajax_updateState = 0; this.form.submit();"</tmpl_if> STYLE="width: 125px">
 											<tmpl_loop name="Engine_List">
 												<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
 											</tmpl_loop>
@@ -256,7 +256,7 @@
 				</tr>
 			</tmpl_if>
 		</table>
-		<form action="index.php?iid=dispatcher" method="POST">
+		<form action="index.php?iid=dispatcher" method="POST" onsubmit="ajax_updateState = 0;">
 			<div id="transferList"><tmpl_include name="inc.transferList.tmpl"></div>
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>
 				<tr>

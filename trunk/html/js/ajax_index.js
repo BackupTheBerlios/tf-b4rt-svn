@@ -114,20 +114,24 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
  *
  */
 function ajax_pageUpdate() {
-	if (updateTimeLeft < 0) {
-		document.getElementById("span_update").innerHTML = "Update in progress...";
-		if (titleChangeEnabled == 1)
-			document.title = "Update in progress... - "+ pageTitle;
-	} else if (updateTimeLeft == 0) {
-		updateTimeLeft = -1;
-		document.getElementById("span_update").innerHTML = "Update in progress...";
-		if (titleChangeEnabled == 1)
-			document.title = "Update in progress... - "+ pageTitle;
-		setTimeout("ajax_update();", 100);
+	if (ajax_updateState == 1) {
+		if (updateTimeLeft < 0) {
+			document.getElementById("span_update").innerHTML = "Update in progress...";
+			if (titleChangeEnabled == 1)
+				document.title = "Update in progress... - "+ pageTitle;
+		} else if (updateTimeLeft == 0) {
+			updateTimeLeft = -1;
+			document.getElementById("span_update").innerHTML = "Update in progress...";
+			if (titleChangeEnabled == 1)
+				document.title = "Update in progress... - "+ pageTitle;
+			setTimeout("ajax_update();", 100);
+		} else {
+			document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
+		}
+		updateTimeLeft--;
 	} else {
-		document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
+		document.getElementById("span_update").innerHTML = "AJAX-Update disabled";
 	}
-	updateTimeLeft--;
 	setTimeout("ajax_pageUpdate();", 1000);
 }
 
