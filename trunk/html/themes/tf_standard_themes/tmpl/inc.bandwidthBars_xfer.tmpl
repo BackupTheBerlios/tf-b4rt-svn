@@ -1,72 +1,54 @@
 <table width="100%">
 	<tr>
-		<td width="10%">
+		<td width="1%" style="padding:3px;" nowrap>
 			<div class="tiny">Upload :</div>
 		</td>
-		<td width="90%">
-			<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;">
+		<td width="98%">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td id="barSpeedUp1" bgcolor="<tmpl_var name="bandwidthbars_upload_bgcolor">" width="<tmpl_var name="bandwidthbars_upload_percent">%">
-						<tmpl_if name="bandwidthbars_upload_percent" op=">" value="49">
-							<div class="tinypercent" align="center"
-								<tmpl_if name="bandwidthbars_upload_percent" value="100">
-									 style="background:#FF0000;">
-								<tmpl_else>
-									>
-								</tmpl_if>
-								<label id="barSpeedUpPercent"><tmpl_var name="bandwidthbars_upload_percent"></label>% (<label id="barSpeedUp"><tmpl_var name="bandwidthbars_upload_text"></label> kb/s)
-							</div>
-						</tmpl_if>
+					<td id="barSpeedUp1" height="14" width="<tmpl_var name="bandwidthbars_upload_percent">%">
+						<div id="divSpeedUp1" style="background:<tmpl_var name="bandwidthbars_upload_bgcolor">;">
+							<img src="themes/tf_standard_themes/images/blank.gif" width="1" height="14" border="0">
+						</div>
 					</td>
-					<td id="barSpeedUp2" bgcolor="#000000" width="<tmpl_var name="bandwidthbars_upload_percent2">%" height="100%">
-						<tmpl_if name="bandwidthbars_upload_percent" op="<" value="50">
-							<div class="tinypercent" align="center" style="color:<tmpl_var name="bandwidthbars_upload_bgcolor">
-								<tmpl_if name="bandwidthbars_upload_percent" value="0">
-									; background:#000000;">
-								<tmpl_else>
-									;">
-								</tmpl_if>
-								<label id="barSpeedUpPercent"><tmpl_var name="bandwidthbars_upload_percent"></label>% (<label id="barSpeedUp"><tmpl_var name="bandwidthbars_upload_text"></label> kb/s)
-							</div>
-						</tmpl_if>
+					<td id="barSpeedUp2" height="14" width="<tmpl_var name="bandwidthbars_upload_percent2">%">
+						<div id="divSpeedUp2" style="background:#000000;">
+							<img src="themes/tf_standard_themes/images/blank.gif" width="1" height="14" border="0">
+						</div>
 					</td>
 				</tr>
 			</table>
+		</td>
+		<td width="1%" style="padding:3px;" nowrap>
+			<div class="tinypercent" align="center">
+				<nobr><label id="barSpeedUpPercent"><tmpl_var name="bandwidthbars_upload_percent"></label>% (<label id="barSpeedUp"><tmpl_var name="bandwidthbars_upload_text"></label> kb/s)</nobr>
+			</div>
 		</td>
 	</tr>
 	<tr>
-		<td width="10%">
+		<td width="1%" style="padding:3px;" nowrap>
 			<div class="tiny">Download :</div>
 		</td>
-		<td width="90%">
-			<table width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-top:1px;margin-bottom:1px;">
+		<td width="98%">
+			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
-					<td id="barSpeedDown1" bgcolor="<tmpl_var name="bandwidthbars_download_bgcolor">" width="<tmpl_var name="bandwidthbars_download_percent">%">
-						<tmpl_if name="bandwidthbars_download_percent" op=">" value="49">
-							<div class="tinypercent" align="center"
-								<tmpl_if name="bandwidthbars_download_percent" value="100">
-									 style="background:#FF0000;">
-								<tmpl_else>
-									>
-								</tmpl_if>
-								<label id="barSpeedDownPercent"><tmpl_var name="bandwidthbars_download_percent"></label>% (<label id="barSpeedDown"><tmpl_var name="bandwidthbars_download_text"></label> kb/s)
-							</div>
-						</tmpl_if>
+					<td id="barSpeedDown1" height="14" width="<tmpl_var name="bandwidthbars_download_percent">%">
+						<div id="divSpeedDown1" style="background:<tmpl_var name="bandwidthbars_download_bgcolor">;">
+							<img src="themes/tf_standard_themes/images/blank.gif" width="1" height="14" border="0">
+						</div>
 					</td>
-					<td id="barSpeedDown2" bgcolor="#000000" width="<tmpl_var name="bandwidthbars_download_percent2">%" height="100%">
-						<tmpl_if name="bandwidthbars_download_percent" op="<" value="50">
-							<div class="tinypercent" align="center" style="color:<tmpl_var name="bandwidthbars_download_bgcolor">
-								<tmpl_if name="bandwidthbars_download_percent" value="0">
-									; background:#000000;">
-								<tmpl_else>
-									;">
-								</tmpl_if>
-								<label id="barSpeedDownPercent"><tmpl_var name="bandwidthbars_download_percent"></label>% (<label id="barSpeedDown"><tmpl_var name="bandwidthbars_download_text"></label> kb/s)
-							</div>
-						</tmpl_if>
+					<td id="barSpeedDown2" height="14" width="<tmpl_var name="bandwidthbars_download_percent2">%">
+						<div id="divSpeedDown2" style="background:#000000;">
+							<img src="themes/tf_standard_themes/images/blank.gif" width="1" height="14" border="0">
+						</div>
 					</td>
 				</tr>
 			</table>
+		</td>
+		<td width="1%" style="padding:3px;" nowrap>
+			<div class="tinypercent" align="center">
+				<nobr><label id="barSpeedDownPercent"><tmpl_var name="bandwidthbars_download_percent"></label>% (<label id="barSpeedDown"><tmpl_var name="bandwidthbars_download_text"></label> kb/s)</nobr>
+			</div>
 		</td>
 	</tr>
 </table>
