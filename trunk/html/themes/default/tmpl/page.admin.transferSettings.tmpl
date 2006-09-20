@@ -89,22 +89,6 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable wget</strong><br>
-								Enable/Disable wget-hack :
-								</td>
-								<td valign="top">
-									<select name="enable_wget">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="enable_wget" value="0">
-											 selected
-										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr><td colspan="2"><hr noshade></td></tr>
-							<tr>
 								<td align="left" width="350" valign="top"><strong>Max Upload Rate (B+T+M)</strong><br>
 									Set the default value for the max upload rate per transfer:
 								</td>
@@ -209,6 +193,20 @@
 									</select>
 								</td>
 							</tr>
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>wget</strong></td></tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable wget</strong><br>
+								Set who can use wget :
+								</td>
+								<td valign="top">
+									<select name="enable_wget">
+										<option value="0" <tmpl_if name="enable_wget" value="0"> selected</tmpl_if>>wget disabled</option>
+										<option value="1" <tmpl_if name="enable_wget" value="1"> selected</tmpl_if>>Only Admins</option>
+										<option value="2" <tmpl_if name="enable_wget" value="2"> selected</tmpl_if>>All Users</option>
+									</select>
+								</td>
+							</tr>
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Common</strong></td></tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable umask (B+T+M+W)</strong><br>
 								Enable/Disable setting umask to 0000 when starting a client. :

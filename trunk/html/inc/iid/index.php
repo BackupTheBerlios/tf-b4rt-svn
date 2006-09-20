@@ -825,9 +825,24 @@ $tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
 if ($cfg["ui_displaybandwidthbars"] != 0)
 	tmplSetBandwidthBars();
 
+// wget
+switch ($cfg["enable_wget"]) {
+	case 2:
+		$tmpl->setvar('enable_wget', 1);
+		break;
+	case 1:
+		if ($cfg['isAdmin'])
+			$tmpl->setvar('enable_wget', 1);
+		else
+			$tmpl->setvar('enable_wget', 0);
+		break;
+	case 0:
+	default:
+		$tmpl->setvar('enable_wget', 0);
+}
+
 $tmpl->setvar('version', $cfg["version"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
-$tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
