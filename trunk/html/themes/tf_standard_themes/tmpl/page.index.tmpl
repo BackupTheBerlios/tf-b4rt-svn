@@ -58,11 +58,11 @@
 								</form>
 							</tr>
 							<tr>
-								<form name="form_url" action="index.php?iid=index" method="post" onsubmit="ajax_updateState = 0;">
+								<form name="form_url" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="ajax_updateState = 0;">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
-										<input type="text" name="url_upload" size="40">
+										<input type="text" name="url" size="40">
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_GETFILE"></option>
 											<tmpl_if name="queueActive" value="1">

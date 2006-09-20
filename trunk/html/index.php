@@ -117,6 +117,10 @@ if(isset($_GET['iid'])) {
 	}
 } else { // use "old" style to stay flux-compatible as good as possible
 
+
+	// dispatcher functions
+	require_once("inc/functions/functions.dispatcher.php");
+
 /*******************************************************************************
  * transfer-start
  ******************************************************************************/
@@ -141,6 +145,17 @@ if (isset($_REQUEST['torrent'])) {
 			exit();
 		}
 	}
+}
+*/
+
+/*******************************************************************************
+ * get torrent via url
+ ******************************************************************************/
+/*
+if (isset($_REQUEST['url_upload'])) {
+	$url_upload = getRequestVar('url_upload');
+	if (!empty($url_upload))
+		indexProcessDownload($url_upload);
 }
 */
 	require_once("inc/iid/index.php");

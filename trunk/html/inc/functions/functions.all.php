@@ -32,9 +32,6 @@ require_once("inc/functions/functions.dispatcher.php");
 // admin
 require_once("inc/functions/functions.admin.php");
 
-// index
-require_once("inc/functions/functions.index.php");
-
 // dir
 require_once("inc/functions/functions.dir.php");
 

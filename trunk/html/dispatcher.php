@@ -32,9 +32,6 @@ require_once('inc/functions/functions.common.php');
 // dispatcher functions
 require_once("inc/functions/functions.dispatcher.php");
 
-// index functions
-require_once("inc/functions/functions.index.php");
-
 /* action */
 $action = "---";
 if (isset($_REQUEST["action"]))
@@ -54,6 +51,7 @@ switch ($action) {
 		indexStartTransfer(getRequestVar('transfer'));
     	break;
     case "indexUrlUpload":
+		indexProcessDownload(getRequestVar('url'));
     	break;
     case "indexFileUpload":
     	break;

@@ -98,9 +98,9 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 				if (empty($link))
 					continue;
 				if ($link != "" && $title2 !="")
-					$content .= "<tr><td><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$link."\"><a href=\"index.php?iid=index&url_upload=".$link."\">".$title2."</a></td><td> ".$pubDate."</td></tr>\n";
+					$content .= "<tr><td><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$link."\"><a href=\"dispatcher.php?action=indexUrlUpload&url=".$link."\">".$title2."</a></td><td> ".$pubDate."</td></tr>\n";
 				else
-					$content .= "<tr><td  class=\"tiny\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\">".ScrubDescription(str_replace("Torrent: <a href=\"", "Torrent: <a href=\"index.php?iid=index&url_upload=", html_entity_decode($rs["items"][$i]["description"])), $title2)."</td><td valign=\"top\">".$pubDate."</td></tr>";
+					$content .= "<tr><td  class=\"tiny\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\">".ScrubDescription(str_replace("Torrent: <a href=\"", "Torrent: <a href=\"dispatcher.php?action=indexUrlUpload&url=", html_entity_decode($rs["items"][$i]["description"])), $title2)."</td><td valign=\"top\">".$pubDate."</td></tr>";
 			}
 		} else {
 			// Request timed out, display timeout message

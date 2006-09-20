@@ -20,25 +20,13 @@
 
 *******************************************************************************/
 
-// index functions
-require_once("inc/functions/functions.index.php");
-
 // =============================================================================
 // messages
 // =============================================================================
 if (isset($_REQUEST['messages'])) {
-	$messages = $_REQUEST['messages'];
+	$messages = urldecode($_REQUEST['messages']);
 } else {
 	$messages = "";
-}
-
-/*******************************************************************************
- * get torrent via url
- ******************************************************************************/
-if (isset($_REQUEST['url_upload'])) {
-	$url_upload = getRequestVar('url_upload');
-	if (!empty($url_upload))
-		indexProcessDownload($url_upload);
 }
 
 /*******************************************************************************

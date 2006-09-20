@@ -2897,6 +2897,22 @@ function convertTime($seconds) {
 }
 
 /**
+ * Returns true if user has message from admin with force_read
+ *
+ * @return boolean
+ */
+function IsForceReadMsg() {
+	global $cfg, $db;
+	$rtnValue = false;
+	$sql = "SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1";
+	$count = $db->GetOne($sql);
+	showError($db,$sql);
+	if ($count >= 1)
+		$rtnValue = true;
+	return $rtnValue;
+}
+
+/**
  * class ProcessInfo
  *
  */
