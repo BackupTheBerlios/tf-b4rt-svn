@@ -52,26 +52,6 @@ if (isset($_REQUEST['torrent'])) {
 }
 
 /*******************************************************************************
- * wget-inject
- ******************************************************************************/
-if (($cfg['enable_wget'] == 1) && (isset($_REQUEST['url_wget']))) {
-	$url_wget = getRequestVar('url_wget');
-	if (!empty($url_wget)) {
-		require_once("inc/classes/ClientHandler.php");
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-		$clientHandler->inject($url_wget);
-		$wget_start = getRequestVar('wget_start');
-		if ($wget_start == 1) {
-			sleep(2);
-			$clientHandler->startClient($url_wget, 0, false);
-			sleep(5);
-		}
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-
-/*******************************************************************************
  * get torrent via url
  ******************************************************************************/
 if (isset($_REQUEST['url_upload'])) {

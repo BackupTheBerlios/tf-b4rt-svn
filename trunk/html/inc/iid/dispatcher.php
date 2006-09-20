@@ -33,6 +33,21 @@ switch ($action) {
     case "---":
     	break;
 
+    /* ----------------------------------------------------------------- wget */
+    case "wget":
+		$url_wget = getRequestVar('url_wget');
+		if (!empty($url_wget)) {
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+			$clientHandler->inject($url_wget);
+			$wget_start = getRequestVar('wget_start');
+			if ($wget_start == 1) {
+				sleep(2);
+				$clientHandler->startClient($url_wget, 0, false);
+				sleep(5);
+			}
+		}
+    	break;
+
     /* ------------------------------------------------------------------ set */
     case "set":
     	$key = getRequestVar('key');
