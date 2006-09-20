@@ -116,6 +116,33 @@ if(isset($_GET['iid'])) {
 			break;
 	}
 } else { // use "old" style to stay flux-compatible as good as possible
+
+/*******************************************************************************
+ * transfer-start
+ ******************************************************************************/
+/*
+if (isset($_REQUEST['torrent'])) {
+	$transfer = getRequestVar('torrent');
+	if (!empty($transfer)) {
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$interactiveStart = getRequestVar('interactive');
+			if ((isset($interactiveStart)) && ($interactiveStart)) // interactive
+				indexStartTorrent($transfer, 1);
+			else // silent
+				indexStartTorrent($transfer, 0);
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			require_once("inc/classes/ClientHandler.php");
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+			$clientHandler->startClient($transfer, 0, false);
+			sleep(5);
+			header("location: index.php?iid=index");
+			exit();
+		}
+	}
+}
+*/
 	require_once("inc/iid/index.php");
 }
 

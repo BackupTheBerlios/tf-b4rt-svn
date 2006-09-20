@@ -26,6 +26,9 @@ require_once("inc/functions/functions.core.php");
 // common
 require_once("inc/functions/functions.common.php");
 
+// dispatcher
+require_once("inc/functions/functions.dispatcher.php");
+
 // admin
 require_once("inc/functions/functions.admin.php");
 

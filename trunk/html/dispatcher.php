@@ -26,17 +26,45 @@ require_once("inc/main.internal.php");
 // clienthandler
 require_once("inc/classes/ClientHandler.php");
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
+// dispatcher functions
+require_once("inc/functions/functions.dispatcher.php");
+
+// index functions
+require_once("inc/functions/functions.index.php");
+
 /* action */
 $action = "---";
 if (isset($_REQUEST["action"]))
     $action = $_REQUEST["action"];
 switch ($action) {
 
-    /* ---------------------------------------------------------------- dummy */
+/*******************************************************************************
+ * dummy
+ ******************************************************************************/
     case "---":
     	break;
 
-    /* ----------------------------------------------------------------- wget */
+/*******************************************************************************
+ * main index-page ops
+ ******************************************************************************/
+    case "indexStart":
+		indexStartTransfer(getRequestVar('transfer'));
+    	break;
+    case "indexUrlUpload":
+    	break;
+    case "indexFileUpload":
+    	break;
+    case "indexDelete":
+    	break;
+    case "indexStop":
+    	break;
+
+/*******************************************************************************
+ * wget
+ ******************************************************************************/
     case "wget":
 		$url_wget = getRequestVar('url_wget');
 		if (!empty($url_wget)) {
@@ -51,7 +79,9 @@ switch ($action) {
 		}
     	break;
 
-    /* ------------------------------------------------------------------ set */
+/*******************************************************************************
+ * set
+ ******************************************************************************/
     case "set":
     	$key = getRequestVar('key');
     	$val = getRequestVar('val');
@@ -66,7 +96,9 @@ switch ($action) {
     	}
     	break;
 
-    /* --------------------------------------------------------- all torrents */
+/*******************************************************************************
+ * bulk operations
+ ******************************************************************************/
     case "bulkStop": /* bulkStop */
     	$transfers = getTorrentListFromFS();
     	foreach ($transfers as $transfer) {
@@ -127,7 +159,9 @@ switch ($action) {
     	}
     	break;
 
-    /* --------------------------------------------------- selected transfers */
+/*******************************************************************************
+ * selected transfers (index-page)
+ ******************************************************************************/
     default:
 
 		foreach($_POST['transfer'] as $key => $element) {
@@ -245,7 +279,10 @@ switch ($action) {
 		} // end loop
 }
 
-/* redirect */
+/*******************************************************************************
+ * redirect
+ ******************************************************************************/
+
 if (isset($_SERVER["HTTP_REFERER"]))
 	header("location: ".$_SERVER["HTTP_REFERER"]);
 else
