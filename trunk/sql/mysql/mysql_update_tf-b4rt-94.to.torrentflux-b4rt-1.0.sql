@@ -86,6 +86,7 @@ UPDATE tf_users SET theme = 'default';
 --
 -- inserts
 --
+INSERT INTO tf_settings VALUES ('wget_limit_retries','3');
 INSERT INTO tf_settings VALUES ('wget_limit_rate','0');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update_title','1');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update_list','1');

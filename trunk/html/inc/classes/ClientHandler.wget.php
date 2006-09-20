@@ -151,6 +151,7 @@ class ClientHandlerWget extends ClientHandler
         		break;
         }
         $this->command .= " " . $this->cfg["wget_limit_rate"];
+        $this->command .= " " . $this->cfg["wget_limit_retries"];
         $this->command .= " > /dev/null &";
         //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
         exec($this->command);

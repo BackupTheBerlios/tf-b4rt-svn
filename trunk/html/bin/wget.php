@@ -69,6 +69,8 @@ if (!isset($argv[5]))
 	die('Arg Error');
 if (!isset($argv[6]))
 	die('Arg Error');
+if (!isset($argv[7]))
+	die('Arg Error');
 
 // args
 $_URL = $argv[1];
@@ -76,7 +78,8 @@ $_ALIAS = $argv[2];
 $_PID = $argv[3];
 $_OWNER = $argv[4];
 $_PATH = $argv[5];
-$_LIMIT = $argv[6];
+$_LIMIT_RATE = $argv[6];
+$_LIMIT_RETRIES = $argv[7];
 
 // set admin-var
 $cfg['isAdmin'] = IsAdmin($_OWNER);
@@ -103,8 +106,10 @@ if ($cfg["enable_umask"] != 0)
 if ($cfg["nice_adjust"] != 0)
     $command .= " nice -n ".$cfg["nice_adjust"];
 $command .= " ".$cfg['bin_wget'];
-if (($_LIMIT != "") && ($_LIMIT != "0"))
-	$command .= " --limit-rate=" . $_LIMIT;
+if (($_LIMIT_RATE != "") && ($_LIMIT_RATE != "0"))
+	$command .= " --limit-rate=" . $_LIMIT_RATE;
+if ($_LIMIT_RETRIES != "")
+	$command .= " --tries=" . $_LIMIT_RETRIES;
 $command .= " -i ".$_URL;
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$_PID; // write pid-file

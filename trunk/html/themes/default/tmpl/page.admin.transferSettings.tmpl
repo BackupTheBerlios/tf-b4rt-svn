@@ -207,12 +207,20 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Limit wget Download Rate</strong><br>
-									Amount may be expressed in bytes, kilobytes with the k suffix, or megabytes with the m suffix. <br>
+								<td align="left" width="350" valign="top"><strong>Limit Download Rate</strong><br>
+									Amount may be expressed in bytes, kilobytes with the k suffix, or megabytes with the m suffix.
 									(0 for no limit).
 								</td>
 								<td valign="top">
 									<input name="wget_limit_rate" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_rate">" size="5">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Limit Number of Retries</strong><br>
+									Set the max Number of Retries. (0 unlimits).
+								</td>
+								<td valign="top">
+									<input name="wget_limit_retries" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_retries">" size="5">
 								</td>
 							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>Common</strong></td></tr>

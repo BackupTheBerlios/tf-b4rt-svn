@@ -45,6 +45,7 @@ $tmpl->setvar('skiphashcheck', $cfg["skiphashcheck"]);
 // wget
 $tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('wget_limit_rate', $cfg["wget_limit_rate"]);
+$tmpl->setvar('wget_limit_retries', $cfg["wget_limit_retries"]);
 // common
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
