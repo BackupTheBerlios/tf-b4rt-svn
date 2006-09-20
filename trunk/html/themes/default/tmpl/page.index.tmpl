@@ -427,7 +427,7 @@
 		</tmpl_if>
 		<tmpl_if name="IsForceReadMsg">
 			<script language="JavaScript">
-				if (confirm("tmpl_if name="_ADMINMESSAGE">")) {
+				if (confirm("<tmpl_var name="_ADMINMESSAGE">")) {
 					document.location = "index.php?iid=readmsg";
 				}
 			</script>
