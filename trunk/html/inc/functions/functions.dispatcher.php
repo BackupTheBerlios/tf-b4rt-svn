@@ -47,10 +47,10 @@ function indexStartTransfer($transfer) {
 	}
 }
 
-/*
+/**
  * Function with which torrents are started in index-page
  *
- * @param $torrent torrent-name
+ * @param $torrent
  * @param $interactive (1|0) : is this a interactive startup with dialog ?
  */
 function indexStartTorrent($torrent, $interactive) {
@@ -101,7 +101,7 @@ function indexStartTorrent($torrent, $interactive) {
 	}
 }
 
-/*
+/**
  * Function with which torrents are downloaded and injected on index-page
  *
  * @param $url_upload url of torrent to download
@@ -116,7 +116,7 @@ function indexProcessDownload($url_upload) {
 	$ext_msg = "";
 	// Check to see if url has something like ?passkey=12345
 	// If so remove it.
-	if( ( $point = strrpos( $file_name, "?" ) ) !== false )
+	if (($point = strrpos($file_name, "?")) !== false )
 		$file_name = substr( $file_name, 0, $point );
 	$ret = strrpos($file_name,".");
 	if ($ret === false) {
@@ -186,7 +186,7 @@ function indexProcessDownload($url_upload) {
 	}
 }
 
-/*
+/**
  * Function with which torrents are uploaded and injected on index-page
  *
  */
@@ -195,11 +195,11 @@ function indexProcessUpload() {
 	$messages = "";
 	$ext_msg = "";
 	if (isset($_FILES['upload_file'])) {
-		if(!empty($_FILES['upload_file']['name'])) {
+		if (!empty($_FILES['upload_file']['name'])) {
 			$file_name = stripslashes($_FILES['upload_file']['name']);
 			$file_name = str_replace(array("'",","), "", $file_name);
 			$file_name = cleanFileName($file_name);
-			if($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
+			if ($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
 				if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
@@ -207,7 +207,7 @@ function indexProcessUpload() {
 						$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
 						$ext_msg = "DUPLICATE :: ";
 					} else {
-						if(move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
+						if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
 							chmod($cfg["transfer_file_path"].$file_name, 0644);
 							AuditAction($cfg["constants"]["file_upload"], $file_name);
 							// init stat-file
@@ -292,6 +292,20 @@ function indexStopTransfer($transfer) {
 			header("location: index.php?iid=".$return.".php?op=fluxdSettings");
 		else
 			header("location: index.php?iid=index");
+		exit();
+	}
+}
+
+/**
+ * indexDeQueueTransfer
+ *
+ * @param $transfer
+ */
+function indexDeQueueTransfer($transfer) {
+	global $cfg, $fluxdQmgr;
+	if (!empty($transfer)) {
+		$fluxdQmgr->dequeueTorrent($transfer, $cfg["user"]);
+		header("location: index.php?iid=index");
 		exit();
 	}
 }

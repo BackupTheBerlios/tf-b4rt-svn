@@ -115,12 +115,11 @@ if (isset($_REQUEST['iid'])) {
 			require_once("inc/iid/logout.php");
 			break;
 	}
-} else { // use "old" style to stay flux-compatible as good as possible
-
-	// $_REQUEST['iid'] = "index";
-
+} else { // this else block is solely for tf 2.1 compat :
 	// dispatcher functions
 	require_once("inc/functions/functions.dispatcher.php");
+	// iid-var
+	$_REQUEST['iid'] = "index";
 
 /*******************************************************************************
  * transfer-start
@@ -207,6 +206,20 @@ if (isset($_REQUEST["kill_torrent"])) {
 			header("location: ".$return.".php?op=queueSettings");
 		else
 			header("location: index.php?iid=index");
+		exit();
+	}
+}
+*/
+
+/*******************************************************************************
+ * deQueue
+ ******************************************************************************/
+/*
+if (isset($_REQUEST["QEntry"])) {
+	$QEntry = getRequestVar('QEntry');
+	if (!empty($QEntry)) {
+		$fluxdQmgr->dequeueTorrent($QEntry, $cfg["user"]);
+		header("location: index.php?iid=index");
 		exit();
 	}
 }

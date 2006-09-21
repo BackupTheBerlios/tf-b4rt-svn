@@ -45,7 +45,7 @@ switch ($action) {
     	break;
 
 /*******************************************************************************
- * main index-page ops
+ * index-page ops
  ******************************************************************************/
     case "indexStart":
 		indexStartTransfer(getRequestVar('transfer'));
@@ -63,7 +63,7 @@ switch ($action) {
     	indexStopTransfer(getRequestVar('transfer'));
     	break;
     case "indexDeQueue":
-    	//indexDeQueueTransfer(getRequestVar('transfer'));
+    	indexDeQueueTransfer(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************

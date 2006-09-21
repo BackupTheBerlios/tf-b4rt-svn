@@ -21,31 +21,7 @@
 *******************************************************************************/
 
 // =============================================================================
-// messages
-// =============================================================================
-if (isset($_REQUEST['messages'])) {
-	$messages = urldecode($_REQUEST['messages']);
-} else {
-	$messages = "";
-}
-
-
-/*******************************************************************************
- * deQueue
- ******************************************************************************/
-if (isset($_REQUEST["QEntry"])) {
-	$QEntry = getRequestVar('QEntry');
-	if (!empty($QEntry)) {
-		$fluxdQmgr->dequeueTorrent($QEntry, $cfg["user"]);
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-
-
-
-// =============================================================================
-// index-page
+// template
 // =============================================================================
 
 if (isset($_REQUEST['ajax_update'])) {
@@ -391,7 +367,7 @@ foreach ($arList as $entry) {
 	}
 
 	// -------------------------------------------------------------------------
-	// Is this torrent for the user list or the general list?
+	// Is this transfer for the user list or the general list?
 	if ($owner)
 		array_push($arUserTorrent, array(
 			'is_owner' => 1,
@@ -600,8 +576,9 @@ else
 	$loadavgString = "n/a";
 
 // messages
-if ($messages != "")
-	$tmpl->setvar('messages', $messages);
+if (isset($_REQUEST['messages']))
+	if ($_REQUEST['messages'] != "")
+		$tmpl->setvar('messages', urldecode($_REQUEST['messages']));
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {
@@ -816,10 +793,7 @@ $tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
 tmplSetTitleBar($cfg["pagetitle"]);
 tmplSetDriveSpaceBar();
 //
-if (isset($_GET["iid"]))
-	$tmpl->setvar('iid', $_GET["iid"]);
-else
-	$tmpl->setvar('iid', 'index');
+$tmpl->setvar('iid', $_GET["iid"]);
 
 // parse template
 $tmpl->pparse();

@@ -172,7 +172,7 @@
 									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
-										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&QEntry=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+										<a href="dispatcher.php?action=indexDeQueue&transfer=<tmpl_var name="url_entry">&alias_file=<tmpl_var name="alias">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
@@ -393,7 +393,7 @@
 									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
-										<a href="index.php?iid=index&alias_file=<tmpl_var name="alias">&QEntry=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+										<a href="dispatcher.php?action=indexDeQueue&transfer=<tmpl_var name="url_entry">&alias_file=<tmpl_var name="alias">"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
