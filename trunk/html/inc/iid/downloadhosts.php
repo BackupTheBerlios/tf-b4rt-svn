@@ -85,7 +85,7 @@ $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&torrent='.$tor
 //
 tmplSetTitleBar($cfg['_ID_HOSTS'], false);
 tmplSetFoot(false);
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

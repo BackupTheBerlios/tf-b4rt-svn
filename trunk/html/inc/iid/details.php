@@ -59,7 +59,7 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_TRANSFERDETAILS']);
 tmplSetDriveSpaceBar();
 tmplSetFoot();
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

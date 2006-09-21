@@ -83,7 +83,7 @@ if (file_exists($filename)) {
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_MRTG']);
 tmplSetFoot();
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

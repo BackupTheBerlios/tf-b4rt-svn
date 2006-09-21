@@ -38,7 +38,7 @@ $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
 //
 tmplSetTitleBar($cfg["pagetitle"]." - Server Monitor", false);
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

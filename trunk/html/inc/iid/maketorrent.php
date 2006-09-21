@@ -135,7 +135,7 @@ $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 //
 tmplSetTitleBar($cfg["pagetitle"]." - Torrent Maker", false);
 //
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

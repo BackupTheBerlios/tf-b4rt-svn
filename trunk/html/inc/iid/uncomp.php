@@ -57,8 +57,8 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 // set vars
 if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 	$tmpl->setvar('is_file', 1);
-	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['file'])));
-	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$_GET['dir'])));
+	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$_REQUEST['file'])));
+	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$_REQUEST['dir'])));
 	$tmpl->setvar('type', $_REQUEST['type']);
 } else {
 	$tmpl->setvar('is_file', 0);
@@ -66,7 +66,7 @@ if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 //
 tmplSetTitleBar('Uncompressing File', false);
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

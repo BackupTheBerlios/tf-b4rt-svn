@@ -108,7 +108,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 tmplSetTitleBar($cfg['_MOVE_FILE_TITLE'], false);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 //
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

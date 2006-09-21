@@ -793,7 +793,7 @@ $tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
 tmplSetTitleBar($cfg["pagetitle"]);
 tmplSetDriveSpaceBar();
 //
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

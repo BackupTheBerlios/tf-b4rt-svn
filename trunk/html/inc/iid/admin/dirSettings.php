@@ -61,7 +61,7 @@ tmplSetMoveSettings();
 tmplSetTitleBar("Administration - Dir Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

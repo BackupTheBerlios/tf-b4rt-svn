@@ -33,7 +33,7 @@ $tmpl->setvar('result2', shell_exec("du -sh ".$cfg["path"]."*"));
 tmplSetTitleBar($cfg['_DRIVESPACE']);
 tmplSetDriveSpaceBar();
 tmplSetFoot();
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

@@ -160,7 +160,7 @@ $tmpl->setvar('metaInfo', showMetaInfo($torrent,false));
 //
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 //
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

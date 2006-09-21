@@ -117,31 +117,13 @@ if (isset($_REQUEST['iid'])) {
 			break;
 	}
 } else {
-	/* this else block is for tf 2.1 compat */
-	// dispatcher functions
-	require_once("inc/functions/functions.dispatcher.php");
 	// iid-var
 	$_REQUEST['iid'] = "index";
-	/* transfer-start */
-	if (isset($_REQUEST['torrent']))
-		indexStartTransfer(getRequestVar('torrent'));
-	/* get torrent via url */
-	if (isset($_REQUEST['url_upload']))
-		indexProcessDownload(getRequestVar('url_upload'));
-	/* file upload */
-	if (isset($_FILES['upload_file'])) {
-		if (!empty($_FILES['upload_file']['name']))
-			indexProcessUpload();
-	}
-	/* del file */
-	if (isset($_REQUEST['delfile']))
-		indexDeleteTransfer(getRequestVar('delfile'));
-	/* kill */
-	if (isset($_REQUEST["kill_torrent"]))
-		indexStopTransfer(getRequestVar('kill_torrent'));
-	/* deQueue */
-	if (isset($_REQUEST["QEntry"]))
-		indexDeQueueTransfer(getRequestVar('QEntry'));
+	/* this is for tf 2.1 compat */
+	// dispatcher functions
+	require_once("inc/functions/functions.dispatcher.php");
+	// index dispatch
+	compatIndexDispatch();
 	// index-page
 	require_once("inc/iid/index.php");
 }

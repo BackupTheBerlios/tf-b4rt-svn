@@ -44,7 +44,7 @@ $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 tmplSetTitleBar($cfg["pagetitle"].' - All Services');
 tmplSetDriveSpaceBar();
 tmplSetFoot();
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 $tmpl->pparse();
 
 ?>

@@ -91,7 +91,7 @@ switch ($op) {
 // deleteProfile -- delete a Profile Information
 //******************************************************************************
 	case "deleteProfile":
-		$pid = $_GET["pid"];
+		$pid = $_REQUEST["pid"];
 		$profile = getProfile($pid);
 		deleteProfileInfo($pid);
 		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Profile: " . $profile["name"] );
@@ -126,7 +126,7 @@ switch ($op) {
 // deleteCookie -- delete a Cookie Host Information
 //******************************************************************************
 	case "deleteCookie":
-		$cid = $_GET["cid"];
+		$cid = $_REQUEST["cid"];
 		$cookie = getCookie($cid);
 		deleteCookieInfo($cid);
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE'] . " Cookie: " . $cookie["host"]);
@@ -168,7 +168,7 @@ switch ($op) {
 	case "showCookies":
 	case "editCookies":
 		$tmpl->setvar('ShowCookies', 1);
-		$cid = @ $_GET["cid"]; // Cookie ID
+		$cid = @ $_REQUEST["cid"]; // Cookie ID
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
 		if(!empty($cid)) {
@@ -218,7 +218,7 @@ switch ($op) {
 	case "showProfiles":
 	case "editProfiles":
 		$tmpl->setvar('ShowProfiles', 1);
-		$pid = @ $_GET["pid"];
+		$pid = @ $_REQUEST["pid"];
 		(!empty( $pid )) ? $add1 = $cfg['_UPDATE'] : $add1 = "Add";
 		$tmpl->setvar('add1', $add1);
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
@@ -409,7 +409,7 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 //
 tmplSetTitleBar($cfg["user"]."'s ".$cfg['_PROFILE']);
 tmplSetFoot();
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

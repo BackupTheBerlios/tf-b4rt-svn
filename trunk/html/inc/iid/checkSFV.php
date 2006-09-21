@@ -36,7 +36,7 @@ $tmpl->setvar('buff', nl2br($buff));
 pclose($handle);
 
 // set vars
-$tmpl->setvar('iid', $_GET["iid"]);
+$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();
