@@ -29,6 +29,6 @@ AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Search Settings")
 $searchEngine = getRequestVar('searchEngine');
 if (empty($searchEngine))
 	$searchEngine = $cfg["searchEngine"];
-header("location: index.php?iid=admin&op=searchSettings&searchEngine=".$searchEngine);
+header("location: admin.php?op=searchSettings&searchEngine=".$searchEngine);
 
 ?>

@@ -36,7 +36,7 @@
 									</td>
 								</tr>
 							<tmpl_else>
-								<form name="controlForm" action="index.php?iid=admin&op=controlFluxd" method="post">
+								<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
 									<tmpl_if name="fluxdRunning">
 										<input type="Hidden" name="a" value="stop">
 										<tr><br>
@@ -84,7 +84,7 @@
 										<br>
 									</td>
 								</tr>
-							<form name="theForm" action="index.php?iid=admin&op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
+							<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
 								<tr>
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>fluxd-core</strong>

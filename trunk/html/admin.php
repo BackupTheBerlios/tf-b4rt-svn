@@ -20,12 +20,16 @@
 
 *******************************************************************************/
 
+// main.internal
+require_once("inc/main.internal.php");
+
 // common functions
 require_once('inc/functions/functions.common.php');
 
 // admin functions
 require_once('inc/functions/functions.admin.php');
 
+// access-check
 if (!$cfg['isAdmin']) {
 	 // the user probably hit this page direct
 	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);
@@ -33,116 +37,71 @@ if (!$cfg['isAdmin']) {
 }
 
 // op-switch
-$op = getRequestVar('op');
+if (isset($_REQUEST['op']))
+	$op = $_REQUEST['op'];
+else
+	$op = "default";
 switch ($op) {
-
-	case "serverSettings":
-		require_once("admin/serverSettings.php");
-		break;
-
-	case "transferSettings":
-		require_once("admin/transferSettings.php");
-		break;
-
-	case "webappSettings":
-		require_once("admin/webappSettings.php");
-		break;
-
-	case "indexSettings":
-		require_once("admin/indexSettings.php");
-		break;
-
-	case "startpopSettings":
-		require_once("admin/startpopSettings.php");
-		break;
-
-	case "dirSettings":
-		require_once("admin/dirSettings.php");
-		break;
-
-	case "statsSettings":
-		require_once("admin/statsSettings.php");
-		break;
-
-	case "fluxdSettings":
-		require_once("admin/fluxdSettings.php");
-		break;
-
-	case "xferSettings":
-		require_once("admin/xferSettings.php");
-		break;
 
 	case "updateServerSettings":
 		$settings = processSettingsParams(false,false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Server Settings");
 		$continue = getRequestVar('continue');
-		header("location: index.php?iid=admin&op=serverSettings");
-		break;
+		header("location: admin.php?op=serverSettings");
+		exit();
 
 	case "updateTransferSettings":
 		$settings = processSettingsParams(false,false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Transfer Settings");
 		$continue = getRequestVar('continue');
-		header("location: index.php?iid=admin&op=transferSettings");
-		break;
+		header("location: admin.php?op=transferSettings");
+		exit();
 
 	case "updateWebappSettings":
 		$settings = processSettingsParams(false,false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux WebApp Settings");
 		$continue = getRequestVar('continue');
-		header("location: index.php?iid=admin&op=webappSettings");
-		break;
+		header("location: admin.php?op=webappSettings");
+		exit();
 
 	case "updateIndexSettings":
 		$settings = processSettingsParams(true,true);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Index Settings");
-		header("location: index.php?iid=admin&op=indexSettings");
-		break;
+		header("location: admin.php?op=indexSettings");
+		exit();
 
 	case "updateStartpopSettings":
 		$settings = processSettingsParams(false,false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux StartPop Settings");
-		header("location: index.php?iid=admin&op=startpopSettings");
-		break;
+		header("location: admin.php?op=startpopSettings");
+		exit();
 
 	case "updateDirSettings":
 		$settings = processSettingsParams(false,false);
 		loadSettings('tf_settings_dir');
 		saveSettings('tf_settings_dir', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Dir Settings");
-		header("location: index.php?iid=admin&op=dirSettings");
-		break;
+		header("location: admin.php?op=dirSettings");
+		exit();
 
 	case "updateStatsSettings":
 		$settings = processSettingsParams(false,false);
 		saveSettings('tf_settings_stats', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Stats Settings");
-		header("location: index.php?iid=admin&op=statsSettings");
-		break;
-
-	case "controlFluxd":
-		require_once("admin/controlFluxd.php");
-		break;
-
-	case "updateFluxdSettings":
-		require_once("admin/updateFluxdSettings.php");
-		break;
+		header("location: admin.php?op=statsSettings");
+		exit();
 
 	case "updateXferSettings":
 		$settings = processSettingsParams(false,false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Xfer Settings");
-		header("location: index.php?iid=admin&op=xferSettings");
-		break;
-
-	case "editRSS":
-		require_once("admin/editRSS.php");
-		break;
+		header("location: admin.php?op=xferSettings");
+		exit();
 
 	case "addRSS":
 		$newRSS = getRequestVar('newRSS');
@@ -150,50 +109,22 @@ switch ($op) {
 			addNewRSS($newRSS);
 			AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
 		}
-		header("location: index.php?iid=admin&op=editRSS");
-		break;
+		header("location: admin.php?op=editRSS");
+		exit();
 
 	case "deleteRSS":
 		$rid = getRequestVar('rid');
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." RSS: ".getRSS($rid));
 		deleteOldRSS($rid);
-		header("location: index.php?iid=admin&op=editRSS");
-		break;
-
-	case "editLink":
-		require_once("admin/editLink.php");
-		break;
-
-	case "editLinks":
-		require_once("admin/editLinks.php");
-		break;
-
-	case "addLink":
-		require_once("admin/addLink.php");
-		break;
-
-	case "moveLink":
-		require_once("admin/moveLink.php");
-		break;
+		header("location: admin.php?op=editRSS");
+		exit();
 
 	case "deleteLink":
 		$lid = getRequestVar('lid');
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
 		deleteOldLink($lid);
-		header("location: index.php?iid=admin&op=editLinks");
-		break;
-
-	case "showUsers":
-		require_once("admin/showUsers.php");
-		break;
-
-	case "CreateUser":
-		require_once("admin/CreateUser.php");
-		break;
-
-	case "addUser":
-		require_once("admin/addUser.php");
-		break;
+		header("location: admin.php?op=editLinks");
+		exit();
 
 	case "deleteUser":
 		$user_id = getRequestVar('user_id');
@@ -201,37 +132,17 @@ switch ($op) {
 			DeleteThisUser($user_id);
 			AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." ".$cfg['_USER'].": ".$user_id);
 		}
-		header("location: index.php?iid=admin");
-		break;
-
-	case "editUser":
-		require_once("admin/editUser.php");
-		break;
-
-	case "updateUser":
-		require_once("admin/updateUser.php");
-		break;
+		header("location: admin.php");
+		exit();
 
 	case "setUserState":
 		setUserState();
-		header("location: index.php?iid=admin&op=showUsers");
-		break;
-
-	case "searchSettings":
-		require_once("admin/searchSettings.php");
-		break;
-
-	case "updateSearchSettings":
-		require_once("admin/updateSearchSettings.php");
-		break;
+		header("location: admin.php?op=showUsers");
+		exit();
 
 	default:
-		require_once("admin/default.php");
-		break;
-
-	case "showUserActivity":
-		require_once("admin/showUserActivity.php");
-		break;
+		require_once("inc/iid/admin/".$op.".php");
+		exit();
 }
 
 ?>

@@ -114,7 +114,6 @@ $tmpl->setvar('_FORCESTOP', str_replace(" ","<br>",$cfg['_FORCESTOP']));
 tmplSetTitleBar("Administration - Fluxd Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

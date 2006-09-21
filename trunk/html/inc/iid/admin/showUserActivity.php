@@ -35,7 +35,6 @@ tmplSetTitleBar($cfg['_ADMINUSERACTIVITY']);
 tmplSetAdminMenu();
 tmplSetActivity($min, $user_id, $srchFile, $srchAction);
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

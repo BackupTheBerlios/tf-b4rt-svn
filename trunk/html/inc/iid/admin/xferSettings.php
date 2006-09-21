@@ -50,7 +50,6 @@ $tmpl->setloop('month_list', $month_list);
 tmplSetTitleBar("Administration - Xfer Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

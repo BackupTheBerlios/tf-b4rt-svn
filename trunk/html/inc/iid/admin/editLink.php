@@ -33,6 +33,6 @@ if (!empty($newLink)){
 	alterLink($lid,$newLink,$newSite);
 	AuditAction($cfg["constants"]["admin"], "Change Link: ".$oldSite." [".$oldLink."] -> ".$newSite." [".$newLink."]");
 }
-header("location: index.php?iid=admin&op=editLinks");
+header("location: admin.php?op=editLinks");
 
 ?>

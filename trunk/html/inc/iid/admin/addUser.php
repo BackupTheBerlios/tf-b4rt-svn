@@ -29,7 +29,7 @@ $newUser = strtolower($newUser);
 if (!(IsUser($newUser))) {
 	addNewUser($newUser, $pass1, $userType);
 	AuditAction($cfg["constants"]["admin"], $cfg['_NEWUSER'].": ".$newUser);
-	header("location: index.php?iid=admin&op=CreateUser");
+	header("location: admin.php?op=CreateUser");
 	exit();
 }
 
@@ -45,7 +45,6 @@ $tmpl->setvar('_HASBEENUSED', $cfg['_HASBEENUSED']);
 tmplSetTitleBar("Administration - Add User");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

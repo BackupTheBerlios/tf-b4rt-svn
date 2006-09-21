@@ -124,7 +124,7 @@ class ClientHandlerWget extends ClientHandler
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["bin_wget"]." is not valid");
             $this->status = -1;
             if ($this->cfg['isAdmin']) {
-                header("location: index.php?iid=admin&op=configSettings");
+                header("location: admin.php?op=serverSettings");
                 return;
             } else {
                 $this->messages .= "Error TorrentFlux settings are not correct (path to wget-bin is not valid) -- please contact an admin.";

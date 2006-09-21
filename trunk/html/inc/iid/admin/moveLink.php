@@ -24,7 +24,7 @@ $lid = getRequestVar('lid');
 $direction = getRequestVar('direction');
 
 if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
-	header("location: index.php?iid=admin&op=editLinks");
+	header("location: admin.php?op=editLinks");
 	exit();
 }
 
@@ -37,6 +37,6 @@ showError($db, $sql);
 $sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
 $db->Execute($sql);
 showError($db, $sql);
-header("Location: index.php?iid=admin&op=editLinks");
+header("Location: admin.php?op=editLinks");
 
 ?>

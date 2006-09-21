@@ -71,7 +71,6 @@ tmplSetSearchEngineDDL($searchEngine,true);
 tmplSetTitleBar("Administration - Search Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

@@ -274,7 +274,7 @@ class ClientHandler
             AuditAction($this->cfg["constants"]["error"], "Error checking " . $this->savepath . ".");
             if ($this->cfg['isAdmin']) {
                 $this->status = -1;
-                header("location: index.php?iid=admin&op=configSettings");
+                header("location: admin.php?op=serverSettings");
                 return;
             } else {
                 $this->status = -1;

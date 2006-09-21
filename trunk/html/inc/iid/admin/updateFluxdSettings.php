@@ -77,7 +77,7 @@ if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	// redir
-	header("Location: index.php?iid=admin&op=fluxdSettings&m=".urlencode($message));
+	header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 } else {
 	// save settings
 	$settings = $_POST;
@@ -85,7 +85,7 @@ if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 	// log
 	AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
 	// redir
-	header("Location: index.php?iid=admin&op=fluxdSettings");
+	header("Location: admin.php?op=fluxdSettings");
 }
 
 ?>

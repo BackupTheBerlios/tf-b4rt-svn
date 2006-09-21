@@ -63,7 +63,6 @@ tmplSetAdminMenu();
 tmplSetGoodLookingStatsForm();
 tmplSetIndexPageSettingsForm();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 // parse template
 $tmpl->pparse();
 

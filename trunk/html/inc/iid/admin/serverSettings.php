@@ -85,7 +85,6 @@ $tmpl->setvar('_OS', $cfg["_OS"]);
 tmplSetTitleBar("Administration - Server Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();

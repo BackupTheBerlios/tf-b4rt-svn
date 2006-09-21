@@ -35,7 +35,7 @@ if (!(IsUser($user_id) && ($user_id != $org_user_id))) {
 	}
 	updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline);
 	AuditAction($cfg["constants"]["admin"], $cfg['_EDITUSER'].": ".$user_id);
-	header("location: index.php?iid=admin");
+	header("location: admin.php");
 	exit();
 }
 
@@ -53,7 +53,6 @@ $tmpl->setvar('_RETURNTOEDIT', $cfg['_RETURNTOEDIT']);
 tmplSetTitleBar("Administration - Update User");
 tmplSetAdminMenu();
 tmplSetFoot();
-$tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();
