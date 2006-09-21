@@ -21,6 +21,19 @@
 
 *******************************************************************************/
 
+// prevent invocation from web
+$bail = 0;
+if ((isset($_SERVER['REMOTE_ADDR'])) && ($_SERVER['REMOTE_ADDR'] != ""))
+	$bail++;
+if ((isset($_SERVER['HTTP_USER_AGENT'])) && ($_SERVER['HTTP_USER_AGENT'] != ""))
+	$bail++;
+if ($bail > 0) {
+	@ob_end_clean();
+	exit();
+}
+
+/******************************************************************************/
+
 /**
  * @author    R.D. Damron
  * @name      rar/zip uncompression
@@ -44,26 +57,26 @@ if(strcasecmp('rar', $arg3) == 0){
     //echo "command " . $Command;
 	$unrarpid = shell_exec("nohup $Command > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
 	echo 'Uncompressing file...<BR>PID is: ' . $unrarpid . '<BR>';
-	while(is_running($unrarpid)) {
-		if(file_exists($arg2.$logfile)) {
+	while (is_running($unrarpid)) {
+		if (file_exists($arg2.$logfile)) {
 			$lines = file($arg2.$logfile);
 			foreach($lines as $chkline) {
-				if(strpos($chkline, 'already exists. Overwrite it ?') !== FALSE){
+				if (strpos($chkline, 'already exists. Overwrite it ?') !== FALSE){
 					kill($unrarpid);
 					echo 'File has already been extracted, please delete extracted file if re-extraction is necessary.';
 					break 2;
 				}
-				if(strpos($chkline, 'Cannot find volume') !== FALSE){
+				if (strpos($chkline, 'Cannot find volume') !== FALSE){
 					kill($unrarpid);
 					echo 'File has a missing volume and can not been extracted.';
 					break 2;
 				}
-				if(strpos($chkline, 'ERROR: Bad archive') !== FALSE){
+				if (strpos($chkline, 'ERROR: Bad archive') !== FALSE){
 					kill($unrarpid);
 					echo 'File has a bad volume and can not been extracted.';
 					break 2;
 				}
-				if(strpos($chkline, 'CRC failed') !== FALSE){
+				if (strpos($chkline, 'CRC failed') !== FALSE){
 					kill($unrarpid);
 					echo 'File extraction has failed with a CRC error and was not been extracted.';
 					break 2;
