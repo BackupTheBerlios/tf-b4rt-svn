@@ -53,9 +53,6 @@ switch ($action) {
     case "indexUrlUpload":
 		indexProcessDownload(getRequestVar('url'));
     	break;
-    case "indexFileUpload":
-		indexProcessUpload();
-    	break;
     case "indexDelete":
     	indexDeleteTransfer(getRequestVar('transfer'));
     	break;
@@ -67,10 +64,10 @@ switch ($action) {
     	break;
 
 /*******************************************************************************
- * multi-file-upload
+ * file-upload
  ******************************************************************************/
-	case "fileMultiUpload":
-		processMultiUpload();
+	case "fileUpload":
+		processFileUpload();
     	break;
 
 /*******************************************************************************

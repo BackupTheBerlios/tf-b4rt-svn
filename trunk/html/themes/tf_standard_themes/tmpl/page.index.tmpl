@@ -32,10 +32,10 @@
 						<td bgcolor="<tmpl_var name="table_header_bg">">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="dispatcher.php?action=indexFileUpload" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
-										<td>
+									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
+									<td>
 										<tmpl_var name="_SELECTFILE">:<br>
-										<input type="File" name="upload_file" size="30">
+										<input type="File" name="upload_files[]" size="30">
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_UPLOAD"></option>
 											<tmpl_if name="queueActive" value="1">
@@ -54,10 +54,10 @@
 											<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
 										</tmpl_if>
 									</td>
-								</form>
-							</tr>
-							<tr>
-								<form name="form_url" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="ajax_updateState = 0;">
+									</form>
+								</tr>
+								<tr>
+									<form name="form_url" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="ajax_updateState = 0;">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
@@ -75,10 +75,10 @@
 										</select>
 										<input type="Submit" value="Go">
 									</td>
-								</form>
-							</tr>
-							<tmpl_if name="enable_wget">
-								<tr>
+									</form>
+								</tr>
+								<tmpl_if name="enable_wget">
+									<tr>
 									<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="ajax_updateState = 0;">
 										<td>
 											<hr>
@@ -88,10 +88,10 @@
 											<input type="Submit" value="Go">
 										</td>
 									</form>
-								</tr>
-							</tmpl_if>
-							<tmpl_if name="enable_search">
-								<tr>
+									</tr>
+								</tmpl_if>
+								<tmpl_if name="enable_search">
+									<tr>
 									<form name="form_search" action="index.php" method="get" onsubmit="ajax_updateState = 0;">
 										<input type="hidden" name="iid" value="torrentSearch">
 										<td>
@@ -106,8 +106,8 @@
 											<input type="Submit" value="<tmpl_var name="_SEARCH">">
 										</td>
 									</form>
-								</tr>
-							</tmpl_if>
+									</tr>
+								</tmpl_if>
 						</table>
 					</td>
 					<td bgcolor="<tmpl_var name="table_data_bg">" width="310" valign="top">

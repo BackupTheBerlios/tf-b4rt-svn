@@ -313,10 +313,10 @@ function indexDeQueueTransfer($transfer) {
 }
 
 /**
- * multi-file-upload
+ * file-upload
  *
  */
-function processMultiUpload() {
+function processFileUpload() {
 	global $cfg;
 	$messages = "";
 	// file upload
