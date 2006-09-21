@@ -29,95 +29,20 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// file upload
-if (!empty($_FILES['upload_files'])) {
-	// action-id
-	$actionId = getRequestVar('aid');
-	// stack
-	$tStack = array();
-	// process upload
-	foreach($_FILES['upload_files']['size'] as $id => $size) {
-		if ($size == 0) {
-			//no or empty file, skip it
-			continue;
-		}
-		$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
-		$file_name = str_replace(array("'",","), "", $file_name);
-		$file_name = cleanFileName($file_name);
-		$ext_msg = "";
-		$messages = "";
-		if($_FILES['upload_files']['size'][$id] <= 1000000 && $_FILES['upload_files']['size'][$id] > 0) {
-			if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
-				//FILE IS BEING UPLOADED
-				if (is_file($cfg["transfer_file_path"].$file_name)) {
-					// Error
-					$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
-					$ext_msg = "DUPLICATE :: ";
-				} else {
-					if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
-						chmod($cfg["transfer_file_path"].$file_name, 0644);
-						AuditAction($cfg["constants"]["file_upload"], $file_name);
-						// instant action ?
-						if ((isset($actionId)) && ($actionId > 1))
-							array_push($tStack,$file_name);
-					} else {
-						$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
-				  	}
-				}
-			} else {
-				$messages .= "<font color=\"#ff0000\" size=3>ERROR: The type of file you are uploading is not allowed.</font><br>";
-			}
-		} else {
-			$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, check file size limit.</font><br>";
-		}
-		if ((isset($messages)) && ($messages != "")) {
-		  // there was an error
-			AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
-		}
-	} // End File Upload
-
-	// instant action ?
-	if (!empty($actionId)) {
-		require_once("inc/classes/ClientHandler.php");
-		foreach ($tStack as $torrent) {
-			// init stat-file
-			injectTorrent($torrent);
-			// file prio
-			if ($cfg["enable_file_priority"]) {
-				include_once("inc/setpriority.php");
-				// Process setPriority Request.
-				setPriority(urldecode($torrent));
-			}
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-			switch ($actionId) {
-				case 3:
-					$clientHandler->startClient($torrent, 0, true);
-					break;
-				case 2:
-					$clientHandler->startClient($torrent, 0, false);
-					break;
-			}
-			// just a sec..
-			sleep(1);
-		}
-	}
-	// back to index if no errors
-	if ((isset($messages)) && ($messages == "")) {
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-
 // create template-instance
 $tmpl = tmplGetInstance($cfg["theme"], "page.multiup.tmpl");
 
-// set vars
-if ((isset($messages)) && ($messages != ""))
-	$tmpl->setvar('messages', $messages);
+// messages
+if (isset($_REQUEST['messages']))
+	if ($_REQUEST['messages'] != "")
+		$tmpl->setvar('messages', urldecode($_REQUEST['messages']));
+
+// form
 $row_list = array();
 for($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j)
 	array_push($row_list, array());
 $tmpl->setloop('row_list', $row_list);
+
 // queue
 if ($queueActive)
 	$tmpl->setvar('queueActive', 1);

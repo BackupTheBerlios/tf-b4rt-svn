@@ -1,18 +1,17 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_if name="messages">
-	<table border="1" cellpadding="10" bgcolor="#ff9b9b">
+	<table border="1" cellpadding="10" bgcolor="#ff9b9b" width="760">
 		<tr>
 			<td><div align="center"><tmpl_var name="messages"></div></td>
 		</tr>
 	</table>
-	<br><br>
 </tmpl_if>
 <table border="0" cellpadding="0" cellspacing="0" width="760">
 	<tr>
 		<td>
 			<table border="0" bordercolor="#d6dfe6" cellpadding="4" cellspacing="0" width="100%">
-				<form name="form_file" action="index.php?iid=multiup" method="post" enctype="multipart/form-data">
+				<form name="form_file" action="dispatcher.php?action=fileMultiUpload" method="post" enctype="multipart/form-data">
 					<tr>
 						<td bgcolor="#d6dfe6">
 							<table width="100%" cellpadding="3" cellspacing="0" border="0">

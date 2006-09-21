@@ -142,7 +142,7 @@ function indexProcessDownload($url_upload) {
 		if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
 			if (is_file($cfg["transfer_file_path"].$file_name)) {
 				// Error
-				$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
+				$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
 				$ext_msg = "DUPLICATE :: ";
 			} else {
 				// open a file to write to
@@ -151,7 +151,7 @@ function indexProcessDownload($url_upload) {
 				fclose($fw);
 			}
 		} else {
-			$messages .= "<b>Error</b> Getting the File (<b>".$file_name."</b>), Could be a Dead URL.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
+			$messages .= "<b>Error</b> Getting the File <b>".$file_name."</b>, Could be a Dead URL.";
 		}
 		if($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
@@ -206,7 +206,7 @@ function indexProcessUpload() {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error
-						$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
+						$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
 						$ext_msg = "DUPLICATE :: ";
 					} else {
 						if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
@@ -309,6 +309,100 @@ function indexDeQueueTransfer($transfer) {
 		$fluxdQmgr->dequeueTorrent($transfer, $cfg["user"]);
 		header("location: index.php?iid=index");
 		exit();
+	}
+}
+
+/**
+ * multi-file-upload
+ *
+ */
+function processMultiUpload() {
+	global $cfg;
+	$messages = "";
+	// file upload
+	if (!empty($_FILES['upload_files'])) {
+		// action-id
+		$actionId = getRequestVar('aid');
+		// stack
+		$tStack = array();
+		// process upload
+		foreach($_FILES['upload_files']['size'] as $id => $size) {
+			if ($size == 0) {
+				//no or empty file, skip it
+				continue;
+			}
+			$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
+			$file_name = str_replace(array("'",","), "", $file_name);
+			$file_name = cleanFileName($file_name);
+			$ext_msg = "";
+			$messages = "";
+			if($_FILES['upload_files']['size'][$id] <= 1000000 && $_FILES['upload_files']['size'][$id] > 0) {
+				if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
+					//FILE IS BEING UPLOADED
+					if (is_file($cfg["transfer_file_path"].$file_name)) {
+						// Error
+						$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
+						$ext_msg = "DUPLICATE :: ";
+					} else {
+						if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
+							chmod($cfg["transfer_file_path"].$file_name, 0644);
+							AuditAction($cfg["constants"]["file_upload"], $file_name);
+							// instant action ?
+							if ((isset($actionId)) && ($actionId > 1))
+								array_push($tStack,$file_name);
+						} else {
+							$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
+					  	}
+					}
+				} else {
+					$messages .= "<font color=\"#ff0000\" size=3>ERROR: The type of file you are uploading is not allowed.</font><br>";
+				}
+			} else {
+				$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, check file size limit.</font><br>";
+			}
+			if ((isset($messages)) && ($messages != "")) {
+			  // there was an error
+				AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
+			}
+		} // End File Upload
+
+		// instant action ?
+		if (!empty($actionId)) {
+			require_once("inc/classes/ClientHandler.php");
+			foreach ($tStack as $torrent) {
+				// init stat-file
+				injectTorrent($torrent);
+				// file prio
+				if ($cfg["enable_file_priority"]) {
+					include_once("inc/setpriority.php");
+					// Process setPriority Request.
+					setPriority(urldecode($torrent));
+				}
+				$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+				switch ($actionId) {
+					case 3:
+						$clientHandler->startClient($torrent, 0, true);
+						break;
+					case 2:
+						$clientHandler->startClient($torrent, 0, false);
+						break;
+				}
+				// just a sec..
+				sleep(1);
+			}
+		}
+		if ((isset($messages)) && ($messages == "")) {
+			// back to index if no errors
+			header("location: index.php?iid=index");
+			exit();
+		} else {
+			// push errors to referrer
+			if (isset($_SERVER["HTTP_REFERER"]))
+				header("location: ".$_SERVER["HTTP_REFERER"]."&messages=".urlencode($messages));
+			else
+				header("location: index.php?iid=index&messages=".urlencode($messages));
+			exit();
+		}
 	}
 }
 
