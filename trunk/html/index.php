@@ -23,109 +23,16 @@
 // main.internal
 require_once("inc/main.internal.php");
 
-// iid-switch
-if (isset($_REQUEST['iid'])) {
-	switch($_REQUEST['iid']) {
-		default:
-			$_REQUEST['iid'] = "index";
-		case "index":
-			require_once("inc/iid/index.php");
-			break;
-		case "admin":
-			require_once("inc/iid/admin.php");
-			break;
-		case "dir":
-			require_once("inc/iid/dir.php");
-			break;
-		case "xfer":
-			require_once("inc/iid/xfer.php");
-			break;
-		case "profile":
-			require_once("inc/iid/profile.php");
-			break;
-		case "history":
-			require_once("inc/iid/history.php");
-			break;
-		case "who":
-			require_once("inc/iid/who.php");
-			break;
-		case "viewnfo":
-			require_once("inc/iid/viewnfo.php");
-			break;
-		case "uncomp":
-			require_once("inc/iid/uncomp.php");
-			break;
-		case "torrentSearch":
-			require_once("inc/iid/torrentSearch.php");
-			break;
-		case "startpop":
-			require_once("inc/iid/startpop.php");
-			break;
-		case "rename":
-			require_once("inc/iid/rename.php");
-			break;
-		case "readrss":
-			require_once("inc/iid/readrss.php");
-			break;
-		case "readmsg":
-			require_once("inc/iid/readmsg.php");
-			break;
-		case "multiup":
-			require_once("inc/iid/multiup.php");
-			break;
-		case "move":
-			require_once("inc/iid/move.php");
-			break;
-		case "mrtg":
-			require_once("inc/iid/mrtg.php");
-			break;
-		case "message":
-			require_once("inc/iid/message.php");
-			break;
-		case "maketorrent":
-			require_once("inc/iid/maketorrent.php");
-			break;
-		case "dereferrer":
-			require_once("inc/iid/dereferrer.php");
-			break;
-		case "details":
-			require_once("inc/iid/details.php");
-			break;
-		case "downloaddetails":
-			require_once("inc/iid/downloaddetails.php");
-			break;
-		case "downloadhosts":
-			require_once("inc/iid/downloadhosts.php");
-			break;
-		case "drivespace":
-			require_once("inc/iid/drivespace.php");
-			break;
-		case "cookiehelp":
-			require_once("inc/iid/cookiehelp.php");
-			break;
-		case "checkSFV":
-			require_once("inc/iid/checkSFV.php");
-			break;
-		case "all_services":
-			require_once("inc/iid/all_services.php");
-			break;
-		case "servermon":
-			require_once("inc/iid/servermon.php");
-			break;
-		case "logout":
-			require_once("inc/iid/logout.php");
-			break;
-	}
-} else {
-	// iid-var
-	$_REQUEST['iid'] = "index";
-	/* this is for tf 2.1 compat */
-	// dispatcher functions
+// iid-check
+if (! isset($_REQUEST['iid'])) {
+	// this is for tf 2.1 compat
 	require_once("inc/functions/functions.dispatcher.php");
-	// index dispatch
 	compatIndexDispatch();
-	// index-page
-	require_once("inc/iid/index.php");
+	// set iid-var
+	$_REQUEST['iid'] = "index";
 }
+
+// include page
+require_once("inc/iid/".$_REQUEST['iid'].".php");
 
 ?>
