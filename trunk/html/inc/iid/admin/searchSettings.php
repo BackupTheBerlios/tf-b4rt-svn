@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 // search engine base
 require_once("inc/searchEngines/SearchEngineBase.php");
 

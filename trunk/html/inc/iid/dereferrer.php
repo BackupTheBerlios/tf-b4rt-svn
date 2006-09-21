@@ -20,8 +20,14 @@
 
 *******************************************************************************/
 
-// common functions
-require_once('inc/functions/functions.common.php');
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../index.php");
+	exit();
+}
+
+/******************************************************************************/
 
 // check param
 if (!(isset($_REQUEST["u"]))) {

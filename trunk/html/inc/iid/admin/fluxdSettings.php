@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 

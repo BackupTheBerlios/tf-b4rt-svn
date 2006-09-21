@@ -30,7 +30,7 @@ $tmpl = tmplGetInstance($cfg["default_theme"], "page.login.tmpl");
 @session_start();
 
 // already got a session ?
-if(isset($_SESSION['user'])) {
+if (isset($_SESSION['user'])) {
 	header("location: index.php?iid=index");
 	exit();
 }

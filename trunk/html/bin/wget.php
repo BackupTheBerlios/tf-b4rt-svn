@@ -34,8 +34,8 @@ require_once('inc/functions/functions.all.php');
 // main.core
 require_once('inc/main.core.php');
 
-// default-language
-require_once("inc/language/".$cfg["default_language"]);
+// load default-language
+loadLanguageFile($cfg["default_language"]);
 
 // af
 require_once('inc/classes/AliasFile.php');

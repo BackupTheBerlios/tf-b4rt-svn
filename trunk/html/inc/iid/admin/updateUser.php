@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 $user_id = getRequestVar('user_id');
 $org_user_id = getRequestVar('org_user_id');
 $pass1 = getRequestVar('pass1');

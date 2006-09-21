@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 // load global settings + overwrite per-user settings
 loadSettings('tf_settings');
 

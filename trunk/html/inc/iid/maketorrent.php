@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 // common functions
 require_once('inc/functions/functions.common.php');
 

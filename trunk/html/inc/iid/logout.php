@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 // delete cookies
 $cookieTime = time() - 3600;
 @setcookie("check", "", $cookieTime);

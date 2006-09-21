@@ -20,15 +20,17 @@
 
 *******************************************************************************/
 
-// common functions
-require_once('inc/functions/functions.common.php');
-
-// user-check
-if (empty($cfg["user"])) {
-	 // the user probably hit this page direct
-	header("location: index.php?iid=index");
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../index.php");
 	exit();
 }
+
+/******************************************************************************/
+
+// common functions
+require_once('inc/functions/functions.common.php');
 
 // delete
 if (isset($_REQUEST['delete'])) {

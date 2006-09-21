@@ -20,6 +20,15 @@
 
 *******************************************************************************/
 
+// prevent direct invocation
+if (!isset($cfg['user'])) {
+	@ob_end_clean();
+	header("location: ../../index.php");
+	exit();
+}
+
+/******************************************************************************/
+
 /*************************************************************
 *  TorrentFlux xfer Statistics hack
 *  blackwidow - matt@mattjanssen.net
@@ -30,9 +39,6 @@
 	published by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 */
-
-// common functions
-require_once('inc/functions/functions.common.php');
 
 // xfer functions
 require_once('inc/functions/functions.xfer.php');
