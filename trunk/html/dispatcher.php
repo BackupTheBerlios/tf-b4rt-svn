@@ -23,14 +23,14 @@
 // main.internal
 require_once("inc/main.internal.php");
 
-// clienthandler
-require_once("inc/classes/ClientHandler.php");
-
 // common functions
 require_once('inc/functions/functions.common.php');
 
 // dispatcher functions
 require_once("inc/functions/functions.dispatcher.php");
+
+// clienthandler
+require_once("inc/classes/ClientHandler.php");
 
 // action
 $action = "---";

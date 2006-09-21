@@ -20,11 +20,11 @@
 
 *******************************************************************************/
 
-// all functions
-require_once('inc/functions/functions.all.php');
-
 // main.internal
 require_once("inc/main.internal.php");
+
+// all functions
+require_once('inc/functions/functions.all.php');
 
 // defines
 define('_DIR_BACKUP','.backup');
