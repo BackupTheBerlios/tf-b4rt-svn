@@ -108,81 +108,83 @@ function indexStartTorrent($torrent, $interactive) {
  */
 function indexProcessDownload($url_upload) {
 	global $cfg, $queueActive;
-	$messages = "";
-	$arURL = explode("/", $url_upload);
-	$file_name = urldecode($arURL[count($arURL)-1]); // get the file name
-	$file_name = str_replace(array("'",","), "", $file_name);
-	$file_name = stripslashes($file_name);
-	$ext_msg = "";
-	// Check to see if url has something like ?passkey=12345
-	// If so remove it.
-	if (($point = strrpos($file_name, "?")) !== false )
-		$file_name = substr( $file_name, 0, $point );
-	$ret = strrpos($file_name,".");
-	if ($ret === false) {
-		$file_name .= ".torrent";
-	} else {
-		if(!strcmp(strtolower(substr($file_name, strlen($file_name)-8, 8)), ".torrent") == 0)
+	if (!empty($url_upload)) {
+		$messages = "";
+		$arURL = explode("/", $url_upload);
+		$file_name = urldecode($arURL[count($arURL)-1]); // get the file name
+		$file_name = str_replace(array("'",","), "", $file_name);
+		$file_name = stripslashes($file_name);
+		$ext_msg = "";
+		// Check to see if url has something like ?passkey=12345
+		// If so remove it.
+		if (($point = strrpos($file_name, "?")) !== false )
+			$file_name = substr( $file_name, 0, $point );
+		$ret = strrpos($file_name,".");
+		if ($ret === false) {
 			$file_name .= ".torrent";
-	}
-	$url_upload = str_replace(" ", "%20", $url_upload);
-	// This is to support Sites that pass an id along with the url for torrent downloads.
-	$tmpId = getRequestVar("id");
-	if(!empty($tmpId))
-		$url_upload .= "&id=".$tmpId;
-	// Call fetchtorrent to retrieve the torrent file
-	$output = FetchTorrent( $url_upload );
-	if (array_key_exists("save_torrent_name",$cfg)) {
-		if ($cfg["save_torrent_name"] != "")
-			$file_name = $cfg["save_torrent_name"];
-	}
-	$file_name = cleanFileName($file_name);
-	// if the output had data then write it to a file
-	if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
-		if (is_file($cfg["transfer_file_path"].$file_name)) {
-			// Error
-			$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
-			$ext_msg = "DUPLICATE :: ";
 		} else {
-			// open a file to write to
-			$fw = fopen($cfg["transfer_file_path"].$file_name,'w');
-			fwrite($fw, $output);
-			fclose($fw);
+			if(!strcmp(strtolower(substr($file_name, strlen($file_name)-8, 8)), ".torrent") == 0)
+				$file_name .= ".torrent";
 		}
-	} else {
-		$messages .= "<b>Error</b> Getting the File (<b>".$file_name."</b>), Could be a Dead URL.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
-	}
-	if($messages != "") { // there was an error
-		AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
-		header("location: index.php?iid=index&messages=".urlencode($messages));
-		exit();
-	} else {
-		AuditAction($cfg["constants"]["url_upload"], $file_name);
-		// init stat-file
-		injectTorrent($file_name);
-		// instant action ?
-		$actionId = getRequestVar('aid');
-		if (isset($actionId)) {
-			if ($cfg["enable_file_priority"]) {
-				include_once("inc/setpriority.php");
-				// Process setPriority Request.
-				setPriority(urldecode($file_name));
-			}
-			require_once("inc/classes/ClientHandler.php");
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
-			switch ($actionId) {
-				case 3:
-					$clientHandler->startClient($file_name, 0, true);
-					break;
-				case 2:
-					$clientHandler->startClient($file_name, 0, false);
-					break;
-			}
-			// just a sec..
-			sleep(1);
+		$url_upload = str_replace(" ", "%20", $url_upload);
+		// This is to support Sites that pass an id along with the url for torrent downloads.
+		$tmpId = getRequestVar("id");
+		if(!empty($tmpId))
+			$url_upload .= "&id=".$tmpId;
+		// Call fetchtorrent to retrieve the torrent file
+		$output = FetchTorrent( $url_upload );
+		if (array_key_exists("save_torrent_name",$cfg)) {
+			if ($cfg["save_torrent_name"] != "")
+				$file_name = $cfg["save_torrent_name"];
 		}
-		header("location: index.php?iid=index");
-		exit();
+		$file_name = cleanFileName($file_name);
+		// if the output had data then write it to a file
+		if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
+			if (is_file($cfg["transfer_file_path"].$file_name)) {
+				// Error
+				$messages .= "<b>Error</b> with (<b>".$file_name."</b>), the file already exists on the server.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
+				$ext_msg = "DUPLICATE :: ";
+			} else {
+				// open a file to write to
+				$fw = fopen($cfg["transfer_file_path"].$file_name,'w');
+				fwrite($fw, $output);
+				fclose($fw);
+			}
+		} else {
+			$messages .= "<b>Error</b> Getting the File (<b>".$file_name."</b>), Could be a Dead URL.<br><center><a href=\"".$_SERVER['PHP_SELF']."\">[Refresh]</a></center>";
+		}
+		if($messages != "") { // there was an error
+			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
+			header("location: index.php?iid=index&messages=".urlencode($messages));
+			exit();
+		} else {
+			AuditAction($cfg["constants"]["url_upload"], $file_name);
+			// init stat-file
+			injectTorrent($file_name);
+			// instant action ?
+			$actionId = getRequestVar('aid');
+			if (isset($actionId)) {
+				if ($cfg["enable_file_priority"]) {
+					include_once("inc/setpriority.php");
+					// Process setPriority Request.
+					setPriority(urldecode($file_name));
+				}
+				require_once("inc/classes/ClientHandler.php");
+				$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+				switch ($actionId) {
+					case 3:
+						$clientHandler->startClient($file_name, 0, true);
+						break;
+					case 2:
+						$clientHandler->startClient($file_name, 0, false);
+						break;
+				}
+				// just a sec..
+				sleep(1);
+			}
+			header("location: index.php?iid=index");
+			exit();
+		}
 	}
 }
 

@@ -27,6 +27,7 @@ require_once("inc/main.internal.php");
 if (isset($_REQUEST['iid'])) {
 	switch($_REQUEST['iid']) {
 		default:
+			$_REQUEST['iid'] = "index";
 		case "index":
 			require_once("inc/iid/index.php");
 			break;
@@ -115,116 +116,33 @@ if (isset($_REQUEST['iid'])) {
 			require_once("inc/iid/logout.php");
 			break;
 	}
-} else { // this else block is solely for tf 2.1 compat :
+} else {
+	/* this else block is for tf 2.1 compat */
 	// dispatcher functions
 	require_once("inc/functions/functions.dispatcher.php");
 	// iid-var
 	$_REQUEST['iid'] = "index";
-
-/*******************************************************************************
- * transfer-start
- ******************************************************************************/
-/*
-if (isset($_REQUEST['torrent'])) {
-	$transfer = getRequestVar('torrent');
-	if (!empty($transfer)) {
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$interactiveStart = getRequestVar('interactive');
-			if ((isset($interactiveStart)) && ($interactiveStart)) // interactive
-				indexStartTorrent($transfer, 1);
-			else // silent
-				indexStartTorrent($transfer, 0);
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			require_once("inc/classes/ClientHandler.php");
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-			$clientHandler->startClient($transfer, 0, false);
-			sleep(5);
-			header("location: index.php?iid=index");
-			exit();
-		}
+	/* transfer-start */
+	if (isset($_REQUEST['torrent']))
+		indexStartTransfer(getRequestVar('torrent'));
+	/* get torrent via url */
+	if (isset($_REQUEST['url_upload']))
+		indexProcessDownload(getRequestVar('url_upload'));
+	/* file upload */
+	if (isset($_FILES['upload_file'])) {
+		if (!empty($_FILES['upload_file']['name']))
+			indexProcessUpload();
 	}
-}
-*/
-
-/*******************************************************************************
- * get torrent via url
- ******************************************************************************/
-/*
-if (isset($_REQUEST['url_upload'])) {
-	$url_upload = getRequestVar('url_upload');
-	if (!empty($url_upload))
-		indexProcessDownload($url_upload);
-}
-*/
-
-/*******************************************************************************
- * file upload
- ******************************************************************************/
-/*
-if (isset($_FILES['upload_file'])) {
-	if(!empty($_FILES['upload_file']['name']))
-		indexProcessUpload();
-}
-*/
-
-/*******************************************************************************
- * del file
- ******************************************************************************/
-/*
-if (isset($_REQUEST['delfile'])) {
-	$transfer = getRequestVar('delfile');
-	if (!empty($transfer)) {
-		deleteTransfer($transfer, getRequestVar('alias_file'));
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-*/
-
-/*******************************************************************************
- * kill
- ******************************************************************************/
-/*
-if (isset($_REQUEST["kill_torrent"])) {
-	$transfer = getRequestVar('kill_torrent');
-	if (!empty($transfer)) {
-		$return = getRequestVar('return');
-		require_once("inc/classes/ClientHandler.php");
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-		} else {
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
-		}
-		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
-		if (!empty($return))
-			header("location: ".$return.".php?op=queueSettings");
-		else
-			header("location: index.php?iid=index");
-		exit();
-	}
-}
-*/
-
-/*******************************************************************************
- * deQueue
- ******************************************************************************/
-/*
-if (isset($_REQUEST["QEntry"])) {
-	$QEntry = getRequestVar('QEntry');
-	if (!empty($QEntry)) {
-		$fluxdQmgr->dequeueTorrent($QEntry, $cfg["user"]);
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-*/
-
+	/* del file */
+	if (isset($_REQUEST['delfile']))
+		indexDeleteTransfer(getRequestVar('delfile'));
+	/* kill */
+	if (isset($_REQUEST["kill_torrent"]))
+		indexStopTransfer(getRequestVar('kill_torrent'));
+	/* deQueue */
+	if (isset($_REQUEST["QEntry"]))
+		indexDeQueueTransfer(getRequestVar('QEntry'));
+	// index-page
 	require_once("inc/iid/index.php");
 }
 
