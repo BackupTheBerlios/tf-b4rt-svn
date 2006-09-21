@@ -35,24 +35,41 @@
 									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
 									<td>
 										<tmpl_var name="_SELECTFILE">:<br>
-										<input type="File" name="upload_files[]" size="30">
-										<select name="aid" size="1">
-											<option value="1" selected><tmpl_var name="_UPLOAD"></option>
-											<tmpl_if name="queueActive" value="1">
-												<tmpl_if name="isAdmin">
-													<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
-												</tmpl_if>
-												<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
-											<tmpl_else>
-												<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
+										<table cellpadding="1" cellspacing="1" border="0">
+											<tr>
+												<td>
+													<div id="fileUploadDiv"><input type="File" name="upload_files[]" size="30"></div>
+												</td>
+												<td valign="top">
+													<select name="aid" size="1">
+														<option value="1" selected><tmpl_var name="_UPLOAD"></option>
+														<tmpl_if name="queueActive" value="1">
+															<tmpl_if name="isAdmin">
+																<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
+															</tmpl_if>
+															<option value="3"><tmpl_var name="_UPLOAD">+Queue</option>
+														<tmpl_else>
+															<option value="2"><tmpl_var name="_UPLOAD">+Start</option>
+														</tmpl_if>
+													</select>
+													<input type="Submit" value="Go">
+												</td>
+											</tr>
+											<tmpl_if name="enable_multiupload">
+												<tr>
+													<td>
+														<script src="js/multiup.js" type="text/javascript"></script>
+														<a href="JavaScript:addUploadField()">More...</a>
+														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+														<a href="index.php?iid=multiup"><img src="themes/tf_standard_themes/images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
+														<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
+													</td>
+													<td>
+														&nbsp;
+													</td>
+												</tr>
 											</tmpl_if>
-										</select>
-										<input type="Submit" value="Go">
-										<br>
-										<tmpl_if name="enable_multiupload">
-											&nbsp;<a href="index.php?iid=multiup"><img src="themes/tf_standard_themes/images/arrow.gif" width="9" height="9" title="<tmpl_var name="_MULTIPLE_UPLOAD">" border="0"></a>&nbsp;
-											<a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a>
-										</tmpl_if>
+										</table>
 									</td>
 									</form>
 								</tr>
