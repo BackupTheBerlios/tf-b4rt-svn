@@ -281,7 +281,6 @@ CREATE TABLE tf_torrents (
   CHECK (drate>=0),
   CHECK (maxuploads>=0),
   CHECK (superseeder>=0),
-  CHECK (runtime>=0),
   CHECK (sharekill>=0),
   CHECK (minport>=0),
   CHECK (maxport>=0),
@@ -296,7 +295,6 @@ CREATE TABLE tf_torrent_totals (
   uptotal INT8 NOT NULL DEFAULT '0',
   downtotal INT8 NOT NULL DEFAULT '0',
   PRIMARY KEY (tid)
-
 );
 
 --
@@ -308,7 +306,6 @@ CREATE TABLE tf_xfer (
   download INT8 NOT NULL DEFAULT '0',
   upload INT8 NOT NULL DEFAULT '0',
   PRIMARY KEY (user,date)
-
 );
 
 --
