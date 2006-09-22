@@ -95,10 +95,13 @@ function showMetaInfo($torrent, $allowSave=false) {
 		require_once('inc/classes/BDecode.php');
 		$showMetaInfo = "";
 		// theme-switch
-		if ((strpos($cfg["theme"], '/')) === false)
+		if ((strpos($cfg["theme"], '/')) === false) {
 			$showMetaInfo .= '<link rel="StyleSheet" href="themes/'.$cfg["theme"].'/css/dtree.css" type="text/css" />';
-		else
+			$showMetaInfo .= '<script type="text/javascript">var dtree_path_images = "../themes/'.$cfg["theme"].'/images/dtree/";</script>';
+		} else {
 			$showMetaInfo .= '<link rel="StyleSheet" href="themes/tf_standard_themes/css/dtree.css" type="text/css" />';
+			$showMetaInfo .= '<script type="text/javascript">var dtree_path_images = "../themes/tf_standard_themes/images/dtree/";</script>';
+		}
 		$showMetaInfo .= '<script type="text/javascript" src="/js/dtree.js"></script>';
 		$ftorrent=$cfg["transfer_file_path"].$torrent;
 		$fp = fopen($ftorrent, "rd");

@@ -99,20 +99,20 @@ function dTree(objName) {
 		inOrder       : false
 	}
 	this.icon = {
-		root          : '../images/dtree/base.gif',
-		folder        : '../images/dtree/folder.gif',
-		folderOpen    : '../images/dtree/folderopen.gif',
-		node          : '../images/dtree/page.gif',
-		empty         : '../images/dtree/empty.gif',
-		line          : '../images/dtree/line.gif',
-		join          : '../images/dtree/join.gif',
-		joinBottom    : '../images/dtree/joinbottom.gif',
-		plus          : '../images/dtree/plus.gif',
-		plusBottom    : '../images/dtree/plusbottom.gif',
-		minus         : '../images/dtree/minus.gif',
-		minusBottom   : '../images/dtree/minusbottom.gif',
-		nlPlus        : '../images/dtree/nolines_plus.gif',
-		nlMinus       : '../images/dtree/nolines_minus.gif'
+		root          : dtree_path_images + 'base.gif',
+		folder        : dtree_path_images + 'folder.gif',
+		folderOpen    : dtree_path_images + 'folderopen.gif',
+		node          : dtree_path_images + 'page.gif',
+		empty         : dtree_path_images + 'empty.gif',
+		line          : dtree_path_images + 'line.gif',
+		join          : dtree_path_images + 'join.gif',
+		joinBottom    : dtree_path_images + 'joinbottom.gif',
+		plus          : dtree_path_images + 'plus.gif',
+		plusBottom    : dtree_path_images + 'plusbottom.gif',
+		minus         : dtree_path_images + 'minus.gif',
+		minusBottom   : dtree_path_images + 'minusbottom.gif',
+		nlPlus        : dtree_path_images + 'nolines_plus.gif',
+		nlMinus       : dtree_path_images + 'nolines_minus.gif'
 	};
 	this.obj = objName;
 	this.aNodes = [];
