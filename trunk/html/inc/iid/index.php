@@ -117,14 +117,20 @@ foreach ($arList as $entry) {
 		// this is a torrent-client
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
-		$owner = IsOwner($cfg["user"], $transferowner);
+		if (IsOwner($cfg["user"], $transferowner))
+			$owner = 1;
+		else
+			$owner = 0;
 		$settingsAry = loadTorrentSettings($entry);
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
 	} else if ((substr(strtolower($entry), -5) == ".wget")) {
 		// this is wget.
 		$isTorrent = false;
 		$transferowner = getOwner($entry);
-		$owner = IsOwner($cfg["user"], $transferowner);
+		if (IsOwner($cfg["user"], $transferowner))
+			$owner = 1;
+		else
+			$owner = 0;
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
 		$settingsAry['hash'] = $entry;
@@ -143,7 +149,7 @@ foreach ($arList as $entry) {
 		// this is "something else". use tornado statfile as default
 		$isTorrent = false;
 		$transferowner = $cfg["user"];
-		$owner = true;
+		$owner = 1;
 		$settingsAry = array();
 		$settingsAry['btclient'] = "tornado";
 		$settingsAry['hash'] = $entry;
@@ -372,75 +378,48 @@ foreach ($arList as $entry) {
 	}
 
 	// -------------------------------------------------------------------------
-	// Is this transfer for the user list or the general list?
-	if ($owner)
-		array_push($arUserTorrent, array(
-			'is_owner' => 1,
-			'transferRunning' => $transferRunning,
-			'alias' => $alias,
-			'url_entry' => urlencode($entry),
-			'hd_image' => $hd->image,
-			'hd_title' => $hd->title,
-			'displayname' => $displayname,
-			'transferowner' => $transferowner,
-			'format_af_size' => $format_af_size,
-			'format_downtotal' => $format_downtotal,
-			'format_uptotal' => $format_uptotal,
-			'statusStr' => $statusStr,
-			'graph_width' => $graph_width,
-			'percentage' => $percentage,
-			'progress_color' => $progress_color,
-			'bar_width' => $bar_width,
-			'background' => $background,
-			'100_graph_width' => (100 - $graph_width),
-			'down_speed' => $down_speed,
-			'up_speed' => $up_speed,
-			'seeds' => $seeds,
-			'peers' => $peers,
-			'estTime' => $estTime,
-			'client' => $client,
-			'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
-			'datapath' => $settingsAry['datapath'],
-			'is_no_file' => $is_no_file,
-			'isTorrent' => $isTorrent,
-			'show_run' => $show_run,
-			'entry' => $entry,
-			)
-		);
+	// create temp-array
+	if ($cfg['isAdmin'])
+		$is_owner = 1;
 	else
-		array_push($arListTorrent, array(
-			'is_owner' => 0,
-			'transferRunning' => $transferRunning,
-			'alias' => $alias,
-			'url_entry' => urlencode($entry),
-			'hd_image' => $hd->image,
-			'hd_title' => $hd->title,
-			'displayname' => $displayname,
-			'transferowner' => $transferowner,
-			'format_af_size' => $format_af_size,
-			'format_downtotal' => $format_downtotal,
-			'format_uptotal' => $format_uptotal,
-			'statusStr' => $statusStr,
-			'graph_width' => $graph_width,
-			'percentage' => $percentage,
-			'progress_color' => $progress_color,
-			'bar_width' => $bar_width,
-			'background' => $background,
-			'100_graph_width' => (100 - $graph_width),
-			'down_speed' => $down_speed,
-			'up_speed' => $up_speed,
-			'seeds' => $seeds,
-			'peers' => $peers,
-			'estTime' => $estTime,
-			'client' => $client,
-			'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
-			'datapath' => $settingsAry['datapath'],
-			'is_no_file' => $is_no_file,
-			'isTorrent' => $isTorrent,
-			'show_run' => $show_run,
-			'entry' => $entry,
-			)
-		);
+		$is_owner = $owner;
+	$tArray = array(
+		'is_owner' => $is_owner,
+		'transferRunning' => $transferRunning,
+		'alias' => $alias,
+		'url_entry' => urlencode($entry),
+		'hd_image' => $hd->image,
+		'hd_title' => $hd->title,
+		'displayname' => $displayname,
+		'transferowner' => $transferowner,
+		'format_af_size' => $format_af_size,
+		'format_downtotal' => $format_downtotal,
+		'format_uptotal' => $format_uptotal,
+		'statusStr' => $statusStr,
+		'graph_width' => $graph_width,
+		'percentage' => $percentage,
+		'progress_color' => $progress_color,
+		'bar_width' => $bar_width,
+		'background' => $background,
+		'100_graph_width' => (100 - $graph_width),
+		'down_speed' => $down_speed,
+		'up_speed' => $up_speed,
+		'seeds' => $seeds,
+		'peers' => $peers,
+		'estTime' => $estTime,
+		'client' => $client,
+		'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
+		'datapath' => $settingsAry['datapath'],
+		'is_no_file' => $is_no_file,
+		'isTorrent' => $isTorrent,
+		'show_run' => $show_run,
+		'entry' => $entry,
+	);
+	// Is this transfer for the user list or the general list?
+	if ($owner == 1)
+		array_push($arUserTorrent, $tArray);
+	else
+		array_push($arListTorrent, $tArray);
 }
 $tmpl->setloop('arUserTorrent', $arUserTorrent);
 $tmpl->setloop('arListTorrent', $arListTorrent);
