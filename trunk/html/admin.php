@@ -103,6 +103,183 @@ switch ($op) {
 		header("location: admin.php?op=xferSettings");
 		exit();
 
+	case "updateFluxdSettings":
+		if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
+			$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
+			$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
+			$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
+			$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
+			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
+			$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
+			$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
+			$_POST["fluxd_Fluxinet_port"] != $cfg["fluxd_Fluxinet_port"] ||
+			$_POST["fluxd_Watch_jobs"] != $cfg["fluxd_Watch_jobs"] ||
+			$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"])
+		{
+			$message = '<br>Settings changed.<br>';
+			// fluxd Running?
+			if ($fluxdRunning) {
+				$needsRestart = false;
+				$reloadModules = false;
+				$needsInit = false;
+				if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
+					$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
+					$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
+					$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
+					$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
+					$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
+					$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"]
+					) {
+					$reloadModules = true;
+				}
+				if ($needsRestart) {
+					$needsHUP = false;
+					$message .= 'You have to restart fluxd to use the new settings.<br><br>';
+				}
+				// reconfig of running daemon :
+				if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
+					$fluxd->setConfig('LOGLEVEL',$_POST["fluxd_loglevel"]);
+					sleep(1);
+				}
+				// save settings
+				$settings = $_POST;
+				saveSettings('tf_settings', $settings);
+				// reload fluxd-database-cache
+				$fluxd->reloadDBCache();
+				// reload fluxd-modules
+				if ($reloadModules) {
+					sleep(1);
+					$fluxd->reloadModules();
+				}
+			} else {
+				// save settings
+				$settings = $_POST;
+				saveSettings('tf_settings', $settings);
+				$message .= 'fluxd is not currently running.<br><br>';
+			}
+			// log
+			AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
+			// redir
+			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
+		} else {
+			// save settings
+			$settings = $_POST;
+			saveSettings('tf_settings', $settings);
+			// log
+			AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
+			// redir
+			header("Location: admin.php?op=fluxdSettings");
+		}
+		exit();
+
+	case "controlFluxd":
+		$message = "";
+		$action = getRequestVar('a');
+		switch($action) {
+			case "start":
+				// start fluxd
+				if ($fluxd->isFluxdReadyToStart()) {
+					$fluxd->startFluxd();
+					if ($fluxd->state == 2) {
+						$message = '<br><strong>fluxd started.</strong><br><br>';
+					} else {
+						$message = '<br><font color="red">Error starting fluxd</font><br>';
+						$message .= 'Error : '.$fluxd->messages . '<br>';
+					}
+					break;
+				}
+				$message = '<br><font color="red">Error starting fluxd</font><br><br>';
+				break;
+			case "stop":
+				// kill fluxd
+				if ($fluxd->isFluxdRunning()) {
+					$fluxd->stopFluxd();
+					if ($fluxd->isFluxdRunning())
+						$message = '<br><strong>Stop-Command sent.</strong><br><br>';
+					else
+						$message = '<br><strong>fluxd stopped.</strong><br><br>';
+					header("Location: admin.php?op=fluxdSettings&m=".urlencode($message).'&s=1');
+					exit;
+				}
+				break;
+			default:
+				$message = '<br><font color="red">Error : no control-operation.</font><br><br>';
+				break;
+		}
+		if ($message != "")
+			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
+		else
+			header("Location: admin.php?op=fluxdSettings");
+		exit();
+
+	case "updateSearchSettings":
+		foreach ($_POST as $key => $value) {
+			if ($key != "searchEngine")
+				$settings[$key] = $value;
+		}
+		saveSettings('tf_settings', $settings);
+		AuditAction($cfg["constants"]["admin"], " Updating TorrentFlux Search Settings");
+		$searchEngine = getRequestVar('searchEngine');
+		if (empty($searchEngine))
+			$searchEngine = $cfg["searchEngine"];
+		header("location: admin.php?op=searchSettings&searchEngine=".$searchEngine);
+		exit();
+
+	case "addLink":
+		$newLink = getRequestVar('newLink');
+		$newSite = getRequestVar('newSite');
+		if (!empty($newLink)){
+			if (strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
+				$newLink = "http://".$newLink;
+			empty($newSite) && $newSite = $newLink;
+			addNewLink($newLink, $newSite);
+			AuditAction($cfg["constants"]["admin"], "New ".$cfg['_LINKS_MENU'].": ".$newSite." [".$newLink."]");
+		}
+		header("location: admin.php?op=editLinks");
+		exit();
+
+	case "editLink":
+		$lid = getRequestVar('lid');
+		$editLink = getRequestVar('editLink');
+		$editSite = getRequestVar('editSite');
+		if (!empty($newLink)){
+			if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
+				$newLink = "http://".$newLink;
+			empty($newSite) && $newSite = $newLink;
+			$oldLink=getLink($lid);
+			$oldSite=getSite($lid);
+			alterLink($lid,$newLink,$newSite);
+			AuditAction($cfg["constants"]["admin"], "Change Link: ".$oldSite." [".$oldLink."] -> ".$newSite." [".$newLink."]");
+		}
+		header("location: admin.php?op=editLinks");
+		exit();
+
+	case "moveLink":
+		$lid = getRequestVar('lid');
+		$direction = getRequestVar('direction');
+		if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
+			header("location: admin.php?op=editLinks");
+			exit();
+		}
+		$idx=getLinkSortOrder($lid);
+		$position = array("up"=>-1, "down"=>1);
+		$new_idx = $idx + $position[$direction];
+		$sql = "UPDATE tf_links SET sort_order = $idx WHERE sort_order = $new_idx";
+		$db->Execute($sql);
+		showError($db, $sql);
+		$sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
+		$db->Execute($sql);
+		showError($db, $sql);
+		header("Location: admin.php?op=editLinks");
+		exit();
+
+	case "deleteLink":
+		$lid = getRequestVar('lid');
+		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
+		deleteOldLink($lid);
+		header("location: admin.php?op=editLinks");
+		exit();
+
 	case "addRSS":
 		$newRSS = getRequestVar('newRSS');
 		if(!empty($newRSS)){
@@ -117,13 +294,6 @@ switch ($op) {
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." RSS: ".getRSS($rid));
 		deleteOldRSS($rid);
 		header("location: admin.php?op=editRSS");
-		exit();
-
-	case "deleteLink":
-		$lid = getRequestVar('lid');
-		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
-		deleteOldLink($lid);
-		header("location: admin.php?op=editLinks");
 		exit();
 
 	case "deleteUser":
