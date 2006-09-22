@@ -1,3 +1,4 @@
+/* $Id$ */
 
 // fields
 var ajax_debug = true;

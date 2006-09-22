@@ -1,3 +1,4 @@
+/* $Id$ */
 
 // fields
 var popUpWin=0;

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 //\//////////////////////////////////////////////////////////////////////////////////
 //\  overLIB 3.51  --  This notice must remain untouched at all times.
 //\  Copyright Erik Bosrup 1998-2002. All rights reserved.
@@ -109,19 +111,19 @@ var CLOSEWEIGHT		=	73;
 // Main background color (the large area)
 // Usually a bright color (white, yellow etc)
 if (typeof ol_fgcolor == 'undefined') { var ol_fgcolor = "#CCCCFF";}
-	
+
 // Border color and color of caption
 // Usually a dark color (black, brown etc)
 if (typeof ol_bgcolor == 'undefined') { var ol_bgcolor = "#333399";}
-	
+
 // Text color
 // Usually a dark color
 if (typeof ol_textcolor == 'undefined') { var ol_textcolor = "#000000";}
-	
+
 // Color of the caption text
 // Usually a bright color
 if (typeof ol_capcolor == 'undefined') { var ol_capcolor = "#FFFFFF";}
-	
+
 // Color of "Close" when using Sticky
 // Usually a semi-bright color
 if (typeof ol_closecolor == 'undefined') { var ol_closecolor = "#9999FF";}
@@ -158,7 +160,7 @@ if (typeof ol_border == 'undefined') { var ol_border = "1";}
 // How many pixels to the right/left of the cursor to show the popup
 // Values between 3 and 12 are best
 if (typeof ol_offsetx == 'undefined') { var ol_offsetx = 10;}
-	
+
 // How many pixels to the below the cursor to show the popup
 // Values between 3 and 12 are best
 if (typeof ol_offsety == 'undefined') { var ol_offsety = 10;}
@@ -428,7 +430,7 @@ var o3_frame = self;
 var o3_timeout = 0;
 var o3_timerid = 0;
 var o3_allowmove = 0;
-var o3_function = null; 
+var o3_function = null;
 var o3_delay = 0;
 var o3_delayid = 0;
 var o3_hauto = 0;
@@ -521,7 +523,7 @@ function no_overlib() {
 // overlib(arg0, ..., argN)
 // Loads parameters into global runtime variables.
 function overlib() {
-	
+
 	// Load defaults to runtime.
 	o3_text = ol_text;
 	o3_cap = ol_cap;
@@ -567,7 +569,7 @@ function overlib() {
 	o3_hauto = ol_hauto;
 	o3_vauto = ol_vauto;
 	o3_closeclick = ol_closeclick;
-	
+
 	o3_css = ol_css;
 	o3_fgclass = ol_fgclass;
 	o3_bgclass = ol_bgclass;
@@ -590,7 +592,7 @@ function overlib() {
 	o3_closestyle = ol_closestyle;
 	o3_closeweight = ol_closeweight;
 	fnRef = '';
-	
+
 
 	// Special for frame support, over must be reset...
 	if ( (ns4) || (ie4) || (ns6) ) {
@@ -600,11 +602,11 @@ function overlib() {
 		if (ie4) over = o3_frame.overDiv.style
 		if (ns6) over = o3_frame.document.getElementById("overDiv");
 	}
-	
-	
+
+
 	// What the next argument is expected to be.
 	var parsemode = -1, udf, v = null;
-	
+
 	var ar = arguments;
 	udf = (!ar.length ? 1 : 0);
 
@@ -662,7 +664,7 @@ function overlib() {
 			if (ar[i] == CLOSESIZE) { o3_closesize = ar[++i]; continue; }
 			if (ar[i] == FRAME) { opt_FRAME(ar[++i]); continue; }
 			if (ar[i] == TIMEOUT) { o3_timeout = ar[++i]; continue; }
-			if (ar[i] == FUNCTION) { udf = 0; if (typeof ar[i+1] != 'number') v = ar[++i]; opt_FUNCTION(v); continue; } 
+			if (ar[i] == FUNCTION) { udf = 0; if (typeof ar[i+1] != 'number') v = ar[++i]; opt_FUNCTION(v); continue; }
 			if (ar[i] == DELAY) { o3_delay = ar[++i]; continue; }
 			if (ar[i] == HAUTO) { o3_hauto = (o3_hauto == 0) ? 1 : 0; continue; }
 			if (ar[i] == VAUTO) { o3_vauto = (o3_vauto == 0) ? 1 : 0; continue; }
@@ -715,7 +717,7 @@ function nd() {
 			o3_removecounter++;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -780,7 +782,7 @@ function overlib351() {
 			}
 		}
 	}
-	
+
 	// We want it to stick!
 	if (o3_sticky) {
 		if (o3_timerid > 0) {
@@ -790,10 +792,10 @@ function overlib351() {
 		o3_showingsticky = 1;
 		o3_removecounter = 0;
 	}
-	
+
 	// Write layer
 	layerWrite(layerhtml);
-	
+
 	// Prepare status bar
 	if (o3_autostatus > 0) {
 		o3_status = o3_text;
@@ -814,7 +816,7 @@ function overlib351() {
 	// Show layer
 	disp(o3_status);
 
-	// Stickies should stay where they are.	
+	// Stickies should stay where they are.
 	if (o3_sticky) o3_allowmove = 0;
 
 	return (o3_status != '');
@@ -922,7 +924,7 @@ function disp(statustext) {
 // Decides where we want the popup.
 function placeLayer() {
 	var placeX, placeY;
-	
+
 	// HORIZONTAL PLACEMENT
 	if (o3_fixx > -1) {
 		// Fixed position
@@ -931,7 +933,7 @@ function placeLayer() {
 		winoffset = (ie4) ? eval('o3_frame.'+docRoot+'.scrollLeft') : o3_frame.pageXOffset;
 		if (ie4) iwidth = eval('o3_frame.'+docRoot+'.clientWidth');
 		if (ns4 || ns6) iwidth = o3_frame.innerWidth;
-		
+
 		// If HAUTO, decide what to use.
 		if (o3_hauto == 1) {
 			if ( (o3_x - winoffset) > ((eval(iwidth)) / 2)) {
@@ -940,7 +942,7 @@ function placeLayer() {
 				o3_hpos = RIGHT;
 			}
 		}
-		
+
 		// From mouse
 		if (o3_hpos == CENTER) { // Center
 			placeX = o3_x+o3_offsetx-(o3_width/2);
@@ -957,7 +959,7 @@ function placeLayer() {
 			placeX = o3_x-o3_offsetx-o3_width;
 			if (placeX < winoffset) placeX = winoffset;
 		}
-	
+
 		// Snapping!
 		if (o3_snapx > 1) {
 			var snapping = placeX % o3_snapx;
@@ -971,8 +973,8 @@ function placeLayer() {
 		}
 	}
 
-	
-	
+
+
 	// VERTICAL PLACEMENT
 	if (o3_fixy > -1) {
 		// Fixed position
@@ -1011,19 +1013,19 @@ function placeLayer() {
 		// Snapping!
 		if (o3_snapy > 1) {
 			var snapping = placeY % o3_snapy;
-			
+
 			if (o3_aboveheight > 0 && o3_vpos == ABOVE) {
 				placeY = placeY - (o3_snapy + snapping);
 			} else {
 				placeY = placeY + (o3_snapy - snapping);
 			}
-			
+
 			if (placeY < scrolloffset) placeY = scrolloffset;
 		}
 	}
 
 
-	// Actually move the object.	
+	// Actually move the object.
 	repositionTo(over, placeX, placeY);
 }
 
@@ -1033,7 +1035,7 @@ function mouseMove(e) {
 	if ( (ns4) || (ns6) ) {o3_x=e.pageX; o3_y=e.pageY;}
 	if (ie4) {o3_x=event.x; o3_y=event.y;}
 	if (ie5) {o3_x=eval('event.x+o3_frame.'+docRoot+'.scrollLeft'); o3_y=eval('event.y+o3_frame.'+docRoot+'.scrollTop');}
-	
+
 	if (o3_allowmove == 1) {
 		placeLayer();
 	}
@@ -1043,7 +1045,7 @@ function mouseMove(e) {
 function cClick() {
 	hideObject(over);
 	o3_showingsticky = 0;
-	
+
 	return false;
 }
 
@@ -1071,7 +1073,7 @@ function compatibleframe(frameid) {
 // Writes to a layer
 function layerWrite(txt) {
 	txt += "\n";
-	
+
 	if (ns4) {
 		var lyr = o3_frame.document.overDiv.document
 		lyr.write(txt)
@@ -1123,15 +1125,15 @@ function repositionTo(obj,xL,yL) {
 function getFrameRef(thisFrame, ofrm) {
 	var retVal = '';
 	for (var i=0; i<thisFrame.length; i++) {
-		if (thisFrame[i].length > 0) { 
+		if (thisFrame[i].length > 0) {
 			retVal = getFrameRef(thisFrame[i],ofrm);
 			if (retVal == '') continue;
 		} else if (thisFrame[i] != ofrm) continue;
-		
+
 		retVal = '['+i+']' + retVal;
 		break;
 	}
-	
+
 	return retVal;
 }
 
@@ -1151,17 +1153,17 @@ function opt_FRAME(frm) {
 		var tFrm = getFrameRef(top.frames, o3_frame);
 		var sFrm = getFrameRef(top.frames, ol_frame);
 
-		if (sFrm.length == tFrm.length) { 
-			l = tFrm.lastIndexOf('['); 
+		if (sFrm.length == tFrm.length) {
+			l = tFrm.lastIndexOf('[');
 			if (l) {
 				while(sFrm.substring(0,l) != tFrm.substring(0,l)) l = tFrm.lastIndexOf('[',l-1);
 				tFrm = tFrm.substr(l);
 				sFrm = sFrm.substr(l);
 			}
 		}
-			
+
 		var cnt = 0, p = '', str = tFrm;
-			
+
 		while((k = str.lastIndexOf('[')) != -1) {
 			cnt++;
 			str = str.substring(0,k);
@@ -1206,7 +1208,7 @@ function vpos_convert(d) {
 			d = CENTER;
 		}
 	}
-	
+
 	return d;
 }
 

@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*--------------------------------------------------|
 | dTree 2.05 | www.destroydrop.com/javascript/tree/ |
 |---------------------------------------------------|
@@ -8,6 +10,8 @@
 |                                                   |
 | Updated: 17.04.2003                               |
 |--------------------------------------------------*/
+
+/* slightly modified to support themes (b4rt) */
 
 function getSizes() {
   var len = 0;

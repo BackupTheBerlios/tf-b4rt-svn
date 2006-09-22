@@ -1,3 +1,5 @@
+/* $Id$ */
+
 // fields
 var formContent = '<br><input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>';
 

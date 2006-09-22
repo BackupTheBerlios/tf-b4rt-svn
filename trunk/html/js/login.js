@@ -1,3 +1,5 @@
+/* $Id$ */
+
 function loginvalidate() {
 	msg = "";
 	pass = document.theForm.iamhim.value;

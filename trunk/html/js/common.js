@@ -1,3 +1,4 @@
+/* $Id$ */
 var varRefresh;
 function initRefresh(refresh) {
 	varRefresh = refresh;

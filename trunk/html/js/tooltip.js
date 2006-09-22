@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /* This notice must be untouched at all times.
 
 wz_tooltip.js    v. 3.31
