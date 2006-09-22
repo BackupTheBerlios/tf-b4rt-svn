@@ -1,7 +1,5 @@
 <?php
 
-/* $Id$ */
-
 /*************************************************************
 *  TorrentFlux PHP Torrent Manager
 *  www.torrentflux.com
@@ -28,6 +26,7 @@
     v 1.01 - Changed Main Categories. (removed TV, changed Movies to Video)
     v 1.02 - Mar 19, 06 - Updated pageing.
     v 1.03 - May 16, 06 - They changed there URL for Searching back to their domain.
+    v 1.04 - Sep 21, 06 - Fix for Bug found by batmark
 */
 
 class SearchEngine extends SearchEngineBase
@@ -41,7 +40,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "TorrentSpy";
 
         $this->author = "kboy";
-        $this->version = "1.03";
+        $this->version = "1.04";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,874.0.html";
         $this->Initialize($cfg);
     }
@@ -254,7 +253,6 @@ class SearchEngine extends SearchEngineBase
     // Function to parse the response.
     function parseResponse()
     {
-    	global $cfg;
         $output = $this->tableHeader();
 
         $thing = $this->htmlPage;
@@ -273,7 +271,7 @@ class SearchEngine extends SearchEngineBase
                 // ok so now we have the listing.
                 $tmpListArr = split("</tr>",$tmpList);
 
-                $langFile = $cfg['_FILE'];
+                $langFile = _FILE;
 
                 $bg = $this->cfg["bgLight"];
 
@@ -285,7 +283,7 @@ class SearchEngine extends SearchEngineBase
                         $ts = new tSpy($value);
 
                         // Determine if we should build this output
-                        if (is_int(array_search($ts->MainId,$this->catFilter)))
+                        if (is_int(array_search($ts->MainCategory,$this->catFilter)))
                         {
                             $buildLine = false;
                         }
@@ -419,7 +417,7 @@ class tSpy
 
             if(count($tmpListArr) > 5)
             {
-                $tmpListArr["0"];  // Torrent Name, Download Link, Status
+                //$tmpListArr["0"];  // Torrent Name, Download Link, Status
 
                 $this->torrentDisplayName = $this->cleanLine($tmpListArr["0"]);  // TorrentName
 
@@ -503,9 +501,8 @@ class tSpy
     // Function to build output for the table.
     function BuildOutput($bg,$langFILE, $searchURL = '')
     {
-		global $cfg;
         $output = "<tr>\n";
-        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName." - ".$this->fileCount." ".$langFILE."\" border=0></a></td>\n";
+        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName." - ".$this->fileCount." ".$langFILE."\" border=0></a></td>\n";
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a>";
         switch ($this->torrentStatus)
         {

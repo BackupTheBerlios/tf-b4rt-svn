@@ -1,7 +1,5 @@
 <?php
 
-/* $Id$ */
-
 /*************************************************************
 *  TorrentFlux PHP Torrent Manager
 *  www.torrentflux.com
@@ -782,9 +780,8 @@ class sddr
     // Function to build output for the table.
     function BuildOutput($bg, $searchURL)
     {
-		global $cfg;
         $output = "<tr>\n";
-        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
+        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a></td>\n";
 
         $output .= "    <td bgcolor=\"".$bg."\" align=right>".$this->torrentSize."</td>\n";
