@@ -484,20 +484,52 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<font color="red"><strong>DONT</strong> do this or you will screw up things for sure !</font><br><br>';
 				$htmlMain .= 'This is only meant as emergency-break if things go terrible wrong already.<br>Please use this only if you know what you are doing.';
 				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>php</strong><br>';
+				$htmlMain .= 'use this to kill all php processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-kill" border="0"> php-kill</a>';
+				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>python</strong><br>';
 				$htmlMain .= 'use this to kill all python processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>perl</strong><br>';
 				$htmlMain .= 'use this to kill all perl processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmissioncli</strong><br>';
 				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=14"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>wget</strong><br>';
+				$htmlMain .= 'use this to kill all wget processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=15"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "11": // Maintenance-Kill : python
+			case "11": // Maintenance-Kill : php
+				$htmlTitle = "Maintenance - Kill - php";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all php processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 php 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "12": // Maintenance-Kill : python
 				$htmlTitle = "Maintenance - Kill - python";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all python processes" done.';
@@ -521,7 +553,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "12": // Maintenance-Kill : perl
+			case "13": // Maintenance-Kill : perl
 				$htmlTitle = "Maintenance - Kill - perl";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all perl processes" done.';
@@ -545,7 +577,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "13": // Maintenance-Kill : transmissioncli
+			case "14": // Maintenance-Kill : transmissioncli
 				$htmlTitle = "Maintenance - Kill - transmissioncli";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all transmissioncli processes" done.';
@@ -566,6 +598,30 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "15": // Maintenance-Kill : wget
+				$htmlTitle = "Maintenance - Kill - wget";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all wget processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 wget 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
