@@ -46,7 +46,7 @@ CREATE TABLE tf_links (
   CHECK (sort_order>=0)
 );
 
-INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0');
+INSERT INTO tf_links VALUES (0,'http://tf-b4rt.berlios.de/','Home','0');
 
 --
 -- Sequences for table tf_log
