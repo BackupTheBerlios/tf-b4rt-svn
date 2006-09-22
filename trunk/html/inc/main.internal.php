@@ -147,7 +147,7 @@ if ($cfg['enable_xfer'] == 1) {
 	// xfer-init
 	$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
 	if (empty($xferRecord)) {
-		$rec = array('user'=>'', 'date'=>$db->DBDate(time()));
+		$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
 		$sTable = 'tf_xfer';
 		$sql = $db->GetInsertSql($sTable, $rec);
 		$db->Execute($sql);

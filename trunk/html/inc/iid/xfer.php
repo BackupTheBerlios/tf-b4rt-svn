@@ -100,7 +100,7 @@ if ($cfg['enable_xfer'] == 1) {
 				$wend = $mend;
 			}
 			// month stats
-			$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$_REQUEST["user"].'" GROUP BY date ORDER BY date';
+			$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE "'.$_REQUEST["user"].'" GROUP BY date ORDER BY date';
 			$rtnValue = $db->GetAll($sql);
 			showError($db,$sql);
 			$start = '';
@@ -146,7 +146,7 @@ if ($cfg['enable_xfer'] == 1) {
 			$tmpl->setloop('month_list', $month_list);
 			// weekly stats
 			$period_query = ($mstart) ? 'and date >= "'.$mstart.'" and date < "'.$mend.'"' : '';
-			$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$_REQUEST["user"].'" '.$period_query.' GROUP BY date ORDER BY date';
+			$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE "'.$_REQUEST["user"].'" '.$period_query.' GROUP BY date ORDER BY date';
 			$rtnValue = $db->GetAll($sql);
 			showError($db,$sql);
 			$start = '';
@@ -193,7 +193,7 @@ if ($cfg['enable_xfer'] == 1) {
 			$tmpl->setloop('week_list', $week_list);
 			// daily stats
 			$period_query = ($wstart) ? 'and date >= "'.$wstart.'" and date < "'.$wend.'"' : '';
-			$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$_REQUEST["user"].'" '.$period_query.' GROUP BY date ORDER BY date';
+			$sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE "'.$_REQUEST["user"].'" '.$period_query.' GROUP BY date ORDER BY date';
 			$rtnValue = $db->GetAll($sql);
 			showError($db,$sql);
 			$start = '';
