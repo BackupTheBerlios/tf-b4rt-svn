@@ -58,10 +58,10 @@ $tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
 $theme_list = array();
 $arThemes = GetThemes();
 for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-	$selected = "";
-	if ($cfg["default_theme"] == $arThemes[$inx]) {
+	if ($cfg["default_theme"] == $arThemes[$inx])
 		$selected = "selected";
-	}
+	else
+		$selected = "";
 	array_push($theme_list, array(
 		'arThemes' => $arThemes[$inx],
 		'selected' => $selected,
@@ -73,11 +73,11 @@ $tmpl->setloop('theme_list', $theme_list);
 $arThemes = GetThemesStandard();
 $tfstandard_theme_list = array();
 for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-	$selected = "";
 	$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
-	if ($cfg["theme"] == $arThemes2[$inx]) {
+	if ($cfg["default_theme"] == $arThemes2[$inx])
 		$selected = "selected";
-	}
+	else
+		$selected = "";
 	array_push($tfstandard_theme_list, array(
 		'arThemes' => $arThemes[$inx],
 		'arThemes2' => $arThemes2[$inx],
