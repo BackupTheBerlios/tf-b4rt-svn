@@ -1484,6 +1484,11 @@ function backupListDisplay() {
 		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Size</strong></td>';
 		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'">&nbsp;</td>';
 		$retVal .= '</tr>';
+		// theme-switch
+		if ((strpos($cfg["theme"], '/')) === false)
+			$theme = $cfg["theme"];
+		else
+			$theme = "tf_standard_themes";
 		$backupListFiles = explode("\n",$fileList);
 		foreach ($backupListFiles as $backup) {
 			$backup = trim($backup);
@@ -1517,7 +1522,7 @@ function backupListDisplay() {
 				$retVal .= '</a>';
 				$retVal .= '&nbsp;&nbsp;';
 				$retVal .= '<a href="'. _FILE_THIS .'?b=5&f='.$backup.'">';
-				$retVal .= '<img src="themes/'.$cfg["theme"].'/images/delete.png" title="Delete" border="0">';
+				$retVal .= '<img src="themes/'.$theme.'/images/delete.png" title="Delete" border="0">';
 				$retVal .= '</a>';
 				$retVal .= '</td>';
 				$retVal .= '</tr>';
