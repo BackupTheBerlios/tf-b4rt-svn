@@ -211,7 +211,7 @@ function findSFV($dirName) {
 	$d = dir($dirName);
 	while (false !== ($entry = $d->read())) {
    		if($entry != '.' && $entry != '..' && !empty($entry)) {
-			if((is_file($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
+			if((isFile($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
 				$sfv['dir'] = $dirName;
 				$sfv['sfv'] = $dirName.'/'.$entry;
 			}

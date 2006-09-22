@@ -2103,7 +2103,7 @@ function AuditAction($action, $file="") {
  */
 function isFile($file) {
     $rtnValue = False;
-    if (is_file($file)) {
+    if (@is_file($file)) {
         $rtnValue = True;
     } else {
         if ($file == trim(shell_exec("ls 2>/dev/null ".$file)))
