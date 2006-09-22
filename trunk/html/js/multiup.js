@@ -1,33 +1,17 @@
-
-
 // fields
-var fileCtr = 1;
-var fileAry = new Array();
+var formContent = '<br><input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>';
 
 /**
  * addUploadField
  */
 function addUploadField() {
-	/*
-	// get old values
-	for (i = 0; i < fileCtr; i++) {
-		id = "file_" + String(i);
-		fileAry[i] = document.getElementById(id).value;
+	element = document.getElementById("fileUploadSpan");
+	if (typeof(element.outerHTML) != 'undefined') {
+		element.outerHTML = formContent;
+	} else {
+		var range = document.createRange();
+		range.setStartBefore(element);
+		element.parentNode.replaceChild(range.createContextualFragment(formContent), element);
 	}
-	*/
-	// add element
-	addElement  = "<br>\n" + '<input type="File" name="upload_files[]" size="30" id="file_';
-	addElement += String(fileCtr);
-	addElement += '">';
-	document.getElementById("fileUploadDiv").innerHTML += addElement;
-	/*
-	// set values
-	for (i = 0; i < fileCtr; i++) {
-		id = "file_" + String(i);
-		// next op is not allowed (security exception) :
-		document.getElementById(id).value = fileAry[i];
-	}
-	*/
-	// increment field-count
-	fileCtr++;
+	// alert(document.getElementById("fileUploadCell").innerHTML);
 }

@@ -37,8 +37,8 @@
 										<tmpl_var name="_SELECTFILE">:<br>
 										<table cellpadding="1" cellspacing="1" border="0">
 											<tr>
-												<td>
-													<div id="fileUploadDiv"><input type="File" name="upload_files[]" size="30" id="file_0"></div>
+												<td id="fileUploadCell">
+													<input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>
 												</td>
 												<td valign="top">
 													<select name="aid" size="1">
@@ -114,7 +114,7 @@
 										<td>
 											<hr>
 											Torrent <tmpl_var name="_SEARCH">:<br>
-											<input type="text" name="searchterm" size="30" maxlength="50">
+											<input type="text" name="searchterm" size="40" maxlength="50">
 												<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="ajax_updateState = 0; this.form.submit();"</tmpl_if> STYLE="width: 125px">
 												<tmpl_loop name="Engine_List">
 													<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
