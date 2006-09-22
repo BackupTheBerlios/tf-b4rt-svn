@@ -266,7 +266,7 @@ CREATE TABLE tf_torrents (
   rate INT2 NOT NULL DEFAULT '0',
   drate INT2 NOT NULL DEFAULT '0',
   maxuploads INT2 NOT NULL DEFAULT '0',
-  superseeder NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
   runtime VARCHAR(5) NOT NULL DEFAULT 'False',
   sharekill INT2 NOT NULL DEFAULT '0',
   minport INT2 NOT NULL DEFAULT '0',

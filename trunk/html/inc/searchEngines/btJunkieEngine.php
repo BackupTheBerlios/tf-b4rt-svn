@@ -256,17 +256,6 @@ class btJunk
             // Chunck up the row into columns.
             $tmpListArr = split("</th>",$htmlLine);
 
-/*
-(
-    [0] => <tr bgcolor="#FFFFFF"><th width="60%" align="left">
-        <a href="/torrent?do=download&id=3780687290ec6d04d99417b85ef14bca45f030c90781"><img src="/images/down.gif" alt="Download Torrent" border="0"></a>
-        <a href="/?do=listfiles&id=3780687290ec6d04d99417b85ef14bca45f030c90781" onclick="return listfiles(this,750,50,'2px solid',0,0,'img3780687290ec6d04d99417b85ef14bca45f030c90781');">
-        <img name="img3780687290ec6d04d99417b85ef14bca45f030c90781" src="/images/expand.gif" alt="File Listing" border="0"></a>&nbsp;
-        <a href="/torrent?do=stat&id=3780687290ec6d04d99417b85ef14bca45f030c90781" class="BlckUnd"><b>Paris Hilton - Paris (withcovers) a DHZ Inc Release</b></a>
-)
-
-*/
-
             if(count($tmpListArr) > 5)
             {
                 //$tmpListArr["0"];  // Torrent Name, Download Link, Status
