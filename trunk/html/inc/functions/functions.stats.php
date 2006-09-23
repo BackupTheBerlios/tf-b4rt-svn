@@ -33,7 +33,6 @@ Params :
 
 "t" : type : optional, default is "'.$cfg['stats_default_type'].'".
       "all" : server + xfer + transfers
-      "home" : server + xfer
       "server" : server-stats
       "xfer" : xfer-stats
       "transfers" : transfer-stats
@@ -59,8 +58,7 @@ Examples :
 * '._URL_THIS.'?t=server&f=xml&a=1       :  server stats as xml sent as attachment.
 * '._URL_THIS.'?t=transfers&f=xml&c=1    :  transfer stats as xml sent compressed.
 * '._URL_THIS.'?t=all&f=rss              :  all stats sent as rss.
-* '._URL_THIS.'?t=all&f=txt&h=1          :  all stats sent as txt with headers.
-* '._URL_THIS.'?t=home&f=txt&h=0         :  home stats sent as txt without headers.
+* '._URL_THIS.'?t=all&f=txt&h=0          :  all stats sent as txt without headers.
 * '._URL_THIS.'?t=xfer&f=txt&a=1&c=1     :  xfer stats as text sent as compressed attachment.
 
 * '._URL_THIS.'?t=transfer&i=foo.torrent        :  transfer-stats of foo sent in default-format.
@@ -108,7 +106,7 @@ function sendContent($content, $contentType, $fileName) {
 
 /**
  * This method sends stats as xml.
- * xml-schema defined in tfbstats.xsd/tfbhome.xsd/tfbserver.xsd/tfbxfer.xsd/tfbtransfers.xsd/tfbtransfer.xsd
+ * xml-schema defined in tfbstats.xsd/tfbserver.xsd/tfbxfer.xsd/tfbtransfers.xsd/tfbtransfer.xsd
  *
  * @param $type
  */
@@ -120,14 +118,10 @@ function sendXML($type) {
 		case "all":
 			$content .= '<tfbstats>'."\n";
 			break;
-		case "home":
-			$content .= '<tfbhome>'."\n";
-			break;
 	}
 	// server stats
 	switch ($type) {
 	    case "all":
-	    case "home":
 	    case "server":
 	    	$content .= $indent.'<server>'."\n";
 			for ($i = 0; $i < $serverIdCount; $i++)
@@ -137,7 +131,6 @@ function sendXML($type) {
 	// xfer stats
 	switch ($type) {
 	    case "all":
-	    case "home":
 	    case "xfer":
 	    	$content .= $indent.'<xfer>'."\n";
 			for ($i = 0; $i < $xferIdCount; $i++)
@@ -171,9 +164,6 @@ function sendXML($type) {
 		case "all":
 			$content .= '</tfbstats>'."\n";
 			break;
-		case "home":
-			$content .= '</tfbhome>'."\n";
-			break;
 	}
     // send content
     sendContent($content, "text/xml", "stats.xml");
@@ -194,7 +184,6 @@ function sendRSS($type) {
     // server stats
 	switch ($type) {
 	    case "all":
-	    case "home":
 	    case "server":
 		    $content .= "   <item>\n";
 		    $content .= "    <title>Server Stats</title>\n";
@@ -210,7 +199,6 @@ function sendRSS($type) {
 	// xfer stats
 	switch ($type) {
 	    case "all":
-	    case "home":
 	    case "xfer":
 		    $content .= "   <item>\n";
 		    $content .= "    <title>Xfer Stats</title>\n";
@@ -274,7 +262,6 @@ function sendTXT($type) {
 	// server stats
 	switch ($type) {
 	    case "all":
-	    case "home":
 	    case "server":
 	    	if ($header == 1) {
 				for ($j = 0; $j < $serverIdCount; $j++) {
@@ -294,7 +281,6 @@ function sendTXT($type) {
 	// xfer stats
 	switch ($type) {
 	    case "all":
-	    case "home":
 	    case "xfer":
 	    	if ($header == 1) {
 				for ($j = 0; $j < $xferIdCount; $j++) {

@@ -159,7 +159,6 @@ switch ($type) {
     case "all":
     	if (!(($format == "txt") && ($header == 0)))
     		$transferHeads = getTransferListHeadArray();
-    case "home":
     	$indent = " ";
 		$cfg['xfer_realtime'] = 1;
     	$transferList = getTransferListArray();
