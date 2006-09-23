@@ -519,7 +519,10 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$ajaxInit .= ",".$cfg["enable_index_ajax_update_title"];
 	$ajaxInit .= ",'".$cfg['pagetitle']."'";
 	$ajaxInit .= ",".$cfg["enable_goodlookstats"];
-	$ajaxInit .= ",'".$settingsHackStats[0].':'.$settingsHackStats[1].':'.$settingsHackStats[2].':'.$settingsHackStats[3].':'.$settingsHackStats[4].':'.$settingsHackStats[5]."'";
+	if ($cfg["enable_goodlookstats"] != "0")
+		$ajaxInit .= ",'".$settingsHackStats[0].':'.$settingsHackStats[1].':'.$settingsHackStats[2].':'.$settingsHackStats[3].':'.$settingsHackStats[4].':'.$settingsHackStats[5]."'";
+	else
+		$ajaxInit .= ",'0:0:0:0:0:0'";
 	$ajaxInit .= ",".$cfg["index_page_stats"];
 	if ($queueActive)
 		$ajaxInit .= ",1";
