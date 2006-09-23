@@ -63,7 +63,7 @@
 		</tr>
 		<tmpl_loop name="arUserTorrent">
 			<a href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')">
-			<tr onmouseover="className='bg';" onmouseout="className='fg';">
+			<tr onmouseover="className='bg';" onmouseout="className='fg';" class="fg">
 				<td valign="bottom" align="center" nowrap>
 					<tmpl_if name="transferRunning" value="1">
 						<a href="JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="themes/default/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle"></a>
@@ -284,7 +284,7 @@
 		</tr>
 		<tmpl_loop name="arListTorrent">
 			<a href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')">
-			<tr onmouseover="className='bg';" onmouseout="className='fg';">
+			<tr onmouseover="className='bg';" onmouseout="className='fg';" class="fg">
 				<td valign="bottom" align="center" nowrap>
 					<tmpl_if name="transferRunning" value="1">
 						<a href="JavaScript:ShowDetails('index.php?iid=downloadhosts&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><img src="themes/default/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle"></a>
