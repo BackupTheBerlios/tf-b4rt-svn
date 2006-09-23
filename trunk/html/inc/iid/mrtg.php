@@ -51,7 +51,7 @@ if ($dirHandle = opendir('./mrtg')) {
 	$htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
 	$idx = 0;
 	while (false !== ($file = readdir($dirHandle))) {
-		if( preg_match("/.*inc/i", $file) ) {
+		if (preg_match("/.*inc/i", $file)) {
 			$htmlTargetsCount++;
 			$targetName = array_shift(explode('.',$file));
 			$htmlTargets .= '<option value="'.$targetName.'"';

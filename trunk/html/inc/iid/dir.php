@@ -300,8 +300,15 @@ if ($cfg['enable_dirstats'] == 1) {
 $entrys = array();
 $handle = opendir($dirName);
 while (false !== ($entry = readdir($handle))) {
-	if ((isValidEntry($entry)) && (hasPermission($entry, $cfg["user"], 'r')))
-		array_push($entrys, $entry);
+	if (empty($dir)) { // parent dir
+		if ((isValidEntry($entry)) && (hasPermission($entry, $cfg["user"], 'r')))
+			array_push($entrys, $entry);
+	} else { // sub-dir
+		if (hasPermission($dir, $cfg["user"], 'r')) {
+			if (isValidEntry($entry))
+				array_push($entrys, $entry);
+		}
+	}
 }
 closedir($handle);
 natsort($entrys);
@@ -311,10 +318,17 @@ $list = array();
 $filelist = array();
 foreach ($entrys as $entry) {
 	// acl-write-check
-	if (hasPermission($entry, $cfg["user"], 'w'))
-		$aclWrite = 1;
-	else
-		$aclWrite = 0;
+	if (empty($dir)) { // parent dir
+		if (hasPermission($entry, $cfg["user"], 'w'))
+			$aclWrite = 1;
+		else
+			$aclWrite = 0;
+	} else { // sub-dir
+		if (hasPermission($dir, $cfg["user"], 'w'))
+			$aclWrite = 1;
+		else
+			$aclWrite = 0;
+	}
 	if (@is_dir($dirName.$entry)) { // dir
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
