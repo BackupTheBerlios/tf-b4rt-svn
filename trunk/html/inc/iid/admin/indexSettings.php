@@ -40,6 +40,7 @@ $tmpl->setvar('enable_index_meta_refresh', $cfg["enable_index_meta_refresh"]);
 $tmpl->setvar('page_refresh', $cfg["page_refresh"]);
 $tmpl->setvar('enable_index_ajax_update', $cfg["enable_index_ajax_update"]);
 $tmpl->setvar('enable_index_ajax_update_title', $cfg["enable_index_ajax_update_title"]);
+$tmpl->setvar('enable_index_ajax_update_users', $cfg["enable_index_ajax_update_users"]);
 $tmpl->setvar('enable_index_ajax_update_list', $cfg["enable_index_ajax_update_list"]);
 $tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);

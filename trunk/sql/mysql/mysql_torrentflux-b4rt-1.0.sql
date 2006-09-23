@@ -254,6 +254,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 --
+INSERT INTO tf_settings VALUES ('enable_index_ajax_update_users','1');
 INSERT INTO tf_settings VALUES ('wget_ftp_pasv','0');
 INSERT INTO tf_settings VALUES ('wget_limit_retries','3');
 INSERT INTO tf_settings VALUES ('wget_limit_rate','0');
