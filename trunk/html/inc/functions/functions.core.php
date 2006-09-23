@@ -1001,9 +1001,11 @@ function deleteTransfer($transfer, $alias_file) {
 			// this is "something else". use tornado statfile as default
 			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
 		}
-		//XFER: before torrent deletion save upload/download xfer data to SQL
-		$transferTotals = getTransferTotals($transfer);
-		saveXfer($transferowner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
+		if ($cfg['enable_xfer'] != 0) {
+			// XFER: before torrent deletion save upload/download xfer data to SQL
+			$transferTotals = getTransferTotals($transfer);
+			saveXfer($transferowner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
+		}
 		// torrent+stat
 		@unlink($cfg["transfer_file_path"].$transfer);
 		@unlink($cfg["transfer_file_path"].$alias_file);
