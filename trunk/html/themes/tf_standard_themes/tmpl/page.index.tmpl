@@ -130,7 +130,7 @@
 					<td bgcolor="<tmpl_var name="table_data_bg">" width="310" valign="top">
 						<table width="100%" cellpadding="1" border="0">
 							<tr>
-								<tmpl_if name="ui_displaylinks">
+								<tmpl_if name="ui_displaylinks" value="1">
 									<td valign="top">
 										<b><tmpl_var name="_TORRENTLINKS">:</b><br>
 										<tmpl_loop name="linklist">
@@ -142,57 +142,60 @@
 										</tmpl_loop>
 									</td>
 								</tmpl_if>
-								<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
-								<tmpl_if name="settingsHackStats1">
-									<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedDown"><tmpl_var name="settingsHackStats11"></label> kB/s</a><br>
-								</tmpl_if>
-								<tmpl_if name="settingsHackStats2">
-									<b><tmpl_var name="_UPLOADSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedUp"><tmpl_var name="settingsHackStats22"></label> kB/s</a><br>
-								</tmpl_if>
-								<tmpl_if name="settingsHackStats3">
-									<b><tmpl_var name="_TOTALSPEED">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedTotal"><tmpl_var name="settingsHackStats33"></label> kB/s</a><br>
-								</tmpl_if>
-								<tmpl_if name="settingsHackStats4">
-									<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
-									<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_cons"><tmpl_var name="settingsHackStats44"></label></a><br>
-								</tmpl_if>
-								<tmpl_if name="settingsHackStats5">
-									<b><tmpl_var name="_DRIVESPACE">:</b><br>
-									<a href="index.php?iid=drivespace"><img src="themes/tf_standard_themes/images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_freeSpace"><tmpl_var name="settingsHackStats55"></label></a><br>
-								</tmpl_if>
-								<tmpl_if name="settingsHackStats6">
-									<b><tmpl_var name="_SERVERLOAD">:</b><br>
-									<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_loadavg"><tmpl_var name="settingsHackStats66"></label></a><br>
-								</tmpl_if>
-								<tmpl_if name="ui_displayusers">
-								    <b><tmpl_var name="_ONLINE">:</b><br>
-								    <tmpl_loop name="arOnlineUsers">
-										<tmpl_if name="is_on">
-											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-											<img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
-										</tmpl_if>
-								    </tmpl_loop>
-    								<tmpl_if name="hide_offline" value="0">
-    									<b><tmpl_var name="_OFFLINE">:</b></br>
-    									<tmpl_loop name="arOfflineUsers">
-											<tmpl_if name="is_off">
-    											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-    											<img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+								<tmpl_if name="ui_displayusers" value="1">
+									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
+									    <b><tmpl_var name="_ONLINE">:</b><br>
+									    <tmpl_loop name="arOnlineUsers">
+											<tmpl_if name="is_on">
+												<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
+												<img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 											</tmpl_if>
-    								    </tmpl_loop>
-    								</tmpl_if>
+									    </tmpl_loop>
+	    								<tmpl_if name="hide_offline" value="0">
+	    									<b><tmpl_var name="_OFFLINE">:</b></br>
+	    									<tmpl_loop name="arOfflineUsers">
+												<tmpl_if name="is_off">
+	    											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
+	    											<img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
+												</tmpl_if>
+	    								    </tmpl_loop>
+	    								</tmpl_if>
+	    							</td>
 								</tmpl_if>
-							</td>
-						</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<tr>
-				<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
+								<tmpl_if name="enable_goodlookstats" value="1">
+									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
+										<tmpl_if name="settingsHackStats1">
+											<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
+											<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedDown"><tmpl_var name="settingsHackStats11"></label> kB/s</a><br>
+										</tmpl_if>
+										<tmpl_if name="settingsHackStats2">
+											<b><tmpl_var name="_UPLOADSPEED">:</b><br>
+											<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedUp"><tmpl_var name="settingsHackStats22"></label> kB/s</a><br>
+										</tmpl_if>
+										<tmpl_if name="settingsHackStats3">
+											<b><tmpl_var name="_TOTALSPEED">:</b><br>
+											<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedTotal"><tmpl_var name="settingsHackStats33"></label> kB/s</a><br>
+										</tmpl_if>
+										<tmpl_if name="settingsHackStats4">
+											<b><tmpl_var name="_ID_CONNECTIONS">:</b><br>
+											<a href="index.php?iid=all_services"><img src="themes/tf_standard_themes/images/all.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_cons"><tmpl_var name="settingsHackStats44"></label></a><br>
+										</tmpl_if>
+										<tmpl_if name="settingsHackStats5">
+											<b><tmpl_var name="_DRIVESPACE">:</b><br>
+											<a href="index.php?iid=drivespace"><img src="themes/tf_standard_themes/images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_freeSpace"><tmpl_var name="settingsHackStats55"></label></a><br>
+										</tmpl_if>
+										<tmpl_if name="settingsHackStats6">
+											<b><tmpl_var name="_SERVERLOAD">:</b><br>
+											<a href="index.php?iid=who"><img src="themes/tf_standard_themes/images/who.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_loadavg"><tmpl_var name="settingsHackStats66"></label></a><br>
+										</tmpl_if>
+									</td>
+								</tmpl_if>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
 					<div align="center">
 						<font face="Arial" size="2">
 							<a href="index.php?iid=readrss">
@@ -230,48 +233,48 @@
 								<img src="themes/tf_standard_themes/images/rss.png" width="14" height="14" border="0" alt="RSS - Stats" title="RSS - Stats" align="absmiddle"></a>
 						</font>
 					</div>
-				</td>
-			</tr>
-			<tr>
-				<td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
-					<tmpl_if name="drivespacebar_type" value="xfer">
-    					<tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
-					<tmpl_else>
-					    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
-					</tmpl_if>
-					<tmpl_if name="xfer_realtime">
-						<table width="100%" border="0" cellpadding="0" cellspacing="0">
-							<tr>
-								<tmpl_var name="xfer_day">
-								<tmpl_var name="xfer_week">
-								<tmpl_var name="xfer_month">
-								<tmpl_var name="xfer_total">
-							</tr>
-						</table>
-					</tmpl_if>
-				</td>
-			</tr>
-			<tmpl_if name="ui_displaybandwidthbars">
-				<tr><td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
-					<tmpl_if name="bandwidthbars_type" value="xfer">
-					    <tmpl_include name="inc.bandwidthBars_xfer.tmpl">
-					<tmpl_else>
-					    <tmpl_include name="inc.bandwidthBars_tf.tmpl">
-					</tmpl_if>
-				</td></tr>
-			</tmpl_if>
-			<tmpl_if name="enable_bigboldwarning" value="1">
-				<tr>
-					<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
-						<div align="center">
-							<font face="Arial" size="2" color="red"><strong>
-								Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
-							</strong></font>
-						</div>
 					</td>
 				</tr>
-			</tmpl_if>
-		</table>
+				<tr>
+					<td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
+						<tmpl_if name="drivespacebar_type" value="xfer">
+	    					<tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
+						<tmpl_else>
+						    <tmpl_include name="inc.driveSpaceBar_tf.tmpl">
+						</tmpl_if>
+						<tmpl_if name="xfer_realtime">
+							<table width="100%" border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<tmpl_var name="xfer_day">
+									<tmpl_var name="xfer_week">
+									<tmpl_var name="xfer_month">
+									<tmpl_var name="xfer_total">
+								</tr>
+							</table>
+						</tmpl_if>
+					</td>
+				</tr>
+				<tmpl_if name="ui_displaybandwidthbars">
+					<tr><td bgcolor="<tmpl_var name="table_header_bg">" colspan="2">
+						<tmpl_if name="bandwidthbars_type" value="xfer">
+						    <tmpl_include name="inc.bandwidthBars_xfer.tmpl">
+						<tmpl_else>
+						    <tmpl_include name="inc.bandwidthBars_tf.tmpl">
+						</tmpl_if>
+					</td></tr>
+				</tmpl_if>
+				<tmpl_if name="enable_bigboldwarning" value="1">
+					<tr>
+						<td bgcolor="<tmpl_var name="table_data_bg">" colspan="2" nowrap>
+							<div align="center">
+								<font face="Arial" size="2" color="red"><strong>
+									Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
+								</strong></font>
+							</div>
+						</td>
+					</tr>
+				</tmpl_if>
+			</table>
 		<form action="dispatcher.php" method="POST" onsubmit="ajax_updateState = 0;">
 			<div id="transferList"><tmpl_include name="inc.transferList.tmpl"></div>
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>

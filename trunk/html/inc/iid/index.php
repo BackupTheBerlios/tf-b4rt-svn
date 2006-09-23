@@ -497,6 +497,7 @@ if ($isAjaxUpdate) {
 // goodlookingstats-init
 if ($cfg["enable_goodlookstats"] != "0")
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
+$tmpl->setvar('enable_goodlookstats', $cfg['enable_goodlookstats']);
 
 $onLoad = "";
 
