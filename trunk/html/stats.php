@@ -67,6 +67,12 @@ $xferIds = array(
 );
 $xferIdCount = count($xferIds);
 
+// ids of user-details
+$userIds = array(
+	"state"               /* 0 */
+);
+$userIdCount = count($userIds);
+
 // defines
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
 define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
@@ -164,6 +170,7 @@ switch ($type) {
     	$transferList = getTransferListArray();
     	initServerStats();
     	initXferStats();
+    	initUserStats();
     	break;
     case "server":
     	$indent = "";
@@ -188,6 +195,10 @@ switch ($type) {
 		$transferID = trim($_REQUEST["i"]);
     	$indent = "";
     	$transferDetails = getTransferDetails($transferID, false);
+    	break;
+    case "users":
+    	$indent = "";
+    	initUserStats();
     	break;
 }
 

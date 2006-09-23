@@ -32,25 +32,25 @@ function sendUsage() {
 Params :
 
 "t" : type : optional, default is "'.$cfg['stats_default_type'].'".
-      "all" : server + xfer + transfers
-      "server" : server-stats
-      "xfer" : xfer-stats
-      "transfers" : transfer-stats
-      "transfer" : transfer-stats of a single transfer. needs extra-param "i" with the
-                   name of the transfer.
+      "all"        : server + xfer + transfers + users
+      "server"     : server-stats
+      "xfer"       : xfer-stats
+      "users"      : users-stats
+      "transfers"  : transfer-stats
+      "transfer"   : transfer-stats of a single transfer. needs extra-param "i" with the name of the transfer.
 "f" : format : optional, default is "'.$cfg['stats_default_format'].'".
-      "xml" : new xml-formats, see xml-schemas in dir "xml"
-      "rss" : rss 0.91
-      "txt" : csv-formatted text
+      "xml"        : new xml-formats, see xml-schemas in dir "xml"
+      "rss"        : rss 0.91
+      "txt"        : csv-formatted text
 "h" : header : optional, only used in txt-format, default is "'.$cfg['stats_default_header'].'".
-      "0" : send header
-      "1" : dont send header.
+      "0"          : send header
+      "1"          : dont send header.
 "a" : send as attachment : optional, default is "'.$cfg['stats_default_attach'].'".
-      "0" : dont send as attachment
-      "1" : send as attachment
+      "0"          : dont send as attachment
+      "1"          : send as attachment
 "c" : send compressed (deflate) : optional, default is "'.$cfg['stats_default_compress'].'".
-      "0" : dont send compressed
-      "1" : send compressed (deflate)
+      "0"          : dont send compressed
+      "1"          : send compressed (deflate)
 
 Examples :
 
@@ -106,12 +106,12 @@ function sendContent($content, $contentType, $fileName) {
 
 /**
  * This method sends stats as xml.
- * xml-schema defined in tfbstats.xsd/tfbserver.xsd/tfbxfer.xsd/tfbtransfers.xsd/tfbtransfer.xsd
+ * xml-schema defined in tfbstats.xsd/tfbserver.xsd/tfbxfer.xsd/tfbtransfers.xsd/tfbtransfer.xsd/tfbusers.xsd
  *
  * @param $type
  */
 function sendXML($type) {
-	global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $indent;
+	global $cfg, $indent, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $userList, $userIds, $userIdCount;
     // build content
 	$content = '<?xml version="1.0" encoding="utf-8"?>'."\n";
 	switch ($type) {
@@ -136,6 +136,19 @@ function sendXML($type) {
 			for ($i = 0; $i < $xferIdCount; $i++)
 				$content .= $indent.' <xferStat name="'.$xferIds[$i].'">'.$xferStats[$i].'</xferStat>'."\n";
 			$content .= $indent.'</xfer>'."\n";
+	}
+    // user-list
+	switch ($type) {
+	    case "all":
+	    case "users":
+		    $content .= $indent.'<users>'."\n";
+			foreach ($userList as $userAry) {
+				$content .= $indent.' <user name="'.$userAry[0].'">'."\n";
+				for ($i = 0; $i < $userIdCount; $i++)
+					$content .= $indent.'  <userProp name="'.$userIds[$i].'">'.$userAry[$i + 1].'</userProp>'."\n";
+				$content .= $indent.' </user>'."\n";
+			}
+		    $content .= $indent.'</users>'."\n";
 	}
     // transfer-list
 	switch ($type) {
@@ -175,7 +188,7 @@ function sendXML($type) {
  * @param $type
  */
 function sendRSS($type) {
-    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
+    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $userList, $userIds, $userIdCount;
     // build content
     $content = "<?xml version='1.0' ?>\n\n";
     $content .= "<rss version=\"0.91\">\n";
@@ -206,6 +219,27 @@ function sendRSS($type) {
 			for ($i = 0; $i < $xferIdCount; $i++) {
 				$content .= $xferLabels[$i].": ".$xferStats[$i];
 				if ($i < ($xferIdCount - 1))
+					$content .= " || ";
+			}
+		    $content .= "    </description>\n";
+		    $content .= "   </item>\n";
+	}
+    // user-list
+	switch ($type) {
+	    case "all":
+	    case "users":
+		    $content .= "   <item>\n";
+		    $content .= "    <title>Users</title>\n";
+		    $content .= "    <description>";
+			$userCt = count($userList);
+			for ($i = 0; $i < $userCt; $i++) {
+				$content .= $userList[$i][0].": ";
+				for ($j = 1; $j <= $userIdCount; $j++) {
+					$content .= $userList[$i][$j];
+					if ($j < ($userIdCount - 1))
+						$content .= ", ";
+				}
+				if ($i < ($userCt - 1))
 					$content .= " || ";
 			}
 		    $content .= "    </description>\n";
@@ -256,7 +290,7 @@ function sendRSS($type) {
  * @param $type
  */
 function sendTXT($type) {
-    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $header, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails;
+    global $cfg, $serverIdCount, $xferIdCount, $transferIdCount, $serverIds, $serverLabels, $xferIds, $xferLabels, $transferIds, $header, $transferList, $transferHeads, $serverStats, $xferStats, $transferID, $transferDetails, $userList, $userIds, $userIdCount;
     // build content
     $content = "";
 	// server stats
@@ -296,6 +330,30 @@ function sendTXT($type) {
 					$content .= $cfg['stats_txt_delim'];
 			}
 			$content .= "\n";
+	}
+    // user-list
+	switch ($type) {
+	    case "all":
+	    case "users":
+	    	if ($header == 1) {
+		    	$content .= "name" . $cfg['stats_txt_delim'];
+				for ($j = 0; $j < $userIdCount; $j++) {
+					$content .= $userIds[$j];
+					if ($j < ($userIdCount - 1))
+						$content .= $cfg['stats_txt_delim'];
+				}
+		    	$content .= "\n";
+	    	}
+			$userCt = count($userList);
+			for ($i = 0; $i < $userCt; $i++) {
+				$content .= $userList[$i][0].$cfg['stats_txt_delim'];
+				for ($j = 1; $j <= $userIdCount; $j++) {
+					$content .= $userList[$i][$j];
+					if ($j < ($userIdCount - 1))
+						$content .= $cfg['stats_txt_delim'];
+				}
+				$content .= "\n";
+			}
 	}
     // transfer-list
 	switch ($type) {
@@ -386,6 +444,28 @@ function initXferStats() {
 		'User : '.$cfg['_DAYXFER']
 	);
 	$xferStats = getXferStats();
+}
+
+/**
+ * init user stats
+ */
+function initUserStats() {
+	global $cfg, $userIds, $userList;
+	$userList = array();
+	$arUsers = GetUsers();
+	$userCount = count($arUsers);
+	for ($i = 0; $i < $userCount; $i++) {
+		$userAry = array();
+		// name
+		array_push($userAry, $arUsers[$i]);
+		// state
+		if (IsOnline($arUsers[$i]))
+			array_push($userAry, "online");
+		else
+			array_push($userAry, "offline");
+		// add user to list
+		array_push($userList, $userAry);
+	}
 }
 
 ?>
