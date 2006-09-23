@@ -308,21 +308,38 @@ function ajax_updateContent(statsServerStr, statsXferStr, usersStr, transferList
 	}
 	// users
 	if (usersEnabled == 1) {
-		alert(usersStr);
+		if (userList != usersStr) {
+			userList = usersStr;
+			if (usersHideOffline == 0) {
+				var allUsers = usersStr.split("+");
+				// online
+				var onlineUsers = allUsers[0].split(ajax_txtDelim);
+				var onlineUsersCount = onlineUsers.length;
+				var htmlString = "";
+				for (i = 0; i < onlineUsersCount; i++) {
+					htmlString += '<a href="index.php?iid=message&to_user='+onlineUsers[i]+'">'+onlineUsers[i]+'</a><br>';
+				}
+				document.getElementById("usersOnline").innerHTML = htmlString;
+				// offline
+				var offlineUsers = allUsers[1].split(ajax_txtDelim);
+				var offlineUsersCount = offlineUsers.length;
+				htmlString = "";
+				for (i = 0; i < offlineUsersCount; i++) {
+					htmlString += '<a href="index.php?iid=message&to_user='+offlineUsers[i]+'">'+offlineUsers[i]+'</a><br>';
+				}
+				document.getElementById("usersOffline").innerHTML = htmlString;
+			} else {
+				// online
+				var onlineUsers = usersStr.split(ajax_txtDelim);
+				var onlineUsersCount = onlineUsers.length;
+				var htmlString = "";
+				for (i = 0; i < onlineUsersCount; i++) {
+					htmlString += '<a href="index.php?iid=message&to_user='+onlineUsers[i]+'">'+onlineUsers[i]+'</a><br>';
+				}
+				document.getElementById("usersOnline").innerHTML = htmlString;
+			}
+		}
 	}
-	//
-	// usersEnabled
-	// usersHideOffline
-	//
-	// usersStr
-	//
-	// userList
-	//
-	// usersOnline
-	// usersOffline
-	//
-	// <a href="index.php?iid=message&to_user=USER">USER</a><br>
-	//
 	// transfer-list
 	if (transferListEnabled == 1) {
 		// update content
