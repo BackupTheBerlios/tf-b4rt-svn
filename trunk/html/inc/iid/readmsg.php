@@ -55,7 +55,7 @@ if (isset($_REQUEST['mid'])) {
 	$message = check_html($message, "a");
 	$message = str_replace("\n", "<br>", $message);
 	if (IsUser($from_user))
-		$tmpl->setvar('IsUser'. 1);
+		$tmpl->setvar('IsUser', 1);
 	$tmpl->setvar('from_user', $from_user);
 	$tmpl->setvar('message', $message);
 	$tmpl->setvar('mid', $mid);
