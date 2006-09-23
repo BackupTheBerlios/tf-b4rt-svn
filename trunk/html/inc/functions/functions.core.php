@@ -1415,16 +1415,6 @@ function getEngineLink($searchEngine) {
 }
 
 /**
- * rnatcasesort
- *
- * @param &$a
- */
-function rnatcasesort(&$a){
-   natcasesort($a);
-   $a = array_reverse($a, true);
-}
-
-/**
  * This method gets transfers in an array
  *
  * @param $sortOrder
@@ -1468,7 +1458,8 @@ function getTransferArray($sortOrder = '') {
 			natcasesort($arList);
 			break;
 		case 'nd': // sort alphabetically by name descending
-			rnatcasesort($arList);
+			natcasesort($arList);
+			$arList = array_reverse($arList, true);
 			break;
 	}
 	return $arList;
