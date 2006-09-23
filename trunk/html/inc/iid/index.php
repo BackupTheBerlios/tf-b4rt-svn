@@ -66,8 +66,6 @@ $tmpl->setvar('user', $cfg["user"]);
 // queue
 if ($queueActive)
 	$tmpl->setvar('queueActive', 1);
-else
-	$tmpl->setvar('queueActive', 0);
 
 // incoming-path
 switch ($cfg["enable_home_dirs"]) {
@@ -495,9 +493,10 @@ if ($isAjaxUpdate) {
 // =============================================================================
 
 // goodlookingstats-init
-if ($cfg["enable_goodlookstats"] != "0")
+if ($cfg["enable_goodlookstats"] != "0") {
+	$tmpl->setvar('enable_goodlookstats', 1);
 	$settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
-$tmpl->setvar('enable_goodlookstats', $cfg['enable_goodlookstats']);
+}
 
 $onLoad = "";
 
@@ -570,11 +569,10 @@ if (isset($_REQUEST['messages']))
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {
-	$arLinks = array();
 	$arLinks = GetLinks();
 	if ((isset($arLinks)) && (is_array($arLinks))) {
 		$linklist = array();
-		foreach($arLinks as $link) {
+		foreach ($arLinks as $link) {
 			array_push($linklist, array(
 				'link_url' => $link['url'],
 				'link_sitename' => $link['sitename'],
@@ -619,16 +617,14 @@ if ($cfg["ui_displayusers"] != "0") {
 	$arOnlineUsers = array();
 	$arOfflineUsers = array();
 	for($inx = 0; $inx < count($arUsers); $inx++) {
-		if(IsOnline($arUsers[$inx])) {
+		if (IsOnline($arUsers[$inx])) {
 			array_push($arOnlineUsers, array(
 				'user' => $arUsers[$inx],
-				'is_on' => 1,
 				)
 			);
 		} else {
 			array_push($arOfflineUsers, array(
 				'user' => $arUsers[$inx],
-				'is_off' => 1,
 				)
 			);
 		}
@@ -638,20 +634,22 @@ if ($cfg["ui_displayusers"] != "0") {
 }
 
 // xfer
-if (($cfg['enable_xfer'] == 1) && ($cfg['enable_public_xfer'] == 1))
-	$tmpl->setvar('enable_xfer', 1);
-if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
-	$tmpl->setvar('xfer_realtime', 1);
-	if ($cfg['xfer_day'])
-		$tmpl->setvar('xfer_day', getXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
-	if ($cfg['xfer_week'])
-		$tmpl->setvar('xfer_week', getXferBar($cfg['xfer_week'],$xfer_total['week']['total'],$cfg['_XFERTHRU'].' '.$cfg['week_start'].':'));
-	$monthStart = strtotime(date('Y-m-').$cfg['month_start']);
-	$monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
-	if ($cfg['xfer_month'])
-		$tmpl->setvar('xfer_month', getXferBar($cfg['xfer_month'],$xfer_total['month']['total'],$cfg['_XFERTHRU'].' '.$monthText.':'));
-	if ($cfg['xfer_total'])
-		$tmpl->setvar('xfer_total', getXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
+if ($cfg['enable_xfer'] == 1) {
+	if ($cfg['enable_public_xfer'] == 1)
+		$tmpl->setvar('enable_xfer', 1);
+	if ($cfg['xfer_realtime'] == 1) {
+		$tmpl->setvar('xfer_realtime', 1);
+		if ($cfg['xfer_day'])
+			$tmpl->setvar('xfer_day', getXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
+		if ($cfg['xfer_week'])
+			$tmpl->setvar('xfer_week', getXferBar($cfg['xfer_week'],$xfer_total['week']['total'],$cfg['_XFERTHRU'].' '.$cfg['week_start'].':'));
+		$monthStart = strtotime(date('Y-m-').$cfg['month_start']);
+		$monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
+		if ($cfg['xfer_month'])
+			$tmpl->setvar('xfer_month', getXferBar($cfg['xfer_month'],$xfer_total['month']['total'],$cfg['_XFERTHRU'].' '.$monthText.':'));
+		if ($cfg['xfer_total'])
+			$tmpl->setvar('xfer_total', getXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
+	}
 }
 
 // drivespace-warning
@@ -712,9 +710,10 @@ if (IsForceReadMsg())
 	$tmpl->setvar('IsForceReadMsg', 1);
 
 // Graphical Bandwidth Bar
-$tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
-if ($cfg["ui_displaybandwidthbars"] != 0)
+if ($cfg["ui_displaybandwidthbars"] != 0) {
+	$tmpl->setvar('ui_displaybandwidthbars', 1);
 	tmplSetBandwidthBars();
+}
 
 // wget
 switch ($cfg["enable_wget"]) {
@@ -724,12 +723,6 @@ switch ($cfg["enable_wget"]) {
 	case 1:
 		if ($cfg['isAdmin'])
 			$tmpl->setvar('enable_wget', 1);
-		else
-			$tmpl->setvar('enable_wget', 0);
-		break;
-	case 0:
-	default:
-		$tmpl->setvar('enable_wget', 0);
 }
 
 $tmpl->setvar('version', $cfg["version"]);
@@ -739,9 +732,9 @@ $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('enable_mrtg', $cfg["enable_mrtg"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
-$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
+$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);

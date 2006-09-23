@@ -146,18 +146,14 @@
 									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 									    <b><tmpl_var name="_ONLINE">:</b><br>
 									    <tmpl_loop name="arOnlineUsers">
-											<tmpl_if name="is_on">
-												<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-												<img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
-											</tmpl_if>
+											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
+											<img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 									    </tmpl_loop>
 	    								<tmpl_if name="hide_offline" value="0">
 	    									<b><tmpl_var name="_OFFLINE">:</b></br>
 	    									<tmpl_loop name="arOfflineUsers">
-												<tmpl_if name="is_off">
-	    											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-	    											<img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
-												</tmpl_if>
+	    										<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
+	    										<img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
 	    								    </tmpl_loop>
 	    								</tmpl_if>
 	    							</td>
