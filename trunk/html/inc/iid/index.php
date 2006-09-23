@@ -454,8 +454,10 @@ if (($boolCond) && (sizeof($arListTorrent) > 0))
 
 if ($isAjaxUpdate) {
 	$content = "";
+	$isFirst = true;
 	// server stats
 	if ($ajaxUpdateParams{0} == "1") {
+		$isFirst = false;
 		$serverStats = getServerStats();
 		$serverCount = count($serverStats);
 		for ($i = 0; $i < $serverCount; $i++) {
@@ -466,7 +468,10 @@ if ($isAjaxUpdate) {
 	}
 	// xfer
 	if ($ajaxUpdateParams{1} == "1") {
-		$content .= "|";
+		if ($isFirst)
+			$isFirst = false;
+		else
+			$content .= "|";
 		$xferStats = getXferStats();
 		$xferCount = count($xferStats);
 		for ($i = 0; $i < $xferCount; $i++) {
@@ -475,9 +480,44 @@ if ($isAjaxUpdate) {
 				$content .= $cfg['stats_txt_delim'];
 		}
 	}
-	// transfer list
+	// users
 	if ($ajaxUpdateParams{2} == "1") {
-		$content .= "|";
+		if ($isFirst)
+			$isFirst = false;
+		else
+			$content .= "|";
+		$arUsers = GetUsers();
+		$countUsers = count($arUsers);
+		$arOnlineUsers = array();
+		$arOfflineUsers = array();
+		for ($i = 0; $i < $countUsers; $i++) {
+			if (IsOnline($arUsers[$i]))
+				array_push($arOnlineUsers, $arUsers[$i]);
+			else
+				array_push($arOfflineUsers, $arUsers[$i]);
+		}
+		$countOnline = count($arOnlineUsers);
+		for ($i = 0; $i < $countOnline; $i++) {
+			$content .= $arOnlineUsers[$i];
+			if ($i < ($countOnline - 1))
+				$content .= $cfg['stats_txt_delim'];
+		}
+		if ($cfg["hide_offline"] == 0) {
+			$content .= "+";
+			$countOffline = count($arOfflineUsers);
+			for ($i = 0; $i < $countOffline; $i++) {
+				$content .= $arOfflineUsers[$i];
+				if ($i < ($countOffline - 1))
+					$content .= $cfg['stats_txt_delim'];
+			}
+		}
+	}
+	// transfer list
+	if ($ajaxUpdateParams{3} == "1") {
+		if ($isFirst)
+			$isFirst = false;
+		else
+			$content .= "|";
 		$content .= $tmpl->grab();
 	}
 	// send and out
@@ -532,6 +572,11 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 		$ajaxInit .= ",1";
 	else
 		$ajaxInit .= ",0";
+	if (($cfg['ui_displayusers'] == 1) && ($cfg['enable_index_ajax_update_users'] == 1))
+		$ajaxInit .= ",1";
+	else
+		$ajaxInit .= ",0";
+	$ajaxInit .= ",".$cfg["hide_offline"];
 	$ajaxInit .= ",".$cfg["enable_index_ajax_update_list"];
 	$ajaxInit .= ",".$cfg["enable_sorttable"];
 	$ajaxInit .= ",'".$cfg['drivespacebar']."'";

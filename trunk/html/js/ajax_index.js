@@ -28,8 +28,10 @@ var goodLookingStatsEnabled = 0;
 var goodLookingStatsSettings = null;
 var bottomStatsEnabled = 0;
 var queueActive = 0;
-var transferListEnabled = 0;
 var xferEnabled = 0;
+var usersEnabled = 0;
+var usersHideOffline = 0;
+var transferListEnabled = 0;
 var sortTableEnabled = 0;
 var driveSpaceBarStyle = "tf";
 var bandwidthBarsEnabled = 0;
@@ -55,13 +57,15 @@ var updateTimeLeft = 0;
  * @param bsEnabled
  * @param qActive
  * @param xEnabled
+ * @param uEnabled
+ * @param uHideOffline
  * @param tEnabled
  * @param sortEnabled
  * @param dsBarStyle
  * @param bwBarsEnabled
  * @param bwBarsStyle
  */
-function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, tEnabled, sortEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
+function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, uEnabled, uHideOffline, tEnabled, sortEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
 	titleChangeEnabled = tChangeEnabled;
@@ -70,6 +74,8 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 	bottomStatsEnabled = bsEnabled;
 	queueActive = qActive;
 	xferEnabled = xEnabled;
+	usersEnabled = uEnabled;
+	usersHideOffline = uHideOffline;
 	transferListEnabled = tEnabled;
 	sortTableEnabled = sortEnabled;
 	driveSpaceBarStyle = dsBarStyle;
@@ -82,6 +88,7 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 		ajax_updateParams += '1';
 	else
 		ajax_updateParams += '0';
+	ajax_updateParams += usersEnabled;
 	ajax_updateParams += transferListEnabled;
 	// gls
 	if (goodLookingStatsEnabled == 1)
@@ -152,20 +159,24 @@ function ajax_processXML(content) {
  */
 function ajax_processText(content) {
 	// content
+	/*
+	// usersEnabled
 	if ((bottomStatsEnabled == 1) && (xferEnabled == 1)) {
 		tempAry = content.split("|");
 		if (transferListEnabled == 1)
-			ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim), tempAry[2]);
+			ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim), null, tempAry[2]);
 		else
-			ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim), null);
+			ajax_updateContent(tempAry[0].split(ajax_txtDelim), tempAry[1].split(ajax_txtDelim), null, null);
 	} else {
 		if (transferListEnabled == 1) {
 			tempAry = content.split("|");
-			ajax_updateContent(tempAry[0].split(ajax_txtDelim), null, tempAry[1]);
+			ajax_updateContent(tempAry[0].split(ajax_txtDelim), null, null, tempAry[1]);
 		} else {
-			ajax_updateContent(content.split(ajax_txtDelim), null, null);
+			ajax_updateContent(content.split(ajax_txtDelim), null, null, null);
 		}
 	}
+	*/
+	alert(content);
 	// timer
 	updateTimeLeft = ajax_updateTimer / 1000;
 }
@@ -175,8 +186,10 @@ function ajax_processText(content) {
  *
  * @param statsServer
  * @param statsXfer
+ * @param users
+ * @param transferList
  */
-function ajax_updateContent(statsServer, statsXfer, transferList) {
+function ajax_updateContent(statsServer, statsXfer, users, transferList) {
 	// page-title
 	if (titleChangeEnabled == 1) {
 		newTitle = "";
@@ -282,6 +295,18 @@ function ajax_updateContent(statsServer, statsXfer, transferList) {
 			}
 		}
 	}
+	// users
+
+	//
+	// usersEnabled
+	// usersHideOffline
+	//
+	// usersOnline
+	// usersOffline
+	//
+	// <a href="index.php?iid=message&to_user=USER">USER</a><br>
+	//
+
 	// transfer-list
 	if (transferListEnabled == 1) {
 		// update content
