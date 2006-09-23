@@ -28,31 +28,35 @@
 			<tmpl_else>
 				<tr bgcolor="<tmpl_var name="bgLight">">
 			</tmpl_if>
-		  		<tmpl_if name="is_dir">
+		  		<tmpl_if name="is_dir" value="1">
 					<td>
 						<a href="index.php?iid=dir&dir=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/folder2.gif" width="16" height="16" title="<tmpl_var name="entry">" border="0" align="absmiddle"><tmpl_var name="entry"></a>
 					</td>
-					<tmpl_if name="enable_dirstats">
+					<tmpl_if name="enable_dirstats" value="1">
 						<td align="right"><tmpl_var name="size">B</td>
 						<td width="140"><tmpl_var name="date"></td>
 					</tmpl_if>
 					<td align="right" nowrap>
-						<tmpl_if name="enable_rename">
+						<tmpl_if name="enable_rename" value="1">
 							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/tf_standard_themes/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
-						<tmpl_if name="enable_move">
+						<tmpl_if name="enable_move" value="1">
 							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 						</tmpl_if>
-						<tmpl_if name="enable_sfvcheck">
+						<tmpl_if name="enable_sfvcheck" value="1">
 							<tmpl_if name="show_sfv" value="1">
 								<a href="javascript:CheckSFV('<tmpl_var name="sfvdir">','<tmpl_var name="sfvsfv">')"><img src="themes/tf_standard_themes/images/sfv_enabled.gif" border="0" width="16" height="16" alt="sfv check torrent"></a>
 							<tmpl_else>
 								<img src="themes/tf_standard_themes/images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">
 							</tmpl_if>
 						</tmpl_if>
-						<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
-						<a href="index.php?iid=dir&tar=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/tar_down.gif" width=16 height=16 title="Download as <tmpl_var name="package_type">" border=0></a>
-						<tmpl_if name="aclWrite">
+						<tmpl_if name="enable_maketorrent" value="1">
+							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
+						</tmpl_if>
+						<tmpl_if name="enable_file_download" value="1">
+							<a href="index.php?iid=dir&tar=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/tar_down.gif" width=16 height=16 title="Download as <tmpl_var name="package_type">" border=0></a>
+						</tmpl_if>
+						<tmpl_if name="aclWrite" value="1">
 							<a href="index.php?iid=dir&del=<tmpl_var name="urlencode1">" onclick="return confirm('<tmpl_var name="_ABOUTTODELETE"> : <tmpl_var name="addslashes1">')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<input type="checkbox" name="file[]" value="<tmpl_var name="urlencode1">">
 						<tmpl_else>
@@ -62,7 +66,7 @@
 					</td>
 				<tmpl_else>
 					<td>
-						<tmpl_if name="enable_file_download">
+						<tmpl_if name="enable_file_download" value="1">
 							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><img src="<tmpl_var name="image">" width="16" height="16" alt="<tmpl_var name="entry">" border="0"></a>
 							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><tmpl_var name="entry"></a>
 						<tmpl_else>
@@ -70,15 +74,15 @@
 							<tmpl_var name="entry">
 						</tmpl_if>
 					</td>
-					<tmpl_if name="enable_dirstats">
+					<tmpl_if name="enable_dirstats" value="1">
 						<td align="right"><tmpl_var name="size"> kB</td>
 						<td width="140"><tmpl_var name="date"></td>
 					</tmpl_if>
 					<td align="right" nowrap>
-						<tmpl_if name="enable_rename">
+						<tmpl_if name="enable_rename" value="1">
 							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/tf_standard_themes/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
-						<tmpl_if name="enable_move">
+						<tmpl_if name="enable_move" value="1">
 							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="show_rar" value="1">
@@ -86,13 +90,13 @@
 						<tmpl_elseif name="show_rar" value="2">
 							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')"><img src="themes/tf_standard_themes/images/zip.png" width=16 height=16 title="Unzip" border=0></a>
 						</tmpl_if>
-						<tmpl_if name="show_nfo">
+						<tmpl_if name="show_nfo" value="1">
 							<a href="index.php?iid=viewnfo&path=<tmpl_var name="urlencode4">"><img src="themes/tf_standard_themes/images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0></a>
 						</tmpl_if>
-						<tmpl_if name="enable_maketorrent">
+						<tmpl_if name="enable_maketorrent" value="1">
 							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
 						</tmpl_if>
-						<tmpl_if name="enable_file_download">
+						<tmpl_if name="enable_file_download" value="1">
 							<a href="index.php?iid=dir&down=<tmpl_var name="urlencode1">"><img src="themes/tf_standard_themes/images/download_owner.gif" width=16 height=16 title="Download" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="aclWrite" value="1">
@@ -118,7 +122,7 @@
 		</table>
 	</tmpl_if>
 </form>
-<tmpl_if name="enable_dirstats">
+<tmpl_if name="enable_dirstats" value="1">
 	<table cellpadding="0" width="740">
 		<tr bgcolor="#ececec">
 			<td align="center"><tmpl_var name="_TDDU"> <tmpl_var name="duTotal">B</td>
