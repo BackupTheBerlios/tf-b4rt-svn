@@ -613,10 +613,12 @@ if ($cfg["enable_goodlookstats"] != "0") {
 
 // users
 if ($cfg["ui_displayusers"] != "0") {
+	$tmpl->setvar('ui_displayusers',1);
+	$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 	$arUsers = GetUsers();
 	$arOnlineUsers = array();
 	$arOfflineUsers = array();
-	for($inx = 0; $inx < count($arUsers); $inx++) {
+	for ($inx = 0; $inx < count($arUsers); $inx++) {
 		if (IsOnline($arUsers[$inx])) {
 			array_push($arOnlineUsers, array(
 				'user' => $arUsers[$inx],
@@ -733,8 +735,6 @@ $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
 $tmpl->setvar('enable_mrtg', $cfg["enable_mrtg"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
-$tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
-$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);

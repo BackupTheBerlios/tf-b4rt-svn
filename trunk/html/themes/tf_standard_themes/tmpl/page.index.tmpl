@@ -127,7 +127,7 @@
 								</tmpl_if>
 						</table>
 					</td>
-					<td bgcolor="<tmpl_var name="table_data_bg">" width="310" valign="top">
+					<td bgcolor="<tmpl_var name="table_data_bg">" width="330" valign="top">
 						<table width="100%" cellpadding="1" border="0">
 							<tr>
 								<tmpl_if name="ui_displaylinks" value="1">
@@ -142,23 +142,39 @@
 										</tmpl_loop>
 									</td>
 								</tmpl_if>
-								<tmpl_if name="ui_displayusers" value="1">
+								<tmpl_if name="ui_displayusers">
 									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
-									    <b><tmpl_var name="_ONLINE">:</b><br>
-									    <tmpl_loop name="arOnlineUsers">
-											<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-											<img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
-									    </tmpl_loop>
-	    								<tmpl_if name="hide_offline" value="0">
-	    									<b><tmpl_var name="_OFFLINE">:</b></br>
-	    									<tmpl_loop name="arOfflineUsers">
-	    										<a href="index.php?iid=message&to_user=<tmpl_var name="user">">
-	    										<img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"><tmpl_var name="user"></a><br>
-	    								    </tmpl_loop>
-	    								</tmpl_if>
+										<table width="100%" cellpadding="0" border="0">
+											<tr>
+										    	<td><img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"></td>
+										    	<td><b><tmpl_var name="_ONLINE"> :</b></td>
+										    </tr>
+										    <tr>
+										    	<td>&nbsp;</td>
+										    	<td id="usersOnline">
+												    <tmpl_loop name="arOnlineUsers">
+														<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
+												    </tmpl_loop>
+											    </td>
+										    </tr>
+		    								<tmpl_if name="hide_offline" value="0">
+												<tr>
+			    									<td><img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"></td>
+			    									<td><b><tmpl_var name="_OFFLINE"> :</b></td>
+											    </tr>
+										    	<tr>
+											    	<td>&nbsp;</td>
+											    	<td id="usersOffline">
+				    									<tmpl_loop name="arOfflineUsers">
+				    										<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
+				    								    </tmpl_loop>
+			    								    </td>
+												</tr>
+		    								</tmpl_if>
+	    								</table>
 	    							</td>
 								</tmpl_if>
-								<tmpl_if name="enable_goodlookstats" value="1">
+								<tmpl_if name="enable_goodlookstats">
 									<td bgcolor="<tmpl_var name="table_data_bg">" valign="top">
 										<tmpl_if name="settingsHackStats1">
 											<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
