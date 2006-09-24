@@ -39,10 +39,10 @@ class RunningTransferWget extends RunningTransfer
             $count = count($arr);
             $this->processId = $arr[0];
             $this->args = "";
-            $this->transferowner = $arr[($count - 1)];
-            $this->filePath = substr($arr[($count - 3)], 0, strrpos($arr[($count - 3)], "/")+1);
-            $this->statFile = str_replace($this->filePath,'',$arr[($count - 4)]);
-            $this->transferFile = str_replace($this->filePath,'',$arr[($count - 4)]);
+            $this->transferowner = $arr[($count - 5)];
+            $this->filePath = substr($arr[($count - 7)], 0, strrpos($arr[($count - 7)], "/")+1);
+            $this->statFile = str_replace($this->filePath,'',$arr[($count - 8)]);
+            $this->transferFile = str_replace($this->filePath,'',$arr[($count - 8)]);
         }
     }
 
