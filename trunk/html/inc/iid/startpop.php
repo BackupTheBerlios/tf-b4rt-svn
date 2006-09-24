@@ -111,7 +111,7 @@ if ($with_profiles == 1) {
 		$tmpl->setvar('max_upload_rate', $settings["rate"]);
 		$tmpl->setvar('max_uploads', $settings["maxuploads"]);
 		$tmpl->setvar('max_download_rate', $settings["drate"]);
-		if ($cfg["runtime"] == "False")
+		if ($settings["runtime"] == "False")
 			$tmpl->setvar('selected', "selected");
 		else
 			$tmpl->setvar('selected', "");
