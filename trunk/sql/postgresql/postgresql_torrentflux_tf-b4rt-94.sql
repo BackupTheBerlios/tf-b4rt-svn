@@ -277,11 +277,7 @@ CREATE TABLE tf_torrents (
   hash VARCHAR(40) DEFAULT '' NOT NULL,
   PRIMARY KEY (torrent),
   CHECK (running>=0),
-  CHECK (rate>=0),
-  CHECK (drate>=0),
   CHECK (maxuploads>=0),
-  CHECK (superseeder>=0),
-  CHECK (sharekill>=0),
   CHECK (minport>=0),
   CHECK (maxport>=0),
   CHECK (maxcons>=0)
