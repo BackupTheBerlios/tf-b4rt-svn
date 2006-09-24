@@ -137,15 +137,10 @@ do {
 	// read header
 	while ($header) {
 		// read
-		$read = @fread($wget, 80);
-		// look for size-string
-		if (!(stristr($read, 'Length:') === false)) {
+		$read = @fread($wget, 1024);
+		if (preg_match("/.*Length:(.*) .*/i", $read, $reg)) {
 			$header = false;
-			$sizeRead = explode(':',trim($read));
-			$_SIZE = @trim(array_shift(explode(' ', trim($sizeRead[1]))));
-			$_SIZE = @str_replace(",", "", $_SIZE);
-			// wait for 0.25 seconds
-			usleep(250000);
+			$_SIZE = str_replace(',','', $reg[1]);
 		}
 	}
 	// read
@@ -201,6 +196,7 @@ function writeStatFile() {
 	$af->downtotal = $_COMPLETED;
 	$af->size = $_SIZE;
 	$af->WriteFile();
+	unset($af);
 }
 
 /**
@@ -211,13 +207,10 @@ function writeStatFile() {
 function processData($data){
 	global $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_INT_SPEED, $_ETA;
 	// completed
-	if(preg_match("/(\d*)K \./i", $data, $reg))
+	if (@preg_match("/(\d*)K \./i", $data, $reg))
 		$_COMPLETED = $reg[1] << 10;
-	// sanity-check
-	if ((!(isset($_SIZE))) || ($_SIZE <= 0))
-		$_SIZE = $_COMPLETED;
 	// percentage + speed
-	if(preg_match("/(\d*)%(\s*)(.*)\/s/i", $data, $reg)) {
+	if (@preg_match("/(\d*)%(\s*)(.*)\/s/i", $data, $reg)) {
 		// percentage
 		$_PERCENTAGE = $reg[1];
 		// speed
@@ -231,13 +224,13 @@ function processData($data){
 			$_INT_SPEED = $_INT_SPEED >> 10;
 		}
 		// ETA
-		if($_INT_SPEED > 0)
+		if ($_INT_SPEED > 0)
 			$_ETA = convertTime((($_SIZE - $_COMPLETED) >> 10) / $_INT_SPEED);
 		else
 			$_ETA = '-';
 	}
 	// download done
-	if (preg_match("/.*saved [.*/", $data)) {
+	if (@preg_match("/.*saved [.*/", $data)) {
 		$_STATUS = '0';
 		$_SPEED = "0.00 kB/s";
 		$_PERCENTAGE = 100;
