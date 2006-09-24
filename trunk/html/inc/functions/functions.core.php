@@ -1809,7 +1809,7 @@ function getTransferListArray() {
  *
  */
 function getServerStats() {
-	global $cfg;
+	global $cfg, $queueActive, $fluxdQmgr;
 	$serverStats = array();
 	// speedDown
     $speedDown = "n/a";
