@@ -25,6 +25,7 @@
 #   * DBI                      ( perl -MCPAN -e "install Bundle::DBI" )        #
 #   * DBD::mysql for MySQL     ( perl -MCPAN -e "install DBD::mysql" )         #
 #   * DBD::SQLite for SQLite   ( perl -MCPAN -e "install DBD::SQLite" )        #
+#   * DBD::Pg for PostgreSQL   ( perl -MCPAN -e "install DBD::Pg" )            #
 #                                                                              #
 ################################################################################
 package FluxDB;
@@ -384,6 +385,15 @@ sub loadDatabaseConfig {
 			$dbDSN .= "SQLite:dbname=".$dbHost;
 			$dbUser = "";
 			$dbPass = "";
+			last SWITCH;
+		};
+
+		# PostgreSQL
+		/^postgres7/i && do {
+			$dbDSN .= "Pg:dbname=".$dbName;
+			if ($dbPort > 0) {
+				$dbDSN .= ";port=".$dbPort;
+			}
 			last SWITCH;
 		};
 
