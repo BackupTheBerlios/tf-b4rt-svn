@@ -41,7 +41,7 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 } else {
 	$tmpl->setvar('is_start', 0);
-	$cmd = "mv \"".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."\" \"".$cfg["path"].$_POST['dir'].$_POST['fileTo']."\"";
+	$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileFrom'])." ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileTo']);
 	$cmd .= ' 2>&1';
 	$handle = popen($cmd, 'r' );
 	$gotError = -1;

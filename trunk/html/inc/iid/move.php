@@ -88,15 +88,15 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	// check dir
 	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
 		$tmpl->setvar('is_valid', 1);
-		 $targetDir = checkDirPathString($targetDir);
+		$targetDir = checkDirPathString($targetDir);
 		// move
-		$cmd = "mv \"".$cfg["path"].$_POST['file']."\" \"".$targetDir."\"";
+		$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['file'])." ".escapeshellarg($targetDir);
 		$cmd .= ' 2>&1';
-		$handle = popen($cmd, 'r' );
+		$handle = popen($cmd, 'r');
 		// get the output and print it.
 		$gotError = -1;
 		$buff= "";
-		while(!feof($handle)) {
+		while (!feof($handle)) {
 			$buff .= @fgets($handle,30);
 			$gotError = $gotError + 1;
 		}
