@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerparse.h 788 2006-08-16 19:21:09Z joshe $
+ * $Id: peerparse.h 931 2006-09-26 22:36:04Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -272,7 +272,7 @@ static inline int parsePiece( tr_torrent_t * tor, tr_peer_t * peer,
         return 1;
     }
 
-    tor->downloaded += r->length;
+    tor->downloadedCur += r->length;
 
     block = tr_block( r->index, r->begin );
     if( tr_cpBlockIsComplete( tor->completion, block ) )

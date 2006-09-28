@@ -1,7 +1,7 @@
 /******************************************************************************
- * $Id: bencode.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id$
  *
- * Copyright (c) 2005-2006 Transmission authors and contributors
+ * Copyright (c) 2006 Transmission authors and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,43 +22,36 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef TR_BENCODE_H
-#define TR_BENCODE_H 1
+#ifndef TR_XML_H
+#define TR_XML_H 1
 
-typedef struct benc_val_s
-{
-    char * begin;
-    char * end;
-#define TYPE_INT  1
-#define TYPE_STR  2
-#define TYPE_LIST 4
-#define TYPE_DICT 8
-    char   type;
-    union
-    {
-        int64_t i;
-        struct
-        {
-            int    i;
-            char * s;
-        } s;
-        struct
-        {
-            int                 alloc;
-            int                 count;
-            struct benc_val_s * vals;
-        } l;
-    } val;
-} benc_val_t;
+const char *
+tr_xmlFindTag( const char * begin, const char * end, const char * tag );
 
-#define tr_bencLoad(b,l,v,e) _tr_bencLoad((char*)(b),(l),(v),(char**)(e))
-int          _tr_bencLoad( char * buf, int len, benc_val_t * val,
-                           char ** end );
-void         tr_bencPrint( benc_val_t * val );
-void         tr_bencFree( benc_val_t * val );
-benc_val_t * tr_bencDictFind( benc_val_t * val, char * key );
-char *       tr_bencSaveMalloc( benc_val_t * val, int * len );
-int          tr_bencSave( benc_val_t * val, char ** buf,
-                          int * used, int * max );
+const char *
+tr_xmlTagName( const char * begin, const char * end, int * len );
+
+const char *
+tr_xmlTagContents( const char * begin, const char * end );
+
+#define tr_xmlFindTagContents( bb, ee, tt ) \
+    ( tr_xmlTagContents( tr_xmlFindTag( (bb), (ee), (tt) ), (ee) ) )
+
+int
+tr_xmlVerifyContents( const char * begin, const char * end, const char * data,
+                      int ignorecase );
+
+#define tr_xmlFindTagVerifyContents( bb, ee, tt, dd, ic ) \
+    ( tr_xmlVerifyContents( tr_xmlFindTagContents( (bb), (ee), (tt) ), \
+                            (ee), (dd), (ic) ) )
+
+const char *
+tr_xmlSkipTag( const char * begin, const char * end );
+
+char *
+tr_xmlDupContents( const char * begin, const char * end );
+
+#define tr_xmlDupTagContents( bb, ee, tt ) \
+  ( tr_xmlDupContents( tr_xmlFindTagContents( (bb), (ee), (tt) ), (ee) ) )
 
 #endif

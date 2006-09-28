@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fastresume.h 326 2006-06-11 04:32:41Z joshe $
+ * $Id: fastresume.h 931 2006-09-26 22:36:04Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -125,6 +125,7 @@ static void fastResumeSave( tr_io_t * io )
     int       version = 1;
     char    * path;
     uint8_t * buf;
+    uint64_t  total;
 
     buf = malloc( FR_PROGRESS_LEN( tor ) );
 
@@ -161,8 +162,10 @@ static void fastResumeSave( tr_io_t * io )
     free( buf );
 
     /* Write download and upload totals */
-    fastResumeWriteData( FR_ID_DOWNLOADED, &tor->downloaded, 8, 1, file );
-    fastResumeWriteData( FR_ID_UPLOADED, &tor->uploaded, 8, 1, file );
+    total = tor->downloadedCur + tor->downloadedPrev;
+    fastResumeWriteData( FR_ID_DOWNLOADED, &total, 8, 1, file );
+    total = tor->uploadedCur + tor->uploadedPrev;
+    fastResumeWriteData( FR_ID_UPLOADED, &total, 8, 1, file );
 
     fclose( file );
 
@@ -248,7 +251,7 @@ static int fastResumeLoadOld( tr_io_t * io, FILE * file )
     if( ftell( file ) != size )
     {
         tr_inf( "Wrong size for resume file (%d bytes, %d expected)",
-                ftell( file ), size );
+                (int)ftell( file ), size );
         fclose( file );
         return 1;
     }
@@ -333,7 +336,7 @@ static int fastResumeLoad( tr_io_t * io )
                 /* read download total */
                 if( 8 == len)
                 {
-                    if( 1 != fread( &tor->downloaded, 8, 1, file ) )
+                    if( 1 != fread( &tor->downloadedPrev, 8, 1, file ) )
                     {
                         fclose( file );
                         return 1;
@@ -346,7 +349,7 @@ static int fastResumeLoad( tr_io_t * io )
                 /* read upload total */
                 if( 8 == len)
                 {
-                    if( 1 != fread( &tor->uploaded, 8, 1, file ) )
+                    if( 1 != fread( &tor->uploadedPrev, 8, 1, file ) )
                     {
                         fclose( file );
                         return 1;

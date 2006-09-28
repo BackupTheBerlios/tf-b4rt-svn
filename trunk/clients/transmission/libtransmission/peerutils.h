@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerutils.h 261 2006-05-29 21:27:31Z titer $
+ * $Id: peerutils.h 920 2006-09-25 18:37:45Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -151,7 +151,7 @@ static int checkPeer( tr_torrent_t * tor, int i )
     if( ( peer->status & PEER_STATUS_IDLE ) &&
         !tr_fdSocketWillCreate( tor->fdlimit, 0 ) )
     {
-        peer->socket = tr_netOpen( peer->addr, peer->port );
+        peer->socket = tr_netOpenTCP( peer->addr, peer->port );
         if( peer->socket < 0 )
         {
             peer_dbg( "connection failed" );

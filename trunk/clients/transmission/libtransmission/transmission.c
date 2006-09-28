@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 815 2006-08-22 02:12:58Z joshe $
+ * $Id: transmission.c 931 2006-09-26 22:36:04Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -74,6 +74,8 @@ tr_handle_t * tr_init()
     h->download = tr_rcInit();
     h->fdlimit  = tr_fdInit();
     h->choking  = tr_chokingInit( h );
+    h->natpmp   = tr_natpmpInit( h->fdlimit );
+    h->upnp     = tr_upnpInit( h->fdlimit );
 
     h->bindPort = -1;
     h->bindSocket = -1;
@@ -104,7 +106,16 @@ void tr_setBindPort( tr_handle_t * h, int port )
     if( !tr_fdSocketWillCreate( h->fdlimit, 0 ) )
     {
         /* XXX should handle failure here in a better way */
-        sock = tr_netBind( port );
+        sock = tr_netBindTCP( port );
+        if( 0 > sock)
+        {
+            tr_fdSocketClosed( h->fdlimit, 0 );
+        }
+        else
+        {   
+            tr_inf( "Bound listening port %d", port );
+            listen( sock, 5 );
+        }
     }
 #else
     return;
@@ -132,7 +143,51 @@ void tr_setBindPort( tr_handle_t * h, int port )
 
     h->bindSocket = sock;
 
+    tr_natpmpForwardPort( h->natpmp, port );
+    tr_upnpForwardPort( h->upnp, port );
+
     tr_lockUnlock( &h->acceptLock );
+}
+
+void tr_natTraversalEnable( tr_handle_t * h )
+{
+    tr_natpmpStart( h->natpmp );
+    tr_upnpStart( h->upnp );
+}
+
+void tr_natTraversalDisable( tr_handle_t * h )
+{
+    tr_natpmpStop( h->natpmp );
+    tr_upnpStop( h->upnp );
+}
+
+int tr_natTraversalStatus( tr_handle_t * h )
+{
+    int statuses[] = {
+        TR_NAT_TRAVERSAL_MAPPED,
+        TR_NAT_TRAVERSAL_MAPPING,
+        TR_NAT_TRAVERSAL_UNMAPPING,
+        TR_NAT_TRAVERSAL_ERROR,
+        TR_NAT_TRAVERSAL_NOTFOUND,
+        TR_NAT_TRAVERSAL_DISABLED,
+        -1,
+    };
+    int natpmp, upnp, ii;
+
+    natpmp = tr_natpmpStatus( h->natpmp );
+    upnp = tr_upnpStatus( h->upnp );
+
+    for( ii = 0; 0 <= statuses[ii]; ii++ )
+    {
+        if( statuses[ii] == natpmp || statuses[ii] == upnp )
+        {
+            return statuses[ii];
+        }
+    }
+
+    assert( 0 );
+
+    return TR_NAT_TRAVERSAL_ERROR;
 }
 
 /***********************************************************************
@@ -337,6 +392,11 @@ void tr_torrentStart( tr_torrent_t * tor )
         torrentReallyStop( tor );
     }
 
+    tor->downloadedPrev += tor->downloadedCur;
+    tor->downloadedCur   = 0;
+    tor->uploadedPrev   += tor->uploadedCur;
+    tor->uploadedCur     = 0;
+
     tor->status  = TR_STATUS_CHECK;
     tor->tracker = tr_trackerInit( tor );
 
@@ -485,8 +545,8 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
             (float) inf->totalSize / s->rateDownload / 1024.0;
     }
 
-    s->downloaded = tor->downloaded;
-    s->uploaded   = tor->uploaded;
+    s->downloaded = tor->downloadedCur + tor->downloadedPrev;
+    s->uploaded   = tor->uploadedCur   + tor->uploadedPrev;
 
     tr_lockUnlock( &tor->lock );
 
@@ -521,6 +581,7 @@ tr_peer_stat_t * tr_torrentPeers( tr_torrent_t * tor, int * peerCount )
             peers[i].client = tr_clientForId(tr_peerId(peer));
             
             peers[i].isConnected = tr_peerIsConnected(peer);
+            peers[i].isIncoming = tr_peerIsIncoming(peer);
             peers[i].isDownloading = tr_peerIsDownloading(peer);
             peers[i].isUploading = tr_peerIsUploading(peer);
         }
@@ -629,6 +690,8 @@ void tr_torrentClose( tr_handle_t * h, tr_torrent_t * tor )
 void tr_close( tr_handle_t * h )
 {
     acceptStop( h );
+    tr_natpmpClose( h->natpmp );
+    tr_upnpClose( h->upnp );
     tr_chokingClose( h->choking );
     tr_fdClose( h->fdlimit );
     tr_rcClose( h->upload );
@@ -735,6 +798,10 @@ static void acceptLoop( void * _h )
     {
         date1 = tr_date();
 
+        /* do NAT-PMP and UPnP pulses here since there's nowhere better */
+        tr_natpmpPulse( h->natpmp );
+        tr_upnpPulse( h->upnp );
+
         /* Check for incoming connections */
         if( h->bindSocket > -1 &&
             h->acceptPeerCount < TR_MAX_PEER_COUNT &&
@@ -766,6 +833,12 @@ static void acceptLoop( void * _h )
                 for( tor = h->torrentList; tor; tor = tor->next )
                 {
                     tr_lockLock( &tor->lock );
+                    if( tor->status & TR_STATUS_INACTIVE )
+                    {
+                        tr_lockUnlock( &tor->lock );
+                        continue;
+                    }
+
                     if( 0 == memcmp( tor->info.hash, hash,
                                      SHA_DIGEST_LENGTH ) )
                     {

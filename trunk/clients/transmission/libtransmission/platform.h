@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.h 310 2006-06-09 19:53:35Z joshe $
+ * $Id: platform.h 920 2006-09-25 18:37:45Z joshe $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -59,5 +59,8 @@ static inline void tr_lockUnlock( tr_lock_t * l )
     pthread_mutex_unlock( l );
 #endif
 }
+
+int
+tr_getDefaultRoute( struct in_addr * addr );
 
 #endif

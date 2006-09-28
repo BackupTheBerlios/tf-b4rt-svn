@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.c 786 2006-08-15 21:38:36Z joshe $
+ * $Id: metainfo.c 920 2006-09-25 18:37:45Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -69,7 +69,7 @@ int tr_metainfoParse( tr_info_t * inf, const char * path,
     }
     if( sb.st_size > TORRENT_MAX_SIZE )
     {
-        tr_err( "Torrent file is too big (%d bytes)", sb.st_size );
+        tr_err( "Torrent file is too big (%d bytes)", (int)sb.st_size );
         return 1;
     }
 

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 774 2006-08-14 22:42:32Z joshe $
+ * $Id: peer.c 931 2006-09-26 22:36:04Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -47,6 +47,7 @@ struct tr_peer_s
 #define PEER_STATUS_CONNECTED  8 /* Got peer's handshake */
     int            status;
     int            socket;
+    char           incoming;
     uint64_t       date;
     uint64_t       keepAlive;
 
@@ -100,6 +101,8 @@ struct tr_peer_s
 };
 
 #define peer_dbg( a... ) __peer_dbg( peer, ## a )
+static void __peer_dbg( tr_peer_t * peer, char * msg, ... ) PRINTF( 2, 3 );
+
 static void __peer_dbg( tr_peer_t * peer, char * msg, ... )
 {
     char    string[256];
@@ -156,10 +159,11 @@ tr_peer_t * tr_peerInit( struct in_addr addr, in_port_t port, int s )
 {
     tr_peer_t * peer = peerInit();
 
-    peer->socket = s;
-    peer->addr   = addr;
-    peer->port   = port;
-    peer->status = PEER_STATUS_CONNECTING;
+    peer->socket   = s;
+    peer->addr     = addr;
+    peer->port     = port;
+    peer->status   = PEER_STATUS_CONNECTING;
+    peer->incoming = 1;
 
     return peer;
 }
@@ -427,9 +431,9 @@ writeBegin:
             tr_rcTransferred( tor->upload, ret );
             tr_rcTransferred( tor->globalUpload, ret );
 
-            tor->uploaded  += ret;
-            peer->outTotal += ret;
-            peer->outDate   = tr_date();
+            tor->uploadedCur += ret;
+            peer->outTotal   += ret;
+            peer->outDate     = tr_date();
 
             /* In case this block is done, you may have messages
                pending. Send them before we start the next block */
@@ -478,6 +482,16 @@ dropPeer:
 int tr_peerIsConnected( tr_peer_t * peer )
 {
     return peer->status & PEER_STATUS_CONNECTED;
+}
+
+/***********************************************************************
+ * tr_peerIsIncoming
+ ***********************************************************************
+ *
+ **********************************************************************/
+int tr_peerIsIncoming( tr_peer_t * peer )
+{
+    return peer->incoming;
 }
 
 /***********************************************************************

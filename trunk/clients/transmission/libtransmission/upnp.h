@@ -1,7 +1,7 @@
 /******************************************************************************
- * $Id: bencode.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id$
  *
- * Copyright (c) 2005-2006 Transmission authors and contributors
+ * Copyright (c) 2006 Transmission authors and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,43 +22,17 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-#ifndef TR_BENCODE_H
-#define TR_BENCODE_H 1
+#ifndef TR_UPNP_H
+#define TR_UPNP_H 1
 
-typedef struct benc_val_s
-{
-    char * begin;
-    char * end;
-#define TYPE_INT  1
-#define TYPE_STR  2
-#define TYPE_LIST 4
-#define TYPE_DICT 8
-    char   type;
-    union
-    {
-        int64_t i;
-        struct
-        {
-            int    i;
-            char * s;
-        } s;
-        struct
-        {
-            int                 alloc;
-            int                 count;
-            struct benc_val_s * vals;
-        } l;
-    } val;
-} benc_val_t;
+typedef struct tr_upnp_s tr_upnp_t; 
 
-#define tr_bencLoad(b,l,v,e) _tr_bencLoad((char*)(b),(l),(v),(char**)(e))
-int          _tr_bencLoad( char * buf, int len, benc_val_t * val,
-                           char ** end );
-void         tr_bencPrint( benc_val_t * val );
-void         tr_bencFree( benc_val_t * val );
-benc_val_t * tr_bencDictFind( benc_val_t * val, char * key );
-char *       tr_bencSaveMalloc( benc_val_t * val, int * len );
-int          tr_bencSave( benc_val_t * val, char ** buf,
-                          int * used, int * max );
+tr_upnp_t * tr_upnpInit( tr_fd_t * );
+void        tr_upnpStart( tr_upnp_t * );
+void        tr_upnpStop( tr_upnp_t * );
+int         tr_upnpStatus( tr_upnp_t * );
+void        tr_upnpForwardPort( tr_upnp_t *, int );
+void        tr_upnpPulse( tr_upnp_t * );
+void        tr_upnpClose( tr_upnp_t * );
 
 #endif

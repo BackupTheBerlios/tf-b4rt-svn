@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 723 2006-08-06 17:16:15Z titer $
+ * $Id: inout.c 920 2006-09-25 18:37:45Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -416,7 +416,7 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
     if( i >= inf->fileCount )
     {
         /* Should not happen */
-        tr_err( "readOrWriteBytes: offset out of range (%lld, %d, %d)",
+        tr_err( "readOrWriteBytes: offset out of range (%"PRIu64", %d, %d)",
                 offset, size, isWrite );
         goto fail;
     }
