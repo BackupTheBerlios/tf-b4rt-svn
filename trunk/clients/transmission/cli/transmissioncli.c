@@ -72,6 +72,7 @@
 "  -i, --info                     Print metainfo and exit\n" \
 "  -s, --scrape                   Print counts of seeders/leechers and exit\n" \
 "  -v, --verbose <int>            Verbose level (0 to 2, default = 0)\n" \
+"  -n, --nat-traversal            Attempt NAT traversal using NAT-PMP or UPnP IGD\n" \
 "  -p, --port <int>               Port we should listen on (default = %d)\n" \
 "  -u, --upload <int>             Maximum upload rate \n" \
 "                                 (std : -1 = no limit, default = 20)\n" \
@@ -97,6 +98,7 @@ static int uploadLimit = 20;
 static int downloadLimit = -1;
 static char * torrentPath = NULL;
 static volatile char mustDie = 0;
+static int natTraversal = 0;
 static int seedLimit = 0;
 static int displayInterval = 1;
 static char * finishCall = NULL;
@@ -107,12 +109,12 @@ static FILE * tf_stat = NULL;
 static char * tf_user = NULL;
 static char * tf_pid = NULL;
 
-/*
+/**
  * main
  */
 int main(int argc, char ** argv) {
 
-	int i, error;
+	int i, error, nat;
 	tr_handle_t * h;
 	tr_torrent_t * tor;
 	tr_stat_t * s;
@@ -122,7 +124,7 @@ int main(int argc, char ** argv) {
 
 	/* Get options */
 	if (parseCommandLine(argc, argv)) {
-		printf( "Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
+		printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
 			VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
 		return 1;
@@ -130,7 +132,7 @@ int main(int argc, char ** argv) {
 
 	/* show help */
 	if (showHelp) {
-		printf( "Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
+		printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
 			VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
 		return 0;
@@ -142,14 +144,14 @@ int main(int argc, char ** argv) {
 	} else if (verboseLevel > 9) {
 		verboseLevel = 9;
 	}
-	if (verboseLevel){
+	if (verboseLevel) {
 		static char env[11];
 		sprintf(env, "TR_DEBUG=%d", verboseLevel);
 		putenv(env);
 	}
 
 	// check port
-	if(bindPort < 1 || bindPort > 65535) {
+	if (bindPort < 1 || bindPort > 65535) {
 		printf("Invalid port '%d'\n", bindPort);
 		return 1;
 	}
@@ -158,58 +160,54 @@ int main(int argc, char ** argv) {
 	h = tr_init();
 
 	// Open and parse torrent file
-	if (!( tor = tr_torrentInit(h, torrentPath, 0, &error))) {
-		printf( "Failed opening torrent file `%s'\n", torrentPath );
+	if (!(tor = tr_torrentInit(h, torrentPath, 0, &error))) {
+		printf("Failed opening torrent file `%s'\n", torrentPath);
 		goto failed;
 	}
 
 	/* show info */
 	if (showInfo) {
-
 		// info
-		tr_info_t * info = tr_torrentInfo( tor );
-
+		tr_info_t * info = tr_torrentInfo(tor);
 		// Print torrent info (quite à la btshowmetainfo)
 		printf("hash:     ");
 		for (i = 0; i < SHA_DIGEST_LENGTH; i++) {
-			printf( "%02x", info->hash[i] );
+			printf("%02x", info->hash[i]);
 		}
-		printf( "\n" );
-		printf( "tracker:  %s:%d\n",
-			info->trackerAddress, info->trackerPort );
-		printf( "announce: %s\n", info->trackerAnnounce );
-		printf( "size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
+		printf("\n");
+		printf("tracker:  %s:%d\n", info->trackerAddress, info->trackerPort);
+		printf("announce: %s\n", info->trackerAnnounce);
+		printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
 			info->totalSize, info->totalSize / info->pieceSize,
-			info->pieceSize, info->totalSize % info->pieceSize );
-		printf( "file(s):\n" );
+			info->pieceSize, info->totalSize % info->pieceSize);
+		printf("file(s):\n");
 		for (i = 0; i < info->fileCount; i++) {
-			printf( " %s (%"PRIu64")\n", info->files[i].name,
-			info->files[i].length );
+			printf(" %s (%"PRIu64")\n", info->files[i].name,
+				info->files[i].length);
 		}
-
+		// cleanup
 		goto cleanup;
 	}
 
 	/* show scrape */
-	if(showScrape) {
+	if (showScrape) {
 		int seeders, leechers;
-
-		if( tr_torrentScrape( tor, &seeders, &leechers ) ) {
-			printf( "Scrape failed.\n" );
+		if (tr_torrentScrape(tor, &seeders, &leechers)) {
+			printf("Scrape failed.\n");
 		} else {
-			printf( "%d seeder(s), %d leecher(s).\n", seeders, leechers );
+			printf("%d seeder(s), %d leecher(s).\n", seeders, leechers);
 		}
-
+		// cleanup
 		goto cleanup;
 	}
 
-	// sig
-	signal( SIGINT, sigHandler );
+	// signal
+	signal(SIGINT, sigHandler);
 
 	// If running torrentflux, Download limit = 0 means no limit
 	if (tf_stat_file != NULL) { /* tfCLI */
 		// up
-		switch(uploadLimit) {
+		switch (uploadLimit) {
 			case 0:
 				uploadLimit = -1;
 				break;
@@ -218,7 +216,7 @@ int main(int argc, char ** argv) {
 				break;
 		}
 		// down
-		switch(downloadLimit) {
+		switch (downloadLimit) {
 			case 0:
 				downloadLimit = -1;
 				break;
@@ -234,7 +232,7 @@ int main(int argc, char ** argv) {
 		pid_file = fopen(tf_pid, "w+");
 		if (pid_file != NULL) {
 			fprintf(pid_file, "%d", getpid());
-			fclose (pid_file);
+			fclose(pid_file);
 		}
 	}
 
@@ -242,11 +240,22 @@ int main(int argc, char ** argv) {
 	tr_setBindPort(h, bindPort);
 	tr_setUploadLimit(h, uploadLimit);
 	tr_setDownloadLimit(h, downloadLimit);
+
+	// nat-traversal
+	if (natTraversal) {
+		tr_natTraversalEnable(h);
+	} else {
+		tr_natTraversalDisable(h);
+	}
+
+	// set folder
 	tr_torrentSetFolder(tor, ".");
+
+	// start the torrent
 	tr_torrentStart(tor);
 
 	/* main-loop */
-	while( !mustDie ) {
+	while (!mustDie) {
 
 		// status-string
 		char string[80];
@@ -256,17 +265,17 @@ int main(int argc, char ** argv) {
 		int stat_state;
 
 		// sleep
-		sleep( displayInterval );
+		sleep(displayInterval);
 
 		// Check if we must stop
 		if (tf_stat_file != NULL) { /* tfCLI */
 			tf_stat = fopen(tf_stat_file, "r");
 			if (tf_stat != NULL) {
-				/* Get state */
-				stat_state=fgetc(tf_stat);
-				/* Close the file */
+				// Get state
+				stat_state = fgetc(tf_stat);
+				// Close the file
 				fclose(tf_stat);
-				/* Torrentflux asked to shutdown the torrent */
+				// Torrentflux asked to shutdown the torrent
 				if (stat_state == '0') {
 					mustDie = 1;
 				}
@@ -274,7 +283,7 @@ int main(int argc, char ** argv) {
 		}
 
 		// torrent-stat
-		s = tr_torrentStat( tor );
+		s = tr_torrentStat(tor);
 
 		if (s->status & TR_STATUS_CHECK) { /* --- CHECK --- */
 
@@ -287,7 +296,7 @@ int main(int argc, char ** argv) {
 			} else { /* tfCLI */
 
 				// write tf-stat-file
-				tr_info_t * info = tr_torrentInfo( tor );
+				tr_info_t * info = tr_torrentInfo(tor);
 				tf_stat = fopen(tf_stat_file, "w+");
 				if (tf_stat != NULL) {
 					fprintf(tf_stat, "%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
@@ -314,19 +323,19 @@ int main(int argc, char ** argv) {
 			if (tf_stat_file == NULL) { /* standalone */
 
 				// status-string
-				chars = snprintf( string, 80,
+				chars = snprintf(string, 80,
 					"Progress: %.2f %%, %d peer%s, dl from %d (%.2f KB/s), "
 					"ul to %d (%.2f KB/s)", 100.0 * s->progress,
 					s->peersTotal, ( s->peersTotal == 1 ) ? "" : "s",
 					s->peersUploading, s->rateDownload,
-					s->peersDownloading, s->rateUpload );
+					s->peersDownloading, s->rateUpload);
 
 			} else { /* tfCLI */
 
 				// sharing
 				if (s->downloaded != 0) {
 					tf_sharing =
-					((double)(s->uploaded) / (double)(s->downloaded))*100;
+						((double)(s->uploaded) / (double)(s->downloaded)) * 100;
 				}
 
 				// seeders + leechers
@@ -343,26 +352,27 @@ int main(int argc, char ** argv) {
 
 				// eta
 				if (s->eta != -1) {
-					if ((s->eta/(24*60*60))!=0) {
-						sprintf (tf_string,"%d:%02d:%02d:%02d",
-							s->eta/(24*60*60),
-							((s->eta)%(24*60*60))/(60*60),
-							((s->eta)%(60*60)/60),
-							s->eta%60);
-					} else if ((s->eta/(60*60)) != 0) {
-						sprintf (tf_string, "%d:%02d:%02d",
-							(s->eta)/(60*60),
-							((s->eta)%(60*60)/60),
-							s->eta%60);
+					if ((s->eta / (24 * 60 * 60)) != 0) {
+						sprintf(tf_string,"%d:%02d:%02d:%02d",
+							s->eta / (24 * 60 * 60),
+							((s->eta) % (24 * 60 * 60)) / (60 * 60),
+							((s->eta) % (60 * 60) / 60),
+							s->eta % 60);
+					} else if ((s->eta / (60 * 60)) != 0) {
+						sprintf(tf_string, "%d:%02d:%02d",
+							(s->eta) / (60 * 60),
+							((s->eta) % (60 * 60) / 60),
+							s->eta % 60);
 					} else {
-						sprintf (tf_string,"%d:%02d",(s->eta)/60,s->eta%60);
+						sprintf(tf_string, "%d:%02d",
+							(s->eta) / 60, s->eta % 60);
 					}
 				} else {
 					// &#8734 = infinite symbol in html
-					sprintf (tf_string,"&#8734");
+					sprintf(tf_string,"&#8734");
 				}
 				if ((s->seeders == -1) && (s->peersTotal == 0)) {
-					sprintf (tf_string,"Connecting to Peers");
+					sprintf(tf_string,"Connecting to Peers");
 				}
 
 				// write tf-stat-file
@@ -390,25 +400,25 @@ int main(int argc, char ** argv) {
 		} else if (s->status & TR_STATUS_SEED) { /* --- SEED --- */
 
 			// info
-			tr_info_t * info = tr_torrentInfo( tor );
+			tr_info_t * info = tr_torrentInfo(tor);
 
 			if (tf_stat_file == NULL) { /* standalone */
 
 				// status-string
-				chars = snprintf( string, 80,
+				chars = snprintf(string, 80,
 					"Seeding, uploading to %d of %d peer(s), %.2f KB/s",
 					s->peersDownloading, s->peersTotal,
-					s->rateUpload );
+					s->rateUpload);
 
 			} else { /* tfCLI */
 
 				// sharing
 				if (s->downloaded != 0) {
 					tf_sharing =
-						((double)(s->uploaded) / (double)(s->downloaded))*100;
+						((double)(s->uploaded) / (double)(s->downloaded)) * 100;
 				} else {
 					tf_sharing =
-						((double)(s->uploaded) / (double)(info->totalSize))*100;
+						((double)(s->uploaded) / (double)(info->totalSize)) * 100;
 				}
 
 				// If we reached the seeding limit, we have to quit transmission
@@ -482,32 +492,32 @@ int main(int argc, char ** argv) {
 		}
 
 		// finishCall
-		if( tr_getFinished( tor ) ) {
+		if (tr_getFinished(tor)) {
 			result = system(finishCall);
 		}
 
-    } /* main-loop */
+	} /* main-loop */
 
 	// mark torrent as stopped in tf-stat-file
 	if (tf_stat_file != NULL) { /* tfCLI */
 
 		// info
-		tr_info_t * info = tr_torrentInfo( tor );
+		tr_info_t * info = tr_torrentInfo(tor);
 
 		// sharing
 		if (s->downloaded != 0) {
 			tf_sharing =
-				((double)(s->uploaded) / (double)(s->downloaded))*100;
+				((double)(s->uploaded) / (double)(s->downloaded)) * 100;
 		} else {
 			tf_sharing =
-				((double)(s->uploaded) / (double)(info->totalSize))*100;
+				((double)(s->uploaded) / (double)(info->totalSize)) * 100;
 		}
 
 		// write tf-stat-file
 		tf_stat = fopen(tf_stat_file, "w+");
 		if (tf_stat != NULL) {
 			float progress;
-			if( s->status & TR_STATUS_SEED ) {
+			if (s->status & TR_STATUS_SEED) {
 				sprintf(tf_string,"Download Succeeded!");
 				progress = 100;
 			} else {
@@ -534,7 +544,7 @@ int main(int argc, char ** argv) {
 
 	// stderr
 	if (tf_stat_file == NULL) { /* standalone */
-		fprintf(stderr, "\n" );
+		fprintf(stderr, "\n");
 	}
 
 	// Remove PID file if created !
@@ -542,27 +552,31 @@ int main(int argc, char ** argv) {
 		remove(tf_pid);
 	}
 
-	// Try for 5 seconds to notice the tracker that we are leaving
+	// Try for 5 seconds to notify the tracker that we are leaving
+	// and to delete any port mappings for nat traversal
 	tr_torrentStop(tor);
-	for( i = 0; i < 10; i++ ) {
+	tr_natTraversalDisable(h);
+	for (i = 0; i < 10; i++) {
 		s = tr_torrentStat(tor);
-		if(s->status & TR_STATUS_PAUSE) {
-			// The 'stopped' message was sent
+		nat = tr_natTraversalStatus(h);
+		if (s->status & TR_STATUS_PAUSE && TR_NAT_TRAVERSAL_DISABLED == nat) {
+			// The 'stopped' tracker message was sent
+			// and port mappings were deleted
 			break;
 		}
 		usleep(500000);
 	}
 
 cleanup:
-    tr_torrentClose(h, tor);
+	tr_torrentClose(h, tor);
 
 failed:
-    tr_close(h);
+	tr_close(h);
 
-    return 0;
+	return 0;
 }
 
-/*
+/**
  * parseCommandLine
  */
 static int parseCommandLine(int argc, char ** argv) {
@@ -577,6 +591,7 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { "download",           required_argument, NULL, 'd' },
 		  { "seedlimit",          required_argument, NULL, 'c' },
 		  { "finish",             required_argument, NULL, 'f' },
+		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { "display_interval",   required_argument, NULL, 'e' },
 		  { "torrentflux",        required_argument, NULL, 't' },
 		  { "torrentflux-owner",  required_argument, NULL, 'w' },
@@ -584,7 +599,7 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:c:f:e:t:w:z:", long_options, &optind);
+			"hisv:p:u:d:c:f:n:e:t:w:z", long_options, &optind);
 		if (c < 0) {
 			break;
 		}
@@ -616,6 +631,9 @@ static int parseCommandLine(int argc, char ** argv) {
 			case 'f':
 				finishCall = optarg;
 				break;
+			case 'n':
+				natTraversal = 1;
+				break;
 			case 'e':
 				displayInterval = atoi(optarg);
 				break;
@@ -639,7 +657,7 @@ static int parseCommandLine(int argc, char ** argv) {
 	return 0;
 }
 
-/*
+/**
  * sigHandler
  */
 static void sigHandler(int signal) {
