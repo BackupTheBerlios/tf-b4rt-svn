@@ -81,7 +81,7 @@ class Fluxd
             return true;
         } else {
         	$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-            $startCommand = "cd ".$fluxDocRoot."/bin ; HOME=".$this->cfg["path"].";";
+            $startCommand = "cd ".$fluxDocRoot." ; HOME=".$this->cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $this->cfg["perlCmd"];
             $startCommand .= " -I ".$fluxDocRoot."/bin/fluxd";
