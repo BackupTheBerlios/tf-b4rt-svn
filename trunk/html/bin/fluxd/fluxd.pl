@@ -163,8 +163,7 @@ while ( $loop ) {
 		}
 	}
 
-	# TODO : sleep-code                                                         /* TODO */
-	#sleep 1; # DEBUG
+	# sleep
 	select undef, undef, undef, 0.1;
 }
 
@@ -342,7 +341,7 @@ sub daemonize {
 	setsid				or die "Can't start a new session: $!";
 
 	# log
-	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$.")\n"; # DEBUG
+	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".`pwd`.")\n";
 
 	# write out pid-file
 	writePidFile($$);
@@ -767,37 +766,37 @@ sub fluxcli {
 	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
 		if ( (defined $Arg1) || (defined $Arg2) ) {
 			$return = printUsage();
-			next;
+			return $return;
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command;
+			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command;
 			$return = `$shellCmd`;
-			next;
+			return $return;
 		}
 	}
 	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
 		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
 			$return = printUsage();
-			next;
+			return $return;
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
 			$return = `$shellCmd`;
-			next;
+			return $return;
 		}
 	}
-	if ($Command =~/^inject/) {
+	if ($Command =~/^inject|^watch/) {
 		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
 			$return = printUsage();
-			next;
+			return $return;
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " ".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
+			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
 			$return = `$shellCmd`;
-			next;
+			return $return;
 		}
 	}
-	return $return;
+
 }
 
 #------------------------------------------------------------------------------#
@@ -1333,6 +1332,39 @@ sub debug {
 		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_port\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_port")."\"\n";
 		# destroy
 		print "destroying \$fluxDB\n";
+		$fluxDB->destroy();
+		exit;
+	} elsif	($debug =~ /fluxcli/) { # fluxcli-debug
+		my $dbcfg = shift @ARGV;
+		if (!(defined $dbcfg)) {
+			print "debug fluxcli is missing an argument : path to docroot\n";
+			exit;
+		}
+		if (!((substr $dbcfg, -1) eq "/")) {
+			$dbcfg .= "/";
+		}
+		$dbcfg .= "inc/config/".$FILE_DBCONF;
+		print "debugging fluxcli...\n";
+		# require
+		require FluxDB;
+		# create instance
+		$fluxDB = FluxDB->new();
+		if ($fluxDB->getState() == -1) {
+			print " error : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# initialize
+		$fluxDB->initialize($dbcfg);
+		if ($fluxDB->getState() < 1) {
+			print " hmm : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+		# init paths
+		initPaths(FluxDB->getFluxConfig("path"));
+		# test fluxcli-command "torrents"
+		my $return = fluxcli("torrents");
+		print $return;
+		# destroy
 		$fluxDB->destroy();
 		exit;
 	}
