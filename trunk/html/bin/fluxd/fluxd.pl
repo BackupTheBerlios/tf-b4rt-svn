@@ -26,7 +26,6 @@ use strict;
 use warnings;
 use IO::Socket::UNIX;
 use IO::Select;
-use Symbol qw(delete_package);
 use POSIX qw(setsid);
 use FluxdCommon;
 ################################################################################
@@ -431,7 +430,7 @@ sub loadServiceModules {
 	# Qmgr
 	if (FluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(exists &Qmgr::new)) {
+		if (!(defined $qmgr)) {
 			if (eval "require Qmgr") {
 				eval {
 					$qmgr = Qmgr->new();
@@ -453,10 +452,9 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ((exists &Qmgr::new) && (defined $qmgr)){
+		if (defined $qmgr) {
 			eval {
 				$qmgr->destroy();
-				delete_package('Qmgr');
 				undef $qmgr;
 			};
 			if ($@) {
@@ -471,7 +469,7 @@ sub loadServiceModules {
 	# Fluxinet
 	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(exists &Fluxinet::new)) {
+		if (!(defined $fluxinet)) {
 			if (eval "require Fluxinet") {
 				eval {
 					$fluxinet = Fluxinet->new();
@@ -493,10 +491,9 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ((exists &Fluxinet::new) && (defined $fluxinet)){
+		if (defined $fluxinet) {
 			eval {
 				$fluxinet->destroy();
-				delete_package('Fluxinet');
 				undef $fluxinet;
 			};
 			if ($@) {
@@ -511,7 +508,7 @@ sub loadServiceModules {
 	# Watch
 	if (FluxDB->getFluxConfig("fluxd_Watch_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(exists &Watch::new)) {
+		if (!(defined $watch)) {
 			if (eval "require Watch") {
 				eval {
 					$watch = Watch->new();
@@ -533,10 +530,9 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ((exists &Watch::new) && (defined $watch)) {
+		if (defined $watch) {
 			eval {
 				$watch->destroy();
-				delete_package('Watch');
 				undef $watch;
 			};
 			if ($@) {
@@ -551,7 +547,7 @@ sub loadServiceModules {
 	# Clientmaint
 	if (FluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(exists &Clientmaint::new)) {
+		if (!(defined $clientmaint)) {
 			if (eval "require Clientmaint") {
 				eval {
 					$clientmaint = Clientmaint->new();
@@ -573,10 +569,9 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ((exists &Clientmaint::new) && (defined $clientmaint)){
+		if (defined $clientmaint) {
 			eval {
 				$clientmaint->destroy();
-				delete_package('Clientmaint');
 				undef $clientmaint;
 			};
 			if ($@) {
@@ -591,7 +586,7 @@ sub loadServiceModules {
 	# Trigger
 	if (FluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(exists &Trigger::new)) {
+		if (!(defined $trigger)) {
 			if (eval "require Trigger") {
 				eval {
 					$trigger = Trigger->new();
@@ -613,10 +608,9 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ((exists &Trigger::new) && (defined $trigger)) {
+		if (defined $trigger) {
 			eval {
 				$trigger->destroy;
-				delete_package('Trigger');
 				undef $trigger;
 			};
 			if ($@) {
@@ -733,7 +727,7 @@ sub processRequest {
 		};
 
 		# fluxcli.php calls
-		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat/ && do {
+		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat|^watch/ && do {
 			$return = fluxcli($_, shift, shift);
 			last SWITCH;
 		};
@@ -1219,11 +1213,8 @@ sub check {
 				print "error initializing service-module Qmgr :\n";
 				print $qmgr->getMessage()."\n";
 			}
-			if (exists &Qmgr::new) {
-				$qmgr->destroy();
-				delete_package('Qmgr');
-				undef $qmgr;
-			}
+			$qmgr->destroy();
+			undef $qmgr;
 		};
 		if ($@) {
 			print "\n $@\n";
@@ -1244,11 +1235,8 @@ sub check {
 				print "error initializing service-module Fluxinet :\n";
 				print $fluxinet->getMessage()."\n";
 			}
-			if (exists &Fluxinet::new) {
-				$fluxinet->destroy();
-				delete_package('Fluxinet');
-				undef $fluxinet;
-			}
+			$fluxinet->destroy();
+			undef $fluxinet;
 		};
 		if ($@) {
 			print "\n $@\n";
@@ -1269,11 +1257,8 @@ sub check {
 				print "error initializing service-module Watch :\n";
 				print $watch->getMessage()."\n";
 			}
-			if (exists &Watch::new) {
-				$watch->destroy();
-				delete_package('Watch');
-				undef $watch;
-			}
+			$watch->destroy();
+			undef $watch;
 		};
 		if ($@) {
 			print "\n $@\n";
@@ -1294,11 +1279,8 @@ sub check {
 				print "error initializing service-module Clientmaint :\n";
 				print $clientmaint->getMessage()."\n";
 			}
-			if (exists &Clientmaint::new) {
-				$clientmaint->destroy();
-				delete_package('Clientmaint');
-				undef $clientmaint;
-			}
+			$clientmaint->destroy();
+			undef $clientmaint;
 		};
 		if ($@) {
 			print "\n $@\n";
@@ -1319,11 +1301,8 @@ sub check {
 				print "error initializing service-module Trigger :\n";
 				print $trigger->getMessage()."\n";
 			}
-			if (exists &Trigger::new) {
-				$trigger->destroy();
-				delete_package('Trigger');
-				undef $trigger;
-			}
+			$trigger->destroy();
+			undef $trigger;
 		};
 		if ($@) {
 			print "\n $@\n";
