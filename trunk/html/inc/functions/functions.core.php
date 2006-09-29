@@ -303,53 +303,32 @@ function getCredentials() {
  */
 function isAuthenticated() {
 	global $cfg, $db;
+	// hold time
 	$create_time = time();
-	if(!isset($_SESSION['user'])) {
+	// user not set
+	if (!isset($_SESSION['user']))
 		return 0;
-	}
-	if ($_SESSION['user'] == md5($cfg["pagetitle"])) {
-		// user changed password and needs to login again
+	// user changed password and needs to login again
+	if ($_SESSION['user'] == md5($cfg["pagetitle"]))
 		return 0;
-	}
-	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
+	// user exists ?
+	$sql = "SELECT uid, hits FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 	$recordset = $db->Execute($sql);
 	showError($db, $sql);
-	if($recordset->RecordCount() != 1) {
+	if ($recordset->RecordCount() != 1) {
 		AuditAction($cfg["constants"]["error"], "FAILED AUTH: ".$cfg["user"]);
 		@session_destroy();
 		return 0;
 	}
-	list($uid, $hits, $cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
+	list ($uid, $hits) = $recordset->FetchRow();
 	// hold the uid in cfg-array
 	$cfg["uid"] = $uid;
-	// Check for valid theme
-	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) {
-		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
-		$cfg["theme"] = $cfg["default_theme"];
-	}
-	// Check for valid language file
-	if(!ereg('^[^./][^/]*$', $cfg["language_file"])) {
-		AuditAction($cfg["constants"]["error"], "LANGUAGE VARIABLE CHANGE ATTEMPT: ".$cfg["language_file"]." from ".$cfg["user"]);
-		$cfg["language_file"] = $cfg["default_language"];
-	}
-	if (!is_dir("themes/".$cfg["theme"]))
-		$cfg["theme"] = $cfg["default_theme"];
-	// Check for valid language file
-	if (!is_file("inc/language/".$cfg["language_file"]))
-		$cfg["language_file"] = $cfg["default_language"];
+	// increment hit-counter
 	$hits++;
-	$sql = 'select * from tf_users where uid = '.$uid;
-	$rs = $db->Execute($sql);
-	showError($db, $sql);
-	$rec = array(
-					'hits' => $hits,
-					'last_visit' => $create_time,
-					'theme' => $cfg['theme'],
-					'language_file' => $cfg['language_file']
-				);
-	$sql = $db->GetUpdateSQL($rs, $rec);
-	$result = $db->Execute($sql);
+	$sql = "UPDATE tf_users SET hits = '".$hits."', last_visit = '".$create_time."' WHERE uid = '".$uid."'";
+	$db->Execute($sql);
 	showError($db,$sql);
+	// return auth suc.
 	return 1;
 }
 

@@ -90,6 +90,28 @@ if (!(isset($_SESSION['cache'][$currentUser]))) {
 	// set admin-var
 	$cfg['isAdmin'] = IsAdmin();
 
+	// load some settings from users-table
+	$sql = "SELECT hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
+	$recordset = $db->Execute($sql);
+	showError($db, $sql);
+	list ($cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
+
+	// Check for valid theme
+	if (!ereg('^[^./][^/]*$', $cfg["theme"]) && strpos($cfg["theme"], "tf_standard_themes")) {
+		AuditAction($cfg["constants"]["error"], "THEME VARIABLE CHANGE ATTEMPT: ".$cfg["theme"]." from ".$cfg["user"]);
+		$cfg["theme"] = $cfg["default_theme"];
+	}
+	if (!is_dir("themes/".$cfg["theme"]))
+		$cfg["theme"] = $cfg["default_theme"];
+
+	// Check for valid language file
+	if (!ereg('^[^./][^/]*$', $cfg["language_file"])) {
+		AuditAction($cfg["constants"]["error"], "LANGUAGE VARIABLE CHANGE ATTEMPT: ".$cfg["language_file"]." from ".$cfg["user"]);
+		$cfg["language_file"] = $cfg["default_language"];
+	}
+	if (!is_file("inc/language/".$cfg["language_file"]))
+		$cfg["language_file"] = $cfg["default_language"];
+
 	// load per user settings
 	loadUserSettingsToConfig($cfg["uid"]);
 
