@@ -556,6 +556,7 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$ajaxInit = "ajax_initialize(";
 	$ajaxInit .= (((int) $cfg['index_ajax_update']) * 1000);
 	$ajaxInit .= ",'".$cfg['stats_txt_delim']."'";
+	$ajaxInit .= ",".$cfg["enable_index_ajax_update_silent"];
 	$ajaxInit .= ",".$cfg["enable_index_ajax_update_title"];
 	$ajaxInit .= ",'".$cfg['pagetitle']."'";
 	$ajaxInit .= ",".$cfg["enable_goodlookstats"];

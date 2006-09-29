@@ -22,6 +22,7 @@ var ajax_fieldIdsXfer = new Array(
 );
 var ajax_idCountXfer = ajax_fieldIdsXfer.length;
 //
+var silentEnabled = 0;
 var titleChangeEnabled = 0;
 var pageTitle = "torrentflux-b4rt";
 var goodLookingStatsEnabled = 0;
@@ -51,6 +52,7 @@ var updateTimeLeft = 0;
  *
  * @param timer
  * @param delim
+ * @param sEnabled
  * @param tChangeEnabled
  * @param pTitle
  * @param glsEnabled
@@ -66,9 +68,10 @@ var updateTimeLeft = 0;
  * @param bwBarsEnabled
  * @param bwBarsStyle
  */
-function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, uEnabled, uHideOffline, tEnabled, sortEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
+function ajax_initialize(timer, delim, sEnabled, tChangeEnabled, pTitle, glsEnabled, glsSettings, bsEnabled, qActive, xEnabled, uEnabled, uHideOffline, tEnabled, sortEnabled, dsBarStyle, bwBarsEnabled, bwBarsStyle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
+	silentEnabled = sEnabled;
 	titleChangeEnabled = tChangeEnabled;
 	pageTitle = pTitle;
 	goodLookingStatsEnabled = glsEnabled;
@@ -125,17 +128,22 @@ function ajax_initialize(timer, delim, tChangeEnabled, pTitle, glsEnabled, glsSe
 function ajax_pageUpdate() {
 	if (ajax_updateState == 1) {
 		if (updateTimeLeft < 0) {
-			document.getElementById("span_update").innerHTML = "Update in progress...";
-			if (titleChangeEnabled == 1)
+			if (silentEnabled == 0)
+				document.getElementById("span_update").innerHTML = "Update in progress...";
+			if ((titleChangeEnabled == 1) && (silentEnabled == 0))
 				document.title = "Update in progress... - "+ pageTitle;
 		} else if (updateTimeLeft == 0) {
 			updateTimeLeft = -1;
-			document.getElementById("span_update").innerHTML = "Update in progress...";
-			if (titleChangeEnabled == 1)
+			if (silentEnabled == 0)
+				document.getElementById("span_update").innerHTML = "Update in progress...";
+			if ((titleChangeEnabled == 1) && (silentEnabled == 0))
 				document.title = "Update in progress... - "+ pageTitle;
 			setTimeout("ajax_update();", 100);
 		} else {
-			document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
+			if (silentEnabled == 0)
+				document.getElementById("span_update").innerHTML = "Next AJAX-Update in " + String(updateTimeLeft) + " seconds";
+			else
+				document.getElementById("span_update").innerHTML = "AJAX-Update enabled";
 		}
 		updateTimeLeft--;
 	} else {
