@@ -113,7 +113,14 @@ sub initialize {
 		Proto           => 'tcp',
 		Listen          => 16,
 		Reuse           => 1);
-	return 0 unless $SERVER; # TODO : set state + message                       /* TODO */
+	if (!(defined $SERVER)) {
+		# message
+		$message = "could not create server socket";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
 	$Select->add($SERVER);
 
 	# set state
