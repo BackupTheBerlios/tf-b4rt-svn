@@ -363,6 +363,9 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 				case "path": // tf-path
 					$settings[$key] = trim(checkDirPathString($value));
 					break;
+				case "docroot": // tf-docroot
+					$settings[$key] = trim(checkDirPathString($value));
+					break;
 				case "move_paths": // move-hack-paths
 					$dirAry = explode(":",$value);
 					$val = "";

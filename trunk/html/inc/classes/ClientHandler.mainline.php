@@ -36,9 +36,10 @@ class ClientHandlerMainline extends ClientHandler
         $this->binSystem = "python";
         $this->binSocket = "python";
         $this->binClient = "bittorrent-console.py";
-        $this->mainlineBin = dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_Mainline/bittorrent-console.py";
         //
         $this->initialize($cfg);
+        //
+        $this->mainlineBin = $this->cfg["docroot"]."bin/TF_Mainline/bittorrent-console.py";
     }
 
     /**

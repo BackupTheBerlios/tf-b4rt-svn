@@ -44,6 +44,12 @@ if (is_dir($cfg["path"])) {
 } else {
 	$tmpl->setvar('is_path', 0);
 }
+// docroot
+$tmpl->setvar('docroot', $cfg["docroot"]);
+if (is_file($cfg["docroot"].".version"))
+	$tmpl->setvar('is_docroot', 1);
+else
+	$tmpl->setvar('is_docroot', 0);
 // homedirs + incoming
 $tmpl->setvar('enable_home_dirs', $cfg["enable_home_dirs"]);
 $tmpl->setvar('path_incoming', $cfg["path_incoming"]);

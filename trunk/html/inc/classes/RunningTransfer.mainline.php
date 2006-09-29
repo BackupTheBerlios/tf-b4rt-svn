@@ -35,7 +35,7 @@ class RunningTransferMainline extends RunningTransfer
         // init conf
         $this->Initialize($cfg);
         //
-        $this->mainlineBin = dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_Mainline/bittorrent-console.py";
+        $this->mainlineBin = $this->cfg["docroot"]."bin/TF_Mainline/bittorrent-console.py";
         //
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)

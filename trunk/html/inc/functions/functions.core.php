@@ -1178,15 +1178,12 @@ function getTorrentMetaInfo($torrent) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["transfer_file_path"].$torrent."\"");
 		case "ttools.pl":
-			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -i "'.$cfg["transfer_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$this->cfg["docroot"].'bin/ttools" "'.$this->cfg["docroot"].'bin/ttools/ttools.pl" -i "'.$cfg["transfer_file_path"].$torrent.'"');
 		case "torrentinfo-console.py":
-			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$this->cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
 		case "btshowmetainfo.py":
 		default:
-			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$fluxDocRoot."/bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
 	}
 }
 
@@ -1202,8 +1199,7 @@ function getTorrentScrapeInfo($torrent) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["transfer_file_path"].$torrent."\"");
 		case "ttools.pl":
-			$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-			return shell_exec($cfg["perlCmd"].' -I "'.$fluxDocRoot.'/bin/ttools" "'.$fluxDocRoot.'/bin/ttools/ttools.pl" -s "'.$cfg["transfer_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s "'.$cfg["transfer_file_path"].$torrent.'"');
 		case "btshowmetainfo.py":
 			return "not supported by btshowmetainfo.py.";
 		case "torrentinfo-console.py":
@@ -1359,7 +1355,7 @@ function getLoadAverageString() {
 function injectTorrent($torrent) {
 	global $cfg;
 	require_once("inc/classes/AliasFile.php");
-	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].getAliasName($torrent).".stat",	 $cfg["user"], $cfg);
+	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].getAliasName($torrent).".stat", $cfg["user"], $cfg);
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["transfer_file_path"].$torrent);
 	$af->WriteFile();

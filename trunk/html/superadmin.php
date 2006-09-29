@@ -447,8 +447,7 @@ if (isset($_REQUEST["f"])) {
 				$htmlTitle = "fluxd - check";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$fluxDocRoot."/bin/fluxd ".$fluxDocRoot."/bin/fluxd/fluxd.pl check ".$fluxDocRoot);
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd ".$cfg["docroot"]."bin/fluxd/fluxd.pl check ".$cfg["docroot"]);
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;
@@ -456,8 +455,7 @@ if (isset($_REQUEST["f"])) {
 				$htmlTitle = "fluxd - db-debug";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$fluxDocRoot."/bin/fluxd ".$fluxDocRoot."/bin/fluxd/fluxd.pl debug db ".$fluxDocRoot);
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd ".$cfg["docroot"]."bin/fluxd/fluxd.pl debug db ".$cfg["docroot"]);
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;

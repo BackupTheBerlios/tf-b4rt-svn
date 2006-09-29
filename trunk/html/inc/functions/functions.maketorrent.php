@@ -66,7 +66,7 @@ function createTorrentTornado() {
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// This is the command to execute
 	$command = "nohup ".$cfg["pythonCmd"]." -OO";
-	$command .= " ".dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btmakemetafile.py";
+	$command .= " ".$cfg["docroot"]."bin/TF_BitTornado/btmakemetafile.py";
 	$command .= " ".$announce;
 	$command .= " ".escapeshellarg($cfg["path"].$path);
 	// Is there comments to add?
@@ -150,7 +150,7 @@ function createTorrentMainline() {
 	$command .= " HOME=".$cfg["path"];
 	$command .= "; export HOME;";
 	$command .= "nohup ".$cfg["pythonCmd"]." -OO ";
-	$command .= dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_Mainline/maketorrent-console.py";
+	$command .= $cfg["docroot"]."bin/TF_Mainline/maketorrent-console.py";
 	$command .= " --no_verbose";
 	$command .= " --no_debug";
 	$command .= " --language en";

@@ -35,7 +35,7 @@ class RunningTransferTornado extends RunningTransfer
         // init conf
         $this->Initialize($cfg);
         //
-        $this->tornadoBin = dirname($_SERVER["SCRIPT_FILENAME"])."/bin/TF_BitTornado/btphptornado.py";
+        $this->tornadoBin = $this->cfg["docroot"]."bin/TF_BitTornado/btphptornado.py";
         //
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)

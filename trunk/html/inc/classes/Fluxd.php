@@ -80,13 +80,12 @@ class Fluxd
             AuditAction($this->cfg["constants"]["fluxd"], "fluxd already started");
             return true;
         } else {
-        	$fluxDocRoot = dirname($_SERVER["SCRIPT_FILENAME"]);
-            $startCommand = "cd ".$fluxDocRoot." ; HOME=".$this->cfg["path"].";";
+            $startCommand = "cd ".$this->cfg["docroot"]." ; HOME=".$this->cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $this->cfg["perlCmd"];
-            $startCommand .= " -I ".$fluxDocRoot."/bin/fluxd";
-            $startCommand .= " ".$fluxDocRoot."/bin/fluxd/fluxd.pl";
-            $startCommand .= " daemon-start ".$fluxDocRoot. " > /dev/null &";
+            $startCommand .= " -I ".$this->cfg["docroot"]."bin/fluxd";
+            $startCommand .= " ".$this->cfg["docroot"]."bin/fluxd/fluxd.pl";
+            $startCommand .= " daemon-start ".$this->cfg["docroot"]. " > /dev/null &";
             $result = exec($startCommand);
             // give fluxd some time
             sleep(8);
