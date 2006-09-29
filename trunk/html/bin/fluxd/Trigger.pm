@@ -151,6 +151,7 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
+		# DEBUG
 		print "Trigger::main : now \"".$now."\" ; time_last_run \"".$time_last_run."\"\n"; # DEBUG
 
 		# set last run time
@@ -178,7 +179,7 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Trigger.pm Revision ".$VERSION." =-\n\n";
-	$return .= "Trigger.pm is currently running\n";
+	$return .= "interval : $interval s \n";
 	return $return;
 }
 
