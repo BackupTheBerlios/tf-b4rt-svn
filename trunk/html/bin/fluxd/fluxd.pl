@@ -1101,7 +1101,7 @@ sub printVersion {
 # Returns: info on system requirements                                         #
 #------------------------------------------------------------------------------#
 sub check {
-	print "Checking requirements...\n";
+	print "checking requirements...\n";
 	my $return = 0;
 
 	# $PATH_DOCROOT
@@ -1177,139 +1177,30 @@ sub check {
 	}
 
 	# db-settings
-	print " - Type : ".$fluxDB->getDatabaseType()."\n";
-	print " - Name : ".$fluxDB->getDatabaseName()."\n";
-	print " - Host : ".$fluxDB->getDatabaseHost()."\n";
+	print " - type : ".$fluxDB->getDatabaseType()."\n";
+	print " - name : ".$fluxDB->getDatabaseName()."\n";
+	print " - host : ".$fluxDB->getDatabaseHost()."\n";
 
 	# init paths
 	initPaths(FluxDB->getFluxConfig("path"));
 
 	# 4. paths
 	print "4. paths\n";
-	print " - flux-data-dir : ".FluxDB->getFluxConfig("path")."\n";
-	print " - PATH_TRANSFER_DIR : ".$PATH_TRANSFER_DIR."\n";
-	print " - PATH_DATA_DIR : ".$PATH_DATA_DIR."\n";
-	print " - PATH_SOCKET : ".$PATH_SOCKET."\n";
-	print " - ERROR_LOG : ".$ERROR_LOG."\n";
-	print " - LOG : ".$LOG."\n";
-	print " - PID_FILE : ".$PID_FILE."\n";
-	print " - PATH_QUEUE_FILE : ".$PATH_QUEUE_FILE."\n";
-
-	# 5. service-modules
-	print "5. service-modules\n";
-
-	# Qmgr
-	print " - Qmgr : ";
-	if (eval "require Qmgr") {
-		eval {
-			$qmgr = Qmgr->new();
-			$qmgr->initialize(FluxDB->getFluxConfig("fluxd_Qmgr_interval"));
-			if ($qmgr->getState() < 1) {
-				print "error initializing service-module Qmgr :\n";
-				print $qmgr->getMessage()."\n";
-			}
-			$qmgr->destroy();
-			undef $qmgr;
-		};
-		if ($@) {
-			print "\n $@\n";
-		} else {
-			# everything ok
-		}
-	} else {
-		print "cant load service-module Qmgr\n";
-	}
-
-	# Fluxinet
-	print " - Fluxinet : ";
-	if (eval "require Fluxinet") {
-		eval {
-			$fluxinet = Fluxinet->new();
-			$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
-			if ($fluxinet->getState() < 1) {
-				print "error initializing service-module Fluxinet :\n";
-				print $fluxinet->getMessage()."\n";
-			}
-			$fluxinet->destroy();
-			undef $fluxinet;
-		};
-		if ($@) {
-			print "\n $@\n";
-		} else {
-			# everything ok
-		}
-	} else {
-		print "cant load service-module Fluxinet\n";
-	}
-
-	# Watch
-	print " - Watch : ";
-	if (eval "require Watch") {
-		eval {
-			$watch = Watch->new();
-			$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_interval"), FluxDB->getFluxConfig("fluxd_Watch_jobs"));
-			if ($watch->getState() < 1) {
-				print "error initializing service-module Watch :\n";
-				print $watch->getMessage()."\n";
-			}
-			$watch->destroy();
-			undef $watch;
-		};
-		if ($@) {
-			print "\n $@\n";
-		} else {
-			# everything ok
-		}
-	} else {
-		print "cant load service-module Watch\n";
-	}
-
-	# Clientmaint
-	print " - Clientmaint : ";
-	if (eval "require Clientmaint") {
-		eval {
-			$clientmaint = Clientmaint->new();
-			$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_interval"));
-			if ($clientmaint->getState() < 1) {
-				print "error initializing service-module Clientmaint :\n";
-				print $clientmaint->getMessage()."\n";
-			}
-			$clientmaint->destroy();
-			undef $clientmaint;
-		};
-		if ($@) {
-			print "\n $@\n";
-		} else {
-			# everything ok
-		}
-	} else {
-		print "cant load service-module Clientmaint\n";
-	}
-
-	# Trigger
-	print " - Trigger : ";
-	if (eval "require Trigger") {
-		eval {
-			$trigger = Trigger->new();
-			$trigger->initialize(FluxDB->getFluxConfig("fluxd_Trigger_interval"));
-			if ($trigger->getState() < 1) {
-				print "error initializing service-module Trigger :\n";
-				print $trigger->getMessage()."\n";
-			}
-			$trigger->destroy();
-			undef $trigger;
-		};
-		if ($@) {
-			print "\n $@\n";
-		} else {
-			# everything ok
-		}
-	} else {
-		print "cant load service-module Trigger\n";
-	}
+	print " - path : ".FluxDB->getFluxConfig("path")."\n";
+	print " - transfers-dir : ".$PATH_TRANSFER_DIR."\n";
+	print " - docroot : ".$PATH_DOCROOT."\n";
+	print " - data-dir : ".$PATH_DATA_DIR."\n";
+	print " - socket : ".$PATH_SOCKET."\n";
+	print " - error-log : ".$ERROR_LOG."\n";
+	print " - log : ".$LOG."\n";
+	print " - pid : ".$PID_FILE."\n";
+	print " - queue : ".$PATH_QUEUE_FILE."\n";
 
 	# destroy fluxDB
 	$fluxDB->destroy();
+
+	# done
+	print "done.\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -1353,40 +1244,42 @@ sub debug {
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
 			# db-settings
-			print "\$fluxDB->getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-			print "\$fluxDB->getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-			print "\$fluxDB->getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-			print "\$fluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-			print "\$fluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-			print "\$fluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-			print "\$fluxDB->getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+			print "getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+			print "getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+			print "getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+			print "getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+			print "getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+			print "getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+			print "getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 			exit;
 		}
 		# db-settings
-		print "\$fluxDB->getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-		print "\$fluxDB->getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-		print "\$fluxDB->getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-		print "\$fluxDB->getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-		print "\$fluxDB->getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-		print "\$fluxDB->getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-		print "\$fluxDB->getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+		print "getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+		print "getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+		print "getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+		print "getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+		print "getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+		print "getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+		print "getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 		# something from the bean
-		print "FluxDB->getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print "FluxDB->getFluxConfig(\"bin_php\") : \"".FluxDB->getFluxConfig("bin_php")."\"\n";
-		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_enabled")."\"\n";
-		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_port\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_port")."\"\n";
+		print "getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print "getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		print "getFluxConfig(\"bin_php\") : \"".FluxDB->getFluxConfig("bin_php")."\"\n";
+		print "getFluxConfig(\"fluxd_loglevel\") : \"".FluxDB->getFluxConfig("fluxd_loglevel")."\"\n";
+		print "getFluxConfig(\"fluxd_Qmgr_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Qmgr_enabled")."\"\n";
+		print "getFluxConfig(\"fluxd_Qmgr_interval\") : \"".FluxDB->getFluxConfig("fluxd_Qmgr_interval")."\"\n";
 		# test to set a val
-		print "FluxDB->getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print "FluxDB->getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print "FluxDB->getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
-		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_enabled")."\"\n";
-		print "FluxDB->getFluxConfig(\"fluxd_Fluxinet_port\") : \"".FluxDB->getFluxConfig("fluxd_Fluxinet_port")."\"\n";
+		print "getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# destroy
 		print "destroying \$fluxDB\n";
 		$fluxDB->destroy();
+		# done
+		print "done.\n";
 		exit;
 	} elsif	($debug =~ /fluxcli/) { # fluxcli-debug
 		my $dbcfg = shift @ARGV;
