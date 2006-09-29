@@ -433,11 +433,19 @@ sub loadServiceModules {
 		# Load up module, unless it is already
 		if (!(exists &Qmgr::new)) {
 			if (eval "require Qmgr") {
-				$qmgr = Qmgr->new();
-				$qmgr->initialize();
-				if ($qmgr->getState() < 1) {
-					print STDERR "error initializing service-module Qmgr :\n";
-					print STDERR $qmgr->getMessage()."\n";
+				eval {
+					$qmgr = Qmgr->new();
+					$qmgr->initialize();
+					if ($qmgr->getState() < 1) {
+						print STDERR "error initializing service-module Qmgr :\n";
+						print STDERR $qmgr->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Qmgr : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Qmgr loaded\n"; # DEBUG
 				}
 			} else {
 				print STDERR "error loading service-module Qmgr :$@\n";
@@ -445,10 +453,18 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if( (exists &Qmgr::new) && (defined $qmgr) ){
-			$qmgr->destroy();
-			delete_package('Qmgr');
-			undef $qmgr;
+		if ((exists &Qmgr::new) && (defined $qmgr)){
+			eval {
+				$qmgr->destroy();
+				delete_package('Qmgr');
+				undef $qmgr;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Qmgr : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Qmgr unloaded\n"; # DEBUG
+			}
 		}
 	}
 
@@ -457,22 +473,38 @@ sub loadServiceModules {
 		# Load up module, unless it is already
 		if (!(exists &Fluxinet::new)) {
 			if (eval "require Fluxinet") {
-				$fluxinet = Fluxinet->new();
-				$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
-				if ($fluxinet->getState() < 1) {
-					print STDERR "error initializing service-module Fluxinet :\n";
-					print STDERR $fluxinet->getMessage()."\n";
+				eval {
+					$fluxinet = Fluxinet->new();
+					$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+					if ($fluxinet->getState() < 1) {
+						print STDERR "error initializing service-module Fluxinet :\n";
+						print STDERR $fluxinet->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Fluxinet : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Fluxinet loaded\n"; # DEBUG
 				}
 			} else {
-				print STDERR "error loading service-module Fluxinet :$@\n";
+				print STDERR "error loading service-module Fluxinet : $@\n";
 			}
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ( (exists &Fluxinet::new) && (defined $fluxinet) ){
-			$fluxinet->destroy();
-			delete_package('Fluxinet');
-			undef $fluxinet;
+		if ((exists &Fluxinet::new) && (defined $fluxinet)){
+			eval {
+				$fluxinet->destroy();
+				delete_package('Fluxinet');
+				undef $fluxinet;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Fluxinet : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Fluxinet unloaded\n"; # DEBUG
+			}
 		}
 	}
 
@@ -481,11 +513,19 @@ sub loadServiceModules {
 		# Load up module, unless it is already
 		if (!(exists &Watch::new)) {
 			if (eval "require Watch") {
-				$watch = Watch->new();
-				$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_jobs"));
-				if ($watch->getState() < 1) {
-					print STDERR "error initializing service-module Watch :\n";
-					print STDERR $watch->getMessage()."\n";
+				eval {
+					$watch = Watch->new();
+					$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_jobs"));
+					if ($watch->getState() < 1) {
+						print STDERR "error initializing service-module Watch :\n";
+						print STDERR $watch->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Watch : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Watch loaded\n"; # DEBUG
 				}
 			} else {
 				print STDERR "error loading service-module Watch :$@\n";
@@ -493,10 +533,18 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ( (exists &Watch::new) && (defined $watch) ) {
-			$watch->destroy();
-			delete_package('Watch');
-			undef $watch;
+		if ((exists &Watch::new) && (defined $watch)) {
+			eval {
+				$watch->destroy();
+				delete_package('Watch');
+				undef $watch;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Watch : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Watch unloaded\n"; # DEBUG
+			}
 		}
 	}
 
@@ -505,11 +553,19 @@ sub loadServiceModules {
 		# Load up module, unless it is already
 		if (!(exists &Clientmaint::new)) {
 			if (eval "require Clientmaint") {
-				$clientmaint = Clientmaint->new();
-				$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_interval"));
-				if ($clientmaint->getState() < 1) {
-					print STDERR "error initializing service-module Clientmaint :\n";
-					print STDERR $clientmaint->getMessage()."\n";
+				eval {
+					$clientmaint = Clientmaint->new();
+					$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_interval"));
+					if ($clientmaint->getState() < 1) {
+						print STDERR "error initializing service-module Clientmaint :\n";
+						print STDERR $clientmaint->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Clientmaint : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Clientmaint loaded\n"; # DEBUG
 				}
 			} else {
 				print STDERR "error loading service-module Clientmaint :$@\n";
@@ -517,10 +573,18 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ( (exists &Clientmaint::new) && (defined $clientmaint) ){
-			$clientmaint->destroy();
-			delete_package('Clientmaint');
-			undef $clientmaint;
+		if ((exists &Clientmaint::new) && (defined $clientmaint)){
+			eval {
+				$clientmaint->destroy();
+				delete_package('Clientmaint');
+				undef $clientmaint;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Clientmaint : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Clientmaint unloaded\n"; # DEBUG
+			}
 		}
 	}
 
@@ -529,11 +593,19 @@ sub loadServiceModules {
 		# Load up module, unless it is already
 		if (!(exists &Trigger::new)) {
 			if (eval "require Trigger") {
-				$trigger = Trigger->new();
-				$trigger->initialize();
-				if ($trigger->getState() < 1) {
-					print STDERR "error initializing service-module Trigger :\n";
-					print STDERR $trigger->getMessage()."\n";
+				eval {
+					$trigger = Trigger->new();
+					$trigger->initialize();
+					if ($trigger->getState() < 1) {
+						print STDERR "error initializing service-module Trigger :\n";
+						print STDERR $trigger->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Trigger : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Trigger loaded\n"; # DEBUG
 				}
 			} else {
 				print STDERR "error loading service-module Trigger :$@\n";
@@ -541,10 +613,18 @@ sub loadServiceModules {
 		}
 	} else {
 		# Unload module, if it is loaded
-		if ( (exists &Trigger::new) && (defined $trigger) ) {
-			$trigger->destroy;
-			delete_package('Trigger');
-			undef $trigger;
+		if ((exists &Trigger::new) && (defined $trigger)) {
+			eval {
+				$trigger->destroy;
+				delete_package('Trigger');
+				undef $trigger;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Trigger : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Trigger unloaded\n"; # DEBUG
+			}
 		}
 	}
 }
