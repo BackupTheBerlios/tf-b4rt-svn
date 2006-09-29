@@ -900,36 +900,41 @@ sub deletePidFile {
 # Returns: Server information page                                             #
 #------------------------------------------------------------------------------#
 sub status {
+	my $head = "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
 	my $status = "";
-	my $modules = "\nLoaded Modules :\n";
-	$status .= "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
-
+	my $modules = "Loaded Modules :\n";
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
 		$modules .= "  * Qmgr.pm\n";
+		$status .= "\n";
 		$status .= $qmgr->status();
 	}
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
 		$modules .= "  * Fluxinet.pm\n";
+		$status .= "\n";
 		$status .= eval { $fluxinet->status(); };
 	}
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
 		$modules .= "  * Clientmaint.pm\n";
+		$status .= "\n";
 		$status .= eval { $clientmaint->status(); };
 	}
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
 		$modules .= "  * Watch.pm\n";
+		$status .= "\n";
 		$status .= eval { $watch->status(); };
 	}
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
 		$modules .= "  * Trigger.pm\n";
+		$status .= "\n";
 		$status .= eval { $trigger->status(); };
 	}
-	return "$status $modules";
+	# return
+	return $head.$modules.$status;
 }
 
 #------------------------------------------------------------------------------#
