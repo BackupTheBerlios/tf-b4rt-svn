@@ -160,7 +160,7 @@
 									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">&alias_file=<tmpl_var name="alias">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
-										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
+										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 									</tmpl_if>
 								<tmpl_else>
 									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="-">
@@ -207,7 +207,7 @@
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
 							<tmpl_if name="enable_multiops">
-								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
+								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 							</tmpl_if>
 						</tmpl_if>
 					<tmpl_else>
@@ -381,7 +381,7 @@
 									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">&alias_file=<tmpl_var name="alias">"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
-										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
+										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 									</tmpl_if>
 								<tmpl_else>
 									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="-">
@@ -428,7 +428,7 @@
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
 							<tmpl_if name="enable_multiops">
-								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">">
+								<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 							</tmpl_if>
 						</tmpl_if>
 					<tmpl_else>
