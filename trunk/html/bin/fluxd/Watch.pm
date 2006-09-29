@@ -219,7 +219,15 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Watch.pm Revision ".$VERSION." =-\n\n";
-	$return .= "Watch.pm is currently running\n";
+	$return .= "interval : $interval s \n";
+	$return .= "Jobs :\n";
+	foreach my $user (sort keys %jobs) {
+		my $dir = $jobs{$user};
+		if ((!($user eq "")) && (-d $dir)) {
+			$return .= "  * username: ".$user."\n";
+			$return .= "    dir: ".$dir."\n";
+		}
+	}
 	return $return;
 }
 

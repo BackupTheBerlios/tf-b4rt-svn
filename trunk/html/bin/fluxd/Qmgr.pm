@@ -198,7 +198,7 @@ sub main {
 		$time_last_run = $now;
 
 		# process queue
-		processQueue();
+		#processQueue();
 	}
 }
 
