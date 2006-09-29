@@ -288,13 +288,12 @@ $content = '<?php
 /******************************************************************************/
 // YOUR DATABASE CONNECTION INFORMATION
 /******************************************************************************/
-// Check the adodb/drivers/ directory for support for your database
-// you may choose from many (mysql is the default)
-$cfg["db_type"] = "'.$_POST["db_type"].'";       // mysql, postgres7 view adodb/drivers/
-$cfg["db_host"] = "'.$_POST["db_host"].'";   // DB host computer name or IP
-$cfg["db_name"] = "'.$_POST["db_name"].'"; // Name of the Database
-$cfg["db_user"] = "'.$_POST["db_user"].'";   // username for your MySQL database
-$cfg["db_pass"] = "'.$_POST["db_pass"].'";  // password for database
+$cfg["db_type"] = "'.$_POST["db_type"].'";  // Databae-Type : mysql/sqlite/postgres
+$cfg["db_host"] = "'.$_POST["db_host"].'";  // Database host computer name or IP
+$cfg["db_name"] = "'.$_POST["db_name"].'";  // Name of the Database
+$cfg["db_user"] = "'.$_POST["db_user"].'";  // Username for Database
+$cfg["db_pass"] = "'.$_POST["db_pass"].'";  // Password for Database
+$cfg["db_pcon"] = false;                    // Persistent Connection enabled : true/false
 /******************************************************************************/
 
 ?>';

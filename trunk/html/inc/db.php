@@ -30,57 +30,29 @@ require_once('inc/lib/adodb/adodb.inc.php');
  */
 function getdb() {
 	global $cfg;
-
-	/*
-	// 2004-12-09 PFM: connect to database.
-	$db = NewADOConnection($cfg["db_type"]);
-	$db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-	if (!$db)
-		showErrorPage('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.db.php file.');
-	return $db;
-	*/
-
-	/*
-	// MySQL
-	# or dsn
-	$dsn = 'mysql://user:pwd@localhost/mydb';
-	$conn = ADONewConnection($dsn);  # no need for Connect()
-	# or persistent dsn
-	$dsn = 'mysql://user:pwd@localhost/mydb?persist';
-	$conn = ADONewConnection($dsn);  # no need for PConnect()
-	*/
-
-	/*
-	// SQLite
-	$path = urlencode('c:\path\to\sqlite.db');
-	$dsn = "sqlite://$path/?persist";  # persist is optional
-	$conn = ADONewConnection($dsn);  # no need for Connect/PConnect
-	*/
-
-	/*
-	// PostgreSQL
-	$dsn = 'postgres://user:pwd@localhost/mydb?persist';  # persist is optional
-	$conn = ADONewConnection($dsn);  # no need for Connect/PConnect
-	*/
-
 	// build DSN
-	$dsn = "";
 	switch ($cfg["db_type"]) {
 		case "mysql":
-			$dsn .= 'mysql://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
+			$dsn = 'mysql://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
+			if ($cfg["db_pcon"])
+				$dsn .= '?persist';
 			break;
 		case "sqlite":
-			$dsn .= 'sqlite://'.$dbHost;
+			$dsn = 'sqlite://'.$dbHost;
+			if ($cfg["db_pcon"])
+				$dsn .= '/?persist';
 			break;
 		case "postgres":
-			$dsn .= 'postgres://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
+			$dsn = 'postgres://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
+			if ($cfg["db_pcon"])
+				$dsn .= '?persist';
 			break;
 		default:
-			showErrorPage('No valid Database-type specfied. (valid : mysql/sqlite/postgres)<br>Check your database settings in the config.db.php file.');
+			showErrorPage('No valid Database-Type specfied. (valid : mysql/sqlite/postgres)<br>Check your database settings in the config.db.php file.');
 	}
 	// connect
 	$db = @ ADONewConnection($dsn);
-	// check if connect successful
+	// check connection
 	if (!$db)
 		showErrorPage('Could not connect to database:<br><em>'.$dsn.'</em><br>Check your database settings in the config.db.php file.');
 	// return db-connection
