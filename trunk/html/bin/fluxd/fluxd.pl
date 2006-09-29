@@ -93,8 +93,8 @@ while ( $loop ) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			die('Unknown value for $@') unless $@ eq "alarm\n";
-			print "Qmgr : Timed out\n";
+			print STDERR "Qmgr : Timed out\n";
+			print STDERR $@."\n";
 		}
 	}
 
@@ -109,8 +109,8 @@ while ( $loop ) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			die('Unknown value for $@') unless $@ eq "alarm\n";
-			print "Fluxinet : Timed out\n";
+			print STDERR "Fluxinet : Timed out\n";
+			print STDERR $@."\n";
 		}
 	}
 
@@ -125,8 +125,8 @@ while ( $loop ) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			die('Unknown value for $@') unless $@ eq "alarm\n";
-			print "Watch : Timed out\n";
+			print STDERR "Watch : Timed out\n";
+			print STDERR $@."\n";
 		}
 	}
 
@@ -141,8 +141,8 @@ while ( $loop ) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			die('Unknown value for $@') unless $@ eq "alarm\n";
-			print "Clientmaint : Timed out\n";
+			print STDERR "Clientmaint : Timed out\n";
+			print STDERR $@."\n";
 		}
 	}
 
@@ -157,8 +157,8 @@ while ( $loop ) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			die('Unkown value for $@') unless $@ eq "alarm\n";
-			print "Trigger : Timed out\n";
+			print STDERR "Trigger : Timed out\n";
+			print STDERR $@."\n";
 		}
 	}
 
@@ -837,39 +837,32 @@ sub fluxcli {
 	my $Command = shift;
 	my $Arg1 = shift;
 	my $Arg2 = shift;
-	my $return;
 
 	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
-		if ( (defined $Arg1) || (defined $Arg2) ) {
-			$return = printUsage();
-			return $return;
+		if ((defined $Arg1) || (defined $Arg2)) {
+			return printUsage();
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
 			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command;
-			$return = `$shellCmd`;
-			return $return;
+			return `$shellCmd`;
 		}
 	}
 	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
-		if ( (!(defined $Arg1)) || (defined $Arg2) ) {
-			$return = printUsage();
-			return $return;
+		if ((!(defined $Arg1)) || (defined $Arg2)) {;
+			return printUsage();
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
 			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
-			$return = `$shellCmd`;
-			return $return;
+			return `$shellCmd`;
 		}
 	}
 	if ($Command =~/^inject|^watch/) {
-		if ( (!(defined $Arg1)) || (!(defined $Arg2)) ) {
-			$return = printUsage();
-			return $return;
+		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
+			return printUsage();
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
 			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
-			$return = `$shellCmd`;
-			return $return;
+			return `$shellCmd`;
 		}
 	}
 
