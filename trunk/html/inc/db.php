@@ -75,6 +75,8 @@ function getdb() {
 		case "postgres":
 			$dsn .= 'postgres://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
 			break;
+		default:
+			showErrorPage('No valid Database-type specfied. (valid : mysql/sqlite/postgres)<br>Check your database settings in the config.db.php file.');
 	}
 	// connect
 	$db = @ ADONewConnection($dsn);
