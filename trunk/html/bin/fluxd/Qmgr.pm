@@ -53,8 +53,6 @@ my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 my ( $MAX_SYS, $MAX_USR );
 my $MAX_START_TRIES = 5;
 my $START_TRIES_SLEEP = 10;
-my $SLEEP_MIN = 5;
-my $SLEEP_MAX = 20;
 
 # references to the FluxDB @users and %names for use internally. Just makes
 # everything look cleaner
@@ -320,7 +318,7 @@ sub processQueue {
 					next USER;
 				} else {
 					$startTry++;
-					sleep $START_TRIES_SLEEP;
+					sleep $START_TRIES_SLEEP; # TODO : new looping code .. this should not be here any longer as it blocks main
 				}
 			}
 		} # USER
@@ -382,23 +380,22 @@ sub saveQueue {
 # Returns: status string                                                      #
 #-----------------------------------------------------------------------------#
 sub status {
-	my $return = "status info\n";
+	my $return = "";
 	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
+	$return .= "interval : $interval s \n";
 	# get count-vars
 	my $countQueue = queue();
 	my $countRunning = running();
 	my $countJobs = $countQueue + $countRunning;
 	# some vars
-	$return .= "min sleep-time worker \t: $SLEEP_MIN s \n";
-	$return .= "max sleep-time worker \t: $SLEEP_MAX s \n";
-	$return .= "max torrents global \t: $MAX_SYS \n";
-	$return .= "max torrents per user \t: $MAX_USR \n";
-	$return .= "max start-tries    \t: $MAX_START_TRIES \n";
-	$return .= "start-try-extra-sleep \t: $START_TRIES_SLEEP s\n\n";
+	$return .= "max torrents global : $MAX_SYS \n";
+	$return .= "max torrents per user : $MAX_USR \n";
+	$return .= "max start-tries : $MAX_START_TRIES \n";
+	$return .= "start-try-extra-sleep : $START_TRIES_SLEEP s\n";
 	# jobs total
-	$return .= "jobs total \t: ".$countJobs."\n";
+	$return .= "jobs total : ".$countJobs."\n";
 	# jobs queued
-	$return .= "jobs queued \t: ".$countQueue."\n";
+	$return .= "jobs queued : ".$countQueue."\n";
 	foreach my $user (@{$users}) {
 		foreach my $jobName (@{$user->{'queue'}}) {
 			my $jobUser = $user->{'username'};
@@ -406,7 +403,7 @@ sub status {
 		}
 	}
 	# jobs running
-	$return .= "jobs running \t: ".$countRunning."\n";
+	$return .= "jobs running : ".$countRunning."\n";
 	foreach my $user (@{$users}) {
 		foreach my $jobName (@{$user->{'running'}}) {
 			my $jobUser = $user->{'username'};
@@ -414,11 +411,11 @@ sub status {
 		}
 	}
 	# misc stats
-	$return .= "\nQmgr Daemon up since $localtime (";
+	$return .= "running since : $localtime (";
 	my $tempiStringy = FluxdCommon::niceTimeString($time);
 	$return .= $tempiStringy.") ";
 	$return .= "(".$globals{'main'}." cycles) \n";
-	$return .= "Qmgr Daemon started ".$globals{'started'}." torrents \n\n";
+	$return .= "started transfers : ".$globals{'started'}."\n";
 	# return
 	return $return;
 }

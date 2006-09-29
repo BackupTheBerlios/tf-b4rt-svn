@@ -59,24 +59,24 @@ sub getVersion {
 sub niceTimeString {
 	my $startTime = shift;
 	my ($dura,$duration,$days,$hours,$mins,$secs,$rest);
-	$dura = ((time)-$startTime);
+	$dura = ((time) - $startTime);
 	$rest = $dura;
 	$days = $hours = $mins = $secs = 0;
 	$duration = "";
-	if ($dura >= (24*60*60)) { # days
-		$days = int((($rest/60)/60)/24);
+	if ($dura >= (24 * 60 * 60)) { # days
+		$days = int((($rest / 60) / 60) / 24);
 		$duration .= $days."d ";
-		$rest = ($dura-($days*60*60*24));
+		$rest = ($dura - ($days * 60 * 60 * 24));
 	}
-	if ($dura >= (60*60)) { # hours
-		$hours = int(($rest/60)/60);
+	if ($dura >= (60 * 60)) { # hours
+		$hours = int(($rest / 60) / 60);
 		$duration .= $hours."h ";
-		$rest = ($dura-($hours*60*60)-($days*60*60*24));
+		$rest = ($dura - ($hours * 60 * 60) - ($days * 60 * 60 * 24));
 	}
 	if ($rest >= 60) { # mins
-		$mins = int($rest/60);
+		$mins = int($rest / 60);
 		$duration .= $mins."m ";
-		$rest = ($dura-($mins*60)-($hours*60*60)-($days*60*60*24));
+		$rest = ($dura - ($mins * 60) - ($hours * 60 * 60) - ($days * 60 * 60 * 24));
 	}
 	if ($rest > 0) { # secs
 		$duration .= $rest."s";
