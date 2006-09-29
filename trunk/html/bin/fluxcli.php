@@ -603,7 +603,7 @@ function cliWatchDir($tpath = "", $username = "") {
 	} else {
 		printUsage();
 	}
-	exit;
+	exit();
 }
 
 /**

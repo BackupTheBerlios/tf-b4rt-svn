@@ -179,10 +179,6 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		print "now : ".$now."\n"; # DEBUG
-		print "time_last_run : ".$time_last_run."\n"; # DEBUG
-		print "interval : ".$interval."\n"; # DEBUG
-
 		# set last run time
 		$time_last_run = $now;
 
@@ -191,8 +187,13 @@ sub main {
 			my $dir = $jobs{$user};
 			if ((!($user eq "")) && (-d $dir)) {
 				print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
-				my $result = Fluxd::fluxcli("watch", $dir, $user);
-				print $result."\n"; # DEBUG
+				eval {
+					my $result = Fluxd::fluxcli("watch", $dir, $user);
+					chomp $result;
+					if (!($result eq "")) {
+						print $result."\n"; # DEBUG
+					}
+				};
 			}
 		}
 	}

@@ -86,7 +86,7 @@ while ( $loop ) {
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub { die "alarm\n" };
-			alarm 5;
+			alarm 15;
 			$qmgr->main();
 			alarm 0;
 		};
@@ -102,7 +102,7 @@ while ( $loop ) {
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 5;
+			alarm 3;
 			$fluxinet->main();
 			alarm 0;
 		};
@@ -118,7 +118,7 @@ while ( $loop ) {
 	if ((defined $watch) && ($watch->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 5;
+			alarm 15;
 			$watch->main();
 			alarm 0;
 		};
@@ -134,7 +134,7 @@ while ( $loop ) {
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 5;
+			alarm 15;
 			$clientmaint->main();
 			alarm 0;
 		};
@@ -150,7 +150,7 @@ while ( $loop ) {
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 5;
+			alarm 15;
 			$trigger->main();
 			alarm 0;
 		};
