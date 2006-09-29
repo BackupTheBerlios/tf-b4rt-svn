@@ -112,14 +112,15 @@ switch ($op) {
 			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
 			$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
 			$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
+			$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
 			$_POST["fluxd_Fluxinet_port"] != $cfg["fluxd_Fluxinet_port"] ||
+			$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
 			$_POST["fluxd_Watch_jobs"] != $cfg["fluxd_Watch_jobs"] ||
-			$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"])
-		{
+			$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"] ||
+			$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
 			$message = '<br>Settings changed.<br>';
 			// fluxd Running?
 			if ($fluxdRunning) {
-				$needsRestart = false;
 				$reloadModules = false;
 				$needsInit = false;
 				if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
@@ -128,13 +129,11 @@ switch ($op) {
 					$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 					$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
 					$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
-					$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"]
-					) {
+					$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
+					$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
+					$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
+					$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
 					$reloadModules = true;
-				}
-				if ($needsRestart) {
-					$needsHUP = false;
-					$message .= 'You have to restart fluxd to use the new settings.<br><br>';
 				}
 				// reconfig of running daemon :
 				if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
@@ -155,7 +154,7 @@ switch ($op) {
 				// save settings
 				$settings = $_POST;
 				saveSettings('tf_settings', $settings);
-				$message .= 'fluxd is not currently running.<br><br>';
+				$message .= 'fluxd is currently not running.<br><br>';
 			}
 			// log
 			AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");

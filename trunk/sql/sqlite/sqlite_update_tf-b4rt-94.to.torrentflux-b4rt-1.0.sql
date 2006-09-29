@@ -128,11 +128,14 @@ INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Qmgr_interval','15');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','admin:/usr/local/torrentflux/.watch/admin;fluxuser:/usr/local/torrentflux/.watch/fluxuser');
+INSERT INTO tf_settings VALUES ('fluxd_Watch_interval','120');
 INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
+INSERT INTO tf_settings VALUES ('fluxd_Trigger_interval','30');
 
 --
 -- commit

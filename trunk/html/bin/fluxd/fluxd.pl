@@ -340,7 +340,9 @@ sub daemonize {
 	setsid				or die "Can't start a new session: $!";
 
 	# log
-	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".`pwd`.")\n";
+	my $pwd = `pwd`;
+	chop $pwd;
+	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n";
 
 	# write out pid-file
 	writePidFile($$);
@@ -434,7 +436,7 @@ sub loadServiceModules {
 			if (eval "require Qmgr") {
 				eval {
 					$qmgr = Qmgr->new();
-					$qmgr->initialize();
+					$qmgr->initialize(FluxDB->getFluxConfig("fluxd_Qmgr_interval"));
 					if ($qmgr->getState() < 1) {
 						print STDERR "error initializing service-module Qmgr :\n";
 						print STDERR $qmgr->getMessage()."\n";
@@ -512,7 +514,7 @@ sub loadServiceModules {
 			if (eval "require Watch") {
 				eval {
 					$watch = Watch->new();
-					$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_jobs"));
+					$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_interval"), FluxDB->getFluxConfig("fluxd_Watch_jobs"));
 					if ($watch->getState() < 1) {
 						print STDERR "error initializing service-module Watch :\n";
 						print STDERR $watch->getMessage()."\n";
@@ -590,7 +592,7 @@ sub loadServiceModules {
 			if (eval "require Trigger") {
 				eval {
 					$trigger = Trigger->new();
-					$trigger->initialize();
+					$trigger->initialize(FluxDB->getFluxConfig("fluxd_Trigger_interval"));
 					if ($trigger->getState() < 1) {
 						print STDERR "error initializing service-module Trigger :\n";
 						print STDERR $trigger->getMessage()."\n";
@@ -1208,7 +1210,7 @@ sub check {
 	if (eval "require Qmgr") {
 		eval {
 			$qmgr = Qmgr->new();
-			$qmgr->initialize();
+			$qmgr->initialize(FluxDB->getFluxConfig("fluxd_Qmgr_interval"));
 			if ($qmgr->getState() < 1) {
 				print "error initializing service-module Qmgr :\n";
 				print $qmgr->getMessage()."\n";
@@ -1252,7 +1254,7 @@ sub check {
 	if (eval "require Watch") {
 		eval {
 			$watch = Watch->new();
-			$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_jobs"));
+			$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_interval"), FluxDB->getFluxConfig("fluxd_Watch_jobs"));
 			if ($watch->getState() < 1) {
 				print "error initializing service-module Watch :\n";
 				print $watch->getMessage()."\n";
@@ -1296,7 +1298,7 @@ sub check {
 	if (eval "require Trigger") {
 		eval {
 			$trigger = Trigger->new();
-			$trigger->initialize();
+			$trigger->initialize(FluxDB->getFluxConfig("fluxd_Trigger_interval"));
 			if ($trigger->getState() < 1) {
 				print "error initializing service-module Trigger :\n";
 				print $trigger->getMessage()."\n";

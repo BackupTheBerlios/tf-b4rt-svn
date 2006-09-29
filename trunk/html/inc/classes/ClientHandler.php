@@ -347,7 +347,7 @@ class ClientHandler
 			if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {
 				$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($this->cfg, $fluxd, 'Qmgr');
 				$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
-				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
 			} else {
 				$this->messages = "Qmgr not active";
 			}
@@ -356,7 +356,7 @@ class ClientHandler
             // The following command starts the transfer running! w00t!
             //system('echo command > /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
             $this->callResult = exec($this->command);
-            AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+            AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
             // slow down and wait for thread to kick off.
             // otherwise on fast servers it will kill stop it before it gets a chance to run.
             sleep(1);

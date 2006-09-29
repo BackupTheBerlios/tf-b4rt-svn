@@ -41,6 +41,12 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# run-interval
+my $interval;
+
+# time of last run
+my $time_last_run = 0;
+
 # jobs-hash
 my %jobs = undef;
 
@@ -81,6 +87,17 @@ sub initialize {
 
 	shift; # class
 
+	# interval
+	$interval = shift;
+	if (!(defined $interval)) {
+		# message
+		$message = "interval not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
 	# jobs
 	my $jobs = shift;
 	if (!(defined $jobs)) {
@@ -92,7 +109,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "initializing Watch (jobs: ".$jobs.")\n"; # DEBUG
+	print "initializing Watch (interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
 
 	# parse jobs
 	my (@jobsAry) = split(/;/,$jobs);
@@ -107,6 +124,9 @@ sub initialize {
 			$jobs{$user} = $dir;
 		}
 	}
+
+	# reset last run time
+	$time_last_run = 0;
 
 	# set state
 	$state = 1;
@@ -156,15 +176,20 @@ sub set {
 # Returns:                                                                     #
 #------------------------------------------------------------------------------#
 sub main {
+	my $now = time();
+	if (($now - $time_last_run) >= $interval) {
 
-	# watch in dirs for dropped meta-files
-	foreach my $user (sort keys %jobs) {
-		my $dir = $jobs{$user};
-		if ((!($user eq "")) && (-d $dir)) {
-			print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
+		# watch in dirs for dropped meta-files
+		foreach my $user (sort keys %jobs) {
+			my $dir = $jobs{$user};
+			if ((!($user eq "")) && (-d $dir)) {
+				print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
+			}
 		}
-	}
 
+		# set last run time
+		$time_last_run = $now;
+	}
 }
 
 #------------------------------------------------------------------------------#

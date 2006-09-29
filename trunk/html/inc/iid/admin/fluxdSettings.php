@@ -68,6 +68,7 @@ if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('fluxd_Qmgr_state', $fluxd->modState('Qmgr'));
 else
 	$tmpl->setvar('fluxd_Qmgr_state', 0);
+$tmpl->setvar('fluxd_Qmgr_interval', $cfg["fluxd_Qmgr_interval"]);
 $tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
 $tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 // Fluxinet
@@ -83,6 +84,7 @@ if (($cfg["fluxd_Watch_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('fluxd_Watch_state', $fluxd->modState('Watch'));
 else
 	$tmpl->setvar('fluxd_Watch_state', 0);
+$tmpl->setvar('fluxd_Watch_interval', $cfg["fluxd_Watch_interval"]);
 // TODO : process watch-jobs-settings-string
 $tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 // Clientmaint
@@ -98,6 +100,7 @@ if (($cfg["fluxd_Trigger_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('fluxd_Trigger_state', $fluxd->modState('Trigger'));
 else
 	$tmpl->setvar('fluxd_Trigger_state', 0);
+$tmpl->setvar('fluxd_Trigger_interval', $cfg["fluxd_Trigger_interval"]);
 // array with all clients
 $clients = array('tornado', 'transmission', 'mainline', 'wget');
 // get informations

@@ -42,6 +42,12 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# run-interval
+my $interval;
+
+# time of last run
+my $time_last_run = 0;
+
 my ( $time, $localtime, %globals );
 my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 my ( $MAX_SYS, $MAX_USR );
@@ -91,7 +97,20 @@ sub destroy {
 #------------------------------------------------------------------------------#
 sub initialize {
 
-	print "initializing Qmgr\n"; # DEBUG
+	shift; # class
+
+	# interval
+	$interval = shift;
+	if (!(defined $interval)) {
+		# message
+		$message = "interval not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	print "initializing Qmgr (interval: ".$interval.")\n"; # DEBUG
 
 	# Create some time vars
 	$time = time();
@@ -120,6 +139,9 @@ sub initialize {
 			$user->{"running"} = ();
 		}
 	}
+
+	# reset last run time
+	$time_last_run = 0;
 
 	# set state
 	$state = 1;
@@ -169,6 +191,15 @@ sub set {
 # Returns:                                                                     #
 #------------------------------------------------------------------------------#
 sub main {
+	my $now = time();
+	if (($now - $time_last_run) >= $interval) {
+
+		# process queue
+		processQueue();
+
+		# set last run time
+		$time_last_run = $now;
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -216,8 +247,6 @@ sub command {
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
 sub processQueue {
-	# hold cycle-start-time
-	my $timeStart = time();
 
 	# update running torrents
 	UpdateRunningTorrents();

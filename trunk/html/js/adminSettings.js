@@ -9,6 +9,10 @@ function validateSettings(section) {
 		case 'dir':
 			break;
 		case 'fluxd':
+			if (isNumber(document.theForm.fluxd_Qmgr_interval.value) == false ) {
+				msg = msg + "* Qmgr Intervall must be a valid number.\n";
+				document.theForm.fluxd_Qmgr_interval.focus();
+			}
 			if (isNumber(document.theForm.fluxd_Qmgr_maxTotalTorrents.value) == false) {
 				msg = msg + "* Max Total Threads must be a valid number.\n";
 				document.theForm.fluxd_Qmgr_maxTotalTorrents.focus();
@@ -17,18 +21,26 @@ function validateSettings(section) {
 				msg = msg + "* Max User Threads must be a valid number.\n";
 				document.theForm.fluxd_Qmgr_maxUserTorrents.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Clientmaint_interval.value) == false) {
-				msg = msg + "* Clientmaint Interval must be a valid number.\n";
-				document.theForm.fluxd_Clientmaint_interval.focus();
-			}
 			if (isNumber(document.theForm.fluxd_Fluxinet_port.value) == false ) {
 				msg = msg + "* Fluxinet port must be a valid number.\n";
 				document.theForm.fluxd_Fluxinet_port.focus();
 			}
+			if (isNumber(document.theForm.fluxd_Watch_interval.value) == false ) {
+				msg = msg + "* Watch Intervall must be a valid number.\n";
+				document.theForm.fluxd_Watch_interval.focus();
+			}
+			if (isNumber(document.theForm.fluxd_Clientmaint_interval.value) == false) {
+				msg = msg + "* Clientmaint Intervall must be a valid number.\n";
+				document.theForm.fluxd_Clientmaint_interval.focus();
+			}
+			if (isNumber(document.theForm.fluxd_Trigger_interval.value) == false ) {
+				msg = msg + "* Trigger Intervall must be a valid number.\n";
+				document.theForm.fluxd_Trigger_interval.focus();
+			}
 			break;
 		case 'index':
 			if (isNumber(document.theForm.page_refresh.value) == false ) {
-				msg = msg + "* Page Refresh Intervall must be a valid number.\n";
+				msg = msg + "* Page Refresh Intervalll must be a valid number.\n";
 				document.theForm.page_refresh.focus();
 			}
 			if (isNumber(document.theForm.index_ajax_update.value) == false ) {
@@ -97,11 +109,11 @@ function validateSettings(section) {
 				document.theForm.minport.focus();
 			}
 			if (isNumber(document.theForm.rerequest_interval.value) == false) {
-				msg = msg + "* Rerequest Interval must have a valid number.\n";
+				msg = msg + "* Rerequest Intervall must have a valid number.\n";
 				document.theForm.rerequest_interval.focus();
 			}
 			if (document.theForm.rerequest_interval.value < 10) {
-				msg = msg + "* Rerequest Interval must 10 or greater.\n";
+				msg = msg + "* Rerequest Intervall must be 10 or greater.\n";
 				document.theForm.rerequest_interval.focus();
 			}
 			if (isNumber(document.theForm.sharekill.value) == false) {

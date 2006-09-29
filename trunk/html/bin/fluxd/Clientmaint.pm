@@ -84,7 +84,7 @@ sub initialize {
 
 	shift; # class
 
-	# $port
+	# interval
 	$interval = shift;
 	if (!(defined $interval)) {
 		# message

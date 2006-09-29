@@ -31,11 +31,11 @@ function ValidateValues() {
 		document.theForm.minport.focus();
 	}
 	if (isNumber(document.theForm.rerequest.value) == false) {
-		msg = msg + "* Rerequest Interval must be a valid number.\n";
+		msg = msg + "* Rerequest Intervall must be a valid number.\n";
 		document.theForm.rerequest.focus();
 	}
 	if (document.theForm.rerequest.value < 10) {
-		msg = msg + "* Rerequest Interval must be 10 or greater.\n";
+		msg = msg + "* Rerequest Intervall must be 10 or greater.\n";
 		document.theForm.rerequest.focus();
 	}
 	if (isNumber(document.theForm.sharekill.value) == false) {
