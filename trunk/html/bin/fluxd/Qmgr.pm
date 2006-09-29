@@ -194,11 +194,11 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		# process queue
-		processQueue();
-
 		# set last run time
 		$time_last_run = $now;
+
+		# process queue
+		processQueue();
 	}
 }
 
