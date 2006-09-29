@@ -45,14 +45,14 @@ function tmplGetInstance($theme, $template) {
 			break;
 	}
 	//  set common template-vars
-	$tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
 	$tmpl->setvar('theme', $theme);
-    $tmpl->setvar('pagetitle', $cfg["pagetitle"]);
-    $tmpl->setvar('main_bgcolor', $cfg["main_bgcolor"]);
-    $tmpl->setvar('table_border_dk', $cfg["table_border_dk"]);
-    $tmpl->setvar('table_header_bg', $cfg["table_header_bg"]);
-    $tmpl->setvar('table_data_bg', $cfg["table_data_bg"]);
-    $tmpl->setvar('body_data_bg', $cfg["body_data_bg"]);
+    $tmpl->setvar('pagetitle', @ $cfg["pagetitle"]);
+    $tmpl->setvar('main_bgcolor', @ $cfg["main_bgcolor"]);
+    $tmpl->setvar('table_border_dk', @ $cfg["table_border_dk"]);
+    $tmpl->setvar('table_header_bg', @ $cfg["table_header_bg"]);
+    $tmpl->setvar('table_data_bg', @ $cfg["table_data_bg"]);
+    $tmpl->setvar('body_data_bg', @ $cfg["body_data_bg"]);
+    $tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
     // return template-instance
     return $tmpl;
 }
@@ -243,9 +243,17 @@ function getTorrentFluxLink() {
  */
 function showErrorPage($errorMessage) {
 	global $cfg;
-	require_once("themes/".$cfg["default_theme"]."/index.php");
+	// theme
+	if (isset($cfg["theme"]))
+		$theme = $cfg["theme"];
+	else if (isset($cfg["default_theme"]))
+		$theme = $cfg["default_theme"];
+	else
+		$theme = "default";
+	// template
+	require_once("themes/".$theme."/index.php");
 	require_once("inc/lib/vlib/vlibTemplate.php");
-	$tmpl = tmplGetInstance($cfg["default_theme"], "page.error.tmpl");
+	$tmpl = @ tmplGetInstance($theme, "page.error.tmpl");
 	$tmpl->setvar('ErrorMsg', $errorMessage);
 	$tmpl->pparse();
 	exit();

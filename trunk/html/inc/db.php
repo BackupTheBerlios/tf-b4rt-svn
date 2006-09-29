@@ -30,11 +30,58 @@ require_once('inc/lib/adodb/adodb.inc.php');
  */
 function getdb() {
 	global $cfg;
+
+	/*
 	// 2004-12-09 PFM: connect to database.
 	$db = NewADOConnection($cfg["db_type"]);
 	$db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-	if(!$db)
-		die ('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.db.php file.');
+	if (!$db)
+		showErrorPage('Could not connect to database: '.$db->ErrorMsg().'<br>Check your database settings in the config.db.php file.');
+	return $db;
+	*/
+
+	/*
+	// MySQL
+	# or dsn
+	$dsn = 'mysql://user:pwd@localhost/mydb';
+	$conn = ADONewConnection($dsn);  # no need for Connect()
+	# or persistent dsn
+	$dsn = 'mysql://user:pwd@localhost/mydb?persist';
+	$conn = ADONewConnection($dsn);  # no need for PConnect()
+	*/
+
+	/*
+	// SQLite
+	$path = urlencode('c:\path\to\sqlite.db');
+	$dsn = "sqlite://$path/?persist";  # persist is optional
+	$conn = ADONewConnection($dsn);  # no need for Connect/PConnect
+	*/
+
+	/*
+	// PostgreSQL
+	$dsn = 'postgres://user:pwd@localhost/mydb?persist';  # persist is optional
+	$conn = ADONewConnection($dsn);  # no need for Connect/PConnect
+	*/
+
+	// build DSN
+	$dsn = "";
+	switch ($cfg["db_type"]) {
+		case "mysql":
+			$dsn .= 'mysql://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
+			break;
+		case "sqlite":
+			$dsn .= 'sqlite://'.$dbHost;
+			break;
+		case "postgres":
+			$dsn .= 'postgres://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
+			break;
+	}
+	// connect
+	$db = @ ADONewConnection($dsn);
+	// check if connect successful
+	if (!$db)
+		showErrorPage('Could not connect to database:<br><em>'.$dsn.'</em><br>Check your database settings in the config.db.php file.');
+	// return db-connection
 	return $db;
 }
 
@@ -47,13 +94,21 @@ function getdb() {
 function showError($db, $sql) {
 	global $cfg;
 	if ($db->ErrorNo() != 0) {
-		require_once("themes/".$cfg["default_theme"]."/index.php");
+		// theme
+		if (isset($cfg["theme"]))
+			$theme = $cfg["theme"];
+		else if (isset($cfg["default_theme"]))
+			$theme = $cfg["default_theme"];
+		else
+			$theme = "default";
+		// template
+		require_once("themes/".$theme."/index.php");
 		require_once("inc/lib/vlib/vlibTemplate.php");
-		$tmpl = tmplGetInstance($cfg["default_theme"], "page.db.tmpl");
-		$tmpl->setvar('debug_sql', $cfg["debug_sql"]);
-		$tmpl->setvar('sql', $sql);
-		$tmpl->setvar('ErrorMsg', $db->ErrorMsg());
-		$tmpl->pparse();
+		$tmpl = @ tmplGetInstance($theme, "page.db.tmpl");
+		@ $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
+		@ $tmpl->setvar('sql', $sql);
+		@ $tmpl->setvar('ErrorMsg', $db->ErrorMsg());
+		@ $tmpl->pparse();
 	}
 }
 

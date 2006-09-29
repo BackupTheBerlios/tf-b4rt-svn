@@ -389,7 +389,7 @@ sub loadDatabaseConfig {
 		};
 
 		# PostgreSQL
-		/^postgres7/i && do {
+		/^postgres/i && do {
 			$dbDSN .= "Pg:dbname=".$dbName;
 			if ($dbPort > 0) {
 				$dbDSN .= ";port=".$dbPort;

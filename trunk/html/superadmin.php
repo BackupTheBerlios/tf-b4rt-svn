@@ -1659,7 +1659,7 @@ function backupCreate($talk = false, $compression = 0) {
 	// command-strings
 	$commandArchive = "cd ".$dirBackup."; tar ".$tarSwitch." ".$fileArchiveName." ";
 	$commandDatabase = "";
-	switch($cfg["db_type"]) {
+	switch ($cfg["db_type"]) {
 		case "mysql":
 			$commandDatabase = "mysqldump -h ".$cfg["db_host"]." -u ".$cfg["db_user"]." --password=".$cfg["db_pass"]." --all -f ".$cfg["db_name"]." > ".$fileDatabase;
 			$commandArchive .= 'database.sql ';
@@ -1668,7 +1668,7 @@ function backupCreate($talk = false, $compression = 0) {
 			$commandDatabase = "sqlite ".$cfg["db_host"]." .dump > ".$fileDatabase;
 			$commandArchive .= 'database.sql ';
 			break;
-		case "postgres7":
+		case "postgres":
 			$commandDatabase = "pg_dump -h ".$cfg["db_host"]." -D ".$cfg["db_name"]." -U ".$cfg["db_user"]." -f ".$fileDatabase;
 			$commandArchive .= 'database.sql ';
 			break;
