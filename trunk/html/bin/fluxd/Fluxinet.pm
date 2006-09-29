@@ -213,8 +213,8 @@ sub command {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Fluxinet.pm Revision ".$VERSION." =-\n\n";
-	$return .= "Fluxinet is currently running.\n";
+	$return .= "\n-= Fluxinet.pm Revision ".$VERSION." =-\n";
+	$return .= "port : $port s \n";
 	return $return;
 }
 

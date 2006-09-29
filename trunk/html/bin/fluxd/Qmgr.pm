@@ -383,13 +383,11 @@ sub saveQueue {
 #-----------------------------------------------------------------------------#
 sub status {
 	my $return = "status info\n";
-	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n\n";
-
+	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
 	# get count-vars
 	my $countQueue = queue();
 	my $countRunning = running();
 	my $countJobs = $countQueue + $countRunning;
-
 	# some vars
 	$return .= "min sleep-time worker \t: $SLEEP_MIN s \n";
 	$return .= "max sleep-time worker \t: $SLEEP_MAX s \n";
@@ -397,10 +395,8 @@ sub status {
 	$return .= "max torrents per user \t: $MAX_USR \n";
 	$return .= "max start-tries    \t: $MAX_START_TRIES \n";
 	$return .= "start-try-extra-sleep \t: $START_TRIES_SLEEP s\n\n";
-
 	# jobs total
 	$return .= "jobs total \t: ".$countJobs."\n";
-
 	# jobs queued
 	$return .= "jobs queued \t: ".$countQueue."\n";
 	foreach my $user (@{$users}) {
@@ -409,7 +405,6 @@ sub status {
 			$return .= "  * ".$jobName." (".$jobUser.")\n";
 		}
 	}
-
 	# jobs running
 	$return .= "jobs running \t: ".$countRunning."\n";
 	foreach my $user (@{$users}) {
@@ -418,14 +413,13 @@ sub status {
 			$return .= "  * ".$jobName." (".$jobUser.")\n";
 		}
 	}
-
 	# misc stats
 	$return .= "\nQmgr Daemon up since $localtime (";
 	my $tempiStringy = FluxdCommon::niceTimeString($time);
 	$return .= $tempiStringy.") ";
 	$return .= "(".$globals{'main'}." cycles) \n";
 	$return .= "Qmgr Daemon started ".$globals{'started'}." torrents \n\n";
-
+	# return
 	return $return;
 }
 

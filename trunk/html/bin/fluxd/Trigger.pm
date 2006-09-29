@@ -178,7 +178,7 @@ sub command {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Trigger.pm Revision ".$VERSION." =-\n\n";
+	$return .= "\n-= Trigger.pm Revision ".$VERSION." =-\n";
 	$return .= "interval : $interval s \n";
 	return $return;
 }
