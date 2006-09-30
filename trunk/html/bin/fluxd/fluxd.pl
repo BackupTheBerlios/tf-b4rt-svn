@@ -36,16 +36,19 @@ use FluxdCommon;
 #
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
-my $PATH_TRANSFER_DIR = ".transfers";
+#
 our $PATH_DATA_DIR = ".fluxd";
+my $PATH_TRANSFER_DIR = ".transfers";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
 my $PATH_QUEUE_FILE = "fluxd.queue";
 #
-my ( $VERSION, $DIR, $PROG, $EXTENSION );
-my $PATH_DOCROOT;
+my $PATH_DOCROOT = "/var/www";
+my $BIN_PHP = "/usr/bin/php";
+#
+my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
 my $Select = new IO::Select();
 my $start_time = time();
@@ -236,6 +239,13 @@ sub processArguments {
 			$temp .= "/";
 		}
 		$PATH_DOCROOT = $temp;
+		# $BIN_PHP
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		$BIN_PHP = $temp;
 		print "Stopping daemon...\n";
 		# db-bean
 		# require
@@ -277,7 +287,14 @@ sub processArguments {
 			$temp .= "/";
 		}
 		$PATH_DOCROOT = $temp;
-		print "Starting up daemon with docroot ".$PATH_DOCROOT."\n"; # DEBUG
+		# $BIN_PHP
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		$BIN_PHP = $temp;
+		print "Starting up daemon with docroot ".$PATH_DOCROOT." and PHP ".$BIN_PHP."\n"; # DEBUG
 		# return
 		return 1;
 	};
@@ -344,11 +361,6 @@ sub daemonize {
 
 	# write out pid-file
 	writePidFile($$);
-
-	# check requirements, die if they aren't there
-	#if (!(check())) {
-	#	exit;
-	#}
 
 	# set up our signal handlers
 	$SIG{HUP} = \&gotSigHup;
@@ -727,7 +739,7 @@ sub processRequest {
 		};
 
 		# fluxcli.php calls
-		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat|^watch/ && do {
+		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat|^watch|^dump/ && do {
 			$return = fluxcli($_, shift, shift);
 			last SWITCH;
 		};
@@ -835,22 +847,19 @@ sub fluxcli {
 	my $Command = shift;
 	my $Arg1 = shift;
 	my $Arg2 = shift;
-
 	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return printUsage();
 		} else {
-			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command;
 			return `$shellCmd`;
 		}
 	}
-	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer|^dump/) {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return printUsage();
 		} else {
-			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
 			return `$shellCmd`;
 		}
 	}
@@ -858,8 +867,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return printUsage();
 		} else {
-			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." >> $LOG";
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." >> $LOG";
 			system($shellCmd);
 			return "1";
 		}
@@ -979,36 +987,6 @@ sub modState {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: printUsage                                                              #
-# Arguments: bool (or undefined)                                               #
-# Returns: Usage Information                                                   #
-#------------------------------------------------------------------------------#
-sub printUsage {
-	my $return = shift;
-	my $data = <<"USAGE";
-$PROG.$EXTENSION Revision $VERSION
-
-Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
-                        starts fluxd daemon
-       $PROG.$EXTENSION <daemon-stop> path-to-docroot
-                        stops fluxd daemon
-       $PROG.$EXTENSION check path-to-docroot
-                        checks for requirements.
-       $PROG.$EXTENSION <-h|--help>
-                        print out help screen.
-       $PROG.$EXTENSION <-v|--version>
-                        print out version-info
-
-USAGE
-
-	if ($return) {
-		return $data;
-	} else {
-		print $data;
-	}
-}
-
-#------------------------------------------------------------------------------#
 # Sub: printVersion                                                            #
 # Arguments: Null                                                              #
 # Returns: Version Information                                                 #
@@ -1092,7 +1070,7 @@ sub check {
 
 	# 1. perl-modules
 	print "1. perl-modules\n";
-	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX', 'DBI');
+	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			$return = 1;
@@ -1148,16 +1126,30 @@ sub debug {
 
 	# database-debug
 	if ($debug =~ /db/) {
-		my $dbcfg = shift @ARGV;
-		if (!(defined $dbcfg)) {
+
+		# $PATH_DOCROOT
+		my $temp = shift @ARGV;
+		if (!(defined $temp)) {
 			print "debug database is missing an argument : path to docroot\n";
 			exit;
 		}
-		if (!((substr $dbcfg, -1) eq "/")) {
-			$dbcfg .= "/";
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
 		}
-		$dbcfg .= "inc/config/".$FILE_DBCONF;
+		$PATH_DOCROOT = $temp;
+
+		# $BIN_PHP
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			print "debug database is missing an argument : path to php\n";
+			exit;
+		}
+		$BIN_PHP = $temp;
+
+		my $dbcfg = $PATH_DOCROOT."inc/config/".$FILE_DBCONF;
+
 		print "debugging database...\n";
+
 		# require
 		require FluxDB;
 		# create instance
@@ -1193,7 +1185,6 @@ sub debug {
 		# something from the bean
 		print "getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
 		print "getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
-		print "getFluxConfig(\"bin_php\") : \"".FluxDB->getFluxConfig("bin_php")."\"\n";
 		print "getFluxConfig(\"fluxd_loglevel\") : \"".FluxDB->getFluxConfig("fluxd_loglevel")."\"\n";
 		print "getFluxConfig(\"fluxd_Qmgr_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Qmgr_enabled")."\"\n";
 		print "getFluxConfig(\"fluxd_Qmgr_interval\") : \"".FluxDB->getFluxConfig("fluxd_Qmgr_interval")."\"\n";
@@ -1207,45 +1198,68 @@ sub debug {
 		# destroy
 		print "destroying \$fluxDB\n";
 		$fluxDB->destroy();
+
 		# done
 		print "done.\n";
 		exit;
+
 	} elsif	($debug =~ /fluxcli/) { # fluxcli-debug
-		my $dbcfg = shift @ARGV;
-		if (!(defined $dbcfg)) {
+		# $PATH_DOCROOT
+		my $temp = shift @ARGV;
+		if (!(defined $temp)) {
 			print "debug fluxcli is missing an argument : path to docroot\n";
 			exit;
 		}
-		if (!((substr $dbcfg, -1) eq "/")) {
-			$dbcfg .= "/";
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
 		}
-		$dbcfg .= "inc/config/".$FILE_DBCONF;
+		$PATH_DOCROOT = $temp;
+		# $BIN_PHP
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			print "debug fluxcli is missing an argument : path to php\n";
+			exit;
+		}
+		$BIN_PHP = $temp;
 		print "debugging fluxcli...\n";
-		# require
-		require FluxDB;
-		# create instance
-		$fluxDB = FluxDB->new();
-		if ($fluxDB->getState() == -1) {
-			print " error : ".$fluxDB->getMessage()."\n";
-			exit;
-		}
-		# initialize
-		$fluxDB->initialize($dbcfg);
-		if ($fluxDB->getState() < 1) {
-			print " hmm : ".$fluxDB->getMessage()."\n";
-			exit;
-		}
-		# init paths
-		initPaths(FluxDB->getFluxConfig("path"));
 		# test fluxcli-command "torrents"
 		my $return = fluxcli("torrents");
 		print $return;
-		# destroy
-		$fluxDB->destroy();
+		# exit
 		exit;
 	}
 
 	# bail out
 	print "debug is missing an operation.\n";
 	exit;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printUsage                                                              #
+# Arguments: bool (or undefined)                                               #
+# Returns: Usage Information                                                   #
+#------------------------------------------------------------------------------#
+sub printUsage {
+	my $return = shift;
+	my $data = <<"USAGE";
+$PROG.$EXTENSION Revision $VERSION
+
+Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot path-to-php
+                        starts fluxd daemon
+       $PROG.$EXTENSION <daemon-stop> path-to-docroot path-to-php
+                        stops fluxd daemon
+       $PROG.$EXTENSION <check> path-to-docroot
+                        checks for requirements.
+       $PROG.$EXTENSION <-v|--version>
+                        print out version-info
+       $PROG.$EXTENSION <-h|--help>
+                        print out help screen.
+
+USAGE
+
+	if ($return) {
+		return $data;
+	} else {
+		print $data;
+	}
 }

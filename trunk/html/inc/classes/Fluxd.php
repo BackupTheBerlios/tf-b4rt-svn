@@ -85,7 +85,10 @@ class Fluxd
             $startCommand .= " nohup " . $this->cfg["perlCmd"];
             $startCommand .= " -I ".$this->cfg["docroot"]."bin/fluxd";
             $startCommand .= " ".$this->cfg["docroot"]."bin/fluxd/fluxd.pl";
-            $startCommand .= " daemon-start ".$this->cfg["docroot"]. " > /dev/null &";
+            $startCommand .= " daemon-start";
+            $startCommand .= " ".escapeshellarg($this->cfg["docroot"]);
+            $startCommand .= " ".escapeshellarg($this->cfg["bin_php"]);
+            $startCommand .= " > /dev/null &";
             $result = exec($startCommand);
             // give fluxd some time
             sleep(8);

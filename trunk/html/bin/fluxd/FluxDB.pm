@@ -54,7 +54,7 @@ my $message = "";
 my $mode = "dbi";
 
 # docroot
-my $docroot = "";
+my $docroot = "/var/www";
 
 # flux-config-hash
 my %fluxConf = undef;
@@ -76,6 +76,9 @@ my $dbPort = 0;
 my $dbUser = "";
 my $dbPass = "";
 my $dbDSN = "";
+
+# php
+my $php = "/usr/bin/php";
 
 # fluxcli
 my $fluxcli = "fluxcli.php";

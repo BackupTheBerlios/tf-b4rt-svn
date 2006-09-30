@@ -163,47 +163,6 @@
 								</tr>
 								<tr>
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Fluxinet</strong>&nbsp;
-										<tmpl_if name="fluxd_Fluxinet_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Fluxinet not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Fluxinet_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Fluxinet loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Fluxinet_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Fluxinet error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Fluxinet enabled</strong><br>
-									Specify whether or not to load the Fluxinet module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Fluxinet_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Fluxinet_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Fluxinet_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
-										the port number to run the Fluxinet socket on:
-									</td>
-									<td valign="top">
-										<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Watch</strong>&nbsp;
 										<tmpl_if name="fluxd_Watch_state" value="0">
 											<img src="themes/tf_standard_themes/images/black.gif" title="Watch not loaded.">
@@ -284,6 +243,47 @@
 											</tr>
 										</table>
 										<input type="hidden" name="fluxd_Watch_jobs" value="<tmpl_var name="fluxd_Watch_jobs">">
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Fluxinet</strong>&nbsp;
+										<tmpl_if name="fluxd_Fluxinet_state" value="0">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Fluxinet not loaded.">
+										</tmpl_if>
+										<tmpl_if name="fluxd_Fluxinet_state" value="1">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Fluxinet loaded.">
+										</tmpl_if>
+										<tmpl_if name="fluxd_Fluxinet_state" value="-1">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Fluxinet error.">
+										</tmpl_if>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Fluxinet enabled</strong><br>
+									Specify whether or not to load the Fluxinet module.
+									</td>
+									<td valign="top">
+										<select name="fluxd_Fluxinet_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Fluxinet_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Fluxinet_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
+										the port number to run the Fluxinet socket on:
+									</td>
+									<td valign="top">
+										<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
 									</td>
 								</tr>
 								<tr>
