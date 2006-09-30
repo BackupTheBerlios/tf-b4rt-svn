@@ -662,20 +662,14 @@ if ($cfg["ui_displayusers"] != "0") {
 	$tmpl->setvar('ui_displayusers',1);
 	$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
 	$arUsers = GetUsers();
+	$userCount = count($arUsers);
 	$arOnlineUsers = array();
 	$arOfflineUsers = array();
-	for ($inx = 0; $inx < count($arUsers); $inx++) {
-		if (IsOnline($arUsers[$inx])) {
-			array_push($arOnlineUsers, array(
-				'user' => $arUsers[$inx],
-				)
-			);
-		} else {
-			array_push($arOfflineUsers, array(
-				'user' => $arUsers[$inx],
-				)
-			);
-		}
+	for ($inx = 0; $inx < $userCount; $inx++) {
+		if (IsOnline($arUsers[$inx]))
+			array_push($arOnlineUsers, array('user' => $arUsers[$inx]));
+		else
+			array_push($arOfflineUsers, array('user' => $arUsers[$inx]));
 	}
 	$tmpl->setloop('arOnlineUsers', $arOnlineUsers);
 	$tmpl->setloop('arOfflineUsers', $arOfflineUsers);

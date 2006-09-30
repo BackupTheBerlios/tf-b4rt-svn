@@ -152,9 +152,11 @@
 										    <tr>
 										    	<td>&nbsp;</td>
 										    	<td id="usersOnline">
-												    <tmpl_loop name="arOnlineUsers">
-														<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
-												    </tmpl_loop>
+										    		<tmpl_if name="arOnlineUsers">
+													    <tmpl_loop name="arOnlineUsers">
+															<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
+													    </tmpl_loop>
+												    </tmpl_if>
 											    </td>
 										    </tr>
 		    								<tmpl_if name="hide_offline" value="0">
@@ -165,9 +167,11 @@
 										    	<tr>
 											    	<td>&nbsp;</td>
 											    	<td id="usersOffline">
-				    									<tmpl_loop name="arOfflineUsers">
-				    										<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
-				    								    </tmpl_loop>
+											    		<tmpl_if name="arOfflineUsers">
+					    									<tmpl_loop name="arOfflineUsers">
+					    										<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
+					    								    </tmpl_loop>
+				    								    </tmpl_if>
 			    								    </td>
 												</tr>
 		    								</tmpl_if>
