@@ -224,8 +224,6 @@ sub processArguments {
 		exit;
 	};
 
-	# TODO : more ops                                                           /* TODO */
-
 	# daemon-stop
 	if ($temp =~ /daemon-stop/) {
 		# $PATH_DOCROOT
@@ -994,29 +992,6 @@ Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot
                         starts fluxd daemon
        $PROG.$EXTENSION <daemon-stop> path-to-docroot
                         stops fluxd daemon
-       $PROG.$EXTENSION <start|stop|reset|delete|wipe> foo.torrent
-                        starts, stops, resets totals, deletes, or deletes
-                        and resets totals for a torrent, as well as removing
-                        all data downloaded for that torrent
-       $PROG.$EXTENSION <torrents|status|netstat|start-all|stop-all|resume-all>
-                        lists info about the selected aspect. status shows all
-       $PROG.$EXTENSION inject /path/to/foo.torrent user
-                        injects a torrent file into flux as the specified user
-       $PROG.$EXTENSION watch /path/to/watch/dir user
-                        sets fluxd to watch the specified directory and upload
-                        torrents entered in it as the specified user
-       $PROG.$EXTENSION set <LOGLEVEL|MAX_USR|MAX_SYS> [VALUE]
-                        if given without a value argument, returns current
-                        value of the given variable. If given with a value
-                        argument, sets the given variable to that value
-       $PROG.$EXTENSION <count-jobs|count-queue|list-queue|check>
-                        returns the number of jobs, number of entries in the
-                        queue, list entries in the queue, or check to ensure
-                        that this computer has everything fluxd needs.
-       $PROG.$EXTENSION repair
-                        repairs torrentflux. DO NOT DO THIS if your system
-                        is running as it should. You WILL break something.
-
        $PROG.$EXTENSION check path-to-docroot
                         checks for requirements.
        $PROG.$EXTENSION <-h|--help>
