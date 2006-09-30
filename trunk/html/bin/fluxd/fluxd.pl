@@ -30,7 +30,6 @@ use FluxdCommon;
 ################################################################################
 # fields                                                                       #
 ################################################################################
-#
 our $PATH_DATA_DIR = ".fluxd";
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
@@ -79,22 +78,6 @@ while ( $loop ) {
 	# check Connections
 	checkConnections();
 
-	# Qmgr
-	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub { die "alarm\n" };
-			alarm 15;
-			$qmgr->main();
-			alarm 0;
-		};
-
-		# Check for alarm (timeout) condition
-		if ($@) {
-			print STDERR "Qmgr : Timed out\n";
-			print STDERR $@."\n";
-		}
-	}
-
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
 		eval {
@@ -107,6 +90,22 @@ while ( $loop ) {
 		# Check for alarm (timeout) condition
 		if ($@) {
 			print STDERR "Fluxinet : Timed out\n";
+			print STDERR $@."\n";
+		}
+	}
+
+	# Qmgr
+	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		eval {
+			local $SIG{ALRM} = sub { die "alarm\n" };
+			alarm 15;
+			$qmgr->main();
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			print STDERR "Qmgr : Timed out\n";
 			print STDERR $@."\n";
 		}
 	}
@@ -320,8 +319,6 @@ sub processArguments {
 sub daemonize {
 
 	# db-bean
-
-	# require
 	require FluxDB;
 
 	# create instance

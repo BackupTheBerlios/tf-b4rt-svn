@@ -23,9 +23,6 @@
 package Fluxinet;
 use strict;
 use warnings;
-#
-use IO::Socket;
-use IO::Select;
 ################################################################################
 
 ################################################################################
@@ -106,6 +103,11 @@ sub initialize {
 
 	print "initializing Fluxinet (port: ".$port.")\n"; # DEBUG
 
+	# load modules
+	if (loadModules() != 1) {
+		return 0;
+	}
+
 	# Create the read set
 	$Select = new IO::Select();
 
@@ -128,6 +130,40 @@ sub initialize {
 	# set state
 	$state = 1;
 
+	# return
+	return 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadModules                                                             #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub loadModules {
+
+	# load IO::Socket
+	if (eval "require IO::Socket")  {
+		IO::Socket->import();
+	} else {
+		# message
+		$message = "cant load perl-module IO::Socket : ".$@;
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	# load IO::Select
+	if (eval "require IO::Select")  {
+		IO::Select->import();
+	} else {
+		# message
+		$message = "cant load perl-module IO::Select : ".$@;
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
 	# return
 	return 1;
 }
