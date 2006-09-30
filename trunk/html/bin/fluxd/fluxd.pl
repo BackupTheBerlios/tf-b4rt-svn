@@ -633,7 +633,7 @@ sub loadServiceModules {
 sub gotSigHup {
 	print "Got SIGHUP, re-loading service-modules...";
 	# have FluxDB reload the DB first, so we can see the changes
-	if ($fluxDB->loadFluxConfig()) {
+	if ($fluxDB->reload()) {
 		loadServiceModules();
 		print "done.\n";
 	} else {
@@ -1152,52 +1152,6 @@ sub check {
 	} else {
 		print "\nError : cant find fluxcli ".$BIN_FLUXCLI." in ".$PATH_DOCROOT."bin/"."\n";
 	}
-
-	# 3. db-bean
-	print "3. database\n";
-
-	# require
-	if (!(eval "require FluxDB")) {
-		print "Error : cant load database-module FluxDB\n";
-		exit;
-	}
-
-	# create instance
-	$fluxDB = FluxDB->new();
-	if ($fluxDB->getState() == -1) {
-		print "Error : creating FluxDB: ".$fluxDB->getMessage()."\n";
-		exit;
-	}
-
-	# initialize
-	$fluxDB->initialize($PATH_DOCROOT."inc/config/".$FILE_DBCONF);
-	if ($fluxDB->getState() < 1) {
-		print "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
-		exit;
-	}
-
-	# db-settings
-	print " - type : ".$fluxDB->getDatabaseType()."\n";
-	print " - name : ".$fluxDB->getDatabaseName()."\n";
-	print " - host : ".$fluxDB->getDatabaseHost()."\n";
-
-	# init paths
-	initPaths(FluxDB->getFluxConfig("path"));
-
-	# 4. paths
-	print "4. paths\n";
-	print " - path : ".FluxDB->getFluxConfig("path")."\n";
-	print " - transfers-dir : ".$PATH_TRANSFER_DIR."\n";
-	print " - docroot : ".$PATH_DOCROOT."\n";
-	print " - data-dir : ".$PATH_DATA_DIR."\n";
-	print " - socket : ".$PATH_SOCKET."\n";
-	print " - error-log : ".$ERROR_LOG."\n";
-	print " - log : ".$LOG."\n";
-	print " - pid : ".$PID_FILE."\n";
-	print " - queue : ".$PATH_QUEUE_FILE."\n";
-
-	# destroy fluxDB
-	$fluxDB->destroy();
 
 	# done
 	print "done.\n";

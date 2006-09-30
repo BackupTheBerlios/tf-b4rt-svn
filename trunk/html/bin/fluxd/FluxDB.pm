@@ -50,11 +50,23 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
-# database-handle
-my $dbHandle = undef;
+# operation-mode : dbi / php
+my $mode = "dbi";
+
+# docroot
+my $docroot = "";
+
+# flux-config-hash
+my %fluxConf = undef;
+
+# users + usernames
+use vars qw( @users %names );
 
 # database-conf-file
-my $dbConfig = "";
+my $dbConfig = "config.db.php";
+
+# database-handle
+my $dbHandle = undef;
 
 # database-settings
 my $dbType = "";
@@ -65,11 +77,8 @@ my $dbUser = "";
 my $dbPass = "";
 my $dbDSN = "";
 
-# flux-config-hash
-my %fluxConf = undef;
-
-# users + usernames
-use vars qw( @users %names );
+# fluxcli
+my $fluxcli = "fluxcli.php";
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -208,6 +217,15 @@ sub getState {
 #------------------------------------------------------------------------------#
 sub getMessage {
 	return $message;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getMode                                                                 #
+# Arguments: null                                                              #
+# Returns: mode                                                                #
+#------------------------------------------------------------------------------#
+sub getMode {
+	return $mode;
 }
 
 #------------------------------------------------------------------------------#
