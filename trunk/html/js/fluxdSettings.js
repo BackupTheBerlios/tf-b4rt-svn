@@ -16,7 +16,7 @@ function mytrim(value) {
  * addWatchEntry
  */
 function addWatchEntry () {
-	var wu = mytrim(document.theForm.watch_user.value);
+	var wu = mytrim(document.theForm.watch_user.options[document.theForm.watch_user.selectedIndex].value);
     var wd = mytrim(document.theForm.watch_dir.value);
     if ((wu != "") && (wd != "")) {
 	    var liststr = document.theForm.fluxd_Watch_jobs;
@@ -24,7 +24,7 @@ function addWatchEntry () {
 	    var newentry = document.createElement("option");
 	    newentry.text = wu + ":" + wd;
 	    newentry.value = newentry.text;
-	    document.theForm.watch_user.value = "";
+	    //document.theForm.watch_user.value = "";
 		document.theForm.watch_dir.value = "";
 	    if (navigator.appName == "Netscape")
 	    	list.add(newentry, null);
@@ -35,7 +35,7 @@ function addWatchEntry () {
 	    else
 	    	liststr.value = liststr.value + ";" + newentry.text;
     } else {
-		alert("Please enter Directory + Username first!");
+		alert("Please select an Username and enter a Directory first!");
 	}
 }
 

@@ -65,6 +65,8 @@ $tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6','<font class="adminlin
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
 
 // MODS
+$users = GetUsers();
+$userCount = count($users);
 
 // Qmgr
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
@@ -108,6 +110,10 @@ if ((isset($cfg["fluxd_Watch_jobs"])) && (strlen($cfg["fluxd_Watch_jobs"]) > 0))
 	}
 	$tmpl->setloop('fluxd_Watch_jobs_list', $watchlist);
 }
+$watchuser = array();
+for ($i = 0; $i < $userCount; $i++)
+	array_push($watchuser, array('user' => $users[$i]));
+$tmpl->setloop('watch_user', $watchuser);
 $tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 
 // Clientmaint

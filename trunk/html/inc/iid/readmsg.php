@@ -102,12 +102,8 @@ if (isset($_REQUEST['mid'])) {
 	$tmpl->setvar('_SENDMESSAGETO', $cfg['_SENDMESSAGETO']);
 	$tmpl->setvar('_COMPOSE', $cfg['_COMPOSE']);
 	$user = array();
-	for($inx = 0; $inx < sizeof($users); $inx++) {
-		array_push($user, array(
-			'user' => $users[$inx],
-			)
-		);
-	}
+	for ($inx = 0; $inx < sizeof($users); $inx++)
+		array_push($user, array('user' => $users[$inx]));
 	$tmpl->setloop('messageList_user', $user);
 }
 

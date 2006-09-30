@@ -269,7 +269,11 @@
 											<tr>
 												<td valign="top" align="left">User :</td>
 												<td valign="top" align="left">
-													<input type="text" name="watch_user" size="32">
+													<select name="watch_user">
+														<tmpl_loop name="watch_user">
+															<option value="<tmpl_var name="user">"><tmpl_var name="user"></option>
+														</tmpl_loop>
+													</select>
 													<input type="button" name="addButton" value="add" onclick="addWatchEntry()" size="30">
 												</td>
 											</tr>
