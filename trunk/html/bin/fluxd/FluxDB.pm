@@ -21,16 +21,16 @@
 #                                                                              #
 ################################################################################
 #                                                                              #
-#  Requirements :                                                              #
-#   * DBI                      ( perl -MCPAN -e "install Bundle::DBI" )        #
-#   * DBD::mysql for MySQL     ( perl -MCPAN -e "install DBD::mysql" )         #
-#   * DBD::SQLite for SQLite   ( perl -MCPAN -e "install DBD::SQLite" )        #
-#   * DBD::Pg for PostgreSQL   ( perl -MCPAN -e "install DBD::Pg" )            #
+#  Requirements for dbi-Mode :                                                 #
+#   * DBI                          ( perl -MCPAN -e "install Bundle::DBI" )    #
+#   * DBD::mysql  for MySQL        ( perl -MCPAN -e "install DBD::mysql"  )    #
+#   * DBD::SQLite for SQLite       ( perl -MCPAN -e "install DBD::SQLite" )    #
+#   * DBD::Pg     for PostgreSQL   ( perl -MCPAN -e "install DBD::Pg"     )    #
 #                                                                              #
 ################################################################################
 package FluxDB;
-use DBI;
 use strict;
+use warnings;
 ################################################################################
 
 ################################################################################
@@ -57,7 +57,7 @@ my $mode = "dbi";
 my $docroot = "/var/www";
 
 # flux-config-hash
-my %fluxConf = undef;
+my %fluxConf;
 
 # users + usernames
 use vars qw( @users %names );
@@ -81,7 +81,7 @@ my $dbDSN = "";
 my $php = "/usr/bin/php";
 
 # fluxcli
-my $fluxcli = "fluxcli.php";
+my $fluxcli = "bin/fluxcli.php";
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -129,64 +129,146 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: db-config-file (config.db.php)                                    #
+# Arguments: path-to-docroot, path-to-php, mode                                #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
 
 	shift; # class
 
-	# db-config
-	$dbConfig = shift;
-	if (!(defined $dbConfig)) {
+	# path-docroot
+	$docroot = shift;
+	if (!(defined $docroot)) {
 		# message
-		$message = "db-config not defined";
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
-	if (!(-f $dbConfig)) {
-		# message
-		$message = "no file";
+		$message = "path-to-docroot not defined";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 
-	# load Database-Config
-	if (loadDatabaseConfig($dbConfig) == 0) {
+	# path-php
+	$php = shift;
+	if (!(defined $php)) {
+		# message
+		$message = "path-to-php not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	if (!(-x $php)) {
+		# message
+		$message = "cant execute php (".$php.")";
+		# set state
+		$state = -1;
 		# return
 		return 0;
 	}
 
-	# connect
-	if (dbConnect() == 0) {
-		# close connection
-		dbDisconnect();
+	# db-mode
+	SWITCH: {
+		$_ = shift;
+		# dbi
+		/^dbi/ && do {
+			$mode = $_;
+
+			# load DBI
+			if (eval "require DBI")  {
+				DBI->import();
+			} else {
+				# message
+				$message = "cant load DBI-module : ".$@;
+				# set state
+				$state = -1;
+				# return
+				return 0;
+			}
+
+			# db-config
+			$dbConfig = $docroot."inc/config/".$dbConfig;
+			if (!(-f $dbConfig)) {
+				# message
+				$message = "db-config no file (".$dbConfig.")";
+				# set state
+				$state = -1;
+				# return
+				return 0;
+			}
+
+			# load Database-Config
+			if (loadDatabaseConfig($dbConfig) == 0) {
+				# return
+				return 0;
+			}
+
+			# connect
+			if (dbConnect() == 0) {
+				# close connection
+				dbDisconnect();
+				# return
+				return 0;
+			}
+
+			# load config
+			if (loadFluxConfigDBI() == 0) {
+				# close connection
+				dbDisconnect();
+				# return
+				return 0;
+			}
+
+			# load users
+			if (loadFluxUsersDBI() == 0) {
+				# close connection
+				dbDisconnect();
+				# return
+				return 0;
+			}
+
+			# close connection
+			dbDisconnect();
+
+			# done
+			last SWITCH;
+		};
+		# php
+		/^php/ && do {
+			$mode = $_;
+
+			# fluxcli
+			if (!(-f $docroot.$fluxcli)) {
+				# message
+				$message = "fluxcli missing (".$docroot.$fluxcli.")";
+				# set state
+				$state = -1;
+				# return
+				return 0;
+			}
+
+			# load config
+			if (loadFluxConfigPHP() == 0) {
+				# return
+				return 0;
+			}
+
+			# load users
+			if (loadFluxUsersPHP() == 0) {
+				# return
+				return 0;
+			}
+
+			# done
+			last SWITCH;
+		};
+		# no valid mode. bail out
+		# message
+		$message = "no valid mode";
+		# set state
+		$state = -1;
 		# return
 		return 0;
 	}
-
-	# load config
-	if (loadFluxConfig() == 0) {
-		# close connection
-		dbDisconnect();
-		# return
-		return 0;
-	}
-
-	# load users
-	if (loadFluxUsers() == 0) {
-		# close connection
-		dbDisconnect();
-		# return
-		return 0;
-	}
-
-	# close connection
-	dbDisconnect();
 
 	# set state
 	$state = 1;
@@ -323,32 +405,60 @@ sub setFluxConfig {
 #------------------------------------------------------------------------------#
 sub reload {
 
-	# connect
-	if (dbConnect() == 0) {
-		# close connection
-		dbDisconnect();
-		# return
-		return 0;
-	}
+	SWITCH: {
+		$_ = $mode;
+		# dbi
+		/^dbi/ && do {
 
-	# load config
-	if (loadFluxConfig() == 0) {
-		# close connection
-		dbDisconnect();
-		# return
-		return 0;
-	}
+			# connect
+			if (dbConnect() == 0) {
+				# close connection
+				dbDisconnect();
+				# return
+				return 0;
+			}
 
-	# load users
-	if (loadFluxUsers() == 0) {
-		# close connection
-		dbDisconnect();
-		# return
-		return 0;
-	}
+			# load config
+			if (loadFluxConfigDBI() == 0) {
+				# close connection
+				dbDisconnect();
+				# return
+				return 0;
+			}
 
-	# close connection
-	dbDisconnect();
+			# load users
+			if (loadFluxUsersDBI() == 0) {
+				# close connection
+				dbDisconnect();
+				# return
+				return 0;
+			}
+
+			# close connection
+			dbDisconnect();
+
+			# done
+			last SWITCH;
+		};
+		# php
+		/^php/ && do {
+
+			# load config
+			if (loadFluxConfigPHP() == 0) {
+				# return
+				return 0;
+			}
+
+			# load users
+			if (loadFluxUsersPHP() == 0) {
+				# return
+				return 0;
+			}
+
+			# done
+			last SWITCH;
+		};
+	}
 
 	# return
 	return 1;
@@ -426,7 +536,6 @@ sub loadDatabaseConfig {
 		# return
 		return 0;
 	}
-
 	return 1;
 }
 
@@ -469,14 +578,16 @@ sub dbDisconnect {
 
 
 #------------------------------------------------------------------------------#
-# Sub: loadFluxConfig                                                          #
+# Sub: loadFluxConfigDBI                                                       #
 # Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
-sub loadFluxConfig {
+sub loadFluxConfigDBI {
 	if (defined $dbHandle) {
+
 		# undef first
 		undef %fluxConf;
+
 		# load from db
 		my $sth = $dbHandle->prepare(q{ SELECT tf_key, tf_value FROM tf_settings });
 		$sth->execute();
@@ -487,6 +598,7 @@ sub loadFluxConfig {
 			$fluxConf{$tfKey} = $tfValue;
 		}
 		$sth->finish();
+
 		# return
 		return 1;
 	} else {
@@ -495,24 +607,17 @@ sub loadFluxConfig {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: saveFluxConfig                                                          #
+# Sub: loadFluxUsersDBI                                                        #
 # Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
-sub saveFluxConfig {
-	return 1;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: loadFluxUsers                                                           #
-# Arguments: null                                                              #
-# Returns: 0|1                                                                 #
-#------------------------------------------------------------------------------#
-sub loadFluxUsers {
+sub loadFluxUsersDBI {
 	if (defined $dbHandle) {
+
 		# undef first
 		undef @users;
 		undef %names;
+
 		# load from db
 		my $sth = $dbHandle->prepare(q{ SELECT uid, user_id FROM tf_users });
 		$sth->execute();
@@ -528,6 +633,7 @@ sub loadFluxUsers {
 			$index++;
 		}
 		$sth->finish();
+
 		# return
 		return 1;
 	} else {
@@ -535,6 +641,38 @@ sub loadFluxUsers {
 	}
 }
 
+#------------------------------------------------------------------------------#
+# Sub: loadFluxConfigPHP                                                       #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub loadFluxConfigPHP {
+
+	# undef first
+	undef %fluxConf;
+
+	# load from db
+
+	# return
+	return 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadFluxUsersPHP                                                        #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub loadFluxUsersPHP {
+
+	# undef first
+	undef @users;
+	undef %names;
+
+	# load from db
+
+	# return
+	return 1;
+}
 
 ################################################################################
 # make perl happy                                                              #

@@ -24,9 +24,11 @@
 package Fluxd;
 use strict;
 use warnings;
+#
 use IO::Socket::UNIX;
 use IO::Select;
 use POSIX qw(setsid);
+#
 use FluxdCommon;
 ################################################################################
 
@@ -34,25 +36,21 @@ use FluxdCommon;
 # fields                                                                       #
 ################################################################################
 #
+our $PATH_DATA_DIR = ".fluxd";
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
-#
-our $PATH_DATA_DIR = ".fluxd";
 my $PATH_TRANSFER_DIR = ".transfers";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
 my $PATH_QUEUE_FILE = "fluxd.queue";
-#
 my $PATH_DOCROOT = "/var/www";
 my $BIN_PHP = "/usr/bin/php";
-#
 my $dbMode = "dbi";
-#
 my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
-my $Select = new IO::Select();
+my $Select;
 my $start_time = time();
 my $start_time_local = localtime();
 
@@ -262,7 +260,7 @@ sub processArguments {
 		# create instance
 		$fluxDB = FluxDB->new();
 		# initialize
-		$fluxDB->initialize($PATH_DOCROOT."inc/config/".$FILE_DBCONF);
+		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
 		if ($fluxDB->getState() < 1) {
 			print "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
 			exit;
@@ -340,7 +338,7 @@ sub daemonize {
 	}
 
 	# initialize
-	$fluxDB->initialize($PATH_DOCROOT."inc/config/".$FILE_DBCONF);
+	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
 	if ($fluxDB->getState() < 1) {
 		print "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
 		exit;
@@ -361,11 +359,21 @@ sub daemonize {
 		exit;
 	}
 
-	#chdir '/'			or die "Can't chdir to /: $!";
-	umask 0;			# sets our umask
+	# chdir
+	#chdir($PATH_DOCROOT) or die "Can't chdir to docroot: $!";
+
+	# umask
+	umask 0;
+
+	# STD-IN/OUT/ERR
 	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
 	open STDOUT, ">>$LOG"		or die "Can't Write to $LOG: $!";
 	open STDERR, ">>$ERROR_LOG"	or die "Can't Write to error $ERROR_LOG: $!";
+
+	# load perl-modules
+	loadModules();
+
+	# fork
 	defined(my $pid = fork)		or die "Can't fork: $!";
 	exit if $pid;
 	setsid				or die "Can't start a new session: $!";
@@ -393,6 +401,9 @@ sub daemonize {
 			);
 	die "Couldn't create socket: $!\n" unless $SERVER;
 	print STDOUT "created socket ".$PATH_SOCKET."\n"; # DEBUG
+
+	# create select
+	$Select = new IO::Select();
 
 	# Add our server socket to the select read set.
 	$Select->add($SERVER);
@@ -446,6 +457,16 @@ sub initPaths {
 	if (! -d $PATH_DATA_DIR) {
 		mkdir($PATH_DATA_DIR,0700);
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadModules                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadModules {
+	# TODO
+	# my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX');
 }
 
 #------------------------------------------------------------------------------#
@@ -1151,8 +1172,6 @@ sub debug {
 		}
 		$BIN_PHP = $temp;
 
-		my $dbcfg = $PATH_DOCROOT."inc/config/".$FILE_DBCONF;
-
 		print "debugging database...\n";
 
 		# require
@@ -1164,42 +1183,63 @@ sub debug {
 			print " error : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
+
+		# PHP
 		# initialize
-		print "initializing \$fluxDB(\"".$dbcfg."\")\n";
-		$fluxDB->initialize($dbcfg);
+		print "initializing \$fluxDB (php)\n";
+		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
+		if ($fluxDB->getState() < 1) {
+			print " hmm : ".$fluxDB->getMessage()."\n";
+			exit;
+		}
+=for later
+		# something from the bean
+		print " getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print " getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		print " getFluxConfig(\"fluxd_dbmode\") : \"".FluxDB->getFluxConfig("fluxd_dbmode")."\"\n";
+		# test to set a val
+		print " getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		$fluxDB->setFluxConfig("default_theme","foo");
+		print " getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		# now reload and check again
+		$fluxDB->reload();
+		print " getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+=cut
+		# destroy
+		print "destroying \$fluxDB\n";
+		$fluxDB->destroy();
+
+		# DBI
+		# initialize
+		print "initializing \$fluxDB (dbi)\n";
+		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
 			# db-settings
-			print "getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-			print "getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-			print "getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-			print "getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-			print "getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-			print "getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-			print "getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+			print " getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+			print " getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+			print " getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+			print " getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+			print " getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+			print " getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+			print " getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 			exit;
 		}
 		# db-settings
-		print "getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-		print "getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-		print "getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-		print "getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-		print "getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-		print "getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-		print "getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+		print " getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+
 		# something from the bean
-		print "getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print "getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
-		print "getFluxConfig(\"fluxd_loglevel\") : \"".FluxDB->getFluxConfig("fluxd_loglevel")."\"\n";
-		print "getFluxConfig(\"fluxd_Qmgr_enabled\") : \"".FluxDB->getFluxConfig("fluxd_Qmgr_enabled")."\"\n";
-		print "getFluxConfig(\"fluxd_Qmgr_interval\") : \"".FluxDB->getFluxConfig("fluxd_Qmgr_interval")."\"\n";
+		print " getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print " getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		print " getFluxConfig(\"fluxd_dbmode\") : \"".FluxDB->getFluxConfig("fluxd_dbmode")."\"\n";
 		# test to set a val
-		print "getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print "getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print "getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+
 		# destroy
 		print "destroying \$fluxDB\n";
 		$fluxDB->destroy();
