@@ -48,6 +48,8 @@ my $PATH_QUEUE_FILE = "fluxd.queue";
 my $PATH_DOCROOT = "/var/www";
 my $BIN_PHP = "/usr/bin/php";
 #
+my $dbMode = "dbi";
+#
 my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
 my $Select = new IO::Select();
@@ -246,6 +248,13 @@ sub processArguments {
 			exit;
 		}
 		$BIN_PHP = $temp;
+		# $dbMode
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		$dbMode = $temp;
 		print "Stopping daemon...\n";
 		# db-bean
 		# require
@@ -294,7 +303,14 @@ sub processArguments {
 			exit;
 		}
 		$BIN_PHP = $temp;
-		print "Starting up daemon with docroot ".$PATH_DOCROOT." and PHP ".$BIN_PHP."\n"; # DEBUG
+		# $dbMode
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		$dbMode = $temp;
+		print "Starting up daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n"; # DEBUG
 		# return
 		return 1;
 	};
@@ -788,8 +804,6 @@ sub processRequest {
 		$return = printUsage(1);
 	}
 
-	#print $return."\n"; # DEBUG
-
 	# return
 	return $return;
 }
@@ -803,7 +817,6 @@ sub set {
 	my $variable = shift;
 	my $value = shift;
 	my $return;
-
 	if ($variable =~/::/) {
 		# setting/getting package variable
 		my @pair = split(/::/, $variable);
@@ -993,11 +1006,9 @@ sub modState {
 #------------------------------------------------------------------------------#
 sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
-
 	# FluxdCommon
 	print "FluxdCommon Version : ";
 	print FluxdCommon::getVersion()."\n";
-
 	# FluxDB
 	print "FluxDB Version : ";
 	if (eval "require FluxDB") {
@@ -1005,7 +1016,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-
 	# Clientmaint
 	print "Clientmaint Version : ";
 	if (eval "require Clientmaint") {
@@ -1013,7 +1023,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-
 	# Fluxinet
 	print "Fluxinet Version : ";
 	if (eval "require Fluxinet") {
@@ -1021,7 +1030,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-
 	# Qmgr
 	print "Qmgr Version : ";
 	if (eval "require Qmgr") {
@@ -1029,7 +1037,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-
 	# Trigger
 	print "Trigger Version : ";
 	if (eval "require Trigger") {
@@ -1037,7 +1044,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-
 	# Watch
 	print "Watch Version : ";
 	if (eval "require Watch") {
@@ -1045,7 +1051,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-
 }
 
 #------------------------------------------------------------------------------#
@@ -1244,10 +1249,12 @@ sub printUsage {
 	my $data = <<"USAGE";
 $PROG.$EXTENSION Revision $VERSION
 
-Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot path-to-php
-                        starts fluxd daemon
-       $PROG.$EXTENSION <daemon-stop> path-to-docroot path-to-php
+Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot path-to-php db-mode
+                        starts fluxd daemon.
+                        db-mode : dbi/php
+       $PROG.$EXTENSION <daemon-stop> path-to-docroot path-to-php db-mode
                         stops fluxd daemon
+                        db-mode : dbi/php
        $PROG.$EXTENSION <check> path-to-docroot
                         checks for requirements.
        $PROG.$EXTENSION <-v|--version>

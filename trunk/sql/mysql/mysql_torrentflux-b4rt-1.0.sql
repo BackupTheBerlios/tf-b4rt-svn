@@ -285,6 +285,7 @@ INSERT INTO tf_settings VALUES ('transfer_profile_level','2');
 INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
 INSERT INTO tf_settings VALUES ('downloadhosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
+INSERT INTO tf_settings VALUES ('fluxd_dbmode','php');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');

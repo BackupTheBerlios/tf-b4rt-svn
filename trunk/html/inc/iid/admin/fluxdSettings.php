@@ -61,7 +61,9 @@ $tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?f=3','<font class="adminlin
 $tmpl->setvar('SuperAdminLink4', getSuperAdminLink('?f=4','<font class="adminlink">status</font>'));
 $tmpl->setvar('SuperAdminLink5', getSuperAdminLink('?f=5','<font class="adminlink">check</font>'));
 $tmpl->setvar('SuperAdminLink6', getSuperAdminLink('?f=6','<font class="adminlink">db-debug</font>'));
-// loglevel
+
+// core
+$tmpl->setvar('fluxd_dbmode', $cfg["fluxd_dbmode"]);
 $tmpl->setvar('fluxd_loglevel', $cfg["fluxd_loglevel"]);
 
 // MODS

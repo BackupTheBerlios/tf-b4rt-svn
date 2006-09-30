@@ -88,6 +88,7 @@ class Fluxd
             $startCommand .= " daemon-start";
             $startCommand .= " ".escapeshellarg($this->cfg["docroot"]);
             $startCommand .= " ".escapeshellarg($this->cfg["bin_php"]);
+            $startCommand .= " ".$this->cfg["fluxd_dbmode"];
             $startCommand .= " > /dev/null &";
             $result = exec($startCommand);
             // give fluxd some time

@@ -88,7 +88,26 @@
 							<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
 								<tr>
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
-										<strong>fluxd-core</strong>
+										<strong>Core</strong>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Database-Mode</strong><br>
+									Specify the Mode to get data from the Database.
+									</td>
+									<td valign="top">
+										<select name="fluxd_dbmode">
+											<option value="php"
+											<tmpl_if name="fluxd_dbmode" value="php">
+												selected
+											</tmpl_if>
+											>PHP + fluxcli</option>
+											<option value="dbi"
+											<tmpl_if name="fluxd_dbmode" value="dbi">
+												selected
+											</tmpl_if>
+											>Perl + DBI/DBD</option>
+										</select>
 									</td>
 								</tr>
 								<tr>
@@ -101,7 +120,7 @@
 								</tr>
 								<tr>
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
-										<strong>service-modules</strong>
+										<strong>Modules</strong>
 									</td>
 								</tr>
 								<tr>
