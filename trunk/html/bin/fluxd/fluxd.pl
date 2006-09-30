@@ -24,11 +24,6 @@
 package Fluxd;
 use strict;
 use warnings;
-#
-use IO::Socket::UNIX;
-use IO::Select;
-use POSIX qw(setsid);
-#
 use FluxdCommon;
 ################################################################################
 
@@ -373,9 +368,9 @@ sub daemonize {
 	loadModules();
 
 	# fork
-	defined(my $pid = fork)		or die "Can't fork: $!";
+	defined(my $pid = fork) or die "Can't fork: $!";
 	exit if $pid;
-	setsid				or die "Can't start a new session: $!";
+	POSIX::setsid() or die "Can't start a new session: $!";
 
 	# log
 	my $pwd = `pwd`;
@@ -393,7 +388,7 @@ sub daemonize {
 
 	# set up server socket
 	$SERVER = IO::Socket::UNIX->new(
-			Type    => SOCK_STREAM,
+			Type    => IO::Socket::UNIX->SOCK_STREAM,
 			Local   => $PATH_SOCKET,
 			Listen  => 16,
 			Reuse   => 1,
@@ -463,8 +458,30 @@ sub initPaths {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub loadModules {
-	# TODO
-	# my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX');
+	# load IO::Socket::UNIX
+	if (eval "require IO::Socket::UNIX")  {
+		IO::Socket::UNIX->import();
+	} else {
+		print STDOUT "cant load perl-module IO::Socket::UNIX : ".$@;
+		print STDERR "cant load perl-module IO::Socket::UNIX : ".$@;
+		exit;
+	}
+	# load IO::Select
+	if (eval "require IO::Select")  {
+		IO::Select->import();
+	} else {
+		print STDOUT "cant load perl-module IO::Select : ".$@;
+		print STDERR "cant load perl-module IO::Select : ".$@;
+		exit;
+	}
+	# load POSIX
+	if (eval "require POSIX")  {
+		POSIX->import(qw(setsid));
+	} else {
+		print STDOUT "cant load perl-module POSIX : ".$@;
+		print STDERR "cant load perl-module POSIX : ".$@;
+		exit;
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -1158,7 +1175,7 @@ sub debug {
 		# require
 		require FluxDB;
 		# create instance
-		print "creating \$fluxDB\n";
+		print " creating \$fluxDB\n";
 		$fluxDB = FluxDB->new();
 		if ($fluxDB->getState() == -1) {
 			print " error : ".$fluxDB->getMessage()."\n";
@@ -1167,7 +1184,7 @@ sub debug {
 
 		# PHP
 		# initialize
-		print "initializing \$fluxDB (php)\n";
+		print " initializing \$fluxDB (php)\n";
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
@@ -1175,23 +1192,23 @@ sub debug {
 		}
 
 		# something from the bean
-		print " FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print " FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		print "  FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print "  FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
 		# test to set a val
-		print " FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "  FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print " FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "  FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print " FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "  FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 
 		# destroy
-		print "destroying \$fluxDB\n";
+		print " destroying \$fluxDB\n";
 		$fluxDB->destroy();
 
 		# DBI
 		# initialize
-		print "initializing \$fluxDB (dbi)\n";
+		print " initializing \$fluxDB (dbi)\n";
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
@@ -1206,21 +1223,21 @@ sub debug {
 			exit;
 		}
 		# db-settings
-		print " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+		print "  DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 
 		# something from the bean
-		print " FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print " FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		print "  FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print "  FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
 		# test to set a val
-		print " FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "  FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print " FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "  FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print " FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print "  FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 
 		# destroy
-		print "destroying \$fluxDB\n";
+		print " destroying \$fluxDB\n";
 		$fluxDB->destroy();
 
 		# done

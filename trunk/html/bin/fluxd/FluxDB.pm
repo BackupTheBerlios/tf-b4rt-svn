@@ -438,7 +438,7 @@ sub reload {
 			dbDisconnect();
 
 			# done
-			last SWITCH;
+			return 1;
 		};
 		# php
 		/^php/ && do {
@@ -456,12 +456,9 @@ sub reload {
 			}
 
 			# done
-			last SWITCH;
+			return 1;
 		};
 	}
-
-	# return
-	return 1;
 }
 
 ################################################################################
