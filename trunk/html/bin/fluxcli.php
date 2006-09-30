@@ -34,6 +34,10 @@ if ($bail > 0) {
 
 /******************************************************************************/
 
+// defines
+define('_DUMP_DELIM', '|');
+define('_REVISION_FLUXCLI', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
+
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
@@ -51,12 +55,9 @@ require_once("inc/classes/ClientHandler.php");
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
-// hold revision-number in a var
-$REVISION_FLUXCLI = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-
 // config
 $cfg["ip"] = '127.0.0.1';
-$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/".$REVISION_FLUXCLI;
+$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;
 
 // set admin-var
 $cfg['isAdmin'] = true;
@@ -64,7 +65,6 @@ $cfg['isAdmin'] = true;
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
-
 $action = @$argv[1];
 if ((isset($action)) && ($action != "")) {
 	switch ($action) {
@@ -113,6 +113,9 @@ if ((isset($action)) && ($action != "")) {
         	echo "done\n";
         	exit;
 			break;
+		case "dump":
+			cliDumpDatabase(@$argv[2]);
+			break;
 		case "version":
 		case "-version":
 		case "--version":
@@ -135,17 +138,15 @@ exit();
 // functions
 // -----------------------------------------------------------------------------
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * printUsage
  *
  * @param $torrent name of the torrent
  * @return boolean if the settings could be loaded (were existent in db already)
  */
 function printUsage() {
-	global $REVISION_FLUXCLI;
 	echo "\n";
-    echo "fluxcli.php Revision ".$REVISION_FLUXCLI."\n";
+    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
 	echo "\n";
 	echo "Usage: fluxcli.php action [extra-args]\n";
 	echo "\naction: \n";
@@ -174,6 +175,8 @@ function printUsage() {
 	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
 	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
 	echo "                Doing this on a running ok flux _will_ screw up things. \n";
+	echo " <dump>       : dump database. \n";
+	echo "                extra-arg 1 : type : settings/users \n";
 	echo "\n";
 	echo "examples: \n";
 	echo "fluxcli.php torrents\n";
@@ -191,23 +194,19 @@ function printUsage() {
     echo "fluxcli.php watch /bar/foo/ fluxuser\n";
     echo "fluxcli.php xfer month\n";
 	echo "fluxcli.php repair\n";
+	echo "fluxcli.php dump settings\n";
 	echo "\n";
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * printVersion
- *
  */
 function printVersion() {
-	global $REVISION_FLUXCLI;
-    echo "fluxcli.php Revision ".$REVISION_FLUXCLI."\n";
+    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * printNetStat
- *
  */
 function printNetStat() {
 	echo "\n";
@@ -226,10 +225,8 @@ function printNetStat() {
 	echo "\n";
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * printTorrents
- *
  */
 function printTorrents() {
 	echo "\n";
@@ -237,7 +234,7 @@ function printTorrents() {
 	echo "          TorrentFlux-Torrents          \n";
     echo "----------------------------------------\n";
     echo "\n";
-	global $cfg, $db, $REVISION_FLUXCLI;
+	global $cfg, $db;
 	// show all .. we set the user to superadmin
     $superAdm = GetSuperAdmin();
     if ((isset($superAdm)) && ($superAdm != "")) {
@@ -278,8 +275,7 @@ function printTorrents() {
 	echo "\n";
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliStartTorrent
  *
  * @param $torrent name of the torrent
@@ -315,10 +311,8 @@ function cliStartTorrent($torrent = "") {
 	exit();
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliStartTorrents
- *
  */
 function cliStartTorrents() {
     global $cfg;
@@ -349,10 +343,8 @@ function cliStartTorrents() {
 	}
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliResumeTorrents
- *
  */
 function cliResumeTorrents() {
     global $cfg;
@@ -383,10 +375,8 @@ function cliResumeTorrents() {
 	}
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliStopTorrents
- *
  */
 function cliStopTorrents() {
 	$torrents = getTorrentListFromFS();
@@ -396,8 +386,7 @@ function cliStopTorrents() {
 	}
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliStopTorrent
  *
  * @param $torrent name of the torrent
@@ -425,8 +414,7 @@ function cliStopTorrent($torrent = "") {
 	}
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliResetTorrent
  *
  * @param $torrent name of the torrent
@@ -442,8 +430,7 @@ function cliResetTorrent($torrent = "") {
 	exit();
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliDeleteTorrent
  *
  * @param $torrent name of the torrent
@@ -471,8 +458,7 @@ function cliDeleteTorrent($torrent = "") {
 	exit();
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliWipeTorrent
  *
  * @param $torrent name of the torrent
@@ -501,8 +487,7 @@ function cliWipeTorrent($torrent = "") {
 	exit();
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliInjectTorrent
  *
  * @param $tpath path to the torrent
@@ -548,8 +533,7 @@ function cliInjectTorrent($tpath = "", $username = "") {
 	exit();
 }
 
-// -----------------------------------------------------------------------------
-/*
+/**
  * cliWatchDir
  *
  * @param $tpath path to a watch-dir
@@ -677,6 +661,35 @@ function cliXferShutdown($delta = '') {
 	} else {
 		printUsage();
 	}
+}
+
+/**
+ * cliDumpDatabase
+ *
+ * @param $type settings|users
+ */
+function cliDumpDatabase($type = "") {
+	global $cfg, $db;
+	if ((isset($type)) && ($type != "")) {
+		switch ($type) {
+			case "settings":
+			    $sql = "SELECT tf_key, tf_value FROM tf_settings";
+				break;
+			case "users":
+				$sql = "SELECT uid, user_id FROM tf_users";
+				break;
+			default:
+				printUsage();
+				exit();
+		}
+	    $recordset = $db->Execute($sql);
+	    showError($db, $sql);
+	    while (list($foo, $bar) = $recordset->FetchRow())
+	    	echo $foo . _DUMP_DELIM . $bar . "\n";
+	} else {
+		printUsage();
+	}
+	exit();
 }
 
 ?>
