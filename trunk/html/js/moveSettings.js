@@ -6,9 +6,8 @@
 function mytrim(value) {
 	var trimmedVal = "";
 	for (var i=0; i<value.length; i++) {
-		if (value.charCodeAt(i) != 32) {
+		if (value.charCodeAt(i) != 32)
 			trimmedVal = trimmedVal + value.charAt(i);
-		}
 	}
 	return trimmedVal;
 }
@@ -41,20 +40,18 @@ function addMoveEntry () {
     var newentry = document.createElement("option");
     newentry.text = document.theForm.category.value;
     newentry.text = mytrim(newentry.text);
- 	if( newentry.text != "") {
+ 	if (newentry.text != "") {
         // empty the new category field
         document.theForm.category.value = "";
         newentry.value = catliste.length;
-        if (navigator.appName == "Netscape") {
+        if (navigator.appName == "Netscape")
         	catliste.add(newentry, null);
-        } else {
+        else
         	catliste.add(newentry);
-        }
-        if (catliststr.value == "") {
+        if (catliststr.value == "")
         	catliststr.value = newentry.text;
-        } else {
+        else
         	catliststr.value = catliststr.value + ":" + newentry.text;
-        }
   	} else {
 		alert("Please enter a Directory first!");
 	}
@@ -69,9 +66,8 @@ function removeMoveEntry() {
 		document.theForm.categorylist.remove(document.theForm.categorylist.selectedIndex);
 		var newValue = "";
 		for (var j = 0; j < document.theForm.categorylist.options.length; j++) {
-            if (j > 0) {
+            if (j > 0)
                 newValue += ":";
-            }
 		    newValue += mytrim(document.theForm.categorylist.options[j].text);
 		}
 		catliststr.value = mytrim(newValue);

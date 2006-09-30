@@ -44,7 +44,7 @@ else
 switch ($op) {
 
 	case "updateServerSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Server Settings");
 		$continue = getRequestVar('continue');
@@ -52,7 +52,7 @@ switch ($op) {
 		exit();
 
 	case "updateTransferSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Transfer Settings");
 		$continue = getRequestVar('continue');
@@ -60,7 +60,7 @@ switch ($op) {
 		exit();
 
 	case "updateWebappSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating WebApp Settings");
 		$continue = getRequestVar('continue');
@@ -68,21 +68,21 @@ switch ($op) {
 		exit();
 
 	case "updateIndexSettings":
-		$settings = processSettingsParams(true,true);
+		$settings = processSettingsParams(true, true);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Index Settings");
 		header("location: admin.php?op=indexSettings");
 		exit();
 
 	case "updateStartpopSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating StartPop Settings");
 		header("location: admin.php?op=startpopSettings");
 		exit();
 
 	case "updateDirSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		loadSettings('tf_settings_dir');
 		saveSettings('tf_settings_dir', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Dir Settings");
@@ -90,14 +90,14 @@ switch ($op) {
 		exit();
 
 	case "updateStatsSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings_stats', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Stats Settings");
 		header("location: admin.php?op=statsSettings");
 		exit();
 
 	case "updateXferSettings":
-		$settings = processSettingsParams(false,false);
+		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Xfer Settings");
 		header("location: admin.php?op=xferSettings");
@@ -141,7 +141,7 @@ switch ($op) {
 					sleep(1);
 				}
 				// save settings
-				$settings = $_POST;
+				$settings = processSettingsParams(false, false);
 				saveSettings('tf_settings', $settings);
 				// reload fluxd-database-cache
 				$fluxd->reloadDBCache();
@@ -152,7 +152,7 @@ switch ($op) {
 				}
 			} else {
 				// save settings
-				$settings = $_POST;
+				$settings = processSettingsParams(false, false);
 				saveSettings('tf_settings', $settings);
 				$message .= 'fluxd is currently not running.<br><br>';
 			}
@@ -162,7 +162,7 @@ switch ($op) {
 			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 		} else {
 			// save settings
-			$settings = $_POST;
+			$settings = processSettingsParams(false, false);
 			saveSettings('tf_settings', $settings);
 			// log
 			AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");

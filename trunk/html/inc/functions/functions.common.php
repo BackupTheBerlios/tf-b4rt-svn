@@ -323,6 +323,13 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 		unset($_POST['resdirlist']);
 	if (isset($_POST['resdirentry']))
 		unset($_POST['resdirentry']);
+	// fluxd : watch
+	if (isset($_POST['watch_jobs']))
+		unset($_POST['watch_jobs']);
+	if (isset($_POST['watch_user']))
+		unset($_POST['watch_user']);
+	if (isset($_POST['watch_dir']))
+		unset($_POST['watch_dir']);
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
