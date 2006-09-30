@@ -2,6 +2,18 @@
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_include name="inc.adminmenu.tmpl">
 <script src="js/adminSettings.js" type="text/javascript"></script>
+<table width="760" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
+	<tr>
+		<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+			<div align="center">
+				<a href="index.php?iid=xfer"><font class="adminlink">show stats</font></a>
+				|
+				<tmpl_var name="SuperAdminLink">
+			</div>
+		</td>
+	</tr>
+</table>
+<br>
 <div align="center">
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>

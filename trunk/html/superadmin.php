@@ -722,36 +722,61 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "4": // Maintenance : Lock
+			case "4": // Maintenance : Reset
+				$htmlTitle = "Maintenance - Reset";
+				$htmlMain .= '<br>';
+				$htmlMain .= '<strong>xfer-stats</strong><br>';
+				$htmlMain .= 'use this to reset the xfer-stats.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
+				$htmlMain .= '<br><br>';
+				break;
+			case "41": // Maintenance : Reset - xfer
+				$htmlTitle = "Maintenance - Reset - xfer";
+				$htmlMain .= '<br>';
+				$htmlMain .= 'Reset of xfer-stats';
+				$result = resetXferStats();
+				if ($result === true)
+					$htmlMain .= ' <font color="green">done.</font>';
+				else
+					$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
+				$htmlMain .= '<br><br>';
+				break;
+			case "5": // Maintenance : Lock
 				$htmlTitle = "Maintenance - Lock";
 				$htmlMain .= '<br>';
 				switch ($cfg['webapp_locked']) {
 					case 0:
 						$htmlMain .= '<strong><font color="green">webapp currently unlocked.</font></strong>';
-					break;
+						break;
 					case 1:
 						$htmlMain .= '<strong><font color="red">webapp currently locked.</font></strong>';
-					break;
+						break;
 				}
 				$htmlMain .= '<p>';
 				$htmlMain .= 'Use this to lock/unlock your webapp. only superadmin can access locked webapp.';
-				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
+				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
 				if ($cfg['webapp_locked'] == 1)
 					$htmlMain .= 'un';
 				$htmlMain .= 'lock</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "41": // Maintenance : lock/unlock
+			case "51": // Maintenance : lock/unlock
 				$htmlTitle = "Maintenance - Lock";
 				$htmlMain .= '<br>';
 				switch ($cfg['webapp_locked']) {
 					case 0:
-						setWebappLock(1);
-						$htmlMain .= '<font color="red">webapp locked.</font>';
+						$result = setWebappLock(1);
+						if ($result === true)
+							$htmlMain .= '<font color="red">webapp locked.</font>';
+						else
+							$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
 						break;
 					case 1:
-						setWebappLock(0);
-						$htmlMain .= '<font color="green">webapp unlocked.</font>';
+						$result = setWebappLock(0);
+						if ($result === true)
+							$htmlMain .= '<font color="green">webapp unlocked.</font>';
+						else
+							$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
 						break;
 				}
 				$htmlMain .= '<br><br>';
@@ -1073,7 +1098,9 @@ function buildPage($action) {
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3">Repair</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4">Lock</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4">Reset</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=5">Lock</a>';
 			$htmlMain .= '</td><td align="right"><strong>Maintenance</td>';
 			$htmlMain .= '</td></tr></table>';
 			break;
@@ -1317,9 +1344,7 @@ function setWebappLock($lock) {
 	// get ado-connection
 	$dbCon = getAdoConnection();
 	if (!$dbCon) {
-		echo $dbCon->ErrorMsg();
-		@ob_end_flush();
-		exit();
+		return $dbCon->ErrorMsg();
 	} else {
 		$dbCon->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
 		// flush session-cache
@@ -1330,11 +1355,36 @@ function setWebappLock($lock) {
 			// return
 			return true;
 		} else { // there was an error
-			echo $dbCon->ErrorMsg();
-			@ob_end_flush();
 			// close ado-connection
 			$dbCon->Close();
-			exit();
+			// return error
+			return $dbCon->ErrorMsg();
+		}
+	}
+}
+
+/**
+ * reset Xfer-Stats
+ *
+ * @return true or function exits with error
+ */
+function resetXferStats() {
+	// get ado-connection
+	$dbCon = getAdoConnection();
+	if (!$dbCon) {
+		return $dbCon->ErrorMsg();
+	} else {
+		$dbCon->Execute("DELETE FROM tf_xfer");
+		if ($dbCon->ErrorNo() == 0) {
+			// close ado-connection
+			$dbCon->Close();
+			// return
+			return true;
+		} else { // there was an error
+			// close ado-connection
+			$dbCon->Close();
+			// return error
+			return $dbCon->ErrorMsg();
 		}
 	}
 }

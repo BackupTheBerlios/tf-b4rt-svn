@@ -43,18 +43,18 @@ $tmpl->setvar('xfer_day', $cfg["xfer_day"]);
 $tmpl->setvar('week_start', $cfg["week_start"]);
 $month_list = array();
 for ($i = 1; $i <= 31 ; $i++) {
-	if ($cfg["month_start"] == $i) {
+	if ($cfg["month_start"] == $i)
 		$month_start_true = 1;
-	} else {
+	else
 		$month_start_true = 0;
-	}
 	array_push($month_list, array(
 		'i' => $i,
-		'month_start_true' => $month_start_true,
+		'month_start_true' => $month_start_true
 		)
 	);
 }
 $tmpl->setloop('month_list', $month_list);
+$tmpl->setvar('SuperAdminLink', getSuperAdminLink('?m=41','<font class="adminlink">reset stats</font>'));
 //
 tmplSetTitleBar("Administration - Xfer Settings");
 tmplSetAdminMenu();
