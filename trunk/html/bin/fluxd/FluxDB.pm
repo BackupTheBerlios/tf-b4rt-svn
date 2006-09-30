@@ -625,6 +625,7 @@ sub loadFluxUsersDBI {
 		my $rv = $sth->bind_columns(undef, \$uid, \$userid);
 		my $index = 0;
 		while ($sth->fetch()) {
+			#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
 			$users[$index] = {
 				uid => $uid,
 				username => $userid,
@@ -651,7 +652,17 @@ sub loadFluxConfigPHP {
 	# undef first
 	undef %fluxConf;
 
-	# load from db
+	# dump and init
+	my $shellCmd = $php." ".$fluxcli." dump settings";
+	my ($tfKey, $tfValue);
+	open(CALL, $shellCmd." |");
+	while(<CALL>) {
+		chomp;
+		($tfKey, $tfValue) = split(/\|/, $_);
+		#print STDERR "fluxconf : ".$tfKey."=".$tfValue."\n"; # DEBUG
+		$fluxConf{$tfKey} = $tfValue;
+	}
+	close(CALL);
 
 	# return
 	return 1;
@@ -668,7 +679,23 @@ sub loadFluxUsersPHP {
 	undef @users;
 	undef %names;
 
-	# load from db
+	# dump and init
+	my $shellCmd = $php." ".$fluxcli." dump users";
+	my ($uid, $userid);
+	my $index = 0;
+	open(CALL, $shellCmd." |");
+	while(<CALL>) {
+		chomp;
+		($uid, $userid) = split(/\|/, $_);
+		#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
+		$users[$index] = {
+			uid => $uid,
+			username => $userid,
+		};
+		$names{$userid} = $index;
+		$index++;
+	}
+	close(CALL);
 
 	# return
 	return 1;

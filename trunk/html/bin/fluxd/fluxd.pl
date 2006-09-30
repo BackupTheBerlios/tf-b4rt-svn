@@ -44,7 +44,6 @@ my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
-my $PATH_QUEUE_FILE = "fluxd.queue";
 my $PATH_DOCROOT = "/var/www";
 my $BIN_PHP = "/usr/bin/php";
 my $dbMode = "dbi";
@@ -448,7 +447,6 @@ sub initPaths {
 	}
 	$PATH_TRANSFER_DIR = $path.$PATH_TRANSFER_DIR."/";
 	$PATH_DATA_DIR = $path.$PATH_DATA_DIR."/";
-	$PATH_QUEUE_FILE = $PATH_DATA_DIR.$PATH_QUEUE_FILE;
 	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
 	$LOG = $PATH_DATA_DIR.$LOG;
 	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
@@ -940,7 +938,16 @@ sub deletePidFile {
 # Returns: Server information page                                             #
 #------------------------------------------------------------------------------#
 sub status {
-	my $head = "fluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
+	my $head = "";
+	$head .= "\n\nfluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
+	$head .= "data-dir : ".$PATH_DATA_DIR."\n";
+	$head .= "log : ".$LOG."\n";
+	$head .= "error-log : ".$ERROR_LOG."\n";
+	$head .= "pid : ".$PID_FILE."\n";
+	$head .= "socket : ".$PATH_SOCKET."\n";
+	$head .= "docroot : ".$PATH_DOCROOT."\n";
+	$head .= "db-mode : ".$dbMode."\n";
+	$head .= "\n";
 	my $status = "";
 	my $modules = "- Loaded Modules -\n";
 	# Qmgr
@@ -1083,17 +1090,6 @@ sub check {
 	print "checking requirements...\n";
 	my $return = 0;
 
-	# $PATH_DOCROOT
-	my $temp = shift @ARGV;
-	if (!(defined $temp)) {
-		printUsage();
-		exit;
-	}
-	if (!((substr $temp, -1) eq "/")) {
-		$temp .= "/";
-	}
-	$PATH_DOCROOT = $temp;
-
 	# 1. perl-modules
 	print "1. perl-modules\n";
 	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX');
@@ -1115,21 +1111,6 @@ sub check {
 			}
 			exit;
 		}
-	}
-
-	# 2. required files
-	print "2. required files\n";
-	print " - ".$FILE_DBCONF." : ";
-	if (-f $PATH_DOCROOT."inc/config/".$FILE_DBCONF) {
-		print $PATH_DOCROOT."inc/config/".$FILE_DBCONF."\n";
-	} else {
-		print "Error : cant find database-config ".$FILE_DBCONF." in ".$PATH_DOCROOT."inc/config/"."\n";
-	}
-	print " - ".$BIN_FLUXCLI." : ";
-	if (-f $PATH_DOCROOT."bin/".$BIN_FLUXCLI) {
-		print $PATH_DOCROOT."bin/".$BIN_FLUXCLI."\n";
-	} else {
-		print "\nError : cant find fluxcli ".$BIN_FLUXCLI." in ".$PATH_DOCROOT."bin/"."\n";
 	}
 
 	# done
@@ -1192,19 +1173,18 @@ sub debug {
 			print " hmm : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
-=for later
+
 		# something from the bean
-		print " getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print " getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
-		print " getFluxConfig(\"fluxd_dbmode\") : \"".FluxDB->getFluxConfig("fluxd_dbmode")."\"\n";
+		print " FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print " FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
 		# test to set a val
-		print " getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print " getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print " getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
-=cut
+		print " FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+
 		# destroy
 		print "destroying \$fluxDB\n";
 		$fluxDB->destroy();
@@ -1216,29 +1196,28 @@ sub debug {
 		if ($fluxDB->getState() < 1) {
 			print " hmm : ".$fluxDB->getMessage()."\n";
 			# db-settings
-			print " getDatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-			print " getDatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-			print " getDatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-			print " getDatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-			print " getDatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-			print " getDatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-			print " getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+			print " DatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+			print " DatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+			print " DatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+			print " DatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+			print " DatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+			print " DatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+			print " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 			exit;
 		}
 		# db-settings
-		print " getDatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+		print " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 
 		# something from the bean
-		print " getFluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print " getFluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
-		print " getFluxConfig(\"fluxd_dbmode\") : \"".FluxDB->getFluxConfig("fluxd_dbmode")."\"\n";
+		print " FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
+		print " FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
 		# test to set a val
-		print " getFluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print " getFluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 		# now reload and check again
 		$fluxDB->reload();
-		print " getFluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		print " FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
 
 		# destroy
 		print "destroying \$fluxDB\n";
@@ -1295,7 +1274,7 @@ Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot path-to-php db-mode
        $PROG.$EXTENSION <daemon-stop> path-to-docroot path-to-php db-mode
                         stops fluxd daemon
                         db-mode : dbi/php
-       $PROG.$EXTENSION <check> path-to-docroot
+       $PROG.$EXTENSION <check>
                         checks for requirements.
        $PROG.$EXTENSION <-v|--version>
                         print out version-info

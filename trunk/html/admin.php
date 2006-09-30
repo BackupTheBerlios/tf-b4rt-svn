@@ -104,7 +104,8 @@ switch ($op) {
 		exit();
 
 	case "updateFluxdSettings":
-		if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
+		if ($_POST["fluxd_dbmode"] != $cfg["fluxd_dbmode"] ||
+			$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 			$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 			$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
 			$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
@@ -121,34 +122,43 @@ switch ($op) {
 			$message = '<br>Settings changed.<br>';
 			// fluxd Running?
 			if ($fluxdRunning) {
-				$reloadModules = false;
-				$needsInit = false;
-				if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
-					$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
-					$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
-					$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
-					$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
-					$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
-					$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
-					$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
-					$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
-					$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
-					$reloadModules = true;
-				}
-				// reconfig of running daemon :
-				if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
-					$fluxd->setConfig('LOGLEVEL',$_POST["fluxd_loglevel"]);
-					sleep(1);
-				}
-				// save settings
-				$settings = processSettingsParams(false, false);
-				saveSettings('tf_settings', $settings);
-				// reload fluxd-database-cache
-				$fluxd->reloadDBCache();
-				// reload fluxd-modules
-				if ($reloadModules) {
-					sleep(1);
-					$fluxd->reloadModules();
+				// restart ?
+				if ($_POST["fluxd_dbmode"] != $cfg["fluxd_dbmode"]) {
+					// save settings
+					$settings = processSettingsParams(false, false);
+					saveSettings('tf_settings', $settings);
+					$message .= 'fluxd needs to be restarted to change db-mode.<br><br>';
+				} else {
+					// reload ?
+					$reloadModules = false;
+					$needsInit = false;
+					if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
+						$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
+						$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
+						$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
+						$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
+						$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
+						$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
+						$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
+						$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
+						$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
+						$reloadModules = true;
+					}
+					// reconfig of running daemon :
+					if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
+						$fluxd->setConfig('LOGLEVEL',$_POST["fluxd_loglevel"]);
+						sleep(1);
+					}
+					// save settings
+					$settings = processSettingsParams(false, false);
+					saveSettings('tf_settings', $settings);
+					// reload fluxd-database-cache
+					$fluxd->reloadDBCache();
+					// reload fluxd-modules
+					if ($reloadModules) {
+						sleep(1);
+						$fluxd->reloadModules();
+					}
 				}
 			} else {
 				// save settings

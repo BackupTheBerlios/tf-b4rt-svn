@@ -139,66 +139,6 @@ exit();
 // -----------------------------------------------------------------------------
 
 /**
- * printUsage
- *
- * @param $torrent name of the torrent
- * @return boolean if the settings could be loaded (were existent in db already)
- */
-function printUsage() {
-	echo "\n";
-    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
-	echo "\n";
-	echo "Usage: fluxcli.php action [extra-args]\n";
-	echo "\naction: \n";
-	echo " <torrents>   : print torrents. \n";
-	echo " <netstat>    : print netstat. \n";
-	echo " <start>      : start a torrent. \n";
-	echo "                extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <stop>       : stop a torrent. \n";
-	echo "                extra-arg : name of torrent as known inside torrentflux \n";
-    echo " <start-all>  : start all torrents. \n";
-    echo " <resume-all> : resume all torrents. \n";
-	echo " <stop-all>   : stop all running torrents. \n";
-	echo " <reset>      : reset totals of a torrent. \n";
-	echo "                extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <delete>     : delete a torrent. \n";
-	echo "                extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <wipe>       : reset totals, delete torrent, delete torrent-data. \n";
-	echo "                extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <inject>     : injects a torrent-file into tflux. \n";
-	echo "                extra-arg 1 : path to torrent-meta-file \n";
-	echo "                extra-arg 2 : username of fluxuser \n";
-	echo " <watch>      : watch a dir and inject+start torrents into tflux. \n";
-	echo "                extra-arg 1 : path to users watch-dir \n";
-	echo "                extra-arg 2 : username of fluxuser \n";
-	echo " <xfer>       : xfer-Limit-Shutdown. stop all torrents if xfer-limit is met.\n";
-	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
-	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
-	echo "                Doing this on a running ok flux _will_ screw up things. \n";
-	echo " <dump>       : dump database. \n";
-	echo "                extra-arg 1 : type : settings/users \n";
-	echo "\n";
-	echo "examples: \n";
-	echo "fluxcli.php torrents\n";
-	echo "fluxcli.php status\n";
-	echo "fluxcli.php netstat\n";
-	echo "fluxcli.php start foo.torrent\n";
-	echo "fluxcli.php stop foo.torrent\n";
-	echo "fluxcli.php start-all\n";
-	echo "fluxcli.php resume-all\n";
-	echo "fluxcli.php stop-all\n";
-	echo "fluxcli.php reset foo.torrent\n";
-	echo "fluxcli.php delete foo.torrent\n";
-	echo "fluxcli.php wipe foo.torrent\n";
-	echo "fluxcli.php inject /bar/foo.torrent fluxuser\n";
-    echo "fluxcli.php watch /bar/foo/ fluxuser\n";
-    echo "fluxcli.php xfer month\n";
-	echo "fluxcli.php repair\n";
-	echo "fluxcli.php dump settings\n";
-	echo "\n";
-}
-
-/**
  * printVersion
  */
 function printVersion() {
@@ -690,6 +630,66 @@ function cliDumpDatabase($type = "") {
 		printUsage();
 	}
 	exit();
+}
+
+/**
+ * printUsage
+ *
+ * @param $torrent name of the torrent
+ * @return boolean if the settings could be loaded (were existent in db already)
+ */
+function printUsage() {
+	echo "\n";
+    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
+	echo "\n";
+	echo "Usage: fluxcli.php action [extra-args]\n";
+	echo "\naction: \n";
+	echo " <torrents>   : print torrents. \n";
+	echo " <netstat>    : print netstat. \n";
+	echo " <start>      : start a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <stop>       : stop a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+    echo " <start-all>  : start all torrents. \n";
+    echo " <resume-all> : resume all torrents. \n";
+	echo " <stop-all>   : stop all running torrents. \n";
+	echo " <reset>      : reset totals of a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <delete>     : delete a torrent. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <wipe>       : reset totals, delete torrent, delete torrent-data. \n";
+	echo "                extra-arg : name of torrent as known inside torrentflux \n";
+	echo " <inject>     : injects a torrent-file into tflux. \n";
+	echo "                extra-arg 1 : path to torrent-meta-file \n";
+	echo "                extra-arg 2 : username of fluxuser \n";
+	echo " <watch>      : watch a dir and inject+start torrents into tflux. \n";
+	echo "                extra-arg 1 : path to users watch-dir \n";
+	echo "                extra-arg 2 : username of fluxuser \n";
+	echo " <xfer>       : xfer-Limit-Shutdown. stop all torrents if xfer-limit is met.\n";
+	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
+	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
+	echo "                Doing this on a running ok flux _will_ screw up things. \n";
+	echo " <dump>       : dump database. \n";
+	echo "                extra-arg 1 : type : settings/users \n";
+	echo "\n";
+	echo "examples: \n";
+	echo "fluxcli.php torrents\n";
+	echo "fluxcli.php status\n";
+	echo "fluxcli.php netstat\n";
+	echo "fluxcli.php start foo.torrent\n";
+	echo "fluxcli.php stop foo.torrent\n";
+	echo "fluxcli.php start-all\n";
+	echo "fluxcli.php resume-all\n";
+	echo "fluxcli.php stop-all\n";
+	echo "fluxcli.php reset foo.torrent\n";
+	echo "fluxcli.php delete foo.torrent\n";
+	echo "fluxcli.php wipe foo.torrent\n";
+	echo "fluxcli.php inject /bar/foo.torrent fluxuser\n";
+    echo "fluxcli.php watch /bar/foo/ fluxuser\n";
+    echo "fluxcli.php xfer month\n";
+	echo "fluxcli.php repair\n";
+	echo "fluxcli.php dump settings\n";
+	echo "\n";
 }
 
 ?>
