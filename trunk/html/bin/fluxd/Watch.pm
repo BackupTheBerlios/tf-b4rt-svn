@@ -186,13 +186,9 @@ sub main {
 		foreach my $user (sort keys %jobs) {
 			my $dir = $jobs{$user};
 			if ((!($user eq "")) && (-d $dir)) {
-				print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
+				#print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
 				eval {
-					my $result = Fluxd::fluxcli("watch", $dir, $user);
-					chomp $result;
-					if (!($result eq "")) {
-						print $result."\n"; # DEBUG
-					}
+					Fluxd::fluxcli("watch", $dir, $user);
 				};
 			}
 		}

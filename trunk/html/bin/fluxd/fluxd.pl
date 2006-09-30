@@ -831,7 +831,7 @@ sub set {
 #------------------------------------------------------------------------------#
 # Sub: fluxcli                                                                 #
 # Arguments: Command [Arg1, [Arg2]]                                            #
-# Returns: null                                                                #
+# Returns: string                                                              #
 #------------------------------------------------------------------------------#
 sub fluxcli {
 	my $Command = shift;
@@ -861,11 +861,11 @@ sub fluxcli {
 			return printUsage();
 		} else {
 			my $shellCmd = FluxDB->getFluxConfig("bin_php");
-			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
-			return `$shellCmd`;
+			$shellCmd .= " bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." >> $LOG";
+			system($shellCmd);
+			return "1";
 		}
 	}
-
 }
 
 #------------------------------------------------------------------------------#
@@ -1117,7 +1117,7 @@ sub check {
 
 	# 1. perl-modules
 	print "1. perl-modules\n";
-	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'Symbol', 'POSIX', 'DBI');
+	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX', 'DBI');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			$return = 1;
