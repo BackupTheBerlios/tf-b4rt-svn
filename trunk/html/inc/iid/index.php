@@ -671,8 +671,10 @@ if ($cfg["ui_displayusers"] != "0") {
 		else
 			array_push($arOfflineUsers, array('user' => $arUsers[$inx]));
 	}
-	$tmpl->setloop('arOnlineUsers', $arOnlineUsers);
-	$tmpl->setloop('arOfflineUsers', $arOfflineUsers);
+	if (count($arOnlineUsers) > 0)
+		$tmpl->setloop('arOnlineUsers', $arOnlineUsers);
+	if (count($arOfflineUsers) > 0)
+		$tmpl->setloop('arOfflineUsers', $arOfflineUsers);
 }
 
 // xfer
