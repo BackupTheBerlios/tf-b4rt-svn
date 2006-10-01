@@ -1178,9 +1178,9 @@ function getTorrentMetaInfo($torrent) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["transfer_file_path"].$torrent."\"");
 		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$this->cfg["docroot"].'bin/ttools" "'.$this->cfg["docroot"].'bin/ttools/ttools.pl" -i "'.$cfg["transfer_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i "'.$cfg["transfer_file_path"].$torrent.'"');
 		case "torrentinfo-console.py":
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$this->cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
 		case "btshowmetainfo.py":
 		default:
 			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
