@@ -21,9 +21,8 @@
 *******************************************************************************/
 
 // defines
-define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
-define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 define('_NAME', 'torrentflux-b4rt');
+define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 define('_TITLE', _NAME.' - check - Revision '._REVISION);
 
 // fields
@@ -125,33 +124,22 @@ send("</ul>");
 // PHP-Database-Support
 send('<h2>4. PHP-Database-Support</h2>');
 send("<ul>");
-// mysql
-$mysql = '<li>mysql ';
-if (function_exists('mysql_connect')) {
-	$mysql .= '<font color="green">Passed</font>';
-	$dbsupported++;
-} else {
-	$mysql .= '<font color="red">Failed</font>';
+// define valid db-types
+$databaseTypes = array();
+$databaseTypes['mysql'] = 'mysql_connect';
+$databaseTypes['sqlite'] = 'sqlite_open';
+$databaseTypes['postgres'] = 'pg_connect';
+// test db-types
+foreach ($databaseTypes as $databaseTypeName => $databaseTypeFunction) {
+	$dbtest = '<li>'.$databaseTypeName.' ';
+	if (function_exists($databaseTypeFunction)) {
+		$dbtest .= '<font color="green">Passed</font>';
+		$dbsupported++;
+	} else {
+		$dbtest .= '<font color="red">Failed</font>';
+	}
+	send($dbtest.'</li>');
 }
-send($mysql.'</li>');
-// sqlite
-$sqlite = '<li>sqlite ';
-if (function_exists('sqlite_open')) {
-	$sqlite .= '<font color="green">Passed</font>';
-	$dbsupported++;
-} else {
-	$sqlite .= '<font color="red">Failed</font>';
-}
-send($sqlite.'</li>');
-// postgres
-$postgres = '<li>postgres ';
-if (function_exists('pg_connect')) {
-	$postgres .= '<font color="green">Passed</font>';
-	$dbsupported++;
-} else {
-	$postgres .= '<font color="red">Failed</font>';
-}
-send($postgres.'</li>');
 send("</ul>");
 // db-state
 if ($dbsupported == 0) {
@@ -265,12 +253,12 @@ function sendHead() {
 	send('<head>');
 	send('<title>'._TITLE.'</title>');
 	send('<style type="text/css">');
-	send('FONT {FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}');
-	send('BODY {FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}');
-	send('P {FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}');
-	send('H1 {FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 15px}');
-	send('H2 {FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 14px}');
-	send('H3 {FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 13px}');
+	send('font {font-family: Verdana,Helvetica; font-size: 12px}');
+	send('body {font-family: Verdana,Helvetica; font-size: 12px}');
+	send('p {font-family: Verdana,Helvetica; font-size: 12px}');
+	send('h1 {font-family: Verdana,Helvetica; font-size: 15px}');
+	send('h2 {font-family: Verdana,Helvetica; font-size: 14px}');
+	send('h3 {font-family: Verdana,Helvetica; font-size: 13px}');
 	send('</style>');
 	send('</head>');
 	send('<body topmargin="8" leftmargin="5" bgcolor="#FFFFFF">');
