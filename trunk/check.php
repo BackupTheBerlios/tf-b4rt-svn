@@ -24,10 +24,13 @@
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 
-// counter
-$warnings = 0;
+// fields
 $errors = 0;
+$errorsMessages = array();
+$warnings = 0;
+$warningsMessages = array();
 $dbsupported = 0;
+$dbsupportedMessages = array();
 
 // -----------------------------------------------------------------------------
 // Main
@@ -45,19 +48,104 @@ send('<h1>torrentflux-b4rt - check - Revision '._REVISION.'</h1>');
 
 // PHP-Version
 send('<h2>1. PHP-Version</h2>');
-
+$phpVersion = 'PHP-Version : <em>'.PHP_VERSION.'</em> ';
+if (PHP_VERSION < 4.3) {
+	$phpVersion .= '<font color="red">Failed</font>';
+	$errors++;
+} else {
+	$phpVersion .= '<font color="green">Passed</font>';
+}
+send($phpVersion);
 
 // PHP-Extensions
 send('<h2>2. PHP-Extensions</h2>');
-
+send("<ul>");
+$loadedExtensions = get_loaded_extensions();
+// session
+$session = '<li>session ';
+if (in_array("session", $loadedExtensions)) {
+	$session .= '<font color="green">Passed</font>';
+} else {
+	$session .= '<font color="red">Failed</font>';
+	$errors++;
+}
+send($session.'</li>');
+// pcre
+$pcre = '<li>pcre ';
+if (in_array("pcre", $loadedExtensions)) {
+	$pcre .= '<font color="green">Passed</font>';
+} else {
+	$pcre .= '<font color="red">Failed</font>';
+	$errors++;
+}
+send($pcre.'</li>');
+// sockets
+$sockets = '<li>sockets ';
+if (in_array("sockets", $loadedExtensions)) {
+	$sockets .= '<font color="green">Passed</font>';
+} else {
+	$sockets .= '<font color="red">Failed</font>';
+	$warnings++;
+}
+send($sockets.'</li>');
+//
+send("</ul>");
 
 // PHP-Configuration
 send('<h2>3. PHP-Configuration</h2>');
-
+send("<ul>");
+// safe_mode
+$safe_mode = '<li>safe_mode ';
+if ((ini_get("safe_mode")) == 0) {
+	$safe_mode .= '<font color="green">Passed</font>';
+} else {
+	$safe_mode .= '<font color="red">Failed</font>';
+	$errors++;
+}
+send($safe_mode.'</li>');
+// allow_url_fopen
+$allow_url_fopen = '<li>allow_url_fopen ';
+if ((ini_get("allow_url_fopen")) == 1) {
+	$allow_url_fopen .= '<font color="green">Passed</font>';
+} else {
+	$allow_url_fopen .= '<font color="red">Failed</font>';
+	$warnings++;
+}
+send($allow_url_fopen.'</li>');
+//
+send("</ul>");
 
 // PHP-Database-Support
 send('<h2>4. PHP-Database-Support</h2>');
-
+send("<ul>");
+// mysql
+$mysql = '<li>mysql ';
+if (function_exists('mysql_connect')) {
+	$mysql .= '<font color="green">Passed</font>';
+	$dbsupported++;
+} else {
+	$mysql .= '<font color="red">Failed</font>';
+}
+send($mysql.'</li>');
+// sqlite
+$sqlite = '<li>sqlite ';
+if (function_exists('sqlite_open')) {
+	$sqlite .= '<font color="green">Passed</font>';
+	$dbsupported++;
+} else {
+	$sqlite .= '<font color="red">Failed</font>';
+}
+send($sqlite.'</li>');
+// postgres
+$postgres = '<li>postgres ';
+if (function_exists('pg_connect')) {
+	$postgres .= '<font color="green">Passed</font>';
+	$dbsupported++;
+} else {
+	$postgres .= '<font color="red">Failed</font>';
+}
+send($postgres.'</li>');
+send("</ul>");
 
 // OS-Specific
 // get os
@@ -75,8 +163,20 @@ if (isset($osString)) {
 send('<h2>5. OS-Specific ('.$osString.' '.php_uname('r').')</h2>');
 switch (_OS) {
 	case 1: // linux
+		send('No Special Requirements on Linux-OS. <font color="green">Passed</font>');
 		break;
 	case 2: // bsd
+		send("<ul>");
+		// posix
+		$posix = '<li>posix ';
+		if ((function_exists('posix_geteuid')) && (function_exists('posix_getpwuid'))) {
+			$posix .= '<font color="green">Passed</font>';
+		} else {
+			$posix .= '<font color="red">Failed</font>';
+			$warnings++;
+		}
+		send($posix.'</li>');
+		send("</ul>");
 		break;
 	case 0: // unknown
 	default:
@@ -86,6 +186,10 @@ switch (_OS) {
 
 // summary
 send('<h1>Summary</h1>');
+
+send("Warnings : ".$warnings."<br>");
+send("Errors : ".$errors."<br>");
+send("Databases supported : ".$dbsupported."<br>");
 
 
 // foot
