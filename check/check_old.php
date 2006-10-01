@@ -40,10 +40,10 @@ $warningsMessages = array();
 if (@ob_get_level() == 0)
 	@ob_start();
 
-// title
+// head
 sendHead();
 
-// header
+// title
 send('<h1>'._TITLE.'</h1>');
 
 // PHP-Version
