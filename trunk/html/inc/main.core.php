@@ -77,7 +77,7 @@ if (isset($osString)) {
     //else if (!(stristr($osString, 'darwin') === false)) /* darwin */
     //    $cfg["_OS"] = 3;
     else /* well... linux ;) */
-    	define('_OS',1);
+    	$cfg["_OS"] = 1;
 } else { /* well... linux ;) */
 	$cfg["_OS"] = 1;
 }
