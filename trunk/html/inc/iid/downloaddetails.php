@@ -116,7 +116,7 @@ if ($af->running == 1) {
 	$torrent_pid = getTransferPid($alias);
 	$tmpl->setvar('port', netstatPortByPid($torrent_pid));
 	$tmpl->setvar('cons', netstatConnectionsByPid($torrent_pid));
-	$tmpl->setvar('maxcons', ' ('.$cfg["maxcons"].')');
+	$tmpl->setvar('maxcons', '('.$cfg["maxcons"].')');
 
 	// down speed
 	if (trim($af->down_speed) != "")
