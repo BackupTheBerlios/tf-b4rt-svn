@@ -72,10 +72,10 @@ $osString = php_uname('s');
 if (isset($osString)) {
     if (!(stristr($osString, 'linux') === false)) /* linux */
     	$cfg["_OS"] = 1;
-    else if (!(stristr($osString, 'bsd') === false)) /* bsd */
+    elseif (!(stristr($osString, 'bsd') === false)) /* bsd */
     	$cfg["_OS"] = 2;
-    //else if (!(stristr($osString, 'darwin') === false)) /* darwin */
-    //    $cfg["_OS"] = 3;
+    elseif (!(stristr($osString, 'darwin') === false)) /* darwin */
+        $cfg["_OS"] = 2;
     else /* well... linux ;) */
     	$cfg["_OS"] = 1;
 } else { /* well... linux ;) */
