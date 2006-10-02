@@ -1106,7 +1106,7 @@ sub check {
 
 	# 1. perl-modules
 	print "1. perl-modules\n";
-	my @mods = ('IO::Socket::UNIX', 'IO::Select', 'POSIX');
+	my @mods = ('IO::Socket::UNIX', 'IO::Socket::INET', 'IO::Select', 'POSIX');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			$return = 1;
