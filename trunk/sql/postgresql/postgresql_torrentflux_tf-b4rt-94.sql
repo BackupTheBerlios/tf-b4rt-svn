@@ -300,8 +300,7 @@ CREATE TABLE tf_xfer (
   user VARCHAR(32) NOT NULL DEFAULT '',
   date DATE NOT NULL DEFAULT '0001-01-01',
   download INT8 NOT NULL DEFAULT '0',
-  upload INT8 NOT NULL DEFAULT '0',
-  PRIMARY KEY (user,date)
+  upload INT8 NOT NULL DEFAULT '0'
 );
 
 --
