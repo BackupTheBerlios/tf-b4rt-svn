@@ -1295,7 +1295,7 @@ function sendLine($line = "") {
  * @return data
  */
 function getDataFromFile($file) {
-	if($fileHandle = @fopen($file,'r')) {
+	if ($fileHandle = @fopen($file, 'r')) {
 		$data = null;
 		while (!@feof($fileHandle))
 			$data .= @fgets($fileHandle, 8192);
@@ -1313,7 +1313,7 @@ function getDataFromFile($file) {
 function getDataFromUrl($url) {
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", "torrentflux-b4rt/". _VERSION_THIS);
-	if($fileHandle = @fopen($url,'r')) {
+	if ($fileHandle = @fopen($url, 'r')) {
 		$data = null;
 		while (!@feof($fileHandle))
 			$data .= @fgets($fileHandle, 4096);
