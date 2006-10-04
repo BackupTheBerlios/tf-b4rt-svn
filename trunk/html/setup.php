@@ -400,7 +400,150 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
-
+// tf_cookies
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_cookies (
+  cid INTEGER PRIMARY KEY,
+  uid INTEGER NOT NULL default '0',
+  host TEXT default NULL,
+  data TEXT default NULL
+)");
+// tf_links
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_links (
+  lid INTEGER PRIMARY KEY,
+  url VARCHAR(255) NOT NULL default '',
+  sitename VARCHAR(255) NOT NULL default 'Old Link',
+  sort_order INTEGER(3) default '0'
+)");
+// tf_log
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_log (
+  cid INTEGER PRIMARY KEY,
+  user_id VARCHAR(32) NOT NULL default '',
+  file VARCHAR(200) NOT NULL default '',
+  action VARCHAR(200) NOT NULL default '',
+  ip VARCHAR(15) NOT NULL default '',
+  ip_resolved VARCHAR(200) NOT NULL default '',
+  user_agent VARCHAR(200) NOT NULL default '',
+  time VARCHAR(14) NOT NULL default '0'
+)");
+// tf_messages
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_messages (
+  mid INTEGER PRIMARY KEY,
+  to_user VARCHAR(32) NOT NULL default '',
+  from_user VARCHAR(32) NOT NULL default '',
+  message TEXT,
+  IsNew INT(11) default NULL,
+  ip VARCHAR(15) NOT NULL default '',
+  time VARCHAR(14) NOT NULL default '0',
+  force_read INTEGER default '0'
+)");
+// tf_rss
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_rss (
+  rid INTEGER PRIMARY KEY,
+  url VARCHAR(255) NOT NULL default ''
+)");
+// tf_users
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_users (
+  uid INTEGER PRIMARY KEY,
+  user_id VARCHAR(32) NOT NULL default '',
+  password VARCHAR(34) NOT NULL default '',
+  hits INT(10) NOT NULL default '0',
+  last_visit VARCHAR(14) NOT NULL default '0',
+  time_created VARCHAR(14) NOT NULL default '0',
+  user_level TINYINT(1) NOT NULL default '0',
+  hide_offline TINYINT(1) NOT NULL default '0',
+  theme VARCHAR(100) NOT NULL default 'default',
+  language_file VARCHAR(60) default 'lang-english.php',
+  state TINYINT(1) NOT NULL default '1',
+)");
+// tf_torrents
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_torrents (
+  torrent VARCHAR(255) NOT NULL default '',
+  running INTEGER(1) NOT NULL default '0',
+  rate INTEGER(4) NOT NULL default '0',
+  drate INTEGER(4) NOT NULL default '0',
+  maxuploads INTEGER(3) NOT NULL default '0',
+  superseeder INTEGER(1) NOT NULL default '0',
+  runtime VARCHAR(5) NOT NULL default 'False',
+  sharekill INTEGER(4) NOT NULL default '0',
+  minport INTEGER(5) NOT NULL default '0',
+  maxport INTEGER(5) NOT NULL default '0',
+  maxcons INTEGER(4) NOT NULL default '0',
+  savepath VARCHAR(255) NOT NULL default '',
+  btclient VARCHAR(32) NOT NULL default 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL default '',
+  PRIMARY KEY  (torrent)
+)");
+// tf_trprofiles
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_trprofiles (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(255) NOT NULL default '',
+  owner INTEGER(10) NOT NULL default '0',
+  public INTEGER(1) NOT NULL default '0',
+  rate INTEGER(4) NOT NULL default '0',
+  drate INTEGER(4) NOT NULL default '0',
+  maxuploads INTEGER(3) NOT NULL default '0',
+  superseeder INTEGER(1) NOT NULL default '0',
+  runtime VARCHAR(5) NOT NULL default 'False',
+  sharekill INTEGER(4) NOT NULL default '0',
+  minport INTEGER(5) NOT NULL default '0',
+  maxport INTEGER(5) NOT NULL default '0',
+  maxcons INTEGER(4) NOT NULL default '0',
+  rerequest INTEGER(8) NOT NULL default '0'
+)");
+// tf_torrent_totals
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_torrent_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
+)");
+// tf_xfer
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_xfer (
+  user_id VARCHAR(32) NOT NULL default '',
+  date DATE NOT NULL default '0000-00-00',
+  download BIGINT(80) NOT NULL default '0',
+  upload BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (user_id,date)
+)");
+// tf_settings_user
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings_user (
+  uid INTEGER NOT NULL,
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL
+)");
+// tf_settings
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings (
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL,
+  PRIMARY KEY  (tf_key)
+)");
+// tf_settings_dir
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings_dir (
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL,
+  PRIMARY KEY  (tf_key)
+)");
+// tf_settings_stats
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings_stats (
+  tf_key VARCHAR(255) NOT NULL default '',
+  tf_value TEXT NOT NULL,
+  PRIMARY KEY  (tf_key)
+)");
 
 // sql-queries : Data
 $cqt = 'data';
@@ -408,7 +551,7 @@ $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
 // tf_links
-
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0')");
 
 // -----------------------------------------------------------------------------
 // postgres
@@ -429,6 +572,50 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
 
+/*
+// tf_cookies
+array_push($queries[$cqt][$cdb], "
+");
+// tf_links
+array_push($queries[$cqt][$cdb], "
+");
+// tf_log
+array_push($queries[$cqt][$cdb], "
+");
+// tf_messages
+array_push($queries[$cqt][$cdb], "
+");
+// tf_rss
+array_push($queries[$cqt][$cdb], "
+");
+// tf_users
+array_push($queries[$cqt][$cdb], "
+");
+// tf_torrents
+array_push($queries[$cqt][$cdb], "
+");
+// tf_trprofiles
+array_push($queries[$cqt][$cdb], "
+");
+// tf_torrent_totals
+array_push($queries[$cqt][$cdb], "
+");
+// tf_xfer
+array_push($queries[$cqt][$cdb], "
+");
+// tf_settings_user
+array_push($queries[$cqt][$cdb], "
+");
+// tf_settings
+array_push($queries[$cqt][$cdb], "
+");
+// tf_settings_dir
+array_push($queries[$cqt][$cdb], "
+");
+// tf_settings_stats
+array_push($queries[$cqt][$cdb], "
+");
+*/
 
 // sql-queries : Data
 $cqt = 'data';
@@ -436,9 +623,9 @@ $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
 // tf_links
-
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','Home','0')");
 // sequences
-
+//array_push($queries[$cqt][$cdb], "");
 
 // -----------------------------------------------------------------------------
 // Main
@@ -872,8 +1059,6 @@ exit();
 // functions
 // -----------------------------------------------------------------------------
 
-
-
 /**
  * write the db-conf file.
  *
@@ -910,12 +1095,12 @@ function writeDatabaseConfig($type, $host, $user, $pass, $name, $pcon) {
 /******************************************************************************/
 // YOUR DATABASE CONNECTION INFORMATION
 /******************************************************************************/
-$cfg["db_type"] = "'.$type.'";  // Databae-Type : mysql/sqlite/postgres
-$cfg["db_host"] = "'.$host.'";  // Database host computer name or IP
-$cfg["db_name"] = "'.$name.'";  // Name of the Database
-$cfg["db_user"] = "'.$user.'";  // Username for Database
-$cfg["db_pass"] = "'.$pass.'";  // Password for Database
-$cfg["db_pcon"] = '.$pcon.';  // Persistent Connection enabled : true/false
+$cfg["db_type"] = "'.$type.'"; // Databae-Type : mysql/sqlite/postgres
+$cfg["db_host"] = "'.$host.'"; // Database host computer name or IP
+$cfg["db_name"] = "'.$name.'"; // Name of the Database
+$cfg["db_user"] = "'.$user.'"; // Username for Database
+$cfg["db_pass"] = "'.$pass.'"; // Password for Database
+$cfg["db_pcon"] = '.$pcon.'; // Persistent Connection enabled : true/false
 /******************************************************************************/
 
 ?>';
@@ -992,14 +1177,6 @@ function getDataFromFile($file) {
  */
 function sendButton($name = "", $value = "") {
 	send('<form name="setup" action="' . _FILE_THIS . '" method="post"><input type="Hidden" name="'.$name.'" value="'.$value.'"><input type="submit" value="Continue"></form><br>');
-}
-
-/**
- * send error
- */
-function sendError($error = "") {
-	send('<h2>Error</h2>');
-	send('<font color="red"><strong>'.$error.'</strong></font>');
 }
 
 /**
