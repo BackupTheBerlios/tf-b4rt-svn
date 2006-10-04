@@ -1166,8 +1166,8 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
 	send("<p>Install completed.</p>");
-	@unlink("setup.php")
-	@unlink("upgrade.php")
+	@unlink("setup.php");
+	@unlink("upgrade.php");
 	send("<h2>Next : Login</h2>");
 	send('<a href="login.php" title="Login">Login</a>');
 } else {                                                                        // default
