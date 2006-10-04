@@ -33,7 +33,7 @@ function getdb() {
 	// build DSN
 	switch ($cfg["db_type"]) {
 		case "mysql":
-			$dsn = "mysql://'".$cfg["db_user"]."':'".$cfg["db_pass"]."'@".$cfg["db_host"]."/".$cfg["db_name"];
+			$dsn = 'mysql://"'.$cfg["db_user"].'":"'.$cfg["db_pass"].'"@'.$cfg["db_host"].'/'.$cfg["db_name"];
 			if ($cfg["db_pcon"])
 				$dsn .= '?persist';
 			break;
@@ -43,7 +43,7 @@ function getdb() {
 				$dsn .= '/?persist';
 			break;
 		case "postgres":
-			$dsn = "postgres://'".$cfg["db_user"]."':'".$cfg["db_pass"]."'@".$cfg["db_host"]."/".$cfg["db_name"];
+			$dsn = 'postgres://"'.$cfg["db_user"].'":"'.$cfg["db_pass"].'"@'.$cfg["db_host"].'/'.$cfg["db_name"];
 			if ($cfg["db_pcon"])
 				$dsn .= '?persist';
 			break;
