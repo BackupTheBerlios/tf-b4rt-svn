@@ -358,7 +358,6 @@ CREATE TABLE tf_settings_dir (
   tf_key VARCHAR(255) NOT NULL DEFAULT '',
   tf_value TEXT DEFAULT '' NOT NULL,
   PRIMARY KEY (tf_key)
-
 );
 
 INSERT INTO tf_settings_dir VALUES ('dir_public_read','1');
@@ -384,7 +383,6 @@ CREATE TABLE tf_settings_stats (
   tf_key VARCHAR(255) NOT NULL DEFAULT '',
   tf_value TEXT DEFAULT '' NOT NULL,
   PRIMARY KEY (tf_key)
-
 );
 
 INSERT INTO tf_settings_stats VALUES ('stats_enable_public','0');
