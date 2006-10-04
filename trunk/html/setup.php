@@ -111,83 +111,210 @@ if (isset($_REQUEST["1"])) {                                                    
 		exit();
 	}
 } elseif (isset($_REQUEST["13"])) {                                             // 13 - Database - config
-	if ((isset($_REQUEST["db_type"])) && ($databaseTypes[$_REQUEST["db_type"]] != "")) {
-		$type = $_REQUEST["db_type"];
-		sendHead(" - Database");
-		send("<h1>"._TITLE."</h1>");
-		send("<h2>Database - Config - ".$type."</h2>");
-		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
-		send('<table border="0">');
-		switch ($type) {
-			case "mysql":
-			case "postgres":
-				// host
-				$line = '<tr><td>Host : </td>';
-				$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40"';
-				if (isset($_REQUEST["db_host"]))
-					$line .= ' value="'.$_REQUEST["db_host"].'">';
-				else
-					$line .= '>';
-				$line .= '</td></tr>';
-				send($line);
-				// name
-				$line = '<tr><td>Name : </td>';
-				$line .= '<td><input name="db_name" type="Text" maxlength="254" size="40"';
-				if (isset($_REQUEST["db_name"]))
-					$line .= ' value="'.$_REQUEST["db_name"].'">';
-				else
-					$line .= '>';
-				$line .= '</td></tr>';
-				send($line);
-				// user
-				$line = '<tr><td>Username : </td>';
-				$line .= '<td><input name="db_user" type="Text" maxlength="254" size="40"';
-				if (isset($_REQUEST["db_user"]))
-					$line .= ' value="'.$_REQUEST["db_user"].'">';
-				else
-					$line .= '>';
-				$line .= '</td></tr>';
-				send($line);
-				// pass
-				$line = '<tr><td>Password : </td>';
-				$line .= '<td><input name="db_pass" type="Password" maxlength="254" size="40"';
-				if (isset($_REQUEST["db_pass"]))
-					$line .= ' value="'.$_REQUEST["db_pass"].'">';
-				else
-					$line .= '>';
-				$line .= '</td></tr>';
-				send($line);
-				// pcon
-				$line = '<tr><td colspan="2">Persistent Connection :';
-				$line .= '<input name="db_pcon" type="Checkbox" value="true"';
-				if (isset($_REQUEST["db_pcon"]))
-					$line .= ' checked">';
-				else
-					$line .= '>';
-				$line .= '</td></tr>';
-				send($line);
-
-				break;
-			case "sqlite":
-				// file
-				$line = '<tr><td>Database-File : </td>';
-				$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40"';
-				if (isset($_REQUEST["db_host"]))
-					$line .= ' value="'.$_REQUEST["db_host"].'">';
-				else
-					$line .= '>';
-				$line .= '</td></tr>';
-				send($line);
-		}
-		send('</table>');
-		send('<input type="Hidden" name="db_type" value="'.$type.'">');
-		send('<input type="Hidden" name="14" value="">');
-		send('<input type="submit" value="Continue">');
-		send('</form>');
-	} else {
-		header("location: setup.php?11");
-		exit();
+	$type = $_REQUEST["db_type"];
+	sendHead(" - Database");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Database - Config - ".$type."</h2>");
+	send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+	send('<table border="0">');
+	switch ($type) {
+		case "mysql":
+		case "postgres":
+			// host
+			$line = '<tr><td>Host : </td>';
+			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40"';
+			if (isset($_REQUEST["db_host"]))
+				$line .= ' value="'.$_REQUEST["db_host"].'">';
+			else
+				$line .= '>';
+			$line .= '</td></tr>';
+			send($line);
+			// name
+			$line = '<tr><td>Name : </td>';
+			$line .= '<td><input name="db_name" type="Text" maxlength="254" size="40"';
+			if (isset($_REQUEST["db_name"]))
+				$line .= ' value="'.$_REQUEST["db_name"].'">';
+			else
+				$line .= '>';
+			$line .= '</td></tr>';
+			send($line);
+			// user
+			$line = '<tr><td>Username : </td>';
+			$line .= '<td><input name="db_user" type="Text" maxlength="254" size="40"';
+			if (isset($_REQUEST["db_user"]))
+				$line .= ' value="'.$_REQUEST["db_user"].'">';
+			else
+				$line .= '>';
+			$line .= '</td></tr>';
+			send($line);
+			// pass
+			$line = '<tr><td>Password : </td>';
+			$line .= '<td><input name="db_pass" type="Password" maxlength="254" size="40"';
+			if (isset($_REQUEST["db_pass"]))
+				$line .= ' value="'.$_REQUEST["db_pass"].'">';
+			else
+				$line .= '>';
+			$line .= '</td></tr>';
+			send($line);
+			// pcon
+			$line = '<tr><td colspan="2">Persistent Connection :';
+			$line .= '<input name="db_pcon" type="Checkbox" value="true"';
+			if (isset($_REQUEST["db_pcon"]))
+				$line .= ' checked">';
+			else
+				$line .= '>';
+			$line .= '</td></tr>';
+			send($line);
+			//
+			break;
+		case "sqlite":
+			// file
+			$line = '<tr><td>Database-File : </td>';
+			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40"';
+			if (isset($_REQUEST["db_host"]))
+				$line .= ' value="'.$_REQUEST["db_host"].'">';
+			else
+				$line .= '>';
+			$line .= '</td></tr>';
+			send($line);
 	}
+	// create
+	$line = '<tr><td colspan="2">Create Database :';
+	$line .= '<input name="db_create" type="Checkbox" value="true"';
+	if (isset($_REQUEST["db_create"]))
+		$line .= ' checked">';
+	else
+		$line .= '>';
+	$line .= '</td></tr>';
+	send($line);
+	send('</table>');
+	send('<input type="Hidden" name="db_type" value="'.$type.'">');
+	send('<input type="Hidden" name="14" value="">');
+	send('<input type="submit" value="Continue">');
+	send('</form>');
+} elseif (isset($_REQUEST["14"])) {                                             // 14 - Database - creation + test
+	$type = $_REQUEST["db_type"];
+	sendHead(" - Database");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Database - Creation + Test - ".$type."</h2>");
+	$paramsOk = true;
+	if (isset($_REQUEST["db_host"]))
+		$host = $_REQUEST["db_host"];
+	else
+		$paramsOk = false;
+	switch ($type) {
+		case "mysql":
+		case "postgres":
+			if (isset($_REQUEST["db_name"]))
+				$name = $_REQUEST["db_name"];
+			else
+				$paramsOk = false;
+			if (isset($_REQUEST["db_user"]))
+				$user = $_REQUEST["db_user"];
+			else
+				$paramsOk = false;
+			if (isset($_REQUEST["db_pass"]))
+				$pass = $_REQUEST["db_pass"];
+			else
+				$paramsOk = false;
+			if (isset($_REQUEST["db_pcon"]))
+				$pcon = true;
+			else
+				$pcon = false;
+			if (isset($_REQUEST["db_create"]))
+				$create = true;
+			else
+				$create = false;
+			break;
+	}
+	$databaseTestOk = false;
+	$databaseError = "";
+	// create + test
+	if ($paramsOk) {
+		$databaseExists = true;
+		if ($create) {
+			$dbCon = getAdoConnection($type, $host, $user, $pass);
+			if (!$dbCon) {
+				$databaseExists = false;
+				$databaseTestOk = false;
+				$databaseError = "cannot connect to database.";
+			} else {
+				$sqlState = "CREATE DATABASE ".$name;
+				$dbCon->Execute($sqlState);
+				if ($dbCon->ErrorNo() == 0) {
+					send("created database <em>".$name."</em>.<br>");
+					$databaseExists = true;
+				} else { // damn there was an error
+					$databaseExists = false;
+					$databaseTestOk = false;
+					$databaseError = "cannot create database <em>".$name."</em>.";
+				}
+				// close ado-connection
+				$dbCon->Close();
+			}
+			unset($dbCon);
+		}
+		if ($databaseExists) {
+			$dbCon = getAdoConnection($type, $host, $user, $pass, $name);
+			if (!$dbCon) {
+				$databaseTestOk = false;
+				$databaseError = "cannot connect to database.";
+			} else {
+				send('<ul>');
+				foreach ($databaseQueriesTest[$type] as $databaseTypeName => $databaseQuery) {
+					send('<li><em>'.$databaseQuery.'</em> : ');
+					$dbCon->Execute($databaseQuery);
+					if ($dbCon->ErrorNo() == 0) {
+						send('<font color="green">Ok</font></li>');
+						$databaseTestOk = true;
+					} else { // damn there was an error
+						send('<font color="red">Error</font></li>');
+						// close ado-connection
+						$dbCon->Close();
+						$databaseTestOk = false;
+						break;
+					}
+				}
+				send('</ul>');
+			}
+		}
+	} else {
+		$databaseTestOk = false;
+		$databaseError = "config error.";
+	}
+	// output
+	if ($databaseTestOk) {
+		send('<font color="green"><strong>Ok</strong></font><br>');
+		send("<h2>Next : Write Config File</h2>");
+		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+		send('<input type="Hidden" name="db_type" value="'.$type.'">');
+		send('<input type="Hidden" name="15" value="">');
+		send('<input type="submit" value="Continue">');
+	} else {
+		send('<font color="red"><strong>Error</strong></font><br>');
+		send($databaseError."<p>");
+		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+		send('<input type="Hidden" name="db_type" value="'.$type.'">');
+		send('<input type="Hidden" name="13" value="">');
+		if (isset($_REQUEST["db_name"]))
+			send('<input type="Hidden" name="db_host" value="'.$_REQUEST["db_host"].'">');
+		if (isset($_REQUEST["db_name"]))
+			send('<input type="Hidden" name="db_name" value="'.$_REQUEST["db_name"].'">');
+		if (isset($_REQUEST["db_user"]))
+			send('<input type="Hidden" name="db_user" value="'.$_REQUEST["db_user"].'">');
+		if (isset($_REQUEST["db_pass"]))
+			send('<input type="Hidden" name="db_pass" value="'.$_REQUEST["db_pass"].'">');
+		if (isset($_REQUEST["db_pcon"]))
+			send('<input type="Hidden" name="db_pcon" value="'.$_REQUEST["db_pcon"].'">');
+		if (isset($_REQUEST["db_create"]))
+			send('<input type="Hidden" name="db_create" value="'.$_REQUEST["db_create"].'">');
+		send('<input type="submit" value="Back">');
+	}
+	send('</form>');
+
+
+
+
 } elseif (isset($_REQUEST["2"])) {                                              // 2 - Configuration
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
@@ -229,7 +356,7 @@ exit();
  *
  * @return database-connection or false on error
  */
-function getAdoConnection($type, $host, $user, $pass, $name) {
+function getAdoConnection($type, $host, $user, $pass, $name = "") {
 	require_once('inc/lib/adodb/adodb.inc.php');
 	// build DSN
 	switch ($type) {
