@@ -35,4 +35,10 @@ $cfg['isAdmin'] = false;
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");
 
+// check for setup.php and upgrade.php
+if (file_exists("setup.php"))
+	showErrorPage("Error : <em>setup.php</em> must be deleted.");
+if (file_exists("upgrade.php"))
+	showErrorPage("Error : <em>upgrade.php</em> must be deleted.");
+
 ?>

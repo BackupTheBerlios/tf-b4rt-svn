@@ -83,9 +83,14 @@ if (isAuthenticated() == 1) {
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
-// load last things to config and cache if not already done.
-// prune db and perform path-check
+// login-tasks
 if (!(isset($_SESSION['cache'][$currentUser]))) {
+
+	// check for setup.php and upgrade.php
+	if (file_exists("setup.php"))
+		showErrorPage("Error : <em>setup.php</em> must be deleted.");
+	if (file_exists("upgrade.php"))
+		showErrorPage("Error : <em>upgrade.php</em> must be deleted.");
 
 	// set admin-var
 	$cfg['isAdmin'] = IsAdmin();
