@@ -38,7 +38,7 @@ function getdb() {
 				$dsn .= '?persist';
 			break;
 		case "sqlite":
-			$dsn = 'sqlite://'.$dbHost;
+			$dsn = 'sqlite://'.$cfg["db_host"];
 			if ($cfg["db_pcon"])
 				$dsn .= '/?persist';
 			break;
