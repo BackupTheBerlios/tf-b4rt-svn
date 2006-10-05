@@ -7,8 +7,8 @@ torrentflux-b4rt 1.0
 -----------------------------------------------------------------
 System Requirements
 -----------------------------------------------------------------
--- A Linux or FreeBSD Box installed and working properly. (tested
-   on Debian, Ubuntu, Gentoo, RedHat, Fedora and others)
+-- A Linux or FreeBSD Box installed and working properly.
+   (tested on Debian, Ubuntu, Gentoo, RedHat, Fedora and others)
 
 -- Web Server.
    * Apache (http://www.apache.org)
@@ -160,6 +160,51 @@ Upgrade from TorrentFlux 2.1-b4rt-94 with "upgrade.php"
 Manual Upgrade from TorrentFlux 2.1-b4rt-94
 -----------------------------------------------------------------
 
+1. Stop all transfers.
+
+2. Delete content of docroot of the v94-installation. (recursive)
+
+3. Untar the package into a directory then copy the contents of
+   the "html" folder into your web site directory.
+
+   tar -jxvf torrentflux-b4rt_1.0.tar.bz2
+
+4. Import the Update-sql-script.
+   You may specify the type of the database you want to use in
+   the file "config.db.php", but the examples here use MySQL.
+
+   "mysql_update_tf-b4rt-94.to.torrentflux-b4rt-1.0.sql"
+   contains the commands to update the table structure and the
+   default data.
+   Import the script into your torrentflux database.
+
+   mysql torrentflux < mysql_update_tf-b4rt-94.to.torrentflux-b4rt-1.0.sql
+   Or load the script with PHPMyAdmin (web interface)
+
+5. rename the file "config.db.php.dist" in the dir "inc/config/"
+   to "config.db.php" and set the database-settings to use your
+   torrentflux-database.
+   You may specify type of database you want to use, but
+   the examples here use MySQL.
+
+6. ensure the files + dirs in the docroot are readable by your
+   webserver-user. if it is not the case one possible solution is
+   to "chown" the files to your webserver-user. this may be done
+   with a line like that :
+   chown -R username /path/to/torrentflux-docroot
+   change dir + username to fit your system so a possible line
+   would be :
+   chown -R www-data /var/www
+
+7. rename the dir ".torrents" in your path to ".transfers".
+   on a default install this would be :
+   /usr/local/torrent/.torrents/
+    ->
+   /usr/local/torrent/.transfers/
+
+8. On your first login after the upgrade you should check all the
+   admin settings pages and configure your installation.
+
 
 -----------------------------------------------------------------
 Upgrade from TorrentFlux 2.1 with "upgrade.php"
@@ -199,6 +244,58 @@ Upgrade from TorrentFlux 2.1 with "upgrade.php"
 -----------------------------------------------------------------
 Manual Upgrade from TorrentFlux 2.1
 -----------------------------------------------------------------
+
+1. Stop all transfers.
+
+2. Delete content of docroot of the 2.1 installation. (recursive)
+
+3. Untar the package into a directory then copy the contents of
+   the "html" folder into your web site directory.
+
+   tar -jxvf torrentflux-b4rt_1.0.tar.bz2
+
+4. Import the Update-sql-script.
+   You may specify the type of the database you want to use in
+   the file "config.db.php", but the examples here use MySQL.
+
+   "mysql_update_torrentflux21.to.torrentflux-b4rt-1.0.sql"
+   contains the commands to update the table structure and the
+   default data.
+   Import the script into your torrentflux database.
+
+   mysql torrentflux < mysql_update_torrentflux21.to.torrentflux-b4rt-1.0.sql
+   Or load the script with PHPMyAdmin (web interface)
+
+5. rename the file "config.db.php.dist" in the dir "inc/config/"
+   to "config.db.php" and set the database-settings to use your
+   torrentflux-database.
+   You may specify type of database you want to use, but
+   the examples here use MySQL.
+
+6. ensure the files + dirs in the docroot are readable by your
+   webserver-user. if it is not the case one possible solution is
+   to "chown" the files to your webserver-user. this may be done
+   with a line like that :
+   chown -R username /path/to/torrentflux-docroot
+   change dir + username to fit your system so a possible line
+   would be :
+   chown -R www-data /var/www
+
+7. rename the dir ".torrents" in your path to ".transfers".
+   on a default install this would be :
+   /usr/local/torrent/.torrents/
+    ->
+   /usr/local/torrent/.transfers/
+
+8. rename your stat-files. (they are located in t
+   change to your path-dir. (the dir just renamed in 7.) on a
+   default install this would be :
+   cd /usr/local/torrent/.transfers/
+   execute this command (requires perl) in that dir :
+   ls -1 *.torrent | perl -e 'while(<STDIN>){$n=((substr($_,0,(length($_))-8)))."stat";$o=lc($n);print $o."->".$n;print`mv $o $n;echo`;}'
+
+9. On your first login after the upgrade you should check all the
+   admin settings pages and configure your installation.
 
 
 -----------------------------------------------------------------
