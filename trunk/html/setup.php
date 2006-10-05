@@ -382,7 +382,6 @@ foreach ($queries['data']['common'] as $dataQuery)
 // tf_links
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0')");
 
-
 // -----------------------------------------------------------------------------
 // SQL : sqlite
 // -----------------------------------------------------------------------------
@@ -757,7 +756,6 @@ array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_rss_rid_seq',(select case wh
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links))");
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles))");
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_log_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_log))");
-
 
 // -----------------------------------------------------------------------------
 // Main
