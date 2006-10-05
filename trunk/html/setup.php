@@ -1159,7 +1159,62 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Configuration</h2>");
-	// TODO
+	send("<h2>Next : Server Settings</h2>");
+	sendButton(21);
+} elseif (isset($_REQUEST["21"])) {                                             // 21 - Configuration - Server Settings input
+	sendHead(" - Configuration");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Configuration - Server Settings</h2>");
+	if (is_file(_FILE_DBCONF)) {
+		require_once(_FILE_DBCONF);
+		$dbCon = getAdoConnection($cfg["db_type"], $cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+		if (!$dbCon) {
+			send('<font color="red"><strong>Error</strong></font><br>');
+			send("cannot connect to database.<p>");
+		} else {
+			$tf_settings = loadSettings("tf_settings");
+			if ($tf_settings !== false) {
+				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+				send('<table border="0">');
+				// path
+				$line = '<tr><td>path : </td>';
+				$line .= '<td><input name="path" type="Text" maxlength="254" size="40" value="';
+				if (isset($_REQUEST["path"]))
+					$line .= $_REQUEST["path"];
+				else
+					$line .= $tf_settings["path"];
+				$line .= '"></td></tr>';
+				send($line);
+				// docroot
+				$line = '<tr><td>docroot : </td>';
+				$line .= '<td><input name="docroot" type="Text" maxlength="254" size="40" value="';
+				if (isset($_REQUEST["docroot"]))
+					$line .= $_REQUEST["docroot"];
+				else
+					$line .= _DIR;
+				$line .= '"></td></tr>';
+				send($line);
+				send('</table>');
+				send('<input type="Hidden" name="22" value="">');
+				send('<input type="submit" value="Continue">');
+				send('</form>');
+			} else {
+				send('<font color="red"><strong>Error</strong></font><br>');
+				send("error loading settings.<p>");
+			}
+		}
+	} else {
+		send('<font color="red"><strong>Error</strong></font><br>');
+		send('database-config-file <em>'._DIR._FILE_DBCONF.'</em> missing. setup cannot continue.');
+	}
+} elseif (isset($_REQUEST["22"])) {                                             // 22 - Configuration - Server Settings validate
+	sendHead(" - Configuration");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Configuration - Server Settings</h2>");
+} elseif (isset($_REQUEST["23"])) {                                             // 23 - Configuration - Server Settings	save
+	sendHead(" - Configuration");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Configuration - Server Settings</h2>");
 	send("<h2>Next : End</h2>");
 	sendButton(3);
 } elseif (isset($_REQUEST["3"])) {                                              // 3 - End
@@ -1167,7 +1222,6 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
 	send("<p>Install completed.</p>");
-
 	if ((substr(_VERSION_THIS, 0, 3)) != "svn") {
 		$result = @unlink(_FILENAME_THIS);
 		if ($result !== true)
@@ -1197,6 +1251,55 @@ exit();
 // -----------------------------------------------------------------------------
 // functions
 // -----------------------------------------------------------------------------
+
+/**
+ * load Settings
+ *
+ * @param $dbTable
+ * @return array
+ */
+function loadSettings($dbTable) {
+    global $dbCon;
+    // pull the config params out of the db
+    $sql = "SELECT tf_key, tf_value FROM ".$dbTable;
+    $recordset = $dbCon->Execute($sql);
+	if ($dbCon->ErrorNo() != 0)
+		return false;
+    $retVal = array();
+    while (list($key, $value) = $recordset->FetchRow()) {
+        $tmpValue = '';
+		if (strpos($key,"Filter") > 0) {
+		  $tmpValue = unserialize($value);
+		} elseif ($key == 'searchEngineLinks') {
+            $tmpValue = unserialize($value);
+    	}
+    	if(is_array($tmpValue))
+            $value = $tmpValue;
+        $retVal[$key] = $value;
+    }
+    return $retVal;
+}
+
+/**
+ * update Setting
+ *
+ * @param $dbTable
+ * @param $key
+ * @param $value
+ * @return boolean
+ */
+function updateSetting($dbTable, $key, $value) {
+    global $dbCon;
+	if (is_array($value))
+        $update_value = serialize($value);
+    else
+    	$update_value = $value;
+    $sql = "UPDATE ".$dbTable." SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
+    $dbCon->Execute($sql);
+    if ($dbCon->ErrorNo() != 0)
+		return false;
+	return true;
+}
 
 /**
  * write the db-conf file.

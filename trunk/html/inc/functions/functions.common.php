@@ -411,7 +411,7 @@ function loadSettings($dbTable) {
     showError($db, $sql);
     while(list($key, $value) = $recordset->FetchRow()) {
         $tmpValue = '';
-		if (strpos($key,"Filter")>0) {
+		if (strpos($key,"Filter") > 0) {
 		  $tmpValue = unserialize($value);
 		} elseif ($key == 'searchEngineLinks') {
             $tmpValue = unserialize($value);
@@ -433,9 +433,10 @@ function insertSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
 	unset($_SESSION['cache']);
-    $update_value = $value;
     if (is_array($value))
         $update_value = serialize($value);
+    else
+    	$update_value = $value;
     $sql = "INSERT INTO ".$dbTable." VALUES ('".$key."', '".$update_value."')";
     if ( $sql != "" ) {
         //$result = $db->Execute($sql);
