@@ -1076,6 +1076,7 @@ if (isset($_REQUEST["1"])) {                                                    
 					if ($renameOk) {
 						send('<font color="green"><strong>Ok</strong></font><br>');
 						send('Files and Dirs renamed.');
+						send("<h2>Next : End</h2>");
 						sendButton(4);
 					} else { // damn there was an error
 						send('<font color="red">Error</font></li>');
