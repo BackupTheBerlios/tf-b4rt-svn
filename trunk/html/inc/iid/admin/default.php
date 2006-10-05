@@ -36,8 +36,6 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.admin.default.tmpl");
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
 tmplSetAdminMenu();
-tmplSetActivity();
-tmplSetUserSection();
 tmplSetFoot();
 
 // parse template
