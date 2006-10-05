@@ -144,20 +144,57 @@ function downloadFile($down) {
 			$current = implode("/", $arTemp);
 		}
 		if (file_exists($path)) {
+			// size
+			$filesize = file_size($path);
 			// filenames in IE containing dots will screw up the filename
 			if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 				$headerName = preg_replace('/\./', '%2e', $file, substr_count($file, '.') - 1);
 			else
 				$headerName = $file;
-			header("Content-type: application/octet-stream\n");
-			header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
-			header("Content-transfer-encoding: binary\n");
-			header("Content-length: " . file_size($path) . "\n");
-			// write the session to close so you can continue to browse on the site.
-			@session_write_close("TorrentFlux");
-			$fp = popen("cat \"$path\"", "r");
-			fpassthru($fp);
-			pclose($fp);
+			// partial or full ?
+			if (isset($_SERVER['HTTP_RANGE'])) {
+				// Partial download
+				$bufsize = 32768;
+				if (preg_match("/^bytes=(\\d+)-(\\d*)$/", $_SERVER['HTTP_RANGE'], $matches)) {
+					$from = $matches[1];
+					$to = $matches[2];
+					if (empty($to))
+						$to = $filesize - 1;
+					$content_size = $to - $from + 1;
+					header("HTTP/1.1 206 Partial Content");
+					header("Content-Range: $from - $to / $filesize");
+					header("Content-Length: $content_size");
+					header("Content-Type: application/force-download");
+					header("Content-Disposition: attachment; filename=\"".$headerName."\"");
+					header("Content-Transfer-Encoding: binary");
+					$fh = fopen($path, "rb");
+					fseek($fh, $from);
+					$cur_pos = ftell($fh);
+					while ($cur_pos !== FALSE && ftell($fh) + $bufsize < $to + 1) {
+						$buffer = fread($fh, $bufsize);
+						echo $buffer;
+						$cur_pos = ftell($fh);
+					}
+					$buffer = fread($fh, $to + 1 - $cur_pos);
+					echo $buffer;
+					fclose($fh);
+				} else {
+					AuditAction($cfg["constants"]["error"], "Partial download : ".$cfg["user"]." tried to download ".$down);
+					header("HTTP/1.1 500 Internal Server Error");
+					exit();
+				}
+			} else {
+				// standard download
+				header("Content-type: application/octet-stream\n");
+				header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
+				header("Content-transfer-encoding: binary\n");
+				header("Content-length: " . $filesize . "\n");
+				// write the session to close so you can continue to browse on the site.
+				@session_write_close("TorrentFlux");
+				$fp = popen("cat \"$path\"", "r");
+				fpassthru($fp);
+				pclose($fp);
+			}
 			// log
 			AuditAction($cfg["constants"]["fm_download"], $down);
 			exit();
