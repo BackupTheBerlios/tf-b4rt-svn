@@ -24,6 +24,7 @@
 define('_NAME', 'torrentflux-b4rt');
 define('_UPGRADE_FROM', 'v94');
 define('_UPGRADE_TO', '1.0');
+define('_DEFAULT_PATH', '/usr/local/torrent/');
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 define('_VERSION_LOCAL', '.version');
 define('_VERSION_THIS', trim(getDataFromFile(_VERSION_LOCAL)));
@@ -51,7 +52,6 @@ $cdb = 'common';
 $cqt = 'data';
 $queries[$cqt][$cdb] = array();
 // tf_settings
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('path','/usr/local/torrentflux/')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('advanced_start','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_upload_rate','10')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_download_rate','0')");
@@ -823,12 +823,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h2>Database - Config - ".$type."</h2>");
 	send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 	send('<table border="0">');
-	// create
-	$line = '<tr><td colspan="2">Create Database :';
-	$line .= '<input name="db_create" type="Checkbox" value="true" checked>';
-	$line .= '</td></tr>';
-	send($line);
-	// create
+	// settings
 	send('<tr><td colspan="2"><strong>Database Settings : </strong></td></tr>');
 	switch ($type) {
 		case "mysql":
@@ -894,20 +889,16 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('<input type="Hidden" name="14" value="">');
 	send('<input type="submit" value="Continue">');
 	send('</form>');
-} elseif (isset($_REQUEST["14"])) {                                             // 14 - Database - creation + test
+} elseif (isset($_REQUEST["14"])) {                                             // 14 - Database - test
 	$type = $_REQUEST["db_type"];
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
-	send("<h2>Database - Creation + Test - ".$type."</h2>");
+	send("<h2>Database - Test - ".$type."</h2>");
 	$paramsOk = true;
 	if (isset($_REQUEST["db_host"]))
 		$host = $_REQUEST["db_host"];
 	else
 		$paramsOk = false;
-	if (isset($_REQUEST["db_create"]))
-		$create = true;
-	else
-		$create = false;
 	if (isset($_REQUEST["db_pcon"]))
 		$pcon = "true";
 	else
@@ -935,58 +926,34 @@ if (isset($_REQUEST["1"])) {                                                    
 	}
 	$databaseTestOk = false;
 	$databaseError = "";
-	// create + test
+	// test
 	if ($paramsOk) {
-		$databaseExists = true;
-		if (($create) && ($type != "sqlite")) {
-			$dbCon = getAdoConnection($type, $host, $user, $pass);
-			if (!$dbCon) {
-				$databaseExists = false;
-				$databaseTestOk = false;
-				$databaseError = "cannot connect to database.";
-			} else {
-				$sqlState = "CREATE DATABASE ".$name;
-				$dbCon->Execute($sqlState);
+		$dbCon = getAdoConnection($type, $host, $user, $pass, $name);
+		if (!$dbCon) {
+			$databaseTestOk = false;
+			$databaseError = "cannot connect to database.";
+		} else {
+			send('<ul>');
+			$databaseTestCount = 0;
+			foreach ($queries['test'][$type] as $databaseTypeName => $databaseQuery) {
+				send('<li><em>'.$databaseQuery.'</em> : ');
+				$dbCon->Execute($databaseQuery);
 				if ($dbCon->ErrorNo() == 0) {
-					send("created database <em>".$name."</em>.<br>");
-					$databaseExists = true;
+					send('<font color="green">Ok</font></li>');
+					$databaseTestCount++;
 				} else { // damn there was an error
-					$databaseExists = false;
-					$databaseTestOk = false;
-					$databaseError = "cannot create database <em>".$name."</em>.";
+					send('<font color="red">Error</font></li>');
+					// close ado-connection
+					$dbCon->Close();
+					break;
 				}
-				// close ado-connection
-				$dbCon->Close();
 			}
-			unset($dbCon);
-		}
-		if ($databaseExists) {
-			$dbCon = getAdoConnection($type, $host, $user, $pass, $name);
-			if (!$dbCon) {
-				$databaseTestOk = false;
-				$databaseError = "cannot connect to database.";
+			if ($databaseTestCount == count($queries['test'][$type])) {
+				$databaseTestOk = true;
 			} else {
-				send('<ul>');
-				$databaseTestCount = 0;
-				foreach ($queries['test'][$type] as $databaseTypeName => $databaseQuery) {
-					send('<li><em>'.$databaseQuery.'</em> : ');
-					$dbCon->Execute($databaseQuery);
-					if ($dbCon->ErrorNo() == 0) {
-						send('<font color="green">Ok</font></li>');
-						$databaseTestCount++;
-					} else { // damn there was an error
-						send('<font color="red">Error</font></li>');
-						// close ado-connection
-						$dbCon->Close();
-						break;
-					}
-				}
-				if ($databaseTestCount == count($queries['test'][$type]))
-					$databaseTestOk = true;
-				else
-					$databaseTestOk = false;
-				send('</ul>');
+				$databaseTestOk = false;
 			}
+			send('</ul>');
 		}
 	} else {
 		$databaseTestOk = false;
@@ -994,10 +961,22 @@ if (isset($_REQUEST["1"])) {                                                    
 	}
 	// output
 	if ($databaseTestOk) {
+		// load path
+		$tf_settings = loadSettings("tf_settings");
+		if ($tf_settings !== false) {
+			$oldpath = $tf_settings["path"];
+			if (((strlen($oldpath) > 0)) && (substr($oldpath, -1 ) != "/"))
+				$oldpath .= "/";
+		} else {
+			$oldpath = _DEFAULT_PATH;
+		}
+		// close ado-connection
+		$dbCon->Close();
 		send('<font color="green"><strong>Ok</strong></font><br>');
 		send("<h2>Next : Write Config File</h2>");
 		send("Please ensure this script can write to the dir <em>"._DIR."inc/config/</em><p>");
 		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+		send('<input type="Hidden" name="oldpath" value="'.$oldpath.'">');
 		send('<input type="Hidden" name="db_type" value="'.$type.'">');
 		send('<input type="Hidden" name="db_host" value="'.$host.'">');
 		send('<input type="Hidden" name="db_name" value="'.$name.'">');
@@ -1031,6 +1010,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Database - Config-File</h2>");
+	$oldpath = $_REQUEST["oldpath"];
 	$type = $_REQUEST["db_type"];
 	$host = $_REQUEST["db_host"];
 	$name = $_REQUEST["db_name"];
@@ -1053,12 +1033,17 @@ if (isset($_REQUEST["1"])) {                                                    
 		send('<textarea cols="81" rows="33">'.$databaseConfContent.'</textarea>');
 		send("<p>Note : You must write this file before you can continue !");
 	}
-	send("<h2>Next : Create Tables</h2>");
-	sendButton(16);
+	send("<h2>Next : Create/Alter Tables</h2>");
+	send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+	send('<input type="Hidden" name="oldpath" value="'.$oldpath.'">');
+	send('<input type="Hidden" name="16" value="">');
+	send('<input type="submit" value="Continue">');
+	send('</form>');
 } elseif (isset($_REQUEST["16"])) {                                             // 16 - Database - table-creation
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Database - Create Tables</h2>");
+	$oldpath = $_REQUEST["oldpath"];
 	if (is_file(_FILE_DBCONF)) {
 		require_once(_FILE_DBCONF);
 		$databaseTableCreationCount = 0;
@@ -1084,17 +1069,24 @@ if (isset($_REQUEST["1"])) {                                                    
 					break;
 				}
 			}
-			if ($databaseTableCreationCount == count($queries['create'][$cfg["db_type"]]))
+			if ($databaseTableCreationCount == count($queries['create'][$cfg["db_type"]])) {
+				// close ado-connection
+				$dbCon->Close();
 				$databaseTableCreation = true;
-			else
+			} else {
 				$databaseTableCreation = false;
+			}
 			send('</ul>');
 		}
 		if ($databaseTableCreation) {
 			send('<font color="green"><strong>Ok</strong></font><br>');
-			send($databaseTableCreationCount.' tables created.');
+			send($databaseTableCreationCount.' queries executed.');
 			send("<h2>Next : Data</h2>");
-			sendButton(17);
+			send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+			send('<input type="Hidden" name="oldpath" value="'.$oldpath.'">');
+			send('<input type="Hidden" name="17" value="">');
+			send('<input type="submit" value="Continue">');
+			send('</form>');
 		} else {
 			send('<font color="red"><strong>Error</strong></font><br>');
 			send($databaseError."<p>");
@@ -1107,6 +1099,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Database - Data</h2>");
+	$oldpath = $_REQUEST["oldpath"];
 	if (is_file(_FILE_DBCONF)) {
 		require_once(_FILE_DBCONF);
 		$databaseDataCount = 0;
@@ -1118,6 +1111,11 @@ if (isset($_REQUEST["1"])) {                                                    
 			$databaseError = "cannot connect to database.";
 		} else {
 			send('<ul>');
+			// add path
+			array_unshift($queries['data'][$cfg["db_type"]], "INSERT INTO tf_settings VALUES ('path',".$oldpath.")");
+			// add delete-state
+			array_unshift($queries['data'][$cfg["db_type"]], "DELETE FROM tf_settings");
+			// exec
 			foreach ($queries['data'][$cfg["db_type"]] as $databaseTypeName => $databaseQuery) {
 				send('<li><em>'.$databaseQuery.'</em> : ');
 				$dbCon->Execute($databaseQuery);
@@ -1132,10 +1130,13 @@ if (isset($_REQUEST["1"])) {                                                    
 					break;
 				}
 			}
-			if ($databaseDataCount == count($queries['data'][$cfg["db_type"]]))
+			if ($databaseDataCount == count($queries['data'][$cfg["db_type"]])) {
+				// close ado-connection
+				$dbCon->Close();
 				$databaseData = true;
-			else
+			} else {
 				$databaseData = false;
+			}
 			send('</ul>');
 		}
 		if ($databaseData) {
@@ -1157,6 +1158,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h2>Configuration</h2>");
 	send("<h2>Next : Server Settings</h2>");
 	sendButton(21);
+	send('</form>');
 } elseif (isset($_REQUEST["21"])) {                                             // 21 - Configuration - Server Settings input
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
@@ -1169,18 +1171,11 @@ if (isset($_REQUEST["1"])) {                                                    
 			send("cannot connect to database.<p>");
 		} else {
 			$tf_settings = loadSettings("tf_settings");
+			// close ado-connection
+			$dbCon->Close();
 			if ($tf_settings !== false) {
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 				send('<table border="0">');
-				// path
-				$line = '<tr><td>path : </td>';
-				$line .= '<td><input name="path" type="Text" maxlength="254" size="40" value="';
-				if (isset($_REQUEST["path"]))
-					$line .= $_REQUEST["path"];
-				else
-					$line .= $tf_settings["path"];
-				$line .= '"></td></tr>';
-				send($line);
 				// docroot
 				$line = '<tr><td>docroot : </td>';
 				$line .= '<td><input name="docroot" type="Text" maxlength="254" size="40" value="';
@@ -1207,44 +1202,22 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Configuration - Server Settings Validation</h2>");
-	$path = $_REQUEST["path"];
-	if (((strlen($path) > 0)) && (substr($path, -1 ) != "/"))
-		$path .= "/";
 	$docroot = $_REQUEST["docroot"];
 	if (((strlen($docroot) > 0)) && (substr($docroot, -1 ) != "/"))
 		$docroot .= "/";
 	$serverSettingsTestCtr = 0;
 	$serverSettingsTestError = "";
-	$pathExists = false;
-	// path
-	if (!(@is_dir($path) === true)) {
-		// dir doesnt exist, try to create
-		if (!((@mkdir($path, 0777)) === true))
-			$serverSettingsTestError .= "path <em>".$path."</em> does not exist and cant be created.<br>";
-		else
-			$pathExists = true;
-	} else {
-		$pathExists = true;
-	}
-	if ($pathExists) {
-		if (!(@is_writable($path) === true))
-			$serverSettingsTestError .= "path <em>".$path."</em> is not writable.<br>";
-		else
-			$serverSettingsTestCtr++;
-	}
 	// docroot
 	if (is_file($docroot.".version"))
 		$serverSettingsTestCtr++;
 	else
 		$serverSettingsTestError .= "docroot <em>".$docroot."</em> is not valid.";
 	// output
-	if ($serverSettingsTestCtr == 2) {
+	if ($serverSettingsTestCtr == 1) {
 		send('<font color="green"><strong>Ok</strong></font><br>');
-		send("path : <em>".$path."</em><br>");
 		send("docroot : <em>".$docroot."</em><br>");
 		send("<h2>Next : Save Server Settings</h2>");
 		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
-		send('<input type="Hidden" name="path" value="'.$path.'">');
 		send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
 		send('<input type="Hidden" name="23" value="">');
 		send('<input type="submit" value="Continue">');
@@ -1252,7 +1225,6 @@ if (isset($_REQUEST["1"])) {                                                    
 		send('<font color="red"><strong>Error</strong></font><br>');
 		send($serverSettingsTestError."<p>");
 		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
-		send('<input type="Hidden" name="path" value="'.$path.'">');
 		send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
 		send('<input type="Hidden" name="21" value="">');
 		send('<input type="submit" value="Back">');
@@ -1262,7 +1234,6 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Configuration - Server Settings Save</h2>");
-	$path = $_REQUEST["path"];
 	$docroot = $_REQUEST["docroot"];
 	if (is_file(_FILE_DBCONF)) {
 		require_once(_FILE_DBCONF);
@@ -1272,31 +1243,69 @@ if (isset($_REQUEST["1"])) {                                                    
 			send("cannot connect to database.<p>");
 		} else {
 			$settingsSaveCtr = 0;
-			if (updateSetting("tf_settings", "path", $path) === true)
-				$settingsSaveCtr++;
 			if (updateSetting("tf_settings", "docroot", $docroot) === true)
 				$settingsSaveCtr++;
-			if ($settingsSaveCtr == 2) {
+			if ($settingsSaveCtr == 1) {
 				send('<font color="green"><strong>Ok</strong></font><br>');
 				send('Server Settings saved.');
-				send("<h2>Next : End</h2>");
+				send("<h2>Next : Rename Files and Dirs</h2>");
 				sendButton(3);
 			} else {
 				send('<font color="red"><strong>Error</strong></font><br>');
 				send('could not save Server Settings.');
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
-				send('<input type="Hidden" name="path" value="'.$path.'">');
 				send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
 				send('<input type="Hidden" name="21" value="">');
 				send('<input type="submit" value="Back">');
 				send('</form>');
+			}
+			// close ado-connection
+			$dbCon->Close();
+		}
+	} else {
+		send('<font color="red"><strong>Error</strong></font><br>');
+		send('database-config-file <em>'._DIR._FILE_DBCONF.'</em> missing. setup cannot continue.');
+	}
+} elseif (isset($_REQUEST["3"])) {                                             // 3 - rename files and dirs
+	sendHead(" - Rename Files and Dirs");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Rename Files and Dirs</h2>");
+	if (is_file(_FILE_DBCONF)) {
+		require_once(_FILE_DBCONF);
+		$dbCon = getAdoConnection($cfg["db_type"], $cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+		if (!$dbCon) {
+			send('<font color="red"><strong>Error</strong></font><br>');
+			send("cannot connect to database.<p>");
+		} else {
+			$tf_settings = loadSettings("tf_settings");
+			// close ado-connection
+			$dbCon->Close();
+			if ($tf_settings !== false) {
+
+
+
+				// TODO
+
+				// inside path : ".torrents" to ".transfers"
+
+
+				send('<font color="green"><strong>Ok</strong></font><br>');
+				send('Files and Dirs renamed.');
+				sendButton(4);
+
+
+
+			} else {
+				send('<font color="red"><strong>Error</strong></font><br>');
+				send("error loading settings.<p>");
 			}
 		}
 	} else {
 		send('<font color="red"><strong>Error</strong></font><br>');
 		send('database-config-file <em>'._DIR._FILE_DBCONF.'</em> missing. setup cannot continue.');
 	}
-} elseif (isset($_REQUEST["3"])) {                                              // 3 - End
+
+} elseif (isset($_REQUEST["4"])) {                                              // 4 - End
 	sendHead(" - End");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");

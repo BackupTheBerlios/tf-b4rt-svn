@@ -826,7 +826,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	$line .= '<input name="db_create" type="Checkbox" value="true" checked>';
 	$line .= '</td></tr>';
 	send($line);
-	// create
+	// settings
 	send('<tr><td colspan="2"><strong>Database Settings : </strong></td></tr>');
 	switch ($type) {
 		case "mysql":
@@ -979,10 +979,13 @@ if (isset($_REQUEST["1"])) {                                                    
 						break;
 					}
 				}
-				if ($databaseTestCount == count($queries['test'][$type]))
+				if ($databaseTestCount == count($queries['test'][$type])) {
+					// close ado-connection
+					$dbCon->Close();
 					$databaseTestOk = true;
-				else
+				} else {
 					$databaseTestOk = false;
+				}
 				send('</ul>');
 			}
 		}
@@ -1082,10 +1085,13 @@ if (isset($_REQUEST["1"])) {                                                    
 					break;
 				}
 			}
-			if ($databaseTableCreationCount == count($queries['create'][$cfg["db_type"]]))
+			if ($databaseTableCreationCount == count($queries['create'][$cfg["db_type"]])) {
+				// close ado-connection
+				$dbCon->Close();
 				$databaseTableCreation = true;
-			else
+			} else {
 				$databaseTableCreation = false;
+			}
 			send('</ul>');
 		}
 		if ($databaseTableCreation) {
@@ -1130,10 +1136,13 @@ if (isset($_REQUEST["1"])) {                                                    
 					break;
 				}
 			}
-			if ($databaseDataCount == count($queries['data'][$cfg["db_type"]]))
+			if ($databaseDataCount == count($queries['data'][$cfg["db_type"]])) {
+				// close ado-connection
+				$dbCon->Close();
 				$databaseData = true;
-			else
+			} else {
 				$databaseData = false;
+			}
 			send('</ul>');
 		}
 		if ($databaseData) {
@@ -1167,6 +1176,8 @@ if (isset($_REQUEST["1"])) {                                                    
 			send("cannot connect to database.<p>");
 		} else {
 			$tf_settings = loadSettings("tf_settings");
+			// close ado-connection
+			$dbCon->Close();
 			if ($tf_settings !== false) {
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 				send('<table border="0">');
@@ -1289,6 +1300,8 @@ if (isset($_REQUEST["1"])) {                                                    
 				send('<input type="submit" value="Back">');
 				send('</form>');
 			}
+			// close ado-connection
+			$dbCon->Close();
 		}
 	} else {
 		send('<font color="red"><strong>Error</strong></font><br>');
