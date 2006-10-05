@@ -36,6 +36,14 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.admin.default.tmpl");
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
 tmplSetAdminMenu();
+$tmpl->setvar('db_type', $cfg["db_type"]);
+$tmpl->setvar('db_host', $cfg["db_host"]);
+$tmpl->setvar('db_name', $cfg["db_name"]);
+$tmpl->setvar('db_user', $cfg["db_user"]);
+if ($cfg["db_pcon"])
+	$tmpl->setvar('db_pcon', "true");
+else
+	$tmpl->setvar('db_pcon', "false");
 tmplSetFoot();
 
 // parse template

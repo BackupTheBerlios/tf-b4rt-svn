@@ -1,22 +1,45 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_include name="inc.adminmenu.tmpl">
-<p>
-<ul>
-	<li><a href="admin.php?op=serverSettings">server</a></li>
-	<li><a href="admin.php?op=transferSettings">transfer</a></li>
-	<li><a href="admin.php?op=webappSettings">webapp</a></li>
-	<li><a href="admin.php?op=indexSettings">index</a></li>
-	<li><a href="admin.php?op=startpopSettings">startpop</a></li>
-	<li><a href="admin.php?op=dirSettings">dir</a></li>
-	<li><a href="admin.php?op=statsSettings">stats</a></li>
-	<li><a href="admin.php?op=fluxdSettings"><tmpl_var name="_FLUXD_MENU"></a></li>
-	<li><a href="admin.php?op=xferSettings">xfer</a></li>
-	<li><a href="admin.php?op=searchSettings"><tmpl_var name="_SEARCHSETTINGS_MENU"></a></li>
-	<li><a href="admin.php?op=editLinks"><tmpl_var name="_LINKS_MENU"></a></li>
-	<li><a href="admin.php?op=editRSS">rss</a></li>
-	<li><a href="admin.php?op=showUsers">users</a></li>
-	<li><a href="admin.php?op=showUserActivity"><tmpl_var name="_ACTIVITY_MENU"></a></li>
-</ul>
-</p>
+<table border="0" width="100%">
+	<tr>
+		<td valign="top" align="left">
+			&nbsp;
+		</td>
+		<td valign="top" align="right">
+			<table border="0" >
+				<tr>
+					<td colspan="2">
+						<table width="100%" border="1" bordercolor="#FFFFFF" cellpadding="2" cellspacing="0">
+							<tr>
+								<td bgcolor="#d6dfe6" background="themes/default/images/bar.gif" nowrap><font class="adminlink">Database-Settings</font></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td><strong>Type : </strong></td>
+					<td><tmpl_var name="db_type"></td>
+				</tr>
+				<tr>
+					<td><strong>Host : </strong></td>
+					<td><tmpl_var name="db_host"></td>
+				</tr>
+				<tr>
+					<td><strong>Name : </strong></td>
+					<td><tmpl_var name="db_name"></td>
+				</tr>
+				<tr>
+					<td><strong>Username : </strong></td>
+					<td><tmpl_var name="db_user"></td>
+				</tr>
+				<tr>
+					<td><strong>Persistent Connection : </strong></td>
+					<td><tmpl_var name="db_pcon"></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<br><br>
 <tmpl_include name="inc.subfoot.tmpl">
