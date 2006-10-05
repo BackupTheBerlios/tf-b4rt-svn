@@ -81,7 +81,6 @@ ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL;
 --
 -- updates
 --
-UPDATE tf_settings SET tf_value = 'default' WHERE tf_key = 'default_theme';
 UPDATE tf_users SET theme = 'default';
 
 --

@@ -51,6 +51,9 @@ $cdb = 'common';
 // sql-queries : Data
 $cqt = 'data';
 $queries[$cqt][$cdb] = array();
+// updates + deletes
+array_push($queries[$cqt][$cdb], "UPDATE tf_users SET theme = 'default'");
+array_push($queries[$cqt][$cdb], "DELETE FROM tf_settings_user");
 // tf_settings
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('advanced_start','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_upload_rate','10')");
@@ -204,6 +207,8 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_d
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_format','xml')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0')");
+// tf_links
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : mysql
@@ -224,93 +229,6 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
-// tf_cookies
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_cookies (
-  cid int(5) NOT NULL auto_increment,
-  uid int(10) NOT NULL default '0',
-  host VARCHAR(255) default NULL,
-  data VARCHAR(255) default NULL,
-  PRIMARY KEY  (cid)
-) TYPE=MyISAM");
-// tf_links
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_links (
-  lid int(10) NOT NULL auto_increment,
-  url VARCHAR(255) NOT NULL default '',
-  sitename VARCHAR(255) NOT NULL default 'Old Link',
-  sort_order TINYINT(3) UNSIGNED default '0',
-  PRIMARY KEY  (lid)
-) TYPE=MyISAM");
-// tf_log
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_log (
-  cid int(14) NOT NULL auto_increment,
-  user_id VARCHAR(32) NOT NULL default '',
-  file VARCHAR(200) NOT NULL default '',
-  action VARCHAR(200) NOT NULL default '',
-  ip VARCHAR(15) NOT NULL default '',
-  ip_resolved VARCHAR(200) NOT NULL default '',
-  user_agent VARCHAR(200) NOT NULL default '',
-  time VARCHAR(14) NOT NULL default '0',
-  PRIMARY KEY  (cid)
-) TYPE=MyISAM");
-// tf_messages
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_messages (
-  mid int(10) NOT NULL auto_increment,
-  to_user VARCHAR(32) NOT NULL default '',
-  from_user VARCHAR(32) NOT NULL default '',
-  message TEXT,
-  IsNew int(11) default NULL,
-  ip VARCHAR(15) NOT NULL default '',
-  time VARCHAR(14) NOT NULL default '0',
-  force_read TINYINT(1) default '0',
-  PRIMARY KEY  (mid)
-) TYPE=MyISAM");
-// tf_rss
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_rss (
-  rid int(10) NOT NULL auto_increment,
-  url VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (rid)
-) TYPE=MyISAM");
-// tf_users
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_users (
-  uid int(10) NOT NULL auto_increment,
-  user_id VARCHAR(32) NOT NULL default '',
-  password VARCHAR(34) NOT NULL default '',
-  hits int(10) NOT NULL default '0',
-  last_visit VARCHAR(14) NOT NULL default '0',
-  time_created VARCHAR(14) NOT NULL default '0',
-  user_level TINYINT(1) NOT NULL default '0',
-  hide_offline TINYINT(1) NOT NULL default '0',
-  theme VARCHAR(100) NOT NULL default 'default',
-  language_file VARCHAR(60) default 'lang-english.php',
-  state TINYINT(1) NOT NULL default '1',
-  PRIMARY KEY  (uid)
-) TYPE=MyISAM");
-// tf_torrents
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
-  running ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
-) TYPE=MyISAM");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_trprofiles (
@@ -330,37 +248,6 @@ CREATE TABLE tf_trprofiles (
   rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM");
-// tf_torrent_totals
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
-) TYPE=MyISAM");
-// tf_xfer
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL default '',
-  date DATE NOT NULL default '0000-00-00',
-  download BIGINT(80) NOT NULL default '0',
-  upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user_id,date)
-) TYPE=MyISAM");
-// tf_settings_user
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_settings_user (
-  uid INT(10) NOT NULL,
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL
-) TYPE=MyISAM");
-// tf_settings
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_settings (
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL,
-  PRIMARY KEY  (tf_key)
-) TYPE=MyISAM");
 // tf_settings_dir
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_settings_dir (
@@ -375,14 +262,16 @@ CREATE TABLE tf_settings_stats (
   tf_value TEXT NOT NULL,
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM");
+// ALTER
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL");
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL");
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL");
 
 // sql-queries : Data
 $cqt = 'data';
 $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
-// tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : sqlite
@@ -402,87 +291,6 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
-// tf_cookies
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_cookies (
-  cid INTEGER PRIMARY KEY,
-  uid INTEGER NOT NULL default '0',
-  host TEXT default NULL,
-  data TEXT default NULL
-)");
-// tf_links
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_links (
-  lid INTEGER PRIMARY KEY,
-  url VARCHAR(255) NOT NULL default '',
-  sitename VARCHAR(255) NOT NULL default 'Old Link',
-  sort_order INTEGER(3) default '0'
-)");
-// tf_log
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_log (
-  cid INTEGER PRIMARY KEY,
-  user_id VARCHAR(32) NOT NULL default '',
-  file VARCHAR(200) NOT NULL default '',
-  action VARCHAR(200) NOT NULL default '',
-  ip VARCHAR(15) NOT NULL default '',
-  ip_resolved VARCHAR(200) NOT NULL default '',
-  user_agent VARCHAR(200) NOT NULL default '',
-  time VARCHAR(14) NOT NULL default '0'
-)");
-// tf_messages
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_messages (
-  mid INTEGER PRIMARY KEY,
-  to_user VARCHAR(32) NOT NULL default '',
-  from_user VARCHAR(32) NOT NULL default '',
-  message TEXT,
-  IsNew INT(11) default NULL,
-  ip VARCHAR(15) NOT NULL default '',
-  time VARCHAR(14) NOT NULL default '0',
-  force_read INTEGER default '0'
-)");
-// tf_rss
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_rss (
-  rid INTEGER PRIMARY KEY,
-  url VARCHAR(255) NOT NULL default ''
-)");
-// tf_users
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_users (
-  uid INTEGER PRIMARY KEY,
-  user_id VARCHAR(32) NOT NULL default '',
-  password VARCHAR(34) NOT NULL default '',
-  hits INT(10) NOT NULL default '0',
-  last_visit VARCHAR(14) NOT NULL default '0',
-  time_created VARCHAR(14) NOT NULL default '0',
-  user_level TINYINT(1) NOT NULL default '0',
-  hide_offline TINYINT(1) NOT NULL default '0',
-  theme VARCHAR(100) NOT NULL default 'default',
-  language_file VARCHAR(60) default 'lang-english.php',
-  state TINYINT(1) NOT NULL default '1',
-)");
-// tf_torrents
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
-  running INTEGER(1) NOT NULL default '0',
-  rate INTEGER(4) NOT NULL default '0',
-  drate INTEGER(4) NOT NULL default '0',
-  maxuploads INTEGER(3) NOT NULL default '0',
-  superseeder INTEGER(1) NOT NULL default '0',
-  runtime VARCHAR(5) NOT NULL default 'False',
-  sharekill INTEGER(4) NOT NULL default '0',
-  minport INTEGER(5) NOT NULL default '0',
-  maxport INTEGER(5) NOT NULL default '0',
-  maxcons INTEGER(4) NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
-)");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_trprofiles (
@@ -501,37 +309,6 @@ CREATE TABLE tf_trprofiles (
   maxcons INTEGER(4) NOT NULL default '0',
   rerequest INTEGER(8) NOT NULL default '0'
 )");
-// tf_torrent_totals
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
-)");
-// tf_xfer
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL default '',
-  date DATE NOT NULL default '0000-00-00',
-  download BIGINT(80) NOT NULL default '0',
-  upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user_id,date)
-)");
-// tf_settings_user
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_settings_user (
-  uid INTEGER NOT NULL,
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL
-)");
-// tf_settings
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_settings (
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL,
-  PRIMARY KEY  (tf_key)
-)");
 // tf_settings_dir
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_settings_dir (
@@ -546,15 +323,18 @@ CREATE TABLE tf_settings_stats (
   tf_value TEXT NOT NULL,
   PRIMARY KEY  (tf_key)
 )");
+// ALTER
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL");
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL");
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL");
 
 // sql-queries : Data
 $cqt = 'data';
 $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
-// tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0')");
 
+/*
 // -----------------------------------------------------------------------------
 // SQL : postgres
 // -----------------------------------------------------------------------------
@@ -758,6 +538,7 @@ array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_rss_rid_seq',(select case wh
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links))");
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles))");
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_log_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_log))");
+*/
 
 // -----------------------------------------------------------------------------
 // Main
@@ -1001,8 +782,6 @@ if (isset($_REQUEST["1"])) {                                                    
 			send('<input type="Hidden" name="db_pass" value="'.$_REQUEST["db_pass"].'">');
 		if (isset($_REQUEST["db_pcon"]))
 			send('<input type="Hidden" name="db_pcon" value="'.$_REQUEST["db_pcon"].'">');
-		if (isset($_REQUEST["db_create"]))
-			send('<input type="Hidden" name="db_create" value="'.$_REQUEST["db_create"].'">');
 		send('<input type="submit" value="Back">');
 	}
 	send('</form>');
@@ -1042,7 +821,7 @@ if (isset($_REQUEST["1"])) {                                                    
 } elseif (isset($_REQUEST["16"])) {                                             // 16 - Database - table-creation
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
-	send("<h2>Database - Create Tables</h2>");
+	send("<h2>Database - Create/Alter Tables</h2>");
 	$oldpath = $_REQUEST["oldpath"];
 	if (is_file(_FILE_DBCONF)) {
 		require_once(_FILE_DBCONF);
@@ -1112,7 +891,7 @@ if (isset($_REQUEST["1"])) {                                                    
 		} else {
 			send('<ul>');
 			// add path
-			array_unshift($queries['data'][$cfg["db_type"]], "INSERT INTO tf_settings VALUES ('path',".$oldpath.")");
+			array_unshift($queries['data'][$cfg["db_type"]], "INSERT INTO tf_settings VALUES ('path','".$oldpath."')");
 			// add delete-state
 			array_unshift($queries['data'][$cfg["db_type"]], "DELETE FROM tf_settings");
 			// exec
@@ -1281,20 +1060,31 @@ if (isset($_REQUEST["1"])) {                                                    
 			// close ado-connection
 			$dbCon->Close();
 			if ($tf_settings !== false) {
-
-
-
-				// TODO
-
-				// inside path : ".torrents" to ".transfers"
-
-
-				send('<font color="green"><strong>Ok</strong></font><br>');
-				send('Files and Dirs renamed.');
-				sendButton(4);
-
-
-
+				$path = $tf_settings["path"];
+				$pathExists = false;
+				$renameOk = false;
+				if ((@is_dir($path) === true) && (@is_dir($path.".torrents") === true)) {
+					$pathExists = true;
+					send('<ul>');
+					send('<li><em>'.$path.".torrents -> ".$path.".transfers".'</em> : ');
+					$renameOk = rename($path.".torrents", $path.".transfers");
+					if ($renameOk === true)
+						send('<font color="green">Ok</font></li>');
+					else
+						send('<font color="red">Error</font></li>');
+					send('</ul>');
+					if ($renameOk) {
+						send('<font color="green"><strong>Ok</strong></font><br>');
+						send('Files and Dirs renamed.');
+						sendButton(4);
+					} else { // damn there was an error
+						send('<font color="red">Error</font></li>');
+						send("error renaming Files and Dirs. you have to re-inject all torrents.<p>");
+					}
+				} else {
+					send('<font color="red">Error</font></li>');
+					send("path <em>".$path.".torrents</em> does not exist. you have to re-inject all torrents.<p>");
+				}
 			} else {
 				send('<font color="red"><strong>Error</strong></font><br>');
 				send("error loading settings.<p>");
@@ -1304,7 +1094,6 @@ if (isset($_REQUEST["1"])) {                                                    
 		send('<font color="red"><strong>Error</strong></font><br>');
 		send('database-config-file <em>'._DIR._FILE_DBCONF.'</em> missing. setup cannot continue.');
 	}
-
 } elseif (isset($_REQUEST["4"])) {                                              // 4 - End
 	sendHead(" - End");
 	send("<h1>"._TITLE."</h1>");
