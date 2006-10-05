@@ -22,7 +22,7 @@
 
 // defines
 define('_NAME', 'torrentflux-b4rt');
-define('_UPGRADE_FROM', 'v94');
+define('_UPGRADE_FROM', '2.1');
 define('_UPGRADE_TO', '1.0');
 define('_DEFAULT_PATH', '/usr/local/torrent/');
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
@@ -38,6 +38,7 @@ define('_FILENAME_THIS', substr(_FILE_THIS, 1));
 $databaseTypes = array();
 $databaseTypes['mysql'] = 'mysql_connect';
 $databaseTypes['sqlite'] = 'sqlite_open';
+$databaseTypes['postgres'] = 'pg_connect';
 
 // sql-queries
 $queries = array();
@@ -333,6 +334,212 @@ $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
 
+/*
+// -----------------------------------------------------------------------------
+// SQL : postgres
+// -----------------------------------------------------------------------------
+$cdb = 'postgres';
+
+// sql-queries : Test
+$cqt = 'test';
+$queries[$cqt][$cdb] = array();
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_test (
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key) )");
+array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
+
+// sql-queries : Create
+$cqt = 'create';
+$queries[$cqt][$cdb] = array();
+// tf_cookies
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_cookies_cid_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_cookies (
+  cid INT4 DEFAULT nextval('tf_cookies_cid_seq'),
+  uid INT4 NOT NULL DEFAULT '0',
+  host VARCHAR(255) DEFAULT NULL,
+  data VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (cid)
+)");
+// tf_links
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_links_lid_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_links (
+  lid INT4 DEFAULT nextval('tf_links_lid_seq'),
+  url VARCHAR(255) NOT NULL DEFAULT '',
+  sitename VARCHAR(255) NOT NULL DEFAULT 'Old Link',
+  sort_order INT2  DEFAULT '0',
+  PRIMARY KEY (lid),
+  CHECK (sort_order>=0)
+)");
+// tf_log
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_log_cid_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_log (
+  cid INT4 DEFAULT nextval('tf_log_cid_seq'),
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  file VARCHAR(200) NOT NULL DEFAULT '',
+  action VARCHAR(200) NOT NULL DEFAULT '',
+  ip VARCHAR(15) NOT NULL DEFAULT '',
+  ip_resolved VARCHAR(200) NOT NULL DEFAULT '',
+  user_agent VARCHAR(200) NOT NULL DEFAULT '',
+  time VARCHAR(14) NOT NULL DEFAULT '0',
+  PRIMARY KEY (cid)
+)");
+// tf_messages
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_messages_mid_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_messages (
+  mid INT4 DEFAULT nextval('tf_messages_mid_seq'),
+  to_user VARCHAR(32) NOT NULL DEFAULT '',
+  from_user VARCHAR(32) NOT NULL DEFAULT '',
+  message TEXT,
+  IsNew INT4 DEFAULT NULL,
+  ip VARCHAR(15) NOT NULL DEFAULT '',
+  time VARCHAR(14) NOT NULL DEFAULT '0',
+  force_read INT2 DEFAULT '0',
+  PRIMARY KEY (mid)
+)");
+// tf_rss
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_rss_rid_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_rss (
+  rid INT4 DEFAULT nextval('tf_rss_rid_seq'),
+  url VARCHAR(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (rid)
+)");
+// tf_users
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_users_uid_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_users (
+  uid INT4 DEFAULT nextval('tf_users_uid_seq'),
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  password VARCHAR(34) NOT NULL DEFAULT '',
+  hits INT4 NOT NULL DEFAULT '0',
+  last_visit VARCHAR(14) NOT NULL DEFAULT '0',
+  time_created VARCHAR(14) NOT NULL DEFAULT '0',
+  user_level INT2 NOT NULL DEFAULT '0',
+  hide_offline INT2 NOT NULL DEFAULT '0',
+  theme VARCHAR(100) NOT NULL DEFAULT 'default',
+  language_file VARCHAR(60) DEFAULT 'lang-english.php',
+  state INT2 NOT NULL DEFAULT '1',
+  PRIMARY KEY (uid)
+)");
+// tf_torrents
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_torrents (
+  torrent VARCHAR(255) NOT NULL DEFAULT '',
+  running INT2 NOT NULL DEFAULT '0',
+  rate INT2 NOT NULL DEFAULT '0',
+  drate INT2 NOT NULL DEFAULT '0',
+  maxuploads INT2 NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
+  runtime VARCHAR(5) NOT NULL DEFAULT 'False',
+  sharekill INT2 NOT NULL DEFAULT '0',
+  minport INT2 NOT NULL DEFAULT '0',
+  maxport INT2 NOT NULL DEFAULT '0',
+  maxcons INT2 NOT NULL DEFAULT '0',
+  savepath VARCHAR(255) NOT NULL DEFAULT '',
+  btclient VARCHAR(32) NOT NULL DEFAULT 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (torrent),
+  CHECK (running>=0),
+  CHECK (maxuploads>=0),
+  CHECK (minport>=0),
+  CHECK (maxport>=0),
+  CHECK (maxcons>=0)
+)");
+// tf_trprofiles
+array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_trprofiles_id_seq");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_trprofiles (
+  id INT4 DEFAULT nextval('tf_trprofiles_id_seq'),
+  name VARCHAR(255) NOT NULL DEFAULT '',
+  owner INT4 NOT NULL DEFAULT '0',
+  public INT2 NOT NULL DEFAULT '0',
+  rate INT2  NOT NULL DEFAULT '0',
+  drate INT2  NOT NULL DEFAULT '0',
+  maxuploads INT2  NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
+  runtime VARCHAR(5) NOT NULL DEFAULT 'False',
+  sharekill INT2  NOT NULL DEFAULT '0',
+  minport INT2 NOT NULL DEFAULT '0',
+  maxport INT2 NOT NULL DEFAULT '0',
+  maxcons INT2 NOT NULL DEFAULT '0',
+  rerequest INT4 NOT NULL DEFAULT '0',
+  PRIMARY KEY (id),
+  CHECK (public>=0),
+  CHECK (maxuploads>=0),
+  CHECK (minport>=0),
+  CHECK (maxport>=0),
+  CHECK (maxcons>=0),
+  CHECK (rerequest>=0)
+)");
+// tf_torrent_totals
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_torrent_totals (
+  tid VARCHAR(40) NOT NULL DEFAULT '',
+  uptotal INT8 NOT NULL DEFAULT '0',
+  downtotal INT8 NOT NULL DEFAULT '0',
+  PRIMARY KEY (tid)
+)");
+// tf_xfer
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_xfer (
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  date DATE NOT NULL DEFAULT '0001-01-01',
+  download INT8 NOT NULL DEFAULT '0',
+  upload INT8 NOT NULL DEFAULT '0'
+)");
+// tf_settings_user
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings_user (
+  uid INT4 NOT NULL,
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL
+)");
+// tf_settings
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings (
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key)
+)");
+// tf_settings_dir
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings_dir (
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key)
+)");
+// tf_settings_stats
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_settings_stats (
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key)
+)");
+
+// sql-queries : Data
+$cqt = 'data';
+$queries[$cqt][$cdb] = array();
+foreach ($queries['data']['common'] as $dataQuery)
+	array_push($queries[$cqt][$cdb], $dataQuery);
+// tf_links
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','Home','0')");
+// sequences
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_users_uid_seq',(select case when max(uid)>0 then max(uid)+1 else 1 end from tf_users))");
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_messages_mid_seq',(select case when max(mid)>0 then max(mid)+1 else 1 end from tf_messages))");
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_cookies_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_cookies))");
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_rss_rid_seq',(select case when max(rid)>0 then max(rid)+1 else 1 end from tf_rss))");
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links))");
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles))");
+array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_log_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_log))");
+*/
+
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
@@ -401,6 +608,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('<tr><td colspan="2"><strong>Database Settings : </strong></td></tr>');
 	switch ($type) {
 		case "mysql":
+		case "postgres":
 			// host
 			$line = '<tr><td>Host : </td>';
 			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40" value="';
@@ -478,6 +686,7 @@ if (isset($_REQUEST["1"])) {                                                    
 		$pcon = "false";
 	switch ($type) {
 		case "mysql":
+		case "postgres":
 			if (isset($_REQUEST["db_name"]))
 				$name = $_REQUEST["db_name"];
 			else
@@ -906,7 +1115,7 @@ if (isset($_REQUEST["1"])) {                                                    
 } else {                                                                        // default
 	sendHead();
 	send("<h1>"._TITLE."</h1>");
-	send("<p>This script will upgrade "._NAME." from "._UPGRADE_FROM." to "._UPGRADE_TO."</p>");
+	send("<p>This script will upgrade from TorrentFlux  "._UPGRADE_FROM." to "._NAME." "._UPGRADE_TO."</p>");
 	send("<h2>Next : Database</h2>");
 	sendButton(1);
 }
