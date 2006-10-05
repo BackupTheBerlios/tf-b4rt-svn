@@ -34,6 +34,12 @@ if ($bail > 0) {
 
 /******************************************************************************/
 
+// change to docroot if cwd is in bin.
+$cwd = getcwd();
+$cwdBase = basename($cwd);
+if ($cwdBase == "bin")
+	chdir("..");
+
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 

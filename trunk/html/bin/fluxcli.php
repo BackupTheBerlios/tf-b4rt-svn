@@ -38,6 +38,12 @@ if ($bail > 0) {
 define('_DUMP_DELIM', '|');
 define('_REVISION_FLUXCLI', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 
+// change to docroot if cwd is in bin.
+$cwd = getcwd();
+$cwdBase = basename($cwd);
+if ($cwdBase == "bin")
+	chdir("..");
+
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
@@ -149,6 +155,7 @@ function printVersion() {
  * printNetStat
  */
 function printNetStat() {
+	global $cfg;
 	echo "\n";
     echo "---------------------------------------\n";
 	echo "          TorrentFlux-NetStat          \n";
