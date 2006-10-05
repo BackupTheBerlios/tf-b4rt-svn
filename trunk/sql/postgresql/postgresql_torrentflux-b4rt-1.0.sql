@@ -153,6 +153,35 @@ CREATE TABLE tf_torrents (
 );
 
 --
+-- tf_torrent_totals
+--
+CREATE TABLE tf_torrent_totals (
+  tid VARCHAR(40) NOT NULL DEFAULT '',
+  uptotal INT8 NOT NULL DEFAULT '0',
+  downtotal INT8 NOT NULL DEFAULT '0',
+  PRIMARY KEY (tid)
+);
+
+--
+-- tf_xfer
+--
+CREATE TABLE tf_xfer (
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  date DATE NOT NULL DEFAULT '0001-01-01',
+  download INT8 NOT NULL DEFAULT '0',
+  upload INT8 NOT NULL DEFAULT '0'
+);
+
+--
+-- tf_settings_user
+--
+CREATE TABLE tf_settings_user (
+  uid INT4 NOT NULL,
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL
+);
+
+--
 -- Sequences for table tf_trprofiles
 --
 CREATE SEQUENCE tf_trprofiles_id_seq;
@@ -182,35 +211,6 @@ CREATE TABLE tf_trprofiles (
   CHECK (maxport>=0),
   CHECK (maxcons>=0),
   CHECK (rerequest>=0)
-);
-
---
--- tf_torrent_totals
---
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL DEFAULT '',
-  uptotal INT8 NOT NULL DEFAULT '0',
-  downtotal INT8 NOT NULL DEFAULT '0',
-  PRIMARY KEY (tid)
-);
-
---
--- tf_xfer
---
-CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL DEFAULT '',
-  date DATE NOT NULL DEFAULT '0001-01-01',
-  download INT8 NOT NULL DEFAULT '0',
-  upload INT8 NOT NULL DEFAULT '0'
-);
-
---
--- tf_settings_user
---
-CREATE TABLE tf_settings_user (
-  uid INT4 NOT NULL,
-  tf_key VARCHAR(255) NOT NULL DEFAULT '',
-  tf_value TEXT DEFAULT '' NOT NULL
 );
 
 --
