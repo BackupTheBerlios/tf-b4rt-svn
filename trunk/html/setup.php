@@ -1210,13 +1210,96 @@ if (isset($_REQUEST["1"])) {                                                    
 } elseif (isset($_REQUEST["22"])) {                                             // 22 - Configuration - Server Settings validate
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
-	send("<h2>Configuration - Server Settings</h2>");
+	send("<h2>Configuration - Server Settings Validation</h2>");
+	$path = $_REQUEST["path"];
+	if (((strlen($path) > 0)) && (substr($path, -1 ) != "/"))
+		$path .= "/";
+	$docroot = $_REQUEST["docroot"];
+	if (((strlen($docroot) > 0)) && (substr($docroot, -1 ) != "/"))
+		$docroot .= "/";
+	$serverSettingsTestCtr = 0;
+	$serverSettingsTestError = "";
+	$pathExists = false;
+	// path
+	if (!(@is_dir($path) === true)) {
+		// dir doesnt exist, try to create
+		if (!((@mkdir($path, 0777)) === true))
+			$serverSettingsTestError .= "path <em>".$path."</em> does not exist and cant be created.<br>";
+		else
+			$pathExists = true;
+	} else {
+		$pathExists = true;
+	}
+	if ($pathExists) {
+		if (!(@is_writable($path) === true))
+			$serverSettingsTestError .= "path <em>".$path."</em> is not writable.<br>";
+		else
+			$serverSettingsTestCtr++;
+	}
+	// docroot
+	if (is_file($docroot.".version"))
+		$serverSettingsTestCtr++;
+	else
+		$serverSettingsTestError .= "docroot <em>".$docroot."</em> is not valid.";
+	// output
+	if ($serverSettingsTestCtr == 2) {
+		send('<font color="green"><strong>Ok</strong></font><br>');
+		send("path : <em>".$path."</em><br>");
+		send("docroot : <em>".$docroot."</em><br>");
+		send("<h2>Next : Save Server Settings</h2>");
+		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+		send('<input type="Hidden" name="path" value="'.$path.'">');
+		send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
+		send('<input type="Hidden" name="23" value="">');
+		send('<input type="submit" value="Continue">');
+	} else {
+		send('<font color="red"><strong>Error</strong></font><br>');
+		send($serverSettingsTestError."<p>");
+		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+		send('<input type="Hidden" name="path" value="'.$path.'">');
+		send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
+		send('<input type="Hidden" name="21" value="">');
+		send('<input type="submit" value="Back">');
+	}
+	send('</form>');
 } elseif (isset($_REQUEST["23"])) {                                             // 23 - Configuration - Server Settings	save
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
-	send("<h2>Configuration - Server Settings</h2>");
-	send("<h2>Next : End</h2>");
-	sendButton(3);
+	send("<h2>Configuration - Server Settings Save</h2>");
+	$path = $_REQUEST["path"];
+	$docroot = $_REQUEST["docroot"];
+	if (is_file(_FILE_DBCONF)) {
+		require_once(_FILE_DBCONF);
+		$dbCon = getAdoConnection($cfg["db_type"], $cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+		if (!$dbCon) {
+			send('<font color="red"><strong>Error</strong></font><br>');
+			send("cannot connect to database.<p>");
+		} else {
+			$settingsSaveCtr = 0;
+			if (updateSetting("tf_settings", "path", $path) === true)
+				$settingsSaveCtr++;
+			if (updateSetting("tf_settings", "docroot", $docroot) === true)
+				$settingsSaveCtr++;
+			if ($settingsSaveCtr == 2) {
+				send('<font color="green"><strong>Ok</strong></font><br>');
+				send('Server Settings saved.');
+				send("<h2>Next : End</h2>");
+				sendButton(3);
+			} else {
+				send('<font color="red"><strong>Error</strong></font><br>');
+				send('could not save Server Settings.');
+				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+				send('<input type="Hidden" name="path" value="'.$path.'">');
+				send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
+				send('<input type="Hidden" name="21" value="">');
+				send('<input type="submit" value="Back">');
+				send('</form>');
+			}
+		}
+	} else {
+		send('<font color="red"><strong>Error</strong></font><br>');
+		send('database-config-file <em>'._DIR._FILE_DBCONF.'</em> missing. setup cannot continue.');
+	}
 } elseif (isset($_REQUEST["3"])) {                                              // 3 - End
 	sendHead(" - End");
 	send("<h1>"._TITLE."</h1>");
@@ -1232,11 +1315,13 @@ if (isset($_REQUEST["1"])) {                                                    
 		send('<p><font color="blue">This is a svn-version. '._FILENAME_THIS.' is untouched.</font></p>');
 	}
 	send("<h2>Next : Login</h2>");
-	send('<a href="login.php" title="Login">Login</a>');
+	send('<form name="setup" action="login.php" method="post">');
+	send('<input type="submit" value="Continue">');
+	send('</form>');
 } else {                                                                        // default
 	sendHead();
 	send("<h1>"._TITLE."</h1>");
-	send("<p>This script will install "._NAME."</p>");
+	send("<p>This script will setup "._NAME."</p>");
 	send("<h2>Next : Database</h2>");
 	sendButton(1);
 }
