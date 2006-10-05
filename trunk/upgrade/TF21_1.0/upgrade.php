@@ -524,56 +524,42 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('<table border="0">');
 	// settings
 	send('<tr><td colspan="2"><strong>Database Settings : </strong></td></tr>');
-	switch ($type) {
-		case "mysql":
-		case "postgres":
-			// host
-			$line = '<tr><td>Host : </td>';
-			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40" value="';
-			if (isset($_REQUEST["db_host"]))
-				$line .= $_REQUEST["db_host"];
-			else
-				$line .= 'localhost';
-			$line .= '"></td></tr>';
-			send($line);
-			// name
-			$line = '<tr><td>Name : </td>';
-			$line .= '<td><input name="db_name" type="Text" maxlength="254" size="40" value="';
-			if (isset($_REQUEST["db_name"]))
-				$line .= $_REQUEST["db_name"];
-			else
-				$line .= 'torrentflux';
-			$line .= '"></td></tr>';
-			send($line);
-			// user
-			$line = '<tr><td>Username : </td>';
-			$line .= '<td><input name="db_user" type="Text" maxlength="254" size="40" value="';
-			if (isset($_REQUEST["db_user"]))
-				$line .= $_REQUEST["db_user"];
-			else
-				$line .= 'root';
-			$line .= '"></td></tr>';
-			send($line);
-			// pass
-			$line = '<tr><td>Password : </td>';
-			$line .= '<td><input name="db_pass" type="Password" maxlength="254" size="40"';
-			if (isset($_REQUEST["db_pass"]))
-				$line .= ' value="'.$_REQUEST["db_pass"].'">';
-			else
-				$line .= '>';
-			$line .= '</td></tr>';
-			send($line);
-			//
-			break;
-		case "sqlite":
-			// file
-			$line = '<tr><td>Database-File : </td>';
-			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40" value="';
-			if (isset($_REQUEST["db_host"]))
-				$line .= $_REQUEST["db_host"];
-			$line .= '"></td></tr>';
-			send($line);
-	}
+	// host
+	$line = '<tr><td>Host : </td>';
+	$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40" value="';
+	if (isset($_REQUEST["db_host"]))
+		$line .= $_REQUEST["db_host"];
+	else
+		$line .= 'localhost';
+	$line .= '"></td></tr>';
+	send($line);
+	// name
+	$line = '<tr><td>Name : </td>';
+	$line .= '<td><input name="db_name" type="Text" maxlength="254" size="40" value="';
+	if (isset($_REQUEST["db_name"]))
+		$line .= $_REQUEST["db_name"];
+	else
+		$line .= 'torrentflux';
+	$line .= '"></td></tr>';
+	send($line);
+	// user
+	$line = '<tr><td>Username : </td>';
+	$line .= '<td><input name="db_user" type="Text" maxlength="254" size="40" value="';
+	if (isset($_REQUEST["db_user"]))
+		$line .= $_REQUEST["db_user"];
+	else
+		$line .= 'root';
+	$line .= '"></td></tr>';
+	send($line);
+	// pass
+	$line = '<tr><td>Password : </td>';
+	$line .= '<td><input name="db_pass" type="Password" maxlength="254" size="40"';
+	if (isset($_REQUEST["db_pass"]))
+		$line .= ' value="'.$_REQUEST["db_pass"].'">';
+	else
+		$line .= '>';
+	$line .= '</td></tr>';
+	send($line);
 	// pcon
 	$line = '<tr><td colspan="2">Persistent Connection :';
 	$line .= '<input name="db_pcon" type="Checkbox" value="true"';
@@ -602,27 +588,18 @@ if (isset($_REQUEST["1"])) {                                                    
 		$pcon = "true";
 	else
 		$pcon = "false";
-	switch ($type) {
-		case "mysql":
-		case "postgres":
-			if (isset($_REQUEST["db_name"]))
-				$name = $_REQUEST["db_name"];
-			else
-				$paramsOk = false;
-			if (isset($_REQUEST["db_user"]))
-				$user = $_REQUEST["db_user"];
-			else
-				$paramsOk = false;
-			if (isset($_REQUEST["db_pass"]))
-				$pass = $_REQUEST["db_pass"];
-			else
-				$paramsOk = false;
-			break;
-		case "sqlite":
-			$name = "";
-			$user = "";
-			$pass = "";
-	}
+	if (isset($_REQUEST["db_name"]))
+		$name = $_REQUEST["db_name"];
+	else
+		$paramsOk = false;
+	if (isset($_REQUEST["db_user"]))
+		$user = $_REQUEST["db_user"];
+	else
+		$paramsOk = false;
+	if (isset($_REQUEST["db_pass"]))
+		$pass = $_REQUEST["db_pass"];
+	else
+		$paramsOk = false;
 	$databaseTestOk = false;
 	$databaseError = "";
 	// test
@@ -984,12 +961,26 @@ if (isset($_REQUEST["1"])) {                                                    
 				if ((@is_dir($path) === true) && (@is_dir($path.".torrents") === true)) {
 					$pathExists = true;
 					send('<ul>');
+					// transfers-dir
 					send('<li><em>'.$path.".torrents -> ".$path.".transfers".'</em> : ');
 					$renameOk = rename($path.".torrents", $path.".transfers");
 					if ($renameOk === true)
 						send('<font color="green">Ok</font></li>');
 					else
 						send('<font color="red">Error</font></li>');
+					// stat-files
+					if ($renameOk) {
+						$tFiles = array();
+						if ($dirHandle = opendir($path.".transfers")) {
+							while (false !== ($file = readdir($dirHandle))) {
+								if ((strlen($file) > 8) && ((substr($file, -7)) == "torrent"))
+									array_push($tFiles, $file);
+							}
+							closedir($dirHandle);
+						}
+						foreach ($tFiles as $tFile)
+							send('<li><em>'.$tFile.'</em></li>');
+					}
 					send('</ul>');
 					if ($renameOk) {
 						send('<font color="green"><strong>Ok</strong></font><br>');
