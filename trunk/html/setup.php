@@ -1166,8 +1166,16 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
 	send("<p>Install completed.</p>");
-	@unlink("setup.php");
-	@unlink("upgrade.php");
+	if ((substr(_VERSION_THIS, 0, 3)) != "svn") {
+		$result = @unlink("setup.php");
+		if ($result !== true) {
+			send('<p><font color="green">Deleted setup.php</font></p>');
+		} else {
+			send('<p><font color="red">Cannot delete setup.php</font> Please delete the file manual.</p>');
+		}
+	} else {
+		send('<p><font color="blue">This is a svn-version. setup.php is untouched.</font></p>');
+	}
 	send("<h2>Next : Login</h2>");
 	send('<a href="login.php" title="Login">Login</a>');
 } else {                                                                        // default
