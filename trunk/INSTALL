@@ -2,18 +2,7 @@
 $Id$
 =================================================================
 
-TorrentFlux: PHP Torrent Download Manager
-=================================================================
-TorrentFlux is a PHP based Torrent client that runs on a
-web server. Manage all of your Torrent downloads through a
-convenient web interface from anywhere.
-=================================================================
-TorrentFlux 2.1 was written by Qrome
-(http://www.torrentflux.com/contact.php)
-=================================================================
-
-PLEASE READ CAREFULLY THE FOLLOWING INSTRUCTIONS. IF YOU DO THIS,
-YOU WILL HAVE YOUR SITE UP AND RUNNING IN JUST A FEW MINUTES.
+torrentflux-b4rt 1.0
 
 -----------------------------------------------------------------
 System Requirements
@@ -21,99 +10,146 @@ System Requirements
 -- A Linux or FreeBSD Box installed and working properly. (tested
    on Debian, Ubuntu, Gentoo, RedHat, Fedora and others)
 
--- Web Server. (eg Apache : http://www.apache.org)
+-- Web Server.
+   * Apache (http://www.apache.org)
+   * LightTPD (http://www.lighttpd.net/)
 
--- SQL-Database. SQL-Files are provided for MySQL
-   (http://www.mysql.com) and SQLite (http://www.sqlite.org)
+-- SQL-Database. Supported are :
+   * MySQL (http://www.mysql.com)
+   * SQLite (http://www.sqlite.org)
+   * PostgreSQL (http://www.postgresql.org/)
 
--- PHP Version 4.3.x or higher with Session, and PCRE support
-   enabled (http://www.php.net)
+-- PHP Version 4.3.x or higher with Session and PCRE support
+   enabled. Socket-Support is required for fluxd.
+   (http://www.php.net)
 
--- Python 2.3 or higher. (http://www.python.org)
+-- Python 2.3 or higher.
+   (http://www.python.org)
 
--- Perl 5.6 or higher. (http://www.perl.com)
-
--- SELinux should be turned off or configured to allow
-   torrentflux-b4rt to work with files in the application Path.
+-- Perl 5.6 or higher for fluxd + fluxpoller.pl
+   (http://www.perl.org)
 
 -- Safe Mode must be turned off in the php.ini file.
-   torrentflux-b4rt reads and writes files that Safe Mode will restrict.
+   (safe_mode = Off)
+   Allow Url fopen must be allowed in the php.ini file.
+   (allow_url_fopen = On)
 
--- To use wget on Mac OS X install. http://www.statusq.org/images/wget.zip
+-- SELinux should be turned off.
 
--- to compile transmission on Mac OS X you need the Developer Tools from Apple.
 
 -----------------------------------------------------------------
-Installing
+Installation with "setup.php"
 -----------------------------------------------------------------
-*** Make sure the System Requirements are met.
-
 
 1. Untar the package into a directory then copy the contents of
-the "html" folder into your web site directory.
+   the "html" folder into your web site directory.
 
-    tar -jxvf torrentflux<version>.tar.bz2
+   tar -jxvf torrentflux-b4rt_1.0.tar.bz2
 
-2. Create a database and load the mysql_torrentflux.sql script.
-Database abstraction is supported starting in TorrentFlux 2.0
-using ADODB for PHP.  You may specify type of database you want
-to use in the config.php, but the examples here use MySQL.
+2. ensure the files + dirs in the docroot are readable by your
+   webserver-user. if it is not the case one possible solution is
+   to "chown" the files to your webserver-user. this may be done
+   with a line like that :
+   chown -R username /path/to/torrentflux-docroot
+   change dir + username to fit your system so a possible line
+   would be :
+   chown -R www-data /var/www
 
-    mysqladmin create torrentflux
+3. ensure the dir "inc/config/" in your torrentflux-docroot is
+   writable by your webserver-user.
 
-"mysql_torrentflux.sql" contains the commands to build the table
-structure and the default data for the TorrentFlux.  Run the
-script on your torrentflux database.
-
-    mysql torrentflux < mysql_torrentflux.sql
-    Or load the script with PHPMyAdmin (web interface)
-
-3. rename file config.db.php.dist to config.db.php and set the
-database-settings to use your torrentflux-database.
-You may specify type of database you want to use, but
-the examples here use MySQL.
-
-4. ensure the files+dirs in the docroot are readable by your
-webserver-user. if it is not the case one possible solution is to
-"chown" the files to your webserver-user. this may be done with a
-line like that :
-chown -R username /path/to/torrentflux-directory
-change dir + username to fit your system so a possible line would
-be :
-chown -R www-data /var/www
+4. open "setup.php" in a browser and complete it step by step.
 
 5. IMPORTANT:  The first time you access the application, you
-will be prompted for a user/password -- this is when you will
-set the SUPER ADMIN user and password by what you enter.  For
-example, you pull the site up for the first time, you will
-be prompted to login and if you put in user: 'goombah' and
-password: 'iama' then your super admin user account will
-be set to goombah/iama -- cool?   You are ready to access
-the application!
+   will be prompted for a user/password -- this is when you will
+   set the SUPER ADMIN user and password by what you enter.  For
+   example, you pull the site up for the first time, you will
+   be prompted to login and if you put in user: 'goombah' and
+   password: 'iama' then your super admin user account will
+   be set to goombah/iama.
 
-6. On your first login, you will be taken to the admin settings
-page.  This is where you will check all your TorrentFlux
-Settings (previous versions had these settings in the config.php)
-At the top of this page is "Path" -- you will need to create
-a directory with read/write permissions for TorrentFlux to use.
-You can create a directory and chmod 777 it then specify this
-path on the Admin Settings page.   When the path is valid and
-writable, there will be a green light next to it.
-
-While you are on the TorrentFlux Settings page, you may want to
-verify that you have green lights down the page (if not you will
-want to fix them).
-
+6. On your first login you should check all the admin settings
+   pages and configure your installation.
 
 
 -----------------------------------------------------------------
-Upgrading from Previous Versions
+Manual Installation
+-----------------------------------------------------------------
+
+1. Untar the package into a directory then copy the contents of
+   the "html" folder into your web site directory.
+
+   tar -jxvf torrentflux-b4rt_1.0.tar.bz2
+
+2. Create a database and import the sql-script.
+   You may specify the type of the database you want to use in
+   the file "config.db.php", but the examples here use MySQL.
+
+   mysqladmin create torrentflux
+
+   "mysql_torrentflux-b4rt-1.0.sql" contains the commands to
+   build the table structure and the default data. Import the
+   script into your torrentflux database.
+
+   mysql torrentflux < mysql_torrentflux-b4rt-1.0.sql
+   Or load the script with PHPMyAdmin (web interface)
+
+3. rename the file "config.db.php.dist" in the dir "inc/config/"
+   to "config.db.php" and set the database-settings to use your
+   torrentflux-database.
+   You may specify type of database you want to use, but
+   the examples here use MySQL.
+
+4. ensure the files + dirs in the docroot are readable by your
+   webserver-user. if it is not the case one possible solution is
+   to "chown" the files to your webserver-user. this may be done
+   with a line like that :
+   chown -R username /path/to/torrentflux-docroot
+   change dir + username to fit your system so a possible line
+   would be :
+   chown -R www-data /var/www
+
+5. IMPORTANT:  The first time you access the application, you
+   will be prompted for a user/password -- this is when you will
+   set the SUPER ADMIN user and password by what you enter.  For
+   example, you pull the site up for the first time, you will
+   be prompted to login and if you put in user: 'goombah' and
+   password: 'iama' then your super admin user account will
+   be set to goombah/iama.
+
+6. On your first login you should check all the admin settings
+   pages and configure your installation.
+
+
+-----------------------------------------------------------------
+Upgrade from TorrentFlux 2.1-b4rt-94 with "upgrade.php"
+-----------------------------------------------------------------
+
+
+-----------------------------------------------------------------
+Upgrade from TorrentFlux 2.1 with "upgrade.php"
+-----------------------------------------------------------------
+
+
+-----------------------------------------------------------------
+Manual Upgrade from TorrentFlux 2.1-b4rt-94
+-----------------------------------------------------------------
+
+
+-----------------------------------------------------------------
+Manual Upgrade from TorrentFlux 2.1
 -----------------------------------------------------------------
 
 
 -----------------------------------------------------------------
 Additional / Optional
 -----------------------------------------------------------------
+
+-- To use wget on Mac OS X install :
+   http://www.statusq.org/images/wget.zip
+
+-- to compile transmission on Mac OS X you need the Developer
+   Tools from Apple.
 
 
 -----------------------------------------------------------------
