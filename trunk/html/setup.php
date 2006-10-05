@@ -29,6 +29,7 @@ define('_TITLE', _NAME.' '._VERSION_THIS.' - Setup');
 define('_DIR', dirname($_SERVER["SCRIPT_FILENAME"])."/");
 define('_FILE_DBCONF', 'inc/config/config.db.php');
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
+define('_FILENAME_THIS', substr(_FILE_THIS, 1));
 
 // Database-Types
 $databaseTypes = array();
@@ -1166,15 +1167,15 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
 	send("<p>Install completed.</p>");
+
 	if ((substr(_VERSION_THIS, 0, 3)) != "svn") {
-		$result = @unlink("setup.php");
-		if ($result !== true) {
-			send('<p><font color="green">Deleted setup.php</font></p>');
-		} else {
-			send('<p><font color="red">Cannot delete setup.php</font> Please delete the file manual.</p>');
-		}
+		$result = @unlink(_FILENAME_THIS);
+		if ($result !== true)
+			send('<p><font color="red">Could not delete '._FILENAME_THIS.'</font><br>Please delete the file manual.</p>');
+		else
+			send('<p><font color="green">Deleted '._FILENAME_THIS.'</font></p>');
 	} else {
-		send('<p><font color="blue">This is a svn-version. setup.php is untouched.</font></p>');
+		send('<p><font color="blue">This is a svn-version. '._FILENAME_THIS.' is untouched.</font></p>');
 	}
 	send("<h2>Next : Login</h2>");
 	send('<a href="login.php" title="Login">Login</a>');
