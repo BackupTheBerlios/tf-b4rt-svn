@@ -978,8 +978,26 @@ if (isset($_REQUEST["1"])) {                                                    
 							}
 							closedir($dirHandle);
 						}
-						foreach ($tFiles as $tFile)
-							send('<li><em>'.$tFile.'</em></li>');
+						$tFilesCount = count($tFiles);
+						$tFilesCtr = 0;
+						if ($tFilesCount > 0) {
+							foreach ($tFiles as $tFile) {
+								$fileNameSource = (strtolower(substr($tFile, 0, -7)))."stat";
+								$fileSource = $path.".transfers/".$fileNameSource;
+								$fileNameTarget = (substr($tFile, 0, -7))."stat";
+								$fileTarget = $path.".transfers/".$fileNameTarget;
+								send('<li><em>'.$fileSource.' -> '.$fileTarget.'</em> : ');
+								$fileRenameOk = rename($fileSource, $fileTarget);
+								if ($fileRenameOk === true) {
+									$tFilesCtr++;
+									send('<font color="green">Ok</font></li>');
+								} else {
+									send('<font color="red">Error</font></li>');
+								}
+							}
+							if ($tFilesCount != $tFilesCtr)
+								$renameOk = false;
+						}
 					}
 					send('</ul>');
 					if ($renameOk) {
