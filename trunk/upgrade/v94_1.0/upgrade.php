@@ -22,10 +22,12 @@
 
 // defines
 define('_NAME', 'torrentflux-b4rt');
+define('_UPGRADE_FROM', 'v94');
+define('_UPGRADE_TO', '1.0');
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 define('_VERSION_LOCAL', '.version');
 define('_VERSION_THIS', trim(getDataFromFile(_VERSION_LOCAL)));
-define('_TITLE', _NAME.' '._VERSION_THIS.' - Setup');
+define('_TITLE', _NAME.' '._VERSION_THIS.' - Upgrade '._UPGRADE_FROM.' to '._UPGRADE_TO);
 define('_DIR', dirname($_SERVER["SCRIPT_FILENAME"])."/");
 define('_FILE_DBCONF', 'inc/config/config.db.php');
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
@@ -1298,7 +1300,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - End");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
-	send("<p>Install completed.</p>");
+	send("<p>Upgrade completed.</p>");
 	if ((substr(_VERSION_THIS, 0, 3)) != "svn") {
 		$result = @unlink(_FILENAME_THIS);
 		if ($result !== true)
@@ -1315,7 +1317,7 @@ if (isset($_REQUEST["1"])) {                                                    
 } else {                                                                        // default
 	sendHead();
 	send("<h1>"._TITLE."</h1>");
-	send("<p>This script will setup "._NAME."</p>");
+	send("<p>This script will upgrade "._NAME." from "._UPGRADE_FROM." to "._UPGRADE_TO."</p>");
 	send("<h2>Next : Database</h2>");
 	sendButton(1);
 }

@@ -1298,7 +1298,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	sendHead(" - End");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
-	send("<p>Install completed.</p>");
+	send("<p>Setup completed.</p>");
 	if ((substr(_VERSION_THIS, 0, 3)) != "svn") {
 		$result = @unlink(_FILENAME_THIS);
 		if ($result !== true)
