@@ -42,7 +42,7 @@ initRestrictedDirEntries();
 // check incoming path
 checkIncomingPath();
 
-// Setup some defaults if they are not set.
+// get request-vars
 $chmod = getRequestVar('chmod');
 $del = getRequestVar('del');
 $down = getRequestVar('down');
@@ -108,46 +108,7 @@ if ($multidel != "") {
 if ($down != "" && $cfg["enable_file_download"]) {
 	// only valid entry with permission
 	if ((isValidEntry(basename($down))) && (hasPermission($down, $cfg["user"], 'r'))) {
-		$current = "";
-		// Yes, then download it
-		// we need to strip slashes twice in some circumstances
-		// Ex.	If we are trying to download test/tester's file/test.txt
-		// $down will be "test/tester\\\'s file/test.txt"
-		// one strip will give us "test/tester\'s file/test.txt
-		// the second strip will give us the correct
-		//	"test/tester's file/test.txt"
-		$down = stripslashes(stripslashes($down));
-		if (!ereg("(\.\.\/)", $down)) {
-			$path = $cfg["path"].$down;
-			$p = explode(".", $path);
-			$pc = count($p);
-			$f = explode("/", $path);
-			$file = array_pop($f);
-			$arTemp = explode("/", $down);
-			if (count($arTemp) > 1) {
-				array_pop($arTemp);
-				$current = implode("/", $arTemp);
-			}
-			if (file_exists($path)) {
-				header("Content-type: application/octet-stream\n");
-				header("Content-disposition: attachment; filename=\"".$file."\"\n");
-				header("Content-transfer-encoding: binary\n");
-				header("Content-length: " . file_size($path) . "\n");
-				// write the session to close so you can continue to browse on the site.
-				session_write_close("TorrentFlux");
-				//$fp = fopen($path, "r");
-				$fp = popen("cat \"$path\"", "r");
-				fpassthru($fp);
-				pclose($fp);
-				// log
-				AuditAction($cfg["constants"]["fm_download"], $down);
-				exit();
-			} else {
-				AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg["user"]." tried to download ".$down);
-			}
-		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
-		}
+		$current = downloadFile($down);
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
 		$current = $down;
@@ -175,60 +136,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
 if ($tar != "" && $cfg["enable_file_download"]) {
 	// only valid entry with permission
 	if ((isValidEntry(basename($tar))) && (hasPermission($tar, $cfg["user"], 'r'))) {
-		$current = "";
-		// Yes, then tar and download it
-		// we need to strip slashes twice in some circumstances
-		// Ex.	If we are trying to download test/tester's file/test.txt
-		// $down will be "test/tester\\\'s file/test.txt"
-		// one strip will give us "test/tester\'s file/test.txt
-		// the second strip will give us the correct
-		//	"test/tester's file/test.txt"
-		$tar = stripslashes(stripslashes($tar));
-		if (!ereg("(\.\.\/)", $tar)) {
-			// This prevents the script from getting killed off when running lengthy tar jobs.
-			ini_set("max_execution_time", 3600);
-			$tar = $cfg["path"].$tar;
-			$arTemp = explode("/", $tar);
-			if (count($arTemp) > 1) {
-				array_pop($arTemp);
-				$current = implode("/", $arTemp);
-			}
-			// Find out if we're really trying to access a file within the
-			// proper directory structure. Sadly, this way requires that $cfg["path"]
-			// is a REAL path, not a symlinked one. Also check if $cfg["path"] is part
-			// of the REAL path.
-			if (is_dir($tar)) {
-				$sendname = basename($tar);
-				switch ($cfg["package_type"]) {
-					Case "tar":
-						$command = "tar cf - \"".addslashes($sendname)."\"";
-						break;
-					Case "zip":
-						$command = "zip -0r - \"".addslashes($sendname)."\"";
-						break;
-					default:
-						$cfg["package_type"] = "tar";
-						$command = "tar cf - \"".addslashes($sendname)."\"";
-						break;
-				}
-				// HTTP/1.0
-				header("Pragma: no-cache");
-				header("Content-Description: File Transfer");
-				header("Content-Type: application/force-download");
-				header('Content-Disposition: attachment; filename="'.$sendname.'.'.$cfg["package_type"].'"');
-				// write the session to close so you can continue to browse on the site.
-				session_write_close("TorrentFlux");
-				// Make it a bit easier for tar/zip.
-				chdir(dirname($tar));
-				passthru($command);
-				AuditAction($cfg["constants"]["fm_download"], $sendname.".".$cfg["package_type"]);
-				exit();
-			} else {
-				AuditAction($cfg["constants"]["error"], "Illegal download: ".$cfg["user"]." tried to download ".$tar);
-			}
-		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
-		}
+		$current = downloadArchive($tar);
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
 		$current = $tar;
