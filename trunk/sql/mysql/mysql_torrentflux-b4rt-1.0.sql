@@ -171,7 +171,6 @@ CREATE TABLE tf_settings (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM;
 
-
 INSERT INTO tf_settings VALUES ('path','/usr/local/torrentflux/');
 INSERT INTO tf_settings VALUES ('advanced_start','1');
 INSERT INTO tf_settings VALUES ('max_upload_rate','10');
