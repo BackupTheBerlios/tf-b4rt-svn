@@ -821,35 +821,42 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h2>Database - Config - ".$type."</h2>");
 	send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 	send('<table border="0">');
+	// create
+	$line = '<tr><td colspan="2">Create Database :';
+	$line .= '<input name="db_create" type="Checkbox" value="true" checked>';
+	$line .= '</td></tr>';
+	send($line);
+	// create
+	send('<tr><td colspan="2"><strong>Database Settings : </strong></td></tr>');
 	switch ($type) {
 		case "mysql":
 		case "postgres":
 			// host
 			$line = '<tr><td>Host : </td>';
-			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40"';
+			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40" value="';
 			if (isset($_REQUEST["db_host"]))
-				$line .= ' value="'.$_REQUEST["db_host"].'">';
+				$line .= $_REQUEST["db_host"];
 			else
-				$line .= '>';
-			$line .= '</td></tr>';
+				$line .= 'localhost';
+			$line .= '"></td></tr>';
 			send($line);
 			// name
 			$line = '<tr><td>Name : </td>';
-			$line .= '<td><input name="db_name" type="Text" maxlength="254" size="40"';
+			$line .= '<td><input name="db_name" type="Text" maxlength="254" size="40" value="';
 			if (isset($_REQUEST["db_name"]))
-				$line .= ' value="'.$_REQUEST["db_name"].'">';
+				$line .= $_REQUEST["db_name"];
 			else
-				$line .= '>';
-			$line .= '</td></tr>';
+				$line .= 'torrentflux';
+			$line .= '"></td></tr>';
 			send($line);
 			// user
 			$line = '<tr><td>Username : </td>';
-			$line .= '<td><input name="db_user" type="Text" maxlength="254" size="40"';
+			$line .= '<td><input name="db_user" type="Text" maxlength="254" size="40" value="';
 			if (isset($_REQUEST["db_user"]))
-				$line .= ' value="'.$_REQUEST["db_user"].'">';
+				$line .= $_REQUEST["db_user"];
 			else
-				$line .= '>';
-			$line .= '</td></tr>';
+				$line .= 'root';
+			$line .= '"></td></tr>';
 			send($line);
 			// pass
 			$line = '<tr><td>Password : </td>';
@@ -860,32 +867,21 @@ if (isset($_REQUEST["1"])) {                                                    
 				$line .= '>';
 			$line .= '</td></tr>';
 			send($line);
-			// pcon
-			$line = '<tr><td colspan="2">Persistent Connection :';
-			$line .= '<input name="db_pcon" type="Checkbox" value="true"';
-			if (isset($_REQUEST["db_pcon"]))
-				$line .= ' checked">';
-			else
-				$line .= '>';
-			$line .= '</td></tr>';
-			send($line);
 			//
 			break;
 		case "sqlite":
 			// file
 			$line = '<tr><td>Database-File : </td>';
-			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40"';
+			$line .= '<td><input name="db_host" type="Text" maxlength="254" size="40" value="';
 			if (isset($_REQUEST["db_host"]))
-				$line .= ' value="'.$_REQUEST["db_host"].'">';
-			else
-				$line .= '>';
-			$line .= '</td></tr>';
+				$line .= $_REQUEST["db_host"];
+			$line .= '"></td></tr>';
 			send($line);
 	}
-	// create
-	$line = '<tr><td colspan="2">Create Database :';
-	$line .= '<input name="db_create" type="Checkbox" value="true"';
-	if (isset($_REQUEST["db_create"]))
+	// pcon
+	$line = '<tr><td colspan="2">Persistent Connection :';
+	$line .= '<input name="db_pcon" type="Checkbox" value="true"';
+	if (isset($_REQUEST["db_pcon"]))
 		$line .= ' checked">';
 	else
 		$line .= '>';
