@@ -2507,78 +2507,81 @@ function FetchTorrent($url) {
 	global $cfg, $db;
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", htmlentities($_SERVER['HTTP_USER_AGENT']));
-	$domain	 = parse_url( $url );
-	if( strtolower( substr( $domain["path"], -8 ) ) != ".torrent" ) {
+	$domain	 = parse_url($url);
+	if (strtolower(substr($domain["path"], -8)) != ".torrent") {
 		// Check know domain types
-		if( strpos( strtolower ( $domain["host"] ), "mininova" ) !== false ) {
+		if (strpos(strtolower($domain["host"]), "mininova") !== false) {
 			// Sample (http://www.mininova.org/rss.xml):
 			// http://www.mininova.org/tor/2254847
 			// <a href="/get/2281554">FreeLinux.ISO.iso.torrent</a>
 			// If received a /tor/ get the required information
-			if( strpos( $url, "/tor/" ) !== false ) {
+			if (strpos($url, "/tor/") !== false) {
 				// Get the contents of the /tor/ to find the real torrent name
-				$html = FetchHTML( $url );
+				$html = FetchHTML($url);
 				// Check for the tag used on mininova.org
-				if( preg_match( "/<a href=\"\/get\/[0-9].[^\"]+\">(.[^<]+)<\/a>/i", $html, $html_preg_match ) ) {
+				if (preg_match("/<a href=\"\/get\/[0-9].[^\"]+\">(.[^<]+)<\/a>/i", $html, $html_preg_match)) {
 					// This is the real torrent filename
 					$cfg["save_torrent_name"] = $html_preg_match[1];
 				}
 				// Change to GET torrent url
-				$url = str_replace( "/tor/", "/get/", $url );
+				$url = str_replace("/tor/", "/get/", $url);
 			}
 			// Now fetch the torrent file
-			$html = FetchHTML( $url );
+			$html = FetchHTML($url);
 			// This usually gets triggered if the original URL was /get/ instead of /tor/
-			if( strlen( $cfg["save_torrent_name"] ) == 0 ) {
+			if ((!isset($cfg["save_torrent_name"])) || (strlen($cfg["save_torrent_name"]) == 0)) {
 				// Get the name of the torrent, and make it the filename
-				if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
+				if (preg_match("/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match)) {
 					$filelength = $html_preg_match[1];
 					$filename = $html_preg_match[2];
-					$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+					$cfg["save_torrent_name"] = substr($filename, 0, $filelength) . ".torrent";
+				} else {
+					$cfg["save_torrent_name"] = "unknown.torrent";
 				}
 			}
 			// Make sure we have a torrent file
-			if( strpos( $html, "d8:" ) === false )	{
+			if (strpos($html, "d8:") === false)	{
 				// We don't have a Torrent File... it is something else
-				AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html );
+				AuditAction($cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html);
 				$html = "";
 			}
 			return $html;
-		} elseif( strpos( strtolower ( $domain["host"] ), "isohunt" ) !== false ) {
+		} elseif (strpos(strtolower($domain["host"]), "isohunt") !== false) {
 			// Sample (http://isohunt.com/js/rss.php):
 			// http://isohunt.com/download.php?mode=bt&id=8837938
 			// http://isohunt.com/btDetails.php?ihq=&id=8464972
 			$referer = "http://" . $domain["host"] . "/btDetails.php?id=";
 			// If the url points to the details page, change it to the download url
-			if( strpos( strtolower( $url ), "/btdetails.php?" ) !== false ) {
-				$url = str_replace( "/btDetails.php?", "/download.php?", $url ) . "&mode=bt"; // Need to make it grab the torrent
-			}
+			if (strpos(strtolower($url), "/btdetails.php?") !== false)
+				$url = str_replace("/btDetails.php?", "/download.php?", $url) . "&mode=bt"; // Need to make it grab the torrent
 			// Grab contents of details page
-			$html = FetchHTML( $url, $referer );
+			$html = FetchHTML($url, $referer);
 			// Get the name of the torrent, and make it the filename
-			if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
+			if (preg_match("/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match)) {
 				$filelength = $html_preg_match[1];
 				$filename = $html_preg_match[2];
-				$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+				$cfg["save_torrent_name"] = substr($filename, 0, $filelength) . ".torrent";
+			} else {
+				$cfg["save_torrent_name"] = "unknown.torrent";
 			}
 			// Make sure we have a torrent file
-			if( strpos( $html, "d8:" ) === false ) {
+			if (strpos($html, "d8:") === false) {
 				// We don't have a Torrent File... it is something else
-				AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html );
+				AuditAction($cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html);
 				$html = "";
 			}
 			return $html;
-		} elseif( strpos( strtolower( $url ), "details.php?" ) !== false ) {
+		} elseif (strpos(strtolower($url), "details.php?") !== false) {
 			// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
 			// http://www.bitmetv.org/details.php?id=18435&hit=1
 			$referer = "http://" . $domain["host"] . "/details.php?id=";
-			$html = FetchHTML( $url, $referer );
+			$html = FetchHTML($url, $referer);
 			// Sample (http://www.bitmetv.org/details.php?id=18435)
 			// download.php/18435/SpiderMan%20Season%204.torrent
-			if( preg_match( "/(download.php.[^\"]+)/i", $html, $html_preg_match ) ) {
-				$torrent = str_replace( " ", "%20", substr( $html_preg_match[0], 0, -1 ) );
+			if (preg_match("/(download.php.[^\"]+)/i", $html, $html_preg_match)) {
+				$torrent = str_replace(" ", "%20", substr($html_preg_match[0], 0, -1));
 				$url2 = "http://" . $domain["host"] . "/" . $torrent;
-				$html2 = FetchHTML( $url2 );
+				$html2 = FetchHTML($url2);
 				// Make sure we have a torrent file
 				if (strpos($html2, "d8:") === false) {
 					// We don't have a Torrent File... it is something else
@@ -2589,22 +2592,24 @@ function FetchTorrent($url) {
 			} else {
 				return "";
 			}
-		} elseif( strpos( strtolower( $url ), "download.asp?" ) !== false ) {
+		} elseif (strpos(strtolower($url), "download.asp?") !== false) {
 			// Sample (TF's TorrenySpy Search):
 			// http://www.torrentspy.com/download.asp?id=519793
 			$referer = "http://" . $domain["host"] . "/download.asp?id=";
-			$html = FetchHTML( $url, $referer );
+			$html = FetchHTML($url, $referer);
 			// Get the name of the torrent, and make it the filename
-			if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
+			if (preg_match("/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match)) {
 				$filelength = $html_preg_match[1];
 				$filename = $html_preg_match[2];
-				$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+				$cfg["save_torrent_name"] = substr($filename, 0, $filelength) . ".torrent";
+			} else {
+				$cfg["save_torrent_name"] = "unknown.torrent";
 			}
-			if( !empty( $html ) ) {
+			if (!empty($html)) {
 				// Make sure we have a torrent file
-				if( strpos( $html, "d8:" ) === false ) {
+				if (strpos($html, "d8:") === false) {
 					// We don't have a Torrent File... it is something else
-					AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html );
+					AuditAction($cfg["constants"]["error"], "BAD TORRENT for: " . $url . "\n" . $html);
 					$html = "";
 				}
 				return $html;
@@ -2613,19 +2618,20 @@ function FetchTorrent($url) {
 			}
 		}
 	}
-	$html = FetchHTML( $url );
+	$html = FetchHTML($url);
 	// Make sure we have a torrent file
-	if( strpos( $html, "d8:" ) === false ) {
+	if (strpos($html, "d8:") === false) {
 		// We don't have a Torrent File... it is something else
-		AuditAction( $cfg["constants"]["error"], "BAD TORRENT for: " . $url.  "\n" . $html );
+		AuditAction($cfg["constants"]["error"], "BAD TORRENT for: " . $url.  "\n" . $html);
 		$html = "";
 	} else {
 		// Get the name of the torrent, and make it the filename
-		if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) )
-		{
+		if (preg_match("/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match)) {
 			$filelength = $html_preg_match[1];
 			$filename = $html_preg_match[2];
-			$cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
+			$cfg["save_torrent_name"] = substr($filename, 0, $filelength) . ".torrent";
+		} else {
+			$cfg["save_torrent_name"] = "unknown.torrent";
 		}
 	}
 	return $html;
@@ -2642,31 +2648,31 @@ function FetchHTML($url, $referer = "") {
 	global $cfg, $db;
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", htmlentities($_SERVER['HTTP_USER_AGENT']));
-	//$url = cleanURL( $url );
-	$domain = parse_url( $url );
+	//$url = cleanURL($url);
+	$domain = parse_url($url);
 	$getcmd	 = $domain["path"];
-	if(!array_key_exists("query", $domain))
+	if (!array_key_exists("query", $domain))
 		$domain["query"] = "";
-	$getcmd .= ( !empty( $domain["query"] ) ) ? "?" . $domain["query"] : "";
+	$getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
 	$cookie = "";
 	$rtnValue = "";
 	// If the url already doesn't contain a passkey, then check
 	// to see if it has cookies set to the domain name.
-	if( ( strpos( $domain["query"], "passkey=" ) ) === false ) {
+	if ((strpos($domain["query"], "passkey=")) === false) {
 		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
-		$cookie = $db->GetOne( $sql );
-		showError( $db, $sql );
+		$cookie = $db->GetOne($sql);
+		showError($db, $sql);
 	}
-	if( !array_key_exists("port", $domain) )
+	if (!array_key_exists("port", $domain))
 		$domain["port"] = 80;
 	// Check to see if this site requires the use of cookies
-	if( !empty( $cookie ) ) {
-		$socket = @fsockopen( $domain["host"], $domain["port"], $errno, $errstr, 30 ); //connect to server
-		if( !empty( $socket ) ) {
+	if (!empty($cookie)) {
+		$socket = @fsockopen($domain["host"], $domain["port"], $errno, $errstr, 30); //connect to server
+		if(!empty($socket)) {
 			// Write the outgoing header packet
 			// Using required cookie information
 			$packet	 = "GET " . $url . "\r\n";
-			$packet .= ( !empty( $referer ) ) ? "Referer: " . $referer . "\r\n" : "";
+			$packet .= (!empty($referer)) ? "Referer: " . $referer . "\r\n" : "";
 			$packet .= "Accept: */*\r\n";
 			$packet .= "Accept-Language: en-us\r\n";
 			$packet .= "User-Agent: ".htmlentities($_SERVER['HTTP_USER_AGENT'])."\r\n";
@@ -2674,20 +2680,20 @@ function FetchHTML($url, $referer = "") {
 			$packet .= "Connection: Close\r\n";
 			$packet .= "Cookie: " . $cookie . "\r\n\r\n";
 			// Send header packet information to server
-			@fputs( $socket, $packet );
+			@fputs($socket, $packet);
 			// Initialize variable, make sure null until we add too it.
 			$rtnValue = null;
 			// If http 1.0 just take it all as 1 chunk (Much easier, but for old servers)
-			while( !@feof( $socket ) )
-				$rtnValue .= @fgets( $socket, 500000 );
-			@fclose( $socket ); // Close our connection
+			while (!@feof($socket))
+				$rtnValue .= @fgets($socket, 500000);
+			@fclose($socket); // Close our connection
 		}
 	} else {
-		if( $fp = @fopen( $url, 'r' ) ) {
+		if ($fp = @fopen($url, 'r')) {
 			$rtnValue = "";
-			while( !@feof( $fp ) )
-				$rtnValue .= @fgets( $fp, 4096 );
-			@fclose( $fp );
+			while (!@feof($fp))
+				$rtnValue .= @fgets($fp, 4096);
+			@fclose($fp);
 		}
 	}
 	// If the HTML is still empty, then try CURL
