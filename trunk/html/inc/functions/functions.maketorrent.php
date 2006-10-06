@@ -31,9 +31,14 @@ function downloadTorrent($tfile) {
 	if (!ereg("(\.\.\/)", $tfile)) {
 		// Does the file exist?
 		if (file_exists($cfg["transfer_file_path"].$tfile)) {
+			// filenames in IE containing dots will screw up the filename
+			if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
+				$headerName = preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1);
+			else
+				$headerName = $tfile;
 			// Prompt the user to download the new torrent file.
 			header("Content-type: application/octet-stream\n");
-			header("Content-disposition: attachment; filename=\"".$tfile."\"\n");
+			header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
 			header("Content-transfer-encoding: binary\n");
 			header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
 			// Send the torrent file
