@@ -299,15 +299,33 @@ Manual Upgrade from TorrentFlux 2.1
 
 
 -----------------------------------------------------------------
+Install Transmission (transmissioncli)
+-----------------------------------------------------------------
+
+1. Untar the package into a directory.
+
+   tar -jxvf Transmission-<version>.tar.bz2
+
+2. Build + Install.
+   Go to the directory just extracted and execute :
+
+   ./configure --disable-gtk
+   make
+   make install
+
+   Note: It may be called 'make' or 'gmake' depending on your
+         system.
+
+
+-----------------------------------------------------------------
 Additional / Optional
 -----------------------------------------------------------------
 
--- To use wget on Mac OS X install :
-   http://www.statusq.org/images/wget.zip
-
--- to compile transmission on Mac OS X you need the Developer
+-- To compile Transmission on Mac OS X you need the Developer
    Tools from Apple.
 
+-- To use wget on Mac OS X install :
+   http://www.statusq.org/images/wget.zip
 
 -----------------------------------------------------------------
 Known Issues
