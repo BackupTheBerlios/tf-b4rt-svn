@@ -321,6 +321,10 @@ Install Transmission (transmissioncli)
 Additional / Optional
 -----------------------------------------------------------------
 
+-- PyCrypto (Python Cryptography Toolkit) is needed to run
+   Mainline (BitTorrent) Client. It can be found here :
+   http://sourceforge.net/projects/pycrypto/
+
 -- To compile Transmission on Mac OS X you need the Developer
    Tools from Apple.
 
