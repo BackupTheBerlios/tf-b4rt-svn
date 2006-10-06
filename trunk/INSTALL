@@ -29,10 +29,10 @@ System Requirements
 -- Perl 5.6 or higher for fluxd + fluxpoller.pl
    (http://www.perl.org)
 
--- Safe Mode must be turned off in the php.ini file.
-   (safe_mode = Off)
-   Allow Url fopen must be allowed in the php.ini file.
-   (allow_url_fopen = On)
+-- Safe Mode must be turned off.
+   (php.ini : safe_mode = Off)
+   Allow Url fopen must be allowed.
+   (php.ini : allow_url_fopen = On)
 
 -- SELinux should be turned off.
 
@@ -322,14 +322,21 @@ Additional / Optional
 -----------------------------------------------------------------
 
 -- PyCrypto (Python Cryptography Toolkit) is needed to run
-   Mainline (BitTorrent) Client. It can be found here :
+   Mainline (BitTorrent) Client. It can be found at :
    http://sourceforge.net/projects/pycrypto/
+
+-- unrar (for Linux) and rarbsd (for FreeBSD) can be found at :
+   http://www.rarlab.com/rar/
+
+-- cksfv (needed for SFV check) can be found at :
+   http://zakalwe.virtuaalipalvelin.net/~shd/foss/cksfv/files/devel/
 
 -- To compile Transmission on Mac OS X you need the Developer
    Tools from Apple.
 
 -- To use wget on Mac OS X install :
    http://www.statusq.org/images/wget.zip
+
 
 -----------------------------------------------------------------
 Known Issues
