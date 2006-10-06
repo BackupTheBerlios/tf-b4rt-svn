@@ -63,7 +63,7 @@ require_once("inc/classes/RunningTransfer.php");
 
 // config
 $cfg["ip"] = '127.0.0.1';
-$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;
+$_SERVER['HTTP_USER_AGENT'] = "fluxcli/" . _REVISION_FLUXCLI;
 
 // set admin-var
 $cfg['isAdmin'] = true;

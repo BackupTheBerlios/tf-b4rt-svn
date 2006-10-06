@@ -31,7 +31,7 @@ function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
 {
     global $cfg, $db;
     ini_set("allow_url_fopen", "1");
-    ini_set("user_agent", $_SERVER["HTTP_USER_AGENT"]);
+    ini_set("user_agent", htmlentities($_SERVER['HTTP_USER_AGENT']));
 
     $url = cleanURL( $url );
     $domain = parse_url( $url );
@@ -74,7 +74,7 @@ function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
         curl_setopt($ch, CURLOPT_HEADER, TRUE);
-        curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
+        curl_setopt($ch, CURLOPT_USERAGENT, htmlentities($_SERVER['HTTP_USER_AGENT']));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
