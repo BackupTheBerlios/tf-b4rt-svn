@@ -288,16 +288,19 @@ function downloadArchive($down) {
  */
 function getExtension($fileName) {
 	$noExtensionFile="unknown"; // The return when no extension is found
-	//Prepare the loop to find an extension
+	// Prepare the loop to find an extension
 	$length = -1*(strlen($fileName)); // The maximum negative value for $i
 	$i=-1; //The counter which counts back to $length
-	//Find the last dot in an string
+	// Find the last dot in an string
 	while (substr($fileName,$i,1) != "." && $i > $length) {$i -= 1; }
-	//Get the extension (with dot)
+	// Get the extension (with dot)
 	$ext = substr($fileName,$i);
-	//Decide what to return.
-	if (substr($ext,0,1)==".") {$ext = substr($ext,((-1 * strlen($ext))+1)); } else {$ext = $noExtensionFile;}
-	//Return the extension
+	// Decide what to return.
+	if (substr($ext,0,1)==".")
+		$ext = substr($ext,((-1 * strlen($ext))+1));
+	else
+		$ext = $noExtensionFile;
+	// Return the extension
 	return strtolower($ext);
 }
 

@@ -324,7 +324,6 @@ function setUserState() {
  */
 function repairTorrentflux() {
 	global $cfg, $db;
-
 	// delete pid-files of torrent-clients
 	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
 		while (false !== ($file = readdir($dirHandle))) {
@@ -333,7 +332,6 @@ function repairTorrentflux() {
 		}
 		closedir($dirHandle);
 	}
-
 	// rewrite stat-files
 	require_once("inc/classes/AliasFile.php");
 	$torrents = getTorrentListFromFS();
@@ -354,10 +352,8 @@ function repairTorrentflux() {
 			$af->WriteFile();
 		}
 	}
-
 	// set flags in db
 	$db->Execute("UPDATE tf_torrents SET running = '0'");
-
 	// delete leftovers of fluxd (only do this if daemon is not running)
 	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c fluxd.pl"));
 	if ($fluxdRunning == "0") {
@@ -368,7 +364,6 @@ function repairTorrentflux() {
 		if (file_exists($cfg["path"].'.fluxd/fluxd.sock'))
 			@unlink($cfg["path"].'.fluxd/fluxd.sock');
 	}
-
 }
 
 /**
