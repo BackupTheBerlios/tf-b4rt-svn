@@ -50,15 +50,15 @@ my $interval;
 my $time_last_run = 0;
 
 my ( $time, $localtime, %globals );
-my $PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
 my ( $MAX_SYS, $MAX_USR );
+my $PATH_QUEUE_FILE;
 my $MAX_START_TRIES = 5;
 my $START_TRIES_SLEEP = 10;
 
 # references to the FluxDB @users and %names for use internally. Just makes
 # everything look cleaner
-my $users = @FluxDB::users;
-my $names = %FluxDB::names;
+my @users;
+my %names;
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -121,6 +121,11 @@ sub initialize {
 	# initialize internal variables
 	$MAX_SYS = FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTorrents");
 	$MAX_USR = FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTorrents");
+
+	$PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
+
+	@users = @FluxDB::users;
+	%names = %FluxDB::names;
 
 	# initialize our globals hash
 	$globals{'main'} = 0;
@@ -197,7 +202,7 @@ sub main {
 		$time_last_run = $now;
 
 		# process queue
-		#processQueue();
+		processQueue();
 	}
 }
 
@@ -248,14 +253,14 @@ sub command {
 sub processQueue {
 
 	# update running torrents
-	UpdateRunningTorrents();
+	updateRunningTorrents();
 
 	# process queue
-	my $jobcountq = Queue();
+	my $jobcountq = queue();
 	my $notDoneProcessingQueue = 1;
 	if ($jobcountq > 0) { # we have queued jobs
 
-		USER: foreach my $user (@{$users}) {
+		USER: foreach my $user (@users) {
 			# initilize some variables for this user
 			my $queueId = 0;
 			my $startTry = 0;
@@ -270,7 +275,7 @@ sub processQueue {
 					print "Qmgr : removing already running job from queue $nextTorrent ($nextUser)\n";
 					stack($queueId, \@{$user->{'queue'}});
 
-					if ($queueId < (Queue()-1)) {
+					if ($queueId < (queue()-1)) {
 						# there is a next entry
 						print "Qmgr : next queue-entry\n" if ($Fluxd::LOGLEVEL > 2);
 						$queueId++;
@@ -348,7 +353,7 @@ sub loadQueue {
 	while (<QUEUEFILE>) {
 		chomp;
 		my ( $torrent, $username ) = split;
-		push(@{$users->[$names->{$username}]->{'queue'}}, $torrent);
+		#push(@{$users->[$names->{$username}]->{'queue'}}, $torrent);
 		#push(@{$FluxDB::users[$FluxDB::names{$username}]{'queue'}}, $torrent);
 		#push(${users[$names->{$username}]{'queue'}}, $torrent);
 	}
@@ -366,7 +371,7 @@ sub saveQueue {
 	# open queue-file
 	open(QUEUEFILE,">$PATH_QUEUE_FILE");
 	# queued torrents
-	foreach my $user (@{$users}) {
+	foreach my $user (@users) {
 		foreach my $torrent (@{$user->{'queue'}}) {
 			print QUEUEFILE $torrent." ".$user->{"username"}."\n";
 		}
@@ -397,7 +402,7 @@ sub status {
 	$return .= "jobs total : ".$countJobs."\n";
 	# jobs queued
 	$return .= "jobs queued : ".$countQueue."\n";
-	foreach my $user (@{$users}) {
+	foreach my $user (@users) {
 		foreach my $jobName (@{$user->{'queue'}}) {
 			my $jobUser = $user->{'username'};
 			$return .= "  * ".$jobName." (".$jobUser.")\n";
@@ -405,7 +410,7 @@ sub status {
 	}
 	# jobs running
 	$return .= "jobs running : ".$countRunning."\n";
-	foreach my $user (@{$users}) {
+	foreach my $user (@users) {
 		foreach my $jobName (@{$user->{'running'}}) {
 			my $jobUser = $user->{'username'};
 			$return .= "  * ".$jobName." (".$jobUser.")\n";
@@ -440,9 +445,9 @@ sub jobs {
 #-----------------------------------------------------------------------------#
 sub queue {
 	my $return = 0;
-	foreach my $user (@{$users}) {
-		$return += scalar(@{$user->{'queue'}});
-	}
+	#foreach my $user (@users) {
+	#	$return += scalar(@{$user->{'queue'}});
+	#}
 	return $return;
 }
 
@@ -453,7 +458,7 @@ sub queue {
 #-----------------------------------------------------------------------------#
 sub running{
 	my $return = 0;
-	foreach my $user (@{$users}) {
+	foreach my $user (@users) {
 		$return += scalar(@{$user->{'running'}});
 	}
 	return $return;
@@ -467,7 +472,7 @@ sub running{
 sub list {
 	my $return = "";
 	# return list
-	foreach my $user (@{$users}) {
+	foreach my $user (@users) {
 		foreach my $queueEntry (@{$user->{'queue'}}) {
 			$return .= $queueEntry.".torrent\n";
 		}
@@ -501,7 +506,7 @@ sub add {
 	my $username = $temp;
 
 	# Looks good, add it to the queue.
-	USER: foreach my $user (@{$users}) {
+	USER: foreach my $user (@users) {
 		foreach my $entry (@{$user->{'queue'}}) {
 			if ($torrent eq $entry) {
 				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($Fluxd::LOGLEVEL);
@@ -519,7 +524,7 @@ sub add {
 	print "Qmgr: Adding job to queue : ".$torrent." (".$username.")";
 
 	if ($AddIt == 1) {
-		push (@{$users->[$names->{$username}]->{'queue'}}, $torrent);
+		#push ({@users->[%names->{$username}]->{'queue'}}, $torrent);
 	}
 }
 
@@ -546,13 +551,13 @@ sub remove {
 
 	# Remove from queue stack
 	my $index = 0;
-	REMOVE: foreach my $entry (@{$users->[$names->{$username}]->{'queue'}}) {
-		if ($torrent eq $entry) {
-			stack($index, \@{$users->[$names->{$username}]->{'queue'}});
-			last REMOVE;
-		}
-		$index++;
-	}
+	#REMOVE: foreach my $entry (@{$users->[$names->{$username}]->{'queue'}}) {
+	#	if ($torrent eq $entry) {
+	#		stack($index, \@{$users->[$names->{$username}]->{'queue'}});
+	#		last REMOVE;
+	#	}
+	#	$index++;
+	#}
 }
 
 #-----------------------------------------------------------------------------#
@@ -563,7 +568,7 @@ sub remove {
 sub updateRunningTorrents {
 	# Get current list of running torrents
 	# get running clients
-	opendir(DIR, $Fluxd::PATH_TORRENT_DIR);
+	opendir(DIR, $Fluxd::PATH_TRANSFER_DIR);
 	my @pids = map { $_->[1] } # extract pathnames
 	map { [ $_, "$_" ] } # no full paths
 	grep { !/^\./ } # no dot-files
@@ -579,7 +584,7 @@ sub updateRunningTorrents {
 		foreach my $pidFile (@pids) {
 			my $torrent = (substr ($pidFile,0,(length($pidFile))-9));
 			my $username = getTorrentOwner($torrent);
-			push(@{$users->[$names->{$username}]->{'running'}}, $torrent);
+			#push(@{$users->[$names->{$username}]->{'running'}}, $torrent);
 		}
 	}
 }
@@ -594,7 +599,7 @@ sub getTorrentOwner {
 	if (!(defined $torrent)) {
 		return undef;
 	}
-	my $statFile = $Fluxd::PATH_TORRENT_DIR.$torrent.".stat";
+	my $statFile = $Fluxd::PATH_TRANSFER_DIR.$torrent.".stat";
 	if (-f $statFile) {
 		open(STATFILE,"< $statFile");
 		while (<STATFILE>) {

@@ -31,9 +31,9 @@ use FluxdCommon;
 # fields                                                                       #
 ################################################################################
 our $PATH_DATA_DIR = ".fluxd";
+our $PATH_TRANSFER_DIR = ".transfers";
 my $BIN_FLUXCLI = "fluxcli.php";
 my $FILE_DBCONF = "config.db.php";
-my $PATH_TRANSFER_DIR = ".transfers";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
