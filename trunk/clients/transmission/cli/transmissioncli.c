@@ -80,9 +80,9 @@
 "  -d, --download <int>           Maximum download rate \n" \
 "                                 (std : -1 = no limit, default = -1)\n" \
 "                                 (tf  : -1|0 = no limit, -2 = null, default = -1)\n" \
+"  -f, --finish <shell script>    Command you wish to run on completion\n" \
 "  -c, --seedlimit <int>          Seed to reach before exiting transmission\n" \
 "                                 (0 = seed forever -1 = no seeding)\n" \
-"  -f, --finish <shell script>    Command you wish to run on completion\n" \
 "  -e, --display_interval <int>   Time between updates of displayed information\n" \
 "  -t, --torrentflux <file>       Name of the stat file shared with torrentflux\n" \
 "  -w, --torrentflux-owner <file> Name of the TF owner of the torrent\n" \
@@ -589,17 +589,17 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { "port",               required_argument, NULL, 'p' },
 		  { "upload",             required_argument, NULL, 'u' },
 		  { "download",           required_argument, NULL, 'd' },
-		  { "seedlimit",          required_argument, NULL, 'c' },
 		  { "finish",             required_argument, NULL, 'f' },
-		  { "nat-traversal",      no_argument,       NULL, 'n' },
+		  { "seedlimit",          required_argument, NULL, 'c' },
 		  { "display_interval",   required_argument, NULL, 'e' },
 		  { "torrentflux",        required_argument, NULL, 't' },
 		  { "torrentflux-owner",  required_argument, NULL, 'w' },
 		  { "pid",                required_argument, NULL, 'z' },
+		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:c:f:n:e:t:w:z", long_options, &optind);
+			"hisv:p:u:d:f:c:e:t:w:z:n", long_options, &optind);
 		if (c < 0) {
 			break;
 		}
@@ -625,14 +625,14 @@ static int parseCommandLine(int argc, char ** argv) {
 			case 'd':
 				downloadLimit = atoi(optarg);
 				break;
-			case 'c':
-				seedLimit = atoi(optarg);
-				break;
 			case 'f':
 				finishCall = optarg;
 				break;
 			case 'n':
 				natTraversal = 1;
+				break;
+			case 'c':
+				seedLimit = atoi(optarg);
 				break;
 			case 'e':
 				displayInterval = atoi(optarg);
