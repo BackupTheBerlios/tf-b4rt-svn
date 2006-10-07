@@ -22,7 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
-	v 1.04 - Sep 20, 06 - updated by batmark
+	v 1.05 - Oct 07, 06 - updated parseing
+    v 1.04 - Sep 20, 06 - updated by batmark
     v 1.03 - Aug 23, 06 - fix ISOHunt fixed search results to display externals.
     v 1.02 - Aug 23, 06 - fix ISOHunt changed there site alittle.
     v 1.01 - Jun 30, 06 - fix to Search..
@@ -40,7 +41,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "isoHunt";
 
         $this->author = "kboy";
-        $this->version = "1.04";
+        $this->version = "1.05";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,878.0.html";
 
         $this->Initialize($cfg);
@@ -91,9 +92,6 @@ class SearchEngine extends SearchEngineBase
             $request .= "&ihs1=18&iho1=d&iht=-1&ihp=" . $this->pg;
         }
 
-        //$request .= "&submit=Torrents";
-
-	//echo $request;
         // make the request if successful call the parse routine.
         if ($this->makeRequest($request))
         {
@@ -119,20 +117,32 @@ class SearchEngine extends SearchEngineBase
 
         // We got a response so display it.
         // Chop the front end off.
- 		$start = strrpos($thing, "isoHunt Rank");
-		$thing = substr($thing, $start, strlen($thing) - $start);
+        if ($latest)
+        {
+            $start = strrpos($thing, "New torrents on isoHunt");
+        } else {
+            $start = strrpos($thing, "isoHunt Rank");
+        }
 
-		$end = strrpos($thing, "»");
-		$thing = substr($thing, 0, $end);
-		$tmpList = $thing;
-		//echo $tmpList;
+        $thing = substr($thing, $start, strlen($thing) - $start);
 
-		if (strpos($tmpList,"/download/") || strpos($tmpList,"torrent_details"))
+        if ($latest)
+        {
+            $end = strrpos($thing, "adclick");
+        } else {
+            $end = strrpos($thing, "»");
+        }
+
+        $thing = substr($thing, 0, $end);
+        $tmpList = $thing;
+        //echo $tmpList;
+
+        if (strpos($tmpList,"/download/") || strpos($tmpList,"torrent_details"))
             {
                 // ok so now we have the listing.
                 $tmpListArr = split("</tr>",$tmpList);
 
-		array_pop($tmpListArr);
+                array_pop($tmpListArr);
                 $bg = $this->cfg["bgLight"];
 
 

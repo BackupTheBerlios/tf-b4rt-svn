@@ -1,7 +1,5 @@
 <?php
 
-/* $Id$ */
-
 /*************************************************************
 *  TorrentFlux PHP Torrent Manager
 *  www.torrentflux.com
@@ -25,6 +23,7 @@
 */
 
 /*
+    v 1.01 - Oct 06, 06 fix to search results.
     v 1.00 - Aug 23, 06
 */
 
@@ -39,7 +38,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "btJunkie";
 
         $this->author = "kboy";
-        $this->version = "1.00";
+        $this->version = "1.01";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,874.0.html";
         $this->Initialize($cfg);
     }
@@ -153,7 +152,6 @@ class SearchEngine extends SearchEngineBase
     // Function to parse the response.
     function parseResponse()
     {
-    	global $cfg;
         $output = $this->tableHeader();
 
         $thing = $this->htmlPage;
@@ -163,11 +161,18 @@ class SearchEngine extends SearchEngineBase
         {
             $thing = substr($thing,strpos($thing,">Health<"));
             $thing = substr($thing,strpos($thing,"<tr"));
-            $tmpList = substr($thing,0,strpos($thing,"do=gear"));
+            if (is_integer(strpos($thing,"do=gear")))
+            {
+                $tmpList = substr($thing,0,strpos($thing,"do=gear"));
+            }
+            else
+            {
+                $tmpList = substr($thing,0,strpos($thing,"JavaScript"));
+            }
             // ok so now we have the listing.
             $tmpListArr = split("</tr>",$tmpList);
 
-            $langFile = $cfg['_FILE'];
+            $langFile = $this->cfg["_FILE"];
 
             $bg = $this->cfg["bgLight"];
 
@@ -256,6 +261,17 @@ class btJunk
             // Chunck up the row into columns.
             $tmpListArr = split("</th>",$htmlLine);
 
+/*
+(
+    [0] => <tr bgcolor="#FFFFFF"><th width="60%" align="left">
+        <a href="/torrent?do=download&id=3780687290ec6d04d99417b85ef14bca45f030c90781"><img src="/images/down.gif" alt="Download Torrent" border="0"></a>
+        <a href="/?do=listfiles&id=3780687290ec6d04d99417b85ef14bca45f030c90781" onclick="return listfiles(this,750,50,'2px solid',0,0,'img3780687290ec6d04d99417b85ef14bca45f030c90781');">
+        <img name="img3780687290ec6d04d99417b85ef14bca45f030c90781" src="/images/expand.gif" alt="File Listing" border="0"></a>&nbsp;
+        <a href="/torrent?do=stat&id=3780687290ec6d04d99417b85ef14bca45f030c90781" class="BlckUnd"><b>Paris Hilton - Paris (withcovers) a DHZ Inc Release</b></a>
+)
+
+*/
+
             if(count($tmpListArr) > 5)
             {
                 //$tmpListArr["0"];  // Torrent Name, Download Link, Status
@@ -309,7 +325,6 @@ class btJunk
     // Function to build output for the table.
     function BuildOutput($bg,$langFILE, $searchURL = '')
     {
-		global $cfg;
         $output = "<tr>\n";
         $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"themes/".$this->cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a>";
