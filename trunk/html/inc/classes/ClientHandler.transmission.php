@@ -74,6 +74,10 @@ class ClientHandlerTransmission extends ClientHandler
             return;
         }
 
+        // transmission wants -1 for no seeding.
+        if ($this->sharekill == -1)
+            $this->sharekill_param = -1;
+
         // pid-file
         $this->pidFile = "\"" . $this->cfg["transfer_file_path"].$this->alias .".stat.pid\"";
 
