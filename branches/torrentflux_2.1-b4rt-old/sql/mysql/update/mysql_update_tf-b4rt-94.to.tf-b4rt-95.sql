@@ -2,8 +2,8 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-Update-File for 'Torrentflux-2.1-b4rt-93'.
--- Updates a 'Torrentflux 2.1-b4rt-92' Database to a 'Torrentflux 2.1-b4rt-93'.
+-- MySQL-Update-File for 'Torrentflux-2.1-b4rt-94'.
+-- Updates a 'Torrentflux 2.1-b4rt-94' Database to a 'Torrentflux 2.1-b4rt-95'.
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
@@ -12,10 +12,5 @@
 --
 -- alter
 --
-ALTER TABLE tf_torrents ADD hash VARCHAR(40) DEFAULT '' NOT NULL;
+ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL;
 
---
--- inserts
---
-INSERT INTO tf_settings VALUES ('enable_sorttable','1');
-INSERT INTO tf_settings VALUES ('drivespacebar','xfer');

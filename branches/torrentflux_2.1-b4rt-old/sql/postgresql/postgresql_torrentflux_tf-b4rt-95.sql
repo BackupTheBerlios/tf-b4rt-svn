@@ -297,7 +297,7 @@ CREATE TABLE tf_torrent_totals (
 -- tf_xfer
 --
 CREATE TABLE tf_xfer (
-  user VARCHAR(32) NOT NULL DEFAULT '',
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
   date DATE NOT NULL DEFAULT '0001-01-01',
   download INT8 NOT NULL DEFAULT '0',
   upload INT8 NOT NULL DEFAULT '0'
