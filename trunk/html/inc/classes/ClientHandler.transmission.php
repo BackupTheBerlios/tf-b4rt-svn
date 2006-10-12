@@ -82,7 +82,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->pidFile = "\"" . $this->cfg["transfer_file_path"].$this->alias .".stat.pid\"";
 
         // workaround for bsd-pid-file-problem : touch file first
-        shell_exec("touch ".$this->pidFile);
+        @shell_exec("touch ".$this->pidFile);
 
 		// note :
 		// order of args must not change for ps-parsing-code in
