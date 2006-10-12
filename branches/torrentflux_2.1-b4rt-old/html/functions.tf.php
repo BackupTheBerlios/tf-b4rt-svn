@@ -1440,14 +1440,17 @@ class ProcessInfo {
     }
 }
 
-//**************************************************************************
-// file_size()
-// Returns file size... overcomes PHP limit of 2.0GB
+/**
+ * Returns file size... overcomes PHP limit of 2.0GB
+ *
+ * @param $file
+ * @return int
+ */
 function file_size($file) {
-    $size = @filesize($file);
-    if ( $size == 0)
-        $size = exec("ls -l \"".$file."\" | awk '{print $5}'");
-    return $size;
+	$size = @filesize($file);
+	if ($size == 0)
+		$size = exec("ls -l \"".$file."\" 2>/dev/null | awk '{print $5}'");
+	return $size;
 }
 
 //**************************************************************************
