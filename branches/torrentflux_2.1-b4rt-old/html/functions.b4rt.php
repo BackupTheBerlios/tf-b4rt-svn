@@ -1369,20 +1369,11 @@ function getTransferArray($sortOrder = '') {
             natcasesort($arList);
             break;
         case 'nd': // sort alphabetically by name descending
-            rnatcasesort($arList);
+            natcasesort($arList);
+   			$arList = array_reverse($arList, true);
             break;
     }
     return $arList;
-}
-
-/*
- * rnatcasesort
- *
- * @param &$a ref to array to sort
- */
-function rnatcasesort(&$a){
-   natcasesort($a);
-   $a = array_reverse($a, true);
 }
 
 /*
