@@ -176,11 +176,11 @@ class ClientHandlerTransmission extends ClientHandler
     /**
      * gets current transfer-vals of a torrent
      *
-     * @param $db ref to db-object
      * @param $torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrent(&$db, $torrent) {
+    function getTorrentTransferCurrent($torrent) {
+    	global $db;
         $retVal = array();
         // transfer from stat-file
         $aliasName = getAliasName($torrent);
@@ -232,11 +232,10 @@ class ClientHandlerTransmission extends ClientHandler
     /**
      * gets total transfer-vals of a torrent
      *
-     * @param $db ref to db-object
      * @param $torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotal(&$db, $torrent) {
+    function getTorrentTransferTotal($torrent) {
         $retVal = array();
         // transfer from stat-file
         $aliasName = getAliasName($torrent);
@@ -255,7 +254,7 @@ class ClientHandlerTransmission extends ClientHandler
      * @param $afd alias-file-downtotal of the torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotalOP($torrent,$afu,$afd) {
+    function getTorrentTransferTotalOP($torrent, $afu, $afd) {
         $retVal = array();
         // transfer from stat-file
         $retVal["uptotal"] = $afu;

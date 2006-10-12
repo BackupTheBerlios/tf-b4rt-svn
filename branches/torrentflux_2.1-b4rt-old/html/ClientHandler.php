@@ -554,11 +554,10 @@ class ClientHandler
     /**
      * gets current transfer-vals of a torrent
      *
-     * @param $db ref to db-object
      * @param $torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrent(&$db, $torrent)  { return; }
+    function getTorrentTransferCurrent($torrent)  { return; }
 
     /**
      * gets current transfer-vals of a torrent. optimized index-page-version
@@ -568,17 +567,16 @@ class ClientHandler
      * @param $afd alias-file-downtotal of the torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferCurrentOP($torrent,$afu,$afd)  { return; }
+    function getTorrentTransferCurrentOP($torrent, $afu, $afd)  { return; }
 
     //--------------------------------------------------------------------------
     /**
      * gets total transfer-vals of a torrent
      *
-     * @param $db ref to db-object
      * @param $torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotal(&$db, $torrent) { return; }
+    function getTorrentTransferTotal($torrent) { return; }
 
     /**
      * gets total transfer-vals of a torrent. optimized index-page-version
@@ -588,10 +586,9 @@ class ClientHandler
      * @param $afd alias-file-downtotal of the torrent
      * @return array with downtotal and uptotal
      */
-    function getTorrentTransferTotalOP($torrent,$afu,$afd) { return; }
+    function getTorrentTransferTotalOP($torrent, $afu, $afd) { return; }
 
 
 } // end class
-
 
 ?>

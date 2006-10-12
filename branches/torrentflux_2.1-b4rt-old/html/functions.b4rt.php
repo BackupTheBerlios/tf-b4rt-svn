@@ -540,7 +540,7 @@ function getTorrentTotals($torrent) {
     $btclient = getTorrentClient($torrent);
     include_once("ClientHandler.php");
     $clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-    return $clientHandler->getTorrentTransferTotal(&$db,$torrent);
+    return $clientHandler->getTorrentTransferTotal($torrent);
 }
 
 /**
@@ -570,7 +570,7 @@ function getTorrentTotalsCurrent($torrent) {
     $btclient = getTorrentClient($torrent);
     include_once("ClientHandler.php");
     $clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
-    return $clientHandler->getTorrentTransferCurrent(&$db,$torrent);
+    return $clientHandler->getTorrentTransferCurrent($torrent);
 }
 
 /**
