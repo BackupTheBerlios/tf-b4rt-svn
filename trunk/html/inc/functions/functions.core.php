@@ -237,6 +237,16 @@ function getTorrentFluxLink() {
 }
 
 /**
+ * get path to images of current theme
+ *
+ * @return string
+ */
+function getImagesPath() {
+	global $cfg;
+	return "themes/".$cfg['theme']."/images/";
+}
+
+/**
  * prints nice error-page
  *
  * @param $errorMessage

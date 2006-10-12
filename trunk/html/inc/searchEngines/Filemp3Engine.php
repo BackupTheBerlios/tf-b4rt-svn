@@ -532,7 +532,7 @@ class fileMP3
     function BuildOutput($bg, $searchURL = '')
     {
         $output = "<tr>\n";
-        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"themes/".$this->cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
+        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"".getImagesPath()."download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a></td>\n";
 
         if (strlen($this->MainCategory) > 1){
