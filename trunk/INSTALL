@@ -4,6 +4,8 @@ $Id$
 
 torrentflux-b4rt 1.0
 
+http://tf-b4rt.berlios.de/
+
 -----------------------------------------------------------------
 System Requirements
 -----------------------------------------------------------------
@@ -122,12 +124,12 @@ Manual Installation
 
 
 -----------------------------------------------------------------
-Upgrade from TorrentFlux 2.1-b4rt-94 with "upgrade.php"
+Upgrade from TorrentFlux 2.1-b4rt-95 with "upgrade.php"
 -----------------------------------------------------------------
 
 1. Stop all transfers.
 
-2. Delete content of docroot of the v94-installation. (recursive)
+2. Delete content of docroot of the v95-installation. (recursive)
 
 3. Untar the package into a directory then copy the contents of
    the "html" folder into your web site directory.
@@ -146,7 +148,7 @@ Upgrade from TorrentFlux 2.1-b4rt-94 with "upgrade.php"
 5. ensure the dir "inc/config/" in your torrentflux-docroot is
    writable by your webserver-user.
 
-6. copy the file "upgrade.php" from the dir "upgrade/v94_1.0/" to
+6. copy the file "upgrade.php" from the dir "upgrade/v95_1.0/" to
    your torrentflux-docroot.
 
 7. open the just copied file "upgrade.php" in a browser and
@@ -157,12 +159,12 @@ Upgrade from TorrentFlux 2.1-b4rt-94 with "upgrade.php"
 
 
 -----------------------------------------------------------------
-Manual Upgrade from TorrentFlux 2.1-b4rt-94
+Manual Upgrade from TorrentFlux 2.1-b4rt-95
 -----------------------------------------------------------------
 
 1. Stop all transfers.
 
-2. Delete content of docroot of the v94-installation. (recursive)
+2. Delete content of docroot of the v95-installation. (recursive)
 
 3. Untar the package into a directory then copy the contents of
    the "html" folder into your web site directory.
@@ -173,12 +175,12 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-94
    You may specify the type of the database you want to use in
    the file "config.db.php", but the examples here use MySQL.
 
-   "mysql_update_tf-b4rt-94.to.torrentflux-b4rt-1.0.sql"
+   "mysql_update_tf-b4rt-95.to.torrentflux-b4rt-1.0.sql"
    contains the commands to update the table structure and the
    default data.
    Import the script into your torrentflux database.
 
-   mysql torrentflux < mysql_update_tf-b4rt-94.to.torrentflux-b4rt-1.0.sql
+   mysql torrentflux < mysql_update_tf-b4rt-95.to.torrentflux-b4rt-1.0.sql
    Or load the script with PHPMyAdmin (web interface)
 
 5. rename the file "config.db.php.dist" in the dir "inc/config/"
@@ -287,7 +289,7 @@ Manual Upgrade from TorrentFlux 2.1
     ->
    /usr/local/torrent/.transfers/
 
-8. rename your stat-files. (they are located in t
+8. rename your stat-files.
    change to your path-dir. (the dir just renamed in 7.) on a
    default install this would be :
    cd /usr/local/torrent/.transfers/
