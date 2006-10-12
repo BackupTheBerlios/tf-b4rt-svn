@@ -2,7 +2,7 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- PostgreSQL-File for 'Torrentflux-2.1-b4rt-94'
+-- PostgreSQL-File for 'Torrentflux-2.1-b4rt-95'
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
@@ -252,7 +252,7 @@ CREATE TABLE tf_users (
   time_created VARCHAR(14) NOT NULL DEFAULT '0',
   user_level INT2 NOT NULL DEFAULT '0',
   hide_offline INT2 NOT NULL DEFAULT '0',
-  theme VARCHAR(100) NOT NULL DEFAULT 'mint',
+  theme VARCHAR(100) NOT NULL DEFAULT 'matrix',
   language_file VARCHAR(60) DEFAULT 'lang-english.php',
   PRIMARY KEY (uid)
 );

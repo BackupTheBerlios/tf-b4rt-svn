@@ -2,7 +2,7 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-File for 'Torrentflux-2.1-b4rt-94'
+-- MySQL-File for 'Torrentflux-2.1-b4rt-95'
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
@@ -219,7 +219,7 @@ CREATE TABLE tf_users (
   time_created VARCHAR(14) NOT NULL default '0',
   user_level TINYINT(1) NOT NULL default '0',
   hide_offline TINYINT(1) NOT NULL default '0',
-  theme VARCHAR(100) NOT NULL default 'mint',
+  theme VARCHAR(100) NOT NULL default 'matrix',
   language_file VARCHAR(60) default 'lang-english.php',
   PRIMARY KEY  (uid)
 ) TYPE=MyISAM;
