@@ -1,69 +1,67 @@
 <?php
 
-/*************************************************************
-*  TorrentFlux PHP Torrent Manager
-*  www.torrentflux.com
-**************************************************************/
-/*
-    This file is part of TorrentFlux.
+/* $Id$ */
 
-    TorrentFlux is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+/*******************************************************************************
 
-    TorrentFlux is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ LICENSE
 
-    You should have received a copy of the GNU General Public License
-    along with TorrentFlux; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License (GPL)
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
 
-   /*****
-    Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
 
-    --announce_list <arg>
-              a list of announce URLs - explained below (defaults to '')
+ To read the license please visit http://www.gnu.org/copyleft/gpl.html
 
-    --httpseeds <arg>
-              a list of http seed URLs - explained below (defaults to '')
+*******************************************************************************/
 
-    --piece_size_pow2 <arg>
-              which power of 2 to set the piece size to (0 = automatic) (defaults
-              to 0)
+/*****
+Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
 
-    --comment <arg>
-              optional human-readable comment to put in .torrent (defaults to '')
+--announce_list <arg>
+          a list of announce URLs - explained below (defaults to '')
 
-    --filesystem_encoding <arg>
-              optional specification for filesystem encoding (set automatically in
-              recent Python versions) (defaults to '')
+--httpseeds <arg>
+          a list of http seed URLs - explained below (defaults to '')
 
-    --target <arg>
-              optional target file for the torrent (defaults to '')
+--piece_size_pow2 <arg>
+          which power of 2 to set the piece size to (0 = automatic) (defaults
+          to 0)
+
+--comment <arg>
+          optional human-readable comment to put in .torrent (defaults to '')
+
+--filesystem_encoding <arg>
+          optional specification for filesystem encoding (set automatically in
+          recent Python versions) (defaults to '')
+
+--target <arg>
+          optional target file for the torrent (defaults to '')
 
 
-        announce_list = optional list of redundant/backup tracker URLs, in the format:
-               url[,url...][|url[,url...]...]
-                    where URLs separated by commas are all tried first
-                    before the next group of URLs separated by the pipe is checked.
-                    If none is given, it is assumed you don't want one in the metafile.
-                    If announce_list is given, clients which support it
-                    will ignore the <announce> value.
-               Examples:
-                    http://tracker1.com|http://tracker2.com|http://tracker3.com
-                         (tries trackers 1-3 in order)
-                    http://tracker1.com,http://tracker2.com,http://tracker3.com
-                         (tries trackers 1-3 in a randomly selected order)
-                    http://tracker1.com|http://backup1.com,http://backup2.com
-                         (tries tracker 1 first, then tries between the 2 backups randomly)
+    announce_list = optional list of redundant/backup tracker URLs, in the format:
+           url[,url...][|url[,url...]...]
+                where URLs separated by commas are all tried first
+                before the next group of URLs separated by the pipe is checked.
+                If none is given, it is assumed you don't want one in the metafile.
+                If announce_list is given, clients which support it
+                will ignore the <announce> value.
+           Examples:
+                http://tracker1.com|http://tracker2.com|http://tracker3.com
+                     (tries trackers 1-3 in order)
+                http://tracker1.com,http://tracker2.com,http://tracker3.com
+                     (tries trackers 1-3 in a randomly selected order)
+                http://tracker1.com|http://backup1.com,http://backup2.com
+                     (tries tracker 1 first, then tries between the 2 backups randomly)
 
-        httpseeds = optional list of http-seed URLs, in the format:
-                url[|url...]
-    *****/
+    httpseeds = optional list of http-seed URLs, in the format:
+            url[|url...]
+*****/
 
     include_once("config.php");
     include_once("functions.php");

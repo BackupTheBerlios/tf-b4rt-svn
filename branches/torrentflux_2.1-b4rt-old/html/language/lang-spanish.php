@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 /**************************************************************************/
 /* TorrentFlux - PHP Torrent Client
 /* ============================================
@@ -39,8 +41,6 @@
 /*
 /* Saludos, besos y abrazos a mi esposa Susan, a quien amo con todo mi corazón!
 /**************************************************************************/
-
-
 
 define("_CHARSET","iso-8859-1");  // if you don't know... then leave this as is.
 define("_SELECTFILE","Seleccione un Torrent para subir");

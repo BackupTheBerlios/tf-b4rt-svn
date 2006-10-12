@@ -1,5 +1,7 @@
 <?php
 
+/* $Id$ */
+
 /*******************************************************************************
 
  LICENSE
@@ -17,7 +19,6 @@
  To read the license please visit http://www.gnu.org/copyleft/gpl.html
 
 *******************************************************************************/
-
 
 // class QueueManager_Qmgr for Qmgr
 class QueueManager_Qmgr extends QueueManager
