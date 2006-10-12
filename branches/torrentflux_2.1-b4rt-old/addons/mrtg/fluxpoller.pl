@@ -3,7 +3,6 @@
 # $Id$
 # $Revision$
 # $Date$
-# $Author$
 #------------------------------------------------------------------------------#
 # fluxpoller.pl                                                                #
 #------------------------------------------------------------------------------#
@@ -11,7 +10,6 @@
 # liable for any damages to your soft- or hardware from this.                  #
 # Feel free to change or rip the code.                                         #
 ################################################################################
-
 use strict;
 
 # should we try to find needed binaries ? (using "whereis" + "awk")
@@ -25,7 +23,7 @@ my @BINS_SOCKET = qw( python transmissionc );
 my ( $REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE );
 
 # bin Vars
-my ( $BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_FSTAT, $BIN_GREP, $BIN_AWK );
+my ( $BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_SOCKSTAT, $BIN_GREP, $BIN_AWK );
 
 # webserver-user (only needed on bsd)
 my $WEBUSER = "www";
@@ -43,7 +41,7 @@ if ($OSTYPE == 1) { # linux
 	$BIN_NETSTAT = "/bin/netstat";
 } elsif ($OSTYPE == 2) { # bsd
 	$BIN_GREP = "/usr/bin/grep";
-	$BIN_FSTAT = "/usr/bin/fstat";
+	$BIN_SOCKSTAT = "/usr/bin/sockstat";
 }
 
 #-------------------------------------------------------------------------------
@@ -201,6 +199,7 @@ sub cactiPrintConnections {
 sub mrtgPrintUptime {
 	# uptime data for mrtg
 	my $uptime = `uptime`;
+	$uptime =~ s/^ //g;
 	my @uptimeAry = split(/\s/, $uptime, 6);
 	(my $timeLabel = $uptimeAry[4]) =~ s/,.*//;
 	print $uptimeAry[3]." ".$timeLabel."\n";
@@ -272,7 +271,7 @@ sub fluxConnections {
 		}
 	} elsif ($OSTYPE == 2) { # bsd
 		foreach my $bin_socket (@BINS_SOCKET) {
-			$cons_temp = `$BIN_FSTAT -u $WEBUSER | $BIN_GREP $bin_socket | $BIN_GREP -c tcp`;
+			$cons_temp = `$BIN_SOCKSTAT | $BIN_GREP -cE $WEBUSER.+$bin_socket.+tcp`;
 			chomp $cons_temp;
 			$cons += $cons_temp;
 		}
@@ -290,7 +289,7 @@ sub findBinaries {
 	$BIN_HEAD = `whereis head | awk '{print \$2}'`; chomp $BIN_HEAD;
 	$BIN_TAIL = `whereis tail | awk '{print \$2}'`; chomp $BIN_TAIL;
 	$BIN_NETSTAT = `whereis netstat | awk '{print \$2}'`; chomp $BIN_NETSTAT;
-	$BIN_FSTAT = `whereis fstat | awk '{print \$2}'`; chomp $BIN_FSTAT;
+	$BIN_SOCKSTAT = `whereis sockstat | awk '{print \$2}'`; chomp $BIN_SOCKSTAT;
 	$BIN_GREP = `whereis grep | awk '{print \$2}'`; chomp $BIN_GREP;
 	$BIN_AWK = `whereis awk | awk '{print \$2}'`; chomp $BIN_AWK;
 }
