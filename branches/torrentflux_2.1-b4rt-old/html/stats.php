@@ -223,12 +223,12 @@ function sendRss() {
         $sharing = number_format(($torrentTotals['uptotal'] / ($af->size+0)), 2);
         $content .= "<item>\n";
         $content .= "<title>".$entry." (".$remaining.")</title>\n";
-        $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".formatBytesToKBMGGB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".formatBytesToKBMGGB($torrentTotals['downtotal'])." || Transfered Up: ".formatBytesToKBMGGB($torrentTotals['uptotal'])."</description>\n";
+        $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".@formatBytesToKBMGGB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".@formatBytesToKBMGGB($torrentTotals['downtotal'])." || Transfered Up: ".@formatBytesToKBMGGB($torrentTotals['uptotal'])."</description>\n";
         $content .= "</item>\n";
     }
     $content .= "<item>\n";
     $content .= "<title>Total (".$run.")</title>\n";
-    $content .= "<description>Down Speed: ".number_format($cfg["total_download"], 2)." || Up Speed: ".number_format($cfg["total_upload"], 2)." || Free Space: ".formatFreeSpace($cfg['free_space'])."</description>\n";
+    $content .= "<description>Down Speed: ".@number_format($cfg["total_download"], 2)." || Up Speed: ".@number_format($cfg["total_upload"], 2)." || Free Space: ".@formatFreeSpace($cfg['free_space'])."</description>\n";
     $content .= "</item>\n";
     $content .= "</channel>\n";
     $content .= "</rss>";
