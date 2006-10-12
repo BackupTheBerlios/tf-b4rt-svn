@@ -1,0 +1,25 @@
+<!ELEMENT free_space ( #PCDATA ) >
+
+<!ELEMENT name ( #PCDATA ) >
+
+<!ELEMENT percent ( #PCDATA ) >
+
+<!ELEMENT remaining ( #PCDATA ) >
+
+<!ELEMENT sharing ( #PCDATA ) >
+
+<!ELEMENT size ( #PCDATA ) >
+
+<!ELEMENT speeds ( #PCDATA ) >
+
+<!ELEMENT tf_details ( total_speeds, free_space ) >
+
+<!ELEMENT torrent ( name, speeds, size, percent, sharing, remaining, transfered ) >
+
+<!ELEMENT torrent_flux ( torrents, tf_details ) >
+
+<!ELEMENT torrents ( torrent+ ) >
+
+<!ELEMENT total_speeds ( #PCDATA ) >
+
+<!ELEMENT transfered ( #PCDATA ) >
