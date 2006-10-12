@@ -83,6 +83,10 @@ class ClientHandlerTransmission extends ClientHandler
 
         // pid-file
         $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
+
+		// workaround for bsd-pid-file-problem : touch file first
+        @shell_exec("touch ".$this->pidFile);
+
         // build the command-string
         $this->command = "-t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\" -w ".$this->owner;
         // "new" transmission-patch has pid-file included
