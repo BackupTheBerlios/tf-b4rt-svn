@@ -389,7 +389,7 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="")
 			$user_icon = "images/user.gif";
 		}
 
-		$ip_info = $ip_resolved."<br>".$user_agent;
+		$ip_info = htmlentities($ip_resolved, ENT_QUOTES)."<br>".htmlentities($user_agent, ENT_QUOTES);
 
 		$output .= "<tr>";
 		if (IsUser($user_id))
