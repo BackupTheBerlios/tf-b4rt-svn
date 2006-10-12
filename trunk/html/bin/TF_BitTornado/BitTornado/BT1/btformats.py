@@ -4,7 +4,7 @@
 from types import StringType, LongType, IntType, ListType, DictType
 from re import compile
 
-reg = compile(r'^[^/\\.~][^/\\]*$|^$')
+reg = compile(r'^[^/\\.~][^/\\]*$')
 
 ints = (LongType, IntType)
 

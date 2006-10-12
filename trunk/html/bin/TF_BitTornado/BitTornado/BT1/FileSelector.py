@@ -225,12 +225,11 @@ class FileSelector:
         except:
             return self.priority[index]
 
+
     def finish(self):
-        # b4rt
-        return
-        #for f in xrange(self.numfiles):
-        #    if self.priority[f] == -1:
-        #        self.storage.delete_file(f)
+        for f in xrange(self.numfiles):
+            if self.priority[f] == -1:
+                self.storage.delete_file(f)
 
     def pickle(self):
         d = {'priority': self.priority}
