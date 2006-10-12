@@ -1167,13 +1167,15 @@ function FetchTorrent($url) {
             // Now fetch the torrent file
             $html = FetchHTML( $url );
             // This usually gets triggered if the original URL was /get/ instead of /tor/
-            if( strlen( $cfg["save_torrent_name"] ) == 0 ) {
+            if ((!isset($cfg["save_torrent_name"])) || (strlen($cfg["save_torrent_name"]) == 0)) {
                 // Get the name of the torrent, and make it the filename
                 if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
                     $filelength = $html_preg_match[1];
                     $filename = $html_preg_match[2];
                     $cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
-                }
+                }  else {
+					$cfg["save_torrent_name"] = "unknown.torrent";
+				}
             }
             // Make sure we have a torrent file
             if( strpos( $html, "d8:" ) === false )  {
@@ -1198,7 +1200,9 @@ function FetchTorrent($url) {
                 $filelength = $html_preg_match[1];
                 $filename = $html_preg_match[2];
                 $cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
-            }
+            } else {
+				$cfg["save_torrent_name"] = "unknown.torrent";
+			}
             // Make sure we have a torrent file
             if( strpos( $html, "d8:" ) === false ) {
                 // We don't have a Torrent File... it is something else
@@ -1237,7 +1241,9 @@ function FetchTorrent($url) {
                 $filelength = $html_preg_match[1];
                 $filename = $html_preg_match[2];
                 $cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
-            }
+            } else {
+				$cfg["save_torrent_name"] = "unknown.torrent";
+			}
             if( !empty( $html ) ) {
                 // Make sure we have a torrent file
                 if( strpos( $html, "d8:" ) === false ) {
@@ -1259,12 +1265,13 @@ function FetchTorrent($url) {
         $html = "";
     } else {
         // Get the name of the torrent, and make it the filename
-        if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) )
-        {
+        if( preg_match( "/name([0-9][^:]):(.[^:]+)/i", $html, $html_preg_match ) ) {
             $filelength = $html_preg_match[1];
             $filename = $html_preg_match[2];
             $cfg["save_torrent_name"] = substr( $filename, 0, $filelength ) . ".torrent";
-        }
+        }  else {
+			$cfg["save_torrent_name"] = "unknown.torrent";
+		}
     }
     return $html;
 }
