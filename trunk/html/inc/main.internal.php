@@ -166,8 +166,7 @@ require_once("inc/lib/vlib/vlibTemplate.php");
 	or (at your option) any later version.
 */
 
-// create tf_xfer if it doesn't already exist. if xfer is empty,
-// insert a zero record for today
+// if xfer is empty, insert a zero record for today
 if ($cfg['enable_xfer'] == 1) {
 	// xfer functions
 	require_once('inc/functions/functions.xfer.php');

@@ -23,11 +23,11 @@
 /******************************************************************************/
 // YOUR DATABASE CONNECTION INFORMATION
 /******************************************************************************/
-$cfg["db_type"] = "mysql";        // Databae-Type : mysql/sqlite/postgres
+$cfg["db_type"] = "mysql";        // Database-Type : mysql/sqlite/postgres
 $cfg["db_host"] = "localhost";    // Database host computer name or IP
 $cfg["db_name"] = "torrentflux";  // Name of the Database
 $cfg["db_user"] = "root";         // Username for Database
-$cfg["db_pass"] = "seceret";      // Password for Database
+$cfg["db_pass"] = "";             // Password for Database
 $cfg["db_pcon"] = false;          // Persistent Connection enabled : true/false
 /******************************************************************************/
 

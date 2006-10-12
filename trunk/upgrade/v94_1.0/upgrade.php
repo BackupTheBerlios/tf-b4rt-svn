@@ -1008,7 +1008,7 @@ function writeDatabaseConfig($type, $host, $user, $pass, $name, $pcon) {
 /******************************************************************************/
 // YOUR DATABASE CONNECTION INFORMATION
 /******************************************************************************/
-$cfg["db_type"] = "'.$type.'"; // Databae-Type : mysql/sqlite/postgres
+$cfg["db_type"] = "'.$type.'"; // Database-Type : mysql/sqlite/postgres
 $cfg["db_host"] = "'.$host.'"; // Database host computer name or IP
 $cfg["db_name"] = "'.$name.'"; // Name of the Database
 $cfg["db_user"] = "'.$user.'"; // Username for Database
