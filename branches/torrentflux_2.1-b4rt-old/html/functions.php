@@ -87,29 +87,16 @@ checkTorrentPath();
     (at your option) any later version.
 */
 
-//XFER: create tf_xfer if it doesn't already exist. if xfer is empty, insert a zero record for today
+//XFER: if xfer is empty, insert a zero record for today
 if ($cfg['enable_xfer'] == 1) {
-  if (($xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer")) === false) {
-    if ($db->Execute('CREATE TABLE tf_xfer (user varchar(32) NOT NULL default "", date date NOT NULL default "0000-00-00", download bigint(20) NOT NULL default "0", upload bigint(20) NOT NULL default "0", PRIMARY KEY (user,date))') === false) {
-      if (IsAdmin()) echo '<b>ERROR:</b> tf_xfer table is missing. Trying to create the table for you <b>FAILED</b>.<br>Create using:<br>CREATE TABLE tf_xfer (<br>user varchar(32) NOT NULL default "",<br>date date NOT NULL default "0000-00-00",<br>download bigint(20) NOT NULL default "0",<br>upload bigint(20) NOT NULL default "0",<br>PRIMARY KEY  (user,date)<br>);<br>';
-      else echo '<b>ERROR:</b> Contact an admin: tf_xfer table is missing.<br>';
-      $cfg['enable_xfer'] = 0;
-    } else {
-      $rec = array('user'=>'',
-                   'date'=>$db->DBDate(time()));
-      $sTable = 'tf_xfer';
-      $sql = $db->GetInsertSql($sTable, $rec);
-      $db->Execute($sql);
-      showError($db,$sql);
-    }
-  } elseif (empty($xferRecord)) {
-    $rec = array('user'=>'',
-                 'date'=>$db->DBDate(time()));
-    $sTable = 'tf_xfer';
-    $sql = $db->GetInsertSql($sTable, $rec);
-    $db->Execute($sql);
-    showError($db,$sql);
-  }
+	$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
+	if (empty($xferRecord)) {
+		$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
+		$sTable = 'tf_xfer';
+		$sql = $db->GetInsertSql($sTable, $rec);
+		$db->Execute($sql);
+		showError($db,$sql);
+	}
 	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
 	$newday = !$db->GetOne($sql);
 	showError($db,$sql);
@@ -117,6 +104,5 @@ if ($cfg['enable_xfer'] == 1) {
 	$lastDate = $db->GetOne($sql);
 	showError($db,$sql);
 }
-
 
 ?>

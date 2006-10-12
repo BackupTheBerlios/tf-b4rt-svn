@@ -26,7 +26,7 @@
 function getUsage($start, $period)
 {
   global $xfer, $xfer_total, $db;
-  $sql = 'SELECT user, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= "'.$start.'" AND user != "" GROUP BY user';
+  $sql = 'SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= "'.$start.'" AND user_id != "" GROUP BY user_id';
   $rtnValue = $db->GetAll($sql);
   showError($db,$sql);
   foreach ($rtnValue as $row) sumUsage($row[0], $row[1], $row[2], $period);
@@ -50,18 +50,18 @@ function sumUsage($user, $download, $upload, $period) {
 //XFER: Inserts or updates SQL upload/download for user
 function saveXfer($user, $down, $up) {
   global $db;
-  $sql = 'SELECT 1 FROM tf_xfer WHERE user = "'.$user.'" AND date = '.$db->DBDate(time());
+  $sql = 'SELECT 1 FROM tf_xfer WHERE user_id = "'.$user.'" AND date = '.$db->DBDate(time());
   if ($db->GetRow($sql)) {
-    $sql = 'UPDATE tf_xfer SET download = download+'.($down+0).', upload = upload+'.($up+0).' WHERE user = "'.$user.'" AND date = '.$db->DBDate(time());
+    $sql = 'UPDATE tf_xfer SET download = download+'.($down+0).', upload = upload+'.($up+0).' WHERE user_id = "'.$user.'" AND date = '.$db->DBDate(time());
     $db->Execute($sql);
     showError($db,$sql);
   } else {
     showError($db,$sql);
     // b4rt-8
     // blackwidow :
-    //$sql = 'INSERT INTO tf_xfer SET user = "'.$user.'", date = '.$db->DBDate(time()).', download = '.($down+0).', upload = '.($up+0);
+    //$sql = 'INSERT INTO tf_xfer SET user_id = "'.$user.'", date = '.$db->DBDate(time()).', download = '.($down+0).', upload = '.($up+0);
     // carlo1234 :
-    $sql = 'INSERT INTO tf_xfer (user,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
+    $sql = 'INSERT INTO tf_xfer (user_id,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
     // b4rt-8
     $db->Execute($sql);
     showError($db,$sql);
@@ -150,7 +150,7 @@ function displayXferDetail($user_id,$period,$period_start,$period_end)
 {
   global $cfg, $xfer, $xfer_total, $db;
   $period_query = ($period_start) ? 'and date >= "'.$period_start.'" and date < "'.$period_end.'"' : '';
-  $sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user LIKE "'.$user_id.'" '.$period_query.' GROUP BY date ORDER BY date';
+  $sql = 'SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE "'.$user_id.'" '.$period_query.' GROUP BY date ORDER BY date';
   $rtnValue = $db->GetAll($sql);
   showError($db,$sql);
   echo "<table width='760' border=1 bordercolor='$cfg[table_admin_border]' cellpadding='2' cellspacing='0' bgcolor='$cfg[table_data_bg]'>";
