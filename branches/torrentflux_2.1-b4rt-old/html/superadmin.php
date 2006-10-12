@@ -1420,6 +1420,10 @@ function backupCreate($talk = false, $compression = 0) {
 			$commandDatabase = "sqlite ".$cfg["db_host"]." .dump > ".$fileDatabase;
 			$commandArchive .= 'database.sql ';
 			break;
+		case "postgres":
+			$commandDatabase = "pg_dump -h ".$cfg["db_host"]." -D ".$cfg["db_name"]." -U ".$cfg["db_user"]." -f ".$fileDatabase;
+			$commandArchive .= 'database.sql ';
+			break;
 	}
 	$commandArchive .= 'docroot.tar';
 	//$commandDocroot = "cd ".$dirBackup."; tar -cf docroot.tar ".$_SERVER['DOCUMENT_ROOT']; // with path of docroot

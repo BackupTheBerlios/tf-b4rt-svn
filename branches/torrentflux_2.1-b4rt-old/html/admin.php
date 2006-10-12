@@ -259,8 +259,6 @@ function backupDatabase()
 {
 	global $cfg;
 
-	// b4rt-7
-	// "Backup Database SQLITE HACK"
 	//$file = $cfg["db_name"]."_".date("Ymd").".tar.gz";
 	$file = $cfg["db_name"]."_".$cfg["db_type"]."_".date("Ymd").".tar.gz";
 
@@ -276,13 +274,14 @@ function backupDatabase()
 		case "sqlite":
 			$sCommand = "sqlite ".$cfg["db_host"]." .dump > ".$sql_file;
 			break;
+		case "postgres":
+			$sCommand = "pg_dump -h ".$cfg["db_host"]." -D ".$cfg["db_name"]." -U ".$cfg["db_user"]." -f ".$sql_file;
+			break;
 		default:
 			// no support for backup-on-demand.
 			$sCommand = "";
 			break;
 	}
-	// "Backup Database SQLITE HACK"
-	// b4rt-7
 
 	if($sCommand != "")
 	{

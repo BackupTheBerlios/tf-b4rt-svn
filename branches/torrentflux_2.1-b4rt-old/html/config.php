@@ -41,7 +41,7 @@ require_once('config.db.php');
 // ***************************************************************************
 // ***************************************************************************
 
-$cfg["pagetitle"] = "TorrentFlux";
+$cfg["pagetitle"] = "torrentflux-b4rt";
 
 // CONSTANTS
 $cfg["constants"] = array();
@@ -65,7 +65,6 @@ $cfg["constants"]["admin"] = "ADMIN";
 asort($cfg["constants"]);
 
 // Add file extensions here that you will allow to be uploaded
-// wget Support V0.1
 $cfg["file_types_array"] = array("torrent","url");
 
 // Capture username
@@ -117,8 +116,6 @@ define('_REN_ERROR', 'An error accured, please try again!');
 define('_REN_ERR_ARG', 'Wrong argument supplied!');
 define('_REN_TITLE', 'Rename Folder');
 
-// <b4rt>
-
 // TorrentFlux Version
 $cfg["version"] = getLocalVersion();
 
@@ -161,17 +158,16 @@ $osString = php_uname('s');
 if (isset($osString)) {
     //$osFound = 0;
     if (!(stristr($osString, 'linux') === false)) { // linux
-        define('_OS',1);
+        define('_OS', 1);
         //$osFound++;
     } else if (!(stristr($osString, 'bsd') === false)) { // bsd
-        define('_OS',2);
+        define('_OS', 2);
         //$osFound++;
+    } else { // well... linux
+    	define('_OS', 1);
     }
     //if ($osFound == 0)
     //    die("unkown os\n");
 }
-
-
-// </b4rt>
 
 ?>
