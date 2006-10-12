@@ -2048,7 +2048,7 @@ function AuditAction($action, $file="") {
     $host_resolved = gethostbyaddr($cfg['ip']);
     $create_time = time();
 	if (isset($_SERVER['HTTP_USER_AGENT']))
-	   $user_agent = htmlentities($_SERVER['HTTP_USER_AGENT']);
+	   $user_agent = $_SERVER['HTTP_USER_AGENT'];
 	if ((! isset($user_agent)) || ($user_agent == ""))
 			$user_agent = "fluxcli.php/unknown";
 	if ((! isset($action)) || ($action == ""))
@@ -2058,8 +2058,8 @@ function AuditAction($action, $file="") {
     	'file' => $file,
     	'action' => $action,
     	'ip' => $cfg['ip'],
-    	'ip_resolved' => $host_resolved,
-    	'user_agent' => $user_agent,
+    	'ip_resolved' => htmlentities($host_resolved, ENT_QUOTES),
+    	'user_agent' => htmlentities($user_agent, ENT_QUOTES),
     	'time' => $create_time
         );
     $sTable = 'tf_log';
@@ -2189,7 +2189,7 @@ function resetOwner($file) {
 						'action' => $cfg["constants"]["reset_owner"],
 						'ip' => $cfg['ip'],
 						'ip_resolved' => $host_resolved,
-						'user_agent' => htmlentities($_SERVER['HTTP_USER_AGENT']),
+						'user_agent' => $_SERVER['HTTP_USER_AGENT'],
 						'time' => $create_time
 					);
 		$sTable = 'tf_log';
@@ -2506,7 +2506,7 @@ function cleanURL($url) {
 function FetchTorrent($url) {
 	global $cfg, $db;
 	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", htmlentities($_SERVER['HTTP_USER_AGENT']));
+	ini_set("user_agent", $_SERVER['HTTP_USER_AGENT']);
 	$domain	 = parse_url($url);
 	if (strtolower(substr($domain["path"], -8)) != ".torrent") {
 		// Check know domain types
@@ -2647,7 +2647,7 @@ function FetchTorrent($url) {
 function FetchHTML($url, $referer = "") {
 	global $cfg, $db;
 	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", htmlentities($_SERVER['HTTP_USER_AGENT']));
+	ini_set("user_agent", $_SERVER['HTTP_USER_AGENT']);
 	//$url = cleanURL($url);
 	$domain = parse_url($url);
 	$getcmd	 = $domain["path"];
@@ -2675,7 +2675,7 @@ function FetchHTML($url, $referer = "") {
 			$packet .= (!empty($referer)) ? "Referer: " . $referer . "\r\n" : "";
 			$packet .= "Accept: */*\r\n";
 			$packet .= "Accept-Language: en-us\r\n";
-			$packet .= "User-Agent: ".htmlentities($_SERVER['HTTP_USER_AGENT'])."\r\n";
+			$packet .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
 			$packet .= "Host: " . $_SERVER["SERVER_NAME"] . "\r\n";
 			$packet .= "Connection: Close\r\n";
 			$packet .= "Cookie: " . $cookie . "\r\n\r\n";
@@ -2706,7 +2706,7 @@ function FetchHTML($url, $referer = "") {
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
 		curl_setopt($ch, CURLOPT_HEADER, TRUE);
-		curl_setopt($ch, CURLOPT_USERAGENT, htmlentities($_SERVER['HTTP_USER_AGENT']));
+		curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);

@@ -68,7 +68,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$result = $db->SelectLimit($sql, $offset, $min);
 	showError($db, $sql);
 	$act_list = array();
-	while(list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
+	while (list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
 		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
 		if (IsOnline($user_id))
 			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
@@ -81,8 +81,8 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 			'user_icon' => $user_icon,
 			'action' => $action,
 			'file' => $file,
-			'ip_resolved' => $ip_resolved,
-			'user_agent' => $user_agent,
+			'ip_resolved' => htmlentities($ip_resolved, ENT_QUOTES),
+			'user_agent' => htmlentities($user_agent, ENT_QUOTES),
 			'ip' => $ip,
 			'date' => date($cfg['_DATETIMEFORMAT'], $time),
 			)
