@@ -184,15 +184,15 @@ if ($cfg["enable_search"])
             $settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
             if ($settingsHackStats[0] == 1) {
                 echo "<b>". _DOWNLOADSPEED .":</b><br>";
-                echo '<a href="who.php"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle">'.number_format($cfg["total_download"], 2).' kB/s</a><br>';
+                echo '<a href="who.php"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle">'.@number_format($cfg["total_download"], 2).' kB/s</a><br>';
             }
             if ($settingsHackStats[1] == 1) {
                 echo "<b>". _UPLOADSPEED .":</b><br>";
-                echo '<a href="who.php"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle">'.number_format($cfg["total_upload"], 2).' kB/s</a><br>';
+                echo '<a href="who.php"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle">'.@number_format($cfg["total_upload"], 2).' kB/s</a><br>';
             }
             if ($settingsHackStats[2] == 1) {
                 echo "<b>". _TOTALSPEED .":</b><br>";
-                echo '<a href="who.php"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle">'.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' kB/s</a><br>';
+                echo '<a href="who.php"><img src="images/download.gif" width="16" height="16" border="0" title="" align="absmiddle">'.@number_format($cfg["total_download"]+$cfg["total_upload"], 2).' kB/s</a><br>';
             }
             if ($settingsHackStats[3] == 1) {
                 echo "<b>". _ID_CONNECTIONS .":</b><br>";
@@ -200,7 +200,7 @@ if ($cfg["enable_search"])
             }
             if ($settingsHackStats[4] == 1) {
                 echo "<b>"._DRIVESPACE.":</b><br>";
-                echo '<a href="drivespace.php"><img src="images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle">'.formatFreeSpace($cfg["free_space"]).'</a><br>';
+                echo '<a href="drivespace.php"><img src="images/hdd.gif" width="16" height="16" border="0" title="" align="absmiddle">'.@formatFreeSpace($cfg["free_space"]).'</a><br>';
             }
             if ($settingsHackStats[5] == 1) {
                 echo "<b>"._SERVERLOAD.":</b><br>";
