@@ -3,7 +3,6 @@
 # $Id$
 # $Revision$
 # $Date$
-# $Author$
 #------------------------------------------------------------------------------#
 # fluxpoller.pl                                                                #
 #------------------------------------------------------------------------------#
@@ -11,7 +10,6 @@
 # liable for any damages to your soft- or hardware from this.                  #
 # Feel free to change or rip the code.                                         #
 ################################################################################
-
 use strict;
 
 # should we try to find needed binaries ? (using "whereis" + "awk")
