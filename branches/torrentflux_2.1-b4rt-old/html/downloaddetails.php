@@ -33,9 +33,8 @@ $alias = getRequestVar('alias');
 if (!empty($alias)) {
     // create AliasFile object
     $af = AliasFile::getAliasFileInstance($cfg["torrent_file_path"].$alias, $torrentowner, $cfg);
-    for ($inx = 0; $inx < sizeof($af->errors); $inx++) {
+    for ($inx = 0; $inx < sizeof($af->errors); $inx++)
         $error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
-    }
 } else {
     die("fatal error torrent file not specified");
 }
@@ -103,8 +102,8 @@ if($af->percent_done >= 100) {
     $background = "#0000ff";
 }
 
-$torrentLabel = $torrent;
-if(strlen($torrentLabel) >= 39)
+$torrentLabel = htmlentities($torrent, ENT_QUOTES);
+if (strlen($torrentLabel) >= 39)
     $torrentLabel = substr($torrent, 0, 35)."...";
 
 $hd = getStatusImage($af);

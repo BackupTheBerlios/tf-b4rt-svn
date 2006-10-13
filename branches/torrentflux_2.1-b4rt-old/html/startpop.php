@@ -34,7 +34,7 @@ if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
 // torrent exists ?
 $torrentExists = (getTorrentDataSize($torrent) > 0);
 // display name
-$displayName = $torrent;
+$displayName = htmlentities($torrent, ENT_QUOTES);
 if(strlen($displayName) >= 55)
     $displayName = substr($displayName, 0, 52)."...";
 

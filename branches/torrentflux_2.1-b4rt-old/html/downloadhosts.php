@@ -45,10 +45,9 @@ if (($af->running == 1) && ($alias != "")) {
 	$torrent_hosts = netstatHostsByPid($torrent_pid);
 }
 
-$torrentLabel = $torrent;
+$torrentLabel = htmlentities($torrent, ENT_QUOTES);
 if(strlen($torrentLabel) >= 39)
   $torrentLabel = substr($torrent, 0, 35)."...";
-
 
 $hd = getStatusImage($af);
 
@@ -108,8 +107,6 @@ if (($torrent_hosts != null) && ($torrent_hosts != "")) {
 }
 
 ?>
-
-
 
 <?php
     if ($error != "")
