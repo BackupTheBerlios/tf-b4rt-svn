@@ -44,9 +44,9 @@ if ((!empty($transfer)) && (!empty($alias))) {
 	$tmpl->setvar('torrent', $transfer);
 	$tmpl->setvar('alias', $alias);
 	if (strlen($transfer) >= 39)
-		$tmpl->setvar('torrentLabel', substr($transfer, 0, 35)."...");
+		$tmpl->setvar('torrentLabel', htmlentities(substr($transfer, 0, 35)."...", ENT_QUOTES));
 	else
-		$tmpl->setvar('torrentLabel', $transfer);
+		$tmpl->setvar('torrentLabel', htmlentities($transfer, ENT_QUOTES));
 } else {
 	showErrorPage("missing params");
 }

@@ -54,7 +54,7 @@ if ($af->running == 1) {
 } else {
 	$torrent_cons = "";
 }
-$torrentLabel = $torrent;
+$torrentLabel = htmlentities($torrent, ENT_QUOTES);
 if(strlen($torrentLabel) >= 39)
 	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);

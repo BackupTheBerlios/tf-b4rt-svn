@@ -49,9 +49,9 @@ $torrentExists = (getTorrentDataSize($torrent) > 0);
 
 // display name
 if (strlen($torrent) >= 55)
-	$displayName = substr($torrent, 0, 52)."...";
+	$displayName = htmlentities(substr($torrent, 0, 52)."...", ENT_QUOTES);
 else
-	$displayName = $torrent;
+	$displayName = htmlentities($torrent, ENT_QUOTES);
 
 // set some template-vars
 $tmpl->setvar('displayName', $displayName);
