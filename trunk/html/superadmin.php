@@ -987,7 +987,7 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= '<pre>';
 				$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
 				$htmlMain .= '</pre>';
-				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
 				break;
 			/*
 			case "4": // Issues
