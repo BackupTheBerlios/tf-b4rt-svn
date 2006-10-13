@@ -596,9 +596,11 @@ function deleteTorrent($torrent,$alias_file) {
             // this is "something else". use tornado statfile as default
             $af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
         }
-        //XFER: before torrent deletion save upload/download xfer data to SQL
-		$torrentTotals = getTorrentTotalsCurrent($delfile);
-		saveXfer($torrentowner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
+        if ($cfg['enable_xfer'] != 0) {
+	        //XFER: before torrent deletion save upload/download xfer data to SQL
+			$torrentTotals = getTorrentTotalsCurrent($delfile);
+			saveXfer($torrentowner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
+        }
 
         // torrent+stat
         @unlink($cfg["torrent_file_path"].$delfile);
