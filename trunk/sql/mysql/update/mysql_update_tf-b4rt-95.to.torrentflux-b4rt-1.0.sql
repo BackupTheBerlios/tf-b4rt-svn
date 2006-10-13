@@ -76,7 +76,6 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 --
 ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL;
 ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
-ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL;
 
 --
 -- updates
