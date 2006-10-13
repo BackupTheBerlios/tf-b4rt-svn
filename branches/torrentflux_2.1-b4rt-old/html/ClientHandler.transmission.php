@@ -83,6 +83,10 @@ class ClientHandlerTransmission extends ClientHandler
         //    $this->drate = -1;
         // included in transmissioncli
 
+        // transmission wants -1 for no seeding.
+        if ($this->sharekill == -1)
+            $this->sharekill_param = -1;
+        
         // pid-file
         $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
 
