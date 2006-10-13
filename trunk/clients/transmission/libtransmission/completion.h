@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.h 994 2006-10-12 23:34:20Z livings124 $
+ * $Id: completion.h 996 2006-10-13 00:23:20Z joshe $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -57,7 +57,7 @@ void              tr_cpBlockAdd( tr_completion_t *, int block );
 void              tr_cpBlockRem( tr_completion_t *, int block );
 uint8_t         * tr_cpBlockBitfield( tr_completion_t * );
 void              tr_cpBlockBitfieldSet( tr_completion_t *, uint8_t * );
-uint8_t           tr_cpPercentBlocksInPiece( tr_completion_t * cp, int piece );
+float             tr_cpPercentBlocksInPiece( tr_completion_t * cp, int piece );
 /* Missing = we don't have it and we are not getting it from any peer yet */
 static inline int tr_cpMissingBlocksForPiece( tr_completion_t * cp, int piece )
 {
