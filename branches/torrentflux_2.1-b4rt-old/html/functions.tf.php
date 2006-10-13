@@ -442,8 +442,6 @@ function DeleteMessage($mid) {
 // Delete Link
 function deleteOldLink($lid) {
     global $db;
-    // Link Mod
-    //$sql = "delete from tf_links where lid=".$lid;
     // Get Current sort order index of link with this link id:
     $idx=getLinkSortOrder($lid);
     // Fetch all link ids and their sort orders where the sort order is greater
@@ -462,7 +460,6 @@ function deleteOldLink($lid) {
     }
     // Finally delete the link:
     $sql = "DELETE FROM tf_links WHERE lid=".$lid;
-    // Link Mod
     $result = $db->Execute($sql);
     showError($db,$sql);
 }
@@ -559,7 +556,6 @@ function MarkMessageRead($mid) {
     showError($db,$sql);
 }
 
-// Link Mod
 //**************************************************************************
 // alterLink()
 // This function updates the database and alters the selected links values
@@ -598,7 +594,6 @@ function addNewLink($newLink,$newSite) {
     $db->Execute($sql);
     showError($db,$sql);
 }
-// Link Mod
 
 // ***************************************************************************
 // addNewRSS - Add New RSS Link
@@ -813,7 +808,6 @@ function DisplayHead($subTopic, $showButtons=true, $refresh="", $percentdone="")
 <?php
 }
 
-
 // ***************************************************************************
 // ***************************************************************************
 // Display the footer portion
@@ -849,7 +843,7 @@ function DisplayTorrentFluxLink($showVersionLink = false) {
     global $cfg;
     if ($cfg["ui_displayfluxlink"] != 0) {
         echo "<div align=\"right\">";
-        echo "<a href=\"http://www.torrentflux.com\" target=\"_blank\"><font class=\"tinywhite\">TorrentFlux ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
+        echo "<a href=\"http://tf-b4rt.berlios.de\" target=\"_blank\"><font class=\"tinywhite\">TorrentFlux ".$cfg["version"]."</font></a>&nbsp;&nbsp;";
         if ($showVersionLink)
             printSuperAdminLink('?a=0','');
         echo "</div>";
@@ -1093,7 +1087,6 @@ function getFileFilter($inArray) {
     $filter .= "$";
     return $filter;
 }
-
 
 //**************************************************************************
 // getAliasName()
@@ -1544,55 +1537,12 @@ function getDirList($dirName) {
             $displayname = substr($entry, 0, 44);
             $displayname .= "...";
         }
-        /*
-        // find out if any screens are running and take their PID and make a KILL option
-        foreach ($runningTorrents as $key => $value) {
-			// b4rt-61
-            //$rt = new RunningTorrent($value);
-			//$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg);
-            if ($rt->statFile == $alias) {
-                if ($kill_id == "") {
-                    $kill_id = $rt->processId;
-                } else {
-                    // there is more than one PID for this torrent
-                    // Add it so it can be killed as well.
-                    $kill_id .= "|".$rt->processId;
-                }
-            }
-        }
-        */
-		// b4rt-61 : this shoots my multi-clients as not all (mixed ones) are in process-list yet
-        // Check to see if we have a pid without a process.
-        /*
-        if (is_file($cfg["torrent_file_path"].$alias.".pid") && empty($kill_id)) {
-            // died outside of tf and pid still exists.
-            @unlink($cfg["torrent_file_path"].$alias.".pid");
-            if(($af->percent_done < 100) && ($af->percent_done >= 0)) {
-                // The file is not running and the percent done needs to be changed
-                $af->percent_done = ($af->percent_done+100)*-1;
-            }
-            $af->running = "0";
-            $af->time_left = "Torrent Died";
-            $af->up_speed = "";
-            $af->down_speed = "";
-            // write over the status file so that we can display a new status
-            $af->WriteFile();
-        }
-		*/
+
         if ($cfg["enable_torrent_download"])
             $torrentfilelink = "<a href=\"maketorrent.php?download=".urlencode($entry)."\"><img src=\"images/down.gif\" width=9 height=9 title=\"Download Torrent File\" border=0 align=\"absmiddle\"></a>";
         //
         $hd = getStatusImage($af);
-        //$output .= "<tr><td class=\"tiny\"><img src=\"images/".$hd->image."\" width=16 height=16 title=\"".$hd->title.$entry."\" border=0 align=\"absmiddle\">".$torrentfilelink.$displayname."</td>";
-        /*
-        $output .= "<tr><td class=\"tiny\">";
-        if ($af->running == 1)
-          $output .= "<a href=\"JavaScript:ShowDetails('downloadhosts.php?alias=".$alias."&torrent=".urlencode($entry)."')\">";
-        $output .= "<img src=\"images/".$hd->image."\" width=16 height=16 title=\"".$hd->title.$entry."\" border=0 align=\"absmiddle\">";
-        if ($af->running == 1)
-          $output .= "</a>";
-        $output .= $torrentfilelink.$displayname."</td>";
-        */
+
         $output .= "<tr>";
         $detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('downloaddetails.php?alias=".$alias."&torrent=".urlencode($entry)."')\">";
 
@@ -1706,9 +1656,6 @@ function getDirList($dirName) {
         $output .= "\"><img src=\"images/properties.png\" width=18 height=13 title=\"".$torrentDetails."\" border=0></a>";
 
         if ($owner || IsAdmin($cfg["user"])) {
-			// b4rt-61
-            //if($kill_id != "" && $af->percent_done >= 0 && $af->running == 1)
-            // messy
 			if($af->percent_done >= 0 && $af->running == 1) {
                 $output .= "<a href=\"index.php?alias_file=".$alias."&kill=".$kill_id."&kill_torrent=".urlencode($entry)."\"><img src=\"images/kill.gif\" width=16 height=16 title=\""._STOPDOWNLOAD."\" border=0></a>";
                 $output .= "<img src=\"images/delete_off.gif\" width=16 height=16 border=0>";
@@ -1744,25 +1691,19 @@ function getDirList($dirName) {
                 if (!is_file($cfg["torrent_file_path"].$alias.".pid")) {
                     $deletelink = $_SERVER['PHP_SELF']."?alias_file=".$alias."&delfile=".urlencode($entry);
                     $output .= "<a href=\"".$deletelink."\" onclick=\"return ConfirmDelete('".$entry."')\"><img src=\"images/delete_on.gif\" width=16 height=16 title=\""._DELETE."\" border=0></a>";
-					// b4rt-3 + 5
                     if ($cfg['enable_multiops'] == 1)
 					   $output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
-					// b4rt-3 + 5
                 } else {
                     // pid file present so process may be still running. don't allow deletion.
                     $output .= "<img src=\"images/delete_off.gif\" width=16 height=16 title=\""._STOPPING."\" border=0>";
-					// b4rt-3 + 5
 					if ($cfg['enable_multiops'] == 1)
 					   $output .= "<input type=\"checkbox\" name=\"torrent[]\" value=\"".urlencode($entry)."\">";
-					// b4rt-3 + 5
                 }
             }
         } else {
             $output .= "<img src=\"images/locked.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
             $output .= "<img src=\"images/locked.gif\" width=16 height=16 border=0 title=\""._NOTOWNER."\">";
-			// b4rt-3
 			$output .= "<input type=\"checkbox\" disabled=\"disabled\">";
-			// b4rt-3
         }
         $output .= "</div>";
         $output .= "</td>";

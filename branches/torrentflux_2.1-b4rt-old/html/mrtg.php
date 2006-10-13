@@ -79,4 +79,5 @@ echo 'position:relative; width:740; height:500; padding-left: 5px; padding-right
 echo $htmlGraph;
 echo '</div>';
 DisplayFoot();
+
 ?>

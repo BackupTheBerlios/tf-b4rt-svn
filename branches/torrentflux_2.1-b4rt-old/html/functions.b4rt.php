@@ -35,7 +35,7 @@ function netstatConnectionsSum() {
             unset($clientHandler);
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
             $nCount += (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c ". $clientHandler->binSocket));
-        break;
+        	break;
         case 2: // bsd
             $processUser = posix_getpwuid(posix_geteuid());
             $webserverUser = $processUser['name'];
@@ -44,7 +44,7 @@ function netstatConnectionsSum() {
             unset($clientHandler);
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
             $nCount += (int) trim(shell_exec($cfg['bin_fstat']." -u ".$webserverUser." | ".$cfg['bin_grep']." ". $clientHandler->binSocket . " | ".$cfg['bin_grep']." -c tcp"));
-        break;
+        	break;
     }
     return $nCount;
 }
@@ -64,7 +64,7 @@ function netstatConnectionsByPid($torrentPid) {
     switch (_OS) {
         case 1: // linux
             return trim(shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c \"".$torrentPid ."/\""));
-        break;
+        	break;
         case 2: // bsd
             $processUser = posix_getpwuid(posix_geteuid());
             $webserverUser = $processUser['name'];
@@ -74,7 +74,7 @@ function netstatConnectionsByPid($torrentPid) {
             $netcon = (int) trim(shell_exec($cfg['bin_fstat']." -u ".$webserverUser." | ".$cfg['bin_grep']." tcp | ".$cfg['bin_grep']." -c \"".$torrentPid ."\""));
             $netcon--;
             return $netcon;
-        break;
+       		break;
     }
 }
 
@@ -93,7 +93,7 @@ function netstatPortList() {
             unset($clientHandler);
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
             $retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
-        break;
+        	break;
         case 2: // bsd
             $processUser = posix_getpwuid(posix_geteuid());
             $webserverUser = $processUser['name'];
@@ -102,7 +102,7 @@ function netstatPortList() {
             unset($clientHandler);
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
             $retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." ".substr($clientHandler->binSocket, 0, 9)." | ". $cfg['bin_awk']." '/tcp/ {print \$6}' | ".$cfg['bin_awk']." -F \":\" '{print \$2}'");
-        break;
+        	break;
     }
     return $retStr;
 }
@@ -122,12 +122,12 @@ function netstatPortByPid($torrentPid) {
     switch (_OS) {
         case 1: // linux
             return trim(shell_exec($cfg['bin_netstat']." -l -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." \"".$torrentPid ."/\" | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'"));
-        break;
+        	break;
         case 2: // bsd
             $processUser = posix_getpwuid(posix_geteuid());
             $webserverUser = $processUser['name'];
             return (shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$torrentPid.".*tcp.*\*:\*/ {split(\$6, a, \":\");print a[2]}'"));
-        break;
+        	break;
     }
 }
 
@@ -146,7 +146,7 @@ function netstatHostList() {
             unset($clientHandler);
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
             $retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
-        break;
+        	break;
         case 2: // bsd
             $processUser = posix_getpwuid(posix_geteuid());
             $webserverUser = $processUser['name'];
@@ -155,7 +155,7 @@ function netstatHostList() {
             unset($clientHandler);
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,"transmission");
             $retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -v '*.*' | ".$cfg['bin_awk']." '/".$webserverUser.".*".substr($clientHandler->binSocket, 0, 9).".*tcp/ {print \$7}'");
-        break;
+        	break;
     }
     return $retStr;
 }
@@ -181,7 +181,7 @@ function netstatHostsByPid($torrentPid) {
                 $hostLineAry = explode(':',trim($line));
                 $hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
             }
-        break;
+        	break;
         case 2: // bsd
             $processUser = posix_getpwuid(posix_geteuid());
             $webserverUser = $processUser['name'];
@@ -195,7 +195,7 @@ function netstatHostsByPid($torrentPid) {
                 if ((trim($hostLineAry[0])) != "*") /* exclude non wanted entry */
                     $hostHash[$hostLineAry[0]] = @ $hostLineAry[1];
             }
-        break;
+        	break;
     }
     return $hostHash;
 }
@@ -295,8 +295,6 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
  */
 function loadTorrentSettings($torrent) {
     global $cfg, $db;
-    //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-    //    return;
     $sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
     $result = $db->Execute($sql);
 		showError($db, $sql);
@@ -328,8 +326,6 @@ function loadTorrentSettings($torrent) {
  */
 function loadTorrentSettingsToConfig($torrent) {
     global $cfg, $db, $superseeder;
-    //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-    //    return false;
     $sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
     $result = $db->Execute($sql);
 		showError($db, $sql);
@@ -359,8 +355,6 @@ function loadTorrentSettingsToConfig($torrent) {
  * @param $torrent name of the torrent
  */
 function stopTorrentSettings($torrent) {
-  //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-  //  return false;
   global $db;
   $sql = "UPDATE tf_torrents SET running = '0' WHERE torrent = '".$torrent."'";
   $db->Execute($sql);
@@ -374,17 +368,6 @@ function stopTorrentSettings($torrent) {
  * @return value of running-flag in db
  */
 function isTorrentRunning($torrent) {
-	//if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-	//	return 0;
-	// b4rt-8: make this pid-file-parsed.. maybe we got some "zombies" (torrents that stopped themselves)
-	/*
-	global $db;
-	$retVal = $db->GetOne("SELECT running FROM tf_torrents WHERE torrent = '".$torrent."'");
-	if ($retVal > 0)
-		return $retVal;
-	else
-		return 0;
-	*/
     global $cfg;
     if (file_exists($cfg["torrent_file_path"].substr($torrent,0,-8).'.stat.pid'))
         return 1;
@@ -399,8 +382,6 @@ function isTorrentRunning($torrent) {
  * @return btclient
  */
 function getTorrentClient($torrent) {
-  //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-  //  return 0;
   global $db;
   return $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$torrent."'");
 }
@@ -452,8 +433,6 @@ function getTorrentHash($torrent) {
     }
 }
 
-// TOTALS =======================================================================================================================
-
 /**
  * updates totals of a torrent
  *
@@ -463,32 +442,6 @@ function getTorrentHash($torrent) {
  */
 function updateTorrentTotals($torrent) {
     global $cfg, $db;
-    //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-    //    return;
-    /*
-    $torrentId = getTorrentHash($torrent);
-    $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
-    $result = $db->Execute($sql);
-		showError($db, $sql);
-    $row = $result->FetchRow();
-    if (!empty($row)) {
-        $currentUp           = $row["uptotal"];
-        $currentDown         = $row["downtotal"];
-        $upSum = $currentUp + $uptotal;
-        $downSum = $currentDown + $downtotal;
-        $sql = "UPDATE tf_torrent_totals SET uptotal = '".($upSum+0)."', downtotal = '".($downSum+0)."' WHERE tid = '".$torrentId."'";
-        $db->Execute($sql);
-    } else {
-        $sql = "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal )
-		          VALUES (
-                    '".$torrentId."',
-                    '".$uptotal."',
-                    '".$downtotal."'
-                   )";
-        $db->Execute($sql);
-    }
-	showError($db, $sql);
-	*/
     $torrentId = getTorrentHash($torrent);
     $torrentTotals = getTorrentTotals($torrent);
     // very ugly exists check... too lazy now
@@ -519,24 +472,6 @@ function updateTorrentTotals($torrent) {
  */
 function getTorrentTotals($torrent) {
     global $cfg, $db;
-    //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-    //    return;
-    /*
-    $torrentId = getTorrentHash($torrent);
-    $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
-    $result = $db->Execute($sql);
-		showError($db, $sql);
-    $row = $result->FetchRow();
-    $retVal = array();
-    if (!empty($row)) {
-        $retVal["uptotal"] = $row["uptotal"];
-        $retVal["downtotal"] = $row["downtotal"];
-    } else {
-        $retVal["uptotal"] = 0;
-        $retVal["downtotal"] = 0;
-    }
-    return $retVal;
-    */
     $btclient = getTorrentClient($torrent);
     include_once("ClientHandler.php");
     $clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
@@ -588,8 +523,6 @@ function getTorrentTotalsCurrentOP($torrent,$btclient,$afu,$afd) {
     $clientHandler = ClientHandler::getClientHandlerInstance($cfg, $btclient);
     return $clientHandler->getTorrentTransferCurrentOP($torrent,$afu,$afd);
 }
-
-// TOTALS =======================================================================================================================
 
 /**
  * resets totals of a torrent
@@ -643,16 +576,12 @@ function deleteTorrent($torrent,$alias_file) {
     if (($cfg["user"] == $torrentowner) || IsAdmin()) {
         include_once("AliasFile.php");
         // we have more meta-files than .torrent. handle this.
-        //$af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, 0, $cfg);
         if ((substr( strtolower($torrent),-8 ) == ".torrent")) {
             // this is a torrent-client
             $btclient = getTorrentClient($delfile);
             $af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $torrentowner, $cfg, $btclient);
-// TOTALS =======================================================================================================================
             // update totals for this torrent
-            //updateTorrentTotals($delfile, $af->uptotal+0, $af->downtotal+0);
             updateTorrentTotals($delfile);
-// TOTALS =======================================================================================================================
             // remove torrent-settings from db
             deleteTorrentSettings($delfile);
 			// client-proprietary leftovers
@@ -667,14 +596,9 @@ function deleteTorrent($torrent,$alias_file) {
             // this is "something else". use tornado statfile as default
             $af = AliasFile::getAliasFileInstance($cfg['torrent_file_path'].$alias_file, $cfg['user'], $cfg, 'tornado');
         }
-
-// TOTALS =======================================================================================================================
         //XFER: before torrent deletion save upload/download xfer data to SQL
-        //if ($af->downtotal || $af->uptotal)
-        //    saveXfer($af->torrentowner,$af->downtotal,$af->uptotal);
 		$torrentTotals = getTorrentTotalsCurrent($delfile);
 		saveXfer($torrentowner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
-// TOTALS =======================================================================================================================
 
         // torrent+stat
         @unlink($cfg["torrent_file_path"].$delfile);
@@ -827,7 +751,6 @@ function getRunningTorrentCount() {
 	global $cfg;
 	/*
 	include_once("ClientHandler.php");
-	// messy...
 	$tCount = 0;
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg,"tornado");
 	$tCount += $clientHandler->getRunningClientCount();
@@ -929,7 +852,7 @@ function getTorrentMetaInfo($torrent) {
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
 			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["torrent_file_path"].$torrent."\"");
-		break;
+			break;
 		case "btshowmetainfo.py":
 		default:
 			return shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
@@ -1993,11 +1916,11 @@ function getLoadAverageString() {
             } else {
                 return 'n/a';
             }
-        break;
+        	break;
         case 2: // bsd
             $loadavg = preg_replace("/.*load averages:(.*)/", "$1", exec("uptime"));
             return $loadavg;
-        break;
+        	break;
         default:
             return 'n/a';
     }
@@ -2321,6 +2244,5 @@ function printDrivespacebarSelectForm() {
     echo '>xfer</option>';
     echo '</select>';
 }
-
 
 ?>

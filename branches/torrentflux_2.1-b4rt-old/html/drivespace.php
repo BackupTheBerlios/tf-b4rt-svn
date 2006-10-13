@@ -23,10 +23,8 @@
 include_once("config.php");
 include_once("functions.php");
 
-
 $result = shell_exec("df -h ".$cfg["path"]);
 $result2 = shell_exec("du -sh ".$cfg["path"]."*");
-
 
 DisplayHead(_DRIVESPACE);
 echo "<table width=\"740\" border=0 cellpadding=0 cellspacing=0><tr><td>";

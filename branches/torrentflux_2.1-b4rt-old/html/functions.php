@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // Start Session and grab user
-session_start("TorrentFlux");
+@session_start("TorrentFlux");
 
 if(isset($_SESSION['user']))
     $cfg["user"] = strtolower($_SESSION['user']);
@@ -74,7 +74,6 @@ PruneDB();
 
 // is there a stat and torrent dir?  If not then it will create it.
 checkTorrentPath();
-
 
 /*************************************************************
 *  TorrentFlux xfer Statistics hack

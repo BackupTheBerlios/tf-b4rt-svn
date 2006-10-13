@@ -49,8 +49,6 @@ echo "<strong>"._SERVERSTATS."</strong>\n\n";
 echo $result4;
 echo "<br><hr><br>";
 echo $result5;
-
-// <b4rt>
 echo "<br><hr><br>";
 echo "<strong>"._ID_CONNECTIONS." : </strong>";
 echo netstatConnectionsSum();
@@ -60,11 +58,8 @@ echo netstatPortList();
 echo "<br>\n";
 echo "<strong>"._ID_HOSTS." : </strong>\n";
 echo netstatHostList();
-// </b4rt>
-
 echo "</pre>";
 echo "</div>";
-
 
 DisplayFoot();
 

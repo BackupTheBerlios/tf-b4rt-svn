@@ -535,7 +535,6 @@ function showIndex() {
     DisplayFoot();
 }
 
-
 //******************************************************************************
 // updateProfile -- update profile
 //******************************************************************************
@@ -567,7 +566,6 @@ function updateProfile($pass1, $pass2, $hideOffline, $theme, $language)
 
     DisplayFoot();
 }
-
 
 //******************************************************************************
 // ShowCookies -- show cookies for user
@@ -754,8 +752,6 @@ function modCookie($cid,$newCookie) {
 
 //****************************************************************************
 //****************************************************************************
-//****************************************************************************
-//****************************************************************************
 // TRAFFIC CONTROLER
 $op = getRequestVar('op');
 
@@ -763,12 +759,12 @@ switch ($op) {
     default:
         showIndex();
         exit;
-    break;
+    	break;
 
     // update per user settings
     case "updateSettingsUser":
         updateSettingsUser();
-    break;
+    	break;
 
     case "updateProfile":
         $pass1 = getRequestVar('pass1');
@@ -777,20 +773,20 @@ switch ($op) {
         $theme = getRequestVar('theme');
         $language = getRequestVar('language');
         updateProfile($pass1, $pass2, $hideOffline, $theme, $language);
-    break;
+    	break;
 
     // Show main Cookie Management
     case "showCookies":
     case "editCookies":
         showCookies();
-    break;
+    	break;
 
     // Add a new cookie to user
     case "addCookie":
         $newCookie["host"] = getRequestVar('host');
         $newCookie["data"] = getRequestVar('data');
         addCookie( $newCookie );
-    break;
+    	break;
 
     // Modify an existing cookie from user
     case "modCookie":
@@ -798,19 +794,17 @@ switch ($op) {
         $newCookie["data"] = getRequestVar( 'data' );
         $cid = getRequestVar( 'cid' );
         modCookie( $cid, $newCookie );
-    break;
+    	break;
 
     // Delete selected cookie from user
     case "deleteCookie":
         $cid = $_GET["cid"];
         deleteCookie( $cid );
-    break;
+    	break;
 
 }
-//****************************************************************************
-//****************************************************************************
-//****************************************************************************
-//****************************************************************************
 
+//****************************************************************************
+//****************************************************************************
 
 ?>

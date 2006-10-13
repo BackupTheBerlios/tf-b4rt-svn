@@ -111,12 +111,10 @@ function ValidateValues()
         msg = msg + "* Port Range is not valid.\n";
         document.theForm.minport.focus();
     }
-    // b4rt-2
     if (isNumber(document.theForm.maxcons.value) == false) {
         msg = msg + "* Max # Connections must be a valid number.\n";
         document.theForm.maxcons.focus();
     }
-    // b4rt-2
     if (msg != "")
     {
         rtnValue = false;
@@ -243,7 +241,7 @@ function isNumber(sText)
         <table>
         <tr>
             <td aligh="right">Save Path:</td>
-            <td colspan="3"><input type="text" name="savepath" size="45" value="<?php echo $cfg["savepath"]; /* b4rt-4 */ /*$cfg["path"].getOwner($torrent).'/';*/ ?>"></td>
+            <td colspan="3"><input type="text" name="savepath" size="45" value="<?php echo $cfg["savepath"]; ?>"></td>
         </tr>
         <tr>
             <td align="right">Or use this path:</td>

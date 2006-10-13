@@ -27,7 +27,7 @@ require_once("settingsfunctions.php");
 // Create Connection.
 $db = getdb();
 loadSettings();
-session_start("TorrentFlux");
+@session_start("TorrentFlux");
 require_once("config.php");
 include("themes/".$cfg["default_theme"]."/index.php");
 global $cfg;
@@ -35,7 +35,7 @@ if(isset($_SESSION['user'])) {
 	header("location: index.php");
 	exit();
 }
-ob_start();
+@ob_start();
 
 // authentication
 switch ($cfg['auth_type']) {
@@ -153,7 +153,7 @@ if(!empty($user) && !empty($iamhim)) {
 		$result = $db->Execute($sql);
 		showError($db, $sql);
 		$_SESSION['user'] = $user;
-		session_write_close();
+		@session_write_close();
 		header("location: ".$next_loc);
 		exit();
 	} else { // wrong credentials
@@ -288,5 +288,5 @@ function loginvalidate() {
 </body>
 </html>
 <?php
-ob_end_flush();
+@ob_end_flush();
 ?>

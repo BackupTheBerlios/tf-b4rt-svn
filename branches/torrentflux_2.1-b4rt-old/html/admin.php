@@ -122,7 +122,7 @@ function addUser($newUser, $pass1, $userType)
 
 		echo "<br><div align=\"center\">"._TRYDIFFERENTUSERID."<br><strong>".$newUser."</strong> "._HASBEENUSED."</div><br><br><br>";
 
-		DisplayFoot(true,true); // b4rt-62
+		DisplayFoot(true,true);
 	}
 	else
 	{
@@ -150,7 +150,7 @@ function updateUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 
 		echo "[<a href=\"admin.php?op=editUser&user_id=".$org_user_id."\">"._RETURNTOEDIT." ".$org_user_id."</a>]</div><br><br><br>";
 
-		DisplayFoot(true,true); // b4rt-62
+		DisplayFoot(true,true);
 	}
 	else
 	{
@@ -226,7 +226,7 @@ function showIndex($min = 0)
 	// Display Activity
 	displayActivity($min);
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 
 }
 
@@ -246,11 +246,9 @@ function showUserActivity($min=0, $user_id="", $srchFile="", $srchAction="")
 	// display Activity for user
 	displayActivity($min, $user_id, $srchFile, $srchAction);
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 
 }
-
-
 
 //****************************************************************************
 // backupDatabase -- backup the database
@@ -311,7 +309,6 @@ function backupDatabase()
 	}
 }
 
-
 //****************************************************************************
 // displayMenu -- displays Admin Menu
 //****************************************************************************
@@ -331,12 +328,11 @@ function displayMenu()
 	//XFER
 	if ($cfg['enable_xfer'] == 1) echo "<a href=\"admin.php?op=xfer\"><font class=\"adminlink\">"._XFER."</font></a> | ";
 	echo "<a href=\"admin.php?op=backupDatabase\"><font class=\"adminlink\">"._BACKUP_MENU."</font></a> | ";
-	echo "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | "; // b4rt-8
-	printSuperAdminLink('','<font class="adminlink">superadmin</font>'); // b4rt-7
+	echo "<a href=\"admin.php?op=uiSettings\"><font class=\"adminlink\">ui</font></a> | ";
+	printSuperAdminLink('','<font class="adminlink">superadmin</font>');
 	echo "</div></td></tr>";
 	echo "</table><br>";
 }
-
 
 //****************************************************************************
 // displayActivity -- displays Activity
@@ -489,7 +485,6 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="")
 	</table>
 	</div>
 
-
 <?php
 	echo "<table width=\"760\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\" bgcolor=\"".$cfg["table_data_bg"]."\">";
 	echo "<tr><td colspan=6 bgcolor=\"".$cfg["table_header_bg"]."\" background=\"themes/".$cfg["theme"]."/images/bar.gif\">";
@@ -528,8 +523,6 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="")
 	echo "</table>";
 
 }
-
-
 
 //****************************************************************************
 // displayUserSection -- displays the user section
@@ -643,7 +636,6 @@ function displayUserSection()
 	</script>
 <?php
 }
-
 
 //****************************************************************************
 // editUser -- edit a user
@@ -871,7 +863,7 @@ function editUser($user_id)
 
 	echo "<br><br>";
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 }
 
 
@@ -984,7 +976,7 @@ function CreateUser()
 
 	echo "<br><br>";
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 }
 
 //****************************************************************************
@@ -1077,13 +1069,9 @@ function editLinks()
 		}
 		// Link Mod
 	}
-
 	echo "</table></div><br><br><br>";
-
-	DisplayFoot(true,true); // b4rt-62
-
+	DisplayFoot(true,true);
 }
-
 
 //****************************************************************************
 // editRSS -- Edit RSS Feeds
@@ -1117,11 +1105,8 @@ function editRSS()
 		echo "<tr><td><a href=\"admin.php?op=deleteRSS&rid=".$rid."\"><img src=\"images/delete_on.gif\" width=16 height=16 border=0 title=\""._DELETE." ".$rid."\" align=\"absmiddle\"></a>&nbsp;";
 		echo "<a href=\"".$link."\" target=\"_blank\">".$link."</a></td></tr>\n";
 	}
-
 	echo "</table></div><br><br><br>";
-
-	DisplayFoot(true,true); // b4rt-62
-
+	DisplayFoot(true,true);
 }
 
 //****************************************************************************
@@ -1438,7 +1423,6 @@ function configSettings()
 				<input name="max_uploads" type="Text" maxlength="5" value="<?php echo($cfg["max_uploads"]); ?>" size="5">
 			</td>
 		</tr>
-		<!-- b4rt-5 -->
 		<tr>
 		   <td align="left" width="350" valign="top"><strong>Max Cons (B)</strong><br>
 		   Set default-value for maxcons.
@@ -2310,9 +2294,8 @@ function configSettings()
 	echo "</td></tr>";
 	echo "</table></div>";
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 }
-
 
 //****************************************************************************
 // updateConfigSettings -- updating App Settings
@@ -2325,13 +2308,6 @@ function updateConfigSettings() {
 	$continue = getRequestVar('continue');
 	header("Location: admin.php?op=".$continue);
 }
-
-
-// ============================================================================================================================
-// _queue_
-
-
-// b4rt-802
 
 //****************************************************************************
 // updateQueueSettings -- updating queue Settings
@@ -2867,8 +2843,6 @@ function queueSettings() {
 		echo "</tr>";
 		echo "\n";
 
-		// b4rt-61
-		// messy...
 		// get running tornado torrents and List them out.
 		$runningTorrents = getRunningTorrents("tornado");
 		foreach ($runningTorrents as $key => $value) {
@@ -2881,7 +2855,6 @@ function queueSettings() {
 			$rt = RunningTorrent::getRunningTorrentInstance($value,$cfg,"transmission");
 			$output .= $rt->BuildAdminOutput();
 		}
-		// b4rt-61
 
 		if( strlen($output) == 0 )
 		{
@@ -2893,7 +2866,7 @@ function queueSettings() {
 
 	}
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 }
 
 
@@ -3030,7 +3003,7 @@ function searchSettings()
 	</table></div>
 <?php
 
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 }
 
 //****************************************************************************
@@ -3346,7 +3319,7 @@ function uiSettings() {
 </td></tr>
 </table></div>
 <?php
-	DisplayFoot(true,true); // b4rt-62
+	DisplayFoot(true,true);
 }
 
 //******************************************************************************
@@ -3374,7 +3347,7 @@ switch ($op)
 		$min = getRequestVar('min');
 		if(empty($min)) $min=0;
 		showIndex($min);
-	break;
+		break;
 
 	case "showUserActivity":
 		$min = getRequestVar('min');
@@ -3383,7 +3356,7 @@ switch ($op)
 		$srchFile = getRequestVar('srchFile');
 		$srchAction = getRequestVar('srchAction');
 		showUserActivity($min, $user_id, $srchFile, $srchAction);
-	break;
+		break;
 
 	//XFER
 	case "xfer":
@@ -3393,82 +3366,75 @@ switch ($op)
 			getDirList($cfg["torrent_file_path"],0);
 			displayXfer();
 		}
-		DisplayFoot(true,true); // b4rt-62
-	break;
+		DisplayFoot(true,true);
+		break;
 
 	case "backupDatabase":
 		backupDatabase();
-	break;
+		break;
 
 	case "editRSS":
 		editRSS();
-	break;
+		break;
 
 	case "addRSS":
 		$newRSS = getRequestVar('newRSS');
 		addRSS($newRSS);
-	break;
+		break;
 
 	case "deleteRSS":
 		$rid = getRequestVar('rid');
 		deleteRSS($rid);
-	break;
+		break;
 
-	// Link Mod
 	case "editLink":
 		$lid = getRequestVar('lid');
 		$editLink = getRequestVar('editLink');
 		$editSite = getRequestVar('editSite');
 		editLink($lid,$editLink,$editSite);
-	break;
-	// Link Mod
+		break;
 
 	case "editLinks":
 		editLinks();
-	break;
+		break;
 
 	case "addLink":
 		$newLink = getRequestVar('newLink');
-		// Link Mod
-		//addLink($newLink);
 		$newSite = getRequestVar('newSite');
 		addLink($newLink,$newSite);
-		// Link Mod
-	break;
+		break;
 
-	// Link Mod
 	case "moveLink":
 		$lid = getRequestVar('lid');
 		$direction = getRequestVar('direction');
 		moveLink($lid, $direction);
-	break;
-	// Link Mod
+		break;
 
 	case "deleteLink":
 		$lid = getRequestVar('lid');
 		deleteLink($lid);
-	break;
+		break;
 
 	case "CreateUser":
 		CreateUser();
-	break;
+		break;
 
 	case "addUser":
 		$newUser = getRequestVar('newUser');
 		$pass1 = getRequestVar('pass1');
 		$userType = getRequestVar('userType');
 		addUser($newUser, $pass1, $userType);
-	break;
+		break;
 
 	case "deleteUser":
 		$user_id = getRequestVar('user_id');
 		deleteUser($user_id);
-	break;
+		break;
 
 	case "editUser":
 		$user_id = getRequestVar('user_id');
 		editUser($user_id);
-	break;
+		break;
 
 	case "updateUser":
 		$user_id = getRequestVar('user_id');
@@ -3477,57 +3443,47 @@ switch ($op)
 		$userType = getRequestVar('userType');
 		$hideOffline = getRequestVar('hideOffline');
 		updateUser($user_id, $org_user_id, $pass1, $userType, $hideOffline);
-	break;
+		break;
 
 	case "configSettings":
 		configSettings();
-	break;
-
-
-// ============================================================================================================================
-// _queue_
+		break;
 
 	case "updateConfigSettings":
 		if (! array_key_exists("debugTorrents", $_REQUEST))
 			$_REQUEST["debugTorrents"] = false;
 		updateConfigSettings();
-	break;
+		break;
 
-	// b4rt-802
 	case "updateQueueSettings":
 		if (! array_key_exists("debugTorrents", $_REQUEST))
 			$_REQUEST["debugTorrents"] = false;
 		@updateQueueSettings();
-	break;
+		break;
 
 	case "controlQueueManager":
 		controlQueueManager();
-	break;
-	// b4rt-802
+		break;
 
 	case "queueSettings":
 		queueSettings();
-	break;
+		break;
 
-// ============================================================================================================================
-
-	// b4rt-8
 	case "uiSettings":
 		uiSettings();
-	break;
+		break;
 
 	case "updateUiSettings":
 		updateUiSettings();
-	break;
-	// b4rt-8
+		break;
 
 	case "searchSettings":
 		searchSettings();
-	break;
+		break;
 
 	case "updateSearchSettings":
 		updateSearchSettings();
-	break;
+		break;
 
 }
 //****************************************************************************

@@ -80,52 +80,52 @@ if ((isset($action)) && ($action != "")) {
 	switch ($action) {
 		case "torrents":
 			printTorrents();
-		break;
+			break;
 		case "status":
 			printStatus();
-		break;
+			break;
 		case "netstat":
 			printNetStat();
-		break;
+			break;
 		case "start":
 			cliStartTorrent(@$argv[2]);
-		break;
+			break;
 		case "stop":
 			cliStopTorrent(@$argv[2]);
-		break;
+			break;
 		case "start-all":
 			cliStartTorrents();
-		break;
+			break;
 		case "resume-all":
 			cliResumeTorrents();
-		break;
+			break;
 		case "stop-all":
 			cliStopTorrents();
-		break;
+			break;
 		case "reset":
 			cliResetTorrent(@$argv[2]);
-		break;
+			break;
 		case "delete":
 			cliDeleteTorrent(@$argv[2]);
-		break;
+			break;
 		case "wipe":
 			cliWipeTorrent(@$argv[2]);
-		break;
+			break;
 		case "inject":
 			cliInjectTorrent(@$argv[2],@$argv[3]);
-		break;
+			break;
 		case "watch":
 			cliWatchDir(@$argv[2],@$argv[3]);
-		break;
+			break;
 		case "repair":
 		    echo "Repairing TorrentFlux-Installation...";
 			repairTorrentflux();
         	echo "done\n";
         	exit;
-		break;
+			break;
 		default:
 			printUsage();
-		break;
+			break;
 	}
 } else {
 	printUsage();

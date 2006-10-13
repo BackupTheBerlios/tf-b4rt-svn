@@ -43,14 +43,12 @@ if (!empty($alias)) {
 // Load saved settings
 loadTorrentSettingsToConfig($torrent);
 
-// TOTALS =======================================================================================================================
 $torrentTotals = getTorrentTotals($torrent);
 $torrentTotalsCurrent = getTorrentTotalsCurrent($torrent);
 $upTotalCurrent = ($torrentTotalsCurrent["uptotal"]+0);
 $downTotalCurrent = ($torrentTotalsCurrent["downtotal"]+0);
 $upTotal =($torrentTotals["uptotal"]+0);
 $downTotal = ($torrentTotals["downtotal"]+0);
-// TOTALS =======================================================================================================================
 
 // seeding-%
 $torrentSize = $af->size+0;
@@ -126,7 +124,6 @@ DisplayHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% ");
     echo $torrentLabel."<font class=\"tiny\"> (".formatBytesToKBMGGB($af->size).")</font>";
 ?>
         </td>
-        <!-- b4rt+b4rt-2 -->
         <td align="right" width="16">
         <?php
         if ($af->running == 1)
@@ -136,9 +133,8 @@ DisplayHead(_DOWNLOADDETAILS, false, "5", $af->percent_done."% ");
         	echo "</a>";
         ?>
         </td>
-        <!-- b4rt+b4rt-2 -->
     </tr>
-    </table> <!-- 352 -->
+    </table>
     <table bgcolor="<?php echo $cfg["table_header_bg"] ?>" width="352" cellpadding="1">
      <tr>
          <td>

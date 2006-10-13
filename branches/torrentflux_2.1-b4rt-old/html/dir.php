@@ -147,7 +147,6 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 
 if ($dir == "")
     unset($dir);
-
 if (isset($dir)) {
     if (ereg("(\.\.)", $dir))
         unset($dir);
@@ -196,7 +195,6 @@ DisplayFoot();
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
-
 //**************************************************************************
 // ListDirectory()
 // This method reads files and directories in the specified path and
@@ -230,7 +228,6 @@ function ListDirectory($dirName) {
             if (@is_dir($dirName.$entry)) {
                 echo "<tr bgcolor=\"".$bg."\"><td><a href=\"dir.php?dir=".urlencode($dir.$entry)."\"><img src=\"images/folder2.gif\" width=\"16\" height=\"16\" title=\"".$entry."\" border=\"0\" align=\"absmiddle\">".$entry."</a></td>";
                 // Some Stats dir hack
-                // b4rt-5
                 if ($cfg['enable_dirstats'] == 1) {
                     $dudir = shell_exec($cfg['bin_du']." -sk -h ".correctFileName($dirName.$entry));
                     $dusize = explode("\t", $dudir);
@@ -249,7 +246,7 @@ function ListDirectory($dirName) {
 				// move hack
 		    	include('move_dir_extension.php');
 
-                // b4rt-5 : SFV Check
+                // SFV Check
                 if ($cfg['enable_sfvcheck'] == 1) {
                     if(false !== ($sfv = findSFV($dirName.$entry))) {
                       echo '<a href="javascript:CheckSFV(\''.
@@ -260,8 +257,7 @@ function ListDirectory($dirName) {
                       echo '<img src="images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">';
                     }
                 }
-                // b4rt-5 : SFV Check
-                // maketorrentt
+                // maketorrent
                 if ($cfg["enable_maketorrent"])
                     echo "<a href=\"JavaScript:MakeTorrent('maketorrent.php?path=".urlencode($dir.$entry)."')\"><img src=\"images/make.gif\" width=16 height=16 title=\"Make Torrent\" border=0></a>";
                 // download
@@ -327,13 +323,11 @@ function ListDirectory($dirName) {
                 }
                 echo "</td>";
                 echo "<td align=\"right\">".$fileSize." KB</td>";
-                // b4rt-5
                 // Some Stats dir hack
                 if ($cfg['enable_dirstats'] == 1)
                     echo "<td width=140>".@date("m-d-Y h:i a", $timeStamp)."</td>";
                 else
                     echo "<td>".@date("m-d-Y g:i a", $timeStamp)."</td>";
-                // b4rt-5
                 echo "<td align=\"right\" nowrap>";
 
 				// rename hack
@@ -341,7 +335,6 @@ function ListDirectory($dirName) {
 				// move hack
 		    	include('move_dir_extension.php');
 
-                // b4rt
                 if ($cfg['enable_rar'] == 1) {
                     // R.D. - Display links for unzip/unrar
                     //**************************************************************************************************************
@@ -354,7 +347,6 @@ function ListDirectory($dirName) {
                     }
                     //**************************************************************************************************************
                 }
-                // b4rt
 
                 // nfo
                 if ($cfg["enable_view_nfo"] && ((substr(strtolower($entry), -4 ) == ".nfo" ) || (substr(strtolower($entry), -4 ) == ".txt" ) || (substr(strtolower($entry), -4 ) == ".log" )))
@@ -391,8 +383,7 @@ function ListDirectory($dirName) {
             }
         }
     }
-    // b4rt-5
-    # Some Stats dir hack
+    // Some Stats dir hack
     closedir($handle);
 
     /* --- Multi Delete Hack --- */
@@ -412,7 +403,6 @@ function ListDirectory($dirName) {
         echo "<td align=\"center\">"._TDDU." ".$du2."B</td></tr>";
         echo "</table>";
     }
-    // b4rt-5
 }
 
 // ***************************************************************************
@@ -448,6 +438,5 @@ function getExtension($fileName) {
     //Return the extension
     return strtolower($ext);
 }
-
 
 ?>

@@ -50,12 +50,9 @@ function setPriority($torrent)
 
         $result = array();
 
-        // b4rt-4
-        //$files = array_filter($_REQUEST['files'],"getFile");
         $files = array();
         if (isset($_REQUEST['files']))
           $files = array_filter($_REQUEST['files'],"getFile");
-        // b4rt-4
 
         // if there are files to get then process and create a prio file.
         if (count($files) > 0)

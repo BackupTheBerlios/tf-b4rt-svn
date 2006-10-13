@@ -154,19 +154,10 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
                     $pos = strpos( $raw, "6:pieces" ) + 9 + strlen( $results[1] ) + $results[1];
                     $fp = @fopen( $tpath . $tfile, "r+" );
                     @fseek( $fp, $pos, SEEK_SET );
-                    // b4rt-81
-                    /*
-                    if( $private ) {
-                        @fwrite( $fp, "7:privatei1e17:dht_backup_enablei0e20:dht_backup_requestedi0eee" );
-                    } else {
-                        @fwrite( $fp, "e7:privatei0e17:dht_backup_enablei1e20:dht_backup_requestedi1eee" );
-                    }
-                    */
                     if($private)
                         @fwrite($fp,"7:privatei1eee");
                     else
                         @fwrite($fp,"e7:privatei0e17:dht_backup_enablei1e20:dht_backup_requestedi1eee");
-                    // b4rt-81
                     @fclose( $fp );
                 }
             }

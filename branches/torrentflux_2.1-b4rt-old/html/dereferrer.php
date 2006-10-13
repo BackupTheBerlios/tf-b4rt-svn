@@ -26,10 +26,10 @@ include_once("functions.php");
 
 if (isset($_REQUEST["u"])) {
     DisplayHead("dereferrer",false,'0;URL='.$_REQUEST["u"]);
-    ?>
+?>
     <br>
     <div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid <?php echo $cfg["main_bgcolor"] ?>; position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
-    <?php
+<?php
     echo '<br><br><strong>';
     echo 'forwarding to <a href="'.$_REQUEST["u"].'">'.$_REQUEST["u"].'</a> ...';
     echo '</strong><br><br>';
@@ -38,4 +38,5 @@ if (isset($_REQUEST["u"])) {
     header("location: index.php");
     exit();
 }
+
 ?>

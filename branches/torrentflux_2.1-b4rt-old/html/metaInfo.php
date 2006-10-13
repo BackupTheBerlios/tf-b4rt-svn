@@ -126,15 +126,6 @@ function showMetaInfo($torrent, $allowSave=false)
 
         $btmeta = BDecode($alltorrent);
 
-        // b4rt-62
-        // b4rt-4.1
-        //if (!(is_array ($btmeta))) {
-        //  echo '<strong><font color="red">Error</font> Cant decode torrent ('.$torrent.')</strong><br>';
-        //  return 0;
-        //}
-        // b4rt-4.1
-        // b4rt-62
-
         $torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
 
         if (array_key_exists('files',$btmeta['info']))
@@ -252,11 +243,8 @@ function showMetaInfo($torrent, $allowSave=false)
     }
     else
     {
-        // b4rt-62
-        //$result = shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
         $result = getTorrentMetaInfo($torrent);
         echo "<pre>".$result."</pre>";
-        // b4rt-62
     }
 }
 ?>

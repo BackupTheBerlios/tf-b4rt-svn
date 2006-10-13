@@ -49,7 +49,7 @@ if ($messages != "")
 <?php
 }
 ?>
-<table border="0" cellpadding="0" cellspacing="0" width="<?php echo $cfg["ui_dim_main_w"] ?>"> <!-- b4rt-8 -->
+<table border="0" cellpadding="0" cellspacing="0" width="<?php echo $cfg["ui_dim_main_w"] ?>">
 <tr>
     <td>
 <table border="1" bordercolor="<?php echo $cfg["table_border_dk"] ?>" cellpadding="4" cellspacing="0" width="100%">
@@ -162,7 +162,6 @@ if ($cfg["enable_search"])
         if ($cfg["ui_displaylinks"] != "0") {
             echo '<td valign="top">';
             echo '<b>'. _TORRENTLINKS .':</b><br>';
-            // Link Mod
             $arLinks = array();
             $arLinks = GetLinks();
             if ((isset($arLinks)) && (is_array($arLinks))) {
@@ -173,11 +172,11 @@ if ($cfg["enable_search"])
                         echo "<a href=\"".$link['url']."\" target=\"_blank\"><img src=\"images/arrow.gif\" width=9 height=9 title=\"".$link['url']."\" border=0 align=\"baseline\">".$link['sitename']."</a><br>\n";
                 }
             }
-            // Link Mod
             echo "</td>";
         }
         echo "<td bgcolor=\"".$cfg["table_data_bg"]."\" valign=\"top\">";
-        //Good looking statistics hack by FLX : b4rt-82
+
+        //Good looking statistics hack by FLX
         if ($cfg["enable_goodlookstats"] != "0") {
             $settingsHackStats = convertByteToArray($cfg["hack_goodlookstats_settings"]);
             if ($settingsHackStats[0] == 1) {
@@ -205,7 +204,6 @@ if ($cfg["enable_search"])
                 echo '<a href="who.php"><img src="images/who.gif" width="16" height="16" border="0" title="" align="absmiddle">'.$loadavgString.'</a><br>';
             }
         }
-        //END
 
         // users
         if ($cfg["ui_displayusers"] != "0") {

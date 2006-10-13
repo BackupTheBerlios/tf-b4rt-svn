@@ -41,23 +41,17 @@ echo $cfg["main_bgcolor"];
 echo "; position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible\">";
 
 $als = getRequestVar('als');
-if($als == "false")
-{
-       showMetaInfo($torrent,false);
-}
+if ($als == "false")
+	showMetaInfo($torrent,false);
 else
-{
-    showMetaInfo($torrent,true);
-}
+	showMetaInfo($torrent,true);
 
-// b4rt-7
 switch ($cfg["metainfoclient"]) {
     case "transmissioncli":
        echo '<br><br><strong>Scrape Info : </strong><br><br>';
        echo(getTorrentScrapeInfo($torrent));
     break;
 }
-// b4rt-7
 
 echo "</div>";
 

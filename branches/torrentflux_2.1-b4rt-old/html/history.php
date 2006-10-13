@@ -36,7 +36,6 @@ function showIndex($min)
     DisplayFoot();
 }
 
-
 //****************************************************************************
 // displayActivity -- displays History
 //****************************************************************************
@@ -50,8 +49,6 @@ function displayActivity($min=0)
     $output = "";
     $morelink = "";
 
-    // b4rt-62
-    // "Only Admin can see other user torrents"
     $sql = "";
     if ($cfg['enable_restrictivetview'] == 0) {
         $sql = "SELECT user_id, file, time FROM tf_log WHERE action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ORDER BY time desc";
@@ -61,8 +58,6 @@ function displayActivity($min=0)
         else
             $sql = "SELECT user_id, file, time FROM tf_log WHERE user_id='".$cfg['user']."' AND ( action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["file_upload"])." ) ORDER BY time desc";
     }
-    // "Only Admin can see other user torrents"
-    // b4rt-62
 
     $result = $db->SelectLimit($sql, $offset, $min);
     while(list($user_id, $file, $time) = $result->FetchRow())
@@ -72,7 +67,6 @@ function displayActivity($min=0)
         {
             $user_icon = "images/user.gif";
         }
-
         $output .= "<tr>";
         $output .= "<td><a href=\"message.php?to_user=".$user_id."\"><img src=\"".$user_icon."\" width=17 height=14 title=\"".$user_id."\" border=0 align=\"bottom\">".$user_id."</a>&nbsp;&nbsp;</td>";
         $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
@@ -142,13 +136,6 @@ function displayActivity($min=0)
 
 }
 
-
-
-
-
-//****************************************************************************
-//****************************************************************************
-//****************************************************************************
 //****************************************************************************
 // TRAFFIC CONTROLER
 if(!isset($op)) $op =  "";
@@ -158,12 +145,8 @@ switch ($op) {
     default:
     if(!isset($min)) $min = 0;
         showIndex($min);
-    break;
+    	break;
 
 }
-//****************************************************************************
-//****************************************************************************
-//****************************************************************************
-//****************************************************************************
 
 ?>

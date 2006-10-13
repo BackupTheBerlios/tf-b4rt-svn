@@ -138,8 +138,6 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 }
 DisplayFoot();
 
-
-
 function displayNews($title, $pageUrl, $content, $rid) {
     global $cfg;
     // Draw the Table

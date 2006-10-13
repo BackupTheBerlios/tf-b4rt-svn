@@ -57,12 +57,7 @@ function saveXfer($user, $down, $up) {
     showError($db,$sql);
   } else {
     showError($db,$sql);
-    // b4rt-8
-    // blackwidow :
-    //$sql = 'INSERT INTO tf_xfer SET user_id = "'.$user.'", date = '.$db->DBDate(time()).', download = '.($down+0).', upload = '.($up+0);
-    // carlo1234 :
     $sql = 'INSERT INTO tf_xfer (user_id,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
-    // b4rt-8
     $db->Execute($sql);
     showError($db,$sql);
   }
@@ -347,18 +342,12 @@ function findSFV($dirName) {
 	$sfv = false;
 	$d = dir($dirName);
 	while (false !== ($entry = $d->read())) {
-   		if($entry != '.' && $entry != '..' && !empty($entry) ) {
-				// b4rt-5
-				//if(is_file($dirName.'/'.$entry) && substr($entry, -4, 4) == '.sfv') {
-	   		//		$sfv[dir] = $dirName;
-				//		$sfv[sfv] = $dirName.'/'.$entry;
-	   		//}
-				if((is_file($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
-	   				$sfv[dir] = $dirName;
-						$sfv[sfv] = $dirName.'/'.$entry;
-	   		}
-				// b4rt-5
-	   	}
+		if($entry != '.' && $entry != '..' && !empty($entry) ) {
+			if((is_file($dirName.'/'.$entry)) && (strtolower(substr($entry, -4, 4)) == '.sfv')) {
+				$sfv[dir] = $dirName;
+				$sfv[sfv] = $dirName.'/'.$entry;
+			}
+		}
 	}
 	$d->close();
 	return $sfv;

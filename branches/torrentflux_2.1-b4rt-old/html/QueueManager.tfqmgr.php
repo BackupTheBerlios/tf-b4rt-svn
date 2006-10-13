@@ -283,7 +283,6 @@ class QueueManager_tfqmgr extends QueueManager
         }
     }
 
-
 }
 
 ?>

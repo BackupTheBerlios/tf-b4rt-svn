@@ -20,32 +20,26 @@
 
 *******************************************************************************/
 
-	include("config.php");
-	include("functions.php");
+include("config.php");
+include("functions.php");
 
-	// load settings for bin-path
-	include_once("settingsfunctions.php");
-	loadSettings();
+// load settings for bin-path
+include_once("settingsfunctions.php");
+loadSettings();
 
-	DisplayHead('sfv check', false);
+DisplayHead('sfv check', false);
 
-	// Main BG
-	echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";
-	// CHECK SFV
-
-	$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
-
-	$handle = popen($cmd . ' 2>&1', 'r' );
-
-	while(!feof($handle))
-	{
-		$buff = fgets($handle,30);
-		echo nl2br($buff) ;
-		ob_flush();
-		flush();
-	}
-	pclose($handle);
-	echo "done";
-	echo "</body>";
+echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";
+$cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_GET['dir']) . ' -f ' . escapeshellarg($_GET['file']);
+$handle = popen($cmd . ' 2>&1', 'r' );
+while(!feof($handle)) {
+	$buff = fgets($handle,30);
+	echo nl2br($buff) ;
+	ob_flush();
+	flush();
+}
+pclose($handle);
+echo "done";
+echo "</body>";
 
 ?>

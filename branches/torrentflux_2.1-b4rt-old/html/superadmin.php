@@ -86,7 +86,7 @@ if (isset($_REQUEST["b"])) {
 				$htmlTitle = "Backup";
 				printPage();
 				exit;
-			break;
+				break;
 			case "1": // server-backup
 				if (ob_get_level() == 0) ob_start();
 				$htmlTitle = "Backup";
@@ -107,7 +107,7 @@ if (isset($_REQUEST["b"])) {
 				printPageEnd(1);
 				ob_end_flush();
 				exit;
-			break;
+				break;
 			case "2": // client-backup
 				$backupArchive = backupCreate(false,$_REQUEST["c"]);
 				if ($backupArchive == "") {
@@ -122,7 +122,7 @@ if (isset($_REQUEST["b"])) {
 					backupSend($backupArchive,true);
 					exit;
 				}
-			break;
+				break;
 			case "3": // backup-list
 				$htmlTitle = "Backup";
 				buildPage("b");
@@ -130,7 +130,7 @@ if (isset($_REQUEST["b"])) {
 				$htmlMain .= backupListDisplay();
 				printPage();
 				exit;
-			break;
+				break;
 			case "4": // download backup
 				$backupArchive = trim($_REQUEST["f"]);
 				if (backupParamCheck($backupArchive)) {
@@ -145,7 +145,7 @@ if (isset($_REQUEST["b"])) {
 					printPage();
 					exit;
 				}
-			break;
+				break;
 			case "5": // delete backup
 				$backupArchive = trim($_REQUEST["f"]);
 				if (backupParamCheck($backupArchive)) {
@@ -168,7 +168,7 @@ if (isset($_REQUEST["b"])) {
 					exit;
 				}
 				exit;
-			break;
+				break;
 		}
 		exit;
 	}
@@ -208,7 +208,7 @@ if (isset($_REQUEST["u"])) {
 					printPage();
 					exit;
 				}
-			break;
+				break;
 			case "1":
 				// get db-settings
 				$updateDBData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=1&v=" . _VERSION_THIS));
@@ -250,7 +250,7 @@ if (isset($_REQUEST["u"])) {
 				} else {
 					updateError();
 				}
-			break;
+				break;
 			case "2":
 				// get sql-data
 				$updateSQLData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION_THIS . "&d=".$cfg["db_type"])));
@@ -294,7 +294,7 @@ if (isset($_REQUEST["u"])) {
 				} else {
 					updateError("\n"."cant get update-sql."."\n".$updateSQLData);
 				}
-			break;
+				break;
 			case "3":
 				// get file-list
 				$updateFileList = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=3&v=" . _VERSION_THIS));
@@ -315,7 +315,7 @@ if (isset($_REQUEST["u"])) {
 				} else {
 					updateError("\n"."cant get file-list."."\n".$updateFileList);
 				}
-			break;
+				break;
 			case "4":
 				$updateFileList = trim($_POST["f"]);
 				if ((isset($updateFileList)) && ($updateFileList != "")) {
@@ -378,7 +378,7 @@ if (isset($_REQUEST["u"])) {
 				} else {
 					updateError("\n"."cant perform file-update."."\n".$updateFileList);
 				}
-			break;
+				break;
 		}
 		exit;
 	}
@@ -392,19 +392,19 @@ if (isset($_REQUEST["q"])) {
 		switch($queueAction) {
 			case "0": // tfqmgr-main
 				$htmlTitle = "tfqmgr";
-			break;
+				break;
 			case "1": // tfqmgr-log
 				$htmlTitle = "tfqmgr-log";
 				$htmlMain .= '<pre>';
 				$htmlMain .= getDataFromFile($cfg["path"].'.tfqmgr/tfqmgr.log');
 				$htmlMain .= '</pre>';
-			break;
+				break;
 			case "2": // tfqmgr-ps
 				$htmlTitle = "tfqmgr-ps";
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." tfqmgr.pl | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
-			break;
+				break;
 			case "3": // tfqmgr-status
 				$htmlTitle = "tfqmgr-status";
 				include_once("QueueManager.php");
@@ -416,7 +416,7 @@ if (isset($_REQUEST["q"])) {
 				} else {
 					$htmlMain .= '<br><strong>tfqmgr not running</strong>';
 				}
-			break;
+				break;
 		}
 		printPage();
 		exit;
@@ -431,7 +431,7 @@ if (isset($_REQUEST["m"])) {
 		switch($mAction) {
 			case "0": // Maintenance-main
 				$htmlTitle = "Maintenance";
-			break;
+				break;
 			case "1": // Maintenance-clean
 				$htmlTitle = "Maintenance-clean";
 				$htmlMain .= '<br>';
@@ -443,7 +443,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
 				$htmlMain .= '<br><br>';
-			break;
+				break;
 			case "11": // Maintenance-clean : pid-file-clean
 				$htmlTitle = "Maintenance-pid-file-clean";
 				$htmlMain .= '<br>';
@@ -466,7 +466,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<br>Deleted pid-leftovers : <pre>'.$result.'</pre><br>';
 				else
 					$htmlMain .= '<br>No pid-leftovers found.<br><br>';
-			break;
+				break;
 			case "12": // Maintenance-clean : transmission-cache-clean
 				$htmlTitle = "Maintenance-transmission-cache-clean";
 				$htmlMain .= '<br>';
@@ -492,7 +492,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<br>Deleted cache-leftovers : <pre>'.$result.'</pre><br>';
 				else
 					$htmlMain .= '<br>No cache-leftovers found.<br><br>';
-			break;
+				break;
 			case "2": // Maintenance-kill
 				$htmlTitle = "Maintenance-kill";
 				$htmlMain .= '<br>';
@@ -507,7 +507,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0">  transmissioncli-kill</a>';
 				$htmlMain .= '<br><br>';
-			break;
+				break;
 			case "21": // Maintenance-kill : python
 				$htmlTitle = "Maintenance-kill-python";
 				$htmlMain .= '<br>';
@@ -531,7 +531,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
-			break;
+				break;
 			case "22": // Maintenance-kill : transmissioncli
 				$htmlTitle = "Maintenance-kill-transmissioncli";
 				$htmlMain .= '<br>';
@@ -555,14 +555,14 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
-			break;
+				break;
 			case "3": // Maintenance : repair
 				$htmlTitle = "Maintenance-repair";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Repairing TorrentFlux-Installation...';
 				repairTorrentflux();
 				$htmlMain .= ' <font color="green">done.</font>';
-			break;
+				break;
 		}
 		printPage();
 		exit;
@@ -577,7 +577,7 @@ if (isset($_REQUEST["t"])) {
 		switch($torrentAction) {
 			case "0": // Torrents-main
 				$htmlTitle = "Torrents";
-			break;
+				break;
 			case "1": // Torrents-Stop
 				include_once("ClientHandler.php");
 				$htmlTitle = "Torrents-Stop";
@@ -599,7 +599,7 @@ if (isset($_REQUEST["t"])) {
 				}
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<hr><br>';
-			break;
+				break;
 			case "2": // Torrents-Start
 				include_once("ClientHandler.php");
 				$htmlTitle = "Torrents-Start";
@@ -625,7 +625,7 @@ if (isset($_REQUEST["t"])) {
 				}
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<hr><br>';
-			break;
+				break;
 			case "3": // Torrents-Resume
 				include_once("ClientHandler.php");
 				$htmlTitle = "Torrents-Resume";
@@ -651,7 +651,7 @@ if (isset($_REQUEST["t"])) {
 				}
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<hr><br>';
-			break;
+				break;
 		}
 		$htmlMain .= '<br><strong>Torrents :</strong><br>';
 		$htmlMain .= '<pre>';
@@ -723,10 +723,10 @@ function buildPage($action) {
 	switch($action) {
 		case "b": // backup passthru
 			$statusImage = "yellow.gif";
-		break;
+			break;
 		case "-b": // backup-error passthru
 			$statusImage = "red.gif";
-		break;
+			break;
 		case "-u": // update-error passthru
 			$statusImage = "red.gif";
 			$htmlTitle = "Update";
@@ -736,7 +736,7 @@ function buildPage($action) {
 			$htmlMain .= '<br>';
 			//$htmlMain .= '<br><br>';
 			//$htmlMain .= getReleaseList();
-		break;
+			break;
 		case "q": // queue passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
@@ -751,7 +751,7 @@ function buildPage($action) {
 			}
 			$htmlMain .= '</td><td align="right"><strong>tfqmgr</td>';
 			$htmlMain .= '</td></tr></table>';
-		break;
+			break;
 		case "m": // maintenance passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
@@ -762,7 +762,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3">repair</a>';
 			$htmlMain .= '</td><td align="right"><strong>Maintenance</td>';
 			$htmlMain .= '</td></tr></table>';
-		break;
+			break;
 		case "t": // torrent passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
@@ -773,7 +773,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=3">Resume All Torrents</a>';
 			$htmlMain .= '</td><td align="right"><strong>Torrents</td>';
 			$htmlMain .= '</td></tr></table>';
-		break;
+			break;
 		case "0": // version
 			$htmlTitle = "Version";
 			// version-check
@@ -829,7 +829,7 @@ function buildPage($action) {
 				$htmlMain .= '<a href="'._URL_HOME.'" target="_blank">'._URL_HOME.'</a>';
 				$htmlMain .= '<br>';
 			}
-		break;
+			break;
 		case "1": // help
 			$htmlTitle = "Help";
 			$htmlMain .= '<br><p>';
@@ -837,7 +837,7 @@ function buildPage($action) {
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
 			$htmlMain .= '<br><br>';
-		break;
+			break;
 		case "2": // changelog
 			$htmlTitle = "Changelog";
 			$htmlMain .= '<br>';
@@ -846,7 +846,7 @@ function buildPage($action) {
 			$htmlMain .= '<pre>';
 			$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
 			$htmlMain .= '</pre>';
-		break;
+			break;
 		case "3": // issues
 			$htmlTitle = "Issues";
 			$issueText = "Error getting issues";
@@ -854,7 +854,7 @@ function buildPage($action) {
 			header("Content-Type: text/plain");
 			echo $issueText;
 			exit;
-		break;
+			break;
 		case "4": // update
 			$htmlTitle = "Update";
 			// version-check
@@ -879,19 +879,19 @@ function buildPage($action) {
 			$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
 			//$htmlMain .= '<br><br>';
 			//$htmlMain .= getReleaseList();
-		break;
+			break;
 		case "5": // news
 			$htmlTitle = "News";
 			$htmlMain .= '<br>';
 			$htmlMain .= '<h4>News<h4>';
 			$htmlMain .= '<hr>';
 			$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
-		break;
+			break;
 		default:
 			$htmlTitle = "SuperAdmin";
 			$statusImage = "black.gif";
 			$htmlMain = '<br>';
-		break;
+			break;
 	}
 }
 
@@ -905,10 +905,10 @@ function doEcho($string, $mode = 0) {
 	switch ($mode) {
 		case 0:
 			echo $string;
-		return;
+			return;
 		case 1:
 			sendLine($string);
-		return;
+			return;
 	}
 }
 
@@ -1399,11 +1399,11 @@ function backupCreate($talk = false, $compression = 0) {
 		case 1:
 			$fileArchiveName .= ".gz";
 			$tarSwitch = "-zcf";
-		break;
+			break;
 		case 2:
 			$fileArchiveName .= ".bz2";
 			$tarSwitch = "-jcf";
-		break;
+			break;
 	}
 	$fileArchive = $dirBackup . '/' . $fileArchiveName;
 	$fileDatabase = $dirBackup . '/database.sql';

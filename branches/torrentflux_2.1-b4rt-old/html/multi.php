@@ -31,14 +31,14 @@ if (isset($_POST["action"]))
 switch ($action) {
     /* ---------------------------------------------------------------- dummy */
     case "---":
-    break;
+    	break;
     /* ---------------------------------------------------------- dir-methods */
     case "fileDelete": /* fileDelete */
     	foreach($_POST['file'] as $key => $element) {
     		$element = urldecode($element);
     		delDirEntry($element);
     	}
-    break;
+    	break;
     /* --------------------------------------------------------- all torrents */
     case "bulkStop": /* bulkStop */
     	$torrents = getTorrentListFromFS();
@@ -56,7 +56,7 @@ switch ($action) {
                 }
             }
     	}
-    break;
+    	break;
     case "bulkResume": /* bulkResume */
     	$torrents = getTorrentListFromDB();
     	foreach ($torrents as $torrent) {
@@ -77,7 +77,7 @@ switch ($action) {
                 }
             }
     	}
-    break;
+    	break;
     case "bulkStart": /* bulkStart */
     	$torrents = getTorrentListFromFS();
     	foreach ($torrents as $torrent) {
@@ -98,7 +98,7 @@ switch ($action) {
                 }
             }
     	}
-    break;
+    	break;
     /* ---------------------------------------------------- selected torrents */
     default:
        foreach($_POST['torrent'] as $key => $element) {
@@ -119,7 +119,7 @@ switch ($action) {
                    // just 2 sec..
                    sleep(2);
                 }
-             break;
+             	break;
              case "torrentStop": /* torrentStop */
                 if ($torrentRunningFlag != 0) {
                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
@@ -127,7 +127,7 @@ switch ($action) {
                    // just 2 sec..
                    sleep(2);
                 }
-             break;
+             	break;
              case "torrentEnQueue": /* torrentEnQueue */
                 if ($torrentRunningFlag == 0) {
                     // set queueing active
@@ -144,7 +144,7 @@ switch ($action) {
                     // just a sec..
                     sleep(1);
                 }
-             break;
+             	break;
              case "torrentDeQueue": /* torrentDeQueue */
                 if ($torrentRunningFlag == 0) {
                     // set request var
@@ -156,10 +156,10 @@ switch ($action) {
                     // just a sec..
                     sleep(1);
                 }
-             break;
+             	break;
              case "torrentResetTotals": /* torrentResetTotals */
                 resetTorrentTotals(urldecode($element), false);
-             break;
+             	break;
              default:
                 if ($torrentRunningFlag != 0) {
                    // stop torrent first
