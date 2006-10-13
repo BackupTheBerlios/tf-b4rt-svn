@@ -12,7 +12,7 @@ $Id$
 
 ***** changes *****
 
-- removed dependency on calltime pass-by-reference
+- removed dependency on call-time pass-by-reference
   allow_call_time_pass_reference can now be off or on in php.ini
   -> v95 has the same PHP-requirements as TorrentFlux 2.1 Final
 
