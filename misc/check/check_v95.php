@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // defines
-define('_NAME', 'torrentflux-b4rt_old');
+define('_NAME', 'TorrentFlux 2.1-b4rt-95');
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 define('_TITLE', _NAME.' - check - Revision '._REVISION);
 
@@ -108,16 +108,6 @@ if ((ini_get("allow_url_fopen")) == 1) {
 	$warnings++;
 }
 send($allow_url_fopen.'</li>');
-// allow_call_time_pass_reference
-$allow_call_time_pass_reference = '<li>allow_call_time_pass_reference ';
-if ((ini_get("allow_call_time_pass_reference")) == 1) {
-	$allow_call_time_pass_reference .= '<font color="green">Passed</font>';
-} else {
-	$allow_call_time_pass_reference .= '<font color="red">Failed</font>';
-	$errors++;
-	array_push($errorsMessages, "PHP-Configuration : allow_call_time_pass_reference must be turned on.");
-}
-send($allow_call_time_pass_reference.'</li>');
 //
 send("</ul>");
 
@@ -128,6 +118,7 @@ send("<ul>");
 $databaseTypes = array();
 $databaseTypes['mysql'] = 'mysql_connect';
 $databaseTypes['sqlite'] = 'sqlite_open';
+$databaseTypes['postgres'] = 'pg_connect';
 // test db-types
 foreach ($databaseTypes as $databaseTypeName => $databaseTypeFunction) {
 	$dbtest = '<li>'.$databaseTypeName.' ';

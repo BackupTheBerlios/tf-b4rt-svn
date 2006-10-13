@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // defines
-define('_NAME', 'torrentflux-b4rt_old');
+define('_NAME', 'TorrentFlux 2.1-b4rt-94');
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 define('_TITLE', _NAME.' - check - Revision '._REVISION);
 
