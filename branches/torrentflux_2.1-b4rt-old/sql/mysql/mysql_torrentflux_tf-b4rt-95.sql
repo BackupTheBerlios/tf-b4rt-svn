@@ -263,7 +263,7 @@ CREATE TABLE tf_xfer (
   date DATE NOT NULL default '0000-00-00',
   download BIGINT(80) NOT NULL default '0',
   upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user,date)
+  PRIMARY KEY  (user_id,date)
 ) TYPE=MyISAM;
 
 --
