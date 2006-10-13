@@ -31,21 +31,21 @@ printPageHead();
 switch($site) {
 	case "features":
 		printPageFeatures();
-	break;
+		break;
 	case "news":
 		printPageNews();
-	break;
+		break;
 	case "about":
 		printPageAbout();
-	break;
+		break;
 	case "changelog":
 		printPageChangelog();
-	break;
+		break;
 	case "index":
 	case "home":
 	default:
 		printPageHome();
-	break;
+		break;
 }
 printPageFoot();
 
@@ -192,8 +192,8 @@ function printPageHome() {
 		<h2 id="requirements">Requirements</h2>
 		<ul>
 			<li>Linux or FreeBSD.</li>
-			<li>Web Server. (eg <a href="http://httpd.apache.org/" title="Apache HTTP Server" target="_blank">Apache</a>)</li>
-			<li>SQL-Database. Supported are <a href="http://www.mysql.com" title="MySQL" target="_blank">MySQL</a> and <a href="http://www.sqlite.org" title="SQLite" target="_blank">SQLite</a>.</li>
+			<li>Web Server. (<a href="http://httpd.apache.org" title="Apache HTTP Server" target="_blank">Apache</a> or <a href="http://www.lighttpd.net" title="LightTPD" target="_blank">LightTPD</a>)</li>
+			<li>SQL-Database. Supported are <a href="http://www.mysql.com" title="MySQL" target="_blank">MySQL</a>, <a href="http://www.sqlite.org" title="SQLite" target="_blank">SQLite</a> and <a href="http://www.postgresql.org" title="PostgreSQL" target="_blank">PostgreSQL</a>.</li>
 			<li><a href="http://www.php.net" title="PHP" target="_blank">PHP</a> 4.3.x or higher.</li>
 			<li><a href="http://www.python.org" title="Python" target="_blank">Python</a> 2.2 or higher.</li>
 			<li><a href="http://www.perl.org" title="Perl" target="_blank">Perl</a> 5.6 or higher. (only for tfqmgr/Qmgr/fluxpoller)</li>
