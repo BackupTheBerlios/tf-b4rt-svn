@@ -23,6 +23,8 @@
 */
 /*
     v 1.01 - TorrentBox changed the download.php to dl.php.
+    v 1.02 - update to add torrentbox.com to download param.
+    v 1.03 - updated by batmark
 */
 
 class SearchEngine extends SearchEngineBase
@@ -36,7 +38,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "TorrentBox";
 
         $this->author = "kboy";
-        $this->version = "1.01";
+        $this->version = "1.03";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,876.0.html";
 
         $this->Initialize($cfg);
@@ -222,10 +224,10 @@ class SearchEngine extends SearchEngineBase
 
             $bg = $this->cfg["bgLight"];
 
-            foreach($tmpListArr as $key =>$value)
+           foreach($tmpListArr as $key =>$value)
             {
-                $buildLine = true;
-                if (strpos($value,"dl.php"))
+		$buildLine = true;
+                if (strpos($value,".torrent"))
                 {
                     $ts = new tBox($value);
 
@@ -336,9 +338,12 @@ class tBox
                 }
                 $this->torrentName = $this->cleanLine($tmpListArr["1"]);  // TorrentName
 
-                $tmpStr = substr($tmpListArr["2"],strpos($tmpListArr["2"],"href=\"")+strlen("href=\"")); // Download Link
-
-                $this->torrentFile = substr($tmpStr,0,strpos($tmpStr,"\""));
+		$tmpStr = $tmpListArr["2"];
+                $start = strpos($tmpStr, "href");
+		$tmpStr = substr($tmpStr,$start + 6, strlen($tmpStr)-$start-6);
+		$end = strpos($tmpStr, ".torrent");
+		$tmpStr = substr($tmpStr, 0, $end + 8); //the DL link
+		$this->torrentFile = "http://www.torrentbox.com".$tmpStr;
 
                 $this->dateAdded = $this->cleanLine($tmpListArr["4"]);  // Date Added
                 $this->torrentSize = $this->cleanLine($tmpListArr["5"]);  // Size of File

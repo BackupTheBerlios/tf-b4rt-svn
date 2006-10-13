@@ -26,7 +26,7 @@
 	v 1.04 - Apr 26. 06 - Fixed filtering lists - Possible bug in admin.php (line 1997 - option value [NO FILTER] needs setting to -1 instead of "")
 	v 1.02 - Apr 25. 06 - Added Category Headings & tidied search results table
 	v 1.01 - Apr 23, 06 - First Release
-    
+
 */
 
 class SearchEngine extends SearchEngineBase
@@ -324,7 +324,7 @@ class SearchEngine extends SearchEngineBase
         return $output;
 
     }
-	
+
     //----------------------------------------------------------------
     // Function to Make the Request (overriding base)
     function makeRequest($request)
@@ -336,46 +336,46 @@ class SearchEngine extends SearchEngineBase
     // Function to get Latest..
     function getLatest()
     {
-        
-		
+
+
 		if (array_key_exists("mainGenre",$_REQUEST))
         {
             $request = "/en/html/list/".$_REQUEST["mainGenre"];
-		
+
         }
 		elseif (array_key_exists("subGenre",$_REQUEST))
         {
 			$request = "/en/html/list/".$_REQUEST["subGenre"];
-		
+
         }
         else
         {
             $request = "/en/";
-		
+
         }
-		
+
 		if (array_key_exists("sort",$_REQUEST))
 		{
 			$request .= "?tl_sortby=" .$_REQUEST["sort"];
 		}
-		
+
 		if (!empty($this->pg))
         {
             if(strpos($request,"?"))
             {
 				$request .= "&tl_offset=" . $this->pg;
-				
-				
+
+
             }
             else
             {
-				
+
                 $request .= "&tl_offset=" . $this->pg;
-				
+
             }
         }
-		
-		
+
+
         if ($this->makeRequest($request))
         {
           return $this->parseResponse();
@@ -394,17 +394,17 @@ class SearchEngine extends SearchEngineBase
 
 		if(strlen($searchTerm) > 0)
         {
-            
+
 			$searchTerm = str_replace(" ", "+", $searchTerm);
-			
-				
+
+
         }
-		
+
 		if (array_key_exists("sort",$_REQUEST))
 		{
 			$request .= "?tl_sortby=" .$_REQUEST["sort"];
 		}
-		
+
         if (!empty($this->pg))
         {
             $request .= "&tl_offset=" . $this->pg;
@@ -427,17 +427,17 @@ class SearchEngine extends SearchEngineBase
     {
         $output = "<table width=\"100%\" cellpadding=3 cellspacing=0 border=0>";
 		$tmpStr = $this->htmlPage;
-		
+
         $output .= "<br>\n";
-		
+
 		$output .= "<tr bgcolor=\"".$this->cfg["bgLight"]."\">";
         $output .= "  <td colspan=7 align=center>";
-        
+
         $tmpStr = substr($tmpStr,strpos($tmpStr,"name=rating value=\"\">"));
 		$tmpStr = substr($tmpStr,strpos($tmpStr,"align=\"left\">"));
         $tmpStr = substr($tmpStr,strpos($tmpStr,"<b>"));
 		$tmpStr = substr($tmpStr,0,strpos($tmpStr,"</b>"));
-		
+
 		if (!empty($tmpStr))
 		{
 		$output .= "<font size=5px><b> Category : ".strip_tags($tmpStr)."</b></font>";
@@ -474,7 +474,7 @@ class SearchEngine extends SearchEngineBase
         }
 
         $output .= ")</td>";
-		
+
         if ((array_key_exists("mainGenre",$_REQUEST)) || (array_key_exists("subGenre",$_REQUEST)) || (array_key_exists("searchterm",$_REQUEST)))
         {
             $output .= "  <td align=center><strong><a href=\"";
@@ -504,7 +504,7 @@ class SearchEngine extends SearchEngineBase
 			$output .= "  <td><strong>Peers</strong></td>";
 			$output .= "  <td><strong>Health</strong></td>";
 		}
-        
+
 		$output .= "</tr>\n";
 
         return $output;
@@ -514,40 +514,40 @@ class SearchEngine extends SearchEngineBase
     // Function to parse the response.
     function parseResponse()
     {
-	 
+
         $output = $this->tableHeader();
-		
+
 		$thing = $this->htmlPage;
-		
-		
+
+
         // We got a response so display it.
         // Chop the front end off.
-        	
+
         while (is_integer(strpos($thing,"class=\"torrent_table\">")))
-	
+
         {
-            
-			$thing = substr($thing,strpos($thing,"class=\"torrent_table\">")); 
-			
+
+			$thing = substr($thing,strpos($thing,"class=\"torrent_table\">"));
+
 			$thing = substr($thing,strpos($thing,"<td"));
-           
+
 			$tmplist = substr($thing,0,strpos($thing,"<td class=\"adbrite\""));
-			
+
             // ok so now we have the listing.
             $tmpListArr = explode("<td colspan=\"3\">",$tmplist); //original
 			foreach($tmpListArr as $key =>$value)
             {
-			
+
 						$tmpListArr2 = explode("</tr>",$value);
 						$bg = $this->cfg["bgLight"];
 						foreach($tmpListArr2 as $key1 =>$value1){
-						
+
 						$buildLine = true;
-						
+
 				if (strpos($value,"/en"))
-			
+
                 {
-					
+
                     $ts = new sddr($value1);
 
                     // Determine if we should build this output
@@ -579,7 +579,7 @@ class SearchEngine extends SearchEngineBase
                         }
                     }
 
-             
+
 				}
             }
         }
@@ -589,14 +589,14 @@ class SearchEngine extends SearchEngineBase
 
         // is there paging at the bottom?
         if (strpos($thing, "&tl_offset=") != false)
-		
+
         {
 			// Yes, then lets grab it and display it!  ;)
             $thing = substr($thing,strpos($thing,"class=\"pager")+strlen("class=\"pager"));
             $thing = substr($thing,strpos($thing,">")+1);
             $pages = substr($thing,0,strpos($thing,"<style"));
 			$pages = substr($thing,0,strpos($thing,"</td>"));
-						
+
 				if(strpos($this->curRequest,"LATEST"))
 				{
                 $pages = str_replace("/en/html/list/",$this->searchURL()."&LATEST=1&subGenre=",$pages);
@@ -606,8 +606,8 @@ class SearchEngine extends SearchEngineBase
 				{
 					$pages = str_replace("/en/html/list/",$this->searchURL()."&subGenre=",$pages);
 					$pages = str_replace("/en/html/search/",$this->searchURL()."&searchterm=",$pages);
-				}	
-           
+				}
+
             $pages = str_replace("?tl_sortby=","&sort=",$pages);
             $pages = str_replace("tl_offset=","pg=",$pages);
 			$pages = str_replace("&&","&",$pages);
@@ -615,8 +615,8 @@ class SearchEngine extends SearchEngineBase
 
             $output .= "<div align=center>".$pages."</div>";
         }
-		
-		
+
+
 
         return $output;
     }
@@ -644,52 +644,52 @@ class sddr
     var $dateAdded = "";
     var $dwnldCount = "";
 
-	
+
  function sddr( $htmlLine )
     {
         if (strlen($htmlLine) > 0)
         {
             $this->Data = $htmlLine;
-			
+
             // Chunck up the row into columns.
-			
-			
+
+
             $tmpListArr = explode("</td>",$htmlLine);
 			foreach($tmpListArr as $key =>$value){
 				$value = str_replace("href=\"/en/html/info/","href=\"http://www.seedler.org/download.x?id=",$value);
 				$value = str_replace("href=\"/en/html/list/","href=\"http://www.seedler.org/en/html/list/",$value);
 				}
-			
-            
+
+
 			if(count($tmpListArr) == 7) //get Category and Torrent Name
             {
-               
+
                 $tmpStr = "";
-                $tmpStr = substr($tmpListArr["0"],strpos($tmpListArr["0"],"title=\"")+strlen("title=\"")); 
-				$tmpStr = substr($tmpStr,strpos($tmpStr,"\">")+strlen("\">")); 
+                $tmpStr = substr($tmpListArr["0"],strpos($tmpListArr["0"],"title=\"")+strlen("title=\""));
+				$tmpStr = substr($tmpStr,strpos($tmpStr,"\">")+strlen("\">"));
 				$tmpStr = substr($tmpStr,0,strpos($tmpStr,"/"));
-				
+
 				$this->torrentName = $this->cleanLine($tmpStr);  // TorrentName
-				
-				
-               
+
+
+
 				$this->dateAdded = $this->cleanLine($tmpListArr["2"]); // Date Added
-				
-                
+
+
 				$tmpStr = "";
 				$tmpStr = str_replace("href=\"/en/html/info/","href=\"http://www.seedler.org/download.x?id=",$tmpListArr["0"]); // Download Link
-                $tmpStr = substr($tmpStr,strpos($tmpStr,"href=\"")+strlen("href=\"")); 
+                $tmpStr = substr($tmpStr,strpos($tmpStr,"href=\"")+strlen("href=\""));
                 $this->torrentFile = substr($tmpStr,0,strpos($tmpStr,"\""));
-			
-                
+
+
 				$this->torrentSize = $this->cleanLine($tmpListArr["1"]);  // Size of File
-				
-				
+
+
 				$this->Seeds = $this->cleanLine($tmpListArr["3"]);  // Seeds
-			
-                
+
+
 				$this->Peers = $this->cleanLine($tmpListArr["4"]);  // Peers
-				
+
 				$tmpStr = "";
                 $tmpStr = substr($tmpListArr["5"],strpos($tmpListArr["5"],"title=\"")+strlen("title=\"")); //Seed Health
 				$tmpStr = substr($tmpStr,0,strpos($tmpStr,"\""));
@@ -707,47 +707,47 @@ class sddr
                 {
                     $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
                 }
-				
-				
+
+
            }
 		   if(count($tmpListArr) == 8) //get Category and Torrent Name for main page and search
             {
-                
+
                 $tmpStr = "";
-                $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"title=\"")+strlen("title=\"")); 
-				$tmpStr = substr($tmpStr,strpos($tmpStr,"\">")+strlen("\">")); 
+                $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"title=\"")+strlen("title=\""));
+				$tmpStr = substr($tmpStr,strpos($tmpStr,"\">")+strlen("\">"));
 				$tmpStr = substr($tmpStr,0,strpos($tmpStr,"/"));
-				
+
 				$this->torrentName = $this->cleanLine($tmpStr);  // TorrentName
-				
+
 				$tmpStr ="";
 				$tmpStr = $tmpListArr["0"];
-				$tmpStr = substr($tmpStr,strpos($tmpStr,"href=\"")+strlen("href=\"")); 
+				$tmpStr = substr($tmpStr,strpos($tmpStr,"href=\"")+strlen("href=\""));
 				$tmpStr = str_replace("/en/html/cat/","",$tmpStr);
                 $this->CatId = substr($tmpStr,0,strpos($tmpStr,"\""));
-               
+
 				$this->dateAdded = $this->cleanLine($tmpListArr["3"]); // Date Added
-				
-                
+
+
 				$tmpStr = "";
 				$tmpListArr["1"] = str_replace("href=\"/en/html/info/","href=\"http://www.seedler.org/download.x?id=",$tmpListArr["1"]); // Download Link
-                $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"href=\"")+strlen("href=\"")); 
+                $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"href=\"")+strlen("href=\""));
                 $this->torrentFile = substr($tmpStr,0,strpos($tmpStr,"\""));
-				
-                
+
+
 				$this->torrentSize = $this->cleanLine($tmpListArr["2"]);  // Size of File
-				
-				
+
+
 				$this->Seeds = $this->cleanLine($tmpListArr["4"]);  // Seeds
-				
-                
+
+
 				$this->Peers = $this->cleanLine($tmpListArr["5"]);  // Peers
-				
+
 				$tmpStr = "";
-                $tmpStr = substr($tmpListArr["6"],strpos($tmpListArr["6"],"title=\"")+strlen("title=\"")); 
+                $tmpStr = substr($tmpListArr["6"],strpos($tmpListArr["6"],"title=\"")+strlen("title=\""));
 				$tmpStr = substr($tmpStr,0,strpos($tmpStr,"\""));
 				$this->Health = $this->cleanLine($tmpStr);
-				
+
 
                 if ($this->Peers == '')
                 {
@@ -761,8 +761,8 @@ class sddr
                 {
                     $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
                 }
-				
-				
+
+
            }
         }
 
@@ -785,12 +785,12 @@ class sddr
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a></td>\n";
 
         $output .= "    <td bgcolor=\"".$bg."\" align=right>".$this->torrentSize."</td>\n";
-		$output .= "    <td bgcolor=\"".$bg."\" align=right>".$this->dateAdded."</td>\n";   
+		$output .= "    <td bgcolor=\"".$bg."\" align=right>".$this->dateAdded."</td>\n";
         $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->Seeds."</td>\n";
         $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->Peers."</td>\n";
 		$output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->Health."</td>\n";
         $output .= "</tr>\n";
-		
+
 
         return $output;
 

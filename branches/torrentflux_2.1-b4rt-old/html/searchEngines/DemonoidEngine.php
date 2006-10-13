@@ -27,7 +27,7 @@
 	v 1.03 - Apr 21, 06 - Modified first row on table to reflect correct date
 	v 1.02 - Apr 18, 06 - Added Update URL
 	v 1.01 - Apr 17, 06 - bug in filtering.
-    
+
 */
 
 class SearchEngine extends SearchEngineBase
@@ -311,7 +311,7 @@ class SearchEngine extends SearchEngineBase
         return $output;
 
     }
-	
+
     //----------------------------------------------------------------
     // Function to Make the Request (overriding base)
     function makeRequest($request)
@@ -324,24 +324,24 @@ class SearchEngine extends SearchEngineBase
     function getLatest()
     {
         $request = '/torrents/';
-		
+
 		if (array_key_exists("mainGenre",$_REQUEST) && array_key_exists("subGenre",$_REQUEST))
         {
             $request = "/torrents/?category=".$_REQUEST["mainGenre"]."&subcategory=".$_REQUEST["subGenre"]."&language=0&seeded=0&external=2&query=&uid=0";
-		
+
         }
 		elseif (array_key_exists("subGenre",$_REQUEST))
         {
 			$splitted = explode(":", $_REQUEST['subGenre']);
             $request = "/torrents/?category=".$splitted[0]."&subcategory=".$splitted[1]."&language=0&seeded=0&external=2&query=&uid=0";
-		
+
         }
         else
         {
             $request = "/torrents/";
-		
+
         }
-		
+
 		if (!empty($this->pg))
         {
             if(strpos($request,"?"))
@@ -353,7 +353,7 @@ class SearchEngine extends SearchEngineBase
                 $request .= "?page=" . $this->pg;
             }
         }
-        
+
 
         if ($this->makeRequest($request))
         {
@@ -413,7 +413,7 @@ class SearchEngine extends SearchEngineBase
 		$output = "<table width=\"100%\" cellpadding=3 cellspacing=0 border=0>";
 
         $output .= "<br>\n";
-		
+
 		//v1.05 Update Starts here
 		if (is_integer(strpos($this->htmlPage,"class=user_box>")))
         {
@@ -427,7 +427,7 @@ class SearchEngine extends SearchEngineBase
 			$output .= "<td colspan=6 align=center><b>".$userinfo."</td></tr>";
         }
 		//v1.05 Update Ends here
-		
+
         $output .= "<tr bgcolor=\"".$this->cfg["table_header_bg"]."\">";
         $output .= "  <td>&nbsp;</td>";
         $output .= "  <td><strong>Torrent Name</strong> &nbsp;(";
@@ -467,9 +467,9 @@ class SearchEngine extends SearchEngineBase
     // Function to parse the response.
     function parseResponse()
     {
-	 
+
         $output = $this->tableHeader();
-		
+
 		if (is_integer(strpos($this->htmlPage,"class=\"added_today\">")))
         {
 			$dateheader = substr($this->htmlPage,strpos($this->htmlPage,"<td colspan=\"10\" class=\"added_today\">")+strlen("<td colspan=\"10\" class=\"added_today\">"));
@@ -480,30 +480,30 @@ class SearchEngine extends SearchEngineBase
         $thing = $this->htmlPage;
 		$thing = str_replace("<a href=\"","<a href=\"http://www.demonoid.com",$thing);
 		$thing = str_replace("<img src=\"","<img src=\"http://www.demonoid.com",$thing);
-		
+
         // We got a response so display it.
         // Chop the front end off.
-        	
+
         while (is_integer(strpos($thing,"class=\"added")))
-	
+
         {
-            
-			$thing = substr($thing,strpos($thing,"class=\"added")); 
+
+			$thing = substr($thing,strpos($thing,"class=\"added"));
 			$thing = str_replace("<td colspan=\"10\" class=\"added_today\">","<td colspan=\"10\" class=\"today\">",$thing);
 			$thing = substr($thing,strpos($thing,"<tr>"));
-       
+
 			$tmplist = substr($thing,0,strpos($thing,"<tr><td colspan=\"10\" align=\"center\""));
-			
+
             // ok so now we have the listing.
             $tmpListArr = explode("</tr><tr>",$tmplist);
 			$bg = $this->cfg["bgLight"];
             foreach($tmpListArr as $key =>$value)
             {
-			
+
 			$buildLine = true;
                 if (strpos($value,"www.demonoid.com"))
                 {
-					
+
                     $ts = new dmnd($value);
 
                     // Determine if we should build this output
@@ -543,25 +543,25 @@ class SearchEngine extends SearchEngineBase
 
         // is there paging at the bottom?
         if (strpos($thing, "&page=") != false)
-		
+
         {
 			// Yes, then lets grab it and display it!  ;)
             $thing = substr($thing,strpos($thing,"<tr><td colspan")+strlen("<tr><td colspan"));
             $thing = substr($thing,strpos($thing,">")+1);
             $pages = substr($thing,0,strpos($thing,"</td>"));
-			
+
             if(strpos($this->curRequest,"LATEST"))
             {
-				
+
                 $pages = str_replace("http://www.demonoid.com/files/?",$this->searchURL()."&LATEST=1&",$pages);
-				
+
             }
             else
             {
-				
+
                 $pages = str_replace("http://www.demonoid.com/files/?",$this->searchURL()."&",$pages);
             }
-			
+
             $pages = str_replace("page=","pg=",$pages);
 			$pages = str_replace("subcategory=","subGenre=",$pages);
             $pages = str_replace("category=","mainGenre=",$pages);
@@ -596,86 +596,86 @@ class dmnd
     var $dateAdded = "";
     var $dwnldCount = "";
 
-	
+
  function dmnd( $htmlLine )
     {
         if (strlen($htmlLine) > 0)
         {
             $this->Data = $htmlLine;
 			$tmpListArr = explode("</td>",$htmlLine);
-			
-            if(count($tmpListArr) >= 13) 
+
+            if(count($tmpListArr) >= 13)
             {
-                
+
 				// Category Id
                 $tmpStr = "";
 				$tmpStr = substr($tmpListArr["0"],strpos($tmpListArr["0"],"category=")+strlen("category="));
                 $this->CatId = substr($tmpStr,0,strpos($tmpStr,"&"));
-								
+
 				//Category Name
 				$tmpStr = "";
 				$tmpStr = substr($tmpListArr["0"],strpos($tmpListArr["0"],"title=\"")+strlen("title=\""));
                 $this->CatName = substr($tmpStr,0,strpos($tmpStr,"\""));
-				                
+
 				//SubCategory ID
 				$tmpStr = "";
 				$tmpStr = substr($tmpListArr["2"],strpos($tmpListArr["2"],"subcategory=")+strlen("subcategory="));
                 $this->SubId = substr($tmpStr,0,strpos($tmpStr,"&"));
-				
+
 				//SubCategory Name
 				$tmpStr = "";
 				$tmpStr = substr($tmpListArr["2"],strpos($tmpListArr["2"],"subcategory\"")+strlen("subcategory\">"));
                 $this->SubCategory = substr($tmpStr,0,strpos($tmpStr,"<"));
-							
+
 				//validate Subcategory ID
 				if (!is_numeric($this->SubId)){
 				$this->SubId = "0";
 				$this->SubCategory = "All";
 				}
-										
+
 				//Set  Category
 				$this->MainCategory = $this->CatName;
 				$this->MainId = $this->CatId;
 				$this->SubId = $this->CatId.":".$this->SubId;
-				
+
 				// TorrentName
-                $this->torrentName = $this->cleanLine($tmpListArr["1"]);  
-				
+                $this->torrentName = $this->cleanLine($tmpListArr["1"]);
+
                 // Download Link
 				$tmpStr = "";
-                $tmpStr = substr($tmpListArr["4"],strpos($tmpListArr["4"],"href=\"")+strlen("href=\"")); 
+                $tmpStr = substr($tmpListArr["4"],strpos($tmpListArr["4"],"href=\"")+strlen("href=\""));
                 $this->torrentFile = substr($tmpStr,0,strpos($tmpStr,"\""));
-				
+
                 // Size of File
-				$this->torrentSize = $this->cleanLine($tmpListArr["7"]); 
-				
+				$this->torrentSize = $this->cleanLine($tmpListArr["7"]);
+
 				// Seeds
-				$this->Seeds = $this->cleanLine($tmpListArr["10"]);  
-				
+				$this->Seeds = $this->cleanLine($tmpListArr["10"]);
+
 				// Peers
-                $this->Peers = $this->cleanLine($tmpListArr["11"]);  
-				
+                $this->Peers = $this->cleanLine($tmpListArr["11"]);
+
 				if ($this->Peers == '')
                 {
                     $this->Peers = "N/A";
                     if (empty($this->Seeds)) $this->Seeds = "N/A";
                 }
                 if ($this->Seeds == '') $this->Seeds = "N/A";
-				
+
 				//set torrent display name
                 $this->torrentDisplayName = $this->torrentName;
                 if(strlen($this->torrentDisplayName) > 50)
                 {
                     $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
                 }
-				
+
 				//Check Date.
 				if (!empty($tmpListArr["12"])) {
 					$this->dateAdded = $this->cleanline($tmpListArr["12"]);
 					}
-				
+
 			}
-		   
+
         }
 
     }

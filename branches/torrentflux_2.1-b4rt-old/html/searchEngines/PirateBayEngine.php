@@ -22,6 +22,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
+    v 1.03 - Aug 23, 06 - Added Top 100
     v 1.02 - Jun 29, 06 - fix to paging..
     v 1.01 - Apr 11, 06 - bug in parsing paging.
 */
@@ -37,7 +38,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "PirateBay";
 
         $this->author = "kboy";
-        $this->version = "1.02";
+        $this->version = "1.03";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1125.0.html";
 
         $this->Initialize($cfg);
@@ -45,6 +46,7 @@ class SearchEngine extends SearchEngineBase
 
     function populateMainCategories()
     {
+        $this->mainCatalog["000"] = "Top100";
         $this->mainCatalog["100"] = "Audio";
         $this->mainCatalog["200"] = "Video";
         $this->mainCatalog["300"] = "Applications";
@@ -126,23 +128,33 @@ class SearchEngine extends SearchEngineBase
         //recent.php
         //top100.php
 
-
-        if (array_key_exists("subGenre",$_REQUEST))
+        if ($_REQUEST["mainGenre"] == "000")
         {
-            $request = "/brwsearch.php?b=1&c=".$_REQUEST["subGenre"];
-        }
-        elseif (array_key_exists("mainGenre",$_REQUEST))
-        {
-            $request = "/brwsearch.php?b=1&c=0&d=".$_REQUEST["mainGenre"];
+            $request = "/top/all";
         }
         else
         {
-            $request = "/recent.php?orderby=";
-        }
-
-        if (!empty($this->pg))
-        {
-            $request .= "&page=" . $this->pg;
+            if (array_key_exists("subGenre",$_REQUEST))
+            {
+                $request = "/brwsearch.php?b=1&c=".$_REQUEST["subGenre"];
+            }
+            elseif (array_key_exists("mainGenre",$_REQUEST))
+            {
+                if ($_REQUEST["mainGenre"] == "000")
+                {
+                    $request = "/top/all";
+                } else {
+                    $request = "/brwsearch.php?b=1&c=0&d=".$_REQUEST["mainGenre"];
+                }
+            }
+            else
+            {
+                $request = "/recent.php?orderby=se";
+            }
+            if (!empty($this->pg))
+            {
+                $request .= "&page=" . $this->pg;
+            }
         }
 
         if ($this->makeRequest($request))
@@ -166,7 +178,7 @@ class SearchEngine extends SearchEngineBase
         }
         elseif (array_key_exists("mainGenre",$_REQUEST))
         {
-            $request = "/brwsearch.php?b=1&c=0&d=".$_REQUEST["mainGenre"];
+           $request = "/brwsearch.php?b=1&c=0&d=".$_REQUEST["mainGenre"];
         }
         else
         {

@@ -22,6 +22,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
+	v 1.05 - Oct 07, 06 - updated parseing
+    v 1.04 - Sep 20, 06 - updated by batmark
+    v 1.03 - Aug 23, 06 - fix ISOHunt fixed search results to display externals.
+    v 1.02 - Aug 23, 06 - fix ISOHunt changed there site alittle.
     v 1.01 - Jun 30, 06 - fix to Search..
 */
 
@@ -37,7 +41,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "isoHunt";
 
         $this->author = "kboy";
-        $this->version = "1.01";
+        $this->version = "1.05";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,878.0.html";
 
         $this->Initialize($cfg);
@@ -81,15 +85,12 @@ class SearchEngine extends SearchEngineBase
 
         // create the request string.
         $searchTerm = str_replace(" ", "+", $searchTerm);
-        $request = "/torrents.php?ihq=".$searchTerm;
-        $request .= "&ext=&op=and";
-
+        $request = "/torrents?ihq=".$searchTerm;
+        //$request .= "&ext=&op=and";
         if (!empty($this->pg))
         {
             $request .= "&ihs1=18&iho1=d&iht=-1&ihp=" . $this->pg;
         }
-
-        $request .= "&submit=Torrents";
 
         // make the request if successful call the parse routine.
         if ($this->makeRequest($request))
@@ -116,26 +117,40 @@ class SearchEngine extends SearchEngineBase
 
         // We got a response so display it.
         // Chop the front end off.
-        while (is_integer(strpos($thing,"<table")))
+        if ($latest)
         {
-            $thing = substr($thing,strpos($thing,"Torrent tag"));
-            $thing = substr($thing,strpos($thing,"</tr>"));
-            $tmpList = substr($thing,0,strpos($thing,"</table>"));
+            $start = strrpos($thing, "New torrents on isoHunt");
+        } else {
+            $start = strrpos($thing, "isoHunt Rank");
+        }
 
-            if (is_integer(strpos($tmpList,"btDetails.php")))
+        $thing = substr($thing, $start, strlen($thing) - $start);
+
+        if ($latest)
+        {
+            $end = strrpos($thing, "adclick");
+        } else {
+            $end = strrpos($thing, "»");
+        }
+
+        $thing = substr($thing, 0, $end);
+        $tmpList = $thing;
+        //echo $tmpList;
+
+        if (strpos($tmpList,"/download/") || strpos($tmpList,"torrent_details"))
             {
                 // ok so now we have the listing.
                 $tmpListArr = split("</tr>",$tmpList);
 
                 array_pop($tmpListArr);
-
                 $bg = $this->cfg["bgLight"];
+
 
                 foreach($tmpListArr as $key =>$value)
                 {
                     //echo $value;
                     $buildLine = true;
-                    if (strpos($value,"id="))
+                    if (strpos($value,"/download/") || strpos($value,"torrent_details"))
                     {
                         $ts = new isoHunt($value,$latest);
 
@@ -170,7 +185,6 @@ class SearchEngine extends SearchEngineBase
 
                     }
                 }
-            }
             // set thing to end of this table.
             $thing = substr($thing,strpos($thing,"</table>"));
             if (!is_integer(strpos($thing,"name=ihLogin")))
@@ -198,7 +212,7 @@ class SearchEngine extends SearchEngineBase
             foreach($tmpPageArr as $key => $value)
             {
                 $value .= "</a> &nbsp;";
-                $tmpVal = substr($value,strpos($value,"/torrents.php"),strpos($value,"\>")-1);
+                $tmpVal = substr($value,strpos($value,"/torrents/"),strpos($value,"\>")-1);
                 $pgNum = substr($tmpVal,strpos($tmpVal,"ihp=")+strlen("ihp="));
                 $pagesout .= str_replace($tmpVal,"XXXURLXXX".$pgNum,$value);
             }
@@ -284,8 +298,8 @@ class isoHunt
                         $this->CatName = $this->cleanLine($tmpListArr["1"]); // Type
 
                         $tmpStr = $tmpListArr["0"];  // TorrentName and Download Link
-                        $tmpStr = substr($tmpStr,strpos($tmpStr,"id="));
-                        $this->torrentFile = "http://isohunt.com/download.php?mode=bt&amp;".substr($tmpStr,0,strpos($tmpStr,"'"));
+                        $tmpStr = substr($tmpStr,strpos($tmpStr,"torrent_details/"));
+                        $this->torrentFile = "http://isohunt.com/download/".substr($tmpStr,0,strpos($tmpStr,"'"));
 
                         $this->torrentName = $this->cleanLine($tmpListArr["2"]);
 
@@ -322,9 +336,9 @@ class isoHunt
 
                         $tmpStr = $tmpListArr["0"];  // Download ID and Type
                         $this->CatName = $this->cleanLine($tmpStr); // Download ID and Type
-                        $tmpStr = substr($tmpStr,strpos($tmpStr,"&id=")+strlen("&id="));
+                        $tmpStr = substr($tmpStr,strpos($tmpStr,"torrent_details/")+strlen("torrent_details/"));
 
-                        $this->torrentFile = "http://isohunt.com/download.php?mode=bt&amp;id=".substr($tmpStr,0,strpos($tmpStr,",")-1);
+                        $this->torrentFile = "http://isohunt.com/download/".substr($tmpStr,0,strpos($tmpStr,",")-1);
 
                         //$tmpListArr["1"] = $this->cleanLine($tmpListArr["1"]);  // Age
 

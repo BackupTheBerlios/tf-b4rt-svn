@@ -22,11 +22,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
-    v 1.05 - Apr 25, 06 - Fixed Paging when getting latest on a cat.
-    v 1.04 - Apr 11, 06 - Fix catagories for improved filtering.
-    v 1.03 - Apr 10, 06 - Fixed Paging.
-    v 1.02 - Apr 07, 06 - Added Wait Column.
-    v 1.01 - Apr 05, 06 - page was not parsing correctly everytime and updated pageing.
+    v 1.01 - Sep 22, 06. Added Stats and Fixed filenames
+    v 1.00 - Sep 22, 06.
 */
 include_once("SearchEngineBase.php");
 
@@ -35,14 +32,14 @@ class SearchEngine extends SearchEngineBase
 
     function SearchEngine($cfg)
     {
-        $this->mainURL = "bitsoup.org";
-        $this->altURL = "www.bitsoup.org";
-        $this->mainTitle = "BitSoup";
-        $this->engineName = "BitSoup";
+        $this->mainURL = "Filemp3.org";
+        $this->altURL = "www.Filemp3.org";
+        $this->mainTitle = "Filemp3";
+        $this->engineName = "Filemp3";
 
         $this->author = "kboy";
-        $this->version = "1.05";
-        $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1035.0.html";
+        $this->version = "1.01";
+        $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1967.0.html";
 
         $this->Initialize($cfg);
 
@@ -54,33 +51,35 @@ class SearchEngine extends SearchEngineBase
     function populateMainCategories()
     {
         $this->mainCatalog["0"]  = "(all types)";
-        $this->mainCatalog["23"] = "Anime";
-
-        $this->mainCatalog["22"] = "Appz/Misc";
-        $this->mainCatalog["1"]  = "Appz/PC ISO";
-
-        $this->mainCatalog["24"] = "Ebooks";
-
-        $this->mainCatalog["4"]  = "Games/PC ISO";
-        $this->mainCatalog["21"] = "Games/PC Rips";
-        $this->mainCatalog["17"] = "Games/PS2";
-        $this->mainCatalog["26"] = "Games/Xbox";
-        $this->mainCatalog["12"] = "GBA/Gamecube";
-
-        $this->mainCatalog["20"] = "Movies/DVD-R";
-        $this->mainCatalog["27"] = "Movies/Other";
-        $this->mainCatalog["5"]  = "Movies/SVCD";
-        $this->mainCatalog["19"] = "Movies/XviD";
-
-        $this->mainCatalog["6"]  = "Music";
-        $this->mainCatalog["29"] = "Music Videos";
-
-        $this->mainCatalog["28"] = "Other/MISC";
-        $this->mainCatalog["30"] = "PSP/Handheld";
-        $this->mainCatalog["7"]  = "TV-Episodes";
-
-        $this->mainCatalog["9"]  = "Pron";
-
+		$this->mainCatalog["1"] = " Alternative";
+		$this->mainCatalog["2"] = " Dance";
+		$this->mainCatalog["3"] = " Hip-Hop";
+		$this->mainCatalog["4"] = " Metal";
+		$this->mainCatalog["5"] = " Pop";
+		$this->mainCatalog["6"] = " Punk";
+		$this->mainCatalog["7"] = " Rap";
+		$this->mainCatalog["8"] = " R 'n' B";
+		$this->mainCatalog["9"] = " Rock";
+		$this->mainCatalog["10"] = "Trance";
+		$this->mainCatalog["11"] = "Other";
+		$this->mainCatalog["12"] = "Music Vids";
+		$this->mainCatalog["13"] = "Old Music";
+		$this->mainCatalog["14"] = "Country";
+		$this->mainCatalog["15"] = "House";
+		$this->mainCatalog["16"] = "Reggae";
+		$this->mainCatalog["17"] = "Electronic";
+		$this->mainCatalog["18"] = "Techno";
+		$this->mainCatalog["19"] = "Drum 'n' Bass";
+		$this->mainCatalog["20"] = "OST";
+		$this->mainCatalog["21"] = "Psychedelic";
+		$this->mainCatalog["22"] = "Hardcore";
+		$this->mainCatalog["23"] = "Jazz";
+		$this->mainCatalog["24"] = "Indie";
+		$this->mainCatalog["25"] = "Funk";
+		$this->mainCatalog["26"] = "Lo Fi";
+		$this->mainCatalog["27"] = "Ambient";
+		$this->mainCatalog["28"] = "Instrumental";
+		$this->mainCatalog["29"] = "Blues";
     }
 
     //----------------------------------------------------------------
@@ -140,9 +139,6 @@ class SearchEngine extends SearchEngineBase
     function performSearch($searchTerm)
     {
 
-        // This is what bitsoup is looking for in a request.
-        // http://www.bitsoup.org/browse.php?search=test&cat=23&incldead=1
-
         // create the request string.
         $searchTerm = str_replace(" ", "+", $searchTerm);
         $request = "/browse.php?search=".$searchTerm;
@@ -195,14 +191,14 @@ class SearchEngine extends SearchEngineBase
         $output .= "<tr bgcolor=\"".$this->cfg["bgLight"]."\">";
         if ($needWait)
         {
-            $output .= "  <td colspan=8 align=center>";
+            $output .= "  <td colspan=9 align=center>";
         }
         else
         {
-            $output .= "  <td colspan=7 align=center>";
+            $output .= "  <td colspan=8 align=center>";
         }
 
-        $tmpStr = substr($tmpStr,strpos($tmpStr,"\"statusbar\""));
+        $tmpStr = substr($tmpStr,strpos($tmpStr,"userdetails"));
         $tmpStr = substr($tmpStr,strpos($tmpStr,"<font"));
         $output .= "<font size=5px> Current Stats : ".strip_tags(substr("<td>".$tmpStr,0,strpos($tmpStr,"</td>")))."</font>";
         $output .= "</td>";
@@ -241,11 +237,13 @@ class SearchEngine extends SearchEngineBase
         {
             $output .= "  <td><strong>Wait</strong></td>";
         }
+		$output .= "  <td><strong>File Life</strong></td>";
         $output .= "  <td><strong>Snatched</strong></td>";
         $output .= "</tr>\n";
 
         return $output;
     }
+
 
     //----------------------------------------------------------------
     // Function to parse the response.
@@ -265,7 +263,7 @@ class SearchEngine extends SearchEngineBase
 
         // We got a response so display it.
         // Chop the front end off.
-        $thing = substr($thing,strpos($thing,">Upped&nbsp;by<"));
+        $thing = substr($thing,strpos($thing,">Hits<"));
 
         $thing = substr($thing,strpos($thing,"</tr>")+strlen("</tr>"));
         $tmpList = substr($thing,0,strpos($thing,"</table>"));
@@ -280,7 +278,7 @@ class SearchEngine extends SearchEngineBase
             $buildLine = true;
             if (strpos($value,"id="))
             {
-                $ts = new bitSoup($value, $this->mainURL);
+                $ts = new fileMP3($value, $this->mainURL);
 
                 // Determine if we should build this output
                 if (is_int(array_search($ts->MainId,$this->catFilter)))
@@ -382,8 +380,9 @@ class SearchEngine extends SearchEngineBase
     }
 }
 
+
 // This is a worker class that takes in a row in a table and parses it.
-class bitSoup
+class fileMP3
 {
     var $torrentName = "";
     var $torrentDisplayName = "";
@@ -392,7 +391,7 @@ class bitSoup
     var $torrentStatus = "";
     var $MainId = "";
     var $MainCategory = "";
-    var $fileCount = "";
+    var $fileLife = "";
     var $Seeds = "";
     var $Peers = "";
 
@@ -403,7 +402,7 @@ class bitSoup
 
     var $torrentRating = "";
 
-    function bitSoup( $htmlLine, $dwnURL )
+    function fileMP3( $htmlLine, $dwnURL )
     {
         if (strlen($htmlLine) > 0)
         {
@@ -416,7 +415,7 @@ class bitSoup
             // Chunck up the row into columns.
             $tmpListArr = split("<td ",$htmlLine);
 
-            if(count($tmpListArr) > 12)
+            if(count($tmpListArr) > 8)
             {
 
                 $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"alt=\"")+strlen("alt=\"")); // MainCategory
@@ -424,15 +423,6 @@ class bitSoup
 
                 $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"cat=")+strlen("cat=")); // Main Id
                 $this->MainId = trim(substr($tmpStr,0,strpos($tmpStr,"\"")));
-
-                if (empty($this->MainId))
-                {
-                    if(strpos($tmpListArr["1"],"pron") > 0 )
-                    {
-                        $this->MainId = "9";
-                        $this->MainCategory = "Pron";
-                    }
-                }
 
                 $this->torrentName = $this->cleanLine("<td ".$tmpListArr["2"]."</td>");  // TorrentName
 
@@ -450,16 +440,17 @@ class bitSoup
                 }
 
                 $this->needsWait = true;
-                $this->waitTime = $this->cleanLine("<td ".$tmpListArr["4"]."</td>");  // Wait Time
+                $this->waitTime = $this->cleanLine("<td ".$tmpListArr["3"]."</td>");  // Wait Time
 
-                $this->fileCount = $this->cleanLine("<td ".$tmpListArr["5"]."</td>");  // File Count
+                $this->fileLife = $this->cleanLine("<td ".$tmpListArr["5"]."</td>");  // File Life
+                $this->fileLife = str_replace("hours","hrs",$this->fileLife);
 
-                $this->torrentSize = $this->cleanLine("<td ".$tmpListArr["8"]."</td>");  // Size of File
+                $this->torrentSize = $this->cleanLine("<td ".$tmpListArr["6"]."</td>");  // Size of File
 
-                $this->torrentStatus = $this->cleanLine(str_replace("<br>"," ","<td ".$tmpListArr["9"]."</td>"));  // Snatched
+                $this->torrentStatus = $this->cleanLine(str_replace("<br>"," ","<td ".$tmpListArr["7"]."</td>"));  // Snatched
 
-                $this->Seeds = $this->cleanLine("<td ".$tmpListArr["10"]."</td>");  // Seeds
-                $this->Peers = $this->cleanLine("<td ".$tmpListArr["11"]."</td>");  // Leech
+                $this->Seeds = $this->cleanLine("<td ".$tmpListArr["8"]."</td>");  // Seeds
+                $this->Peers = $this->cleanLine("<td ".$tmpListArr["9"]."</td>");  // Leech
 
                 if ($this->Peers == '')
                 {
@@ -468,29 +459,13 @@ class bitSoup
                 }
                 if ($this->Seeds == '') $this->Seeds = "N/A";
 
-                $this->torrentDisplayName = $this->torrentName;
-                if(strlen($this->torrentDisplayName) > 50)
-                {
-                    $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
-                }
+           } else {
 
-           }
-           elseif (count($tmpListArr) > 11)
-           {
                 $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"alt=\"")+strlen("alt=\"")); // MainCategory
                 $this->MainCategory = substr($tmpStr,0,strpos($tmpStr,"\""));
 
                 $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"cat=")+strlen("cat=")); // Main Id
-                $this->MainId = substr($tmpStr,0,strpos($tmpStr,"\""));
-
-                if (empty($this->MainId))
-                {
-                    if(strpos($tmpListArr["1"],"pron") > 0 )
-                    {
-                        $this->MainId = "9";
-                        $this->MainCategory = "Pron";
-                    }
-                }
+                $this->MainId = trim(substr($tmpStr,0,strpos($tmpStr,"\"")));
 
                 $this->torrentName = $this->cleanLine("<td ".$tmpListArr["2"]."</td>");  // TorrentName
 
@@ -507,14 +482,17 @@ class bitSoup
                     $this->torrentFile .= str_replace(" ","_",$this->torrentName).".torrent";
                 }
 
-                $this->fileCount = $this->cleanLine("<td ".$tmpListArr["4"]."</td>");  // File Count
+                $this->needsWait = false;
 
-                $this->torrentSize = $this->cleanLine("<td ".$tmpListArr["7"]."</td>");  // Size of File
+                $this->fileLife = $this->cleanLine("<td ".$tmpListArr["4"]."</td>");  // File Life
+                $this->fileLife = str_replace("hours","hrs",$this->fileLife);
 
-                $this->torrentStatus = $this->cleanLine(str_replace("<br>"," ","<td ".$tmpListArr["8"]."</td>"));  // Snatched
+                $this->torrentSize = $this->cleanLine("<td ".$tmpListArr["5"]."</td>");  // Size of File
 
-                $this->Seeds = $this->cleanLine("<td ".$tmpListArr["9"]."</td>");  // Seeds
-                $this->Peers = $this->cleanLine("<td ".$tmpListArr["10"]."</td>");  // Leech
+                $this->torrentStatus = $this->cleanLine(str_replace("<br>"," ","<td ".$tmpListArr["6"]."</td>"));  // Snatched
+
+                $this->Seeds = $this->cleanLine("<td ".$tmpListArr["7"]."</td>");  // Seeds
+                $this->Peers = $this->cleanLine("<td ".$tmpListArr["8"]."</td>");  // Leech
 
                 if ($this->Peers == '')
                 {
@@ -523,13 +501,20 @@ class bitSoup
                 }
                 if ($this->Seeds == '') $this->Seeds = "N/A";
 
-                $this->torrentDisplayName = $this->torrentName;
-                if(strlen($this->torrentDisplayName) > 50)
-                {
-                    $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
-                }
-
            }
+
+			$this->torrentDisplayName = $this->torrentName;
+			if(strpos($this->torrentName,"\n"))
+			{
+				$this->torrentDisplayName = substr($this->torrentName,0,strpos($this->torrentName,"\n"));
+				$this->torrentName = str_replace("\n"," [",$this->torrentName)."]";
+			}
+			if(strlen($this->torrentDisplayName) > 50)
+			{
+				$this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
+			}
+
+
         }
 
     }
@@ -547,7 +532,7 @@ class bitSoup
     function BuildOutput($bg, $searchURL = '')
     {
         $output = "<tr>\n";
-        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName." - ".$this->fileCount." "._FILE."\" border=0></a></td>\n";
+        $output .= "    <td width=16 bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\"><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$this->torrentName."\" border=0></a></td>\n";
         $output .= "    <td bgcolor=\"".$bg."\"><a href=\"index.php?url_upload=".$this->torrentFile."\" title=\"".$this->torrentName."\">".$this->torrentDisplayName."</a></td>\n";
 
         if (strlen($this->MainCategory) > 1){
@@ -565,6 +550,7 @@ class bitSoup
         {
             $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->waitTime."</td>\n";
         }
+		$output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->fileLife."</td>\n";
         $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->torrentStatus."</td>\n";
         $output .= "</tr>\n";
 

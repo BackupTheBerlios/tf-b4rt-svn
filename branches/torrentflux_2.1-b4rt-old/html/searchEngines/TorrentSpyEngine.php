@@ -26,6 +26,7 @@
     v 1.01 - Changed Main Categories. (removed TV, changed Movies to Video)
     v 1.02 - Mar 19, 06 - Updated pageing.
     v 1.03 - May 16, 06 - They changed there URL for Searching back to their domain.
+    v 1.04 - Sep 21, 06 - Fix for Bug found by batmark
 */
 
 class SearchEngine extends SearchEngineBase
@@ -39,7 +40,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "TorrentSpy";
 
         $this->author = "kboy";
-        $this->version = "1.03";
+        $this->version = "1.04";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,874.0.html";
         $this->Initialize($cfg);
     }
@@ -282,7 +283,7 @@ class SearchEngine extends SearchEngineBase
                         $ts = new tSpy($value);
 
                         // Determine if we should build this output
-                        if (is_int(array_search($ts->MainId,$this->catFilter)))
+                        if (is_int(array_search($ts->MainCategory,$this->catFilter)))
                         {
                             $buildLine = false;
                         }
@@ -416,7 +417,7 @@ class tSpy
 
             if(count($tmpListArr) > 5)
             {
-                $tmpListArr["0"];  // Torrent Name, Download Link, Status
+                //$tmpListArr["0"];  // Torrent Name, Download Link, Status
 
                 $this->torrentDisplayName = $this->cleanLine($tmpListArr["0"]);  // TorrentName
 
