@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 926 2006-09-25 21:56:52Z titer $
+ * $Id: transmission.h 994 2006-10-12 23:34:20Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -272,6 +272,8 @@ void tr_torrentPeersFree( tr_peer_stat_t *, int peerCount );
  * of connected peers who have the piece.
  **********************************************************************/
 void tr_torrentAvailability( tr_torrent_t *, int8_t * tab, int size );
+
+void tr_torrentAmountFinished( tr_torrent_t * tor, int8_t * tab, int size );
 
 /***********************************************************************
  * tr_torrentRemoveSaved

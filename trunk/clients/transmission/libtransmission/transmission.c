@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 931 2006-09-26 22:36:04Z joshe $
+ * $Id: transmission.c 994 2006-10-12 23:34:20Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -629,6 +629,19 @@ void tr_torrentAvailability( tr_torrent_t * tor, int8_t * tab, int size )
                 (tab[i])++;
             }
         }
+    }
+    tr_lockUnlock( &tor->lock );
+}
+
+void tr_torrentAmountFinished( tr_torrent_t * tor, int8_t * tab, int size )
+{
+    int i, piece;
+
+    tr_lockLock( &tor->lock );
+    for( i = 0; i < size; i++ )
+    {
+        piece = i * tor->info.pieceCount / size;
+        tab[i] = tr_cpPercentBlocksInPiece( tor->completion, piece );
     }
     tr_lockUnlock( &tor->lock );
 }
