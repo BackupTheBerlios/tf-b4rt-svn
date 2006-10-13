@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 996 2006-10-13 00:23:20Z joshe $
+ * $Id: transmission.c 1007 2006-10-13 19:04:29Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -494,6 +494,7 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
             sizeof( s->trackerError ) );
 
     s->peersTotal       = 0;
+    s->peersIncoming    = 0;
     s->peersUploading   = 0;
     s->peersDownloading = 0;
     
@@ -504,6 +505,12 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
         if( tr_peerIsConnected( peer ) )
         {
             (s->peersTotal)++;
+            
+            if( tr_peerIsIncoming( peer ) )
+            {
+                (s->peersIncoming)++;
+            }
+            
             if( tr_peerIsUploading( peer ) )
             {
                 (s->peersUploading)++;

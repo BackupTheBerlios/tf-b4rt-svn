@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 996 2006-10-13 00:23:20Z joshe $
+ * $Id: transmission.h 1006 2006-10-13 18:58:12Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -358,6 +358,7 @@ struct tr_stat_s
     float               rateUpload;
     int                 eta;
     int                 peersTotal;
+    int                 peersIncoming;
     int                 peersUploading;
     int                 peersDownloading;
     int                 seeders;
