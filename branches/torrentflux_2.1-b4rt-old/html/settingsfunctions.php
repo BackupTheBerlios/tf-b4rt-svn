@@ -145,17 +145,19 @@ function saveSettings($settings) {
     }
 }
 
-//******************************************************************************
-// isFile
-//******************************************************************************
+/**
+ * isFile
+ *
+ * @param $file
+ * @return boolean
+ */
 function isFile($file) {
     $rtnValue = False;
-    if (is_file($file)) {
+    if (@is_file($file)) {
         $rtnValue = True;
     } else {
-        if ($file == trim(shell_exec("ls ".$file))) {
+        if ($file == trim(shell_exec("ls 2>/dev/null ".$file)))
             $rtnValue = True;
-        }
     }
     return $rtnValue;
 }
