@@ -48,6 +48,9 @@ $htmlMain = "";
 // authenticate first
 performAuthentication();
 
+// fopen
+ini_set("allow_url_fopen", "1");
+
 // get + define this version (is done in config.php but we dont want that here)
 define('_VERSION_THIS',trim(getDataFromFile(_VERSION_LOCAL)));
 
@@ -432,19 +435,166 @@ if (isset($_REQUEST["m"])) {
 			case "0": // Maintenance-main
 				$htmlTitle = "Maintenance";
 				break;
-			case "1": // Maintenance-clean
+			case "1": // Maintenance-Kill
+				$htmlTitle = "Maintenance - Kill";
+				$htmlMain .= '<br>';
+				$htmlMain .= '<font color="red"><strong>DONT</strong> do this or you will screw up things for sure !</font><br><br>';
+				$htmlMain .= 'This is only meant as emergency-break if things go terrible wrong already.<br>Please use this only if you know what you are doing.';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>php</strong><br>';
+				$htmlMain .= 'use this to kill all php processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="images/arrow.gif" width="9" height="9" title="php-kill" border="0"> php-kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>python</strong><br>';
+				$htmlMain .= 'use this to kill all python processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>perl</strong><br>';
+				$htmlMain .= 'use this to kill all perl processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>transmissioncli</strong><br>';
+				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=14"><img src="images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>wget</strong><br>';
+				$htmlMain .= 'use this to kill all wget processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=15"><img src="images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
+				$htmlMain .= '<br><br>';
+				break;
+			case "11": // Maintenance-Kill : php
+				$htmlTitle = "Maintenance - Kill - php";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all php processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 php 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "12": // Maintenance-Kill : python
+				$htmlTitle = "Maintenance - Kill - python";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all python processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 python 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "13": // Maintenance-Kill : perl
+				$htmlTitle = "Maintenance - Kill - perl";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all perl processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 perl 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "14": // Maintenance-Kill : transmissioncli
+				$htmlTitle = "Maintenance - Kill - transmissioncli";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all transmissioncli processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 transmissioncli 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "15": // Maintenance-Kill : wget
+				$htmlTitle = "Maintenance - Kill - wget";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all wget processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 wget 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(1); // just a sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;				
+			case "2": // Maintenance-clean
 				$htmlTitle = "Maintenance-clean";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<strong>pid-file-leftovers</strong><br>';
 				$htmlMain .= 'use this to delete pid-file-leftovers of deleted torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmission-cache</strong><br>';
 				$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "11": // Maintenance-clean : pid-file-clean
+			case "21": // Maintenance-clean : pid-file-clean
 				$htmlTitle = "Maintenance-pid-file-clean";
 				$htmlMain .= '<br>';
 				$result = "";
@@ -467,7 +617,7 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No pid-leftovers found.<br><br>';
 				break;
-			case "12": // Maintenance-clean : transmission-cache-clean
+			case "22": // Maintenance-clean : transmission-cache-clean
 				$htmlTitle = "Maintenance-transmission-cache-clean";
 				$htmlMain .= '<br>';
 				$result = "";
@@ -493,75 +643,21 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No cache-leftovers found.<br><br>';
 				break;
-			case "2": // Maintenance-kill
-				$htmlTitle = "Maintenance-kill";
+			case "3": // Maintenance : Repair
+				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
-				$htmlMain .= '<font color="red"><strong>DONT</strong> do this or you will screw up things for sure !</font><br><br>';
-				$htmlMain .= 'This is only meant as emergency-break if things go terrible wrong already.<br>Please use this only if you know what you are doing.';
-				$htmlMain .= '<p>';
-				$htmlMain .= '<strong>python</strong><br>';
-				$htmlMain .= 'use this to kill all python processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="images/arrow.gif" width="9" height="9" title="python-kill" border="0">  python-kill</a>';
-				$htmlMain .= '<p>';
-				$htmlMain .= '<strong>transmissioncli</strong><br>';
-				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0">  transmissioncli-kill</a>';
+				$htmlMain .= '<font color="red"><strong>DONT</strong> do this if your system is running as it should. You WILL break something.</font>';
+				$htmlMain .= '<br>use this after server-reboot, if torrents were killed or if there are other problems with the webapp.';
+				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=31"><img src="images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "21": // Maintenance-kill : python
-				$htmlTitle = "Maintenance-kill-python";
+			case "31": // Maintenance : Repair
+				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
-				$htmlMain .= '"kill all python processes" done.';
-				$htmlMain .= '<br><br>';
-				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
-				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
-				$htmlMain .= '</pre>';
-				$htmlMain .= '<br>';
-				$callResult = trim(shell_exec("killall -9 python 2> /dev/null"));
-				if ((isset($callResult)) && ($callResult != "")) {
-					$htmlMain .= '<br>';
-					$htmlMain .= 'Call-Result : <br>';
-					$htmlMain .= '<pre>'.$callResult.'</pre>';
-					$htmlMain .= '<br>';
-				}
-				sleep(1); // just a sec
-				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
-				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
-				$htmlMain .= '</pre>';
-				$htmlMain .= '<br>';
-				break;
-			case "22": // Maintenance-kill : transmissioncli
-				$htmlTitle = "Maintenance-kill-transmissioncli";
-				$htmlMain .= '<br>';
-				$htmlMain .= '"kill all transmissioncli processes" done.';
-				$htmlMain .= '<br><br>';
-				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
-				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
-				$htmlMain .= '</pre>';
-				$htmlMain .= '<br>';
-				$callResult = trim(shell_exec("killall -9 transmissioncli 2> /dev/null"));
-				if ((isset($callResult)) && ($callResult != "")) {
-					$htmlMain .= '<br>';
-					$htmlMain .= 'Call-Result : <br>';
-					$htmlMain .= '<pre>'.$callResult.'</pre>';
-					$htmlMain .= '<br>';
-				}
-				sleep(1); // just a sec
-				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
-				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
-				$htmlMain .= '</pre>';
-				$htmlMain .= '<br>';
-				break;
-			case "3": // Maintenance : repair
-				$htmlTitle = "Maintenance-repair";
-				$htmlMain .= '<br>';
-				$htmlMain .= 'Repairing TorrentFlux-Installation...';
+				$htmlMain .= 'Repair of torrentflux-b4rt Installation';
 				repairTorrentflux();
 				$htmlMain .= ' <font color="green">done.</font>';
+				$htmlMain .= '<br><br>';
 				break;
 		}
 		printPage();
@@ -755,10 +851,10 @@ function buildPage($action) {
 		case "m": // maintenance passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1">clean</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1">kill</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2">kill</a>';
-			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2">clean</a>';
+			$htmlMain .= ' | ';			
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3">repair</a>';
 			$htmlMain .= '</td><td align="right"><strong>Maintenance</td>';
 			$htmlMain .= '</td></tr></table>';
@@ -840,17 +936,24 @@ function buildPage($action) {
 			break;
 		case "2": // changelog
 			$htmlTitle = "Changelog";
+			/*
 			$htmlMain .= '<br>';
 			$htmlMain .= '<h4>Changelog<h4>';
 			$htmlMain .= '<hr>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
+			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
 			$htmlMain .= '</pre>';
+			*/
+			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+			$htmlMain .= '<pre>';
+			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
+			$htmlMain .= '</pre>';
+			$htmlMain .= '</div>';
 			break;
 		case "3": // issues
 			$htmlTitle = "Issues";
 			$issueText = "Error getting issues";
-			$issueText = gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
+			$issueText = @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
 			header("Content-Type: text/plain");
 			echo $issueText;
 			exit;
@@ -882,10 +985,15 @@ function buildPage($action) {
 			break;
 		case "5": // news
 			$htmlTitle = "News";
+			/*
 			$htmlMain .= '<br>';
 			$htmlMain .= '<h4>News<h4>';
 			$htmlMain .= '<hr>';
-			$htmlMain .= gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
+			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
+			*/
+			$htmlMain .= '<br>';
+			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
+			$htmlMain .= '<br><br>';			
 			break;
 		default:
 			$htmlTitle = "SuperAdmin";
