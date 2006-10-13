@@ -28,7 +28,6 @@
     v 1.00 - Mar 31, 06 - Created
 */
 
-
 class SearchEngine extends SearchEngineBase
 {
     var $dateAdded = "";

@@ -29,7 +29,6 @@
     v 1.01 - Jun 30, 06 - fix to Search..
 */
 
-
 class SearchEngine extends SearchEngineBase
 {
 
