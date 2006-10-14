@@ -36,13 +36,10 @@
 ################################################################################
 use strict;
 use warnings;
-#
-use XML::Simple;
-use LWP::Simple;
 ################################################################################
 
 # arg-vars
-my ($PATH_TFLUX, $PATH_SAVE, $RSS_URL);
+my ($PATH_FILTERS, $PATH_HISTORY, $PATH_SAVE, $RSS_URL);
 
 # Internal Vars
 my ($VERSION, $DIR, $PROG, $EXTENSION, $USAGE);
@@ -60,7 +57,7 @@ $EXTENSION=$1;
 
 # check args
 my $argCount = scalar(@ARGV);
-if (($argCount != 1) && ($argCount != 3)) {
+if (($argCount != 1) && ($argCount != 4)) {
 	printUsage();
 	exit;
 }
@@ -87,10 +84,20 @@ if ($argCount == 1) {
 	}
 }
 
-# init vars
-$PATH_TFLUX = shift @ARGV;
-$PATH_SAVE = shift @ARGV;
+# init arg-vars
 $RSS_URL = shift @ARGV;
+$PATH_FILTERS = shift @ARGV;
+$PATH_HISTORY = shift @ARGV;
+$PATH_SAVE = shift @ARGV;
+
+# load modules
+loadModules();
+
+
+print "RSS_URL : ".$RSS_URL."\n";
+print "PATH_FILTERS : ".$PATH_FILTERS."\n";
+print "PATH_HISTORY : ".$PATH_HISTORY."\n";
+print "PATH_SAVE : ".$PATH_SAVE."\n";
 
 
 exit;
@@ -127,18 +134,18 @@ my $data = $rss->XMLin(get($rssFeed));
 open(FILTERS,$filters);
 
 # Loop through all of the regular expressions
-while(<FILTERS>){
+while(<FILTERS>) {
 	chomp;
 	my $filter = $_;
 	print "*****$filter*****\n";
 
 	# compare the filter to each torrent in the xml doc
-	foreach my $torrent (@{$data->{channel}->{item}}){
+	foreach my $torrent (@{$data->{channel}->{item}}) {
 
 		# if we have a match, save torrent file
 
 		# if($torrent->{title} =~ /($filter)/i && $torrent->{title} !~ /HR/){
-		if($torrent->{title} =~ /($filter)/i){
+		if($torrent->{title} =~ /($filter)/i) {
 
 			# Check the history file for the torrent we're looking at
 			open(HISTORY,$historyFile);
@@ -160,7 +167,7 @@ while(<FILTERS>){
 			close HISTORY;
 
 			# if we haven't already downloaded the torrent, process it
-			if (!$match){
+			if (!$match) {
 
 				# Add the torrent to the history log
 				open(HISTORY,">>$historyFile");
@@ -183,6 +190,28 @@ close FILTERS;
 #===============================================================================
 # Subs
 #===============================================================================
+
+#------------------------------------------------------------------------------#
+# Sub: loadModules                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadModules {
+	# load LWP::Simple
+	if (eval "require LWP::Simple")  {
+		LWP::Simple->import();
+	} else {
+		print STDERR "cant load perl-module LWP::Simple : ".$@;
+		exit;
+	}
+	# load XML::Simple
+	if (eval "require XML::Simple")  {
+		XML::Simple->import();
+	} else {
+		print STDERR "cant load perl-module XML::Simple : ".$@;
+		exit;
+	}
+}
 
 #------------------------------------------------------------------------------#
 # Sub: check                                                                   #
@@ -225,19 +254,19 @@ sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
 }
 
-#-------------------------------------------------------------------------------
-# Sub: printUsage
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printUsage                                                              #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub printUsage {
 	print <<"USAGE";
 $PROG.$EXTENSION (Revision $VERSION)
 
-Usage: $PROG.$EXTENSION tflux-path save-location rss-feed-url
+Usage: $PROG.$EXTENSION rss-feed-url filter-file history-file save-location
 
 Example:
-$PROG.$EXTENSION /usr/local/torrent /save/location http://www.example.com/feed.xml
+$PROG.$EXTENSION http://www.example.com/feed.xml /usr/local/torrentflux/.tfrss/regex.dat /usr/local/torrentflux/.tfrss/history.log /usr/local/torrentflux/.watch/
 
 USAGE
 
