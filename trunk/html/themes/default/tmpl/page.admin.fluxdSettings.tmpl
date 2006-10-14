@@ -113,11 +113,13 @@
 										<input name="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
 									</td>
 								</tr>
+								<tr><td colspan="2" align="center"><br></td></tr>
 								<tr>
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Modules</strong>
 									</td>
 								</tr>
+								<tr><td colspan="2" align="center"><br></td></tr>
 								<tr>
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Qmgr</strong>&nbsp;
@@ -152,11 +154,11 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Qmgr Intervall</strong><br>
-										Intervall in seconds to have run Qmgr.
+									<td align="left" width="350" valign="top"><strong>Qmgr Interval</strong><br>
+										Interval in seconds to have run Qmgr.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Qmgr_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Qmgr_interval">" size="3">
+										<input name="fluxd_Qmgr_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_interval">" size="5">
 									</td>
 								</tr>
 								<tr>
@@ -164,7 +166,7 @@
 									Specify the maximum number of torrents the server will allow to run at one time (admins may override this):
 									</td>
 									<td valign="top">
-										<input name="fluxd_Qmgr_maxTotalTorrents" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Qmgr_maxTotalTorrents">" size="3">
+										<input name="fluxd_Qmgr_maxTotalTorrents" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxTotalTorrents">" size="5">
 									</td>
 								</tr>
 								<tr>
@@ -172,7 +174,7 @@
 									Specify the maximum number of torrents a single user may run at one time:
 									</td>
 									<td valign="top">
-										<input name="fluxd_Qmgr_maxUserTorrents" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Qmgr_maxUserTorrents">" size="3">
+										<input name="fluxd_Qmgr_maxUserTorrents" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxUserTorrents">" size="5">
 									</td>
 								</tr>
 								<tr>
@@ -209,11 +211,11 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch Intervall</strong><br>
-										Intervall in seconds to have run Watch.
+									<td align="left" width="350" valign="top"><strong>Watch Interval</strong><br>
+										Interval in seconds to have run Watch.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Watch_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Watch_interval">" size="3">
+										<input name="fluxd_Watch_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Watch_interval">" size="5">
 									</td>
 								</tr>
 								<tr>
@@ -261,6 +263,63 @@
 								</tr>
 								<tr>
 									<td colspan="2" align="center" bgcolor="#d6dfe6">
+										<strong>Rssad</strong>&nbsp;
+										<tmpl_if name="fluxd_Rssad_state" value="0">
+											<img src="themes/default/images/black.gif" title="Rssad not loaded.">
+										</tmpl_if>
+										<tmpl_if name="fluxd_Rssad_state" value="1">
+											<img src="themes/default/images/green.gif" title="Rssad loaded.">
+										</tmpl_if>
+										<tmpl_if name="fluxd_Rssad_state" value="-1">
+											<img src="themes/default/images/red.gif" title="Rssad error.">
+										</tmpl_if>
+									</td>
+								</tr>								
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Rssad enabled</strong><br>
+									Specify whether or not to load the Rssad module.
+									</td>
+									<td valign="top">
+										<select name="fluxd_Rssad_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Rssad_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Rssad_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Rssad Interval</strong><br>
+										Interval in seconds to have run Rssad.
+									</td>
+									<td valign="top">
+										<input name="fluxd_Rssad_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Rssad_interval">" size="5">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Rssad Filters</strong><br>
+										Configure the Rssad-Filters.
+									</td>
+									<td valign="top">
+										TODO
+									</td>
+								</tr>								
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Rssad Jobs</strong><br>
+										Configure the Rssad-Jobs.
+									</td>
+									<td valign="top">
+										TODO
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" align="center" bgcolor="#d6dfe6">
 										<strong>Fluxinet</strong>&nbsp;
 										<tmpl_if name="fluxd_Fluxinet_state" value="0">
 											<img src="themes/default/images/black.gif" title="Fluxinet not loaded.">
@@ -301,57 +360,16 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="2" align="center" bgcolor="#d6dfe6">
-										<strong>Clientmaint</strong>&nbsp;
-										<tmpl_if name="fluxd_Clientmaint_state" value="0">
-											<img src="themes/default/images/black.gif" title="Clientmaint not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Clientmaint_state" value="1">
-											<img src="themes/default/images/green.gif" title="Clientmaint loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Clientmaint_state" value="-1">
-											<img src="themes/default/images/red.gif" title="Clientmaint error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Clientmaint enabled</strong><br>
-									Specify whether or not to load the Client Maintainance module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Clientmaint_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Clientmaint_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Clientmaint_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Clientmaint Intervall</strong><br>
-										Intervall in seconds to have run Client maintainance.
-									</td>
-									<td valign="top">
-										<input name="fluxd_Clientmaint_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Clientmaint_interval">" size="3">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="#d6dfe6">
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
 										<strong>Trigger</strong>&nbsp;
 										<tmpl_if name="fluxd_Trigger_state" value="0">
-											<img src="themes/default/images/black.gif" title="Trigger not loaded.">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Trigger not loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Trigger_state" value="1">
-											<img src="themes/default/images/green.gif" title="Trigger loaded.">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Trigger loaded.">
 										</tmpl_if>
 										<tmpl_if name="fluxd_Trigger_state" value="-1">
-											<img src="themes/default/images/red.gif" title="Trigger error.">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Trigger error.">
 										</tmpl_if>
 									</td>
 								</tr>
@@ -375,11 +393,52 @@
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Trigger Intervall</strong><br>
-										Intervall in seconds to have run Trigger.
+									<td align="left" width="350" valign="top"><strong>Trigger Interval</strong><br>
+										Interval in seconds to have run Trigger.
 									</td>
 									<td valign="top">
-										<input name="fluxd_Trigger_interval" type="Text" maxlength="3" value="<tmpl_var name="fluxd_Trigger_interval">" size="3">
+										<input name="fluxd_Trigger_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Trigger_interval">" size="5">
+									</td>
+								</tr>								
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
+										<strong>Clientmaint</strong>&nbsp;
+										<tmpl_if name="fluxd_Clientmaint_state" value="0">
+											<img src="themes/tf_standard_themes/images/black.gif" title="Clientmaint not loaded.">
+										</tmpl_if>
+										<tmpl_if name="fluxd_Clientmaint_state" value="1">
+											<img src="themes/tf_standard_themes/images/green.gif" title="Clientmaint loaded.">
+										</tmpl_if>
+										<tmpl_if name="fluxd_Clientmaint_state" value="-1">
+											<img src="themes/tf_standard_themes/images/red.gif" title="Clientmaint error.">
+										</tmpl_if>
+									</td>
+								</tr>								
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Clientmaint enabled</strong><br>
+									Specify whether or not to load the Client Maintainance module.
+									</td>
+									<td valign="top">
+										<select name="fluxd_Clientmaint_enabled">
+											<option value="1"
+											<tmpl_if name="fluxd_Clientmaint_enabled" value="1">
+												selected
+											</tmpl_if>
+											>True</option>
+											<option value="0"
+											<tmpl_if name="fluxd_Clientmaint_enabled" value="0">
+												selected
+											</tmpl_if>
+											>False</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Clientmaint Interval</strong><br>
+										Interval in seconds to have run Client maintainance.
+									</td>
+									<td valign="top">
+										<input name="fluxd_Clientmaint_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Clientmaint_interval">" size="5">
 									</td>
 								</tr>
 								<tr><td colspan="2"><hr noshade></td></tr>
@@ -387,7 +446,7 @@
 									<td align="center" colspan="2">
 									<input type="Submit" value="Update Settings">
 									</td>
-								</tr>
+								</tr>								
 							</form>
 						</table>
 					</div>
