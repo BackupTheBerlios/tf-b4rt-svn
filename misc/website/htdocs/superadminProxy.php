@@ -22,9 +22,9 @@
 
 // defines
 define('_FILE_NEWS','newshtml.txt');
-define('_FILE_CHANGELOG','changelog.txt');
-define('_FILE_ISSUES','issues.txt');
 define('_FILE_VERSION_CURRENT','version.txt');
+define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
+define('_FILE_ISSUES','issues.txt');
 define('_UPDATE_BASEDIR','update');
 define('_UPDATE_DATADIR','data');
 define('_UPDATE_SQLDIR','sql');
