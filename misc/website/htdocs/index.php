@@ -7,7 +7,7 @@
 /* defines */
 define('_FILE_NEWS','newshtml.txt');
 define('_FILE_VERSION','version.txt');
-define('_FILE_CHANGELOG','changelog.txt');
+define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
 
 /* global fields */
 $version = "";
