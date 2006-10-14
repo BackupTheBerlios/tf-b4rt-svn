@@ -22,9 +22,11 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
-use Convert::Bencode;
-use Net::BitTorrent::File;
-use LWP::UserAgent;
+#                                                                              #
+#  Requirements :                                                              #
+#   * LWP::UserAgent  ( perl -MCPAN -e "install LWP::UserAgent" )              #
+#                                                                              #
+################################################################################
 use strict;
 ################################################################################
 
@@ -49,11 +51,17 @@ $EXTENSION=$1;
 SWITCH: {
 	$_ = shift @ARGV;
 	/info|.*-i/ && do { # --- info ---
+		loadModules();
 		torrentInfo(shift @ARGV);
 		exit;
 	};
 	/scrape|.*-s/ && do { # --- scrape ---
+		loadModules();
 		torrentScrape(shift @ARGV);
+		exit;
+	};
+	/check/ && do { # --- check ---
+		check();
 		exit;
 	};
 	/.*(version|-v).*/ && do { # --- version ---
@@ -213,6 +221,67 @@ sub getUrl() {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: loadModules                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadModules {
+	# load LWP::UserAgent
+	if (eval "require LWP::UserAgent")  {
+		LWP::UserAgent->import();
+	} else {
+		print STDERR "Error : cant load perl-module LWP::UserAgent : ".$@."\n";
+		exit;
+	}
+	# load Convert::Bencode
+	if (eval "require Convert::Bencode")  {
+		Convert::Bencode->import();
+	} else {
+		print STDERR "Error : cant load perl-module Convert::Bencode : ".$@."\n";
+		exit;
+	}
+	# load Net::BitTorrent::File
+	if (eval "require Net::BitTorrent::File")  {
+		Net::BitTorrent::File->import();
+	} else {
+		print STDERR "Error : cant load perl-module Net::BitTorrent::File : ".$@."\n";
+		exit;
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: check                                                                   #
+# Arguments: Null                                                              #
+# Returns: info on system requirements                                         #
+#------------------------------------------------------------------------------#
+sub check {
+	print "checking requirements...\n";
+	# 1. perl-modules
+	print "1. perl-modules\n";
+	my @mods = ('LWP::UserAgent', 'Convert::Bencode', 'Net::BitTorrent::File');
+	foreach my $mod (@mods) {
+		if (eval "require $mod")  {
+			print " - ".$mod."\n";
+			next;
+		} else {
+			print "Error : cant load module ".$mod."\n";
+			# Turn on Autoflush;
+			$| = 1;
+			print "Should we try to install the module with CPAN ? (y|n) ";
+			my $answer = "";
+			chomp($answer=<STDIN>);
+			$answer = lc($answer);
+			if ($answer eq "y") {
+				exec('perl -MCPAN -e "install '.$mod.'"');
+			}
+			exit;
+		}
+	}
+	# done
+	print "done.\n";
+}
+
+#------------------------------------------------------------------------------#
 # Sub: printVersion                                                            #
 # Arguments: Null                                                              #
 # Returns: Version Information                                                 #
@@ -231,6 +300,9 @@ sub printUsage {
 $PROG.$EXTENSION (Revision $VERSION)
 
 Usage: $PROG.$EXTENSION operation path-to-torrent-meta-file
+       $PROG.$EXTENSION check
+       $PROG.$EXTENSION version
+       $PROG.$EXTENSION help
 
 Operations :
  -i  : decode and print out torrent-info.
