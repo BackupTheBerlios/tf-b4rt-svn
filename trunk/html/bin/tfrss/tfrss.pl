@@ -1,31 +1,37 @@
 #!/usr/bin/perl
-# TFRSS v0.1 
-# Last Modified 10/11/2006
-# Copyright 2006 Chris Craig
-# chris@chriscraig.net
+################################################################################
+# $Id$
+# $Date$
+# $Revision$
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
+################################################################################
 #
-###############################################################################
-# 
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+# tfrss.pl is a simple script to download a torrent rss feed and download
+# torrents that match regular expressions.
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+################################################################################
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+# tfrss.pl is based on TFRSS v0.1 written by Chris Craig (chris@chriscraig.net)
 #
-###############################################################################
-#
-# TFRSS is a simple script to download a torrent rss feed and download torrents
-# that match regular expressions. It is best used with a cron job and a watch 
-# directory to fully automate the process.
-#
+################################################################################
+
+
 ###############################################################################
 #
 # config
@@ -38,7 +44,7 @@ $filters = "/path/to/tfrss/regex.dat";
 # The URL of the rss feed
 $rssFeed = "http://myfeed.com/feeds/thefeed/";
 
-# The location to save torrents (should be the same as your watch folder in 
+# The location to save torrents (should be the same as your watch folder in
 # TorrentFlux
 $saveLocation = "/path/to/watch/directory/";
 
@@ -66,49 +72,49 @@ while(<FILTERS>){
 	chomp;
 	$filter = $_;
 	print "*****$filter*****\n";
-	
+
 	# compare the filter to each torrent in the xml doc
 	foreach $torrent (@{$data->{channel}->{item}}){
-		
+
 		# if we have a match, save torrent file
-		
+
 		# if($torrent->{title} =~ /($filter)/i && $torrent->{title} !~ /HR/){
 		if($torrent->{title} =~ /($filter)/i){
-			
+
 			# Check the history file for the torrent we're looking at
 			open(HISTORY,$historyFile);
-			
+
 			# Set the match flag to false
 			$match = 0;
-			
+
 			#Read through the history file to see if we've already
 			#downloaded this torrent before.
 			while(<HISTORY>){
 				chomp;
-				
+
 				# If we find the torrent, set the match flag to true
 				if($_ eq $torrent->{title}){
 					$match = 1;
 				}
 			}
-			
+
 			close HISTORY;
 
 			# if we haven't already downloaded the torrent, process it
 			if (!$match){
-				
+
 				# Add the torrent to the history log
 				open(HISTORY,">>$historyFile");
 				print HISTORY "$torrent->{title}\n";
 				close HISTORY;
-				print "$torrent->{title}\n";	
-			
+				print "$torrent->{title}\n";
+
 				# Download the torrent
 				getstore($torrent->{link},"$saveLocation$torrent->{title}.torrent");
-				
+
 			}
 		}
-		
+
 	}
 }
 
