@@ -3,14 +3,26 @@
 # $Id$
 # $Revision$
 # $Date$
-#------------------------------------------------------------------------------#
-# fluxpoller.pl                                                                #
-#------------------------------------------------------------------------------#
-# This Stuff is provided 'as-is'. In no way will the author be held            #
-# liable for any damages to your soft- or hardware from this.                  #
-# Feel free to change or rip the code.                                         #
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
 ################################################################################
 use strict;
+################################################################################
 
 # should we try to find needed binaries ? (using "whereis" + "awk")
 # use 1 to activate, else "constants" are used (the faster + safer way)
@@ -20,10 +32,10 @@ my $autoFindBinaries = 0;
 my @BINS_SOCKET = qw( python transmissionc wget );
 
 # Internal Vars
-my ( $REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE );
+my ($REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE);
 
 # bin Vars
-my ( $BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_SOCKSTAT, $BIN_GREP, $BIN_AWK );
+my ($BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_SOCKSTAT, $BIN_GREP, $BIN_AWK);
 
 # webserver-user (only needed on bsd)
 my $WEBUSER = "www";
