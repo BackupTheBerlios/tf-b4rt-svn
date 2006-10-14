@@ -41,6 +41,16 @@ use warnings;
 # arg-vars
 my ($PATH_FILTERS, $PATH_HISTORY, $PATH_SAVE, $RSS_URL);
 
+# filters
+my @filters;
+
+# history
+my @history;
+my @historyNew;
+
+# data
+my $data;
+
 # Internal Vars
 my ($VERSION, $DIR, $PROG, $EXTENSION, $USAGE);
 
@@ -66,7 +76,6 @@ if (($argCount != 1) && ($argCount != 4)) {
 if ($argCount == 1) {
 	SWITCH: {
 		$_ = shift @ARGV;
-
 		/check/ && do { # --- check ---
 			check();
 			exit;
@@ -90,18 +99,38 @@ $PATH_FILTERS = shift @ARGV;
 $PATH_HISTORY = shift @ARGV;
 $PATH_SAVE = shift @ARGV;
 
+# check args
+if (!(-f $PATH_FILTERS)) {
+	print STDERR "Error : filter-file is no file : ".$PATH_FILTERS."\n";
+	exit;
+}
+if (!(-d $PATH_SAVE)) {
+	print STDERR "Error : save-location is no dir : ".$PATH_SAVE."\n";
+	exit;
+}
+
 # load modules
 loadModules();
 
+# load filters
+loadFilters();
 
-print "RSS_URL : ".$RSS_URL."\n";
-print "PATH_FILTERS : ".$PATH_FILTERS."\n";
-print "PATH_HISTORY : ".$PATH_HISTORY."\n";
-print "PATH_SAVE : ".$PATH_SAVE."\n";
+# load history
+loadHistory();
 
+# load data
+loadData();
 
+# process feed
+processFeed();
+
+# update history
+updateHistory();
+
+# exit
 exit;
 
+=for later
 
 ###############################################################################
 # config
@@ -122,7 +151,6 @@ my $historyFile = "/path/to/tfrss/history.log";
 
 # DO NOT EDIT BELOW THIS POINT UNLESS YOU KNOW WHAT YOU'RE DOING!
 ################################################################################
-
 
 # Create the xml object
 my $rss = new XML::Simple;
@@ -186,10 +214,91 @@ while(<FILTERS>) {
 
 close FILTERS;
 
+=cut
 
 #===============================================================================
 # Subs
 #===============================================================================
+
+#------------------------------------------------------------------------------#
+# Sub: processFeed                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub processFeed {
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadData                                                                #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadData {
+	# load rss-feed
+	my $feed;
+	eval {
+		$feed = get($RSS_URL);
+	};
+	if ($@) {
+		print STDERR "Error : cant download feed from ".$RSS_URL.": ".$@."\n";
+		exit;
+	}
+	# Create the xml object
+	my $rss = new XML::Simple;
+	# Parse the xml object
+	eval {
+		$data = $rss->XMLin($feed);
+	};
+	if ($@) {
+		print STDERR "Error : cant parse feed-data from ".$RSS_URL.": ".$@."\n";
+		exit;
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadFilters                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadFilters {
+	open(FILTERS, $PATH_FILTERS);
+	while(<FILTERS>) {
+		chomp;
+		push @filters, $_;
+	}
+	close FILTERS;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadHistory                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadHistory {
+	if (-f $PATH_HISTORY) {
+		open(HISTORY, $PATH_HISTORY);
+		while(<HISTORY>) {
+			chomp;
+			push @history, $_;
+		}
+		close HISTORY;
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: updateHistory                                                           #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub updateHistory {
+	if ((scalar(@historyNew)) > 0) {
+		open(HISTORY, ">>$PATH_HISTORY");
+		foreach my $hist (@historyNew) {
+			print HISTORY $hist."\n";
+		}
+		close HISTORY;
+	}
+}
 
 #------------------------------------------------------------------------------#
 # Sub: loadModules                                                             #
@@ -201,14 +310,14 @@ sub loadModules {
 	if (eval "require LWP::Simple")  {
 		LWP::Simple->import();
 	} else {
-		print STDERR "cant load perl-module LWP::Simple : ".$@;
+		print STDERR "Error : cant load perl-module LWP::Simple : ".$@."\n";
 		exit;
 	}
 	# load XML::Simple
 	if (eval "require XML::Simple")  {
 		XML::Simple->import();
 	} else {
-		print STDERR "cant load perl-module XML::Simple : ".$@;
+		print STDERR "Error : cant load perl-module XML::Simple : ".$@."\n";
 		exit;
 	}
 }
@@ -264,6 +373,9 @@ sub printUsage {
 $PROG.$EXTENSION (Revision $VERSION)
 
 Usage: $PROG.$EXTENSION rss-feed-url filter-file history-file save-location
+       $PROG.$EXTENSION check
+       $PROG.$EXTENSION version
+       $PROG.$EXTENSION help
 
 Example:
 $PROG.$EXTENSION http://www.example.com/feed.xml /usr/local/torrentflux/.tfrss/regex.dat /usr/local/torrentflux/.tfrss/history.log /usr/local/torrentflux/.watch/
