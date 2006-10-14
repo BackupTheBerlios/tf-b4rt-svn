@@ -52,7 +52,8 @@ if ($OSTYPE == 1) { # linux
 if ($autoFindBinaries != 0) { findBinaries() };
 
 # init some vars
-$REVISION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+$REVISION =
+	do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 ($DIR=$0) =~ s/([^\/\\]*)$//;
 ($PROG=$1) =~ s/\.([^\.]*)$//;
 $EXTENSION=$1;
@@ -66,6 +67,10 @@ SWITCH: {
 	};
 	/^connections/ && do { # --- connections ---
 		printConnections(shift @ARGV);
+		exit;
+	};
+	/.*(version|-v).*/ && do { # --- version ---
+		printVersion();
 		exit;
 	};
 	/.*(help|-h).*/ && do { # --- help ---
@@ -313,6 +318,15 @@ sub checkEnv {
 	}
 }
 
+#------------------------------------------------------------------------------#
+# Sub: printVersion                                                            #
+# Arguments: Null                                                              #
+# Returns: Version Information                                                 #
+#------------------------------------------------------------------------------#
+sub printVersion {
+	print $PROG.".".$EXTENSION." Version ".$REVISION."\n";
+}
+
 #-------------------------------------------------------------------------------
 # Sub: printUsage
 # Parameters:	-
@@ -320,7 +334,6 @@ sub checkEnv {
 #-------------------------------------------------------------------------------
 sub printUsage {
 	print <<"USAGE";
-
 $PROG.$EXTENSION (Revision $REVISION)
 
 Usage: $PROG.$EXTENSION type [extra-args]

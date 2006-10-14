@@ -56,6 +56,10 @@ SWITCH: {
 		torrentScrape(shift @ARGV);
 		exit;
 	};
+	/.*(version|-v).*/ && do { # --- version ---
+		printVersion();
+		exit;
+	};
 	/.*(help|-h).*/ && do { # --- help ---
 		printUsage();
 		exit;
@@ -208,6 +212,15 @@ sub getUrl() {
 	return $ua->get($url);
 }
 
+#------------------------------------------------------------------------------#
+# Sub: printVersion                                                            #
+# Arguments: Null                                                              #
+# Returns: Version Information                                                 #
+#------------------------------------------------------------------------------#
+sub printVersion {
+	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
+}
+
 #-------------------------------------------------------------------------------
 # Sub: printUsage
 # Parameters:	-
@@ -215,7 +228,6 @@ sub getUrl() {
 #-------------------------------------------------------------------------------
 sub printUsage {
 	print <<"USAGE";
-
 $PROG.$EXTENSION (Revision $VERSION)
 
 Usage: $PROG.$EXTENSION operation path-to-torrent-meta-file
@@ -224,8 +236,7 @@ Operations :
  -i  : decode and print out torrent-info.
  -s  : get scrape-info and print out seeders + leechers.
 
-Example:
-
+Examples:
 $PROG.$EXTENSION -i /foo/bar.torrent
 $PROG.$EXTENSION -s /foo/bar.torrent
 

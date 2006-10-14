@@ -1102,14 +1102,11 @@ sub printVersion {
 #------------------------------------------------------------------------------#
 sub check {
 	print "checking requirements...\n";
-	my $return = 0;
-
 	# 1. perl-modules
 	print "1. perl-modules\n";
 	my @mods = ('IO::Socket::UNIX', 'IO::Socket::INET', 'IO::Select', 'POSIX');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
-			$return = 1;
 			print " - ".$mod."\n";
 			next;
 		} else {
@@ -1126,7 +1123,6 @@ sub check {
 			exit;
 		}
 	}
-
 	# done
 	print "done.\n";
 }
