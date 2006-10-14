@@ -97,12 +97,12 @@ SWITCH: {
 # Subs
 #===============================================================================
 
-#-------------------------------------------------------------------------------
-# Sub: printTraffic
-# Parameters: string with path of flux-dir
-#             string with wanted output-format (mrtg|cacti)
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printTraffic                                                            #
+# Parameters: string with path of flux-dir                                     #
+#             string with wanted output-format (mrtg|cacti)                    #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub printTraffic {
 	my $fluxDir = shift;
 	if (!(defined $fluxDir)) {
@@ -123,11 +123,11 @@ sub printTraffic {
 	}
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintTraffic
-# Parameters:	string with path of flux-".stat-files"-dir
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintTraffic                                                        #
+# Parameters:	string with path of flux-".stat-files"-dir                     #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub mrtgPrintTraffic {
 	my $fluxDir = shift;
 	# get traffic-vals
@@ -144,11 +144,11 @@ sub mrtgPrintTraffic {
 	mrtgPrintTargetname();
 }
 
-#-------------------------------------------------------------------------------
-# Sub: cactiPrintTraffic
-# Parameters:	string with path of flux-".stat-files"-dir
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: cactiPrintTraffic                                                       #
+# Parameters:	string with path of flux-".stat-files"-dir                     #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub cactiPrintTraffic {
 	my $fluxDir = shift;
 	# get traffic-vals
@@ -163,11 +163,11 @@ sub cactiPrintTraffic {
 	print $trafficLine;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: printConnections
-# Parameters:	string with wanted output-format (mrtg|cacti)
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printConnections                                                        #
+# Parameters:	string with wanted output-format (mrtg|cacti)                  #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub printConnections {
 	my $outputFormat = shift;
 	if ($outputFormat eq "mrtg") {
@@ -180,11 +180,11 @@ sub printConnections {
 	}
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintConnections
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintConnections                                                    #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub mrtgPrintConnections {
 	# print down-"speed" for mrtg
 	print fluxConnections();
@@ -198,21 +198,21 @@ sub mrtgPrintConnections {
 	mrtgPrintTargetname();
 }
 
-#-------------------------------------------------------------------------------
-# Sub: cactiPrintConnections
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: cactiPrintConnections                                                   #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub cactiPrintConnections {
 	# print connections for cacti
 	print fluxConnections();
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintUptime
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintUptime                                                         #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub mrtgPrintUptime {
 	# uptime data for mrtg
 	my $uptime = `uptime`;
@@ -222,22 +222,22 @@ sub mrtgPrintUptime {
 	print $uptimeAry[3]." ".$timeLabel."\n";
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintTargetname
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintTargetname                                                     #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub mrtgPrintTargetname {
 	# target-name for mrtg
 	my $targetname = `hostname`;
 	print $targetname;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: fluxTraffic
-# Parameters:	string with path of flux-".stat-files"-dir
-# Return: array with current down-traffic ([0]) and up-traffic ([1])
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: fluxTraffic                                                             #
+# Parameters:	string with path of flux-".stat-files"-dir                     #
+# Return: array with current down-traffic ([0]) and up-traffic ([1])           #
+#------------------------------------------------------------------------------#
 sub fluxTraffic {
 	my $fluxDir = shift;
 	# init speed-sum-vars
@@ -272,11 +272,11 @@ sub fluxTraffic {
 	return @retVal;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: fluxConnections
-# Parameters:	-
-# Return: int with current flux-tcp-connections (python + transmission)
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: fluxConnections                                                         #
+# Parameters:	-                                                              #
+# Return: int with current flux-tcp-connections (python + transmission)        #
+#------------------------------------------------------------------------------#
 sub fluxConnections {
 	my $cons = 0;
 	my $cons_temp = 0;
@@ -296,11 +296,11 @@ sub fluxConnections {
 	return $cons;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: findBinaries
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: findBinaries                                                            #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub findBinaries {
 	$BIN_CAT = `whereis cat | awk '{print \$2}'`; chomp $BIN_CAT;
 	$BIN_HEAD = `whereis head | awk '{print \$2}'`; chomp $BIN_HEAD;
@@ -311,11 +311,11 @@ sub findBinaries {
 	$BIN_AWK = `whereis awk | awk '{print \$2}'`; chomp $BIN_AWK;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: checkEnv
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: checkEnv                                                                #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub checkEnv {
 	## win32 not supported ;)
 	if ("$^O" =~ /win32/i) {
@@ -339,11 +339,11 @@ sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$REVISION."\n";
 }
 
-#-------------------------------------------------------------------------------
-# Sub: printUsage
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printUsage                                                              #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub printUsage {
 	print <<"USAGE";
 $PROG.$EXTENSION (Revision $REVISION)

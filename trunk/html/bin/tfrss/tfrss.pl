@@ -35,7 +35,6 @@
 #                                                                              #
 ################################################################################
 use strict;
-use warnings;
 ################################################################################
 
 # timeout for lwp-operations
@@ -96,7 +95,7 @@ if ($argCount == 1) {
 	}
 }
 
-# init args
+# init arg vars
 initArgVars();
 
 # load modules
@@ -136,15 +135,15 @@ sub processFeed {
 		# compare the filter to each torrent in the xml doc
 		TORRENTS: foreach my $torrent (@{$data->{channel}->{item}}) {
 			# if we have a match, save torrent file
-			# if($torrent->{title} =~ /($filter)/i && $torrent->{title} !~ /HR/){
-			if($torrent->{title} =~ /($filter)/i) {
+			# if ($torrent->{title} =~ /($filter)/i && $torrent->{title} !~ /HR/){
+			if ($torrent->{title} =~ /($filter)/i) {
 				# Set the match flag to false
 				my $match = 0;
 				# Check the history file for the torrent we're looking at
 				if ((scalar(@history)) > 0) {
 					HISTORY: foreach my $hist (@history) {
 						# If we find the torrent, set the match flag to true
-						if($hist eq $torrent->{title}){
+						if ($hist eq $torrent->{title}){
 							$match = 1;
 							last HISTORY;
 						}
@@ -153,7 +152,6 @@ sub processFeed {
 				# if we haven't already downloaded the torrent, process it
 				if (!$match) {
 					# Add the torrent to the history
-					push @history, $torrent->{title};
 					push @historyNew, $torrent->{title};
 					# print it
 					print "$torrent->{title}\n";
@@ -259,11 +257,11 @@ sub downloadTorrent {
 	return 1;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: getUrl
-# Parameters: string with url
-# Return: res
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: getUrl                                                                  #
+# Parameters: string with url                                                  #
+# Return: res or undef                                                         #
+#------------------------------------------------------------------------------#
 sub getUrl() {
 	my $url = shift;
 	my $urldata;
@@ -358,7 +356,6 @@ sub initArgVars {
 	$PATH_FILTERS = shift @ARGV;
 	$PATH_HISTORY = shift @ARGV;
 	$PATH_SAVE = shift @ARGV;
-
 	# check args
 	if (!(-f $PATH_FILTERS)) {
 		print STDERR "Error : filter-file is no file : ".$PATH_FILTERS."\n";
@@ -388,7 +385,7 @@ Usage: $PROG.$EXTENSION rss-feed-url filter-file history-file save-location
        $PROG.$EXTENSION help
 
 Example:
-$PROG.$EXTENSION http://www.example.com/feed.xml /usr/local/torrentflux/.tfrss/regex.dat /usr/local/torrentflux/.tfrss/history.log /usr/local/torrentflux/.watch/
+$PROG.$EXTENSION http://www.example.com/feed.xml /usr/local/torrentflux/.tfrss/regex.dat /usr/local/torrentflux/.tfrss/history.dat /usr/local/torrentflux/.watch/
 
 USAGE
 
