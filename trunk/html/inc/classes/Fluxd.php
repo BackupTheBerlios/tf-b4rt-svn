@@ -20,8 +20,7 @@
 
 *******************************************************************************/
 
-
-// class Fluxd for managing the Fluxd Daemon
+// class Fluxd for integration of fluxd
 class Fluxd
 {
 	// fields

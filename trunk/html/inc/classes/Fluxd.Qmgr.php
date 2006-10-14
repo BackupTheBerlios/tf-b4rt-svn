@@ -20,7 +20,6 @@
 
 *******************************************************************************/
 
-
 // class for the Fluxd-Service-module Qmgr
 class FluxdQmgr extends FluxdServiceMod
 {
@@ -133,7 +132,6 @@ class FluxdQmgr extends FluxdServiceMod
         // Write out the new Stat File
         $af->WriteFile();
     }
-
 
 }
 

@@ -20,11 +20,9 @@
 
 *******************************************************************************/
 
-
 // class for the Fluxd-Service-module Fluxinet
 class FluxdFluxinet extends FluxdServiceMod
 {
-
     /**
      * ctor
      */

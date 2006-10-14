@@ -20,11 +20,9 @@
 
 *******************************************************************************/
 
-
 // class for the Fluxd-Service-module Watch
 class FluxdWatch extends FluxdServiceMod
 {
-
     /**
      * ctor
      */

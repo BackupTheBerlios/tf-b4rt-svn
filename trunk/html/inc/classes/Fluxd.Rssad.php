@@ -20,14 +20,14 @@
 
 *******************************************************************************/
 
-// class for the Fluxd-Service-module Trigger
-class FluxdTrigger extends FluxdServiceMod
+// class for the Fluxd-Service-module Rssad
+class FluxdRssad extends FluxdServiceMod
 {
     /**
      * ctor
      */
-    function FluxdTrigger($cfg, $fluxd) {
-        $this->moduleName = "Trigger";
+    function FluxdRssad($cfg, $fluxd) {
+        $this->moduleName = "Rssad";
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         $this->initialize($cfg, $fluxd);
     }

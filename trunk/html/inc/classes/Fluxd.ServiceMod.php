@@ -20,7 +20,6 @@
 
 *******************************************************************************/
 
-
 // base class for a Fluxd-Service-module
 class FluxdServiceMod
 {
@@ -78,11 +77,14 @@ class FluxdServiceMod
                 case "Fluxinet":
                     return new FluxdFluxinet(serialize($fluxCfg), $fluxd);
                 	break;
-                case "Trigger":
-                    return new FluxdTrigger(serialize($fluxCfg), $fluxd);
-                	break;
                 case "Watch":
                     return new FluxdWatch(serialize($fluxCfg), $fluxd);
+                	break;
+                case "Rssad":
+                    return new FluxdRssad(serialize($fluxCfg), $fluxd);
+                	break;                	
+                case "Trigger":
+                    return new FluxdTrigger(serialize($fluxCfg), $fluxd);
                 	break;
                 case "Clientmaint":
                     return new FluxdClientmaint(serialize($fluxCfg), $fluxd);

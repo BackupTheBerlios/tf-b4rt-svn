@@ -20,11 +20,9 @@
 
 *******************************************************************************/
 
-
 // class for the Fluxd-Service-module Clientmaint
 class FluxdClientmaint extends FluxdServiceMod
 {
-
     /**
      * ctor
      */
