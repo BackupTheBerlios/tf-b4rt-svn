@@ -38,6 +38,9 @@ use strict;
 use warnings;
 ################################################################################
 
+# timeout for lwp-operations
+my $TIMEOUT = 10;
+
 # arg-vars
 my ($PATH_FILTERS, $PATH_HISTORY, $PATH_SAVE, $RSS_URL);
 
@@ -93,24 +96,8 @@ if ($argCount == 1) {
 	}
 }
 
-# init arg-vars
-$RSS_URL = shift @ARGV;
-$PATH_FILTERS = shift @ARGV;
-$PATH_HISTORY = shift @ARGV;
-$PATH_SAVE = shift @ARGV;
-
-# check args
-if (!(-f $PATH_FILTERS)) {
-	print STDERR "Error : filter-file is no file : ".$PATH_FILTERS."\n";
-	exit;
-}
-if (!(-d $PATH_SAVE)) {
-	print STDERR "Error : save-location is no dir : ".$PATH_SAVE."\n";
-	exit;
-}
-if (!((substr $PATH_SAVE, -1) eq "/")) {
-	$PATH_SAVE .= "/";
-}
+# init args
+initArgVars();
 
 # load modules
 loadModules();
@@ -171,26 +158,10 @@ sub processFeed {
 					# print it
 					print "$torrent->{title}\n";
 					# Download the torrent
-					loadTorrent($torrent->{link}, $PATH_SAVE.$torrent->{title}.".torrent");
+					downloadTorrent($torrent->{link}, $PATH_SAVE.$torrent->{title}.".torrent");
 				}
 			}
 		}
-	}
-}
-
-#------------------------------------------------------------------------------#
-# Sub: loadTorrent                                                             #
-# Arguments: url, destination                                                  #
-# Returns: null                                                                #
-#------------------------------------------------------------------------------#
-sub loadTorrent {
-	my $turl = shift;
-	my $tdest = shift;
-	eval {
-		getstore($turl, $tdest);
-	};
-	if ($@) {
-		print STDERR "Error : cant download torrent from ".$turl.": ".$@."\n";
 	}
 }
 
@@ -201,22 +172,19 @@ sub loadTorrent {
 #------------------------------------------------------------------------------#
 sub loadData {
 	# load rss-feed
-	my $feed;
-	eval {
-		$feed = get($RSS_URL);
-	};
-	if ($@) {
-		print STDERR "Error : cant download feed from ".$RSS_URL.": ".$@."\n";
-		exit;
-	}
-	# Create the xml object
-	my $rss = new XML::Simple;
-	# Parse the xml object
-	eval {
-		$data = $rss->XMLin($feed);
-	};
-	if ($@) {
-		print STDERR "Error : cant parse feed-data from ".$RSS_URL.": ".$@."\n";
+	my $feed = getUrl($RSS_URL);
+	if (defined($feed)) {
+		# Create the xml object
+		my $rss = new XML::Simple;
+		# Parse the xml object
+		eval {
+			$data = $rss->XMLin($feed);
+		};
+		if ($@) {
+			print STDERR "Error : cant parse feed-data from ".$RSS_URL.": ".$@."\n";
+			exit;
+		}
+	} else {
 		exit;
 	}
 }
@@ -264,6 +232,56 @@ sub updateHistory {
 		}
 		close HISTORY;
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: downloadTorrent                                                         #
+# Arguments: url, destination                                                  #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub downloadTorrent {
+	my $turl = shift;
+	my $tdest = shift;
+	eval {
+		local $SIG{ALRM} = sub {die "alarm\n"};
+		alarm $TIMEOUT;
+		getstore($turl, $tdest);
+		alarm 0;
+	};
+	if ($@) {
+		if ($@ eq "alarm\n") {
+			print STDERR "Error : download torrent from ".$turl." timed out.\n";
+		} else {
+			print STDERR "Error : cant download torrent from ".$turl.": ".$@."\n";
+		}
+		return 0;
+	}
+	return 1;
+}
+
+#-------------------------------------------------------------------------------
+# Sub: getUrl
+# Parameters: string with url
+# Return: res
+#-------------------------------------------------------------------------------
+sub getUrl() {
+	my $url = shift;
+	my $urldata;
+	eval {
+		local $SIG{ALRM} = sub {die "alarm\n"};
+		alarm $TIMEOUT;
+		$urldata = get($url);
+		alarm 0;
+	};
+	if ($@) {
+		if ($@ eq "alarm\n") {
+			print STDERR "Error : download URL ".$url." timed out.\n";
+		} else {
+			print STDERR "Error : cant download URL ".$url." : ".$@."\n";
+		}
+		return undef;
+	}
+	return $urldata;
 }
 
 #------------------------------------------------------------------------------#
@@ -327,6 +345,32 @@ sub check {
 #------------------------------------------------------------------------------#
 sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";
+}
+
+#------------------------------------------------------------------------------#
+# Sub: initArgVars                                                             #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub initArgVars {
+	# init arg-vars
+	$RSS_URL = shift @ARGV;
+	$PATH_FILTERS = shift @ARGV;
+	$PATH_HISTORY = shift @ARGV;
+	$PATH_SAVE = shift @ARGV;
+
+	# check args
+	if (!(-f $PATH_FILTERS)) {
+		print STDERR "Error : filter-file is no file : ".$PATH_FILTERS."\n";
+		exit;
+	}
+	if (!(-d $PATH_SAVE)) {
+		print STDERR "Error : save-location is no dir : ".$PATH_SAVE."\n";
+		exit;
+	}
+	if (!((substr $PATH_SAVE, -1) eq "/")) {
+		$PATH_SAVE .= "/";
+	}
 }
 
 #------------------------------------------------------------------------------#
