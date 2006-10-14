@@ -33,7 +33,7 @@ define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
 define('_VERSION_LOCAL','.version');
 define('_VERSION_REMOTE','version.txt');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
-define('_SUPERADMIN_PROXY','superadminProxy.php');
+define('_SUPERADMIN_PROXY','tf-b4rt.php');
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
 
 // global fields
