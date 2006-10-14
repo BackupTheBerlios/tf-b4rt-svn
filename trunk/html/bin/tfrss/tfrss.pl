@@ -108,6 +108,9 @@ if (!(-d $PATH_SAVE)) {
 	print STDERR "Error : save-location is no dir : ".$PATH_SAVE."\n";
 	exit;
 }
+if (!((substr $PATH_SAVE, -1) eq "/")) {
+	$PATH_SAVE .= "/";
+}
 
 # load modules
 loadModules();
@@ -130,92 +133,6 @@ updateHistory();
 # exit
 exit;
 
-=for later
-
-###############################################################################
-# config
-###############################################################################
-
-# The list of regular expressions (1 regex per line)
-my $filters = "/path/to/tfrss/regex.dat";
-
-# The URL of the rss feed
-my $rssFeed = "http://myfeed.com/feeds/thefeed/";
-
-# The location to save torrents (should be the same as your watch folder in
-# TorrentFlux
-my $saveLocation = "/path/to/watch/directory/";
-
-# History File Location
-my $historyFile = "/path/to/tfrss/history.log";
-
-# DO NOT EDIT BELOW THIS POINT UNLESS YOU KNOW WHAT YOU'RE DOING!
-################################################################################
-
-# Create the xml object
-my $rss = new XML::Simple;
-
-# Parse the xml object
-my $data = $rss->XMLin(get($rssFeed));
-
-# Open the file with the list of regular expressions
-open(FILTERS,$filters);
-
-# Loop through all of the regular expressions
-while(<FILTERS>) {
-	chomp;
-	my $filter = $_;
-	print "*****$filter*****\n";
-
-	# compare the filter to each torrent in the xml doc
-	foreach my $torrent (@{$data->{channel}->{item}}) {
-
-		# if we have a match, save torrent file
-
-		# if($torrent->{title} =~ /($filter)/i && $torrent->{title} !~ /HR/){
-		if($torrent->{title} =~ /($filter)/i) {
-
-			# Check the history file for the torrent we're looking at
-			open(HISTORY,$historyFile);
-
-			# Set the match flag to false
-			my $match = 0;
-
-			#Read through the history file to see if we've already
-			#downloaded this torrent before.
-			while(<HISTORY>){
-				chomp;
-
-				# If we find the torrent, set the match flag to true
-				if($_ eq $torrent->{title}){
-					$match = 1;
-				}
-			}
-
-			close HISTORY;
-
-			# if we haven't already downloaded the torrent, process it
-			if (!$match) {
-
-				# Add the torrent to the history log
-				open(HISTORY,">>$historyFile");
-				print HISTORY "$torrent->{title}\n";
-				close HISTORY;
-				print "$torrent->{title}\n";
-
-				# Download the torrent
-				getstore($torrent->{link},"$saveLocation$torrent->{title}.torrent");
-
-			}
-		}
-
-	}
-}
-
-close FILTERS;
-
-=cut
-
 #===============================================================================
 # Subs
 #===============================================================================
@@ -226,6 +143,55 @@ close FILTERS;
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub processFeed {
+	# Loop through all of the regular expressions
+	FILTERS: foreach my $filter (@filters) {
+		print "***** ".$filter." *****\n";
+		# compare the filter to each torrent in the xml doc
+		TORRENTS: foreach my $torrent (@{$data->{channel}->{item}}) {
+			# if we have a match, save torrent file
+			# if($torrent->{title} =~ /($filter)/i && $torrent->{title} !~ /HR/){
+			if($torrent->{title} =~ /($filter)/i) {
+				# Set the match flag to false
+				my $match = 0;
+				# Check the history file for the torrent we're looking at
+				if ((scalar(@history)) > 0) {
+					HISTORY: foreach my $hist (@history) {
+						# If we find the torrent, set the match flag to true
+						if($hist eq $torrent->{title}){
+							$match = 1;
+							last HISTORY;
+						}
+					}
+				}
+				# if we haven't already downloaded the torrent, process it
+				if (!$match) {
+					# Add the torrent to the history
+					push @history, $torrent->{title};
+					push @historyNew, $torrent->{title};
+					# print it
+					print "$torrent->{title}\n";
+					# Download the torrent
+					loadTorrent($torrent->{link}, $PATH_SAVE.$torrent->{title}.".torrent");
+				}
+			}
+		}
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadTorrent                                                             #
+# Arguments: url, destination                                                  #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub loadTorrent {
+	my $turl = shift;
+	my $tdest = shift;
+	eval {
+		getstore($turl, $tdest);
+	};
+	if ($@) {
+		print STDERR "Error : cant download torrent from ".$turl.": ".$@."\n";
+	}
 }
 
 #------------------------------------------------------------------------------#
