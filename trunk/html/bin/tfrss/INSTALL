@@ -2,21 +2,17 @@
 $Id$
 ================================================================================
 
-TFRSS v0.1 Instructions
+Instructions
 
-TFRSS is a simple script to help automate the process of downloading
+tfrss.pl is a simple script to help automate the process of downloading
 torrents from an RSS feed based upon user specifed regular expressions.
-
-Purpose:
-The reason this script was written was to automate downloading tv torrents.
-Other uses are possible, but haven't yet been considered.
 
 How it works:
 The user will specify all of the regular expressions (search terms) in the
-regex.dat file (one item per line).  A cronjob will run the script at a
+filter-file (one item per line).  A cronjob will run the script at a
 specified interval.
 
-The script will download the rss feed.  Then, it will open the regex.dat file
+The script will download the rss feed.  Then, it will open the filter-file
 and cycle through the regular expressions.  For each expression, it will make
 a comparison with each torrent in the feed.
 
@@ -24,48 +20,47 @@ If a match is made, the history file is parsed looking to see if the torrent
 has already been downloaded.  If it hasn't, the torrent is downloaded and is
 added to the history file.
 
-Requirements:
-Note: This script has only been tested according to the following
-      requirements.
 
-Linux kernel 2.6.17
-Perl v5.8.8
-	- XML::Simple perl module
-	- LWP::Simple perl module
-torrentflux_2.1-b4rt-94
+Note: This script has only been tested on the following setups :
+* Linux 2.6.17 / 2.4.33.3
+* Perl v5.8.8
+  - XML::Simple perl module
+  - LWP::Simple perl module
+* torrentflux_2.1-b4rt-94 / torrentflux-b4rt-svn-trunk
 
-Setup Instructions:
+
+Setup Instructions for manual setup with cron :
+
 1. Place tfrss.pl in a directory of your choice.
 
 2. Make tfrss.pl executable (chmod +x tfrss.pl).
 
 3. Ensure a watch directory has been configured.
 
-4. Add regular expressions to regex.dat.  Add only 1 expression per line.
+4. Add regular expressions to the filter-file.  Add only 1 expression per line.
 
-   Ex:
+   Example:
 
-   Lost.*HDTV
-   The.Colbert.Report
-   Stargate.Atlantis
+   debian
+   Ubuntu
+   freebsd.*release
 
    Note: The regular expressions are NOT case sensitive in this script
          (makes things a whole lot easier).
 
-5. Use a text editor to configure tfrss.pl the way you need it.
+5. Create a cron job that runs the script at a specified interval.
+   Please choose a sane interval and avoid hammering the feed.
 
-   $rssFeed - The fully qualified URL of the rss feed you want to monitor.
-   $saveLocation - The location you want to save the torrents to. (Should be
-	the same as your watch directory)
+   Usage :
+    tfrss.pl rss-feed-url filter-file history-file save-location
 
-6. $historyFile - The default is history.log. This will not show up until the
-	first time a torrent is downloaded.  It's purpose is to keep TFRSS
-	from downloading the same torrent twice.
+   Where :
+    rss-feed-url  : The fully qualified URL of the rss feed.
+    filter-file   : path to the filter-file.
+    history-file  : path to the history-file.
+    save-location : The location you want to save the torrents to. (Should be
+                    the same as your watch directory)
 
-7. Create a cron job that runs the script at a specified interval. Try not to
-	set it to run less than every 10 minutes to avoid hammering the feed.
-
-   Ex:
-	*/10 * * * * /path/to/tfrss.pl
-
+   Example :
+    */15 * * * * /path/to/tfrss.pl http://www.example.com/feed.xml /usr/local/torrentflux/.tfrss/regex.dat /usr/local/torrentflux/.tfrss/history.dat /usr/local/torrentflux/.watch/
 
