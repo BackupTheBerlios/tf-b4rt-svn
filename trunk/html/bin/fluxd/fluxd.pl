@@ -50,7 +50,7 @@ my $start_time_local = localtime();
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw( $fluxDB $qmgr $fluxinet $watch $clientmaint $trigger );
+use vars qw( $fluxDB $qmgr $fluxinet $rssad $watch $clientmaint $trigger );
 
 ################################################################################
 # main                                                                         #
@@ -110,6 +110,22 @@ while ( $loop ) {
 		}
 	}
 
+	# Rssad
+	if ((defined $rssad) && ($rssad->getState() == 1)) {
+		eval {
+			local $SIG{ALRM} = sub {die "alarm\n"};
+			alarm 15;
+			$rssad->main();
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			print STDERR "Rssad : Timed out\n";
+			print STDERR $@."\n";
+		}
+	}
+
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
 		eval {
@@ -126,22 +142,6 @@ while ( $loop ) {
 		}
 	}
 
-	# Clientmaint
-	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 15;
-			$clientmaint->main();
-			alarm 0;
-		};
-
-		# Check for alarm (timeout) condition
-		if ($@) {
-			print STDERR "Clientmaint : Timed out\n";
-			print STDERR $@."\n";
-		}
-	}
-
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
 		eval {
@@ -154,6 +154,22 @@ while ( $loop ) {
 		# Check for alarm (timeout) condition
 		if ($@) {
 			print STDERR "Trigger : Timed out\n";
+			print STDERR $@."\n";
+		}
+	}
+
+	# Clientmaint
+	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+		eval {
+			local $SIG{ALRM} = sub {die "alarm\n"};
+			alarm 15;
+			$clientmaint->main();
+			alarm 0;
+		};
+
+		# Check for alarm (timeout) condition
+		if ($@) {
+			print STDERR "Clientmaint : Timed out\n";
 			print STDERR $@."\n";
 		}
 	}
@@ -488,6 +504,45 @@ sub loadModules {
 #------------------------------------------------------------------------------#
 sub loadServiceModules {
 
+	# Fluxinet
+	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(defined $fluxinet)) {
+			if (eval "require Fluxinet") {
+				eval {
+					$fluxinet = Fluxinet->new();
+					$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+					if ($fluxinet->getState() < 1) {
+						print STDERR "error initializing service-module Fluxinet :\n";
+						print STDERR $fluxinet->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Fluxinet : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Fluxinet loaded\n"; # DEBUG
+				}
+			} else {
+				print STDERR "error loading service-module Fluxinet : $@\n";
+			}
+		}
+	} else {
+		# Unload module, if it is loaded
+		if (defined $fluxinet) {
+			eval {
+				$fluxinet->destroy();
+				undef $fluxinet;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Fluxinet : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Fluxinet unloaded\n"; # DEBUG
+			}
+		}
+	}
+
 	# Qmgr
 	if (FluxDB->getFluxConfig("fluxd_Qmgr_enabled") == 1) {
 		# Load up module, unless it is already
@@ -527,41 +582,41 @@ sub loadServiceModules {
 		}
 	}
 
-	# Fluxinet
-	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
+	# Rssad
+	if (FluxDB->getFluxConfig("fluxd_Rssad_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(defined $fluxinet)) {
-			if (eval "require Fluxinet") {
+		if (!(defined $rssad)) {
+			if (eval "require Rssad") {
 				eval {
-					$fluxinet = Fluxinet->new();
-					$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
-					if ($fluxinet->getState() < 1) {
-						print STDERR "error initializing service-module Fluxinet :\n";
-						print STDERR $fluxinet->getMessage()."\n";
+					$rssad = Rssad->new();
+					$rssad->initialize(FluxDB->getFluxConfig("fluxd_Rssad_interval"), FluxDB->getFluxConfig("fluxd_Rssad_jobs"));
+					if ($rssad->getState() < 1) {
+						print STDERR "error initializing service-module Rssad :\n";
+						print STDERR $rssad->getMessage()."\n";
 					}
 				};
 				if ($@) {
-					print STDERR "error loading service-module Fluxinet : $@\n";
+					print STDERR "error loading service-module Rssad : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Fluxinet loaded\n"; # DEBUG
+					print STDOUT "Rssad loaded\n"; # DEBUG
 				}
 			} else {
-				print STDERR "error loading service-module Fluxinet : $@\n";
+				print STDERR "error loading service-module Rssad :$@\n";
 			}
 		}
 	} else {
 		# Unload module, if it is loaded
-		if (defined $fluxinet) {
+		if (defined $rssad) {
 			eval {
-				$fluxinet->destroy();
-				undef $fluxinet;
+				$rssad->destroy();
+				undef $rssad;
 			};
 			if ($@) {
-				print STDERR "error unloading service-module Fluxinet : $@\n";
+				print STDERR "error unloading service-module Rssad : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Fluxinet unloaded\n"; # DEBUG
+				print STDOUT "Rssad unloaded\n"; # DEBUG
 			}
 		}
 	}
@@ -605,6 +660,45 @@ sub loadServiceModules {
 		}
 	}
 
+	# Trigger
+	if (FluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
+		# Load up module, unless it is already
+		if (!(defined $trigger)) {
+			if (eval "require Trigger") {
+				eval {
+					$trigger = Trigger->new();
+					$trigger->initialize(FluxDB->getFluxConfig("fluxd_Trigger_interval"));
+					if ($trigger->getState() < 1) {
+						print STDERR "error initializing service-module Trigger :\n";
+						print STDERR $trigger->getMessage()."\n";
+					}
+				};
+				if ($@) {
+					print STDERR "error loading service-module Trigger : $@\n";
+				} else {
+					# everything ok
+					print STDOUT "Trigger loaded\n"; # DEBUG
+				}
+			} else {
+				print STDERR "error loading service-module Trigger :$@\n";
+			}
+		}
+	} else {
+		# Unload module, if it is loaded
+		if (defined $trigger) {
+			eval {
+				$trigger->destroy;
+				undef $trigger;
+			};
+			if ($@) {
+				print STDERR "error unloading service-module Trigger : $@\n";
+			} else {
+				# everything ok
+				print STDOUT "Trigger unloaded\n"; # DEBUG
+			}
+		}
+	}
+
 	# Clientmaint
 	if (FluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
 		# Load up module, unless it is already
@@ -644,44 +738,6 @@ sub loadServiceModules {
 		}
 	}
 
-	# Trigger
-	if (FluxDB->getFluxConfig("fluxd_Trigger_enabled") == 1) {
-		# Load up module, unless it is already
-		if (!(defined $trigger)) {
-			if (eval "require Trigger") {
-				eval {
-					$trigger = Trigger->new();
-					$trigger->initialize(FluxDB->getFluxConfig("fluxd_Trigger_interval"));
-					if ($trigger->getState() < 1) {
-						print STDERR "error initializing service-module Trigger :\n";
-						print STDERR $trigger->getMessage()."\n";
-					}
-				};
-				if ($@) {
-					print STDERR "error loading service-module Trigger : $@\n";
-				} else {
-					# everything ok
-					print STDOUT "Trigger loaded\n"; # DEBUG
-				}
-			} else {
-				print STDERR "error loading service-module Trigger :$@\n";
-			}
-		}
-	} else {
-		# Unload module, if it is loaded
-		if (defined $trigger) {
-			eval {
-				$trigger->destroy;
-				undef $trigger;
-			};
-			if ($@) {
-				print STDERR "error unloading service-module Trigger : $@\n";
-			} else {
-				# everything ok
-				print STDOUT "Trigger unloaded\n"; # DEBUG
-			}
-		}
-	}
 }
 
 #------------------------------------------------------------------------------#
@@ -800,27 +856,33 @@ sub processRequest {
 			$return = "";
 			$_ = $mod;
 			MODCALL: {
-				/Qmgr/ && do {
-					if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-						$return = $qmgr->command($command);
-					}
-					last SWITCH;
-				};
 				/Fluxinet/ && do {
 					if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
 						$return = $fluxinet->command($command);
 					}
 					last SWITCH;
 				};
-				/Trigger/ && do {
-					if ((defined $trigger) && ($trigger->getState() == 1)) {
-						$return = $trigger->command($command);
+				/Qmgr/ && do {
+					if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+						$return = $qmgr->command($command);
+					}
+					last SWITCH;
+				};
+				/Rssad/ && do {
+					if ((defined $rssad) && ($rssad->getState() == 1)) {
+						$return = $rssad->command($command);
 					}
 					last SWITCH;
 				};
 				/Watch/ && do {
 					if ((defined $watch) && ($watch->getState() == 1)) {
 						$return = $watch->command($command);
+					}
+					last SWITCH;
+				};
+				/Trigger/ && do {
+					if ((defined $trigger) && ($trigger->getState() == 1)) {
+						$return = $trigger->command($command);
 					}
 					last SWITCH;
 				};
@@ -853,23 +915,27 @@ sub set {
 	if ($variable =~/::/) {
 		# setting/getting package variable
 		my @pair = split(/::/, $variable);
-		next if ($pair[0] !~/Qmgr|Fluxinet|Trigger|Watch|Clientmaint/);
+		next if ($pair[0] !~/Fluxinet|Qmgr|Rssad|Watch|Trigger|Clientmaint/);
 		SWITCH: {
 			$_ = $pair[0];
-			/Qmgr/ && do {
-				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
-				last SWITCH;
-			};
 			/Fluxinet/ && do {
 				$return = $fluxinet->set($pair[1], $value) if(defined $fluxinet);
 				last SWITCH;
 			};
-			/Trigger/ && do {
-				$return = $trigger->set($pair[1], $value) if(defined $trigger);
+			/Qmgr/ && do {
+				$return = $qmgr->set($pair[1], $value) if (defined $qmgr);
+				last SWITCH;
+			};
+			/Rssad/ && do {
+				$return = $rssad->set($pair[1], $value) if(defined $rssad);
 				last SWITCH;
 			};
 			/Watch/ && do {
 				$return = $watch->set($pair[1], $value) if(defined $watch);
+				last SWITCH;
+			};
+			/Trigger/ && do {
+				$return = $trigger->set($pair[1], $value) if(defined $trigger);
 				last SWITCH;
 			};
 			/Clientmaint/ && do {
@@ -964,20 +1030,20 @@ sub status {
 	$head .= "\n";
 	my $status = "";
 	my $modules = "- Loaded Modules -\n";
-	# Qmgr
-	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		$modules .= "  * Qmgr.pm\n";
-		$status .= $qmgr->status();
-	}
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
 		$modules .= "  * Fluxinet.pm\n";
 		$status .= eval { $fluxinet->status(); };
 	}
-	# Clientmaint
-	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		$modules .= "  * Clientmaint.pm\n";
-		$status .= eval { $clientmaint->status(); };
+	# Qmgr
+	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		$modules .= "  * Qmgr.pm\n";
+		$status .= $qmgr->status();
+	}
+	# Rssad
+	if ((defined $rssad) && ($rssad->getState() == 1)) {
+		$modules .= "  * Rssad.pm\n";
+		$status .= eval { $rssad->status(); };
 	}
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
@@ -988,6 +1054,11 @@ sub status {
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
 		$modules .= "  * Trigger.pm\n";
 		$status .= eval { $trigger->status(); };
+	}
+	# Clientmaint
+	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+		$modules .= "  * Clientmaint.pm\n";
+		$status .= eval { $clientmaint->status(); };
 	}
 	# return
 	return $head.$modules.$status;
@@ -1003,13 +1074,6 @@ sub modState {
 	if (!(defined $_)) {
 		return 0;
 	} else {
-		/Qmgr/ && do {
-			if (defined $qmgr) {
-				return $qmgr->getState();
-			} else {
-				return 0;
-			}
-		};
 		/Fluxinet/ && do {
 			if (defined $fluxinet) {
 				return $fluxinet->getState();
@@ -1017,9 +1081,16 @@ sub modState {
 				return 0;
 			}
 		};
-		/Trigger/ && do {
-			if (defined $trigger) {
-				return $trigger->getState();
+		/Qmgr/ && do {
+			if (defined $qmgr) {
+				return $qmgr->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Rssad/ && do {
+			if (defined $rssad) {
+				return $rssad->getState();
 			} else {
 				return 0;
 			}
@@ -1027,6 +1098,13 @@ sub modState {
 		/Watch/ && do {
 			if (defined $watch) {
 				return $watch->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Trigger/ && do {
+			if (defined $trigger) {
+				return $trigger->getState();
 			} else {
 				return 0;
 			}
@@ -1058,13 +1136,6 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-	# Clientmaint
-	print "Clientmaint Version : ";
-	if (eval "require Clientmaint") {
-		print Clientmaint->getVersion()."\n";
-	} else {
-		print "cant load module\n";
-	}
 	# Fluxinet
 	print "Fluxinet Version : ";
 	if (eval "require Fluxinet") {
@@ -1079,10 +1150,10 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-	# Trigger
-	print "Trigger Version : ";
-	if (eval "require Trigger") {
-		print Trigger->getVersion()."\n";
+	# Rssad
+	print "Rssad Version : ";
+	if (eval "require Rssad") {
+		print Rssad->getVersion()."\n";
 	} else {
 		print "cant load module\n";
 	}
@@ -1090,6 +1161,20 @@ sub printVersion {
 	print "Watch Version : ";
 	if (eval "require Watch") {
 		print Watch->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
+	# Trigger
+	print "Trigger Version : ";
+	if (eval "require Trigger") {
+		print Trigger->getVersion()."\n";
+	} else {
+		print "cant load module\n";
+	}
+	# Clientmaint
+	print "Clientmaint Version : ";
+	if (eval "require Clientmaint") {
+		print Clientmaint->getVersion()."\n";
 	} else {
 		print "cant load module\n";
 	}
