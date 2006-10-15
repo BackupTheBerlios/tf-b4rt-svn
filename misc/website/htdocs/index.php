@@ -2,7 +2,23 @@
 
 /* $Id$ */
 
-/* -------------------------------------------------------------------------- */
+/*******************************************************************************
+
+ LICENSE
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License (GPL)
+ as published by the Free Software Foundation; either version 2
+ of the License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ To read the license please visit http://www.gnu.org/copyleft/gpl.html
+
+*******************************************************************************/
 
 /* defines */
 define('_FILE_NEWS','newshtml.txt');
@@ -13,6 +29,9 @@ define('_FILE_HITS','./internal/hits.txt');
 /* global fields */
 $version = "";
 $site = "";
+
+// functions
+require_once('functions.php');
 
 // -----------------------------------------------------------------------------
 // Main
@@ -53,66 +72,6 @@ printPageFoot();
 
 // exit
 exit();
-
-// -----------------------------------------------------------------------------
-// functions
-// -----------------------------------------------------------------------------
-
-/**
- * load data of file
- *
- * @param $file the file
- * @return data
- */
-function getDataFromFile($file) {
-    // read content
-    if ($fileHandle = @fopen($file,'r')) {
-        $data = null;
-        while (!@feof($fileHandle))
-            $data .= @fgets($fileHandle, 4096);
-        @fclose($fileHandle);
-    }
-    return $data;
-}
-
-/**
- * log the hit
- */
-function logHit() {
-	if ($fileHandle = @fopen(_FILE_HITS, 'r')) {
-		$data = @fgets($fileHandle, 2048);
-		@fclose($fileHandle);
-		if ($fileHandle = @fopen(_FILE_HITS, 'w+')) {
-			$hits = (int) trim($data);
-			$hits++;
-			fwrite($fileHandle, $hits);
-			fclose ($fileHandle);
-		}
-	}
-}
-
-/**
- * rewrite berliOS-news-export-HTML to fitting xhtml
- *
- * @param $string string with berliOS-news-export
- * @return string with news
- */
-function rewriteNews($string) {
-	// remove <hr>-tags
-	$retVal = eregi_replace("<hr[[:space:]]*([^>]*)[[:space:]]*>", '', $string);
-	// create list-elements from news-entries
-	$retVal = eregi_replace("<a[[:space:]]*", '<li><a ', $retVal);
-	$retVal = eregi_replace("<b>", '', $retVal);
-	$retVal = eregi_replace("</b>", '', $retVal);
-	$retVal = eregi_replace("<i>", '<em class="newsauthor">', $retVal);
-	$retVal = eregi_replace("</i>", '</em></li>', $retVal);
-	// spacer
-	$retVal = eregi_replace("&nbsp;&nbsp;&nbsp;", '&nbsp;&nbsp;', $retVal);
-	// remove news-archive-link
-	$retVal = eregi_replace("<div.*</div>", '', $retVal);
-	// return
-	return $retVal;
-}
 
 // -----------------------------------------------------------------------------
 // content
