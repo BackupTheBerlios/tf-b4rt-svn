@@ -80,7 +80,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 			'user_id' => $user_id,
 			'user_icon' => $user_icon,
 			'action' => $action,
-			'file' => $file,
+			'file' => htmlentities($file, ENT_QUOTES),
 			'ip_resolved' => htmlentities($ip_resolved, ENT_QUOTES),
 			'user_agent' => htmlentities($user_agent, ENT_QUOTES),
 			'ip' => $ip,
