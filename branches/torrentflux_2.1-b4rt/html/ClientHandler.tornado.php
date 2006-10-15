@@ -29,7 +29,7 @@ class ClientHandlerTornado extends ClientHandler
      */
     function ClientHandlerTornado($cfg) {
         $this->handlerName = "tornado";
-        $this->version = "1.00";
+        $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
@@ -98,7 +98,9 @@ class ClientHandlerTornado extends ClientHandler
             $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
             $this->command .= " --priority ".$priolist;
         }
-        $this->command .= " ".$this->cfg["btclient_tornado_options"]." > /dev/null &";
+		if (strlen($this->cfg["btclient_tornado_options"]) > 0)
+			$this->command .= " ".$this->cfg["btclient_tornado_options"];
+        $this->command .= " > /dev/null &";
         if (($this->cfg["AllowQueing"]) && ($this->queue == "1")) {
             //  This file is queued.
         } else {
