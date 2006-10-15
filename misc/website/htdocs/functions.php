@@ -104,6 +104,37 @@ function logHit() {
 }
 
 /**
+ * proxy-log
+ */
+function logProxy() {
+	// ua
+	if ((isset($_SERVER['HTTP_USER_AGENT'])) && ($_SERVER['HTTP_USER_AGENT'] != ""))
+		$ua = addslashes($_SERVER['HTTP_USER_AGENT']);
+	else
+		$ua = "unknown";
+	// db-conf	
+	require_once('internal/dbconf.php');
+	$db = @mysql_connect ($db_host, $db_user, $db_pass);
+	if (!isset($db))
+		return;	
+	@mysql_select_db($db_name, $db);
+	$result = @mysql_query("SELECT ct FROM tfb4rt_proxystats WHERE ua LIKE '".$ua."'", $db);
+	$num_rows = mysql_num_rows($result);
+	if ($num_rows > 0) { // update
+		$row = @mysql_fetch_row($result);
+		$ct = $row[0];
+		@mysql_free_result($result);
+		$ct++;
+		@mysql_query("UPDATE tfb4rt_proxystats SET ct = '".$ct."' WHERE ua LIKE '".$ua."' LIMIT 1", $db);		
+	} else { // insert
+		$ct = 1;
+		@mysql_query("INSERT INTO tfb4rt_proxystats (ua,ct) values ( '".$ua."','".$ct."')", $db);		
+	}
+	// close
+	@mysql_close($db);
+}
+
+/**
  * rewrite berliOS-news-export-HTML to fitting xhtml
  *
  * @param $string string with berliOS-news-export

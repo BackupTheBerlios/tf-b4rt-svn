@@ -36,7 +36,7 @@ require_once('functions.php');
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
-logHit();
+@logHit();
 
 // get current version
 $version = trim(getDataFromFile(_FILE_VERSION));
