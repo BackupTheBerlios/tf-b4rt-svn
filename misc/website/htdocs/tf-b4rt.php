@@ -21,9 +21,8 @@
 *******************************************************************************/
 
 // defines
-define('_FILE_NEWS','newshtml.txt');
 define('_FILE_CHANGELOG','changelog-torrentflux-b4rt.txt');
-define('_FILE_ISSUES','issues.txt');
+define('_FILE_NEWS','newshtml.txt');
 define('_FILE_VERSION_CURRENT','version.txt');
 define('_UPDATE_BASEDIR','update');
 define('_UPDATE_DATADIR','data');
@@ -33,6 +32,7 @@ define('_UPDATE_INDEX','update.txt');
 define('_UPDATE_DB','db.txt');
 define('_UPDATE_MYSQL','mysql.txt');
 define('_UPDATE_SQLITE','sqlite.txt');
+define('_UPDATE_POSTGRES','postgres.txt');
 
 // -----------------------------------------------------------------------------
 // Main
@@ -68,7 +68,7 @@ if ((isset($update)) && ($update != "")) {
                 } else {
                     bailOut(false);
                 }
-            break;
+                exit;
             case "1":
                 // load db-file and spit out
                 $updateDBData = trim(getDataFromFile("./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" . _UPDATE_DB));
@@ -79,7 +79,6 @@ if ((isset($update)) && ($update != "")) {
                     bailOut(true);
                 }
                 exit;
-            break;
             case "2":
                 // hold remote database-version
                 $remoteDb = @trim($_REQUEST["d"]);
@@ -88,13 +87,16 @@ if ((isset($update)) && ($update != "")) {
                     switch($remoteDb) {
                         case "mysql":
                           $sqlFile = _UPDATE_MYSQL;
-                        break;
+                          break;
                         case "sqlite":
                           $sqlFile = _UPDATE_SQLITE;
-                        break;
+                          break;
+                        case "postgres":
+                          $sqlFile = _UPDATE_POSTGRES;
+                          break;                          
                         default:
                             bailOut(true);
-                        break;
+                            break;
                     }
                     // load sql-file and spit out
                     $updateSQLData = trim(getDataFromFile("./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" ._UPDATE_DATADIR . "/" . _UPDATE_SQLDIR . "/" . $sqlFile));
@@ -107,7 +109,6 @@ if ((isset($update)) && ($update != "")) {
                     bailOut(true);
                 }
                 exit;
-            break;
             case "3":
                 // file list
                 $updateFileList = getFileList($currentVersion, $remoteVersion);
@@ -141,7 +142,6 @@ if ((isset($update)) && ($update != "")) {
                     bailOut(true);
                 }
                 exit;
-            break;
         }
     } else {
         bailOut(false);
@@ -154,14 +154,6 @@ switch($action) {
     case "1": // changelog
         outputData(getDataFromFile(_FILE_CHANGELOG));
         exit;
-    break;
-    case "2": // issues
-        outputData(getDataFromFile(_FILE_ISSUES));
-        exit;
-    //case "3": // release-list
-    //    outputData(getReleaseList());
-    //    exit;
-    //break;
     case "0": // news
     default:
         outputData(rewriteNews(getDataFromFile(_FILE_NEWS)));
@@ -240,35 +232,6 @@ function getFileList($currentVersion, $remoteVersion) {
         return "0";
     }
 }
-
-/**
- * get release-list
- *
- * @return releaselist as string
- */
-/*
-function getReleaseList() {
-    // release list
-    $dirName = "./". _FILESDIR;
-    if (file_exists($dirName)) {
-        if ($dirHandle = opendir($dirName)) {
-            $releaseList = "";
-            while (false !== ($file = readdir($dirHandle))) {
-                if ((substr($file, -1, 1)) == "2")
-                    $releaseList .= $file . "\n";
-            }
-            closedir($dirHandle);
-            return $releaseList;
-        } else {
-            die("error open dir ".$dirName);
-            return "";
-        }
-    } else {
-        die("dir ".$dirName."does not exist");
-        return "";
-    }
-}
-*/
 
 /**
  * rewrite berliOS-news-export-HTML to fitting xhtml
