@@ -78,7 +78,21 @@ class ClientHandlerTornado extends ClientHandler
         $skipHashCheck = "";
         if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($torrent) > 0))
             $skipHashCheck = " --check_hashes 0";
-        $this->command = $this->runtime ." ".$this->sharekill_param ." ".$this->cfg["torrent_file_path"].$this->alias .".stat ".$this->owner ." --responsefile '".$this->cfg["torrent_file_path"].$this->torrent ."' --display_interval 5 --max_download_rate ".$this->drate ." --max_upload_rate ".$this->rate ." --max_uploads ".$this->maxuploads ." --minport ".$this->port ." --maxport ".$this->maxport ." --rerequest_interval ".$this->rerequest ." --super_seeder ".$this->superseeder ." --max_initiate ".$this->maxcons .$skipHashCheck;
+        $this->command = $this->runtime;
+        $this->command .= " ".$this->sharekill_param;
+        $this->command .= " ".escapeshellarg($this->cfg["torrent_file_path"].$this->alias.".stat");
+        $this->command .= " ".$this->owner;
+        $this->command .= " --responsefile ".escapeshellarg($this->cfg["torrent_file_path"].$this->torrent);
+        $this->command .= " --display_interval 5";
+        $this->command .= " --max_download_rate ".$this->drate;
+        $this->command .= " --max_upload_rate ".$this->rate;
+        $this->command .= " --max_uploads ".$this->maxuploads;
+        $this->command .= " --minport ".$this->port;
+        $this->command .= " --maxport ".$this->maxport;
+        $this->command .= " --rerequest_interval ".$this->rerequest;
+        $this->command .= " --super_seeder ".$this->superseeder;
+        $this->command .= " --max_connections ".$this->maxcons;
+        $this->command .= $skipHashCheck;
         if(file_exists($this->cfg["torrent_file_path"].$this->alias.".prio")) {
             $priolist = explode(',',file_get_contents($this->cfg["torrent_file_path"].$this->alias .".prio"));
             $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
@@ -101,7 +115,7 @@ class ClientHandlerTornado extends ClientHandler
 			} else {
 					$pyCmd = $this->cfg["pythonCmd"];
 			}
-			$this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $pyCmd . " " .$this->cfg["btclient_tornado_bin"] . " " . $this->command;
+			$this->command = "cd " . escapeshellarg($this->savepath) . "; HOME=".escapeshellarg($this->cfg["path"])."; export HOME;". $this->umask ." nohup " . $this->nice . $pyCmd . " " .escapeshellarg($this->cfg["btclient_tornado_bin"]) . " " . $this->command;
 		}
         // start the client
         parent::doStartTorrentClient();

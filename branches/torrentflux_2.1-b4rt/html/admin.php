@@ -1364,7 +1364,7 @@ function configSettings()
 		</tr>
 		<tr>
 			<td align="left" width="350" valign="top"><strong>tornado : Extra Commandline Options</strong><br>
-			DO NOT include --max_upload_rate, --minport, --maxport, --max_uploads , --max_initiate here.
+			DO NOT include --max_upload_rate, --minport, --maxport, --max_uploads and --max_connections here.
 			</td>
 			<td valign="top">
 				<input name="btclient_tornado_options" type="Text" maxlength="254" value="<?php echo($cfg["btclient_tornado_options"]); ?>" size="55">

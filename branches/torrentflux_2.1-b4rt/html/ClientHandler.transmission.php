@@ -88,17 +88,22 @@ class ClientHandlerTransmission extends ClientHandler
             $this->sharekill_param = -1;
         
         // pid-file
-        $this->pidFile = "\"" . $this->cfg["torrent_file_path"].$this->alias .".stat.pid\"";
+        $this->pidFile = escapeshellarg($this->cfg["torrent_file_path"].$this->alias .".stat.pid");
 
 		// workaround for bsd-pid-file-problem : touch file first
         @shell_exec("touch ".$this->pidFile);
 
         // build the command-string
-        $this->command = "-t \"".$this->cfg["torrent_file_path"].$this->alias .".stat\" -w ".$this->owner;
+        $this->command = "-t ".escapeshellarg($this->cfg["torrent_file_path"].$this->alias .".stat");
+        $this->command .= " -w ".$this->owner;
         // "new" transmission-patch has pid-file included
         $this->command .= " -z ". $this->pidFile; /* - bsd-workaround */
-        $this->command .= " -e 5 -p ".$this->port ." -u ".$this->rate ." -c ". $this->sharekill_param ." -d ".$this->drate;
-        $this->command .= " ".$this->cfg["btclient_transmission_options"]. "\"". $this->cfg["torrent_file_path"]. $this->torrent;
+        $this->command .= " -e 5 -p ".$this->port;
+        $this->command .= " -u ".$this->rate;
+        $this->command .= " -c ". $this->sharekill_param;
+        $this->command .= " -d ".$this->drate;
+        $this->command .= " ".$this->cfg["btclient_transmission_options"];
+        $this->command .= escapeshellarg($this->cfg["torrent_file_path"].$this->torrent);
         // standard, no shell trickery ("new" transmission-patch has pid-file included) :
         $this->command .= '" &> /dev/null &'; /* - bsd-workaround */
         // <begin shell-trickery> to write the pid of the client into the pid-file
@@ -111,7 +116,7 @@ class ClientHandlerTransmission extends ClientHandler
             //  This file is queued.
 		} else {
             // This file is started manually.
-            $this->command = "cd " . $this->savepath . "; HOME=".$this->cfg["path"]."; export HOME;". $this->umask ." nohup " . $this->nice . $this->cfg["btclient_transmission_bin"] . " " . $this->command;
+            $this->command = "cd " . escapeshellarg($this->savepath) . "; HOME=".escapeshellarg($this->cfg["path"])."; export HOME;". $this->umask ." nohup " . $this->nice . escapeshellarg($this->cfg["btclient_transmission_bin"]) . " " . $this->command;
         }
         // start the client
         parent::doStartTorrentClient();
