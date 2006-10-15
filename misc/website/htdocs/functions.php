@@ -113,9 +113,9 @@ function logProxy() {
 		$ua = addslashes($_SERVER['HTTP_USER_AGENT']);
 	else
 		$ua = "unknown";
-	// db-conf	
+	// db	
 	require_once('internal/dbconf.php');
-	$db = @mysql_connect ($db_host, $db_user, $db_pass);
+	$db = @mysql_connect($db_host, $db_user, $db_pass);
 	if (!isset($db))
 		return;	
 	@mysql_select_db($db_name, $db);
