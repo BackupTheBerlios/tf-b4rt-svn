@@ -103,7 +103,7 @@ if (isset($_REQUEST['mid'])) {
 	$tmpl->setvar('_COMPOSE', $cfg['_COMPOSE']);
 	$user = array();
 	for ($inx = 0; $inx < sizeof($users); $inx++)
-		array_push($user, array('user' => $users[$inx]));
+		array_push($user, array('user' => htmlentities($users[$inx], ENT_QUOTES)));
 	$tmpl->setloop('messageList_user', $user);
 }
 

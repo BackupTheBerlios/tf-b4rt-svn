@@ -83,7 +83,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 			'file' => htmlentities($file, ENT_QUOTES),
 			'ip_resolved' => htmlentities($ip_resolved, ENT_QUOTES),
 			'user_agent' => htmlentities($user_agent, ENT_QUOTES),
-			'ip' => $ip,
+			'ip' => htmlentities($ip, ENT_QUOTES),
 			'date' => date($cfg['_DATETIMEFORMAT'], $time),
 			)
 		);
@@ -112,7 +112,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 		if ($user == $users[$inx2])
 			$selected = "selected";
 		array_push($user_list, array(
-			'user' => $users[$inx2],
+			'user' => htmlentities($users[$inx2], ENT_QUOTES),
 			'selected' => $selected,
 			)
 		);
