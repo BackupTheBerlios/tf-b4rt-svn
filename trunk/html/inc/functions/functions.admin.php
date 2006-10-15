@@ -79,7 +79,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 			'is_superuser' => $is_superuser,
 			'user_id' => $user_id,
 			'user_icon' => $user_icon,
-			'action' => $action,
+			'action' => htmlentities($action, ENT_QUOTES),
 			'file' => htmlentities($file, ENT_QUOTES),
 			'ip_resolved' => htmlentities($ip_resolved, ENT_QUOTES),
 			'user_agent' => htmlentities($user_agent, ENT_QUOTES),
@@ -94,11 +94,11 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$action_list = array();
 	foreach ($cfg["constants"] as $action) {
 		$selected = "";
-		if($action != $cfg["constants"]["hit"]) {
+		if ($action != $cfg["constants"]["hit"]) {
 			if ($srchAction == $action)
 				$selected = "selected";
 			array_push($action_list, array(
-				'action' => $action,
+				'action' => htmlentities($action, ENT_QUOTES),
 				'selected' => $selected,
 				)
 			);
