@@ -243,10 +243,10 @@ function getFileList($currentVersion, $remoteVersion) {
  * log the hit
  */
 function logHit() {
-	if ($fileHandle = fopen(_FILE_HITS, 'r')) {
-		$data = fgets($fileHandle, 2048);
-		fclose($fileHandle);
-		if ($fileHandle = fopen(_FILE_HITS, 'w+')) {
+	if ($fileHandle = @fopen(_FILE_HITS, 'r')) {
+		$data = @fgets($fileHandle, 2048);
+		@fclose($fileHandle);
+		if ($fileHandle = @fopen(_FILE_HITS, 'w+')) {
 			$hits = (int) trim($data);
 			$hits++;
 			fwrite($fileHandle, $hits);
