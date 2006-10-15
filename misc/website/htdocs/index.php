@@ -8,6 +8,7 @@
 define('_FILE_NEWS','newshtml.txt');
 define('_FILE_VERSION','version.txt');
 define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
+define('_FILE_HITS','./internal/hits.txt');
 
 /* global fields */
 $version = "";
@@ -16,6 +17,7 @@ $site = "";
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
+logHit();
 
 // get current version
 $version = trim(getDataFromFile(_FILE_VERSION));
@@ -64,13 +66,29 @@ exit();
  */
 function getDataFromFile($file) {
     // read content
-    if($fileHandle = @fopen($file,'r')) {
+    if ($fileHandle = @fopen($file,'r')) {
         $data = null;
         while (!@feof($fileHandle))
             $data .= @fgets($fileHandle, 4096);
-        @fclose ($fileHandle);
+        @fclose($fileHandle);
     }
     return $data;
+}
+
+/**
+ * log the hit
+ */
+function logHit() {
+	if ($fileHandle = @fopen(_FILE_HITS, 'r')) {
+		$data = @fgets($fileHandle, 2048);
+		@fclose($fileHandle);
+		if ($fileHandle = @fopen(_FILE_HITS, 'w+')) {
+			$hits = (int) trim($data);
+			$hits++;
+			fwrite($fileHandle, $hits);
+			fclose ($fileHandle);
+		}
+	}
 }
 
 /**

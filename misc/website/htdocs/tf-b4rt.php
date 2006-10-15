@@ -184,7 +184,7 @@ function getDataFromFile($file) {
         $data = null;
         while (!@feof($fileHandle))
             $data .= @fgets($fileHandle, 4096);
-        @fclose ($fileHandle);
+        @fclose($fileHandle);
     }
     return $data;
 }
@@ -250,7 +250,7 @@ function logHit() {
 			$hits = (int) trim($data);
 			$hits++;
 			fwrite($fileHandle, $hits);
-			fclose ($fileHandle);
+			fclose($fileHandle);
 		}
 	}
 }
