@@ -21,8 +21,6 @@
 *******************************************************************************/
 
 // defines
-define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
-define('_URL_THIS','http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 define('_URL_DTD_XML','http://'.$_SERVER['SERVER_NAME'].'/tf_xml.dtd');
 
 // -----------------------------------------------------------------------------
