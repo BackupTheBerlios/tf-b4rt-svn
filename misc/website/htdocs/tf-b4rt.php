@@ -166,7 +166,7 @@ switch($action) {
         exit;
     default:
 		header("Content-Type: text/plain");
-		echo basename($_SERVER['SCRIPT_FILENAME']) . " " . _REVISION;
+		echo trim(getDataFromFile(_FILE_VERSION_CURRENT));
 		exit;
 }
 
