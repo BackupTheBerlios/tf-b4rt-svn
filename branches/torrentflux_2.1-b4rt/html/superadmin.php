@@ -24,7 +24,6 @@
 define('_DIR_BACKUP','.backup');
 define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_VERSION_LOCAL','version');
-define('_VERSION_REMOTE','version.txt');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','superadminProxy.php');
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
@@ -349,7 +348,7 @@ if (isset($_REQUEST["u"])) {
 					}
 					sendLine('</ul><p><font color="green">File-Update done.</font><br><br>');
 					sendLine('Updating Version-Information...');
-					$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
+					$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 					if ((isset($versionAvailable)) && ($versionAvailable != "")) {
 						if ($handle = fopen(_VERSION_LOCAL, "w")) {
 							if (fwrite($handle, $versionAvailable)) {
@@ -873,7 +872,7 @@ function buildPage($action) {
 		case "0": // version
 			$htmlTitle = "Version";
 			// version-check
-			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
+			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 			if ((isset($versionAvailable)) && ($versionAvailable != "")) {
 				// set image
 				if ($versionAvailable == _VERSION_THIS || (substr(_VERSION_THIS, 0, 3)) == "svn")
@@ -961,7 +960,7 @@ function buildPage($action) {
 		case "4": // update
 			$htmlTitle = "Update";
 			// version-check
-			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._VERSION_REMOTE));
+			$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 			if ((isset($versionAvailable)) && ($versionAvailable != "")) {
 				// set image
 				if ($versionAvailable == _VERSION_THIS)
