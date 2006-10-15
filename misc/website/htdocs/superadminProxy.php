@@ -22,6 +22,7 @@
 
 // defines
 define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
+define('_FILE_HITS','./internal/hits-torrentflux_2.1-b4rt.txt');
 define('_FILE_ISSUES','issues.txt');
 define('_FILE_NEWS','newshtml.txt');
 define('_FILE_VERSION_CURRENT','version.txt');
@@ -34,10 +35,12 @@ define('_UPDATE_DB','db.txt');
 define('_UPDATE_MYSQL','mysql.txt');
 define('_UPDATE_SQLITE','sqlite.txt');
 define('_UPDATE_POSTGRES','postgres.txt');
+define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
+logHit();
 
 // update
 $update = @trim($_REQUEST["u"]);
@@ -152,19 +155,19 @@ if ((isset($update)) && ($update != "")) {
 // standard-action
 $action = @trim($_REQUEST["a"]);
 switch($action) {
+    case "0": // news
+        outputData(rewriteNews(getDataFromFile(_FILE_NEWS)));
+        exit; 	
     case "1": // changelog
         outputData(getDataFromFile(_FILE_CHANGELOG));
         exit;
     case "2": // issues
         outputData(getDataFromFile(_FILE_ISSUES));
         exit;
-    //case "3": // release-list
-    //    outputData(getReleaseList());
-    //    exit;
-    case "0": // news
     default:
-        outputData(rewriteNews(getDataFromFile(_FILE_NEWS)));
-        exit;
+		header("Content-Type: text/plain");
+		echo basename($_SERVER['SCRIPT_FILENAME']) . " " . _REVISION;
+		exit;
 }
 
 exit;
@@ -268,6 +271,22 @@ function getReleaseList() {
     }
 }
 */
+
+/**
+ * log the hit
+ */
+function logHit() {
+	if ($fileHandle = fopen(_FILE_HITS, 'r')) {
+		$data = fgets($fileHandle, 2048);
+		fclose($fileHandle);
+		if ($fileHandle = fopen(_FILE_HITS, 'w+')) {
+			$hits = (int) trim($data);
+			$hits++;
+			fwrite($fileHandle, $hits);
+			fclose ($fileHandle);
+		}
+	}
+}
 
 /**
  * rewrite berliOS-news-export-HTML to fitting xhtml
