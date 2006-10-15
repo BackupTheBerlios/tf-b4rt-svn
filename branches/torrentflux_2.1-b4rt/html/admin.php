@@ -393,14 +393,13 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="")
 		{
 			$output .= "<td><img src=\"".$user_icon."\" width=17 height=14 title=\"n/a\" border=0 align=\"bottom\">".$user_id."&nbsp;&nbsp;</td>";
 		}
-		$output .= "<td><div class=\"tiny\">".$action."</div></td>";
+		$output .= "<td><div class=\"tiny\">".htmlentities($action, ENT_QUOTES)."</div></td>";
 		$output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
 		$output .= htmlentities($file, ENT_QUOTES);
 		$output .= "</div></td>";
 		$output .= "<td><div class=\"tiny\" align=\"left\"><a href=\"javascript:void(0)\" onclick=\"return overlib('".$ip_info."<br>', STICKY, CSSCLASS);\" onmouseover=\"return overlib('".$ip_info."<br>', CSSCLASS);\" onmouseout=\"return nd();\"><img src=\"images/properties.png\" width=\"18\" height=\"13\" border=\"0\"><font class=tiny>".$ip."</font></a></div></td>";
 		$output .= "<td><div class=\"tiny\" align=\"center\">".date(_DATETIMEFORMAT, $time)."</div></td>";
 		$output .= "</tr>";
-
 		$inx++;
 	}
 
@@ -455,7 +454,7 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="")
 				{
 					$selected = "selected";
 				}
-				echo "<option value=\"".$action."\" ".$selected.">".$action."</option>";
+				echo "<option value=\"".$action."\" ".$selected.">".htmlentities($action, ENT_QUOTES)."</option>";
 			}
 		}
 ?>
