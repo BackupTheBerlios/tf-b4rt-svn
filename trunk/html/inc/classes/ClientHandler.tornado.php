@@ -92,18 +92,18 @@ class ClientHandlerTornado extends ClientHandler
 		// order of args must not change for ps-parsing-code in
 		// RunningTransferTornado
 
-		$this->command = "cd " . $this->savepath .";";
-		$this->command .= " HOME=".$this->cfg["path"];
+		$this->command = "cd ".escapeshellarg($this->savepath).";";
+		$this->command .= " HOME=".escapeshellarg($this->cfg["path"]);
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $pyCmd . " " .$this->tornadoBin;
+		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
         $this->command .= " ".$this->runtime;
         $this->command .= " ".$this->sharekill_param;
-        $this->command .= " ".$this->cfg["transfer_file_path"].$this->alias .".stat";
+        $this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias .".stat");
         $this->command .= " ".$this->owner;
-        $this->command .= " --responsefile \"".$this->cfg["transfer_file_path"].$this->transfer ."\"";
+        $this->command .= " --responsefile ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
         $this->command .= " --display_interval 5";
         $this->command .= " --max_download_rate ".$this->drate;
         $this->command .= " --max_upload_rate ".$this->rate;
@@ -112,10 +112,12 @@ class ClientHandlerTornado extends ClientHandler
         $this->command .= " --maxport ".$this->maxport;
         $this->command .= " --rerequest_interval ".$this->rerequest;
         $this->command .= " --super_seeder ".$this->superseeder;
-        $this->command .= " --max_initiate ".$this->maxcons;
+        $this->command .= " --max_connections ".$this->maxcons;
         $this->command .= $skipHashCheck;
 		$this->command .= $filePrio;
-        $this->command .= " ".$this->cfg["btclient_tornado_options"]." > /dev/null &";
+		if (strlen($this->cfg["btclient_tornado_options"]) > 0)
+			$this->command .= " ".$this->cfg["btclient_tornado_options"];
+        $this->command .= " > /dev/null &";
 
         // start the client
         parent::doStartClient();

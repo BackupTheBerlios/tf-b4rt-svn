@@ -79,88 +79,22 @@ class ClientHandlerMainline extends ClientHandler
 
 		// build the command-string
 
-		/* Skip file priority stuff, as its not in the CL client, that I can see
-		$filePrio = "";
-		if(file_exists($this->cfg["transfer_file_path"].$this->alias.".prio")) {
-		$priolist = explode(',',file_get_contents($this->cfg["transfer_file_path"].$this->alias .".prio"));
-		$priolist = implode(',',array_slice($priolist,1,$priolist[0]));
-		$filePrio = " --priority ".$priolist;
-		}
-		<-- end file priority --> */
-
-		/*
-
-		some args :
-
---max_upload_rate <arg>
-          maximum B/s to upload at (defaults to 125000000)
-
---max_download_rate <arg>
-          average maximum B/s to download at (defaults to 125000000)
-
-
---max_files_open <arg>
-          the maximum number of files in a multifile torrent to keep open at a
-          time, 0 means no limit. Used to avoid running out of file
-          descriptors. (defaults to 50)
-
---start_trackerless_client, --no_start_trackerless_client
-          Initialize a trackerless client. This must be enabled in order to
-          download trackerless torrents. (defaults to True)
-
---upnp, --no_upnp
-          Enable automatic port mapping (UPnP) (defaults to True)
-
---xmlrpc_port <arg>
-          Start the XMLRPC interface on the specified port. This XML-RPC-based
-          RPC allows a remote program to control the client to enable automated
-          hosting, conformance testing, and benchmarking. (defaults to -1)
-
---save_in <arg>
-          local directory where the torrent contents will be saved. The file
-          (single-file torrents) or directory (batch torrents) will be created
-          under this directory using the default name specified in the .torrent
-          file. See also --save_as. (defaults to u'')
-
---save_incomplete_in <arg>
-          local directory where the incomplete torrent downloads will be stored
-          until completion. Upon completion, downloads will be moved to the
-          directory specified by --save_in. (defaults to u'')
-
---save_as <arg>
-          file name (for single-file torrents) or directory name (for batch
-          torrents) to save the torrent as, overriding the default name in the
-          torrent. See also --save_in (defaults to u'')
-
-
---bad_libc_workaround, --no_bad_libc_workaround
-          enable workaround for a bug in BSD libc that makes file reads very
-          slow. (defaults to False)
-
-
---twisted <arg>
-          Use Twisted network libraries for network connections. 1 means use
-          twisted, 0 means do not use twisted, -1 means autodetect, and prefer
-          twisted (defaults to -1)
-
-		*/
-
 		// note :
 		// order of args must not change for ps-parsing-code in
 		// RunningTransferMainline
-
-		$this->command = "cd " . $this->savepath .";";
+		
+		$this->command = "cd ".escapeshellarg($this->savepath).";";
 		$this->command .= " HOME=".$this->cfg["path"];
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $pyCmd . " " .$this->mainlineBin;
+		$this->command .= $pyCmd . " " .escapeshellarg($this->mainlineBin);
 		$this->command .= " --display_interval 5";
 		$this->command .= " --tf_owner ".$this->owner;
-		$this->command .= " --stat_file ".$this->cfg["transfer_file_path"].$this->alias .".stat";
-		$this->command .= " --save_incomplete_in ".$this->savepath;
-		$this->command .= " --save_in ".$this->savepath;
+		$this->command .= " --stat_file ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias.".stat");
+		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
+		$this->command .= " --save_in ".escapeshellarg($this->savepath);
 		$this->command .= " --language en";
 		$this->command .= " --seed_limit ".$this->sharekill_param;
 		if ($this->drate != 0) {
@@ -180,9 +114,10 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --max_initiate ".$this->maxcons;
 		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
 			$this->command .= " --no_check_hashes";
-		$this->command .= " ".$this->cfg["btclient_mainline_options"];
-		$this->command .= " ".$this->cfg["transfer_file_path"].$this->transfer;
-		$this->command .= " > /dev/null &";
+		if (strlen($this->cfg["btclient_mainline_options"]) > 0)
+			$this->command .= " ".$this->cfg["btclient_mainline_options"];
+		$this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
+		$this->command .= " > /dev/null &";	
 
 		// start the client
 		parent::doStartClient();

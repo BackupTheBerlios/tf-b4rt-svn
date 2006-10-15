@@ -79,39 +79,40 @@ class ClientHandlerTransmission extends ClientHandler
             $this->sharekill_param = -1;
 
         // pid-file
-        $this->pidFile = "\"" . $this->cfg["transfer_file_path"].$this->alias .".stat.pid\"";
+        $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".stat.pid";
 
         // workaround for bsd-pid-file-problem : touch file first
-        @shell_exec("touch ".$this->pidFile);
+        @shell_exec("touch ".escapeshellarg($this->pidFile));
 
 		// note :
 		// order of args must not change for ps-parsing-code in
 		// RunningTransferTransmission
 
         // build the command-string
-        $this->command = "cd " . $this->savepath .";";
-        $this->command .= " HOME=".$this->cfg["path"]."; export HOME;".
+        $this->command = "cd ".escapeshellarg($this->savepath).";";
+        $this->command .= " HOME=".escapeshellarg($this->cfg["path"])."; export HOME;".
         $this->command .= $this->umask;
         $this->command .= " nohup ";
         $this->command .= $this->nice;
-        $this->command .= $this->cfg["btclient_transmission_bin"];
-        $this->command .= " -t \"".$this->cfg["transfer_file_path"].$this->alias .".stat\"";
+        $this->command .= escapeshellarg($this->cfg["btclient_transmission_bin"]);
+        $this->command .= " -t ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias.".stat");
         $this->command .= " -w ".$this->owner;
-        $this->command .= " -z ". $this->pidFile;
+        $this->command .= " -z ".escapeshellarg($this->pidFile);
         $this->command .= " -e 5";
-        $this->command .= " -c ". $this->sharekill_param;
+        $this->command .= " -c ".$this->sharekill_param;
         $this->command .= " -d ".$this->drate;
         $this->command .= " -u ".$this->rate;
         $this->command .= " -p ".$this->port;
-        $this->command .= " ".$this->cfg["btclient_transmission_options"];
-        $this->command .= "\"". $this->cfg["transfer_file_path"].$this->transfer;
+        if (strlen($this->cfg["btclient_transmission_options"]) > 0)
+        	$this->command .= " ".$this->cfg["btclient_transmission_options"];
+        $this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
         // standard, no shell trickery ("new" transmission-patch has pid-file included) :
-        $this->command .= '" > /dev/null &';
+        $this->command .= " > /dev/null &";
         // <begin shell-trickery> to write the pid of the client into the pid-file
         // * b4rt :
-        //$this->command .= '" &> /dev/null & echo $! > "'. $this->pidFile .'"';
+        //$this->command .= " &> /dev/null & echo $! > ".escapeshellarg($this->pidFile);
         // * lord_nor :
-        //$this->command .= '" > /dev/null & echo $! & > "'. $this->pidFile .'"'; /* + bsd-workaround */
+        //$this->command .= " > /dev/null & echo $! & > ".escapeshellarg($this->pidFile);
         // <end shell-trickery>
         // start the client
         parent::doStartClient();
