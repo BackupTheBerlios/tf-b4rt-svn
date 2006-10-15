@@ -472,7 +472,7 @@ function displayActivity($min=0, $user="", $srchFile="", $srchAction="")
 			{
 				$selected = "selected";
 			}
-			echo "<option value=\"".$users[$inx]."\" ".$selected.">".$users[$inx]."</option>";
+			echo "<option value=\"".$users[$inx]."\" ".$selected.">".htmlentities($users[$inx], ENT_QUOTES)."</option>";
 		}
 ?>
 		</select>

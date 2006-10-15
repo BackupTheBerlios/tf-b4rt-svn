@@ -905,7 +905,7 @@ function DisplayMessageList() {
     '<tr><td>' . _SENDMESSAGETO ;
     echo '<select name="to_user">';
     for($inx = 0; $inx < sizeof($users); $inx++)
-        echo '<option>'.$users[$inx].'</option>';
+        echo '<option>'.htmlentities($users[$inx], ENT_QUOTES).'</option>';
     echo '</select>';
     echo '<input type="Submit" value="' . _COMPOSE .'">';
     echo '</td></tr></form></table></div>';
