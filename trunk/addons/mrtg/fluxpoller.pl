@@ -101,7 +101,7 @@ SWITCH: {
 # Sub: printTraffic                                                            #
 # Parameters: string with path of flux-dir                                     #
 #             string with wanted output-format (mrtg|cacti)                    #
-# Return:		-                                                              #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub printTraffic {
 	my $fluxDir = shift;
@@ -125,8 +125,8 @@ sub printTraffic {
 
 #------------------------------------------------------------------------------#
 # Sub: mrtgPrintTraffic                                                        #
-# Parameters:	string with path of flux-".stat-files"-dir                     #
-# Return:		-                                                              #
+# Parameters: string with path of flux-".stat-files"-dir                       #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub mrtgPrintTraffic {
 	my $fluxDir = shift;
@@ -146,8 +146,8 @@ sub mrtgPrintTraffic {
 
 #------------------------------------------------------------------------------#
 # Sub: cactiPrintTraffic                                                       #
-# Parameters:	string with path of flux-".stat-files"-dir                     #
-# Return:		-                                                              #
+# Parameters: string with path of flux-".stat-files"-dir                       #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub cactiPrintTraffic {
 	my $fluxDir = shift;
@@ -165,8 +165,8 @@ sub cactiPrintTraffic {
 
 #------------------------------------------------------------------------------#
 # Sub: printConnections                                                        #
-# Parameters:	string with wanted output-format (mrtg|cacti)                  #
-# Return:		-                                                              #
+# Parameters: string with wanted output-format (mrtg|cacti)                    #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub printConnections {
 	my $outputFormat = shift;
@@ -182,8 +182,8 @@ sub printConnections {
 
 #------------------------------------------------------------------------------#
 # Sub: mrtgPrintConnections                                                    #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub mrtgPrintConnections {
 	# print down-"speed" for mrtg
@@ -200,8 +200,8 @@ sub mrtgPrintConnections {
 
 #------------------------------------------------------------------------------#
 # Sub: cactiPrintConnections                                                   #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub cactiPrintConnections {
 	# print connections for cacti
@@ -210,8 +210,8 @@ sub cactiPrintConnections {
 
 #------------------------------------------------------------------------------#
 # Sub: mrtgPrintUptime                                                         #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub mrtgPrintUptime {
 	# uptime data for mrtg
@@ -224,8 +224,8 @@ sub mrtgPrintUptime {
 
 #------------------------------------------------------------------------------#
 # Sub: mrtgPrintTargetname                                                     #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub mrtgPrintTargetname {
 	# target-name for mrtg
@@ -274,7 +274,7 @@ sub fluxTraffic {
 
 #------------------------------------------------------------------------------#
 # Sub: fluxConnections                                                         #
-# Parameters:	-                                                              #
+# Parameters: null                                                             #
 # Return: int with current flux-tcp-connections (python + transmission)        #
 #------------------------------------------------------------------------------#
 sub fluxConnections {
@@ -298,8 +298,8 @@ sub fluxConnections {
 
 #------------------------------------------------------------------------------#
 # Sub: findBinaries                                                            #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub findBinaries {
 	$BIN_CAT = `whereis cat | awk '{print \$2}'`; chomp $BIN_CAT;
@@ -313,8 +313,8 @@ sub findBinaries {
 
 #------------------------------------------------------------------------------#
 # Sub: checkEnv                                                                #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub checkEnv {
 	## win32 not supported ;)
@@ -341,8 +341,8 @@ sub printVersion {
 
 #------------------------------------------------------------------------------#
 # Sub: printUsage                                                              #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub printUsage {
 	print <<"USAGE";

@@ -82,7 +82,7 @@ SWITCH: {
 #------------------------------------------------------------------------------#
 # Sub: torrentInfo                                                             #
 # Parameters: string with path to torrent-meta-file                            #
-# Return: -                                                                    #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub torrentInfo {
 	my $torrentFile = shift;
@@ -130,7 +130,7 @@ sub torrentInfo {
 #------------------------------------------------------------------------------#
 # Sub: torrentScrape                                                           #
 # Parameters: string with path to torrent-meta-file                            #
-# Return: -                                                                    #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub torrentScrape {
 	my $torrentFile = shift;
@@ -291,8 +291,8 @@ sub printVersion {
 
 #------------------------------------------------------------------------------#
 # Sub: printUsage                                                              #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub printUsage {
 	print <<"USAGE";

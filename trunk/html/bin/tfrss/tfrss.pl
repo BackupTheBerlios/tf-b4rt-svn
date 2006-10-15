@@ -110,8 +110,8 @@ loadHistory();
 # load data
 loadData();
 
-# process feed
-processFeed();
+# process data
+processData();
 
 # update history
 updateHistory();
@@ -124,11 +124,11 @@ exit;
 #===============================================================================
 
 #------------------------------------------------------------------------------#
-# Sub: processFeed                                                             #
+# Sub: processData                                                             #
 # Arguments: null                                                              #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
-sub processFeed {
+sub processData {
 	# Loop through all of the regular expressions
 	FILTERS: foreach my $filter (@filters) {
 		print "***** ".$filter." *****\n";
@@ -260,7 +260,7 @@ sub downloadTorrent {
 #------------------------------------------------------------------------------#
 # Sub: getUrl                                                                  #
 # Parameters: string with url                                                  #
-# Return: res or undef                                                         #
+# Return: data or undef                                                        #
 #------------------------------------------------------------------------------#
 sub getUrl() {
 	my $url = shift;
@@ -372,8 +372,8 @@ sub initArgVars {
 
 #------------------------------------------------------------------------------#
 # Sub: printUsage                                                              #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub printUsage {
 	print <<"USAGE";
