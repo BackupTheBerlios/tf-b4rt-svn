@@ -146,7 +146,7 @@ function sendXML() {
             $speed = $af->down_speed." - ".$af->up_speed;
     	else
             $speed = "Torrent Not Running";
-        $sharing = number_format((($torrentTotals['uptotal'] / ($af->size+0)) * 100), 2);
+        $sharing = @number_format((($torrentTotals['uptotal'] / ($af->size+0)) * 100), 2);
 		$content .= "<torrent>\n";
 		$content .= "<name><![CDATA[".$entry."]]></name>\n";
 		$content .= "<speeds><![CDATA[".$speed."]]></speeds>\n";
@@ -154,12 +154,12 @@ function sendXML() {
 		$content .= "<percent><![CDATA[".$af->percent_done."]]></percent>\n";
 		$content .= "<sharing><![CDATA[". $sharing ."]]></sharing>\n";
 		$content .= "<remaining><![CDATA[".str_replace('&#8734', 'Unknown', $af->time_left)."]]></remaining>\n";
-		$content .= "<transfered><![CDATA[".formatBytesToKBMGGB($torrentTotals['downtotal'])." - ".formatBytesToKBMGGB($torrentTotals['uptotal'])."]]></transfered>\n";
+		$content .= "<transfered><![CDATA[".@formatBytesToKBMGGB($torrentTotals['downtotal'])." - ".@formatBytesToKBMGGB($torrentTotals['uptotal'])."]]></transfered>\n";
 		$content .= "</torrent>\n";
     }
 	$content .= "</torrents>\n";
 	$content .= "<tf_details>\n";
-	$content .= "<total_speeds><![CDATA[".number_format($cfg["total_download"], 2)." - ".number_format($cfg["total_upload"], 2)."]]></total_speeds>\n";
+	$content .= "<total_speeds><![CDATA[".@number_format($cfg["total_download"], 2)." - ".@number_format($cfg["total_upload"], 2)."]]></total_speeds>\n";
 	$content .= "<free_space><![CDATA[".formatFreeSpace($cfg['free_space'])."]]></free_space>\n";
 	$content .= "</tf_details>\n";
 	$content .= "</torrent_flux>\n";
@@ -219,7 +219,7 @@ function sendRss() {
             $run++;
         else
             $remaining = "Torrent Not Running";
-        $sharing = number_format(($torrentTotals['uptotal'] / ($af->size+0)), 2);
+        $sharing = @number_format(($torrentTotals['uptotal'] / ($af->size+0)), 2);
         $content .= "<item>\n";
         $content .= "<title>".$entry." (".$remaining.")</title>\n";
         $content .= "<description>Down Speed: ".$af->down_speed." || Up Speed: ".$af->up_speed." || Size: ".@formatBytesToKBMGGB($af->size)." || Percent: ".$af->percent_done." || Sharing: ". $sharing ." || Remaining: ".$remaining." || Transfered Down: ".@formatBytesToKBMGGB($torrentTotals['downtotal'])." || Transfered Up: ".@formatBytesToKBMGGB($torrentTotals['uptotal'])."</description>\n";
