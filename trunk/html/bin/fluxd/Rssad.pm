@@ -22,7 +22,6 @@
 ################################################################################
 package Rssad;
 use strict;
-no strict "refs";
 use warnings;
 ################################################################################
 
@@ -60,9 +59,6 @@ my $binTfrss = "/var/www/bin/tfrss/tfrss.pl";
 
 # data-dir
 my $dataDir = "rssad/";
-
-# watch-dir
-
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -195,19 +191,19 @@ sub initialize {
 		# username#url#filtername
 		chomp $jobEntry;
 		my (@jobAry) = split(/#/,$jobEntry);
-		my $user = shift @jobAry;
-		chomp $user;
+		my $savedir = shift @jobAry;
+		chomp $savedir;
 		my $url = shift @jobAry;
 		chomp $url;
 		my $filter = shift @jobAry;
 		chomp $filter;
 		# job-entry
-		print "Rssad : job : user=".$user.", url=".$url.", filter=".$filter."\n"; # DEBUG
+		print "Rssad : job : savedir=".$savedir.", url=".$url.", filter=".$filter."\n"; # DEBUG
 		# add to jobs-array
-		if ((!($user eq "")) && (!($url eq "")) && (!($filter eq ""))) {
+		if ((!($savedir eq "")) && (!($url eq "")) && (!($filter eq ""))) {
 			my $index = scalar(@jobs);
 			$jobs[$index] = {
-				'user' => $user,
+				'savedir' => $savedir,
 				'url' => $url,
 				'filter' => $filter
 			};
@@ -274,15 +270,15 @@ sub main {
 		# TODO
 		my $jobCount = scalar(@jobs);
 		for (my $i = 0; $i < $jobCount; $i++) {
-			print "Rssad : executing job :\n"; # DEBUG
-			print "  user: ".$jobs[$i]{"user"}."\n"; # DEBUG
-			print "  url: ".$jobs[$i]{"url"}."\n"; # DEBUG
-			print "  filter: ".$jobs[$i]{"filter"}."\n"; # DEBUG
 			my $url = $jobs[$i]{"url"};
-			my $filter = $jobs[$i]{"filter"} . ".dat";
-			my $history = $jobs[$i]{"filter"} . ".hist";
-			my $save = $jobs[$i]{"user"};
-			tfrss($jobs[$i]{"url"}, );
+			my $filter = $dataDir.$jobs[$i]{"filter"}.".dat";
+			my $history = $dataDir.$jobs[$i]{"filter"}.".hist";
+			my $savedir = $jobs[$i]{"savedir"};
+			print "Rssad : executing job :\n"; # DEBUG
+			print " url: ".$url."\n"; # DEBUG
+			print " filter: ".$filter."\n"; # DEBUG
+			print " history: ".$history."\n"; # DEBUG
+			print " savedir: ".$savedir."\n"; # DEBUG
 		}
 	}
 }
@@ -311,7 +307,7 @@ sub status {
 	$return .= "jobs :\n";
 	my $jobCount = scalar(@jobs);
 	for (my $i = 0; $i < $jobCount; $i++) {
-		$return .= "  * user: ".$jobs[$i]{"user"}."\n";
+		$return .= "  * savedir: ".$jobs[$i]{"savedir"}."\n";
 		$return .= "    url: ".$jobs[$i]{"url"}."\n";
 		$return .= "    filter: ".$jobs[$i]{"filter"}."\n";
 	}
