@@ -89,9 +89,9 @@ else
 $tmpl->setvar('fluxd_Watch_interval', $cfg["fluxd_Watch_interval"]);
 if ((isset($cfg["fluxd_Watch_jobs"])) && (strlen($cfg["fluxd_Watch_jobs"]) > 0)) {
 	$watchlist = array();
-	$jobs = split(";", trim($cfg["fluxd_Watch_jobs"]));
+	$jobs = explode(";", trim($cfg["fluxd_Watch_jobs"]));
 	foreach ($jobs as $job) {
-		$jobAry = split(":", trim($job));
+		$jobAry = explode(":", trim($job));
 		$user = trim(array_shift($jobAry));
 		$dir = trim(array_shift($jobAry));
 		if ((strlen($user) > 0) && (strlen($dir) > 0)) {

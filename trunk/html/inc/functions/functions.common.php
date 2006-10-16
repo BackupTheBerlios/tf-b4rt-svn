@@ -383,6 +383,25 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 					}
 					$settings[$key] = trim($val);
 					break;
+				case "fluxd_Watch_jobs": // watch-jobs
+					$val = "";
+					$jobs = explode(";", $value);
+					foreach ($jobs as $job) {
+						$jobAry = explode(":", trim($job));
+						$user = trim(array_shift($jobAry));
+						$dir = trim(array_shift($jobAry));
+						$dir = trim(checkDirPathString($dir));
+						if (checkDirectory($dir)) {
+							if ($idx > 0)
+								$val .= ';';
+							$val .= $user;
+							$val .= ':';
+							$val .= $dir;
+						}
+						$idx++;
+					}
+					$settings[$key] = trim($val);
+					break;
 				default: // "normal" key-val-pair
 					$settings[$key] = $value;
 			}
