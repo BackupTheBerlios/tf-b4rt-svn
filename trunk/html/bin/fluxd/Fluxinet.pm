@@ -46,7 +46,7 @@ my $message = "";
 my $port = 3150;
 
 # server-socket
-my ( $SERVER, $Select );
+my ($SERVER, $Select);
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -70,6 +70,9 @@ sub new {
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
 sub destroy {
+	# set state
+	$state = 0;
+	# remove
 	foreach my $handle ($Select->handles) {
 		$Select->remove($handle);
 		$handle->close;

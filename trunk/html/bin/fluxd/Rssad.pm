@@ -81,6 +81,10 @@ sub new {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub destroy {
+	# set state
+	$state = 0;
+	# undef
+	undef @jobs;
 }
 
 ################################################################################
@@ -328,7 +332,7 @@ sub tfrss {
 	$shellCmd .= " \"".$filter.".hist\"";
 	$shellCmd .= " \"".$url."\"";
 	$shellCmd .= " >> \"".$logfile."\"";
-	print "Rssad : DEBUG : ".$shellCmd."\n"; # DEBUG
+	#print "Rssad : DEBUG : ".$shellCmd."\n"; # DEBUG
 	# log the invocation
 	open(LOGFILE,">>\"$logfile\"");
 	print LOGFILE localtime()." - ".$url."\n";
