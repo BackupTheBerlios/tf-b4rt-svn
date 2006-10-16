@@ -16,437 +16,44 @@
 	<a name="fluxd" id="fluxd"></a>
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
-			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
-				<font class="title">
-					<tmpl_if name="fluxdRunning">
-						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/green.gif" align="absmiddle" align="absmiddle"> fluxd Running (pid: <tmpl_var name="fluxdPid">)
-					<tmpl_else>
-						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/black.gif" align="absmiddle"> fluxd Off
-					</tmpl_if>
-				</font>
-			</td>
-		</tr>
-		<tr>
 			<td align="center">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-							<tmpl_if name="shutdown">
-								<tr>
-									<td align="center" colspan="2">
-										<br>fluxd going down... Please Wait.<br>
-									</td>
-								</tr>
-							<tmpl_else>
-								<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
-									<tmpl_if name="fluxdRunning">
-										<input type="Hidden" name="a" value="stop">
-										<tr><br>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Stop fluxd">
-											<br><br></td>
-										</tr>
-										<tmpl_else>
-										<input type="Hidden" name="a" value="start">
-										<tr>
-											<td align="left" width="350" valign="top"><strong>Start fluxd:</strong><br></td>
-										</tr>
-										<tr>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Start fluxd">
-											<br><br></td>
-										</tr>
-									</tmpl_if>
-								</form>
-							</tmpl_if>
-								<tr>
-									<td align="center" colspan="2">
-										<table width="100%" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
-											<tr>
-												<td colspan="6" bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
-													<div align="center">
-														<tmpl_var name="SuperAdminLink1">
-														|<tmpl_var name="SuperAdminLink2">
-														|<tmpl_var name="SuperAdminLink3">
-														<tmpl_if name="fluxdRunning">
-															 |<tmpl_var name="SuperAdminLink4">
-														<tmpl_else>
-															 |<tmpl_var name="SuperAdminLink5">
-															 |<tmpl_var name="SuperAdminLink6">
-														</tmpl_if>
-													</div>
-												</td>
-											</tr>
-										</table>
-										<br>
-									</td>
-								</tr>
-							<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
+							<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadFilters')">
+								<input type="hidden" name="pageop" value="updateFilters">
 								<tr>
 									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
-										<strong>Core</strong>
+										<strong>Filters</strong>
 									</td>
 								</tr>
 								<tr>
-									<td align="left" width="350" valign="top"><strong>Database-Mode</strong><br>
-									Specify the Mode to get data from the Database.
-									</td>
-									<td valign="top">
-										<select name="fluxd_dbmode">
-											<option value="php"
-											<tmpl_if name="fluxd_dbmode" value="php">
-												selected
-											</tmpl_if>
-											>PHP + fluxcli</option>
-											<option value="dbi"
-											<tmpl_if name="fluxd_dbmode" value="dbi">
-												selected
-											</tmpl_if>
-											>Perl + DBI/DBD</option>
-										</select>
+									<td colspan="2" align="center">
+										<br>TODO<br><br>
 									</td>
 								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Loglevel</strong><br>
-									Specify the level of logging (default is 0):
-									</td>
-									<td valign="top">
-										<input name="fluxd_loglevel" type="Text" maxlength="2" value="<tmpl_var name="fluxd_loglevel">" size="5">
-									</td>
-								</tr>
-								<tr><td colspan="2" align="center"><br></td></tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
-										<strong>Modules</strong>
-									</td>
-								</tr>
-								<tr><td colspan="2" align="center"><br></td></tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Qmgr</strong>&nbsp;
-										<tmpl_if name="fluxd_Qmgr_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Qmgr not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Qmgr_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Qmgr loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Qmgr_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Qmgr error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Qmgr enabled</strong><br>
-									Specify whether or not to load the Qmgr module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Qmgr_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Qmgr_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Qmgr_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Qmgr Interval</strong><br>
-										Interval in seconds to have run Qmgr.
-									</td>
-									<td valign="top">
-										<input name="fluxd_Qmgr_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_interval">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Limit Torrent Global</strong><br>
-									Specify the maximum number of torrents the server will allow to run at one time (admins may override this):
-									</td>
-									<td valign="top">
-										<input name="fluxd_Qmgr_maxTotalTorrents" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxTotalTorrents">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Limit Torrent Per User</strong><br>
-									Specify the maximum number of torrents a single user may run at one time:
-									</td>
-									<td valign="top">
-										<input name="fluxd_Qmgr_maxUserTorrents" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Qmgr_maxUserTorrents">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Watch</strong>&nbsp;
-										<tmpl_if name="fluxd_Watch_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Watch not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Watch_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Watch loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Watch_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Watch error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch enabled</strong><br>
-									Specify whether or not to load the Watch module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Watch_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Watch_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Watch_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch Interval</strong><br>
-										Interval in seconds to have run Watch.
-									</td>
-									<td valign="top">
-										<input name="fluxd_Watch_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Watch_interval">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Watch Jobs</strong><br>
-										Configure the Watch-Jobs.
-									</td>
-									<td valign="top">
-										<table>
-											<tr>
-												<td valign="top" align="left">Jobs :</td>
-												<td valign="top" align="left">
-													<select name="watch_jobs" size="3">
-														<tmpl_if name="fluxd_Watch_jobs_list">
-															<tmpl_loop name="fluxd_Watch_jobs_list">
-																<option value="<tmpl_var name="user">:<tmpl_var name="dir">"><tmpl_var name="user">:<tmpl_var name="dir"></option>
-															</tmpl_loop>
-														</tmpl_if>
-													</select>
-													<input type="button" name="remButton" value="remove" onclick="removeWatchEntry()">
-												</td>
-											</tr>
-											<tr>
-												<td valign="top" align="left" colspan="2">New Job :</td>
-											</tr>
-											<tr>
-												<td valign="top" align="left">User :</td>
-												<td valign="top" align="left">
-													<select name="watch_user">
-														<tmpl_loop name="watch_user">
-															<option value="<tmpl_var name="user">"><tmpl_var name="user"></option>
-														</tmpl_loop>
-													</select>
-													<input type="button" name="addButton" value="add" onclick="addWatchEntry()" size="30">
-												</td>
-											</tr>
-											<tr>
-												<td valign="top" align="left">Dir :</td>
-												<td valign="top" align="left">
-													<input type="text" name="watch_dir" size="40">
-												</td>
-											</tr>
-										</table>
-										<input type="hidden" name="fluxd_Watch_jobs" value="<tmpl_var name="fluxd_Watch_jobs">">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Rssad</strong>&nbsp;
-										<tmpl_if name="fluxd_Rssad_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Rssad not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Rssad_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Rssad loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Rssad_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Rssad error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad enabled</strong><br>
-									Specify whether or not to load the Rssad module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Rssad_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Rssad_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Rssad_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad Interval</strong><br>
-										Interval in seconds to have run Rssad.
-									</td>
-									<td valign="top">
-										<input name="fluxd_Rssad_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Rssad_interval">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad Filters</strong><br>
-										Configure the Rssad-Filters.
-									</td>
-									<td valign="top">
-										TODO
-									</td>
-								</tr>								
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Rssad Jobs</strong><br>
-										Configure the Rssad-Jobs.
-									</td>
-									<td valign="top">
-										TODO
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Fluxinet</strong>&nbsp;
-										<tmpl_if name="fluxd_Fluxinet_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Fluxinet not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Fluxinet_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Fluxinet loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Fluxinet_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Fluxinet error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Fluxinet enabled</strong><br>
-									Specify whether or not to load the Fluxinet module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Fluxinet_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Fluxinet_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Fluxinet_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="250" valign="top"><strong>Fluxinet port</strong><br>
-										the port number to run the Fluxinet socket on:
-									</td>
-									<td valign="top">
-										<input name="fluxd_Fluxinet_port" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Fluxinet_port">" size="5">
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Trigger</strong>&nbsp;
-										<tmpl_if name="fluxd_Trigger_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Trigger not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Trigger_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Trigger loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Trigger_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Trigger error.">
-										</tmpl_if>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Trigger enabled</strong><br>
-									Specify whether or not to load the Triggers module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Trigger_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Trigger_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Trigger_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Trigger Interval</strong><br>
-										Interval in seconds to have run Trigger.
-									</td>
-									<td valign="top">
-										<input name="fluxd_Trigger_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Trigger_interval">" size="5">
-									</td>
-								</tr>								
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">">
-										<strong>Clientmaint</strong>&nbsp;
-										<tmpl_if name="fluxd_Clientmaint_state" value="0">
-											<img src="themes/tf_standard_themes/images/black.gif" title="Clientmaint not loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Clientmaint_state" value="1">
-											<img src="themes/tf_standard_themes/images/green.gif" title="Clientmaint loaded.">
-										</tmpl_if>
-										<tmpl_if name="fluxd_Clientmaint_state" value="-1">
-											<img src="themes/tf_standard_themes/images/red.gif" title="Clientmaint error.">
-										</tmpl_if>
-									</td>
-								</tr>								
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Clientmaint enabled</strong><br>
-									Specify whether or not to load the Client Maintainance module.
-									</td>
-									<td valign="top">
-										<select name="fluxd_Clientmaint_enabled">
-											<option value="1"
-											<tmpl_if name="fluxd_Clientmaint_enabled" value="1">
-												selected
-											</tmpl_if>
-											>True</option>
-											<option value="0"
-											<tmpl_if name="fluxd_Clientmaint_enabled" value="0">
-												selected
-											</tmpl_if>
-											>False</option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td align="left" width="350" valign="top"><strong>Clientmaint Interval</strong><br>
-										Interval in seconds to have run Client maintainance.
-									</td>
-									<td valign="top">
-										<input name="fluxd_Clientmaint_interval" type="Text" maxlength="5" value="<tmpl_var name="fluxd_Clientmaint_interval">" size="5">
-									</td>
-								</tr>
-								<tr><td colspan="2"><hr noshade></td></tr>
 								<tr>
 									<td align="center" colspan="2">
-									<input type="Submit" value="Update Settings">
+										<input type="Submit" value="Update Filters">
+									</td>
+								</tr>								
+							</form>
+							<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadJobs')">
+								<input type="hidden" name="pageop" value="updateJobs">
+								<tr>
+									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
+										<strong>Jobs</strong>
+									</td>
+								</tr>								
+								<tr>
+									<td colspan="2" align="center">
+										<br>TODO<br><br>
 									</td>
 								</tr>
+								<tr>
+									<td align="center" colspan="2">
+										<input type="Submit" value="Update Jobs">
+									</td>
+								</tr>								
 							</form>
 						</table>
 					</div>
@@ -455,40 +62,5 @@
 			</tr>
 		</table>
 	</div>
-	<tmpl_if name="fluxd_Qmgr_enabled">
-		<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
-			<tr>
-				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
-					<table width="100%" cellpadding=0 cellspacing=0 border=0>
-						<tr>
-							<td><img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Queued Items </font></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
-			</tr>
-			</table>
-			<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
-			<tr>
-				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
-					<table width="100%" cellpadding=0 cellspacing=0 border=0>
-						<tr>
-							<td><img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Running Items </font></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="1%"><div align=center class="title"><tmpl_var name="_FORCESTOP"></div></td>
-			</tr>
-			<tmpl_var name="output">
-		</table>
-	</tmpl_if>
 </div>
 <tmpl_include name="inc.subfoot.tmpl">
