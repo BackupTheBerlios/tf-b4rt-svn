@@ -126,7 +126,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Qmgr : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n"; # DEBUG
+	print "Qmgr : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n";
 
 	# Create some time vars
 	$time = time();
@@ -291,11 +291,11 @@ sub processQueue {
 
 					if ($queueId < (queue()-1)) {
 						# there is a next entry
-						print "Qmgr : next queue-entry\n" if ($Fluxd::LOGLEVEL > 2);
+						print "Qmgr : next queue-entry\n" if ($LOGLEVEL > 2);
 						$queueId++;
 					} else {
 						# queue is empty
-						print "Qmgr : last queue-entry for $nextUser\n" if ($Fluxd::LOGLEVEL > 2);
+						print "Qmgr : last queue-entry for $nextUser\n" if ($LOGLEVEL > 2);
 						next USER;
 					}
 				}
@@ -307,14 +307,14 @@ sub processQueue {
 			my $jobCount = running();
 			if ($jobCount >= $MAX_SYS) {
 				# Can't start it now.
-				print "Qmgr : Max limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($Fluxd::LOGLEVEL);
+				print "Qmgr : Max limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($LOGLEVEL);
 				last USER;
 			}
 
 			# check to see if user max applies
 			if (scalar($user->{'running'}) >= $MAX_USR) {
 				# Can't start it now.
-				print "Qmgr : User limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($Fluxd::LOGLEVEL);
+				print "Qmgr : User limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($LOGLEVEL);
 				next USER;
 			}
 
@@ -325,7 +325,7 @@ sub processQueue {
 				$startTry = 0;
 
 				# remove torrent from queue
-				print "Qmgr : Removing $nextTorrent from queue\n" if ($Fluxd::LOGLEVEL);
+				print "Qmgr : Removing $nextTorrent from queue\n" if ($LOGLEVEL);
 				stack($queueId, \@{$user->{'queue'}});
 
 				# slow it down now!
@@ -334,7 +334,7 @@ sub processQueue {
 				# how many times have we tried to start this thing?
 				if ($startTry >= $MAX_START_TRIES) {
 					# TODO : provide option to remove bogus torrents
-					print "Qmgr : tried $MAX_START_TRIES to start $nextTorrent, skipping\n" if ($Fluxd::LOGLEVEL);
+					print "Qmgr : tried $MAX_START_TRIES to start $nextTorrent, skipping\n" if ($LOGLEVEL);
 					next USER;
 				} else {
 					$startTry++;
@@ -523,13 +523,13 @@ sub add {
 	USER: foreach my $user (@users) {
 		foreach my $entry (@{$user->{'queue'}}) {
 			if ($torrent eq $entry) {
-				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($Fluxd::LOGLEVEL);
+				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($LOGLEVEL);
 				last USER;
 			}
 		}
 		foreach my $entry (@{$user->{'running'}}) {
 			if ($torrent eq $entry) {
-				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($Fluxd::LOGLEVEL);
+				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($LOGLEVEL);
 				last USER;
 			}
 		}

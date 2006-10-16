@@ -118,7 +118,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Fluxinet : initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n"; # DEBUG
+	print "Fluxinet : initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n";
 
 	# load modules
 	if (loadModules() != 1) {

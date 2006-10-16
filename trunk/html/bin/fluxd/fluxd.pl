@@ -74,7 +74,7 @@ loadServiceModules();
 
 # Here we go! The main loop!
 my $loop = 1;
-while ( $loop ) {
+while ($loop) {
 
 	# check Connections
 	checkConnections();
@@ -318,7 +318,7 @@ sub processArguments {
 			exit;
 		}
 		$dbMode = $temp;
-		print "Starting up daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n"; # DEBUG
+		print "Starting up daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n";
 		# return
 		return 1;
 	};
@@ -392,7 +392,7 @@ sub daemonize {
 	# log
 	my $pwd = `pwd`;
 	chop $pwd;
-	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n";
+	print STDOUT localtime()." - "."Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n";
 
 	# set up our signal handlers
 	$SIG{HUP} = \&gotSigHup;
@@ -408,7 +408,9 @@ sub daemonize {
 			Reuse   => 1,
 			);
 	die "Couldn't create socket: $!\n" unless $SERVER;
-	print STDOUT "created socket ".$PATH_SOCKET."\n"; # DEBUG
+	if ($LOGLEVEL > 0) {
+		print STDOUT "created socket ".$PATH_SOCKET."\n";
+	}
 
 	# create select
 	$Select = new IO::Select();
@@ -426,13 +428,15 @@ sub daemonize {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub daemonShutdown {
-	print "Shutting down!\n";
+	print localtime()." - "."Shutting down!\n";
 
 	# set main-loop-flag
 	$loop = 0;
 
 	# remove socket
-	print STDOUT "deleting socket ".$PATH_SOCKET."\n"; # DEBUG
+	if ($LOGLEVEL > 0) {
+		print STDOUT "deleting socket ".$PATH_SOCKET."\n";
+	}
 	unlink($PATH_SOCKET);
 
 	# destroy db-bean
@@ -479,7 +483,6 @@ sub loadModules {
 	if (eval "require IO::Socket::UNIX")  {
 		IO::Socket::UNIX->import();
 	} else {
-		print STDOUT "cant load perl-module IO::Socket::UNIX : ".$@;
 		print STDERR "cant load perl-module IO::Socket::UNIX : ".$@;
 		exit;
 	}
@@ -487,7 +490,6 @@ sub loadModules {
 	if (eval "require IO::Select")  {
 		IO::Select->import();
 	} else {
-		print STDOUT "cant load perl-module IO::Select : ".$@;
 		print STDERR "cant load perl-module IO::Select : ".$@;
 		exit;
 	}
@@ -495,7 +497,6 @@ sub loadModules {
 	if (eval "require POSIX")  {
 		POSIX->import(qw(setsid));
 	} else {
-		print STDOUT "cant load perl-module POSIX : ".$@;
 		print STDERR "cant load perl-module POSIX : ".$@;
 		exit;
 	}
@@ -528,7 +529,9 @@ sub loadServiceModules {
 					print STDERR "error loading service-module Fluxinet : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Fluxinet loaded\n"; # DEBUG
+					if ($LOGLEVEL > 0) {
+						print STDOUT "Fluxinet loaded\n";
+					}
 				}
 			} else {
 				print STDERR "error loading service-module Fluxinet : $@\n";
@@ -545,7 +548,9 @@ sub loadServiceModules {
 				print STDERR "error unloading service-module Fluxinet : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Fluxinet unloaded\n"; # DEBUG
+				if ($LOGLEVEL > 0) {
+					print STDOUT "Fluxinet unloaded\n";
+				}
 			}
 		}
 	}
@@ -570,7 +575,9 @@ sub loadServiceModules {
 					print STDERR "error loading service-module Qmgr : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Qmgr loaded\n"; # DEBUG
+					if ($LOGLEVEL > 0) {
+						print STDOUT "Qmgr loaded\n";
+					}
 				}
 			} else {
 				print STDERR "error loading service-module Qmgr :$@\n";
@@ -587,7 +594,9 @@ sub loadServiceModules {
 				print STDERR "error unloading service-module Qmgr : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Qmgr unloaded\n"; # DEBUG
+				if ($LOGLEVEL > 0) {
+					print STDOUT "Qmgr unloaded\n";
+				}
 			}
 		}
 	}
@@ -616,7 +625,9 @@ sub loadServiceModules {
 					print STDERR "error loading service-module Rssad : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Rssad loaded\n"; # DEBUG
+					if ($LOGLEVEL > 0) {
+						print STDOUT "Rssad loaded\n";
+					}
 				}
 			} else {
 				print STDERR "error loading service-module Rssad :$@\n";
@@ -633,7 +644,9 @@ sub loadServiceModules {
 				print STDERR "error unloading service-module Rssad : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Rssad unloaded\n"; # DEBUG
+				if ($LOGLEVEL > 0) {
+					print STDOUT "Rssad unloaded\n";
+				}
 			}
 		}
 	}
@@ -659,7 +672,9 @@ sub loadServiceModules {
 					print STDERR "error loading service-module Watch : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Watch loaded\n"; # DEBUG
+					if ($LOGLEVEL > 0) {
+						print STDOUT "Watch loaded\n";
+					}
 				}
 			} else {
 				print STDERR "error loading service-module Watch :$@\n";
@@ -676,7 +691,9 @@ sub loadServiceModules {
 				print STDERR "error unloading service-module Watch : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Watch unloaded\n"; # DEBUG
+				if ($LOGLEVEL > 0) {
+					print STDOUT "Watch unloaded\n";
+				}
 			}
 		}
 	}
@@ -701,7 +718,9 @@ sub loadServiceModules {
 					print STDERR "error loading service-module Trigger : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Trigger loaded\n"; # DEBUG
+					if ($LOGLEVEL > 0) {
+						print STDOUT "Trigger loaded\n";
+					}
 				}
 			} else {
 				print STDERR "error loading service-module Trigger :$@\n";
@@ -718,7 +737,9 @@ sub loadServiceModules {
 				print STDERR "error unloading service-module Trigger : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Trigger unloaded\n"; # DEBUG
+				if ($LOGLEVEL > 0) {
+					print STDOUT "Trigger unloaded\n";
+				}
 			}
 		}
 	}
@@ -743,7 +764,9 @@ sub loadServiceModules {
 					print STDERR "error loading service-module Clientmaint : $@\n";
 				} else {
 					# everything ok
-					print STDOUT "Clientmaint loaded\n"; # DEBUG
+					if ($LOGLEVEL > 0) {
+						print STDOUT "Clientmaint loaded\n";
+					}
 				}
 			} else {
 				print STDERR "error loading service-module Clientmaint :$@\n";
@@ -760,7 +783,9 @@ sub loadServiceModules {
 				print STDERR "error unloading service-module Clientmaint : $@\n";
 			} else {
 				# everything ok
-				print STDOUT "Clientmaint unloaded\n"; # DEBUG
+				if ($LOGLEVEL > 0) {
+					print STDOUT "Clientmaint unloaded\n";
+				}
 			}
 		}
 	}
@@ -1023,7 +1048,9 @@ sub writePidFile {
 	if (!(defined $pid)) {
 		$pid = $$;
 	}
-	print STDOUT "writing pid-file ".$PID_FILE." (pid: ".$pid.")\n"; # DEBUG
+	if ($LOGLEVEL > 0) {
+		print STDOUT "writing pid-file ".$PID_FILE." (pid: ".$pid.")\n";
+	}
 	open(PIDFILE,">$PID_FILE");
 	print PIDFILE $pid."\n";
 	close(PIDFILE);
@@ -1035,7 +1062,9 @@ sub writePidFile {
 # Returns: return-val of delete                                                #
 #------------------------------------------------------------------------------#
 sub deletePidFile {
-	print STDOUT "deleting pid-file ".$PID_FILE."\n"; # DEBUG
+	if ($LOGLEVEL > 0) {
+		print STDOUT "deleting pid-file ".$PID_FILE."\n";
+	}
 	return unlink($PID_FILE);
 }
 
@@ -1049,6 +1078,7 @@ sub status {
 	$head .= "\n\nfluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
 	$head .= "data-dir : ".$PATH_DATA_DIR."\n";
 	$head .= "log : ".$LOG."\n";
+	$head .= "loglevel : ".$LOGLEVEL."\n";
 	$head .= "error-log : ".$ERROR_LOG."\n";
 	$head .= "pid : ".$PID_FILE."\n";
 	$head .= "socket : ".$PATH_SOCKET."\n";

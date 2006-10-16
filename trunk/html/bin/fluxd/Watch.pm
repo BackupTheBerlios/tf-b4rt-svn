@@ -128,7 +128,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Watch : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
+	print "Watch : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; jobs: ".$jobs.")\n";
 
 	# parse jobs
 	my (@jobsAry) = split(/;/,$jobs);
@@ -140,7 +140,9 @@ sub initialize {
 		my $dir = shift @jobAry;
 		chomp $dir;
 		if ((!($user eq "")) && (-d $dir)) {
-			print "Watch : job : user=".$user.", dir=".$dir."\n"; # DEBUG
+			if ($LOGLEVEL > 1) {
+				print "Watch : job : user=".$user.", dir=".$dir."\n";
+			}
 			$jobs{$user} = $dir;
 		}
 	}
@@ -206,9 +208,11 @@ sub main {
 		foreach my $user (sort keys %jobs) {
 			my $dir = $jobs{$user};
 			if ((!($user eq "")) && (-d $dir)) {
-				print "Watch : executing job (".localtime().") :\n"; # DEBUG
-				print " user: ".$user."\n"; # DEBUG
-				print " dir: ".$dir."\n"; # DEBUG
+				if ($LOGLEVEL > 1) {
+					print "Watch : executing job (".localtime().") :\n";
+					print " user: ".$user."\n";
+					print " dir: ".$dir."\n";
+				}
 				eval {
 					Fluxd::fluxcli("watch", $dir, $user);
 				};

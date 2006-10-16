@@ -112,7 +112,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Trigger : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n"; # DEBUG
+	print "Trigger : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n";
 
 	# reset last run time
 	$time_last_run = time();
@@ -168,7 +168,6 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		# DEBUG
 		print "Trigger : ".localtime()."\n"; # DEBUG
 
 		# set last run time
