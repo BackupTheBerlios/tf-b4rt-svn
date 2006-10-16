@@ -99,7 +99,7 @@ sub initialize {
 	print "Trigger : initializing (interval: ".$interval.")\n"; # DEBUG
 
 	# reset last run time
-	$time_last_run = 0;
+	$time_last_run = time();
 
 	# set state
 	$state = 1;

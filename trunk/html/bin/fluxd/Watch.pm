@@ -128,7 +128,7 @@ sub initialize {
 	}
 
 	# reset last run time
-	$time_last_run = 0;
+	$time_last_run = time();
 
 	# set state
 	$state = 1;
