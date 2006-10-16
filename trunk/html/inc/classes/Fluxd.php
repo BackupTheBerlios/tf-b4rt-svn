@@ -95,15 +95,13 @@ class Fluxd
             $maxLoops = 60;
             $loopCtr = 0;
             $started = false;
-            // give fluxd some time
-            sleep(1);
             while ($loop) {
             	if ($this->isFluxdRunning()) {
             		$started = true;
             		$loop = false;
             	} else {
 	            	$loopCtr++;
-	            	if ($loopCtr >= $maxLoops)
+	            	if ($loopCtr > $maxLoops)
 	            		$loop = false;
 	            	else
 	            		usleep(250000); // wait for 0.25 seconds					
@@ -135,8 +133,21 @@ class Fluxd
         AuditAction($this->cfg["constants"]["fluxd"], "Stopping fluxd");
         if ($this->isFluxdRunning()) {
             $this->sendCommand('die', 0);
-            // give fluxd some time
-            sleep(6);
+            // check if fluxd still running
+            $maxLoops = 60;
+            $loopCtr = 0;
+            while (1) {
+            	if ($this->isFluxdRunning()) {
+	            	$loopCtr++;
+	            	if ($loopCtr > $maxLoops)
+	            		return 0;
+	            	else
+	            		usleep(250000); // wait for 0.25 seconds
+            	} else {
+            		return 1;					
+            	}
+            }
+            return 0;
         }
     }
 
