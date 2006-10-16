@@ -98,11 +98,6 @@
 											 selected
 										</tmpl_if>
 										>all</option>
-										<option value="home"
-										<tmpl_if name="stats_default_type" value="home">
-											 selected
-										</tmpl_if>
-										>home</option>
 										<option value="server"
 										<tmpl_if name="stats_default_type" value="server">
 											 selected
@@ -113,12 +108,17 @@
 											 selected
 										</tmpl_if>
 										>xfer</option>
+										<option value="users"
+										<tmpl_if name="stats_default_type" value="users">
+											 selected
+										</tmpl_if>
+										>users</option>										
 										<option value="transfers"
 										<tmpl_if name="stats_default_type" value="transfers">
 											 selected
 										</tmpl_if>
 										>transfers</option>
-									</select>
+									</select>									
 								</td>
 							</tr>
 							<tr>
