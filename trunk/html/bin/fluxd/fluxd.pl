@@ -390,9 +390,6 @@ sub daemonize {
 	chop $pwd;
 	print STDOUT "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n";
 
-	# write out pid-file
-	writePidFile($$);
-
 	# set up our signal handlers
 	$SIG{HUP} = \&gotSigHup;
 	$SIG{QUIT} = \&gotSigQuit;
@@ -414,6 +411,9 @@ sub daemonize {
 
 	# Add our server socket to the select read set.
 	$Select->add($SERVER);
+
+	# write out pid-file
+	writePidFile($$);
 }
 
 #------------------------------------------------------------------------------#
