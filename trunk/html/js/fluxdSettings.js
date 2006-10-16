@@ -19,6 +19,10 @@ function addWatchEntry () {
 	var wu = mytrim(document.theForm.watch_user.options[document.theForm.watch_user.selectedIndex].value);
     var wd = mytrim(document.theForm.watch_dir.value);
     if ((wu != "") && (wd != "")) {
+		if (wd.indexOf('/') != 0) {
+			alert("Directory must be absolute !");
+			return false;
+		}
 	    var liststr = document.theForm.fluxd_Watch_jobs;
 	    var list = document.theForm.watch_jobs;
 	    var newentry = document.createElement("option");
