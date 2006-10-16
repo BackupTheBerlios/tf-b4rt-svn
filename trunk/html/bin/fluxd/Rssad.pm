@@ -22,6 +22,7 @@
 ################################################################################
 package Rssad;
 use strict;
+no strict "refs";
 use warnings;
 ################################################################################
 
@@ -48,7 +49,7 @@ my $interval;
 # time of last run
 my $time_last_run = 0;
 
-# jobs-array
+# jobs
 my @jobs;
 
 # perl
@@ -59,6 +60,9 @@ my $binTfrss = "/var/www/bin/tfrss/tfrss.pl";
 
 # data-dir
 my $dataDir = "rssad/";
+
+# watch-dir
+
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -186,21 +190,28 @@ sub initialize {
 
 	# parse jobs
 	# job1|job2|job3
-	my (@jobsAry) = split(/#/,$jobs);
+	my (@jobsAry) = split(/\|/, $jobs);
 	foreach my $jobEntry (@jobsAry) {
 		# username#url#filtername
 		chomp $jobEntry;
-		my (@jobAry) = split(/\|/,$jobEntry);
+		my (@jobAry) = split(/#/,$jobEntry);
 		my $user = shift @jobAry;
 		chomp $user;
 		my $url = shift @jobAry;
 		chomp $url;
 		my $filter = shift @jobAry;
 		chomp $filter;
-
-		#if ((!($user eq "")) && (-d $dir)) {
-		#	$jobs{$user} = $dir;
-		#}
+		# job-entry
+		print "Rssad : job : user=".$user.", url=".$url.", filter=".$filter."\n"; # DEBUG
+		# add to jobs-array
+		if ((!($user eq "")) && (!($url eq "")) && (!($filter eq ""))) {
+			my $index = scalar(@jobs);
+			$jobs[$index] = {
+				'user' => $user,
+				'url' => $url,
+				'filter' => $filter
+			};
+		}
 	}
 
 	# reset last run time
@@ -261,6 +272,18 @@ sub main {
 		$time_last_run = $now;
 
 		# TODO
+		my $jobCount = scalar(@jobs);
+		for (my $i = 0; $i < $jobCount; $i++) {
+			print "Rssad : executing job :\n"; # DEBUG
+			print "  user: ".$jobs[$i]{"user"}."\n"; # DEBUG
+			print "  url: ".$jobs[$i]{"url"}."\n"; # DEBUG
+			print "  filter: ".$jobs[$i]{"filter"}."\n"; # DEBUG
+			my $url = $jobs[$i]{"url"};
+			my $filter = $jobs[$i]{"filter"} . ".dat";
+			my $history = $jobs[$i]{"filter"} . ".hist";
+			my $save = $jobs[$i]{"user"};
+			tfrss($jobs[$i]{"url"}, );
+		}
 	}
 }
 
@@ -286,8 +309,41 @@ sub status {
 	$return .= "\n-= Rssad.pm Revision ".$VERSION." =-\n";
 	$return .= "interval : $interval s \n";
 	$return .= "jobs :\n";
-	# TODO
+	my $jobCount = scalar(@jobs);
+	for (my $i = 0; $i < $jobCount; $i++) {
+		$return .= "  * user: ".$jobs[$i]{"user"}."\n";
+		$return .= "    url: ".$jobs[$i]{"url"}."\n";
+		$return .= "    filter: ".$jobs[$i]{"filter"}."\n";
+	}
 	return $return;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: tfrss                                                                   #
+# Arguments: rss-feed-url, filter-file, history-file, save-location            #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub tfrss {
+	my $url = shift;
+	my $filter = shift;
+	my $history = shift;
+	my $save = shift;
+	my $shellCmd = "";
+	$shellCmd .= $binPerl;
+	$shellCmd .= " ".$binTfrss;
+	$shellCmd .= " ".$url;
+	$shellCmd .= " ".$filter;
+	$shellCmd .= " ".$history;
+	$shellCmd .= " ".$save;
+	$shellCmd .= " > /dev/null";
+	eval {
+		system($shellCmd);
+	};
+	if ($@) {
+		print STDERR "Rssad : error calling tfrss.pl (".$shellCmd.") : ".$@."\n";
+		return 0;
+	}
+	return 1;
 }
 
 ################################################################################

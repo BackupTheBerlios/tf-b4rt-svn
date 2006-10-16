@@ -122,6 +122,7 @@ sub initialize {
 		my $dir = shift @jobAry;
 		chomp $dir;
 		if ((!($user eq "")) && (-d $dir)) {
+			print "Watch : job : user=".$user.", dir=".$dir."\n"; # DEBUG
 			$jobs{$user} = $dir;
 		}
 	}
