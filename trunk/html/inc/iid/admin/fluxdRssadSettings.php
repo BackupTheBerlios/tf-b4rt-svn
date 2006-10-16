@@ -117,6 +117,7 @@ if (($cfg["fluxd_Rssad_enabled"] == 1) && ($fluxdRunning))
 else
 	$tmpl->setvar('fluxd_Rssad_state', 0);
 $tmpl->setvar('fluxd_Rssad_interval', $cfg["fluxd_Rssad_interval"]);
+$tmpl->setvar('fluxd_Rssad_jobs', $cfg["fluxd_Rssad_jobs"]);
 
 // Fluxinet
 $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
