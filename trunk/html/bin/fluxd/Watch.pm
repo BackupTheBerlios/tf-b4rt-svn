@@ -42,6 +42,9 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# loglevel
+my $LOGLEVEL = 2;
+
 # run-interval
 my $interval;
 
@@ -92,6 +95,17 @@ sub initialize {
 
 	shift; # class
 
+	# loglevel
+	$LOGLEVEL = shift;
+	if (!(defined $LOGLEVEL)) {
+		# message
+		$message = "loglevel not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
 	# interval
 	$interval = shift;
 	if (!(defined $interval)) {
@@ -114,7 +128,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Watch : initializing (interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
+	print "Watch : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
 
 	# parse jobs
 	my (@jobsAry) = split(/;/,$jobs);

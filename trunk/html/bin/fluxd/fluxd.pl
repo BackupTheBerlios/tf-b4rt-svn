@@ -37,6 +37,7 @@ my $FILE_DBCONF = "config.db.php";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
+my $LOGLEVEL = 2;
 my $PID_FILE = "fluxd.pid";
 my $PATH_DOCROOT = "/var/www";
 my $BIN_PHP = "/usr/bin/php";
@@ -114,7 +115,7 @@ while ( $loop ) {
 	if ((defined $rssad) && ($rssad->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 15;
+			alarm 20;
 			$rssad->main();
 			alarm 0;
 		};
@@ -146,7 +147,7 @@ while ( $loop ) {
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 15;
+			alarm 5;
 			$trigger->main();
 			alarm 0;
 		};
@@ -162,7 +163,7 @@ while ( $loop ) {
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 15;
+			alarm 5;
 			$clientmaint->main();
 			alarm 0;
 		};
@@ -351,6 +352,9 @@ sub daemonize {
 		exit;
 	}
 
+	# loglevel
+	$LOGLEVEL = FluxDB->getFluxConfig("fluxd_loglevel");
+
 	# init paths
 	initPaths(FluxDB->getFluxConfig("path"));
 
@@ -511,7 +515,10 @@ sub loadServiceModules {
 			if (eval "require Fluxinet") {
 				eval {
 					$fluxinet = Fluxinet->new();
-					$fluxinet->initialize(FluxDB->getFluxConfig("fluxd_Fluxinet_port"));
+					$fluxinet->initialize(
+						$LOGLEVEL,
+						FluxDB->getFluxConfig("fluxd_Fluxinet_port")
+					);
 					if ($fluxinet->getState() < 1) {
 						print STDERR "error initializing service-module Fluxinet :\n";
 						print STDERR $fluxinet->getMessage()."\n";
@@ -550,7 +557,10 @@ sub loadServiceModules {
 			if (eval "require Qmgr") {
 				eval {
 					$qmgr = Qmgr->new();
-					$qmgr->initialize(FluxDB->getFluxConfig("fluxd_Qmgr_interval"));
+					$qmgr->initialize(
+						$LOGLEVEL,
+						FluxDB->getFluxConfig("fluxd_Qmgr_interval")
+					);
 					if ($qmgr->getState() < 1) {
 						print STDERR "error initializing service-module Qmgr :\n";
 						print STDERR $qmgr->getMessage()."\n";
@@ -590,6 +600,7 @@ sub loadServiceModules {
 				eval {
 					$rssad = Rssad->new();
 					$rssad->initialize(
+						$LOGLEVEL,
 						FluxDB->getFluxConfig("perlCmd"),
 						$PATH_DOCROOT . "bin/tfrss/tfrss.pl",
 						$PATH_DATA_DIR,
@@ -634,7 +645,11 @@ sub loadServiceModules {
 			if (eval "require Watch") {
 				eval {
 					$watch = Watch->new();
-					$watch->initialize(FluxDB->getFluxConfig("fluxd_Watch_interval"), FluxDB->getFluxConfig("fluxd_Watch_jobs"));
+					$watch->initialize(
+						$LOGLEVEL,
+						FluxDB->getFluxConfig("fluxd_Watch_interval"),
+						FluxDB->getFluxConfig("fluxd_Watch_jobs")
+					);
 					if ($watch->getState() < 1) {
 						print STDERR "error initializing service-module Watch :\n";
 						print STDERR $watch->getMessage()."\n";
@@ -673,7 +688,10 @@ sub loadServiceModules {
 			if (eval "require Trigger") {
 				eval {
 					$trigger = Trigger->new();
-					$trigger->initialize(FluxDB->getFluxConfig("fluxd_Trigger_interval"));
+					$trigger->initialize(
+						$LOGLEVEL,
+						FluxDB->getFluxConfig("fluxd_Trigger_interval")
+					);
 					if ($trigger->getState() < 1) {
 						print STDERR "error initializing service-module Trigger :\n";
 						print STDERR $trigger->getMessage()."\n";
@@ -712,7 +730,10 @@ sub loadServiceModules {
 			if (eval "require Clientmaint") {
 				eval {
 					$clientmaint = Clientmaint->new();
-					$clientmaint->initialize(FluxDB->getFluxConfig("fluxd_Clientmaint_interval"));
+					$clientmaint->initialize(
+						$LOGLEVEL,
+						FluxDB->getFluxConfig("fluxd_Clientmaint_interval")
+					);
 					if ($clientmaint->getState() < 1) {
 						print STDERR "error initializing service-module Clientmaint :\n";
 						print STDERR $clientmaint->getMessage()."\n";

@@ -42,6 +42,9 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# loglevel
+my $LOGLEVEL = 2;
+
 # run-interval
 my $interval;
 
@@ -100,6 +103,17 @@ sub destroy {
 sub initialize {
 
 	shift; # class
+
+	# loglevel
+	$LOGLEVEL = shift;
+	if (!(defined $LOGLEVEL)) {
+		# message
+		$message = "loglevel not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
 
 	# path-perl
 	$binPerl = shift;
@@ -186,7 +200,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Rssad : initializing (data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
+	print "Rssad : initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
 
 	# parse jobs
 	# job1|job2|job3

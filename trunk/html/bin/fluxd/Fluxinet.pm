@@ -42,6 +42,9 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# loglevel
+my $LOGLEVEL = 2;
+
 # port
 my $port = 3150;
 
@@ -93,6 +96,17 @@ sub initialize {
 
 	shift; # class
 
+	# loglevel
+	$LOGLEVEL = shift;
+	if (!(defined $LOGLEVEL)) {
+		# message
+		$message = "loglevel not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
 	# $port
 	$port = shift;
 	if (!(defined $port)) {
@@ -104,7 +118,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Fluxinet : initializing (port: ".$port.")\n"; # DEBUG
+	print "Fluxinet : initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n"; # DEBUG
 
 	# load modules
 	if (loadModules() != 1) {
