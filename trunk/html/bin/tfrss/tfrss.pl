@@ -339,7 +339,7 @@ sub check {
 #------------------------------------------------------------------------------#
 # Sub: printVersion                                                            #
 # Arguments: Null                                                              #
-# Returns: Version Information                                                 #
+# Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub printVersion {
 	print $PROG.".".$EXTENSION." Version ".$VERSION."\n";

@@ -101,7 +101,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "initializing Fluxinet (port: ".$port.")\n"; # DEBUG
+	print "Fluxinet : initializing (port: ".$port.")\n"; # DEBUG
 
 	# load modules
 	if (loadModules() != 1) {

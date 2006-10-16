@@ -51,6 +51,15 @@ my $time_last_run = 0;
 # jobs-array
 my @jobs;
 
+# perl
+my $binPerl = "perl";
+
+# binTfrss
+my $binTfrss = "/var/www/bin/tfrss/tfrss.pl";
+
+# data-dir
+my $dataDir = "rssad/";
+
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -81,12 +90,75 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: null                                                              #
+# Arguments: path-to-perl, path-to-tfrss, data-dir, interval, jobs             #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
 
 	shift; # class
+
+	# path-perl
+	$binPerl = shift;
+	if (!(defined $binPerl)) {
+		# message
+		$message = "path-to-perl not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	if (!(-x $binPerl)) {
+		# message
+		$message = "cant execute perl (".$binPerl.")";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	# tfrss.pl
+	$binTfrss = shift;
+	if (!(defined $binTfrss)) {
+		# message
+		$message = "path-to-tfrss not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	if (!(-f $binTfrss)) {
+		# message
+		$message = "tfrss.pl no file (".$binTfrss.")";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	# data-dir
+	my $ddir = shift;
+	if (!(defined $ddir)) {
+		# message
+		$message = "data-dir not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	$dataDir = $ddir . $dataDir;
+	# check if our main-dir exists. try to create if it doesnt
+	if (! -d $dataDir) {
+		print "Rssad : creating data-dir : ".$dataDir."\n"; # DEBUG
+		mkdir($dataDir, 0700);
+		if (! -d $dataDir) {
+			# message
+			$message = "data-dir does not exist and cannot be created";
+			# set state
+			$state = -1;
+			# return
+			return 0;
+		}
+	}
 
 	# interval
 	$interval = shift;
@@ -110,7 +182,26 @@ sub initialize {
 		return 0;
 	}
 
-	print "initializing Rssad (interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
+	print "Rssad : initializing (data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
+
+	# parse jobs
+	# job1|job2|job3
+	my (@jobsAry) = split(/#/,$jobs);
+	foreach my $jobEntry (@jobsAry) {
+		# username#url#filtername
+		chomp $jobEntry;
+		my (@jobAry) = split(/\|/,$jobEntry);
+		my $user = shift @jobAry;
+		chomp $user;
+		my $url = shift @jobAry;
+		chomp $url;
+		my $filter = shift @jobAry;
+		chomp $filter;
+
+		#if ((!($user eq "")) && (-d $dir)) {
+		#	$jobs{$user} = $dir;
+		#}
+	}
 
 	# reset last run time
 	$time_last_run = 0;

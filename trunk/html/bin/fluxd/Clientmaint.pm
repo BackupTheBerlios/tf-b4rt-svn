@@ -78,7 +78,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: null                                                              #
+# Arguments: interval                                                          #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -96,7 +96,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "initializing Clientmaint (interval: ".$interval.")\n"; # DEBUG
+	print "Clientmaint : initializing (interval: ".$interval.")\n"; # DEBUG
 
 	# reset last run time
 	$time_last_run = 0;
@@ -153,7 +153,7 @@ sub main {
 	if (($now - $time_last_run) >= $interval) {
 
 		# DEBUG
-		print "Clientmaint::main : now \"".$now."\" ; time_last_run \"".$time_last_run."\"\n"; # DEBUG
+		print "Clientmaint : now \"".$now."\" ; time_last_run \"".$time_last_run."\"\n"; # DEBUG
 
 		# set last run time
 		$time_last_run = $now;

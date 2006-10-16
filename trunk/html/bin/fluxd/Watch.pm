@@ -81,7 +81,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: null                                                              #
+# Arguments: interval, jobs                                                    #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -110,7 +110,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "initializing Watch (interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
+	print "Watch : initializing (interval: ".$interval." ; jobs: ".$jobs.")\n"; # DEBUG
 
 	# parse jobs
 	my (@jobsAry) = split(/;/,$jobs);

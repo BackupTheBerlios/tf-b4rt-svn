@@ -91,7 +91,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: null                                                              #
+# Arguments: interval                                                          #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -109,14 +109,11 @@ sub initialize {
 		return 0;
 	}
 
-	print "initializing Qmgr (interval: ".$interval.")\n"; # DEBUG
+	print "Qmgr : initializing (interval: ".$interval.")\n"; # DEBUG
 
 	# Create some time vars
 	$time = time();
 	$localtime = localtime();
-
-	# Create and start the log file
-	print "Qmgr : Starting : Qmgr\n";
 
 	# initialize internal variables
 	$MAX_SYS = FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTorrents");

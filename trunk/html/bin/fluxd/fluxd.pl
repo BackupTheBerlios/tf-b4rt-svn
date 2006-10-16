@@ -461,7 +461,7 @@ sub initPaths {
 	$PID_FILE = $PATH_DATA_DIR.$PID_FILE;
 	# check if our main-dir exists. try to create if it doesnt
 	if (! -d $PATH_DATA_DIR) {
-		mkdir($PATH_DATA_DIR,0700);
+		mkdir($PATH_DATA_DIR, 0700);
 	}
 }
 
@@ -589,7 +589,13 @@ sub loadServiceModules {
 			if (eval "require Rssad") {
 				eval {
 					$rssad = Rssad->new();
-					$rssad->initialize(FluxDB->getFluxConfig("fluxd_Rssad_interval"), FluxDB->getFluxConfig("fluxd_Rssad_jobs"));
+					$rssad->initialize(
+						FluxDB->getFluxConfig("perlCmd"),
+						$PATH_DOCROOT . "bin/tfrss/tfrss.pl",
+						$PATH_DATA_DIR,
+						FluxDB->getFluxConfig("fluxd_Rssad_interval"),
+						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
+					);
 					if ($rssad->getState() < 1) {
 						print STDERR "error initializing service-module Rssad :\n";
 						print STDERR $rssad->getMessage()."\n";
