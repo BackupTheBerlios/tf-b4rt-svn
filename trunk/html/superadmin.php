@@ -132,7 +132,7 @@ if (isset($_REQUEST["b"])) {
 				}
 				break;
 			case "3": // backup-list
-				$htmlTitle = "Backup - List";
+				$htmlTitle = "Backup - Backups on Server";
 				buildPage("b");
 				$htmlMain .= '<br>';
 				$htmlMain .= backupListDisplay();
@@ -1057,8 +1057,8 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?b=0">Create Backup</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?b=3">Backups on Server</a>';
-			$htmlMain .= '</td><td align="right" nowrap><strong>Backup</td>';
-			$htmlMain .= '</td></tr></table>';
+			$htmlMain .= '</td><td align="right" nowrap><strong>Backup</strong></td>';
+			$htmlMain .= '</tr></table>';
 			break;
 		case "-u": // update-error passthru
 			$statusImage = "red.gif";
@@ -1069,7 +1069,8 @@ function buildPage($action) {
 			$htmlMain .= '<br>';
 			break;
 		case "f": // fluxd passthru
-			$statusImage = "black.gif";
+			$htmlTop = "";
+			$statusImage = "";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=1">log</a>';
 			$htmlMain .= ' | ';
@@ -1085,8 +1086,8 @@ function buildPage($action) {
 				$htmlMain .= ' | ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=6">db-debug</a>';
 			}
-			$htmlMain .= '</td><td align="right"><strong>fluxd</td>';
-			$htmlMain .= '</td></tr></table>';
+			$htmlMain .= '</td><td align="right"><strong>fluxd</strong>';
+			$htmlMain .= '</tr></table>';
 			break;
 		case "m": // maintenance passthru
 			$statusImage = "black.gif";
@@ -1100,8 +1101,8 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4">Reset</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=5">Lock</a>';
-			$htmlMain .= '</td><td align="right"><strong>Maintenance</td>';
-			$htmlMain .= '</td></tr></table>';
+			$htmlMain .= '</td><td align="right"><strong>Maintenance</strong></td>';
+			$htmlMain .= '</tr></table>';
 			break;
 		case "t": // torrent passthru
 			$statusImage = "black.gif";
@@ -1118,8 +1119,8 @@ function buildPage($action) {
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=4" target="_blank">Issues</a>';
 			*/
-			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</td>';
-			$htmlMain .= '</td></tr></table>';
+			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</strong></td>';
+			$htmlMain .= '</tr></table>';
 			break;
 		case "_": // default
 		default:
@@ -1205,11 +1206,13 @@ function printPageStart($echoMode = 0) {
 	doEcho($htmlTop,$echoMode);
 	doEcho('</td>',$echoMode);
 	doEcho('<td align="right" width="16">',$echoMode);
-	if ($statusImage != "yellow.gif")
-		doEcho('<a href="' . _FILE_THIS . '">',$echoMode);
-	doEcho('<img src="themes/'.$cfg["theme"].'/images/'.$statusImage.'" width="16" height="16" border="0" title="'.$statusMessage.'">',$echoMode);
-	if ($statusImage != "yellow.gif")
-		doEcho('</a>',$echoMode);
+	if ($statusImage != "") {
+		if ($statusImage != "yellow.gif")
+			doEcho('<a href="' . _FILE_THIS . '">',$echoMode);
+		doEcho('<img src="themes/'.$cfg["theme"].'/images/'.$statusImage.'" width="16" height="16" border="0" title="'.$statusMessage.'">',$echoMode);
+		if ($statusImage != "yellow.gif")
+			doEcho('</a>',$echoMode);
+	}
 	doEcho('</td>',$echoMode);
 	doEcho('</tr>',$echoMode);
 	doEcho('</table>',$echoMode);
