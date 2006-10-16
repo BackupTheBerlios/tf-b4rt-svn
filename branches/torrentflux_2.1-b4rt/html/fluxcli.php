@@ -25,17 +25,8 @@
 // pre-check
 // -----------------------------------------------------------------------------
 
-// we dont want to be used from web. as i dunno how to do it in a safe way
-// i tried to do it in hopefully safe way ;)
-$bail = 0;
-if ((isset($_SERVER['REMOTE_ADDR'])) && ($_SERVER['REMOTE_ADDR'] != ""))
-	$bail++;
-if ((isset($_SERVER['HTTP_USER_AGENT'])) && ($_SERVER['HTTP_USER_AGENT'] != ""))
-	$bail++;
-if ($bail > 0) {
-	@ob_end_clean();
-	exit();
-}
+// prevent invocation from web
+if (!isset($argv)) die();
 
 // -----------------------------------------------------------------------------
 // init
