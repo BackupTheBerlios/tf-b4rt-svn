@@ -90,10 +90,27 @@ class Fluxd
             $startCommand .= " ".$this->cfg["fluxd_dbmode"];
             $startCommand .= " > /dev/null &";
             $result = exec($startCommand);
+            // check if fluxd could be started
+            $loop = true;
+            $maxLoops = 60;
+            $loopCtr = 0;
+            $started = false;
             // give fluxd some time
-            sleep(8);
+            sleep(1);
+            while ($loop) {
+            	if ($this->isFluxdRunning()) {
+            		$started = true;
+            		$loop = false;
+            	} else {
+	            	$loopCtr++;
+	            	if ($loopCtr >= $maxLoops)
+	            		$loop = false;
+	            	else
+	            		usleep(250000); // wait for 0.25 seconds					
+            	}
+            }
             // check if started
-            if ($this->isFluxdRunning()) {
+            if ($started) {
             	AuditAction($this->cfg["constants"]["fluxd"], "fluxd started");
             	// Set the state
             	$this->state = 2;
