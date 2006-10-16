@@ -158,6 +158,10 @@ if(strlen($output) == 0)
 	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Transfers</div></td></tr>";
 $tmpl->setvar('output', $output);
 $tmpl->setvar('fluxdRunning', $fluxdRunning);
+if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
+	$tmpl->setvar('showTransfers', 1);
+else	
+	$tmpl->setvar('showTransfers', 0);	
 //
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_FILE', $cfg['_FILE']);
