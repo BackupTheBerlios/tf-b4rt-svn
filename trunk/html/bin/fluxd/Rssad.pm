@@ -204,8 +204,8 @@ sub initialize {
 			my $index = scalar(@jobs);
 			$jobs[$index] = {
 				'savedir' => $savedir,
-				'url' => $url,
-				'filter' => $filter
+				'filter' => $filter,
+				'url' => $url
 			};
 		}
 	}
@@ -270,16 +270,11 @@ sub main {
 		# exec tfrss-jobs
 		my $jobCount = scalar(@jobs);
 		for (my $i = 0; $i < $jobCount; $i++) {
-			my $url = $jobs[$i]{"url"};
-			my $filter = $dataDir.$jobs[$i]{"filter"}.".dat";
-			my $history = $dataDir.$jobs[$i]{"filter"}.".hist";
-			my $savedir = $jobs[$i]{"savedir"};
 			print "Rssad : executing job (".localtime().") :\n"; # DEBUG
-			print " url: ".$url."\n"; # DEBUG
-			print " filter: ".$filter."\n"; # DEBUG
-			print " history: ".$history."\n"; # DEBUG
-			print " savedir: ".$savedir."\n"; # DEBUG
-			tfrss($url, $filter, $history, $savedir);
+			print " savedir: ".$jobs[$i]{"savedir"}."\n"; # DEBUG
+			print " filter: ".$dataDir.$jobs[$i]{"filter"}."\n"; # DEBUG
+			print " url: ".$jobs[$i]{"url"}."\n"; # DEBUG
+			tfrss($jobs[$i]{"savedir"}, $dataDir.$jobs[$i]{"filter"}, $jobs[$i]{"url"});
 		}
 	}
 }
@@ -309,32 +304,36 @@ sub status {
 	my $jobCount = scalar(@jobs);
 	for (my $i = 0; $i < $jobCount; $i++) {
 		$return .= "  * savedir: ".$jobs[$i]{"savedir"}."\n";
-		$return .= "    url: ".$jobs[$i]{"url"}."\n";
 		$return .= "    filter: ".$jobs[$i]{"filter"}."\n";
+		$return .= "    url: ".$jobs[$i]{"url"}."\n";
 	}
 	return $return;
 }
 
 #------------------------------------------------------------------------------#
 # Sub: tfrss                                                                   #
-# Arguments: rss-feed-url, filter-file, history-file, save-location            #
+# Arguments: save-location, filter, rss-feed-url                               #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub tfrss {
-	my $url = shift;
-	my $filter = shift;
-	my $history = shift;
 	my $save = shift;
+	my $filter = shift;
+	my $url = shift;
+	my $logfile = $filter.".log";
 	my $shellCmd = "";
 	$shellCmd .= $binPerl;
-	$shellCmd .= " ".$binTfrss;
-	$shellCmd .= " ".$url;
-	$shellCmd .= " ".$filter;
-	$shellCmd .= " ".$history;
-	$shellCmd .= " ".$save;
-	$shellCmd .= "  > /dev/null";
-	#$shellCmd .= "  >> ".$Fluxd::LOG;
+	$shellCmd .= " \"".$binTfrss."\"";
+	$shellCmd .= " \"".$save."\"";
+	$shellCmd .= " \"".$filter.".dat\"";
+	$shellCmd .= " \"".$filter.".hist\"";
+	$shellCmd .= " \"".$url."\"";
+	$shellCmd .= " >> \"".$logfile."\"";
 	print "Rssad : DEBUG : ".$shellCmd."\n"; # DEBUG
+	# log the invocation
+	open(LOGFILE,">>\"$logfile\"");
+	print LOGFILE localtime()." - ".$url."\n";
+	close(LOGFILE);
+	# syscall
 	eval {
 		system($shellCmd);
 	};

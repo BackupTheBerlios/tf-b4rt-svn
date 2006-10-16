@@ -352,10 +352,10 @@ sub printVersion {
 #------------------------------------------------------------------------------#
 sub initArgVars {
 	# init arg-vars
-	$RSS_URL = shift @ARGV;
+	$PATH_SAVE = shift @ARGV;
 	$PATH_FILTERS = shift @ARGV;
 	$PATH_HISTORY = shift @ARGV;
-	$PATH_SAVE = shift @ARGV;
+	$RSS_URL = shift @ARGV;
 	# check args
 	if (!(-f $PATH_FILTERS)) {
 		print STDERR "Error : filter-file is no file : ".$PATH_FILTERS."\n";
@@ -379,7 +379,7 @@ sub printUsage {
 	print <<"USAGE";
 $PROG.$EXTENSION (Revision $VERSION)
 
-Usage: $PROG.$EXTENSION rss-feed-url filter-file history-file save-location
+Usage: $PROG.$EXTENSION save-location filter-file history-file rss-feed-url
        $PROG.$EXTENSION check
        $PROG.$EXTENSION version
        $PROG.$EXTENSION help
