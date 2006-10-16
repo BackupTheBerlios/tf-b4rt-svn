@@ -279,6 +279,7 @@ sub main {
 			print " filter: ".$filter."\n"; # DEBUG
 			print " history: ".$history."\n"; # DEBUG
 			print " savedir: ".$savedir."\n"; # DEBUG
+			tfrss($url, $filter, $history, $savedir);
 		}
 	}
 }
@@ -331,7 +332,9 @@ sub tfrss {
 	$shellCmd .= " ".$filter;
 	$shellCmd .= " ".$history;
 	$shellCmd .= " ".$save;
-	$shellCmd .= " > /dev/null";
+	$shellCmd .= "  > /dev/null";
+	#$shellCmd .= "  >> ".$Fluxd::LOG;
+	print "Rssad : DEBUG : ".$shellCmd."\n"; # DEBUG
 	eval {
 		system($shellCmd);
 	};
