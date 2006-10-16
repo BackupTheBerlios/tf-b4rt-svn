@@ -267,14 +267,14 @@ sub main {
 		# set last run time
 		$time_last_run = $now;
 
-		# TODO
+		# exec tfrss-jobs
 		my $jobCount = scalar(@jobs);
 		for (my $i = 0; $i < $jobCount; $i++) {
 			my $url = $jobs[$i]{"url"};
 			my $filter = $dataDir.$jobs[$i]{"filter"}.".dat";
 			my $history = $dataDir.$jobs[$i]{"filter"}.".hist";
 			my $savedir = $jobs[$i]{"savedir"};
-			print "Rssad : executing job :\n"; # DEBUG
+			print "Rssad : executing job (".localtime().") :\n"; # DEBUG
 			print " url: ".$url."\n"; # DEBUG
 			print " filter: ".$filter."\n"; # DEBUG
 			print " history: ".$history."\n"; # DEBUG

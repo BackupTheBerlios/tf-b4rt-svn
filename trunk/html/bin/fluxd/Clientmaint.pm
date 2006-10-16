@@ -153,7 +153,7 @@ sub main {
 	if (($now - $time_last_run) >= $interval) {
 
 		# DEBUG
-		print "Clientmaint : now \"".$now."\" ; time_last_run \"".$time_last_run."\"\n"; # DEBUG
+		print "Clientmaint : ".localtime()."\n"; # DEBUG
 
 		# set last run time
 		$time_last_run = $now;

@@ -188,7 +188,9 @@ sub main {
 		foreach my $user (sort keys %jobs) {
 			my $dir = $jobs{$user};
 			if ((!($user eq "")) && (-d $dir)) {
-				#print "Watch::main : username \"".$user."\" ; dir \"".$dir."\"\n"; # DEBUG
+				print "Watch : executing job (".localtime().") :\n"; # DEBUG
+				print " user: ".$user."\n"; # DEBUG
+				print " dir: ".$dir."\n"; # DEBUG
 				eval {
 					Fluxd::fluxcli("watch", $dir, $user);
 				};
