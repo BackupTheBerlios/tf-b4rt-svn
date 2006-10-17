@@ -61,3 +61,47 @@ function removeWatchEntry() {
 		alert("Please select a Job first!");
 	}
 }
+
+/**
+ * addRssadFilterEntry()
+ */
+function addRssadFilterEntry() {
+    var filter = mytrim(document.theForm.rssad_filter_entry.value);
+    if (filter != "") {
+	    var liststr = document.theForm.rssad_filtercontent;
+	    var list = document.theForm.rssad_filters;
+	    var newentry = document.createElement("option");
+	    newentry.text = filter;
+	    newentry.value = newentry.text;
+		document.theForm.rssad_filter_entry.value = "";
+	    if (navigator.appName == "Netscape")
+	    	list.add(newentry, null);
+	    else
+	    	list.add(newentry);
+	    if (liststr.value == "")
+	    	liststr.value = newentry.text;
+	    else
+	    	liststr.value = liststr.value + "\n" + newentry.text;
+    } else {
+		alert("Please enter a Filter.");
+	}
+}
+
+/**
+ * removeRssadFilterEntry()
+ */
+function removeRssadFilterEntry() {
+	if (document.theForm.rssad_filters.selectedIndex != -1) {
+		var liststr = document.theForm.rssad_filtercontent;
+		document.theForm.rssad_filters.remove(document.theForm.rssad_filters.selectedIndex);
+		var newValue = "";
+		for (var j = 0; j < document.theForm.rssad_filters.options.length; j++) {
+            if (j > 0)
+                newValue += "\n";
+		    newValue += mytrim(document.theForm.rssad_filters.options[j].text);
+		}
+		liststr.value = mytrim(newValue);
+	} else {
+		alert("Please select a Filter first!");
+	}
+}

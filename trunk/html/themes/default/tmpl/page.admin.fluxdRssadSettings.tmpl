@@ -34,7 +34,7 @@
 				<tmpl_loop name=rssad_filters>
 					<tr>
 						<td>
-							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">"  onclick="return confirm('Delete Filter <tmpl_var name="filtername"> ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
 							<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><img src="themes/default/images/edit.gif" width=16 height=16 border=0 title="Edit <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
 							<tmpl_var name="filtername">
 						</td>
@@ -70,15 +70,29 @@
 			</tr>
 			<tmpl_if name="filtername">		
 				<tr>
-					<td align="center">
+					<td align="center" valign="top">
 						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_1')">
 							<input type="hidden" name="pageop" value="saveFilter">
 							<input type="hidden" name="new" value="true">
+							<input type="hidden" name="rssad_filtercontent" value="<tmpl_var name="rssad_filtercontent">">
 							Name : <input type="Text" size="30" maxlength="255" name="filtername" value="<tmpl_var name="filtername">">
-							<br>
-							<textarea cols="100" rows="15" name="rssad_filtercontent"><tmpl_var name="rssad_filtercontent"></textarea>
-							<br>
+							<br><br>
+							Filter-Entries :
+							<br><br>
+							<select name="rssad_filters" size="10">
+								<tmpl_if name="rssad_filter_list">
+									<tmpl_loop name="rssad_filter_list">
+										<option value="<tmpl_var name="filter">"><tmpl_var name="filter"></option>
+									</tmpl_loop>
+								</tmpl_if>
+							</select>
+							<input type="button" name="remButton" value="remove" onclick="removeRssadFilterEntry()">
+							<br><br>
+							Add Filter-Entry : <input type="text" name="rssad_filter_entry" size="50">
+							<input type="button" name="addButton" value="add" onclick="addRssadFilterEntry()" size="30">
+							<br><br>
 							<input type="Submit" value="Add Filter">
+							<br><br>
 						</form>
 					</td>
 				</tr>
@@ -100,16 +114,30 @@
 			</tr>		
 			<tmpl_if name="filtername">		
 				<tr>
-					<td align="center">
-						<form action="admin.php?op=fluxdRssadSettings" method="post">
+					<td align="center" valign="top">
+						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post">
 							<input type="hidden" name="pageop" value="saveFilter">
 							<input type="hidden" name="new" value="false">
+							<input type="hidden" name="rssad_filtercontent" value="<tmpl_var name="rssad_filtercontent">">
 							<input type="hidden" name="filtername" value="<tmpl_var name="filtername">">
 							<strong><tmpl_var name="filtername"></strong>
-							<br>
-							<textarea cols="100" rows="15" name="rssad_filtercontent"><tmpl_var name="rssad_filtercontent"></textarea>
-							<br>
+							<br><br>
+							Filter-Entries :
+							<br><br>
+							<select name="rssad_filters" size="10">
+								<tmpl_if name="rssad_filter_list">
+									<tmpl_loop name="rssad_filter_list">
+										<option value="<tmpl_var name="filter">"><tmpl_var name="filter"></option>
+									</tmpl_loop>
+								</tmpl_if>
+							</select>
+							<input type="button" name="remButton" value="remove" onclick="removeRssadFilterEntry()">
+							<br><br>
+							Add Filter-Entry : <input type="text" name="rssad_filter_entry" size="50">
+							<input type="button" name="addButton" value="add" onclick="addRssadFilterEntry()" size="30">
+							<br><br>
 							<input type="Submit" value="Save Filter">
+							<br><br>
 						</form>
 					</td>
 				</tr>

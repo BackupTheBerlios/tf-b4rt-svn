@@ -74,7 +74,7 @@ switch ($pageop) {
 			$filterlist = array();
 			foreach ($filters as $filter) {
 				$filt = trim($filter);
-				if (strlen($filter) > 0)
+				if (strlen($filt) > 0)
 					array_push($filterlist, array("filtername" => $filt));
 			}
 			$tmpl->setloop('rssad_filters', $filterlist);
@@ -111,7 +111,18 @@ switch ($pageop) {
 				// create the filter
 				if ($rssad->filterExists($filtername) === true) {
 					$tmpl->setvar('filtername', $filtername);
-					$tmpl->setvar('rssad_filtercontent', $rssad->filterGetContent($filtername));				
+					$content = trim($rssad->filterGetContent($filtername));
+					$tmpl->setvar('rssad_filtercontent', $content);
+					$filterlines = explode("\n", $content);
+					if (count($filterlines) > 0) {
+						$filterlist = array();
+						foreach ($filterlines as $filterline) {
+							$filt = trim($filterline);
+							if (strlen($filt) > 0)
+								array_push($filterlist, array("filter" => $filt));
+						}
+						$tmpl->setloop('rssad_filter_list', $filterlist);
+					}
 				} else {
 					$tmpl->setvar('new_msg', 1);
 					$tmpl->setvar('message', "Error : Filter does not exist.");
