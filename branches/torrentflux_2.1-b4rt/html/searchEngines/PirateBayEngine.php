@@ -22,6 +22,7 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
+	v 1.04 - Oct 16, 06 - fix paging
     v 1.03 - Aug 23, 06 - Added Top 100
     v 1.02 - Jun 29, 06 - fix to paging..
     v 1.01 - Apr 11, 06 - bug in parsing paging.
@@ -38,7 +39,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "PirateBay";
 
         $this->author = "kboy";
-        $this->version = "1.03";
+        $this->version = "1.04";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1125.0.html";
 
         $this->Initialize($cfg);
@@ -327,7 +328,6 @@ class SearchEngine extends SearchEngineBase
             $thing = substr($thing,strpos($thing,"<tr><td colspan")+strlen("<tr><td colspan"));
             $thing = substr($thing,strpos($thing,">")+1);
             $pages = substr($thing,0,strpos($thing,"</td>"));
-
             if (strpos($pages,"prev") > 0)
             {
                 $tmpStr = substr($pages,0,strpos($pages,"<img"));
@@ -354,6 +354,7 @@ class SearchEngine extends SearchEngineBase
             else
             {
                 $pages = str_replace("?",$this->searchURL()."&",$pages);
+				$pages = str_replace("/search.php",'',$pages);
             }
 
             $pages = str_replace("page=","pg=",$pages);
