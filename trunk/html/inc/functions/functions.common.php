@@ -489,7 +489,7 @@ function updateSetting($dbTable, $key, $value) {
 	if (is_array($value))
         $update_value = serialize($value);
     $sql = "UPDATE ".$dbTable." SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
-    if ( $sql != "" ) {
+    if ($sql != "") {
         //$result = $db->Execute($sql);
         $db->Execute($sql);
         showError($db,$sql);

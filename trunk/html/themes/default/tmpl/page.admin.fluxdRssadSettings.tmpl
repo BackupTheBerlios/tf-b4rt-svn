@@ -31,7 +31,7 @@
 				</td>
 			</tr>			
 			<tmpl_if name="rssad_filters">
-				<tmpl_loop name=rssad_filters>
+				<tmpl_loop name="rssad_filters">
 					<tr>
 						<td>
 							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">"  onclick="return confirm('Delete Filter <tmpl_var name="filtername"> ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
@@ -55,11 +55,23 @@
 					<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Jobs</font>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<strong>TODO</strong>
-				</td>
-			</tr>
+			<tmpl_if name="rssad_jobs">
+				<tmpl_loop name="rssad_jobs">
+					<tr>
+						<td>
+							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">"  onclick="return confirm('Delete Filter <tmpl_var name="filtername"> ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><img src="themes/default/images/edit.gif" width=16 height=16 border=0 title="Edit <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
+							<tmpl_var name="filtername">
+						</td>
+					</tr>
+				</tmpl_loop>
+			<tmpl_else>
+				<tr>
+					<td>
+						<strong>No Jobs defined.</strong>
+					</td>
+				</tr>
+			</tmpl_if>
 		</table>
 	<tmpl_elseif name="pageop" value="addFilter">
 		<table width="100%" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">

@@ -79,6 +79,11 @@ switch ($pageop) {
 			}
 			$tmpl->setloop('rssad_filters', $filterlist);
 		}
+		// jobs
+		$jobs = $rssad->jobsGetList();
+		if ($jobs !== false)
+			$tmpl->setloop('rssad_jobs', $jobs);
+		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad Settings");
 		break;
 	case "addFilter":
@@ -88,17 +93,31 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : No Filtername.");
 		} else {
 			if ($rssad->filterIdCheck($filtername, true) === true) {
-				// create the filter
-				if ($rssad->filterExists($filtername) === true)
-					$tmpl->setvar('filtername', $filtername."_new");				
-				else
-					$tmpl->setvar('filtername', $filtername);
-				$tmpl->setvar('rssad_filtercontent', "");
+				$filterstring = $filtername;
+				$maxFiles = 100;
+				$noMatch = true;
+				$idx = 1;
+				while ($noMatch) {
+					if ($rssad->filterExists($filtername) === false) {
+						$tmpl->setvar('filtername', $filtername);
+						$tmpl->setvar('rssad_filtercontent', "");
+						$noMatch = false;
+					} else {
+						$filtername = $filterstring."_".$idx;
+					}
+					$idx++;
+					if ($idx >= $maxFiles) {
+						$noMatch = false;
+						$tmpl->setvar('new_msg', 1);
+						$tmpl->setvar('message', "Error : Invalid Filtername.");
+					}
+				}
 			} else {
 				$tmpl->setvar('new_msg', 1);
 				$tmpl->setvar('message', "Error : Invalid Filtername.");
 			}
 		}
+		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Add Filter");
 		break;
 	case "editFilter":
@@ -132,6 +151,7 @@ switch ($pageop) {
 				$tmpl->setvar('message', "Error : Invalid Filtername.");
 			}
 		}
+		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Filter");
 		break;		
 	case "saveFilter":
@@ -162,8 +182,9 @@ switch ($pageop) {
 				$tmpl->setvar('message', "Error : Invalid Filtername.");
 			}
 		}
-		break;
+		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Save Filter");
+		break;
 	case "deleteFilter":
 		$filtername = getRequestVar('filtername');
 		if (empty($filtername)) {
@@ -184,12 +205,12 @@ switch ($pageop) {
 				$tmpl->setvar('message', "Error : Invalid Filtername.");
 			}
 		}
+		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Filter");
 		break;
 		
 		
-		// jobs
-		
+
 }
 
 //

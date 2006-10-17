@@ -127,7 +127,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * saves a filter
 	 * 
 	 * @param $filtername
-	 * @param $$content
+	 * @param $content
 	 * @return boolean
 	 */
 	function filterSave($filtername, $content) {
@@ -189,6 +189,54 @@ class FluxdRssad extends FluxdServiceMod
 		}
 	}
 
+	
+	/**
+	 * get job-list
+	 *
+	 * @return job-list as array or false on error / no files
+	 */
+	function jobsGetList() {
+		// job1|job2|job3
+		// savedir#url#filtername
+		if ((isset($this->cfg["fluxd_Rssad_jobs"])) && (strlen($this->cfg["fluxd_Rssad_jobs"]) > 0)) {
+			$joblist = array();
+			$jobs = explode("|", trim($this->cfg["fluxd_Rssad_jobs"]));
+			if (count($jobs) > 0) {
+				foreach ($jobs as $job) {
+					$jobAry = explode("#", trim($job));
+					$savedir = trim(array_shift($jobAry));
+					$url = trim(array_shift($jobAry));
+					$filtername = trim(array_shift($jobAry));
+					if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
+						array_push($joblist, array(
+							'savedir' => $savedir,
+							'url' => $url,
+							'filtername' => $filtername
+							)
+						);
+					}
+				}
+				return $joblist;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * updates jobs
+	 * 
+	 * @param $content
+	 * @return boolean
+	 */
+	function jobsUpdate($content) {
+		// update setting
+		updateSetting("tf_settings", "fluxd_Rssad_jobs", $content);
+		// log
+		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Jobs Saved : \n".$content);
+		// return
+		return true;
+	}		
+	
 }
 
 ?>
