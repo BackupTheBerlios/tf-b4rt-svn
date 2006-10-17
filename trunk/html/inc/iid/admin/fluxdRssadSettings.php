@@ -79,31 +79,109 @@ switch ($pageop) {
 			}
 			$tmpl->setloop('rssad_filters', $filterlist);
 		}
-
-		// jobs		
+		tmplSetTitleBar("Administration - Fluxd Rssad Settings");
 		break;
 	case "addFilter":
+		$filtername = getRequestVar('filtername');
+		if (empty($filtername)) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : No Filtername.");
+		} else {
+			if ($rssad->filterIdCheck($filtername, true) === true) {
+				// create the filter
+				if ($rssad->filterExists($filtername) === true)
+					$tmpl->setvar('filtername', $filtername."_new");				
+				else
+					$tmpl->setvar('filtername', $filtername);
+				$tmpl->setvar('rssad_filtercontent', "");
+			} else {
+				$tmpl->setvar('new_msg', 1);
+				$tmpl->setvar('message', "Error : Invalid Filtername.");
+			}
+		}
+		tmplSetTitleBar("Administration - Fluxd Rssad - Add Filter");
 		break;
+	case "editFilter":
+		$filtername = getRequestVar('filtername');
+		if (empty($filtername)) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : No Filtername.");
+		} else {
+			if ($rssad->filterIdCheck($filtername, false) === true) {
+				// create the filter
+				if ($rssad->filterExists($filtername) === true) {
+					$tmpl->setvar('filtername', $filtername);
+					$tmpl->setvar('rssad_filtercontent', $rssad->filterGetContent($filtername));				
+				} else {
+					$tmpl->setvar('new_msg', 1);
+					$tmpl->setvar('message', "Error : Filter does not exist.");
+				}
+			} else {
+				$tmpl->setvar('new_msg', 1);
+				$tmpl->setvar('message', "Error : Invalid Filtername.");
+			}
+		}
+		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Filter");
+		break;		
+	case "saveFilter":
+		$filtername = getRequestVar('filtername');
+		$filtercontent = getRequestVar('rssad_filtercontent');
+		$new = getRequestVar('new');
+		if (empty($filtername)) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : No Filtername.");
+		} else {
+			$isnew = false;
+			if ($new == true)
+				$isnew = true;
+			else
+				$isnew = false;
+			if ($rssad->filterIdCheck($filtername, $isnew) === true) {
+				// save the filter
+				$tmpl->setvar('filtername', $filtername);
+				if (($rssad->filterSave($filtername, $filtercontent)) === true) {
+					$tmpl->setvar('filter_saved', 1);
+					$tmpl->setvar('filtercontent', $filtercontent);
+				} else {
+					$tmpl->setvar('filter_saved', 0);
+					$tmpl->setvar('messages', $rssad->messages);
+				}
+			} else {
+				$tmpl->setvar('new_msg', 1);
+				$tmpl->setvar('message', "Error : Invalid Filtername.");
+			}
+		}
+		break;
+		tmplSetTitleBar("Administration - Fluxd Rssad - Save Filter");
+	case "deleteFilter":
+		$filtername = getRequestVar('filtername');
+		if (empty($filtername)) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : No Filtername.");
+		} else {
+			if ($rssad->filterIdCheck($filtername, false) === true) {
+				// delete the filter
+				$tmpl->setvar('filtername', $filtername);
+				if (($rssad->filterDelete($filtername)) === true) {
+					$tmpl->setvar('filter_deleted', 1);
+				} else {
+					$tmpl->setvar('filter_deleted', 0);
+					$tmpl->setvar('messages', $rssad->messages);
+				}
+			} else {
+				$tmpl->setvar('new_msg', 1);
+				$tmpl->setvar('message', "Error : Invalid Filtername.");
+			}
+		}
+		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Filter");
+		break;
+		
+		
+		// jobs
+		
 }
-	
-
-// MODS
-$users = GetUsers();
-$userCount = count($users);
-
-// Rssad
-$rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
-$tmpl->setvar('fluxd_Rssad_enabled', $cfg["fluxd_Rssad_enabled"]);
-if (($cfg["fluxd_Rssad_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Rssad_state', $fluxd->modState('Rssad'));
-else
-	$tmpl->setvar('fluxd_Rssad_state', 0);
-$tmpl->setvar('fluxd_Rssad_interval', $cfg["fluxd_Rssad_interval"]);
-$tmpl->setvar('fluxd_Rssad_jobs', $cfg["fluxd_Rssad_jobs"]);
-
 
 //
-tmplSetTitleBar("Administration - Fluxd Rssad Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
 

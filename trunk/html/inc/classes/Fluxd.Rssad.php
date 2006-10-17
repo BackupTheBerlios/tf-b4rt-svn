@@ -23,7 +23,7 @@
 // class for the Fluxd-Service-module Rssad
 class FluxdRssad extends FluxdServiceMod
 {
-	
+	// basedir
 	var $basedir = ".fluxd/rssad/";
 	
     /**
@@ -36,47 +36,57 @@ class FluxdRssad extends FluxdServiceMod
     }
 
 	/**
-	 * checks if filter-id is a valid filter-file
+	 * check if filter exists
 	 *
-	 * @param $param
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function filterExists($filtername) {
+		// filter-file
+		$file = $this->cfg["path"].$this->basedir.$filtername.".dat";
+		// return
+		return file_exists($file);
+	}
+    
+	/**
+	 * checks if filter-id is a valid filter-id
+	 *
+	 * @param $id
+	 * @param $new 
 	 * @param boolean
 	 */
-	function filterParamCheck($param) {
+	function filterIdCheck($id, $new = false) {
 		// sanity-checks
-		if (strpos(urldecode($param), "/") !== false)
+		if (strpos(urldecode($id), "/") !== false)
 			return false;		
-		if (preg_match("/\\\/", urldecode($param)))
+		if (preg_match("/\\\/", urldecode($id)))
 			return false;
-		if (preg_match("/\.\./", urldecode($param)))
+		if (preg_match("/\.\./", urldecode($id)))
 			return false;
 		// check id
-		$fileList = filterGetList();
-		if ($fileList !== false) {
-			if (in_array($param.".dat", $fileList))
-				return true;
-			else
-				return false;
-		} else {
-			return false;
-		}
-		return false;
+		if (!$new)
+			return $this->filterExists($id);
+		// looks ok
+		return true;
 	}
 	
 	/**
 	 * get filter-list
 	 *
-	 * @return filter-list as error or false on error / no files
+	 * @return filter-list as array or false on error / no files
 	 */
 	function filterGetList() {
-		$dirBackup = $this->cfg["path"].$this->basedir;
-		if (file_exists($dirBackup)) {
-			if ($dirHandle = opendir($dirBackup)) {
+		$dirFilter = $this->cfg["path"].$this->basedir;
+		if (is_dir($dirFilter)) {
+			$dirHandle = false;
+			$dirHandle = @opendir($dirFilter);
+			if ($dirHandle !== false) {
 				$retVal = array();
-				while (false !== ($file = readdir($dirHandle))) {
+				while (false !== ($file = @readdir($dirHandle))) {
 					if ((strlen($file) > 4) && ((substr($file, -4)) == ".dat"))
 						array_push($retVal, substr($file, 0, -4));
 				}
-				closedir($dirHandle);
+				@closedir($dirHandle);
 				return $retVal;
 			} else {
 				return false;
@@ -87,11 +97,37 @@ class FluxdRssad extends FluxdServiceMod
 	}
 	
 	/**
+	 * get filter-content
+	 *
+	 * @param $filtername
+	 * @return filter as string or false on error / no files
+	 */
+	function filterGetContent($filtername) {
+		// filter-file
+		$file = $this->cfg["path"].$this->basedir.$filtername.".dat";
+		// check
+		if (!(file_exists($file)))
+			return false;
+		// open
+		$handle = false;
+		$handle = @fopen($file, "r");
+		if (!$handle) {
+			$this->messages = "cannot open ".$file.".";
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Load-Error : ".$this->messages);
+			return false;
+		}
+		$data = "";
+		while (!@feof($handle))
+			$data .= @fgets($handle, 8192);
+		@fclose ($handle);
+		return $data;
+	}
+	
+	/**
 	 * saves a filter
 	 * 
 	 * @param $filtername
 	 * @param $$content
-	 * 
 	 * @return boolean
 	 */
 	function filterSave($filtername, $content) {
@@ -121,34 +157,34 @@ class FluxdRssad extends FluxdServiceMod
 	 * deletes a filter
 	 *
 	 * @param $filtername
-	 * 
 	 * @return boolean
 	 */
 	function filterDelete($filtername) {
 		$extAry = array('.dat', '.hist', '.log');
 		// count files
 		$fileCount = 0;
-		foreach($extAry as $ext) {
-			$file = $this->cfg["path"].$this->basedir.$filtername.$ext;
+		for ($i = 0; $i < 3; $i++) {
+			$file = $this->cfg["path"].$this->basedir.$filtername.$extAry[$i];
 			if (file_exists($file))
 				$fileCount++;
 		}
 		// delete files
 		$deleted = 0;
-		foreach($extAry as $ext) {
-			$file = $this->cfg["path"].$this->basedir.$filtername.$ext;
-			if (file_exists($file))
+		for ($i = 0; $i < 3; $i++) {
+			$file = $this->cfg["path"].$this->basedir.$filtername.$extAry[$i];
+			if (file_exists($file)) {
 				@unlink($file);
-			if (!(file_exists($file)))
-				$deleted++;
+				if (!(file_exists($file)))
+					$deleted++;
+			}
 		}
 		if ($fileCount == $deleted) {
 			// log + return
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Deleted : ".$filtername);
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Deleted : ".$filtername." (".$deleted."/".$fileCount.")");
 			return true;
 		} else {
 			// log + return
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Delete Error : ".$filtername);
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
 			return false;			
 		}
 	}
