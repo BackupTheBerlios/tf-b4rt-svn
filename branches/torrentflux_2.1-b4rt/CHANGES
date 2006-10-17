@@ -2,6 +2,59 @@
 $Id$
 ================================================================================
 
+  b4rt-952
+
+  details :
+  http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1226&sc=0&isdir=1
+
+
+***** changes ***** 
+
+- dont print out any var-info on db-error
+
+- fluxcli.php : prevent invocation from web with help of "$argv"
+
+- removed unused defines from stats.php
+
+- client-handlers : escapeshellarg @ all strings in commandline-string possibly 
+  unsafe 
+   
+- superadmin : use proxy to get current version
+
+
+***** fixes *****
+
+- fixed some notices in xfer-hack
+
+- stats.php : fixed some notices
+
+- pid-file-fix-bug (fixed the bug in the workaround)
+
+- "maxcons"-bug (thanks again to nw for the hint on this) :
+  changed "--max_initiate" to "--max_connections"
+
+- "TorrentFlux ip Script Insertion"
+
+- "TorrentFlux user_id Script Insertion"
+  http://www.stevenroddis.com.au/2006/10/17/torrentflux-user_id-script-insertion/
+
+- "TorrentFlux action Script Insertion"
+  http://www.stevenroddis.com.au/2006/10/17/torrentflux-action-script-insertion/
+
+- "TorrentFlux file Script Insertion"
+  http://www.stevenroddis.com.au/2006/10/17/torrentflux-file-script-insertion/  
+  
+  
+--------------------------------------------------------------------------------
+
+  b4rt-951
+  
+***** fixes *****  
+  
+- dont print DSN on db-error
+
+
+--------------------------------------------------------------------------------
 
   b4rt-95
 
