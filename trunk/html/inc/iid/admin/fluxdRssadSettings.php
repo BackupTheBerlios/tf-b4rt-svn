@@ -41,23 +41,31 @@ if ((isset($message)) && ($message != "")) {
 	$tmpl->setvar('new_msg', 0);
 }
 
-// DEBUG
-$message = getRequestVar('pageop');
-if ((isset($message)) && ($message != "")) {
-	$tmpl->setvar('new_msg', 1);
-	$tmpl->setvar('message', urldecode($message));
-} else {
-	$tmpl->setvar('new_msg', 0);
-}
+// pageop
+//
+// * default
+//
+// * addFilter
+// * editFilter
+// * deleteFilter 
+//
+// * addJob
+// * editJob
+// * deleteJob
+//
+$pageop = getRequestVar('pageop');
+if (empty($pageop))
+	$tmpl->setvar('pageop', "default");
+else
+	$tmpl->setvar('pageop', $pageop);
 
-// superadmin-links
-$tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','<font class="adminlink">log</font></a>'));
 
 // MODS
 $users = GetUsers();
 $userCount = count($users);
 
 // Rssad
+$rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
 $tmpl->setvar('fluxd_Rssad_enabled', $cfg["fluxd_Rssad_enabled"]);
 if (($cfg["fluxd_Rssad_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('fluxd_Rssad_state', $fluxd->modState('Rssad'));
@@ -65,6 +73,7 @@ else
 	$tmpl->setvar('fluxd_Rssad_state', 0);
 $tmpl->setvar('fluxd_Rssad_interval', $cfg["fluxd_Rssad_interval"]);
 $tmpl->setvar('fluxd_Rssad_jobs', $cfg["fluxd_Rssad_jobs"]);
+
 
 //
 tmplSetTitleBar("Administration - Fluxd Rssad Settings");

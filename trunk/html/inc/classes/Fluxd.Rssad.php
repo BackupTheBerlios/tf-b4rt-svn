@@ -23,6 +23,9 @@
 // class for the Fluxd-Service-module Rssad
 class FluxdRssad extends FluxdServiceMod
 {
+	
+	var $basedir = ".fluxd/rssad/";
+	
     /**
      * ctor
      */
@@ -31,6 +34,68 @@ class FluxdRssad extends FluxdServiceMod
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         $this->initialize($cfg, $fluxd);
     }
+
+
+	/**
+	 * checks if filter-id is a valid filter-file
+	 *
+	 * @param $param
+	 * @param boolean
+	 */
+	function filterParamCheck($param) {
+		// sanity-checks
+		if( preg_match("/\\\/", urldecode($param)) )
+			return false;
+		if( preg_match("/\.\./", urldecode($param)) )
+			return false;
+		// check id
+		$fileList = getFilterList();
+		if ((isset($fileList)) && ($fileList != "")) {
+			$validFiles = explode("\n",$fileList);
+			if (in_array($param, $validFiles))
+				return true;
+			else
+				return false;
+		} else {
+			return false;
+		}
+		return false;
+	}
+	
+	/**
+	 * get filter-list
+	 *
+	 * @return filter-list as string or empty string on error / no files
+	 */
+	function getFilterList() {
+		$dirBackup = $this->cfg["path"].$this->basedir;
+		if (file_exists($dirBackup)) {
+			if ($dirHandle = opendir($dirBackup)) {
+				$fileList = "";
+				while (false !== ($file = readdir($dirHandle))) {
+					if ((substr($file, 0, 1)) != ".")
+						$fileList .= $file . "\n";
+				}
+				closedir($dirHandle);
+				return $fileList;
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+	
+	/**
+	 * deletes a filter
+	 *
+	 * @param $filename the file with the filter
+	 */
+	function filterDelete($filename) {
+		$backupFile = $this->cfg["path"].$this->basedir.$filename;
+		@unlink($backupFile);
+		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Deleted : ".$filename);
+	}
 
 }
 

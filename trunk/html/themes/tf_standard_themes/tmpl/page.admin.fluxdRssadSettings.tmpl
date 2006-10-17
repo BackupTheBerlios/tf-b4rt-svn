@@ -17,50 +17,57 @@
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
 			<td align="center">
+			<tmpl_if name="pageop" value="default">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-							<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadFilters')">
-								<input type="hidden" name="pageop" value="updateFilters">
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
-										<strong>Filters</strong>
-									</td>
-								</tr>
-								<tr>
-									<td colspan="2" align="center">
-										<br>TODO<br><br>
-									</td>
-								</tr>
-								<tr>
-									<td align="center" colspan="2">
-										<input type="Submit" value="Update Filters">
-									</td>
-								</tr>								
-							</form>
-							<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadJobs')">
-								<input type="hidden" name="pageop" value="updateJobs">
-								<tr>
-									<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
-										<strong>Jobs</strong>
-									</td>
-								</tr>								
-								<tr>
-									<td colspan="2" align="center">
-										<br>TODO<br><br>
-									</td>
-								</tr>
-								<tr>
-									<td align="center" colspan="2">
-										<input type="Submit" value="Update Jobs">
-									</td>
-								</tr>								
-							</form>
-						</table>
-					</div>
-					<br>
-				</td>
-			</tr>
-		</table>
-	</div>
+						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadFilters')">
+							<input type="hidden" name="pageop" value="addFilter">
+							<tr>
+								<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
+									<strong>Filters</strong>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="2" align="center">
+									<br>TODO<br><br>
+								</td>
+							</tr>
+							<tr>
+								<td align="center" colspan="2">
+									<input type="Submit" value="Filters">
+								</td>
+							</tr>								
+						</form>
+						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadJobs')">
+							<input type="hidden" name="pageop" value="addJob">
+							<tr>
+								<td colspan="2" align="center" bgcolor="<tmpl_var name="table_border_dk">">
+									<strong>Jobs</strong>
+								</td>
+							</tr>								
+							<tr>
+								<td colspan="2" align="center">
+									<br>TODO<br><br>
+								</td>
+							</tr>
+							<tr>
+								<td align="center" colspan="2">
+									<input type="Submit" value="Jobs">
+								</td>
+							</tr>								
+						</form>
+					</table>
+				</div>
+				<br>
+			<tmpl_elseif name="pageop" value="addFilter">
+				addFilter
+			<tmpl_elseif name="pageop" value="editFilter">
+				editFilter
+			<tmpl_elseif name="pageop" value="editFilter">
+				deleteFilter					
+			</tmpl_if>	
+			</td>
+		</tr>
+	</table>
 </div>
 <tmpl_include name="inc.subfoot.tmpl">
