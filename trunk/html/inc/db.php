@@ -54,7 +54,7 @@ function getdb() {
 	$db = @ ADONewConnection($dsn);
 	// check connection
 	if (!$db)
-		showErrorPage('Could not connect to database :<br>Check your database settings in the config.db.php file.');
+		showErrorPage('Could not connect to database.<br>Check your database settings in the config.db.php file.');
 	// return db-connection
 	return $db;
 }
