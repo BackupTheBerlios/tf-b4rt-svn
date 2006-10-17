@@ -236,7 +236,7 @@ function displayXferList()
       foreach ($rtnValue as $user_id) {
         echo '<tr>';
           echo '<td><a href="?op=xfer&user='.$user_id.'">'.$user_id.'</a></td>';
-          $total = formatFreeSpace($xfer[$user_id]['total']['total']/(1024*1024));
+          $total = formatFreeSpace(@ $xfer[$user_id]['total']['total']/(1024*1024));
           $month = formatFreeSpace(@ $xfer[$user_id]['month']['total']/(1024*1024));
           $week = formatFreeSpace(@ $xfer[$user_id]['week']['total']/(1024*1024));
           $day = formatFreeSpace(@ $xfer[$user_id]['day']['total']/(1024*1024));
@@ -247,10 +247,10 @@ function displayXferList()
         echo '</tr>';
       }
       echo '<td><a href="?op=xfer&user=%"><b>'._TOTAL.'</b></a></td>';
-      $total = formatFreeSpace($xfer_total['total']['total']/(1024*1024));
-      $month = formatFreeSpace($xfer_total['month']['total']/(1024*1024));
-      $week = formatFreeSpace($xfer_total['week']['total']/(1024*1024));
-      $day = formatFreeSpace($xfer_total['day']['total']/(1024*1024));
+      $total = formatFreeSpace(@ $xfer_total['total']['total']/(1024*1024));
+      $month = formatFreeSpace(@ $xfer_total['month']['total']/(1024*1024));
+      $week = formatFreeSpace(@ $xfer_total['week']['total']/(1024*1024));
+      $day = formatFreeSpace(@ $xfer_total['day']['total']/(1024*1024));
       echo '<td><div class="tiny" align="center"><b>'.$total.'</b></div></td>';
       echo '<td><div class="tiny" align="center"><b>'.$month.'</b></div></td>';
       echo '<td><div class="tiny" align="center"><b>'.$week.'</b></div></td>';
