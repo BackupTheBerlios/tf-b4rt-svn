@@ -288,7 +288,7 @@ if ($cfg["enable_search"])
         if ($cfg['xfer_day']) echo displayXferBar($cfg['xfer_day'],$xfer_total['day']['total'],_XFERTHRU.' Today:');
         if ($cfg['xfer_week']) echo displayXferBar($cfg['xfer_week'],$xfer_total['week']['total'],_XFERTHRU.' '.$cfg['week_start'].':');
         $monthStart = strtotime(date('Y-m-').$cfg['month_start']);
-        $monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
+        $monthText = (date('j') < $cfg['month_start']) ? date('Mï¿½j',strtotime('-1 Day',$monthStart)) : date('Mï¿½j',strtotime('+1 Month -1 Day',$monthStart));
         if ($cfg['xfer_month']) echo displayXferBar($cfg['xfer_month'],$xfer_total['month']['total'],_XFERTHRU.' '.$monthText.':');
         if ($cfg['xfer_total']) echo displayXferBar($cfg['xfer_total'],$xfer_total['total']['total'],_TOTALXFER.':');
       echo '</tr></table>';
@@ -414,10 +414,10 @@ echo "<table bgcolor=\"".$cfg["table_data_bg"]."\" width=\"100%\" bordercolor=\"
         if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
             echo '<td class="tiny" align="left" valign="bottom">';
             echo '<b>'._SERVERXFERSTATS.'</b><br>';
-            echo _TOTALXFER.': <strong>'.formatFreeSpace($xfer_total['total']['total']/(1024*1024)).'</strong><br>';
-            echo _MONTHXFER.': <strong>'.formatFreeSpace($xfer_total['month']['total']/(1024*1024)).'</strong><br>';
-            echo _WEEKXFER.': <strong>'.formatFreeSpace($xfer_total['week']['total']/(1024*1024)).'</strong><br>';
-            echo _DAYXFER.': <strong>'.formatFreeSpace($xfer_total['day']['total']/(1024*1024)).'</strong><br>';
+            echo _TOTALXFER.': <strong>'.@formatFreeSpace($xfer_total['total']['total']/(1024*1024)).'</strong><br>';
+            echo _MONTHXFER.': <strong>'.@formatFreeSpace($xfer_total['month']['total']/(1024*1024)).'</strong><br>';
+            echo _WEEKXFER.': <strong>'.@formatFreeSpace($xfer_total['week']['total']/(1024*1024)).'</strong><br>';
+            echo _DAYXFER.': <strong>'.@formatFreeSpace($xfer_total['day']['total']/(1024*1024)).'</strong><br>';
             echo '</td>';
         }
         if ($queueActive) {
@@ -449,10 +449,10 @@ echo "<table bgcolor=\"".$cfg["table_data_bg"]."\" width=\"100%\" bordercolor=\"
         if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
             echo '<td class="tiny" align="right" valign="bottom">';
             echo '<b>'._YOURXFERSTATS.'</b><br>';
-            echo _TOTALXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['total']['total']/(1024*1024)).'</strong><br>';
-            echo _MONTHXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['month']['total']/(1024*1024)).'</strong><br>';
-            echo _WEEKXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['week']['total']/(1024*1024)).'</strong><br>';
-            echo _DAYXFER.': <strong>'.formatFreeSpace($xfer[$cfg['user']]['day']['total']/(1024*1024)).'</strong><br>';
+            echo _TOTALXFER.': <strong>'.@formatFreeSpace($xfer[$cfg['user']]['total']['total']/(1024*1024)).'</strong><br>';
+            echo _MONTHXFER.': <strong>'.@formatFreeSpace($xfer[$cfg['user']]['month']['total']/(1024*1024)).'</strong><br>';
+            echo _WEEKXFER.': <strong>'.@formatFreeSpace($xfer[$cfg['user']]['week']['total']/(1024*1024)).'</strong><br>';
+            echo _DAYXFER.': <strong>'.@formatFreeSpace($xfer[$cfg['user']]['day']['total']/(1024*1024)).'</strong><br>';
             echo '</td>';
         }
         echo '</tr></table>';
