@@ -41,16 +41,21 @@ if ((isset($message)) && ($message != "")) {
 	$tmpl->setvar('new_msg', 0);
 }
 
+// Rssad
+$rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
+
 // pageop
 //
 // * default
 //
 // * addFilter
 // * editFilter
+// * saveFilter
 // * deleteFilter 
 //
 // * addJob
 // * editJob
+// * saveJob
 // * deleteJob
 //
 $pageop = getRequestVar('pageop');
@@ -59,6 +64,28 @@ if (empty($pageop))
 else
 	$tmpl->setvar('pageop', $pageop);
 
+// op-switch
+switch ($pageop) {
+	default:
+	case "default":
+		// filters
+		$filters = $rssad->getFilterList();
+		if ($filters !== false) {
+			$filterlist = array();
+			foreach ($filters as $filter) {
+				$filt = trim($filter);
+				if (strlen($filter) > 0)
+					array_push($filterlist, array("filtername" => $filt));
+			}
+			$tmpl->setloop('rssad_filters', $filterlist);
+		}
+
+		// jobs		
+		break;
+	case "addFilter":
+		break;
+}
+	
 
 // MODS
 $users = GetUsers();

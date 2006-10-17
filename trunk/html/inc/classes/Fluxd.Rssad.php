@@ -44,15 +44,16 @@ class FluxdRssad extends FluxdServiceMod
 	 */
 	function filterParamCheck($param) {
 		// sanity-checks
-		if( preg_match("/\\\/", urldecode($param)) )
+		if (strpos(urldecode($param), "/") !== false)
+			return false;		
+		if (preg_match("/\\\/", urldecode($param)))
 			return false;
-		if( preg_match("/\.\./", urldecode($param)) )
+		if (preg_match("/\.\./", urldecode($param)))
 			return false;
 		// check id
 		$fileList = getFilterList();
-		if ((isset($fileList)) && ($fileList != "")) {
-			$validFiles = explode("\n",$fileList);
-			if (in_array($param, $validFiles))
+		if ($fileList !== false) {
+			if (in_array($param, $fileList))
 				return true;
 			else
 				return false;
@@ -65,24 +66,24 @@ class FluxdRssad extends FluxdServiceMod
 	/**
 	 * get filter-list
 	 *
-	 * @return filter-list as string or empty string on error / no files
+	 * @return filter-list as error or false on error / no files
 	 */
 	function getFilterList() {
 		$dirBackup = $this->cfg["path"].$this->basedir;
 		if (file_exists($dirBackup)) {
 			if ($dirHandle = opendir($dirBackup)) {
-				$fileList = "";
+				$retVal = array();
 				while (false !== ($file = readdir($dirHandle))) {
-					if ((substr($file, 0, 1)) != ".")
-						$fileList .= $file . "\n";
+					if ((strlen($file) > 4) && ((substr($file, -4)) == ".dat"))
+						array_push($retVal, substr($file, 0, -4));
 				}
 				closedir($dirHandle);
-				return $fileList;
+				return $retVal;
 			} else {
-				return "";
+				return false;
 			}
 		} else {
-			return "";
+			return false;
 		}
 	}
 	

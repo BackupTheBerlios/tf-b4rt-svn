@@ -15,59 +15,44 @@
 <div align="center">
 	<a name="fluxd" id="fluxd"></a>
 	<table width="100%" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
-		<tr>
-			<td align="center">
-			<tmpl_if name="pageop" value="default">
-				<div align="center">
-					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-						<form name="theForm" action=""admin.php?op=fluxdRssadSettings"" method="post" onsubmit="return validateSettings('fluxdRssadFilters')">
-							<input type="hidden" name="pageop" value="addFilter">
-							<tr>
-								<td colspan="2" align="center" bgcolor="#d6dfe6">
-									<strong>Filters</strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" align="center">
-									<br>TODO<br><br>
-								</td>
-							</tr>
-							<tr>
-								<td align="center" colspan="2">
-									<input type="Submit" value="Filters">
-								</td>
-							</tr>								
-						</form>
-						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxdRssadJobs')">
-							<input type="hidden" name="pageop" value="addJob">
-							<tr>
-								<td colspan="2" align="center" bgcolor="#d6dfe6">
-									<strong>Jobs</strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="2" align="center">
-									<br>TODO<br><br>
-								</td>
-							</tr>
-							<tr>
-								<td align="center" colspan="2">
-									<input type="Submit" value="Jobs">
-								</td>
-							</tr>
-						</form>
-					</table>
-				</div>
-				<br>
-			<tmpl_elseif name="pageop" value="addFilter">
-				addFilter
-			<tmpl_elseif name="pageop" value="editFilter">
-				editFilter
-			<tmpl_elseif name="pageop" value="editFilter">
-				deleteFilter					
-			</tmpl_if>					
-			</td>
-		</tr>
+		<tmpl_if name="pageop" value="default">
+			<tr>
+				<td bgcolor="#d6dfe6" background="themes/default/images/bar.gif">
+					<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"><tmpl_var name="_ADMINEDITLINKS"></font>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">
+					<form action="admin.php?op=fluxdRssadSettings" method="post">
+						<input type="hidden" name="pageop" value="addFilter">
+						<input type="Submit" value="Add Filter"><br>
+					</form>
+				</td>
+			</tr>			
+			<tmpl_if name="rssad_filters">
+				<tmpl_loop name=rssad_filters>
+					<tr>
+						<td>
+							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><img src="themes/default/images/edit.gif" width=16 height=16 border=0 title="Edit <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
+							<tmpl_var name="filtername">
+						</td>
+					</tr>
+				</tmpl_loop>
+			<tmpl_else>
+				<tr>
+					<td>
+						<strong>No Filters defined.</strong>
+					</td>
+				</tr>
+			</tmpl_if>			
+		<tmpl_elseif name="pageop" value="addFilter">
+			addFilter
+		<tmpl_elseif name="pageop" value="editFilter">
+			editFilter
+		<tmpl_elseif name="pageop" value="editFilter">
+			deleteFilter					
+		</tmpl_if>
 	</table>
 </div>
 <tmpl_include name="inc.subfoot.tmpl">
