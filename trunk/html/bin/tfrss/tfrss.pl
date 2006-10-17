@@ -385,7 +385,7 @@ Usage: $PROG.$EXTENSION save-location filter-file history-file rss-feed-url
        $PROG.$EXTENSION help
 
 Example:
-$PROG.$EXTENSION http://www.example.com/feed.xml /usr/local/torrentflux/.tfrss/regex.dat /usr/local/torrentflux/.tfrss/history.dat /usr/local/torrentflux/.watch/
+$PROG.$EXTENSION /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/feed.xml
 
 USAGE
 
