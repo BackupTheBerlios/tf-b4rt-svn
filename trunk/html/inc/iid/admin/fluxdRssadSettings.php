@@ -69,7 +69,7 @@ switch ($pageop) {
 	default:
 	case "default":
 		// filters
-		$filters = $rssad->getFilterList();
+		$filters = $rssad->filterGetList();
 		if ($filters !== false) {
 			$filterlist = array();
 			foreach ($filters as $filter) {

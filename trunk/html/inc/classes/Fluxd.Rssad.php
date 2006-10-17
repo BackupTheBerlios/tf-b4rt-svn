@@ -35,7 +35,6 @@ class FluxdRssad extends FluxdServiceMod
         $this->initialize($cfg, $fluxd);
     }
 
-
 	/**
 	 * checks if filter-id is a valid filter-file
 	 *
@@ -51,9 +50,9 @@ class FluxdRssad extends FluxdServiceMod
 		if (preg_match("/\.\./", urldecode($param)))
 			return false;
 		// check id
-		$fileList = getFilterList();
+		$fileList = filterGetList();
 		if ($fileList !== false) {
-			if (in_array($param, $fileList))
+			if (in_array($param.".dat", $fileList))
 				return true;
 			else
 				return false;
@@ -68,7 +67,7 @@ class FluxdRssad extends FluxdServiceMod
 	 *
 	 * @return filter-list as error or false on error / no files
 	 */
-	function getFilterList() {
+	function filterGetList() {
 		$dirBackup = $this->cfg["path"].$this->basedir;
 		if (file_exists($dirBackup)) {
 			if ($dirHandle = opendir($dirBackup)) {
@@ -88,14 +87,70 @@ class FluxdRssad extends FluxdServiceMod
 	}
 	
 	/**
+	 * saves a filter
+	 * 
+	 * @param $filtername
+	 * @param $$content
+	 * 
+	 * @return boolean
+	 */
+	function filterSave($filtername, $content) {
+		// filter-file
+		$file = $this->cfg["path"].$this->basedir.$filtername.".dat";
+		$handle = false;
+		$handle = @fopen($file, "w");
+		if (!$handle) {
+			$this->messages = "cannot open ".$file." for writing.";
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Save-Error : ".$this->messages);
+			return false;
+		}
+		$result = @fwrite($handle, $content);
+		@fclose($handle);
+		if ($result === false) {
+			$this->messages = "cannot write content to ".$handle.".";
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Save-Error : ".$this->messages);
+			return false;
+		}
+		// log
+		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Saved : ".$filtername);
+		// return
+		return true;
+	}	
+	
+	/**
 	 * deletes a filter
 	 *
-	 * @param $filename the file with the filter
+	 * @param $filtername
+	 * 
+	 * @return boolean
 	 */
-	function filterDelete($filename) {
-		$backupFile = $this->cfg["path"].$this->basedir.$filename;
-		@unlink($backupFile);
-		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Deleted : ".$filename);
+	function filterDelete($filtername) {
+		$extAry = array('.dat', '.hist', '.log');
+		// count files
+		$fileCount = 0;
+		foreach($extAry as $ext) {
+			$file = $this->cfg["path"].$this->basedir.$filtername.$ext;
+			if (file_exists($file))
+				$fileCount++;
+		}
+		// delete files
+		$deleted = 0;
+		foreach($extAry as $ext) {
+			$file = $this->cfg["path"].$this->basedir.$filtername.$ext;
+			if (file_exists($file))
+				@unlink($file);
+			if (!(file_exists($file)))
+				$deleted++;
+		}
+		if ($fileCount == $deleted) {
+			// log + return
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Deleted : ".$filtername);
+			return true;
+		} else {
+			// log + return
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Delete Error : ".$filtername);
+			return false;			
+		}
 	}
 
 }
