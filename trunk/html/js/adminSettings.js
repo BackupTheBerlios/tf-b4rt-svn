@@ -7,13 +7,7 @@ function validateSettings(section) {
 	var msg = "";
 	switch (section) {
 		case 'dir':
-			break;
-		case 'fluxd_Rssad_filter_1':
-			if (document.theForm.filtername.value.length < 1) {
-				msg = msg + "* Enter a Filtername.\n";
-				document.theForm.filtername.focus();
-			}
-			break;			
+			break;		
 		case 'fluxd':
 			if (isNumber(document.theForm.fluxd_Qmgr_interval.value) == false ) {
 				msg = msg + "* Qmgr Intervall must be a valid number.\n";
@@ -44,6 +38,12 @@ function validateSettings(section) {
 				document.theForm.fluxd_Trigger_interval.focus();
 			}
 			break;
+		case 'fluxd_Rssad_filter_1':
+			if (document.theForm.filtername.value.length < 1) {
+				msg = msg + "* Enter a Filtername.\n";
+				document.theForm.filtername.focus();
+			}
+			break;			
 		case 'index':
 			if (isNumber(document.theForm.page_refresh.value) == false ) {
 				msg = msg + "* Page Refresh Intervalll must be a valid number.\n";

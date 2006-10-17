@@ -1,7 +1,7 @@
 /* $Id$ */
 
 /**
- * old meth
+ * mytrim
  */
 function mytrim(value) {
 	var trimmedVal = "";
@@ -14,15 +14,25 @@ function mytrim(value) {
 }
 
 /**
- * old meth
+ * addDirEntry
  */
 function addDirEntry () {
-    var resliststr = document.theForm.dir_restricted;
-    var reslist = document.theForm.resdirlist;
-    var newentry = document.createElement("option");
-    newentry.text = document.theForm.resdirentry.value;
-    newentry.text = mytrim(newentry.text);
- 	if( newentry.text != "") {
+    var val = mytrim(document.theForm.resdirentry.value);
+ 	if (val != "") {
+  		if (val.indexOf('/') != -1) {
+ 			alert("No slashes allowed");
+	    	return false;
+ 		}	
+ 		for (var i = 0; i < document.theForm.resdirlist.options.length; i++) {
+	    	if ((mytrim(document.theForm.resdirlist.options[i].text)) == val) {
+	    		alert("Entry already exists.");
+	    		return false;
+	    	}
+	    }
+	    var resliststr = document.theForm.dir_restricted;
+	    var reslist = document.theForm.resdirlist;	    
+ 	    var newentry = document.createElement("option");
+	    newentry.text = val;
         document.theForm.resdirentry.value = "";
         newentry.value = reslist.length;
         if (navigator.appName == "Netscape") {
@@ -41,7 +51,7 @@ function addDirEntry () {
 }
 
 /**
- * old meth
+ * removeDirEntry
  */
 function removeDirEntry() {
 	var resliststr = document.theForm.dir_restricted;

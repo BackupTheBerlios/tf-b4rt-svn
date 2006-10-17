@@ -13,34 +13,25 @@ function mytrim(value) {
 }
 
 /**
- * enableMoveElements
- */
-function enableMoveElements(form, dropDownField) {
-	if (dropDownField.value == "0") {
-		form.move_path.disabled = true;
-		form.categorylist.disabled = true;
-		form.category.disabled = true;
-		form.addCatButton.disabled = true;
-		form.remCatButton.disabled = true;
-	} else {
-		form.move_path.disabled = false;
-		form.categorylist.disabled = false;
-		form.category.disabled = false;
-		form.addCatButton.disabled = false;
-		form.remCatButton.disabled = false;
-	}
-}
-
-/**
  * addMoveEntry
  */
 function addMoveEntry () {
-    var catliststr = document.theForm.move_paths;
-    var catliste = document.theForm.categorylist;
-    var newentry = document.createElement("option");
-    newentry.text = document.theForm.category.value;
-    newentry.text = mytrim(newentry.text);
- 	if (newentry.text != "") {
+    var val = mytrim(document.theForm.category.value);
+ 	if (val != "") {
+ 	 	for (var i = 0; i < document.theForm.categorylist.options.length; i++) {
+	    	if ((mytrim(document.theForm.categorylist.options[i].text)) == val) {
+	    		alert("Move-dir already exists");
+	    		return false;
+	    	}
+	    	if ((mytrim(document.theForm.categorylist.options[i].text)) == val + "/") {
+	    		alert("Move-dir already exists");
+	    		return false;
+	    	}	    	
+	    }
+	    var catliststr = document.theForm.move_paths;
+	    var catliste = document.theForm.categorylist;
+	    var newentry = document.createElement("option");
+ 		newentry.text = val;
         // empty the new category field
         document.theForm.category.value = "";
         newentry.value = catliste.length;

@@ -25,6 +25,16 @@ function addWatchEntry () {
 		}
 	    var liststr = document.theForm.fluxd_Watch_jobs;
 	    var list = document.theForm.watch_jobs;
+	    for (var i = 0; i < document.theForm.watch_jobs.options.length; i++) {
+	    	if ((mytrim(document.theForm.watch_jobs.options[i].text)) == (wu + ":" + wd)) {
+	    		alert("Job already exists");
+	    		return false;
+	    	}
+	    	if ((mytrim(document.theForm.watch_jobs.options[i].text)) == (wu + ":" + wd + "/")) {
+	    		alert("Job already exists");
+	    		return false;
+	    	}	    	
+	    }	    
 	    var newentry = document.createElement("option");
 	    newentry.text = wu + ":" + wd;
 	    newentry.value = newentry.text;
@@ -68,8 +78,14 @@ function removeWatchEntry() {
 function addRssadFilterEntry() {
     var filter = mytrim(document.theForm.rssad_filter_entry.value);
     if (filter != "") {
+	    for (var i = 0; i < document.theForm.rssad_filters.options.length; i++) {
+	    	if ((mytrim(document.theForm.rssad_filters.options[i].text)) == filter) {
+	    		alert("Filter already exists");
+	    		return false;
+	    	}
+	    }
 	    var liststr = document.theForm.rssad_filtercontent;
-	    var list = document.theForm.rssad_filters;
+	    var list = document.theForm.rssad_filters;	    
 	    var newentry = document.createElement("option");
 	    newentry.text = filter;
 	    newentry.value = newentry.text;
