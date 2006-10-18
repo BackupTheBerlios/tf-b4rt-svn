@@ -59,6 +59,10 @@ function validateSettings(section) {
 			if (document.theForm.savedir.value.length < 1) {
 				msg = msg + "* Enter a savedir.\n";
 				document.theForm.savedir.focus();
+			} else {
+				if (document.theForm.savedir.value.indexOf('/') != 0) {
+					msg = msg + "* savedir must be a absolute path.\n";
+				}	
 			}
 			if (document.theForm.url.value.length < 1) {
 				msg = msg + "* Enter a URL.\n";

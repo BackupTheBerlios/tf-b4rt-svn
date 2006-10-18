@@ -213,13 +213,20 @@ switch ($pageop) {
 		break;
 		
 	case "addJob":
-		
-		// TODO
-		
+		// filters
+		$filters = $rssad->filterGetList();
+		if ($filters !== false) {
+			$filterlist = array();
+			foreach ($filters as $filter) {
+				$filt = trim($filter);
+				if (strlen($filt) > 0)
+					array_push($filterlist, array("filtername" => $filt));
+			}
+			$tmpl->setloop('rssad_filters', $filterlist);
+		}
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Add Job");		
 		break;
-		
 	case "editJob":
 		$jobNumber = trim(getRequestVar('job'));
 		if (empty($jobNumber)) {
@@ -231,9 +238,28 @@ switch ($pageop) {
 			if ($job !== false) {
 				$tmpl->setvar('rssad_job_loaded', 1);
 				$tmpl->setvar('jobnumber', $jobNumber);
-				$tmpl->setvar('savedir', $job['savedir']);
-				$tmpl->setvar('url', $job['url']);
-				$tmpl->setvar('filtername', $job['filtername']);
+				$tmpl->setvar('rssad_savedir', $job['savedir']);
+				$tmpl->setvar('rssad_url', $job['url']);
+				$tmpl->setvar('rssad_filtername', $job['filtername']);
+				// filters
+				$filters = $rssad->filterGetList();
+				if ($filters !== false) {
+					$filterlist = array();
+					foreach ($filters as $filter) {
+						$filt = trim($filter);
+						if ($filt == $job['filtername'])
+							$selected = " selected";
+						else
+							$selected = "";
+						if (strlen($filt) > 0)
+							array_push($filterlist, array(
+								"filtername" => $filt,
+								"selected" => $selected
+								)
+							);
+					}
+					$tmpl->setloop('rssad_filters', $filterlist);
+				}				
 			} else {
 				$tmpl->setvar('rssad_job_loaded', 0);
 				$tmpl->setvar('messages', $jobNumber);
@@ -242,7 +268,6 @@ switch ($pageop) {
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Job");		
 		break;
-		
 	case "saveJob":
 		$jobNumber = trim(getRequestVar('job'));
 		$savedir = getRequestVar('savedir');

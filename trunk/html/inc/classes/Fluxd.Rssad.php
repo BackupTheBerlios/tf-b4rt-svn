@@ -239,6 +239,30 @@ class FluxdRssad extends FluxdServiceMod
 		updateSetting("tf_settings", "fluxd_Rssad_jobs", $content);
 		// log
 		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Jobs Saved : \n".$content);
+		// check dirs
+		/*
+		$jobs = explode($this->delimJobs, trim($this->cfg["fluxd_Rssad_jobs"]));
+		if (count($jobs) > 0) {
+			foreach ($jobs as $job) {
+				$jobAry = explode($this->delimJob, trim($job));
+				$savedir = trim(array_shift($jobAry));
+				$url = trim(array_shift($jobAry));
+				$filtername = trim(array_shift($jobAry));
+				if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
+					array_push($joblist, array(
+						'savedir' => $savedir,
+						'url' => $url,
+						'filtername' => $filtername
+						)
+					);
+				}
+			}
+			return $joblist;
+		}
+		*/
+		// $dir = trim(checkDirPathString($dir));
+		// if (checkDirectory($dir)) {		
+		
 		// return
 		return true;
 	}

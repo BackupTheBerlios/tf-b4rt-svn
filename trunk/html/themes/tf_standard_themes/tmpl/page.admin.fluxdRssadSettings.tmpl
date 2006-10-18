@@ -251,13 +251,17 @@
 			<input type="hidden" name="pageop" value="saveJob">
 			<tr>					
 				<td>
-					<input type="text" size="40" name="savedir" value="<tmpl_var name="savedir">">
+					<input type="text" size="40" name="savedir">
 				</td>	
 				<td>
-					<input type="text" size="50" name="url" value="<tmpl_var name="url">">						
+					<input type="text" size="50" name="url">						
 				</td>
 				<td>
-					<input type="text" size="15" name="filtername" value="<tmpl_var name="filtername">">
+					<select name="filtername">
+						<tmpl_loop name="rssad_filters">
+							<option value="<tmpl_var name="filtername">"><tmpl_var name="filtername"></option>
+						</tmpl_loop>
+					</select>
 				</td>
 			</tr>
 			<tr>
@@ -286,13 +290,17 @@
 				<input type="hidden" name="job" value="<tmpl_var name="jobnumber">">
 				<tr>					
 					<td>
-						<input type="text" size="40" name="savedir" value="<tmpl_var name="savedir">">
+						<input type="text" size="40" name="savedir" value="<tmpl_var name="rssad_savedir">">
 					</td>	
 					<td>
-						<input type="text" size="50" name="url" value="<tmpl_var name="url">">						
+						<input type="text" size="50" name="url" value="<tmpl_var name="rssad_url">">						
 					</td>
 					<td>
-						<input type="text" size="15" name="filtername" value="<tmpl_var name="filtername">">
+						<select name="filtername">
+							<tmpl_loop name="rssad_filters">
+								<option value="<tmpl_var name="filtername">"<tmpl_var name="selected">><tmpl_var name="filtername"></option>							
+							</tmpl_loop>
+						</select>
 					</td>
 				</tr>
 				<tr>
