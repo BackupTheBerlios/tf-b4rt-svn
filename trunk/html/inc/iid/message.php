@@ -54,7 +54,7 @@ if (!empty($message)) {
 	else
 		$force_read = 0;
 	$message = check_html($message, "nohtml");
-	SaveMessage($to_user, $cfg["user"], $message, $to_all, $force_read);
+	SaveMessage($to_user, $cfg["user"], htmlentities($message), $to_all, $force_read);
 	header("location: index.php?iid=readmsg");
 	exit();
 }

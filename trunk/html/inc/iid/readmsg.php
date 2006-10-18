@@ -53,6 +53,7 @@ if (isset($_REQUEST['mid'])) {
 		MarkMessageRead($mid);
 	}
 	$message = check_html($message, "a");
+	$message = html_entity_decode($message);
 	$message = str_replace("\n", "<br>", $message);
 	if (IsUser($from_user))
 		$tmpl->setvar('IsUser', 1);
