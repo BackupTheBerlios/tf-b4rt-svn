@@ -1317,11 +1317,18 @@ function convertIntegerToArray($dataInt) {
  * @return boolean if dir exists/could be created
  */
 function checkDirectory($dir, $mode = 0755) {
-  if ((is_dir($dir) && is_writable ($dir)) || mkdir($dir,$mode))
-	return true;
-  if (! checkDirectory(dirname($dir),$mode))
-	return false;
-  return mkdir($dir,$mode);
+	global $CHECKDIR_RECURSION;
+	if (isset($CHECKDIR_RECURSION))
+		$CHECKDIR_RECURSION++;
+	else
+		$CHECKDIR_RECURSION = 0;
+	if ($CHECKDIR_RECURSION > 10)
+		return false;
+	if ((@is_dir($dir) && @is_writable($dir)) || @mkdir($dir, $mode))
+		return true;
+	if (!@checkDirectory(dirname($dir), $mode))
+		return false;
+	return @mkdir($dir, $mode);
 }
 
 /**
