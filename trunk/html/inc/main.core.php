@@ -88,8 +88,8 @@ require_once('inc/config/config.db.php');
 // db
 require_once('inc/db.php');
 
-// Create Connection.
-$db = getdb();
+// initialize database
+initializeDatabase();
 
 // load global settings
 loadSettings('tf_settings');
