@@ -85,7 +85,7 @@ class ClientHandlerTransmission extends ClientHandler
 
         // workaround for bsd-pid-file-problem : touch file first
         if ((!$enqueue) && ($this->cfg["_OS"] == 2))
-        	@shell_exec("touch ".escapeshellarg($this->pidFile));
+        	@touch($this->pidFile);
         
 		// note :
 		// order of args must not change for ps-parsing-code in
