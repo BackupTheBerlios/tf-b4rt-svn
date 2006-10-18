@@ -330,6 +330,15 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 		unset($_POST['watch_user']);
 	if (isset($_POST['watch_dir']))
 		unset($_POST['watch_dir']);
+	if (isset($_POST['checkdir'])) {
+		if ($_POST['checkdir'] == "true")
+		    $doCheckdir = true;
+		else
+		    $doCheckdir = false;
+		unset($_POST['checkdir']);
+	} else {
+		$doCheckdir = false;	
+	}
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
 	$settings = array();
@@ -396,14 +405,14 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 							$user = trim(array_shift($jobAry));
 							$dir = trim(array_shift($jobAry));
 							$dir = trim(checkDirPathString($dir));
-							if (checkDirectory($dir)) {
-								if ($idx > 0)
-									$val .= ';';
-								$val .= $user;
-								$val .= ':';
-								$val .= $dir;
-							}
+							if ($idx > 0)
+								$val .= ';';
+							$val .= $user;
+							$val .= ':';
+							$val .= $dir;
 							$idx++;
+							if ($doCheckdir) 
+								checkDirectory($dir);
 						}
 						$settings[$key] = trim($val);
 					} else {
