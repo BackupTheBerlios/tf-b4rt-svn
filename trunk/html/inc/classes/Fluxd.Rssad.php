@@ -26,6 +26,12 @@ class FluxdRssad extends FluxdServiceMod
 	// basedir
 	var $basedir = ".fluxd/rssad/";
 	
+	// jobs-delim
+	var $delimJobs = "|";
+
+	// job-delim
+	var $delimJob = "#";
+	
     /**
      * ctor
      */
@@ -200,10 +206,10 @@ class FluxdRssad extends FluxdServiceMod
 		// savedir#url#filtername
 		if ((isset($this->cfg["fluxd_Rssad_jobs"])) && (strlen($this->cfg["fluxd_Rssad_jobs"]) > 0)) {
 			$joblist = array();
-			$jobs = explode("|", trim($this->cfg["fluxd_Rssad_jobs"]));
+			$jobs = explode($this->delimJobs, trim($this->cfg["fluxd_Rssad_jobs"]));
 			if (count($jobs) > 0) {
 				foreach ($jobs as $job) {
-					$jobAry = explode("#", trim($job));
+					$jobAry = explode($this->delimJob, trim($job));
 					$savedir = trim(array_shift($jobAry));
 					$url = trim(array_shift($jobAry));
 					$filtername = trim(array_shift($jobAry));
@@ -235,6 +241,137 @@ class FluxdRssad extends FluxdServiceMod
 		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Jobs Saved : \n".$content);
 		// return
 		return true;
+	}
+	
+	/**
+	 * get jobs-content
+	 *
+	 * @param $jobnumber
+	 * @return job as array or false on error
+	 */
+	function jobGetContent($jobnumber) {
+		if ($jobNumber > 0) {
+			$jobs = $this->jobsGetList();		
+			if (($jobs !== false) && (count($jobs) >= ($jobNumber - 1)))
+				return $jobs[$jobNumber - 1];
+			else
+				return false;
+		} else {
+			return false;
+		}
+	}	
+	
+	/**
+	 * adds a job
+	 * 
+	 * @param $jobNumber
+	 * @param $savedir
+	 * @param $url
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function jobAdd($savedir, $url, $filtername) {
+		if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
+			$jobsString = "";
+			$jobs = $this->jobsGetList();
+			if (($jobs !== false) && (count($jobs) > 0)) {
+				foreach ($jobs as $job) {
+					$jobsString .= $job["savedir"].$this->delimJob;
+					$jobsString .= $job["url"].$this->delimJob;
+					$jobsString .= $job["filtername"];
+					$jobsString .= $this->delimJobs;
+				}
+			}
+			$jobsString .= $savedir.$this->delimJob;
+			$jobsString .= $url.$this->delimJob;
+			$jobsString .= $filtername;		
+			// update setting
+			return $this->jobsUpdate($jobsString);
+		} else {
+			return false;
+		}
+	}	
+	
+	/**
+	 * updates a single job
+	 * 
+	 * @param $jobNumber
+	 * @param $savedir
+	 * @param $url
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function jobUpdate($jobNumber, $savedir, $url, $filtername) {
+		if (($jobNumber > 0) && (strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
+			$jobs = $this->jobsGetList();
+			if (($jobs !== false) && (count($jobs) > 0)) {
+				$result = array();
+				$idx = 1;
+				while (count($jobs) > 0) {
+					$job = array_shift($jobs);
+					if ($idx != $jobNumber)
+						array_push($result, $job);
+					else
+						array_push($result, array(
+							'savedir' => $savedir,
+							'url' => $url,
+							'filtername' => $filtername
+							)
+						);
+					$idx++;
+				}
+				$jobsString = "";
+				$resultCount = count($result);
+				for ($i = 0; $i < $resultCount; $i++) {
+					$jobsString .= $result[$i]["savedir"].$this->delimJob;
+					$jobsString .= $result[$i]["url"].$this->delimJob;
+					$jobsString .= $result[$i]["filtername"];
+					if ($i < ($resultCount - 1))
+						$jobsString .= $this->delimJobs;
+				}
+				// update setting
+				return $this->jobsUpdate($jobsString);			
+			}
+			return false;
+		} else {
+			return false;
+		}		
+	}
+	
+	/**
+	 * deletes a single job
+	 * 
+	 * @param $jobNumber
+	 * @return boolean
+	 */
+	function jobDelete($jobNumber) {
+		if ($jobNumber > 0) {
+			$jobs = $this->jobsGetList();
+			if (($jobs !== false) && (count($jobs) > 0)) {
+				$result = array();
+				$idx = 1;
+				while (count($jobs) > 0) {
+					$job = array_shift($jobs);
+					if ($idx != $jobNumber)
+						array_push($result, $job);
+					$idx++;
+				}
+				$jobsString = "";
+				$resultCount = count($result);
+				for ($i = 0; $i < $resultCount; $i++) {
+					$jobsString .= $result[$i]["savedir"].$this->delimJob;
+					$jobsString .= $result[$i]["url"].$this->delimJob;
+					$jobsString .= $result[$i]["filtername"];
+					if ($i < ($resultCount - 1))
+						$jobsString .= $this->delimJobs;
+				}
+				// update setting
+				return $this->jobsUpdate($jobsString);			
+			}
+			return false;
+		} else {
+			return false;
+		}			
 	}		
 	
 }

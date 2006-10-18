@@ -200,11 +200,12 @@
 				<td>	
 					<tmpl_if name="filter_saved" value="1">
 						<br>
-						<strong>Filter <em><tmpl_var name="filtername"></em> saved.</strong>
+						<strong><tmpl_var name="rssad_filter_message"></strong>
 						<br>
 						<pre><tmpl_var name="filtercontent"></pre>
 					<tmpl_else>
-						<strong>Error saving Filter <em><tmpl_var name="filtername"></em> : </strong>
+						<br>
+						<strong>Error saving Filter <tmpl_var name="filtername"> : </strong>
 						<br>
 						<em><tmpl_var name="messages"></em>
 					</tmpl_if>
@@ -223,9 +224,10 @@
 				<td>	
 					<tmpl_if name="filter_deleted" value="1">
 						<br>	
-						<strong>Filter <em><tmpl_var name="filtername"></em> deleted.</strong>
+						<strong>Filter <tmpl_var name="filtername"> deleted.</strong>
 					<tmpl_else>
-						<strong>Error deleting Filter <em><tmpl_var name="filtername"></em> : 
+						<br>
+						<strong>Error deleting Filter <tmpl_var name="filtername"> : 
 						<br>
 						<em><tmpl_var name="messages"></em>
 					</tmpl_if>
@@ -262,6 +264,7 @@
 				</tr>			
 				<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
 				<input type="hidden" name="pageop" value="saveJob">
+				<input type="hidden" name="job" value="<tmpl_var name="jobnumber">">
 				<tr>					
 					<td>
 						<input type="text" size="40" name="savedir" value="<tmpl_var name="savedir">">
@@ -282,7 +285,8 @@
 			<tmpl_else>
 				<tr>
 					<td colspan="3">
-						<strong>There was an error.</strong>
+						<strong>Error loading Job : </strong>
+						<em><tmpl_var name="messages"></em>
 					</td>
 				</tr>
 			</tmpl_if>
@@ -297,7 +301,15 @@
 			</tr>		
 			<tr>
 				<td>	
-					TODO
+					<tmpl_if name="rssad_job_saved" value="1">
+						<br>
+						<strong><tmpl_var name="rssad_job_message"></strong>
+					<tmpl_else>
+						<br>
+						<strong>Error saving Job : </strong>
+						<br>
+						<em><tmpl_var name="messages"></em>
+					</tmpl_if>
 				</td>
 			</tr>
 		</table>
@@ -311,7 +323,15 @@
 			</tr>		
 			<tr>
 				<td>	
-					TODO
+					<tmpl_if name="rssad_job_deleted" value="1">
+						<br>	
+						<strong>Job deleted.</strong>
+					<tmpl_else>
+						<br>
+						<strong>Error deleting Job : 
+						<br>
+						<em><tmpl_var name="messages"></em>
+					</tmpl_if>
 				</td>
 			</tr>
 		</table>

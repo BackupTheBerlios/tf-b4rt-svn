@@ -163,10 +163,13 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : No Filtername.");
 		} else {
 			$isnew = false;
-			if ($new == true)
+			if ($new == "true") {
 				$isnew = true;
-			else
+				$tmpl->setvar('rssad_filter_message', "Filter ".$filtername." added.");
+			} else {
 				$isnew = false;
+				$tmpl->setvar('rssad_filter_message', "Filter ".$filtername." updated.");
+			}
 			if ($rssad->filterIdCheck($filtername, $isnew) === true) {
 				// save the filter
 				$tmpl->setvar('filtername', $filtername);
@@ -209,11 +212,15 @@ switch ($pageop) {
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Filter");
 		break;
 		
+		
 	case "addJob":
+		
+		// TODO
 		
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Add Job");		
 		break;
+		
 		
 	case "editJob":
 		$jobNumber = getRequestVar('job');
@@ -222,25 +229,76 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : No Job-Number.");
 			$tmpl->setvar('rssad_job_loaded', 0);
 		} else {
-			// TODO
-			$tmpl->setvar('rssad_job_loaded', 1);
-		}		
+			$job = $rssad->jobGetContent($jobNumber);
+			if ($job !== false) {
+				$tmpl->setvar('rssad_job_loaded', 1);
+				$tmpl->setvar('jobnumber', $jobNumber);
+				$tmpl->setvar('savedir', $job['savedir']);
+				$tmpl->setvar('url', $job['url']);
+				$tmpl->setvar('filtername', $job['filtername']);
+			} else {
+				$tmpl->setvar('rssad_job_loaded', 0);
+				$tmpl->setvar('messages', $jobNumber);
+			}
+		}
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Job");		
 		break;
 		
 	case "saveJob":
-		
+		$jobNumber = getRequestVar('job');
+		$savedir = getRequestVar('savedir');
+		$url = getRequestVar('url');
+		$filtername = getRequestVar('filtername');
+		if (empty($jobNumber))
+			$isNew = true;
+		else
+			$isNew = false;		
+		$paramErrors = 0;
+		if (empty($savedir))
+			$paramErrors++;
+		if (empty($url))
+			$paramErrors++;
+		if (empty($filtername))
+			$paramErrors++;
+		if ($paramErrors != 0) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : Argument-Error.");
+		} else {
+			if ($isNew) {
+				if ($rssad->jobAdd($savedir, $url, $filtername) === true) {
+					$tmpl->setvar('rssad_job_saved', 1);
+					$tmpl->setvar('rssad_job_message', "Job added.");
+				} else {
+					$tmpl->setvar('rssad_job_saved', 0);
+				}
+			} else {
+				if ($rssad->jobUpdate($jobNumber, $savedir, $url, $filtername) === true) {
+					$tmpl->setvar('rssad_job_saved', 1);
+					$tmpl->setvar('rssad_job_message', "Job updated.");
+				} else {
+					$tmpl->setvar('rssad_job_saved', 0);
+				}			
+			}
+		}		
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Save Job");		
 		break;
-		
 	case "deleteJob":
-		
+		$jobNumber = getRequestVar('job');
+		if (empty($jobNumber)) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : No Job-Number.");
+			$tmpl->setvar('rssad_job_deleted', 0);
+		} else {
+			if ($rssad->jobDelete($jobNumber) === true)
+				$tmpl->setvar('rssad_job_deleted', 1);
+			else
+				$tmpl->setvar('rssad_job_deleted', 0);
+		}			
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Job");		
-		break;						
-		
+		break;
 }
 
 //
