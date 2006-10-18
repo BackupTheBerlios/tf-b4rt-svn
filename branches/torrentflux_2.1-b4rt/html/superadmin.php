@@ -1251,21 +1251,6 @@ function getReleaseList() {
 }
 
 /**
- * checks a dir. recursive process to emulate "mkdir -p" if dir not present
- *
- * @param $dir the name of the dir
- * @param $mode the mode of the dir if created. default is 0755
- * @return boolean if dir exists/could be created
- */
-function checkDir($dir, $mode = 0755) {
-  if ((is_dir($dir) && is_writable ($dir)) || @mkdir($dir,$mode))
-	return true;
-  if (! checkDir(dirname($dir),$mode))
-	return false;
-  return @mkdir($dir,$mode);
-}
-
-/**
  * formats a timestamp-string to human readable format.
  *
  * @param $timestampString string with prop. timestamp
@@ -1494,7 +1479,7 @@ function backupCreate($talk = false, $compression = 0) {
 	global $cfg, $error;
 	// backup-dir
 	$dirBackup = $cfg["path"]. _DIR_BACKUP;
-	if (! checkDir($dirBackup)) {
+	if (! checkDirectory($dirBackup)) {
 		$error = "Errors when checking/creating backup-dir : ".$dirBackup;
 		return "";
 	}
