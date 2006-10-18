@@ -235,36 +235,40 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return boolean
 	 */
 	function jobsUpdate($content) {
-		// update setting
-		updateSetting("tf_settings", "fluxd_Rssad_jobs", $content);
-		// log
-		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Jobs Saved : \n".$content);
-		// check dirs
-		/*
-		$jobs = explode($this->delimJobs, trim($this->cfg["fluxd_Rssad_jobs"]));
-		if (count($jobs) > 0) {
-			foreach ($jobs as $job) {
+		$jobsSane = array();
+		$jobs = explode($this->delimJobs, trim($content));
+		if (($jobs !== false) && (count($jobs) > 0)) {
+			while (count($jobs) > 0) {
+				$job = array_shift($jobs);
 				$jobAry = explode($this->delimJob, trim($job));
 				$savedir = trim(array_shift($jobAry));
 				$url = trim(array_shift($jobAry));
 				$filtername = trim(array_shift($jobAry));
-				if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
-					array_push($joblist, array(
-						'savedir' => $savedir,
+				if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0))
+					array_push($jobsSane, array(
+						'savedir' => trim(checkDirPathString($savedir)),
 						'url' => $url,
 						'filtername' => $filtername
 						)
 					);
-				}
 			}
-			return $joblist;
+			$jobsString = "";
+			$resultCount = count($jobsSane);
+			for ($i = 0; $i < $resultCount; $i++) {
+				$jobsString .= $jobsSane[$i]["savedir"].$this->delimJob;
+				$jobsString .= $jobsSane[$i]["url"].$this->delimJob;
+				$jobsString .= $jobsSane[$i]["filtername"];
+				if ($i < ($resultCount - 1))
+					$jobsString .= $this->delimJobs;
+			}
+			// update setting
+			updateSetting("tf_settings", "fluxd_Rssad_jobs", $jobsString);
+			// log
+			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Jobs Saved : \n".$jobsString);
+			return true;
+		} else {
+			return false;
 		}
-		*/
-		// $dir = trim(checkDirPathString($dir));
-		// if (checkDirectory($dir)) {		
-		
-		// return
-		return true;
 	}
 	
 	/**
@@ -295,7 +299,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $filtername
 	 * @return boolean
 	 */
-	function jobAdd($savedir, $url, $filtername) {
+	function jobAdd($savedir, $url, $filtername, $checkdir = false) {
 		if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
 			$jobsString = "";
 			$jobs = $this->jobsGetList();
@@ -307,11 +311,16 @@ class FluxdRssad extends FluxdServiceMod
 					$jobsString .= $this->delimJobs;
 				}
 			}
-			$jobsString .= $savedir.$this->delimJob;
+			$jobsString .= trim(checkDirPathString($savedir)).$this->delimJob;
 			$jobsString .= $url.$this->delimJob;
 			$jobsString .= $filtername;		
+			// check dir
+			if ($checkdir)
+				$check = checkDirectory($savedir);
+			else
+				$check = true;
 			// update setting
-			return $this->jobsUpdate($jobsString);
+			return ($check && $this->jobsUpdate($jobsString));
 		} else {
 			return false;
 		}
@@ -326,7 +335,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $filtername
 	 * @return boolean
 	 */
-	function jobUpdate($jobNumber, $savedir, $url, $filtername) {
+	function jobUpdate($jobNumber, $savedir, $url, $filtername, $checkdir = false) {
 		if (($jobNumber > 0) && (strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
 			$jobs = $this->jobsGetList();
 			if (($jobs !== false) && (count($jobs) > 0)) {
@@ -338,7 +347,7 @@ class FluxdRssad extends FluxdServiceMod
 						array_push($result, $job);
 					else
 						array_push($result, array(
-							'savedir' => $savedir,
+							'savedir' => trim(checkDirPathString($savedir)),
 							'url' => $url,
 							'filtername' => $filtername
 							)
@@ -354,8 +363,13 @@ class FluxdRssad extends FluxdServiceMod
 					if ($i < ($resultCount - 1))
 						$jobsString .= $this->delimJobs;
 				}
+				// check dir
+				if ($checkdir)
+					$check = checkDirectory($savedir);
+				else
+					$check = true;
 				// update setting
-				return $this->jobsUpdate($jobsString);			
+				return ($check && $this->jobsUpdate($jobsString));			
 			}
 			return false;
 		} else {

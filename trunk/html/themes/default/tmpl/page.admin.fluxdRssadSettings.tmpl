@@ -79,7 +79,7 @@
 							</tmpl_if>						
 						</td>
 						<td>	
-							<tmpl_var name="filtername">
+							<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><tmpl_var name="filtername"></a>
 						</td>
 					</tr>
 				</tmpl_loop>
@@ -92,10 +92,14 @@
 			</tmpl_if>
 			<tr>
 				<td colspan="4" align="center">
-					<form action="admin.php?op=fluxdRssadSettings" method="post">
-						<input type="hidden" name="pageop" value="addJob">
-						<input type="Submit" value="Add Job">
-					</form>
+					<tmpl_if name="rssad_filters">
+						<form action="admin.php?op=fluxdRssadSettings" method="post">
+							<input type="hidden" name="pageop" value="addJob">
+							<input type="Submit" value="Add Job">
+						</form>
+					<tmpl_else>
+						<form><input type="Submit" value="Add Job" disabled></form>
+					</tmpl_if>	
 				</td>
 			</tr>				
 		</table>
@@ -265,6 +269,8 @@
 			</tr>
 			<tr>
 				<td colspan="3" align="center">
+					Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
+					<br>				
 					<input type="Submit" value="Add Job">
 				</td>
 			</tr>				
@@ -304,6 +310,8 @@
 				</tr>
 				<tr>
 					<td colspan="3" align="center">
+						Check/Create dir <input type="checkbox" name="checkdir" value="true" checked>
+						<br>					
 						<input type="Submit" value="Save Job">
 					</td>
 				</tr>				

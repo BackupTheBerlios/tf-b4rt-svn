@@ -273,10 +273,15 @@ switch ($pageop) {
 		$savedir = getRequestVar('savedir');
 		$url = getRequestVar('url');
 		$filtername = getRequestVar('filtername');
+		$checkdir = getRequestVar('checkdir');
 		if (empty($jobNumber))
 			$isNew = true;
 		else
-			$isNew = false;		
+			$isNew = false;
+		if ($checkdir == "true")
+			$doCheckdir = true;
+		else
+			$doCheckdir = false;
 		$paramErrors = 0;
 		if (empty($savedir))
 			$paramErrors++;
@@ -289,21 +294,21 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : Argument-Error.");
 		} else {
 			if ($isNew) {
-				if ($rssad->jobAdd($savedir, $url, $filtername) === true) {
+				if ($rssad->jobAdd($savedir, $url, $filtername, $doCheckdir) === true) {
 					$tmpl->setvar('rssad_job_saved', 1);
 					$tmpl->setvar('rssad_job_message', "Job added.");
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
 				}
 			} else {
-				if ($rssad->jobUpdate($jobNumber, $savedir, $url, $filtername) === true) {
+				if ($rssad->jobUpdate($jobNumber, $savedir, $url, $filtername, $doCheckdir) === true) {
 					$tmpl->setvar('rssad_job_saved', 1);
 					$tmpl->setvar('rssad_job_message', "Job updated.");
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
 				}			
 			}
-		}		
+		}
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Save Job");
 		break;
