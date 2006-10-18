@@ -22,9 +22,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
-    v 1.01 - TorrentBox changed the download.php to dl.php.
-    v 1.02 - update to add torrentbox.com to download param.
+    v 1.04 - Oct 18, 06 - fix paging
     v 1.03 - updated by batmark
+    v 1.02 - update to add torrentbox.com to download param.
+    v 1.01 - TorrentBox changed the download.php to dl.php.
 */
 
 class SearchEngine extends SearchEngineBase
@@ -38,7 +39,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "TorrentBox";
 
         $this->author = "kboy";
-        $this->version = "1.03";
+        $this->version = "1.04";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,876.0.html";
 
         $this->Initialize($cfg);
@@ -226,7 +227,7 @@ class SearchEngine extends SearchEngineBase
 
            foreach($tmpListArr as $key =>$value)
             {
-		$buildLine = true;
+                $buildLine = true;
                 if (strpos($value,".torrent"))
                 {
                     $ts = new tBox($value);
@@ -275,22 +276,20 @@ class SearchEngine extends SearchEngineBase
             // Yes, then lets grab it and display it!  ;)
             $thing = substr($thing,strpos($thing,"<span class=\"pager\">")+strlen("<span class=\"pager\">"));
             $pages = substr($thing,0,strpos($thing,"</span>"));
+
+            $pages = str_replace("http://www.torrentbox.com","",$pages);
+            $pages = str_replace("page=","pg=",$pages);
+            $pages = str_replace("search=","searchterm=",$pages);
+
             if(strpos($this->curRequest,"LATEST"))
             {
-                if(strpos($pages,"cat="))
-                {
-                    $pages = str_replace("page=","pg=",str_replace("http://www.torrentbox.com/torrents-browse.php?",$this->searchURL()."&LATEST=1&",$pages));
-                }
-                else
-                {
-                    $pages = str_replace("http://www.torrentbox.com/torrents-browse.php?page=",$this->searchURL()."&LATEST=1&pg=",$pages);
-                }
+                $pages = str_replace("/torrents-browse.php?",$this->searchURL()."&LATEST=1&",$pages);
             }
             else
             {
-                $pages = str_replace("page","pg",str_replace("http://www.torrentbox.com/torrents-browse.php?search=",$this->searchURL()."&searchterm=",$pages));
+                $pages = str_replace("/torrents-browse.php?",$this->searchURL()."&",$pages);
             }
-            $output .= "<div align=center>".$pages."</div>";
+            $output = "<div align=center>".$pages."</div>";
         }
 
         return $output;
@@ -338,12 +337,12 @@ class tBox
                 }
                 $this->torrentName = $this->cleanLine($tmpListArr["1"]);  // TorrentName
 
-		$tmpStr = $tmpListArr["2"];
+        $tmpStr = $tmpListArr["2"];
                 $start = strpos($tmpStr, "href");
-		$tmpStr = substr($tmpStr,$start + 6, strlen($tmpStr)-$start-6);
-		$end = strpos($tmpStr, ".torrent");
-		$tmpStr = substr($tmpStr, 0, $end + 8); //the DL link
-		$this->torrentFile = "http://www.torrentbox.com".$tmpStr;
+        $tmpStr = substr($tmpStr,$start + 6, strlen($tmpStr)-$start-6);
+        $end = strpos($tmpStr, ".torrent");
+        $tmpStr = substr($tmpStr, 0, $end + 8); //the DL link
+        $this->torrentFile = "http://www.torrentbox.com".$tmpStr;
 
                 $this->dateAdded = $this->cleanLine($tmpListArr["4"]);  // Date Added
                 $this->torrentSize = $this->cleanLine($tmpListArr["5"]);  // Size of File
