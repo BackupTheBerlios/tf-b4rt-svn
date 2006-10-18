@@ -1192,15 +1192,21 @@ function getDataFromUrl($url) {
 }
 
 /**
- * get a ado-connection to our database
+ * get a ado-connection to our database.
  *
- * @return database-connection
+ * @return database-connection or false on error
  */
 function getAdoConnection() {
-	global $cfg;
-	$dbCon = NewADOConnection($cfg["db_type"]);
-	$dbCon->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-	return $dbCon;
+	global $cfg;	
+	// create ado-object
+    $db = &ADONewConnection($cfg["db_type"]);
+    // connect
+    @ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    // check for error	
+    if ($db->ErrorNo() != 0)
+    	return false;    
+    // return db-connection
+	return $db;	
 }
 
 /**
