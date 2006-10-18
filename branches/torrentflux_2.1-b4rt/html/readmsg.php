@@ -46,6 +46,7 @@ if (!empty($mid)) {
     DisplayHead(_MESSAGES);
     //$message = check_html($message, "nohtml");
     $message = check_html($message, "a");
+    $message = html_entity_decode($message);
     $message = str_replace("\n", "<br>", $message);
     echo "<a href=\"".$_SERVER['PHP_SELF']."\"><img src=\"images/up_dir.gif\" width=16 height=16 title=\""._RETURNTOMESSAGES."\" border=0>"._RETURNTOMESSAGES."</a><br>";
     echo "<table width=\"740\" border=1 bordercolor=\"".$cfg["table_admin_border"]."\" cellpadding=\"2\" cellspacing=\"0\"><tr>";
