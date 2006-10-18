@@ -250,10 +250,11 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return job as array or false on error
 	 */
 	function jobGetContent($jobnumber) {
-		if ($jobNumber > 0) {
-			$jobs = $this->jobsGetList();		
-			if (($jobs !== false) && (count($jobs) >= ($jobNumber - 1)))
-				return $jobs[$jobNumber - 1];
+		$jobInt = (int) $jobnumber;
+		if ($jobInt > 0) {
+			$jobs = $this->jobsGetList();
+			if (($jobs !== false) && (count($jobs) > ($jobInt - 1)))
+				return $jobs[$jobInt - 1];
 			else
 				return false;
 		} else {

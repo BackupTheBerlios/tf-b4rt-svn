@@ -54,8 +54,16 @@ function validateSettings(section) {
 				msg = msg + "* Enter at least one Filter.\n";
 				document.theForm.rssad_filter_entry.focus();
 			}
-			break;
+			break;					
 		case 'fluxd_Rssad_job':
+			if (document.theForm.savedir.value.length < 1) {
+				msg = msg + "* Enter a savedir.\n";
+				document.theForm.savedir.focus();
+			}
+			if (document.theForm.url.value.length < 1) {
+				msg = msg + "* Enter a URL.\n";
+				document.theForm.url.focus();
+			}		
 			break;					
 		case 'index':
 			if (isNumber(document.theForm.page_refresh.value) == false ) {

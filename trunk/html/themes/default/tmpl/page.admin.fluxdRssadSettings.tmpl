@@ -237,15 +237,34 @@
 	<tmpl_elseif name="pageop" value="addJob">
 		<table width="100%" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
 			<tr>
-				<td bgcolor="#d6dfe6" background="themes/default/images/bar.gif">
+				<td colspan="3" bgcolor="#d6dfe6" background="themes/default/images/bar.gif">
 					<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Add Job</font>
 				</td>
 			</tr>		
-			<tr>
-				<td>	
-					TODO
+			<tr bgcolor="#d6dfe6">
+				<td align="center">Savedir</td>
+				<td align="center">URL</td>
+				<td align="center">Filter</td>
+			</tr>					
+			<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
+			<input type="hidden" name="pageop" value="saveJob">
+			<tr>					
+				<td>
+					<input type="text" size="40" name="savedir" value="<tmpl_var name="savedir">">
+				</td>	
+				<td>
+					<input type="text" size="50" name="url" value="<tmpl_var name="url">">						
+				</td>
+				<td>
+					<input type="text" size="15" name="filtername" value="<tmpl_var name="filtername">">
 				</td>
 			</tr>
+			<tr>
+				<td colspan="3" align="center">
+					<input type="Submit" value="Add Job">
+				</td>
+			</tr>				
+			</form>
 		</table>
 		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
 	<tmpl_elseif name="pageop" value="editJob">
