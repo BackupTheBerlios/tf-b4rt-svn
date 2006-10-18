@@ -119,10 +119,8 @@ class ClientHandlerTransmission extends ClientHandler
             // This file is started manually.
             $this->command = "cd " . escapeshellarg($this->savepath) . "; HOME=".escapeshellarg($this->cfg["path"])."; export HOME;". $this->umask ." nohup " . $this->nice . escapeshellarg($this->cfg["btclient_transmission_bin"]) . " " . $this->command;
 			// workaround for bsd-pid-file-problem : touch file first
-			switch (_OS) {
-				case 2: // bsd
-					@shell_exec("touch ".escapeshellarg($this->pidFile));
-			}
+			if (_OS == 2)
+				@touch($this->pidFile);
         }
         // start the client
         parent::doStartTorrentClient();
