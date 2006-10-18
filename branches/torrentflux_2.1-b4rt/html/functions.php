@@ -28,13 +28,15 @@ if(isset($_SESSION['user']))
 else
     $cfg["user"] = "";
 
-include_once('db.php');
-include_once("settingsfunctions.php");
-
-
 //******************************************************************************
 // include functions
 //******************************************************************************
+
+// db
+include_once('db.php');
+
+// settings functions
+include_once("settingsfunctions.php");
 
 // tf-functions
 include_once('functions.tf.php');
@@ -47,8 +49,8 @@ include_once('functions.b4rt.php');
 
 //******************************************************************************
 
-// Create Connection.
-$db = getdb();
+// initialize database
+initializeDatabase();
 
 // load global settings
 loadSettings();

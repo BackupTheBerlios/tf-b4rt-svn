@@ -20,7 +20,14 @@
 
 *******************************************************************************/
 
+// config
 include_once("config.php");
+
+// db
+include_once('db.php');
+
+// settings functions
+include_once("settingsfunctions.php");
 
 // Start Session and grab user
 session_start("TorrentFlux");
@@ -31,13 +38,10 @@ if (! isset($_SESSION['user'])) {
     $cfg["user"] = strtolower($_SESSION['user']);
 }
 
-// 2004-12-09 PFM
-include_once('db.php');
+// initialize database
+initializeDatabase();
 
-// Create Connection.
-$db = getdb();
-
-include_once("settingsfunctions.php");
+// load global settings
 loadSettings();
 
 // somehow there is a bug when disabling rememberme-hack while cookie is set.

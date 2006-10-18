@@ -26,14 +26,14 @@ include_once('config.php');
 include_once('adodb/adodb.inc.php');
 
 /**
- * get ado-connection
+ * initialize ADOdb-connection
  *
- * @return ado-connection
+ * @return ADOdb-connection
  */
-function getdb() {
-	global $cfg;
+function initializeDatabase() {
+	global $cfg, $db;
 	// create ado-object
-    $db = &ADONewConnection($cfg["db_type"]);   
+    $db = ADONewConnection($cfg["db_type"]);   
     // connect
     if ($cfg["db_pcon"])
     	@ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
@@ -42,8 +42,19 @@ function getdb() {
     // check for error	
     if ($db->ErrorNo() != 0)
     	showErrorPage('Could not connect to database.<br>Check your database settings in the config.db.php file.');
-    // return db-connection
-	return $db;
+}
+
+/**
+ * get ADOdb-connection
+ *
+ * @return ADOdb-connection or false
+ */
+function getdb() {
+	global $db;
+	if (isset($db))
+		return $db;
+	else
+		return false;
 }
 
 /**

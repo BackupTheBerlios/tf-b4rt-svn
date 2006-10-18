@@ -20,13 +20,19 @@
 
 *******************************************************************************/
 
-include_once('config.php');
+// config
+include_once("config.php");
+
+// db
 include_once('db.php');
+
+// settings functions
 include_once("settingsfunctions.php");
 
-// Create Connection.
-$db = getdb();
+// initialize database
+initializeDatabase();
 
+// load global settings
 loadSettings();
 
 //__________________________________________________________________________________________________

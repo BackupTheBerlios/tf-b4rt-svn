@@ -20,13 +20,19 @@
 
 *******************************************************************************/
 
-// ADODB support.
+// db
 require_once('db.php');
+
+// settings functions
 require_once("settingsfunctions.php");
 
-// Create Connection.
-$db = getdb();
+// initialize database
+initializeDatabase();
+
+// load global settings
 loadSettings();
+
+// session start
 @session_start("TorrentFlux");
 require_once("config.php");
 include("themes/".$cfg["default_theme"]."/index.php");

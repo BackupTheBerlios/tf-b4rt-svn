@@ -32,7 +32,9 @@ if (!isset($argv)) die();
 // init
 // -----------------------------------------------------------------------------
 
+// db
 include_once('db.php');
+// settings functions
 include_once("settingsfunctions.php");
 // tf-functions
 include_once('functions.tf.php');
@@ -41,8 +43,8 @@ include_once('functions.hacks.php');
 // b4rt-functions
 include_once('functions.b4rt.php');
 
-// Create Connection.
-$db = getdb();
+// initialize database
+initializeDatabase();
 
 // load settings
 loadSettings();
