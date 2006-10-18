@@ -21,15 +21,6 @@
 					<img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Filters</font>
 				</td>
 			</tr>
-			<tr>
-				<td align="center">
-					<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_1')">
-						<input type="hidden" name="pageop" value="addFilter">
-						Name : <input type="Text" size="30" maxlength="255" name="filtername">
-						<input type="Submit" value="Add Filter">
-					</form>
-				</td>
-			</tr>			
 			<tmpl_if name="rssad_filters">
 				<tmpl_loop name="rssad_filters">
 					<tr>
@@ -47,32 +38,68 @@
 					</td>
 				</tr>
 			</tmpl_if>
+			<tr>
+				<td align="center">
+					<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter')">
+						<input type="hidden" name="pageop" value="addFilter">
+						Name : <input type="Text" size="30" maxlength="255" name="filtername">
+						<input type="Submit" value="Add Filter">
+					</form>
+				</td>
+			</tr>			
 		</table>
 		<br>
 		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 			<tr>
-				<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+				<td colspan="4" bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
 					<img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Jobs</font>
 				</td>
 			</tr>
 			<tmpl_if name="rssad_jobs">
+				<tr bgcolor="<tmpl_var name="table_border_dk">">
+					<td align="center">&nbsp;</td>
+					<td align="center">Savedir</td>
+					<td align="center">URL</td>
+					<td align="center">Filter</td>
+				</tr>
 				<tmpl_loop name="rssad_jobs">
 					<tr>
 						<td>
-							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="filtername">" onclick="return confirm('Delete Filter <tmpl_var name="filtername"> ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 border=0 title="Delete <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
-							<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="filtername">"><img src="themes/tf_standard_themes/images/edit.gif" width=16 height=16 border=0 title="Edit <tmpl_var name="filtername">" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteJob&job=<tmpl_var name="__ROWNUM__">" onclick="return confirm('Delete Job ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 border=0 title="Delete Job" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=editJob&job=<tmpl_var name="__ROWNUM__">"><img src="themes/tf_standard_themes/images/edit.gif" width=16 height=16 border=0 title="Edit Job" align="absmiddle"></a>&nbsp;
+						</td>					
+						<td>
+							<tmpl_var name="savedir">
+						</td>	
+						<td>
+							<tmpl_if name="enable_dereferrer">
+								<a href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="url"></a>
+							<tmpl_else>
+								<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="url"></a>
+							</tmpl_if>						
+						</td>
+						<td>	
 							<tmpl_var name="filtername">
 						</td>
 					</tr>
 				</tmpl_loop>
 			<tmpl_else>
 				<tr>
-					<td>
+					<td colspan="4">
 						<strong>No Jobs defined.</strong>
 					</td>
 				</tr>
 			</tmpl_if>
+			<tr>
+				<td colspan="4" align="center">
+					<form action="admin.php?op=fluxdRssadSettings" method="post">
+						<input type="hidden" name="pageop" value="addJob">
+						<input type="Submit" value="Add Job">
+					</form>
+				</td>
+			</tr>			
 		</table>
+		<br>
 	<tmpl_elseif name="pageop" value="addFilter">
 		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 			<tr>
@@ -83,7 +110,7 @@
 			<tmpl_if name="filtername">		
 				<tr>
 					<td align="center" valign="top">
-						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_1')">
+						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter')">
 							<input type="hidden" name="pageop" value="saveFilter">
 							<input type="hidden" name="new" value="true">
 							<input type="hidden" name="rssad_filtercontent" value="<tmpl_var name="rssad_filtercontent">">
@@ -206,7 +233,89 @@
 			</tr>
 		</table>
 		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
-	</tmpl_if>
+	<tmpl_elseif name="pageop" value="addJob">
+		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+			<tr>
+				<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+					<img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Add Job</font>
+				</td>
+			</tr>		
+			<tr>
+				<td>	
+					TODO
+				</td>
+			</tr>
+		</table>
+		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
+	<tmpl_elseif name="pageop" value="editJob">
+		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+			<tr>
+				<td colspan="3" bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+					<img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Edit Job</font>
+				</td>
+			</tr>		
+			<tmpl_if name="rssad_job_loaded" value="1">
+				<tr bgcolor="<tmpl_var name="table_border_dk">">
+					<td align="center">Savedir</td>
+					<td align="center">URL</td>
+					<td align="center">Filter</td>
+				</tr>			
+				<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_job')">
+				<input type="hidden" name="pageop" value="saveJob">
+				<tr>					
+					<td>
+						<input type="text" size="40" name="savedir" value="<tmpl_var name="savedir">">
+					</td>	
+					<td>
+						<input type="text" size="50" name="url" value="<tmpl_var name="url">">						
+					</td>
+					<td>
+						<input type="text" size="15" name="filtername" value="<tmpl_var name="filtername">">
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" align="center">
+						<input type="Submit" value="Save Job">
+					</td>
+				</tr>
+				</form>
+			<tmpl_else>
+				<tr>
+					<td colspan="3">
+						<strong>There was an error.</strong>
+					</td>
+				</tr>
+			</tmpl_if>
+		</table>
+		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
+	<tmpl_elseif name="pageop" value="saveJob">
+		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+			<tr>
+				<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+					<img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Save Job</font>
+				</td>
+			</tr>		
+			<tr>
+				<td>	
+					TODO
+				</td>
+			</tr>
+		</table>
+		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>
+	<tmpl_elseif name="pageop" value="deleteJob">
+		<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+			<tr>
+				<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
+					<img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">Delete Job</font>
+				</td>
+			</tr>		
+			<tr>
+				<td>	
+					TODO
+				</td>
+			</tr>
+		</table>
+		<div align="center">[<a href="admin.php?op=fluxdRssadSettings">Return to fluxd-Rssad-Settings</a>]</div>					
+	</tmpl_if>	
 </div>
-<div align="center">[<a href="admin.php?op=fluxdSettings">Return to fluxd-Settings</a>]</div>
 <tmpl_include name="inc.subfoot.tmpl">

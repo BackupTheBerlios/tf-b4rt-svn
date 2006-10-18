@@ -209,10 +209,42 @@ switch ($pageop) {
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Filter");
 		break;
 		
+	case "addJob":
 		
-
+		// title-bar
+		tmplSetTitleBar("Administration - Fluxd Rssad - Add Job");		
+		break;
+		
+	case "editJob":
+		$jobNumber = getRequestVar('job');
+		if (empty($jobNumber)) {
+			$tmpl->setvar('new_msg', 1);
+			$tmpl->setvar('message', "Error : No Job-Number.");
+			$tmpl->setvar('rssad_job_loaded', 0);
+		} else {
+			// TODO
+			$tmpl->setvar('rssad_job_loaded', 1);
+		}		
+		// title-bar
+		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Job");		
+		break;
+		
+	case "saveJob":
+		
+		// title-bar
+		tmplSetTitleBar("Administration - Fluxd Rssad - Save Job");		
+		break;
+		
+	case "deleteJob":
+		
+		// title-bar
+		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Job");		
+		break;						
+		
 }
 
+//
+$tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 //
 tmplSetAdminMenu();
 tmplSetFoot();

@@ -38,12 +38,14 @@ function validateSettings(section) {
 				document.theForm.fluxd_Trigger_interval.focus();
 			}
 			break;
-		case 'fluxd_Rssad_filter_1':
+		case 'fluxd_Rssad_filter':
 			if (document.theForm.filtername.value.length < 1) {
 				msg = msg + "* Enter a Filtername.\n";
 				document.theForm.filtername.focus();
 			}
-			break;			
+			break;
+		case 'fluxd_Rssad_job':
+			break;					
 		case 'index':
 			if (isNumber(document.theForm.page_refresh.value) == false ) {
 				msg = msg + "* Page Refresh Intervalll must be a valid number.\n";
