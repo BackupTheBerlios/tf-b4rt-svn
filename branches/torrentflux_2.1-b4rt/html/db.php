@@ -20,8 +20,9 @@
 
 *******************************************************************************/
 
-// will need include of config.php
+// config.php
 include_once('config.php');
+// ADOdb
 include_once('adodb/adodb.inc.php');
 
 /**
@@ -31,32 +32,17 @@ include_once('adodb/adodb.inc.php');
  */
 function getdb() {
 	global $cfg;
-	// build DSN
-	switch ($cfg["db_type"]) {
-		case "mysql":
-			$dsn = 'mysql://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
-			if ($cfg["db_pcon"])
-				$dsn .= '?persist';
-			break;
-		case "sqlite":
-			$dsn = 'sqlite://'.$cfg["db_host"];
-			if ($cfg["db_pcon"])
-				$dsn .= '/?persist';
-			break;
-		case "postgres":
-			$dsn = 'postgres://'.$cfg["db_user"].':'.$cfg["db_pass"].'@'.$cfg["db_host"].'/'.$cfg["db_name"];
-			if ($cfg["db_pcon"])
-				$dsn .= '?persist';
-			break;
-		default:
-			showErrorPage('No valid Database-Type specfied. <br>valid : mysql/sqlite/postgres<br>Check your database settings in the config.db.php file.');
-	}
-	// connect
-	$db = @ ADONewConnection($dsn);
-	// check connection
-	if (!$db)
-		showErrorPage('Could not connect to database.<br>Check your database settings in the config.db.php file.');
-	// return db-connection
+	// create ado-object
+    $db = &ADONewConnection($cfg["db_type"]);   
+    // connect
+    if ($cfg["db_pcon"])
+    	@ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    else
+    	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+    // check for error	
+    if ($db->ErrorNo() != 0)
+    	showErrorPage('Could not connect to database.<br>Check your database settings in the config.db.php file.');
+    // return db-connection
 	return $db;
 }
 
