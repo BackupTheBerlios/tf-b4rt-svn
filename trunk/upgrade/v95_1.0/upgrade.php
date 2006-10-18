@@ -1124,25 +1124,16 @@ $cfg["db_pcon"] = '.$pcon.'; // Persistent Connection enabled : true/false
  * @return database-connection or false on error
  */
 function getAdoConnection($type, $host, $user, $pass, $name = "") {
-	require_once('inc/lib/adodb/adodb.inc.php');
-	// build DSN
-	switch ($type) {
-		case "mysql":
-			$dsn = 'mysql://'.$user.':'.$pass.'@'.$host.'/'.$name;
-			break;
-		case "sqlite":
-			$dsn = 'sqlite://'.$host;
-			break;
-		case "postgres":
-			$dsn = 'postgres://'.$user.':'.$pass.'@'.$host.'/'.$name;
-			break;
-		default:
-			return false;
-	}
-	// connect
-	$db = @ ADONewConnection($dsn);
-	// return db-connection
-	return $db;
+	require_once('inc/lib/adodb/adodb.inc.php');	
+	// create ado-object
+    $db = &ADONewConnection($type);
+    // connect
+    @ $db->Connect($host, $user, $pass, $name);
+    // check for error	
+    if ($db->ErrorNo() != 0)
+    	return false;
+    // return db-connection
+	return $db;	
 }
 
 /**
