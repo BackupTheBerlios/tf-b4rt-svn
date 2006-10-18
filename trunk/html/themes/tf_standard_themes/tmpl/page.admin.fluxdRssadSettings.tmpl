@@ -40,7 +40,7 @@
 			</tmpl_if>
 			<tr>
 				<td align="center">
-					<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter')">
+					<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_new')">
 						<input type="hidden" name="pageop" value="addFilter">
 						Name : <input type="Text" size="30" maxlength="255" name="filtername">
 						<input type="Submit" value="Add Filter">
@@ -110,7 +110,7 @@
 			<tmpl_if name="filtername">		
 				<tr>
 					<td align="center" valign="top">
-						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter')">
+						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_add')">
 							<input type="hidden" name="pageop" value="saveFilter">
 							<input type="hidden" name="new" value="true">
 							<input type="hidden" name="rssad_filtercontent" value="<tmpl_var name="rssad_filtercontent">">
@@ -154,7 +154,7 @@
 			<tmpl_if name="filtername">		
 				<tr>
 					<td align="center" valign="top">
-						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post">
+						<form name="theForm" action="admin.php?op=fluxdRssadSettings" method="post" onsubmit="return validateSettings('fluxd_Rssad_filter_edit')">
 							<input type="hidden" name="pageop" value="saveFilter">
 							<input type="hidden" name="new" value="false">
 							<input type="hidden" name="rssad_filtercontent" value="<tmpl_var name="rssad_filtercontent">">

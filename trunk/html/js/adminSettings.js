@@ -38,10 +38,21 @@ function validateSettings(section) {
 				document.theForm.fluxd_Trigger_interval.focus();
 			}
 			break;
-		case 'fluxd_Rssad_filter':
+		case 'fluxd_Rssad_filter_new':
 			if (document.theForm.filtername.value.length < 1) {
 				msg = msg + "* Enter a Filtername.\n";
 				document.theForm.filtername.focus();
+			}
+			break;
+		case 'fluxd_Rssad_filter_add':
+			if (document.theForm.filtername.value.length < 1) {
+				msg = msg + "* Enter a Filtername.\n";
+				document.theForm.filtername.focus();
+			}
+		case 'fluxd_Rssad_filter_edit':
+			if (document.theForm.rssad_filters.options.length < 1) {
+				msg = msg + "* Enter at least one Filter.\n";
+				document.theForm.rssad_filter_entry.focus();
 			}
 			break;
 		case 'fluxd_Rssad_job':
