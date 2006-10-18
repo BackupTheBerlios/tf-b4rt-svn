@@ -22,10 +22,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
+    v 1.02 - Oct 18, 06. fix to parsing thx kalep
     v 1.01 - Sep 22, 06. Added Stats and Fixed filenames
     v 1.00 - Sep 22, 06.
 */
-include_once("SearchEngineBase.php");
 
 class SearchEngine extends SearchEngineBase
 {
@@ -38,7 +38,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "Filemp3";
 
         $this->author = "kboy";
-        $this->version = "1.01";
+        $this->version = "1.02";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1967.0.html";
 
         $this->Initialize($cfg);
@@ -51,35 +51,35 @@ class SearchEngine extends SearchEngineBase
     function populateMainCategories()
     {
         $this->mainCatalog["0"]  = "(all types)";
-		$this->mainCatalog["1"] = " Alternative";
-		$this->mainCatalog["2"] = " Dance";
-		$this->mainCatalog["3"] = " Hip-Hop";
-		$this->mainCatalog["4"] = " Metal";
-		$this->mainCatalog["5"] = " Pop";
-		$this->mainCatalog["6"] = " Punk";
-		$this->mainCatalog["7"] = " Rap";
-		$this->mainCatalog["8"] = " R 'n' B";
-		$this->mainCatalog["9"] = " Rock";
-		$this->mainCatalog["10"] = "Trance";
-		$this->mainCatalog["11"] = "Other";
-		$this->mainCatalog["12"] = "Music Vids";
-		$this->mainCatalog["13"] = "Old Music";
-		$this->mainCatalog["14"] = "Country";
-		$this->mainCatalog["15"] = "House";
-		$this->mainCatalog["16"] = "Reggae";
-		$this->mainCatalog["17"] = "Electronic";
-		$this->mainCatalog["18"] = "Techno";
-		$this->mainCatalog["19"] = "Drum 'n' Bass";
-		$this->mainCatalog["20"] = "OST";
-		$this->mainCatalog["21"] = "Psychedelic";
-		$this->mainCatalog["22"] = "Hardcore";
-		$this->mainCatalog["23"] = "Jazz";
-		$this->mainCatalog["24"] = "Indie";
-		$this->mainCatalog["25"] = "Funk";
-		$this->mainCatalog["26"] = "Lo Fi";
-		$this->mainCatalog["27"] = "Ambient";
-		$this->mainCatalog["28"] = "Instrumental";
-		$this->mainCatalog["29"] = "Blues";
+        $this->mainCatalog["1"] = " Alternative";
+        $this->mainCatalog["2"] = " Dance";
+        $this->mainCatalog["3"] = " Hip-Hop";
+        $this->mainCatalog["4"] = " Metal";
+        $this->mainCatalog["5"] = " Pop";
+        $this->mainCatalog["6"] = " Punk";
+        $this->mainCatalog["7"] = " Rap";
+        $this->mainCatalog["8"] = " R 'n' B";
+        $this->mainCatalog["9"] = " Rock";
+        $this->mainCatalog["10"] = "Trance";
+        $this->mainCatalog["11"] = "Other";
+        $this->mainCatalog["12"] = "Music Vids";
+        $this->mainCatalog["13"] = "Old Music";
+        $this->mainCatalog["14"] = "Country";
+        $this->mainCatalog["15"] = "House";
+        $this->mainCatalog["16"] = "Reggae";
+        $this->mainCatalog["17"] = "Electronic";
+        $this->mainCatalog["18"] = "Techno";
+        $this->mainCatalog["19"] = "Drum 'n' Bass";
+        $this->mainCatalog["20"] = "OST";
+        $this->mainCatalog["21"] = "Psychedelic";
+        $this->mainCatalog["22"] = "Hardcore";
+        $this->mainCatalog["23"] = "Jazz";
+        $this->mainCatalog["24"] = "Indie";
+        $this->mainCatalog["25"] = "Funk";
+        $this->mainCatalog["26"] = "Lo Fi";
+        $this->mainCatalog["27"] = "Ambient";
+        $this->mainCatalog["28"] = "Instrumental";
+        $this->mainCatalog["29"] = "Blues";
     }
 
     //----------------------------------------------------------------
@@ -237,7 +237,7 @@ class SearchEngine extends SearchEngineBase
         {
             $output .= "  <td><strong>Wait</strong></td>";
         }
-		$output .= "  <td><strong>File Life</strong></td>";
+        $output .= "  <td><strong>File Life</strong></td>";
         $output .= "  <td><strong>Snatched</strong></td>";
         $output .= "</tr>\n";
 
@@ -415,7 +415,7 @@ class fileMP3
             // Chunck up the row into columns.
             $tmpListArr = split("<td ",$htmlLine);
 
-            if(count($tmpListArr) > 8)
+            if(count($tmpListArr) > 9)
             {
 
                 $tmpStr = substr($tmpListArr["1"],strpos($tmpListArr["1"],"alt=\"")+strlen("alt=\"")); // MainCategory
@@ -503,16 +503,16 @@ class fileMP3
 
            }
 
-			$this->torrentDisplayName = $this->torrentName;
-			if(strpos($this->torrentName,"\n"))
-			{
-				$this->torrentDisplayName = substr($this->torrentName,0,strpos($this->torrentName,"\n"));
-				$this->torrentName = str_replace("\n"," [",$this->torrentName)."]";
-			}
-			if(strlen($this->torrentDisplayName) > 50)
-			{
-				$this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
-			}
+            $this->torrentDisplayName = $this->torrentName;
+            if(strpos($this->torrentName,"\n"))
+            {
+                $this->torrentDisplayName = substr($this->torrentName,0,strpos($this->torrentName,"\n"));
+                $this->torrentName = str_replace("\n"," [",$this->torrentName)."]";
+            }
+            if(strlen($this->torrentDisplayName) > 50)
+            {
+                $this->torrentDisplayName = substr($this->torrentDisplayName,0,50)."...";
+            }
 
 
         }
@@ -550,7 +550,7 @@ class fileMP3
         {
             $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->waitTime."</td>\n";
         }
-		$output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->fileLife."</td>\n";
+        $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->fileLife."</td>\n";
         $output .= "    <td bgcolor=\"".$bg."\" align=center>".$this->torrentStatus."</td>\n";
         $output .= "</tr>\n";
 
