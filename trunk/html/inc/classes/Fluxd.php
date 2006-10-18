@@ -55,7 +55,8 @@ class Fluxd
      * ctor
      */
     function Fluxd($cfg) {
-    	$this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+    	$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+    	$this->version = $uselessVar;
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
