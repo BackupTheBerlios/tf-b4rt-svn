@@ -27,9 +27,10 @@ class AliasFileTornado extends AliasFile
     // ctor
     function AliasFileTornado($inFile,$user="",$cfg) {
         // version
-        $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-        // init conf
-        $this->Initialize($cfg);
+		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+		$this->version = $uselessVar;
+		// initialize
+        $this->initialize($cfg);
         // init some vars
         $this->running = "1";
         $this->percent_done = "0.0";

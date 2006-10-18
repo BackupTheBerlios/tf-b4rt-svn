@@ -28,7 +28,10 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function FluxdQmgr($cfg, $fluxd) {
         $this->moduleName = "Qmgr";
-        $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+        // version
+		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+		$this->version = $uselessVar;
+		// initialize
         $this->initialize($cfg, $fluxd);
     }
 

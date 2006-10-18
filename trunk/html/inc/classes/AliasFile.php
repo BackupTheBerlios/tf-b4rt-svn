@@ -92,8 +92,8 @@ class AliasFile
     }
 
     //--------------------------------------------------------------------------
-    // Initialize the AliasFile.
-    function Initialize($cfg) {
+    // initialize the AliasFile.
+    function initialize($cfg) {
         $this->cfg = unserialize($cfg);
     }
 
