@@ -323,10 +323,13 @@ class FluxdRssad extends FluxdServiceMod
 			$jobsString .= $url.$this->delimJob;
 			$jobsString .= $filtername;		
 			// check dir
-			if ($checkdir)
+			if ($checkdir) {
 				$check = checkDirectory($savedir);
-			else
+				if (!$check)
+					$this->messages = "dir ".$savedir." does not exist and could not be created.";
+			} else {
 				$check = true;
+			}
 			// update setting
 			return ($check && $this->jobsUpdate($jobsString));
 		} else {
@@ -372,10 +375,13 @@ class FluxdRssad extends FluxdServiceMod
 						$jobsString .= $this->delimJobs;
 				}
 				// check dir
-				if ($checkdir)
+				if ($checkdir) {
 					$check = checkDirectory($savedir);
-				else
+					if (!$check)
+						$this->messages = "dir ".$savedir." does not exist and could not be created.";
+				} else {
 					$check = true;
+				}
 				// update setting
 				return ($check && $this->jobsUpdate($jobsString));			
 			}

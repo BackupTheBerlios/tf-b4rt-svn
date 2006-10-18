@@ -299,6 +299,7 @@ switch ($pageop) {
 					$tmpl->setvar('rssad_job_message', "Job added.");
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
+					$tmpl->setvar('messages', $rssad->messages);
 				}
 			} else {
 				if ($rssad->jobUpdate($jobNumber, $savedir, $url, $filtername, $doCheckdir) === true) {
@@ -306,6 +307,7 @@ switch ($pageop) {
 					$tmpl->setvar('rssad_job_message', "Job updated.");
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
+					$tmpl->setvar('messages', $rssad->messages);
 				}			
 			}
 		}
