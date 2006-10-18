@@ -39,6 +39,11 @@ class FluxdRssad extends FluxdServiceMod
         $this->moduleName = "Rssad";
         $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
         $this->initialize($cfg, $fluxd);
+         // check our base-dir
+        if (!(checkDirectory($this->cfg["path"].$this->basedir))) {
+            $this->messages = "Rssad base-dir ".$this->basedir." error.";
+            $this->state = -1;
+        }
     }
 
 	/**
