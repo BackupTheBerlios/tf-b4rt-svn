@@ -36,7 +36,11 @@
 					<td>
 						<a href="admin.php?op=deleteLink&lid=<tmpl_var name="lid">"  onclick="return confirm('Delete Link <tmpl_var name="sitename"> ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
 						<a href="admin.php?op=editLinks&edit=<tmpl_var name="lid">"><img src="themes/default/images/edit.gif" width=16 height=16 border=0 title="<tmpl_var name="_EDIT"> <tmpl_var name="lid">" align="absmiddle"></a>&nbsp;
-						<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+						<tmpl_if name="enable_dereferrer">
+							<a href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+						<tmpl_else>
+							<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+						</tmpl_if>	
 					</td>
 					<td align=right width='36'>
 						<tmpl_if name="counter" value="2">

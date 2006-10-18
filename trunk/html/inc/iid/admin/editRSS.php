@@ -50,6 +50,7 @@ foreach($arLinks as $link) {
 	);
 }
 $tmpl->setloop('link_rss', $link_rss);
+$tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 //
 $tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
 $tmpl->setvar('_UPDATE', $cfg['_UPDATE']);

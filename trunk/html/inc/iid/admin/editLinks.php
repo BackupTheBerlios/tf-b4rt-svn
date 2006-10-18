@@ -64,6 +64,7 @@ foreach($arLinks as $link) {
 	);
 }
 $tmpl->setloop('link_list', $link_list);
+$tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 //
 $tmpl->setvar('_ADMINEDITLINKS', $cfg['_ADMINEDITLINKS']);
 $tmpl->setvar('_FULLURLLINK', $cfg['_FULLURLLINK']);
