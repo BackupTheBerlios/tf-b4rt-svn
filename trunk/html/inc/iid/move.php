@@ -89,7 +89,6 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
 		$tmpl->setvar('is_valid', 1);
 		$targetDir = checkDirPathString($targetDir);
-		// move
 		$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['file'])." ".escapeshellarg($targetDir);
 		$cmd .= ' 2>&1';
 		$handle = popen($cmd, 'r');
@@ -100,9 +99,9 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 			$buff .= @fgets($handle,30);
 			$gotError = $gotError + 1;
 		}
-		$tmpl->setvar('buff', nl2br($buff));
+		$tmpl->setvar('messages', nl2br($buff));
 		pclose($handle);
-		if($gotError <= 0) {
+		if ($gotError <= 0) {
 			$tmpl->setvar('got_no_error', 1);
 			$tmpl->setvar('file', $_POST['file']);
 		} else {

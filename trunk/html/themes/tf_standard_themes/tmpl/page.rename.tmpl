@@ -9,6 +9,7 @@
 								<input type="hidden" name="fileFrom" value="<tmpl_var name="file">"/>
 							</form>
 						<tmpl_else>
+							<tmpl_var name="messages">
 							<tmpl_if name="no_error">
 								<tmpl_var name="_REN_DONE"><br>
 								renamed <em><tmpl_var name="fileFrom"></em> to <em><tmpl_var name="fileTo"></em>

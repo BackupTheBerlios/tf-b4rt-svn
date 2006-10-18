@@ -35,13 +35,21 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.rename.tmpl");
 // process move and set vars
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('file', htmlspecialchars(urldecode($_REQUEST['file'])));
-	$tmpl->setvar('dir', htmlspecialchars(urldecode($_REQUEST['dir'])));
+	$tmpl->setvar('file', urldecode($_REQUEST['file']));
+	$tmpl->setvar('dir', urldecode($_REQUEST['dir']));
 	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 } else {
 	$tmpl->setvar('is_start', 0);
-	if (rename($cfg["path"].$_POST['dir'].$_POST['fileFrom'], $cfg["path"].$_POST['dir'].$_POST['fileTo']) === true) {
+	$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileFrom'])." ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileTo']);
+    $cmd .= ' 2>&1';	 
+    $handle = popen($cmd, 'r' );	 
+    $gotError = -1;	 
+    $buff = fgets($handle);	 
+    $gotError = $gotError + 1;	 
+    pclose($handle);	 
+    $tmpl->setvar('messages', nl2br($buff));	 
+    if ($gotError <= 0) {
 		$tmpl->setvar('no_error', 1);
 		$tmpl->setvar('fileFrom', $_POST['fileFrom']);
 		$tmpl->setvar('fileTo', $_POST['fileTo']);
