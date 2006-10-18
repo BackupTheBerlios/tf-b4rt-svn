@@ -65,8 +65,8 @@
 				<tmpl_loop name="rssad_jobs">
 					<tr>
 						<td>
-							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteFilter&filtername=<tmpl_var name="__ROWNUM__">"  onclick="return confirm('Delete Job ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete Job" align="absmiddle"></a>&nbsp;
-							<a href="admin.php?op=fluxdRssadSettings&pageop=editFilter&filtername=<tmpl_var name="__ROWNUM__">"><img src="themes/default/images/edit.gif" width=16 height=16 border=0 title="Edit Job" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=deleteJob&job=<tmpl_var name="__ROWNUM__">"  onclick="return confirm('Delete Job ?')"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="Delete Job" align="absmiddle"></a>&nbsp;
+							<a href="admin.php?op=fluxdRssadSettings&pageop=editJob&job=<tmpl_var name="__ROWNUM__">"><img src="themes/default/images/edit.gif" width=16 height=16 border=0 title="Edit Job" align="absmiddle"></a>&nbsp;
 						</td>					
 						<td>
 							<tmpl_var name="savedir">
