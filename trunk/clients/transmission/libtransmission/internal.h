@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 931 2006-09-26 22:36:04Z joshe $
+ * $Id: internal.h 1016 2006-10-17 18:48:04Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -51,9 +51,11 @@
 #include <netinet/in.h>
 #include <fcntl.h>
 #include <assert.h>
+#ifdef SYS_BEOS
+#  define socklen_t uint32_t
+#endif
 #ifdef BEOS_NETSERVER
 #  define in_port_t uint16_t
-#  define socklen_t uint32_t
 #else
 #  include <arpa/inet.h>
 #endif
