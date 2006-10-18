@@ -29,7 +29,9 @@ class ClientHandlerTornado extends ClientHandler
      */
     function ClientHandlerTornado($cfg) {
         $this->handlerName = "tornado";
-        $this->version = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+		// version
+		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+		$this->version = $uselessVar;
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
