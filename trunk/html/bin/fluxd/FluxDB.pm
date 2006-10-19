@@ -59,8 +59,11 @@ my $docroot = "/var/www";
 # flux-config-hash
 my %fluxConf;
 
-# users + usernames
-use vars qw( @users %names );
+# usernames
+my %names;
+
+# users
+my @users;
 
 # database-conf-file
 my $dbConfig = "config.db.php";
@@ -396,6 +399,24 @@ sub setFluxConfig {
 	shift; # class
 	my $key = shift;
 	$fluxConf{$key} = shift;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getFluxUsernames                                                        #
+# Arguments: null                                                              #
+# Returns: hash                                                                #
+#------------------------------------------------------------------------------#
+sub getFluxUsernames {
+	return %names;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getFluxUsers                                                            #
+# Arguments: null                                                              #
+# Returns: array                                                               #
+#------------------------------------------------------------------------------#
+sub getFluxUsers {
+	return @users;
 }
 
 #------------------------------------------------------------------------------#
