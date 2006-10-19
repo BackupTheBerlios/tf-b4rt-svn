@@ -219,7 +219,7 @@ sub main {
 		}
 
 		# set last run time
-		$time_last_run = $now;
+		$time_last_run = time();
 
 	}
 }

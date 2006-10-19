@@ -330,7 +330,7 @@ sub main {
 		processQueue();
 
 		# set last run time
-		$time_last_run = $now;
+		$time_last_run = time();
 	}
 }
 
@@ -447,7 +447,7 @@ sub processQueue {
 					if ($userCtr < $globals{'limitUser'}) { # user limit does not apply
 						# startup the thing
 						if ($LOGLEVEL > 0) {
-							print "Qmgr : starting transfer : ".$nextTransfer." (".$nextUser.")\n";
+							print "Qmgr : starting transfer : ".$nextTransfer." (".$nextUser.") (".localtime().")\n";
 						}
 						if (startTransfer($nextTransfer) == 1) { # start transfer succeeded
 							# reset start-counter-var
