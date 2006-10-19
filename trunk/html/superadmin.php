@@ -458,6 +458,14 @@ if (isset($_REQUEST["f"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;
+			case "9": // fluxd-version
+				$htmlTitle = "fluxd - version";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<pre>';
+				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd ".$cfg["docroot"]."bin/fluxd/fluxd.pl version");
+				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
+				break;				
 		}
 		printPage();
 		exit();
@@ -1085,6 +1093,8 @@ function buildPage($action) {
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=5">check</a>';
 				$htmlMain .= ' | ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=6">db-debug</a>';
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=9">version</a>';				
 			}
 			$htmlMain .= '</td><td align="right"><strong>fluxd</strong>';
 			$htmlMain .= '</tr></table>';
