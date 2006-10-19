@@ -349,7 +349,8 @@ class ClientHandler
 				$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
 				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
 			} else {
-				$this->messages = "Qmgr not active";
+				$this->messages = "queue-request (".$this->transfer."/".$this->cfg['user'].") but Qmgr not active";
+				AuditAction($this->cfg["constants"]["error"], $this->messages);
 			}
             $transferRunningFlag = 0;
         } else { // start
