@@ -22,7 +22,6 @@
 ################################################################################
 package Qmgr;
 use strict;
-#no strict "refs";
 use warnings;
 ################################################################################
 
@@ -109,6 +108,15 @@ sub new {
 sub destroy {
 	# set state
 	$state = 0;
+	# log
+	print "Qmgr : shutdown\n";
+	# save queue
+	my $jobcount = countQueue();
+	if ($jobcount > 0) {
+		print "Qmgr : jobs queued : ".$jobcount.". writing queue-file...";
+		# save queue
+		saveQueue();
+	}
 	# undef
 	undef %names;
 	undef @users;
@@ -242,10 +250,7 @@ sub initialize {
 		loadQueue();
 	} else {
 		print "Qmgr : Creating empty queue\n";
-		foreach my $user (@users) {
-			$user->{"queue"} = ();
-			$user->{"running"} = ();
-		}
+		@queue = qw();
 	}
 
 	# reset last run time
@@ -302,11 +307,11 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		# set last run time
-		$time_last_run = $now;
-
 		# process queue
 		processQueue();
+
+		# set last run time
+		$time_last_run = $now;
 	}
 }
 
@@ -320,34 +325,39 @@ sub command {
 	$_= shift;
 	SWITCH: {
 		/^count-jobs/ && do {
-			return jobs();
+			return countJobs();
 		};
 		/^count-queue/ && do {
-			return queue();
+			return countQueue();
 		};
 		/^list-queue/ && do {
-			return list();
+			return listQueue();
 		};
 		/^enqueue;(.*);(.*)/ && do {
-			print "Qmgr : enqueue : \"".$1."\" (user : ".$2.")\n"; # DEBUG
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : enqueue : \"".$1."\" (user : ".$2.")\n";
+			}
 			# TODO
 			#return add($1,$2);
 			return 1;
 		};
 		/^dequeue;(.*);(.*)/ && do {
-			print "Qmgr : dequeue : \"".$1."\" (user : ".$2.")\n"; # DEBUG
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : dequeue : \"".$1."\" (user : ".$2.")\n";
+			}
 			# TODO
 			#return remove($1,$2);
 			return 1;
 		};
 		/^set;(.*);(.*)/ && do {
-			print "Qmgr : set : \"".$1."\"->\"".$2."\")\n"; # DEBUG
-			return set($1,$2);
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : set : \"".$1."\"->\"".$2."\")\n";
+			}
+			return set($1, $2);
 		};
 	}
 	return "Unknown command";
 }
-
 
 #-------------------------------------------------------------------------------#
 # Sub: processQueue                                                             #
@@ -362,6 +372,7 @@ sub processQueue {
 	# TODO
 	return 1;
 
+=for later
 	# process queue
 	my $jobcountq = queue();
 	my $notDoneProcessingQueue = 1;
@@ -438,41 +449,72 @@ sub processQueue {
 
 		$globals{'main'} += 1;
 	}
+=cut
+
+
+
+
 }
 
-#------------------------------------------------------------------------------#
-# Sub: loadQueue                                                               #
-# Arguments: Null                                                              #
-# Returns: Null                                                                #
-#------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------#
+# Sub: loadQueue                                                                #
+# Arguments: Null                                                               #
+# Returns: Null                                                                 #
+#-------------------------------------------------------------------------------#
 sub loadQueue {
 	# read from file into queue-array
 	open(QUEUEFILE,"< $fileQueue");
 	while (<QUEUEFILE>) {
 		chomp;
-		my ($torrent, $username) = split;
-		#push(@{$users->[$names->{$username}]->{'queue'}}, $torrent);
-		#push(@{$FluxDB::users[$FluxDB::names{$username}]{'queue'}}, $torrent);
-		#push(${users[$names->{$username}]{'queue'}}, $torrent);
+		push(@queue, $_);
 	}
 	close QUEUEFILE;
+	# fill job-hash
+	foreach my $torrent (@queue) {
+		my $user = getTorrentOwner($torrent);
+		if (!(defined $user)) {
+			$jobs{"queued"}{$torrent} = "unknown";
+		} else {
+			if (! exists $jobs{"queued"}{$torrent}) {
+				$jobs{"queued"}{$torrent} = $user;
+			}
+		}
+	}
 	# done loading, delete queue-file
 	return unlink($fileQueue);
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: saveQueue                                                              #
-# Arguments: Null                                                             #
-# Returns: Null                                                               #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: saveQueue                                                               #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub saveQueue {
 	# open queue-file
 	open(QUEUEFILE,">$fileQueue");
 	# queued torrents
-	foreach my $user (@users) {
-		foreach my $torrent (@{$user->{'queue'}}) {
-			print QUEUEFILE $torrent." ".$user->{"username"}."\n";
-		}
+	foreach my $queueEntry (@queue) {
+		print QUEUEFILE $queueEntry."\n";
+	}
+	# close queue-file
+	close(QUEUEFILE);
+}
+
+#-------------------------------------------------------------------------------
+# Sub: dumpQueue
+# Parameters:	-
+# Return:		-
+#-------------------------------------------------------------------------------
+sub dumpQueue {
+	# open queue-file
+	open(QUEUEFILE,">$fileQueue");
+	# running torrents
+	foreach my $jobName (keys %{$jobs{"running"}}) {
+		print QUEUEFILE $jobName."\n";
+	}
+	# queued torrents
+	foreach my $queueEntry (@queue) {
+		print QUEUEFILE $queueEntry."\n";
 	}
 	# close queue-file
 	close(QUEUEFILE);
@@ -488,8 +530,8 @@ sub status {
 	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
 	$return .= "interval : $interval s \n";
 	# get count-vars
-	my $countQueue = queue();
-	my $countRunning = running();
+	my $countQueue = countQueue();
+	my $countRunning = countRunning();
 	my $countJobs = $countQueue + $countRunning;
 	# some vars
 	$return .= "max torrents global : $limitGlobal \n";
@@ -500,19 +542,15 @@ sub status {
 	$return .= "jobs total : ".$countJobs."\n";
 	# jobs queued
 	$return .= "jobs queued : ".$countQueue."\n";
-	foreach my $user (@users) {
-		foreach my $jobName (@{$user->{'queue'}}) {
-			my $jobUser = $user->{'username'};
-			$return .= "  * ".$jobName." (".$jobUser.")\n";
-		}
+	foreach my $jobName (sort keys %{$jobs{"queued"}}) {
+		my $jobUser = $jobs{"queued"}{$jobName};
+		$return .= "  * ".$jobName." (".$jobUser.")\n";
 	}
 	# jobs running
 	$return .= "jobs running : ".$countRunning."\n";
-	foreach my $user (@users) {
-		foreach my $jobName (@{$user->{'running'}}) {
-			my $jobUser = $user->{'username'};
-			$return .= "  * ".$jobName." (".$jobUser.")\n";
-		}
+	foreach my $jobName (sort keys %{$jobs{"running"}}) {
+		my $jobUser = $jobs{"running"}{$jobName};
+		$return .= "  * ".$jobName." (".$jobUser.")\n";
 	}
 	# misc stats
 	$return .= "running since : $localtime (";
@@ -524,68 +562,58 @@ sub status {
 	return $return;
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: jobs                                                                   #
-# Arguments: Null                                                             #
-# Returns: Total number of jobs                                               #
-#-----------------------------------------------------------------------------#
-sub jobs {
+#------------------------------------------------------------------------------#
+# Sub: countJobs                                                               #
+# Parameters:	-                                                              #
+# Return:	number of  Jobs                                                    #
+#------------------------------------------------------------------------------#
+sub countJobs {
 	my $jobcount = 0;
-	$jobcount += queue();
-	$jobcount += running();
-    return $jobcount;
+	$jobcount += countQueue();
+	$jobcount += countRunning();
+	return $jobcount;
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: queue                                                                  #
-# Arguments: Null                                                             #
-# Returns: Number of queued jobs                                              #
-#-----------------------------------------------------------------------------#
-sub queue {
-	my $return = 0;
-	#foreach my $user (@users) {
-	#	$return += scalar(@{$user->{'queue'}});
-	#}
-	return $return;
+#------------------------------------------------------------------------------#
+# Sub: countQueue                                                              #
+# Parameters:	-                                                              #
+# Return:	number of queued jobs                                              #
+#------------------------------------------------------------------------------#
+sub countQueue {
+	return scalar((keys %{$jobs{"queued"}}));
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: running                                                                #
-# Arguments: Null                                                             #
-# Returns: Number of running jobs                                             #
-#-----------------------------------------------------------------------------#
-sub running{
-	my $return = 0;
-	foreach my $user (@users) {
-		$return += scalar(@{$user->{'running'}});
-	}
-	return $return;
+#------------------------------------------------------------------------------#
+# Sub: countRunning                                                            #
+# Parameters:	-                                                              #
+# Return:	number of queued jobs                                              #
+#------------------------------------------------------------------------------#
+sub countRunning {
+	return scalar((keys %{$jobs{"running"}}));
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: list                                                                   #
-# Arguments: Null                                                             #
-# Returns: List of queued torrents                                            #
-#-----------------------------------------------------------------------------#
-sub list {
+
+#------------------------------------------------------------------------------#
+# Sub: listQueue                                                               #
+# Arguments: Null                                                              #
+# Returns: List of queued torrents                                             #
+#------------------------------------------------------------------------------#
+sub listQueue {
 	my $return = "";
-	# return list
-	foreach my $user (@users) {
-		foreach my $queueEntry (@{$user->{'queue'}}) {
-			$return .= $queueEntry.".torrent\n";
-		}
+	foreach my $queueEntry (@queue) {
+		$return .= $queueEntry.".torrent\n";
 	}
 	return $return;
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: add                                                                    #
-# Arguments: torrent, user                                                    #
-# Returns: Null                                                               #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: add                                                                     #
+# Arguments: torrent, user                                                     #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub add {
+=for later
 	# add a torrent to the queue
-
 	my $AddIt = 0;
 	# Verify that the arguments look good
 	my $temp = shift;
@@ -595,14 +623,12 @@ sub add {
 	}
 	my $torrent = $temp;
 	$torrent = StripTorrentName($torrent);
-
 	$temp = shift;
 	if (!(defined $temp)) {
 		printUsage();
 		return;
 	}
 	my $username = $temp;
-
 	# Looks good, add it to the queue.
 	USER: foreach my $user (@users) {
 		foreach my $entry (@{$user->{'queue'}}) {
@@ -620,20 +646,23 @@ sub add {
 	}
 	$AddIt = 1;
 	print "Qmgr: Adding job to queue : ".$torrent." (".$username.")";
-
 	if ($AddIt == 1) {
 		#push ({@users->[%names->{$username}]->{'queue'}}, $torrent);
 	}
+=cut
+
+
+
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: remove                                                                 #
-# Arguments: torrent, user                                                    #
-# Returns: Null                                                               #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: remove                                                                  #
+# Arguments: torrent, user                                                     #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub remove {
+=for later
 	# remove a torrent from the queue
-
 	# Check arguments
 	my $temp = shift;
 	if (!(defined $temp)) {
@@ -642,11 +671,8 @@ sub remove {
 	}
 	my $torrent = $temp;
 	#$torrent = StripTorrentName();
-
 	my $username = getTorrentOwner($torrent);
-
 	print "Qmgr : Remove : Removing from queue : ".$torrent." (".$username.")";
-
 	# Remove from queue stack
 	my $index = 0;
 	#REMOVE: foreach my $entry (@{$users->[$names->{$username}]->{'queue'}}) {
@@ -656,16 +682,18 @@ sub remove {
 	#	}
 	#	$index++;
 	#}
+=cut
+
+
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: updateRunningTorrents                                                  #
-# Arguments: Null                                                             #
-# Returns: Null                                                               #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: updateRunningTorrents                                                   #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub updateRunningTorrents {
-	# Get current list of running torrents
-	# get running clients
+	# get runnin clients
 	opendir(DIR, $transfersDir);
 	my @pids = map { $_->[1] } # extract pathnames
 	map { [ $_, "$_" ] } # no full paths
@@ -674,24 +702,31 @@ sub updateRunningTorrents {
 	readdir(DIR);
 	closedir(DIR);
 	# flush running-jobs-hash
-	foreach my $user (@users) {
-		$user->{'running'} = ();
+	foreach my $jobName (keys %{$jobs{"running"}}) {
+		# delete job
+		delete($jobs{"running"}{$jobName});
 	}
 	# refill hash
 	if (scalar(@pids) > 0) {
 		foreach my $pidFile (@pids) {
-			my $torrent = (substr ($pidFile,0,(length($pidFile))-9));
-			my $username = getTorrentOwner($torrent);
-			#push(@{$users->[$names->{$username}]->{'running'}}, $torrent);
+			my $torrent = (substr ($pidFile, 0, (length($pidFile)) - 9));
+			my $user = getTorrentOwner($torrent);
+			if (!(defined $user)) {
+				$jobs{"running"}{$torrent} = "unknown";
+			} else {
+				if (! exists $jobs{"running"}{$torrent}) {
+					$jobs{"running"}{$torrent} = $user;
+				}
+			}
 		}
 	}
 }
 
-#-----------------------------------------------------------------------------#
-# Sub: getTorrentOwner                                                        #
-# Arguments: torrent                                                          #
-# Returns: user                                                               #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: getTorrentOwner                                                         #
+# Arguments: torrent                                                           #
+# Returns: user                                                                #
+#------------------------------------------------------------------------------#
 sub getTorrentOwner {
 	my $torrent = shift;
 	if (!(defined $torrent)) {
@@ -710,6 +745,24 @@ sub getTorrentOwner {
 		close STATFILE;
 	}
 	return undef;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: startTransfer                                                           #
+# Parameters:	transfer-name                                                  #
+# Return:		int with return of start-call (0|1)                            #
+#------------------------------------------------------------------------------#
+sub startTransfer {
+	my $transfer = shift;
+	if (!(defined $transfer)) {
+		return 0;
+	}
+	# start transfer
+	if (Fluxd::fluxcli("start", $transfer) == 1) {
+		$globals{"started"} += 1;
+		return 1;
+	}
+	return 0;
 }
 
 #------------------------------------------------------------------------------#
