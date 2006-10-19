@@ -40,8 +40,13 @@ function initializeDatabase() {
     else
     	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     // check for error	
-    if ($db->ErrorNo() != 0)
-    	showErrorPage('Could not connect to database.<br>Check your database settings in the config.db.php file.');
+    if ($db->ErrorNo() != 0) {
+    	global $argv;
+    	if (isset($argv))
+    		die("Error.\nCould not connect to database.\nCheck your database settings in the config.db.php file.\n");
+    	else
+    		showErrorPage("Could not connect to database.<br>Check your database settings in the config.db.php file.");
+    }
 }
 
 /**
@@ -51,10 +56,12 @@ function initializeDatabase() {
  */
 function getdb() {
 	global $db;
-	if (isset($db))
+	if (isset($db)) {
 		return $db;
-	else
-		return false;
+	} else {
+		initializeDatabase();
+		return $db;
+	}
 }
 
 /**
