@@ -352,9 +352,9 @@ sub tfrss {
 	$shellCmd .= " >> \"".$logfile."\"";
 	#print "Rssad : ".$shellCmd."\n"; # DEBUG
 	# log the invocation
-	open(LOGFILE,">>\"$logfile\"");
-	print LOGFILE localtime()." - ".$url."\n";
-	close(LOGFILE);
+	open(FILTERLOG,">>$logfile");
+	print FILTERLOG localtime()." - ".$url."\n";
+	close(FILTERLOG);
 	# syscall
 	eval {
 		system($shellCmd);
