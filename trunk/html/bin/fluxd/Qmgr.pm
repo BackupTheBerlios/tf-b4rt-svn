@@ -354,13 +354,13 @@ sub command {
 		};
 		/^enqueue;(.*);(.*)/ && do {
 			if ($LOGLEVEL > 1) {
-				print "Qmgr : enqueue : \"".$1."\" (user : ".$2.")\n";
+				print "Qmgr : enqueue-request : \"".$1."\" (".$2.")\n";
 			}
 			return add($1, $2);
 		};
 		/^dequeue;(.*);(.*)/ && do {
 			if ($LOGLEVEL > 1) {
-				print "Qmgr : dequeue : \"".$1."\" (user : ".$2.")\n";
+				print "Qmgr : dequeue-request : \"".$1."\" (".$2.")\n";
 			}
 			return remove($1, $2);
 		};
