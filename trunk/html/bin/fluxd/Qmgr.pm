@@ -66,12 +66,6 @@ my $fileQueue = "Qmgr.queue";
 # transfers-dir
 my $transfersDir = ".transfers";
 
-# limits
-my $limitGlobal = 5;
-my $limitUser = 2;
-my $limitStartTries = 5;
-my $startTrySleep = 10;
-
 # time-vars
 my ($time, $localtime);
 
@@ -83,6 +77,10 @@ my %jobs;
 
 # queue
 my @queue;
+
+# some defaults
+my $DEFAULT_limitStartTries = 3;
+my $DEFAULT_startTrySleep = 5;
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -113,7 +111,9 @@ sub destroy {
 	# save queue
 	my $jobcount = countQueue();
 	if ($jobcount > 0) {
-		print "Qmgr : jobs queued : ".$jobcount.". writing queue-file...";
+		if ($LOGLEVEL > 0) {
+			print "Qmgr : jobs queued : ".$jobcount.". writing queue-file...\n";
+		}
 		# save queue
 		saveQueue();
 	}
@@ -207,51 +207,62 @@ sub initialize {
 		return 0;
 	}
 
-	# limit-sys, limit-user
-	$limitGlobal = shift;
-	if (!(defined $interval)) {
+	# global-limit
+	my $limitGlobal = shift;
+	if (!(defined $limitGlobal)) {
 		# message
-		$message = "interval not defined";
+		$message = "global-limit not defined";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 
-	# limit-sys, limit-user
-	$limitUser = shift;
-	if (!(defined $interval)) {
+	# user-limit
+	my $limitUser = shift;
+	if (!(defined $limitUser)) {
 		# message
-		$message = "interval not defined";
+		$message = "user-limit not defined";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 
-	print "Qmgr : initializing (loglevel: ".$LOGLEVEL." data-dir: ".$dataDir." ; interval: ".$interval." ; limit-global: ".$limitGlobal." ; limit-user: ".$limitUser.")\n";
+	print "Qmgr : initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; global-limit: ".$limitGlobal." ; user-limit: ".$limitUser.")\n";
 
 	# Create some time vars
 	$time = time();
 	$localtime = localtime();
 
+	# initialize our globals hash
+	$globals{'main'} = 0;
+	$globals{'started'} = 0;
+	$globals{'limitGlobal'} = $limitGlobal;
+	$globals{'limitUser'} = $limitUser;
+	$globals{'limitStartTries'} = $DEFAULT_limitStartTries;
+	$globals{'startTrySleep'} = $DEFAULT_startTrySleep;
+
 	# get users + usernames
 	@users = FluxDB->getFluxUsers();
 	%names = FluxDB->getFluxUsernames();
 
-	# initialize our globals hash
-	$globals{'main'} = 0;
-	$globals{'started'} = 0;
-
 	#initialize the queue
 	if (-f $fileQueue) {
-		print "Qmgr : Loading Queue-file\n";
+		if ($LOGLEVEL > 0) {
+			print "Qmgr : Loading Queue-file\n";
+		}
 		# actually load the queue
 		loadQueue();
 	} else {
-		print "Qmgr : Creating empty queue\n";
+		if ($LOGLEVEL > 0) {
+			print "Qmgr : Creating empty queue\n";
+		}
 		@queue = qw();
 	}
+
+	# update running transfers
+	updateRunningTransfers();
 
 	# reset last run time
 	$time_last_run = time();
@@ -296,6 +307,8 @@ sub getMessage {
 # Returns:                                                                     #
 #------------------------------------------------------------------------------#
 sub set {
+	my $key = shift;
+	$globals{$key} = shift;
 }
 
 #------------------------------------------------------------------------------#
@@ -304,8 +317,14 @@ sub set {
 # Returns:                                                                     #
 #------------------------------------------------------------------------------#
 sub main {
+
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
+
+		# log
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : process queue...\n";
+		}
 
 		# process queue
 		processQueue();
@@ -361,93 +380,161 @@ sub command {
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
 sub processQueue {
-	# update running torrents
-	updateRunningTorrents();
-	# TODO
+#####################
+	updateRunningTransfers();
 	return 1;
-=for later
-	# process queue
-	my $jobcountq = queue();
-	my $notDoneProcessingQueue = 1;
-	if ($jobcountq > 0) { # we have queued jobs
-
-		USER: foreach my $user (@users) {
-			# initilize some variables for this user
-			my $queueId = 0;
-			my $startTry = 0;
-
-			# Grab the next torrent
-			my $nextTorrent = ${$user->{'queue'}}[$queueId];
-			my $nextUser = $user->{'username'};
-
-			# check to ensure that we aren't already running this torrent
-			foreach my $torrent (@{$user->{'running'}}) {
-				if ($torrent eq $nextTorrent) {
-					print "Qmgr : removing already running job from queue $nextTorrent ($nextUser)\n";
-					stack($queueId, \@{$user->{'queue'}});
-
-					if ($queueId < (queue()-1)) {
-						# there is a next entry
-						print "Qmgr : next queue-entry\n" if ($LOGLEVEL > 2);
-						$queueId++;
-					} else {
-						# queue is empty
-						print "Qmgr : last queue-entry for $nextUser\n" if ($LOGLEVEL > 2);
-						next USER;
+#####################
+	my $queueIdx = 0;
+	my $startTry = 0;
+	QUEUE: while (1) {
+		# update running transfers
+		updateRunningTransfers();
+		# process queue
+		my $jobcountq = scalar(@queue);
+		if ($jobcountq > 0) { # we have queued jobs
+			# next job
+			my $nextTransfer = $queue[$queueIdx];
+			my $nextUser = $jobs{"queued"}{$nextTransfer};
+			# check if this queue-entry exists in running-jobs. dont start what is
+			# running. this may be after a restart or transfer was started outside.
+			if (exists $jobs{"running"}{$nextTransfer}) { # transfer already running
+				# remove job from queue
+				if ($LOGLEVEL > 0) {
+					print "Qmgr : removing already running job from queue : ".$nextTransfer." (".$nextUser.")\n";
+				}
+				if ($queueIdx > 0) { # not first entry, stack-action
+					my @stack;
+					for (my $i = 0; $i < $queueIdx; $i++) {
+						push(@stack,(shift @queue));
 					}
+					shift @queue;
+					for (my $i = 0; $i < $queueIdx; $i++) {
+						push(@queue, (shift @stack));
+					}
+					$queueIdx--;
+				} else { # first entry, just shift
+					shift @queue;
 				}
-			}
-
-			# ok, torrent isn't running, try to start it up
-
-			# check to see if system max applies
-			my $jobCount = running();
-			if ($jobCount >= $limitGlobal) {
-				# Can't start it now.
-				print "Qmgr : Max limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($LOGLEVEL);
-				last USER;
-			}
-
-			# check to see if user max applies
-			if (scalar($user->{'running'}) >= $limitUser) {
-				# Can't start it now.
-				print "Qmgr : User limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($LOGLEVEL);
-				next USER;
-			}
-
-			# Neither limit applies, we can try to start the torrent
-			print "Qmgr : starting torrent $nextTorrent ($nextUser)\n";
-			if (Fluxd::fluxcli("start", $nextTorrent) == 1) {
-				# reset start-tries counter
-				$startTry = 0;
-
-				# remove torrent from queue
-				print "Qmgr : Removing $nextTorrent from queue\n" if ($LOGLEVEL);
-				stack($queueId, \@{$user->{'queue'}});
-
-				# slow it down now!
-				sleep 1;
-			} else {
-				# how many times have we tried to start this thing?
-				if ($startTry >= $limitStartTries) {
-					# TODO : provide option to remove bogus torrents
-					print "Qmgr : tried $limitStartTries to start $nextTorrent, skipping\n" if ($LOGLEVEL);
-					next USER;
-				} else {
-					$startTry++;
-					sleep $startTrySleep; # TODO : new looping code .. this should not be here any longer as it blocks main
+				# remove job from jobs
+				if ($LOGLEVEL > 0) {
+					print "Qmgr : removing already running job from jobs queued : ".$nextTransfer." (".$nextUser.")\n";
 				}
+				delete($jobs{"queued"}{$nextTransfer});
+				#
+				if ($queueIdx < (countQueue()-1)) { # there is a next entry
+					if ($LOGLEVEL > 1) {
+						print "Qmgr : next queue-entry\n";
+					}
+					$queueIdx++;
+				} else { # no more in queue
+					if ($LOGLEVEL > 1) {
+						print "Qmgr : last queue-entry\n";
+					}
+					last QUEUE;
+				}
+			} else { # transfer not already running
+				my @jobAry = (keys %{$jobs{"running"}});
+				my $jobcount = scalar(@jobAry);
+				# lets see if max limit applies
+				if ($jobcount < $globals{'limitGlobal'}) { # max limit does not apply
+					# lets see if per user limit applies
+					my $userCtr = 0;
+					foreach my $anJob (@jobAry) {
+						if ($jobs{"running"}{$anJob} eq $nextUser) {
+							$userCtr++;
+						}
+					}
+					if ($userCtr < $globals{'limitUser'}) { # user limit does not apply
+						# startup the thing
+						if ($LOGLEVEL > 0) {
+							print "Qmgr : starting transfer : ".$nextTransfer." (".$nextUser.")\n";
+						}
+						if (startTransfer($nextTransfer) == 1) { # start transfer succeeded
+							# reset start-counter-var
+							$startTry = 0;
+							# remove job from queue
+							if ($LOGLEVEL > 0) {
+								print "Qmgr : removing job from queue : ".$nextTransfer." (".$nextUser.")\n";
+							}
+							if ($queueIdx > 0) { # not first entry, stack-action
+								my @stack;
+								for (my $i = 0; $i < $queueIdx; $i++) {
+									push(@stack,(shift @queue));
+								}
+								shift @queue;
+								for (my $i = 0; $i < $queueIdx; $i++) {
+									push(@queue, (shift @stack));
+								}
+								$queueIdx--;
+							} else { # first entry, just shift
+								shift @queue;
+							}
+							# remove job from jobs
+							if ($LOGLEVEL > 0) {
+								print "Qmgr : removing job from jobs queued : ".$nextTransfer." (".$nextUser.")\n";
+							}
+							delete($jobs{"queued"}{$nextTransfer});
+							# add job to jobs running (not nec. is don in-loop anyway)
+							if ($LOGLEVEL > 0) {
+								print "Qmgr : adding job to jobs running : ".$nextTransfer." (".$nextUser.")\n";
+							}
+							$jobs{"running"}{$nextTransfer} = $nextUser;
+							# done with queue ?
+							$jobcountq = scalar(@queue);
+							if ($jobcountq > 0) { # more jobs in queue
+								$queueIdx = 0;
+								# dont hurry too much when processing queue
+								select undef, undef, undef, 0.5;
+							} else { # nothing more in queue
+								last QUEUE;
+							}
+						} else { # start transfer failed
+							print STDERR "Qmgr : start transfer failed : ".$nextTransfer." (".$nextUser.")\n";
+							# already tried max-times to start this thing ?
+							if ($startTry == $globals{'limitStartTries'}) {
+								$startTry = 0;
+								# TODO : give an option to remove bogus transfers
+								if ($queueIdx < (countQueue()-1)) { # there is a next entry
+									print STDERR "Qmgr : ".$globals{'limitStartTries'}." errors when starting, skipping job : ".$nextTransfer." (".$nextUser.") (next queue-entry)\n";
+									$queueIdx++;
+								} else { # no more in queue
+									print STDERR "Qmgr : ".$globals{'limitStartTries'}." errors when starting, skipping job : ".$nextTransfer." (".$nextUser.") (last queue-entry)\n";
+									last QUEUE;
+								}
+							} else {
+								$startTry++;
+								sleep $globals{'startTrySleep'};
+							}
+						} # start transfer failed
+					} else { # user-limit for this user applies, check next queue-entry if one exists
+						if ($queueIdx < (countQueue() - 1)) { # there is a next entry
+							if ($LOGLEVEL > 0) {
+								print "Qmgr : user limit applies, skipping job : ".$nextTransfer." (".$nextUser.") (next queue-entry)\n";
+							}
+							$queueIdx++;
+						} else { # no more in queue
+							if ($LOGLEVEL > 0) {
+								print "Qmgr : user limit applies, skipping job : ".$nextTransfer." (".$nextUser.") (last queue-entry)\n";
+							}
+							last QUEUE;
+						}
+					}
+				} else { # max limit does apply
+					if ($LOGLEVEL > 0) {
+						print "Qmgr : max limit applies, skipping job : ".$nextTransfer." (".$nextUser.")\n";
+					}
+					last QUEUE;
+				}
+			} # else already runnin
+		} else { # no queued jobs
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : empty queue...\n";
 			}
-		} # USER
-
-		$globals{'main'} += 1;
-	}
-=cut
-
-
-
-
-
+			last QUEUE;
+		}
+	} # queue-while-loop
+	# increment main-count
+	$globals{"main"} += 1;
 }
 
 #-------------------------------------------------------------------------------#
@@ -464,13 +551,13 @@ sub loadQueue {
 	}
 	close QUEUEFILE;
 	# fill job-hash
-	foreach my $torrent (@queue) {
-		my $user = getTorrentOwner($torrent);
+	foreach my $transfer (@queue) {
+		my $user = getTransferOwner($transfer);
 		if (!(defined $user)) {
-			$jobs{"queued"}{$torrent} = "unknown";
+			$jobs{"queued"}{$transfer} = "unknown";
 		} else {
-			if (! exists $jobs{"queued"}{$torrent}) {
-				$jobs{"queued"}{$torrent} = $user;
+			if (! exists $jobs{"queued"}{$transfer}) {
+				$jobs{"queued"}{$transfer} = $user;
 			}
 		}
 	}
@@ -486,7 +573,7 @@ sub loadQueue {
 sub saveQueue {
 	# open queue-file
 	open(QUEUEFILE,">$fileQueue");
-	# queued torrents
+	# queued transfers
 	foreach my $queueEntry (@queue) {
 		print QUEUEFILE $queueEntry."\n";
 	}
@@ -502,11 +589,11 @@ sub saveQueue {
 sub dumpQueue {
 	# open queue-file
 	open(QUEUEFILE,">$fileQueue");
-	# running torrents
+	# running transfers
 	foreach my $jobName (keys %{$jobs{"running"}}) {
 		print QUEUEFILE $jobName."\n";
 	}
-	# queued torrents
+	# queued transfers
 	foreach my $queueEntry (@queue) {
 		print QUEUEFILE $queueEntry."\n";
 	}
@@ -522,16 +609,16 @@ sub dumpQueue {
 sub status {
 	my $return = "";
 	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
-	$return .= "interval : $interval s \n";
+	$return .= "interval : ".$interval." s \n";
 	# get count-vars
 	my $countQueue = countQueue();
 	my $countRunning = countRunning();
 	my $countJobs = $countQueue + $countRunning;
 	# some vars
-	$return .= "max torrents global : $limitGlobal \n";
-	$return .= "max torrents per user : $limitUser \n";
-	$return .= "max start-tries : $limitStartTries \n";
-	$return .= "start-try-extra-sleep : $startTrySleep s\n";
+	$return .= "max transfers global : ".$globals{'limitGlobal'}."\n";
+	$return .= "max transfers per user : ".$globals{'limitUser'}."\n";
+	$return .= "max start-tries : ".$globals{'limitStartTries'}."\n";
+	$return .= "start-try-extra-sleep : ".$globals{'startTrySleep'}." s\n";
 	# jobs total
 	$return .= "jobs total : ".$countJobs."\n";
 	# jobs queued
@@ -589,12 +676,13 @@ sub countRunning {
 #------------------------------------------------------------------------------#
 # Sub: listQueue                                                               #
 # Arguments: Null                                                              #
-# Returns: List of queued torrents                                             #
+# Returns: List of queued transfers                                            #
 #------------------------------------------------------------------------------#
 sub listQueue {
 	my $return = "";
 	foreach my $queueEntry (@queue) {
-		$return .= $queueEntry.".torrent\n";
+		#$return .= $queueEntry.".torrent\n";
+		$return .= $queueEntry."\n";
 	}
 	return $return;
 }
@@ -623,12 +711,12 @@ sub add {
 	if ((! exists $jobs{"queued"}{$transfer}) && (! exists $jobs{"running"}{$transfer})) {
 		$addIt = 1;
 		if ($LOGLEVEL > 0) {
-			print "Qmgr : adding job to jobs queued : ".$transfer." (".$username.")";
+			print "Qmgr : adding job to jobs queued : ".$transfer." (".$username.")\n";
 		}
 		$jobs{"queued"}{$transfer} = $username;
 	} else {
-		if ($LOGLEVEL > 1) {
-			print "Qmgr : job already present in jobs : ".$transfer." (".$username.")";
+		if ($LOGLEVEL > 0) {
+			print "Qmgr : job already present in jobs : ".$transfer." (".$username.")\n";
 		}
 	}
 	if ($addIt == 1) {
@@ -659,7 +747,7 @@ sub remove {
 	my $username = $temp;
 	# log
 	if ($LOGLEVEL > 0) {
-		print "Qmgr : remove job from jobs queued : ".$transfer." (".$username.")";
+		print "Qmgr : remove job from jobs queued : ".$transfer." (".$username.")\n";
 	}
 	# remove from job-hash
 	my $retValJobs = 0;
@@ -701,11 +789,11 @@ sub remove {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: updateRunningTorrents                                                   #
+# Sub: updateRunningTransfers                                                  #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub updateRunningTorrents {
+sub updateRunningTransfers {
 	# get runnin clients
 	opendir(DIR, $transfersDir);
 	my @pids = map { $_->[1] } # extract pathnames
@@ -722,13 +810,13 @@ sub updateRunningTorrents {
 	# refill hash
 	if (scalar(@pids) > 0) {
 		foreach my $pidFile (@pids) {
-			my $torrent = (substr ($pidFile, 0, (length($pidFile)) - 9));
-			my $user = getTorrentOwner($torrent);
+			my $transfer = (substr ($pidFile, 0, (length($pidFile)) - 9));
+			my $user = getTransferOwner($transfer);
 			if (!(defined $user)) {
-				$jobs{"running"}{$torrent} = "unknown";
+				$jobs{"running"}{$transfer} = "unknown";
 			} else {
-				if (! exists $jobs{"running"}{$torrent}) {
-					$jobs{"running"}{$torrent} = $user;
+				if (! exists $jobs{"running"}{$transfer}) {
+					$jobs{"running"}{$transfer} = $user;
 				}
 			}
 		}
@@ -736,16 +824,16 @@ sub updateRunningTorrents {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: getTorrentOwner                                                         #
-# Arguments: torrent                                                           #
+# Sub: getTransferOwner                                                        #
+# Arguments: transfer                                                          #
 # Returns: user                                                                #
 #------------------------------------------------------------------------------#
-sub getTorrentOwner {
-	my $torrent = shift;
-	if (!(defined $torrent)) {
+sub getTransferOwner {
+	my $transfer = shift;
+	if (!(defined $transfer)) {
 		return undef;
 	}
-	my $statFile = $transfersDir.$torrent.".stat";
+	my $statFile = $transfersDir.$transfer.".stat";
 	if (-f $statFile) {
 		open(STATFILE,"< $statFile");
 		while (<STATFILE>) {
