@@ -79,6 +79,12 @@ my ($time, $localtime);
 # globals
 my %globals;
 
+# jobs
+my %jobs;
+
+# queue
+my @queue;
+
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -107,6 +113,8 @@ sub destroy {
 	undef %names;
 	undef @users;
 	undef %globals;
+	undef %jobs;
+	undef @queue;
 }
 
 ################################################################################
@@ -525,7 +533,7 @@ sub jobs {
 	my $jobcount = 0;
 	$jobcount += queue();
 	$jobcount += running();
-        return $jobcount;
+    return $jobcount;
 }
 
 #-----------------------------------------------------------------------------#

@@ -646,7 +646,7 @@ sub loadFluxUsersDBI {
 			#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
 			$users[$index] = {
 				uid => $uid,
-				username => $userid,
+				username => $userid
 			};
 			$names{$userid} = $index;
 			$index++;
@@ -708,7 +708,7 @@ sub loadFluxUsersPHP {
 		#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
 		$users[$index] = {
 			uid => $uid,
-			username => $userid,
+			username => $userid
 		};
 		$names{$userid} = $index;
 		$index++;
