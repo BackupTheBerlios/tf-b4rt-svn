@@ -22,7 +22,7 @@
 ################################################################################
 package Qmgr;
 use strict;
-no strict "refs";
+#no strict "refs";
 use warnings;
 ################################################################################
 
@@ -52,16 +52,32 @@ my $interval;
 # time of last run
 my $time_last_run = 0;
 
-my ( $time, $localtime, %globals );
-my ( $MAX_SYS, $MAX_USR );
-my $PATH_QUEUE_FILE;
-my $MAX_START_TRIES = 5;
-my $START_TRIES_SLEEP = 10;
-
-# references to the FluxDB @users and %names for use internally. Just makes
-# everything look cleaner
-my @users;
+# usernames
 my %names;
+
+# users
+my @users;
+
+# data-dir
+my $dataDir = "qmgr/";
+
+# queue-file
+my $fileQueue = "Qmgr.queue";
+
+# transfers-dir
+my $transfersDir = ".transfers";
+
+# limits
+my $limitGlobal = 5;
+my $limitUser = 2;
+my $limitStartTries = 5;
+my $startTrySleep = 10;
+
+# time-vars
+my ($time, $localtime);
+
+# globals
+my %globals;
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -88,6 +104,9 @@ sub destroy {
 	# set state
 	$state = 0;
 	# undef
+	undef %names;
+	undef @users;
+	undef %globals;
 }
 
 ################################################################################
@@ -97,7 +116,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: interval                                                          #
+# Arguments: loglevel,data-dir,transfers-dir,interval,limit-sys,limit-user     #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -115,6 +134,52 @@ sub initialize {
 		return 0;
 	}
 
+	# data-dir
+	my $ddir = shift;
+	if (!(defined $ddir)) {
+		# message
+		$message = "data-dir not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	$dataDir = $ddir . $dataDir;
+	# check if our main-dir exists. try to create if it doesnt
+	if (! -d $dataDir) {
+		print "Qmgr : creating data-dir : ".$dataDir."\n";
+		mkdir($dataDir, 0700);
+		if (! -d $dataDir) {
+			# message
+			$message = "data-dir does not exist and cannot be created";
+			# set state
+			$state = -1;
+			# return
+			return 0;
+		}
+	}
+	# queue-file
+	$fileQueue = $dataDir . $fileQueue;
+
+	# transfers-dir
+	my $transfersDir = shift;
+	if (!(defined $transfersDir)) {
+		# message
+		$message = "transfers-dir not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	if (! -d $transfersDir) {
+		# message
+		$message = "transfers-dir does not exist";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
 	# interval
 	$interval = shift;
 	if (!(defined $interval)) {
@@ -126,33 +191,50 @@ sub initialize {
 		return 0;
 	}
 
-	print "Qmgr : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n";
+	# limit-sys, limit-user
+	$limitGlobal = shift;
+	if (!(defined $interval)) {
+		# message
+		$message = "interval not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	# limit-sys, limit-user
+	$limitUser = shift;
+	if (!(defined $interval)) {
+		# message
+		$message = "interval not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	print "Qmgr : initializing (loglevel: ".$LOGLEVEL." data-dir: ".$dataDir." ; interval: ".$interval." ; limit-global: ".$limitGlobal." ; limit-user: ".$limitUser.")\n";
 
 	# Create some time vars
 	$time = time();
 	$localtime = localtime();
 
-	# initialize internal variables
-	$MAX_SYS = FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTorrents");
-	$MAX_USR = FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTorrents");
-
-	$PATH_QUEUE_FILE = $Fluxd::PATH_DATA_DIR."fluxd.queue";
-
-	@users = @FluxDB::users;
-	%names = %FluxDB::names;
+	# get users + usernames
+	@users = FluxDB->getFluxUsers();
+	%names = FluxDB->getFluxUsernames();
 
 	# initialize our globals hash
 	$globals{'main'} = 0;
 	$globals{'started'} = 0;
 
 	#initialize the queue
-	if (-f $PATH_QUEUE_FILE) {
+	if (-f $fileQueue) {
 		print "Qmgr : Loading Queue-file\n";
 		# actually load the queue
 		loadQueue();
 	} else {
 		print "Qmgr : Creating empty queue\n";
-		foreach my $user (@FluxDB::users) {
+		foreach my $user (@users) {
 			$user->{"queue"} = ();
 			$user->{"running"} = ();
 		}
@@ -269,6 +351,9 @@ sub processQueue {
 	# update running torrents
 	updateRunningTorrents();
 
+	# TODO
+	return 1;
+
 	# process queue
 	my $jobcountq = queue();
 	my $notDoneProcessingQueue = 1;
@@ -305,14 +390,14 @@ sub processQueue {
 
 			# check to see if system max applies
 			my $jobCount = running();
-			if ($jobCount >= $MAX_SYS) {
+			if ($jobCount >= $limitGlobal) {
 				# Can't start it now.
 				print "Qmgr : Max limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($LOGLEVEL);
 				last USER;
 			}
 
 			# check to see if user max applies
-			if (scalar($user->{'running'}) >= $MAX_USR) {
+			if (scalar($user->{'running'}) >= $limitUser) {
 				# Can't start it now.
 				print "Qmgr : User limit applies, skipping torrent $nextTorrent ($nextUser)\n" if ($LOGLEVEL);
 				next USER;
@@ -332,13 +417,13 @@ sub processQueue {
 				sleep 1;
 			} else {
 				# how many times have we tried to start this thing?
-				if ($startTry >= $MAX_START_TRIES) {
+				if ($startTry >= $limitStartTries) {
 					# TODO : provide option to remove bogus torrents
-					print "Qmgr : tried $MAX_START_TRIES to start $nextTorrent, skipping\n" if ($LOGLEVEL);
+					print "Qmgr : tried $limitStartTries to start $nextTorrent, skipping\n" if ($LOGLEVEL);
 					next USER;
 				} else {
 					$startTry++;
-					sleep $START_TRIES_SLEEP; # TODO : new looping code .. this should not be here any longer as it blocks main
+					sleep $startTrySleep; # TODO : new looping code .. this should not be here any longer as it blocks main
 				}
 			}
 		} # USER
@@ -347,33 +432,24 @@ sub processQueue {
 	}
 }
 
-#-------------------------------------------------------------------------------
-# Sub: printVersion
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
-sub printVersion {
-	print "Qmgr.pm Revision ".$VERSION."\n";
-}
-
-#-----------------------------------------------------------------------------#
-# Sub: loadQueue                                                              #
-# Arguments: Null                                                             #
-# Returns: Null                                                               #
-#-----------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: loadQueue                                                               #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub loadQueue {
 	# read from file into queue-array
-	open(QUEUEFILE,"< $PATH_QUEUE_FILE");
+	open(QUEUEFILE,"< $fileQueue");
 	while (<QUEUEFILE>) {
 		chomp;
-		my ( $torrent, $username ) = split;
+		my ($torrent, $username) = split;
 		#push(@{$users->[$names->{$username}]->{'queue'}}, $torrent);
 		#push(@{$FluxDB::users[$FluxDB::names{$username}]{'queue'}}, $torrent);
 		#push(${users[$names->{$username}]{'queue'}}, $torrent);
 	}
 	close QUEUEFILE;
 	# done loading, delete queue-file
-	return unlink($PATH_QUEUE_FILE);
+	return unlink($fileQueue);
 }
 
 #-----------------------------------------------------------------------------#
@@ -383,7 +459,7 @@ sub loadQueue {
 #-----------------------------------------------------------------------------#
 sub saveQueue {
 	# open queue-file
-	open(QUEUEFILE,">$PATH_QUEUE_FILE");
+	open(QUEUEFILE,">$fileQueue");
 	# queued torrents
 	foreach my $user (@users) {
 		foreach my $torrent (@{$user->{'queue'}}) {
@@ -408,10 +484,10 @@ sub status {
 	my $countRunning = running();
 	my $countJobs = $countQueue + $countRunning;
 	# some vars
-	$return .= "max torrents global : $MAX_SYS \n";
-	$return .= "max torrents per user : $MAX_USR \n";
-	$return .= "max start-tries : $MAX_START_TRIES \n";
-	$return .= "start-try-extra-sleep : $START_TRIES_SLEEP s\n";
+	$return .= "max torrents global : $limitGlobal \n";
+	$return .= "max torrents per user : $limitUser \n";
+	$return .= "max start-tries : $limitStartTries \n";
+	$return .= "start-try-extra-sleep : $startTrySleep s\n";
 	# jobs total
 	$return .= "jobs total : ".$countJobs."\n";
 	# jobs queued
@@ -582,7 +658,7 @@ sub remove {
 sub updateRunningTorrents {
 	# Get current list of running torrents
 	# get running clients
-	opendir(DIR, $Fluxd::PATH_TRANSFER_DIR);
+	opendir(DIR, $transfersDir);
 	my @pids = map { $_->[1] } # extract pathnames
 	map { [ $_, "$_" ] } # no full paths
 	grep { !/^\./ } # no dot-files
@@ -590,7 +666,7 @@ sub updateRunningTorrents {
 	readdir(DIR);
 	closedir(DIR);
 	# flush running-jobs-hash
-	foreach my $user (@FluxDB::users) {
+	foreach my $user (@users) {
 		$user->{'running'} = ();
 	}
 	# refill hash
@@ -613,7 +689,7 @@ sub getTorrentOwner {
 	if (!(defined $torrent)) {
 		return undef;
 	}
-	my $statFile = $Fluxd::PATH_TRANSFER_DIR.$torrent.".stat";
+	my $statFile = $transfersDir.$torrent.".stat";
 	if (-f $statFile) {
 		open(STATFILE,"< $statFile");
 		while (<STATFILE>) {
@@ -636,7 +712,6 @@ sub getTorrentOwner {
 sub stack {
 	my $index = shift;
 	my $array = shift;
-
 	if ($index) {
 		my @stack;
 		for (my $i = 0; $i < $index; $i++) {

@@ -97,7 +97,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: path-to-perl, path-to-tfrss, data-dir, interval, jobs             #
+# Arguments: loglevel, path-to-perl, path-to-tfrss, data-dir, interval, jobs   #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {

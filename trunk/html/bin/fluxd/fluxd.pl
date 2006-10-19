@@ -564,7 +564,11 @@ sub loadServiceModules {
 					$qmgr = Qmgr->new();
 					$qmgr->initialize(
 						$LOGLEVEL,
-						FluxDB->getFluxConfig("fluxd_Qmgr_interval")
+						$PATH_DATA_DIR,
+						$PATH_TRANSFER_DIR,
+						FluxDB->getFluxConfig("fluxd_Qmgr_interval"),
+						FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTorrents"),
+						FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTorrents")
 					);
 					if ($qmgr->getState() < 1) {
 						print STDERR "error initializing service-module Qmgr :\n";

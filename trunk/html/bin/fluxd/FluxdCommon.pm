@@ -50,14 +50,14 @@ sub getVersion {
 	return $VERSION;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: niceTimeString
-# Arguments: start-time
-# Return: nice Time String
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: niceTimeString                                                          #
+# Arguments: start-time                                                        #
+# Return: nice Time String                                                     #
+#------------------------------------------------------------------------------#
 sub niceTimeString {
 	my $startTime = shift;
-	my ($dura,$duration,$days,$hours,$mins,$secs,$rest);
+	my ($dura, $duration, $days, $hours, $mins, $secs, $rest);
 	$dura = ((time) - $startTime);
 	$rest = $dura;
 	$days = $hours = $mins = $secs = 0;
