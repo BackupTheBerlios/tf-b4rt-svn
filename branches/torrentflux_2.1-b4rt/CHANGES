@@ -2,6 +2,49 @@
 $Id$
 ================================================================================
 
+
+  b4rt-953
+
+  details :
+  http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1280&sc=0&isdir=1
+
+
+***** changes ***** 
+
+- transmission-handler : bsd-workaround : use PHP-function "touch" and not 
+  shell-call to "touch"
+
+- refactoring db :
+  * dont return adodb-connection-object but just initialize global var in new
+    function initializeDatabase()
+  * function getdb() returns global instance of $db (method should not be used
+    anymore and is not used anymore, just in case it is needed / compat-reasons)
+
+- superadmin : ported new db-connect-code
+
+- db.php : dont use DSN to connect, use Connect/PConnect and extra error-check
+
+- added "max-recursion-depth" (10) to function "checkDirectory".
+
+- superadmin : function backupCreate : use function checkDirectory from 
+  functions-lib and not extra local one
+
+
+***** fixes *****
+
+- bug when writing messages with accents or special characters.
+  fix provided by Shadow aok, thanks for this.
+  http://tf-b4rt.berlios.de/forum/index.php/topic,216.0.html 
+
+- use a useless var in all PHP-classes ctors to prevent this error on flawed 
+  PHPs :
+  "Fatal error: Only variables can be passed by reference in ..."
+
+- notice in xfer-hack
+
+
+--------------------------------------------------------------------------------
+
   b4rt-952
 
   details :
