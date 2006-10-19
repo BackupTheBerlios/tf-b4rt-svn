@@ -86,6 +86,8 @@ sub new {
 sub destroy {
 	# set state
 	$state = 0;
+	# log
+	print "Rssad : shutdown\n";
 	# undef
 	undef @jobs;
 }
@@ -284,9 +286,6 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		# set last run time
-		$time_last_run = $now;
-
 		# exec tfrss-jobs
 		my $jobCount = scalar(@jobs);
 		for (my $i = 0; $i < $jobCount; $i++) {
@@ -298,6 +297,10 @@ sub main {
 			}
 			tfrss($jobs[$i]{"savedir"}, $dataDir.$jobs[$i]{"filter"}, $jobs[$i]{"url"});
 		}
+
+		# set last run time
+		$time_last_run = $now;
+
 	}
 }
 

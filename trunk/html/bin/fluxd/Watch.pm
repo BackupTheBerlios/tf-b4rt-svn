@@ -77,6 +77,8 @@ sub new {
 sub destroy {
 	# set state
 	$state = 0;
+	# log
+	print "Watch : shutdown\n";
 	# undef
 	undef %jobs;
 }
@@ -201,9 +203,6 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		# set last run time
-		$time_last_run = $now;
-
 		# watch in dirs for dropped meta-files
 		foreach my $user (sort keys %jobs) {
 			my $dir = $jobs{$user};
@@ -218,6 +217,10 @@ sub main {
 				};
 			}
 		}
+
+		# set last run time
+		$time_last_run = $now;
+
 	}
 }
 

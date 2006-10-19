@@ -75,6 +75,8 @@ sub new {
 sub destroy {
 	# set state
 	$state = 0;
+	# log
+	print "Fluxinet : shutdown\n";
 	# remove
 	foreach my $handle ($Select->handles) {
 		$Select->remove($handle);

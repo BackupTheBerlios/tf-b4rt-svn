@@ -74,6 +74,8 @@ sub new {
 sub destroy {
 	# set state
 	$state = 0;
+	# log
+	print "Clientmaint : shutdown\n";
 }
 
 ################################################################################
