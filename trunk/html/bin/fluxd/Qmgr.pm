@@ -337,17 +337,13 @@ sub command {
 			if ($LOGLEVEL > 1) {
 				print "Qmgr : enqueue : \"".$1."\" (user : ".$2.")\n";
 			}
-			# TODO
-			#return add($1,$2);
-			return 1;
+			return add($1, $2);
 		};
 		/^dequeue;(.*);(.*)/ && do {
 			if ($LOGLEVEL > 1) {
 				print "Qmgr : dequeue : \"".$1."\" (user : ".$2.")\n";
 			}
-			# TODO
-			#return remove($1,$2);
-			return 1;
+			return remove($1, $2);
 		};
 		/^set;(.*);(.*)/ && do {
 			if ($LOGLEVEL > 1) {
@@ -365,13 +361,10 @@ sub command {
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
 sub processQueue {
-
 	# update running torrents
 	updateRunningTorrents();
-
 	# TODO
 	return 1;
-
 =for later
 	# process queue
 	my $jobcountq = queue();
@@ -450,6 +443,7 @@ sub processQueue {
 		$globals{'main'} += 1;
 	}
 =cut
+
 
 
 
@@ -554,8 +548,7 @@ sub status {
 	}
 	# misc stats
 	$return .= "running since : $localtime (";
-	my $tempiStringy = FluxdCommon::niceTimeString($time);
-	$return .= $tempiStringy.") ";
+	$return .= FluxdCommon::niceTimeString($time).") ";
 	$return .= "(".$globals{'main'}." cycles) \n";
 	$return .= "started transfers : ".$globals{'started'}."\n";
 	# return
@@ -608,83 +601,103 @@ sub listQueue {
 
 #------------------------------------------------------------------------------#
 # Sub: add                                                                     #
-# Arguments: torrent, user                                                     #
-# Returns: Null                                                                #
+# Arguments: transfer, user                                                    #
+# Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub add {
-=for later
-	# add a torrent to the queue
-	my $AddIt = 0;
 	# Verify that the arguments look good
 	my $temp = shift;
 	if (!(defined $temp)) {
-		printUsage();
-		return;
+		print STDERR "Qmgr : invalid argument for transfer on add\n";
+		return 0;
 	}
-	my $torrent = $temp;
-	$torrent = StripTorrentName($torrent);
+	my $transfer = $temp;
 	$temp = shift;
 	if (!(defined $temp)) {
-		printUsage();
-		return;
+		print STDERR "Qmgr : invalid argument for username on add\n";
+		return 0;
 	}
 	my $username = $temp;
-	# Looks good, add it to the queue.
-	USER: foreach my $user (@users) {
-		foreach my $entry (@{$user->{'queue'}}) {
-			if ($torrent eq $entry) {
-				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($LOGLEVEL);
-				last USER;
-			}
+	# add it
+	my $addIt = 0;
+	if ((! exists $jobs{"queued"}{$transfer}) && (! exists $jobs{"running"}{$transfer})) {
+		$addIt = 1;
+		if ($LOGLEVEL > 0) {
+			print "Qmgr : adding job to jobs queued : ".$transfer." (".$username.")";
 		}
-		foreach my $entry (@{$user->{'running'}}) {
-			if ($torrent eq $entry) {
-				print "Qmgr: Job already exists : ".$torrent." (".$user->{'username'}.")" if ($LOGLEVEL);
-				last USER;
-			}
+		$jobs{"queued"}{$transfer} = $username;
+	} else {
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : job already present in jobs : ".$transfer." (".$username.")";
 		}
 	}
-	$AddIt = 1;
-	print "Qmgr: Adding job to queue : ".$torrent." (".$username.")";
-	if ($AddIt == 1) {
-		#push ({@users->[%names->{$username}]->{'queue'}}, $torrent);
+	if ($addIt == 1) {
+		push(@queue,$transfer);
 	}
-=cut
-
-
-
+	# return
+	return $addIt;
 }
 
 #------------------------------------------------------------------------------#
 # Sub: remove                                                                  #
-# Arguments: torrent, user                                                     #
-# Returns: Null                                                                #
+# Arguments: transfer, user                                                    #
+# Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub remove {
-=for later
-	# remove a torrent from the queue
-	# Check arguments
+	# Verify that the arguments look good
 	my $temp = shift;
 	if (!(defined $temp)) {
-		printUsage();
-		return;
+		print STDERR "Qmgr : invalid argument for transfer on remove\n";
+		return 0;
 	}
-	my $torrent = $temp;
-	#$torrent = StripTorrentName();
-	my $username = getTorrentOwner($torrent);
-	print "Qmgr : Remove : Removing from queue : ".$torrent." (".$username.")";
-	# Remove from queue stack
-	my $index = 0;
-	#REMOVE: foreach my $entry (@{$users->[$names->{$username}]->{'queue'}}) {
-	#	if ($torrent eq $entry) {
-	#		stack($index, \@{$users->[$names->{$username}]->{'queue'}});
-	#		last REMOVE;
-	#	}
-	#	$index++;
-	#}
-=cut
-
-
+	my $transfer = $temp;
+	$temp = shift;
+	if (!(defined $temp)) {
+		print STDERR "Qmgr : invalid argument for username on remove\n";
+		return 0;
+	}
+	my $username = $temp;
+	# log
+	if ($LOGLEVEL > 0) {
+		print "Qmgr : remove job from jobs queued : ".$transfer." (".$username.")";
+	}
+	# remove from job-hash
+	my $retValJobs = 0;
+	if (exists $jobs{"queued"}{$transfer}) {
+		delete($jobs{"queued"}{$transfer});
+		$retValJobs = 1;
+	}
+	# remove from queue-stack
+	my $retValQueue = 0;
+	my $Idx = 0;
+	LOOP: foreach my $queueEntry (@queue) {
+		if ($queueEntry eq $transfer) {
+			$retValQueue = 1;
+			last LOOP;
+		}
+		$Idx++;
+	}
+	if ($retValQueue > 0) {
+		if ($Idx > 0) { # not first entry, stack-action
+			my @stack;
+			for (my $i = 0; $i < $Idx; $i++) {
+				push(@stack, (shift @queue));
+			}
+			shift @queue;
+			for (my $i = 0; $i < $Idx; $i++) {
+				push(@queue, (shift @stack));
+			}
+			$Idx--;
+		} else { # first entry, just shift
+			shift @queue;
+		}
+	}
+	# return
+	if (($retValJobs > 0) && ($retValQueue > 0)) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
 
 #------------------------------------------------------------------------------#
