@@ -48,6 +48,9 @@ class Fluxd
     var $pathDataDir = "";
     var $pathPidFile = "";
     var $pathSocket = "";
+    
+    // socket-timeout
+    var $socketTimeout = 5;
 
     // ctor
 
@@ -254,40 +257,41 @@ class Fluxd
         if ($this->isFluxdRunning()) {
 
         	// create socket
-            $socket = socket_create(AF_UNIX, SOCK_STREAM, 0);
+        	$socket = -1;
+            $socket = @socket_create(AF_UNIX, SOCK_STREAM, 0);
             if ($socket < 0) {
-            	$this->messages = "socket_create() failed: reason: " . socket_strerror($socket);
+            	$this->messages = "socket_create() failed: reason: " . @socket_strerror($socket);
             	$this->state = -1;
                 return null;
             }
 
             //timeout after 3 seconds
-    		socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>3,'usec'=>0));
+    		@socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $this->socketTimeout, 'usec' => 0));
 
             // connect
-            $result = socket_connect($socket, $this->pathSocket);
+            $result = -1;
+            $result = @socket_connect($socket, $this->pathSocket);
             if ($result < 0) {
-            	$this->messages = "socket_connect() failed: reason: " . socket_strerror($result);
+            	$this->messages = "socket_connect() failed: reason: " . @socket_strerror($result);
             	$this->state = -1;
                 return null;
             }
 
             // write command
-            socket_write($socket, $command."\n");
+            @socket_write($socket, $command."\n");
 
             // read retval
             $return = "";
             if ($read != 0) {
-	            // read data
-				$data = socket_read($socket, 4096, PHP_BINARY_READ);
-				while (isset($data) && ($data != "")) {
+				do {
+					// read data
+					$data = @socket_read($socket, 4096, PHP_BINARY_READ);
 					$return .= $data;
-					$data = socket_read($socket, 4096, PHP_BINARY_READ);
-				}
+				} while (isset($data) && ($data != ""));            	
             }
 
             // close socket
-            socket_close($socket);
+            @socket_close($socket);
 
             // return
             return $return;
