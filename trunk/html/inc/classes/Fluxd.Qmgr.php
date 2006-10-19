@@ -64,7 +64,7 @@ class FluxdQmgr extends FluxdServiceMod
     function enqueueTorrent($torrent, $user) {
     	$torrent = urldecode($torrent);
     	// send command to Qmgr
-    	parent::sendServiceCommand("enqueue;".$torrent.";".$user, 0);
+    	parent::sendServiceCommand("enqueue;".substr($torrent, 0, -8).";".$user, 0);
     }
 
     /**
@@ -83,7 +83,7 @@ class FluxdQmgr extends FluxdServiceMod
             exit();
         } else {
             // send command to Qmgr
-            parent::sendServiceCommand("dequeue;".$torrent.";".$user, 0);
+            parent::sendServiceCommand("dequeue;".substr($torrent, 0, -8).";".$user, 0);
             // flag the torrent as stopped (in db)
             stopTorrentSettings($torrent);
             // update the stat file.
