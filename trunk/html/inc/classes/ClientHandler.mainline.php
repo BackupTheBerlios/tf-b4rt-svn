@@ -51,7 +51,7 @@ class ClientHandlerMainline extends ClientHandler
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
      * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive, $enqueue = false) {
+    function startClient($transfer, $interactive, $enqueue) {
 
         // do mainline special-pre-start-checks
         // check to see if the path to the python script is valid

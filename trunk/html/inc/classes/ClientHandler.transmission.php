@@ -51,7 +51,7 @@ class ClientHandlerTransmission extends ClientHandler
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
      * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive, $enqueue = false) {
+    function startClient($transfer, $interactive, $enqueue) {
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
@@ -84,7 +84,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".stat.pid";
 
         // workaround for bsd-pid-file-problem : touch file first
-        if ((!$enqueue) && ($this->cfg["_OS"] == 2))
+        if (($this->queue == 0) && ($this->cfg["_OS"] == 2))
         	@touch($this->pidFile);
         
 		// note :

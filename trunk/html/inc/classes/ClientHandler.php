@@ -200,19 +200,22 @@ class ClientHandler
             }
             $this->savepath = getRequestVar('savepath') ;
             $this->skip_hash_check = getRequestVar('skiphashcheck');
+            global $_REQUEST;
+            system('echo queue >> /tmp/tflux.debug; echo "'. $_REQUEST["queue"] .'" >> /tmp/tflux.debug');
+            system('echo enqueue >> /tmp/tflux.debug; echo "'. $_REQUEST["enqueue"] .'" >> /tmp/tflux.debug');
 	        // queue
 	        if ($enqueue) {
-	            if($this->cfg['isAdmin']) {
-	                $this->queue = getRequestVar('queue');
-	                if($this->queue == 'on')
-	                    $this->queue = "1";
+	            if ($this->cfg['isAdmin']) {
+	                $queueTemp = getRequestVar('queue');
+	                if ($queueTemp == "true")
+	                    $this->queue = 1;
 	                else
-	                    $this->queue = "0";
+	                    $this->queue = 0;
 	            } else {
-	                $this->queue = "1";
+	                $this->queue = 1;
 	            }
 	        } else {
-	            $this->queue = "0";
+	            $this->queue = 0;
 	        }
         } else { // non-interactive, load settings from db and set vars
             $this->rerequest = $this->cfg["rerequest_interval"];
@@ -220,16 +223,16 @@ class ClientHandler
             $this->superseeder = 0;
 			// queue
 	        if ($enqueue) {
-	            if($this->cfg['isAdmin']) {
-	                if($enqueue)
-	                    $this->queue = "1";
+	            if ($this->cfg['isAdmin']) {
+	                if ($enqueue)
+	                    $this->queue = 1;
 	                else
-	                    $this->queue = "0";
+	                    $this->queue = 0;
 	            } else {
-	                $this->queue = "1";
+	                $this->queue = 1;
 	            }
 	        } else {
-	            $this->queue = "0";
+	            $this->queue = 0;
 	        }
             // load settings
             $settingsAry = loadTorrentSettings(urldecode($transfer));
@@ -315,7 +318,7 @@ class ClientHandler
             }
         }
         // write stat-file
-        if($this->queue == "1") {
+        if ($this->queue == 1) {
             $this->af->QueueTransferFile();  // this only writes out the stat file (does not start transfer)
         } else {
             if ($this->setClientPort() === false)
@@ -337,9 +340,9 @@ class ClientHandler
             return;
         }
         // write the session to close so older version of PHP will not hang
-        session_write_close("TorrentFlux");
+        @session_write_close("TorrentFlux");
         $transferRunningFlag = 1;
-        if ($this->queue == "1") { // queue
+        if ($this->queue == 1) { // queue
 			require_once("inc/classes/Fluxd.php");
 			require_once("inc/classes/Fluxd.ServiceMod.php");
 			$fluxd = new Fluxd(serialize($this->cfg));
@@ -347,7 +350,7 @@ class ClientHandler
 			if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {
 				$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($this->cfg, $fluxd, 'Qmgr');
 				$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
-				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
+				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ." : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
 			} else {
 				$this->messages = "queue-request (".$this->transfer."/".$this->cfg['user'].") but Qmgr not active";
 				AuditAction($this->cfg["constants"]["error"], $this->messages);
@@ -357,7 +360,7 @@ class ClientHandler
             // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
             $this->callResult = exec($this->command);
-            AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
+            AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. " : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
             // slow down and wait for thread to kick off.
             // otherwise on fast servers it will kill stop it before it gets a chance to run.
             sleep(1);

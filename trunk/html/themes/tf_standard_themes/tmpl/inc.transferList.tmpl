@@ -177,11 +177,11 @@
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="isTorrent">
 												<tmpl_if name="advanced_start">
-														<tmpl_if name="show_run">
-															<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
-														<tmpl_else>
-															<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
-														</tmpl_if>
+													<tmpl_if name="show_run">
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<tmpl_else>
+														<a href="#" onclick="StartTorrent('index.php?iid=startpop&torrent=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													</tmpl_if>
 												<tmpl_else>
 													<tmpl_if name="show_run">
 														<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>

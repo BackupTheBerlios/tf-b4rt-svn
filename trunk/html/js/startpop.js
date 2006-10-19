@@ -1,12 +1,20 @@
 /* $Id$ */
 
+var setQueue = 0;
+
 /**
  * StartTorrent
  */
 function StartTorrent() {
-	if (ValidateValues()) {
-		document.theForm.submit();
+	if (setQueue == 1) {
+		var qbox = document.getElementById("queuebox");
+		if (qbox.checked)
+			document.getElementById("queue").value = "true";
+		else
+			document.getElementById("queue").value = "false";
 	}
+	if (ValidateValues())
+		document.theForm.submit();
 }
 
 /**

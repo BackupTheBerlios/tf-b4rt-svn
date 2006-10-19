@@ -192,6 +192,13 @@
 							</tmpl_if>
 						</tr>
 					</table>
+					<tmpl_if name="is_queue">
+						<tmpl_if name="isAdmin">
+							<input type="hidden" name="queue" id="queue" value="false">
+						<tmpl_else>
+							<input type="hidden" name="queue" id="queue" value="true">
+						</tmpl_if>
+					</tmpl_if>
 					Torrent Meta Data / Priority Selection:
 				</td>
 			</tr>
@@ -206,12 +213,8 @@
 					<td>
 						<tmpl_if name="is_queue">
 							<tmpl_if name="isAdmin">
-								<input type='Checkbox' name='queue'>Enqueue
-							<tmpl_else>
-								<input type='hidden' name='queue' value="1">
+								<input type="checkbox" name="queuebox" id="queuebox" onclick="setQueue = 1;">Enqueue
 							</tmpl_if>
-						<tmpl_else>
-							&nbsp;
 						</tmpl_if>
 						<input type="button" id="startbtn" name="startbtn" value="<tmpl_var name="_RUNTRANSFER">" onclick="StartTorrent();">&nbsp;&nbsp;
 						<input type="button" value="Cancel" onclick="window.close()">
