@@ -36,7 +36,7 @@ if (isset($_SESSION['user'])) {
 }
 
 // start ob
-ob_start();
+@ob_start();
 
 // authentication
 switch ($cfg['auth_type']) {

@@ -87,9 +87,9 @@ AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 if (!(isset($_SESSION['cache'][$currentUser]))) {
 
 	// check for setup.php and upgrade.php
-	if (file_exists("setup.php"))
+	if (@file_exists("setup.php") === true)
 		showErrorPage("Error : <em>setup.php</em> must be deleted.");
-	if (file_exists("upgrade.php"))
+	if (@file_exists("upgrade.php") === true)
 		showErrorPage("Error : <em>upgrade.php</em> must be deleted.");
 
 	// set admin-var
