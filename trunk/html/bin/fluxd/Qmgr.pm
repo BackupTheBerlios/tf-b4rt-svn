@@ -547,8 +547,8 @@ sub saveQueue {
 
 #------------------------------------------------------------------------------#
 # Sub: dumpQueue                                                               #
-# Parameters:	-                                                              #
-# Return:		-                                                              #
+# Parameters: -                                                                #
+# Return: -                                                                    #
 #------------------------------------------------------------------------------#
 sub dumpQueue {
 	if ($LOGLEVEL > 0) {
@@ -570,8 +570,8 @@ sub dumpQueue {
 
 #------------------------------------------------------------------------------#
 # Sub: countJobs                                                               #
-# Parameters:	-                                                              #
-# Return:	number of  Jobs                                                    #
+# Parameters: -                                                                #
+# Return: number of  Jobs                                                      #
 #------------------------------------------------------------------------------#
 sub countJobs {
 	my $jobcount = 0;
@@ -582,8 +582,8 @@ sub countJobs {
 
 #------------------------------------------------------------------------------#
 # Sub: countQueue                                                              #
-# Parameters:	-                                                              #
-# Return:	number of queued jobs                                              #
+# Parameters: -                                                                #
+# Return: number of queued jobs                                                #
 #------------------------------------------------------------------------------#
 sub countQueue {
 	return scalar(@queue);
@@ -592,8 +592,8 @@ sub countQueue {
 
 #------------------------------------------------------------------------------#
 # Sub: countRunning                                                            #
-# Parameters:	-                                                              #
-# Return:	number of queued jobs                                              #
+# Parameters: -                                                                #
+# Return: number of queued jobs                                                #
 #------------------------------------------------------------------------------#
 sub countRunning {
 	return scalar((keys %{$jobs{"running"}}));
@@ -785,8 +785,8 @@ sub getTransferOwner {
 
 #------------------------------------------------------------------------------#
 # Sub: startTransfer                                                           #
-# Parameters:	transfer-name                                                  #
-# Return:		int with return of start-call (0|1)                            #
+# Parameters: transfer-name                                                    #
+# Return: int with return of start-call (0|1)                                  #
 #------------------------------------------------------------------------------#
 sub startTransfer {
 	my $transfer = shift;

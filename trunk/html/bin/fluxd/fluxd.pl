@@ -70,7 +70,7 @@ processArguments();
 &daemonize();
 
 # load flux-service-modules
-loadServiceModules();
+serviceModulesLoad();
 
 # Here we go! The main loop!
 my $loop = 1;
@@ -239,6 +239,11 @@ sub processArguments {
 
 	# daemon-stop
 	if ($temp =~ /daemon-stop/) {
+		# check if running
+		if (daemonIsRunning() == 0) {
+			print STDERR "daemon not running.\n";
+			exit;
+		}
 		# $PATH_DOCROOT
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -294,6 +299,11 @@ sub processArguments {
 
 	# daemon-start
 	if ($temp =~ /daemon-start/) {
+		# check if already running
+		if (daemonIsRunning() == 1) {
+			print STDERR "daemon already running.\n";
+			exit;
+		}
 		# $PATH_DOCROOT
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -318,7 +328,7 @@ sub processArguments {
 			exit;
 		}
 		$dbMode = $temp;
-		print "Starting up daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n";
+		print "Starting daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n";
 		# return
 		return 1;
 	};
@@ -369,16 +379,22 @@ sub daemonize {
 	open STDOUT, ">>$LOG"		or die "Can't Write to $LOG: $!";
 	open STDERR, ">>$ERROR_LOG"	or die "Can't Write to error $ERROR_LOG: $!";
 
-	# check for pid-file : if exists bail out
-	if (-f $PID_FILE) {
-		print STDERR "CORE : pid-file (".$PID_FILE.") exists. daemon running ?\n";
+	# check if already running
+	if (daemonIsRunning() == 1) {
+		print STDERR "CORE : daemon already running.\n";
 		exit;
 	}
 
-	# check for socket : if exists bail out
+	# check for pid-file
+	if (-f $PID_FILE) {
+		print "CORE : pid-file (".$PATH_SOCKET.") exists but daemon not running. deleting...\n";
+		pidFileDelete();
+	}
+
+	# check for socket
 	if (-r $PATH_SOCKET) {
-		print STDERR "CORE : socket (".$PATH_SOCKET.") exists. daemon running ?\n";
-		exit;
+		print "CORE : socket (".$PATH_SOCKET.") exists but daemon not running. deleting...\n";
+		socketRemove();
 	}
 
 	# load perl-modules
@@ -400,28 +416,11 @@ sub daemonize {
 	$SIG{HUP} = \&gotSigHup;
 	$SIG{QUIT} = \&gotSigQuit;
 
-	# set up daemon stuff...
-
 	# set up server socket
-	$SERVER = IO::Socket::UNIX->new(
-			Type    => IO::Socket::UNIX->SOCK_STREAM,
-			Local   => $PATH_SOCKET,
-			Listen  => 16,
-			Reuse   => 1,
-			);
-	die "CORE : Couldn't create socket: $!\n" unless $SERVER;
-	if ($LOGLEVEL > 0) {
-		print STDOUT "CORE : created socket ".$PATH_SOCKET."\n";
-	}
-
-	# create select
-	$Select = new IO::Select();
-
-	# Add our server socket to the select read set.
-	$Select->add($SERVER);
+	socketInitialize();
 
 	# write out pid-file
-	writePidFile($$);
+	pidFileWrite($$);
 }
 
 #------------------------------------------------------------------------------#
@@ -436,13 +435,10 @@ sub daemonShutdown {
 	$loop = 0;
 
 	# unload modules
-	unloadServiceModules();
+	serviceModulesUnload();
 
 	# remove socket
-	if ($LOGLEVEL > 0) {
-		print STDOUT "CORE : deleting socket ".$PATH_SOCKET."\n";
-	}
-	unlink($PATH_SOCKET);
+	socketRemove();
 
 	# destroy db-bean
 	if (defined($fluxDB)) {
@@ -450,10 +446,28 @@ sub daemonShutdown {
 	}
 
 	# remove pid-file
-	deletePidFile();
+	pidFileDelete();
 
 	# get out here
 	exit;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: daemonIsRunning                                                         #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub daemonIsRunning {
+	my $name = $DIR.$PROG.".".$EXTENSION;
+	my $qstring = "ps -aux 2> /dev/null";
+	my $pcount = 0;
+	foreach my $line (grep(/$name/, qx($qstring))) {
+		$pcount++;
+	}
+	if ($pcount > 1) {
+		return 1;
+	}
+	return 0;
 }
 
 #------------------------------------------------------------------------------#
@@ -508,11 +522,11 @@ sub loadModules {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: loadServiceModules                                                      #
+# Sub: serviceModulesLoad                                                      #
 # Arguments: null                                                              #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
-sub loadServiceModules {
+sub serviceModulesLoad {
 
 	# Fluxinet
 	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
@@ -802,11 +816,11 @@ sub loadServiceModules {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: unloadServiceModules                                                    #
+# Sub: serviceModulesUnload                                                    #
 # Arguments: null                                                              #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
-sub unloadServiceModules {
+sub serviceModulesUnload {
 
 	# Fluxinet
 	if (defined $fluxinet) {
@@ -907,6 +921,61 @@ sub unloadServiceModules {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: serviceModuleState                                                      #
+# Arguments: name of service-module                                            #
+# Returns: state of service-module                                             #
+#------------------------------------------------------------------------------#
+sub serviceModuleState {
+	$_ = shift;
+	if (!(defined $_)) {
+		return 0;
+	} else {
+		/Fluxinet/ && do {
+			if (defined $fluxinet) {
+				return $fluxinet->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Qmgr/ && do {
+			if (defined $qmgr) {
+				return $qmgr->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Rssad/ && do {
+			if (defined $rssad) {
+				return $rssad->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Watch/ && do {
+			if (defined $watch) {
+				return $watch->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Trigger/ && do {
+			if (defined $trigger) {
+				return $trigger->getState();
+			} else {
+				return 0;
+			}
+		};
+		/Clientmaint/ && do {
+			if (defined $clientmaint) {
+				return $clientmaint->getState();
+			} else {
+				return 0;
+			}
+		};
+	}
+}
+
+#------------------------------------------------------------------------------#
 # Sub: gotSigHup                                                               #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
@@ -915,7 +984,7 @@ sub gotSigHup {
 	print "CORE : Got SIGHUP, re-loading service-modules...";
 	# have FluxDB reload the DB first, so we can see the changes
 	if ($fluxDB->reload()) {
-		loadServiceModules();
+		serviceModulesLoad();
 		print "done.\n";
 	} else {
 		print "Error\n";
@@ -989,7 +1058,7 @@ sub processRequest {
 			last SWITCH;
 		};
 		/^modstate/ && do {
-			$return = modState(shift);
+			$return = serviceModuleState(shift);
 			last SWITCH;
 		};
 		/^check/ && do {
@@ -1005,7 +1074,7 @@ sub processRequest {
 			last SWITCH;
 		};
 		/^reloadModules/ && do {
-			$return = loadServiceModules();
+			$return = serviceModulesLoad();
 			last SWITCH;
 		};
 
@@ -1153,11 +1222,47 @@ sub fluxcli {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: writePidFile                                                            #
+# Sub: socketInitialize                                                        #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub socketInitialize {
+	$SERVER = IO::Socket::UNIX->new(
+			Type    => IO::Socket::UNIX->SOCK_STREAM,
+			Local   => $PATH_SOCKET,
+			Listen  => 16,
+			Reuse   => 1,
+			);
+	die "CORE : Couldn't create socket: $!\n" unless $SERVER;
+	if ($LOGLEVEL > 0) {
+		print STDOUT "CORE : created socket ".$PATH_SOCKET."\n";
+	}
+
+	# create select
+	$Select = new IO::Select();
+
+	# Add our server socket to the select read set.
+	$Select->add($SERVER);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: socketRemove                                                            #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub socketRemove {
+	if ($LOGLEVEL > 0) {
+		print STDOUT "CORE : removing socket ".$PATH_SOCKET."\n";
+	}
+	unlink($PATH_SOCKET);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: pidFileWrite                                                            #
 # Arguments: int with pid                                                      #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
-sub writePidFile {
+sub pidFileWrite {
 	my $pid = shift;
 	if (!(defined $pid)) {
 		$pid = $$;
@@ -1171,11 +1276,11 @@ sub writePidFile {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: deletePidFile                                                           #
+# Sub: pidFileDelete                                                           #
 # Arguments: null                                                              #
 # Returns: return-val of delete                                                #
 #------------------------------------------------------------------------------#
-sub deletePidFile {
+sub pidFileDelete {
 	if ($LOGLEVEL > 0) {
 		print STDOUT "CORE : deleting pid-file ".$PID_FILE."\n";
 	}
@@ -1236,61 +1341,6 @@ sub status {
 	}
 	# return
 	return $head.$modules.$status;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: modState                                                                #
-# Arguments: name of service-module                                            #
-# Returns: state of service-module                                             #
-#------------------------------------------------------------------------------#
-sub modState {
-	$_ = shift;
-	if (!(defined $_)) {
-		return 0;
-	} else {
-		/Fluxinet/ && do {
-			if (defined $fluxinet) {
-				return $fluxinet->getState();
-			} else {
-				return 0;
-			}
-		};
-		/Qmgr/ && do {
-			if (defined $qmgr) {
-				return $qmgr->getState();
-			} else {
-				return 0;
-			}
-		};
-		/Rssad/ && do {
-			if (defined $rssad) {
-				return $rssad->getState();
-			} else {
-				return 0;
-			}
-		};
-		/Watch/ && do {
-			if (defined $watch) {
-				return $watch->getState();
-			} else {
-				return 0;
-			}
-		};
-		/Trigger/ && do {
-			if (defined $trigger) {
-				return $trigger->getState();
-			} else {
-				return 0;
-			}
-		};
-		/Clientmaint/ && do {
-			if (defined $clientmaint) {
-				return $clientmaint->getState();
-			} else {
-				return 0;
-			}
-		};
-	}
 }
 
 #------------------------------------------------------------------------------#
