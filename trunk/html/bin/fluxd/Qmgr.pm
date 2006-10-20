@@ -71,6 +71,7 @@ my %jobs;
 
 # queue
 my @queue;
+my $queueIdx = 0;
 
 # some defaults
 my $DEFAULT_limitStartTries = 3;
@@ -237,14 +238,11 @@ sub initialize {
 
 	#initialize the queue
 	if (-f $fileQueue) {
-		if ($LOGLEVEL > 0) {
-			print "Qmgr : Loading Queue-file\n";
-		}
 		# actually load the queue
 		loadQueue();
 	} else {
 		if ($LOGLEVEL > 0) {
-			print "Qmgr : Creating empty queue\n";
+			print "Qmgr : creating empty queue\n";
 		}
 		@queue = qw();
 	}
@@ -368,149 +366,94 @@ sub command {
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
 sub processQueue {
-	my $queueIdx = 0;
+	$queueIdx = 0;
 	my $startTry = 0;
 	QUEUE: while (1) {
 		# update running transfers
 		updateRunningTransfers();
 		# process queue
-		my $jobcountq = scalar(@queue);
-		if ($jobcountq > 0) { # we have queued jobs
+		my $jobcountq = countQueue();
+		if ($jobcountq > 0) {                                                   # we have queued jobs
 			# next job
 			my $nextTransfer = $queue[$queueIdx];
 			my $nextUser = $jobs{"queued"}{$nextTransfer};
-			# check if this queue-entry exists in running-jobs. dont start what is
-			# running. this may be after a restart or transfer was started outside.
-			if (exists $jobs{"running"}{$nextTransfer}) { # transfer already running
+			# check if this queue-entry exists in running-jobs.
+			# dont try to start what is already running.
+			# this may be after a restart or transfer was started outside.
+			if (exists $jobs{"running"}{$nextTransfer}) {                       # already running
 				# remove job from queue
-				if ($LOGLEVEL > 0) {
-					print "Qmgr : removing already running job from queue : ".$nextTransfer." (".$nextUser.")\n";
-				}
-				if ($queueIdx > 0) { # not first entry, stack-action
-					my @stack;
-					for (my $i = 0; $i < $queueIdx; $i++) {
-						push(@stack,(shift @queue));
-					}
-					shift @queue;
-					for (my $i = 0; $i < $queueIdx; $i++) {
-						push(@queue, (shift @stack));
-					}
-					$queueIdx--;
-				} else { # first entry, just shift
-					shift @queue;
-				}
-				# remove job from jobs
-				if ($LOGLEVEL > 0) {
-					print "Qmgr : removing already running job from jobs queued : ".$nextTransfer." (".$nextUser.")\n";
-				}
-				delete($jobs{"queued"}{$nextTransfer});
-				#
-				if ($queueIdx < (countQueue()-1)) { # there is a next entry
-					if ($LOGLEVEL > 1) {
-						print "Qmgr : next queue-entry\n";
-					}
-					$queueIdx++;
-				} else { # no more in queue
-					if ($LOGLEVEL > 1) {
-						print "Qmgr : last queue-entry\n";
-					}
-					last QUEUE;
-				}
-			} else { # transfer not already running
+				my $removed = remove($nextTransfer, $nextUser);
+				if ($removed == 0) { $queueIdx++; }
+				# check if more entries
+				if (queueHasMoreEntries() == 0) { last QUEUE; }
+			} else {                                                            # transfer not already running
 				my @jobAry = (keys %{$jobs{"running"}});
-				my $jobcount = scalar(@jobAry);
+				my $jobcountr = scalar(@jobAry);
 				# lets see if max limit applies
-				if ($jobcount < $globals{'limitGlobal'}) { # max limit does not apply
+				if ($jobcountr < $globals{'limitGlobal'}) {                     # max limit does not apply
 					# lets see if per user limit applies
-					my $userCtr = 0;
+					$jobcountr = 0;
 					foreach my $anJob (@jobAry) {
 						if ($jobs{"running"}{$anJob} eq $nextUser) {
-							$userCtr++;
+							$jobcountr++;
 						}
 					}
-					if ($userCtr < $globals{'limitUser'}) { # user limit does not apply
+					if ($jobcountr < $globals{'limitUser'}) {                   # user limit does not apply
 						# startup the thing
 						if ($LOGLEVEL > 0) {
 							print "Qmgr : starting transfer : ".$nextTransfer." (".$nextUser.") (".localtime().")\n";
 						}
-						if (startTransfer($nextTransfer) == 1) { # start transfer succeeded
+						if (startTransfer($nextTransfer) == 1) {                # start transfer succeeded
 							# reset start-counter-var
 							$startTry = 0;
 							# remove job from queue
-							if ($LOGLEVEL > 0) {
-								print "Qmgr : removing job from queue : ".$nextTransfer." (".$nextUser.")\n";
-							}
-							if ($queueIdx > 0) { # not first entry, stack-action
-								my @stack;
-								for (my $i = 0; $i < $queueIdx; $i++) {
-									push(@stack,(shift @queue));
-								}
-								shift @queue;
-								for (my $i = 0; $i < $queueIdx; $i++) {
-									push(@queue, (shift @stack));
-								}
-								$queueIdx--;
-							} else { # first entry, just shift
-								shift @queue;
-							}
-							# remove job from jobs
-							if ($LOGLEVEL > 0) {
-								print "Qmgr : removing job from jobs queued : ".$nextTransfer." (".$nextUser.")\n";
-							}
-							delete($jobs{"queued"}{$nextTransfer});
-							# add job to jobs running (not nec. is don in-loop anyway)
+							my $removed = remove($nextTransfer, $nextUser);
+							if ($removed == 0) { $queueIdx++; }
+							# add job to jobs running
 							if ($LOGLEVEL > 0) {
 								print "Qmgr : adding job to jobs running : ".$nextTransfer." (".$nextUser.")\n";
 							}
 							$jobs{"running"}{$nextTransfer} = $nextUser;
-							# done with queue ?
-							$jobcountq = scalar(@queue);
-							if ($jobcountq > 0) { # more jobs in queue
-								$queueIdx = 0;
-								# dont hurry too much when processing queue
-								select undef, undef, undef, 0.5;
-							} else { # nothing more in queue
-								last QUEUE;
-							}
-						} else { # start transfer failed
+							# check if more entries
+							if (queueHasMoreEntries() == 0) { last QUEUE; }
+						} else {                                                # start transfer failed
 							print STDERR "Qmgr : start transfer failed : ".$nextTransfer." (".$nextUser.")\n";
 							# already tried max-times to start this thing ?
 							if ($startTry == $globals{'limitStartTries'}) {
 								$startTry = 0;
-								# TODO : give an option to remove bogus transfers
-								if ($queueIdx < (countQueue()-1)) { # there is a next entry
-									print STDERR "Qmgr : ".$globals{'limitStartTries'}." errors when starting, skipping job : ".$nextTransfer." (".$nextUser.") (next queue-entry)\n";
-									$queueIdx++;
-								} else { # no more in queue
-									print STDERR "Qmgr : ".$globals{'limitStartTries'}." errors when starting, skipping job : ".$nextTransfer." (".$nextUser.") (last queue-entry)\n";
-									last QUEUE;
-								}
+								print STDERR "Qmgr : ".$globals{'limitStartTries'}." errors when starting, cancel job : ".$nextTransfer." (".$nextUser.")\n";
+								# remove job from queue
+								my $removed = remove($nextTransfer, $nextUser);
+								if ($removed == 0) { $queueIdx++; }
+								# check if more entries
+								if (queueHasMoreEntries() == 0) { last QUEUE; }
 							} else {
 								$startTry++;
 								sleep $globals{'startTrySleep'};
 							}
-						} # start transfer failed
-					} else { # user-limit for this user applies, check next queue-entry if one exists
+						} # end start transfer failed
+					} else {                                                    # user-limit for this user applies
+						# check next queue-entry if one exists
 						if ($queueIdx < (countQueue() - 1)) { # there is a next entry
 							if ($LOGLEVEL > 0) {
-								print "Qmgr : user limit applies, skipping job : ".$nextTransfer." (".$nextUser.") (next queue-entry)\n";
+								print "Qmgr : user limit reached, skipping job : ".$nextTransfer." (".$nextUser.") (next queue-entry)\n";
 							}
 							$queueIdx++;
 						} else { # no more in queue
 							if ($LOGLEVEL > 0) {
-								print "Qmgr : user limit applies, skipping job : ".$nextTransfer." (".$nextUser.") (last queue-entry)\n";
+								print "Qmgr : user limit reached, skipping job : ".$nextTransfer." (".$nextUser.") (last queue-entry)\n";
 							}
 							last QUEUE;
 						}
 					}
-				} else { # max limit does apply
+				} else {                                                        # max limit does apply
 					if ($LOGLEVEL > 0) {
-						print "Qmgr : max limit applies, skipping job : ".$nextTransfer." (".$nextUser.")\n";
+						print "Qmgr : max limit reached, skipping job : ".$nextTransfer." (".$nextUser.")\n";
 					}
 					last QUEUE;
 				}
-			} # else already runnin
-		} else { # no queued jobs
+			} # end already runnin
+		} else {                                                                # no queued jobs
 			if ($LOGLEVEL > 1) {
 				print "Qmgr : empty queue...\n";
 			}
@@ -521,11 +464,39 @@ sub processQueue {
 	$globals{"main"} += 1;
 }
 
-#-------------------------------------------------------------------------------#
-# Sub: loadQueue                                                                #
-# Arguments: Null                                                               #
-# Returns: Null                                                                 #
-#-------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: queueHasMoreEntries                                                     #
+# Arguments: Null                                                              #
+# Returns: 0|num of entries                                                    #
+#------------------------------------------------------------------------------#
+sub queueHasMoreEntries {
+	# check if more entries
+	my $jobcount = countQueue();
+	if ($jobcount > 0) { # more jobs in queue
+		if ($queueIdx < ($jobcount)) { # there is a next entry
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : next queue-entry\n";
+			}
+			return ($jobcount - $queueIdx);
+		} else { # no more in queue
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : last queue-entry\n";
+			}
+			return 0;
+		}
+	} else { # nothing more in queue
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : last queue-entry\n";
+		}
+		return 0;
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: loadQueue                                                               #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub loadQueue {
 	if ($LOGLEVEL > 0) {
 		print "Qmgr : loading queue-file : ".$fileQueue."\n";
@@ -561,7 +532,7 @@ sub loadQueue {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub saveQueue {
-	if ($LOGLEVEL > 0) {
+	if ($LOGLEVEL > 1) {
 		print "Qmgr : saving queue-file : ".$fileQueue."\n";
 	}
 	# open queue-file
@@ -574,11 +545,11 @@ sub saveQueue {
 	close(QUEUEFILE);
 }
 
-#-------------------------------------------------------------------------------
-# Sub: dumpQueue
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: dumpQueue                                                               #
+# Parameters:	-                                                              #
+# Return:		-                                                              #
+#------------------------------------------------------------------------------#
 sub dumpQueue {
 	if ($LOGLEVEL > 0) {
 		print "Qmgr : dumping queue-file : ".$fileQueue."\n";
@@ -595,47 +566,6 @@ sub dumpQueue {
 	}
 	# close queue-file
 	close(QUEUEFILE);
-}
-
-#-----------------------------------------------------------------------------#
-# Sub: status                                                                 #
-# Arguments: Null                                                             #
-# Returns: status string                                                      #
-#-----------------------------------------------------------------------------#
-sub status {
-	my $return = "";
-	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
-	$return .= "interval : ".$interval." s \n";
-	# get count-vars
-	my $countQueue = countQueue();
-	my $countRunning = countRunning();
-	my $countJobs = $countQueue + $countRunning;
-	# some vars
-	$return .= "max transfers global : ".$globals{'limitGlobal'}."\n";
-	$return .= "max transfers per user : ".$globals{'limitUser'}."\n";
-	$return .= "max start-tries : ".$globals{'limitStartTries'}."\n";
-	$return .= "start-try-extra-sleep : ".$globals{'startTrySleep'}." s\n";
-	# jobs total
-	$return .= "jobs total : ".$countJobs."\n";
-	# jobs queued
-	$return .= "jobs queued : ".$countQueue."\n";
-	foreach my $jobName (sort keys %{$jobs{"queued"}}) {
-		my $jobUser = $jobs{"queued"}{$jobName};
-		$return .= "  * ".$jobName." (".$jobUser.")\n";
-	}
-	# jobs running
-	$return .= "jobs running : ".$countRunning."\n";
-	foreach my $jobName (sort keys %{$jobs{"running"}}) {
-		my $jobUser = $jobs{"running"}{$jobName};
-		$return .= "  * ".$jobName." (".$jobUser.")\n";
-	}
-	# misc stats
-	$return .= "running since : $localtime (";
-	$return .= FluxdCommon::niceTimeString($time).") ";
-	$return .= "(".$globals{'main'}." cycles) \n";
-	$return .= "started transfers : ".$globals{'started'}."\n";
-	# return
-	return $return;
 }
 
 #------------------------------------------------------------------------------#
@@ -656,7 +586,8 @@ sub countJobs {
 # Return:	number of queued jobs                                              #
 #------------------------------------------------------------------------------#
 sub countQueue {
-	return scalar((keys %{$jobs{"queued"}}));
+	return scalar(@queue);
+	#return scalar((keys %{$jobs{"queued"}}));
 }
 
 #------------------------------------------------------------------------------#
@@ -667,7 +598,6 @@ sub countQueue {
 sub countRunning {
 	return scalar((keys %{$jobs{"running"}}));
 }
-
 
 #------------------------------------------------------------------------------#
 # Sub: listQueue                                                               #
@@ -715,7 +645,10 @@ sub add {
 		}
 	}
 	if ($addIt == 1) {
+		# add
 		push(@queue,$transfer);
+		# save queue
+		saveQueue();
 	}
 	# return
 	return $addIt;
@@ -775,8 +708,10 @@ sub remove {
 			shift @queue;
 		}
 	}
-	# return
+	# return / save
 	if (($retValJobs > 0) && ($retValQueue > 0)) {
+		# save queue
+		saveQueue();
 		return 1;
 	} else {
 		return 0;
@@ -890,6 +825,47 @@ sub stack {
 	} else {
 		shift @$array;
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: status                                                                  #
+# Arguments: Null                                                              #
+# Returns: status string                                                       #
+#------------------------------------------------------------------------------#
+sub status {
+	my $return = "";
+	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
+	$return .= "interval : ".$interval." s \n";
+	# get count-vars
+	my $countQueue = countQueue();
+	my $countRunning = countRunning();
+	my $countJobs = $countQueue + $countRunning;
+	# some vars
+	$return .= "max transfers global : ".$globals{'limitGlobal'}."\n";
+	$return .= "max transfers per user : ".$globals{'limitUser'}."\n";
+	$return .= "max start-tries : ".$globals{'limitStartTries'}."\n";
+	$return .= "start-try-extra-sleep : ".$globals{'startTrySleep'}." s\n";
+	# jobs total
+	$return .= "jobs total : ".$countJobs."\n";
+	# jobs queued
+	$return .= "jobs queued : ".$countQueue."\n";
+	foreach my $jobName (sort keys %{$jobs{"queued"}}) {
+		my $jobUser = $jobs{"queued"}{$jobName};
+		$return .= "  * ".$jobName." (".$jobUser.")\n";
+	}
+	# jobs running
+	$return .= "jobs running : ".$countRunning."\n";
+	foreach my $jobName (sort keys %{$jobs{"running"}}) {
+		my $jobUser = $jobs{"running"}{$jobName};
+		$return .= "  * ".$jobName." (".$jobUser.")\n";
+	}
+	# misc stats
+	$return .= "running since : $localtime (";
+	$return .= FluxdCommon::niceTimeString($time).") ";
+	$return .= "(".$globals{'main'}." cycles) \n";
+	$return .= "started transfers : ".$globals{'started'}."\n";
+	# return
+	return $return;
 }
 
 ################################################################################
