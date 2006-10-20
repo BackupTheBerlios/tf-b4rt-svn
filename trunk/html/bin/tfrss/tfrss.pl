@@ -193,12 +193,15 @@ sub loadData {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub loadFilters {
+	my $lineSep = $/;
+	$/ = "\n";
 	open(FILTERS, $PATH_FILTERS);
 	while(<FILTERS>) {
 		chomp;
 		push @filters, $_;
 	}
 	close FILTERS;
+	$/ = $lineSep;
 }
 
 #------------------------------------------------------------------------------#
@@ -208,12 +211,15 @@ sub loadFilters {
 #------------------------------------------------------------------------------#
 sub loadHistory {
 	if (-f $PATH_HISTORY) {
+		my $lineSep = $/;
+		$/ = "\n";
 		open(HISTORY, $PATH_HISTORY);
 		while(<HISTORY>) {
 			chomp;
 			push @history, $_;
 		}
 		close HISTORY;
+		$/ = $lineSep;
 	}
 }
 
