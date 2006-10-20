@@ -832,7 +832,7 @@ sub stack {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Qmgr.pm Revision ".$VERSION." =-\n";
+	$return .= "\n-= Qmgr Revision ".$VERSION." =-\n";
 	$return .= "interval : ".$interval." s \n";
 	# get count-vars
 	my $countQueue = countQueue();

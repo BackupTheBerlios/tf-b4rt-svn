@@ -196,7 +196,7 @@ sub command {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Clientmaint.pm Revision ".$VERSION." =-\n";
+	$return .= "\n-= Clientmaint Revision ".$VERSION." =-\n";
 	$return .= "interval : $interval s \n";
 	return $return;
 }

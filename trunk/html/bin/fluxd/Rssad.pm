@@ -324,7 +324,7 @@ sub command {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Rssad.pm Revision ".$VERSION." =-\n";
+	$return .= "\n-= Rssad Revision ".$VERSION." =-\n";
 	$return .= "interval : $interval s \n";
 	$return .= "jobs :\n";
 	my $jobCount = scalar(@jobs);

@@ -30,18 +30,21 @@ use FluxdCommon;
 ################################################################################
 # fields                                                                       #
 ################################################################################
-our $PATH_DATA_DIR = ".fluxd";
-our $PATH_TRANSFER_DIR = ".transfers";
+# files and dirs
+my $PATH_DATA_DIR = ".fluxd";
+my $PATH_TRANSFER_DIR = ".transfers";
 my $BIN_FLUXCLI = "fluxcli.php";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
-my $LOGLEVEL = 2;
 my $PID_FILE = "fluxd.pid";
+# defaults
+my $LOGLEVEL = 2;
 my $PATH_DOCROOT = "/var/www";
 my $BIN_PHP = "/usr/bin/php";
 my $dbMode = "dbi";
 my $pwd = ".";
+# internal vars
 my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
 my $Select;
@@ -99,7 +102,7 @@ while ($loop) {
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub { die "alarm\n" };
-			alarm 15;
+			alarm 20;
 			$qmgr->main();
 			alarm 0;
 		};
@@ -131,7 +134,7 @@ while ($loop) {
 	if ((defined $watch) && ($watch->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 15;
+			alarm 20;
 			$watch->main();
 			alarm 0;
 		};
@@ -209,7 +212,6 @@ sub initialize {
 #------------------------------------------------------------------------------#
 sub processArguments {
 	my $temp = shift @ARGV;
-
 	# first arg is operation.
 	if (!(defined $temp)) {
 		printUsage();
@@ -230,13 +232,11 @@ sub processArguments {
 		check();
 		exit;
 	};
-
 	# debug
 	if ($temp =~ /debug/) {
 		debug();
 		exit;
 	};
-
 	# daemon-stop
 	if ($temp =~ /daemon-stop/) {
 		# check if running
@@ -296,7 +296,6 @@ sub processArguments {
 		# exit
 		exit;
 	};
-
 	# daemon-start
 	if ($temp =~ /daemon-start/) {
 		# check if already running
@@ -332,7 +331,6 @@ sub processArguments {
 		# return
 		return 1;
 	};
-
 	# hmmm dont know this arg, print usage screen
 	printUsage();
 	exit;
@@ -930,16 +928,16 @@ sub serviceModuleState {
 	if (!(defined $_)) {
 		return 0;
 	} else {
-		/Fluxinet/ && do {
-			if (defined $fluxinet) {
-				return $fluxinet->getState();
+		/Qmgr/ && do {
+			if (defined $qmgr) {
+				return $qmgr->getState();
 			} else {
 				return 0;
 			}
 		};
-		/Qmgr/ && do {
-			if (defined $qmgr) {
-				return $qmgr->getState();
+		/Watch/ && do {
+			if (defined $watch) {
+				return $watch->getState();
 			} else {
 				return 0;
 			}
@@ -951,9 +949,9 @@ sub serviceModuleState {
 				return 0;
 			}
 		};
-		/Watch/ && do {
-			if (defined $watch) {
-				return $watch->getState();
+		/Fluxinet/ && do {
+			if (defined $fluxinet) {
+				return $fluxinet->getState();
 			} else {
 				return 0;
 			}
@@ -1042,27 +1040,16 @@ sub processRequest {
 	@array = split (/ /, $temp);
 	@_ = @array;
 	my $return;
-
 	SWITCH: {
 		$_ = shift;
-
-		#print "CORE : processing request ".$_."\n"; # DEBUG
-
+		#print "CORE : processing request \"".$_."\"\n"; # DEBUG
 		# Actual fluxd subroutine calls
-		/^die/ && do {
-			$return = daemonShutdown();
-			last SWITCH;
-		};
-		/^status/ && do {
-			$return = status();
-			last SWITCH;
-		};
 		/^modstate/ && do {
 			$return = serviceModuleState(shift);
 			last SWITCH;
 		};
-		/^check/ && do {
-			$return = check();
+		/^status/ && do {
+			$return = status();
 			last SWITCH;
 		};
 		/^set/ && do {
@@ -1077,7 +1064,14 @@ sub processRequest {
 			$return = serviceModulesLoad();
 			last SWITCH;
 		};
-
+		/^check/ && do {
+			$return = check();
+			last SWITCH;
+		};
+		/^die/ && do {
+			$return = daemonShutdown();
+			last SWITCH;
+		};
 		# module-calls
 		/^!(.+):(.+)/ && do {
 			my $mod = $1;
@@ -1123,11 +1117,9 @@ sub processRequest {
 				};
 			}
 		};
-
 		# Default case.
 		$return = printUsage(1);
 	}
-
 	# return
 	return $return;
 }
@@ -1210,7 +1202,7 @@ sub fluxcli {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." 1>> ".$LOG." 2>> ".$ERROR_LOG;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command;
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1218,7 +1210,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." 1>> ".$LOG." 2>> ".$ERROR_LOG;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1226,7 +1218,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." 1>> ".$LOG." 2>> ".$ERROR_LOG;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1239,6 +1231,7 @@ sub fluxcli {
 #------------------------------------------------------------------------------#
 sub doSysCall {
 	my $command = shift;
+	$command .= " 1>> ".$LOG." 2>> ".$ERROR_LOG." &";
     system($command);
     if ($? == -1) {
         print STDERR "CORE : failed to execute: $!\n";
