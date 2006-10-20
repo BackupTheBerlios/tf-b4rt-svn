@@ -87,9 +87,8 @@ my $DEFAULT_startTrySleep = 5;
 # Returns: Object                                                              #
 #------------------------------------------------------------------------------#
 sub new {
-	my $objclass = shift;
-	my $self = {};
-	bless ($self, $objclass);
+	my $class = shift;
+	my $self = bless ({}, ref ($class) || $class);
 	return $self;
 }
 

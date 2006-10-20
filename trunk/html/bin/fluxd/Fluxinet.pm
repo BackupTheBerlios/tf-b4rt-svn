@@ -61,9 +61,8 @@ my ($SERVER, $Select);
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
 sub new {
-	# Create the object
-	my $self = {};
-	bless $self;
+	my $class = shift;
+	my $self = bless ({}, ref ($class) || $class);
 	return $self;
 }
 

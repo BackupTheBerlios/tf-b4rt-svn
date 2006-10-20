@@ -96,12 +96,8 @@ my $fluxcli = "bin/fluxcli.php";
 # Returns: object reference                                                    #
 #------------------------------------------------------------------------------#
 sub new {
-
-	# class
 	my $class = shift;
-
-	# return
-	my $self = bless {}, $class;
+	my $self = bless ({}, ref ($class) || $class);
 	return $self;
 }
 

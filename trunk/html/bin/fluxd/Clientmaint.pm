@@ -61,8 +61,8 @@ my $time_last_run = 0;
 # Returns: object reference                                                    #
 #------------------------------------------------------------------------------#
 sub new {
-	my $self = {};
-	bless $self;
+	my $class = shift;
+	my $self = bless ({}, ref ($class) || $class);
 	return $self;
 }
 
