@@ -793,15 +793,13 @@ sub startTransfer {
 	if (!(defined $transfer)) {
 		return 0;
 	}
-	eval {
-		$message = Fluxd::fluxcli("start", $transfer.".torrent");
-	};
-	if ($@) {
-		print STDERR "Qmgr : error executing fluxcli : ".$message.": ".$@."\n";
-		return 0;
+	# fluxcli-call
+	my $result = Fluxd::fluxcli("start", $transfer.".torrent");
+	if ($result == 1) {
+		$globals{"started"} += 1;
+		return 1;
 	}
-	$globals{"started"} += 1;
-	return 1;
+	return 0;
 }
 
 #------------------------------------------------------------------------------#

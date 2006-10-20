@@ -360,14 +360,7 @@ sub tfrss {
 	print FILTERLOG localtime()." - ".$url."\n";
 	close(FILTERLOG);
 	# syscall
-	eval {
-		system($shellCmd);
-	};
-	if ($@) {
-		print STDERR "Rssad : error calling tfrss.pl (".$shellCmd.") : ".$@."\n";
-		return 0;
-	}
-	return 1;
+	return Fluxd::doSysCall($shellCmd);
 }
 
 ################################################################################

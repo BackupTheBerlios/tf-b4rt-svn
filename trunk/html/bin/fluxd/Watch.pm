@@ -263,15 +263,8 @@ sub status {
 sub tfwatch {
 	my $dir = shift;
 	my $user = shift;
-	# syscall
-	eval {
-		Fluxd::fluxcli("watch", $dir, $user);
-	};
-	if ($@) {
-		print STDERR "Rssad : error calling tfwatch : ".$@."\n";
-		return 0;
-	}
-	return 1;
+	# fluxcli-call
+	return Fluxd::fluxcli("watch", $dir, $user);
 }
 
 ################################################################################

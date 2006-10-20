@@ -1078,12 +1078,6 @@ sub processRequest {
 			last SWITCH;
 		};
 
-		# fluxcli.php calls
-		/^start|^stop|^inject|^wipe|^delete|^reset|^\w+-all|^torrents|^netstat|^watch|^dump/ && do {
-			$return = fluxcli($_, shift, shift);
-			last SWITCH;
-		};
-
 		# module-calls
 		/^!(.+):(.+)/ && do {
 			my $mod = $1;
@@ -1188,25 +1182,18 @@ sub set {
 #------------------------------------------------------------------------------#
 # Sub: fluxcli                                                                 #
 # Arguments: Command [Arg1, [Arg2]]                                            #
-# Returns: string                                                              #
+# Returns: string or 0|1                                                       #
 #------------------------------------------------------------------------------#
 sub fluxcli {
 	my $Command = shift;
 	my $Arg1 = shift;
 	my $Arg2 = shift;
-	if ($Command =~/^torrents|^netstat|^\w+-all|^repair/) {
+	# qx
+	if ($Command =~/^torrents|^netstat/) {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command;
-			return qx($shellCmd);
-		}
-	}
-	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer|^dump/) {
-		if ((!(defined $Arg1)) || (defined $Arg2)) {;
-			return printUsage();
-		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." 2>> ".$ERROR_LOG;
 			return qx($shellCmd);
 		}
 	}
@@ -1214,19 +1201,56 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." 2>> ".$ERROR_LOG;
 			return qx($shellCmd);
+		}
+	}
+	# syscall
+	if ($Command =~/^\w+-all|^repair/) {
+		if ((defined $Arg1) || (defined $Arg2)) {
+			return 0;
+		} else {
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." 1>> ".$LOG." 2>> ".$ERROR_LOG;
+			return doSysCall($shellCmd);
+		}
+	}
+	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer/) {
+		if ((!(defined $Arg1)) || (defined $Arg2)) {;
+			return 0;
+		} else {
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." 1>> ".$LOG." 2>> ".$ERROR_LOG;
+			return doSysCall($shellCmd);
 		}
 	}
 	if ($Command =~/^inject|^watch/) {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
-			return printUsage();
+			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." >> $LOG";
-			system($shellCmd);
-			return "1";
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." 1>> ".$LOG." 2>> ".$ERROR_LOG;
+			return doSysCall($shellCmd);
 		}
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: doSysCall                                                               #
+# Arguments: Command-string                                                    #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub doSysCall {
+	my $command = shift;
+    system($command);
+    if ($? == -1) {
+        print STDERR "CORE : failed to execute: $!\n";
+    } elsif ($? & 127) {
+        printf STDERR "CORE : child died with signal %d, %s coredump\n", ($? & 127),  ($? & 128) ? 'with' : 'without';
+    } else {
+		if ($LOGLEVEL > 1) {
+			printf "CORE : child exited with value %d\n", $? >> 8;
+		}
+		return 1;
+    }
+	return 0;
 }
 
 #------------------------------------------------------------------------------#
@@ -1319,32 +1343,32 @@ sub status {
 	my $modules = "- Loaded Modules -\n";
 	# Fluxinet
 	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		$modules .= "  * Fluxinet.pm\n";
+		$modules .= "  * Fluxinet\n";
 		$status .= eval { $fluxinet->status(); };
 	}
 	# Qmgr
 	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		$modules .= "  * Qmgr.pm\n";
+		$modules .= "  * Qmgr\n";
 		$status .= $qmgr->status();
 	}
 	# Rssad
 	if ((defined $rssad) && ($rssad->getState() == 1)) {
-		$modules .= "  * Rssad.pm\n";
+		$modules .= "  * Rssad\n";
 		$status .= eval { $rssad->status(); };
 	}
 	# Watch
 	if ((defined $watch) && ($watch->getState() == 1)) {
-		$modules .= "  * Watch.pm\n";
+		$modules .= "  * Watch\n";
 		$status .= eval { $watch->status(); };
 	}
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		$modules .= "  * Trigger.pm\n";
+		$modules .= "  * Trigger\n";
 		$status .= eval { $trigger->status(); };
 	}
 	# Clientmaint
 	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		$modules .= "  * Clientmaint.pm\n";
+		$modules .= "  * Clientmaint\n";
 		$status .= eval { $clientmaint->status(); };
 	}
 	# return
@@ -1415,7 +1439,7 @@ sub printVersion {
 #------------------------------------------------------------------------------#
 # Sub: check                                                                   #
 # Arguments: Null                                                              #
-# Returns: info on system requirements                                         #
+# Returns: info on sys requirements                                            #
 #------------------------------------------------------------------------------#
 sub check {
 	print "checking requirements...\n";
