@@ -406,7 +406,7 @@ sub daemonize {
 	POSIX::setsid() or die "CORE : Can't start a new session: $!";
 
 	# get cwd
-	$pwd = `pwd`;
+	$pwd = qx(pwd);
 	chop $pwd;
 
 	# log
@@ -1199,7 +1199,7 @@ sub fluxcli {
 			return printUsage();
 		} else {
 			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command;
-			return `$shellCmd`;
+			return qx($shellCmd);
 		}
 	}
 	if ($Command =~/^start|^stop|^reset|^delete|^wipe|^xfer|^dump/) {
@@ -1207,7 +1207,15 @@ sub fluxcli {
 			return printUsage();
 		} else {
 			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
-			return `$shellCmd`;
+			return qx($shellCmd);
+		}
+	}
+	if ($Command =~/^dump/) {
+		if ((!(defined $Arg1)) || (defined $Arg2)) {;
+			return printUsage();
+		} else {
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			return qx($shellCmd);
 		}
 	}
 	if ($Command =~/^inject|^watch/) {
