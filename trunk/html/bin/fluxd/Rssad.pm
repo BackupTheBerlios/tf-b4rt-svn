@@ -295,6 +295,7 @@ sub main {
 				print " filter: ".$dataDir.$jobs[$i]{"filter"}."\n";
 				print " url: ".$jobs[$i]{"url"}."\n";
 			}
+			# exec
 			tfrss($jobs[$i]{"savedir"}, $dataDir.$jobs[$i]{"filter"}, $jobs[$i]{"url"});
 		}
 

@@ -212,9 +212,8 @@ sub main {
 					print " user: ".$user."\n";
 					print " dir: ".$dir."\n";
 				}
-				eval {
-					Fluxd::fluxcli("watch", $dir, $user);
-				};
+				# exec
+				tfwatch($dir, $user);
 			}
 		}
 
@@ -254,6 +253,25 @@ sub status {
 		}
 	}
 	return $return;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: tfwatch                                                                 #
+# Arguments: dir, user                                                         #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub tfwatch {
+	my $dir = shift;
+	my $user = shift;
+	# syscall
+	eval {
+		Fluxd::fluxcli("watch", $dir, $user);
+	};
+	if ($@) {
+		print STDERR "Rssad : error calling tfwatch : ".$@."\n";
+		return 0;
+	}
+	return 1;
 }
 
 ################################################################################
