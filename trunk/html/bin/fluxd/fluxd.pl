@@ -33,7 +33,6 @@ use FluxdCommon;
 our $PATH_DATA_DIR = ".fluxd";
 our $PATH_TRANSFER_DIR = ".transfers";
 my $BIN_FLUXCLI = "fluxcli.php";
-my $FILE_DBCONF = "config.db.php";
 my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
@@ -42,6 +41,7 @@ my $PID_FILE = "fluxd.pid";
 my $PATH_DOCROOT = "/var/www";
 my $BIN_PHP = "/usr/bin/php";
 my $dbMode = "dbi";
+my $pwd = ".";
 my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
 my $Select;
@@ -51,7 +51,7 @@ my $start_time_local = localtime();
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw( $fluxDB $qmgr $fluxinet $rssad $watch $clientmaint $trigger );
+use vars qw($fluxDB $qmgr $fluxinet $rssad $watch $clientmaint $trigger);
 
 ################################################################################
 # main                                                                         #
@@ -389,9 +389,11 @@ sub daemonize {
 	exit if $pid;
 	POSIX::setsid() or die "CORE : Can't start a new session: $!";
 
-	# log
-	my $pwd = `pwd`;
+	# get cwd
+	$pwd = `pwd`;
 	chop $pwd;
+
+	# log
 	print STDOUT "CORE : ".localtime()." - "."Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n";
 
 	# set up our signal handlers
@@ -799,7 +801,6 @@ sub loadServiceModules {
 
 }
 
-
 #------------------------------------------------------------------------------#
 # Sub: unloadServiceModules                                                    #
 # Arguments: null                                                              #
@@ -904,7 +905,6 @@ sub unloadServiceModules {
 	}
 
 }
-
 
 #------------------------------------------------------------------------------#
 # Sub: gotSigHup                                                               #
@@ -1192,12 +1192,15 @@ sub status {
 	$head .= "\n\nfluxd has been up since ".$start_time_local." (".FluxdCommon::niceTimeString($start_time).")\n\n";
 	$head .= "data-dir : ".$PATH_DATA_DIR."\n";
 	$head .= "log : ".$LOG."\n";
-	$head .= "loglevel : ".$LOGLEVEL."\n";
 	$head .= "error-log : ".$ERROR_LOG."\n";
 	$head .= "pid : ".$PID_FILE."\n";
 	$head .= "socket : ".$PATH_SOCKET."\n";
+	$head .= "transfers-dir : ".$PATH_TRANSFER_DIR."\n";
 	$head .= "docroot : ".$PATH_DOCROOT."\n";
+	$head .= "fluxcli : ".$pwd."/bin/".$BIN_FLUXCLI."\n";
+	$head .= "php : ".$BIN_PHP."\n";
 	$head .= "db-mode : ".$dbMode."\n";
+	$head .= "loglevel : ".$LOGLEVEL."\n";
 	$head .= "\n";
 	my $status = "";
 	my $modules = "- Loaded Modules -\n";

@@ -200,9 +200,6 @@ class ClientHandler
             }
             $this->savepath = getRequestVar('savepath') ;
             $this->skip_hash_check = getRequestVar('skiphashcheck');
-            global $_REQUEST;
-            system('echo queue >> /tmp/tflux.debug; echo "'. $_REQUEST["queue"] .'" >> /tmp/tflux.debug');
-            system('echo enqueue >> /tmp/tflux.debug; echo "'. $_REQUEST["enqueue"] .'" >> /tmp/tflux.debug');
 	        // queue
 	        if ($enqueue) {
 	            if ($this->cfg['isAdmin']) {

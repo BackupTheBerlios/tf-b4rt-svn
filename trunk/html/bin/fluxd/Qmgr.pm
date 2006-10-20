@@ -51,17 +51,11 @@ my $interval;
 # time of last run
 my $time_last_run = 0;
 
-# usernames
-my %names;
-
-# users
-my @users;
-
 # data-dir
 my $dataDir = "qmgr/";
 
 # queue-file
-my $fileQueue = "Qmgr.queue";
+my $fileQueue = "qmgr.queue";
 
 # transfers-dir
 my $transfersDir = ".transfers";
@@ -118,8 +112,6 @@ sub destroy {
 		saveQueue();
 	}
 	# undef
-	undef %names;
-	undef @users;
 	undef %globals;
 	undef %jobs;
 	undef @queue;
@@ -178,7 +170,7 @@ sub initialize {
 	$fileQueue = $dataDir . $fileQueue;
 
 	# transfers-dir
-	my $transfersDir = shift;
+	$transfersDir = shift;
 	if (!(defined $transfersDir)) {
 		# message
 		$message = "transfers-dir not defined";
@@ -242,10 +234,6 @@ sub initialize {
 	$globals{'limitUser'} = $limitUser;
 	$globals{'limitStartTries'} = $DEFAULT_limitStartTries;
 	$globals{'startTrySleep'} = $DEFAULT_startTrySleep;
-
-	# get users + usernames
-	@users = FluxDB->getFluxUsers();
-	%names = FluxDB->getFluxUsernames();
 
 	#initialize the queue
 	if (-f $fileQueue) {
@@ -354,13 +342,13 @@ sub command {
 		};
 		/^enqueue;(.*);(.*)/ && do {
 			if ($LOGLEVEL > 1) {
-				print "Qmgr : enqueue-request : \"".$1."\" (".$2.")\n";
+				print "Qmgr : enqueue-request : ".$1." (".$2.")\n";
 			}
 			return add($1, $2);
 		};
 		/^dequeue;(.*);(.*)/ && do {
 			if ($LOGLEVEL > 1) {
-				print "Qmgr : dequeue-request : \"".$1."\" (".$2.")\n";
+				print "Qmgr : dequeue-request : ".$1." (".$2.")\n";
 			}
 			return remove($1, $2);
 		};
@@ -380,10 +368,6 @@ sub command {
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
 sub processQueue {
-#####################
-	updateRunningTransfers();
-	return 1;
-#####################
 	my $queueIdx = 0;
 	my $startTry = 0;
 	QUEUE: while (1) {
@@ -543,13 +527,19 @@ sub processQueue {
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
 sub loadQueue {
+	if ($LOGLEVEL > 0) {
+		print "Qmgr : loading queue-file : ".$fileQueue."\n";
+	}
 	# read from file into queue-array
+	my $lineSep = $/;
+	$/ = "\n";
 	open(QUEUEFILE,"< $fileQueue");
 	while (<QUEUEFILE>) {
 		chomp;
 		push(@queue, $_);
 	}
 	close QUEUEFILE;
+	$/ = $lineSep;
 	# fill job-hash
 	foreach my $transfer (@queue) {
 		my $user = getTransferOwner($transfer);
@@ -571,6 +561,9 @@ sub loadQueue {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub saveQueue {
+	if ($LOGLEVEL > 0) {
+		print "Qmgr : saving queue-file : ".$fileQueue."\n";
+	}
 	# open queue-file
 	open(QUEUEFILE,">$fileQueue");
 	# queued transfers
@@ -587,6 +580,9 @@ sub saveQueue {
 # Return:		-
 #-------------------------------------------------------------------------------
 sub dumpQueue {
+	if ($LOGLEVEL > 0) {
+		print "Qmgr : dumping queue-file : ".$fileQueue."\n";
+	}
 	# open queue-file
 	open(QUEUEFILE,">$fileQueue");
 	# running transfers
@@ -681,7 +677,6 @@ sub countRunning {
 sub listQueue {
 	my $return = "";
 	foreach my $queueEntry (@queue) {
-		#$return .= $queueEntry.".torrent\n";
 		$return .= $queueEntry."\n";
 	}
 	return $return;
@@ -812,7 +807,7 @@ sub updateRunningTransfers {
 		foreach my $pidFile (@pids) {
 			my $transfer = (substr ($pidFile, 0, (length($pidFile)) - 9));
 			my $user = getTransferOwner($transfer);
-			if (!(defined $user)) {
+			if ((!(defined $user)) || ($user eq "")) {
 				$jobs{"running"}{$transfer} = "unknown";
 			} else {
 				if (! exists $jobs{"running"}{$transfer}) {
@@ -835,15 +830,20 @@ sub getTransferOwner {
 	}
 	my $statFile = $transfersDir.$transfer.".stat";
 	if (-f $statFile) {
-		open(STATFILE,"< $statFile");
+		my $lineSep = $/;
+		$/ = "\n";
+		$. = 0;
+		open(STATFILE,"<$statFile");
 		while (<STATFILE>) {
 			if ($. == 6) {
 				chomp;
 				close STATFILE;
+				$/ = $lineSep;
 				return $_;
 			}
 		}
 		close STATFILE;
+		$/ = $lineSep;
 	}
 	return undef;
 }
@@ -858,12 +858,15 @@ sub startTransfer {
 	if (!(defined $transfer)) {
 		return 0;
 	}
-	# start transfer
-	if (Fluxd::fluxcli("start", $transfer) == 1) {
-		$globals{"started"} += 1;
-		return 1;
+	eval {
+		$message = Fluxd::fluxcli("start", $transfer.".torrent");
+	};
+	if ($@) {
+		print STDERR "Qmgr : error executing fluxcli : ".$message.": ".$@."\n";
+		return 0;
 	}
-	return 0;
+	$globals{"started"} += 1;
+	return 1;
 }
 
 #------------------------------------------------------------------------------#
