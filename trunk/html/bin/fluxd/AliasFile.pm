@@ -76,7 +76,7 @@ my @errors;
 sub new {
 	my $class = shift;
 	my $self = bless ({}, ref ($class) || $class);
-	# initialize file now if name given in ctor
+	# initialize file now if name supplied in ctor
 	$aliasFile = shift;
 	if (defined($aliasFile)) {
 		$self->initialize($aliasFile);
@@ -140,7 +140,8 @@ sub initialize {
 		close ALIASFILE;
 		$/ = $lineSep;
 		# process data
-		@errors = split (/\n/, $content);
+		@errors = split(/\n/, $content);
+		%data = ();
 		$data{"running"} = shift @errors;
 		$data{"percent_done"} = shift @errors;
 		$data{"time_left"} = shift @errors;
@@ -204,6 +205,7 @@ sub get {
 	shift; # class
 	my $key = shift;
 	return $data{$key};
+	#if (exists $data{$key}) {
 }
 
 #------------------------------------------------------------------------------#
@@ -215,6 +217,15 @@ sub set {
 	shift; # class
 	my $key = shift;
 	$data{$key} = shift;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getFilename                                                             #
+# Arguments: null                                                              #
+# Returns: string                                                              #
+#------------------------------------------------------------------------------#
+sub getFilename {
+	return $aliasFile;
 }
 
 #------------------------------------------------------------------------------#
