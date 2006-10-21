@@ -167,7 +167,7 @@ function tmplSetBandwidthBars() {
 	if ($percent_upload > 0)
 		$tmpl->setvar('bandwidthbars_upload_text', number_format($cfg["total_upload"], 2));
 	else
-		$tmpl->setvar('bandwidthbars_upload_text', "0.0");
+		$tmpl->setvar('bandwidthbars_upload_text', "0.00");
 	$tmpl->setvar('bandwidthbars_upload_percent', $percent_upload);
 	$tmpl->setvar('bandwidthbars_upload_percent2', (100 - $percent_upload));
 	// download
@@ -179,7 +179,7 @@ function tmplSetBandwidthBars() {
 	if ($percent_download > 0)
 		$tmpl->setvar('bandwidthbars_download_text', number_format($cfg["total_download"], 2));
 	else
-		$tmpl->setvar('bandwidthbars_download_text', "0.0");
+		$tmpl->setvar('bandwidthbars_download_text', "0.00");
 	$tmpl->setvar('bandwidthbars_download_percent', $percent_download);
 	$tmpl->setvar('bandwidthbars_download_percent2', (100 - $percent_download));
 	// colors for xfer
