@@ -380,7 +380,7 @@ sub command {
 #-------------------------------------------------------------------------------#
 sub queueProcess {
 	$queueIdx = 0;
-	QUEUE: while (1) {
+	QUEUE: while ($queueIdx < queueCount()) {
 		# update running transfers
 		runningUpdate();
 		# process queue

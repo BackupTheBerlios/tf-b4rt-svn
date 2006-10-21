@@ -170,7 +170,7 @@ sub initialize {
 sub loadModules {
 
 	# load IO::Socket
-	if ($LOGLEVEL > 1) {
+	if ($LOGLEVEL > 2) {
 		print "Fluxinet : loading Perl-module IO::Socket\n";
 	}
 	if (eval "require IO::Socket")  {
