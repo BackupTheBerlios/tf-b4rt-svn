@@ -122,7 +122,6 @@ sub initialize {
 	if (!(defined $aliasFile)) {
 		# message
 		$message = "path-to-alias-file not defined";
-		print STDERR "AliasFile : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -163,7 +162,6 @@ sub initialize {
 	} else {
 		# message
 		$message = "alias-file no file";
-		print STDERR "AliasFile : ".$message."\n";
 		# set state
 		$state = -1;
 		# return

@@ -105,7 +105,6 @@ sub initialize {
 	if (!(defined $LOGLEVEL)) {
 		# message
 		$message = "loglevel not defined";
-		print STDERR "Fluxinet : ".$message;
 		# set state
 		$state = -1;
 		# return
@@ -117,7 +116,6 @@ sub initialize {
 	if (!(defined $port)) {
 		# message
 		$message = "port not defined";
-		print STDERR "Fluxinet : ".$message;
 		# set state
 		$state = -1;
 		# return
@@ -145,7 +143,6 @@ sub initialize {
 	if (!(defined $SERVER)) {
 		# message
 		$message = "could not create server socket";
-		print STDERR "Fluxinet : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -180,8 +177,7 @@ sub loadModules {
 		IO::Socket->import();
 	} else {
 		# message
-		$message = "cant load perl-module IO::Socket : ".$@;
-		print STDERR "Fluxinet : ".$message."\n";
+		$message = "cant load perl-module IO::Socket : ".$@;;
 		# set state
 		$state = -1;
 		# return

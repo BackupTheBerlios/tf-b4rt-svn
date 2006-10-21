@@ -97,7 +97,6 @@ sub initialize {
 	if (!(defined $LOGLEVEL)) {
 		# message
 		$message = "loglevel not defined";
-		print STDERR "Clientmaint : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -109,7 +108,6 @@ sub initialize {
 	if (!(defined $interval)) {
 		# message
 		$message = "interval not defined";
-		print STDERR "Clientmaint : ".$message."\n";
 		# set state
 		$state = -1;
 		# return

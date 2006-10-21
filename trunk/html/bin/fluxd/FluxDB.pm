@@ -140,7 +140,6 @@ sub initialize {
 	if (!(defined $docroot)) {
 		# message
 		$message = "path-to-docroot not defined";
-		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -152,7 +151,6 @@ sub initialize {
 	if (!(defined $php)) {
 		# message
 		$message = "path-to-php not defined";
-		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -161,7 +159,6 @@ sub initialize {
 	if (!(-x $php)) {
 		# message
 		$message = "cant execute php (".$php.")";
-		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -181,7 +178,6 @@ sub initialize {
 			} else {
 				# message
 				$message = "cant load DBI-module : ".$@;
-				print STDERR "FluxDB : ".$message."\n";
 				# set state
 				$state = -1;
 				# return
@@ -193,7 +189,6 @@ sub initialize {
 			if (!(-f $dbConfig)) {
 				# message
 				$message = "db-config no file (".$dbConfig.")";
-				print STDERR "FluxDB : ".$message."\n";
 				# set state
 				$state = -1;
 				# return
@@ -244,7 +239,6 @@ sub initialize {
 			if (!(-f $docroot.$fluxcli)) {
 				# message
 				$message = "fluxcli missing (".$docroot.$fluxcli.")";
-				print STDERR "FluxDB : ".$message."\n";
 				# set state
 				$state = -1;
 				# return
@@ -269,7 +263,6 @@ sub initialize {
 		# no valid mode. bail out
 		# message
 		$message = "no valid mode";
-		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -552,7 +545,6 @@ sub loadDatabaseConfig {
 		# no valid db-type. bail out
 		# message
 		$message = "no valid db-type : ".$dbType;
-		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -577,7 +569,6 @@ sub dbConnect {
 	if (!(defined $dbHandle)) {
 		# message
 		$message = "error connecting to database :\n".$DBI::errstr;
-		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
