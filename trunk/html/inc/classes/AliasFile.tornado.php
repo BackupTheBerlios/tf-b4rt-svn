@@ -38,29 +38,22 @@ class AliasFileTornado extends AliasFile
         if ($user != "") {
             $this->transferowner = $user;
         }
-        if(file_exists($inFile)) {
+        if (file_exists($inFile)) {
             // read the alias file
-            $arStatus = file($inFile);
-            $this->running = trim($arStatus[0]);
-            $this->percent_done = trim($arStatus[1]);
-            $this->time_left = trim($arStatus[2]);
-            $this->down_speed = trim($arStatus[3]);
-            $this->up_speed = trim($arStatus[4]);
-            $this->transferowner = trim($arStatus[5]);
-            $this->seeds = trim($arStatus[6]);
-            $this->peers = trim($arStatus[7]);
-            $this->sharing = trim($arStatus[8]);
-            $this->seedlimit = trim($arStatus[9]);
-            $this->uptotal = trim($arStatus[10]);
-            $this->downtotal = trim($arStatus[11]);
-            $this->size = @trim($arStatus[12]);
-            if (sizeof($arStatus) > 13) {
-                for ($inx = 13; $inx < sizeof($arStatus); $inx++) {
-                    array_push($this->errors, $arStatus[$inx]);
-                }
-            }
-        } else {
-            // this file does not exist (yet)
+            $this->errors = file($inFile);
+            $this->running = @trim(array_shift($this->errors));
+            $this->percent_done = @trim(array_shift($this->errors));
+            $this->time_left = @trim(array_shift($this->errors));
+            $this->down_speed = @trim(array_shift($this->errors));
+            $this->up_speed = @trim(array_shift($this->errors));
+            $this->transferowner = @trim(array_shift($this->errors));
+            $this->seeds = @trim(array_shift($this->errors));
+            $this->peers = @trim(array_shift($this->errors));
+            $this->sharing = @trim(array_shift($this->errors));
+            $this->seedlimit = @trim(array_shift($this->errors));
+            $this->uptotal = @trim(array_shift($this->errors));
+            $this->downtotal = @trim(array_shift($this->errors));
+            $this->size = @trim(array_shift($this->errors));
         }
     }
 
