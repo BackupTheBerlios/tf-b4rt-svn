@@ -1007,4 +1007,92 @@ else:
                 desktop = tmp_desktop + os.sep
 
 
+"""
+    copied from BTL.platform
+"""
+
+def get_filesystem_encoding(errorfunc=None):
+    def dummy_log(e):
+        print e
+        pass
+    if not errorfunc:
+        errorfunc = dummy_log
+
+
+    default_encoding = 'utf8'
+
+    if os.path.supports_unicode_filenames:
+        encoding = None
+    else:
+        try:
+            encoding = sys.getfilesystemencoding()
+        except AttributeError:
+            errorfunc("This version of Python cannot detect filesystem encoding.")
+
+
+        if encoding is None:
+            encoding = default_encoding
+            errorfunc("Python failed to detect filesystem encoding. "
+                      "Assuming '%s' instead." % default_encoding)
+        else:
+            try:
+                'a1'.decode(encoding)
+            except:
+                errorfunc("Filesystem encoding '%s' is not supported. Using '%s' instead." %
+                          (encoding, default_encoding))
+                encoding = default_encoding
+
+    return encoding
+
+def encode_for_filesystem(path):
+    assert isinstance(path, unicode), "Path should be unicode not %s" % type(path)
+
+    bad = False
+    encoding = get_filesystem_encoding()
+    if encoding == None:
+        encoded_path = path
+    else:
+        try:
+            encoded_path = path.encode(encoding)
+        except:
+            bad = True
+            path.replace(u"%", urllib.quote(u"%"))
+            encoded_path = path.encode(encoding, 'urlquote')
+
+    return (encoded_path, bad)
+
+def decode_from_filesystem(path):
+    encoding = get_filesystem_encoding()
+    if encoding == None:
+        assert isinstance(path, unicode), "Path should be unicode not %s" % type(path)
+        decoded_path = path
+    else:
+        assert isinstance(path, str), "Path should be str not %s" % type(path)
+        decoded_path = path.decode(encoding)
+
+    return decoded_path
+
+efs = encode_for_filesystem
+
+def efs2(path):
+    # same as encode_for_filesystem, but doesn't bother returning "bad"
+    return encode_for_filesystem(path)[0]
+
+# this function is the preferred way to get windows' paths
+def get_shell_dir(value):
+    dir = None
+    if os.name == 'nt':
+        try:
+            dir = shell.SHGetFolderPath(0, value, 0, 0)
+        except:
+            pass
+    return dir
+
+def get_cache_dir():
+    dir = None
+    if os.name == 'nt':
+        dir = get_shell_dir(shellcon.CSIDL_INTERNET_CACHE)
+    return dir
+
+
 

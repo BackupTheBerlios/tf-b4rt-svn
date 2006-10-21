@@ -32,10 +32,12 @@ import logging
 from logging import ERROR, WARNING
 from time import strftime, sleep
 import traceback
-from BitTorrent import platform
 import BTL.stackthreading as threading
-from BTL import platform
-from BTL.platform import decode_from_filesystem, encode_for_filesystem
+#from BTL import platform
+#from BTL.platform import decode_from_filesystem, encode_for_filesystem
+from BitTorrent import platform
+from BitTorrent.platform import decode_from_filesystem, encode_for_filesystem
+#
 from BTL.defer import DeferredEvent
 from BitTorrent import inject_main_logfile
 from BitTorrent.MultiTorrent import Feedback, MultiTorrent
