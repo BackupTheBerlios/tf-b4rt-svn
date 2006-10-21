@@ -498,6 +498,9 @@ sub initPaths {
 #------------------------------------------------------------------------------#
 sub loadModules {
 	# load IO::Socket::UNIX
+	if ($LOGLEVEL > 1) {
+		print "CORE : loading Perl-module IO::Socket::UNIX\n";
+	}
 	if (eval "require IO::Socket::UNIX")  {
 		IO::Socket::UNIX->import();
 	} else {
@@ -505,6 +508,9 @@ sub loadModules {
 		exit;
 	}
 	# load IO::Select
+	if ($LOGLEVEL > 1) {
+		print "CORE : loading Perl-module IO::Select\n";
+	}
 	if (eval "require IO::Select")  {
 		IO::Select->import();
 	} else {
@@ -512,6 +518,9 @@ sub loadModules {
 		exit;
 	}
 	# load POSIX
+	if ($LOGLEVEL > 1) {
+		print "CORE : loading Perl-module POSIX\n";
+	}
 	if (eval "require POSIX")  {
 		POSIX->import(qw(setsid));
 	} else {
