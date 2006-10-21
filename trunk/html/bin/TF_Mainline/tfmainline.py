@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-
+################################################################################
+# $Id$
+# $Revision$
+# $Date$
+################################################################################
+#
 # The contents of this file are subject to the BitTorrent Open Source License
 # Version 1.1 (the License).  You may not copy or use this file, in either
 # source code or executable form, except in compliance with the License.  You
@@ -9,11 +14,15 @@
 # WITHOUT WARRANTY OF ANY KIND, either express or implied.  See the License
 # for the specific language governing rights and limitations under the
 # License.
-
+#
 # Written by Bram Cohen, Uoti Urpala, John Hoffman, and David Harrison
-
+#
+################################################################################
+#
+# tfmainline.py - use mainline with torrentflux
+#
+################################################################################
 from __future__ import division
-
 app_name = "BitTorrent"
 from BitTorrent.translation import _
 import sys
@@ -39,14 +48,17 @@ from BitTorrent import version
 from BTL import GetTorrent
 from BTL.ConvertedMetainfo import ConvertedMetainfo
 from BitTorrent.MultiTorrent import TorrentNotInitialized
-from BitTorrent.RawServer_twisted import RawServer, task
+#from BitTorrent.RawServer_twisted import RawServer, task
+from BitTorrent.RawServer_twisted import RawServer
+from twisted.internet import task
+#
 from BitTorrent.UI import Size, Duration
 inject_main_logfile()
 from BitTorrent import console
 from BitTorrent import stderr_console  # must import after inject_main_logfile
                                        # because import is really a copy.
                                        # If imported earlier, stderr_console
-                                       # doesn't reflect the changes made in 
+                                       # doesn't reflect the changes made in
                                        # inject_main_logfile!!  BAAAHHHH!!
 
 def wrap_log(context_string, logger):
@@ -156,8 +168,8 @@ class HeadlessDisplayer(object):
         else:
             print _("Log:")
         for err in self.errors[-4:]:
-            print err 
-        print    
+            print err
+        print
         print _("saving:        "), self.file
         print _("file size:     "), self.fileSize
         print _("percent done:  "), self.percentDone
@@ -220,11 +232,11 @@ class TorrentApp(object):
         def __init__(self, app, level=logging.NOTSET):
             logging.Handler.__init__(self,level)
             self.app = app
-      
+
         def emit(self, record):
-            self.app.display_error(record.getMessage() ) 
+            self.app.display_error(record.getMessage() )
             if record.exc_info is not None:
-                self.app.display_error( " %s: %s" % 
+                self.app.display_error( " %s: %s" %
                     ( str(record.exc_info[0]), str(record.exc_info[1])))
                 tb = record.exc_info[2]
                 stack = traceback.extract_tb(tb)
@@ -260,7 +272,7 @@ class TorrentApp(object):
     def start_torrent(self,metainfo,save_incomplete_as,save_as):
         """Tells the MultiTorrent to begin downloading."""
         try:
-            self.d.display({'activity':_("initializing"), 
+            self.d.display({'activity':_("initializing"),
                                'fractionDone':0})
             multitorrent = self.multitorrent
             df = multitorrent.create_torrent(metainfo, save_incomplete_as,
@@ -281,7 +293,7 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "Failed to create torrent", exc_info = e )
             return
-        
+
     def run(self):
         self.core_doneflag = DeferredEvent()
         rawserver = RawServer(self.config)
@@ -291,7 +303,7 @@ class TorrentApp(object):
         # can throw exceptions.
         def shutdown():
             print "shutdown."
-            self.d.display({'activity':_("shutting down"), 
+            self.d.display({'activity':_("shutting down"),
                             'fractionDone':0})
             if self.multitorrent:
                 df = self.multitorrent.shutdown()
@@ -306,7 +318,7 @@ class TorrentApp(object):
         # between core_doneflag's callback and addCallback.
         self.core_doneflag.addCallback(
             lambda r: rawserver.external_add_task(0, shutdown))
-        
+
         rawserver.install_sigint_handler(self.core_doneflag)
 
 
@@ -345,21 +357,21 @@ class TorrentApp(object):
             save_incomplete_as = os.path.join(save_incomplete_in,torrent_name)
         else:
             save_incomplete_as = os.path.join(savein,torrent_name)
-    
+
         data_dir,bad = platform.encode_for_filesystem(config['data_dir'])
         if bad:
             raise BTFailure(_("Invalid path encoding."))
 
-        try: 
+        try:
             self.multitorrent = \
                 MultiTorrent(self.config, rawserver, data_dir,
                              is_single_torrent = True,
                              resume_from_torrent_config = False)
-                
+
             self.d.set_torrent_values(metainfo.name, os.path.abspath(saveas),
                                 metainfo.total_bytes, len(metainfo.hashes))
             self.start_torrent(self.metainfo, save_incomplete_as, saveas)
-        
+
             self.get_status()
         except UserFailure, e:
             self.logger.error( unicode(e.args[0]) )
@@ -367,7 +379,7 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "", exc_info = e )
             rawserver.add_task(0, self.core_doneflag.set)
-            
+
         # always make sure events get processed even if only for
         # shutting down.
         rawserver.listen_forever()
