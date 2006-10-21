@@ -75,9 +75,11 @@ my %jobs;
 my @queue;
 my $queueIdx = 0;
 
+# start-tries-hash
+my %startTries;
+
 # some defaults
 my $DEFAULT_limitStartTries = 3;
-my $DEFAULT_startTrySleep = 5;
 
 # af-instance-field to reuse object
 my $af = AliasFile->new();
@@ -124,6 +126,7 @@ sub destroy {
 	undef %globals;
 	undef %jobs;
 	undef @queue;
+	undef %startTries;
 }
 
 ################################################################################
@@ -242,7 +245,6 @@ sub initialize {
 	$globals{'limitGlobal'} = $limitGlobal;
 	$globals{'limitUser'} = $limitUser;
 	$globals{'limitStartTries'} = $DEFAULT_limitStartTries;
-	$globals{'startTrySleep'} = $DEFAULT_startTrySleep;
 
 	#initialize the queue
 	if (-f $fileQueue) {
@@ -254,6 +256,9 @@ sub initialize {
 		}
 		@queue = qw();
 	}
+
+	# start-tries hash
+	%startTries = ();
 
 	# update running transfers
 	runningUpdate();
@@ -375,7 +380,6 @@ sub command {
 #-------------------------------------------------------------------------------#
 sub queueProcess {
 	$queueIdx = 0;
-	my $startTry = 0;
 	QUEUE: while (1) {
 		# update running transfers
 		runningUpdate();
@@ -411,9 +415,15 @@ sub queueProcess {
 						if ($LOGLEVEL > 0) {
 							print "Qmgr : starting transfer : ".$nextTransfer." (".$nextUser.") (".localtime().")\n";
 						}
+						# set start-counter-var
+						if (exists $startTries{$nextTransfer}) {
+							$startTries{$nextTransfer} += 1;
+						} else {
+							$startTries{$nextTransfer} = 1;
+						}
 						if (transferStart($nextTransfer) == 1) {                # start transfer succeeded
 							# reset start-counter-var
-							$startTry = 0;
+							delete($startTries{$nextTransfer});
 							# remove job from queue
 							my $removed = queueRemove($nextTransfer, $nextUser);
 							if ($removed == 0) { $queueIdx++; }
@@ -427,8 +437,9 @@ sub queueProcess {
 						} else {                                                # start transfer failed
 							print STDERR "Qmgr : start transfer failed : ".$nextTransfer." (".$nextUser.")\n";
 							# already tried max-times to start this thing ?
-							if ($startTry == $globals{'limitStartTries'}) {
-								$startTry = 0;
+							if ($startTries{$nextTransfer} > $globals{'limitStartTries'}) {
+								# reset start-counter-var
+								delete($startTries{$nextTransfer});
 								print STDERR "Qmgr : ".$globals{'limitStartTries'}." errors when starting, cancel job : ".$nextTransfer." (".$nextUser.")\n";
 								# remove job from queue
 								my $removed = queueRemove($nextTransfer, $nextUser);
@@ -436,8 +447,11 @@ sub queueProcess {
 								# check if more entries
 								if (queueCountEntriesLeft() == 0) { last QUEUE; }
 							} else {
-								$startTry++;
-								sleep $globals{'startTrySleep'};
+								print STDERR "Qmgr : ".$startTries{$nextTransfer}." errors when starting, skip job : ".$nextTransfer." (".$nextUser.")\n";
+								# next entry
+								$queueIdx++;
+								# check if more entries
+								if (queueCountEntriesLeft() == 0) { last QUEUE; }
 							}
 						} # end start transfer failed
 					} else {                                                    # user-limit for this user applies
@@ -853,7 +867,6 @@ sub status {
 	$return .= "max transfers global : ".$globals{'limitGlobal'}."\n";
 	$return .= "max transfers per user : ".$globals{'limitUser'}."\n";
 	$return .= "max start-tries : ".$globals{'limitStartTries'}."\n";
-	$return .= "start-try-extra-sleep : ".$globals{'startTrySleep'}." s\n";
 	# jobs total
 	$return .= "jobs total : ".$countJobs."\n";
 	# jobs queued
