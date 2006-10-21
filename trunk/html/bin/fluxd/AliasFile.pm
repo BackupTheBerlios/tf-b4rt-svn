@@ -117,11 +117,12 @@ sub initialize {
 
 	shift; # class
 
-	# path-to-aliasfile
+	# path-to-alias-file
 	$aliasFile = shift;
 	if (!(defined $aliasFile)) {
 		# message
-		$message = "path-to-aliasfile not defined";
+		$message = "path-to-alias-file not defined";
+		print STDERR "AliasFile : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -161,7 +162,8 @@ sub initialize {
 		return 1;
 	} else {
 		# message
-		$message = "aliasfile no file";
+		$message = "alias-file no file";
+		print STDERR "AliasFile : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
