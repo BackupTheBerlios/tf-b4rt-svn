@@ -51,6 +51,9 @@ my $port = 3150;
 # server-socket
 my ($SERVER, $Select);
 
+# modules loaded
+my $modsLoaded = 0;
+
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -102,6 +105,7 @@ sub initialize {
 	if (!(defined $LOGLEVEL)) {
 		# message
 		$message = "loglevel not defined";
+		print STDERR "Fluxinet : ".$message;
 		# set state
 		$state = -1;
 		# return
@@ -113,6 +117,7 @@ sub initialize {
 	if (!(defined $port)) {
 		# message
 		$message = "port not defined";
+		print STDERR "Fluxinet : ".$message;
 		# set state
 		$state = -1;
 		# return
@@ -122,8 +127,10 @@ sub initialize {
 	print "Fluxinet : initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n";
 
 	# load modules
-	if (loadModules() != 1) {
-		return 0;
+	if ($modsLoaded == 0) {
+		if (loadModules() != 1) {
+			return 0;
+		}
 	}
 
 	# Create the read set
@@ -138,12 +145,18 @@ sub initialize {
 	if (!(defined $SERVER)) {
 		# message
 		$message = "could not create server socket";
+		print STDERR "Fluxinet : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 	$Select->add($SERVER);
+
+	# log
+	if ($LOGLEVEL > 1) {
+		print "Fluxinet : tcp-server-socket setup on port ".$port."\n";
+	}
 
 	# set state
 	$state = 1;
@@ -160,28 +173,24 @@ sub initialize {
 sub loadModules {
 
 	# load IO::Socket
+	if ($LOGLEVEL > 1) {
+		print "Fluxinet : loading Perl-module IO::Socket\n";
+	}
 	if (eval "require IO::Socket")  {
 		IO::Socket->import();
 	} else {
 		# message
 		$message = "cant load perl-module IO::Socket : ".$@;
+		print STDERR "Fluxinet : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 
-	# load IO::Select
-	if (eval "require IO::Select")  {
-		IO::Select->import();
-	} else {
-		# message
-		$message = "cant load perl-module IO::Select : ".$@;
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
+	# set flag
+	$modsLoaded = 1;
+
 	# return
 	return 1;
 }
