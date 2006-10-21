@@ -56,8 +56,14 @@ my $mode = "dbi";
 # docroot
 my $docroot = "/var/www";
 
+# load conf : 0|1
+my $loadConf = 1;
+
 # flux-config-hash
 my %fluxConf;
+
+# load users : 0|1
+my $loadUsers = 0;
 
 # usernames
 my %names;
@@ -210,19 +216,23 @@ sub initialize {
 			}
 
 			# load config
-			if (loadFluxConfigDBI() == 0) {
-				# close connection
-				dbDisconnect();
-				# return
-				return 0;
+			if ($loadConf == 1) {
+				if (loadFluxConfigDBI() == 0) {
+					# close connection
+					dbDisconnect();
+					# return
+					return 0;
+				}
 			}
 
 			# load users
-			if (loadFluxUsersDBI() == 0) {
-				# close connection
-				dbDisconnect();
-				# return
-				return 0;
+			if ($loadUsers == 1) {
+				if (loadFluxUsersDBI() == 0) {
+					# close connection
+					dbDisconnect();
+					# return
+					return 0;
+				}
 			}
 
 			# close connection
@@ -246,15 +256,19 @@ sub initialize {
 			}
 
 			# load config
-			if (loadFluxConfigPHP() == 0) {
-				# return
-				return 0;
+			if ($loadConf == 1) {
+				if (loadFluxConfigPHP() == 0) {
+					# return
+					return 0;
+				}
 			}
 
 			# load users
-			if (loadFluxUsersPHP() == 0) {
-				# return
-				return 0;
+			if ($loadUsers == 1) {
+				if (loadFluxUsersPHP() == 0) {
+					# return
+					return 0;
+				}
 			}
 
 			# done
@@ -436,19 +450,23 @@ sub reload {
 			}
 
 			# load config
-			if (loadFluxConfigDBI() == 0) {
-				# close connection
-				dbDisconnect();
-				# return
-				return 0;
+			if ($loadConf == 1) {
+				if (loadFluxConfigDBI() == 0) {
+					# close connection
+					dbDisconnect();
+					# return
+					return 0;
+				}
 			}
 
 			# load users
-			if (loadFluxUsersDBI() == 0) {
-				# close connection
-				dbDisconnect();
-				# return
-				return 0;
+			if ($loadUsers == 1) {
+				if (loadFluxUsersDBI() == 0) {
+					# close connection
+					dbDisconnect();
+					# return
+					return 0;
+				}
 			}
 
 			# close connection
@@ -461,15 +479,19 @@ sub reload {
 		/^php/ && do {
 
 			# load config
-			if (loadFluxConfigPHP() == 0) {
-				# return
-				return 0;
+			if ($loadConf == 1) {
+				if (loadFluxConfigPHP() == 0) {
+					# return
+					return 0;
+				}
 			}
 
 			# load users
-			if (loadFluxUsersPHP() == 0) {
-				# return
-				return 0;
+			if ($loadUsers == 1) {
+				if (loadFluxUsersPHP() == 0) {
+					# return
+					return 0;
+				}
 			}
 
 			# done
