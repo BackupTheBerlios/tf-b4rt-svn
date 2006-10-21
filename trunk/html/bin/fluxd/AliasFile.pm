@@ -132,33 +132,28 @@ sub initialize {
 	if (-f $aliasFile) {
 		# sep + open file
 		my $lineSep = $/;
-		$/ = "\n";
-		$. = 0;
+		undef $/;
 		open(ALIASFILE,"<$aliasFile");
 		# read data
-		$data{"running"} = <ALIASFILE>;
-		$data{"percent_done"} = <ALIASFILE>;
-		$data{"time_left"} = <ALIASFILE>;
-		$data{"down_speed"} = <ALIASFILE>;
-		$data{"up_speed"} = <ALIASFILE>;
-		$data{"transferowner"} = <ALIASFILE>;
-		$data{"seeds"} = <ALIASFILE>;
-		$data{"peers"} = <ALIASFILE>;
-		$data{"sharing"} = <ALIASFILE>;
-		$data{"seedlimit"} = <ALIASFILE>;
-		$data{"uptotal"} = <ALIASFILE>;
-		$data{"downtotal"} = <ALIASFILE>;
-		$data{"size"} = <ALIASFILE>;
-		chomp %data;
-		# errors
-		@errors = qw();
-		while (<ALIASFILE>) {
-			chomp;
-			push(@errors, $_);
-		}
+		my $content = <ALIASFILE>;
 		# close file + sep
 		close ALIASFILE;
 		$/ = $lineSep;
+		# process data
+		@errors = split (/\n/, $content);
+		$data{"running"} = shift @errors;
+		$data{"percent_done"} = shift @errors;
+		$data{"time_left"} = shift @errors;
+		$data{"down_speed"} = shift @errors;
+		$data{"up_speed"} = shift @errors;
+		$data{"transferowner"} = shift @errors;
+		$data{"seeds"} = shift @errors;
+		$data{"peers"} = shift @errors;
+		$data{"sharing"} = shift @errors;
+		$data{"seedlimit"} = shift @errors;
+		$data{"uptotal"} = shift @errors;
+		$data{"downtotal"} = shift @errors;
+		$data{"size"} = shift @errors;
 		# set state
 		$state = 1;
 		# return
