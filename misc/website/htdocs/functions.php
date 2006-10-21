@@ -99,8 +99,8 @@ function logHit() {
 	if ($fileHandle = @fopen(_FILE_HITS, 'w+')) {
 		$hits = (int) trim($data);
 		$hits++;
-		fwrite($fileHandle, $hits);
-		fclose($fileHandle);
+		@fwrite($fileHandle, $hits);
+		@fclose($fileHandle);
 	}	
 }
 
@@ -120,7 +120,8 @@ function logProxy() {
 		return;	
 	@mysql_select_db($db_name, $db);
 	$result = @mysql_query("SELECT ct FROM tfb4rt_proxystats WHERE ua LIKE '".$ua."'", $db);
-	$num_rows = mysql_num_rows($result);
+	$num_rows = 0;
+	$num_rows = @mysql_num_rows($result);
 	if ($num_rows > 0) { // update
 		$row = @mysql_fetch_row($result);
 		$ct = $row[0];

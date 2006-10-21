@@ -22,7 +22,6 @@
 
 // defines
 define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
-define('_FILE_HITS','./internal/hits-torrentflux_2.1-b4rt.txt');
 define('_FILE_ISSUES','issues.txt');
 define('_FILE_NEWS','newshtml.txt');
 define('_FILE_VERSION_CURRENT','version.txt');
@@ -43,7 +42,6 @@ require_once('functions.php');
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
-@logHit();
 @logProxy();
 
 // update

@@ -21,8 +21,6 @@
 *******************************************************************************/
 
 /* defines */
-define('_FILE_HITS_OLD','hits-torrentflux_2.1-b4rt.txt');
-define('_FILE_HITS_NEW','hits-torrentflux-b4rt.txt');
 define('_FILE_HITS','hits.txt');
 
 // functions
@@ -36,19 +34,46 @@ require_once('../functions.php');
 printPageHead();
 
 // hit-stats
-echo "<h2>Hits</h2>";
+echo "<h2>hits</h2>";
 echo "<strong>Website</strong> : ".trim(getDataFromFile(_FILE_HITS))."<br>";
-echo "<strong>superadmin-proxy old</strong> : ".trim(getDataFromFile(_FILE_HITS_OLD))."<br>";
-echo "<strong>superadmin-proxy new</strong> : ".trim(getDataFromFile(_FILE_HITS_NEW))."<br>";
 
 // proxy-stats
-echo "<h2>superadmin-proxy</h2>";
+echo "<h2>superadmin</h2>";
 require_once('dbconf.php');
-$db = mysql_connect($db_host, $db_user, $db_pass) or die('connect failed: ' . mysql_error());	
+$db = mysql_connect($db_host, $db_user, $db_pass) or die('connect failed: ' . mysql_error());
 if (!isset($db)) {
 	echo '<font color="red">Error connecting to database.</font>';
 } else {
-	mysql_select_db($db_name, $db) or die('select db failed: ' . mysql_error());	
+	mysql_select_db($db_name, $db) or die('select db failed: ' . mysql_error());
+	echo '<table border="1">';
+	// torrentflux-b4rt
+	$result = mysql_query("SELECT SUM(ct) FROM tfb4rt_proxystats WHERE ua LIKE '%torrentflux-b4rt%'", $db);
+	$row = mysql_fetch_row($result);
+	$ct = $row[0];
+	mysql_free_result($result);
+	echo "<tr><td>torrentflux-b4rt</td><td>".$ct."</td></tr>";	
+	// torrentflux_2.1-b4rt
+	$result = mysql_query("SELECT SUM(ct) FROM tfb4rt_proxystats WHERE ua LIKE '%TorrentFlux/%'", $db);
+	$row = mysql_fetch_row($result);
+	$ct = $row[0];
+	mysql_free_result($result);
+	echo "<tr><td>torrentflux_2.1-b4rt</td><td>".$ct."</td></tr>";
+	// unknown
+	$result = mysql_query("SELECT SUM(ct) FROM tfb4rt_proxystats WHERE ua NOT LIKE '%orrent%'", $db);
+	$row = mysql_fetch_row($result);
+	$ct = $row[0];
+	mysql_free_result($result);
+	echo "<tr><td>unknown</td><td>".$ct."</td></tr>";
+	// sum
+	$result = mysql_query("SELECT SUM(ct) FROM tfb4rt_proxystats", $db);
+	$row = mysql_fetch_row($result);
+	$ct = $row[0];
+	mysql_free_result($result);
+	echo "<tr><td><strong>sum</strong></td><td><strong>".$ct."</strong></td></tr>";	
+	//
+	echo "</table>";
+	// details-table
+	echo "<br>";
 	$query = 'SELECT * FROM tfb4rt_proxystats ORDER BY ct DESC';
 	$result = mysql_query($query) or die('query failed: ' . mysql_error());	
 	echo '<table border="1">';
@@ -59,9 +84,8 @@ if (!isset($db)) {
 	echo "</tr>";
 	while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
 		echo "<tr>";
-		foreach ($line as $col_value) {
+		foreach ($line as $col_value)
 			echo "<td>".htmlentities($col_value, ENT_QUOTES)."</td>";
-		}
 		echo "</tr>";
 	}
 	echo "</table>";
