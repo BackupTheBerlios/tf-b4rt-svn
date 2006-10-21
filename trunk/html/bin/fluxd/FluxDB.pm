@@ -140,6 +140,7 @@ sub initialize {
 	if (!(defined $docroot)) {
 		# message
 		$message = "path-to-docroot not defined";
+		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -151,6 +152,7 @@ sub initialize {
 	if (!(defined $php)) {
 		# message
 		$message = "path-to-php not defined";
+		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -159,6 +161,7 @@ sub initialize {
 	if (!(-x $php)) {
 		# message
 		$message = "cant execute php (".$php.")";
+		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -178,6 +181,7 @@ sub initialize {
 			} else {
 				# message
 				$message = "cant load DBI-module : ".$@;
+				print STDERR "FluxDB : ".$message."\n";
 				# set state
 				$state = -1;
 				# return
@@ -189,6 +193,7 @@ sub initialize {
 			if (!(-f $dbConfig)) {
 				# message
 				$message = "db-config no file (".$dbConfig.")";
+				print STDERR "FluxDB : ".$message."\n";
 				# set state
 				$state = -1;
 				# return
@@ -239,6 +244,7 @@ sub initialize {
 			if (!(-f $docroot.$fluxcli)) {
 				# message
 				$message = "fluxcli missing (".$docroot.$fluxcli.")";
+				print STDERR "FluxDB : ".$message."\n";
 				# set state
 				$state = -1;
 				# return
@@ -263,6 +269,7 @@ sub initialize {
 		# no valid mode. bail out
 		# message
 		$message = "no valid mode";
+		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -545,6 +552,7 @@ sub loadDatabaseConfig {
 		# no valid db-type. bail out
 		# message
 		$message = "no valid db-type : ".$dbType;
+		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -569,6 +577,7 @@ sub dbConnect {
 	if (!(defined $dbHandle)) {
 		# message
 		$message = "error connecting to database :\n".$DBI::errstr;
+		print STDERR "FluxDB : ".$message."\n";
 		# set state
 		$state = -1;
 		# return
@@ -599,8 +608,8 @@ sub dbDisconnect {
 sub loadFluxConfigDBI {
 	if (defined $dbHandle) {
 
-		# undef first
-		undef %fluxConf;
+		# flush first
+		%fluxConf = ();
 
 		# load from db
 		my $sth = $dbHandle->prepare(q{ SELECT tf_key, tf_value FROM tf_settings });
@@ -628,9 +637,9 @@ sub loadFluxConfigDBI {
 sub loadFluxUsersDBI {
 	if (defined $dbHandle) {
 
-		# undef first
-		undef @users;
-		undef %names;
+		# flush first
+		@users = ();
+		%names = ();
 
 		# load from db
 		my $sth = $dbHandle->prepare(q{ SELECT uid, user_id FROM tf_users });
@@ -663,8 +672,8 @@ sub loadFluxUsersDBI {
 #------------------------------------------------------------------------------#
 sub loadFluxConfigPHP {
 
-	# undef first
-	undef %fluxConf;
+	# flush first
+	%fluxConf = ();
 
 	# dump and init
 	my $shellCmd = $php." ".$fluxcli." dump settings";
@@ -689,9 +698,9 @@ sub loadFluxConfigPHP {
 #------------------------------------------------------------------------------#
 sub loadFluxUsersPHP {
 
-	# undef first
-	undef @users;
-	undef %names;
+	# flush first
+	@users = ();
+	%names = ();
 
 	# dump and init
 	my $shellCmd = $php." ".$fluxcli." dump users";
