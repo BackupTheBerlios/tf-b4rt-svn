@@ -25,9 +25,6 @@ use Exporter;
 @ISA = ('Exporter');
 @EXPORT_OK = qw(
 				getVersion
-				transferGetOwner
-				transferGetStatus
-				transferGetLine
 				niceTimeString
 				);
 ################################################################################
@@ -43,57 +40,6 @@ my $VERSION = do {
 ################################################################################
 # subs                                                                         #
 ################################################################################
-
-#------------------------------------------------------------------------------#
-# Sub: transferGetOwner                                                        #
-# Arguments: transfer                                                          #
-# Returns: user or undef                                                       #
-#------------------------------------------------------------------------------#
-sub transferGetOwner {
-	return transferGetLine(shift, 6);
-}
-
-#------------------------------------------------------------------------------#
-# Sub: transferGetStatus                                                       #
-# Arguments: transfer                                                          #
-# Returns: status or undef                                                     #
-#------------------------------------------------------------------------------#
-sub transferGetStatus {
-	return transferGetLine(shift, 0);
-}
-
-#------------------------------------------------------------------------------#
-# Sub: transferGetLine                                                         #
-# Arguments: transfer, linenumber                                              #
-# Returns: string or undef                                                     #
-#------------------------------------------------------------------------------#
-sub transferGetLine {
-	my $statFile = shift;
-	if (!(defined $statFile)) {
-		return undef;
-	}
-	my $number = shift;
-	if (!(defined $number)) {
-		return undef;
-	}
-	if (-f $statFile) {
-		my $lineSep = $/;
-		$/ = "\n";
-		$. = 0;
-		open(STATFILE,"<$statFile");
-		while (<STATFILE>) {
-			if ($. == $number) {
-				chomp;
-				close STATFILE;
-				$/ = $lineSep;
-				return $_;
-			}
-		}
-		close STATFILE;
-		$/ = $lineSep;
-	}
-	return undef;
-}
 
 #------------------------------------------------------------------------------#
 # Sub: niceTimeString                                                          #
