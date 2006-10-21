@@ -25,6 +25,7 @@ package Fluxd;
 use strict;
 use warnings;
 use FluxdCommon;
+use AliasFile;
 ################################################################################
 
 ################################################################################
@@ -1378,6 +1379,9 @@ sub printVersion {
 	# FluxdCommon
 	print "FluxdCommon Version : ";
 	print FluxdCommon::getVersion()."\n";
+	# AliasFile
+	print "AliasFile Version : ";
+	print AliasFile::getVersion()."\n";
 	# FluxDB
 	print "FluxDB Version : ";
 	if (eval "require FluxDB") {
