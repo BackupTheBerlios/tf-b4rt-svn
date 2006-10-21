@@ -34,6 +34,7 @@ from time import strftime, sleep
 import traceback
 from BitTorrent import platform
 import BTL.stackthreading as threading
+from BTL import platform
 from BTL.platform import decode_from_filesystem, encode_for_filesystem
 from BTL.defer import DeferredEvent
 from BitTorrent import inject_main_logfile
@@ -68,11 +69,28 @@ def wrap_log(context_string, logger):
 
 
 def fmttime(n):
+    """
     if n == 0:
         return _("download complete!")
     return _("finishing in %s") % (str(Duration(n)))
+    """
+    if n == 0:
+        return 'complete!'
+    try:
+        n = int(n)
+        assert n >= 0 and n < 5184000  # 60 days
+    except:
+        return '<unknown>'
+    m, s = divmod(n, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    if d > 0:
+        return '%dd %02d:%02d:%02d' % (d, h, m, s)
+    else:
+        return '%02d:%02d:%02d' % (h, m, s)
 
 def fmtsize(n):
+    """
     s = str(n)
     size = s[-3:]
     while len(s) > 3:
@@ -80,7 +98,8 @@ def fmtsize(n):
         size = '%s,%s' % (s[-3:], size)
     size = '%s (%s)' % (size, str(Size(n)))
     return size
-
+    """
+    return int(n)
 
 class HeadlessDisplayer(object):
 
