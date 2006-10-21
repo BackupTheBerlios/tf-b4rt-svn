@@ -42,6 +42,24 @@ my $VERSION = do {
 ################################################################################
 
 #------------------------------------------------------------------------------#
+# Sub: transferIsRunning                                                       #
+# Arguments: transfer                                                          #
+# Return: 0|1                                                                  #
+#------------------------------------------------------------------------------#
+sub transferIsRunning {
+	my $name = shift;
+	my $qstring = "ps -aux 2> /dev/null";
+	my $pcount = 0;
+	foreach my $line (grep(/$name/, qx($qstring))) {
+		$pcount++;
+	}
+	if ($pcount > 1) {
+		return 1;
+	}
+	return 0;
+}
+
+#------------------------------------------------------------------------------#
 # Sub: niceTimeString                                                          #
 # Arguments: start-time                                                        #
 # Return: nice Time String                                                     #
