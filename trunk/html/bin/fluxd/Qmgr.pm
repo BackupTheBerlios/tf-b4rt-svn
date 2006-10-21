@@ -52,13 +52,15 @@ my $interval;
 my $time_last_run = 0;
 
 # data-dir
-my $dataDir = "qmgr/";
+my $dataDir;
+my $PATH_dataDir = "qmgr/";
 
 # queue-file
-my $fileQueue = "qmgr.queue";
+my $fileQueue;
+my $PATH_fileQueue = "qmgr.queue";
 
 # transfers-dir
-my $transfersDir = ".transfers";
+my $transfersDir;
 
 # time-vars
 my ($time, $localtime);
@@ -76,6 +78,9 @@ my $queueIdx = 0;
 # some defaults
 my $DEFAULT_limitStartTries = 3;
 my $DEFAULT_startTrySleep = 5;
+
+# af-instance-field to reuse object
+my $af = AliasFile->new();
 
 ################################################################################
 # constructor + destructor                                                     #
@@ -103,7 +108,7 @@ sub destroy {
 	# log
 	print "Qmgr : shutdown\n";
 	# save queue
-	my $jobcount = countQueue();
+	my $jobcount = queueCount();
 	if ($jobcount > 0) {
 		if ($LOGLEVEL > 0) {
 			print "Qmgr : jobs queued : ".$jobcount.". writing queue-file...\n";
@@ -111,6 +116,10 @@ sub destroy {
 		# save queue
 		queueSave();
 	}
+	# strings
+	undef $dataDir;
+	undef $fileQueue;
+	undef $transfersDir;
 	# undef
 	undef %globals;
 	undef %jobs;
@@ -152,7 +161,7 @@ sub initialize {
 		# return
 		return 0;
 	}
-	$dataDir = $ddir . $dataDir;
+	$dataDir = $ddir . $PATH_dataDir;
 	# check if our main-dir exists. try to create if it doesnt
 	if (! -d $dataDir) {
 		print "Qmgr : creating data-dir : ".$dataDir."\n";
@@ -167,7 +176,7 @@ sub initialize {
 		}
 	}
 	# queue-file
-	$fileQueue = $dataDir . $fileQueue;
+	$fileQueue = $dataDir . $PATH_fileQueue;
 
 	# transfers-dir
 	$transfersDir = shift;
@@ -238,7 +247,7 @@ sub initialize {
 	#initialize the queue
 	if (-f $fileQueue) {
 		# actually load the queue
-		loadQueue();
+		queueLoad();
 	} else {
 		if ($LOGLEVEL > 0) {
 			print "Qmgr : creating empty queue\n";
@@ -247,7 +256,7 @@ sub initialize {
 	}
 
 	# update running transfers
-	updateRunningTransfers();
+	runningUpdate();
 
 	# reset last run time
 	$time_last_run = time();
@@ -312,7 +321,7 @@ sub main {
 		}
 
 		# process queue
-		processQueue();
+		queueProcess();
 
 		# set last run time
 		$time_last_run = time();
@@ -329,10 +338,10 @@ sub command {
 	$_= shift;
 	SWITCH: {
 		/^count-jobs/ && do {
-			return countJobs();
+			return jobsCount();
 		};
 		/^count-queue/ && do {
-			return countQueue();
+			return queueCount();
 		};
 		/^list-queue/ && do {
 			return queueList();
@@ -360,18 +369,18 @@ sub command {
 }
 
 #-------------------------------------------------------------------------------#
-# Sub: processQueue                                                             #
+# Sub: queueProcess                                                             #
 # Arguments: Null                                                               #
 # Returns: Null                                                                 #
 #-------------------------------------------------------------------------------#
-sub processQueue {
+sub queueProcess {
 	$queueIdx = 0;
 	my $startTry = 0;
 	QUEUE: while (1) {
 		# update running transfers
-		updateRunningTransfers();
+		runningUpdate();
 		# process queue
-		my $jobcountq = countQueue();
+		my $jobcountq = queueCount();
 		if ($jobcountq > 0) {                                                   # we have queued jobs
 			# next job
 			my $nextTransfer = $queue[$queueIdx];
@@ -402,7 +411,7 @@ sub processQueue {
 						if ($LOGLEVEL > 0) {
 							print "Qmgr : starting transfer : ".$nextTransfer." (".$nextUser.") (".localtime().")\n";
 						}
-						if (startTransfer($nextTransfer) == 1) {                # start transfer succeeded
+						if (transferStart($nextTransfer) == 1) {                # start transfer succeeded
 							# reset start-counter-var
 							$startTry = 0;
 							# remove job from queue
@@ -433,7 +442,7 @@ sub processQueue {
 						} # end start transfer failed
 					} else {                                                    # user-limit for this user applies
 						# check next queue-entry if one exists
-						if ($queueIdx < (countQueue() - 1)) { # there is a next entry
+						if ($queueIdx < (queueCount() - 1)) { # there is a next entry
 							if ($LOGLEVEL > 0) {
 								print "Qmgr : user limit reached, skipping job : ".$nextTransfer." (".$nextUser.") (next queue-entry)\n";
 							}
@@ -470,7 +479,7 @@ sub processQueue {
 #------------------------------------------------------------------------------#
 sub queueCountEntriesLeft {
 	# check if more entries
-	my $jobcount = countQueue();
+	my $jobcount = queueCount();
 	if ($jobcount > 0) { # more jobs in queue
 		if ($queueIdx < ($jobcount)) { # there is a next entry
 			if ($LOGLEVEL > 1) {
@@ -492,33 +501,43 @@ sub queueCountEntriesLeft {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: updateRunningTransfers                                                  #
+# Sub: runningUpdate                                                           #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub updateRunningTransfers {
-	# get runnin clients
+sub runningUpdate {
+	# get running transfers
 	opendir(DIR, $transfersDir);
 	my @pids = map { $_->[1] } # extract pathnames
 	map { [ $_, "$_" ] } # no full paths
-	grep { !/^\./ } # no dot-files
 	grep { /.*\.pid$/ } # only .pid-files
 	readdir(DIR);
 	closedir(DIR);
 	# flush running-jobs-hash
-	foreach my $jobName (keys %{$jobs{"running"}}) {
-		# delete job
-		delete($jobs{"running"}{$jobName});
-	}
+	$jobs{"running"} = ();
 	# refill hash
 	if (scalar(@pids) > 0) {
 		foreach my $pidFile (@pids) {
 			my $transfer = (substr ($pidFile, 0, (length($pidFile)) - 9));
-			my $user = FluxdCommon::transferGetOwner($transfersDir.$transfer.".stat");
-			if ((!(defined $user)) || ($user eq "")) {
-				$jobs{"running"}{$transfer} = "unknown";
+			$af->initialize($transfersDir.$transfer.".stat");
+			my $running = $af->get("running");
+			my $user = $af->get("transferowner");
+			if ((!(defined $running)) || ($running ne "1")) {
+				if ($LOGLEVEL > 1) {
+					print "Qmgr : transfer not in running state, skipping : ".$transfer."\n";
+				}
+			} elsif ((!(defined $user)) || ($user eq "")) {
+				if ($LOGLEVEL > 1) {
+					print "Qmgr : cannot get owner of running transfer, using n/a : ".$transfer."\n";
+				}
+				if (! exists $jobs{"running"}{$transfer}) {
+					$jobs{"running"}{$transfer} = "n/a";
+				}
 			} else {
 				if (! exists $jobs{"running"}{$transfer}) {
+					if ($LOGLEVEL > 1) {
+						print "Qmgr : adding to running transfers : ".$transfer." (".$user.")\n";
+					}
 					$jobs{"running"}{$transfer} = $user;
 				}
 			}
@@ -527,32 +546,46 @@ sub updateRunningTransfers {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: loadQueue                                                               #
+# Sub: queueLoad                                                               #
 # Arguments: Null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
-sub loadQueue {
+sub queueLoad {
 	if ($LOGLEVEL > 0) {
 		print "Qmgr : loading queue-file : ".$fileQueue."\n";
 	}
 	# read from file into queue-array
 	my $lineSep = $/;
 	$/ = "\n";
+	my @tempo = qw();
 	open(QUEUEFILE,"< $fileQueue");
 	while (<QUEUEFILE>) {
 		chomp;
-		push(@queue, $_);
+		push(@tempo, $_);
 	}
 	close QUEUEFILE;
 	$/ = $lineSep;
-	# fill job-hash
-	foreach my $transfer (@queue) {
-		my $user = FluxdCommon::transferGetOwner($transfersDir.$transfer.".stat");
-		if (!(defined $user)) {
-			$jobs{"queued"}{$transfer} = "unknown";
+	# fill queue
+	@queue = qw();
+	foreach my $transfer (@tempo) {
+		$af->initialize($transfersDir.$transfer.".stat");
+		my $running = $af->get("running");
+		my $user = $af->get("transferowner");
+		if ((!(defined $running)) || ($running ne "3")) {
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : transfer not in queued state, skipping : ".$fileQueue."\n";
+			}
+		} elsif ((!(defined $user)) || ($user eq "")) {
+			if ($LOGLEVEL > 1) {
+				print "Qmgr : cannot get owner, skipping : ".$fileQueue."\n";
+			}
 		} else {
 			if (! exists $jobs{"queued"}{$transfer}) {
+				if ($LOGLEVEL > 1) {
+					print "Qmgr : adding job to queue : ".$transfer." (".$user.")\n";
+				}
 				$jobs{"queued"}{$transfer} = $user;
+				push(@queue, $transfer);
 			}
 		}
 	}
@@ -573,6 +606,9 @@ sub queueSave {
 	open(QUEUEFILE,">$fileQueue");
 	# queued transfers
 	foreach my $queueEntry (@queue) {
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : saving job : ".$queueEntry."\n";
+		}
 		print QUEUEFILE $queueEntry."\n";
 	}
 	# close queue-file
@@ -580,22 +616,28 @@ sub queueSave {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: queueDump                                                               #
+# Sub: jobsDump                                                                #
 # Parameters: -                                                                #
 # Return: -                                                                    #
 #------------------------------------------------------------------------------#
-sub queueDump {
+sub jobsDump {
 	if ($LOGLEVEL > 0) {
-		print "Qmgr : dumping queue-file : ".$fileQueue."\n";
+		print "Qmgr : dumping jobs to queue-file : ".$fileQueue."\n";
 	}
 	# open queue-file
 	open(QUEUEFILE,">$fileQueue");
 	# running transfers
 	foreach my $jobName (keys %{$jobs{"running"}}) {
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : dumping running job : ".$jobName."\n";
+		}
 		print QUEUEFILE $jobName."\n";
 	}
 	# queued transfers
 	foreach my $queueEntry (@queue) {
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : dumping queued job : ".$queueEntry."\n";
+		}
 		print QUEUEFILE $queueEntry."\n";
 	}
 	# close queue-file
@@ -722,42 +764,42 @@ sub queueRemove {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: countJobs                                                               #
+# Sub: jobsCount                                                               #
 # Parameters: -                                                                #
 # Return: number of  Jobs                                                      #
 #------------------------------------------------------------------------------#
-sub countJobs {
+sub jobsCount {
 	my $jobcount = 0;
-	$jobcount += countQueue();
-	$jobcount += countRunning();
+	$jobcount += queueCount();
+	$jobcount += runningCount();
 	return $jobcount;
 }
 
 #------------------------------------------------------------------------------#
-# Sub: countQueue                                                              #
+# Sub: queueCount                                                              #
 # Parameters: -                                                                #
 # Return: number of queued jobs                                                #
 #------------------------------------------------------------------------------#
-sub countQueue {
+sub queueCount {
 	return scalar(@queue);
 	#return scalar((keys %{$jobs{"queued"}}));
 }
 
 #------------------------------------------------------------------------------#
-# Sub: countRunning                                                            #
+# Sub: runningCount                                                            #
 # Parameters: -                                                                #
 # Return: number of queued jobs                                                #
 #------------------------------------------------------------------------------#
-sub countRunning {
+sub runningCount {
 	return scalar((keys %{$jobs{"running"}}));
 }
 
 #------------------------------------------------------------------------------#
-# Sub: startTransfer                                                           #
+# Sub: transferStart                                                           #
 # Parameters: transfer-name                                                    #
 # Return: int with return of start-call (0|1)                                  #
 #------------------------------------------------------------------------------#
-sub startTransfer {
+sub transferStart {
 	my $transfer = shift;
 	if (!(defined $transfer)) {
 		return 0;
@@ -804,8 +846,8 @@ sub status {
 	$return .= "\n-= Qmgr Revision ".$VERSION." =-\n";
 	$return .= "interval : ".$interval." s \n";
 	# get count-vars
-	my $countQueue = countQueue();
-	my $countRunning = countRunning();
+	my $countQueue = queueCount();
+	my $countRunning = runningCount();
 	my $countJobs = $countQueue + $countRunning;
 	# some vars
 	$return .= "max transfers global : ".$globals{'limitGlobal'}."\n";
