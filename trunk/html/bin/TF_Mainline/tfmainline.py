@@ -91,14 +91,14 @@ def fmttime(n):
         return '%02d:%02d:%02d' % (h, m, s)
 
 def fmtsize(n):
-    # s = str(n)
-    # size = s[-3:]
-    # while len(s) > 3:
-    #    s = s[:-3]
-    #    size = '%s,%s' % (s[-3:], size)
-    # size = '%s (%s)' % (size, str(Size(n)))
-    # return size
-    return int(n)
+    s = str(n)
+    size = s[-3:]
+    while len(s) > 3:
+        s = s[:-3]
+        size = '%s,%s' % (s[-3:], size)
+    size = '%s (%s)' % (size, str(Size(n)))
+    return size
+    #return int(n)
 
 class HeadlessDisplayer(object):
 
@@ -119,9 +119,12 @@ class HeadlessDisplayer(object):
         self.done = False
         self.state = 1
         self.percentDone = ''
-        self.timeEst = 'Starting ...'
-        self.downRate = '0.0 kB/s'
-        self.upRate = '0.0 kB/s'
+        #self.timeEst = 'Starting ...'
+        #self.downRate = '0.0 kB/s'
+        #self.upRate = '0.0 kB/s'
+        self.timeEst = ''
+        self.downRate = '---'
+        self.upRate = '---'
         self.tfOwner = config['tf_owner']
         self.shareRating = ''
         self.seedStatus = ''
@@ -143,7 +146,8 @@ class HeadlessDisplayer(object):
     def finished(self):
         self.done = True
         # self.downRate = '---'
-        self.downRate = '0.0 kB/s'
+        # self.downRate = '0.0 kB/s'
+        self.downRate = '---'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
 
     def error(self, errormsg):
@@ -210,23 +214,23 @@ class HeadlessDisplayer(object):
             self.seedStatus = "0"
             self.peerStatus = "0"
 
-        # if not self.errors:
-        #    print _("Log: none")
-        # else:
-        #    print _("Log:")
-        # for err in self.errors[-4:]:
-        #    print err
-        # print
-        # print _("saving:        "), self.file
-        # print _("file size:     "), self.fileSize
-        # print _("percent done:  "), self.percentDone
-        # print _("time left:     "), self.timeEst
-        # print _("download to:   "), self.downloadTo
-        # print _("download rate: "), self.downRate
-        # print _("upload rate:   "), self.upRate
-        # print _("share rating:  "), self.shareRating
-        # print _("seed status:   "), self.seedStatus
-        # print _("peer status:   "), self.peerStatus
+        if not self.errors:
+           print _("Log: none")
+        else:
+           print _("Log:")
+        for err in self.errors[-4:]:
+           print err
+        print
+        print _("saving:        "), self.file
+        print _("file size:     "), self.fileSize
+        print _("percent done:  "), self.percentDone
+        print _("time left:     "), self.timeEst
+        print _("download to:   "), self.downloadTo
+        print _("download rate: "), self.downRate
+        print _("upload rate:   "), self.upRate
+        print _("share rating:  "), self.shareRating
+        print _("seed status:   "), self.seedStatus
+        print _("peer status:   "), self.peerStatus
 
         # set some fields in app which we need in shutdown
         app.percentDone = self.percentDone
