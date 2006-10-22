@@ -41,7 +41,7 @@ $tmpl = tmplGetInstance($cfg["theme"], "page.move.tmpl");
 // set vars
 if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('path', $_REQUEST['path']);
+	$tmpl->setvar('path', stripslashes($_REQUEST['path']));
 	$tmpl->setvar('_MOVE_STRING', $cfg['_MOVE_STRING']);
 	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
