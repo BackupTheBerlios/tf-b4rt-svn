@@ -38,11 +38,11 @@ class ClientHandlerMainline extends ClientHandler
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
-        $this->binClient = "bittorrent-console.py";
+        $this->binClient = "tfmainline.py";
         //
         $this->initialize($cfg);
         //
-        $this->mainlineBin = $this->cfg["docroot"]."bin/TF_Mainline/bittorrent-console.py";
+        $this->mainlineBin = $this->cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
     }
 
     /**
