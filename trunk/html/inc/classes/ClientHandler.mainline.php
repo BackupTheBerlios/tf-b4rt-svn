@@ -98,7 +98,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --stat_file ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias.".stat");
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
-		$this->command .= " --language en";
+		//$this->command .= " --language en";
 		$this->command .= " --seed_limit ".$this->sharekill_param;
 		if ($this->drate != 0) {
 			$this->command .= " --max_download_rate " . $this->drate * 1024;
