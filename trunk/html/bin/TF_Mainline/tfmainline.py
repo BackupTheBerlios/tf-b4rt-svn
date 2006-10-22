@@ -133,6 +133,7 @@ class HeadlessDisplayer(object):
         self.file = ''
         self.downloadTo = ''
         self.fileSize = ''
+        self.fileSize_stat = ''
         self.numpieces = 0
         self.seedLimit = config['seed_limit']
         self.statFile = config['stat_file']
@@ -141,13 +142,13 @@ class HeadlessDisplayer(object):
         self.file = name
         self.downloadTo = path
         self.fileSize = fmtsize(size)
+        self.fileSize_stat = int(size)
         self.numpieces = numpieces
 
     def finished(self):
         self.done = True
         # self.downRate = '---'
-        # self.downRate = '0.0 kB/s'
-        self.downRate = '---'
+        self.downRate = '0.0 kB/s'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
 
     def error(self, errormsg):
@@ -214,23 +215,23 @@ class HeadlessDisplayer(object):
             self.seedStatus = "0"
             self.peerStatus = "0"
 
-        if not self.errors:
-           print _("Log: none")
-        else:
-           print _("Log:")
-        for err in self.errors[-4:]:
-           print err
-        print
-        print _("saving:        "), self.file
-        print _("file size:     "), self.fileSize
-        print _("percent done:  "), self.percentDone
-        print _("time left:     "), self.timeEst
-        print _("download to:   "), self.downloadTo
-        print _("download rate: "), self.downRate
-        print _("upload rate:   "), self.upRate
-        print _("share rating:  "), self.shareRating
-        print _("seed status:   "), self.seedStatus
-        print _("peer status:   "), self.peerStatus
+        #if not self.errors:
+        #   print _("Log: none")
+        #else:
+        #   print _("Log:")
+        #for err in self.errors[-4:]:
+        #   print err
+        #print
+        #print _("saving:        "), self.file
+        #print _("file size:     "), self.fileSize
+        #print _("percent done:  "), self.percentDone
+        #print _("time left:     "), self.timeEst
+        #print _("download to:   "), self.downloadTo
+        #print _("download rate: "), self.downRate
+        #print _("upload rate:   "), self.upRate
+        #print _("share rating:  "), self.shareRating
+        #print _("seed status:   "), self.seedStatus
+        #print _("peer status:   "), self.peerStatus
 
         # set some fields in app which we need in shutdown
         app.percentDone = self.percentDone
@@ -275,7 +276,7 @@ class HeadlessDisplayer(object):
                 FILE.write(self.seedLimit+"\n")
                 FILE.write(repr(upTotal)+"\n")
                 FILE.write(repr(downTotal)+"\n")
-                FILE.write(repr(self.fileSize))
+                FILE.write(repr(self.fileSize_stat))
                 # write errors to stat-file
                 # this is
                 if self.errors:
@@ -527,7 +528,7 @@ class TorrentApp(object):
             FILE.write(self.d.seedLimit+"\n")
             FILE.write(repr(self.upTotal)+"\n")
             FILE.write(repr(self.downTotal)+"\n")
-            FILE.write(repr(self.d.fileSize))
+            FILE.write(repr(self.d.fileSize_stat))
             FILE.flush()
             FILE.close()
         except Exception, e:
