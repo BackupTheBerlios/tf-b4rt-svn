@@ -27,6 +27,7 @@ app_name = "BitTorrent"
 from BitTorrent.translation import _
 import sys
 import os
+from os import getpid, remove
 from cStringIO import StringIO
 import logging
 from logging import ERROR, WARNING
@@ -71,11 +72,9 @@ def wrap_log(context_string, logger):
 
 
 def fmttime(n):
-    """
-    if n == 0:
-        return _("download complete!")
-    return _("finishing in %s") % (str(Duration(n)))
-    """
+    # if n == 0:
+    #    return _("download complete!")
+    # return _("finishing in %s") % (str(Duration(n)))
     if n == 0:
         return 'complete!'
     try:
@@ -92,25 +91,38 @@ def fmttime(n):
         return '%02d:%02d:%02d' % (h, m, s)
 
 def fmtsize(n):
-    """
-    s = str(n)
-    size = s[-3:]
-    while len(s) > 3:
-        s = s[:-3]
-        size = '%s,%s' % (s[-3:], size)
-    size = '%s (%s)' % (size, str(Size(n)))
-    return size
-    """
+    # s = str(n)
+    # size = s[-3:]
+    # while len(s) > 3:
+    #    s = s[:-3]
+    #    size = '%s,%s' % (s[-3:], size)
+    # size = '%s (%s)' % (size, str(Size(n)))
+    # return size
     return int(n)
 
 class HeadlessDisplayer(object):
 
     def __init__(self):
+        # self.done = False
+        # self.percentDone = ''
+        # self.timeEst = ''
+        # self.downRate = '---'
+        # self.upRate = '---'
+        # self.shareRating = ''
+        # self.seedStatus = ''
+        # self.peerStatus = ''
+        # self.errors = []
+        # self.file = ''
+        # self.downloadTo = ''
+        # self.fileSize = ''
+        # self.numpieces = 0
         self.done = False
+        self.state = 1
         self.percentDone = ''
-        self.timeEst = ''
-        self.downRate = '---'
-        self.upRate = '---'
+        self.timeEst = 'Starting ...'
+        self.downRate = '0.0 kB/s'
+        self.upRate = '0.0 kB/s'
+        self.tfOwner = config['tf_owner']
         self.shareRating = ''
         self.seedStatus = ''
         self.peerStatus = ''
@@ -119,6 +131,8 @@ class HeadlessDisplayer(object):
         self.downloadTo = ''
         self.fileSize = ''
         self.numpieces = 0
+        self.seedLimit = config['seed_limit']
+        self.statFile = config['stat_file']
 
     def set_torrent_values(self, name, path, size, numpieces):
         self.file = name
@@ -128,7 +142,8 @@ class HeadlessDisplayer(object):
 
     def finished(self):
         self.done = True
-        self.downRate = '---'
+        # self.downRate = '---'
+        self.downRate = '0.0 kB/s'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
 
     def error(self, errormsg):
@@ -145,7 +160,7 @@ class HeadlessDisplayer(object):
         upRate = statistics.get('upRate')
         spew = statistics.get('spew')
 
-        print '\n\n\n\n'
+        # print '\n\n\n\n'
         if spew is not None:
             self.print_spew(spew)
 
@@ -157,9 +172,12 @@ class HeadlessDisplayer(object):
         if fractionDone is not None:
             self.percentDone = str(int(fractionDone * 1000) / 10)
         if downRate is not None:
-            self.downRate = '%.1f KB/s' % (downRate / (1 << 10))
+            self.downRate = '%.1f kB/s' % (downRate / (1 << 10))
         if upRate is not None:
-            self.upRate = '%.1f KB/s' % (upRate / (1 << 10))
+            self.upRate = '%.1f kB/s' % (upRate / (1 << 10))
+        #
+        upTotal = None
+        downTotal = None
         downTotal = statistics.get('downTotal')
         if downTotal is not None:
             upTotal = statistics['upTotal']
@@ -173,7 +191,8 @@ class HeadlessDisplayer(object):
             #nextCopies = ', '.join(["%d:%.1f%%" % (a,int(b*1000)/10) for a,b in
             #        zip(xrange(numCopies+1, 1000), statistics['numCopyList'])])
             if not self.done:
-                self.seedStatus = _("%d seen now") % statistics['numSeeds']
+                self.seedStatus = _("%d") % statistics['numSeeds']
+                #self.seedStatus = _("%d seen now") % statistics['numSeeds']
             #    self.seedStatus = _("%d seen now, plus %d distributed copies"
             #                        "(%s)") % (statistics['numSeeds' ],
             #                                   statistics['numCopies'],
@@ -182,25 +201,88 @@ class HeadlessDisplayer(object):
                 self.seedStatus = ""
             #    self.seedStatus = _("%d distributed copies (next: %s)") % (
             #        statistics['numCopies'], nextCopies)
-            self.peerStatus = _("%d seen now") % statistics['numPeers']
-
-        if not self.errors:
-            print _("Log: none")
+            # self.peerStatus = _("%d seen now") % statistics['numPeers']
+            self.peerStatus = _("%d") % statistics['numPeers']
         else:
-            print _("Log:")
-        for err in self.errors[-4:]:
-            print err
-        print
-        print _("saving:        "), self.file
-        print _("file size:     "), self.fileSize
-        print _("percent done:  "), self.percentDone
-        print _("time left:     "), self.timeEst
-        print _("download to:   "), self.downloadTo
-        print _("download rate: "), self.downRate
-        print _("upload rate:   "), self.upRate
-        print _("share rating:  "), self.shareRating
-        print _("seed status:   "), self.seedStatus
-        print _("peer status:   "), self.peerStatus
+            upTotal = 0
+            downTotal = 0
+            self.shareRating = "oo"
+            self.seedStatus = "0"
+            self.peerStatus = "0"
+
+        # if not self.errors:
+        #    print _("Log: none")
+        # else:
+        #    print _("Log:")
+        # for err in self.errors[-4:]:
+        #    print err
+        # print
+        # print _("saving:        "), self.file
+        # print _("file size:     "), self.fileSize
+        # print _("percent done:  "), self.percentDone
+        # print _("time left:     "), self.timeEst
+        # print _("download to:   "), self.downloadTo
+        # print _("download rate: "), self.downRate
+        # print _("upload rate:   "), self.upRate
+        # print _("share rating:  "), self.shareRating
+        # print _("seed status:   "), self.seedStatus
+        # print _("peer status:   "), self.peerStatus
+
+        # set some fields in app which we need in shutdown
+        app.percentDone = self.percentDone
+        app.shareRating = self.shareRating
+        app.upTotal = upTotal
+        app.downTotal = downTotal
+
+        # read state from stat-file
+        running = 0
+        try:
+            FILE = open(self.statFile, 'r')
+            running = FILE.read(1)
+            FILE.close()
+        except:
+            running = 0
+
+        # shutdown or write stat-file
+        if running == '0':
+            # hmm :
+            #app.logger.info("shutting down...")
+            #app.logger.log(logging.INFO, "shutting down..." )
+            # then use error now :
+            app.logger.error("shutting down...")
+            # shutdown
+            self.state = 0
+            df = app.multitorrent.shutdown()
+            stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
+            df.addCallbacks(stop_rawserver, stop_rawserver)
+        else:
+            try:
+                FILE = open(self.statFile,"w")
+                # write stats to stat-file
+                FILE.write(repr(self.state)+"\n")
+                FILE.write(self.percentDone+"\n")
+                FILE.write(self.timeEst+"\n")
+                FILE.write(self.downRate+"\n")
+                FILE.write(self.upRate+"\n")
+                FILE.write(self.tfOwner+"\n")
+                FILE.write(self.seedStatus+"\n")
+                FILE.write(self.peerStatus+"\n")
+                FILE.write(self.shareRating+"\n")
+                FILE.write(self.seedLimit+"\n")
+                FILE.write(repr(upTotal)+"\n")
+                FILE.write(repr(downTotal)+"\n")
+                FILE.write(repr(self.fileSize))
+                # write errors to stat-file
+                # this is
+                if self.errors:
+                    FILE.write("\n")
+                    #for err in self.errors[-4:]:
+                    for err in self.errors[0:]:
+                        FILE.write(err)
+                FILE.flush()
+                FILE.close()
+            except Exception, e:
+                app.logger.error( "Failed to write stat-file", exc_info = e )
 
     def print_spew(self, spew):
         s = StringIO()
@@ -283,6 +365,12 @@ class TorrentApp(object):
         logger = logging.getLogger()
         logger.addHandler(log_handler)
 
+        # some fields we need in shutdown
+        self.percentDone = "0"
+        self.shareRating = "0"
+        self.upTotal = "0"
+        self.downTotal = "0"
+
         # disable stdout and stderr error reporting to stderr.
         global stderr_console
         logging.getLogger('').removeHandler(console)
@@ -316,6 +404,16 @@ class TorrentApp(object):
             return
 
     def run(self):
+
+        # write pid-file
+        try:
+            pidFile = open(self.config['stat_file'] + ".pid", 'w')
+            pidFile.write(str(getpid()).strip() + "\n")
+            pidFile.flush()
+            pidFile.close()
+        except Exception, e:
+            self.logger.error( "Failed to write pid-file", exc_info = e )
+
         self.core_doneflag = DeferredEvent()
         rawserver = RawServer(self.config)
         self.d = HeadlessDisplayer()
@@ -404,6 +502,38 @@ class TorrentApp(object):
         # always make sure events get processed even if only for
         # shutting down.
         rawserver.listen_forever()
+
+        # overwrite stat-file in "Torrent Stopped" format.
+        try:
+            FILE = open(self.d.statFile,"w")
+            # write stopped stats to stat-file
+            FILE.write("0\n")
+            pcts = "-"+self.percentDone
+            pctf = float(pcts)
+            pctf -= 100
+            FILE.write(str(pctf))
+            FILE.write("\n")
+            FILE.write("Torrent Stopped\n")
+            FILE.write("\n")
+            FILE.write("\n")
+            FILE.write(self.d.tfOwner+"\n")
+            FILE.write("\n")
+            FILE.write("\n")
+            FILE.write(self.shareRating+"\n")
+            FILE.write(self.d.seedLimit+"\n")
+            FILE.write(repr(self.upTotal)+"\n")
+            FILE.write(repr(self.downTotal)+"\n")
+            FILE.write(repr(self.d.fileSize))
+            FILE.flush()
+            FILE.close()
+        except Exception, e:
+            self.logger.error( "Failed to write stat-file", exc_info = e )
+
+        # remove pid-file
+        try:
+            remove(self.config['stat_file'] + ".pid")
+        except Exception, e:
+            self.logger.error( "Failed to remove pid-file", exc_info = e )
 
     def get_status(self):
         self.multitorrent.rawserver.add_task(self.config['display_interval'],
