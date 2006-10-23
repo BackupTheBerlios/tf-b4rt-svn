@@ -210,8 +210,8 @@ switch ($action) {
 							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 							$clientHandler->startClient(urldecode($element), 0, false);
 						}
-						// just 2 sec..
-						sleep(2);
+						// just 3 sec..
+						sleep(3);
 					}
 					break;
 
@@ -235,8 +235,8 @@ switch ($action) {
 						require_once("inc/classes/ClientHandler.php");
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 						$clientHandler->startClient(urldecode($element), 0, true);
-						// just a sec..
-						sleep(1);
+						// just 3 sec..
+						sleep(3);
 					}
 					break;
 
@@ -246,8 +246,8 @@ switch ($action) {
 						$_REQUEST['alias_file'] = getAliasName($element).".stat";;
 						// dequeue it
 						$fluxdQmgr->dequeueTorrent($element, $cfg["user"]);
-						// just a sec..
-						sleep(1);
+						// just 3 sec..
+						sleep(3);
 					}
 					break;
 
