@@ -145,7 +145,7 @@ class SearchEngineBase
            $tmp_key = urlencode(is_int($k) ? $numeric_prefix.$k : $k);
            if ($key) $tmp_key = $key.'['.$tmp_key.']';
            if ( is_array($v) || is_object($v) ) {
-               $res[] = http_query_builder($v, null, $tmp_key);
+               $res[] = $this->http_query_builder($v, null, $tmp_key);
            } else {
                $res[] = $tmp_key."=".urlencode($v);
            }
