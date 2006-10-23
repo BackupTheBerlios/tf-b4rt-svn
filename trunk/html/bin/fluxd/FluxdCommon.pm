@@ -25,6 +25,7 @@ use Exporter;
 @ISA = ('Exporter');
 @EXPORT_OK = qw(
 				getVersion
+				transferIsRunning
 				niceTimeString
 				);
 ################################################################################

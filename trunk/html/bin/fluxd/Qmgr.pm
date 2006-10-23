@@ -373,19 +373,18 @@ sub command {
 	return "Unknown command";
 }
 
-#-------------------------------------------------------------------------------#
-# Sub: queueProcess                                                             #
-# Arguments: Null                                                               #
-# Returns: Null                                                                 #
-#-------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+# Sub: queueProcess                                                            #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
 sub queueProcess {
-	$queueIdx = 0;
-	QUEUE: while ($queueIdx < queueCount()) {
-		# update running transfers
-		runningUpdate();
-		# process queue
-		my $jobcountq = queueCount();
-		if ($jobcountq > 0) {                                                   # we have queued jobs
+	# update running transfers
+	runningUpdate();
+	if (queueCount() > 0) {
+		# queue-loop
+		$queueIdx = 0;
+		QUEUE: while ($queueIdx < queueCount()) {
 			# next job
 			my $nextTransfer = $queue[$queueIdx];
 			my $nextUser = $jobs{"queued"}{$nextTransfer};
@@ -475,13 +474,12 @@ sub queueProcess {
 					last QUEUE;
 				}
 			} # end already runnin
-		} else {                                                                # no queued jobs
-			if ($LOGLEVEL > 1) {
-				print "Qmgr : empty queue...\n";
-			}
-			last QUEUE;
+		} # queue-while-loop
+	} else {
+		if ($LOGLEVEL > 1) {
+			print "Qmgr : empty queue...\n";
 		}
-	} # queue-while-loop
+	}
 	# increment main-count
 	$globals{"main"} += 1;
 }
@@ -536,23 +534,41 @@ sub runningUpdate {
 			$af->initialize($transfersDir.$transfer.".stat");
 			my $running = $af->get("running");
 			my $user = $af->get("transferowner");
-			if ((!(defined $running)) || ($running ne "1")) {
-				if ($LOGLEVEL > 1) {
-					print "Qmgr : transfer not in running state, skipping : ".$transfer."\n";
-				}
-			} elsif ((!(defined $user)) || ($user eq "")) {
+			my $addIt = 1;
+			# user
+			if ((!(defined $user)) || ($user eq "")) {
 				if ($LOGLEVEL > 1) {
 					print "Qmgr : cannot get owner of running transfer, using n/a : ".$transfer."\n";
 				}
-				if (! exists $jobs{"running"}{$transfer}) {
-					$jobs{"running"}{$transfer} = "n/a";
+				$user = "n/a";
+			}
+			# running
+			if ((!(defined $running)) || ($running ne "1")) {
+				if ($LOGLEVEL > 1) {
+					print "Qmgr : transfer not in running state, checking via ps-list if transfer is up : ".$transfer."\n";
 				}
-			} else {
+				if (FluxdCommon::transferIsRunning($transfer) == 1) {
+					if ($LOGLEVEL > 1) {
+						print "Qmgr : transfer is running, adding to running transfers : ".$transfer." (".$user.")\n";
+					}
+				} else {
+					if ($LOGLEVEL > 1) {
+						print "Qmgr : transfer not running, skipping add to running transfers : ".$transfer." (".$user.")\n";
+					}
+					$addIt = 0;
+				}
+			}
+			# add it
+			if ($addIt == 1) {
 				if (! exists $jobs{"running"}{$transfer}) {
 					if ($LOGLEVEL > 1) {
 						print "Qmgr : adding to running transfers : ".$transfer." (".$user.")\n";
 					}
 					$jobs{"running"}{$transfer} = $user;
+				} else {
+					if ($LOGLEVEL > 1) {
+						print "Qmgr : transfer already exists in running transfers, skipping : ".$transfer." (".$user.")\n";
+					}
 				}
 			}
 		}
