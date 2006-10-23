@@ -100,16 +100,14 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
 		//$this->command .= " --language en";
 		$this->command .= " --seed_limit ".$this->sharekill_param;
-		if ($this->drate != 0) {
+		if ($this->drate != 0)
 			$this->command .= " --max_download_rate " . $this->drate * 1024;
-		} else {
-			$this->command .= " --max_download_rate -1";
-		}
-		if ($this->rate != 0) {
+		else
+			$this->command .= " --max_download_rate 125000000"; # 1 GBit local net = 125MB/s
+		if ($this->rate != 0)
 			$this->command .= " --max_upload_rate " . $this->rate * 1024;
-		} else {
-			$this->command .= " --max_upload_rate -1";
-		}
+		else
+			$this->command .= " --max_upload_rate 125000000"; # 1 GBit local net = 125MB/s
 		$this->command .= " --max_uploads ".$this->maxuploads;
 		$this->command .= " --minport ".$this->port;
 		$this->command .= " --maxport ".$this->maxport;
