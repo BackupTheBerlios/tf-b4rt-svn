@@ -3,6 +3,32 @@ $Id$
 ================================================================================
 
 
+  b4rt-96
+
+
+***** changes *****
+
+- db.php :
+  * function initializeDatabase() :
+    no html-page on error in cli-mode bust just die.
+  * function getdb() :
+    try once to initialize Database if $db not set.
+
+
+***** updates *****
+
+- Search-Engines
+  * TorrentBox 1.04
+  * Filemp3 1.02
+  * The Pirate Bay Search Module v1.04
+  
+- BitTornado 0.3.17
+
+- Transmission 0.7-svn
+
+
+--------------------------------------------------------------------------------
+
   b4rt-953
 
   details :
