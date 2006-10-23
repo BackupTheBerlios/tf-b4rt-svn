@@ -26,7 +26,6 @@ require_once('inc/lib/adodb/adodb.inc.php');
 /**
  * initialize ADOdb-connection
  *
- * @return ADOdb-connection
  */
 function initializeDatabase() {
 	global $cfg, $db;
@@ -50,7 +49,7 @@ function initializeDatabase() {
 /**
  * get ADOdb-connection
  *
- * @return ADOdb-connection or false
+ * @return ADOdb-connection
  */
 function getdb() {
 	global $db;
