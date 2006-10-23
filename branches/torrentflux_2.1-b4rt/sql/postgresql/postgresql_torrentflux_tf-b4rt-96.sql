@@ -2,7 +2,7 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- SQLite-File for 'Torrentflux-2.1-b4rt-95'
+-- PostgreSQL-File for 'Torrentflux-2.1-b4rt-96'
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
@@ -11,74 +11,105 @@
 --
 -- begin transaction
 --
-BEGIN TRANSACTION;
+BEGIN;
+
+--
+-- Sequences for table tf_cookies
+--
+CREATE SEQUENCE tf_cookies_cid_seq;
 
 --
 -- tf_cookies
 --
 CREATE TABLE tf_cookies (
-  cid INTEGER PRIMARY KEY,
-  uid INTEGER NOT NULL default '0',
-  host TEXT default NULL,
-  data TEXT default NULL
-) ;
+  cid INT4 DEFAULT nextval('tf_cookies_cid_seq'),
+  uid INT4 NOT NULL DEFAULT '0',
+  host VARCHAR(255) DEFAULT NULL,
+  data VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (cid)
+);
+
+--
+-- Sequences for table tf_links
+--
+CREATE SEQUENCE tf_links_lid_seq;
 
 --
 -- tf_links
 --
 CREATE TABLE tf_links (
-  lid INTEGER PRIMARY KEY,
-  url VARCHAR(255) NOT NULL default '',
-  sitename VARCHAR(255) NOT NULL default 'Old Link',
-  sort_order INTEGER(3) default '0'
-) ;
+  lid INT4 DEFAULT nextval('tf_links_lid_seq'),
+  url VARCHAR(255) NOT NULL DEFAULT '',
+  sitename VARCHAR(255) NOT NULL DEFAULT 'Old Link',
+  sort_order INT2  DEFAULT '0',
+  PRIMARY KEY (lid),
+  CHECK (sort_order>=0)
+);
 
-INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0');
+INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','Home','0');
+
+--
+-- Sequences for table tf_log
+--
+CREATE SEQUENCE tf_log_cid_seq;
 
 --
 -- tf_log
 --
 CREATE TABLE tf_log (
-  cid INTEGER PRIMARY KEY,
-  user_id VARCHAR(32) NOT NULL default '',
-  file VARCHAR(200) NOT NULL default '',
-  action VARCHAR(200) NOT NULL default '',
-  ip VARCHAR(15) NOT NULL default '',
-  ip_resolved VARCHAR(200) NOT NULL default '',
-  user_agent VARCHAR(200) NOT NULL default '',
-  time VARCHAR(14) NOT NULL default '0'
-) ;
+  cid INT4 DEFAULT nextval('tf_log_cid_seq'),
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  file VARCHAR(200) NOT NULL DEFAULT '',
+  action VARCHAR(200) NOT NULL DEFAULT '',
+  ip VARCHAR(15) NOT NULL DEFAULT '',
+  ip_resolved VARCHAR(200) NOT NULL DEFAULT '',
+  user_agent VARCHAR(200) NOT NULL DEFAULT '',
+  time VARCHAR(14) NOT NULL DEFAULT '0',
+  PRIMARY KEY (cid)
+);
+
+--
+-- Sequences for table tf_messages
+--
+CREATE SEQUENCE tf_messages_mid_seq;
 
 --
 -- tf_messages
 --
 CREATE TABLE tf_messages (
-  mid INTEGER PRIMARY KEY,
-  to_user VARCHAR(32) NOT NULL default '',
-  from_user VARCHAR(32) NOT NULL default '',
+  mid INT4 DEFAULT nextval('tf_messages_mid_seq'),
+  to_user VARCHAR(32) NOT NULL DEFAULT '',
+  from_user VARCHAR(32) NOT NULL DEFAULT '',
   message TEXT,
-  IsNew INT(11) default NULL,
-  ip VARCHAR(15) NOT NULL default '',
-  time VARCHAR(14) NOT NULL default '0',
-  force_read INTEGER default '0'
-) ;
+  IsNew INT4 DEFAULT NULL,
+  ip VARCHAR(15) NOT NULL DEFAULT '',
+  time VARCHAR(14) NOT NULL DEFAULT '0',
+  force_read INT2 DEFAULT '0',
+  PRIMARY KEY (mid)
+);
+
+--
+-- Sequences for table tf_rss
+--
+CREATE SEQUENCE tf_rss_rid_seq;
 
 --
 -- tf_rss
 --
 CREATE TABLE tf_rss (
-  rid INTEGER PRIMARY KEY,
-  url VARCHAR(255) NOT NULL default ''
-) ;
+  rid INT4 DEFAULT nextval('tf_rss_rid_seq'),
+  url VARCHAR(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (rid)
+);
 
 --
 -- tf_settings
 --
 CREATE TABLE tf_settings (
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL,
-  PRIMARY KEY  (tf_key)
-) ;
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key)
+);
 
 INSERT INTO tf_settings VALUES ('path','/usr/local/torrent/');
 INSERT INTO tf_settings VALUES ('btphpbin','/var/www/TF_BitTornado/btphptornado.py');
@@ -205,71 +236,111 @@ INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
 
 --
+-- Sequences for table tf_users
+--
+CREATE SEQUENCE tf_users_uid_seq;
+
+--
 -- tf_users
 --
 CREATE TABLE tf_users (
-  uid INTEGER PRIMARY KEY,
-  user_id VARCHAR(32) NOT NULL default '',
-  password VARCHAR(34) NOT NULL default '',
-  hits INT(10) NOT NULL default '0',
-  last_visit VARCHAR(14) NOT NULL default '0',
-  time_created VARCHAR(14) NOT NULL default '0',
-  user_level TINYINT(1) NOT NULL default '0',
-  hide_offline TINYINT(1) NOT NULL default '0',
-  theme VARCHAR(100) NOT NULL default 'matrix',
-  language_file VARCHAR(60) default 'lang-english.php'
-) ;
+  uid INT4 DEFAULT nextval('tf_users_uid_seq'),
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  password VARCHAR(34) NOT NULL DEFAULT '',
+  hits INT4 NOT NULL DEFAULT '0',
+  last_visit VARCHAR(14) NOT NULL DEFAULT '0',
+  time_created VARCHAR(14) NOT NULL DEFAULT '0',
+  user_level INT2 NOT NULL DEFAULT '0',
+  hide_offline INT2 NOT NULL DEFAULT '0',
+  theme VARCHAR(100) NOT NULL DEFAULT 'matrix',
+  language_file VARCHAR(60) DEFAULT 'lang-english.php',
+  PRIMARY KEY (uid)
+);
 
 --
 -- tf_torrents
 --
 CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
-  running INTEGER(1) NOT NULL default '0',
-  rate INTEGER(4) NOT NULL default '0',
-  drate INTEGER(4) NOT NULL default '0',
-  maxuploads INTEGER(3) NOT NULL default '0',
-  superseeder INTEGER(1) NOT NULL default '0',
-  runtime VARCHAR(5) NOT NULL default 'False',
-  sharekill INTEGER(4) NOT NULL default '0',
-  minport INTEGER(5) NOT NULL default '0',
-  maxport INTEGER(5) NOT NULL default '0',
-  maxcons INTEGER(4) NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
+  torrent VARCHAR(255) NOT NULL DEFAULT '',
+  running INT2 NOT NULL DEFAULT '0',
+  rate INT2 NOT NULL DEFAULT '0',
+  drate INT2 NOT NULL DEFAULT '0',
+  maxuploads INT2 NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
+  runtime VARCHAR(5) NOT NULL DEFAULT 'False',
+  sharekill INT2 NOT NULL DEFAULT '0',
+  minport INT2 NOT NULL DEFAULT '0',
+  maxport INT2 NOT NULL DEFAULT '0',
+  maxcons INT2 NOT NULL DEFAULT '0',
+  savepath VARCHAR(255) NOT NULL DEFAULT '',
+  btclient VARCHAR(32) NOT NULL DEFAULT 'tornado',
   hash VARCHAR(40) DEFAULT '' NOT NULL,
-  PRIMARY KEY  (torrent)
-) ;
+  PRIMARY KEY (torrent),
+  CHECK (running>=0),
+  CHECK (maxuploads>=0),
+  CHECK (minport>=0),
+  CHECK (maxport>=0),
+  CHECK (maxcons>=0)
+);
 
 --
 -- tf_torrent_totals
 --
 CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
-) ;
+  tid VARCHAR(40) NOT NULL DEFAULT '',
+  uptotal INT8 NOT NULL DEFAULT '0',
+  downtotal INT8 NOT NULL DEFAULT '0',
+  PRIMARY KEY (tid)
+);
 
 --
 -- tf_xfer
 --
 CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL default '',
-  date DATE NOT NULL default '0000-00-00',
-  download BIGINT(80) NOT NULL default '0',
-  upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user_id,date)
-) ;
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  date DATE NOT NULL DEFAULT '0001-01-01',
+  download INT8 NOT NULL DEFAULT '0',
+  upload INT8 NOT NULL DEFAULT '0'
+);
 
 --
 -- tf_settings_user
 --
 CREATE TABLE tf_settings_user (
-  uid INTEGER NOT NULL,
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL
-) ;
+  uid INT4 NOT NULL,
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL
+);
+
+--
+-- Sequences for table tf_users
+--
+SELECT SETVAL('tf_users_uid_seq',(select case when max(uid)>0 then max(uid)+1 else 1 end from tf_users));
+
+--
+-- Sequences for table tf_messages
+--
+SELECT SETVAL('tf_messages_mid_seq',(select case when max(mid)>0 then max(mid)+1 else 1 end from tf_messages));
+
+--
+-- Sequences for table tf_cookies
+--
+SELECT SETVAL('tf_cookies_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_cookies));
+
+--
+-- Sequences for table tf_rss
+--
+SELECT SETVAL('tf_rss_rid_seq',(select case when max(rid)>0 then max(rid)+1 else 1 end from tf_rss));
+
+--
+-- Sequences for table tf_links
+--
+SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links));
+
+--
+-- Sequences for table tf_log
+--
+SELECT SETVAL('tf_log_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_log));
 
 --
 -- commit

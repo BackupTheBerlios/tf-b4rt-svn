@@ -2,92 +2,88 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-Update-File for 'Torrentflux-2.1-b4rt-95'.
--- Updates a 'Torrentflux 2.1 Final' Database to a 'Torrentflux 2.1-b4rt-95'.
+-- PostgreSQL-Update-File for 'Torrentflux-2.1-b4rt-96'.
+-- Updates a 'Torrentflux 2.1 Final' Database to a 'Torrentflux 2.1-b4rt-96'.
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
 -- -----------------------------------------------------------------------------
 
 --
--- to do an update use the following statement. 
--- but you have to assign the sort_order-values manual after doing so !
--- or you wont be able to re-order your existing links.
+-- begin transaction
 --
--- ALTER TABLE tf_links ADD `sitename` VARCHAR(255) DEFAULT 'Old Link' NOT NULL , ADD `sort_order` TINYINT(3) UNSIGNED DEFAULT '0';
---
---
+BEGIN;
 
 --
 -- tf_links
 --
-DROP TABLE IF EXISTS tf_links;
+DROP TABLE tf_links;
 
 CREATE TABLE tf_links (
-  lid int(10) NOT NULL auto_increment,
-  url VARCHAR(255) NOT NULL default '',
-  sitename VARCHAR(255) NOT NULL default 'Old Link',
-  sort_order TINYINT(3) UNSIGNED default '0',
-  PRIMARY KEY  (lid)
-) TYPE=MyISAM;
+  lid INT4 DEFAULT nextval('tf_links_lid_seq'),
+  url VARCHAR(255) NOT NULL DEFAULT '',
+  sitename VARCHAR(255) NOT NULL DEFAULT 'Old Link',
+  sort_order INT2  DEFAULT '0',
+  PRIMARY KEY (lid),
+  CHECK (sort_order>=0)
+);
 
-INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','Home','0');
-
---
--- tf_cookies
---
-ALTER TABLE tf_cookies CHANGE `cid` `cid` INT(5) NOT NULL AUTO_INCREMENT;
+INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','Home','0');
 
 --
 -- tf_torrents
 --
 CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
-  running ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
+  torrent VARCHAR(255) NOT NULL DEFAULT '',
+  running INT2 NOT NULL DEFAULT '0',
+  rate INT2 NOT NULL DEFAULT '0',
+  drate INT2 NOT NULL DEFAULT '0',
+  maxuploads INT2 NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
+  runtime VARCHAR(5) NOT NULL DEFAULT 'False',
+  sharekill INT2 NOT NULL DEFAULT '0',
+  minport INT2 NOT NULL DEFAULT '0',
+  maxport INT2 NOT NULL DEFAULT '0',
+  maxcons INT2 NOT NULL DEFAULT '0',
+  savepath VARCHAR(255) NOT NULL DEFAULT '',
+  btclient VARCHAR(32) NOT NULL DEFAULT 'tornado',
   hash VARCHAR(40) DEFAULT '' NOT NULL,
-  PRIMARY KEY  (torrent)
-) TYPE=MyISAM;
+  PRIMARY KEY (torrent),
+  CHECK (running>=0),
+  CHECK (maxuploads>=0),
+  CHECK (minport>=0),
+  CHECK (maxport>=0),
+  CHECK (maxcons>=0)
+);
 
 --
 -- tf_torrent_totals
 --
 CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
-) TYPE=MyISAM;
+  tid VARCHAR(40) NOT NULL DEFAULT '',
+  uptotal INT8 NOT NULL DEFAULT '0',
+  downtotal INT8 NOT NULL DEFAULT '0',
+  PRIMARY KEY (tid)
+);
 
 --
 -- tf_xfer
 --
 CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL default '',
-  date DATE NOT NULL default '0000-00-00',
-  download BIGINT(80) NOT NULL default '0',
-  upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user_id,date)
-) TYPE=MyISAM;
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  date DATE NOT NULL DEFAULT '0001-01-01',
+  download INT8 NOT NULL DEFAULT '0',
+  upload INT8 NOT NULL DEFAULT '0'
+);
 
 --
 -- tf_settings_user
 --
 CREATE TABLE tf_settings_user (
-  uid INT(10) NOT NULL,
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL
-) TYPE=MyISAM;
+  uid INT4 NOT NULL,
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL
+);
 
 --
 -- extra inserts + updates
@@ -174,3 +170,13 @@ INSERT INTO tf_settings VALUES ('skiphashcheck','0');
 INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
+
+--
+-- Sequences for table tf_links
+--
+SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links));
+
+--
+-- commit
+--
+COMMIT;

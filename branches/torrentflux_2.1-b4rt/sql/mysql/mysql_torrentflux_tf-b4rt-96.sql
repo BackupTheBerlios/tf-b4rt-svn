@@ -2,7 +2,7 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-File for 'Torrentflux-2.1-b4rt-95'
+-- MySQL-File for 'Torrentflux-2.1-b4rt-96'
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
