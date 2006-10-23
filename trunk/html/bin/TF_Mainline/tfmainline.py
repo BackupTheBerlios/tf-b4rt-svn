@@ -34,11 +34,8 @@ from logging import ERROR, WARNING
 from time import strftime, sleep
 import traceback
 import BTL.stackthreading as threading
-#from BTL import platform
-#from BTL.platform import decode_from_filesystem, encode_for_filesystem
 from BitTorrent import platform
 from BitTorrent.platform import decode_from_filesystem, encode_for_filesystem
-#
 from BTL.defer import DeferredEvent
 from BitTorrent import inject_main_logfile
 from BitTorrent.MultiTorrent import Feedback, MultiTorrent
@@ -52,10 +49,8 @@ from BitTorrent import version
 from BTL import GetTorrent
 from BTL.ConvertedMetainfo import ConvertedMetainfo
 from BitTorrent.MultiTorrent import TorrentNotInitialized
-#from BitTorrent.RawServer_twisted import RawServer, task
 from BitTorrent.RawServer_twisted import RawServer
 from twisted.internet import task
-#
 from BitTorrent.UI import Size, Duration
 inject_main_logfile()
 from BitTorrent import console
@@ -72,9 +67,6 @@ def wrap_log(context_string, logger):
 
 
 def fmttime(n):
-    # if n == 0:
-    #    return _("download complete!")
-    # return _("finishing in %s") % (str(Duration(n)))
     if n == 0:
         return 'complete!'
     try:
@@ -98,30 +90,13 @@ def fmtsize(n):
         size = '%s,%s' % (s[-3:], size)
     size = '%s (%s)' % (size, str(Size(n)))
     return size
-    #return int(n)
 
 class HeadlessDisplayer(object):
 
     def __init__(self):
-        # self.done = False
-        # self.percentDone = ''
-        # self.timeEst = ''
-        # self.downRate = '---'
-        # self.upRate = '---'
-        # self.shareRating = ''
-        # self.seedStatus = ''
-        # self.peerStatus = ''
-        # self.errors = []
-        # self.file = ''
-        # self.downloadTo = ''
-        # self.fileSize = ''
-        # self.numpieces = 0
         self.done = False
         self.state = 1
         self.percentDone = ''
-        #self.timeEst = 'Starting ...'
-        #self.downRate = '0.0 kB/s'
-        #self.upRate = '0.0 kB/s'
         self.timeEst = ''
         self.downRate = '---'
         self.upRate = '---'
@@ -147,9 +122,10 @@ class HeadlessDisplayer(object):
 
     def finished(self):
         self.done = True
-        # self.downRate = '---'
-        self.downRate = '0.0 kB/s'
+        self.downRate = '---'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
+        self.downRate = '0.0 kB/s'
+        # shutdown when die-when-done
 
     def error(self, errormsg):
         newerrmsg = strftime('[%H:%M:%S] ') + errormsg
@@ -186,12 +162,22 @@ class HeadlessDisplayer(object):
         downTotal = statistics.get('downTotal')
         if downTotal is not None:
             upTotal = statistics['upTotal']
-            if downTotal <= upTotal / 100:
-                self.shareRating = _("oo  (%.1f MB up / %.1f MB down)") % (
-                    upTotal / (1<<20), downTotal / (1<<20))
+            #if downTotal <= upTotal / 100:
+            #    self.shareRating = _("oo  (%.1f MB up / %.1f MB down)") % (
+            #        upTotal / (1<<20), downTotal / (1<<20))
+            #else:
+            #    self.shareRating = _("%.3f  (%.1f MB up / %.1f MB down)") % (
+            #       upTotal / downTotal, upTotal / (1<<20), downTotal / (1<<20))
+            if downTotal > 0:
+                if upTotal is not None:
+                    if upTotal > 0:
+                        self.shareRating = _("%.3f") % (upTotal / downTotal)
+                    else:
+                        self.shareRating = "0"
+                else:
+                    self.shareRating = "0"
             else:
-                self.shareRating = _("%.3f  (%.1f MB up / %.1f MB down)") % (
-                   upTotal / downTotal, upTotal / (1<<20), downTotal / (1<<20))
+                self.shareRating = "oo"
             #numCopies = statistics['numCopies']
             #nextCopies = ', '.join(["%d:%.1f%%" % (a,int(b*1000)/10) for a,b in
             #        zip(xrange(numCopies+1, 1000), statistics['numCopyList'])])
@@ -239,6 +225,11 @@ class HeadlessDisplayer(object):
         app.upTotal = upTotal
         app.downTotal = downTotal
 
+        # check for seed-limit
+        #if fractionDone is not None:
+        #    self.percentDone = str(int(fractionDone * 1000) / 10)
+        # self.seedLimit = config['seed_limit']
+
         # read state from stat-file
         running = 0
         try:
@@ -278,7 +269,6 @@ class HeadlessDisplayer(object):
                 FILE.write(repr(downTotal)+"\n")
                 FILE.write(repr(self.fileSize_stat))
                 # write errors to stat-file
-                # this is
                 if self.errors:
                     FILE.write("\n")
                     #for err in self.errors[-4:]:
