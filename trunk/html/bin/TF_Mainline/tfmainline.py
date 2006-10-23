@@ -141,66 +141,80 @@ class HeadlessDisplayer(object):
         upRate = statistics.get('upRate')
         spew = statistics.get('spew')
 
-        # print '\n\n\n\n'
+        # spew
         if spew is not None:
             self.print_spew(spew)
 
+        # eta
         if timeEst is not None:
             self.timeEst = fmttime(timeEst)
         elif activity is not None:
             self.timeEst = activity
 
+        # fractionDone
         if fractionDone is not None:
             self.percentDone = str(int(fractionDone * 1000) / 10)
+
+        # downRate
         if downRate is not None:
             self.downRate = '%.1f kB/s' % (downRate / (1 << 10))
+
+        # upRate
         if upRate is not None:
             self.upRate = '%.1f kB/s' % (upRate / (1 << 10))
-        #
+
+        # totals, share-rating and seed-limit
+        seedLimitReached = 0
         upTotal = None
         downTotal = None
         downTotal = statistics.get('downTotal')
+        upTotal = statistics.get('upTotal')
+        if upTotal is None:
+            upTotal = 0
         if downTotal is not None:
-            upTotal = statistics['upTotal']
-            #if downTotal <= upTotal / 100:
-            #    self.shareRating = _("oo  (%.1f MB up / %.1f MB down)") % (
-            #        upTotal / (1<<20), downTotal / (1<<20))
-            #else:
-            #    self.shareRating = _("%.3f  (%.1f MB up / %.1f MB down)") % (
-            #       upTotal / downTotal, upTotal / (1<<20), downTotal / (1<<20))
             if downTotal > 0:
-                if upTotal is not None:
-                    if upTotal > 0:
-                        self.shareRating = _("%.3f") % (upTotal / downTotal)
-                    else:
-                        self.shareRating = "0"
+                if upTotal > 0:
+                    self.shareRating = _("%.3f") % (upTotal / downTotal)
+                    if self.done and self.seedLimit > 0:
+                        currentShareRating = (int) (upTotal / downTotal)
+                        if currentShareRating >= self.seedLimit:
+                            seedLimitReached = 1
+                            app.logger.error("seed-Limit Reached, setting shutdown-flag...")
                 else:
                     self.shareRating = "0"
             else:
                 self.shareRating = "oo"
-            #numCopies = statistics['numCopies']
-            #nextCopies = ', '.join(["%d:%.1f%%" % (a,int(b*1000)/10) for a,b in
-            #        zip(xrange(numCopies+1, 1000), statistics['numCopyList'])])
-            if not self.done:
-                self.seedStatus = _("%d") % statistics['numSeeds']
-                #self.seedStatus = _("%d seen now") % statistics['numSeeds']
-            #    self.seedStatus = _("%d seen now, plus %d distributed copies"
-            #                        "(%s)") % (statistics['numSeeds' ],
-            #                                   statistics['numCopies'],
-            #                                   nextCopies)
-            else:
-                self.seedStatus = ""
-            #    self.seedStatus = _("%d distributed copies (next: %s)") % (
-            #        statistics['numCopies'], nextCopies)
-            # self.peerStatus = _("%d seen now") % statistics['numPeers']
-            self.peerStatus = _("%d") % statistics['numPeers']
         else:
-            upTotal = 0
             downTotal = 0
             self.shareRating = "oo"
-            self.seedStatus = "0"
+
+        # seeds
+        seeds = None
+        seeds = statistics.get('numSeeds')
+        if seeds is None:
+            seeds = 0
+        # dht :
+        numCopies = statistics.get('numCopies')
+        if numCopies is not None:
+            seeds += numCopies
+        # set status
+        self.seedStatus = _("%d") % seeds
+
+        # peers
+        peers = None
+        peers = statistics.get('numPeers')
+        if peers is not None:
+            self.peerStatus = _("%d") % peers
+        else:
             self.peerStatus = "0"
 
+        # set some fields in app which we need in shutdown
+        app.percentDone = self.percentDone
+        app.shareRating = self.shareRating
+        app.upTotal = upTotal
+        app.downTotal = downTotal
+
+        # output
         #if not self.errors:
         #   print _("Log: none")
         #else:
@@ -219,25 +233,18 @@ class HeadlessDisplayer(object):
         #print _("seed status:   "), self.seedStatus
         #print _("peer status:   "), self.peerStatus
 
-        # set some fields in app which we need in shutdown
-        app.percentDone = self.percentDone
-        app.shareRating = self.shareRating
-        app.upTotal = upTotal
-        app.downTotal = downTotal
-
         # check for seed-limit
-        #if fractionDone is not None:
-        #    self.percentDone = str(int(fractionDone * 1000) / 10)
-        # self.seedLimit = config['seed_limit']
-
-        # read state from stat-file
-        running = 0
-        try:
-            FILE = open(self.statFile, 'r')
-            running = FILE.read(1)
-            FILE.close()
-        except:
-            running = 0
+        if seedLimitReached == 0:
+            # read state from stat-file
+            running = '0'
+            try:
+                FILE = open(self.statFile, 'r')
+                running = FILE.read(1)
+                FILE.close()
+            except:
+                running = '0'
+        else:
+            running = '0'
 
         # shutdown or write stat-file
         if running == '0':
