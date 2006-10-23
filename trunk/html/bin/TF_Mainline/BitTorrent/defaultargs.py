@@ -61,7 +61,7 @@ basic_options = [
      _("Path to the torrentflux stat file." )),
     ('seed_limit', '0',
      _("Die when ratio reaches this amount." )),
-    ('die_when_done', False,
+    ('die_when_done', 'False',
      _("die when the torrent is finished. Please seed your Torrents !" )),
     ]
 

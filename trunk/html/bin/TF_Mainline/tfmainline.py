@@ -100,7 +100,6 @@ class HeadlessDisplayer(object):
         self.timeEst = ''
         self.downRate = '---'
         self.upRate = '---'
-        self.tfOwner = config['tf_owner']
         self.shareRating = ''
         self.seedStatus = ''
         self.peerStatus = ''
@@ -110,8 +109,10 @@ class HeadlessDisplayer(object):
         self.fileSize = ''
         self.fileSize_stat = ''
         self.numpieces = 0
+        self.tfOwner = config['tf_owner']
         self.seedLimit = config['seed_limit']
         self.statFile = config['stat_file']
+        self.dieWhenDone = config['die_when_done']
         self.isInShutDown = 0
 
     def set_torrent_values(self, name, path, size, numpieces):
@@ -125,8 +126,6 @@ class HeadlessDisplayer(object):
         self.done = True
         self.downRate = '---'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
-        self.downRate = '0.0 kB/s'
-        # shutdown when die-when-done
 
     def error(self, errormsg):
         newerrmsg = strftime('[%H:%M:%S] ') + errormsg
@@ -211,18 +210,22 @@ class HeadlessDisplayer(object):
             app.upTotal = upTotal
             app.downTotal = downTotal
 
-        # check for seed-limit
-        if seedLimitReached == 0:
-            # read state from stat-file
+        # check for die-when-done / seed-limit / shutdown-command in stat-file
+        if self.done and self.dieWhenDone == 'True':
+            app.logger.error("die-when-done set, setting shutdown-flag...")
             running = '0'
-            try:
-                FILE = open(self.statFile, 'r')
-                running = FILE.read(1)
-                FILE.close()
-            except:
-                running = '0'
         else:
-            running = '0'
+            if seedLimitReached == 0:
+                # read state from stat-file
+                running = '0'
+                try:
+                    FILE = open(self.statFile, 'r')
+                    running = FILE.read(1)
+                    FILE.close()
+                except:
+                    running = '0'
+            else:
+                running = '0'
 
         # shutdown or write stat-file
         if running == '0':
