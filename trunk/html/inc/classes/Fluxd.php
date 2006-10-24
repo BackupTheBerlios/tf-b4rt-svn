@@ -96,7 +96,7 @@ class Fluxd
             $result = exec($startCommand);
             // check if fluxd could be started
             $loop = true;
-            $maxLoops = 100;
+            $maxLoops = 75;
             $loopCtr = 0;
             $started = false;
             while ($loop) {
@@ -108,7 +108,7 @@ class Fluxd
 	            	if ($loopCtr > $maxLoops)
 	            		$loop = false;
 	            	else
-	            		usleep(150000); // wait for 0.15 seconds					
+	            		usleep(200000); // wait for 0.2 seconds					
             	}
             }
             // check if started
@@ -138,7 +138,7 @@ class Fluxd
         if ($this->isFluxdRunning()) {
             $this->sendCommand('die', 0);
             // check if fluxd still running
-            $maxLoops = 100;
+            $maxLoops = 75;
             $loopCtr = 0;
             while (1) {
             	if ($this->isFluxdRunning()) {
@@ -146,7 +146,7 @@ class Fluxd
 	            	if ($loopCtr > $maxLoops)
 	            		return 0;
 	            	else
-	            		usleep(150000); // wait for 0.15 seconds
+	            		usleep(200000); // wait for 0.2 seconds
             	} else {
             		return 1;					
             	}
