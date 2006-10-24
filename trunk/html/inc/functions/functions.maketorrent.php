@@ -158,7 +158,7 @@ function createTorrentMainline() {
 	$command .= $cfg["docroot"]."bin/TF_Mainline/maketorrent-console.py";
 	$command .= " --no_verbose";
 	$command .= " --no_debug";
-	$command .= " --language en";
+	// $command .= " --language en";
 	// Is there comments to add?
 	if (!empty($comment))
 		$command .= " --comment ".escapeshellarg($comment);
@@ -166,15 +166,20 @@ function createTorrentMainline() {
 	if (!empty($piece))
 		$command .= " --piece_size_pow2 ".$piece;
 	// trackerless / tracker
+	/*
 	if ((isset($use_tracker)) && ($use_tracker == 1))
 		$command .= " --use_tracker";
 	else
 		$command .= " --no_use_tracker";
+	*/
+	$command .= " --use_tracker";
 	// tracker-name
-	if ((!empty($tracker_name)) && ($tracker_name != "http://"))
-		$command .= " --tracker_name ".escapeshellarg($tracker_name);
+	//if ((!empty($tracker_name)) && ($tracker_name != "http://"))
+	$command .= " --tracker_name ".escapeshellarg($tracker_name);
 	// Set the target torrent field
 	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
+	// tracker (i dont know...)
+	$command .= " ".escapeshellarg($tracker_name);	
 	// input
 	$command .= " ".escapeshellarg($cfg["path"].$path);
 	// Set to never timeout for large torrents
@@ -182,6 +187,7 @@ function createTorrentMainline() {
 	// Let's see how long this takes...
 	$time_start = microtime(true);
 	// Execute the command
+	system('echo command >> /tmp/tflux.debug; echo "'. $command .'" >> /tmp/tflux.debug');
 	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;

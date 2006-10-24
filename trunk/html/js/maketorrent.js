@@ -71,6 +71,8 @@ function doSubmit(obj, client) {
 	} else {
 		// mainline-special-checks
 		document.getElementById('trtag').innerHTML = "";
+		/*
+		due to bugs (?) in mainlines maketorrent, this is disabled.
 		if (trackerState == 1) {
 			if ((document.maketorrent.tracker_name.value === "http://") || (document.maketorrent.tracker_name.value === "")) {
 				document.getElementById('trtag').innerHTML = "<b style=\"color: #990000;\">*</b>";
@@ -84,6 +86,14 @@ function doSubmit(obj, client) {
 				valid = false;
 			}
 		}
+		*/
+		if (trackerState == 1) {
+			if ((document.maketorrent.tracker_name.value === "http://") || (document.maketorrent.tracker_name.value === "")) {
+				document.getElementById('trtag').innerHTML = "<b style=\"color: #990000;\">*</b>";
+				document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid Tracker Name.</b><BR />";
+				valid = false;
+			}
+		}		
 	}
 	// If validation passed, submit form
 	if (valid === true) {
@@ -122,11 +132,15 @@ function toggleDHT(dhtstatus) {
  * toggleTracker
  */
 function toggleTracker(tState) {
+	/*
 	trackerState = tState;
-	if (trackerState == 1)
+	if (trackerState == 1) {
 		document.maketorrent.tracker_name.value = "http://";
-	else
+	} else {
 		document.maketorrent.tracker_name.value = "";
+	}
+	*/
+	trackerState = 1;
 }
 
 /**

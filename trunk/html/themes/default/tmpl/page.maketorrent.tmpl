@@ -67,6 +67,7 @@
 											<input type="hidden" name="path" value="<tmpl_var name="path">">
 												<table>
 												<tmpl_if name="client" value="tornado">
+													<input type="hidden" name="client" value="tornado">
 													<tr>
 														<td><img align="absmiddle" src="themes/default/images/info.gif" onmouseover="return escape(tornt);" hspace="1" />Torrent name:</td>
 														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
@@ -108,10 +109,12 @@
 														<td><input type="checkbox" id="DHT" name="DHT"<tmpl_if name="dht"> checked</tmpl_if> value="DHT"></input></td>
 													</tr>
 												<tmpl_else>
+													<input type="hidden" name="client" value="mainline">
 													<tr>
 														<td>Torrent name :</td>
 														<td><input type="text" id="torrent" name="torrent" size="55" value="<tmpl_var name="torrent">" /> <label id="ttag"></label></td>
 													</tr>
+													<!--
 													<tr>
 														<td>Use Tracker :</td>
 														<td>
@@ -119,8 +122,9 @@
 															<input type="radio" id="use_tracker" name="use_tracker" value="0" onClick="toggleTracker(0);"<tmpl_if name="use_tracker" value="0"> checked</tmpl_if>>No</input>
 														</td>
 													</tr>
+													--> 
 													<tr>
-														<td>Tracker / Node :</td>
+														<td>Tracker  :</td>
 														<td><input type="text" id="tracker_name" name="tracker_name" size="55" value="<tmpl_var name="tracker_name">" /> <label id="trtag"></label></td>
 													</tr>
 													<tr>

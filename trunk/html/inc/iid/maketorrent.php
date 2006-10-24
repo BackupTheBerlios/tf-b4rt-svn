@@ -77,6 +77,7 @@ switch ($client) {
 			$use_tracker = $_POST['use_tracker'];
 		else
 			$use_tracker = 1;
+		$use_tracker = 1;
 		if (isset($_POST['tracker_name']))
 			$tracker_name = $_POST['tracker_name'];
 		else
