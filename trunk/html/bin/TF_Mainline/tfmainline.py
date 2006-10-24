@@ -123,6 +123,7 @@ class HeadlessDisplayer(object):
         self.numpieces = numpieces
 
     def finished(self):
+        # this method is never called
         self.done = True
         self.downRate = '---'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
@@ -134,6 +135,13 @@ class HeadlessDisplayer(object):
         #self.display({})    # display is only called periodically.
 
     def display(self, statistics):
+
+        # app.torrent.logger.debug("torrent done !!!")
+
+        if app.multitorrent.isDone:
+            app.logger.error("torrent done !!!")
+        else:
+            app.logger.error("torrent running...")
 
         # eta
         activity = statistics.get('activity')
@@ -164,14 +172,24 @@ class HeadlessDisplayer(object):
         downTotal = None
         downTotal = statistics.get('downTotal')
         upTotal = statistics.get('upTotal')
+        app.logger.error("upTotal : ")                                          # DEBUG
+        app.logger.error(upTotal)                                               # DEBUG
+        app.logger.error("downTotal : ")                                        # DEBUG
+        app.logger.error(downTotal)                                             # DEBUG
         if upTotal is None:
             upTotal = 0
         if downTotal is not None:
             if downTotal > 0:
                 if upTotal > 0:
                     self.shareRating = _("%.3f") % (upTotal / downTotal)
+                    app.logger.error("self.seedLimit : ")                       # DEBUG
+                    app.logger.error(self.seedLimit)                            # DEBUG
+                    app.logger.error("self.done : ")                            # DEBUG
+                    app.logger.error(self.done)                                 # DEBUG
                     if self.done and self.seedLimit > 0:
                         currentShareRating = (int) (upTotal / downTotal)
+                        app.logger.error("currentShareRating : ")               # DEBUG
+                        app.logger.error(currentShareRating)                    # DEBUG
                         if currentShareRating >= self.seedLimit:
                             seedLimitReached = 1
                             app.logger.error("seed-limit reached, setting shutdown-flag...")
@@ -366,8 +384,7 @@ class TorrentApp(object):
     def start_torrent(self,metainfo,save_incomplete_as,save_as):
         """Tells the MultiTorrent to begin downloading."""
         try:
-            self.d.display({'activity':_("initializing"),
-                               'fractionDone':0})
+            self.d.display({'activity':_("initializing"), 'fractionDone':0})
             multitorrent = self.multitorrent
             df = multitorrent.create_torrent(metainfo, save_incomplete_as,
                                              save_as)
@@ -407,8 +424,7 @@ class TorrentApp(object):
         # can throw exceptions.
         def shutdown():
             print "shutdown."
-            self.d.display({'activity':_("shutting down"),
-                            'fractionDone':0})
+            self.d.display({'activity':_("shutting down"), 'fractionDone':0})
             if self.multitorrent:
                 df = self.multitorrent.shutdown()
                 stop_rawserver = lambda *a : rawserver.stop()
