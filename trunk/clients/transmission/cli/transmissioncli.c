@@ -226,16 +226,6 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	// Create PID file if wanted by user
-	if (tf_pid != NULL) {
-		FILE * pid_file;
-		pid_file = fopen(tf_pid, "w+");
-		if (pid_file != NULL) {
-			fprintf(pid_file, "%d", getpid());
-			fclose(pid_file);
-		}
-	}
-
 	// init some things
 	tr_setBindPort(h, bindPort);
 	tr_setUploadLimit(h, uploadLimit);
@@ -253,6 +243,16 @@ int main(int argc, char ** argv) {
 
 	// start the torrent
 	tr_torrentStart(tor);
+
+	// Create PID file if wanted by user
+	if (tf_pid != NULL) {
+		FILE * pid_file;
+		pid_file = fopen(tf_pid, "w+");
+		if (pid_file != NULL) {
+			fprintf(pid_file, "%d", getpid());
+			fclose(pid_file);
+		}
+	}
 
 	/* main-loop */
 	while (!mustDie) {
@@ -547,11 +547,6 @@ int main(int argc, char ** argv) {
 		fprintf(stderr, "\n");
 	}
 
-	// Remove PID file if created !
-	if (tf_pid != NULL) {
-		remove(tf_pid);
-	}
-
 	// Try for 5 seconds to notify the tracker that we are leaving
 	// and to delete any port mappings for nat traversal
 	tr_torrentStop(tor);
@@ -565,6 +560,11 @@ int main(int argc, char ** argv) {
 			break;
 		}
 		usleep(500000);
+	}
+
+	// Remove PID file if created !
+	if (tf_pid != NULL) {
+		remove(tf_pid);
 	}
 
 cleanup:
