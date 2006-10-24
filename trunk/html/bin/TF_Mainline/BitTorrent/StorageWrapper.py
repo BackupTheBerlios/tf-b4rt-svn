@@ -77,7 +77,7 @@ class DataPig(object):
         if index in self.failed_pieces:
             for d in self.failed_pieces[index]:
                 d.bad(index)
-            del self.failed_pieces[index]        
+            del self.failed_pieces[index]
 
     def failed_piece(self, index):
         self.failed_pieces[index] = set()
@@ -88,7 +88,7 @@ class DataPig(object):
             culprit = allsenders.keys()[0]
             culprit.bad(index, bump = True)
             del self.failed_pieces[index] # found the culprit already
-        
+
 current_version = 2
 resume_prefix = 'BitTorrent resume state file, version '
 version_string = resume_prefix + str(current_version)
@@ -139,11 +139,11 @@ class StorageWrapper(object):
         # Otherwise the piece is not in the dict.
         self.active_requests = {}
         self.have_callbacks = {}
-        
+
         read = lambda index, length, offset : self._storage_read(self.places[index],
                                                                  length, offset=offset)
         self.datapig = DataPig(read, self.add_task)
-        
+
         self.full_pieces = set()
         # a index => df dict for locking pieces
         self.blocking_pieces = {}
@@ -186,21 +186,21 @@ class StorageWrapper(object):
                     df = self.hashcheck_pieces()
                     df.addCallback(self._initialized)
             except:
-                if resumefile is not None:
-                    global_logger.warning("Failed to read fastresume",
-                                          exc_info=sys.exc_info())
+                #if resumefile is not None:
+                #    global_logger.warning("Failed to read fastresume",
+                #                          exc_info=sys.exc_info())
                 self.rplaces = array(self.typecode, [UNALLOCATED] * self.numpieces)
                 # full hashcheck
                 df = self.hashcheck_pieces()
                 df.addCallback(self._initialized)
-                
+
     def _initialized(self, v):
         self._pieces_in_buf = []
         self._piece_buf = None
         self.initialized = v
         global_logger.debug('Initialized')
         self.done_checking_df.callback(v)
-                
+
     ## fastresume
     ############################################################################
     def read_fastresume(self, f, working_path, destination_path):
@@ -219,7 +219,7 @@ class StorageWrapper(object):
         else:
             raise BTFailure(_("Unsupported fastresume file format, "
                               "maybe from another client version?"))
-        
+
     def _read_fastresume_v1(self, f, working_path, destination_path):
         # skip a bunch of lines
         amount_done = int(f.readline())
@@ -239,7 +239,7 @@ class StorageWrapper(object):
         df = launch_coroutine(_wrap_task(self.add_task),
                               self._checkPieces_v1)
         return df
-        
+
     def _checkPieces_v1(self):
         partials = {}
 
@@ -262,7 +262,7 @@ class StorageWrapper(object):
                     global_logger.error(_("Bad fastresume info (truncation at piece %d)") % i)
                     needs_full_hashcheck = True
                     i -= 1
-                    break                    
+                    break
                 self._check_partial(i, partials, data)
                 self.rplaces[i] = ALLOCATED
 
@@ -282,7 +282,7 @@ class StorageWrapper(object):
             if r == False:
                 yield False
 
-        self._realize_partials(partials)            
+        self._realize_partials(partials)
         yield True
 
     def _read_fastresume_v2(self, f, working_path, destination_path):
@@ -293,7 +293,7 @@ class StorageWrapper(object):
         # Path read from resume should either reside in/at the
         # working_path or the destination_path.
 
-        d = cPickle.loads(f.read())        
+        d = cPickle.loads(f.read())
 
         try:
             snapshot = d['snapshot']
@@ -320,7 +320,7 @@ class StorageWrapper(object):
                     return False
                 elif work_or_dest == 1 and commond != destination_path:
                     return False
-                    
+
                 # this could be a lot smarter, like punching holes in the
                 # ranges on failed files in a batch torrent.
                 if not os.path.exists(filename):
@@ -329,7 +329,7 @@ class StorageWrapper(object):
                     raise ValueError("File sizes do not match.")
                 if os.path.getmtime(filename) < (s['mtime'] - 5):
                     raise ValueError("File modification times do not match.")
-                
+
             self.places = array(self.typecode)
             self.places.fromstring(d['places'])
             self.rplaces = array(self.typecode)
@@ -341,7 +341,7 @@ class StorageWrapper(object):
             # we should not read from fastresume.
             self.storage.undownloaded = d['undownloaded']
             self.amount_left = d['amount_left']
-            
+
             # all unwritten partials are now inactive
             self.inactive_requests = d['unwritten_partials']
 
@@ -373,9 +373,9 @@ class StorageWrapper(object):
             self.places = array(self.typecode, [NO_PLACE] * self.numpieces)
             self.rplaces = array(self.typecode, range(self.numpieces))
             raise
-        
+
         return True
-    
+
 
     def write_fastresume(self, resumefile):
         try:
@@ -383,7 +383,7 @@ class StorageWrapper(object):
         except:
             import traceback
             traceback.print_exc()
-            
+
 
     def _write_fastresume_v1(self, resumefile):
         if not self.initialized:
@@ -396,7 +396,7 @@ class StorageWrapper(object):
         for b, e, filename in self.storage.ranges:
             resumefile.write(str(0) + ' ' +
                              str(0) + '\n')
-        
+
         # copy the array so as not to screw the current state of things
         rplaces = array(self.rplaces.typecode, list(self.rplaces))
         # Ow. -G
@@ -409,7 +409,7 @@ class StorageWrapper(object):
     def _write_fastresume_v2(self, resumefile):
         if not self.initialized:
             return
-        
+
         global_logger.debug('Writing fast resume: %s' % version_string)
         resumefile.write(version_string + '\n')
 
@@ -424,7 +424,7 @@ class StorageWrapper(object):
             s['mtime'] = os.path.getmtime(filename)
             snapshot[filename] = s
         d['snapshot'] = snapshot
-        
+
         d['places'] = self.places.tostring()
         d['rplaces'] = self.rplaces.tostring()
         d['have'] = self.have
@@ -475,7 +475,7 @@ class StorageWrapper(object):
                 c.callback(None)
         assert piece not in self.inactive_requests
 
-    ## hashcheck    
+    ## hashcheck
     ############################################################################
     def _get_data(self, i):
         if i in self._pieces_in_buf:
@@ -501,7 +501,7 @@ class StorageWrapper(object):
             self._piece_buf = ''
         p = i - self._pieces_in_buf[0]
         yield buffer(self._piece_buf, p * self.piece_size, self._piecelen(i))
-        
+
     def hashcheck_pieces(self, begin=0, end=None):
         df = launch_coroutine(_wrap_task(self.add_task),
                               self._hashcheck_pieces,
@@ -525,7 +525,7 @@ class StorageWrapper(object):
 
             # we're shutting down, abort.
             if self.doneflag.isSet():
-                yield False                
+                yield False
 
             piece_len = self._piecelen(i)
             global_logger.debug( "i=%d, piece_len=%d" % (i,piece_len) )
@@ -540,7 +540,7 @@ class StorageWrapper(object):
                 data = r.getResult()
             else:
                 data = r
-            
+
             sh = sha(buffer(data, 0, self.lastlen))
             sp = sh.digest()
             sh.update(buffer(data, self.lastlen))
@@ -564,7 +564,7 @@ class StorageWrapper(object):
                 self._check_partial(i, partials, data)
             self.statusfunc(fractionDone = 1 - self.amount_left /
                             self.total_length)
-            
+
         global_logger.debug('Hashcheck from %d to %d complete.' % (begin, end))
 
         self._realize_partials(partials)
@@ -691,7 +691,7 @@ class StorageWrapper(object):
                 df.getResult()
 
             self._initalloc(index, index)
-            
+
         df = self.datapig.got_piece(index, begin, piece, source)
         if df is not None:
             yield df
