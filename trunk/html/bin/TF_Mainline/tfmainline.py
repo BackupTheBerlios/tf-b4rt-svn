@@ -136,13 +136,6 @@ class HeadlessDisplayer(object):
 
     def display(self, statistics):
 
-        # app.torrent.logger.debug("torrent done !!!")
-
-        if app.multitorrent.isDone:
-            app.logger.error("torrent done !!!")
-        else:
-            app.logger.error("torrent running...")
-
         # eta
         activity = statistics.get('activity')
         timeEst = statistics.get('timeEst')
@@ -181,18 +174,24 @@ class HeadlessDisplayer(object):
         if downTotal is not None:
             if downTotal > 0:
                 if upTotal > 0:
-                    self.shareRating = _("%.3f") % (upTotal / downTotal)
-                    app.logger.error("self.seedLimit : ")                       # DEBUG
-                    app.logger.error(self.seedLimit)                            # DEBUG
-                    app.logger.error("self.done : ")                            # DEBUG
-                    app.logger.error(self.done)                                 # DEBUG
-                    if self.done and self.seedLimit > 0:
-                        currentShareRating = (int) (upTotal / downTotal)
-                        app.logger.error("currentShareRating : ")               # DEBUG
-                        app.logger.error(currentShareRating)                    # DEBUG
-                        if currentShareRating >= self.seedLimit:
+                    self.shareRating = _("%.3f") % ((upTotal * 100) / downTotal)
+                    app.logger.error("self.shareRating : ")                           # DEBUG
+                    app.logger.error(self.shareRating)                                # DEBUG
+                    app.logger.error("self.seedLimit : ")                             # DEBUG
+                    app.logger.error(self.seedLimit)                                  # DEBUG
+                    totalShareRating = (int) ((upTotal * 100) / self.fileSize_stat)   # DEBUG
+                    app.logger.error("totalShareRating : ")                           # DEBUG
+                    app.logger.error(totalShareRating)                                # DEBUG
+                    if app.multitorrent.isDone and self.seedLimit > 0:
+                        #totalShareRating = (int) (upTotal / downTotal)
+                        #totalShareRating = (int) ((upTotal * 100) / self.fileSize_stat)
+                        if totalShareRating >= self.seedLimit:
                             seedLimitReached = 1
                             app.logger.error("seed-limit reached, setting shutdown-flag...")
+                    else:
+                        app.logger.error("not done yet : ")                           # DEBUG
+                        app.logger.error(app.multitorrent.isDone)                     # DEBUG
+                        app.logger.error(self.seedLimit)                              # DEBUG
                 else:
                     self.shareRating = "0"
             else:
@@ -229,7 +228,7 @@ class HeadlessDisplayer(object):
             app.downTotal = downTotal
 
         # check for die-when-done / seed-limit / shutdown-command in stat-file
-        if self.done and self.dieWhenDone == 'True':
+        if app.multitorrent.isDone and self.dieWhenDone == 'True':
             app.logger.error("die-when-done set, setting shutdown-flag...")
             running = '0'
         else:
@@ -249,10 +248,7 @@ class HeadlessDisplayer(object):
         if running == '0':
             # set flag
             self.isInShutDown = 1
-            # hmm :
-            #app.logger.info("shutting down...")
-            #app.logger.log(logging.INFO, "shutting down..." )
-            # then use error now :
+            # log
             app.logger.error("shutting down...")
             # shutdown
             self.state = 0
