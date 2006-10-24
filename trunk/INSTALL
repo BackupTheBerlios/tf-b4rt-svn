@@ -335,6 +335,15 @@ Additional / Optional
    Mainline (BitTorrent) Client. It can be found at :
    http://sourceforge.net/projects/pycrypto/
 
+-- Twisted is needed to run Mainline (BitTorrent) Client.
+   It can be found at :
+   http://twistedmatrix.com
+   Twisted requires at least Zope Interface 3.0.1 or higher. It
+   can also work with ZopeX3 version 3.0.0c1 or higher.
+   Zope Interface is included in Twisted-source-tarball or can be
+   found at :
+   http://www.zope.org/Products/ZopeInterface
+
 -- unrar (for Linux) and rarbsd (for FreeBSD) can be found at :
    http://www.rarlab.com/rar/
 
