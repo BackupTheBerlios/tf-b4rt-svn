@@ -60,7 +60,10 @@ else
 // client-generic vars
 $tfile = @ $_POST['torrent'];
 $comment = @ $_POST['comments'];
-$alert = @ ($_POST['alert']) ? 1 : "";
+if (isset($_POST["alert"]))
+	$alert = 1;
+else
+	$alert = 0;
 
 // client-switch
 switch ($client) {
