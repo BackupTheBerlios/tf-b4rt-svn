@@ -54,17 +54,12 @@ from twisted.internet import task
 from BitTorrent.UI import Size, Duration
 inject_main_logfile()
 from BitTorrent import console
-from BitTorrent import stderr_console  # must import after inject_main_logfile
-                                       # because import is really a copy.
-                                       # If imported earlier, stderr_console
-                                       # doesn't reflect the changes made in
-                                       # inject_main_logfile!!  BAAAHHHH!!
+from BitTorrent import stderr_console
 
 def wrap_log(context_string, logger):
     """Useful when passing a logger to a deferred's errback.  The context
        specifies what was being done when the exception was raised."""
     return lambda e, *args, **kwargs : logger.error(context_string, exc_info=e)
-
 
 def fmttime(n):
     if n == 0:
@@ -91,6 +86,9 @@ def fmtsize(n):
     size = '%s (%s)' % (size, str(Size(n)))
     return size
 
+#------------------------------------------------------------------------------#
+# HeadlessDisplayer                                                            #
+#------------------------------------------------------------------------------#
 class HeadlessDisplayer(object):
 
     def __init__(self):
@@ -114,6 +112,7 @@ class HeadlessDisplayer(object):
         self.statFile = config['stat_file']
         self.dieWhenDone = config['die_when_done']
         self.isInShutDown = 0
+        self.running = '1'
 
     def set_torrent_values(self, name, path, size, numpieces):
         self.file = name
@@ -123,7 +122,7 @@ class HeadlessDisplayer(object):
         self.numpieces = numpieces
 
     def finished(self):
-        # this method is never called
+        """ this method is never called """
         self.done = True
         self.downRate = '---'
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
@@ -131,143 +130,138 @@ class HeadlessDisplayer(object):
     def error(self, errormsg):
         newerrmsg = strftime('[%H:%M:%S] ') + errormsg
         self.errors.append(newerrmsg)
-        print errormsg
-        #self.display({})    # display is only called periodically.
 
     def display(self, statistics):
 
-        # eta
-        activity = statistics.get('activity')
-        timeEst = statistics.get('timeEst')
-        if timeEst is not None:
-            self.timeEst = fmttime(timeEst)
-        elif activity is not None:
-            self.timeEst = activity
-
-        # fractionDone
-        fractionDone = statistics.get('fractionDone')
-        if fractionDone is not None:
-            self.percentDone = str(int(fractionDone * 1000) / 10)
-
-        # downRate
-        downRate = statistics.get('downRate')
-        if downRate is not None:
-            self.downRate = '%.1f kB/s' % (downRate / (1 << 10))
-
-        # upRate
-        upRate = statistics.get('upRate')
-        if upRate is not None:
-            self.upRate = '%.1f kB/s' % (upRate / (1 << 10))
-
-        # totals
-        downTotal = statistics.get('downTotal')
-        upTotal = statistics.get('upTotal')
-        if upTotal is None:
-            upTotal = 0
-        if downTotal is None:
-            downTotal = 0
-
-        # share-rating
-        if downTotal > 0:
-            if upTotal > 0:
-                self.shareRating = _("%.3f") % ((upTotal * 100) / downTotal)
-            else:
-                self.shareRating = "0"
-        else:
-            self.shareRating = "oo"
-
-        # seeds
-        seeds = statistics.get('numSeeds')
-        if seeds is None:
-            seeds = 0
-        # dht :
-        numCopies = statistics.get('numCopies')
-        if numCopies is not None:
-            seeds += numCopies
-        # set status
-        self.seedStatus = _("%d") % seeds
-
-        # peers
-        peers = statistics.get('numPeers')
-        if peers is not None:
-            self.peerStatus = _("%d") % peers
-        else:
-            self.peerStatus = "0"
-
-        # set some fields in app which we need in shutdown
+        # only process when not in shutdown-sequence
         if self.isInShutDown == 0:
+
+            # eta
+            activity = statistics.get('activity')
+            timeEst = statistics.get('timeEst')
+            if timeEst is not None:
+                self.timeEst = fmttime(timeEst)
+            elif activity is not None:
+                self.timeEst = activity
+
+            # fractionDone
+            fractionDone = statistics.get('fractionDone')
+            if fractionDone is not None:
+                self.percentDone = str(int(fractionDone * 1000) / 10)
+
+            # downRate
+            downRate = statistics.get('downRate')
+            if downRate is not None:
+                self.downRate = '%.1f kB/s' % (downRate / (1 << 10))
+
+            # upRate
+            upRate = statistics.get('upRate')
+            if upRate is not None:
+                self.upRate = '%.1f kB/s' % (upRate / (1 << 10))
+
+            # totals
+            downTotal = statistics.get('downTotal')
+            upTotal = statistics.get('upTotal')
+            if upTotal is None:
+                upTotal = 0
+            if downTotal is None:
+                downTotal = 0
+
+            # share-rating
+            if downTotal > 0:
+                if upTotal > 0:
+                    self.shareRating = _("%.3f") % ((upTotal * 100) / downTotal)
+                else:
+                    self.shareRating = "0"
+            else:
+                self.shareRating = "oo"
+
+            # seeds
+            seeds = statistics.get('numSeeds')
+            if seeds is None:
+                seeds = 0
+            # dht :
+            numCopies = statistics.get('numCopies')
+            if numCopies is not None:
+                seeds += numCopies
+            # set status
+            self.seedStatus = _("%d") % seeds
+
+            # peers
+            peers = statistics.get('numPeers')
+            if peers is not None:
+                self.peerStatus = _("%d") % peers
+            else:
+                self.peerStatus = "0"
+
+            # set some fields in app which we need in shutdown
             app.percentDone = self.percentDone
             app.shareRating = self.shareRating
             app.upTotal = upTotal
             app.downTotal = downTotal
 
-        # check for seed-limit
-        seedLimitReached = 0
-        if app.multitorrent.isDone:
-            seedLimitMax = int(self.seedLimit)
-            if seedLimitMax > 0:
-                totalShareRating = int(((upTotal * 100) / self.fileSize_stat))
-                if totalShareRating >= seedLimitMax:
-                    seedLimitReached = 1
-                    app.logger.error("seed-limit reached, setting shutdown-flag...")
+            # die-on-seed-limit / die-when-done
+            if app.multitorrent.isDone:
+                if self.dieWhenDone == 'True':
+                    app.logger.error("die-when-done set, setting shutdown-flag...")
+                    self.running = '0'
+                else:
+                    seedLimitMax = int(self.seedLimit)
+                    if seedLimitMax > 0:
+                        totalShareRating = int(((upTotal * 100) / self.fileSize_stat))
+                        if totalShareRating >= seedLimitMax:
+                            app.logger.error("seed-limit reached, setting shutdown-flag...")
+                            self.running = '0'
 
-        # die-when-done / seed-limit / shutdown-command in stat-file
-        if app.multitorrent.isDone and self.dieWhenDone == 'True':
-            app.logger.error("die-when-done set, setting shutdown-flag...")
-            running = '0'
-        else:
-            if seedLimitReached == 0:
-                # read state from stat-file
-                running = '0'
+            # read state from stat-file
+            if self.running == '1':
                 try:
                     FILE = open(self.statFile, 'r')
-                    running = FILE.read(1)
+                    self.running = FILE.read(1)
                     FILE.close()
-                except:
-                    running = '0'
-            else:
-                running = '0'
+                except Exception, e:
+                    self.running = '0'
+                    app.logger.error( "Failed to read stat-file... bye bye...", exc_info = e )
 
-        # shutdown or write stat-file
-        if running == '0':
-            # only once
-            if self.isInShutDown == 0:
-                # set flag
-                self.isInShutDown = 1
+            # shutdown or write stat-file
+            if self.running == '0':
                 # log
                 app.logger.error("shutting down...")
-                # shutdown
+                # set flags
                 self.state = 0
+                self.isInShutDown = 1
+                self.running = '0'
+                # shutdown
                 df = app.multitorrent.shutdown()
                 stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
                 df.addCallbacks(stop_rawserver, stop_rawserver)
-        else:
-            try:
-                FILE = open(self.statFile,"w")
-                # write stats to stat-file
-                FILE.write(repr(self.state)+"\n")
-                FILE.write(self.percentDone+"\n")
-                FILE.write(self.timeEst+"\n")
-                FILE.write(self.downRate+"\n")
-                FILE.write(self.upRate+"\n")
-                FILE.write(self.tfOwner+"\n")
-                FILE.write(self.seedStatus+"\n")
-                FILE.write(self.peerStatus+"\n")
-                FILE.write(self.shareRating+"\n")
-                FILE.write(self.seedLimit+"\n")
-                FILE.write(repr(upTotal)+"\n")
-                FILE.write(repr(downTotal)+"\n")
-                FILE.write(repr(self.fileSize_stat))
-                # write errors to stat-file
-                if self.errors:
-                    FILE.write("\n")
-                    #for err in self.errors[-4:]:
-                    for err in self.errors[0:]:
-                        FILE.write(err)
-                FILE.flush()
-                FILE.close()
-            except Exception, e:
-                app.logger.error( "Failed to write stat-file", exc_info = e )
+            else:
+                try:
+                    FILE = open(self.statFile,"w")
+                    # write stats to stat-file
+                    FILE.write(repr(self.state)+"\n")
+                    FILE.write(self.percentDone+"\n")
+                    FILE.write(self.timeEst+"\n")
+                    FILE.write(self.downRate+"\n")
+                    FILE.write(self.upRate+"\n")
+                    FILE.write(self.tfOwner+"\n")
+                    FILE.write(self.seedStatus+"\n")
+                    FILE.write(self.peerStatus+"\n")
+                    FILE.write(self.shareRating+"\n")
+                    FILE.write(self.seedLimit+"\n")
+                    FILE.write(repr(upTotal)+"\n")
+                    FILE.write(repr(downTotal)+"\n")
+                    FILE.write(repr(self.fileSize_stat))
+                    # write errors to stat-file
+                    if self.errors:
+                        FILE.write("\n")
+                        #for err in self.errors[-4:]:
+                        for err in self.errors[0:]:
+                            FILE.write(err)
+                    FILE.flush()
+                    FILE.close()
+                except Exception, e:
+                    app.logger.error( "Failed to write stat-file", exc_info = e )
 
     def print_spew(self, spew):
         s = StringIO()
@@ -293,7 +287,6 @@ class HeadlessDisplayer(object):
                 s.write('c')
             else:
                 s.write(' ')
-
             total, rate, interested, choked, snubbed = c['download']
             s.write(' %10s %10s ' % (str(int(total/10485.76)/100),
                                      str(int(rate))))
@@ -312,8 +305,9 @@ class HeadlessDisplayer(object):
             s.write('\n')
         print s.getvalue()
 
-
-#class TorrentApp(Feedback):
+#------------------------------------------------------------------------------#
+# TorrentApp                                                                   #
+#------------------------------------------------------------------------------#
 class TorrentApp(object):
 
     class LogHandler(logging.Handler):
@@ -388,16 +382,6 @@ class TorrentApp(object):
             return
 
     def run(self):
-
-        # write pid-file
-        try:
-            pidFile = open(self.config['stat_file'] + ".pid", 'w')
-            pidFile.write(str(getpid()).strip() + "\n")
-            pidFile.flush()
-            pidFile.close()
-        except Exception, e:
-            self.logger.error( "Failed to write pid-file", exc_info = e )
-
         self.core_doneflag = DeferredEvent()
         rawserver = RawServer(self.config)
         self.d = HeadlessDisplayer()
@@ -420,9 +404,7 @@ class TorrentApp(object):
         # between core_doneflag's callback and addCallback.
         self.core_doneflag.addCallback(
             lambda r: rawserver.external_add_task(0, shutdown))
-
         rawserver.install_sigint_handler(self.core_doneflag)
-
 
         # semantics for --save_in vs --save_as:
         #   save_in specifies the directory in which torrent is written.
@@ -435,7 +417,6 @@ class TorrentApp(object):
         metainfo = self.metainfo
         torrent_name = metainfo.name_fs  # if batch then this contains
                                          # directory name.
-
         if config['save_as']:
             if config['save_in']:
                 raise BTFailure(_("You cannot specify both --save_as and "
@@ -459,21 +440,17 @@ class TorrentApp(object):
             save_incomplete_as = os.path.join(save_incomplete_in,torrent_name)
         else:
             save_incomplete_as = os.path.join(savein,torrent_name)
-
         data_dir,bad = platform.encode_for_filesystem(config['data_dir'])
         if bad:
             raise BTFailure(_("Invalid path encoding."))
-
         try:
             self.multitorrent = \
                 MultiTorrent(self.config, rawserver, data_dir,
                              is_single_torrent = True,
                              resume_from_torrent_config = False)
-
             self.d.set_torrent_values(metainfo.name, os.path.abspath(saveas),
                                 metainfo.total_bytes, len(metainfo.hashes))
             self.start_torrent(self.metainfo, save_incomplete_as, saveas)
-
             self.get_status()
         except UserFailure, e:
             self.logger.error( unicode(e.args[0]) )
@@ -481,6 +458,16 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "", exc_info = e )
             rawserver.add_task(0, self.core_doneflag.set)
+
+        # write pid-file
+        try:
+            pidFile = open(self.config['stat_file'] + ".pid", 'w')
+            pidFile.write(str(getpid()).strip() + "\n")
+            pidFile.flush()
+            pidFile.close()
+        except Exception, e:
+            self.logger.error( "Failed to write pid-file", exc_info = e )
+            raise BTFailure(_("Failed to write pid-file."))
 
         # always make sure events get processed even if only for
         # shutting down.
@@ -512,12 +499,6 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "Failed to write stat-file", exc_info = e )
 
-        # remove pid-file
-        try:
-            remove(self.config['stat_file'] + ".pid")
-        except Exception, e:
-            self.logger.error( "Failed to remove pid-file", exc_info = e )
-
     def get_status(self):
         self.multitorrent.rawserver.add_task(self.config['display_interval'],
                                              self.get_status)
@@ -530,12 +511,14 @@ class TorrentApp(object):
            curses window."""
         self.d.error(text)
 
-
-
+#------------------------------------------------------------------------------#
+# __main__                                                                     #
+#------------------------------------------------------------------------------#
 if __name__ == '__main__':
     uiname = 'bittorrent-console'
-    defaults = get_defaults(uiname)
 
+    # args
+    defaults = get_defaults(uiname)
     metainfo = None
     if len(sys.argv) <= 1:
         printHelp(uiname, defaults)
@@ -553,7 +536,6 @@ if __name__ == '__main__':
         defaults.append( tuple(data_dir) )
         config, args = configfile.parse_configuration_and_args(defaults,
                                        uiname, sys.argv[1:], 0, 1)
-
         torrentfile = None
         if len(args):
             torrentfile = args[0]
@@ -570,6 +552,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         sys.exit(1)
 
+    # app
     app = TorrentApp(metainfo, config)
     try:
         app.run()
@@ -590,4 +573,10 @@ if __name__ == '__main__':
            print "non-daemon threads not shutting down:"
            for th in nondaemons:
                print " ", th
+
+    # remove pid-file
+    try:
+        remove(app.config['stat_file'] + ".pid")
+    except Exception, e:
+        app.logger.error( "Failed to remove pid-file", exc_info = e )
 
