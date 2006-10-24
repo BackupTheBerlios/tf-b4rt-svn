@@ -352,16 +352,15 @@ class ClientHandler
 				$this->messages = "queue-request (".$this->transfer."/".$this->cfg['user'].") but Qmgr not active";
 				AuditAction($this->cfg["constants"]["error"], $this->messages);
 			}
-            $transferRunningFlag = 0;
+            $transferRunningFlag = 0;       
         } else { // start
             // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
             $this->callResult = exec($this->command);
             AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. " : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
-            // slow down and wait for thread to kick off.
-            // otherwise on fast servers it will kill stop it before it gets a chance to run.
-            sleep(1);
             $transferRunningFlag = 1;
+            // wait until transfer is up
+            waitForTransfer($this->transfer, 1, 15);
         }
         if ($this->messages == "") {
             // Save transfer settings
@@ -385,6 +384,8 @@ class ClientHandler
         // set some vars
         $this->transfer = $transfer;
         $this->alias = $aliasFile;
+        // log
+        AuditAction($this->cfg["constants"]["stop_transfer"], $this->transfer);
         // set pidfile
         if ($this->pidFile == "") // pid-file not set in subclass. use a default
             $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".pid";
@@ -406,27 +407,30 @@ class ClientHandler
             $this->af->time_left = "Download Succeeded!";
         }
         require_once("inc/classes/RunningTransfer.php");
-        // see if the transfer process is hung.
-        if (!is_file($this->pidFile)) {
-            $running = getRunningTransfers();
-            foreach ($running as $key => $value) {
-                $rt = RunningTransfer::getRunningTransferInstance($value,$this->cfg,$this->handlerName);
-                if ($rt->statFile == $this->alias) {
-                    AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
-                	// $callResult = exec("kill ".$rt->processId);
-                }
-            }
-        }
         // Write out the new Stat File
         $this->af->WriteFile();
+        // wait until transfer is down
+        waitForTransfer($this->transfer, 0, 15);
+        // see if the transfer process is hung.
+        /*
+        $running = getRunningTransfers();
+        $isHung = 0;
+        foreach ($running as $key => $value) {
+            $rt = RunningTransfer::getRunningTransferInstance($value,$this->cfg,$this->handlerName);
+            if ($rt->statFile == $this->alias) {
+            	$isHung = 1;
+                AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
+            	// $callResult = exec("kill ".$rt->processId);
+            }
+        }
+		*/
         // flag the transfer as stopped (in db)
         // blame me for this dirty shit, i am lazy. of course this should be
         // hooked into the place where client really dies.
         stopTorrentSettings($this->transfer);
-        //
-        AuditAction($this->cfg["constants"]["kill_transfer"], $this->transfer);
-        if (!empty($return)) {
-            sleep(3);
+        // kill
+        if (!empty($return)) { // fluxd-page
+        	AuditAction($this->cfg["constants"]["kill_transfer"], $this->transfer);
             // set pid
             if ((isset($transferPid)) && ($transferPid != "")) {
                 $this->pid = $transferPid;

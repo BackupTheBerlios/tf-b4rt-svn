@@ -724,7 +724,7 @@ function stopTorrentSettings($torrent) {
 }
 
 /**
- * checks if transfer is running by checking for existencte of pid-file.
+ * checks if transfer is running by checking for existence of pid-file.
  *
  * @param $transfer name of the transfer
  * @return 1|0
@@ -746,6 +746,31 @@ function isTransferRunning($transfer) {
 	} else {
 		return 0;
 	}
+}
+
+/**
+ * waits until transfer is up/down
+ *
+ * @param $transfer name of the transfer
+ * @param $state : 1 = start, 0 = stop
+ * @param $maxWait in seconds
+ * @return 1|0
+ */
+function waitForTransfer($transfer, $state, $maxWait = 10) {
+	$maxLoops = $maxWait * 5;
+	$loopCtr = 0;
+	while (1) {
+		if (isTransferRunning($transfer) == $state) {
+			return 1;
+		} else {
+		 	$loopCtr++;
+		 	if ($loopCtr > $maxLoops)
+		 		return 0;
+		 	else
+		 		usleep(200000); // wait for 0.2 seconds
+		}
+	}
+	return 0;
 }
 
 /**

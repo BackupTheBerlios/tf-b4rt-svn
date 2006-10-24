@@ -79,11 +79,8 @@ switch ($action) {
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 			$clientHandler->inject($url);
 			$wget_start = getRequestVar('wget_start');
-			if ($wget_start == 1) {
-				sleep(2);
+			if ($wget_start == 1)
 				$clientHandler->startClient($url, 0, false);
-				sleep(5);
-			}
 		}
     	break;
 
@@ -118,8 +115,6 @@ switch ($action) {
                     $btclient = getTransferClient($transfer);
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                     $clientHandler->stopClient($transfer, $alias);
-                    // just 2 sec..
-                    sleep(2);
                 }
             }
     	}
@@ -139,8 +134,6 @@ switch ($action) {
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                     $clientHandler->startClient($transfer, 0, false);
-                    // just 2 sec..
-                    sleep(2);
                 }
             }
     	}
@@ -160,8 +153,6 @@ switch ($action) {
                     }
                     $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
                     $clientHandler->startClient($transfer, 0, false);
-                    // just 2 sec..
-                    sleep(2);
                 }
             }
     	}
@@ -210,8 +201,6 @@ switch ($action) {
 							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 							$clientHandler->startClient(urldecode($element), 0, false);
 						}
-						// just 3 sec..
-						sleep(3);
 					}
 					break;
 
@@ -219,8 +208,6 @@ switch ($action) {
 					if (($isTorrent) && ($tRunningFlag != 0)) {
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 						$clientHandler->stopClient(urldecode($element), $alias);
-						// just 2 sec..
-						sleep(2);
 					}
 					break;
 
@@ -235,8 +222,6 @@ switch ($action) {
 						require_once("inc/classes/ClientHandler.php");
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 						$clientHandler->startClient(urldecode($element), 0, true);
-						// just 3 sec..
-						sleep(3);
 					}
 					break;
 
@@ -246,8 +231,6 @@ switch ($action) {
 						$_REQUEST['alias_file'] = getAliasName($element).".stat";;
 						// dequeue it
 						$fluxdQmgr->dequeueTorrent($element, $cfg["user"]);
-						// just 3 sec..
-						sleep(3);
 					}
 					break;
 
@@ -260,8 +243,6 @@ switch ($action) {
 						// stop torrent first
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 						$clientHandler->stopClient(urldecode($element), $alias);
-						// give the torrent some time to die
-						sleep(8);
 						// is transfer running ?
 						$tRunningFlag = isTransferRunning(urldecode($element));
 					}

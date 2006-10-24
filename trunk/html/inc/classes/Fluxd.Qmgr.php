@@ -65,6 +65,8 @@ class FluxdQmgr extends FluxdServiceMod
     	$torrent = urldecode($torrent);
     	// send command to Qmgr
     	parent::sendServiceCommand("enqueue;".substr($torrent, 0, -8).";".$user, 0);
+        // just 2 sec... dont stress fluxd
+        sleep(2);      	
     }
 
     /**
@@ -90,6 +92,8 @@ class FluxdQmgr extends FluxdServiceMod
             $this->updateStatFile($torrent, $alias_file);
             // log
             AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent);
+            // just 2 sec... dont stress fluxd
+            sleep(2);              
         }
     }
 

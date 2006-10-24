@@ -527,7 +527,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<pre>'.$callResult.'</pre>';
 					$htmlMain .= '<br>';
 				}
-				sleep(1); // just a sec
+				sleep(2); // just 2 sec
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." php | ".$cfg['bin_grep']." -v grep"));
@@ -551,7 +551,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<pre>'.$callResult.'</pre>';
 					$htmlMain .= '<br>';
 				}
-				sleep(1); // just a sec
+				sleep(2); // just 2 sec
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." python | ".$cfg['bin_grep']." -v grep"));
@@ -575,7 +575,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<pre>'.$callResult.'</pre>';
 					$htmlMain .= '<br>';
 				}
-				sleep(1); // just a sec
+				sleep(2); // just 2 sec
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." perl | ".$cfg['bin_grep']." -v grep"));
@@ -599,7 +599,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<pre>'.$callResult.'</pre>';
 					$htmlMain .= '<br>';
 				}
-				sleep(1); // just a sec
+				sleep(2); // just 2 sec
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." transmissioncli | ".$cfg['bin_grep']." -v grep"));
@@ -623,7 +623,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<pre>'.$callResult.'</pre>';
 					$htmlMain .= '<br>';
 				}
-				sleep(1); // just a sec
+				sleep(2); // just 2 sec
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
@@ -828,8 +828,6 @@ if (isset($_REQUEST["t"])) {
 						$clientHandler->stopClient($torrent, $alias);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
-						// just 2 sec..
-						sleep(2);
 					}
 				}
 				$htmlMain .= '</pre>';
@@ -854,8 +852,6 @@ if (isset($_REQUEST["t"])) {
 						$clientHandler->startClient($torrent, 0, false);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
-						// just 2 sec..
-						sleep(2);
 					}
 				}
 				$htmlMain .= '</pre>';
@@ -880,8 +876,6 @@ if (isset($_REQUEST["t"])) {
 						$clientHandler->startClient($torrent, 0, false);
 						$htmlMain .=  ' - '.$torrent."";
 						$htmlMain .=  "\n";
-						// just 2 sec..
-						sleep(2);
 					}
 				}
 				$htmlMain .= '</pre>';

@@ -137,8 +137,6 @@ class ClientHandlerMainline extends ClientHandler
         $this->pidFile = $this->cfg["transfer_file_path"].$aliasFile.".pid";
         // stop the client
         parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
-        // give it some extra time, it needs it.
-        sleep(2);
     }
 
     /**

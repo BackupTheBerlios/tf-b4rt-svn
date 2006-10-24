@@ -156,7 +156,7 @@ switch ($op) {
 					$fluxd->reloadDBCache();
 					// reload fluxd-modules
 					if ($reloadModules) {
-						sleep(1);
+						sleep(3);
 						$fluxd->reloadModules();
 					}
 				}

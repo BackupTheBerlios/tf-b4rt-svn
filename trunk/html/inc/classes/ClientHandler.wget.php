@@ -157,6 +157,9 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . $this->cfg["wget_ftp_pasv"];
         $this->command .= " > /dev/null &";
         exec($this->command);
+        
+        // wait until transfer is up
+        waitForTransfer($this->transfer, 1, 15);
     }
 
     /**

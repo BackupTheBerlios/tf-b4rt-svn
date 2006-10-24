@@ -40,7 +40,6 @@ function indexStartTransfer($transfer) {
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 			$clientHandler->startClient($transfer, 0, false);
-			sleep(5);
 			header("location: index.php?iid=index");
 			exit();
 		}
@@ -66,8 +65,6 @@ function indexStartTorrent($torrent, $interactive) {
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->startClient($torrent, 0, $queueActive);
-			// just 2 sec..
-			sleep(2);
 			// header + out
 			header("location: index.php?iid=index");
 			exit();
@@ -81,8 +78,6 @@ function indexStartTorrent($torrent, $interactive) {
 				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
 				$clientHandler->startClient($torrent, 1, $queueActive);
 				if ($clientHandler->status == 3) { // hooray
-					// wait another sec
-					sleep(1);
 					if (array_key_exists("closeme",$_POST)) {
 						echo '<script  language="JavaScript">';
 						echo ' window.opener.location.reload(true);';
@@ -98,6 +93,61 @@ function indexStartTorrent($torrent, $interactive) {
 				exit();
 			}
 			break;
+	}
+}
+
+/**
+ * indexStopTransfer
+ *
+ * @param $transfer
+ */
+function indexStopTransfer($transfer) {
+	global $cfg;
+	if (!empty($transfer)) {
+		$return = getRequestVar('return');
+		require_once("inc/classes/ClientHandler.php");
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+		} else {
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+		}
+		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
+		if (!empty($return))
+			header("location: index.php?iid=".$return.".php?op=fluxdSettings");
+		else
+			header("location: index.php?iid=index");
+		exit();
+	}
+}
+
+/**
+ * indexDeleteTransfer
+ *
+ * @param $transfer
+ */
+function indexDeleteTransfer($transfer) {
+	if (!empty($transfer)) {
+		deleteTransfer($transfer, getRequestVar('alias_file'));
+		header("location: index.php?iid=index");
+		exit();
+	}
+}
+
+/**
+ * indexDeQueueTransfer
+ *
+ * @param $transfer
+ */
+function indexDeQueueTransfer($transfer) {
+	global $cfg, $fluxdQmgr;
+	if (!empty($transfer)) {
+		$fluxdQmgr->dequeueTorrent($transfer, $cfg["user"]);
+		header("location: index.php?iid=index");
+		exit();
 	}
 }
 
@@ -179,8 +229,6 @@ function indexProcessDownload($url_upload) {
 						$clientHandler->startClient($file_name, 0, false);
 						break;
 				}
-				// just a sec..
-				sleep(1);
 			}
 			header("location: index.php?iid=index");
 			exit();
@@ -232,8 +280,6 @@ function indexProcessUpload() {
 										$clientHandler->startClient($file_name, 0, false);
 										break;
 								}
-								// just a sec..
-								sleep(1);
 							}
 						} else {
 							$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
@@ -252,61 +298,6 @@ function indexProcessUpload() {
 		header("location: index.php?iid=index&messages=".urlencode($messages));
 		exit();
 	} else {
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-
-/**
- * indexDeleteTransfer
- *
- * @param $transfer
- */
-function indexDeleteTransfer($transfer) {
-	if (!empty($transfer)) {
-		deleteTransfer($transfer, getRequestVar('alias_file'));
-		header("location: index.php?iid=index");
-		exit();
-	}
-}
-
-/**
- * indexStopTransfer
- *
- * @param $transfer
- */
-function indexStopTransfer($transfer) {
-	global $cfg;
-	if (!empty($transfer)) {
-		$return = getRequestVar('return');
-		require_once("inc/classes/ClientHandler.php");
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
-		} else {
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
-		}
-		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
-		if (!empty($return))
-			header("location: index.php?iid=".$return.".php?op=fluxdSettings");
-		else
-			header("location: index.php?iid=index");
-		exit();
-	}
-}
-
-/**
- * indexDeQueueTransfer
- *
- * @param $transfer
- */
-function indexDeQueueTransfer($transfer) {
-	global $cfg, $fluxdQmgr;
-	if (!empty($transfer)) {
-		$fluxdQmgr->dequeueTorrent($transfer, $cfg["user"]);
 		header("location: index.php?iid=index");
 		exit();
 	}
@@ -387,8 +378,6 @@ function processFileUpload() {
 						$clientHandler->startClient($torrent, 0, false);
 						break;
 				}
-				// just a sec..
-				sleep(1);
 			}
 		}
 		if ((isset($messages)) && ($messages == "")) {

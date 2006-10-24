@@ -270,14 +270,10 @@ function cliStartTorrents() {
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->startClient($torrent, 0, false);
-            // just 2 sec..
-            sleep(2);
-            //
-			if ($clientHandler->status == 3) { // hooray
+			if ($clientHandler->status == 3) // hooray
 				echo " done\n";
-			} else { // start failed
+			else // start failed
 				echo "\n" . $clientHandler->messages;
-			}
         }
 	}
 }
@@ -302,14 +298,10 @@ function cliResumeTorrents() {
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->startClient($torrent, 0, false);
-            // just 2 sec..
-            sleep(2);
-            //
-			if ($clientHandler->status == 3) { // hooray
+			if ($clientHandler->status == 3) // hooray
 				echo " done\n";
-			} else { // start failed
+			else // start failed
 				echo "\n" . $clientHandler->messages;
-			}
         }
 	}
 }
@@ -343,8 +335,6 @@ function cliStopTorrent($torrent = "") {
 			$alias = getAliasName($torrent).".stat";
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->stopClient($torrent,$alias);
-			// give the torrent some time to die
-            sleep(2);
 			echo "done\n";
 		}
 	} else {
@@ -386,11 +376,14 @@ function cliDeleteTorrent($torrent = "") {
 			// stop torrent first
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->stopClient($torrent, $alias);
-			// give the torrent some time to die
-			sleep(8);
+			$tRunningFlag = isTransferRunning($torrent);
         }
-        deleteTransfer($torrent, $alias);
-		echo "done\n";
+        if ($tRunningFlag == 0) {
+        	deleteTransfer($torrent, $alias);
+        	echo "done\n";
+        } else {
+        	echo "transfer still up... cannot delete\n";
+        }
 	} else {
 		printUsage();
 	}
@@ -414,12 +407,15 @@ function cliWipeTorrent($torrent = "") {
 			// stop torrent first
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->stopClient($torrent, $alias);
-			// give the torrent some time to die
-			sleep(6);
+			$tRunningFlag = isTransferRunning($torrent);
         }
-        deleteTransfer($torrent);
-        resetTorrentTotals($torrent, true);
-		echo "done\n";
+        if ($tRunningFlag == 0) {
+	        deleteTransfer($torrent);
+	        resetTorrentTotals($torrent, true);
+			echo "done\n";
+        } else {
+        	echo "transfer still up... cannot wipe\n";
+        }		
 	} else {
 		printUsage();
 	}
@@ -506,8 +502,6 @@ function cliWatchDir($tpath = "", $username = "") {
                             // start
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
                             $clientHandler->startClient($file_name, 0, false);
-                            // just 2 secs..
-                            sleep(2);
                             if ($clientHandler->status == 3) // hooray
                                 echo " done\n";
                             else  // start failed
