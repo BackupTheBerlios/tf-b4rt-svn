@@ -398,6 +398,16 @@ class TorrentApp(object):
             else:
                 rawserver.stop()
 
+        # write pid-file
+        try:
+            pidFile = open(self.config['stat_file'] + ".pid", 'w')
+            pidFile.write(str(getpid()).strip() + "\n")
+            pidFile.flush()
+            pidFile.close()
+        except Exception, e:
+            self.logger.error( "Failed to write pid-file", exc_info = e )
+            raise BTFailure(_("Failed to write pid-file."))
+
         # It is safe to addCallback here, because there is only one thread,
         # but even if the code were multi-threaded, core_doneflag has not
         # been passed to anyone.  There is no chance of a race condition
@@ -458,16 +468,6 @@ class TorrentApp(object):
         except Exception, e:
             self.logger.error( "", exc_info = e )
             rawserver.add_task(0, self.core_doneflag.set)
-
-        # write pid-file
-        try:
-            pidFile = open(self.config['stat_file'] + ".pid", 'w')
-            pidFile.write(str(getpid()).strip() + "\n")
-            pidFile.flush()
-            pidFile.close()
-        except Exception, e:
-            self.logger.error( "Failed to write pid-file", exc_info = e )
-            raise BTFailure(_("Failed to write pid-file."))
 
         # always make sure events get processed even if only for
         # shutting down.
