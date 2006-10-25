@@ -364,6 +364,16 @@ def run(autoDie,shareKill,statusFile,userName,params):
                 print get_usage()
                 break
 
+            # write pid-file
+            try:
+                f=open(statusFile+".pid",'w')
+                f.write(str(getpid()).strip() + "\n")
+                f.flush()
+                f.close()
+            except:
+                if __debug__: traceMsg('run - Failed to Create PID file, shutting down')
+                break
+
             myid = createPeerID()
             seed(myid)
 
@@ -409,16 +419,6 @@ def run(autoDie,shareKill,statusFile,userName,params):
                 break
             dow.startRerequester()
             dow.autoStats()
-
-            # write pid-file
-            try:
-                f=open(statusFile+".pid",'w')
-                f.write(str(getpid()).strip() + "\n")
-                f.flush()
-                f.close()
-            except:
-                if __debug__: traceMsg('run - Failed to Create PID file, shutting down')
-                break
 
             if not dow.am_I_finished():
                 h.display(activity = 'connecting to peers')
