@@ -201,6 +201,16 @@ int main(int argc, char ** argv) {
 		goto cleanup;
 	}
 
+	// Create PID file if wanted by user
+	if (tf_pid != NULL) {
+		FILE * pid_file;
+		pid_file = fopen(tf_pid, "w+");
+		if (pid_file != NULL) {
+			fprintf(pid_file, "%d", getpid());
+			fclose(pid_file);
+		}
+	}
+
 	// signal
 	signal(SIGINT, sigHandler);
 
@@ -243,16 +253,6 @@ int main(int argc, char ** argv) {
 
 	// start the torrent
 	tr_torrentStart(tor);
-
-	// Create PID file if wanted by user
-	if (tf_pid != NULL) {
-		FILE * pid_file;
-		pid_file = fopen(tf_pid, "w+");
-		if (pid_file != NULL) {
-			fprintf(pid_file, "%d", getpid());
-			fclose(pid_file);
-		}
-	}
 
 	/* main-loop */
 	while (!mustDie) {
