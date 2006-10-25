@@ -172,7 +172,7 @@ switch ($op) {
 		break;
 
 //******************************************************************************
-// ShowCookies -- show cookies for user
+// ShowCookies
 //******************************************************************************
 	case "showCookies":
 	case "editCookies":
@@ -222,7 +222,7 @@ switch ($op) {
 		break;
 
 //******************************************************************************
-// ShowProfiles -- show cookies for user
+// ShowProfiles
 //******************************************************************************
 	case "showProfiles":
 	case "editProfiles":

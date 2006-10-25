@@ -337,7 +337,7 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 		    $doCheckdir = false;
 		unset($_POST['checkdir']);
 	} else {
-		$doCheckdir = false;	
+		$doCheckdir = false;
 	}
 	// init settings array from params
 	// process and handle all specials and exceptions while doing this.
@@ -411,13 +411,13 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 							$val .= ':';
 							$val .= $dir;
 							$idx++;
-							if ($doCheckdir) 
+							if ($doCheckdir)
 								checkDirectory($dir);
 						}
 						$settings[$key] = trim($val);
 					} else {
 						$settings[$key] = "";
-					}					
+					}
 					break;
 				default: // "normal" key-val-pair
 					$settings[$key] = $value;
@@ -674,6 +674,8 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 	if ($sql != "") {
 		$result = $db->Execute($sql);
 		showError($db,$sql);
+		// flush session-cache
+		unset($_SESSION['cache']);
 	}
 }
 
