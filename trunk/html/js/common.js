@@ -28,8 +28,11 @@ function openServerMonitor() {
 	window.open('index.php?iid=servermon','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=470,height=220')
 }
 function StartTorrent(name_file) {
-	if (actionClick(false))
-		window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=700,height=650')
+	if (actionInProgress) {
+		actionRequestError();
+		return false;
+	}
+	window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=700,height=650')
 }
 function actionClick(showlabel) {
 	if (actionInProgress) {
