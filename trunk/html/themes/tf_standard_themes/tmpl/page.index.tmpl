@@ -8,7 +8,7 @@
 		alert('<tmpl_var name="_WARNING">: <tmpl_var name="drivespace">% <tmpl_var name="_DRIVESPACEUSED">');
 	</script>
 </tmpl_if>
-<body topmargin="8" bgcolor="<tmpl_var name="main_bgcolor">"<tmpl_if name="onLoad"> onLoad="<tmpl_var name="onLoad">"</tmpl_if>>
+<body topmargin="8" bgcolor="<tmpl_var name="main_bgcolor">" onLoad="actionInProgress = false<tmpl_if name="onLoad">; <tmpl_var name="onLoad"></tmpl_if>">
 <div align="center">
 	<tmpl_if name="messages">
 		<table border="1" cellpadding="10" bgcolor="#ff9b9b" width="<tmpl_var name="ui_dim_main_w">"
@@ -32,7 +32,7 @@
 						<td bgcolor="<tmpl_var name="table_header_bg">">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
-									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="ajax_updateState = 0;">
+									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
 									<td>
 										<tmpl_var name="_SELECTFILE">:<br>
 										<table cellpadding="1" cellspacing="1" border="0">
@@ -74,7 +74,7 @@
 									</form>
 								</tr>
 								<tr>
-									<form name="form_url" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="ajax_updateState = 0;">
+									<form name="form_url" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
@@ -96,7 +96,7 @@
 								</tr>
 								<tmpl_if name="enable_wget">
 									<tr>
-									<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="ajax_updateState = 0;">
+									<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
 										<td>
 											<hr>
 											URL for the File to wget :<br>
@@ -109,13 +109,13 @@
 								</tmpl_if>
 								<tmpl_if name="enable_search">
 									<tr>
-									<form name="form_search" action="index.php" method="get" onsubmit="ajax_updateState = 0;">
+									<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
 										<input type="hidden" name="iid" value="torrentSearch">
 										<td>
 											<hr>
 											Torrent <tmpl_var name="_SEARCH">:<br>
 											<input type="text" name="searchterm" size="40" maxlength="50">
-												<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="ajax_updateState = 0; this.form.submit();"</tmpl_if> STYLE="width: 125px">
+												<select name="searchEngine" style="width: 125px">
 												<tmpl_loop name="Engine_List">
 													<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
 												</tmpl_loop>
@@ -291,7 +291,7 @@
 					</tr>
 				</tmpl_if>
 			</table>
-		<form action="dispatcher.php" method="POST" onsubmit="ajax_updateState = 0;">
+		<form action="dispatcher.php" method="POST" onsubmit="return actionSubmit()">
 			<div id="transferList"><tmpl_include name="inc.transferList.tmpl"></div>
 			<table bgcolor="<tmpl_var name="table_data_bg">" width="100%" bordercolor="<tmpl_var name="table_border_dk">" border="0" cellpadding=3 cellspacing=0>
 				<tr>
@@ -337,9 +337,9 @@
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="dispatcher.php?action=bulkStart" onclick="return confirm('Start All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkstart.gif" width="16" height="16" border="0" title="Start All Torrents"></a>
-														<a href="dispatcher.php?action=bulkResume" onclick="return confirm('Resume All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" border="0" title="Resume All Torrents"></a>
-														<a href="dispatcher.php?action=bulkStop" onclick="return confirm('Stop All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="Stop All Torrents"></a>
+														<a href="dispatcher.php?action=bulkStart" onclick="return actionConfirm('Start All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkstart.gif" width="16" height="16" border="0" title="Start All Torrents"></a>
+														<a href="dispatcher.php?action=bulkResume" onclick="return actionConfirm('Resume All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" border="0" title="Resume All Torrents"></a>
+														<a href="dispatcher.php?action=bulkStop" onclick="return actionConfirm('Stop All Torrents ?')"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="Stop All Torrents"></a>
 													</td>
 												</tmpl_if>
 												<tmpl_if name="enable_multiops">
@@ -359,7 +359,7 @@
 															<option value="transferWipe" style="background-color: #DDAAAA">Wipe [BTM]</option>
 														</select>
 														<input type="submit" value="Go">
-														<input type="checkbox" name="bulkBox" onclick="ajax_updateState = 0; bulkCheck(this);">
+														<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);">
 													</td>
 												</tmpl_if>
 											</tr>
@@ -368,29 +368,29 @@
 								</div>
 								<div align="center" class="tiny">
 									<tmpl_if name="page_refresh">
-										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=0" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_PAGEWILLREFRESH"> <span id='span_refresh'><tmpl_var name="page_refresh"></span> <tmpl_var name="_SECONDS">
 										</a>
 										<br>
 									<tmpl_else>
-										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=1" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_meta_refresh&val=1" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_TURNONREFRESH">
 										</a>
 										<br>
 									</tmpl_if>
 									<tmpl_if name="index_ajax_update">
-										<a href="dispatcher.php?action=set&key=index_ajax_update&val=0" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_ajax_update&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<span id='span_update'>Next AJAX-Update in <tmpl_var name="index_ajax_update"> seconds</span>
 										</a>
 										<br>
 									<tmpl_else>
-										<a href="dispatcher.php?action=set&key=index_ajax_update&val=1" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=index_ajax_update&val=1" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											Turn ON AJAX-Update
 										</a>
 										<br>
 									</tmpl_if>
 									<tmpl_if name="onLoad">
-										<a href="dispatcher.php?action=set&key=_all_&val=0" style="font-size:10px; text-decoration:none;">
+										<a href="dispatcher.php?action=set&key=_all_&val=0" onclick="return actionClick(true)" style="font-size:10px; text-decoration:none;">
 											<tmpl_var name="_TURNOFFREFRESH"> AND AJAX-Update
 										</a>
 										<br>
@@ -471,5 +471,6 @@
 	</tr>
 	</table>
 </div>
+<div id="action_in_progress" style="display: none;">Processing Request...</div>
 </body>
 </html>

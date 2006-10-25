@@ -91,7 +91,7 @@ function createTorrentTornado() {
 	// Set the target torrent field
 	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
 	// Set to never timeout for large torrents
-	set_time_limit(0);
+	@set_time_limit(0);
 	// Let's see how long this takes...
 	$time_start = microtime(true);
 	// Execute the command
@@ -179,11 +179,11 @@ function createTorrentMainline() {
 	// Set the target torrent field
 	$command .= " --target ".escapeshellarg($cfg["transfer_file_path"].$tfile);
 	// tracker (i dont know...)
-	$command .= " ".escapeshellarg($tracker_name);	
+	$command .= " ".escapeshellarg($tracker_name);
 	// input
 	$command .= " ".escapeshellarg($cfg["path"].$path);
 	// Set to never timeout for large torrents
-	set_time_limit(0);
+	@set_time_limit(0);
 	// Let's see how long this takes...
 	$time_start = microtime(true);
 	// Execute the command

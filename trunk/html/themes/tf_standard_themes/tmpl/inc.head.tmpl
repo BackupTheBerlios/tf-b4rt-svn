@@ -13,18 +13,12 @@
 	<tmpl_if name="enable_sorttable">
 		<script src="js/sorttable.js" type="text/javascript"></script>
 		<style type="text/css">
-			table.sortable a.sortheader {
-				color: white;
-				text-decoration: none;
-				font-weight: bold;
-			}
-			table.sortable span.sortarrow {
-				color: white;
-				text-decoration: none;
-			}
+			table.sortable a.sortheader { color: white; text-decoration: none; font-weight: bold; }
+			table.sortable span.sortarrow { color: white; text-decoration: none; }
 		</style>
 	</tmpl_if>
 	<style>
 		form {margin: 0px; padding: 0px; display: inline;}
+		#action_in_progress { background: <tmpl_var name="table_header_bg">; color: white; text-align: center; font-weight: bold; font-size: 18pt; padding: 3px; width: 100%; position: fixed; top: 0; left: 0; }
 	</style>
 </head>
