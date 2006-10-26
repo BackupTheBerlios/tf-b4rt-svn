@@ -127,8 +127,8 @@ if (!(cacheIsSet($currentUser))) {
 	// load language
 	loadLanguageFile($cfg["language_file"]);
 
-	// add cfg-array to session-cache
-	$_SESSION['cache'][$currentUser] = $cfg;
+	// set cache
+	cacheSet($currentUser);
 
 	// prune db
 	PruneDB();
