@@ -77,6 +77,12 @@ $userIdCount = count($userIds);
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
 define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 
+// cache
+require_once('inc/main.cache.php');
+
+// core functions
+require_once('inc/functions/functions.core.php');
+
 // stats-functions
 require_once('inc/functions/functions.stats.php');
 

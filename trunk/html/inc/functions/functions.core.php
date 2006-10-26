@@ -21,48 +21,6 @@
 *******************************************************************************/
 
 /**
- * check if cache set
- *
- * @param $username
- * @return boolean
- */
-function cacheIsSet($username) {
-	return isset($_SESSION['cache'][$username]);
-}
-
-/**
- * inits the cache
- *
- * @param $username
- */
-function cacheInit($username) {
-	global $cfg;
-	$cfg = $_SESSION['cache'][$username];
-}
-
-/**
- * set the cache
- *
- * @param $username
- */
-function cacheSet($username) {
-	global $cfg;
-	$_SESSION['cache'][$username] = $cfg;
-}
-
-/**
- * flush the cache
- *
- * @param $username
- */
-function cacheFlush($username = "") {
-	if (empty($username))
-		unset($_SESSION['cache']);
-	else
-		unset($_SESSION['cache'][$username]);
-}
-
-/**
  * template-factory.
  *
  * @param $theme

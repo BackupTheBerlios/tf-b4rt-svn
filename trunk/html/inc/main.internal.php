@@ -23,13 +23,15 @@
 // start session
 @session_start();
 
-// core functions
-require_once('inc/functions/functions.core.php');
+// cache
+require_once('inc/main.cache.php');
 
 // init
 if (isset($_SESSION['user'])) {
 	$currentUser = strtolower($_SESSION['user']);
 	if (cacheIsSet($currentUser)) {
+		// core functions
+		require_once('inc/functions/functions.core.php');
 		// init cache
 		cacheInit($currentUser);
 		// db
