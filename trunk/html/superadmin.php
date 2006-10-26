@@ -465,7 +465,7 @@ if (isset($_REQUEST["f"])) {
 				$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd ".$cfg["docroot"]."bin/fluxd/fluxd.pl version");
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
-				break;				
+				break;
 		}
 		printPage();
 		exit();
@@ -637,13 +637,21 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= 'use this to delete pid-file-leftovers of deleted torrents.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<strong>transmission-cache</strong><br>';
+				$htmlMain .= '<strong>tornado</strong><br>';
+				$htmlMain .= 'use this to delete tornados cache. (stop your tornados first !)<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tornado-clean" border="0"> tornado-clean</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>transmission</strong><br>';
 				$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-cache-clean" border="0"> transmission-cache-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-clean" border="0"> transmission-clean</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>mainline</strong><br>';
+				$htmlMain .= 'use this to delete cache of mainline. (stop your mainlines first !)<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=24"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline-clean" border="0"> mainline-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>template-cache</strong><br>';
 				$htmlMain .= 'use this to delete the template-cache.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> template-cache-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> template-cache-clean</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "21": // Maintenance-Clean : pid-file-clean
@@ -669,8 +677,21 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No pid-leftovers found.<br><br>';
 				break;
-			case "22": // Maintenance-Clean : transmission-cache-clean
-				$htmlTitle = "Maintenance - Clean - transmission-cache";
+			case "22": // Maintenance-Clean : tornado-clean
+				$htmlTitle = "Maintenance - Clean - tornado";
+				$htmlMain .= '<br>';
+				$result = "";
+				$result .= cleanDir($cfg["path"].'.BitTornado/datacache');
+				$result .= cleanDir($cfg["path"].'.BitTornado/torrentcache');
+				$result .= cleanDir($cfg["path"].'.BitTornado/piececache');
+				$result .= cleanDir($cfg["path"].'.BitTornado/icons');
+				if (strlen($result) > 0)
+					$htmlMain .= '<br>Deleted  : <br><pre>'.$result.'</pre><br>';
+				else
+					$htmlMain .= '<br>Nothing found.<br><br>';
+				break;
+			case "23": // Maintenance-Clean : transmission-clean
+				$htmlTitle = "Maintenance - Clean - transmission";
 				$htmlMain .= '<br>';
 				$result = "";
 				$torrents = getTorrentListFromDB();
@@ -695,19 +716,23 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No cache-leftovers found.<br><br>';
 				break;
-			case "23": // Maintenance-Clean :template-cache-clean
-				$htmlTitle = "Maintenance - Clean - template-cache";
+			case "24": // Maintenance-Clean : mainline-clean
+				$htmlTitle = "Maintenance - Clean - mainline";
 				$htmlMain .= '<br>';
 				$result = "";
-				if ($dirHandle = @opendir($cfg["path"].'.templateCache')) {
-					while (false !== ($file = readdir($dirHandle))) {
-						if ((substr($file, 0, 1)) != ".") {
-							$result .= $file."\n";
-							@unlink($cfg["path"].'.templateCache/'.$file);
-						}
-					}
-					closedir($dirHandle);
-				}
+				$result .= cleanDir($cfg["path"].'.bittorrent/console/resume');
+				$result .= cleanDir($cfg["path"].'.bittorrent/console/metainfo');
+				$result .= cleanDir($cfg["path"].'.bittorrent/console/torrents');
+				$result .= cleanDir($cfg["path"].'.bittorrent/mutex');
+				if (strlen($result) > 0)
+					$htmlMain .= '<br>Deleted  : <br><pre>'.$result.'</pre><br>';
+				else
+					$htmlMain .= '<br>Nothing found.<br><br>';
+				break;
+			case "25": // Maintenance-Clean :template-cache-clean
+				$htmlTitle = "Maintenance - Clean - template-cache";
+				$htmlMain .= '<br>';
+				$result = cleanDir($cfg["path"].'.templateCache');
 				if (strlen($result) > 0)
 					$htmlMain .= '<br>Deleted compiled templates : <br><pre>'.$result.'</pre><br>';
 				else
@@ -1088,7 +1113,7 @@ function buildPage($action) {
 				$htmlMain .= ' | ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=6">db-debug</a>';
 				$htmlMain .= ' | ';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?f=9">version</a>';				
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=9">version</a>';
 			}
 			$htmlMain .= '</td><td align="right"><strong>fluxd</strong>';
 			$htmlMain .= '</tr></table>';
@@ -1334,16 +1359,16 @@ function getDataFromUrl($url) {
  * @return database-connection or false on error
  */
 function getAdoConnection() {
-	global $cfg;	
+	global $cfg;
 	// create ado-object
     $db = &ADONewConnection($cfg["db_type"]);
     // connect
     @ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-    // check for error	
+    // check for error
     if ($db->ErrorNo() != 0)
-    	return false;    
+    	return false;
     // return db-connection
-	return $db;	
+	return $db;
 }
 
 /**
@@ -1446,6 +1471,31 @@ function getReleaseList() {
 		$retVal .= '</table>';
 	}
 	return $retVal;
+}
+
+/**
+ * cleans a dir (deletes all files)
+ *
+ * @param $dir
+ * @return string with deleted files
+ */
+function cleanDir($dir) {
+	if (((strlen($dir) > 0)) && (substr($dir, -1 ) != "/"))
+		$dir .= "/";
+	$result = "";
+	$dirHandle = false;
+	$dirHandle = @opendir($dir);
+	if ($dirHandle === false) return $result;
+	while (false !== ($file = @readdir($dirHandle))) {
+		if ((@is_file($dir.$file)) && ((substr($file, 0, 1)) != ".")) {
+			if (@unlink($dir.$file) === true)
+				$result .= $file."\n";
+			else
+				$result .= "ERROR : ".$file."\n";
+		}
+	}
+	@closedir($dirHandle);
+	return $result;
 }
 
 /**
