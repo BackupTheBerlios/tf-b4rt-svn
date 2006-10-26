@@ -638,7 +638,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>tornado</strong><br>';
-				$htmlMain .= 'use this to delete tornados cache. (stop your tornados first !)<br>';
+				$htmlMain .= 'use this to delete the cache of tornado. (stop your tornados first !)<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tornado-clean" border="0"> tornado-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmission</strong><br>';
@@ -646,7 +646,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-clean" border="0"> transmission-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>mainline</strong><br>';
-				$htmlMain .= 'use this to delete cache of mainline. (stop your mainlines first !)<br>';
+				$htmlMain .= 'use this to delete the cache of mainline. (stop your mainlines first !)<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=24"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline-clean" border="0"> mainline-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>template-cache</strong><br>';

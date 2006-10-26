@@ -17,7 +17,13 @@ function mytrim(value) {
  */
 function addMoveEntry () {
     var val = mytrim(document.theForm.category.value);
- 	if (val != "") {
+ 	if (val == "") {
+ 		alert("Please enter a Directory first!");
+ 		return false;
+ 	} else if (val.indexOf('/') != 0) {
+		alert("Directory must be absolute !");
+		return false;
+ 	} else {
  	 	for (var i = 0; i < document.theForm.categorylist.options.length; i++) {
 	    	if ((mytrim(document.theForm.categorylist.options[i].text)) == val) {
 	    		alert("Move-dir already exists");
@@ -26,7 +32,7 @@ function addMoveEntry () {
 	    	if ((mytrim(document.theForm.categorylist.options[i].text)) == val + "/") {
 	    		alert("Move-dir already exists");
 	    		return false;
-	    	}	    	
+	    	}
 	    }
 	    var catliststr = document.theForm.move_paths;
 	    var catliste = document.theForm.categorylist;
@@ -43,9 +49,7 @@ function addMoveEntry () {
         	catliststr.value = newentry.text;
         else
         	catliststr.value = catliststr.value + ":" + newentry.text;
-  	} else {
-		alert("Please enter a Directory first!");
-	}
+  	}
 }
 
 /**
