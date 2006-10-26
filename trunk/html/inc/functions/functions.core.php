@@ -21,6 +21,41 @@
 *******************************************************************************/
 
 /**
+ * check if cache set
+ *
+ * @return boolean
+ */
+function cacheIsSet($username) {
+	return isset($_SESSION['cache'][$username]);
+}
+
+/**
+ * inits the cache
+ */
+function cacheInit() {
+}
+
+/**
+ * set the cache
+ *
+ * @param $configArray
+ */
+function cacheSet($configArray) {
+}
+
+/**
+ * flush the cache
+ *
+ * @param $username
+ */
+function cacheFlush($username = "") {
+	if (empty($username))
+		unset($_SESSION['cache']);
+	else
+		unset($_SESSION['cache'][$username]);
+}
+
+/**
  * template-factory.
  *
  * @param $theme

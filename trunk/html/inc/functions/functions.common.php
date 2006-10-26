@@ -468,7 +468,7 @@ function loadSettings($dbTable) {
 function insertSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
-	unset($_SESSION['cache']);
+	cacheFlush();
     if (is_array($value))
         $update_value = serialize($value);
     else
@@ -493,7 +493,7 @@ function insertSetting($dbTable, $key, $value) {
 function updateSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
-	unset($_SESSION['cache']);
+	cacheFlush();
     $update_value = $value;
 	if (is_array($value))
         $update_value = serialize($value);
@@ -570,7 +570,7 @@ function insertUserSettingPair($uid,$key,$value) {
 			return true;
 	}
 	// flush session-cache
-	unset($_SESSION['cache'][$cfg["user"]]);
+	cacheFlush($cfg["user"]);
 	$sql = "INSERT INTO tf_settings_user VALUES ('".$uid."', '".$key."', '".$update_value."')";
 	$result = $db->Execute($sql);
 	showError($db,$sql);
@@ -589,7 +589,7 @@ function deleteUserSettings($uid) {
 		return false;
 	global $db;
 	// flush session-cache
-	unset($_SESSION['cache'][$cfg["user"]]);
+	cacheFlush($cfg["user"]);
 	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
 	$db->Execute($sql);
 		showError($db, $sql);
@@ -675,7 +675,7 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 		$result = $db->Execute($sql);
 		showError($db,$sql);
 		// flush session-cache
-		unset($_SESSION['cache']);
+		cacheFlush($cfg["user"]);
 	}
 }
 

@@ -23,14 +23,15 @@
 // start session
 @session_start();
 
+// core functions
+require_once('inc/functions/functions.core.php');
+
 // init
 if (isset($_SESSION['user'])) {
 	$currentUser = strtolower($_SESSION['user']);
 	if (isset($_SESSION['cache'][$currentUser])) {
 		// set cfg-array from session-cache
 		$cfg = $_SESSION['cache'][$currentUser];
-		// core functions
-		require_once('inc/functions/functions.core.php');
 		// db
 		require_once('inc/db.php');
 		// initialize database

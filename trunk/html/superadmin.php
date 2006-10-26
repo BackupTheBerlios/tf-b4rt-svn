@@ -1393,6 +1393,7 @@ function getAdoConnection() {
  * @return true or function exits with error
  */
 function setWebappLock($lock) {
+	global $cfg;
 	// get ado-connection
 	$dbCon = getAdoConnection();
 	if (!$dbCon) {
@@ -1400,8 +1401,8 @@ function setWebappLock($lock) {
 	} else {
 		$dbCon->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
 		// flush session-cache
-		unset($_SESSION['cache']);
-		if($dbCon->ErrorNo() == 0) {
+		cacheFlush();
+		if ($dbCon->ErrorNo() == 0) {
 			// close ado-connection
 			$dbCon->Close();
 			// return
