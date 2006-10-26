@@ -54,7 +54,7 @@ for ($i = 1; $i <= 31 ; $i++) {
 	);
 }
 $tmpl->setloop('month_list', $month_list);
-$tmpl->setvar('SuperAdminLink', getSuperAdminLink('?m=41','<font class="adminlink">reset stats</font></a>'));
+$tmpl->setvar('SuperAdminLink', getSuperAdminLink('?m=42','<font class="adminlink">reset stats</font></a>'));
 //
 tmplSetTitleBar("Administration - Xfer Settings");
 tmplSetAdminMenu();

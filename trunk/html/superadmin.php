@@ -757,12 +757,27 @@ if (isset($_REQUEST["m"])) {
 			case "4": // Maintenance : Reset
 				$htmlTitle = "Maintenance - Reset";
 				$htmlMain .= '<br>';
+				$htmlMain .= '<strong>torrent-totals</strong><br>';
+				$htmlMain .= 'use this to reset the torrent-totals.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="torrent-totals" border="0"> torrent-totals-reset</a>';
+				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>xfer-stats</strong><br>';
 				$htmlMain .= 'use this to reset the xfer-stats.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=42"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "41": // Maintenance : Reset - xfer
+			case "41": // Maintenance : Reset - torrent-totals
+				$htmlTitle = "Maintenance - Reset - torrent-totals";
+				$htmlMain .= '<br>';
+				$htmlMain .= 'Reset of torrent-totals';
+				$result = resetTorentTotals();
+				if ($result === true)
+					$htmlMain .= ' <font color="green">done.</font>';
+				else
+					$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
+				$htmlMain .= '<br><br>';
+				break;
+			case "42": // Maintenance : Reset - xfer
 				$htmlTitle = "Maintenance - Reset - xfer";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Reset of xfer-stats';
@@ -1387,6 +1402,32 @@ function setWebappLock($lock) {
 		// flush session-cache
 		unset($_SESSION['cache']);
 		if($dbCon->ErrorNo() == 0) {
+			// close ado-connection
+			$dbCon->Close();
+			// return
+			return true;
+		} else { // there was an error
+			// close ado-connection
+			$dbCon->Close();
+			// return error
+			return $dbCon->ErrorMsg();
+		}
+	}
+}
+
+/**
+ * reset Torent-Totals
+ *
+ * @return true or function exits with error
+ */
+function resetTorentTotals() {
+	// get ado-connection
+	$dbCon = getAdoConnection();
+	if (!$dbCon) {
+		return $dbCon->ErrorMsg();
+	} else {
+		$dbCon->Execute("DELETE FROM tf_torrent_totals");
+		if ($dbCon->ErrorNo() == 0) {
 			// close ado-connection
 			$dbCon->Close();
 			// return
