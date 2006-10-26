@@ -100,8 +100,9 @@ switch ($cfg['stats_enable_public']) {
 		// xfer functions
 		if ($cfg['enable_xfer'] == 1)
 			require_once('inc/functions/functions.xfer.php');
-		// load default-language
-		loadLanguageFile($cfg["default_language"]);
+		// load default-language if cache not set
+		if (!(cacheIsSet($_SESSION['user'])))
+			loadLanguageFile($cfg["default_language"]);
 		// public stats... show all .. we set the user to superadmin
 		$superAdm = GetSuperAdmin();
 		if ((isset($superAdm)) && ($superAdm != "")) {
