@@ -25,10 +25,12 @@ System Requirements
    enabled. Socket-Support is required for fluxd.
    (http://www.php.net)
 
--- Python 2.3 or higher.
+-- Python 2.2 or higher for BitTornado and Python 2.3 or 
+   higher for Mainline (BitTorrent).
    (http://www.python.org)
 
--- Perl 5.6 or higher for fluxd + fluxpoller.pl
+-- Perl 5.6 or higher for fluxd, tfrss.pl, ttools.pl and
+   fluxpoller.pl
    (http://www.perl.org)
 
 -- Safe Mode must be turned off.
@@ -124,14 +126,14 @@ Manual Installation
 
 
 -----------------------------------------------------------------
-Upgrade from TorrentFlux 2.1-b4rt-95 with "upgrade.php"
+Upgrade from TorrentFlux 2.1-b4rt-9x with "upgrade.php"
 -----------------------------------------------------------------
 
 1. If QueueManager is running dequeue all torrents and stop it.
 
 2. Stop all transfers.
 
-3. Delete content of docroot of the v95-installation. (recursive)
+3. Delete content of docroot of the v9x-installation. (recursive)
 
 4. Untar the package into a directory then copy the contents of
    the "html" folder into your web site directory.
@@ -150,8 +152,8 @@ Upgrade from TorrentFlux 2.1-b4rt-95 with "upgrade.php"
 6. ensure the dir "inc/config/" in your torrentflux-docroot is
    writable by your webserver-user.
 
-7. copy the file "upgrade.php" from the dir "upgrade/v95_1.0/" to
-   your torrentflux-docroot.
+7. copy the file "upgrade.php" from the dir "upgrade/v9x_1.0/" to
+   your torrentflux-docroot. choose the appropriate version. 
 
 8. open the just copied file "upgrade.php" in a browser and
    complete it step by step.
@@ -161,14 +163,14 @@ Upgrade from TorrentFlux 2.1-b4rt-95 with "upgrade.php"
 
 
 -----------------------------------------------------------------
-Manual Upgrade from TorrentFlux 2.1-b4rt-95
+Manual Upgrade from TorrentFlux 2.1-b4rt-96
 -----------------------------------------------------------------
 
 1. If QueueManager is running dequeue all torrents and stop it.
 
 2. Stop all transfers.
 
-3. Delete content of docroot of the v95-installation. (recursive)
+3. Delete content of docroot of the v96-installation. (recursive)
 
 4. Untar the package into a directory then copy the contents of
    the "html" folder into your web site directory.
@@ -179,12 +181,12 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-95
    You may specify the type of the database you want to use in
    the file "config.db.php", but the examples here use MySQL.
 
-   "mysql_update_tf-b4rt-95.to.torrentflux-b4rt-1.0.sql"
+   "mysql_update_tf-b4rt-96.to.torrentflux-b4rt-1.0.sql"
    contains the commands to update the table structure and the
    default data.
    Import the script into your torrentflux database.
 
-   mysql torrentflux < mysql_update_tf-b4rt-95.to.torrentflux-b4rt-1.0.sql
+   mysql torrentflux < mysql_update_tf-b4rt-96.to.torrentflux-b4rt-1.0.sql
    Or load the script with PHPMyAdmin (web interface)
 
 6. rename the file "config.db.php.dist" in the dir "inc/config/"
