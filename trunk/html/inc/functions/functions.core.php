@@ -23,6 +23,7 @@
 /**
  * check if cache set
  *
+ * @param $username
  * @return boolean
  */
 function cacheIsSet($username) {
@@ -31,19 +32,22 @@ function cacheIsSet($username) {
 
 /**
  * inits the cache
+ *
+ * @param $username
  */
-function cacheInit() {
+function cacheInit($username) {
 	global $cfg;
+	$cfg = $_SESSION['cache'][$username];
 }
 
 /**
  * set the cache
  *
  * @param $username
- * @param $configArray
  */
-function cacheSet($username, $configArray) {
-	$_SESSION['cache'][$username] = $configArray;
+function cacheSet($username) {
+	global $cfg;
+	$_SESSION['cache'][$username] = $cfg;
 }
 
 /**

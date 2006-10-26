@@ -82,7 +82,7 @@ require_once('inc/functions/functions.stats.php');
 
 // config
 if ((isset($_SESSION['user'])) && (cacheIsSet($_SESSION['user']))) {
-	$cfg = $_SESSION['cache'][$_SESSION['user']];
+	cacheInit($_SESSION['user']);
 } else {
 	// main.core
 	require_once('inc/main.core.php');

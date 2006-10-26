@@ -30,8 +30,8 @@ require_once('inc/functions/functions.core.php');
 if (isset($_SESSION['user'])) {
 	$currentUser = strtolower($_SESSION['user']);
 	if (cacheIsSet($currentUser)) {
-		// set cfg-array from session-cache
-		$cfg = $_SESSION['cache'][$currentUser];
+		// init cache
+		cacheInit($currentUser);
 		// db
 		require_once('inc/db.php');
 		// initialize database
