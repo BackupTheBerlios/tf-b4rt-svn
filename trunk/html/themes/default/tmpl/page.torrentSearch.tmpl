@@ -3,9 +3,9 @@
 <style>.tinyRow {font-size:2px;height:2px;}</style>
 <a name="top"></a>
 	<div align="center">
-		<table border=1 cellspacing=0 width="760" cellpadding=5>
+		<table border=0 cellspacing=0 width="760" cellpadding=5>
 			<tr>
-				<td bgcolor="#d6dfe6">
+				<td bgcolor="#A2BED4">
 					<form id="searchForm" name="searchForm" action="index.php" method="get">
 						<input type="hidden" name="iid" value="torrentSearch">
 						<tmpl_var name="_SEARCH"> Torrents:<br>
@@ -29,7 +29,7 @@
 					</form>
 					* Click on Torrent Links to add them to the Torrent Download List
 				</td>
-				<td bgcolor="#d6dfe6" align=right valign=top>Visit:<br>
+				<td bgcolor="#A2BED4" align=right valign=top>Visit:<br>
 					<tmpl_loop name="buildSearchEngineArray">
 						<a href="http://<tmpl_var name="hreflink">" target="_blank">
 							<tmpl_if name="selected">
@@ -55,7 +55,7 @@
 					</tr>
 					<tmpl_if name="no_empty_genre">
 						<tmpl_if name="count_subCats">
-							<tr bgcolor="#d6dfe6">
+							<tr bgcolor="#A2BED4">
 								<td colspan=6>
 									<form method=get id="subLatest" name="subLatest" action=index.php>
 										<input type=hidden name="iid" value="torrentSearch">

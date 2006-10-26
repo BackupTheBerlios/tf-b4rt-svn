@@ -2,9 +2,9 @@
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_if name="mid">
 	<a href="index.php?iid=readmsg"><img src="themes/default/images/up_dir.gif" width=16 height=16 title="<tmpl_var name="_RETURNTOMESSAGES">" border=0><tmpl_var name="_RETURNTOMESSAGES"></a><br>
-	<table width="740" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0">
+	<table width="740" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0">
 		<tr>
-			<td bgcolor="#d6dfe6" colspan=2>
+			<td bgcolor="#A2BED4" colspan=2>
 				<table width="100%" cellpadding=0 cellspacing=0 border=0>
 					<tr>
 						<td>
@@ -24,7 +24,7 @@
 			<td colspan=2><tmpl_var name="_DATE">: <strong><tmpl_var name="date1"></strong></td>
 		</tr>
 		</tr>
-			<td colspan=2 bgcolor="#EEEEEE"><tmpl_var name="_MESSAGE">:<blockquote><strong><tmpl_var name="message"></strong></blockquote></td>
+			<td colspan=2 bgcolor="#A2BED4"><tmpl_var name="_MESSAGE">:<blockquote><strong><tmpl_var name="message"></strong></blockquote></td>
 		</tr>
 	</table>
 <tmpl_else>
@@ -42,12 +42,12 @@
 			</form>
 		</table>
 	</div>
-	<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
+	<table width="760" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
 		<tr>
-			<td bgcolor="#d6dfe6" width="20%"><div align=center class="title"><tmpl_var name="_FROM"></div></td>
-			<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_MESSAGE"></div></td>
-			<td bgcolor="#d6dfe6" width="20%"><div align=center class="title"><tmpl_var name="_DATE"></div></td>
-			<td bgcolor="#d6dfe6" width="10%"><div align=center class="title"><tmpl_var name="_ADMIN"></div></td>
+			<td bgcolor="#A2BED4" width="20%"><div align=center class="title"><tmpl_var name="_FROM"></div></td>
+			<td bgcolor="#A2BED4"><div align=center class="title"><tmpl_var name="_MESSAGE"></div></td>
+			<td bgcolor="#A2BED4" width="20%"><div align=center class="title"><tmpl_var name="_DATE"></div></td>
+			<td bgcolor="#A2BED4" width="10%"><div align=center class="title"><tmpl_var name="_ADMIN"></div></td>
 		</tr>
 		<tmpl_loop name="message_list">
 			<tr>

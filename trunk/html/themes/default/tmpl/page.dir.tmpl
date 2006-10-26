@@ -27,9 +27,9 @@
 	<tmpl_if name="list">
 		<tmpl_loop name="list">
 			<tmpl_if name="__EVEN__">
-				<tr bgcolor="<tmpl_var name="bgDark">">
-			<tmpl_else>
 				<tr bgcolor="<tmpl_var name="bgLight">">
+			<tmpl_else>
+				<tr bgcolor="<tmpl_var name="bgDark">">
 			</tmpl_if>
 				<tmpl_if name="is_dir" value="1">
 					<td nowrap>
@@ -114,20 +114,20 @@
 			</tr>
 		</tmpl_loop>
 		<input type="hidden" name="action" value="fileDelete">
-		<tr>
+		<tr bgcolor="#A2BED4">
 			<tmpl_if name="enable_dirstats" value="1">
-			<td align="right" colspan="4">
+				<td align="right" colspan="4">
 			<tmpl_else>
-			<td align="right" colspan="2">
+				<td align="right" colspan="2">
 			</tmpl_if>
-				<a href="javascript:document.multidir.submit()" onclick="return confirm('<tmpl_var name="_ABOUTTODELETE"> : Multiple Files')"><img src="themes/default/images/delete_on.gif" title="Delete" border="0" height="16" width="16"></a>
-				<input type="checkbox" onclick="checkCheck(this);" />
-			</td>
+					<a href="javascript:document.multidir.submit()" onclick="return confirm('<tmpl_var name="_ABOUTTODELETE"> : Multiple Files')"><img src="themes/default/images/delete_on.gif" title="Delete" border="0" height="16" width="16"></a>
+					<input type="checkbox" onclick="checkCheck(this);" />
+				</td>
 		</tr>
 	</tmpl_if>
 </form>
 <tmpl_if name="enable_dirstats" value="1">
-	<tr bgcolor="#ececec">
+	<tr bgcolor="#829FB5">
 		<td align="center" colspan="4"><tmpl_var name="_TDDU"> <tmpl_var name="duTotal">B</td>
 	</tr>
 </tmpl_if>

@@ -38,8 +38,8 @@
 		</form>
 	</table>
 </div>
-<table width="760" border=1 bordercolor="#FFFFFF" cellpadding="2" cellspacing="0" bgcolor="#EEEEEE">
-	<tr><td colspan=6 bgcolor="#d6dfe6" background="themes/default/images/bar.gif">
+<table width="760" border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
+	<tr><td colspan=6 bgcolor="#A2BED4" background="themes/default/images/bar.gif">
 		<table width="100%" cellpadding=0 cellspacing=0 border=0><tr><td>
 			<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"><tmpl_var name="_ACTIVITYLOG"> <tmpl_var name="activity_days_to_keep"> <tmpl_var name="_DAYS"> (<tmpl_var name="activity_userdisplay">)</font>
 		</td>
@@ -53,11 +53,11 @@
 		</td></tr></table>
 	</td></tr>
 	<tr>
-		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_USER"></div></td>
-		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_ACTION"></div></td>
-		<td bgcolor="#d6dfe6"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
-		<td bgcolor="#d6dfe6" width="13%"><div align=center class="title"><tmpl_var name="_IP"></div></td>
-		<td bgcolor="#d6dfe6" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
+		<td bgcolor="#A2BED4"><div align=center class="title"><tmpl_var name="_USER"></div></td>
+		<td bgcolor="#A2BED4"><div align=center class="title"><tmpl_var name="_ACTION"></div></td>
+		<td bgcolor="#A2BED4"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
+		<td bgcolor="#A2BED4" width="13%"><div align=center class="title"><tmpl_var name="_IP"></div></td>
+		<td bgcolor="#A2BED4" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
 	</tr>
 	<tmpl_loop name="activity_act_list">
 		<tmpl_if name="activity_act_list">
@@ -79,7 +79,7 @@
 		</tmpl_if>
 	</tmpl_loop>
 	<tmpl_if name="activity_both_set">
-		<tr><td colspan=6 bgcolor="#d6dfe6">
+		<tr><td colspan=6 bgcolor="#A2BED4">
 			<table width="100%" cellpadding=0 cellspacing=0 border=0><tr><td align="left">
 				<tmpl_if name="activity_is_prev">
 					<a href="admin.php?op=showUserActivity&min=<tmpl_var name="activity_prev">&user_id=<tmpl_var name="activity_user">&srchFile=<tmpl_var name="activity_srchFile">&srchAction=<tmpl_var name="activity_srchAction">"><font class="TinyWhite">&lt;&lt;<tmpl_var name="activity_min"> <tmpl_var name="_SHOWPREVIOUS">]</font></a> &nbsp;

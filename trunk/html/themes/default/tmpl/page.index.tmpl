@@ -22,14 +22,14 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="<tmpl_var name="ui_dim_main_w">"
 		<tr>
 			<td>
-				<table border="1" bordercolor="#d6dfe6" cellpadding="4" cellspacing="0" width="100%">
+				<table border="1" bordercolor="#A2BED4" cellpadding="4" cellspacing="0" width="100%">
 					<tr>
 						<td colspan="2" background="themes/default/images/bar.gif">
 							<tmpl_include name="inc.titleBar.tmpl">
 						</td>
 					</tr>
 					<tr>
-						<td bgcolor="#d6dfe6">
+						<td bgcolor="#A2BED4">
 							<table width="100%" cellpadding="1" cellspacing="0" border="0">
 								<tr>
 									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
@@ -127,8 +127,8 @@
 								</tmpl_if>
 						</table>
 					</td>
-					<td bgcolor="#EEEEEE" width="330" valign="top">
-						<table width="100%" cellpadding="1" border="0">
+					<td bgcolor="#A2BED4" width="330" valign="top">
+						<table width="100%" cellpadding="6" border="0">
 							<tr>
 								<tmpl_if name="ui_displaylinks" value="1">
 									<td valign="top">
@@ -143,7 +143,7 @@
 									</td>
 								</tmpl_if>
 								<tmpl_if name="ui_displayusers">
-									<td bgcolor="#EEEEEE" valign="top">
+									<td bgcolor="#A2BED4" valign="top">
 										<table width="100%" cellpadding="0" border="0">
 											<tr>
 										    	<td><img src="themes/default/images/user.gif" width=17 height=14 title="" border=0 align="bottom"></td>
@@ -179,7 +179,7 @@
     								</td>
 								</tmpl_if>
 								<tmpl_if name="enable_goodlookstats">
-									<td bgcolor="#EEEEEE" valign="top">
+									<td bgcolor="#A2BED4" valign="top">
 										<tmpl_if name="settingsHackStats1">
 											<b><tmpl_var name="_DOWNLOADSPEED">:</b><br>
 											<a href="index.php?iid=who"><img src="themes/default/images/download.gif" width="16" height="16" border="0" title="" align="absmiddle"><label id="g_speedDown"><tmpl_var name="settingsHackStats11"></label> kB/s</a><br>
@@ -211,7 +211,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td bgcolor="#EEEEEE" colspan="2" nowrap>
+					<td bgcolor="#A2BED4" colspan="2" nowrap>
 					<div align="center">
 						<font face="Arial" size="2">
 							<a href="index.php?iid=readrss">
@@ -252,7 +252,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td bgcolor="#d6dfe6" colspan="2">
+					<td bgcolor="#A2BED4" colspan="2">
 					<tmpl_if name="drivespacebar_type" value="xfer">
 					    <tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
 					<tmpl_else>
@@ -271,7 +271,7 @@
 					</td>
 				</tr>
 				<tmpl_if name="ui_displaybandwidthbars">
-					<tr><td bgcolor="#d6dfe6" colspan="2">
+					<tr><td bgcolor="#A2BED4" colspan="2">
 						<tmpl_if name="bandwidthbars_type" value="xfer">
 						    <tmpl_include name="inc.bandwidthBars_xfer.tmpl">
 						<tmpl_else>
@@ -281,7 +281,7 @@
 				</tmpl_if>
 				<tmpl_if name="enable_bigboldwarning" value="1">
 					<tr>
-						<td bgcolor="#EEEEEE" colspan="2" nowrap>
+						<td bgcolor="#A2BED4" colspan="2" nowrap>
 							<div align="center">
 								<font face="Arial" size="2" color="red"><strong>
 									Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
