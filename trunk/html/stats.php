@@ -81,7 +81,7 @@ define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 require_once('inc/functions/functions.stats.php');
 
 // config
-if ((isset($_SESSION['user'])) && (isset($_SESSION['cache'][$_SESSION['user']]))) {
+if ((isset($_SESSION['user'])) && (cacheIsSet($_SESSION['user']))) {
 	$cfg = $_SESSION['cache'][$_SESSION['user']];
 } else {
 	// main.core

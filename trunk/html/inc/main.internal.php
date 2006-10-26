@@ -29,7 +29,7 @@ require_once('inc/functions/functions.core.php');
 // init
 if (isset($_SESSION['user'])) {
 	$currentUser = strtolower($_SESSION['user']);
-	if (isset($_SESSION['cache'][$currentUser])) {
+	if (cacheIsSet($currentUser)) {
 		// set cfg-array from session-cache
 		$cfg = $_SESSION['cache'][$currentUser];
 		// db
@@ -85,7 +85,7 @@ if (isAuthenticated() == 1) {
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
 // login-tasks
-if (!(isset($_SESSION['cache'][$currentUser]))) {
+if (!(cacheIsSet($currentUser))) {
 
 	// check for setup.php and upgrade.php
 	if (@file_exists("setup.php") === true)

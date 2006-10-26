@@ -33,14 +33,17 @@ function cacheIsSet($username) {
  * inits the cache
  */
 function cacheInit() {
+	global $cfg;
 }
 
 /**
  * set the cache
  *
+ * @param $username
  * @param $configArray
  */
-function cacheSet($configArray) {
+function cacheSet($username, $configArray) {
+	$_SESSION['cache'][$username] = $configArray;
 }
 
 /**
