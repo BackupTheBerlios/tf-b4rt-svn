@@ -59,6 +59,11 @@ function indexStartTorrent($torrent, $interactive) {
 		// Process setPriority Request.
 		setPriority($torrent);
 	}
+	$spo = getRequestVar('setPriorityOnly');
+	if (!empty($spo)){
+		// This is a setPriorityOnly Request.
+		return 1;
+	}
 	switch ($interactive) {
 		case 0:
 			require_once("inc/classes/ClientHandler.php");
@@ -70,28 +75,23 @@ function indexStartTorrent($torrent, $interactive) {
 			exit();
 			break;
 		case 1:
-			$spo = getRequestVar('setPriorityOnly');
-			if (!empty($spo)){
-				// This is a setPriorityOnly Request.
-			} else {
-				require_once("inc/classes/ClientHandler.php");
-				$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
-				$clientHandler->startClient($torrent, 1, $queueActive);
-				if ($clientHandler->status == 3) { // hooray
-					if (array_key_exists("closeme",$_POST)) {
-						echo '<script  language="JavaScript">';
-						echo ' window.opener.location.reload(true);';
-						echo ' window.close();';
-						echo '</script>';
-					} else {
-						header("location: index.php?iid=index");
-					}
-				} else { // start failed
-					header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
-					exit();
+			require_once("inc/classes/ClientHandler.php");
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
+			$clientHandler->startClient($torrent, 1, $queueActive);
+			if ($clientHandler->status == 3) { // hooray
+				if (array_key_exists("closeme",$_POST)) {
+					echo '<script  language="JavaScript">';
+					echo ' window.opener.location.reload(true);';
+					echo ' window.close();';
+					echo '</script>';
+				} else {
+					header("location: index.php?iid=index");
 				}
+			} else { // start failed
+				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
 				exit();
 			}
+			exit();
 			break;
 	}
 }

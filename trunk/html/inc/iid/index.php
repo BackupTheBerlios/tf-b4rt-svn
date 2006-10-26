@@ -81,6 +81,7 @@ switch ($cfg["enable_home_dirs"]) {
 // some configs
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
+$tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 
 // =============================================================================
 // transfer-list

@@ -152,7 +152,7 @@
 				</tmpl_if>
 				<td nowrap>
 					<div align="center" class="admincell">
-						<a href="index.php?iid=details&torrent=<tmpl_var name="url_entry"><tmpl_if name="transferRunning" value="1">&als=false</tmpl_if>" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" title="<tmpl_var name="_TRANSFERDETAILS">" border="0"></a>
+						<a href="index.php?iid=details&torrent=<tmpl_var name="url_entry"><tmpl_if name="enable_file_priority" value="1">&als=true</tmpl_if>" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" title="<tmpl_var name="_TRANSFERDETAILS">" border="0"></a>
 						<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/datadir.gif" title="<tmpl_var name="datapath">" border="0"></a>
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
@@ -373,7 +373,7 @@
 				</tmpl_if>
 				<td nowrap>
 					<div align="center" class="admincell">
-						<a href="index.php?iid=details&torrent=<tmpl_var name="url_entry"><tmpl_if name="transferRunning" value="1">&als=false</tmpl_if>" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" title="<tmpl_var name="_TRANSFERDETAILS">" border="0"></a>
+						<a href="index.php?iid=details&torrent=<tmpl_var name="url_entry"><tmpl_if name="enable_file_priority" value="1">&als=true</tmpl_if>" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" title="<tmpl_var name="_TRANSFERDETAILS">" border="0"></a>
 						<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/datadir.gif" title="<tmpl_var name="datapath">" border="0"></a>
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">

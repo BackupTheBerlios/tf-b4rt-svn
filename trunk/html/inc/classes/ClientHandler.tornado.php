@@ -84,7 +84,7 @@ class ClientHandlerTornado extends ClientHandler
         if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
             $skipHashCheck = " --check_hashes 0";
         $filePrio = "";
-        if(file_exists($this->cfg["transfer_file_path"].$this->alias.".prio")) {
+        if (file_exists($this->cfg["transfer_file_path"].$this->alias.".prio")) {
             $priolist = explode(',',file_get_contents($this->cfg["transfer_file_path"].$this->alias .".prio"));
             $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
             $filePrio = " --priority ".$priolist;
