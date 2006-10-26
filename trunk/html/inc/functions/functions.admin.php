@@ -563,6 +563,7 @@ function DeleteThisUser($user_id) {
  */
 function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline) {
 	global $db;
+	$user_id = strtolower($user_id);
 	if ($hideOffline == "")
 		$hideOffline = 0;
 	$sql = 'select * from tf_users where user_id = '.$db->qstr($org_user_id);

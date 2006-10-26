@@ -281,21 +281,21 @@ function getCredentials() {
 	// be wrong credentials fetched)
 	if (($cfg['auth_type'] == 2) || ($cfg['auth_type'] == 3)) {
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
-			$retVal['username'] = strtolower($_SERVER['PHP_AUTH_USER']);
+			$retVal['username'] = $_SERVER['PHP_AUTH_USER'];
 			$retVal['password'] = addslashes($_SERVER['PHP_AUTH_PW']);
 			return $retVal;
 		}
 	}
 	// check for http-post/get-supplied credentials
 	if ((isset($_REQUEST['username'])) && (isset($_REQUEST['iamhim']))) {
-		$retVal['username'] = strtolower($_REQUEST['username']);
+		$retVal['username'] = $_REQUEST['username'];
 		$retVal['password'] = addslashes($_REQUEST['iamhim']);
 		return $retVal;
 	}
 	// check for cookie-supplied credentials (only if activated)
 	if ($cfg['auth_type'] == 1) {
 		if ((isset($HTTP_COOKIE_VARS['username'])) && (isset($HTTP_COOKIE_VARS['iamhim']))) {
-			$retVal['username'] = strtolower($HTTP_COOKIE_VARS['username']);
+			$retVal['username'] = $HTTP_COOKIE_VARS['username'];
 			$retVal['password'] = addslashes($HTTP_COOKIE_VARS['iamhim']);
 			return $retVal;
 		}
@@ -2251,10 +2251,7 @@ function resetOwner($file) {
  * @return boolean
  */
 function IsOwner($user, $owner) {
-	$rtnValue = false;
-	if (strtolower($user) == strtolower($owner))
-		$rtnValue = true;
-	return $rtnValue;
+	return (($user) == ($owner));
 }
 
 /**

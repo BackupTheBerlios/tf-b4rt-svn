@@ -196,7 +196,7 @@ function performAuthentication($username = '', $password = '') {
 		showError($db, $sql);
 		$_SESSION['user'] = $username;
 		$_SESSION['uid'] = $uid;
-		$cfg["user"] = strtolower($_SESSION['user']);
+		$cfg["user"] = $_SESSION['user'];
 		$cfg['uid'] = $uid;
 		@session_write_close();
 		return 1;
@@ -230,7 +230,7 @@ function firstLogin($username = '', $password = '') {
 	// This user is first in DB.  Make them super admin.
 	// this is The Super USER, add them to the user table
 	$record = array(
-					'user_id'=>$username,
+					'user_id'=>strtolower($username),
 					'password'=>md5($password),
 					'hits'=>1,
 					'last_visit'=>$create_time,
@@ -730,15 +730,14 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 		while($row = $result->FetchRow())
 		{
 			$rec = array(
-						'to_user' => $row['user_id'],
-						'from_user' => $from_user,
+						'to_user' => strtolower($row['user_id']),
+						'from_user' => strtolower($from_user),
 						'message' => $message,
 						'IsNew' => 1,
 						'ip' => $cfg['ip'],
 						'time' => $create_time,
 						'force_read' => $force_read
 						);
-
 			$sql = $db->GetInsertSql($sTable, $rec);
 			$result2 = $db->Execute($sql);
 			showError($db,$sql);
@@ -746,8 +745,8 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 	} else {
 		// Only Send to one Person
 		$rec = array(
-					'to_user' => $to_user,
-					'from_user' => $from_user,
+					'to_user' => strtolower($to_user),
+					'from_user' => strtolower($from_user),
 					'message' => $message,
 					'IsNew' => 1,
 					'ip' => $cfg['ip'],

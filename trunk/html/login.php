@@ -43,7 +43,7 @@ switch ($cfg['auth_type']) {
 	case 3: /* Basic-Passthru */
 	case 2: /* Basic-Auth */
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
-			$user = strtolower($_SERVER['PHP_AUTH_USER']);
+			$user = $_SERVER['PHP_AUTH_USER'];
 			$iamhim = addslashes($_SERVER['PHP_AUTH_PW']);
 		} else {
 			header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
@@ -53,7 +53,7 @@ switch ($cfg['auth_type']) {
 		}
 		break;
 	case 1: /* Form-Based Auth + "Remember Me" */
-		$user = strtolower(getRequestVar('username'));
+		$user = getRequestVar('username');
 		$iamhim = addslashes(getRequestVar('iamhim'));
 		$check = @$HTTP_COOKIE_VARS["check"];
 		$password = @$HTTP_COOKIE_VARS["iamhim"];
@@ -66,7 +66,7 @@ switch ($cfg['auth_type']) {
 				setcookie("iamhim", $_POST['iamhim'], time()+60*60*24*30);
 		}
 		if(empty($user) && empty($iamhim) && !empty($username) && !empty($password)) {
-			$user = strtolower($username);
+			$user = $username;
 			$iamhim = addslashes($password);
 		}
 		$tmpl->setvar('username', $user);
@@ -75,7 +75,7 @@ switch ($cfg['auth_type']) {
 		break;
 	case 0: /* Form-Based Auth Standard */
 	default:
-		$user = strtolower(getRequestVar('username'));
+		$user = getRequestVar('username');
 		$iamhim = addslashes(getRequestVar('iamhim'));
 		break;
 }
@@ -87,7 +87,7 @@ if(!empty($user) && !empty($iamhim)) {
 	$sql = "SELECT count(*) FROM tf_users";
 	$user_count = $db->GetOne($sql);
 	if($user_count == 0) {
-		firstLogin($user,$iamhim);
+		firstLogin($user, $iamhim);
 		$next_loc = "admin.php?op=serverSettings";
 	}
 	// perform auth
