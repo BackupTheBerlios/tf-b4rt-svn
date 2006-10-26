@@ -819,7 +819,7 @@ function GetLanguages() {
 	$dir = "inc/language/";
 	$handle = opendir($dir);
 	while($entry = readdir($handle)) {
-		if (is_file($dir.$entry) && (strcmp((substr($entry, strlen($entry)-4, 4), ".php") == 0))
+		if (is_file($dir.$entry) && (strcmp(substr($entry, strlen($entry)-4, 4), ".php") == 0))
 			array_push($arLanguages, $entry);
 	}
 	closedir($handle);
