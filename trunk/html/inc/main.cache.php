@@ -20,12 +20,11 @@
 
 *******************************************************************************/
 
-//
-// webapp-cache
-//
-// dont change this unless you know what you are doing.
-// dont use shm on multi-user-installs. it is not supported.
-//
+/*
+  webapp-cache :
+  dont change this unless you know what you are doing.
+  dont use shm on multi-user-installs. it is not supported.
+*/
 
 // no cache
 // require_once('inc/functions/functions.cache.off.php');

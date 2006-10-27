@@ -24,8 +24,7 @@
 define("_WEBAPP_CACHE_SHM_SIZE", 16384);
 
 // shm-id
-//define("_WEBAPP_CACHE_SHM_ID", ftok(__FILE__, 'b'));
-define("_WEBAPP_CACHE_SHM_ID", 0x8457);
+define("_WEBAPP_CACHE_SHM_ID", 0x8457); // ftok(__FILE__, 'b')
 
 /**
  * check if cache set
