@@ -40,6 +40,9 @@ $sql = "DELETE FROM tf_log WHERE user_id=".$db->qstr($cfg["user"])." and action=
 $result = $db->Execute($sql);
 showError($db, $sql);
 
+// flush cache
+cacheFlush($cfg["user"]);
+
 // destroy session
 @session_destroy();
 
