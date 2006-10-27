@@ -1330,6 +1330,8 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('</form>');
 } else {                                                                        // default
 	sendHead();
+	if (is_file(_FILE_DBCONF))
+		send('<p><br><font color="red"><h1>db-config already exists '._FILE_DBCONF.'</h1></font>Delete setup.php if you came here after finishing setup to proceed to login.</p><hr>');
 	send("<h1>"._TITLE."</h1>");
 	send("<p>This script will setup "._NAME."</p>");
 	send("<h2>Next : Database</h2>");
@@ -1470,16 +1472,16 @@ $cfg["db_pcon"] = '.$pcon.'; // Persistent Connection enabled : true/false
  * @return database-connection or false on error
  */
 function getAdoConnection($type, $host, $user, $pass, $name = "") {
-	require_once('inc/lib/adodb/adodb.inc.php');	
+	require_once('inc/lib/adodb/adodb.inc.php');
 	// create ado-object
     $db = &ADONewConnection($type);
     // connect
     @ $db->Connect($host, $user, $pass, $name);
-    // check for error	
+    // check for error
     if ($db->ErrorNo() != 0)
     	return false;
     // return db-connection
-	return $db;	
+	return $db;
 }
 
 /**
