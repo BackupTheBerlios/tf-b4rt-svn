@@ -20,16 +20,22 @@
 
 *******************************************************************************/
 
-// webapp-cache :
 //
-// * off
-// * session
-// * shm
+// webapp-cache
 //
-define("_WEBAPP_CACHE", "session");
+// dont change this unless you know what you are doing.
+// dont use shm on multi-user-installs. it is not supported.
+//
+
+// no cache
+// require_once('inc/functions/functions.cache.off.php');
+
+// session-based cache
+require_once('inc/functions/functions.cache.session.php');
+
+// shared-mem-based cache (NOT for multi-user-installs !)
+// require_once('inc/functions/functions.cache.shm.php');
 
 /******************************************************************************/
-
-require_once('inc/functions/functions.cache.'._WEBAPP_CACHE.'.php');
 
 ?>
