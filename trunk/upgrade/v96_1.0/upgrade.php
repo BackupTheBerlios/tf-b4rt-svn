@@ -22,7 +22,7 @@
 
 // defines
 define('_NAME', 'torrentflux-b4rt');
-define('_UPGRADE_FROM', 'v95');
+define('_UPGRADE_FROM', 'v96');
 define('_UPGRADE_TO', '1.0');
 define('_DEFAULT_PATH', '/usr/local/torrent/');
 define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
@@ -239,8 +239,8 @@ CREATE TABLE tf_trprofiles (
   name VARCHAR(255) NOT NULL default '',
   owner INT(10) NOT NULL default '0',
   public ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
+  rate SMALLINT(4) NOT NULL default '0',
+  drate SMALLINT(4) NOT NULL default '0',
   maxuploads TINYINT(3) unsigned NOT NULL default '0',
   superseeder ENUM('0','1') NOT NULL default '0',
   runtime ENUM('True','False') NOT NULL default 'False',
@@ -266,6 +266,8 @@ CREATE TABLE tf_settings_stats (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM");
 // ALTER
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents CHANGE rate rate SMALLINT(4) DEFAULT '0' NOT NULL");
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents CHANGE drate drate SMALLINT(4) DEFAULT '0' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL");
 
