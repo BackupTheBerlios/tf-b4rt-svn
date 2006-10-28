@@ -216,10 +216,8 @@ sub cactiPrintConnections {
 sub mrtgPrintUptime {
 	# uptime data for mrtg
 	my $uptime = `uptime`;
-	$uptime =~ s/^ //g;
-	my @uptimeAry = split(/\s/, $uptime, 6);
-	(my $timeLabel = $uptimeAry[4]) =~ s/,.*//;
-	print $uptimeAry[3]." ".$timeLabel."\n";
+    $uptime =~ /up (.*?), (.*?), /;
+    print "$1, $2\n";
 }
 
 #------------------------------------------------------------------------------#
@@ -361,9 +359,9 @@ types:
 
 Examples:
 
-$PROG.$EXTENSION traffic /usr/local/torrent
-$PROG.$EXTENSION traffic /usr/local/torrent mrtg
-$PROG.$EXTENSION traffic /usr/local/torrent cacti
+$PROG.$EXTENSION traffic /usr/local/torrentflux
+$PROG.$EXTENSION traffic /usr/local/torrentflux mrtg
+$PROG.$EXTENSION traffic /usr/local/torrentflux cacti
 
 $PROG.$EXTENSION connections
 $PROG.$EXTENSION connections mrtg
