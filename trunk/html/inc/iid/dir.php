@@ -47,8 +47,11 @@ $chmod = getRequestVar('chmod');
 $del = getRequestVar('del');
 $down = getRequestVar('down');
 $tar = getRequestVar('tar');
-$dir = stripslashes(urldecode(getRequestVar('dir')));
 $multidel = getRequestVar('multidel');
+$dir = urldecode(getRequestVar('dir'));
+if (preg_match("/\\\/", $dir)) $dir = "";
+if (preg_match("/\.\.\//", $dir)) $dir = "";
+$dir = stripslashes($dir);
 
 /*******************************************************************************
  * chmod
@@ -159,12 +162,8 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 
 // check dir-var
 if (isset($dir)) {
-	if ($dir != "") {
-		if (ereg("(\.\.)", $dir))
-			$dir = "";
-		else
-			$dir = $dir."/";
-	}
+	if ($dir != "")
+		$dir = $dir."/";
 } else {
 	$dir = "";
 }
