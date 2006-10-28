@@ -34,6 +34,9 @@ if (@file_exists("setup.php") === true) {
 	exit();
 }
 
+// cache
+require_once('inc/main.cache.php');
+
 // main.core
 require_once('inc/main.core.php');
 
