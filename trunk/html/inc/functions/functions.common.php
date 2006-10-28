@@ -247,21 +247,68 @@ function firstLogin($username = '', $password = '') {
 	showError($db,$sql);
 	// Test and setup some paths for the TF settings
 	// path
-	if (is_dir($cfg["path"]))
+	$tfPath = $cfg["path"];
+	if (!is_dir($cfg["path"]))
 		$tfPath = getcwd() . "/downloads/";
-	else
-		$tfPath = $cfg["path"];
-	// python
-	$pythonCmd = $cfg["pythonCmd"];
-	if (! is_file($cfg["pythonCmd"])) {
-		$pythonCmd = trim(shell_exec("which python"));
-		if ($pythonCmd == "")
-			$pythonCmd = $cfg["pythonCmd"];
-	}
+	// settings
 	$settings = array(
-						"pythonCmd" => $pythonCmd,
-						"path" => $tfPath
+						"path" => $tfPath,
+						"pythonCmd" => $cfg["pythonCmd"],
+						"perlCmd" => $cfg["perlCmd"],
+						"bin_php" => $cfg["bin_php"],
+						"bin_grep" => $cfg["bin_grep"],
+						"bin_awk" => $cfg["bin_awk"],
+						"bin_du" => $cfg["bin_du"],
+						"bin_wget" => $cfg["bin_wget"],
+						"bin_unrar" => $cfg["bin_unrar"],
+						"bin_unzip" => $cfg["bin_unzip"],
+						"bin_cksfv" => $cfg["bin_cksfv"],
+						"btclient_transmission_bin" => $cfg["btclient_transmission_bin"],
+						"bin_netstat" => $cfg["bin_netstat"],
+						"bin_sockstat" => $cfg["bin_sockstat"]
 					);
+	// binaries to test
+	$binaries = array(
+						"pythonCmd" => $cfg["pythonCmd"],
+						"perlCmd" => $cfg["perlCmd"],
+						"bin_php" => $cfg["bin_php"],
+						"bin_grep" => $cfg["bin_grep"],
+						"bin_awk" => $cfg["bin_awk"],
+						"bin_du" => $cfg["bin_du"],
+						"bin_wget" => $cfg["bin_wget"],
+						"bin_unrar" => $cfg["bin_unrar"],
+						"bin_unzip" => $cfg["bin_unzip"],
+						"bin_cksfv" => $cfg["bin_cksfv"],
+						"btclient_transmission_bin" => $cfg["btclient_transmission_bin"],
+						"bin_netstat" => $cfg["bin_netstat"],
+						"bin_sockstat" => $cfg["bin_sockstat"]
+					);
+	// bins for which
+	$bins = array(
+						"pythonCmd" => "python",
+						"perlCmd" => "perl",
+						"bin_php" => "php",
+						"bin_grep" => "grep",
+						"bin_awk" => "awk",
+						"bin_du" => "du",
+						"bin_wget" => "wget",
+						"bin_unrar" => "unrar",
+						"bin_unzip" => "unzip",
+						"bin_cksfv" => "cksfv",
+						"btclient_transmission_bin" => "transmissioncli",
+						"bin_netstat" => "netstat",
+						"bin_sockstat" => "sockstat"
+					);
+	// check
+	foreach ($binaries as $key => $value) {
+		if (!is_file($value)) {
+			$bin = "";
+			$bin = @trim(shell_exec("which ".$bins[$key]));
+			if ($bin != "")
+				$settings[$key] = $bin;
+		}
+	}
+	// save
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["update"], "Initial Settings Updated for first login.");
 }
