@@ -246,8 +246,13 @@ function firstLogin($username = '', $password = '') {
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 	// Test and setup some paths for the TF settings
+	// path
+	if (is_dir($cfg["path"]))
+		$tfPath = getcwd() . "/downloads/";
+	else
+		$tfPath = $cfg["path"];
+	// python
 	$pythonCmd = $cfg["pythonCmd"];
-	$tfPath = getcwd() . "/downloads/";
 	if (! is_file($cfg["pythonCmd"])) {
 		$pythonCmd = trim(shell_exec("which python"));
 		if ($pythonCmd == "")

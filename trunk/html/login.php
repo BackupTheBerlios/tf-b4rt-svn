@@ -86,7 +86,7 @@ if(!empty($user) && !empty($iamhim)) {
 	$next_loc = "index.php?iid=index";
 	$sql = "SELECT count(*) FROM tf_users";
 	$user_count = $db->GetOne($sql);
-	if($user_count == 0) {
+	if ($user_count == 0) {
 		firstLogin($user, $iamhim);
 		$next_loc = "admin.php?op=serverSettings";
 	}
