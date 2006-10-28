@@ -83,25 +83,40 @@ if (isset($osString)) {
 	$cfg["_OS"] = 1;
 }
 
-// db-config
-require_once('inc/config/config.db.php');
-
 // db
-require_once('inc/db.php');
+if (is_file('inc/config/config.db.php')) {
 
-// initialize database
-initializeDatabase();
+	// db-config
+	require_once('inc/config/config.db.php');
 
-// load global settings
-loadSettings('tf_settings');
+	// db
+	require_once('inc/db.php');
 
-// load stats-settings
-loadSettings('tf_settings_stats');
+	// initialize database
+	initializeDatabase();
 
-// Path to where the meta files will be stored... usually a sub of $cfg["path"]
-$cfg["transfer_file_path"] = $cfg["path"].".transfers/";
+	// load global settings
+	loadSettings('tf_settings');
 
-// Free space in MB
-$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
+	// load stats-settings
+	loadSettings('tf_settings_stats');
+
+	// Path to where the meta files will be stored... usually a sub of $cfg["path"]
+	$cfg["transfer_file_path"] = $cfg["path"].".transfers/";
+
+	// Free space in MB
+	$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
+
+} else {
+    if (isset($argv)) {
+    	die("Error.\nCould not find database-settings-file config.db.php.\n");
+    } else {
+
+		// redir to login ... (which may redir to upgrade.php / setup.php)
+		@ob_end_clean();
+		@header("location: login.php");
+		exit();
+    }
+}
 
 ?>
