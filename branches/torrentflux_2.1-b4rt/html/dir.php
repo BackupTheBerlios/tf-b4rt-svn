@@ -29,7 +29,10 @@ checkUserPath();
 $del = getRequestVar('del');
 $down = getRequestVar('down');
 $tar = getRequestVar('tar');
-$dir = stripslashes(urldecode(getRequestVar('dir')));
+$dir = urldecode(getRequestVar('dir'));
+if (preg_match("/\\\/", $dir)) $dir = "";
+if (preg_match("/\.\.\//", $dir)) $dir = "";
+$dir = stripslashes($dir);
 
 // -----------------------------------------------------------------------------
 
