@@ -238,7 +238,6 @@ function indexProcessDownload($url_upload) {
 
 /**
  * Function with which torrents are uploaded and injected on index-page
- *
  */
 function indexProcessUpload() {
 	global $cfg;
@@ -305,7 +304,6 @@ function indexProcessUpload() {
 
 /**
  * file-upload
- *
  */
 function processFileUpload() {
 	global $cfg;
@@ -397,7 +395,6 @@ function processFileUpload() {
 
 /**
  * tf 2.1 compat function
- *
  */
 function compatIndexDispatch() {
 	// transfer-start

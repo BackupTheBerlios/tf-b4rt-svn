@@ -20,8 +20,8 @@
 
 *******************************************************************************/
 
-class dir
-{
+class dir {
+
 	var $name;
 	var $subdirs;
 	var $files;
@@ -84,6 +84,7 @@ class file {
 		$this->size = $size;
 		$this->prio = $prio;
 	}
+
 }
 
 function showMetaInfo($torrent, $allowSave=false) {
@@ -103,7 +104,7 @@ function showMetaInfo($torrent, $allowSave=false) {
 			$showMetaInfo .= '<script type="text/javascript">var dtree_path_images = "themes/tf_standard_themes/images/dtree/";</script>';
 		}
 		$showMetaInfo .= '<script type="text/javascript" src="js/dtree.js"></script>';
-		$ftorrent=$cfg["transfer_file_path"].$torrent;
+		$ftorrent = $cfg["transfer_file_path"].$torrent;
 		$fp = fopen($ftorrent, "rd");
 		$alltorrent = fread($fp, filesize($ftorrent));
 		fclose($fp);
@@ -146,11 +147,11 @@ function showMetaInfo($torrent, $allowSave=false) {
 		$showMetaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$torrent."</td></tr>";
 		$showMetaInfo .= "<tr><td>Directory Name:</td><td>".$btmeta['info']['name']."</td></tr>";
 		$showMetaInfo .= "<tr><td>Announce URL:</td><td>".$btmeta['announce']."</td></tr>";
-		if(array_key_exists('comment',$btmeta))
+		if (array_key_exists('comment',$btmeta))
 			$showMetaInfo .= "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
 		$showMetaInfo .= "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
-		$showMetaInfo .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".formatBytesTokBMBGBTB($torrent_size).")</td></tr>";
-		$showMetaInfo .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".formatBytesTokBMBGBTB($btmeta['info']['piece length']).")</td></tr>";
+		$showMetaInfo .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")</td></tr>";
+		$showMetaInfo .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".@formatBytesTokBMBGBTB($btmeta['info']['piece length']).")</td></tr>";
 		if (array_key_exists('files',$btmeta['info'])) {
 			$showMetaInfo .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
 			$showMetaInfo .= "</table><br>\n";
@@ -177,7 +178,7 @@ function showMetaInfo($torrent, $allowSave=false) {
 			$showMetaInfo .= "</form>";
 		} else {
 			$showMetaInfo .= "</table><br>";
-			$showMetaInfo .= $btmeta['info']['name'].$torrent_size." (".formatBytesTokBMBGBTB($torrent_size).")";
+			$showMetaInfo .= $btmeta['info']['name'].$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")";
 		}
 	} else {
 		$result = getTorrentMetaInfo($torrent);

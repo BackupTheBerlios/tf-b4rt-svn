@@ -22,7 +22,6 @@
 
 /**
  * sends usage to client.
- *
  */
 function sendUsage() {
 	global $cfg;

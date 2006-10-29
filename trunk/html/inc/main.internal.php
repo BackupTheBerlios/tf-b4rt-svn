@@ -205,7 +205,7 @@ $fluxd = new Fluxd(serialize($cfg));
 $fluxdRunning = $fluxd->isFluxdRunning();
 $fluxdQmgr = null;
 $queueActive = false;
-if($cfg["fluxd_Qmgr_enabled"] == 1) {
+if ($cfg["fluxd_Qmgr_enabled"] == 1) {
 	if ($fluxd->modState('Qmgr') == 1) {
 		$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
 		$queueActive = true;

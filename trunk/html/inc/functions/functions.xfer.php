@@ -151,11 +151,12 @@ function transferListXferUpdate2($newday) {
  * @param $period
  */
 function getUsage($start, $period) {
-  global $xfer, $xfer_total, $db;
-  $sql = 'SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= "'.$start.'" AND user_id != "" GROUP BY user_id';
-  $rtnValue = $db->GetAll($sql);
-  showError($db,$sql);
-  foreach ($rtnValue as $row) sumUsage($row[0], $row[1], $row[2], $period);
+	global $xfer, $xfer_total, $db;
+	$sql = 'SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= "'.$start.'" AND user_id != "" GROUP BY user_id';
+	$rtnValue = $db->GetAll($sql);
+	showError($db,$sql);
+	foreach ($rtnValue as $row)
+		sumUsage($row[0], $row[1], $row[2], $period);
 }
 
 /**
@@ -167,13 +168,13 @@ function getUsage($start, $period) {
  * @param $period
  */
 function sumUsage($user, $download, $upload, $period) {
-  global $xfer, $xfer_total;
-  @ $xfer[$user][$period]['download'] += $download;
-  @ $xfer[$user][$period]['upload'] += $upload;
-  @ $xfer[$user][$period]['total'] += $download + $upload;
-  @ $xfer_total[$period]['download'] += $download;
-  @ $xfer_total[$period]['upload'] += $upload;
-  @ $xfer_total[$period]['total'] += $download + $upload;
+	global $xfer, $xfer_total;
+	@ $xfer[$user][$period]['download'] += $download;
+	@ $xfer[$user][$period]['upload'] += $upload;
+	@ $xfer[$user][$period]['total'] += $download + $upload;
+	@ $xfer_total[$period]['download'] += $download;
+	@ $xfer_total[$period]['upload'] += $upload;
+	@ $xfer_total[$period]['total'] += $download + $upload;
 }
 
 /**
@@ -184,18 +185,18 @@ function sumUsage($user, $download, $upload, $period) {
  * @param $up
  */
 function saveXfer($user, $down, $up) {
-  global $db;
-  $sql = 'SELECT 1 FROM tf_xfer WHERE user_id = "'.$user.'" AND date = '.$db->DBDate(time());
-  if ($db->GetRow($sql)) {
-    $sql = 'UPDATE tf_xfer SET download = download+'.($down+0).', upload = upload+'.($up+0).' WHERE user_id = "'.$user.'" AND date = '.$db->DBDate(time());
-    $db->Execute($sql);
-    showError($db,$sql);
-  } else {
-    showError($db,$sql);
-    $sql = 'INSERT INTO tf_xfer (user_id,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
-    $db->Execute($sql);
-    showError($db,$sql);
-  }
+	global $db;
+	$sql = 'SELECT 1 FROM tf_xfer WHERE user_id = "'.$user.'" AND date = '.$db->DBDate(time());
+	if ($db->GetRow($sql)) {
+		$sql = 'UPDATE tf_xfer SET download = download+'.($down+0).', upload = upload+'.($up+0).' WHERE user_id = "'.$user.'" AND date = '.$db->DBDate(time());
+		$db->Execute($sql);
+		showError($db,$sql);
+	} else {
+		showError($db,$sql);
+		$sql = 'INSERT INTO tf_xfer (user_id,date,download,upload) values ("'.$user.'",'.$db->DBDate(time()).','.($down+0).','.($up+0).')';
+		$db->Execute($sql);
+		showError($db,$sql);
+	}
 }
 
 /**

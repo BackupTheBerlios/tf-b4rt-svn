@@ -22,7 +22,6 @@
 
 /**
  * setVarsFromPersistentSettings
- *
  */
 function setVarsFromPersistentSettings() {
 	global $cfg, $tmpl, $torrent, $queueActive;

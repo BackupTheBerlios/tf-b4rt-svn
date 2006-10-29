@@ -774,13 +774,12 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 	$message = str_replace(array("'"), "", $message);
 	$create_time = time();
 	$sTable = 'tf_messages';
-	if($to_all == 1) {
+	if ($to_all == 1) {
 		$message .= "\n\n__________________________________\n*** ".$cfg['_MESSAGETOALL']." ***";
 		$sql = 'select user_id from tf_users';
 		$result = $db->Execute($sql);
 		showError($db,$sql);
-		while($row = $result->FetchRow())
-		{
+		while($row = $result->FetchRow()) {
 			$rec = array(
 						'to_user' => strtolower($row['user_id']),
 						'from_user' => strtolower($from_user),

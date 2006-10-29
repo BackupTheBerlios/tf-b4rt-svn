@@ -25,18 +25,17 @@ require_once('inc/lib/adodb/adodb.inc.php');
 
 /**
  * initialize ADOdb-connection
- *
  */
 function initializeDatabase() {
 	global $cfg, $db;
 	// create ado-object
-    $db = ADONewConnection($cfg["db_type"]);   
+    $db = ADONewConnection($cfg["db_type"]);
     // connect
     if ($cfg["db_pcon"])
     	@ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     else
     	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-    // check for error	
+    // check for error
     if ($db->ErrorNo() != 0) {
     	global $argv;
     	if (isset($argv))

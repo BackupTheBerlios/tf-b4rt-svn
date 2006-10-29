@@ -56,7 +56,6 @@ function hasPermission($object, $user, $permission) {
 
 /**
  * inits restricted entries array.
- *
  */
 function initRestrictedDirEntries() {
 	global $cfg, $restrictedFileEntries;
@@ -69,7 +68,6 @@ function initRestrictedDirEntries() {
 /**
  * Checks for the location of the incoming directory
  * If it does not exist, then it creates it.
- *
  */
 function checkIncomingPath() {
 	global $cfg;

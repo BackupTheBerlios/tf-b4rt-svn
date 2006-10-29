@@ -220,13 +220,13 @@ function createTorrentMainline() {
  * @param $path
  * @return string
  */
-function StripFolders( $path ) {
-	$pos = strrpos( $path, "/" );
+function StripFolders($path) {
+	$pos = strrpos($path, "/");
 	if ($pos === false)
 		$pos = 0;
 	else
-		$pos = $pos +1;
-	$path = substr( $path, $pos );
+		$pos = $pos + 1;
+	$path = substr($path, $pos);
 	return $path;
 }
 
@@ -237,28 +237,28 @@ function StripFolders( $path ) {
  * @return string
  */
 function duration($timestamp) {
-	$years = floor( $timestamp / ( 60 * 60 * 24 * 365 ) );
+	$years = floor($timestamp / (60 * 60 * 24 * 365));
 	$timestamp %= 60 * 60 * 24 * 365;
-	$weeks = floor( $timestamp / ( 60 * 60 * 24 * 7 ) );
+	$weeks = floor($timestamp / (60 * 60 * 24 * 7));
 	$timestamp %= 60 * 60 * 24 * 7;
-	$days = floor( $timestamp / ( 60 * 60 * 24 ) );
+	$days = floor($timestamp / (60 * 60 * 24));
 	$timestamp %= 60 * 60 * 24;
-	$hrs = floor( $timestamp / ( 60 * 60 ) );
+	$hrs = floor($timestamp / (60 * 60));
 	$timestamp %= 60 * 60;
-	$mins = floor( $timestamp / 60 );
+	$mins = floor($timestamp / 60);
 	$secs = $timestamp % 60;
 	$str = "";
-	if( $years >= 1 )
+	if ($years >= 1)
 		$str .= "{$years} years ";
-	if( $weeks >= 1 )
+	if ($weeks >= 1)
 		$str .= "{$weeks} weeks ";
-	if( $days >= 1 )
+	if ($days >= 1)
 		$str .= "{$days} days ";
-	if( $hrs >= 1 )
+	if ($hrs >= 1)
 		$str .= "{$hrs} hours ";
-	if( $mins >= 1 )
+	if ($mins >= 1)
 		$str .= "{$mins} minutes ";
-	if( $secs >= 1 )
+	if ($secs >= 1)
 		$str.="{$secs} seconds ";
 	return $str;
 }

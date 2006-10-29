@@ -69,7 +69,7 @@ if ($fileHandle = @fopen('.version','r')) {
 }
 
 // get os
-$osString = php_uname('s');
+$osString = @php_uname('s');
 if (isset($osString)) {
     if (!(stristr($osString, 'linux') === false)) /* linux */
     	$cfg["_OS"] = 1;
