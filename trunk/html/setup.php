@@ -81,7 +81,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_mrtg',
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('showdirtree','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('maxdepth','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_multiops','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_wget','1')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_wget','2')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_multiupload','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_xfer','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_public_xfer','1')");
@@ -155,7 +155,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bandwidth_dow
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bandwidth_up','10240')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('webapp_locked','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_transfer_profile','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_transfer_profile','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_profile_level','2')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_customize_settings','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('downloadhosts','0')");
@@ -382,7 +382,7 @@ $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
 // tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','torrentflux-b4rt','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : sqlite
@@ -553,7 +553,7 @@ $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
 // tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','torrentflux-b4rt','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : postgres
@@ -749,7 +749,7 @@ $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
 // tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','torrentflux-b4rt','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','tf-b4rt','0')");
 // sequences
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_users_uid_seq',(select case when max(uid)>0 then max(uid)+1 else 1 end from tf_users))");
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_messages_mid_seq',(select case when max(mid)>0 then max(mid)+1 else 1 end from tf_messages))");

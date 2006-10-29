@@ -33,7 +33,7 @@ CREATE TABLE tf_links (
   sort_order INTEGER(3) default '0'
 ) ;
 
-INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','torrentflux-b4rt','0');
+INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0');
 
 --
 -- tf_log
@@ -203,7 +203,7 @@ INSERT INTO tf_settings VALUES ('enable_mrtg','1');
 INSERT INTO tf_settings VALUES ('showdirtree','1');
 INSERT INTO tf_settings VALUES ('maxdepth','0');
 INSERT INTO tf_settings VALUES ('enable_multiops','1');
-INSERT INTO tf_settings VALUES ('enable_wget','1');
+INSERT INTO tf_settings VALUES ('enable_wget','2');
 INSERT INTO tf_settings VALUES ('enable_multiupload','1');
 INSERT INTO tf_settings VALUES ('enable_xfer','1');
 INSERT INTO tf_settings VALUES ('enable_public_xfer','1');
@@ -278,7 +278,7 @@ INSERT INTO tf_settings VALUES ('bandwidth_down','10240');
 INSERT INTO tf_settings VALUES ('bandwidth_up','10240');
 INSERT INTO tf_settings VALUES ('webapp_locked','0');
 INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
-INSERT INTO tf_settings VALUES ('enable_transfer_profile','0');
+INSERT INTO tf_settings VALUES ('enable_transfer_profile','1');
 INSERT INTO tf_settings VALUES ('transfer_profile_level','2');
 INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
 INSERT INTO tf_settings VALUES ('downloadhosts','0');

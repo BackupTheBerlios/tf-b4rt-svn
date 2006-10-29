@@ -85,7 +85,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_mrtg',
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('showdirtree','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('maxdepth','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_multiops','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_wget','1')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_wget','2')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_multiupload','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_xfer','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_public_xfer','1')");
@@ -159,7 +159,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bandwidth_dow
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bandwidth_up','10240')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('webapp_locked','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_transfer_profile','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_transfer_profile','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_profile_level','2')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_customize_settings','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('downloadhosts','0')");
@@ -209,7 +209,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_d
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0')");
 // tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','torrentflux-b4rt','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : mysql
