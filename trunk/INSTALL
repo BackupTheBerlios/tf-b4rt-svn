@@ -10,6 +10,7 @@ http://tf-b4rt.berlios.de/
 -----------------------------------------------------------------
 System Requirements
 -----------------------------------------------------------------
+
 -- A Linux or FreeBSD Box installed and working properly.
    (tested on Debian, Ubuntu, Gentoo, RedHat, Fedora and others)
 
@@ -358,6 +359,37 @@ Additional / Optional
 
 -- To use wget on Mac OS X install :
    http://www.statusq.org/images/wget.zip
+
+
+-----------------------------------------------------------------
+Perl-Modules
+-----------------------------------------------------------------
+
+-- fluxd.pl (part of fluxd)
+   * IO::Socket::UNIX (perl -MCPAN -e "install IO::Socket::UNIX")
+   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
+   * IO::Select       (perl -MCPAN -e "install IO::Select")
+   * POSIX            (perl -MCPAN -e "install POSIX")
+
+-- FluxDB.pm (part of fluxd) (only in dbi-mode)
+   * all database-types :
+     DBI              (perl -MCPAN -e "install Bundle::DBI")
+   * MySQL :
+     DBD::mysql       (perl -MCPAN -e "install DBD::mysql")
+   * SQLite :
+     DBD::SQLite      (perl -MCPAN -e "install DBD::SQLite")
+   * PostgreSQL :
+     DBD::Pg          (perl -MCPAN -e "install DBD::Pg")
+
+-- Fluxinet.pm (part of fluxd)
+   * IO::Socket       (perl -MCPAN -e "install IO::Socket")
+
+-- tfrss.pl
+   * LWP::Simple      (perl -MCPAN -e "install LWP::Simple")
+   * XML::Simple      (perl -MCPAN -e "install XML::Simple")
+
+-- ttools.pl
+   * LWP::UserAgent   (perl -MCPAN -e "install LWP::UserAgent")
 
 
 -----------------------------------------------------------------

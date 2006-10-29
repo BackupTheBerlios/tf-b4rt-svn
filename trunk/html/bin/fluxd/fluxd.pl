@@ -21,6 +21,14 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
+#                                                                              #
+#  Requirements :                                                              #
+#   * IO::Socket::UNIX   ( perl -MCPAN -e "install IO::Socket::UNIX" )         #
+#   * IO::Socket::INET   ( perl -MCPAN -e "install IO::Socket::INET" )         #
+#   * IO::Select         ( perl -MCPAN -e "install IO::Select" )               #
+#   * POSIX              ( perl -MCPAN -e "install POSIX" )                    #
+#                                                                              #
+################################################################################
 package Fluxd;
 use strict;
 use warnings;
