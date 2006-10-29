@@ -415,7 +415,7 @@ function cliWipeTorrent($torrent = "") {
 			echo "done\n";
         } else {
         	echo "transfer still up... cannot wipe\n";
-        }		
+        }
 	} else {
 		printUsage();
 	}
@@ -667,7 +667,6 @@ function printUsage() {
 	echo "\n";
 	echo "examples: \n";
 	echo "fluxcli.php torrents\n";
-	echo "fluxcli.php status\n";
 	echo "fluxcli.php netstat\n";
 	echo "fluxcli.php start foo.torrent\n";
 	echo "fluxcli.php stop foo.torrent\n";
@@ -682,6 +681,7 @@ function printUsage() {
     echo "fluxcli.php xfer month\n";
 	echo "fluxcli.php repair\n";
 	echo "fluxcli.php dump settings\n";
+	echo "fluxcli.php dump users\n";
 	echo "\n";
 }
 
