@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // load global settings + overwrite per-user settings
 loadSettings('tf_settings');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.indexSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.indexSettings.tmpl");
 
 // set vars
 $tmpl->setvar('enable_index_meta_refresh', $cfg["enable_index_meta_refresh"]);

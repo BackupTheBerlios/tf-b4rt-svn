@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.history.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.history.tmpl");
 
 // prepare vars
 $offset = 50;

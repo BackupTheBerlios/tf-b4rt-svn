@@ -43,8 +43,8 @@ if (!isset($cfg['user'])) {
 // xfer functions
 require_once('inc/functions/functions.xfer.php');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.xfer.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.xfer.tmpl");
 
 // set vars
 if ($cfg['enable_xfer'] == 1) {

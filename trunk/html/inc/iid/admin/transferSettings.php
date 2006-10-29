@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.transferSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.transferSettings.tmpl");
 
 // torrent
 $tmpl->setvar('btclient', $cfg["btclient"]);

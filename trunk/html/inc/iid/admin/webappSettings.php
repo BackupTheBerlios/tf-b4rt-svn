@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.webappSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.webappSettings.tmpl");
 
 // set vars
 $tmpl->setvar('auth_type', $cfg["auth_type"]);

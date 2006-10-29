@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // default-target
 define('_DEFAULT_TARGET','traffic');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.mrtg.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.mrtg.tmpl");
 
 // request-vars
 if (isset($_REQUEST['mrtg_target']))

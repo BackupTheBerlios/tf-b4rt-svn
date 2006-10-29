@@ -32,12 +32,12 @@ if (!isset($cfg['user'])) {
 if (isset($_REQUEST['ajax_update'])) {
 	$isAjaxUpdate = true;
 	$ajaxUpdateParams = $_REQUEST['ajax_update'];
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "inc.transferList.tmpl");
+	// init template-instance
+	tmplInitializeInstance($cfg["theme"], "inc.transferList.tmpl");
 } else {
 	$isAjaxUpdate = false;
-	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "page.index.tmpl");
+	// init template-instance
+	tmplInitializeInstance($cfg["theme"], "page.index.tmpl");
 }
 
 // =============================================================================

@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.fluxdRssadSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.fluxdRssadSettings.tmpl");
 
 // message section
 $message = getRequestVar('m');
@@ -51,7 +51,7 @@ $rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
 // * addFilter
 // * editFilter
 // * saveFilter
-// * deleteFilter 
+// * deleteFilter
 //
 // * addJob
 // * editJob
@@ -153,7 +153,7 @@ switch ($pageop) {
 		}
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Filter");
-		break;		
+		break;
 	case "saveFilter":
 		$filtername = getRequestVar('filtername');
 		$filtercontent = getRequestVar('rssad_filtercontent');
@@ -211,7 +211,7 @@ switch ($pageop) {
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Filter");
 		break;
-		
+
 	case "addJob":
 		// filters
 		$filters = $rssad->filterGetList();
@@ -225,7 +225,7 @@ switch ($pageop) {
 			$tmpl->setloop('rssad_filters', $filterlist);
 		}
 		// title-bar
-		tmplSetTitleBar("Administration - Fluxd Rssad - Add Job");		
+		tmplSetTitleBar("Administration - Fluxd Rssad - Add Job");
 		break;
 	case "editJob":
 		$jobNumber = trim(getRequestVar('job'));
@@ -259,14 +259,14 @@ switch ($pageop) {
 							);
 					}
 					$tmpl->setloop('rssad_filters', $filterlist);
-				}				
+				}
 			} else {
 				$tmpl->setvar('rssad_job_loaded', 0);
 				$tmpl->setvar('messages', $jobNumber);
 			}
 		}
 		// title-bar
-		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Job");		
+		tmplSetTitleBar("Administration - Fluxd Rssad - Edit Job");
 		break;
 	case "saveJob":
 		$jobNumber = trim(getRequestVar('job'));
@@ -308,7 +308,7 @@ switch ($pageop) {
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
 					$tmpl->setvar('messages', $rssad->messages);
-				}			
+				}
 			}
 		}
 		// title-bar
@@ -325,7 +325,7 @@ switch ($pageop) {
 				$tmpl->setvar('rssad_job_deleted', 1);
 			else
 				$tmpl->setvar('rssad_job_deleted', 0);
-		}			
+		}
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Job");
 		break;

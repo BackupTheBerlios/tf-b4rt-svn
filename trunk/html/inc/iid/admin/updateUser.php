@@ -48,8 +48,8 @@ if (!(IsUser($user_id) && ($user_id != $org_user_id))) {
 	exit();
 }
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.updateUser.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.updateUser.tmpl");
 
 // set vars
 $tmpl->setvar('user_id', $user_id);

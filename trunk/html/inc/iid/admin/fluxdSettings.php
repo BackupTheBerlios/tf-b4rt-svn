@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.fluxdSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.fluxdSettings.tmpl");
 
 // message section
 $message = getRequestVar('m');
@@ -161,8 +161,8 @@ $tmpl->setvar('output', $output);
 $tmpl->setvar('fluxdRunning', $fluxdRunning);
 if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
 	$tmpl->setvar('showTransfers', 1);
-else	
-	$tmpl->setvar('showTransfers', 0);	
+else
+	$tmpl->setvar('showTransfers', 0);
 //
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_FILE', $cfg['_FILE']);

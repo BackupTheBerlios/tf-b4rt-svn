@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // readrss functions
 require_once('inc/functions/functions.readrss.php');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.editRSS.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.editRSS.tmpl");
 
 // set vars
 $arLinks = GetRSSLinks();

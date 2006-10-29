@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.startpopSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.startpopSettings.tmpl");
 
 // set vars
 $tmpl->setvar('enable_btclient_chooser', $cfg["enable_btclient_chooser"]);

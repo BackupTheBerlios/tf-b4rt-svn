@@ -42,8 +42,8 @@ if (!(IsUser($newUser))) {
 	exit();
 }
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.addUser.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.addUser.tmpl");
 
 // set vars
 $tmpl->setvar('newUser', $newUser);

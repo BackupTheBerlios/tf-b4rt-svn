@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.servermon.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.servermon.tmpl");
 
 // set vars
 $tmpl->setvar('onLoad', "ajax_initialize(".(((int) $cfg['servermon_update']) * 1000).",'".$cfg['stats_txt_delim']."');");

@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.all_services.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.all_services.tmpl");
 
 // set vars
 $tmpl->setvar('result1', shell_exec("df -h ".$cfg["path"]));

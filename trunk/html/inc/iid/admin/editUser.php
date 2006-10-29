@@ -31,8 +31,8 @@ if (!isset($cfg['user'])) {
 
 $user_id = getRequestVar('user_id');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.editUser.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.editUser.tmpl");
 
 // set vars
 $editUserImage = "themes/".$cfg['theme']."/images/user.gif";

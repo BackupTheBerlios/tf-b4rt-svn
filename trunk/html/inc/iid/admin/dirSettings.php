@@ -36,8 +36,8 @@ require_once('inc/functions/functions.dir.php');
 loadSettings('tf_settings_dir');
 initRestrictedDirEntries();
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.dirSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.dirSettings.tmpl");
 
 // restricted entries
 $dir_list = array();

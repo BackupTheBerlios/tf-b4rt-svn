@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.rename.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.rename.tmpl");
 
 // process move and set vars
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
@@ -42,13 +42,13 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 } else {
 	$tmpl->setvar('is_start', 0);
 	$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileFrom'])." ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileTo']);
-    $cmd .= ' 2>&1';	 
-    $handle = popen($cmd, 'r' );	 
-    $gotError = -1;	 
-    $buff = fgets($handle);	 
-    $gotError = $gotError + 1;	 
-    pclose($handle);	 
-    $tmpl->setvar('messages', nl2br($buff));	 
+    $cmd .= ' 2>&1';
+    $handle = popen($cmd, 'r' );
+    $gotError = -1;
+    $buff = fgets($handle);
+    $gotError = $gotError + 1;
+    pclose($handle);
+    $tmpl->setvar('messages', nl2br($buff));
     if ($gotError <= 0) {
 		$tmpl->setvar('no_error', 1);
 		$tmpl->setvar('fileFrom', $_POST['fileFrom']);

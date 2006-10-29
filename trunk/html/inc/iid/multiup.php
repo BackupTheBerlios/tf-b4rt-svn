@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.multiup.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.multiup.tmpl");
 
 // messages
 if (isset($_REQUEST['messages']))

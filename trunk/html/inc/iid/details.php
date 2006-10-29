@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // metainfo
 require_once("inc/metaInfo.php");
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.details.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.details.tmpl");
 
 // set vars
 $transfer = getRequestVar('torrent');

@@ -21,6 +21,41 @@
 *******************************************************************************/
 
 /**
+ * initialize global template-instance
+ *
+ * @param $theme
+ * @param $template
+ * @return vlib-template-instance
+ */
+function tmplInitializeInstance($theme, $template) {
+	global $cfg, $tmpl;
+	// theme-switch
+	if ((strpos($theme, '/')) === false)
+		$path = "themes/".$theme."/tmpl/";
+	else
+		$path = "themes/tf_standard_themes/tmpl/";
+	// template-cache-switch
+	switch ($cfg['enable_tmpl_cache']) {
+		case 1:
+			$tmpl = new vlibTemplateCache($path.$template);
+			break;
+		case 0:
+		default:
+			$tmpl =  new vlibTemplate($path.$template);
+			break;
+	}
+	//  set common template-vars
+	$tmpl->setvar('theme', $theme);
+    $tmpl->setvar('pagetitle', @ $cfg["pagetitle"]);
+    $tmpl->setvar('main_bgcolor', @ $cfg["main_bgcolor"]);
+    $tmpl->setvar('table_border_dk', @ $cfg["table_border_dk"]);
+    $tmpl->setvar('table_header_bg', @ $cfg["table_header_bg"]);
+    $tmpl->setvar('table_data_bg', @ $cfg["table_data_bg"]);
+    $tmpl->setvar('body_data_bg', @ $cfg["body_data_bg"]);
+    $tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
+}
+
+/**
  * template-factory.
  *
  * @param $theme

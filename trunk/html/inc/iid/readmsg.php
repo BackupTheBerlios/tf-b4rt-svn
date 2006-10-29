@@ -41,8 +41,8 @@ if (isset($_REQUEST['delete'])) {
 	exit();
 }
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.readmsg.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.readmsg.tmpl");
 
 if (isset($_REQUEST['mid'])) {
 	$mid = getRequestVar('mid');

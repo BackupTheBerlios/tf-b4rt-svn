@@ -36,8 +36,8 @@ require_once("inc/classes/AliasFile.php");
 $transfer = getRequestVar('torrent');
 $alias = getRequestVar('alias');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.downloaddetails.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
 // check
 if ((!empty($transfer)) && (!empty($alias))) {

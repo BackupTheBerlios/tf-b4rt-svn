@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.who.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.who.tmpl");
 
 // set vars
 $tmpl->setvar('result1', shell_exec("w"));

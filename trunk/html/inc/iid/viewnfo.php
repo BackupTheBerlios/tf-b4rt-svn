@@ -31,8 +31,8 @@ if (!isset($cfg['user'])) {
 
 // contributed by NovaKing -- thanks duder!
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.viewnfo.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.viewnfo.tmpl");
 
 // set vars
 $file = $_REQUEST["path"];

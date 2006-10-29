@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.cookiehelp.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.cookiehelp.tmpl");
 
 // set vars
 tmplSetTitleBar("Cookie Help", false);

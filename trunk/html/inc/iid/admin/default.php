@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // readrss functions
 require_once('inc/functions/functions.readrss.php');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.default.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.default.tmpl");
 
 // set vars
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);

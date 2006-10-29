@@ -43,8 +43,8 @@ if ((!empty($torrent)) && (!empty($alias)))
 else
 	showErrorPage("missing params");
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.downloadhosts.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");
 
 // set vars
 if ($af->running == 1) {

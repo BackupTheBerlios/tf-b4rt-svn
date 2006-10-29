@@ -54,8 +54,8 @@ $rss->cache_dir = $cacheDir;
 $rss->cache_time = $cfg["rss_cache_min"] * 60; // 1200 = 20 min.  3600 = 1 hour
 $rss->strip_html = false; // don't remove HTML from the description
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.readrss.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.readrss.tmpl");
 
 // set vars
 // Loop through each RSS feed

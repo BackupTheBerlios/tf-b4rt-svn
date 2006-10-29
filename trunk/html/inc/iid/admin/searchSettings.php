@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // search engine base
 require_once("inc/searchEngines/SearchEngineBase.php");
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.searchSettings.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.searchSettings.tmpl");
 
 // set vars
 $searchEngine = getRequestVar('searchEngine');

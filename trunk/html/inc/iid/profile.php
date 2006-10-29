@@ -32,8 +32,8 @@ if (!isset($cfg['user'])) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.profile.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.profile.tmpl");
 
 // op-switch
 $op = getRequestVar('op');

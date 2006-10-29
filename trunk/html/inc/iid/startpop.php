@@ -38,8 +38,8 @@ require_once('inc/functions/functions.startpop.php');
 // require
 require_once("inc/metaInfo.php");
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.startpop.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.startpop.tmpl");
 
 // get torren-param
 $torrent = getRequestVar('torrent');

@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.uncomp.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.uncomp.tmpl");
 
 // process
 if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {

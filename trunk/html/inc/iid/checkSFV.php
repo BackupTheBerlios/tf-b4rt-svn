@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.checkSFV.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.checkSFV.tmpl");
 
 // process
 $cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_REQUEST['dir']) . ' -f ' . escapeshellarg($_REQUEST['file']);

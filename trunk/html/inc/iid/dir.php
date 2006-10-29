@@ -182,8 +182,8 @@ if (!(@is_dir($dirName))) {
 	exit();
 }
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.dir.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.dir.tmpl");
 
 // dirstats
 if ($cfg['enable_dirstats'] == 1) {

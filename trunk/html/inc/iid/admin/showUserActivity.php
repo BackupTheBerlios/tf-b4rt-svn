@@ -36,8 +36,8 @@ $user_id = getRequestVar('user_id');
 $srchFile = getRequestVar('srchFile');
 $srchAction = getRequestVar('srchAction');
 
-// create template-instance
-$tmpl = tmplGetInstance($cfg["theme"], "page.admin.showUserActivity.tmpl");
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.admin.showUserActivity.tmpl");
 
 // set vars
 tmplSetTitleBar($cfg['_ADMINUSERACTIVITY']);
