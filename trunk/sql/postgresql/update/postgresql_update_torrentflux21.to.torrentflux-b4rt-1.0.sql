@@ -5,7 +5,7 @@
 -- PostgreSQL-Update-File for 'torrentflux-b4rt-1.0'.
 -- Updates a 'Torrentflux 2.1 Final' Database to a 'torrentflux-b4rt-1.0'.
 --
--- This Stuff is provided 'as-is'. In no way will the author be held
+-- This Stuff is provided 'as-is'. In no way will the authors be held
 -- liable for any damages to your soft- or hardware from this.
 -- -----------------------------------------------------------------------------
 

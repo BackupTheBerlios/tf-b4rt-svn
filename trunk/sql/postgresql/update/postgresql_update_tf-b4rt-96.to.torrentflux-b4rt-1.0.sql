@@ -2,7 +2,7 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- This Stuff is provided 'as-is'. In no way will the author be held
+-- This Stuff is provided 'as-is'. In no way will the authors be held
 -- liable for any damages to your soft- or hardware from this.
 -- -----------------------------------------------------------------------------
 
