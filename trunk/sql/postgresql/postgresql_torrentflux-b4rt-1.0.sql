@@ -46,7 +46,7 @@ CREATE TABLE tf_links (
   CHECK (sort_order>=0)
 );
 
-INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','Home','0');
+INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','torrentflux-b4rt','0');
 
 --
 -- Sequences for table tf_log
@@ -276,7 +276,7 @@ INSERT INTO tf_settings VALUES ('metainfoclient','btshowmetainfo.py');
 INSERT INTO tf_settings VALUES ('enable_restrictivetview','1');
 INSERT INTO tf_settings VALUES ('perlCmd','/usr/bin/perl');
 INSERT INTO tf_settings VALUES ('ui_displayfluxlink','1');
-INSERT INTO tf_settings VALUES ('ui_dim_main_w','780');
+INSERT INTO tf_settings VALUES ('ui_dim_main_w','900');
 INSERT INTO tf_settings VALUES ('enable_bigboldwarning','1');
 INSERT INTO tf_settings VALUES ('enable_goodlookstats','1');
 INSERT INTO tf_settings VALUES ('ui_displaylinks','1');
