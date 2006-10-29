@@ -187,7 +187,6 @@ function createTorrentMainline() {
 	// Let's see how long this takes...
 	$time_start = microtime(true);
 	// Execute the command
-	system('echo command >> /tmp/tflux.debug; echo "'. $command .'" >> /tmp/tflux.debug');
 	exec($command);
 	// We want to check to make sure the file was successful
 	$success = false;
