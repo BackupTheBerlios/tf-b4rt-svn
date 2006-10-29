@@ -1827,7 +1827,7 @@ function getTransferListArray() {
 	//XFER: if a new day but no .stat files where found put blank entry into the
 	//      DB for today to indicate accounting has been done for the new day
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		transferListXferUpdate2($newday);
+		@transferListXferUpdate2($newday);
 
 	// -------------------------------------------------------------------------
 	// build output-array
