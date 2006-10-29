@@ -43,7 +43,7 @@ else
 
 // set vars
 $htmlTargetsCount = 0;
-if ($dirHandle = opendir('./mrtg')) {
+if ($dirHandle = @opendir('./mrtg')) {
 	$htmlTargets = "";
 	$htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
 	$htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="get">';
@@ -71,9 +71,9 @@ if ($htmlTargetsCount > 0)
 else
 	$tmpl->setvar('htmlTargets', "");
 $filename = "./mrtg/".$mrtgTarget.".inc";
-if (file_exists($filename)) {
+if (is_file($filename)) {
 	$htmlGraph = "";
-	$fileHandle = fopen ($filename, "r");
+	$fileHandle = fopen($filename, "r");
 	while (!feof($fileHandle))
 		$htmlGraph .= fgets($fileHandle, 4096);
 	fclose ($fileHandle);
@@ -84,7 +84,7 @@ if (file_exists($filename)) {
 	// set var
 	$tmpl->setvar('htmlGraph', $htmlGraph);
 } else {
-	$tmpl->setvar('htmlGraph', "");
+	$tmpl->setvar('htmlGraph', "<br><p><strong>No Graphs found.</strong></p>");
 }
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_MRTG']);
