@@ -162,7 +162,7 @@ class vlibTemplateCache extends vlibTemplate {
         if (is_dir($filepath)) return true;
 
         $dirs = split('[\\/]', $filepath);
-        $currpath;
+        $currpath = "";
         foreach ($dirs as $dir) {
             $currpath .= $dir .'/';
             $type = @filetype($currpath);
