@@ -452,6 +452,7 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 					if (strlen($value) > 0) {
 						$val = "";
 						$jobs = explode(";", $value);
+						$idx = 0;
 						foreach ($jobs as $job) {
 							$jobAry = explode(":", trim($job));
 							$user = trim(array_shift($jobAry));

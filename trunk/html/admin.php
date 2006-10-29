@@ -167,7 +167,7 @@ switch ($op) {
 				$message .= 'fluxd is currently not running.<br><br>';
 			}
 			// log
-			AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
+			AuditAction($cfg["constants"]["fluxd"], " Updating fluxd Settings");
 			// redir
 			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 		} else {
@@ -175,7 +175,7 @@ switch ($op) {
 			$settings = processSettingsParams(false, false);
 			saveSettings('tf_settings', $settings);
 			// log
-			AuditAction($cfg["constants"]["admin"], " Updating fluxd Settings");
+			AuditAction($cfg["constants"]["fluxd"], " Updating fluxd Settings");
 			// redir
 			header("Location: admin.php?op=fluxdSettings");
 		}
