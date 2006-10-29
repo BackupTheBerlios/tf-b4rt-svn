@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// cache
+require_once("inc/main.cache.php");
+
 // core
 require_once("inc/functions/functions.core.php");
 
