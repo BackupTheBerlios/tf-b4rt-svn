@@ -963,10 +963,24 @@ if (isset($_REQUEST["z"])) {
 					if ((substr(_VERSION_THIS, 0, 3)) == "svn") {
 					        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
 	    					$htmlMain .= '<br><br>';
-	    					$htmlMain .= '<strong>Available Version : </strong>';
+	    					$htmlMain .= '<strong>Latest Release : </strong>';
 	    					$htmlMain .= $versionAvailable;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<font color="blue">This Version is a svn-Version.</font>';
+					} elseif ((@substr(_VERSION_THIS, 0, 4)) == "beta") {
+					        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+	    					$htmlMain .= '<br><br>';
+	    					$htmlMain .= '<strong>Latest Release : </strong>';
+	    					$htmlMain .= $versionAvailable;
+	    					$htmlMain .= '<br><br>';
+	    					$htmlMain .= '<font color="blue">This Version is a beta-Version.</font>';
+					} elseif ((@substr(_VERSION_THIS, 0, 5)) == "alpha") {
+					        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+	    					$htmlMain .= '<br><br>';
+	    					$htmlMain .= '<strong>Latest Release : </strong>';
+	    					$htmlMain .= $versionAvailable;
+	    					$htmlMain .= '<br><br>';
+	    					$htmlMain .= '<font color="blue">This Version is a alpha-Version.</font>';
 					} else {
 	    				if ($versionAvailable != _VERSION_THIS) {
 	    					$htmlMain .= '<strong>This Version : </strong>';
