@@ -25,13 +25,13 @@ class FluxdRssad extends FluxdServiceMod
 {
 	// basedir
 	var $basedir = ".fluxd/rssad/";
-	
+
 	// jobs-delim
 	var $delimJobs = "|";
 
 	// job-delim
 	var $delimJob = "#";
-	
+
     /**
      * ctor
      */
@@ -61,18 +61,18 @@ class FluxdRssad extends FluxdServiceMod
 		// return
 		return file_exists($file);
 	}
-    
+
 	/**
 	 * checks if filter-id is a valid filter-id
 	 *
 	 * @param $id
-	 * @param $new 
+	 * @param $new
 	 * @param boolean
 	 */
 	function filterIdCheck($id, $new = false) {
 		// sanity-checks
 		if (strpos(urldecode($id), "/") !== false)
-			return false;		
+			return false;
 		if (preg_match("/\\\/", urldecode($id)))
 			return false;
 		if (preg_match("/\.\./", urldecode($id)))
@@ -83,7 +83,7 @@ class FluxdRssad extends FluxdServiceMod
 		// looks ok
 		return true;
 	}
-	
+
 	/**
 	 * get filter-list
 	 *
@@ -109,7 +109,7 @@ class FluxdRssad extends FluxdServiceMod
 			return false;
 		}
 	}
-	
+
 	/**
 	 * get filter-content
 	 *
@@ -127,7 +127,7 @@ class FluxdRssad extends FluxdServiceMod
 		$handle = @fopen($file, "r");
 		if (!$handle) {
 			$this->messages = "cannot open ".$file.".";
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Load-Error : ".$this->messages);
+			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Load-Error : ".$this->messages);
 			return false;
 		}
 		$data = "";
@@ -136,10 +136,10 @@ class FluxdRssad extends FluxdServiceMod
 		@fclose ($handle);
 		return $data;
 	}
-	
+
 	/**
 	 * saves a filter
-	 * 
+	 *
 	 * @param $filtername
 	 * @param $content
 	 * @return boolean
@@ -151,22 +151,22 @@ class FluxdRssad extends FluxdServiceMod
 		$handle = @fopen($file, "w");
 		if (!$handle) {
 			$this->messages = "cannot open ".$file." for writing.";
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Save-Error : ".$this->messages);
+			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$this->messages);
 			return false;
 		}
 		$result = @fwrite($handle, $content);
 		@fclose($handle);
 		if ($result === false) {
 			$this->messages = "cannot write content to ".$handle.".";
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Save-Error : ".$this->messages);
+			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$this->messages);
 			return false;
 		}
 		// log
-		AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Saved : ".$filtername);
+		AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Saved : ".$filtername);
 		// return
 		return true;
-	}	
-	
+	}
+
 	/**
 	 * deletes a filter
 	 *
@@ -194,16 +194,16 @@ class FluxdRssad extends FluxdServiceMod
 		}
 		if ($fileCount == $deleted) {
 			// log + return
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Deleted : ".$filtername." (".$deleted."/".$fileCount.")");
+			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Deleted : ".$filtername." (".$deleted."/".$fileCount.")");
 			return true;
 		} else {
 			// log + return
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
-			return false;			
+			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
+			return false;
 		}
 	}
 
-	
+
 	/**
 	 * get job-list
 	 *
@@ -235,10 +235,10 @@ class FluxdRssad extends FluxdServiceMod
 		}
 		return false;
 	}
-	
+
 	/**
 	 * updates jobs
-	 * 
+	 *
 	 * @param $content
 	 * @return boolean
 	 */
@@ -272,13 +272,13 @@ class FluxdRssad extends FluxdServiceMod
 			// update setting
 			updateSetting("tf_settings", "fluxd_Rssad_jobs", $jobsString);
 			// log
-			AuditAction($cfg["constants"]["admin"], "fluxd Rssad Jobs Saved : \n".$jobsString);
+			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Jobs Saved : \n".$jobsString);
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * get jobs-content
 	 *
@@ -296,11 +296,11 @@ class FluxdRssad extends FluxdServiceMod
 		} else {
 			return false;
 		}
-	}	
-	
+	}
+
 	/**
 	 * adds a job
-	 * 
+	 *
 	 * @param $jobNumber
 	 * @param $savedir
 	 * @param $url
@@ -321,7 +321,7 @@ class FluxdRssad extends FluxdServiceMod
 			}
 			$jobsString .= trim(checkDirPathString($savedir)).$this->delimJob;
 			$jobsString .= $url.$this->delimJob;
-			$jobsString .= $filtername;		
+			$jobsString .= $filtername;
 			// check dir
 			if ($checkdir) {
 				$check = checkDirectory($savedir);
@@ -335,11 +335,11 @@ class FluxdRssad extends FluxdServiceMod
 		} else {
 			return false;
 		}
-	}	
-	
+	}
+
 	/**
 	 * updates a single job
-	 * 
+	 *
 	 * @param $jobNumber
 	 * @param $savedir
 	 * @param $url
@@ -383,17 +383,17 @@ class FluxdRssad extends FluxdServiceMod
 					$check = true;
 				}
 				// update setting
-				return ($check && $this->jobsUpdate($jobsString));			
+				return ($check && $this->jobsUpdate($jobsString));
 			}
 			return false;
 		} else {
 			return false;
-		}		
+		}
 	}
-	
+
 	/**
 	 * deletes a single job
-	 * 
+	 *
 	 * @param $jobNumber
 	 * @return boolean
 	 */
@@ -419,14 +419,14 @@ class FluxdRssad extends FluxdServiceMod
 						$jobsString .= $this->delimJobs;
 				}
 				// update setting
-				return $this->jobsUpdate($jobsString);			
+				return $this->jobsUpdate($jobsString);
 			}
 			return false;
 		} else {
 			return false;
-		}			
-	}		
-	
+		}
+	}
+
 }
 
 ?>
