@@ -512,6 +512,7 @@ sub reload {
 sub loadDatabaseConfig {
 	my $file = shift;
 	open(CONFIG, $file) || return 0;
+	my $lineSep = $/;
 	undef $/;
 	while (<CONFIG>) {
 		if (/db_type.*[^\[]\"(.*)\"[^\]]/) {
@@ -530,7 +531,7 @@ sub loadDatabaseConfig {
 			$dbPass = $1;
 		}
 	}
-	$/ = '\n';
+	$/ = $lineSep;
 	close(CONFIG);
 
 	# build dsn
