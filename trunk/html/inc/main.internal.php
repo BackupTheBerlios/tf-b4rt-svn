@@ -215,6 +215,7 @@ if($cfg["fluxd_Qmgr_enabled"] == 1) {
 /*******************************************************************************
  *  DEBUG
  ******************************************************************************/
+/*
 if ($cfg["version"] != "svn") {
 	// turn off error_reporting
 	error_reporting(0);
@@ -222,5 +223,6 @@ if ($cfg["version"] != "svn") {
 	// turn on error_reporting
 	error_reporting(E_ALL);
 }
+*/
 
 ?>
