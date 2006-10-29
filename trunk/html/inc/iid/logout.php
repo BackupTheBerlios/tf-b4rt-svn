@@ -41,18 +41,18 @@ $result = $db->Execute($sql);
 showError($db, $sql);
 
 // flush cache
-cacheFlush($cfg["user"]);
+@cacheFlush($cfg["user"]);
 
 // destroy session
 @session_destroy();
 
 // final logout-step
 if ($cfg["auth_type"] == 2) { /* Basic-Auth */
-    header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
-    header('HTTP/1.0 401 Unauthorized');
+    @header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
+    @header('HTTP/1.0 401 Unauthorized');
     @ob_end_clean();
 } else {
-    header('location: login.php');
+    @header('location: login.php');
 }
 exit();
 
