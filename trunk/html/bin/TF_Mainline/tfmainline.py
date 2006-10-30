@@ -473,17 +473,19 @@ class TorrentApp(object):
         # shutting down.
         rawserver.listen_forever()
 
-        # overwrite stat-file in "Torrent Stopped" format.
+        # overwrite stat-file in "Torrent Stopped"/"Download Succeeded!" format.
         try:
             FILE = open(self.d.statFile,"w")
-            # write stopped stats to stat-file
             FILE.write("0\n")
             pcts = "-"+self.percentDone
             pctf = float(pcts)
             pctf -= 100
             FILE.write(str(pctf))
             FILE.write("\n")
-            FILE.write("Torrent Stopped\n")
+            if self.multitorrent.isDone:
+                FILE.write("Download Succeeded!\n")
+            else:
+                FILE.write("Torrent Stopped\n")
             FILE.write("\n")
             FILE.write("\n")
             FILE.write(self.d.tfOwner+"\n")
