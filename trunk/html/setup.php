@@ -1190,15 +1190,17 @@ if (isset($_REQUEST["1"])) {                                                    
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 				send('<table border="0">');
 				// path
-				$line = '<tr><td>path : </td>';
+				$line = '<tr><td><strong>path : </strong></td>';
 				$line .= '<td><input name="path" type="Text" maxlength="254" size="40" value="';
 				if (isset($_REQUEST["path"]))
 					$line .= $_REQUEST["path"];
 				else
 					$line .= $tf_settings["path"];
 				$line .= '"></td></tr>';
+				$line .= '<tr><td colspan="2">Note : this is the what you know as "path" (or "downloads") from TF 2.1 and TF 2.1-b4rt.<br> (the "tflux-parent-dir" where home-dirs etc will be created).<br><br></td></tr>';
 				send($line);
 				// docroot
+				/*
 				$line = '<tr><td>docroot : </td>';
 				$line .= '<td><input name="docroot" type="Text" maxlength="254" size="40" value="';
 				if (isset($_REQUEST["docroot"]))
@@ -1207,7 +1209,13 @@ if (isset($_REQUEST["1"])) {                                                    
 					$line .= _DIR;
 				$line .= '"></td></tr>';
 				send($line);
+				*/
 				send('</table>');
+				// docroot
+				if (isset($_REQUEST["docroot"]))
+					send('<input type="Hidden" name="docroot" value="'.$_REQUEST["docroot"].'">');
+				else
+					send('<input type="Hidden" name="docroot" value="'.getcwd().'">');
 				send('<input type="Hidden" name="22" value="">');
 				send('<input type="submit" value="Continue">');
 				send('</form>');
