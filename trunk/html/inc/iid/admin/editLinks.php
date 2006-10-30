@@ -40,6 +40,8 @@ $link_count = count($arLinks);
 $link_list = array();
 foreach($arLinks as $link) {
 	$lid = $arLid[$inx++];
+	$counter = 0;
+	$counter2 = 0;
 	if (isset($_REQUEST["edit"]) && $_REQUEST["edit"] == $link['lid']) {
 		$is_edit = 1;
 	} else {
