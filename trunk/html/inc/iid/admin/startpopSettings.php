@@ -45,6 +45,9 @@ tmplSetTitleBar("Administration - StartPop Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
 
+// set iid-var
+$tmpl->setvar('iid', $_REQUEST["iid"]);
+
 // parse template
 $tmpl->pparse();
 

@@ -45,6 +45,9 @@ tmplSetAdminMenu();
 tmplSetActivity($min, $user_id, $srchFile, $srchAction);
 tmplSetFoot();
 
+// set iid-var
+$tmpl->setvar('iid', $_REQUEST["iid"]);
+
 // parse template
 $tmpl->pparse();
 

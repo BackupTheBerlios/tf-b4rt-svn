@@ -109,6 +109,9 @@ tmplSetAdminMenu();
 tmplSetUserSection();
 tmplSetFoot();
 
+// set iid-var
+$tmpl->setvar('iid', $_REQUEST["iid"]);
+
 // parse template
 $tmpl->pparse();
 

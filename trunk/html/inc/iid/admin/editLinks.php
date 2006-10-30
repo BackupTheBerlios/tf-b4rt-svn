@@ -79,6 +79,9 @@ tmplSetTitleBar($cfg['_ADMINEDITLINKS']);
 tmplSetAdminMenu();
 tmplSetFoot();
 
+// set iid-var
+$tmpl->setvar('iid', $_REQUEST["iid"]);
+
 // parse template
 $tmpl->pparse();
 

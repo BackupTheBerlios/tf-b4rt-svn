@@ -321,6 +321,9 @@ switch ($op) {
 		exit();
 
 	default:
+		// set iid-var
+		$_REQUEST['iid'] = "admin";
+		// include page
 		require_once("inc/iid/admin/".$op.".php");
 		exit();
 }
