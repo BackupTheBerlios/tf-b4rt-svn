@@ -20,6 +20,12 @@
 
 *******************************************************************************/
 
+/**
+ * POSIX-wrapper for PHPs lacking posix-support (--disable-posix)
+ */
+if (!function_exists("posix_geteuid"))
+	require_once("functions.posix.php");
+
 /*
  * netstatConnectionsSum
  */
