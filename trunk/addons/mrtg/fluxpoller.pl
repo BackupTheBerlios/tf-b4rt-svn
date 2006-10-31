@@ -263,34 +263,25 @@ sub cactiPrintLoadAVG {
 # Return: null                                                                 #
 #------------------------------------------------------------------------------#
 sub LoadAVG {
-
 	# vars
-	my ($AVG1min, $AVG5min, $AVG15min, $junk);
-
+	my ($AVG1min, $AVG5min, $AVG15min);
 	#generate LOAD AVG.
 	if ($OSTYPE == 1) { # linux
-
 		my $loadAVG=`cat /proc/loadavg`;
-		($AVG1min, $AVG5min, $AVG15min, $junk) = split /\s/, $loadAVG;
-
+		($AVG1min, $AVG5min, $AVG15min) = split /\s/, $loadAVG, 3;
 	} elsif ($OSTYPE == 2) { # bsd
-
 		my $loadAVG=`uptime`;
 		$loadAVG =~ /.*load averages:(.*)/;
 		my @loadAry = split /\s/, $1;
 		$AVG1min = shift @loadAry;
 		$AVG5min = shift @loadAry;
-
 	}
-
 	#1m AVG.
 	print ($AVG1min * $AVGmultiplier);
 	print "\n";
-
 	#5m AVG.
 	print ($AVG5min * $AVGmultiplier);
 	print "\n";
-
 }
 
 #------------------------------------------------------------------------------#
