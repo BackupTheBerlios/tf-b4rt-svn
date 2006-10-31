@@ -21,11 +21,16 @@
 *******************************************************************************/
 
 /**
- * initialize global template-instance
+ * POSIX-wrapper for PHPs lacking posix-support (--disable-posix)
+ */
+if (!function_exists("posix_geteuid"))
+	require_once("inc/functions/functions.posix.php");
+
+/**
+ * initialize global template-instance "$tmpl"
  *
  * @param $theme
  * @param $template
- * @return vlib-template-instance
  */
 function tmplInitializeInstance($theme, $template) {
 	global $cfg, $tmpl;
