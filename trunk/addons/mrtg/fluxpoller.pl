@@ -28,9 +28,8 @@ use strict;
 # CHANGEME
 my $AVGmultiplier = "100";
 
-# should we try to find needed binaries ? (using "whereis" + "awk")
-# use 1 to activate, else "constants" are used (the faster + safer way)
-my $autoFindBinaries = 0;
+# stat-file-dir (".transfers" in tf-b4rt and ".torrents" in TF 2.1 / 2.1-b4rt)
+my $STATFILEDIR=".transfers";
 
 # webserver-user
 # (only used on bsd)
@@ -39,6 +38,10 @@ my $WEBUSER = "www";
 # define socket-bins. default : qw( python transmissionc wget )
 # (only used on bsd)
 my @BINS_SOCKET = qw( python transmissionc wget );
+
+# should we try to find needed binaries ? (using "whereis" + "awk")
+# use 1 to activate, else "constants" are used (the faster + safer way)
+my $autoFindBinaries = 0;
 
 # Internal Vars
 my ($REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE);
@@ -119,7 +122,7 @@ sub printTraffic {
 		printUsage();
 		exit;
 	}
-	$fluxDir .= "/.transfers";
+	$fluxDir .= "/".$STATFILEDIR;
 	my $outputFormat = shift;
 	if ($outputFormat eq "mrtg") {
 		mrtgPrintTraffic($fluxDir);
