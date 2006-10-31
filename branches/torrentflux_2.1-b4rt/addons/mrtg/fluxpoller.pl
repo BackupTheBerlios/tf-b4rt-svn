@@ -3,30 +3,51 @@
 # $Id$
 # $Revision$
 # $Date$
-#------------------------------------------------------------------------------#
-# fluxpoller.pl                                                                #
-#------------------------------------------------------------------------------#
-# This Stuff is provided 'as-is'. In no way will the author be held            #
-# liable for any damages to your soft- or hardware from this.                  #
-# Feel free to change or rip the code.                                         #
+################################################################################
+#                                                                              #
+# LICENSE                                                                      #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License (GPL)            #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# To read the license please visit http://www.gnu.org/copyleft/gpl.html        #
+#                                                                              #
+#                                                                              #
 ################################################################################
 use strict;
+################################################################################
+
+# load-average multiplier
+# CHANGEME
+my $AVGmultiplier = "100";
+
+# stat-file-dir (".transfers" in tf-b4rt and ".torrents" in TF 2.1 / 2.1-b4rt)
+my $STATFILEDIR=".torrents";
+
+# webserver-user
+# (only used on bsd)
+my $WEBUSER = "www";
+
+# define socket-bins. default : qw( python transmissionc wget )
+# (only used on bsd)
+my @BINS_SOCKET = qw( python transmissionc wget );
 
 # should we try to find needed binaries ? (using "whereis" + "awk")
 # use 1 to activate, else "constants" are used (the faster + safer way)
 my $autoFindBinaries = 0;
 
-# define socket-bins. default : qw( python transmissionc )
-my @BINS_SOCKET = qw( python transmissionc wget );
-
 # Internal Vars
-my ( $REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE );
+my ($REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE);
 
 # bin Vars
-my ( $BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_SOCKSTAT, $BIN_GREP, $BIN_AWK );
-
-# webserver-user (only needed on bsd)
-my $WEBUSER = "www";
+my ($BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_SOCKSTAT, $BIN_GREP, $BIN_AWK);
 
 # check env
 checkEnv();
@@ -52,7 +73,8 @@ if ($OSTYPE == 1) { # linux
 if ($autoFindBinaries != 0) { findBinaries() };
 
 # init some vars
-$REVISION = do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
+$REVISION =
+	do { my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 ($DIR=$0) =~ s/([^\/\\]*)$//;
 ($PROG=$1) =~ s/\.([^\.]*)$//;
 $EXTENSION=$1;
@@ -68,6 +90,14 @@ SWITCH: {
 		printConnections(shift @ARGV);
 		exit;
 	};
+	/^loadavg/ && do { # --- LOAD AVG ---
+		printLoadAVG(shift @ARGV);
+		exit;
+	};
+	/.*(version|-v).*/ && do { # --- version ---
+		printVersion();
+		exit;
+	};
 	/.*(help|-h).*/ && do { # --- help ---
 		printUsage();
 		exit;
@@ -80,19 +110,19 @@ SWITCH: {
 # Subs
 #===============================================================================
 
-#-------------------------------------------------------------------------------
-# Sub: printTraffic
-# Parameters: string with path of flux-dir
-#             string with wanted output-format (mrtg|cacti)
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printTraffic                                                            #
+# Parameters: string with path of flux-dir                                     #
+#             string with wanted output-format (mrtg|cacti)                    #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub printTraffic {
 	my $fluxDir = shift;
 	if (!(defined $fluxDir)) {
 		printUsage();
 		exit;
 	}
-	$fluxDir .= "/.torrents";
+	$fluxDir .= "/".$STATFILEDIR;
 	my $outputFormat = shift;
 	if ($outputFormat eq "mrtg") {
 		mrtgPrintTraffic($fluxDir);
@@ -106,11 +136,11 @@ sub printTraffic {
 	}
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintTraffic
-# Parameters:	string with path of flux-".stat-files"-dir
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintTraffic                                                        #
+# Parameters: string with path of flux-".stat-files"-dir                       #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub mrtgPrintTraffic {
 	my $fluxDir = shift;
 	# get traffic-vals
@@ -127,11 +157,11 @@ sub mrtgPrintTraffic {
 	mrtgPrintTargetname();
 }
 
-#-------------------------------------------------------------------------------
-# Sub: cactiPrintTraffic
-# Parameters:	string with path of flux-".stat-files"-dir
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: cactiPrintTraffic                                                       #
+# Parameters: string with path of flux-".stat-files"-dir                       #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub cactiPrintTraffic {
 	my $fluxDir = shift;
 	# get traffic-vals
@@ -146,11 +176,11 @@ sub cactiPrintTraffic {
 	print $trafficLine;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: printConnections
-# Parameters:	string with wanted output-format (mrtg|cacti)
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printConnections                                                        #
+# Parameters: string with wanted output-format (mrtg|cacti)                    #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub printConnections {
 	my $outputFormat = shift;
 	if ($outputFormat eq "mrtg") {
@@ -163,11 +193,11 @@ sub printConnections {
 	}
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintConnections
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintConnections                                                    #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub mrtgPrintConnections {
 	# print down-"speed" for mrtg
 	print fluxConnections();
@@ -181,21 +211,89 @@ sub mrtgPrintConnections {
 	mrtgPrintTargetname();
 }
 
-#-------------------------------------------------------------------------------
-# Sub: cactiPrintConnections
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: cactiPrintConnections                                                   #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub cactiPrintConnections {
 	# print connections for cacti
 	print fluxConnections();
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintUptime
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printLoadAVG                                                            #
+# Parameters: string with wanted output-format (mrtg|cacti)                    #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub printLoadAVG {
+	my $outputFormat = shift;
+	if ($outputFormat eq "mrtg") {
+		mrtgPrintLoadAVG();
+	} elsif ($outputFormat eq "cacti") {
+		cactiPrintLoadAVG();
+	} else {
+		print LoadAVG();
+		#print "\n";
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintLoadAVG                                                        #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub mrtgPrintLoadAVG {
+	# print Load AVG. for mrtg
+	LoadAVG();
+	# print uptime for mrtg
+	mrtgPrintUptime();
+	# print target-name for mrtg
+	mrtgPrintTargetname();
+}
+
+#------------------------------------------------------------------------------#
+# Sub: cactiPrintLoadAVG                                                       #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub cactiPrintLoadAVG {
+	# print Load AVG. for cacti
+	print LoadAVG();
+}
+
+#------------------------------------------------------------------------------#
+# Sub: LoadAVG                                                                 #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub LoadAVG {
+	# vars
+	my ($AVG1min, $AVG5min, $AVG15min);
+	#generate LOAD AVG.
+	if ($OSTYPE == 1) { # linux
+		my $loadAVG=`cat /proc/loadavg`;
+		($AVG1min, $AVG5min, $AVG15min) = split /\s/, $loadAVG, 3;
+	} elsif ($OSTYPE == 2) { # bsd
+		my $loadAVG=`uptime`;
+		$loadAVG =~ /.*load averages:(.*)/;
+		my @loadAry = split /\s/, $1;
+		$AVG1min = shift @loadAry;
+		$AVG5min = shift @loadAry;
+	}
+	#1m AVG.
+	print ($AVG1min * $AVGmultiplier);
+	print "\n";
+	#5m AVG.
+	print ($AVG5min * $AVGmultiplier);
+	print "\n";
+}
+
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintUptime                                                         #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub mrtgPrintUptime {
 	# uptime data for mrtg
 	my $uptime = `uptime`;
@@ -203,22 +301,22 @@ sub mrtgPrintUptime {
     print "$1, $2\n";
 }
 
-#-------------------------------------------------------------------------------
-# Sub: mrtgPrintTargetname
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintTargetname                                                     #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub mrtgPrintTargetname {
 	# target-name for mrtg
 	my $targetname = `hostname`;
 	print $targetname;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: fluxTraffic
-# Parameters:	string with path of flux-".stat-files"-dir
-# Return: array with current down-traffic ([0]) and up-traffic ([1])
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: fluxTraffic                                                             #
+# Parameters:	string with path of flux-".stat-files"-dir                     #
+# Return: array with current down-traffic ([0]) and up-traffic ([1])           #
+#------------------------------------------------------------------------------#
 sub fluxTraffic {
 	my $fluxDir = shift;
 	# init speed-sum-vars
@@ -253,20 +351,18 @@ sub fluxTraffic {
 	return @retVal;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: fluxConnections
-# Parameters:	-
-# Return: int with current flux-tcp-connections (python + transmission)
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: fluxConnections                                                         #
+# Parameters: null                                                             #
+# Return: int with current flux-tcp-connections (python + transmission)        #
+#------------------------------------------------------------------------------#
 sub fluxConnections {
 	my $cons = 0;
 	my $cons_temp = 0;
 	if ($OSTYPE == 1) { # linux
-		foreach my $bin_socket (@BINS_SOCKET) {
-			$cons_temp = `$BIN_NETSTAT -e -p --tcp -n 2> /dev/null | $BIN_GREP -v root | $BIN_GREP -v 127.0.0.1 | $BIN_GREP -c $bin_socket`;
-			chomp $cons_temp;
-			$cons += $cons_temp;
-		}
+		$cons_temp = `$BIN_NETSTAT -e -p --tcp -n 2> /dev/null | $BIN_GREP -v root | $BIN_GREP -v 127.0.0.1 | $BIN_GREP -cE '.*(python|transmissionc|wget).*'`;
+		chomp $cons_temp;
+		$cons = int $cons_temp;
 	} elsif ($OSTYPE == 2) { # bsd
 		foreach my $bin_socket (@BINS_SOCKET) {
 			$cons_temp = `$BIN_SOCKSTAT | $BIN_GREP -cE $WEBUSER.+$bin_socket.+tcp`;
@@ -277,11 +373,11 @@ sub fluxConnections {
 	return $cons;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: findBinaries
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: findBinaries                                                            #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub findBinaries {
 	$BIN_CAT = `whereis cat | awk '{print \$2}'`; chomp $BIN_CAT;
 	$BIN_HEAD = `whereis head | awk '{print \$2}'`; chomp $BIN_HEAD;
@@ -292,11 +388,11 @@ sub findBinaries {
 	$BIN_AWK = `whereis awk | awk '{print \$2}'`; chomp $BIN_AWK;
 }
 
-#-------------------------------------------------------------------------------
-# Sub: checkEnv
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: checkEnv                                                                #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub checkEnv {
 	## win32 not supported ;)
 	if ("$^O" =~ /win32/i) {
@@ -311,14 +407,22 @@ sub checkEnv {
 	}
 }
 
-#-------------------------------------------------------------------------------
-# Sub: printUsage
-# Parameters:	-
-# Return:		-
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------#
+# Sub: printVersion                                                            #
+# Arguments: Null                                                              #
+# Returns: Version Information                                                 #
+#------------------------------------------------------------------------------#
+sub printVersion {
+	print $PROG.".".$EXTENSION." Version ".$REVISION."\n";
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printUsage                                                              #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
 sub printUsage {
 	print <<"USAGE";
-
 $PROG.$EXTENSION (Revision $REVISION)
 
 Usage: $PROG.$EXTENSION type [extra-args]
@@ -331,16 +435,22 @@ types:
 <connections> : print current flux-tcp-connections.
                 extra-args : 1. (optional) output-format (mrtg|cacti)
 
+<loadavg>     : print current load-average.
+                extra-args : 1. (optional) output-format (mrtg|cacti)
 
 Examples:
 
-$PROG.$EXTENSION traffic /usr/local/torrent
-$PROG.$EXTENSION traffic /usr/local/torrent mrtg
-$PROG.$EXTENSION traffic /usr/local/torrent cacti
+$PROG.$EXTENSION traffic /usr/local/torrentflux
+$PROG.$EXTENSION traffic /usr/local/torrentflux mrtg
+$PROG.$EXTENSION traffic /usr/local/torrentflux cacti
 
 $PROG.$EXTENSION connections
 $PROG.$EXTENSION connections mrtg
 $PROG.$EXTENSION connections cacti
+
+$PROG.$EXTENSION loadavg
+$PROG.$EXTENSION loadavg mrtg
+$PROG.$EXTENSION loadavg cacti
 
 USAGE
 
