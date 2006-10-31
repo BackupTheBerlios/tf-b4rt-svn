@@ -24,6 +24,10 @@
 use strict;
 ################################################################################
 
+# load-average multiplier
+# CHANGEME
+my $AVGmultiplier = "100";
+
 # should we try to find needed binaries ? (using "whereis" + "awk")
 # use 1 to activate, else "constants" are used (the faster + safer way)
 my $autoFindBinaries = 0;
@@ -260,21 +264,38 @@ sub cactiPrintLoadAVG {
 #------------------------------------------------------------------------------#
 sub LoadAVG {
 
-    #generate LOAD AVG.
+	if ($OSTYPE == 1) { # linux
 
-	#CHANGEME
-	my $AVGmultiplier = "100";
-	my $loadAVG=`cat /proc/loadavg`;
-	my ($AVG1min,$AVG5min,$AVG15min,$junk) = split /\s/,$loadAVG;
+		#generate LOAD AVG.
+		my $loadAVG=`cat /proc/loadavg`;
+		my ($AVG1min,$AVG5min,$AVG15min,$junk) = split /\s/,$loadAVG;
 
-	#1m AVG.
-	print ($AVG1min * $AVGmultiplier);
-	print "\n";
+		#1m AVG.
+		print ($AVG1min * $AVGmultiplier);
+		print "\n";
 
-	#5m AVG.
-	print ($AVG5min * $AVGmultiplier);
-	print "\n";
+		#5m AVG.
+		print ($AVG5min * $AVGmultiplier);
+		print "\n";
 
+	} elsif ($OSTYPE == 2) { # bsd
+
+		my ($AVG1min,$AVG5min,$AVG15min,$junk);
+		my $loadAVG=`uptime`;
+		$loadAVG =~ /.*load averages:(.*)/;
+		my @loadAry = split /\s/, $1;
+		$AVG1min = shift @loadAry;
+		$AVG5min = shift @loadAry;
+
+		#1m AVG.
+		print ($AVG1min * $AVGmultiplier);
+		print "\n";
+
+		#5m AVG.
+		print ($AVG5min * $AVGmultiplier);
+		print "\n";
+
+	}
 }
 
 #------------------------------------------------------------------------------#
