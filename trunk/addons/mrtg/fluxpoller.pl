@@ -81,6 +81,10 @@ SWITCH: {
 		printConnections(shift @ARGV);
 		exit;
 	};
+	/^loadavg/ && do { # --- LOAD AVG ---
+		printLoadAVG(shift @ARGV);
+		exit;
+	};
 	/.*(version|-v).*/ && do { # --- version ---
 		printVersion();
 		exit;
@@ -206,6 +210,71 @@ sub mrtgPrintConnections {
 sub cactiPrintConnections {
 	# print connections for cacti
 	print fluxConnections();
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printLoadAVG                                                            #
+# Parameters: string with wanted output-format (mrtg|cacti)                    #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub printLoadAVG {
+	my $outputFormat = shift;
+	if ($outputFormat eq "mrtg") {
+		mrtgPrintLoadAVG();
+	} elsif ($outputFormat eq "cacti") {
+		cactiPrintLoadAVG();
+	} else {
+		print LoadAVG();
+		#print "\n";
+	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: mrtgPrintLoadAVG                                                        #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub mrtgPrintLoadAVG {
+	# print Load AVG. for mrtg
+	LoadAVG();
+	# print uptime for mrtg
+	mrtgPrintUptime();
+	# print target-name for mrtg
+	mrtgPrintTargetname();
+}
+
+#------------------------------------------------------------------------------#
+# Sub: cactiPrintLoadAVG                                                       #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub cactiPrintLoadAVG {
+	# print Load AVG. for cacti
+	print LoadAVG();
+}
+
+#------------------------------------------------------------------------------#
+# Sub: LoadAVG                                                                 #
+# Parameters: null                                                             #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub LoadAVG {
+
+    #generate LOAD AVG.
+
+	#CHANGEME
+	my $AVGmultiplier = "100";
+	my $loadAVG=`cat /proc/loadavg`;
+	my ($AVG1min,$AVG5min,$AVG15min,$junk) = split /\s/,$loadAVG;
+
+	#1m AVG.
+	print ($AVG1min * $AVGmultiplier);
+	print "\n";
+
+	#5m AVG.
+	print ($AVG5min * $AVGmultiplier);
+	print "\n";
+
 }
 
 #------------------------------------------------------------------------------#
@@ -356,6 +425,8 @@ types:
 <connections> : print current flux-tcp-connections.
                 extra-args : 1. (optional) output-format (mrtg|cacti)
 
+<loadavg>     : print current load-average.
+                extra-args : 1. (optional) output-format (mrtg|cacti)
 
 Examples:
 
@@ -366,6 +437,10 @@ $PROG.$EXTENSION traffic /usr/local/torrentflux cacti
 $PROG.$EXTENSION connections
 $PROG.$EXTENSION connections mrtg
 $PROG.$EXTENSION connections cacti
+
+$PROG.$EXTENSION loadavg
+$PROG.$EXTENSION loadavg mrtg
+$PROG.$EXTENSION loadavg cacti
 
 USAGE
 
