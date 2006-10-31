@@ -118,6 +118,16 @@ if ((ini_get("allow_url_fopen")) == 1) {
 	$warnings++;
 }
 send($allow_url_fopen.'</li>');
+// register_globals
+$register_globals = '<li>register_globals ';
+if ((ini_get("register_globals")) == 0) {
+	$register_globals .= '<font color="green">Passed</font>';
+} else {
+	$register_globals .= '<font color="red">Failed</font>';
+	$errors++;
+	array_push($errorsMessages, "PHP-Configuration : register_globals must be turned off.");
+}
+send($register_globals.'</li>');
 //
 send("</ul>");
 
