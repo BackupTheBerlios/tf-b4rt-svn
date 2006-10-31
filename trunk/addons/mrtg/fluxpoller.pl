@@ -32,7 +32,12 @@ my $AVGmultiplier = "100";
 # use 1 to activate, else "constants" are used (the faster + safer way)
 my $autoFindBinaries = 0;
 
-# define socket-bins. default : qw( python transmissionc )
+# webserver-user
+# (only used on bsd)
+my $WEBUSER = "www";
+
+# define socket-bins. default : qw( python transmissionc wget )
+# (only used on bsd)
 my @BINS_SOCKET = qw( python transmissionc wget );
 
 # Internal Vars
@@ -40,9 +45,6 @@ my ($REVISION, $DIR, $PROG, $EXTENSION, $USAGE, $OSTYPE);
 
 # bin Vars
 my ($BIN_CAT, $BIN_HEAD, $BIN_TAIL, $BIN_NETSTAT, $BIN_SOCKSTAT, $BIN_GREP, $BIN_AWK);
-
-# webserver-user (only needed on bsd)
-my $WEBUSER = "www";
 
 # check env
 checkEnv();
@@ -355,11 +357,9 @@ sub fluxConnections {
 	my $cons = 0;
 	my $cons_temp = 0;
 	if ($OSTYPE == 1) { # linux
-		foreach my $bin_socket (@BINS_SOCKET) {
-			$cons_temp = `$BIN_NETSTAT -e -p --tcp -n 2> /dev/null | $BIN_GREP -v root | $BIN_GREP -v 127.0.0.1 | $BIN_GREP -c $bin_socket`;
-			chomp $cons_temp;
-			$cons += $cons_temp;
-		}
+		$cons_temp = `$BIN_NETSTAT -e -p --tcp -n 2> /dev/null | $BIN_GREP -v root | $BIN_GREP -v 127.0.0.1 | $BIN_GREP -cE '.*(python|transmissionc|wget).*'`;
+		chomp $cons_temp;
+		$cons = int $cons_temp;
 	} elsif ($OSTYPE == 2) { # bsd
 		foreach my $bin_socket (@BINS_SOCKET) {
 			$cons_temp = `$BIN_SOCKSTAT | $BIN_GREP -cE $WEBUSER.+$bin_socket.+tcp`;
