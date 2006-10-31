@@ -203,17 +203,21 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		# watch in dirs for dropped meta-files
-		foreach my $user (sort keys %jobs) {
-			my $dir = $jobs{$user};
-			if ((!($user eq "")) && (-d $dir)) {
+		## fork here ##
+		unless (my $child = fork) {
+			if (!(defined($child))) {
+				print STDERR "Watch : Error on fork: $!\n";
+			} else {
+				# main in child
 				if ($LOGLEVEL > 1) {
-					print "Watch : executing job (".localtime().") :\n";
-					print " user: ".$user."\n";
-					print " dir: ".$dir."\n";
+					print "Watch : forked (".$child."), child executing his main...\n";
 				}
-				# exec
-				tfwatch($dir, $user);
+				main_child();
+				# exit child
+				if ($LOGLEVEL > 1) {
+					print "Watch : exit child...\n";
+				}
+				exit 1;
 			}
 		}
 
@@ -221,6 +225,29 @@ sub main {
 		$time_last_run = time();
 
 	}
+}
+
+#------------------------------------------------------------------------------#
+# Sub: main_child                                                              #
+# Arguments: Null                                                              #
+# Returns:                                                                     #
+#------------------------------------------------------------------------------#
+sub main_child {
+
+	# watch in dirs for dropped meta-files
+	foreach my $user (sort keys %jobs) {
+		my $dir = $jobs{$user};
+		if ((!($user eq "")) && (-d $dir)) {
+			if ($LOGLEVEL > 1) {
+				print "Watch : executing job (".localtime().") :\n";
+				print " user: ".$user."\n";
+				print " dir: ".$dir."\n";
+			}
+			# exec
+			tfwatch($dir, $user);
+		}
+	}
+
 }
 
 #------------------------------------------------------------------------------#
