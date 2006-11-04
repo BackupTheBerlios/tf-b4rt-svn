@@ -34,8 +34,8 @@ from logging import ERROR, WARNING
 from time import strftime, sleep
 import traceback
 import BTL.stackthreading as threading
-from BitTorrent import platform
-from BitTorrent.platform import decode_from_filesystem, encode_for_filesystem
+from BTL.platform import decode_from_filesystem, encode_for_filesystem
+from BitTorrent.platform import get_dot_dir
 from BTL.defer import DeferredEvent
 from BitTorrent import inject_main_logfile
 from BitTorrent.MultiTorrent import Feedback, MultiTorrent
@@ -431,12 +431,12 @@ class TorrentApp(object):
             if config['save_in']:
                 raise BTFailure(_("You cannot specify both --save_as and "
                                   "--save_in."))
-            saveas,bad = platform.encode_for_filesystem(config['save_as'])
+            saveas,bad = encode_for_filesystem(config['save_as'])
             if bad:
                 raise BTFailure(_("Invalid path encoding."))
             savein = os.path.dirname(os.path.abspath(saveas))
         elif config['save_in']:
-            savein,bad = platform.encode_for_filesystem(config['save_in'])
+            savein,bad = encode_for_filesystem(config['save_in'])
             if bad:
                 raise BTFailure(_("Invalid path encoding."))
             saveas = os.path.join(savein,torrent_name)
@@ -444,13 +444,13 @@ class TorrentApp(object):
             saveas = torrent_name
         if config['save_incomplete_in']:
             save_incomplete_in,bad = \
-                platform.encode_for_filesystem(config['save_incomplete_in'])
+                encode_for_filesystem(config['save_incomplete_in'])
             if bad:
                 raise BTFailure(_("Invalid path encoding."))
             save_incomplete_as = os.path.join(save_incomplete_in,torrent_name)
         else:
             save_incomplete_as = os.path.join(savein,torrent_name)
-        data_dir,bad = platform.encode_for_filesystem(config['data_dir'])
+        data_dir,bad = encode_for_filesystem(config['data_dir'])
         if bad:
             raise BTFailure(_("Invalid path encoding."))
         try:
@@ -533,7 +533,7 @@ if __name__ == '__main__':
                         if name == "data_dir"][0]
         defaults = [(name, value,doc) for (name, value, doc) in defaults
                         if not name == "data_dir"]
-        ddir = os.path.join( platform.get_dot_dir(), "console" )
+        ddir = os.path.join( get_dot_dir(), "console" )
         data_dir[1] = decode_from_filesystem(ddir)
         defaults.append( tuple(data_dir) )
         config, args = configfile.parse_configuration_and_args(defaults,
