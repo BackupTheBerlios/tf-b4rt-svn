@@ -20,9 +20,6 @@
 
 *******************************************************************************/
 
-/* defines */
-define('_FILE_HITS','hits.txt');
-
 // functions
 require_once('../functions.php');
 
@@ -32,10 +29,6 @@ require_once('../functions.php');
 
 // print page head
 printPageHead();
-
-// hit-stats
-echo "<h2>hits</h2>";
-echo "<strong>Website</strong> : ".trim(getDataFromFile(_FILE_HITS))."<br>";
 
 // proxy-stats
 echo "<h2>superadmin</h2>";
@@ -51,7 +44,7 @@ if (!isset($db)) {
 	$row = mysql_fetch_row($result);
 	$ct = $row[0];
 	mysql_free_result($result);
-	echo "<tr><td>torrentflux-b4rt</td><td>".$ct."</td></tr>";	
+	echo "<tr><td>torrentflux-b4rt</td><td>".$ct."</td></tr>";
 	// torrentflux_2.1-b4rt
 	$result = mysql_query("SELECT SUM(ct) FROM tfb4rt_proxystats WHERE ua LIKE '%TorrentFlux/%'", $db);
 	$row = mysql_fetch_row($result);
@@ -69,13 +62,13 @@ if (!isset($db)) {
 	$row = mysql_fetch_row($result);
 	$ct = $row[0];
 	mysql_free_result($result);
-	echo "<tr><td><strong>sum</strong></td><td><strong>".$ct."</strong></td></tr>";	
+	echo "<tr><td><strong>sum</strong></td><td><strong>".$ct."</strong></td></tr>";
 	//
 	echo "</table>";
 	// details-table
 	echo "<br>";
 	$query = 'SELECT * FROM tfb4rt_proxystats ORDER BY ct DESC';
-	$result = mysql_query($query) or die('query failed: ' . mysql_error());	
+	$result = mysql_query($query) or die('query failed: ' . mysql_error());
 	echo '<table border="1">';
 	echo "<tr>";
 	echo "<th>client</th>";

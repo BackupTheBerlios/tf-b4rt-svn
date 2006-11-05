@@ -24,7 +24,6 @@
 define('_FILE_NEWS','newshtml.txt');
 define('_FILE_VERSION','version.txt');
 define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
-define('_FILE_HITS','./internal/hits.txt');
 
 /* global fields */
 $version = "";
@@ -36,7 +35,6 @@ require_once('functions.php');
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
-@logHit();
 
 // get current version
 $version = trim(getDataFromFile(_FILE_VERSION));
