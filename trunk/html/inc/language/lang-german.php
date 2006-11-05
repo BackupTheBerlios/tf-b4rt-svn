@@ -20,7 +20,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-1");
-define("_SELECTFILE","Wähle eine Torrent für Upload aus");
+define("_SELECTFILE","Wähle einen Torrent für Upload aus");
 define("_URLFILE","URL der Torrent Datei");
 define("_UPLOAD","Upload");
 define("_GETFILE","Hole Datei");
