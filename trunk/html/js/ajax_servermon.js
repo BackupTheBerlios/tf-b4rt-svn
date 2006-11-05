@@ -12,16 +12,20 @@ var ajax_fieldIds = new Array(
 	"queued"
 );
 var ajax_idCount = ajax_fieldIds.length;
+//
+var pageTitle = "torrentflux-b4rt";
 
 /**
  * ajax_initialize
  *
  * @param timer
  * @param delim
+ * @param pTitle
  */
-function ajax_initialize(timer, delim) {
+function ajax_initialize(timer, delim, pTitle) {
 	ajax_updateTimer = timer;
 	ajax_txtDelim = delim;
+	pageTitle = pTitle;
 	if (ajax_useXML)
 		ajax_updateParams = '?t=server&f=xml';
 	else
@@ -60,6 +64,16 @@ function ajax_processText(content) {
  * @param content
  */
 function ajax_updateContent(content) {
+	// page-title
+	var newTitle = "";
+	for (i = 0; i < ajax_idCount; i++) {
+		newTitle += content[i];
+		if (i < ajax_idCount - 1)
+			newTitle += "|";
+	}
+	newTitle += " - " + pageTitle;
+	document.title = newTitle;
+	// fields
 	for (i = 0; i < ajax_idCount; i++) {
 		document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];
 	}
