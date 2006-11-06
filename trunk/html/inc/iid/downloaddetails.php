@@ -85,18 +85,18 @@ $totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $
 $tmpl->setvar('transferowner', $transferowner);
 
 // size
-$torrentSize = $af->size;
-$tmpl->setvar('size', formatBytesTokBMBGBTB($torrentSize));
+$torrentSize = (int) $af->size;
+$tmpl->setvar('size', @formatBytesTokBMBGBTB($torrentSize));
 
 // sharing
-if ($torrentSize == 0)
-	$tmpl->setvar('sharing', "0");
+if ($torrentSize > 0)
+	$tmpl->setvar('sharing', @number_format((($totals["uptotal"] / $torrentSize) * 100), 2));
 else
-	$tmpl->setvar('sharing', (number_format((($totals["uptotal"] / $torrentSize) * 100), 2)));
+	$tmpl->setvar('sharing', "0");
 
 // totals
-$tmpl->setvar('downTotal', formatFreeSpace($totals["downtotal"] / 1048576));
-$tmpl->setvar('upTotal', formatFreeSpace($totals["uptotal"] / 1048576));
+$tmpl->setvar('downTotal', @formatFreeSpace($totals["downtotal"] / 1048576));
+$tmpl->setvar('upTotal', @formatFreeSpace($totals["uptotal"] / 1048576));
 
 // more
 if ($af->running == 1) {
