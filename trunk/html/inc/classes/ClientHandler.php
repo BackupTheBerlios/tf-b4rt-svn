@@ -287,7 +287,7 @@ class ClientHandler
         $transferTotals = getTransferTotals($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
         if ($this->cfg['enable_xfer'] == 1)
-        	saveXfer($this->owner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
+        	saveXfer($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
         // update totals for this transfer
         updateTransferTotals($this->transfer);
         // set param for sharekill
@@ -295,23 +295,30 @@ class ClientHandler
             $this->sharekill_param = 0;
         } else { // recalc sharekill
             $totalAry = getTransferTotals(urldecode($transfer));
-            $upTotal = $totalAry["uptotal"]+0;
-            $transferSize = $this->af->size+0;
-            $upWanted = ($this->sharekill / 100) * $transferSize;
-            if ($upTotal >= $upWanted) { // we already have seeded at least
-                                         // wanted percentage. continue to seed
-                                         // forever is suitable in this case ~~
-                $this->sharekill_param = 0;
-            } else { // not done seeding wanted percentage
-                $this->sharekill_param = (int) ($this->sharekill - (($upTotal / $transferSize) * 100));
-                // the type-cast may have floored the value. (tornado lacks
-                // precision because only (really?) accepting percentage-values)
-                // better to seed more than less so we add a percent in case ;)
-                if (($upWanted % $upTotal) != 0)
-                    $this->sharekill_param += 1;
-                // sanity-check.
-                if ($this->sharekill_param <= -1)
-                    $this->sharekill_param = 0;
+            $upTotal = $totalAry["uptotal"];
+            // sanity-check. catch "data-size = 0".
+            $transferSize = (int) $this->af->size;
+            if ($transferSize > 0) {
+	            $upWanted = ($this->sharekill / 100) * $transferSize;
+	            if ($upTotal >= $upWanted) { // we already have seeded at least
+	                                         // wanted percentage. continue to seed
+	                                         // forever is suitable in this case ~~
+	                $this->sharekill_param = 0;
+	            } else { // not done seeding wanted percentage
+	                $this->sharekill_param = (int) ($this->sharekill - (($upTotal / $transferSize) * 100));
+	                // the type-cast may have floored the value. (tornado lacks
+	                // precision because only (really?) accepting percentage-values)
+	                // better to seed more than less so we add a percent in case ;)
+	                if (($upWanted % $upTotal) != 0)
+	                    $this->sharekill_param += 1;
+	                // sanity-check.
+	                if ($this->sharekill_param <= -1)
+	                    $this->sharekill_param = 0;
+	            }
+            } else {
+				$this->messages = "data-size is 0 when recalcing share-kill for ".$this->transfer."/".$this->cfg['user'].". setting sharekill absolute to ".$this->sharekill;
+				AuditAction($this->cfg["constants"]["error"], $this->messages);
+				$this->sharekill_param = $this->sharekill;
             }
         }
         // write stat-file
@@ -352,7 +359,7 @@ class ClientHandler
 				$this->messages = "queue-request (".$this->transfer."/".$this->cfg['user'].") but Qmgr not active";
 				AuditAction($this->cfg["constants"]["error"], $this->messages);
 			}
-            $transferRunningFlag = 0;       
+            $transferRunningFlag = 0;
         } else { // start
             // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
