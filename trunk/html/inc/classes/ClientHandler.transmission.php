@@ -86,7 +86,7 @@ class ClientHandlerTransmission extends ClientHandler
         // workaround for bsd-pid-file-problem : touch file first
         if (($this->queue == 0) && ($this->cfg["_OS"] == 2))
         	@touch($this->pidFile);
-        
+
 		// note :
 		// order of args must not change for ps-parsing-code in
 		// RunningTransferTransmission
@@ -188,8 +188,8 @@ class ClientHandlerTransmission extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] = $af->uptotal+0;
-        $retVal["downtotal"] = $af->downtotal+0;
+        $retVal["uptotal"] = $af->uptotal;
+        $retVal["downtotal"] = $af->downtotal;
         // transfer from db
         $torrentId = getTorrentHash($transfer);
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
@@ -242,8 +242,8 @@ class ClientHandlerTransmission extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] = $af->uptotal+0;
-        $retVal["downtotal"] = $af->downtotal+0;
+        $retVal["uptotal"] = $af->uptotal;
+        $retVal["downtotal"] = $af->downtotal;
         return $retVal;
     }
 

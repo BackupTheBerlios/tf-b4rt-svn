@@ -186,8 +186,8 @@ class ClientHandlerTornado extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] = $af->uptotal+0;
-        $retVal["downtotal"] = $af->downtotal+0;
+        $retVal["uptotal"] = $af->uptotal;
+        $retVal["downtotal"] = $af->downtotal;
         return $retVal;
     }
 
@@ -234,8 +234,8 @@ class ClientHandlerTornado extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] += ($af->uptotal+0);
-        $retVal["downtotal"] += ($af->downtotal+0);
+        $retVal["uptotal"] += $af->uptotal;
+        $retVal["downtotal"] += $af->downtotal;
         return $retVal;
     }
 

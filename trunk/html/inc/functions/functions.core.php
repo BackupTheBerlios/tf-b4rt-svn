@@ -901,14 +901,14 @@ function updateTransferTotals($transfer) {
 		showError($db, $sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
-		$sql = "UPDATE tf_torrent_totals SET uptotal = '".($transferTotals["uptotal"]+0)."', downtotal = '".($transferTotals["downtotal"]+0)."' WHERE tid = '".$torrentId."'";
+		$sql = "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$torrentId."'";
 		$db->Execute($sql);
 	} else {
 		$sql = "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal )
 					VALUES (
 					'".$torrentId."',
-					'".($transferTotals["uptotal"]+0)."',
-					'".($transferTotals["downtotal"]+0)."'
+					'".$transferTotals["uptotal"]."',
+					'".$transferTotals["downtotal"]."'
 				   )";
 		$db->Execute($sql);
 	}
@@ -1064,7 +1064,7 @@ function deleteTransfer($transfer, $alias_file) {
 		if ($cfg['enable_xfer'] != 0) {
 			// XFER: before torrent deletion save upload/download xfer data to SQL
 			$transferTotals = getTransferTotals($transfer);
-			saveXfer($transferowner,($transferTotals["downtotal"]+0),($transferTotals["uptotal"]+0));
+			saveXfer($transferowner,$transferTotals["downtotal"],$transferTotals["uptotal"]);
 		}
 		// torrent+stat
 		@unlink($cfg["transfer_file_path"].$transfer);
@@ -1726,15 +1726,15 @@ function getTransferListArray() {
 
 		// ================================================================ size
 		if ($settings[1] != 0)
-			array_push($transferAry, formatBytesTokBMBGBTB($af->size));
+			array_push($transferAry, @formatBytesTokBMBGBTB($af->size));
 
 		// =========================================================== downtotal
 		if ($settings[2] != 0)
-			array_push($transferAry, formatBytesTokBMBGBTB($transferTotals["downtotal"]+0));
+			array_push($transferAry, @formatBytesTokBMBGBTB($transferTotals["downtotal"]));
 
 		// ============================================================= uptotal
 		if ($settings[3] != 0)
-			array_push($transferAry, formatBytesTokBMBGBTB($transferTotals["uptotal"]+0));
+			array_push($transferAry, @formatBytesTokBMBGBTB($transferTotals["uptotal"]));
 
 		// ============================================================== status
 		if ($settings[4] != 0)
@@ -2001,7 +2001,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
 	}
 	// size
-	$size = $af->size;
+	$size = (int) $af->size;
 	// totals
 	$afu = $af->uptotal;
 	$afd = $af->downtotal;
@@ -2025,9 +2025,9 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		else
 			$details['speedUp'] = '0.0 kB/s';
 		// down_current
-		$details['downCurrent'] = formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
+		$details['downCurrent'] = @formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
 		// up_current
-		$details['upCurrent'] = formatFreeSpace($totalsCurrent["uptotal"] / 1048576);
+		$details['upCurrent'] = @formatFreeSpace($totalsCurrent["uptotal"] / 1048576);
 		// seeds
 		$details['seeds'] = $af->seeds;
 		// peers
@@ -2051,9 +2051,9 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$details['cons'] = "";
 	}
 	// down_total
-	$details['downTotal'] = formatFreeSpace($totals["downtotal"] / 1048576);
+	$details['downTotal'] = @formatFreeSpace($totals["downtotal"] / 1048576);
 	// up_total
-	$details['upTotal'] = formatFreeSpace($totals["uptotal"] / 1048576);
+	$details['upTotal'] = @formatFreeSpace($totals["uptotal"] / 1048576);
 	// percentage
 	$percentage = $af->percent_done;
 	if ($percentage < 0) {
@@ -2067,7 +2067,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	$details['eta'] = $af->time_left;
 	// sharing
 	if ($size > 0)
-		$details['sharing'] = number_format((($totals["uptotal"] / $size) * 100), 2);
+		$details['sharing'] = @number_format((($totals["uptotal"] / $size) * 100), 2);
 	else
 		$details['sharing'] = 0;
 	// errors
@@ -2077,7 +2077,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		// owner
 		$details['owner'] = $transferowner;
 		// size
-		$details['size'] = formatBytesTokBMBGBTB($size);
+		$details['size'] = @formatBytesTokBMBGBTB($size);
 		if ($running == 1) {
 			// max_download_rate
 			$details['maxSpeedDown'] = number_format($cfg["max_download_rate"], 2);

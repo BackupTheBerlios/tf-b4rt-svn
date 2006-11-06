@@ -85,7 +85,7 @@ class ClientHandlerMainline extends ClientHandler
 		// note :
 		// order of args must not change for ps-parsing-code in
 		// RunningTransferMainline
-		
+
 		$this->command = "cd ".escapeshellarg($this->savepath).";";
 		$this->command .= " HOME=".$this->cfg["path"];
 		$this->command .= "; export HOME;";
@@ -119,7 +119,7 @@ class ClientHandlerMainline extends ClientHandler
 		if (strlen($this->cfg["btclient_mainline_options"]) > 0)
 			$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
-		$this->command .= " > /dev/null &";	
+		$this->command .= " > /dev/null &";
 
 		// start the client
 		parent::doStartClient();
@@ -186,8 +186,8 @@ class ClientHandlerMainline extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] = $af->uptotal+0;
-        $retVal["downtotal"] = $af->downtotal+0;
+        $retVal["uptotal"] = $af->uptotal;
+        $retVal["downtotal"] = $af->downtotal;
         return $retVal;
     }
 
@@ -234,8 +234,8 @@ class ClientHandlerMainline extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] += ($af->uptotal+0);
-        $retVal["downtotal"] += ($af->downtotal+0);
+        $retVal["uptotal"] += $af->uptotal;
+        $retVal["downtotal"] += $af->downtotal;
         return $retVal;
     }
 

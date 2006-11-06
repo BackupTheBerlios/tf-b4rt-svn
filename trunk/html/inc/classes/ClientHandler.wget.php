@@ -157,7 +157,7 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . $this->cfg["wget_ftp_pasv"];
         $this->command .= " > /dev/null &";
         exec($this->command);
-        
+
         // wait until transfer is up
         waitForTransfer($this->transfer, 1, 15);
     }
@@ -222,8 +222,8 @@ class ClientHandlerWget extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] = $af->uptotal+0;
-        $retVal["downtotal"] = $af->downtotal+0;
+        $retVal["uptotal"] = $af->uptotal;
+        $retVal["downtotal"] = $af->downtotal;
         return $retVal;
     }
 
@@ -257,8 +257,8 @@ class ClientHandlerWget extends ClientHandler
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
         $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
-        $retVal["uptotal"] = $af->uptotal+0;
-        $retVal["downtotal"] = $af->downtotal+0;
+        $retVal["uptotal"] = $af->uptotal;
+        $retVal["downtotal"] = $af->downtotal;
         return $retVal;
     }
 
