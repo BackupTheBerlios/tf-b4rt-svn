@@ -28,7 +28,8 @@ if (!isset($argv)) die();
 
 // defines
 define('_DUMP_DELIM', '|');
-define('_REVISION_FLUXCLI', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
+$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
+define('_REVISION_FLUXCLI', $uselessVar);
 
 // change to docroot if cwd is in bin.
 $cwd = getcwd();
