@@ -181,6 +181,29 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable vlc</strong><br>
+								Enable/Disable vlc-streaming :
+								</td>
+								<td valign="top">
+									<select name="enable_vlc">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_vlc" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>vlc port </strong><br>
+									Set the port for vlc (8080).
+								</td>
+								<td valign="top">
+									<input name="vlc_port" type="Text" maxlength="5" value="<tmpl_var name="vlc_port">" size="5">
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable Rename Files</strong><br>
 									Enable/Disable Rename Files or Folders:
 								</td>
