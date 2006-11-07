@@ -27,8 +27,7 @@ class AliasFileWget extends AliasFile
     // ctor
     function AliasFileWget($inFile,$user="",$cfg) {
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.4";
 		// initialize
         $this->Initialize($cfg);
         // init some vars

@@ -28,8 +28,7 @@ class RunningTransferWget extends RunningTransfer
     // ctor
     function RunningTransferWget($psLine,$cfg) {
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.4";
         // init conf
         $this->Initialize($cfg);
         // ps-parse

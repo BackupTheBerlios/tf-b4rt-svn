@@ -29,8 +29,7 @@ class FluxdQmgr extends FluxdServiceMod
     function FluxdQmgr($cfg, $fluxd) {
         $this->moduleName = "Qmgr";
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }
@@ -66,7 +65,7 @@ class FluxdQmgr extends FluxdServiceMod
     	// send command to Qmgr
     	parent::sendServiceCommand("enqueue;".substr($torrent, 0, -8).";".$user, 0);
         // just 2 sec... dont stress fluxd
-        sleep(2);      	
+        sleep(2);
     }
 
     /**
@@ -93,7 +92,7 @@ class FluxdQmgr extends FluxdServiceMod
             // log
             AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent);
             // just 2 sec... dont stress fluxd
-            sleep(2);              
+            sleep(2);
         }
     }
 

@@ -1532,7 +1532,9 @@ function getReleaseList() {
 		foreach ($releaseListFiles as $release) {
 			$release = trim($release);
 			if ((isset($release)) && ($release != "")) {
-				$releaseVersion = substr((array_pop(explode("_",$release))), 0, -8);
+				$tempArray = explode("_", $release);
+				$tempString = array_pop($tempArray);
+				$releaseVersion = substr(($tempString), 0, -8);
 				$retVal .= '<tr>';
 				$retVal .= '<td align="center">';
 				$retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'">';

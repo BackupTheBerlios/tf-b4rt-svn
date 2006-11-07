@@ -27,8 +27,7 @@ class AliasFileMainline extends AliasFile
     // ctor
     function AliasFileMainline($inFile,$user="",$cfg) {
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.4";
 		// initialize
         $this->initialize($cfg);
         // init some vars

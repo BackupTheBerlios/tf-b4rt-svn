@@ -28,8 +28,6 @@ else
 
 // defines
 define('_NAME', 'torrentflux-b4rt');
-$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-define('_REVISION', $uselessVar);
 define('_VERSION_LOCAL', '.version');
 define('_VERSION_THIS', trim(getDataFromFile(_VERSION_LOCAL)));
 define('_TITLE', _NAME.' '._VERSION_THIS.' - Setup');

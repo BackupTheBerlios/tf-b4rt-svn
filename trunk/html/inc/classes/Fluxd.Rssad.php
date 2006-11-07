@@ -38,8 +38,7 @@ class FluxdRssad extends FluxdServiceMod
     function FluxdRssad($cfg, $fluxd) {
         $this->moduleName = "Rssad";
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
          // check our base-dir

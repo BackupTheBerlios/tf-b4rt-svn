@@ -31,8 +31,6 @@ define('_NAME', 'torrentflux-b4rt');
 define('_UPGRADE_FROM', 'v95');
 define('_UPGRADE_TO', '1.0');
 define('_DEFAULT_PATH', '/usr/local/torrent/');
-$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-define('_REVISION', $uselessVar);
 define('_VERSION_LOCAL', '.version');
 define('_VERSION_THIS', trim(getDataFromFile(_VERSION_LOCAL)));
 define('_TITLE', _NAME.' '._VERSION_THIS.' - Upgrade '._UPGRADE_FROM.' to '._UPGRADE_TO);

@@ -48,7 +48,7 @@ class Fluxd
     var $pathDataDir = "";
     var $pathPidFile = "";
     var $pathSocket = "";
-    
+
     // socket-timeout
     var $socketTimeout = 5;
 
@@ -58,8 +58,9 @@ class Fluxd
      * ctor
      */
     function Fluxd($cfg) {
-    	$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-    	$this->version = $uselessVar;
+        // version
+		$this->version = "0.1";
+		//
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
@@ -108,7 +109,7 @@ class Fluxd
 	            	if ($loopCtr > $maxLoops)
 	            		$loop = false;
 	            	else
-	            		usleep(200000); // wait for 0.2 seconds					
+	            		usleep(200000); // wait for 0.2 seconds
             	}
             }
             // check if started
@@ -148,7 +149,7 @@ class Fluxd
 	            	else
 	            		usleep(200000); // wait for 0.2 seconds
             	} else {
-            		return 1;					
+            		return 1;
             	}
             }
             return 0;
@@ -287,7 +288,7 @@ class Fluxd
 					// read data
 					$data = @socket_read($socket, 4096, PHP_BINARY_READ);
 					$return .= $data;
-				} while (isset($data) && ($data != ""));            	
+				} while (isset($data) && ($data != ""));
             }
 
             // close socket

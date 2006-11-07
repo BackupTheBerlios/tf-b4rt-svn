@@ -29,8 +29,7 @@ class FluxdFluxinet extends FluxdServiceMod
     function FluxdFluxinet($cfg, $fluxd) {
         $this->moduleName = "Fluxinet";
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }

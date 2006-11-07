@@ -29,8 +29,7 @@ class FluxdTrigger extends FluxdServiceMod
     function FluxdTrigger($cfg, $fluxd) {
         $this->moduleName = "Trigger";
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }

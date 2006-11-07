@@ -32,18 +32,15 @@ class ClientHandlerWget extends ClientHandler
     function ClientHandlerWget($cfg) {
         $this->handlerName = "wget";
         // version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.4";
         //
         $this->binSocket = "wget";
         $this->binClient = "wget.php";
         //
         $this->initialize($cfg);
-        // efficient code :
-        //$bin = array_pop(explode("/",$this->cfg["btclient_transmission_bin"]));
-        // compatible code (should work on flawed phps like 5.0.5+) :
-        $uselessVar = explode("/",$this->cfg["bin_wget"]);
-        $bin = array_pop($uselessVar);
+        //
+        $tempArray = explode("/",$this->cfg["bin_wget"]);
+        $bin = array_pop($tempArray);
         //
         $this->binSystem = $bin;
     }
