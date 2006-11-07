@@ -361,6 +361,9 @@ class ClientHandler
 			}
             $transferRunningFlag = 0;
         } else { // start
+        	// DEBUG : log the command
+        	if ($this->cfg['debuglevel'] > 1)
+        		AuditAction($this->cfg["constants"]["debug"], "ClientHandler::doStartClient : ".$this->command);
             // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
             $this->callResult = exec($this->command);
