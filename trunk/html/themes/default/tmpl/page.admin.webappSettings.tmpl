@@ -226,6 +226,18 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Debug-Level</strong><br>
+								Set the Debug-Level of the Webapp.
+								</td>
+								<td valign="top">
+									<select name="debuglevel">
+										<option value="0"<tmpl_if name="debuglevel" value="0"> selected</tmpl_if>>0</option>
+										<option value="1"<tmpl_if name="debuglevel" value="1"> selected</tmpl_if>>1</option>
+										<option value="2"<tmpl_if name="debuglevel" value="2"> selected</tmpl_if>>2</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Show SQL Debug Statements</strong><br>
 								SQL Errors will always be displayed but when this feature is enabled the SQL Statement
 								that caused the error will be displayed as well:

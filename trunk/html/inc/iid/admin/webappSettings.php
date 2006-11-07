@@ -49,6 +49,7 @@ $tmpl->setvar('minutes_to_keep', $cfg["minutes_to_keep"]);
 $tmpl->setvar('rss_cache_min', $cfg["rss_cache_min"]);
 $tmpl->setvar('servermon_update', $cfg["servermon_update"]);
 $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
+$tmpl->setvar('debuglevel', $cfg["debuglevel"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
 $tmpl->setvar('details_type', $cfg["details_type"]);
