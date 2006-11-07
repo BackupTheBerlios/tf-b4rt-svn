@@ -508,6 +508,10 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<strong>wget</strong><br>';
 				$htmlMain .= 'use this to kill all wget processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=15"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>vlc</strong><br>';
+				$htmlMain .= 'use this to kill all vlc processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=16"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "11": // Maintenance-Kill : php
@@ -627,6 +631,30 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
 				$htmlMain .= '<pre>';
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				break;
+			case "16": // Maintenance-Kill : vlc
+				$htmlTitle = "Maintenance - Kill - vlc";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"kill all vlc processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = trim(shell_exec("killall -9 vlc 2> /dev/null"));
+				if ((isset($callResult)) && ($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(2); // just 2 sec
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." vlc | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
