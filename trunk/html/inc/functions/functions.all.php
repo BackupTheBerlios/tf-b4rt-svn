@@ -53,4 +53,7 @@ require_once('inc/functions/functions.readrss.php');
 // startpop
 require_once('inc/functions/functions.startpop.php');
 
+// vlc functions
+require_once('inc/functions/functions.vlc.php');
+
 ?>

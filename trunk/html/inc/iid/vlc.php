@@ -41,6 +41,9 @@ require_once('inc/functions/functions.common.php');
 // dir functions
 require_once('inc/functions/functions.dir.php');
 
+// vlc functions
+require_once('inc/functions/functions.vlc.php');
+
 // config
 loadSettings('tf_settings_dir');
 
@@ -50,7 +53,6 @@ tmplInitializeInstance($cfg["theme"], "page.vlc.tmpl");
 // pageop
 //
 // * default
-//
 // * start
 // * stop
 //
@@ -90,13 +92,13 @@ switch ($pageop) {
 		$fileName = urldecode(stripslashes($_REQUEST['file']));
 		$tmpl->setvar('file', $fileName);
 		$tmpl->setvar('target', urlencode(addslashes($dirName.$fileName)));
-		// more vars
+		// host vars
 		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
 		$tmpl->setvar('port', $cfg['vlc_port']);
 		// already streaming
-		if (vlcIsRunning() === true) {
+		if (vlcIsRunning($_SERVER['SERVER_NAME'], $cfg['vlc_port']) === true) {
 			$tmpl->setvar('is_streaming', 1);
-			$tmpl->setvar('current_stream', vlcGetRunning());
+			$tmpl->setvar('current_stream', vlcGetRunningCurrent());
 		} else {
 			$tmpl->setvar('is_streaming', 0);
 		}
@@ -118,7 +120,7 @@ switch ($pageop) {
 		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
 		$tmpl->setvar('port', $cfg['vlc_port']);
 		// start vlc
-		@vlcStart($targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
+		@vlcStart($_SERVER['SERVER_NAME'], $cfg['vlc_port'], $cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
 		break;
 	case "stop":
 		// stop vlc
