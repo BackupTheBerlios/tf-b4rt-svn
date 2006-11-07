@@ -57,3 +57,13 @@ function CheckSFV(dir,file) {
 	var height = screen.height/2-110;
 	var InfoWin = window.open("index.php?iid=checkSFV&dir="+dir+"&file="+file, "CheckSFV", "status=no,toolbar=no,scrollbars=yes,resizable=yes,menubar=no,width=560,height=240,left="+width+",top="+height);
 }
+
+/**
+ * StreamMultimedia
+ */
+function StreamMultimedia(name_file) {
+	if (popUpWin) {
+		if (!popUpWin.closed) popUpWin.close();
+	}
+	popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=640,height=430')
+}

@@ -40,18 +40,18 @@
 						<td width="140" nowrap><tmpl_var name="date"></td>
 					</tmpl_if>
 					<td align="right" nowrap>
-						<tmpl_if name="enable_rename" value="1">
-							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/tf_standard_themes/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
-						</tmpl_if>
-						<tmpl_if name="enable_move" value="1">
-							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
-						</tmpl_if>
 						<tmpl_if name="enable_sfvcheck" value="1">
 							<tmpl_if name="show_sfv" value="1">
 								<a href="javascript:CheckSFV('<tmpl_var name="sfvdir">','<tmpl_var name="sfvsfv">')"><img src="themes/tf_standard_themes/images/sfv_enabled.gif" border="0" width="16" height="16" alt="sfv check torrent"></a>
 							<tmpl_else>
 								<img src="themes/tf_standard_themes/images/sfv_disabled.gif" border="0" width="16" height="16" alt="sfv check torrent (no sfv found)">
 							</tmpl_if>
+						</tmpl_if>
+						<tmpl_if name="enable_rename" value="1">
+							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/tf_standard_themes/images/rename.gif" width="16" height="16" title="<tmpl_var name="_DIR_REN_LINK">" border="0"></a>
+						</tmpl_if>
+						<tmpl_if name="enable_move" value="1">
+							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/tf_standard_themes/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border="0"></a>
 						</tmpl_if>
 						<tmpl_if name="enable_maketorrent" value="1">
 							<a href="JavaScript:MakeTorrent('index.php?iid=maketorrent&path=<tmpl_var name="urlencode1">')"><img src="themes/tf_standard_themes/images/make.gif" width=16 height=16 title="Make Torrent" border=0></a>
@@ -82,6 +82,9 @@
 						<td width="140" nowrap><tmpl_var name="date"></td>
 					</tmpl_if>
 					<td align="right" nowrap>
+						<tmpl_if name="enable_vlc" value="1">
+							<a href="JavaScript:StreamMultimedia('index.php?iid=vlc&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&op=start')"><img src="themes/tf_standard_themes/images/vlc.png" width="16" height="16" title="Stream Multimedia (vlc)" border="0"></a>
+						</tmpl_if>
 						<tmpl_if name="enable_rename" value="1">
 							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/tf_standard_themes/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
