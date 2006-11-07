@@ -952,7 +952,11 @@ if (isset($_REQUEST["1"])) {                                                    
 				$databaseTestOk = false;
 				$databaseError = "cannot connect to database.";
 			} else {
-				$sqlState = "CREATE DATABASE ".$name;
+				$sqlState = "CREATE DATABASE ";
+				if ($type == "mysql")
+					$sqlState .= "`".$name."`";
+				else
+					$sqlState .= $name;
 				$dbCon->Execute($sqlState);
 				if ($dbCon->ErrorNo() == 0) {
 					send("created database <em>".$name."</em>.<br>");
@@ -1198,7 +1202,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				else
 					$line .= $tf_settings["path"];
 				$line .= '"></td></tr>';
-				$line .= '<tr><td colspan="2">Note : this is the what you know as "path" (or "downloads") from TF 2.1 and TF 2.1-b4rt.<br> (the "tflux-parent-dir" where home-dirs etc will be created).<br><br></td></tr>';
+				$line .= '<tr><td colspan="2">Note : this is what you know as "path" (or "downloads") from TF 2.1 and TF 2.1-b4rt.<br> (the "tflux-parent-dir" where home-dirs etc will be created).<br><br></td></tr>';
 				send($line);
 				// docroot
 				/*
@@ -1345,7 +1349,7 @@ if (isset($_REQUEST["1"])) {                                                    
 } else {                                                                        // default
 	sendHead();
 	if (is_file(_FILE_DBCONF))
-		send('<p><br><font color="red"><h1>db-config already exists '._FILE_DBCONF.'</h1></font>Delete setup.php if you came here after finishing setup to proceed to login.</p><hr>');
+		send('<p><br><font color="red"><h1>db-config already exists ('._FILE_DBCONF.')</h1></font>Delete setup.php if you came here after finishing setup to proceed to login.</p><hr>');
 	send("<h1>"._TITLE."</h1>");
 	send("<p>This script will setup "._NAME."</p>");
 	send("<h2>Next : Database</h2>");
