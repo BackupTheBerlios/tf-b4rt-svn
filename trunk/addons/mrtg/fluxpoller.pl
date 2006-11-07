@@ -259,7 +259,7 @@ sub mrtgPrintLoadAVG {
 #------------------------------------------------------------------------------#
 sub cactiPrintLoadAVG {
 	# print Load AVG. for cacti
-	print LoadAVG();
+	LoadAVG();
 }
 
 #------------------------------------------------------------------------------#
@@ -272,10 +272,10 @@ sub LoadAVG {
 	my ($AVG1min, $AVG5min, $AVG15min);
 	#generate LOAD AVG.
 	if ($OSTYPE == 1) { # linux
-		my $loadAVG=`cat /proc/loadavg`;
+		my $loadAVG = `cat /proc/loadavg`;
 		($AVG1min, $AVG5min, $AVG15min) = split /\s/, $loadAVG, 3;
 	} elsif ($OSTYPE == 2) { # bsd
-		my $loadAVG=`uptime`;
+		my $loadAVG = `uptime`;
 		$loadAVG =~ /.*load averages:(.*)/;
 		my @loadAry = split /\s/, $1;
 		$AVG1min = shift @loadAry;
