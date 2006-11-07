@@ -28,7 +28,7 @@ if (!isset($argv)) die();
 
 // defines
 define('_DUMP_DELIM', '|');
-preg_match('|^\$Revision$', $revisionMatches);
+preg_match('|.* (\d+) .*|', '$Revision$', $revisionMatches);
 define('_REVISION_FLUXCLI', $revisionMatches[1]);
 
 // change to docroot if cwd is in bin.

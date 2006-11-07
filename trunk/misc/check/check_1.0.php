@@ -22,7 +22,7 @@
 
 // defines
 define('_NAME', 'torrentflux-b4rt 1.0');
-preg_match('|^\$Revision$', $revisionMatches);
+preg_match('|.* (\d+) .*|', '$Revision$', $revisionMatches);
 define('_REVISION', $revisionMatches[1]);
 define('_TITLE', _NAME.' - check - Revision '._REVISION);
 
