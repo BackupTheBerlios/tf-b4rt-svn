@@ -1059,7 +1059,7 @@ if (isset($_REQUEST["1"])) {                                                    
 } else {                                                                        // default
 	sendHead();
 	if (is_file(_FILE_DBCONF))
-		send('<p><br><font color="red"><h1>db-config already exists '._FILE_DBCONF.'</h1></font>Delete upgrade.php if you came here after finishing upgrade to proceed to login.</p><hr>');
+		send('<p><br><font color="red"><h1>db-config already exists ('._FILE_DBCONF.')</h1></font>Delete upgrade.php if you came here after finishing upgrade to proceed to login.</p><hr>');
 	send("<h1>"._TITLE."</h1>");
 	send("<p>This script will upgrade from TorrentFlux  "._UPGRADE_FROM." to "._NAME." "._UPGRADE_TO."</p>");
 	send("<h2>Next : Database</h2>");
