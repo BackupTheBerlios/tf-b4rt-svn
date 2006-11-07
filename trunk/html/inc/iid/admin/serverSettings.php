@@ -78,6 +78,8 @@ $tmpl->setvar('bin_unzip', $cfg["bin_unzip"]);
 $tmpl->setvar('validate_unzip', validateFile($cfg["bin_unzip"]));
 $tmpl->setvar('bin_cksfv', $cfg["bin_cksfv"]);
 $tmpl->setvar('validate_cksfv', validateFile($cfg["bin_cksfv"]));
+$tmpl->setvar('bin_vlc', $cfg["bin_vlc"]);
+$tmpl->setvar('validate_vlc', validateFile($cfg["bin_vlc"]));
 $tmpl->setvar('php_uname1', php_uname('s'));
 $tmpl->setvar('php_uname2', php_uname('r'));
 $tmpl->setvar('bin_unrar', $cfg["bin_unrar"]);
