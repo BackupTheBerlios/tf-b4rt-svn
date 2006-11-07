@@ -51,6 +51,8 @@ INSERT INTO tf_settings_dir VALUES ('enable_move','0');
 INSERT INTO tf_settings_dir VALUES ('enable_rename','1');
 INSERT INTO tf_settings_dir VALUES ('move_paths','');
 INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder');
+INSERT INTO tf_settings_dir VALUES ('enable_vlc','1');
+INSERT INTO tf_settings_dir VALUES ('vlc_port','8080');
 
 --
 -- tf_settings_stats
@@ -169,6 +171,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','tf');
 --
+INSERT INTO tf_settings VALUES ('bin_vlc','/usr/local/bin/vlc');
 INSERT INTO tf_settings VALUES ('debuglevel','0');
 INSERT INTO tf_settings VALUES ('docroot','/var/www/');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update_silent','0');

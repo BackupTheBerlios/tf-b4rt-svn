@@ -139,6 +139,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('skiphashcheck
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_umask','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_sorttable','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('drivespacebar','tf')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_vlc','/usr/local/bin/vlc')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('debuglevel','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('docroot','/var/www/')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_index_ajax_update_silent','0')");
@@ -205,6 +206,8 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('enable_mo
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('enable_rename','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('move_paths','')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('enable_vlc','1')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('vlc_port','8080')");
 // tf_settings_stats
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_enable_public','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_show_usage','1')");
