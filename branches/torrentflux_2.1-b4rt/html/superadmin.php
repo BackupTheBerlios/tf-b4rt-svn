@@ -580,7 +580,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." wget | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
-				break;				
+				break;
 			case "2": // Maintenance-clean
 				$htmlTitle = "Maintenance-clean";
 				$htmlMain .= '<br>';
@@ -853,7 +853,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1">kill</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2">clean</a>';
-			$htmlMain .= ' | ';			
+			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3">repair</a>';
 			$htmlMain .= '</td><td align="right"><strong>Maintenance</td>';
 			$htmlMain .= '</td></tr></table>';
@@ -992,7 +992,7 @@ function buildPage($action) {
 			*/
 			$htmlMain .= '<br>';
 			$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=0"));
-			$htmlMain .= '<br><br>';			
+			$htmlMain .= '<br><br>';
 			break;
 		default:
 			$htmlTitle = "SuperAdmin";
@@ -1197,16 +1197,16 @@ function getDataFromUrl($url) {
  * @return database-connection or false on error
  */
 function getAdoConnection() {
-	global $cfg;	
+	global $cfg;
 	// create ado-object
     $db = &ADONewConnection($cfg["db_type"]);
     // connect
     @ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-    // check for error	
+    // check for error
     if ($db->ErrorNo() != 0)
-    	return false;    
+    	return false;
     // return db-connection
-	return $db;	
+	return $db;
 }
 
 /**
@@ -1231,7 +1231,9 @@ function getReleaseList() {
 		foreach ($releaseListFiles as $release) {
 			$release = trim($release);
 			if ((isset($release)) && ($release != "")) {
-				$releaseVersion = substr((array_pop(explode("_",$release))), 0, -8);
+				$tempArray = explode("_", $release);
+				$tempString = array_pop($tempArray);
+				$releaseVersion = substr(($tempString), 0, -8);
 				$retVal .= '<tr>';
 				$retVal .= '<td align="center">';
 				$retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'">';

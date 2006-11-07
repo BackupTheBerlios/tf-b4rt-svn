@@ -36,8 +36,7 @@ class QueueManager_tfqmgr extends QueueManager
     function QueueManager_tfqmgr($cfg) {
         $this->managerName = "tfqmgr";
 		// version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.2";
 		// initialize
         $this->Initialize($cfg);
         //

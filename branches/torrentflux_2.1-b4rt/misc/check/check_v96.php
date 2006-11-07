@@ -22,8 +22,8 @@
 
 // defines
 define('_NAME', 'TorrentFlux 2.1-b4rt-96');
-$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-define('_REVISION', $uselessVar);
+preg_match('|^\$Revision$', $revisionMatches);
+define('_REVISION', $revisionMatches[1]);
 define('_TITLE', _NAME.' - check - Revision '._REVISION);
 
 // fields

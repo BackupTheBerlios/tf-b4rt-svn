@@ -30,17 +30,14 @@ class ClientHandlerTransmission extends ClientHandler
     function ClientHandlerTransmission($cfg) {
         $this->handlerName = "transmission";
 		// version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.3";
         //
         $this->binSocket = "transmissionc";
         //
         $this->Initialize($cfg);
-        // efficient code :
-        //$bin = array_pop(explode("/",$this->cfg["btclient_transmission_bin"]));
-        // compatible code (should work on flawed phps like 5.0.5+) :
-        $uselessVar = explode("/",$this->cfg["btclient_transmission_bin"]);
-        $bin = array_pop($uselessVar);
+        //
+        $tempArray = explode("/", $this->cfg["btclient_transmission_bin"]);
+        $bin = array_pop($tempArray);
         //
         $this->binSystem = $bin;
         $this->binClient = $bin;
@@ -88,7 +85,7 @@ class ClientHandlerTransmission extends ClientHandler
         // transmission wants -1 for no seeding.
         if ($this->sharekill == -1)
             $this->sharekill_param = -1;
-        
+
         // pid-file
         $this->pidFile = $this->cfg["torrent_file_path"].$this->alias.".stat.pid";
 

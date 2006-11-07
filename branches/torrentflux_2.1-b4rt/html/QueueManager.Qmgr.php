@@ -36,8 +36,7 @@ class QueueManager_Qmgr extends QueueManager
     function QueueManager_Qmgr($cfg) {
         $this->managerName = "Qmgr";
 		// version
-		$uselessVar = array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$')))));
-		$this->version = $uselessVar;
+		$this->version = "0.2";
 		// initialize
         $this->Initialize($cfg);
         //

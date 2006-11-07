@@ -41,7 +41,8 @@ if ($dirHandle = opendir('./mrtg')) {
   while (false !== ($file = readdir($dirHandle))) {
     if( preg_match("/.*inc/i", $file) ) {
       $mrtgTargets[$idx] = $file;
-      $targetName = array_shift(explode('.',$file));
+      $tempAry = explode('.',$file);
+      $targetName = array_shift($tempAry);
       $htmlTargets .= '<option value="'.$targetName.'"';
       if ($mrtgTarget == $targetName)
         $htmlTargets .= ' selected';
@@ -59,12 +60,15 @@ if ($dirHandle = opendir('./mrtg')) {
 $htmlGraph = "";
 $filename = "./mrtg/".$mrtgTarget.".inc";
 if (file_exists($filename)) {
-  $fileHandle = fopen ($filename, "r");
+  $fileHandle = @fopen($filename, "r");
   while (!feof($fileHandle))
-    $htmlGraph .= fgets($fileHandle, 4096);
-  fclose ($fileHandle);
+    $htmlGraph .= @fgets($fileHandle, 4096);
+  @fclose ($fileHandle);
   // we are only interested in the "real" content
-  $htmlGraph = array_shift(explode("_CONTENT_END_",array_pop(explode("_CONTENT_BEGIN_",$htmlGraph))));
+  $tempAry = explode("_CONTENT_BEGIN_", $htmlGraph);
+  $tempVar = array_pop($tempAry);
+  $tempAry = explode("_CONTENT_END_", $tempVar);
+  $htmlGraph = array_shift($tempAry);
   // rewrite image-links
   $htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
 }
