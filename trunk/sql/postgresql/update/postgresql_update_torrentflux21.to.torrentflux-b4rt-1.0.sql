@@ -257,6 +257,7 @@ INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','tf');
 --
+INSERT INTO tf_settings VALUES ('debuglevel','0');
 INSERT INTO tf_settings VALUES ('docroot','/var/www/');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update_silent','0');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update_users','1');
