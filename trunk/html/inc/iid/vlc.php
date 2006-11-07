@@ -29,91 +29,105 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// option-lists
+$vidcList = array('DIV3', 'DIV4', 'WMV1', 'WMV2', 'RV10', 'mp1v', 'mp4v');
+$vbitList = array('192', '256', '384', '512', '768', '1024', '1280', '1536', '1792', '2048');
+$audcList = array('mp3', 'mp4a', 'mpga', 'vorb', 'flac');
+$abitList = array('64', '96', '128', '192', '256', '384');
+
 // common functions
 require_once('inc/functions/functions.common.php');
+
+// dir functions
+require_once('inc/functions/functions.dir.php');
 
 // config
 loadSettings('tf_settings_dir');
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.move.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.vlc.tmpl");
 
-// set vars
-if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
-	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('path', stripslashes($_REQUEST['path']));
-	$tmpl->setvar('_MOVE_STRING', $cfg['_MOVE_STRING']);
-	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
-	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
-		$tmpl->setvar('move_start', 1);
-		$dirs = split(":", trim($cfg["move_paths"]));
-		$dir_list = array();
-		foreach ($dirs as $dir) {
-			$target = trim($dir);
-			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
-				array_push($dir_list, array(
-					'target' => $target,
-					)
-				);
-			}
-		}
-		$tmpl->setloop('dir_list', $dir_list);
-	} else {
-		$tmpl->setvar('move_start', 0);
-	}
-} else {
-	$tmpl->setvar('is_start', 0);
-	$targetDir = "";
-	if (isset($_POST['dest'])) {
-		 $tempDir = trim(urldecode($_POST['dest']));
-		 if (strlen($tempDir) > 0)
-			$targetDir = $tempDir;
-	}
-	if (($targetDir == "") && (isset($_POST['selector'])))
-		 $targetDir = trim(urldecode($_POST['selector']));
-	$dirValid = true;
-	if (strlen($targetDir) <= 0) {
-		 $dirValid = false;
-	} else {
-		// we need absolute paths or stuff will end up in docroot
-		// inform user .. dont move it into a fallback-dir which may be a hastle
-		if ($targetDir{0} != '/') {
-			$tmpl->setvar('not_absolute', 1);
-			$dirValid = false;
+// pageop
+//
+// * default
+//
+// * start
+// * stop
+//
+$pageop = getRequestVar('pageop');
+if (empty($pageop))
+	$tmpl->setvar('pageop', "default");
+else
+	$tmpl->setvar('pageop', $pageop);
+
+// op-switch
+switch ($pageop) {
+	default:
+	case "default":
+		// fill lists
+		// vidc
+		$list_vidc = array();
+		foreach ($vidcList as $vidcT)
+			array_push($list_vidc, array('name' => $vidcT));
+		$tmpl->setloop('list_vidc', $list_vidc);
+		// vbit
+		$list_vbit = array();
+		foreach ($vbitList as $vbitT)
+			array_push($list_vbit, array('name' => $vbitT));
+		$tmpl->setloop('list_vbit', $list_vbit);
+		// audc
+		$list_audc = array();
+		foreach ($audcList as $audcT)
+			array_push($list_audc, array('name' => $audcT));
+		$tmpl->setloop('list_audc', $list_audc);
+		// abit
+		$list_abit = array();
+		foreach ($abitList as $abitT)
+			array_push($list_abit, array('name' => $abitT));
+		$tmpl->setloop('list_abit', $list_abit);
+		// requested file
+		$dirName = urldecode($_REQUEST['dir']);
+		$fileName = urldecode(stripslashes($_REQUEST['file']));
+		$tmpl->setvar('file', $fileName);
+		$tmpl->setvar('target', urlencode(addslashes($dirName.$fileName)));
+		// more vars
+		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
+		$tmpl->setvar('port', $cfg['vlc_port']);
+		// already streaming
+		if (vlcIsRunning() === true) {
+			$tmpl->setvar('is_streaming', 1);
+			$tmpl->setvar('current_stream', vlcGetRunning());
 		} else {
-			$tmpl->setvar('not_absolute', 0);
+			$tmpl->setvar('is_streaming', 0);
 		}
-	}
-	$tmpl->setvar('targetDir', $targetDir);
-	// check dir
-	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
-		$tmpl->setvar('is_valid', 1);
-		$targetDir = checkDirPathString($targetDir);
-		$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['file'])." ".escapeshellarg($targetDir);
-		$cmd .= ' 2>&1';
-		$handle = popen($cmd, 'r');
-		// get the output and print it.
-		$gotError = -1;
-		$buff= "";
-		while (!feof($handle)) {
-			$buff .= @fgets($handle,30);
-			$gotError = $gotError + 1;
-		}
-		$tmpl->setvar('messages', nl2br($buff));
-		pclose($handle);
-		if ($gotError <= 0) {
-			$tmpl->setvar('got_no_error', 1);
-			$tmpl->setvar('file', $_POST['file']);
-		} else {
-			$tmpl->setvar('got_no_error', 0);
-		}
-	} else {
-		$tmpl->setvar('is_valid', 1);
-	}
+		break;
+	case "start":
+		// get vars
+		$fileName = urldecode(stripslashes($_REQUEST['file']));
+		$targetFile = urldecode(stripslashes($_POST['target']));
+		$target_vidc = $_POST['vidc'];
+		$target_vbit = $_POST['vbit'];
+		$target_audc = $_POST['audc'];
+		$target_abit = $_POST['abit'];
+		// set template vars
+		$tmpl->setvar('file', $fileName);
+		$tmpl->setvar('vidc', $target_vidc);
+		$tmpl->setvar('vbit', $target_vbit);
+		$tmpl->setvar('audc', $target_audc);
+		$tmpl->setvar('abit', $target_abit);
+		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
+		$tmpl->setvar('port', $cfg['vlc_port']);
+		// start vlc
+		@vlcStart($targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
+		break;
+	case "stop":
+		// stop vlc
+		@vlcStop();
+		break;
 }
 
 //
-tmplSetTitleBar($cfg['_MOVE_FILE_TITLE'], false);
+tmplSetTitleBar($cfg["pagetitle"]." - "."vlc", false);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 //
 $tmpl->setvar('iid', $_REQUEST["iid"]);

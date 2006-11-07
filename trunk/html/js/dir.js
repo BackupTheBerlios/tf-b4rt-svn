@@ -65,5 +65,5 @@ function StreamMultimedia(name_file) {
 	if (popUpWin) {
 		if (!popUpWin.closed) popUpWin.close();
 	}
-	popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=640,height=430')
+	popUpWin = open(name_file,'_blank','toolbar=no,location=0,directories=no,status=no,menubar=no,scrollbars=yes,resizable=no,width=500,height=400')
 }

@@ -60,7 +60,7 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	}
 }
 //
-tmplSetTitleBar($cfg['_REN_TITLE'], false);
+tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_REN_TITLE'], false);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 

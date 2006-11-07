@@ -412,7 +412,7 @@ foreach ($arList as $entry) {
 		'is_no_file' => $is_no_file,
 		'isTorrent' => $isTorrent,
 		'show_run' => $show_run,
-		'entry' => $entry,
+		'entry' => $entry
 	);
 	// Is this transfer for the user list or the general list?
 	if ($owner == 1)
