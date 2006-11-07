@@ -354,6 +354,9 @@ Additional / Optional
 -- cksfv (needed for SFV check) can be found at :
    http://zakalwe.virtuaalipalvelin.net/~shd/foss/cksfv/files/devel/
 
+-- vlc (needed for Streaming Feature) can be found at :
+   http://www.videolan.org/
+
 -- To compile Transmission on Mac OS X you need the Developer
    Tools from Apple.
 
