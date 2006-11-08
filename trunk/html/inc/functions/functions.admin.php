@@ -195,7 +195,7 @@ function tmplSetUserSection() {
 		}
 		// xfer-usage
 		if ($cfg['enable_xfer'] == 1) {
-			$sql2 = 'SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user_id LIKE "'.$user_id.'"';
+			$sql2 = "SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user_id LIKE '".$user_id."'";
 			$result2 = $db->Execute($sql2);
 			showError($db, $sql2);
 			$row = $result2->FetchRow();
@@ -407,7 +407,7 @@ function addNewLink($newLink,$newSite) {
  */
 function alterLink($lid,$newLink,$newSite) {
 	global $cfg, $db;
-	$sql = "UPDATE tf_links SET url='".$newLink."',`sitename`='".$newSite."' WHERE `lid` = ".$lid." LIMIT 1";
+	$sql = "UPDATE tf_links SET url='".$newLink."',sitename='".$newSite."' WHERE lid = ".$lid;
 	$db->Execute($sql);
 	showError($db,$sql);
 }
