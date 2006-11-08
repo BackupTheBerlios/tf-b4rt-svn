@@ -61,7 +61,7 @@ tmplInitializeInstance($cfg["theme"], "page.readrss.tmpl");
 // Loop through each RSS feed
 $rss_list = array();
 foreach ($arURL as $rid => $url) {
-	if ($rs = $rss->get($url)) {
+	if (($rs = $rss->get($url)) && (isset($rs["title"]))) {
 		if(!empty( $rs["items"])) {
 			// Cache rss feed so we don't have to call it again
 			$rssfeed[] = $rs;
@@ -70,18 +70,18 @@ foreach ($arURL as $rid => $url) {
 			$rssfeed[] = "";
 			$stat = 2;
 		}
+		array_push($rss_list, array(
+			'stat' => $stat,
+			'rid' => $rid,
+			'title' => $rs["title"],
+			'url' => $url
+			)
+		);
 	} else {
 		// Unable to grab RSS feed, must of timed out
 		$rssfeed[] = "";
 		$stat = 3;
 	}
-	array_push($rss_list, array(
-		'stat' => $stat,
-		'rid' => $rid,
-		'title' => $rs["title"],
-		'url' => $url,
-		)
-	);
 }
 $tmpl->setloop('rss_list', $rss_list);
 // Parse through cache RSS feed
@@ -115,10 +115,7 @@ if (isset($rssfeed) && is_array($rssfeed)) {
 		}
 		if ($content != "") // Close the content and add a line break
 			$content .= "<br>";
-		array_push($news_list, array(
-			'content' => $content,
-			)
-		);
+		array_push($news_list, array('content' => $content));
 	}
 }
 if (isset($news_list))
