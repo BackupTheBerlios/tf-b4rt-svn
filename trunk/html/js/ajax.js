@@ -1,7 +1,7 @@
 /* $Id$ */
 
 // fields
-var ajax_debug = true;
+var ajax_debug = false;
 var ajax_useXML = false;
 var ajax_txtDelim = ";";
 var ajax_updateUrl = "stats.php";
@@ -9,7 +9,6 @@ var ajax_updateParams = "";
 var ajax_updateTimer = 5000;
 var ajax_updateState = 0; // 0 = update off; 1 = update on
 var ajax_httpRequest = false;
-
 
 /**
  * get http-request-instance
