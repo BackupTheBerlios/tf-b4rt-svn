@@ -20,7 +20,7 @@
 		<tmpl_loop name="link_rss">
 			<tmpl_if name="true">
 				<tr>
-					<td><a href="index.php?iidadmin&op=deleteRSS&rid=<tmpl_var name="rid">"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="rid">" align="absmiddle"></a>&nbsp;
+					<td><a href="admin.php?op=deleteRSS&rid=<tmpl_var name="rid">"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="rid">" align="absmiddle"></a>&nbsp;
 						<tmpl_if name="enable_dereferrer">
 							<a href="index.php?iid=dereferrer&u=<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
 						<tmpl_else>
