@@ -263,6 +263,7 @@ function firstLogin($username = '', $password = '') {
 						"bin_unrar" => $cfg["bin_unrar"],
 						"bin_unzip" => $cfg["bin_unzip"],
 						"bin_cksfv" => $cfg["bin_cksfv"],
+						"bin_vlc" => $cfg["bin_vlc"],
 						"btclient_transmission_bin" => $cfg["btclient_transmission_bin"],
 						"bin_netstat" => $cfg["bin_netstat"],
 						"bin_sockstat" => $cfg["bin_sockstat"]
@@ -279,6 +280,7 @@ function firstLogin($username = '', $password = '') {
 						"bin_unrar" => $cfg["bin_unrar"],
 						"bin_unzip" => $cfg["bin_unzip"],
 						"bin_cksfv" => $cfg["bin_cksfv"],
+						"bin_vlc" => $cfg["bin_vlc"],
 						"btclient_transmission_bin" => $cfg["btclient_transmission_bin"],
 						"bin_netstat" => $cfg["bin_netstat"],
 						"bin_sockstat" => $cfg["bin_sockstat"]
@@ -295,6 +297,7 @@ function firstLogin($username = '', $password = '') {
 						"bin_unrar" => "unrar",
 						"bin_unzip" => "unzip",
 						"bin_cksfv" => "cksfv",
+						"bin_vlc" => "vlc",
 						"btclient_transmission_bin" => "transmissioncli",
 						"bin_netstat" => "netstat",
 						"bin_sockstat" => "sockstat"
