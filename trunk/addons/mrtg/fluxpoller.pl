@@ -276,10 +276,7 @@ sub LoadAVG {
 		($AVG1min, $AVG5min, $AVG15min) = split /\s/, $loadAVG, 3;
 	} elsif ($OSTYPE == 2) { # bsd
 		my $loadAVG = `uptime`;
-		$loadAVG =~ /.*load averages:(.*)/;
-		my @loadAry = split /\s/, $1;
-		$AVG1min = shift @loadAry;
-		$AVG5min = shift @loadAry;
+		($AVG1min, $AVG5min, $AVG15min) = $loadAVG=~/.*load averages: (\S+), (\S+), (\S+)/;
 	}
 	#1m AVG.
 	print ($AVG1min * $AVGmultiplier);
