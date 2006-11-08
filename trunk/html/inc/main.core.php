@@ -59,14 +59,11 @@ $cfg["user"] = "";
 @ $cfg["ip"] = $_SERVER['REMOTE_ADDR'];
 
 // torrentflux-b4rt Version
-if ($fileHandle = @fopen('.version','r')) {
-	$data = "";
-    while (!@feof($fileHandle))
-        $data .= @fgets($fileHandle, 64);
-    @fclose ($fileHandle);
-    $cfg["version"] = trim($data);
+if (is_file('version.php')) {
+	require_once('version.php');
+	$cfg["version"] = _VERSION;
 } else {
-  $cfg["version"] =  "Error getting local Version";
+	$cfg["version"] =  "Error getting local Version";
 }
 
 // get os
@@ -109,10 +106,11 @@ if (is_file('inc/config/config.db.php')) {
 	$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
 
 } else {
+
+	// die in cli-mode, send redir in webapp
     if (isset($argv)) {
     	die("Error.\nCould not find database-settings-file config.db.php.\n");
     } else {
-
 		// redir to login ... (which may redir to upgrade.php / setup.php)
 		@ob_end_clean();
 		@header("location: login.php");

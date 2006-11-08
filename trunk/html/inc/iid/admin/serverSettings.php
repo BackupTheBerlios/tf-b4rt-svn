@@ -46,7 +46,7 @@ if (is_dir($cfg["path"])) {
 }
 // docroot
 $tmpl->setvar('docroot', $cfg["docroot"]);
-if (is_file($cfg["docroot"].".version"))
+if (is_file($cfg["docroot"]."version.php"))
 	$tmpl->setvar('is_docroot', 1);
 else
 	$tmpl->setvar('is_docroot', 0);

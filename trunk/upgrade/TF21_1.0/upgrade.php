@@ -20,6 +20,12 @@
 
 *******************************************************************************/
 
+// version
+if (is_file('version.php'))
+	require_once('version.php');
+else
+	die("Fatal Error. version.php is missing.");
+
 // install-functions
 if (is_file('inc/functions/functions.install.php'))
 	require_once('inc/functions/functions.install.php');
@@ -31,9 +37,7 @@ define('_NAME', 'torrentflux-b4rt');
 define('_UPGRADE_FROM', '2.1');
 define('_UPGRADE_TO', '1.0');
 define('_DEFAULT_PATH', '/usr/local/torrent/');
-define('_VERSION_LOCAL', '.version');
-define('_VERSION_THIS', trim(getDataFromFile(_VERSION_LOCAL)));
-define('_TITLE', _NAME.' '._VERSION_THIS.' - Upgrade '._UPGRADE_FROM.' to '._UPGRADE_TO);
+define('_TITLE', _NAME.' '._VERSION.' - Upgrade '._UPGRADE_FROM.' to '._UPGRADE_TO);
 define('_DIR', dirname($_SERVER["SCRIPT_FILENAME"])."/");
 define('_FILE_DBCONF', 'inc/config/config.db.php');
 define('_FILE_THIS', $_SERVER['SCRIPT_NAME']);
@@ -900,7 +904,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	$serverSettingsTestCtr = 0;
 	$serverSettingsTestError = "";
 	// docroot
-	if (is_file($docroot.".version"))
+	if (is_file($docroot."version.php"))
 		$serverSettingsTestCtr++;
 	else
 		$serverSettingsTestError .= "docroot <em>".$docroot."</em> is not valid.";
@@ -1045,7 +1049,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>End</h2>");
 	send("<p>Upgrade completed.</p>");
-	if ((substr(_VERSION_THIS, 0, 3)) != "svn") {
+	if ((substr(_VERSION, 0, 3)) != "svn") {
 		$result = @unlink(__FILE__);
 		if ($result !== true)
 			send('<p><font color="red">Could not delete '.__FILE__.'</font><br>Please delete the file manual.</p>');

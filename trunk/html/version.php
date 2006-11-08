@@ -1,0 +1,1 @@
+<?php define("_VERSION", "svn-trunk"); ?>

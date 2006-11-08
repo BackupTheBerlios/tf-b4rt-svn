@@ -30,7 +30,6 @@ require_once('inc/functions/functions.all.php');
 define('_DIR_BACKUP','.backup');
 define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
-define('_VERSION_LOCAL','.version');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','tf-b4rt.php');
 define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
@@ -53,8 +52,11 @@ superadminAuthentication();
 // fopen
 ini_set("allow_url_fopen", "1");
 
-// get + define this version
-define('_VERSION_THIS',trim(getDataFromFile(_VERSION_LOCAL)));
+// version
+if (is_file('version.php'))
+	require_once('version.php');
+else
+	die("Fatal Error. version.php is missing.");
 
 // -----------------------------------------------------------------------------
 // backup
@@ -190,7 +192,7 @@ if (isset($_REQUEST["u"])) {
 		switch($updateStep) {
 			case "0":
 				// get updateIndex to check if update from this version possible
-				$updateIndexData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=0&v=" . _VERSION_THIS));
+				$updateIndexData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=0&v=" . _VERSION));
 				if ((isset($updateIndexData)) && ($updateIndexData != "")) {
 					$updateIndexVars = explode("\n",$updateIndexData);
 					$updatePossible = trim($updateIndexVars[0]);
@@ -220,7 +222,7 @@ if (isset($_REQUEST["u"])) {
 				break;
 			case "1":
 				// get db-settings
-				$updateDBData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=1&v=" . _VERSION_THIS));
+				$updateDBData = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=1&v=" . _VERSION));
 				if ((isset($updateDBData)) && ($updateDBData != "")) {
 					$updateDBVars = explode("\n",$updateDBData);
 					$updateNeeded = trim($updateDBVars[0]);
@@ -262,7 +264,7 @@ if (isset($_REQUEST["u"])) {
 				break;
 			case "2":
 				// get sql-data
-				$updateSQLData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION_THIS . "&d=".$cfg["db_type"])));
+				$updateSQLData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION . "&d=".$cfg["db_type"])));
 				if ((isset($updateSQLData)) && ($updateSQLData != "")) {
 					if (ob_get_level() == 0)
 						@ob_start();
@@ -307,7 +309,7 @@ if (isset($_REQUEST["u"])) {
 				break;
 			case "3":
 				// get file-list
-				$updateFileList = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=3&v=" . _VERSION_THIS));
+				$updateFileList = trim(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=3&v=" . _VERSION));
 				if ((isset($updateFileList)) && ($updateFileList != "")) {
 					echo '<strong>Update - Files</strong>';
 					echo '<br><br>';
@@ -336,7 +338,7 @@ if (isset($_REQUEST["u"])) {
 					foreach ($updateFileAry as $requestFile) {
 						$requestFile = trim($requestFile);
 						sendLine('<li>'.$requestFile);
-						$fileData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=4&v=" . _VERSION_THIS . "&f=".$requestFile)));
+						$fileData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=4&v=" . _VERSION . "&f=".$requestFile)));
 						sendLine(' (' . strlen($fileData) .')');
 						if ($handle = fopen($requestFile, "w")) {
 							if (fwrite($handle, $fileData)) {
@@ -359,8 +361,8 @@ if (isset($_REQUEST["u"])) {
 					sendLine('Updating Version-Information...');
 					$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 					if ((isset($versionAvailable)) && ($versionAvailable != "")) {
-						if ($handle = fopen(_VERSION_LOCAL, "w")) {
-							if (fwrite($handle, $versionAvailable)) {
+						if ($handle = fopen("version.php", "w")) {
+							if (fwrite($handle, '<?php define("_VERSION", "'.$versionAvailable.'"); ?>')) {
 								fclose($handle);
 								sendLine(' <font color="green">Ok</font>');
 							} else {
@@ -982,37 +984,37 @@ if (isset($_REQUEST["z"])) {
 				$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
 				if ((isset($versionAvailable)) && ($versionAvailable != "")) {
 					// set image
-					if ($versionAvailable == _VERSION_THIS || (substr(_VERSION_THIS, 0, 3)) == "svn")
+					if ($versionAvailable == _VERSION || (substr(_VERSION, 0, 3)) == "svn")
 						$statusImage = "green.gif";
 					else
 						$statusImage = "red.gif";
 					// version-text
 					$htmlMain .= '<br>';
-					if (strpos(_VERSION_THIS, "svn") !== false) {
-					        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+					if (strpos(_VERSION, "svn") !== false) {
+					        $htmlMain .= '<strong>This Version : </strong>'._VERSION;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<strong>Latest Release : </strong>';
 	    					$htmlMain .= $versionAvailable;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<font color="blue">This Version is a svn-Version.</font>';
-					} elseif (strpos(_VERSION_THIS, "alpha") !== false) {
-					        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+					} elseif (strpos(_VERSION, "alpha") !== false) {
+					        $htmlMain .= '<strong>This Version : </strong>'._VERSION;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<strong>Latest Release : </strong>';
 	    					$htmlMain .= $versionAvailable;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<font color="blue">This Version is a alpha-Version.</font>';
-					} elseif (strpos(_VERSION_THIS, "beta") !== false) {
-					        $htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+					} elseif (strpos(_VERSION, "beta") !== false) {
+					        $htmlMain .= '<strong>This Version : </strong>'._VERSION;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<strong>Latest Release : </strong>';
 	    					$htmlMain .= $versionAvailable;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<font color="blue">This Version is a beta-Version.</font>';
 					} else {
-	    				if ($versionAvailable != _VERSION_THIS) {
+	    				if ($versionAvailable != _VERSION) {
 	    					$htmlMain .= '<strong>This Version : </strong>';
-	    					$htmlMain .= '<font color="red">'._VERSION_THIS.'</font>';
+	    					$htmlMain .= '<font color="red">'._VERSION.'</font>';
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<strong>Available Version : </strong>';
 	    					$htmlMain .= $versionAvailable;
@@ -1033,7 +1035,7 @@ if (isset($_REQUEST["z"])) {
 	    					$htmlMain .= '<a href="'._URL_HOME.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Homepage on berliOS" border="0"> '._URL_HOME.'</a>';
 	    					$htmlMain .= '<br>';
 	    				} else {
-	    					$htmlMain .= '<strong>This Version : </strong>'._VERSION_THIS;
+	    					$htmlMain .= '<strong>This Version : </strong>'._VERSION;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<strong>Available Version : </strong>';
 	    					$htmlMain .= $versionAvailable;
@@ -1400,7 +1402,7 @@ function getDataFromFile($file) {
  */
 function getDataFromUrl($url) {
 	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", "torrentflux-b4rt/". _VERSION_THIS);
+	ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
 	if ($fileHandle = @fopen($url, 'r')) {
 		$data = null;
 		while (!@feof($fileHandle))
@@ -1821,7 +1823,7 @@ function backupCreate($talk = false, $compression = 0) {
 		return "";
 	}
 	// files and more strings
-	$backupName = "backup_". _VERSION_THIS ."_".date("YmdHis");
+	$backupName = "backup_". _VERSION ."_".date("YmdHis");
 	$fileArchiveName = $backupName.".tar";
 	$tarSwitch = "-cf";
 	switch ($compression) {
