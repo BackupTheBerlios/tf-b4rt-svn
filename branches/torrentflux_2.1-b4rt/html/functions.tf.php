@@ -561,7 +561,7 @@ function MarkMessageRead($mid) {
 // This function updates the database and alters the selected links values
 function alterLink($lid,$newLink,$newSite) {
     global $cfg, $db;
-    $sql = "UPDATE tf_links SET url='".$newLink."',`sitename`='".$newSite."' WHERE `lid` = ".$lid." LIMIT 1";
+    $sql = "UPDATE tf_links SET url='".$newLink."',sitename='".$newSite."' WHERE lid = ".$lid;
     $db->Execute($sql);
     showError($db,$sql);
 }
@@ -1487,7 +1487,7 @@ function getDirList($dirName) {
 		//XFER: add upload/download stats to the xfer array
         if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
           $torrentTotalsCurrent = getTorrentTotalsCurrentOP($entry,$btclient,$af->uptotal,$af->downtotal);
-          $sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+          $sql = "SELECT 1 FROM tf_xfer WHERE date = ".$db->DBDate(time());
           $newday = !$db->GetOne($sql);
           showError($db,$sql);
           sumUsage($torrentowner, ($torrentTotalsCurrent["downtotal"]+0), ($torrentTotalsCurrent["uptotal"]+0), 'total');
@@ -1497,29 +1497,29 @@ function getDirList($dirName) {
           //XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
           if ($newday) {
             $newday = 2;
-            $sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
+            $sql = "SELECT date FROM tf_xfer ORDER BY date DESC";
             $lastDate = $db->GetOne($sql);
             showError($db,$sql);
             // MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
-            $sql = 'SELECT 1 FROM tf_xfer WHERE user_id = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+            $sql = "SELECT 1 FROM tf_xfer WHERE user_id = '".$torrentowner."' AND date = '".$lastDate."'";
             if ($db->GetOne($sql)) {
-                $sql = 'UPDATE tf_xfer SET download = download+'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload+'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user_id = "'.$torrentowner.'" AND date = "'.$lastDate.'"';
+                $sql = "UPDATE tf_xfer SET download = download+".($torrentTotalsCurrent["downtotal"]+0).", upload = upload+".($torrentTotalsCurrent["uptotal"]+0)." WHERE user_id = '".$torrentowner."' AND date = '".$lastDate."'";
                 $db->Execute($sql);
                 showError($db,$sql);
             } else {
                 showError($db,$sql);
-                $sql = 'INSERT INTO tf_xfer (user_id,date,download,upload) values ("'.$torrentowner.'","'.$lastDate.'",'.($torrentTotalsCurrent["downtotal"]+0).','.($torrentTotalsCurrent["uptotal"]+0).')';
+                $sql = "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$torrentowner."','".$lastDate."',".($torrentTotalsCurrent["downtotal"]+0).",".($torrentTotalsCurrent["uptotal"]+0).")";
                 $db->Execute($sql);
                 showError($db,$sql);
             }
-            $sql = 'SELECT 1 FROM tf_xfer WHERE user_id = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+            $sql = "SELECT 1 FROM tf_xfer WHERE user_id = '".$torrentowner."' AND date = ".$db->DBDate(time());
             if ($db->GetOne($sql)) {
-              $sql = 'UPDATE tf_xfer SET download = download-'.($torrentTotalsCurrent["downtotal"]+0).', upload = upload-'.($torrentTotalsCurrent["uptotal"]+0).' WHERE user_id = "'.$torrentowner.'" AND date = '.$db->DBDate(time());
+              $sql = "UPDATE tf_xfer SET download = download-".($torrentTotalsCurrent["downtotal"]+0).", upload = upload-".($torrentTotalsCurrent["uptotal"]+0)." WHERE user_id = '".$torrentowner."' AND date = ".$db->DBDate(time());
               $db->Execute($sql);
               showError($db,$sql);
             } else {
               showError($db,$sql);
-                $sql = 'INSERT INTO tf_xfer (user_id,date,download,upload) values ("'.$torrentowner.'",'.$db->DBDate(time()).',-'.($torrentTotalsCurrent["downtotal"]+0).',-'.($torrentTotalsCurrent["uptotal"]+0).')';
+                $sql = "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$torrentowner."',".$db->DBDate(time()).",-".($torrentTotalsCurrent["downtotal"]+0).",-".($torrentTotalsCurrent["uptotal"]+0).")";
                 $db->Execute($sql);
                 showError($db,$sql);
             }
@@ -1719,7 +1719,7 @@ function getDirList($dirName) {
 	//XFER: if a new day but no .stat files where found put blank entry into the DB for today to indicate accounting has been done for the new day
     if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
       if ((isset($newday)) && ($newday == 1)) {
-        $sql = 'INSERT INTO tf_xfer (user_id,date) values ( "",'.$db->DBDate(time()).')';
+        $sql = "INSERT INTO tf_xfer (user_id,date) values ( '',".$db->DBDate(time()).")";
         $db->Execute($sql);
         showError($db,$sql);
       }

@@ -98,10 +98,10 @@ if ($cfg['enable_xfer'] == 1) {
 		$db->Execute($sql);
 		showError($db,$sql);
 	}
-	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
+	$sql = "SELECT 1 FROM tf_xfer WHERE date = ".$db->DBDate(time());
 	$newday = !$db->GetOne($sql);
 	showError($db,$sql);
-	$sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
+	$sql = "SELECT date FROM tf_xfer ORDER BY date DESC";
 	$lastDate = $db->GetOne($sql);
 	showError($db,$sql);
 }
