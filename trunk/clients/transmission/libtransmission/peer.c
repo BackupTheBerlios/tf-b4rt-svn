@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 931 2006-09-26 22:36:04Z joshe $
+ * $Id: peer.c 1060 2006-11-09 04:45:14Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -148,6 +148,26 @@ void tr_peerAddCompact( tr_torrent_t * tor, struct in_addr addr,
                         in_port_t port )
 {
     addWithAddr( tor, addr, port );
+}
+
+/***********************************************************************
+ * tr_peerAddCompactMany
+ ***********************************************************************
+ * Adds several peers in compact form
+ **********************************************************************/
+void tr_peerAddCompactMany( tr_torrent_t * tor, uint8_t * buf, int len )
+{
+    struct in_addr addr;
+    in_port_t port;
+    int i;
+
+    len /= 6;
+    for( i = 0; i < len; i++ )
+    {
+        memcpy( &addr, buf, 4 ); buf += 4;
+        memcpy( &port, buf, 2 ); buf += 2;
+        tr_peerAddCompact( tor, addr, port );
+    }
 }
 
 /***********************************************************************
@@ -615,4 +635,40 @@ void tr_peerBlame( tr_torrent_t * tor, tr_peer_t * peer,
         }
     }
     tr_bitfieldRem( peer->blamefield, piece );
+}
+
+int tr_peerGetConnectable( tr_torrent_t * tor, uint8_t ** _buf )
+{
+    int count = 0;
+    uint8_t * buf = malloc( 6 * tor->peerCount );
+    tr_peer_t * peer;
+    int i;
+
+    for( i = 0; i < tor->peerCount; i++ )
+    {
+        peer = tor->peers[i];
+
+        /* Skip peers for which the connection isn't established,
+         * and peers that came from incoming connections */
+        if( peer->status < PEER_STATUS_CONNECTED )
+            continue;
+        if( peer->incoming )
+            continue;
+
+        memcpy( &buf[count*6], &peer->addr, 4 );
+        memcpy( &buf[count*6+4], &peer->port, 2 );
+        count++;
+    }
+
+    if( count < 1 )
+    {
+        free( buf );
+        *_buf = NULL;
+    }
+    else
+    {
+        *_buf = buf;
+    }
+
+    return count * 6;
 }
