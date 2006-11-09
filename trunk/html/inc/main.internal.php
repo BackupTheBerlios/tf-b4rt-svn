@@ -144,6 +144,9 @@ if (!(cacheIsSet($currentUser))) {
 	// check main-directories.
 	checkMainDirectories();
 
+	// client-care
+	clientCare();
+
 	// set session-settings
 	if ($cfg["enable_index_meta_refresh"] != 0)
 		$_SESSION['settings']['index_meta_refresh'] = 1;

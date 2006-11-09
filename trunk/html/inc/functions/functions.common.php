@@ -648,7 +648,7 @@ function deleteUserSettings($uid) {
 	cacheFlush($cfg["user"]);
 	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
 	$db->Execute($sql);
-		showError($db, $sql);
+	showError($db, $sql);
 	return true;
 }
 
@@ -1275,6 +1275,79 @@ function deleteProfileInfo($pid) {
 	$sql = "DELETE FROM tf_trprofiles WHERE id=".$pid;
 	$result = $db->Execute($sql);
 	showError($db,$sql);
+}
+
+/**
+ * clientCare
+ */
+function clientCare() {
+	global $cfg;
+	// sanity-check for transfers-dir
+	if (!is_dir($cfg["transfer_file_path"]))
+		return false;
+	// pid-files of transfer-clients
+	$pidFiles = array();
+	if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
+		while (false !== ($file = @readdir($dirHandle))) {
+			if ((strlen($file) > 3) && ((substr($file, -4, 4)) == ".pid"))
+				array_push($pidFiles, $file);
+		}
+		@closedir($dirHandle);
+	}
+	// done if no pid-files found
+	if (count($pidFiles) < 1)
+		return true;
+	// get process-list
+	$psString = trim(shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww"));
+	// test if client for pid is still up
+	$bogusTransfers = array();
+	foreach ($pidFiles as $pidFile) {
+		$alias = substr($pidFile, 0, -4);
+		$transfer = (substr($alias, 0, -5));
+		if (stristr($psString, $transfer) === false)
+			array_push($bogusTransfers, $transfer);
+	}
+	// done if no stale pid-files
+	if (count($bogusTransfers) < 1)
+		return true;
+	// repair the bogus clients
+	require_once("inc/classes/AliasFile.php");
+	foreach ($bogusTransfers as $bogusTransfer) {
+		$alias = $bogusTransfer.".stat";
+		$pidFile = $alias.".pid";
+		$transfer = $bogusTransfer.".torrent";
+		$settingsAry = loadTorrentSettings($transfer);
+		if ((isset($settingsAry)) && (is_array($settingsAry))) {
+			// this is a torrent-client
+			// set stopped flag in db
+			stopTorrentSettings($transfer);
+		} else {
+			// this is a wget-client
+			$transfer = $bogusTransfer.".wget";
+			$settingsAry = array();
+			$settingsAry['btclient'] = "wget";
+		}
+		// get owner
+		$transferowner = getOwner($transfer);
+		// rewrite stat-file
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+		if (isset($af)) {
+			$af->running = 0;
+			$af->percent_done = -100.0;
+			$af->time_left = 'Transfer Died';
+			$af->down_speed = 0;
+			$af->up_speed = 0;
+			$af->seeds = 0;
+			$af->peers = 0;
+			$af->WriteFile();
+			unset($af);
+		}
+		// delete pid-file
+		@unlink($cfg["transfer_file_path"].$pidFile);
+		// DEBUG : log the repair of the bogus transfer
+		if ($cfg['debuglevel'] > 1)
+			AuditAction($cfg["constants"]["debug"], "clientCare : transfer repaired : ".$transfer);
+	}
 }
 
 ?>

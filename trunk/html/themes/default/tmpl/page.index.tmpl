@@ -332,8 +332,13 @@
 													<td>
 														&nbsp;&nbsp;&nbsp;<img src="themes/default/images/down.gif" width="9" height="9" title="<tmpl_var name="_DELQUEUE">"></td>
 													<td class="tiny">
-														Download Torrent</td>
+														Download Torrent
+													</td>
 												</tmpl_if>
+												<td class="tiny" align="right" nowrap>
+													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													<a href="dispatcher.php?action=clientCare" onclick="return actionClick(true)"><img src="themes/default/images/clientcare.gif" width="16" height="16" border="0" title="Client-Care"></a>
+												</td>
 												<tmpl_if name="enable_bulkops">
 													<td class="tiny" align="right" nowrap>
 														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;

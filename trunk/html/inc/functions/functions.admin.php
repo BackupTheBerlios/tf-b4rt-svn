@@ -22,7 +22,6 @@
 
 /**
  * admin menu
- *
  */
 function tmplSetAdminMenu() {
 	global $cfg, $tmpl;
@@ -155,7 +154,6 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 
 /**
  * sets vars for the user section
- *
  */
 function tmplSetUserSection() {
 	global $cfg, $db, $tmpl;
@@ -285,7 +283,6 @@ function validateFile($the_file) {
 
 /**
  * setUserState
- *
  */
 function setUserState() {
 	global $cfg, $db;
@@ -316,54 +313,6 @@ function setUserState() {
 			break;
 	}
 	return true;
-}
-
-/**
- * repairTorrentflux
- *
- */
-function repairTorrentflux() {
-	global $cfg, $db;
-	// delete pid-files of torrent-clients
-	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
-		while (false !== ($file = readdir($dirHandle))) {
-			if ((substr($file, -1, 1)) == "d")
-				@unlink($cfg["transfer_file_path"].$file);
-		}
-		closedir($dirHandle);
-	}
-	// rewrite stat-files
-	require_once("inc/classes/AliasFile.php");
-	$torrents = getTorrentListFromFS();
-	foreach ($torrents as $torrent) {
-		$alias = getAliasName($torrent);
-		$owner = getOwner($torrent);
-		$btclient = getTransferClient($torrent);
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias.".stat", $owner, $cfg, $btclient);
-		if (isset($af)) {
-			$af->running = 0;
-			$af->percent_done = -100.0;
-			$af->time_left = 'Torrent Stopped';
-			$af->down_speed = 0;
-			$af->up_speed = 0;
-			$af->seeds = 0;
-			$af->peers = 0;
-			$af->errors = array();
-			$af->WriteFile();
-		}
-	}
-	// set flags in db
-	$db->Execute("UPDATE tf_torrents SET running = '0'");
-	// delete leftovers of fluxd (only do this if daemon is not running)
-	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c fluxd.pl"));
-	if ($fluxdRunning == "0") {
-		// pid
-		if (file_exists($cfg["path"].'.fluxd/fluxd.pid'))
-			@unlink($cfg["path"].'.fluxd/fluxd.pid');
-		// socket
-		if (file_exists($cfg["path"].'.fluxd/fluxd.sock'))
-			@unlink($cfg["path"].'.fluxd/fluxd.sock');
-	}
 }
 
 /**
@@ -609,6 +558,57 @@ function changeUserLevel($user_id, $level) {
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	$result = $db->Execute($sql);
 	showError($db,$sql);
+}
+
+/**
+ * repairTorrentflux
+ */
+function repairTorrentflux() {
+	global $cfg, $db;
+	// sanity-check for transfers-dir
+	if (!is_dir($cfg["transfer_file_path"]))
+		return false;
+	// delete pid-files of torrent-clients
+	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
+		while (false !== ($file = readdir($dirHandle))) {
+			if ((strlen($file) > 3) && ((substr($file, -4, 4)) == ".pid"))
+				@unlink($cfg["transfer_file_path"].$file);
+		}
+		closedir($dirHandle);
+	}
+	// rewrite stat-files
+	require_once("inc/classes/AliasFile.php");
+	$torrents = getTorrentListFromFS();
+	foreach ($torrents as $torrent) {
+		$alias = getAliasName($torrent);
+		$owner = getOwner($torrent);
+		$btclient = getTransferClient($torrent);
+		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias.".stat", $owner, $cfg, $btclient);
+		if (isset($af)) {
+			$af->running = 0;
+			$af->percent_done = -100.0;
+			$af->time_left = 'Torrent Stopped';
+			$af->down_speed = 0;
+			$af->up_speed = 0;
+			$af->seeds = 0;
+			$af->peers = 0;
+			$af->errors = array();
+			$af->WriteFile();
+			unset($af);
+		}
+	}
+	// set flags in db
+	$db->Execute("UPDATE tf_torrents SET running = '0'");
+	// delete leftovers of fluxd (only do this if daemon is not running)
+	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c fluxd.pl"));
+	if ($fluxdRunning == "0") {
+		// pid
+		if (file_exists($cfg["path"].'.fluxd/fluxd.pid'))
+			@unlink($cfg["path"].'.fluxd/fluxd.pid');
+		// socket
+		if (file_exists($cfg["path"].'.fluxd/fluxd.sock'))
+			@unlink($cfg["path"].'.fluxd/fluxd.sock');
+	}
 }
 
 ?>
