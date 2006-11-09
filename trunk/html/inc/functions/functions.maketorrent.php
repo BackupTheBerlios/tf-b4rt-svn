@@ -71,15 +71,15 @@ function createTorrentTornado() {
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// This is the command to execute
 	$command = "nohup ".$cfg["pythonCmd"]." -OO";
-	$command .= " ".$cfg["docroot"]."bin/TF_BitTornado/btmakemetafile.py";
-	$command .= " ".$announce;
+	$command .= " ".escapeshellarg($cfg["docroot"]."bin/TF_BitTornado/btmakemetafile.py");
+	$command .= " ".escapeshellarg($announce);
 	$command .= " ".escapeshellarg($cfg["path"].$path);
 	// Is there comments to add?
 	if (!empty($comment))
 		$command .= " --comment ".escapeshellarg($comment);
 	// Set the piece size
 	if (!empty($piece))
-		$command .= " --piece_size_pow2 ".$piece;
+		$command .= " --piece_size_pow2 ".escapeshellarg($piece);
 	if (!empty($ancelist)) {
 		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
 		// if they didn't add the primary tracker in, we will add it for them
@@ -151,8 +151,8 @@ function createTorrentMainline() {
 	if (@file_exists($cfg["transfer_file_path"].$tfile))
 		@unlink($cfg["transfer_file_path"].$tfile );
 	// build command-string
-	$command = "cd ".$cfg["transfer_file_path"].";";
-	$command .= " HOME=".$cfg["path"];
+	$command = "cd ".escapeshellarg($cfg["transfer_file_path"]).";";
+	$command .= " HOME=".escapeshellarg($cfg["path"]);
 	$command .= "; export HOME;";
 	$command .= "nohup ".$cfg["pythonCmd"]." -OO ";
 	$command .= $cfg["docroot"]."bin/TF_Mainline/maketorrent-console.py";
@@ -164,7 +164,7 @@ function createTorrentMainline() {
 		$command .= " --comment ".escapeshellarg($comment);
 	// Set the piece size
 	if (!empty($piece))
-		$command .= " --piece_size_pow2 ".$piece;
+		$command .= " --piece_size_pow2 ".escapeshellarg($piece);
 	// trackerless / tracker
 	/*
 	if ((isset($use_tracker)) && ($use_tracker == 1))

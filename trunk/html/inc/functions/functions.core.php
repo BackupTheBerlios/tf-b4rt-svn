@@ -1249,14 +1249,14 @@ function getTorrentMetaInfo($torrent) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["transfer_file_path"].$torrent."\"");
+			return shell_exec($cfg["btclient_transmission_bin"] . " -i ".escapeshellarg($cfg["transfer_file_path"].$torrent));
 		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i "'.$cfg["transfer_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i '.escapeshellarg($cfg["transfer_file_path"].$torrent));
 		case "torrentinfo-console.py":
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py ".escapeshellarg($torrent));
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py \"".$torrent."\"");
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py ".escapeshellarg($torrent));
 	}
 }
 
@@ -1270,9 +1270,9 @@ function getTorrentScrapeInfo($torrent) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["transfer_file_path"].$torrent."\"");
+			return shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$torrent));
 		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s "'.$cfg["transfer_file_path"].$torrent.'"');
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s '.escapeshellarg($cfg["transfer_file_path"].$torrent));
 		case "btshowmetainfo.py":
 			return "not supported by btshowmetainfo.py.";
 		case "torrentinfo-console.py":
@@ -2162,7 +2162,7 @@ function isFile($file) {
     if (@is_file($file)) {
         $rtnValue = True;
     } else {
-        if ($file == trim(shell_exec("ls 2>/dev/null ".$file)))
+        if ($file == trim(shell_exec("ls 2>/dev/null ".escapeshellarg($file))))
             $rtnValue = True;
     }
     return $rtnValue;
@@ -2899,7 +2899,7 @@ function getStatusImage($af) {
 function file_size($file) {
 	$size = @filesize($file);
 	if ($size == 0)
-		$size = exec("ls -l \"".$file."\" 2>/dev/null | awk '{print $5}'");
+		$size = exec("ls -l ".escapeshellarg($file)." 2>/dev/null | awk '{print $5}'");
 	return $size;
 }
 

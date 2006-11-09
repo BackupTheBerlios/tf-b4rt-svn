@@ -101,7 +101,7 @@ switch ($cfg["_OS"]) {
 		$duArg = "-L";
 		break;
 }
-$du = @shell_exec($cfg['bin_du']." -ch ".$duArg." ".escapeshellarg($cfg['docroot'])." | ".$cfg['bin_grep']." \"total\"");
+$du = @shell_exec($cfg['bin_du']." -ch ".escapeshellarg($duArg)." ".escapeshellarg($cfg['docroot'])." | ".$cfg['bin_grep']." \"total\"");
 $tmpl->setvar('server_du_total', substr($du, 0, -7));
 // version
 $tmpl->setvar('server_version', $cfg["version"]);

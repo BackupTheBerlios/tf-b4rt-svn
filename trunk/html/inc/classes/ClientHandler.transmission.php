@@ -99,10 +99,10 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -w ".$this->owner;
         $this->command .= " -z ".escapeshellarg($this->pidFile);
         $this->command .= " -e 5";
-        $this->command .= " -c ".$this->sharekill_param;
-        $this->command .= " -d ".$this->drate;
-        $this->command .= " -u ".$this->rate;
-        $this->command .= " -p ".$this->port;
+        $this->command .= " -c ".escapeshellarg($this->sharekill_param);
+        $this->command .= " -d ".escapeshellarg($this->drate);
+        $this->command .= " -u ".escapeshellarg($this->rate);
+        $this->command .= " -p ".escapeshellarg($this->port);
         if (strlen($this->cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$this->cfg["btclient_transmission_options"];
         $this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);

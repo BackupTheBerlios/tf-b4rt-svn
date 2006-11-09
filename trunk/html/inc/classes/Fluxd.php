@@ -87,12 +87,12 @@ class Fluxd
             $startCommand = "cd ".$this->cfg["docroot"]." ; HOME=".$this->cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $this->cfg["perlCmd"];
-            $startCommand .= " -I ".$this->cfg["docroot"]."bin/fluxd";
-            $startCommand .= " ".$this->cfg["docroot"]."bin/fluxd/fluxd.pl";
+            $startCommand .= " -I ".escapeshellarg($this->cfg["docroot"]."bin/fluxd");
+            $startCommand .= " ".escapeshellarg($this->cfg["docroot"]."bin/fluxd/fluxd.pl");
             $startCommand .= " daemon-start";
             $startCommand .= " ".escapeshellarg($this->cfg["docroot"]);
             $startCommand .= " ".escapeshellarg($this->cfg["bin_php"]);
-            $startCommand .= " ".$this->cfg["fluxd_dbmode"];
+            $startCommand .= " ".escapeshellarg($this->cfg["fluxd_dbmode"]);
             $startCommand .= " > /dev/null &";
             $result = exec($startCommand);
             // check if fluxd could be started

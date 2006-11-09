@@ -86,7 +86,7 @@ class ClientHandlerTornado extends ClientHandler
         if (file_exists($this->cfg["transfer_file_path"].$this->alias.".prio")) {
             $priolist = explode(',',file_get_contents($this->cfg["transfer_file_path"].$this->alias .".prio"));
             $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
-            $filePrio = " --priority ".$priolist;
+            $filePrio = " --priority ".escapeshellarg($priolist);
         }
 
 		// note :
@@ -100,20 +100,20 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
-        $this->command .= " ".$this->runtime;
-        $this->command .= " ".$this->sharekill_param;
+        $this->command .= " ".escapeshellarg($this->runtime);
+        $this->command .= " ".escapeshellarg($this->sharekill_param);
         $this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias .".stat");
         $this->command .= " ".$this->owner;
         $this->command .= " --responsefile ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
         $this->command .= " --display_interval 5";
-        $this->command .= " --max_download_rate ".$this->drate;
-        $this->command .= " --max_upload_rate ".$this->rate;
-        $this->command .= " --max_uploads ".$this->maxuploads;
-        $this->command .= " --minport ".$this->port;
-        $this->command .= " --maxport ".$this->maxport;
-        $this->command .= " --rerequest_interval ".$this->rerequest;
-        $this->command .= " --super_seeder ".$this->superseeder;
-        $this->command .= " --max_connections ".$this->maxcons;
+        $this->command .= " --max_download_rate ".escapeshellarg($this->drate);
+        $this->command .= " --max_upload_rate ".escapeshellarg($this->rate);
+        $this->command .= " --max_uploads ".escapeshellarg($this->maxuploads);
+        $this->command .= " --minport ".escapeshellarg($this->port);
+        $this->command .= " --maxport ".escapeshellarg($this->maxport);
+        $this->command .= " --rerequest_interval ".escapeshellarg($this->rerequest);
+        $this->command .= " --super_seeder ".escapeshellarg($this->superseeder);
+        $this->command .= " --max_connections ".escapeshellarg($this->maxcons);
         $this->command .= $skipHashCheck;
 		$this->command .= $filePrio;
 		if (strlen($this->cfg["btclient_tornado_options"]) > 0)

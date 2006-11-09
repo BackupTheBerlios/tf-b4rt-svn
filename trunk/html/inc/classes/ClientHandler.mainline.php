@@ -86,7 +86,7 @@ class ClientHandlerMainline extends ClientHandler
 		// RunningTransferMainline
 
 		$this->command = "cd ".escapeshellarg($this->savepath).";";
-		$this->command .= " HOME=".$this->cfg["path"];
+		$this->command .= " HOME=".escapeshellarg($this->cfg["path"]);
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
@@ -98,21 +98,21 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
 		//$this->command .= " --language en";
-		$this->command .= " --die_when_done ".$this->runtime;
-		$this->command .= " --seed_limit ".$this->sharekill_param;
+		$this->command .= " --die_when_done ".escapeshellarg($this->runtime);
+		$this->command .= " --seed_limit ".escapeshellarg($this->sharekill_param);
 		if ($this->drate != 0)
-			$this->command .= " --max_download_rate " . $this->drate * 1024;
+			$this->command .= " --max_download_rate " . escapeshellarg($this->drate * 1024);
 		else
 			$this->command .= " --max_download_rate 125000000"; # 1 GBit local net = 125MB/s
 		if ($this->rate != 0)
-			$this->command .= " --max_upload_rate " . $this->rate * 1024;
+			$this->command .= " --max_upload_rate " . escapeshellarg($this->rate * 1024);
 		else
 			$this->command .= " --max_upload_rate 125000000"; # 1 GBit local net = 125MB/s
-		$this->command .= " --max_uploads ".$this->maxuploads;
-		$this->command .= " --minport ".$this->port;
-		$this->command .= " --maxport ".$this->maxport;
-		$this->command .= " --rerequest_interval ".$this->rerequest;
-		$this->command .= " --max_initiate ".$this->maxcons;
+		$this->command .= " --max_uploads ".escapeshellarg($this->maxuploads);
+		$this->command .= " --minport ".escapeshellarg($this->port);
+		$this->command .= " --maxport ".escapeshellarg($this->maxport);
+		$this->command .= " --rerequest_interval ".escapeshellarg($this->rerequest);
+		$this->command .= " --max_initiate ".escapeshellarg($this->maxcons);
 		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
 			$this->command .= " --no_check_hashes";
 		if (strlen($this->cfg["btclient_mainline_options"]) > 0)
