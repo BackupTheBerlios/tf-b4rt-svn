@@ -1297,7 +1297,7 @@ function configSettings()
 		<tr>
 			<td align="left" width="350" valign="top"><strong>Select Auth-Type</strong><br>
 			<u>Form-Auth</u> : Standard TF 2.1 Form-Based Auth<br>
-			<u>Form-Auth + Cookie</u> : Form-Based Auth with "Remember Me"-Cookie<br>
+			<u>Form-Auth + Cookie</u> : Form-Based Auth with "Remember Me"-Cookie<br><font color="red">Warning : </font> cookie contains plaintext-password<br>
 			<u>Basic-Auth</u> : Basic-Auth with Realm "<?php echo(_AUTH_BASIC_REALM); ?>"<br>
 			<u>Basic-Passthru</u> : gets credentials of already authenticated user and passes them to flux<br>
 			</td>
