@@ -401,10 +401,10 @@ if (isset($_REQUEST["u"])) {
 // fluxd
 // -----------------------------------------------------------------------------
 if (isset($_REQUEST["f"])) {
-	$queueAction = trim($_REQUEST["f"]);
-	if ($queueAction != "") {
+	$action = trim($_REQUEST["f"]);
+	if ($action != "") {
 		buildPage("f");
-		switch($queueAction) {
+		switch($action) {
 			case "0": // fluxd-main
 				$htmlTitle = "fluxd";
 				break;
@@ -865,6 +865,86 @@ if (isset($_REQUEST["m"])) {
 }
 
 // -----------------------------------------------------------------------------
+// log
+// -----------------------------------------------------------------------------
+if (isset($_REQUEST["l"])) {
+	$action = trim($_REQUEST["l"]);
+	if ($action != "") {
+		buildPage("l");
+		switch($action) {
+			case "0": // log-main
+				$htmlTitle = "log";
+				break;
+			case "1": // fluxd-log
+				$htmlTitle = "log - fluxd";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<pre>';
+				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd.log');
+				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
+				break;
+			case "2": // fluxd-error-log
+				$htmlTitle = "log - fluxd - error-log";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<pre>';
+				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd-error.log');
+				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
+				break;
+			case "5": // mainline-log
+				$htmlTitle = "log - mainline";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<pre>';
+				$mainlineLog = $cfg["path"].'.bittorrent/tfmainline.log';
+				if (is_file($mainlineLog))
+					$htmlMain .= getDataFromFile($mainlineLog);
+				else
+					$htmlMain .= "mainline-log not found.";
+				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
+				break;
+			case "8": // transfers
+				$htmlTitle = "log - transfers";
+				$logList = getTransferArray('na');
+				if ((isset($logList)) && (is_array($logList))) {
+					$htmlMain .= '<ul>';
+					foreach ($logList as $logFile) {
+						if ((isset($logFile)) && ($logFile != "")) {
+							$htmlMain .= '<li>';
+							$htmlMain .= '<a href="'. _FILE_THIS .'?l=9&transfer='.$logFile.'">';
+							$htmlMain .= $logFile;
+							$htmlMain .= '</a>';
+							$htmlMain .= '</li>';
+						}
+					}
+					$htmlMain .= '</ul>';
+				}
+				break;
+			case "9": // transfer-log
+				if (isset($_REQUEST["transfer"])) {
+					$transfer = trim(htmlentities($_REQUEST["transfer"], ENT_QUOTES));
+					// shorten name if too long
+					if(strlen($transfer) >= 70)
+						$htmlTitle = "log - transfer-log - ".substr($transfer, 0, 67)."...";
+					else
+						$htmlTitle = "log - transfer-log - ".$transfer;
+					$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+					$htmlMain .= '<pre>';
+					$htmlMain .= getTransferLog($transfer);
+					$htmlMain .= '</pre>';
+					$htmlMain .= '</div>';
+				} else {
+					$htmlTitle = "log - transfer-log";
+					$htmlMain .= '<font color="red">Error. missing params</font>';
+				}
+				break;
+		}
+		printPage();
+		exit();
+	}
+}
+
+// -----------------------------------------------------------------------------
 // torrents
 // -----------------------------------------------------------------------------
 if (isset($_REQUEST["t"])) {
@@ -971,10 +1051,10 @@ if (isset($_REQUEST["t"])) {
 // tf-b4rt
 // -----------------------------------------------------------------------------
 if (isset($_REQUEST["z"])) {
-	$queueAction = trim($_REQUEST["z"]);
-	if ($queueAction != "") {
+	$action = trim($_REQUEST["z"]);
+	if ($action != "") {
 		buildPage("z");
-		switch($queueAction) {
+		switch($action) {
 			case "0": // main
 				$htmlTitle = "tf-b4rt";
 				break;
@@ -1102,7 +1182,6 @@ exit();
 
 /**
  * superadminAuthentication
- *
  */
 function superadminAuthentication($message = "") {
 	if (! IsSuperAdmin()) {
@@ -1118,7 +1197,6 @@ function superadminAuthentication($message = "") {
 
 /**
  * builds page
- *
  */
 function buildPage($action) {
 	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain, $fluxd, $fluxdRunning;
@@ -1128,6 +1206,8 @@ function buildPage($action) {
 	$htmlTop .= '<a href="' . _FILE_THIS . '?m=0">Maintenance</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?b=0">Backup</a>';
+	$htmlTop .= ' | ';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?l=0">Log</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?z=0">tf-b4rt</a>';
 	// body
@@ -1192,6 +1272,19 @@ function buildPage($action) {
 			$htmlMain .= '</td><td align="right"><strong>Maintenance</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
+		case "l": // log passthru
+			$statusImage = "black.gif";
+			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=1">fluxd</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=2">fluxd-error</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=5">mainline</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=8">transfers</a>';
+			$htmlMain .= '</td><td align="right"><strong>Log</strong></td>';
+			$htmlMain .= '</tr></table>';
+			break;
 		case "t": // torrent passthru
 			$statusImage = "black.gif";
 			break;
@@ -1238,7 +1331,6 @@ function doEcho($string, $mode = 0) {
 
 /**
  * prints the page
- *
  */
 function printPage() {
 	printPageStart(0);
@@ -1249,7 +1341,6 @@ function printPage() {
 
 /**
  * prints the page-start
- *
  */
 function printPageStart($echoMode = 0) {
 	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
@@ -1313,7 +1404,6 @@ function printPageStart($echoMode = 0) {
 
 /**
  * prints the page-end
- *
  */
 function printPageEnd($echoMode = 0) {
 	doEcho('</table>',$echoMode);
@@ -1338,7 +1428,6 @@ function printPageEnd($echoMode = 0) {
 
 /**
  * bails out cause of version-errors.
- *
  */
 function updateErrorNice($message = "") {
 	global $statusImage, $statusMessage, $htmlTop, $htmlMain;
@@ -1356,7 +1445,6 @@ function updateErrorNice($message = "") {
 
 /**
  * bails out cause of version-errors.
- *
  */
 function updateError($message = "") {
 	$errorString = "ERROR processing auto-update. please do manual update.";
@@ -1369,7 +1457,6 @@ function updateError($message = "") {
 
 /**
  * sendLine - sends a line to the browser
- *
  */
 function sendLine($line = "") {
 	echo $line;
