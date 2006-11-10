@@ -58,6 +58,8 @@ class ClientHandler
     // pid
     var $pid = "";
     var $pidFile = "";
+    // logfile
+    var $logFile = "";
     // command
     var $command = "";
     // umask
@@ -141,6 +143,7 @@ class ClientHandler
         $this->nice = "";
         if ($this->cfg["nice_adjust"] != 0)
             $this->nice = "nice -n ".$this->cfg["nice_adjust"]." ";
+        // state ok
         $this->status = 1;
     }
 
@@ -255,6 +258,7 @@ class ClientHandler
         }
         $this->transfer = urldecode($transfer);
         $this->alias = getAliasName($this->transfer);
+        $this->logFile = $this->cfg["transfer_file_path"].$this->alias.".log";
         $this->owner = getOwner($this->transfer);
         if (empty($this->savepath)) {
 	        switch ($this->cfg["enable_home_dirs"]) {

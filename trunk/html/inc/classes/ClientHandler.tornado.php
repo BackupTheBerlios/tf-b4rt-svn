@@ -118,7 +118,7 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $filePrio;
 		if (strlen($this->cfg["btclient_tornado_options"]) > 0)
 			$this->command .= " ".$this->cfg["btclient_tornado_options"];
-        $this->command .= " > /dev/null &";
+        $this->command .= " > ".escapeshellarg($this->logFile)." &";
 
         // start the client
         parent::doStartClient();

@@ -58,6 +58,7 @@ class ClientHandlerWget extends ClientHandler
         $aliasName = getAliasName($this->transfer);
         $this->urlFile = $this->cfg["transfer_file_path"].$aliasName.".wget";
         $this->alias = $aliasName.".stat";
+        $this->logFile = $this->cfg["transfer_file_path"].$aliasName.".log";
         $this->owner = $this->cfg['user'];
         $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".pid";
     }
@@ -152,7 +153,7 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . $this->cfg["wget_limit_rate"];
         $this->command .= " " . $this->cfg["wget_limit_retries"];
         $this->command .= " " . $this->cfg["wget_ftp_pasv"];
-        $this->command .= " > /dev/null &";
+        $this->command .= " > ".escapeshellarg($this->logFile)." &";
         exec($this->command);
 
         // wait until transfer is up

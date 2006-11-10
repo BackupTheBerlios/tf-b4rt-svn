@@ -118,7 +118,7 @@ class ClientHandlerMainline extends ClientHandler
 		if (strlen($this->cfg["btclient_mainline_options"]) > 0)
 			$this->command .= " ".$this->cfg["btclient_mainline_options"];
 		$this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
-		$this->command .= " > /dev/null &";
+		$this->command .= " > ".escapeshellarg($this->logFile)." &";
 
 		// start the client
 		parent::doStartClient();

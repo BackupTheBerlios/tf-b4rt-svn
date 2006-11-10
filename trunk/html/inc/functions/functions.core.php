@@ -1002,7 +1002,7 @@ function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
  */
 function resetTorrentTotals($torrent, $delete = false) {
 	global $cfg, $db;
-	if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
+	if (!isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent))
 		return false;
 	// vars
 	$torrentId = getTorrentHash($torrent);
@@ -1031,10 +1031,44 @@ function resetTorrentTotals($torrent, $delete = false) {
 }
 
 /**
+ * get log of a Transfer
+ *
+ * @param $transfer
+ * @return string
+ */
+function getTransferLog($transfer) {
+	global $cfg;
+	$emptyLog = "log empty";
+	// sanity-checks
+	if (!isset($transfer) || !preg_match('/^[a-zA-Z0-9._]+$/', $transfer))
+		return "invalid transfer";
+	// alias-name + log-file
+	$aliasName = getAliasName($transfer);
+	$transferLogFile = $cfg["transfer_file_path"].$aliasName.".log";
+	// check
+	if (!(file_exists($transferLogFile)))
+		return $emptyLog;
+	// open
+	$handle = false;
+	$handle = @fopen($transferLogFile, "r");
+	if (!$handle)
+		return $emptyLog;
+	// read
+	$data = "";
+	while (!@feof($handle))
+		$data .= @fgets($handle, 8192);
+	@fclose ($handle);
+	if ($data == "")
+		return $emptyLog;
+	// return
+	return $data;
+}
+
+/**
  * deletes a transfer
  *
- * @param $transfer name of the torrent
- * @param $alias_file alias-file of the torrent
+ * @param $transfer name of the transfer
+ * @param $alias_file alias-file of the transfer
  * @return boolean of success
  */
 function deleteTransfer($transfer, $alias_file) {
@@ -1066,12 +1100,23 @@ function deleteTransfer($transfer, $alias_file) {
 			$transferTotals = getTransferTotals($transfer);
 			saveXfer($transferowner,$transferTotals["downtotal"],$transferTotals["uptotal"]);
 		}
+		// alias-name
+		$aliasName = getAliasName($transfer);
 		// torrent+stat
 		@unlink($cfg["transfer_file_path"].$transfer);
 		@unlink($cfg["transfer_file_path"].$alias_file);
-		// try to remove the pid file
-		@unlink($cfg["transfer_file_path"].$alias_file.".pid");
-		@unlink($cfg["transfer_file_path"].getAliasName($transfer).".prio");
+		// if exist remove pid file
+		$pidFile = $cfg["transfer_file_path"].$alias_file.".pid";
+		if (file_exists($pidFile))
+			@unlink($pidFile);
+		// if exist remove prio-file
+		$prioFile = $cfg["transfer_file_path"].$aliasName.".prio";
+		if (file_exists($prioFile))
+			@unlink($prioFile);
+		// if exist remove log-file
+		$logFile = $cfg["transfer_file_path"].$aliasName.".log";
+		if (file_exists($logFile))
+			@unlink($logFile);
 		AuditAction($cfg["constants"]["delete_torrent"], $transfer);
 		return true;
 	} else {
