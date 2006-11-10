@@ -153,11 +153,13 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . $this->cfg["wget_limit_rate"];
         $this->command .= " " . $this->cfg["wget_limit_retries"];
         $this->command .= " " . $this->cfg["wget_ftp_pasv"];
-        $this->command .= " > ".escapeshellarg($this->logFile)." &";
+        $this->command .= " 1>> ".escapeshellarg($this->logFile);
+        $this->command .= " 2>> ".escapeshellarg($this->logFile);
+        $this->command .= " &";
         exec($this->command);
 
-        // wait until transfer is up
-        waitForTransfer($this->transfer, 1, 15);
+        // this is wget.. just wait 2 seconds
+        sleep(2);
     }
 
     /**

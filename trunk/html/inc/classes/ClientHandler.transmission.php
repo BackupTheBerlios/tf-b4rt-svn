@@ -106,7 +106,9 @@ class ClientHandlerTransmission extends ClientHandler
         if (strlen($this->cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$this->cfg["btclient_transmission_options"];
         $this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
-        $this->command .= " > ".escapeshellarg($this->logFile)." &";
+        $this->command .= " 1>> ".escapeshellarg($this->logFile);
+        $this->command .= " 2>> ".escapeshellarg($this->logFile);
+        $this->command .= " &";
 
         // <begin shell-trickery> to write the pid of the client into the pid-file
         // * b4rt :
