@@ -89,7 +89,7 @@ if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 //
 $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&torrent='.$torrent.'&alias='.$alias);
 //
-tmplSetTitleBar($cfg['_ID_HOSTS'], false);
+tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_ID_HOSTS'], false);
 tmplSetFoot(false);
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 
