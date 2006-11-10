@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1060 2006-11-09 04:45:14Z titer $
+ * $Id: peer.c 1064 2006-11-10 04:21:46Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -63,6 +63,8 @@ struct tr_peer_s
 
     /* The pieces that the peer has */
     uint8_t      * bitfield;
+    int            pieceCount;
+    float          progress;
 
     int            goodPcs;
     int            badPcs;
@@ -532,6 +534,16 @@ int tr_peerIsUploading( tr_peer_t * peer )
 int tr_peerIsDownloading( tr_peer_t * peer )
 {
     return peer->outBlockSending;
+}
+
+/***********************************************************************
+ * tr_peerIsDownloading
+ ***********************************************************************
+ *
+ **********************************************************************/
+float tr_peerProgress( tr_peer_t * peer )
+{
+    return peer->progress;
 }
 
 /***********************************************************************

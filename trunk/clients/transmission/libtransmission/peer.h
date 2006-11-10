@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.h 1060 2006-11-09 04:45:14Z titer $
+ * $Id: peer.h 1064 2006-11-10 04:21:46Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -43,6 +43,7 @@ int         tr_peerIsConnected   ( tr_peer_t * );
 int         tr_peerIsIncoming    ( tr_peer_t * );
 int         tr_peerIsUploading   ( tr_peer_t * );
 int         tr_peerIsDownloading ( tr_peer_t * );
+float       tr_peerProgress      ( tr_peer_t * );
 uint8_t *   tr_peerBitfield      ( tr_peer_t * );
 float       tr_peerDownloadRate  ( tr_peer_t * );
 int         tr_peerIsUnchoked    ( tr_peer_t * );

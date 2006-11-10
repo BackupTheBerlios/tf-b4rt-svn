@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1007 2006-10-13 19:04:29Z livings124 $
+ * $Id: transmission.c 1064 2006-11-10 04:21:46Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -591,6 +591,7 @@ tr_peer_stat_t * tr_torrentPeers( tr_torrent_t * tor, int * peerCount )
             peers[i].isIncoming = tr_peerIsIncoming(peer);
             peers[i].isDownloading = tr_peerIsDownloading(peer);
             peers[i].isUploading = tr_peerIsUploading(peer);
+            peers[i].progress = tr_peerProgress(peer);
         }
     }
     

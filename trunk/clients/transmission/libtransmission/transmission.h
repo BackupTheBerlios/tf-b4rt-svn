@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1006 2006-10-13 18:58:12Z livings124 $
+ * $Id: transmission.h 1064 2006-11-10 04:21:46Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -378,6 +378,7 @@ struct tr_peer_stat_s
     int     isIncoming;
     int     isDownloading;
     int     isUploading;
+    float   progress;
 };
 
 struct tr_msg_list_s
