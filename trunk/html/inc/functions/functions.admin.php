@@ -600,7 +600,7 @@ function repairTorrentflux() {
 	// set flags in db
 	$db->Execute("UPDATE tf_torrents SET running = '0'");
 	// delete leftovers of fluxd (only do this if daemon is not running)
-	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c fluxd.pl"));
+	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl"));
 	if ($fluxdRunning == "0") {
 		// pid
 		if (file_exists($cfg["path"].'.fluxd/fluxd.pid'))
