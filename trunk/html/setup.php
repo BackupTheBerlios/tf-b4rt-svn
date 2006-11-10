@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ALL);
 /* $Id$ */
 
 /*******************************************************************************
@@ -1417,7 +1416,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h2>Setup Completed</h2>");
 	send("<p>Congratulations!  "._NAME." has successfully been installed.</p>");
 
-	if (true || (substr(_VERSION, 0, 3)) != "svn") {
+	if ((substr(_VERSION, 0, 3)) != "svn") {
 		$result = @unlink(__FILE__);
 		if ($result !== true) {
 			$err = 'Could not delete '.__FILE__.'. Please delete the file manually.';
