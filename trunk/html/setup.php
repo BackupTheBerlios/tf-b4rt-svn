@@ -43,7 +43,7 @@ define('_FORUM_URL', "http://tf-b4rt.berlios.de/forum/");
 $databaseTypes = array();
 $databaseTypes['MySQL'] = 'mysql_connect';
 $databaseTypes['SQLite'] = 'sqlite_open';
-$databaseTypes['PostgreSQL'] = 'pg_connect';
+$databaseTypes['Postgres'] = 'pg_connect';
 
 // generic msg about db config missing:
 $msgDbConfigMissing = 'Database configuration file <em>'._DIR._FILE_DBCONF.'</em> missing. ';
@@ -575,7 +575,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b
 // -----------------------------------------------------------------------------
 // SQL : postgres
 // -----------------------------------------------------------------------------
-$cdb = 'postgresql';
+$cdb = 'postgres';
 
 // sql-queries : Test
 $cqt = 'test';
@@ -870,7 +870,7 @@ if (isset($_REQUEST["1"])) {                                                    
 		
 		// MySQL and PostgreSQL have same data reqs, make it default case:
 		case "mysql":
-		case "postgresql":
+		case "postgres":
 		default:
 			// host
 			$line = '<tr><td>Host : </td>';
@@ -959,7 +959,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			$user = "";
 			$pass = "";
 		case "mysql":
-		case "postgresql":
+		case "postgres":
 		default:
 			if (!empty($_REQUEST["db_name"]))
 				$name = stripslashes($_REQUEST["db_name"]);
