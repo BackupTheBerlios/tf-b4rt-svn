@@ -105,7 +105,7 @@ function writeDatabaseConfig($type, $host, $user, $pass, $name, $pcon) {
 /******************************************************************************/
 // YOUR DATABASE CONNECTION INFORMATION
 /******************************************************************************/
-$cfg["db_type"] = "'.$type.'"; // Database-Type : mysql/sqlite/postgres
+$cfg["db_type"] = "'.strtolower($type).'"; // Database-Type : mysql/sqlite/postgres
 $cfg["db_host"] = "'.$host.'"; // Database host computer name or IP
 $cfg["db_name"] = "'.$name.'"; // Name of the Database
 $cfg["db_user"] = "'.$user.'"; // Username for Database
@@ -118,14 +118,14 @@ $cfg["db_pcon"] = '.$pcon.'; // Persistent Connection enabled : true/false
 	$configFile = @fopen(_DIR._FILE_DBCONF, "w");
 	if (!$configFile) {
 		$databaseConfWriteOk = false;
-		$databaseConfWriteError = "cannot open config-file <em>"._DIR._FILE_DBCONF."</em> for writing.";
+		$databaseConfWriteError = "Cannot open configuration file <em>"._DIR._FILE_DBCONF."</em> for writing.  Please check permissions and try again.";
 		return false;
 	}
 	$result = @fwrite($configFile, $databaseConfContent);
 	@fclose($configFile);
 	if ($result === false) {
 		$databaseConfWriteOk = false;
-		$databaseConfWriteError = "cannot write content to config-file <em>"._DIR._FILE_DBCONF."</em>.";
+		$databaseConfWriteError = "Cannot write content to config-file <em>"._DIR._FILE_DBCONF."</em>. Please check any file locking issues and try again.";
 		return false;
 	}
 	$databaseConfWriteOk = true;
@@ -217,4 +217,14 @@ function send($string = "") {
 	@flush();
 }
 
+/**
+ * displaySetupError - displays a setup message
+ * @param $msg - message to display
+ * @param $status - boolean, true for 'Ok:', false for 'Error:'
+ */
+function displaySetupMessage($msg="A problem occured.", $status=false){
+	$thisMsg='<p><font color="'.($status ? "green" : "red").'"><strong>';
+	$thisMsg.= ($status ? "Ok" : "Error").': </strong></font>'.$msg.'</p>';
+	send($thisMsg);		
+}
 ?>
