@@ -248,11 +248,6 @@ sub processArguments {
 	};
 	# daemon-stop
 	if ($temp =~ /daemon-stop/) {
-		# check if running
-		if (daemonIsRunning() == 0) {
-			print STDERR "daemon not running.\n";
-			exit;
-		}
 		# $PATH_DOCROOT
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -277,6 +272,11 @@ sub processArguments {
 			exit;
 		}
 		$dbMode = $temp;
+		# check if running
+		if (daemonIsRunning($PATH_DOCROOT) == 0) {
+			print STDERR "daemon not running.\n";
+			exit;
+		}
 		print "Stopping daemon...\n";
 		# db-bean
 		# require
@@ -307,11 +307,6 @@ sub processArguments {
 	};
 	# daemon-start
 	if ($temp =~ /daemon-start/) {
-		# check if already running
-		if (daemonIsRunning() == 1) {
-			print STDERR "daemon already running.\n";
-			exit;
-		}
 		# $PATH_DOCROOT
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -336,6 +331,11 @@ sub processArguments {
 			exit;
 		}
 		$dbMode = $temp;
+		# check if already running
+		if (daemonIsRunning($PATH_DOCROOT) == 1) {
+			print STDERR "daemon already running.\n";
+			exit;
+		}
 		print "Starting daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n";
 		# return
 		return 1;
@@ -387,7 +387,7 @@ sub daemonize {
 	open STDERR, ">>$ERROR_LOG"	or die "Can't Write to error $ERROR_LOG: $!";
 
 	# check if already running
-	if (daemonIsRunning() == 1) {
+	if (daemonIsRunning($PATH_DOCROOT) == 1) {
 		print STDERR "CORE : daemon already running.\n";
 		exit;
 	}
@@ -461,14 +461,19 @@ sub daemonShutdown {
 
 #------------------------------------------------------------------------------#
 # Sub: daemonIsRunning                                                         #
-# Arguments: null                                                              #
+# Arguments: docroot                                                           #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub daemonIsRunning {
+	my $docroot = shift;
+	if (!(defined $docroot)) {
+		return 0;
+	}
 	my $name = $DIR.$PROG.".".$EXTENSION;
+	my $fluxdScript = $docroot."bin/fluxd/".$name;
 	my $qstring = "ps -aux 2> /dev/null";
 	my $pcount = 0;
-	foreach my $line (grep(/$name/, qx($qstring))) {
+	foreach my $line (grep(/$fluxdScript/, qx($qstring))) {
 		$pcount++;
 	}
 	if ($pcount > 1) {
