@@ -345,11 +345,12 @@ function getCredentials() {
 	}
 	// check for cookie-supplied credentials (only if activated)
 	if ($cfg['auth_type'] == 1) {
-		if ((isset($HTTP_COOKIE_VARS['username'])) && (isset($HTTP_COOKIE_VARS['md5pass']))) {
+		if (isset($_COOKIE["autologin"])) {
+			$creds = explode('|', $_COOKIE["autologin"]);
 			$retVal = array();
-			$retVal['username'] = $HTTP_COOKIE_VARS['username'];
+			$retVal['username'] = $creds[0];
 			$retVal['password'] = "";
-			$retVal['md5pass'] = $HTTP_COOKIE_VARS['md5pass'];
+			$retVal['md5pass'] = $creds[1];
 			return $retVal;
 		}
 	}

@@ -29,12 +29,6 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// delete cookies
-$cookieTime = time() - 3600;
-@setcookie("check", "", $cookieTime);
-@setcookie("username", "", $cookieTime);
-@setcookie("iamhim", "", $cookieTime);
-
 // logout user
 $sql = "DELETE FROM tf_log WHERE user_id=".$db->qstr($cfg["user"])." and action=".$db->qstr($cfg["constants"]["hit"]);
 $result = $db->Execute($sql);

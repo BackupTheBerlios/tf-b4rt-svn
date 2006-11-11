@@ -45,12 +45,16 @@ if (isset($_SESSION['user'])) {
 @ob_start();
 
 // authentication
+$isLoginRequest = false;
 switch ($cfg['auth_type']) {
 	case 3: /* Basic-Passthru */
 	case 2: /* Basic-Auth */
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
 			$user = $_SERVER['PHP_AUTH_USER'];
 			$iamhim = addslashes($_SERVER['PHP_AUTH_PW']);
+			$md5password = "";
+			if ((!empty($user)) && (isset($iamhim)))
+				$isLoginRequest = true;
 		} else {
 			header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
 			header('HTTP/1.0 401 Unauthorized');
@@ -58,36 +62,54 @@ switch ($cfg['auth_type']) {
 			exit();
 		}
 		break;
-	case 1: /* Form-Based Auth + "Remember Me" */
-		$user = getRequestVar('username');
-		$iamhim = addslashes(getRequestVar('iamhim'));
-		$check = @$HTTP_COOKIE_VARS["check"];
-		$password = @$HTTP_COOKIE_VARS["iamhim"];
-		$username = @$HTTP_COOKIE_VARS["username"];
-		if ((isset($_POST['check'])) && ($_POST['check'] == "true")) {
-			setcookie("check", "true", time()+60*60*24*30);
-			if ($_POST['username'] != "")
-				setcookie("username", $_POST['username'], time()+60*60*24*30);
-			if ($_POST['iamhim'] != "")
-				setcookie("iamhim", $_POST['iamhim'], time()+60*60*24*30);
+	case 1: /* Form-Based Auth + "Remember Me"-cookie */
+		$cookieDelim = '|';
+		// check if login-request
+		$isCookieLoginRequest = getRequestVar('docookielogin');
+		if ($isCookieLoginRequest == "true") {
+			$isLoginRequest = true;
+			$user = getRequestVar('username');
+			$iamhim = "";
+			$md5password = getRequestVar('md5pass');
+			// set new cookie
+			setcookie("autologin", $user.$cookieDelim.$md5password, time() + 60 * 60 * 24 * 30);
+		} else {
+			// is a form-login-request ?
+			$docookieloginnew = getRequestVar('docookieloginnew');
+			if ($docookieloginnew == "true") {
+				$isLoginRequest = true;
+				$user = getRequestVar('username');
+				$requestPW = getRequestVar('iamhim');
+				$iamhim = addslashes($requestPW);
+				$md5password = "";
+				$setcookie = getRequestVar('setcookie');
+				// set cookie if wanted
+				if ($setcookie == "true")
+					setcookie("autologin", $user.$cookieDelim.md5($requestPW), time() + 60 * 60 * 24 * 30);
+			} else {
+				// check if cookie-set
+				if (isset($_COOKIE["autologin"])) {
+					// cookie is set
+					$tmpl->setvar('cookie_set', 1);
+					$creds = explode($cookieDelim, $_COOKIE["autologin"]);
+					$tmpl->setvar('cookieuser', $creds[0]);
+					$tmpl->setvar('cookiepass', $creds[1]);
+				}
+			}
 		}
-		if(empty($user) && empty($iamhim) && !empty($username) && !empty($password)) {
-			$user = $username;
-			$iamhim = addslashes($password);
-		}
-		$tmpl->setvar('username', $user);
-		$tmpl->setvar('password', $iamhim);
-		$tmpl->setvar('check', $check);
 		break;
 	case 0: /* Form-Based Auth Standard */
 	default:
 		$user = getRequestVar('username');
 		$iamhim = addslashes(getRequestVar('iamhim'));
+		$md5password = "";
+		if (!empty($user))
+			$isLoginRequest = true;
 		break;
 }
 
-// Check for user
-if(!empty($user) && !empty($iamhim)) {
+// process login if this is a login-request
+if ($isLoginRequest) {
 	// First User check
 	$next_loc = "index.php?iid=index";
 	$sql = "SELECT count(*) FROM tf_users";
@@ -97,7 +119,7 @@ if(!empty($user) && !empty($iamhim)) {
 		$next_loc = "admin.php?op=serverSettings";
 	}
 	// perform auth
-	if (performAuthentication($user,$iamhim) == 1) {
+	if (performAuthentication($user, $iamhim, $md5password) == 1) {
 		header("location: ".$next_loc);
 		exit();
 	} else {

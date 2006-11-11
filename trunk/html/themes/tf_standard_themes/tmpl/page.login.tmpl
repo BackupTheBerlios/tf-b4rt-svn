@@ -45,28 +45,77 @@
 															<tmpl_if name="login_failed">
 																<div align="center">Login failed.<br />Please try again.</div>
 															</tmpl_if>
-															<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
-																<table width="100%" cellpadding="5" cellspacing="0" border="0">
+															<table width="100%" cellpadding="5" cellspacing="0" border="0">
+																<tmpl_if name="auth_type" value="1">
+																	<tmpl_if name="cookie_set" value="1">
+																		<tr>
+																			<td align="center" colspan="2"><strong>Cookie found</strong></td>
+																		</tr>
+																		<form name="cookieLogin" action="login.php" method="post">
+																		<input name="docookielogin" type="Hidden" value="true">
+																		<input name="username" type="Hidden" value="<tmpl_var name="cookieuser">">
+																		<input name="md5pass" type="Hidden" value="<tmpl_var name="cookiepass">">
+																		<tr>
+																			<td colspan="2" align="center"><input class="button" type="submit" value="Login as <tmpl_var name="cookieuser">" /><br><br></td>
+																		</tr>
+																		</form>
+																		<tr>
+																			<td align="center" colspan="2"><strong>Login as different User :</strong></td>
+																		</tr>
+																		<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
+																		<input name="docookieloginnew" type="Hidden" value="true">
+																		<tr>
+																			<td align="right">Username: </td>
+																			<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																		</tr>
+																		<tr>
+																			<td align="right">Password:</td>
+																			<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																		</tr>
+																		<tr>
+																			<td align="right">Set "Auto-Login" Cookie</td>
+																			<td align="left"><input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																		</tr>
+																		<tr>
+																			<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
+																		</tr>
+																		</form>
+																	<tmpl_else>
+																		<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
+																		<input name="docookieloginnew" type="Hidden" value="true">
+																		<tr>
+																			<td align="right">Username: </td>
+																			<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																		</tr>
+																		<tr>
+																			<td align="right">Password:</td>
+																			<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																		</tr>
+																		<tr>
+																			<td align="right">Set "Auto-Login" Cookie</td>
+																			<td align="left"><input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																		</tr>
+																		<tr>
+																			<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
+																		</tr>
+																		</form>
+																	</tmpl_if>
+																<tmpl_else>
+																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
 																	<tr>
 																		<td align="right">Username: </td>
-																		<td><input type="text" name="username" value="<tmpl_var name="username">" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
-
+																		<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
 																	</tr>
 																	<tr>
 																		<td align="right">Password:</td>
-																		<td><input type="password" name="iamhim" value="<tmpl_var name="password">" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																		<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																	</tr>
-																	<tmpl_if name="auth_type" value="1">
-																		<tr>
-																			<td align="right">Remember me:</td>
-																			<td align="left"><input type="checkbox" name="check" value="true"<tmpl_if name="check" value="true"> checked </tmpl_if>size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
-																		</tr>
-																	</tmpl_if>
 																	<tr>
 																		<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
 																	</tr>
-																</table>
-															</form>
+																	</form>
+																</tmpl_if>
+															</table>
 														</td>
 													</tr>
 												</table>
