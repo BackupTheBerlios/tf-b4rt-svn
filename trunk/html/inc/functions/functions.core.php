@@ -310,38 +310,51 @@ function showErrorPage($errorMessage) {
 }
 
 /**
- * getCredentials
+ * try to get Credentials
  *
- * @return array with credentials or null if no credentials found.
+ * @return array with credentials or false if no credentials found.
  */
 function getCredentials() {
-	global $cfg, $db;
-	$retVal = array();
+	global $cfg;
 	// check for basic-auth-supplied credentials (only if activated or there may
 	// be wrong credentials fetched)
 	if (($cfg['auth_type'] == 2) || ($cfg['auth_type'] == 3)) {
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
+			$retVal = array();
 			$retVal['username'] = $_SERVER['PHP_AUTH_USER'];
 			$retVal['password'] = addslashes($_SERVER['PHP_AUTH_PW']);
+			$retVal['md5pass'] = "";
 			return $retVal;
 		}
 	}
 	// check for http-post/get-supplied credentials
-	if ((isset($_REQUEST['username'])) && (isset($_REQUEST['iamhim']))) {
-		$retVal['username'] = $_REQUEST['username'];
-		$retVal['password'] = addslashes($_REQUEST['iamhim']);
-		return $retVal;
-	}
-	// check for cookie-supplied credentials (only if activated)
-	if ($cfg['auth_type'] == 1) {
-		if ((isset($HTTP_COOKIE_VARS['username'])) && (isset($HTTP_COOKIE_VARS['iamhim']))) {
-			$retVal['username'] = $HTTP_COOKIE_VARS['username'];
-			$retVal['password'] = addslashes($HTTP_COOKIE_VARS['iamhim']);
+	if (isset($_REQUEST['username'])) {
+		if (isset($_REQUEST['md5pass'])) {
+			$retVal = array();
+			$retVal['username'] = $_REQUEST['username'];
+			$retVal['password'] = "";
+			$retVal['md5pass'] = $_REQUEST['md5pass'];
+			return $retVal;
+		} elseif (isset($_REQUEST['iamhim'])) {
+			$retVal = array();
+			$retVal['username'] = $_REQUEST['username'];
+			$retVal['password'] = addslashes($_REQUEST['iamhim']);
+			$retVal['md5pass'] = "";
 			return $retVal;
 		}
 	}
-	// no credentials found, return null
-	return null;
+	// check for cookie-supplied credentials (only if activated)
+	if ($cfg['auth_type'] == 1) {
+		if ((isset($HTTP_COOKIE_VARS['username'])) && (isset($HTTP_COOKIE_VARS['md5pass']))) {
+			$retVal = array();
+			$retVal['username'] = $HTTP_COOKIE_VARS['username'];
+			$retVal['password'] = "";
+			$retVal['md5pass'] = $HTTP_COOKIE_VARS['md5pass'];
+			return $retVal;
+		}
+	}
+	// no credentials found, return false
+	return false;
 }
 
 /**

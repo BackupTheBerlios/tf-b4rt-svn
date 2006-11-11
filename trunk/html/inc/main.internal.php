@@ -72,8 +72,8 @@ if (isAuthenticated() == 1) {
 } else {
 	// try to auth with supplied credentials
 	$credentials = getCredentials();
-	if (isset($credentials)) {
-		if (performAuthentication($credentials['username'],$credentials['password']) == 1) {
+	if ($credentials !== false) {
+		if (performAuthentication($credentials['username'], $credentials['password'], $credentials['md5pass']) == 1) {
 			if (isAuthenticated() != 1) {
 				header('location: login.php');
 				exit();
