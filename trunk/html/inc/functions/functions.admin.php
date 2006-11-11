@@ -198,7 +198,8 @@ function tmplSetUserSection() {
 			showError($db, $sql2);
 			$row = $result2->FetchRow();
 			if (!empty($row)) {
-				$xfer_usage = formatFreeSpace(($row["download"] / (1024 * 1024)) + ($row["upload"] / (1024 * 1024)));
+				$xfer_usage = "0";
+				$xfer_usage = @formatFreeSpace(($row["download"] / (1024 * 1024)) + ($row["upload"] / (1024 * 1024)));
 			} else {
 				$xfer_usage = "0";
 			}

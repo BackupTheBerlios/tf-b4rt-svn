@@ -99,23 +99,23 @@ function transferListXferUpdate1($entry, $transferowner, $af, $settingsAry) {
 		// MySQL 4.1.0 introduced 'ON DUPLICATE KEY UPDATE' to make this easier
 		$sql = "SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'";
 		if ($db->GetOne($sql)) {
-			$sql = "UPDATE tf_xfer SET download = download+".($transferTotalsCurrent["downtotal"]).", upload = upload+".($transferTotalsCurrent["uptotal"])." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'";
+			$sql = "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'";
 			$db->Execute($sql);
 			showError($db,$sql);
 		} else {
 			showError($db,$sql);
-			$sql = "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."','".$lastDate."',".($transferTotalsCurrent["downtotal"]).",".($transferTotalsCurrent["uptotal"]).")";
+			$sql = "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."','".$lastDate."',".@($transferTotalsCurrent["downtotal"] + 0).",".@($transferTotalsCurrent["uptotal"] + 0).")";
 			$db->Execute($sql);
 			showError($db,$sql);
 		}
 		$sql = "SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time());
 		if ($db->GetOne($sql)) {
-			$sql = "UPDATE tf_xfer SET download = download-".($transferTotalsCurrent["downtotal"]).", upload = upload-".($transferTotalsCurrent["uptotal"])." WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time());
+			$sql = "UPDATE tf_xfer SET download = download-".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload-".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = ".$db->DBDate(time());
 			$db->Execute($sql);
 			showError($db,$sql);
 		} else {
 			showError($db,$sql);
-			$sql = "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",-".($transferTotalsCurrent["downtotal"]).",-".($transferTotalsCurrent["uptotal"]).")";
+			$sql = "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",-".@($transferTotalsCurrent["downtotal"] + 0).",-".@($transferTotalsCurrent["uptotal"] + 0).")";
 			$db->Execute($sql);
 			showError($db,$sql);
 		}
@@ -131,7 +131,7 @@ function transferListXferUpdate1($entry, $transferowner, $af, $settingsAry) {
 function transferListXferUpdate2($newday) {
 	global $cfg, $db;
 	if ($newday == 1) {
-		$sql = "INSERT INTO tf_xfer (user_id,date) values ( '',".$db->DBDate(time()).")";
+		$sql = "INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")";
 		$db->Execute($sql);
 		showError($db,$sql);
 	}
@@ -187,6 +187,9 @@ function sumUsage($user, $download, $upload, $period) {
 function saveXfer($user, $down, $up) {
 	global $db;
 	$sql = "SELECT 1 FROM tf_xfer WHERE user_id = '".$user."' AND date = ".$db->DBDate(time());
+	// just to be safe..
+	if (empty($down)) $down = "0";
+	if (empty($up)) $up = "0";
 	if ($db->GetRow($sql)) {
 		$sql = "UPDATE tf_xfer SET download = download+".$down.", upload = upload+".$up." WHERE user_id = '".$user."' AND date = ".$db->DBDate(time());
 		$db->Execute($sql);
