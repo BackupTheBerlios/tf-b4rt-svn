@@ -155,21 +155,27 @@ function tmplSetMoveSettings() {
  *
  * @param $username
  * @param $password
+ * @param $md5password
  * @return int with :
  *                     1 : user authenticated
  *                     0 : user not authenticated
  */
-function performAuthentication($username = '', $password = '') {
+function performAuthentication($username = '', $password = '', $md5password = '') {
 	global $cfg, $db;
+	// check username
 	if (! isset($username))
-		return 0;
-	if (! isset($password))
 		return 0;
 	if ($username == '')
 		return 0;
-	if ($password == '')
+	// sql-state
+	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE state = 1 AND user_id=".$db->qstr($username)." AND password=";
+	if ((isset($md5password)) && (strlen($md5password) == 32)) /* md5-password */
+		$sql .= $db->qstr($md5password);
+	elseif (isset($password)) /* plaintext-password */
+		$sql .= $db->qstr(md5($password));
+	else /* no password */
 		return 0;
-	$sql = "SELECT uid, hits, hide_offline, theme, language_file FROM tf_users WHERE state = 1 AND user_id=".$db->qstr($username)." AND password=".$db->qstr(md5($password));
+	// exec query
 	$result = $db->Execute($sql);
 	showError($db,$sql);
 	list($uid,$hits,$cfg["hide_offline"],$cfg["theme"],$cfg["language_file"]) = $result->FetchRow();
