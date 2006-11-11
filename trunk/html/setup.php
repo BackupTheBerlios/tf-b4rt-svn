@@ -809,10 +809,10 @@ if (isset($_REQUEST["1"])) {                                                    
 		send($option);
 	}
 	send('</select>');
+	send('<p><strong>Note:</strong> if you do not see the type of database you wish to use, please visit <a href="'._FORUM_URL.'">the '._NAME.' forum</a> to find out about getting your database type added to '._NAME.'.</p>');
 	send('<input type="Hidden" name="12" value="">');
 	send('<input type="submit" value="Continue">');
-	send('</form>');
-	send('<p><strong>Note:</strong> if you do not see the type of database you wish to use, please visit <a href="'._FORUM_URL.'">the '._NAME.' forum</a> to find out about getting your database type added to '._NAME.'.</p>');
+	send('</form></p>');
 } elseif (isset($_REQUEST["12"])) {                                             // 12 - Database - type check
 	if ((isset($_REQUEST["db_type"])) && ($databaseTypes[$_REQUEST["db_type"]] != "")) {
 		$type = $_REQUEST["db_type"];
@@ -1063,7 +1063,6 @@ if (isset($_REQUEST["1"])) {                                                    
 		send("<br/>");
 		send("<h2>Next: Write Database Configuration File</h2>");
 		send("Please ensure this script can write to the directory <em>"._DIR."inc/config/</em> before continuing.<p>");
-		send("<br/>");
 		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 		send('<input type="Hidden" name="db_type" value="'.$type.'">');
 		send('<input type="Hidden" name="db_host" value="'.$host.'">');
@@ -1434,16 +1433,16 @@ if (isset($_REQUEST["1"])) {                                                    
 			send('</form>');
 		}
 	} else {
-		$msg = '<font color="blue">This is an svn-version. '.__FILE__.' is untouched.</font>';
+		$msg = '<font color="blue">This is an svn-version. '.__FILE__.' is untouched. Please remove the file manually to login to your '._NAME.' installation.</font>';
 		displaySetupMessage($msg, true);
 	}
+		send("<p><strong>Important:</strong><br/>When logging in for the first time <strong>the login username and password you supply there will create the default superadmin user for your "._NAME." installation.</strong>  For this reason it is important you do this immediately and remember the username and password!!!</p>");
 } else {                                                                        // default
 	sendHead();
 	if (is_file(_FILE_DBCONF))
 		send('<p><br><font color="red"><h1>db-config already exists ('._FILE_DBCONF.')</h1></font>Delete setup.php if you came here after finishing setup to proceed to login.</p><hr>');
 	send("<h1>"._TITLE."</h1>");
-	send("<p>Welcome to the installation script for ". _NAME.".</p><br/>");
-	send("<p>In the following pages you will be guided through the steps necessary to get your installation of "._NAME." up and running, including database configuration and initial "._NAME." system configuration file creation.</p>");
+	send("<p>Welcome to the installation script for ". _NAME.". In the following pages you will be guided through the steps necessary to get your installation of "._NAME." up and running, including database configuration and initial "._NAME." system configuration file creation.</p>");
 	send("<br/>");
 	send("<h2>Next: Database</h2>");
 	sendButton(1);
