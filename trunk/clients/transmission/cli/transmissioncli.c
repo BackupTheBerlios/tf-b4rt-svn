@@ -352,24 +352,28 @@ int main(int argc, char ** argv) {
 
 				// eta
 				if (s->eta != -1) {
-					if ((s->eta / (24 * 60 * 60)) != 0) {
-						sprintf(tf_string,"%d:%02d:%02d:%02d",
-							s->eta / (24 * 60 * 60),
-							((s->eta) % (24 * 60 * 60)) / (60 * 60),
-							((s->eta) % (60 * 60) / 60),
-							s->eta % 60);
-					} else if ((s->eta / (60 * 60)) != 0) {
-						sprintf(tf_string, "%d:%02d:%02d",
-							(s->eta) / (60 * 60),
-							((s->eta) % (60 * 60) / 60),
-							s->eta % 60);
+					// sanity-check. value of eta >= 7 days is not really of use
+					if (s->eta < 604800) {
+						if ((s->eta / (24 * 60 * 60)) != 0) {
+							sprintf(tf_string,"%d:%02d:%02d:%02d",
+								s->eta / (24 * 60 * 60),
+								((s->eta) % (24 * 60 * 60)) / (60 * 60),
+								((s->eta) % (60 * 60) / 60),
+								s->eta % 60);
+						} else if ((s->eta / (60 * 60)) != 0) {
+							sprintf(tf_string, "%d:%02d:%02d",
+								(s->eta) / (60 * 60),
+								((s->eta) % (60 * 60) / 60),
+								s->eta % 60);
+						} else {
+							sprintf(tf_string, "%d:%02d",
+								(s->eta) / 60, s->eta % 60);
+						}
 					} else {
-						sprintf(tf_string, "%d:%02d",
-							(s->eta) / 60, s->eta % 60);
+						sprintf(tf_string,"-");
 					}
 				} else {
-					// &#8734 = infinite symbol in html
-					sprintf(tf_string,"&#8734");
+					sprintf(tf_string,"-");
 				}
 				if ((s->seeders == -1) && (s->peersTotal == 0)) {
 					sprintf(tf_string,"Connecting to Peers");
