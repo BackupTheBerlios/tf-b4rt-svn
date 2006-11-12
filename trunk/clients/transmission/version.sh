@@ -2,6 +2,10 @@
 #
 # $Id$
 
+MAJOR=0
+MINOR=6
+STRING=0.7-svn
+
 # get transmission-revision from transmission.revision
 if [ -f transmission.revision ]; then
 	REV_TR=`cat transmission.revision`
@@ -28,15 +32,24 @@ echo "Transmission : $REV_TR"
 echo "CLI : $REV_CLI"
 
 # Generate version.mk
-cp -f mk/version.mk.in mk/version.mk.new
-echo "VERSION_REVISION = $REV_TR" >> mk/version.mk.new
-echo "VERSION_REVISION_CLI = $REV_CLI" >> mk/version.mk.new 
+cat > mk/version.mk.new << EOF
+VERSION_MAJOR    = $MAJOR
+VERSION_MINOR    = $MINOR
+VERSION_STRING   = $STRING
+VERSION_REVISION = $REV_TR
+VERSION_REVISION_CLI = $REV_CLI
+EOF
 replace_if_differs mk/version.mk.new mk/version.mk
 
-# Generate version.h from version.mk
-grep "^VER" mk/version.mk | sed -e 's/^/#define /g' -e 's/= //g' \
-    -e 's/\(VERSION_STRING[ ]*\)\(.*\)/\1"\2"/' > \
-    libtransmission/version.h.new
+# Generate version.h
+cat > libtransmission/version.h.new << EOF
+#define VERSION_MAJOR    $MAJOR
+#define VERSION_MINOR    $MINOR
+#define VERSION_STRING   "$STRING"
+#define VERSION_REVISION $REV_TR
+#define VERSION_REVISION_CLI $REV_CLI
+EOF
 replace_if_differs libtransmission/version.h.new libtransmission/version.h
+
 
 exit 0
