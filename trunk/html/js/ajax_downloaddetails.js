@@ -80,6 +80,9 @@ function ajax_updateContent(content) {
 		document.barImage2.width = (100 - currentPercentage) * 3.5;
 	// fields
 	for (i = 1; i < ajax_idCount; i++) {
-		document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];
+		if ((ajax_fieldIds[i] == 'eta') && (content[i] == '-'))
+			document.getElementById(ajax_fieldIds[i]).innerHTML = '&#8734';
+		else
+			document.getElementById(ajax_fieldIds[i]).innerHTML = content[i];
 	}
 }

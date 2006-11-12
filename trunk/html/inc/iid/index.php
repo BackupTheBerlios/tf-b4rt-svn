@@ -226,7 +226,7 @@ foreach ($arList as $entry) {
 						if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
 							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
 						else
-							$estTime = '&#8734';
+							$estTime = '-';
 					} else {
 						$estTime = $af->time_left;
 					}

@@ -2985,15 +2985,12 @@ function GetSpeedInBytes($inValue) {
  * @return common time-delta-string
  */
 function convertTime($seconds) {
-	$periods = array (
-		31556926,
-		2629743,
-		604800,
-		86400,
-		3600,
-		60,
-		1
-	);
+	// sanity-check
+	if ($seconds < 0) return '?';
+	// one week is enough
+	if ($seconds >= 604800) return '-';
+	// format time-delta
+	$periods = array (/* 31556926, 2629743, 604800,*/ 86400, 3600, 60, 1);
 	$seconds = (float) $seconds;
 	$values = array();
 	foreach ($periods as $period) {

@@ -145,7 +145,7 @@
 					</td>
 				</tmpl_if>
 				<tmpl_if name="settings_10">
-					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_var name="estTime"></a></td>
+					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_if name="estTime" value="-">&#8734<tmpl_else><tmpl_var name="estTime"></tmpl_if></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_11">
 					<td valign="bottom" align="center"><tmpl_var name="client"></a></td>
@@ -367,7 +367,7 @@
 					</td>
 				</tmpl_if>
 				<tmpl_if name="settings_10">
-					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_var name="estTime"></a></td>
+					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_if name="estTime" value="-">&#8734<tmpl_else><tmpl_var name="estTime"></tmpl_if></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_11">
 					<td valign="bottom" align="center"><tmpl_var name="client"></a></td>

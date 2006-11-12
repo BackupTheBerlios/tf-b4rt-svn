@@ -68,7 +68,7 @@
 																<table border="0" cellpadding="2" cellspacing="2" width="90%">
 																	<tr>
 																		<td align="right"><div class="tiny"><tmpl_var name="_ESTIMATEDTIME">:</div></td>
-																		<td colspan="3" bgcolor="<tmpl_var name="body_data_bg">"><div class="tiny"><strong><label id="eta"><tmpl_var name="time_left"></label></strong></div></td>
+																		<td colspan="3" bgcolor="<tmpl_var name="body_data_bg">"><div class="tiny"><strong><label id="eta"><tmpl_if name="time_left" value="-">&#8734<tmpl_else><tmpl_var name="time_left"></tmpl_if></label></strong></div></td>
 																	</tr>
 																	<tr>
 																		<td align="right" nowrap><div class="tiny"><tmpl_var name="_PERCENTDONE">:</div></td>
