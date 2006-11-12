@@ -11,7 +11,7 @@ if PSYCO.psyco:
         psyco.full()
     except:
         pass
-    
+
 from BitTornado.download_bt1 import BT1Download, defaults, parse_params, get_usage, get_response
 from BitTornado.RawServer import RawServer, UPnP_ERROR
 from random import seed
@@ -47,7 +47,13 @@ def traceMsg(msg):
     except:
         return
 
-def hours(n):
+def fmttime(n):
+    # short format :
+    return fmttimeshort(n)
+    # long format :
+    # return fmttimelong(n)
+
+def fmttimeshort(n):
     if n == 0:
         return 'complete!'
     try:
@@ -58,7 +64,34 @@ def hours(n):
     m, s = divmod(n, 60)
     h, m = divmod(m, 60)
     d, h = divmod(h, 24)
-    if d > 0:
+    if d >= 7:
+        return '-'
+    elif d > 0:
+        return '%dd %02d:%02d:%02d' % (d, h, m, s)
+    else:
+        return '%02d:%02d:%02d' % (h, m, s)
+
+def fmttimelong(n):
+    if n == 0:
+        return 'complete!'
+    try:
+        n = int(n)
+        assert n >= 0 and n < 5184000  # 60 days
+    except:
+        return '<unknown>'
+    m, s = divmod(n, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    y, d = divmod(d, 365)
+    dec, y = divmod(y, 10)
+    cent, dec = divmod(dec, 10)
+    if cent > 0:
+        return '%dcent %ddec %dy %dd %02d:%02d:%02d' % (cent, dec, y, d, h, m, s)
+    elif dec > 0:
+        return '%ddec %dy %dd %02d:%02d:%02d' % (dec, y, d, h, m, s)
+    elif y > 0:
+        return '%dy %dd %02d:%02d:%02d' % (y, d, h, m, s)
+    elif d > 0:
         return '%dd %02d:%02d:%02d' % (d, h, m, s)
     else:
         return '%02d:%02d:%02d' % (h, m, s)
@@ -101,7 +134,7 @@ class HeadlessDisplayer:
             self.upRate = ''
             if self.stoppedAt == '':
                 self.writeStatus()
-            if __debug__: traceMsg('finished - end - raised ki')
+            if __debug__: traceMsg('finished - end - raising ki')
             raise KeyboardInterrupt
         if __debug__: traceMsg('finished - end')
 
@@ -116,7 +149,7 @@ class HeadlessDisplayer:
             self.upRate = ''
             if self.stoppedAt == '':
                 self.writeStatus()
-            if __debug__:traceMsg('failed - end - raised ki')
+            if __debug__:traceMsg('failed - end - raising ki')
             raise KeyboardInterrupt
         if __debug__: traceMsg('failed - end')
 
@@ -124,7 +157,7 @@ class HeadlessDisplayer:
         self.errors.append(errormsg)
         self.display()
 
-    def display(self, dpflag = Event(), fractionDone = None, timeEst = None, 
+    def display(self, dpflag = Event(), fractionDone = None, timeEst = None,
         downRate = None, upRate = None, activity = None,
         statistics = None,  **kws):
         if __debug__: traceMsg('display - begin')
@@ -134,7 +167,7 @@ class HeadlessDisplayer:
         if fractionDone is not None:
             self.percentDone = str(float(int(fractionDone * 1000)) / 10)
         if timeEst is not None:
-            self.timeEst = hours(timeEst)
+            self.timeEst = fmttime(timeEst)
         if activity is not None and not self.done:
             self.timeEst = activity
         if downRate is not None:
@@ -165,7 +198,7 @@ class HeadlessDisplayer:
 
         if __debug__: traceMsg('display - prior to self.write')
 
-        if self.stoppedAt == '': 
+        if self.stoppedAt == '':
            self.writeStatus()
 
         if __debug__: traceMsg('display - end')
@@ -234,7 +267,7 @@ class HeadlessDisplayer:
                     #self.finished()
 
         lcount = 0
-        
+
         while 1:
             lcount += 1
             try:
@@ -274,7 +307,7 @@ class HeadlessDisplayer:
                 pass
 
         if die:
-            if __debug__: traceMsg('writeStatus - dieing - raised ki')
+            if __debug__: traceMsg('writeStatus - dieing - raising ki')
             raise KeyboardInterrupt
 
     def newpath(self, path):
@@ -335,6 +368,7 @@ def run(autoDie,shareKill,statusFile,userName,params):
 
     if __debug__: traceMsg('run - begin')
 
+    """
     try:
         f=open(statusFile+".pid",'w')
         f.write(str(getpid()).strip() + "\n")
@@ -343,6 +377,7 @@ def run(autoDie,shareKill,statusFile,userName,params):
     except:
         if __debug__: traceMsg('run - Failed to Create PID file')
         pass
+    """
 
     try:
 
@@ -351,7 +386,7 @@ def run(autoDie,shareKill,statusFile,userName,params):
         h.autoShutdown = autoDie
         h.shareKill = shareKill
         h.user = userName
-    
+
         while 1:
             try:
                 config = parse_params(params)
@@ -362,9 +397,19 @@ def run(autoDie,shareKill,statusFile,userName,params):
                 print get_usage()
                 break
 
+            # write pid-file
+            try:
+                f=open(statusFile+".pid",'w')
+                f.write(str(getpid()).strip() + "\n")
+                f.flush()
+                f.close()
+            except:
+                if __debug__: traceMsg('run - Failed to Create PID file, shutting down')
+                break
+
             myid = createPeerID()
             seed(myid)
-        
+
             doneflag = Event()
             def disp_exception(text):
                 print text
@@ -395,11 +440,11 @@ def run(autoDie,shareKill,statusFile,userName,params):
 
             dow = BT1Download(h.display, h.finished, h.error, disp_exception, doneflag,
                         config, response, infohash, myid, rawserver, listen_port)
-        
-            if not dow.saveAs(h.chooseFile, h.newpath): 
+
+            if not dow.saveAs(h.chooseFile, h.newpath):
                 break
 
-            if not dow.initFiles(old_style = True): 
+            if not dow.initFiles(old_style = True):
                 break
 
             if not dow.startEngine():
@@ -410,24 +455,28 @@ def run(autoDie,shareKill,statusFile,userName,params):
 
             if not dow.am_I_finished():
                 h.display(activity = 'connecting to peers')
-                
+
             rawserver.listen_forever(dow.getPortHandler())
             h.display(activity = 'shutting down')
             dow.shutdown()
             break
 
-        try: 
+        try:
             rawserver.shutdown()
-        except: 
+        except:
             pass
 
-        if not h.done: 
+        if not h.done:
             h.failed()
 
     finally:
         if __debug__: traceMsg('run - removing PID file :'+statusFile+".pid")
 
-        remove(statusFile+".pid")
+        try:
+            remove(statusFile+".pid")
+        except:
+            if __debug__: traceMsg('run - Failed to remove PID file')
+            pass
 
     if __debug__: traceMsg('run - end')
 
