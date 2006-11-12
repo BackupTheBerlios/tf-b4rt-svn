@@ -62,6 +62,12 @@ def wrap_log(context_string, logger):
     return lambda e, *args, **kwargs : logger.error(context_string, exc_info=e)
 
 def fmttime(n):
+    # short format :
+    return fmttimeshort(n)
+    # long format :
+    # return fmttimelong(n)
+
+def fmttimeshort(n):
     if n == 0:
         return 'complete!'
     try:
@@ -72,7 +78,34 @@ def fmttime(n):
     m, s = divmod(n, 60)
     h, m = divmod(m, 60)
     d, h = divmod(h, 24)
-    if d > 0:
+    if d >= 7:
+        return '-'
+    elif d > 0:
+        return '%dd %02d:%02d:%02d' % (d, h, m, s)
+    else:
+        return '%02d:%02d:%02d' % (h, m, s)
+
+def fmttimelong(n):
+    if n == 0:
+        return 'complete!'
+    try:
+        n = int(n)
+        assert n >= 0 and n < 5184000  # 60 days
+    except:
+        return '<unknown>'
+    m, s = divmod(n, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    y, d = divmod(d, 365)
+    dec, y = divmod(y, 10)
+    cent, dec = divmod(dec, 10)
+    if cent > 0:
+        return '%dcent %ddec %dy %dd %02d:%02d:%02d' % (cent, dec, y, d, h, m, s)
+    elif dec > 0:
+        return '%ddec %dy %dd %02d:%02d:%02d' % (dec, y, d, h, m, s)
+    elif y > 0:
+        return '%dy %dd %02d:%02d:%02d' % (y, d, h, m, s)
+    elif d > 0:
         return '%dd %02d:%02d:%02d' % (d, h, m, s)
     else:
         return '%02d:%02d:%02d' % (h, m, s)
