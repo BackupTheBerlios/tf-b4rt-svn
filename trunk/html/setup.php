@@ -60,6 +60,7 @@ $cdb = 'common';
 // sql-queries : Data
 $cqt = 'data';
 $queries[$cqt][$cdb] = array();
+
 // tf_settings
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('path','/usr/local/torrentflux/')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('advanced_start','1')");
@@ -98,15 +99,6 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_wget',
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_multiupload','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_xfer','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_public_xfer','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_grep','/bin/grep')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_netstat','/bin/netstat')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_php','/usr/bin/php')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_awk','/usr/bin/awk')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_du','/usr/bin/du')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_wget','/usr/bin/wget')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_unrar','/usr/bin/unrar')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_unzip','/usr/bin/unzip')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_cksfv','/usr/bin/cksfv')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('btclient','tornado')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('btclient_tornado_options','')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('btclient_transmission_bin','/usr/local/bin/transmissioncli')");
@@ -135,14 +127,12 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('index_page_co
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('index_page_stats','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('index_page_sortorder','dd')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('index_page_settings','1266')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_sockstat','/usr/bin/sockstat')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nice_adjust','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('xfer_realtime','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('skiphashcheck','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_umask','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_sorttable','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('drivespacebar','tf')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_vlc','/usr/local/bin/vlc')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('debuglevel','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('docroot','/var/www/')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_index_ajax_update_silent','0')");
@@ -1254,6 +1244,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			$dbCon->Close();
 			if ($tf_settings !== false) {
 				send("<p>Please enter the path to the directory you want "._NAME." to save your user downloads into below.</p>");
+				send("<p><strong>Important:</strong> this path <b>must</b> be writeable by the webserver user</p>");
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 				send('<table border="0">');
 			
@@ -1339,15 +1330,15 @@ if (isset($_REQUEST["1"])) {                                                    
 		$msg = "User download directory set to: <em>".$path."</em>";
 		displaySetupMessage($msg, true);
 
-		$msg = "Document root directory set to:<em>".$docroot."</em>";
+		$msg = "Document root directory set to: <em>".$docroot."</em>";
 		displaySetupMessage($msg, true);
 
 		send("<br/>");
-		send("<h2>Next : Save Server Settings</h2>");
+		send("<h2>Next: Check For Third Party Utilities</h2>");
 		send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 		send('<input type="Hidden" name="path" value="'.$path.'">');
 		send('<input type="Hidden" name="docroot" value="'.$docroot.'">');
-		send('<input type="Hidden" name="23" value="">');
+		send('<input type="Hidden" name="221" value="">');
 		send('<input type="submit" value="Continue">');
 	} else {
 		displaySetupMessage($serverSettingsTestError, false);
@@ -1360,6 +1351,89 @@ if (isset($_REQUEST["1"])) {                                                    
 		send('<input type="submit" value="Back">');
 	}
 	send('</form>');
+} elseif (isset($_REQUEST["221"])) {
+	// Check for system tools like grep, awk, netstat, rar, etc:
+	sendHead(" - Configuration");
+	send("<h1>"._TITLE."</h1>");
+	send("<h2>Configuration - Check System Tools</h2>");
+	send("<p>The installation will now check to locate the system tools required for operating "._NAME." smoothly.</p><br/>");
+	$line  = '<table border="1" cellspacing="0">';
+	$line .= '<tr style="font-weight:bold"><td>Tool Name</td><td>Path</td><td width="400">Info</td></td></tr>';
+
+	if (is_file(_FILE_DBCONF)) {
+		require_once(_FILE_DBCONF);
+		$databaseError = "";
+
+		$dbCon = getAdoConnection($cfg["db_type"], $cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
+		if (!$dbCon) {
+			$databaseError = "cannot connect to database.";
+			// stop:
+			displaySetupMessage($databaseError, false);
+		} else {
+			// Array of binaries => default binary paths:
+			$bins = array(
+				'grep'		=> '/bin/grep',
+				'netstat'	=> '/bin/netstat',
+				'php'		=> '/usr/bin/php',
+				'awk'		=> '/usr/bin/awk',
+				'du'		=> '/usr/bin/du',
+				'wget'		=> '/usr/bin/wget',
+				'unrar'		=> '/usr/bin/unrar',
+				'unzip'		=> '/usr/bin/unzip',
+				'cksfv'		=> '/usr/bin/cksfv',
+				'sockstat'	=> '/usr/bin/sockstat',
+				'vlc'		=> '/usr/local/bin/vlc'
+			);
+			
+			$pathErrCount = 0;
+			foreach ($bins as $bin => $path){
+				$line .= '<tr valign="top"><td>'.$bin.'</td><td>';
+
+				// see if which finds this binary:
+				$foundPath = trim(exec(escapeshellcmd("which $bin")));
+
+				if(empty($foundPath)){
+					// Didn't find this binary, let the user know:
+					$line .= '<font color="red">NOT FOUND</font></td>';
+					$line .= "<td>Could not find <strong>$bin</strong> on your system.  Default path <strong>$path</strong> used.";
+					$pathErrCount++;
+				} else {
+					// Use the path found by 'which':
+					$path = $foundPath;
+					$line .= $path.'</td><td>Path found Ok.';
+				}
+
+				// Insert settings into db:
+				$databaseQuery = "INSERT INTO tf_settings VALUES ('bin_".$bin."','".$path."')";
+				$dbCon->Execute($databaseQuery);
+
+				if ($dbCon->ErrorNo() != 0) {
+					// Problem with query:
+					$line .= "<br/><br/>Error executing query:<br/><strong>$databaseQuery</strong>";
+				}
+				$line .= "</td></tr>";
+			}
+			$line .="</table>";
+
+			if($pathErrCount > 0){
+				$line .= "<br/><p><strong>Important:</strong><br/>There were problems locating the paths to some tools on your server.  After installation, check that the tools reported as <font=\"red\">NOT FOUND</font> above are installed correctly and modify your installation settings to reflect the path of the problematic tools.  You can do this by clicking on the 'Admin' link at the top right of the "._NAME." page and then selecting the 'Server Settings' tab.</p>";
+			}
+			send($line);
+
+			send("<br/>");
+			send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
+			send('<input type="Hidden" name="path" value="'.$_REQUEST["path"].'">');
+			send('<input type="Hidden" name="docroot" value="'.$_REQUEST["docroot"].'">');
+			send('<input type="Hidden" name="23" value="">');
+			send("<br/>");
+			send("<h2>Next: Server Settings Save</h2>");
+			send('<input type="submit" value="Continue">');
+			send('</form>');
+		}	
+	} else {
+		// stop:
+		displaySetupMessage($msgDbConfigMissing, false);
+	}
 } elseif (isset($_REQUEST["23"])) {                                             // 23 - Configuration - Server Settings	save
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
