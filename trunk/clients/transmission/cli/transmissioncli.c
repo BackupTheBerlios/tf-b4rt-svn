@@ -60,6 +60,7 @@
 #include <getopt.h>
 #include <signal.h>
 #include <transmission.h>
+#include <sys/types.h>
 #ifdef SYS_BEOS
 #include <kernel/OS.h>
 #define usleep snooze
@@ -201,19 +202,6 @@ int main(int argc, char ** argv) {
 		goto cleanup;
 	}
 
-	// Create PID file if wanted by user
-	if (tf_pid != NULL) {
-		FILE * pid_file;
-		pid_file = fopen(tf_pid, "w+");
-		if (pid_file != NULL) {
-			fprintf(pid_file, "%d", getpid());
-			fclose(pid_file);
-		}
-	}
-
-	// signal
-	signal(SIGINT, sigHandler);
-
 	// If running torrentflux, Download limit = 0 means no limit
 	if (tf_stat_file != NULL) { /* tfCLI */
 		// up
@@ -236,6 +224,40 @@ int main(int argc, char ** argv) {
 		}
 	}
 
+	// print what we are starting up
+	if ((tf_user != NULL) && (tf_stat_file != NULL) && (tf_pid != NULL)) { /* tfCLI */
+		fprintf(stderr, "\ntransmission starting up :\n");
+		fprintf(stderr, " - torrentPath : %s\n", torrentPath);
+		fprintf(stderr, " - tf_user : %s\n", tf_user);
+		fprintf(stderr, " - tf_stat_file : %s\n", tf_stat_file);
+		fprintf(stderr, " - tf_pid : %s\n", tf_pid);
+		fprintf(stderr, " - seedLimit : %d\n", seedLimit);
+		fprintf(stderr, " - bindPort : %d\n", bindPort);
+		fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
+		fprintf(stderr, " - downloadLimit : %d\n", downloadLimit);
+		fprintf(stderr, " - natTraversal : %d\n", natTraversal);
+		if (finishCall != NULL) {
+			fprintf(stderr, " - finishCall : %s\n", finishCall);
+		}
+	}
+
+	// Create PID file if wanted by user
+	if (tf_pid != NULL) {
+		pid_t currentPid = getpid();
+		FILE * pidFile;
+		pidFile = fopen(tf_pid, "w+");
+		if (pidFile != NULL) {
+			fprintf(pidFile, "%d", currentPid);
+			fclose(pidFile);
+			fprintf(stderr, "wrote pid-file : %s (%d)\n" ,tf_pid , currentPid);
+		} else {
+			fprintf(stderr, "error opening pid-file for write : %s (%d)\n" ,tf_pid , currentPid);
+		}
+	}
+
+	// signal
+	signal(SIGINT, sigHandler);
+
 	// init some things
 	tr_setBindPort(h, bindPort);
 	tr_setUploadLimit(h, uploadLimit);
@@ -254,6 +276,11 @@ int main(int argc, char ** argv) {
 	// start the torrent
 	tr_torrentStart(tor);
 
+	// print that we are done with startup
+	if (tf_stat_file != NULL) {
+		fprintf(stderr, "transmission up and running.\n");
+	}
+
 	/* main-loop */
 	while (!mustDie) {
 
@@ -262,7 +289,7 @@ int main(int argc, char ** argv) {
 		int chars = 0;
 		//
 		int result;
-		int stat_state;
+		int stat_state = 0;
 
 		// sleep
 		sleep(displayInterval);
@@ -275,10 +302,13 @@ int main(int argc, char ** argv) {
 				stat_state = fgetc(tf_stat);
 				// Close the file
 				fclose(tf_stat);
-				// Torrentflux asked to shutdown the torrent
+				// Torrentflux asked to shutdown the torrent, set flag
 				if (stat_state == '0') {
+					fprintf(stderr, "shutting down...\n");
 					mustDie = 1;
 				}
+			} else {
+				fprintf(stderr, "error opening stat-file for read : %s\n", tf_stat_file);
 			}
 		}
 
@@ -314,6 +344,8 @@ int main(int argc, char ** argv) {
 						s->downloaded,              /* downloaded bytes  */
 						info->totalSize);           /* global size       */
 					fclose(tf_stat);
+				} else {
+					fprintf(stderr, "error opening stat-file for write : %s\n", tf_stat_file);
 				}
 
 			}
@@ -398,6 +430,8 @@ int main(int argc, char ** argv) {
 						s->downloaded,                      /* downloaded bytes     */
 						info->totalSize);                   /* global size          */
 					fclose(tf_stat);
+				} else {
+					fprintf(stderr, "error opening stat-file for write : %s\n", tf_stat_file);
 				}
 			}
 
@@ -425,10 +459,12 @@ int main(int argc, char ** argv) {
 						((double)(s->uploaded) / (double)(info->totalSize)) * 100;
 				}
 
-				// If we reached the seeding limit, we have to quit transmission
-				if ((seedLimit != 0) &&
-					((tf_sharing > (double)(seedLimit)) ||
-					(seedLimit == -1))) {
+				// die-on-seed-limit / die-when-done
+				if (seedLimit == -1) {
+					fprintf(stderr, "die-when-done set, setting shutdown-flag...\n");
+					mustDie = 1;
+				} else if ((seedLimit != 0) && (tf_sharing > (double)(seedLimit))) {
+					fprintf(stderr, "seed-limit reached, setting shutdown-flag...\n");
 					mustDie = 1;
 				}
 
@@ -462,6 +498,8 @@ int main(int argc, char ** argv) {
 						s->downloaded,                      /* downloaded bytes */
 						info->totalSize);                   /* global size      */
 					fclose(tf_stat);
+				} else {
+					fprintf(stderr, "error opening stat-file for write : %s\n", tf_stat_file);
 				}
 			}
 
@@ -481,6 +519,8 @@ int main(int argc, char ** argv) {
 				// print errors to stderr
 				fprintf(stderr, "\n%s\n", s->trackerError);
 			} else { /* tfCLI */
+				// print errors to stderr
+				fprintf(stderr, "trackerError : %s\n", s->trackerError);
 				// append errors to stat-file
 				tf_stat = fopen(tf_stat_file, "a+");
 				if (tf_stat != NULL) {
@@ -543,6 +583,8 @@ int main(int argc, char ** argv) {
 				s->downloaded,              /* downloaded bytes */
 				info->totalSize);           /* global size      */
 			fclose(tf_stat);
+		} else {
+			fprintf(stderr, "error opening stat-file for write : %s\n", tf_stat_file);
 		}
 	}
 
@@ -568,7 +610,13 @@ int main(int argc, char ** argv) {
 
 	// Remove PID file if created !
 	if (tf_pid != NULL) {
+		fprintf(stderr, "removing pid-file : %s\n", tf_pid);
 		remove(tf_pid);
+	}
+
+	// print exit
+	if (tf_stat_file != NULL) { /* tfCLI */
+		fprintf(stderr, "transmission exit\n");
 	}
 
 cleanup:
@@ -667,6 +715,9 @@ static int parseCommandLine(int argc, char ** argv) {
 static void sigHandler(int signal) {
 	switch(signal) {
 		case SIGINT:
+			if (tf_stat_file != NULL) { /* tfCLI */
+				fprintf(stderr, "got SIGINT, setting shutdown-flag...\n");
+			}
 			mustDie = 1;
 			break;
 		default:
