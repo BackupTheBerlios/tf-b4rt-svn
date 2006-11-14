@@ -105,7 +105,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			send('<input type="submit" value="Continue">');
 			send('</form>');
 		} else {
-			$err='Your PHP installation does not have support for '.$databaseTypes[$type].' built into it. Please reinstall PHP and ensure support for your database is built in.</p>';
+			$err='Your PHP installation does not have support for '.$type.' built into it. Please reinstall PHP and ensure support for your database is built in.</p>';
 			displaySetupMessage($err, false);
 
 			send("<br/>");
@@ -711,7 +711,9 @@ if (isset($_REQUEST["1"])) {                                                    
 							// Check executable bit:
 							if ( is_executable($path) ){
 								$isExe = true;
-								break;
+								
+								// Done with this exe, move onto next:
+								continue;
 							}
 						}
 					}
