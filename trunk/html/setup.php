@@ -209,7 +209,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('</form>');
 } elseif (isset($_REQUEST["14"])) {                                             // 14 - Database - creation + test
 	// Get queries:
-	$queries = getSQL();
+	$queries = getSQL("install");
 
 	$type = $_REQUEST["db_type"];
 	sendHead(" - Database");
@@ -404,7 +404,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h2>Next : Create Tables</h2>");
 	sendButton(16);
 } elseif (isset($_REQUEST["16"])) {                                             // 16 - Database - table-creation
-	$queries = getSQL();
+	$queries = getSQL("install");
 
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
@@ -458,7 +458,7 @@ if (isset($_REQUEST["1"])) {                                                    
 		displaySetupMessage($msgDbConfigMissing, false);
 	}
 } elseif (isset($_REQUEST["17"])) {                                             // 17 - Database - data
-	$queries = getSQL();
+	$queries = getSQL("install");
 
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
