@@ -661,6 +661,21 @@ if (isset($_REQUEST["1"])) {                                                    
 			// stop:
 			displaySetupMessage($databaseError, false);
 		} else {
+			// extra non-standard binary paths to check installed binarys:
+			$binPaths = array(
+				// FreeBSD:
+				'/usr/local/bin',
+				'/usr/local/sbin',
+				
+				// NetBSD:
+				'/usr/pkgsrc/bin',
+				'/usr/pkgsrc/sbin',
+
+				// OpenBSD (same as fbsd?):				
+				// Solaris (unsure):
+				// AN other:
+			);	
+			
 			// Array of binaries => default binary paths:
 			$bins = array(
 				'grep'		=> '/bin/grep',
@@ -678,20 +693,50 @@ if (isset($_REQUEST["1"])) {                                                    
 			
 			$pathErrCount = 0;
 			foreach ($bins as $bin => $path){
+				$foundPath = "";
+				$isExe = false;
 				$line .= '<tr valign="top"><td>'.$bin.'</td><td>';
 
 				// see if which finds this binary:
 				$foundPath = trim(exec(escapeshellcmd("which $bin")));
 
 				if(empty($foundPath)){
-					// Didn't find this binary, let the user know:
-					$line .= '<font color="red">NOT FOUND</font></td>';
-					$line .= "<td>Could not find <strong>$bin</strong> on your system.  Default path <strong>$path</strong> used.";
-					$pathErrCount++;
+					// OK no bin found, let's check the non-standard paths:
+					foreach ($binPaths as $extraPath){
+						$thisBin = $extraPath."/".$bin;
+						if( is_file($thisBin) ){
+							// Yay, found the file:
+							$path = $foundPath = $thisBin;
+							
+							// Check executable bit:
+							if ( is_executable($path) ){
+								$isExe = true;
+								break;
+							}
+						}
+					}
 				} else {
 					// Use the path found by 'which':
 					$path = $foundPath;
-					$line .= $path.'</td><td>Path found Ok.';
+					
+					// Check is exe:
+					if(is_executable($path)){
+						$isExe = true;
+					}
+				}
+				
+				if(!empty($foundPath)){
+					$line .= $path.'</td><td>Path found Ok. ';
+					if(!$isExe){
+						$line .= '<font color="red">Error: binary '.$path.' is NOT executable.  Ensure webserver user can execute this binary before continuing.</font>';
+					} else {
+						$line .= $path.' is executable.';
+					}
+				} else {
+					// Didn't find this binary, let the user know:
+					$line .= '<font color="red">NOT FOUND</font></td>';
+					$line .= '<td><font color="red">Error: could not find <strong>'.$bin.'</strong> on your system.  Default path <strong>'.$path.'</strong> used.</font>';
+					$pathErrCount++;
 				}
 
 				// Insert settings into db:
@@ -707,7 +752,8 @@ if (isset($_REQUEST["1"])) {                                                    
 			$line .="</table>";
 
 			if($pathErrCount > 0){
-				$line .= "<br/><p><strong>Important:</strong><br/>There were problems locating the paths to some tools on your server.  After installation, check that the tools reported as <font=\"red\">NOT FOUND</font> above are installed correctly and modify your installation settings to reflect the path of the problematic tools.  You can do this by clicking on the 'Admin' link at the top right of the "._NAME." page and then selecting the 'Server Settings' tab.</p>";
+				$line .= "<br/><p><strong>Important:</strong><br/>There were problems locating the paths to some tools on your server.  ";
+				$line .= "Depending on which tools they were, some features may not work as expected.</p><p>After installation, check that the tools reported as <font color=\"red\">NOT FOUND</font> above are installed correctly and modify your installation settings to reflect the path of the problematic tools.  You can do this by clicking on the 'Admin' link at the top right of the "._NAME." page and then selecting the 'Server Settings' tab.</p>";
 			}
 			send($line);
 
