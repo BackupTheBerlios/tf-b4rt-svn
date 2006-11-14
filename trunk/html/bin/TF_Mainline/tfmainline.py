@@ -119,6 +119,15 @@ def fmtsize(n):
     size = '%s (%s)' % (size, str(Size(n)))
     return size
 
+def transferLog(message):
+    try:
+        FILE = open(transferLogFile,"a+")
+        FILE.write(message)
+        FILE.flush()
+        FILE.close()
+    except Exception, e:
+        sys.stderr.write("Failed to write log-file : " + transferLogFile + "\n")
+
 #------------------------------------------------------------------------------#
 # HeadlessDisplayer                                                            #
 #------------------------------------------------------------------------------#
@@ -236,14 +245,14 @@ class HeadlessDisplayer(object):
             # die-on-seed-limit / die-when-done
             if app.multitorrent.isDone:
                 if self.dieWhenDone == 'True':
-                    sys.stderr.write("die-when-done set, setting shutdown-flag...\n")
+                    transferLog("die-when-done set, setting shutdown-flag...\n")
                     self.running = '0'
                 else:
                     seedLimitMax = int(self.seedLimit)
                     if seedLimitMax > 0:
                         totalShareRating = int(((upTotal * 100) / self.fileSize_stat))
                         if totalShareRating >= seedLimitMax:
-                            sys.stderr.write("seed-limit reached, setting shutdown-flag...\n")
+                            transferLog("seed-limit reached, setting shutdown-flag...\n")
                             self.running = '0'
 
             # read state from stat-file
@@ -254,13 +263,12 @@ class HeadlessDisplayer(object):
                     FILE.close()
                 except Exception, e:
                     self.running = '1'
-                    sys.stderr.write("Failed to read stat-file : " + self.statFile + "\n")
-                    app.logger.error( "Failed to read stat-file. ", exc_info = e )
+                    transferLog("Failed to read stat-file : " + self.statFile + "\n")
 
             # shutdown or write stat-file
             if self.running == '0':
                 # log
-                sys.stderr.write("shutting down...\n")
+                transferLog("mainline shutting down...\n")
                 # set flags
                 self.state = 0
                 self.isInShutDown = 1
@@ -286,21 +294,20 @@ class HeadlessDisplayer(object):
                     FILE.write(repr(upTotal)+"\n")
                     FILE.write(repr(downTotal)+"\n")
                     FILE.write(repr(self.fileSize_stat))
-                    # errors to stat-file
-                    """
+                    # log errors and append to stat-file
                     if self.errors:
-                        FILE.write("\n")
+                        # FILE.write("\n")
                         #for err in self.errors[-4:]:
-                        #for err in self.errors[0:]:
-                        for err in self.errors[-2:]:
-                            sys.stderr.write("self.errors : " + err + "\n")
-                            FILE.write(err)
-                    """
+                        errorMessage = "\n"
+                        for err in self.errors[0:]:
+                            errorMessage += err + "\n"
+                            # FILE.write(err)
+                        FILE.write(errorMessage)
+                        transferLog("self.errors : \n" + errorMessage)
                     FILE.flush()
                     FILE.close()
                 except Exception, e:
-                    sys.stderr.write("Failed to write stat-file : " + self.statFile + "\n")
-                    app.logger.error( "Failed to write stat-file", exc_info = e )
+                    transferLog("Failed to write stat-file : " + self.statFile + "\n")
 
     def print_spew(self, spew):
         s = StringIO()
@@ -390,11 +397,11 @@ class TorrentApp(object):
         self.downTotal = "0"
 
         # disable stdout and stderr error reporting to stderr.
-        #global stderr_console
-        #logging.getLogger('').removeHandler(console)
-        #if stderr_console is not None:
-        #    logging.getLogger('').removeHandler(stderr_console)
-        #logging.getLogger().setLevel(WARNING)
+        global stderr_console
+        logging.getLogger('').removeHandler(console)
+        if stderr_console is not None:
+            logging.getLogger('').removeHandler(stderr_console)
+        logging.getLogger().setLevel(WARNING)
 
     def start_torrent(self,metainfo,save_incomplete_as,save_as):
         """Tells the MultiTorrent to begin downloading."""
@@ -439,15 +446,15 @@ class TorrentApp(object):
 
         # write pid-file
         currentPid = (str(getpid())).strip()
-        sys.stderr.write("writing pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")\n")
+        transferLog("writing pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")\n")
         try:
             pidFile = open(self.config['stat_file'] + ".pid", 'w')
             pidFile.write(currentPid + "\n")
             pidFile.flush()
             pidFile.close()
         except Exception, e:
-            sys.stderr.write("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")\n")
-            self.logger.error( "Failed to write pid-file", exc_info = e )
+            transferLog("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")" + "\n")
+            self.logger.error("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")", exc_info = e)
             raise BTFailure(_("Failed to write pid-file."))
 
         # It is safe to addCallback here, because there is only one thread,
@@ -511,8 +518,8 @@ class TorrentApp(object):
             self.logger.error( "", exc_info = e )
             rawserver.add_task(0, self.core_doneflag.set)
 
-        # print that we are done with startup
-        sys.stderr.write("mainline up and running.\n")
+        # log that we are done with startup
+        transferLog("mainline up and running.\n")
 
         # always make sure events get processed even if only for
         # shutting down.
@@ -544,8 +551,7 @@ class TorrentApp(object):
             FILE.flush()
             FILE.close()
         except Exception, e:
-            sys.stderr.write("Failed to write stat-file : " + self.config['stat_file'] + "\n")
-            self.logger.error( "Failed to write stat-file", exc_info = e )
+            transferLog("Failed to write stat-file : " + self.config['stat_file'] + "\n")
 
     def get_status(self):
         self.multitorrent.rawserver.add_task(self.config['display_interval'],
@@ -600,30 +606,36 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         sys.exit(1)
 
-    # print what we are starting up
-    sys.stderr.write("\nmainline starting up :\n")
-    sys.stderr.write(" - torrentfile : " + torrentfile + "\n")
-    sys.stderr.write(" - save_in : " + config['save_in'] + "\n")
-    sys.stderr.write(" - tf_owner : " + config['tf_owner'] + "\n")
-    sys.stderr.write(" - stat_file : " + config['stat_file'] + "\n")
-    sys.stderr.write(" - pid-file : " + config['stat_file'] + ".pid" + "\n")
-    sys.stderr.write(" - die_when_done : " + str(config['die_when_done']) + "\n")
-    sys.stderr.write(" - seed_limit : " + str(config['seed_limit']) + "\n")
-    sys.stderr.write(" - minport : " + str(config['minport']) + "\n")
-    sys.stderr.write(" - maxport : " + str(config['maxport']) + "\n")
-    sys.stderr.write(" - max_upload_rate : " + str(config['max_upload_rate']) + "\n")
-    sys.stderr.write(" - max_download_rate : " + str(config['max_download_rate']) + "\n")
-    sys.stderr.write(" - min_uploads : " + str(config['min_uploads']) + "\n")
-    sys.stderr.write(" - max_uploads : " + str(config['max_uploads']) + "\n")
-    sys.stderr.write(" - min_peers : " + str(config['min_peers']) + "\n")
-    sys.stderr.write(" - max_initiate : " + str(config['max_initiate']) + "\n")
-    sys.stderr.write(" - max_incomplete : " + str(config['max_incomplete']) + "\n")
-    sys.stderr.write(" - max_allow_in : " + str(config['max_allow_in']) + "\n")
-    sys.stderr.write(" - rerequest_interval : " + str(config['rerequest_interval']) + "\n")
-    sys.stderr.write(" - start_trackerless_client : " + str(config['start_trackerless_client']) + "\n")
-    sys.stderr.write(" - check_hashes : " + str(config['check_hashes']) + "\n")
-    sys.stderr.write(" - max_files_open : " + str(config['max_files_open']) + "\n")
-    sys.stderr.write(" - upnp : " + str(config['upnp']) + "\n")
+    # get/set log-file
+    transferLogFile = config['stat_file']
+    transferLogFile = transferLogFile.replace(".stat", ".log")
+
+    # log what we are starting up
+    startupMessage = "\nmainline starting up :\n"
+    startupMessage += " - torrentfile : " + torrentfile + "\n"
+    startupMessage += " - save_in : " + config['save_in'] + "\n"
+    startupMessage += " - tf_owner : " + config['tf_owner'] + "\n"
+    startupMessage += " - stat_file : " + config['stat_file'] + "\n"
+    startupMessage += " - pid-file : " + config['stat_file'] + ".pid" + "\n"
+    startupMessage += " - transferLogFile : " + transferLogFile + "\n"
+    startupMessage += " - die_when_done : " + str(config['die_when_done']) + "\n"
+    startupMessage += " - seed_limit : " + str(config['seed_limit']) + "\n"
+    startupMessage += " - minport : " + str(config['minport']) + "\n"
+    startupMessage += " - maxport : " + str(config['maxport']) + "\n"
+    startupMessage += " - max_upload_rate : " + str(config['max_upload_rate']) + "\n"
+    startupMessage += " - max_download_rate : " + str(config['max_download_rate']) + "\n"
+    startupMessage += " - min_uploads : " + str(config['min_uploads']) + "\n"
+    startupMessage += " - max_uploads : " + str(config['max_uploads']) + "\n"
+    startupMessage += " - min_peers : " + str(config['min_peers']) + "\n"
+    startupMessage += " - max_initiate : " + str(config['max_initiate']) + "\n"
+    startupMessage += " - max_incomplete : " + str(config['max_incomplete']) + "\n"
+    startupMessage += " - max_allow_in : " + str(config['max_allow_in']) + "\n"
+    startupMessage += " - rerequest_interval : " + str(config['rerequest_interval']) + "\n"
+    startupMessage += " - start_trackerless_client : " + str(config['start_trackerless_client']) + "\n"
+    startupMessage += " - check_hashes : " + str(config['check_hashes']) + "\n"
+    startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
+    startupMessage += " - upnp : " + str(config['upnp']) + "\n"
+    transferLog(startupMessage)
 
     # app
     app = TorrentApp(metainfo, config)
@@ -648,11 +660,12 @@ if __name__ == '__main__':
                print " ", th
 
     # remove pid-file
-    sys.stderr.write("removing pid-file : " + app.config['stat_file'] + ".pid" + "\n")
+    transferLog("removing pid-file : " + app.config['stat_file'] + ".pid" + "\n")
     try:
         remove(app.config['stat_file'] + ".pid")
     except Exception, e:
-        app.logger.error( "Failed to remove pid-file", exc_info = e )
+        transferLog("Failed to remove pid-file : " + app.config['stat_file'] + ".pid" + "\n")
+        app.logger.error("Failed to remove pid-file", exc_info = e)
 
-    # print exit
-    sys.stderr.write("mainline exit.\n")
+    # log exit
+    transferLog("mainline exit.\n")
