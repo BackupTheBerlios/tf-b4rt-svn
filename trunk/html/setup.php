@@ -643,6 +643,8 @@ if (isset($_REQUEST["1"])) {                                                    
 	}
 	send('</form>');
 } elseif (isset($_REQUEST["221"])) {
+	$OS = strtolower(exec("uname"));
+	
 	// Check for system tools like grep, awk, netstat, rar, etc:
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
@@ -693,6 +695,10 @@ if (isset($_REQUEST["1"])) {                                                    
 			
 			$pathErrCount = 0;
 			foreach ($bins as $bin => $path){
+				if($OS == "linux" && $bin == "sockstat"){
+					continue;
+				}
+				
 				$foundPath = "";
 				$isExe = false;
 				$line .= '<tr valign="top"><td>'.$bin.'</td><td>';
@@ -706,34 +712,40 @@ if (isset($_REQUEST["1"])) {                                                    
 						$thisBin = $extraPath."/".$bin;
 						if( is_file($thisBin) ){
 							// Yay, found the file:
-							$path = $foundPath = $thisBin;
+							$foundPath = $thisBin;
 							
 							// Check executable bit:
-							if ( is_executable($path) ){
+							if ( is_executable($foundPath) ){
 								$isExe = true;
 								
 								// Done with this exe, move onto next:
-								continue;
+								break;
 							}
 						}
 					}
 				} else {
-					// Use the path found by 'which':
-					$path = $foundPath;
-					
 					// Check is exe:
-					if(is_executable($path)){
+					if(is_executable($foundPath)){
 						$isExe = true;
 					}
 				}
 				
 				if(!empty($foundPath)){
-					$line .= $path.'</td><td>Path found Ok. ';
+					$line .= $foundPath.'</td><td>Path found Ok. ';
 					if(!$isExe){
-						$line .= '<font color="red">Error: binary '.$path.' is NOT executable.  Ensure webserver user can execute this binary before continuing.</font>';
+						$line .= '<font color="red">Error: binary '.$foundPath.' is NOT executable.  Ensure webserver user can execute this binary before continuing.</font>';
 					} else {
-						$line .= $path.' is executable.';
+						$line .= $foundPath.' is executable.';
 					}
+					
+					// Update path for this binary:
+					$databaseQuery = "UPDATE tf_settings SET tf_value='$foundPath' WHERE tf_key='bin_$bin'";
+					$dbCon->Execute($databaseQuery);
+	
+					if ($dbCon->ErrorNo() != 0) {
+						// Problem with query:
+						$line .= "<br/><br/>Error executing query:<br/><strong>$databaseQuery</strong>";
+					}	
 				} else {
 					// Didn't find this binary, let the user know:
 					$line .= '<font color="red">NOT FOUND</font></td>';
@@ -741,14 +753,6 @@ if (isset($_REQUEST["1"])) {                                                    
 					$pathErrCount++;
 				}
 
-				// Insert settings into db:
-				$databaseQuery = "INSERT INTO tf_settings VALUES ('bin_".$bin."','".$path."')";
-				$dbCon->Execute($databaseQuery);
-
-				if ($dbCon->ErrorNo() != 0) {
-					// Problem with query:
-					$line .= "<br/><br/>Error executing query:<br/><strong>$databaseQuery</strong>";
-				}
 				$line .= "</td></tr>";
 			}
 			$line .="</table>";
