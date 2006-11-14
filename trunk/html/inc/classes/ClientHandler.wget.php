@@ -120,7 +120,7 @@ class ClientHandlerWget extends ClientHandler
 
         // do wget special-pre-start-checks
         // check to see if the path to the wget-bin is valid
-        if (!is_file($this->cfg["bin_wget"])) {
+        if (!is_executable($this->cfg["bin_wget"])) {
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["bin_wget"]." is not valid");
             $this->status = -1;
             if ($this->cfg['isAdmin']) {
