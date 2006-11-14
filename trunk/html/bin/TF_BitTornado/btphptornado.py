@@ -1,8 +1,18 @@
 #!/usr/bin/env python
-
+################################################################################
+# $Id$
+# $Revision$
+# $Date$
+################################################################################
+#
 # Written by Bram Cohen
 # see LICENSE.txt for license information
-
+#
+################################################################################
+#
+# btphptornado.py - use BitTornado with torrentflux
+#
+################################################################################
 from BitTornado import PSYCO
 if PSYCO.psyco:
     try:
@@ -11,7 +21,6 @@ if PSYCO.psyco:
         psyco.full()
     except:
         pass
-
 from BitTornado.download_bt1 import BT1Download, defaults, parse_params, get_usage, get_response
 from BitTornado.RawServer import RawServer, UPnP_ERROR
 from random import seed
@@ -96,6 +105,18 @@ def fmttimelong(n):
     else:
         return '%02d:%02d:%02d' % (h, m, s)
 
+def transferLog(message):
+    try:
+        FILE = open(transferLogFile,"a+")
+        FILE.write(message)
+        FILE.flush()
+        FILE.close()
+    except Exception, e:
+        sys.stderr.write("Failed to write log-file : " + transferLogFile + "\n")
+
+#------------------------------------------------------------------------------#
+# HeadlessDisplayer                                                            #
+#------------------------------------------------------------------------------#
 class HeadlessDisplayer:
     def __init__(self):
         self.done = False
@@ -227,6 +248,7 @@ class HeadlessDisplayer:
             running = 0
             self.timeEst = 'Failed To Open StatFile'
             if __debug__: traceMsg('writeStatus - Failed to Open StatFile')
+            transferLog("Failed to read stat-file : " + self.statFile + "\n")
 
         if __debug__: traceMsg('writeStatus - running :' + str(running))
         if __debug__: traceMsg('writeStatus - stoppedAt :' + self.stoppedAt)
@@ -249,6 +271,7 @@ class HeadlessDisplayer:
                 self.percentDone = '100'
                 downRate = self.size
                 if self.autoShutdown == 'True':
+                    transferLog("die-when-done set, setting shutdown-flag...\n")
                     running = '0'
             if self.upTotal > 0:
                 self.percentShare = '%.1f' % ((float(self.upTotal)/float(downRate))*100)
@@ -256,11 +279,13 @@ class HeadlessDisplayer:
                 self.percentShare = '0.0'
             if self.done and self.percentShare is not '' and self.autoShutdown == 'False':
                 if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
+                    transferLog("seed-limit reached, setting shutdown-flag...\n")
                     die = True
                     running = '0'
                     self.upRate = ''
             elif (not self.done) and (self.timeEst == 'complete!') and (self.percentDone == '100.0'):
                 if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
+                    transferLog("seed-limit reached, setting shutdown-flag...\n")
                     die = True
                     running = '0'
                     self.upRate = ''
@@ -285,15 +310,21 @@ class HeadlessDisplayer:
                 f.write(str(self.upTotal) + '\n')
                 f.write(str(self.downTotal) + '\n')
                 f.write(str(self.size))
-
+                # log errors and append to stat-file
                 try:
                     errs = []
                     errs = self.scrub_errs()
-
-                    for errmsg in errs:
-                        f.write('\n' + errmsg)
+                    #for errmsg in errs:
+                    #    f.write('\n' + errmsg)
+                    if errs:
+                        errorMessage = ""
+                        for errmsg in errs:
+                            errorMessage += "\n" + errmsg
+                        f.write(errorMessage)
+                        transferLog("self.scrub_errs() : \n" + errorMessage + "\n")
                 except:
                     if __debug__: traceMsg('writeStatus - Failed during writing Errors')
+                    transferLog("Failed to write stat-file : " + self.statFile + "\n")
                     pass
 
                 f.flush()
@@ -302,12 +333,14 @@ class HeadlessDisplayer:
                 break
             except:
                 if __debug__: traceMsg('writeStatus - Failed to Open StatFile for Writing')
+                transferLog("Failed to open stat-file for writing : " + self.statFile + "\n")
                 if lcount > 30:
                     break
                 pass
 
         if die:
             if __debug__: traceMsg('writeStatus - dieing - raising ki')
+            transferLog("tornado shutting down...\n")
             raise KeyboardInterrupt
 
     def newpath(self, path):
@@ -364,20 +397,12 @@ class HeadlessDisplayer:
 
         return new_errors
 
+#------------------------------------------------------------------------------#
+# run                                                                          #
+#------------------------------------------------------------------------------#
 def run(autoDie,shareKill,statusFile,userName,params):
 
     if __debug__: traceMsg('run - begin')
-
-    """
-    try:
-        f=open(statusFile+".pid",'w')
-        f.write(str(getpid()).strip() + "\n")
-        f.flush()
-        f.close()
-    except:
-        if __debug__: traceMsg('run - Failed to Create PID file')
-        pass
-    """
 
     try:
 
@@ -397,14 +422,48 @@ def run(autoDie,shareKill,statusFile,userName,params):
                 print get_usage()
                 break
 
+            # log what we are starting up
+            startupMessage = "\ntornado starting up :\n"
+            startupMessage += " - torrentfile : " + config['responsefile'] + "\n"
+            startupMessage += " - userName : " + userName + "\n"
+            startupMessage += " - statusFile : " + statusFile + "\n"
+            startupMessage += " - pid-file : " + statusFile + ".pid" + "\n"
+            startupMessage += " - transferLogFile : " + transferLogFile + "\n"
+            startupMessage += " - autoDie : " + autoDie + "\n"
+            startupMessage += " - shareKill : " + shareKill + "\n"
+            startupMessage += " - minport : " + str(config['minport']) + "\n"
+            startupMessage += " - maxport : " + str(config['maxport']) + "\n"
+            startupMessage += " - max_upload_rate : " + str(config['max_upload_rate']) + "\n"
+            startupMessage += " - max_download_rate : " + str(config['max_download_rate']) + "\n"
+            startupMessage += " - min_uploads : " + str(config['min_uploads']) + "\n"
+            startupMessage += " - max_uploads : " + str(config['max_uploads']) + "\n"
+            startupMessage += " - min_peers : " + str(config['min_peers']) + "\n"
+            startupMessage += " - max_initiate : " + str(config['max_initiate']) + "\n"
+            startupMessage += " - max_connections : " + str(config['max_connections']) + "\n"
+            startupMessage += " - super_seeder : " + str(config['super_seeder']) + "\n"
+            startupMessage += " - security : " + str(config['security']) + "\n"
+            startupMessage += " - auto_kick : " + str(config['auto_kick']) + "\n"
+            startupMessage += " - priority : " + str(config['priority']) + "\n"
+            startupMessage += " - alloc_type : " + str(config['alloc_type']) + "\n"
+            startupMessage += " - alloc_rate : " + str(config['alloc_rate']) + "\n"
+            startupMessage += " - buffer_reads : " + str(config['buffer_reads']) + "\n"
+            startupMessage += " - write_buffer_size : " + str(config['write_buffer_size']) + "\n"
+            startupMessage += " - check_hashes : " + str(config['check_hashes']) + "\n"
+            startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
+            startupMessage += " - upnp_nat_access : " + str(config['upnp_nat_access']) + "\n"
+            transferLog(startupMessage)
+
             # write pid-file
+            currentPid = (str(getpid())).strip()
+            transferLog("writing pid-file : " + statusFile + ".pid (" + currentPid + ")\n")
             try:
-                f=open(statusFile+".pid",'w')
-                f.write(str(getpid()).strip() + "\n")
-                f.flush()
-                f.close()
-            except:
+                pidFile = open(statusFile + ".pid", 'w')
+                pidFile.write(currentPid + "\n")
+                pidFile.flush()
+                pidFile.close()
+            except Exception, e:
                 if __debug__: traceMsg('run - Failed to Create PID file, shutting down')
+                transferLog("Failed to write pid-file, shutting down : " + statusFile + ".pid (" + currentPid + ")" + "\n")
                 break
 
             myid = createPeerID()
@@ -456,7 +515,13 @@ def run(autoDie,shareKill,statusFile,userName,params):
             if not dow.am_I_finished():
                 h.display(activity = 'connecting to peers')
 
+            # log that we are done with startup
+            transferLog("tornado up and running.\n")
+
+            # listen forever
             rawserver.listen_forever(dow.getPortHandler())
+
+            # shutdown
             h.display(activity = 'shutting down')
             dow.shutdown()
             break
@@ -471,20 +536,32 @@ def run(autoDie,shareKill,statusFile,userName,params):
 
     finally:
         if __debug__: traceMsg('run - removing PID file :'+statusFile+".pid")
-
+        transferLog("removing pid-file : " + statusFile + ".pid" + "\n")
         try:
             remove(statusFile+".pid")
         except:
             if __debug__: traceMsg('run - Failed to remove PID file')
+            transferLog("Failed to remove pid-file : " + statusFile + ".pid" + "\n")
             pass
 
     if __debug__: traceMsg('run - end')
 
-
+#------------------------------------------------------------------------------#
+# __main__                                                                     #
+#------------------------------------------------------------------------------#
 if __name__ == '__main__':
     if argv[1:] == ['--version']:
         print version
         sys.exit(0)
+
+    # check argv-length
+    if len(argv) < 5:
+        print "Error : missing arguments, exiting. \n"
+        sys.exit(0)
+
+    # get/set log-file
+    transferLogFile = argv[3]
+    transferLogFile = transferLogFile.replace(".stat", ".log")
 
     if PROFILER:
         import profile, pstats
@@ -498,3 +575,6 @@ if __name__ == '__main__':
         sys.stdout = normalstdout
     else:
         run(argv[1],argv[2],argv[3],argv[4],argv[5:])
+
+    # log exit
+    transferLog("tornado exit.\n")
