@@ -36,8 +36,6 @@ tmplInitializeInstance($cfg["theme"], "page.admin.transferSettings.tmpl");
 $tmpl->setvar('btclient', $cfg["btclient"]);
 $tmpl->setvar('metainfoclient', $cfg["metainfoclient"]);
 $tmpl->setvar('btclient_tornado_options', $cfg["btclient_tornado_options"]);
-$tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
-$tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmission_bin"]));
 $tmpl->setvar('btclient_transmission_options', $cfg["btclient_transmission_options"]);
 $tmpl->setvar('btclient_mainline_options', $cfg["btclient_mainline_options"]);
 $tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);

@@ -52,7 +52,7 @@ class ClientHandlerTransmission extends ClientHandler
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
-        if (!is_file($this->cfg["btclient_transmission_bin"])) {
+        if (!is_executable($this->cfg["btclient_transmission_bin"])) {
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["btclient_transmission_bin"]." is not valid");
             $this->status = -1;
             if ($this->cfg['isAdmin']) {

@@ -276,10 +276,26 @@ function tmplSetUserSection() {
  */
 function validateFile($the_file) {
 	global $cfg;
-	$msg = '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
 	if (isFile($the_file))
-		$msg = '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">';
-	return $msg;
+		return '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">';
+	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+}
+
+/**
+ * Validates existance + exec of a file and returns the status image
+ *
+ * @param $the_file
+ * @return string
+ */
+function validateBinary($the_file) {
+	global $cfg;
+	if (isFile($the_file)) {
+		if (is_executable($the_file))
+			return '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">';
+		else
+			return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
+	}
+	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
 }
 
 /**

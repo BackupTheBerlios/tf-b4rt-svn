@@ -59,41 +59,41 @@ else
 	$tmpl->setvar('path_incoming_ok', 0);
 // bins
 $tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
-$tmpl->setvar('validate_transmission_bin', validateFile($cfg["btclient_transmission_bin"]));
+$tmpl->setvar('validate_transmission_bin', validateBinary($cfg["btclient_transmission_bin"]));
 $tmpl->setvar('perlCmd', $cfg["perlCmd"]);
-$tmpl->setvar('validate_perl', validateFile($cfg["perlCmd"]));
+$tmpl->setvar('validate_perl', validateBinary($cfg["perlCmd"]));
 $tmpl->setvar('bin_grep', $cfg["bin_grep"]);
-$tmpl->setvar('validate_grep', validateFile($cfg["bin_grep"]));
+$tmpl->setvar('validate_grep', validateBinary($cfg["bin_grep"]));
 $tmpl->setvar('bin_php', $cfg["bin_php"]);
-$tmpl->setvar('validate_php', validateFile($cfg["bin_php"]));
+$tmpl->setvar('validate_php', validateBinary($cfg["bin_php"]));
 $tmpl->setvar('pythonCmd', $cfg["pythonCmd"]);
-$tmpl->setvar('validate_python', validateFile($cfg["pythonCmd"]));
+$tmpl->setvar('validate_python', validateBinary($cfg["pythonCmd"]));
 $tmpl->setvar('bin_awk', $cfg["bin_awk"]);
-$tmpl->setvar('validate_awk', validateFile($cfg["bin_awk"]));
+$tmpl->setvar('validate_awk', validateBinary($cfg["bin_awk"]));
 $tmpl->setvar('bin_du', $cfg["bin_du"]);
-$tmpl->setvar('validate_du', validateFile($cfg["bin_du"]));
+$tmpl->setvar('validate_du', validateBinary($cfg["bin_du"]));
 $tmpl->setvar('bin_wget', $cfg["bin_wget"]);
-$tmpl->setvar('validate_wget', validateFile($cfg["bin_wget"]));
+$tmpl->setvar('validate_wget', validateBinary($cfg["bin_wget"]));
 $tmpl->setvar('bin_unzip', $cfg["bin_unzip"]);
-$tmpl->setvar('validate_unzip', validateFile($cfg["bin_unzip"]));
+$tmpl->setvar('validate_unzip', validateBinary($cfg["bin_unzip"]));
 $tmpl->setvar('bin_cksfv', $cfg["bin_cksfv"]);
-$tmpl->setvar('validate_cksfv', validateFile($cfg["bin_cksfv"]));
+$tmpl->setvar('validate_cksfv', validateBinary($cfg["bin_cksfv"]));
 $tmpl->setvar('bin_vlc', $cfg["bin_vlc"]);
-$tmpl->setvar('validate_vlc', validateFile($cfg["bin_vlc"]));
+$tmpl->setvar('validate_vlc', validateBinary($cfg["bin_vlc"]));
 $tmpl->setvar('php_uname1', php_uname('s'));
 $tmpl->setvar('php_uname2', php_uname('r'));
 $tmpl->setvar('bin_unrar', $cfg["bin_unrar"]);
-$tmpl->setvar('validate_unrar', validateFile($cfg["bin_unrar"]));
+$tmpl->setvar('validate_unrar', validateBinary($cfg["bin_unrar"]));
 switch ($cfg["_OS"]) {
 	case 1:
 		$tmpl->setvar('loadavg_path', $cfg["loadavg_path"]);
 		$tmpl->setvar('validate_loadavg', validateFile($cfg["loadavg_path"]));
 		$tmpl->setvar('bin_netstat', $cfg["bin_netstat"]);
-		$tmpl->setvar('validate_netstat', validateFile($cfg["bin_netstat"]));
+		$tmpl->setvar('validate_netstat', validateBinary($cfg["bin_netstat"]));
 		break;
 	case 2:
 		$tmpl->setvar('bin_sockstat', $cfg["bin_sockstat"]);
-		$tmpl->setvar('validate_sockstat', validateFile($cfg["bin_sockstat"]));
+		$tmpl->setvar('validate_sockstat', validateBinary($cfg["bin_sockstat"]));
 		break;
 }
 //
