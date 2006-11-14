@@ -287,9 +287,9 @@ int main(int argc, char ** argv) {
 		// status-string
 		char string[80];
 		int chars = 0;
-		//
+
+		// result
 		int result;
-		int stat_state = 0;
 
 		// sleep
 		sleep(displayInterval);
@@ -298,13 +298,14 @@ int main(int argc, char ** argv) {
 		if (tf_stat_file != NULL) { /* tfCLI */
 			tf_stat = fopen(tf_stat_file, "r");
 			if (tf_stat != NULL) {
+				// stat-state
+				int stat_state = 1;
 				// Get state
 				stat_state = fgetc(tf_stat);
 				// Close the file
 				fclose(tf_stat);
 				// Torrentflux asked to shutdown the torrent, set flag
 				if (stat_state == '0') {
-					fprintf(stderr, "shutting down...\n");
 					mustDie = 1;
 				}
 			} else {
@@ -541,6 +542,11 @@ int main(int argc, char ** argv) {
 		}
 
 	} /* main-loop */
+
+	// print that we are going down
+	if (tf_stat_file != NULL) { /* tfCLI */
+		fprintf(stderr, "transmission shutting down...\n");
+	}
 
 	// mark torrent as stopped in tf-stat-file
 	if (tf_stat_file != NULL) { /* tfCLI */
