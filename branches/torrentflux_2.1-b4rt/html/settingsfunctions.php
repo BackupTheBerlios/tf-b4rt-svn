@@ -29,8 +29,8 @@
 // getRequestVar
 //******************************************************************************
 function getRequestVar($varName) {
-    if (array_key_exists($varName,$_REQUEST))
-        return trim($_REQUEST[$varName]);
+    if (array_key_exists($varName, $_REQUEST))
+        return htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES);
     else
         return '';
 }
