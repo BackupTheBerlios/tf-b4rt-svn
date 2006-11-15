@@ -310,6 +310,33 @@ function showErrorPage($errorMessage) {
 }
 
 /**
+ * class ProcessInfo
+ *
+ */
+class ProcessInfo {
+	var $pid = "";
+	var $ppid = "";
+	var $cmdline = "";
+	function ProcessInfo($psLine) {
+		$psLine = trim($psLine);
+		if (strlen($psLine) > 12) {
+			$this->pid = trim(substr($psLine, 0, 5));
+			$this->ppid = trim(substr($psLine, 5, 6));
+			$this->cmdline = trim(substr($psLine, 12));
+		}
+	}
+}
+
+/**
+ * class ProcessInfo : Stores the image and title of for the health of a file.
+ *
+ */
+class HealthData {
+	var $image = "";
+	var $title = "";
+}
+
+/**
  * try to get Credentials
  *
  * @return array with credentials or false if no credentials found.
@@ -3026,30 +3053,18 @@ function IsForceReadMsg() {
 }
 
 /**
- * class ProcessInfo
+ * isValidTransfer
  *
+ * @param $transfer
+ * @return boolean
  */
-class ProcessInfo {
-	var $pid = "";
-	var $ppid = "";
-	var $cmdline = "";
-	function ProcessInfo($psLine) {
-		$psLine = trim($psLine);
-		if (strlen($psLine) > 12) {
-			$this->pid = trim(substr($psLine, 0, 5));
-			$this->ppid = trim(substr($psLine, 5, 6));
-			$this->cmdline = trim(substr($psLine, 12));
-		}
-	}
-}
-
-/**
- * class ProcessInfo : Stores the image and title of for the health of a file.
- *
- */
-class HealthData {
-	var $image = "";
-	var $title = "";
+function isValidTransfer($transfer) {
+	global $cfg;
+	if (ereg("(\.\.\/)", $transfer))
+		return false;
+	if (preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer))
+		return true;
+	return false;
 }
 
 ?>
