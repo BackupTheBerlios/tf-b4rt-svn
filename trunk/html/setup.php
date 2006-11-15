@@ -749,7 +749,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				} else {
 					// Didn't find this binary, let the user know:
 					$line .= '<font color="red">NOT FOUND</font></td>';
-					$line .= '<td><font color="o">Warning: could not find <strong>'.$bin.'</strong> on your system.  Default path <strong>'.$path.'</strong> used.</font>';
+					$line .= '<td><font color="orange">Warning: could not find <strong>'.$bin.'</strong> on your system.  Default path <strong>'.$path.'</strong> used.</font>';
 					$pathErrCount++;
 				}
 
