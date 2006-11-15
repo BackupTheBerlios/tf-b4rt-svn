@@ -30,7 +30,7 @@ if (!isset($cfg['user'])) {
 /******************************************************************************/
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.all_services.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.allServices.tmpl");
 
 // set vars
 $tmpl->setvar('result1', shell_exec("df -h ".$cfg["path"]));

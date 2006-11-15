@@ -484,7 +484,7 @@ function netstatPortList() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			// not time-critical (only used on all_services-page), use the
+			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
 			$clients = array('tornado', 'transmission', 'wget');
@@ -545,7 +545,7 @@ function netstatHostList() {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			require_once("inc/classes/ClientHandler.php");
-			// not time-critical (only used on all_services-page), use the
+			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
 			$clients = array('tornado', 'transmission', 'wget');
