@@ -575,8 +575,8 @@ function resetTorrentTotals($torrent, $delete = false) {
  */
 function killTorrent($killTorrent) {
 	global $cfg;
-	// check if file is a sane file
-	if ((ereg("(\.\.\/)", $killTorrent)) || (!preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')/', $killTorrent))) {
+	// check if valid transfer
+	if (isValidTransfer($killTorrent) !== true) {
 		AuditAction($cfg["constants"]["error"], "Invalid File for Kill : ".$cfg["user"]." tried to kill ".$killTorrent);
 		global $argv;
 		if (isset($argv))
@@ -605,8 +605,8 @@ function killTorrent($killTorrent) {
 function deleteTorrent($torrent,$alias_file) {
 	global $cfg;
 	$delfile = $torrent;
-	// check if file is a sane file
-	if ((ereg("(\.\.\/)", $delfile)) || (!preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')/', $delfile))) {
+	// check if valid transfer
+	if (isValidTransfer($delfile) !== true) {
 		AuditAction($cfg["constants"]["error"], "Invalid File for Delete : ".$cfg["user"]." tried to delete ".$delfile);
 		global $argv;
 		if (isset($argv))
@@ -2296,6 +2296,21 @@ function printDrivespacebarSelectForm() {
         echo " selected";
     echo '>xfer</option>';
     echo '</select>';
+}
+
+/**
+ * isValidTransfer
+ *
+ * @param $transfer
+ * @return boolean
+ */
+function isValidTransfer($transfer) {
+	global $cfg;
+	if (ereg("(\.\.\/)", $transfer))
+		return false;
+	if (preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer))
+		return true;
+	return false;
 }
 
 ?>
