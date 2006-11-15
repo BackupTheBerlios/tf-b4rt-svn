@@ -24,7 +24,7 @@
 require_once("inc/main.internal.php");
 
 // iid-check
-if (! isset($_REQUEST['iid'])) {
+if (!isset($_REQUEST['iid'])) {
 	// this is for tf 2.1 compat
 	require_once("inc/functions/functions.dispatcher.php");
 	compatIndexDispatch();
@@ -33,6 +33,11 @@ if (! isset($_REQUEST['iid'])) {
 }
 
 // include page
-require_once("inc/iid/".$_REQUEST['iid'].".php");
+if (preg_match('/^[a-z]+$/', $_REQUEST['iid'])) {
+	require_once("inc/iid/".$_REQUEST['iid'].".php");
+} else {
+	AuditAction($cfg["constants"]["error"], "Invalid Page-ID : ".htmlentities($_REQUEST['iid'], ENT_QUOTES));
+	showErrorPage("Invalid Page-ID : <br>".htmlentities($_REQUEST['iid'], ENT_QUOTES));
+}
 
 ?>
