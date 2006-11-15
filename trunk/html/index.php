@@ -33,7 +33,7 @@ if (!isset($_REQUEST['iid'])) {
 }
 
 // include page
-if (preg_match('/^[a-z]+$/', $_REQUEST['iid'])) {
+if (preg_match('/^[a-zA-Z]+$/', $_REQUEST['iid'])) {
 	require_once("inc/iid/".$_REQUEST['iid'].".php");
 } else {
 	AuditAction($cfg["constants"]["error"], "Invalid Page-ID : ".htmlentities($_REQUEST['iid'], ENT_QUOTES));
