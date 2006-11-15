@@ -63,6 +63,15 @@ class AliasFile
      * @return $aliasFileInstance AliasFile-instance
      */
     function getAliasFileInstance($inFile, $user = "", $fluxCfg, $clientType = '') {
+    	// check if file is a sane file
+    	if ((ereg("(\.\.\/)", $inFile)) || (!preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $fluxCfg["file_types_array"]).')/', $inFile))) {
+    		AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile : ".$fluxCfg["user"]." tried to access ".$inFile);
+    		global $argv;
+    		if (isset($argv))
+    			die("Invalid AliasFile : ".$inFile);
+    		else
+    			showErrorPage("Invalid AliasFile : <br>".htmlentities($inFile), ENT_QUOTES);
+    	}
         // damn dirty but does php (< 5) have reflection or something like
         // class-by-name ?
         if ((isset($clientType)) && ($clientType != '')) {

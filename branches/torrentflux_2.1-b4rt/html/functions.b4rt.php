@@ -568,6 +568,34 @@ function resetTorrentTotals($torrent, $delete = false) {
 }
 
 /**
+ * kills a torrent
+ *
+ * @param $torrent name of the torrent
+ * @return boolean of success
+ */
+function killTorrent($killTorrent) {
+	global $cfg;
+	// check if file is a sane file
+	if ((ereg("(\.\.\/)", $killTorrent)) || (!preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')/', $killTorrent))) {
+		AuditAction($cfg["constants"]["error"], "Invalid File for Kill : ".$cfg["user"]." tried to kill ".$killTorrent);
+		global $argv;
+		if (isset($argv))
+			die("Invalid File for Kill : ".$killTorrent);
+		else
+			showErrorPage("Invalid File for Kill : <br>".htmlentities($killTorrent), ENT_QUOTES);
+	}
+    $return = getRequestVar('return');
+    include_once("ClientHandler.php");
+    $clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTorrentClient($killTorrent));
+    $clientHandler->stopTorrentClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
+    if (!empty($return))
+        header("location: ".$return.".php?op=queueSettings");
+    else
+        header("location: index.php");
+    exit();
+}
+
+/**
  * deletes a torrent
  *
  * @param $torrent name of the torrent
@@ -575,8 +603,17 @@ function resetTorrentTotals($torrent, $delete = false) {
  * @return boolean of success
  */
 function deleteTorrent($torrent,$alias_file) {
-    $delfile = $torrent;
-    global $cfg;
+	global $cfg;
+	$delfile = $torrent;
+	// check if file is a sane file
+	if ((ereg("(\.\.\/)", $delfile)) || (!preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')/', $delfile))) {
+		AuditAction($cfg["constants"]["error"], "Invalid File for Delete : ".$cfg["user"]." tried to delete ".$delfile);
+		global $argv;
+		if (isset($argv))
+			die("Invalid File for Delete : ".$delfile);
+		else
+			showErrorPage("Invalid File for Delete : <br>".htmlentities($delfile), ENT_QUOTES);
+	}
     //$alias_file = getRequestVar('alias_file');
     $torrentowner = getOwner($delfile);
     if (($cfg["user"] == $torrentowner) || IsAdmin()) {

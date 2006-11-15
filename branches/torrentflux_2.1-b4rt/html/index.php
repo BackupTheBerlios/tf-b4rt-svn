@@ -112,15 +112,7 @@ if(! $delfile == '') {
 // Did the user select the option to kill a running torrent?
 $killTorrent = getRequestVar('kill_torrent');
 if(! $killTorrent == '') {
-    $return = getRequestVar('return');
-    include_once("ClientHandler.php");
-    $clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTorrentClient($killTorrent));
-    $clientHandler->stopTorrentClient($killTorrent, getRequestVar('alias_file'), getRequestVar('kill'), $return);
-    if (!empty($return))
-        header("location: ".$return.".php?op=queueSettings");
-    else
-        header("location: index.php");
-    exit();
+	killTorrent($killTorrent);
 }
 
 // =============================================================================
