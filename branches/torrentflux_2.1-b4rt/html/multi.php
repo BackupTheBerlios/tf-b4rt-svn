@@ -102,85 +102,91 @@ switch ($action) {
     /* ---------------------------------------------------- selected torrents */
     default:
        foreach($_POST['torrent'] as $key => $element) {
-          $alias = getAliasName($element).".stat";
-          $settingsAry = loadTorrentSettings(urldecode($element));
-          $torrentRunningFlag = isTorrentRunning(urldecode($element));
-          $btclient = $settingsAry["btclient"];
-          switch ($action) {
-             case "torrentStart": /* torrentStart */
-                if ($torrentRunningFlag == 0) {
-                   if ($cfg["enable_file_priority"]) {
-                       include_once("setpriority.php");
-                       // Process setPriority Request.
-                       setPriority(urldecode($element));
-                   }
-                   $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->startTorrentClient(urldecode($element), 0);
-                   // just 2 sec..
-                   sleep(2);
-                }
-             	break;
-             case "torrentStop": /* torrentStop */
-                if ($torrentRunningFlag != 0) {
-                   $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->stopTorrentClient(urldecode($element), $alias);
-                   // just 2 sec..
-                   sleep(2);
-                }
-             	break;
-             case "torrentEnQueue": /* torrentEnQueue */
-                if ($torrentRunningFlag == 0) {
-                    // set queueing active
-                    $_REQUEST['queue'] = 'on';
-                    // enqueue it
-                    if ($cfg["enable_file_priority"]) {
-                        include_once("setpriority.php");
-                        // Process setPriority Request.
-                        setPriority(urldecode($element));
-                    }
-                    include_once("ClientHandler.php");
-                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                    $clientHandler->startTorrentClient(urldecode($element), 0);
-                    // just a sec..
-                    sleep(1);
-                }
-             	break;
-             case "torrentDeQueue": /* torrentDeQueue */
-                if ($torrentRunningFlag == 0) {
-                    // set request var
-                    $_REQUEST['alias_file'] = getAliasName($element).".stat";;
-                    // dequeue it
-                    include_once("QueueManager.php");
-                    $queueManager = QueueManager::getQueueManagerInstance($cfg);
-                    $queueManager->dequeueTorrent($element);
-                    // just a sec..
-                    sleep(1);
-                }
-             	break;
-             case "torrentResetTotals": /* torrentResetTotals */
-                resetTorrentTotals(urldecode($element), false);
-             	break;
-             default:
-                if ($torrentRunningFlag != 0) {
-                   // stop torrent first
-                   $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-                   $clientHandler->stopTorrentClient(urldecode($element), $alias);
-                   // give the torrent some time to die
-                   sleep(8);
-                }
-                // if it was running... hope the thing is down... rock on
-                switch ($action) {
-                   case "torrentWipe": /* torrentWipe */
-                      deleteTorrentData(urldecode($element));
-                      resetTorrentTotals(urldecode($element), true);
-                      break;
-                   case "torrentData": /* torrentData */
-                      deleteTorrentData(urldecode($element));
-                   case "torrent": /* torrent */
-                      deleteTorrent(urldecode($element), $alias);
-                }
+          // is valid transfer ?
+          if (isValidTransfer($element) !== true) {
+              AuditAction($cfg["constants"]["error"], "Invalid Transfer for ".$action." : ".$cfg["user"]." tried to ".$action." ".$element);
+              showErrorPage("Invalid Transfer for ".htmlentities($action, ENT_QUOTES)." : <br>".htmlentities($element, ENT_QUOTES));
           }
-       }
+          // process
+	      $alias = getAliasName($element).".stat";
+	      $settingsAry = loadTorrentSettings(urldecode($element));
+	      $torrentRunningFlag = isTorrentRunning(urldecode($element));
+	      $btclient = $settingsAry["btclient"];
+	      switch ($action) {
+	         case "torrentStart": /* torrentStart */
+	            if ($torrentRunningFlag == 0) {
+	               if ($cfg["enable_file_priority"]) {
+	                   include_once("setpriority.php");
+	                   // Process setPriority Request.
+	                   setPriority(urldecode($element));
+	               }
+	               $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+	               $clientHandler->startTorrentClient(urldecode($element), 0);
+	               // just 2 sec..
+	               sleep(2);
+	            }
+	         	break;
+	         case "torrentStop": /* torrentStop */
+	            if ($torrentRunningFlag != 0) {
+	               $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+	               $clientHandler->stopTorrentClient(urldecode($element), $alias);
+	               // just 2 sec..
+	               sleep(2);
+	            }
+	         	break;
+	         case "torrentEnQueue": /* torrentEnQueue */
+	            if ($torrentRunningFlag == 0) {
+	                // set queueing active
+	                $_REQUEST['queue'] = 'on';
+	                // enqueue it
+	                if ($cfg["enable_file_priority"]) {
+	                    include_once("setpriority.php");
+	                    // Process setPriority Request.
+	                    setPriority(urldecode($element));
+	                }
+	                include_once("ClientHandler.php");
+	                $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+	                $clientHandler->startTorrentClient(urldecode($element), 0);
+	                // just a sec..
+	                sleep(1);
+	            }
+	         	break;
+	         case "torrentDeQueue": /* torrentDeQueue */
+	            if ($torrentRunningFlag == 0) {
+	                // set request var
+	                $_REQUEST['alias_file'] = getAliasName($element).".stat";;
+	                // dequeue it
+	                include_once("QueueManager.php");
+	                $queueManager = QueueManager::getQueueManagerInstance($cfg);
+	                $queueManager->dequeueTorrent($element);
+	                // just a sec..
+	                sleep(1);
+	            }
+	         	break;
+	         case "torrentResetTotals": /* torrentResetTotals */
+	            resetTorrentTotals(urldecode($element), false);
+	         	break;
+	         default:
+	            if ($torrentRunningFlag != 0) {
+	               // stop torrent first
+	               $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+	               $clientHandler->stopTorrentClient(urldecode($element), $alias);
+	               // give the torrent some time to die
+	               sleep(8);
+	            }
+	            // if it was running... hope the thing is down... rock on
+	            switch ($action) {
+	               case "torrentWipe": /* torrentWipe */
+	                  deleteTorrentData(urldecode($element));
+	                  resetTorrentTotals(urldecode($element), true);
+	                  break;
+	               case "torrentData": /* torrentData */
+	                  deleteTorrentData(urldecode($element));
+	               case "torrent": /* torrent */
+	                  deleteTorrent(urldecode($element), $alias);
+	            }
+	      }
+	   }
 }
 
 /* redirect */
