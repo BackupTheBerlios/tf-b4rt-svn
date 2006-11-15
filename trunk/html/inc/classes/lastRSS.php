@@ -4,11 +4,11 @@
 /*
  ======================================================================
  lastRSS 0.9.1
- 
+
  Simple yet powerfull PHP class to parse RSS files.
- 
+
  by Vojtech Semecky, webmaster @ webdot . cz
- 
+
  Latest version, features, manual and examples:
  	http://lastrss.webdot.cz/
 
@@ -84,7 +84,7 @@ class lastRSS {
 		// return result
 		return $result;
 	}
-	
+
 	// -------------------------------------------------------------------
 	// Modification of preg_match(); return trimed field with index 1
 	// from 'classic' preg_match() array output
@@ -151,11 +151,11 @@ class lastRSS {
 				{ $this->rsscp = $this->default_cp; } // This is used in my_preg_match()
 
 			// Parse CHANNEL info
-			preg_match("'<channel.*?>(.*?)</channel>'si", $rss_content, $out_channel);
-			foreach($this->channeltags as $channeltag)
-			{
-				$temp = $this->my_preg_match("'<$channeltag.*?>(.*?)</$channeltag>'si", $out_channel[1]);
-				if ($temp != '') $result[$channeltag] = $temp; // Set only if not empty
+			if (preg_match("'<channel.*?>(.*?)</channel>'si", $rss_content, $out_channel)) {
+				foreach($this->channeltags as $channeltag) {
+					$temp = $this->my_preg_match("'<$channeltag.*?>(.*?)</$channeltag>'si", $out_channel[1]);
+					if ($temp != '') $result[$channeltag] = $temp; // Set only if not empty
+				}
 			}
 			// If date_format is specified and lastBuildDate is valid
 			if ($this->date_format != '' && ($timestamp = strtotime($result['lastBuildDate'])) !==-1) {
