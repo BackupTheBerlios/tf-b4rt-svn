@@ -27,7 +27,7 @@ System Requirements
    enabled. Socket-Support is required for fluxd.
    (http://www.php.net)
 
--- Python 2.2 or higher for BitTornado and Python 2.3 or
+-- Python 2.2 or higher for BitTornado and Python 2.4 or
    higher for Mainline (BitTorrent).
    (http://www.python.org)
 
