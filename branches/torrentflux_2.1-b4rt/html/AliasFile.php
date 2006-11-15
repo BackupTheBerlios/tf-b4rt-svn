@@ -70,7 +70,7 @@ class AliasFile
     		if (isset($argv))
     			die("Invalid AliasFile : ".$inFile);
     		else
-    			showErrorPage("Invalid AliasFile : <br>".htmlentities($inFile), ENT_QUOTES);
+    			showErrorPage("Invalid AliasFile : <br>".htmlentities($inFile, ENT_QUOTES));
     	}
         // damn dirty but does php (< 5) have reflection or something like
         // class-by-name ?

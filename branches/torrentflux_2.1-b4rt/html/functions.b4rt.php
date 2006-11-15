@@ -582,7 +582,7 @@ function killTorrent($killTorrent) {
 		if (isset($argv))
 			die("Invalid File for Kill : ".$killTorrent);
 		else
-			showErrorPage("Invalid File for Kill : <br>".htmlentities($killTorrent), ENT_QUOTES);
+			showErrorPage("Invalid File for Kill : <br>".htmlentities($killTorrent, ENT_QUOTES));
 	}
     $return = getRequestVar('return');
     include_once("ClientHandler.php");
@@ -612,7 +612,7 @@ function deleteTorrent($torrent,$alias_file) {
 		if (isset($argv))
 			die("Invalid File for Delete : ".$delfile);
 		else
-			showErrorPage("Invalid File for Delete : <br>".htmlentities($delfile), ENT_QUOTES);
+			showErrorPage("Invalid File for Delete : <br>".htmlentities($delfile, ENT_QUOTES));
 	}
     //$alias_file = getRequestVar('alias_file');
     $torrentowner = getOwner($delfile);
