@@ -181,7 +181,7 @@ write_stat_file();
 $nice = "";
 if ($cfg["nice_adjust"] != 0)
     $nice = "nice -n ".$cfg["nice_adjust"]." ";
-$command = "cd ".$cfg["path"].$_OWNER."/; HOME=".$cfg["path"].$_OWNER."/; export HOME; ".$nice.$cfg['bin_wget']." -i ".$cfg["torrent_file_path"].getAliasName($_NAME).".url 2>&1"; //2>&1 will direct STDERR to STDOUT
+$command = "cd ".$cfg["path"].$_OWNER."/; HOME=".$cfg["path"].$_OWNER."/; export HOME; ".$nice.$cfg['bin_wget']." -i ".escapeshellarg($cfg["torrent_file_path"].getAliasName($_NAME).".url")." 2>&1"; //2>&1 will direct STDERR to STDOUT
 
 $wget = popen($command,'r');
 do {

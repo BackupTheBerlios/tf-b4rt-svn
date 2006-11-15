@@ -95,7 +95,7 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
         }
 
         // This is the command to execute
-        $app = "nohup " . $cfg["pythonCmd"] . " -OO " . $cfg["btmakemetafile"] . " " . $announce . " " . escapeshellarg( $cfg['path'] . $file ) . " ";
+        $app = "nohup " . $cfg["pythonCmd"] . " -OO " . $cfg["btmakemetafile"] . " " . escapeshellarg($announce) . " " . escapeshellarg( $cfg['path'] . $file ) . " ";
 
         // Is there comments to add?
         if( !empty( $comment ) )
@@ -106,7 +106,7 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
         // Set the piece size
         if( !empty( $peice ) )
         {
-            $app .= "--piece_size_pow2 " . $peice . " ";
+            $app .= "--piece_size_pow2 " . escapeshellarg($peice) . " ";
         }
 
         if( !empty( $ancelist ) )
@@ -204,8 +204,8 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
  	            if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
  	                $headerName = preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1);
  	            else
- 	                $headerName = $tfile;            	
-            	
+ 	                $headerName = $tfile;
+
                 // Prompt the user to download the new torrent file.
                 header( "Content-type: application/octet-stream\n" );
                 header( "Content-disposition: attachment; filename=\"" . $headerName . "\"\n" );

@@ -156,7 +156,7 @@ function isFile($file) {
     if (@is_file($file)) {
         $rtnValue = True;
     } else {
-        if ($file == trim(shell_exec("ls 2>/dev/null ".$file)))
+        if ($file == trim(shell_exec("ls 2>/dev/null ".escapeshellarg($file))))
             $rtnValue = True;
     }
     return $rtnValue;

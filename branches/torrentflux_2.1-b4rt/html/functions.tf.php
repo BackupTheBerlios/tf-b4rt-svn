@@ -1442,7 +1442,7 @@ class ProcessInfo {
 function file_size($file) {
 	$size = @filesize($file);
 	if ($size == 0)
-		$size = exec("ls -l \"".$file."\" 2>/dev/null | awk '{print $5}'");
+		$size = exec("ls -l ".escapeshellarg($file)." 2>/dev/null | awk '{print $5}'");
 	return $size;
 }
 

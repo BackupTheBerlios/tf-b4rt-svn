@@ -76,7 +76,7 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
 	if (($dirValid) && (checkDirectory($targetDir,0777))) {
 	    $targetDir = checkDirPathString($targetDir);
     	// move
-    	$cmd = "mv \"".$cfg["path"].$_POST['file']."\" ".$targetDir."";
+    	$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['file'])." ".escapeshellarg($targetDir);
         $cmd .= ' 2>&1';
     	$handle = popen($cmd, 'r' );
     	// get the output and print it.

@@ -66,7 +66,8 @@ class QueueManager_tfqmgr extends QueueManager
             AuditAction($this->cfg["constants"]["QManager"], "tfqmgr already started");
             return true;
         } else {
-            $tfqmgr = "cd ".$this->cfg["tfqmgr_path_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup " . $this->cfg["perlCmd"] . " -I " .$this->cfg["tfqmgr_path"] ." ".$this->cfg["tfqmgr_path"] . "/tfqmgr.pl";
+            $tfqmgr = "cd ".$this->cfg["tfqmgr_path_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup ";
+			$tfqmgr .=  $this->cfg["perlCmd"] . " -I " .$this->cfg["tfqmgr_path"] ." ".$this->cfg["tfqmgr_path"] . "/tfqmgr.pl";
             $startCommand = $tfqmgr . " start " . $this->cfg["path"] . " ".$this->cfg["tfqmgr_limit_global"]." ".$this->cfg["tfqmgr_limit_user"]." ".$this->cfg["bin_php"]." &> /dev/null &";
             $result = exec($startCommand);
             sleep(1); // dont hurry

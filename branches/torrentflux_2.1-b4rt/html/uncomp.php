@@ -42,13 +42,13 @@ if((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 		$passwd = "-";
 	}
 	// @usage	  ./uncompress.php "pathtofile" "extractdir" "typeofcompression" "uncompressor-bin" "password"
-	$cmd = $cfg['bin_php']." uncompress.php " .$_POST['file'] ." ". $_POST['dir'] ." ". $_POST['type'];
+	$cmd = $cfg['bin_php']." uncompress.php " .escapeshellarg($_POST['file']) ." ". escapeshellarg($_POST['dir']) ." ". escapeshellarg($_POST['type']);
 	if (strcasecmp('rar', $_GET['type']) == 0) {
 		$cmd .= " ". $cfg['bin_unrar'];
 	} else if (strcasecmp('zip', $_GET['type']) == 0) {
 		$cmd .= " ". $cfg['bin_unzip'];
 	}
-	$cmd .= " ". $passwd;
+	$cmd .= " ". escapeshellarg($passwd);
 
 	// os-switch
 	switch (_OS) {

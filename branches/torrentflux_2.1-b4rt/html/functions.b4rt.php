@@ -211,7 +211,7 @@ function netstatHostsByPid($torrentPid) {
  */
 function getTorrentPid($torrentAlias) {
     global $cfg;
-    return trim(shell_exec($cfg['bin_cat']." ".$cfg["torrent_file_path"].$torrentAlias.".pid"));
+    return trim(shell_exec($cfg['bin_cat']." ".escapeshellarg($cfg["torrent_file_path"].$torrentAlias.".pid")));
 }
 
 /**
@@ -859,11 +859,11 @@ function getTorrentMetaInfo($torrent) {
     global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -i \"".$cfg["torrent_file_path"].$torrent."\"");
+			return shell_exec($cfg["btclient_transmission_bin"] . " -i ".escapeshellarg($cfg["torrent_file_path"].$torrent));
 			break;
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." \"".$torrent."\"");
+			return shell_exec("cd " . $cfg["torrent_file_path"]."; " . $cfg["pythonCmd"] . " -OO " . $cfg["btshowmetainfo"]." ".escapeshellarg($torrent));
 	}
 }
 
@@ -877,7 +877,7 @@ function getTorrentScrapeInfo($torrent) {
     global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -s \"".$cfg["torrent_file_path"].$torrent."\"");
+			return shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["torrent_file_path"].$torrent));
 		break;
 		case "btshowmetainfo.py":
 		default:

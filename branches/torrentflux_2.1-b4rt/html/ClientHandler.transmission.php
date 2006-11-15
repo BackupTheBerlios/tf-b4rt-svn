@@ -95,10 +95,10 @@ class ClientHandlerTransmission extends ClientHandler
         // "new" transmission-patch has pid-file included
         $this->command .= " -z ".escapeshellarg($this->pidFile);
         $this->command .= " -e 5";
-        $this->command .= " -p ".$this->port;
-        $this->command .= " -u ".$this->rate;
-        $this->command .= " -c ".$this->sharekill_param;
-        $this->command .= " -d ".$this->drate;
+        $this->command .= " -p ".escapeshellarg($this->port);
+        $this->command .= " -u ".escapeshellarg($this->rate);
+        $this->command .= " -c ".escapeshellarg($this->sharekill_param);
+        $this->command .= " -d ".escapeshellarg($this->drate);
         if (strlen($this->cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$this->cfg["btclient_transmission_options"];
         $this->command .= " ".escapeshellarg($this->cfg["torrent_file_path"].$this->torrent);

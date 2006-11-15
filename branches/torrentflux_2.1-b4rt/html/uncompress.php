@@ -38,17 +38,17 @@ $arg5 = $argv[5];
 
 // functions
 function is_running($PID){
-    exec("ps $PID", $ProcessState);
+    exec("ps ".escapeshellarg($PID), $ProcessState);
     return(count($ProcessState) >= 2);
 }
 
 function kill($PID){
-    exec("kill -KILL $PID");
+    exec("kill -KILL ".escapeshellarg($PID));
     return true;
 }
 
 function del($file){
-    exec("rm -rf $file");
+    exec("rm -rf ".escapeshellarg($file));
     return true;
 }
 
@@ -57,7 +57,6 @@ if(strcasecmp('rar', $arg3) == 0){
 	if(file_exists($arg2.$logfile))
 		del($arg2.$logfile);
     $Command = escapeshellarg($arg4)." x -p". $arg5 ." ". escapeshellarg($arg1) . " " . escapeshellarg($arg2);
-    //echo "command " . $Command;
 	$unrarpid = shell_exec("nohup $Command > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
 	echo 'Uncompressing file...<BR>PID is: ' . $unrarpid . '<BR>';
 	while(is_running($unrarpid)) {

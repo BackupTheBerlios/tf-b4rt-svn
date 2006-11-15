@@ -72,7 +72,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
             // write the session to close so you can continue to browse on the site.
             session_write_close("TorrentFlux");
             //$fp = fopen($path, "r");
-            $fp = popen("cat \"$path\"", "r");
+            $fp = popen("cat ".escapeshellarg($path), "r");
             fpassthru($fp);
             pclose($fp);
             // log
@@ -232,7 +232,7 @@ function ListDirectory($dirName) {
                 echo "<tr bgcolor=\"".$bg."\"><td><a href=\"dir.php?dir=".urlencode($dir.$entry)."\"><img src=\"images/folder2.gif\" width=\"16\" height=\"16\" title=\"".$entry."\" border=\"0\" align=\"absmiddle\">".$entry."</a></td>";
                 // Some Stats dir hack
                 if ($cfg['enable_dirstats'] == 1) {
-                    $dudir = shell_exec($cfg['bin_du']." -sk -h ".correctFileName($dirName.$entry));
+                    $dudir = shell_exec($cfg['bin_du']." -sk -h ".escapeshellarg(correctFileName($dirName.$entry)));
                     $dusize = explode("\t", $dudir);
                     $arStat = @lstat($dirName.$entry);
                     $timeStamp = @filemtime($dirName.$entry); //$timeStamp = $arStat[10];
@@ -398,7 +398,7 @@ function ListDirectory($dirName) {
     echo "</table>";
 
     if ($cfg['enable_dirstats'] == 1) {
-        $cmd = $cfg['bin_du']." -ch \"".$dirName."\" | ".$cfg['bin_grep']." \"total\"";
+        $cmd = $cfg['bin_du']." -ch ".escapeshellarg($dirName)." | ".$cfg['bin_grep']." \"total\"";
         $du = shell_exec($cmd);
         echo '<table cellpadding="0" width="740">';
         $du2 = substr($du, 0, -7);

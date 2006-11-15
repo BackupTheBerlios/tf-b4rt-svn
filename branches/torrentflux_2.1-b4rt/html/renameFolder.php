@@ -37,7 +37,7 @@ if((isset($_GET['start'])) && ($_GET['start'] == true)) {
     </form>
 <?php
 } else {
-    $cmd = "mv \"".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."\" \"".$cfg["path"].$_POST['dir'].$_POST['fileTo']."\"";
+    $cmd = "mv ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileFrom'])." ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileTo']);
     $cmd .= ' 2>&1';
 	$handle = popen($cmd, 'r' );
     // get the output and print it.

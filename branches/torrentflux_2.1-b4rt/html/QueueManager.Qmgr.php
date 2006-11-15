@@ -66,7 +66,8 @@ class QueueManager_Qmgr extends QueueManager
             AuditAction($this->cfg["constants"]["QManager"], "Qmgr already started");
             return true;
         } else {
-            $Qmgr = "cd ".$this->cfg["Qmgr_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup " . $this->cfg["Qmgr_perl"] . " -I " .$this->cfg["Qmgr_path"] ." ".$this->cfg["Qmgr_path"] . "/Qmgrd.pl ";
+            $Qmgr = "cd ".$this->cfg["Qmgr_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup ";
+            $Qmgr .= $this->cfg["Qmgr_perl"] . " -I " .$this->cfg["Qmgr_path"] ." ".$this->cfg["Qmgr_path"] . "/Qmgrd.pl ";
             $startCommand = $Qmgr . $this->cfg["path"] . " " .$this->cfg["Qmgr_maxTotalTorrents"]." ".$this->cfg["Qmgr_maxUserTorrents"]." ".$this->cfg["Qmgr_host"]." ".$this->cfg["Qmgr_port"]." > /dev/null &";
             //echo $startCommand;
             $result = exec($startCommand);
@@ -255,7 +256,8 @@ class QueueManager_Qmgr extends QueueManager
      */
     function sendQueueCommand($command) {
         if ($this->isQueueManagerRunning()) {
-            $Qmgr = "cd ".$this->cfg["Qmgr_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup " . $this->cfg["Qmgr_perl"] . " -I ".$this->cfg["Qmgr_path"] ." ".$this->cfg["Qmgr_path"] . "/Qmgr.pl ".$command;
+            $Qmgr = "cd ".$this->cfg["Qmgr_fluxcli"]."; HOME=".$this->cfg["path"]."; export HOME; nohup ";
+            $Qmgr .= $this->cfg["Qmgr_perl"] . " -I ".$this->cfg["Qmgr_path"] ." ".$this->cfg["Qmgr_path"] . "/Qmgr.pl ".escapeshellarg($command);
             $return = exec($Qmgr);
             return $return;
         }

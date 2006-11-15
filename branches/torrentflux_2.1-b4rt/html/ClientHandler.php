@@ -412,9 +412,9 @@ class ClientHandler
             if ((isset($torrentPid)) && ($torrentPid != ""))
                 $this->pid = $torrentPid;
             else
-                $this->pid = trim(shell_exec($this->cfg['bin_cat']." ".$this->pidFile));
+                $this->pid = trim(shell_exec($this->cfg['bin_cat']." ".escapeshellarg($this->pidFile)));
             // kill it
-            $this->callResult = exec("kill ".$this->pid);
+            $this->callResult = exec("kill ".escapeshellarg($this->pid));
             // try to remove the pid file
             @unlink($this->pidFile);
         }

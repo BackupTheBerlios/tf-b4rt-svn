@@ -75,7 +75,7 @@ class QueueManager_tfQManager extends QueueManager
                 $pyCmd = $this->cfg["pythonCmd"];
             }
             $btphp = "'" . $cmd1. "; HOME=".$this->cfg["path"]."; export HOME; nohup " . $pyCmd . " " .$this->cfg["btclient_tornado_bin"] . " '";
-            $startCommand = $pyCmd . " " . $this->cfg["tfQManager"] . " ".$this->cfg["torrent_file_path"]."queue/ ". $this->limitGlobal ." ". $this->limitUser ." ".$this->cfg["sleepInterval"]." ".$btphp." > /dev/null &";
+            $startCommand = $pyCmd . " " . $this->cfg["tfQManager"] . " ".$this->cfg["torrent_file_path"]."queue/ ". escapeshellarg($this->limitGlobal) ." ". $this->limitUser ." ".$this->cfg["sleepInterval"]." ".$btphp." > /dev/null &";
             $result = exec($startCommand);
             sleep(2); // wait for it to start prior to getting pid
             $this->pid = $this->getQManagerPID();

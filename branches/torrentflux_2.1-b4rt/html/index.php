@@ -80,7 +80,7 @@ if ($cfg['enable_wget'] == 1) {
     $url_wget = getRequestVar('url_wget');
     // <DD32>:
     if(! $url_wget == '') {
-        exec("nohup ".$cfg['bin_php']." -f wget.php ".$url_wget." ".$cfg['user']." > /dev/null &");
+        exec("nohup ".$cfg['bin_php']." -f wget.php ".escapeshellarg($url_wget)." ".$cfg['user']." > /dev/null &");
         sleep(2); //sleep so that hopefully the other script has time to write out the stat files.
         header("location: index.php");
         exit();
