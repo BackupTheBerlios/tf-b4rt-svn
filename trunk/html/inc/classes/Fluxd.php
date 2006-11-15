@@ -122,6 +122,7 @@ class Fluxd
             } else {
             	AuditAction($this->cfg["constants"]["fluxd"], "errors starting fluxd");
             	// set messages to startcommand for debug
+            	// TODO : set better message
             	$this->messages = $startCommand;
             	// Set the state
             	$this->state = -1;

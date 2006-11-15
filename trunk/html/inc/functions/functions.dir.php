@@ -189,7 +189,7 @@ function downloadFile($down) {
 				header("Content-length: " . $filesize . "\n");
 				// write the session to close so you can continue to browse on the site.
 				@session_write_close("TorrentFlux");
-				$fp = popen("cat \"$path\"", "r");
+				$fp = popen("cat ".escapeshellarg($path), "r");
 				fpassthru($fp);
 				pclose($fp);
 			}

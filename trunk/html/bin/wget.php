@@ -97,17 +97,6 @@ $cfg['isAdmin'] = IsAdmin($_OWNER);
 // write out stat-file now
 writeStatFile();
 
-/*
-
--i,  	--input-file=FILE		download URLs found in FILE.
-
--c,  	--continue				resume getting a partially-downloaded file.
-
-		--http-user=USER		set http user to USER.
-		--http-passwd=PASS		set http password to PASS.
-
-*/
-
 // command-string
 $command = "cd ".$cfg["path"].$_PATH.";";
 $command .= " HOME=".$cfg["path"].$_PATH."/; export HOME;";
@@ -122,7 +111,7 @@ if ($_LIMIT_RETRIES != "")
 	$command .= " --tries=" . $_LIMIT_RETRIES;
 if ($_PASV == 1)
 	$command .= " --passive-ftp";
-$command .= " -i ".$_URL;
+$command .= " -i ".escapeshellarg($_URL);
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$_PID; // write pid-file
 

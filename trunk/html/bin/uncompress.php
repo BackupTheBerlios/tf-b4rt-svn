@@ -45,9 +45,9 @@ $arg5 = $argv[5];
 if(strcasecmp('rar', $arg3) == 0){
 	if(file_exists($arg2.$logfile))
 		del($arg2.$logfile);
-    $Command = escapeshellarg($arg4)." x -p". $arg5 ." ". escapeshellarg($arg1) . " " . escapeshellarg($arg2);
+    $Command = escapeshellarg($arg4)." x -p". escapeshellarg($arg5) ." ". escapeshellarg($arg1) . " " . escapeshellarg($arg2);
     //echo "command " . $Command;
-	$unrarpid = shell_exec("nohup $Command > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
+	$unrarpid = shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
 	echo 'Uncompressing file...<BR>PID is: ' . $unrarpid . '<BR>';
 	while (is_running($unrarpid)) {
 		if (file_exists($arg2.$logfile)) {
@@ -93,7 +93,7 @@ if (strcasecmp('zip', $arg3) == 0) {
 	if(file_exists($arg2.$logfile))
 		del($arg2.$logfile);
     $Command = escapeshellarg($arg4).' ' . escapeshellarg($arg1) . ' -d ' . escapeshellarg($arg2);
-	$unzippid = shell_exec("nohup $Command > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
+	$unzippid = shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
 	echo 'Uncompressing file...<BR>PID is: ' . $unzippid . '<BR>';
 	while(is_running($unzippid)) {
 		/* occupy time to cause popup window load bar to load in conjunction with unzip progress */
@@ -116,7 +116,7 @@ if (strcasecmp('debug', $arg3) == 0) {
  * @return
  */
 function is_running($PID){
-    exec("ps $PID", $ProcessState);
+    exec("ps ".escapeshellarg($PID), $ProcessState);
     return(count($ProcessState) >= 2);
 }
 
@@ -127,7 +127,7 @@ function is_running($PID){
  * @return
  */
 function kill($PID){
-    exec("kill -KILL $PID");
+    exec("kill -KILL ".escapeshellarg($PID));
     return true;
 }
 
@@ -138,7 +138,7 @@ function kill($PID){
  * @return
  */
 function del($file){
-    exec("rm -rf $file");
+    exec("rm -rf ".escapeshellarg($file));
     return true;
 }
 
