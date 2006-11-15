@@ -41,6 +41,13 @@ if (isset($_REQUEST['op']))
 	$op = $_REQUEST['op'];
 else
 	$op = "default";
+
+// check arg
+if (!preg_match('/^[a-zA-Z]+$/', $op)) {
+	AuditAction($cfg["constants"]["error"], "Invalid Admin-Op : ".htmlentities($op, ENT_QUOTES));
+	showErrorPage("Invalid Admin-Op : <br>".htmlentities($op, ENT_QUOTES));
+}
+
 switch ($op) {
 
 	case "updateServerSettings":
