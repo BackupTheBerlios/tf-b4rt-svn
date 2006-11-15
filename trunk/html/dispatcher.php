@@ -183,6 +183,12 @@ switch ($action) {
 
 		foreach($_POST['transfer'] as $key => $element) {
 
+			// is valid transfer ?
+			if (isValidTransfer(urldecode($element)) !== true) {
+				AuditAction($cfg["constants"]["error"], "Invalid Transfer for ".$action." : ".$cfg["user"]." tried to ".$action." ".$element);
+				showErrorPage("Invalid Transfer for ".htmlentities($action, ENT_QUOTES)." : <br>".htmlentities($element, ENT_QUOTES));
+			}
+
 			// alias
 			$alias = getAliasName($element).".stat";
 			if ((substr(strtolower($element), -8) == ".torrent")) {
