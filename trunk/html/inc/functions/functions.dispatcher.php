@@ -27,7 +27,7 @@
  */
 function indexStartTransfer($transfer) {
 	global $cfg;
-	if (!empty($transfer)) {
+	if (isValidTransfer($transfer) === true) {
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
 			$interactiveStart = getRequestVar('interactive');
@@ -43,6 +43,9 @@ function indexStartTransfer($transfer) {
 			header("location: index.php?iid=index");
 			exit();
 		}
+	} else {
+		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Start : ".$cfg["user"]." tried to start ".$transfer);
+		showErrorPage("Invalid Transfer for Start : <br>".htmlentities($transfer, ENT_QUOTES));
 	}
 }
 
@@ -103,7 +106,7 @@ function indexStartTorrent($torrent, $interactive) {
  */
 function indexStopTransfer($transfer) {
 	global $cfg;
-	if (!empty($transfer)) {
+	if (isValidTransfer($transfer) === true) {
 		$return = getRequestVar('return');
 		require_once("inc/classes/ClientHandler.php");
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
@@ -121,6 +124,9 @@ function indexStopTransfer($transfer) {
 		else
 			header("location: index.php?iid=index");
 		exit();
+	} else {
+		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
+		showErrorPage("Invalid Transfer for Stop : <br>".htmlentities($transfer, ENT_QUOTES));
 	}
 }
 
@@ -130,10 +136,13 @@ function indexStopTransfer($transfer) {
  * @param $transfer
  */
 function indexDeleteTransfer($transfer) {
-	if (!empty($transfer)) {
+	if (isValidTransfer($transfer) === true) {
 		deleteTransfer($transfer, getRequestVar('alias_file'));
 		header("location: index.php?iid=index");
 		exit();
+	} else {
+		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Delete : ".$cfg["user"]." tried to delete ".$transfer);
+		showErrorPage("Invalid Transfer for Delete : <br>".htmlentities($transfer, ENT_QUOTES));
 	}
 }
 
@@ -144,10 +153,13 @@ function indexDeleteTransfer($transfer) {
  */
 function indexDeQueueTransfer($transfer) {
 	global $cfg, $fluxdQmgr;
-	if (!empty($transfer)) {
+	if (isValidTransfer($transfer) === true) {
 		$fluxdQmgr->dequeueTorrent($transfer, $cfg["user"]);
 		header("location: index.php?iid=index");
 		exit();
+	} else {
+		AuditAction($cfg["constants"]["error"], "Invalid Transfer for DeQueue : ".$cfg["user"]." tried to deQueue ".$transfer);
+		showErrorPage("Invalid Transfer for DeQueue : <br>".htmlentities($transfer, ENT_QUOTES));
 	}
 }
 
