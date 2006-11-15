@@ -103,7 +103,7 @@ switch ($action) {
     default:
        foreach($_POST['torrent'] as $key => $element) {
           // is valid transfer ?
-          if (isValidTransfer($element) !== true) {
+          if (isValidTransfer(urldecode($element)) !== true) {
               AuditAction($cfg["constants"]["error"], "Invalid Transfer for ".$action." : ".$cfg["user"]." tried to ".$action." ".$element);
               showErrorPage("Invalid Transfer for ".htmlentities($action, ENT_QUOTES)." : <br>".htmlentities($element, ENT_QUOTES));
           }
