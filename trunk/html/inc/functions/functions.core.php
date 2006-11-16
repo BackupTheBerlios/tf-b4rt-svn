@@ -1051,7 +1051,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 	$owner = getOwner($torrent);
 	// delete torrent
 	if ($delete == true) {
-		deleteTransfer($torrent, $alias);
+		deleteTransfer($torrent, $alias.".stat");
 		// delete the stat file. shouldnt be there.. but...
 		@unlink($cfg["transfer_file_path"].$alias.".stat");
 	} else {
