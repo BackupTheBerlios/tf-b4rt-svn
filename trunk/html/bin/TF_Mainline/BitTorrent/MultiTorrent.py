@@ -73,7 +73,7 @@ class MultiTorrent(Feedback):
 
        If you wish to instantiate MultiTorrent to download only a single
        torrent then pass is_single_torrent=True.
-       
+
        If you want to avoid resuming from prior torrent config state then
        pass resume_from_torrent_config = False.
        It will still use fast resume if available.
@@ -95,7 +95,7 @@ class MultiTorrent(Feedback):
          @param init_torrents: restore fast resume state from prior
            instantiations of MultiTorrent.
          @param is_single_torrent: if true then allow only one torrent
-           at a time in this MultiTorrent. 
+           at a time in this MultiTorrent.
          @param resume_from_torrent_config: resume from ui_state files.
         """
         # is_single_torrent will go away when we move MultiTorrent into
@@ -120,11 +120,14 @@ class MultiTorrent(Feedback):
         # .bittorrent/launchmany-*/ui_state directory.  This is highly
         # counterintuitive.  Best to simply ignore the ui_state
         # directory altogether.  --Dave
-        
+
         assert isinstance(config, Preferences)
         #assert isinstance(data_dir, unicode)  # temporarily commented -Dave
         assert isinstance(listen_fail_ok, bool)
         assert not (is_single_torrent and resume_from_torrent_config)
+
+        # flag for done
+        self.isDone = False
 
         self.config = config
         self.data_dir = data_dir
@@ -335,11 +338,11 @@ class MultiTorrent(Feedback):
                     self.data_dir, self.rawserver, self.choker,
                     self.singleport_listener, self.up_ratelimiter,
                     self.down_ratelimiter, self.total_downmeasure,
-                    self.filepool, self.dht, self, 
+                    self.filepool, self.dht, self,
                     self.log_root, hidden=hidden, is_auto_update=is_auto_update)
         if feedback:
             t.add_feedback(feedback)
-            
+
         retdf = Deferred()
 
         def torrent_started(*args):
@@ -554,6 +557,8 @@ class MultiTorrent(Feedback):
         t = self.get_torrent(torrent.infohash)
 
     def finished(self, torrent):
+        # set done-flag
+        self.isDone = True
         torrent.logger.debug("torrent finished")
         t = self.get_torrent(torrent.infohash)
         t._dump_torrent_config()
@@ -650,7 +655,7 @@ class MultiTorrent(Feedback):
                                       lambda *e : self.logger.error(*e))
 
     def _dump_torrents(self):
-        assert self.resume_from_torrent_config 
+        assert self.resume_from_torrent_config
 
         self.last_save_time = bttime()
         r = []
