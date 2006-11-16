@@ -359,7 +359,7 @@ class ClientHandler
      *
      * @param $torrent name of the torrent
      * @param $aliasFile alias-file of the torrent
-     * @param $kill kill-param
+     * @param $torrentPid
      * @param $return return-param
      */
     function doStopTorrentClient($torrent, $aliasFile, $torrentPid = "", $return = "") {
@@ -405,14 +405,32 @@ class ClientHandler
         // hooked into the place where client really dies.
         stopTorrentSettings($this->torrent);
         //
-        AuditAction($this->cfg["constants"]["kill_torrent"], $this->torrent);
         if (!empty($return)) {
+        	AuditAction($this->cfg["constants"]["kill_torrent"], $this->torrent);
             sleep(3);
             // set pid
-            if ((isset($torrentPid)) && ($torrentPid != ""))
-                $this->pid = $torrentPid;
-            else
-                $this->pid = trim(shell_exec($this->cfg['bin_cat']." ".escapeshellarg($this->pidFile)));
+            if ((isset($torrentPid)) && ($torrentPid != "")) {
+            	// test for valid pid-var
+            	if (preg_match('/^[0-9]+$/', $torrentPid)) {
+                	$this->pid = $torrentPid;
+            	} else {
+		    		AuditAction($this->cfg["constants"]["error"], "Invalid kill-param : ".$this->cfg["user"]." tried to kill ".$torrentPid);
+		    		global $argv;
+		    		if (isset($argv))
+		    			die("Invalid kill-param : ".$torrentPid);
+		    		else
+		    			showErrorPage("Invalid kill-param : <br>".htmlentities($torrentPid, ENT_QUOTES));
+            	}
+            } else {
+            	$data = "";
+				if ($fileHandle = @fopen($this->pidFile,'r')) {
+					while (!@feof($fileHandle))
+						$data .= @fgets($fileHandle, 64);
+					@fclose ($fileHandle);
+				}
+                $this->pid = trim($data);
+            }
+
             // kill it
             $this->callResult = exec("kill ".escapeshellarg($this->pid));
             // try to remove the pid file
