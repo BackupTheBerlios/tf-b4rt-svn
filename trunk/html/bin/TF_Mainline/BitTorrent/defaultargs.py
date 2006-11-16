@@ -61,6 +61,14 @@ basic_options = [
        "temporary directories for dot, data, incomplete torrents and "
        "complete torrents.  Allows multiple clients on the same machine to "
        "communicate with each other." )),
+    ('tf_owner', '',
+     _("Torrentflux user to run the torrent as." )),
+    ('stat_file', '',
+     _("Path to the torrentflux stat file." )),
+    ('seed_limit', '0',
+     _("Die when ratio reaches this amount." )),
+    ('die_when_done', 'False',
+     _("die when the torrent is finished. Please seed your Torrents !" )),
     ]
 
 common_options = [
@@ -95,7 +103,7 @@ common_options = [
      _("maximum B/s to upload at")),
     ('max_download_rate', 125000000, # 1 GBit local net = 125MB/s
      _("average maximum B/s to download at")),
-    ("download_rate_limiter_interval", 0.5, 
+    ("download_rate_limiter_interval", 0.5,
     _("download rate limiter's leaky bucket update interval.")),
     ('bandwidth_management', os.name == 'nt',
      _("automatic bandwidth management (Windows only)")),
@@ -106,7 +114,7 @@ common_options = [
        "time, 0 means no limit. Used to avoid running out of file descriptors.")),
     ('start_trackerless_client', True,
      _("Initialize a trackerless client.  This must be enabled in order to download trackerless torrents.")),
-    ('upnp', True,
+    ('upnp', False,
      _("Enable automatic port mapping")+' (UPnP)'),
     ('resolve_hostnames', True,
      _("Resolve hostnames in peer list")),
@@ -385,8 +393,8 @@ def get_defaults(ui):
 	if sys.platform == "darwin":
 	    # listctrl placement of the progress bars does not work on Carbon
 	    progress_bar[1] = 0
-	    
-	r.extend([ progress_bar,		    
+
+	r.extend([ progress_bar,
 		   ])
 
 
