@@ -91,7 +91,7 @@ class Handler(object):
     # called when a connection dies (lost or requested)
     def connection_lost(self, s):
         pass
-        
+
 
 class ConnectionWrapper(object):
 
@@ -194,7 +194,9 @@ class ConnectionWrapper(object):
         try:
             ret = self.transport.write(packet, addr)
         except:
-            rawserver_logger.warning("UDP sendto failed", exc_info=sys.exc_info())
+            # dont be so noisy here
+            pass
+            # rawserver_logger.warning("UDP sendto failed", exc_info=sys.exc_info())
 
         return ret
 
@@ -321,7 +323,7 @@ class CallbackProtocol(CallbackConnection, TimeoutMixin, Protocol):
 
         self.can_timeout = True
         self.setTimeout(self.factory.rawserver.config.get('socket_timeout', 30))
-        
+
         return Protocol.makeConnection(self, transport)
 
 
@@ -336,7 +338,7 @@ class CallbackDatagramProtocol(CallbackConnection, DatagramProtocol):
 class ConnectionFactory(ClientFactory):
 
     protocol = CallbackProtocol
-    
+
     def __init__(self, rawserver, outgoing):
         self.rawserver = rawserver
         self.outgoing = outgoing
@@ -346,7 +348,7 @@ class ConnectionFactory(ClientFactory):
 
     def get_connection_data(self):
         return self.data
-    
+
     def get_wrapper(self):
         if self.outgoing:
             wrapper = self.get_connection_data()
@@ -354,7 +356,7 @@ class ConnectionFactory(ClientFactory):
             args = self.get_connection_data()
             wrapper = ConnectionWrapper(*args)
         return wrapper
-            
+
     def startedConnecting(self, connector):
         peer = connector.getDestination()
         addr = (peer.host, peer.port)
@@ -365,10 +367,10 @@ class ConnectionFactory(ClientFactory):
         protocol = ClientFactory.buildProtocol(self, addr)
         protocol.wrapper = self.get_wrapper()
         return protocol
-        
+
     def clientConnectionFailed(self, connector, reason):
         wrapper = self.get_wrapper()
-    
+
         # opt-out
         if not wrapper.dying:
             # this might not work - reason is not an exception
@@ -380,7 +382,7 @@ class ConnectionFactory(ClientFactory):
 
 # storage for socket creation requestions, and proxy once the connection is made
 class SocketRequestProxy(object):
-    
+
     def __init__(self, port, bind, protocol):
         self.port = port
         self.bind = bind
@@ -406,7 +408,7 @@ class RawServerMixin(object):
         if not self.config:
             self.config = {}
         self.sigint_flag = None
-        self.sigint_installed = False        
+        self.sigint_installed = False
 
     # going away soon. call _context_wrap on the context.
     def _make_wrapped_call(self, _f, *args, **kwargs):
@@ -428,7 +430,7 @@ class RawServerMixin(object):
             elif self.noisy:
                 rawserver_logger.exception("Error in _make_wrapped_call for %s",
                                            _f.__name__)
-   
+
     # must be called from the main thread
     def install_sigint_handler(self, flag = None):
         if flag is not None:
@@ -441,7 +443,7 @@ class RawServerMixin(object):
             self.external_add_task(0, self.sigint_flag.set)
         elif self.doneflag:
             self.external_add_task(0, self.doneflag.set)
-       
+
         # Allow pressing ctrl-c multiple times to raise KeyboardInterrupt,
         # in case the program is in an infinite loop
         signal.signal(signal.SIGINT, signal.default_int_handler)
@@ -567,7 +569,7 @@ class RawServer(RawServerMixin):
         #rawserver_logger.debug(sizes)
         print sizes
     ##############################################################
-        
+
     def get_remote_endpoints(self):
         addrs = [(s.ip, s.port) for s in self.single_sockets]
         return addrs
@@ -604,7 +606,7 @@ class RawServer(RawServerMixin):
 
     def create_serversocket(self, port, bind=''):
         s = SocketRequestProxy(port, bind, 'tcp')
-    
+
         factory = ConnectionFactory(self, outgoing=False)
         try:
             s.listening_port = reactor.listenTCP(s.port, factory,
@@ -756,7 +758,7 @@ class RawServer(RawServerMixin):
 
         if profile:
             self.prof.enable()
-        
+
         if noSignals:
             reactor.run(installSignalHandlers=False)
         else:
@@ -813,10 +815,10 @@ class RawServer(RawServerMixin):
 
         if was_connected:
             self.connections -= 1
-            
+
     def connectionMade(self, s):
         self.connections += 1
-        
+
     def gethostbyname(self, name):
         return self.reactor.resolve(name)
 
