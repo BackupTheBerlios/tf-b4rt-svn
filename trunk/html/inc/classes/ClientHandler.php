@@ -391,7 +391,7 @@ class ClientHandler
      *
      * @param $transfer name of the transfer
      * @param $aliasFile alias-file of the transfer
-     * @param $kill kill-param
+     * @param $transferPid
      * @param $return return-param
      */
     function doStopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
@@ -447,7 +447,17 @@ class ClientHandler
         	AuditAction($this->cfg["constants"]["kill_transfer"], $this->transfer);
             // set pid
             if ((isset($transferPid)) && ($transferPid != "")) {
-                $this->pid = $transferPid;
+            	// test for valid pid-var
+            	if (preg_match('/^[0-9]+$/', $transferPid)) {
+                	$this->pid = $transferPid;
+            	} else {
+		    		AuditAction($this->cfg["constants"]["error"], "Invalid kill-param : ".$this->cfg["user"]." tried to kill ".$transferPid);
+		    		global $argv;
+		    		if (isset($argv))
+		    			die("Invalid kill-param : ".$transferPid);
+		    		else
+		    			showErrorPage("Invalid kill-param : <br>".htmlentities($transferPid, ENT_QUOTES));
+            	}
             } else {
             	$data = "";
 				if ($fileHandle = @fopen($this->pidFile,'r')) {
