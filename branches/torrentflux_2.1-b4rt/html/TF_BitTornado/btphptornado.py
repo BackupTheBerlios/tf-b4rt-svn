@@ -3,6 +3,8 @@
 # Written by Bram Cohen
 # see LICENSE.txt for license information
 
+# $Id$
+
 from BitTornado import PSYCO
 if PSYCO.psyco:
     try:

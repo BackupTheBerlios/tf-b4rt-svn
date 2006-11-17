@@ -1,3 +1,5 @@
+/* $Id$ */
+
 // Enable the textfield if Moving shall be anabled.
 function enableMoveElements(form, dropDownField) {
 	if(dropDownField.value == "0") {

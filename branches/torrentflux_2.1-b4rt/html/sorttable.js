@@ -1,3 +1,5 @@
+/* $Id$ */
+
 addEvent(window, "load", sortables_init);
 
 var SORT_COLUMN_INDEX;

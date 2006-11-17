@@ -9,6 +9,8 @@
 | Updated: 17.04.2003                               |
 |--------------------------------------------------*/
 
+/* $Id$ */
+
 function getSizes() {
   var len = 0;
   for (var n=0; n<d.aNodes.length; n++) {

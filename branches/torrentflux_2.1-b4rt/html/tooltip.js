@@ -32,7 +32,7 @@ For more details on the GNU Lesser General Public License,
 see http://www.gnu.org/copyleft/lesser.html
 */
 
-
+/* $Id$ */
 
 ////////////////  GLOBAL TOOPTIP CONFIGURATION  /////////////////////
 
