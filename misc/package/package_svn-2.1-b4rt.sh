@@ -30,15 +30,12 @@ MAINDIR="torrentflux_2.1-b4rt"
 
 # version-string
 VERSION="svn-2.1-b4rt"
-#VERSION="2.1-b4rt-97"
 
 # tarball-name
 TARNAME="torrentflux_2.1-b4rt-svn"
-#TARNAME="torrentflux_2.1-b4rt-97"
 
 # use svn-revision
 USE_SVNREV="1"
-#USE_SVNREV="0"
 
 #------------------------------------------------------------------------------#
 
@@ -80,13 +77,18 @@ ENDINGS="php
 $BIN_SVN export --quiet --non-interactive $SVN_URL
 
 # Get current SVN revision of tfb from Ids in all files
-REV_TFB=`( find $MAINDIR '(' -name '*.[chm]' -o -name '*.php' -o -name '*.dist' \
-            -o -name '*.pl' -o -name '*.pm' -o -name '*.txt' \
-			-o -name '*.cfg' -o -name '*.tmpl' -o -name '*.html' \
-			-o -name '*.js' -o -name '*.css' -o -name '*.xml' \
-			-o -name '*.dtd' -o -name '*.xsd' -o -name '*.sql' \
-			-o -name '*.py' -o -name 'INSTALL' -o -name 'CHANGES' \
-            -o -name 'flux-mrtg-update.sh' ')' -exec cat '{}' ';' ) | \
+REV_TFB=`( find $MAINDIR '(' -name 'CHANGES' \
+			-o -name 'INSTALL' \
+			-o -name 'transmissioncli.c' \
+			-o -name 'flux-mrtg-update.sh' \
+			-o -name '*.php' -o -name '*.dist' \
+			-o -name '*.pl' -o -name '*.pm' \
+			-o -name '*.tmpl' -o -name '*.html' \
+			-o -name '*.css' -o -name '*.js' \
+			-o -name '*.sql' -o -name '*.cfg' \
+			-o -name '*.xml' -o -name '*.xsd' \
+			-o -name '*.py' \
+            ')' -exec cat '{}' ';' ) | \
           sed -e '/\$Id:/!d' -e \
             's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' |
           awk 'BEGIN { REV_TFB=0 }
