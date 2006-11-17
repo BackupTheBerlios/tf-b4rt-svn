@@ -4,6 +4,8 @@
 # modified for multitracker display by John Hoffman
 # see LICENSE.txt for license information
 
+# $Id$
+
 from sys import *
 from os.path import *
 from sha import *
