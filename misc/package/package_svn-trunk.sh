@@ -106,7 +106,9 @@ else
 fi
 
 # get cli-revision from id in transmissioncli.c
-REV_CLI=`sed -e '/\$Id:/!d' -e 's/.*\$Id$MAINDIR/clients/transmission/cli/transmissioncli.c`
+REV_CLI=`sed -e '/\$Id:/!d' -e \
+	's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' \
+	$MAINDIR/clients/transmission/cli/transmissioncli.c`
 
 # DEBUG
 #echo REV_TFB : $REV_TFB
