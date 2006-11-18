@@ -2811,16 +2811,25 @@ function FetchTorrent($url) {
  */
 function FetchHTML($url, $referer = "") {
 	global $cfg, $db;
+
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", $_SERVER['HTTP_USER_AGENT']);
-	//$url = cleanURL($url);
+
+	// array of URL component parts for use in raw HTTP request:
 	$domain = parse_url($url);
-	$getcmd	 = $domain["path"];
-	if (!array_key_exists("query", $domain))
-		$domain["query"] = "";
-	$getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
+
+	// URI/path used in GET request:
+	$getcmd	= $domain["path"];
+
+    if (!array_key_exists("query", $domain))
+        $domain["query"] = "";
+
+	// append the query string if included:
+    $getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
+
+	// Cookie string used in raw HTTP request:
 	$cookie = "";
-	$rtnValue = "";
+
 	// If the url already doesn't contain a passkey, then check
 	// to see if it has cookies set to the domain name.
 	if ((strpos($domain["query"], "passkey=")) === false) {
@@ -2828,45 +2837,79 @@ function FetchHTML($url, $referer = "") {
 		$cookie = $db->GetOne($sql);
 		showError($db, $sql);
 	}
+
 	if (!array_key_exists("port", $domain))
 		$domain["port"] = 80;
+
+	// the raw HTTP request to send to the remote webserver:
+	$request = "";
+
+	// the raw HTTP response received from the remote webserver:
+	$reponse = "";
+
+	// $response stripped of HTTP response headers:
+	$rtnValue = "";
+
+
 	// Check to see if this site requires the use of cookies
 	if (!empty($cookie)) {
 		$socket = @fsockopen($domain["host"], $domain["port"], $errno, $errstr, 30); //connect to server
+
 		if(!empty($socket)) {
-			// Write the outgoing header packet
-			// Using required cookie information
-			$packet	 = "GET " . $url . "\r\n";
-			$packet .= (!empty($referer)) ? "Referer: " . $referer . "\r\n" : "";
-			$packet .= "Accept: */*\r\n";
-			$packet .= "Accept-Language: en-us\r\n";
-			$packet .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
-			$packet .= "Host: " . $_SERVER["SERVER_NAME"] . "\r\n";
-			$packet .= "Connection: Close\r\n";
-			$packet .= "Cookie: " . $cookie . "\r\n\r\n";
+			// Write the outgoing HTTP request using cookie info
+
+			// Standard HTTP/1.1 request looks like:
+			//
+			// GET /url/path/example.php HTTP/1.1
+			// Host: example.com
+			// Accept: */*
+			// Accept-Language: en-us
+			// User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1) Gecko/20061010 Firefox/2.0
+			// Connection: Close
+			// Cookie: uid=12345;pass=asdfasdf;
+			//
+			$request  = "GET " . $getcmd . " HTTP/1.1\r\n";
+			$request .= (!empty($referer)) ? "Referer: " . $referer . "\r\n" : "";
+			$request .= "Accept: */*\r\n";
+			$request .= "Accept-Language: en-us\r\n";
+			$request .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
+			$request .= "Host: " . $domain["host"] . "\r\n";
+			$request .= "Connection: Close\r\n";
+			$request .= "Cookie: " . $cookie . "\r\n\r\n";
+
 			// Send header packet information to server
-			@fputs($socket, $packet);
-			// Initialize variable, make sure null until we add too it.
-			$rtnValue = null;
-			// If http 1.0 just take it all as 1 chunk (Much easier, but for old servers)
+			@fputs($socket, $request);
+
+			// Assign response from server:
 			while (!@feof($socket))
-				$rtnValue .= @fgets($socket, 500000);
+				$response .= @fgets($socket, 500000);
+
 			@fclose($socket); // Close our connection
 		}
 	} else {
+		// No cookies - no need for raw HTTP:
 		if ($fp = @fopen($url, 'r')) {
-			$rtnValue = "";
 			while (!@feof($fp))
-				$rtnValue .= @fgets($fp, 4096);
+				$response .= @fgets($fp, 4096);
+
 			@fclose($fp);
 		}
 	}
-	// If the HTML is still empty, then try CURL
-	if (($rtnValue == "" && function_exists("curl_init")) || (strpos($rtnValue, "HTTP/1.1 302") > 0 && function_exists("curl_init"))) {
+
+	// If no response from server or we were redirected with 30x response,
+	// try cURL:
+	if (
+			($response == "" && function_exists("curl_init"))
+			||
+			(strpos($response, "HTTP/1.1 30") > 0 && function_exists("curl_init"))
+		){
+
 		// Give CURL a Try
 		$ch = curl_init();
+
 		if ($cookie != "")
 			curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+
 		curl_setopt($ch, CURLOPT_PORT, $domain["port"]);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
@@ -2876,11 +2919,18 @@ function FetchHTML($url, $referer = "") {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+
 		$response = curl_exec($ch);
+
 		curl_close($ch);
-		$rtnValue = substr($response, strpos($response, "d8:"));
-		$rtnValue = rtrim($rtnValue, "\r\n");
 	}
+
+	// Finally, trim the HTTP $response of it's HTTP headers:
+	$rtnValue = substr($response, strpos($response, "\r\n\r\n"));
+
+	// Trim any extraneous linefeed chars:
+	$rtnValue = trim($rtnValue, "\r\n");
+
 	return $rtnValue;
 }
 
