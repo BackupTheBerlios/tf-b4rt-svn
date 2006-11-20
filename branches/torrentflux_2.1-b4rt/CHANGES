@@ -3,7 +3,55 @@ $Id$
 ================================================================================
 
 
-  b4rt-96
+***** changes *****
+
+- various security-related changes (nothing functional).
+
+- tornado : time-delta-format-code.
+
+- added a warning to "remember me"-setting.
+
+- integrated posix-functions provided by osearth.
+
+- backport of fluxpoller.pl and new mrtg-target.
+
+- added version-files to tornado + adodb.
+
+
+***** fixes *****
+
+- various security-related fixes and rewrites. these include fixes for :
+  * http://secunia.com/advisories/22880/
+  * http://secunia.com/advisories/22933/
+
+- various PHP5-problems fixed.
+
+- various SQL-statement-problems fixed.
+
+- fix for "TorrentFlux Dir.PHP Directory Traversal Vulnerability."
+  * http://www.securityfocus.com/bid/20771/
+
+- various fixes in fluxpoller.pl.
+
+- fixed problem in method http_query_builder in class SearchEngineBase.
+
+
+***** updates *****
+
+- Transmission :
+  * tfCLI-version : 1565
+  * Transmission-version : 0.7-svn-1108
+
+- Search-Engines :
+  * BitMe 1.01
+
+- ADOdb V4.93a
+
+
+--------------------------------------------------------------------------------
+
+
+  b4rt-96 (1354)
 
 
 ***** changes *****
@@ -21,7 +69,7 @@ $Id$
   * TorrentBox 1.04
   * Filemp3 1.02
   * The Pirate Bay Search Module v1.04
-  
+
 - BitTornado 0.3.17
 
 - Transmission 0.7-svn
@@ -35,9 +83,9 @@ $Id$
   http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1280&sc=0&isdir=1
 
 
-***** changes ***** 
+***** changes *****
 
-- transmission-handler : bsd-workaround : use PHP-function "touch" and not 
+- transmission-handler : bsd-workaround : use PHP-function "touch" and not
   shell-call to "touch"
 
 - refactoring db :
@@ -52,7 +100,7 @@ $Id$
 
 - added "max-recursion-depth" (10) to function "checkDirectory".
 
-- superadmin : function backupCreate : use function checkDirectory from 
+- superadmin : function backupCreate : use function checkDirectory from
   functions-lib and not extra local one
 
 
@@ -60,9 +108,9 @@ $Id$
 
 - bug when writing messages with accents or special characters.
   fix provided by Shadow aok, thanks for this.
-  http://tf-b4rt.berlios.de/forum/index.php/topic,216.0.html 
+  http://tf-b4rt.berlios.de/forum/index.php/topic,216.0.html
 
-- use a useless var in all PHP-classes ctors to prevent this error on flawed 
+- use a useless var in all PHP-classes ctors to prevent this error on flawed
   PHPs :
   "Fatal error: Only variables can be passed by reference in ..."
 
@@ -77,7 +125,7 @@ $Id$
   http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1226&sc=0&isdir=1
 
 
-***** changes ***** 
+***** changes *****
 
 - dont print out any var-info on db-error
 
@@ -85,9 +133,9 @@ $Id$
 
 - removed unused defines from stats.php
 
-- client-handlers : escapeshellarg @ all strings in commandline-string possibly 
-  unsafe 
-   
+- client-handlers : escapeshellarg @ all strings in commandline-string possibly
+  unsafe
+
 - superadmin : use proxy to get current version
 
 
@@ -111,15 +159,15 @@ $Id$
   http://www.stevenroddis.com.au/2006/10/17/torrentflux-action-script-insertion/
 
 - "TorrentFlux file Script Insertion"
-  http://www.stevenroddis.com.au/2006/10/17/torrentflux-file-script-insertion/  
-  
-  
+  http://www.stevenroddis.com.au/2006/10/17/torrentflux-file-script-insertion/
+
+
 --------------------------------------------------------------------------------
 
   b4rt-951
-  
-***** fixes *****  
-  
+
+***** fixes *****
+
 - dont print DSN on db-error
 
 
