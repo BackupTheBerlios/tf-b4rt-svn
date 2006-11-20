@@ -5,6 +5,8 @@ $Id$
 
 ***** changes *****
 
+- added code to catch problems when main-path is invalid (eg not readable)
+
 - various security-related changes (nothing functional).
 
 - tornado : time-delta-format-code.
