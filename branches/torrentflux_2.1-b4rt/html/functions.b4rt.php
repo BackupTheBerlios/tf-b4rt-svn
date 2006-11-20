@@ -1303,7 +1303,7 @@ function getTransferArray($sortOrder = '') {
     global $cfg;
     $arList = array();
     $file_filter = getFileFilter($cfg["file_types_array"]);
-    if (is_dir($cfg["torrent_file_path"]))
+    if (@is_dir($cfg["torrent_file_path"]))
         $handle = opendir($cfg["torrent_file_path"]);
     else
         return null;
@@ -1364,6 +1364,8 @@ function getTransferList() {
         $sortOrder = $cfg["index_page_sortorder"];
     // t-list
     $arList = getTransferArray($sortOrder);
+    if (!is_array($arList))
+    	return '<strong><font color="red">Problem getting Transfer-List. Check your Path-Settings + Permissions.</font></strong>';
     foreach($arList as $entry) {
 
         // ---------------------------------------------------------------------
