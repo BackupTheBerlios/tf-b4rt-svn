@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.c 997 2006-10-13 00:26:35Z joshe $
+ * $Id: metainfo.c 1101 2006-11-18 06:01:50Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -29,7 +29,7 @@
 /***********************************************************************
  * Local prototypes
  **********************************************************************/
-#define strcatUTF8( dst, src) _strcatUTF8( (dst), sizeof( dst ), (src) )
+#define strcatUTF8( dst, src) _strcatUTF8( (dst), sizeof( dst ) - 1, (src) )
 static void _strcatUTF8( char *, int, char * );
 
 /***********************************************************************
