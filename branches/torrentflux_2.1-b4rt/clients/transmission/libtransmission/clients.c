@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1063 2006-11-09 20:49:51Z titer $
+ * $Id: clients.c 1108 2006-11-19 21:33:49Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -81,6 +81,11 @@ char * tr_clientForId( uint8_t * id )
         {
             asprintf( &ret, "libTorrent %c.%c.%c.%c",
                       id[3], id[4], id[5], id[6] );
+        }
+        else if( !memcmp( &id[1], "ES", 2 ) )
+        {
+            asprintf( &ret, "Electric Sheep %c.%c.%c",
+                      id[3], id[4], id[5] );
         }
     }
     else if( !memcmp( &id[4], "----", 4 ) || !memcmp( &id[4], "--00", 4 ) )
