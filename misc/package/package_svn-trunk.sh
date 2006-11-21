@@ -78,7 +78,7 @@ $BIN_SVN export --quiet --non-interactive $SVN_URL
 
 # Get current SVN revision of tfb from Ids in all files
 REV_TFB=`( find $MAINDIR '(' -name 'CHANGES' \
-			-o -name 'INSTALL' \
+			-o -name 'INSTALL' -o -name 'TODO' \
 			-o -name 'transmissioncli.c' \
 			-o -name 'flux-mrtg-update.sh' \
 			-o -name '*.php' -o -name '*.dist' \
