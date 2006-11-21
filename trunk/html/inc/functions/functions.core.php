@@ -3110,7 +3110,7 @@ function IsForceReadMsg() {
  */
 function isValidTransfer($transfer) {
 	global $cfg;
-	if (ereg("(\.\.\/)", $transfer))
+	if (strpos($transfer, "../") !== false)
 		return false;
 	if (preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer))
 		return true;
