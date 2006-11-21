@@ -365,9 +365,8 @@ class ClientHandler
 			}
             $transferRunningFlag = 0;
         } else { // start
-        	// DEBUG : log the command
-        	if ($this->cfg['debuglevel'] > 1)
-        		AuditAction($this->cfg["constants"]["debug"], "ClientHandler::doStartClient : ".$this->command);
+        	// log the command
+        	$this->transferLog("ClientHandler::doStartClient : \n".$this->command, true);
             // The following command starts the transfer running! w00t!
             //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
             $this->callResult = exec($this->command);
@@ -589,6 +588,28 @@ class ClientHandler
             }
         }
         return false;
+    }
+
+    /**
+     * writes a message to the per-transfer-logfile
+     *
+     * @param $message
+     * @param $withTS
+     */
+    function transferLog($message, $withTS = false) {
+    	$content = "";
+    	if ($withTS)
+    		$content .= @date("Y/m/d - H:i:s") . " - ";
+    	$content .= $message;
+		$fp = false;
+		$fp = @fopen($this->logFile, "a+");
+		if (!$fp)
+			return false;
+		$result = @fwrite($fp, $content);
+		@fclose($fp);
+		if ($result === false)
+			return false;
+		return true;
     }
 
     /**
