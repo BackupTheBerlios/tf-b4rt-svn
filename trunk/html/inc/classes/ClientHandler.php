@@ -447,7 +447,7 @@ class ClientHandler
             // set pid
             if ((isset($transferPid)) && ($transferPid != "")) {
             	// test for valid pid-var
-            	if (preg_match('/^[0-9]+$/', $transferPid)) {
+            	if (is_numeric($transferPid)) {
                 	$this->pid = $transferPid;
             	} else {
 		    		AuditAction($this->cfg["constants"]["error"], "Invalid kill-param : ".$this->cfg["user"]." tried to kill ".$transferPid);
