@@ -1,0 +1,92 @@
+================================================================================
+$Id$
+================================================================================
+
+
+********************************************************************************
+*** code ***********************************************************************
+********************************************************************************
+
+  - (3)
+    further enhance source of all 3 torrent-clients to print more usefull info
+    to the pre-transfer-logfile
+
+  - (2) (includes + depends on templates)
+    user reported that current rss-page is messed. needs to be fixed if that is
+    the case.
+
+  - (3)
+    make all upgrade.php-scripts "equal" to setup.php. unify where the sql-
+    states for install/upgrade are stored as its now a bit messy.
+
+  - (2) (includes + depends on templates)
+    per-user-settings : currently not in use at all.
+    need to be added to all templates and code needs to be checked if still "ok"
+
+  - (1) (includes + depends on templates)
+    fix well known bugs (if possible)
+    + multi-upload on index-page not working in FF and Opera
+    + dir/filemanager : problems with files/dirs containing "&"
+    + dir/filemanager : problems with files/dirs containing "+"
+
+  - (3)
+    finalize code
+
+
+********************************************************************************
+*** themes *********************************************************************
+********************************************************************************
+
+  - (1)
+    page.torrentSearch.tmpl very messed html/templates in both template-sets.
+    (wonder why this works, weird nested if/else and html)
+
+  - (1)
+    template-files for "default"-theme
+    note : as there is much functionality in the template-files some of the open
+           code-things require changes in templates as well. so they are kinda
+           dependant on a finalized default-template-set.
+
+  - (1)
+    images for "default"-theme
+
+
+********************************************************************************
+*** test ***********************************************************************
+********************************************************************************
+
+  - (1) (depends on templates)
+    test all functions in both theme-sets (new default of course not current)
+
+  - (1)
+    things to test in detail :
+    + xfer : detail-tests if xfer works correct with all 4 client-types
+
+
+********************************************************************************
+*** docu ***********************************************************************
+********************************************************************************
+
+  - (2)
+    common docu
+
+  - (2)
+    fluxd in common
+
+  - (2)
+    fluxd-modules
+
+
+********************************************************************************
+*** infra **********************************************************************
+********************************************************************************
+
+  - (3)
+    new website for release of new codebase
+
+  - (3)
+    forum-restructure (+ resort)
+
+
+
+
