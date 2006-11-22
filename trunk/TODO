@@ -30,6 +30,8 @@ $Id$
   - (1) (includes + depends on templates)
     fix well known bugs (if possible)
     + multi-upload on index-page not working in FF and Opera
+    + dir/filemanager : problems with files/dirs containing "&"
+    + dir/filemanager : problems with files/dirs containing "+"
 
   - (3)
     finalize code
