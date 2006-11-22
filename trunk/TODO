@@ -7,6 +7,10 @@ $Id$
 *** code ***********************************************************************
 ********************************************************************************
 
+  - (1)
+    escaped arguments in client-handlers produce bugs :
+    example : limits in mainline not working anymore with escaped number
+
   - (3)
     further enhance source of all 3 torrent-clients to print more usefull info
     to the pre-transfer-logfile
