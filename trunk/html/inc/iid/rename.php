@@ -42,8 +42,13 @@ if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 } else {
 	$tmpl->setvar('is_start', 0);
 
-	// Use single quotes to escape nastiness:
-	$cmd = "mv '".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."' '".$cfg["path"].$_POST['dir'].$_POST['fileTo']."'";
+	$targetDir=$cfg["path"].$_POST['dir'].$_POST['fileTo'];
+	// Add slashes if magic_quotes off:
+	if(get_magic_quotes_gpc()!==1){
+		$targetDir=addslashes($targetDir);
+	}
+	# Use single quote to escape mv args:
+	$cmd = "mv '".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."' '".$targetDir."'";
     $cmd .= ' 2>&1';
     $handle = popen($cmd, 'r' );
     $gotError = -1;
