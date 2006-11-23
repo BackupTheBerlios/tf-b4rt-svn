@@ -89,7 +89,13 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
 		$tmpl->setvar('is_valid', 1);
 		$targetDir = checkDirPathString($targetDir);
-		# Use single quote to safely escape mv args:
+
+		// Add slashes if magic_quotes off:
+		if(get_magic_quotes_gpc()!==1){
+			$targetDir=addslashes($targetDir);
+		}
+
+		# Use single quote to escape mv args:
 		$cmd = "mv '".$cfg["path"].$_POST['file']."' '".$targetDir."'";
 		$cmd .= ' 2>&1';
 		$handle = popen($cmd, 'r');
