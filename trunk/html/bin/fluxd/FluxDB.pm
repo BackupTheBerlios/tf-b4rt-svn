@@ -695,7 +695,7 @@ sub loadFluxConfigPHP {
 	open(CALL, $shellCmd." |");
 	while(<CALL>) {
 		chomp;
-		($tfKey, $tfValue) = split(/\|/, $_);
+		($tfKey, $tfValue) = split(/\*/, $_);
 		#print STDERR "fluxconf : ".$tfKey."=".$tfValue."\n"; # DEBUG
 		$fluxConf{$tfKey} = $tfValue;
 	}
@@ -723,7 +723,7 @@ sub loadFluxUsersPHP {
 	open(CALL, $shellCmd." |");
 	while(<CALL>) {
 		chomp;
-		($uid, $userid) = split(/\|/, $_);
+		($uid, $userid) = split(/\*/, $_);
 		#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
 		$users[$index] = {
 			uid => $uid,

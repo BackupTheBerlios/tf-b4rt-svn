@@ -27,7 +27,7 @@ if (!isset($argv)) die();
 /******************************************************************************/
 
 // defines
-define('_DUMP_DELIM', '|');
+define('_DUMP_DELIM', '*');
 preg_match('|.* (\d+) .*|', '$Revision$', $revisionMatches);
 define('_REVISION_FLUXCLI', $revisionMatches[1]);
 
