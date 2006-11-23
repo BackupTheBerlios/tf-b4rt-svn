@@ -118,15 +118,17 @@ switch ($op) {
 			$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
 			$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
+			$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"] ||
 			$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
 			$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
 			$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
 			$_POST["fluxd_Fluxinet_port"] != $cfg["fluxd_Fluxinet_port"] ||
 			$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
 			$_POST["fluxd_Watch_jobs"] != $cfg["fluxd_Watch_jobs"] ||
+			$_POST["fluxd_Rssad_interval"] != $cfg["fluxd_Rssad_interval"] ||
 			$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"] ||
 			$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
-			$message = '<br>Settings changed.<br>';
+			$message = 'Settings changed. ';
 			// fluxd Running?
 			if ($fluxdRunning) {
 				// restart ?
@@ -134,21 +136,16 @@ switch ($op) {
 					// save settings
 					$settings = processSettingsParams(false, false);
 					saveSettings('tf_settings', $settings);
-					$message .= 'fluxd needs to be restarted to change db-mode.<br><br>';
+					$message .= 'fluxd needs to be restarted to change db-mode.';
 				} else {
 					// reload ?
 					$reloadModules = false;
-					$needsInit = false;
 					if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 						$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
 						$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
 						$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 						$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
-						$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
-						$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
-						$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
-						$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
-						$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
+						$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"]) {
 						$reloadModules = true;
 					}
 					// reconfig of running daemon :
@@ -165,13 +162,16 @@ switch ($op) {
 					if ($reloadModules) {
 						sleep(3);
 						$fluxd->reloadModules();
+						$message .= 'modules reloaded.';
+					} else {
+						$message .= ' reload module(s) to use new settings.';
 					}
 				}
 			} else {
 				// save settings
 				$settings = processSettingsParams(false, false);
 				saveSettings('tf_settings', $settings);
-				$message .= 'fluxd is currently not running.<br><br>';
+				$message .= 'fluxd is not running.';
 			}
 			// log
 			AuditAction($cfg["constants"]["fluxd"], " Updating fluxd Settings");
@@ -197,29 +197,29 @@ switch ($op) {
 				if ($fluxd->isFluxdReadyToStart()) {
 					$fluxd->startFluxd();
 					if ($fluxd->state == 2) {
-						$message = '<br><strong>fluxd started.</strong><br><br>';
+						$message = 'fluxd started';
 					} else {
-						$message = '<br><font color="red">Error starting fluxd</font><br>';
-						$message .= 'Error : '.$fluxd->messages . '<br>';
+						$message = 'Error starting fluxd.';
+						//$message .= 'Error : '.$fluxd->messages . '<br>';
 					}
 					break;
 				}
-				$message = '<br><font color="red">Error starting fluxd</font><br><br>';
+				$message = 'Error starting fluxd.';
 				break;
 			case "stop":
 				// kill fluxd
 				if ($fluxd->isFluxdRunning()) {
 					$fluxd->stopFluxd();
 					if ($fluxd->isFluxdRunning())
-						$message = '<br><strong>Stop-Command sent.</strong><br><br>';
+						$message = 'Stop-Command sent.';
 					else
-						$message = '<br><strong>fluxd stopped.</strong><br><br>';
+						$message = 'fluxd stopped.';
 					header("Location: admin.php?op=fluxdSettings&m=".urlencode($message).'&s=1');
 					exit;
 				}
 				break;
 			default:
-				$message = '<br><font color="red">Error : no control-operation.</font><br><br>';
+				$message = 'Error : no control-operation.';
 				break;
 		}
 		if ($message != "")
