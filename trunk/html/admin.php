@@ -125,8 +125,6 @@ switch ($op) {
 			$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
 			$_POST["fluxd_Watch_jobs"] != $cfg["fluxd_Watch_jobs"] ||
 			$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"] ||
-			$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"] ||
-			$_POST["fluxd_Rssad_interval"] != $cfg["fluxd_Rssad_interval"] ||
 			$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
 			$message = '<br>Settings changed.<br>';
 			// fluxd Running?
@@ -150,8 +148,6 @@ switch ($op) {
 						$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
 						$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
 						$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
-						$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"] ||
-						$_POST["fluxd_Rssad_interval"] != $cfg["fluxd_Rssad_interval"] ||
 						$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
 						$reloadModules = true;
 					}
@@ -163,7 +159,6 @@ switch ($op) {
 					// save settings
 					$settings = processSettingsParams(false, false);
 					saveSettings('tf_settings', $settings);
-					sleep(3);
 					// reload fluxd-database-cache
 					$fluxd->reloadDBCache();
 					// reload fluxd-modules
