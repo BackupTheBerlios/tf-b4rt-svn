@@ -163,6 +163,7 @@ switch ($op) {
 					// save settings
 					$settings = processSettingsParams(false, false);
 					saveSettings('tf_settings', $settings);
+					sleep(3);
 					// reload fluxd-database-cache
 					$fluxd->reloadDBCache();
 					// reload fluxd-modules
