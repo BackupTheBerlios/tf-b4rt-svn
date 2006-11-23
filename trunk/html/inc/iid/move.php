@@ -65,7 +65,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 0);
 	$targetDir = "";
 	if (isset($_POST['dest'])) {
-		 $tempDir = trim(urldecode($_POST['dest']));
+		 $tempDir = trim(rawurldecode($_POST['dest']));
 		 if (strlen($tempDir) > 0)
 			$targetDir = $tempDir;
 	}
@@ -89,7 +89,8 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
 		$tmpl->setvar('is_valid', 1);
 		$targetDir = checkDirPathString($targetDir);
-		$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['file'])." ".escapeshellarg($targetDir);
+		# Use single quote to safely escape mv args:
+		$cmd = "mv '".$cfg["path"].$_POST['file']."' '".$targetDir."'";
 		$cmd .= ' 2>&1';
 		$handle = popen($cmd, 'r');
 		// get the output and print it.
