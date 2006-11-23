@@ -150,7 +150,7 @@ switch ($op) {
 					}
 					// reconfig of running daemon :
 					if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
-						$fluxd->setConfig('LOGLEVEL',$_POST["fluxd_loglevel"]);
+						$fluxd->setConfig('LOGLEVEL', $_POST["fluxd_loglevel"]);
 						sleep(1);
 					}
 					// save settings
@@ -200,7 +200,7 @@ switch ($op) {
 						$message = 'fluxd started';
 					} else {
 						$message = 'Error starting fluxd.';
-						//$message .= 'Error : '.$fluxd->messages . '<br>';
+						$fluxd->logError("Error starting fluxd :\n".$fluxd->messages, true);
 					}
 					break;
 				}
@@ -215,7 +215,7 @@ switch ($op) {
 					else
 						$message = 'fluxd stopped.';
 					header("Location: admin.php?op=fluxdSettings&m=".urlencode($message).'&s=1');
-					exit;
+					exit();
 				}
 				break;
 			default:

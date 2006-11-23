@@ -48,6 +48,8 @@ class Fluxd
     var $pathDataDir = "";
     var $pathPidFile = "";
     var $pathSocket = "";
+    var $pathLogFile = "";
+    var $pathLogFileError = "";
 
     // socket-timeout
     var $socketTimeout = 5;
@@ -70,6 +72,8 @@ class Fluxd
         $this->pathDataDir = $this->cfg["path"] . '.fluxd/';
         $this->pathPidFile = $this->pathDataDir . 'fluxd.pid';
         $this->pathSocket = $this->pathDataDir . 'fluxd.sock';
+        $this->pathLogFile = $this->pathDataDir . 'fluxd.log';
+        $this->pathLogFileError = $this->pathDataDir . 'fluxd-error.log';
         $this->state = 1;
     }
 
@@ -247,7 +251,53 @@ class Fluxd
 			$this->sendCommand('reloadModules', 0);
     }
 
+    /**
+     * writes a message to the log
+     *
+     * @param $message
+     * @param $withTS
+     * @return boolean
+     */
+    function logMessage($message, $withTS = false) {
+		return $this->doLog($this->pathLogFile, $message, $withTS);
+    }
+
+    /**
+     * writes a message to the error-log
+     *
+     * @param $message
+     * @param $withTS
+     * @return boolean
+     */
+    function logError($message, $withTS = false) {
+		return $this->doLog($this->pathLogFileError, $message, $withTS);
+    }
+
     // private meths
+
+    /**
+     * log a message
+     *
+     * @param $logFile
+     * @param $message
+     * @param $withTS
+     * @return boolean
+     */
+    function doLog($logFile, $message, $withTS = false) {
+    	$content = "";
+    	if ($withTS)
+    		$content .= @date("Y/m/d - H:i:s") . " - ";
+    	$content .= $message;
+		$fp = false;
+		$fp = @fopen($logFile, "a+");
+		if (!$fp)
+			return false;
+		$result = @fwrite($fp, $content);
+		@fclose($fp);
+		if ($result === false)
+			return false;
+		return true;
+    }
 
     /**
      * send command
