@@ -35,13 +35,15 @@ tmplInitializeInstance($cfg["theme"], "page.rename.tmpl");
 // process move and set vars
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('file', urldecode(stripslashes($_REQUEST['file'])));
-	$tmpl->setvar('dir', urldecode($_REQUEST['dir']));
+	$tmpl->setvar('file', rawurldecode(stripslashes($_REQUEST['file'])));
+	$tmpl->setvar('dir', rawurldecode($_REQUEST['dir']));
 	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 } else {
 	$tmpl->setvar('is_start', 0);
-	$cmd = "mv ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileFrom'])." ".escapeshellarg($cfg["path"].$_POST['dir'].$_POST['fileTo']);
+
+	// Use single quotes to escape nastiness:
+	$cmd = "mv '".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."' '".$cfg["path"].$_POST['dir'].$_POST['fileTo']."'";
     $cmd .= ' 2>&1';
     $handle = popen($cmd, 'r' );
     $gotError = -1;

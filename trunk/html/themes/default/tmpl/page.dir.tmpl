@@ -48,7 +48,7 @@
 							</tmpl_if>
 						</tmpl_if>
 						<tmpl_if name="enable_rename" value="1">
-							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">&start=true')"><img src="themes/default/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
+							<a href="JavaScript:rename('index.php?iid=rename&dir=<tmpl_var escape="url" name="urlencode2">&file=<tmpl_var escape="url" name="urlencode3">&start=true')"><img src="themes/default/images/rename.gif" width=16 height=16 title="<tmpl_var name="_DIR_REN_LINK">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_move" value="1">
 							<a href="JavaScript:moveFile('index.php?iid=move&path=<tmpl_var name="urlencode1">&start=true')"><img src="themes/default/images/_move.gif" width=16 height=16 title="<tmpl_Var name="_DIR_MOVE_LINK">" border=0></a>
