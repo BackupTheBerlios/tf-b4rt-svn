@@ -97,7 +97,9 @@ class Fluxd
             $startCommand .= " ".escapeshellarg($this->cfg["docroot"]);
             $startCommand .= " ".escapeshellarg($this->cfg["bin_php"]);
             $startCommand .= " ".escapeshellarg($this->cfg["fluxd_dbmode"]);
-            $startCommand .= " > /dev/null &";
+	        $startCommand .= " 1>> ".escapeshellarg($this->pathLogFile);
+	        $startCommand .= " 2>> ".escapeshellarg($this->pathLogFileError);
+	        $startCommand .= " &";
             $result = exec($startCommand);
             // check if fluxd could be started
             $loop = true;
