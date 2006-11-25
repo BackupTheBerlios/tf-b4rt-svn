@@ -3,9 +3,12 @@ $Id$
 ================================================================================
 
 
+  b4rt-97
+
+
 ***** changes *****
 
-- added code to catch problems when main-path is invalid (eg not readable)
+- added code to catch problems when main-path is invalid (eg not readable).
 
 - various security-related changes (nothing functional).
 
@@ -42,7 +45,7 @@ $Id$
 
 - Transmission :
   * tfCLI-version : 1565
-  * Transmission-version : 0.7-svn-1108
+  * Transmission-version : 0.7-svn-1124
 
 - Search-Engines :
   * BitMe 1.01
@@ -53,7 +56,7 @@ $Id$
 --------------------------------------------------------------------------------
 
 
-  b4rt-96 (1354)
+  b4rt-96
 
 
 ***** changes *****
