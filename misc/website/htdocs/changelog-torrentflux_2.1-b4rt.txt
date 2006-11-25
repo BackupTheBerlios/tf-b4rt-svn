@@ -3,6 +3,59 @@ $Id$
 ================================================================================
 
 
+  b4rt-97
+
+
+***** changes *****
+
+- added code to catch problems when main-path is invalid (eg not readable).
+
+- various security-related changes (nothing functional).
+
+- tornado : time-delta-format-code.
+
+- added a warning to "remember me"-setting.
+
+- integrated posix-functions provided by osearth.
+
+- backport of fluxpoller.pl and new mrtg-target.
+
+- added version-files to tornado + adodb.
+
+
+***** fixes *****
+
+- various security-related fixes and rewrites. these include fixes for :
+  * http://secunia.com/advisories/22880/
+  * http://secunia.com/advisories/22933/
+
+- various PHP5-problems fixed.
+
+- various SQL-statement-problems fixed.
+
+- fix for "TorrentFlux Dir.PHP Directory Traversal Vulnerability."
+  * http://www.securityfocus.com/bid/20771/
+
+- various fixes in fluxpoller.pl.
+
+- fixed problem in method http_query_builder in class SearchEngineBase.
+
+
+***** updates *****
+
+- Transmission :
+  * tfCLI-version : 1565
+  * Transmission-version : 0.7-svn-1124
+
+- Search-Engines :
+  * BitMe 1.01
+
+- ADOdb V4.93a
+
+
+--------------------------------------------------------------------------------
+
+
   b4rt-96
 
 
