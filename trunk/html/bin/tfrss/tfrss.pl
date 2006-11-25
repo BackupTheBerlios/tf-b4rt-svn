@@ -193,15 +193,17 @@ sub loadData {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub loadFilters {
+	# sep + open file
 	my $lineSep = $/;
-	$/ = "\n";
-	open(FILTERS, $PATH_FILTERS);
-	while(<FILTERS>) {
-		chomp;
-		push @filters, $_;
-	}
+	undef $/;
+	open(FILTERS,"<$PATH_FILTERS");
+	# read data
+	my $content = <FILTERS>;
+	# close file + sep
 	close FILTERS;
 	$/ = $lineSep;
+	# process data
+	@filters = split(/\n/, $content);
 }
 
 #------------------------------------------------------------------------------#
