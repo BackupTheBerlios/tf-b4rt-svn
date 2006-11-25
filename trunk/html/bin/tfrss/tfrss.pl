@@ -213,15 +213,17 @@ sub loadFilters {
 #------------------------------------------------------------------------------#
 sub loadHistory {
 	if (-f $PATH_HISTORY) {
+		# sep + open file
 		my $lineSep = $/;
-		$/ = "\n";
-		open(HISTORY, $PATH_HISTORY);
-		while(<HISTORY>) {
-			chomp;
-			push @history, $_;
-		}
+		undef $/;
+		open(HISTORY,"<$PATH_HISTORY");
+		# read data
+		my $content = <HISTORY>;
+		# close file + sep
 		close HISTORY;
 		$/ = $lineSep;
+		# process data
+		@history = split(/\n/, $content);
 	}
 }
 
