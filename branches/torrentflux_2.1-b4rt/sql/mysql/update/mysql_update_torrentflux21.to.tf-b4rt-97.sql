@@ -2,8 +2,8 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-Update-File for 'Torrentflux-2.1-b4rt-96'.
--- Updates a 'Torrentflux 2.1 Final' Database to a 'Torrentflux 2.1-b4rt-96'.
+-- MySQL-Update-File for 'Torrentflux-2.1-b4rt-97'.
+-- Updates a 'Torrentflux 2.1 Final' Database to a 'Torrentflux 2.1-b4rt-97'.
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
