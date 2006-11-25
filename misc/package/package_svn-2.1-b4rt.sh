@@ -132,7 +132,9 @@ do
 done
 
 # some execs
-chmod +x $MAINDIR/clients/transmission/version.sh
+find $MAINDIR -name "*.sh" | $BIN_XARGS chmod +x
+find $MAINDIR -name "*.pl" | $BIN_XARGS chmod +x
+chmod +x $MAINDIR/html/fluxcli.php
 chmod +x $MAINDIR/clients/transmission/configure
 
 # rename dir
@@ -140,6 +142,7 @@ mv $MAINDIR $TARNAME
 
 # create tar
 $BIN_TAR jcf $TARNAME.tar.bz2 $TARNAME
+
 # md5-sum
 $BIN_MDSUM -b $TARNAME.tar.bz2 > $TARNAME.tar.bz2.md5
 
