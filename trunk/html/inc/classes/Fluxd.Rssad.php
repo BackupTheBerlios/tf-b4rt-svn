@@ -153,7 +153,7 @@ class FluxdRssad extends FluxdServiceMod
 			AuditAction($this->cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$this->messages);
 			return false;
 		}
-		$result = @fwrite($handle, $content);
+        $result = @fwrite($handle, str_replace("\r\n", "\n", $content));
 		@fclose($handle);
 		if ($result === false) {
 			$this->messages = "cannot write content to ".$handle.".";
