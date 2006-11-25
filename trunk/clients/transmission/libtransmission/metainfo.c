@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.c 1101 2006-11-18 06:01:50Z titer $
+ * $Id: metainfo.c 1124 2006-11-23 04:10:16Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -190,6 +190,28 @@ int tr_metainfoParse( tr_info_t * inf, const char * path,
         return 1;
     }
     snprintf( inf->trackerAnnounce, MAX_PATH_LENGTH, "%s", s2 );
+    
+    /* Comment info */
+    if( ( val = tr_bencDictFind( &meta, "comment.utf-8" ) ) || ( val = tr_bencDictFind( &meta, "comment" ) ) )
+    {
+        strcatUTF8( inf->comment, val->val.s.s );
+    }
+    
+    /* Creator info */
+    if( ( val = tr_bencDictFind( &meta, "created by.utf-8" ) ) || ( val = tr_bencDictFind( &meta, "created by" ) ) )
+    {
+        strcatUTF8( inf->creator, val->val.s.s );
+    }
+    
+    /* Date created */
+    if( ( val = tr_bencDictFind( &meta, "creation date" ) ) )
+    {
+        inf->dateCreated = val->val.i;
+    }
+    else
+    {
+        inf->dateCreated = 0;
+    }
 
     /* Piece length */
     if( !( val = tr_bencDictFind( beInfo, "piece length" ) ) )

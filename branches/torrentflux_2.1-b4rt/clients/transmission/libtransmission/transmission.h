@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1064 2006-11-10 04:21:46Z titer $
+ * $Id: transmission.h 1119 2006-11-23 01:38:18Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -318,6 +318,11 @@ struct tr_info_s
     char        trackerAddress[256];
     int         trackerPort;
     char        trackerAnnounce[MAX_PATH_LENGTH];
+    
+    /* Torrent info */
+    char        comment[MAX_PATH_LENGTH];
+    char        creator[MAX_PATH_LENGTH];
+    int         dateCreated;
 
     /* Pieces info */
     int         pieceSize;
