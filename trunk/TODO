@@ -7,10 +7,6 @@ $Id$
 *** code ***********************************************************************
 ********************************************************************************
 
-  - (1)
-    escaped arguments in client-handlers produce bugs :
-    example : limits in mainline not working anymore with escaped number
-
   - (3)
     further enhance source of all 3 torrent-clients to print more usefull info
     to the pre-transfer-logfile
@@ -31,7 +27,6 @@ $Id$
     fix well known bugs (if possible)
     + multi-upload on index-page not working in FF and Opera
     + dir/filemanager : problems with files/dirs containing "&"
-    + dir/filemanager : problems with files/dirs containing "+"
 
   - (3)
     finalize code
