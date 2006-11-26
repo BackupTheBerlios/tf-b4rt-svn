@@ -107,7 +107,7 @@ class FluxdQmgr extends FluxdServiceMod
         $btclient = getTransferClient($torrent);
         $modded = 0;
         // create AliasFile object
-        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$alias_file, $the_user, $this->cfg, $btclient);
+        $af = AliasFile::getAliasFileInstance($alias_file, $the_user, $this->cfg, $btclient);
         if($af->percent_done > 0 && $af->percent_done < 100) {
             // has downloaded something at some point, mark it is incomplete
             $af->running = "0";

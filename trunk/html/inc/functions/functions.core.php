@@ -1057,7 +1057,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 	} else {
 		// reset in stat-file
 		require_once("inc/classes/AliasFile.php");
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias.".stat", $owner, $cfg);
+		$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $cfg);
 		if (isset($af)) {
 			$af->uptotal = 0;
 			$af->downtotal = 0;
@@ -1120,7 +1120,7 @@ function deleteTransfer($transfer, $alias_file) {
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($transfer);
-			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $transferowner, $cfg, $btclient);
+			$af = AliasFile::getAliasFileInstance($alias_file, $transferowner, $cfg, $btclient);
 			// update totals for this torrent
 			updateTransferTotals($transfer);
 			// remove torrent-settings from db
@@ -1131,10 +1131,10 @@ function deleteTransfer($transfer, $alias_file) {
 			$clientHandler->deleteCache($transfer);
 		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 			// this is wget.
-			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $transferowner, $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($alias_file, $transferowner, $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
-			$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias_file, $cfg["user"], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($alias_file, $cfg["user"], $cfg, 'tornado');
 		}
 		if ($cfg['enable_xfer'] != 0) {
 			// XFER: before torrent deletion save upload/download xfer data to SQL
@@ -1521,7 +1521,7 @@ function getLoadAverageString() {
 function injectTorrent($torrent) {
 	global $cfg;
 	require_once("inc/classes/AliasFile.php");
-	$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].getAliasName($torrent).".stat", $cfg["user"], $cfg);
+	$af = AliasFile::getAliasFileInstance(getAliasName($torrent).".stat", $cfg["user"], $cfg);
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["transfer_file_path"].$torrent);
 	$af->WriteFile();
@@ -1703,7 +1703,7 @@ function getTransferListArray() {
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
-			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, $settingsAry['btclient']);
 		} else if ((substr(strtolower($entry), -5) == ".wget")) {
 			// this is wget.
 			$isTorrent = false;
@@ -1712,7 +1712,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, 'wget');
+			$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, 'wget');
 		} else {
 			// this is "something else". use tornado statfile as default
 			$isTorrent = false;
@@ -1721,7 +1721,7 @@ function getTransferListArray() {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "tornado";
 			$settingsAry['hash'] = $entry;
-			$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
+			$af = AliasFile::getAliasFileInstance($alias, $cfg["user"], $cfg, 'tornado');
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -2072,19 +2072,19 @@ function getTransferDetails($transfer, $full, $alias = "") {
 			// new torrent
 			$cfg['hash'] = $transfer;
 		}
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $cfg['btclient']);
+		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, $cfg['btclient']);
 	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
 		$transferowner = getOwner($transfer);
 		$cfg['btclient'] = "wget";
 		$cfg['hash'] = $transfer;
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, "wget");
+		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, "wget");
 	} else {
 		// this is "something else". use tornado statfile as default
 		$transferowner = $cfg["user"];
 		$cfg['btclient'] = "tornado";
 		$cfg['hash'] = $transfer;
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg, 'tornado');
+		$af = AliasFile::getAliasFileInstance($alias, $cfg["user"], $cfg, 'tornado');
 	}
 	// size
 	$size = (int) $af->size;
@@ -2341,7 +2341,7 @@ function resetOwner($file) {
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
 	if(file_exists($cfg["transfer_file_path"].$alias)) {
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $cfg["user"], $cfg);
+		$af = AliasFile::getAliasFileInstance($alias, $cfg["user"], $cfg);
 		if (IsUser($af->transferowner)) {
 			// We have an owner!
 			$rtnValue = $af->transferowner;
@@ -3103,7 +3103,7 @@ function IsForceReadMsg() {
 }
 
 /**
- * isValidTransfer
+ * check if transfer is valid
  *
  * @param $transfer
  * @return boolean

@@ -56,22 +56,24 @@ class AliasFile
     /**
      * get AliasFile-instance
      *
-     * @param $inFile the path to stats-file
+     * @param $aliasname name of the stat-file
      * @param $user the user
      * @param $fluxCfg torrent-flux config-array
      * @param $clientType client-type
      * @return $aliasFileInstance AliasFile-instance
      */
-    function getAliasFileInstance($inFile, $user = "", $fluxCfg, $clientType = '') {
-    	// check if file is a sane file
-    	if (((strpos($inFile, "../") !== false)) || (!preg_match('/^[a-zA-Z0-9._\-\/]+(stat)$/', $inFile))) {
-    		AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile : ".$fluxCfg["user"]." tried to access ".$inFile);
+    function getAliasFileInstance($aliasname, $user = "", $fluxCfg, $clientType = '') {
+    	// check if aliasname is valid
+    	if (!preg_match('/^[a-zA-Z0-9._]+(stat)$/', $aliasname)) {
+    		AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile : ".$fluxCfg["user"]." tried to access ".$aliasname);
     		global $argv;
     		if (isset($argv))
-    			die("Invalid AliasFile : ".$inFile);
+    			die("Invalid AliasFile : ".$aliasname);
     		else
-    			showErrorPage("Invalid AliasFile : <br>".htmlentities($inFile, ENT_QUOTES));
+    			showErrorPage("Invalid AliasFile : <br>".htmlentities($aliasname, ENT_QUOTES));
     	}
+    	// alias-file-path
+    	$inFile = $fluxCfg["transfer_file_path"].$aliasname;
         // damn dirty but does php (< 5) have reflection or something like
         // class-by-name ?
         if ((isset($clientType)) && ($clientType != '')) {

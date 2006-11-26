@@ -93,7 +93,7 @@ class ClientHandlerWget extends ClientHandler
 
 		// write out aliasfile
 		require_once("inc/classes/AliasFile.php");
-		$af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$this->alias,	$this->cfg['user'], $this->cfg);
+		$af = AliasFile::getAliasFileInstance($this->alias,	$this->cfg['user'], $this->cfg);
 		$af->running = "2"; // file is new
 		$af->size = 0;
 		$af->WriteFile();
@@ -138,7 +138,7 @@ class ClientHandlerWget extends ClientHandler
         // start it
         $this->command = "nohup ".$this->cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
-        $this->command .= " " . escapeshellarg($this->cfg["transfer_file_path"].$this->alias);
+        $this->command .= " " . escapeshellarg($this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
         $this->command .= " " . $this->owner;
         switch ($this->cfg["enable_home_dirs"]) {
@@ -221,7 +221,7 @@ class ClientHandlerWget extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal;
         $retVal["downtotal"] = $af->downtotal;
         return $retVal;
@@ -256,7 +256,7 @@ class ClientHandlerWget extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner, $this->cfg, $this->handlerName);
         $retVal["uptotal"] = $af->uptotal;
         $retVal["downtotal"] = $af->downtotal;
         return $retVal;

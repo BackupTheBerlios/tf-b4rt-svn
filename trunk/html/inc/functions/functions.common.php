@@ -1336,7 +1336,7 @@ function clientCare() {
 		// get owner
 		$transferowner = getOwner($transfer);
 		// rewrite stat-file
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias, $transferowner, $cfg, $settingsAry['btclient']);
+		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, $settingsAry['btclient']);
 		if (isset($af)) {
 			$af->running = 0;
 			$af->percent_done = -100.0;

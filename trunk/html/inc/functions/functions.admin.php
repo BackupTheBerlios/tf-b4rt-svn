@@ -600,7 +600,7 @@ function repairTorrentflux() {
 		$alias = getAliasName($torrent);
 		$owner = getOwner($torrent);
 		$btclient = getTransferClient($torrent);
-		$af = AliasFile::getAliasFileInstance($cfg["transfer_file_path"].$alias.".stat", $owner, $cfg, $btclient);
+		$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $cfg, $btclient);
 		if (isset($af)) {
 			$af->running = 0;
 			$af->percent_done = -100.0;

@@ -287,7 +287,7 @@ class ClientHandler
 		}
         // create AliasFile object and write out the stat file
         require_once("inc/classes/AliasFile.php");
-        $this->af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
+        $this->af = AliasFile::getAliasFileInstance($this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
         $transferTotals = getTransferTotals($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
         if ($this->cfg['enable_xfer'] == 1)
@@ -407,7 +407,7 @@ class ClientHandler
         $this->owner = getOwner($this->transfer);
         require_once("inc/classes/AliasFile.php");
         // read the alias file + create AliasFile object
-        $this->af = AliasFile::getAliasFileInstance($this->cfg["transfer_file_path"].$this->alias, $this->owner, $this->cfg, $this->handlerName);
+        $this->af = AliasFile::getAliasFileInstance($this->alias, $this->owner, $this->cfg, $this->handlerName);
         if($this->af->percent_done < 100) {
             // The transfer is being stopped but is not completed dowloading
             $this->af->percent_done = ($this->af->percent_done + 100)*-1;
