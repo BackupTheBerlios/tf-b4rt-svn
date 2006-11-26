@@ -52,31 +52,34 @@ class RunningTransfer
      * @return $runningTorrentInstance RunningTransfer-instance
      */
     function getRunningTransferInstance($psLine, $fluxCfg, $clientType = '') {
-        // damn dirty but does php (< 5) have reflection or something like
-        // class-by-name ?
-        if ((isset($clientType)) && ($clientType != '')) {
+    	// create and return object-instance
+        if ($clientType != '') {
             $clientClass = $clientType;
             $fluxCfg["btclient"] = $clientType;
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
         $classFile = 'inc/classes/RunningTransfer.'.$clientClass.'.php';
-        if (is_file($classFile)) {
-            require_once($classFile);
-            switch ($clientClass) {
-                case "tornado":
-                    return new RunningTransferTornado($psLine,serialize($fluxCfg));
-                	break;
-                case "transmission":
-                    return new RunningTransferTransmission($psLine,serialize($fluxCfg));
-                	break;
-                case "mainline":
-                    return new RunningTransferMainline($psLine,serialize($fluxCfg));
-                	break;
-                case "wget":
-                    return new RunningTransferWget($psLine,serialize($fluxCfg));
-                	break;
-            }
+        switch ($clientClass) {
+            case "tornado":
+            	require_once($classFile);
+                return new RunningTransferTornado($psLine,serialize($fluxCfg));
+            case "transmission":
+            	require_once($classFile);
+                return new RunningTransferTransmission($psLine,serialize($fluxCfg));
+            case "mainline":
+            	require_once($classFile);
+                return new RunningTransferMainline($psLine,serialize($fluxCfg));
+            case "wget":
+            	require_once($classFile);
+                return new RunningTransferWget($psLine,serialize($fluxCfg));
+            default:
+            	AuditAction($fluxCfg["constants"]["error"], "Invalid RunningTransfer-Class : ".$clientClass);
+				global $argv;
+    			if (isset($argv))
+    				die("Invalid RunningTransfer-Class : ".$clientClass);
+    			else
+    				showErrorPage("Invalid RunningTransfer-Class : <br>".htmlentities($clientClass, ENT_QUOTES));
         }
     }
 

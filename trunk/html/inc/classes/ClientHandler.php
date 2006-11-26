@@ -95,31 +95,34 @@ class ClientHandler
      * @return $clientHandler ClientHandler-instance
      */
     function getClientHandlerInstance($fluxCfg, $clientType = '') {
-        // damn dirty but does php (< 5) have reflection or something like
-        // class-by-name ?
-        if ((isset($clientType)) && ($clientType != '')) {
+    	// create and return object-instance
+        if ($clientType != '') {
             $clientClass = $clientType;
             $fluxCfg["btclient"] = $clientType;
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
         $classFile = 'inc/classes/ClientHandler.'.$clientClass.'.php';
-        if (is_file($classFile)) {
-            require_once($classFile);
-            switch ($clientClass) {
-                case "tornado":
-                    return new ClientHandlerTornado(serialize($fluxCfg));
-                	break;
-                case "transmission":
-                    return new ClientHandlerTransmission(serialize($fluxCfg));
-                	break;
-                case "mainline":
-                    return new ClientHandlerMainline(serialize($fluxCfg));
-                	break;
-                case "wget":
-                    return new ClientHandlerWget(serialize($fluxCfg));
-                	break;
-            }
+        switch ($clientClass) {
+            case "tornado":
+            	require_once($classFile);
+                return new ClientHandlerTornado(serialize($fluxCfg));
+            case "transmission":
+            	require_once($classFile);
+                return new ClientHandlerTransmission(serialize($fluxCfg));
+            case "mainline":
+            	require_once($classFile);
+                return new ClientHandlerMainline(serialize($fluxCfg));
+            case "wget":
+            	require_once($classFile);
+                return new ClientHandlerWget(serialize($fluxCfg));
+            default:
+            	AuditAction($fluxCfg["constants"]["error"], "Invalid ClientHandler-Class : ".$clientClass);
+				global $argv;
+    			if (isset($argv))
+    				die("Invalid ClientHandler-Class : ".$clientClass);
+    			else
+    				showErrorPage("Invalid ClientHandler-Class : <br>".htmlentities($clientClass, ENT_QUOTES));
         }
     }
 

@@ -72,33 +72,34 @@ class AliasFile
     		else
     			showErrorPage("Invalid AliasFile : <br>".htmlentities($aliasname, ENT_QUOTES));
     	}
-    	// alias-file-path
-    	$inFile = $fluxCfg["transfer_file_path"].$aliasname;
-        // damn dirty but does php (< 5) have reflection or something like
-        // class-by-name ?
-        if ((isset($clientType)) && ($clientType != '')) {
+        // create and return object-instance
+        if ($clientType != '') {
             $clientClass = $clientType;
             $fluxCfg["btclient"] = $clientType;
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
         $classFile = 'inc/classes/AliasFile.'.$clientClass.'.php';
-        if (is_file($classFile)) {
-            require_once($classFile);
-            switch ($clientClass) {
-                case "tornado":
-                    return new AliasFileTornado($inFile, $user, serialize($fluxCfg));
-                	break;
-                case "transmission":
-                    return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
-                	break;
-                case "mainline":
-                    return new AliasFileMainline($inFile, $user, serialize($fluxCfg));
-                	break;
-                case "wget":
-                    return new AliasFileWget($inFile, $user, serialize($fluxCfg));
-                	break;
-            }
+        switch ($clientClass) {
+            case "tornado":
+            	require_once($classFile);
+                return new AliasFileTornado($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
+            case "transmission":
+            	require_once($classFile);
+                return new AliasFileTransmission($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
+            case "mainline":
+            	require_once($classFile);
+                return new AliasFileMainline($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
+            case "wget":
+            	require_once($classFile);
+                return new AliasFileWget($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
+            default:
+            	AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile-Class : ".$clientClass);
+				global $argv;
+    			if (isset($argv))
+    				die("Invalid AliasFile-Class : ".$clientClass);
+    			else
+    				showErrorPage("Invalid AliasFile-Class : <br>".htmlentities($clientClass, ENT_QUOTES));
         }
     }
 

@@ -65,31 +65,34 @@ class FluxdServiceMod
      * @return FluxdServiceMod-instance
      */
     function getFluxdServiceModInstance($fluxCfg, $fluxd, $moduleType) {
-        // damn dirty but does php (< 5) have reflection or something like
-        // class-by-name ?
+    	// create and return object-instance
         $classFile = 'inc/classes/Fluxd.'.$moduleType.'.php';
-        if (is_file($classFile)) {
-            require_once($classFile);
-            switch ($moduleType) {
-                case "Qmgr":
-                    return new FluxdQmgr(serialize($fluxCfg), $fluxd);
-                	break;
-                case "Fluxinet":
-                    return new FluxdFluxinet(serialize($fluxCfg), $fluxd);
-                	break;
-                case "Watch":
-                    return new FluxdWatch(serialize($fluxCfg), $fluxd);
-                	break;
-                case "Rssad":
-                    return new FluxdRssad(serialize($fluxCfg), $fluxd);
-                	break;                	
-                case "Trigger":
-                    return new FluxdTrigger(serialize($fluxCfg), $fluxd);
-                	break;
-                case "Clientmaint":
-                    return new FluxdClientmaint(serialize($fluxCfg), $fluxd);
-                	break;
-            }
+        switch ($moduleType) {
+            case "Qmgr":
+            	require_once($classFile);
+                return new FluxdQmgr(serialize($fluxCfg), $fluxd);
+            case "Fluxinet":
+            	require_once($classFile);
+                return new FluxdFluxinet(serialize($fluxCfg), $fluxd);
+            case "Watch":
+            	require_once($classFile);
+                return new FluxdWatch(serialize($fluxCfg), $fluxd);
+            case "Rssad":
+            	require_once($classFile);
+                return new FluxdRssad(serialize($fluxCfg), $fluxd);
+            case "Trigger":
+            	require_once($classFile);
+                return new FluxdTrigger(serialize($fluxCfg), $fluxd);
+            case "Clientmaint":
+            	require_once($classFile);
+                return new FluxdClientmaint(serialize($fluxCfg), $fluxd);
+            default:
+            	AuditAction($fluxCfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$moduleType);
+				global $argv;
+    			if (isset($argv))
+    				die("Invalid FluxdServiceMod-Class : ".$moduleType);
+    			else
+    				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($moduleType, ENT_QUOTES));
         }
     }
 
