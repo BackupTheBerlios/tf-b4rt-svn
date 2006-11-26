@@ -65,7 +65,7 @@ if (isAuthenticated() == 1) {
 	if ($cfg["webapp_locked"] == 1) {
 		// only superadmin can login when we are locked
 		if (! IsSuperAdmin()) {
-			header('location: locked.php');
+			@header('location: locked.php');
 			exit();
 		}
 	}
@@ -75,16 +75,24 @@ if (isAuthenticated() == 1) {
 	if ($credentials !== false) {
 		if (performAuthentication($credentials['username'], $credentials['password'], $credentials['md5pass']) == 1) {
 			if (isAuthenticated() != 1) {
-				header('location: login.php');
+				@header('location: login.php');
 				exit();
 			}
 			$currentUser = $cfg["user"];
+			// check if we are locked
+			if ($cfg["webapp_locked"] == 1) {
+				// only superadmin can login when we are locked
+				if (! IsSuperAdmin()) {
+					@header('location: locked.php');
+					exit();
+				}
+			}
 		} else {
-			header('location: login.php');
+			@header('location: login.php');
 			exit();
 		}
 	} else {
-		header('location: login.php');
+		@header('location: login.php');
 		exit();
 	}
 }
