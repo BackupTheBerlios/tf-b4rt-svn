@@ -7,26 +7,31 @@ $Id$
 *** code ***********************************************************************
 ********************************************************************************
 
-  - (3)
-    further enhance source of all 3 torrent-clients to print more usefull info
-    to the pre-transfer-logfile
+  - (1) (includes + depends on templates)
+    fix well known bugs (if possible)
+    + multi-upload on index-page not working in FF and Opera
+    + dir/filemanager : problems with files/dirs containing "&"
 
   - (2) (includes + depends on templates)
     user reported that current rss-page is messed. needs to be fixed if that is
     the case.
 
-  - (3)
-    make all upgrade.php-scripts "equal" to setup.php. unify where the sql-
-    states for install/upgrade are stored as its now a bit messy.
-
   - (2) (includes + depends on templates)
     per-user-settings : currently not in use at all.
     need to be added to all templates and code needs to be checked if still "ok"
 
-  - (1) (includes + depends on templates)
-    fix well known bugs (if possible)
-    + multi-upload on index-page not working in FF and Opera
-    + dir/filemanager : problems with files/dirs containing "&"
+  - (3)
+    make all upgrade.php-scripts "equal" to setup.php. unify where the sql-
+    states for install/upgrade are stored as its now a bit messy.
+
+  - (3)
+    rewrite superadmin-update as current implementation is only for a flat dir-
+    tree and not suited for dir-layout of new branch. (so both ends (client +
+    server can currently be seen as "broken"))
+
+  - (3)
+    further enhance source of all 3 torrent-clients to print more usefull info
+    to the pre-transfer-logfile
 
   - (3)
     finalize code
