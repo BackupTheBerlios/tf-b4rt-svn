@@ -188,7 +188,7 @@ function downloadFile($down) {
 				header("Content-transfer-encoding: binary\n");
 				header("Content-length: " . $filesize . "\n");
 				// write the session to close so you can continue to browse on the site.
-				@session_write_close("TorrentFlux");
+				@session_write_close();
 				$fp = popen("cat ".escapeshellarg($path), "r");
 				fpassthru($fp);
 				pclose($fp);
@@ -258,7 +258,7 @@ function downloadArchive($down) {
 			header("Content-Type: application/force-download");
 			header('Content-Disposition: attachment; filename="'.$headerName.'.'.$cfg["package_type"].'"');
 			// write the session to close so you can continue to browse on the site.
-			@session_write_close("TorrentFlux");
+			@session_write_close();
 			// Make it a bit easier for tar/zip.
 			chdir(dirname($down));
 			passthru($command);

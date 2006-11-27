@@ -351,7 +351,7 @@ class ClientHandler
             return;
         }
         // write the session to close so older version of PHP will not hang
-        @session_write_close("TorrentFlux");
+        @session_write_close();
         $transferRunningFlag = 1;
         if ($this->queue == 1) { // queue
 			require_once("inc/classes/Fluxd.php");
