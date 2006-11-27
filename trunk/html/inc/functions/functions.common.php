@@ -1367,7 +1367,7 @@ function clientCare($talk = false) {
 		if ($cfg['debuglevel'] > 1)
 			AuditAction($cfg["constants"]["debug"], "clientCare : transfer repaired : ".$transfer);
 		if ($talk)
-			echo "done.\n";
+			echo "done\n";
 	}
 }
 

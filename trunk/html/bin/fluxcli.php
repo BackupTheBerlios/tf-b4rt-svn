@@ -110,8 +110,12 @@ if ((isset($action)) && ($action != "")) {
 		    echo "Repairing torrentflux-b4rt Installation...";
 			repairTorrentflux();
         	echo "done\n";
-        	exit;
-			break;
+        	exit();
+		case "care":
+		    echo "Running clientCare...\n";
+			clientCare(true);
+        	echo "clientCare done\n";
+        	exit();
 		case "dump":
 			cliDumpDatabase(@$argv[2]);
 			break;
@@ -663,6 +667,7 @@ function printUsage() {
 	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
 	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
 	echo "                Doing this on a running ok flux _will_ screw up things. \n";
+	echo " <care>       : call clientCare and repair all died torrents. \n";
 	echo " <dump>       : dump database. \n";
 	echo "                extra-arg 1 : type : settings/users \n";
 	echo "\n";
@@ -681,6 +686,7 @@ function printUsage() {
     echo "fluxcli.php watch /bar/foo/ fluxuser\n";
     echo "fluxcli.php xfer month\n";
 	echo "fluxcli.php repair\n";
+	echo "fluxcli.php care\n";
 	echo "fluxcli.php dump settings\n";
 	echo "fluxcli.php dump users\n";
 	echo "\n";
