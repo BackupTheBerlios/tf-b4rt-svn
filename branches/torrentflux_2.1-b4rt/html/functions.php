@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // Start Session and grab user
-@session_start("TorrentFlux");
+@session_start();
 
 if(isset($_SESSION['user']))
     $cfg["user"] = strtolower($_SESSION['user']);

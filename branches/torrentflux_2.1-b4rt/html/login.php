@@ -33,7 +33,7 @@ initializeDatabase();
 loadSettings();
 
 // session start
-@session_start("TorrentFlux");
+@session_start();
 require_once("config.php");
 include("themes/".$cfg["default_theme"]."/index.php");
 global $cfg;

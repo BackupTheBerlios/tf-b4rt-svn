@@ -30,7 +30,7 @@ include_once('db.php');
 include_once("settingsfunctions.php");
 
 // Start Session and grab user
-session_start("TorrentFlux");
+@session_start();
 if (! isset($_SESSION['user'])) {
     @ob_end_clean();
     exit();

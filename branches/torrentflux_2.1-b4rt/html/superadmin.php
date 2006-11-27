@@ -1435,7 +1435,7 @@ function backupSend($filename, $delete = false) {
 	global $cfg;
 	$backupFile = $cfg["path"]. _DIR_BACKUP . '/' . $filename;
 	if ($delete) {
-		session_write_close();
+		@session_write_close();
 		ob_end_clean();
 		if (connection_status() != 0)
 			return false;

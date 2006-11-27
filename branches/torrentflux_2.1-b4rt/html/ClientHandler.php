@@ -321,7 +321,7 @@ class ClientHandler
             return;
         }
         // write the session to close so older version of PHP will not hang
-        session_write_close("TorrentFlux");
+        @session_write_close();
         $torrentRunningFlag = 1;
         if($this->af->running == "3") {
             // _queue_

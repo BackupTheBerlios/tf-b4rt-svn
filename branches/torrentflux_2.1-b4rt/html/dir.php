@@ -70,7 +70,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
             header("Content-transfer-encoding: binary\n");
             header("Content-length: " . file_size($path) . "\n");
             // write the session to close so you can continue to browse on the site.
-            session_write_close("TorrentFlux");
+            @session_write_close();
             //$fp = fopen($path, "r");
             $fp = popen("cat ".escapeshellarg($path), "r");
             fpassthru($fp);
@@ -131,7 +131,7 @@ if ($tar != "" && $cfg["enable_file_download"]) {
             header("Content-Type: application/force-download");
             header('Content-Disposition: attachment; filename="'.$sendname.'.'.$cfg["package_type"].'"');
             // write the session to close so you can continue to browse on the site.
-            session_write_close("TorrentFlux");
+            @session_write_close();
             // Make it a bit easier for tar/zip.
             chdir(dirname($tar));
             passthru($command);
