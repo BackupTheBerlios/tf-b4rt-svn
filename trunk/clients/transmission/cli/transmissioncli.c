@@ -622,7 +622,7 @@ int main(int argc, char ** argv) {
 
 	// print exit
 	if (tf_stat_file != NULL) { /* tfCLI */
-		fprintf(stderr, "transmission exit\n");
+		fprintf(stderr, "transmission exit.\n");
 	}
 
 cleanup:
