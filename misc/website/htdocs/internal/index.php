@@ -67,14 +67,86 @@ if (!isset($db)) {
 	echo "</table>";
 	// details-table
 	echo "<br>";
-	$query = 'SELECT * FROM tfb4rt_proxystats ORDER BY ct DESC';
-	$result = mysql_query($query) or die('query failed: ' . mysql_error());
+	$sort = "10"; // ct DESC
+	if (isset($_REQUEST['s'])) {
+		if (strlen($_REQUEST['s']) == 2)
+			$sort = $_REQUEST['s'];
+	}
+	$sortColumn = $sort{0};
+	$sortOrder = $sort{1};
+	$query = 'SELECT * FROM tfb4rt_proxystats ORDER BY';
+	switch ($sortColumn) {
+		case 0:
+			$query .= " ua";
+			break;
+		case 1:
+			$query .= " ct";
+			break;
+		case 2:
+			$query .= " ts";
+			break;
+	}
+	switch ($sortOrder) {
+		case 0:
+			$query .= " DESC";
+			break;
+		case 1:
+			$query .= " ASC";
+			break;
+	}
 	echo '<table border="1">';
 	echo "<tr>";
-	echo "<th>client</th>";
-	echo "<th>access-count</th>";
-	echo "<th>last access</th>";
+	// client
+	echo '<th>';
+	echo '<a href="'.$_SERVER['SCRIPT_NAME'].'?s=0';
+	if ($sortOrder == 0)
+		echo '1';
+	else
+		echo '0';
+	echo '">client';
+	if ($sortColumn == 0) {
+		if ($sortOrder == 0)
+			echo ' &uarr;';
+		else
+			echo ' &darr;';
+	}
+	echo '</a>';
+	echo '</th>';
+	// access-count
+	echo '<th>';
+	echo '<a href="'.$_SERVER['SCRIPT_NAME'].'?s=1';
+	if ($sortOrder == 0)
+		echo '1';
+	else
+		echo '0';
+	echo '">access-count';
+	if ($sortColumn == 1) {
+		if ($sortOrder == 0)
+			echo ' &uarr;';
+		else
+			echo ' &darr;';
+	}
+	echo '</a>';
+	echo '</th>';
+	// last access
+	echo '<th>';
+	echo '<a href="'.$_SERVER['SCRIPT_NAME'].'?s=2';
+	if ($sortOrder == 0)
+		echo '1';
+	else
+		echo '0';
+	echo '">last access';
+	if ($sortColumn == 2) {
+		if ($sortOrder == 0)
+			echo ' &uarr;';
+		else
+			echo ' &darr;';
+	}
+	echo '</a>';
+	echo '</th>';
+	//
 	echo "</tr>";
+	$result = mysql_query($query) or die('query failed: ' . mysql_error());
 	while ($line = mysql_fetch_array($result, MYSQL_ASSOC)) {
 		echo "<tr>";
 		foreach ($line as $col_value)
