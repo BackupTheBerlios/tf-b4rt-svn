@@ -1274,7 +1274,7 @@ function modProfileInfo($pid, $newProfile) {
 /**
  * Delete Profile Information
  *
- * @param unknown_type $pid
+ * @param $pid
  */
 function deleteProfileInfo($pid) {
 	global $db;
@@ -1285,12 +1285,17 @@ function deleteProfileInfo($pid) {
 
 /**
  * clientCare
+ *
+ * @param $talk : boolean if function should talk
  */
-function clientCare() {
+function clientCare($talk = false) {
 	global $cfg;
 	// sanity-check for transfers-dir
-	if (!is_dir($cfg["transfer_file_path"]))
+	if (!is_dir($cfg["transfer_file_path"])) {
+		if ($talk)
+			echo "invalid dir-settings. no dir : ".$cfg["transfer_file_path"]."\n";
 		return false;
+	}
 	// pid-files of transfer-clients
 	$pidFiles = array();
 	if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
@@ -1301,8 +1306,11 @@ function clientCare() {
 		@closedir($dirHandle);
 	}
 	// done if no pid-files found
-	if (count($pidFiles) < 1)
+	if (count($pidFiles) < 1) {
+		if ($talk)
+			echo "no pid-files found.\n";
 		return true;
+	}
 	// get process-list
 	$psString = trim(shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww"));
 	// test if client for pid is still up
@@ -1314,14 +1322,19 @@ function clientCare() {
 			array_push($bogusTransfers, $transfer);
 	}
 	// done if no stale pid-files
-	if (count($bogusTransfers) < 1)
+	if (count($bogusTransfers) < 1) {
+		if ($talk)
+			echo "no stale pid-files found.\n";
 		return true;
+	}
 	// repair the bogus clients
 	require_once("inc/classes/AliasFile.php");
 	foreach ($bogusTransfers as $bogusTransfer) {
+		$transfer = $bogusTransfer.".torrent";
+		if ($talk)
+			echo "repairing ".$transfer." ...";
 		$alias = $bogusTransfer.".stat";
 		$pidFile = $alias.".pid";
-		$transfer = $bogusTransfer.".torrent";
 		$settingsAry = loadTorrentSettings($transfer);
 		if ((isset($settingsAry)) && (is_array($settingsAry))) {
 			// this is a torrent-client
@@ -1353,6 +1366,8 @@ function clientCare() {
 		// DEBUG : log the repair of the bogus transfer
 		if ($cfg['debuglevel'] > 1)
 			AuditAction($cfg["constants"]["debug"], "clientCare : transfer repaired : ".$transfer);
+		if ($talk)
+			echo "done.\n";
 	}
 }
 

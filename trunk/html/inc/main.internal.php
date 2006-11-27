@@ -153,7 +153,7 @@ if (!(cacheIsSet($currentUser))) {
 	checkMainDirectories();
 
 	// client-care
-	clientCare();
+	clientCare(false);
 
 	// set session-settings
 	if ($cfg["enable_index_meta_refresh"] != 0)
