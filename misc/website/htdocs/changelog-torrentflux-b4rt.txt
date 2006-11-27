@@ -3,14 +3,21 @@ $Id$
 ================================================================================
 
 
-  torrentflux-b4rt 1.0 alpha2
+  torrentflux-b4rt svn-trunk
+  http://svn.berlios.de/wsvn/tf-b4rt/trunk/?op=log&rev=0
 
+--------------------------------------------------------------------------------
+
+  torrentflux-b4rt 1.0 alpha3
+  http://svn.berlios.de/wsvn/tf-b4rt/trunk/?op=log&rev=1688
+
+--------------------------------------------------------------------------------
+
+  torrentflux-b4rt 1.0 alpha2
   http://svn.berlios.de/wsvn/tf-b4rt/trunk/?op=log&rev=1522
 
 --------------------------------------------------------------------------------
 
-
   torrentflux-b4rt 1.0 alpha1
-
   http://svn.berlios.de/wsvn/tf-b4rt/trunk/?op=log&rev=1452
 
