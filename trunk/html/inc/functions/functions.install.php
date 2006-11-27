@@ -225,31 +225,33 @@ function send($string = "") {
 function displaySetupMessage($msg="A problem occured.", $status=false){
 	$thisMsg='<p><font color="'.($status ? "green" : "red").'"><strong>';
 	$thisMsg.= ($status ? "Ok" : "Error").': </strong></font>'.$msg.'</p>';
-	send($thisMsg);		
+	send($thisMsg);
 }
 
 /**
- * getSQL - assign SQL to an array for insertion into db
+ * initQueries - assign SQL to an array for insertion into db
  * @param $type - type of SQL data to get. Valid options are: install
- * @return $queries - array of 'type of queries' => 'db type' where type of queries are:
-					- data - actual data used by tfb
-					- test - queries to test db credentials provided by user
-					- create - creation of tables used by tb
+ * $queries : array of 'type of queries' => 'db type' where type of queries are:
+			- data - actual data used by tfb
+			- test - queries to test db credentials provided by user
+			- create - creation of tables used by tb
  */
- function getSQL($type = ""){
+ function initQueries($type = ""){
+ 	global $queries;
 	// sql-queries
 	$queries = array();
+	switch ($type) {
+		case "install":
 
-	if($type == "install"){
-		// -----------------------------------------------------------------------------
+		// ---------------------------------------------------------------------
 		// SQL : common
-		// -----------------------------------------------------------------------------
+		// ---------------------------------------------------------------------
 		$cdb = 'common';
-	
+
 		// sql-queries : Data
 		$cqt = 'data';
 		$queries[$cqt][$cdb] = array();
-	
+
 		// tf_settings
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('path','/usr/local/torrentflux/')");
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('advanced_start','1')");
@@ -411,12 +413,12 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_format','xml')");
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0')");
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0')");
-	
-		// -----------------------------------------------------------------------------
+
+		// ---------------------------------------------------------------------
 		// SQL : mysql
-		// -----------------------------------------------------------------------------
+		// ---------------------------------------------------------------------
 		$cdb = 'mysql';
-	
+
 		// sql-queries : Test
 		$cqt = 'test';
 		$queries[$cqt][$cdb] = array();
@@ -427,7 +429,7 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 		  PRIMARY KEY (tf_key)
 		) TYPE=MyISAM");
 		array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
-	
+
 		// sql-queries : Create
 		$cqt = 'create';
 		$queries[$cqt][$cdb] = array();
@@ -582,7 +584,7 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 		  tf_value TEXT NOT NULL,
 		  PRIMARY KEY  (tf_key)
 		) TYPE=MyISAM");
-	
+
 		// sql-queries : Data
 		$cqt = 'data';
 		$queries[$cqt][$cdb] = array();
@@ -590,12 +592,12 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 			array_push($queries[$cqt][$cdb], $dataQuery);
 		// tf_links
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
-	
-		// -----------------------------------------------------------------------------
+
+		// ---------------------------------------------------------------------
 		// SQL : sqlite
-		// -----------------------------------------------------------------------------
+		// ---------------------------------------------------------------------
 		$cdb = 'sqlite';
-	
+
 		// sql-queries : Test
 		$cqt = 'test';
 		$queries[$cqt][$cdb] = array();
@@ -605,7 +607,7 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 		  tf_value TEXT NOT NULL,
 		  PRIMARY KEY (tf_key) )");
 		array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
-	
+
 		// sql-queries : Create
 		$cqt = 'create';
 		$queries[$cqt][$cdb] = array();
@@ -760,9 +762,9 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 			array_push($queries[$cqt][$cdb], $dataQuery);
 		// tf_links
 		array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
-			// -----------------------------------------------------------------------------
+		// ---------------------------------------------------------------------
 		// SQL : postgres
-		// -----------------------------------------------------------------------------
+		// ---------------------------------------------------------------------
 		$cdb = 'postgres';
 				// sql-queries : Test
 		$cqt = 'test';
@@ -945,7 +947,7 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 		  tf_value TEXT DEFAULT '' NOT NULL,
 		  PRIMARY KEY (tf_key)
 		)");
-	
+
 		// sql-queries : Data
 		$cqt = 'data';
 		$queries[$cqt][$cdb] = array();
@@ -961,7 +963,9 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 		array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links))");
 		array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles))");
 		array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_log_cid_seq',(select case when max(cid)>0 then max(cid)+1 else 1 end from tf_log))");
+		break;
+
 	}
-	return $queries;
+
 }
 ?>

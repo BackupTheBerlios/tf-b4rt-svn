@@ -50,6 +50,8 @@ $databaseTypes['Postgres'] = 'pg_connect';
 $msgDbConfigMissing = 'Database configuration file <em>'._DIR._FILE_DBCONF.'</em> missing. ';
 $msgDbConfigMissing .= 'Setup cannot continue.  Please check the file exists and is readable by the webserver before continuing.';
 
+// init queries:
+// $queries = getSQL("install");
 
 // -----------------------------------------------------------------------------
 // Main
@@ -142,7 +144,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$line .= $_REQUEST["db_host"];
 			$line .= '"></td></tr>';
 			send($line);
-		
+
 		// MySQL and PostgreSQL have same data reqs, make it default case:
 		case "mysql":
 		case "postgres":
@@ -192,7 +194,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	$line .= '<td><input name="db_create" type="Checkbox" value="true" checked> <strong>Note:</strong> the next step will fail if the database already exists.';
 	$line .= '</td></tr>';
 	send($line);
-	
+
 	// pcon
 	$line = '<tr><td>Use Persistent Connection:';
 	$line .= '<td><input name="db_pcon" type="Checkbox" value="true"';
@@ -209,9 +211,6 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('<input type="submit" value="Continue">');
 	send('</form>');
 } elseif (isset($_REQUEST["14"])) {                                             // 14 - Database - creation + test
-	// Get queries:
-	$queries = getSQL("install");
-
 	$type = $_REQUEST["db_type"];
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
@@ -303,7 +302,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$databaseError = "Cannot connect to database to perform query tests.";
 			} else {
 				$databaseTestCount = 0;
-				
+
 				send('<ul>');
 				foreach ($queries['test'][strtolower($type)] as $databaseTypeName => $databaseQuery) {
 					send('<li/>');
@@ -405,8 +404,6 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h2>Next : Create Tables</h2>");
 	sendButton(16);
 } elseif (isset($_REQUEST["16"])) {                                             // 16 - Database - table-creation
-	$queries = getSQL("install");
-
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Database - Create Tables</h2>");
@@ -459,8 +456,6 @@ if (isset($_REQUEST["1"])) {                                                    
 		displaySetupMessage($msgDbConfigMissing, false);
 	}
 } elseif (isset($_REQUEST["17"])) {                                             // 17 - Database - data
-	$queries = getSQL("install");
-
 	sendHead(" - Database");
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Database - Insert Data Into Database</h2>");
@@ -539,7 +534,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				send("<p><strong>Important:</strong> this path <b>must</b> be writeable by the webserver user</p>");
 				send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 				send('<table border="0">');
-			
+
 				// path
 				$line = '<tr><td width="200"><strong>User Download Path:</strong></td>';
 				$line .= '<td><input name="path" type="Text" maxlength="254" size="40" value="';
@@ -645,7 +640,7 @@ if (isset($_REQUEST["1"])) {                                                    
 	send('</form>');
 } elseif (isset($_REQUEST["221"])) {
 	$OS = strtolower(exec("uname"));
-	
+
 	// Check for system tools like grep, awk, netstat, rar, etc:
 	sendHead(" - Configuration");
 	send("<h1>"._TITLE."</h1>");
@@ -669,16 +664,16 @@ if (isset($_REQUEST["1"])) {                                                    
 				// FreeBSD:
 				'/usr/local/bin',
 				'/usr/local/sbin',
-				
+
 				// NetBSD:
 				'/usr/pkgsrc/bin',
 				'/usr/pkgsrc/sbin',
 
-				// OpenBSD (same as fbsd?):				
+				// OpenBSD (same as fbsd?):
 				// Solaris (unsure):
 				// AN other:
-			);	
-			
+			);
+
 			// Array of binaries => default binary paths:
 			$bins = array(
 				'grep'		=> '/bin/grep',
@@ -693,13 +688,13 @@ if (isset($_REQUEST["1"])) {                                                    
 				'sockstat'	=> '/usr/bin/sockstat',
 				'vlc'		=> '/usr/local/bin/vlc'
 			);
-			
+
 			$pathErrCount = 0;
 			foreach ($bins as $bin => $path){
 				if($OS == "linux" && $bin == "sockstat"){
 					continue;
 				}
-				
+
 				$foundPath = "";
 				$isExe = false;
 				$line .= '<tr valign="top"><td>'.$bin.'</td><td>';
@@ -714,11 +709,11 @@ if (isset($_REQUEST["1"])) {                                                    
 						if( is_file($thisBin) ){
 							// Yay, found the file:
 							$foundPath = $thisBin;
-							
+
 							// Check executable bit:
 							if ( is_executable($foundPath) ){
 								$isExe = true;
-								
+
 								// Done with this exe, move onto next:
 								break;
 							}
@@ -730,7 +725,7 @@ if (isset($_REQUEST["1"])) {                                                    
 						$isExe = true;
 					}
 				}
-				
+
 				if(!empty($foundPath)){
 					$line .= $foundPath.'</td><td>Path found Ok. ';
 					if(!$isExe){
@@ -738,15 +733,15 @@ if (isset($_REQUEST["1"])) {                                                    
 					} else {
 						$line .= $foundPath.' is executable.';
 					}
-					
+
 					// Update path for this binary:
 					$databaseQuery = "UPDATE tf_settings SET tf_value='$foundPath' WHERE tf_key='bin_$bin'";
 					$dbCon->Execute($databaseQuery);
-	
+
 					if ($dbCon->ErrorNo() != 0) {
 						// Problem with query:
 						$line .= "<br/><br/>Error executing query:<br/><strong>$databaseQuery</strong>";
-					}	
+					}
 				} else {
 					// Didn't find this binary, let the user know:
 					$line .= '<font color="red">NOT FOUND</font></td>';
@@ -773,7 +768,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			send("<h2>Next: Server Settings Save</h2>");
 			send('<input type="submit" value="Continue">');
 			send('</form>');
-		}	
+		}
 	} else {
 		// stop:
 		displaySetupMessage($msgDbConfigMissing, false);
