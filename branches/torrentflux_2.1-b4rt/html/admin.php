@@ -2116,7 +2116,7 @@ function configSettings()
 
 		<!-- Move Hack -->
 		<tr>
-		  <td align="left" width="350" valign="top"><strong>Move Settings</strong><br>
+		  <td align="left" width="350" valign="top"><strong>Enable Move</strong><br>
 			Enable/Disable Moving Files into a specified dir:
 		  </td>
 		  <td valign="top"><select name="enable_move">
