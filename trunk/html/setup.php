@@ -27,10 +27,10 @@ else
     die("Fatal Error. version.php is missing.");
 
 // install-functions
-if (is_file('inc/functions/functions.install.php'))
-	require_once('inc/functions/functions.install.php');
+if ((@is_file('inc/install/functions.install.php')) === true)
+	require_once('inc/install/functions.install.php');
 else
-	die("Fatal Error. inc/functions/functions.install.php is missing.");
+	die("Fatal Error. inc/install/functions.install.php is missing.");
 
 // defines
 define('_NAME', 'torrentflux-b4rt');
@@ -50,8 +50,8 @@ $databaseTypes['Postgres'] = 'pg_connect';
 $msgDbConfigMissing = 'Database configuration file <em>'._DIR._FILE_DBCONF.'</em> missing. ';
 $msgDbConfigMissing .= 'Setup cannot continue.  Please check the file exists and is readable by the webserver before continuing.';
 
-// init queries:
-// $queries = getSQL("install");
+// init queries
+initQueries("install");
 
 // -----------------------------------------------------------------------------
 // Main

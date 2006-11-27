@@ -21,8 +21,7 @@ $Id$
     need to be added to all templates and code needs to be checked if still "ok"
 
   - (3)
-    make all upgrade.php-scripts "equal" to setup.php. unify where the sql-
-    states for install/upgrade are stored as its now a bit messy.
+    enhance all upgrade.php-scripts ("equal" to setup.php).
 
   - (3)
     rewrite superadmin-update as current implementation is only for a flat dir-
