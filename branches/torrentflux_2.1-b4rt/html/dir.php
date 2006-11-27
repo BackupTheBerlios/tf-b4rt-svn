@@ -232,10 +232,10 @@ function ListDirectory($dirName) {
                 echo "<tr bgcolor=\"".$bg."\"><td><a href=\"dir.php?dir=".urlencode($dir.$entry)."\"><img src=\"images/folder2.gif\" width=\"16\" height=\"16\" title=\"".$entry."\" border=\"0\" align=\"absmiddle\">".$entry."</a></td>";
                 // Some Stats dir hack
                 if ($cfg['enable_dirstats'] == 1) {
-                    $dudir = shell_exec($cfg['bin_du']." -sk -h ".escapeshellarg(correctFileName($dirName.$entry)));
+                    $dudir = @shell_exec($cfg['bin_du']." -sk -h ".escapeshellarg($dirName.$entry));
                     $dusize = explode("\t", $dudir);
                     $arStat = @lstat($dirName.$entry);
-                    $timeStamp = @filemtime($dirName.$entry); //$timeStamp = $arStat[10];
+                    $timeStamp = @filemtime($dirName.$entry);
                     echo "<td align=\"right\">".$dusize[0]."B</td>";
                     echo "<td width=140>".@date("m-d-Y h:i a", $timeStamp)."</td>";
                 } else {
