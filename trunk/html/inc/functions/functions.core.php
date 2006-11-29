@@ -1043,8 +1043,6 @@ function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
  */
 function resetTorrentTotals($torrent, $delete = false) {
 	global $cfg, $db;
-	if (!isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent))
-		return false;
 	// vars
 	$torrentId = getTorrentHash($torrent);
 	$alias = getAliasName($torrent);
@@ -1080,8 +1078,8 @@ function resetTorrentTotals($torrent, $delete = false) {
 function getTransferLog($transfer) {
 	global $cfg;
 	$emptyLog = "log empty";
-	// sanity-checks
-	if (!isset($transfer) || !preg_match('/^[a-zA-Z0-9._]+$/', $transfer))
+	// sanity-check
+	if (!isset($transfer) || (isValidTransfer($transfer) !== true))
 		return "invalid transfer";
 	// alias-name + log-file
 	$aliasName = getAliasName($transfer);
@@ -2626,12 +2624,11 @@ function getFileFilter($inArray) {
  */
 function getAliasName($inName) {
 	global $cfg;
-	$alias = preg_replace("/[^0-9a-z.]+/i",'_', $inName);
+	$alias = preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
 	$replaceArray = array();
 	foreach ($cfg['file_types_array'] as $ftype)
 		array_push($replaceArray, ".".$ftype);
-	$alias = str_replace($replaceArray, "", $alias);
-	return $alias;
+	return str_replace($replaceArray, "", $alias);
 }
 
 /**
@@ -2641,11 +2638,7 @@ function getAliasName($inName) {
  * @return string
  */
 function cleanFileName($inName) {
-	$replaceItems = array("?", "&", "'", "\"", "+", "@");
-	$cleanName = str_replace($replaceItems, "", $inName);
-	$cleanName = ltrim($cleanName, "-");
-	$cleanName = preg_replace("/[^0-9a-z.]+/i",'_', $cleanName);
-	return $cleanName;
+	return preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
 }
 
 /**
@@ -3110,7 +3103,7 @@ function IsForceReadMsg() {
  */
 function isValidTransfer($transfer) {
 	global $cfg;
-	return ((preg_match('/^[a-zA-Z0-9._]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
+	return ((preg_match('/^[a-zA-Z0-9._-]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
 }
 
 ?>

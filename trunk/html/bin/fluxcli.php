@@ -439,7 +439,6 @@ function cliInjectTorrent($tpath = "", $username = "") {
 	    $cfg["user"] = $username;
 	    $file_name = basename($tpath);
         $file_name = stripslashes($file_name);
-        $file_name = str_replace(array("'",","), "", $file_name);
         $file_name = cleanFileName($file_name);
         $ext_msg = "";
         $messages = "";
@@ -489,7 +488,6 @@ function cliWatchDir($tpath = "", $username = "") {
                 while (false !== ($file = readdir($dirHandle))) {
                     if ((strtolower((substr($file, -8)))) == ".torrent") {
                         $file_name = stripslashes($file);
-                        $file_name = str_replace(array("'",","), "", $file_name);
                         $file_name = cleanFileName($file_name);
                         echo "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...";
                         if ((is_file($watchDir.$file)) && (copy($watchDir.$file, $cfg["transfer_file_path"].$file_name))) {

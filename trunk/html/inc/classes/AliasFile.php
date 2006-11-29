@@ -64,7 +64,7 @@ class AliasFile
      */
     function getAliasFileInstance($aliasname, $user = "", $fluxCfg, $clientType = '') {
     	// check if aliasname is valid
-    	if (!preg_match('/^[a-zA-Z0-9._]+(stat)$/', $aliasname)) {
+    	if (!preg_match('/^[a-zA-Z0-9._-]+(stat)$/', $aliasname)) {
     		AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile : ".$fluxCfg["user"]." tried to access ".$aliasname);
     		global $argv;
     		if (isset($argv))

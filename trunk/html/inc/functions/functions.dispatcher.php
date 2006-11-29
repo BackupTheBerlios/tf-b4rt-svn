@@ -258,7 +258,6 @@ function indexProcessUpload() {
 	if (isset($_FILES['upload_file'])) {
 		if (!empty($_FILES['upload_file']['name'])) {
 			$file_name = stripslashes($_FILES['upload_file']['name']);
-			$file_name = str_replace(array("'",","), "", $file_name);
 			$file_name = cleanFileName($file_name);
 			if ($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
 				if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
@@ -333,7 +332,6 @@ function processFileUpload() {
 				continue;
 			}
 			$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
-			$file_name = str_replace(array("'",","), "", $file_name);
 			$file_name = cleanFileName($file_name);
 			$ext_msg = "";
 			$messages = "";
