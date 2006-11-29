@@ -204,7 +204,7 @@ function indexProcessDownload($url_upload) {
 		if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
 			if (is_file($cfg["transfer_file_path"].$file_name)) {
 				// Error
-				$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
+				$messages .= "ERROR: the file ".$file_name." already exists on the server.";
 				$ext_msg = "DUPLICATE :: ";
 			} else {
 				// open a file to write to
@@ -213,7 +213,7 @@ function indexProcessDownload($url_upload) {
 				fclose($fw);
 			}
 		} else {
-			$messages .= "<b>Error</b> Getting the File <b>".$file_name."</b>, Could be a Dead URL.";
+			$messages .= "ERROR: could not get ".$file_name.", could be a dead URL.";
 		}
 		if($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
@@ -264,7 +264,7 @@ function indexProcessUpload() {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error
-						$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
+						$messages .= "ERROR: the file ".$file_name." already exists on the server.";
 						$ext_msg = "DUPLICATE :: ";
 					} else {
 						if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
@@ -292,14 +292,14 @@ function indexProcessUpload() {
 								}
 							}
 						} else {
-							$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
+							$messages .= "ERROR: File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name;
 						}
 					}
 				} else {
-					$messages .= "<font color=\"#ff0000\" size=3>ERROR: The type of file you are uploading is not allowed.</font><br>";
+					$messages .= "ERROR: The type of file you are uploading is not allowed.";
 				}
 			} else {
-				$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, check file size limit.</font><br>";
+				$messages .= "ERROR: File not uploaded, check file size limit.";
 			}
 		}
 	}
@@ -340,7 +340,7 @@ function processFileUpload() {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error
-						$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
+						$messages .= "ERROR: the file ".$file_name." already exists on the server.";
 						$ext_msg = "DUPLICATE :: ";
 					} else {
 						if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
@@ -350,14 +350,14 @@ function processFileUpload() {
 							if ((isset($actionId)) && ($actionId > 1))
 								array_push($tStack,$file_name);
 						} else {
-							$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, file could not be found or could not be moved:<br>".$cfg["transfer_file_path"] . $file_name."</font><br>";
+							$messages .= "ERROR: File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name;
 					  	}
 					}
 				} else {
-					$messages .= "<font color=\"#ff0000\" size=3>ERROR: The type of file you are uploading is not allowed.</font><br>";
+					$messages .= "ERROR: The type of file you are uploading is not allowed.";
 				}
 			} else {
-				$messages .= "<font color=\"#ff0000\" size=3>ERROR: File not uploaded, check file size limit.</font><br>";
+				$messages .= "ERROR: File not uploaded, check file size limit.";
 			}
 			if ((isset($messages)) && ($messages != "")) {
 			  // there was an error

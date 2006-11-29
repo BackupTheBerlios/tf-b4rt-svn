@@ -2838,11 +2838,10 @@ function FetchHTML($url, $referer = "") {
 	$request = "";
 
 	// the raw HTTP response received from the remote webserver:
-	$reponse = "";
+	$response = "";
 
 	// $response stripped of HTTP response headers:
 	$rtnValue = "";
-
 
 	// Check to see if this site requires the use of cookies
 	if (!empty($cookie)) {
