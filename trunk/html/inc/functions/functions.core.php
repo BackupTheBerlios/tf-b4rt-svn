@@ -2905,7 +2905,7 @@ function FetchHTML($url, $referer = "") {
 	if (
 			($response == "" && function_exists("curl_init"))
 			||
-			(strpos($response, "HTTP/1.1 30") > 0 && function_exists("curl_init"))
+			(preg_match("#HTTP/1\.[01] 30#", $response) > 0 && function_exists("curl_init"))
 		){
 
 		// Give CURL a Try
