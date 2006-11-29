@@ -169,7 +169,8 @@ function indexDeQueueTransfer($transfer) {
  * @param $url_upload url of torrent to download
  */
 function indexProcessDownload($url_upload) {
-	global $cfg, $queueActive;
+	global $cfg, $queueActive, $messages;
+
 	if (!empty($url_upload)) {
 		$messages = "";
 		$arURL = explode("/", $url_upload);
@@ -193,28 +194,34 @@ function indexProcessDownload($url_upload) {
 		$tmpId = getRequestVar("id");
 		if(!empty($tmpId))
 			$url_upload .= "&id=".$tmpId;
+
 		// Call fetchtorrent to retrieve the torrent file
 		$output = FetchTorrent( $url_upload );
-		if (array_key_exists("save_torrent_name",$cfg)) {
-			if ($cfg["save_torrent_name"] != "")
-				$file_name = $cfg["save_torrent_name"];
-		}
-		$file_name = cleanFileName($file_name);
-		// if the output had data then write it to a file
-		if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
-			if (is_file($cfg["transfer_file_path"].$file_name)) {
-				// Error
-				$messages .= "ERROR: the file ".$file_name." already exists on the server.";
-				$ext_msg = "DUPLICATE :: ";
-			} else {
-				// open a file to write to
-				$fw = fopen($cfg["transfer_file_path"].$file_name,'w');
-				fwrite($fw, $output);
-				fclose($fw);
+
+		// Only process $output if no error messages were emitted in FetchTorrent:
+		if($messages == ""){
+			if (array_key_exists("save_torrent_name",$cfg)) {
+				if ($cfg["save_torrent_name"] != "")
+					$file_name = $cfg["save_torrent_name"];
 			}
-		} else {
-			$messages .= "ERROR: could not get ".$file_name.", could be a dead URL.";
+			$file_name = cleanFileName($file_name);
+			// if the output had data then write it to a file
+			if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
+				if (is_file($cfg["transfer_file_path"].$file_name)) {
+					// Error
+					$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
+					$ext_msg = "DUPLICATE :: ";
+				} else {
+					// open a file to write to
+					$fw = fopen($cfg["transfer_file_path"].$file_name,'w');
+					fwrite($fw, $output);
+					fclose($fw);
+				}
+			} else {
+				$messages .= "<b>Error</b> Getting the File <b>".$file_name."</b>, Could be a Dead URL.";
+			}
 		}
+
 		if($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
 			header("location: index.php?iid=index&messages=".urlencode($messages));

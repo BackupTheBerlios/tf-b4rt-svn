@@ -2662,10 +2662,22 @@ function cleanURL($url) {
  * @return string
  */
 function FetchTorrent($url) {
-	global $cfg, $db;
+	global $cfg, $db, $messages;
+
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", $_SERVER['HTTP_USER_AGENT']);
 	$domain	 = parse_url($url);
+
+	// Check we have a remote URL:
+	if(!isset($domain["host"])){
+		// Not a remote URL:
+		$messages=$thisMsg="The torrent requested for download: ".$url." is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
+		AuditAction($cfg["constants"]["error"], $thisMsg);
+
+		// return empty HTML:
+		return($html="");
+	}
+
 	if (strtolower(substr($domain["path"], -8)) != ".torrent") {
 		// Check know domain types
 		if (strpos(strtolower($domain["host"]), "mininova") !== false) {
