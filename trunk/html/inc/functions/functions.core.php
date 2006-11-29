@@ -3110,7 +3110,7 @@ function IsForceReadMsg() {
  */
 function isValidTransfer($transfer) {
 	global $cfg;
-	return ((preg_match('/^[a-zA-Z0-9._]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) > 0);
+	return ((preg_match('/^[a-zA-Z0-9._]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
 }
 
 ?>
