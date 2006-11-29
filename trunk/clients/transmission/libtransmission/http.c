@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.c 920 2006-09-25 18:37:45Z joshe $
+ * $Id: http.c 1141 2006-11-28 21:45:37Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -679,7 +679,7 @@ static int
 checklength( tr_http_t * http )
 {
     char * buf;
-    int    num, ii, len;
+    int    num, ii, len, lastnum;
 
     switch( http->lengthtype )
     {
@@ -702,10 +702,19 @@ checklength( tr_http_t * http )
             break;
 
         case HTTP_LENGTH_CHUNKED:
-            buf = http->header.buf;
+            buf     = http->header.buf;
+            lastnum = -1;
             while( http->header.used > http->chunkoff + http->chunklen )
             {
                 num = http->chunkoff + http->chunklen;
+                if( lastnum == num )
+                {
+                    /* ugh, some trackers send Transfer-encoding: chunked
+                       and then don't encode the body */
+                    http->lengthtype = HTTP_LENGTH_EOF;
+                    return checklength( http );
+                }
+                lastnum = num;
                 while(  http->header.used > num && NL( buf[num] ) )
                 {
                     num++;
@@ -721,6 +730,8 @@ checklength( tr_http_t * http )
                     len = strtol( buf + num, NULL, 16 );
                     if( 0 == len )
                     {
+                        /* XXX should handle invalid length
+                               differently than 0 length chunk */
                         http->header.used = http->chunkoff + http->chunklen;
                         return 1;
                     }
