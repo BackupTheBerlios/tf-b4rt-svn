@@ -199,7 +199,7 @@ function indexProcessDownload($url_upload) {
 		$output = FetchTorrent( $url_upload );
 
 		// Only process $output if no error messages were emitted in FetchTorrent:
-		if($messages == ""){
+		if ($messages == ""){
 			if (array_key_exists("save_torrent_name",$cfg)) {
 				if ($cfg["save_torrent_name"] != "")
 					$file_name = $cfg["save_torrent_name"];
@@ -209,7 +209,7 @@ function indexProcessDownload($url_upload) {
 			if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
 				if (is_file($cfg["transfer_file_path"].$file_name)) {
 					// Error
-					$messages .= "<b>Error</b> with <b>".$file_name."</b>, the file already exists on the server.";
+					$messages .= "ERROR: the file ".$file_name." already exists on the server.";
 					$ext_msg = "DUPLICATE :: ";
 				} else {
 					// open a file to write to
@@ -218,11 +218,11 @@ function indexProcessDownload($url_upload) {
 					fclose($fw);
 				}
 			} else {
-				$messages .= "<b>Error</b> Getting the File <b>".$file_name."</b>, Could be a Dead URL.";
+				$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
 			}
 		}
 
-		if($messages != "") { // there was an error
+		if ($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
 			header("location: index.php?iid=index&messages=".urlencode($messages));
 			exit();

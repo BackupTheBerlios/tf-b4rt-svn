@@ -2671,7 +2671,7 @@ function FetchTorrent($url) {
 	// Check we have a remote URL:
 	if(!isset($domain["host"])){
 		// Not a remote URL:
-		$messages=$thisMsg="The torrent requested for download: ".$url." is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
+		$messages=$thisMsg="The torrent requested for download (".$url.") is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
 		AuditAction($cfg["constants"]["error"], $thisMsg);
 
 		// return empty HTML:
