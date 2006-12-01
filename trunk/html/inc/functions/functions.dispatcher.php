@@ -136,6 +136,8 @@ function indexStopTransfer($transfer) {
  * @param $transfer
  */
 function indexDeleteTransfer($transfer) {
+	global $cfg;
+
 	if (isValidTransfer($transfer) === true) {
 		deleteTransfer($transfer, getRequestVar('alias_file'));
 		header("location: index.php?iid=index");
