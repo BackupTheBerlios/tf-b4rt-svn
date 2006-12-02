@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.h 261 2006-05-29 21:27:31Z titer $
+ * $Id: tracker.h 1149 2006-12-02 01:46:54Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -37,17 +37,31 @@ void           tr_trackerClose     ( tr_tracker_t * );
 /***********************************************************************
  * tr_trackerSeeders
  ***********************************************************************
- * Looks for the seeders/leechers as returned by the tracker.
+ * Looks for the seeders as returned by the tracker.
  **********************************************************************/
-int			    tr_trackerSeeders  ( tr_tracker_t * );
+int tr_trackerSeeders  ( tr_tracker_t * );
 
 /***********************************************************************
  * tr_trackerLeechers
  ***********************************************************************
- * Looks for the seeders/leechers as returned by the tracker.
+ * Looks for the leechers as returned by the tracker.
  **********************************************************************/
-int			    tr_trackerLeechers ( tr_tracker_t * );
+int tr_trackerLeechers ( tr_tracker_t * );
 
-int            tr_trackerScrape    ( tr_torrent_t *, int *, int * );
+/***********************************************************************
+ * tr_trackerDownloaded
+ ***********************************************************************
+ * Looks for number of completed downloads as returned by the tracker
+ * (from scrape).
+ **********************************************************************/
+int tr_trackerDownloaded( tr_tracker_t * tc );
+
+/***********************************************************************
+ * tr_trackerScrape
+ ***********************************************************************
+ * Attempt a blocking scrape and return the seeders, leechers, and
+ * completed downloads if successful.
+ **********************************************************************/
+int tr_trackerScrape( tr_torrent_t * tor, int * s, int * l, int * d );
 
 #endif
