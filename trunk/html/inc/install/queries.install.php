@@ -213,7 +213,7 @@ $queries[$cqt][$cdb] = array();
 // tf_cookies
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_cookies (
-  cid int(5) NOT NULL auto_increment,
+  cid int(10) NOT NULL auto_increment,
   uid int(10) NOT NULL default '0',
   host VARCHAR(255) default NULL,
   data VARCHAR(255) default NULL,

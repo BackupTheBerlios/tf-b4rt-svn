@@ -212,16 +212,6 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
-// tf_links
-array_push($queries[$cqt][$cdb], "DROP TABLE IF EXISTS tf_links");
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_links (
-  lid int(10) NOT NULL auto_increment,
-  url VARCHAR(255) NOT NULL default '',
-  sitename VARCHAR(255) NOT NULL default 'Old Link',
-  sort_order TINYINT(3) UNSIGNED default '0',
-  PRIMARY KEY  (lid)
-) TYPE=MyISAM");
 // tf_torrents
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_torrents (
