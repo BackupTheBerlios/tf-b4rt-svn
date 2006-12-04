@@ -62,9 +62,15 @@ foreach($arLinks as $link) {
 		'lid' => $lid,
 		'counter' => $counter,
 		'counter2' => $counter2,
+		'last_link' => false
 		)
 	);
 }
+
+// Set a tmpl var to indicate this is last link so we can format/align the last
+// link correctly:
+$link_list[count($link_list)-1]['last_link']=true;
+
 $tmpl->setloop('link_list', $link_list);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 //
@@ -74,6 +80,7 @@ $tmpl->setvar('_FULLSITENAME', $cfg['_FULLSITENAME']);
 $tmpl->setvar('_UPDATE', $cfg['_UPDATE']);
 $tmpl->setvar('_DELETE', $cfg['_DELETE']);
 $tmpl->setvar('_EDIT', $cfg['_EDIT']);
+
 //
 tmplSetTitleBar($cfg['_ADMINEDITLINKS']);
 tmplSetAdminMenu();
@@ -84,5 +91,4 @@ $tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();
-
 ?>

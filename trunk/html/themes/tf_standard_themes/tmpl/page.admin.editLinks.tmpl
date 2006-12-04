@@ -40,9 +40,9 @@
 							<a href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
 						<tmpl_else>
 							<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
-						</tmpl_if>	
+						</tmpl_if>
 					</td>
-					<td align=right width='36'>
+					<td align=<tmpl_if name="last_link">left<tmpl_else>right</tmpl_if> width='36'>
 						<tmpl_if name="counter" value="2">
 							<a href='admin.php?op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='themes/tf_standard_themes/images/uparrow.png' width='16' height='16' border='0' title='Move link up' align='absmiddle' alt='Up'></a><tmpl_elseif name="counter" value="1">
 							<img src='themes/tf_standard_themes/images/blank.gif' width='16' align='absmiddle'>
