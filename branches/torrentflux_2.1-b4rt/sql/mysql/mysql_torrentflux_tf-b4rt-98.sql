@@ -2,7 +2,7 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-File for 'Torrentflux-2.1-b4rt-97'
+-- MySQL-File for 'Torrentflux-2.1-b4rt-98'
 --
 -- This Stuff is provided 'as-is'. In no way will the author be held
 -- liable for any damages to your soft- or hardware from this.
@@ -12,7 +12,7 @@
 -- tf_cookies
 --
 CREATE TABLE tf_cookies (
-  cid int(5) NOT NULL auto_increment,
+  cid int(10) NOT NULL auto_increment,
   uid int(10) NOT NULL default '0',
   host VARCHAR(255) default NULL,
   data VARCHAR(255) default NULL,
