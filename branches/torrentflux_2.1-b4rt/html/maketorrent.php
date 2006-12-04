@@ -284,7 +284,7 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
 <html>
 <HEAD>
     <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1" />
-    <META HTTP-EQUIV="Pragma" CONTENT="no-cache; charset=<?php echo _CHARSET ?>" />
+    <META HTTP-EQUIV="Pragma" CONTENT="no-cache" charset="<?php echo _CHARSET ?>">
     <TITLE><?php echo $cfg["pagetitle"]; ?> - Torrent Maker</TITLE>
     <LINK REL="icon" HREF="images/favicon.ico" TYPE="image/x-icon" />
     <LINK REL="shortcut icon" HREF="images/favicon.ico" TYPE="image/x-icon" />
@@ -472,16 +472,15 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
                                                 </tr>
                                                 <tr>
                                                     <td><img align="absmiddle" src="images/info.gif" onmouseover="return escape(piece);" hspace="1" />Piece size:</td>
-                                                    <td><select id="piecesize" name="piecesize">
-                                                        <option id="0" value="0" selected>0 (Auto)</option>
-                                                        <!-- Removed for now as it doesn't seem to be working with creating torrents (??) -->
-                                                        <!--
-                                                        <option id="256" value="256">256</option>
-                                                        <option id="512" value="512">512</option>
-                                                        <option id="1024" value="1024">1024</option>
-                                                        <option id="2048" value="2048">2048</option>
-                                                        -->
-                                                    </select> bytes</td>
+													<td>
+														<select id="piecesize" name="piecesize">
+	                                                        <option id="0" value="0" selected>0 (Auto)</option>
+	                                                        <option id="256" value="18">256</option>
+	                                                        <option id="512" value="19">512</option>
+	                                                        <option id="1024" value="20">1024</option>
+	                                                        <option id="2048" value="21">2048</option>
+														</select> bytes
+													</td>
                                                 </tr>
                                                 <tr>
                                                     <td valign="top"><img align="absmiddle" src="images/info.gif" onmouseover="return escape(comnt);" hspace="1" />Comments:</td>
