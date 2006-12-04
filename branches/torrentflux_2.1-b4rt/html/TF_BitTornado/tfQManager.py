@@ -4,8 +4,6 @@
 
 # v 1.01 Mar 20, 06 
 
-# $Id$
-
 import commands, os, re, sys
 from os import popen, getpid, remove
 from sys import argv, stdout
@@ -141,13 +139,15 @@ def run(qDirectory,maxSvrThreads,maxUsrThreads,sleepInterval,execPath):
                                                     # and creates a pid file.
                                                     # once this happens we can remove the Qinfo.
                                                     # 
-                                                    while 1:
+                                                    for i in range(5):
                                                         try:
                                                             time.sleep(2)
                                                             f=open(statsFile+".pid",'r')
                                                             f.close()
                                                             break
                                                         except:
+                                                            if i == 5:
+                                                                if __debug__: traceMsg("pid file not created.  Continue.")
                                                             continue
 
                                                     # Ok this one started Remove Qinfo File.
