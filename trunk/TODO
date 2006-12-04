@@ -13,8 +13,7 @@ $Id$
     + dir/filemanager : problems with files/dirs containing "&"
 
   - (2) (includes + depends on templates)
-    user reported that current rss-page is messed. needs to be fixed if that is
-    the case.
+    rss-page (index.php?iid=readrss) results from different feed-sources messed.
 
   - (2) (includes + depends on templates)
     per-user-settings : currently not in use at all.
