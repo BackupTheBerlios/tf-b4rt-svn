@@ -162,14 +162,14 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-94
 
 
 -----------------------------------------------------------------
-Manual Upgrade from TorrentFlux 2.1
+Manual Upgrade from TorrentFlux 2.1/2.2
 -----------------------------------------------------------------
 
 1. If QueueManager is running dequeue all torrents and stop it.
 
 2. Stop all transfers.
 
-3. Delete content of docroot of the 2.1 installation. (recursive)
+3. Delete content of docroot of the 2.1/2.2 installation. (recursive)
 
 4. Untar the package into a directory then copy the contents of
    the "html" folder into your web site directory.
@@ -178,13 +178,14 @@ Manual Upgrade from TorrentFlux 2.1
 
 5. Import the Update-sql-script.
    You may specify the type of the database you want to use in
-   the file "config.db.php", but the examples here use MySQL.
+   the file "config.db.php", but the examples here use MySQL for
+   update from TorrentFlux 2.2.
 
-   "mysql_update_torrentflux21.to.tf-b4rt-97.sql" contains the
+   "mysql_update_torrentflux22.to.tf-b4rt-97.sql" contains the
    commands to update the table structure and the default data.
    Import the script into your torrentflux database.
 
-   mysql torrentflux < mysql_update_torrentflux21.to.tf-b4rt-97.sql
+   mysql torrentflux < mysql_update_torrentflux22.to.tf-b4rt-97.sql
    Or load the script with PHPMyAdmin (web interface)
 
 6. rename the file "config.db.php.dist" to "config.db.php" and
