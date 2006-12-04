@@ -61,7 +61,6 @@ tmplInitializeInstance($cfg["theme"], "page.readrss.tmpl");
 // Loop through each RSS feed
 $rss_list = array();
 foreach ($arURL as $rid => $url) {
-
 	if (($rs = $rss->get($url))) {
 		if(!empty( $rs["items"])) {
 			// Check this feed has a title tag:
