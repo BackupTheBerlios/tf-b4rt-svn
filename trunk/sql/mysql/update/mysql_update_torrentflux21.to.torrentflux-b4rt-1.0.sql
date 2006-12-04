@@ -149,7 +149,7 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 -- alter
 --
 ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
-ALTER TABLE tf_cookies CHANGE `cid` `cid` INT(5) NOT NULL AUTO_INCREMENT;
+ALTER TABLE tf_cookies CHANGE `cid` `cid` INT(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- updates
