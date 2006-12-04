@@ -61,8 +61,14 @@ tmplInitializeInstance($cfg["theme"], "page.readrss.tmpl");
 // Loop through each RSS feed
 $rss_list = array();
 foreach ($arURL as $rid => $url) {
-	if (($rs = $rss->get($url)) && (isset($rs["title"]))) {
+
+	if (($rs = $rss->get($url))) {
 		if(!empty( $rs["items"])) {
+			// Check this feed has a title tag:
+			if(!isset($rs["title"]) || empty($rs["title"])){
+				$rs["title"] = "Feed URL ".htmlentities($url, ENT_QUOTES)." Note: this feed does not have a valid 'title' tag";
+			}
+
 			// Cache rss feed so we don't have to call it again
 			$rssfeed[] = $rs;
 			$stat = 1;
@@ -70,6 +76,7 @@ foreach ($arURL as $rid => $url) {
 			$rssfeed[] = "";
 			$stat = 2;
 		}
+
 		array_push($rss_list, array(
 			'stat' => $stat,
 			'rid' => $rid,
