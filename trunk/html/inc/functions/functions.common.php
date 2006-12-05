@@ -59,7 +59,6 @@ function tmplSetIndexPageSettingsForm() {
 
 /**
  * set vars for form of good looking stats (0-63)
- *
  */
 function tmplSetGoodLookingStatsForm() {
 	global $cfg, $tmpl;
@@ -129,7 +128,6 @@ function tmplSetDirTree($dir, $maxdepth) {
 
 /**
  * set vars for form of move-settings
- *
  */
 function tmplSetMoveSettings() {
 	global $cfg, $tmpl;
@@ -178,12 +176,8 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 	// exec query
 	$result = $db->Execute($sql);
 	showError($db,$sql);
-	list($uid,$hits,$cfg["hide_offline"],$cfg["theme"],$cfg["language_file"]) = $result->FetchRow();
-	if(!array_key_exists("shutdown",$cfg))
-		$cfg['shutdown'] = '';
-	if(!array_key_exists("upload_rate",$cfg))
-		$cfg['upload_rate'] = '';
-	if($result->RecordCount() == 1) { // suc. auth.
+	list($uid, $hits, $cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $result->FetchRow();
+	if ($result->RecordCount() == 1) { // suc. auth.
 		// Add a hit to the user
 		$hits++;
 		$sql = 'select * from tf_users where uid = '.$uid;
@@ -193,9 +187,7 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 						'hits'=>$hits,
 						'last_visit'=>$db->DBDate(time()),
 						'theme'=>$cfg['theme'],
-						'language_file'=>$cfg['language_file'],
-						'shutdown'=>$cfg['shutdown'],
-						'upload_rate'=>$cfg['upload_rate']
+						'language_file'=>$cfg['language_file']
 					);
 		$sql = $db->GetUpdateSQL($rs, $rec);
 		$result = $db->Execute($sql);
@@ -335,7 +327,6 @@ function firstLogin($username = '', $password = '') {
 
 /**
  * prune db
- *
  */
 function PruneDB() {
 	global $cfg, $db;

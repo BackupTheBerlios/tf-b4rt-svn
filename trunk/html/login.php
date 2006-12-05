@@ -62,7 +62,7 @@ switch ($cfg['auth_type']) {
 			exit();
 		}
 		break;
-	case 1: /* Form-Based Auth + "Remember Me"-cookie */
+	case 1: /* Form-Auth + Cookie */
 		$cookieDelim = '|';
 		// check if login-request
 		$isCookieLoginRequest = getRequestVar('docookielogin');
@@ -96,6 +96,39 @@ switch ($cfg['auth_type']) {
 					$tmpl->setvar('cookiepass', $creds[1]);
 				}
 			}
+		}
+		break;
+	case 4: /* Form-Auth + Image-Validation */
+		// image functions
+		require_once('inc/functions/functions.image.php');
+		//
+		$user = getRequestVar('username');
+		$iamhim = addslashes(getRequestVar('iamhim'));
+		$md5password = "";
+		$isImageSupported = imageIsSupported();
+		if (!empty($user)) {
+			$isLoginRequest = true;
+			// image-validation
+			if ($isImageSupported) {
+				$secCode = getRequestVar('security');
+				$rndChk = getRequestVar('rnd_chk');
+				if ($secCode !== loginImageCode($cfg["db_user"], $rndChk)) {
+					// log this
+					AuditAction($cfg["constants"]["access_denied"], "FAILED IMAGE-VALIDATION: ".$user);
+					// flush credentials if sec-code-validation fails (-> login-failure)
+					$user = "";
+					$iamhim = "";
+				}
+			}
+		}
+		if ($isImageSupported) {
+			$tmpl->setvar('imageSupported', 1);
+			// rand
+			mt_srand((double)microtime() * 1000000);
+			$rnd = mt_rand(0, 1000000);
+			$tmpl->setvar('rnd', $rnd);
+		} else {
+			$tmpl->setvar('imageSupported', 0);
 		}
 		break;
 	case 0: /* Form-Based Auth Standard */

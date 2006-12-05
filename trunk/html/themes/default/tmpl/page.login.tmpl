@@ -62,7 +62,7 @@
 																		<tr>
 																			<td align="center" colspan="2"><strong>Login as different User :</strong></td>
 																		</tr>
-																		<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
+																		<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 																		<input name="docookieloginnew" type="Hidden" value="true">
 																		<tr>
 																			<td align="right">Username: </td>
@@ -77,11 +77,11 @@
 																			<td align="left"><input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																		</tr>
 																		<tr>
-																			<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
+																			<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>
 																		</tr>
 																		</form>
 																	<tmpl_else>
-																		<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
+																		<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 																		<input name="docookieloginnew" type="Hidden" value="true">
 																		<tr>
 																			<td align="right">Username: </td>
@@ -96,12 +96,37 @@
 																			<td align="left"><input type="checkbox" name="setcookie" value="true" checked size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																		</tr>
 																		<tr>
-																			<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
+																			<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>
 																		</tr>
 																		</form>
 																	</tmpl_if>
+																<tmpl_elseif name="auth_type" value="4">
+																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(<tmpl_var name="imageSupported">)">
+																	<tr>
+																		<td align="right">Username: </td>
+																		<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
+																	</tr>
+																	<tr>
+																		<td align="right">Password:</td>
+																		<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+																	</tr>
+																	<tmpl_if name="imageSupported" value="1">
+											                            <tr>
+											                                <td align="right"><img border="1" align="middle" src="image.php?i=login&rnd=<tmpl_var name="rnd">"> : </td>
+											                                <td><input type="text" name="security" value="" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
+											                            </tr>
+											                            <input type="Hidden" name="rnd_chk" value="<tmpl_var name="rnd">">
+											                        <tmpl_else>
+											                            <tr>
+											                                <td colspan="2" align="center"><img border="0" align="middle" src="image.php?i=notsup"></td>
+											                            </tr>
+											                        </tmpl_if>
+																	<tr>
+																		<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>
+																	</tr>
+																	</form>
 																<tmpl_else>
-																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit()">
+																	<form name="theForm" action="login.php" method="post" onsubmit="return loginSubmit(0)">
 																	<tr>
 																		<td align="right">Username: </td>
 																		<td><input type="text" name="username" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000;" /></td>
@@ -111,7 +136,7 @@
 																		<td><input type="password" name="iamhim" size="15" style="font-family:verdana,helvetica,sans-serif; font-size:9px; color:#000" /></td>
 																	</tr>
 																	<tr>
-																		<td colspan="2" align="center"><input class="button" type="submit" value="Login"  /></td>
+																		<td colspan="2" align="center"><input class="button" type="submit" value="Login" /></td>
 																	</tr>
 																	</form>
 																</tmpl_if>

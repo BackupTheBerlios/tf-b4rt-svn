@@ -354,20 +354,22 @@ function getCredentials() {
 			return $retVal;
 		}
 	}
-	// check for http-post/get-supplied credentials
-	if (isset($_REQUEST['username'])) {
-		if (isset($_REQUEST['md5pass'])) {
-			$retVal = array();
-			$retVal['username'] = $_REQUEST['username'];
-			$retVal['password'] = "";
-			$retVal['md5pass'] = $_REQUEST['md5pass'];
-			return $retVal;
-		} elseif (isset($_REQUEST['iamhim'])) {
-			$retVal = array();
-			$retVal['username'] = $_REQUEST['username'];
-			$retVal['password'] = addslashes($_REQUEST['iamhim']);
-			$retVal['md5pass'] = "";
-			return $retVal;
+	// check for http-post/get-supplied credentials (only if auth-type not 4)
+	if ($cfg['auth_type'] != 4) {
+		if (isset($_REQUEST['username'])) {
+			if (isset($_REQUEST['md5pass'])) {
+				$retVal = array();
+				$retVal['username'] = $_REQUEST['username'];
+				$retVal['password'] = "";
+				$retVal['md5pass'] = $_REQUEST['md5pass'];
+				return $retVal;
+			} elseif (isset($_REQUEST['iamhim'])) {
+				$retVal = array();
+				$retVal['username'] = $_REQUEST['username'];
+				$retVal['password'] = addslashes($_REQUEST['iamhim']);
+				$retVal['md5pass'] = "";
+				return $retVal;
+			}
 		}
 	}
 	// check for cookie-supplied credentials (only if activated)
@@ -407,11 +409,11 @@ function isAuthenticated() {
 	$recordset = $db->Execute($sql);
 	showError($db, $sql);
 	if ($recordset->RecordCount() != 1) {
-		AuditAction($cfg["constants"]["error"], "FAILED AUTH: ".$cfg["user"]);
+		AuditAction($cfg["constants"]["access_denied"], "FAILED AUTH: ".$cfg["user"]);
 		@session_destroy();
 		return 0;
 	}
-	list ($uid, $hits) = $recordset->FetchRow();
+	list($uid, $hits) = $recordset->FetchRow();
 	// hold the uid in cfg-array
 	$cfg["uid"] = $uid;
 	// increment hit-counter

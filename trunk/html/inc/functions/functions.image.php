@@ -124,7 +124,6 @@ function imageOutputLabelFromImage($bgimage, $label,
 	if (extension_loaded('gd')) {
 		$imageTypes = imagetypes();
 		// png
-
 		if ($imageTypes & IMG_PNG) {
 			$imp = @imagecreatefrompng($bgimage.".png");
 			if ($imp !== false) {
@@ -136,7 +135,6 @@ function imageOutputLabelFromImage($bgimage, $label,
 				exit();
 			}
 		}
-
 		// jpg
 		if ($imageTypes & IMG_JPG) {
 			$imj = @imagecreatefromjpeg($bgimage.".jpg");

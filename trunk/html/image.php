@@ -56,6 +56,12 @@ switch ($imageOp) {
 			$bgImage = 'themes/tf_standard_themes/images/code_bg';
 		imageOutputLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
 
+	case "notsup":
+		// check for valid referer
+		imageCheckReferer();
+		// output image
+		imageOutputNotSupported();
+
 	case "noop":
 	default:
 		// check for valid referer
