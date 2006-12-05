@@ -61,6 +61,7 @@ tmplInitializeInstance($cfg["theme"], "page.readrss.tmpl");
 // Loop through each RSS feed
 $rss_list = array();
 foreach ($arURL as $rid => $url) {
+	if(isset($_REQUEST["debug"])){$rss->cache_time=0;}
 	if (($rs = $rss->get($url))) {
 		if(!empty( $rs["items"])) {
 			// Check this feed has a title tag:
@@ -68,76 +69,48 @@ foreach ($arURL as $rid => $url) {
 				$rs["title"] = "Feed URL ".htmlentities($url, ENT_QUOTES)." Note: this feed does not have a valid 'title' tag";
 			}
 
-			// Cache rss feed so we don't have to call it again
-			$rssfeed[] = $rs;
+			// Check each item in this feed has link, title and publication date:
+			for ($i=0; $i < count($rs["items"]); $i++) {
+				// Don't include feed items without a link:
+				if(!isset($rs["items"][$i]["link"]) || empty($rs["items"][$i]["link"])){
+					array_splice ($rs["items"], $i, 1);
+
+					// Continue to next feed item:
+					continue;
+				}
+
+				// Check item's pub date:
+				if(empty($rs["items"][$i]["pubDate"]) || empty($rs["items"][$i]["pubDate"])){
+					$rs["items"][$i]["pubDate"] = "Unknown publication date";
+				}
+
+				// Check item's description:
+				if(empty($rs["items"][$i]["description"]) || !isset($rs["items"][$i]["description"])){
+					$rs["items"][$i]["description"] = "Unknown feed item: ".html_entity_decode($rs["items"][$i]["link"]);
+				}
+			}
 			$stat = 1;
 		} else {
-			$rssfeed[] = "";
+			// feed URL is valid and active, but no feed items were found:
 			$stat = 2;
 		}
-
-		array_push($rss_list, array(
-			'stat' => $stat,
-			'rid' => $rid,
-			'title' => $rs["title"],
-			'url' => $url
-			)
-		);
 	} else {
 		// Unable to grab RSS feed, must of timed out
-		$rssfeed[] = "";
 		$stat = 3;
 	}
+
+	array_push($rss_list, array(
+		'stat' => $stat,
+		'rid' => $rid,
+		'title' => (isset($rs["title"]) ? $rs["title"] : ""),
+		'url' => $url,
+		'feedItems' => $rs['items']
+		)
+	);
 }
+//var_dump($rss_list);exit;
 $tmpl->setloop('rss_list', $rss_list);
-// Parse through cache RSS feed
-if (isset($rssfeed) && is_array($rssfeed)) {
-	$news_list = array();
-	foreach( $rssfeed as $rid => $rs ) {
-		$title = "";
-		$content = "";
-		$pageUrl = "";
-		if (!empty($rs["items"])) {
-			// get Site title and Page Link
-			$title = $rs["title"];
-			$pageUrl = $rs["link"];
-			$content = "";
-			for ($i=0; $i < count($rs["items"]); $i++) {
-				$link = $rs["items"][$i]["link"];
-				$title2 = $rs["items"][$i]["title"];
-				$pubDate = (!empty($rs["items"][$i]["pubDate"])) ? $rs["items"][$i]["pubDate"] : "Unknown";
-				// RSS entry needs to have a link, otherwise pointless
-				if (empty($link))
-					continue;
-				if ($link != "" && $title2 !="")
-					$content .= "<tr><td><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$link."\"><a href=\"dispatcher.php?action=indexUrlUpload&url=".$link."\">".$title2."</a></td><td> ".$pubDate."</td></tr>\n";
-				else
-					$content .= "<tr><td  class=\"tiny\"><img src=\"themes/".$cfg['theme']."/images/download_owner.gif\" width=\"16\" height=\"16\">".ScrubDescription(str_replace("Torrent: <a href=\"", "Torrent: <a href=\"dispatcher.php?action=indexUrlUpload&url=", html_entity_decode($rs["items"][$i]["description"])), $title2)."</td><td valign=\"top\">".$pubDate."</td></tr>";
-			}
-		} else {
-			// Request timed out, display timeout message
-			$tmpl->setvar('timeout_rss', 1);
-			$tmpl->setvar('url', $url);
-		}
-		if ($content != "") // Close the content and add a line break
-			$content .= "<br>";
-		array_push($news_list, array('content' => $content));
-	}
-}
-if (isset($news_list))
-	$tmpl->setloop('news_list', $news_list);
-if (isset($pageUrl))
-	$tmpl->setvar('pageUrl', $pageUrl);
-else
-	$tmpl->setvar('pageUrl', "");
-if (isset($title))
-	$tmpl->setvar('title', $title);
-else
-	$tmpl->setvar('title', "");
-if (isset($rid))
-	$tmpl->setvar('rid', $rid);
-else
-	$tmpl->setvar('rid', "");
+
 //
 $tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
