@@ -2864,6 +2864,8 @@ function FetchHTML($url, $referer = "") {
 				$response .= @fgets($socket, 500000);
 
 			@fclose($socket); // Close our connection
+		} else {
+			return "Error fetching $url.  PHP Error No: $errno. PHP Error String: $errstr.";
 		}
 	} else {
 		// No cookies - no need for raw HTTP:
