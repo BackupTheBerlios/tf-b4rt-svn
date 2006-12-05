@@ -49,7 +49,8 @@ if ($fluxdRunning) {
 	$fluxdPid = $fluxd->getFluxdPid();
 	$tmpl->setvar('fluxdPid', $fluxdPid);
 }
-if ((isset($shutdown)) && ($shutdown == "1"))
+$shutdown = getRequestVar("s");
+if ($shutdown == "1")
 	$tmpl->setvar('shutdown', 1);
 else
 	$tmpl->setvar('shutdown', 0);
