@@ -123,13 +123,25 @@ function imageOutputLabelFromImage($bgimage, $label,
 	// only if gd available
 	if (extension_loaded('gd')) {
 		$imageTypes = imagetypes();
+		// gif
+		if ($imageTypes & IMG_GIF) {
+			$img = @imagecreatefromgif($bgimage.".gif");
+			if ($img !== false) {
+				$textcolor = imagecolorallocate($img, $r, $g, $b);
+				imagestring($img, $font, $x, $y, $label, $textcolor);
+				header("Content-type: image/gif");
+				imagegif($img);
+				imagedestroy($img);
+				exit();
+			}
+		}
 		// png
 		if ($imageTypes & IMG_PNG) {
 			$imp = @imagecreatefrompng($bgimage.".png");
 			if ($imp !== false) {
 				$textcolor = imagecolorallocate($imp, $r, $g, $b);
-				header("Content-type: image/png");
 				imagestring($imp, $font, $x, $y, $label, $textcolor);
+				header("Content-type: image/png");
 				imagepng($imp);
 				imagedestroy($imp);
 				exit();
@@ -140,8 +152,8 @@ function imageOutputLabelFromImage($bgimage, $label,
 			$imj = @imagecreatefromjpeg($bgimage.".jpg");
 			if ($imj !== false) {
 				$textcolor = imagecolorallocate($imj, $r, $g, $b);
-				header("Content-type: image/jpeg");
 				imagestring($imj, $font, $x, $y, $label, $textcolor);
+				header("Content-type: image/jpeg");
 				imagejpeg($imj, '', 75);
 				imagedestroy($imj);
 				exit();
@@ -153,14 +165,17 @@ function imageOutputLabelFromImage($bgimage, $label,
 }
 
 /**
- * check image support of PHP
+ * check image support of PHP + GD
  *
  * @return boolean
  */
 function imageIsSupported() {
 	if (extension_loaded('gd')) {
-		// gd is there but we need at least also png or jpg support
+		// gd is there but we also need support for at least one image-type
 		$imageTypes = imagetypes();
+		// gif
+		if ($imageTypes & IMG_GIF)
+			return true;
 		// png
 		if ($imageTypes & IMG_PNG)
 		   return true;
