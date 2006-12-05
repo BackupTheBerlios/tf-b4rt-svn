@@ -29,12 +29,58 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// image functions
+require_once('inc/functions/functions.image.php');
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.admin.webappSettings.tmpl");
 
 // set vars
+
+// auth-vars
+$authlist = array();
+// Form-Auth
+array_push($authlist, array(
+	'avalue' => 0,
+	'atype' => "Form-Auth",
+	'aselected' => ($cfg["auth_type"] == 0) ? 1 : 0
+	)
+);
+// Form-Auth + Cookie
+array_push($authlist, array(
+	'avalue' => 1,
+	'atype' => "Form-Auth + Cookie",
+	'aselected' => ($cfg["auth_type"] == 1) ? 1 : 0
+	)
+);
+// Form-Auth + Image-Validation
+if (imageIsSupported()) {
+	array_push($authlist, array(
+		'avalue' => 4,
+		'atype' => "Form-Auth + Image-Validation",
+		'aselected' => ($cfg["auth_type"] == 4) ? 1 : 0
+		)
+	);
+}
+// Basic-Auth
+array_push($authlist, array(
+	'avalue' => 2,
+	'atype' => "Basic-Auth",
+	'aselected' => ($cfg["auth_type"] == 2) ? 1 : 0
+	)
+);
+// Basic-Passthru
+array_push($authlist, array(
+	'avalue' => 3,
+	'atype' => "Basic-Passthru",
+	'aselected' => ($cfg["auth_type"] == 3) ? 1 : 0
+	)
+);
+$tmpl->setloop('auth_type_list', $authlist);
 $tmpl->setvar('auth_type', $cfg["auth_type"]);
 $tmpl->setvar('auth_basic_realm', $cfg["auth_basic_realm"]);
+
+// more vars
 $tmpl->setvar('enable_tmpl_cache', $cfg["enable_tmpl_cache"]);
 $link = '<img src="themes/';
 if ((strpos($cfg["theme"], '/')) === false)

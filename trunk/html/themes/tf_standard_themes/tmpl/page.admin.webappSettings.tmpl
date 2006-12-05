@@ -17,33 +17,21 @@
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Select Auth-Type</strong><br>
 									<em>Form-Auth</em> : Standard Form-Based Auth<br>
-									<em>Form-Auth</em> + Cookie : Form-Based Auth with "Auto-Login"-Cookie<br>
+									<em>Form-Auth + Cookie</em> : Form-Based Auth with "Auto-Login"-Cookie<br>
+									<em>Form-Auth + Image-Validation</em> : Form-Based Auth with additional Image-Validation<br>
 									<em>Basic-Auth</em> : Basic-Auth<br>
 									<em>Basic-Passthru</em> : gets credentials of already authenticated user and passes them to webapp<br>
 								</td>
 								<td valign="top">
-									<select name="auth_type">
-									<option value="0"
-									<tmpl_if name="auth_type" value="0">
-										 selected
+									<tmpl_if name="auth_type_list">
+										<select name="auth_type">
+											<tmpl_loop name="auth_type_list">
+												<option value="<tmpl_var name="avalue">"<tmpl_if name="aselected" value="1"> selected</tmpl_if>><tmpl_var name="atype"></option>
+											</tmpl_loop>
+										</select>
 									</tmpl_if>
-									>Form-Auth</option>
-									<option value="1"
-									<tmpl_if name="auth_type" value="1">
-										 selected
-									</tmpl_if>
-									>Form-Auth + Cookie</option>
-									<option value="2"
-									<tmpl_if name="auth_type" value="2">
-										 selected
-									</tmpl_if>
-									>Basic-Auth</option>
-									<option value="3"
-									<tmpl_if name="auth_type" value="3">
-										 selected
-									</tmpl_if>
-									>Basic-Passthru</option>
-									</select>
+									<br /><br /><br />
+									<img src="image.php?i=test" border="0" title="Test-Image">
 								</td>
 							</tr>
 							<tr>
