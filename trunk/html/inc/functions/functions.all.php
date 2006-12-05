@@ -56,4 +56,7 @@ require_once('inc/functions/functions.startpop.php');
 // vlc functions
 require_once('inc/functions/functions.vlc.php');
 
+// image functions
+require_once('inc/functions/functions.image.php');
+
 ?>

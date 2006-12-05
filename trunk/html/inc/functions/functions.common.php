@@ -217,6 +217,17 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 }
 
 /**
+ * get image-code
+ *
+ * @param $rstr
+ * @param $rnd
+ * @return string
+ */
+function loginImageCode($rstr, $rnd) {
+    return substr((hexdec(md5($_SERVER['HTTP_USER_AGENT'].$rstr.$rnd.date("F j")))), 3, 6);
+}
+
+/**
  * first Login
  *
  * @param $username
