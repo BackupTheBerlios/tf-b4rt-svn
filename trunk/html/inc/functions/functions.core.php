@@ -2813,13 +2813,10 @@ function FetchHTML($url, $referer = "") {
 	// Cookie string used in raw HTTP request:
 	$cookie = "";
 
-	// If the url already doesn't contain a passkey, then check
-	// to see if it has cookies set to the domain name.
-	if ((strpos($domain["query"], "passkey=")) === false) {
-		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
-		$cookie = $db->GetOne($sql);
-		showError($db, $sql);
-	}
+	// Check to see if cookie required for this domain:
+	$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
+	$cookie = $db->GetOne($sql);
+	showError($db, $sql);
 
 	if (!array_key_exists("port", $domain))
 		$domain["port"] = 80;
