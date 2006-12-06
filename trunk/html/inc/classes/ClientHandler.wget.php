@@ -157,9 +157,6 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " 2>> ".escapeshellarg($this->logFile);
         $this->command .= " &";
         exec($this->command);
-
-        // this is wget.. just wait 2 seconds
-        sleep(2);
     }
 
     /**

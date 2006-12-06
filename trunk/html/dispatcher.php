@@ -82,8 +82,10 @@ switch ($action) {
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 			$clientHandler->inject($url);
 			$wget_start = getRequestVar('wget_start');
-			if ($wget_start == 1)
+			if ($wget_start == 1) {
 				$clientHandler->startClient($url, 0, false);
+				sleep(3);
+			}
 		}
     	break;
 

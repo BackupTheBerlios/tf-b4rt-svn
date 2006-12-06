@@ -29,7 +29,7 @@ class ClientHandlerTransmission extends ClientHandler
     function ClientHandlerTransmission($cfg) {
         $this->handlerName = "transmission";
         // version
-		$this->version = "0.4";
+		$this->version = "0.41";
         //
         $this->binSocket = "transmissionc";
         //
@@ -66,12 +66,13 @@ class ClientHandlerTransmission extends ClientHandler
 
         // prepare starting of client
         parent::prepareStartClient($transfer, $interactive, $enqueue);
-        // prepare succeeded ?
-        if ($this->status != 2) {
-            $this->status = -1;
-            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.") failed";
-            return;
-        }
+
+		// only continue if prepare succeeded (skip start / error)
+		if ($this->status != 2) {
+			if ($this->status == -1)
+				$this->messages .= "Error after call to parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.")";
+			return;
+		}
 
         // transmission wants -1 for no seeding.
         if ($this->sharekill == -1)

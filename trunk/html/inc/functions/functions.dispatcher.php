@@ -40,6 +40,7 @@ function indexStartTransfer($transfer) {
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 			$clientHandler->startClient($transfer, 0, false);
+			sleep(3);
 			header("location: index.php?iid=index");
 			exit();
 		}
@@ -81,7 +82,10 @@ function indexStartTorrent($torrent, $interactive) {
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
 			$clientHandler->startClient($torrent, 1, $queueActive);
-			if ($clientHandler->status == 3) { // hooray
+			if ($clientHandler->status == -1) { // start failed
+				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
+				exit();
+			} else {
 				if (array_key_exists("closeme",$_POST)) {
 					echo '<script  language="JavaScript">';
 					echo ' window.opener.location.reload(true);';
@@ -90,9 +94,6 @@ function indexStartTorrent($torrent, $interactive) {
 				} else {
 					header("location: index.php?iid=index");
 				}
-			} else { // start failed
-				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
-				exit();
 			}
 			exit();
 			break;

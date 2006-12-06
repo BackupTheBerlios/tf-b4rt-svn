@@ -31,7 +31,6 @@ class ClientHandler
                          // its not using the sys-bin for some ops
     var $binSocket = ""; // the binary this client uses for socket-connections
                          // used in netstat hack to identify connections
-
     // generic vars for a transfer-start
     var $rate = "";
     var $drate = "";
@@ -279,54 +278,68 @@ class ClientHandler
         // check target-directory, create if not present
 		if (!(checkDirectory($this->savepath, 0777))) {
             AuditAction($this->cfg["constants"]["error"], "Error checking " . $this->savepath . ".");
-            if ($this->cfg['isAdmin']) {
-                $this->status = -1;
-                header("location: admin.php?op=serverSettings");
-                return;
+            $this->status = -1;
+            $this->messages .= "Error. TorrentFlux settings are not correct (path-setting).";
+            global $argv;
+            if (isset($argv)) {
+            	die($this->messages);
             } else {
-                $this->status = -1;
-                $this->messages .= "Error. TorrentFlux settings are not correct (path is not writable) -- please contact an admin.";
+				if ($this->cfg['isAdmin']) {
+					@header("location: admin.php?op=serverSettings");
+					exit();
+				} else {
+					$this->messages .= " please contact an admin.";
+					showErrorPage($this->messages);
+				}
             }
 		}
         // create AliasFile object and write out the stat file
         require_once("inc/classes/AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
-        $transferTotals = getTransferTotals($this->transfer);
+        $transferTotals = getTransferTotalsCurrent($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
         if ($this->cfg['enable_xfer'] == 1)
         	saveXfer($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
         // update totals for this transfer
         updateTransferTotals($this->transfer);
         // set param for sharekill
-        if ($this->sharekill <= 0) { // nice, we seed forever
+        $this->sharekill = intval($this->sharekill);
+        if ($this->sharekill == 0) { // nice, we seed forever
             $this->sharekill_param = 0;
-        } else { // recalc sharekill
-            $totalAry = getTransferTotals(urldecode($transfer));
-            $upTotal = $totalAry["uptotal"];
+        } elseif ($this->sharekill > 0) { // recalc sharekill
             // sanity-check. catch "data-size = 0".
-            $transferSize = (int) $this->af->size;
+            $transferSize = intval($this->af->size);
             if ($transferSize > 0) {
-	            $upWanted = ($this->sharekill / 100) * $transferSize;
-	            if ($upTotal >= $upWanted) { // we already have seeded at least
-	                                         // wanted percentage. continue to seed
-	                                         // forever is suitable in this case ~~
-	                $this->sharekill_param = 0;
-	            } else { // not done seeding wanted percentage
-	                $this->sharekill_param = (int) ($this->sharekill - (($upTotal / $transferSize) * 100));
-	                // the type-cast may have floored the value. (tornado lacks
-	                // precision because only (really?) accepting percentage-values)
-	                // better to seed more than less so we add a percent in case ;)
-	                if (($upWanted % $upTotal) != 0)
-	                    $this->sharekill_param += 1;
+				$totalAry = getTransferTotals($this->transfer);
+            	$upTotal = $totalAry["uptotal"] + 0;
+            	$downTotal = $totalAry["downtotal"] + 0;
+				$upWanted = ($this->sharekill / 100) * $transferSize;
+				$sharePercentage = ($upTotal / $transferSize) * 100;
+	            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
+	            	// we already have seeded at least wanted percentage.
+	            	// skip start of client
+	                // set status
+        			$this->status = 1;
+        			// message
+        			$this->messages = "skipping start of transfer ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
+					// DEBUG : log the messages
+					AuditAction($this->cfg["constants"]["debug"], $this->messages);
+					// return
+					return;
+	            } else {
+	            	// not done seeding wanted percentage
+	                $this->sharekill_param = intval(ceil($this->sharekill - $sharePercentage));
 	                // sanity-check.
-	                if ($this->sharekill_param <= -1)
-	                    $this->sharekill_param = 0;
+	                if ($this->sharekill_param < 1)
+	                    $this->sharekill_param = 1;
 	            }
             } else {
-				$this->messages = "data-size is 0 when recalcing share-kill for ".$this->transfer."/".$this->cfg['user'].". setting sharekill absolute to ".$this->sharekill;
+				$this->messages = "data-size is 0 when recalcing share-kill for ".$this->transfer.". setting sharekill absolute to ".$this->sharekill;
 				AuditAction($this->cfg["constants"]["error"], $this->messages);
 				$this->sharekill_param = $this->sharekill;
             }
+		} else {
+        	$this->sharekill_param = $this->sharekill;
         }
         // write stat-file
         if ($this->queue == 1) {
@@ -586,7 +599,7 @@ class ClientHandler
                 $this->port += 1;
             if ($this->port > $this->maxport) {
                 $this->status = -1;
-                $this->messages .= "<b>Error</b> All ports in use.<br>";
+                $this->messages .= "All ports in use.";
                 return false;
             }
         }
@@ -662,6 +675,5 @@ class ClientHandler
 
 
 } // end class
-
 
 ?>

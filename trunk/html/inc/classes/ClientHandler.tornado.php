@@ -32,7 +32,7 @@ class ClientHandlerTornado extends ClientHandler
     function ClientHandlerTornado($cfg) {
         $this->handlerName = "tornado";
         // version
-		$this->version = "0.4";
+		$this->version = "0.41";
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
@@ -68,12 +68,13 @@ class ClientHandlerTornado extends ClientHandler
 
         // prepare starting of client
         parent::prepareStartClient($transfer, $interactive, $enqueue);
-        // prepare succeeded ?
-        if ($this->status != 2) {
-            $this->status = -1;
-            $this->messages .= "Error parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.") failed";
-            return;
-        }
+
+		// only continue if prepare succeeded (skip start / error)
+		if ($this->status != 2) {
+			if ($this->status == -1)
+				$this->messages .= "Error after call to parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.")";
+			return;
+		}
 
 		// pythonCmd
 		$pyCmd = $this->cfg["pythonCmd"] . " -OO";

@@ -1138,7 +1138,7 @@ function deleteTransfer($transfer, $alias_file) {
 		}
 		if ($cfg['enable_xfer'] != 0) {
 			// XFER: before torrent deletion save upload/download xfer data to SQL
-			$transferTotals = getTransferTotals($transfer);
+			$transferTotals = getTransferTotalsCurrent($transfer);
 			saveXfer($transferowner,$transferTotals["downtotal"],$transferTotals["uptotal"]);
 		}
 		// alias-name
