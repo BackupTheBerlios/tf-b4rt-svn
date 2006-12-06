@@ -54,12 +54,12 @@ if ((isset($update)) && ($update != "")) {
         // pre-sanity-checks
         if( preg_match("/\\\/", urldecode($remoteVersion)) ) {
             header("Content-Type: text/plain");
-            echo "no exploits pls. thx.";
+            echo "invalid version";
             exit;
         }
         if( preg_match("/\.\./", urldecode($remoteVersion)) ) {
             header("Content-Type: text/plain");
-            echo "no exploits pls. thx.";
+            echo "invalid version";
             exit;
         }
         switch($update) {
@@ -116,7 +116,7 @@ if ((isset($update)) && ($update != "")) {
                 exit;
             case "3":
                 // file list
-                $updateFileList = getFileList($currentVersion, $remoteVersion);
+                $updateFileList = getFileListNEW($currentVersion, $remoteVersion);
                 if ((isset($updateFileList)) && ($updateFileList != "0")) {
                     header("Content-Type: text/plain");
                     echo $updateFileList;
@@ -129,7 +129,7 @@ if ((isset($update)) && ($update != "")) {
                 $requestFile = @trim($_REQUEST["f"]);
                 if ((isset($requestFile)) && ($requestFile != "")) {
                     // file list (no exploits, only deliver valid data)
-                    $updateFileList = getFileList($currentVersion, $remoteVersion);
+                    $updateFileList = getFileListNEW($currentVersion, $remoteVersion);
                     if ((isset($updateFileList)) && ($updateFileList != "0")) {
                         $validFiles = explode("\n",$updateFileList);
                         if (in_array($requestFile, $validFiles)) {
@@ -137,7 +137,7 @@ if ((isset($update)) && ($update != "")) {
                             exit;
                         } else {
                             header("Content-Type: text/plain");
-                            echo $requestFile." is not a valid file-ressource-id. no exploits pls. thx.";
+                            echo $requestFile." is not a valid file-ressource-id.";
                             exit;
                         }
                     } else {

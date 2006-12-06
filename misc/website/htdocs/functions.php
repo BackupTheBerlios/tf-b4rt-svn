@@ -52,7 +52,7 @@ function outputData($data) {
  *
  */
 function bailOut($compressed = false) {
-    $errorString = "0"."\n"."cant auto-update from your version. please do manual update.";
+    $errorString = "0"."\n"."web-update from your version not possible. please perform manual update.";
     if ($compressed) {
         echo(gzdeflate($errorString, 9));
     } else {
@@ -63,11 +63,11 @@ function bailOut($compressed = false) {
 }
 
 /**
- * get file-list
+ * get file-list for old branch
  *
  * @return filelist as string
  */
-function getFileList($currentVersion, $remoteVersion) {
+function getFileListOLD($currentVersion, $remoteVersion) {
     // file list
     $dirName = "./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" ._UPDATE_DATADIR . "/" . _UPDATE_HTMLDIR;
     if (file_exists($dirName)) {
@@ -88,20 +88,12 @@ function getFileList($currentVersion, $remoteVersion) {
 }
 
 /**
- * log the hit
+ * get file-list for new branch
+ *
+ * @return filelist as string
  */
-function logHit() {
-	$data = "0";
-	if ($fileHandle = @fopen(_FILE_HITS, 'r')) {
-		$data = @fgets($fileHandle, 2048);
-		@fclose($fileHandle);
-	}
-	if ($fileHandle = @fopen(_FILE_HITS, 'w+')) {
-		$hits = (int) trim($data);
-		$hits++;
-		@fwrite($fileHandle, $hits);
-		@fclose($fileHandle);
-	}	
+function getFileListNEW($currentVersion, $remoteVersion) {
+	return "0";
 }
 
 /**
@@ -113,11 +105,11 @@ function logProxy() {
 		$ua = addslashes($_SERVER['HTTP_USER_AGENT']);
 	else
 		$ua = "unknown";
-	// db	
+	// db
 	require_once('internal/dbconf.php');
 	$db = @mysql_connect($db_host, $db_user, $db_pass);
 	if (!isset($db))
-		return;	
+		return;
 	@mysql_select_db($db_name, $db);
 	$result = @mysql_query("SELECT ct FROM tfb4rt_proxystats WHERE ua LIKE '".$ua."'", $db);
 	$num_rows = 0;
@@ -127,10 +119,10 @@ function logProxy() {
 		$ct = $row[0];
 		@mysql_free_result($result);
 		$ct++;
-		@mysql_query("UPDATE tfb4rt_proxystats SET ct = '".$ct."' WHERE ua LIKE '".$ua."' LIMIT 1", $db);		
+		@mysql_query("UPDATE tfb4rt_proxystats SET ct = '".$ct."' WHERE ua LIKE '".$ua."' LIMIT 1", $db);
 	} else { // insert
 		$ct = 1;
-		@mysql_query("INSERT INTO tfb4rt_proxystats (ua,ct) values ( '".$ua."','".$ct."')", $db);		
+		@mysql_query("INSERT INTO tfb4rt_proxystats (ua,ct) values ( '".$ua."','".$ct."')", $db);
 	}
 	// close
 	@mysql_close($db);
