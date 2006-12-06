@@ -39,9 +39,9 @@ function initializeDatabase() {
     if ($db->ErrorNo() != 0) {
     	global $argv;
     	if (isset($argv))
-    		die("Error.\nCould not connect to database.\nCheck your database settings in the config.db.php file.\n");
+    		die("Error.\nCould not connect to database.\nCheck your database settings in the file config.db.php.\n");
     	else
-    		showErrorPage("Could not connect to database.<br>Check your database settings in the config.db.php file.");
+    		showErrorPage("Could not connect to database.<br>Check your database settings in the file <em>config.db.php</em>.");
     }
 }
 
@@ -61,7 +61,7 @@ function getdb() {
 }
 
 /**
- * prints nice db-error
+ * show db-error
  *
  * @param $db
  * @param $sql
@@ -69,21 +69,36 @@ function getdb() {
 function showError($db, $sql) {
 	global $cfg;
 	if ($db->ErrorNo() != 0) {
-		// theme
-		if (isset($cfg["theme"]))
-			$theme = $cfg["theme"];
-		else if (isset($cfg["default_theme"]))
-			$theme = $cfg["default_theme"];
-		else
-			$theme = "default";
-		// template
-		require_once("themes/".$theme."/index.php");
-		require_once("inc/lib/vlib/vlibTemplate.php");
-		$tmpl = @ tmplGetInstance($theme, "page.db.tmpl");
-		@ $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
-		@ $tmpl->setvar('sql', $sql);
-		@ $tmpl->setvar('ErrorMsg', $db->ErrorMsg());
-		@ $tmpl->pparse();
+		global $argv;
+    	if (isset($argv)) {
+    		$dieMessage = "Database-Error :\n";
+    		$dieMessage .= $db->ErrorMsg();
+    		if ($cfg["debug_sql"] == 1)
+    			$dieMessage .= "\nSQL: ".$sql;
+    		die($dieMessage);
+    	} else {
+			// theme
+			if (isset($cfg["theme"]))
+				$theme = $cfg["theme"];
+			else if (isset($cfg["default_theme"]))
+				$theme = $cfg["default_theme"];
+			else
+				$theme = "default";
+			// template
+			require_once("themes/".$theme."/index.php");
+			require_once("inc/lib/vlib/vlibTemplate.php");
+			$tmpl = @ tmplGetInstance($theme, "page.db.tmpl");
+			@ $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
+			@ $tmpl->setvar('sql', $sql);
+			$dbErrMsg = $db->ErrorMsg();
+			@ $tmpl->setvar('ErrorMsg', $dbErrMsg);
+			if (preg_match('/.*Query.*empty.*/i', $dbErrMsg))
+				@ $tmpl->setvar('ExtraMsg', 'Database may be corrupted. Try to repair the tables.');
+			else
+				@ $tmpl->setvar('ExtraMsg', 'Always check your database settings in the config.db.php file.');
+			@ $tmpl->pparse();
+			exit();
+    	}
 	}
 }
 

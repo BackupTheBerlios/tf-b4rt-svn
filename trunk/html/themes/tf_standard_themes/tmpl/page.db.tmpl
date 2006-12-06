@@ -34,11 +34,13 @@
 												<table border="0" cellpadding="4" cellspacing="0" width="90%">
 													<tr>
 														<td>
-															<tmpl_if name="debug_sql">
-																Debug SQL is on. <br><br>SQL: <strong><tmpl_var name="sql"></strong><br><br><br>
+															Database-Error: <strong><tmpl_var name="ErrorMsg"></strong><br><br>
+															<tmpl_if name="debug_sql" value="1">
+																SQL: <strong><tmpl_var name="sql"></strong><br><br>
 															</tmpl_if>
-															Database error: <strong><tmpl_var name="ErrorMsg"></strong><br><br>
-															Always check your database variables in the config.db.php file.<br><br>
+															<tmpl_if name="ExtraMsg">
+																<tmpl_var name="ExtraMsg"><br><br>
+															</tmpl_if>
 														</td>
 													</tr>
 												</table>

@@ -192,6 +192,7 @@ if ($cfg['enable_xfer'] == 1) {
 	require_once('inc/functions/functions.xfer.php');
 	// xfer-init
 	$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
+	//showError($db,$sql);
 	if (empty($xferRecord)) {
 		$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
 		$sTable = 'tf_xfer';
