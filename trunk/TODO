@@ -25,10 +25,6 @@ $Id$
     server can currently be seen as "broken"))
 
   - (3)
-    further enhance source of all 3 torrent-clients to print more usefull info
-    to the pre-transfer-logfile
-
-  - (3)
     finalize code
 
 
@@ -48,18 +44,6 @@ $Id$
 
   - (1)
     images for "default"-theme
-
-
-********************************************************************************
-*** test ***********************************************************************
-********************************************************************************
-
-  - (1) (depends on templates)
-    test all functions in both theme-sets (new default of course not current)
-
-  - (1)
-    things to test in detail :
-    + xfer : detail-tests if xfer works correct with all 4 client-types
 
 
 ********************************************************************************
