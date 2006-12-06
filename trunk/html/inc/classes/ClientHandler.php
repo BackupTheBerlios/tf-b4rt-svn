@@ -382,9 +382,8 @@ class ClientHandler
             $transferRunningFlag = 0;
         } else { // start
         	// log the command
-        	$this->transferLog("ClientHandler::doStartClient : \n".$this->command, true);
-            // The following command starts the transfer running! w00t!
-            //system('echo command >> /tmp/tflux.debug; echo "'. $this->command .'" >> /tmp/tflux.debug');
+        	$this->transferLog("ClientHandler::doStartClient : \n".$this->command."\n", true);
+            // startup
             $this->callResult = exec($this->command);
             AuditAction($this->cfg["constants"]["start_torrent"], $this->transfer. " : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
             $transferRunningFlag = 1;
@@ -612,10 +611,10 @@ class ClientHandler
      * @param $message
      * @param $withTS
      */
-    function transferLog($message, $withTS = false) {
+    function transferLog($message, $withTS = true) {
     	$content = "";
     	if ($withTS)
-    		$content .= @date("Y/m/d - H:i:s") . " - ";
+    		$content .= @date("[Y/m/d - H:i:s]")." ";
     	$content .= $message;
 		$fp = false;
 		$fp = @fopen($this->logFile, "a+");
