@@ -80,8 +80,8 @@ class QueueManager_tfQManager extends QueueManager
             sleep(2); // wait for it to start prior to getting pid
             $this->pid = $this->getQManagerPID();
             AuditAction($this->cfg["constants"]["QManager"], "Started PID:" .  $this->pid);
-            // set status
-            $this->status = 2;
+            // set state
+            $this->state = 2;
             return true;
         } else{
             AuditAction($this->cfg["constants"]["QManager"], "QManager Already Started  PID:" . $this->getQManagerPID());

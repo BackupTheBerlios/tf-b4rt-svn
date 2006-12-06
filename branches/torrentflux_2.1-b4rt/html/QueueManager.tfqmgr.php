@@ -72,8 +72,8 @@ class QueueManager_tfqmgr extends QueueManager
             $result = exec($startCommand);
             sleep(1); // dont hurry
             AuditAction($this->cfg["constants"]["QManager"], "tfqmgr started");
-            // set status
-            $this->status = 2;
+            // set state
+            $this->state = 2;
             return true;
         }
     }

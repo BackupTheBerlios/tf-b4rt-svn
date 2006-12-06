@@ -54,11 +54,11 @@ class ClientHandlerTornado extends ClientHandler
         if (!is_file($this->cfg["btclient_tornado_bin"])) {
             AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->cfg["btclient_tornado_bin"]." is not valid");
             if (IsAdmin()) {
-                $this->status = -1;
+                $this->state = -1;
                 header("location: admin.php?op=configSettings");
                 return;
             } else {
-                $this->status = -1;
+                $this->state = -1;
                 $this->messages .= "Error: TorrentFlux settings are not correct (path to python script is not valid) -- please contact an admin.";
                 return;
             }
@@ -68,8 +68,8 @@ class ClientHandlerTornado extends ClientHandler
         parent::prepareStartTorrentClient($torrent, $interactive);
 
 		// only continue if prepare succeeded (skip start / error)
-		if ($this->status != 2) {
-			if ($this->status == -1)
+		if ($this->state != 2) {
+			if ($this->state == -1)
 				$this->messages .= "Error after call to parent::prepareStartClient(".$torrent.",".$interactive.")";
 			return;
 		}

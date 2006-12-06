@@ -68,20 +68,20 @@ class ClientHandler
     var $cfg = array();
     // messages-string
     var $messages = "";
-    // handler-status
-    var $status = 0;    // status of the handler
-                        //  0 : not initialized
-                        //  1 : initialized
-                        //  2 : ready to start
-                        //  3 : torrent-client started successfull
-                        // -1 : error
+    // handler-state
+    var $state = 0;    // state of the handler
+                       //  0 : not initialized
+                       //  1 : initialized
+                       //  2 : ready to start
+                       //  3 : torrent-client started successfull
+                       // -1 : error
 
     //--------------------------------------------------------------------------
     /**
      * ctor
      */
     function ClientHandler() {
-        $this->status = -1;
+        $this->state = -1;
         die('base class -- dont do this');
     }
 
@@ -122,7 +122,7 @@ class ClientHandler
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
-            $this->status = -1;
+            $this->state = -1;
             return;
         }
         // umask
@@ -133,7 +133,7 @@ class ClientHandler
         $this->nice = "";
         if ($this->cfg["nice_adjust"] != 0)
             $this->nice = "nice -n ".$this->cfg["nice_adjust"]." ";
-        $this->status = 1;
+        $this->state = 1;
     }
 
     //--------------------------------------------------------------------------
@@ -144,8 +144,8 @@ class ClientHandler
      * @param $interactive (1|0) : is this a interactive startup with dialog ?
      */
     function prepareStartTorrentClient($torrent, $interactive) {
-        if ($this->status < 1) {
-            $this->status = -1;
+        if ($this->state < 1) {
+            $this->state = -1;
             $this->messages .= "Error. ClientHandler in wrong state on prepare-request.";
             return;
         }
@@ -244,7 +244,7 @@ class ClientHandler
         // check target-directory, create if not present
 		if (!(checkDirectory($this->savepath, 0777))) {
             AuditAction($this->cfg["constants"]["error"], "Error checking " . $this->savepath . ".");
-            $this->status = -1;
+            $this->state = -1;
             $this->messages .= "Error. TorrentFlux settings are not correct (path-setting).";
         	global $argv;
             if (isset($argv)) {
@@ -283,8 +283,8 @@ class ClientHandler
 	            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
 	            	// we already have seeded at least wanted percentage.
 	            	// skip start of client
-	                // set status
-        			$this->status = 1;
+	                // set state
+        			$this->state = 1;
         			// message
         			$this->messages = "skipping start of transfer ".$this->torrent." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
 					// DEBUG : log the messages
@@ -321,8 +321,8 @@ class ClientHandler
             $this->af->StartTorrentFile();  // this only writes out the stat file (does not start torrent)
 
         }
-        // set status
-        $this->status = 2;
+        // set state
+        $this->state = 2;
     }
 
     //--------------------------------------------------------------------------
@@ -331,8 +331,8 @@ class ClientHandler
      */
     function doStartTorrentClient() {
         include_once("AliasFile.php");
-        if ($this->status != 2) {
-            $this->status = -1;
+        if ($this->state != 2) {
+            $this->state = -1;
             $this->messages .= "Error. ClientHandler in wrong state on execStart-request.";
             return;
         }
@@ -362,10 +362,10 @@ class ClientHandler
         if ($this->messages == "") {
             // Save torrent settings
             saveTorrentSettings($this->torrent, $torrentRunningFlag, $this->rate, $this->drate, $this->maxuploads, $this->runtime, $this->sharekill, $this->minport, $this->maxport, $this->maxcons, $this->savepath, $this->handlerName);
-            $this->status = 3;
+            $this->state = 3;
         } else {
             AuditAction($this->cfg["constants"]["error"], $this->messages);
-            $this->status = -1;
+            $this->state = -1;
         }
     }
 
@@ -568,7 +568,7 @@ class ClientHandler
             else
                 $this->port += 1;
             if ($this->port > $this->maxport) {
-                $this->status = -1;
+                $this->state = -1;
                 $this->messages .= "All ports in use.";
                 return false;
             }

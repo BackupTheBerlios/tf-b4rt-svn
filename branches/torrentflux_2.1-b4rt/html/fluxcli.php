@@ -280,9 +280,9 @@ function cliStartTorrent($torrent = "") {
 			// start
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->startTorrentClient($torrent, 0);
-			if ($clientHandler->status == 3) { // hooray
-				echo "done\n";
-			} else { // start failed
+			if ($clientHandler->state == 3) { // hooray
+				echo " done\n";
+			} else {
 				echo "\n" . $clientHandler->messages;
 			}
 		} else {
@@ -320,9 +320,9 @@ function cliStartTorrents() {
             // just 2 sec..
             sleep(2);
             //
-			if ($clientHandler->status == 3) { // hooray
+			if ($clientHandler->state == 3) { // hooray
 				echo " done\n";
-			} else { // start failed
+			} else {
 				echo "\n" . $clientHandler->messages;
 			}
         }
@@ -355,9 +355,9 @@ function cliResumeTorrents() {
             // just 2 sec..
             sleep(2);
             //
-			if ($clientHandler->status == 3) { // hooray
+			if ($clientHandler->state == 3) { // hooray
 				echo " done\n";
-			} else { // start failed
+			} else {
 				echo "\n" . $clientHandler->messages;
 			}
         }
@@ -572,10 +572,10 @@ function cliWatchDir($tpath = "", $username = "") {
                             $clientHandler->startTorrentClient($file_name, 0);
                             // just 2 secs..
                             sleep(2);
-                            if ($clientHandler->status == 3) // hooray
+                            if ($clientHandler->state == 3) // hooray
                                 echo " done\n";
-                            else  // start failed
-                                echo "\n ERROR : ". $clientHandler->messages ."\n";
+                            else
+                                echo "\n". $clientHandler->messages ."\n";
                         } else {
                             echo "\n ERROR: File could not be found or could not be copied: ".$watchDir.$file."\n";
                         }

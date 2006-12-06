@@ -73,8 +73,8 @@ class QueueManager_Qmgr extends QueueManager
             $result = exec($startCommand);
             sleep(1);
             AuditAction($this->cfg["constants"]["QManager"], "Qmgr started");
-            // Set the status
-            $this->status = 2;
+            // Set the state
+            $this->state = 2;
             return true;
         }
     }

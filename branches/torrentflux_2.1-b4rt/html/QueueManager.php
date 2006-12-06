@@ -42,8 +42,8 @@ class QueueManager
     var $cfg = array();
     // messages-string
     var $messages = "";
-    // manager-status
-    var $status = 0;    // status of the manager
+    // manager-state
+    var $state = 0;    // state of the manager
                         //  0 : not initialized
                         //  1 : initialized
                         //  2 : started/running
@@ -54,7 +54,7 @@ class QueueManager
      * ctor
      */
     function QueueManager() {
-        $this->status = -1;
+        $this->state = -1;
         die('base class -- dont do this');
     }
 
@@ -98,10 +98,10 @@ class QueueManager
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
-            $this->status = -1;
+            $this->state = -1;
             return;
         }
-        $this->status = 1;
+        $this->state = 1;
     }
 
     //--------------------------------------------------------------------------
