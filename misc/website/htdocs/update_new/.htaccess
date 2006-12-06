@@ -1,0 +1,4 @@
+# $Id$
+Order Deny,Allow
+Deny from all
+Allow from 127.0.0.0/255.0.0.0
