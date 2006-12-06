@@ -251,7 +251,7 @@ class HeadlessDisplayer(object):
                     if seedLimitMax > 0:
                         totalShareRating = int(((upTotal * 100) / self.fileSize_stat))
                         if totalShareRating >= seedLimitMax:
-                            transferLog("seed-limit reached, setting shutdown-flag...\n")
+                            transferLog("seed-limit "+str(self.seedLimit)+" reached, setting shutdown-flag...\n")
                             self.running = '0'
 
             # read state from stat-file
