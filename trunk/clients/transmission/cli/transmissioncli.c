@@ -30,8 +30,7 @@
 
 /*******************************************************************************
  *
- * $Date$ : $Author$
- * $HeadURL$
+ * Torrentflux integration history :
  *
  * 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here,
  *                     check svn-log on berliOS-svn from now on.
@@ -278,7 +277,7 @@ int main(int argc, char ** argv) {
 			fprintf(stderr, "wrote pid-file : %s (%d)\n" ,tf_pid , currentPid);
 		} else {
 			fprintTimestamp();
-			fprintf(stderr, "error opening pid-file for write : %s (%d)\n" ,
+			fprintf(stderr, "error opening pid-file for write : %s (%d)\n",
 				tf_pid ,
 				currentPid);
 		}
@@ -630,7 +629,7 @@ int main(int argc, char ** argv) {
 				                  /* upload speed     */
 				tf_user,          /* user             */
 				                  /* seeds            */
-                                  /* peers            */
+									/* peers            */
 				tf_sharing,       /* sharing          */
 				seedLimit,        /* seedlimit        */
 				s->uploaded,      /* uploaded bytes   */
