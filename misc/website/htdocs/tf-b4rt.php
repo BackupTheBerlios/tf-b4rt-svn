@@ -33,7 +33,6 @@ define('_UPDATE_DB','db.txt');
 define('_UPDATE_MYSQL','mysql.txt');
 define('_UPDATE_SQLITE','sqlite.txt');
 define('_UPDATE_POSTGRES','postgres.txt');
-define('_REVISION', array_shift(explode(" ",trim(array_pop(explode(":",'$Revision$'))))));
 
 // functions
 require_once('functions.php');
@@ -98,7 +97,7 @@ if ((isset($update)) && ($update != "")) {
                           break;
                         case "postgres":
                           $sqlFile = _UPDATE_POSTGRES;
-                          break;                          
+                          break;
                         default:
                             bailOut(true);
                             break;
@@ -158,7 +157,7 @@ $action = @trim($_REQUEST["a"]);
 switch($action) {
     case "0": // news
         outputData(rewriteNews(getDataFromFile(_FILE_NEWS)));
-        exit; 	
+        exit;
     case "1": // changelog
         outputData(getDataFromFile(_FILE_CHANGELOG));
         exit;
