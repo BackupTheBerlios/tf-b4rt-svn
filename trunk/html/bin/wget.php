@@ -146,13 +146,12 @@ pclose($wget);
 $_STATUS = '0';
 $_SPEED = "0.00 kB/s";
 $_PERCENTAGE = 100;
-$_COMPLETED = $_SIZE;
+if ($_SIZE > 0)
+	$_COMPLETED = $_SIZE;
+else
+	$_SIZE = $_COMPLETED;
 $_ETA = "Download Succeeded!";
 writeStatFile();
-
-// update xfer
-if ($cfg['enable_xfer'] == 1)
-	saveXfer($_OWNER, $_SIZE, 0);
 
 // delete pid-file
 @unlink($_PID);
@@ -181,7 +180,7 @@ function writeStatFile() {
 	$af->seedlimit = "0";
 	$af->uptotal = "0";
 	$af->downtotal = $_COMPLETED;
-	$af->size = $_SIZE;
+	$af->size = ($_SIZE > 0) ? $_SIZE : $_COMPLETED;
 	$af->WriteFile();
 	unset($af);
 }
@@ -211,7 +210,7 @@ function processData($data){
 			$_INT_SPEED = $_INT_SPEED >> 10;
 		}
 		// ETA
-		if ($_INT_SPEED > 0)
+		if (($_SIZE > 0) && ($_INT_SPEED > 0))
 			$_ETA = convertTime((($_SIZE - $_COMPLETED) >> 10) / $_INT_SPEED);
 		else
 			$_ETA = '-';
@@ -221,7 +220,10 @@ function processData($data){
 		$_STATUS = '0';
 		$_SPEED = "0.00 kB/s";
 		$_PERCENTAGE = 100;
-		$_COMPLETED = $_SIZE;
+		if ($_SIZE > 0)
+			$_COMPLETED = $_SIZE;
+		else
+			$_SIZE = $_COMPLETED;
 		$_ETA = "Download Succeeded!";
 	}
 }
