@@ -33,13 +33,13 @@ include_once('adodb/adodb.inc.php');
 function initializeDatabase() {
 	global $cfg, $db;
 	// create ado-object
-    $db = ADONewConnection($cfg["db_type"]);   
+    $db = ADONewConnection($cfg["db_type"]);
     // connect
     if ($cfg["db_pcon"])
     	@ $db->PConnect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     else
     	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
-    // check for error	
+    // check for error
     if ($db->ErrorNo() != 0) {
     	global $argv;
     	if (isset($argv))
@@ -180,7 +180,7 @@ function showError($db, $sql) {
                     if ($cfg["debug_sql"])
                         echo "Debug SQL is on. <br><br>SQL: <strong>".$sql."</strong><br><br><br>";
                     echo "Database error: <strong>".$db->ErrorMsg()."</strong><br><br>";
-                    echo "Always check your database variables in the config.php file.<br><br>"
+                    echo "Always check your database variables in the config.db.php file.<br><br>"
 ?>
                     </td>
                     </tr>

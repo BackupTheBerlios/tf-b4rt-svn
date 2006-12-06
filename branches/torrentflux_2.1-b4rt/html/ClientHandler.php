@@ -30,7 +30,6 @@ class ClientHandler
                          // its not using the sys-bin for some ops
     var $binSocket = ""; // the binary this client uses for socket-connections
                          // used in netstat hack to identify connections
-
     // generic vars for a torrent-start
     var $rate = "";
     var $drate = "";
@@ -242,24 +241,24 @@ class ClientHandler
           $this->savepath = $this->cfg['path'].$this->owner."/";
         // ensure path has trailing slash
         $this->savepath = checkDirPathString($this->savepath);
-        // The following lines of code were suggested by Jody Steele jmlsteele@stfu.ca
-        // This is to help manage user downloads by their user names
-        // if the user's path doesnt exist, create it
-        if (!is_dir($this->cfg["path"]."/".$this->owner)) {
-            if (is_writable($this->cfg["path"])) {
-                mkdir($this->cfg["path"]."/".$this->owner, 0777);
+        // check target-directory, create if not present
+		if (!(checkDirectory($this->savepath, 0777))) {
+            AuditAction($this->cfg["constants"]["error"], "Error checking " . $this->savepath . ".");
+            $this->status = -1;
+            $this->messages .= "Error. TorrentFlux settings are not correct (path-setting).";
+        	global $argv;
+            if (isset($argv)) {
+            	die($this->messages);
             } else {
-                AuditAction($this->cfg["constants"]["error"], "Error -- " . $this->cfg["path"] . " is not writable.");
-                if (IsAdmin()) {
-                    $this->status = -1;
-                    header("location: admin.php?op=configSettings");
-                    return;
-                } else {
-                    $this->status = -1;
-                    $this->messages .= "Error. TorrentFlux settings are not correct (path is not writable) -- please contact an admin.";
-                }
+				if (IsAdmin()) {
+					@header("location: admin.php?op=configSettings");
+					exit();
+				} else {
+					$this->messages .= " please contact an admin.";
+					showErrorPage($this->messages);
+				}
             }
-        }
+		}
         // create AliasFile object and write out the stat file
         include_once("AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
@@ -269,29 +268,45 @@ class ClientHandler
         // update totals for this torrent
         updateTorrentTotals($this->torrent);
         // set param for sharekill
-        if ($this->sharekill <= 0) { // nice, we seed forever
+        $this->sharekill = intval($this->sharekill);
+        if ($this->sharekill == 0) { // nice, we seed forever
             $this->sharekill_param = 0;
-        } else { // recalc sharekill
-            $totalAry = getTorrentTotals(urldecode($torrent));
-            $upTotal = $totalAry["uptotal"]+0;
-            $torrentSize = $this->af->size+0;
-            $upWanted = ($this->sharekill / 100) * $torrentSize;
-            if ($upTotal >= $upWanted) { // we already have seeded at least
-                                         // wanted percentage. continue to seed
-                                         // forever is suitable in this case ~~
-                $this->sharekill_param = 0;
-            } else { // not done seeding wanted percentage
-                $this->sharekill_param = (int) ($this->sharekill - (($upTotal / $torrentSize) * 100));
-                // the type-cast may have floored the value. (tornado lacks
-                // precision because only (really?) accepting percentage-values)
-                // better to seed more than less so we add a percent in case ;)
-                if (($upWanted % $upTotal) != 0)
-                    $this->sharekill_param += 1;
-                // sanity-check.
-                if ($this->sharekill_param <= -1)
-                    $this->sharekill_param = 0;
+        } elseif ($this->sharekill > 0) { // recalc sharekill
+            // sanity-check. catch "data-size = 0".
+            $transferSize = intval($this->af->size);
+            if ($transferSize > 0) {
+				$totalAry = getTorrentTotals($this->torrent);
+            	$upTotal = $totalAry["uptotal"] + 0;
+            	$downTotal = $totalAry["downtotal"] + 0;
+				$upWanted = ($this->sharekill / 100) * $transferSize;
+				$sharePercentage = ($upTotal / $transferSize) * 100;
+	            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
+	            	// we already have seeded at least wanted percentage.
+	            	// skip start of client
+	                // set status
+        			$this->status = 1;
+        			// message
+        			$this->messages = "skipping start of transfer ".$this->torrent." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
+					// DEBUG : log the messages
+					AuditAction($this->cfg["constants"]["debug"], $this->messages);
+					// return
+					return;
+	            } else {
+	            	// not done seeding wanted percentage
+	                $this->sharekill_param = intval(ceil($this->sharekill - $sharePercentage));
+	                // sanity-check.
+	                if ($this->sharekill_param < 1)
+	                    $this->sharekill_param = 1;
+	            }
+            } else {
+				$this->messages = "data-size is 0 when recalcing share-kill for ".$this->torrent.". setting sharekill absolute to ".$this->sharekill;
+				AuditAction($this->cfg["constants"]["error"], $this->messages);
+				$this->sharekill_param = $this->sharekill;
             }
+        } else {
+        	$this->sharekill_param = $this->sharekill;
         }
+        // continue
         if ($this->cfg["AllowQueing"]) {
             if($this->queue == "1") {
                 $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start torrent)
@@ -306,6 +321,7 @@ class ClientHandler
             $this->af->StartTorrentFile();  // this only writes out the stat file (does not start torrent)
 
         }
+        // set status
         $this->status = 2;
     }
 
@@ -330,14 +346,14 @@ class ClientHandler
             $queueManager = QueueManager::getQueueManagerInstance($this->cfg);
             $queueManager->command = $this->command; // tfQmanager...
             $queueManager->enqueueTorrent($this->torrent);
-            AuditAction($this->cfg["constants"]["queued_torrent"], $this->torrent ."<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+            AuditAction($this->cfg["constants"]["queued_torrent"], $this->torrent ." : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
             AuditAction($this->cfg["constants"]["queued_torrent"], $this->command);
             $torrentRunningFlag = 0;
         } else {
             // The following command starts the torrent running! w00t!
             //system('echo command >> /tmp/fluxi.debug; echo "'. $this->command .'" >> /tmp/fluxi.debug');
             $this->callResult = exec($this->command);
-            AuditAction($this->cfg["constants"]["start_torrent"], $this->torrent. "<br>Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
+            AuditAction($this->cfg["constants"]["start_torrent"], $this->torrent. " : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Interval:".$this->rerequest);
             // slow down and wait for thread to kick off.
             // otherwise on fast servers it will kill stop it before it gets a chance to run.
             sleep(1);
@@ -553,7 +569,7 @@ class ClientHandler
                 $this->port += 1;
             if ($this->port > $this->maxport) {
                 $this->status = -1;
-                $this->messages .= "<b>Error</b> All ports in use.<br>";
+                $this->messages .= "All ports in use.";
                 return false;
             }
         }

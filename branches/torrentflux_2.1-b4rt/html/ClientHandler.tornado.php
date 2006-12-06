@@ -30,7 +30,7 @@ class ClientHandlerTornado extends ClientHandler
     function ClientHandlerTornado($cfg) {
         $this->handlerName = "tornado";
 		// version
-		$this->version = "0.3";
+		$this->version = "0.31";
         //
         $this->binSystem = "python";
         $this->binSocket = "python";
@@ -59,19 +59,20 @@ class ClientHandlerTornado extends ClientHandler
                 return;
             } else {
                 $this->status = -1;
-                $this->messages .= "<b>Error</b> TorrentFlux settings are not correct (path to python script is not valid) -- please contact an admin.<br>";
+                $this->messages .= "Error: TorrentFlux settings are not correct (path to python script is not valid) -- please contact an admin.";
                 return;
             }
         }
 
         // prepare starting of client
         parent::prepareStartTorrentClient($torrent, $interactive);
-        // prepare succeeded ?
-        if ($this->status != 2) {
-            $this->status = -1;
-            $this->messages .= "<b>Error</b> parent::prepareStartTorrentClient(".$torrent.",".$interactive.") failed<br>";
-            return;
-        }
+
+		// only continue if prepare succeeded (skip start / error)
+		if ($this->status != 2) {
+			if ($this->status == -1)
+				$this->messages .= "Error after call to parent::prepareStartClient(".$torrent.",".$interactive.")";
+			return;
+		}
 
         // build the command-string
         $skipHashCheck = "";

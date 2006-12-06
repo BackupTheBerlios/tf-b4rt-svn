@@ -1131,7 +1131,9 @@ function indexStartTorrent($torrent,$interactive) {
                 include_once("ClientHandler.php");
                 $clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
                 $clientHandler->startTorrentClient($torrent, 1);
-                if ($clientHandler->status == 3) { // hooray
+                if ($clientHandler->status == -1) { // start failed
+                	echo $clientHandler->messages;
+                } else {
                     // wait another sec
                     sleep(1);
                     if (array_key_exists("closeme",$_POST)) {
@@ -1142,8 +1144,6 @@ function indexStartTorrent($torrent,$interactive) {
                     } else {
                         header("location: index.php");
                     }
-                } else { // start failed
-                    echo $clientHandler->messages;
                 }
                 exit();
             }

@@ -30,7 +30,7 @@ class ClientHandlerTransmission extends ClientHandler
     function ClientHandlerTransmission($cfg) {
         $this->handlerName = "transmission";
 		// version
-		$this->version = "0.3";
+		$this->version = "0.31";
         //
         $this->binSocket = "transmissionc";
         //
@@ -60,27 +60,20 @@ class ClientHandlerTransmission extends ClientHandler
                 header("location: admin.php?op=configSettings");
                 return;
             } else {
-                $this->messages .= "<b>Error</b> TorrentFlux settings are not correct (path to transmission-bin is not valid) -- please contact an admin.<br>";
+                $this->messages .= "Error: TorrentFlux settings are not correct (path to transmission-bin is not valid) -- please contact an admin.";
                 return;
             }
         }
 
         // prepare starting of client
         parent::prepareStartTorrentClient($torrent, $interactive);
-        // prepare succeeded ?
-        if ($this->status != 2) {
-            $this->status = -1;
-            $this->messages .= "<b>Error</b> parent::prepareStartTorrentClient(".$torrent.",".$interactive.") failed<br>";
-            return;
-        }
 
-        // included in transmissioncli
-        // quick-hack for transmission--1
-        //if ($this->rate == 0)
-        //    $this->rate = -1;
-        //if ($this->drate == 0)
-        //    $this->drate = -1;
-        // included in transmissioncli
+		// only continue if prepare succeeded (skip start / error)
+		if ($this->status != 2) {
+			if ($this->status == -1)
+				$this->messages .= "Error after call to parent::prepareStartClient(".$torrent.",".$interactive.")";
+			return;
+		}
 
         // transmission wants -1 for no seeding.
         if ($this->sharekill == -1)
