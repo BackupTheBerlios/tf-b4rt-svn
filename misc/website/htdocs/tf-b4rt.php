@@ -23,8 +23,9 @@
 // defines
 define('_FILE_CHANGELOG','changelog-torrentflux-b4rt.txt');
 define('_FILE_VERSION_CURRENT','version-torrentflux-b4rt.txt');
+define('_UPDATE_BASEDIR','update_new');
+//
 define('_FILE_NEWS','newshtml.txt');
-define('_UPDATE_BASEDIR','update');
 define('_UPDATE_DATADIR','data');
 define('_UPDATE_SQLDIR','sql');
 define('_UPDATE_HTMLDIR','html');
