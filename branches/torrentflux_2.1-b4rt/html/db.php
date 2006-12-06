@@ -43,9 +43,9 @@ function initializeDatabase() {
     if ($db->ErrorNo() != 0) {
     	global $argv;
     	if (isset($argv))
-    		die("Error.\nCould not connect to database.\nCheck your database settings in the config.db.php file.\n");
+    		die("Error.\nCould not connect to database.\nCheck your database settings in the file config.db.php.\n");
     	else
-    		showErrorPage("Could not connect to database.<br>Check your database settings in the config.db.php file.");
+    		showErrorPage("Could not connect to database.<br>Check your database settings in the file <em>config.db.php</em>.");
     }
 }
 
@@ -130,7 +130,7 @@ function showErrorPage($errorMessage) {
 }
 
 /**
- * show db error page
+ * show db error
  *
  * @param $db
  * @param $sql
@@ -138,7 +138,14 @@ function showErrorPage($errorMessage) {
 function showError($db, $sql) {
     global $cfg;
     if($db->ErrorNo() != 0) {
-        include("themes/matrix/index.php");
+    	if (isset($argv)) {
+    		$dieMessage = "Database-Error :\n";
+    		$dieMessage .= $db->ErrorMsg();
+    		if ($cfg["debug_sql"] == 1)
+    			$dieMessage .= "\nSQL: ".$sql;
+    		die($dieMessage);
+    	} else {
+        	include("themes/matrix/index.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -177,10 +184,17 @@ function showError($db, $sql) {
                      <tr>
                      <td>
 <?php
-                    if ($cfg["debug_sql"])
-                        echo "Debug SQL is on. <br><br>SQL: <strong>".$sql."</strong><br><br><br>";
-                    echo "Database error: <strong>".$db->ErrorMsg()."</strong><br><br>";
-                    echo "Always check your database variables in the config.db.php file.<br><br>"
+					// db-error
+					$dbErrMsg = $db->ErrorMsg();
+					echo "Database-Error: <strong>".$dbErrMsg."</strong><br><br>";
+					// sql
+                    if ($cfg["debug_sql"] == 1)
+                        echo "SQL: <strong>".$sql."</strong><br><br>";
+                    // extra-message
+                    if (preg_match('/.*Query.*empty.*/i', $dbErrMsg))
+                    	echo "Database may be corrupted. Try to repair the tables.<br><br>";
+                    else
+                    	echo "Always check your database settings in the config.db.php file.<br><br>";
 ?>
                     </td>
                     </tr>
@@ -198,7 +212,8 @@ function showError($db, $sql) {
     </table>
 </div>
 <?php
-        exit();
+        	exit();
+    	}
     }
 }
 ?>
