@@ -24,7 +24,14 @@
 
 /*******************************************************************************
  *
- * Torrentflux integration history :
+ * This version of transmissioncli is meant to be used with torrentflux-b4rt
+ *
+ ******************************************************************************/
+
+/*******************************************************************************
+ *
+ * $Date$ : $Author$
+ * $HeadURL$
  *
  * 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here,
  *                     check svn-log on berliOS-svn from now on.
