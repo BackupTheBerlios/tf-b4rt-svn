@@ -23,7 +23,15 @@
  ******************************************************************************/
 
 /*******************************************************************************
+ *
+ * This version of transmissioncli is meant to be used with TorrentFlux 2.1-b4rt
+ *
+ ******************************************************************************/
+
+/*******************************************************************************
+ *
  * Torrentflux integration history :
+ *
  * 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here,
  *                     check svn-log on berliOS-svn from now on.
  * 15/07/06 : b4rt   - changes due to move to svn.
@@ -53,6 +61,7 @@
  *                     (was trying to close a file that wasn't open)
  ******************************************************************************/
 
+/* defines */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,11 +69,11 @@
 #include <getopt.h>
 #include <signal.h>
 #include <transmission.h>
+#include <sys/types.h>
 #ifdef SYS_BEOS
 #include <kernel/OS.h>
 #define usleep snooze
 #endif
-
 #define USAGE \
 "Usage: %s [options] file.torrent [options]\n\n" \
 "Options:\n" \
@@ -89,6 +98,7 @@
 "  -z, --pid <file>               File containing PID of transmission\n" \
 "\n"
 
+/* fields */
 static int showHelp = 0;
 static int showInfo = 0;
 static int showScrape = 0;
@@ -102,18 +112,22 @@ static int natTraversal = 0;
 static int seedLimit = 0;
 static int displayInterval = 1;
 static char * finishCall = NULL;
-static int parseCommandLine (int argc, char ** argv);
-static void sigHandler (int signal);
+// tfCLI
 static char * tf_stat_file = NULL;
 static FILE * tf_stat = NULL;
 static char * tf_user = NULL;
 static char * tf_pid = NULL;
 
-/**
+/* functions */
+static int parseCommandLine(int argc, char ** argv);
+static void sigHandler(int signal);
+
+/*******************************************************************************
  * main
- */
+ ******************************************************************************/
 int main(int argc, char ** argv) {
 
+	/* vars */
 	int i, error, nat;
 	tr_handle_t * h;
 	tr_torrent_t * tor;
@@ -207,6 +221,8 @@ int main(int argc, char ** argv) {
 		// cleanup
 		goto cleanup;
 	}
+
+	/* start up transmission */
 
 	// Create PID file if wanted by user
 	if (tf_pid != NULL) {
@@ -391,19 +407,19 @@ int main(int argc, char ** argv) {
 				if (tf_stat != NULL) {
 					tr_info_t * info = tr_torrentInfo( tor );
 					fprintf(tf_stat, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
-						1,                                  /* State                */
-						100.0 * s->progress,                /* downloading progress */
-						tf_string,                          /* Estimated time       */
-						s->rateDownload,                    /* download speed       */
-						s->rateUpload,                      /* upload speed         */
-						tf_user,                            /* user                 */
-						s->peersUploading, tf_seeders,      /* seeds                */
-						s->peersDownloading, tf_leechers,   /* peers                */
-						tf_sharing,                         /* sharing              */
-						seedLimit,                          /* seedlimit            */
-						s->uploaded,                        /* uploaded bytes       */
-						s->downloaded,                      /* downloaded bytes     */
-						info->totalSize);                   /* global size          */
+						1,                                /* State            */
+						100.0 * s->progress,              /* progress         */
+						tf_string,                        /* Estimated time   */
+						s->rateDownload,                  /* download speed   */
+						s->rateUpload,                    /* upload speed     */
+						tf_user,                          /* user             */
+						s->peersUploading, tf_seeders,    /* seeds            */
+						s->peersDownloading, tf_leechers, /* peers            */
+						tf_sharing,                       /* sharing          */
+						seedLimit,                        /* seedlimit        */
+						s->uploaded,                      /* uploaded bytes   */
+						s->downloaded,                    /* downloaded bytes */
+						info->totalSize);                 /* global size      */
 					fclose(tf_stat);
 				}
 			}
@@ -426,10 +442,12 @@ int main(int argc, char ** argv) {
 				// sharing
 				if (s->downloaded != 0) {
 					tf_sharing =
-						((double)(s->uploaded) / (double)(s->downloaded)) * 100;
+						((double)(s->uploaded) /
+							(double)(s->downloaded)) * 100;
 				} else {
 					tf_sharing =
-						((double)(s->uploaded) / (double)(info->totalSize)) * 100;
+						((double)(s->uploaded) /
+							(double)(info->totalSize)) * 100;
 				}
 
 				// If we reached the seeding limit, we have to quit transmission
@@ -455,19 +473,19 @@ int main(int argc, char ** argv) {
 				tf_stat = fopen(tf_stat_file, "w+");
 				if (tf_stat != NULL) {
 					fprintf(tf_stat, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
-						1,                                  /* State            */
-						100.0 * s->progress,                /* progress         */
-						"Download Succeeded!",              /* State text       */
-						s->rateDownload,                    /* download speed   */
-						s->rateUpload,                      /* upload speed     */
-						tf_user,                            /* user             */
-						s->peersUploading, tf_seeders,      /* seeds            */
-						s->peersDownloading, tf_leechers,   /* peers            */
-						tf_sharing,                         /* sharing          */
-						seedLimit,                          /* seedlimit        */
-						s->uploaded,                        /* uploaded bytes   */
-						s->downloaded,                      /* downloaded bytes */
-						info->totalSize);                   /* global size      */
+						1,                                /* State            */
+						100.0 * s->progress,              /* progress         */
+						"Download Succeeded!",            /* State text       */
+						s->rateDownload,                  /* download speed   */
+						s->rateUpload,                    /* upload speed     */
+						tf_user,                          /* user             */
+						s->peersUploading, tf_seeders,    /* seeds            */
+						s->peersDownloading, tf_leechers, /* peers            */
+						tf_sharing,                       /* sharing          */
+						seedLimit,                        /* seedlimit        */
+						s->uploaded,                      /* uploaded bytes   */
+						s->downloaded,                    /* downloaded bytes */
+						info->totalSize);                 /* global size      */
 					fclose(tf_stat);
 				}
 			}
@@ -587,9 +605,9 @@ failed:
 	return 0;
 }
 
-/**
+/*******************************************************************************
  * parseCommandLine
- */
+ ******************************************************************************/
 static int parseCommandLine(int argc, char ** argv) {
 	for(;;) {
 		static struct option long_options[] =
@@ -668,9 +686,9 @@ static int parseCommandLine(int argc, char ** argv) {
 	return 0;
 }
 
-/**
+/*******************************************************************************
  * sigHandler
- */
+ ******************************************************************************/
 static void sigHandler(int signal) {
 	switch(signal) {
 		case SIGINT:
