@@ -61,6 +61,7 @@ $cfg["constants"]["error"] = "ERROR";
 $cfg["constants"]["hit"] = "HIT";
 $cfg["constants"]["update"] = "UPDATE";
 $cfg["constants"]["admin"] = "ADMIN";
+$cfg["constants"]["debug"] = "DEBUG";
 
 asort($cfg["constants"]);
 
