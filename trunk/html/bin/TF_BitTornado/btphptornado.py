@@ -279,13 +279,13 @@ class HeadlessDisplayer:
                 self.percentShare = '0.0'
             if self.done and self.percentShare is not '' and self.autoShutdown == 'False':
                 if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
-                    transferLog("seed-limit reached, setting shutdown-flag...\n")
+                    transferLog("seed-limit "+str(self.shareKill)+" reached, setting shutdown-flag...\n")
                     die = True
                     running = '0'
                     self.upRate = ''
             elif (not self.done) and (self.timeEst == 'complete!') and (self.percentDone == '100.0'):
                 if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
-                    transferLog("seed-limit reached, setting shutdown-flag...\n")
+                    transferLog("seed-limit "+str(self.shareKill)+" reached, setting shutdown-flag...\n")
                     die = True
                     running = '0'
                     self.upRate = ''
