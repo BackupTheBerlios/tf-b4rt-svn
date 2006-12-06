@@ -118,10 +118,13 @@ def fmtsize(n):
     size = '%s (%s)' % (size, str(Size(n)))
     return size
 
-def transferLog(message):
+def transferLog(message, ts):
     try:
         FILE = open(transferLogFile,"a+")
-        FILE.write(message)
+        if not ts:
+            FILE.write(message)
+        else:
+            FILE.write(strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message)
         FILE.flush()
         FILE.close()
     except Exception, e:
@@ -244,14 +247,14 @@ class HeadlessDisplayer(object):
             # die-on-seed-limit / die-when-done
             if app.multitorrent.isDone:
                 if self.dieWhenDone == 'True':
-                    transferLog("die-when-done set, setting shutdown-flag...\n")
+                    transferLog("die-when-done set, setting shutdown-flag...\n", True)
                     self.running = '0'
                 else:
                     seedLimitMax = int(self.seedLimit)
                     if seedLimitMax > 0:
                         totalShareRating = int(((upTotal * 100) / self.fileSize_stat))
                         if totalShareRating >= seedLimitMax:
-                            transferLog("seed-limit "+str(self.seedLimit)+" reached, setting shutdown-flag...\n")
+                            transferLog("seed-limit "+str(self.seedLimit)+" reached, setting shutdown-flag...\n", True)
                             self.running = '0'
 
             # read state from stat-file
@@ -262,12 +265,12 @@ class HeadlessDisplayer(object):
                     FILE.close()
                 except Exception, e:
                     self.running = '1'
-                    transferLog("Failed to read stat-file : " + self.statFile + "\n")
+                    transferLog("Failed to read stat-file : " + self.statFile + "\n", True)
 
             # shutdown or write stat-file
             if self.running == '0':
                 # log
-                transferLog("mainline shutting down...\n")
+                transferLog("mainline shutting down...\n", True)
                 # set flags
                 self.state = 0
                 self.isInShutDown = 1
@@ -302,11 +305,11 @@ class HeadlessDisplayer(object):
                             errorMessage += err + "\n"
                             # FILE.write(err)
                         FILE.write(errorMessage)
-                        transferLog("self.errors : \n" + errorMessage)
+                        transferLog("self.errors : \n" + errorMessage, True)
                     FILE.flush()
                     FILE.close()
                 except Exception, e:
-                    transferLog("Failed to write stat-file : " + self.statFile + "\n")
+                    transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
 
     def print_spew(self, spew):
         s = StringIO()
@@ -445,14 +448,14 @@ class TorrentApp(object):
 
         # write pid-file
         currentPid = (str(getpid())).strip()
-        transferLog("writing pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")\n")
+        transferLog("writing pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")\n", True)
         try:
             pidFile = open(self.config['stat_file'] + ".pid", 'w')
             pidFile.write(currentPid + "\n")
             pidFile.flush()
             pidFile.close()
         except Exception, e:
-            transferLog("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")" + "\n")
+            transferLog("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")" + "\n", True)
             self.logger.error("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")", exc_info = e)
             raise BTFailure(_("Failed to write pid-file."))
 
@@ -518,7 +521,7 @@ class TorrentApp(object):
             rawserver.add_task(0, self.core_doneflag.set)
 
         # log that we are done with startup
-        transferLog("mainline up and running.\n")
+        transferLog("mainline up and running.\n", True)
 
         # always make sure events get processed even if only for
         # shutting down.
@@ -550,7 +553,7 @@ class TorrentApp(object):
             FILE.flush()
             FILE.close()
         except Exception, e:
-            transferLog("Failed to write stat-file : " + self.config['stat_file'] + "\n")
+            transferLog("Failed to write stat-file : " + self.config['stat_file'] + "\n", True)
 
     def get_status(self):
         self.multitorrent.rawserver.add_task(self.config['display_interval'],
@@ -610,7 +613,7 @@ if __name__ == '__main__':
     transferLogFile = transferLogFile.replace(".stat", ".log")
 
     # log what we are starting up
-    startupMessage = "\nmainline starting up :\n"
+    startupMessage = "mainline starting up :\n"
     startupMessage += " - torrentfile : " + torrentfile + "\n"
     startupMessage += " - save_in : " + config['save_in'] + "\n"
     startupMessage += " - tf_owner : " + config['tf_owner'] + "\n"
@@ -634,7 +637,7 @@ if __name__ == '__main__':
     startupMessage += " - check_hashes : " + str(config['check_hashes']) + "\n"
     startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
     startupMessage += " - upnp : " + str(config['upnp']) + "\n"
-    transferLog(startupMessage)
+    transferLog(startupMessage, True)
 
     # app
     app = TorrentApp(metainfo, config)
@@ -659,12 +662,12 @@ if __name__ == '__main__':
                print " ", th
 
     # remove pid-file
-    transferLog("removing pid-file : " + app.config['stat_file'] + ".pid" + "\n")
+    transferLog("removing pid-file : " + app.config['stat_file'] + ".pid" + "\n", True)
     try:
         remove(app.config['stat_file'] + ".pid")
     except Exception, e:
-        transferLog("Failed to remove pid-file : " + app.config['stat_file'] + ".pid" + "\n")
+        transferLog("Failed to remove pid-file : " + app.config['stat_file'] + ".pid" + "\n", True)
         app.logger.error("Failed to remove pid-file", exc_info = e)
 
     # log exit
-    transferLog("mainline exit.\n")
+    transferLog("mainline exit.\n", True)
