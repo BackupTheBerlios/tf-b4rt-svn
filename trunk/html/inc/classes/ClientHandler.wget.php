@@ -122,7 +122,7 @@ class ClientHandlerWget extends ClientHandler
         // check to see if the path to the wget-bin is valid
         if (!is_executable($this->cfg["bin_wget"])) {
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["bin_wget"]." is not valid");
-            $this->status = -1;
+            $this->state = -1;
             if ($this->cfg['isAdmin']) {
                 header("location: admin.php?op=serverSettings");
                 return;

@@ -54,7 +54,7 @@ class ClientHandlerTransmission extends ClientHandler
         // check to see if the path to the transmission-bin is valid
         if (!is_executable($this->cfg["btclient_transmission_bin"])) {
             AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["btclient_transmission_bin"]." is not valid");
-            $this->status = -1;
+            $this->state = -1;
             if ($this->cfg['isAdmin']) {
                 header("location: admin.php?op=serverSettings");
                 return;
@@ -68,8 +68,8 @@ class ClientHandlerTransmission extends ClientHandler
         parent::prepareStartClient($transfer, $interactive, $enqueue);
 
 		// only continue if prepare succeeded (skip start / error)
-		if ($this->status != 2) {
-			if ($this->status == -1)
+		if ($this->state != 2) {
+			if ($this->state == -1)
 				$this->messages .= "Error after call to parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.")";
 			return;
 		}

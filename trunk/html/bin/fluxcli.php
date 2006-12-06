@@ -241,9 +241,9 @@ function cliStartTorrent($torrent = "") {
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			// force start, dont queue
 			$clientHandler->startClient($torrent, 0, false);
-			if ($clientHandler->status == 3) { // hooray
-				echo "done\n";
-			} else { // start failed
+			if ($clientHandler->state == 3) { // hooray
+				echo " done\n";
+			} else {
 				echo "\n" . $clientHandler->messages;
 			}
 		} else {
@@ -275,9 +275,9 @@ function cliStartTorrents() {
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->startClient($torrent, 0, false);
-			if ($clientHandler->status == 3) // hooray
+			if ($clientHandler->state == 3) // hooray
 				echo " done\n";
-			else // start failed
+			else
 				echo "\n" . $clientHandler->messages;
         }
 	}
@@ -303,9 +303,9 @@ function cliResumeTorrents() {
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->startClient($torrent, 0, false);
-			if ($clientHandler->status == 3) // hooray
+			if ($clientHandler->state == 3) // hooray
 				echo " done\n";
-			else // start failed
+			else
 				echo "\n" . $clientHandler->messages;
         }
 	}
@@ -505,10 +505,10 @@ function cliWatchDir($tpath = "", $username = "") {
                             // start
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
                             $clientHandler->startClient($file_name, 0, false);
-                            if ($clientHandler->status == 3) // hooray
+                            if ($clientHandler->state == 3) // hooray
                                 echo " done\n";
-                            else  // start failed
-                                echo "\n ERROR : ". $clientHandler->messages ."\n";
+                            else
+                                echo "\n". $clientHandler->messages ."\n";
                         } else {
                             echo "\n ERROR: File could not be found or could not be copied: ".$watchDir.$file."\n";
                         }

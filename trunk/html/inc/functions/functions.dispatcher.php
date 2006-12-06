@@ -82,7 +82,7 @@ function indexStartTorrent($torrent, $interactive) {
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
 			$clientHandler->startClient($torrent, 1, $queueActive);
-			if ($clientHandler->status == -1) { // start failed
+			if ($clientHandler->state == -1) { // start failed
 				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
 				exit();
 			} else {
