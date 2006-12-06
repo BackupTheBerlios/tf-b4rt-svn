@@ -1077,20 +1077,6 @@ if (isset($_REQUEST["z"])) {
 	    					$htmlMain .= $versionAvailable;
 	    					$htmlMain .= '<br><br>';
 	    					$htmlMain .= '<font color="blue">This Version is a svn-Version.</font>';
-					} elseif (strpos(_VERSION, "alpha") !== false) {
-					        $htmlMain .= '<strong>This Version : </strong>'._VERSION;
-	    					$htmlMain .= '<br><br>';
-	    					$htmlMain .= '<strong>Latest Release : </strong>';
-	    					$htmlMain .= $versionAvailable;
-	    					$htmlMain .= '<br><br>';
-	    					$htmlMain .= '<font color="blue">This Version is a alpha-Version.</font>';
-					} elseif (strpos(_VERSION, "beta") !== false) {
-					        $htmlMain .= '<strong>This Version : </strong>'._VERSION;
-	    					$htmlMain .= '<br><br>';
-	    					$htmlMain .= '<strong>Latest Release : </strong>';
-	    					$htmlMain .= $versionAvailable;
-	    					$htmlMain .= '<br><br>';
-	    					$htmlMain .= '<font color="blue">This Version is a beta-Version.</font>';
 					} else {
 	    				if ($versionAvailable != _VERSION) {
 	    					$htmlMain .= '<strong>This Version : </strong>';
@@ -1105,7 +1091,6 @@ if (isset($_REQUEST["z"])) {
 							$htmlMain .= '<input type="Hidden" name="u" value="0">';
 							$htmlMain .= '<input type="submit" value="Update to Version '.$versionAvailable.'">';
 							$htmlMain .= '</form>';
-	    					//$htmlMain .= '<br>';
 	    					$htmlMain .= '<strong>Current Release : </strong>';
 	    					$htmlMain .= '<br>';
 	    					$htmlMain .= '<a href="'._URL_RELEASE.'" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Current Release" border="0"> '._URL_RELEASE.'</a>';
