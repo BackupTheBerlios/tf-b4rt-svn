@@ -472,7 +472,7 @@ int main(int argc, char ** argv) {
 					fprintf(stderr, "die-when-done set, setting shutdown-flag...\n");
 					mustDie = 1;
 				} else if ((seedLimit != 0) && (tf_sharing > (double)(seedLimit))) {
-					fprintf(stderr, "seed-limit reached, setting shutdown-flag...\n");
+					fprintf(stderr, "seed-limit %d reached, setting shutdown-flag...\n", seedLimit);
 					mustDie = 1;
 				}
 
