@@ -67,10 +67,12 @@ if ($dirHandle = @opendir('./mrtg')) {
 	$htmlTargets .= '</form>';
 	$htmlTargets .= '</td></tr></table>'."\n";
 }
-if ($htmlTargetsCount > 0)
+if ($htmlTargetsCount > 0) {
 	$tmpl->setvar('htmlTargets', $htmlTargets);
-else
+} else {
 	$tmpl->setvar('htmlTargets', "");
+	$tmpl->setvar('htmlGraph', "<br><p><strong>No Graphs found.</strong></p>");
+}
 $filename = "./mrtg/".$mrtgTarget.".inc";
 if (is_file($filename)) {
 	$htmlGraph = "";
@@ -87,8 +89,6 @@ if (is_file($filename)) {
 	$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
 	// set var
 	$tmpl->setvar('htmlGraph', $htmlGraph);
-} else {
-	$tmpl->setvar('htmlGraph', "<br><p><strong>No Graphs found.</strong></p>");
 }
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_MRTG']);
