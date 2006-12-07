@@ -108,7 +108,7 @@ foreach ($arURL as $rid => $url) {
 		)
 	);
 }
-//var_dump($rss_list);exit;
+
 $tmpl->setloop('rss_list', $rss_list);
 
 //
