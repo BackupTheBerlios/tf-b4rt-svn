@@ -3,6 +3,88 @@ $Id$
 ================================================================================
 
 
+
+  b4rt-971
+
+  Note : when upgrading via superadmin-web-upgrade only part of the files are
+         updated ! (superadmin-upgrade of 2.1-branch can only update the files
+         in the docroot (and only docroot, not even subdirs of docroot))
+
+
+  details :
+  http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1788
+
+
+***** changes *****
+
+- mrtg.php :
+  print a message when no graphs are found.
+
+- aliasfile-security-checks : do not print aliasfile-name on invalid
+  aliasfile-requests as it contains path-info. just print a error-message.
+
+- optimizations : use "strpos" instead of "ereg" where possible
+
+- maketorrent :
+  * better security-check in download-request
+  * in download set the mime-type to "application/x-bittorrent" if file is
+    a torrent-file and to "application/octet-stream" if not.
+
+- db-error-function :
+  * added cli-mode-switch
+  * additional error-message in db-error-page (should hopefully recognize the
+    "corrupted tables"-problem and print out a proper message.)
+
+- sharekill-calculation :
+  * change in fallback-behaviour :
+    new :
+     when restarting a torrent and seeding-ratio of set sharekill-value is
+     already reached the torrent will not be started. (entry is logged to
+     activity / debug if this applies)
+    old :
+     when restarting a torrent and seeding-ratio of set sharekill-value is
+     already reached the torrent will be started with sharekill 0 (= seed
+     forever).
+  * new sanity-check for "torrentdata-size = 0" :
+    if this case applies the sharekill-recalculation can not be done as size is
+    a required value for the maths. when this case applies the torrent is now
+    started with an unaltered sharekill-setting (so what is set will be passed
+    1:1 to the client) and additionally the event is logged. (activity - ERROR)
+
+- added cfg-constant for debug (activity-log)
+
+- Updated maketorrent to allow changing of chunk size. (ported from TF 2.2)
+
+- alias-file-sanity-check : allow -
+
+- various minors.
+
+
+***** fixes *****
+
+- sharekill-calculation : some fixes in code
+
+- Fixed Qmanager looping issue. (from TF 2.2)
+
+- fixed a bug in dir-stats
+
+- various minors.
+
+
+***** updates *****
+
+- Added Turkish and Russian language files. (from TF 2.2)
+
+- updated SQL-files for TF 2.2 (renamed to v98 to prevent confusion)
+
+- Transmission :
+  * tfCLI-version : 1775
+  * Transmission-version : 0.7-svn-1152
+
+
+--------------------------------------------------------------------------------
+
+
   b4rt-97
 
 
@@ -74,7 +156,7 @@ $Id$
   * TorrentBox 1.04
   * Filemp3 1.02
   * The Pirate Bay Search Module v1.04
-  
+
 - BitTornado 0.3.17
 
 - Transmission 0.7-svn
@@ -88,9 +170,9 @@ $Id$
   http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1280&sc=0&isdir=1
 
 
-***** changes ***** 
+***** changes *****
 
-- transmission-handler : bsd-workaround : use PHP-function "touch" and not 
+- transmission-handler : bsd-workaround : use PHP-function "touch" and not
   shell-call to "touch"
 
 - refactoring db :
@@ -105,7 +187,7 @@ $Id$
 
 - added "max-recursion-depth" (10) to function "checkDirectory".
 
-- superadmin : function backupCreate : use function checkDirectory from 
+- superadmin : function backupCreate : use function checkDirectory from
   functions-lib and not extra local one
 
 
@@ -113,9 +195,9 @@ $Id$
 
 - bug when writing messages with accents or special characters.
   fix provided by Shadow aok, thanks for this.
-  http://tf-b4rt.berlios.de/forum/index.php/topic,216.0.html 
+  http://tf-b4rt.berlios.de/forum/index.php/topic,216.0.html
 
-- use a useless var in all PHP-classes ctors to prevent this error on flawed 
+- use a useless var in all PHP-classes ctors to prevent this error on flawed
   PHPs :
   "Fatal error: Only variables can be passed by reference in ..."
 
@@ -130,7 +212,7 @@ $Id$
   http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1226&sc=0&isdir=1
 
 
-***** changes ***** 
+***** changes *****
 
 - dont print out any var-info on db-error
 
@@ -138,9 +220,9 @@ $Id$
 
 - removed unused defines from stats.php
 
-- client-handlers : escapeshellarg @ all strings in commandline-string possibly 
-  unsafe 
-   
+- client-handlers : escapeshellarg @ all strings in commandline-string possibly
+  unsafe
+
 - superadmin : use proxy to get current version
 
 
@@ -164,15 +246,15 @@ $Id$
   http://www.stevenroddis.com.au/2006/10/17/torrentflux-action-script-insertion/
 
 - "TorrentFlux file Script Insertion"
-  http://www.stevenroddis.com.au/2006/10/17/torrentflux-file-script-insertion/  
-  
+  http://www.stevenroddis.com.au/2006/10/17/torrentflux-file-script-insertion/
+
 
 --------------------------------------------------------------------------------
 
   b4rt-951
-  
-***** fixes *****  
-  
+
+***** fixes *****
+
 - dont print DSN on db-error
 
 
