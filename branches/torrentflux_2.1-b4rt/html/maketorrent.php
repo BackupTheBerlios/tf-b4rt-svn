@@ -190,43 +190,36 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
     }
 
     // This is the torrent download prompt
-    if( !empty( $_GET["download"] ) )
-    {
+    if (!empty( $_GET["download"])) {
         $tfile = $_GET["download"];
-
-        // ../ is not allowed in the file name
-        if (!ereg("(\.\.\/)", $tfile))
-        {
+        if (isValidTransfer($tfile) === true) {
             // Does the file exist?
-            if (file_exists($tpath . $tfile))
-            {
+            if (file_exists($tpath . $tfile)) {
             	// filenames in IE containing dots will screw up the filename
  	            if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
  	                $headerName = preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1);
  	            else
  	                $headerName = $tfile;
-
-                // Prompt the user to download the new torrent file.
-                header( "Content-type: application/octet-stream\n" );
-                header( "Content-disposition: attachment; filename=\"" . $headerName . "\"\n" );
-                header( "Content-transfer-encoding: binary\n");
-                header( "Content-length: " . @filesize( $tpath . $tfile ) . "\n" );
-
-                // Send the torrent file
+                // Prompt the user to download the file.
+				if ((substr(strtolower($tfile), -8) == ".torrent")) {
+					header("Content-type: application/x-bittorrent\n");
+				} else {
+					header( "Content-type: application/octet-stream\n" );
+				}
+                header("Content-disposition: attachment; filename=\"" . $headerName . "\"\n");
+                header("Content-transfer-encoding: binary\n");
+                header("Content-length: " . @filesize( $tpath . $tfile) . "\n");
+                // Send the file
                 $fp = @fopen( $tpath . $tfile, "r" );
                 @fpassthru( $fp );
                 @fclose( $fp );
-
                 AuditAction($cfg["constants"]["fm_download"], $tfile);
-            }
-            else
-            {
+            } else {
                 AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg['user']." tried to download ".$tfile);
             }
-        }
-        else
-        {
-            AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg['user']." tried to download ".$tfile);
+        } else {
+            AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg['user']." tried to download ".htmlentities($tfile, ENT_QUOTES));
+            @showErrorPage("ILLEGAL DOWNLOAD : <br>".htmlentities($tfile, ENT_QUOTES));
         }
         exit();
     }
