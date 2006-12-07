@@ -136,6 +136,9 @@ class lastRSS {
 	function Parse ($rss_url) {
 		// Load RSS file
 		$rss_content = FetchHTML($rss_url);
+		if(empty($rss_content)){
+			return false;
+		}
 
 		// Parse document encoding
 		$result['encoding'] = $this->my_preg_match("'encoding=[\'\"](.*?)[\'\"]'si", $rss_content);
