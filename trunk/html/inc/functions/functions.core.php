@@ -2798,10 +2798,16 @@ function FetchHTML($url, $referer = "") {
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", $_SERVER['HTTP_USER_AGENT']);
 
-	// array of URL component parts for use in raw HTTP request:
+	/**
+	 * array of URL component parts for use in raw HTTP request
+	 * @param	array	$domain
+	 */
 	$domain = parse_url($url);
 
-	// URI/path used in GET request:
+	/**
+	 * URI/path used in GET request:
+	 * @param	string	$getcmd
+	 */
 	$getcmd	= $domain["path"];
 
     if (!array_key_exists("query", $domain))
@@ -2810,7 +2816,10 @@ function FetchHTML($url, $referer = "") {
 	// append the query string if included:
     $getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
 
-	// Cookie string used in raw HTTP request:
+	/**
+	 * Cookie string used in raw HTTP request
+	 * @param	string	$cookie
+	 */
 	$cookie = "";
 
 	// Check to see if cookie required for this domain:
@@ -2821,17 +2830,60 @@ function FetchHTML($url, $referer = "") {
 	if (!array_key_exists("port", $domain))
 		$domain["port"] = 80;
 
-	// the raw HTTP request to send to the remote webserver:
+	/**
+	 * the raw HTTP request to send to the remote webserver
+	 * @param	string	$request
+	 */
 	$request = "";
 
-	// the raw HTTP response received from the remote webserver:
-	$response = "";
+	/**
+	 * the raw HTTP response received from the remote webserver
+	 * @param	string	$responseBody
+	 */
+	$responseBody = "";
 
-	// $response stripped of HTTP response headers:
-	$rtnValue = "";
+	/**
+	 * Array of HTTP response headers
+	 * @param	array	$responseHeaders
+	 */
+	$responseHeaders = array();
+
+	/**
+	 * Indicates if we got the response line or not from webserver
+	 * 'HTTP/1.1 200 OK
+	 * etc
+	 * @param	bool	$gotResponseLine
+	 */
+	$gotResponseLine = false;
+
+	/**
+	 * Status code of webserver resonse
+	 * @param	string	$status
+	 */
+	$status = "";
+
+	/**
+	 * Temporarily use HTTP/1.0 until chunked encoding is sorted out
+	 * Valid values are '1.0' or '1.1'
+	 * @param	string	$httpVersion
+	 */
+	$httpVersion = "1.0";
+
+	/**
+	 * Error string used in fsockopen
+	 * @param	string	$errstr
+	 */
+	$errstr="";
+
+	/**
+	 * Error number used in fsockopen
+	 * @param	int		$errno
+	 */
+	$errno="";
 
 	// Check to see if this site requires the use of cookies
-	if (!empty($cookie)) {
+	// Whilst in SVN/testing, always use the cookie/raw HTTP handling code:
+	if (true || !empty($cookie)) {
 		$socket = @fsockopen($domain["host"], $domain["port"], $errno, $errstr, 30); //connect to server
 
 		if(!empty($socket)) {
@@ -2847,31 +2899,100 @@ function FetchHTML($url, $referer = "") {
 			// Connection: Close
 			// Cookie: uid=12345;pass=asdfasdf;
 			//
-			$request  = "GET " . $getcmd . " HTTP/1.1\r\n";
+			$request  = "GET " . ($httpVersion=="1.1" ? $getcmd : $url ). " HTTP/" . $httpVersion ."\r\n";
 			$request .= (!empty($referer)) ? "Referer: " . $referer . "\r\n" : "";
 			$request .= "Accept: */*\r\n";
 			$request .= "Accept-Language: en-us\r\n";
 			$request .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
 			$request .= "Host: " . $domain["host"] . "\r\n";
-			$request .= "Connection: Close\r\n";
+			if($httpVersion=="1.1"){
+				$request .= "Connection: Close\r\n";
+			}
 			$request .= "Cookie: " . $cookie . "\r\n\r\n";
 
 			// Send header packet information to server
-			@fputs($socket, $request);
+			fputs($socket, $request);
 
-			// Assign response from server:
-			while (!@feof($socket))
-				$response .= @fgets($socket, 500000);
+			// Get response headers:
+			while ($line=@fgets($socket, 500000)){
+				// First empty line/\r\n indicates end of response headers:
+				if($line == "\r\n"){
+					break;
+				}
 
+				if(!$gotResponseLine){
+					preg_match("@HTTP/[^ ]+ (\d\d\d)@", $line, $matches);
+					// TODO: Use this to see if we redirected (30x) and follow the redirect:
+					$status = $matches[1];
+					$gotResponseLine = true;
+					continue;
+				}
+
+				// Get response headers:
+				preg_match("/^([^:]+):\s*(.*)/", trim($line), $matches);
+				$responseHeaders[strtolower($matches[1])] = $matches[2];
+			}
+
+			if(
+				$httpVersion=="1.1"
+				&& isset($responseHeaders["transfer-encoding"])
+				&& !empty($responseHeaders["transfer-encoding"])
+			){
+				/*
+				// NOT CURRENTLY WORKING, USE HTTP/1.0 ONLY UNTIL THIS IS FIXED!
+				*/
+
+				// Get body of HTTP response:
+				// Handle chunked encoding:
+				/*
+						length := 0
+						read chunk-size, chunk-extension (if any) and CRLF
+						while (chunk-size > 0) {
+						   read chunk-data and CRLF
+						   append chunk-data to entity-body
+						   length := length + chunk-size
+						   read chunk-size and CRLF
+						}
+				*/
+
+				// Used to count total of all chunk lengths, the content-length:
+				$chunkLength=0;
+
+				// Get first chunk size:
+				$chunkSize = hexdec(trim(fgets($socket)));
+
+				// 0 size chunk indicates end of content:
+				while($chunkSize > 0){
+					// Read in up to $chunkSize chars:
+					$line=@fgets($socket, $chunkSize);
+
+					// Discard crlf after current chunk:
+					fgets($socket);
+
+					// Append chunk to response body:
+					$responseBody.=$line;
+
+					// Keep track of total chunk/content length:
+					$chunkLength+=$chunkSize;
+
+					// Read next chunk size:
+					$chunkSize = hexdec(trim(fgets($socket)));
+				}
+				$responseHeaders["content-length"] = $chunkLength;
+			} else {
+				while ($line=@fread($socket, 500000)){
+					$responseBody .= $line;
+				}
+			}
 			@fclose($socket); // Close our connection
 		} else {
-			return "Error fetching $url.  PHP Error No: $errno. PHP Error String: $errstr.";
+			return "Error fetching $url.  PHP Error No=$errno. PHP Error String=$errstr";
 		}
 	} else {
 		// No cookies - no need for raw HTTP:
 		if ($fp = @fopen($url, 'r')) {
 			while (!@feof($fp))
-				$response .= @fgets($fp, 4096);
+				$responseBody .= @fgets($fp, 4096);
 
 			@fclose($fp);
 		}
@@ -2880,9 +3001,9 @@ function FetchHTML($url, $referer = "") {
 	// If no response from server or we were redirected with 30x response,
 	// try cURL:
 	if (
-			($response == "" && function_exists("curl_init"))
+			($responseBody == "" && function_exists("curl_init"))
 			||
-			(preg_match("#HTTP/1\.[01] 30#", $response) > 0 && function_exists("curl_init"))
+			(preg_match("#HTTP/1\.[01] 30#", $responseBody) > 0 && function_exists("curl_init"))
 		){
 
 		// Give CURL a Try
@@ -2894,25 +3015,39 @@ function FetchHTML($url, $referer = "") {
 		curl_setopt($ch, CURLOPT_PORT, $domain["port"]);
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
-		curl_setopt($ch, CURLOPT_HEADER, TRUE);
+		curl_setopt($ch, CURLOPT_HEADER, FALSE);
 		curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt ($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+		curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
 
-		$response = curl_exec($ch);
+		$responseBody = curl_exec($ch);
 
 		curl_close($ch);
 	}
 
-	// Finally, trim the HTTP $response of it's HTTP headers:
-	$rtnValue = substr($response, strpos($response, "\r\n\r\n"));
-
 	// Trim any extraneous linefeed chars:
-	$rtnValue = trim($rtnValue, "\r\n");
+	$responseBody = trim($responseBody, "\r\n");
 
-	return $rtnValue;
+	// If a filename is associated with this content, assign it to $cfg:
+	if(isset($responseHeaders["content-disposition"]) && !empty($responseHeaders["content-disposition"])){
+		// Content-disposition: attachment; filename="nameoffile":
+		// Don't think single quotes can be used to escape filename here, but just in case check for ' and ":
+		if(preg_match("/filename=(['\"])([^\\1]+)\\1/", $responseHeaders["content-disposition"], $matches)){
+			if(isset($matches[2]) && !empty($matches[2])){
+				$filename=$matches[2];
+
+				// Only accept filenames, not paths:
+				if(!preg_match("@/@", $filename)){
+					$cfg["save_torrent_name"] = $filename;
+				}
+			}
+		}
+	}
+
+	return $responseBody;
 }
 
 /**
