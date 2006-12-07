@@ -209,7 +209,12 @@ function indexProcessDownload($url_upload) {
 			}
 			$file_name = cleanFileName($file_name);
 			// if the output had data then write it to a file
-			if ((strlen($output) > 0) && (strpos($output, "<br />") === false)) {
+			if (strlen($output) > 0) {
+				// check if content contains html
+				if ($cfg['debuglevel'] > 0) {
+					if (strpos($output, "<br />") === false)
+						AuditAction($cfg["constants"]["debug"], "indexProcessDownload : content contained html : ".htmlentities(addslashes($url_upload), ENT_QUOTES));
+				}
 				if (is_file($cfg["transfer_file_path"].$file_name)) {
 					// Error
 					$messages .= "ERROR: the file ".$file_name." already exists on the server.";
