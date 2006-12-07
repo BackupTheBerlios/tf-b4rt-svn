@@ -37,7 +37,7 @@ function downloadTorrent($tfile) {
 			else
 				$headerName = $tfile;
 			// Prompt the user to download the new torrent file.
-			header("Content-type: application/octet-stream\n");
+			header("Content-type: application/x-bittorrent\n");
 			header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
 			header("Content-transfer-encoding: binary\n");
 			header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
