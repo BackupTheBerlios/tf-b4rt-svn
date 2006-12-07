@@ -69,6 +69,7 @@ foreach ($arURL as $rid => $url) {
 				$rs["title"] = "Feed URL ".htmlentities($url, ENT_QUOTES)." Note: this feed does not have a valid 'title' tag";
 			}
 
+
 			// Check each item in this feed has link, title and publication date:
 			for ($i=0; $i < count($rs["items"]); $i++) {
 				// Don't include feed items without a link:
@@ -80,13 +81,23 @@ foreach ($arURL as $rid => $url) {
 				}
 
 				// Check item's pub date:
-				if(empty($rs["items"][$i]["pubDate"]) || empty($rs["items"][$i]["pubDate"])){
+				if(empty($rs["items"][$i]["pubDate"]) || !isset($rs["items"][$i]["pubDate"])){
 					$rs["items"][$i]["pubDate"] = "Unknown publication date";
 				}
 
-				// Check item's description:
-				if(empty($rs["items"][$i]["description"]) || !isset($rs["items"][$i]["description"])){
-					$rs["items"][$i]["description"] = "Unknown feed item: ".html_entity_decode($rs["items"][$i]["link"]);
+				// Check item's title:
+				if(empty($rs["items"][$i]["title"]) || !isset($rs["items"][$i]["title"])){
+					// No title found for this item, create one from the link:
+					$link=html_entity_decode($rs["items"][$i]["link"]);
+					if(strlen($link) >= 45){
+						$link = substr($link, 0, 42)."...";
+					}
+					$rs["items"][$i]["title"] = "Unknown feed item title: $link";
+				} elseif(strlen($rs["items"][$i]["title"]) >= 67){
+					// if title string is longer than 70, truncate it:
+					// Note this is a quick hack, link title's will also be truncated as well
+					// as the feed's display title in the table.
+					$rs["items"][$i]["title"] = substr($rs["items"][$i]["title"], 0, 64)."...";
 				}
 			}
 			$stat = 1;
