@@ -27,8 +27,7 @@
  */
 function downloadTorrent($tfile) {
 	global $cfg;
-	// ../ is not allowed in the file name
-	if (!ereg("(\.\.\/)", $tfile)) {
+	if (isValidTransfer($tfile) === true) {
 		// Does the file exist?
 		if (file_exists($cfg["transfer_file_path"].$tfile)) {
 			// filenames in IE containing dots will screw up the filename
@@ -36,12 +35,16 @@ function downloadTorrent($tfile) {
 				$headerName = preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1);
 			else
 				$headerName = $tfile;
-			// Prompt the user to download the new torrent file.
-			header("Content-type: application/x-bittorrent\n");
+			// Prompt the user to download file.
+			if ((substr(strtolower($tfile), -8) == ".torrent")) {
+				header("Content-type: application/x-bittorrent\n");
+			} else {
+				header( "Content-type: application/octet-stream\n" );
+			}
 			header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
 			header("Content-transfer-encoding: binary\n");
 			header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
-			// Send the torrent file
+			// Send the file
 			$fp = @fopen($cfg["transfer_file_path"].$tfile, "r");
 			@fpassthru($fp);
 			@fclose($fp);
@@ -50,7 +53,8 @@ function downloadTorrent($tfile) {
 			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg["user"]." tried to download ".$tfile);
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$tfile);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".htmlentities($tfile, ENT_QUOTES));
+		@showErrorPage("ILLEGAL DOWNLOAD : <br>".htmlentities($tfile, ENT_QUOTES));
 	}
 	exit();
 }
