@@ -264,7 +264,7 @@ if (isset($_REQUEST["u"])) {
 				break;
 			case "2":
 				// get sql-data
-				$updateSQLData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION . "&d=".$cfg["db_type"])));
+				$updateSQLData = @trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION . "&d=".$cfg["db_type"])));
 				if ((isset($updateSQLData)) && ($updateSQLData != "")) {
 					if (ob_get_level() == 0)
 						@ob_start();
@@ -338,7 +338,7 @@ if (isset($_REQUEST["u"])) {
 					foreach ($updateFileAry as $requestFile) {
 						$requestFile = trim($requestFile);
 						sendLine('<li>'.$requestFile);
-						$fileData = trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=4&v=" . _VERSION . "&f=".$requestFile)));
+						$fileData = @trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=4&v=" . _VERSION . "&f=".$requestFile)));
 						sendLine(' (' . strlen($fileData) .')');
 						if ($handle = fopen($requestFile, "w")) {
 							if (fwrite($handle, $fileData)) {
@@ -1281,10 +1281,6 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2">News</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3">Changelog</a>';
-			/*
-			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=4" target="_blank">Issues</a>';
-			*/
 			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
