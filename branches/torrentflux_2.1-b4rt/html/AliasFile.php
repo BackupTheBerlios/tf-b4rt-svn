@@ -64,13 +64,13 @@ class AliasFile
      */
     function getAliasFileInstance($inFile, $user = "", $fluxCfg, $clientType = '') {
     	// check if file is a sane file
-    	if ((ereg("(\.\.\/)", $inFile)) || (!preg_match('/^[a-zA-Z0-9._\-\/]+(stat)$/', $inFile))) {
+    	if ((strpos($inFile, "../") !== false) || (!preg_match('/^[a-zA-Z0-9._\-\/]+(stat)$/', $inFile))) {
     		AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile : ".$fluxCfg["user"]." tried to access ".$inFile);
     		global $argv;
     		if (isset($argv))
-    			die("Invalid AliasFile : ".$inFile);
+    			die("Invalid AliasFile");
     		else
-    			showErrorPage("Invalid AliasFile : <br>".htmlentities($inFile, ENT_QUOTES));
+    			showErrorPage("Invalid AliasFile");
     	}
         // damn dirty but does php (< 5) have reflection or something like
         // class-by-name ?
@@ -86,10 +86,10 @@ class AliasFile
             switch ($clientClass) {
                 case "tornado":
                     return new AliasFileTornado($inFile, $user, serialize($fluxCfg));
-                break;
+                	break;
                 case "transmission":
                     return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
-                break;
+                	break;
             }
         }
     }
