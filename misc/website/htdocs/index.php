@@ -21,12 +21,13 @@
 *******************************************************************************/
 
 /* defines */
-define('_FILE_NEWS','newshtml.txt');
-define('_FILE_VERSION','version.txt');
-define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
+define('_FILE_NEWS', 'newshtml.txt');
+define('_FILE_VERSION_OLD', 'version.txt');
+define('_FILE_VERSION_NEW', 'version-torrentflux-b4rt.txt');
+define('_FILE_CHANGELOG', 'changelog-torrentflux_2.1-b4rt.txt');
 
 /* global fields */
-$version = "";
+$versions = array();
 $site = "";
 
 // functions
@@ -36,8 +37,9 @@ require_once('functions.php');
 // Main
 // -----------------------------------------------------------------------------
 
-// get current version
-$version = trim(getDataFromFile(_FILE_VERSION));
+// get current versions
+$versions['old'] = @trim(getDataFromFile(_FILE_VERSION_OLD));
+$versions['new'] = @trim(getDataFromFile(_FILE_VERSION_NEW));
 
 // init site-var
 if (isset($_REQUEST["s"]))
@@ -77,10 +79,9 @@ exit();
 
 /**
  * prints page-head
- *
  */
 function printPageHead() {
-	global $version;
+	global $versions;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -102,8 +103,10 @@ function printPageHead() {
 <div id="container">
 	<div id="header">
 		<p class="version">
-			<span class="versionspan">Current Version:</span>
-			<a href="http://tf-b4rt.berlios.de/current" title="Current Version"><?php echo $version; ?></a>
+			<span class="versionspan">Current Versions:</span>
+			<a href="http://tf-b4rt.berlios.de/current" title="2.1-b4rt"><?php echo $versions['old']; ?></a>
+			<span class="versionspan"> | </span>
+			<a href="http://tf-b4rt.berlios.de/tfb" title="1.0"><?php echo $versions['new']; ?></a>
 		</p>
 	</div>
 	<div id="navi">
@@ -123,7 +126,6 @@ function printPageHead() {
 
 /**
  * prints page-foot
- *
  */
 function printPageFoot() {
 ?>
@@ -149,7 +151,6 @@ function printPageFoot() {
 
 /**
  * prints page "home"
- *
  */
 function printPageHome() {
 ?>
@@ -179,7 +180,6 @@ function printPageHome() {
 
 /**
  * prints page "features"
- *
  */
 function printPageFeatures() {
 ?>
@@ -247,7 +247,6 @@ function printPageFeatures() {
 
 /**
  * prints page "news"
- *
  */
 function printPageNews() {
 ?>
@@ -267,7 +266,6 @@ function printPageNews() {
 
 /**
  * prints page "about"
- *
  */
 function printPageAbout() {
 ?>
@@ -296,7 +294,6 @@ function printPageAbout() {
 
 /**
  * prints page "changelog"
- *
  */
 function printPageChangelog() {
 ?>
