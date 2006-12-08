@@ -582,6 +582,8 @@ function changeUserLevel($user_id, $level) {
  */
 function repairTorrentflux() {
 	global $cfg, $db;
+	// repair totals
+	repairTotals(false);
 	// sanity-check for transfers-dir
 	if (!is_dir($cfg["transfer_file_path"]))
 		return false;

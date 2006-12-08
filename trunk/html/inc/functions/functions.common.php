@@ -1292,6 +1292,8 @@ function deleteProfileInfo($pid) {
  */
 function clientCare($talk = false) {
 	global $cfg;
+	// repair totals
+	repairTotals($talk);
 	// sanity-check for transfers-dir
 	if (!is_dir($cfg["transfer_file_path"])) {
 		if ($talk)
@@ -1366,10 +1368,36 @@ function clientCare($talk = false) {
 		// delete pid-file
 		@unlink($cfg["transfer_file_path"].$pidFile);
 		// DEBUG : log the repair of the bogus transfer
-		if ($cfg['debuglevel'] > 1)
+		if ($cfg['debuglevel'] > 0)
 			AuditAction($cfg["constants"]["debug"], "clientCare : transfer repaired : ".$transfer);
 		if ($talk)
 			echo "done\n";
+	}
+}
+
+/**
+ * repairTotals
+ *
+ * @param $talk : boolean if function should talk
+ */
+function repairTotals($talk = false) {
+	global $cfg, $db;
+	if ($talk)
+		echo "repairing totals ...\n";
+	$bogusCount = 0;
+	$bogusCount = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
+	if (($bogusCount !== false) && ($bogusCount > 0)) {
+		if ($talk)
+			echo "found ".$bogusCount." invalid entries, deleting...\n";
+		$sql = "DELETE FROM tf_torrent_totals WHERE tid = ''";
+		$result = $db->Execute($sql);
+		showError($db, $sql);
+		// DEBUG : log the repair
+		if ($cfg['debuglevel'] > 0)
+			AuditAction($cfg["constants"]["debug"], "repairTotals : found and removed ".$bogusCount." invalid totals-entries");
+	} else {
+		if ($talk)
+			echo "no errors found.\n";
 	}
 }
 

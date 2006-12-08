@@ -941,7 +941,7 @@ function updateTransferTotals($transfer) {
 	// very ugly exists check... too lazy now
 	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
 	$result = $db->Execute($sql);
-		showError($db, $sql);
+	showError($db, $sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$sql = "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$torrentId."'";
