@@ -38,6 +38,9 @@ class lastRSS {
 	// -------------------------------------------------------------------
 	// Public properties
 	// -------------------------------------------------------------------
+	// version
+    var $version = "0.9.1-tf";
+    //
 	var $default_cp = 'UTF-8';
 	var $CDATA = 'nochange';
 	var $cp = '';
@@ -52,6 +55,30 @@ class lastRSS {
 	var $itemtags = array('title', 'link', 'description', 'author', 'category', 'comments', 'enclosure', 'guid', 'pubDate', 'source');
 	var $imagetags = array('title', 'url', 'link', 'width', 'height');
 	var $textinputtags = array('title', 'description', 'name', 'link');
+    // config-array
+    var $cfg = array();
+
+    /**
+     * factory
+     *
+     * @param $cfg
+     * @return lastRSS
+     */
+    function getInstance($cfg) {
+    	return new lastRSS(serialize($cfg));
+    }
+
+    /**
+     * do not use direct, use the factory-method !
+     *
+     * @param $cfg
+     * @return lastRSS
+     */
+    function lastRSS($cfg) {
+        $this->cfg = unserialize($cfg);
+        if (empty($this->cfg))
+            return false;
+    }
 
 	// -------------------------------------------------------------------
 	// Parse RSS file and returns associative array.
@@ -134,6 +161,7 @@ class lastRSS {
 	// Don't use Parse() in your scripts - use Get($rss_file) instead.
 	// -------------------------------------------------------------------
 	function Parse($rss_url) {
+
 		// Load RSS file
 		$rss_content = FetchHTML($rss_url);
 		if(empty($rss_content)){
