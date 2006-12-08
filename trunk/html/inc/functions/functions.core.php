@@ -888,7 +888,7 @@ function getTorrentHash($torrent) {
 	$hashAry = array();
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-		case "ttools":
+		case "ttools.pl":
 			$hashAry = explode(":",trim($resultAry[0]));
 			break;
 		case "btshowmetainfo.py":
