@@ -80,6 +80,9 @@ foreach ($arURL as $rid => $url) {
 					continue;
 				}
 
+				// Set the label for the link title (<a href="foo" title="$label">)
+				$rs["items"][$i]["label"] = $rs["items"][$i]["title"];
+
 				// Check item's pub date:
 				if(empty($rs["items"][$i]["pubDate"]) || !isset($rs["items"][$i]["pubDate"])){
 					$rs["items"][$i]["pubDate"] = "Unknown publication date";
