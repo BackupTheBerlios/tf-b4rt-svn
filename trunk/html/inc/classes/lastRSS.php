@@ -56,7 +56,7 @@ class lastRSS {
 	// -------------------------------------------------------------------
 	// Parse RSS file and returns associative array.
 	// -------------------------------------------------------------------
-	function Get ($rss_url) {
+	function Get($rss_url) {
 		// If CACHE ENABLED
 		if ($this->cache_dir != '') {
 			$cache_file = $this->cache_dir . '/rsscache_' . md5($rss_url);
@@ -90,7 +90,7 @@ class lastRSS {
 	// Modification of preg_match(); return trimed field with index 1
 	// from 'classic' preg_match() array output
 	// -------------------------------------------------------------------
-	function my_preg_match ($pattern, $subject) {
+	function my_preg_match($pattern, $subject) {
 		// start regullar expression
 		preg_match($pattern, $subject, $out);
 
@@ -118,7 +118,7 @@ class lastRSS {
 	// -------------------------------------------------------------------
 	// Replace HTML entities &something; by real characters
 	// -------------------------------------------------------------------
-	function unhtmlentities ($string) {
+	function unhtmlentities($string) {
 		// Get HTML entities table
 		$trans_tbl = get_html_translation_table (HTML_ENTITIES, ENT_QUOTES);
 		// Flip keys<==>values
@@ -133,12 +133,15 @@ class lastRSS {
 	// Parse() is private method used by Get() to load and parse RSS file.
 	// Don't use Parse() in your scripts - use Get($rss_file) instead.
 	// -------------------------------------------------------------------
-	function Parse ($rss_url) {
+	function Parse($rss_url) {
 		// Load RSS file
 		$rss_content = FetchHTML($rss_url);
 		if(empty($rss_content)){
 			return false;
 		}
+
+		// result-array
+		$result = array();
 
 		// Parse document encoding
 		$result['encoding'] = $this->my_preg_match("'encoding=[\'\"](.*?)[\'\"]'si", $rss_content);
@@ -158,14 +161,14 @@ class lastRSS {
 		}
 		// If date_format is specified and lastBuildDate is valid
 		if ($this->date_format != '' && ($timestamp = strtotime($result['lastBuildDate'])) !==-1) {
-					// convert lastBuildDate to specified date format
-					$result['lastBuildDate'] = date($this->date_format, $timestamp);
+			// convert lastBuildDate to specified date format
+			$result['lastBuildDate'] = date($this->date_format, $timestamp);
 		}
 
 		// Parse TEXTINPUT info
 		preg_match("'<textinput(|[^>]*[^/])>(.*?)</textinput>'si", $rss_content, $out_textinfo);
-			// This a little strange regexp means:
-			// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beggining tag)
+		// This a little strange regexp means:
+		// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beggining tag)
 		if (isset($out_textinfo[2])) {
 			foreach($this->textinputtags as $textinputtag) {
 				$temp = $this->my_preg_match("'<$textinputtag.*?>(.*?)</$textinputtag>'si", $out_textinfo[2]);
