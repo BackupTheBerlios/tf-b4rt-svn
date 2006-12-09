@@ -96,6 +96,9 @@ class SimpleHTTP
 	 */
 	var $errno = 0;
 
+	// user-agent
+	var $userAgent = "";
+
     // filename
     var $filename = "";
 
@@ -154,12 +157,11 @@ class SimpleHTTP
 			$this->mode = 1;
 		} else
 			$this->mode = 2;
+		// user-agent
+		$this->userAgent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "torrentflux-b4rt/". $this->cfg["version"];
 		// ini-settings
 		@ini_set("allow_url_fopen", "1");
-		if (isset($_SERVER['HTTP_USER_AGENT']))
-			@ini_set("user_agent", $_SERVER['HTTP_USER_AGENT']);
-		else
-			@ini_set("user_agent", "torrentflux-b4rt/". $this->cfg["version"]);
+		@ini_set("user_agent", $this->userAgent);
         // state
         $this->state = 1;
     }
@@ -235,7 +237,7 @@ class SimpleHTTP
 				$this->request .= (!empty($this->referer)) ? "Referer: " . $this->referer . "\r\n" : "";
 				$this->request .= "Accept: */*\r\n";
 				$this->request .= "Accept-Language: en-us\r\n";
-				$this->request .= "User-Agent: ".$_SERVER['HTTP_USER_AGENT']."\r\n";
+				$this->request .= "User-Agent: ".$this->userAgent."\r\n";
 				$this->request .= "Host: " . $domain["host"] . "\r\n";
 				if($this->httpVersion=="1.1"){
 					$this->request .= "Connection: Close\r\n";
@@ -348,7 +350,7 @@ class SimpleHTTP
 			curl_setopt($ch, CURLOPT_URL, $this->url);
 			curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
 			curl_setopt($ch, CURLOPT_HEADER, FALSE);
-			curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+			curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
