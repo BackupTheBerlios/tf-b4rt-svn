@@ -21,6 +21,71 @@
 *******************************************************************************/
 
 /**
+ * cliPrintUsage
+ */
+function cliPrintUsage() {
+	echo "\n";
+    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
+	echo "\n";
+	echo "Usage: fluxcli.php action [extra-args]\n";
+	echo "\naction: \n";
+	echo " <transfers>  : print transfers.\n";
+	echo " <netstat>    : print netstat.\n";
+	echo " <start>      : start a transfer.\n";
+	echo "                extra-arg : name of transfer as known inside torrentflux\n";
+	echo " <stop>       : stop a transfer.\n";
+	echo "                extra-arg : name of transfer as known inside torrentflux\n";
+    echo " <start-all>  : start all transfers.\n";
+    echo " <resume-all> : resume all transfers.\n";
+	echo " <stop-all>   : stop all running transfers.\n";
+	echo " <reset>      : reset totals of a transfer.\n";
+	echo "                extra-arg : name of transfer as known inside torrentflux\n";
+	echo " <delete>     : delete a transfer.\n";
+	echo "                extra-arg : name of transfer as known inside torrentflux\n";
+	echo " <wipe>       : reset totals, delete torrent, delete torrent-data.\n";
+	echo "                extra-arg : name of torrent as known inside torrentflux\n";
+	echo " <inject>     : injects a transfer-file into tflux.\n";
+	echo "                extra-arg 1 : path to transfer-meta-file\n";
+	echo "                extra-arg 2 : username of fluxuser\n";
+	echo " <watch>      : watch a dir and inject+start transfers into tflux.\n";
+	echo "                extra-arg 1 : path to users watch-dir\n";
+	echo "                extra-arg 2 : username of fluxuser\n";
+	echo " <rss>        : download torrents matching filter-rules from a rss-feed.\n";
+	echo "                extra-arg 1 : save-dir\n";
+	echo "                extra-arg 2 : filter-file\n";
+	echo "                extra-arg 3 : history-file\n";
+	echo "                extra-arg 4 : rss-feed-url\n";
+	echo " <xfer>       : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n";
+	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day>\n";
+	echo " <repair>     : repair of torrentflux. DONT do this unless you have to.\n";
+	echo "                Doing this on a running ok flux _will_ screw up things.\n";
+	echo " <care>       : call clientCare and repair all died transfers.\n";
+	echo " <dump>       : dump database.\n";
+	echo "                extra-arg 1 : type : settings/users\n";
+	echo "\n";
+	echo "examples: \n";
+	echo "fluxcli.php transfers\n";
+	echo "fluxcli.php netstat\n";
+	echo "fluxcli.php start foo.torrent\n";
+	echo "fluxcli.php stop foo.torrent\n";
+	echo "fluxcli.php start-all\n";
+	echo "fluxcli.php resume-all\n";
+	echo "fluxcli.php stop-all\n";
+	echo "fluxcli.php reset foo.torrent\n";
+	echo "fluxcli.php delete foo.torrent\n";
+	echo "fluxcli.php wipe foo.torrent\n";
+	echo "fluxcli.php inject /path/to/foo.torrent fluxuser\n";
+    echo "fluxcli.php watch /path/to/watch-dir/ fluxuser\n";
+    echo "fluxcli.php rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n";
+    echo "fluxcli.php xfer month\n";
+	echo "fluxcli.php repair\n";
+	echo "fluxcli.php care\n";
+	echo "fluxcli.php dump settings\n";
+	echo "fluxcli.php dump users\n";
+	echo "\n";
+}
+
+/**
  * cliPrintVersion
  */
 function cliPrintVersion() {
@@ -129,7 +194,7 @@ function cliStartTransfer($transfer = "") {
 			echo "Transfer already running.\n";
 		}
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
@@ -222,7 +287,7 @@ function cliStopTransfer($transfer = "") {
 			echo "done\n";
 		}
 	} else {
-		printUsage();
+		cliPrintUsage();
 		exit();
 	}
 }
@@ -238,7 +303,7 @@ function cliResetTransfer($transfer = "") {
 		resetTorrentTotals($transfer, false);
 		echo "done\n";
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
@@ -269,7 +334,7 @@ function cliDeleteTransfer($transfer = "") {
         	echo "transfer still up... cannot delete\n";
         }
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
@@ -301,7 +366,7 @@ function cliWipeTransfer($transfer = "") {
         	echo "transfer still up... cannot wipe\n";
         }
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
@@ -346,7 +411,7 @@ function cliInjectTransfer($tpath = "", $username = "") {
             echo "Injected ".$tpath." as ".$file_name." for user ".$cfg["user"]."\n";
         }
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
@@ -400,7 +465,7 @@ function cliWatchDir($tpath = "", $username = "") {
 	        exit();
 	    }
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
@@ -474,7 +539,7 @@ function cliXferShutdown($delta = '') {
 			}
 		}
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 }
 
@@ -494,7 +559,7 @@ function cliDumpDatabase($type = "") {
 				$sql = "SELECT uid, user_id FROM tf_users";
 				break;
 			default:
-				printUsage();
+				cliPrintUsage();
 				exit();
 		}
 	    $recordset = $db->Execute($sql);
@@ -502,68 +567,37 @@ function cliDumpDatabase($type = "") {
 	    while (list($foo, $bar) = $recordset->FetchRow())
 	    	echo $foo . _DUMP_DELIM . $bar . "\n";
 	} else {
-		printUsage();
+		cliPrintUsage();
 	}
 	exit();
 }
 
 /**
- * printUsage
+ * download torrents matching filter-rules from a rss-feed
+ *
+ * @param $sdir
+ * @param $filter
+ * @param $history
+ * @param $url
  */
-function printUsage() {
-	echo "\n";
-    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
-	echo "\n";
-	echo "Usage: fluxcli.php action [extra-args]\n";
-	echo "\naction: \n";
-	echo " <transfers>  : print transfers. \n";
-	echo " <netstat>    : print netstat. \n";
-	echo " <start>      : start a transfer. \n";
-	echo "                extra-arg : name of transfer as known inside torrentflux \n";
-	echo " <stop>       : stop a transfer. \n";
-	echo "                extra-arg : name of transfer as known inside torrentflux \n";
-    echo " <start-all>  : start all transfers. \n";
-    echo " <resume-all> : resume all transfers. \n";
-	echo " <stop-all>   : stop all running transfers. \n";
-	echo " <reset>      : reset totals of a transfer. \n";
-	echo "                extra-arg : name of transfer as known inside torrentflux \n";
-	echo " <delete>     : delete a transfer. \n";
-	echo "                extra-arg : name of transfer as known inside torrentflux \n";
-	echo " <wipe>       : reset totals, delete torrent, delete torrent-data. \n";
-	echo "                extra-arg : name of torrent as known inside torrentflux \n";
-	echo " <inject>     : injects a transfer-file into tflux. \n";
-	echo "                extra-arg 1 : path to transfer-meta-file \n";
-	echo "                extra-arg 2 : username of fluxuser \n";
-	echo " <watch>      : watch a dir and inject+start transfers into tflux. \n";
-	echo "                extra-arg 1 : path to users watch-dir \n";
-	echo "                extra-arg 2 : username of fluxuser \n";
-	echo " <xfer>       : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n";
-	echo "                extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day> \n";
-	echo " <repair>     : repair of torrentflux. DONT do this unless you have to. \n";
-	echo "                Doing this on a running ok flux _will_ screw up things. \n";
-	echo " <care>       : call clientCare and repair all died transfers. \n";
-	echo " <dump>       : dump database. \n";
-	echo "                extra-arg 1 : type : settings/users \n";
-	echo "\n";
-	echo "examples: \n";
-	echo "fluxcli.php transfers\n";
-	echo "fluxcli.php netstat\n";
-	echo "fluxcli.php start foo.torrent\n";
-	echo "fluxcli.php stop foo.torrent\n";
-	echo "fluxcli.php start-all\n";
-	echo "fluxcli.php resume-all\n";
-	echo "fluxcli.php stop-all\n";
-	echo "fluxcli.php reset foo.torrent\n";
-	echo "fluxcli.php delete foo.torrent\n";
-	echo "fluxcli.php wipe foo.torrent\n";
-	echo "fluxcli.php inject /bar/foo.torrent fluxuser\n";
-    echo "fluxcli.php watch /bar/foo/ fluxuser\n";
-    echo "fluxcli.php xfer month\n";
-	echo "fluxcli.php repair\n";
-	echo "fluxcli.php care\n";
-	echo "fluxcli.php dump settings\n";
-	echo "fluxcli.php dump users\n";
-	echo "\n";
+function cliProcessRssFeed($sdir = "", $filter = "", $history = "", $url = "") {
+	global $cfg;
+	$gotArgs = 0;
+	if ((isset($sdir)) && ($sdir != ""))
+		$gotArgs++;
+	if ((isset($filter)) && ($filter != ""))
+		$gotArgs++;
+	if ((isset($history)) && ($history != ""))
+		$gotArgs++;
+	if ((isset($url)) && ($url != ""))
+		$gotArgs++;
+	if ($gotArgs == 4) {
+		$rssd = Rssd::getInstance($cfg);
+		$rssd->processFeed($sdir, $filter, $history, $url);
+	} else {
+		cliPrintUsage();
+	}
+	exit();
 }
 
 ?>

@@ -49,10 +49,12 @@ require_once('inc/main.core.php');
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
-// client-handler-"interfaces"
+// classes
 require_once("inc/classes/ClientHandler.php");
 require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
+require_once("inc/classes/SimpleHTTP.php");
+require_once("inc/classes/Rssd.php");
 
 // config
 $cfg["ip"] = '127.0.0.1';
@@ -103,6 +105,9 @@ if ((isset($action)) && ($action != "")) {
 		case "watch":
 			cliWatchDir(@$argv[2],@$argv[3]);
 			break;
+		case "rss":
+			cliProcessRssFeed(@$argv[2],@$argv[3],@$argv[4],@$argv[5]);
+			break;
 		case "xfer":
 			cliXferShutdown(@$argv[2]);
 			break;
@@ -129,11 +134,11 @@ if ((isset($action)) && ($action != "")) {
 		case "--help":
 		case "-h":
 		default:
-			printUsage();
+			cliPrintUsage();
 			break;
 	}
 } else {
-	printUsage();
+	cliPrintUsage();
 }
 exit();
 
