@@ -256,6 +256,7 @@ class Rssd
 						// download and save
 						if ($this->saveTorrent($link, $title) === true) {
 							// add to history
+							array_push($this->history, $title);
 							array_push($this->historyNew, $title);
 						}
 					}
