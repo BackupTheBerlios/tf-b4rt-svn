@@ -30,6 +30,9 @@
  ======================================================================
 */
 
+// require SimpleHTTP
+require_once("inc/classes/SimpleHTTP.php");
+
 /**
 * lastRSS
 * Simple yet powerfull PHP class to parse RSS files.
@@ -55,8 +58,12 @@ class lastRSS {
 	var $itemtags = array('title', 'link', 'description', 'author', 'category', 'comments', 'enclosure', 'guid', 'pubDate', 'source');
 	var $imagetags = array('title', 'url', 'link', 'width', 'height');
 	var $textinputtags = array('title', 'description', 'name', 'link');
-    // config-array
+
+	// config-array
     var $cfg = array();
+
+    // SimpleHTTP-instance
+	var $simpleHTTP;
 
     /**
      * factory
@@ -78,6 +85,8 @@ class lastRSS {
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg))
             return false;
+		// create SimpleHTTP-instance
+		$this->simpleHTTP = SimpleHTTP::getInstance($this->cfg);
     }
 
 	// -------------------------------------------------------------------
@@ -163,8 +172,10 @@ class lastRSS {
 	function Parse($rss_url) {
 
 		// Load RSS file
-		$rss_content = FetchHTML($rss_url);
-		if(empty($rss_content)){
+		$rss_content = $this->simpleHTTP->getData($rss_url);
+		if ($this->simpleHTTP->state != 2) {
+			// last op was not ok
+			// TODO :
 			return false;
 		}
 

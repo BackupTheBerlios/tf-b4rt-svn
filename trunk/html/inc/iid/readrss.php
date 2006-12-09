@@ -44,7 +44,7 @@ if (!defined("ENT_QUOTES")) define("ENT_QUOTES", 3);
 $arURL = GetRSSLinks();
 
 // create lastRSS object
-$rss = new lastRSS();
+$rss = lastRSS::getInstance($cfg);
 
 // setup transparent cache
 $cacheDir = $cfg['path'].".rsscache";
@@ -61,14 +61,13 @@ tmplInitializeInstance($cfg["theme"], "page.readrss.tmpl");
 // Loop through each RSS feed
 $rss_list = array();
 foreach ($arURL as $rid => $url) {
-	if(isset($_REQUEST["debug"])){$rss->cache_time=0;}
+	if (isset($_REQUEST["debug"]))
+		$rss->cache_time=0;
 	if (($rs = $rss->get($url))) {
 		if(!empty( $rs["items"])) {
 			// Check this feed has a title tag:
-			if(!isset($rs["title"]) || empty($rs["title"])){
+			if (!isset($rs["title"]) || empty($rs["title"]))
 				$rs["title"] = "Feed URL ".htmlentities($url, ENT_QUOTES)." Note: this feed does not have a valid 'title' tag";
-			}
-
 
 			// Check each item in this feed has link, title and publication date:
 			for ($i=0; $i < count($rs["items"]); $i++) {
@@ -84,12 +83,11 @@ foreach ($arURL as $rid => $url) {
 				$rs["items"][$i]["label"] = $rs["items"][$i]["title"];
 
 				// Check item's pub date:
-				if(empty($rs["items"][$i]["pubDate"]) || !isset($rs["items"][$i]["pubDate"])){
+				if (empty($rs["items"][$i]["pubDate"]) || !isset($rs["items"][$i]["pubDate"]))
 					$rs["items"][$i]["pubDate"] = "Unknown publication date";
-				}
 
 				// Check item's title:
-				if(empty($rs["items"][$i]["title"]) || !isset($rs["items"][$i]["title"])){
+				if (empty($rs["items"][$i]["title"]) || !isset($rs["items"][$i]["title"])){
 					// No title found for this item, create one from the link:
 					$link=html_entity_decode($rs["items"][$i]["link"]);
 					if(strlen($link) >= 45){

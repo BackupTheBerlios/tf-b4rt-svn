@@ -34,6 +34,10 @@
    !! All changes and customizations should be done in those files and not in this file. !!
 
 */
+
+// require SimpleHTTP
+require_once("inc/classes/SimpleHTTP.php");
+
 // Created By Kboy
 class SearchEngineBase
 {
@@ -79,19 +83,20 @@ class SearchEngineBase
 
     var $initialized = false;   // Boolean to determine if the search engine initialized ok.
 
+    // SimpleHTTP-instance
+	var $simpleHTTP;
+
     /**
      * Constructor
      */
-    function SearchEngineBase()
-    {
+    function SearchEngineBase() {
         die('Virtual Class -- cannot instantiate');
     }
 
     //----------------------------------------------------------------
     // Initialize the Search Engine setting up the Catalog and Filters.
     // and Testing the connection.
-    function Initialize($cfg)
-    {
+    function Initialize($cfg) {
         $rtnValue = false;
 
         $this->cfg = unserialize($cfg);
@@ -100,12 +105,14 @@ class SearchEngineBase
         if (empty($this->altURL))
             $this->altURL = $this->mainURL;
 
-        if (empty($this->cfg))
-        {
+        if (empty($this->cfg)) {
             $this->msg = "Config not passed";
             $this->initialized = false;
             return;
         }
+
+		// create SimpleHTTP-instance
+		$this->simpleHTTP = SimpleHTTP::getInstance($this->cfg);
 
         $this->catFilterName = $this->engineName."GenreFilter";
         $this->mainCatalogName = $this->engineName."_catalog";
@@ -137,17 +144,15 @@ class SearchEngineBase
 
     //------------------------------------------------------------------
     // This is for backward compatibility.
-    function http_query_builder( $formdata, $numeric_prefix = null, $key = null )
-    {
+    function http_query_builder( $formdata, $numeric_prefix = null, $key = null ) {
        $res = array();
        foreach ((array)$formdata as $k=>$v) {
            $tmp_key = urlencode(is_int($k) ? $numeric_prefix.$k : $k);
            if ($key) $tmp_key = $key.'['.$tmp_key.']';
-           if ( is_array($v) || is_object($v) ) {
+           if ( is_array($v) || is_object($v) )
                $res[] = $this->http_query_builder($v, null, $tmp_key);
-           } else {
+           else
                $res[] = $tmp_key."=".urlencode($v);
-           }
        }
        $separator = ini_get('arg_separator.output');
        return implode($separator, $res);
@@ -155,25 +160,21 @@ class SearchEngineBase
 
     //----------------------------------------------------------------
     // Function to populate the mainCatalog
-    function populateMainCategories()
-    {
+    function populateMainCategories() {
         return;
     }
 
     //----------------------------------------------------------------
     // Function to Get Sub Categories
-    function getSubCategories($mainGenre)
-    {
+    function getSubCategories($mainGenre) {
         return array();
     }
 
     //----------------------------------------------------------------
     // Function to test Connection.
-    function getConnection()
-    {
+    function getConnection() {
         // Try to connect
-        if (!$this->fp = @fsockopen ($this->mainURL, 80, $errno, $errstr, 30))
-        {
+        if (!$this->fp = @fsockopen ($this->mainURL, 80, $errno, $errstr, 30)) {
             // Error Connecting
             $this->msg = "Error connecting to ".$this->mainURL."!";
             return false;
@@ -183,12 +184,9 @@ class SearchEngineBase
 
     //----------------------------------------------------------------
     // Function to Close Connection.
-    function closeConnection()
-    {
+    function closeConnection() {
         if($this->fp)
-        {
             fclose($this->fp);
-        }
     }
 
     //----------------------------------------------------------------
@@ -199,80 +197,52 @@ class SearchEngineBase
 
     //----------------------------------------------------------------
     // Function to Make the GetRequest
-    function makeRequest($request, $useAlt = false)
-    {
-        $rtnVal = false;
-
+    function makeRequest($request, $useAlt = false) {
         if (isset($_SESSION['lastOutBoundURI']))
-        {
             $refererURI = $_SESSION['lastOutBoundURI'];
-        }
         else
-        {
             $refererURI = "http://".$this->mainURL;
-        }
-
         if ($useAlt)
-        {
             $request =  "http://".$this->altURL. $request;
-        }
         else
-        {
             $request =  "http://".$this->mainURL. $request;
-        }
-
-        $this->htmlPage = FetchHTML( $request, $refererURI );
-        $rtnVal = true;
-
-        return $rtnVal;
+		// get data
+        $this->htmlPage = $this->simpleHTTP->getData($request, $refererURI);
+        // return
+        return ($this->simpleHTTP->state == 2);
     }
 
     //----------------------------------------------------------------
     // Function to Get Main Categories
-    function getMainCategories($filtered = true)
-    {
+    function getMainCategories($filtered = true) {
         $output = array();
-
-        foreach ($this->mainCatalog as $mainId => $mainName)
-        {
-            if ($filtered)
-            {
+        foreach ($this->mainCatalog as $mainId => $mainName) {
+            if ($filtered) {
                 // see if this is filtered out.
                 if (!(@in_array($mainId, $this->catFilter)))
-                {
                     $output[$mainId] = $mainName;
-                }
-            }
-            else
-            {
+            } else {
                 $output[$mainId] = $mainName;
             }
         }
-
         return $output;
     }
 
     //----------------------------------------------------------------
     // Function to Get Main Category Name
-    function GetMainCatName($mainGenre)
-    {
+    function GetMainCatName($mainGenre) {
         $mainGenreName = '';
-        foreach ($this->getMainCategories() as $mainId => $mainName)
-        {
+        foreach ($this->getMainCategories() as $mainId => $mainName) {
             if ($mainId == $mainGenre)
-            {
                 $mainGenreName = $mainName;
-            }
         }
         return $mainGenreName;
     }
 
     //----------------------------------------------------------------
     // Function to setup the table header
-    function tableHeader()
-    {
+    function tableHeader() {
         $output = "<table width=\"100%\" cellpadding=3 cellspacing=0 border=0>";
-
         $output .= "<br>\n";
         $output .= "<tr bgcolor=\"".$this->cfg["table_header_bg"]."\">";
         $output .= "  <td>&nbsp;</td>";
@@ -282,22 +252,14 @@ class SearchEngineBase
 
         // Check to see if Question mark is there.
         if (strpos($tmpURI,'?'))
-        {
             $tmpURI .= "&";
-        }
         else
-        {
             $tmpURI .= "?";
-        }
 
         if($this->hideSeedless == "yes")
-        {
             $output .= "<a href=\"". $tmpURI . "hideSeedless=no\">Show Seedless</a>";
-        }
         else
-        {
             $output .= "<a href=\"". $tmpURI . "hideSeedless=yes\">Hide Seedless</a>";
-        }
 
         $output .= ")</td>";
         $output .= "  <td><strong>Category</strong></td>";

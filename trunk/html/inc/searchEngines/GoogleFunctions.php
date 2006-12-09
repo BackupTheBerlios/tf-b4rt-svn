@@ -25,7 +25,8 @@
 */
 
 // -------------------------------------------------------------------
-// FetchHTML() method to get data from URL -- uses timeout and user agent
+// FetchHTMLNoWaitNoFollow() method to get data from URL
+// uses timeout and user agent
 // -------------------------------------------------------------------
 function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
 {

@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// require SimpleHTTP
+require_once("inc/classes/SimpleHTTP.php");
+
 // require lastRSS
 require_once("inc/classes/lastRSS.php");
 
@@ -65,6 +68,9 @@ class Rssd
 	// lastRSS-instance
 	var $rss;
 
+    // SimpleHTTP-instance
+	var $simpleHTTP;
+
     // factory + ctor
 
     /**
@@ -80,7 +86,7 @@ class Rssd
     /**
      * do not use direct, use the factory-method !
      *
-     * @param $cfg
+     * @param $cfg (serialized)
      * @return Rssd
      */
     function Rssd($cfg) {
@@ -88,12 +94,14 @@ class Rssd
         if (empty($this->cfg)) {
             $this->messages = "Config not passed";
             $this->state = -1;
-            return null;
+            return false;
         }
-        // lastRSS-instance
-		$rss = new lastRSS();
-		$rss->cache_dir = '';
-		$rss->stripHTML = false;
+        // init lastRSS-instance
+		$this->rss = lastRSS::getInstance($this->cfg);
+		$this->rss->cache_dir = '';
+		$this->rss->stripHTML = false;
+		// init SimpleHTTP-instance
+		$this->simpleHTTP = SimpleHTTP::getInstance($this->cfg);
         // state
         $this->state = 1;
     }
@@ -207,7 +215,31 @@ class Rssd
      * @return boolean
      */
 	function downloadMetafile($url) {
-		return true;
+		$content = $this->simpleHTTP->getTorrent($url);
+		if ($this->simpleHTTP->state == 2) {
+			// write file
+			$file = $pathSave.cleanFileName($this->simpleHTTP->filename);
+			$handle = false;
+			$handle = @fopen($file, "w");
+			if (!$handle) {
+				$this->messages = "cannot open ".$file." for writing.";
+				AuditAction($this->cfg["constants"]["error"], "Rssd File-Write-Error : ".$this->messages);
+				return false;
+			}
+	        $result = @fwrite($handle, $content);
+			@fclose($handle);
+			if ($result === false) {
+				$this->messages = "cannot write content to ".$handle.".";
+				AuditAction($this->cfg["constants"]["error"], "Rssd File-Write-Error : ".$this->messages);
+				return false;
+			}
+			// return
+			return true;
+		} else {
+			// last op was not ok
+			// TODO :
+			return false;
+		}
     }
 
 }

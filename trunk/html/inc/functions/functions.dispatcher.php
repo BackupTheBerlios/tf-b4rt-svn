@@ -173,7 +173,6 @@ function indexDeQueueTransfer($transfer) {
  */
 function indexProcessDownload($url_upload) {
 	global $cfg, $queueActive, $messages;
-
 	if (!empty($url_upload)) {
 		$messages = "";
 		$arURL = explode("/", $url_upload);
@@ -197,39 +196,43 @@ function indexProcessDownload($url_upload) {
 		$tmpId = getRequestVar("id");
 		if(!empty($tmpId))
 			$url_upload .= "&id=".$tmpId;
-
-		// Call fetchtorrent to retrieve the torrent file
-		$output = FetchTorrent( $url_upload );
-
-		// Only process $output if no error messages were emitted in FetchTorrent:
-		if ($messages == ""){
-			if (array_key_exists("save_torrent_name",$cfg)) {
-				if ($cfg["save_torrent_name"] != "")
-					$file_name = $cfg["save_torrent_name"];
-			}
+		// retrieve the torrent file
+		// require SimpleHTTP
+		require_once("inc/classes/SimpleHTTP.php");
+		$simpleHTTP = SimpleHTTP::getInstance($cfg);
+		$content = $simpleHTTP->getData($url_upload);
+		if (($simpleHTTP->state == 2) && (strlen($content) > 0)) {
+			if ($simpleHTTP->filename != "")
+				$file_name = $simpleHTTP->filename;
 			$file_name = cleanFileName($file_name);
-			// if the output had data then write it to a file
-			if (strlen($output) > 0) {
-				// check if content contains html
-				if ($cfg['debuglevel'] > 0) {
-					if (strpos($output, "<br />") === false)
-						AuditAction($cfg["constants"]["debug"], "indexProcessDownload : content contained html : ".htmlentities(addslashes($url_upload), ENT_QUOTES));
-				}
-				if (is_file($cfg["transfer_file_path"].$file_name)) {
-					// Error
-					$messages .= "ERROR: the file ".$file_name." already exists on the server.";
-					$ext_msg = "DUPLICATE :: ";
-				} else {
-					// open a file to write to
-					$fw = fopen($cfg["transfer_file_path"].$file_name,'w');
-					fwrite($fw, $output);
-					fclose($fw);
-				}
-			} else {
-				$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
+			// check if content contains html
+			if ($cfg['debuglevel'] > 0) {
+				if (strpos($content, "<br />") === false)
+					AuditAction($cfg["constants"]["debug"], "indexProcessDownload : content contained html : ".htmlentities(addslashes($url_upload), ENT_QUOTES));
 			}
+			if (is_file($cfg["transfer_file_path"].$file_name)) {
+				// Error
+				$messages .= "ERROR: the file ".$file_name." already exists on the server.";
+				$ext_msg = "DUPLICATE :: ";
+			} else {
+				// write to file
+				$handle = false;
+				$handle = @fopen($cfg["transfer_file_path"].$file_name, "w");
+				if (!$handle) {
+					$messages .= "cannot open ".$file." for writing.";
+					AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$messages);
+				} else {
+					$result = @fwrite($handle, $content);
+					@fclose($handle);
+					if ($result === false) {
+						$messages .= "cannot write content to ".$handle.".";
+						AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$messages);
+					}
+				}
+			}
+		} else {
+			$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
 		}
-
 		if ($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
 			header("location: index.php?iid=index&messages=".urlencode($messages));

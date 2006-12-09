@@ -138,7 +138,7 @@ class SimpleHTTP
     /**
      * do not use direct, use the factory-method !
      *
-     * @param $cfg
+     * @param $cfg (serialized)
      * @return SimpleHTTP
      */
     function SimpleHTTP($cfg) {
