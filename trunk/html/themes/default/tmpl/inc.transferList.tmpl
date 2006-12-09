@@ -129,7 +129,11 @@
 				<tmpl_if name="settings_8">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_var name="seeds"></a>
+							<tmpl_if name="seeds" op="!=" value="">
+								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_var name="seeds"></a>
+							<tmpl_else>
+								&nbsp;
+							</tmpl_if>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
@@ -138,7 +142,11 @@
 				<tmpl_if name="settings_9">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_var name="peers"></a>
+							<tmpl_if name="peers" op="!=" value="">
+								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=<tmpl_var name="alias">&torrent=<tmpl_var name="url_entry">')"><tmpl_var name="peers"></a>
+							<tmpl_else>
+								&nbsp;
+							</tmpl_if>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
