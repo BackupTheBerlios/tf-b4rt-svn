@@ -27,6 +27,8 @@ use Exporter;
 				getVersion
 				transferIsRunning
 				niceTimeString
+				printMessage
+				printError
 				);
 ################################################################################
 
@@ -41,6 +43,40 @@ my $VERSION = do {
 ################################################################################
 # subs                                                                         #
 ################################################################################
+
+#------------------------------------------------------------------------------#
+# Sub: printMessage                                                            #
+# Arguments: module, message                                                   #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub printMessage {
+	my $module = shift;
+	my $message = shift;
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+		= localtime(time);
+	print STDOUT sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
+							$year + 1900, $mon + 1, $mday,
+							$hour, $min, $sec,
+							$module, $message
+						 );
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printError                                                              #
+# Arguments: module, message                                                   #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub printError {
+	my $module = shift;
+	my $message = shift;
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+		= localtime(time);
+	print STDERR sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
+							$year + 1900, $mon + 1, $mday,
+							$hour, $min, $sec,
+							$module, $message
+						 );
+}
 
 #------------------------------------------------------------------------------#
 # Sub: transferIsRunning                                                       #
