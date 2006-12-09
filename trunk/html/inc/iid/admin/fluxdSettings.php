@@ -49,11 +49,6 @@ if ($fluxdRunning) {
 	$fluxdPid = $fluxd->getFluxdPid();
 	$tmpl->setvar('fluxdPid', $fluxdPid);
 }
-$shutdown = getRequestVar("s");
-if ($shutdown == "1")
-	$tmpl->setvar('shutdown', 1);
-else
-	$tmpl->setvar('shutdown', 0);
 
 // superadmin-links
 $tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?f=1','<font class="adminlink">log</font></a>'));

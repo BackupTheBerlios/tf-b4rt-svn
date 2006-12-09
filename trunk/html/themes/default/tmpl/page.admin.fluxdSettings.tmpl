@@ -30,57 +30,49 @@
 			<td align="center">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-							<tmpl_if name="shutdown">
-								<tr>
-									<td align="center" colspan="2">
-										<br>fluxd going down... Please Wait.<br>
-									</td>
-								</tr>
-							<tmpl_else>
-								<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
-									<tmpl_if name="fluxdRunning">
-										<input type="Hidden" name="a" value="stop">
-										<tr><br>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Stop fluxd">
-											<br><br></td>
-										</tr>
-										<tmpl_else>
-										<input type="Hidden" name="a" value="start">
+							<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
+								<tmpl_if name="fluxdRunning">
+									<input type="Hidden" name="a" value="stop">
+									<tr><br>
+										<td align="center" colspan="2">
+											<input type="Submit" value="Stop fluxd">
+										<br><br></td>
+									</tr>
+									<tmpl_else>
+									<input type="Hidden" name="a" value="start">
+									<tr>
+										<td align="left" width="350" valign="top"><strong>Start fluxd:</strong><br></td>
+									</tr>
+									<tr>
+										<td align="center" colspan="2">
+											<input type="Submit" value="Start fluxd">
+										<br><br></td>
+									</tr>
+								</tmpl_if>
+							</form>
+							<tr>
+								<td align="center" colspan="2">
+									<table width="100%" border="2" bgcolor="#829FB5" bordercolor="#829FB5" cellpadding="2" cellspacing="0">
 										<tr>
-											<td align="left" width="350" valign="top"><strong>Start fluxd:</strong><br></td>
+											<td colspan="6">
+												<div align="center">
+													<tmpl_var name="SuperAdminLink1">
+													|<tmpl_var name="SuperAdminLink2">
+													|<tmpl_var name="SuperAdminLink3">
+													<tmpl_if name="fluxdRunning">
+														 |<tmpl_var name="SuperAdminLink4">
+													<tmpl_else>
+														 |<tmpl_var name="SuperAdminLink5">
+														 |<tmpl_var name="SuperAdminLink6">
+														 |<tmpl_var name="SuperAdminLink9">
+													</tmpl_if>
+												</div>
+											</td>
 										</tr>
-										<tr>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Start fluxd">
-											<br><br></td>
-										</tr>
-									</tmpl_if>
-								</form>
-							</tmpl_if>
-								<tr>
-									<td align="center" colspan="2">
-										<table width="100%" border="2" bgcolor="#829FB5" bordercolor="#829FB5" cellpadding="2" cellspacing="0">
-											<tr>
-												<td colspan="6">
-													<div align="center">
-														<tmpl_var name="SuperAdminLink1">
-														|<tmpl_var name="SuperAdminLink2">
-														|<tmpl_var name="SuperAdminLink3">
-														<tmpl_if name="fluxdRunning">
-															 |<tmpl_var name="SuperAdminLink4">
-														<tmpl_else>
-															 |<tmpl_var name="SuperAdminLink5">
-															 |<tmpl_var name="SuperAdminLink6">
-															 |<tmpl_var name="SuperAdminLink9">
-														</tmpl_if>
-													</div>
-												</td>
-											</tr>
-										</table>
-										<br>
-									</td>
-								</tr>
+									</table>
+									<br>
+								</td>
+							</tr>
 							<form name="theForm" action="admin.php?op=updateFluxdSettings" method="post" onsubmit="return validateSettings('fluxd')">
 								<tr>
 									<td colspan="2" align="center" bgcolor="#A2BED4">

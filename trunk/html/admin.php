@@ -214,7 +214,7 @@ switch ($op) {
 						$message = 'Stop-Command sent.';
 					else
 						$message = 'fluxd stopped.';
-					header("Location: admin.php?op=fluxdSettings&m=".urlencode($message).'&s=1');
+					header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 					exit();
 				}
 				break;
