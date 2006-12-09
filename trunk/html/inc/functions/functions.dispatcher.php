@@ -207,7 +207,7 @@ function indexProcessDownload($url_upload) {
 			$file_name = cleanFileName($file_name);
 			// check if content contains html
 			if ($cfg['debuglevel'] > 0) {
-				if (strpos($content, "<br />") === false)
+				if (strpos($content, "<br />") !== false)
 					AuditAction($cfg["constants"]["debug"], "indexProcessDownload : content contained html : ".htmlentities(addslashes($url_upload), ENT_QUOTES));
 			}
 			if (is_file($cfg["transfer_file_path"].$file_name)) {
@@ -219,13 +219,13 @@ function indexProcessDownload($url_upload) {
 				$handle = false;
 				$handle = @fopen($cfg["transfer_file_path"].$file_name, "w");
 				if (!$handle) {
-					$messages .= "cannot open ".$file." for writing.";
+					$messages .= "cannot open ".$file_name." for writing.";
 					AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$messages);
 				} else {
 					$result = @fwrite($handle, $content);
 					@fclose($handle);
 					if ($result === false) {
-						$messages .= "cannot write content to ".$handle.".";
+						$messages .= "cannot write content to ".$file_name.".";
 						AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$messages);
 					}
 				}
