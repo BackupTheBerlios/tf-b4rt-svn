@@ -78,7 +78,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# log
-	print "Watch : shutdown\n";
+	FluxdCommon::printMessage("Watch", "shutdown\n");
 	# undef
 	undef %jobs;
 }
@@ -130,7 +130,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Watch : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; jobs: ".$jobs.")\n";
+	FluxdCommon::printMessage("Watch", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
 
 	# parse jobs
 	my (@jobsAry) = split(/;/,$jobs);
@@ -143,7 +143,7 @@ sub initialize {
 		chomp $dir;
 		if ((!($user eq "")) && (-d $dir)) {
 			if ($LOGLEVEL > 1) {
-				print "Watch : job : user=".$user.", dir=".$dir."\n";
+				FluxdCommon::printMessage("Watch", "job : user=".$user.", dir=".$dir."\n");
 			}
 			$jobs{$user} = $dir;
 		}
@@ -208,9 +208,10 @@ sub main {
 			my $dir = $jobs{$user};
 			if ((!($user eq "")) && (-d $dir)) {
 				if ($LOGLEVEL > 1) {
-					print "Watch : executing job (".localtime().") :\n";
-					print " user: ".$user."\n";
-					print " dir: ".$dir."\n";
+					my $msg = "executing job :\n";
+					$msg .= " user: ".$user."\n";
+					$msg .= " dir: ".$dir."\n";
+					FluxdCommon::printMessage("Watch", $msg);
 				}
 				# exec
 				tfwatch($dir, $user);

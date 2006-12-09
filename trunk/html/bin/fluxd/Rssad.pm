@@ -87,7 +87,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# log
-	print "Rssad : shutdown\n";
+	FluxdCommon::printMessage("Rssad", "shutdown\n");
 	# undef
 	undef @jobs;
 }
@@ -168,7 +168,7 @@ sub initialize {
 	$dataDir = $ddir . $dataDir;
 	# check if our main-dir exists. try to create if it doesnt
 	if (! -d $dataDir) {
-		print "Rssad : creating data-dir : ".$dataDir."\n";
+		FluxdCommon::printMessage("Rssad", "creating data-dir : ".$dataDir."\n");
 		mkdir($dataDir, 0700);
 		if (! -d $dataDir) {
 			# message
@@ -202,7 +202,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Rssad : initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n";
+	FluxdCommon::printMessage("Rssad", "initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
 
 	# parse jobs
 	# job1|job2|job3
@@ -219,7 +219,7 @@ sub initialize {
 		chomp $filter;
 		# job-entry
 		if ($LOGLEVEL > 1) {
-			print "Rssad : job : savedir=".$savedir.", url=".$url.", filter=".$filter."\n";
+			FluxdCommon::printMessage("Rssad", "job : savedir=".$savedir.", url=".$url.", filter=".$filter."\n");
 		}
 		# add to jobs-array
 		if ((!($savedir eq "")) && (!($url eq "")) && (!($filter eq ""))) {
@@ -290,10 +290,11 @@ sub main {
 		my $jobCount = scalar(@jobs);
 		for (my $i = 0; $i < $jobCount; $i++) {
 			if ($LOGLEVEL > 1) {
-				print "Rssad : executing job (".localtime().") :\n";
-				print " savedir: ".$jobs[$i]{"savedir"}."\n";
-				print " filter: ".$dataDir.$jobs[$i]{"filter"}."\n";
-				print " url: ".$jobs[$i]{"url"}."\n";
+				my $msg = "executing job :\n";
+				$msg .= " savedir: ".$jobs[$i]{"savedir"}."\n";
+				$msg .= " filter: ".$dataDir.$jobs[$i]{"filter"}."\n";
+				$msg .= " url: ".$jobs[$i]{"url"}."\n";
+				FluxdCommon::printMessage("Rssad", $msg);
 			}
 			# exec
 			tfrss($jobs[$i]{"savedir"}, $dataDir.$jobs[$i]{"filter"}, $jobs[$i]{"url"});

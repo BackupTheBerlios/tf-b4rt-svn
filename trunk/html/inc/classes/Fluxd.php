@@ -93,7 +93,7 @@ class Fluxd
             $startCommand .= " nohup " . $this->cfg["perlCmd"];
             $startCommand .= " -I ".escapeshellarg($this->cfg["docroot"]."bin/fluxd");
             $startCommand .= " ".escapeshellarg($this->cfg["docroot"]."bin/fluxd/fluxd.pl");
-            $startCommand .= " daemon-start";
+            $startCommand .= " start";
             $startCommand .= " ".escapeshellarg($this->cfg["docroot"]);
             $startCommand .= " ".escapeshellarg($this->cfg["bin_php"]);
             $startCommand .= " ".escapeshellarg($this->cfg["fluxd_dbmode"]);

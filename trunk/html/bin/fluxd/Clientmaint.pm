@@ -75,7 +75,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# log
-	print "Clientmaint : shutdown\n";
+	FluxdCommon::printMessage("Clientmaint", "shutdown\n");
 }
 
 ################################################################################
@@ -114,7 +114,7 @@ sub initialize {
 		return 0;
 	}
 
-	print "Clientmaint : initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n";
+	FluxdCommon::printMessage("Clientmaint", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n");
 
 	# reset last run time
 	$time_last_run = time();
@@ -170,7 +170,7 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		print "Clientmaint : ".localtime()."\n"; # DEBUG
+		FluxdCommon::printMessage("Clientmaint", "main\n"); # DEBUG
 
 		# set last run time
 		$time_last_run = time();

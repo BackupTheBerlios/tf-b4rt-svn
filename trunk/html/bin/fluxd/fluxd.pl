@@ -102,8 +102,7 @@ while ($loop) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			print STDERR "CORE : Fluxinet Timed out\n";
-			print STDERR "CORE : ".$@."\n";
+			FluxdCommon::printError("CORE", "Fluxinet Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -118,8 +117,7 @@ while ($loop) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			print STDERR "CORE : Qmgr Timed out\n";
-			print STDERR "CORE : ".$@."\n";
+			FluxdCommon::printError("CORE", "Qmgr Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -134,8 +132,7 @@ while ($loop) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			print STDERR "CORE : Rssad Timed out\n";
-			print STDERR "CORE : ".$@."\n";
+			FluxdCommon::printError("CORE", "Rssad Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -150,8 +147,7 @@ while ($loop) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			print STDERR "CORE : Watch Timed out\n";
-			print STDERR "CORE : ".$@."\n";
+			FluxdCommon::printError("CORE", "Watch Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -166,8 +162,7 @@ while ($loop) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			print STDERR "CORE : Trigger Timed out\n";
-			print STDERR "CORE : ".$@."\n";
+			FluxdCommon::printError("CORE", "Trigger Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -182,8 +177,7 @@ while ($loop) {
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			print STDERR "CORE : Clientmaint Timed out\n";
-			print STDERR "CORE : ".$@."\n";
+			FluxdCommon::printError("CORE", "Clientmaint Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -247,7 +241,7 @@ sub processArguments {
 		exit;
 	};
 	# daemon-stop
-	if ($temp =~ /daemon-stop/) {
+	if ($temp =~ /stop/) {
 		# $PATH_DOCROOT
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -286,7 +280,7 @@ sub processArguments {
 		# initialize
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
 		if ($fluxDB->getState() < 1) {
-			print "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
+			print STDERR "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
 			exit;
 		}
 		# init paths
@@ -300,13 +294,13 @@ sub processArguments {
 			# send QUIT to daemon
 			kill 'SIGQUIT', $daemonPid;
 		} else {
-			print "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n";
+			print STDERR "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n";
 		}
 		# exit
 		exit;
 	};
-	# daemon-start
-	if ($temp =~ /daemon-start/) {
+	# start
+	if ($temp =~ /start/) {
 		# $PATH_DOCROOT
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -336,11 +330,11 @@ sub processArguments {
 			print STDERR "daemon already running.\n";
 			exit;
 		}
-		print "Starting daemon. docroot: ".$PATH_DOCROOT." ; PHP: ".$BIN_PHP." ; db-mode: ".$dbMode."\n";
+		print "Starting daemon...\n";
 		# return
 		return 1;
 	};
-	# hmmm dont know this arg, print usage screen
+	# hmmm dont know this arg, show usage screen
 	printUsage();
 	exit;
 }
@@ -358,14 +352,14 @@ sub daemonize {
 	# create instance
 	$fluxDB = FluxDB->new();
 	if ($fluxDB->getState() == -1) {
-		print STDERR "Error : creating FluxDB: ".$fluxDB->getMessage()."\n";
+		FluxdCommon::printError("CORE", "Error : creating FluxDB: ".$fluxDB->getMessage()."\n");
 		exit;
 	}
 
 	# initialize
 	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
 	if ($fluxDB->getState() < 1) {
-		print STDERR "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n";
+		FluxdCommon::printError("CORE", "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n");
 		exit;
 	}
 
@@ -388,19 +382,19 @@ sub daemonize {
 
 	# check if already running
 	if (daemonIsRunning($PATH_DOCROOT) == 1) {
-		print STDERR "CORE : daemon already running.\n";
+		FluxdCommon::printError("CORE", "daemon already running.\n");
 		exit;
 	}
 
 	# check for pid-file
 	if (-f $PID_FILE) {
-		print "CORE : pid-file (".$PATH_SOCKET.") exists but daemon not running. deleting...\n";
+		FluxdCommon::printMessage("CORE", "pid-file (".$PATH_SOCKET.") exists but daemon not running. deleting...\n");
 		pidFileDelete();
 	}
 
 	# check for socket
 	if (-r $PATH_SOCKET) {
-		print "CORE : socket (".$PATH_SOCKET.") exists but daemon not running. deleting...\n";
+		FluxdCommon::printMessage("CORE", "socket (".$PATH_SOCKET.") exists but daemon not running. deleting...\n");
 		socketRemove();
 	}
 
@@ -417,7 +411,7 @@ sub daemonize {
 	chop $pwd;
 
 	# log
-	print STDOUT "CORE : ".localtime()." - "."Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n";
+	FluxdCommon::printMessage("CORE", "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n");
 
 	# set up our signal handlers
 	$SIG{HUP} = \&gotSigHup;
@@ -436,7 +430,7 @@ sub daemonize {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub daemonShutdown {
-	print "CORE : ".localtime()." - "."Shutting down!\n";
+	FluxdCommon::printMessage("CORE", "Shutting down!\n");
 
 	# set main-loop-flag
 	$loop = 0;
@@ -469,11 +463,9 @@ sub daemonIsRunning {
 	if (!(defined $docroot)) {
 		return 0;
 	}
-	my $name = $DIR.$PROG.".".$EXTENSION;
-	my $fluxdScript = $docroot."bin/fluxd/".$name;
 	my $qstring = "ps -aux 2> /dev/null";
 	my $pcount = 0;
-	foreach my $line (grep(/$fluxdScript/, qx($qstring))) {
+	foreach my $line (grep(/$0.*$docroot/, qx($qstring))) {
 		$pcount++;
 	}
 	if ($pcount > 1) {
@@ -512,32 +504,32 @@ sub initPaths {
 sub loadModules {
 	# load IO::Socket::UNIX
 	if ($LOGLEVEL > 2) {
-		print "CORE : loading Perl-module IO::Socket::UNIX\n";
+		FluxdCommon::printMessage("CORE", "loading Perl-module IO::Socket::UNIX\n");
 	}
 	if (eval "require IO::Socket::UNIX")  {
 		IO::Socket::UNIX->import();
 	} else {
-		print STDERR "CORE : cant load perl-module IO::Socket::UNIX\n";
+		FluxdCommon::printError("CORE", "load perl-module IO::Socket::UNIX failed\n");
 		exit;
 	}
 	# load IO::Select
 	if ($LOGLEVEL > 2) {
-		print "CORE : loading Perl-module IO::Select\n";
+		FluxdCommon::printMessage("CORE", "loading Perl-module IO::Select\n");
 	}
 	if (eval "require IO::Select")  {
 		IO::Select->import();
 	} else {
-		print STDERR "CORE : cant load perl-module IO::Select\n";
+		FluxdCommon::printError("CORE", "load perl-module IO::Select failed\n");
 		exit;
 	}
 	# load POSIX
 	if ($LOGLEVEL > 2) {
-		print "CORE : loading Perl-module POSIX\n";
+		FluxdCommon::printMessage("CORE", "loading Perl-module POSIX\n");
 	}
 	if (eval "require POSIX")  {
 		POSIX->import(qw(setsid));
 	} else {
-		print STDERR "CORE : cant load perl-module POSIX\n";
+		FluxdCommon::printError("CORE", "load perl-module POSIX failed\n");
 		exit;
 	}
 }
@@ -561,20 +553,21 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Fluxinet_port")
 					);
 					if ($fluxinet->getState() < 1) {
-						print STDERR "CORE : error initializing service-module Fluxinet :\n";
-						print STDERR "CORE : ".$fluxinet->getMessage()."\n";
+						my $msg = "error initializing service-module Fluxinet :\n";
+						$msg .= " ".$fluxinet->getMessage()."\n";
+						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					print STDERR "CORE : error loading service-module Fluxinet : $@\n";
+					FluxdCommon::printError("CORE", "error loading service-module Fluxinet : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						print STDOUT "CORE : Fluxinet loaded\n";
+						FluxdCommon::printMessage("CORE", "Fluxinet loaded\n");
 					}
 				}
 			} else {
-				print STDERR "CORE : error loading service-module Fluxinet : $@\n";
+				FluxdCommon::printError("CORE", "error loading service-module Fluxinet : $@\n");
 			}
 		}
 	} else {
@@ -585,11 +578,11 @@ sub serviceModulesLoad {
 				undef $fluxinet;
 			};
 			if ($@) {
-				print STDERR "CORE : error unloading service-module Fluxinet : $@\n";
+				FluxdCommon::printError("CORE", "error unloading service-module Fluxinet : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					print STDOUT "CORE : Fluxinet unloaded\n";
+					FluxdCommon::printMessage("CORE", "Fluxinet unloaded\n");
 				}
 			}
 		}
@@ -611,20 +604,21 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTorrents")
 					);
 					if ($qmgr->getState() < 1) {
-						print STDERR "CORE : error initializing service-module Qmgr :\n";
-						print STDERR "CORE : ".$qmgr->getMessage()."\n";
+						my $msg = "error initializing service-module Qmgr :\n";
+						$msg .= " ".$qmgr->getMessage()."\n";
+						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					print STDERR "CORE : error loading service-module Qmgr : $@\n";
+					FluxdCommon::printError("CORE", "error loading service-module Qmgr : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						print STDOUT "CORE : Qmgr loaded\n";
+						FluxdCommon::printMessage("CORE", "Qmgr loaded\n");
 					}
 				}
 			} else {
-				print STDERR "CORE : error loading service-module Qmgr : $@\n";
+				FluxdCommon::printError("CORE", "error loading service-module Qmgr : $@\n");
 			}
 		}
 	} else {
@@ -635,11 +629,11 @@ sub serviceModulesLoad {
 				undef $qmgr;
 			};
 			if ($@) {
-				print STDERR "CORE : error unloading service-module Qmgr : $@\n";
+				FluxdCommon::printError("CORE", "error unloading service-module Qmgr : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					print STDOUT "CORE : Qmgr unloaded\n";
+					FluxdCommon::printMessage("CORE", "Qmgr unloaded\n");
 				}
 			}
 		}
@@ -661,20 +655,21 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
 					);
 					if ($rssad->getState() < 1) {
-						print STDERR "CORE : error initializing service-module Rssad :\n";
-						print STDERR "CORE : ".$rssad->getMessage()."\n";
+						my $msg = "error initializing service-module Rssad :\n";
+						$msg .= " ".$rssad->getMessage()."\n";
+						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					print STDERR "CORE : error loading service-module Rssad : $@\n";
+					FluxdCommon::printError("CORE", "error loading service-module Rssad : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						print STDOUT "CORE : Rssad loaded\n";
+						FluxdCommon::printMessage("CORE", "Rssad loaded\n");
 					}
 				}
 			} else {
-				print STDERR "CORE : error loading service-module Rssad : $@\n";
+				FluxdCommon::printError("CORE", "error loading service-module Rssad : $@\n");
 			}
 		}
 	} else {
@@ -685,11 +680,11 @@ sub serviceModulesLoad {
 				undef $rssad;
 			};
 			if ($@) {
-				print STDERR "CORE : error unloading service-module Rssad : $@\n";
+				FluxdCommon::printError("CORE", "error unloading service-module Rssad : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					print STDOUT "CORE : Rssad unloaded\n";
+					FluxdCommon::printMessage("CORE", "Rssad unloaded\n");
 				}
 			}
 		}
@@ -708,20 +703,21 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Watch_jobs")
 					);
 					if ($watch->getState() < 1) {
-						print STDERR "CORE : error initializing service-module Watch :\n";
-						print STDERR "CORE : ".$watch->getMessage()."\n";
+						my $msg = "error initializing service-module Watch :\n";
+						$msg .= " ".$watch->getMessage()."\n";
+						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					print STDERR "CORE : error loading service-module Watch : $@\n";
+					FluxdCommon::printError("CORE", "error loading service-module Watch : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						print STDOUT "CORE : Watch loaded\n";
+						FluxdCommon::printMessage("CORE", "Watch loaded\n");
 					}
 				}
 			} else {
-				print STDERR "CORE : error loading service-module Watch : $@\n";
+				FluxdCommon::printError("CORE", "error loading service-module Watch : $@\n");
 			}
 		}
 	} else {
@@ -732,11 +728,11 @@ sub serviceModulesLoad {
 				undef $watch;
 			};
 			if ($@) {
-				print STDERR "CORE : error unloading service-module Watch : $@\n";
+				FluxdCommon::printError("CORE", "error unloading service-module Watch : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					print STDOUT "CORE : Watch unloaded\n";
+					FluxdCommon::printMessage("CORE", "Watch unloaded\n");
 				}
 			}
 		}
@@ -754,20 +750,21 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Trigger_interval")
 					);
 					if ($trigger->getState() < 1) {
-						print STDERR "CORE : error initializing service-module Trigger :\n";
-						print STDERR "CORE : ".$trigger->getMessage()."\n";
+						my $msg = "error initializing service-module Trigger :\n";
+						$msg .= " ".$trigger->getMessage()."\n";
+						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					print STDERR "CORE : error loading service-module Trigger : $@\n";
+					FluxdCommon::printError("CORE", "error loading service-module Trigger : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						print STDOUT "CORE : Trigger loaded\n";
+						FluxdCommon::printMessage("CORE", "Trigger loaded\n");
 					}
 				}
 			} else {
-				print STDERR "CORE : error loading service-module Trigger : $@\n";
+				FluxdCommon::printError("CORE", "error loading service-module Trigger : $@\n");
 			}
 		}
 	} else {
@@ -778,11 +775,11 @@ sub serviceModulesLoad {
 				undef $trigger;
 			};
 			if ($@) {
-				print STDERR "CORE : error unloading service-module Trigger : $@\n";
+				FluxdCommon::printError("CORE", "error unloading service-module Trigger : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					print STDOUT "CORE : Trigger unloaded\n";
+					FluxdCommon::printMessage("CORE", "Trigger unloaded\n");
 				}
 			}
 		}
@@ -800,20 +797,21 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Clientmaint_interval")
 					);
 					if ($clientmaint->getState() < 1) {
-						print STDERR "CORE : error initializing service-module Clientmaint :\n";
-						print STDERR "CORE : ".$clientmaint->getMessage()."\n";
+						my $msg = "error initializing service-module Clientmaint :\n";
+						$msg .= " ".$clientmaint->getMessage()."\n";
+						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					print STDERR "CORE : error loading service-module Clientmaint : $@\n";
+					FluxdCommon::printError("CORE", "error loading service-module Clientmaint : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						print STDOUT "CORE : Clientmaint loaded\n";
+						FluxdCommon::printMessage("CORE", "Clientmaint loaded\n");
 					}
 				}
 			} else {
-				print STDERR "CORE : error loading service-module Clientmaint : $@\n";
+				FluxdCommon::printError("CORE", "error loading service-module Clientmaint : $@\n");
 			}
 		}
 	} else {
@@ -824,11 +822,11 @@ sub serviceModulesLoad {
 				undef $clientmaint;
 			};
 			if ($@) {
-				print STDERR "CORE : error unloading service-module Clientmaint : $@\n";
+				FluxdCommon::printError("CORE", "error unloading service-module Clientmaint : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					print STDOUT "CORE : Clientmaint unloaded\n";
+					FluxdCommon::printMessage("CORE", "Clientmaint unloaded\n");
 				}
 			}
 		}
@@ -850,11 +848,11 @@ sub serviceModulesUnload {
 			undef $fluxinet;
 		};
 		if ($@) {
-			print STDERR "CORE : error unloading service-module Fluxinet : $@\n";
+			FluxdCommon::printError("CORE", "error unloading service-module Fluxinet : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				print STDOUT "CORE : Fluxinet unloaded\n";
+				FluxdCommon::printMessage("CORE", "Fluxinet unloaded\n");
 			}
 		}
 	}
@@ -866,11 +864,11 @@ sub serviceModulesUnload {
 			undef $qmgr;
 		};
 		if ($@) {
-			print STDERR "CORE : error unloading service-module Qmgr : $@\n";
+			FluxdCommon::printError("CORE", "error unloading service-module Qmgr : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				print STDOUT "CORE : Qmgr unloaded\n";
+				FluxdCommon::printMessage("CORE", "Qmgr unloaded\n");
 			}
 		}
 	}
@@ -882,11 +880,11 @@ sub serviceModulesUnload {
 			undef $rssad;
 		};
 		if ($@) {
-			print STDERR "CORE : error unloading service-module Rssad : $@\n";
+			FluxdCommon::printError("CORE", "error unloading service-module Rssad : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				print STDOUT "CORE : Rssad unloaded\n";
+				FluxdCommon::printMessage("CORE", "Rssad unloaded\n");
 			}
 		}
 	}
@@ -898,11 +896,11 @@ sub serviceModulesUnload {
 			undef $watch;
 		};
 		if ($@) {
-			print STDERR "CORE : error unloading service-module Watch : $@\n";
+			FluxdCommon::printError("CORE", "error unloading service-module Watch : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				print STDOUT "CORE : Watch unloaded\n";
+				FluxdCommon::printMessage("CORE", "Watch unloaded\n");
 			}
 		}
 	}
@@ -914,11 +912,11 @@ sub serviceModulesUnload {
 			undef $trigger;
 		};
 		if ($@) {
-			print STDERR "CORE : error unloading service-module Trigger : $@\n";
+			FluxdCommon::printError("CORE", "error unloading service-module Trigger : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				print STDOUT "CORE : Trigger unloaded\n";
+				FluxdCommon::printMessage("CORE", "Trigger unloaded\n");
 			}
 		}
 	}
@@ -930,11 +928,11 @@ sub serviceModulesUnload {
 			undef $clientmaint;
 		};
 		if ($@) {
-			print STDERR "CORE : error unloading service-module Clientmaint : $@\n";
+			FluxdCommon::printError("CORE", "error unloading service-module Clientmaint : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				print STDOUT "CORE : Clientmaint unloaded\n";
+				FluxdCommon::printMessage("CORE", "Clientmaint unloaded\n");
 			}
 		}
 	}
@@ -1002,15 +1000,14 @@ sub serviceModuleState {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub gotSigHup {
-	print "CORE : Got SIGHUP, re-loading service-modules...";
+	FluxdCommon::printMessage("CORE", "Got SIGHUP, re-loading service-modules...\n");
 	# have FluxDB reload the DB first, so we can see the changes
 	if ($fluxDB->reload()) {
 		serviceModulesLoad();
-		print "done.\n";
 	} else {
-		print "Error\n";
-		print STDERR "CORE : Error connecting to DB to read changes\n";
-		print STDERR "CORE : ".$fluxDB->getMessage()."\n";
+		my $msg = "Error connecting to DB to read changes :\n";
+		$msg .= $fluxDB->getMessage()."\n";
+		FluxdCommon::printError("CORE", $msg);
 	}
 }
 
@@ -1065,7 +1062,6 @@ sub processRequest {
 	my $return;
 	SWITCH: {
 		$_ = shift;
-		#print "CORE : processing request \"".$_."\"\n"; # DEBUG
 		# Actual fluxd subroutine calls
 		/^modstate/ && do {
 			$return = serviceModuleState(shift);
@@ -1267,12 +1263,12 @@ sub doSysCall {
 	$command .= " 1>> ".$LOG." 2>> ".$ERROR_LOG." &";
     system($command);
     if ($? == -1) {
-        print STDERR "CORE : failed to execute: $!\n";
+		FluxdCommon::printError("CORE", "failed to execute: $!\n");
     } elsif ($? & 127) {
-        printf STDERR "CORE : child died with signal %d, %s coredump\n", ($? & 127),  ($? & 128) ? 'with' : 'without';
+		FluxdCommon::printError("CORE", (sprintf "child died with signal %d, %s coredump\n", ($? & 127),  ($? & 128) ? 'with' : 'without'));
     } else {
 		if ($LOGLEVEL > 1) {
-			printf "CORE : child exited with value %d\n", $? >> 8;
+			FluxdCommon::printError("CORE", (sprintf "child exited with value %d\n", $? >> 8));
 		}
 		return 1;
     }
@@ -1293,7 +1289,7 @@ sub socketInitialize {
 			);
 	die "CORE : Couldn't create socket: $!\n" unless $SERVER;
 	if ($LOGLEVEL > 0) {
-		print STDOUT "CORE : created socket ".$PATH_SOCKET."\n";
+		FluxdCommon::printMessage("CORE", "created socket ".$PATH_SOCKET."\n");
 	}
 
 	# create select
@@ -1310,7 +1306,7 @@ sub socketInitialize {
 #------------------------------------------------------------------------------#
 sub socketRemove {
 	if ($LOGLEVEL > 0) {
-		print STDOUT "CORE : removing socket ".$PATH_SOCKET."\n";
+		FluxdCommon::printMessage("CORE", "removing socket ".$PATH_SOCKET."\n");
 	}
 	unlink($PATH_SOCKET);
 }
@@ -1326,7 +1322,7 @@ sub pidFileWrite {
 		$pid = $$;
 	}
 	if ($LOGLEVEL > 0) {
-		print STDOUT "CORE : writing pid-file ".$PID_FILE." (pid: ".$pid.")\n";
+		FluxdCommon::printMessage("CORE", "writing pid-file ".$PID_FILE." (pid: ".$pid.")\n");
 	}
 	open(PIDFILE,">$PID_FILE");
 	print PIDFILE $pid."\n";
@@ -1340,7 +1336,7 @@ sub pidFileWrite {
 #------------------------------------------------------------------------------#
 sub pidFileDelete {
 	if ($LOGLEVEL > 0) {
-		print STDOUT "CORE : deleting pid-file ".$PID_FILE."\n";
+		FluxdCommon::printMessage("CORE", "deleting pid-file ".$PID_FILE."\n");
 	}
 	return unlink($PID_FILE);
 }
@@ -1648,14 +1644,14 @@ sub printUsage {
 	my $data = <<"USAGE";
 $PROG.$EXTENSION Revision $VERSION
 
-Usage: $PROG.$EXTENSION <daemon-start> path-to-docroot path-to-php db-mode
-                        starts fluxd daemon.
+Usage: $PROG.$EXTENSION <start> path-to-docroot path-to-php db-mode
+                        start fluxd daemon.
                         db-mode : dbi/php
-       $PROG.$EXTENSION <daemon-stop> path-to-docroot path-to-php db-mode
-                        stops fluxd daemon
+       $PROG.$EXTENSION <stop> path-to-docroot path-to-php db-mode
+                        stop fluxd daemon
                         db-mode : dbi/php
        $PROG.$EXTENSION <check>
-                        checks for requirements.
+                        check for requirements.
        $PROG.$EXTENSION <-v|--version>
                         print out version-info
        $PROG.$EXTENSION <-h|--help>
