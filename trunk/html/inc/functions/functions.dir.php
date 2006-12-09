@@ -59,10 +59,9 @@ function hasPermission($object, $user, $permission) {
  */
 function initRestrictedDirEntries() {
 	global $cfg, $restrictedFileEntries;
-	if ((isset($cfg["dir_restricted"])) && (strlen($cfg["dir_restricted"]) > 0))
-		$restrictedFileEntries = split(":", trim($cfg["dir_restricted"]));
-	else
-		$restrictedFileEntries = array();
+	$restrictedFileEntries = ((isset($cfg["dir_restricted"])) && (strlen($cfg["dir_restricted"]) > 0))
+		? split(":", trim($cfg["dir_restricted"]))
+		: array();
 }
 
 /**
@@ -145,10 +144,9 @@ function downloadFile($down) {
 			// size
 			$filesize = file_size($path);
 			// filenames in IE containing dots will screw up the filename
-			if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
-				$headerName = preg_replace('/\./', '%2e', $file, substr_count($file, '.') - 1);
-			else
-				$headerName = $file;
+			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
+				? preg_replace('/\./', '%2e', $file, substr_count($file, '.') - 1)
+				: $file;
 			// partial or full ?
 			if (isset($_SERVER['HTTP_RANGE'])) {
 				// Partial download
@@ -249,10 +247,9 @@ function downloadArchive($down) {
 					break;
 			}
 			// filenames in IE containing dots will screw up the filename
-			if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
-				$headerName = preg_replace('/\./', '%2e', $sendname, substr_count($sendname, '.') - 1);
-			else
-				$headerName = $sendname;
+			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
+				? preg_replace('/\./', '%2e', $sendname, substr_count($sendname, '.') - 1)
+				: $sendname;
 			header("Pragma: no-cache");
 			header("Content-Description: File Transfer");
 			header("Content-Type: application/force-download");
@@ -294,10 +291,7 @@ function getExtension($fileName) {
 	// Get the extension (with dot)
 	$ext = substr($fileName,$i);
 	// Decide what to return.
-	if (substr($ext,0,1)==".")
-		$ext = substr($ext,((-1 * strlen($ext))+1));
-	else
-		$ext = $noExtensionFile;
+	$ext = (substr($ext,0,1)==".") ? substr($ext,((-1 * strlen($ext))+1)) : $noExtensionFile;
 	// Return the extension
 	return strtolower($ext);
 }
@@ -395,20 +389,17 @@ function chmodRecursive($path, $mode = 0777) {
 	while ($file = readdir($dirHandle)) {
 		if (isValidEntry(basename($file))) {
 			$fullpath = $path.'/'.$file;
-			if (! @is_dir($fullpath)) {
-				if (! @chmod($fullpath, $mode))
+			if (!@is_dir($fullpath)) {
+				if (!@chmod($fullpath, $mode))
 					return false;
 			} else {
-				if (! chmodRecursive($fullpath, $mode))
+				if (!chmodRecursive($fullpath, $mode))
 					return false;
 			}
 		}
 	}
 	closedir($dirHandle);
-	if ((isValidEntry(basename($path))) && (@chmod($path, $mode)))
-		return true;
-	else
-		return false;
+	return ((isValidEntry(basename($path))) && (@chmod($path, $mode)));
 }
 
 ?>

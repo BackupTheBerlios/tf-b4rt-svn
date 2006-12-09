@@ -138,7 +138,6 @@ function indexStopTransfer($transfer) {
  */
 function indexDeleteTransfer($transfer) {
 	global $cfg;
-
 	if (isValidTransfer($transfer) === true) {
 		deleteTransfer($transfer, getRequestVar('alias_file'));
 		header("location: index.php?iid=index");
@@ -202,9 +201,9 @@ function indexProcessDownload($url_upload) {
 		$simpleHTTP = SimpleHTTP::getInstance($cfg);
 		$content = $simpleHTTP->getData($url_upload);
 		if (($simpleHTTP->state == 2) && (strlen($content) > 0)) {
-			if ($simpleHTTP->filename != "")
-				$file_name = $simpleHTTP->filename;
-			$file_name = cleanFileName($file_name);
+			$file_name = ($simpleHTTP->filename != "")
+				? $simpleHTTP->filename
+				: cleanFileName($file_name);
 			// check if content contains html
 			if ($cfg['debuglevel'] > 0) {
 				if (strpos($content, "<br />") !== false)
@@ -382,7 +381,6 @@ function processFileUpload() {
 				AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
 			}
 		} // End File Upload
-
 		// instant action ?
 		if (!empty($actionId)) {
 			require_once("inc/classes/ClientHandler.php");
