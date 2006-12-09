@@ -81,13 +81,9 @@ function tmplSetClientSelectForm($btclient = 'tornado') {
 	$btclients = array("tornado", "transmission", "mainline");
 	$client_list = array();
 	foreach ($btclients as $client) {
-		if ($btclient == $client)
-			$selected = 1;
-		else
-			$selected = 0;
 		array_push($client_list, array(
 			'client' => $client,
-			'selected' => $selected,
+			'selected' => ($btclient == $client) ? 1 : 0,
 			)
 		);
 	}
@@ -161,7 +157,7 @@ function tmplSetMoveSettings() {
 function performAuthentication($username = '', $password = '', $md5password = '') {
 	global $cfg, $db;
 	// check username
-	if (! isset($username))
+	if (!isset($username))
 		return 0;
 	if ($username == '')
 		return 0;
@@ -227,9 +223,9 @@ function loginImageCode($rstr, $rnd) {
  */
 function firstLogin($username = '', $password = '') {
 	global $cfg, $db;
-	if (! isset($username))
+	if (!isset($username))
 		return 0;
-	if (! isset($password))
+	if (!isset($password))
 		return 0;
 	if ($username == '')
 		return 0;
@@ -394,10 +390,7 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 	if (isset($_POST['watch_dir']))
 		unset($_POST['watch_dir']);
 	if (isset($_POST['checkdir'])) {
-		if ($_POST['checkdir'] == "true")
-		    $doCheckdir = true;
-		else
-		    $doCheckdir = false;
+		$doCheckdir = ($_POST['checkdir'] == "true") ? true : false;
 		unset($_POST['checkdir']);
 	} else {
 		$doCheckdir = false;
@@ -426,17 +419,11 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 		if (($updateIndexSettings) && ((substr($key, 0, $hackStatsStringLen)) == $hackStatsPrefix)) {
 			// good-look-stats
 			$idx = (int) substr($key, -1, 1);
-			if ($value != "0")
-				$settingsHackAry[$idx] = 1;
-			else
-				$settingsHackAry[$idx] = 0;
+			$settingsHackAry[$idx] = ($value != "0") ? 1 : 0;
 		} else if (($updateGoodlookinSettings) && ((substr($key, 0, $indexPageSettingsPrefixLen)) == $indexPageSettingsPrefix)) {
 			// index-page
 			$idx = (int) substr($key, ($indexPageSettingsPrefixLen - (strlen($key))));
-			if ($value != "0")
-				$settingsIndexPageAry[$idx] = 1;
-			else
-				$settingsIndexPageAry[$idx] = 0;
+			$settingsIndexPageAry[$idx] = ($value != "0") ? 1 : 0;
 		} else {
 			switch ($key) {
 				case "path": // tf-path
@@ -510,15 +497,14 @@ function loadSettings($dbTable) {
     $recordset = $db->Execute($sql);
     showError($db, $sql);
     while(list($key, $value) = $recordset->FetchRow()) {
-        $tmpValue = '';
-		if (strpos($key,"Filter") > 0) {
-		  $tmpValue = unserialize($value);
-		} elseif ($key == 'searchEngineLinks') {
-            $tmpValue = unserialize($value);
-    	}
-    	if(is_array($tmpValue))
-            $value = $tmpValue;
-        $cfg[$key] = $value;
+		$tmpValue = '';
+		if (strpos($key,"Filter") > 0)
+			$tmpValue = unserialize($value);
+		elseif ($key == 'searchEngineLinks')
+			$tmpValue = unserialize($value);
+		if (is_array($tmpValue))
+			$value = $tmpValue;
+		$cfg[$key] = $value;
     }
 }
 
@@ -533,13 +519,9 @@ function insertSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
 	cacheFlush();
-    if (is_array($value))
-        $update_value = serialize($value);
-    else
-    	$update_value = $value;
+    $update_value = (is_array($value)) ? serialize($value) : $value;
     $sql = "INSERT INTO ".$dbTable." VALUES ('".$key."', '".$update_value."')";
-    if ( $sql != "" ) {
-        //$result = $db->Execute($sql);
+    if ($sql != "") {
         $db->Execute($sql);
         showError($db,$sql);
         // update the Config.
@@ -558,12 +540,9 @@ function updateSetting($dbTable, $key, $value) {
     global $cfg, $db;
 	// flush session-cache
 	cacheFlush();
-    $update_value = $value;
-	if (is_array($value))
-        $update_value = serialize($value);
+    $update_value = (is_array($value)) ? serialize($value) : $value;
     $sql = "UPDATE ".$dbTable." SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
     if ($sql != "") {
-        //$result = $db->Execute($sql);
         $db->Execute($sql);
         showError($db,$sql);
         // update the Config.
@@ -582,7 +561,7 @@ function saveSettings($dbTable, $settings) {
     foreach ($settings as $key => $value) {
         if (array_key_exists($key, $cfg)) {
             if (is_array($cfg[$key]) || is_array($value)) {
-                if(serialize($cfg[$key]) != serialize($value))
+                if (serialize($cfg[$key]) != serialize($value))
                     updateSetting($dbTable, $key, $value);
             } elseif ($cfg[$key] != $value) {
                 updateSetting($dbTable, $key, $value);
@@ -602,7 +581,7 @@ function saveSettings($dbTable, $settings) {
  * @param $settings settings-array
  */
 function saveUserSettings($uid, $settings) {
-	if (! isset($uid))
+	if (!isset($uid))
 		return false;
 	// Messy - a not exists would prob work better. but would have to be done
 	// on every key/value pair so lots of extra-statements.
@@ -622,7 +601,7 @@ function saveUserSettings($uid, $settings) {
  * @return boolean
  */
 function insertUserSettingPair($uid,$key,$value) {
-	if (! isset($uid))
+	if (!isset($uid))
 		return false;
 	global $cfg, $db;
 	$update_value = $value;
@@ -649,7 +628,7 @@ function insertUserSettingPair($uid,$key,$value) {
  * @param $uid uid of the user
  */
 function deleteUserSettings($uid) {
-	if ( !isset($uid))
+	if (!isset($uid))
 		return false;
 	global $db;
 	// flush session-cache
@@ -667,7 +646,7 @@ function deleteUserSettings($uid) {
  * @return boolean
  */
 function loadUserSettingsToConfig($uid) {
-	if ( !isset($uid))
+	if (!isset($uid))
 		return false;
 	global $cfg, $db;
 	// get user-settings from db and set in global cfg-array
@@ -765,8 +744,7 @@ function MarkMessageRead($mid) {
 	$sql = 'select * from tf_messages where mid = '.$mid;
 	$rs = $db->Execute($sql);
 	showError($db,$sql);
-	$rec = array('IsNew'=>0,
-			 'force_read'=>0);
+	$rec = array('IsNew'=>0, 'force_read'=>0);
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	$db->Execute($sql);
 	showError($db,$sql);
@@ -1155,9 +1133,7 @@ function modCookieInfo($cid, $newCookie) {
 function GetActivityCount($user="") {
 	global $cfg, $db;
 	$count = 0;
-	$for_user = "";
-	if ($user != "")
-		$for_user = "user_id=".$db->qstr($user)." AND ";
+	$for_user = ($user != "") ? "user_id=".$db->qstr($user)." AND " : "";
 	$sql = "SELECT count(*) FROM tf_log WHERE ".$for_user."(action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"]).")";
 	$count = $db->GetOne($sql);
 	return $count;
@@ -1177,13 +1153,9 @@ function GetProfiles($user, $profile) {
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
-			if($arr == $profile)
-				$is_select = 1;
-			else
-				$is_select = 0;
 			array_push($profiles_array, array(
 				'name' => $arr,
-				'is_selected' => $is_select,
+				'is_selected' => ($arr == $profile) ? 1 : 0,
 				)
 			);
 		}
@@ -1205,13 +1177,9 @@ function GetPublicProfiles($profile) {
 	$rs = $db->GetCol($sql);
 	if ($rs) {
 		foreach($rs as $arr) {
-			if($arr == $profile)
-				$is_select = 1;
-			else
-				$is_select = 0;
 			array_push($profiles_array, array(
 				'name' => $arr,
-				'is_selected' => $is_select,
+				'is_selected' => ($arr == $profile) ? 1 : 0,
 				)
 			);
 		}
