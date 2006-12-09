@@ -50,13 +50,13 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	global $cfg, $db, $tmpl;
 	$sqlForSearch = "";
 	$userdisplay = $user;
-	if($user != "")
+	if ($user != "")
 		$sqlForSearch .= "user_id='".$user."' AND ";
 	else
 		$userdisplay = $cfg['_ALLUSERS'];
-	if($srchFile != "")
+	if ($srchFile != "")
 		$sqlForSearch .= "file like '%".$srchFile."%' AND ";
-	if($srchAction != "")
+	if ($srchAction != "")
 		$sqlForSearch .= "action like '%".$srchAction."%' AND ";
 	$offset = 50;
 	$inx = 0;
@@ -68,12 +68,10 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	showError($db, $sql);
 	$act_list = array();
 	while (list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
-		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
-		if (IsOnline($user_id))
-			$user_icon = "themes/".$cfg['theme']."/images/user.gif";
-		$is_superuser = 0;
-		if (IsUser($user_id))
-			$is_superuser = 1;
+		$user_icon = (IsOnline($user_id))
+			? "themes/".$cfg['theme']."/images/user.gif"
+			: "themes/".$cfg['theme']."/images/user_offline.gif";
+		$is_superuser = (IsUser($user_id)) ? 1 : 0;
 		array_push($act_list, array(
 			'is_superuser' => $is_superuser,
 			'user_id' => $user_id,
@@ -92,13 +90,10 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$selected = "";
 	$action_list = array();
 	foreach ($cfg["constants"] as $action) {
-		$selected = "";
 		if ($action != $cfg["constants"]["hit"]) {
-			if ($srchAction == $action)
-				$selected = "selected";
 			array_push($action_list, array(
 				'action' => htmlentities($action, ENT_QUOTES),
-				'selected' => $selected,
+				'selected' => ($srchAction == $action) ? "selected" : "",
 				)
 			);
 		}
@@ -107,12 +102,9 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$users = GetUsers();
 	$selected = "";
 	for ($inx2 = 0; $inx2 < sizeof($users); $inx2++) {
-		$selected = "";
-		if ($user == $users[$inx2])
-			$selected = "selected";
 		array_push($user_list, array(
 			'user' => htmlentities($users[$inx2], ENT_QUOTES),
-			'selected' => $selected,
+			'selected' => ($user == $users[$inx2]) ? "selected" : "",
 			)
 		);
 	}
@@ -225,8 +217,7 @@ function tmplSetUserSection() {
 			$user_image = "themes/".$cfg['theme']."/images/superadmin.gif";
 			$type_user = $cfg['_SUPERADMIN'];
 		}
-		if ($user_level <= 1 || IsSuperAdmin())
-			$is_superadmin = 1;
+		$is_superadmin = ($user_level <= 1 || IsSuperAdmin()) ? 1 : 0;
 		// add to list
 		array_push($user_details_list, array(
 			'is_user' => IsUser($user_id),
@@ -306,7 +297,7 @@ function setUserState() {
 	$user_id = getRequestVar('user_id');
 	$user_state = getRequestVar('state');
 	// check params
-	if (! (isset($user_id)) && (isset($user_state)))
+	if (!(isset($user_id)) && (isset($user_state)))
 		return false;
 	// sanity-check, dont allow setting state of superadmin to 0
 	if (($user_state == 0) && (IsSuperAdmin($user_id))) {
@@ -347,12 +338,9 @@ function addNewLink($newLink,$newSite) {
 	$sql="SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
 	$result=$db->SelectLimit($sql, 1);
 	showError($db, $sql);
-	if($result->fields === false){
-		// No links currently in db:
-		$idx=0;
-	} else {
-		$idx=$result->fields["sort_order"]+1;
-	}
+	$idx = ($result->fields === false)
+		? 0 /* No links currently in db */
+		: $result->fields["sort_order"] + 1;
 	$rec = array(
 		'url'=>$newLink,
 		'sitename'=>$newSite,
