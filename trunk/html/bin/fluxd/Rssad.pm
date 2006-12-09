@@ -54,12 +54,6 @@ my $time_last_run = 0;
 # jobs
 my @jobs;
 
-# perl
-my $binPerl = "perl";
-
-# binTfrss
-my $binTfrss = "/var/www/bin/tfrss/tfrss.pl";
-
 # data-dir
 my $dataDir = "rssad/";
 
@@ -99,7 +93,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: loglevel, path-to-perl, path-to-tfrss, data-dir, interval, jobs   #
+# Arguments: loglevel, data-dir, interval, jobs                                #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -111,44 +105,6 @@ sub initialize {
 	if (!(defined $LOGLEVEL)) {
 		# message
 		$message = "loglevel not defined";
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
-
-	# path-perl
-	$binPerl = shift;
-	if (!(defined $binPerl)) {
-		# message
-		$message = "path-to-perl not defined";
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
-	if (!(-x $binPerl)) {
-		# message
-		$message = "cant execute perl (".$binPerl.")";
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
-
-	# tfrss.pl
-	$binTfrss = shift;
-	if (!(defined $binTfrss)) {
-		# message
-		$message = "path-to-tfrss not defined";
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
-	if (!(-f $binTfrss)) {
-		# message
-		$message = "tfrss.pl no file (".$binTfrss.")";
 		# set state
 		$state = -1;
 		# return
@@ -347,21 +303,12 @@ sub tfrss {
 	my $filter = shift;
 	my $url = shift;
 	my $logfile = $filter.".log";
-	my $shellCmd = "";
-	$shellCmd .= $binPerl;
-	$shellCmd .= " \"".$binTfrss."\"";
-	$shellCmd .= " \"".$save."\"";
-	$shellCmd .= " \"".$filter.".dat\"";
-	$shellCmd .= " \"".$filter.".hist\"";
-	$shellCmd .= " \"".$url."\"";
-	$shellCmd .= " >> \"".$logfile."\"";
-	#print "Rssad : ".$shellCmd."\n"; # DEBUG
 	# log the invocation
 	open(FILTERLOG,">>$logfile");
 	print FILTERLOG localtime()." - ".$url."\n";
 	close(FILTERLOG);
-	# syscall
-	return Fluxd::doSysCall($shellCmd);
+	# fluxcli-call
+	return Fluxd::fluxcli("rss", $save, $filter.".dat", $filter.".hist", $url);
 }
 
 ################################################################################

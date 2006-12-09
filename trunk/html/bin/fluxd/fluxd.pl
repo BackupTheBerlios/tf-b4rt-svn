@@ -648,8 +648,6 @@ sub serviceModulesLoad {
 					$rssad = Rssad->new();
 					$rssad->initialize(
 						$LOGLEVEL,
-						FluxDB->getFluxConfig("perlCmd"),
-						$PATH_DOCROOT . "bin/tfrss/tfrss.pl",
 						$PATH_DATA_DIR,
 						FluxDB->getFluxConfig("fluxd_Rssad_interval"),
 						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
@@ -1268,7 +1266,7 @@ sub doSysCall {
 		FluxdCommon::printError("CORE", (sprintf "child died with signal %d, %s coredump\n", ($? & 127),  ($? & 128) ? 'with' : 'without'));
     } else {
 		if ($LOGLEVEL > 1) {
-			FluxdCommon::printError("CORE", (sprintf "child exited with value %d\n", $? >> 8));
+			FluxdCommon::printMessage("CORE", (sprintf "child exited with value %d\n", $? >> 8));
 		}
 		return 1;
     }
