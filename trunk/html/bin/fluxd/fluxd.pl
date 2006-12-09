@@ -1196,13 +1196,15 @@ sub set {
 
 #------------------------------------------------------------------------------#
 # Sub: fluxcli                                                                 #
-# Arguments: Command [Arg1, [Arg2]]                                            #
+# Arguments: Command [Arg1, Arg2, Arg3, Arg4]                                  #
 # Returns: string or 0|1                                                       #
 #------------------------------------------------------------------------------#
 sub fluxcli {
 	my $Command = shift;
 	my $Arg1 = shift;
 	my $Arg2 = shift;
+	my $Arg3 = shift;
+	my $Arg4 = shift;
 	# qx
 	if ($Command =~/^torrents|^netstat/) {
 		if ((defined $Arg1) || (defined $Arg2)) {
@@ -1242,6 +1244,14 @@ sub fluxcli {
 			return 0;
 		} else {
 			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
+			return doSysCall($shellCmd);
+		}
+	}
+	if ($Command =~/^rss/) {
+		if ((!(defined $Arg1)) || (!(defined $Arg2)) || (!(defined $Arg3)) || (!(defined $Arg4))) {
+			return 0;
+		} else {
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." ".$Arg3." ".$Arg4;
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1658,4 +1668,5 @@ USAGE
 	} else {
 		print $data;
 	}
+
 }
