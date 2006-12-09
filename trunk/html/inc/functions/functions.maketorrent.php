@@ -31,16 +31,14 @@ function downloadTorrent($tfile) {
 		// Does the file exist?
 		if (file_exists($cfg["transfer_file_path"].$tfile)) {
 			// filenames in IE containing dots will screw up the filename
-			if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
-				$headerName = preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1);
-			else
-				$headerName = $tfile;
+			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
+				? preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1)
+				: $tfile;
 			// Prompt the user to download file.
-			if ((substr(strtolower($tfile), -8) == ".torrent")) {
+			if ((substr(strtolower($tfile), -8) == ".torrent"))
 				header("Content-type: application/x-bittorrent\n");
-			} else {
+			else
 				header( "Content-type: application/octet-stream\n" );
-			}
 			header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
 			header("Content-transfer-encoding: binary\n");
 			header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
@@ -87,7 +85,7 @@ function createTorrentTornado() {
 	if (!empty($ancelist)) {
 		$check = "/".str_replace("/", "\/", quotemeta($announce)) . "/i";
 		// if they didn't add the primary tracker in, we will add it for them
-		if( preg_match( $check, $ancelist, $result ) )
+		if (preg_match( $check, $ancelist, $result))
 			$command .= " --announce_list ".escapeshellarg($ancelist);
 		else
 			$command .= " --announce_list ".escapeshellarg($announce.",".$ancelist);
@@ -226,10 +224,7 @@ function createTorrentMainline() {
  */
 function StripFolders($path) {
 	$pos = strrpos($path, "/");
-	if ($pos === false)
-		$pos = 0;
-	else
-		$pos = $pos + 1;
+	$pos = ($pos === false) ? 0 : $pos + 1;
 	$path = substr($path, $pos);
 	return $path;
 }
