@@ -1696,18 +1696,15 @@ function formatHumanSize($sizeInByte) {
 function backupParamCheck($param) {
 	global $cfg, $error;
 	// sanity-checks
-	if( preg_match("/\\\/", urldecode($param)) )
+	if (preg_match("/\\\/", urldecode($param)))
 		return false;
-	if( preg_match("/\.\./", urldecode($param)) )
+	if (preg_match("/\.\./", urldecode($param)))
 		return false;
 	// check id
 	$fileList = backupList();
 	if ((isset($fileList)) && ($fileList != "")) {
 		$validFiles = explode("\n",$fileList);
-		if (in_array($param, $validFiles))
-			return true;
-		else
-			return false;
+		return (in_array($param, $validFiles));
 	} else {
 		return false;
 	}
@@ -1840,7 +1837,7 @@ function backupSend($filename, $delete = false) {
 			return false;
 		set_time_limit(0);
 	}
-	if (! is_file($backupFile))
+	if (!is_file($backupFile))
 		return false;
 	// log before we screw up the file-name
 	AuditAction($cfg["constants"]["admin"], "FluxBackup Sent : ".$filename);

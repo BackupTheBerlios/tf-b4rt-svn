@@ -35,10 +35,8 @@ require_once("inc/classes/ClientHandler.php");
 // time-limit
 @set_time_limit(0);
 
-// action
-$action = "---";
-if (isset($_REQUEST["action"]))
-    $action = $_REQUEST["action"];
+// action-switch
+$action = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : "---";
 switch ($action) {
 
 /*******************************************************************************

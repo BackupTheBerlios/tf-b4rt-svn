@@ -24,11 +24,7 @@
 require_once('inc/functions/functions.image.php');
 
 // image-op-switch
-if (isset($_REQUEST['i']))
-	$imageOp = $_REQUEST['i'];
-else
-	$imageOp = "noop";
-
+$imageOp = (isset($_REQUEST['i'])) ? $_REQUEST['i'] : "noop";
 switch ($imageOp) {
 
 	case "login":
@@ -37,10 +33,9 @@ switch ($imageOp) {
 		// main.external
 		require_once('inc/main.external.php');
 		// output image
-		if ((strpos($cfg["default_theme"], '/')) === false)
-			$bgImage = 'themes/'.$cfg["default_theme"].'/images/code_bg';
-		else
-			$bgImage = 'themes/tf_standard_themes/images/code_bg';
+		$bgImage = ((strpos($cfg["default_theme"], '/')) === false)
+			? 'themes/'.$cfg["default_theme"].'/images/code_bg'
+			: 'themes/tf_standard_themes/images/code_bg';
 		$rndCode = loginImageCode($cfg["db_user"], $_REQUEST["rnd"]);
 		imageOutputLabelFromImage($bgImage, $rndCode, 5, 12, 2, 80, 80, 80);
 
@@ -50,10 +45,9 @@ switch ($imageOp) {
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
-		if ((strpos($cfg["theme"], '/')) === false)
-			$bgImage = 'themes/'.$cfg["theme"].'/images/code_bg';
-		else
-			$bgImage = 'themes/tf_standard_themes/images/code_bg';
+		$bgImage = ((strpos($cfg["theme"], '/')) === false)
+			? 'themes/'.$cfg["theme"].'/images/code_bg'
+			: 'themes/tf_standard_themes/images/code_bg';
 		imageOutputLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
 
 	case "notsup":

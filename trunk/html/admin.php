@@ -36,11 +36,8 @@ if ((!isset($cfg['isAdmin'])) || (!$cfg['isAdmin'])) {
 	header("location: index.php?iid=index");
 }
 
-// op-switch
-if (isset($_REQUEST['op']))
-	$op = $_REQUEST['op'];
-else
-	$op = "default";
+// op-arg
+$op = (isset($_REQUEST['op'])) ? $_REQUEST['op'] : "default";
 
 // check arg
 if (!preg_match('/^[a-zA-Z]+$/', $op)) {
@@ -48,6 +45,7 @@ if (!preg_match('/^[a-zA-Z]+$/', $op)) {
 	showErrorPage("Invalid Admin-Op : <br>".htmlentities($op, ENT_QUOTES));
 }
 
+// op-switch
 switch ($op) {
 
 	case "updateServerSettings":
@@ -258,10 +256,9 @@ switch ($op) {
 		$lid = getRequestVar('lid');
 		$newLink = getRequestVar('editLink');
 		$newSite = getRequestVar('editSite');
-		if(!empty($newLink)){
-			if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0){
+		if (!empty($newLink)){
+			if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 				$newLink = "http://".$newLink;
-			}
 			empty($newSite) && $newSite = $newLink;
 			$oldLink = getLink($lid);
 			$oldSite = getSite($lid);
