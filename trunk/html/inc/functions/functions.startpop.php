@@ -36,10 +36,7 @@ function setVarsFromPersistentSettings() {
 	$tmpl->setvar('minport', $cfg["minport"]);
 	$tmpl->setvar('maxport', $cfg["maxport"]);
 	$tmpl->setvar('sharekill', $cfg["sharekill"]);
-	if ($cfg["torrent_dies_when_done"] == "False")
-		$tmpl->setvar('selected', "selected");
-	else
-		$tmpl->setvar('selected', "");
+	$tmpl->setvar('selected', ($cfg["torrent_dies_when_done"] == "False") ? "selected" : "");
 	// btclient-chooser
 	if ($cfg["enable_btclient_chooser"] != 0)
 		tmplSetClientSelectForm($cfg["btclient"]);
@@ -47,15 +44,9 @@ function setVarsFromPersistentSettings() {
 		$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 	// savepath
 	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-		switch ($cfg["enable_home_dirs"]) {
-		    case 1:
-		    default:
-				$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
-				break;
-		    case 0:
-		    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
-		    	break;
-		}
+		$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].getOwner($torrent).'/'
+			:  $cfg["path"].$cfg["path_incoming"].'/';
 	}
 	$tmpl->setvar('savepath', $cfg["savepath"]);
 }
