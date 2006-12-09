@@ -72,9 +72,8 @@ foreach ($arURL as $rid => $url) {
 			// Check each item in this feed has link, title and publication date:
 			for ($i=0; $i < count($rs["items"]); $i++) {
 				// Don't include feed items without a link:
-				if(!isset($rs["items"][$i]["link"]) || empty($rs["items"][$i]["link"])){
+				if (!isset($rs["items"][$i]["link"]) || empty($rs["items"][$i]["link"])){
 					array_splice ($rs["items"], $i, 1);
-
 					// Continue to next feed item:
 					continue;
 				}
@@ -83,11 +82,11 @@ foreach ($arURL as $rid => $url) {
 				$rs["items"][$i]["label"] = $rs["items"][$i]["title"];
 
 				// Check item's pub date:
-				if (empty($rs["items"][$i]["pubDate"]) || !isset($rs["items"][$i]["pubDate"]))
+				if (!isset($rs["items"][$i]["pubDate"]) || empty($rs["items"][$i]["pubDate"]))
 					$rs["items"][$i]["pubDate"] = "Unknown publication date";
 
 				// Check item's title:
-				if (empty($rs["items"][$i]["title"]) || !isset($rs["items"][$i]["title"])){
+				if (!isset($rs["items"][$i]["title"]) || empty($rs["items"][$i]["title"])) {
 					// No title found for this item, create one from the link:
 					$link=html_entity_decode($rs["items"][$i]["link"]);
 					if(strlen($link) >= 45){
