@@ -35,20 +35,13 @@ if (!function_exists("posix_geteuid"))
 function tmplInitializeInstance($theme, $template) {
 	global $cfg, $tmpl;
 	// theme-switch
-	if ((strpos($theme, '/')) === false)
-		$path = "themes/".$theme."/tmpl/";
-	else
-		$path = "themes/tf_standard_themes/tmpl/";
+	$path = ((strpos($theme, '/')) === false)
+		? "themes/".$theme."/tmpl/"
+		: "themes/tf_standard_themes/tmpl/";
 	// template-cache-switch
-	switch ($cfg['enable_tmpl_cache']) {
-		case 1:
-			$tmpl = new vlibTemplateCache($path.$template);
-			break;
-		case 0:
-		default:
-			$tmpl =  new vlibTemplate($path.$template);
-			break;
-	}
+	$tmpl = ($cfg['enable_tmpl_cache'] != 0)
+		? new vlibTemplateCache($path.$template)
+		: new vlibTemplate($path.$template);
 	//  set common template-vars
 	$tmpl->setvar('theme', $theme);
     $tmpl->setvar('pagetitle', @ $cfg["pagetitle"]);
@@ -70,20 +63,13 @@ function tmplInitializeInstance($theme, $template) {
 function tmplGetInstance($theme, $template) {
 	global $cfg;
 	// theme-switch
-	if ((strpos($theme, '/')) === false)
-		$path = "themes/".$theme."/tmpl/";
-	else
-		$path = "themes/tf_standard_themes/tmpl/";
+	$path = ((strpos($theme, '/')) === false)
+		? "themes/".$theme."/tmpl/"
+		: "themes/tf_standard_themes/tmpl/";
 	// template-cache-switch
-	switch ($cfg['enable_tmpl_cache']) {
-		case 1:
-			$tmpl = new vlibTemplateCache($path.$template);
-			break;
-		case 0:
-		default:
-			$tmpl =  new vlibTemplate($path.$template);
-			break;
-	}
+	$tmpl = ($cfg['enable_tmpl_cache'] != 0)
+		? new vlibTemplateCache($path.$template)
+		: new vlibTemplate($path.$template);
 	//  set common template-vars
 	$tmpl->setvar('theme', $theme);
     $tmpl->setvar('pagetitle', @ $cfg["pagetitle"]);
@@ -154,12 +140,8 @@ function tmplSetSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fa
 	foreach($entrys as $entry) {
 		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
 			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-			$selected = 0;
-			if ($selectedEngine == $tmpEngine) {
-				$selected = 1;
-			}
 			array_push($Engine_List, array(
-				'selected' => $selected,
+				'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
 				'Engine' => $tmpEngine,
 				)
 			);
@@ -200,26 +182,24 @@ function tmplSetBandwidthBars() {
 	$tmpl->setvar('bandwidthbars_type', $cfg['bandwidthbar']);
 	// upload
 	$max_upload = $cfg["bandwidth_up"] / 8;
-	if ($max_upload > 0)
-		$percent_upload = number_format(($cfg["total_upload"] / $max_upload) * 100, 0);
-	else
-		$percent_upload = 0;
-	if ($percent_upload > 0)
-		$tmpl->setvar('bandwidthbars_upload_text', number_format($cfg["total_upload"], 2));
-	else
-		$tmpl->setvar('bandwidthbars_upload_text', "0.00");
+	$percent_upload = ($max_upload > 0)
+		? @number_format(($cfg["total_upload"] / $max_upload) * 100, 0)
+		: 0;
+	$tmpl->setvar('bandwidthbars_upload_text',
+		($percent_upload > 0)
+			? @number_format($cfg["total_upload"], 2)
+			: "0.00");
 	$tmpl->setvar('bandwidthbars_upload_percent', $percent_upload);
 	$tmpl->setvar('bandwidthbars_upload_percent2', (100 - $percent_upload));
 	// download
 	$max_download = $cfg["bandwidth_down"] / 8;
-	if ($max_download > 0)
-		$percent_download = number_format(($cfg["total_download"] / $max_download) * 100, 0);
-	else
-		$percent_download = 0;
-	if ($percent_download > 0)
-		$tmpl->setvar('bandwidthbars_download_text', number_format($cfg["total_download"], 2));
-	else
-		$tmpl->setvar('bandwidthbars_download_text', "0.00");
+	$percent_download = ($max_download > 0)
+		? @number_format(($cfg["total_download"] / $max_download) * 100, 0)
+		: 0;
+	$tmpl->setvar('bandwidthbars_download_text',
+		($percent_download > 0)
+			? @number_format($cfg["total_download"], 2)
+			: "0.00");
 	$tmpl->setvar('bandwidthbars_download_percent', $percent_download);
 	$tmpl->setvar('bandwidthbars_download_percent2', (100 - $percent_download));
 	// colors for xfer
@@ -632,12 +612,8 @@ function getTransferPid($transferAlias) {
  * @return int with max cons
  */
 function getSumMaxCons() {
-  global $db;
-  $retVal = $db->GetOne("SELECT SUM(maxcons) AS maxcons FROM tf_torrents WHERE running = '1'");
-  if ($retVal > 0)
-	return $retVal;
-  else
-	return 0;
+	global $db;
+	return $db->GetOne("SELECT SUM(maxcons) AS maxcons FROM tf_torrents WHERE running = '1'");
 }
 
 /**
@@ -646,12 +622,8 @@ function getSumMaxCons() {
  * @return int with max upload-speed
  */
 function getSumMaxUpRate() {
-  global $db;
-  $retVal = $db->GetOne("SELECT SUM(rate) AS rate FROM tf_torrents WHERE running = '1'");
-  if ($retVal > 0)
-	return $retVal;
-  else
-	return 0;
+	global $db;
+	return $db->GetOne("SELECT SUM(rate) AS rate FROM tf_torrents WHERE running = '1'");
 }
 
 /**
@@ -660,12 +632,8 @@ function getSumMaxUpRate() {
  * @return int with max download-speed
  */
 function getSumMaxDownRate() {
-  global $db;
-  $retVal = $db->GetOne("SELECT SUM(drate) AS drate FROM tf_torrents WHERE running = '1'");
-  if ($retVal > 0)
-	return $retVal;
-  else
-	return 0;
+	global $db;
+	return $db->GetOne("SELECT SUM(drate) AS drate FROM tf_torrents WHERE running = '1'");
 }
 
 /**
@@ -700,33 +668,33 @@ function deleteTorrentSettings($torrent) {
  * @return boolean
  */
 function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
+	global $db;
 	// Messy - a not exists would prob work better
 	deleteTorrentSettings($torrent);
-	global $db;
 	// get hash
 	$tHash = getTorrentHash($torrent);
 	// get datapath
 	$tDatapath = getTorrentDatapath($torrent);
-	//
+	// insert
 	$sql = "INSERT INTO tf_torrents ( torrent , running ,rate , drate, maxuploads , runtime , sharekill , minport , maxport, maxcons , savepath , btclient, hash, datapath )
 			VALUES (
-					'".$torrent."',
-					'".$running."',
-					'".$rate."',
-					'".$drate."',
-					'".$maxuploads."',
-					'".$runtime."',
-					'".$sharekill."',
-					'".$minport."',
-					'".$maxport."',
-					'".$maxcons."',
-					'".$savepath."',
-					'".$btclient."',
-					'".$tHash."',
-					'".$tDatapath."'
+					".$db->qstr($torrent).",
+					".$db->qstr($running).",
+					".$db->qstr($rate).",
+					".$db->qstr($drate).",
+					".$db->qstr($maxuploads).",
+					".$db->qstr($runtime).",
+					".$db->qstr($sharekill).",
+					".$db->qstr($minport).",
+					".$db->qstr($maxport).",
+					".$db->qstr($maxcons).",
+					".$db->qstr($savepath).",
+					".$db->qstr($btclient).",
+					".$db->qstr($tHash).",
+					".$db->qstr($tDatapath)."
 				   )";
 	$db->Execute($sql);
-		showError($db, $sql);
+	showError($db, $sql);
 	return true;
 }
 
@@ -737,7 +705,7 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
  * @return array
  */
 function loadTorrentSettings($torrent) {
-	global $cfg, $db;
+	global $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$result = $db->Execute($sql);
 	showError($db, $sql);
@@ -769,7 +737,7 @@ function loadTorrentSettings($torrent) {
  * @return boolean if the settings could be loaded (were existent in db already)
  */
 function loadTorrentSettingsToConfig($torrent) {
-	global $cfg, $db, $superseeder;
+	global $cfg, $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
 	$result = $db->Execute($sql);
 	showError($db, $sql);
@@ -816,16 +784,10 @@ function isTransferRunning($transfer) {
 	global $cfg;
 	if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
-		if (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.stat.pid'))
-			return 1;
-		else
-			return 0;
+		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.stat.pid')) ? 1 : 0;
 	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
-		if (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid'))
-			return 1;
-		else
-			return 0;
+		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid')) ? 1 : 0;
 	} else {
 		return 0;
 	}
@@ -863,8 +825,8 @@ function waitForTransfer($transfer, $state, $maxWait = 10) {
  * @return btclient
  */
 function getTransferClient($torrent) {
-  global $db;
-  return $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$torrent."'");
+	global $db;
+	return $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$torrent."'");
 }
 
 /**
@@ -897,12 +859,8 @@ function getTorrentHash($torrent) {
 			$hashAry = explode(":",trim($resultAry[3]));
 			break;
 	}
-	$tHash = @trim($hashAry[1]);
 	// return
-	if (isset($tHash) && $tHash != "")
-		return $tHash;
-	else
-		return "";
+	return (isset($hashAry[1])) ? trim($hashAry[1]) : "";
 }
 
 /**
@@ -916,15 +874,11 @@ function getTorrentHash($torrent) {
 function getTorrentDatapath($torrent) {
 	global $cfg;
     require_once('inc/classes/BDecode.php');
-    $ftorrent=$cfg["transfer_file_path"].$torrent;
+    $ftorrent = $cfg["transfer_file_path"].$torrent;
     $fd = fopen($ftorrent, "rd");
     $alltorrent = fread($fd, filesize($ftorrent));
-    $btmeta = BDecode($alltorrent);
-    $data = $btmeta['info']['name'];
-    if(trim($data) != "")
-        return $data;
-    else
-    	return "";
+    $btmeta = @BDecode($alltorrent);
+    return (!empty($btmeta['info']['name'])) ? trim($btmeta['info']['name']) : "";
 }
 
 /**
@@ -935,7 +889,7 @@ function getTorrentDatapath($torrent) {
  * @param $downtotal downtotal of the transfer
  */
 function updateTransferTotals($transfer) {
-	global $cfg, $db;
+	global $db;
 	$torrentId = getTorrentHash($transfer);
 	$transferTotals = getTransferTotals($transfer);
 	// very ugly exists check... too lazy now
@@ -1067,7 +1021,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 	// reset in db
 	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
 	$db->Execute($sql);
-		showError($db, $sql);
+	showError($db, $sql);
 	return true;
 }
 
@@ -1139,7 +1093,7 @@ function deleteTransfer($transfer, $alias_file) {
 		if ($cfg['enable_xfer'] != 0) {
 			// XFER: before torrent deletion save upload/download xfer data to SQL
 			$transferTotals = getTransferTotalsCurrent($transfer);
-			saveXfer($transferowner,$transferTotals["downtotal"],$transferTotals["uptotal"]);
+			saveXfer($transferowner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
 		}
 		// alias-name
 		$aliasName = getAliasName($transfer);
@@ -1173,30 +1127,23 @@ function deleteTransfer($transfer, $alias_file) {
  */
 function deleteTorrentData($torrent) {
 	global $cfg;
-	if (($cfg["user"] == getOwner($torrent)) || $cfg['isAdmin']) {
-		# the user is the owner of the torrent -> delete it
+	$owner = getOwner($torrent);
+	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
 		require_once('inc/classes/BDecode.php');
-		$ftorrent=$cfg["transfer_file_path"].$torrent;
+		$ftorrent = $cfg["transfer_file_path"].$torrent;
 		$fd = fopen($ftorrent, "rd");
 		$alltorrent = fread($fd, filesize($ftorrent));
-		$btmeta = BDecode($alltorrent);
-		$delete = $btmeta['info']['name'];
-		if(trim($delete) != "") {
+		$btmeta = @BDecode($alltorrent);
+		$delete = @trim($btmeta['info']['name']);
+		if ($delete != "") {
 			// load torrent-settings from db to get data-location
 			loadTorrentSettingsToConfig(urldecode($torrent));
-			if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-				switch ($cfg["enable_home_dirs"]) {
-				    case 1:
-				    default:
-						$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
-						break;
-				    case 0:
-				    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
-				    	break;
-				}
+			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+					? $cfg["path"].$owner.'/'
+					:  $cfg["path"].$cfg["path_incoming"].'/';
 			}
 			$delete = $cfg["savepath"].$delete;
-			# this is from dir.php - its not a function, and we need to call it several times
 			$del = stripslashes(stripslashes($delete));
 			if (!ereg("(\.\.\/)", $del)) {
 				 avddelete($del);
@@ -1222,37 +1169,27 @@ function deleteTorrentData($torrent) {
  * @return int with size of data of torrent.
  *		   -1 if error
  *		   4096 if dir (lol ~)
- *		   string with file/dir-name if doesnt exist. (lol~)
  */
 function getTorrentDataSize($torrent) {
 	global $cfg;
 	require_once('inc/classes/BDecode.php');
-	$ftorrent=$cfg["transfer_file_path"].$torrent;
+	$ftorrent = $cfg["transfer_file_path"].$torrent;
 	$fd = fopen($ftorrent, "rd");
 	$alltorrent = fread($fd, filesize($ftorrent));
-	$btmeta = BDecode($alltorrent);
-	$name = $btmeta['info']['name'];
-	if(trim($name) != "") {
+	$btmeta = @BDecode($alltorrent);
+	$name = @trim($btmeta['info']['name']);
+	if ($name != "") {
 		// load torrent-settings from db to get data-location
 		loadTorrentSettingsToConfig($torrent);
-		if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-			switch ($cfg["enable_home_dirs"]) {
-			    case 1:
-			    default:
-					$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
-					break;
-			    case 0:
-			    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
-			    	break;
-			}
+		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].getOwner($torrent).'/'
+				:  $cfg["path"].$cfg["path_incoming"].'/';
 		}
 		$name = $cfg["savepath"].$name;
-		# this is from dir.php - its not a function, and we need to call it several times
 		$tData = stripslashes(stripslashes($name));
-		if (!ereg("(\.\.\/)", $tData)) {
-			$fileSize = file_size($tData);
-			return $fileSize;
-		}
+		if (!ereg("(\.\.\/)", $tData))
+			return file_size($tData);
 	}
 	return -1;
 }
@@ -1407,14 +1344,12 @@ function getTorrentListFromDB() {
  * @return byte
  */
 function convertArrayToByte($dataArray) {
-   if (count($dataArray) > 8) return false;
-   foreach ($dataArray as $key => $value) {
-	   if ($value) $dataArray[$key] = 1;
-	   if (!$value) $dataArray[$key] = 0;
-   }
-   $binString = strrev(implode('', $dataArray));
-   $bitByte = bindec($binString);
-   return $bitByte;
+	if (count($dataArray) > 8) return false;
+	foreach ($dataArray as $key => $value)
+		$dataArray[$key] = ($value) ? 1 : 0;
+	$binString = strrev(implode('', $dataArray));
+	$bitByte = bindec($binString);
+	return $bitByte;
 }
 
 /**
@@ -1424,10 +1359,10 @@ function convertArrayToByte($dataArray) {
  * @return array
  */
 function convertByteToArray($dataByte) {
-   if (($dataByte > 255) || ($dataByte < 0)) return false;
-   $binString = strrev(str_pad(decbin($dataByte),8,"0",STR_PAD_LEFT));
-   $bitArray = explode(":",chunk_split($binString, 1, ":"));
-   return $bitArray;
+	if (($dataByte > 255) || ($dataByte < 0)) return false;
+	$binString = strrev(str_pad(decbin($dataByte), 8, "0", STR_PAD_LEFT));
+	$bitArray = explode(":", chunk_split($binString, 1, ":"));
+	return $bitArray;
 }
 
 /**
@@ -1437,14 +1372,12 @@ function convertByteToArray($dataByte) {
  * @return int
  */
 function convertArrayToInteger($dataArray) {
-   if (count($dataArray) > 31) return false;
-   foreach ($dataArray as $key => $value) {
-	   if ($value) $dataArray[$key] = 1;
-	   if (!$value) $dataArray[$key] = 0;
-   }
-   $binString = strrev(implode('', $dataArray));
-   $bitInteger = bindec($binString);
-   return $bitInteger;
+	if (count($dataArray) > 31) return false;
+	foreach ($dataArray as $key => $value)
+		$dataArray[$key] = ($value) ? 1 : 0;
+	$binString = strrev(implode('', $dataArray));
+	$bitInteger = bindec($binString);
+	return $bitInteger;
 }
 
 /**
@@ -1454,10 +1387,10 @@ function convertArrayToInteger($dataArray) {
  * @return array
  */
 function convertIntegerToArray($dataInt) {
-   if (($dataInt > 2147483647) || ($dataInt < 0)) return false;
-   $binString = strrev(str_pad(decbin($dataInt),31,"0",STR_PAD_LEFT));
-   $bitArray = explode(":",chunk_split($binString, 1, ":"));
-   return $bitArray;
+	if (($dataInt > 2147483647) || ($dataInt < 0)) return false;
+	$binString = strrev(str_pad(decbin($dataInt), 31, "0", STR_PAD_LEFT));
+	$bitArray = explode(":", chunk_split($binString, 1, ":"));
+	return $bitArray;
 }
 
 /**
@@ -1503,8 +1436,7 @@ function getLoadAverageString() {
 			}
 			break;
 		case 2: // bsd
-			$loadavg = preg_replace("/.*load averages:(.*)/", "$1", exec("uptime"));
-			return $loadavg;
+			return preg_replace("/.*load averages:(.*)/", "$1", exec("uptime"));
 			break;
 		default:
 			return 'n/a';
@@ -1591,11 +1523,7 @@ function getTransferArray($sortOrder = '') {
 	}
 	closedir($handle);
 	// sort transfer-array
-	$sortId = "";
-	if ((isset($sortOrder)) && ($sortOrder != ""))
-		$sortId = $sortOrder;
-	else
-		$sortId = $cfg["index_page_sortorder"];
+	$sortId = ($sortOrder != "") ? $sortOrder : $cfg["index_page_sortorder"];
 	switch ($sortId) {
 		case 'da': // sort by date ascending
 			ksort($arList);
@@ -1735,7 +1663,7 @@ function getTransferListArray() {
 
 		// ---------------------------------------------------------------------
 		// injects
-		if(! file_exists($cfg["transfer_file_path"].$alias)) {
+		if (!file_exists($cfg["transfer_file_path"].$alias)) {
 			$transferRunning = 2;
 			$af->running = "2";
 			$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
@@ -1761,8 +1689,8 @@ function getTransferListArray() {
 				break;
 			default: // running + stopped
 				// increment the totals
-				if(!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
-				if(!isset($cfg["total_download"])) $cfg["total_download"] = 0;
+				if (!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
+				if (!isset($cfg["total_download"])) $cfg["total_download"] = 0;
 				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
 				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
 				// $estTime
@@ -1771,10 +1699,9 @@ function getTransferListArray() {
 				} else {
 					if ($af->time_left != "" && $af->time_left != "0") {
 						if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
-							if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-								$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
-							else
-								$estTime = '-';
+							$estTime = (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
+									? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left"
+									: '-';
 						} else {
 							$estTime = $af->time_left;
 						}
@@ -1784,11 +1711,7 @@ function getTransferListArray() {
 				$lastUser = $transferowner;
 				// $show_run + $statusStr
 				if($percentDone >= 100) {
-					if (($transferRunning == 1) && (trim($af->up_speed) != "")) {
-						$statusStr = 'Seeding';
-					} else {
-						$statusStr = 'Done';
-					}
+					$statusStr = (($transferRunning == 1) && (trim($af->up_speed) != "")) ? 'Seeding' : 'Done';
 					$show_run = false;
 				} else if ($percentDone < 0) {
 					$statusStr = 'Stopped';
@@ -1832,13 +1755,12 @@ function getTransferListArray() {
 			if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
 				$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
 			} else {
-				if ($percentDone >= 1) {
+				if ($percentDone >= 1)
 					$percentage = $percentDone . '%';
-				} else if ($percentDone < 0) {
+				else if ($percentDone < 0)
 					$percentage = round(($percentDone*-1)-100,1) . '%';
-				} else {
+				else
 					$percentage = '0%';
-				}
 			}
 			array_push($transferAry, $percentage);
 		}
@@ -1846,24 +1768,16 @@ function getTransferListArray() {
 		// ================================================================ down
 		if ($settings[6] != 0) {
 			$down = "";
-			if ($transferRunning == 1) {
-				if (trim($af->down_speed) != "")
-					$down = $af->down_speed;
-				else
-					$down = '0.0 kB/s';
-			}
+			if ($transferRunning == 1)
+				$down = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
 			array_push($transferAry, $down);
 		}
 
 		// ================================================================== up
 		if ($settings[7] != 0) {
 			$up = "";
-			if ($transferRunning == 1) {
-				if (trim($af->up_speed) != "")
-					$up = $af->up_speed;
-				else
-					$up = '0.0 kB/s';
-			}
+			if ($transferRunning == 1)
+				$up = (trim($af->up_speed) != "") ? $af->up_speed : '0.0 kB/s';
 			array_push($transferAry, $up);
 		}
 
@@ -1996,18 +1910,16 @@ function getServerStats() {
 	// speedDownPercent
 	$percentDownload = 0;
 	$maxDownload = $cfg["bandwidth_down"] / 8;
-	if ($maxDownload > 0)
-		$percentDownload = @number_format(($cfg["total_download"] / $maxDownload) * 100, 0);
-	else
-		$percentDownload = 0;
+	$percentDownload = ($maxDownload > 0)
+		? @number_format(($cfg["total_download"] / $maxDownload) * 100, 0)
+		: 0;
 	array_push($serverStats, $percentDownload);
 	// speedUpPercent
 	$percentUpload = 0;
 	$maxUpload = $cfg["bandwidth_up"] / 8;
-	if ($maxUpload > 0)
-		$percentUpload = @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0);
-	else
-		$percentUpload = 0;
+	$percentUpload = ($maxUpload > 0)
+		? @number_format(($cfg["total_upload"] / $maxUpload) * 100, 0)
+		: 0;
 	array_push($serverStats, $percentUpload);
 	// driveSpacePercent
     $driveSpacePercent = 0;
@@ -2101,15 +2013,9 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		// pid
 		$pid = getTransferPid($alias);
 		// speed_down
-		if (trim($af->down_speed) != "")
-			$details['speedDown'] = $af->down_speed;
-		else
-			$details['speedDown'] = '0.0 kB/s';
+		$details['speedDown'] = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
 		// speed_up
-		if (trim($af->up_speed) != "")
-			$details['speedUp'] = $af->up_speed;
-		else
-			$details['speedUp'] = '0.0 kB/s';
+		$details['speedUp'] = (trim($af->up_speed) != "") ? $af->up_speed : '0.0 kB/s';
 		// down_current
 		$details['downCurrent'] = @formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
 		// up_current
@@ -2152,10 +2058,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// eta
 	$details['eta'] = $af->time_left;
 	// sharing
-	if ($size > 0)
-		$details['sharing'] = @number_format((($totals["uptotal"] / $size) * 100), 2);
-	else
-		$details['sharing'] = 0;
+	$details['sharing'] = ($size > 0) ? @number_format((($totals["uptotal"] / $size) * 100), 2) : 0;
 	// errors
 	$details['errors'] = $af->errors;
 	// full (including static) details
@@ -2199,10 +2102,9 @@ function getTransferDetails($transfer, $full, $alias = "") {
  * @return string
  */
 function getRequestVar($varName) {
-    if (array_key_exists($varName, $_REQUEST))
-        return htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES);
-    else
-        return '';
+	return (array_key_exists($varName, $_REQUEST))
+		? htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES)
+		: '';
 }
 
 /**
@@ -2213,22 +2115,14 @@ function getRequestVar($varName) {
  */
 function AuditAction($action, $file="") {
     global $_SERVER, $cfg, $db;
-    $host_resolved = gethostbyaddr($cfg['ip']);
-    $create_time = time();
-	if (isset($_SERVER['HTTP_USER_AGENT']))
-	   $user_agent = $_SERVER['HTTP_USER_AGENT'];
-	if ((! isset($user_agent)) || ($user_agent == ""))
-			$user_agent = "fluxcli.php/unknown";
-	if ((! isset($action)) || ($action == ""))
-			$action = "unset";
     $rec = array(
     	'user_id' => $cfg["user"],
     	'file' => $file,
-    	'action' => $action,
+    	'action' => ($action != "") ? $action : "unset",
     	'ip' => $cfg['ip'],
-    	'ip_resolved' => htmlentities($host_resolved, ENT_QUOTES),
-    	'user_agent' => htmlentities($user_agent, ENT_QUOTES),
-    	'time' => $create_time
+    	'ip_resolved' => htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES),
+    	'user_agent' => (isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"],
+    	'time' => time()
         );
     $sTable = 'tf_log';
     $sql = $db->GetInsertSql($sTable, $rec);
@@ -2248,7 +2142,7 @@ function isFile($file) {
     if (@is_file($file)) {
         $rtnValue = True;
     } else {
-        if ($file == trim(shell_exec("ls 2>/dev/null ".escapeshellarg($file))))
+        if ($file == @trim(shell_exec("ls 2>/dev/null ".escapeshellarg($file))))
             $rtnValue = True;
     }
     return $rtnValue;
@@ -2282,13 +2176,10 @@ function avddelete($file) {
  */
 function IsOnline($user) {
 	global $cfg, $db;
-	$online = false;
 	$sql = "SELECT count(*) FROM tf_log WHERE user_id=" . $db->qstr($user)." AND action=".$db->qstr($cfg["constants"]["hit"]);
 	$number_hits = $db->GetOne($sql);
 	showError($db,$sql);
-	if ($number_hits > 0)
-		$online = true;
-	return $online;
+	return ($number_hits > 0);
 }
 
 /**
@@ -2298,13 +2189,10 @@ function IsOnline($user) {
  * @return boolean
  */
 function IsUser($user) {
-	global $cfg, $db;
-	$isUser = false;
+	global $db;
 	$sql = "SELECT count(*) FROM tf_users WHERE user_id=".$db->qstr($user);
 	$number_users = $db->GetOne($sql);
-	if ($number_users > 0)
-		$isUser = true;
-	return $isUser;
+	return ($number_users > 0);
 }
 
 /**
@@ -2319,12 +2207,9 @@ function getOwner($file) {
 	// Check log to see what user has a history with this file
 	$sql = "SELECT user_id FROM tf_log WHERE file=".$db->qstr($file)." AND (action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["reset_owner"]).") ORDER  BY time DESC";
 	$user_id = $db->GetOne($sql);
-	if($user_id != "") {
-		$rtnValue = $user_id;
-	} else {
-		// try and get the owner from the stat file
-		$rtnValue = resetOwner($file);
-	}
+	$rtnValue = ($user_id != "")
+		? $user_id
+		: resetOwner($file); // try and get the owner from the stat file
 	return $rtnValue;
 }
 
@@ -2340,25 +2225,19 @@ function resetOwner($file) {
 	// log entry has expired so we must renew it
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
-	if(file_exists($cfg["transfer_file_path"].$alias)) {
+	if (file_exists($cfg["transfer_file_path"].$alias)) {
 		$af = AliasFile::getAliasFileInstance($alias, $cfg["user"], $cfg);
-		if (IsUser($af->transferowner)) {
-			// We have an owner!
-			$rtnValue = $af->transferowner;
-		} else {
-			// no owner found, so the super admin will now own it
-			$rtnValue = GetSuperAdmin();
-		}
-		$host_resolved = gethostbyaddr($cfg['ip']);
-		$create_time = time();
+		$rtnValue = (IsUser($af->transferowner))
+			? $af->transferowner /* We have an owner */
+			: GetSuperAdmin(); /* no owner found, so the super admin will now own it */
 		$rec = array(
 						'user_id' => $rtnValue,
 						'file' => $file,
 						'action' => $cfg["constants"]["reset_owner"],
 						'ip' => $cfg['ip'],
-						'ip_resolved' => $host_resolved,
-						'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-						'time' => $create_time
+						'ip_resolved' => gethostbyaddr($cfg['ip']),
+						'user_agent' => (isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"],
+						'time' => time()
 					);
 		$sTable = 'tf_log';
 		$sql = $db->GetInsertSql($sTable, $rec);
@@ -2387,11 +2266,8 @@ function IsOwner($user, $owner) {
  * @return number
  */
 function GetSpeedValue($inValue) {
-	$rtnValue = 0;
 	$arTemp = split(" ", trim($inValue));
-	if (is_numeric($arTemp[0]))
-		$rtnValue = $arTemp[0];
-	return $rtnValue;
+	return (is_numeric($arTemp[0])) ? $arTemp[0] : 0;
 }
 
 /**
@@ -2402,14 +2278,11 @@ function GetSpeedValue($inValue) {
  */
 function IsAdmin($user="") {
 	global $cfg, $db;
-	$isAdmin = false;
 	if ($user == "")
 		$user = $cfg["user"];
 	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
 	$user_level = $db->GetOne($sql);
-	if ($user_level >= 1)
-		$isAdmin = true;
-	return $isAdmin;
+	return ($user_level >= 1);
 }
 
 /**
@@ -2420,14 +2293,11 @@ function IsAdmin($user="") {
  */
 function IsSuperAdmin($user="") {
 	global $cfg, $db;
-	$isAdmin = false;
 	if($user == "")
 		$user = $cfg["user"];
 	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
 	$user_level = $db->GetOne($sql);
-	if ($user_level > 1)
-		$isAdmin = true;
-	return $isAdmin;
+	return ($user_level > 1);
 }
 
 /**
@@ -2481,7 +2351,7 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 	$settingsNeedsSaving = false;
 	$settings['searchEngineLinks'] = Array();
 	$output = array();
-	if( (!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
+	if ((!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
 		saveSettings('tf_settings', $settings);
 	$handle = opendir("./inc/searchEngines");
 	while($entry = readdir($handle))
@@ -2489,9 +2359,9 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 	natcasesort($entrys);
 	foreach($entrys as $entry) {
 		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != ".")
-			if(strpos($entry,"Engine.php")) {
+			if (strpos($entry, "Engine.php")) {
 				$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-				if(array_key_exists($tmpEngine,$cfg['searchEngineLinks'])) {
+				if (array_key_exists($tmpEngine,$cfg['searchEngineLinks'])) {
 					$hreflink = $cfg['searchEngineLinks'][$tmpEngine];
 					$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
 				} else {
@@ -2500,19 +2370,11 @@ function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
 					$settingsNeedsSaving = true;
 				}
 				if (strlen($hreflink) > 0) {
-					if ($selectedEngine == $tmpEngine) {
-						array_push($output, array(
+					array_push($output, array(
 							'hreflink' => $hreflink,
-							'selected' => 1,
+							'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
 							)
 						);
-					} else {
-						array_push($output, array(
-							'hreflink' => $hreflink,
-							'selected' => 0,
-							)
-						);
-					}
 				}
 			}
 	}
@@ -2550,10 +2412,7 @@ function check_html ($str, $strip="") {
 	while (ereg("<(/?[[:alpha:]]*)[[:space:]]*([^>]*)>",$str,$reg)) {
 		$i = strpos($str,$reg[0]);
 		$l = strlen($reg[0]);
-		if ($reg[1][0] == "/")
-			$tag = strtolower(substr($reg[1],1));
-		else
-			$tag = strtolower($reg[1]);
+		$tag = ($reg[1][0] == "/") ? strtolower(substr($reg[1],1)) : strtolower($reg[1]);
 		if ($a = $AllowableHTML[$tag]) {
 			if ($reg[1][0] == "/") {
 				$tag = "</$tag>";
@@ -2576,10 +2435,9 @@ function check_html ($str, $strip="") {
 	// parse for strings starting with http:// and subst em with hyperlinks.
 	if ($strip != "nohtml") {
 		global $cfg;
-		if ($cfg["enable_dereferrer"] != "0")
-			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="index.php?iid=dereferrer&u=${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
-		else
-			$str = preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
+		$str = ($cfg["enable_dereferrer"] != 0)
+			? preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="index.php?iid=dereferrer&u=${1}${2}" target="_blank">${1}${2}</a>${3}', $str)
+			: preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
 	}
 	return $str;
 }
@@ -2595,7 +2453,7 @@ function getDriveSpace($drive) {
 	if (is_dir($drive)) {
 		$dt = disk_total_space($drive);
 		$df = disk_free_space($drive);
-		$percent = round((($dt - $df)/$dt) * 100);
+		$percent = round((($dt - $df) / $dt) * 100);
 	}
 	return $percent;
 }
@@ -2610,7 +2468,7 @@ function getFileFilter($inArray) {
 	$filter = "(\.".strtolower($inArray[0]).")|"; // used to hold the file type filter
 	$filter .= "(\.".strtoupper($inArray[0]).")";
 	// Build the file filter
-	for($inx = 1; $inx < sizeof($inArray); $inx++) {
+	for ($inx = 1; $inx < sizeof($inArray); $inx++) {
 		$filter .= "|(\.".strtolower($inArray[$inx]).")";
 		$filter .= "|(\.".strtoupper($inArray[$inx]).")";
 	}
@@ -2650,11 +2508,8 @@ function cleanFileName($inName) {
  * @return string
  */
 function cleanURL($url) {
-	$rtnValue = $url;
 	$arURL = explode("*", $url);
-	if (sizeof($arURL) > 1)
-		$rtnValue = $arURL[1];
-	return $rtnValue;
+	return (sizeof($arURL) > 1) ? $arURL[1] : $url;
 }
 
 /**
@@ -2669,7 +2524,7 @@ function getDownloadSize($torrent) {
 		require_once("inc/classes/BDecode.php");
 		$fd = fopen($torrent, "rd");
 		$alltorrent = fread($fd, filesize($torrent));
-		$array = BDecode($alltorrent);
+		$array = @BDecode($alltorrent);
 		fclose($fd);
 		$rtnValue = $array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20);
 	}
@@ -2683,16 +2538,14 @@ function getDownloadSize($torrent) {
  * @return string
  */
 function formatBytesTokBMBGBTB($inBytes) {
-	$rsize = "";
 	if ($inBytes > 1099511627776)
-		$rsize = round($inBytes / 1099511627776, 2) . " TB";
+		return round($inBytes / 1099511627776, 2) . " TB";
 	elseif ($inBytes > 1073741824)
-		$rsize = round($inBytes / 1073741824, 2) . " GB";
+		return round($inBytes / 1073741824, 2) . " GB";
 	elseif ($inBytes < 1048576)
-		$rsize = round($inBytes / 1024, 1) . " kB";
+		return round($inBytes / 1024, 1) . " kB";
 	else
-		$rsize = round($inBytes / 1048576, 1) . " MB";
-	return $rsize;
+		return round($inBytes / 1048576, 1) . " MB";
 }
 
 /**
@@ -2702,14 +2555,12 @@ function formatBytesTokBMBGBTB($inBytes) {
  * @return string
  */
 function formatFreeSpace($freeSpace) {
-	$rtnValue = "";
 	if ($freeSpace > 1048576)
-		$rtnValue = number_format($freeSpace / 1048576, 2)." TB";
+		return number_format($freeSpace / 1048576, 2)." TB";
 	elseif ($freeSpace > 1024)
-		$rtnValue = number_format($freeSpace / 1024, 2)." GB";
+		return number_format($freeSpace / 1024, 2)." GB";
 	else
-		$rtnValue = number_format($freeSpace, 2)." MB";
-	return $rtnValue;
+		return number_format($freeSpace, 2)." MB";
 }
 
 /**
@@ -2732,13 +2583,9 @@ function getStatusImage($af) {
 			$hd->image = "green.gif";
 	}
 	if ($af->percent_done >= 100) {
-		if(trim($af->up_speed) != "" && $af->running == "1") {
-			// is seeding
-			$hd->image = "green.gif";
-		} else {
-			// the torrent is finished
-			$hd->image = "black.gif";
-		}
+		$hd->image = (trim($af->up_speed) != "" && $af->running == "1")
+			? "green.gif" /* is seeding */
+			: "black.gif"; /*  the torrent is finished */
 	}
 	if ($hd->image != "black.gif")
 		$hd->title = "S:".$af->seeds." P:".$af->peers." ";
@@ -2769,13 +2616,8 @@ function file_size($file) {
  * @return string
  */
 function GetSpeedInBytes($inValue) {
-	$rtnValue = 0;
 	$arTemp = split(" ", trim($inValue));
-	if ($arTemp[1] == "kB/s")
-		$rtnValue = $arTemp[0] * 1024;
-	else
-		$rtnValue = $arTemp[0];
-	return $rtnValue;
+	return ($arTemp[1] == "kB/s") ? $arTemp[0] * 1024 : $arTemp[0];
 }
 
 /**
@@ -2797,16 +2639,10 @@ function convertTime($seconds) {
 		$count = floor($seconds / $period);
 		if ($count == 0)
 		continue;
-		if ($count < 10)
-			array_push($values, "0".$count);
-		else
-			array_push($values, $count);
+		array_push($values, ($count < 10) ? "0".$count : $count);
 		$seconds = $seconds % $period;
 	}
-	if (empty($values))
-		return "?";
-	else
-		return implode(':', $values);
+	return (empty($values)) ? "?" : implode(':', $values);
 }
 
 /**
@@ -2816,13 +2652,10 @@ function convertTime($seconds) {
  */
 function IsForceReadMsg() {
 	global $cfg, $db;
-	$rtnValue = false;
 	$sql = "SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1";
 	$count = $db->GetOne($sql);
 	showError($db,$sql);
-	if ($count >= 1)
-		$rtnValue = true;
-	return $rtnValue;
+	return ($count >= 1);
 }
 
 /**
