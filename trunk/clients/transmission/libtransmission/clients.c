@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1108 2006-11-19 21:33:49Z livings124 $
+ * $Id: clients.c 1171 2006-12-07 23:08:44Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -92,7 +92,8 @@ char * tr_clientForId( uint8_t * id )
     {
         if( id[0] == 'T' )
         {
-            asprintf( &ret, "BitTornado (%c%c%c)", id[1], id[2], id[3] );
+            asprintf( &ret, "BitTornado %d.%d.%d", ( id[1] - '0' - ( id[1] < 'A' ? 0 : 7 ) ),
+                 ( id[2] - '0' - ( id[2] < 'A' ? 0 : 7 ) ),  ( id[3] - '0' - ( id[3] < 'A' ? 0 : 7 ) ) );
         }
         else if( id[0] == 'A' )
         {
