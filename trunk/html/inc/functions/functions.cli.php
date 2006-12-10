@@ -60,6 +60,7 @@ function cliPrintUsage() {
 	echo " <repair>     : repair of torrentflux. DONT do this unless you have to.\n";
 	echo "                Doing this on a running ok flux _will_ screw up things.\n";
 	echo " <care>       : call clientCare and repair all died transfers.\n";
+	echo "                extra-arg 1 : restart died transfers (true/false)\n";
 	echo " <dump>       : dump database.\n";
 	echo "                extra-arg 1 : type : settings/users\n";
 	echo "\n";
@@ -79,7 +80,7 @@ function cliPrintUsage() {
     echo "fluxcli.php rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n";
     echo "fluxcli.php xfer month\n";
 	echo "fluxcli.php repair\n";
-	echo "fluxcli.php care\n";
+	echo "fluxcli.php care true\n";
 	echo "fluxcli.php dump settings\n";
 	echo "fluxcli.php dump users\n";
 	echo "\n";

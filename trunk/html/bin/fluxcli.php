@@ -58,7 +58,7 @@ require_once("inc/classes/Rssd.php");
 
 // config
 $cfg["ip"] = '127.0.0.1';
-$_SERVER['HTTP_USER_AGENT'] = "fluxcli/" . _REVISION_FLUXCLI;
+$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;
 
 // set admin-var
 $cfg['isAdmin'] = true;
@@ -118,7 +118,7 @@ if ((isset($action)) && ($action != "")) {
         	exit();
 		case "care":
 		    echo "Running clientCare...\n";
-			clientCare(true);
+			clientCare(true, ((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
         	echo "clientCare done\n";
         	exit();
 		case "dump":

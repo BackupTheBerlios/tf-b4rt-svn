@@ -1256,15 +1256,22 @@ function deleteProfileInfo($pid) {
 /**
  * clientCare
  *
- * @param $talk : boolean if function should talk
+ * @param $cliMode : boolean
  */
-function clientCare($talk = false) {
-	global $cfg;
+/**
+ * client-care
+ *
+ * @param : $cliMode
+ * @param $restartTransfers
+ * @return boolean
+ */
+function clientCare($cliMode = false, $restartTransfers = false) {
+	global $cfg, $queueActive;
 	// repair totals
-	repairTotals($talk);
+	repairTotals($cliMode);
 	// sanity-check for transfers-dir
 	if (!is_dir($cfg["transfer_file_path"])) {
-		if ($talk)
+		if ($cliMode)
 			echo "invalid dir-settings. no dir : ".$cfg["transfer_file_path"]."\n";
 		return false;
 	}
@@ -1279,7 +1286,7 @@ function clientCare($talk = false) {
 	}
 	// done if no pid-files found
 	if (count($pidFiles) < 1) {
-		if ($talk)
+		if ($cliMode)
 			echo "no pid-files found.\n";
 		return true;
 	}
@@ -1295,16 +1302,16 @@ function clientCare($talk = false) {
 	}
 	// done if no stale pid-files
 	if (count($bogusTransfers) < 1) {
-		if ($talk)
+		if ($cliMode)
 			echo "no stale pid-files found.\n";
 		return true;
 	}
 	// repair the bogus clients
+	if ($cliMode)
+		echo "repairing died clients...\n";
 	require_once("inc/classes/AliasFile.php");
 	foreach ($bogusTransfers as $bogusTransfer) {
 		$transfer = $bogusTransfer.".torrent";
-		if ($talk)
-			echo "repairing ".$transfer." ...";
 		$alias = $bogusTransfer.".stat";
 		$pidFile = $alias.".pid";
 		$settingsAry = loadTorrentSettings($transfer);
@@ -1318,6 +1325,9 @@ function clientCare($talk = false) {
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 		}
+		// print
+		if ($cliMode)
+			echo "repairing ".$transfer." ...";
 		// get owner
 		$transferowner = getOwner($transfer);
 		// rewrite stat-file
@@ -1338,24 +1348,74 @@ function clientCare($talk = false) {
 		// DEBUG : log the repair of the bogus transfer
 		if ($cfg['debuglevel'] > 0)
 			AuditAction($cfg["constants"]["debug"], "clientCare : transfer repaired : ".$transfer);
-		if ($talk)
+		// print
+		if ($cliMode)
 			echo "done\n";
 	}
+	// restart transfers
+	if ($restartTransfers) {
+		if ($cliMode)
+			echo "restarting died clients...\n";
+		// hold current user
+		$whoami = ($cliMode) ? GetSuperAdmin() : $cfg["user"];
+		foreach ($bogusTransfers as $bogusTransfer) {
+			$transfer = $bogusTransfer.".torrent";
+			$alias = $bogusTransfer.".stat";
+			$pidFile = $alias.".pid";
+			$settingsAry = loadTorrentSettings($transfer);
+			if (!((isset($settingsAry)) && (is_array($settingsAry)))) {
+				// this is a wget-client, skip it
+				continue;
+			}
+			// print
+			if ($cliMode)
+				echo "Starting ".$transfer." ...";
+			// get owner
+			$transferowner = getOwner($transfer);
+			// set current user to transfer-owner
+			$cfg["user"] = $transferowner;
+			// file-prio
+            if ($cfg["enable_file_priority"]) {
+                include_once("inc/setpriority.php");
+                // Process setPriority Request.
+                setPriority($transfer);
+            }
+			// clientHandler + start
+			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $settingsAry['btclient']);
+			$clientHandler->startClient($transfer, 0, $queueActive);
+			// DEBUG : log the restart of the died transfer
+			if ($cfg['debuglevel'] > 0) {
+				$staret = ($clientHandler->state == 3) ? "OK" : "FAILED";
+				AuditAction($cfg["constants"]["debug"], "clientCare : transfer ".$transfer." restarted by ".$whoami." (".$staret.")");
+			}
+			// print
+			if ($cliMode) {
+				if ($clientHandler->state == 3)
+					echo " done\n";
+				else
+					echo "\n".$clientHandler->messages."\n";
+			}
+		}
+		// set user back
+		$cfg["user"] = $whoami;
+	}
+	// return
+	return true;
 }
 
 /**
  * repairTotals
  *
- * @param $talk : boolean if function should talk
+ * @param $cliMode : boolean
  */
-function repairTotals($talk = false) {
+function repairTotals($cliMode = false) {
 	global $cfg, $db;
-	if ($talk)
-		echo "repairing totals ...\n";
+	if ($cliMode)
+		echo "repairing totals...\n";
 	$bogusCount = 0;
 	$bogusCount = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
 	if (($bogusCount !== false) && ($bogusCount > 0)) {
-		if ($talk)
+		if ($cliMode)
 			echo "found ".$bogusCount." invalid entries, deleting...\n";
 		$sql = "DELETE FROM tf_torrent_totals WHERE tid = ''";
 		$result = $db->Execute($sql);
@@ -1364,7 +1424,7 @@ function repairTotals($talk = false) {
 		if ($cfg['debuglevel'] > 0)
 			AuditAction($cfg["constants"]["debug"], "repairTotals : found and removed ".$bogusCount." invalid totals-entries");
 	} else {
-		if ($talk)
+		if ($cliMode)
 			echo "no errors found.\n";
 	}
 }
