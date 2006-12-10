@@ -41,7 +41,6 @@ $link_list = array();
 foreach($arLinks as $link) {
 	$lid = $arLid[$inx++];
 	$counter = 0;
-	$counter2 = 0;
 	if (isset($_REQUEST["edit"]) && $_REQUEST["edit"] == $link['lid']) {
 		$is_edit = 1;
 	} else {
@@ -50,10 +49,6 @@ foreach($arLinks as $link) {
 			$counter = 2;
 		if ($inx == 1)
 			$counter = 1;
-		if ($inx != count($arLinks))
-			$counter2 = 1;
-		else
-			$counter2 = 0;
 	}
 	array_push($link_list, array(
 		'is_edit' => $is_edit,
@@ -61,7 +56,7 @@ foreach($arLinks as $link) {
 		'sitename' => $link['sitename'],
 		'lid' => $lid,
 		'counter' => $counter,
-		'counter2' => $counter2,
+		'counter2' => ($inx != count($arLinks)) ? 1 : 0,
 		'last_link' => false
 		)
 	);
@@ -91,4 +86,5 @@ $tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
 $tmpl->pparse();
+
 ?>

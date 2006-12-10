@@ -35,13 +35,9 @@ tmplInitializeInstance($cfg["theme"], "page.admin.statsSettings.tmpl");
 // set vars
 $list = array();
 for ($i = 0; $i <= 9 ; $i++) {
-	if ($cfg["stats_deflate_level"] == $i)
-		$is_selected = 1;
-	else
-		$is_selected = 0;
 	array_push($list, array(
 		'i' => $i,
-		'is_selected' => $is_selected,
+		'is_selected' => ($cfg["stats_deflate_level"] == $i) ? 1 : 0
 		)
 	);
 }

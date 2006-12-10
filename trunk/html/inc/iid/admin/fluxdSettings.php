@@ -69,20 +69,14 @@ $userCount = count($users);
 
 // Qmgr
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
-if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Qmgr_state', $fluxd->modState('Qmgr'));
-else
-	$tmpl->setvar('fluxd_Qmgr_state', 0);
+$tmpl->setvar('fluxd_Qmgr_state', (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Qmgr') : 0);
 $tmpl->setvar('fluxd_Qmgr_interval', $cfg["fluxd_Qmgr_interval"]);
 $tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
 $tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 
 // Watch
 $tmpl->setvar('fluxd_Watch_enabled', $cfg["fluxd_Watch_enabled"]);
-if (($cfg["fluxd_Watch_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Watch_state', $fluxd->modState('Watch'));
-else
-	$tmpl->setvar('fluxd_Watch_state', 0);
+$tmpl->setvar('fluxd_Watch_state', (($cfg["fluxd_Watch_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Watch') : 0);
 $tmpl->setvar('fluxd_Watch_interval', $cfg["fluxd_Watch_interval"]);
 if ((isset($cfg["fluxd_Watch_jobs"])) && (strlen($cfg["fluxd_Watch_jobs"]) > 0)) {
 	$watchlist = array();
@@ -109,35 +103,23 @@ $tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 
 // Rssad
 $tmpl->setvar('fluxd_Rssad_enabled', $cfg["fluxd_Rssad_enabled"]);
-if (($cfg["fluxd_Rssad_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Rssad_state', $fluxd->modState('Rssad'));
-else
-	$tmpl->setvar('fluxd_Rssad_state', 0);
+$tmpl->setvar('fluxd_Rssad_state', (($cfg["fluxd_Rssad_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Rssad') : 0);
 $tmpl->setvar('fluxd_Rssad_interval', $cfg["fluxd_Rssad_interval"]);
 
 // Fluxinet
 $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
-if (($cfg["fluxd_Fluxinet_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Fluxinet_state', $fluxd->modState('Fluxinet'));
-else
-	$tmpl->setvar('fluxd_Fluxinet_state', 0);
+$tmpl->setvar('fluxd_Fluxinet_state', (($cfg["fluxd_Fluxinet_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Fluxinet') : 0);
 $tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
-
-// Trigger
-$tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
-if (($cfg["fluxd_Trigger_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Trigger_state', $fluxd->modState('Trigger'));
-else
-	$tmpl->setvar('fluxd_Trigger_state', 0);
-$tmpl->setvar('fluxd_Trigger_interval', $cfg["fluxd_Trigger_interval"]);
 
 // Clientmaint
 $tmpl->setvar('fluxd_Clientmaint_enabled', $cfg["fluxd_Clientmaint_enabled"]);
-if (($cfg["fluxd_Clientmaint_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('fluxd_Clientmaint_state', $fluxd->modState('Clientmaint'));
-else
-	$tmpl->setvar('fluxd_Clientmaint_state', 0);
+$tmpl->setvar('fluxd_Clientmaint_state', (($cfg["fluxd_Clientmaint_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Clientmaint') : 0);
 $tmpl->setvar('fluxd_Clientmaint_interval', $cfg["fluxd_Clientmaint_interval"]);
+
+// Trigger
+$tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
+$tmpl->setvar('fluxd_Trigger_state', (($cfg["fluxd_Trigger_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Trigger') : 0);
+$tmpl->setvar('fluxd_Trigger_interval', $cfg["fluxd_Trigger_interval"]);
 
 // array with all clients
 $clients = array('tornado', 'transmission', 'mainline', 'wget');
@@ -155,10 +137,7 @@ if(strlen($output) == 0)
 	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Transfers</div></td></tr>";
 $tmpl->setvar('output', $output);
 $tmpl->setvar('fluxdRunning', $fluxdRunning);
-if (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning))
-	$tmpl->setvar('showTransfers', 1);
-else
-	$tmpl->setvar('showTransfers', 0);
+$tmpl->setvar('showTransfers', (($cfg["fluxd_Qmgr_enabled"] == 1) && ($fluxdRunning)) ? 1 : 0);
 //
 $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('_FILE', $cfg['_FILE']);

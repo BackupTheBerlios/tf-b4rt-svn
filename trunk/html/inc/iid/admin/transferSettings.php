@@ -59,13 +59,9 @@ $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
 $nice_list = array();
 for ($i = 0; $i < 20 ; $i++) {
-	if ($cfg["nice_adjust"] == $i)
-		$nice_adjust_true = 1;
-	else
-		$nice_adjust_true = 0;
 	array_push($nice_list, array(
 		'i' => $i,
-		'nice_adjust_true' => $nice_adjust_true,
+		'nice_adjust_true' => ($cfg["nice_adjust"] == $i) ? 1 : 0
 		)
 	);
 }

@@ -56,10 +56,7 @@ if ($user_level >= 2) {
 if ($hide_offline == 1)
 	$hide_checked = "checked";
 $user_activity = GetActivityCount($user_id);
-if ($user_activity == 0)
-	$user_percent = 0;
-else
-	$user_percent = number_format(($user_activity/$total_activity)*100);
+$user_percent = ($user_activity != 0) ? number_format(($user_activity / $total_activity) * 100) : 0;
 $tmpl->setvar('editUserImage', $editUserImage);
 $tmpl->setvar('user_id', $user_id);
 $tmpl->setvar('time_created', date($cfg['_DATETIMEFORMAT'], $time_created));

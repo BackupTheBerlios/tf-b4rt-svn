@@ -43,12 +43,8 @@ tmplInitializeInstance($cfg["theme"], "page.admin.dirSettings.tmpl");
 $dir_list = array();
 foreach ($restrictedFileEntries as $entry) {
 	$target = trim($entry);
-	if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
-		array_push($dir_list, array(
-			'target' => $target,
-			)
-		);
-	}
+	if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
+		array_push($dir_list, array('target' => $target));
 }
 $tmpl->setloop('dir_restricted_list', $dir_list);
 $tmpl->setvar('dir_restricted', $cfg["dir_restricted"]);

@@ -37,26 +37,17 @@ tmplInitializeInstance($cfg["theme"], "page.admin.serverSettings.tmpl");
 $tmpl->setvar('path', $cfg["path"]);
 if (is_dir($cfg["path"])) {
 	$tmpl->setvar('is_path', 1);
-	if (is_writable($cfg["path"]))
-		$tmpl->setvar('is_writable', 1);
-	else
-		$tmpl->setvar('is_writable', 0);
+	$tmpl->setvar('is_writable', (is_writable($cfg["path"])) ? 1 : 0);
 } else {
 	$tmpl->setvar('is_path', 0);
 }
 // docroot
 $tmpl->setvar('docroot', $cfg["docroot"]);
-if (is_file($cfg["docroot"]."version.php"))
-	$tmpl->setvar('is_docroot', 1);
-else
-	$tmpl->setvar('is_docroot', 0);
+$tmpl->setvar('is_docroot', (is_file($cfg["docroot"]."version.php")) ? 1 : 0);
 // homedirs + incoming
 $tmpl->setvar('enable_home_dirs', $cfg["enable_home_dirs"]);
 $tmpl->setvar('path_incoming', $cfg["path_incoming"]);
-if (checkDirectory($cfg["path"].$cfg["path_incoming"], 0777))
-	$tmpl->setvar('path_incoming_ok', 1);
-else
-	$tmpl->setvar('path_incoming_ok', 0);
+$tmpl->setvar('path_incoming_ok', (checkDirectory($cfg["path"].$cfg["path_incoming"], 0777)) ? 1 : 0);
 // bins
 $tmpl->setvar('btclient_transmission_bin', $cfg["btclient_transmission_bin"]);
 $tmpl->setvar('validate_transmission_bin', validateBinary($cfg["btclient_transmission_bin"]));

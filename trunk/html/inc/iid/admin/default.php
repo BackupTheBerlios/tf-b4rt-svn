@@ -110,10 +110,7 @@ $tmpl->setvar('db_type', $cfg["db_type"]);
 $tmpl->setvar('db_host', $cfg["db_host"]);
 $tmpl->setvar('db_name', $cfg["db_name"]);
 $tmpl->setvar('db_user', $cfg["db_user"]);
-if ($cfg["db_pcon"])
-	$tmpl->setvar('db_pcon', "true");
-else
-	$tmpl->setvar('db_pcon', "false");
+$tmpl->setvar('db_pcon', ($cfg["db_pcon"]) ? "true" : "false");
 // foot
 tmplSetFoot();
 

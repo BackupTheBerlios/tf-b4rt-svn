@@ -45,7 +45,7 @@ foreach($arLinks as $link) {
 	array_push($link_rss, array(
 		'true' => true,
 		'rid' => $rid,
-		'link' => $link,
+		'link' => $link
 		)
 	);
 }

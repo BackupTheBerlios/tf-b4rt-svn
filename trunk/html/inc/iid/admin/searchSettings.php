@@ -58,14 +58,10 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 			$tmpl->setvar('catFilterName', $sEngine->catFilterName);
 			$cats = array();
 			foreach ($sEngine->getMainCategories(false) as $mainId => $mainName) {
-				if (@in_array($mainId, $sEngine->catFilter))
-					$in_array = 1;
-				else
-					$in_array = 0;
 				array_push($cats, array(
 					'mainId' => $mainId,
-					'in_array' => $in_array,
-					'mainName' => $mainName,
+					'in_array' => (@in_array($mainId, $sEngine->catFilter)) ? 1 : 0,
+					'mainName' => $mainName
 					)
 				);
 			}

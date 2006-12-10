@@ -104,31 +104,23 @@ $tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
 // themes
 $theme_list = array();
 $arThemes = GetThemes();
-for($inx = 0; $inx < sizeof($arThemes); $inx++) {
-	if ($cfg["default_theme"] == $arThemes[$inx])
-		$selected = "selected";
-	else
-		$selected = "";
+for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	array_push($theme_list, array(
 		'arThemes' => $arThemes[$inx],
-		'selected' => $selected,
+		'selected' => ($cfg["default_theme"] == $arThemes[$inx])
 		)
 	);
 }
 $tmpl->setloop('theme_list', $theme_list);
 // tf standard themes
-$arThemes = GetThemesStandard();
 $tfstandard_theme_list = array();
-for($inx = 0; $inx < sizeof($arThemes); $inx++) {
+$arThemes = GetThemesStandard();
+for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	$arThemes2[$inx] = "tf_standard_themes/".$arThemes[$inx];
-	if ($cfg["default_theme"] == $arThemes2[$inx])
-		$selected = "selected";
-	else
-		$selected = "";
 	array_push($tfstandard_theme_list, array(
 		'arThemes' => $arThemes[$inx],
 		'arThemes2' => $arThemes2[$inx],
-		'selected' => $selected,
+		'selected' => ($cfg["default_theme"] == $arThemes2[$inx]) ? "selected" : ""
 		)
 	);
 }
@@ -136,15 +128,11 @@ $tmpl->setloop('tfstandard_theme_list', $tfstandard_theme_list);
 // languages
 $lang_list = array();
 $arLanguage = GetLanguages();
-for($inx = 0; $inx < sizeof($arLanguage); $inx++) {
-	$selected = "";
-	if ($cfg["default_language"] == $arLanguage[$inx]) {
-		$selected = "selected";
-	}
+for ($inx = 0; $inx < sizeof($arLanguage); $inx++) {
 	array_push($lang_list, array(
 		'arLanguage' => $arLanguage[$inx],
-		'selected' => $selected,
-		'GetLanguageFromFile' => GetLanguageFromFile($arLanguage[$inx]),
+		'selected' => ($cfg["default_language"] == $arLanguage[$inx]) ? "selected" : "",
+		'GetLanguageFromFile' => GetLanguageFromFile($arLanguage[$inx])
 		)
 	);
 }

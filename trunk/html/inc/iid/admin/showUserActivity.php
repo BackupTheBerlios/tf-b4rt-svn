@@ -31,7 +31,7 @@ if (!isset($cfg['user'])) {
 
 $min = getRequestVar('min');
 if (empty($min))
-	$min=0;
+	$min = 0;
 $user_id = getRequestVar('user_id');
 $srchFile = getRequestVar('srchFile');
 $srchAction = getRequestVar('srchAction');
