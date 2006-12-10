@@ -268,10 +268,10 @@ sub processArguments {
 		$dbMode = $temp;
 		# check if running
 		if (daemonIsRunning($PATH_DOCROOT) == 0) {
-			print STDERR "daemon not running.\n";
+			FluxdCommon::printError("CORE", "daemon not running.\n");
 			exit;
 		}
-		print "Stopping daemon...\n";
+		FluxdCommon::printMessage("CORE", "Stopping daemon...\n");
 		# db-bean
 		# require
 		require FluxDB;
@@ -280,7 +280,7 @@ sub processArguments {
 		# initialize
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
 		if ($fluxDB->getState() < 1) {
-			print STDERR "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n";
+			FluxdCommon::printError("CORE", "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n");
 			exit;
 		}
 		# init paths
@@ -294,7 +294,7 @@ sub processArguments {
 			# send QUIT to daemon
 			kill 'SIGQUIT', $daemonPid;
 		} else {
-			print STDERR "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n";
+			FluxdCommon::printError("CORE", "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n");
 		}
 		# exit
 		exit;
@@ -327,10 +327,10 @@ sub processArguments {
 		$dbMode = $temp;
 		# check if already running
 		if (daemonIsRunning($PATH_DOCROOT) == 1) {
-			print STDERR "daemon already running.\n";
+			FluxdCommon::printError("CORE", "daemon already running.\n");
 			exit;
 		}
-		print "Starting daemon...\n";
+		FluxdCommon::printMessage("CORE", "Starting daemon...\n");
 		# return
 		return 1;
 	};
