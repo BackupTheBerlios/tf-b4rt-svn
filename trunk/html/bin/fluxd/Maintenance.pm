@@ -20,7 +20,7 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
-package Clientmaint;
+package Maintenance;
 use strict;
 use warnings;
 ################################################################################
@@ -78,7 +78,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# print
-	FluxdCommon::printMessage("Clientmaint", "shutdown\n");
+	FluxdCommon::printMessage("Maintenance", "shutdown\n");
 }
 
 ################################################################################
@@ -129,7 +129,7 @@ sub initialize {
 	}
 
 	# print
-	FluxdCommon::printMessage("Clientmaint", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
+	FluxdCommon::printMessage("Maintenance", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
 
 	# reset last run time
 	$time_last_run = time();
@@ -187,7 +187,7 @@ sub main {
 
 		# print
 		if ($LOGLEVEL > 1) {
-			FluxdCommon::printMessage("Clientmaint", "executing maintenance (trestart: ".$trestart."):\n");
+			FluxdCommon::printMessage("Maintenance", "executing maintenance (trestart: ".$trestart."):\n");
 		}
 
 		# exec
@@ -217,7 +217,7 @@ sub command {
 #------------------------------------------------------------------------------#
 sub status {
 	my $return = "";
-	$return .= "\n-= Clientmaint Revision ".$VERSION." =-\n";
+	$return .= "\n-= Maintenance Revision ".$VERSION." =-\n";
 	$return .= "interval : ".$interval." s \n";
 	$return .= "trestart : ".$trestart."\n";
 	return $return;

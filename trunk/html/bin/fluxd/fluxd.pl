@@ -63,7 +63,7 @@ my $start_time_local = localtime();
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
 #------------------------------------------------------------------------------#
-use vars qw($fluxDB $qmgr $fluxinet $rssad $watch $clientmaint $trigger);
+use vars qw($fluxDB $qmgr $fluxinet $rssad $watch $maintenance $trigger);
 
 ################################################################################
 # main                                                                         #
@@ -151,18 +151,18 @@ while ($loop) {
 		}
 	}
 
-	# Clientmaint
-	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
+	# Maintenance
+	if ((defined $maintenance) && ($maintenance->getState() == 1)) {
 		eval {
 			local $SIG{ALRM} = sub {die "alarm\n"};
 			alarm 5;
-			$clientmaint->main();
+			$maintenance->main();
 			alarm 0;
 		};
 
 		# Check for alarm (timeout) condition
 		if ($@) {
-			FluxdCommon::printError("CORE", "Clientmaint Timed out:\n ".$@."\n");
+			FluxdCommon::printError("CORE", "Maintenance Timed out:\n ".$@."\n");
 		}
 	}
 
@@ -736,49 +736,49 @@ sub serviceModulesLoad {
 		}
 	}
 
-	# Clientmaint
-	if (FluxDB->getFluxConfig("fluxd_Clientmaint_enabled") == 1) {
+	# Maintenance
+	if (FluxDB->getFluxConfig("fluxd_Maintenance_enabled") == 1) {
 		# Load up module, unless it is already
-		if (!(defined $clientmaint)) {
-			if (eval "require Clientmaint") {
+		if (!(defined $maintenance)) {
+			if (eval "require Maintenance") {
 				eval {
-					$clientmaint = Clientmaint->new();
-					$clientmaint->initialize(
+					$maintenance = Maintenance->new();
+					$maintenance->initialize(
 						$LOGLEVEL,
-						FluxDB->getFluxConfig("fluxd_Clientmaint_interval"),
-						FluxDB->getFluxConfig("fluxd_Clientmaint_trestart")
+						FluxDB->getFluxConfig("fluxd_Maintenance_interval"),
+						FluxDB->getFluxConfig("fluxd_Maintenance_trestart")
 					);
-					if ($clientmaint->getState() < 1) {
-						my $msg = "error initializing service-module Clientmaint :\n";
-						$msg .= " ".$clientmaint->getMessage()."\n";
+					if ($maintenance->getState() < 1) {
+						my $msg = "error initializing service-module Maintenance :\n";
+						$msg .= " ".$maintenance->getMessage()."\n";
 						FluxdCommon::printError("CORE", $msg);
 					}
 				};
 				if ($@) {
-					FluxdCommon::printError("CORE", "error loading service-module Clientmaint : $@\n");
+					FluxdCommon::printError("CORE", "error loading service-module Maintenance : $@\n");
 				} else {
 					# everything ok
 					if ($LOGLEVEL > 0) {
-						FluxdCommon::printMessage("CORE", "Clientmaint loaded\n");
+						FluxdCommon::printMessage("CORE", "Maintenance loaded\n");
 					}
 				}
 			} else {
-				FluxdCommon::printError("CORE", "error loading service-module Clientmaint : $@\n");
+				FluxdCommon::printError("CORE", "error loading service-module Maintenance : $@\n");
 			}
 		}
 	} else {
 		# Unload module, if it is loaded
-		if (defined $clientmaint) {
+		if (defined $maintenance) {
 			eval {
-				$clientmaint->destroy();
-				undef $clientmaint;
+				$maintenance->destroy();
+				undef $maintenance;
 			};
 			if ($@) {
-				FluxdCommon::printError("CORE", "error unloading service-module Clientmaint : $@\n");
+				FluxdCommon::printError("CORE", "error unloading service-module Maintenance : $@\n");
 			} else {
 				# everything ok
 				if ($LOGLEVEL > 0) {
-					FluxdCommon::printMessage("CORE", "Clientmaint unloaded\n");
+					FluxdCommon::printMessage("CORE", "Maintenance unloaded\n");
 				}
 			}
 		}
@@ -904,18 +904,18 @@ sub serviceModulesUnload {
 		}
 	}
 
-	# Clientmaint
-	if (defined $clientmaint) {
+	# Maintenance
+	if (defined $maintenance) {
 		eval {
-			$clientmaint->destroy();
-			undef $clientmaint;
+			$maintenance->destroy();
+			undef $maintenance;
 		};
 		if ($@) {
-			FluxdCommon::printError("CORE", "error unloading service-module Clientmaint : $@\n");
+			FluxdCommon::printError("CORE", "error unloading service-module Maintenance : $@\n");
 		} else {
 			# everything ok
 			if ($LOGLEVEL > 0) {
-				FluxdCommon::printMessage("CORE", "Clientmaint unloaded\n");
+				FluxdCommon::printMessage("CORE", "Maintenance unloaded\n");
 			}
 		}
 	}
@@ -976,9 +976,9 @@ sub serviceModuleState {
 				return 0;
 			}
 		};
-		/Clientmaint/ && do {
-			if (defined $clientmaint) {
-				return $clientmaint->getState();
+		/Maintenance/ && do {
+			if (defined $maintenance) {
+				return $maintenance->getState();
 			} else {
 				return 0;
 			}
@@ -1121,9 +1121,9 @@ sub processRequest {
 					}
 					last SWITCH;
 				};
-				/Clientmaint/ && do {
-					if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-						$return = $clientmaint->command($command);
+				/Maintenance/ && do {
+					if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+						$return = $maintenance->command($command);
 					}
 					last SWITCH;
 				};
@@ -1154,7 +1154,7 @@ sub set {
 	if ($variable =~/::/) {
 		# setting/getting package variable
 		my @pair = split(/::/, $variable);
-		next if ($pair[0] !~/Fluxinet|Qmgr|Rssad|Watch|Trigger|Clientmaint/);
+		next if ($pair[0] !~/Fluxinet|Qmgr|Rssad|Watch|Maintenance|Trigger/);
 		SWITCH: {
 			$_ = $pair[0];
 			/Fluxinet/ && do {
@@ -1173,8 +1173,8 @@ sub set {
 				$return = $watch->set($pair[1], $value) if(defined $watch);
 				last SWITCH;
 			};
-			/Clientmaint/ && do {
-				$return = $clientmaint->set($pair[1], $value) if(defined $clientmaint);
+			/Maintenance/ && do {
+				$return = $maintenance->set($pair[1], $value) if(defined $maintenance);
 				last SWITCH;
 			};
 			/Trigger/ && do {
@@ -1382,10 +1382,10 @@ sub status {
 		$modules .= "  * Watch\n";
 		$status .= eval { $watch->status(); };
 	}
-	# Clientmaint
-	if ((defined $clientmaint) && ($clientmaint->getState() == 1)) {
-		$modules .= "  * Clientmaint\n";
-		$status .= eval { $clientmaint->status(); };
+	# Maintenance
+	if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+		$modules .= "  * Maintenance\n";
+		$status .= eval { $maintenance->status(); };
 	}
 	# Trigger
 	if ((defined $trigger) && ($trigger->getState() == 1)) {
@@ -1444,10 +1444,10 @@ sub printVersion {
 	} else {
 		print "cant load module\n";
 	}
-	# Clientmaint
-	print "Clientmaint Version : ";
-	if (eval "require Clientmaint") {
-		print Clientmaint->getVersion()."\n";
+	# Maintenance
+	print "Maintenance Version : ";
+	if (eval "require Maintenance") {
+		print Maintenance->getVersion()."\n";
 	} else {
 		print "cant load module\n";
 	}
