@@ -51,6 +51,9 @@ my $interval;
 # time of last run
 my $time_last_run = 0;
 
+# transfer-restart
+my $trestart = 0;
+
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -74,7 +77,7 @@ sub new {
 sub destroy {
 	# set state
 	$state = 0;
-	# log
+	# print
 	FluxdCommon::printMessage("Clientmaint", "shutdown\n");
 }
 
@@ -114,7 +117,19 @@ sub initialize {
 		return 0;
 	}
 
-	FluxdCommon::printMessage("Clientmaint", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n");
+	# transfer-restart
+	$trestart = shift;
+	if (!(defined $trestart)) {
+		# message
+		$message = "transfer-restart not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	# print
+	FluxdCommon::printMessage("Clientmaint", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
 
 	# reset last run time
 	$time_last_run = time();
@@ -170,7 +185,13 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		FluxdCommon::printMessage("Clientmaint", "main\n"); # DEBUG
+		# print
+		if ($LOGLEVEL > 1) {
+			FluxdCommon::printMessage("Clientmaint", "executing care (trestart: ".$trestart."):\n");
+		}
+
+		# exec
+		tfcare();
 
 		# set last run time
 		$time_last_run = time();
@@ -197,8 +218,19 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Clientmaint Revision ".$VERSION." =-\n";
-	$return .= "interval : $interval s \n";
+	$return .= "interval : ".$interval." s \n";
+	$return .= "trestart : ".$trestart."\n";
 	return $return;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: tfcare                                                                  #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub tfcare {
+	# fluxcli-call
+	return Fluxd::fluxcli("care", "true", ($trestart == 1) ? "true" : "false");
 }
 
 ################################################################################

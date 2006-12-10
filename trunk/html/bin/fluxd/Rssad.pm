@@ -282,7 +282,7 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Rssad Revision ".$VERSION." =-\n";
-	$return .= "interval : $interval s \n";
+	$return .= "interval : ".$interval." s \n";
 	$return .= "jobs :\n";
 	my $jobCount = scalar(@jobs);
 	for (my $i = 0; $i < $jobCount; $i++) {

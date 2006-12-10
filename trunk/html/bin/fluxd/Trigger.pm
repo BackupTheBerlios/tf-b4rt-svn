@@ -197,7 +197,7 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Trigger Revision ".$VERSION." =-\n";
-	$return .= "interval : $interval s \n";
+	$return .= "interval : ".$interval." s \n";
 	return $return;
 }
 

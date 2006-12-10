@@ -244,7 +244,7 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Watch Revision ".$VERSION." =-\n";
-	$return .= "interval : $interval s \n";
+	$return .= "interval : ".$interval." s \n";
 	$return .= "jobs :\n";
 	foreach my $user (sort keys %jobs) {
 		my $dir = $jobs{$user};

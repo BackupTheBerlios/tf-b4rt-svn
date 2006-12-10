@@ -280,7 +280,7 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Fluxinet Revision ".$VERSION." =-\n";
-	$return .= "port : $port \n";
+	$return .= "port : ".$port." s \n";
 	return $return;
 }
 
