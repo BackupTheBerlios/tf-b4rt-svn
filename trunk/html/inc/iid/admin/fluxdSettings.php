@@ -111,11 +111,11 @@ $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
 $tmpl->setvar('fluxd_Fluxinet_state', (($cfg["fluxd_Fluxinet_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Fluxinet') : 0);
 $tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
 
-// Clientmaint
-$tmpl->setvar('fluxd_Clientmaint_enabled', $cfg["fluxd_Clientmaint_enabled"]);
-$tmpl->setvar('fluxd_Clientmaint_state', (($cfg["fluxd_Clientmaint_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Clientmaint') : 0);
-$tmpl->setvar('fluxd_Clientmaint_interval', $cfg["fluxd_Clientmaint_interval"]);
-$tmpl->setvar('fluxd_Clientmaint_trestart', $cfg["fluxd_Clientmaint_trestart"]);
+// Maintenance
+$tmpl->setvar('fluxd_Maintenance_enabled', $cfg["fluxd_Maintenance_enabled"]);
+$tmpl->setvar('fluxd_Maintenance_state', (($cfg["fluxd_Maintenance_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Maintenance') : 0);
+$tmpl->setvar('fluxd_Maintenance_interval', $cfg["fluxd_Maintenance_interval"]);
+$tmpl->setvar('fluxd_Maintenance_trestart', $cfg["fluxd_Maintenance_trestart"]);
 
 // Trigger
 $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);

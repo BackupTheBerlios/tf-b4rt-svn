@@ -20,14 +20,14 @@
 
 *******************************************************************************/
 
-// class for the Fluxd-Service-module Clientmaint
-class FluxdClientmaint extends FluxdServiceMod
+// class for the Fluxd-Service-module Maintenance
+class FluxdMaintenance extends FluxdServiceMod
 {
     /**
      * ctor
      */
-    function FluxdClientmaint($cfg, $fluxd) {
-        $this->moduleName = "Clientmaint";
+    function FluxdMaintenance($cfg, $fluxd) {
+        $this->moduleName = "Maintenance";
         // version
 		$this->version = "0.1";
 		// initialize

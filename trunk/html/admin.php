@@ -116,7 +116,7 @@ switch ($op) {
 			$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 			$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 			$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
-			$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
+			$_POST["fluxd_Maintenance_enabled"] != $cfg["fluxd_Maintenance_enabled"] ||
 			$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
 			$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"] ||
@@ -127,7 +127,7 @@ switch ($op) {
 			$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||
 			$_POST["fluxd_Watch_jobs"] != $cfg["fluxd_Watch_jobs"] ||
 			$_POST["fluxd_Rssad_interval"] != $cfg["fluxd_Rssad_interval"] ||
-			$_POST["fluxd_Clientmaint_interval"] != $cfg["fluxd_Clientmaint_interval"] ||
+			$_POST["fluxd_Maintenance_interval"] != $cfg["fluxd_Maintenance_interval"] ||
 			$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
 			$message = 'Settings changed. ';
 			// fluxd Running?
@@ -143,7 +143,7 @@ switch ($op) {
 					$reloadModules = false;
 					if ($_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
 						$_POST["fluxd_Fluxinet_enabled"] != $cfg["fluxd_Fluxinet_enabled"] ||
-						$_POST["fluxd_Clientmaint_enabled"] != $cfg["fluxd_Clientmaint_enabled"] ||
+						$_POST["fluxd_Maintenance_enabled"] != $cfg["fluxd_Maintenance_enabled"] ||
 						$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 						$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
 						$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"]) {

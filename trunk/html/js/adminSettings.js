@@ -7,7 +7,7 @@ function validateSettings(section) {
 	var msg = "";
 	switch (section) {
 		case 'dir':
-			break;		
+			break;
 		case 'fluxd':
 			if (isNumber(document.theForm.fluxd_Qmgr_interval.value) == false ) {
 				msg = msg + "* Qmgr Intervall must be a valid number.\n";
@@ -29,9 +29,9 @@ function validateSettings(section) {
 				msg = msg + "* Watch Intervall must be a valid number.\n";
 				document.theForm.fluxd_Watch_interval.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Clientmaint_interval.value) == false) {
-				msg = msg + "* Clientmaint Intervall must be a valid number.\n";
-				document.theForm.fluxd_Clientmaint_interval.focus();
+			if (isNumber(document.theForm.fluxd_Maintenance_interval.value) == false) {
+				msg = msg + "* Maintenance Intervall must be a valid number.\n";
+				document.theForm.fluxd_Maintenance_interval.focus();
 			}
 			if (isNumber(document.theForm.fluxd_Trigger_interval.value) == false ) {
 				msg = msg + "* Trigger Intervall must be a valid number.\n";
@@ -54,7 +54,7 @@ function validateSettings(section) {
 				msg = msg + "* Enter at least one Filter.\n";
 				document.theForm.rssad_filter_entry.focus();
 			}
-			break;					
+			break;
 		case 'fluxd_Rssad_job':
 			if (document.theForm.savedir.value.length < 1) {
 				msg = msg + "* Enter a savedir.\n";
@@ -62,13 +62,13 @@ function validateSettings(section) {
 			} else {
 				if (document.theForm.savedir.value.indexOf('/') != 0) {
 					msg = msg + "* savedir must be a absolute path.\n";
-				}	
+				}
 			}
 			if (document.theForm.url.value.length < 1) {
 				msg = msg + "* Enter a URL.\n";
 				document.theForm.url.focus();
-			}		
-			break;					
+			}
+			break;
 		case 'index':
 			if (isNumber(document.theForm.page_refresh.value) == false ) {
 				msg = msg + "* Page Refresh Intervalll must be a valid number.\n";

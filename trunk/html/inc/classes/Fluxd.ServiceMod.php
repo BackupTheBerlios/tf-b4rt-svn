@@ -61,7 +61,7 @@ class FluxdServiceMod
      *
      * @param $fluxCfg torrentflux config-array
      * @param $fluxd Fluxd instance
-     * @param $moduleType (Qmgr|Fluxinet|Trigger|Watch|Clientmaint)
+     * @param $moduleType (Qmgr|Fluxinet|Trigger|Watch|Maintenance)
      * @return FluxdServiceMod-instance
      */
     function getFluxdServiceModInstance($fluxCfg, $fluxd, $moduleType) {
@@ -83,9 +83,9 @@ class FluxdServiceMod
             case "Trigger":
             	require_once($classFile);
                 return new FluxdTrigger(serialize($fluxCfg), $fluxd);
-            case "Clientmaint":
+            case "Maintenance":
             	require_once($classFile);
-                return new FluxdClientmaint(serialize($fluxCfg), $fluxd);
+                return new FluxdMaintenance(serialize($fluxCfg), $fluxd);
             default:
             	AuditAction($fluxCfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$moduleType);
 				global $argv;

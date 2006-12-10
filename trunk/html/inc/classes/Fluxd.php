@@ -193,7 +193,7 @@ class Fluxd
 
     /**
      * modState
-     * @param name of service-module (Qmgr|Fluxinet|Trigger|Watch|Clientmaint)
+     * @param name of service-module (Qmgr|Fluxinet|Trigger|Watch|Maintenance)
      * @return int with mod-state
      */
     function modState($mod) {
