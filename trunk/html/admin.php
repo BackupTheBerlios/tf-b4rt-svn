@@ -29,9 +29,6 @@ require_once('inc/functions/functions.common.php');
 // admin functions
 require_once('inc/functions/functions.admin.php');
 
-// maintenance
-require_once("inc/functions/functions.maintenance.php");
-
 // access-check
 if ((!isset($cfg['isAdmin'])) || (!$cfg['isAdmin'])) {
 	 // the user probably hit this page direct

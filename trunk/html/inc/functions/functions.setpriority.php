@@ -20,12 +20,21 @@
 
 *******************************************************************************/
 
+/**
+ * getFile
+ *
+ * @param $var
+ * @return boolean
+ */
 function getFile($var) {
 	return ($var < 65535);
 }
 
-//*********************************************************
-// setPriority()
+/**
+ * setPriority
+ *
+ * @param $torrent
+ */
 function setPriority($torrent) {
     global $cfg;
     // we will use this to determine if we should create a prio file.

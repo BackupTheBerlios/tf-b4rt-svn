@@ -109,8 +109,9 @@ switch ($action) {
  * Maintenance
  ******************************************************************************/
     case "maintenance":
-    	require_once("inc/functions/functions.maintenance.php");
-		maintenance(false, (getRequestVar('trestart') == "true") ? true : false);
+		require_once("inc/classes/MaintenanceAndRepair.php");
+		$mat = MaintenanceAndRepair::getInstance($cfg);
+		$mat->maintenance((getRequestVar('trestart') == "true") ? true : false);
     	break;
 
 /*******************************************************************************
@@ -147,7 +148,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $btclient = getTransferClient($transfer);
                     if ($cfg["enable_file_priority"]) {
-                        include_once("inc/setpriority.php");
+                        include_once("inc/functions/functions.setpriority.php");
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
@@ -166,7 +167,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $btclient = getTransferClient($transfer);
                     if ($cfg["enable_file_priority"]) {
-                        include_once("inc/setpriority.php");
+                        include_once("inc/functions/functions.setpriority.php");
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
@@ -216,7 +217,7 @@ switch ($action) {
 					if ($tRunningFlag == 0) {
 						if ($isTorrent) {
 							if ($cfg["enable_file_priority"]) {
-								include_once("inc/setpriority.php");
+								include_once("inc/functions/functions.setpriority.php");
 								// Process setPriority Request.
 								setPriority(urldecode($element));
 							}
@@ -240,7 +241,7 @@ switch ($action) {
 					if (($isTorrent) && ($tRunningFlag == 0)) {
 						// enqueue it
 						if ($cfg["enable_file_priority"]) {
-							include_once("inc/setpriority.php");
+							include_once("inc/functions/functions.setpriority.php");
 							// Process setPriority Request.
 							setPriority(urldecode($element));
 						}

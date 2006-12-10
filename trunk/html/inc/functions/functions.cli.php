@@ -180,7 +180,7 @@ function cliStartTransfer($transfer = "") {
 			$cfg["user"] = getOwner($transfer);
 			printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
 			if ($cfg["enable_file_priority"]) {
-				include_once("inc/setpriority.php");
+				include_once("inc/functions/functions.setpriority.php");
 				// Process setPriority Request.
 				setPriority($transfer);
 			}
@@ -215,7 +215,7 @@ function cliStartTransfers() {
             $cfg["user"] = getOwner($transfer);
             $btclient = getTransferClient($transfer);
             if ($cfg["enable_file_priority"]) {
-                include_once("inc/setpriority.php");
+                include_once("inc/functions/functions.setpriority.php");
                 // Process setPriority Request.
                 setPriority($transfer);
             }
@@ -243,7 +243,7 @@ function cliResumeTransfers() {
             $cfg["user"] = getOwner($transfer);
             $btclient = getTransferClient($transfer);
             if ($cfg["enable_file_priority"]) {
-                include_once("inc/setpriority.php");
+                include_once("inc/functions/functions.setpriority.php");
                 // Process setPriority Request.
                 setPriority($transfer);
             }
@@ -444,7 +444,7 @@ function cliWatchDir($tpath = "", $username = "") {
                             injectTorrent($file_name);
                             // file-prio
                             if ($cfg["enable_file_priority"]) {
-                                include_once("inc/setpriority.php");
+                                include_once("inc/functions/functions.setpriority.php");
                                 // Process setPriority Request.
                                 setPriority($file_name);
                             }

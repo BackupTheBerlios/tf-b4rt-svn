@@ -20,74 +20,14 @@
 
 *******************************************************************************/
 
-class dir {
-
-	var $name;
-	var $subdirs;
-	var $files;
-	var $num;
-	var $prio;
-
-	function dir($name,$num,$prio) {
-		$this->name = $name;
-		$this->num = $num;
-		$this->prio = $prio;
-		$this->files = array();
-		$this->subdirs = array();
-	}
-
-	function &addFile($file) {
-		$this->files[] =& $file;
-		return $file;
-	}
-
-	function &addDir($dir) {
-		$this->subdirs[] =& $dir;
-		return $dir;
-	}
-
-	// code changed to support php4
-	// thx to Mistar Muffin
-	function &findDir($name) {
-		foreach (array_keys($this->subdirs) as $v) {
-			$dir =& $this->subdirs[$v];
-			if($dir->name == $name)
-				return $dir;
-		}
-		$retVal = false;
-		return $retVal;
-	}
-
-	function draw($parent) {
-		$draw = ("d.add(".$this->num.",".$parent.",\"".$this->name."\",".$this->prio.",0);\n");
-		foreach($this->subdirs as $v)
-			$draw .= $v->draw($this->num);
-		foreach($this->files as $v) {
-			if(is_object($v))
-			  $draw .= ("d.add(".$v->num.",".$this->num.",\"".$v->name."\",".$v->prio.",".$v->size.");\n");
-		}
-		return $draw;
-	}
-
-}
-
-class file {
-
-	var $name;
-	var $prio;
-	var $size;
-	var $num;
-
-	function file($name,$num,$size,$prio) {
-		$this->name = $name;
-		$this->num	= $num;
-		$this->size = $size;
-		$this->prio = $prio;
-	}
-
-}
-
-function showMetaInfo($torrent, $allowSave=false) {
+/**
+ * showMetaInfo
+ *
+ * @param $torrent
+ * @param $allowSave
+ * @return string
+ */
+function showMetaInfo($torrent, $allowSave = false) {
 	global $cfg;
 	if (empty($torrent)) {
 		$showMetaInfo = $cfg['_NORECORDSFOUND'];
@@ -182,6 +122,84 @@ function showMetaInfo($torrent, $allowSave=false) {
 		$showMetaInfo = "<pre>".$result."</pre>";
 	}
 	return $showMetaInfo;
+}
+
+
+// =============================================================================
+// classes
+// =============================================================================
+
+/**
+ * dir
+ */
+class dir {
+
+	var $name;
+	var $subdirs;
+	var $files;
+	var $num;
+	var $prio;
+
+	function dir($name,$num,$prio) {
+		$this->name = $name;
+		$this->num = $num;
+		$this->prio = $prio;
+		$this->files = array();
+		$this->subdirs = array();
+	}
+
+	function &addFile($file) {
+		$this->files[] =& $file;
+		return $file;
+	}
+
+	function &addDir($dir) {
+		$this->subdirs[] =& $dir;
+		return $dir;
+	}
+
+	// code changed to support php4
+	// thx to Mistar Muffin
+	function &findDir($name) {
+		foreach (array_keys($this->subdirs) as $v) {
+			$dir =& $this->subdirs[$v];
+			if($dir->name == $name)
+				return $dir;
+		}
+		$retVal = false;
+		return $retVal;
+	}
+
+	function draw($parent) {
+		$draw = ("d.add(".$this->num.",".$parent.",\"".$this->name."\",".$this->prio.",0);\n");
+		foreach($this->subdirs as $v)
+			$draw .= $v->draw($this->num);
+		foreach($this->files as $v) {
+			if(is_object($v))
+			  $draw .= ("d.add(".$v->num.",".$this->num.",\"".$v->name."\",".$v->prio.",".$v->size.");\n");
+		}
+		return $draw;
+	}
+
+}
+
+/**
+ * file
+ */
+class file {
+
+	var $name;
+	var $prio;
+	var $size;
+	var $num;
+
+	function file($name,$num,$size,$prio) {
+		$this->name = $name;
+		$this->num	= $num;
+		$this->size = $size;
+		$this->prio = $prio;
+	}
+
 }
 
 ?>

@@ -87,9 +87,6 @@ if (is_file('inc/config/config.db.php')) {
 	// db-config
 	require_once('inc/config/config.db.php');
 
-	// db
-	require_once('inc/db.php');
-
 	// initialize database
 	initializeDatabase();
 

@@ -40,8 +40,6 @@ if (isset($_SESSION['user'])) {
 		require_once('inc/functions/functions.core.php');
 		// init cache
 		cacheInit($currentUser);
-		// db
-		require_once('inc/db.php');
 		// initialize database
 		initializeDatabase();
 		// Free space in MB
@@ -149,14 +147,10 @@ if (!(cacheIsSet($currentUser))) {
 	// check main-directories.
 	checkMainDirectories();
 
-	// maintenance-functions
-	require_once("inc/functions/functions.maintenance.php");
-
 	// maintenance-run
-	maintenance(false, false);
-
-	// maintenance-prune-db
-	maintenancePruneDB();
+	require_once("inc/classes/MaintenanceAndRepair.php");
+	$mat = MaintenanceAndRepair::getInstance($cfg);
+	$mat->maintenance(false);
 
 	// set session-settings
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;

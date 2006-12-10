@@ -35,8 +35,8 @@ require_once('inc/functions/functions.common.php');
 // startpop functions
 require_once('inc/functions/functions.startpop.php');
 
-// require
-require_once("inc/metaInfo.php");
+// metainfo-functions
+require_once("inc/functions/functions.metainfo.php");
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.startpop.tmpl");

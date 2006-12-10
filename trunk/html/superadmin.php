@@ -501,7 +501,9 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Main - Standard Maintenance-Run";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Standard Maintenance-Run';
-				maintenance(false, false);
+				require_once("inc/classes/MaintenanceAndRepair.php");
+				$mat = MaintenanceAndRepair::getInstance($cfg);
+				$mat->maintenance(false);
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
@@ -509,7 +511,9 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Main - Extended Maintenance-Run";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Extended Maintenance-Run';
-				maintenance(false, true);
+				require_once("inc/classes/MaintenanceAndRepair.php");
+				$mat = MaintenanceAndRepair::getInstance($cfg);
+				$mat->maintenance(true);
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
@@ -808,7 +812,8 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Repair';
-				repair(false);
+				$mat = MaintenanceAndRepair::getInstance($cfg);
+				$mat->repair();
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
@@ -1022,7 +1027,7 @@ if (isset($_REQUEST["t"])) {
 					if ($tRunningFlag == 0) {
 						$btclient = getTransferClient($torrent);
 						if ($cfg["enable_file_priority"]) {
-							include_once("inc/setpriority.php");
+							include_once("inc/functions/functions.setpriority.php");
 							// Process setPriority Request.
 							setPriority($torrent);
 						}
@@ -1046,7 +1051,7 @@ if (isset($_REQUEST["t"])) {
 					if ($tRunningFlag == 0) {
 						$btclient = getTransferClient($torrent);
 						if ($cfg["enable_file_priority"]) {
-							include_once("inc/setpriority.php");
+							include_once("inc/functions/functions.setpriority.php");
 							// Process setPriority Request.
 							setPriority($torrent);
 						}

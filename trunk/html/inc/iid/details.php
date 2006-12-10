@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// metainfo
-require_once("inc/metaInfo.php");
+// metainfo-functions
+require_once("inc/functions/functions.metainfo.php");
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.details.tmpl");

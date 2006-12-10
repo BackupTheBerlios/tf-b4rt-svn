@@ -33,6 +33,9 @@ class Rssd
 {
 	// fields
 
+	// name
+	var $name = "Rssd";
+
 	// version
     var $version = "0.1";
 
@@ -356,6 +359,10 @@ class Rssd
 		}
     }
 
+	// =========================================================================
+	// output-methods
+	// =========================================================================
+
     /**
      * output message
      *
@@ -364,7 +371,7 @@ class Rssd
 	function outputMessage($message) {
         // only in cli-mode
 		if ($this->mode == 1)
-			printMessage("Rssd", $message);
+			printMessage($this->name, $message);
     }
 
     /**
@@ -375,7 +382,7 @@ class Rssd
 	function outputError($message) {
         // only in cli-mode
 		if ($this->mode == 1)
-			printMessage("Rssd", $message);
+			printError($this->name, $message);
     }
 
 }

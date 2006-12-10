@@ -55,6 +55,7 @@ require_once("inc/classes/AliasFile.php");
 require_once("inc/classes/RunningTransfer.php");
 require_once("inc/classes/SimpleHTTP.php");
 require_once("inc/classes/Rssd.php");
+require_once("inc/classes/MaintenanceAndRepair.php");
 
 // config
 $cfg["ip"] = '127.0.0.1';
@@ -112,10 +113,12 @@ if ((isset($action)) && ($action != "")) {
 			cliXferShutdown(@$argv[2]);
 			break;
 		case "repair":
-			repair(true);
+			$mat = MaintenanceAndRepair::getInstance($cfg);
+			$mat->repair();
         	exit();
 		case "maintenance":
-			maintenance(true, ((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
+			$mat = MaintenanceAndRepair::getInstance($cfg);
+			$mat->maintenance(((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
         	exit();
 		case "dump":
 			cliDumpDatabase(@$argv[2]);
