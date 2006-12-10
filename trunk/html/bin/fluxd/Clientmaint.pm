@@ -187,11 +187,11 @@ sub main {
 
 		# print
 		if ($LOGLEVEL > 1) {
-			FluxdCommon::printMessage("Clientmaint", "executing care (trestart: ".$trestart."):\n");
+			FluxdCommon::printMessage("Clientmaint", "executing maintenance (trestart: ".$trestart."):\n");
 		}
 
 		# exec
-		tfcare();
+		tfmaintenance();
 
 		# set last run time
 		$time_last_run = time();
@@ -224,13 +224,13 @@ sub status {
 }
 
 #------------------------------------------------------------------------------#
-# Sub: tfcare                                                                  #
+# Sub: tfmaintenance                                                           #
 # Arguments: null                                                              #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
-sub tfcare {
+sub tfmaintenance {
 	# fluxcli-call
-	return Fluxd::fluxcli("care", "true", ($trestart == 1) ? "true" : "false");
+	return Fluxd::fluxcli("maintenance", "true", ($trestart == 1) ? "true" : "false");
 }
 
 ################################################################################

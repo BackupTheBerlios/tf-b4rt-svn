@@ -1234,7 +1234,7 @@ sub fluxcli {
 			return doSysCall($shellCmd);
 		}
 	}
-	if ($Command =~/^inject|^watch|^care/) {
+	if ($Command =~/^inject|^watch|^maintenance/) {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return 0;
 		} else {

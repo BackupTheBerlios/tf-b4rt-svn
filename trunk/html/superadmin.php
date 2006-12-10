@@ -485,7 +485,35 @@ if (isset($_REQUEST["m"])) {
 			case "0": // Maintenance-main
 				$htmlTitle = "Maintenance";
 				break;
-			case "1": // Maintenance-Kill
+			case "1": // Maintenance : Main
+				$htmlTitle = "Maintenance - Main";
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>Standard</strong><br>';
+				$htmlMain .= 'Standard Maintenance-Run. (same as on index-page and automatic called on every login).<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Standard Maintenance-Run" border="0"> Standard Maintenance-Run</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>Extended</strong><br>';
+				$htmlMain .= 'Extended Maintenance-Run. Like a standard-run but will also restart all died Transfers.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> Extended Maintenance-Run</a>';
+				$htmlMain .= '<br><br>';
+				break;
+			case "11": // Maintenance : Main : Standard Maintenance-Run
+				$htmlTitle = "Maintenance - Main - Standard Maintenance-Run";
+				$htmlMain .= '<br>';
+				$htmlMain .= 'Standard Maintenance-Run';
+				maintenance(false, false);
+				$htmlMain .= ' <font color="green">done.</font>';
+				$htmlMain .= '<br><br>';
+				break;
+			case "12": // Maintenance : Main
+				$htmlTitle = "Maintenance - Main - Extended Maintenance-Run";
+				$htmlMain .= '<br>';
+				$htmlMain .= 'Extended Maintenance-Run';
+				maintenance(false, true);
+				$htmlMain .= ' <font color="green">done.</font>';
+				$htmlMain .= '<br><br>';
+				break;
+			case "2": // Maintenance-Kill
 				$htmlTitle = "Maintenance - Kill";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<font color="red"><strong>DONT</strong> do this or you will screw up things for sure !</font><br><br>';
@@ -493,30 +521,30 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>php</strong><br>';
 				$htmlMain .= 'use this to kill all php processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=11"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-kill" border="0"> php-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-kill" border="0"> php-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>python</strong><br>';
 				$htmlMain .= 'use this to kill all python processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=12"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="python-kill" border="0"> python-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>perl</strong><br>';
 				$htmlMain .= 'use this to kill all perl processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=13"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="perl-kill" border="0"> perl-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmissioncli</strong><br>';
 				$htmlMain .= 'use this to kill all transmissioncli processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=14"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=24"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmissioncli-kill" border="0"> transmissioncli-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>wget</strong><br>';
 				$htmlMain .= 'use this to kill all wget processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=15"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>vlc</strong><br>';
 				$htmlMain .= 'use this to kill all vlc processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=16"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "11": // Maintenance-Kill : php
+			case "21": // Maintenance-Kill : php
 				$htmlTitle = "Maintenance - Kill - php";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all php processes" done.';
@@ -540,7 +568,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "12": // Maintenance-Kill : python
+			case "22": // Maintenance-Kill : python
 				$htmlTitle = "Maintenance - Kill - python";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all python processes" done.';
@@ -564,7 +592,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "13": // Maintenance-Kill : perl
+			case "23": // Maintenance-Kill : perl
 				$htmlTitle = "Maintenance - Kill - perl";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all perl processes" done.';
@@ -588,7 +616,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "14": // Maintenance-Kill : transmissioncli
+			case "24": // Maintenance-Kill : transmissioncli
 				$htmlTitle = "Maintenance - Kill - transmissioncli";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all transmissioncli processes" done.';
@@ -612,7 +640,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "15": // Maintenance-Kill : wget
+			case "25": // Maintenance-Kill : wget
 				$htmlTitle = "Maintenance - Kill - wget";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all wget processes" done.';
@@ -636,7 +664,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "16": // Maintenance-Kill : vlc
+			case "26": // Maintenance-Kill : vlc
 				$htmlTitle = "Maintenance - Kill - vlc";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all vlc processes" done.';
@@ -660,31 +688,31 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				break;
-			case "2": // Maintenance-Clean
+			case "3": // Maintenance-Clean
 				$htmlTitle = "Maintenance - Clean";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<strong>pid-file-leftovers</strong><br>';
 				$htmlMain .= 'use this to delete pid-file-leftovers of deleted torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=21"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=31"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>tornado</strong><br>';
 				$htmlMain .= 'use this to delete the cache of tornado. (stop your tornados first !)<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=22"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tornado-clean" border="0"> tornado-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=32"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tornado-clean" border="0"> tornado-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>transmission</strong><br>';
 				$htmlMain .= 'use this to delete cache-leftovers of deleted transmission-torrents.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=23"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-clean" border="0"> transmission-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=33"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transmission-clean" border="0"> transmission-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>mainline</strong><br>';
 				$htmlMain .= 'use this to delete the cache of mainline. (stop your mainlines first !)<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=24"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline-clean" border="0"> mainline-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=34"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline-clean" border="0"> mainline-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>template-cache</strong><br>';
 				$htmlMain .= 'use this to delete the template-cache.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> template-cache-clean</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=35"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="template-cache-clean" border="0"> template-cache-clean</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "21": // Maintenance-Clean : pid-file-clean
+			case "31": // Maintenance-Clean : pid-file-clean
 				$htmlTitle = "Maintenance - Clean - pid-file";
 				$htmlMain .= '<br>';
 				$result = "";
@@ -707,7 +735,7 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No pid-leftovers found.<br><br>';
 				break;
-			case "22": // Maintenance-Clean : tornado-clean
+			case "32": // Maintenance-Clean : tornado-clean
 				$htmlTitle = "Maintenance - Clean - tornado";
 				$htmlMain .= '<br>';
 				$result = "";
@@ -720,7 +748,7 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>Nothing found.<br><br>';
 				break;
-			case "23": // Maintenance-Clean : transmission-clean
+			case "33": // Maintenance-Clean : transmission-clean
 				$htmlTitle = "Maintenance - Clean - transmission";
 				$htmlMain .= '<br>';
 				$result = "";
@@ -746,7 +774,7 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No cache-leftovers found.<br><br>';
 				break;
-			case "24": // Maintenance-Clean : mainline-clean
+			case "34": // Maintenance-Clean : mainline-clean
 				$htmlTitle = "Maintenance - Clean - mainline";
 				$htmlMain .= '<br>';
 				$result = "";
@@ -759,7 +787,7 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>Nothing found.<br><br>';
 				break;
-			case "25": // Maintenance-Clean :template-cache-clean
+			case "35": // Maintenance-Clean :template-cache-clean
 				$htmlTitle = "Maintenance - Clean - template-cache";
 				$htmlMain .= '<br>';
 				$result = cleanDir($cfg["path"].'.templateCache');
@@ -768,35 +796,35 @@ if (isset($_REQUEST["m"])) {
 				else
 					$htmlMain .= '<br>No compiled templates found.<br><br>';
 				break;
-			case "3": // Maintenance : Repair
+			case "4": // Maintenance : Repair
 				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<font color="red"><strong>DONT</strong> do this if your system is running as it should. You WILL break something.</font>';
 				$htmlMain .= '<br>use this after server-reboot, if torrents were killed or if there are other problems with the webapp.';
-				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=31"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
+				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "31": // Maintenance : Repair
+			case "41": // Maintenance : Repair
 				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Repair of torrentflux-b4rt Installation';
-				repairTorrentflux();
+				$htmlMain .= 'Repair';
+				repair(false);
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "4": // Maintenance : Reset
+			case "5": // Maintenance : Reset
 				$htmlTitle = "Maintenance - Reset";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<strong>torrent-totals</strong><br>';
 				$htmlMain .= 'use this to reset the torrent-totals.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="torrent-totals" border="0"> torrent-totals-reset</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="torrent-totals" border="0"> torrent-totals-reset</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>xfer-stats</strong><br>';
 				$htmlMain .= 'use this to reset the xfer-stats.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=42"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "41": // Maintenance : Reset - torrent-totals
+			case "51": // Maintenance : Reset - torrent-totals
 				$htmlTitle = "Maintenance - Reset - torrent-totals";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Reset of torrent-totals';
@@ -807,7 +835,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
 				$htmlMain .= '<br><br>';
 				break;
-			case "42": // Maintenance : Reset - xfer
+			case "52": // Maintenance : Reset - xfer
 				$htmlTitle = "Maintenance - Reset - xfer";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Reset of xfer-stats';
@@ -818,7 +846,7 @@ if (isset($_REQUEST["m"])) {
 					$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
 				$htmlMain .= '<br><br>';
 				break;
-			case "5": // Maintenance : Lock
+			case "6": // Maintenance : Lock
 				$htmlTitle = "Maintenance - Lock";
 				$htmlMain .= '<br>';
 				switch ($cfg['webapp_locked']) {
@@ -831,13 +859,13 @@ if (isset($_REQUEST["m"])) {
 				}
 				$htmlMain .= '<p>';
 				$htmlMain .= 'Use this to lock/unlock your webapp. only superadmin can access locked webapp.';
-				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
+				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=61"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> ';
 				if ($cfg['webapp_locked'] == 1)
 					$htmlMain .= 'un';
 				$htmlMain .= 'lock</a>';
 				$htmlMain .= '<br><br>';
 				break;
-			case "51": // Maintenance : lock/unlock
+			case "61": // Maintenance : lock/unlock
 				$htmlTitle = "Maintenance - Lock";
 				$htmlMain .= '<br>';
 				switch ($cfg['webapp_locked']) {
@@ -1245,15 +1273,17 @@ function buildPage($action) {
 		case "m": // maintenance passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1">Kill</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=1">Main</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2">Clean</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=2">Kill</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3">Repair</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=3">Clean</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4">Reset</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=4">Repair</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?m=5">Lock</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=5">Reset</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=6">Lock</a>';
 			$htmlMain .= '</td><td align="right"><strong>Maintenance</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;

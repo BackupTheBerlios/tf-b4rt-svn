@@ -112,14 +112,14 @@ if ((isset($action)) && ($action != "")) {
 			cliXferShutdown(@$argv[2]);
 			break;
 		case "repair":
-		    echo "Repairing torrentflux-b4rt Installation...";
-			repairTorrentflux();
-        	echo "done\n";
+		    echo "Running Repair...";
+			repair(true);
+        	echo "Repair done\n";
         	exit();
-		case "care":
-		    echo "Running clientCare...\n";
-			clientCare(true, ((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
-        	echo "clientCare done\n";
+		case "maintenance":
+		    echo "Running Maintenance...\n";
+			maintenance(true, ((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
+        	echo "Maintenance done\n";
         	exit();
 		case "dump":
 			cliDumpDatabase(@$argv[2]);

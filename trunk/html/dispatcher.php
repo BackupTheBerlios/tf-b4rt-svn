@@ -106,10 +106,11 @@ switch ($action) {
 
 
 /*******************************************************************************
- * Client-Care
+ * Maintenance
  ******************************************************************************/
-    case "clientCare":
-		clientCare(false, false);
+    case "maintenance":
+    	require_once("inc/functions/functions.maintenance.php");
+		maintenance(false, (getRequestVar('trestart') == "true") ? true : false);
     	break;
 
 /*******************************************************************************

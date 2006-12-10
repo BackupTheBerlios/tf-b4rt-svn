@@ -35,6 +35,9 @@ require_once("inc/functions/functions.dispatcher.php");
 // admin
 require_once("inc/functions/functions.admin.php");
 
+// maintenance
+require_once("inc/functions/functions.maintenance.php");
+
 // dir
 require_once("inc/functions/functions.dir.php");
 
