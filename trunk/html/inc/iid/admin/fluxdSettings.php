@@ -115,6 +115,7 @@ $tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
 $tmpl->setvar('fluxd_Clientmaint_enabled', $cfg["fluxd_Clientmaint_enabled"]);
 $tmpl->setvar('fluxd_Clientmaint_state', (($cfg["fluxd_Clientmaint_enabled"] == 1) && ($fluxdRunning)) ? $fluxd->modState('Clientmaint') : 0);
 $tmpl->setvar('fluxd_Clientmaint_interval', $cfg["fluxd_Clientmaint_interval"]);
+$tmpl->setvar('fluxd_Clientmaint_trestart', $cfg["fluxd_Clientmaint_trestart"]);
 
 // Trigger
 $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
