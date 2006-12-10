@@ -99,8 +99,8 @@ switch ($cfg['auth_type']) {
 		}
 		break;
 	case 4: /* Form-Auth + Image-Validation */
-		// image functions
-		require_once('inc/functions/functions.image.php');
+		// Image class
+		require_once('inc/classes/Image.php');
 		//
 		$user = getRequestVar('username');
 		$iamhim = addslashes(getRequestVar('iamhim'));

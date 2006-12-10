@@ -20,8 +20,8 @@
 
 *******************************************************************************/
 
-// image functions
-require_once('inc/functions/functions.image.php');
+// Image class
+require_once('inc/classes/Image.php');
 
 // image-op-switch
 $imageOp = (isset($_REQUEST['i'])) ? $_REQUEST['i'] : "noop";
@@ -37,7 +37,7 @@ switch ($imageOp) {
 			? 'themes/'.$cfg["default_theme"].'/images/code_bg'
 			: 'themes/tf_standard_themes/images/code_bg';
 		$rndCode = loginImageCode($cfg["db_user"], $_REQUEST["rnd"]);
-		imageOutputLabelFromImage($bgImage, $rndCode, 5, 12, 2, 80, 80, 80);
+		imagePaintLabelFromImage($bgImage, $rndCode, 5, 12, 2, 80, 80, 80);
 
 	case "test":
 		// check for valid referer
@@ -48,20 +48,24 @@ switch ($imageOp) {
 		$bgImage = ((strpos($cfg["theme"], '/')) === false)
 			? 'themes/'.$cfg["theme"].'/images/code_bg'
 			: 'themes/tf_standard_themes/images/code_bg';
-		imageOutputLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
+		imagePaintLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
 
 	case "notsup":
 		// check for valid referer
 		imageCheckReferer();
 		// output image
-		imageOutputNotSupported();
+		imagePaintNotSupported();
 
 	case "noop":
 	default:
+		/*
+		// create Image-instance
+		$image = Image::getImage();
+		*/
 		// check for valid referer
 		imageCheckReferer();
 		// output image
-		imageOutputNoOp();
+		imagePaintNoOp();
 
 }
 

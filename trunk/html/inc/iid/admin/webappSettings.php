@@ -29,8 +29,8 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// image functions
-require_once('inc/functions/functions.image.php');
+// Image class
+require_once('inc/classes/Image.php');
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.admin.webappSettings.tmpl");
