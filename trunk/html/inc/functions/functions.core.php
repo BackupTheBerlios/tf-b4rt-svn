@@ -1141,7 +1141,7 @@ function deleteTorrentData($torrent) {
 			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 					? $cfg["path"].$owner.'/'
-					:  $cfg["path"].$cfg["path_incoming"].'/';
+					: $cfg["path"].$cfg["path_incoming"].'/';
 			}
 			$delete = $cfg["savepath"].$delete;
 			$del = stripslashes(stripslashes($delete));
@@ -1184,7 +1184,7 @@ function getTorrentDataSize($torrent) {
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 				? $cfg["path"].getOwner($torrent).'/'
-				:  $cfg["path"].$cfg["path_incoming"].'/';
+				: $cfg["path"].$cfg["path_incoming"].'/';
 		}
 		$name = $cfg["savepath"].$name;
 		$tData = stripslashes(stripslashes($name));

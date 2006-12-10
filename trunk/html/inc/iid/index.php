@@ -64,19 +64,10 @@ $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('user', $cfg["user"]);
 
 // queue
-if ($queueActive)
-	$tmpl->setvar('queueActive', 1);
+$tmpl->setvar('queueActive', ($queueActive) ? 1 : 0);
 
 // incoming-path
-switch ($cfg["enable_home_dirs"]) {
-    case 1:
-    default:
-        $tmpl->setvar('path_incoming', $cfg["user"]);
-        break;
-    case 0:
-    	$tmpl->setvar('path_incoming', $cfg["path_incoming"]);
-        break;
-}
+$tmpl->setvar('path_incoming', ($cfg["enable_home_dirs"] != 0) ? $cfg["user"] : $cfg["path_incoming"]);
 
 // some configs
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
@@ -94,9 +85,7 @@ $arListTorrent = array();
 $settings = convertIntegerToArray($cfg["index_page_settings"]);
 // sortOrder
 $sortOrder = getRequestVar("so");
-if (empty($sortOrder))
-	$sortOrder = $cfg["index_page_sortorder"];
-$tmpl->setvar('sortOrder', $sortOrder);
+$tmpl->setvar('sortOrder', (empty($sortOrder)) ? $cfg["index_page_sortorder"] : $sortOrder);
 // t-list
 $arList = getTransferArray($sortOrder);
 $progress_color = "#00ff00";
@@ -104,10 +93,7 @@ $bar_width = "4";
 foreach ($arList as $entry) {
 	// ---------------------------------------------------------------------
 	// displayname
-	if (strlen($entry) >= 47)
-		$displayname = substr($entry, 0, 44)."...";
-	else
-		$displayname = $entry;
+	$displayname = (strlen($entry) >= 47) ? substr($entry, 0, 44)."..." : $entry;
 
 	// ---------------------------------------------------------------------
 	// alias / stat
@@ -116,32 +102,20 @@ foreach ($arList as $entry) {
 		// this is a torrent-client
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
-		if (IsOwner($cfg["user"], $transferowner))
-			$owner = 1;
-		else
-			$owner = 0;
+		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
 		$settingsAry = loadTorrentSettings($entry);
 		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, $settingsAry['btclient']);
 	} else if ((substr(strtolower($entry), -5) == ".wget")) {
 		// this is wget.
 		$isTorrent = false;
 		$transferowner = getOwner($entry);
-		if (IsOwner($cfg["user"], $transferowner))
-			$owner = 1;
-		else
-			$owner = 0;
+		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
 		$settingsAry['hash'] = $entry;
-	    switch ($cfg["enable_home_dirs"]) {
-	        case 1:
-	        default:
-	            $settingsAry['savepath'] = $cfg["path"].$transferowner."/";
-	            break;
-	        case 0:
-	        	$settingsAry['savepath'] = $cfg["path"].$cfg["path_incoming"]."/";
-	            break;
-	    }
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
 		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, 'wget');
 	} else {
@@ -152,15 +126,9 @@ foreach ($arList as $entry) {
 		$settingsAry = array();
 		$settingsAry['btclient'] = "tornado";
 		$settingsAry['hash'] = $entry;
-	    switch ($cfg["enable_home_dirs"]) {
-	        case 1:
-	        default:
-	            $settingsAry['savepath'] = $cfg["path"].$transferowner."/";
-	            break;
-	        case 0:
-	        	$settingsAry['savepath'] = $cfg["path"].$cfg["path_incoming"]."/";
-	            break;
-	    }
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
 		$af = AliasFile::getAliasFileInstance($alias, $cfg["user"], $cfg, 'tornado');
 	}
@@ -211,9 +179,9 @@ foreach ($arList as $entry) {
 			break;
 		default: // running
 			// increment the totals
-			if(!isset($cfg["total_upload"]))
+			if (!isset($cfg["total_upload"]))
 				$cfg["total_upload"] = 0;
-			if(!isset($cfg["total_download"]))
+			if (!isset($cfg["total_download"]))
 				 $cfg["total_download"] = 0;
 			$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
 			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
@@ -223,10 +191,9 @@ foreach ($arList as $entry) {
 			} else {
 				if ($af->time_left != "" && $af->time_left != "0") {
 					if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
-						if (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-							$estTime = convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left";
-						else
-							$estTime = '-';
+						$estTime = (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
+							? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left"
+							: '-';
 					} else {
 						$estTime = $af->time_left;
 					}
@@ -234,10 +201,7 @@ foreach ($arList as $entry) {
 			}
 			// $show_run + $statusStr
 			if ($percentDone >= 100) {
-				if(trim($af->up_speed) != "" && $transferRunning == 1)
-					$statusStr = $detailsLinkString.'Seeding</a>';
-				else
-					$statusStr = $detailsLinkString.'Done</a>';
+				$statusStr = (trim($af->up_speed) != "" && $transferRunning == 1) ? $detailsLinkString.'Seeding</a>' : $detailsLinkString.'Done</a>';
 				$show_run = false;
 			} else if ($percentDone < 0) {
 				$statusStr = $detailsLinkString."Stopped</a>";
@@ -246,10 +210,7 @@ foreach ($arList as $entry) {
 				$statusStr = $detailsLinkString."Leeching</a>";
 			}
 			// pid-file
-			if (!is_file($cfg["transfer_file_path"].$alias.".pid"))
-				$is_no_file = 1;
-			else
-				$is_no_file = 0;
+			$is_no_file = (is_file($cfg["transfer_file_path"].$alias.".pid")) ? 0 : 1;
 			break;
 	}
 
@@ -258,22 +219,13 @@ foreach ($arList as $entry) {
 	// =================================================================== owner
 
 	// ==================================================================== size
-	if ($settings[1] != 0)
-		$format_af_size = formatBytesTokBMBGBTB($af->size);
-	else
-		$format_af_size = "&nbsp;";
+	$format_af_size = ($settings[1] != 0) ? formatBytesTokBMBGBTB($af->size) : "&nbsp;";
 
 	// =============================================================== downtotal
-	if ($settings[2] != 0)
-		$format_downtotal = formatBytesTokBMBGBTB($transferTotals["downtotal"]);
-	else
-		$format_downtotal = "&nbsp;";
+	$format_downtotal = ($settings[2] != 0) ? formatBytesTokBMBGBTB($transferTotals["downtotal"]) : "&nbsp;";
 
 	// ================================================================= uptotal
-	if ($settings[3] != 0)
-		$format_uptotal = formatBytesTokBMBGBTB($transferTotals["uptotal"]);
-	else
-		$format_uptotal = "&nbsp;";
+	$format_uptotal = ($settings[3] != 0) ? formatBytesTokBMBGBTB($transferTotals["uptotal"]) : "&nbsp;";
 
 	// ================================================================== status
 
@@ -294,10 +246,7 @@ foreach ($arList as $entry) {
 				$percentage = '0%';
 			}
 		}
-		if ($graph_width == 100)
-			$background = $progress_color;
-		else
-			$background = "#000000";
+		$background = ($graph_width == 100) ? $progress_color : "#000000";
 	} else {
 		$graph_width = 0;
 		$background = "";
@@ -306,28 +255,20 @@ foreach ($arList as $entry) {
 
 	// ==================================================================== down
 	if ($settings[6] != 0) {
-		if ($transferRunning == 1) {
-			if (trim($af->down_speed) != "")
-				$down_speed = $af->down_speed;
-			else
-				$down_speed = '0.0 kB/s';
-		} else {
+		if ($transferRunning == 1)
+			$down_speed = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
+		else
 			$down_speed = "&nbsp;";
-		}
 	} else {
 		$down_speed = "&nbsp;";
 	}
 
 	// ====================================================================== up
 	if ($settings[7] != 0) {
-		if ($transferRunning == 1) {
-			if (trim($af->up_speed) != "")
-				$up_speed = $af->up_speed;
-			else
-				$up_speed = '0.0 kB/s';
-		} else {
+		if ($transferRunning == 1)
+			$up_speed = (trim($af->up_speed) != "") ? $af->up_speed : '0.0 kB/s';
+		else
 			$up_speed = "&nbsp;";
-		}
 	} else {
 		$up_speed = "&nbsp;";
 	}
@@ -378,12 +319,8 @@ foreach ($arList as $entry) {
 
 	// -------------------------------------------------------------------------
 	// create temp-array
-	if ($cfg['isAdmin'])
-		$is_owner = 1;
-	else
-		$is_owner = $owner;
 	$tArray = array(
-		'is_owner' => $is_owner,
+		'is_owner' => ($cfg['isAdmin']) ? 1 : $owner,
 		'transferRunning' => $transferRunning,
 		'alias' => $alias,
 		'url_entry' => urlencode($entry),
@@ -446,8 +383,7 @@ if (sizeof($arUserTorrent) > 0)
 $boolCond = true;
 if ($cfg['enable_restrictivetview'] == 1)
 	$boolCond = $cfg['isAdmin'];
-if (($boolCond) && (sizeof($arListTorrent) > 0))
-	$tmpl->setvar('are_torrent', 1);
+$tmpl->setvar('are_torrent', (($boolCond) && (sizeof($arListTorrent) > 0)) ? 1 : 0);
 
 // =============================================================================
 // ajax-index
@@ -604,10 +540,7 @@ if ($cfg["index_page_connections"] != 0) {
 	$netstatConnectionsMax = "";
 }
 // loadavg
-if ($cfg["show_server_load"] != 0)
-	$loadavgString = @getLoadAverageString();
-else
-	$loadavgString = "n/a";
+$loadavgString = ($cfg["show_server_load"] != 0) ? @getLoadAverageString() : "n/a";
 
 // messages
 if (isset($_REQUEST['messages']))

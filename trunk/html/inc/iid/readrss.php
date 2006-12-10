@@ -88,10 +88,9 @@ foreach ($arURL as $rid => $url) {
 				// Check item's title:
 				if (!isset($rs["items"][$i]["title"]) || empty($rs["items"][$i]["title"])) {
 					// No title found for this item, create one from the link:
-					$link=html_entity_decode($rs["items"][$i]["link"]);
-					if(strlen($link) >= 45){
+					$link = html_entity_decode($rs["items"][$i]["link"]);
+					if (strlen($link) >= 45)
 						$link = substr($link, 0, 42)."...";
-					}
 					$rs["items"][$i]["title"] = "Unknown feed item title: $link";
 				} elseif(strlen($rs["items"][$i]["title"]) >= 67){
 					// if title string is longer than 70, truncate it:
@@ -109,7 +108,6 @@ foreach ($arURL as $rid => $url) {
 		// Unable to grab RSS feed, must of timed out
 		$stat = 3;
 	}
-
 	array_push($rss_list, array(
 		'stat' => $stat,
 		'rid' => $rid,
@@ -119,7 +117,6 @@ foreach ($arURL as $rid => $url) {
 		)
 	);
 }
-
 $tmpl->setloop('rss_list', $rss_list);
 
 //

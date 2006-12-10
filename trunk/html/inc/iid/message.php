@@ -43,18 +43,10 @@ if (empty($to_user) or empty($cfg["user"])) {
 // message
 $message = getRequestVar('message');
 if (!empty($message)) {
-	$to_all = getRequestVar('to_all');
-	if (!empty($to_all))
-		$to_all = 1;
-	else
-		$to_all = 0;
-	$force_read = getRequestVar('force_read');
-	if (!empty($force_read) && $cfg['isAdmin'])
-		$force_read = 1;
-	else
-		$force_read = 0;
+	$to_all_r = getRequestVar('to_all');
+	$force_read_r = getRequestVar('force_read');
 	$message = check_html($message, "nohtml");
-	SaveMessage($to_user, $cfg["user"], htmlentities($message), $to_all, $force_read);
+	SaveMessage($to_user, $cfg["user"], htmlentities($message), (empty($to_all_r)) ? 0 : 1, (!empty($force_read_r) && $cfg['isAdmin']) ? 1 : 0);
 	header("location: index.php?iid=readmsg");
 	exit();
 }

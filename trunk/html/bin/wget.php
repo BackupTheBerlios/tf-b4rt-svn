@@ -210,10 +210,9 @@ function processData($data){
 			$_INT_SPEED = $_INT_SPEED >> 10;
 		}
 		// ETA
-		if (($_SIZE > 0) && ($_INT_SPEED > 0))
-			$_ETA = convertTime((($_SIZE - $_COMPLETED) >> 10) / $_INT_SPEED);
-		else
-			$_ETA = '-';
+		$_ETA = (($_SIZE > 0) && ($_INT_SPEED > 0))
+			? convertTime((($_SIZE - $_COMPLETED) >> 10) / $_INT_SPEED)
+			: '-';
 	}
 	// download done
 	if (@preg_match("/.*saved [.*/", $data)) {

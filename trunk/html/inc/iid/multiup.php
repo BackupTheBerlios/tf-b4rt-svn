@@ -39,15 +39,12 @@ if (isset($_REQUEST['messages']))
 
 // form
 $row_list = array();
-for($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j)
+for ($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j)
 	array_push($row_list, array());
 $tmpl->setloop('row_list', $row_list);
 
 // queue
-if ($queueActive)
-	$tmpl->setvar('queueActive', 1);
-else
-	$tmpl->setvar('queueActive', 0);
+$tmpl->setvar('queueActive', ($queueActive) ? 1 : 0);
 //
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

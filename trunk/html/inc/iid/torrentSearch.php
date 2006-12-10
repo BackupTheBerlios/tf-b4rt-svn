@@ -85,10 +85,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 			$mainStart = false;
 		}
 		$tmpl->setvar('links_list', $catLinks.$tmpCatLinks);
-		if ($mainStart == false)
-			$tmpl->setvar('no_mainStart', 1);
-		else
-			$tmpl->setvar('no_mainStart', 0);
+		$tmpl->setvar('no_mainStart', ($mainStart == false) ? 1 : 0);
 		$mainGenre = getRequestVar('mainGenre');
 		if (!empty($mainGenre) && !array_key_exists("subGenre",$_REQUEST)) {
 			$tmpl->setvar('no_empty_genre', 1);

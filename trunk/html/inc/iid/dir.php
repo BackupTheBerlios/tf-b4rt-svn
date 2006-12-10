@@ -225,17 +225,10 @@ $list = array();
 $filelist = array();
 foreach ($entrys as $entry) {
 	// acl-write-check
-	if (empty($dir)) { // parent dir
-		if (hasPermission($entry, $cfg["user"], 'w'))
-			$aclWrite = 1;
-		else
-			$aclWrite = 0;
-	} else { // sub-dir
-		if (hasPermission($dir, $cfg["user"], 'w'))
-			$aclWrite = 1;
-		else
-			$aclWrite = 0;
-	}
+	if (empty($dir)) /* parent dir */
+		$aclWrite = (hasPermission($entry, $cfg["user"], 'w')) ? 1 : 0;
+	else /* sub-dir */
+		$aclWrite = (hasPermission($dir, $cfg["user"], 'w')) ? 1 : 0;
 	if (@is_dir($dirName.$entry)) { // dir
 		// dirstats
 		if ($cfg['enable_dirstats'] == 1) {
@@ -277,8 +270,8 @@ foreach ($entrys as $entry) {
 		);
 	} else if (!@is_dir($dirName.$entry)) { // file
 		// image
-		$image="themes/".$cfg['theme']."/images/time.gif";
-		$imageOption="themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
+		$image = "themes/".$cfg['theme']."/images/time.gif";
+		$imageOption = "themes/".$cfg['theme']."/images/files/".getExtension($entry).".png";
 		if (file_exists("./".$imageOption))
 			$image = $imageOption;
 		// dirstats
@@ -295,15 +288,9 @@ foreach ($entrys as $entry) {
 			$date = "";
 		}
 		// nfo
-		if ($cfg["enable_view_nfo"] == 1)
-			$show_nfo = isNfo($entry);
-		else
-			$show_nfo = 0;
+		$show_nfo = ($cfg["enable_view_nfo"] == 1) ? isNfo($entry) : 0;
 		// rar
-		if (($cfg["enable_rar"] == 1) && ($aclWrite == 1))
-			$show_rar = isRar($entry);
-		else
-			$show_rar = 0;
+		$show_rar = (($cfg["enable_rar"] == 1) && ($aclWrite == 1)) ? isRar($entry) : 0;
 		// add entry to file-array
 		array_push($filelist, array(
 			'is_dir' => 0,
@@ -341,14 +328,10 @@ if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
 else
 	$tmpl->setvar('parentURL', "index.php?iid=dir");
 // chmod, parent-dir cannot be chmodded
-if ($dir == "") {
+if ($dir == "")
 	$tmpl->setvar('show_chmod', 0);
-} else {
-	if (($cfg["dir_enable_chmod"] == 1) && (hasPermission($dir, $cfg['user'], 'w')))
-		$tmpl->setvar('show_chmod', 1);
-	else
-		$tmpl->setvar('show_chmod', 0);
-}
+else
+	$tmpl->setvar('show_chmod', (($cfg["dir_enable_chmod"] == 1) && (hasPermission($dir, $cfg['user'], 'w'))) ? 1 : 0);
 //
 $tmpl->setvar('enable_rename', $cfg["enable_rename"]);
 $tmpl->setvar('enable_move', $cfg["enable_move"]);

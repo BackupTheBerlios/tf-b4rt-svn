@@ -52,18 +52,12 @@ $path = @ $_REQUEST['path'];
 $torrent = @cleanFileName(StripFolders(trim($path))).".torrent";
 
 // check if there is a var sent for client, if not use default
-if (isset($_REQUEST["client"]))
-	$client = $_REQUEST["client"];
-else
-	$client = $cfg["dir_maketorrent_default"];
+$client = (isset($_REQUEST["client"])) ? $_REQUEST["client"] : $cfg["dir_maketorrent_default"];
 
 // client-generic vars
 $tfile = @ $_POST['torrent'];
 $comment = @ $_POST['comments'];
-if (isset($_POST["alert"]))
-	$alert = 1;
-else
-	$alert = 0;
+$alert = (isset($_POST["alert"])) ? 1 : 0;
 
 // client-switch
 switch ($client) {
@@ -76,19 +70,9 @@ switch ($client) {
 		$piece = @ $_POST['piecesize'];
 		break;
 	case "mainline":
-		if (isset($_POST['use_tracker']))
-			$use_tracker = $_POST['use_tracker'];
-		else
-			$use_tracker = 1;
-		$use_tracker = 1;
-		if (isset($_POST['tracker_name']))
-			$tracker_name = $_POST['tracker_name'];
-		else
-			$tracker_name = "http://";
-		if (isset($_POST['piecesize']))
-			$piece = $_POST['piecesize'];
-		else
-			$piece = 0;
+		$use_tracker = (isset($_POST['use_tracker'])) ? $_POST['use_tracker'] : 1;
+		$tracker_name = (isset($_POST['tracker_name'])) ? $_POST['tracker_name'] : "http://";
+		$piece = (isset($_POST['piecesize'])) ? $_POST['piecesize'] : 0;
 		break;
 }
 
@@ -128,10 +112,7 @@ switch ($client) {
 	default:
 	case "tornado":
 		$tmpl->setvar('form_action', $_SERVER['REQUEST_URI']."&create=tornado");
-		if ((!empty($private)) && ($private))
-			$tmpl->setvar('is_private', 1);
-		else
-			$tmpl->setvar('is_private', 0);
+		$tmpl->setvar('is_private', ((!empty($private)) && ($private)) ? 1 : 0);
 		$tmpl->setvar('announce', $announce);
 		$tmpl->setvar('ancelist', $ancelist);
 		$tmpl->setvar('dht', $dht);

@@ -50,12 +50,8 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		$dir_list = array();
 		foreach ($dirs as $dir) {
 			$target = trim($dir);
-			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
-				array_push($dir_list, array(
-					'target' => $target,
-					)
-				);
-			}
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
+				array_push($dir_list, array('target' => $target));
 		}
 		$tmpl->setloop('dir_list', $dir_list);
 	} else {
@@ -89,13 +85,10 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
 		$tmpl->setvar('is_valid', 1);
 		$targetDir = checkDirPathString($targetDir);
-
 		// Add slashes if magic_quotes off:
-		if(get_magic_quotes_gpc()!==1){
-			$targetDir=addslashes($targetDir);
-		}
-
-		# Use single quote to escape mv args:
+		if (get_magic_quotes_gpc() !== 1)
+			$targetDir = addslashes($targetDir);
+		// Use single quote to escape mv args:
 		$cmd = "mv '".$cfg["path"].$_POST['file']."' '".$targetDir."'";
 		$cmd .= ' 2>&1';
 		$handle = popen($cmd, 'r');

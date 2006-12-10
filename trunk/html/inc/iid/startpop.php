@@ -47,14 +47,8 @@ $torrent = getRequestVar('torrent');
 // torrent exists ?
 $torrentExists = (getTorrentDataSize($torrent) > 0);
 
-// display name
-if (strlen($torrent) >= 55)
-	$displayName = htmlentities(substr($torrent, 0, 52)."...", ENT_QUOTES);
-else
-	$displayName = htmlentities($torrent, ENT_QUOTES);
-
 // set some template-vars
-$tmpl->setvar('displayName', $displayName);
+$tmpl->setvar('displayName', (strlen($torrent) >= 55) ? substr($torrent, 0, 52)."..." : $torrent);
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('torrentExists', $torrentExists);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
@@ -64,37 +58,25 @@ if ($cfg["enable_btclient_chooser"] != 0)
 else
 	$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 
-switch ($cfg["enable_home_dirs"]) {
-    case 1:
-    default:
-    	tmplSetDirTree($cfg["path"].getOwner($torrent).'/', $cfg["maxdepth"]);
-		break;
-    case 0:
-    	tmplSetDirTree($cfg["path"].$cfg["path_incoming"].'/', $cfg["maxdepth"]);
-    	break;
-}
+// dirtree
+$dirTree = ($cfg["enable_home_dirs"] != 0)
+	? $cfg["path"].getOwner($torrent).'/'
+	: $cfg["path"].$cfg["path_incoming"].'/';
+tmplSetDirTree($dirTree, $cfg["maxdepth"]);
+
 if ($torrentExists) {
 	$tmpl->setvar('torrent_exists', 1);
-	if ($cfg["skiphashcheck"] != 0)
-		$tmpl->setvar('is_skip', 1);
-	else
-		$tmpl->setvar('is_skip', 0);
+	$tmpl->setvar('is_skip', ($cfg["skiphashcheck"] != 0) ? 1 : 0);
 }
 // Force Queuing if not an admin.
-if ($queueActive)
-	$tmpl->setvar('is_queue', 1);
-else
-	$tmpl->setvar('is_queue', 0);
+$tmpl->setvar('is_queue', ($queueActive) ? 1 : 0);
+
 // profiles
 if ($cfg["enable_transfer_profile"] == "1") {
-	if ($cfg['transfer_profile_level'] >= "1") {
+	if ($cfg['transfer_profile_level'] >= "1")
 		$with_profiles = 1;
-	} else {
-		if ($cfg['isAdmin'])
-			$with_profiles = 1;
-		else
-			$with_profiles = 0;
-	}
+	else
+		$with_profiles = ($cfg['isAdmin']) ? 1 : 0;
 } else {
 	$with_profiles = 0;
 }
@@ -111,30 +93,18 @@ if ($with_profiles == 1) {
 		$tmpl->setvar('max_upload_rate', $settings["rate"]);
 		$tmpl->setvar('max_uploads', $settings["maxuploads"]);
 		$tmpl->setvar('max_download_rate', $settings["drate"]);
-		if ($settings["runtime"] == "False")
-			$tmpl->setvar('selected', "selected");
-		else
-			$tmpl->setvar('selected', "");
+		$tmpl->setvar('selected', ($settings["runtime"] == "False") ? "selected" : "");
 		$tmpl->setvar('runtimeValue', $settings["runtime"]);
 		$tmpl->setvar('sharekill', $settings["sharekill"]);
-		if ($settings['superseeder'] == 1)
-			$tmpl->setvar('superseeder', "checked");
-		else
-			$tmpl->setvar('superseeder', "");
+		$tmpl->setvar('superseeder', ($settings['superseeder'] == 1) ? "checked" : "");
 		$tmpl->setvar('superseederValue', $settings['superseeder']);
 		// Load saved settings
 		loadTorrentSettingsToConfig($torrent);
 		// savepath
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-			switch ($cfg["enable_home_dirs"]) {
-			    case 1:
-			    default:
-					$cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
-					break;
-			    case 0:
-			    	$cfg["savepath"] = $cfg["path"].$cfg["path_incoming"].'/';
-			    	break;
-			}
+			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].getOwner($torrent).'/'
+				: $cfg["path"].$cfg["path_incoming"].'/';
 		}
 		$tmpl->setvar('savepath', $cfg["savepath"]);
 	} else {
@@ -142,7 +112,7 @@ if ($with_profiles == 1) {
 		setVarsFromPersistentSettings();
 	}
 	// load profile list
-	if ($cfg['transfer_profile_level'] == "2" or $cfg['isAdmin'])
+	if ($cfg['transfer_profile_level'] == "2" || $cfg['isAdmin'])
 		$profiles = GetProfiles($cfg["uid"], $profile);
 	if ($cfg['transfer_profile_level'] >= "1")
 		$public_profiles = GetPublicProfiles($profile);

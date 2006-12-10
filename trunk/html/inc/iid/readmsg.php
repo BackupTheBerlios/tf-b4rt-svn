@@ -68,18 +68,13 @@ if (isset($_REQUEST['mid'])) {
 	showError($db,$sql);
 	$message_list = array();
 	while (list($mid, $from_user, $message, $new, $ip, $time, $force_read) = $result->FetchRow()) {
-		if ($new == 1)
-			$mail_image = "themes/".$cfg['theme']."/images/new_message.gif";
-		else
-			$mail_image = "themes/".$cfg['theme']."/images/old_message.gif";
+		$mail_image = ($new == 1)
+			? "themes/".$cfg['theme']."/images/new_message.gif"
+			: "themes/".$cfg['theme']."/images/old_message.gif";
 		$display_message = check_html($message, "nohtml");
 		if (strlen($display_message) >= 40)
 			$display_message = substr($display_message, 0, 39)."...";
 		// No, let them reply or delete it
-		if (IsUser($from_user))
-			$IsUser2 = 1;
-		else
-			$IsUser2 = 0;
 		array_push($message_list, array (
 			'mid' => $mid,
 			'mail_image' => $mail_image,
@@ -87,7 +82,7 @@ if (isset($_REQUEST['mid'])) {
 			'display_message' => $display_message,
 			'date2' => date($cfg['_DATETIMEFORMAT'], $time),
 			'force_read' => $force_read,
-			'IsUser2' => $IsUser2,
+			'IsUser2' => (IsUser($from_user)) ? 1 : 0,
 			)
 		);
 		$inx++;

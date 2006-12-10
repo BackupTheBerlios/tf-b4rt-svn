@@ -50,7 +50,7 @@ if ($fileHandle = @fopen($cfg["path"].$file,'r')) {
 if ((empty($_REQUEST["dos"]) && empty($_REQUEST["win"])) || !empty($_REQUEST["dos"]))
 	$tmpl->setvar('output', htmlentities($output, ENT_COMPAT, "cp866"));
 else
-	$tmpl->setvar('output', htmlentities( $output ));
+	$tmpl->setvar('output', htmlentities($output));
 //
 tmplSetTitleBar($cfg["pagetitle"].' - View NFO');
 tmplSetFoot();

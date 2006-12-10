@@ -53,14 +53,10 @@ switch ($op) {
 		$newProfile["drate"] = getRequestVar('drate');
 		$newProfile["runtime"] = getRequestVar('runtime');
 		$newProfile["sharekill"] = getRequestVar('sharekill');
-		if (getRequestVar('superseeder') == "")
-			$newProfile["superseeder"] = 0;
-		else
-			$newProfile["superseeder"] = getRequestVar('superseeder');
-		if (getRequestVar('public') == "")
-			$newProfile["public"] = 0;
-		else
-			$newProfile["public"] = getRequestVar('public');
+		$supsed = getRequestVar('superseeder');
+		$newProfile["superseeder"] = ($supsed == "") ? 0 : $supsed;
+		$pub = getRequestVar('public');
+		$newProfile["public"] = ($pub == "") ? 0 : $pub;
 		if (!empty( $newProfile)) {
 			AddProfileInfo($newProfile);
 			AuditAction( $cfg["constants"]["admin"], "New Profile: " . $newProfile["name"] );
@@ -82,14 +78,10 @@ switch ($op) {
 		$newProfile["drate"] = getRequestVar('drate');
 		$newProfile["runtime"] = getRequestVar('runtime');
 		$newProfile["sharekill"] = getRequestVar('sharekill');
-		if (getRequestVar('superseeder') == "")
-			$newProfile["superseeder"] = 0;
-		else
-			$newProfile["superseeder"] = getRequestVar('superseeder');
-		if (getRequestVar('public') == "")
-			$newProfile["public"] = 0;
-		else
-			$newProfile["public"] = getRequestVar('public');
+		$supsed = getRequestVar('superseeder');
+		$newProfile["superseeder"] = ($supsed == "") ? 0 : $supsed;
+		$pub = getRequestVar('public');
+		$newProfile["public"] = ($pub == "") ? 0 : $pub;
 		$pid = getRequestVar('pid');
 		modProfileInfo($pid,$newProfile);
 		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
@@ -180,7 +172,7 @@ switch ($op) {
 		$cid = @ $_REQUEST["cid"]; // Cookie ID
 		// Used for when editing a cookie
 		$hostvalue = $datavalue = "";
-		if(!empty($cid)) {
+		if (!empty($cid)) {
 			// Get cookie information from database
 			$cookie = getCookie( $cid );
 			$hostvalue = " value=\"" . $cookie['host'] . "\"";

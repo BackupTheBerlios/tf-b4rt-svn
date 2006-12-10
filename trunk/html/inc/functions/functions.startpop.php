@@ -46,7 +46,7 @@ function setVarsFromPersistentSettings() {
 	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 		$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 			? $cfg["path"].getOwner($torrent).'/'
-			:  $cfg["path"].$cfg["path_incoming"].'/';
+			: $cfg["path"].$cfg["path_incoming"].'/';
 	}
 	$tmpl->setvar('savepath', $cfg["savepath"]);
 }

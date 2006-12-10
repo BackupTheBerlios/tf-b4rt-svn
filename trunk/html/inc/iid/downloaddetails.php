@@ -43,10 +43,7 @@ tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 if ((!empty($transfer)) && (!empty($alias))) {
 	$tmpl->setvar('torrent', $transfer);
 	$tmpl->setvar('alias', $alias);
-	if (strlen($transfer) >= 39)
-		$tmpl->setvar('torrentLabel', htmlentities(substr($transfer, 0, 35)."...", ENT_QUOTES));
-	else
-		$tmpl->setvar('torrentLabel', htmlentities($transfer, ENT_QUOTES));
+	$tmpl->setvar('torrentLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 } else {
 	showErrorPage("missing params");
 }
@@ -89,10 +86,7 @@ $torrentSize = (int) $af->size;
 $tmpl->setvar('size', @formatBytesTokBMBGBTB($torrentSize));
 
 // sharing
-if ($torrentSize > 0)
-	$tmpl->setvar('sharing', @number_format((($totals["uptotal"] / $torrentSize) * 100), 2));
-else
-	$tmpl->setvar('sharing', "0");
+$tmpl->setvar('sharing', ($torrentSize > 0) ? @number_format((($totals["uptotal"] / $torrentSize) * 100), 2) : "0");
 
 // totals
 $tmpl->setvar('downTotal', @formatFreeSpace($totals["downtotal"] / 1048576));
@@ -119,30 +113,15 @@ if ($af->running == 1) {
 	$tmpl->setvar('maxcons', '('.$cfg["maxcons"].')');
 
 	// down speed
-	if (trim($af->down_speed) != "")
-		$tmpl->setvar('down_speed', $af->down_speed);
-	else
-		$tmpl->setvar('down_speed', '0.0 kB/s');
-	if ($cfg["max_download_rate"] != 0)
-		$tmpl->setvar('max_download_rate', ' ('.number_format($cfg["max_download_rate"], 2).')');
-	else
-		$tmpl->setvar('max_download_rate', ' (&#8734)');
+	$tmpl->setvar('down_speed', (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s');
+	$tmpl->setvar('max_download_rate', ($cfg["max_download_rate"] != 0) ? ' ('.number_format($cfg["max_download_rate"], 2).')' : ' (&#8734)');
 
 	// up speed
-	if (trim($af->up_speed) != "")
-		$tmpl->setvar('up_speed', $af->up_speed);
-	else
-		$tmpl->setvar('up_speed', '0.0 kB/s');
-	if ($cfg["max_upload_rate"] != 0)
-		$tmpl->setvar('max_upload_rate', ' ('.number_format($cfg["max_upload_rate"], 2).')');
-	else
-		$tmpl->setvar('max_upload_rate', ' (&#8734)');
+	$tmpl->setvar('up_speed', (trim($af->up_speed) != "") ?  $af->up_speed : '0.0 kB/s');
+	$tmpl->setvar('max_upload_rate', ($cfg["max_upload_rate"] != 0) ? ' ('.number_format($cfg["max_upload_rate"], 2).')' : ' (&#8734)');
 
 	// sharekill
-	if ($cfg["sharekill"] != 0)
-		$tmpl->setvar('sharekill', $cfg["sharekill"].'%');
-	else
-		$tmpl->setvar('sharekill', '&#8734');
+	$tmpl->setvar('sharekill', ($cfg["sharekill"] != 0) ? $cfg["sharekill"].'%' : '&#8734');
 
 } else {
 

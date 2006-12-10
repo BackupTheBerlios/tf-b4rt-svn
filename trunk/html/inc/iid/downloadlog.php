@@ -33,7 +33,6 @@ if (!isset($cfg['user'])) {
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	showErrorPage("missing params");
-$transfer = htmlentities($transfer, ENT_QUOTES);
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloadlog.tmpl");

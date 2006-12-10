@@ -36,17 +36,14 @@ define('_DEFAULT_TARGET','traffic');
 tmplInitializeInstance($cfg["theme"], "page.mrtg.tmpl");
 
 // request-vars
-if (isset($_REQUEST['mrtg_target']))
-	$mrtgTarget = getRequestVar('mrtg_target');
-else
-	$mrtgTarget = _DEFAULT_TARGET;
+$mrtgTarget = (isset($_REQUEST['mrtg_target'])) ? getRequestVar('mrtg_target') : _DEFAULT_TARGET;
 
 // set vars
 $htmlTargetsCount = 0;
 if ($dirHandle = @opendir('./mrtg')) {
 	$htmlTargets = "";
 	$htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
-	$htmlTargets .= '<form name="targetSelector" action="'.$_SERVER['SCRIPT_NAME'].'" method="get">';
+	$htmlTargets .= '<form name="targetSelector" action="index.php" method="get">';
 	$htmlTargets .= '<input type="hidden" name="iid" value="mrtg">';
 	$htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
 	$idx = 0;

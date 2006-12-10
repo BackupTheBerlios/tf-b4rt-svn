@@ -40,10 +40,7 @@ $transfer = getRequestVar('torrent');
 if ((substr(strtolower($transfer), -8) == ".torrent")) {
 	// this is a torrent-client
 	$als = getRequestVar('als');
-	if ($als == "false")
-		$tmpl->setvar('metaInfo', showMetaInfo($transfer, false));
-	else
-		$tmpl->setvar('metaInfo', showMetaInfo($transfer, true));
+	$tmpl->setvar('metaInfo', ($als == "false") ? showMetaInfo($transfer, false) : showMetaInfo($transfer, true));
 	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
 	$tmpl->setvar('scrape', 1);
 } else if ((substr(strtolower($transfer), -5) == ".wget")) {

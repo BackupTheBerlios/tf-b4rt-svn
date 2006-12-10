@@ -57,11 +57,7 @@ tmplInitializeInstance($cfg["theme"], "page.vlc.tmpl");
 // * stop
 //
 $pageop = getRequestVar('pageop');
-if (empty($pageop))
-	$tmpl->setvar('pageop', "default");
-else
-	$tmpl->setvar('pageop', $pageop);
-
+$tmpl->setvar('pageop', (empty($pageop)) ? "default" : $pageop);
 // op-switch
 switch ($pageop) {
 	default:

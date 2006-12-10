@@ -54,11 +54,8 @@ if ($af->running == 1) {
 } else {
 	$torrent_cons = "";
 }
-$torrentLabel = htmlentities($torrent, ENT_QUOTES);
-if(strlen($torrentLabel) >= 39)
-	$torrentLabel = substr($torrent, 0, 35)."...";
 $hd = getStatusImage($af);
-$tmpl->setvar('torrentLabel', $torrentLabel);
+$tmpl->setvar('torrentLabel', (strlen($torrent) >= 39) ? substr($torrent, 0, 35)."..." : $torrent);
 $tmpl->setvar('cons_hosts', $torrent_cons." ".$cfg['_ID_HOSTS']);
 $tmpl->setvar('torrent', $torrent);
 $tmpl->setvar('alias', $alias);
