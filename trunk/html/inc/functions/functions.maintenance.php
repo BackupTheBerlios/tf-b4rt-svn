@@ -28,10 +28,18 @@
  * @return boolean
  */
 function maintenance($cliMode = false, $restartTransfers = false) {
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "Running Maintenance...\n");
 	// totals
 	maintenanceTotals($cliMode);
 	// transfers
 	maintenanceTransfers($cliMode, $restartTransfers);
+	// fluxd
+	maintenanceFluxd($cliMode);
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "Maintenance done.\n");
 }
 
 /**
@@ -41,10 +49,21 @@ function maintenance($cliMode = false, $restartTransfers = false) {
  * @return boolean
  */
 function repair($cliMode = false) {
+	global $cfg;
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "Running Repair...\n");
 	// totals
 	maintenanceTotals($cliMode);
 	// repair app
-	repairApp();
+	repairApp($cliMode);
+	// fluxd
+	maintenanceFluxd($cliMode);
+	// log
+	AuditAction($cfg["constants"]["debug"], "Repair done.");
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "Repair done.\n");
 }
 
 /**
@@ -56,6 +75,9 @@ function repair($cliMode = false) {
  */
 function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 	global $cfg, $db, $queueActive;
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "transfers-maintenance...\n");
 	// sanity-check for transfers-dir
 	if (!is_dir($cfg["transfer_file_path"])) {
 		if ($cliMode)
@@ -73,8 +95,10 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 	}
 	// return if no pid-files found
 	if (count($pidFiles) < 1) {
-		if ($cliMode)
+		if ($cliMode) {
 			printMessage("fluxcli.php", "no pid-files found.\n");
+			printMessage("fluxcli.php", "transfers-maintenance done.\n");
+		}
 		return true;
 	}
 	// get process-list
@@ -89,8 +113,10 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 	}
 	// return if no stale pid-files
 	if (count($bogusTransfers) < 1) {
-		if ($cliMode)
+		if ($cliMode) {
 			printMessage("fluxcli.php", "no stale pid-files found.\n");
+			printMessage("fluxcli.php", "transfers-maintenance done.\n");
+		}
 		return true;
 	}
 	// repair the bogus clients
@@ -186,6 +212,9 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 		// set user back
 		$cfg["user"] = $whoami;
 	}
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "transfers-maintenance done.\n");
 	// return
 	return true;
 }
@@ -197,8 +226,9 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
  */
 function maintenanceTotals($cliMode = false) {
 	global $cfg, $db;
+	// print
 	if ($cliMode)
-		printMessage("fluxcli.php", "repairing totals...\n");
+		printMessage("fluxcli.php", "totals-maintenance...\n");
 	$bogusCount = 0;
 	$bogusCount = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
 	if (($bogusCount !== false) && ($bogusCount > 0)) {
@@ -211,19 +241,70 @@ function maintenanceTotals($cliMode = false) {
 		if ($cfg['debuglevel'] > 0)
 			AuditAction($cfg["constants"]["debug"], "maintenanceTotals : found and removed ".$bogusCount." invalid totals-entries");
 	} else {
+		// print
 		if ($cliMode)
 			printMessage("fluxcli.php", "no problems found.\n");
 	}
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "totals-maintenance done.\n");
+}
+
+/**
+ * maintenanceFluxd
+ * delete leftovers of fluxd (only do this if daemon is not running)
+ *
+ * @param $cliMode : boolean
+ */
+function maintenanceFluxd($cliMode = false) {
+	global $cfg;
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "fluxd-maintenance...\n");
+	// files
+	$fdp = $cfg["path"].'.fluxd/fluxd.pid';
+	$fds = $cfg["path"].'.fluxd/fluxd.sock';
+	$fdpe = file_exists($fdp);
+	$fdse = file_exists($fds);
+	// pid or socket exists
+	if (($fdpe || $fdse) && (
+		("0" == @trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl"))))) {
+		// problems
+		// pid
+		if ($fdpe)
+			@unlink($fdp);
+		// socket
+		if ($fdse)
+			@unlink($fds);
+		// DEBUG : log the repair
+		if ($cfg['debuglevel'] > 0)
+			AuditAction($cfg["constants"]["debug"], "maintenanceFluxd : found and removed fluxd-leftovers.");
+	} else {
+		// no problems
+		if ($cliMode)
+			printMessage("fluxcli.php", "no problems found.\n");
+	}
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "fluxd-maintenance done.\n");
 }
 
 /**
  * repairApp
+ *
+ * @param $cliMode : boolean
  */
-function repairApp() {
+function repairApp($cliMode = false) {
 	global $cfg, $db;
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "repairing app...\n");
 	// sanity-check for transfers-dir
-	if (!is_dir($cfg["transfer_file_path"]))
+	if (!is_dir($cfg["transfer_file_path"])) {
+		if ($cliMode)
+			printError("fluxcli.php", "invalid dir-settings. no dir : ".$cfg["transfer_file_path"]."\n");
 		return false;
+	}
 	// delete pid-files of torrent-clients
 	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
 		while (false !== ($file = readdir($dirHandle))) {
@@ -241,6 +322,9 @@ function repairApp() {
 		$btclient = getTransferClient($torrent);
 		$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $cfg, $btclient);
 		if (isset($af)) {
+			// print
+			if ($cliMode)
+				printMessage("fluxcli.php", "rewrite stat-file for ".$torrent." ...\n");
 			$af->running = 0;
 			$af->percent_done = -100.0;
 			$af->time_left = 'Torrent Stopped';
@@ -254,17 +338,12 @@ function repairApp() {
 		}
 	}
 	// set flags in db
+	if ($cliMode)
+		printMessage("fluxcli.php", "reset running-flag in database...\n");
 	$db->Execute("UPDATE tf_torrents SET running = '0'");
-	// delete leftovers of fluxd (only do this if daemon is not running)
-	$fluxdRunning = trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl"));
-	if ($fluxdRunning == "0") {
-		// pid
-		if (file_exists($cfg["path"].'.fluxd/fluxd.pid'))
-			@unlink($cfg["path"].'.fluxd/fluxd.pid');
-		// socket
-		if (file_exists($cfg["path"].'.fluxd/fluxd.sock'))
-			@unlink($cfg["path"].'.fluxd/fluxd.sock');
-	}
+	// print
+	if ($cliMode)
+		printMessage("fluxcli.php", "repair app done.\n");
 }
 
 /**
