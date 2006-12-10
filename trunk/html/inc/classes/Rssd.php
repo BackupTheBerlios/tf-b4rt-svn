@@ -136,17 +136,17 @@ class Rssd
    		if (!checkDirectory($sdir, 0777)) {
             $this->state = -1;
             $this->messages = "Save-Dir ".$sdir." not valid.";
-            $this->printError($this->messages."\n");
+            $this->outputError($this->messages."\n");
             return false;
    		}
    		if (!is_file($filter)) {
             $this->state = -1;
             $this->messages = "Filter-File ".$filter." not valid.";
-            $this->printError($this->messages."\n");
+            $this->outputError($this->messages."\n");
             return false;
    		}
-		// print
-		$this->printMessage("Processing feed ".$url." ...\n");
+		// output
+		$this->outputMessage("Processing feed ".$url." ...\n");
     	// set vars
     	$this->dirSave = checkDirPathString($sdir);
     	$this->fileFilters = $filter;
@@ -180,8 +180,8 @@ class Rssd
 			return false;
 		// state
 		$this->state = 2;
-		// print
-		$this->printMessage("feed processed. downloaded and saved ".count($this->filesSaved)." torrents.\n");
+		// output
+		$this->outputMessage("feed processed. downloaded and saved ".count($this->filesSaved)." torrents.\n");
 		// return
 		return true;
     }
@@ -222,7 +222,7 @@ class Rssd
 		} else {
 			$this->state = -1;
 			$this->messages = "Problem getting feed-data from ".$this->urlRSS;
-            $this->printError($this->messages."\n");
+            $this->outputError($this->messages."\n");
             return false;
 		}
     }
@@ -235,8 +235,8 @@ class Rssd
 		$itemCount = count($this->data["items"]);
 		// filter-loop
 		foreach ($this->filters as $filter) {
-			// print filtername
-			$this->printMessage("***** ".$filter." *****\n");
+			// output filtername
+			$this->outputMessage("***** ".$filter." *****\n");
 			// item-loop
 			for ($i = 0; $i < $itemCount; $i++) {
 				// skip feed items without a link or title:
@@ -251,8 +251,8 @@ class Rssd
 				if (preg_match('/'.$filter.'/i', $title)) {
 					// if not in history, process it
 					if (!in_array($title, $this->history)) {
-						// print
-						$this->printMessage("new match for filter '".$filter."' : ".$title."\n");
+						// output
+						$this->outputMessage("new match for filter '".$filter."' : ".$title."\n");
 						// download and save
 						if ($this->saveTorrent($link, $title) === true) {
 							// add to history
@@ -280,7 +280,7 @@ class Rssd
 				$this->state = -1;
 				$this->messages = "cannot open history ".$this->fileHistory." for writing.";
 				AuditAction($this->cfg["constants"]["error"], "Rssd updateHistory-Error : ".$this->messages);
-				$this->printError($this->messages."\n");
+				$this->outputError($this->messages."\n");
 				return false;
 			}
 	        $result = @fwrite($handle, implode("\n", $this->historyNew)."\n");
@@ -289,7 +289,7 @@ class Rssd
 				$this->state = -1;
 				$this->messages = "cannot write content to history ".$this->fileHistory.".";
 				AuditAction($this->cfg["constants"]["error"], "Rssd updateHistory-Error : ".$this->messages);
-				$this->printError($this->messages."\n");
+				$this->outputError($this->messages."\n");
 				return false;
 			}
 		}
@@ -317,7 +317,7 @@ class Rssd
 				// Error
 				$this->messages = "the file ".$file." already exists in ".$this->dirSave;
 				AuditAction($this->cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$this->messages);
-				$this->printError($this->messages."\n");
+				$this->outputError($this->messages."\n");
 				return false;
 			}
 			// write file
@@ -326,7 +326,7 @@ class Rssd
 			if (!$handle) {
 				$this->messages = "cannot open ".$file." for writing.";
 				AuditAction($this->cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$this->messages);
-				$this->printError($this->messages."\n");
+				$this->outputError($this->messages."\n");
 				return false;
 			}
 	        $result = @fwrite($handle, $content);
@@ -334,7 +334,7 @@ class Rssd
 			if ($result === false) {
 				$this->messages = "cannot write content to ".$file.".";
 				AuditAction($this->cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$this->messages);
-				$this->printError($this->messages."\n");
+				$this->outputError($this->messages."\n");
 				return false;
 			}
 			// add to file-array
@@ -345,37 +345,37 @@ class Rssd
 				'file' => $file
 				)
 			);
-			// print
-			$this->printMessage("torrent saved : \n url: ".$url."\n file: ".$file."\n");
+			// output
+			$this->outputMessage("torrent saved : \n url: ".$url."\n file: ".$file."\n");
 			// return
 			return true;
 		} else {
 			// last op was not ok
-			$this->printError("could not download torrent with title ".$title." from url ".$url." : \n".implode("\n", $this->simpleHTTP->messages));
+			$this->outputError("could not download torrent with title ".$title." from url ".$url." : \n".implode("\n", $this->simpleHTTP->messages));
 			return false;
 		}
     }
 
     /**
-     * print message
+     * output message
      *
      * @param $message
      */
-	function printMessage($message) {
+	function outputMessage($message) {
         // only in cli-mode
 		if ($this->mode == 1)
-			@fwrite(STDOUT, @date("[Y/m/d - H:i:s]")."[Rssd] ".$message);
+			printMessage("Rssd", $message);
     }
 
     /**
-     * print error
+     * output error
      *
      * @param $message
      */
 	function printError($message) {
         // only in cli-mode
 		if ($this->mode == 1)
-			@fwrite(STDERR, @date("[Y/m/d - H:i:s]")."[Rssd] ".$message);
+			printMessage("Rssd", $message);
     }
 
 }

@@ -2669,4 +2669,22 @@ function isValidTransfer($transfer) {
 	return ((preg_match('/^[a-zA-Z0-9._-]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
 }
 
+/**
+ * print message
+ *
+ * @param $message
+ */
+function printMessage($mod, $message) {
+	@fwrite(STDOUT, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$message);
+}
+
+/**
+ * print error
+ *
+ * @param $message
+ */
+function printError($mod, $message) {
+	@fwrite(STDERR, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$message);
+}
+
 ?>
