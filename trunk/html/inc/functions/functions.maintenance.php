@@ -59,7 +59,7 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 	// sanity-check for transfers-dir
 	if (!is_dir($cfg["transfer_file_path"])) {
 		if ($cliMode)
-			echo "invalid dir-settings. no dir : ".$cfg["transfer_file_path"]."\n";
+			printError("fluxcli.php", "invalid dir-settings. no dir : ".$cfg["transfer_file_path"]."\n");
 		return false;
 	}
 	// pid-files of transfer-clients
@@ -71,10 +71,10 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 		}
 		@closedir($dirHandle);
 	}
-	// done if no pid-files found
+	// return if no pid-files found
 	if (count($pidFiles) < 1) {
 		if ($cliMode)
-			echo "no pid-files found.\n";
+			printMessage("fluxcli.php", "no pid-files found.\n");
 		return true;
 	}
 	// get process-list
@@ -87,15 +87,15 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 		if (stristr($psString, $transfer) === false)
 			array_push($bogusTransfers, $transfer);
 	}
-	// done if no stale pid-files
+	// return if no stale pid-files
 	if (count($bogusTransfers) < 1) {
 		if ($cliMode)
-			echo "no stale pid-files found.\n";
+			printMessage("fluxcli.php", "no stale pid-files found.\n");
 		return true;
 	}
 	// repair the bogus clients
 	if ($cliMode)
-		echo "repairing died clients...\n";
+		printMessage("fluxcli.php", "repairing died clients...\n");
 	require_once("inc/classes/AliasFile.php");
 	foreach ($bogusTransfers as $bogusTransfer) {
 		$transfer = $bogusTransfer.".torrent";
@@ -114,7 +114,7 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 		}
 		// print
 		if ($cliMode)
-			echo "repairing ".$transfer." ...";
+			printMessage("fluxcli.php", "repairing ".$transfer." ...\n");
 		// get owner
 		$transferowner = getOwner($transfer);
 		// rewrite stat-file
@@ -137,12 +137,12 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 			AuditAction($cfg["constants"]["debug"], "maintenance : transfer repaired : ".$transfer);
 		// print
 		if ($cliMode)
-			echo "done\n";
+			printMessage("fluxcli.php", "done.\n");
 	}
 	// restart transfers
 	if ($restartTransfers) {
 		if ($cliMode)
-			echo "restarting died clients...\n";
+			printMessage("fluxcli.php", "restarting died clients...\n");
 		// hold current user
 		$whoami = ($cliMode) ? GetSuperAdmin() : $cfg["user"];
 		foreach ($bogusTransfers as $bogusTransfer) {
@@ -156,7 +156,7 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 			}
 			// print
 			if ($cliMode)
-				echo "Starting ".$transfer." ...";
+				printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
 			// get owner
 			$transferowner = getOwner($transfer);
 			// set current user to transfer-owner
@@ -178,9 +178,9 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 			// print
 			if ($cliMode) {
 				if ($clientHandler->state == 3)
-					echo " done\n";
+					printMessage("fluxcli.php", "done.\n");
 				else
-					echo "\n".$clientHandler->messages."\n";
+					printError("fluxcli.php", $clientHandler->messages."\n");
 			}
 		}
 		// set user back
@@ -198,12 +198,12 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
 function maintenanceTotals($cliMode = false) {
 	global $cfg, $db;
 	if ($cliMode)
-		echo "repairing totals...\n";
+		printMessage("fluxcli.php", "repairing totals...\n");
 	$bogusCount = 0;
 	$bogusCount = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
 	if (($bogusCount !== false) && ($bogusCount > 0)) {
 		if ($cliMode)
-			echo "found ".$bogusCount." invalid entries, deleting...\n";
+			printMessage("fluxcli.php", "found ".$bogusCount." invalid entries, deleting...\n");
 		$sql = "DELETE FROM tf_torrent_totals WHERE tid = ''";
 		$result = $db->Execute($sql);
 		showError($db, $sql);
@@ -212,7 +212,7 @@ function maintenanceTotals($cliMode = false) {
 			AuditAction($cfg["constants"]["debug"], "maintenanceTotals : found and removed ".$bogusCount." invalid totals-entries");
 	} else {
 		if ($cliMode)
-			echo "no errors found.\n";
+			printMessage("fluxcli.php", "no problems found.\n");
 	}
 }
 
@@ -265,6 +265,24 @@ function repairApp() {
 		if (file_exists($cfg["path"].'.fluxd/fluxd.sock'))
 			@unlink($cfg["path"].'.fluxd/fluxd.sock');
 	}
+}
+
+/**
+ * prune db
+ */
+function maintenancePruneDB() {
+	global $cfg, $db;
+	// Prune LOG
+	$testTime = time()-($cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
+	$sql = "delete from tf_log where time < " . $db->qstr($testTime);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	unset($result);
+	$testTime = time()-($cfg['minutes_to_keep'] * 60);
+	$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($cfg["constants"]["hit"]);
+	$result = $db->Execute($sql);
+	showError($db,$sql);
+	unset($result);
 }
 
 ?>

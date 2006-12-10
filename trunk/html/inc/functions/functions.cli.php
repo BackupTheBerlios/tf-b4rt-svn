@@ -24,66 +24,68 @@
  * cliPrintUsage
  */
 function cliPrintUsage() {
-	echo "\n";
-    echo "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n";
-	echo "\n";
-	echo "Usage: fluxcli.php action [extra-args]\n";
-	echo "\naction: \n";
-	echo " <transfers>   : print transfers.\n";
-	echo " <netstat>     : print netstat.\n";
-	echo " <start>       : start a transfer.\n";
-	echo "                 extra-arg : name of transfer as known inside torrentflux\n";
-	echo " <stop>        : stop a transfer.\n";
-	echo "                 extra-arg : name of transfer as known inside torrentflux\n";
-    echo " <start-all>   : start all transfers.\n";
-    echo " <resume-all>  : resume all transfers.\n";
-	echo " <stop-all>    : stop all running transfers.\n";
-	echo " <reset>       : reset totals of a transfer.\n";
-	echo "                 extra-arg : name of transfer as known inside torrentflux\n";
-	echo " <delete>      : delete a transfer.\n";
-	echo "                 extra-arg : name of transfer as known inside torrentflux\n";
-	echo " <wipe>        : reset totals, delete torrent, delete torrent-data.\n";
-	echo "                 extra-arg : name of torrent as known inside torrentflux\n";
-	echo " <inject>      : injects a transfer-file into tflux.\n";
-	echo "                 extra-arg 1 : path to transfer-meta-file\n";
-	echo "                 extra-arg 2 : username of fluxuser\n";
-	echo " <watch>       : watch a dir and inject+start transfers into tflux.\n";
-	echo "                 extra-arg 1 : path to users watch-dir\n";
-	echo "                 extra-arg 2 : username of fluxuser\n";
-	echo " <rss>         : download torrents matching filter-rules from a rss-feed.\n";
-	echo "                 extra-arg 1 : save-dir\n";
-	echo "                 extra-arg 2 : filter-file\n";
-	echo "                 extra-arg 3 : history-file\n";
-	echo "                 extra-arg 4 : rss-feed-url\n";
-	echo " <xfer>        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n";
-	echo "                 extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day>\n";
-	echo " <repair>      : repair of torrentflux. DONT do this unless you have to.\n";
-	echo "                 Doing this on a running ok flux _will_ screw up things.\n";
-	echo " <maintenance> : call maintenance and repair all died transfers.\n";
-	echo "                 extra-arg 1 : restart died transfers (true/false)\n";
-	echo " <dump>        : dump database.\n";
-	echo "                 extra-arg 1 : type : settings/users\n";
-	echo "\n";
-	echo "examples: \n";
-	echo "fluxcli.php transfers\n";
-	echo "fluxcli.php netstat\n";
-	echo "fluxcli.php start foo.torrent\n";
-	echo "fluxcli.php stop foo.torrent\n";
-	echo "fluxcli.php start-all\n";
-	echo "fluxcli.php resume-all\n";
-	echo "fluxcli.php stop-all\n";
-	echo "fluxcli.php reset foo.torrent\n";
-	echo "fluxcli.php delete foo.torrent\n";
-	echo "fluxcli.php wipe foo.torrent\n";
-	echo "fluxcli.php inject /path/to/foo.torrent fluxuser\n";
-    echo "fluxcli.php watch /path/to/watch-dir/ fluxuser\n";
-    echo "fluxcli.php rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n";
-    echo "fluxcli.php xfer month\n";
-	echo "fluxcli.php repair\n";
-	echo "fluxcli.php maintenance true\n";
-	echo "fluxcli.php dump settings\n";
-	echo "fluxcli.php dump users\n";
-	echo "\n";
+	$content = ""
+	. "\n"
+    . "fluxcli.php Revision " . _REVISION_FLUXCLI . "\n"
+	. "\n"
+	. "Usage: fluxcli.php action [extra-args]\n"
+	. "\naction: \n"
+	. " <transfers>   : print transfers.\n"
+	. " <netstat>     : print netstat.\n"
+	. " <start>       : start a transfer.\n"
+	. "                 extra-arg : name of transfer as known inside torrentflux\n"
+	. " <stop>        : stop a transfer.\n"
+	. "                 extra-arg : name of transfer as known inside torrentflux\n"
+    . " <start-all>   : start all transfers.\n"
+    . " <resume-all>  : resume all transfers.\n"
+	. " <stop-all>    : stop all running transfers.\n"
+	. " <reset>       : reset totals of a transfer.\n"
+	. "                 extra-arg : name of transfer as known inside torrentflux\n"
+	. " <delete>      : delete a transfer.\n"
+	. "                 extra-arg : name of transfer as known inside torrentflux\n"
+	. " <wipe>        : reset totals, delete torrent, delete torrent-data.\n"
+	. "                 extra-arg : name of torrent as known inside torrentflux\n"
+	. " <inject>      : injects a transfer-file into tflux.\n"
+	. "                 extra-arg 1 : path to transfer-meta-file\n"
+	. "                 extra-arg 2 : username of fluxuser\n"
+	. " <watch>       : watch a dir and inject+start transfers into tflux.\n"
+	. "                 extra-arg 1 : path to users watch-dir\n"
+	. "                 extra-arg 2 : username of fluxuser\n"
+	. " <rss>         : download torrents matching filter-rules from a rss-feed.\n"
+	. "                 extra-arg 1 : save-dir\n"
+	. "                 extra-arg 2 : filter-file\n"
+	. "                 extra-arg 3 : history-file\n"
+	. "                 extra-arg 4 : rss-feed-url\n"
+	. " <xfer>        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
+	. "                 extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day>\n"
+	. " <repair>      : repair of torrentflux. DONT do this unless you have to.\n"
+	. "                 Doing this on a running ok flux _will_ screw up things.\n"
+	. " <maintenance> : call maintenance and repair all died transfers.\n"
+	. "                 extra-arg 1 : restart died transfers (true/false)\n"
+	. " <dump>        : dump database.\n"
+	. "                 extra-arg 1 : type : settings/users\n"
+	. "\n"
+	. "examples: \n"
+	. "fluxcli.php transfers\n"
+	. "fluxcli.php netstat\n"
+	. "fluxcli.php start foo.torrent\n"
+	. "fluxcli.php stop foo.torrent\n"
+	. "fluxcli.php start-all\n"
+	. "fluxcli.php resume-all\n"
+	. "fluxcli.php stop-all\n"
+	. "fluxcli.php reset foo.torrent\n"
+	. "fluxcli.php delete foo.torrent\n"
+	. "fluxcli.php wipe foo.torrent\n"
+	. "fluxcli.php inject /path/to/foo.torrent fluxuser\n"
+    . "fluxcli.php watch /path/to/watch-dir/ fluxuser\n"
+    . "fluxcli.php rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n"
+    . "fluxcli.php xfer month\n"
+	. "fluxcli.php repair\n"
+	. "fluxcli.php maintenance true\n"
+	. "fluxcli.php dump settings\n"
+	. "fluxcli.php dump users\n"
+	. "\n";
+	echo $content;
 }
 
 /**
@@ -176,7 +178,7 @@ function cliStartTransfer($transfer = "") {
 		if ($tRunningFlag == 0) {
 			$btclient = getTransferClient($transfer);
 			$cfg["user"] = getOwner($transfer);
-			echo "Starting ".$transfer." ...";
+			printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
 			if ($cfg["enable_file_priority"]) {
 				include_once("inc/setpriority.php");
 				// Process setPriority Request.
@@ -186,13 +188,12 @@ function cliStartTransfer($transfer = "") {
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			// force start, dont queue
 			$clientHandler->startClient($transfer, 0, false);
-			if ($clientHandler->state == 3) { // hooray
-				echo " done\n";
-			} else {
-				echo "\n" . $clientHandler->messages;
-			}
+			if ($clientHandler->state == 3) /* hooray */
+				printMessage("fluxcli.php", "done.\n");
+			else
+				printError("fluxcli.php", $clientHandler->messages."\n");
 		} else {
-			echo "Transfer already running.\n";
+			printError("fluxcli.php", "Transfer already running.\n");
 		}
 	} else {
 		cliPrintUsage();
@@ -205,12 +206,12 @@ function cliStartTransfer($transfer = "") {
  */
 function cliStartTransfers() {
     global $cfg;
-    echo "Starting all transfers ...\n";
+    printMessage("fluxcli.php", "Starting all transfers ...\n");
 	$transfers = getTorrentListFromFS();
 	foreach ($transfers as $transfer) {
         $tRunningFlag = isTransferRunning($transfer);
         if ($tRunningFlag == 0) {
-            echo " - ".$transfer."...";
+            printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
             $btclient = getTransferClient($transfer);
             if ($cfg["enable_file_priority"]) {
@@ -220,10 +221,10 @@ function cliStartTransfers() {
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->startClient($transfer, 0, false);
-			if ($clientHandler->state == 3) // hooray
-				echo " done\n";
+			if ($clientHandler->state == 3) /* hooray */
+				printMessage("fluxcli.php", "done.\n");
 			else
-				echo "\n" . $clientHandler->messages;
+				printError("fluxcli.php", $clientHandler->messages."\n");
         }
 	}
 }
@@ -233,12 +234,12 @@ function cliStartTransfers() {
  */
 function cliResumeTransfers() {
     global $cfg;
-    echo "Resuming all transfers ...\n";
+    printMessage("fluxcli.php", "Resuming all transfers ...\n");
 	$transfers = getTorrentListFromDB();
 	foreach ($transfers as $transfer) {
         $tRunningFlag = isTransferRunning($transfer);
         if ($tRunningFlag == 0) {
-            echo " - ".$transfer."...";
+            printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
             $btclient = getTransferClient($transfer);
             if ($cfg["enable_file_priority"]) {
@@ -248,10 +249,10 @@ function cliResumeTransfers() {
             }
             $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->startClient($transfer, 0, false);
-			if ($clientHandler->state == 3) // hooray
-				echo " done\n";
+			if ($clientHandler->state == 3) /* hooray */
+				printMessage("fluxcli.php", "done.\n");
 			else
-				echo "\n" . $clientHandler->messages;
+				printError("fluxcli.php", $clientHandler->messages."\n");
         }
 	}
 }
@@ -277,15 +278,15 @@ function cliStopTransfer($transfer = "") {
 	if ((isset($transfer)) && ($transfer != "")) {
 		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag == 0) {
-			echo "Transfer not running.\n";
+			printError("fluxcli.php", "Transfer not running.\n");
 		} else {
-			echo "Stopping ".$transfer." ...";
+			printMessage("fluxcli.php", "Stopping ".$transfer." ...\n");
 			$btclient = getTransferClient($transfer);
 			$cfg["user"] = getOwner($transfer);
 			$alias = getAliasName($transfer).".stat";
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
             $clientHandler->stopClient($transfer,$alias);
-			echo "done\n";
+			printMessage("fluxcli.php", "done.\n");
 		}
 	} else {
 		cliPrintUsage();
@@ -300,9 +301,9 @@ function cliStopTransfer($transfer = "") {
  */
 function cliResetTransfer($transfer = "") {
 	if ((isset($transfer)) && ($transfer != "")) {
-		echo "Resetting totals of ".$transfer." ...";
+		printMessage("fluxcli.php", "Resetting totals of ".$transfer." ...\n");
 		resetTorrentTotals($transfer, false);
-		echo "done\n";
+		printMessage("fluxcli.php", "done.\n");
 	} else {
 		cliPrintUsage();
 	}
@@ -317,7 +318,7 @@ function cliResetTransfer($transfer = "") {
 function cliDeleteTransfer($transfer = "") {
 	global $cfg;
 	if ((isset($transfer)) && ($transfer != "")) {
-		echo "Deleting ".$transfer." ...";
+		printMessage("fluxcli.php", "Deleting ".$transfer." ...\n");
         $tRunningFlag = isTransferRunning($transfer);
         $btclient = getTransferClient($transfer);
     	$cfg["user"] = getOwner($transfer);
@@ -330,9 +331,9 @@ function cliDeleteTransfer($transfer = "") {
         }
         if ($tRunningFlag == 0) {
         	deleteTransfer($transfer, $alias);
-        	echo "done\n";
+        	printMessage("fluxcli.php", "done.\n");
         } else {
-        	echo "transfer still up... cannot delete\n";
+        	printError("fluxcli.php", "transfer still up... cannot delete\n");
         }
 	} else {
 		cliPrintUsage();
@@ -348,7 +349,7 @@ function cliDeleteTransfer($transfer = "") {
 function cliWipeTransfer($transfer = "") {
 	global $cfg;
 	if ((isset($transfer)) && ($transfer != "")) {
-		echo "Wipe ".$transfer." ...";
+		printMessage("fluxcli.php", "Wipe ".$transfer." ...\n");
         $tRunningFlag = isTransferRunning($transfer);
         $btclient = getTransferClient($transfer);
 		$cfg["user"] = getOwner($transfer);
@@ -362,9 +363,9 @@ function cliWipeTransfer($transfer = "") {
         if ($tRunningFlag == 0) {
 	        deleteTransfer($transfer);
 	        resetTorrentTotals($transfer, true);
-			echo "done\n";
+			printMessage("fluxcli.php", "done.\n");
         } else {
-        	echo "transfer still up... cannot wipe\n";
+        	printError("fluxcli.php", "transfer still up... cannot wipe\n");
         }
 	} else {
 		cliPrintUsage();
@@ -405,11 +406,11 @@ function cliInjectTransfer($tpath = "", $username = "") {
             $ext_msg = "NOT ALLOWED :: ";
             $messages .= "ERROR: The type of file you are injecting is not allowed.\n";
         }
-        if($messages != "") { // there was an error
+        if ($messages != "") { // there was an error
             AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
-            echo $messages;
+            printError("fluxcli.php", $messages);
         } else {
-            echo "Injected ".$tpath." as ".$file_name." for user ".$cfg["user"]."\n";
+        	printMessage("fluxcli.php", "Injected ".$tpath." as ".$file_name." for user ".$cfg["user"]."\n");
         }
 	} else {
 		cliPrintUsage();
@@ -434,7 +435,7 @@ function cliWatchDir($tpath = "", $username = "") {
                     if ((strtolower((substr($file, -8)))) == ".torrent") {
                         $file_name = stripslashes($file);
                         $file_name = cleanFileName($file_name);
-                        echo "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...";
+                        printMessage("fluxcli.php", "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...\n");
                         if ((is_file($watchDir.$file)) && (copy($watchDir.$file, $cfg["transfer_file_path"].$file_name))) {
                             @unlink($watchDir.$file);
                             chmod($cfg["transfer_file_path"].$file_name, 0644);
@@ -450,19 +451,19 @@ function cliWatchDir($tpath = "", $username = "") {
                             // start
                             $clientHandler = ClientHandler::getClientHandlerInstance($cfg);
                             $clientHandler->startClient($file_name, 0, false);
-                            if ($clientHandler->state == 3) // hooray
-                                echo " done\n";
+                            if ($clientHandler->state == 3) /* hooray */
+                            	printMessage("fluxcli.php", "done.\n");
                             else
-                                echo "\n". $clientHandler->messages ."\n";
+                            	printError("fluxcli.php", $clientHandler->messages."\n");
                         } else {
-                            echo "\n ERROR: File could not be found or could not be copied: ".$watchDir.$file."\n";
+                        	printError("fluxcli.php", "ERROR: File could not be found or could not be copied: ".$watchDir.$file."\n");
                         }
                     }
                 }
                 closedir($dirHandle);
             }
 	    } else {
-	        echo "ERROR: ".$tpath." is not a dir.\n";
+	    	printError("fluxcli.php", "ERROR: ".$tpath." is not a dir.\n");
 	        exit();
 	    }
 	} else {
@@ -479,7 +480,7 @@ function cliWatchDir($tpath = "", $username = "") {
 function cliXferShutdown($delta = '') {
 	global $cfg, $xfer_total;
 	if ($cfg['enable_xfer'] != 1) {
-		echo "Error, xfer-Hack must be enabled. \n";
+		printError("fluxcli.php", "Error, xfer-Hack must be enabled.\n");
 		return;
 	}
 	if ((isset($delta)) && ($delta != "")) {
@@ -493,8 +494,8 @@ function cliXferShutdown($delta = '') {
 			if ($cfg["xfer_total"] > 0) {
 				if ($xfer_total['total']['total'] >= $cfg["xfer_total"]) {
 					// limit met, stop all Transfers now.
-					echo 'Limit met for "total" : '.formatFreeSpace($xfer_total['total']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_total"]/(1048576))."\n";
-					echo "Stopping all transfers...\n";
+					printMessage("fluxcli.php", 'Limit met for "total" : '.formatFreeSpace($xfer_total['total']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_total"]/(1048576))."\n");
+					printMessage("fluxcli.php", "Stopping all transfers...\n");
 					cliStopTransfers();
 					return;
 				}
@@ -506,8 +507,8 @@ function cliXferShutdown($delta = '') {
 			if ($cfg["xfer_month"] > 0) {
 				if ($xfer_total['month']['total'] >= $cfg["xfer_month"]) {
 					// limit met, stop all Transfers now.
-					echo 'Limit met for "month" : '.formatFreeSpace($xfer_total['month']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_month"]/(1048576))."\n";
-					echo "Stopping all transfers...\n";
+					printMessage("fluxcli.php", 'Limit met for "month" : '.formatFreeSpace($xfer_total['month']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_month"]/(1048576))."\n");
+					printMessage("fluxcli.php", "Stopping all transfers...\n");
 					cliStopTransfers();
 					return;
 				}
@@ -519,8 +520,8 @@ function cliXferShutdown($delta = '') {
 			if ($cfg["xfer_week"] > 0) {
 				if ($xfer_total['week']['total'] >= $cfg["xfer_week"]) {
 					// limit met, stop all Transfers now.
-					echo 'Limit met for "week" : '.formatFreeSpace($xfer_total['week']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_week"]/(1048576))."\n";
-					echo "Stopping all transfers...\n";
+					printMessage("fluxcli.php", 'Limit met for "week" : '.formatFreeSpace($xfer_total['week']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_week"]/(1048576))."\n");
+					printMessage("fluxcli.php", "Stopping all transfers...\n");
 					cliStopTransfers();
 					return;
 				}
@@ -532,8 +533,8 @@ function cliXferShutdown($delta = '') {
 			if ($cfg["xfer_day"] > 0) {
 				if ($xfer_total['day']['total'] >= $cfg["xfer_day"]) {
 					// limit met, stop all Transfers now.
-					echo 'Limit met for "day" : '.formatFreeSpace($xfer_total['day']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_day"]/(1048576))."\n";
-					echo "Stopping all transfers...\n";
+					printMessage("fluxcli.php", 'Limit met for "day" : '.formatFreeSpace($xfer_total['day']['total']/(1048576))." / ".formatFreeSpace($cfg["xfer_day"]/(1048576))."\n");
+					printMessage("fluxcli.php", "Stopping all transfers...\n");
 					cliStopTransfers();
 					return;
 				}

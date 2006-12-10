@@ -372,7 +372,7 @@ class Rssd
      *
      * @param $message
      */
-	function printError($message) {
+	function outputError($message) {
         // only in cli-mode
 		if ($this->mode == 1)
 			printMessage("Rssd", $message);

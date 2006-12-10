@@ -112,14 +112,14 @@ if ((isset($action)) && ($action != "")) {
 			cliXferShutdown(@$argv[2]);
 			break;
 		case "repair":
-		    echo "Running Repair...";
+			printMessage("fluxcli.php", "Running Repair...\n");
 			repair(true);
-        	echo "Repair done\n";
+			printMessage("fluxcli.php", "Repair done.\n");
         	exit();
 		case "maintenance":
-		    echo "Running Maintenance...\n";
+		    printMessage("fluxcli.php", "Running Maintenance...\n");
 			maintenance(true, ((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
-        	echo "Maintenance done\n";
+        	printMessage("fluxcli.php", "Maintenance done.\n");
         	exit();
 		case "dump":
 			cliDumpDatabase(@$argv[2]);

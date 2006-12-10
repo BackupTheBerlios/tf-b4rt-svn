@@ -146,15 +146,17 @@ if (!(cacheIsSet($currentUser))) {
 	// set cache
 	cacheSet($currentUser);
 
-	// prune db
-	PruneDB();
-
 	// check main-directories.
 	checkMainDirectories();
 
-	// maintenance
+	// maintenance-functions
 	require_once("inc/functions/functions.maintenance.php");
+
+	// maintenance-run
 	maintenance(false, false);
+
+	// maintenance-prune-db
+	maintenancePruneDB();
 
 	// set session-settings
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;

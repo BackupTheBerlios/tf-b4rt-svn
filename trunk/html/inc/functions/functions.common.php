@@ -322,24 +322,6 @@ function firstLogin($username = '', $password = '') {
 }
 
 /**
- * prune db
- */
-function PruneDB() {
-	global $cfg, $db;
-	// Prune LOG
-	$testTime = time()-($cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
-	$sql = "delete from tf_log where time < " . $db->qstr($testTime);
-	$result = $db->Execute($sql);
-	showError($db,$sql);
-	unset($result);
-	$testTime = time()-($cfg['minutes_to_keep'] * 60);
-	$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($cfg["constants"]["hit"]);
-	$result = $db->Execute($sql);
-	showError($db,$sql);
-	unset($result);
-}
-
-/**
  * checks main-directories.
  *
  * @return boolean
