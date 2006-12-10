@@ -299,7 +299,7 @@ INSERT INTO tf_settings VALUES ('fluxd_Qmgr_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Rssad_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_enabled','0');
-INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_enabled','0');
+INSERT INTO tf_settings VALUES ('fluxd_Maintenance_enabled','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_interval','15');
 INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5');
@@ -308,8 +308,8 @@ INSERT INTO tf_settings VALUES ('fluxd_Rssad_interval','1800');
 INSERT INTO tf_settings VALUES ('fluxd_Rssad_jobs','');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_interval','120');
 INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','');
-INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_interval','600');
-INSERT INTO tf_settings VALUES ('fluxd_Clientmaint_trestart','0');
+INSERT INTO tf_settings VALUES ('fluxd_Maintenance_interval','600');
+INSERT INTO tf_settings VALUES ('fluxd_Maintenance_trestart','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_interval','600');
 
 --
