@@ -1526,8 +1526,9 @@ function backupCreate($talk = false, $compression = 0) {
 			break;
 	}
 	$commandArchive .= 'docroot.tar';
-	//$commandDocroot = "cd ".$dirBackup."; tar -cf docroot.tar ".$_SERVER['DOCUMENT_ROOT']; // with path of docroot
-	$commandDocroot = "cd ".escapeshellarg($_SERVER['DOCUMENT_ROOT'])."; tar -cf ".$fileDocroot." ."; // only content of docroot
+	$docroot = dirname(__FILE__);
+	//$commandDocroot = "cd ".$dirBackup."; tar -cf docroot.tar ".$docroot; // with path of docroot
+	$commandDocroot = "cd ".escapeshellarg($docroot)."; tar -cf ".$fileDocroot." ."; // only content of docroot
 	// database-command
 	if ($commandDatabase != "") {
 		if ($talk)
@@ -1538,7 +1539,7 @@ function backupCreate($talk = false, $compression = 0) {
 		sendLine(' <font color="green">Ok</font><br>');
 	// docroot-command
 	if ($talk)
-		sendLine('Backup of Docroot <em>'.$_SERVER['DOCUMENT_ROOT'].'</em> ...');
+		sendLine('Backup of Docroot <em>'.$docroot.'</em> ...');
 	shell_exec($commandDocroot);
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
