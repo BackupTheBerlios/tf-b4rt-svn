@@ -21,10 +21,7 @@
 *******************************************************************************/
 
 function getFile($var) {
-    if ($var < 65535)
-        return true;
-    else
-        return false;
+	return ($var < 65535);
 }
 
 //*********************************************************
@@ -43,7 +40,7 @@ function setPriority($torrent) {
         $result = array();
         $files = array();
         if (isset($_REQUEST['files']))
-          $files = array_filter($_REQUEST['files'],"getFile");
+			$files = array_filter($_REQUEST['files'],"getFile");
         // if there are files to get then process and create a prio file.
         if (count($files) > 0) {
             for($i=0;$i<getRequestVar('count');$i++) {

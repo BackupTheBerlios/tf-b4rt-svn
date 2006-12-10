@@ -110,16 +110,13 @@ function showMetaInfo($torrent, $allowSave=false) {
 		fclose($fp);
 		$btmeta = BDecode($alltorrent);
 		$torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
-		if (array_key_exists('files',$btmeta['info']))
-			$dirnum = count($btmeta['info']['files']);
-		else
-			$dirnum = 0;
-		if ( is_readable($prioFileName)) {
+		$dirnum = (array_key_exists('files',$btmeta['info'])) ? $dirnum = count($btmeta['info']['files']) : 0;
+		if (is_readable($prioFileName)) {
 			$prio = split(',',file_get_contents($prioFileName));
 			$prio = array_splice($prio,1);
 		} else {
 			$prio = array();
-			for($i=0;$i<$dirnum;$i++)
+			for ($i=0; $i<$dirnum; $i++)
 				$prio[$i] = -1;
 		}
 		$tree = new dir("/",$dirnum,isset($prio[$dirnum])?$prio[$dirnum]:-1);
@@ -127,10 +124,10 @@ function showMetaInfo($torrent, $allowSave=false) {
 			foreach( $btmeta['info']['files'] as $filenum => $file) {
 				$depth = count($file['path']);
 				$branch =& $tree;
-				for($i=0; $i < $depth; $i++) {
-					if ($i != $depth-1) {
+				for ($i=0; $i < $depth; $i++) {
+					if ($i != $depth - 1) {
 						$d =& $branch->findDir($file['path'][$i]);
-						if($d) {
+						if ($d) {
 							$branch =& $d;
 						} else {
 							$dirnum++;

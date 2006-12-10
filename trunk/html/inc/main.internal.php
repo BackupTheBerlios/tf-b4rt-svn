@@ -156,14 +156,9 @@ if (!(cacheIsSet($currentUser))) {
 	clientCare(false);
 
 	// set session-settings
-	if ($cfg["enable_index_meta_refresh"] != 0)
-		$_SESSION['settings']['index_meta_refresh'] = 1;
-	else
-		$_SESSION['settings']['index_meta_refresh'] = 0;
-	if ($cfg["enable_index_ajax_update"] != 0)
-		$_SESSION['settings']['index_ajax_update'] = 1;
-	else
-		$_SESSION['settings']['index_ajax_update'] = 0;
+	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;
+	$_SESSION['settings']['index_ajax_update'] = ($cfg["enable_index_ajax_update"] != 0) ? 1 : 0;
+
 }
 
 // drivespace-var
@@ -229,18 +224,5 @@ if ($cfg["fluxd_Qmgr_enabled"] == 1) {
 		$queueActive = true;
 	}
 }
-
-/*******************************************************************************
- *  DEBUG
- ******************************************************************************/
-/*
-if ($cfg["version"] != "svn") {
-	// turn off error_reporting
-	error_reporting(0);
-} else {
-	// turn on error_reporting
-	error_reporting(E_ALL);
-}
-*/
 
 ?>

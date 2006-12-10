@@ -50,13 +50,13 @@ $cfg["constants"]["debug"] = "DEBUG";
 asort($cfg["constants"]);
 
 // Add file extensions here that you will allow to be uploaded
-$cfg["file_types_array"] = array("torrent","wget");
+$cfg["file_types_array"] = array("torrent", "wget");
 
 // Capture username
 $cfg["user"] = "";
 
 // Capture ip
-@ $cfg["ip"] = $_SERVER['REMOTE_ADDR'];
+$cfg["ip"] = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : "127.0.0.1";
 
 // torrentflux-b4rt Version
 if (is_file('version.php')) {
