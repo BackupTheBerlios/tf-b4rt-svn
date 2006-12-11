@@ -3,8 +3,39 @@ $Id$
 ================================================================================
 
 
+  2.1-b4rt-972
 
-  b4rt-971
+
+  There is a local file disclosure vulnerability in the nfo-viewer (viewnfo.php)
+  of TorrentFlux 2.1(-b4rt) in all versions up to 2.1-b4rt-971 which is fixed in
+  this version. the vuln can only be exploited by someone having a valid user-
+  account from a TorrentFlux-2.1(-b4rt)-installation.
+
+
+  details :
+  http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1870
+
+
+***** changes *****
+
+- minor optimizations. (avoid use of preg_match)
+
+
+***** fixes *****
+
+- fix for the local file disclosure vulnerability in the nfo-viewer.
+  (viewnfo.php)
+
+- extended checks to prevent invocation from web in all "PHP-bins".
+  (hopefully now catching all the php-config-permutations)
+
+- superadmin-file-backup : backup flux-docroot and not server-docroot.
+
+
+--------------------------------------------------------------------------------
+
+
+  2.1-b4rt-971
 
   Note : when upgrading via superadmin-web-upgrade only part of the files are
          updated ! (superadmin-upgrade of 2.1-branch can only update the files
@@ -85,7 +116,7 @@ $Id$
 --------------------------------------------------------------------------------
 
 
-  b4rt-97
+  2.1-b4rt-97
 
 
 ***** changes *****
@@ -138,7 +169,7 @@ $Id$
 --------------------------------------------------------------------------------
 
 
-  b4rt-96
+  2.1-b4rt-96
 
 
 ***** changes *****
@@ -164,7 +195,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-953
+  2.1-b4rt-953
 
   details :
   http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1280&sc=0&isdir=1
@@ -206,7 +237,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-952
+  2.1-b4rt-952
 
   details :
   http://svn.berlios.de/wsvn/tf-b4rt/branches/torrentflux_2.1-b4rt/?op=log&rev=1226&sc=0&isdir=1
@@ -251,7 +282,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-951
+  2.1-b4rt-951
 
 ***** fixes *****
 
@@ -260,7 +291,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-95
+  2.1-b4rt-95
 
   Note : maintenance release of v9x-branch and not based on the codebase of the
          next version. this version does not add any real new features but only
@@ -336,7 +367,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-94
+  2.1-b4rt-94
 
 
   note : this is the last of the "old" releases. this is not yet one of the
@@ -369,7 +400,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  changes from b4rt-93 to initial svn-import @ berliOS
+  changes from 2.1-b4rt-93 to initial svn-import @ berliOS
 
 
 - minor changes in admin.php (msn_exploder)
@@ -412,7 +443,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-93
+  2.1-b4rt-93
 
 
 - Transmission 0.6.1 + 0.7-svn543 with tflux-transmissioncli 1.6 included.
@@ -489,7 +520,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-92
+  2.1-b4rt-92
 
 
 - added multi-queue-operations (enqueue + dequeue) to dropdown-menu on
@@ -548,7 +579,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-91
+  2.1-b4rt-91
 
 - used idea from "lord_nor's port fix" and added a method in handler-baseclass
   to set client-port on start. it is used by all clients and so now working for
@@ -632,7 +663,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-9
+  2.1-b4rt-9
 
 - changes from v9-test to v9-rc
   # new #
@@ -788,7 +819,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-85
+  2.1-b4rt-85
 
 - fixed transmission-transfer-values problem.
   http://www.torrentflux.com/forum/index.php/topic,1265.msg11508.html#msg11508
@@ -811,7 +842,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-84
+  2.1-b4rt-84
 
 - bulk-operations
   bulk-operations in drop-down are now available for "normal" users and only
@@ -840,7 +871,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-83
+  2.1-b4rt-83
 
 - added "bulk"-operations for admins. as this function operates on all clients
   of the torrentflux-installation its a admin-only function. (if not this code
@@ -905,7 +936,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-82
+  2.1-b4rt-82
 
 - newest available patched transmissioncli included in the tarball.
 
@@ -933,7 +964,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-81
+  2.1-b4rt-81
 
 - introduced per-user-settings. users can set their personal settings (these
   override admins default-settings) in their profile.
@@ -957,7 +988,7 @@ $Id$
 
 --------------------------------------------------------------------------------
 
-  b4rt-802
+  2.1-b4rt-802
 
 - rewrote parts of admin-page
   ~ splitted settings-safe functions.
@@ -971,7 +1002,7 @@ $Id$
 --------------------------------------------------------------------------------
 
 
-  b4rt-801
+  2.1-b4rt-801
 
 - bug fixed which prevented non-admin-users to delete their files in dir-view.
 
@@ -979,7 +1010,7 @@ $Id$
 --------------------------------------------------------------------------------
 
 
-  b4rt-8
+  2.1-b4rt-8
 
 
 smaller things
@@ -1136,7 +1167,7 @@ QueueManager-Implementation "tfqmgr"
 
 --------------------------------------------------------------------------------
 
-  b4rt-7
+  2.1-b4rt-7
 
 - torrent-details-page show scrape-info of the torrent. (only available when
   transmissioncli is selected as meta-info-client)
@@ -1271,7 +1302,7 @@ QueueManager-Implementation "tfqmgr"
 
 --------------------------------------------------------------------------------
 
-  b4rt-61
+  2.1-b4rt-61
 
 - about queue-manager-support in this version :
   http://www.torrentflux.com/forum/index.php/topic,1265.msg9986.html#msg9986
@@ -1291,7 +1322,7 @@ QueueManager-Implementation "tfqmgr"
 
 --------------------------------------------------------------------------------
 
-  b4rt-6
+  2.1-b4rt-6
 
 - multi-multi-clients / client-handler v 0.2
 
@@ -1387,7 +1418,7 @@ QueueManager-Implementation "tfqmgr"
 
 --------------------------------------------------------------------------------
 
-  b4rt-5
+  2.1-b4rt-5
 
 - basic-auth hack. read the thread
   http://www.torrentflux.com/forum/index.php/topic,1295.0.html
@@ -1415,7 +1446,7 @@ QueueManager-Implementation "tfqmgr"
 
 --------------------------------------------------------------------------------
 
-  b4rt-4
+  2.1-b4rt-4
 
 - MRTG-integration
   if mrtg should be used additional setup is needed. read the thread
@@ -1453,7 +1484,7 @@ QueueManager-Implementation "tfqmgr"
 
 --------------------------------------------------------------------------------
 
-  b4rt-3
+  2.1-b4rt-3
 
 - functionality/usability.
   ~ persistent torrent-settings. start-form is prefilled when restarting a
