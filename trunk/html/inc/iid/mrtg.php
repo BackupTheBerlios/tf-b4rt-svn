@@ -48,7 +48,7 @@ if ($dirHandle = @opendir('./mrtg')) {
 	$htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
 	$idx = 0;
 	while (false !== ($file = readdir($dirHandle))) {
-		if (preg_match("/.*inc/i", $file)) {
+		if ((strlen($file) > 4) && (substr(strtolower($file), -4) == ".inc")) {
 			$htmlTargetsCount++;
 			$tempAry = explode('.',$file);
       		$targetName = array_shift($tempAry);
