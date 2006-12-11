@@ -200,9 +200,10 @@ function indexProcessDownload($url_upload) {
 		require_once("inc/classes/SimpleHTTP.php");
 		$simpleHTTP = SimpleHTTP::getInstance($cfg);
 		$content = $simpleHTTP->getData($url_upload);
+
 		if (($simpleHTTP->state == 2) && (strlen($content) > 0)) {
 			$file_name = ($simpleHTTP->filename != "")
-				? $simpleHTTP->filename
+				? cleanFileName($simpleHTTP->filename)
 				: cleanFileName($file_name);
 			// check if content contains html
 			if ($cfg['debuglevel'] > 0) {
