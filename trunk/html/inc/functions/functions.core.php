@@ -2727,6 +2727,24 @@ function isValidTransfer($transfer) {
 }
 
 /**
+ * check if path is valid
+ *
+ * @param $path
+ * @param $ext
+ * @return boolean
+ */
+function isValidPath($path, $ext = "") {
+	if (preg_match("/\\\/", $path)) return false;
+	if (preg_match("/\.\.\//", $path)) return false;
+	if ($ext != "") {
+		$extLength = strlen($ext);
+		if (strlen($path) < $extLength) return false;
+		if ((substr(strtolower($path), -($extLength)) !== strtolower($ext))) return false;
+	}
+	return true;
+}
+
+/**
  * print message
  *
  * @param $message

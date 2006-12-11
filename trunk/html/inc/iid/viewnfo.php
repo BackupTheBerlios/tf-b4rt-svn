@@ -29,13 +29,18 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// contributed by NovaKing -- thanks duder!
+// target-file
+$file = getRequestVar("path");
+$fileIsValid = (isValidPath($file, ".nfo") || isValidPath($file, ".txt") || isValidPath($file, ".log"));
+if (!$fileIsValid) {
+	AuditAction($cfg["constants"]["error"], "Invalid NFO-file : ".$cfg["user"]." tried to access ".$file);
+	showErrorPage("Invalid NFO-file : <br>".$file);
+}
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.viewnfo.tmpl");
 
 // set vars
-$file = $_REQUEST["path"];
 $tmpl->setvar('file', $file);
 $folder = htmlspecialchars(substr($file, 0, strrpos($file, "/" )));
 $tmpl->setvar('folder', $folder);
