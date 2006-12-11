@@ -21,8 +21,13 @@
 
 *******************************************************************************/
 
-// prevent invocation from web
-if (!isset($argv)) die();
+// prevent invocation from web (hopefully on all the php-config-permutations)
+if (!empty($_REQUEST)) die();
+if (!empty($_GET)) die();
+if (!empty($_POST)) die();
+if (empty($argv[0])) die();
+if (empty($_SERVER['argv'][0])) die();
+if ($argv[0] != $_SERVER['argv'][0]) die();
 
 /******************************************************************************/
 
