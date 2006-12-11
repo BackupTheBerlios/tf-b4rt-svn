@@ -1202,7 +1202,7 @@ function deleteTorrentData($torrent) {
 			}
 			$delete = $cfg["savepath"].$delete;
 			$del = stripslashes(stripslashes($delete));
-			if (!ereg("(\.\.\/)", $del)) {
+			if (isValidPath($del)) {
 				 avddelete($del);
 				 $arTemp = explode("/", $del);
 				 if (count($arTemp) > 1) {
@@ -1245,7 +1245,7 @@ function getTorrentDataSize($torrent) {
 		}
 		$name = $cfg["savepath"].$name;
 		$tData = stripslashes(stripslashes($name));
-		if (!ereg("(\.\.\/)", $tData))
+		if (isValidPath($tData))
 			return file_size($tData);
 	}
 	return -1;

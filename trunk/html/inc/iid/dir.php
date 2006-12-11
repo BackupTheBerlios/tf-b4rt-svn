@@ -49,8 +49,11 @@ $down = getRequestVar('down');
 $tar = getRequestVar('tar');
 $multidel = getRequestVar('multidel');
 $dir = html_entity_decode(rawurldecode(getRequestVar('dir')));
-if (preg_match("/\\\/", $dir)) $dir = "";
-if (preg_match("/\.\.\//", $dir)) $dir = "";
+// check dir-var
+if (isValidPath($dir) !== true) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
+	$dir = "";
+}
 $dir = stripslashes($dir);
 
 /*******************************************************************************
@@ -61,7 +64,7 @@ if ($chmod != "") {
 	if ((isValidEntry(basename($dir))) && (hasPermission($dir, $cfg["user"], 'w')))
 		chmodRecursive($cfg["path"].$dir);
 	else
-		AuditAction($cfg["constants"]["error"], "ILLEGAL CHNOD: ".$cfg["user"]." tried to chmod ".$dir);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL CHMOD: ".$cfg["user"]." tried to chmod ".$dir);
 	header("Location: index.php?iid=dir&dir=".urlencode($dir));
 	exit();
 }
@@ -77,7 +80,7 @@ if ($del != "") {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
 		$current = $del;
 		$del = stripslashes(stripslashes($del));
-		if (!ereg("(\.\.\/)", $del)) {
+		if (isValidPath($del)) {
 			$arTemp = explode("/", $del);
 			if (count($arTemp) > 1) {
 				array_pop($arTemp);
@@ -116,7 +119,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
 		$current = $down;
 		$down = stripslashes(stripslashes($down));
-		if (!ereg("(\.\.\/)", $down)) {
+		if (isValidPath($down)) {
 			$path = $cfg["path"].$down;
 			$p = explode(".", $path);
 			$pc = count($p);
@@ -144,7 +147,7 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
 		$current = $tar;
 		$del = stripslashes(stripslashes($tar));
-		if (!ereg("(\.\.\/)", $tar)) {
+		if (isValidPath($tar)) {
 			$arTemp = explode("/", $tar);
 			if (count($arTemp) > 1) {
 				array_pop($arTemp);
