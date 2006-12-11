@@ -30,8 +30,11 @@ $del = getRequestVar('del');
 $down = getRequestVar('down');
 $tar = getRequestVar('tar');
 $dir = urldecode(getRequestVar('dir'));
-if (preg_match("/\\\/", $dir)) $dir = "";
-if (preg_match("/\.\.\//", $dir)) $dir = "";
+// check dir-var
+if (isValidPath($dir) !== true) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
+	$dir = "";
+}
 $dir = stripslashes($dir);
 
 // -----------------------------------------------------------------------------
@@ -53,7 +56,7 @@ if ($down != "" && $cfg["enable_file_download"]) {
     // the second strip will give us the correct
     //  "test/tester's file/test.txt"
     $down = stripslashes(stripslashes($down));
-    if (!ereg("(\.\.\/)", $down)) {
+    if (isValidPath($down)) {
         $path = $cfg["path"].$down;
         $p = explode(".", $path);
         $pc = count($p);
@@ -98,7 +101,7 @@ if ($tar != "" && $cfg["enable_file_download"]) {
     // the second strip will give us the correct
     //  "test/tester's file/test.txt"
     $tar = stripslashes(stripslashes($tar));
-    if (!ereg("(\.\.\/)", $tar)) {
+    if (isValidPath($tar)) {
         // This prevents the script from getting killed off when running lengthy tar jobs.
         ini_set("max_execution_time", 3600);
         $tar = $cfg["path"].$tar;
@@ -151,7 +154,7 @@ if ($tar != "" && $cfg["enable_file_download"]) {
 if ($dir == "")
     unset($dir);
 if (isset($dir)) {
-    if (ereg("(\.\.)", $dir))
+    if (isValidPath($dir) !== true)
         unset($dir);
     else
         $dir = $dir."/";

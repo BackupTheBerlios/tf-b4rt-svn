@@ -260,8 +260,6 @@ function getSumMaxDownRate() {
  * Function to delete saved Torrent Settings
  */
 function deleteTorrentSettings($torrent) {
-    //if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-    //    return false;
     global $db;
     $sql = "DELETE FROM tf_torrents WHERE torrent = '".$torrent."'";
     $db->Execute($sql);
@@ -539,8 +537,6 @@ function getTorrentTotalsCurrentOP($torrent,$btclient,$afu,$afd) {
  */
 function resetTorrentTotals($torrent, $delete = false) {
     global $cfg, $db;
-    if ( !isset($torrent) || !preg_match('/^[a-zA-Z0-9._]+$/', $torrent) )
-        return false;
     // vars
     $torrentId = getTorrentHash($torrent);
     $alias = getAliasName($torrent);
@@ -685,7 +681,7 @@ function deleteTorrentData($torrent) {
             $delete = $cfg["savepath"].$delete;
             # this is from dir.php - its not a function, and we need to call it several times
             $del = stripslashes(stripslashes($delete));
-            if (!ereg("(\.\.\/)", $del)) {
+            if (isValidPath($del)) {
                  avddelete($del);
                  $arTemp = explode("/", $del);
                  if (count($arTemp) > 1) {
@@ -725,9 +721,9 @@ function getTorrentDataSize($torrent) {
         if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"])))
             $cfg["savepath"] = $cfg["path"].getOwner($torrent).'/';
         $name = $cfg["savepath"].$name;
-        # this is from dir.php - its not a function, and we need to call it several times
+        // this is from dir.php - its not a function, and we need to call it several times
         $tData = stripslashes(stripslashes($name));
-        if (!ereg("(\.\.\/)", $tData)) {
+        if (isValidPath($tData)) {
             $fileSize = file_size($tData);
             return $fileSize;
         }
@@ -755,7 +751,7 @@ function delDirEntry($del) {
         //    the second strip will give us the correct
         //        "test/tester's file/test.txt"
         $del = stripslashes(stripslashes($del));
-        if (!ereg("(\.\.\/)", $del)) {
+        if (isValidPath($del)) {
             avddelete($cfg["path"].$del);
             $arTemp = explode("/", $del);
             if (count($arTemp) > 1) {
@@ -2310,9 +2306,7 @@ function isValidTransfer($transfer) {
 	global $cfg;
 	if (strpos($transfer, "../") !== false)
 		return false;
-	if (preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer))
-		return true;
-	return false;
+	return ((preg_match('/^[a-zA-Z0-9._\/]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
 }
 
 /**
