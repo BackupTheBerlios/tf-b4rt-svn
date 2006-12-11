@@ -25,13 +25,22 @@
 include_once("config.php");
 include_once("functions.php");
 
-DisplayHead("View NFO");
+// target-file
+$file = getRequestVar("path");
+$fileIsValid = (isValidPath($file, ".nfo") || isValidPath($file, ".txt") || isValidPath($file, ".log"));
+if (!$fileIsValid) {
+	AuditAction($cfg["constants"]["error"], "Invalid NFO-file : ".$cfg["user"]." tried to access ".$file);
+	showErrorPage("Invalid NFO-file : <br>".$file);
+}
 
-$file = $_GET["path"];
+// get content
 $folder = htmlspecialchars( substr( $file, 0, strrpos( $file, "/" ) ) );
-
 if( ( $output = @file_get_contents( $cfg["path"] . $file ) ) === false )
     $output = "Error opening NFO File.";
+
+// output
+DisplayHead("View NFO");
+
 ?>
 <div align="center" style="width: 740px;">
 <a href="<?php echo "viewnfo.php?path=$file&dos=1"; ?>">DOS Format</a> :-:
