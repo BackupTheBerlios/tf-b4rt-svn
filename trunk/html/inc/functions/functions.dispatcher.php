@@ -199,7 +199,7 @@ function indexProcessDownload($url_upload) {
 		// require SimpleHTTP
 		require_once("inc/classes/SimpleHTTP.php");
 		$simpleHTTP = SimpleHTTP::getInstance($cfg);
-		$content = $simpleHTTP->getData($url_upload);
+		$content = $simpleHTTP->getTorrent($url_upload);
 
 		if (($simpleHTTP->state == 2) && (strlen($content) > 0)) {
 			$file_name = ($simpleHTTP->filename != "")
@@ -231,7 +231,12 @@ function indexProcessDownload($url_upload) {
 				}
 			}
 		} else {
-			$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
+			if(!empty($simpleHTTP->messages)){
+				// Tag on any messages found in $simpleHTTP->messages:
+				$messages .= "Error downloading URL: ".$simpleHTTP->formatMessages();
+			} else {
+				$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
+			}
 		}
 		if ($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);

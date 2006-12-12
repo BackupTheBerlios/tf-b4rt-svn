@@ -521,6 +521,21 @@ class SimpleHTTP
 		return $data;
 	}
 
+	/**
+	*  Format any messages contained in $messages array ready for output
+	*  in different contexts.
+	* @param	string	$format - formatting to apply to messages.  Valid options are: 'text' (plain text output)
+	* TODO: needs extending to handle formatting of HTML messages
+	*/
+	function formatMessages($format="text"){
+		$msg="";
+		$count=1;
+		foreach($this->messages as $thisMsg){
+			$msg.= $count.=": $thisMsg\n";
+			$count++;
+		}
+		return $msg;
+	}
 }
 
 ?>
