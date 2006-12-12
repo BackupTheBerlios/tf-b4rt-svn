@@ -20,6 +20,16 @@
 
 *******************************************************************************/
 
+// states
+define('MAINTENANCEANDREPAIR_STATE_NULL', 0);          // null (not initialized)
+define('MAINTENANCEANDREPAIR_STATE_INITIALIZED', 1);              // initialized
+define('MAINTENANCEANDREPAIR_STATE_DONE', 2);                            // done
+define('MAINTENANCEANDREPAIR_STATE_ERROR', -1);                         // error
+
+// modes
+define('MAINTENANCEANDREPAIR_MODE_CLI', 1);                               // cli
+define('MAINTENANCEANDREPAIR_MODE_WEB', 2);                               // web
+
 /**
  * MaintenanceAndRepair
  */
@@ -40,15 +50,9 @@ class MaintenanceAndRepair
     var $messages = array();
 
     // state
-    //  0 : not initialized
-    //  1 : initialized
-    //  2 : done
-    // -1 : error
-    var $state = 0;
+    var $state = MAINTENANCEANDREPAIR_STATE_NULL;
 
     // mode
-    // 1 : cli
-    // 2 : web
     var $mode = 0;
 
 	// transfer fields
@@ -84,7 +88,7 @@ class MaintenanceAndRepair
 		global $instanceMaintenanceAndRepair;
 		return (isset($instanceMaintenanceAndRepair))
 			? $instanceMaintenanceAndRepair->state
-			: 0;
+			: MAINTENANCEANDREPAIR_STATE_NULL;
     }
 
     /**
@@ -140,18 +144,18 @@ class MaintenanceAndRepair
         // cfg
         $this->cfg = unserialize($cfg);
         if (empty($this->cfg)) {
-        	$this->state = -1;
+        	$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
             array_push($this->messages, "Config not passed");
             return false;
         }
         // cli/web
 		global $argv;
 		if (isset($argv)) {
-			$this->mode = 1;
+			$this->mode = MAINTENANCEANDREPAIR_MODE_CLI;
 		} else
-			$this->mode = 2;
+			$this->mode = MAINTENANCEANDREPAIR_MODE_WEB;
         // state
-        $this->state = 1;
+        $this->state = MAINTENANCEANDREPAIR_STATE_INITIALIZED;
     }
 
 	// =========================================================================
@@ -175,7 +179,7 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("Maintenance done.\n");
 		// state
-		$this->state = 2;
+		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
 	}
 
 	/**
@@ -195,7 +199,7 @@ class MaintenanceAndRepair
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
-		$this->state = 2;
+		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
 	}
 
 	// =========================================================================
@@ -221,7 +225,7 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("Maintenance done.\n");
 		// state
-		$this->state = 2;
+		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
 	}
 
 	/**
@@ -274,7 +278,7 @@ class MaintenanceAndRepair
 		$this->_outputMessage("transfers-maintenance...\n");
 		// sanity-check for transfers-dir
 		if (!is_dir($this->cfg["transfer_file_path"])) {
-			$this->state = -1;
+			$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
             $msg = "invalid dir-settings. no dir : ".$this->cfg["transfer_file_path"];
             array_push($this->messages , $msg);
 			$this->_outputError($msg."\n");
@@ -368,7 +372,7 @@ class MaintenanceAndRepair
 			$this->fixedTransfers = array();
 			$this->_outputMessage("restarting died clients...\n");
 			// hold current user
-			$whoami = ($this->mode == 1) ? GetSuperAdmin() : $this->cfg["user"];
+			$whoami = ($this->mode == MAINTENANCEANDREPAIR_MODE_CLI) ? GetSuperAdmin() : $this->cfg["user"];
 			foreach ($this->bogusTransfers as $bogusTransfer) {
 				$transfer = $bogusTransfer.".torrent";
 				$alias = $bogusTransfer.".stat";
@@ -598,7 +602,7 @@ class MaintenanceAndRepair
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
-		$this->state = 2;
+		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
 	}
 
 	/**
@@ -610,7 +614,7 @@ class MaintenanceAndRepair
 		$this->_outputMessage("repairing app...\n");
 		// sanity-check for transfers-dir
 		if (!is_dir($this->cfg["transfer_file_path"])) {
-			$this->state = -1;
+			$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
             $msg = "invalid dir-settings. no dir : ".$this->cfg["transfer_file_path"];
             array_push($this->messages , $msg);
 			$this->_outputError($msg."\n");
@@ -667,7 +671,7 @@ class MaintenanceAndRepair
      */
 	function _outputMessage($message) {
         // only in cli-mode
-		if ($this->mode == 1)
+		if ($this->mode == MAINTENANCEANDREPAIR_MODE_CLI)
 			printMessage($this->name, $message);
     }
 
@@ -678,7 +682,7 @@ class MaintenanceAndRepair
      */
 	function _outputError($message) {
         // only in cli-mode
-		if ($this->mode == 1)
+		if ($this->mode == MAINTENANCEANDREPAIR_MODE_CLI)
 			printError($this->name, $message);
     }
 
