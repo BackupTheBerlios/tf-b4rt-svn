@@ -20,127 +20,92 @@
 
 *******************************************************************************/
 
+// states
+define('FLUXDMOD_STATE_NULL', 0);                      // null (not initialized)
+define('FLUXDMOD_STATE_INITIALIZED', 1);                          // initialized
+define('FLUXDMOD_STATE_RUNNING', 2);                                 //  running
+define('FLUXDMOD_STATE_ERROR', -1);                                     // error
+
 // base class for a Fluxd-Service-module
 class FluxdServiceMod
 {
-	// fields
+	// public fields
 
 	// mod-related
 	var $moduleName = "";
     var $version = "0.2";
 
-    // call-result
-    var $callResult;
+    // state
+    var $state = FLUXDMOD_STATE_NULL;
+
+    // messages-array
+    var $messages = array();
+
+    // private fields
 
     // config-array
-    var $cfg = array();
+    var $_cfg = array();
 
-    // messages-string
-    var $messages = "";
+	// =========================================================================
+	// public static methods
+	// =========================================================================
 
-    // Fluxd-instance
-    var $fluxd;
+    /**
+     * accessor for singleton
+     *
+     * @return FluxdServiceMod
+     */
+    function getInstance() {}
 
-    // state
-    //  0 : not initialized
-    //  1 : initialized
-    //  2 : started/running
-    // -1 : error
-    var $state = 0;
+    /**
+     * initialize FluxdServiceMod.
+     */
+    function initialize() {}
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+	function getState() {}
+
+    /**
+     * getMessages
+     * @return array
+     */
+    function getMessages() {}
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
      */
     function FluxdServiceMod() {
-        $this->state = -1;
+        $this->state = FLUXDMOD_STATE_ERROR;
         die('base class -- dont do this');
     }
 
-    /**
-     * factory : get FluxdServiceMod-instance
-     *
-     * @param $fluxCfg torrentflux config-array
-     * @param $fluxd Fluxd instance
-     * @param $moduleType (Qmgr|Fluxinet|Trigger|Watch|Maintenance)
-     * @return FluxdServiceMod-instance
-     */
-    function getFluxdServiceModInstance($fluxCfg, $fluxd, $moduleType) {
-    	// create and return object-instance
-        $classFile = 'inc/classes/FluxdServiceMod.'.$moduleType.'.php';
-        switch ($moduleType) {
-            case "Qmgr":
-            	require_once($classFile);
-                return new FluxdQmgr(serialize($fluxCfg), $fluxd);
-            case "Fluxinet":
-            	require_once($classFile);
-                return new FluxdFluxinet(serialize($fluxCfg), $fluxd);
-            case "Watch":
-            	require_once($classFile);
-                return new FluxdWatch(serialize($fluxCfg), $fluxd);
-            case "Rssad":
-            	require_once($classFile);
-                return new FluxdRssad(serialize($fluxCfg), $fluxd);
-            case "Trigger":
-            	require_once($classFile);
-                return new FluxdTrigger(serialize($fluxCfg), $fluxd);
-            case "Maintenance":
-            	require_once($classFile);
-                return new FluxdMaintenance(serialize($fluxCfg), $fluxd);
-            default:
-            	AuditAction($fluxCfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$moduleType);
-				global $argv;
-    			if (isset($argv))
-    				die("Invalid FluxdServiceMod-Class : ".$moduleType);
-    			else
-    				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($moduleType, ENT_QUOTES));
-        }
-    }
+	// =========================================================================
+	// public methods
+	// =========================================================================
 
     /**
      * initialize the FluxdServiceMod.
      *
      * @param $cfg torrentflux config-array
-     * @param $fluxd Fluxd instance
      */
-    function initialize($cfg, $fluxd) {
+    function instance_initialize($cfg) {
         // config
-    	$this->cfg = unserialize($cfg);
-        if (empty($this->cfg)) {
-            $this->messages = "Config not passed";
-            $this->state = -1;
-            return;
-        }
-        // Fluxd-instance
-        $this->fluxd = $fluxd;
-        if (!(isset($this->fluxd))) {
-            $this->messages = "Fluxd-instance not set";
-            $this->state = -1;
+    	$this->_cfg = unserialize($cfg);
+        if (empty($this->_cfg)) {
+            array_push($this->messages , "Config not passed");
+            $this->state = FLUXDMOD_STATE_ERROR;
             return;
         }
         // all ok
-        $this->state = 1;
-    }
-
-    /**
-     * setConfig
-     *
-     * @param $key
-     * @param $val
-     */
-    function setConfig($key, $val) {
-    	// send command to Qmgr
-    	$this->sendServiceCommand("set;".$key.";".$val, 0);
-    }
-
-    /**
-     * send service command
-     * @param $command
-     * @param $read does this command return something ?
-     * @return string with retval or null if error
-     */
-    function sendServiceCommand($command, $read = 0) {
-        $this->callResult = $this->fluxd->sendCommand('!'.$this->moduleName.':'.$command, $read);
-        return $this->callResult;
+        $this->state = FLUXDMOD_STATE_INITIALIZED;
     }
 
 }

@@ -205,5 +205,6 @@ if ($cfg['enable_xfer'] == 1) {
  *  fluxd
  ******************************************************************************/
 Fluxd::initialize();
+//Fluxd::initializeServiceMod('Qmgr');
 
 ?>

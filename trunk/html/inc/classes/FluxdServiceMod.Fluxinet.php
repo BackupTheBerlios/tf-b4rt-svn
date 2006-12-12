@@ -23,16 +23,70 @@
 // class for the Fluxd-Service-module Fluxinet
 class FluxdFluxinet extends FluxdServiceMod
 {
+	// public fields
+
 	// version
 	var $version = "0.2";
+
+	// =========================================================================
+	// public static methods
+	// =========================================================================
+
+    /**
+     * accessor for singleton
+     *
+     * @return FluxdFluxinet
+     */
+    function getInstance() {
+		global $instanceFluxdFluxinet;
+		// initialize if needed
+		if (!isset($instanceFluxdFluxinet))
+			FluxdFluxinet::initialize();
+		return $instanceFluxdFluxinet;
+    }
+
+    /**
+     * initialize FluxdFluxinet.
+     */
+    function initialize() {
+    	global $cfg, $instanceFluxdFluxinet;
+    	// create instance
+    	if (!isset($instanceFluxdFluxinet))
+    		$instanceFluxdFluxinet = new FluxdFluxinet(serialize($cfg));
+    }
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+    function getState() {
+		global $instanceFluxdFluxinet;
+		return (isset($instanceFluxdFluxinet))
+			? $instanceFluxdFluxinet->state
+			: FLUXDMOD_STATE_NULL;
+    }
+
+    /**
+     * getMessages
+     * @return array
+     */
+    function getMessages() {
+    	global $instanceFluxdFluxinet;
+		return $instanceFluxdFluxinet->messages;
+    }
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
      */
-    function FluxdFluxinet($cfg, $fluxd) {
+    function FluxdFluxinet($cfg) {
         $this->moduleName = "Fluxinet";
 		// initialize
-        $this->initialize($cfg, $fluxd);
+        $this->instance_initialize($cfg);
     }
 
 }

@@ -69,6 +69,19 @@ class MaintenanceAndRepair
 	// =========================================================================
 
     /**
+     * accessor for singleton
+     *
+     * @return MaintenanceAndRepair
+     */
+    function getInstance() {
+		global $instanceMaintenanceAndRepair;
+		// initialize
+		MaintenanceAndRepair::initialize();
+		// return instance
+		return $instanceMaintenanceAndRepair;
+    }
+
+    /**
      * initialize MaintenanceAndRepair.
      */
     function initialize() {
@@ -88,19 +101,6 @@ class MaintenanceAndRepair
 		return (isset($instanceMaintenanceAndRepair))
 			? $instanceMaintenanceAndRepair->state
 			: MAINTENANCEANDREPAIR_STATE_NULL;
-    }
-
-    /**
-     * accessor for singleton
-     *
-     * @return MaintenanceAndRepair
-     */
-    function getInstance() {
-		global $instanceMaintenanceAndRepair;
-		// initialize
-		MaintenanceAndRepair::initialize();
-		// return instance
-		return $instanceMaintenanceAndRepair;
     }
 
     /**

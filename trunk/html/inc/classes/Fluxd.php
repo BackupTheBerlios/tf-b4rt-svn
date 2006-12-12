@@ -37,8 +37,8 @@ class Fluxd
     // state
     var $state = FLUXD_STATE_NULL;
 
-    // messages-string
-    var $messages = "";
+    // messages-array
+    var $messages = array();
 
     // private fields
 
@@ -63,9 +63,20 @@ class Fluxd
 	// =========================================================================
 
     /**
-     * initialize Fluxd.
+     * accessor for singleton
      *
-     * @return boolean
+     * @return Fluxd
+     */
+    function getInstance() {
+		global $instanceFluxd;
+		// initialize if needed
+		if (!isset($instanceFluxd))
+			Fluxd::initialize();
+		return $instanceFluxd;
+    }
+
+    /**
+     * initialize Fluxd.
      */
     function initialize() {
     	global $cfg, $instanceFluxd;
@@ -87,16 +98,45 @@ class Fluxd
     }
 
     /**
-     * accessor for singleton
-     *
-     * @return Fluxd
+     * getMessages
+     * @return array
      */
-    function getInstance() {
-		global $instanceFluxd;
-		// initialize if needed
-		if (!isset($instanceFluxd))
-			Fluxd::initialize();
-		return $instanceFluxd;
+    function getMessages() {
+    	global $instanceFluxd;
+		return $instanceFluxd->messages;
+    }
+
+    /**
+     * initialize a Fluxd-mod.
+     */
+    function initializeServiceMod($type) {
+        switch ($type) {
+            case "Qmgr":
+            	require_once('inc/classes/FluxdServiceMod.Qmgr.php');
+            	FluxdQmgr::initialize();
+            case "Fluxinet":
+            	require_once('inc/classes/FluxdServiceMod.Fluxinet.php');
+                FluxdFluxinet::initialize();
+            case "Watch":
+            	require_once('inc/classes/FluxdServiceMod.Watch.php');
+                FluxdWatch::initialize();
+            case "Rssad":
+            	require_once('inc/classes/FluxdServiceMod.Rssad.php');
+                FluxdRssad::initialize();
+            case "Trigger":
+            	require_once('inc/classes/FluxdServiceMod.Trigger.php');
+                FluxdTrigger::initialize();
+            case "Maintenance":
+            	require_once('inc/classes/FluxdServiceMod.Maintenance.php');
+                FluxdMaintenance::initialize();
+            default:
+            	AuditAction($fluxCfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$type);
+				global $argv;
+    			if (isset($argv))
+    				die("Invalid FluxdServiceMod-Class : ".$type);
+    			else
+    				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($type, ENT_QUOTES));
+        }
     }
 
     /**
@@ -106,15 +146,6 @@ class Fluxd
     function isRunning() {
     	global $instanceFluxd;
 		return ($instanceFluxd->state == FLUXD_STATE_RUNNING);
-    }
-
-    /**
-     * getMessages
-     * @return string
-     */
-    function getMessages() {
-    	global $instanceFluxd;
-		return $instanceFluxd->messages;
     }
 
 	/**
@@ -234,6 +265,17 @@ class Fluxd
 		return $instanceFluxd->instance_sendCommand($command, $read);
     }
 
+    /**
+     * send service command
+     * @param $command
+     * @param $read does this command return something ?
+     * @return string with retval or null if error
+     */
+    function sendServiceCommand($mod, $command, $read = 0) {
+    	global $instanceFluxd;
+    	return $instanceFluxd->instance_sendCommand('!'.$mod.':'.$command, $read);
+    }
+
 	// =========================================================================
 	// ctor
 	// =========================================================================
@@ -245,7 +287,7 @@ class Fluxd
     	// basic init
         $this->_cfg = unserialize($cfg);
         if (empty($this->_cfg)) {
-            $this->messages = "Config not passed";
+            array_push($this->messages , "Config not passed");
             $this->state = FLUXD_STATE_ERROR;
             return null;
         }
@@ -258,8 +300,6 @@ class Fluxd
         // check if fluxd running
         if ($this->_isRunning())
         	$this->state = FLUXD_STATE_RUNNING;
-        // TODO initialize fluxd-service-modules
-		// FluxdQmgr::initialize();
     }
 
 	// =========================================================================
@@ -314,9 +354,9 @@ class Fluxd
             	return true;
             } else {
             	AuditAction($this->_cfg["constants"]["fluxd"], "errors starting fluxd");
-            	// set messages to startcommand for debug
+            	// add startcommand to messages for debug
             	// TODO : set better message
-            	$this->messages = $startCommand;
+            	array_push($this->messages , $startCommand);
             	// Set the state
             	$this->state = FLUXD_STATE_ERROR;
             	// return
@@ -468,7 +508,7 @@ class Fluxd
         	$socket = -1;
             $socket = @socket_create(AF_UNIX, SOCK_STREAM, 0);
             if ($socket < 0) {
-            	$this->messages = "socket_create() failed: reason: " . @socket_strerror($socket);
+            	array_push($this->messages , "socket_create() failed: reason: ".@socket_strerror($socket));
             	$this->state = FLUXD_STATE_ERROR;
                 return null;
             }
@@ -480,7 +520,7 @@ class Fluxd
             $result = -1;
             $result = @socket_connect($socket, $this->_pathSocket);
             if ($result < 0) {
-            	$this->messages = "socket_connect() failed: reason: " . @socket_strerror($result);
+            	array_push($this->messages , "socket_connect() failed: reason: ".@socket_strerror($result));
             	$this->state = FLUXD_STATE_ERROR;
                 return null;
             }

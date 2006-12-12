@@ -79,19 +79,18 @@ class AliasFile
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'inc/classes/AliasFile.'.$clientClass.'.php';
         switch ($clientClass) {
             case "tornado":
-            	require_once($classFile);
+            	require_once('inc/classes/AliasFile.tornado.php');
                 return new AliasFileTornado($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
             case "transmission":
-            	require_once($classFile);
+            	require_once('inc/classes/AliasFile.transmission.php');
                 return new AliasFileTransmission($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
             case "mainline":
-            	require_once($classFile);
+            	require_once('inc/classes/AliasFile.mainline.php');
                 return new AliasFileMainline($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
             case "wget":
-            	require_once($classFile);
+            	require_once('inc/classes/AliasFile.wget.php');
                 return new AliasFileWget($fluxCfg["transfer_file_path"].$aliasname, $user, serialize($fluxCfg));
             default:
             	AuditAction($fluxCfg["constants"]["error"], "Invalid AliasFile-Class : ".$clientClass);

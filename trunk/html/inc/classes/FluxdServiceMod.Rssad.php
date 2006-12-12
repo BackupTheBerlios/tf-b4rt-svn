@@ -45,7 +45,7 @@ class FluxdRssad extends FluxdServiceMod
          // check our base-dir
         if (!(checkDirectory($this->cfg["path"].$this->basedir))) {
             $this->messages = "Rssad base-dir ".$this->basedir." error.";
-            $this->state = -1;
+            $this->state = FLUXDMOD_STATE_ERROR;
         }
     }
 

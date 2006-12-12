@@ -59,19 +59,18 @@ class RunningTransfer
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'inc/classes/RunningTransfer.'.$clientClass.'.php';
         switch ($clientClass) {
             case "tornado":
-            	require_once($classFile);
+            	require_once('inc/classes/RunningTransfer.tornado.php');
                 return new RunningTransferTornado($psLine,serialize($fluxCfg));
             case "transmission":
-            	require_once($classFile);
+            	require_once('inc/classes/RunningTransfer.tornado.php');
                 return new RunningTransferTransmission($psLine,serialize($fluxCfg));
             case "mainline":
-            	require_once($classFile);
+            	require_once('inc/classes/RunningTransfer.tornado.php');
                 return new RunningTransferMainline($psLine,serialize($fluxCfg));
             case "wget":
-            	require_once($classFile);
+            	require_once('inc/classes/RunningTransfer.tornado.php');
                 return new RunningTransferWget($psLine,serialize($fluxCfg));
             default:
             	AuditAction($fluxCfg["constants"]["error"], "Invalid RunningTransfer-Class : ".$clientClass);

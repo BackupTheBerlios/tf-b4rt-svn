@@ -101,19 +101,18 @@ class ClientHandler
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'inc/classes/ClientHandler.'.$clientClass.'.php';
         switch ($clientClass) {
             case "tornado":
-            	require_once($classFile);
+            	require_once('inc/classes/ClientHandler.tornado.php');
                 return new ClientHandlerTornado(serialize($fluxCfg));
             case "transmission":
-            	require_once($classFile);
+            	require_once('inc/classes/ClientHandler.transmission.php');
                 return new ClientHandlerTransmission(serialize($fluxCfg));
             case "mainline":
-            	require_once($classFile);
+            	require_once('inc/classes/ClientHandler.mainline.php');
                 return new ClientHandlerMainline(serialize($fluxCfg));
             case "wget":
-            	require_once($classFile);
+            	require_once('inc/classes/ClientHandler.wget.php');
                 return new ClientHandlerWget(serialize($fluxCfg));
             default:
             	AuditAction($fluxCfg["constants"]["error"], "Invalid ClientHandler-Class : ".$clientClass);

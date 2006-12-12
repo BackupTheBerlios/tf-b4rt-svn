@@ -35,6 +35,8 @@ class FluxdQmgr extends FluxdServiceMod
         $this->initialize($cfg, $fluxd);
     }
 
+
+
     /**
      * getQueuedTorrents
      *
@@ -96,6 +98,8 @@ class FluxdQmgr extends FluxdServiceMod
             sleep(2);
         }
     }
+
+
 
     /**
      * updateStatFile
