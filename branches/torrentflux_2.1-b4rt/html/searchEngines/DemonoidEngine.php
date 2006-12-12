@@ -24,12 +24,12 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 /*
+	v 1.06 - Dec 12. 06 - Change path on main pages.
 	v 1.05 - May 20. 06 - Change to paging URL, addtion of user stats as per Qromes Request (should now appear above column headers)
 	v 1.04 - Apr 26. 06 - Fixed filtering lists - Possible bug in admin.php (line 1997 - option value [NO FILTER] needs setting to -1 instead of "")
 	v 1.03 - Apr 21, 06 - Modified first row on table to reflect correct date
 	v 1.02 - Apr 18, 06 - Added Update URL
 	v 1.01 - Apr 17, 06 - bug in filtering.
-
 */
 
 class SearchEngine extends SearchEngineBase
@@ -43,7 +43,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "Demonoid";
 
         $this->author = "moldavite";
-        $this->version = "1.05";
+        $this->version = "1.06";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1210.0.html";
 
         $this->Initialize($cfg);
@@ -325,22 +325,22 @@ class SearchEngine extends SearchEngineBase
     // Function to get Latest..
     function getLatest()
     {
-        $request = '/torrents/';
+        $request = '/files/';
 
 		if (array_key_exists("mainGenre",$_REQUEST) && array_key_exists("subGenre",$_REQUEST))
         {
-            $request = "/torrents/?category=".$_REQUEST["mainGenre"]."&subcategory=".$_REQUEST["subGenre"]."&language=0&seeded=0&external=2&query=&uid=0";
+            $request = "/files/?category=".$_REQUEST["mainGenre"]."&subcategory=".$_REQUEST["subGenre"]."&language=0&seeded=0&external=2&query=&uid=0";
 
         }
 		elseif (array_key_exists("subGenre",$_REQUEST))
         {
 			$splitted = explode(":", $_REQUEST['subGenre']);
-            $request = "/torrents/?category=".$splitted[0]."&subcategory=".$splitted[1]."&language=0&seeded=0&external=2&query=&uid=0";
+            $request = "/files/?category=".$splitted[0]."&subcategory=".$splitted[1]."&language=0&seeded=0&external=2&query=&uid=0";
 
         }
         else
         {
-            $request = "/torrents/";
+            $request = "/files/";
 
         }
 
@@ -373,7 +373,7 @@ class SearchEngine extends SearchEngineBase
     {
         if (array_key_exists("mainGenre",$_REQUEST) && array_key_exists("subGenre",$_REQUEST))
         {
-            $request = "/torrents/?category=".$_REQUEST['mainGenre']."&subcategory=".$_REQUEST["subGenre"]."&language=0&seeded=0&external=2&query=&uid=0";
+            $request = "/files/?category=".$_REQUEST['mainGenre']."&subcategory=".$_REQUEST["subGenre"]."&language=0&seeded=0&external=2&query=&uid=0";
 
         }
         // elseif (array_key_exists("mainGenre",$_REQUEST))
@@ -383,7 +383,7 @@ class SearchEngine extends SearchEngineBase
         // }
         else
         {
-            $request = "/torrents/?query=".$searchTerm;
+            $request = "/files/?query=".$searchTerm;
 
 		}
 
@@ -482,7 +482,6 @@ class SearchEngine extends SearchEngineBase
         $thing = $this->htmlPage;
 		$thing = str_replace("<a href=\"","<a href=\"http://www.demonoid.com",$thing);
 		$thing = str_replace("<img src=\"","<img src=\"http://www.demonoid.com",$thing);
-
         // We got a response so display it.
         // Chop the front end off.
 
