@@ -149,8 +149,7 @@ if (!(cacheIsSet($currentUser))) {
 
 	// maintenance-run
 	require_once("inc/classes/MaintenanceAndRepair.php");
-	$mat = MaintenanceAndRepair::getInstance($cfg);
-	$mat->maintenance(false);
+	MaintenanceAndRepair::maintenance(false);
 
 	// set session-settings
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;

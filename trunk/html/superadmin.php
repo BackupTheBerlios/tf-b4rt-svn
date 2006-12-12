@@ -502,8 +502,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Standard Maintenance-Run';
 				require_once("inc/classes/MaintenanceAndRepair.php");
-				$mat = MaintenanceAndRepair::getInstance($cfg);
-				$mat->maintenance(false);
+				MaintenanceAndRepair::maintenance(false);
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
@@ -512,8 +511,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Extended Maintenance-Run';
 				require_once("inc/classes/MaintenanceAndRepair.php");
-				$mat = MaintenanceAndRepair::getInstance($cfg);
-				$mat->maintenance(true);
+				MaintenanceAndRepair::maintenance(true);
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;
@@ -812,8 +810,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Repair';
-				$mat = MaintenanceAndRepair::getInstance($cfg);
-				$mat->repair();
+				MaintenanceAndRepair::repair();
 				$htmlMain .= ' <font color="green">done.</font>';
 				$htmlMain .= '<br><br>';
 				break;

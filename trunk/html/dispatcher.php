@@ -120,8 +120,7 @@ switch ($action) {
  ******************************************************************************/
     case "maintenance":
 		require_once("inc/classes/MaintenanceAndRepair.php");
-		$mat = MaintenanceAndRepair::getInstance($cfg);
-		$mat->maintenance((getRequestVar('trestart') == "true") ? true : false);
+		MaintenanceAndRepair::maintenance((getRequestVar('trestart') == "true") ? true : false);
     	break;
 
 /*******************************************************************************

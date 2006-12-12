@@ -118,12 +118,10 @@ if ((isset($action)) && ($action != "")) {
 			cliXferShutdown(@$argv[2]);
 			break;
 		case "repair":
-			$mat = MaintenanceAndRepair::getInstance($cfg);
-			$mat->repair();
+			MaintenanceAndRepair::repair();
         	exit();
 		case "maintenance":
-			$mat = MaintenanceAndRepair::getInstance($cfg);
-			$mat->maintenance(((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
+			MaintenanceAndRepair::maintenance(((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
         	exit();
 		case "dump":
 			cliDumpDatabase(@$argv[2]);
