@@ -66,6 +66,12 @@ Usage: btmakemetafile.py <trackerurl> <file> [file...] [params...]
     include_once("config.php");
     include_once("functions.php");
 
+	// is enabled ?
+	if ($cfg["enable_maketorrent"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use maketorrent");
+		showErrorPage("maketorrent is disabled.");
+	}
+
     // Variable information
     $tpath    = $cfg["torrent_file_path"];
     $tfile    = @ $_POST['torrent'];

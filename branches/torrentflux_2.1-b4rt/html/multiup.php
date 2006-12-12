@@ -23,6 +23,12 @@
 include_once("config.php");
 include_once("functions.php");
 
+// is enabled ?
+if ($cfg["enable_multiupload"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multiupload");
+	showErrorPage("multiupload is disabled.");
+}
+
 if (!empty($_FILES['upload_files'])) {
 	//echo '<pre>'; var_dump($_FILES); echo '</pre>';
     // instant action ?

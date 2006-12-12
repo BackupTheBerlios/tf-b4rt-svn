@@ -23,6 +23,12 @@
 include("config.php");
 include("functions.php");
 
+// is enabled ?
+if ($cfg["enable_rename"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use rename");
+	showErrorPage("rename is disabled.");
+}
+
 DisplayHead(_REN_TITLE, false);
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {

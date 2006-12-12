@@ -23,6 +23,12 @@
 include("config.php");
 include("functions.php");
 
+// is enabled ?
+if ($cfg["enable_rar"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use rar");
+	showErrorPage("rar is disabled.");
+}
+
 DisplayHead('Uncompressing File', false);
 echo "<body bgcolor=".$cfg["main_bgcolor"]." leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>";
 

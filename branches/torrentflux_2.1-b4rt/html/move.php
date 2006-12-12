@@ -23,6 +23,12 @@
 include("config.php");
 include("functions.php");
 
+// is enabled ?
+if ($cfg["enable_move"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use move");
+	showErrorPage("move is disabled.");
+}
+
 DisplayHead(_MOVE_FILE_TITLE, false);
 
 if((isset($_GET['start'])) && ($_GET['start'] == true)) {

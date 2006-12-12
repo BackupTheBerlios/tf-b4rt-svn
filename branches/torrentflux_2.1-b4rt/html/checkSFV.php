@@ -23,6 +23,12 @@
 include("config.php");
 include("functions.php");
 
+// is enabled ?
+if ($cfg["enable_sfvcheck"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use cksfv");
+	showErrorPage("cksfv is disabled.");
+}
+
 // load settings for bin-path
 include_once("settingsfunctions.php");
 loadSettings();

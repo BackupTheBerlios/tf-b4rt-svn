@@ -25,6 +25,12 @@ define('_DEFAULT_TARGET','traffic');
 include_once("config.php");
 include_once("functions.php");
 
+// is enabled ?
+if ($cfg["enable_mrtg"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use mrtg");
+	showErrorPage("mrtg is disabled.");
+}
+
 // request-vars
 $mrtgTarget = getRequestVar('mrtg_target');
 if ($mrtgTarget == '')

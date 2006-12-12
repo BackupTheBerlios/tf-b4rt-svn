@@ -46,7 +46,12 @@ if ($del != "") {
 }
 
 // Are we to download something?
-if ($down != "" && $cfg["enable_file_download"]) {
+if ($down != "") {
+	// is enabled ?
+	if ($cfg["enable_file_download"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use download (".$down.")");
+		showErrorPage("download is disabled.");
+	}
     $current = "";
     // Yes, then download it
     // we need to strip slashes twice in some circumstances
@@ -91,7 +96,12 @@ if ($down != "" && $cfg["enable_file_download"]) {
 }
 
 // Are we to download something?
-if ($tar != "" && $cfg["enable_file_download"]) {
+if ($tar != "") {
+	// is enabled ?
+	if ($cfg["enable_file_download"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use download (".$tar.")");
+		showErrorPage("download is disabled.");
+	}
     $current = "";
     // Yes, then tar and download it
     // we need to strip slashes twice in some circumstances

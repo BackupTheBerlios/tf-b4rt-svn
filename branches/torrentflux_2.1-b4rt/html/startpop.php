@@ -24,6 +24,12 @@ include_once("config.php");
 include_once("functions.php");
 require_once("metaInfo.php");
 
+// is enabled ?
+if ($cfg["advanced_start"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use advanced start");
+	showErrorPage("advanced start is disabled.");
+}
+
 $torrent = getRequestVar('torrent');
 // Load saved settings
 $btclient_default = $cfg["btclient"];

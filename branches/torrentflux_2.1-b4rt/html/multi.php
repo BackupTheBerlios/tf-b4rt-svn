@@ -41,6 +41,11 @@ switch ($action) {
     	break;
     /* --------------------------------------------------------- all torrents */
     case "bulkStop": /* bulkStop */
+    	// is enabled ?
+		if ($cfg["enable_bulkops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStop");
+			showErrorPage("bulkops are disabled.");
+		}
     	$torrents = getTorrentListFromFS();
     	foreach ($torrents as $torrent) {
             $torrentRunningFlag = isTorrentRunning($torrent);
@@ -58,6 +63,11 @@ switch ($action) {
     	}
     	break;
     case "bulkResume": /* bulkResume */
+    	// is enabled ?
+		if ($cfg["enable_bulkops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkResume");
+			showErrorPage("bulkops are disabled.");
+		}
     	$torrents = getTorrentListFromDB();
     	foreach ($torrents as $torrent) {
             $torrentRunningFlag = isTorrentRunning($torrent);
@@ -79,6 +89,11 @@ switch ($action) {
     	}
     	break;
     case "bulkStart": /* bulkStart */
+    	// is enabled ?
+		if ($cfg["enable_bulkops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStart");
+			showErrorPage("bulkops are disabled.");
+		}
     	$torrents = getTorrentListFromFS();
     	foreach ($torrents as $torrent) {
             $torrentRunningFlag = isTorrentRunning($torrent);
@@ -101,6 +116,11 @@ switch ($action) {
     	break;
     /* ---------------------------------------------------- selected torrents */
     default:
+		// is enabled ?
+		if ($cfg["enable_multiops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multi-op ".htmlentities($action, ENT_QUOTES));
+			showErrorPage("bulkops are disabled.");
+		}
        foreach($_POST['torrent'] as $key => $element) {
           // is valid transfer ?
           if (isValidTransfer(urldecode($element)) !== true) {

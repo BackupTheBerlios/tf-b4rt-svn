@@ -76,23 +76,31 @@ if(! empty($torrent)) {
 
 // =============================================================================
 // wget
-if ($cfg['enable_wget'] == 1) {
-    $url_wget = getRequestVar('url_wget');
-    // <DD32>:
-    if(! $url_wget == '') {
-        exec("nohup ".$cfg['bin_php']." -f wget.php ".escapeshellarg($url_wget)." ".$cfg['user']." > /dev/null &");
-        sleep(2); //sleep so that hopefully the other script has time to write out the stat files.
-        header("location: index.php");
-        exit();
-    }
-    // </DD32>
+$url_wget = getRequestVar('url_wget');
+if(! $url_wget == '') {
+	// is enabled ?
+	if ($cfg["enable_wget"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+		showErrorPage("wget is disabled.");
+	}
+    exec("nohup ".$cfg['bin_php']." -f wget.php ".escapeshellarg($url_wget)." ".$cfg['user']." > /dev/null &");
+    sleep(2); //sleep so that hopefully the other script has time to write out the stat files.
+    header("location: index.php");
+    exit();
 }
 
 // =============================================================================
 // Do they want us to get a torrent via a URL?
 $url_upload = getRequestVar('url_upload');
-if(! $url_upload == '')
+if(! $url_upload == '') {
+	// is enabled ?
+	if ($cfg["enable_torrent_download"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");
+		showErrorPage("torrent download is disabled.");
+	}
+	// download
     indexProcessDownload($url_upload);
+}
 
 // =============================================================================
 // Handle the file upload if there is one

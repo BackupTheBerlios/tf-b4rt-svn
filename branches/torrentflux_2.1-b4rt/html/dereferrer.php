@@ -24,6 +24,12 @@
 include_once("config.php");
 include_once("functions.php");
 
+// is enabled ?
+if ($cfg["enable_dereferrer"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use dereferrer");
+	showErrorPage("dereferrer is disabled.");
+}
+
 if (isset($_REQUEST["u"])) {
     DisplayHead("dereferrer",false,'0;URL='.$_REQUEST["u"]);
 ?>
