@@ -35,35 +35,34 @@ define('MAINTENANCEANDREPAIR_MODE_WEB', 2);                               // web
  */
 class MaintenanceAndRepair
 {
-	// fields
-
-	// name
-	var $name = "MaintenanceAndRepair";
+	// public fields
 
 	// version
     var $version = "0.2";
 
-    // config-array
-    var $cfg = array();
+    // state
+    var $state = MAINTENANCEANDREPAIR_STATE_NULL;
 
     // messages-array
     var $messages = array();
 
-    // state
-    var $state = MAINTENANCEANDREPAIR_STATE_NULL;
+	// private fields
+
+    // config-array
+    var $_cfg = array();
 
     // mode
-    var $mode = 0;
+    var $_mode = 0;
 
 	// transfer fields
-	var $bogusTransfers = array();
-	var $fixedTransfers = array();
-	var $restartTransfers = false;
+	var $_bogusTransfers = array();
+	var $_fixedTransfers = array();
+	var $_restartTransfers = false;
 
 	// counter
-	var $count = 0;
-	var $countProblems = 0;
-	var $countFixed = 0;
+	var $_count = 0;
+	var $_countProblems = 0;
+	var $_countFixed = 0;
 
 	// =========================================================================
 	// public static methods
@@ -104,6 +103,18 @@ class MaintenanceAndRepair
 		return $instanceMaintenanceAndRepair;
     }
 
+    /**
+     * accessor for messages
+     *
+     * @return array
+     */
+    function getMessages() {
+		global $instanceMaintenanceAndRepair;
+		return (isset($instanceMaintenanceAndRepair))
+			? $instanceMaintenanceAndRepair->messages
+			: array();
+    }
+
 	/**
 	 * maintenance
 	 *
@@ -141,9 +152,9 @@ class MaintenanceAndRepair
     function MaintenanceAndRepair($cfg) {
         // messages
         $this->messages = array();
-        // cfg
-        $this->cfg = unserialize($cfg);
-        if (empty($this->cfg)) {
+        // _cfg
+        $this->_cfg = unserialize($cfg);
+        if (empty($this->_cfg)) {
         	$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
             array_push($this->messages, "Config not passed");
             return false;
@@ -151,9 +162,9 @@ class MaintenanceAndRepair
         // cli/web
 		global $argv;
 		if (isset($argv)) {
-			$this->mode = MAINTENANCEANDREPAIR_MODE_CLI;
+			$this->_mode = MAINTENANCEANDREPAIR_MODE_CLI;
 		} else
-			$this->mode = MAINTENANCEANDREPAIR_MODE_WEB;
+			$this->_mode = MAINTENANCEANDREPAIR_MODE_WEB;
         // state
         $this->state = MAINTENANCEANDREPAIR_STATE_INITIALIZED;
     }
@@ -195,7 +206,7 @@ class MaintenanceAndRepair
 		// database
 		$this->_maintenanceDatabase();
 		// log
-		AuditAction($this->cfg["constants"]["debug"], "Repair done.");
+		AuditAction($this->_cfg["constants"]["debug"], "Repair done.");
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
@@ -236,13 +247,13 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("fluxd-maintenance...\n");
 		// files
-		$fdp = $this->cfg["path"].'.fluxd/fluxd.pid';
-		$fds = $this->cfg["path"].'.fluxd/fluxd.sock';
+		$fdp = $this->_cfg["path"].'.fluxd/fluxd.pid';
+		$fds = $this->_cfg["path"].'.fluxd/fluxd.sock';
 		$fdpe = file_exists($fdp);
 		$fdse = file_exists($fds);
 		// pid or socket exists
 		if (($fdpe || $fdse) && (
-			("0" == @trim(shell_exec("ps aux 2> /dev/null | ".$this->cfg['bin_grep']." -v grep | ".$this->cfg['bin_grep']." -c ".$this->cfg["docroot"]."bin/fluxd/fluxd.pl"))))) {
+			("0" == @trim(shell_exec("ps aux 2> /dev/null | ".$this->_cfg['bin_grep']." -v grep | ".$this->_cfg['bin_grep']." -c ".$this->_cfg["docroot"]."bin/fluxd/fluxd.pl"))))) {
 			// problems
 			$this->_outputMessage("found and removing fluxd-leftovers...\n");
 			// pid
@@ -252,8 +263,8 @@ class MaintenanceAndRepair
 			if ($fdse)
 				@unlink($fds);
 			// DEBUG : log the repair
-			if ($this->cfg['debuglevel'] > 0)
-				AuditAction($this->cfg["constants"]["debug"], "fluxd-maintenance : found and removed fluxd-leftovers.");
+			if ($this->_cfg['debuglevel'] > 0)
+				AuditAction($this->_cfg["constants"]["debug"], "fluxd-maintenance : found and removed fluxd-leftovers.");
 			// output
 			$this->_outputMessage("done.\n");
 		} else {
@@ -273,20 +284,20 @@ class MaintenanceAndRepair
 	function _maintenanceTransfers($trestart = false) {
 		global $db, $queueActive;
 		// set var
-		$this->restartTransfers = $trestart;
+		$this->_restartTransfers = $trestart;
 		// output
 		$this->_outputMessage("transfers-maintenance...\n");
 		// sanity-check for transfers-dir
-		if (!is_dir($this->cfg["transfer_file_path"])) {
+		if (!is_dir($this->_cfg["transfer_file_path"])) {
 			$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
-            $msg = "invalid dir-settings. no dir : ".$this->cfg["transfer_file_path"];
+            $msg = "invalid dir-settings. no dir : ".$this->_cfg["transfer_file_path"];
             array_push($this->messages , $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
 		// pid-files of transfer-clients
 		$pidFiles = array();
-		if ($dirHandle = @opendir($this->cfg["transfer_file_path"])) {
+		if ($dirHandle = @opendir($this->_cfg["transfer_file_path"])) {
 			while (false !== ($file = @readdir($dirHandle))) {
 				if ((strlen($file) > 3) && ((substr($file, -4, 4)) == ".pid"))
 					array_push($pidFiles, $file);
@@ -302,26 +313,26 @@ class MaintenanceAndRepair
 		// get process-list
 		$psString = trim(shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww"));
 		// test if client for pid is still up
-		$this->bogusTransfers = array();
+		$this->_bogusTransfers = array();
 		foreach ($pidFiles as $pidFile) {
 			$alias = substr($pidFile, 0, -4);
 			$transfer = (substr($alias, 0, -5));
 			if (stristr($psString, $transfer) === false)
-				array_push($this->bogusTransfers, $transfer);
+				array_push($this->_bogusTransfers, $transfer);
 		}
 		// return if no stale pid-files
-		$this->countProblems = count($this->bogusTransfers);
-		if ($this->countProblems < 1) {
+		$this->_countProblems = count($this->_bogusTransfers);
+		if ($this->_countProblems < 1) {
 			$this->_outputMessage("no stale pid-files found.\n");
 			$this->_outputMessage("transfers-maintenance done.\n");
 			return true;
 		}
 
 		/* repair the bogus clients */
-		$this->countFixed = 0;
+		$this->_countFixed = 0;
 		$this->_outputMessage("repairing died clients...\n");
 		require_once("inc/classes/AliasFile.php");
-		foreach ($this->bogusTransfers as $bogusTransfer) {
+		foreach ($this->_bogusTransfers as $bogusTransfer) {
 			$transfer = $bogusTransfer.".torrent";
 			$alias = $bogusTransfer.".stat";
 			$pidFile = $alias.".pid";
@@ -341,7 +352,7 @@ class MaintenanceAndRepair
 			// get owner
 			$transferowner = getOwner($transfer);
 			// rewrite stat-file
-			$af = AliasFile::getAliasFileInstance($alias, $transferowner, $this->cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($alias, $transferowner, $this->_cfg, $settingsAry['btclient']);
 			if (isset($af)) {
 				$af->running = 0;
 				$af->percent_done = -100.0;
@@ -354,26 +365,26 @@ class MaintenanceAndRepair
 				unset($af);
 			}
 			// delete pid-file
-			@unlink($this->cfg["transfer_file_path"].$pidFile);
+			@unlink($this->_cfg["transfer_file_path"].$pidFile);
 			// DEBUG : log the repair of the bogus transfer
-			if ($this->cfg['debuglevel'] > 0)
-				AuditAction($this->cfg["constants"]["debug"], "transfers-maintenance : transfer repaired : ".$transfer);
+			if ($this->_cfg['debuglevel'] > 0)
+				AuditAction($this->_cfg["constants"]["debug"], "transfers-maintenance : transfer repaired : ".$transfer);
 			// output
 			$this->_outputMessage("done.\n");
 			// count
-			$this->countFixed++;
+			$this->_countFixed++;
 		}
 		// output
-		if ($this->countProblems > 0)
-			$this->_outputMessage("repaired transfers : ".$this->countFixed."/".$this->countProblems."\n");
+		if ($this->_countProblems > 0)
+			$this->_outputMessage("repaired transfers : ".$this->_countFixed."/".$this->_countProblems."\n");
 
 		/* restart transfers */
-		if ($this->restartTransfers) {
-			$this->fixedTransfers = array();
+		if ($this->_restartTransfers) {
+			$this->_fixedTransfers = array();
 			$this->_outputMessage("restarting died clients...\n");
 			// hold current user
-			$whoami = ($this->mode == MAINTENANCEANDREPAIR_MODE_CLI) ? GetSuperAdmin() : $this->cfg["user"];
-			foreach ($this->bogusTransfers as $bogusTransfer) {
+			$whoami = ($this->_mode == MAINTENANCEANDREPAIR_MODE_CLI) ? GetSuperAdmin() : $this->_cfg["user"];
+			foreach ($this->_bogusTransfers as $bogusTransfer) {
 				$transfer = $bogusTransfer.".torrent";
 				$alias = $bogusTransfer.".stat";
 				$pidFile = $alias.".pid";
@@ -387,40 +398,40 @@ class MaintenanceAndRepair
 				// get owner
 				$transferowner = getOwner($transfer);
 				// set current user to transfer-owner
-				$this->cfg["user"] = $transferowner;
+				$this->_cfg["user"] = $transferowner;
 				// file-prio
-	            if ($this->cfg["enable_file_priority"]) {
+	            if ($this->_cfg["enable_file_priority"]) {
 	                include_once("inc/functions/functions.setpriority.php");
 	                // Process setPriority Request.
 	                setPriority($transfer);
 	            }
 				// clientHandler + start
-				$clientHandler = ClientHandler::getClientHandlerInstance($this->cfg, $settingsAry['btclient']);
+				$clientHandler = ClientHandler::getClientHandlerInstance($this->_cfg, $settingsAry['btclient']);
 				$clientHandler->startClient($transfer, 0, $queueActive);
 				// DEBUG : log the restart of the died transfer
-				if ($this->cfg['debuglevel'] > 0) {
+				if ($this->_cfg['debuglevel'] > 0) {
 					$staret = ($clientHandler->state == 3) ? "OK" : "FAILED";
-					AuditAction($this->cfg["constants"]["debug"], "transfers-maintenance : restarted transfer ".$transfer." for ".$whoami." : ".$staret);
+					AuditAction($this->_cfg["constants"]["debug"], "transfers-maintenance : restarted transfer ".$transfer." for ".$whoami." : ".$staret);
 				}
 				//
 				if ($clientHandler->state == 3) {
 					// output
 					$this->_outputMessage("done.\n");
 					// add to ary
-					array_push($this->fixedTransfers, $transfer);
+					array_push($this->_fixedTransfers, $transfer);
 					// count
-					$this->countFixed++;
+					$this->_countFixed++;
 				} else {
 		            array_push($this->messages , $clientHandler->messages);
 					$this->_outputError($clientHandler->messages."\n");
 				}
 			}
 			// set user back
-			$this->cfg["user"] = $whoami;
+			$this->_cfg["user"] = $whoami;
 			// output
-			$this->countFixed = count($this->fixedTransfers);
-			if ($this->countFixed > 0)
-				$this->_outputMessage("restarted transfers : ".$this->countFixed."/".$this->countProblems."\n");
+			$this->_countFixed = count($this->_fixedTransfers);
+			if ($this->_countFixed > 0)
+				$this->_outputMessage("restarted transfers : ".$this->_countFixed."/".$this->_countProblems."\n");
 		}
 
 		/* done */
@@ -438,8 +449,8 @@ class MaintenanceAndRepair
 		$this->_outputMessage("database-maintenance...\n");
 
 		/* tf_torrents */
-		$this->countProblems = 0;
-		$this->countFixed = 0;
+		$this->_countProblems = 0;
+		$this->_countFixed = 0;
 		// output
 		$this->_outputMessage("table-maintenance : tf_torrents\n");
 		// running-flag
@@ -450,12 +461,12 @@ class MaintenanceAndRepair
 		if ($rc > 0) {
 			while (list($tname) = $recordset->FetchRow()) {
 				if (isTransferRunning($tname) == 0) {
-					$this->countProblems++;
+					$this->_countProblems++;
 					// t is not running, reset running-flag
 					$this->_outputMessage("reset of running-flag for transfer which is not running : ".$tname."\n");
 					$sql = "UPDATE tf_torrents SET running = '0' WHERE torrent = '".$tname."'";
 					$db->Execute($sql);
-					$this->countFixed++;
+					$this->_countFixed++;
 					// output
 					$this->_outputMessage("done.\n");
 				}
@@ -467,7 +478,7 @@ class MaintenanceAndRepair
 		showError($db, $sql);
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
-			$this->countProblems += $rc;
+			$this->_countProblems += $rc;
 			while (list($tname) = $recordset->FetchRow()) {
 				// t has no hash, update
 				$this->_outputMessage("updating transfer which has empty hash : ".$tname."\n");
@@ -477,7 +488,7 @@ class MaintenanceAndRepair
 				if (!empty($thash)) {
 					$sql = "UPDATE tf_torrents SET hash = '".$thash."' WHERE torrent = '".$tname."'";
 					$db->Execute($sql);
-					$this->countFixed++;
+					$this->_countFixed++;
 					// output
 					$this->_outputMessage("done.\n");
 				}
@@ -489,7 +500,7 @@ class MaintenanceAndRepair
 		showError($db, $sql);
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
-			$this->countProblems += $rc;
+			$this->_countProblems += $rc;
 			while (list($tname) = $recordset->FetchRow()) {
 				// t has no datapath, update
 				$this->_outputMessage("updating transfer which has empty datapath : ".$tname."\n");
@@ -499,45 +510,45 @@ class MaintenanceAndRepair
 				if (!empty($tDatapath)) {
 					$sql = "UPDATE tf_torrents SET datapath = ".$db->qstr($tDatapath)." WHERE torrent = '".$tname."'";
 					$db->Execute($sql);
-					$this->countFixed++;
+					$this->_countFixed++;
 					// output
 					$this->_outputMessage("done.\n");
 				}
 			}
 		}
 		// output + log
-		if ($this->countProblems == 0) {
+		if ($this->_countProblems == 0) {
 			// output
 			$this->_outputMessage("no problems found.\n");
 		} else {
 			// DEBUG : log
-			$msg = "found and fixed problems in tf_torrents : ".$this->countFixed."/".$this->countProblems;
-			if ($this->cfg['debuglevel'] > 0)
-				AuditAction($this->cfg["constants"]["debug"], "database-maintenance : table-maintenance : ".$msg);
+			$msg = "found and fixed problems in tf_torrents : ".$this->_countFixed."/".$this->_countProblems;
+			if ($this->_cfg['debuglevel'] > 0)
+				AuditAction($this->_cfg["constants"]["debug"], "database-maintenance : table-maintenance : ".$msg);
 			// output
 			$this->_outputMessage($msg."\n");
 		}
 
 		/* tf_torrent_totals */
-		$this->countProblems = 0;
-		$this->countFixed = 0;
+		$this->_countProblems = 0;
+		$this->_countFixed = 0;
 		// output
 		$this->_outputMessage("table-maintenance : tf_torrent_totals\n");
-		$this->countProblems = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
-		if (($this->countProblems !== false) && ($this->countProblems > 0)) {
+		$this->_countProblems = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
+		if (($this->_countProblems !== false) && ($this->_countProblems > 0)) {
 			// output
-			$this->_outputMessage("found ".$this->countProblems." invalid entries, deleting...\n");
+			$this->_outputMessage("found ".$this->_countProblems." invalid entries, deleting...\n");
 			$sql = "DELETE FROM tf_torrent_totals WHERE tid = ''";
 			$result = $db->Execute($sql);
 			showError($db, $sql);
-			$this->countFixed = $db->Affected_Rows();
+			$this->_countFixed = $db->Affected_Rows();
 			// output
 			$this->_outputMessage("done.\n");
-			$rCount = ($this->countFixed !== false) ? $this->countFixed : $this->countProblems;
+			$rCount = ($this->_countFixed !== false) ? $this->_countFixed : $this->_countProblems;
 			// DEBUG : log
-			$msg = "found and removed invalid totals-entries from tf_torrent_totals : ".$rCount."/".$this->countProblems;
-			if ($this->cfg['debuglevel'] > 0)
-				AuditAction($this->cfg["constants"]["debug"], "database-maintenance : table-maintenance : ".$msg);
+			$msg = "found and removed invalid totals-entries from tf_torrent_totals : ".$rCount."/".$this->_countProblems;
+			if ($this->_cfg['debuglevel'] > 0)
+				AuditAction($this->_cfg["constants"]["debug"], "database-maintenance : table-maintenance : ".$msg);
 			// output
 			$this->_outputMessage($msg."\n");
 		} else {
@@ -562,22 +573,22 @@ class MaintenanceAndRepair
 		$this->_outputMessage("pruning database...\n");
 		$this->_outputMessage("table : tf_log\n");
 		// Prune LOG
-		$this->count = 0;
-		$testTime = time() - ($this->cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
+		$this->_count = 0;
+		$testTime = time() - ($this->_cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
 		$sql = "delete from tf_log where time < " . $db->qstr($testTime);
 		$result = $db->Execute($sql);
 		showError($db,$sql);
-		$this->count += $db->Affected_Rows();
+		$this->_count += $db->Affected_Rows();
 		unset($result);
-		$testTime = time() - ($this->cfg['minutes_to_keep'] * 60);
-		$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($this->cfg["constants"]["hit"]);
+		$testTime = time() - ($this->_cfg['minutes_to_keep'] * 60);
+		$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($this->_cfg["constants"]["hit"]);
 		$result = $db->Execute($sql);
 		showError($db,$sql);
-		$this->count += $db->Affected_Rows();
+		$this->_count += $db->Affected_Rows();
 		unset($result);
 		/* done */
-		if ($this->count > 0)
-			$this->_outputMessage("deleted entries from tf_log : ".$this->count."\n");
+		if ($this->_count > 0)
+			$this->_outputMessage("deleted entries from tf_log : ".$this->_count."\n");
 		else
 			$this->_outputMessage("no entries deleted.\n");
 		$this->_outputMessage("prune database done.\n");
@@ -598,7 +609,7 @@ class MaintenanceAndRepair
 		// database
 		$this->_maintenanceDatabase();
 		// log
-		AuditAction($this->cfg["constants"]["debug"], "Repair done.");
+		AuditAction($this->_cfg["constants"]["debug"], "Repair done.");
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
@@ -613,18 +624,18 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("repairing app...\n");
 		// sanity-check for transfers-dir
-		if (!is_dir($this->cfg["transfer_file_path"])) {
+		if (!is_dir($this->_cfg["transfer_file_path"])) {
 			$this->state = MAINTENANCEANDREPAIR_STATE_ERROR;
-            $msg = "invalid dir-settings. no dir : ".$this->cfg["transfer_file_path"];
+            $msg = "invalid dir-settings. no dir : ".$this->_cfg["transfer_file_path"];
             array_push($this->messages , $msg);
 			$this->_outputError($msg."\n");
 			return false;
 		}
 		// delete pid-files of torrent-clients
-		if ($dirHandle = opendir($this->cfg["transfer_file_path"])) {
+		if ($dirHandle = opendir($this->_cfg["transfer_file_path"])) {
 			while (false !== ($file = readdir($dirHandle))) {
 				if ((strlen($file) > 3) && ((substr($file, -4, 4)) == ".pid"))
-					@unlink($this->cfg["transfer_file_path"].$file);
+					@unlink($this->_cfg["transfer_file_path"].$file);
 			}
 			closedir($dirHandle);
 		}
@@ -635,7 +646,7 @@ class MaintenanceAndRepair
 			$alias = getAliasName($torrent);
 			$owner = getOwner($torrent);
 			$btclient = getTransferClient($torrent);
-			$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $this->cfg, $btclient);
+			$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $this->_cfg, $btclient);
 			if (isset($af)) {
 				// output
 				$this->_outputMessage("rewrite stat-file for ".$torrent." ...\n");
@@ -671,7 +682,7 @@ class MaintenanceAndRepair
      */
 	function _outputMessage($message) {
         // only in cli-mode
-		if ($this->mode == MAINTENANCEANDREPAIR_MODE_CLI)
+		if ($this->_mode == MAINTENANCEANDREPAIR_MODE_CLI)
 			printMessage($this->name, $message);
     }
 
@@ -682,7 +693,7 @@ class MaintenanceAndRepair
      */
 	function _outputError($message) {
         // only in cli-mode
-		if ($this->mode == MAINTENANCEANDREPAIR_MODE_CLI)
+		if ($this->_mode == MAINTENANCEANDREPAIR_MODE_CLI)
 			printError($this->name, $message);
     }
 
