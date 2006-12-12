@@ -20,16 +20,17 @@
 
 *******************************************************************************/
 
-// class for the Fluxd-Service-module Fluxinet
-class FluxdFluxinet extends FluxdServiceMod
+// class for the Fluxd-Service-module Trigger
+class FluxdTrigger extends FluxdServiceMod
 {
+	// version
+	var $version = "0.2";
+
     /**
      * ctor
      */
-    function FluxdFluxinet($cfg, $fluxd) {
-        $this->moduleName = "Fluxinet";
-        // version
-		$this->version = "0.1";
+    function FluxdTrigger($cfg, $fluxd) {
+        $this->moduleName = "Trigger";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }

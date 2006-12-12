@@ -29,9 +29,6 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.admin.fluxdSettings.tmpl");
 
@@ -135,7 +132,7 @@ foreach($clients as $client) {
 if(strlen($output) == 0)
 	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Transfers</div></td></tr>";
 $tmpl->setvar('output', $output);
-$tmpl->setvar('fluxdRunning', Fluxd::isRunning());
+$tmpl->setvar('fluxdRunning', (Fluxd::isRunning()) ? 1 : 0);
 $tmpl->setvar('showTransfers', (($cfg["fluxd_Qmgr_enabled"] == 1) && (Fluxd::isRunning())) ? 1 : 0);
 //
 $tmpl->setvar('_USER', $cfg['_USER']);

@@ -92,7 +92,6 @@ class ClientHandlerWget extends ClientHandler
 		$this->setVarsFromUrl($url);
 
 		// write out aliasfile
-		require_once("inc/classes/AliasFile.php");
 		$af = AliasFile::getAliasFileInstance($this->alias,	$this->cfg['user'], $this->cfg);
 		$af->running = "2"; // file is new
 		$af->size = 0;

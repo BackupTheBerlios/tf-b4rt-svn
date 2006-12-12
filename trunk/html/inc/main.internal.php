@@ -36,6 +36,8 @@ require_once('inc/main.cache.php');
 if (isset($_SESSION['user'])) {
 	$currentUser = $_SESSION['user'];
 	if (cacheIsSet($currentUser)) {
+		// core-classes
+		require_once("inc/classes/CoreClasses.php");
 		// core functions
 		require_once('inc/functions/functions.core.php');
 		// init cache
@@ -202,7 +204,6 @@ if ($cfg['enable_xfer'] == 1) {
 /*******************************************************************************
  *  fluxd
  ******************************************************************************/
-require_once("inc/classes/Fluxd.php");
 Fluxd::initialize();
 
 ?>

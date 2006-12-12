@@ -47,7 +47,6 @@ function indexStartTransfer($transfer) {
 					showErrorPage("wget is disabled for users.");
 				}
 			}
-			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 			$clientHandler->startClient($transfer, 0, false);
 			sleep(3);
@@ -80,7 +79,6 @@ function indexStartTorrent($torrent, $interactive) {
 	}
 	switch ($interactive) {
 		case 0:
-			require_once("inc/classes/ClientHandler.php");
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->startClient($torrent, 0, $queueActive);
@@ -89,7 +87,6 @@ function indexStartTorrent($torrent, $interactive) {
 			exit();
 			break;
 		case 1:
-			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
 			$clientHandler->startClient($torrent, 1, $queueActive);
 			if ($clientHandler->state == -1) { // start failed
@@ -119,7 +116,6 @@ function indexStopTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
 		$return = getRequestVar('return');
-		require_once("inc/classes/ClientHandler.php");
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
@@ -269,7 +265,6 @@ function indexProcessDownload($url_upload) {
 					// Process setPriority Request.
 					setPriority(urldecode($file_name));
 				}
-				require_once("inc/classes/ClientHandler.php");
 				$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 				switch ($actionId) {
 					case 3:
@@ -318,7 +313,6 @@ function indexProcessUpload() {
 									// Process setPriority Request.
 									setPriority(urldecode($file_name));
 								}
-								require_once("inc/classes/ClientHandler.php");
 								$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
 								switch ($actionId) {
 									case 3:
@@ -404,7 +398,6 @@ function processFileUpload() {
 		} // End File Upload
 		// instant action ?
 		if (!empty($actionId)) {
-			require_once("inc/classes/ClientHandler.php");
 			foreach ($tStack as $torrent) {
 				// init stat-file
 				injectTorrent($torrent);

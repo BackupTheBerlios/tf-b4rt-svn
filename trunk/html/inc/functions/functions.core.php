@@ -522,7 +522,6 @@ function netstatPortList() {
 	$retStr = "";
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			require_once("inc/classes/ClientHandler.php");
 			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
@@ -583,7 +582,6 @@ function netstatHostList() {
 	$retStr = "";
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			require_once("inc/classes/ClientHandler.php");
 			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
@@ -977,7 +975,6 @@ function updateTransferTotals($transfer) {
  */
 function getTransferTotals($transfer) {
 	global $cfg;
-	require_once("inc/classes/ClientHandler.php");
 	if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
 		$tclient = getTransferClient($transfer);
@@ -1003,7 +1000,6 @@ function getTransferTotals($transfer) {
  */
 function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
-	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
 }
@@ -1016,7 +1012,6 @@ function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
  */
 function getTransferTotalsCurrent($transfer) {
 	global $cfg;
-	require_once("inc/classes/ClientHandler.php");
 	if ((substr( strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
 		$tclient = getTransferClient($transfer);
@@ -1042,7 +1037,6 @@ function getTransferTotalsCurrent($transfer) {
  */
 function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
 	global $cfg;
-	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
 }
@@ -1067,7 +1061,6 @@ function resetTorrentTotals($torrent, $delete = false) {
 		@unlink($cfg["transfer_file_path"].$alias.".stat");
 	} else {
 		// reset in stat-file
-		require_once("inc/classes/AliasFile.php");
 		$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $cfg);
 		if (isset($af)) {
 			$af->uptotal = 0;
@@ -1127,7 +1120,6 @@ function deleteTransfer($transfer, $alias_file) {
 	global $cfg;
 	$transferowner = getOwner($transfer);
 	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
-		require_once("inc/classes/AliasFile.php");
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
 			$btclient = getTransferClient($transfer);
@@ -1137,7 +1129,6 @@ function deleteTransfer($transfer, $alias_file) {
 			// remove torrent-settings from db
 			deleteTorrentSettings($transfer);
 			// client-proprietary leftovers
-			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
 			$clientHandler->deleteCache($transfer);
 		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
@@ -1281,7 +1272,6 @@ function getRunningTransferCount() {
  */
 function getRunningTransfers($clientType = '') {
 	global $cfg;
-	require_once("inc/classes/ClientHandler.php");
 	// get only torrents of a particular client
 	if ((isset($clientType)) && ($clientType != '')) {
 		$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$clientType);
@@ -1509,7 +1499,6 @@ function getLoadAverageString() {
  */
 function injectTorrent($torrent) {
 	global $cfg;
-	require_once("inc/classes/AliasFile.php");
 	$af = AliasFile::getAliasFileInstance(getAliasName($torrent).".stat", $cfg["user"], $cfg);
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["transfer_file_path"].$torrent);
@@ -1659,7 +1648,6 @@ function getTransferListHeadArray($settings = null) {
  */
 function getTransferListArray() {
 	global $cfg, $db;
-	require_once("inc/classes/AliasFile.php");
 	$kill_id = "";
 	$lastUser = "";
 	$arUserTorrent = array();
@@ -2025,8 +2013,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	$details = array();
 	// common functions
 	require_once('inc/functions/functions.common.php');
-	// aliasfile
-	require_once("inc/classes/AliasFile.php");
 	// alias-file
 	if ((!(isset($alias))) || ($alias == "")) {
 		$aliasName = getAliasName($transfer);
@@ -2278,7 +2264,6 @@ function getOwner($file) {
  */
 function resetOwner($file) {
 	global $cfg, $db;
-	require_once("inc/classes/AliasFile.php");
 	// log entry has expired so we must renew it
 	$rtnValue = "";
 	$alias = getAliasName($file).".stat";
@@ -2760,35 +2745,6 @@ function printMessage($mod, $message) {
  */
 function printError($mod, $message) {
 	@fwrite(STDERR, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$message);
-}
-
-// =============================================================================
-// classes
-// =============================================================================
-
-/**
- * class ProcessInfo
- */
-class ProcessInfo {
-	var $pid = "";
-	var $ppid = "";
-	var $cmdline = "";
-	function ProcessInfo($psLine) {
-		$psLine = trim($psLine);
-		if (strlen($psLine) > 12) {
-			$this->pid = trim(substr($psLine, 0, 5));
-			$this->ppid = trim(substr($psLine, 5, 6));
-			$this->cmdline = trim(substr($psLine, 12));
-		}
-	}
-}
-
-/**
- * class ProcessInfo : Stores the image and title of for the health of a file.
- */
-class HealthData {
-	var $image = "";
-	var $title = "";
 }
 
 ?>

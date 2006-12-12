@@ -23,13 +23,14 @@
 // class for the Fluxd-Service-module Qmgr
 class FluxdQmgr extends FluxdServiceMod
 {
+	// version
+	var $version = "0.2";
+
     /**
      * ctor
      */
     function FluxdQmgr($cfg, $fluxd) {
         $this->moduleName = "Qmgr";
-        // version
-		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }
@@ -102,7 +103,6 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $alias_file alias_file of the torrent
      */
     function updateStatFile($torrent, $alias_file) {
-        require_once("inc/classes/AliasFile.php");
         $the_user = getOwner($torrent);
         $btclient = getTransferClient($torrent);
         $modded = 0;

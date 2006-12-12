@@ -23,6 +23,9 @@
 // class for the Fluxd-Service-module Rssad
 class FluxdRssad extends FluxdServiceMod
 {
+	// version
+	var $version = "0.2";
+
 	// basedir
 	var $basedir = ".fluxd/rssad/";
 
@@ -37,8 +40,6 @@ class FluxdRssad extends FluxdServiceMod
      */
     function FluxdRssad($cfg, $fluxd) {
         $this->moduleName = "Rssad";
-        // version
-		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
          // check our base-dir

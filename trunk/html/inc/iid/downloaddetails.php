@@ -29,9 +29,6 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
-// alias-file
-require_once("inc/classes/AliasFile.php");
-
 // request-vars
 $transfer = getRequestVar('torrent');
 $alias = getRequestVar('alias');

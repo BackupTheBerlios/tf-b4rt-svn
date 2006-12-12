@@ -40,17 +40,11 @@ if ($cwdBase == "bin")
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
-// all functions
-require_once('inc/functions/functions.all.php');
-
 // main.core
 require_once('inc/main.core.php');
 
 // load default-language
 loadLanguageFile($cfg["default_language"]);
-
-// af
-require_once('inc/classes/AliasFile.php');
 
 // some vars
 $_STATUS = 1;

@@ -23,13 +23,14 @@
 // class for the Fluxd-Service-module Maintenance
 class FluxdMaintenance extends FluxdServiceMod
 {
+	// version
+	var $version = "0.2";
+
     /**
      * ctor
      */
     function FluxdMaintenance($cfg, $fluxd) {
         $this->moduleName = "Maintenance";
-        // version
-		$this->version = "0.1";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }

@@ -27,7 +27,7 @@ class FluxdServiceMod
 
 	// mod-related
 	var $moduleName = "";
-    var $version = "";
+    var $version = "0.2";
 
     // call-result
     var $callResult;
@@ -66,7 +66,7 @@ class FluxdServiceMod
      */
     function getFluxdServiceModInstance($fluxCfg, $fluxd, $moduleType) {
     	// create and return object-instance
-        $classFile = 'inc/classes/Fluxd.'.$moduleType.'.php';
+        $classFile = 'inc/classes/FluxdServiceMod.'.$moduleType.'.php';
         switch ($moduleType) {
             case "Qmgr":
             	require_once($classFile);

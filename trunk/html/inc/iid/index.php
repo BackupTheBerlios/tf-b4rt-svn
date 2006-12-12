@@ -77,8 +77,6 @@ $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 // =============================================================================
 // transfer-list
 // =============================================================================
-
-require_once("inc/classes/AliasFile.php");
 $arUserTorrent = array();
 $arListTorrent = array();
 // settings

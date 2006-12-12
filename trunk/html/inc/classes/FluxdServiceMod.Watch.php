@@ -20,16 +20,17 @@
 
 *******************************************************************************/
 
-// class for the Fluxd-Service-module Trigger
-class FluxdTrigger extends FluxdServiceMod
+// class for the Fluxd-Service-module Watch
+class FluxdWatch extends FluxdServiceMod
 {
+	// version
+	var $version = "0.2";
+
     /**
      * ctor
      */
-    function FluxdTrigger($cfg, $fluxd) {
-        $this->moduleName = "Trigger";
-        // version
-		$this->version = "0.1";
+    function FluxdWatch($cfg, $fluxd) {
+        $this->moduleName = "Watch";
 		// initialize
         $this->initialize($cfg, $fluxd);
     }

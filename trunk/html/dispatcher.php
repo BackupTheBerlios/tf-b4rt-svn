@@ -29,9 +29,6 @@ require_once('inc/functions/functions.common.php');
 // dispatcher functions
 require_once("inc/functions/functions.dispatcher.php");
 
-// clienthandler
-require_once("inc/classes/ClientHandler.php");
-
 // time-limit
 @set_time_limit(0);
 
@@ -278,7 +275,6 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority(urldecode($element));
 						}
-						require_once("inc/classes/ClientHandler.php");
 						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 						$clientHandler->startClient(urldecode($element), 0, true);
 					}

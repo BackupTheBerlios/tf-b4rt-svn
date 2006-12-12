@@ -80,6 +80,9 @@ define('_URL_THIS', 'http://'.$_SERVER['SERVER_NAME']. _FILE_THIS);
 // cache
 require_once('inc/main.cache.php');
 
+// core-classes
+require_once("inc/classes/CoreClasses.php");
+
 // core functions
 require_once('inc/functions/functions.core.php');
 

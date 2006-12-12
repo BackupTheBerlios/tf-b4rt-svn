@@ -294,7 +294,6 @@ class ClientHandler
             }
 		}
         // create AliasFile object and write out the stat file
-        require_once("inc/classes/AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
         $transferTotals = getTransferTotalsCurrent($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
@@ -357,7 +356,6 @@ class ClientHandler
      * do start of a client.
      */
     function doStartClient() {
-        require_once("inc/classes/AliasFile.php");
         if ($this->state != 2) {
             $this->state = -1;
             $this->messages .= "Error. ClientHandler in wrong state on execStart-request.";
@@ -367,13 +365,9 @@ class ClientHandler
         @session_write_close();
         $transferRunningFlag = 1;
         if ($this->queue == 1) { // queue
-			require_once("inc/classes/Fluxd.php");
-			require_once("inc/classes/Fluxd.ServiceMod.php");
-			$fluxd = new Fluxd(serialize($this->cfg));
-			$fluxdRunning = $fluxd->isFluxdRunning();
-			if (($fluxdRunning) && ($fluxd->modState('Qmgr') == 1)) {
-				$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($this->cfg, $fluxd, 'Qmgr');
-				$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
+			if (Fluxd::modState('Qmgr') == 1) {
+				//$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($this->cfg, $fluxd, 'Qmgr');
+				//$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
 				AuditAction($this->cfg["constants"]["queued_torrent"], $this->transfer ." : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
 			} else {
 				$this->messages = "queue-request (".$this->transfer."/".$this->cfg['user'].") but Qmgr not active";
@@ -420,7 +414,6 @@ class ClientHandler
         // We are going to write a '0' on the front of the stat file so that
         // the client will no to stop -- this will report stats when it dies
         $this->owner = getOwner($this->transfer);
-        require_once("inc/classes/AliasFile.php");
         // read the alias file + create AliasFile object
         $this->af = AliasFile::getAliasFileInstance($this->alias, $this->owner, $this->cfg, $this->handlerName);
         if($this->af->percent_done < 100) {
@@ -434,7 +427,6 @@ class ClientHandler
             $this->af->running = "0";
             $this->af->time_left = "Download Succeeded!";
         }
-        require_once("inc/classes/RunningTransfer.php");
         // Write out the new Stat File
         $this->af->WriteFile();
         // wait until transfer is down
@@ -493,8 +485,6 @@ class ClientHandler
      *
      */
     function getRunningClientsInfo() {
-        // action
-        require_once("inc/classes/RunningTransfer.php");
         // ps-string
         $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["transfer_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
         $arScreen = array();

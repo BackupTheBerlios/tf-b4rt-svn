@@ -45,7 +45,6 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 	$tmpl->setvar('scrape', 1);
 } else if ((substr(strtolower($transfer), -5) == ".wget")) {
 	// this is wget.
-	require_once("inc/classes/ClientHandler.php");
 	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 	$clientHandler->setVarsFromFile($transfer);
 	$metaInfo = "<table>";

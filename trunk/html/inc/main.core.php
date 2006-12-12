@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// core-classes
+require_once("inc/classes/CoreClasses.php");
+
 // core functions
 require_once('inc/functions/functions.core.php');
 

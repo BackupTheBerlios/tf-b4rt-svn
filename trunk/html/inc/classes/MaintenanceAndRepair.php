@@ -331,7 +331,6 @@ class MaintenanceAndRepair
 		/* repair the bogus clients */
 		$this->_countFixed = 0;
 		$this->_outputMessage("repairing died clients...\n");
-		require_once("inc/classes/AliasFile.php");
 		foreach ($this->_bogusTransfers as $bogusTransfer) {
 			$transfer = $bogusTransfer.".torrent";
 			$alias = $bogusTransfer.".stat";
@@ -640,7 +639,6 @@ class MaintenanceAndRepair
 			closedir($dirHandle);
 		}
 		// rewrite stat-files
-		require_once("inc/classes/AliasFile.php");
 		$torrents = getTorrentListFromFS();
 		foreach ($torrents as $torrent) {
 			$alias = getAliasName($torrent);

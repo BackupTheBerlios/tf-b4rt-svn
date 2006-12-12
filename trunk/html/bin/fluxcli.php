@@ -45,22 +45,14 @@ if ($cwdBase == "bin")
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
-// all functions
-require_once('inc/functions/functions.all.php');
-
 // main.core
 require_once('inc/main.core.php');
 
+// all functions
+require_once('inc/functions/functions.all.php');
+
 // load default-language
 loadLanguageFile($cfg["default_language"]);
-
-// classes
-require_once("inc/classes/ClientHandler.php");
-require_once("inc/classes/AliasFile.php");
-require_once("inc/classes/RunningTransfer.php");
-require_once("inc/classes/SimpleHTTP.php");
-require_once("inc/classes/Rssd.php");
-require_once("inc/classes/MaintenanceAndRepair.php");
 
 // config
 $cfg["ip"] = '127.0.0.1';
@@ -118,9 +110,11 @@ if ((isset($action)) && ($action != "")) {
 			cliXferShutdown(@$argv[2]);
 			break;
 		case "repair":
+			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::repair();
         	exit();
 		case "maintenance":
+			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::maintenance(((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
         	exit();
 		case "dump":

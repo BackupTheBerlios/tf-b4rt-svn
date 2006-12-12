@@ -594,6 +594,7 @@ function cliProcessRssFeed($sdir = "", $filter = "", $history = "", $url = "") {
 	if ((isset($url)) && ($url != ""))
 		$gotArgs++;
 	if ($gotArgs == 4) {
+		require_once("inc/classes/Rssd.php");
 		$rssd = Rssd::getInstance($cfg);
 		$rssd->processFeed($sdir, $filter, $history, $url);
 	} else {
