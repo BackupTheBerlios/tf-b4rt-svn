@@ -80,17 +80,13 @@ class AliasFile
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'AliasFile.'.$clientClass.'.php';
-        if (is_file($classFile)) {
-            include_once($classFile);
-            switch ($clientClass) {
-                case "tornado":
-                    return new AliasFileTornado($inFile, $user, serialize($fluxCfg));
-                	break;
-                case "transmission":
-                    return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
-                	break;
-            }
+        switch ($clientClass) {
+            case "tornado":
+            	require_once('AliasFile.tornado.php');
+                return new AliasFileTornado($inFile, $user, serialize($fluxCfg));
+            case "transmission":
+            	require_once('AliasFile.transmission.php');
+                return new AliasFileTransmission($inFile, $user, serialize($fluxCfg));
         }
     }
 

@@ -102,17 +102,13 @@ class ClientHandler
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'ClientHandler.'.$clientClass.'.php';
-        if (is_file($classFile)) {
-            include_once($classFile);
-            switch ($clientClass) {
-                case "tornado":
-                    return new ClientHandlerTornado(serialize($fluxCfg));
-                break;
-                case "transmission":
-                    return new ClientHandlerTransmission(serialize($fluxCfg));
-                break;
-            }
+        switch ($clientClass) {
+            case "tornado":
+            	require_once('ClientHandler.tornado.php');
+                return new ClientHandlerTornado(serialize($fluxCfg));
+            case "transmission":
+            	require_once('ClientHandler.transmission.php');
+                return new ClientHandlerTransmission(serialize($fluxCfg));
         }
     }
 

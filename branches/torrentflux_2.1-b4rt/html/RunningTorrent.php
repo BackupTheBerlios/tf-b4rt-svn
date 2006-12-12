@@ -60,17 +60,13 @@ class RunningTorrent
         } else {
             $clientClass = $fluxCfg["btclient"];
         }
-        $classFile = 'RunningTorrent.'.$clientClass.'.php';
-        if (is_file($classFile)) {
-            include_once($classFile);
-            switch ($clientClass) {
-                case "tornado":
-                    return new RunningTorrentTornado($psLine,serialize($fluxCfg));
-                break;
-                case "transmission":
-                    return new RunningTorrentTransmission($psLine,serialize($fluxCfg));
-                break;
-            }
+        switch ($clientClass) {
+            case "tornado":
+            	require_once('RunningTorrent.tornado.php');
+                return new RunningTorrentTornado($psLine,serialize($fluxCfg));
+            case "transmission":
+            	require_once('RunningTorrent.transmission.php');
+                return new RunningTorrentTransmission($psLine,serialize($fluxCfg));
         }
     }
 

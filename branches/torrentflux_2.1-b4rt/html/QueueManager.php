@@ -75,20 +75,16 @@ class QueueManager
         } else {
             $managerClass = $fluxCfg["queuemanager"];
         }
-        $classFile = 'QueueManager.'.$managerClass.'.php';
-        if (is_file($classFile)) {
-            include_once($classFile);
-            switch ($managerClass) {
-                case "tfqmgr":
-                    return new QueueManager_tfqmgr(serialize($fluxCfg));
-                break;
-                case "tfQManager":
-                    return new QueueManager_tfQManager(serialize($fluxCfg));
-                break;
-                case "Qmgr":
-                    return new QueueManager_Qmgr(serialize($fluxCfg));
-                break;
-            }
+        switch ($managerClass) {
+            case "tfqmgr":
+            	require_once('QueueManager.tfqmgr.php');
+                return new QueueManager_tfqmgr(serialize($fluxCfg));
+            case "tfQManager":
+            	require_once('QueueManager.tfQManager.php');
+                return new QueueManager_tfQManager(serialize($fluxCfg));
+            case "Qmgr":
+            	require_once('QueueManager.Qmgr.php');
+                return new QueueManager_Qmgr(serialize($fluxCfg));
         }
     }
 
