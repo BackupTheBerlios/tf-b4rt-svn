@@ -114,7 +114,7 @@ class MaintenanceAndRepair
 		// initialize
 		MaintenanceAndRepair::initialize();
 		// maintenance run
-		$instanceMaintenanceAndRepair->maintenanceRun($trestart);
+		$instanceMaintenanceAndRepair->instance_maintenance($trestart);
 	}
 
 	/**
@@ -125,7 +125,7 @@ class MaintenanceAndRepair
 		// initialize
 		MaintenanceAndRepair::initialize();
 		// repair run
-		$instanceMaintenanceAndRepair->repairRun();
+		$instanceMaintenanceAndRepair->instance_repair();
 	}
 
 	// =========================================================================
@@ -163,11 +163,11 @@ class MaintenanceAndRepair
 	// =========================================================================
 
 	/**
-	 * maintenanceRun
+	 * instance_maintenance
 	 *
 	 * @param $trestart
 	 */
-	function maintenanceRun($trestart = false) {
+	function instance_maintenance($trestart = false) {
 		// output
 		$this->_outputMessage("Running Maintenance...\n");
 		// fluxd
@@ -183,9 +183,9 @@ class MaintenanceAndRepair
 	}
 
 	/**
-	 * repairRun
+	 * instance_repair
 	 */
-	function repairRun() {
+	function instance_repair() {
 		// output
 		$this->_outputMessage("Running Repair...\n");
 		// fluxd
