@@ -42,7 +42,7 @@ if ((isset($message)) && ($message != "")) {
 }
 
 // Rssad
-$rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
+//$rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
 
 // pageop
 //

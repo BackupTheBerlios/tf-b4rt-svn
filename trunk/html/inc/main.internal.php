@@ -202,23 +202,7 @@ if ($cfg['enable_xfer'] == 1) {
 /*******************************************************************************
  *  fluxd
  ******************************************************************************/
-/*
- * allways use this instance of Fluxd in included pages.
- * allways use this boolean for "is fluxd up and running" in included pages.
- * allways use this instance of FluxdQmgr in included pages.
- * allways use this boolean for "is queue up and running" in included pages.
- */
 require_once("inc/classes/Fluxd.php");
-require_once("inc/classes/Fluxd.ServiceMod.php");
-$fluxd = new Fluxd(serialize($cfg));
-$fluxdRunning = $fluxd->isFluxdRunning();
-$fluxdQmgr = null;
-$queueActive = false;
-if ($cfg["fluxd_Qmgr_enabled"] == 1) {
-	if ($fluxd->modState('Qmgr') == 1) {
-		$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Qmgr');
-		$queueActive = true;
-	}
-}
+Fluxd::initialize();
 
 ?>

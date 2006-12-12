@@ -434,10 +434,10 @@ if (isset($_REQUEST["f"])) {
 				break;
 			case "4": // fluxd-status
 				$htmlTitle = "fluxd - status";
-				if ($fluxdRunning) {
+				if (Fluxd::isRunning()) {
 					$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 					$htmlMain .= '<pre>';
-					$htmlMain .= $fluxd->statusFluxd();
+					$htmlMain .= Fluxd::status();
 					$htmlMain .= '</pre>';
 					$htmlMain .= '</div>';
 				} else {
@@ -1214,7 +1214,7 @@ function superadminAuthentication($message = "") {
  * builds page
  */
 function buildPage($action) {
-	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain, $fluxd, $fluxdRunning;
+	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
 	// navi
 	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Torrents</a>';
 	$htmlTop .= ' | ';
@@ -1258,7 +1258,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=2">error-log</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?f=3">ps</a>';
-			if ($fluxdRunning) {
+			if (Fluxd::isRunning()) {
 				$htmlMain .= ' | ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?f=4">status</a>';
 			} else {

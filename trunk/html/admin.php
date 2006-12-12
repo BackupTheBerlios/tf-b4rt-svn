@@ -128,7 +128,7 @@ switch ($op) {
 			$_POST["fluxd_Trigger_interval"] != $cfg["fluxd_Trigger_interval"]) {
 			$message = 'Settings changed. ';
 			// fluxd Running?
-			if ($fluxdRunning) {
+			if (Fluxd::isRunning()) {
 				// restart ?
 				if ($_POST["fluxd_dbmode"] != $cfg["fluxd_dbmode"]) {
 					// save settings
@@ -148,18 +148,18 @@ switch ($op) {
 					}
 					// reconfig of running daemon :
 					if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
-						$fluxd->setConfig('LOGLEVEL', $_POST["fluxd_loglevel"]);
+						Fluxd::setConfig('LOGLEVEL', $_POST["fluxd_loglevel"]);
 						sleep(1);
 					}
 					// save settings
 					$settings = processSettingsParams(false, false);
 					saveSettings('tf_settings', $settings);
 					// reload fluxd-database-cache
-					$fluxd->reloadDBCache();
+					Fluxd::reloadDBCache();
 					// reload fluxd-modules
 					if ($reloadModules) {
 						sleep(3);
-						$fluxd->reloadModules();
+						Fluxd::reloadModules();
 						$message .= 'modules reloaded.';
 					} else {
 						$message .= ' reload module(s) to use new settings.';
@@ -192,13 +192,13 @@ switch ($op) {
 		switch($action) {
 			case "start":
 				// start fluxd
-				if ($fluxd->isFluxdReadyToStart()) {
-					$fluxd->startFluxd();
-					if ($fluxd->state == 2) {
+				if (Fluxd::isReadyToStart()) {
+					Fluxd::startFluxd();
+					if (Fluxd::isRunning()) {
 						$message = 'fluxd started';
 					} else {
 						$message = 'Error starting fluxd.';
-						$fluxd->logError("Error starting fluxd :\n".$fluxd->messages, true);
+						Fluxd::logError("Error starting fluxd :\n".Fluxd::getMessages(), true);
 					}
 					break;
 				}
@@ -206,9 +206,9 @@ switch ($op) {
 				break;
 			case "stop":
 				// kill fluxd
-				if ($fluxd->isFluxdRunning()) {
-					$fluxd->stopFluxd();
-					if ($fluxd->isFluxdRunning())
+				if (Fluxd::isRunning()) {
+					Fluxd::stop();
+					if (Fluxd::isRunning())
 						$message = 'Stop-Command sent.';
 					else
 						$message = 'fluxd stopped.';
