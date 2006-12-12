@@ -29,6 +29,18 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
+// config
+loadSettings('tf_settings_dir');
+
+// is enabled ?
+if ($cfg["enable_sfvcheck"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use checkSFV");
+	showErrorPage("checkSFV is disabled.");
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.checkSFV.tmpl");
 

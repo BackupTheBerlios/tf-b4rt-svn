@@ -60,6 +60,11 @@ $dir = stripslashes($dir);
  * chmod
  ******************************************************************************/
 if ($chmod != "") {
+	// is enabled ?
+	if ($cfg["dir_enable_chmod"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use chmod (".$dir.")");
+		showErrorPage("chmod is disabled.");
+	}
 	// only valid entry with permission
 	if ((isValidEntry(basename($dir))) && (hasPermission($dir, $cfg["user"], 'w')))
 		chmodRecursive($cfg["path"].$dir);
@@ -77,7 +82,7 @@ if ($del != "") {
 	if ((isValidEntry(basename($del))) && (hasPermission($del, $cfg["user"], 'w'))) {
 		$current = delDirEntry($del);
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete (".$del.")");
 		$current = $del;
 		$del = stripslashes(stripslashes($del));
 		if (isValidPath($del)) {
@@ -111,7 +116,12 @@ if ($multidel != "") {
 /*******************************************************************************
  * download
  ******************************************************************************/
-if ($down != "" && $cfg["enable_file_download"]) {
+if ($down != "") {
+	// is enabled ?
+	if ($cfg["enable_file_download"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use download (".$down.")");
+		showErrorPage("download is disabled.");
+	}
 	// only valid entry with permission
 	if ((isValidEntry(basename($down))) && (hasPermission($down, $cfg["user"], 'r'))) {
 		$current = downloadFile($down);
@@ -139,7 +149,12 @@ if ($down != "" && $cfg["enable_file_download"]) {
 /*******************************************************************************
  * download as archive
  ******************************************************************************/
-if ($tar != "" && $cfg["enable_file_download"]) {
+if ($tar != "") {
+	// is enabled ?
+	if ($cfg["enable_file_download"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use download (".$tar.")");
+		showErrorPage("download is disabled.");
+	}
 	// only valid entry with permission
 	if ((isValidEntry(basename($tar))) && (hasPermission($tar, $cfg["user"], 'r'))) {
 		$current = downloadArchive($tar);

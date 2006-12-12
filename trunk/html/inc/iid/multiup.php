@@ -29,6 +29,12 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// is enabled ?
+if ($cfg["enable_multiupload"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multiupload");
+	showErrorPage("multiupload is disabled.");
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.multiup.tmpl");
 

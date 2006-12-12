@@ -37,6 +37,16 @@ function indexStartTransfer($transfer) {
 				indexStartTorrent($transfer, 0);
 		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 			// this is wget.
+			// is enabled ?
+			if ($cfg["enable_wget"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+				showErrorPage("wget is disabled.");
+			} elseif ($cfg["enable_wget"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+					showErrorPage("wget is disabled for users.");
+				}
+			}
 			require_once("inc/classes/ClientHandler.php");
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
 			$clientHandler->startClient($transfer, 0, false);
@@ -172,6 +182,11 @@ function indexDeQueueTransfer($transfer) {
  */
 function indexProcessDownload($url_upload) {
 	global $cfg, $queueActive, $messages;
+	// is enabled ?
+	if ($cfg["enable_torrent_download"] != 1) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");
+		showErrorPage("torrent download is disabled.");
+	}
 	if (!empty($url_upload)) {
 		$messages = "";
 		$arURL = explode("/", $url_upload);

@@ -29,12 +29,18 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// is enabled ?
+if ($cfg["enable_dereferrer"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use dereferrer");
+	showErrorPage("dereferrer is disabled.");
+}
+
 // check param
 if (!(isset($_REQUEST["u"]))) {
 	header("location: index.php?iid=index");
 	exit();
 } else {
-	$url = $_REQUEST["u"];
+	$url = getRequestVar("u");
 }
 
 // init template-instance

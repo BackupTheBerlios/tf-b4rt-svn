@@ -75,6 +75,16 @@ switch ($action) {
  * wget
  ******************************************************************************/
     case "wget":
+		// is enabled ?
+		if ($cfg["enable_wget"] == 0) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+			showErrorPage("wget is disabled.");
+		} elseif ($cfg["enable_wget"] == 1) {
+			if (!$cfg['isAdmin']) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+				showErrorPage("wget is disabled for users.");
+			}
+		}
 		$url = getRequestVar('url');
 		if (!empty($url)) {
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
@@ -124,7 +134,13 @@ switch ($action) {
 /*******************************************************************************
  * bulk operations
  ******************************************************************************/
-    case "bulkStop": /* bulkStop */
+    case "bulkStop": /* bulkStop *///
+    	// is enabled ?
+		if ($cfg["enable_bulkops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStop");
+			showErrorPage("bulkops are disabled.");
+		}
+		// stop all
     	$transfers = getTorrentListFromFS();
     	foreach ($transfers as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
@@ -140,6 +156,12 @@ switch ($action) {
     	}
     	break;
     case "bulkResume": /* bulkResume */
+    	// is enabled ?
+		if ($cfg["enable_bulkops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkResume");
+			showErrorPage("bulkops are disabled.");
+		}
+		// resume all
     	$transfers = getTorrentListFromDB();
     	foreach ($transfers as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
@@ -159,6 +181,12 @@ switch ($action) {
     	}
     	break;
     case "bulkStart": /* bulkStart */
+    	// is enabled ?
+		if ($cfg["enable_bulkops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStart");
+			showErrorPage("bulkops are disabled.");
+		}
+		// start all
     	$transfers = getTorrentListFromFS();
     	foreach ($transfers as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
@@ -182,6 +210,12 @@ switch ($action) {
  * selected transfers (index-page)
  ******************************************************************************/
     default:
+
+    	// is enabled ?
+		if ($cfg["enable_multiops"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multi-op ".$action);
+			showErrorPage("bulkops are disabled.");
+		}
 
 		foreach($_POST['transfer'] as $key => $element) {
 

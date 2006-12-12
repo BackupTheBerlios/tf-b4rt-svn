@@ -47,6 +47,12 @@ require_once('inc/functions/functions.vlc.php');
 // config
 loadSettings('tf_settings_dir');
 
+// is enabled ?
+if ($cfg["enable_vlc"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use vlc");
+	showErrorPage("vlc is disabled.");
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.vlc.tmpl");
 

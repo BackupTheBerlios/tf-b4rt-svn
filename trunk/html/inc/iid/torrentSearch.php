@@ -29,6 +29,12 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// is enabled ?
+if ($cfg["enable_search"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use search");
+	showErrorPage("search is disabled.");
+}
+
 // common functions
 require_once('inc/functions/functions.common.php');
 

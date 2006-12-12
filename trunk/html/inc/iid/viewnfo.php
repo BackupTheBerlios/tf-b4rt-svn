@@ -29,6 +29,18 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
+// config
+loadSettings('tf_settings_dir');
+
+// is enabled ?
+if ($cfg["enable_view_nfo"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nfo-viewer");
+	showErrorPage("nfo-viewer is disabled.");
+}
+
 // target-file
 $file = getRequestVar("path");
 $fileIsValid = (isValidPath($file, ".nfo") || isValidPath($file, ".txt") || isValidPath($file, ".log"));

@@ -29,6 +29,12 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// is enabled ?
+if ($cfg["advanced_start"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use advanced start");
+	showErrorPage("advanced start is disabled.");
+}
+
 // common functions
 require_once('inc/functions/functions.common.php');
 

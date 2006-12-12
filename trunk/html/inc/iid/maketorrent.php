@@ -35,6 +35,15 @@ require_once('inc/functions/functions.common.php');
 // maketorrent
 require_once("inc/functions/functions.maketorrent.php");
 
+// config
+loadSettings('tf_settings_dir');
+
+// is enabled ?
+if ($cfg["enable_maketorrent"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use maketorrent");
+	showErrorPage("maketorrent is disabled.");
+}
+
 /*******************************************************************************
  * torrent download
  ******************************************************************************/
@@ -44,8 +53,6 @@ if ((isset($_REQUEST["download"])) && (!(empty($_REQUEST["download"]))))
 /*******************************************************************************
  * create + page
  ******************************************************************************/
-// config
-loadSettings('tf_settings_dir');
 
 // file + torrent vars
 $path = @ $_REQUEST['path'];

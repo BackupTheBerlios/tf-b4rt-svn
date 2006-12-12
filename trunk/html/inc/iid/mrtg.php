@@ -29,6 +29,12 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// is enabled ?
+if ($cfg["enable_mrtg"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use mrtg");
+	showErrorPage("mrtg is disabled.");
+}
+
 // default-target
 define('_DEFAULT_TARGET','traffic');
 
