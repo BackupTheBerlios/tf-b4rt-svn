@@ -199,7 +199,7 @@ switch ($op) {
 					} else {
 						$message = 'Error starting fluxd.';
 						$msgs = Fluxd::getMessages();
-						Fluxd::logError("Error starting fluxd :\n".implode("\n", $msgs), true);
+						Fluxd::logError("Error starting fluxd, please check fluxd-logs. Messages :\n".implode("\n", $msgs), true);
 						// TODO : $msgs
 					}
 					break;

@@ -296,6 +296,7 @@ class Fluxd
             $startCommand .= " ".escapeshellarg($this->_cfg["docroot"]."bin/fluxd/fluxd.pl");
             $startCommand .= " start";
             $startCommand .= " ".escapeshellarg($this->_cfg["docroot"]);
+            $startCommand .= " ".escapeshellarg($this->_cfg["path"]);
             $startCommand .= " ".escapeshellarg($this->_cfg["bin_php"]);
             $startCommand .= " ".escapeshellarg($this->_cfg["fluxd_dbmode"]);
 	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
@@ -411,7 +412,7 @@ class Fluxd
      * instance_modState
      *
      * @param name of service-module
-     * @return int with mod-state
+     * @return string with mod-state
      */
     function instance_modState($mod) {
 		return ($this->state == FLUXD_STATE_RUNNING)

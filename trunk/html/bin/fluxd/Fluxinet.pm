@@ -22,7 +22,8 @@
 ################################################################################
 #                                                                              #
 #  Requirements :                                                              #
-#   * IO::Socket ( perl -MCPAN -e "install IO::Socket" )                       #
+#   * IO::Select       ( perl -MCPAN -e "install IO::Select" )                 #
+#   * IO::Socket::INET ( perl -MCPAN -e "install IO::Socket::INET" )           #
 #                                                                              #
 ################################################################################
 package Fluxinet;
@@ -98,7 +99,7 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: port                                                              #
+# Arguments: loglevel,port                                                     #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
@@ -174,15 +175,30 @@ sub initialize {
 #------------------------------------------------------------------------------#
 sub loadModules {
 
-	# load IO::Socket
+	# load IO::Select
+	if ($LOGLEVEL > 2) {
+		FluxdCommon::printMessage("Fluxinet", "loading Perl-module IO::Select\n");
+	}
+	if (eval "require IO::Select")  {
+		IO::Select->import();
+	} else {
+		# message
+		$message = "cant load perl-module IO::Socket::INET : ".$@;;
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+
+	# load IO::Socket::INET
 	if ($LOGLEVEL > 2) {
 		FluxdCommon::printMessage("Fluxinet", "loading Perl-module IO::Socket\n");
 	}
-	if (eval "require IO::Socket")  {
-		IO::Socket->import();
+	if (eval "require IO::Socket::INET")  {
+		IO::Socket::INET->import();
 	} else {
 		# message
-		$message = "cant load perl-module IO::Socket : ".$@;;
+		$message = "cant load perl-module IO::Socket::INET : ".$@;;
 		# set state
 		$state = -1;
 		# return
@@ -280,7 +296,7 @@ sub command {
 sub status {
 	my $return = "";
 	$return .= "\n-= Fluxinet Revision ".$VERSION." =-\n";
-	$return .= "port : ".$port." s \n";
+	$return .= "port : ".$port."\n";
 	return $return;
 }
 

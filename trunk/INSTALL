@@ -395,9 +395,9 @@ Perl-Modules
 -----------------------------------------------------------------
 
 -- fluxd.pl (part of fluxd)
+   * IO::Select       (perl -MCPAN -e "install IO::Select")
    * IO::Socket::UNIX (perl -MCPAN -e "install IO::Socket::UNIX")
    * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
-   * IO::Select       (perl -MCPAN -e "install IO::Select")
    * POSIX            (perl -MCPAN -e "install POSIX")
 
 -- FluxDB.pm (part of fluxd) (only in dbi-mode)
@@ -411,7 +411,8 @@ Perl-Modules
      DBD::Pg          (perl -MCPAN -e "install DBD::Pg")
 
 -- Fluxinet.pm (part of fluxd)
-   * IO::Socket       (perl -MCPAN -e "install IO::Socket")
+   * IO::Select       (perl -MCPAN -e "install IO::Select")
+   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
 
 -- tfrss.pl
    * LWP::Simple      (perl -MCPAN -e "install LWP::Simple")

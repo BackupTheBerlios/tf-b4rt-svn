@@ -50,6 +50,9 @@ my $state = 0;
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
+# loglevel
+my $LOGLEVEL = 2;
+
 # operation-mode : dbi / php
 my $mode = "dbi";
 
@@ -114,6 +117,9 @@ sub new {
 #------------------------------------------------------------------------------#
 sub destroy {
 
+	# log
+	FluxdCommon::printMessage("FluxDB", "shutdown\n");
+
 	# set state
 	$state = 0;
 
@@ -172,8 +178,14 @@ sub initialize {
 	}
 
 	# db-mode
+	my $_dbmode = shift;
+
+	# print
+	FluxdCommon::printMessage("FluxDB", "initializing (mode: ".$_dbmode." ; docroot: ".$docroot." ; php: ".$php.")\n");
+
+	# db-mode
 	SWITCH: {
-		$_ = shift;
+		$_ = $_dbmode;
 		# dbi
 		/^dbi/ && do {
 			$mode = $_;
@@ -282,6 +294,20 @@ sub initialize {
 		# return
 		return 0;
 	}
+
+	# loglevel
+	if (!(defined $fluxConf{"fluxd_loglevel"})) {
+		# message
+		$message = "loglevel not defined";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+	$LOGLEVEL = $fluxConf{"fluxd_loglevel"};
+
+	# print
+	FluxdCommon::printMessage("FluxDB", "data loaded and cached, FluxDB ready.\n");
 
 	# set state
 	$state = 1;
@@ -436,6 +462,11 @@ sub getFluxUsers {
 #------------------------------------------------------------------------------#
 sub reload {
 
+	# print
+	if ($LOGLEVEL > 0) {
+		FluxdCommon::printMessage("FluxDB", "reloading DB-Cache...\n");
+	}
+
 	SWITCH: {
 		$_ = $mode;
 		# dbi
@@ -472,8 +503,6 @@ sub reload {
 			# close connection
 			dbDisconnect();
 
-			# done
-			return 1;
 		};
 		# php
 		/^php/ && do {
@@ -494,10 +523,16 @@ sub reload {
 				}
 			}
 
-			# done
-			return 1;
 		};
 	}
+
+	# print
+	if ($LOGLEVEL > 0) {
+		FluxdCommon::printMessage("FluxDB", "done reloading DB-Cache.\n");
+	}
+
+	# done
+	return 1;
 }
 
 ################################################################################

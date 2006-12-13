@@ -27,6 +27,7 @@ use Exporter;
 				getVersion
 				transferIsRunning
 				niceTimeString
+				getMessage
 				printMessage
 				printError
 				);
@@ -45,6 +46,23 @@ my $VERSION = do {
 ################################################################################
 
 #------------------------------------------------------------------------------#
+# Sub: getMessage                                                              #
+# Arguments: module, message                                                   #
+# Return: string                                                               #
+#------------------------------------------------------------------------------#
+sub getMessage {
+	my $module = shift;
+	my $message = shift;
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+		= localtime(time);
+	return sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
+						$year + 1900, $mon + 1, $mday,
+						$hour, $min, $sec,
+						$module, $message
+	);
+}
+
+#------------------------------------------------------------------------------#
 # Sub: printMessage                                                            #
 # Arguments: module, message                                                   #
 # Return: null                                                                 #
@@ -52,13 +70,7 @@ my $VERSION = do {
 sub printMessage {
 	my $module = shift;
 	my $message = shift;
-	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-		= localtime(time);
-	print STDOUT sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
-							$year + 1900, $mon + 1, $mday,
-							$hour, $min, $sec,
-							$module, $message
-						 );
+	print STDOUT getMessage($module, $message);
 }
 
 #------------------------------------------------------------------------------#
@@ -69,13 +81,7 @@ sub printMessage {
 sub printError {
 	my $module = shift;
 	my $message = shift;
-	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-		= localtime(time);
-	print STDERR sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
-							$year + 1900, $mon + 1, $mday,
-							$hour, $min, $sec,
-							$module, $message
-						 );
+	print STDERR getMessage($module, $message);
 }
 
 #------------------------------------------------------------------------------#

@@ -23,9 +23,9 @@
 ################################################################################
 #                                                                              #
 #  Requirements :                                                              #
+#   * IO::Select         ( perl -MCPAN -e "install IO::Select" )               #
 #   * IO::Socket::UNIX   ( perl -MCPAN -e "install IO::Socket::UNIX" )         #
 #   * IO::Socket::INET   ( perl -MCPAN -e "install IO::Socket::INET" )         #
-#   * IO::Select         ( perl -MCPAN -e "install IO::Select" )               #
 #   * POSIX              ( perl -MCPAN -e "install POSIX" )                    #
 #                                                                              #
 ################################################################################
@@ -39,6 +39,7 @@ use AliasFile;
 ################################################################################
 # fields                                                                       #
 ################################################################################
+
 # files and dirs
 my $PATH_DATA_DIR = ".fluxd";
 my $PATH_TRANSFER_DIR = ".transfers";
@@ -47,18 +48,22 @@ my $PATH_SOCKET = "fluxd.sock";
 my $ERROR_LOG = "fluxd-error.log";
 my $LOG = "fluxd.log";
 my $PID_FILE = "fluxd.pid";
+
 # defaults
 my $LOGLEVEL = 2;
-my $PATH_DOCROOT = "/var/www";
+my $PATH_DOCROOT = "/var/www/";
+my $PATH_PATH = "/usr/local/torrentflux/";
 my $BIN_PHP = "/usr/bin/php";
 my $dbMode = "dbi";
 my $pwd = ".";
+
 # internal vars
 my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
 my $Select;
 my $start_time = time();
 my $start_time_local = localtime();
+my $loop = 0;
 
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
@@ -84,8 +89,11 @@ processArguments();
 # load flux-service-modules
 serviceModulesLoad();
 
+# print that we started ok
+FluxdCommon::printMessage("CORE", "fluxd-startup complete. fluxd is up and running.\n");
+
 # Here we go! The main loop!
-my $loop = 1;
+$loop = 1;
 while ($loop) {
 
 	# check Connections
@@ -195,11 +203,6 @@ while ($loop) {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub initialize {
-	# Windows is not supported
-	if ("$^0" =~ /win32/i) {
-		print "\r\nWin32 not supported.\r\n";
-		exit;
-	}
 	# initialize some variables
 	$VERSION = do {
 		my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
@@ -252,6 +255,16 @@ sub processArguments {
 			$temp .= "/";
 		}
 		$PATH_DOCROOT = $temp;
+		# PATH_PATH
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
+		}
+		$PATH_PATH = $temp;
 		# $BIN_PHP
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -266,25 +279,15 @@ sub processArguments {
 			exit;
 		}
 		$dbMode = $temp;
+		# init paths
+		initPaths();
 		# check if running
 		if (daemonIsRunning($PATH_DOCROOT) == 0) {
 			FluxdCommon::printError("CORE", "daemon not running.\n");
 			exit;
 		}
 		FluxdCommon::printMessage("CORE", "Stopping daemon...\n");
-		# db-bean
-		# require
-		require FluxDB;
-		# create instance
-		$fluxDB = FluxDB->new();
-		# initialize
-		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
-		if ($fluxDB->getState() < 1) {
-			FluxdCommon::printError("CORE", "Error : Problems initializing FluxDB : ".$fluxDB->getMessage()."\n");
-			exit;
-		}
-		# init paths
-		initPaths(FluxDB->getFluxConfig("path"));
+		# shutdown
 		if (-f $PID_FILE) {
 			# get pid
 			open(PIDFILE,"< $PID_FILE");
@@ -311,6 +314,16 @@ sub processArguments {
 			$temp .= "/";
 		}
 		$PATH_DOCROOT = $temp;
+		# PATH_PATH
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			printUsage();
+			exit;
+		}
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
+		}
+		$PATH_PATH = $temp;
 		# $BIN_PHP
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
@@ -325,11 +338,9 @@ sub processArguments {
 			exit;
 		}
 		$dbMode = $temp;
-		# check if already running
-		if (daemonIsRunning($PATH_DOCROOT) == 1) {
-			FluxdCommon::printError("CORE", "daemon already running.\n");
-			exit;
-		}
+		# init paths
+		initPaths();
+		# print
 		FluxdCommon::printMessage("CORE", "Starting daemon...\n");
 		# return
 		return 1;
@@ -346,39 +357,26 @@ sub processArguments {
 #------------------------------------------------------------------------------#
 sub daemonize {
 
-	# db-bean
-	require FluxDB;
-
-	# create instance
-	$fluxDB = FluxDB->new();
-	if ($fluxDB->getState() == -1) {
-		FluxdCommon::printError("CORE", "Error : creating FluxDB: ".$fluxDB->getMessage()."\n");
-		exit;
-	}
-
-	# initialize
-	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
-	if ($fluxDB->getState() < 1) {
-		FluxdCommon::printError("CORE", "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n");
-		exit;
-	}
-
-	# loglevel
-	$LOGLEVEL = FluxDB->getFluxConfig("fluxd_loglevel");
-
-	# init paths
-	initPaths(FluxDB->getFluxConfig("path"));
-
-	# chdir
-	#chdir($PATH_DOCROOT) or die "Can't chdir to docroot: $!";
-
 	# umask
 	umask 0;
 
 	# STD-IN/OUT/ERR
-	open STDIN, "/dev/null" 	or die "Can't read /dev/null: $!";
-	open STDOUT, ">>$LOG"		or die "Can't Write to $LOG: $!";
-	open STDERR, ">>$ERROR_LOG"	or die "Can't Write to error $ERROR_LOG: $!";
+
+	# STDIN
+	unless (open STDIN, "/dev/null") {
+		logError("CORE", "failed to open STDIN: ".$!."\n");
+		exit;
+	}
+	# STDOUT
+	unless (open STDOUT, ">>$LOG") {
+		logError("CORE", "failed to open STDOUT: ".$!."\n");
+		exit;
+	}
+	# STDERR
+	unless (open STDERR, ">>$ERROR_LOG") {
+		logError("CORE", "failed to open STDERR: ".$!."\n");
+		exit;
+	}
 
 	# check if already running
 	if (daemonIsRunning($PATH_DOCROOT) == 1) {
@@ -398,22 +396,57 @@ sub daemonize {
 		socketRemove();
 	}
 
+	# print
+	FluxdCommon::printMessage("CORE", "initialize FluxDB...\n");
+
+	# db-bean
+	require FluxDB;
+
+	# create instance
+	$fluxDB = FluxDB->new();
+
+	# initialize
+	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
+	if ($fluxDB->getState() < 1) {
+		FluxdCommon::printError("CORE", "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n");
+		exit;
+	}
+
+	# loglevel
+	$LOGLEVEL = FluxDB->getFluxConfig("fluxd_loglevel");
+
+	# chdir
+	#chdir($PATH_DOCROOT) or die "Can't chdir to docroot: $!";
+
 	# load perl-modules
 	loadModules();
 
 	# fork
-	defined(my $pid = fork) or die "CORE : Can't fork: $!";
+	if ($LOGLEVEL > 1) {
+		FluxdCommon::printMessage("CORE", "forking and starting a new session...\n");
+	}
+	my $pid = fork;
+	unless (defined($pid)) {
+		FluxdCommon::printError("CORE", "could not fork: ".$!."\n");
+		exit;
+	}
 	exit if $pid;
-	POSIX::setsid() or die "CORE : Can't start a new session: $!";
+	unless (POSIX::setsid()) {
+		FluxdCommon::printError("CORE", "could not start a new session: ".$!."\n");
+		exit;
+	}
 
 	# get cwd
 	$pwd = qx(pwd);
 	chop $pwd;
 
 	# log
-	FluxdCommon::printMessage("CORE", "Starting up daemon with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n");
+	FluxdCommon::printMessage("CORE", "daemon starting with docroot ".$PATH_DOCROOT." (pid: ".$$." ; pwd: ".$pwd.")\n");
 
 	# set up our signal handlers
+	if ($LOGLEVEL > 1) {
+		FluxdCommon::printMessage("CORE", "setting up signal handlers...\n");
+	}
 	$SIG{HUP} = \&gotSigHup;
 	$SIG{QUIT} = \&gotSigQuit;
 
@@ -442,12 +475,16 @@ sub daemonShutdown {
 	socketRemove();
 
 	# destroy db-bean
+	FluxdCommon::printMessage("CORE", "shutting down FluxDB...\n");
 	if (defined($fluxDB)) {
 		$fluxDB->destroy();
 	}
 
 	# remove pid-file
 	pidFileDelete();
+
+	# print that we started ok
+	FluxdCommon::printMessage("CORE", "fluxd-shutdown complete.\n");
 
 	# get out here
 	exit;
@@ -476,16 +513,12 @@ sub daemonIsRunning {
 
 #------------------------------------------------------------------------------#
 # Sub: initPaths                                                               #
-# Arguments: base path for t-flux                                              #
+# Arguments: null                                                              #
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub initPaths {
-	my $path = shift;
-	if (!((substr $path, -1) eq "/")) {
-		$path .= "/";
-	}
-	$PATH_TRANSFER_DIR = $path.$PATH_TRANSFER_DIR."/";
-	$PATH_DATA_DIR = $path.$PATH_DATA_DIR."/";
+	$PATH_TRANSFER_DIR = $PATH_PATH.$PATH_TRANSFER_DIR."/";
+	$PATH_DATA_DIR = $PATH_PATH.$PATH_DATA_DIR."/";
 	$PATH_SOCKET = $PATH_DATA_DIR.$PATH_SOCKET;
 	$LOG = $PATH_DATA_DIR.$LOG;
 	$ERROR_LOG = $PATH_DATA_DIR.$ERROR_LOG;
@@ -502,6 +535,10 @@ sub initPaths {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub loadModules {
+	# print
+	if ($LOGLEVEL > 1) {
+		FluxdCommon::printMessage("CORE", "loading Perl-modules...\n");
+	}
 	# load IO::Socket::UNIX
 	if ($LOGLEVEL > 2) {
 		FluxdCommon::printMessage("CORE", "loading Perl-module IO::Socket::UNIX\n");
@@ -532,6 +569,10 @@ sub loadModules {
 		FluxdCommon::printError("CORE", "load perl-module POSIX failed\n");
 		exit;
 	}
+	# print
+	if ($LOGLEVEL > 1) {
+		FluxdCommon::printMessage("CORE", "Perl-modules loaded.\n");
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -540,6 +581,11 @@ sub loadModules {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub serviceModulesLoad {
+
+	# print
+	if ($LOGLEVEL > 0) {
+		FluxdCommon::printMessage("CORE", "loading service-modules...\n");
+	}
 
 	# Fluxinet
 	if (FluxDB->getFluxConfig("fluxd_Fluxinet_enabled") == 1) {
@@ -831,6 +877,11 @@ sub serviceModulesLoad {
 		}
 	}
 
+	# print
+	if ($LOGLEVEL > 0) {
+		FluxdCommon::printMessage("CORE", "done loading service-modules.\n");
+	}
+
 }
 
 #------------------------------------------------------------------------------#
@@ -839,6 +890,11 @@ sub serviceModulesLoad {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub serviceModulesUnload {
+
+	# print
+	if ($LOGLEVEL > 0) {
+		FluxdCommon::printMessage("CORE", "unloading service-modules...\n");
+	}
 
 	# Fluxinet
 	if (defined $fluxinet) {
@@ -934,6 +990,11 @@ sub serviceModulesUnload {
 				FluxdCommon::printMessage("CORE", "Trigger unloaded\n");
 			}
 		}
+	}
+
+	# print
+	if ($LOGLEVEL > 0) {
+		FluxdCommon::printMessage("CORE", "done unloading service-modules.\n");
 	}
 
 }
@@ -1262,12 +1323,12 @@ sub doSysCall {
 	$command .= " 1>> ".$LOG." 2>> ".$ERROR_LOG." &";
     system($command);
     if ($? == -1) {
-		FluxdCommon::printError("CORE", "failed to execute: $!\n");
+		FluxdCommon::printError("CORE", "failed to execute: ".$!."\ncommand:\n".$command);
     } elsif ($? & 127) {
-		FluxdCommon::printError("CORE", (sprintf "child died with signal %d, %s coredump\n", ($? & 127),  ($? & 128) ? 'with' : 'without'));
+		FluxdCommon::printError("CORE", (sprintf "child died with signal %d, %s coredump\ncommand:\n%s", ($? & 127),  ($? & 128) ? 'with' : 'without'), $command);
     } else {
 		if ($LOGLEVEL > 2) {
-			FluxdCommon::printMessage("CORE", (sprintf "child exited with value %d\n", $? >> 8));
+			FluxdCommon::printMessage("CORE", (sprintf "child exited with value %d\ncommand:\n%s", $? >> 8, $command));
 		}
 		return 1;
     }
@@ -1286,7 +1347,14 @@ sub socketInitialize {
 			Listen  => 16,
 			Reuse   => 1,
 			);
-	die "CORE : Couldn't create socket: $!\n" unless $SERVER;
+
+	# check socket
+	unless ($SERVER) {
+		FluxdCommon::printError("CORE", "could not create socket: ".$!."\n");
+		exit;
+	}
+
+	# print
 	if ($LOGLEVEL > 0) {
 		FluxdCommon::printMessage("CORE", "created socket ".$PATH_SOCKET."\n");
 	}
@@ -1466,30 +1534,68 @@ sub printVersion {
 # Returns: info on sys requirements                                            #
 #------------------------------------------------------------------------------#
 sub check {
-	print "checking requirements...\n";
-	# 1. perl-modules
-	print "1. perl-modules\n";
-	my @mods = ('IO::Socket::UNIX', 'IO::Socket::INET', 'IO::Select', 'POSIX');
+
+	my $errors = 0;
+	my $warnings = 0;
+	my @errorMessages = ();
+	my @warningMessages = ();
+	FluxdCommon::printMessage("CORE", "checking requirements...\n");
+
+	# 1. CORE-Perl-modules
+	FluxdCommon::printMessage("CORE", "1. CORE-Perl-modules\n");
+	my @mods = ('IO::Select', 'IO::Socket::UNIX', 'IO::Socket::INET', 'POSIX');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
-			print " - ".$mod."\n";
+			FluxdCommon::printMessage("CORE", "   - OK : ".$mod."\n");
 			next;
 		} else {
-			print "Error : cant load module ".$mod."\n";
-			# Turn on Autoflush;
-			$| = 1;
-			print "Should we try to install the module with CPAN ? (y|n) ";
-			my $answer = "";
-			chomp($answer=<STDIN>);
-			$answer = lc($answer);
-			if ($answer eq "y") {
-				exec('perl -MCPAN -e "install '.$mod.'"');
-			}
-			exit;
+			$errors++;
+			push(@errorMessages, "Loading of CORE-Perl-module ".$mod." failed.\n");
+			FluxdCommon::printMessage("CORE", "   - FAILED : ".$mod."\n");
 		}
 	}
-	# done
-	print "done.\n";
+
+	# 2. FluxDB-Perl-modules
+	FluxdCommon::printMessage("CORE", "2. Database-Perl-modules\n");
+	if (eval "require DBI")  {
+		FluxdCommon::printMessage("CORE", "   - OK : DBI\n");
+	} else {
+		$warnings++;
+		push(@warningMessages, "Loading of FluxDB-Perl-module DBI failed. fluxd cannot work in DBI/DBD-mode but only in PHP-mode.\n");
+		FluxdCommon::printMessage("CORE", "   - FAILED : DBI\n");
+	}
+	my $dbdwarnings = 0;
+	@mods = ('DBD::mysql', 'DBD::SQLite', 'DBD::Pg',);
+	foreach my $mod (@mods) {
+		if (eval "require $mod")  {
+			FluxdCommon::printMessage("CORE", "   - OK : ".$mod."\n");
+			next;
+		} else {
+			$dbdwarnings++;
+			FluxdCommon::printMessage("CORE", "   - FAILED : ".$mod."\n");
+		}
+	}
+	if ($dbdwarnings == 3) {
+		$warnings++;
+		push(@warningMessages, "No DBD-Module could be loaded. fluxd cannot work in DBI/DBD-mode but only in PHP-mode.\n");
+	}
+
+	# 3. Result
+	FluxdCommon::printMessage("CORE", "3. Result : ".(($errors == 0) ? "PASSED" : "FAILED")."\n");
+	# failures
+	if ($errors > 0) {
+		FluxdCommon::printMessage("CORE", "Errors:\n");
+		foreach my $msg (@errorMessages) {
+			FluxdCommon::printMessage("CORE", $msg);
+		}
+	}
+	# warnings
+	if ($warnings > 0) {
+		FluxdCommon::printMessage("CORE", "Warnings:\n");
+		foreach my $msg (@warningMessages) {
+			FluxdCommon::printMessage("CORE", $msg);
+		}
+	}
 }
 
 #------------------------------------------------------------------------------#
@@ -1502,135 +1608,140 @@ sub debug {
 
 	# first arg is debug-operation.
 	if (!(defined $debug)) {
-		print "debug is missing an operation.\n";
+		FluxdCommon::printError("CORE", "debug is missing an operation.\n");
 		exit;
 	}
 
 	# database-debug
 	if ($debug =~ /db/) {
-
 		# $PATH_DOCROOT
 		my $temp = shift @ARGV;
 		if (!(defined $temp)) {
-			print "debug database is missing an argument : path to docroot\n";
+			FluxdCommon::printError("CORE", "debug database is missing an argument : path to docroot\n");
 			exit;
 		}
 		if (!((substr $temp, -1) eq "/")) {
 			$temp .= "/";
 		}
 		$PATH_DOCROOT = $temp;
-
+		# PATH_PATH
+		$temp = shift @ARGV;
+		if (!(defined $temp)) {
+			FluxdCommon::printError("CORE", "debug database is missing an argument : path to path\n");
+			exit;
+		}
+		if (!((substr $temp, -1) eq "/")) {
+			$temp .= "/";
+		}
+		$PATH_PATH = $temp;
 		# $BIN_PHP
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
-			print "debug database is missing an argument : path to php\n";
+			FluxdCommon::printError("CORE", "debug database is missing an argument : path to php\n");
 			exit;
 		}
 		$BIN_PHP = $temp;
-
-		print "debugging database...\n";
-
+		FluxdCommon::printMessage("CORE", "debugging database...\n");
 		# require
 		require FluxDB;
 		# create instance
-		print " creating \$fluxDB\n";
+		FluxdCommon::printMessage("CORE", "creating \$fluxDB\n");
 		$fluxDB = FluxDB->new();
-		if ($fluxDB->getState() == -1) {
-			print " error : ".$fluxDB->getMessage()."\n";
-			exit;
-		}
-
 		# PHP
 		# initialize
-		print " initializing \$fluxDB (php)\n";
+		FluxdCommon::printMessage("CORE", "initializing \$fluxDB (php)\n");
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
 		if ($fluxDB->getState() < 1) {
-			print " hmm : ".$fluxDB->getMessage()."\n";
+			FluxdCommon::printError("CORE", "error : ".$fluxDB->getMessage()."\n");
 			exit;
 		}
-
 		# something from the bean
-		print "  FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print "  FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n");
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n");
 		# test to set a val
-		print "  FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n");
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print "  FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n");
 		# now reload and check again
 		$fluxDB->reload();
-		print "  FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
-
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n");
 		# destroy
-		print " destroying \$fluxDB\n";
+		FluxdCommon::printMessage("CORE", "destroying \$fluxDB\n");
 		$fluxDB->destroy();
-
 		# DBI
 		# initialize
-		print " initializing \$fluxDB (dbi)\n";
+		FluxdCommon::printMessage("CORE", "initializing \$fluxDB (dbi)\n");
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
 		if ($fluxDB->getState() < 1) {
-			print " hmm : ".$fluxDB->getMessage()."\n";
+			FluxdCommon::printError("CORE", "error : ".$fluxDB->getMessage()."\n");
 			# db-settings
-			print " DatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-			print " DatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-			print " DatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-			print " DatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-			print " DatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-			print " DatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-			print " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+			print STDERR " DatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
+			print STDERR " DatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
+			print STDERR " DatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
+			print STDERR " DatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
+			print STDERR " DatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
+			print STDERR " DatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
+			print STDERR " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
 			exit;
 		}
 		# db-settings
-		print "  DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
-
+		FluxdCommon::printMessage("CORE", "DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n");
 		# something from the bean
-		print "  FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n";
-		print "  FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n";
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"path\") : \"".FluxDB->getFluxConfig("path")."\"\n");
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"docroot\") : \"".FluxDB->getFluxConfig("docroot")."\"\n");
 		# test to set a val
-		print "  FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"default_theme\") : \"".FluxDB->getFluxConfig("default_theme")."\"\n");
 		$fluxDB->setFluxConfig("default_theme","foo");
-		print "  FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"default_theme\") after set : \"".FluxDB->getFluxConfig("default_theme")."\"\n");
 		# now reload and check again
 		$fluxDB->reload();
-		print "  FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n";
-
+		FluxdCommon::printMessage("CORE", "FluxConfig(\"default_theme\") after reload : \"".FluxDB->getFluxConfig("default_theme")."\"\n");
 		# destroy
-		print " destroying \$fluxDB\n";
+		FluxdCommon::printMessage("CORE", "destroying \$fluxDB\n");
 		$fluxDB->destroy();
-
 		# done
-		print "done.\n";
-		exit;
-
-	} elsif	($debug =~ /fluxcli/) { # fluxcli-debug
-		# $PATH_DOCROOT
-		my $temp = shift @ARGV;
-		if (!(defined $temp)) {
-			print "debug fluxcli is missing an argument : path to docroot\n";
-			exit;
-		}
-		if (!((substr $temp, -1) eq "/")) {
-			$temp .= "/";
-		}
-		$PATH_DOCROOT = $temp;
-		# $BIN_PHP
-		$temp = shift @ARGV;
-		if (!(defined $temp)) {
-			print "debug fluxcli is missing an argument : path to php\n";
-			exit;
-		}
-		$BIN_PHP = $temp;
-		print "debugging fluxcli...\n";
-		# test fluxcli-command "torrents"
-		my $return = fluxcli("torrents");
-		print $return;
-		# exit
+		FluxdCommon::printMessage("CORE", "database debug done.\n");
 		exit;
 	}
 
 	# bail out
 	print "debug is missing an operation.\n";
 	exit;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: logMessage                                                              #
+# Arguments: module, message                                                   #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub logMessage {
+	my $module = shift;
+	my $message = shift;
+	logToFile($LOG ,FluxdCommon::getMessage($module, $message));
+}
+
+#------------------------------------------------------------------------------#
+# Sub: logError                                                                #
+# Arguments: module, message                                                   #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub logError {
+	my $module = shift;
+	my $message = shift;
+	logToFile($ERROR_LOG ,FluxdCommon::getMessage($module, $message));
+}
+
+#------------------------------------------------------------------------------#
+# Sub: logToFile                                                               #
+# Arguments: file, message                                                     #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub logToFile {
+	my $file = shift;
+	my $message = shift;
+	open(LOG, ">>$file");
+	print LOG $message;
+	close LOG;
 }
 
 #------------------------------------------------------------------------------#
@@ -1643,18 +1754,28 @@ sub printUsage {
 	my $data = <<"USAGE";
 $PROG.$EXTENSION Revision $VERSION
 
-Usage: $PROG.$EXTENSION <start> path-to-docroot path-to-php db-mode
-                        start fluxd daemon.
-                        db-mode : dbi/php
-       $PROG.$EXTENSION <stop> path-to-docroot path-to-php db-mode
-                        stop fluxd daemon
-                        db-mode : dbi/php
-       $PROG.$EXTENSION <check>
-                        check for requirements.
-       $PROG.$EXTENSION <-v|--version>
-                        print out version-info
-       $PROG.$EXTENSION <-h|--help>
-                        print out help screen.
+Usage:
+
+ $PROG.$EXTENSION <start> path-to-docroot path-to-path path-to-php db-mode
+   start fluxd daemon.
+   db-mode : dbi/php
+
+ $PROG.$EXTENSION <stop> path-to-docroot path-to-path path-to-php db-mode
+   stop fluxd daemon
+   db-mode : dbi/php
+
+ $PROG.$EXTENSION <check>
+   check for requirements.
+
+ $PROG.$EXTENSION <debug> type path-to-docroot path-to-path path-to-php
+   debug fluxd daemon
+   type : db
+
+ $PROG.$EXTENSION <-v|--version>
+   print out version-info
+
+ $PROG.$EXTENSION <-h|--help>
+   print out help screen.
 
 USAGE
 
