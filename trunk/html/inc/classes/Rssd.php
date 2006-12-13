@@ -82,9 +82,6 @@ class Rssd
 	// lastRSS-instance
 	var $_lastRSS;
 
-    // SimpleHTTP-instance
-	var $_simpleHTTP;
-
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -190,8 +187,6 @@ class Rssd
 		$this->_lastRSS = lastRSS::getInstance($this->_cfg);
 		$this->_lastRSS->cache_dir = '';
 		$this->_lastRSS->stripHTML = false;
-		// init SimpleHTTP-instance
-		$this->_simpleHTTP = SimpleHTTP::getInstance($this->_cfg);
     }
 
 	// =========================================================================
@@ -208,6 +203,8 @@ class Rssd
 	 * @return boolean
 	 */
     function instance_processFeed($sdir, $filter, $hist, $url) {
+    	// (re)set state
+    	$this->state = RSSD_STATE_NULL;
    		// validate
    		if (!checkDirectory($sdir, 0777)) {
             $this->state = RSSD_STATE_ERROR;
@@ -384,10 +381,10 @@ class Rssd
      * @return boolean
      */
 	function _saveTorrent($url, $title) {
-		$content = $this->_simpleHTTP->getTorrent($url);
-		if ($this->_simpleHTTP->state == SIMPLEHTTP_STATE_OK) {
+		$content = SimpleHTTP::getTorrent($url);
+		if (SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) {
 			// filename
-			$filename = $this->_simpleHTTP->filename;
+			$filename = SimpleHTTP::getFilename();
 			$filename = (($filename != "") && ($filename != "unknown.torrent") && (strpos($filename, ".torrent") !== false))
 				? cleanFileName($filename)
 				: cleanFileName($title);
@@ -435,7 +432,8 @@ class Rssd
 			return true;
 		} else {
 			// last op was not ok
-			$this->_outputError("could not download torrent with title ".$title." from url ".$url." : \n".implode("\n", $this->_simpleHTTP->messages));
+			$msgs = SimpleHTTP::getMessages();
+			$this->_outputError("could not download torrent with title ".$title." from url ".$url." : \n".implode("\n", $msgs));
 			return false;
 		}
     }

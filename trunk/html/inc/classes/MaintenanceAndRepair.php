@@ -175,6 +175,8 @@ class MaintenanceAndRepair
 	 * @param $trestart
 	 */
 	function instance_maintenance($trestart = false) {
+    	// (re)set state
+    	$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
 		// output
 		$this->_outputMessage("Running Maintenance...\n");
 		// fluxd
@@ -193,6 +195,8 @@ class MaintenanceAndRepair
 	 * instance_repair
 	 */
 	function instance_repair() {
+    	// (re)set state
+    	$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
 		// output
 		$this->_outputMessage("Running Repair...\n");
 		// fluxd

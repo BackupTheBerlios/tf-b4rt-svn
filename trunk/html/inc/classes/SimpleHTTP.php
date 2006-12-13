@@ -125,18 +125,112 @@ class SimpleHTTP
     var $_cfg = array();
 
 	// =========================================================================
-	// factory + ctor
+	// public static methods
 	// =========================================================================
 
     /**
      * factory
      *
-     * @param $cfg
      * @return SimpleHTTP
      */
-    function getInstance($cfg) {
+    function getNewInstance($cfg) {
+    	global $cfg;
     	return new SimpleHTTP(serialize($cfg));
     }
+
+    /**
+     * accessor for singleton
+     *
+     * @return SimpleHTTP
+     */
+    function getInstance() {
+		global $instanceSimpleHTTP;
+		// initialize if needed
+		if (!isset($instanceSimpleHTTP))
+			SimpleHTTP::initialize();
+		return $instanceSimpleHTTP;
+    }
+
+    /**
+     * initialize SimpleHTTP.
+     */
+    function initialize() {
+    	global $cfg, $instanceSimpleHTTP;
+    	// create instance
+    	if (!isset($instanceSimpleHTTP))
+    		$instanceSimpleHTTP = new SimpleHTTP(serialize($cfg));
+    }
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+    function getState() {
+		global $instanceSimpleHTTP;
+		return (isset($instanceSimpleHTTP))
+			? $instanceSimpleHTTP->state
+			: SIMPLEHTTP_STATE_NULL;
+    }
+
+    /**
+     * getMessages
+     *
+     * @return array
+     */
+    function getMessages() {
+		global $instanceSimpleHTTP;
+		return (isset($instanceSimpleHTTP))
+			? $instanceSimpleHTTP->messages
+			: array();
+    }
+
+    /**
+     * getMessages
+     *
+     * @return string
+     */
+    function getFilename() {
+		global $instanceSimpleHTTP;
+		return (isset($instanceSimpleHTTP))
+			? $instanceSimpleHTTP->filename
+			: "";
+    }
+
+	/**
+	 * method to get data from URL -- uses timeout and user agent
+	 *
+	 * @param $get_url
+	 * @param $get_referer
+	 * @return string
+	 */
+	function getData($get_url, $get_referer = "") {
+		global $instanceSimpleHTTP;
+		// initialize if needed
+		if (!isset($instanceSimpleHTTP))
+			SimpleHTTP::initialize();
+		// call instance-method
+		return $instanceSimpleHTTP->instance_getData($get_url, $get_referer);
+	}
+
+	/**
+	 * get torrent from URL. Has support for specific sites
+	 *
+	 * @param $turl
+	 * @return string
+	 */
+	function getTorrent($turl) {
+		global $instanceSimpleHTTP;
+		// initialize if needed
+		if (!isset($instanceSimpleHTTP))
+			SimpleHTTP::initialize();
+		// call instance-method
+		return $instanceSimpleHTTP->instance_getTorrent($turl);
+	}
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * do not use direct, use the factory-method !
@@ -169,12 +263,15 @@ class SimpleHTTP
 	 * @param $get_referer
 	 * @return string
 	 */
-	function getData($get_url, $get_referer = "") {
+	function instance_getData($get_url, $get_referer = "") {
 		global $db;
 
 		// set fields
 		$this->url = $get_url;
 		$this->referer = $get_referer;
+
+    	// (re)set state
+    	$this->state = SIMPLEHTTP_STATE_NULL;
 
 		// (re-)set some vars
 		$this->cookie = "";
@@ -386,7 +483,10 @@ class SimpleHTTP
 	 * @param $turl
 	 * @return string
 	 */
-	function getTorrent($turl) {
+	function instance_getTorrent($turl) {
+
+    	// (re)set state
+    	$this->state = SIMPLEHTTP_STATE_NULL;
 
 		// Initialize torrent name:
 		$this->filename = "";
@@ -419,7 +519,7 @@ class SimpleHTTP
 				// If received a /tor/ get the required information
 				if (strpos($turl, "/tor/") !== false) {
 					// Get the contents of the /tor/ to find the real torrent name
-					$data = $this->getData($turl);
+					$data = $this->instance_getData($turl);
 					// Check for the tag used on mininova.org
 					if (preg_match("/<a href=\"\/get\/[0-9].[^\"]+\">(.[^<]+)<\/a>/i", $data, $data_preg_match)) {
 						// This is the real torrent filename
@@ -430,7 +530,7 @@ class SimpleHTTP
 				}
 
 				// Now fetch the torrent file
-				$data = $this->getData($turl);
+				$data = $this->instance_getData($turl);
 			} elseif (strpos(strtolower($domain["host"]), "isohunt") !== false) {
 				// Sample (http://isohunt.com/js/rss.php):
 				// http://isohunt.com/download.php?mode=bt&id=8837938
@@ -444,19 +544,19 @@ class SimpleHTTP
 				}
 
 				// Grab contents of details page
-				$data = $this->getData($turl, $treferer);
+				$data = $this->instance_getData($turl, $treferer);
 			} elseif (strpos(strtolower($turl), "details.php?") !== false) {
 				// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
 				// http://www.bitmetv.org/details.php?id=18435&hit=1
 				$treferer = "http://" . $domain["host"] . "/details.php?id=";
-				$data = $this->getData($turl, $treferer);
+				$data = $this->instance_getData($turl, $treferer);
 
 				// Sample (http://www.bitmetv.org/details.php?id=18435)
 				// download.php/18435/SpiderMan%20Season%204.torrent
 				if (preg_match("/(download.php.[^\"]+)/i", $data, $data_preg_match)) {
 					$torrent = str_replace(" ", "%20", substr($data_preg_match[0], 0, -1));
 					$turl2 = "http://" . $domain["host"] . "/" . $torrent;
-					$data = $this->getData($turl2);
+					$data = $this->instance_getData($turl2);
 				} else {
 					$msg = "Error: could not find link to torrent file in $turl";
 					AuditAction($this->_cfg["constants"]["error"], $msg);
@@ -470,13 +570,13 @@ class SimpleHTTP
 				// Sample (TF's TorrenySpy Search):
 				// http://www.torrentspy.com/download.asp?id=519793
 				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
-				$data = $this->getData($turl, $treferer);
+				$data = $this->instance_getData($turl, $treferer);
 			} else {
 				// Fallback case for any URL not ending in .torrent and not matching the above cases:
-				$data = $this->getData($turl);
+				$data = $this->instance_getData($turl);
 			}
 		} else {
-			$data = $this->getData($turl);
+			$data = $this->instance_getData($turl);
 		}
 		// Make sure we have a torrent file
 		if (strpos($data, "d8:") === false)	{
@@ -515,23 +615,6 @@ class SimpleHTTP
 		return $data;
 	}
 
-	/**
-	 * Format any messages contained in $messages array ready for output
-	 * in different contexts.
-	 * TODO: needs extending to handle formatting of HTML messages (not really ;))
-	 *
-	 * @param $format string	$format - formatting to apply to messages.  Valid options are: 'text' (plain text output)
-	 * @return string
-	 */
-	function formatMessages($format="text"){
-		$msg = "";
-		$count = 1;
-		foreach ($this->messages as $thisMsg){
-			$msg.= $count.=": $thisMsg\n";
-			$count++;
-		}
-		return $msg;
-	}
 }
 
 ?>

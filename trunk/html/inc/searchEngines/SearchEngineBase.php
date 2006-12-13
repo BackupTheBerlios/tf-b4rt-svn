@@ -35,9 +35,6 @@
 
 */
 
-// require SimpleHTTP
-require_once("inc/classes/SimpleHTTP.php");
-
 // Created By Kboy
 class SearchEngineBase
 {
@@ -83,9 +80,6 @@ class SearchEngineBase
 
     var $initialized = false;   // Boolean to determine if the search engine initialized ok.
 
-    // SimpleHTTP-instance
-	var $_simpleHTTP;
-
     /**
      * Constructor
      */
@@ -97,65 +91,49 @@ class SearchEngineBase
     // Initialize the Search Engine setting up the Catalog and Filters.
     // and Testing the connection.
     function Initialize($cfg) {
-        $rtnValue = false;
-
-        $this->cfg = unserialize($cfg);
-        $this->pg = getRequestVar('pg');
-
-        if (empty($this->altURL))
-            $this->altURL = $this->mainURL;
-
-        if (empty($this->cfg)) {
-            $this->msg = "Config not passed";
-            $this->initialized = false;
-            return;
-        }
-
-		// create SimpleHTTP-instance
-		$this->_simpleHTTP = SimpleHTTP::getInstance($this->cfg);
-
-        $this->catFilterName = $this->engineName."GenreFilter";
-        $this->mainCatalogName = $this->engineName."_catalog";
-
-        if (array_key_exists('hideSeedless',$_SESSION))
-            $this->hideSeedless = $_SESSION['hideSeedless'];
-
-        if (array_key_exists($this->catFilterName,$this->cfg))
-            $this->catFilter = $this->cfg[$this->catFilterName];
-        else
-            $this->catFilter = array();
-
-        if (array_key_exists($this->mainCatalogName,$this->cfg))
-            $this->mainCatalog = $this->cfg[$this->mainCatalogName];
-        else
-            $this->populateMainCategories();
-
-        if ( $this->getConnection() )
-            $rtnValue = true;
-
-        $this->closeConnection();
-
-        // in PHP 5 use
-        //$this->curRequest = http_build_query($_REQUEST);
-        $this->curRequest = $this->http_query_builder($_REQUEST);
-
-        $this->initialized = $rtnValue;
+		$rtnValue = false;
+		$this->cfg = unserialize($cfg);
+		$this->pg = getRequestVar('pg');
+		if (empty($this->altURL))
+			$this->altURL = $this->mainURL;
+		if (empty($this->cfg)) {
+			$this->msg = "Config not passed";
+			$this->initialized = false;
+			return;
+		}
+		$this->catFilterName = $this->engineName."GenreFilter";
+		$this->mainCatalogName = $this->engineName."_catalog";
+		if (array_key_exists('hideSeedless',$_SESSION))
+			$this->hideSeedless = $_SESSION['hideSeedless'];
+		$this->catFilter = (array_key_exists($this->catFilterName,$this->cfg))
+			? $this->cfg[$this->catFilterName]
+			: array();
+		if (array_key_exists($this->mainCatalogName,$this->cfg))
+			$this->mainCatalog = $this->cfg[$this->mainCatalogName];
+		else
+			$this->populateMainCategories();
+		if ($this->getConnection())
+			$rtnValue = true;
+		$this->closeConnection();
+		// in PHP 5 use
+		//$this->curRequest = http_build_query($_REQUEST);
+		$this->curRequest = $this->http_query_builder($_REQUEST);
+		$this->initialized = $rtnValue;
     }
 
     //------------------------------------------------------------------
     // This is for backward compatibility.
     function http_query_builder( $formdata, $numeric_prefix = null, $key = null ) {
-       $res = array();
-       foreach ((array)$formdata as $k=>$v) {
-           $tmp_key = urlencode(is_int($k) ? $numeric_prefix.$k : $k);
-           if ($key) $tmp_key = $key.'['.$tmp_key.']';
-           if ( is_array($v) || is_object($v) )
-               $res[] = $this->http_query_builder($v, null, $tmp_key);
-           else
-               $res[] = $tmp_key."=".urlencode($v);
-       }
-       $separator = ini_get('arg_separator.output');
-       return implode($separator, $res);
+		$res = array();
+		foreach ((array)$formdata as $k=>$v) {
+			$tmp_key = urlencode(is_int($k) ? $numeric_prefix.$k : $k);
+			if ($key) $tmp_key = $key.'['.$tmp_key.']';
+			$res[] = (is_array($v) || is_object($v))
+				? $this->http_query_builder($v, null, $tmp_key)
+				: $tmp_key."=".urlencode($v);
+		}
+		$separator = ini_get('arg_separator.output');
+		return implode($separator, $res);
     }
 
     //----------------------------------------------------------------
@@ -198,18 +176,18 @@ class SearchEngineBase
     //----------------------------------------------------------------
     // Function to Make the GetRequest
     function makeRequest($request, $useAlt = false) {
-        if (isset($_SESSION['lastOutBoundURI']))
-            $refererURI = $_SESSION['lastOutBoundURI'];
-        else
-            $refererURI = "http://".$this->mainURL;
-        if ($useAlt)
-            $request =  "http://".$this->altURL. $request;
-        else
-            $request =  "http://".$this->mainURL. $request;
+    	$refererURI = (isset($_SESSION['lastOutBoundURI']))
+    		? $_SESSION['lastOutBoundURI']
+    		: "http://".$this->mainURL;
+    	$request = 	($useAlt)
+    		? "http://".$this->altURL. $request
+    		: "http://".$this->mainURL. $request;
+		// require SimpleHTTP
+		require_once("inc/classes/SimpleHTTP.php");
 		// get data
-        $this->htmlPage = $this->_simpleHTTP->getData($request, $refererURI);
+        $this->htmlPage = SimpleHTTP::getData($request, $refererURI);
         // return
-        return ($this->_simpleHTTP->state == SIMPLEHTTP_STATE_OK);
+        return (SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK);
     }
 
     //----------------------------------------------------------------
@@ -247,27 +225,20 @@ class SearchEngineBase
         $output .= "<tr bgcolor=\"".$this->cfg["table_header_bg"]."\">";
         $output .= "  <td>&nbsp;</td>";
         $output .= "  <td><strong>Torrent Name</strong> &nbsp;(";
-
         $tmpURI = str_replace(array("?hideSeedless=yes","&hideSeedless=yes","?hideSeedless=no","&hideSeedless=no"),"",$_SERVER["REQUEST_URI"]);
-
         // Check to see if Question mark is there.
-        if (strpos($tmpURI,'?'))
-            $tmpURI .= "&";
-        else
-            $tmpURI .= "?";
-
-        if($this->hideSeedless == "yes")
-            $output .= "<a href=\"". $tmpURI . "hideSeedless=no\">Show Seedless</a>";
-        else
-            $output .= "<a href=\"". $tmpURI . "hideSeedless=yes\">Hide Seedless</a>";
-
+        $tmpURI .= (strpos($tmpURI,'?'))
+        	? "&"
+        	: "?";
+        $output .= ($this->hideSeedless == "yes")
+        	? "<a href=\"". $tmpURI . "hideSeedless=no\">Show Seedless</a>"
+        	: "<a href=\"". $tmpURI . "hideSeedless=yes\">Hide Seedless</a>";
         $output .= ")</td>";
         $output .= "  <td><strong>Category</strong></td>";
         $output .= "  <td align=center><strong>&nbsp;&nbsp;Size</strong></td>";
         $output .= "  <td><strong>Seeds</strong></td>";
         $output .= "  <td><strong>Peers</strong></td>";
         $output .= "</tr>\n";
-
         return $output;
     }
 

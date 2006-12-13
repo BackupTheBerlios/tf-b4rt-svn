@@ -209,12 +209,11 @@ function indexProcessDownload($url_upload) {
 		// retrieve the torrent file
 		// require SimpleHTTP
 		require_once("inc/classes/SimpleHTTP.php");
-		$simpleHTTP = SimpleHTTP::getInstance($cfg);
-		$content = $simpleHTTP->getTorrent($url_upload);
-
-		if (($simpleHTTP->state == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
-			$file_name = ($simpleHTTP->filename != "")
-				? cleanFileName($simpleHTTP->filename)
+		$content = SimpleHTTP::getTorrent($url_upload);
+		if ((SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
+			$filename = SimpleHTTP::getFilename();
+			$file_name = ($filename != "")
+				? cleanFileName($filename)
 				: cleanFileName($file_name);
 			// check if content contains html
 			if ($cfg['debuglevel'] > 0) {
@@ -242,9 +241,15 @@ function indexProcessDownload($url_upload) {
 				}
 			}
 		} else {
-			if(!empty($simpleHTTP->messages)){
-				// Tag on any messages found in $simpleHTTP->messages:
-				$messages .= "Error downloading URL: ".$simpleHTTP->formatMessages();
+			$msgs = SimpleHTTP::getMessages();
+			if (!empty($msgs)) {
+				// Tag on any messages found
+				$messages .= "Error downloading URL: \n";
+				$count = 1;
+				foreach ($msgs as $thisMsg){
+					$messages .= $count.": ".$thisMsg."\n";
+					$count++;
+				}
 			} else {
 				$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
 			}
