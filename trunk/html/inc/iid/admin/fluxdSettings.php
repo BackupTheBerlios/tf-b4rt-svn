@@ -63,6 +63,7 @@ $users = GetUsers();
 $userCount = count($users);
 
 // Qmgr
+require_once('inc/classes/FluxdServiceMod.Qmgr.php');
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
 $tmpl->setvar('fluxd_Qmgr_state', ($cfg["fluxd_Qmgr_enabled"] == 1) ? Fluxd::modState('Qmgr') : 0);
 $tmpl->setvar('fluxd_Qmgr_interval', $cfg["fluxd_Qmgr_interval"]);
@@ -70,6 +71,7 @@ $tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]
 $tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 
 // Watch
+require_once('inc/classes/FluxdServiceMod.Watch.php');
 $tmpl->setvar('fluxd_Watch_enabled', $cfg["fluxd_Watch_enabled"]);
 $tmpl->setvar('fluxd_Watch_state', ($cfg["fluxd_Watch_enabled"] == 1) ? Fluxd::modState('Watch') : 0);
 $tmpl->setvar('fluxd_Watch_interval', $cfg["fluxd_Watch_interval"]);
@@ -97,22 +99,26 @@ $tmpl->setloop('watch_user', $watchuser);
 $tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 
 // Rssad
+require_once('inc/classes/FluxdServiceMod.Rssad.php');
 $tmpl->setvar('fluxd_Rssad_enabled', $cfg["fluxd_Rssad_enabled"]);
 $tmpl->setvar('fluxd_Rssad_state', ($cfg["fluxd_Rssad_enabled"] == 1) ? Fluxd::modState('Rssad') : 0);
 $tmpl->setvar('fluxd_Rssad_interval', $cfg["fluxd_Rssad_interval"]);
 
 // Fluxinet
+require_once('inc/classes/FluxdServiceMod.Fluxinet.php');
 $tmpl->setvar('fluxd_Fluxinet_enabled', $cfg["fluxd_Fluxinet_enabled"]);
 $tmpl->setvar('fluxd_Fluxinet_state', ($cfg["fluxd_Fluxinet_enabled"] == 1) ? Fluxd::modState('Fluxinet') : 0);
 $tmpl->setvar('fluxd_Fluxinet_port', $cfg["fluxd_Fluxinet_port"]);
 
 // Maintenance
+require_once('inc/classes/FluxdServiceMod.Maintenance.php');
 $tmpl->setvar('fluxd_Maintenance_enabled', $cfg["fluxd_Maintenance_enabled"]);
 $tmpl->setvar('fluxd_Maintenance_state', ($cfg["fluxd_Maintenance_enabled"] == 1) ? Fluxd::modState('Maintenance') : 0);
 $tmpl->setvar('fluxd_Maintenance_interval', $cfg["fluxd_Maintenance_interval"]);
 $tmpl->setvar('fluxd_Maintenance_trestart', $cfg["fluxd_Maintenance_trestart"]);
 
 // Trigger
+require_once('inc/classes/FluxdServiceMod.Trigger.php');
 $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
 $tmpl->setvar('fluxd_Trigger_state', ($cfg["fluxd_Trigger_enabled"] == 1) ? Fluxd::modState('Trigger') : 0);
 $tmpl->setvar('fluxd_Trigger_interval', $cfg["fluxd_Trigger_interval"]);

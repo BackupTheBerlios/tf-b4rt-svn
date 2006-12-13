@@ -23,16 +23,85 @@
 // class for the Fluxd-Service-module Trigger
 class FluxdTrigger extends FluxdServiceMod
 {
+	// public fields
+
 	// version
 	var $version = "0.2";
+
+	// =========================================================================
+	// public static methods
+	// =========================================================================
+
+    /**
+     * accessor for singleton
+     *
+     * @return FluxdTrigger
+     */
+    function getInstance() {
+		global $instanceFluxdTrigger;
+		// initialize if needed
+		if (!isset($instanceFluxdTrigger))
+			FluxdTrigger::initialize();
+		return $instanceFluxdTrigger;
+    }
+
+    /**
+     * initialize FluxdTrigger.
+     */
+    function initialize() {
+    	global $cfg, $instanceFluxdTrigger;
+    	// create instance
+    	if (!isset($instanceFluxdTrigger))
+    		$instanceFluxdTrigger = new FluxdTrigger(serialize($cfg));
+    }
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+    function getState() {
+		global $instanceFluxdTrigger;
+		return (isset($instanceFluxdTrigger))
+			? $instanceFluxdTrigger->state
+			: FLUXDMOD_STATE_NULL;
+    }
+
+    /**
+     * getMessages
+     *
+     * @return array
+     */
+    function getMessages() {
+		global $instanceFluxdTrigger;
+		return (isset($instanceFluxdTrigger))
+			? $instanceFluxdTrigger->messages
+			: array();
+    }
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function isRunning() {
+		global $instanceFluxdTrigger;
+		return (isset($instanceFluxdTrigger))
+			? $instanceFluxdTrigger->instance_isRunning()
+			: false;
+    }
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
      */
-    function FluxdTrigger($cfg, $fluxd) {
+    function FluxdTrigger($cfg) {
         $this->moduleName = "Trigger";
 		// initialize
-        $this->initialize($cfg, $fluxd);
+        $this->instance_initialize($cfg);
     }
 
 }

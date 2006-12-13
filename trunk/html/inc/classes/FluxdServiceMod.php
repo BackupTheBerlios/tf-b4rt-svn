@@ -41,10 +41,12 @@ class FluxdServiceMod
     // messages-array
     var $messages = array();
 
-    // private fields
+    // protected fields
 
     // config-array
     var $_cfg = array();
+
+    // private fields
 
 	// =========================================================================
 	// public static methods
@@ -71,9 +73,58 @@ class FluxdServiceMod
 
     /**
      * getMessages
+     *
      * @return array
      */
     function getMessages() {}
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function isRunning() {}
+
+    /**
+     * initialize a Fluxd-Service-mod.
+     *
+     * @param $type
+     */
+    function initializeServiceMod($type) {
+        switch ($type) {
+            case "Qmgr":
+            	require_once('inc/classes/FluxdServiceMod.Qmgr.php');
+            	FluxdQmgr::initialize();
+            	return;
+            case "Fluxinet":
+            	require_once('inc/classes/FluxdServiceMod.Fluxinet.php');
+                FluxdFluxinet::initialize();
+                return;
+            case "Watch":
+            	require_once('inc/classes/FluxdServiceMod.Watch.php');
+                FluxdWatch::initialize();
+                return;
+            case "Rssad":
+            	require_once('inc/classes/FluxdServiceMod.Rssad.php');
+                FluxdRssad::initialize();
+                return;
+            case "Trigger":
+            	require_once('inc/classes/FluxdServiceMod.Trigger.php');
+                FluxdTrigger::initialize();
+                return;
+            case "Maintenance":
+            	require_once('inc/classes/FluxdServiceMod.Maintenance.php');
+                FluxdMaintenance::initialize();
+                return;
+            default:
+            	global $cfg, $argv;
+            	AuditAction($cfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$type);
+    			if (isset($argv))
+    				die("Invalid FluxdServiceMod-Class : ".$type);
+    			else
+    				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($type, ENT_QUOTES));
+        }
+    }
 
 	// =========================================================================
 	// ctor
@@ -83,7 +134,6 @@ class FluxdServiceMod
      * ctor
      */
     function FluxdServiceMod() {
-        $this->state = FLUXDMOD_STATE_ERROR;
         die('base class -- dont do this');
     }
 
@@ -106,6 +156,15 @@ class FluxdServiceMod
         }
         // all ok
         $this->state = FLUXDMOD_STATE_INITIALIZED;
+    }
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function instance_isRunning() {
+    	return (Fluxd::modState($this->moduleName) == 1);
     }
 
 }

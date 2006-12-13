@@ -193,7 +193,7 @@ switch ($op) {
 			case "start":
 				// start fluxd
 				if (Fluxd::isReadyToStart()) {
-					Fluxd::startFluxd();
+					Fluxd::start();
 					if (Fluxd::isRunning()) {
 						$message = 'fluxd started';
 					} else {

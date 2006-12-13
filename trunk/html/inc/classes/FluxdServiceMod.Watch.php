@@ -23,16 +23,85 @@
 // class for the Fluxd-Service-module Watch
 class FluxdWatch extends FluxdServiceMod
 {
+	// public fields
+
 	// version
 	var $version = "0.2";
+
+	// =========================================================================
+	// public static methods
+	// =========================================================================
+
+    /**
+     * accessor for singleton
+     *
+     * @return FluxdWatch
+     */
+    function getInstance() {
+		global $instanceFluxdWatch;
+		// initialize if needed
+		if (!isset($instanceFluxdWatch))
+			FluxdWatch::initialize();
+		return $instanceFluxdWatch;
+    }
+
+    /**
+     * initialize FluxdWatch.
+     */
+    function initialize() {
+    	global $cfg, $instanceFluxdWatch;
+    	// create instance
+    	if (!isset($instanceFluxdWatch))
+    		$instanceFluxdWatch = new FluxdWatch(serialize($cfg));
+    }
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+    function getState() {
+		global $instanceFluxdWatch;
+		return (isset($instanceFluxdWatch))
+			? $instanceFluxdWatch->state
+			: FLUXDMOD_STATE_NULL;
+    }
+
+    /**
+     * getMessages
+     *
+     * @return array
+     */
+    function getMessages() {
+		global $instanceFluxdWatch;
+		return (isset($instanceFluxdWatch))
+			? $instanceFluxdWatch->messages
+			: array();
+    }
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function isRunning() {
+		global $instanceFluxdWatch;
+		return (isset($instanceFluxdWatch))
+			? $instanceFluxdWatch->instance_isRunning()
+			: false;
+    }
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
      */
-    function FluxdWatch($cfg, $fluxd) {
+    function FluxdWatch($cfg) {
         $this->moduleName = "Watch";
 		// initialize
-        $this->initialize($cfg, $fluxd);
+        $this->instance_initialize($cfg);
     }
 
 }

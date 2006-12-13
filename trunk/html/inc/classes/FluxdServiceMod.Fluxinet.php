@@ -69,11 +69,26 @@ class FluxdFluxinet extends FluxdServiceMod
 
     /**
      * getMessages
+     *
      * @return array
      */
     function getMessages() {
-    	global $instanceFluxdFluxinet;
-		return $instanceFluxdFluxinet->messages;
+		global $instanceFluxdFluxinet;
+		return (isset($instanceFluxdFluxinet))
+			? $instanceFluxdFluxinet->messages
+			: array();
+    }
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function isRunning() {
+		global $instanceFluxdFluxinet;
+		return (isset($instanceFluxdFluxinet))
+			? $instanceFluxdFluxinet->instance_isRunning()
+			: false;
     }
 
 	// =========================================================================

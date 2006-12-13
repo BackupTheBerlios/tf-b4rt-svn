@@ -23,16 +23,85 @@
 // class for the Fluxd-Service-module Maintenance
 class FluxdMaintenance extends FluxdServiceMod
 {
+	// public fields
+
 	// version
 	var $version = "0.2";
+
+	// =========================================================================
+	// public static methods
+	// =========================================================================
+
+    /**
+     * accessor for singleton
+     *
+     * @return FluxdMaintenance
+     */
+    function getInstance() {
+		global $instanceFluxdMaintenance;
+		// initialize if needed
+		if (!isset($instanceFluxdMaintenance))
+			FluxdMaintenance::initialize();
+		return $instanceFluxdMaintenance;
+    }
+
+    /**
+     * initialize FluxdMaintenance.
+     */
+    function initialize() {
+    	global $cfg, $instanceFluxdMaintenance;
+    	// create instance
+    	if (!isset($instanceFluxdMaintenance))
+    		$instanceFluxdMaintenance = new FluxdMaintenance(serialize($cfg));
+    }
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+    function getState() {
+		global $instanceFluxdMaintenance;
+		return (isset($instanceFluxdMaintenance))
+			? $instanceFluxdMaintenance->state
+			: FLUXDMOD_STATE_NULL;
+    }
+
+    /**
+     * getMessages
+     *
+     * @return array
+     */
+    function getMessages() {
+		global $instanceFluxdMaintenance;
+		return (isset($instanceFluxdMaintenance))
+			? $instanceFluxdMaintenance->messages
+			: array();
+    }
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function isRunning() {
+		global $instanceFluxdMaintenance;
+		return (isset($instanceFluxdMaintenance))
+			? $instanceFluxdMaintenance->instance_isRunning()
+			: false;
+    }
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
      */
-    function FluxdMaintenance($cfg, $fluxd) {
+    function FluxdMaintenance($cfg) {
         $this->moduleName = "Maintenance";
 		// initialize
-        $this->initialize($cfg, $fluxd);
+        $this->instance_initialize($cfg);
     }
 
 }

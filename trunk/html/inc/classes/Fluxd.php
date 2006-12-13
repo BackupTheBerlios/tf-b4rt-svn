@@ -92,13 +92,12 @@ class Fluxd
      */
     function getState() {
 		global $instanceFluxd;
-		return (isset($instanceFluxd))
-			? $instanceFluxd->state
-			: FLUXD_STATE_NULL;
+		return $instanceFluxd->state;
     }
 
     /**
      * getMessages
+     *
      * @return array
      */
     function getMessages() {
@@ -107,40 +106,8 @@ class Fluxd
     }
 
     /**
-     * initialize a Fluxd-mod.
-     */
-    function initializeServiceMod($type) {
-        switch ($type) {
-            case "Qmgr":
-            	require_once('inc/classes/FluxdServiceMod.Qmgr.php');
-            	FluxdQmgr::initialize();
-            case "Fluxinet":
-            	require_once('inc/classes/FluxdServiceMod.Fluxinet.php');
-                FluxdFluxinet::initialize();
-            case "Watch":
-            	require_once('inc/classes/FluxdServiceMod.Watch.php');
-                FluxdWatch::initialize();
-            case "Rssad":
-            	require_once('inc/classes/FluxdServiceMod.Rssad.php');
-                FluxdRssad::initialize();
-            case "Trigger":
-            	require_once('inc/classes/FluxdServiceMod.Trigger.php');
-                FluxdTrigger::initialize();
-            case "Maintenance":
-            	require_once('inc/classes/FluxdServiceMod.Maintenance.php');
-                FluxdMaintenance::initialize();
-            default:
-            	AuditAction($fluxCfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$type);
-				global $argv;
-    			if (isset($argv))
-    				die("Invalid FluxdServiceMod-Class : ".$type);
-    			else
-    				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($type, ENT_QUOTES));
-        }
-    }
-
-    /**
      * isRunning
+     *
      * @return boolean
      */
     function isRunning() {
@@ -150,6 +117,7 @@ class Fluxd
 
 	/**
      * start
+     *
      * @return boolean
      */
     function start() {
@@ -167,6 +135,7 @@ class Fluxd
 
     /**
      * getPid
+     *
      * @return int with pid
      */
     function getPid() {
@@ -176,6 +145,7 @@ class Fluxd
 
     /**
      * status
+     *
      * @return string
      */
     function status() {
@@ -185,6 +155,7 @@ class Fluxd
 
     /**
      * modState
+     *
      * @param name of service-module
      * @return int with mod-state
      */
@@ -195,6 +166,7 @@ class Fluxd
 
     /**
      * isReadyToStart
+     *
      * @return boolean
      */
     function isReadyToStart() {
@@ -204,6 +176,7 @@ class Fluxd
 
     /**
      * setConfig
+     *
      * @param $key, $value
      * @return Null
      */
@@ -214,7 +187,6 @@ class Fluxd
 
 	/**
 	 * reloadDBCache
-	 *
 	 */
     function reloadDBCache() {
     	global $instanceFluxd;
@@ -223,7 +195,6 @@ class Fluxd
 
 	/**
 	 * reloadModules
-	 *
 	 */
     function reloadModules() {
     	global $instanceFluxd;
@@ -256,6 +227,7 @@ class Fluxd
 
     /**
      * send command
+     *
      * @param $command
      * @param $read does this command return something ?
      * @return string with retval or null if error
@@ -267,6 +239,7 @@ class Fluxd
 
     /**
      * send service command
+     *
      * @param $command
      * @param $read does this command return something ?
      * @return string with retval or null if error
@@ -308,6 +281,7 @@ class Fluxd
 
     /**
      * instance_start
+     *
      * @return boolean
      */
     function instance_start() {
@@ -369,8 +343,8 @@ class Fluxd
      * instance_stop
      */
     function instance_stop() {
-        AuditAction($this->_cfg["constants"]["fluxd"], "Stopping fluxd");
         if ($this->state == FLUXD_STATE_RUNNING) {
+        	AuditAction($this->_cfg["constants"]["fluxd"], "Stopping fluxd");
             $this->instance_sendCommand('die', 0);
             // check if fluxd still running
             $maxLoops = 75;
@@ -390,11 +364,19 @@ class Fluxd
             	}
             }
             return 0;
+        } else {
+        	$msg = "errors stopping fluxd as was not running.";
+        	AuditAction($this->_cfg["constants"]["fluxd"], $msg);
+        	array_push($this->messages , $msg);
+            // Set the state
+            $this->state = FLUXD_STATE_ERROR;
+			return 0;
         }
     }
 
     /**
      * instance_getPid
+     *
      * @return string with pid
      */
     function instance_getPid() {
@@ -416,6 +398,7 @@ class Fluxd
 
     /**
      * instance_status
+     *
      * @return string
      */
     function instance_status() {
@@ -426,6 +409,7 @@ class Fluxd
 
     /**
      * instance_modState
+     *
      * @param name of service-module
      * @return int with mod-state
      */
@@ -437,6 +421,7 @@ class Fluxd
 
     /**
      * instance_isReadyToStart
+     *
      * @return boolean
      */
     function instance_isReadyToStart() {
@@ -447,6 +432,7 @@ class Fluxd
 
     /**
      * instance_setConfig
+     *
      * @param $key, $value
      * @return Null
      */
@@ -457,7 +443,6 @@ class Fluxd
 
 	/**
 	 * instance_reloadDBCache
-	 *
 	 */
     function instance_reloadDBCache() {
 		if ($this->state == FLUXD_STATE_RUNNING)
@@ -466,7 +451,6 @@ class Fluxd
 
 	/**
 	 * instance_reloadModules
-	 *
 	 */
     function instance_reloadModules() {
 		if ($this->state == FLUXD_STATE_RUNNING)
@@ -497,6 +481,7 @@ class Fluxd
 
     /**
      * send command
+     *
      * @param $command
      * @param $read does this command return something ?
      * @return string with retval or null if error
@@ -555,6 +540,7 @@ class Fluxd
 
     /**
      * _isRunning
+     *
      * @return boolean
      */
     function _isRunning() {
