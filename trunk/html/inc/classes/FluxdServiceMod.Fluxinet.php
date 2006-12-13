@@ -111,12 +111,10 @@ class FluxdFluxinet extends FluxdServiceMod
      * ctor
      */
     function FluxdFluxinet($cfg) {
+    	// name
         $this->moduleName = "Fluxinet";
 		// initialize
         $this->instance_initialize($cfg);
-        // set modstate if mod enabled
-        if ($this->_cfg["fluxd_Fluxinet_enabled"] == 1)
-        	$this->modstate = $this->instance_getModState();
     }
 
 }

@@ -163,24 +163,8 @@ class FluxdServiceMod
             $this->state = FLUXDMOD_STATE_ERROR;
             return;
         }
-    }
-
-    /**
-     * isRunning
-     *
-     * @return boolean
-     */
-    function instance_isRunning() {
-    	return (Fluxd::modState($this->moduleName) == 1);
-    }
-
-    /**
-     * instance_getModState
-     *
-     * @return state
-     */
-    function instance_getModState() {
-    	return Fluxd::modState($this->moduleName);
+        // modstate-init
+        $this->modstate = Fluxd::modState($this->moduleName);
     }
 
 }

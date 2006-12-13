@@ -122,12 +122,10 @@ class FluxdRssad extends FluxdServiceMod
      * ctor
      */
     function FluxdRssad($cfg) {
+    	// name
         $this->moduleName = "Rssad";
 		// initialize
         $this->instance_initialize($cfg);
-        // set modstate if mod enabled
-        if ($this->_cfg["fluxd_Rssad_enabled"] == 1)
-        	$this->modstate = $this->instance_getModState();
          // check our base-dir
         if (!(checkDirectory($this->_cfg["path"].$this->_basedir))) {
             $this->messages = "Rssad base-dir ".$this->_basedir." error.";

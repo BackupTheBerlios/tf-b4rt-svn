@@ -57,6 +57,10 @@ my $BIN_PHP = "/usr/bin/php";
 my $dbMode = "dbi";
 my $pwd = ".";
 
+# delims of modList
+my $delimMod = ";";
+my $delimState = ":";
+
 # internal vars
 my ($VERSION, $DIR, $PROG, $EXTENSION);
 my $SERVER;
@@ -107,7 +111,6 @@ while ($loop) {
 			$fluxinet->main();
 			alarm 0;
 		};
-
 		# Check for alarm (timeout) condition
 		if ($@) {
 			FluxdCommon::printError("CORE", "Fluxinet Timed out:\n ".$@."\n");
@@ -122,7 +125,6 @@ while ($loop) {
 			$qmgr->main();
 			alarm 0;
 		};
-
 		# Check for alarm (timeout) condition
 		if ($@) {
 			FluxdCommon::printError("CORE", "Qmgr Timed out:\n ".$@."\n");
@@ -137,7 +139,6 @@ while ($loop) {
 			$rssad->main();
 			alarm 0;
 		};
-
 		# Check for alarm (timeout) condition
 		if ($@) {
 			FluxdCommon::printError("CORE", "Rssad Timed out:\n ".$@."\n");
@@ -152,7 +153,6 @@ while ($loop) {
 			$watch->main();
 			alarm 0;
 		};
-
 		# Check for alarm (timeout) condition
 		if ($@) {
 			FluxdCommon::printError("CORE", "Watch Timed out:\n ".$@."\n");
@@ -167,7 +167,6 @@ while ($loop) {
 			$maintenance->main();
 			alarm 0;
 		};
-
 		# Check for alarm (timeout) condition
 		if ($@) {
 			FluxdCommon::printError("CORE", "Maintenance Timed out:\n ".$@."\n");
@@ -182,7 +181,6 @@ while ($loop) {
 			$trigger->main();
 			alarm 0;
 		};
-
 		# Check for alarm (timeout) condition
 		if ($@) {
 			FluxdCommon::printError("CORE", "Trigger Timed out:\n ".$@."\n");
@@ -999,6 +997,70 @@ sub serviceModulesUnload {
 
 }
 
+
+
+#------------------------------------------------------------------------------#
+# Sub: serviceModuleList                                                       #
+# Arguments: null                                                              #
+# Returns: string with list of mods+state                                      #
+#------------------------------------------------------------------------------#
+sub serviceModuleList {
+
+	# retval
+	my $modList = "";
+
+	# Fluxinet
+	$modList .= "Fluxinet".$delimState;
+	if (defined $fluxinet) {
+		$modList .= $fluxinet->getState();
+	} else {
+		$modList .= "0";
+	}
+
+	# Qmgr
+	$modList .= $delimMod."Qmgr".$delimState;
+	if (defined $qmgr) {
+		$modList .= $qmgr->getState();
+	} else {
+		$modList .= "0";
+	}
+
+	# Rssad
+	$modList .= $delimMod."Rssad".$delimState;
+	if (defined $rssad) {
+		$modList .= $rssad->getState();
+	} else {
+		$modList .= "0";
+	}
+
+	# Watch
+	$modList .= $delimMod."Watch".$delimState;
+	if (defined $watch) {
+		$modList .= $watch->getState();
+	} else {
+		$modList .= "0";
+	}
+
+	# Maintenance
+	$modList .= $delimMod."Maintenance".$delimState;
+	if (defined $maintenance) {
+		$modList .= $maintenance->getState();
+	} else {
+		$modList .= "0";
+	}
+
+	# Trigger
+	$modList .= $delimMod."Trigger".$delimState;
+	if (defined $trigger) {
+		$modList .= $trigger->getState();
+	} else {
+		$modList .= "0";
+	}
+
+	# return
+	return $modList;
+}
+
 #------------------------------------------------------------------------------#
 # Sub: serviceModuleState                                                      #
 # Arguments: name of service-module                                            #
@@ -1123,6 +1185,10 @@ sub processRequest {
 	SWITCH: {
 		$_ = shift;
 		# Actual fluxd subroutine calls
+		/^modlist/ && do {
+			$return = serviceModuleList();
+			last SWITCH;
+		};
 		/^modstate/ && do {
 			$return = serviceModuleState(shift);
 			last SWITCH;
@@ -1608,7 +1674,7 @@ sub debug {
 
 	# first arg is debug-operation.
 	if (!(defined $debug)) {
-		FluxdCommon::printError("CORE", "debug is missing an operation.\n");
+		FluxdCommon::printMessage("CORE", "debug is missing an operation.\n");
 		exit;
 	}
 
@@ -1617,7 +1683,7 @@ sub debug {
 		# $PATH_DOCROOT
 		my $temp = shift @ARGV;
 		if (!(defined $temp)) {
-			FluxdCommon::printError("CORE", "debug database is missing an argument : path to docroot\n");
+			FluxdCommon::printMessage("CORE", "debug database is missing an argument : path to docroot\n");
 			exit;
 		}
 		if (!((substr $temp, -1) eq "/")) {
@@ -1627,7 +1693,7 @@ sub debug {
 		# PATH_PATH
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
-			FluxdCommon::printError("CORE", "debug database is missing an argument : path to path\n");
+			FluxdCommon::printMessage("CORE", "debug database is missing an argument : path to path\n");
 			exit;
 		}
 		if (!((substr $temp, -1) eq "/")) {
@@ -1637,7 +1703,7 @@ sub debug {
 		# $BIN_PHP
 		$temp = shift @ARGV;
 		if (!(defined $temp)) {
-			FluxdCommon::printError("CORE", "debug database is missing an argument : path to php\n");
+			FluxdCommon::printMessage("CORE", "debug database is missing an argument : path to php\n");
 			exit;
 		}
 		$BIN_PHP = $temp;
@@ -1652,7 +1718,7 @@ sub debug {
 		FluxdCommon::printMessage("CORE", "initializing \$fluxDB (php)\n");
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
 		if ($fluxDB->getState() < 1) {
-			FluxdCommon::printError("CORE", "error : ".$fluxDB->getMessage()."\n");
+			FluxdCommon::printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			exit;
 		}
 		# something from the bean
@@ -1673,15 +1739,15 @@ sub debug {
 		FluxdCommon::printMessage("CORE", "initializing \$fluxDB (dbi)\n");
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
 		if ($fluxDB->getState() < 1) {
-			FluxdCommon::printError("CORE", "error : ".$fluxDB->getMessage()."\n");
+			FluxdCommon::printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			# db-settings
-			print STDERR " DatabaseType : \"".$fluxDB->getDatabaseType()."\"\n";
-			print STDERR " DatabaseName : \"".$fluxDB->getDatabaseName()."\"\n";
-			print STDERR " DatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n";
-			print STDERR " DatabasePort : \"".$fluxDB->getDatabasePort()."\"\n";
-			print STDERR " DatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n";
-			print STDERR " DatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n";
-			print STDERR " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n";
+			FluxdCommon::printMessage("CORE", " DatabaseType : \"".$fluxDB->getDatabaseType()."\"\n");
+			FluxdCommon::printMessage("CORE", " DatabaseName : \"".$fluxDB->getDatabaseName()."\"\n");
+			FluxdCommon::printMessage("CORE", " DatabaseHost : \"".$fluxDB->getDatabaseHost()."\"\n");
+			FluxdCommon::printMessage("CORE", " DatabasePort : \"".$fluxDB->getDatabasePort()."\"\n");
+			FluxdCommon::printMessage("CORE", " DatabaseUser : \"".$fluxDB->getDatabaseUser()."\"\n");
+			FluxdCommon::printMessage("CORE", " DatabasePassword : \"".$fluxDB->getDatabasePassword()."\"\n");
+			FluxdCommon::printMessage("CORE", " DatabaseDSN : \"".$fluxDB->getDatabaseDSN()."\"\n");
 			exit;
 		}
 		# db-settings
@@ -1705,7 +1771,7 @@ sub debug {
 	}
 
 	# bail out
-	print "debug is missing an operation.\n";
+	FluxdCommon::printMessage("CORE", "debug is missing an operation.\n");
 	exit;
 }
 

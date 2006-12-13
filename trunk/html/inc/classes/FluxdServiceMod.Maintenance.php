@@ -111,12 +111,10 @@ class FluxdMaintenance extends FluxdServiceMod
      * ctor
      */
     function FluxdMaintenance($cfg) {
+    	// name
         $this->moduleName = "Maintenance";
 		// initialize
         $this->instance_initialize($cfg);
-        // set modstate if mod enabled
-        if ($this->_cfg["fluxd_Maintenance_enabled"] == 1)
-        	$this->modstate = $this->instance_getModState();
     }
 
 }

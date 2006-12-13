@@ -147,12 +147,10 @@ class FluxdQmgr extends FluxdServiceMod
      * ctor
      */
     function FluxdQmgr($cfg) {
+    	// name
         $this->moduleName = "Qmgr";
 		// initialize
         $this->instance_initialize($cfg);
-        // set modstate if mod enabled
-        if ($this->_cfg["fluxd_Qmgr_enabled"] == 1)
-        	$this->modstate = $this->instance_getModState();
     }
 
 	// =========================================================================
@@ -207,13 +205,13 @@ class FluxdQmgr extends FluxdServiceMod
     function instance_dequeueTransfer($transfer, $user) {
     	if ($this->state == FLUXDMOD_STATE_RUNNING) {
         	if (isTransferRunning($transfer)) {
-	            // torrent has been started...log
+	            // transfer has been started...log
 	            // TODO : kill it ?
 	            AuditAction($this->_cfg["constants"]["unqueued_transfer"], $transfer . "has been already started.");
         	} else {
 	            // send command (hardcoded for .torrent for now)
     			Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.substr($transfer, 0, -8).';'.$user, 0);
-	            // flag the torrent as stopped (in db)
+	            // flag the transfer as stopped (in db)
 	            stopTorrentSettings($transfer);
 	            // update the stat file.
 	            $this->_updateStatFile($transfer, getAliasName($transfer).".stat");
@@ -241,7 +239,7 @@ class FluxdQmgr extends FluxdServiceMod
         $modded = 0;
         // create AliasFile object
         $af = AliasFile::getAliasFileInstance($alias, $the_user, $this->_cfg, $btclient);
-        if($af->percent_done > 0 && $af->percent_done < 100) {
+        if ($af->percent_done > 0 && $af->percent_done < 100) {
             // has downloaded something at some point, mark it is incomplete
             $af->running = "0";
             $af->time_left = "Transfer Stopped";

@@ -111,12 +111,10 @@ class FluxdTrigger extends FluxdServiceMod
      * ctor
      */
     function FluxdTrigger($cfg) {
+    	// name
         $this->moduleName = "Trigger";
 		// initialize
         $this->instance_initialize($cfg);
-        // set modstate if mod enabled
-        if ($this->_cfg["fluxd_Trigger_enabled"] == 1)
-        	$this->modstate = $this->instance_getModState();
     }
 
 }

@@ -111,12 +111,10 @@ class FluxdWatch extends FluxdServiceMod
      * ctor
      */
     function FluxdWatch($cfg) {
+    	// name
         $this->moduleName = "Watch";
 		// initialize
         $this->instance_initialize($cfg);
-        // set modstate if mod enabled
-        if ($this->_cfg["fluxd_Watch_enabled"] == 1)
-        	$this->modstate = $this->instance_getModState();
     }
 
 }

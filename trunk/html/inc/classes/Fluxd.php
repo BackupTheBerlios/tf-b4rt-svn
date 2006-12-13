@@ -26,6 +26,10 @@ define('FLUXD_STATE_INITIALIZED', 1);                             // initialized
 define('FLUXD_STATE_RUNNING', 2);                                    //  running
 define('FLUXD_STATE_ERROR', -1);                                        // error
 
+// delims of modList
+define('FLUXD_DELIM_MOD', ';');
+define('FLUXD_DELIM_STATE', ':');
+
 // class Fluxd for integration of fluxd
 class Fluxd
 {
@@ -54,6 +58,9 @@ class Fluxd
     var $_pathSocket = "";
     var $_pathLogFile = "";
     var $_pathLogFileError = "";
+
+	// mod-list
+	var $_modList = array();
 
     // socket-timeout
     var $_socketTimeout = 5;
@@ -165,6 +172,37 @@ class Fluxd
     }
 
     /**
+     * modList
+     *
+     * @return array with mod-list
+     */
+    function modList() {
+    	global $instanceFluxd;
+		return $instanceFluxd->instance_modList();
+    }
+
+    /**
+     * modStatePoll
+     *
+     * @param name of service-module
+     * @return int with mod-state
+     */
+    function modStatePoll($mod) {
+    	global $instanceFluxd;
+		return $instanceFluxd->instance_modStatePoll($mod);
+    }
+
+    /**
+     * modListPoll
+     *
+     * @return array with mod-list
+     */
+    function modListPoll() {
+    	global $instanceFluxd;
+		return $instanceFluxd->instance_modListPoll();
+    }
+
+    /**
      * isReadyToStart
      *
      * @return boolean
@@ -273,6 +311,8 @@ class Fluxd
         // check if fluxd running
         if ($this->_isRunning())
         	$this->state = FLUXD_STATE_RUNNING;
+        // modlist-init
+        $this->_modList = $this->instance_modListPoll();
     }
 
 	// =========================================================================
@@ -415,9 +455,56 @@ class Fluxd
      * @return string with mod-state
      */
     function instance_modState($mod) {
+    	return $this->_modList[$mod];
+    }
+
+    /**
+     * instance_modList
+     *
+     * @return array with mod-list
+     */
+    function instance_modList() {
+    	return $this->_modList;
+    }
+
+    /**
+     * instance_modStatePoll
+     *
+     * @param name of service-module
+     * @return string with mod-state
+     */
+    function instance_modStatePoll($mod) {
 		return ($this->state == FLUXD_STATE_RUNNING)
 			? (int) $this->instance_sendCommand('modstate '.$mod, 1)
 			: 0;
+    }
+
+    /**
+     * instance_modListPoll
+     *
+     * @return array with mod-list
+     */
+    function instance_modListPoll() {
+    	if ($this->state == FLUXD_STATE_RUNNING) {
+			$modsAry = explode(FLUXD_DELIM_MOD, trim($this->instance_sendCommand('modlist', 1)), 6);
+			return array(
+				substr($modsAry[0], 0, -2) => substr($modsAry[0], -1),
+				substr($modsAry[1], 0, -2) => substr($modsAry[1], -1),
+				substr($modsAry[2], 0, -2) => substr($modsAry[2], -1),
+				substr($modsAry[3], 0, -2) => substr($modsAry[3], -1),
+				substr($modsAry[4], 0, -2) => substr($modsAry[4], -1),
+				substr($modsAry[5], 0, -2) => substr($modsAry[5], -1)
+			);
+    	} else {
+			return array(
+				'Fluxinet' => 0,
+				'Qmgr' => 0,
+				'Rssad' => 0,
+				'Watch' => 0,
+				'Maintenance' => 0,
+				'Trigger' => 0
+			);
+    	}
     }
 
     /**
@@ -489,7 +576,6 @@ class Fluxd
      */
     function instance_sendCommand($command, $read = 0) {
         if ($this->state == FLUXD_STATE_RUNNING) {
-
         	// create socket
         	$socket = -1;
             $socket = @socket_create(AF_UNIX, SOCK_STREAM, 0);
@@ -498,10 +584,8 @@ class Fluxd
             	$this->state = FLUXD_STATE_ERROR;
                 return null;
             }
-
             //timeout after n seconds
     		@socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => $this->_socketTimeout, 'usec' => 0));
-
             // connect
             $result = -1;
             $result = @socket_connect($socket, $this->_pathSocket);
@@ -510,10 +594,8 @@ class Fluxd
             	$this->state = FLUXD_STATE_ERROR;
                 return null;
             }
-
             // write command
             @socket_write($socket, $command."\n");
-
             // read retval
             $return = "";
             if ($read != 0) {
@@ -523,13 +605,10 @@ class Fluxd
 					$return .= $data;
 				} while (isset($data) && ($data != ""));
             }
-
             // close socket
             @socket_close($socket);
-
             // return
             return $return;
-
         } else { // fluxd not running
         	return null;
         }
