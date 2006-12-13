@@ -402,4 +402,11 @@ function chmodRecursive($path, $mode = 0777) {
 	return ((isValidEntry(basename($path))) && (@chmod($path, $mode)));
 }
 
+function UrlHTMLEncode($input){
+	return(htmlentities(rawurlencode($input), ENT_QUOTES));
+}
+
+function UrlHTMLDecode($input){
+	return(html_entity_decode(rawurldecode($input), ENT_QUOTES));
+}
 ?>

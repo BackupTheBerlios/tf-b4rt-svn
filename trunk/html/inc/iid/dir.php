@@ -43,12 +43,12 @@ initRestrictedDirEntries();
 checkIncomingPath();
 
 // get request-vars
-$chmod = getRequestVar('chmod');
-$del = getRequestVar('del');
-$down = getRequestVar('down');
-$tar = getRequestVar('tar');
-$multidel = getRequestVar('multidel');
-$dir = html_entity_decode(rawurldecode(getRequestVar('dir')));
+$chmod = UrlHTMLDecode(getRequestVar('chmod'));
+$del = UrlHTMLDecode(getRequestVar('del'));
+$down = UrlHTMLDecode(getRequestVar('down'));
+$tar = UrlHTMLDecode(getRequestVar('tar'));
+$multidel = UrlHTMLDecode(getRequestVar('multidel'));
+$dir = UrlHTMLDecode(getRequestVar('dir'));
 // check dir-var
 if (isValidPath($dir) !== true) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
@@ -70,7 +70,7 @@ if ($chmod != "") {
 		chmodRecursive($cfg["path"].$dir);
 	else
 		AuditAction($cfg["constants"]["error"], "ILLEGAL CHMOD: ".$cfg["user"]." tried to chmod ".$dir);
-	header("Location: index.php?iid=dir&dir=".urlencode($dir));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($dir));
 	exit();
 }
 
@@ -93,7 +93,7 @@ if ($del != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".urlencode($current));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($current));
 	exit();
 }
 
@@ -109,7 +109,7 @@ if ($multidel != "") {
 		else
 			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$element);
 	}
-	header("Location: index.php?iid=dir&dir=".urlencode($dir));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($dir));
 	exit();
 }
 
@@ -142,7 +142,7 @@ if ($down != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".urlencode($current));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($current));
 	exit();
 }
 
@@ -170,7 +170,7 @@ if ($tar != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".urlencode($current));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($current));
 	exit();
 }
 
@@ -194,7 +194,7 @@ $dirName = stripslashes($dirName);
 if (!(@is_dir($dirName))) {
 	// our dir is no dir but a file. use parent-directory.
 	if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-		header("Location: index.php?iid=dir&dir=".urlencode($matches[1]));
+		header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($matches[1]));
 	else
 		header("Location: index.php?iid=dir");
 	exit();
@@ -240,7 +240,7 @@ natsort($entrys);
 
 // process entries and fill dir- + file-array
 $list = array();
-$filelist = array();
+
 foreach ($entrys as $entry) {
 	// acl-write-check
 	if (empty($dir)) /* parent dir */
@@ -275,9 +275,9 @@ foreach ($entrys as $entry) {
 			'is_dir' => 1,
 			'aclWrite' => $aclWrite,
 			'entry' => $entry,
-			'urlencode1' => urlencode(addslashes($dir.$entry)),
-			'urlencode2' => urlencode($dir),
-			'urlencode3' => urlencode(addslashes($entry)),
+			'urlencode1' => UrlHTMLEncode(addslashes($dir.$entry)),
+			'urlencode2' => UrlHTMLEncode($dir),
+			'urlencode3' => UrlHTMLEncode(addslashes($entry)),
 			'addslashes1' => addslashes($entry),
 			'size' => $size,
 			'date' => $date,
@@ -310,14 +310,14 @@ foreach ($entrys as $entry) {
 		// rar
 		$show_rar = (($cfg["enable_rar"] == 1) && ($aclWrite == 1)) ? isRar($entry) : 0;
 		// add entry to file-array
-		array_push($filelist, array(
+		array_push($list, array(
 			'is_dir' => 0,
 			'aclWrite' => $aclWrite,
 			'entry' => $entry,
-			'urlencode1' => urlencode(addslashes($dir.$entry)),
-			'urlencode2' => urlencode($dir),
-			'urlencode3' => urlencode(addslashes($entry)),
-			'urlencode4' => urlencode(addslashes($dir.$entry)),
+			'urlencode1' => UrlHTMLEncode(addslashes($dir.$entry)),
+			'urlencode2' => UrlHTMLEncode($dir),
+			'urlencode3' => UrlHTMLEncode(addslashes($entry)),
+			'urlencode4' => UrlHTMLEncode(addslashes($dir.$entry)),
 			'addslashes1' => addslashes($entry),
 			'image' => $image,
 			'size' => $size,
@@ -329,10 +329,6 @@ foreach ($entrys as $entry) {
 	}
 }
 
-// add files to list
-foreach ($filelist as $entry)
-	array_push($list, $entry);
-
 // set template-loop
 $tmpl->setloop('list', $list);
 
@@ -342,7 +338,7 @@ $tmpl->setloop('list', $list);
 $tmpl->setvar('dir', $dir);
 // parent url
 if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . urlencode($matches[1]));
+	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . UrlHTMLEncode($matches[1]));
 else
 	$tmpl->setvar('parentURL', "index.php?iid=dir");
 // chmod, parent-dir cannot be chmodded
