@@ -34,7 +34,10 @@ if (!defined("IMG_PNG")) define("IMG_PNG", 4);
  */
 class Image
 {
-	// fields
+	// public fields
+
+	// version
+    var $version = "0.1";
 
 	// content-types
 	var $contentTypes = array(

@@ -21,9 +21,8 @@
 *******************************************************************************/
 
 // states
-define('MAINTENANCEANDREPAIR_STATE_NULL', 0);          // null (not initialized)
-define('MAINTENANCEANDREPAIR_STATE_INITIALIZED', 1);              // initialized
-define('MAINTENANCEANDREPAIR_STATE_DONE', 2);                            // done
+define('MAINTENANCEANDREPAIR_STATE_NULL', 0);                            // null
+define('MAINTENANCEANDREPAIR_STATE_OK', 1);                                // ok
 define('MAINTENANCEANDREPAIR_STATE_ERROR', -1);                         // error
 
 // modes
@@ -147,7 +146,7 @@ class MaintenanceAndRepair
      * do not use direct, use the factory-method !
      *
      * @param $cfg (serialized)
-     * @return Rssd
+     * @return MaintenanceAndRepair
      */
     function MaintenanceAndRepair($cfg) {
         // messages
@@ -161,12 +160,9 @@ class MaintenanceAndRepair
         }
         // cli/web
 		global $argv;
-		if (isset($argv)) {
-			$this->_mode = MAINTENANCEANDREPAIR_MODE_CLI;
-		} else
-			$this->_mode = MAINTENANCEANDREPAIR_MODE_WEB;
-        // state
-        $this->state = MAINTENANCEANDREPAIR_STATE_INITIALIZED;
+		$this->_mode = (isset($argv))
+			? MAINTENANCEANDREPAIR_MODE_CLI
+			: MAINTENANCEANDREPAIR_MODE_WEB;
     }
 
 	// =========================================================================
@@ -190,7 +186,7 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("Maintenance done.\n");
 		// state
-		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
+		$this->state = MAINTENANCEANDREPAIR_STATE_OK;
 	}
 
 	/**
@@ -210,7 +206,7 @@ class MaintenanceAndRepair
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
-		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
+		$this->state = MAINTENANCEANDREPAIR_STATE_OK;
 	}
 
 	// =========================================================================
@@ -236,7 +232,7 @@ class MaintenanceAndRepair
 		// output
 		$this->_outputMessage("Maintenance done.\n");
 		// state
-		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
+		$this->state = MAINTENANCEANDREPAIR_STATE_OK;
 	}
 
 	/**
@@ -612,7 +608,7 @@ class MaintenanceAndRepair
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
-		$this->state = MAINTENANCEANDREPAIR_STATE_DONE;
+		$this->state = MAINTENANCEANDREPAIR_STATE_OK;
 	}
 
 	/**

@@ -21,9 +21,8 @@
 *******************************************************************************/
 
 // states
-define('FLUXD_STATE_NULL', 0);                         // null (not initialized)
-define('FLUXD_STATE_INITIALIZED', 1);                             // initialized
-define('FLUXD_STATE_RUNNING', 2);                                    //  running
+define('FLUXD_STATE_NULL', 0);                                           // null
+define('FLUXD_STATE_RUNNING', 1);                                    //  running
 define('FLUXD_STATE_ERROR', -1);                                        // error
 
 // delims of modList
@@ -307,7 +306,6 @@ class Fluxd
         $this->_pathSocket = $this->_pathDataDir . 'fluxd.sock';
         $this->_pathLogFile = $this->_pathDataDir . 'fluxd.log';
         $this->_pathLogFileError = $this->_pathDataDir . 'fluxd-error.log';
-        $this->state = FLUXD_STATE_INITIALIZED;
         // check if fluxd running
         if ($this->_isRunning())
         	$this->state = FLUXD_STATE_RUNNING;
@@ -399,7 +397,7 @@ class Fluxd
 	            		usleep(200000); // wait for 0.2 seconds
             	} else {
             		// Set the state
-            		$this->state = FLUXD_STATE_INITIALIZED;
+            		$this->state = FLUXD_STATE_NULL;
             		// return
             		return 1;
             	}

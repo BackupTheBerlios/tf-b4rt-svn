@@ -21,8 +21,8 @@
 *******************************************************************************/
 
 // states
-define('FLUXDMOD_STATE_NULL', 0);      // null (not initialized and not running)
-define('FLUXDMOD_STATE_RUNNING', 1);                    // initialized + running
+define('FLUXDMOD_STATE_NULL', 0);                                        // null
+define('FLUXDMOD_STATE_RUNNING', 1);                                  // running
 define('FLUXDMOD_STATE_ERROR', -1);                                     // error
 
 // base class for a Fluxd-Service-module

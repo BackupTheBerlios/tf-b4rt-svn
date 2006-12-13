@@ -22,7 +22,7 @@
 
 // states
 define('SIMPLEHTTP_STATE_NULL', 0);                                      // null
-define('SIMPLEHTTP_STATE_OK', 1);                      // ok = last op done suc.
+define('SIMPLEHTTP_STATE_OK', 1);                                          // ok
 define('SIMPLEHTTP_STATE_ERROR', -1);                                   // error
 
 /**
@@ -33,7 +33,7 @@ class SimpleHTTP
 	// public fields
 
 	// version
-    var $version = "0.1";
+    var $version = "0.2";
 
     // timeout
     var $timeout = 20;
@@ -394,7 +394,7 @@ class SimpleHTTP
 		$domain	 = parse_url($turl);
 
 		// Check we have a remote URL:
-		if(!isset($domain["host"])){
+		if (!isset($domain["host"])){
 			// Not a remote URL:
 			$msg = "The torrent requested for download (".$turl.") is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
 			AuditAction($this->_cfg["constants"]["error"], $msg);
@@ -402,7 +402,7 @@ class SimpleHTTP
 			// state
         	$this->state = SIMPLEHTTP_STATE_ERROR;
 			// return empty data:
-			return($data="");
+			return ($data="");
 		}
 
 		if (strtolower(substr($domain["path"], -8)) != ".torrent") {
