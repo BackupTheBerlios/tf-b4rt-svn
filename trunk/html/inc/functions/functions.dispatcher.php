@@ -212,7 +212,7 @@ function indexProcessDownload($url_upload) {
 		$simpleHTTP = SimpleHTTP::getInstance($cfg);
 		$content = $simpleHTTP->getTorrent($url_upload);
 
-		if (($simpleHTTP->state == 2) && (strlen($content) > 0)) {
+		if (($simpleHTTP->state == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
 			$file_name = ($simpleHTTP->filename != "")
 				? cleanFileName($simpleHTTP->filename)
 				: cleanFileName($file_name);

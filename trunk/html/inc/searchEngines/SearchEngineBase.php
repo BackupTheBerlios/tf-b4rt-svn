@@ -84,7 +84,7 @@ class SearchEngineBase
     var $initialized = false;   // Boolean to determine if the search engine initialized ok.
 
     // SimpleHTTP-instance
-	var $simpleHTTP;
+	var $_simpleHTTP;
 
     /**
      * Constructor
@@ -112,7 +112,7 @@ class SearchEngineBase
         }
 
 		// create SimpleHTTP-instance
-		$this->simpleHTTP = SimpleHTTP::getInstance($this->cfg);
+		$this->_simpleHTTP = SimpleHTTP::getInstance($this->cfg);
 
         $this->catFilterName = $this->engineName."GenreFilter";
         $this->mainCatalogName = $this->engineName."_catalog";
@@ -207,9 +207,9 @@ class SearchEngineBase
         else
             $request =  "http://".$this->mainURL. $request;
 		// get data
-        $this->htmlPage = $this->simpleHTTP->getData($request, $refererURI);
+        $this->htmlPage = $this->_simpleHTTP->getData($request, $refererURI);
         // return
-        return ($this->simpleHTTP->state == 2);
+        return ($this->_simpleHTTP->state == SIMPLEHTTP_STATE_OK);
     }
 
     //----------------------------------------------------------------

@@ -306,7 +306,7 @@ class Rssd
      */
 	function saveTorrent($url, $title) {
 		$content = $this->simpleHTTP->getTorrent($url);
-		if ($this->simpleHTTP->state == 2) {
+		if ($this->simpleHTTP->state == SIMPLEHTTP_STATE_OK) {
 			// filename
 			$filename = $this->simpleHTTP->filename;
 			if (($filename != "") && ($filename != "unknown.torrent") && (strpos($filename, ".torrent") !== false))

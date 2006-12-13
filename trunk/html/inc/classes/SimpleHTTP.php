@@ -20,12 +20,17 @@
 
 *******************************************************************************/
 
+// states
+define('SIMPLEHTTP_STATE_NULL', 0);                                      // null
+define('SIMPLEHTTP_STATE_OK', 1);                      // ok = last op done suc.
+define('SIMPLEHTTP_STATE_ERROR', -1);                                   // error
+
 /**
  * SimpleHTTP
  */
 class SimpleHTTP
 {
-	// fields
+	// public fields
 
 	// version
     var $version = "0.1";
@@ -108,25 +113,20 @@ class SimpleHTTP
     // referer
     var $referer = "";
 
-    // config-array
-    var $cfg = array();
-
     // messages
     var $messages = array();
 
     // state
-    //  0 : not initialized
-    //  1 : initialized
-    //  2 : last op done suc.
-    // -1 : error
-    var $state = 0;
+    var $state = SIMPLEHTTP_STATE_NULL;
 
-    // mode
-    // 1 : cli
-    // 2 : web
-    var $mode = 0;
+    // private fields
 
-    // factory + ctor
+    // config-array
+    var $_cfg = array();
+
+	// =========================================================================
+	// factory + ctor
+	// =========================================================================
 
     /**
      * factory
@@ -145,28 +145,22 @@ class SimpleHTTP
      * @return SimpleHTTP
      */
     function SimpleHTTP($cfg) {
-        $this->cfg = unserialize($cfg);
-        if (empty($this->cfg)) {
+        $this->_cfg = unserialize($cfg);
+        if (empty($this->_cfg)) {
             array_push($this->messages , "Config not passed");
-            $this->state = -1;
+            $this->state = SIMPLEHTTP_STATE_ERROR;
             return false;
         }
-        // cli/web
-		global $argv;
-		if (isset($argv)) {
-			$this->mode = 1;
-		} else
-			$this->mode = 2;
 		// user-agent
-		$this->userAgent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "torrentflux-b4rt/". $this->cfg["version"];
+		$this->userAgent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "torrentflux-b4rt/". $this->_cfg["version"];
 		// ini-settings
 		@ini_set("allow_url_fopen", "1");
 		@ini_set("user_agent", $this->userAgent);
-        // state
-        $this->state = 1;
     }
 
-    // public meths
+	// =========================================================================
+	// public methods
+	// =========================================================================
 
 	/**
 	 * method to get data from URL -- uses timeout and user agent
@@ -208,7 +202,7 @@ class SimpleHTTP
 	    $this->getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
 
 		// Check to see if cookie required for this domain:
-		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $this->cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
+		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $this->_cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
 		$this->cookie = $db->GetOne($sql);
 		showError($db, $sql);
 
@@ -380,7 +374,7 @@ class SimpleHTTP
 		}
 
         // state
-        $this->state = 2;
+        $this->state = SIMPLEHTTP_STATE_OK;
 
 		// return content
 		return $this->responseBody;
@@ -403,10 +397,10 @@ class SimpleHTTP
 		if(!isset($domain["host"])){
 			// Not a remote URL:
 			$msg = "The torrent requested for download (".$turl.") is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
-			AuditAction($this->cfg["constants"]["error"], $msg);
+			AuditAction($this->_cfg["constants"]["error"], $msg);
 			array_push($this->messages , $msg);
 			// state
-        	$this->state = -1;
+        	$this->state = SIMPLEHTTP_STATE_ERROR;
 			// return empty data:
 			return($data="");
 		}
@@ -465,10 +459,10 @@ class SimpleHTTP
 					$data = $this->getData($turl2);
 				} else {
 					$msg = "Error: could not find link to torrent file in $turl";
-					AuditAction($this->cfg["constants"]["error"], $msg);
+					AuditAction($this->_cfg["constants"]["error"], $msg);
 					array_push($this->messages , $msg);
 					// state
-			    	$this->state = -1;
+			    	$this->state = SIMPLEHTTP_STATE_ERROR;
 					// return empty data:
 					return($data="");
 				}
@@ -488,11 +482,11 @@ class SimpleHTTP
 		if (strpos($data, "d8:") === false)	{
 			// We don't have a Torrent File... it is something else.  Let the user know about it:
 			$msg = "Content returned from $turl does not appear to be a valid torrent.";
-			AuditAction($this->cfg["constants"]["error"], $msg);
+			AuditAction($this->_cfg["constants"]["error"], $msg);
 			array_push($this->messages , $msg);
 			// Display the first part of $data if debuglevel higher than 1:
-			if($this->cfg["debuglevel"] > 1){
-				if(strlen($data) > 0){
+			if ($this->_cfg["debuglevel"] > 1){
+				if (strlen($data) > 0){
 					array_push($this->messages , "  Displaying first 1024 chars of output: ".htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
 				} else {
 					array_push($this->messages , "  Output from $turl was empty.");
@@ -502,7 +496,7 @@ class SimpleHTTP
 			}
 			$data = "";
 			// state
-			$this->state = -1;
+			$this->state = SIMPLEHTTP_STATE_ERROR;
 		} else {
 			// If the torrent file name isn't set already, do it now:
 			if ((!isset($this->filename)) || (strlen($this->filename) == 0)) {
@@ -516,21 +510,23 @@ class SimpleHTTP
 				}
 			}
 	        // state
-	        $this->state = 2;
+	        $this->state = SIMPLEHTTP_STATE_OK;
 		}
 		return $data;
 	}
 
 	/**
-	*  Format any messages contained in $messages array ready for output
-	*  in different contexts.
-	* @param	string	$format - formatting to apply to messages.  Valid options are: 'text' (plain text output)
-	* TODO: needs extending to handle formatting of HTML messages
-	*/
+	 * Format any messages contained in $messages array ready for output
+	 * in different contexts.
+	 * TODO: needs extending to handle formatting of HTML messages (not really ;))
+	 *
+	 * @param $format string	$format - formatting to apply to messages.  Valid options are: 'text' (plain text output)
+	 * @return string
+	 */
 	function formatMessages($format="text"){
-		$msg="";
-		$count=1;
-		foreach($this->messages as $thisMsg){
+		$msg = "";
+		$count = 1;
+		foreach ($this->messages as $thisMsg){
 			$msg.= $count.=": $thisMsg\n";
 			$count++;
 		}

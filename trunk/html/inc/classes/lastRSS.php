@@ -38,9 +38,10 @@ require_once("inc/classes/SimpleHTTP.php");
 * Simple yet powerfull PHP class to parse RSS files.
 */
 class lastRSS {
-	// -------------------------------------------------------------------
+
+	// -------------------------------------------------------------------------
 	// Public properties
-	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	// version
     var $version = "0.9.1-tf";
     //
@@ -51,19 +52,19 @@ class lastRSS {
 	var $stripHTML = False;
 	var $date_format = '';
 
-	// -------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	// Private variables
-	// -------------------------------------------------------------------
-	var $channeltags = array ('title', 'link', 'description', 'language', 'copyright', 'managingEditor', 'webMaster', 'lastBuildDate', 'rating', 'docs');
-	var $itemtags = array('title', 'link', 'description', 'author', 'category', 'comments', 'enclosure', 'guid', 'pubDate', 'source');
-	var $imagetags = array('title', 'url', 'link', 'width', 'height');
-	var $textinputtags = array('title', 'description', 'name', 'link');
+	// -------------------------------------------------------------------------
+	var $_channeltags = array ('title', 'link', 'description', 'language', 'copyright', 'managingEditor', 'webMaster', 'lastBuildDate', 'rating', 'docs');
+	var $_itemtags = array('title', 'link', 'description', 'author', 'category', 'comments', 'enclosure', 'guid', 'pubDate', 'source');
+	var $_imagetags = array('title', 'url', 'link', 'width', 'height');
+	var $_textinputtags = array('title', 'description', 'name', 'link');
 
 	// config-array
     var $cfg = array();
 
     // SimpleHTTP-instance
-	var $simpleHTTP;
+	var $_simpleHTTP;
 
     /**
      * factory
@@ -82,11 +83,11 @@ class lastRSS {
      * @return lastRSS
      */
     function lastRSS($cfg) {
-        $this->cfg = unserialize($cfg);
-        if (empty($this->cfg))
+        $this->_cfg = unserialize($cfg);
+        if (empty($this->_cfg))
             return false;
 		// create SimpleHTTP-instance
-		$this->simpleHTTP = SimpleHTTP::getInstance($this->cfg);
+		$this->_simpleHTTP = SimpleHTTP::getInstance($this->_cfg);
     }
 
 	// -------------------------------------------------------------------
@@ -172,8 +173,8 @@ class lastRSS {
 	function Parse($rss_url) {
 
 		// Load RSS file
-		$rss_content = $this->simpleHTTP->getData($rss_url);
-		if ($this->simpleHTTP->state != 2) {
+		$rss_content = $this->_simpleHTTP->getData($rss_url);
+		if ($this->_simpleHTTP->state != SIMPLEHTTP_STATE_OK) {
 			// last op was not ok
 			// TODO :
 			return false;
@@ -193,7 +194,7 @@ class lastRSS {
 
 		// Parse CHANNEL info
 		if (preg_match("'<channel.*?>(.*?)</channel>'si", $rss_content, $out_channel)) {
-			foreach($this->channeltags as $channeltag) {
+			foreach($this->_channeltags as $channeltag) {
 				$temp = $this->my_preg_match("'<$channeltag.*?>(.*?)</$channeltag>'si", $out_channel[1]);
 				if ($temp != '') $result[$channeltag] = $temp; // Set only if not empty
 			}
@@ -209,7 +210,7 @@ class lastRSS {
 		// This a little strange regexp means:
 		// Look for tag <textinput> with or without any attributes, but skip truncated version <textinput /> (it's not beggining tag)
 		if (isset($out_textinfo[2])) {
-			foreach($this->textinputtags as $textinputtag) {
+			foreach($this->_textinputtags as $textinputtag) {
 				$temp = $this->my_preg_match("'<$textinputtag.*?>(.*?)</$textinputtag>'si", $out_textinfo[2]);
 				if ($temp != '') $result['textinput_'.$textinputtag] = $temp; // Set only if not empty
 			}
@@ -217,7 +218,7 @@ class lastRSS {
 		// Parse IMAGE info
 		preg_match("'<image.*?>(.*?)</image>'si", $rss_content, $out_imageinfo);
 		if (isset($out_imageinfo[1])) {
-			foreach($this->imagetags as $imagetag) {
+			foreach($this->_imagetags as $imagetag) {
 				$temp = $this->my_preg_match("'<$imagetag.*?>(.*?)</$imagetag>'si", $out_imageinfo[1]);
 				if ($temp != '') $result['image_'.$imagetag] = $temp; // Set only if not empty
 			}
@@ -230,7 +231,7 @@ class lastRSS {
 		foreach($rss_items as $rss_item) {
 			// If number of items is lower then limit: Parse one item
 			if ($i < $this->items_limit || $this->items_limit == 0) {
-				foreach($this->itemtags as $itemtag) {
+				foreach($this->_itemtags as $itemtag) {
 					$temp = $this->my_preg_match("'<$itemtag.*?>(.*?)</$itemtag>'si", $rss_item);
 					if ($temp != '') $result['items'][$i][$itemtag] = $temp; // Set only if not empty
 				}
