@@ -210,7 +210,13 @@
 						<br>
 						<strong>Error saving Filter <tmpl_var name="filtername"> : </strong>
 						<br>
-						<em><tmpl_var name="messages"></em>
+						<tmpl_if name="messages">
+						    <ul>
+						        <tmpl_loop name="messages">
+						            <li><tmpl_var name="msg"></li>
+						        </tmpl_loop>
+						    </ul>
+						</tmpl_if>
 					</tmpl_if>
 				</td>
 			</tr>
@@ -232,7 +238,13 @@
 						<br>
 						<strong>Error deleting Filter <tmpl_var name="filtername"> :
 						<br>
-						<em><tmpl_var name="messages"></em>
+						<tmpl_if name="messages">
+						    <ul>
+						        <tmpl_loop name="messages">
+						            <li><tmpl_var name="msg"></li>
+						        </tmpl_loop>
+						    </ul>
+						</tmpl_if>
 					</tmpl_if>
 				</td>
 			</tr>
@@ -320,7 +332,14 @@
 				<tr>
 					<td colspan="3">
 						<strong>Error loading Job : </strong>
-						<em><tmpl_var name="messages"></em>
+						<br>
+						<tmpl_if name="messages">
+						    <ul>
+						        <tmpl_loop name="messages">
+						            <li><tmpl_var name="msg"></li>
+						        </tmpl_loop>
+						    </ul>
+						</tmpl_if>
 					</td>
 				</tr>
 			</tmpl_if>
@@ -342,7 +361,13 @@
 						<br>
 						<strong>Error saving Job : </strong>
 						<br>
-						<em><tmpl_var name="messages"></em>
+						<tmpl_if name="messages">
+						    <ul>
+						        <tmpl_loop name="messages">
+						            <li><tmpl_var name="msg"></li>
+						        </tmpl_loop>
+						    </ul>
+						</tmpl_if>
 					</tmpl_if>
 				</td>
 			</tr>
@@ -364,7 +389,13 @@
 						<br>
 						<strong>Error deleting Job :
 						<br>
-						<em><tmpl_var name="messages"></em>
+						<tmpl_if name="messages">
+						    <ul>
+						        <tmpl_loop name="messages">
+						            <li><tmpl_var name="msg"></li>
+						        </tmpl_loop>
+						    </ul>
+						</tmpl_if>
 					</tmpl_if>
 				</td>
 			</tr>

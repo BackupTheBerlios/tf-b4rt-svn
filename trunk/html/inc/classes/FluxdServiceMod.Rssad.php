@@ -114,6 +114,133 @@ class FluxdRssad extends FluxdServiceMod
 			: false;
     }
 
+	/**
+	 * check if filter exists
+	 *
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function filterExists($filtername) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_filterExists($filtername);
+	}
+
+	/**
+	 * checks if filter-id is a valid filter-id
+	 *
+	 * @param $id
+	 * @param $new
+	 * @param boolean
+	 */
+	function filterIdCheck($id, $new = false) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_filterIdCheck($id, $new);
+	}
+
+	/**
+	 * get filter-list
+	 *
+	 * @return filter-list as array or false on error / no files
+	 */
+	function filterGetList() {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_filterGetList();
+	}
+
+	/**
+	 * get filter-content
+	 *
+	 * @param $filtername
+	 * @return filter as string or false on error / no files
+	 */
+	function filterGetContent($filtername) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_filterGetContent($filtername);
+	}
+
+	/**
+	 * saves a filter
+	 *
+	 * @param $filtername
+	 * @param $content
+	 * @return boolean
+	 */
+	function filterSave($filtername, $content) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_filterSave($filtername, $content);
+	}
+
+	/**
+	 * deletes a filter
+	 *
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function filterDelete($filtername) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_filterDelete($filtername);
+	}
+
+	/**
+	 * get job-list
+	 *
+	 * @return job-list as array or false on error / no files
+	 */
+	function jobsGetList() {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_jobsGetList();
+	}
+
+	/**
+	 * get jobs-content
+	 *
+	 * @param $jobnumber
+	 * @return job as array or false on error
+	 */
+	function jobGetContent($jobnumber) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_jobGetContent($jobnumber);
+	}
+
+	/**
+	 * adds a job
+	 *
+	 * @param $jobNumber
+	 * @param $savedir
+	 * @param $url
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function jobAdd($savedir, $url, $filtername, $checkdir = false) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_jobAdd($savedir, $url, $filtername, $checkdir);
+	}
+
+	/**
+	 * updates a single job
+	 *
+	 * @param $jobNumber
+	 * @param $savedir
+	 * @param $url
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function jobUpdate($jobNumber, $savedir, $url, $filtername, $checkdir = false) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_jobUpdate($jobNumber, $savedir, $url, $filtername, $checkdir);
+	}
+
+	/**
+	 * deletes a single job
+	 *
+	 * @param $jobNumber
+	 * @return boolean
+	 */
+	function jobDelete($jobNumber) {
+		global $instanceFluxdRssad;
+		return $instanceFluxdRssad->instance_jobDelete($jobNumber);
+	}
+
 	// =========================================================================
 	// ctor
 	// =========================================================================
@@ -128,7 +255,7 @@ class FluxdRssad extends FluxdServiceMod
         $this->instance_initialize($cfg);
          // check our base-dir
         if (!(checkDirectory($this->_cfg["path"].$this->_basedir))) {
-            $this->messages = "Rssad base-dir ".$this->_basedir." error.";
+        	array_push($this->messages , "Rssad base-dir ".$this->_basedir." error.");
             $this->state = FLUXDMOD_STATE_ERROR;
         }
     }
@@ -143,7 +270,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $filtername
 	 * @return boolean
 	 */
-	function filterExists($filtername) {
+	function instance_filterExists($filtername) {
 		// filter-file
 		$file = $this->_cfg["path"].$this->_basedir.$filtername.".dat";
 		// return
@@ -157,7 +284,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $new
 	 * @param boolean
 	 */
-	function filterIdCheck($id, $new = false) {
+	function instance_filterIdCheck($id, $new = false) {
 		// sanity-checks
 		if (strpos(urldecode($id), "/") !== false)
 			return false;
@@ -167,7 +294,7 @@ class FluxdRssad extends FluxdServiceMod
 			return false;
 		// check id
 		if (!$new)
-			return $this->filterExists($id);
+			return $this->instance_filterExists($id);
 		// looks ok
 		return true;
 	}
@@ -177,7 +304,7 @@ class FluxdRssad extends FluxdServiceMod
 	 *
 	 * @return filter-list as array or false on error / no files
 	 */
-	function filterGetList() {
+	function instance_filterGetList() {
 		$dirFilter = $this->_cfg["path"].$this->_basedir;
 		if (is_dir($dirFilter)) {
 			$dirHandle = false;
@@ -204,7 +331,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $filtername
 	 * @return filter as string or false on error / no files
 	 */
-	function filterGetContent($filtername) {
+	function instance_filterGetContent($filtername) {
 		// filter-file
 		$file = $this->_cfg["path"].$this->_basedir.$filtername.".dat";
 		// check
@@ -214,8 +341,9 @@ class FluxdRssad extends FluxdServiceMod
 		$handle = false;
 		$handle = @fopen($file, "r");
 		if (!$handle) {
-			$this->messages = "cannot open ".$file.".";
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Load-Error : ".$this->messages);
+			$msg = "cannot open ".$file.".";
+			array_push($this->messages , $msg);
+			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Load-Error : ".$msg);
 			return false;
 		}
 		$data = "";
@@ -232,21 +360,23 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $content
 	 * @return boolean
 	 */
-	function filterSave($filtername, $content) {
+	function instance_filterSave($filtername, $content) {
 		// filter-file
 		$file = $this->_cfg["path"].$this->_basedir.$filtername.".dat";
 		$handle = false;
 		$handle = @fopen($file, "w");
 		if (!$handle) {
-			$this->messages = "cannot open ".$file." for writing.";
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$this->messages);
+			$msg = "cannot open ".$file." for writing.";
+			array_push($this->messages , $msg);
+			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
         $result = @fwrite($handle, str_replace("\r\n", "\n", $content));
 		@fclose($handle);
 		if ($result === false) {
-			$this->messages = "cannot write content to ".$file.".";
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$this->messages);
+			$msg = "cannot write content to ".$file.".";
+			array_push($this->messages , $msg);
+			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
 		// log
@@ -261,7 +391,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @param $filtername
 	 * @return boolean
 	 */
-	function filterDelete($filtername) {
+	function instance_filterDelete($filtername) {
 		$extAry = array('.dat', '.hist', '.log');
 		// count files
 		$fileCount = 0;
@@ -291,13 +421,12 @@ class FluxdRssad extends FluxdServiceMod
 		}
 	}
 
-
 	/**
 	 * get job-list
 	 *
 	 * @return job-list as array or false on error / no files
 	 */
-	function jobsGetList() {
+	function instance_jobsGetList() {
 		// job1|job2|job3
 		// savedir#url#filtername
 		if ((isset($this->_cfg["fluxd_Rssad_jobs"])) && (strlen($this->_cfg["fluxd_Rssad_jobs"]) > 0)) {
@@ -325,12 +454,163 @@ class FluxdRssad extends FluxdServiceMod
 	}
 
 	/**
+	 * get jobs-content
+	 *
+	 * @param $jobnumber
+	 * @return job as array or false on error
+	 */
+	function instance_jobGetContent($jobnumber) {
+		$jobInt = (int) $jobnumber;
+		if ($jobInt > 0) {
+			$jobs = $this->instance_jobsGetList();
+			return (($jobs !== false) && (count($jobs) > ($jobInt - 1)))
+				? $jobs[$jobInt - 1]
+				: false;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * adds a job
+	 *
+	 * @param $jobNumber
+	 * @param $savedir
+	 * @param $url
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function instance_jobAdd($savedir, $url, $filtername, $checkdir = false) {
+		if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
+			$jobsString = "";
+			$jobs = $this->instance_jobsGetList();
+			if (($jobs !== false) && (count($jobs) > 0)) {
+				foreach ($jobs as $job) {
+					$jobsString .= $job["savedir"].$this->_delimJob;
+					$jobsString .= $job["url"].$this->_delimJob;
+					$jobsString .= $job["filtername"];
+					$jobsString .= $this->_delimJobs;
+				}
+			}
+			$jobsString .= trim(checkDirPathString($savedir)).$this->_delimJob;
+			$jobsString .= $url.$this->_delimJob;
+			$jobsString .= $filtername;
+			// check dir
+			if ($checkdir) {
+				$check = checkDirectory($savedir);
+				if (!$check)
+					array_push($this->messages , "dir ".$savedir." does not exist and could not be created.");
+			} else {
+				$check = true;
+			}
+			// update setting
+			return ($check && $this->_jobsUpdate($jobsString));
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * updates a single job
+	 *
+	 * @param $jobNumber
+	 * @param $savedir
+	 * @param $url
+	 * @param $filtername
+	 * @return boolean
+	 */
+	function instance_jobUpdate($jobNumber, $savedir, $url, $filtername, $checkdir = false) {
+		if (($jobNumber > 0) && (strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
+			$jobs = $this->instance_jobsGetList();
+			if (($jobs !== false) && (count($jobs) > 0)) {
+				$result = array();
+				$idx = 1;
+				while (count($jobs) > 0) {
+					$job = array_shift($jobs);
+					if ($idx != $jobNumber)
+						array_push($result, $job);
+					else
+						array_push($result, array(
+							'savedir' => trim(checkDirPathString($savedir)),
+							'url' => $url,
+							'filtername' => $filtername
+							)
+						);
+					$idx++;
+				}
+				$jobsString = "";
+				$resultCount = count($result);
+				for ($i = 0; $i < $resultCount; $i++) {
+					$jobsString .= $result[$i]["savedir"].$this->_delimJob;
+					$jobsString .= $result[$i]["url"].$this->_delimJob;
+					$jobsString .= $result[$i]["filtername"];
+					if ($i < ($resultCount - 1))
+						$jobsString .= $this->_delimJobs;
+				}
+				// check dir
+				if ($checkdir) {
+					$check = checkDirectory($savedir);
+					if (!$check)
+						array_push($this->messages , "dir ".$savedir." does not exist and could not be created.");
+				} else {
+					$check = true;
+				}
+				// update setting
+				return ($check && $this->_jobsUpdate($jobsString));
+			}
+			return false;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * deletes a single job
+	 *
+	 * @param $jobNumber
+	 * @return boolean
+	 */
+	function instance_jobDelete($jobNumber) {
+		if ($jobNumber > 0) {
+			$jobs = $this->instance_jobsGetList();
+			if (($jobs !== false) && (count($jobs) > 0)) {
+				$result = array();
+				$idx = 1;
+				while (count($jobs) > 0) {
+					$job = array_shift($jobs);
+					if ($idx != $jobNumber)
+						array_push($result, $job);
+					$idx++;
+				}
+				$jobsString = "";
+				$resultCount = count($result);
+				for ($i = 0; $i < $resultCount; $i++) {
+					$jobsString .= $result[$i]["savedir"].$this->_delimJob;
+					$jobsString .= $result[$i]["url"].$this->_delimJob;
+					$jobsString .= $result[$i]["filtername"];
+					if ($i < ($resultCount - 1))
+						$jobsString .= $this->_delimJobs;
+				}
+				// update setting
+				return $this->_jobsUpdate($jobsString);
+			}
+			return false;
+		} else {
+			return false;
+		}
+	}
+
+    // =========================================================================
+	// private methods
+	// =========================================================================
+
+	/**
 	 * updates jobs
 	 *
 	 * @param $content
 	 * @return boolean
 	 */
-	function jobsUpdate($content) {
+	function _jobsUpdate($content) {
 		$jobsSane = array();
 		$jobs = explode($this->_delimJobs, trim($content));
 		if (($jobs !== false) && (count($jobs) > 0)) {
@@ -362,154 +642,6 @@ class FluxdRssad extends FluxdServiceMod
 			// log
 			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Jobs Saved : \n".$jobsString);
 			return true;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * get jobs-content
-	 *
-	 * @param $jobnumber
-	 * @return job as array or false on error
-	 */
-	function jobGetContent($jobnumber) {
-		$jobInt = (int) $jobnumber;
-		if ($jobInt > 0) {
-			$jobs = $this->jobsGetList();
-			if (($jobs !== false) && (count($jobs) > ($jobInt - 1)))
-				return $jobs[$jobInt - 1];
-			else
-				return false;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * adds a job
-	 *
-	 * @param $jobNumber
-	 * @param $savedir
-	 * @param $url
-	 * @param $filtername
-	 * @return boolean
-	 */
-	function jobAdd($savedir, $url, $filtername, $checkdir = false) {
-		if ((strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
-			$jobsString = "";
-			$jobs = $this->jobsGetList();
-			if (($jobs !== false) && (count($jobs) > 0)) {
-				foreach ($jobs as $job) {
-					$jobsString .= $job["savedir"].$this->_delimJob;
-					$jobsString .= $job["url"].$this->_delimJob;
-					$jobsString .= $job["filtername"];
-					$jobsString .= $this->_delimJobs;
-				}
-			}
-			$jobsString .= trim(checkDirPathString($savedir)).$this->_delimJob;
-			$jobsString .= $url.$this->_delimJob;
-			$jobsString .= $filtername;
-			// check dir
-			if ($checkdir) {
-				$check = checkDirectory($savedir);
-				if (!$check)
-					$this->messages = "dir ".$savedir." does not exist and could not be created.";
-			} else {
-				$check = true;
-			}
-			// update setting
-			return ($check && $this->jobsUpdate($jobsString));
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * updates a single job
-	 *
-	 * @param $jobNumber
-	 * @param $savedir
-	 * @param $url
-	 * @param $filtername
-	 * @return boolean
-	 */
-	function jobUpdate($jobNumber, $savedir, $url, $filtername, $checkdir = false) {
-		if (($jobNumber > 0) && (strlen($savedir) > 0) && (strlen($url) > 0) && (strlen($filtername) > 0)) {
-			$jobs = $this->jobsGetList();
-			if (($jobs !== false) && (count($jobs) > 0)) {
-				$result = array();
-				$idx = 1;
-				while (count($jobs) > 0) {
-					$job = array_shift($jobs);
-					if ($idx != $jobNumber)
-						array_push($result, $job);
-					else
-						array_push($result, array(
-							'savedir' => trim(checkDirPathString($savedir)),
-							'url' => $url,
-							'filtername' => $filtername
-							)
-						);
-					$idx++;
-				}
-				$jobsString = "";
-				$resultCount = count($result);
-				for ($i = 0; $i < $resultCount; $i++) {
-					$jobsString .= $result[$i]["savedir"].$this->_delimJob;
-					$jobsString .= $result[$i]["url"].$this->_delimJob;
-					$jobsString .= $result[$i]["filtername"];
-					if ($i < ($resultCount - 1))
-						$jobsString .= $this->_delimJobs;
-				}
-				// check dir
-				if ($checkdir) {
-					$check = checkDirectory($savedir);
-					if (!$check)
-						$this->messages = "dir ".$savedir." does not exist and could not be created.";
-				} else {
-					$check = true;
-				}
-				// update setting
-				return ($check && $this->jobsUpdate($jobsString));
-			}
-			return false;
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * deletes a single job
-	 *
-	 * @param $jobNumber
-	 * @return boolean
-	 */
-	function jobDelete($jobNumber) {
-		if ($jobNumber > 0) {
-			$jobs = $this->jobsGetList();
-			if (($jobs !== false) && (count($jobs) > 0)) {
-				$result = array();
-				$idx = 1;
-				while (count($jobs) > 0) {
-					$job = array_shift($jobs);
-					if ($idx != $jobNumber)
-						array_push($result, $job);
-					$idx++;
-				}
-				$jobsString = "";
-				$resultCount = count($result);
-				for ($i = 0; $i < $resultCount; $i++) {
-					$jobsString .= $result[$i]["savedir"].$this->_delimJob;
-					$jobsString .= $result[$i]["url"].$this->_delimJob;
-					$jobsString .= $result[$i]["filtername"];
-					if ($i < ($resultCount - 1))
-						$jobsString .= $this->_delimJobs;
-				}
-				// update setting
-				return $this->jobsUpdate($jobsString);
-			}
-			return false;
 		} else {
 			return false;
 		}

@@ -29,6 +29,9 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// Rssad
+FluxdServiceMod::initializeServiceMod('Rssad');
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.admin.fluxdRssadSettings.tmpl");
 
@@ -40,9 +43,6 @@ if ((isset($message)) && ($message != "")) {
 } else {
 	$tmpl->setvar('new_msg', 0);
 }
-
-// Rssad
-//$rssad = FluxdServiceMod::getFluxdServiceModInstance($cfg, $fluxd, 'Rssad');
 
 // pageop
 //
@@ -66,7 +66,7 @@ switch ($pageop) {
 	default:
 	case "default":
 		// filters
-		$filters = $rssad->filterGetList();
+		$filters = FluxdRssad::filterGetList();
 		if ($filters !== false) {
 			$filterlist = array();
 			foreach ($filters as $filter) {
@@ -77,7 +77,7 @@ switch ($pageop) {
 			$tmpl->setloop('rssad_filters', $filterlist);
 		}
 		// jobs
-		$jobs = $rssad->jobsGetList();
+		$jobs = FluxdRssad::jobsGetList();
 		if ($jobs !== false)
 			$tmpl->setloop('rssad_jobs', $jobs);
 		// title-bar
@@ -90,13 +90,13 @@ switch ($pageop) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
 		} else {
-			if ($rssad->filterIdCheck($filtername, true) === true) {
+			if (FluxdRssad::filterIdCheck($filtername, true) === true) {
 				$filterstring = $filtername;
 				$maxFiles = 100;
 				$noMatch = true;
 				$idx = 1;
 				while ($noMatch) {
-					if ($rssad->filterExists($filtername) === false) {
+					if (FluxdRssad::filterExists($filtername) === false) {
 						$tmpl->setvar('filtername', $filtername);
 						$tmpl->setvar('rssad_filtercontent', "");
 						$noMatch = false;
@@ -125,11 +125,11 @@ switch ($pageop) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
 		} else {
-			if ($rssad->filterIdCheck($filtername, false) === true) {
+			if (FluxdRssad::filterIdCheck($filtername, false) === true) {
 				// create the filter
-				if ($rssad->filterExists($filtername) === true) {
+				if (FluxdRssad::filterExists($filtername) === true) {
 					$tmpl->setvar('filtername', $filtername);
-					$content = trim($rssad->filterGetContent($filtername));
+					$content = trim(FluxdRssad::filterGetContent($filtername));
 					$tmpl->setvar('rssad_filtercontent', $content);
 					$filterlines = explode("\n", $content);
 					if (count($filterlines) > 0) {
@@ -170,15 +170,19 @@ switch ($pageop) {
 				$isnew = false;
 				$tmpl->setvar('rssad_filter_message', "Filter ".$filtername." updated.");
 			}
-			if ($rssad->filterIdCheck($filtername, $isnew) === true) {
+			if (FluxdRssad::filterIdCheck($filtername, $isnew) === true) {
 				// save the filter
 				$tmpl->setvar('filtername', $filtername);
-				if (($rssad->filterSave($filtername, $filtercontent)) === true) {
+				if ((FluxdRssad::filterSave($filtername, $filtercontent)) === true) {
 					$tmpl->setvar('filter_saved', 1);
 					$tmpl->setvar('filtercontent', $filtercontent);
 				} else {
 					$tmpl->setvar('filter_saved', 0);
-					$tmpl->setvar('messages', $rssad->messages);
+					$messages = array();
+					$msgs = FluxdRssad::getMessages();
+					foreach ($msgs as $msg)
+						array_push($messages, array('msg' => $msg));
+					$tmpl->setloop('messages', $messages);
 				}
 			} else {
 				$tmpl->setvar('new_msg', 1);
@@ -195,14 +199,18 @@ switch ($pageop) {
 			$tmpl->setvar('new_msg', 1);
 			$tmpl->setvar('message', "Error : No Filtername.");
 		} else {
-			if ($rssad->filterIdCheck($filtername, false) === true) {
+			if (FluxdRssad::filterIdCheck($filtername, false) === true) {
 				// delete the filter
 				$tmpl->setvar('filtername', $filtername);
-				if (($rssad->filterDelete($filtername)) === true) {
+				if ((FluxdRssad::filterDelete($filtername)) === true) {
 					$tmpl->setvar('filter_deleted', 1);
 				} else {
 					$tmpl->setvar('filter_deleted', 0);
-					$tmpl->setvar('messages', $rssad->messages);
+					$messages = array();
+					$msgs = FluxdRssad::getMessages();
+					foreach ($msgs as $msg)
+						array_push($messages, array('msg' => $msg));
+					$tmpl->setloop('messages', $messages);
 				}
 			} else {
 				$tmpl->setvar('new_msg', 1);
@@ -215,7 +223,7 @@ switch ($pageop) {
 
 	case "addJob":
 		// filters
-		$filters = $rssad->filterGetList();
+		$filters = FluxdRssad::filterGetList();
 		if ($filters !== false) {
 			$filterlist = array();
 			foreach ($filters as $filter) {
@@ -236,7 +244,7 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : No Job-Number.");
 			$tmpl->setvar('rssad_job_loaded', 0);
 		} else {
-			$job = $rssad->jobGetContent($jobNumber);
+			$job = FluxdRssad::jobGetContent($jobNumber);
 			if ($job !== false) {
 				$tmpl->setvar('rssad_job_loaded', 1);
 				$tmpl->setvar('jobnumber', $jobNumber);
@@ -244,7 +252,7 @@ switch ($pageop) {
 				$tmpl->setvar('rssad_url', $job['url']);
 				$tmpl->setvar('rssad_filtername', $job['filtername']);
 				// filters
-				$filters = $rssad->filterGetList();
+				$filters = FluxdRssad::filterGetList();
 				if ($filters !== false) {
 					$filterlist = array();
 					foreach ($filters as $filter) {
@@ -287,20 +295,28 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : Argument-Error.");
 		} else {
 			if ($isNew) {
-				if ($rssad->jobAdd($savedir, $url, $filtername, $doCheckdir) === true) {
+				if (FluxdRssad::jobAdd($savedir, $url, $filtername, $doCheckdir) === true) {
 					$tmpl->setvar('rssad_job_saved', 1);
 					$tmpl->setvar('rssad_job_message', "Job added.");
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
-					$tmpl->setvar('messages', $rssad->messages);
+					$messages = array();
+					$msgs = FluxdRssad::getMessages();
+					foreach ($msgs as $msg)
+						array_push($messages, array('msg' => $msg));
+					$tmpl->setloop('messages', $messages);
 				}
 			} else {
-				if ($rssad->jobUpdate($jobNumber, $savedir, $url, $filtername, $doCheckdir) === true) {
+				if (FluxdRssad::jobUpdate($jobNumber, $savedir, $url, $filtername, $doCheckdir) === true) {
 					$tmpl->setvar('rssad_job_saved', 1);
 					$tmpl->setvar('rssad_job_message', "Job updated.");
 				} else {
 					$tmpl->setvar('rssad_job_saved', 0);
-					$tmpl->setvar('messages', $rssad->messages);
+					$messages = array();
+					$msgs = FluxdRssad::getMessages();
+					foreach ($msgs as $msg)
+						array_push($messages, array('msg' => $msg));
+					$tmpl->setloop('messages', $messages);
 				}
 			}
 		}
@@ -315,7 +331,7 @@ switch ($pageop) {
 			$tmpl->setvar('message', "Error : No Job-Number.");
 			$tmpl->setvar('rssad_job_deleted', 0);
 		} else {
-			$tmpl->setvar('rssad_job_deleted', ($rssad->jobDelete($jobNumber) === true) ? 1 : 0);
+			$tmpl->setvar('rssad_job_deleted', (FluxdRssad::jobDelete($jobNumber) === true) ? 1 : 0);
 		}
 		// title-bar
 		tmplSetTitleBar("Administration - Fluxd Rssad - Delete Job");
