@@ -282,7 +282,7 @@ class MaintenanceAndRepair
 	 * @return boolean
 	 */
 	function _maintenanceTransfers($trestart = false) {
-		global $db, $queueActive;
+		global $db;
 		// set var
 		$this->_restartTransfers = $trestart;
 		// output
@@ -406,7 +406,7 @@ class MaintenanceAndRepair
 	            }
 				// clientHandler + start
 				$clientHandler = ClientHandler::getClientHandlerInstance($this->_cfg, $settingsAry['btclient']);
-				$clientHandler->startClient($transfer, 0, $queueActive);
+				$clientHandler->startClient($transfer, 0, FluxdQmgr::isRunning());
 				// DEBUG : log the restart of the died transfer
 				if ($this->_cfg['debuglevel'] > 0) {
 					$staret = ($clientHandler->state == 3) ? "OK" : "FAILED";

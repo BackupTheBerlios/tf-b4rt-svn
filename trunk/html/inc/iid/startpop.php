@@ -75,7 +75,7 @@ if ($torrentExists) {
 	$tmpl->setvar('is_skip', ($cfg["skiphashcheck"] != 0) ? 1 : 0);
 }
 // Force Queuing if not an admin.
-$tmpl->setvar('is_queue', ($queueActive) ? 1 : 0);
+$tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);
 
 // profiles
 if ($cfg["enable_transfer_profile"] == "1") {

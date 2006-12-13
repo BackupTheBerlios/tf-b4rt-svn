@@ -64,7 +64,7 @@ $tmpl->setvar('_USER', $cfg['_USER']);
 $tmpl->setvar('user', $cfg["user"]);
 
 // queue
-$tmpl->setvar('queueActive', ($queueActive) ? 1 : 0);
+$tmpl->setvar('queueActive', (FluxdQmgr::isRunning()) ? 1 : 0);
 
 // incoming-path
 $tmpl->setvar('path_incoming', ($cfg["enable_home_dirs"] != 0) ? $cfg["user"] : $cfg["path_incoming"]);
@@ -500,7 +500,7 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	else
 		$ajaxInit .= ",'0:0:0:0:0:0'";
 	$ajaxInit .= ",".$cfg["index_page_stats"];
-	if ($queueActive)
+	if (FluxdQmgr::isRunning())
 		$ajaxInit .= ",1";
 	else
 		$ajaxInit .= ",0";
@@ -649,12 +649,10 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('weekxfer1', @formatFreeSpace($xfer_total['week']['total'] / 1048576));
 		$tmpl->setvar('dayxfer1', @formatFreeSpace($xfer_total['day']['total'] / 1048576));
 	}
-	if ($queueActive) {
+	if (FluxdQmgr::isRunning()) {
 		$tmpl->setvar('_QUEUEMANAGER', $cfg['_QUEUEMANAGER']);
-		$runningTransferCount = strval(getRunningTransferCount());
-		$tmpl->setvar('runningTransferCount', $runningTransferCount);
-		$countQueuedTorrents = strval($fluxdQmgr->countQueuedTorrents());
-		$tmpl->setvar('countQueuedTorrents', $countQueuedTorrents);
+		$tmpl->setvar('runningTransferCount', getRunningTransferCount());
+		$tmpl->setvar('countQueuedTransfers', FluxdQmgr::countQueuedTransfers());
 		$tmpl->setvar('limitGlobal', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
 		$tmpl->setvar('limitUser', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 	}

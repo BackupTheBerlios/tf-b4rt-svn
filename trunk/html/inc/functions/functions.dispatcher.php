@@ -66,7 +66,7 @@ function indexStartTransfer($transfer) {
  * @param $interactive (1|0) : is this a interactive startup with dialog ?
  */
 function indexStartTorrent($torrent, $interactive) {
-	global $cfg, $queueActive;
+	global $cfg;
 	if ($cfg["enable_file_priority"]) {
 		include_once("inc/functions/functions.setpriority.php");
 		// Process setPriority Request.
@@ -81,14 +81,14 @@ function indexStartTorrent($torrent, $interactive) {
 		case 0:
 			$btclient = getTransferClient($torrent);
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
-			$clientHandler->startClient($torrent, 0, $queueActive);
+			$clientHandler->startClient($torrent, 0, FluxdQmgr::isRunning());
 			// header + out
 			header("location: index.php?iid=index");
 			exit();
 			break;
 		case 1:
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
-			$clientHandler->startClient($torrent, 1, $queueActive);
+			$clientHandler->startClient($torrent, 1, FluxdQmgr::isRunning());
 			if ($clientHandler->state == -1) { // start failed
 				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
 				exit();
@@ -160,9 +160,9 @@ function indexDeleteTransfer($transfer) {
  * @param $transfer
  */
 function indexDeQueueTransfer($transfer) {
-	global $cfg, $fluxdQmgr;
+	global $cfg;
 	if (isValidTransfer($transfer) === true) {
-		$fluxdQmgr->dequeueTorrent($transfer, $cfg["user"]);
+		FluxdQmgr::dequeueTransfer($transfer, $cfg['user']);
 		header("location: index.php?iid=index");
 		exit();
 	} else {
@@ -177,7 +177,7 @@ function indexDeQueueTransfer($transfer) {
  * @param $url_upload url of torrent to download
  */
 function indexProcessDownload($url_upload) {
-	global $cfg, $queueActive, $messages;
+	global $cfg, $messages;
 	// is enabled ?
 	if ($cfg["enable_torrent_download"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");

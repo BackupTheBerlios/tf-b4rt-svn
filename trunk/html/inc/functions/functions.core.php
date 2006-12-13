@@ -1917,7 +1917,7 @@ function getTransferListArray() {
  *
  */
 function getServerStats() {
-	global $cfg, $queueActive, $fluxdQmgr;
+	global $cfg;
 	$serverStats = array();
 	// speedDown
     $speedDown = "n/a";
@@ -1948,9 +1948,7 @@ function getServerStats() {
 	$running = @getRunningTransferCount();
 	array_push($serverStats, $running);
 	// queued
-	$queued = "n/a";
-	if ((isset($queueActive)) && ($queueActive) && (isset($fluxdQmgr)))
-	    $queued = @ $fluxdQmgr->countQueuedTorrents();
+	$queued = FluxdQmgr::countQueuedTransfers();
 	array_push($serverStats, $queued);
 	// speedDownPercent
 	$percentDownload = 0;

@@ -252,7 +252,7 @@ switch ($action) {
 								setPriority(urldecode($element));
 							}
 							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
-							$clientHandler->startClient(urldecode($element), 0, $queueActive);
+							$clientHandler->startClient(urldecode($element), 0, FluxdQmgr::isRunning());
 						} else {
 							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
 							$clientHandler->startClient(urldecode($element), 0, false);
@@ -282,10 +282,8 @@ switch ($action) {
 
 				case "transferDeQueue": /* transferDeQueue */
 					if (($isTorrent) && ($tRunningFlag == 0)) {
-						// set request var
-						$_REQUEST['alias_file'] = getAliasName($element).".stat";;
 						// dequeue it
-						$fluxdQmgr->dequeueTorrent($element, $cfg["user"]);
+						FluxdQmgr::dequeueTransfer(urldecode($element), $cfg['user']);
 					}
 					break;
 

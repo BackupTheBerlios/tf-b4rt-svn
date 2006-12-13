@@ -50,7 +50,7 @@ for ($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j)
 $tmpl->setloop('row_list', $row_list);
 
 // queue
-$tmpl->setvar('queueActive', ($queueActive) ? 1 : 0);
+$tmpl->setvar('queueActive', (FluxdQmgr::isRunning()) ? 1 : 0);
 //
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

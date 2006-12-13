@@ -365,8 +365,7 @@ class ClientHandler
         $transferRunningFlag = 1;
         if ($this->queue == 1) { // queue
 			if (FluxdQmgr::isRunning()) {
-				//$fluxdQmgr = FluxdServiceMod::getFluxdServiceModInstance($this->cfg, $fluxd, 'Qmgr');
-				//$fluxdQmgr->enqueueTorrent($this->transfer, $this->cfg['user']);
+				FluxdQmgr::enqueueTransfer($this->transfer, $this->cfg['user']);
 				AuditAction($this->cfg["constants"]["queued_transfer"], $this->transfer ." : Die:".$this->runtime .", Sharekill:".$this->sharekill .", MaxUploads:".$this->maxuploads .", DownRate:".$this->drate .", UploadRate:".$this->rate .", Ports:".$this->minport ."-".$this->maxport .", SuperSeed:".$this->superseeder .", Rerequest Intervall:".$this->rerequest);
 			} else {
 				$this->messages = "queue-request (".$this->transfer."/".$this->cfg['user'].") but Qmgr not active";

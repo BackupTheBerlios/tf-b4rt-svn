@@ -126,7 +126,7 @@ function maintenanceFluxd($cliMode = false) {
  * @return boolean
  */
 function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
-	global $cfg, $db, $queueActive;
+	global $cfg, $db;
 	// print
 	if ($cliMode)
 		printMessage("fluxcli.php", "transfers-maintenance...\n");
@@ -259,7 +259,7 @@ function maintenanceTransfers($cliMode = false, $restartTransfers = false) {
             }
 			// clientHandler + start
 			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $settingsAry['btclient']);
-			$clientHandler->startClient($transfer, 0, $queueActive);
+			$clientHandler->startClient($transfer, 0, FluxdQmgr::isRunning());
 			// DEBUG : log the restart of the died transfer
 			if ($cfg['debuglevel'] > 0) {
 				$staret = ($clientHandler->state == 3) ? "OK" : "FAILED";

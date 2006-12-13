@@ -24,7 +24,7 @@
  * setVarsFromPersistentSettings
  */
 function setVarsFromPersistentSettings() {
-	global $cfg, $tmpl, $torrent, $queueActive;
+	global $cfg, $tmpl, $torrent;
 	// Load saved settings
 	loadTorrentSettingsToConfig($torrent);
 	// set settings

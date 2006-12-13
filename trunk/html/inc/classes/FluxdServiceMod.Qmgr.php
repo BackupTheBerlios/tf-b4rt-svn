@@ -23,99 +23,220 @@
 // class for the Fluxd-Service-module Qmgr
 class FluxdQmgr extends FluxdServiceMod
 {
+	// public fields
+
 	// version
 	var $version = "0.2";
+
+	// =========================================================================
+	// public static methods
+	// =========================================================================
+
+    /**
+     * accessor for singleton
+     *
+     * @return FluxdQmgr
+     */
+    function getInstance() {
+		global $instanceFluxdQmgr;
+		// initialize if needed
+		if (!isset($instanceFluxdQmgr))
+			FluxdQmgr::initialize();
+		return $instanceFluxdQmgr;
+    }
+
+    /**
+     * initialize FluxdQmgr.
+     */
+    function initialize() {
+    	global $cfg, $instanceFluxdQmgr;
+    	// create instance
+    	if (!isset($instanceFluxdQmgr))
+    		$instanceFluxdQmgr = new FluxdQmgr(serialize($cfg));
+    }
+
+	/**
+	 * getState
+	 *
+	 * @return state
+	 */
+    function getState() {
+		global $instanceFluxdQmgr;
+		return $instanceFluxdQmgr->state;
+    }
+
+    /**
+     * getMessages
+     *
+     * @return array
+     */
+    function getMessages() {
+    	global $instanceFluxdQmgr;
+		return $instanceFluxdQmgr->messages;
+    }
+
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function isRunning() {
+    	global $instanceFluxdQmgr;
+		return ($instanceFluxdQmgr->state == FLUXDMOD_STATE_RUNNING);
+    }
+
+    /**
+     * getQueuedTransfers
+     *
+     * @param $user
+     * @return string
+     */
+    function getQueuedTransfers($user = "") {
+    	global $instanceFluxdQmgr;
+    	return $instanceFluxdQmgr->instance_getQueuedTransfers($user);
+    }
+
+    /**
+     * countQueuedTransfers
+     *
+     * @param $user
+     * @return int
+     */
+    function countQueuedTransfers($user = "") {
+    	global $instanceFluxdQmgr;
+    	return $instanceFluxdQmgr->instance_countQueuedTransfers($user);
+    }
+
+    /**
+     * enqueue
+     *
+     * @param $transfer
+     * @param $user
+     */
+    function enqueueTransfer($transfer, $user) {
+    	global $instanceFluxdQmgr;
+    	$instanceFluxdQmgr->instance_enqueueTransfer($transfer, $user);
+    }
+
+    /**
+     * remove
+     *
+     * @param $transfer
+     * @param $user
+     */
+    function dequeueTransfer($transfer, $user) {
+    	global $instanceFluxdQmgr;
+    	$instanceFluxdQmgr->instance_dequeueTransfer($transfer, $user);
+    }
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
      */
-    function FluxdQmgr($cfg, $fluxd) {
+    function FluxdQmgr($cfg) {
         $this->moduleName = "Qmgr";
 		// initialize
-        $this->initialize($cfg, $fluxd);
-    }
-
-
-
-    /**
-     * getQueuedTorrents
-     *
-     * @param $user
-     * @return Queued Torrents
-     */
-    function getQueuedTorrents($user = "") {
-    	return parent::sendServiceCommand("list-queue", 1);
-    }
-
-    /**
-     * countQueuedTorrents
-     *
-     * @param $user
-     * @return int with sum of Queued Torrents
-     */
-    function countQueuedTorrents($user = "") {
-    	return (int) parent::sendServiceCommand("count-queue", 1);
-    }
-
-    /**
-     * enqueueTorrent
-     *
-     * @param $torrent
-     * @param $user
-     */
-    function enqueueTorrent($torrent, $user) {
-    	$torrent = urldecode($torrent);
-    	// send command to Qmgr
-    	parent::sendServiceCommand("enqueue;".substr($torrent, 0, -8).";".$user, 0);
-        // just 2 sec... dont stress fluxd
-        sleep(2);
-    }
-
-    /**
-     * dequeueTorrent
-     *
-     * @param $torrent
-     * @param $user
-     */
-    function dequeueTorrent($torrent, $user) {
-    	$torrent = urldecode($torrent);
-        $alias_file = getRequestVar('alias_file');
-        if (isTransferRunning($torrent)) {
-            // torrent has been started... try and kill it.
-            AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent . "has been started -- TRY TO KILL IT");
-            header("location: dispatcher.php?action=indexStop&transfer=".urlencode($torrent)."&alias_file=".$alias_file."&kill=true");
-            exit();
-        } else {
-            // send command to Qmgr
-            parent::sendServiceCommand("dequeue;".substr($torrent, 0, -8).";".$user, 0);
-            // flag the torrent as stopped (in db)
-            stopTorrentSettings($torrent);
-            // update the stat file.
-            $this->updateStatFile($torrent, $alias_file);
-            // log
-            AuditAction($this->cfg["constants"]["unqueued_torrent"], $torrent);
-            // just 2 sec... dont stress fluxd
-            sleep(2);
+        $this->instance_initialize($cfg);
+        // check if queue is running
+        if ($this->_cfg["fluxd_Qmgr_enabled"] == 1) {
+        	if ($this->instance_isRunning())
+        		$this->state = FLUXDMOD_STATE_RUNNING;
         }
     }
 
-
+	// =========================================================================
+	// public methods
+	// =========================================================================
 
     /**
-     * updateStatFile
-     * @param $torrent name of the torrent
-     * @param $alias_file alias_file of the torrent
+     * instance_getQueuedTransfers
+     *
+     * @param $user
+     * @return string
      */
-    function updateStatFile($torrent, $alias_file) {
-        $the_user = getOwner($torrent);
-        $btclient = getTransferClient($torrent);
+    function instance_getQueuedTransfers($user = "") {
+     	return ($this->state == FLUXDMOD_STATE_RUNNING)
+    		? Fluxd::sendServiceCommand($this->moduleName, 'list-queue', 1)
+    		: "";
+    }
+
+    /**
+     * instance_countQueuedTransfers
+     *
+     * @param $user
+     * @return int
+     */
+    function instance_countQueuedTransfers($user = "") {
+     	return ($this->state == FLUXDMOD_STATE_RUNNING)
+    		? Fluxd::sendServiceCommand($this->moduleName, 'count-queue', 1)
+    		: 0;
+    }
+
+    /**
+     * instance_enqueue
+     *
+     * @param $transfer
+     * @param $user
+     */
+    function instance_enqueueTransfer($transfer, $user) {
+    	if ($this->state == FLUXDMOD_STATE_RUNNING) {
+    		// send command (hardcoded for .torrent for now)
+    		Fluxd::sendServiceCommand($this->moduleName, 'enqueue;'.substr($transfer, 0, -8).';'.$user, 0);
+	        // just 2 sec... dont stress fluxd
+	        sleep(2);
+    	}
+    }
+
+    /**
+     * instance_dequeue
+     *
+     * @param $transfer
+     * @param $user
+     */
+    function instance_dequeueTransfer($transfer, $user) {
+    	if ($this->state == FLUXDMOD_STATE_RUNNING) {
+        	if (isTransferRunning($transfer)) {
+	            // torrent has been started...log
+	            // TODO : kill it ?
+	            AuditAction($this->_cfg["constants"]["unqueued_transfer"], $transfer . "has been already started.");
+        	} else {
+	            // send command (hardcoded for .torrent for now)
+    			Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.substr($transfer, 0, -8).';'.$user, 0);
+	            // flag the torrent as stopped (in db)
+	            stopTorrentSettings($transfer);
+	            // update the stat file.
+	            $this->_updateStatFile($transfer, getAliasName($transfer).".stat");
+	            // log
+	            AuditAction($this->_cfg["constants"]["unqueued_transfer"], $transfer);
+	            // just 2 sec... dont stress fluxd
+	            sleep(2);
+        	}
+        }
+    }
+
+    // =========================================================================
+	// private methods
+	// =========================================================================
+
+    /**
+     * _updateStatFile
+     *
+     * @param $transfer
+     * @param $alias
+     */
+    function _updateStatFile($transfer, $alias) {
+        $the_user = getOwner($transfer);
+        $btclient = getTransferClient($transfer);
         $modded = 0;
         // create AliasFile object
-        $af = AliasFile::getAliasFileInstance($alias_file, $the_user, $this->cfg, $btclient);
+        $af = AliasFile::getAliasFileInstance($alias, $the_user, $this->_cfg, $btclient);
         if($af->percent_done > 0 && $af->percent_done < 100) {
             // has downloaded something at some point, mark it is incomplete
             $af->running = "0";
-            $af->time_left = "Torrent Stopped";
+            $af->time_left = "Transfer Stopped";
             $modded++;
         }
         if ($modded == 0) {
@@ -137,7 +258,7 @@ class FluxdQmgr extends FluxdServiceMod
         if ($modded == 0) {
             // hmmm this stat-file is quite strange... just rewrite it stopped.
             $af->running = "0";
-            $af->time_left = "Torrent Stopped";
+            $af->time_left = "Transfer Stopped";
         }
         // Write out the new Stat File
         $af->WriteFile();
