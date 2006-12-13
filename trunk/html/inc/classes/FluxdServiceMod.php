@@ -21,9 +21,8 @@
 *******************************************************************************/
 
 // states
-define('FLUXDMOD_STATE_NULL', 0);                      // null (not initialized)
-define('FLUXDMOD_STATE_INITIALIZED', 1);                          // initialized
-define('FLUXDMOD_STATE_RUNNING', 2);                                 //  running
+define('FLUXDMOD_STATE_NULL', 0);      // null (not initialized and not running)
+define('FLUXDMOD_STATE_RUNNING', 1);                    // initialized + running
 define('FLUXDMOD_STATE_ERROR', -1);                                     // error
 
 // base class for a Fluxd-Service-module
@@ -40,6 +39,9 @@ class FluxdServiceMod
 
     // messages-array
     var $messages = array();
+
+    // modstate
+    var $modstate = FLUXDMOD_STATE_NULL;
 
     // protected fields
 
@@ -77,6 +79,13 @@ class FluxdServiceMod
      * @return array
      */
     function getMessages() {}
+
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {}
 
     /**
      * isRunning
@@ -154,8 +163,6 @@ class FluxdServiceMod
             $this->state = FLUXDMOD_STATE_ERROR;
             return;
         }
-        // all ok
-        $this->state = FLUXDMOD_STATE_INITIALIZED;
     }
 
     /**
@@ -165,6 +172,15 @@ class FluxdServiceMod
      */
     function instance_isRunning() {
     	return (Fluxd::modState($this->moduleName) == 1);
+    }
+
+    /**
+     * instance_getModState
+     *
+     * @return state
+     */
+    function instance_getModState() {
+    	return Fluxd::modState($this->moduleName);
     }
 
 }

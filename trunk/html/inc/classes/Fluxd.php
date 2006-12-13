@@ -446,7 +446,7 @@ class Fluxd
 	 */
     function instance_reloadDBCache() {
 		if ($this->state == FLUXD_STATE_RUNNING)
-			$this->instance_sendCommand('instance_reloadDBCache', 0);
+			$this->instance_sendCommand('reloadDBCache', 0);
     }
 
 	/**
@@ -454,7 +454,7 @@ class Fluxd
 	 */
     function instance_reloadModules() {
 		if ($this->state == FLUXD_STATE_RUNNING)
-			$this->instance_sendCommand('instance_reloadModules', 0);
+			$this->instance_sendCommand('reloadModules', 0);
     }
 
     /**

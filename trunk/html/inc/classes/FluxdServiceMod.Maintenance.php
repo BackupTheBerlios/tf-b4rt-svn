@@ -79,6 +79,18 @@ class FluxdMaintenance extends FluxdServiceMod
 			: array();
     }
 
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {
+		global $instanceFluxdMaintenance;
+		return (isset($instanceFluxdMaintenance))
+			? $instanceFluxdMaintenance->modstate
+			: FLUXDMOD_STATE_NULL;
+	}
+
     /**
      * isRunning
      *
@@ -87,7 +99,7 @@ class FluxdMaintenance extends FluxdServiceMod
     function isRunning() {
 		global $instanceFluxdMaintenance;
 		return (isset($instanceFluxdMaintenance))
-			? $instanceFluxdMaintenance->instance_isRunning()
+			? ($instanceFluxdMaintenance->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
     }
 
@@ -102,6 +114,9 @@ class FluxdMaintenance extends FluxdServiceMod
         $this->moduleName = "Maintenance";
 		// initialize
         $this->instance_initialize($cfg);
+        // set modstate if mod enabled
+        if ($this->_cfg["fluxd_Maintenance_enabled"] == 1)
+        	$this->modstate = $this->instance_getModState();
     }
 
 }

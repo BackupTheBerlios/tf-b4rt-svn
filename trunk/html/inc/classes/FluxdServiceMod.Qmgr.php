@@ -75,6 +75,16 @@ class FluxdQmgr extends FluxdServiceMod
 		return $instanceFluxdQmgr->messages;
     }
 
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {
+		global $instanceFluxdQmgr;
+		return $instanceFluxdQmgr->modstate;
+	}
+
     /**
      * isRunning
      *
@@ -82,7 +92,7 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function isRunning() {
     	global $instanceFluxdQmgr;
-		return ($instanceFluxdQmgr->state == FLUXDMOD_STATE_RUNNING);
+		return ($instanceFluxdQmgr->modstate == FLUXDMOD_STATE_RUNNING);
     }
 
     /**
@@ -140,11 +150,9 @@ class FluxdQmgr extends FluxdServiceMod
         $this->moduleName = "Qmgr";
 		// initialize
         $this->instance_initialize($cfg);
-        // check if queue is running
-        if ($this->_cfg["fluxd_Qmgr_enabled"] == 1) {
-        	if ($this->instance_isRunning())
-        		$this->state = FLUXDMOD_STATE_RUNNING;
-        }
+        // set modstate if mod enabled
+        if ($this->_cfg["fluxd_Qmgr_enabled"] == 1)
+        	$this->modstate = $this->instance_getModState();
     }
 
 	// =========================================================================

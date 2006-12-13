@@ -79,6 +79,18 @@ class FluxdTrigger extends FluxdServiceMod
 			: array();
     }
 
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {
+		global $instanceFluxdTrigger;
+		return (isset($instanceFluxdTrigger))
+			? $instanceFluxdTrigger->modstate
+			: FLUXDMOD_STATE_NULL;
+	}
+
     /**
      * isRunning
      *
@@ -87,7 +99,7 @@ class FluxdTrigger extends FluxdServiceMod
     function isRunning() {
 		global $instanceFluxdTrigger;
 		return (isset($instanceFluxdTrigger))
-			? $instanceFluxdTrigger->instance_isRunning()
+			? ($instanceFluxdTrigger->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
     }
 
@@ -102,6 +114,9 @@ class FluxdTrigger extends FluxdServiceMod
         $this->moduleName = "Trigger";
 		// initialize
         $this->instance_initialize($cfg);
+        // set modstate if mod enabled
+        if ($this->_cfg["fluxd_Trigger_enabled"] == 1)
+        	$this->modstate = $this->instance_getModState();
     }
 
 }

@@ -79,6 +79,18 @@ class FluxdWatch extends FluxdServiceMod
 			: array();
     }
 
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {
+		global $instanceFluxdWatch;
+		return (isset($instanceFluxdWatch))
+			? $instanceFluxdWatch->modstate
+			: FLUXDMOD_STATE_NULL;
+	}
+
     /**
      * isRunning
      *
@@ -87,7 +99,7 @@ class FluxdWatch extends FluxdServiceMod
     function isRunning() {
 		global $instanceFluxdWatch;
 		return (isset($instanceFluxdWatch))
-			? $instanceFluxdWatch->instance_isRunning()
+			? ($instanceFluxdWatch->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
     }
 
@@ -102,6 +114,9 @@ class FluxdWatch extends FluxdServiceMod
         $this->moduleName = "Watch";
 		// initialize
         $this->instance_initialize($cfg);
+        // set modstate if mod enabled
+        if ($this->_cfg["fluxd_Watch_enabled"] == 1)
+        	$this->modstate = $this->instance_getModState();
     }
 
 }

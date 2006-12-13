@@ -79,6 +79,18 @@ class FluxdFluxinet extends FluxdServiceMod
 			: array();
     }
 
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {
+		global $instanceFluxdFluxinet;
+		return (isset($instanceFluxdFluxinet))
+			? $instanceFluxdFluxinet->modstate
+			: FLUXDMOD_STATE_NULL;
+	}
+
     /**
      * isRunning
      *
@@ -87,7 +99,7 @@ class FluxdFluxinet extends FluxdServiceMod
     function isRunning() {
 		global $instanceFluxdFluxinet;
 		return (isset($instanceFluxdFluxinet))
-			? $instanceFluxdFluxinet->instance_isRunning()
+			? ($instanceFluxdFluxinet->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
     }
 
@@ -102,6 +114,9 @@ class FluxdFluxinet extends FluxdServiceMod
         $this->moduleName = "Fluxinet";
 		// initialize
         $this->instance_initialize($cfg);
+        // set modstate if mod enabled
+        if ($this->_cfg["fluxd_Fluxinet_enabled"] == 1)
+        	$this->modstate = $this->instance_getModState();
     }
 
 }

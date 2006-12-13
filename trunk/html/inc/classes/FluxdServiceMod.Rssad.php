@@ -90,6 +90,18 @@ class FluxdRssad extends FluxdServiceMod
 			: array();
     }
 
+	/**
+	 * getModState
+	 *
+	 * @return state
+	 */
+	function getModState() {
+		global $instanceFluxdRssad;
+		return (isset($instanceFluxdRssad))
+			? $instanceFluxdRssad->modstate
+			: FLUXDMOD_STATE_NULL;
+	}
+
     /**
      * isRunning
      *
@@ -98,7 +110,7 @@ class FluxdRssad extends FluxdServiceMod
     function isRunning() {
 		global $instanceFluxdRssad;
 		return (isset($instanceFluxdRssad))
-			? $instanceFluxdRssad->instance_isRunning()
+			? ($instanceFluxdRssad->modstate == FLUXDMOD_STATE_RUNNING)
 			: false;
     }
 
@@ -113,6 +125,9 @@ class FluxdRssad extends FluxdServiceMod
         $this->moduleName = "Rssad";
 		// initialize
         $this->instance_initialize($cfg);
+        // set modstate if mod enabled
+        if ($this->_cfg["fluxd_Rssad_enabled"] == 1)
+        	$this->modstate = $this->instance_getModState();
          // check our base-dir
         if (!(checkDirectory($this->_cfg["path"].$this->_basedir))) {
             $this->messages = "Rssad base-dir ".$this->_basedir." error.";
