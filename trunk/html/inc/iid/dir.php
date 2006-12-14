@@ -59,18 +59,18 @@ initRestrictedDirEntries();
 checkIncomingPath();
 
 // get request-vars
-$chmod = UrlHTMLDecode(getRequestVar('chmod'));
-$del = UrlHTMLDecode(getRequestVar('del'));
-$down = UrlHTMLDecode(getRequestVar('down'));
-$tar = UrlHTMLDecode(getRequestVar('tar'));
-$multidel = UrlHTMLDecode(getRequestVar('multidel'));
-$dir = UrlHTMLDecode(getRequestVar('dir'));
+$chmod = UrlHTMLSlashesDecode(getRequestVar('chmod'));
+$del = UrlHTMLSlashesDecode(getRequestVar('del'));
+$down = UrlHTMLSlashesDecode(getRequestVar('down'));
+$tar = UrlHTMLSlashesDecode(getRequestVar('tar'));
+$multidel = UrlHTMLSlashesDecode(getRequestVar('multidel'));
+$dir = UrlHTMLSlashesDecode(getRequestVar('dir'));
+
 // check dir-var
 if (isValidPath($dir) !== true) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
 	$dir = "";
 }
-$dir = stripslashes($dir);
 
 /*******************************************************************************
  * chmod
@@ -86,7 +86,7 @@ if ($chmod != "") {
 		chmodRecursive($cfg["path"].$dir);
 	else
 		AuditAction($cfg["constants"]["error"], "ILLEGAL CHMOD: ".$cfg["user"]." tried to chmod ".$dir);
-	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($dir));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($dir));
 	exit();
 }
 
@@ -100,7 +100,7 @@ if ($del != "") {
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete (".$del.")");
 		$current = $del;
-		$del = stripslashes(stripslashes($del));
+
 		if (isValidPath($del)) {
 			$arTemp = explode("/", $del);
 			if (count($arTemp) > 1) {
@@ -109,7 +109,7 @@ if ($del != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($current));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
 	exit();
 }
 
@@ -125,7 +125,7 @@ if ($multidel != "") {
 		else
 			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$element);
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($dir));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($dir));
 	exit();
 }
 
@@ -144,7 +144,7 @@ if ($down != "") {
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".$down);
 		$current = $down;
-		$down = stripslashes(stripslashes($down));
+
 		if (isValidPath($down)) {
 			$path = $cfg["path"].$down;
 			$p = explode(".", $path);
@@ -158,7 +158,7 @@ if ($down != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($current));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
 	exit();
 }
 
@@ -177,7 +177,7 @@ if ($tar != "") {
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL TAR DOWNLOAD: ".$cfg["user"]." tried to download ".$tar);
 		$current = $tar;
-		$del = stripslashes(stripslashes($tar));
+
 		if (isValidPath($tar)) {
 			$arTemp = explode("/", $tar);
 			if (count($arTemp) > 1) {
@@ -186,7 +186,7 @@ if ($tar != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($current));
+	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
 	exit();
 }
 
@@ -204,13 +204,12 @@ if (isset($dir)) {
 
 // dir-name
 $dirName = $cfg["path"].$dir;
-$dirName = stripslashes($dirName);
 
 // dir-check
 if (!(@is_dir($dirName))) {
 	// our dir is no dir but a file. use parent-directory.
 	if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-		header("Location: index.php?iid=dir&dir=".UrlHTMLEncode($matches[1]));
+		header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($matches[1]));
 	else
 		header("Location: index.php?iid=dir");
 	exit();
@@ -291,15 +290,15 @@ foreach ($entrys as $entry) {
 			'is_dir' => 1,
 			'aclWrite' => $aclWrite,
 			'entry' => $entry,
-			'urlencode1' => UrlHTMLEncode(addslashes($dir.$entry)),
-			'urlencode2' => UrlHTMLEncode($dir),
-			'urlencode3' => UrlHTMLEncode(addslashes($entry)),
+			'urlencode1' => UrlHTMLSlashesEncode($dir.$entry),
+			'urlencode2' => UrlHTMLSlashesEncode($dir),
+			'urlencode3' => UrlHTMLSlashesEncode($entry),
 			'addslashes1' => addslashes($entry),
 			'size' => $size,
 			'date' => $date,
 			'show_sfv' => $show_sfv,
-			'sfvdir' => UrlHTMLEncode($sfvdir),
-			'sfvsfv' => UrlHTMLEncode($sfvsfv)
+			'sfvdir' => UrlHTMLSlashesEncode($sfvdir),
+			'sfvsfv' => UrlHTMLSlashesEncode($sfvsfv)
 			)
 		);
 	} else if (!@is_dir($dirName.$entry)) { // file
@@ -330,10 +329,10 @@ foreach ($entrys as $entry) {
 			'is_dir' => 0,
 			'aclWrite' => $aclWrite,
 			'entry' => $entry,
-			'urlencode1' => UrlHTMLEncode(addslashes($dir.$entry)),
-			'urlencode2' => UrlHTMLEncode($dir),
-			'urlencode3' => UrlHTMLEncode(addslashes($entry)),
-			'urlencode4' => UrlHTMLEncode(addslashes($dir.$entry)),
+			'urlencode1' => UrlHTMLSlashesEncode($dir.$entry),
+			'urlencode2' => UrlHTMLSlashesEncode($dir),
+			'urlencode3' => UrlHTMLSlashesEncode($entry),
+			'urlencode4' => UrlHTMLSlashesEncode($dir.$entry),
 			'addslashes1' => addslashes($entry),
 			'image' => $image,
 			'size' => $size,
@@ -354,7 +353,7 @@ $tmpl->setloop('list', $list);
 $tmpl->setvar('dir', $dir);
 // parent url
 if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . UrlHTMLEncode($matches[1]));
+	$tmpl->setvar('parentURL', "index.php?iid=dir&dir=" . UrlHTMLSlashesEncode($matches[1]));
 else
 	$tmpl->setvar('parentURL', "index.php?iid=dir");
 // chmod, parent-dir cannot be chmodded

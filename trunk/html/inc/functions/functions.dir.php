@@ -402,11 +402,31 @@ function chmodRecursive($path, $mode = 0777) {
 	return ((isValidEntry(basename($path))) && (@chmod($path, $mode)));
 }
 
-function UrlHTMLEncode($input){
-	return(htmlentities(rawurlencode($input), ENT_QUOTES));
+
+/**
+*  Encode a string for safe transport across GET transfers, adding
+*  slashes if magic quoting is off
+*
+* @param	string	$input to apply encoding to
+* @return	string	$return string with encoded string
+*/
+function UrlHTMLSlashesEncode($input){
+	$return=htmlentities(rawurlencode($input), ENT_QUOTES);
+
+	// Add slashes if magic quotes off:
+	if(get_magic_quotes_gpc() === 0){
+		$return=addslashes($return);
+	}
+	return($return);
 }
 
-function UrlHTMLDecode($input){
-	return(html_entity_decode(rawurldecode($input), ENT_QUOTES));
+/**
+*  Decode a string encoded with UrlHTMLSlashesEncode()
+*
+* @param	string	$input string to decode
+* @return	string	$return string with decoded string
+*/
+function UrlHTMLSlashesDecode($input){
+	return(stripslashes(html_entity_decode(rawurldecode($input), ENT_QUOTES)));
 }
 ?>
