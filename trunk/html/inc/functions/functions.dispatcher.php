@@ -47,7 +47,7 @@ function indexStartTransfer($transfer) {
 					showErrorPage("wget is disabled for users.");
 				}
 			}
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+			$clientHandler = ClientHandler::getInstance($cfg, 'wget');
 			$clientHandler->startClient($transfer, 0, false);
 			sleep(3);
 			header("location: index.php?iid=index");
@@ -80,14 +80,14 @@ function indexStartTorrent($torrent, $interactive) {
 	switch ($interactive) {
 		case 0:
 			$btclient = getTransferClient($torrent);
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
 			$clientHandler->startClient($torrent, 0, FluxdQmgr::isRunning());
 			// header + out
 			header("location: index.php?iid=index");
 			exit();
 			break;
 		case 1:
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getRequestVar('btclient'));
+			$clientHandler = ClientHandler::getInstance($cfg, getRequestVar('btclient'));
 			$clientHandler->startClient($torrent, 1, FluxdQmgr::isRunning());
 			if ($clientHandler->state == -1) { // start failed
 				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
@@ -118,12 +118,12 @@ function indexStopTransfer($transfer) {
 		$return = getRequestVar('return');
 		if ((substr(strtolower($transfer), -8) == ".torrent")) {
 			// this is a torrent-client
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, getTransferClient($transfer));
+			$clientHandler = ClientHandler::getInstance($cfg, getTransferClient($transfer));
 		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 			// this is wget.
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+			$clientHandler = ClientHandler::getInstance($cfg, 'wget');
 		} else {
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'tornado');
+			$clientHandler = ClientHandler::getInstance($cfg, 'tornado');
 		}
 		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
 		if (!empty($return))
@@ -270,7 +270,7 @@ function indexProcessDownload($url_upload) {
 					// Process setPriority Request.
 					setPriority(urldecode($file_name));
 				}
-				$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+				$clientHandler = ClientHandler::getInstance($cfg);
 				switch ($actionId) {
 					case 3:
 						$clientHandler->startClient($file_name, 0, true);
@@ -318,7 +318,7 @@ function indexProcessUpload() {
 									// Process setPriority Request.
 									setPriority(urldecode($file_name));
 								}
-								$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+								$clientHandler = ClientHandler::getInstance($cfg);
 								switch ($actionId) {
 									case 3:
 										$clientHandler->startClient($file_name, 0, true);
@@ -412,7 +412,7 @@ function processFileUpload() {
 					// Process setPriority Request.
 					setPriority(urldecode($torrent));
 				}
-				$clientHandler = ClientHandler::getClientHandlerInstance($cfg);
+				$clientHandler = ClientHandler::getInstance($cfg);
 				switch ($actionId) {
 					case 3:
 						$clientHandler->startClient($torrent, 0, true);

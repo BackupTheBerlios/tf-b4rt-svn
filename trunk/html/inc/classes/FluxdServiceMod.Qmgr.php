@@ -234,7 +234,7 @@ class FluxdQmgr extends FluxdServiceMod
         $btclient = getTransferClient($transfer);
         $modded = 0;
         // create AliasFile object
-        $af = AliasFile::getAliasFileInstance($alias, $the_user);
+        $af = new AliasFile($alias, $the_user);
         if ($af->percent_done > 0 && $af->percent_done < 100) {
             // has downloaded something at some point, mark it is incomplete
             $af->running = "0";
@@ -263,7 +263,7 @@ class FluxdQmgr extends FluxdServiceMod
             $af->time_left = "Transfer Stopped";
         }
         // Write out the new Stat File
-        $af->WriteFile();
+        $af->write();
     }
 
 }

@@ -39,9 +39,9 @@ class RunningTransfer
      *
      * @param $psLine ps-line
      * @param $clientType client-type
-     * @return RunningTransfer RunningTransfer-instance
+     * @return RunningTransfer
      */
-    function getRunningTransferInstance($psLine, $clientType = '') {
+    function getInstance($psLine, $clientType = '') {
     	// create and return object-instance
     	if ($clientType == '') {
     		global $cfg;

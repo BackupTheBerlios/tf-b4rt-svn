@@ -41,7 +41,7 @@ if ($cfg['isAdmin']) {
 	// get informations
 	$process_list = array();
 	foreach ($clients as $client) {
-		$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $client);
+		$clientHandler = ClientHandler::getInstance($cfg, $client);
 		array_push($process_list, array(
 			'client' => $client,
 			'RunningProcessInfo' => $clientHandler->getRunningClientsInfo(),

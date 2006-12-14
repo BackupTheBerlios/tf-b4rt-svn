@@ -84,7 +84,7 @@ switch ($action) {
 		}
 		$url = getRequestVar('url');
 		if (!empty($url)) {
-			$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'wget');
+			$clientHandler = ClientHandler::getInstance($cfg, 'wget');
 			$clientHandler->inject($url);
 			$wget_start = getRequestVar('wget_start');
 			if ($wget_start == 1) {
@@ -145,7 +145,7 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $alias = getAliasName($transfer).".stat";
                     $btclient = getTransferClient($transfer);
-                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+                    $clientHandler = ClientHandler::getInstance($cfg,$btclient);
                     $clientHandler->stopClient($transfer, $alias);
                 }
             }
@@ -170,7 +170,7 @@ switch ($action) {
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+                    $clientHandler = ClientHandler::getInstance($cfg,$btclient);
                     $clientHandler->startClient($transfer, 0, false);
                 }
             }
@@ -195,7 +195,7 @@ switch ($action) {
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getClientHandlerInstance($cfg,$btclient);
+                    $clientHandler = ClientHandler::getInstance($cfg,$btclient);
                     $clientHandler->startClient($transfer, 0, false);
                 }
             }
@@ -251,10 +251,10 @@ switch ($action) {
 								// Process setPriority Request.
 								setPriority(urldecode($element));
 							}
-							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+							$clientHandler = ClientHandler::getInstance($cfg, $tclient);
 							$clientHandler->startClient(urldecode($element), 0, FluxdQmgr::isRunning());
 						} else {
-							$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+							$clientHandler = ClientHandler::getInstance($cfg, $tclient);
 							$clientHandler->startClient(urldecode($element), 0, false);
 						}
 					}
@@ -262,7 +262,7 @@ switch ($action) {
 
 				case "transferStop": /* transferStop */
 					if (($isTorrent) && ($tRunningFlag != 0)) {
-						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler = ClientHandler::getInstance($cfg, $tclient);
 						$clientHandler->stopClient(urldecode($element), $alias);
 					}
 					break;
@@ -275,7 +275,7 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority(urldecode($element));
 						}
-						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler = ClientHandler::getInstance($cfg, $tclient);
 						$clientHandler->startClient(urldecode($element), 0, true);
 					}
 					break;
@@ -294,7 +294,7 @@ switch ($action) {
 				default:
 					if (($isTorrent) && ($tRunningFlag != 0)) {
 						// stop torrent first
-						$clientHandler = ClientHandler::getClientHandlerInstance($cfg, $tclient);
+						$clientHandler = ClientHandler::getInstance($cfg, $tclient);
 						$clientHandler->stopClient(urldecode($element), $alias);
 						// is transfer running ?
 						$tRunningFlag = isTransferRunning(urldecode($element));

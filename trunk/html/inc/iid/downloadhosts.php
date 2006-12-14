@@ -36,7 +36,7 @@ $alias = getRequestVar('alias');
 // alias
 $transferowner = getOwner($torrent);
 if ((!empty($torrent)) && (!empty($alias)))
-	$af = AliasFile::getAliasFileInstance($alias, $transferowner);
+	$af = new AliasFile($alias, $transferowner);
 else
 	showErrorPage("missing params");
 

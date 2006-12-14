@@ -348,7 +348,7 @@ class MaintenanceAndRepair
 			// get owner
 			$transferowner = getOwner($transfer);
 			// rewrite stat-file
-			$af = AliasFile::getAliasFileInstance($alias, $transferowner);
+			$af = new AliasFile($alias, $transferowner);
 			if (isset($af)) {
 				$af->running = 0;
 				$af->percent_done = -100.0;
@@ -357,7 +357,7 @@ class MaintenanceAndRepair
 				$af->up_speed = 0;
 				$af->seeds = 0;
 				$af->peers = 0;
-				$af->WriteFile();
+				$af->write();
 				unset($af);
 			}
 			// delete pid-file
@@ -402,7 +402,7 @@ class MaintenanceAndRepair
 	                setPriority($transfer);
 	            }
 				// clientHandler + start
-				$clientHandler = ClientHandler::getClientHandlerInstance($this->_cfg, $settingsAry['btclient']);
+				$clientHandler = ClientHandler::getInstance($this->_cfg, $settingsAry['btclient']);
 				$clientHandler->startClient($transfer, 0, FluxdQmgr::isRunning());
 				// DEBUG : log the restart of the died transfer
 				if ($this->_cfg['debuglevel'] > 0) {
@@ -641,7 +641,7 @@ class MaintenanceAndRepair
 			$alias = getAliasName($torrent);
 			$owner = getOwner($torrent);
 			$btclient = getTransferClient($torrent);
-			$af = AliasFile::getAliasFileInstance($alias.".stat", $owner);
+			$af = new AliasFile($alias.".stat", $owner);
 			if (isset($af)) {
 				// output
 				$this->_outputMessage("rewrite stat-file for ".$torrent." ...\n");
@@ -653,7 +653,7 @@ class MaintenanceAndRepair
 				$af->seeds = 0;
 				$af->peers = 0;
 				$af->errors = array();
-				$af->WriteFile();
+				$af->write();
 				unset($af);
 				// output
 				$this->_outputMessage("done.\n");

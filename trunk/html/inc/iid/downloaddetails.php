@@ -54,19 +54,19 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		// new torrent
 		$cfg['hash'] = $transfer;
 	}
-	$af = AliasFile::getAliasFileInstance($alias, $transferowner);
+	$af = new AliasFile($alias, $transferowner);
 } else if ((substr(strtolower($transfer), -5) == ".wget")) {
 	// this is wget.
 	$transferowner = getOwner($transfer);
 	$cfg['btclient'] = "wget";
 	$cfg['hash'] = $transfer;
-	$af = AliasFile::getAliasFileInstance($alias, $transferowner);
+	$af = new AliasFile($alias, $transferowner);
 } else {
 	// this is "something else". use tornado statfile as default
 	$transferowner = $cfg["user"];
 	$cfg['btclient'] = "tornado";
 	$cfg['hash'] = $transfer;
-	$af = AliasFile::getAliasFileInstance($alias, $cfg["user"]);
+	$af = new AliasFile($alias, $cfg["user"]);
 }
 
 // totals

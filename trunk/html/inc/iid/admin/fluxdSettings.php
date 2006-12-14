@@ -130,7 +130,7 @@ $output = "";
 foreach ($clients as $client) {
 	$running = getRunningTransfers($client);
 	foreach ($running as $key => $value) {
-		$rt = RunningTransfer::getRunningTransferInstance($value, $client);
+		$rt = RunningTransfer::getInstance($value, $client);
         $output .= "<tr>";
         $output .= "<td><div class=\"tiny\">";
         $output .= $rt->transferowner;

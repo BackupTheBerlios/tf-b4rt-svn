@@ -20,10 +20,17 @@
 
 *******************************************************************************/
 
-// base class AliasFile
+/**
+ * AliasFile
+ */
 class AliasFile
 {
     // public fields
+
+    // file
+    var $theFile;
+
+    // af-props
     var $running = "1";
     var $percent_done = "0.0";
     var $time_left = "";
@@ -46,23 +53,12 @@ class AliasFile
     /**
      * factory
      *
-     * @param $aliasname name of the stat-file
-     * @param $user the user
-     * @return $aliasFileInstance AliasFile-instance
+     * @param $aliasname
+     * @param $user
+     * @return AliasFile
      */
-    function getAliasFileInstance($aliasname, $user = '') {
-    	global $cfg;
-    	// check if aliasname is valid
-    	if (!preg_match('/^[a-zA-Z0-9._-]+(stat)$/', $aliasname)) {
-    		AuditAction($cfg["constants"]["error"], "Invalid AliasFile : ".$cfg["user"]." tried to access ".$aliasname);
-    		global $argv;
-    		if (isset($argv))
-    			die("Invalid AliasFile : ".$aliasname);
-    		else
-    			showErrorPage("Invalid AliasFile : <br>".htmlentities($aliasname, ENT_QUOTES));
-    	}
-    	// create and return new aliasfile-instance
-        return new AliasFile($cfg["transfer_file_path"].$aliasname, $user);
+    function getInstance($aliasname, $user = '') {
+        return new AliasFile($aliasname, $user);
     }
 
 	// =========================================================================
@@ -70,43 +66,58 @@ class AliasFile
 	// =========================================================================
 
     /**
-     * do not use direct, use the factory-method or you bypass security !
+     * ctor
      *
-     * @param $inFile
+     * @param $aliasname
      * @param $user
      * @return AliasFile
      */
-    function AliasFile($inFile, $user = '') {
+    function AliasFile($aliasname, $user = '') {
+    	global $cfg;
+    	// check if aliasname is valid
+    	if (!preg_match('/^[a-zA-Z0-9._-]+(stat)$/', $aliasname)) {
+    		AuditAction($cfg["constants"]["error"], "Invalid AliasFile : ".$cfg["user"]." tried to access ".$aliasname);
+    		if (empty($_REQUEST))
+    			die("Invalid AliasFile : ".$aliasname);
+    		else
+    			showErrorPage("Invalid AliasFile : <br>".htmlentities($aliasname, ENT_QUOTES));
+    	}
+    	// file
+    	$this->theFile = $cfg["transfer_file_path"].$aliasname;
         // set user
         if ($user != '')
             $this->transferowner = $user;
         // load file
-        if (file_exists($inFile)) {
+        if (@file_exists($this->theFile)) {
             // read the alias file
-            $this->errors = file($inFile);
-            $this->errors = array_map('rtrim', $this->errors);
-            $this->running = array_shift($this->errors);
-            $this->percent_done = array_shift($this->errors);
-            $this->time_left = array_shift($this->errors);
-            $this->down_speed = array_shift($this->errors);
-            $this->up_speed = array_shift($this->errors);
-            $this->transferowner = array_shift($this->errors);
-            $this->seeds = array_shift($this->errors);
-            $this->peers = array_shift($this->errors);
-            $this->sharing = array_shift($this->errors);
-            $this->seedlimit = array_shift($this->errors);
-            $this->uptotal = array_shift($this->errors);
-            $this->downtotal = array_shift($this->errors);
-            $this->size = array_shift($this->errors);
+            $this->errors = @file($this->theFile);
+            $this->errors = @array_map('rtrim', $this->errors);
+            $this->running = @array_shift($this->errors);
+            $this->percent_done = @array_shift($this->errors);
+            $this->time_left = @array_shift($this->errors);
+            $this->down_speed = @array_shift($this->errors);
+            $this->up_speed = @array_shift($this->errors);
+            $this->transferowner = @array_shift($this->errors);
+            $this->seeds = @array_shift($this->errors);
+            $this->peers = @array_shift($this->errors);
+            $this->sharing = @array_shift($this->errors);
+            $this->seedlimit = @array_shift($this->errors);
+            $this->uptotal = @array_shift($this->errors);
+            $this->downtotal = @array_shift($this->errors);
+            $this->size = @array_shift($this->errors);
         }
     }
 
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
     /**
-     * Call this when wanting to create a new alias and/or starting it
+     * call this on start
      *
      * @return boolean
      */
-    function StartTransferFile() {
+    function start() {
         // Reset all the var to new state (all but transferowner)
         $this->running = "1";
         $this->percent_done = "0.0";
@@ -121,15 +132,15 @@ class AliasFile
         $this->downtotal = "";
         $this->errors = array();
         // Write to file
-        $this->WriteFile();
+        return $this->write();
     }
 
     /**
-     * Call this when wanting to create a new alias and/or starting it
+     * call this on enqueue
      *
      * @return boolean
      */
-    function QueueTransferFile() {
+    function queue() {
         // Reset all the var to new state (all but transferowner)
         $this->running = "3";
         $this->time_left = "Waiting...";
@@ -141,55 +152,40 @@ class AliasFile
         $this->downtotal = "";
         $this->errors = array();
         // Write to file
-        $this->WriteFile();
+        return $this->write();
     }
 
     /**
-     * Common WriteFile Method
+     * Common write Method
      *
      * @return boolean
      */
-    function WriteFile() {
-        $fw = fopen($this->theFile,"w");
-        fwrite($fw, $this->BuildOutput());
-        fclose($fw);
+    function write() {
+		// content
+        $content  = $this->running."\n";
+        $content .= $this->percent_done."\n";
+        $content .= $this->time_left."\n";
+        $content .= $this->down_speed."\n";
+        $content .= $this->up_speed."\n";
+        $content .= $this->transferowner."\n";
+        $content .= $this->seeds."\n";
+        $content .= $this->peers."\n";
+        $content .= $this->sharing."\n";
+        $content .= $this->seedlimit."\n";
+        $content .= $this->uptotal."\n";
+        $content .= $this->downtotal."\n";
+        $content .= $this->size;
+        if (count($this->errors) > 0)
+        	$output .= "\n".implode("\n", $this->errors);
+		// write file
+		if ($handle = @fopen($this->theFile, "w")) {
+	        $resultSuccess = (@fwrite($handle, $content) !== false);
+			@fclose($handle);
+			return $resultSuccess;
+		}
+		return false;
     }
 
-    /**
-     * Private Function to put the variables into a string for writing to file
-     *
-     * @return string
-     */
-    function BuildOutput() {
-        $output  = $this->running."\n";
-        $output .= $this->percent_done."\n";
-        $output .= $this->time_left."\n";
-        $output .= $this->down_speed."\n";
-        $output .= $this->up_speed."\n";
-        $output .= $this->transferowner."\n";
-        $output .= $this->seeds."\n";
-        $output .= $this->peers."\n";
-        $output .= $this->sharing."\n";
-        $output .= $this->seedlimit."\n";
-        $output .= $this->uptotal."\n";
-        $output .= $this->downtotal."\n";
-        $output .= $this->size;
-        for ($inx = 0; $inx < sizeof($this->errors); $inx++) {
-            if ($this->errors[$inx] != "") {
-                $output .= "\n".$this->errors[$inx];
-            }
-        }
-        return $output;
-    }
-
-    /**
-     * Public Function to display real total download in MB
-     *
-     * @return int
-     */
-    function GetRealDownloadTotal() {
-        return (($this->percent_done * $this->size) / 100) / (1048576);
-    }
 }
 
 ?>

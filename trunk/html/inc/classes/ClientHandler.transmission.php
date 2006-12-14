@@ -185,7 +185,7 @@ class ClientHandlerTransmission extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner);
+        $af = new AliasFile($aliasName.".stat", $owner);
         $retVal["uptotal"] = $af->uptotal;
         $retVal["downtotal"] = $af->downtotal;
         // transfer from db
@@ -239,7 +239,7 @@ class ClientHandlerTransmission extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner);
+        $af = new AliasFile($aliasName.".stat", $owner);
         $retVal["uptotal"] = $af->uptotal;
         $retVal["downtotal"] = $af->downtotal;
         return $retVal;

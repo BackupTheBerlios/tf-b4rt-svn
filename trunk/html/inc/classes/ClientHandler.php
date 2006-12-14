@@ -90,9 +90,9 @@ class ClientHandler
      * get ClientHandler-instance
      *
      * @param $fluxCfg torrent-flux config-array
-     * @return $clientHandler ClientHandler-instance
+     * @return ClientHandler
      */
-    function getClientHandlerInstance($fluxCfg, $clientType = '') {
+    function getInstance($fluxCfg, $clientType = '') {
     	// create and return object-instance
         if ($clientType != '') {
             $clientClass = $clientType;
@@ -292,7 +292,7 @@ class ClientHandler
             }
 		}
         // create AliasFile object and write out the stat file
-        $this->af = AliasFile::getAliasFileInstance($this->alias.".stat", $this->owner);
+        $this->af = new AliasFile($this->alias.".stat", $this->owner);
         $transferTotals = getTransferTotalsCurrent($this->transfer);
         //XFER: before a transfer start/restart save upload/download xfer to SQL
         if ($this->cfg['enable_xfer'] == 1)
@@ -340,11 +340,11 @@ class ClientHandler
         }
         // write stat-file
         if ($this->queue == 1) {
-            $this->af->QueueTransferFile();  // this only writes out the stat file (does not start transfer)
+            $this->af->queue();
         } else {
             if ($this->setClientPort() === false)
                 return;
-            $this->af->StartTransferFile();  // this only writes out the stat file (does not start transfer)
+            $this->af->start();
         }
         // set state
         $this->state = 2;
@@ -412,8 +412,8 @@ class ClientHandler
         // the client will no to stop -- this will report stats when it dies
         $this->owner = getOwner($this->transfer);
         // read the alias file + create AliasFile object
-        $this->af = AliasFile::getAliasFileInstance($this->alias, $this->owner);
-        if($this->af->percent_done < 100) {
+        $this->af = new AliasFile($this->alias, $this->owner);
+        if ($this->af->percent_done < 100) {
             // The transfer is being stopped but is not completed dowloading
             $this->af->percent_done = ($this->af->percent_done + 100)*-1;
             $this->af->running = "0";
@@ -425,7 +425,7 @@ class ClientHandler
             $this->af->time_left = "Download Succeeded!";
         }
         // Write out the new Stat File
-        $this->af->WriteFile();
+        $this->af->write();
         // wait until transfer is down
         waitForTransfer($this->transfer, 0, 15);
         // see if the transfer process is hung.
@@ -433,7 +433,7 @@ class ClientHandler
         $running = getRunningTransfers();
         $isHung = 0;
         foreach ($running as $key => $value) {
-            $rt = RunningTransfer::getRunningTransferInstance($value, $this->handlerName);
+            $rt = RunningTransfer::getInstance($value, $this->handlerName);
             if ($rt->statFile == $this->alias) {
             	$isHung = 1;
                 AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
@@ -501,7 +501,7 @@ class ClientHandler
                     if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
                         if(!strpos($pinfo->cmdline, "ps x") > 0) {
                             array_push($pProcess,$pinfo->pid);
-                            $rt = RunningTransfer::getRunningTransferInstance($pinfo->pid." ".$pinfo->cmdline, $this->handlerName);
+                            $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $this->handlerName);
                             array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
                         }
                     }

@@ -166,7 +166,7 @@ exit();
  */
 function writeStatFile() {
 	global $cfg, $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_REAL_NAME, $_INT_SPEED, $_OWNER, $_ALIAS, $_ETA;
-    $af = AliasFile::getAliasFileInstance($_ALIAS, $_OWNER);
+    $af = new AliasFile($_ALIAS, $_OWNER);
 	$af->running = $_STATUS;
 	$af->percent_done = $_PERCENTAGE;
 	$af->down_speed = $_SPEED;
@@ -180,7 +180,7 @@ function writeStatFile() {
 	$af->uptotal = "0";
 	$af->downtotal = $_COMPLETED;
 	$af->size = ($_SIZE > 0) ? $_SIZE : $_COMPLETED;
-	$af->WriteFile();
+	$af->write();
 	unset($af);
 }
 
