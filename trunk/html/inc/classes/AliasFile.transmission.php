@@ -92,7 +92,6 @@ class AliasFileTransmission extends AliasFile
         $this->WriteFile();
     }
 
-
     //----------------------------------------------------------------
     // Common WriteFile Method
     function WriteFile() {

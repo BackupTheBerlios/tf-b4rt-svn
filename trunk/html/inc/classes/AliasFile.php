@@ -24,8 +24,10 @@
 class AliasFile
 {
     // common fields
+
     // the file
     var $theFile;
+
     // File Properties
     var $running = "";
     var $percent_done = "";
@@ -41,17 +43,7 @@ class AliasFile
     var $downtotal = "";
     var $size = "";
     var $errors = array();
-    // config-array
-    var $cfg = array();
 
-    //--------------------------------------------------------------------------
-    // ctor
-    function AliasFile() {
-        die('base class -- dont do this');
-    }
-
-    //--------------------------------------------------------------------------
-    // factory
     /**
      * get AliasFile-instance
      *
@@ -99,6 +91,15 @@ class AliasFile
     			else
     				showErrorPage("Invalid AliasFile-Class : <br>".htmlentities($clientClass, ENT_QUOTES));
         }
+    }
+
+	/**
+	 * ctor
+	 *
+	 * @return AliasFile
+	 */
+    function AliasFile() {
+        die('base class -- dont do this');
     }
 
     //--------------------------------------------------------------------------
