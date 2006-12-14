@@ -20,16 +20,23 @@
 
 *******************************************************************************/
 
+// states
+define('CLIENTHANDLER_STATE_NULL', 0);                                   // null
+define('CLIENTHANDLER_STATE_READY', 1);                                 // ready
+define('CLIENTHANDLER_STATE_OK', 2);                                  // started
+define('CLIENTHANDLER_STATE_ERROR', -1);                                // error
 
 // base class ClientHandler
 class ClientHandler
 {
+	// public fields
+
+	// client-specific fields
     var $handlerName = "";
     var $binSystem = ""; // the sys-binary of this client
-    var $binClient = ""; // the binary of this client.. stay a bit flux-comp.
-                         // its not using the sys-bin for some ops
+    var $binClient = ""; // the binary of this client.
     var $binSocket = ""; // the binary this client uses for socket-connections
-                         // used in netstat hack to identify connections
+
     // generic vars for a transfer-start
     var $rate = "";
     var $drate = "";
@@ -45,44 +52,54 @@ class ClientHandler
     var $sharekill_param = "";
     var $savepath = "";
     var $skip_hash_check = "";
-    //
+
+    // queue
     var $queue = "";
-    //
+
+    // transfer
     var $transfer = "";
+
+    // alis
     var $alias = "";
+
+    // owner
     var $owner = "";
+
     // alias-file (object)
     var $af;
+
     // pid
     var $pid = "";
     var $pidFile = "";
+
     // logfile
     var $logFile = "";
+
     // command
     var $command = "";
+
     // umask
     var $umask = "";
+
     // nice
     var $nice = "";
+
     // call-result
     var $callResult;
+
     // config-array
     var $cfg = array();
+
     // messages-string
     var $messages = "";
+
     // handler-state
-    var $state = 0;    // state of the handler
-                       //  0 : not initialized
-                       //  1 : initialized
-                       //  2 : ready to start
-                       //  3 : transfer-client started successfull
-                       // -1 : error
+    var $state = CLIENTHANDLER_STATE_NULL;
 
     /**
      * ctor
      */
     function ClientHandler() {
-        $this->state = -1;
         die('base class -- dont do this');
     }
 
@@ -143,8 +160,6 @@ class ClientHandler
         $this->nice = "";
         if ($this->cfg["nice_adjust"] != 0)
             $this->nice = "nice -n ".$this->cfg["nice_adjust"]." ";
-        // state ok
-        $this->state = 1;
     }
 
     /**
@@ -429,18 +444,14 @@ class ClientHandler
         // wait until transfer is down
         waitForTransfer($this->transfer, 0, 15);
         // see if the transfer process is hung.
-        /*
-        $running = getRunningTransfers();
-        $isHung = 0;
-        foreach ($running as $key => $value) {
-            $rt = RunningTransfer::getInstance($value, $this->handlerName);
+        $running = getRunningClientProcesses($this->handlerName);
+        foreach ($running as $rng) {
+            $rt = RunningTransfer::getInstance($rng[0], $this->handlerName);
             if ($rt->statFile == $this->alias) {
-            	$isHung = 1;
-                AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
-            	// $callResult = exec("kill ".$rt->processId);
+                AuditAction($this->cfg["constants"]["error"], "Posible Hung Process for ".$rt->statFile." (".$rt->processId.")");
+            	//$this->callResult = exec("kill ".escapeshellarg($rt->processId));
             }
         }
-		*/
         // flag the transfer as stopped (in db)
         // blame me for this dirty shit, i am lazy. of course this should be
         // hooked into the place where client really dies.
@@ -475,98 +486,6 @@ class ClientHandler
             // try to remove the pid file
             @unlink($this->pidFile);
         }
-    }
-
-    /**
-     * get info of running clients
-     *
-     */
-    function getRunningClientsInfo() {
-        // ps-string
-        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["transfer_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
-        $arScreen = array();
-        $tok = strtok($screenStatus, "\n");
-        while ($tok) {
-            array_push($arScreen, $tok);
-            $tok = strtok("\n");
-        }
-        $cProcess = array();
-        $cpProcess = array();
-        $pProcess = array();
-        $ProcessCmd = array();
-        for($i = 0; $i < sizeof($arScreen); $i++) {
-            if(strpos($arScreen[$i], $this->binClient) !== false) {
-                $pinfo = new ProcessInfo($arScreen[$i]);
-                if (intval($pinfo->ppid) == 1) {
-                    if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
-                        if(!strpos($pinfo->cmdline, "ps x") > 0) {
-                            array_push($pProcess,$pinfo->pid);
-                            $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $this->handlerName);
-                            array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
-                        }
-                    }
-                } else {
-                    if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
-                        if(!strpos($pinfo->cmdline, "ps x") > 0) {
-                            array_push($cProcess,$pinfo->pid);
-                            array_push($cpProcess,$pinfo->ppid);
-                        }
-                    }
-                }
-            }
-        }
-        $runningClientsInfo = " --- Running Processes ---\n";
-        $runningClientsInfo .= " Parents  : " . count($pProcess) . "\n";
-        $runningClientsInfo .= " Children : " . count($cProcess) . "\n";
-        $runningClientsInfo .= "\n";
-        $runningClientsInfo .= " PID \tOwner\tTransfer File\n";
-        foreach($pProcess as $key => $value) {
-            $runningClientsInfo .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
-            foreach($cpProcess as $cKey => $cValue)
-                if (intval($value) == intval($cValue))
-                    $runningClientsInfo .= "\t" . $cProcess[$cKey] . "\n";
-        }
-        $runningClientsInfo .= "\n";
-        return $runningClientsInfo;
-    }
-
-    /**
-     * gets count of running clients
-     *
-     * @return client-count
-     */
-    function getRunningClientCount() {
-        return count($this->getRunningClients());
-    }
-
-    /**
-     * gets ary of running clients
-     *
-     * @return client-ary
-     */
-    function getRunningClients() {
-        // ps-string
-        $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$this->cfg['bin_grep']." ". $this->binClient ." | ".$this->cfg['bin_grep']." ".$this->cfg["transfer_file_path"]." | ".$this->cfg['bin_grep']." -v grep");
-        $arScreen = array();
-        $tok = strtok($screenStatus, "\n");
-        while ($tok) {
-            array_push($arScreen, $tok);
-            $tok = strtok("\n");
-        }
-        $artransfer = array();
-        for($i = 0; $i < sizeof($arScreen); $i++) {
-            if(strpos($arScreen[$i], $this->binClient) !== false) {
-                $pinfo = new ProcessInfo($arScreen[$i]);
-                if (intval($pinfo->ppid) == 1) {
-                     if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
-                         if(!strpos($pinfo->cmdline, "ps x") > 0) {
-                             array_push($artransfer,$pinfo->pid . " " . $pinfo->cmdline);
-                         }
-                     }
-                }
-            }
-        }
-        return $artransfer;
     }
 
     /**

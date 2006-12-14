@@ -1251,13 +1251,13 @@ function getRunningTransferCount() {
 	global $cfg;
 	// use pid-files-direct-access for now because all clients of currently
 	// available handlers write one. then its faster and correct meanwhile.
-	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
+	if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
 		$tCount = 0;
-		while (false !== ($file = readdir($dirHandle))) {
+		while (false !== ($file = @readdir($dirHandle))) {
 			if ((substr($file, -4, 4)) == ".pid")
 				$tCount++;
 		}
-		closedir($dirHandle);
+		@closedir($dirHandle);
 		return $tCount;
 	} else {
 		return 0;
@@ -1265,47 +1265,112 @@ function getRunningTransferCount() {
 }
 
 /**
- * getRunningTransfers
+ *
+ *
+ * @param $clientType
+ * @return string
+ */
+/**
+ * get info of running clients (via call to ps)
+ *
+ * @param $handlerName
+ * @param $binSystem
+ * @param $binClient
+ * @return string
+ */
+function getRunningClientProcessInfo($handlerName, $binSystem, $binClient) {
+	global $cfg;
+    // ps-string
+    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ". $binClient ." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
+    $arScreen = array();
+    $tok = strtok($screenStatus, "\n");
+    while ($tok) {
+        array_push($arScreen, $tok);
+        $tok = strtok("\n");
+    }
+    $cProcess = array();
+    $cpProcess = array();
+    $pProcess = array();
+    $ProcessCmd = array();
+    for($i = 0; $i < sizeof($arScreen); $i++) {
+        if(strpos($arScreen[$i], $binClient) !== false) {
+            $pinfo = new ProcessInfo($arScreen[$i]);
+            if (intval($pinfo->ppid) == 1) {
+                if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
+                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
+                        array_push($pProcess,$pinfo->pid);
+                        $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $handlerName);
+                        array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
+                    }
+                }
+            } else {
+                if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
+                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
+                        array_push($cProcess,$pinfo->pid);
+                        array_push($cpProcess,$pinfo->ppid);
+                    }
+                }
+            }
+        }
+    }
+    $retVal  = " --- Running Processes ---\n";
+    $retVal .= " Parents  : " . count($pProcess) . "\n";
+    $retVal .= " Children : " . count($cProcess) . "\n";
+    $retVal .= "\n";
+    $retVal .= " PID \tOwner\tTransfer File\n";
+    foreach($pProcess as $key => $value) {
+        $retVal .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
+        foreach($cpProcess as $cKey => $cValue)
+            if (intval($value) == intval($cValue))
+                $retVal .= "\t" . $cProcess[$cKey] . "\n";
+    }
+    $retVal .= "\n";
+    return $retVal;
+}
+
+/**
+ * gets ary of running clients (via call to ps)
  *
  * @param $clientType
  * @return array
  */
-function getRunningTransfers($clientType = '') {
+function getRunningClientProcesses($clientType = '') {
 	global $cfg;
-	// get only torrents of a particular client
-	if ((isset($clientType)) && ($clientType != '')) {
-		$clientHandler = ClientHandler::getInstance($cfg,$clientType);
-		return $clientHandler->getRunningClients();
-	}
-	// get torrents of all clients
-	// messy...
+	// client-array
+	$clients = ($clientType == '')
+		? array('tornado', 'transmission', 'mainline', 'wget')
+		: array($clientType);
+	// get clients
 	$retAry = array();
-	// tornado
-	$clientHandler = ClientHandler::getInstance($cfg,"tornado");
-	$tempAry = $clientHandler->getRunningClients();
-	foreach ($tempAry as $val)
-		array_push($retAry,$val);
-	unset($clientHandler);
-	unset($tempAry);
-	// mainline
-	$clientHandler = ClientHandler::getInstance($cfg,"mainline");
-	$tempAry = $clientHandler->getRunningClients();
-	foreach ($tempAry as $val)
-		array_push($retAry,$val);
-	unset($clientHandler);
-	unset($tempAry);
-	// transmission
-	$clientHandler = ClientHandler::getInstance($cfg,"transmission");
-	$tempAry = $clientHandler->getRunningClients();
-	foreach ($tempAry as $val)
-		array_push($retAry,$val);
-	unset($clientHandler);
-	unset($tempAry);
-	// wget
-	$clientHandler = ClientHandler::getInstance($cfg,"wget");
-	$tempAry = $clientHandler->getRunningClients();
-	foreach ($tempAry as $val)
-		array_push($retAry,$val);
+	foreach ($clients as $client) {
+		// client-handler
+		$clientHandler = ClientHandler::getInstance($cfg, $client);
+		$binClient = $clientHandler->binClient;
+		$binSystem = $clientHandler->binSystem;
+	    // ps-string
+	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ".$binClient." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
+	    $arScreen = array();
+	    $tok = strtok($screenStatus, "\n");
+	    while ($tok) {
+	        array_push($arScreen, $tok);
+	        $tok = strtok("\n");
+	    }
+	    $arySize = sizeof($arScreen);
+		for ($i = 0; $i < $arySize; $i++) {
+			if(strpos($arScreen[$i], $binClient) !== false) {
+				$pinfo = new ProcessInfo($arScreen[$i]);
+				if (intval($pinfo->ppid) == 1) {
+					if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
+						if (!strpos($pinfo->cmdline, "ps x") > 0) {
+							// array_push($retAry, $pinfo->pid." ".$pinfo->cmdline);
+							array_push($retAry, array($pinfo->pid." ".$pinfo->cmdline, $client));
+						}
+					}
+				}
+	        }
+	    }
+	}
+	// return
 	return $retAry;
 }
 

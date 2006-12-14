@@ -123,35 +123,33 @@ $tmpl->setvar('fluxd_Trigger_enabled', $cfg["fluxd_Trigger_enabled"]);
 $tmpl->setvar('fluxd_Trigger_state', FluxdTrigger::getModState());
 $tmpl->setvar('fluxd_Trigger_interval', $cfg["fluxd_Trigger_interval"]);
 
-// array with all clients
-$clients = array('tornado', 'transmission', 'mainline', 'wget');
 // get informations
 $output = "";
-foreach ($clients as $client) {
-	$running = getRunningTransfers($client);
-	foreach ($running as $key => $value) {
-		$rt = RunningTransfer::getInstance($value, $client);
-        $output .= "<tr>";
-        $output .= "<td><div class=\"tiny\">";
-        $output .= $rt->transferowner;
-        $output .= "</div></td>";
-        $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
-        $output .= str_replace(array(".stat"),"",$rt->statFile);
-        $output .= "</div></td>";
-        $output .= "<td>";
-        $output .= "<a href=\"dispatcher.php?action=indexStop";
-        $output .= "&transfer=".urlencode($rt->transferFile);
-        $output .= "&alias_file=".$rt->statFile;
-        $output .= "&kill=".$rt->processId;
-        $output .= "&return=admin\">";
-        $output .= "<img src=\"themes/".$cfg["theme"]."/images/kill.gif\" width=16 height=16 title=\"".$cfg['_FORCESTOP']."\" border=0></a></td>";
-        $output .= "</tr>";
-        $output .= "\n";
+if (($cfg["fluxd_Qmgr_enabled"] == 1) && (Fluxd::isRunning())) {
+	$running = getRunningClientProcesses();
+	foreach ($running as $rng) {
+		$rt = RunningTransfer::getInstance($rng[0], $rng[1]);
+	    $output .= "<tr>";
+	    $output .= "<td><div class=\"tiny\">";
+	    $output .= $rt->transferowner;
+	    $output .= "</div></td>";
+	    $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
+	    $output .= str_replace(array(".stat"),"",$rt->statFile);
+	    $output .= "</div></td>";
+	    $output .= "<td>";
+	    $output .= "<a href=\"dispatcher.php?action=indexStop";
+	    $output .= "&transfer=".urlencode($rt->transferFile);
+	    $output .= "&alias_file=".$rt->statFile;
+	    $output .= "&kill=".$rt->processId;
+	    $output .= "&return=admin\">";
+	    $output .= "<img src=\"themes/".$cfg["theme"]."/images/kill.gif\" width=16 height=16 title=\"".$cfg['_FORCESTOP']."\" border=0></a></td>";
+	    $output .= "</tr>";
+	    $output .= "\n";
 		unset($rt);
 	}
+	if(strlen($output) == 0)
+		$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Transfers</div></td></tr>";
 }
-if(strlen($output) == 0)
-	$output = "<tr><td colspan=3><div class=\"tiny\" align=center>No Running Transfers</div></td></tr>";
 $tmpl->setvar('output', $output);
 $tmpl->setvar('fluxdRunning', (Fluxd::isRunning()) ? 1 : 0);
 $tmpl->setvar('showTransfers', (($cfg["fluxd_Qmgr_enabled"] == 1) && (Fluxd::isRunning())) ? 1 : 0);

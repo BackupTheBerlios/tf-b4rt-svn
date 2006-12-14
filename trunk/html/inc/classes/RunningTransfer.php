@@ -42,11 +42,10 @@ class RunningTransfer
      * @return RunningTransfer
      */
     function getInstance($psLine, $clientType = '') {
+    	global $cfg;
     	// create and return object-instance
-    	if ($clientType == '') {
-    		global $cfg;
+    	if ($clientType == '')
     		$clientType = $cfg["btclient"];
-    	}
         switch ($clientType) {
             case "tornado":
             	require_once('inc/classes/RunningTransfer.tornado.php');

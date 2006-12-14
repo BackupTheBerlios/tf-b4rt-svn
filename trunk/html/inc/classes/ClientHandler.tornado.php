@@ -140,32 +140,6 @@ class ClientHandlerTornado extends ClientHandler
     }
 
     /**
-     * get info of running clients
-     *
-     */
-    function getRunningClientsInfo()  {
-        return parent::getRunningClientsInfo();
-    }
-
-    /**
-     * gets count of running clients
-     *
-     * @return client-count
-     */
-    function getRunningClientCount()  {
-        return parent::getRunningClientCount();
-    }
-
-    /**
-     * gets ary of running clients
-     *
-     * @return client-ary
-     */
-    function getRunningClients() {
-        return parent::getRunningClients();
-    }
-
-    /**
      * deletes cache of a transfer
      *
      * @param $transfer
