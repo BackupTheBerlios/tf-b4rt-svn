@@ -20,18 +20,20 @@
 
 *******************************************************************************/
 
-
-// class RunningTransferTransmission for transmission-client
+/**
+ * class RunningTransferTransmission for transmission-client
+ */
 class RunningTransferTransmission extends RunningTransfer
 {
-    //--------------------------------------------------------------------------
-    // ctor
-    function RunningTransferTransmission($psLine,$cfg) {
-        // version
-		$this->version = "0.4";
-        // init conf
-        $this->Initialize($cfg);
-        //
+
+	/**
+	 * ctor
+	 *
+	 * @param $psLine
+	 * @return RunningTransferTransmission
+	 */
+    function RunningTransferTransmission($psLine) {
+        // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
@@ -53,10 +55,9 @@ class RunningTransferTransmission extends RunningTransfer
                     if (!empty($value)) {
                         if (strpos($value,"-",1) > 0) {
                             if(array_key_exists($key+1,$arr)) {
-                                if (strpos($value,"priority") > 0)
-                                    $this->args .= "\n file ".$value." set";
-                                else
-                                    $this->args .= $value.":".$arr[$key+1].",";
+                            	$this->args .= (strpos($value,"priority") > 0)
+                            		? "\n file ".$value." set"
+                            		: $value.":".$arr[$key+1].",";
                             } else {
                                 $this->args .= "";
                             }
@@ -69,11 +70,6 @@ class RunningTransferTransmission extends RunningTransfer
         }
     }
 
-    //----------------------------------------------------------------
-    // Function to put the variables into a string for writing to file
-    function BuildAdminOutput($theme) {
-        return parent::BuildAdminOutput($theme);
-    }
 }
 
 ?>

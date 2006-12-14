@@ -23,10 +23,6 @@
 // class for the Fluxd-Service-module Rssad
 class FluxdRssad extends FluxdServiceMod
 {
-	// public fields
-
-	// version
-	var $version = "0.2";
 
 	// private fields
 

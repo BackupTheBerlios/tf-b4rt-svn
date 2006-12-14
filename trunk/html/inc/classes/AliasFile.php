@@ -24,7 +24,6 @@
 class AliasFile
 {
     // common fields
-    var $version = "";
     // the file
     var $theFile;
     // File Properties

@@ -20,23 +20,23 @@
 
 *******************************************************************************/
 
-
-// class RunningTransferMainline for mainline-client
+/**
+ * class RunningTransferMainline for mainline-client
+ */
 class RunningTransferMainline extends RunningTransfer
 {
-	// tornado-bin
-	var $mainlineBin = "";
 
-    //--------------------------------------------------------------------------
-    // ctor
-    function RunningTransferMainline($psLine,$cfg) {
-        // version
-		$this->version = "0.4";
-        // init conf
-        $this->Initialize($cfg);
-        //
-        $this->mainlineBin = $this->cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
-        //
+	/**
+	 * ctor
+	 *
+	 * @param $psLine
+	 * @return RunningTransferMainline
+	 */
+    function RunningTransferMainline($psLine) {
+    	global $cfg;
+        // mainlineBin
+        $mainlineBin = $cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
+        // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
@@ -46,7 +46,7 @@ class RunningTransferMainline extends RunningTransfer
             foreach($arr as $key =>$value) {
                 if ($key == 0)
                     $startArgs = false;
-                if ($value == $this->mainlineBin) {
+                if ($value == $mainlineBin) {
                 	$this->transferowner = $arr[7];
                 	$this->filePath = substr($arr[$arrC - 1], 0, strrpos($arr[$arrC - 1], "/") + 1);
                 	$this->statFile = str_replace($this->filePath,'', $arr[9]);
@@ -57,10 +57,9 @@ class RunningTransferMainline extends RunningTransfer
                     if (!empty($value)) {
                         if (strpos($value,"-",1) > 0) {
                             if(array_key_exists($key+1,$arr)) {
-                                if (strpos($value,"priority") > 0)
-                                    $this->args .= "\n file ".$value." set";
-                                else
-                                    $this->args .= $value.":".$arr[$key+1].",";
+                            	$this->args .= (strpos($value,"priority") > 0)
+                            		? "\n file ".$value." set"
+                            		: $value.":".$arr[$key+1].",";
                             } else {
                             	$this->transferFile = str_replace($this->filePath,'',$value);
                             }
@@ -73,11 +72,6 @@ class RunningTransferMainline extends RunningTransfer
         }
     }
 
-    //----------------------------------------------------------------
-    // Function to put the variables into a string for writing to file
-    function BuildAdminOutput($theme) {
-        return parent::BuildAdminOutput($theme);
-    }
 }
 
 ?>

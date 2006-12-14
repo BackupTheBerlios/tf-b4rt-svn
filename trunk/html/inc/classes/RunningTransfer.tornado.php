@@ -20,23 +20,23 @@
 
 *******************************************************************************/
 
-
-// class RunningTransferTornado for tornado-client
+/**
+ * class RunningTransferTornado for tornado-client
+ */
 class RunningTransferTornado extends RunningTransfer
 {
-	// tornado-bin
-	var $tornadoBin = "";
 
-    //--------------------------------------------------------------------------
-    // ctor
-    function RunningTransferTornado($psLine,$cfg) {
-        // version
-		$this->version = "0.4";
-        // init conf
-        $this->Initialize($cfg);
-        //
-        $this->tornadoBin = $this->cfg["docroot"]."bin/TF_BitTornado/btphptornado.py";
-        //
+	/**
+	 * ctor
+	 *
+	 * @param $psLine
+	 * @return RunningTransferTornado
+	 */
+    function RunningTransferTornado($psLine) {
+    	global $cfg;
+        // tornadoBin
+        $tornadoBin = $cfg["docroot"]."bin/TF_BitTornado/btphptornado.py";
+        // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
@@ -45,11 +45,11 @@ class RunningTransferTornado extends RunningTransfer
             foreach($arr as $key =>$value) {
                 if ($key == 0)
                     $startArgs = false;
-                if ($value == $this->tornadoBin) {
+                if ($value == $tornadoBin) {
                     $offset = 2;
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0)
+                    if(!@strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
-                    if(! @strpos($arr[$key+$offset],"/",1) > 0)
+                    if(!@strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
                     $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
                     $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
@@ -59,12 +59,11 @@ class RunningTransferTornado extends RunningTransfer
                     $startArgs = true;
                 if ($startArgs) {
                     if (!empty($value)) {
-                        if (strpos($value,"-",1) > 0) {
-                            if(array_key_exists($key+1,$arr)) {
-                                if (strpos($value,"priority") > 0)
-                                    $this->args .= "\n file ".$value." set";
-                                else
-                                    $this->args .= $value.":".$arr[$key+1].",";
+                        if (strpos($value, "-", 1) > 0) {
+                            if (array_key_exists($key + 1, $arr)) {
+                            	$this->args .= (strpos($value,"priority") > 0)
+                            		? "\n file ".$value." set"
+                            		: $value.":".$arr[$key+1].",";
                             } else {
                                 $this->args .= "";
                             }
@@ -79,11 +78,6 @@ class RunningTransferTornado extends RunningTransfer
         }
     }
 
-    //----------------------------------------------------------------
-    // Function to put the variables into a string for writing to file
-    function BuildAdminOutput($theme) {
-        return parent::BuildAdminOutput($theme);
-    }
 }
 
 ?>

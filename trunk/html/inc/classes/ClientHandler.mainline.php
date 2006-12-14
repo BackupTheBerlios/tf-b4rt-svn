@@ -31,8 +31,6 @@ class ClientHandlerMainline extends ClientHandler
      */
     function ClientHandlerMainline($cfg) {
         $this->handlerName = "mainline";
-        // version
-		$this->version = "0.41";
 		// initialize
         //
         $this->binSystem = "python";

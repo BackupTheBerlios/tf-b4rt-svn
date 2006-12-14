@@ -26,8 +26,6 @@ class AliasFileMainline extends AliasFile
     //--------------------------------------------------------------------------
     // ctor
     function AliasFileMainline($inFile,$user="",$cfg) {
-        // version
-		$this->version = "0.4";
 		// initialize
         $this->initialize($cfg);
         // init some vars

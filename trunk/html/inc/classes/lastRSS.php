@@ -39,9 +39,6 @@ class lastRSS {
 	// -------------------------------------------------------------------------
 	// Public properties
 	// -------------------------------------------------------------------------
-	// version
-    var $version = "0.9.1-tf";
-    //
 	var $default_cp = 'UTF-8';
 	var $CDATA = 'nochange';
 	var $cp = '';
@@ -58,7 +55,7 @@ class lastRSS {
 	var $_textinputtags = array('title', 'description', 'name', 'link');
 
 	// config-array
-    var $cfg = array();
+    var $_cfg = array();
 
     /**
      * factory

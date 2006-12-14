@@ -34,9 +34,6 @@ class Fluxd
 {
 	// public fields
 
-	// version
-    var $version = "0.2";
-
     // state
     var $state = FLUXD_STATE_NULL;
 

@@ -20,96 +20,65 @@
 
 *******************************************************************************/
 
-// base class RunningTransfer
+/**
+ * base class RunningTransfer
+ */
 class RunningTransfer
 {
-    // common fields
-    var $version = "";
-    // running transfer fields
+
+	// public fields
     var $statFile = "";
     var $transferFile = "";
     var $filePath = "";
     var $transferowner = "";
     var $processId = "";
     var $args = "";
-    // config-array
-    var $cfg = array();
 
-    //--------------------------------------------------------------------------
-    // ctor
+    /**
+     * factory
+     *
+     * @param $psLine ps-line
+     * @param $clientType client-type
+     * @return RunningTransfer RunningTransfer-instance
+     */
+    function getRunningTransferInstance($psLine, $clientType = '') {
+    	// create and return object-instance
+    	if ($clientType == '') {
+    		global $cfg;
+    		$clientType = $cfg["btclient"];
+    	}
+        switch ($clientType) {
+            case "tornado":
+            	require_once('inc/classes/RunningTransfer.tornado.php');
+                return new RunningTransferTornado($psLine);
+            case "transmission":
+            	require_once('inc/classes/RunningTransfer.transmission.php');
+                return new RunningTransferTransmission($psLine);
+            case "mainline":
+            	require_once('inc/classes/RunningTransfer.mainline.php');
+                return new RunningTransferMainline($psLine);
+            case "wget":
+            	require_once('inc/classes/RunningTransfer.wget.php');
+                return new RunningTransferWget($psLine);
+            default:
+            	AuditAction($cfg["constants"]["error"], "Invalid RunningTransfer-Type : ".$clientType);
+				global $argv;
+    			if (isset($argv))
+    				die("Invalid RunningTransfer-Type : ".$clientType);
+    			else
+    				showErrorPage("Invalid RunningTransfer-Type : <br>".$clientType);
+        }
+    }
+
+	/**
+	 * ctor
+	 *
+	 * @return RunningTransfer
+	 */
     function RunningTransfer() {
         die('base class -- dont do this');
     }
 
-    //--------------------------------------------------------------------------
-    // factory
-    /**
-     * get RunningTransfer-instance
-     *
-     * @param $psLine ps-line
-     * @param $fluxCfg torrent-flux config-array
-     * @param $clientType client-type
-     * @return $runningTorrentInstance RunningTransfer-instance
-     */
-    function getRunningTransferInstance($psLine, $fluxCfg, $clientType = '') {
-    	// create and return object-instance
-        if ($clientType != '') {
-            $clientClass = $clientType;
-            $fluxCfg["btclient"] = $clientType;
-        } else {
-            $clientClass = $fluxCfg["btclient"];
-        }
-        switch ($clientClass) {
-            case "tornado":
-            	require_once('inc/classes/RunningTransfer.tornado.php');
-                return new RunningTransferTornado($psLine,serialize($fluxCfg));
-            case "transmission":
-            	require_once('inc/classes/RunningTransfer.tornado.php');
-                return new RunningTransferTransmission($psLine,serialize($fluxCfg));
-            case "mainline":
-            	require_once('inc/classes/RunningTransfer.tornado.php');
-                return new RunningTransferMainline($psLine,serialize($fluxCfg));
-            case "wget":
-            	require_once('inc/classes/RunningTransfer.tornado.php');
-                return new RunningTransferWget($psLine,serialize($fluxCfg));
-            default:
-            	AuditAction($fluxCfg["constants"]["error"], "Invalid RunningTransfer-Class : ".$clientClass);
-				global $argv;
-    			if (isset($argv))
-    				die("Invalid RunningTransfer-Class : ".$clientClass);
-    			else
-    				showErrorPage("Invalid RunningTransfer-Class : <br>".htmlentities($clientClass, ENT_QUOTES));
-        }
-    }
-
-    //--------------------------------------------------------------------------
-    // Initialize the RunningTransfer.
-    function Initialize($cfg) {
-        $this->cfg = unserialize($cfg);
-    }
-
-    //--------------------------------------------------------------------------
-    // Function to put the variables into a string for writing to file
-    function BuildAdminOutput($theme) {
-    	global $cfg;
-        $output = "<tr>";
-        $output .= "<td><div class=\"tiny\">";
-        $output .= $this->transferowner;
-        $output .= "</div></td>";
-        $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
-        $output .= str_replace(array(".stat"),"",$this->statFile);
-        $output .= "</div></td>";
-        $output .= "<td>";
-        $output .= "<a href=\"dispatcher.php?action=indexStop";
-        $output .= "&transfer=".urlencode($this->transferFile);
-        $output .= "&alias_file=".$this->statFile;
-        $output .= "&kill=".$this->processId;
-        $output .= "&return=admin\">";
-        $output .= "<img src=\"themes/".$theme."/images/kill.gif\" width=16 height=16 title=\"".$cfg['_FORCESTOP']."\" border=0></a></td>";
-        $output .= "</tr>";
-        $output .= "\n";
-        return $output;
-    }
 }
 
 ?>

@@ -23,10 +23,6 @@
 // class for the Fluxd-Service-module Qmgr
 class FluxdQmgr extends FluxdServiceMod
 {
-	// public fields
-
-	// version
-	var $version = "0.2";
 
 	// =========================================================================
 	// public static methods

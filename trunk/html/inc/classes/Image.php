@@ -36,9 +36,6 @@ class Image
 {
 	// public fields
 
-	// version
-    var $version = "0.1";
-
 	// content-types
 	var $contentTypes = array(
 		IMG_GIF => 'image/gif',

@@ -32,9 +32,6 @@ class SimpleHTTP
 {
 	// public fields
 
-	// version
-    var $version = "0.2";
-
     // timeout
     var $timeout = 20;
 

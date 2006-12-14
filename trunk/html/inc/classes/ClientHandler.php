@@ -25,7 +25,6 @@
 class ClientHandler
 {
     var $handlerName = "";
-    var $version = "";
     var $binSystem = ""; // the sys-binary of this client
     var $binClient = ""; // the binary of this client.. stay a bit flux-comp.
                          // its not using the sys-bin for some ops
@@ -434,7 +433,7 @@ class ClientHandler
         $running = getRunningTransfers();
         $isHung = 0;
         foreach ($running as $key => $value) {
-            $rt = RunningTransfer::getRunningTransferInstance($value,$this->cfg,$this->handlerName);
+            $rt = RunningTransfer::getRunningTransferInstance($value, $this->handlerName);
             if ($rt->statFile == $this->alias) {
             	$isHung = 1;
                 AuditAction($this->cfg["constants"]["error"], "Posible Hung Process " . $rt->processId);
@@ -502,8 +501,8 @@ class ClientHandler
                     if(!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
                         if(!strpos($pinfo->cmdline, "ps x") > 0) {
                             array_push($pProcess,$pinfo->pid);
-                            $rt = RunningTransfer::getRunningTransferInstance($pinfo->pid . " " . $pinfo->cmdline, $this->cfg, $this->handlerName);
-                            array_push($ProcessCmd,$rt->transferowner . "\t". str_replace(array(".stat"),"",$rt->statFile));
+                            $rt = RunningTransfer::getRunningTransferInstance($pinfo->pid." ".$pinfo->cmdline, $this->handlerName);
+                            array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
                         }
                     }
                 } else {

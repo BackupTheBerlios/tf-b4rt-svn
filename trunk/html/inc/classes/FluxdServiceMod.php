@@ -30,9 +30,8 @@ class FluxdServiceMod
 {
 	// public fields
 
-	// mod-related
+	// module-name
 	var $moduleName = "";
-    var $version = "0.2";
 
     // state
     var $state = FLUXDMOD_STATE_NULL;

@@ -36,9 +36,6 @@ class MaintenanceAndRepair
 {
 	// public fields
 
-	// version
-    var $version = "0.2";
-
     // state
     var $state = MAINTENANCEANDREPAIR_STATE_NULL;
 

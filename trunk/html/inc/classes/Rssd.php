@@ -43,9 +43,6 @@ class Rssd
 	// public fields
 	var $name = "Rssd";
 
-	// version
-    var $version = "0.2";
-
     // state
     var $state = RSSD_STATE_NULL;
 

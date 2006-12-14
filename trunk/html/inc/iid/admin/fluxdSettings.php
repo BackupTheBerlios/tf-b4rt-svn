@@ -130,8 +130,23 @@ $output = "";
 foreach ($clients as $client) {
 	$running = getRunningTransfers($client);
 	foreach ($running as $key => $value) {
-		$rt = RunningTransfer::getRunningTransferInstance($value, $cfg, $client);
-		$output .= $rt->BuildAdminOutput($cfg['theme']);
+		$rt = RunningTransfer::getRunningTransferInstance($value, $client);
+        $output .= "<tr>";
+        $output .= "<td><div class=\"tiny\">";
+        $output .= $rt->transferowner;
+        $output .= "</div></td>";
+        $output .= "<td><div align=center><div class=\"tiny\" align=\"left\">";
+        $output .= str_replace(array(".stat"),"",$rt->statFile);
+        $output .= "</div></td>";
+        $output .= "<td>";
+        $output .= "<a href=\"dispatcher.php?action=indexStop";
+        $output .= "&transfer=".urlencode($rt->transferFile);
+        $output .= "&alias_file=".$rt->statFile;
+        $output .= "&kill=".$rt->processId;
+        $output .= "&return=admin\">";
+        $output .= "<img src=\"themes/".$cfg["theme"]."/images/kill.gif\" width=16 height=16 title=\"".$cfg['_FORCESTOP']."\" border=0></a></td>";
+        $output .= "</tr>";
+        $output .= "\n";
 		unset($rt);
 	}
 }

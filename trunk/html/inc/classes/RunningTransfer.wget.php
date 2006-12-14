@@ -20,17 +20,19 @@
 
 *******************************************************************************/
 
-
-// class RunningTransferTornado for wget-client
+/**
+ * class RunningTransferTornado for wget-client
+ */
 class RunningTransferWget extends RunningTransfer
 {
-    //--------------------------------------------------------------------------
-    // ctor
-    function RunningTransferWget($psLine,$cfg) {
-        // version
-		$this->version = "0.4";
-        // init conf
-        $this->Initialize($cfg);
+
+	/**
+	 * ctor
+	 *
+	 * @param $psLine
+	 * @return RunningTransferWget
+	 */
+    function RunningTransferWget($psLine) {
         // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
@@ -46,11 +48,6 @@ class RunningTransferWget extends RunningTransfer
         }
     }
 
-    //----------------------------------------------------------------
-    // Function to put the variables into a string for writing to file
-    function BuildAdminOutput($theme) {
-        return parent::BuildAdminOutput($theme);
-    }
 }
 
 ?>
