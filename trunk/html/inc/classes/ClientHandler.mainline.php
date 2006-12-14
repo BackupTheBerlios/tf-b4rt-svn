@@ -185,7 +185,7 @@ class ClientHandlerMainline extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner);
         $retVal["uptotal"] = $af->uptotal;
         $retVal["downtotal"] = $af->downtotal;
         return $retVal;
@@ -233,7 +233,7 @@ class ClientHandlerMainline extends ClientHandler
         // transfer from stat-file
         $aliasName = getAliasName($transfer);
         $owner = getOwner($transfer);
-        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner, $this->cfg, $this->handlerName);
+        $af = AliasFile::getAliasFileInstance($aliasName.".stat", $owner);
         $retVal["uptotal"] += $af->uptotal;
         $retVal["downtotal"] += $af->downtotal;
         return $retVal;

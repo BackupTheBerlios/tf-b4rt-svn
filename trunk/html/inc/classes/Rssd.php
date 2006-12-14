@@ -264,6 +264,7 @@ class Rssd
 
     /**
      * load filters
+     *
      * @return boolean
      */
 	function _loadFilters() {
@@ -274,6 +275,7 @@ class Rssd
 
     /**
      * load history
+     *
      * @return boolean
      */
 	function _loadHistory() {
@@ -288,6 +290,7 @@ class Rssd
 
     /**
      * load data
+     *
      * @return boolean
      */
 	function _loadData() {
@@ -303,6 +306,7 @@ class Rssd
 
     /**
      * process data
+     *
      * @return boolean
      */
 	function _processData() {
@@ -343,6 +347,7 @@ class Rssd
 
     /**
      * update history
+     *
      * @return boolean
      */
 	function _updateHistory() {
@@ -375,6 +380,7 @@ class Rssd
 
     /**
      * download and save a torrent-file
+     *
      * @return boolean
      */
 	function _saveTorrent($url, $title) {

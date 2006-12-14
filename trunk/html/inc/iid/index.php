@@ -102,7 +102,7 @@ foreach ($arList as $entry) {
 		$transferowner = getOwner($entry);
 		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
 		$settingsAry = loadTorrentSettings($entry);
-		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, $settingsAry['btclient']);
+		$af = AliasFile::getAliasFileInstance($alias, $transferowner);
 	} else if ((substr(strtolower($entry), -5) == ".wget")) {
 		// this is wget.
 		$isTorrent = false;
@@ -115,7 +115,7 @@ foreach ($arList as $entry) {
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
-		$af = AliasFile::getAliasFileInstance($alias, $transferowner, $cfg, 'wget');
+		$af = AliasFile::getAliasFileInstance($alias, $transferowner);
 	} else {
 		// this is "something else". use tornado statfile as default
 		$isTorrent = false;
@@ -128,7 +128,7 @@ foreach ($arList as $entry) {
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
-		$af = AliasFile::getAliasFileInstance($alias, $cfg["user"], $cfg, 'tornado');
+		$af = AliasFile::getAliasFileInstance($alias, $cfg["user"]);
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = $af->running;

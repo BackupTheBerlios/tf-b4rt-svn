@@ -348,7 +348,7 @@ class MaintenanceAndRepair
 			// get owner
 			$transferowner = getOwner($transfer);
 			// rewrite stat-file
-			$af = AliasFile::getAliasFileInstance($alias, $transferowner, $this->_cfg, $settingsAry['btclient']);
+			$af = AliasFile::getAliasFileInstance($alias, $transferowner);
 			if (isset($af)) {
 				$af->running = 0;
 				$af->percent_done = -100.0;
@@ -641,7 +641,7 @@ class MaintenanceAndRepair
 			$alias = getAliasName($torrent);
 			$owner = getOwner($torrent);
 			$btclient = getTransferClient($torrent);
-			$af = AliasFile::getAliasFileInstance($alias.".stat", $owner, $this->_cfg, $btclient);
+			$af = AliasFile::getAliasFileInstance($alias.".stat", $owner);
 			if (isset($af)) {
 				// output
 				$this->_outputMessage("rewrite stat-file for ".$torrent." ...\n");
