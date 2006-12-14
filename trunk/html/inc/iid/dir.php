@@ -26,7 +26,6 @@ Check each of these items for correct functionality with enoding/decoding
 of HTML and URLs, including inc/iid/item.php and any templates associated with
 the item:
 
-checkSFV
 del
 maketorrent
 move
@@ -299,8 +298,8 @@ foreach ($entrys as $entry) {
 			'size' => $size,
 			'date' => $date,
 			'show_sfv' => $show_sfv,
-			'sfvdir' => $sfvdir,
-			'sfvsfv' => $sfvsfv
+			'sfvdir' => UrlHTMLEncode($sfvdir),
+			'sfvsfv' => UrlHTMLEncode($sfvsfv)
 			)
 		);
 	} else if (!@is_dir($dirName.$entry)) { // file

@@ -47,11 +47,17 @@ tmplInitializeInstance($cfg["theme"], "page.checkSFV.tmpl");
 // process
 $cmd = $cfg['bin_cksfv'] . ' -C ' . escapeshellarg($_REQUEST['dir']) . ' -f ' . escapeshellarg($_REQUEST['file']);
 $handle = popen($cmd . ' 2>&1', 'r' );
-$buff= "";
+$buff = (isset($cfg["debuglevel"]) && $cfg["debuglevel"] == 2)
+	? "<strong>Debug:</strong> Evaluating command:<br/><br/><pre>$cmd</pre><br/>Output follows below:<br/>"
+	: "";
+$buff.= "<pre>";
+
 while(!feof($handle))
 	$buff .= @fgets($handle,30);
 $tmpl->setvar('buff', nl2br($buff));
 pclose($handle);
+
+$buff.= "</pre>";
 
 // set vars
 $tmpl->setvar('iid', $_REQUEST["iid"]);
