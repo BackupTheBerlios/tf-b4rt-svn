@@ -20,6 +20,23 @@
 
 *******************************************************************************/
 
+/*
+munk TODO:
+Check each of these items for correct functionality with enoding/decoding
+of HTML and URLs, including inc/iid/item.php and any templates associated with
+the item:
+
+checkSFV
+del
+maketorrent
+move
+rename
+tar
+uncomp
+viewnfo
+vlc
+*/
+
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
