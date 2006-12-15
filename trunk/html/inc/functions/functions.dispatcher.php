@@ -47,15 +47,15 @@ function indexStartTransfer($transfer) {
 					showErrorPage("wget is disabled for users.");
 				}
 			}
-			$clientHandler = ClientHandler::getInstance($cfg, 'wget');
-			$clientHandler->startClient($transfer, 0, false);
+			$clientHandler = ClientHandler::getInstance('wget');
+			$clientHandler->start($transfer, false, false);
 			sleep(3);
 			header("location: index.php?iid=index");
 			exit();
 		}
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Start : ".$cfg["user"]." tried to start ".$transfer);
-		showErrorPage("Invalid Transfer for Start : <br>".htmlentities($transfer, ENT_QUOTES));
+		showErrorPage("Invalid Transfer for Start : <br>".$transfer);
 	}
 }
 
@@ -80,18 +80,15 @@ function indexStartTorrent($torrent, $interactive) {
 	switch ($interactive) {
 		case 0:
 			$btclient = getTransferClient($torrent);
-			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
-			$clientHandler->startClient($torrent, 0, FluxdQmgr::isRunning());
+			$clientHandler = ClientHandler::getInstance($btclient);
+			$clientHandler->start($torrent, false, FluxdQmgr::isRunning());
 			// header + out
-			header("location: index.php?iid=index");
-			exit();
-			break;
+			@header("location: index.php?iid=index");
 		case 1:
-			$clientHandler = ClientHandler::getInstance($cfg, getRequestVar('btclient'));
-			$clientHandler->startClient($torrent, 1, FluxdQmgr::isRunning());
-			if ($clientHandler->state == -1) { // start failed
-				header("location: index.php?iid=index&messages=".urlencode($clientHandler->messages));
-				exit();
+			$clientHandler = ClientHandler::getInstance(getRequestVar('btclient'));
+			$clientHandler->start($torrent, true, FluxdQmgr::isRunning());
+			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+				showErrorPage(implode("<br>", $clientHandler->messages));
 			} else {
 				if (array_key_exists("closeme",$_POST)) {
 					echo '<script  language="JavaScript">';
@@ -99,12 +96,11 @@ function indexStartTorrent($torrent, $interactive) {
 					echo ' window.close();';
 					echo '</script>';
 				} else {
-					header("location: index.php?iid=index");
+					@header("location: index.php?iid=index");
 				}
 			}
-			exit();
-			break;
 	}
+	exit();
 }
 
 /**
@@ -115,25 +111,16 @@ function indexStartTorrent($torrent, $interactive) {
 function indexStopTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
-		$return = getRequestVar('return');
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$clientHandler = ClientHandler::getInstance($cfg, getTransferClient($transfer));
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			$clientHandler = ClientHandler::getInstance($cfg, 'wget');
-		} else {
-			$clientHandler = ClientHandler::getInstance($cfg, 'tornado');
-		}
-		$clientHandler->stopClient($transfer, getRequestVar('alias_file'), "", $return);
-		if (!empty($return))
-			header("location: index.php?iid=".$return.".php?op=fluxdSettings");
+		if ((substr(strtolower($transfer), -8) == ".torrent"))
+			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		else if ((substr(strtolower($transfer), -5) == ".wget"))
+			$clientHandler = ClientHandler::getInstance('wget');
 		else
-			header("location: index.php?iid=index");
-		exit();
+			$clientHandler = ClientHandler::getInstance('tornado');
+		$clientHandler->stop($transfer, getRequestVar('alias_file'), (getRequestVar('kill') == 1), getRequestVar('pid'));
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
-		showErrorPage("Invalid Transfer for Stop : <br>".htmlentities($transfer, ENT_QUOTES));
+		showErrorPage("Invalid Transfer for Stop : <br>".$transfer);
 	}
 }
 
@@ -150,7 +137,7 @@ function indexDeleteTransfer($transfer) {
 		exit();
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Delete : ".$cfg["user"]." tried to delete ".$transfer);
-		showErrorPage("Invalid Transfer for Delete : <br>".htmlentities($transfer, ENT_QUOTES));
+		showErrorPage("Invalid Transfer for Delete : <br>".$transfer);
 	}
 }
 
@@ -167,7 +154,7 @@ function indexDeQueueTransfer($transfer) {
 		exit();
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for DeQueue : ".$cfg["user"]." tried to deQueue ".$transfer);
-		showErrorPage("Invalid Transfer for DeQueue : <br>".htmlentities($transfer, ENT_QUOTES));
+		showErrorPage("Invalid Transfer for DeQueue : <br>".$transfer);
 	}
 }
 
@@ -270,13 +257,13 @@ function indexProcessDownload($url_upload) {
 					// Process setPriority Request.
 					setPriority(urldecode($file_name));
 				}
-				$clientHandler = ClientHandler::getInstance($cfg);
+				$clientHandler = ClientHandler::getInstance();
 				switch ($actionId) {
 					case 3:
-						$clientHandler->startClient($file_name, 0, true);
+						$clientHandler->start($file_name, false, true);
 						break;
 					case 2:
-						$clientHandler->startClient($file_name, 0, false);
+						$clientHandler->start($file_name, false, false);
 						break;
 				}
 			}
@@ -318,13 +305,13 @@ function indexProcessUpload() {
 									// Process setPriority Request.
 									setPriority(urldecode($file_name));
 								}
-								$clientHandler = ClientHandler::getInstance($cfg);
+								$clientHandler = ClientHandler::getInstance();
 								switch ($actionId) {
 									case 3:
-										$clientHandler->startClient($file_name, 0, true);
+										$clientHandler->start($file_name, false, true);
 										break;
 									case 2:
-										$clientHandler->startClient($file_name, 0, false);
+										$clientHandler->start($file_name, false, false);
 										break;
 								}
 							}
@@ -412,13 +399,13 @@ function processFileUpload() {
 					// Process setPriority Request.
 					setPriority(urldecode($torrent));
 				}
-				$clientHandler = ClientHandler::getInstance($cfg);
+				$clientHandler = ClientHandler::getInstance();
 				switch ($actionId) {
 					case 3:
-						$clientHandler->startClient($torrent, 0, true);
+						$clientHandler->start($torrent, false, true);
 						break;
 					case 2:
-						$clientHandler->startClient($torrent, 0, false);
+						$clientHandler->start($torrent, false, false);
 						break;
 				}
 			}

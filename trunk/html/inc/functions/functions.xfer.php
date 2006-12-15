@@ -71,17 +71,20 @@ function getXferStats() {
 }
 
 /**
- * transferListXferUpdate1
+ * xfer update 1
  *
  * @param $entry
  * @param $transferowner
- * @param $af
- * @param $settingsAry
+ * @param $tclient
+ * @param $hash
+ * @param $uptotal
+ * @param $downtotal
  * @return unknown
  */
-function transferListXferUpdate1($entry, $transferowner, $af, $settingsAry) {
+function transferListXferUpdate1($entry, $transferowner, $tclient, $hash, $uptotal, $downtotal) {
 	global $cfg, $db;
-	$transferTotalsCurrent = getTransferTotalsCurrentOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+	$clientHandler = ClientHandler::getInstance($tclient);
+	$transferTotalsCurrent = $clientHandler->getTransferCurrentOP($entry, $hash, $uptotal, $downtotal);
 	$newday = 0;
 	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
 	$newday = !$db->GetOne($sql);

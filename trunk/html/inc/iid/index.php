@@ -144,7 +144,7 @@ foreach ($arList as $entry) {
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
+		$newday = transferListXferUpdate1($entry, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
 
 	// ---------------------------------------------------------------------
 	// injects
@@ -157,8 +157,10 @@ foreach ($arList as $entry) {
 
 	// totals-preparation
 	// if downtotal + uptotal + progress > 0
-	if (($settings[2] + $settings[3] + $settings[5]) > 0)
-		$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+	if (($settings[2] + $settings[3] + $settings[5]) > 0) {
+		$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+		$transferTotals = $clientHandler->getTransferTotalOP($entry, $settingsAry['hash'], $af->uptotal, $af->downtotal);
+	}
 
 	// ---------------------------------------------------------------------
 	// preprocess alias-file and get some vars

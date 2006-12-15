@@ -23,24 +23,19 @@
 // class ClientHandler for wget-client
 class ClientHandlerWget extends ClientHandler
 {
+
+	// public fields
 	var $url = "";
 	var $urlFile = "";
 
     /**
      * ctor
      */
-    function ClientHandlerWget($cfg) {
+    function ClientHandlerWget() {
         $this->handlerName = "wget";
-        //
+        $this->binSystem = "wget";
         $this->binSocket = "wget";
         $this->binClient = "wget.php";
-        //
-        $this->initialize($cfg);
-        //
-        $tempArray = explode("/",$this->cfg["bin_wget"]);
-        $bin = array_pop($tempArray);
-        //
-        $this->binSystem = $bin;
     }
 
     /**
@@ -49,16 +44,17 @@ class ClientHandlerWget extends ClientHandler
      * @param $transferUrl
      */
     function setVarsFromUrl($transferUrl) {
+    	global $cfg;
     	$this->url = $transferUrl;
         $this->transfer = strrchr($transferUrl,'/');
         if ($this->transfer{0} == '/')
         	$this->transfer = substr($this->transfer, 1);
         $aliasName = getAliasName($this->transfer);
-        $this->urlFile = $this->cfg["transfer_file_path"].$aliasName.".wget";
+        $this->urlFile = $cfg["transfer_file_path"].$aliasName.".wget";
         $this->alias = $aliasName.".stat";
-        $this->logFile = $this->cfg["transfer_file_path"].$aliasName.".log";
-        $this->owner = $this->cfg['user'];
-        $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".pid";
+        $this->logFile = $cfg["transfer_file_path"].$aliasName.".log";
+        $this->owner = $cfg['user'];
+        $this->pidFile = $cfg["transfer_file_path"].$this->alias.".pid";
     }
 
     /**
@@ -67,10 +63,11 @@ class ClientHandlerWget extends ClientHandler
      * @param $transfer
      */
     function setVarsFromFile($transfer) {
+    	global $cfg;
     	$aliasName = getAliasName($transfer);
-    	$uf = $this->cfg["transfer_file_path"].$aliasName.".wget";
+    	$uf = $cfg["transfer_file_path"].$aliasName.".wget";
 	    $data = "";
-	    if($fileHandle = @fopen($uf,'r')) {
+	    if ($fileHandle = @fopen($uf,'r')) {
 	        while (!@feof($fileHandle))
 	            $data .= @fgets($fileHandle, 2048);
 	        @fclose ($fileHandle);
@@ -85,12 +82,13 @@ class ClientHandlerWget extends ClientHandler
 	 * @return boolean
 	 */
 	function inject($url) {
+		global $cfg;
 
 		// set vars from the url
 		$this->setVarsFromUrl($url);
 
 		// write out aliasfile
-		$af = new AliasFile($this->alias, $this->cfg['user']);
+		$af = new AliasFile($this->alias, $cfg['user']);
 		$af->running = "2"; // file is new
 		$af->size = 0;
 		$af->write();
@@ -101,7 +99,7 @@ class ClientHandlerWget extends ClientHandler
 		fclose($fp);
 
 		// Make an entry for the owner
-		AuditAction($this->cfg["constants"]["file_upload"], basename($this->urlFile));
+		AuditAction($cfg["constants"]["file_upload"], basename($this->urlFile));
 
 		// return
 		return true;
@@ -109,51 +107,56 @@ class ClientHandlerWget extends ClientHandler
 
     /**
      * starts a client
+     *
      * @param $transfer name of the transfer
-     * @param $interactive (1|0) : is this a interactive startup with dialog ?
+     * @param $interactive (boolean) : is this a interactive startup with dialog ?
      * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive, $enqueue) {
+    function start($transfer, $interactive = false, $enqueue = false) {
+    	global $cfg;
 
         // do wget special-pre-start-checks
         // check to see if the path to the wget-bin is valid
-        if (!is_executable($this->cfg["bin_wget"])) {
-            AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["bin_wget"]." is not valid");
-            $this->state = -1;
-            if ($this->cfg['isAdmin']) {
-                header("location: admin.php?op=serverSettings");
-                return;
-            } else {
-                $this->messages .= "Error TorrentFlux settings are not correct (path to wget-bin is not valid) -- please contact an admin.";
-                return;
-            }
+        if (!is_executable($cfg["bin_wget"])) {
+        	$this->state = CLIENTHANDLER_STATE_ERROR;
+            $msg = "wget cannot be executed : ".$cfg["bin_wget"];
+            array_push($this->messages , $msg);
+            AuditAction($cfg["constants"]["error"], $msg);
+            if (empty($_REQUEST))
+            	die($msg);
+            else
+				showErrorPage($msg);
         }
 
         // set vars from the wget-file
 		$this->setVarsFromFile($transfer);
 
-        // start it
-        $this->command = "nohup ".$this->cfg['bin_php']." -f bin/wget.php";
+		// more vars
+		$this->queue = 0;
+
+		// build the command-string
+		// note : order of args must not change for ps-parsing-code in
+		// RunningTransferWget
+        $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
         $this->command .= " " . escapeshellarg($this->alias);
         $this->command .= " " . escapeshellarg($this->pidFile);
         $this->command .= " " . $this->owner;
-        switch ($this->cfg["enable_home_dirs"]) {
-        	case 1:
-        	default:
-        		$this->command .= " " . $this->owner;
-        		break;
-        	case 0:
-        		$this->command .= " " . escapeshellarg($this->cfg["path_incoming"]);
-        		break;
-        }
-        $this->command .= " " . $this->cfg["wget_limit_rate"];
-        $this->command .= " " . $this->cfg["wget_limit_retries"];
-        $this->command .= " " . $this->cfg["wget_ftp_pasv"];
+        $this->command .= ($cfg["enable_home_dirs"] != 0)
+        	? " " . $this->owner
+        	: " " . escapeshellarg($cfg["path_incoming"]);
+        $this->command .= " " . $cfg["wget_limit_rate"];
+        $this->command .= " " . $cfg["wget_limit_retries"];
+        $this->command .= " " . $cfg["wget_ftp_pasv"];
         $this->command .= " 1>> ".escapeshellarg($this->logFile);
         $this->command .= " 2>> ".escapeshellarg($this->logFile);
         $this->command .= " &";
-        exec($this->command);
+
+		// state
+		$this->state = CLIENTHANDLER_STATE_READY;
+
+		// start the client
+		$this->execStart(false, false);
     }
 
     /**
@@ -161,10 +164,10 @@ class ClientHandlerWget extends ClientHandler
      *
      * @param $transfer name of the transfer
      * @param $aliasFile alias-file of the transfer
+     * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
-     * @param $return return-param (optional)
      */
-    function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
+    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
         // stop the client
     }
 

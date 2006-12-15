@@ -84,11 +84,10 @@ switch ($action) {
 		}
 		$url = getRequestVar('url');
 		if (!empty($url)) {
-			$clientHandler = ClientHandler::getInstance($cfg, 'wget');
+			$clientHandler = ClientHandler::getInstance('wget');
 			$clientHandler->inject($url);
-			$wget_start = getRequestVar('wget_start');
-			if ($wget_start == 1) {
-				$clientHandler->startClient($url, 0, false);
+			if (getRequestVar('wget_start') == 1) {
+				$clientHandler->start($url, false, false);
 				sleep(3);
 			}
 		}
@@ -145,8 +144,8 @@ switch ($action) {
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
                     $alias = getAliasName($transfer).".stat";
                     $btclient = getTransferClient($transfer);
-                    $clientHandler = ClientHandler::getInstance($cfg,$btclient);
-                    $clientHandler->stopClient($transfer, $alias);
+                    $clientHandler = ClientHandler::getInstance($btclient);
+                    $clientHandler->stop($transfer, $alias);
                 }
             }
     	}
@@ -170,8 +169,8 @@ switch ($action) {
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getInstance($cfg,$btclient);
-                    $clientHandler->startClient($transfer, 0, false);
+                    $clientHandler = ClientHandler::getInstance($btclient);
+                    $clientHandler->start($transfer, false, false);
                 }
             }
     	}
@@ -195,8 +194,8 @@ switch ($action) {
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getInstance($cfg,$btclient);
-                    $clientHandler->startClient($transfer, 0, false);
+                    $clientHandler = ClientHandler::getInstance($btclient);
+                    $clientHandler->start($transfer, false, false);
                 }
             }
     	}
@@ -251,19 +250,19 @@ switch ($action) {
 								// Process setPriority Request.
 								setPriority(urldecode($element));
 							}
-							$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-							$clientHandler->startClient(urldecode($element), 0, FluxdQmgr::isRunning());
+							$clientHandler = ClientHandler::getInstance($tclient);
+							$clientHandler->start(urldecode($element), false, FluxdQmgr::isRunning());
 						} else {
-							$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-							$clientHandler->startClient(urldecode($element), 0, false);
+							$clientHandler = ClientHandler::getInstance($tclient);
+							$clientHandler->start(urldecode($element), false, false);
 						}
 					}
 					break;
 
 				case "transferStop": /* transferStop */
 					if (($isTorrent) && ($tRunningFlag != 0)) {
-						$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-						$clientHandler->stopClient(urldecode($element), $alias);
+						$clientHandler = ClientHandler::getInstance($tclient);
+						$clientHandler->stop(urldecode($element), $alias);
 					}
 					break;
 
@@ -275,8 +274,8 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority(urldecode($element));
 						}
-						$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-						$clientHandler->startClient(urldecode($element), 0, true);
+						$clientHandler = ClientHandler::getInstance($tclient);
+						$clientHandler->start(urldecode($element), false, true);
 					}
 					break;
 
@@ -294,8 +293,8 @@ switch ($action) {
 				default:
 					if (($isTorrent) && ($tRunningFlag != 0)) {
 						// stop torrent first
-						$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-						$clientHandler->stopClient(urldecode($element), $alias);
+						$clientHandler = ClientHandler::getInstance($tclient);
+						$clientHandler->stop(urldecode($element), $alias);
 						// is transfer running ?
 						$tRunningFlag = isTransferRunning(urldecode($element));
 					}

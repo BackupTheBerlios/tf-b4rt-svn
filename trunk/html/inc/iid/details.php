@@ -45,7 +45,7 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 	$tmpl->setvar('scrape', 1);
 } else if ((substr(strtolower($transfer), -5) == ".wget")) {
 	// this is wget.
-	$clientHandler = ClientHandler::getInstance($cfg, 'wget');
+	$clientHandler = ClientHandler::getInstance('wget');
 	$clientHandler->setVarsFromFile($transfer);
 	$metaInfo = "<table>";
 	$metaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";

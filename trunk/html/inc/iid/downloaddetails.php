@@ -72,9 +72,9 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 // totals
 $afu = $af->uptotal;
 $afd = $af->downtotal;
-$totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
-$totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
-
+$clientHandler = ClientHandler::getInstance($cfg['btclient']);
+$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $cfg['hash'], $afu, $afd);
+$totals = $clientHandler->getTransferTotalOP($transfer, $cfg['hash'], $afu, $afd);
 // owner
 $tmpl->setvar('transferowner', $transferowner);
 

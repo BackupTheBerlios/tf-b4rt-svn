@@ -501,14 +501,12 @@ function netstatConnectionsByPid($transferPid) {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			return trim(shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -c \"".$transferPid ."/\""));
-			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid.".+tcp"));
 			$netcon--;
 			return $netcon;
-			break;
 	}
 }
 
@@ -527,10 +525,9 @@ function netstatPortList() {
 			// array with all clients
 			$clients = array('tornado', 'transmission', 'wget');
 			// get informations
-			foreach($clients as $client) {
-				$clientHandler = ClientHandler::getInstance($cfg, $client);
+			foreach ($clients as $client) {
+				$clientHandler = ClientHandler::getInstance($client);
 				$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
-				unset($clientHandler);
 			}
 			break;
 		case 2: // bsd
@@ -563,12 +560,10 @@ function netstatPortByPid($transferPid) {
 	switch ($cfg["_OS"]) {
 		case 1: // linux
 			return trim(shell_exec($cfg['bin_netstat']." -l -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." \"".$transferPid ."/\" | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'"));
-			break;
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			return (shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$transferPid.".*tcp.*(\*:\*|[[:digit:]]:(21|80))/ {split(\$6, a, \":\");print a[2]}'"));
-			break;
 	}
 }
 
@@ -588,9 +583,8 @@ function netstatHostList() {
 			$clients = array('tornado', 'transmission', 'wget');
 			// get informations
 			foreach($clients as $client) {
-				$clientHandler = ClientHandler::getInstance($cfg, $client);
+				$clientHandler = ClientHandler::getInstance($client);
 				$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
-				unset($clientHandler);
 			}
 			break;
 		case 2: // bsd
@@ -899,7 +893,7 @@ function getTorrentHash($torrent) {
 	//print 'info hash.....: %s' % info_hash.hexdigest()
 	global $cfg;
 	$result = getTorrentMetaInfo($torrent);
-	if (! isset($result))
+	if (empty($result))
 		return "";
 	$resultAry = explode("\n",$result);
 	$hashAry = array();
@@ -933,7 +927,7 @@ function getTorrentDatapath($torrent) {
     $fd = fopen($ftorrent, "rd");
     $alltorrent = fread($fd, filesize($ftorrent));
     $btmeta = @BDecode($alltorrent);
-    return (!empty($btmeta['info']['name'])) ? trim($btmeta['info']['name']) : "";
+    return (empty($btmeta['info']['name'])) ? "" : trim($btmeta['info']['name']);
 }
 
 /**
@@ -947,7 +941,6 @@ function updateTransferTotals($transfer) {
 	global $db;
 	$torrentId = getTorrentHash($transfer);
 	$transferTotals = getTransferTotals($transfer);
-	// very ugly exists check... too lazy now
 	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
 	$result = $db->Execute($sql);
 	showError($db, $sql);
@@ -974,34 +967,17 @@ function updateTransferTotals($transfer) {
  * @return array with transfer-totals
  */
 function getTransferTotals($transfer) {
-	global $cfg;
 	if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
 		$tclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getInstance($cfg, $tclient);
+		$clientHandler = ClientHandler::getInstance($tclient);
 	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
-		$clientHandler = ClientHandler::getInstance($cfg, 'wget');
+		$clientHandler = ClientHandler::getInstance('wget');
 	} else {
-		$clientHandler = ClientHandler::getInstance($cfg, 'tornado');
+		$clientHandler = ClientHandler::getInstance('tornado');
 	}
 	return $clientHandler->getTransferTotal($transfer);
-}
-
-/**
- * gets totals of a transfer
- *
- * @param $transfer name of the transfer
- * @param $tid of the transfer
- * @param $tclient client of the transfer
- * @param $afu alias-file-uptotal of the transfer
- * @param $afd alias-file-downtotal of the transfer
- * @return array with transfer-totals
- */
-function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
-	global $cfg;
-	$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
 }
 
 /**
@@ -1011,34 +987,17 @@ function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
  * @return array with transfer-totals
  */
 function getTransferTotalsCurrent($transfer) {
-	global $cfg;
 	if ((substr( strtolower($transfer), -8) == ".torrent")) {
 		// this is a torrent-client
 		$tclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getInstance($cfg, $tclient);
+		$clientHandler = ClientHandler::getInstance($tclient);
 	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
 		// this is wget.
-		$clientHandler = ClientHandler::getInstance($cfg, 'wget');
+		$clientHandler = ClientHandler::getInstance('wget');
 	} else {
-		$clientHandler = ClientHandler::getInstance($cfg, 'tornado');
+		$clientHandler = ClientHandler::getInstance('tornado');
 	}
 	return $clientHandler->getTransferCurrent($transfer);
-}
-
-/**
- * gets current totals of a transfer
- *
- * @param $transfer name of the transfer
- * @param $tid of the transfer
- * @param $tclient client of the transfer
- * @param $afu alias-file-uptotal of the transfer
- * @param $afd alias-file-downtotal of the transfer
- * @return array with transfer-totals
- */
-function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
-	global $cfg;
-	$clientHandler = ClientHandler::getInstance($cfg, $tclient);
-	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
 }
 
 /**
@@ -1076,6 +1035,52 @@ function resetTorrentTotals($torrent, $delete = false) {
 }
 
 /**
+ * gets ary of running clients (via call to ps)
+ *
+ * @param $clientType
+ * @return array
+ */
+function getRunningClientProcesses($clientType = '') {
+	// client-array
+	$clients = ($clientType == '')
+		? array('tornado', 'transmission', 'mainline', 'wget')
+		: array($clientType);
+	// get clients
+	$retVal = array();
+	foreach ($clients as $client) {
+		// client-handler
+		$clientHandler = ClientHandler::getInstance($client);
+		$procs = $clientHandler->runningProcesses();
+		if (!empty($procs))
+			$retVal = array_merge($retVal, $procs);
+	}
+	// return
+	return $retVal;
+}
+
+/**
+ * get info of running clients (via call to ps)
+ *
+ * @param $clientType
+ * @return string
+ */
+function getRunningClientProcessInfo($clientType = '') {
+	// client-array
+	$clients = ($clientType == '')
+		? array('tornado', 'transmission', 'mainline', 'wget')
+		: array($clientType);
+	// get clients
+	$retVal = "";
+	foreach ($clients as $client) {
+		// client-handler
+		$clientHandler = ClientHandler::getInstance($client);
+		$retVal .= $clientHandler->runningProcessInfo();
+	}
+	// return
+	return $retVal;
+}
+
+/**
  * get log of a Transfer
  *
  * @param $transfer
@@ -1107,65 +1112,6 @@ function getTransferLog($transfer) {
 		return $emptyLog;
 	// return
 	return $data;
-}
-
-/**
- * deletes a transfer
- *
- * @param $transfer name of the transfer
- * @param $alias_file alias-file of the transfer
- * @return boolean of success
- */
-function deleteTransfer($transfer, $alias_file) {
-	global $cfg;
-	$transferowner = getOwner($transfer);
-	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$btclient = getTransferClient($transfer);
-			$af = new AliasFile($alias_file, $transferowner);
-			// update totals for this torrent
-			updateTransferTotals($transfer);
-			// remove torrent-settings from db
-			deleteTorrentSettings($transfer);
-			// client-proprietary leftovers
-			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
-			$clientHandler->deleteCache($transfer);
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			$af = new AliasFile($alias_file, $transferowner);
-		} else {
-			// this is "something else". use tornado statfile as default
-			$af = new AliasFile($alias_file, $cfg["user"]);
-		}
-		if ($cfg['enable_xfer'] != 0) {
-			// XFER: before torrent deletion save upload/download xfer data to SQL
-			$transferTotals = getTransferTotalsCurrent($transfer);
-			saveXfer($transferowner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
-		}
-		// alias-name
-		$aliasName = getAliasName($transfer);
-		// torrent+stat
-		@unlink($cfg["transfer_file_path"].$transfer);
-		@unlink($cfg["transfer_file_path"].$alias_file);
-		// if exist remove pid file
-		$pidFile = $cfg["transfer_file_path"].$alias_file.".pid";
-		if (file_exists($pidFile))
-			@unlink($pidFile);
-		// if exist remove prio-file
-		$prioFile = $cfg["transfer_file_path"].$aliasName.".prio";
-		if (file_exists($prioFile))
-			@unlink($prioFile);
-		// if exist remove log-file
-		$logFile = $cfg["transfer_file_path"].$aliasName.".log";
-		if (file_exists($logFile))
-			@unlink($logFile);
-		AuditAction($cfg["constants"]["delete_torrent"], $transfer);
-		return true;
-	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
-		return false;
-	}
 }
 
 /**
@@ -1262,116 +1208,6 @@ function getRunningTransferCount() {
 	} else {
 		return 0;
 	}
-}
-
-/**
- *
- *
- * @param $clientType
- * @return string
- */
-/**
- * get info of running clients (via call to ps)
- *
- * @param $handlerName
- * @param $binSystem
- * @param $binClient
- * @return string
- */
-function getRunningClientProcessInfo($handlerName, $binSystem, $binClient) {
-	global $cfg;
-    // ps-string
-    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ". $binClient ." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
-    $arScreen = array();
-    $tok = strtok($screenStatus, "\n");
-    while ($tok) {
-        array_push($arScreen, $tok);
-        $tok = strtok("\n");
-    }
-    $cProcess = array();
-    $cpProcess = array();
-    $pProcess = array();
-    $ProcessCmd = array();
-    for($i = 0; $i < sizeof($arScreen); $i++) {
-        if(strpos($arScreen[$i], $binClient) !== false) {
-            $pinfo = new ProcessInfo($arScreen[$i]);
-            if (intval($pinfo->ppid) == 1) {
-                if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
-                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
-                        array_push($pProcess,$pinfo->pid);
-                        $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $handlerName);
-                        array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
-                    }
-                }
-            } else {
-                if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
-                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
-                        array_push($cProcess,$pinfo->pid);
-                        array_push($cpProcess,$pinfo->ppid);
-                    }
-                }
-            }
-        }
-    }
-    $retVal  = " --- Running Processes ---\n";
-    $retVal .= " Parents  : " . count($pProcess) . "\n";
-    $retVal .= " Children : " . count($cProcess) . "\n";
-    $retVal .= "\n";
-    $retVal .= " PID \tOwner\tTransfer File\n";
-    foreach($pProcess as $key => $value) {
-        $retVal .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
-        foreach($cpProcess as $cKey => $cValue)
-            if (intval($value) == intval($cValue))
-                $retVal .= "\t" . $cProcess[$cKey] . "\n";
-    }
-    $retVal .= "\n";
-    return $retVal;
-}
-
-/**
- * gets ary of running clients (via call to ps)
- *
- * @param $clientType
- * @return array
- */
-function getRunningClientProcesses($clientType = '') {
-	global $cfg;
-	// client-array
-	$clients = ($clientType == '')
-		? array('tornado', 'transmission', 'mainline', 'wget')
-		: array($clientType);
-	// get clients
-	$retAry = array();
-	foreach ($clients as $client) {
-		// client-handler
-		$clientHandler = ClientHandler::getInstance($cfg, $client);
-		$binClient = $clientHandler->binClient;
-		$binSystem = $clientHandler->binSystem;
-	    // ps-string
-	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ".$binClient." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
-	    $arScreen = array();
-	    $tok = strtok($screenStatus, "\n");
-	    while ($tok) {
-	        array_push($arScreen, $tok);
-	        $tok = strtok("\n");
-	    }
-	    $arySize = sizeof($arScreen);
-		for ($i = 0; $i < $arySize; $i++) {
-			if(strpos($arScreen[$i], $binClient) !== false) {
-				$pinfo = new ProcessInfo($arScreen[$i]);
-				if (intval($pinfo->ppid) == 1) {
-					if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
-						if (!strpos($pinfo->cmdline, "ps x") > 0) {
-							// array_push($retAry, $pinfo->pid." ".$pinfo->cmdline);
-							array_push($retAry, array($pinfo->pid." ".$pinfo->cmdline, $client));
-						}
-					}
-				}
-	        }
-	    }
-	}
-	// return
-	return $retAry;
 }
 
 /**
@@ -1769,7 +1605,7 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			$newday = transferListXferUpdate1($entry, $transferowner, $af, $settingsAry);
+			$newday = transferListXferUpdate1($entry, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
 		// injects
@@ -1782,8 +1618,10 @@ function getTransferListArray() {
 
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
-		if (($settings[2] + $settings[3] + $settings[5]) > 0)
-			$transferTotals = getTransferTotalsOP($entry, $settingsAry['hash'], $settingsAry['btclient'], $af->uptotal, $af->downtotal);
+		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
+			$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+			$transferTotals = $clientHandler->getTransferTotalOP($entry, $settingsAry['hash'], $af->uptotal, $af->downtotal);
+		}
 
 		// ---------------------------------------------------------------------
 		// preprocess alias-file and get some vars
@@ -2109,8 +1947,9 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// totals
 	$afu = $af->uptotal;
 	$afd = $af->downtotal;
-	$totalsCurrent = getTransferTotalsCurrentOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
-	$totals = getTransferTotalsOP($transfer, $cfg['hash'], $cfg['btclient'], $afu, $afd);
+	$clientHandler = ClientHandler::getInstance($cfg['btclient']);
+	$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $cfg['hash'], $afu, $afd);
+	$totals = $clientHandler->getTransferTotalOP($transfer, $cfg['hash'], $afu, $afd);
 	// running
 	$running = $af->running;
 	$details['running'] = $running;

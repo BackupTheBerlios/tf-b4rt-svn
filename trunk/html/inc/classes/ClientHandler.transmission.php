@@ -23,52 +23,47 @@
 // class ClientHandler for transmission-client
 class ClientHandlerTransmission extends ClientHandler
 {
+
     /**
      * ctor
      */
-    function ClientHandlerTransmission($cfg) {
+    function ClientHandlerTransmission() {
         $this->handlerName = "transmission";
-        //
+        $this->binSystem = "transmissioncli";
         $this->binSocket = "transmissionc";
-        //
-        $this->initialize($cfg);
-        //
-        $tempArray = explode("/", $this->cfg["btclient_transmission_bin"]);
-        $bin = array_pop($tempArray);
-        //
-        $this->binSystem = $bin;
-        $this->binClient = $bin;
+        $this->binClient = "transmissioncli";
     }
 
     /**
      * starts a client
+     *
      * @param $transfer name of the transfer
-     * @param $interactive (1|0) : is this a interactive startup with dialog ?
+     * @param $interactive (boolean) : is this a interactive startup with dialog ?
      * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive, $enqueue) {
+    function start($transfer, $interactive = false, $enqueue = false) {
+    	global $cfg;
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
-        if (!is_executable($this->cfg["btclient_transmission_bin"])) {
-            AuditAction($this->cfg["constants"]["error"], "Error Path for ".$this->cfg["btclient_transmission_bin"]." is not valid");
-            $this->state = -1;
-            if ($this->cfg['isAdmin']) {
-                header("location: admin.php?op=serverSettings");
-                return;
-            } else {
-                $this->messages .= "Error TorrentFlux settings are not correct (path to transmission-bin is not valid) -- please contact an admin.";
-                return;
-            }
+        if (!is_executable($cfg["btclient_transmission_bin"])) {
+        	$this->state = CLIENTHANDLER_STATE_ERROR;
+            $msg = "transmissioncli cannot be executed : ".$cfg["btclient_transmission_bin"];
+            array_push($this->messages , $msg);
+            AuditAction($cfg["constants"]["error"], $msg);
+            if (empty($_REQUEST))
+            	die($msg);
+            else
+				showErrorPage($msg);
         }
 
         // prepare starting of client
-        parent::prepareStartClient($transfer, $interactive, $enqueue);
+        $this->prepareStart($transfer, $interactive, $enqueue);
 
 		// only continue if prepare succeeded (skip start / error)
-		if ($this->state != 2) {
-			if ($this->state == -1)
-				$this->messages .= "Error after call to parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.")";
+		if ($this->state != CLIENTHANDLER_STATE_READY) {
+			if ($this->state == CLIENTHANDLER_STATE_ERROR)
+				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
 			return;
 		}
 
@@ -77,24 +72,22 @@ class ClientHandlerTransmission extends ClientHandler
             $this->sharekill_param = -1;
 
         // pid-file
-        $this->pidFile = $this->cfg["transfer_file_path"].$this->alias.".stat.pid";
+        $this->pidFile = $cfg["transfer_file_path"].$this->alias.".stat.pid";
 
         // workaround for bsd-pid-file-problem : touch file first
-        if (($this->queue == 0) && ($this->cfg["_OS"] == 2))
+        if (($this->queue == 0) && ($cfg["_OS"] == 2))
         	@touch($this->pidFile);
 
-		// note :
-		// order of args must not change for ps-parsing-code in
-		// RunningTransferTransmission
-
         // build the command-string
-        $this->command = "cd ".escapeshellarg($this->savepath).";";
-        $this->command .= " HOME=".escapeshellarg($this->cfg["path"])."; export HOME;".
+		// note : order of args must not change for ps-parsing-code in
+		// RunningTransferTransmission
+        $this->command  = "cd ".escapeshellarg($this->savepath).";";
+        $this->command .= " HOME=".escapeshellarg($cfg["path"])."; export HOME;".
         $this->command .= $this->umask;
         $this->command .= " nohup ";
         $this->command .= $this->nice;
-        $this->command .= escapeshellarg($this->cfg["btclient_transmission_bin"]);
-        $this->command .= " -t ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias.".stat");
+        $this->command .= escapeshellarg($cfg["btclient_transmission_bin"]);
+        $this->command .= " -t ".escapeshellarg($cfg["transfer_file_path"].$this->alias.".stat");
         $this->command .= " -w ".$this->owner;
         $this->command .= " -z ".escapeshellarg($this->pidFile);
         $this->command .= " -e 5";
@@ -102,21 +95,21 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -d ".escapeshellarg($this->drate);
         $this->command .= " -u ".escapeshellarg($this->rate);
         $this->command .= " -p ".escapeshellarg($this->port);
-        if (strlen($this->cfg["btclient_transmission_options"]) > 0)
-        	$this->command .= " ".$this->cfg["btclient_transmission_options"];
-        $this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
+        if (strlen($cfg["btclient_transmission_options"]) > 0)
+        	$this->command .= " ".$cfg["btclient_transmission_options"];
+        $this->command .= " ".escapeshellarg($cfg["transfer_file_path"].$this->transfer);
         $this->command .= " 1>> ".escapeshellarg($this->logFile);
         $this->command .= " 2>> ".escapeshellarg($this->logFile);
         $this->command .= " &";
 
-        // <begin shell-trickery> to write the pid of the client into the pid-file
+        // <begin shell> to write the pid of the client into the pid-file
         // * b4rt :
         //$this->command .= " &> /dev/null & echo $! > ".escapeshellarg($this->pidFile);
         // * lord_nor :
         //$this->command .= " > /dev/null & echo $! & > ".escapeshellarg($this->pidFile);
-        // <end shell-trickery>
+        // <end shell>
         // start the client
-        parent::doStartClient();
+        $this->execStart(true, true);
     }
 
     /**
@@ -124,13 +117,14 @@ class ClientHandlerTransmission extends ClientHandler
      *
      * @param $transfer name of the transfer
      * @param $aliasFile alias-file of the transfer
+     * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
-     * @param $return return-param (optional)
      */
-    function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
-        $this->pidFile = $this->cfg["transfer_file_path"].$aliasFile.".pid";
+    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
+    	global $cfg;
+        $this->pidFile = $cfg["transfer_file_path"].$aliasFile.".pid";
         // stop the client
-        parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
+        $this->execStop($transfer, $aliasFile, $kill, $transferPid);
         // delete the pid file
         // included in transmissioncli
         @unlink($this->pidFile);
@@ -142,8 +136,9 @@ class ClientHandlerTransmission extends ClientHandler
      * @param $transfer
      */
     function deleteCache($transfer) {
+    	global $cfg;
         $torrentId = getTorrentHash($transfer);
-        @unlink($this->cfg["path"].".transmission/cache/resume.".$torrentId);
+        @unlink($cfg["path"].".transmission/cache/resume.".$torrentId);
         return;
     }
 

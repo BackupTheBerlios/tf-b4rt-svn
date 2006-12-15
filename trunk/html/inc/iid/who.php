@@ -41,10 +41,10 @@ if ($cfg['isAdmin']) {
 	// get informations
 	$process_list = array();
 	foreach ($clients as $client) {
-		$clientHandler = ClientHandler::getInstance($cfg, $client);
+		$clientHandler = ClientHandler::getInstance($client);
 		array_push($process_list, array(
 			'client' => $client,
-			'RunningProcessInfo' => getRunningClientProcessInfo($clientHandler->handlerName, $clientHandler->binSystem, $clientHandler->binClient),
+			'RunningProcessInfo' => $clientHandler->runningProcessInfo(),
 			'pinfo' => shell_exec("ps auxww | ".$cfg['bin_grep']." ".$clientHandler->binClient." | ".$cfg['bin_grep']." -v grep")
 			)
 		);

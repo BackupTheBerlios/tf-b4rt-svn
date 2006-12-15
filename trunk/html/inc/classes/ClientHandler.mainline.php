@@ -23,69 +23,64 @@
 // class ClientHandler for mainline-client
 class ClientHandlerMainline extends ClientHandler
 {
+	// public fields
+
 	// mainline-bin
 	var $mainlineBin = "";
 
     /**
      * ctor
      */
-    function ClientHandlerMainline($cfg) {
+    function ClientHandlerMainline() {
+    	global $cfg;
         $this->handlerName = "mainline";
-		// initialize
-        //
         $this->binSystem = "python";
         $this->binSocket = "python";
         $this->binClient = "tfmainline.py";
-        //
-        $this->initialize($cfg);
-        //
-        $this->mainlineBin = $this->cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
+        $this->mainlineBin = $cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
     }
 
     /**
      * starts a client
+     *
      * @param $transfer name of the transfer
-     * @param $interactive (1|0) : is this a interactive startup with dialog ?
+     * @param $interactive (boolean) : is this a interactive startup with dialog ?
      * @param $enqueue (boolean) : enqueue ?
      */
-    function startClient($transfer, $interactive, $enqueue) {
+    function start($transfer, $interactive = false, $enqueue = false) {
+    	global $cfg;
 
         // do mainline special-pre-start-checks
         // check to see if the path to the python script is valid
         if (!is_file($this->mainlineBin)) {
-            AuditAction($this->cfg["constants"]["error"], "Error  Path for ".$this->mainlineBin." is not valid");
-            if ($this->cfg['isAdmin']) {
-                $this->state = -1;
-                header("location: admin.php?op=serverSettings");
-                return;
-            } else {
-                $this->state = -1;
-                $this->messages .= "Error TorrentFlux settings are not correct (path to python script is not valid) -- please contact an admin.";
-                return;
-            }
+        	$this->state = CLIENTHANDLER_STATE_ERROR;
+            $msg = "path for tfmainline.py is not valid : ".$this->mainlineBin;
+            array_push($this->messages , $msg);
+            AuditAction($cfg["constants"]["error"], $msg);
+            if (empty($_REQUEST))
+            	die($msg);
+            else
+				showErrorPage($msg);
         }
 
         // prepare starting of client
-        parent::prepareStartClient($transfer, $interactive, $enqueue);
+        $this->prepareStart($transfer, $interactive, $enqueue);
 
 		// only continue if prepare succeeded (skip start / error)
-		if ($this->state != 2) {
-			if ($this->state == -1)
-				$this->messages .= "Error after call to parent::prepareStartClient(".$transfer.",".$interactive.",".$enqueue.")";
+		if ($this->state != CLIENTHANDLER_STATE_READY) {
+			if ($this->state == CLIENTHANDLER_STATE_ERROR)
+				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
 			return;
 		}
 
 		// pythonCmd
-		$pyCmd = $this->cfg["pythonCmd"] . " -OO";
+		$pyCmd = $cfg["pythonCmd"] . " -OO";
 
 		// build the command-string
-
-		// note :
-		// order of args must not change for ps-parsing-code in
+		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferMainline
-
-		$this->command = "cd ".escapeshellarg($this->savepath).";";
-		$this->command .= " HOME=".escapeshellarg($this->cfg["path"]);
+		$this->command  = "cd ".escapeshellarg($this->savepath).";";
+		$this->command .= " HOME=".escapeshellarg($cfg["path"]);
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
@@ -93,10 +88,9 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= $pyCmd . " " .escapeshellarg($this->mainlineBin);
 		$this->command .= " --display_interval 5";
 		$this->command .= " --tf_owner ".$this->owner;
-		$this->command .= " --stat_file ".escapeshellarg($this->cfg["transfer_file_path"].$this->alias.".stat");
+		$this->command .= " --stat_file ".escapeshellarg($cfg["transfer_file_path"].$this->alias.".stat");
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
-		//$this->command .= " --language en";
 		$this->command .= " --die_when_done ".escapeshellarg($this->runtime);
 		$this->command .= " --seed_limit ".escapeshellarg($this->sharekill_param);
 		if ($this->drate != 0)
@@ -114,15 +108,15 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " --max_initiate ".escapeshellarg($this->maxcons);
 		if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($this->transfer) > 0))
 			$this->command .= " --no_check_hashes";
-		if (strlen($this->cfg["btclient_mainline_options"]) > 0)
-			$this->command .= " ".$this->cfg["btclient_mainline_options"];
-		$this->command .= " ".escapeshellarg($this->cfg["transfer_file_path"].$this->transfer);
+		if (strlen($cfg["btclient_mainline_options"]) > 0)
+			$this->command .= " ".$cfg["btclient_mainline_options"];
+		$this->command .= " ".escapeshellarg($cfg["transfer_file_path"].$this->transfer);
         $this->command .= " 1>> ".escapeshellarg($this->logFile);
         $this->command .= " 2>> ".escapeshellarg($this->logFile);
         $this->command .= " &";
 
 		// start the client
-		parent::doStartClient();
+		$this->execStart(true, true);
     }
 
     /**
@@ -130,13 +124,14 @@ class ClientHandlerMainline extends ClientHandler
      *
      * @param $transfer name of the transfer
      * @param $aliasFile alias-file of the transfer
+     * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
-     * @param $return return-param (optional)
      */
-    function stopClient($transfer, $aliasFile, $transferPid = "", $return = "") {
-        $this->pidFile = $this->cfg["transfer_file_path"].$aliasFile.".pid";
+    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
+    	global $cfg;
+        $this->pidFile = $cfg["transfer_file_path"].$aliasFile.".pid";
         // stop the client
-        parent::doStopClient($transfer, $aliasFile, $transferPid, $return);
+        $this->execStop($transfer, $aliasFile, $kill, $transferPid);
     }
 
     /**

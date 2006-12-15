@@ -402,15 +402,15 @@ class MaintenanceAndRepair
 	                setPriority($transfer);
 	            }
 				// clientHandler + start
-				$clientHandler = ClientHandler::getInstance($this->_cfg, $settingsAry['btclient']);
-				$clientHandler->startClient($transfer, 0, FluxdQmgr::isRunning());
+				$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+				$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
 				// DEBUG : log the restart of the died transfer
 				if ($this->_cfg['debuglevel'] > 0) {
-					$staret = ($clientHandler->state == 3) ? "OK" : "FAILED";
+					$staret = ($clientHandler->state == CLIENTHANDLER_STATE_OK) ? "OK" : "FAILED";
 					AuditAction($this->_cfg["constants"]["debug"], "transfers-maintenance : restarted transfer ".$transfer." for ".$whoami." : ".$staret);
 				}
 				//
-				if ($clientHandler->state == 3) {
+				if ($clientHandler->state == CLIENTHANDLER_STATE_OK) {
 					// output
 					$this->_outputMessage("done.\n");
 					// add to ary
@@ -418,8 +418,8 @@ class MaintenanceAndRepair
 					// count
 					$this->_countFixed++;
 				} else {
-		            array_push($this->messages , $clientHandler->messages);
-					$this->_outputError($clientHandler->messages."\n");
+					$this->messages = array_merge($this->messages, $clientHandler->messages);
+					$this->_outputError(implode("\n", $clientHandler->messages)."\n");
 				}
 			}
 			// set user back

@@ -185,13 +185,13 @@ function cliStartTransfer($transfer = "") {
 				setPriority($transfer);
 			}
 			// clientHandler
-			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
+			$clientHandler = ClientHandler::getInstance($btclient);
 			// force start, dont queue
-			$clientHandler->startClient($transfer, 0, false);
-			if ($clientHandler->state == 3) /* hooray */
+			$clientHandler->start($transfer, false, false);
+			if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
 				printMessage("fluxcli.php", "done.\n");
 			else
-				printError("fluxcli.php", $clientHandler->messages."\n");
+				printError("fluxcli.php", "messages:\n".implode("\n", $clientHandler->messages)."\n");
 		} else {
 			printError("fluxcli.php", "Transfer already running.\n");
 		}
@@ -219,12 +219,12 @@ function cliStartTransfers() {
                 // Process setPriority Request.
                 setPriority($transfer);
             }
-            $clientHandler = ClientHandler::getInstance($cfg,$btclient);
-            $clientHandler->startClient($transfer, 0, false);
-			if ($clientHandler->state == 3) /* hooray */
+            $clientHandler = ClientHandler::getInstance($btclient);
+            $clientHandler->start($transfer, false, false);
+			if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
 				printMessage("fluxcli.php", "done.\n");
 			else
-				printError("fluxcli.php", $clientHandler->messages."\n");
+				printError("fluxcli.php", "messages:\n".implode("\n", $clientHandler->messages)."\n");
         }
 	}
 }
@@ -247,12 +247,12 @@ function cliResumeTransfers() {
                 // Process setPriority Request.
                 setPriority($transfer);
             }
-            $clientHandler = ClientHandler::getInstance($cfg,$btclient);
-            $clientHandler->startClient($transfer, 0, false);
-			if ($clientHandler->state == 3) /* hooray */
+            $clientHandler = ClientHandler::getInstance($btclient);
+            $clientHandler->start($transfer, false, false);
+			if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
 				printMessage("fluxcli.php", "done.\n");
 			else
-				printError("fluxcli.php", $clientHandler->messages."\n");
+				printError("fluxcli.php", "messages:\n".implode("\n", $clientHandler->messages)."\n");
         }
 	}
 }
@@ -284,8 +284,8 @@ function cliStopTransfer($transfer = "") {
 			$btclient = getTransferClient($transfer);
 			$cfg["user"] = getOwner($transfer);
 			$alias = getAliasName($transfer).".stat";
-			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
-            $clientHandler->stopClient($transfer,$alias);
+			$clientHandler = ClientHandler::getInstance($btclient);
+            $clientHandler->stop($transfer, $alias);
 			printMessage("fluxcli.php", "done.\n");
 		}
 	} else {
@@ -325,8 +325,8 @@ function cliDeleteTransfer($transfer = "") {
     	$alias = getAliasName($transfer).".stat";
 		if ($tRunningFlag == 1) {
 			// stop transfer first
-			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
-			$clientHandler->stopClient($transfer, $alias);
+			$clientHandler = ClientHandler::getInstance($btclient);
+			$clientHandler->stop($transfer, $alias);
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
@@ -356,8 +356,8 @@ function cliWipeTransfer($transfer = "") {
 		$alias = getAliasName($transfer).".stat";
 		if ($tRunningFlag == 1) {
 			// stop transfer first
-			$clientHandler = ClientHandler::getInstance($cfg,$btclient);
-			$clientHandler->stopClient($transfer, $alias);
+			$clientHandler = ClientHandler::getInstance($btclient);
+			$clientHandler->stop($transfer, $alias);
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
@@ -449,12 +449,12 @@ function cliWatchDir($tpath = "", $username = "") {
                                 setPriority($file_name);
                             }
                             // start
-                            $clientHandler = ClientHandler::getInstance($cfg);
-                            $clientHandler->startClient($file_name, 0, false);
-                            if ($clientHandler->state == 3) /* hooray */
+                            $clientHandler = ClientHandler::getInstance();
+                            $clientHandler->start($file_name, false, false);
+                            if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
                             	printMessage("fluxcli.php", "done.\n");
                             else
-                            	printError("fluxcli.php", $clientHandler->messages."\n");
+                            	printError("fluxcli.php", "messages:\n".implode("\n", $clientHandler->messages)."\n");
                         } else {
                         	printError("fluxcli.php", "ERROR: File could not be found or could not be copied: ".$watchDir.$file."\n");
                         }

@@ -1,7 +1,7 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_include name="inc.adminmenu.tmpl">
-<tmpl_if name="new_msg">
+<tmpl_if name="message">
 	<table cellpadding="5" cellspacing="0" border="0" width="100%">
 		<tr>
 			<td align="center" bgcolor="<tmpl_var name="table_header_bg">">
@@ -465,40 +465,5 @@
 			</tr>
 		</table>
 	</div>
-	<tmpl_if name="showTransfers" value="1">
-		<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
-			<tr>
-				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
-					<table width="100%" cellpadding=0 cellspacing=0 border=0>
-						<tr>
-							<td><img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Queued Items </font></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_TIMESTAMP"></div></td>
-			</tr>
-			</table>
-			<table width="760" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
-			<tr>
-				<td colspan=6 bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
-					<table width="100%" cellpadding=0 cellspacing=0 border=0>
-						<tr>
-							<td><img src="themes/tf_standard_themes/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title"> Running Items </font></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-			<tr>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="15%"><div align=center class="title"><tmpl_var name="_USER"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">"><div align=center class="title"><tmpl_var name="_FILE"></div></td>
-				<td bgcolor="<tmpl_var name="table_header_bg">" width="1%"><div align=center class="title"><tmpl_var name="_FORCESTOP"></div></td>
-			</tr>
-			<tmpl_var name="output">
-		</table>
-	</tmpl_if>
 </div>
 <tmpl_include name="inc.subfoot.tmpl">

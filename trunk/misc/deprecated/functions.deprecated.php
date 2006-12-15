@@ -936,4 +936,267 @@ function FetchHTML($url, $referer = "") {
 	return $responseBody;
 }
 
+/**
+ * get info of running clients (via call to ps)
+ *
+ * @param $handlerName
+ * @param $binSystem
+ * @param $binClient
+ * @return string
+ */
+function getRunningClientProcessInfo($handlerName, $binSystem, $binClient) {
+	global $cfg;
+    // ps-string
+    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ". $binClient ." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
+    $arScreen = array();
+    $tok = strtok($screenStatus, "\n");
+    while ($tok) {
+        array_push($arScreen, $tok);
+        $tok = strtok("\n");
+    }
+    $cProcess = array();
+    $cpProcess = array();
+    $pProcess = array();
+    $ProcessCmd = array();
+    for($i = 0; $i < sizeof($arScreen); $i++) {
+        if(strpos($arScreen[$i], $binClient) !== false) {
+            $pinfo = new ProcessInfo($arScreen[$i]);
+            if (intval($pinfo->ppid) == 1) {
+                if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
+                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
+                        array_push($pProcess,$pinfo->pid);
+                        $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $handlerName);
+                        array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
+                    }
+                }
+            } else {
+                if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
+                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
+                        array_push($cProcess,$pinfo->pid);
+                        array_push($cpProcess,$pinfo->ppid);
+                    }
+                }
+            }
+        }
+    }
+    $retVal  = " --- Running Processes ---\n";
+    $retVal .= " Parents  : " . count($pProcess) . "\n";
+    $retVal .= " Children : " . count($cProcess) . "\n";
+    $retVal .= "\n";
+    $retVal .= " PID \tOwner\tTransfer File\n";
+    foreach($pProcess as $key => $value) {
+        $retVal .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
+        foreach($cpProcess as $cKey => $cValue)
+            if (intval($value) == intval($cValue))
+                $retVal .= "\t" . $cProcess[$cKey] . "\n";
+    }
+    $retVal .= "\n";
+    return $retVal;
+}
+
+/**
+ * gets ary of running clients (via call to ps)
+ *
+ * @param $clientType
+ * @return array
+ */
+function getRunningClientProcesses($clientType = '') {
+	global $cfg;
+	// client-array
+	$clients = ($clientType == '')
+		? array('tornado', 'transmission', 'mainline', 'wget')
+		: array($clientType);
+	// get clients
+	$retAry = array();
+	foreach ($clients as $client) {
+		// client-handler
+		$clientHandler = ClientHandler::getInstance($cfg, $client);
+		$binClient = $clientHandler->binClient;
+		$binSystem = $clientHandler->binSystem;
+	    // ps-string
+	    $screenStatus = shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww | ".$cfg['bin_grep']." ".$binClient." | ".$cfg['bin_grep']." ".$cfg["transfer_file_path"]." | ".$cfg['bin_grep']." -v grep");
+	    $arScreen = array();
+	    $tok = strtok($screenStatus, "\n");
+	    while ($tok) {
+	        array_push($arScreen, $tok);
+	        $tok = strtok("\n");
+	    }
+	    $arySize = sizeof($arScreen);
+		for ($i = 0; $i < $arySize; $i++) {
+			if(strpos($arScreen[$i], $binClient) !== false) {
+				$pinfo = new ProcessInfo($arScreen[$i]);
+				if (intval($pinfo->ppid) == 1) {
+					if (!strpos($pinfo->cmdline, "rep ". $binSystem) > 0) {
+						if (!strpos($pinfo->cmdline, "ps x") > 0) {
+							// array_push($retAry, $pinfo->pid." ".$pinfo->cmdline);
+							array_push($retAry, array($pinfo->pid." ".$pinfo->cmdline, $client));
+						}
+					}
+				}
+	        }
+	    }
+	}
+	// return
+	return $retAry;
+}
+
+/**
+ * gets totals of a transfer
+ *
+ * @param $transfer name of the transfer
+ * @param $tid of the transfer
+ * @param $tclient client of the transfer
+ * @param $afu alias-file-uptotal of the transfer
+ * @param $afd alias-file-downtotal of the transfer
+ * @return array with transfer-totals
+ */
+function getTransferTotalsOP($transfer, $tid, $tclient, $afu, $afd) {
+	$clientHandler = ClientHandler::getInstance($tclient);
+	return $clientHandler->getTransferTotalOP($transfer, $tid, $afu, $afd);
+}
+
+/**
+ * gets current totals of a transfer
+ *
+ * @param $transfer name of the transfer
+ * @param $tid of the transfer
+ * @param $tclient client of the transfer
+ * @param $afu alias-file-uptotal of the transfer
+ * @param $afd alias-file-downtotal of the transfer
+ * @return array with transfer-totals
+ */
+function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
+	$clientHandler = ClientHandler::getInstance($tclient);
+	return $clientHandler->getTransferCurrentOP($transfer, $tid, $afu, $afd);
+}
+
+/**
+ * updates totals of a transfer
+ *
+ * @param $transfer name of the transfer
+ * @param $uptotal uptotal of the transfer
+ * @param $downtotal downtotal of the transfer
+ */
+function updateTransferTotals($transfer) {
+	global $db;
+	$torrentId = getTorrentHash($transfer);
+	$transferTotals = getTransferTotals($transfer);
+	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
+	$result = $db->Execute($sql);
+	showError($db, $sql);
+	$row = $result->FetchRow();
+	if (!empty($row)) {
+		$sql = "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$torrentId."'";
+		$db->Execute($sql);
+	} else {
+		$sql = "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal )
+					VALUES (
+					'".$torrentId."',
+					'".$transferTotals["uptotal"]."',
+					'".$transferTotals["downtotal"]."'
+				   )";
+		$db->Execute($sql);
+	}
+	showError($db, $sql);
+}
+
+/**
+ * gets totals of a transfer
+ *
+ * @param $transfer name of the transfer
+ * @return array with transfer-totals
+ */
+function getTransferTotals($transfer) {
+	if ((substr(strtolower($transfer), -8) == ".torrent")) {
+		// this is a torrent-client
+		$tclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getInstance($tclient);
+	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+		// this is wget.
+		$clientHandler = ClientHandler::getInstance('wget');
+	} else {
+		$clientHandler = ClientHandler::getInstance('tornado');
+	}
+	return $clientHandler->getTransferTotal($transfer);
+}
+
+/**
+ * gets current totals of a transfer
+ *
+ * @param $transfer name of the transfer
+ * @return array with transfer-totals
+ */
+function getTransferTotalsCurrent($transfer) {
+	if ((substr( strtolower($transfer), -8) == ".torrent")) {
+		// this is a torrent-client
+		$tclient = getTransferClient($transfer);
+		$clientHandler = ClientHandler::getInstance($tclient);
+	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+		// this is wget.
+		$clientHandler = ClientHandler::getInstance('wget');
+	} else {
+		$clientHandler = ClientHandler::getInstance('tornado');
+	}
+	return $clientHandler->getTransferCurrent($transfer);
+}
+
+/**
+ * deletes a transfer
+ *
+ * @param $transfer name of the transfer
+ * @param $alias_file alias-file of the transfer
+ * @return boolean of success
+ */
+function deleteTransfer($transfer, $alias_file) {
+	global $cfg;
+	$transferowner = getOwner($transfer);
+	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$btclient = getTransferClient($transfer);
+			$af = new AliasFile($alias_file, $transferowner);
+			// update totals for this torrent
+			updateTransferTotals($transfer);
+			// remove torrent-settings from db
+			deleteTorrentSettings($transfer);
+			// client-proprietary leftovers
+			$clientHandler = ClientHandler::getInstance($btclient);
+			$clientHandler->deleteCache($transfer);
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			$af = new AliasFile($alias_file, $transferowner);
+		} else {
+			// this is "something else". use tornado statfile as default
+			$af = new AliasFile($alias_file, $cfg["user"]);
+		}
+		if ($cfg['enable_xfer'] != 0) {
+			// XFER: before torrent deletion save upload/download xfer data to SQL
+			$transferTotals = getTransferTotalsCurrent($transfer);
+			saveXfer($transferowner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
+		}
+		// alias-name
+		$aliasName = getAliasName($transfer);
+		// torrent+stat
+		@unlink($cfg["transfer_file_path"].$transfer);
+		@unlink($cfg["transfer_file_path"].$alias_file);
+		// if exist remove pid file
+		$pidFile = $cfg["transfer_file_path"].$alias_file.".pid";
+		if (file_exists($pidFile))
+			@unlink($pidFile);
+		// if exist remove prio-file
+		$prioFile = $cfg["transfer_file_path"].$aliasName.".prio";
+		if (file_exists($prioFile))
+			@unlink($prioFile);
+		// if exist remove log-file
+		$logFile = $cfg["transfer_file_path"].$aliasName.".log";
+		if (file_exists($logFile))
+			@unlink($logFile);
+		AuditAction($cfg["constants"]["delete_torrent"], $transfer);
+		return true;
+	} else {
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
+		return false;
+	}
+}
+
 ?>
