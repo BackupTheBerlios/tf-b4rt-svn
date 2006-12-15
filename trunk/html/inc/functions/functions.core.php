@@ -45,8 +45,7 @@ function initializeDatabase() {
     	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     // check for error
     if ($db->ErrorNo() != 0) {
-    	global $argv;
-    	if (isset($argv))
+    	if (empty($_REQUEST))
     		die("Error.\nCould not connect to database.\nCheck your database settings in the file config.db.php.\n");
     	else
     		showErrorPage("Could not connect to database.<br>Check your database settings in the file <em>config.db.php</em>.");
@@ -77,8 +76,7 @@ function getdb() {
 function showError($db, $sql) {
 	global $cfg;
 	if ($db->ErrorNo() != 0) {
-		global $argv;
-    	if (isset($argv)) {
+    	if (empty($_REQUEST)) {
     		$dieMessage = "Database-Error :\n";
     		$dieMessage .= $db->ErrorMsg();
     		if ($cfg["debug_sql"] == 1)

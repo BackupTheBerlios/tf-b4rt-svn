@@ -156,8 +156,7 @@ class MaintenanceAndRepair
             return false;
         }
         // cli/web
-		global $argv;
-		$this->_mode = (isset($argv))
+		$this->_mode = (empty($_REQUEST))
 			? MAINTENANCEANDREPAIR_MODE_CLI
 			: MAINTENANCEANDREPAIR_MODE_WEB;
     }

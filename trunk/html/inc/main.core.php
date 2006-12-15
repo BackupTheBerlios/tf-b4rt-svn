@@ -108,7 +108,7 @@ if (is_file('inc/config/config.db.php')) {
 } else {
 
 	// die in cli-mode, send redir in webapp
-    if (isset($argv)) {
+    if (empty($_REQUEST)) {
     	die("Error.\nCould not find database-settings-file config.db.php.\n");
     } else {
 		// redir to login ... (which may redir to upgrade.php / setup.php)

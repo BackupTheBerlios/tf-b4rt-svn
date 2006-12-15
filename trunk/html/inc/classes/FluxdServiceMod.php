@@ -125,9 +125,9 @@ class FluxdServiceMod
                 FluxdMaintenance::initialize();
                 return;
             default:
-            	global $cfg, $argv;
+            	global $cfg;
             	AuditAction($cfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$type);
-    			if (isset($argv))
+    			if (empty($_REQUEST))
     				die("Invalid FluxdServiceMod-Class : ".$type);
     			else
     				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($type, ENT_QUOTES));

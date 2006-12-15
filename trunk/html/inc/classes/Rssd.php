@@ -176,8 +176,7 @@ class Rssd
             return false;
         }
         // cli/web
-		global $argv;
-		$this->_mode = (isset($argv))
+		$this->_mode = (empty($_REQUEST))
 			? RSSD_MODE_CLI
 			: RSSD_MODE_WEB;
         // init lastRSS-instance

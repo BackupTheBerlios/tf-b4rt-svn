@@ -61,8 +61,7 @@ class RunningTransfer
                 return new RunningTransferWget($psLine);
             default:
             	AuditAction($cfg["constants"]["error"], "Invalid RunningTransfer-Type : ".$clientType);
-				global $argv;
-    			if (isset($argv))
+    			if (empty($_REQUEST))
     				die("Invalid RunningTransfer-Type : ".$clientType);
     			else
     				showErrorPage("Invalid RunningTransfer-Type : <br>".$clientType);
