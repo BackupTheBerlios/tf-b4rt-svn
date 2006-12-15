@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../index.php");
+	@header("location: ../../index.php");
 	exit();
 }
 
@@ -61,7 +61,7 @@ switch ($op) {
 			AddProfileInfo($newProfile);
 			AuditAction( $cfg["constants"]["admin"], "New Profile: " . $newProfile["name"] );
 		}
-		header( "location: index.php?iid=profile&op=showProfiles" );
+		@header( "location: index.php?iid=profile&op=showProfiles" );
 		exit();
 
 //******************************************************************************
@@ -85,7 +85,7 @@ switch ($op) {
 		$pid = getRequestVar('pid');
 		modProfileInfo($pid,$newProfile);
 		AuditAction($cfg["constants"]["admin"], "Modified Profile: ".$newProfile["name"]);
-		header("location: index.php?iid=profile&op=showProfiles");
+		@header("location: index.php?iid=profile&op=showProfiles");
 		exit();
 
 //******************************************************************************
@@ -96,7 +96,7 @@ switch ($op) {
 		$profile = getProfile($pid);
 		deleteProfileInfo($pid);
 		AuditAction( $cfg["constants"]["admin"], $cfg['_DELETE'] . " Profile: " . $profile["name"] );
-		header("location: index.php?iid=profile&op=showProfiles" );
+		@header("location: index.php?iid=profile&op=showProfiles" );
 		exit();
 
 //******************************************************************************
@@ -107,7 +107,7 @@ switch ($op) {
 		//$settings = processSettingsParams(true,true);
 		//saveUserSettings($cfg["uid"],$settings);
 		AuditAction($cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
-		header( "location: index.php?iid=profile" );
+		@header( "location: index.php?iid=profile" );
 		exit();
 
 //******************************************************************************
@@ -120,7 +120,7 @@ switch ($op) {
 			AddCookieInfo($newCookie);
 			AuditAction($cfg["constants"]["admin"], "New Cookie: " . $newCookie["host"] . " | " . $newCookie["data"]);
 		}
-		header("location: index.php?iid=profile&op=showCookies");
+		@header("location: index.php?iid=profile&op=showCookies");
 		exit();
 
 //******************************************************************************
@@ -131,7 +131,7 @@ switch ($op) {
 		$cookie = getCookie($cid);
 		deleteCookieInfo($cid);
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE'] . " Cookie: " . $cookie["host"]);
-		header("location: index.php?iid=profile&op=showCookies");
+		@header("location: index.php?iid=profile&op=showCookies");
 		exit();
 
 //******************************************************************************
@@ -143,7 +143,7 @@ switch ($op) {
 		$cid = getRequestVar('cid');
 		modCookieInfo($cid,$newCookie);
 		AuditAction($cfg["constants"]["admin"], "Modified Cookie: ".$newCookie["host"]." | ".$newCookie["data"]);
-		header("location: index.php?iid=profile&op=showCookies");
+		@header("location: index.php?iid=profile&op=showCookies");
 		exit();
 
 

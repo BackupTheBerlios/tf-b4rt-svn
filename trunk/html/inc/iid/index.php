@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../index.php");
+	@header("location: ../../index.php");
 	exit();
 }
 
@@ -457,9 +457,9 @@ if ($isAjaxUpdate) {
 		$content .= $tmpl->grab();
 	}
 	// send and out
-    header("Cache-Control: ");
-    header("Pragma: ");
-	header("Content-Type: text/plain");
+    @header("Cache-Control: ");
+    @header("Pragma: ");
+	@header("Content-Type: text/plain");
 	echo $content;
 	exit();
 }

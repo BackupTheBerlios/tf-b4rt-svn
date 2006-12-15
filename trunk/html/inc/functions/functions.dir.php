@@ -157,12 +157,12 @@ function downloadFile($down) {
 					if (empty($to))
 						$to = $filesize - 1;
 					$content_size = $to - $from + 1;
-					header("HTTP/1.1 206 Partial Content");
-					header("Content-Range: $from - $to / $filesize");
-					header("Content-Length: $content_size");
-					header("Content-Type: application/force-download");
-					header("Content-Disposition: attachment; filename=\"".$headerName."\"");
-					header("Content-Transfer-Encoding: binary");
+					@header("HTTP/1.1 206 Partial Content");
+					@header("Content-Range: $from - $to / $filesize");
+					@header("Content-Length: $content_size");
+					@header("Content-Type: application/force-download");
+					@header("Content-Disposition: attachment; filename=\"".$headerName."\"");
+					@header("Content-Transfer-Encoding: binary");
 					$fh = fopen($path, "rb");
 					fseek($fh, $from);
 					$cur_pos = ftell($fh);
@@ -176,15 +176,15 @@ function downloadFile($down) {
 					fclose($fh);
 				} else {
 					AuditAction($cfg["constants"]["error"], "Partial download : ".$cfg["user"]." tried to download ".$down);
-					header("HTTP/1.1 500 Internal Server Error");
+					@header("HTTP/1.1 500 Internal Server Error");
 					exit();
 				}
 			} else {
 				// standard download
-				header("Content-type: application/octet-stream\n");
-				header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
-				header("Content-transfer-encoding: binary\n");
-				header("Content-length: " . $filesize . "\n");
+				@header("Content-type: application/octet-stream\n");
+				@header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
+				@header("Content-transfer-encoding: binary\n");
+				@header("Content-length: " . $filesize . "\n");
 				// write the session to close so you can continue to browse on the site.
 				@session_write_close();
 				$fp = popen("cat ".escapeshellarg($path), "r");
@@ -250,10 +250,10 @@ function downloadArchive($down) {
 			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 				? preg_replace('/\./', '%2e', $sendname, substr_count($sendname, '.') - 1)
 				: $sendname;
-			header("Pragma: no-cache");
-			header("Content-Description: File Transfer");
-			header("Content-Type: application/force-download");
-			header('Content-Disposition: attachment; filename="'.$headerName.'.'.$cfg["package_type"].'"');
+			@header("Pragma: no-cache");
+			@header("Content-Description: File Transfer");
+			@header("Content-Type: application/force-download");
+			@header('Content-Disposition: attachment; filename="'.$headerName.'.'.$cfg["package_type"].'"');
 			// write the session to close so you can continue to browse on the site.
 			@session_write_close();
 			// Make it a bit easier for tar/zip.

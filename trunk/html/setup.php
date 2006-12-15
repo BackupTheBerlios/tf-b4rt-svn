@@ -118,7 +118,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			send('</form>');
 		}
 	} else {
-		header("location: setup.php?11");
+		@header("location: setup.php?11");
 		exit();
 	}
 } elseif (isset($_REQUEST["13"])) {                                             // 13 - Database - config

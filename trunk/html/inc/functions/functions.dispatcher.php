@@ -50,7 +50,7 @@ function indexStartTransfer($transfer) {
 			$clientHandler = ClientHandler::getInstance('wget');
 			$clientHandler->start($transfer, false, false);
 			sleep(3);
-			header("location: index.php?iid=index");
+			@header("location: index.php?iid=index");
 			exit();
 		}
 	} else {
@@ -134,7 +134,7 @@ function indexDeleteTransfer($transfer) {
 	if (isValidTransfer($transfer) === true) {
 		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		$clientHandler->delete($transfer);
-		header("location: index.php?iid=index");
+		@header("location: index.php?iid=index");
 		exit();
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Delete : ".$cfg["user"]." tried to delete ".$transfer);
@@ -151,7 +151,7 @@ function indexDeQueueTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
 		FluxdQmgr::dequeueTransfer($transfer, $cfg['user']);
-		header("location: index.php?iid=index");
+		@header("location: index.php?iid=index");
 		exit();
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for DeQueue : ".$cfg["user"]." tried to deQueue ".$transfer);
@@ -244,7 +244,7 @@ function indexProcessDownload($url_upload) {
 		}
 		if ($messages != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
-			header("location: index.php?iid=index&messages=".urlencode($messages));
+			@header("location: index.php?iid=index&messages=".urlencode($messages));
 			exit();
 		} else {
 			AuditAction($cfg["constants"]["url_upload"], $file_name);
@@ -268,7 +268,7 @@ function indexProcessDownload($url_upload) {
 						break;
 				}
 			}
-			header("location: index.php?iid=index");
+			@header("location: index.php?iid=index");
 			exit();
 		}
 	}
@@ -330,10 +330,10 @@ function indexProcessUpload() {
 	}
 	if ($messages != "") { // there was an error
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
-		header("location: index.php?iid=index&messages=".urlencode($messages));
+		@header("location: index.php?iid=index&messages=".urlencode($messages));
 		exit();
 	} else {
-		header("location: index.php?iid=index");
+		@header("location: index.php?iid=index");
 		exit();
 	}
 }
@@ -413,14 +413,14 @@ function processFileUpload() {
 		}
 		if ((isset($messages)) && ($messages == "")) {
 			// back to index if no errors
-			header("location: index.php?iid=index");
+			@header("location: index.php?iid=index");
 			exit();
 		} else {
 			// push errors to referrer
 			if (isset($_SERVER["HTTP_REFERER"]))
-				header("location: ".$_SERVER["HTTP_REFERER"]."&messages=".urlencode($messages));
+				@header("location: ".$_SERVER["HTTP_REFERER"]."&messages=".urlencode($messages));
 			else
-				header("location: index.php?iid=index&messages=".urlencode($messages));
+				@header("location: index.php?iid=index&messages=".urlencode($messages));
 			exit();
 		}
 	}

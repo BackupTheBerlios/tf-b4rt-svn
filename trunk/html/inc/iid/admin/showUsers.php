@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../../index.php");
+	@header("location: ../../../index.php");
 	exit();
 }
 

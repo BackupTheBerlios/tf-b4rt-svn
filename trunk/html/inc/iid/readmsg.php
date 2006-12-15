@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../index.php");
+	@header("location: ../../index.php");
 	exit();
 }
 
@@ -37,7 +37,7 @@ if (isset($_REQUEST['delete'])) {
 	$delete = getRequestVar('delete');
 	if (!empty($delete))
 		DeleteMessage($delete);
-	header("location: index.php?iid=readmsg");
+	@header("location: index.php?iid=readmsg");
 	exit();
 }
 

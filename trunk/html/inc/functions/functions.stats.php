@@ -68,7 +68,7 @@ Examples :
 
 	';
     // send content
-    header("Content-Type: text/plain");
+    @header("Content-Type: text/plain");
     echo $content;
     exit();
 }
@@ -81,22 +81,22 @@ Examples :
 function sendContent($content, $contentType, $fileName) {
 	global $cfg, $sendAsAttachment, $sendCompressed;
     // send content
-    header("Cache-Control: ");
-    header("Pragma: ");
+    @header("Cache-Control: ");
+    @header("Pragma: ");
     if ($sendCompressed != 0) {
     	$contentCompressed = gzdeflate($content, $cfg['stats_deflate_level']);
-		header("Content-Type: application/octet-stream");
+		@header("Content-Type: application/octet-stream");
 		if ($sendAsAttachment != 0) {
-			header("Content-Length: " .(string)(strlen($contentCompressed)) );
-			header('Content-Disposition: attachment; filename="'.$fileName.'"');
+			@header("Content-Length: " .(string)(strlen($contentCompressed)) );
+			@header('Content-Disposition: attachment; filename="'.$fileName.'"');
 		}
-		header("Content-Transfer-Encoding: binary\n");
+		@header("Content-Transfer-Encoding: binary\n");
 		echo $contentCompressed;
     } else {
-	    header("Content-Type: ".$contentType);
+	    @header("Content-Type: ".$contentType);
 	    if ($sendAsAttachment != 0) {
-	        header("Content-Length: ".(string)strlen($content));
-	        header('Content-Disposition: attachment; filename="'.$fileName.'"');
+	        @header("Content-Length: ".(string)strlen($content));
+	        @header('Content-Disposition: attachment; filename="'.$fileName.'"');
 	    }
 	    echo $content;
     }

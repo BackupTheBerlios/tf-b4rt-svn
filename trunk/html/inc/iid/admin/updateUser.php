@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../../index.php");
+	@header("location: ../../../index.php");
 	exit();
 }
 
@@ -44,7 +44,7 @@ if (!(IsUser($user_id) && ($user_id != $org_user_id))) {
 	}
 	updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline);
 	AuditAction($cfg["constants"]["admin"], $cfg['_EDITUSER'].": ".$user_id);
-	header("location: admin.php");
+	@header("location: admin.php");
 	exit();
 }
 

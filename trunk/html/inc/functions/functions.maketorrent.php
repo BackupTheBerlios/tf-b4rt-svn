@@ -36,12 +36,12 @@ function downloadTorrent($tfile) {
 				: $tfile;
 			// Prompt the user to download file.
 			if ((substr(strtolower($tfile), -8) == ".torrent"))
-				header("Content-type: application/x-bittorrent\n");
+				@header("Content-type: application/x-bittorrent\n");
 			else
-				header( "Content-type: application/octet-stream\n" );
-			header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
-			header("Content-transfer-encoding: binary\n");
-			header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
+				@header( "Content-type: application/octet-stream\n" );
+			@header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
+			@header("Content-transfer-encoding: binary\n");
+			@header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
 			// Send the file
 			$fp = @fopen($cfg["transfer_file_path"].$tfile, "r");
 			@fpassthru($fp);

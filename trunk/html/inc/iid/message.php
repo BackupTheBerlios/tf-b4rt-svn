@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../index.php");
+	@header("location: ../../index.php");
 	exit();
 }
 
@@ -36,7 +36,7 @@ require_once('inc/functions/functions.common.php');
 $to_user = getRequestVar('to_user');
 if (empty($to_user) or empty($cfg["user"])) {
 	 // the user probably hit this page direct
-	header("location: index.php?iid=index");
+	@header("location: index.php?iid=index");
 	exit();
 }
 
@@ -47,7 +47,7 @@ if (!empty($message)) {
 	$force_read_r = getRequestVar('force_read');
 	$message = check_html($message, "nohtml");
 	SaveMessage($to_user, $cfg["user"], htmlentities($message), (empty($to_all_r)) ? 0 : 1, (!empty($force_read_r) && $cfg['isAdmin']) ? 1 : 0);
-	header("location: index.php?iid=readmsg");
+	@header("location: index.php?iid=readmsg");
 	exit();
 }
 

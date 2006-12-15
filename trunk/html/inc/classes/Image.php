@@ -123,7 +123,7 @@ class Image
      * paint
      */
     function paint() {
-    	header("Content-type: ".$this->contentTypes[$this->type]);
+    	@header("Content-type: ".$this->contentTypes[$this->type]);
 		switch ($this->type) {
 			case IMG_GIF:
 				imagegif($this->image);
@@ -226,9 +226,9 @@ function imagePaintNoOp() {
  * @param $len
  */
 function imagePaint($type, $data, $len) {
-	header('Accept-Ranges: bytes');
-    header('Content-Length: '.$len);
-    header('Content-Type: '.$type);
+	@header('Accept-Ranges: bytes');
+    @header('Content-Length: '.$len);
+    @header('Content-Type: '.$type);
     echo $data;
     exit();
 }
@@ -298,7 +298,7 @@ function imagePaintLabelFromImage($bgimage, $label,
 			if ($img !== false) {
 				$textcolor = imagecolorallocate($img, $r, $g, $b);
 				imagestring($img, $font, $x, $y, $label, $textcolor);
-				header("Content-type: image/gif");
+				@header("Content-type: image/gif");
 				imagegif($img);
 				imagedestroy($img);
 				exit();
@@ -310,7 +310,7 @@ function imagePaintLabelFromImage($bgimage, $label,
 			if ($imp !== false) {
 				$textcolor = imagecolorallocate($imp, $r, $g, $b);
 				imagestring($imp, $font, $x, $y, $label, $textcolor);
-				header("Content-type: image/png");
+				@header("Content-type: image/png");
 				imagepng($imp);
 				imagedestroy($imp);
 				exit();
@@ -322,7 +322,7 @@ function imagePaintLabelFromImage($bgimage, $label,
 			if ($imj !== false) {
 				$textcolor = imagecolorallocate($imj, $r, $g, $b);
 				imagestring($imj, $font, $x, $y, $label, $textcolor);
-				header("Content-type: image/jpeg");
+				@header("Content-type: image/jpeg");
 				imagejpeg($imj, '', 75);
 				imagedestroy($imj);
 				exit();

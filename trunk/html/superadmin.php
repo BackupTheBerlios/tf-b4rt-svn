@@ -1169,7 +1169,7 @@ if (isset($_REQUEST["z"])) {
 			case "4": // Issues
 				$issueText = "Error getting issues";
 				$issueText = @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=2"));
-				header("Content-Type: text/plain");
+				@header("Content-Type: text/plain");
 				echo $issueText;
 				exit();
 				break;
@@ -1196,7 +1196,7 @@ exit();
  */
 function superadminAuthentication($message = "") {
 	if (! IsSuperAdmin()) {
-		header("Content-Type: text/plain");
+		@header("Content-Type: text/plain");
 		echo "\nAccess Error"."\n\n";
 		if ((isset($message)) && ($message != ""))
 			echo $message."\n";
@@ -1459,7 +1459,7 @@ function updateError($message = "") {
 	$errorString = "ERROR processing auto-update. please do manual update.";
 	if ((isset($message)) && ($message != ""))
 		$errorString .= "\n".$message;
-	header("Content-Type: text/plain");
+	@header("Content-Type: text/plain");
 	echo $errorString;
 	exit();
 }
@@ -1873,12 +1873,12 @@ function backupSend($filename, $delete = false) {
 	if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 		$filename = preg_replace('/\./', '%2e', $filename, substr_count($filename, '.') - 1);
 	// send data
-	header("Cache-Control: ");
-	header("Pragma: ");
-	header("Content-Type: application/octet-stream");
-	header("Content-Length: " .(string)(filesize($backupFile)) );
-	header('Content-Disposition: attachment; filename="'.$filename.'"');
-	header("Content-Transfer-Encoding: binary\n");
+	@header("Cache-Control: ");
+	@header("Pragma: ");
+	@header("Content-Type: application/octet-stream");
+	@header("Content-Length: " .(string)(filesize($backupFile)) );
+	@header('Content-Disposition: attachment; filename="'.$filename.'"');
+	@header("Content-Transfer-Encoding: binary\n");
 	if ($delete) { // read data to mem, delete file and send complete
 		$data = getDataFromFile($backupFile);
 		@unlink($backupFile);

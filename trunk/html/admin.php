@@ -33,7 +33,7 @@ require_once('inc/functions/functions.admin.php');
 if ((!isset($cfg['isAdmin'])) || (!$cfg['isAdmin'])) {
 	 // the user probably hit this page direct
 	AuditAction($cfg["constants"]["access_denied"], $_SERVER['PHP_SELF']);
-	header("location: index.php?iid=index");
+	@header("location: index.php?iid=index");
 }
 
 // op-arg
@@ -53,7 +53,7 @@ switch ($op) {
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Server Settings");
 		$continue = getRequestVar('continue');
-		header("location: admin.php?op=serverSettings");
+		@header("location: admin.php?op=serverSettings");
 		exit();
 
 	case "updateTransferSettings":
@@ -61,7 +61,7 @@ switch ($op) {
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Transfer Settings");
 		$continue = getRequestVar('continue');
-		header("location: admin.php?op=transferSettings");
+		@header("location: admin.php?op=transferSettings");
 		exit();
 
 	case "updateWebappSettings":
@@ -69,21 +69,21 @@ switch ($op) {
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating WebApp Settings");
 		$continue = getRequestVar('continue');
-		header("location: admin.php?op=webappSettings");
+		@header("location: admin.php?op=webappSettings");
 		exit();
 
 	case "updateIndexSettings":
 		$settings = processSettingsParams(true, true);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Index Settings");
-		header("location: admin.php?op=indexSettings");
+		@header("location: admin.php?op=indexSettings");
 		exit();
 
 	case "updateStartpopSettings":
 		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating StartPop Settings");
-		header("location: admin.php?op=startpopSettings");
+		@header("location: admin.php?op=startpopSettings");
 		exit();
 
 	case "updateDirSettings":
@@ -91,21 +91,21 @@ switch ($op) {
 		loadSettings('tf_settings_dir');
 		saveSettings('tf_settings_dir', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Dir Settings");
-		header("location: admin.php?op=dirSettings");
+		@header("location: admin.php?op=dirSettings");
 		exit();
 
 	case "updateStatsSettings":
 		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings_stats', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Stats Settings");
-		header("location: admin.php?op=statsSettings");
+		@header("location: admin.php?op=statsSettings");
 		exit();
 
 	case "updateXferSettings":
 		$settings = processSettingsParams(false, false);
 		saveSettings('tf_settings', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Xfer Settings");
-		header("location: admin.php?op=xferSettings");
+		@header("location: admin.php?op=xferSettings");
 		exit();
 
 	case "updateFluxdSettings":
@@ -174,7 +174,7 @@ switch ($op) {
 			// log
 			AuditAction($cfg["constants"]["fluxd"], " Updating fluxd Settings");
 			// redir
-			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
+			@header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 		} else {
 			// save settings
 			$settings = processSettingsParams(false, false);
@@ -182,7 +182,7 @@ switch ($op) {
 			// log
 			AuditAction($cfg["constants"]["fluxd"], " Updating fluxd Settings");
 			// redir
-			header("Location: admin.php?op=fluxdSettings");
+			@header("Location: admin.php?op=fluxdSettings");
 		}
 		exit();
 
@@ -214,7 +214,7 @@ switch ($op) {
 						$message = 'Stop-Command sent.';
 					else
 						$message = 'fluxd stopped.';
-					header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
+					@header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 					exit();
 				}
 				break;
@@ -223,9 +223,9 @@ switch ($op) {
 				break;
 		}
 		if ($message != "")
-			header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
+			@header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 		else
-			header("Location: admin.php?op=fluxdSettings");
+			@header("Location: admin.php?op=fluxdSettings");
 		exit();
 
 	case "updateSearchSettings":
@@ -238,7 +238,7 @@ switch ($op) {
 		$searchEngine = getRequestVar('searchEngine');
 		if (empty($searchEngine))
 			$searchEngine = $cfg["searchEngine"];
-		header("location: admin.php?op=searchSettings&searchEngine=".$searchEngine);
+		@header("location: admin.php?op=searchSettings&searchEngine=".$searchEngine);
 		exit();
 
 	case "addLink":
@@ -251,7 +251,7 @@ switch ($op) {
 			addNewLink($newLink, $newSite);
 			AuditAction($cfg["constants"]["admin"], "New ".$cfg['_LINKS_MENU'].": ".$newSite." [".$newLink."]");
 		}
-		header("location: admin.php?op=editLinks");
+		@header("location: admin.php?op=editLinks");
 		exit();
 
 	case "editLink":
@@ -267,14 +267,14 @@ switch ($op) {
 			alterLink($lid, $newLink, $newSite);
 			AuditAction($cfg["constants"]["admin"], "Change Link: ".$oldSite." [".$oldLink."] -> ".$newSite." [".$newLink."]");
 		}
-		header("location: admin.php?op=editLinks");
+		@header("location: admin.php?op=editLinks");
 		exit();
 
 	case "moveLink":
 		$lid = getRequestVar('lid');
 		$direction = getRequestVar('direction');
 		if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
-			header("location: admin.php?op=editLinks");
+			@header("location: admin.php?op=editLinks");
 			exit();
 		}
 		$idx=getLinkSortOrder($lid);
@@ -286,14 +286,14 @@ switch ($op) {
 		$sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
 		$db->Execute($sql);
 		showError($db, $sql);
-		header("Location: admin.php?op=editLinks");
+		@header("Location: admin.php?op=editLinks");
 		exit();
 
 	case "deleteLink":
 		$lid = getRequestVar('lid');
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
 		deleteOldLink($lid);
-		header("location: admin.php?op=editLinks");
+		@header("location: admin.php?op=editLinks");
 		exit();
 
 	case "addRSS":
@@ -302,14 +302,14 @@ switch ($op) {
 			addNewRSS($newRSS);
 			AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
 		}
-		header("location: admin.php?op=editRSS");
+		@header("location: admin.php?op=editRSS");
 		exit();
 
 	case "deleteRSS":
 		$rid = getRequestVar('rid');
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." RSS: ".getRSS($rid));
 		deleteOldRSS($rid);
-		header("location: admin.php?op=editRSS");
+		@header("location: admin.php?op=editRSS");
 		exit();
 
 	case "deleteUser":
@@ -318,12 +318,12 @@ switch ($op) {
 			DeleteThisUser($user_id);
 			AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." ".$cfg['_USER'].": ".$user_id);
 		}
-		header("location: admin.php");
+		@header("location: admin.php");
 		exit();
 
 	case "setUserState":
 		setUserState();
-		header("location: admin.php?op=showUsers");
+		@header("location: admin.php?op=showUsers");
 		exit();
 
 	default:

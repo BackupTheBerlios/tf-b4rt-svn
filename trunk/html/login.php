@@ -37,7 +37,7 @@ if (@ini_get('register_globals')) {
 
 // already got a session ?
 if (isset($_SESSION['user'])) {
-	header("location: index.php?iid=index");
+	@header("location: index.php?iid=index");
 	exit();
 }
 
@@ -56,8 +56,8 @@ switch ($cfg['auth_type']) {
 			if ((!empty($user)) && (isset($iamhim)))
 				$isLoginRequest = true;
 		} else {
-			header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
-			header('HTTP/1.0 401 Unauthorized');
+			@header('WWW-Authenticate: Basic realm="'. $cfg["auth_basic_realm"] .'"');
+			@header('HTTP/1.0 401 Unauthorized');
 			@ob_end_clean();
 			exit();
 		}
@@ -153,7 +153,7 @@ if ($isLoginRequest) {
 	}
 	// perform auth
 	if (performAuthentication($user, $iamhim, $md5password) == 1) {
-		header("location: ".$next_loc);
+		@header("location: ".$next_loc);
 		exit();
 	} else {
 		$tmpl->setvar('login_failed', 1);

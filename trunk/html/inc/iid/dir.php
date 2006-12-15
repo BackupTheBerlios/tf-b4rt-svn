@@ -39,7 +39,7 @@ vlc
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../index.php");
+	@header("location: ../../index.php");
 	exit();
 }
 
@@ -86,7 +86,7 @@ if ($chmod != "") {
 		chmodRecursive($cfg["path"].$dir);
 	else
 		AuditAction($cfg["constants"]["error"], "ILLEGAL CHMOD: ".$cfg["user"]." tried to chmod ".$dir);
-	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($dir));
+	@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($dir));
 	exit();
 }
 
@@ -109,7 +109,7 @@ if ($del != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
+	@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
 	exit();
 }
 
@@ -125,7 +125,7 @@ if ($multidel != "") {
 		else
 			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$element);
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($dir));
+	@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($dir));
 	exit();
 }
 
@@ -158,7 +158,7 @@ if ($down != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
+	@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
 	exit();
 }
 
@@ -186,7 +186,7 @@ if ($tar != "") {
 			}
 		}
 	}
-	header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
+	@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($current));
 	exit();
 }
 
@@ -209,9 +209,9 @@ $dirName = $cfg["path"].$dir;
 if (!(@is_dir($dirName))) {
 	// our dir is no dir but a file. use parent-directory.
 	if (preg_match("/^(.+)\/.+$/", $dir, $matches) == 1)
-		header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($matches[1]));
+		@header("Location: index.php?iid=dir&dir=".UrlHTMLSlashesEncode($matches[1]));
 	else
-		header("Location: index.php?iid=dir");
+		@header("Location: index.php?iid=dir");
 	exit();
 }
 

@@ -23,7 +23,7 @@
 // prevent direct invocation
 if (!isset($cfg['user'])) {
 	@ob_end_clean();
-	header("location: ../../index.php");
+	@header("location: ../../index.php");
 	exit();
 }
 
@@ -37,7 +37,7 @@ if ($cfg["enable_dereferrer"] != 1) {
 
 // check param
 if (!(isset($_REQUEST["u"]))) {
-	header("location: index.php?iid=index");
+	@header("location: index.php?iid=index");
 	exit();
 } else {
 	$url = getRequestVar("u");
