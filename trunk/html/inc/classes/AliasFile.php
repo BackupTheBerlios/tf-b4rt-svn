@@ -175,8 +175,17 @@ class AliasFile
         $content .= $this->uptotal."\n";
         $content .= $this->downtotal."\n";
         $content .= $this->size;
-        if (count($this->errors) > 0)
-        	$output .= "\n".implode("\n", $this->errors);
+        // errors
+        $errCtr = count($this->errors);
+        if ($errCtr > 0) {
+			for ($i = 0; $i < $errCtr; $ii) {
+				if ($this->errors[$i] != "") {
+					$output .= ($i == 0)
+						? "\n".$this->errors[$i]."\n"
+						: $this->errors[$i]."\n";
+				}
+			}
+        }
 		// write file
 		if ($handle = @fopen($this->theFile, "w")) {
 	        $resultSuccess = (@fwrite($handle, $content) !== false);
