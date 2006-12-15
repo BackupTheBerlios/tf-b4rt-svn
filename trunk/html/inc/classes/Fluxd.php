@@ -29,7 +29,9 @@ define('FLUXD_STATE_ERROR', -1);                                        // error
 define('FLUXD_DELIM_MOD', ';');
 define('FLUXD_DELIM_STATE', ':');
 
-// class Fluxd for integration of fluxd
+/**
+ * class Fluxd for integration of fluxd
+ */
 class Fluxd
 {
 	// public fields

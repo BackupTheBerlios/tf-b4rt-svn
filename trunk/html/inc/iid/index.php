@@ -95,14 +95,14 @@ foreach ($arList as $entry) {
 
 	// ---------------------------------------------------------------------
 	// alias / stat
-	$alias = getAliasName($entry).".stat";
+	$aliasFile = getAliasName($entry).".stat";
 	if ((substr(strtolower($entry), -8) == ".torrent")) {
 		// this is a torrent-client
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
 		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
 		$settingsAry = loadTorrentSettings($entry);
-		$af = new AliasFile($alias, $transferowner);
+		$af = new AliasFile($aliasFile, $transferowner);
 	} else if ((substr(strtolower($entry), -5) == ".wget")) {
 		// this is wget.
 		$isTorrent = false;
@@ -115,7 +115,7 @@ foreach ($arList as $entry) {
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
-		$af = new AliasFile($alias, $transferowner);
+		$af = new AliasFile($aliasFile, $transferowner);
 	} else {
 		// this is "something else". use tornado statfile as default
 		$isTorrent = false;
@@ -128,7 +128,7 @@ foreach ($arList as $entry) {
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
-		$af = new AliasFile($alias, $cfg["user"]);
+		$af = new AliasFile($aliasFile, $cfg["user"]);
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = $af->running;
@@ -139,7 +139,7 @@ foreach ($arList as $entry) {
 	$hd = getStatusImage($af);
 
 	// more vars
-	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&alias=".$alias."&torrent=".urlencode($entry)."')\">";
+	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=".urlencode($entry)."')\">";
 
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
@@ -148,11 +148,11 @@ foreach ($arList as $entry) {
 
 	// ---------------------------------------------------------------------
 	// injects
-	if(! file_exists($cfg["transfer_file_path"].$alias)) {
+	if(!file_exists($cfg["transfer_file_path"].$aliasFile)) {
 		$transferRunning = 2;
 		$af->running = "2";
 		$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
-		$af->write();
+		injectAlias($entry);
 	}
 
 	// totals-preparation
@@ -210,7 +210,7 @@ foreach ($arList as $entry) {
 				$statusStr = $detailsLinkString."Leeching</a>";
 			}
 			// pid-file
-			$is_no_file = (is_file($cfg["transfer_file_path"].$alias.".pid")) ? 0 : 1;
+			$is_no_file = (is_file($cfg["transfer_file_path"].$aliasFile.".pid")) ? 0 : 1;
 			break;
 	}
 
@@ -322,7 +322,6 @@ foreach ($arList as $entry) {
 	$tArray = array(
 		'is_owner' => ($cfg['isAdmin']) ? 1 : $owner,
 		'transferRunning' => $transferRunning,
-		'alias' => $alias,
 		'url_entry' => urlencode($entry),
 		'hd_image' => $hd->image,
 		'hd_title' => $hd->title,
@@ -543,9 +542,8 @@ if ($cfg["index_page_connections"] != 0) {
 $loadavgString = ($cfg["show_server_load"] != 0) ? @getLoadAverageString() : "n/a";
 
 // messages
-if (isset($_REQUEST['messages']))
-	if ($_REQUEST['messages'] != "")
-		$tmpl->setvar('messages', urldecode($_REQUEST['messages']));
+if (!empty($_REQUEST['messages']))
+	$tmpl->setvar('messages', urldecode(getRequestVar('messages')));
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {

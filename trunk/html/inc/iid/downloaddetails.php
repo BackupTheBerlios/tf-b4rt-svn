@@ -30,43 +30,42 @@ if (!isset($cfg['user'])) {
 /******************************************************************************/
 
 // request-vars
-$transfer = getRequestVar('torrent');
-$alias = getRequestVar('alias');
+$transfer = getRequestVar('transfer');
+$aliasFile = getAliasName($transfer).".stat";
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
 // check
-if ((!empty($transfer)) && (!empty($alias))) {
-	$tmpl->setvar('torrent', $transfer);
-	$tmpl->setvar('alias', $alias);
-	$tmpl->setvar('torrentLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+if ((!empty($transfer)) && (!empty($aliasFile))) {
+	$tmpl->setvar('transfer', $transfer);
+	$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 } else {
 	showErrorPage("missing params");
 }
 
 // alias / stat
 if ((substr(strtolower($transfer), -8) == ".torrent")) {
-	// this is a torrent-client
+	// this is a t-client
 	$transferowner = getOwner($transfer);
 	$transferExists = loadTorrentSettingsToConfig($transfer);
 	if (!$transferExists) {
-		// new torrent
+		// new t
 		$cfg['hash'] = $transfer;
 	}
-	$af = new AliasFile($alias, $transferowner);
+	$af = new AliasFile($aliasFile, $transferowner);
 } else if ((substr(strtolower($transfer), -5) == ".wget")) {
 	// this is wget.
 	$transferowner = getOwner($transfer);
 	$cfg['btclient'] = "wget";
 	$cfg['hash'] = $transfer;
-	$af = new AliasFile($alias, $transferowner);
+	$af = new AliasFile($aliasFile, $transferowner);
 } else {
 	// this is "something else". use tornado statfile as default
 	$transferowner = $cfg["user"];
 	$cfg['btclient'] = "tornado";
 	$cfg['hash'] = $transfer;
-	$af = new AliasFile($alias, $cfg["user"]);
+	$af = new AliasFile($aliasFile, $cfg["user"]);
 }
 
 // totals
@@ -79,11 +78,11 @@ $totals = $clientHandler->getTransferTotalOP($transfer, $cfg['hash'], $afu, $afd
 $tmpl->setvar('transferowner', $transferowner);
 
 // size
-$torrentSize = (int) $af->size;
-$tmpl->setvar('size', @formatBytesTokBMBGBTB($torrentSize));
+$transferSize = (int) $af->size;
+$tmpl->setvar('size', @formatBytesTokBMBGBTB($transferSize));
 
 // sharing
-$tmpl->setvar('sharing', ($torrentSize > 0) ? @number_format((($totals["uptotal"] / $torrentSize) * 100), 2) : "0");
+$tmpl->setvar('sharing', ($transferSize > 0) ? @number_format((($totals["uptotal"] / $transferSize) * 100), 2) : "0");
 
 // totals
 $tmpl->setvar('downTotal', @formatFreeSpace($totals["downtotal"] / 1048576));
@@ -104,9 +103,9 @@ if ($af->running == 1) {
 	$tmpl->setvar('peers', $af->peers);
 
 	// port + cons
-	$torrent_pid = getTransferPid($alias);
-	$tmpl->setvar('port', netstatPortByPid($torrent_pid));
-	$tmpl->setvar('cons', netstatConnectionsByPid($torrent_pid));
+	$transfer_pid = getTransferPid($aliasFile);
+	$tmpl->setvar('port', netstatPortByPid($transfer_pid));
+	$tmpl->setvar('cons', netstatConnectionsByPid($transfer_pid));
 	$tmpl->setvar('maxcons', '('.$cfg["maxcons"].')');
 
 	// down speed
@@ -198,7 +197,7 @@ switch ($cfg['details_type']) {
 	default:
 	case "standard":
 		// refresh
-		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&torrent='.$transfer.'&alias='.$alias);
+		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&transfer='.$transfer);
 		break;
 	case "ajax":
 		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);

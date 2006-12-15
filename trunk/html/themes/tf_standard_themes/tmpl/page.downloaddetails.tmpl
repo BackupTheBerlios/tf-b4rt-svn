@@ -38,11 +38,11 @@
 															<tmpl_if name="is_error">
 																<img src="themes/tf_standard_themes/images/error.gif" width=16 height=16 border=0 title="ERROR" align="absmiddle">
 															</tmpl_if>
-															<tmpl_var name="torrentLabel"><font class="tiny"> (<tmpl_var name="size">)</font>
+															<tmpl_var name="transferLabel"><font class="tiny"> (<tmpl_var name="size">)</font>
 														</td>
 														<td align="right" width="16">
 															<tmpl_if name="running">
-																<a href="index.php?iid=downloadhosts&torrent=<tmpl_var name="torrent">&alias=<tmpl_var name="alias">">
+																<a href="index.php?iid=downloadhosts&transfer=<tmpl_var name="transfer">">
 															</tmpl_if>
 															<img id="statusImage" src="themes/tf_standard_themes/images/<tmpl_var name="hd_image">" width="16" height="16" border="0" title="<tmpl_var name="hd_title">">
 															<tmpl_if name="running">

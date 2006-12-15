@@ -62,15 +62,15 @@ function indexStartTransfer($transfer) {
 /**
  * Function with which torrents are started in index-page
  *
- * @param $torrent
+ * @param $transfer
  * @param $interactive (1|0) : is this a interactive startup with dialog ?
  */
-function indexStartTorrent($torrent, $interactive) {
+function indexStartTorrent($transfer, $interactive) {
 	global $cfg;
 	if ($cfg["enable_file_priority"]) {
 		include_once("inc/functions/functions.setpriority.php");
 		// Process setPriority Request.
-		setPriority($torrent);
+		setPriority($transfer);
 	}
 	$spo = getRequestVar('setPriorityOnly');
 	if (!empty($spo)){
@@ -79,14 +79,14 @@ function indexStartTorrent($torrent, $interactive) {
 	}
 	switch ($interactive) {
 		case 0:
-			$btclient = getTransferClient($torrent);
+			$btclient = getTransferClient($transfer);
 			$clientHandler = ClientHandler::getInstance($btclient);
-			$clientHandler->start($torrent, false, FluxdQmgr::isRunning());
+			$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
 			// header + out
 			@header("location: index.php?iid=index");
 		case 1:
 			$clientHandler = ClientHandler::getInstance(getRequestVar('btclient'));
-			$clientHandler->start($torrent, true, FluxdQmgr::isRunning());
+			$clientHandler->start($transfer, true, FluxdQmgr::isRunning());
 			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 				showErrorPage(implode("<br>", $clientHandler->messages));
 			} else {
@@ -117,7 +117,7 @@ function indexStopTransfer($transfer) {
 			$clientHandler = ClientHandler::getInstance('wget');
 		else
 			$clientHandler = ClientHandler::getInstance('tornado');
-		$clientHandler->stop($transfer, getRequestVar('alias_file'), (getRequestVar('kill') == 1), getRequestVar('pid'));
+		$clientHandler->stop($transfer, (getRequestVar('kill') == 1), getRequestVar('pid'));
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
 		showErrorPage("Invalid Transfer for Stop : <br>".$transfer);
@@ -132,7 +132,8 @@ function indexStopTransfer($transfer) {
 function indexDeleteTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
-		deleteTransfer($transfer, getRequestVar('alias_file'));
+		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		$clientHandler->delete($transfer);
 		header("location: index.php?iid=index");
 		exit();
 	} else {
@@ -248,7 +249,7 @@ function indexProcessDownload($url_upload) {
 		} else {
 			AuditAction($cfg["constants"]["url_upload"], $file_name);
 			// init stat-file
-			injectTorrent($file_name);
+			injectAlias($file_name);
 			// instant action ?
 			$actionId = getRequestVar('aid');
 			if (isset($actionId)) {
@@ -296,7 +297,7 @@ function indexProcessUpload() {
 							chmod($cfg["transfer_file_path"].$file_name, 0644);
 							AuditAction($cfg["constants"]["file_upload"], $file_name);
 							// init stat-file
-							injectTorrent($file_name);
+							injectAlias($file_name);
 							// instant action ?
 							$actionId = getRequestVar('aid');
 							if (isset($actionId)) {
@@ -390,22 +391,22 @@ function processFileUpload() {
 		} // End File Upload
 		// instant action ?
 		if (!empty($actionId)) {
-			foreach ($tStack as $torrent) {
+			foreach ($tStack as $transfer) {
 				// init stat-file
-				injectTorrent($torrent);
+				injectAlias($transfer);
 				// file prio
 				if ($cfg["enable_file_priority"]) {
 					include_once("inc/functions/functions.setpriority.php");
 					// Process setPriority Request.
-					setPriority(urldecode($torrent));
+					setPriority(urldecode($transfer));
 				}
 				$clientHandler = ClientHandler::getInstance();
 				switch ($actionId) {
 					case 3:
-						$clientHandler->start($torrent, false, true);
+						$clientHandler->start($transfer, false, true);
 						break;
 					case 2:
-						$clientHandler->start($torrent, false, false);
+						$clientHandler->start($transfer, false, false);
 						break;
 				}
 			}
@@ -426,29 +427,27 @@ function processFileUpload() {
 }
 
 /**
- * tf 2.1 compat function
+ * tf 2.x compat function
  */
 function compatIndexDispatch() {
 	// transfer-start
 	if (isset($_REQUEST['torrent']))
-		indexStartTransfer(getRequestVar('torrent'));
+		indexStartTransfer(urldecode(getRequestVar('torrent')));
 	// get torrent via url
 	if (isset($_REQUEST['url_upload']))
 		indexProcessDownload(getRequestVar('url_upload'));
 	// file upload
-	if (isset($_FILES['upload_file'])) {
-		if (!empty($_FILES['upload_file']['name']))
-			indexProcessUpload();
-	}
+	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
+		indexProcessUpload();
 	// del file
 	if (isset($_REQUEST['delfile']))
-		indexDeleteTransfer(getRequestVar('delfile'));
+		indexDeleteTransfer(urldecode(getRequestVar('delfile')));
 	// kill
 	if (isset($_REQUEST["kill_torrent"]))
-		indexStopTransfer(getRequestVar('kill_torrent'));
+		indexStopTransfer(urldecode(getRequestVar('kill_torrent')));
 	// deQueue
 	if (isset($_REQUEST["QEntry"]))
-		indexDeQueueTransfer(getRequestVar('QEntry'));
+		indexDeQueueTransfer(urldecode(getRequestVar('QEntry')));
 }
 
 ?>

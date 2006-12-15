@@ -48,14 +48,14 @@ require_once("inc/functions/functions.metainfo.php");
 tmplInitializeInstance($cfg["theme"], "page.startpop.tmpl");
 
 // get torren-param
-$torrent = getRequestVar('torrent');
+$transfer = getRequestVar('torrent');
 
 // torrent exists ?
-$torrentExists = (getTorrentDataSize($torrent) > 0);
+$torrentExists = (getTorrentDataSize($transfer) > 0);
 
 // set some template-vars
-$tmpl->setvar('displayName', (strlen($torrent) >= 55) ? substr($torrent, 0, 52)."..." : $torrent);
-$tmpl->setvar('torrent', $torrent);
+$tmpl->setvar('displayName', (strlen($transfer) >= 55) ? substr($transfer, 0, 52)."..." : $transfer);
+$tmpl->setvar('torrent', $transfer);
 $tmpl->setvar('torrentExists', $torrentExists);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
@@ -66,7 +66,7 @@ else
 
 // dirtree
 $dirTree = ($cfg["enable_home_dirs"] != 0)
-	? $cfg["path"].getOwner($torrent).'/'
+	? $cfg["path"].getOwner($transfer).'/'
 	: $cfg["path"].$cfg["path_incoming"].'/';
 tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
@@ -105,11 +105,11 @@ if ($with_profiles == 1) {
 		$tmpl->setvar('superseeder', ($settings['superseeder'] == 1) ? "checked" : "");
 		$tmpl->setvar('superseederValue', $settings['superseeder']);
 		// Load saved settings
-		loadTorrentSettingsToConfig($torrent);
+		loadTorrentSettingsToConfig($transfer);
 		// savepath
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
-				? $cfg["path"].getOwner($torrent).'/'
+				? $cfg["path"].getOwner($transfer).'/'
 				: $cfg["path"].$cfg["path_incoming"].'/';
 		}
 		$tmpl->setvar('savepath', $cfg["savepath"]);
@@ -141,7 +141,7 @@ if ($with_profiles == 1) {
 $tmpl->setvar('with_profiles', $with_profiles);
 //
 $tmpl->setvar('bgLight', $cfg["bgLight"]);
-$tmpl->setvar('metaInfo', showMetaInfo($torrent,false));
+$tmpl->setvar('metaInfo', showMetaInfo($transfer,false));
 //
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 //

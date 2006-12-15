@@ -20,13 +20,20 @@
 
 *******************************************************************************/
 
-// class ClientHandler for mainline-client
+/**
+ * class ClientHandler for mainline-client
+ */
 class ClientHandlerMainline extends ClientHandler
 {
+
 	// public fields
 
 	// mainline-bin
 	var $mainlineBin = "";
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
@@ -40,6 +47,10 @@ class ClientHandlerMainline extends ClientHandler
         $this->mainlineBin = $cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
     }
 
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
     /**
      * starts a client
      *
@@ -49,6 +60,9 @@ class ClientHandlerMainline extends ClientHandler
      */
     function start($transfer, $interactive = false, $enqueue = false) {
     	global $cfg;
+
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
 
         // do mainline special-pre-start-checks
         // check to see if the path to the python script is valid
@@ -64,7 +78,7 @@ class ClientHandlerMainline extends ClientHandler
         }
 
         // prepare starting of client
-        $this->prepareStart($transfer, $interactive, $enqueue);
+        $this->prepareStart($interactive, $enqueue);
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
@@ -72,9 +86,6 @@ class ClientHandlerMainline extends ClientHandler
 				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
 			return;
 		}
-
-		// pythonCmd
-		$pyCmd = $cfg["pythonCmd"] . " -OO";
 
 		// build the command-string
 		// note : order of args must not change for ps-parsing-code in
@@ -85,22 +96,20 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $pyCmd . " " .escapeshellarg($this->mainlineBin);
+		$this->command .= $cfg["pythonCmd"] . " -OO" . " " .escapeshellarg($this->mainlineBin);
 		$this->command .= " --display_interval 5";
 		$this->command .= " --tf_owner ".$this->owner;
-		$this->command .= " --stat_file ".escapeshellarg($cfg["transfer_file_path"].$this->alias.".stat");
+		$this->command .= " --stat_file ".escapeshellarg($this->aliasFile);
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
 		$this->command .= " --die_when_done ".escapeshellarg($this->runtime);
 		$this->command .= " --seed_limit ".escapeshellarg($this->sharekill_param);
-		if ($this->drate != 0)
-			$this->command .= " --max_download_rate " . escapeshellarg($this->drate * 1024);
-		else
-			$this->command .= " --max_download_rate 125000000"; # 1 GBit local net = 125MB/s
-		if ($this->rate != 0)
-			$this->command .= " --max_upload_rate " . escapeshellarg($this->rate * 1024);
-		else
-			$this->command .= " --max_upload_rate 125000000"; # 1 GBit local net = 125MB/s
+		$this->command .= ($this->drate != 0)
+			? " --max_download_rate " . escapeshellarg($this->drate * 1024)
+			: " --max_download_rate 125000000"; // 1 GBit local net = 125MB/s
+		$this->command .= ($this->rate != 0)
+			? " --max_upload_rate " . escapeshellarg($this->rate * 1024)
+			: " --max_upload_rate 125000000"; // 1 GBit local net = 125MB/s
 		$this->command .= " --max_uploads ".escapeshellarg($this->maxuploads);
 		$this->command .= " --minport ".escapeshellarg($this->port);
 		$this->command .= " --maxport ".escapeshellarg($this->maxport);
@@ -110,7 +119,7 @@ class ClientHandlerMainline extends ClientHandler
 			$this->command .= " --no_check_hashes";
 		if (strlen($cfg["btclient_mainline_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_mainline_options"];
-		$this->command .= " ".escapeshellarg($cfg["transfer_file_path"].$this->transfer);
+		$this->command .= " ".escapeshellarg($this->transferFile);
         $this->command .= " 1>> ".escapeshellarg($this->logFile);
         $this->command .= " 2>> ".escapeshellarg($this->logFile);
         $this->command .= " &";
@@ -123,25 +132,28 @@ class ClientHandlerMainline extends ClientHandler
      * stops a client
      *
      * @param $transfer name of the transfer
-     * @param $aliasFile alias-file of the transfer
      * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
      */
-    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
-    	global $cfg;
-        $this->pidFile = $cfg["transfer_file_path"].$aliasFile.".pid";
+    function stop($transfer, $kill = false, $transferPid = 0) {
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
         // stop the client
-        $this->execStop($transfer, $aliasFile, $kill, $transferPid);
+        $this->execStop($kill, $transferPid);
     }
 
-    /**
-     * deletes cache of a transfer
-     *
-     * @param $transfer
-     */
-    function deleteCache($transfer) {
-        return;
-    }
+	/**
+	 * deletes a transfer
+	 *
+	 * @param $transfer name of the transfer
+	 * @return boolean of success
+	 */
+	function delete($transfer) {
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
+		// delete
+		$this->execDelete(true);
+	}
 
     /**
      * gets current transfer-vals of a transfer
@@ -150,18 +162,13 @@ class ClientHandlerMainline extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrent($transfer) {
-        $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
-        $retVal["uptotal"] = $af->uptotal;
-        $retVal["downtotal"] = $af->downtotal;
-        return $retVal;
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
     /**
-     * gets current transfer-vals of a transfer. optimized index-page-version
+     * gets current transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -170,11 +177,7 @@ class ClientHandlerMainline extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        $retVal = array();
-        // transfer from stat-file
-        $retVal["uptotal"] = $afu;
-        $retVal["downtotal"] = $afd;
-        return $retVal;
+        return array("uptotal" => $afu, "downtotal" => $afd);
     }
 
     /**
@@ -187,29 +190,25 @@ class ClientHandlerMainline extends ClientHandler
     	global $db;
         $retVal = array();
         // transfer from db
-        $torrentId = getTorrentHash($transfer);
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
+        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
         $result = $db->Execute($sql);
-    	showError($db, $sql);
         $row = $result->FetchRow();
-        if (!empty($row)) {
+        if (empty($row)) {
+        	$retVal["uptotal"] = 0;
+            $retVal["downtotal"] = 0;
+        } else {
             $retVal["uptotal"] = $row["uptotal"];
             $retVal["downtotal"] = $row["downtotal"];
-        } else {
-            $retVal["uptotal"] = 0;
-            $retVal["downtotal"] = 0;
         }
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         $retVal["uptotal"] += $af->uptotal;
         $retVal["downtotal"] += $af->downtotal;
         return $retVal;
     }
 
     /**
-     * gets total transfer-vals of a transfer. optimized index-page-version
+     * gets total transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -223,14 +222,13 @@ class ClientHandlerMainline extends ClientHandler
         // transfer from db
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
         $result = $db->Execute($sql);
-    	showError($db, $sql);
         $row = $result->FetchRow();
-        if (!empty($row)) {
+        if (empty($row)) {
+        	$retVal["uptotal"] = 0;
+            $retVal["downtotal"] = 0;
+        } else {
             $retVal["uptotal"] = $row["uptotal"];
             $retVal["downtotal"] = $row["downtotal"];
-        } else {
-            $retVal["uptotal"] = 0;
-            $retVal["downtotal"] = 0;
         }
         // transfer from stat-file
         $retVal["uptotal"] += $afu;

@@ -4,10 +4,10 @@
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 		<tr>
 			<td align="center">
-				<tmpl_var name="torrentLabel"><font class="tiny"> (<tmpl_var name="cons_hosts">)</font>
+				<tmpl_var name="transferLabel"><font class="tiny"> (<tmpl_var name="cons_hosts">)</font>
 			</td>
 			<td align="right" width="16">
-				<a href="index.php?iid=downloaddetails&torrent=<tmpl_var name="torrent">&alias=<tmpl_var name="alias">">
+				<a href="index.php?iid=downloaddetails&transfer=<tmpl_var name="transfer">">
 					<img src="themes/default/images/<tmpl_var name="hd_image">" width=16 height=16 border=0 title="<tmpl_var name="hd_title">">
 				</a>
 			</td>
@@ -18,7 +18,7 @@
 			<td>
 				<div align="center">
 					<table border="0" cellpadding="2" cellspacing="2" width="90%">
-						<tmpl_if name="torrent_hosts_aval">
+						<tmpl_if name="transfer_hosts_aval">
 							<tr>
 								<td><div class="tiny"><strong><tmpl_var name="_ID_HOST"></strong></div></td>
 								<td><div class="tiny"><strong><tmpl_var name="_ID_PORT"></strong></div></td>

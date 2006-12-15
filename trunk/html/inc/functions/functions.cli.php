@@ -281,11 +281,9 @@ function cliStopTransfer($transfer = "") {
 			printError("fluxcli.php", "Transfer not running.\n");
 		} else {
 			printMessage("fluxcli.php", "Stopping ".$transfer." ...\n");
-			$btclient = getTransferClient($transfer);
 			$cfg["user"] = getOwner($transfer);
-			$alias = getAliasName($transfer).".stat";
-			$clientHandler = ClientHandler::getInstance($btclient);
-            $clientHandler->stop($transfer, $alias);
+			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+            $clientHandler->stop($transfer);
 			printMessage("fluxcli.php", "done.\n");
 		}
 	} else {
@@ -319,18 +317,16 @@ function cliDeleteTransfer($transfer = "") {
 	global $cfg;
 	if ((isset($transfer)) && ($transfer != "")) {
 		printMessage("fluxcli.php", "Deleting ".$transfer." ...\n");
-        $tRunningFlag = isTransferRunning($transfer);
-        $btclient = getTransferClient($transfer);
-    	$cfg["user"] = getOwner($transfer);
-    	$alias = getAliasName($transfer).".stat";
+		$cfg["user"] = getOwner($transfer);
+		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag == 1) {
 			// stop transfer first
-			$clientHandler = ClientHandler::getInstance($btclient);
-			$clientHandler->stop($transfer, $alias);
+			$clientHandler->stop($transfer);
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
-        	deleteTransfer($transfer, $alias);
+        	$clientHandler->delete($transfer);
         	printMessage("fluxcli.php", "done.\n");
         } else {
         	printError("fluxcli.php", "transfer still up... cannot delete\n");
@@ -350,20 +346,20 @@ function cliWipeTransfer($transfer = "") {
 	global $cfg;
 	if ((isset($transfer)) && ($transfer != "")) {
 		printMessage("fluxcli.php", "Wipe ".$transfer." ...\n");
-        $tRunningFlag = isTransferRunning($transfer);
-        $btclient = getTransferClient($transfer);
 		$cfg["user"] = getOwner($transfer);
-		$alias = getAliasName($transfer).".stat";
+		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag == 1) {
 			// stop transfer first
-			$clientHandler = ClientHandler::getInstance($btclient);
-			$clientHandler->stop($transfer, $alias);
+			$clientHandler->stop($transfer);
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
-	        deleteTransfer($transfer);
-	        resetTorrentTotals($transfer, true);
-			printMessage("fluxcli.php", "done.\n");
+        	if ((substr(strtolower($transfer), -8) == ".torrent"))
+        		deleteTorrentData($transfer);
+        	resetTorrentTotals($transfer, true);
+        	$clientHandler->delete($transfer);
+        	printMessage("fluxcli.php", "done.\n");
         } else {
         	printError("fluxcli.php", "transfer still up... cannot wipe\n");
         }
@@ -397,7 +393,7 @@ function cliInjectTransfer($tpath = "", $username = "") {
                     chmod($cfg["transfer_file_path"].$file_name, 0644);
                     AuditAction($cfg["constants"]["file_upload"], $file_name);
                     // init stat-file
-                    injectTorrent($file_name);
+                    injectAlias($file_name);
                 } else {
                     $messages .= "ERROR: File could not be found or could not be copied: ".$tpath."\n";
                 }
@@ -441,7 +437,7 @@ function cliWatchDir($tpath = "", $username = "") {
                             chmod($cfg["transfer_file_path"].$file_name, 0644);
                             AuditAction($cfg["constants"]["file_upload"], $file_name);
                             // init stat-file
-                            injectTorrent($file_name);
+                            injectAlias($file_name);
                             // file-prio
                             if ($cfg["enable_file_priority"]) {
                                 include_once("inc/functions/functions.setpriority.php");

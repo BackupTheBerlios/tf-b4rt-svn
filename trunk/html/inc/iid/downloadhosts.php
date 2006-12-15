@@ -30,13 +30,13 @@ if (!isset($cfg['user'])) {
 /******************************************************************************/
 
 // request-vars
-$torrent = getRequestVar('torrent');
-$alias = getRequestVar('alias');
+$transfer = getRequestVar('transfer');
+$aliasFile = getAliasName($transfer).".stat";
 
 // alias
-$transferowner = getOwner($torrent);
-if ((!empty($torrent)) && (!empty($alias)))
-	$af = new AliasFile($alias, $transferowner);
+$transferowner = getOwner($transfer);
+if ((!empty($transfer)) && (!empty($aliasFile)))
+	$af = new AliasFile($aliasFile, $transferowner);
 else
 	showErrorPage("missing params");
 
@@ -45,28 +45,27 @@ tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");
 
 // set vars
 if ($af->running == 1) {
-	$torrent_pid = getTransferPid($alias);
-	$torrent_cons = netstatConnectionsByPid($torrent_pid);
-	$torrent_hosts = netstatHostsByPid($torrent_pid);
+	$transfer_pid = getTransferPid($aliasFile);
+	$transfer_cons = netstatConnectionsByPid($transfer_pid);
+	$transfer_hosts = netstatHostsByPid($transfer_pid);
 } else {
-	$torrent_cons = "";
+	$transfer_cons = "";
 }
 $hd = getStatusImage($af);
-$tmpl->setvar('torrentLabel', (strlen($torrent) >= 39) ? substr($torrent, 0, 35)."..." : $torrent);
-$tmpl->setvar('cons_hosts', $torrent_cons." ".$cfg['_ID_HOSTS']);
-$tmpl->setvar('torrent', $torrent);
-$tmpl->setvar('alias', $alias);
+$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+$tmpl->setvar('cons_hosts', $transfer_cons." ".$cfg['_ID_HOSTS']);
+$tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('hd_image', $hd->image);
 $tmpl->setvar('hd_title', $hd->title);
-if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
-	$tmpl->setvar('torrent_hosts_aval', 1);
+if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
+	$tmpl->setvar('transfer_hosts_aval', 1);
 	$tmpl->setvar('_ID_HOST', $cfg['_ID_HOST']);
 	$tmpl->setvar('_ID_PORT', $cfg['_ID_PORT']);
-	$hostAry = array_keys($torrent_hosts);
+	$hostAry = array_keys($transfer_hosts);
 	$list_host = array();
 	foreach ($hostAry as $host) {
 		$host = @trim($host);
-		$port = @trim($torrent_hosts[$host]);
+		$port = @trim($transfer_hosts[$host]);
 		if ($cfg["downloadhosts"] == 1)
 			$host = @gethostbyaddr($host);
 		if ($host != "") {
@@ -81,7 +80,7 @@ if ((isset($torrent_hosts)) && ($torrent_hosts != "")) {
 	$tmpl->setloop('list_host', $list_host);
 }
 //
-$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&torrent='.$torrent.'&alias='.$alias);
+$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&transfer='.$transfer);
 //
 tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_ID_HOSTS'], false);
 tmplSetFoot(false);

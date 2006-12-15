@@ -20,13 +20,19 @@
 
 *******************************************************************************/
 
-// class ClientHandler for wget-client
+/**
+ * class ClientHandler for wget-client
+ */
 class ClientHandlerWget extends ClientHandler
 {
 
 	// public fields
 	var $url = "";
 	var $urlFile = "";
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
@@ -38,6 +44,10 @@ class ClientHandlerWget extends ClientHandler
         $this->binClient = "wget.php";
     }
 
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
     /**
      * setVarsFromUrl
      *
@@ -46,15 +56,13 @@ class ClientHandlerWget extends ClientHandler
     function setVarsFromUrl($transferUrl) {
     	global $cfg;
     	$this->url = $transferUrl;
-        $this->transfer = strrchr($transferUrl,'/');
-        if ($this->transfer{0} == '/')
-        	$this->transfer = substr($this->transfer, 1);
-        $aliasName = getAliasName($this->transfer);
-        $this->urlFile = $cfg["transfer_file_path"].$aliasName.".wget";
-        $this->alias = $aliasName.".stat";
-        $this->logFile = $cfg["transfer_file_path"].$aliasName.".log";
-        $this->owner = $cfg['user'];
-        $this->pidFile = $cfg["transfer_file_path"].$this->alias.".pid";
+        $transfer = strrchr($transferUrl,'/');
+        if ($transfer{0} == '/')
+        	$transfer = substr($transfer, 1);
+		$this->setVarsFromTransfer($transfer);
+        $this->urlFile = $cfg["transfer_file_path"].$this->alias.".wget";
+        if (empty($this->owner) || (strtolower($this->owner) == "n/a"))
+        	$this->owner = $cfg['user'];
     }
 
     /**
@@ -64,10 +72,10 @@ class ClientHandlerWget extends ClientHandler
      */
     function setVarsFromFile($transfer) {
     	global $cfg;
-    	$aliasName = getAliasName($transfer);
-    	$uf = $cfg["transfer_file_path"].$aliasName.".wget";
+		$this->setVarsFromTransfer($transfer);
+    	$this->urlFile = $cfg["transfer_file_path"].$this->alias.".wget";
 	    $data = "";
-	    if ($fileHandle = @fopen($uf,'r')) {
+	    if ($fileHandle = @fopen($this->urlFile,'r')) {
 	        while (!@feof($fileHandle))
 	            $data .= @fgets($fileHandle, 2048);
 	        @fclose ($fileHandle);
@@ -87,22 +95,38 @@ class ClientHandlerWget extends ClientHandler
 		// set vars from the url
 		$this->setVarsFromUrl($url);
 
-		// write out aliasfile
-		$af = new AliasFile($this->alias, $cfg['user']);
+		// inject alias
+		$af = new AliasFile($this->aliasFile);
 		$af->running = "2"; // file is new
-		$af->size = 0;
-		$af->write();
+		$af->size = "0";
+		if (!$af->write()) {
+			$this->state = CLIENTHANDLER_STATE_ERROR;
+            $msg = "wget-inject-error when writing alias-file : ".$this->aliasFile;
+            array_push($this->messages , $msg);
+            AuditAction($cfg["constants"]["error"], $msg);
+            return false;
+		}
 
-		// write wget-file
-		$fp = fopen($this->urlFile, 'w');
-		fwrite($fp, $this->url);
-		fclose($fp);
+		// write meta-file
+		$resultSuccess = false;
+		if ($handle = @fopen($this->urlFile, "w")) {
+	        $resultSuccess = (@fwrite($handle, $this->url) !== false);
+			@fclose($handle);
+		}
 
-		// Make an entry for the owner
-		AuditAction($cfg["constants"]["file_upload"], basename($this->urlFile));
+		// log
+		if ($resultSuccess) {
+			// Make an entry for the owner
+			AuditAction($cfg["constants"]["file_upload"], basename($this->urlFile));
+		} else {
+			$this->state = CLIENTHANDLER_STATE_ERROR;
+            $msg = "wget-metafile cannot be written : ".$this->urlFile;
+            array_push($this->messages , $msg);
+            AuditAction($cfg["constants"]["error"], $msg);
+		}
 
 		// return
-		return true;
+		return $resultSuccess;
 	}
 
     /**
@@ -114,6 +138,9 @@ class ClientHandlerWget extends ClientHandler
      */
     function start($transfer, $interactive = false, $enqueue = false) {
     	global $cfg;
+
+        // set vars from the wget-file
+		$this->setVarsFromFile($transfer);
 
         // do wget special-pre-start-checks
         // check to see if the path to the wget-bin is valid
@@ -128,18 +155,15 @@ class ClientHandlerWget extends ClientHandler
 				showErrorPage($msg);
         }
 
-        // set vars from the wget-file
-		$this->setVarsFromFile($transfer);
-
-		// more vars
-		$this->queue = 0;
+		// queue false
+		$this->queue = false;
 
 		// build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
-        $this->command .= " " . escapeshellarg($this->alias);
+        $this->command .= " " . escapeshellarg($this->aliasFile);
         $this->command .= " " . escapeshellarg($this->pidFile);
         $this->command .= " " . $this->owner;
         $this->command .= ($cfg["enable_home_dirs"] != 0)
@@ -163,22 +187,25 @@ class ClientHandlerWget extends ClientHandler
      * stops a client
      *
      * @param $transfer name of the transfer
-     * @param $aliasFile alias-file of the transfer
      * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
      */
-    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
+    function stop($transfer, $kill = false, $transferPid = 0) {
         // stop the client
     }
 
-    /**
-     * deletes cache of a transfer
-     *
-     * @param $transfer
-     */
-    function deleteCache($transfer) {
-        return;
-    }
+	/**
+	 * deletes a transfer
+	 *
+	 * @param $transfer name of the transfer
+	 * @return boolean of success
+	 */
+	function delete($transfer) {
+        // set vars from the wget-file
+		$this->setVarsFromFile($transfer);
+		// delete
+		$this->execDelete(true);
+	}
 
     /**
      * gets current transfer-vals of a transfer
@@ -187,19 +214,13 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrent($transfer) {
-    	global $db;
-        $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
-        $retVal["uptotal"] = $af->uptotal;
-        $retVal["downtotal"] = $af->downtotal;
-        return $retVal;
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
     /**
-     * gets current transfer-vals of a transfer. optimized index-page-version
+     * gets current transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -208,12 +229,7 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        global $db;
-        $retVal = array();
-        // transfer from stat-file
-        $retVal["uptotal"] = $afu;
-        $retVal["downtotal"] = $afd;
-        return $retVal;
+        return array("uptotal" => $afu, "downtotal" => $afd);
     }
 
     /**
@@ -223,18 +239,13 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotal($transfer) {
-        $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
-        $retVal["uptotal"] = $af->uptotal;
-        $retVal["downtotal"] = $af->downtotal;
-        return $retVal;
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
     /**
-     * gets total transfer-vals of a transfer. optimized index-page-version
+     * gets total transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -243,11 +254,7 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotalOP($transfer, $tid, $afu, $afd) {
-        $retVal = array();
-        // transfer from stat-file
-        $retVal["uptotal"] = $afu;
-        $retVal["downtotal"] = $afd;
-        return $retVal;
+        return array("uptotal" => $afu, "downtotal" => $afd);
     }
 }
 

@@ -20,7 +20,9 @@
 
 *******************************************************************************/
 
-// class ClientHandler for tornado-client
+/**
+ * class ClientHandler for tornado-client
+ */
 class ClientHandlerTornado extends ClientHandler
 {
 
@@ -28,6 +30,10 @@ class ClientHandlerTornado extends ClientHandler
 
 	// tornado-bin
 	var $tornadoBin = "";
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
@@ -41,6 +47,10 @@ class ClientHandlerTornado extends ClientHandler
         $this->tornadoBin = $cfg["docroot"]."bin/TF_BitTornado/btphptornado.py";
     }
 
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
     /**
      * starts a client
      *
@@ -50,6 +60,9 @@ class ClientHandlerTornado extends ClientHandler
      */
     function start($transfer, $interactive = false, $enqueue = false) {
 		global $cfg;
+
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
 
         // do tornado special-pre-start-checks
         // check to see if the path to the python script is valid
@@ -65,7 +78,7 @@ class ClientHandlerTornado extends ClientHandler
         }
 
         // prepare starting of client
-        $this->prepareStart($transfer, $interactive, $enqueue);
+        $this->prepareStart($interactive, $enqueue);
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
@@ -82,9 +95,9 @@ class ClientHandlerTornado extends ClientHandler
         if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
             $skipHashCheck = " --check_hashes 0";
         $filePrio = "";
-        if (file_exists($cfg["transfer_file_path"].$this->alias.".prio")) {
-            $priolist = explode(',',file_get_contents($cfg["transfer_file_path"].$this->alias .".prio"));
-            $priolist = implode(',',array_slice($priolist,1,$priolist[0]));
+        if (@file_exists($this->prioFile)) {
+            $priolist = explode(',', file_get_contents($this->prioFile));
+            $priolist = implode(',', array_slice($priolist, 1, $priolist[0]));
             $filePrio = " --priority ".escapeshellarg($priolist);
         }
 
@@ -100,9 +113,9 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
         $this->command .= " ".escapeshellarg($this->runtime);
         $this->command .= " ".escapeshellarg($this->sharekill_param);
-        $this->command .= " ".escapeshellarg($cfg["transfer_file_path"].$this->alias .".stat");
+        $this->command .= " ".escapeshellarg($this->aliasFile);
         $this->command .= " ".$this->owner;
-        $this->command .= " --responsefile ".escapeshellarg($cfg["transfer_file_path"].$this->transfer);
+        $this->command .= " --responsefile ".escapeshellarg($this->transferFile);
         $this->command .= " --display_interval 5";
         $this->command .= " --max_download_rate ".escapeshellarg($this->drate);
         $this->command .= " --max_upload_rate ".escapeshellarg($this->rate);
@@ -128,25 +141,28 @@ class ClientHandlerTornado extends ClientHandler
      * stops a client
      *
      * @param $transfer name of the transfer
-     * @param $aliasFile alias-file of the transfer
      * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
      */
-    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
-    	global $cfg;
-        $this->pidFile = $cfg["transfer_file_path"].$aliasFile.".pid";
+    function stop($transfer, $kill = false, $transferPid = 0) {
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
         // stop the client
-        $this->execStop($transfer, $aliasFile, $kill, $transferPid);
+        $this->execStop($kill, $transferPid);
     }
 
-    /**
-     * deletes cache of a transfer
-     *
-     * @param $transfer
-     */
-    function deleteCache($transfer) {
-        return;
-    }
+	/**
+	 * deletes a transfer
+	 *
+	 * @param $transfer name of the transfer
+	 * @return boolean of success
+	 */
+	function delete($transfer) {
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
+		// delete
+		$this->execDelete(true);
+	}
 
     /**
      * gets current transfer-vals of a transfer
@@ -155,18 +171,13 @@ class ClientHandlerTornado extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrent($transfer) {
-        $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
-        $retVal["uptotal"] = $af->uptotal;
-        $retVal["downtotal"] = $af->downtotal;
-        return $retVal;
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
     /**
-     * gets current transfer-vals of a transfer. optimized index-page-version
+     * gets current transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -175,11 +186,7 @@ class ClientHandlerTornado extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        $retVal = array();
-        // transfer from stat-file
-        $retVal["uptotal"] = $afu;
-        $retVal["downtotal"] = $afd;
-        return $retVal;
+        return array("uptotal" => $afu, "downtotal" => $afd);
     }
 
     /**
@@ -192,29 +199,25 @@ class ClientHandlerTornado extends ClientHandler
     	global $db;
         $retVal = array();
         // transfer from db
-        $torrentId = getTorrentHash($transfer);
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
+        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
         $result = $db->Execute($sql);
-    	showError($db, $sql);
         $row = $result->FetchRow();
-        if (!empty($row)) {
+        if (empty($row)) {
+        	$retVal["uptotal"] = 0;
+            $retVal["downtotal"] = 0;
+        } else {
             $retVal["uptotal"] = $row["uptotal"];
             $retVal["downtotal"] = $row["downtotal"];
-        } else {
-            $retVal["uptotal"] = 0;
-            $retVal["downtotal"] = 0;
         }
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         $retVal["uptotal"] += $af->uptotal;
         $retVal["downtotal"] += $af->downtotal;
         return $retVal;
     }
 
     /**
-     * gets total transfer-vals of a transfer. optimized index-page-version
+     * gets total transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -228,14 +231,13 @@ class ClientHandlerTornado extends ClientHandler
         // transfer from db
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
         $result = $db->Execute($sql);
-    	showError($db, $sql);
         $row = $result->FetchRow();
-        if (!empty($row)) {
+        if (empty($row)) {
+        	$retVal["uptotal"] = 0;
+            $retVal["downtotal"] = 0;
+        } else {
             $retVal["uptotal"] = $row["uptotal"];
             $retVal["downtotal"] = $row["downtotal"];
-        } else {
-            $retVal["uptotal"] = 0;
-            $retVal["downtotal"] = 0;
         }
         // transfer from stat-file
         $retVal["uptotal"] += $afu;

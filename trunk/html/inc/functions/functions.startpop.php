@@ -24,9 +24,9 @@
  * setVarsFromPersistentSettings
  */
 function setVarsFromPersistentSettings() {
-	global $cfg, $tmpl, $torrent;
+	global $cfg, $tmpl, $transfer;
 	// Load saved settings
-	loadTorrentSettingsToConfig($torrent);
+	loadTorrentSettingsToConfig($transfer);
 	// set settings
 	$tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 	$tmpl->setvar('max_uploads', $cfg["max_uploads"]);
@@ -45,7 +45,7 @@ function setVarsFromPersistentSettings() {
 	// savepath
 	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 		$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
-			? $cfg["path"].getOwner($torrent).'/'
+			? $cfg["path"].getOwner($transfer).'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 	}
 	$tmpl->setvar('savepath', $cfg["savepath"]);

@@ -20,9 +20,15 @@
 
 *******************************************************************************/
 
-// class ClientHandler for transmission-client
+/**
+ * class ClientHandler for transmission-client
+ */
 class ClientHandlerTransmission extends ClientHandler
 {
+
+	// =========================================================================
+	// ctor
+	// =========================================================================
 
     /**
      * ctor
@@ -34,6 +40,10 @@ class ClientHandlerTransmission extends ClientHandler
         $this->binClient = "transmissioncli";
     }
 
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
     /**
      * starts a client
      *
@@ -43,6 +53,9 @@ class ClientHandlerTransmission extends ClientHandler
      */
     function start($transfer, $interactive = false, $enqueue = false) {
     	global $cfg;
+
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
@@ -58,7 +71,7 @@ class ClientHandlerTransmission extends ClientHandler
         }
 
         // prepare starting of client
-        $this->prepareStart($transfer, $interactive, $enqueue);
+        $this->prepareStart($interactive, $enqueue);
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
@@ -71,11 +84,8 @@ class ClientHandlerTransmission extends ClientHandler
         if ($this->sharekill == -1)
             $this->sharekill_param = -1;
 
-        // pid-file
-        $this->pidFile = $cfg["transfer_file_path"].$this->alias.".stat.pid";
-
         // workaround for bsd-pid-file-problem : touch file first
-        if (($this->queue == 0) && ($cfg["_OS"] == 2))
+        if ((!$this->queue) && ($cfg["_OS"] == 2))
         	@touch($this->pidFile);
 
         // build the command-string
@@ -87,7 +97,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " nohup ";
         $this->command .= $this->nice;
         $this->command .= escapeshellarg($cfg["btclient_transmission_bin"]);
-        $this->command .= " -t ".escapeshellarg($cfg["transfer_file_path"].$this->alias.".stat");
+        $this->command .= " -t ".escapeshellarg($this->aliasFile);
         $this->command .= " -w ".$this->owner;
         $this->command .= " -z ".escapeshellarg($this->pidFile);
         $this->command .= " -e 5";
@@ -97,17 +107,11 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -p ".escapeshellarg($this->port);
         if (strlen($cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$cfg["btclient_transmission_options"];
-        $this->command .= " ".escapeshellarg($cfg["transfer_file_path"].$this->transfer);
+        $this->command .= " ".escapeshellarg($this->transferFile);
         $this->command .= " 1>> ".escapeshellarg($this->logFile);
         $this->command .= " 2>> ".escapeshellarg($this->logFile);
         $this->command .= " &";
 
-        // <begin shell> to write the pid of the client into the pid-file
-        // * b4rt :
-        //$this->command .= " &> /dev/null & echo $! > ".escapeshellarg($this->pidFile);
-        // * lord_nor :
-        //$this->command .= " > /dev/null & echo $! & > ".escapeshellarg($this->pidFile);
-        // <end shell>
         // start the client
         $this->execStart(true, true);
     }
@@ -116,29 +120,35 @@ class ClientHandlerTransmission extends ClientHandler
      * stops a client
      *
      * @param $transfer name of the transfer
-     * @param $aliasFile alias-file of the transfer
      * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
      */
-    function stop($transfer, $aliasFile, $kill = false, $transferPid = 0) {
-    	global $cfg;
-        $this->pidFile = $cfg["transfer_file_path"].$aliasFile.".pid";
+    function stop($transfer, $kill = false, $transferPid = 0) {
+    	// set vars
+		$this->setVarsFromTransfer($transfer);
         // stop the client
-        $this->execStop($transfer, $aliasFile, $kill, $transferPid);
-        // delete the pid file
-        // included in transmissioncli
-        @unlink($this->pidFile);
+        $this->execStop($kill, $transferPid);
     }
+
+	/**
+	 * deletes a transfer
+	 *
+	 * @param $transfer name of the transfer
+	 * @return boolean of success
+	 */
+	function delete($transfer) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+		// delete
+		$this->execDelete(true);
+	}
 
     /**
      * deletes cache of a transfer
-     *
-     * @param $transfer
      */
-    function deleteCache($transfer) {
+    function execDeleteCache() {
     	global $cfg;
-        $torrentId = getTorrentHash($transfer);
-        @unlink($cfg["path"].".transmission/cache/resume.".$torrentId);
+        @unlink($cfg["path"].".transmission/cache/resume.".getTorrentHash($this->transfer));
         return;
     }
 
@@ -152,18 +162,15 @@ class ClientHandlerTransmission extends ClientHandler
     	global $db;
         $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
+		$af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         $retVal["uptotal"] = $af->uptotal;
         $retVal["downtotal"] = $af->downtotal;
         // transfer from db
         $torrentId = getTorrentHash($transfer);
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
         $result = $db->Execute($sql);
-    	showError($db, $sql);
         $row = $result->FetchRow();
-        if (! empty($row)) {
+        if (!empty($row)) {
             $retVal["uptotal"] -= $row["uptotal"];
             $retVal["downtotal"] -= $row["downtotal"];
         }
@@ -171,7 +178,7 @@ class ClientHandlerTransmission extends ClientHandler
     }
 
     /**
-     * gets current transfer-vals of a transfer. optimized index-page-version
+     * gets current transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -188,9 +195,8 @@ class ClientHandlerTransmission extends ClientHandler
         // transfer from db
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
         $result = $db->Execute($sql);
-    	showError($db, $sql);
         $row = $result->FetchRow();
-        if (! empty($row)) {
+        if (!empty($row)) {
             $retVal["uptotal"] -= $row["uptotal"];
             $retVal["downtotal"] -= $row["downtotal"];
         }
@@ -204,18 +210,13 @@ class ClientHandlerTransmission extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotal($transfer) {
-        $retVal = array();
         // transfer from stat-file
-        $aliasName = getAliasName($transfer);
-        $owner = getOwner($transfer);
-        $af = new AliasFile($aliasName.".stat", $owner);
-        $retVal["uptotal"] = $af->uptotal;
-        $retVal["downtotal"] = $af->downtotal;
-        return $retVal;
+        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
     /**
-     * gets total transfer-vals of a transfer. optimized index-page-version
+     * gets total transfer-vals of a transfer. optimized version
      *
      * @param $transfer
      * @param $tid of the transfer
@@ -224,11 +225,7 @@ class ClientHandlerTransmission extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotalOP($transfer, $tid, $afu, $afd) {
-        $retVal = array();
-        // transfer from stat-file
-        $retVal["uptotal"] = $afu;
-        $retVal["downtotal"] = $afd;
-        return $retVal;
+        return array("uptotal" => $afu, "downtotal" => $afd);
     }
 }
 

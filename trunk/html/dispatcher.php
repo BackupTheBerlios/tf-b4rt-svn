@@ -46,19 +46,19 @@ switch ($action) {
  * index-page ops
  ******************************************************************************/
     case "indexStart":
-		indexStartTransfer(getRequestVar('transfer'));
+		indexStartTransfer(urldecode(getRequestVar('transfer')));
     	break;
     case "indexUrlUpload":
-		indexProcessDownload(getRequestVar('url'));
+		indexProcessDownload(urldecode(getRequestVar('url')));
     	break;
     case "indexDelete":
-    	indexDeleteTransfer(getRequestVar('transfer'));
+    	indexDeleteTransfer(urldecode(getRequestVar('transfer')));
     	break;
     case "indexStop":
-    	indexStopTransfer(getRequestVar('transfer'));
+    	indexStopTransfer(urldecode(getRequestVar('transfer')));
     	break;
     case "indexDeQueue":
-    	indexDeQueueTransfer(getRequestVar('transfer'));
+    	indexDeQueueTransfer(urldecode(getRequestVar('transfer')));
     	break;
 
 /*******************************************************************************
@@ -142,10 +142,9 @@ switch ($action) {
             if ($tRunningFlag != 0) {
                 $owner = getOwner($transfer);
                 if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $alias = getAliasName($transfer).".stat";
                     $btclient = getTransferClient($transfer);
                     $clientHandler = ClientHandler::getInstance($btclient);
-                    $clientHandler->stop($transfer, $alias);
+                    $clientHandler->stop($transfer);
                 }
             }
     	}
@@ -214,30 +213,32 @@ switch ($action) {
 
 		foreach($_POST['transfer'] as $key => $element) {
 
+			// url-decode
+			$element = urldecode($element);
+
 			// is valid transfer ?
-			if (isValidTransfer(urldecode($element)) !== true) {
+			if (isValidTransfer($element) !== true) {
 				AuditAction($cfg["constants"]["error"], "Invalid Transfer for ".$action." : ".$cfg["user"]." tried to ".$action." ".$element);
 				showErrorPage("Invalid Transfer for ".htmlentities($action, ENT_QUOTES)." : <br>".htmlentities($element, ENT_QUOTES));
 			}
 
-			// alias
-			$alias = getAliasName($element).".stat";
+			// client
 			if ((substr(strtolower($element), -8) == ".torrent")) {
 				// this is a torrent-client
 				$isTorrent = true;
-				$tclient = getTransferClient(urldecode($element));
+				$tclient = getTransferClient($element);
 			} else if ((substr(strtolower($element), -5) == ".wget")) {
 				// this is wget.
 				$isTorrent = false;
 				$tclient = "wget";
 			} else {
-				// this is "something else". use tornado statfile as default
+				// this is "something else". use tornado as default
 				$isTorrent = false;
 				$tclient = "tornado";
 			}
 
 			// is transfer running ?
-			$tRunningFlag = isTransferRunning(urldecode($element));
+			$tRunningFlag = isTransferRunning($element);
 
 			// action switch
 			switch ($action) {
@@ -248,13 +249,13 @@ switch ($action) {
 							if ($cfg["enable_file_priority"]) {
 								include_once("inc/functions/functions.setpriority.php");
 								// Process setPriority Request.
-								setPriority(urldecode($element));
+								setPriority($element);
 							}
 							$clientHandler = ClientHandler::getInstance($tclient);
-							$clientHandler->start(urldecode($element), false, FluxdQmgr::isRunning());
+							$clientHandler->start($element, false, FluxdQmgr::isRunning());
 						} else {
 							$clientHandler = ClientHandler::getInstance($tclient);
-							$clientHandler->start(urldecode($element), false, false);
+							$clientHandler->start($element, false, false);
 						}
 					}
 					break;
@@ -262,7 +263,7 @@ switch ($action) {
 				case "transferStop": /* transferStop */
 					if (($isTorrent) && ($tRunningFlag != 0)) {
 						$clientHandler = ClientHandler::getInstance($tclient);
-						$clientHandler->stop(urldecode($element), $alias);
+						$clientHandler->stop($element);
 					}
 					break;
 
@@ -272,31 +273,31 @@ switch ($action) {
 						if ($cfg["enable_file_priority"]) {
 							include_once("inc/functions/functions.setpriority.php");
 							// Process setPriority Request.
-							setPriority(urldecode($element));
+							setPriority($element);
 						}
 						$clientHandler = ClientHandler::getInstance($tclient);
-						$clientHandler->start(urldecode($element), false, true);
+						$clientHandler->start($element, false, true);
 					}
 					break;
 
 				case "transferDeQueue": /* transferDeQueue */
 					if (($isTorrent) && ($tRunningFlag == 0)) {
 						// dequeue it
-						FluxdQmgr::dequeueTransfer(urldecode($element), $cfg['user']);
+						FluxdQmgr::dequeueTransfer($element, $cfg['user']);
 					}
 					break;
 
 				case "transferResetTotals": /* transferResetTotals */
-					resetTorrentTotals(urldecode($element), false);
+					resetTorrentTotals($element, false);
 					break;
 
 				default:
 					if (($isTorrent) && ($tRunningFlag != 0)) {
 						// stop torrent first
 						$clientHandler = ClientHandler::getInstance($tclient);
-						$clientHandler->stop(urldecode($element), $alias);
+						$clientHandler->stop($element);
 						// is transfer running ?
-						$tRunningFlag = isTransferRunning(urldecode($element));
+						$tRunningFlag = isTransferRunning($element);
 					}
 					// if it was running... hope the thing is down...
 					// only continue if it is
@@ -304,15 +305,16 @@ switch ($action) {
 						switch ($action) {
 							case "transferWipe": /* transferWipe */
 								if ($isTorrent) {
-									deleteTorrentData(urldecode($element));
-									resetTorrentTotals(urldecode($element), true);
+									deleteTorrentData($element);
+									resetTorrentTotals($element, true);
 								}
 								break;
 							case "transferData": /* transferData */
 								if ($isTorrent)
-									deleteTorrentData(urldecode($element));
+									deleteTorrentData($element);
 							case "transfer": /* transfer */
-								deleteTransfer(urldecode($element), $alias);
+								$clientHandler = ClientHandler::getInstance($tclient);
+								$clientHandler->delete($element);
 						}
 					}
 

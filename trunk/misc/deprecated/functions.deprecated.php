@@ -1071,6 +1071,65 @@ function getTransferTotalsCurrentOP($transfer, $tid, $tclient, $afu, $afd) {
 }
 
 /**
+ * deletes a transfer
+ *
+ * @param $transfer name of the transfer
+ * @param $alias_file alias-file of the transfer
+ * @return boolean of success
+ */
+function deleteTransfer($transfer, $alias_file) {
+	global $cfg;
+	$transferowner = getOwner($transfer);
+	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
+		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+			// this is a torrent-client
+			$btclient = getTransferClient($transfer);
+			$af = new AliasFile($alias_file, $transferowner);
+			// update totals for this torrent
+			updateTransferTotals($transfer);
+			// remove torrent-settings from db
+			deleteTorrentSettings($transfer);
+			// client-proprietary leftovers
+			$clientHandler = ClientHandler::getInstance($btclient);
+			$clientHandler->deleteCache($transfer);
+		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+			// this is wget.
+			$af = new AliasFile($alias_file, $transferowner);
+		} else {
+			// this is "something else". use tornado statfile as default
+			$af = new AliasFile($alias_file, $cfg["user"]);
+		}
+		if ($cfg['enable_xfer'] != 0) {
+			// XFER: before torrent deletion save upload/download xfer data to SQL
+			$transferTotals = getTransferTotalsCurrent($transfer);
+			saveXfer($transferowner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
+		}
+		// alias-name
+		$aliasName = getAliasName($transfer);
+		// torrent+stat
+		@unlink($cfg["transfer_file_path"].$transfer);
+		@unlink($cfg["transfer_file_path"].$alias_file);
+		// if exist remove pid file
+		$pidFile = $cfg["transfer_file_path"].$alias_file.".pid";
+		if (file_exists($pidFile))
+			@unlink($pidFile);
+		// if exist remove prio-file
+		$prioFile = $cfg["transfer_file_path"].$aliasName.".prio";
+		if (file_exists($prioFile))
+			@unlink($prioFile);
+		// if exist remove log-file
+		$logFile = $cfg["transfer_file_path"].$aliasName.".log";
+		if (file_exists($logFile))
+			@unlink($logFile);
+		AuditAction($cfg["constants"]["delete_torrent"], $transfer);
+		return true;
+	} else {
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
+		return false;
+	}
+}
+
+/**
  * updates totals of a transfer
  *
  * @param $transfer name of the transfer
@@ -1138,65 +1197,6 @@ function getTransferTotalsCurrent($transfer) {
 		$clientHandler = ClientHandler::getInstance('tornado');
 	}
 	return $clientHandler->getTransferCurrent($transfer);
-}
-
-/**
- * deletes a transfer
- *
- * @param $transfer name of the transfer
- * @param $alias_file alias-file of the transfer
- * @return boolean of success
- */
-function deleteTransfer($transfer, $alias_file) {
-	global $cfg;
-	$transferowner = getOwner($transfer);
-	if (($cfg["user"] == $transferowner) || $cfg['isAdmin']) {
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
-			// this is a torrent-client
-			$btclient = getTransferClient($transfer);
-			$af = new AliasFile($alias_file, $transferowner);
-			// update totals for this torrent
-			updateTransferTotals($transfer);
-			// remove torrent-settings from db
-			deleteTorrentSettings($transfer);
-			// client-proprietary leftovers
-			$clientHandler = ClientHandler::getInstance($btclient);
-			$clientHandler->deleteCache($transfer);
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-			// this is wget.
-			$af = new AliasFile($alias_file, $transferowner);
-		} else {
-			// this is "something else". use tornado statfile as default
-			$af = new AliasFile($alias_file, $cfg["user"]);
-		}
-		if ($cfg['enable_xfer'] != 0) {
-			// XFER: before torrent deletion save upload/download xfer data to SQL
-			$transferTotals = getTransferTotalsCurrent($transfer);
-			saveXfer($transferowner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
-		}
-		// alias-name
-		$aliasName = getAliasName($transfer);
-		// torrent+stat
-		@unlink($cfg["transfer_file_path"].$transfer);
-		@unlink($cfg["transfer_file_path"].$alias_file);
-		// if exist remove pid file
-		$pidFile = $cfg["transfer_file_path"].$alias_file.".pid";
-		if (file_exists($pidFile))
-			@unlink($pidFile);
-		// if exist remove prio-file
-		$prioFile = $cfg["transfer_file_path"].$aliasName.".prio";
-		if (file_exists($prioFile))
-			@unlink($prioFile);
-		// if exist remove log-file
-		$logFile = $cfg["transfer_file_path"].$aliasName.".log";
-		if (file_exists($logFile))
-			@unlink($logFile);
-		AuditAction($cfg["constants"]["delete_torrent"], $transfer);
-		return true;
-	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
-		return false;
-	}
 }
 
 ?>

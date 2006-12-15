@@ -336,7 +336,7 @@ class MaintenanceAndRepair
 			if ((isset($settingsAry)) && (is_array($settingsAry))) {
 				// this is a torrent-client
 				// set stopped flag in db
-				stopTorrentSettings($transfer);
+				stopTransferSettings($transfer);
 			} else {
 				// this is a wget-client
 				$transfer = $bogusTransfer.".wget";

@@ -686,14 +686,14 @@ function getSumMaxDownRate() {
 }
 
 /**
- * Function to delete saved Torrent Settings
+ * Function to delete saved Settings
  *
- * @param $torrent
+ * @param $transfer
  * @return boolean
  */
-function deleteTorrentSettings($torrent) {
+function deleteTransferSettings($transfer) {
 	global $db;
-	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$torrent."'";
+	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$db->Execute($sql);
 	showError($db, $sql);
 	return true;
@@ -702,7 +702,7 @@ function deleteTorrentSettings($torrent) {
 /**
  * Function for saving Torrent Settings
  *
- * @param $torrent
+ * @param $transfer
  * @param $running
  * @param $rate
  * @param $drate
@@ -716,18 +716,18 @@ function deleteTorrentSettings($torrent) {
  * @param $btclient
  * @return boolean
  */
-function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
+function saveTorrentSettings($transfer, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
 	global $db;
 	// Messy - a not exists would prob work better
-	deleteTorrentSettings($torrent);
+	deleteTransferSettings($transfer);
 	// get hash
-	$tHash = getTorrentHash($torrent);
+	$tHash = getTorrentHash($transfer);
 	// get datapath
-	$tDatapath = getTorrentDatapath($torrent);
+	$tDatapath = getTorrentDatapath($transfer);
 	// insert
 	$sql = "INSERT INTO tf_torrents ( torrent , running ,rate , drate, maxuploads , runtime , sharekill , minport , maxport, maxcons , savepath , btclient, hash, datapath )
 			VALUES (
-					".$db->qstr($torrent).",
+					".$db->qstr($transfer).",
 					".$db->qstr($running).",
 					".$db->qstr($rate).",
 					".$db->qstr($drate).",
@@ -750,12 +750,12 @@ function saveTorrentSettings($torrent, $running, $rate, $drate, $maxuploads, $ru
 /**
  * Function to load the settings for a torrent. returns array with settings
  *
- * @param $torrent
+ * @param $transfer
  * @return array
  */
-function loadTorrentSettings($torrent) {
+function loadTorrentSettings($transfer) {
 	global $db;
-	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
+	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
 	showError($db, $sql);
 	$row = $result->FetchRow();
@@ -782,12 +782,12 @@ function loadTorrentSettings($torrent) {
 /*
  * Function to load the settings for a torrent to global cfg-array
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @return boolean if the settings could be loaded (were existent in db already)
  */
-function loadTorrentSettingsToConfig($torrent) {
+function loadTorrentSettingsToConfig($transfer) {
 	global $cfg, $db;
-	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$torrent."'";
+	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
 	showError($db, $sql);
 	$row = $result->FetchRow();
@@ -814,12 +814,11 @@ function loadTorrentSettingsToConfig($torrent) {
 /**
  * sets the running flag in the db to stopped.
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  */
-function stopTorrentSettings($torrent) {
+function stopTransferSettings($transfer) {
   global $db;
-  $sql = "UPDATE tf_torrents SET running = '0' WHERE torrent = '".$torrent."'";
-  $db->Execute($sql);
+  $db->Execute("UPDATE tf_torrents SET running = '0' WHERE torrent = '".$transfer."'");
   return true;
 }
 
@@ -870,12 +869,19 @@ function waitForTransfer($transfer, $state, $maxWait = 10) {
 /**
  * gets the btclient of the torrent out of the the db.
  *
- * @param $torrent name of the torrent
- * @return btclient
+ * @param $transfer name of the torrent
+ * @return string
  */
-function getTransferClient($torrent) {
-	global $db;
-	return $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$torrent."'");
+function getTransferClient($transfer) {
+	global $cfg, $db;
+	$client = @ $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
+	if (empty($client)) {
+		return ((substr($transfer, -5) == ".wget"))
+			? "wget"
+			: $cfg["btclient"];
+	} else {
+		return $client;
+	}
 }
 
 /**
@@ -883,16 +889,16 @@ function getTransferClient($torrent) {
  * this should not be called external if its no must, use cached value in
  * tf_torrents if possible.
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @return var with torrent-hash
  */
-function getTorrentHash($torrent) {
+function getTorrentHash($transfer) {
 	//info = metainfo['info']
 	//info_hash = sha(bencode(info))
 	//print 'metainfo file.: %s' % basename(metainfo_name)
 	//print 'info hash.....: %s' % info_hash.hexdigest()
 	global $cfg;
-	$result = getTorrentMetaInfo($torrent);
+	$result = getTorrentMetaInfo($transfer);
 	if (empty($result))
 		return "";
 	$resultAry = explode("\n",$result);
@@ -917,87 +923,17 @@ function getTorrentHash($torrent) {
  * this should not be called external if its no must, use cached value in
  * tf_torrents if possible.
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @return var with torrent-datapath or empty string on error
  */
-function getTorrentDatapath($torrent) {
+function getTorrentDatapath($transfer) {
 	global $cfg;
     require_once('inc/classes/BDecode.php');
-    $ftorrent = $cfg["transfer_file_path"].$torrent;
+    $ftorrent = $cfg["transfer_file_path"].$transfer;
     $fd = fopen($ftorrent, "rd");
     $alltorrent = fread($fd, filesize($ftorrent));
     $btmeta = @BDecode($alltorrent);
     return (empty($btmeta['info']['name'])) ? "" : trim($btmeta['info']['name']);
-}
-
-/**
- * updates totals of a transfer
- *
- * @param $transfer name of the transfer
- * @param $uptotal uptotal of the transfer
- * @param $downtotal downtotal of the transfer
- */
-function updateTransferTotals($transfer) {
-	global $db;
-	$torrentId = getTorrentHash($transfer);
-	$transferTotals = getTransferTotals($transfer);
-	$sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
-	$result = $db->Execute($sql);
-	showError($db, $sql);
-	$row = $result->FetchRow();
-	if (!empty($row)) {
-		$sql = "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$torrentId."'";
-		$db->Execute($sql);
-	} else {
-		$sql = "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal )
-					VALUES (
-					'".$torrentId."',
-					'".$transferTotals["uptotal"]."',
-					'".$transferTotals["downtotal"]."'
-				   )";
-		$db->Execute($sql);
-	}
-	showError($db, $sql);
-}
-
-/**
- * gets totals of a transfer
- *
- * @param $transfer name of the transfer
- * @return array with transfer-totals
- */
-function getTransferTotals($transfer) {
-	if ((substr(strtolower($transfer), -8) == ".torrent")) {
-		// this is a torrent-client
-		$tclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getInstance($tclient);
-	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-		// this is wget.
-		$clientHandler = ClientHandler::getInstance('wget');
-	} else {
-		$clientHandler = ClientHandler::getInstance('tornado');
-	}
-	return $clientHandler->getTransferTotal($transfer);
-}
-
-/**
- * gets current totals of a transfer
- *
- * @param $transfer name of the transfer
- * @return array with transfer-totals
- */
-function getTransferTotalsCurrent($transfer) {
-	if ((substr( strtolower($transfer), -8) == ".torrent")) {
-		// this is a torrent-client
-		$tclient = getTransferClient($transfer);
-		$clientHandler = ClientHandler::getInstance($tclient);
-	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
-		// this is wget.
-		$clientHandler = ClientHandler::getInstance('wget');
-	} else {
-		$clientHandler = ClientHandler::getInstance('tornado');
-	}
-	return $clientHandler->getTransferCurrent($transfer);
 }
 
 /**
@@ -1007,20 +943,15 @@ function getTransferTotalsCurrent($transfer) {
  * @param $delete boolean if to delete torrent-file
  * @return boolean of success
  */
-function resetTorrentTotals($torrent, $delete = false) {
+function resetTorrentTotals($transfer, $delete = false) {
 	global $cfg, $db;
-	// vars
-	$torrentId = getTorrentHash($torrent);
-	$alias = getAliasName($torrent);
-	$owner = getOwner($torrent);
 	// delete torrent
 	if ($delete == true) {
-		deleteTransfer($torrent, $alias.".stat");
-		// delete the stat file. shouldnt be there.. but...
-		@unlink($cfg["transfer_file_path"].$alias.".stat");
+		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		$clientHandler->delete($transfer);
 	} else {
 		// reset in stat-file
-		$af = new AliasFile($alias.".stat", $owner);
+		$af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
 		if (isset($af)) {
 			$af->uptotal = 0;
 			$af->downtotal = 0;
@@ -1028,7 +959,7 @@ function resetTorrentTotals($torrent, $delete = false) {
 		}
 	}
 	// reset in db
-	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
+	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
 	$db->Execute($sql);
 	showError($db, $sql);
 	return true;
@@ -1117,21 +1048,21 @@ function getTransferLog($transfer) {
 /**
  * deletes data of a torrent
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  */
-function deleteTorrentData($torrent) {
+function deleteTorrentData($transfer) {
 	global $cfg;
-	$owner = getOwner($torrent);
+	$owner = getOwner($transfer);
 	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
 		require_once('inc/classes/BDecode.php');
-		$ftorrent = $cfg["transfer_file_path"].$torrent;
+		$ftorrent = $cfg["transfer_file_path"].$transfer;
 		$fd = fopen($ftorrent, "rd");
 		$alltorrent = fread($fd, filesize($ftorrent));
 		$btmeta = @BDecode($alltorrent);
 		$delete = @trim($btmeta['info']['name']);
 		if ($delete != "") {
 			// load torrent-settings from db to get data-location
-			loadTorrentSettingsToConfig(urldecode($torrent));
+			loadTorrentSettingsToConfig(urldecode($transfer));
 			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 					? $cfg["path"].$owner.'/'
@@ -1152,32 +1083,32 @@ function deleteTorrentData($torrent) {
 			}
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$torrent);
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
 	}
 }
 
 /**
  * gets size of data of a torrent
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @return int with size of data of torrent.
  *		   -1 if error
  *		   4096 if dir (lol ~)
  */
-function getTorrentDataSize($torrent) {
+function getTorrentDataSize($transfer) {
 	global $cfg;
 	require_once('inc/classes/BDecode.php');
-	$ftorrent = $cfg["transfer_file_path"].$torrent;
+	$ftorrent = $cfg["transfer_file_path"].$transfer;
 	$fd = fopen($ftorrent, "rd");
 	$alltorrent = fread($fd, filesize($ftorrent));
 	$btmeta = @BDecode($alltorrent);
 	$name = @trim($btmeta['info']['name']);
 	if ($name != "") {
 		// load torrent-settings from db to get data-location
-		loadTorrentSettingsToConfig($torrent);
+		loadTorrentSettingsToConfig($transfer);
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
-				? $cfg["path"].getOwner($torrent).'/'
+				? $cfg["path"].getOwner($transfer).'/'
 				: $cfg["path"].$cfg["path_incoming"].'/';
 		}
 		$name = $cfg["savepath"].$name;
@@ -1213,37 +1144,37 @@ function getRunningTransferCount() {
 /**
  * gets metainfo of a torrent as string
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @return string with torrent-meta-info
  */
-function getTorrentMetaInfo($torrent) {
+function getTorrentMetaInfo($transfer) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -i ".escapeshellarg($cfg["transfer_file_path"].$torrent));
+			return shell_exec($cfg["btclient_transmission_bin"] . " -i ".escapeshellarg($cfg["transfer_file_path"].$transfer));
 		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i '.escapeshellarg($cfg["transfer_file_path"].$torrent));
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i '.escapeshellarg($cfg["transfer_file_path"].$transfer));
 		case "torrentinfo-console.py":
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py ".escapeshellarg($torrent));
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py ".escapeshellarg($transfer));
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py ".escapeshellarg($torrent));
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py ".escapeshellarg($transfer));
 	}
 }
 
 /**
  * gets scrape-info of a torrent as string
  *
- * @param $torrent name of the torrent
+ * @param $transfer name of the torrent
  * @return string with torrent-scrape-info
  */
-function getTorrentScrapeInfo($torrent) {
+function getTorrentScrapeInfo($transfer) {
 	global $cfg;
 	switch ($cfg["metainfoclient"]) {
 		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$torrent));
+			return shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$transfer));
 		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s '.escapeshellarg($cfg["transfer_file_path"].$torrent));
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s '.escapeshellarg($cfg["transfer_file_path"].$transfer));
 		case "btshowmetainfo.py":
 			return "not supported by btshowmetainfo.py.";
 		case "torrentinfo-console.py":
@@ -1280,8 +1211,8 @@ function getTorrentListFromDB() {
 	$sql = "SELECT torrent FROM tf_torrents ORDER BY torrent ASC";
 	$recordset = $db->Execute($sql);
 	showError($db, $sql);
-	while(list($torrent) = $recordset->FetchRow())
-		array_push($retVal, $torrent);
+	while(list($transfer) = $recordset->FetchRow())
+		array_push($retVal, $transfer);
 	return $retVal;
 }
 
@@ -1393,18 +1324,22 @@ function getLoadAverageString() {
 }
 
 /**
- * injects a torrent
+ * injects a Alias
  *
- * @param $torrent
+ * @param $transfer
  * @return boolean
  */
-function injectTorrent($torrent) {
+function injectAlias($transfer) {
 	global $cfg;
-	$af = new AliasFile(getAliasName($torrent).".stat");
+	$af = new AliasFile(getAliasName($transfer).".stat");
 	$af->running = "2"; // file is new
-	$af->size = getDownloadSize($cfg["transfer_file_path"].$torrent);
-	$af->write();
-	return true;
+	$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+	if ($af->write()) {
+		return true;
+	} else {
+        AuditAction($cfg["constants"]["error"], "aliasfile cannot be written when injecting : ".$transfer);
+        return false;
+	}
 }
 
 /**
@@ -1609,11 +1544,11 @@ function getTransferListArray() {
 
 		// ---------------------------------------------------------------------
 		// injects
-		if (!file_exists($cfg["transfer_file_path"].$alias)) {
+		if(!file_exists($cfg["transfer_file_path"].$alias)) {
 			$transferRunning = 2;
 			$af->running = "2";
 			$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
-			$af->write();
+			injectAlias($entry);
 		}
 
 		// totals-preparation
@@ -2459,20 +2394,22 @@ function cleanURL($url) {
 /**
  * Grab the full size of the download from the torrent metafile
  *
- * @param $torrent
+ * @param $transfer
  * @return int
  */
-function getDownloadSize($torrent) {
-	$rtnValue = "";
-	if (file_exists($torrent)) {
+function getDownloadSize($transfer) {
+	if (@file_exists($transfer)) {
 		require_once("inc/classes/BDecode.php");
-		$fd = fopen($torrent, "rd");
-		$alltorrent = fread($fd, filesize($torrent));
-		$array = @BDecode($alltorrent);
-		fclose($fd);
-		$rtnValue = $array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20);
+		if ($fd = fopen($transfer, "rd")) {
+			$alltorrent = @fread($fd, @filesize($transfer));
+			$array = @BDecode($alltorrent);
+			@fclose($fd);
+		}
+		return ((isset($array["info"]["piece length"])) && (isset($array["info"]["pieces"])))
+			? $array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20)
+			: "";
 	}
-	return $rtnValue;
+	return "";
 }
 
 /**

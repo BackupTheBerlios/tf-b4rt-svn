@@ -208,7 +208,7 @@ class FluxdQmgr extends FluxdServiceMod
 	            // send command (hardcoded for .torrent for now)
     			Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.substr($transfer, 0, -8).';'.$user, 0);
 	            // flag the transfer as stopped (in db)
-	            stopTorrentSettings($transfer);
+	            stopTransferSettings($transfer);
 	            // update the stat file.
 	            $this->_updateStatFile($transfer, getAliasName($transfer).".stat");
 	            // log
