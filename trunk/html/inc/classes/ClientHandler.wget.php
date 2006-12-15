@@ -163,8 +163,8 @@ class ClientHandlerWget extends ClientHandler
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
-        $this->command .= " " . escapeshellarg($this->aliasFile);
-        $this->command .= " " . escapeshellarg($this->pidFile);
+        $this->command .= " " . escapeshellarg($this->aliasFilePath);
+        $this->command .= " " . escapeshellarg($this->pidFilePath);
         $this->command .= " " . $this->owner;
         $this->command .= ($cfg["enable_home_dirs"] != 0)
         	? " " . $this->owner
@@ -172,8 +172,8 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . $cfg["wget_limit_rate"];
         $this->command .= " " . $cfg["wget_limit_retries"];
         $this->command .= " " . $cfg["wget_ftp_pasv"];
-        $this->command .= " 1>> ".escapeshellarg($this->logFile);
-        $this->command .= " 2>> ".escapeshellarg($this->logFile);
+        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
         $this->command .= " &";
 
 		// state

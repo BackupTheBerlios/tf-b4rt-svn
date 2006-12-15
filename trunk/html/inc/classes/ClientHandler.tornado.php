@@ -95,8 +95,8 @@ class ClientHandlerTornado extends ClientHandler
         if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
             $skipHashCheck = " --check_hashes 0";
         $filePrio = "";
-        if (@file_exists($this->prioFile)) {
-            $priolist = explode(',', file_get_contents($this->prioFile));
+        if (@file_exists($this->prioFilePath)) {
+            $priolist = explode(',', file_get_contents($this->prioFilePath));
             $priolist = implode(',', array_slice($priolist, 1, $priolist[0]));
             $filePrio = " --priority ".escapeshellarg($priolist);
         }
@@ -113,9 +113,9 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
         $this->command .= " ".escapeshellarg($this->runtime);
         $this->command .= " ".escapeshellarg($this->sharekill_param);
-        $this->command .= " ".escapeshellarg($this->aliasFile);
+        $this->command .= " ".escapeshellarg($this->aliasFilePath);
         $this->command .= " ".$this->owner;
-        $this->command .= " --responsefile ".escapeshellarg($this->transferFile);
+        $this->command .= " --responsefile ".escapeshellarg($this->transferFilePath);
         $this->command .= " --display_interval 5";
         $this->command .= " --max_download_rate ".escapeshellarg($this->drate);
         $this->command .= " --max_upload_rate ".escapeshellarg($this->rate);
@@ -129,8 +129,8 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $filePrio;
 		if (strlen($cfg["btclient_tornado_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_tornado_options"];
-        $this->command .= " 1>> ".escapeshellarg($this->logFile);
-        $this->command .= " 2>> ".escapeshellarg($this->logFile);
+        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
         $this->command .= " &";
 
         // start the client

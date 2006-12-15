@@ -60,21 +60,22 @@ class ClientHandler
 
     // transfer
     var $transfer = "";
-    var $transferFile = "";
+    var $transferFilePath = "";
 
     // alias
     var $alias = "";
     var $aliasFile = "";
+    var $aliasFilePath = "";
 
     // pid
     var $pid = "";
-    var $pidFile = "";
+    var $pidFilePath = "";
 
     // logfile
-    var $logFile = "";
+    var $logFilePath = "";
 
     // priofile
-    var $prioFile = "";
+    var $prioFilePath = "";
 
     // owner
     var $owner = "";
@@ -459,7 +460,7 @@ class ClientHandler
         // We are going to write a '0' on the front of the stat file so that
         // the client will no to stop -- this will report stats when it dies
         // read the alias file + create AliasFile object
-        $this->af = new AliasFile($this->alias, $this->owner);
+        $this->af = new AliasFile($this->aliasFile, $this->owner);
         if ($this->af->percent_done < 100) {
             // The transfer is being stopped but is not completed dowloading
             $this->af->percent_done = ($this->af->percent_done + 100)*-1;
@@ -480,7 +481,7 @@ class ClientHandler
         $isHung = false;
         foreach ($running as $rng) {
             $rt = RunningTransfer::getInstance($rng['pinfo'], $this->handlerName);
-            if ($rt->statFile == $this->alias) {
+            if ($rt->statFile == $this->aliasFile) {
             	$isHung = true;
                 AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->statFile." (".$rt->processId.")");
             	//$this->callResult = exec("kill ".escapeshellarg($rt->processId));
@@ -507,7 +508,7 @@ class ClientHandler
             	}
             } else {
             	$data = "";
-				if ($fileHandle = @fopen($this->pidFile,'r')) {
+				if ($fileHandle = @fopen($this->pidFilePath,'r')) {
 					while (!@feof($fileHandle))
 						$data .= @fgets($fileHandle, 64);
 					@fclose ($fileHandle);
@@ -517,7 +518,7 @@ class ClientHandler
             // kill it
             $this->callResult = exec("kill ".escapeshellarg($this->pid));
             // try to remove the pid file
-            @unlink($this->pidFile);
+            @unlink($this->pidFilePath);
         }
     }
 
@@ -562,20 +563,20 @@ class ClientHandler
 				saveXfer($this->owner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
 			}
 			// remove meta-file
-			if (@file_exists($this->transferFile))
-				@unlink($this->transferFile);
+			if (@file_exists($this->transferFilePath))
+				@unlink($this->transferFilePath);
 			// remove alias-file
-			if (@file_exists($this->aliasFile))
-				@unlink($this->aliasFile);
+			if (@file_exists($this->aliasFilePath))
+				@unlink($this->aliasFilePath);
 			// if exist remove pid file
-			if (@file_exists($this->pidFile))
-				@unlink($this->pidFile);
+			if (@file_exists($this->pidFilePath))
+				@unlink($this->pidFilePath);
 			// if exist remove log-file
-			if (@file_exists($this->logFile))
-				@unlink($this->logFile);
+			if (@file_exists($this->logFilePath))
+				@unlink($this->logFilePath);
 			// if exist remove prio-file
-			if (@file_exists($this->prioFile))
-				@unlink($this->prioFile);
+			if (@file_exists($this->prioFilePath))
+				@unlink($this->prioFilePath);
 			AuditAction($cfg["constants"]["delete_transfer"], $this->transfer);
 			return true;
 		} else {
@@ -687,9 +688,9 @@ class ClientHandler
      */
     function logMessage($message, $withTS = true) {
     	// return if log-file-field not set
-    	if ($this->logFile == "") return false;
+    	if ($this->logFilePath == "") return false;
     	// log
-		if ($handle = @fopen($this->logFile, "a+")) {
+		if ($handle = @fopen($this->logFilePath, "a+")) {
 			$content = ($withTS)
 				? @date("[Y/m/d - H:i:s]")." ".$message
 				: $message;
@@ -708,12 +709,13 @@ class ClientHandler
     function setVarsFromTransfer($transfer) {
     	global $cfg;
         $this->transfer = $transfer;
-        $this->transferFile = $cfg["transfer_file_path"].$this->transfer;
         $this->alias = getAliasName($this->transfer);
-        $this->aliasFile = $cfg["transfer_file_path"].$this->alias.".stat";
-		$this->pidFile = $cfg["transfer_file_path"].$this->alias.".stat.pid";
-        $this->logFile = $cfg["transfer_file_path"].$this->alias.".log";
-        $this->prioFile = $cfg["transfer_file_path"].$this->alias.".prio";
+        $this->aliasFile = $this->alias.".stat";
+        $this->aliasFilePath = $cfg["transfer_file_path"].$this->aliasFile;
+		$this->pidFilePath = $cfg["transfer_file_path"].$this->alias.".stat.pid";
+        $this->logFilePath = $cfg["transfer_file_path"].$this->alias.".log";
+        $this->prioFilePath = $cfg["transfer_file_path"].$this->alias.".prio";
+        $this->transferFilePath = $cfg["transfer_file_path"].$this->transfer;
         $this->owner = getOwner($this->transfer);
     }
 

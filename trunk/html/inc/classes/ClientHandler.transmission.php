@@ -86,7 +86,7 @@ class ClientHandlerTransmission extends ClientHandler
 
         // workaround for bsd-pid-file-problem : touch file first
         if ((!$this->queue) && ($cfg["_OS"] == 2))
-        	@touch($this->pidFile);
+        	@touch($this->pidFilePath);
 
         // build the command-string
 		// note : order of args must not change for ps-parsing-code in
@@ -97,9 +97,9 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " nohup ";
         $this->command .= $this->nice;
         $this->command .= escapeshellarg($cfg["btclient_transmission_bin"]);
-        $this->command .= " -t ".escapeshellarg($this->aliasFile);
+        $this->command .= " -t ".escapeshellarg($this->aliasFilePath);
         $this->command .= " -w ".$this->owner;
-        $this->command .= " -z ".escapeshellarg($this->pidFile);
+        $this->command .= " -z ".escapeshellarg($this->pidFilePath);
         $this->command .= " -e 5";
         $this->command .= " -c ".escapeshellarg($this->sharekill_param);
         $this->command .= " -d ".escapeshellarg($this->drate);
@@ -107,9 +107,9 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " -p ".escapeshellarg($this->port);
         if (strlen($cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$cfg["btclient_transmission_options"];
-        $this->command .= " ".escapeshellarg($this->transferFile);
-        $this->command .= " 1>> ".escapeshellarg($this->logFile);
-        $this->command .= " 2>> ".escapeshellarg($this->logFile);
+        $this->command .= " ".escapeshellarg($this->transferFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
         $this->command .= " &";
 
         // start the client

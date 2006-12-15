@@ -99,7 +99,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= $cfg["pythonCmd"] . " -OO" . " " .escapeshellarg($this->mainlineBin);
 		$this->command .= " --display_interval 5";
 		$this->command .= " --tf_owner ".$this->owner;
-		$this->command .= " --stat_file ".escapeshellarg($this->aliasFile);
+		$this->command .= " --stat_file ".escapeshellarg($this->aliasFilePath);
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
 		$this->command .= " --die_when_done ".escapeshellarg($this->runtime);
@@ -119,9 +119,9 @@ class ClientHandlerMainline extends ClientHandler
 			$this->command .= " --no_check_hashes";
 		if (strlen($cfg["btclient_mainline_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_mainline_options"];
-		$this->command .= " ".escapeshellarg($this->transferFile);
-        $this->command .= " 1>> ".escapeshellarg($this->logFile);
-        $this->command .= " 2>> ".escapeshellarg($this->logFile);
+		$this->command .= " ".escapeshellarg($this->transferFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
         $this->command .= " &";
 
 		// start the client
