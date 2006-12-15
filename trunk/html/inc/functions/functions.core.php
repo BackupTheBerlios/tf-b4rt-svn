@@ -1982,9 +1982,45 @@ function getTransferDetails($transfer, $full, $alias = "") {
  * @return string
  */
 function getRequestVar($varName) {
-	return (array_key_exists($varName, $_REQUEST))
-		? htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES)
-		: '';
+	$return="";
+
+	if(array_key_exists($varName, $_REQUEST)){
+		// If magic quoting on, strip magic quotes:
+		/**
+		* TODO:
+		* Codebase needs auditing to remove any unneeded stripslashes
+		* calls before uncommenting this.  Also using this really means
+		* checking any addslashes() calls to see if they're really needed
+		* when magic quotes is on.
+
+		if(ini_get('magic_quotes_gpc')){
+			tfb_strip_quotes($_REQUEST[$varName]);
+		}
+		*/
+		$return = htmlentities(trim($_REQUEST[$varName]), ENT_QUOTES);
+	}
+
+	return $return;
+}
+
+/**
+ *  Avoid magic_quotes_gpc issues
+ *  courtesy of iliaa@php.net
+ * @param	ref		&$var reference to a $_REQUEST variable
+ * @return	null
+ */
+function tfb_strip_quotes(&$var){
+	if (is_array($var)) {
+		foreach ($var as $k => $v) {
+			if (is_array($v)) {
+				array_walk($var[$k], 'tfb_strip_quotes');
+			} else {
+				$var[$k] = stripslashes($v);
+			}
+		}
+	} else {
+		$var = stripslashes($var);
+	}
 }
 
 /**
