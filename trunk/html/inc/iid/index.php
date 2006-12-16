@@ -571,7 +571,7 @@ if ($cfg["enable_goodlookstats"] != "0") {
 	}
 	if ($settingsHackStats[4] == 1) {
 		$tmpl->setvar('settingsHackStats5', 1);
-		$tmpl->setvar('settingsHackStats55', $freeSpaceFormatted);
+		$tmpl->setvar('settingsHackStats55', $cfg['freeSpaceFormatted']);
 	}
 	if ($settingsHackStats[5] == 1) {
 		$tmpl->setvar('settingsHackStats6', 1);
@@ -619,7 +619,7 @@ if ($cfg['enable_xfer'] == 1) {
 }
 
 // drivespace-warning
-if ($driveSpace >= 98) {
+if ($cfg['driveSpace'] >= 98) {
 	if ($cfg['enable_bigboldwarning'] != 0)
 		$tmpl->setvar('enable_bigboldwarning', 1);
 	else
@@ -658,7 +658,7 @@ if ($cfg['index_page_stats'] != 0) {
 	$tmpl->setvar('totalspeed11', @number_format($sumMaxRate, 2));
 	$tmpl->setvar('id_connections1', $netstatConnectionsSum);
 	$tmpl->setvar('id_connections11', $netstatConnectionsMax);
-	$tmpl->setvar('drivespace1', $freeSpaceFormatted);
+	$tmpl->setvar('drivespace1', $cfg['freeSpaceFormatted']);
 	$tmpl->setvar('serverload1', $loadavgString);
 	if (($cfg['enable_xfer'] != 0) && ($cfg['xfer_realtime'] != 0)) {
 		$tmpl->setvar('_YOURXFERSTATS', $cfg['_YOURXFERSTATS']);
@@ -700,8 +700,8 @@ $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
-$tmpl->setvar('drivespace', $driveSpace);
-$tmpl->setvar('freeSpaceFormatted', $freeSpaceFormatted);
+$tmpl->setvar('drivespace', $cfg['driveSpace']);
+$tmpl->setvar('freeSpaceFormatted', $cfg['freeSpaceFormatted']);
 tmplSetSearchEngineDDL($cfg["searchEngine"]);
 //
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);

@@ -160,10 +160,10 @@ if (!(cacheIsSet($currentUser))) {
 }
 
 // drivespace-var
-$driveSpace = getDriveSpace($cfg["path"]);
+$cfg['driveSpace'] = getDriveSpace($cfg["path"]);
 
 // free space-var
-$freeSpaceFormatted = formatFreeSpace($cfg["free_space"]);
+$cfg['freeSpaceFormatted'] = formatFreeSpace($cfg["free_space"]);
 
 // vlib
 require_once("inc/lib/vlib/vlibTemplate.php");

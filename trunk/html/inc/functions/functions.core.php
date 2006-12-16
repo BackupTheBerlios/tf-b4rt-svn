@@ -244,18 +244,18 @@ function tmplSetSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fa
  *
  */
 function tmplSetDriveSpaceBar() {
-	global $cfg, $tmpl, $driveSpace, $freeSpaceFormatted;
+	global $cfg, $tmpl;
 	$tmpl->setvar('_STORAGE', $cfg['_STORAGE']);
 	$tmpl->setvar('drivespacebar_type', $cfg['drivespacebar']);
-	$tmpl->setvar('drivespacebar_space', $driveSpace);
-	$tmpl->setvar('drivespacebar_space2', (100 - $driveSpace));
-	$tmpl->setvar('drivespacebar_freeSpace', $freeSpaceFormatted);
+	$tmpl->setvar('drivespacebar_space', $cfg['driveSpace']);
+	$tmpl->setvar('drivespacebar_space2', (100 - $cfg['driveSpace']));
+	$tmpl->setvar('drivespacebar_freeSpace', $cfg['freeSpaceFormatted']);
 	// color for xfer
 	switch ($cfg['drivespacebar']) {
 		case "xfer":
 			$bgcolor = '#';
-			$bgcolor .= str_pad(dechex(256 - 256 * ((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
-			$bgcolor .= str_pad(dechex(256 * ((100 - $driveSpace) / 100)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256 - 256 * ((100 - $cfg['driveSpace']) / 100)), 2, 0, STR_PAD_LEFT);
+			$bgcolor .= str_pad(dechex(256 * ((100 - $cfg['driveSpace']) / 100)), 2, 0, STR_PAD_LEFT);
 			$bgcolor .= '00';
 			$tmpl->setvar('drivespacebar_bgcolor', $bgcolor);
 			break;
