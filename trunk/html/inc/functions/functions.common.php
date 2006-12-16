@@ -155,14 +155,14 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 		return 0;
 	// exec query
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	list($uid, $hits, $cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $result->FetchRow();
 	if ($result->RecordCount() == 1) { // suc. auth.
 		// Add a hit to the user
 		$hits++;
 		$sql = 'select * from tf_users where uid = '.$uid;
 		$rs = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$rec = array(
 						'hits'=>$hits,
 						'last_visit'=>$db->DBDate(time()),
@@ -171,7 +171,7 @@ function performAuthentication($username = '', $password = '', $md5password = ''
 					);
 		$sql = $db->GetUpdateSQL($rs, $rec);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$_SESSION['user'] = $username;
 		$_SESSION['uid'] = $uid;
 		$cfg["user"] = $_SESSION['user'];
@@ -233,7 +233,7 @@ function firstLogin($username = '', $password = '') {
 	$sTable = 'tf_users';
 	$sql = $db->GetInsertSql($sTable, $record);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// Test and setup some paths for the TF settings
 	// path
 	$tfPath = $cfg["path"];
@@ -313,21 +313,11 @@ function firstLogin($username = '', $password = '') {
 function checkMainDirectories() {
 	global $cfg;
 	// main-path
-	if (!(@is_dir($cfg["path"]) === true)) {
-		// dir doesnt exist, try to create
-		if (!((@mkdir($cfg["path"], 0777)) === true))
-			showErrorPage("Main-Path <em>".$cfg["path"]."</em> does not exist and cant be created.");
-	}
-	if (!(@is_writable($cfg["path"]) === true))
-		showErrorPage("Main-Path <em>".$cfg["path"]."</em> is not writable.");
-	// transfer-file-path
-	if (!(@is_dir($cfg["transfer_file_path"]) === true)) {
-		// dir doesnt exist, try to create
-		if (!((@mkdir($cfg["transfer_file_path"], 0777)) === true))
-			showErrorPage("Transfer-File-Path <em>".$cfg["transfer_file_path"]."</em> does not exist and cant be created.");
-	}
-	if (!(@is_writable($cfg["transfer_file_path"]) === true))
-		showErrorPage("Transfer-File-Path <em>".$cfg["transfer_file_path"]."</em> is not writable.");
+	if (!checkDirectory($cfg["path"]))
+		@error("Main-Path does not exist and cannot be created or is not writable", "admin.php?op=serverSettings", "Server-Settings", array("path : ".$cfg["path"]));
+	// transfer-path
+	if (!checkDirectory($cfg["transfer_file_path"]))
+		@error("Transfer-File-Path does not exist and cannot be created or is not writable", "admin.php?op=serverSettings", "Server-Settings", array("transfer_file_path : ".$cfg["transfer_file_path"]));
 }
 
 /**
@@ -461,7 +451,7 @@ function loadSettings($dbTable) {
     // pull the config params out of the db
     $sql = "SELECT tf_key, tf_value FROM ".$dbTable;
     $recordset = $db->Execute($sql);
-    dbDieOnError($sql);
+    if ($db->ErrorNo() != 0) dbError($sql);
     while(list($key, $value) = $recordset->FetchRow()) {
 		$tmpValue = '';
 		if (strpos($key,"Filter") > 0)
@@ -488,7 +478,7 @@ function insertSetting($dbTable, $key, $value) {
     $update_value = (is_array($value)) ? serialize($value) : $value;
     $sql = "INSERT INTO ".$dbTable." VALUES ('".$key."', '".$update_value."')";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// update the Config.
 	$cfg[$key] = $value;
 }
@@ -507,7 +497,7 @@ function updateSetting($dbTable, $key, $value) {
     $update_value = (is_array($value)) ? serialize($value) : $value;
     $sql = "UPDATE ".$dbTable." SET tf_value = '".$update_value."' WHERE tf_key = '".$key."'";
     $db->Execute($sql);
-    dbDieOnError($sql);
+    if ($db->ErrorNo() != 0) dbError($sql);
     // update the Config.
     $cfg[$key] = $value;
 }
@@ -576,7 +566,7 @@ function insertUserSettingPair($uid,$key,$value) {
 	cacheFlush($cfg["user"]);
 	$sql = "INSERT INTO tf_settings_user VALUES ('".$uid."', '".$key."', '".$update_value."')";
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// update the Config.
 	$cfg[$key] = $value;
 	return true;
@@ -595,7 +585,7 @@ function deleteUserSettings($uid) {
 	cacheFlush($cfg["user"]);
 	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return true;
 }
 
@@ -612,7 +602,7 @@ function loadUserSettingsToConfig($uid) {
 	// get user-settings from db and set in global cfg-array
 	$sql = "SELECT tf_key, tf_value FROM tf_settings_user WHERE uid = '".$uid."'";
 	$recordset = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	if ((isset($recordset)) && ($recordset->NumRows() > 0)) {
 		while(list($key, $value) = $recordset->FetchRow())
 			$cfg[$key] = $value;
@@ -645,7 +635,7 @@ function addNewUser($newUser, $pass1, $userType) {
 	$sTable = 'tf_users';
 	$sql = $db->GetInsertSql($sTable, $record);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -669,14 +659,14 @@ function UpdateUserProfile($user_id, $pass1, $hideOffline, $theme, $language) {
 	}
 	$sql = 'select * from tf_users where user_id = '.$db->qstr($user_id);
 	$rs = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec['hide_offline'] = $hideOffline;
 	$rec['theme'] = $theme;
 	$rec['language_file'] = $language;
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	if ($sql != "") {
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		// flush session-cache
 		cacheFlush($cfg["user"]);
 	}
@@ -691,7 +681,7 @@ function DeleteMessage($mid) {
 	global $cfg, $db;
 	$sql = "delete from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -703,11 +693,11 @@ function MarkMessageRead($mid) {
 	global $cfg, $db;
 	$sql = 'select * from tf_messages where mid = '.$mid;
 	$rs = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('IsNew'=>0, 'force_read'=>0);
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -728,7 +718,7 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 		$message .= "\n\n__________________________________\n*** ".$cfg['_MESSAGETOALL']." ***";
 		$sql = 'select user_id from tf_users';
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		while ($row = $result->FetchRow()) {
 			$rec = array(
 						'to_user' => strtolower($row['user_id']),
@@ -741,7 +731,7 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 						);
 			$sql = $db->GetInsertSql($sTable, $rec);
 			$result2 = $db->Execute($sql);
-			dbDieOnError($sql);
+			if ($db->ErrorNo() != 0) dbError($sql);
 		}
 	} else {
 		// Only Send to one Person
@@ -756,7 +746,7 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 					);
 		$sql = $db->GetInsertSql($sTable, $rec);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 }
 
@@ -770,7 +760,7 @@ function GetMessage($mid) {
 	global $cfg, $db;
 	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
 	$rtnValue = $db->GetRow($sql);
-	dbDieOnError($sql);
+	dbDieOnErrorr($sql);
 	return $rtnValue;
 }
 
@@ -1053,7 +1043,7 @@ function deleteCookieInfo($cid) {
 	global $db;
 	$sql = "delete from tf_cookies where cid=".$cid;
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -1068,7 +1058,7 @@ function addCookieInfo( $newCookie ) {
 	$uid = $db->GetOne( $sql );
 	$sql = "INSERT INTO tf_cookies ( cid, uid, host, data ) VALUES ( '', '" . $uid . "', '" . $newCookie["host"] . "', '" . $newCookie["data"] . "' )";
 	$db->Execute( $sql );
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -1081,7 +1071,7 @@ function modCookieInfo($cid, $newCookie) {
 	global $db;
 	$sql = "UPDATE tf_cookies SET host='" . $newCookie["host"] . "', data='" . $newCookie["data"] . "' WHERE cid='" . $cid . "'";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -1120,7 +1110,7 @@ function GetProfiles($user, $profile) {
 			);
 		}
 	}
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return $profiles_array;
 }
 
@@ -1144,7 +1134,7 @@ function GetPublicProfiles($profile) {
 			);
 		}
 	}
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return $profiles_array;
 }
 
@@ -1158,7 +1148,7 @@ function GetProfileSettings($profile) {
 	global $cfg, $db;
 	$sql = "SELECT minport, maxport, maxcons, rerequest, rate, maxuploads, drate, runtime, sharekill, superseeder from tf_trprofiles where name like '".$profile."'";
 	$settings = $db->GetRow($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return $settings;
 }
 
@@ -1171,7 +1161,7 @@ function AddProfileInfo( $newProfile ) {
 	global $db, $cfg;
 	$sql = 'INSERT INTO tf_trprofiles ( name , owner , minport , maxport , maxcons , rerequest , rate , maxuploads , drate , runtime , sharekill , superseeder , public )'." VALUES ('".$newProfile["name"]."', '".$cfg['uid']."', '".$newProfile["minport"]."', '".$newProfile["maxport"]."', '".$newProfile["maxcons"]."', '".$newProfile["rerequest"]."', '".$newProfile["rate"]."', '".$newProfile["maxuploads"]."', '".$newProfile["drate"]."', '".$newProfile["runtime"]."', '".$newProfile["sharekill"]."', '".$newProfile["superseeder"]."', '".$newProfile["public"]."')";
 	$db->Execute( $sql );
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -1198,7 +1188,7 @@ function modProfileInfo($pid, $newProfile) {
 	global $cfg, $db;
 	$sql = "UPDATE tf_trprofiles SET owner = '".$cfg['uid']."', name = '".$newProfile["name"]."', minport = '".$newProfile["minport"]."', maxport = '".$newProfile["maxport"]."', maxcons = '".$newProfile["maxcons"]."', rerequest = '".$newProfile["rerequest"]."', rate = '".$newProfile["rate"]."', maxuploads = '".$newProfile["maxuploads"]."', drate = '".$newProfile["drate"]."', runtime = '".$newProfile["runtime"]."', sharekill = '".$newProfile["sharekill"]."', superseeder = '".$newProfile["superseeder"]."', public = '".$newProfile["public"]."' WHERE id = '".$pid."'";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -1210,7 +1200,7 @@ function deleteProfileInfo($pid) {
 	global $db;
 	$sql = "DELETE FROM tf_trprofiles WHERE id=".$pid;
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 ?>

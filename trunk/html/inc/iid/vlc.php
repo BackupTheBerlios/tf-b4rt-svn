@@ -50,7 +50,7 @@ loadSettings('tf_settings_dir');
 // is enabled ?
 if ($cfg["enable_vlc"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use vlc");
-	showErrorPage("vlc is disabled.");
+	@error("vlc is disabled", "index.php?iid=index", "");
 }
 
 // init template-instance

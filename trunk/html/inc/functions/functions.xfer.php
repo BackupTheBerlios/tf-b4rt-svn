@@ -135,7 +135,7 @@ function getUsage($start, $period) {
 	global $db, $xfer, $xfer_total;
 	$sql = "SELECT user_id, SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE date >= '".$start."' AND user_id != '' GROUP BY user_id";
 	$rtnValue = $db->GetAll($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	foreach ($rtnValue as $row)
 		sumUsage($row[0], $row[1], $row[2], $period);
 }

@@ -68,13 +68,11 @@ class ClientHandlerTornado extends ClientHandler
         // check to see if the path to the python script is valid
         if (!is_file($this->tornadoBin)) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
-            $msg = "path for btphptornado.py is not valid : ".$this->tornadoBin;
-            array_push($this->messages , $msg);
-            AuditAction($cfg["constants"]["error"], $msg);
-            if (empty($_REQUEST))
-            	die($msg);
-            else
-				showErrorPage($msg);
+        	$msg = "path for btphptornado.py is not valid";
+        	AuditAction($cfg["constants"]["error"], $msg);
+        	array_push($this->messages, $msg);
+            array_push($this->messages, "tornadoBin : ".$this->tornadoBin);
+            return false;
         }
 
         // prepare starting of client
@@ -84,7 +82,7 @@ class ClientHandlerTornado extends ClientHandler
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR)
 				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
-			return;
+			return false;
 		}
 
 		// pythonCmd
@@ -161,7 +159,7 @@ class ClientHandlerTornado extends ClientHandler
     	// set vars
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(true);
+		$this->execDelete(true, true);
 	}
 
     /**

@@ -146,13 +146,11 @@ class ClientHandlerWget extends ClientHandler
         // check to see if the path to the wget-bin is valid
         if (!is_executable($cfg["bin_wget"])) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
-            $msg = "wget cannot be executed : ".$cfg["bin_wget"];
-            array_push($this->messages , $msg);
-            AuditAction($cfg["constants"]["error"], $msg);
-            if (empty($_REQUEST))
-            	die($msg);
-            else
-				showErrorPage($msg);
+        	$msg = "wget cannot be executed";
+        	AuditAction($cfg["constants"]["error"], $msg);
+        	array_push($this->messages, $msg);
+            array_push($this->messages, "bin_wget : ".$cfg["bin_wget"]);
+            return false;
         }
 
 		// queue false
@@ -204,7 +202,7 @@ class ClientHandlerWget extends ClientHandler
         // set vars from the wget-file
 		$this->setVarsFromFile($transfer);
 		// delete
-		$this->execDelete(true);
+		$this->execDelete(false, false);
 	}
 
     /**

@@ -42,10 +42,7 @@ class RunningTransfer
      * @return RunningTransfer
      */
     function getInstance($psLine, $clientType = '') {
-    	global $cfg;
     	// create and return object-instance
-    	if ($clientType == '')
-    		$clientType = $cfg["btclient"];
         switch ($clientType) {
             case "tornado":
             	require_once('inc/classes/RunningTransfer.tornado.php');
@@ -60,11 +57,8 @@ class RunningTransfer
             	require_once('inc/classes/RunningTransfer.wget.php');
                 return new RunningTransferWget($psLine);
             default:
-            	AuditAction($cfg["constants"]["error"], "Invalid RunningTransfer-Type : ".$clientType);
-    			if (empty($_REQUEST))
-    				die("Invalid RunningTransfer-Type : ".$clientType);
-    			else
-    				showErrorPage("Invalid RunningTransfer-Type : <br>".$clientType);
+            	global $cfg;
+            	return RunningTransfer::getInstance($psLine, $cfg["btclient"]);
         }
     }
 

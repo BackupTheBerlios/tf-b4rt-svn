@@ -38,15 +38,15 @@ loadSettings('tf_settings_dir');
 // is enabled ?
 if ($cfg["enable_view_nfo"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nfo-viewer");
-	showErrorPage("nfo-viewer is disabled.");
+	@error("nfo-viewer is disabled", "index.php?iid=index", "");
 }
 
 // target-file
 $file = getRequestVar("path");
 $fileIsValid = (isValidPath($file, ".nfo") || isValidPath($file, ".txt") || isValidPath($file, ".log"));
 if (!$fileIsValid) {
-	AuditAction($cfg["constants"]["error"], "Invalid NFO-file : ".$cfg["user"]." tried to access ".$file);
-	showErrorPage("Invalid NFO-file : <br>".$file);
+	AuditAction($cfg["constants"]["error"], "INVALID NFO: ".$cfg["user"]." tried to access ".$file);
+	@error("Invalid nfo", "index.php?iid=index", "", array($file));
 }
 
 // init template-instance

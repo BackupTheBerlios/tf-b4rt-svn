@@ -44,73 +44,80 @@ function dbInitialize() {
     else
     	@ $db->Connect($cfg["db_host"], $cfg["db_user"], $cfg["db_pass"], $cfg["db_name"]);
     // check for error
-    if ($db->ErrorNo() != 0) {
-    	if (empty($_REQUEST))
-    		die("Error.\nCould not connect to database.\nCheck your database settings in the file config.db.php.\n");
-    	else
-    		showErrorPage("Could not connect to database.<br>Check your database settings in the file <em>config.db.php</em>.");
-    }
+    if ($db->ErrorNo() != 0)
+    	@error("Database Connection Problems", "", "", array("Check your database-config-file. (inc/config/config.db.php)"));
 }
 
 /**
- * show db-error
+ * db-error-function
  *
  * @param $sql
  */
-function dbDieOnError($sql) {
+function dbError($sql) {
 	global $cfg, $db;
-	if ($db->ErrorNo() != 0) {
-    	if (empty($_REQUEST)) {
-    		$dieMessage = "Database-Error :\n";
-    		$dieMessage .= $db->ErrorMsg();
-    		if ($cfg["debug_sql"] == 1)
-    			$dieMessage .= "\nSQL: ".$sql;
-    		die($dieMessage);
-    	} else {
-			// theme
-			$theme = "default";
-			if (isset($cfg["theme"]))
-				$theme = $cfg["theme"];
-			else if (isset($cfg["default_theme"]))
-				$theme = $cfg["default_theme"];
-			// template
-			require_once("themes/".$theme."/index.php");
-			require_once("inc/lib/vlib/vlibTemplate.php");
-			$tmpl = @ tmplGetInstance($theme, "page.db.tmpl");
-			@ $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
-			@ $tmpl->setvar('sql', $sql);
-			$dbErrMsg = $db->ErrorMsg();
-			@ $tmpl->setvar('ErrorMsg', $dbErrMsg);
-			if (preg_match('/.*Query.*empty.*/i', $dbErrMsg))
-				@ $tmpl->setvar('ExtraMsg', 'Database may be corrupted. Try to repair the tables.');
-			else
-				@ $tmpl->setvar('ExtraMsg', 'Always check your database settings in the config.db.php file.');
-			@ $tmpl->pparse();
-			exit();
-    	}
+	$msgs = array();
+	$dbErrMsg = $db->ErrorMsg();
+	array_push($msgs, "ErrorMsg : ");
+	array_push($msgs, $dbErrMsg);
+	if ($cfg["debug_sql"] != 0) {
+		array_push($msgs, "\nSQL : ");
+		array_push($msgs, $sql);
 	}
+	array_push($msgs, "");
+	if (preg_match('/.*Query.*empty.*/i', $dbErrMsg))
+		array_push($msgs, "\nDatabase may be corrupted. Try to repair the tables.");
+	else
+		array_push($msgs, "\nAlways check your database settings in the config.db.php file.");
+	@error("Database-Error", "", "", $msgs);
 }
 
 /**
- * prints nice error-page
+ * global error-function
  *
- * @param $errorMessage
+ * @param $msg
+ * @param $link
+ * @param $linklabel
+ * @param $msgs
  */
-function showErrorPage($errorMessage) {
+function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 	global $cfg;
-	// theme
-	$theme = "default";
-	if (isset($cfg["theme"]))
-		$theme = $cfg["theme"];
-	else if (isset($cfg["default_theme"]))
-		$theme = $cfg["default_theme"];
-	// template
-	require_once("themes/".$theme."/index.php");
-	require_once("inc/lib/vlib/vlibTemplate.php");
-	$tmpl = @ tmplGetInstance($theme, "page.error.tmpl");
-	$tmpl->setvar('ErrorMsg', $errorMessage);
-	$tmpl->pparse();
-	exit();
+	// web/cli
+    if (empty($_REQUEST)) { // cli
+    	// message
+    	$exitMsg = "Error : ".$msg."\n";
+    	// messages
+    	if (!empty($msgs))
+    		$exitMsg .= implode("\n", $msgs)."\n";
+    	// get out here
+    	exit($exitMsg);
+    } else { // web
+		// theme
+		$theme = "default";
+		if (isset($cfg["theme"]))
+			$theme = $cfg["theme"];
+		else if (isset($cfg["default_theme"]))
+			$theme = $cfg["default_theme"];
+		// template
+		require_once("themes/".$theme."/index.php");
+		require_once("inc/lib/vlib/vlibTemplate.php");
+		$tmpl = tmplGetInstance($theme, "page.error.tmpl");
+		// message
+		$tmpl->setvar('message', htmlentities($msg, ENT_QUOTES));
+		// messages
+		if (!empty($msgs)) {
+			$msgAry = array_map("htmlentities", $msgs);
+			$tmpl->setvar('messages', implode("\n", $msgAry));
+		}
+		// link + linklabel
+		if (!empty($link)) {
+			$tmpl->setvar('link', $link);
+			$tmpl->setvar('linklabel', (!empty($linklabel)) ? htmlentities($linklabel, ENT_QUOTES) : "OK");
+		}
+		// parse template
+		$tmpl->pparse();
+		// get out here
+		exit();
+    }
 }
 
 /**
@@ -666,7 +673,7 @@ function deleteTransferSettings($transfer) {
 	global $db;
 	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return true;
 }
 
@@ -714,7 +721,7 @@ function saveTorrentSettings($transfer, $running, $rate, $drate, $maxuploads, $r
 					".$db->qstr($tDatapath)."
 				   )";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return true;
 }
 
@@ -728,7 +735,7 @@ function loadTorrentSettings($transfer) {
 	global $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$retAry = array();
@@ -760,7 +767,7 @@ function loadTorrentSettingsToConfig($transfer) {
 	global $cfg, $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$cfg["running"]					= $row["running"];
@@ -914,7 +921,7 @@ function resetTorrentTotals($transfer, $delete = false) {
 	// reset in db
 	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return true;
 }
 
@@ -1181,7 +1188,7 @@ function getTorrentListFromDB() {
 	$retVal = array();
 	$sql = "SELECT torrent FROM tf_torrents ORDER BY torrent ASC";
 	$recordset = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	while(list($transfer) = $recordset->FetchRow())
 		array_push($retVal, $transfer);
 	return $retVal;
@@ -1484,8 +1491,8 @@ function getTransferListArray() {
 			$settingsAry['hash'] = $entry;
 			$af = new AliasFile($alias, $transferowner);
 		} else {
-			AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$entry);
-			showErrorPage("Invalid Transfer : <br>".$entry);
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$entry);
+			@error("Invalid Transfer", "index.php?iid=index", "", array($entry));
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -1826,8 +1833,8 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$cfg['hash'] = $transfer;
 		$af = new AliasFile($alias, $transferowner);
 	} else {
-		AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$transfer);
-		showErrorPage("Invalid Transfer : <br>".$transfer);
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 	// size
 	$size = (int) $af->size;
@@ -2103,7 +2110,7 @@ function resetOwner($file) {
 		$sql = $db->GetInsertSql($sTable, $rec);
 		// add record to the log
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 	return $rtnValue;
 }
@@ -2507,7 +2514,13 @@ function cleanFileName($inName) {
 		if (($stringLength > $extLength) && (strtolower(substr($outName, -($extLength))) === ($ftype)))
 			return substr($outName, 0, -($extLength)).$ftype;
 	}
-	showErrorPage("Invalid File-Type : ".$inName);
+	$msgs = array();
+	array_push($msgs, "inName : ".$inName);
+	array_push($msgs, "outName : ".$outName);
+	array_push($msgs, "\nvalid file-extensions :");
+	$msgs = array_merge($msgs, $cfg['file_types_array']);
+	AuditAction($cfg["constants"]["error"], "INVALID FILETYPE: ".$inName);
+	@error("Invalid File-Type", "index.php?iid=index", "", $msgs);
 }
 
 /**
@@ -2524,19 +2537,19 @@ function cleanURL($url) {
 /**
  * print message
  *
- * @param $message
+ * @param $msg
  */
-function printMessage($mod, $message) {
-	@fwrite(STDOUT, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$message);
+function printMessage($mod, $msg) {
+	@fwrite(STDOUT, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$msg);
 }
 
 /**
  * print error
  *
- * @param $message
+ * @param $msg
  */
-function printError($mod, $message) {
-	@fwrite(STDERR, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$message);
+function printError($mod, $msg) {
+	@fwrite(STDERR, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$msg);
 }
 
 ?>

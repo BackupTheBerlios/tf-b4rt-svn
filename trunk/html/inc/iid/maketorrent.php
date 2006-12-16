@@ -41,14 +41,14 @@ loadSettings('tf_settings_dir');
 // is enabled ?
 if ($cfg["enable_maketorrent"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use maketorrent");
-	showErrorPage("maketorrent is disabled.");
+	@error("maketorrent is disabled", "index.php?iid=index", "");
 }
 
 /*******************************************************************************
  * torrent download
  ******************************************************************************/
 if ((isset($_REQUEST["download"])) && (!(empty($_REQUEST["download"]))))
-	downloadTorrent($_REQUEST["download"]);
+	downloadTorrent(getRequestVar("download"));
 
 /*******************************************************************************
  * create + page

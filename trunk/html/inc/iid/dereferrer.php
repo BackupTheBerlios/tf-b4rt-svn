@@ -32,7 +32,7 @@ if (!isset($cfg['user'])) {
 // is enabled ?
 if ($cfg["enable_dereferrer"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use dereferrer");
-	showErrorPage("dereferrer is disabled.");
+	@error("dereferrer is disabled", "index.php?iid=index", "");
 }
 
 // check param

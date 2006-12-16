@@ -49,7 +49,7 @@ $rss = lastRSS::getInstance($cfg);
 // setup transparent cache
 $cacheDir = $cfg['path'].".rsscache";
 if (!checkDirectory($cacheDir, 0777))
-	showErrorPage("Error with rss-cache-dir ".$cacheDir);
+	@error("Error with rss-cache-dir", "index.php?iid=index", "", array($cacheDir));
 $rss->cache_dir = $cacheDir;
 $rss->cache_time = $cfg["rss_cache_min"] * 60; // 1200 = 20 min.  3600 = 1 hour
 $rss->strip_html = false; // don't remove HTML from the description

@@ -34,7 +34,13 @@
 												<table border="0" cellpadding="4" cellspacing="0" width="90%">
 													<tr>
 														<td>
-															<tmpl_var name="ErrorMsg">
+															<strong><tmpl_var name="message"></strong>
+															<tmpl_if name="messages">
+																<p><div align="left"><pre><tmpl_var name="messages"></pre></div></p>
+															</tmpl_if>
+															<tmpl_if name="link">
+																<p>[<a href="<tmpl_var name="link">"><tmpl_var name="linklabel"></a>]</p>
+															</tmpl_if>
 														</td>
 													</tr>
 												</table>

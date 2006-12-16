@@ -124,13 +124,6 @@ class FluxdServiceMod
             	require_once('inc/classes/FluxdServiceMod.Maintenance.php');
                 FluxdMaintenance::initialize();
                 return;
-            default:
-            	global $cfg;
-            	AuditAction($cfg["constants"]["error"], "Invalid FluxdServiceMod-Class : ".$type);
-    			if (empty($_REQUEST))
-    				die("Invalid FluxdServiceMod-Class : ".$type);
-    			else
-    				showErrorPage("Invalid FluxdServiceMod-Class : <br>".htmlentities($type, ENT_QUOTES));
         }
     }
 

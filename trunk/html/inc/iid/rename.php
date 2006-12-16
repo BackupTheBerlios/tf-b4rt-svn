@@ -38,7 +38,7 @@ loadSettings('tf_settings_dir');
 // is enabled ?
 if ($cfg["enable_rename"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use rename");
-	showErrorPage("rename is disabled.");
+	@error("rename is disabled", "index.php?iid=index", "");
 }
 
 // init template-instance

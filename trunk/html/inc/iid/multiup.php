@@ -32,7 +32,7 @@ if (!isset($cfg['user'])) {
 // is enabled ?
 if ($cfg["enable_multiupload"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multiupload");
-	showErrorPage("multiupload is disabled.");
+	@error("multiupload is disabled", "index.php?iid=index", "");
 }
 
 // init template-instance

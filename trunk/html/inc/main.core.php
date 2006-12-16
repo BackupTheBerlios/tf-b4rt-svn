@@ -109,9 +109,9 @@ if (is_file('inc/config/config.db.php')) {
 
 } else {
 
-	// die in cli-mode, send redir in webapp
+	// error in cli-mode, send redir in webapp
     if (empty($_REQUEST)) {
-    	die("Error.\nCould not find database-settings-file config.db.php.\n");
+    	@error("Could not find database-settings-file config.db.php");
     } else {
 		// redir to login ... (which may redir to upgrade.php / setup.php)
 		@ob_end_clean();

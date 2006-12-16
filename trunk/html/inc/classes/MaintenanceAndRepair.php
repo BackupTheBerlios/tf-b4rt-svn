@@ -451,7 +451,7 @@ class MaintenanceAndRepair
 		// running-flag
 		$sql = "SELECT torrent FROM tf_torrents WHERE running = '1'";
 		$recordset = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
 			while (list($tname) = $recordset->FetchRow()) {
@@ -470,7 +470,7 @@ class MaintenanceAndRepair
 		// empty hash
 		$sql = "SELECT torrent FROM tf_torrents WHERE hash = ''";
 		$recordset = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
 			$this->_countProblems += $rc;
@@ -492,7 +492,7 @@ class MaintenanceAndRepair
 		// empty datapath
 		$sql = "SELECT torrent FROM tf_torrents WHERE datapath = ''";
 		$recordset = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
 			$this->_countProblems += $rc;
@@ -535,7 +535,7 @@ class MaintenanceAndRepair
 			$this->_outputMessage("found ".$this->_countProblems." invalid entries, deleting...\n");
 			$sql = "DELETE FROM tf_torrent_totals WHERE tid = ''";
 			$result = $db->Execute($sql);
-			dbDieOnError($sql);
+			if ($db->ErrorNo() != 0) dbError($sql);
 			$this->_countFixed = $db->Affected_Rows();
 			// output
 			$this->_outputMessage("done.\n");
@@ -572,13 +572,13 @@ class MaintenanceAndRepair
 		$testTime = time() - ($this->_cfg['days_to_keep'] * 86400); // 86400 is one day in seconds
 		$sql = "delete from tf_log where time < " . $db->qstr($testTime);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$this->_count += $db->Affected_Rows();
 		unset($result);
 		$testTime = time() - ($this->_cfg['minutes_to_keep'] * 60);
 		$sql = "delete from tf_log where time < " . $db->qstr($testTime). " and action=".$db->qstr($this->_cfg["constants"]["hit"]);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$this->_count += $db->Affected_Rows();
 		unset($result);
 		/* done */

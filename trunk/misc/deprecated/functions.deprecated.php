@@ -1376,4 +1376,65 @@ function getdb() {
 	}
 }
 
+/**
+ * prints nice error-page
+ *
+ * @param $errorMessage
+ */
+function showErrorPage($errorMessage) {
+	global $cfg;
+	// theme
+	$theme = "default";
+	if (isset($cfg["theme"]))
+		$theme = $cfg["theme"];
+	else if (isset($cfg["default_theme"]))
+		$theme = $cfg["default_theme"];
+	// template
+	require_once("themes/".$theme."/index.php");
+	require_once("inc/lib/vlib/vlibTemplate.php");
+	$tmpl = @ tmplGetInstance($theme, "page.error.tmpl");
+	$tmpl->setvar('ErrorMsg', $errorMessage);
+	$tmpl->pparse();
+	exit();
+}
+
+/**
+ * show db-error
+ *
+ * @param $sql
+ */
+function dbDieOnError($sql) {
+	global $cfg, $db;
+	if ($db->ErrorNo() != 0) {
+    	if (empty($_REQUEST)) {
+    		$dieMessage = "Database-Error :\n";
+    		$dieMessage .= $db->ErrorMsg();
+    		if ($cfg["debug_sql"] == 1)
+    			$dieMessage .= "\nSQL: ".$sql;
+    		die($dieMessage);
+    	} else {
+			// theme
+			$theme = "default";
+			if (isset($cfg["theme"]))
+				$theme = $cfg["theme"];
+			else if (isset($cfg["default_theme"]))
+				$theme = $cfg["default_theme"];
+			// template
+			require_once("themes/".$theme."/index.php");
+			require_once("inc/lib/vlib/vlibTemplate.php");
+			$tmpl = tmplGetInstance($theme, "page.db.tmpl");
+			$tmpl->setvar('debug_sql', $cfg["debug_sql"]);
+			$tmpl->setvar('sql', $sql);
+			$dbErrMsg = $db->ErrorMsg();
+			$tmpl->setvar('ErrorMsg', $dbErrMsg);
+			if (preg_match('/.*Query.*empty.*/i', $dbErrMsg))
+				$tmpl->setvar('ExtraMsg', 'Database may be corrupted. Try to repair the tables.');
+			else
+				$tmpl->setvar('ExtraMsg', 'Always check your database settings in the config.db.php file.');
+			$tmpl->pparse();
+			exit();
+    	}
+	}
+}
+
 ?>

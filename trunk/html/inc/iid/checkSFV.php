@@ -38,7 +38,7 @@ loadSettings('tf_settings_dir');
 // is enabled ?
 if ($cfg["enable_sfvcheck"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use checkSFV");
-	showErrorPage("checkSFV is disabled.");
+	@error("checkSFV is disabled", "index.php?iid=index", "");
 }
 
 // init template-instance

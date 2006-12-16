@@ -27,9 +27,11 @@
  */
 function indexStartTransfer($transfer) {
 	global $cfg;
+	$invalid = true;
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -8) == ".torrent") {
 			// this is a torrent-client
+			$invalid = false;
 			$interactiveStart = getRequestVar('interactive');
 			if ((isset($interactiveStart)) && ($interactiveStart)) // interactive
 				indexStartTorrent($transfer, 1);
@@ -37,28 +39,36 @@ function indexStartTransfer($transfer) {
 				indexStartTorrent($transfer, 0);
 		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
+			$invalid = false;
 			// is enabled ?
 			if ($cfg["enable_wget"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-				showErrorPage("wget is disabled.");
+				@error("wget is disabled", "index.php?iid=index", "");
 			} elseif ($cfg["enable_wget"] == 1) {
 				if (!$cfg['isAdmin']) {
 					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-					showErrorPage("wget is disabled for users.");
+					@error("wget is disabled for users", "index.php?iid=index", "");
 				}
 			}
 			$clientHandler = ClientHandler::getInstance('wget');
 			$clientHandler->start($transfer, false, false);
-			sleep(3);
-			@header("location: index.php?iid=index");
-			exit();
-		} else {
-			AuditAction($cfg["constants"]["error"], "Invalid Transfer for Start : ".$cfg["user"]." tried to start ".$transfer);
-			showErrorPage("Invalid Transfer for Start : <br>".$transfer);
+			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+				$msgs = array();
+				array_push($msgs, "transfer : ".$transfer);
+				array_push($msgs, "\nmessages :");
+				$msgs = array_merge($msgs, $clientHandler->messages);
+				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+				@error("Start failed", "", "", $msgs);
+			} else {
+				sleep(3);
+				@header("location: index.php?iid=index");
+				exit();
+			}
 		}
-	} else {
-		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Start : ".$cfg["user"]." tried to start ".$transfer);
-		showErrorPage("Invalid Transfer for Start : <br>".$transfer);
+	}
+	if ($invalid) {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 }
 
@@ -91,7 +101,12 @@ function indexStartTorrent($transfer, $interactive) {
 			$clientHandler = ClientHandler::getInstance(getRequestVar('btclient'));
 			$clientHandler->start($transfer, true, FluxdQmgr::isRunning());
 			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
-				showErrorPage(implode("<br>", $clientHandler->messages));
+				$msgs = array();
+				array_push($msgs, "transfer : ".$transfer);
+				array_push($msgs, "\nmessages :");
+				$msgs = array_merge($msgs, $clientHandler->messages);
+				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+				@error("Start failed", "", "", $msgs);
 			} else {
 				if (array_key_exists("closeme",$_POST)) {
 					echo '<script  language="JavaScript">';
@@ -113,19 +128,20 @@ function indexStartTorrent($transfer, $interactive) {
  */
 function indexStopTransfer($transfer) {
 	global $cfg;
+	$invalid = true;
 	if (isValidTransfer($transfer) === true) {
 		if ((substr($transfer, -8) == ".torrent")) {
+			$invalid = false;
 			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if ((substr($transfer, -5) == ".wget")) {
+			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
-		} else {
-			AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
-			showErrorPage("Invalid Transfer for Stop : <br>".$transfer);
 		}
 		$clientHandler->stop($transfer, (getRequestVar('kill') == 1), getRequestVar('pid'));
-	} else {
-		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
-		showErrorPage("Invalid Transfer for Stop : <br>".$transfer);
+	}
+	if ($invalid) {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 }
 
@@ -142,8 +158,8 @@ function indexDeleteTransfer($transfer) {
 		@header("location: index.php?iid=index");
 		exit();
 	} else {
-		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Delete : ".$cfg["user"]." tried to delete ".$transfer);
-		showErrorPage("Invalid Transfer for Delete : <br>".$transfer);
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 }
 
@@ -159,8 +175,8 @@ function indexDeQueueTransfer($transfer) {
 		@header("location: index.php?iid=index");
 		exit();
 	} else {
-		AuditAction($cfg["constants"]["error"], "Invalid Transfer for DeQueue : ".$cfg["user"]." tried to deQueue ".$transfer);
-		showErrorPage("Invalid Transfer for DeQueue : <br>".$transfer);
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 }
 
@@ -170,14 +186,14 @@ function indexDeQueueTransfer($transfer) {
  * @param $url_upload url of torrent to download
  */
 function indexProcessDownload($url_upload) {
-	global $cfg, $messages;
+	global $cfg, $message;
 	// is enabled ?
 	if ($cfg["enable_torrent_download"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");
-		showErrorPage("torrent download is disabled.");
+		@error("torrent download is disabled", "index.php?iid=index", "");
 	}
 	if (!empty($url_upload)) {
-		$messages = "";
+		$message = "";
 		$arURL = explode("/", $url_upload);
 		$file_name = urldecode($arURL[count($arURL)-1]); // get the file name
 		$file_name = str_replace(array("'",","), "", $file_name);
@@ -215,21 +231,21 @@ function indexProcessDownload($url_upload) {
 			}
 			if (is_file($cfg["transfer_file_path"].$file_name)) {
 				// Error
-				$messages .= "ERROR: the file ".$file_name." already exists on the server.";
+				$message .= "ERROR: the file ".$file_name." already exists on the server.";
 				$ext_msg = "DUPLICATE :: ";
 			} else {
 				// write to file
 				$handle = false;
 				$handle = @fopen($cfg["transfer_file_path"].$file_name, "w");
 				if (!$handle) {
-					$messages .= "cannot open ".$file_name." for writing.";
-					AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$messages);
+					$message .= "cannot open ".$file_name." for writing.";
+					AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$message);
 				} else {
 					$result = @fwrite($handle, $content);
 					@fclose($handle);
 					if ($result === false) {
-						$messages .= "cannot write content to ".$file_name.".";
-						AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$messages);
+						$message .= "cannot write content to ".$file_name.".";
+						AuditAction($this->cfg["constants"]["error"], "File-Write-Error : ".$message);
 					}
 				}
 			}
@@ -237,19 +253,19 @@ function indexProcessDownload($url_upload) {
 			$msgs = SimpleHTTP::getMessages();
 			if (!empty($msgs)) {
 				// Tag on any messages found
-				$messages .= "Error downloading URL: \n";
+				$message .= "Error downloading URL: \n";
 				$count = 1;
 				foreach ($msgs as $thisMsg){
-					$messages .= $count.": ".$thisMsg."\n";
+					$message .= $count.": ".$thisMsg."\n";
 					$count++;
 				}
 			} else {
-				$messages .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
+				$message .= "ERROR: could not get the file ".$file_name.", could be a dead URL.";
 			}
 		}
-		if ($messages != "") { // there was an error
+		if ($message != "") { // there was an error
 			AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
-			@header("location: index.php?iid=index&messages=".urlencode($messages));
+			@header("location: index.php?iid=index&messages=".urlencode($message));
 			exit();
 		} else {
 			AuditAction($cfg["constants"]["url_upload"], $file_name);
@@ -284,7 +300,7 @@ function indexProcessDownload($url_upload) {
  */
 function indexProcessUpload() {
 	global $cfg;
-	$messages = "";
+	$message = "";
 	$ext_msg = "";
 	if (isset($_FILES['upload_file'])) {
 		if (!empty($_FILES['upload_file']['name'])) {
@@ -295,7 +311,7 @@ function indexProcessUpload() {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error
-						$messages .= "ERROR: the file ".$file_name." already exists on the server.";
+						$message .= "ERROR: the file ".$file_name." already exists on the server.";
 						$ext_msg = "DUPLICATE :: ";
 					} else {
 						if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
@@ -322,20 +338,20 @@ function indexProcessUpload() {
 								}
 							}
 						} else {
-							$messages .= "ERROR: File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name;
+							$message .= "ERROR: File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name;
 						}
 					}
 				} else {
-					$messages .= "ERROR: The type of file you are uploading is not allowed.";
+					$message .= "ERROR: The type of file you are uploading is not allowed.";
 				}
 			} else {
-				$messages .= "ERROR: File not uploaded, check file size limit.";
+				$message .= "ERROR: File not uploaded, check file size limit.";
 			}
 		}
 	}
-	if ($messages != "") { // there was an error
+	if ($message != "") { // there was an error
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
-		@header("location: index.php?iid=index&messages=".urlencode($messages));
+		@header("location: index.php?iid=index&messages=".urlencode($message));
 		exit();
 	} else {
 		@header("location: index.php?iid=index");
@@ -348,7 +364,7 @@ function indexProcessUpload() {
  */
 function processFileUpload() {
 	global $cfg;
-	$messages = "";
+	$message = "";
 	// file upload
 	if (!empty($_FILES['upload_files'])) {
 		// action-id
@@ -364,13 +380,13 @@ function processFileUpload() {
 			$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
 			$file_name = cleanFileName($file_name);
 			$ext_msg = "";
-			$messages = "";
+			$message = "";
 			if($_FILES['upload_files']['size'][$id] <= 1000000 && $_FILES['upload_files']['size'][$id] > 0) {
 				if (isValidTransfer($file_name)) {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error
-						$messages .= "ERROR: the file ".$file_name." already exists on the server.";
+						$message .= "ERROR: the file ".$file_name." already exists on the server.";
 						$ext_msg = "DUPLICATE :: ";
 					} else {
 						if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
@@ -380,16 +396,16 @@ function processFileUpload() {
 							if ((isset($actionId)) && ($actionId > 1))
 								array_push($tStack,$file_name);
 						} else {
-							$messages .= "ERROR: File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name;
+							$message .= "ERROR: File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name;
 					  	}
 					}
 				} else {
-					$messages .= "ERROR: The type of file you are uploading is not allowed.";
+					$message .= "ERROR: The type of file you are uploading is not allowed.";
 				}
 			} else {
-				$messages .= "ERROR: File not uploaded, check file size limit.";
+				$message .= "ERROR: File not uploaded, check file size limit.";
 			}
-			if ((isset($messages)) && ($messages != "")) {
+			if ((isset($message)) && ($message != "")) {
 			  // there was an error
 				AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
 			}
@@ -416,16 +432,16 @@ function processFileUpload() {
 				}
 			}
 		}
-		if ((isset($messages)) && ($messages == "")) {
+		if ((isset($message)) && ($message == "")) {
 			// back to index if no errors
 			@header("location: index.php?iid=index");
 			exit();
 		} else {
 			// push errors to referrer
 			if (isset($_SERVER["HTTP_REFERER"]))
-				@header("location: ".$_SERVER["HTTP_REFERER"]."&messages=".urlencode($messages));
+				@header("location: ".$_SERVER["HTTP_REFERER"]."&messages=".urlencode($message));
 			else
-				@header("location: index.php?iid=index&messages=".urlencode($messages));
+				@header("location: index.php?iid=index&messages=".urlencode($message));
 			exit();
 		}
 	}

@@ -37,11 +37,11 @@ $aliasFile = getAliasName($transfer).".stat";
 tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
 // check
-if ((!empty($transfer)) && (!empty($aliasFile))) {
+if (!empty($transfer)) {
 	$tmpl->setvar('transfer', $transfer);
 	$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 } else {
-	showErrorPage("missing params");
+	@error("missing params", "index.php?iid=index", "", array('transfer'));
 }
 
 // alias / stat
@@ -61,8 +61,8 @@ if (substr($transfer, -8) == ".torrent") {
 	$cfg['hash'] = $transfer;
 	$af = new AliasFile($aliasFile, $transferowner);
 } else {
-	AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$cfg["user"]." tried to access ".$transfer);
-	showErrorPage("Invalid Transfer : <br>".$transfer);
+	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+	@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 }
 
 // totals

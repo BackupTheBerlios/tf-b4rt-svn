@@ -41,8 +41,9 @@ $op = (isset($_REQUEST['op'])) ? $_REQUEST['op'] : "default";
 
 // check arg
 if (!preg_match('/^[a-zA-Z]+$/', $op)) {
-	AuditAction($cfg["constants"]["error"], "Invalid Admin-Op : ".htmlentities($op, ENT_QUOTES));
-	showErrorPage("Invalid Admin-Op : <br>".htmlentities($op, ENT_QUOTES));
+	$op = getRequestVar('op');
+	AuditAction($cfg["constants"]["error"], "INVALID ADMIN-OP : ".$op);
+	@error("Invalid Admin-Op", "admin.php", "Admin", array($op));
 }
 
 // op-switch
@@ -282,10 +283,10 @@ switch ($op) {
 		$new_idx = $idx + $position[$direction];
 		$sql = "UPDATE tf_links SET sort_order = $idx WHERE sort_order = $new_idx";
 		$db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
 		$db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		@header("Location: admin.php?op=editLinks");
 		exit();
 

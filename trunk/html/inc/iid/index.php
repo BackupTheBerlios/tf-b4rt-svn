@@ -117,8 +117,8 @@ foreach ($arList as $entry) {
 		$settingsAry['datapath'] = "";
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else {
-		AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$entry);
-		showErrorPage("Invalid Transfer : <br>".$entry);
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$entry);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($entry));
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = $af->running;

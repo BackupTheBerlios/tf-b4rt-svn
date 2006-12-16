@@ -32,7 +32,7 @@ if (!isset($cfg['user'])) {
 // request-vars
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
-	showErrorPage("missing params");
+	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloadlog.tmpl");

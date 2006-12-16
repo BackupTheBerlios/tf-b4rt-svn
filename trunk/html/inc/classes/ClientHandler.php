@@ -326,12 +326,8 @@ class ClientHandler
 			$this->savepath = checkDirPathString($this->savepath);
         // check target-directory, create if not present
 		if (!(checkDirectory($this->savepath, 0777))) {
-			$msg = "Error checking dir ".$this->savepath;
-            AuditAction($cfg["constants"]["error"], $msg);
-            if (empty($_REQUEST))
-            	die($msg);
-            else
-				showErrorPage($msg);
+            array_push($this->messages, "savepath : ".$this->savepath);
+            @error("Error checking savepath", "admin.php?op=serverSettings", "Server-Settings", $this->messages);
 		}
         // create AliasFile object and write out the stat file
         $this->af = new AliasFile($this->aliasFile, $this->owner);
@@ -500,11 +496,9 @@ class ClientHandler
             	if (is_numeric($transferPid)) {
                 	$this->pid = $transferPid;
             	} else {
-		    		AuditAction($cfg["constants"]["error"], "Invalid kill-param : ".$cfg["user"]." tried to kill ".$transferPid);
-		    		if (empty($_REQUEST))
-		    			die("Invalid transfer-pid-param : ".$transferPid);
-		    		else
-		    			showErrorPage("Invalid kill-param : <br>".$transferPid);
+		    		AuditAction($cfg["constants"]["error"], "INVALID PID: ".$transferPid);
+		    		array_push($this->messages, "transferPid : ".$transferPid);
+		    		@error("Invalid pid-param", "index.php?iid=index", "", $this->messages);
             	}
             } else {
             	$data = "";
@@ -533,7 +527,6 @@ class ClientHandler
 			? "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'"
 			: "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal ) VALUES ('".$tid."', '".$transferTotals["uptotal"]."', '".$transferTotals["downtotal"]."')";
 		$db->Execute($sql);
-		dbDieOnError($sql);
 	}
 
 	/**
@@ -541,10 +534,9 @@ class ClientHandler
 	 *
 	 * @param $updateTotals
 	 * @param $deleteSettings
-	 * @param $deleteCache
 	 * @return boolean
 	 */
-	function execDelete($updateTotals = true, $deleteSettings = true, $deleteCache = true) {
+	function execDelete($updateTotals = true, $deleteSettings = true) {
 		global $cfg;
         // delete
 		if (($cfg["user"] == $this->owner) || $cfg['isAdmin']) {
@@ -579,7 +571,7 @@ class ClientHandler
 			AuditAction($cfg["constants"]["delete_transfer"], $this->transfer);
 			return true;
 		} else {
-			AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$this->transfer);
+			AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$this->transfer);
 			return false;
 		}
 	}

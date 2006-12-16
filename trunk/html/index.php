@@ -36,8 +36,9 @@ if (!isset($_REQUEST['iid'])) {
 if (preg_match('/^[a-zA-Z]+$/', $_REQUEST['iid'])) {
 	require_once("inc/iid/".$_REQUEST['iid'].".php");
 } else {
-	AuditAction($cfg["constants"]["error"], "Invalid Page-ID : ".htmlentities($_REQUEST['iid'], ENT_QUOTES));
-	showErrorPage("Invalid Page-ID : <br>".htmlentities($_REQUEST['iid'], ENT_QUOTES));
+	$iid = getRequestVar('iid');
+	AuditAction($cfg["constants"]["error"], "INVALID PAGE: ".$iid);
+	@error("Invalid Page", "index.php?iid=index", "Home", array($iid));
 }
 
 ?>

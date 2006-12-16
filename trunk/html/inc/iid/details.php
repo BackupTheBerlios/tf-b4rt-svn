@@ -54,8 +54,8 @@ if (substr($transfer, -8) == ".torrent") {
 	$tmpl->setvar('metaInfo', $metaInfo);
 	$tmpl->setvar('scrape', 0);
 } else {
-	AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$cfg["user"]." tried to access ".$transfer);
-	showErrorPage("Invalid Transfer : <br>".$transfer);
+	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+	@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 }
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_TRANSFERDETAILS']);

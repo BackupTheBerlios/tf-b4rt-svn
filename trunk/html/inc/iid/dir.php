@@ -79,7 +79,7 @@ if ($chmod != "") {
 	// is enabled ?
 	if ($cfg["dir_enable_chmod"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use chmod (".$dir.")");
-		showErrorPage("chmod is disabled.");
+		@error("chmod is disabled", "index.php?iid=index", "");
 	}
 	// only valid entry with permission
 	if ((isValidEntry(basename($dir))) && (hasPermission($dir, $cfg["user"], 'w')))
@@ -136,7 +136,7 @@ if ($down != "") {
 	// is enabled ?
 	if ($cfg["enable_file_download"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use download (".$down.")");
-		showErrorPage("download is disabled.");
+		@error("download is disabled", "index.php?iid=index", "");
 	}
 	// only valid entry with permission
 	if ((isValidEntry(basename($down))) && (hasPermission($down, $cfg["user"], 'r'))) {
@@ -169,7 +169,7 @@ if ($tar != "") {
 	// is enabled ?
 	if ($cfg["enable_file_download"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use download (".$tar.")");
-		showErrorPage("download is disabled.");
+		@error("download is disabled", "index.php?iid=index", "");
 	}
 	// only valid entry with permission
 	if ((isValidEntry(basename($tar))) && (hasPermission($tar, $cfg["user"], 'r'))) {

@@ -38,7 +38,7 @@ $transferowner = getOwner($transfer);
 if ((!empty($transfer)) && (!empty($aliasFile)))
 	$af = new AliasFile($aliasFile, $transferowner);
 else
-	showErrorPage("missing params");
+	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");

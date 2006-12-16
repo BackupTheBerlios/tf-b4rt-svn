@@ -61,13 +61,11 @@ class ClientHandlerTransmission extends ClientHandler
         // check to see if the path to the transmission-bin is valid
         if (!is_executable($cfg["btclient_transmission_bin"])) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
-            $msg = "transmissioncli cannot be executed : ".$cfg["btclient_transmission_bin"];
-            array_push($this->messages , $msg);
-            AuditAction($cfg["constants"]["error"], $msg);
-            if (empty($_REQUEST))
-            	die($msg);
-            else
-				showErrorPage($msg);
+        	$msg = "transmissioncli cannot be executed";
+        	AuditAction($cfg["constants"]["error"], $msg);
+        	array_push($this->messages, $msg);
+            array_push($this->messages, "btclient_transmission_bin : ".$cfg["btclient_transmission_bin"]);
+            return false;
         }
 
         // prepare starting of client
@@ -77,7 +75,7 @@ class ClientHandlerTransmission extends ClientHandler
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR)
 				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
-			return;
+			return false;
 		}
 
         // transmission wants -1 for no seeding.
@@ -140,7 +138,7 @@ class ClientHandlerTransmission extends ClientHandler
 		// set vars
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(true);
+		$this->execDelete(true, true);
 	}
 
     /**

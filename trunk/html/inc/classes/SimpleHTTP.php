@@ -298,7 +298,7 @@ class SimpleHTTP
 		// Check to see if cookie required for this domain:
 		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $this->_cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
 		$this->cookie = $db->GetOne($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 
 		if (!array_key_exists("port", $domain))
 			$domain["port"] = 80;

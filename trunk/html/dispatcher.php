@@ -75,11 +75,11 @@ switch ($action) {
 		// is enabled ?
 		if ($cfg["enable_wget"] == 0) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-			showErrorPage("wget is disabled.");
+			@error("wget is disabled", "index.php?iid=index", "");
 		} elseif ($cfg["enable_wget"] == 1) {
 			if (!$cfg['isAdmin']) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-				showErrorPage("wget is disabled for users.");
+				@error("wget is disabled for users", "index.php?iid=index", "");
 			}
 		}
 		$url = getRequestVar('url');
@@ -88,7 +88,16 @@ switch ($action) {
 			$clientHandler->inject($url);
 			if (getRequestVar('wget_start') == 1) {
 				$clientHandler->start($url, false, false);
-				sleep(3);
+				if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+					$msgs = array();
+					array_push($msgs, "transfer : ".$transfer);
+					array_push($msgs, "\nmessages :");
+					$msgs = array_merge($msgs, $clientHandler->messages);
+					AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+					@error("Start failed", "", "", $msgs);
+				} else {
+					sleep(3);
+				}
 			}
 		}
     	break;
@@ -133,7 +142,7 @@ switch ($action) {
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStop");
-			showErrorPage("bulkops are disabled.");
+			@error("bulkops are disabled", "index.php?iid=index", "");
 		}
 		// stop all
     	$transfers = getTorrentListFromFS();
@@ -153,7 +162,7 @@ switch ($action) {
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkResume");
-			showErrorPage("bulkops are disabled.");
+			@error("bulkops are disabled", "index.php?iid=index", "");
 		}
 		// resume all
     	$transfers = getTorrentListFromDB();
@@ -178,7 +187,7 @@ switch ($action) {
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStart");
-			showErrorPage("bulkops are disabled.");
+			@error("bulkops are disabled", "index.php?iid=index", "");
 		}
 		// start all
     	$transfers = getTorrentListFromFS();
@@ -208,7 +217,7 @@ switch ($action) {
     	// is enabled ?
 		if ($cfg["enable_multiops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multi-op ".$action);
-			showErrorPage("bulkops are disabled.");
+			@error("multiops are disabled", "index.php?iid=index", "");
 		}
 
 		foreach($_POST['transfer'] as $key => $element) {
@@ -217,23 +226,24 @@ switch ($action) {
 			$element = urldecode($element);
 
 			// is valid transfer ?
-			if (isValidTransfer($element) !== true) {
-				AuditAction($cfg["constants"]["error"], "Invalid Transfer for ".$action." : ".$cfg["user"]." tried to ".$action." ".$element);
-				showErrorPage("Invalid Transfer for ".htmlentities($action, ENT_QUOTES)." : <br>".htmlentities($element, ENT_QUOTES));
+			$invalid = true;
+			if (isValidTransfer($element) === true) {
+				// client
+				if (substr($element, -8) == ".torrent") {
+					// this is a torrent-client
+					$invalid = false;
+					$isTorrent = true;
+					$tclient = getTransferClient($element);
+				} else if (substr($element, -5) == ".wget") {
+					// this is wget.
+					$invalid = false;
+					$isTorrent = false;
+					$tclient = "wget";
+				}
 			}
-
-			// client
-			if (substr($element, -8) == ".torrent") {
-				// this is a torrent-client
-				$isTorrent = true;
-				$tclient = getTransferClient($element);
-			} else if (substr($element, -5) == ".wget") {
-				// this is wget.
-				$isTorrent = false;
-				$tclient = "wget";
-			} else {
-				AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$cfg["user"]." tried to access ".$element);
-				showErrorPage("Invalid Transfer : <br>".$element);
+			if ($invalid) {
+				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$cfg["user"]." tried to ".$action." ".$element);
+				@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 			}
 
 			// is transfer running ?

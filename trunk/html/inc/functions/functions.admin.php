@@ -65,7 +65,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	$max = $min + $offset;
 	$sql = "SELECT user_id, file, action, ip, ip_resolved, user_agent, time FROM tf_log WHERE ".$sqlForSearch."action!=".$db->qstr($cfg["constants"]["hit"])." ORDER BY time desc";
 	$result = $db->SelectLimit($sql, $offset, $min);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$act_list = array();
 	while (list($user_id, $file, $action, $ip, $ip_resolved, $user_agent, $time) = $result->FetchRow()) {
 		$user_icon = (IsOnline($user_id))
@@ -164,7 +164,7 @@ function tmplSetUserSection() {
 	$total_activity = GetActivityCount();
 	$sql = "SELECT user_id, hits, last_visit, time_created, user_level, state FROM tf_users ORDER BY user_id";
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// user-details
 	$user_details_list = array();
 	while (list($user_id, $hits, $last_visit, $time_created, $user_level, $user_state) = $result->FetchRow()) {
@@ -185,9 +185,9 @@ function tmplSetUserSection() {
 		}
 		// xfer-usage
 		if ($cfg['enable_xfer'] == 1) {
-			$sql2 = "SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user_id LIKE '".$user_id."'";
-			$result2 = $db->Execute($sql2);
-			dbDieOnError($sql2);
+			$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload FROM tf_xfer WHERE user_id LIKE '".$user_id."'";
+			$result2 = $db->Execute($sql);
+			if ($db->ErrorNo() != 0) dbError($sql);
 			$row = $result2->FetchRow();
 			if (!empty($row)) {
 				$xfer_usage = "0";
@@ -307,11 +307,11 @@ function setUserState() {
 	// set new state
 	$sql='SELECT * FROM tf_users WHERE user_id = '.$db->qstr($user_id);
 	$rs = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('state'=>$user_state);
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	switch ($user_state) {
 		case 0:
 			AuditAction($cfg["constants"]["admin"], "User ".$user_id." deactivated.");
@@ -337,7 +337,7 @@ function addNewLink($newLink,$newSite) {
 	// Get current highest link index:
 	$sql="SELECT sort_order FROM tf_links ORDER BY sort_order DESC";
 	$result=$db->SelectLimit($sql, 1);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$idx = ($result->fields === false)
 		? 0 /* No links currently in db */
 		: $result->fields["sort_order"] + 1;
@@ -349,7 +349,7 @@ function addNewLink($newLink,$newSite) {
 	$sTable = 'tf_links';
 	$sql = $db->GetInsertSql($sTable, $rec);
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -363,7 +363,7 @@ function alterLink($lid,$newLink,$newSite) {
 	global $cfg, $db;
 	$sql = "UPDATE tf_links SET url='".$newLink."',sitename='".$newSite."' WHERE lid = ".$lid;
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -397,19 +397,19 @@ function deleteOldLink($lid) {
 	$sql="SELECT sort_order, lid FROM tf_links ";
 	$sql.="WHERE sort_order > $idx ORDER BY sort_order ASC";
 	$result=$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$arLinks=$result->GetAssoc();
 	// Decrement the sort order of each link:
 	foreach ($arLinks as $sid=>$this_lid) {
 		$sql="UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=$this_lid";
 		$db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 	// Finally delete the link:
 	$sql = "DELETE FROM tf_links WHERE lid=".$lid;
 	// Link Mod
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -423,7 +423,7 @@ function getLinkSortOrder($lid) {
     // Get Current sort order index of link with this link id:
     $sql="SELECT sort_order FROM tf_links WHERE lid=$lid";
     $rtnValue=$db->GetOne($sql);
-    dbDieOnError($sql);
+    if ($db->ErrorNo() != 0) dbError($sql);
     return $rtnValue;
 }
 
@@ -452,7 +452,7 @@ function addNewRSS($newRSS) {
 	$sTable = 'tf_rss';
 	$sql = $db->GetInsertSql($sTable, $rec);
 	$db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -464,7 +464,7 @@ function deleteOldRSS($rid) {
 	global $db;
 	$sql = "delete from tf_rss where rid=".$rid;
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -490,20 +490,20 @@ function DeleteThisUser($user_id) {
 	global $db;
 	$sql = "SELECT uid FROM tf_users WHERE user_id = ".$db->qstr($user_id);
 	$uid = $db->GetOne( $sql );
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// delete any cookies this user may have had
 	//$sql = "DELETE tf_cookies FROM tf_cookies, tf_users WHERE (tf_users.uid = tf_cookies.uid) AND tf_users.user_id=".$db->qstr($user_id);
 	$sql = "DELETE FROM tf_cookies WHERE uid=".$uid;
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// Now cleanup any message this person may have had
 	$sql = "DELETE FROM tf_messages WHERE to_user=".$db->qstr($user_id);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	// now delete the user from the table
 	$sql = "DELETE FROM tf_users WHERE user_id=".$db->qstr($user_id);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 /**
@@ -522,7 +522,7 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 		$hideOffline = 0;
 	$sql = 'select * from tf_users where user_id = '.$db->qstr($org_user_id);
 	$rs = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array();
 	$rec['user_id'] = $user_id;
 	$rec['user_level'] = $userType;
@@ -532,19 +532,19 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	if ($sql != "") {
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 	// if the original user id and the new id do not match, we need to update messages and log
 	if ($user_id != $org_user_id) {
 		$sql = "UPDATE tf_messages SET to_user=".$db->qstr($user_id)." WHERE to_user=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$sql = "UPDATE tf_messages SET from_user=".$db->qstr($user_id)." WHERE from_user=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$sql = "UPDATE tf_log SET user_id=".$db->qstr($user_id)." WHERE user_id=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 }
 
@@ -558,11 +558,11 @@ function changeUserLevel($user_id, $level) {
 	global $db;
 	$sql='select * from tf_users where user_id = '.$db->qstr($user_id);
 	$rs = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('user_level'=>$level);
 	$sql = $db->GetUpdateSQL($rs, $rec);
 	$result = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
 ?>

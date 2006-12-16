@@ -56,7 +56,7 @@ ini_set("allow_url_fopen", "1");
 if (is_file('version.php'))
 	require_once('version.php');
 else
-	die("Fatal Error. version.php is missing.");
+	@error("version.php is missing");
 
 // -----------------------------------------------------------------------------
 // backup

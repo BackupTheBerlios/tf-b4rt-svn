@@ -32,7 +32,7 @@ if (!isset($cfg['user'])) {
 // is enabled ?
 if ($cfg["enable_xfer"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use xfer");
-	showErrorPage("xfer is disabled.");
+	@error("xfer is disabled", "index.php?iid=index", "");
 }
 
 /*************************************************************
@@ -71,7 +71,7 @@ if (($cfg['enable_public_xfer'] == 1 ) || $cfg['isAdmin']) {
 	$tmpl->setvar('show_xfer', 1);
 	$sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
 	$rtnValue = $db->GetCol($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	$user_list = array();
 	foreach ($rtnValue as $user_id) {
 		array_push($user_list, array(
@@ -107,7 +107,7 @@ if (($cfg['enable_public_xfer'] == 1 ) || $cfg['isAdmin']) {
 		// month stats
 		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' GROUP BY date ORDER BY date";
 		$rtnValue = $db->GetAll($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$start = '';
 		$download = 0;
 		$upload = 0;
@@ -153,7 +153,7 @@ if (($cfg['enable_public_xfer'] == 1 ) || $cfg['isAdmin']) {
 		$period_query = ($mstart) ? "and date >= '".$mstart."' and date < '".$mend."'" : "";
 		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' ".$period_query." GROUP BY date ORDER BY date";
 		$rtnValue = $db->GetAll($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$start = '';
 		$download = 0;
 		$upload = 0;
@@ -200,7 +200,7 @@ if (($cfg['enable_public_xfer'] == 1 ) || $cfg['isAdmin']) {
 		$period_query = ($wstart) ? "and date >= '".$wstart."' and date < '".$wend."'" : "";
 		$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' ".$period_query." GROUP BY date ORDER BY date";
 		$rtnValue = $db->GetAll($sql);
-		dbDieOnError($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
 		$start = '';
 		$download = 0;
 		$upload = 0;

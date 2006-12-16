@@ -38,7 +38,7 @@ loadSettings('tf_settings_dir');
 // is enabled ?
 if ($cfg["enable_rar"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use rar");
-	showErrorPage("rar is disabled.");
+	@error("rar is disabled", "index.php?iid=index", "");
 }
 
 // init template-instance

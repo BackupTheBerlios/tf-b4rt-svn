@@ -561,7 +561,7 @@ function cliDumpDatabase($type = "") {
 				exit();
 		}
 	    $recordset = $db->Execute($sql);
-	    dbDieOnError($sql);
+	    if ($db->ErrorNo() != 0) dbError($sql);
 	    while (list($foo, $bar) = $recordset->FetchRow())
 	    	echo $foo . _DUMP_DELIM . $bar . "\n";
 	} else {

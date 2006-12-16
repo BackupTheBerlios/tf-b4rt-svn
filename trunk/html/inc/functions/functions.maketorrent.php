@@ -48,11 +48,12 @@ function downloadTorrent($tfile) {
 			@fclose($fp);
 			AuditAction($cfg["constants"]["fm_download"], $tfile);
 		} else {
-			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$cfg["user"]." tried to download ".$tfile);
+			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$tfile);
+			@error("File Not found for download", "index.php?iid=index", "", array($tfile));
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".htmlentities($tfile, ENT_QUOTES));
-		showErrorPage("ILLEGAL DOWNLOAD : <br>".htmlentities($tfile, ENT_QUOTES));
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$tfile);
+		@error("Invalid File", "index.php?iid=index", "", array($tfile));
 	}
 	exit();
 }

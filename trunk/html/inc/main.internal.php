@@ -105,9 +105,9 @@ if (!(cacheIsSet($currentUser))) {
 
 	// check for setup.php and upgrade.php
 	if (@file_exists("setup.php") === true)
-		showErrorPage("Error : <em>setup.php</em> must be deleted.");
+		@error("setup.php must be deleted", "setup.php", "Setup");
 	if (@file_exists("upgrade.php") === true)
-		showErrorPage("Error : <em>upgrade.php</em> must be deleted.");
+		@error("upgrade.php must be deleted", "upgrade.php", "Upgrade");
 
 	// set admin-var
 	$cfg['isAdmin'] = IsAdmin();
@@ -115,7 +115,7 @@ if (!(cacheIsSet($currentUser))) {
 	// load some settings from users-table
 	$sql = "SELECT hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 	$recordset = $db->Execute($sql);
-	dbDieOnError($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	list ($cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
 
 	// Check for valid theme
