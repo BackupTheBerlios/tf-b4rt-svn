@@ -84,10 +84,10 @@ class Fluxd
      * initialize Fluxd.
      */
     function initialize() {
-    	global $cfg, $instanceFluxd;
+    	global $instanceFluxd;
     	// create instance
     	if (!isset($instanceFluxd))
-    		$instanceFluxd = new Fluxd(serialize($cfg));
+    		$instanceFluxd = new Fluxd();
     }
 
     /**
@@ -292,15 +292,10 @@ class Fluxd
     /**
      * ctor
      */
-    function Fluxd($cfg) {
-    	// basic init
-        $this->_cfg = unserialize($cfg);
-        if (empty($this->_cfg)) {
-            array_push($this->messages , "Config not passed");
-            $this->state = FLUXD_STATE_ERROR;
-            return null;
-        }
-        $this->_pathDataDir = $this->_cfg["path"] . '.fluxd/';
+    function Fluxd() {
+    	global $cfg;
+    	// paths
+        $this->_pathDataDir = $cfg["path"] . '.fluxd/';
         $this->_pathPidFile = $this->_pathDataDir . 'fluxd.pid';
         $this->_pathSocket = $this->_pathDataDir . 'fluxd.sock';
         $this->_pathLogFile = $this->_pathDataDir . 'fluxd.log';
@@ -322,20 +317,21 @@ class Fluxd
      * @return boolean
      */
     function instance_start() {
+    	global $cfg;
         if ($this->state == FLUXD_STATE_RUNNING) {
-            AuditAction($this->_cfg["constants"]["fluxd"], "fluxd already started");
+            AuditAction($cfg["constants"]["fluxd"], "fluxd already started");
             return true;
         } else {
-            $startCommand = "cd ".$this->_cfg["docroot"]." ; HOME=".$this->_cfg["path"].";";
+            $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
-            $startCommand .= " nohup " . $this->_cfg["perlCmd"];
-            $startCommand .= " -I ".escapeshellarg($this->_cfg["docroot"]."bin/fluxd");
-            $startCommand .= " ".escapeshellarg($this->_cfg["docroot"]."bin/fluxd/fluxd.pl");
+            $startCommand .= " nohup " . $cfg["perlCmd"];
+            $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/fluxd");
+            $startCommand .= " ".escapeshellarg($cfg["docroot"]."bin/fluxd/fluxd.pl");
             $startCommand .= " start";
-            $startCommand .= " ".escapeshellarg($this->_cfg["docroot"]);
-            $startCommand .= " ".escapeshellarg($this->_cfg["path"]);
-            $startCommand .= " ".escapeshellarg($this->_cfg["bin_php"]);
-            $startCommand .= " ".escapeshellarg($this->_cfg["fluxd_dbmode"]);
+            $startCommand .= " ".escapeshellarg($cfg["docroot"]);
+            $startCommand .= " ".escapeshellarg($cfg["path"]);
+            $startCommand .= " ".escapeshellarg($cfg["bin_php"]);
+            $startCommand .= " ".escapeshellarg($cfg["fluxd_dbmode"]);
 	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
 	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFileError);
 	        $startCommand .= " &";
@@ -359,13 +355,13 @@ class Fluxd
             }
             // check if started
             if ($started) {
-            	AuditAction($this->_cfg["constants"]["fluxd"], "fluxd started");
+            	AuditAction($cfg["constants"]["fluxd"], "fluxd started");
             	// Set the state
             	$this->state = FLUXD_STATE_RUNNING;
             	// return
             	return true;
             } else {
-            	AuditAction($this->_cfg["constants"]["fluxd"], "errors starting fluxd");
+            	AuditAction($cfg["constants"]["fluxd"], "errors starting fluxd");
             	// add startcommand to messages for debug
             	// TODO : set better message
             	array_push($this->messages , $startCommand);
@@ -381,8 +377,9 @@ class Fluxd
      * instance_stop
      */
     function instance_stop() {
+    	global $cfg;
         if ($this->state == FLUXD_STATE_RUNNING) {
-        	AuditAction($this->_cfg["constants"]["fluxd"], "Stopping fluxd");
+        	AuditAction($cfg["constants"]["fluxd"], "Stopping fluxd");
             $this->instance_sendCommand('die', 0);
             // check if fluxd still running
             $maxLoops = 75;
@@ -404,7 +401,7 @@ class Fluxd
             return 0;
         } else {
         	$msg = "errors stopping fluxd as was not running.";
-        	AuditAction($this->_cfg["constants"]["fluxd"], $msg);
+        	AuditAction($cfg["constants"]["fluxd"], $msg);
         	array_push($this->messages , $msg);
             // Set the state
             $this->state = FLUXD_STATE_ERROR;

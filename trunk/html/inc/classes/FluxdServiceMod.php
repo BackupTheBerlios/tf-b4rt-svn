@@ -42,13 +42,6 @@ class FluxdServiceMod
     // modstate
     var $modstate = FLUXDMOD_STATE_NULL;
 
-    // protected fields
-
-    // config-array
-    var $_cfg = array();
-
-    // private fields
-
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -144,17 +137,8 @@ class FluxdServiceMod
 
     /**
      * initialize the FluxdServiceMod.
-     *
-     * @param $cfg torrentflux config-array
      */
-    function instance_initialize($cfg) {
-        // config
-    	$this->_cfg = unserialize($cfg);
-        if (empty($this->_cfg)) {
-            array_push($this->messages , "Config not passed");
-            $this->state = FLUXDMOD_STATE_ERROR;
-            return;
-        }
+    function instance_initialize() {
         // modstate-init
         $this->modstate = Fluxd::modState($this->moduleName);
     }

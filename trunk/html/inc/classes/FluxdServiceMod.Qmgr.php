@@ -45,10 +45,10 @@ class FluxdQmgr extends FluxdServiceMod
      * initialize FluxdQmgr.
      */
     function initialize() {
-    	global $cfg, $instanceFluxdQmgr;
+    	global $instanceFluxdQmgr;
     	// create instance
     	if (!isset($instanceFluxdQmgr))
-    		$instanceFluxdQmgr = new FluxdQmgr(serialize($cfg));
+    		$instanceFluxdQmgr = new FluxdQmgr();
     }
 
 	/**
@@ -142,11 +142,11 @@ class FluxdQmgr extends FluxdServiceMod
     /**
      * ctor
      */
-    function FluxdQmgr($cfg) {
+    function FluxdQmgr() {
     	// name
         $this->moduleName = "Qmgr";
 		// initialize
-        $this->instance_initialize($cfg);
+        $this->instance_initialize();
     }
 
 	// =========================================================================
@@ -199,11 +199,12 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $user
      */
     function instance_dequeueTransfer($transfer, $user) {
+    	global $cfg;
     	if ($this->state == FLUXDMOD_STATE_RUNNING) {
         	if (isTransferRunning($transfer)) {
 	            // transfer has been started...log
 	            // TODO : kill it ?
-	            AuditAction($this->_cfg["constants"]["unqueued_transfer"], $transfer . "has been already started.");
+	            AuditAction($cfg["constants"]["unqueued_transfer"], $transfer . "has been already started.");
         	} else {
 	            // send command (hardcoded for .torrent for now)
     			Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.substr($transfer, 0, -8).';'.$user, 0);
@@ -212,7 +213,7 @@ class FluxdQmgr extends FluxdServiceMod
 	            // update the stat file.
 	            $this->_updateStatFile($transfer, getAliasName($transfer).".stat");
 	            // log
-	            AuditAction($this->_cfg["constants"]["unqueued_transfer"], $transfer);
+	            AuditAction($cfg["constants"]["unqueued_transfer"], $transfer);
 	            // just 2 sec... dont stress fluxd
 	            sleep(2);
         	}

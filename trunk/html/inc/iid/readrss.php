@@ -44,7 +44,7 @@ if (!defined("ENT_QUOTES")) define("ENT_QUOTES", 3);
 $arURL = GetRSSLinks();
 
 // create lastRSS object
-$rss = lastRSS::getInstance($cfg);
+$rss = new lastRSS();
 
 // setup transparent cache
 $cacheDir = $cfg['path'].".rsscache";

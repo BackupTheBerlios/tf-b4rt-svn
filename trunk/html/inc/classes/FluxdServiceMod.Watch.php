@@ -45,10 +45,10 @@ class FluxdWatch extends FluxdServiceMod
      * initialize FluxdWatch.
      */
     function initialize() {
-    	global $cfg, $instanceFluxdWatch;
+    	global $instanceFluxdWatch;
     	// create instance
     	if (!isset($instanceFluxdWatch))
-    		$instanceFluxdWatch = new FluxdWatch(serialize($cfg));
+    		$instanceFluxdWatch = new FluxdWatch();
     }
 
 	/**
@@ -106,11 +106,11 @@ class FluxdWatch extends FluxdServiceMod
     /**
      * ctor
      */
-    function FluxdWatch($cfg) {
+    function FluxdWatch() {
     	// name
         $this->moduleName = "Watch";
 		// initialize
-        $this->instance_initialize($cfg);
+        $this->instance_initialize();
     }
 
 }

@@ -45,10 +45,10 @@ class FluxdTrigger extends FluxdServiceMod
      * initialize FluxdTrigger.
      */
     function initialize() {
-    	global $cfg, $instanceFluxdTrigger;
+    	global $instanceFluxdTrigger;
     	// create instance
     	if (!isset($instanceFluxdTrigger))
-    		$instanceFluxdTrigger = new FluxdTrigger(serialize($cfg));
+    		$instanceFluxdTrigger = new FluxdTrigger();
     }
 
 	/**
@@ -106,11 +106,11 @@ class FluxdTrigger extends FluxdServiceMod
     /**
      * ctor
      */
-    function FluxdTrigger($cfg) {
+    function FluxdTrigger() {
     	// name
         $this->moduleName = "Trigger";
 		// initialize
-        $this->instance_initialize($cfg);
+        $this->instance_initialize();
     }
 
 }

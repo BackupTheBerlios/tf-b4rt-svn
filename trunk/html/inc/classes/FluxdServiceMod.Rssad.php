@@ -56,10 +56,10 @@ class FluxdRssad extends FluxdServiceMod
      * initialize FluxdRssad.
      */
     function initialize() {
-    	global $cfg, $instanceFluxdRssad;
+    	global $instanceFluxdRssad;
     	// create instance
     	if (!isset($instanceFluxdRssad))
-    		$instanceFluxdRssad = new FluxdRssad(serialize($cfg));
+    		$instanceFluxdRssad = new FluxdRssad();
     }
 
 	/**
@@ -244,13 +244,14 @@ class FluxdRssad extends FluxdServiceMod
     /**
      * ctor
      */
-    function FluxdRssad($cfg) {
+    function FluxdRssad() {
+    	global $cfg;
     	// name
         $this->moduleName = "Rssad";
 		// initialize
-        $this->instance_initialize($cfg);
+        $this->instance_initialize();
          // check our base-dir
-        if (!(checkDirectory($this->_cfg["path"].$this->_basedir))) {
+        if (!(checkDirectory($cfg["path"].$this->_basedir))) {
         	array_push($this->messages , "Rssad base-dir ".$this->_basedir." error.");
             $this->state = FLUXDMOD_STATE_ERROR;
         }
@@ -267,8 +268,9 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return boolean
 	 */
 	function instance_filterExists($filtername) {
+		global $cfg;
 		// filter-file
-		$file = $this->_cfg["path"].$this->_basedir.$filtername.".dat";
+		$file = $cfg["path"].$this->_basedir.$filtername.".dat";
 		// return
 		return file_exists($file);
 	}
@@ -301,7 +303,8 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return filter-list as array or false on error / no files
 	 */
 	function instance_filterGetList() {
-		$dirFilter = $this->_cfg["path"].$this->_basedir;
+		global $cfg;
+		$dirFilter = $cfg["path"].$this->_basedir;
 		if (is_dir($dirFilter)) {
 			$dirHandle = false;
 			$dirHandle = @opendir($dirFilter);
@@ -328,8 +331,9 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return filter as string or false on error / no files
 	 */
 	function instance_filterGetContent($filtername) {
+		global $cfg;
 		// filter-file
-		$file = $this->_cfg["path"].$this->_basedir.$filtername.".dat";
+		$file = $cfg["path"].$this->_basedir.$filtername.".dat";
 		// check
 		if (!(file_exists($file)))
 			return false;
@@ -339,7 +343,7 @@ class FluxdRssad extends FluxdServiceMod
 		if (!$handle) {
 			$msg = "cannot open ".$file.".";
 			array_push($this->messages , $msg);
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Load-Error : ".$msg);
+			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Load-Error : ".$msg);
 			return false;
 		}
 		$data = "";
@@ -357,14 +361,15 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return boolean
 	 */
 	function instance_filterSave($filtername, $content) {
+		global $cfg;
 		// filter-file
-		$file = $this->_cfg["path"].$this->_basedir.$filtername.".dat";
+		$file = $cfg["path"].$this->_basedir.$filtername.".dat";
 		$handle = false;
 		$handle = @fopen($file, "w");
 		if (!$handle) {
 			$msg = "cannot open ".$file." for writing.";
 			array_push($this->messages , $msg);
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
+			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
         $result = @fwrite($handle, str_replace("\r\n", "\n", $content));
@@ -372,11 +377,11 @@ class FluxdRssad extends FluxdServiceMod
 		if ($result === false) {
 			$msg = "cannot write content to ".$file.".";
 			array_push($this->messages , $msg);
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
+			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Save-Error : ".$msg);
 			return false;
 		}
 		// log
-		AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Saved : ".$filtername);
+		AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Saved : ".$filtername);
 		// return
 		return true;
 	}
@@ -388,18 +393,19 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return boolean
 	 */
 	function instance_filterDelete($filtername) {
+		global $cfg;
 		$extAry = array('.dat', '.hist', '.log');
 		// count files
 		$fileCount = 0;
 		for ($i = 0; $i < 3; $i++) {
-			$file = $this->_cfg["path"].$this->_basedir.$filtername.$extAry[$i];
+			$file = $cfg["path"].$this->_basedir.$filtername.$extAry[$i];
 			if (file_exists($file))
 				$fileCount++;
 		}
 		// delete files
 		$deleted = 0;
 		for ($i = 0; $i < 3; $i++) {
-			$file = $this->_cfg["path"].$this->_basedir.$filtername.$extAry[$i];
+			$file = $cfg["path"].$this->_basedir.$filtername.$extAry[$i];
 			if (file_exists($file)) {
 				@unlink($file);
 				if (!(file_exists($file)))
@@ -408,11 +414,11 @@ class FluxdRssad extends FluxdServiceMod
 		}
 		if ($fileCount == $deleted) {
 			// log + return
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Deleted : ".$filtername." (".$deleted."/".$fileCount.")");
+			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Deleted : ".$filtername." (".$deleted."/".$fileCount.")");
 			return true;
 		} else {
 			// log + return
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
+			AuditAction($cfg["constants"]["fluxd"], "Rssad Filter Delete Error : ".$filtername." (".$deleted."/".$fileCount.")");
 			return false;
 		}
 	}
@@ -423,11 +429,12 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return job-list as array or false on error / no files
 	 */
 	function instance_jobsGetList() {
+		global $cfg;
 		// job1|job2|job3
 		// savedir#url#filtername
-		if ((isset($this->_cfg["fluxd_Rssad_jobs"])) && (strlen($this->_cfg["fluxd_Rssad_jobs"]) > 0)) {
+		if ((isset($cfg["fluxd_Rssad_jobs"])) && (strlen($cfg["fluxd_Rssad_jobs"]) > 0)) {
 			$joblist = array();
-			$jobs = explode($this->_delimJobs, trim($this->_cfg["fluxd_Rssad_jobs"]));
+			$jobs = explode($this->_delimJobs, trim($cfg["fluxd_Rssad_jobs"]));
 			if (count($jobs) > 0) {
 				foreach ($jobs as $job) {
 					$jobAry = explode($this->_delimJob, trim($job));
@@ -607,6 +614,7 @@ class FluxdRssad extends FluxdServiceMod
 	 * @return boolean
 	 */
 	function _jobsUpdate($content) {
+		global $cfg;
 		$jobsSane = array();
 		$jobs = explode($this->_delimJobs, trim($content));
 		if (($jobs !== false) && (count($jobs) > 0)) {
@@ -636,7 +644,7 @@ class FluxdRssad extends FluxdServiceMod
 			// update setting
 			updateSetting("tf_settings", "fluxd_Rssad_jobs", $jobsString);
 			// log
-			AuditAction($this->_cfg["constants"]["fluxd"], "Rssad Jobs Saved : \n".$jobsString);
+			AuditAction($cfg["constants"]["fluxd"], "Rssad Jobs Saved : \n".$jobsString);
 			return true;
 		} else {
 			return false;

@@ -45,10 +45,10 @@ class FluxdMaintenance extends FluxdServiceMod
      * initialize FluxdMaintenance.
      */
     function initialize() {
-    	global $cfg, $instanceFluxdMaintenance;
+    	global $instanceFluxdMaintenance;
     	// create instance
     	if (!isset($instanceFluxdMaintenance))
-    		$instanceFluxdMaintenance = new FluxdMaintenance(serialize($cfg));
+    		$instanceFluxdMaintenance = new FluxdMaintenance();
     }
 
 	/**
@@ -106,11 +106,11 @@ class FluxdMaintenance extends FluxdServiceMod
     /**
      * ctor
      */
-    function FluxdMaintenance($cfg) {
+    function FluxdMaintenance() {
     	// name
         $this->moduleName = "Maintenance";
 		// initialize
-        $this->instance_initialize($cfg);
+        $this->instance_initialize();
     }
 
 }

@@ -201,7 +201,8 @@ switch ($op) {
 						$message = 'Error starting fluxd.';
 						$msgs = Fluxd::getMessages();
 						Fluxd::logError("Error starting fluxd, please check fluxd-logs. Messages :\n".implode("\n", $msgs), true);
-						// TODO : $msgs
+						array_unshift($msgs, "please check fluxd-logs");
+						@error($message, "admin.php?op=fluxdSettings", "fluxd-Settings", $msgs);
 					}
 					break;
 				}

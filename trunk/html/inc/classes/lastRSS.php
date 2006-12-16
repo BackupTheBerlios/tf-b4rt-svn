@@ -54,31 +54,6 @@ class lastRSS {
 	var $_imagetags = array('title', 'url', 'link', 'width', 'height');
 	var $_textinputtags = array('title', 'description', 'name', 'link');
 
-	// config-array
-    var $_cfg = array();
-
-    /**
-     * factory
-     *
-     * @param $cfg
-     * @return lastRSS
-     */
-    function getInstance($cfg) {
-    	return new lastRSS(serialize($cfg));
-    }
-
-    /**
-     * do not use direct, use the factory-method !
-     *
-     * @param $cfg
-     * @return lastRSS
-     */
-    function lastRSS($cfg) {
-        $this->_cfg = unserialize($cfg);
-        if (empty($this->_cfg))
-            return false;
-    }
-
 	// -------------------------------------------------------------------
 	// Parse RSS file and returns associative array.
 	// -------------------------------------------------------------------

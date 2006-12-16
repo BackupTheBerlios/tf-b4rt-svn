@@ -326,8 +326,11 @@ class ClientHandler
 			$this->savepath = checkDirPathString($this->savepath);
         // check target-directory, create if not present
 		if (!(checkDirectory($this->savepath, 0777))) {
-            array_push($this->messages, "savepath : ".$this->savepath);
-            @error("Error checking savepath", "admin.php?op=serverSettings", "Server-Settings", $this->messages);
+			$this->state = CLIENTHANDLER_STATE_ERROR;
+			$msg = "Error checking savepath ".$this->savepath;
+			AuditAction($cfg["constants"]["error"], $msg);
+            array_push($this->messages, $msg);
+            return false;
 		}
         // create AliasFile object and write out the stat file
         $this->af = new AliasFile($this->aliasFile, $this->owner);
@@ -496,9 +499,10 @@ class ClientHandler
             	if (is_numeric($transferPid)) {
                 	$this->pid = $transferPid;
             	} else {
+            		$this->state = CLIENTHANDLER_STATE_ERROR;
 		    		AuditAction($cfg["constants"]["error"], "INVALID PID: ".$transferPid);
-		    		array_push($this->messages, "transferPid : ".$transferPid);
-		    		@error("Invalid pid-param", "index.php?iid=index", "", $this->messages);
+		    		array_push($this->messages, "INVALID PID: ".$transferPid);
+		    		return false;
             	}
             } else {
             	$data = "";

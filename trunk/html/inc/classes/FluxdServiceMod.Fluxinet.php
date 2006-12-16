@@ -45,10 +45,10 @@ class FluxdFluxinet extends FluxdServiceMod
      * initialize FluxdFluxinet.
      */
     function initialize() {
-    	global $cfg, $instanceFluxdFluxinet;
+    	global $instanceFluxdFluxinet;
     	// create instance
     	if (!isset($instanceFluxdFluxinet))
-    		$instanceFluxdFluxinet = new FluxdFluxinet(serialize($cfg));
+    		$instanceFluxdFluxinet = new FluxdFluxinet();
     }
 
 	/**
@@ -106,11 +106,11 @@ class FluxdFluxinet extends FluxdServiceMod
     /**
      * ctor
      */
-    function FluxdFluxinet($cfg) {
+    function FluxdFluxinet() {
     	// name
         $this->moduleName = "Fluxinet";
 		// initialize
-        $this->instance_initialize($cfg);
+        $this->instance_initialize();
     }
 
 }

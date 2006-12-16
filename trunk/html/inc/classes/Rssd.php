@@ -51,9 +51,6 @@ class Rssd
 
     // private fields
 
-    // config-array
-    var $_cfg = array();
-
     // mode
     var $_mode = 0;
 
@@ -84,16 +81,6 @@ class Rssd
 	// =========================================================================
 
     /**
-     * factory
-     *
-     * @return Rssd
-     */
-    function getNewInstance($cfg) {
-    	global $cfg;
-    	return new Rssd(serialize($cfg));
-    }
-
-    /**
      * accessor for singleton
      *
      * @return Rssd
@@ -110,10 +97,10 @@ class Rssd
      * initialize Rssd.
      */
     function initialize() {
-    	global $cfg, $instanceRssd;
+    	global $instanceRssd;
     	// create instance
     	if (!isset($instanceRssd))
-    		$instanceRssd = new Rssd(serialize($cfg));
+    		$instanceRssd = new Rssd();
     }
 
 	/**
@@ -165,22 +152,15 @@ class Rssd
     /**
      * do not use direct, use the factory-methods !
      *
-     * @param $cfg (serialized)
      * @return Rssd
      */
-    function Rssd($cfg) {
-        $this->_cfg = unserialize($cfg);
-        if (empty($this->_cfg)) {
-        	$this->state = RSSD_STATE_ERROR;
-            array_push($this->messages , "Config not passed");
-            return false;
-        }
+    function Rssd() {
         // cli/web
 		$this->_mode = (empty($_REQUEST))
 			? RSSD_MODE_CLI
 			: RSSD_MODE_WEB;
         // init lastRSS-instance
-		$this->_lastRSS = lastRSS::getInstance($this->_cfg);
+		$this->_lastRSS = new lastRSS();
 		$this->_lastRSS->cache_dir = '';
 		$this->_lastRSS->stripHTML = false;
     }
@@ -350,6 +330,7 @@ class Rssd
      * @return boolean
      */
 	function _updateHistory() {
+		global $cfg;
 		if (count($this->_historyNew) > 0) {
 			// write file
 			$handle = false;
@@ -358,7 +339,7 @@ class Rssd
 				$this->state = RSSD_STATE_ERROR;
 	            $msg = "cannot open history ".$this->_fileHistory." for writing.";
 	            array_push($this->messages , $msg);
-	            AuditAction($this->_cfg["constants"]["error"], "Rssd _updateHistory-Error : ".$msg);
+	            AuditAction($cfg["constants"]["error"], "Rssd _updateHistory-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
 			}
@@ -368,7 +349,7 @@ class Rssd
 				$this->state = RSSD_STATE_ERROR;
 	            $msg = "cannot write content to history ".$this->_fileHistory.".";
 	            array_push($this->messages , $msg);
-	            AuditAction($this->_cfg["constants"]["error"], "Rssd _updateHistory-Error : ".$msg);
+	            AuditAction($cfg["constants"]["error"], "Rssd _updateHistory-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
 			}
@@ -383,6 +364,7 @@ class Rssd
      * @return boolean
      */
 	function _saveTorrent($url, $title) {
+		global $cfg;
 		$content = SimpleHTTP::getTorrent($url);
 		if (SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) {
 			// filename
@@ -397,7 +379,7 @@ class Rssd
 				// Error
 	            $msg = "the file ".$file." already exists in ".$this->_dirSave;
 	            array_push($this->messages , $msg);
-	            AuditAction($this->_cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
+	            AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
 			}
@@ -407,7 +389,7 @@ class Rssd
 			if (!$handle) {
 	            $msg = "cannot open ".$file." for writing.";
 	            array_push($this->messages , $msg);
-				AuditAction($this->_cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
+				AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
 			}
@@ -416,7 +398,7 @@ class Rssd
 			if ($result === false) {
 	            $msg = "cannot write content to ".$file.".";
 	            array_push($this->messages , $msg);
-				AuditAction($this->_cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
+				AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
 				$this->_outputError($msg."\n");
 				return false;
 			}

@@ -116,24 +116,9 @@ class SimpleHTTP
     // state
     var $state = SIMPLEHTTP_STATE_NULL;
 
-    // private fields
-
-    // config-array
-    var $_cfg = array();
-
 	// =========================================================================
 	// public static methods
 	// =========================================================================
-
-    /**
-     * factory
-     *
-     * @return SimpleHTTP
-     */
-    function getNewInstance($cfg) {
-    	global $cfg;
-    	return new SimpleHTTP(serialize($cfg));
-    }
 
     /**
      * accessor for singleton
@@ -152,10 +137,10 @@ class SimpleHTTP
      * initialize SimpleHTTP.
      */
     function initialize() {
-    	global $cfg, $instanceSimpleHTTP;
+    	global $instanceSimpleHTTP;
     	// create instance
     	if (!isset($instanceSimpleHTTP))
-    		$instanceSimpleHTTP = new SimpleHTTP(serialize($cfg));
+    		$instanceSimpleHTTP = new SimpleHTTP();
     }
 
 	/**
@@ -232,18 +217,12 @@ class SimpleHTTP
     /**
      * do not use direct, use the factory-method !
      *
-     * @param $cfg (serialized)
      * @return SimpleHTTP
      */
-    function SimpleHTTP($cfg) {
-        $this->_cfg = unserialize($cfg);
-        if (empty($this->_cfg)) {
-            array_push($this->messages , "Config not passed");
-            $this->state = SIMPLEHTTP_STATE_ERROR;
-            return false;
-        }
+    function SimpleHTTP() {
+    	global $cfg;
 		// user-agent
-		$this->userAgent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "torrentflux-b4rt/". $this->_cfg["version"];
+		$this->userAgent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "torrentflux-b4rt/". $cfg["version"];
 		// ini-settings
 		@ini_set("allow_url_fopen", "1");
 		@ini_set("user_agent", $this->userAgent);
@@ -261,7 +240,7 @@ class SimpleHTTP
 	 * @return string
 	 */
 	function instance_getData($get_url, $get_referer = "") {
-		global $db;
+		global $cfg, $db;
 
 		// set fields
 		$this->url = $get_url;
@@ -296,7 +275,7 @@ class SimpleHTTP
 	    $this->getcmd .= (!empty($domain["query"])) ? "?" . $domain["query"] : "";
 
 		// Check to see if cookie required for this domain:
-		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $this->_cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
+		$sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
 		$this->cookie = $db->GetOne($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 
@@ -481,6 +460,7 @@ class SimpleHTTP
 	 * @return string
 	 */
 	function instance_getTorrent($turl) {
+		global $cfg;
 
     	// (re)set state
     	$this->state = SIMPLEHTTP_STATE_NULL;
@@ -494,7 +474,7 @@ class SimpleHTTP
 		if (!isset($domain["host"])){
 			// Not a remote URL:
 			$msg = "The torrent requested for download (".$turl.") is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
-			AuditAction($this->_cfg["constants"]["error"], $msg);
+			AuditAction($cfg["constants"]["error"], $msg);
 			array_push($this->messages , $msg);
 			// state
         	$this->state = SIMPLEHTTP_STATE_ERROR;
@@ -556,7 +536,7 @@ class SimpleHTTP
 					$data = $this->instance_getData($turl2);
 				} else {
 					$msg = "Error: could not find link to torrent file in $turl";
-					AuditAction($this->_cfg["constants"]["error"], $msg);
+					AuditAction($cfg["constants"]["error"], $msg);
 					array_push($this->messages , $msg);
 					// state
 			    	$this->state = SIMPLEHTTP_STATE_ERROR;
@@ -579,10 +559,10 @@ class SimpleHTTP
 		if (strpos($data, "d8:") === false)	{
 			// We don't have a Torrent File... it is something else.  Let the user know about it:
 			$msg = "Content returned from $turl does not appear to be a valid torrent.";
-			AuditAction($this->_cfg["constants"]["error"], $msg);
+			AuditAction($cfg["constants"]["error"], $msg);
 			array_push($this->messages , $msg);
 			// Display the first part of $data if debuglevel higher than 1:
-			if ($this->_cfg["debuglevel"] > 1){
+			if ($cfg["debuglevel"] > 1){
 				if (strlen($data) > 0){
 					array_push($this->messages , "  Displaying first 1024 chars of output: ".htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
 				} else {
