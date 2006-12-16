@@ -65,7 +65,7 @@ if (isset($_REQUEST['mid'])) {
 	$inx = 0;
 	$sql = "SELECT mid, from_user, message, IsNew, ip, time, force_read FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." ORDER BY time";
 	$result = $db->Execute($sql);
-	showError($db,$sql);
+	dbDieOnError($sql);
 	$message_list = array();
 	while (list($mid, $from_user, $message, $new, $ip, $time, $force_read) = $result->FetchRow()) {
 		$mail_image = ($new == 1)

@@ -529,12 +529,11 @@ class ClientHandler
 		global $db;
 		$tid = getTorrentHash($this->transfer);
 		$transferTotals = $this->getTransferTotal($this->transfer);
-		$result = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = '".$tid."'");
-		$sql = (empty($result))
-			? "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal ) VALUES ('".$tid."', '".$transferTotals["uptotal"]."', '".$transferTotals["downtotal"]."')"
-			: "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'";
+		$sql = ($db->GetOne("SELECT 1 FROM tf_torrent_totals WHERE tid = '".$tid."'"))
+			? "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'"
+			: "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal ) VALUES ('".$tid."', '".$transferTotals["uptotal"]."', '".$transferTotals["downtotal"]."')";
 		$db->Execute($sql);
-		showError($db, $sql);
+		dbDieOnError($sql);
 	}
 
 	/**

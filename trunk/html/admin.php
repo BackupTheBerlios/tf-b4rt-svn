@@ -282,10 +282,10 @@ switch ($op) {
 		$new_idx = $idx + $position[$direction];
 		$sql = "UPDATE tf_links SET sort_order = $idx WHERE sort_order = $new_idx";
 		$db->Execute($sql);
-		showError($db, $sql);
+		dbDieOnError($sql);
 		$sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
 		$db->Execute($sql);
-		showError($db, $sql);
+		dbDieOnError($sql);
 		@header("Location: admin.php?op=editLinks");
 		exit();
 

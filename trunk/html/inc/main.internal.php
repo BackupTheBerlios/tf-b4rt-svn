@@ -43,7 +43,7 @@ if (isset($_SESSION['user'])) {
 		// init cache
 		cacheInit($currentUser);
 		// initialize database
-		initializeDatabase();
+		dbInitialize();
 		// Free space in MB
 		$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
 	} else {
@@ -115,7 +115,7 @@ if (!(cacheIsSet($currentUser))) {
 	// load some settings from users-table
 	$sql = "SELECT hide_offline, theme, language_file FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
 	$recordset = $db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	list ($cfg["hide_offline"], $cfg["theme"], $cfg["language_file"]) = $recordset->FetchRow();
 
 	// Check for valid theme
@@ -185,20 +185,14 @@ if ($cfg['enable_xfer'] == 1) {
 	require_once('inc/functions/functions.xfer.php');
 	// xfer-init
 	$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
-	//showError($db,$sql);
 	if (empty($xferRecord)) {
 		$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
 		$sTable = 'tf_xfer';
 		$sql = $db->GetInsertSql($sTable, $rec);
 		$db->Execute($sql);
-		showError($db,$sql);
 	}
-	$sql = 'SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time());
-	$newday = !$db->GetOne($sql);
-	showError($db,$sql);
-	$sql = 'SELECT date FROM tf_xfer ORDER BY date DESC';
-	$lastDate = $db->GetOne($sql);
-	showError($db,$sql);
+	$newday = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+	$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
 }
 
 /*******************************************************************************

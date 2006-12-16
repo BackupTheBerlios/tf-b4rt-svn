@@ -31,8 +31,8 @@ if (!isset($cfg['user'])) {
 
 // logout user
 $sql = "DELETE FROM tf_log WHERE user_id=".$db->qstr($cfg["user"])." and action=".$db->qstr($cfg["constants"]["hit"]);
-$result = $db->Execute($sql);
-showError($db, $sql);
+$db->Execute($sql);
+dbDieOnError($sql);
 
 // flush cache
 @cacheFlush($cfg["user"]);

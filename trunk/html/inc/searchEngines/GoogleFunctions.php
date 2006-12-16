@@ -54,7 +54,7 @@ function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
     {
         $sql = "SELECT c.data FROM tf_cookies AS c LEFT JOIN tf_users AS u ON ( u.uid = c.uid ) WHERE u.user_id = '" . $cfg["user"] . "' AND c.host = '" . $domain['host'] . "'";
         $cookie = $db->GetOne( $sql );
-        showError( $db, $sql );
+        dbDieOnError($sql);
     }
 
 

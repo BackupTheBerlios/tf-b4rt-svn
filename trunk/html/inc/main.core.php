@@ -93,7 +93,7 @@ if (is_file('inc/config/config.db.php')) {
 	require_once('inc/config/config.db.php');
 
 	// initialize database
-	initializeDatabase();
+	dbInitialize();
 
 	// load global settings
 	loadSettings('tf_settings');

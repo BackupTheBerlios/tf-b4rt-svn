@@ -81,7 +81,7 @@ function GetRSSLinks() {
 	$link_array = array();
 	$sql = "SELECT rid, url FROM tf_rss ORDER BY rid";
 	$link_array = $db->GetAssoc($sql);
-	showError($db,$sql);
+	dbDieOnError($sql);
 	return $link_array;
 }
 

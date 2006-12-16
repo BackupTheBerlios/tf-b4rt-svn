@@ -34,7 +34,7 @@ require_once('inc/lib/adodb/adodb.inc.php');
 /**
  * initialize ADOdb-connection
  */
-function initializeDatabase() {
+function dbInitialize() {
 	global $cfg, $db;
 	// create ado-object
     $db = ADONewConnection($cfg["db_type"]);
@@ -53,28 +53,12 @@ function initializeDatabase() {
 }
 
 /**
- * get ADOdb-connection
- *
- * @return ADOdb-connection
- */
-function getdb() {
-	global $db;
-	if (isset($db)) {
-		return $db;
-	} else {
-		initializeDatabase();
-		return $db;
-	}
-}
-
-/**
  * show db-error
  *
- * @param $db
  * @param $sql
  */
-function showError($db, $sql) {
-	global $cfg;
+function dbDieOnError($sql) {
+	global $cfg, $db;
 	if ($db->ErrorNo() != 0) {
     	if (empty($_REQUEST)) {
     		$dieMessage = "Database-Error :\n";
@@ -203,13 +187,8 @@ function tmplSetTitleBar($pageTitleText, $showButtons = true) {
 	$tmpl->setvar('_MYPROFILE', $cfg['_MYPROFILE']);
 	$tmpl->setvar('_MESSAGES', $cfg['_MESSAGES']);
 	$tmpl->setvar('_ADMINISTRATION', $cfg['_ADMINISTRATION']);
-	if ($showButtons) {
-		// Does the user have messages?
-		$sql = "select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew = 1";
-		$number_messages = $db->GetOne($sql);
-		showError($db,$sql);
-		$tmpl->setvar('titleBar_number_messages', $number_messages);
-	}
+	if ($showButtons)
+		$tmpl->setvar('titleBar_number_messages', $db->GetOne("select count(*) from tf_messages where to_user='".$cfg["user"]."' and IsNew = 1"));
 }
 
 /**
@@ -438,9 +417,7 @@ function isAuthenticated() {
 	if ($_SESSION['user'] == md5($cfg["pagetitle"]))
 		return 0;
 	// user exists ?
-	$sql = "SELECT uid, hits FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]);
-	$recordset = $db->Execute($sql);
-	showError($db, $sql);
+	$recordset = $db->Execute("SELECT uid, hits FROM tf_users WHERE user_id=".$db->qstr($cfg["user"]));
 	if ($recordset->RecordCount() != 1) {
 		AuditAction($cfg["constants"]["access_denied"], "FAILED AUTH: ".$cfg["user"]);
 		@session_destroy();
@@ -451,9 +428,7 @@ function isAuthenticated() {
 	$cfg["uid"] = $uid;
 	// increment hit-counter
 	$hits++;
-	$sql = "UPDATE tf_users SET hits = '".$hits."', last_visit = '".$create_time."' WHERE uid = '".$uid."'";
-	$db->Execute($sql);
-	showError($db,$sql);
+	$db->Execute("UPDATE tf_users SET hits = '".$hits."', last_visit = '".$create_time."' WHERE uid = '".$uid."'");
 	// return auth suc.
 	return 1;
 }
@@ -691,7 +666,7 @@ function deleteTransferSettings($transfer) {
 	global $db;
 	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	return true;
 }
 
@@ -739,7 +714,7 @@ function saveTorrentSettings($transfer, $running, $rate, $drate, $maxuploads, $r
 					".$db->qstr($tDatapath)."
 				   )";
 	$db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	return true;
 }
 
@@ -753,7 +728,7 @@ function loadTorrentSettings($transfer) {
 	global $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$retAry = array();
@@ -785,7 +760,7 @@ function loadTorrentSettingsToConfig($transfer) {
 	global $cfg, $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$cfg["running"]					= $row["running"];
@@ -870,7 +845,7 @@ function waitForTransfer($transfer, $state, $maxWait = 10) {
  */
 function getTransferClient($transfer) {
 	global $cfg, $db;
-	$client = @ $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
+	$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
 	if (empty($client)) {
 		return ((substr($transfer, -5) == ".wget"))
 			? "wget"
@@ -939,7 +914,7 @@ function resetTorrentTotals($transfer, $delete = false) {
 	// reset in db
 	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
 	$db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	return true;
 }
 
@@ -1206,7 +1181,7 @@ function getTorrentListFromDB() {
 	$retVal = array();
 	$sql = "SELECT torrent FROM tf_torrents ORDER BY torrent ASC";
 	$recordset = $db->Execute($sql);
-	showError($db, $sql);
+	dbDieOnError($sql);
 	while(list($transfer) = $recordset->FetchRow())
 		array_push($retVal, $transfer);
 	return $retVal;
@@ -2007,7 +1982,7 @@ function tfb_strip_quotes(&$var){
  * @param $file
  */
 function AuditAction($action, $file="") {
-    global $_SERVER, $cfg, $db;
+    global $cfg, $db;
     $rec = array(
     	'user_id' => $cfg["user"],
     	'file' => $file,
@@ -2021,7 +1996,6 @@ function AuditAction($action, $file="") {
     $sql = $db->GetInsertSql($sTable, $rec);
     // add record to the log
     $db->Execute($sql);
-    showError($db,$sql);
 }
 
 /**
@@ -2069,10 +2043,7 @@ function avddelete($file) {
  */
 function IsOnline($user) {
 	global $cfg, $db;
-	$sql = "SELECT count(*) FROM tf_log WHERE user_id=" . $db->qstr($user)." AND action=".$db->qstr($cfg["constants"]["hit"]);
-	$number_hits = $db->GetOne($sql);
-	showError($db,$sql);
-	return ($number_hits > 0);
+	return ($db->GetOne("SELECT count(*) FROM tf_log WHERE user_id=" . $db->qstr($user)." AND action=".$db->qstr($cfg["constants"]["hit"])) > 0);
 }
 
 /**
@@ -2083,9 +2054,7 @@ function IsOnline($user) {
  */
 function IsUser($user) {
 	global $db;
-	$sql = "SELECT count(*) FROM tf_users WHERE user_id=".$db->qstr($user);
-	$number_users = $db->GetOne($sql);
-	return ($number_users > 0);
+	return ($db->GetOne("SELECT count(*) FROM tf_users WHERE user_id=".$db->qstr($user)) > 0);
 }
 
 /**
@@ -2098,8 +2067,7 @@ function getOwner($file) {
 	global $cfg, $db;
 	$rtnValue = "n/a";
 	// Check log to see what user has a history with this file
-	$sql = "SELECT user_id FROM tf_log WHERE file=".$db->qstr($file)." AND (action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["reset_owner"]).") ORDER  BY time DESC";
-	$user_id = $db->GetOne($sql);
+	$user_id = $db->GetOne("SELECT user_id FROM tf_log WHERE file=".$db->qstr($file)." AND (action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["reset_owner"]).") ORDER BY time DESC");
 	$rtnValue = ($user_id != "")
 		? $user_id
 		: resetOwner($file); // try and get the owner from the stat file
@@ -2135,7 +2103,7 @@ function resetOwner($file) {
 		$sql = $db->GetInsertSql($sTable, $rec);
 		// add record to the log
 		$result = $db->Execute($sql);
-		showError($db,$sql);
+		dbDieOnError($sql);
 	}
 	return $rtnValue;
 }
@@ -2168,13 +2136,11 @@ function GetSpeedValue($inValue) {
  * @param $user
  * @return boolean
  */
-function IsAdmin($user="") {
+function IsAdmin($user = "") {
 	global $cfg, $db;
 	if ($user == "")
 		$user = $cfg["user"];
-	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
-	$user_level = $db->GetOne($sql);
-	return ($user_level >= 1);
+	return ($db->GetOne("SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user)) >= 1);
 }
 
 /**
@@ -2183,13 +2149,11 @@ function IsAdmin($user="") {
  * @param $user
  * @return boolean
  */
-function IsSuperAdmin($user="") {
+function IsSuperAdmin($user = "") {
 	global $cfg, $db;
-	if($user == "")
+	if ($user == "")
 		$user = $cfg["user"];
-	$sql = "SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user);
-	$user_level = $db->GetOne($sql);
-	return ($user_level > 1);
+	return ($db->GetOne("SELECT user_level FROM tf_users WHERE user_id=".$db->qstr($user)) > 1);
 }
 
 /**
@@ -2198,11 +2162,9 @@ function IsSuperAdmin($user="") {
  * @return array
  */
 function GetUsers() {
-	global $cfg, $db;
+	global $db;
 	$user_array = array();
-	$sql = "select user_id from tf_users order by user_id";
-	$user_array = $db->GetCol($sql);
-	showError($db,$sql);
+	$user_array = $db->GetCol("select user_id from tf_users order by user_id");
 	return $user_array;
 }
 
@@ -2212,12 +2174,8 @@ function GetUsers() {
  * @return string
  */
 function GetSuperAdmin() {
-	global $cfg, $db;
-	$rtnValue = "";
-	$sql = "select user_id from tf_users WHERE user_level=2";
-	$rtnValue = $db->GetOne($sql);
-	showError($db,$sql);
-	return $rtnValue;
+	global $db;
+	return $db->GetOne("select user_id from tf_users WHERE user_level=2");
 }
 
 /**
@@ -2226,7 +2184,7 @@ function GetSuperAdmin() {
  * @return array
  */
 function GetLinks() {
-	global $cfg, $db;
+	global $db;
 	$link_array = array();
 	$link_array = $db->GetAssoc("SELECT lid, url, sitename, sort_order FROM tf_links ORDER BY sort_order");
 	return $link_array;
@@ -2341,13 +2299,12 @@ function check_html ($str, $strip="") {
  * @return int
  */
 function getDriveSpace($drive) {
-	$percent = 0;
 	if (is_dir($drive)) {
 		$dt = disk_total_space($drive);
 		$df = disk_free_space($drive);
-		$percent = round((($dt - $df) / $dt) * 100);
+		return round((($dt - $df) / $dt) * 100);
 	}
-	return $percent;
+	return 0;
 }
 
 /**
@@ -2368,7 +2325,7 @@ function getDownloadSize($transfer) {
 			? $array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20)
 			: "";
 	}
-	return "";
+	return 0;
 }
 
 /**
@@ -2445,7 +2402,7 @@ function getStatusImage($af) {
 function file_size($file) {
 	$size = @filesize($file);
 	if ($size == 0)
-		$size = exec("ls -l ".escapeshellarg($file)." 2>/dev/null | awk '{print $5}'");
+		return exec("ls -l ".escapeshellarg($file)." 2>/dev/null | awk '{print $5}'");
 	return $size;
 }
 
@@ -2492,10 +2449,7 @@ function convertTime($seconds) {
  */
 function IsForceReadMsg() {
 	global $cfg, $db;
-	$sql = "SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1";
-	$count = $db->GetOne($sql);
-	showError($db,$sql);
-	return ($count >= 1);
+	return ($db->GetOne("SELECT count(*) FROM tf_messages WHERE to_user=".$db->qstr($cfg["user"])." AND force_read=1") >= 1);
 }
 
 /**
@@ -2553,7 +2507,7 @@ function cleanFileName($inName) {
 		if (($stringLength > $extLength) && (strtolower(substr($outName, -($extLength))) === ($ftype)))
 			return substr($outName, 0, -($extLength)).$ftype;
 	}
-	return $outName; // should not reach this, just for safety
+	showErrorPage("Invalid File-Type : ".$inName);
 }
 
 /**
