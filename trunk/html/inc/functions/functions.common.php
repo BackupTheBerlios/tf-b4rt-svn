@@ -83,7 +83,7 @@ function tmplSetClientSelectForm($btclient = 'tornado') {
 	foreach ($btclients as $client) {
 		array_push($client_list, array(
 			'client' => $client,
-			'selected' => ($btclient == $client) ? 1 : 0,
+			'selected' => ($btclient == $client) ? 1 : 0
 			)
 		);
 	}
@@ -101,23 +101,11 @@ function tmplSetDirTree($dir, $maxdepth) {
 	$tmpl->setvar('dirtree_dir', $dir);
 	if (is_numeric ($maxdepth)) {
 		$retvar_list = array();
-		if ($maxdepth == 0) {
-			$last = exec ("find ".$dir." -type d | sort && echo", $retval);
-			for ($i = 1; $i < (count ($retval) - 1); $i++) {
-				array_push($retvar_list, array(
-					'retval' => $retval[$i],
-					)
-				);
-			}
-		} elseif ($maxdepth > 0) {
-			$last = exec ("find ".$dir." -maxdepth ".$maxdepth." -type d | sort && echo", $retval);
-			for ($i = 1; $i < (count ($retval) - 1); $i++) {
-				array_push($retvar_list, array(
-					'retval' => $retval[$i],
-					)
-				);
-			}
-		}
+		$last = ($maxdepth == 0)
+			? exec("find ".escapeshellarg($dir)." -type d | sort && echo", $retval)
+			: exec("find ".escapeshellarg($dir)." -maxdepth ".escapeshellarg($maxdepth)." -type d | sort && echo", $retval);
+		for ($i = 1; $i < (count ($retval) - 1); $i++)
+			array_push($retvar_list, array('retval' => $retval[$i]));
 		$tmpl->setloop('dirtree_retvar_list', $retvar_list);
 	}
 }
@@ -132,12 +120,8 @@ function tmplSetMoveSettings() {
 		$dir_list = array();
 		foreach ($dirs as $dir) {
 			$target = trim($dir);
-			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";")) {
-				array_push($dir_list, array(
-					'target' => $target,
-					)
-				);
-			}
+			if ((strlen($target) > 0) && ((substr($target, 0, 1)) != ";"))
+				array_push($dir_list, array('target' => $target));
 		}
 		$tmpl->setloop('moveSettings_move_list', $dir_list);
 	}
@@ -751,7 +735,7 @@ function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
 		$sql = 'select user_id from tf_users';
 		$result = $db->Execute($sql);
 		showError($db,$sql);
-		while($row = $result->FetchRow()) {
+		while ($row = $result->FetchRow()) {
 			$rec = array(
 						'to_user' => strtolower($row['user_id']),
 						'from_user' => strtolower($from_user),
@@ -1137,7 +1121,7 @@ function GetProfiles($user, $profile) {
 		foreach($rs as $arr) {
 			array_push($profiles_array, array(
 				'name' => $arr,
-				'is_selected' => ($arr == $profile) ? 1 : 0,
+				'is_selected' => ($arr == $profile) ? 1 : 0
 				)
 			);
 		}
@@ -1161,7 +1145,7 @@ function GetPublicProfiles($profile) {
 		foreach($rs as $arr) {
 			array_push($profiles_array, array(
 				'name' => $arr,
-				'is_selected' => ($arr == $profile) ? 1 : 0,
+				'is_selected' => ($arr == $profile) ? 1 : 0
 				)
 			);
 		}

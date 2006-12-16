@@ -74,14 +74,6 @@ class AliasFile
      */
     function AliasFile($aliasname, $user = '') {
     	global $cfg;
-    	// check if aliasname is valid
-    	if (!preg_match('/^[a-zA-Z0-9._-]+(stat)$/', $aliasname)) {
-    		AuditAction($cfg["constants"]["error"], "Invalid AliasFile : ".$cfg["user"]." tried to access ".$aliasname);
-    		if (empty($_REQUEST))
-    			die("Invalid AliasFile : ".$aliasname);
-    		else
-    			showErrorPage("Invalid AliasFile : <br>".htmlentities($aliasname, ENT_QUOTES));
-    	}
     	// file
     	$this->theFile = $cfg["transfer_file_path"].$aliasname;
         // set user

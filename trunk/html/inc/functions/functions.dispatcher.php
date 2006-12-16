@@ -28,14 +28,14 @@
 function indexStartTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
-		if ((substr(strtolower($transfer), -8) == ".torrent")) {
+		if (substr($transfer, -8) == ".torrent") {
 			// this is a torrent-client
 			$interactiveStart = getRequestVar('interactive');
 			if ((isset($interactiveStart)) && ($interactiveStart)) // interactive
 				indexStartTorrent($transfer, 1);
 			else // silent
 				indexStartTorrent($transfer, 0);
-		} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
 			// is enabled ?
 			if ($cfg["enable_wget"] == 0) {
@@ -52,6 +52,9 @@ function indexStartTransfer($transfer) {
 			sleep(3);
 			@header("location: index.php?iid=index");
 			exit();
+		} else {
+			AuditAction($cfg["constants"]["error"], "Invalid Transfer for Start : ".$cfg["user"]." tried to start ".$transfer);
+			showErrorPage("Invalid Transfer for Start : <br>".$transfer);
 		}
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Start : ".$cfg["user"]." tried to start ".$transfer);
@@ -111,12 +114,14 @@ function indexStartTorrent($transfer, $interactive) {
 function indexStopTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
-		if ((substr(strtolower($transfer), -8) == ".torrent"))
+		if ((substr($transfer, -8) == ".torrent")) {
 			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-		else if ((substr(strtolower($transfer), -5) == ".wget"))
+		} else if ((substr($transfer, -5) == ".wget")) {
 			$clientHandler = ClientHandler::getInstance('wget');
-		else
-			$clientHandler = ClientHandler::getInstance('tornado');
+		} else {
+			AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
+			showErrorPage("Invalid Transfer for Stop : <br>".$transfer);
+		}
 		$clientHandler->stop($transfer, (getRequestVar('kill') == 1), getRequestVar('pid'));
 	} else {
 		AuditAction($cfg["constants"]["error"], "Invalid Transfer for Stop : ".$cfg["user"]." tried to stop ".$transfer);
@@ -186,7 +191,7 @@ function indexProcessDownload($url_upload) {
 		if ($ret === false) {
 			$file_name .= ".torrent";
 		} else {
-			if(!strcmp(strtolower(substr($file_name, strlen($file_name)-8, 8)), ".torrent") == 0)
+			if (!strcmp(strtolower(substr($file_name, -8)), ".torrent") == 0)
 				$file_name .= ".torrent";
 		}
 		$url_upload = str_replace(" ", "%20", $url_upload);
@@ -286,7 +291,7 @@ function indexProcessUpload() {
 			$file_name = stripslashes($_FILES['upload_file']['name']);
 			$file_name = cleanFileName($file_name);
 			if ($_FILES['upload_file']['size'] <= 1000000 && $_FILES['upload_file']['size'] > 0) {
-				if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
+				if (isValidTransfer($file_name)) {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error
@@ -361,7 +366,7 @@ function processFileUpload() {
 			$ext_msg = "";
 			$messages = "";
 			if($_FILES['upload_files']['size'][$id] <= 1000000 && $_FILES['upload_files']['size'][$id] > 0) {
-				if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
+				if (isValidTransfer($file_name)) {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
 						// Error

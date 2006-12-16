@@ -45,7 +45,7 @@ if ((!empty($transfer)) && (!empty($aliasFile))) {
 }
 
 // alias / stat
-if ((substr(strtolower($transfer), -8) == ".torrent")) {
+if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
 	$transferowner = getOwner($transfer);
 	$transferExists = loadTorrentSettingsToConfig($transfer);
@@ -54,18 +54,15 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 		$cfg['hash'] = $transfer;
 	}
 	$af = new AliasFile($aliasFile, $transferowner);
-} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+} else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
 	$transferowner = getOwner($transfer);
 	$cfg['btclient'] = "wget";
 	$cfg['hash'] = $transfer;
 	$af = new AliasFile($aliasFile, $transferowner);
 } else {
-	// this is "something else". use tornado statfile as default
-	$transferowner = $cfg["user"];
-	$cfg['btclient'] = "tornado";
-	$cfg['hash'] = $transfer;
-	$af = new AliasFile($aliasFile, $cfg["user"]);
+	AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$cfg["user"]." tried to access ".$transfer);
+	showErrorPage("Invalid Transfer : <br>".$transfer);
 }
 
 // totals

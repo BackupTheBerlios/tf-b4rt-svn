@@ -1199,4 +1199,126 @@ function getTransferTotalsCurrent($transfer) {
 	return $clientHandler->getTransferCurrent($transfer);
 }
 
+
+/**
+ * Remove bad characters that cause problems
+ *
+ * @param $inName
+ * @return string
+ */
+function cleanFileName($inName) {
+	return preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
+}
+
+/**
+ * get File Filter
+ *
+ * @param $inArray
+ * @return string
+ */
+function getFileFilter($inArray) {
+	$filter = "(\.".strtolower($inArray[0]).")|"; // used to hold the file type filter
+	$filter .= "(\.".strtoupper($inArray[0]).")";
+	// Build the file filter
+	for ($inx = 1; $inx < sizeof($inArray); $inx++) {
+		$filter .= "|(\.".strtolower($inArray[$inx]).")";
+		$filter .= "|(\.".strtoupper($inArray[$inx]).")";
+	}
+	$filter .= "$";
+	return $filter;
+}
+
+/**
+ * Create Alias name for Text file and Screen Alias
+ *
+ * @param $inName
+ * @return string
+ */
+function getAliasName($inName) {
+	global $cfg;
+	$alias = preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
+	$replaceArray = array();
+	foreach ($cfg['file_types_array'] as $ftype)
+		array_push($replaceArray, ".".$ftype);
+	return str_replace($replaceArray, "", $alias);
+}
+
+/**
+ * check if transfer is valid
+ *
+ * @param $transfer
+ * @return boolean
+ */
+function isValidTransfer($transfer) {
+	global $cfg;
+	return ((preg_match('/^[a-zA-Z0-9._-]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
+}
+
+
+/**
+ * Create Alias name for Text file and Screen Alias
+ *
+ * @param $inName
+ * @return string
+ */
+function getAliasName($inName) {
+	global $cfg;
+	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-z.-]+/i",'_', $inName));
+}
+
+/**
+ * Remove bad characters that cause problems
+ *
+ * @param $inName
+ * @return string
+ */
+function cleanFileName($inName) {
+	return preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
+}
+
+
+/**
+ * ctor
+ *
+ * @param $aliasname
+ * @param $user
+ * @return AliasFile
+ */
+function AliasFile($aliasname, $user = '') {
+	global $cfg;
+	// check if aliasname is valid
+	if (!preg_match('/^[a-zA-Z0-9._-]+(stat)$/', $aliasname)) {
+		AuditAction($cfg["constants"]["error"], "Invalid AliasFile : ".$cfg["user"]." tried to access ".$aliasname);
+		if (empty($_REQUEST))
+			die("Invalid AliasFile : ".$aliasname);
+		else
+			showErrorPage("Invalid AliasFile : <br>".htmlentities($aliasname, ENT_QUOTES));
+	}
+	// file
+	$this->theFile = $cfg["transfer_file_path"].$aliasname;
+    // set user
+    if ($user != '')
+        $this->transferowner = $user;
+    // load file
+    if (@file_exists($this->theFile)) {
+        // read the alias file
+        $this->errors = @file($this->theFile);
+        $this->errors = @array_map('rtrim', $this->errors);
+        $this->running = @array_shift($this->errors);
+        $this->percent_done = @array_shift($this->errors);
+        $this->time_left = @array_shift($this->errors);
+        $this->down_speed = @array_shift($this->errors);
+        $this->up_speed = @array_shift($this->errors);
+        $this->transferowner = @array_shift($this->errors);
+        $this->seeds = @array_shift($this->errors);
+        $this->peers = @array_shift($this->errors);
+        $this->sharing = @array_shift($this->errors);
+        $this->seedlimit = @array_shift($this->errors);
+        $this->uptotal = @array_shift($this->errors);
+        $this->downtotal = @array_shift($this->errors);
+        $this->size = @array_shift($this->errors);
+    }
+}
+
+
 ?>

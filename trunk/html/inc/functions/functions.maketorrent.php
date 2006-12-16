@@ -35,7 +35,7 @@ function downloadTorrent($tfile) {
 				? preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1)
 				: $tfile;
 			// Prompt the user to download file.
-			if ((substr(strtolower($tfile), -8) == ".torrent"))
+			if ((substr($tfile, -8) == ".torrent"))
 				@header("Content-type: application/x-bittorrent\n");
 			else
 				@header( "Content-type: application/octet-stream\n" );
@@ -52,7 +52,7 @@ function downloadTorrent($tfile) {
 		}
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$cfg["user"]." tried to download ".htmlentities($tfile, ENT_QUOTES));
-		@showErrorPage("ILLEGAL DOWNLOAD : <br>".htmlentities($tfile, ENT_QUOTES));
+		showErrorPage("ILLEGAL DOWNLOAD : <br>".htmlentities($tfile, ENT_QUOTES));
 	}
 	exit();
 }

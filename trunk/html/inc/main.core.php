@@ -20,7 +20,7 @@
 
 *******************************************************************************/
 
-// core-classes
+// core classes
 require_once("inc/classes/CoreClasses.php");
 
 // core functions
@@ -52,8 +52,10 @@ $cfg["constants"]["admin"] = "ADMIN";
 $cfg["constants"]["debug"] = "DEBUG";
 asort($cfg["constants"]);
 
-// Add file extensions here that you will allow to be uploaded
-$cfg["file_types_array"] = array("torrent", "wget");
+// valid file extensions
+$cfg["file_types_array"] = array(".torrent", ".wget");
+// do NOT (!) touch the next line
+$cfg["file_types_string"] = implode("|", $cfg["file_types_array"]);
 
 // Capture username
 $cfg["user"] = "";

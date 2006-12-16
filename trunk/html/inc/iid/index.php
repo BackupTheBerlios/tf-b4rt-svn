@@ -96,14 +96,14 @@ foreach ($arList as $entry) {
 	// ---------------------------------------------------------------------
 	// alias / stat
 	$aliasFile = getAliasName($entry).".stat";
-	if ((substr(strtolower($entry), -8) == ".torrent")) {
+	if (substr($entry, -8 == ".torrent")) {
 		// this is a torrent-client
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
 		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
 		$settingsAry = loadTorrentSettings($entry);
 		$af = new AliasFile($aliasFile, $transferowner);
-	} else if ((substr(strtolower($entry), -5) == ".wget")) {
+	} else if (substr($entry, -5) == ".wget") {
 		// this is wget.
 		$isTorrent = false;
 		$transferowner = getOwner($entry);
@@ -117,18 +117,8 @@ foreach ($arList as $entry) {
 		$settingsAry['datapath'] = "";
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else {
-		// this is "something else". use tornado statfile as default
-		$isTorrent = false;
-		$transferowner = $cfg["user"];
-		$owner = 1;
-		$settingsAry = array();
-		$settingsAry['btclient'] = "tornado";
-		$settingsAry['hash'] = $entry;
-		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-			? $cfg["path"].$transferowner.'/'
-			: $cfg["path"].$cfg["path_incoming"].'/';
-		$settingsAry['datapath'] = "";
-		$af = new AliasFile($aliasFile, $cfg["user"]);
+		AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$entry);
+		showErrorPage("Invalid Transfer : <br>".$entry);
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = $af->running;

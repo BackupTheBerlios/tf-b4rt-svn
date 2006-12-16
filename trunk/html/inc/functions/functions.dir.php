@@ -330,7 +330,7 @@ function isValidEntry($entry) {
  * @return 0|1
  */
 function isNfo($entry) {
-	$subst = substr(strtolower($entry), -4);
+	$subst = strtolower(substr($entry, -4));
 	if ($subst == ".nfo")
 		return 1;
 	if ($subst == ".txt")

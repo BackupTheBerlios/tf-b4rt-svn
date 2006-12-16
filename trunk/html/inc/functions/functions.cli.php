@@ -355,7 +355,7 @@ function cliWipeTransfer($transfer = "") {
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
-        	if ((substr(strtolower($transfer), -8) == ".torrent"))
+        	if ((substr($transfer, -8) == ".torrent"))
         		deleteTorrentData($transfer);
         	resetTorrentTotals($transfer, true);
         	$clientHandler->delete($transfer);
@@ -384,7 +384,7 @@ function cliInjectTransfer($tpath = "", $username = "") {
         $file_name = cleanFileName($file_name);
         $ext_msg = "";
         $messages = "";
-        if (ereg(getFileFilter($cfg["file_types_array"]), $file_name)) {
+        if (isValidTransfer($file_name)) {
             if (is_file($cfg["transfer_file_path"].$file_name)) {
                 $messages .= "Error with ".$file_name.", the file already exists on the server.\n";
                 $ext_msg = "DUPLICATE :: ";
@@ -428,7 +428,7 @@ function cliWatchDir($tpath = "", $username = "") {
             $watchDir = checkDirPathString($tpath);
             if ($dirHandle = opendir($tpath)) {
                 while (false !== ($file = readdir($dirHandle))) {
-                    if ((strtolower((substr($file, -8)))) == ".torrent") {
+                    if (substr($file, -8) == ".torrent") {
                         $file_name = stripslashes($file);
                         $file_name = cleanFileName($file_name);
                         printMessage("fluxcli.php", "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...\n");

@@ -223,18 +223,17 @@ switch ($action) {
 			}
 
 			// client
-			if ((substr(strtolower($element), -8) == ".torrent")) {
+			if (substr($element, -8) == ".torrent") {
 				// this is a torrent-client
 				$isTorrent = true;
 				$tclient = getTransferClient($element);
-			} else if ((substr(strtolower($element), -5) == ".wget")) {
+			} else if (substr($element, -5) == ".wget") {
 				// this is wget.
 				$isTorrent = false;
 				$tclient = "wget";
 			} else {
-				// this is "something else". use tornado as default
-				$isTorrent = false;
-				$tclient = "tornado";
+				AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$cfg["user"]." tried to access ".$element);
+				showErrorPage("Invalid Transfer : <br>".$element);
 			}
 
 			// is transfer running ?

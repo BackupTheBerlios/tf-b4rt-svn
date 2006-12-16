@@ -37,13 +37,13 @@ tmplInitializeInstance($cfg["theme"], "page.details.tmpl");
 
 // set vars
 $transfer = getRequestVar('torrent');
-if ((substr(strtolower($transfer), -8) == ".torrent")) {
+if (substr($transfer, -8) == ".torrent") {
 	// this is a torrent-client
 	$als = getRequestVar('als');
 	$tmpl->setvar('metaInfo', ($als == "false") ? showMetaInfo($transfer, false) : showMetaInfo($transfer, true));
 	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
 	$tmpl->setvar('scrape', 1);
-} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+} else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
 	$clientHandler = ClientHandler::getInstance('wget');
 	$clientHandler->setVarsFromFile($transfer);
@@ -54,8 +54,8 @@ if ((substr(strtolower($transfer), -8) == ".torrent")) {
 	$tmpl->setvar('metaInfo', $metaInfo);
 	$tmpl->setvar('scrape', 0);
 } else {
-	$tmpl->setvar('metaInfo', "");
-	$tmpl->setvar('scrape', 0);
+	AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$cfg["user"]." tried to access ".$transfer);
+	showErrorPage("Invalid Transfer : <br>".$transfer);
 }
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_TRANSFERDETAILS']);

@@ -84,12 +84,11 @@ function showError($db, $sql) {
     		die($dieMessage);
     	} else {
 			// theme
+			$theme = "default";
 			if (isset($cfg["theme"]))
 				$theme = $cfg["theme"];
 			else if (isset($cfg["default_theme"]))
 				$theme = $cfg["default_theme"];
-			else
-				$theme = "default";
 			// template
 			require_once("themes/".$theme."/index.php");
 			require_once("inc/lib/vlib/vlibTemplate.php");
@@ -106,6 +105,28 @@ function showError($db, $sql) {
 			exit();
     	}
 	}
+}
+
+/**
+ * prints nice error-page
+ *
+ * @param $errorMessage
+ */
+function showErrorPage($errorMessage) {
+	global $cfg;
+	// theme
+	$theme = "default";
+	if (isset($cfg["theme"]))
+		$theme = $cfg["theme"];
+	else if (isset($cfg["default_theme"]))
+		$theme = $cfg["default_theme"];
+	// template
+	require_once("themes/".$theme."/index.php");
+	require_once("inc/lib/vlib/vlibTemplate.php");
+	$tmpl = @ tmplGetInstance($theme, "page.error.tmpl");
+	$tmpl->setvar('ErrorMsg', $errorMessage);
+	$tmpl->pparse();
+	exit();
 }
 
 /**
@@ -224,7 +245,7 @@ function tmplSetSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fa
 			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
 			array_push($Engine_List, array(
 				'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
-				'Engine' => $tmpEngine,
+				'Engine' => $tmpEngine
 				)
 			);
 		}
@@ -346,29 +367,6 @@ function getTorrentFluxLink() {
 function getImagesPath() {
 	global $cfg;
 	return "themes/".$cfg['theme']."/images/";
-}
-
-/**
- * prints nice error-page
- *
- * @param $errorMessage
- */
-function showErrorPage($errorMessage) {
-	global $cfg;
-	// theme
-	if (isset($cfg["theme"]))
-		$theme = $cfg["theme"];
-	else if (isset($cfg["default_theme"]))
-		$theme = $cfg["default_theme"];
-	else
-		$theme = "default";
-	// template
-	require_once("themes/".$theme."/index.php");
-	require_once("inc/lib/vlib/vlibTemplate.php");
-	$tmpl = @ tmplGetInstance($theme, "page.error.tmpl");
-	$tmpl->setvar('ErrorMsg', $errorMessage);
-	$tmpl->pparse();
-	exit();
 }
 
 /**
@@ -561,7 +559,7 @@ function netstatPortByPid($transferPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return (shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$transferPid.".*tcp.*(\*:\*|[[:digit:]]:(21|80))/ {split(\$6, a, \":\");print a[2]}'"));
+			return shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$transferPid.".*tcp.*(\*:\*|[[:digit:]]:(21|80))/ {split(\$6, a, \":\");print a[2]}'");
 	}
 }
 
@@ -828,10 +826,10 @@ function stopTransferSettings($transfer) {
  */
 function isTransferRunning($transfer) {
 	global $cfg;
-	if ((substr(strtolower($transfer), -8) == ".torrent")) {
+	if ((substr($transfer, -8) == ".torrent")) {
 		// this is a torrent-client
 		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.stat.pid')) ? 1 : 0;
-	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+	} else if ((substr($transfer, -5) == ".wget")) {
 		// this is wget.
 		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid')) ? 1 : 0;
 	} else {
@@ -914,24 +912,6 @@ function getTorrentHash($transfer) {
 	}
 	// return
 	return (isset($hashAry[1])) ? trim($hashAry[1]) : "";
-}
-
-/**
- * gets datapath of a torrent.
- * this should not be called external if its no must, use cached value in
- * tf_torrents if possible.
- *
- * @param $transfer name of the torrent
- * @return var with torrent-datapath or empty string on error
- */
-function getTorrentDatapath($transfer) {
-	global $cfg;
-    require_once('inc/classes/BDecode.php');
-    $ftorrent = $cfg["transfer_file_path"].$transfer;
-    $fd = fopen($ftorrent, "rd");
-    $alltorrent = fread($fd, filesize($ftorrent));
-    $btmeta = @BDecode($alltorrent);
-    return (empty($btmeta['info']['name'])) ? "" : trim($btmeta['info']['name']);
 }
 
 /**
@@ -1058,9 +1038,9 @@ function deleteTorrentData($transfer) {
 		$alltorrent = fread($fd, filesize($ftorrent));
 		$btmeta = @BDecode($alltorrent);
 		$delete = @trim($btmeta['info']['name']);
-		if ($delete != "") {
+		if (!empty($delete)) {
 			// load torrent-settings from db to get data-location
-			loadTorrentSettingsToConfig(urldecode($transfer));
+			loadTorrentSettingsToConfig($transfer);
 			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 					? $cfg["path"].$owner.'/'
@@ -1101,7 +1081,7 @@ function getTorrentDataSize($transfer) {
 	$alltorrent = fread($fd, filesize($ftorrent));
 	$btmeta = @BDecode($alltorrent);
 	$name = @trim($btmeta['info']['name']);
-	if ($name != "") {
+	if (!empty($name)) {
 		// load torrent-settings from db to get data-location
 		loadTorrentSettingsToConfig($transfer);
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
@@ -1115,6 +1095,24 @@ function getTorrentDataSize($transfer) {
 			return file_size($tData);
 	}
 	return -1;
+}
+
+/**
+ * gets datapath of a torrent.
+ * this should not be called external if its no must, use cached value in
+ * tf_torrents if possible.
+ *
+ * @param $transfer name of the torrent
+ * @return var with torrent-datapath or empty string on error
+ */
+function getTorrentDatapath($transfer) {
+	global $cfg;
+    require_once('inc/classes/BDecode.php');
+    $ftorrent = $cfg["transfer_file_path"].$transfer;
+    $fd = fopen($ftorrent, "rd");
+    $alltorrent = fread($fd, filesize($ftorrent));
+    $btmeta = @BDecode($alltorrent);
+    return (empty($btmeta['info']['name'])) ? "" : trim($btmeta['info']['name']);
 }
 
 /**
@@ -1383,23 +1381,13 @@ function getEngineLink($searchEngine) {
  */
 function getTransferArray($sortOrder = '') {
 	global $cfg;
-	$arList = array();
-	$file_filter = getFileFilter($cfg["file_types_array"]);
-	if (is_dir($cfg["transfer_file_path"]))
-		$handle = opendir($cfg["transfer_file_path"]);
-	else
+	$handle = @opendir($cfg["transfer_file_path"]);
+	if (!$handle)
 		return null;
-	while($entry = readdir($handle)) {
-		if ($entry != "." && $entry != "..") {
-			if (is_dir($cfg["transfer_file_path"]."/".$entry)) {
-				// don''t do a thing
-			} else {
-				if (ereg($file_filter, $entry)) {
-					$key = filemtime($cfg["transfer_file_path"]."/".$entry).md5($entry);
-					$arList[$key] = $entry;
-				}
-			}
-		}
+	$arList = array();
+	while ($entry = readdir($handle)) {
+		if (($entry{0} != ".") && isValidTransfer($entry))
+			$arList[filemtime($cfg["transfer_file_path"]."/".$entry)] = $entry;
 	}
 	closedir($handle);
 	// sort transfer-array
@@ -1504,14 +1492,14 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		// alias / stat
 		$alias = getAliasName($entry).".stat";
-		if ((substr(strtolower($entry), -8) == ".torrent")) {
+		if (substr($entry, -8) == ".torrent") {
 			// this is a torrent-client
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = loadTorrentSettings($entry);
 			$af = new AliasFile($alias, $transferowner);
-		} else if ((substr(strtolower($entry), -5) == ".wget")) {
+		} else if (substr($entry, -5) == ".wget") {
 			// this is wget.
 			$isTorrent = false;
 			$transferowner = getOwner($entry);
@@ -1521,14 +1509,8 @@ function getTransferListArray() {
 			$settingsAry['hash'] = $entry;
 			$af = new AliasFile($alias, $transferowner);
 		} else {
-			// this is "something else". use tornado statfile as default
-			$isTorrent = false;
-			$transferowner = $cfg["user"];
-			$owner = true;
-			$settingsAry = array();
-			$settingsAry['btclient'] = "tornado";
-			$settingsAry['hash'] = $entry;
-			$af = new AliasFile($alias, $cfg["user"]);
+			AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$entry);
+			showErrorPage("Invalid Transfer : <br>".$entry);
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -1853,7 +1835,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$alias = $aliasName.".stat";
 	}
 	// alias / stat
-	if ((substr(strtolower($transfer), -8) == ".torrent")) {
+	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		$transferowner = getOwner($transfer);
 		$transferExists = loadTorrentSettingsToConfig($transfer);
@@ -1862,18 +1844,15 @@ function getTransferDetails($transfer, $full, $alias = "") {
 			$cfg['hash'] = $transfer;
 		}
 		$af = new AliasFile($alias, $transferowner);
-	} else if ((substr(strtolower($transfer), -5) == ".wget")) {
+	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$transferowner = getOwner($transfer);
 		$cfg['btclient'] = "wget";
 		$cfg['hash'] = $transfer;
 		$af = new AliasFile($alias, $transferowner);
 	} else {
-		// this is "something else". use tornado statfile as default
-		$transferowner = $cfg["user"];
-		$cfg['btclient'] = "tornado";
-		$cfg['hash'] = $transfer;
-		$af = new AliasFile($alias, $cfg["user"]);
+		AuditAction($cfg["constants"]["error"], "Invalid Transfer : ".$transfer);
+		showErrorPage("Invalid Transfer : <br>".$transfer);
 	}
 	// size
 	$size = (int) $af->size;
@@ -2372,60 +2351,6 @@ function getDriveSpace($drive) {
 }
 
 /**
- * get File Filter
- *
- * @param $inArray
- * @return string
- */
-function getFileFilter($inArray) {
-	$filter = "(\.".strtolower($inArray[0]).")|"; // used to hold the file type filter
-	$filter .= "(\.".strtoupper($inArray[0]).")";
-	// Build the file filter
-	for ($inx = 1; $inx < sizeof($inArray); $inx++) {
-		$filter .= "|(\.".strtolower($inArray[$inx]).")";
-		$filter .= "|(\.".strtoupper($inArray[$inx]).")";
-	}
-	$filter .= "$";
-	return $filter;
-}
-
-/**
- * Create Alias name for Text file and Screen Alias
- *
- * @param $inName
- * @return string
- */
-function getAliasName($inName) {
-	global $cfg;
-	$alias = preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
-	$replaceArray = array();
-	foreach ($cfg['file_types_array'] as $ftype)
-		array_push($replaceArray, ".".$ftype);
-	return str_replace($replaceArray, "", $alias);
-}
-
-/**
- * Remove bad characters that cause problems
- *
- * @param $inName
- * @return string
- */
-function cleanFileName($inName) {
-	return preg_replace("/[^0-9a-z.-]+/i",'_', $inName);
-}
-
-/**
- * split on the "*" coming from Varchar URL
- *
- * @param $url
- * @return string
- */
-function cleanURL($url) {
-	$arURL = explode("*", $url);
-	return (sizeof($arURL) > 1) ? $arURL[1] : $url;
-}
-
-/**
  * Grab the full size of the download from the torrent metafile
  *
  * @param $transfer
@@ -2553,7 +2478,7 @@ function convertTime($seconds) {
 	foreach ($periods as $period) {
 		$count = floor($seconds / $period);
 		if ($count == 0)
-		continue;
+			continue;
 		array_push($values, ($count < 10) ? "0".$count : $count);
 		$seconds = $seconds % $period;
 	}
@@ -2574,17 +2499,6 @@ function IsForceReadMsg() {
 }
 
 /**
- * check if transfer is valid
- *
- * @param $transfer
- * @return boolean
- */
-function isValidTransfer($transfer) {
-	global $cfg;
-	return ((preg_match('/^[a-zA-Z0-9._-]+('.implode("|", $cfg["file_types_array"]).')$/', $transfer)) == 1);
-}
-
-/**
  * check if path is valid
  *
  * @param $path
@@ -2597,9 +2511,60 @@ function isValidPath($path, $ext = "") {
 	if ($ext != "") {
 		$extLength = strlen($ext);
 		if (strlen($path) < $extLength) return false;
-		if ((substr(strtolower($path), -($extLength)) !== strtolower($ext))) return false;
+		if ((strtolower(substr($path, -($extLength)))) !== strtolower($ext)) return false;
 	}
 	return true;
+}
+
+/**
+ * check if transfer is valid
+ *
+ * @param $transfer
+ * @return boolean
+ */
+function isValidTransfer($transfer) {
+	global $cfg;
+	return ((preg_match('/^[0-9a-zA-Z._-]+('.$cfg["file_types_string"].')$/', $transfer)) == 1);
+}
+
+/**
+ * Create Alias name for Text file and Screen Alias
+ *
+ * @param $inName
+ * @return string
+ */
+function getAliasName($inName) {
+	global $cfg;
+	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName));
+}
+
+/**
+ * Remove bad characters make extension lower-case
+ *
+ * @param $inName
+ * @return string
+ */
+function cleanFileName($inName) {
+	global $cfg;
+	$outName = preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName);
+	$stringLength = strlen($outName);
+	foreach ($cfg['file_types_array'] as $ftype) {
+		$extLength = strlen($ftype);
+		if (($stringLength > $extLength) && (strtolower(substr($outName, -($extLength))) === ($ftype)))
+			return substr($outName, 0, -($extLength)).$ftype;
+	}
+	return $outName; // should not reach this, just for safety
+}
+
+/**
+ * split on the "*" coming from Varchar URL
+ *
+ * @param $url
+ * @return string
+ */
+function cleanURL($url) {
+	$arURL = explode("*", $url);
+	return (sizeof($arURL) > 1) ? $arURL[1] : $url;
 }
 
 /**
