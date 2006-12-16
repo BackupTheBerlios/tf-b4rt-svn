@@ -200,7 +200,7 @@ class ClientHandlerWget extends ClientHandler
 	 */
 	function delete($transfer) {
         // set vars from the wget-file
-		$this->setVarsFromFile($transfer);
+		$this->setVarsFromTransfer($transfer);
 		// delete
 		$this->execDelete(false, false);
 	}
