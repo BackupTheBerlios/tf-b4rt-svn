@@ -1170,7 +1170,17 @@ function getTransferListArray() {
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
-			$settingsAry = $transferSettings[$entry];
+			if (isset($transferSettings[$entry])) {
+				$settingsAry = $transferSettings[$entry];
+			} else {
+				$settingsAry = array();
+				$settingsAry['btclient'] = $cfg["btclient"];
+				$settingsAry['hash'] = "";
+				$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+					? $cfg["path"].$transferowner.'/'
+					: $cfg["path"].$cfg["path_incoming"].'/';
+				$settingsAry['datapath'] = "";
+			}
 			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($entry, -5) == ".wget") {
 			// this is wget.
