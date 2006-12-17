@@ -64,12 +64,16 @@ class ClientHandlerMainline extends ClientHandler
     	// set vars
 		$this->setVarsFromTransfer($transfer);
 
+    	// log
+    	$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+
         // do mainline special-pre-start-checks
         // check to see if the path to the python script is valid
         if (!is_file($this->mainlineBin)) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
         	$msg = "path for tfmainline.py is not valid";
         	AuditAction($cfg["constants"]["error"], $msg);
+        	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
             array_push($this->messages, "mainlineBin : ".$this->mainlineBin);
             return false;
@@ -80,8 +84,11 @@ class ClientHandlerMainline extends ClientHandler
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
-			if ($this->state == CLIENTHANDLER_STATE_ERROR)
-				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
+			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
+				$msg = "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")";
+				array_push($this->messages , $msg);
+				$this->logMessage($msg."\n", true);
+			}
 			return false;
 		}
 

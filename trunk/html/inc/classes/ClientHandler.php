@@ -287,7 +287,7 @@ class ClientHandler
             $this->skip_hash_check = $cfg["skiphashcheck"];
             $this->superseeder = 0;
             // load settings
-            $settingsAry = loadTransferSettings($transfer);
+            $settingsAry = loadTransferSettings($this->transfer);
             $this->rate = $settingsAry["max_upload_rate"];
             $this->drate = $settingsAry["max_download_rate"];
             $this->runtime = $settingsAry["torrent_dies_when_done"];
@@ -328,8 +328,9 @@ class ClientHandler
 		if (!(checkDirectory($this->savepath, 0777))) {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
 			$msg = "Error checking savepath ".$this->savepath;
+			array_push($this->messages, $msg);
 			AuditAction($cfg["constants"]["error"], $msg);
-            array_push($this->messages, $msg);
+            $this->logMessage($msg."\n", true);
             return false;
 		}
         // create AliasFile object and write out the stat file
@@ -362,7 +363,7 @@ class ClientHandler
 		            $msg = "skipping start of transfer ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
 		            array_push($this->messages , $msg);
 					AuditAction($cfg["constants"]["debug"], $msg);
-					// TODO : message
+					$this->logMessage($msg."\n", true);
 					// return
 					return;
 	            } else {
@@ -377,7 +378,7 @@ class ClientHandler
 	            $msg = "data-size is 0 when recalcing share-kill for ".$this->transfer.". setting sharekill absolute to ".$this->sharekill;
 	            array_push($this->messages , $msg);
 				AuditAction($cfg["constants"]["error"], $msg);
-				// TODO : message
+				$this->logMessage($msg."\n", true);
 				// set 1:1 to provided value
 				$this->sharekill_param = $this->sharekill;
             }
@@ -416,10 +417,12 @@ class ClientHandler
 			if (FluxdQmgr::isRunning()) {
 				FluxdQmgr::enqueueTransfer($this->transfer, $cfg['user']);
 				AuditAction($cfg["constants"]["queued_transfer"], $this->transfer);
+				$this->logMessage("transfer enqueued : ".$this->transfer."\n", true);
 			} else {
 	            $msg = "queue-request (".$this->transfer."/".$cfg['user'].") but Qmgr not active";
 	            array_push($this->messages , $msg);
 				AuditAction($cfg["constants"]["error"], $msg);
+				$this->logMessage($msg."\n", true);
 			}
 			// set flag
             $transferRunningFlag = 0;
@@ -442,7 +445,9 @@ class ClientHandler
             $this->state = CLIENTHANDLER_STATE_OK;
         } else {
             $this->state = CLIENTHANDLER_STATE_ERROR;
-            // TODO : message
+            $msg = "error starting client. messages :\n";
+            $msg .= implode("\n", $this->messages);
+            $this->logMessage($msg."\n", true);
         }
     }
 
@@ -739,6 +744,7 @@ class ClientHandler
 	            $msg = "All ports in use.";
 	            array_push($this->messages , $msg);
 				AuditAction($cfg["constants"]["error"], $msg);
+				$this->logMessage($msg."\n", true);
 				// return
                 return false;
             }

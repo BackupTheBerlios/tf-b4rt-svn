@@ -104,6 +104,7 @@ class ClientHandlerWget extends ClientHandler
             $msg = "wget-inject-error when writing alias-file : ".$this->aliasFile;
             array_push($this->messages , $msg);
             AuditAction($cfg["constants"]["error"], $msg);
+            $this->logMessage($msg."\n", true);
             return false;
 		}
 
@@ -123,6 +124,7 @@ class ClientHandlerWget extends ClientHandler
             $msg = "wget-metafile cannot be written : ".$this->urlFile;
             array_push($this->messages , $msg);
             AuditAction($cfg["constants"]["error"], $msg);
+            $this->logMessage($msg."\n", true);
 		}
 
 		// return
@@ -142,12 +144,16 @@ class ClientHandlerWget extends ClientHandler
         // set vars from the wget-file
 		$this->setVarsFromFile($transfer);
 
+    	// log
+    	$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+
         // do wget special-pre-start-checks
         // check to see if the path to the wget-bin is valid
         if (!is_executable($cfg["bin_wget"])) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
         	$msg = "wget cannot be executed";
         	AuditAction($cfg["constants"]["error"], $msg);
+        	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
             array_push($this->messages, "bin_wget : ".$cfg["bin_wget"]);
             return false;

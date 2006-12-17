@@ -57,12 +57,16 @@ class ClientHandlerTransmission extends ClientHandler
     	// set vars
 		$this->setVarsFromTransfer($transfer);
 
+    	// log
+    	$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
         if (!is_executable($cfg["btclient_transmission_bin"])) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
         	$msg = "transmissioncli cannot be executed";
         	AuditAction($cfg["constants"]["error"], $msg);
+        	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
             array_push($this->messages, "btclient_transmission_bin : ".$cfg["btclient_transmission_bin"]);
             return false;
@@ -73,8 +77,11 @@ class ClientHandlerTransmission extends ClientHandler
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
-			if ($this->state == CLIENTHANDLER_STATE_ERROR)
-				array_push($this->messages , "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")");
+			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
+				$msg = "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")";
+				array_push($this->messages , $msg);
+				$this->logMessage($msg."\n", true);
+			}
 			return false;
 		}
 
