@@ -29,6 +29,9 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 // request-vars
 $transfer = getRequestVar('transfer');
 if (empty($transfer))

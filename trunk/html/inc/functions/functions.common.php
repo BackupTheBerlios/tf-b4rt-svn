@@ -129,6 +129,25 @@ function tmplSetMoveSettings() {
 }
 
 /**
+ * get superadmin-popup-link-html-snip.
+ *
+ * @param $param
+ * @param $linkText
+ * @return string
+ */
+function getSuperAdminLink($param = "", $linkText = "") {
+	global $cfg;
+	// create template-instance
+	$_tmpl = tmplGetInstance($cfg["theme"], "component.superAdminLink.tmpl");
+	$_tmpl->setvar('param', $param);
+	if ((isset($linkText)) && ($linkText != ""))
+		$_tmpl->setvar('linkText', $linkText);
+	// grab the template
+	$output = $_tmpl->grab();
+	return $output;
+}
+
+/**
  * perform Authentication
  *
  * @param $username
@@ -765,6 +784,61 @@ function GetMessage($mid) {
 }
 
 /**
+ * Removes HTML from Messages
+ *
+ * @param $str
+ * @param $strip
+ * @return string
+ */
+function check_html ($str, $strip="") {
+	/* The core of this code has been lifted from phpslash */
+	/* which is licenced under the GPL. */
+	if ($strip == "nohtml")
+		$AllowableHTML = array('');
+	$str = stripslashes($str);
+	$str = eregi_replace("<[[:space:]]*([^>]*)[[:space:]]*>",'<\\1>', $str);
+	// Delete all spaces from html tags .
+	$str = eregi_replace("<a[^>]*href[[:space:]]*=[[:space:]]*\"?[[:space:]]*([^\" >]*)[[:space:]]*\"?[^>]*>",'<a href="\\1">', $str);
+	// Delete all attribs from Anchor, except an href, double quoted.
+	$str = eregi_replace("<[[:space:]]* img[[:space:]]*([^>]*)[[:space:]]*>", '', $str);
+	// Delete all img tags
+	$str = eregi_replace("<a[^>]*href[[:space:]]*=[[:space:]]*\"?javascript[[:punct:]]*\"?[^>]*>", '', $str);
+	// Delete javascript code from a href tags -- Zhen-Xjell @ http://nukecops.com
+	$tmp = "";
+	while (ereg("<(/?[[:alpha:]]*)[[:space:]]*([^>]*)>",$str,$reg)) {
+		$i = strpos($str,$reg[0]);
+		$l = strlen($reg[0]);
+		$tag = ($reg[1][0] == "/") ? strtolower(substr($reg[1],1)) : strtolower($reg[1]);
+		if ($a = $AllowableHTML[$tag]) {
+			if ($reg[1][0] == "/") {
+				$tag = "</$tag>";
+			} elseif (($a == 1) || ($reg[2] == "")) {
+				$tag = "<$tag>";
+			} else {
+			  # Place here the double quote fix function.
+			  $attrb_list=delQuotes($reg[2]);
+			  // A VER
+			  $attrb_list = ereg_replace("&","&amp;",$attrb_list);
+			  $tag = "<$tag" . $attrb_list . ">";
+			} # Attribs in tag allowed
+		} else {
+			$tag = "";
+		}
+		$tmp .= substr($str,0,$i) . $tag;
+		$str = substr($str,$i+$l);
+	}
+	$str = $tmp . $str;
+	// parse for strings starting with http:// and subst em with hyperlinks.
+	if ($strip != "nohtml") {
+		global $cfg;
+		$str = ($cfg["enable_dereferrer"] != 0)
+			? preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="index.php?iid=dereferrer&u=${1}${2}" target="_blank">${1}${2}</a>${3}', $str)
+			: preg_replace('/(http:\/\/)(.*)([[:space:]]*)/i', '<a href="${1}${2}" target="_blank">${1}${2}</a>${3}', $str);
+	}
+	return $str;
+}
+
+/**
  * Get Themes data in an array
  *
  * @return array
@@ -1201,6 +1275,330 @@ function deleteProfileInfo($pid) {
 	$sql = "DELETE FROM tf_trprofiles WHERE id=".$pid;
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+}
+
+/**
+ * gets scrape-info of a torrent as string
+ *
+ * @param $transfer name of the torrent
+ * @return string with torrent-scrape-info
+ */
+function getTorrentScrapeInfo($transfer) {
+	global $cfg;
+	switch ($cfg["metainfoclient"]) {
+		case "transmissioncli":
+			return shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$transfer));
+		case "ttools.pl":
+			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s '.escapeshellarg($cfg["transfer_file_path"].$transfer));
+		case "btshowmetainfo.py":
+			return "not supported by btshowmetainfo.py.";
+		case "torrentinfo-console.py":
+			return "not supported by torrentinfo-console.py.";
+		default:
+			return "error.";
+	}
+}
+
+/**
+ * get log of a Transfer
+ *
+ * @param $transfer
+ * @return string
+ */
+function getTransferLog($transfer) {
+	global $cfg;
+	$emptyLog = "log empty";
+	// sanity-check
+	if (!isset($transfer) || (isValidTransfer($transfer) !== true))
+		return "invalid transfer";
+	// alias-name + log-file
+	$aliasName = getAliasName($transfer);
+	$transferLogFile = $cfg["transfer_file_path"].$aliasName.".log";
+	// check
+	if (!(file_exists($transferLogFile)))
+		return $emptyLog;
+	// open
+	$handle = false;
+	$handle = @fopen($transferLogFile, "r");
+	if (!$handle)
+		return $emptyLog;
+	// read
+	$data = "";
+	while (!@feof($handle))
+		$data .= @fgets($handle, 8192);
+	@fclose ($handle);
+	if ($data == "")
+		return $emptyLog;
+	// return
+	return $data;
+}
+
+/**
+ * Function to delete saved Settings
+ *
+ * @param $transfer
+ * @return boolean
+ */
+function deleteTransferSettings($transfer) {
+	global $db;
+	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$transfer."'";
+	$db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	return true;
+}
+
+/**
+ * Function for saving transfer Settings
+ *
+ * @param $transfer
+ * @param $running
+ * @param $rate
+ * @param $drate
+ * @param $maxuploads
+ * @param $runtime
+ * @param $sharekill
+ * @param $minport
+ * @param $maxport
+ * @param $maxcons
+ * @param $savepath
+ * @param $btclient
+ * @return boolean
+ */
+function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
+	global $db;
+	// Messy - a not exists would prob work better
+	deleteTransferSettings($transfer);
+	// get hash
+	$tHash = getTorrentHash($transfer);
+	// get datapath
+	$tDatapath = getTorrentDatapath($transfer);
+	// insert
+	$sql = "INSERT INTO tf_torrents ( torrent , running ,rate , drate, maxuploads , runtime , sharekill , minport , maxport, maxcons , savepath , btclient, hash, datapath )
+			VALUES (
+					".$db->qstr($transfer).",
+					".$db->qstr($running).",
+					".$db->qstr($rate).",
+					".$db->qstr($drate).",
+					".$db->qstr($maxuploads).",
+					".$db->qstr($runtime).",
+					".$db->qstr($sharekill).",
+					".$db->qstr($minport).",
+					".$db->qstr($maxport).",
+					".$db->qstr($maxcons).",
+					".$db->qstr($savepath).",
+					".$db->qstr($btclient).",
+					".$db->qstr($tHash).",
+					".$db->qstr($tDatapath)."
+				   )";
+	$db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	return true;
+}
+
+/**
+ * sets the running flag in the db to stopped.
+ *
+ * @param $transfer name of the torrent
+ */
+function stopTransferSettings($transfer) {
+  global $db;
+  $db->Execute("UPDATE tf_torrents SET running = '0' WHERE torrent = '".$transfer."'");
+  return true;
+}
+
+/**
+ * waits until transfer is up/down
+ *
+ * @param $transfer name of the transfer
+ * @param $state : 1 = start, 0 = stop
+ * @param $maxWait in seconds
+ * @return 1|0
+ */
+function waitForTransfer($transfer, $state, $maxWait = 10) {
+	$maxLoops = $maxWait * 5;
+	$loopCtr = 0;
+	while (1) {
+		if (isTransferRunning($transfer) == $state) {
+			return 1;
+		} else {
+		 	$loopCtr++;
+		 	if ($loopCtr > $maxLoops)
+		 		return 0;
+		 	else
+		 		usleep(200000); // wait for 0.2 seconds
+		}
+	}
+	return 0;
+}
+
+/**
+ * resets totals of a torrent
+ *
+ * @param $transfer name of the torrent
+ * @param $delete boolean if to delete torrent-file
+ * @return message
+ */
+function resetTorrentTotals($transfer, $delete = false) {
+	global $cfg, $db;
+	$msgs = array();
+	// delete torrent
+	if ($delete == true) {
+		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		$clientHandler->delete($transfer);
+		if (count($clientHandler->messages) > 0)
+    		$msgs = array_merge($msgs, $clientHandler->messages);
+	} else {
+		// reset in stat-file
+		$af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+		if (isset($af)) {
+			$af->uptotal = 0;
+			$af->downtotal = 0;
+			$af->write();
+		}
+	}
+	// reset in db
+	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
+	$db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	return $msgs;
+}
+
+/**
+ * deletes data of a torrent
+ *
+ * @param $transfer name of the torrent
+ */
+function deleteTorrentData($transfer) {
+	global $cfg;
+	$owner = getOwner($transfer);
+	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
+		require_once('inc/classes/BDecode.php');
+		$ftorrent = $cfg["transfer_file_path"].$transfer;
+		$fd = fopen($ftorrent, "rd");
+		$alltorrent = fread($fd, filesize($ftorrent));
+		$btmeta = @BDecode($alltorrent);
+		$delete = @trim($btmeta['info']['name']);
+		if (!empty($delete)) {
+			// load transfer-settings from db to get data-location
+			loadTransferSettingsToConfig($transfer);
+			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+					? $cfg["path"].$owner.'/'
+					: $cfg["path"].$cfg["path_incoming"].'/';
+			}
+			$delete = $cfg["savepath"].$delete;
+			$del = stripslashes(stripslashes($delete));
+			if (isValidPath($del)) {
+				 avddelete($del);
+				 $arTemp = explode("/", $del);
+				 if (count($arTemp) > 1) {
+					 array_pop($arTemp);
+					 $current = implode("/", $arTemp);
+				 }
+				 AuditAction($cfg["constants"]["fm_delete"], $del);
+			} else {
+				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
+			}
+		}
+	} else {
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
+	}
+}
+
+/**
+ * gets size of data of a torrent
+ *
+ * @param $transfer name of the torrent
+ * @return int with size of data of torrent.
+ *		   -1 if error
+ *		   4096 if dir (lol ~)
+ */
+function getTorrentDataSize($transfer) {
+	global $cfg;
+	require_once('inc/classes/BDecode.php');
+	$ftorrent = $cfg["transfer_file_path"].$transfer;
+	$fd = fopen($ftorrent, "rd");
+	$alltorrent = fread($fd, filesize($ftorrent));
+	$btmeta = @BDecode($alltorrent);
+	$name = @trim($btmeta['info']['name']);
+	if (!empty($name)) {
+		// load transfer-settings from db to get data-location
+		loadTransferSettingsToConfig($transfer);
+		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
+			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].getOwner($transfer).'/'
+				: $cfg["path"].$cfg["path_incoming"].'/';
+		}
+		$name = $cfg["savepath"].$name;
+		$tData = stripslashes(stripslashes($name));
+		if (isValidPath($tData))
+			return file_size($tData);
+	}
+	return -1;
+}
+
+/**
+ * gets datapath of a torrent.
+ * this should not be called external if its no must, use cached value in
+ * tf_torrents if possible.
+ *
+ * @param $transfer name of the torrent
+ * @return var with torrent-datapath or empty string on error
+ */
+function getTorrentDatapath($transfer) {
+	global $cfg;
+    require_once('inc/classes/BDecode.php');
+    $ftorrent = $cfg["transfer_file_path"].$transfer;
+    $fd = fopen($ftorrent, "rd");
+    $alltorrent = fread($fd, filesize($ftorrent));
+    $btmeta = @BDecode($alltorrent);
+    return (empty($btmeta['info']['name'])) ? "" : trim($btmeta['info']['name']);
+}
+
+/**
+ * gets ary of running clients (via call to ps)
+ *
+ * @param $clientType
+ * @return array
+ */
+function getRunningClientProcesses($clientType = '') {
+	// client-array
+	$clients = ($clientType == '')
+		? array('tornado', 'transmission', 'mainline', 'wget')
+		: array($clientType);
+	// get clients
+	$retVal = array();
+	foreach ($clients as $client) {
+		// client-handler
+		$clientHandler = ClientHandler::getInstance($client);
+		$procs = $clientHandler->runningProcesses();
+		if (!empty($procs))
+			$retVal = array_merge($retVal, $procs);
+	}
+	// return
+	return $retVal;
+}
+
+/**
+ * get info of running clients (via call to ps)
+ *
+ * @param $clientType
+ * @return string
+ */
+function getRunningClientProcessInfo($clientType = '') {
+	// client-array
+	$clients = ($clientType == '')
+		? array('tornado', 'transmission', 'mainline', 'wget')
+		: array($clientType);
+	// get clients
+	$retVal = "";
+	foreach ($clients as $client) {
+		// client-handler
+		$clientHandler = ClientHandler::getInstance($client);
+		$retVal .= $clientHandler->runningProcessInfo();
+	}
+	// return
+	return $retVal;
 }
 
 ?>

@@ -23,11 +23,8 @@
 // main.internal
 require_once("inc/main.internal.php");
 
-// common functions
-require_once('inc/functions/functions.common.php');
-
-// dispatcher functions
-require_once("inc/functions/functions.dispatcher.php");
+// all functions
+require_once('inc/functions/functions.all.php');
 
 // time-limit
 @set_time_limit(0);

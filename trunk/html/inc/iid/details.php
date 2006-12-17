@@ -29,6 +29,9 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 // metainfo-functions
 require_once("inc/functions/functions.metainfo.php");
 
