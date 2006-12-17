@@ -35,7 +35,7 @@ define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','tf-b4rt.php');
-define('_FILE_THIS',$_SERVER['SCRIPT_NAME']);
+define('_FILE_THIS', 'superadmin.php');
 
 // global fields
 $error = "";
@@ -478,6 +478,85 @@ if (isset($_REQUEST["f"])) {
 }
 
 // -----------------------------------------------------------------------------
+// Processes
+// -----------------------------------------------------------------------------
+if (isset($_REQUEST["p"])) {
+	$action = trim($_REQUEST["p"]);
+	if ($action != "") {
+		buildPage("p");
+		switch($action) {
+			case "0": // Processes-main
+				$htmlTitle = "Processes";
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?p=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="All" border="0"> All</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?p=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a>';
+				$htmlMain .= '<br><br>';
+				break;
+			case "1": // Processes - All
+				$htmlTitle = "Processes - All";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<br>';
+				$htmlMain .= '<p><strong>fluxd</strong>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep");
+				$htmlMain .= '</pre>';
+				$clients = array('tornado', 'transmission', 'mainline', 'wget');
+				foreach ($clients as $client) {
+					$clientHandler = ClientHandler::getInstance($client);
+					$htmlMain .= '<p><strong>'.$client.'</strong>';
+					$htmlMain .= '<br>';
+					$htmlMain .= '<pre>';
+					$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." ".$clientHandler->binClient." | ".$cfg['bin_grep']." -v grep");
+					$htmlMain .= '</pre>';
+					$htmlMain .= '<br>';
+					$htmlMain .= '<pre>';
+					$htmlMain .= $clientHandler->runningProcessInfo();
+					$htmlMain .= '</pre>';
+				}
+				$htmlMain .= '</div>';
+				break;
+			case "2": // Processes - Transfers
+				$htmlTitle = "Processes - Transfers";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<br>
+					<table width="700" border=1 bordercolor="'.$cfg["table_admin_border"].'" cellpadding="2" cellspacing="0" bgcolor="'.$cfg["table_data_bg"].'">
+				    <tr><td colspan=6 bgcolor="'.$cfg["table_header_bg"].'" background="themes/'.$cfg["theme"].'/images/bar.gif">
+				    	<table width="100%" cellpadding=0 cellspacing=0 border=0><tr><td><font class="title"> Running Items </font></td></tr></table>
+				    </td></tr>
+				    <tr>
+				        <td bgcolor="'.$cfg["table_header_bg"].'" width="15%" nowrap><div align=center class="title">'.$cfg["_USER"].'</div></td>
+				        <td bgcolor="'.$cfg["table_header_bg"].'" nowrap><div align=center class="title">'.$cfg["_FILE"].'</div></td>
+				        <td bgcolor="'.$cfg["table_header_bg"].'" width="1%" nowrap><div align=center class="title">'.$cfg["_FORCESTOP"].'</div></td>
+				    </tr>
+				';
+				$running = getRunningClientProcesses();
+				foreach ($running as $rng) {
+					$rt = RunningTransfer::getInstance($rng['pinfo'], $rng['client']);
+				    $htmlMain .= '<tr bgcolor="'.$cfg["table_header_bg"].'">';
+				    $htmlMain .= '<td nowrap><div class="tiny">';
+				    $htmlMain .= $rt->transferowner;
+				    $htmlMain .= '</div></td>';
+				    $htmlMain .= '<td nowrap><div align=center><div class="tiny" align="left">';
+				    $htmlMain .= str_replace(array(".stat"),"",$rt->statFile);
+				    $htmlMain .= '</div></td>';
+				    $htmlMain .= '<td nowrap>';
+				    $htmlMain .= '<a href="dispatcher.php?action=forceStop';
+				    $htmlMain .= "&transfer=".urlencode($rt->transferFile);
+				    $htmlMain .= "&pid=".$rt->processId;
+				    $htmlMain .= '"><img src="themes/'.$cfg["theme"].'/images/kill.gif" width="16" height="16" title="'.$cfg['_FORCESTOP'].'" border="0"></a></td>';
+				    $htmlMain .= '</tr>';
+				}
+				$htmlMain .= '</table>';
+				$htmlMain .= '</div>';
+				break;
+		}
+		printPage();
+		exit();
+	}
+}
+
+// -----------------------------------------------------------------------------
 // maintenance
 // -----------------------------------------------------------------------------
 if (isset($_REQUEST["m"])) {
@@ -487,6 +566,19 @@ if (isset($_REQUEST["m"])) {
 		switch($mAction) {
 			case "0": // Maintenance-main
 				$htmlTitle = "Maintenance";
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Main" border="0"> Main</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Kill" border="0"> Kill</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Clean" border="0"> Clean</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=4"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Reset" border="0"> Reset</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=6"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Lock" border="0"> Lock</a>';
+				$htmlMain .= '<br><br>';
 				break;
 			case "1": // Maintenance : Main
 				$htmlTitle = "Maintenance - Main";
@@ -907,6 +999,15 @@ if (isset($_REQUEST["l"])) {
 		switch($action) {
 			case "0": // log-main
 				$htmlTitle = "log";
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?l=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd" border="0"> fluxd</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?l=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="fluxd-error" border="0"> fluxd-error</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?l=5"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="mainline" border="0"> mainline</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?l=8"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfers" border="0"> transfers</a>';
+				$htmlMain .= '<br><br>';
 				break;
 			case "1": // fluxd-log
 				$htmlTitle = "log - fluxd";
@@ -1086,6 +1187,13 @@ if (isset($_REQUEST["z"])) {
 		switch($action) {
 			case "0": // main
 				$htmlTitle = "tf-b4rt";
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Version" border="0"> Version</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="News" border="0"> News</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>';
+				$htmlMain .= '<br><br>';
 				break;
 			case "1": // Version
 				$htmlTitle = "tf-b4rt - Version";

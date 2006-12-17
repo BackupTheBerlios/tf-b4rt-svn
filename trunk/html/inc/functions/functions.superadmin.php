@@ -43,6 +43,8 @@ function buildPage($action) {
 	// navi
 	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Torrents</a>';
 	$htmlTop .= ' | ';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?p=0">Processes</a>';
+	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?m=0">Maintenance</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?b=0">Backup</a>';
@@ -97,6 +99,15 @@ function buildPage($action) {
 			$htmlMain .= '</td><td align="right"><strong>fluxd</strong>';
 			$htmlMain .= '</tr></table>';
 			break;
+		case "p": // processes passthru
+			$statusImage = "black.gif";
+			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?p=1">All</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?p=2">Transfers</a>';
+			$htmlMain .= '</td><td align="right"><strong>Processes</strong></td>';
+			$htmlMain .= '</tr></table>';
+			break;
 		case "m": // maintenance passthru
 			$statusImage = "black.gif";
 			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
@@ -146,6 +157,19 @@ function buildPage($action) {
 			$htmlTitle = "SuperAdmin";
 			$statusImage = "black.gif";
 			$htmlMain = '<br>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Torrents" border="0"> Torrents</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?p=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Processes" border="0"> Processes</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Maintenance" border="0"> Maintenance</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?b=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Backup" border="0"> Backup</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?l=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Log" border="0"> Log</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> tf-b4rt</a>';
+			$htmlMain .= '<br><br>';
 			break;
 	}
 }

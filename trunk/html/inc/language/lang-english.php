@@ -155,7 +155,7 @@ define("_STARTED", "Started");
 define("_ENDED", "Ended");
 define("_QUEUED","Queued");
 define("_DELQUEUE","Remove from Queue");
-define("_FORCESTOP","Kill Transfer");
+define("_FORCESTOP","Force Stop");
 define("_STOPPING","Stopping");
 define("_COOKIE_MENU","cookies");
 define('_TOTALXFER','Total Transfer');

@@ -729,7 +729,7 @@ function MarkMessageRead($mid) {
  * @param $force_read
  */
 function SaveMessage($to_user, $from_user, $message, $to_all=0, $force_read=0) {
-	global $_SERVER, $cfg, $db;
+	global $cfg, $db;
 	$message = str_replace(array("'"), "", $message);
 	$create_time = time();
 	$sTable = 'tf_messages';

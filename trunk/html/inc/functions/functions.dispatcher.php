@@ -137,7 +137,7 @@ function indexStopTransfer($transfer) {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
 		}
-		$clientHandler->stop($transfer, (getRequestVar('kill') == 1), getRequestVar('pid'));
+		$clientHandler->stop($transfer);
 		if (count($clientHandler->messages) > 0)
     		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
 	}
@@ -357,6 +357,32 @@ function indexProcessUpload() {
 	} else {
 		@header("location: index.php?iid=index");
 		exit();
+	}
+}
+
+/**
+ * forceStopTransfer
+ *
+ * @param $transfer
+ */
+function forceStopTransfer($transfer, $pid) {
+	global $cfg;
+	$invalid = true;
+	if (isValidTransfer($transfer) === true) {
+		if (substr($transfer, -8) == ".torrent") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		} else if (substr($transfer, -5) == ".wget") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance('wget');
+		}
+		$clientHandler->stop($transfer, true, $pid);
+		if (count($clientHandler->messages) > 0)
+    		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
+	}
+	if ($invalid) {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($transfer));
 	}
 }
 
