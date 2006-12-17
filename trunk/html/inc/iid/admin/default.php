@@ -39,7 +39,8 @@ tmplInitializeInstance($cfg["theme"], "page.admin.default.tmpl");
 $tmpl->setvar('enable_xfer', $cfg["enable_xfer"]);
 tmplSetTitleBar($cfg['_ADMINISTRATION']);
 tmplSetAdminMenu();
-// L: server-stats 1
+
+// L: tfb-stats
 // transfers
 $arTransfers = getTorrentListFromFS();
 $countTransfers = count($arTransfers);
@@ -48,10 +49,6 @@ $tmpl->setvar('server_transfers_total', $countTransfers);
 $arUsers = GetUsers();
 $countUsers = count($arUsers);
 $tmpl->setvar('server_users_total', $countUsers);
-// activity
-$arActivity = GetActivityCount();
-$countActivity = count($arActivity);
-$tmpl->setvar('server_activity_total', $countActivity);
 // hits
 $hits = $db->GetOne("SELECT SUM(hits) AS hits FROM tf_users");
 $tmpl->setvar('server_hits_total', $hits);
@@ -75,7 +72,6 @@ $tmpl->setvar('server_cookies_total', $cookies);
 // profiles
 $profiles = $db->GetOne("SELECT COUNT(id) AS id FROM tf_trprofiles");
 $tmpl->setvar('server_profiles_total', $profiles);
-// M: server-stats 2
 // search-engines
 $arSearchEngines = buildSearchEngineArray();
 $countSearchEngines = count($arSearchEngines);
@@ -105,12 +101,65 @@ $du = @shell_exec($cfg['bin_du']." -ch ".escapeshellarg($duArg)." ".escapeshella
 $tmpl->setvar('server_du_total', substr($du, 0, -7));
 // version
 $tmpl->setvar('server_version', $cfg["version"]);
+
+// M: server-stats
+$tmpl->setvar('server_os', php_uname('s'));
+$tmpl->setvar('server_php', PHP_VERSION);
+$tmpl->setvar('server_php_state', (PHP_VERSION < 4.3) ? 0 : 1);
+$loadedExtensions = get_loaded_extensions();
+if (in_array("session", $loadedExtensions)) {
+	$tmpl->setvar('server_extension_session', "yes");
+	$tmpl->setvar('server_extension_session_state', 1);
+} else {
+	$tmpl->setvar('server_extension_session', "no");
+	$tmpl->setvar('server_extension_session_state', 0);
+}
+if (in_array("pcre", $loadedExtensions)) {
+	$tmpl->setvar('server_extension_pcre', "yes");
+	$tmpl->setvar('server_extension_pcre_state', 1);
+} else {
+	$tmpl->setvar('server_extension_pcre', "no");
+	$tmpl->setvar('server_extension_pcre_state', 0);
+}
+if (in_array("sockets", $loadedExtensions)) {
+	$tmpl->setvar('server_extension_sockets', "yes");
+	$tmpl->setvar('server_extension_sockets_state', 1);
+} else {
+	$tmpl->setvar('server_extension_sockets', "no");
+	$tmpl->setvar('server_extension_sockets_state', 0);
+}
+$safe_mode = ini_get("safe_mode");
+if ($safe_mode) {
+	$tmpl->setvar('server_ini_safe_mode', "on");
+	$tmpl->setvar('server_ini_safe_mode_state', 0);
+} else {
+	$tmpl->setvar('server_ini_safe_mode', "off");
+	$tmpl->setvar('server_ini_safe_mode_state', 1);
+}
+$allow_url_fopen = ini_get("allow_url_fopen");
+if ($allow_url_fopen) {
+	$tmpl->setvar('server_ini_allow_url_fopen', "on");
+	$tmpl->setvar('server_ini_allow_url_fopen_state', 1);
+} else {
+	$tmpl->setvar('server_ini_allow_url_fopen', "off");
+	$tmpl->setvar('server_ini_allow_url_fopen_state', 0);
+}
+$register_globals = ini_get("register_globals");
+if ($register_globals) {
+	$tmpl->setvar('server_ini_register_globals', "on");
+	$tmpl->setvar('server_ini_register_globals_state', 0);
+} else {
+	$tmpl->setvar('server_ini_register_globals', "off");
+	$tmpl->setvar('server_ini_register_globals_state', 1);
+}
+
 // R: db-settings
 $tmpl->setvar('db_type', $cfg["db_type"]);
 $tmpl->setvar('db_host', $cfg["db_host"]);
 $tmpl->setvar('db_name', $cfg["db_name"]);
 $tmpl->setvar('db_user', $cfg["db_user"]);
 $tmpl->setvar('db_pcon', ($cfg["db_pcon"]) ? "true" : "false");
+
 // foot
 tmplSetFoot();
 

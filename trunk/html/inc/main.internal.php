@@ -52,8 +52,8 @@ if (isset($_SESSION['user'])) {
 	}
     $cfg["user"] = $currentUser;
 } else {
-	// main.core
-	require_once('inc/main.core.php');
+	// core functions
+	require_once('inc/functions/functions.core.php');
 	// reset user
     $cfg["user"] = "";
     $currentUser = "";
@@ -96,6 +96,8 @@ if (isset($_SESSION['user'])) {
 		if (is_writable('inc/config/config.db.php'))
 			@error("config-file is writable", "index.php?iid=index", "", array("remove write-permissions from database-config-file (inc/config/config.db.php)"));
 	}
+	// main.core
+	require_once('inc/main.core.php');
 }
 
 // authenticate
