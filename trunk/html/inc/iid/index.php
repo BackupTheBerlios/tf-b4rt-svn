@@ -101,7 +101,7 @@ foreach ($arList as $entry) {
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
 		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
-		$settingsAry = loadTorrentSettings($entry);
+		$settingsAry = loadTransferSettings($entry);
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else if (substr($entry, -5) == ".wget") {
 		// this is wget.
@@ -530,10 +530,6 @@ if ($cfg["index_page_connections"] != 0) {
 }
 // loadavg
 $loadavgString = ($cfg["show_server_load"] != 0) ? @getLoadAverageString() : "n/a";
-
-// messages
-if (!empty($_REQUEST['messages']))
-	$tmpl->setvar('messages', urldecode(getRequestVar('messages')));
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {

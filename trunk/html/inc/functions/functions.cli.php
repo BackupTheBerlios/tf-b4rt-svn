@@ -300,8 +300,11 @@ function cliStopTransfer($transfer = "") {
 function cliResetTransfer($transfer = "") {
 	if ((isset($transfer)) && ($transfer != "")) {
 		printMessage("fluxcli.php", "Resetting totals of ".$transfer." ...\n");
-		resetTorrentTotals($transfer, false);
-		printMessage("fluxcli.php", "done.\n");
+		$msgs = resetTorrentTotals($transfer, false);
+		if (count($msgs) > 0)
+        	printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $msgs));
+		else
+			printMessage("fluxcli.php", "done.\n");
 	} else {
 		cliPrintUsage();
 	}
@@ -355,11 +358,19 @@ function cliWipeTransfer($transfer = "") {
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
-        	if ((substr($transfer, -8) == ".torrent"))
+        	if ((substr($transfer, -8) == ".torrent")) {
         		deleteTorrentData($transfer);
-        	resetTorrentTotals($transfer, true);
+				$msgs = resetTorrentTotals($transfer, true);
+				if (count($msgs) > 0) {
+		        	printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $msgs));
+		        	exit;
+				}
+        	}
         	$clientHandler->delete($transfer);
-        	printMessage("fluxcli.php", "done.\n");
+        	if (count($clientHandler->messages) > 0)
+    			printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+    		else
+        		printMessage("fluxcli.php", "done.\n");
         } else {
         	printError("fluxcli.php", "transfer still up... cannot wipe\n");
         }

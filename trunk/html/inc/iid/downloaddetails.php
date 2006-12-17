@@ -48,7 +48,7 @@ if (!empty($transfer)) {
 if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
 	$transferowner = getOwner($transfer);
-	$transferExists = loadTorrentSettingsToConfig($transfer);
+	$transferExists = loadTransferSettingsToConfig($transfer);
 	if (!$transferExists) {
 		// new t
 		$cfg['hash'] = $transfer;

@@ -100,21 +100,21 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 		// template
 		require_once("themes/".$theme."/index.php");
 		require_once("inc/lib/vlib/vlibTemplate.php");
-		$tmpl = tmplGetInstance($theme, "page.error.tmpl");
+		$_tmpl = tmplGetInstance($theme, "page.error.tmpl");
 		// message
-		$tmpl->setvar('message', htmlentities($msg, ENT_QUOTES));
+		$_tmpl->setvar('message', htmlentities($msg, ENT_QUOTES));
 		// messages
 		if (!empty($msgs)) {
 			$msgAry = array_map("htmlentities", $msgs);
-			$tmpl->setvar('messages', implode("\n", $msgAry));
+			$_tmpl->setvar('messages', implode("\n", $msgAry));
 		}
 		// link + linklabel
 		if (!empty($link)) {
-			$tmpl->setvar('link', $link);
-			$tmpl->setvar('linklabel', (!empty($linklabel)) ? htmlentities($linklabel, ENT_QUOTES) : "OK");
+			$_tmpl->setvar('link', $link);
+			$_tmpl->setvar('linklabel', (!empty($linklabel)) ? htmlentities($linklabel, ENT_QUOTES) : "OK");
 		}
 		// parse template
-		$tmpl->pparse();
+		$_tmpl->pparse();
 		// get out here
 		exit();
     }
@@ -161,20 +161,20 @@ function tmplGetInstance($theme, $template) {
 		? "themes/".$theme."/tmpl/"
 		: "themes/tf_standard_themes/tmpl/";
 	// template-cache-switch
-	$tmpl = ($cfg['enable_tmpl_cache'] != 0)
+	$_tmpl = ($cfg['enable_tmpl_cache'] != 0)
 		? new vlibTemplateCache($path.$template)
 		: new vlibTemplate($path.$template);
 	//  set common template-vars
-	$tmpl->setvar('theme', $theme);
-    $tmpl->setvar('pagetitle', @ $cfg["pagetitle"]);
-    $tmpl->setvar('main_bgcolor', @ $cfg["main_bgcolor"]);
-    $tmpl->setvar('table_border_dk', @ $cfg["table_border_dk"]);
-    $tmpl->setvar('table_header_bg', @ $cfg["table_header_bg"]);
-    $tmpl->setvar('table_data_bg', @ $cfg["table_data_bg"]);
-    $tmpl->setvar('body_data_bg', @ $cfg["body_data_bg"]);
-    $tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
+	$_tmpl->setvar('theme', $theme);
+    $_tmpl->setvar('pagetitle', @ $cfg["pagetitle"]);
+    $_tmpl->setvar('main_bgcolor', @ $cfg["main_bgcolor"]);
+    $_tmpl->setvar('table_border_dk', @ $cfg["table_border_dk"]);
+    $_tmpl->setvar('table_header_bg', @ $cfg["table_header_bg"]);
+    $_tmpl->setvar('table_data_bg', @ $cfg["table_data_bg"]);
+    $_tmpl->setvar('body_data_bg', @ $cfg["body_data_bg"]);
+    $_tmpl->setvar('isAdmin', @ $cfg['isAdmin']);
     // return template-instance
-    return $tmpl;
+    return $_tmpl;
 }
 
 /**
@@ -319,12 +319,12 @@ function tmplSetBandwidthBars() {
 function getSuperAdminLink($param = "", $linkText = "") {
 	global $cfg;
 	// create template-instance
-	$tmpl = tmplGetInstance($cfg["theme"], "component.superAdminLink.tmpl");
-	$tmpl->setvar('param', $param);
+	$_tmpl = tmplGetInstance($cfg["theme"], "component.superAdminLink.tmpl");
+	$_tmpl->setvar('param', $param);
 	if ((isset($linkText)) && ($linkText != ""))
-		$tmpl->setvar('linkText', $linkText);
+		$_tmpl->setvar('linkText', $linkText);
 	// grab the template
-	$output = $tmpl->grab();
+	$output = $_tmpl->grab();
 	return $output;
 }
 
@@ -678,7 +678,7 @@ function deleteTransferSettings($transfer) {
 }
 
 /**
- * Function for saving Torrent Settings
+ * Function for saving transfer Settings
  *
  * @param $transfer
  * @param $running
@@ -694,7 +694,7 @@ function deleteTransferSettings($transfer) {
  * @param $btclient
  * @return boolean
  */
-function saveTorrentSettings($transfer, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
+function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
 	global $db;
 	// Messy - a not exists would prob work better
 	deleteTransferSettings($transfer);
@@ -731,7 +731,7 @@ function saveTorrentSettings($transfer, $running, $rate, $drate, $maxuploads, $r
  * @param $transfer
  * @return array
  */
-function loadTorrentSettings($transfer) {
+function loadTransferSettings($transfer) {
 	global $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
@@ -758,12 +758,12 @@ function loadTorrentSettings($transfer) {
 }
 
 /*
- * Function to load the settings for a torrent to global cfg-array
+ * Function to load the settings for a transfer to global cfg-array
  *
- * @param $transfer name of the torrent
+ * @param $transfer name of the transfer
  * @return boolean if the settings could be loaded (were existent in db already)
  */
-function loadTorrentSettingsToConfig($transfer) {
+function loadTransferSettingsToConfig($transfer) {
 	global $cfg, $db;
 	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$result = $db->Execute($sql);
@@ -901,14 +901,17 @@ function getTorrentHash($transfer) {
  *
  * @param $transfer name of the torrent
  * @param $delete boolean if to delete torrent-file
- * @return boolean of success
+ * @return message
  */
 function resetTorrentTotals($transfer, $delete = false) {
 	global $cfg, $db;
+	$msgs = array();
 	// delete torrent
 	if ($delete == true) {
 		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		$clientHandler->delete($transfer);
+		if (count($clientHandler->messages) > 0)
+    		$msgs = array_merge($msgs, $clientHandler->messages);
 	} else {
 		// reset in stat-file
 		$af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
@@ -922,7 +925,7 @@ function resetTorrentTotals($transfer, $delete = false) {
 	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
-	return true;
+	return $msgs;
 }
 
 /**
@@ -1021,8 +1024,8 @@ function deleteTorrentData($transfer) {
 		$btmeta = @BDecode($alltorrent);
 		$delete = @trim($btmeta['info']['name']);
 		if (!empty($delete)) {
-			// load torrent-settings from db to get data-location
-			loadTorrentSettingsToConfig($transfer);
+			// load transfer-settings from db to get data-location
+			loadTransferSettingsToConfig($transfer);
 			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 					? $cfg["path"].$owner.'/'
@@ -1064,8 +1067,8 @@ function getTorrentDataSize($transfer) {
 	$btmeta = @BDecode($alltorrent);
 	$name = @trim($btmeta['info']['name']);
 	if (!empty($name)) {
-		// load torrent-settings from db to get data-location
-		loadTorrentSettingsToConfig($transfer);
+		// load transfer-settings from db to get data-location
+		loadTransferSettingsToConfig($transfer);
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
 				? $cfg["path"].getOwner($transfer).'/'
@@ -1479,7 +1482,7 @@ function getTransferListArray() {
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
-			$settingsAry = loadTorrentSettings($entry);
+			$settingsAry = loadTransferSettings($entry);
 			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($entry, -5) == ".wget") {
 			// this is wget.
@@ -1820,7 +1823,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		$transferowner = getOwner($transfer);
-		$transferExists = loadTorrentSettingsToConfig($transfer);
+		$transferExists = loadTransferSettingsToConfig($transfer);
 		if (!$transferExists) {
 			// new torrent
 			$cfg['hash'] = $transfer;

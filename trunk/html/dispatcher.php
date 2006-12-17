@@ -75,11 +75,11 @@ switch ($action) {
 		// is enabled ?
 		if ($cfg["enable_wget"] == 0) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-			@error("wget is disabled", "index.php?iid=index", "");
+			@error("wget is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
 		} elseif ($cfg["enable_wget"] == 1) {
 			if (!$cfg['isAdmin']) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-				@error("wget is disabled for users", "index.php?iid=index", "");
+				@error("wget is disabled for users", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
 			}
 		}
 		$url = getRequestVar('url');
@@ -145,6 +145,7 @@ switch ($action) {
 			@error("bulkops are disabled", "index.php?iid=index", "");
 		}
 		// stop all
+		$dispatcherMessages = array();
     	$transfers = getTorrentListFromFS();
     	foreach ($transfers as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
@@ -154,17 +155,22 @@ switch ($action) {
                     $btclient = getTransferClient($transfer);
                     $clientHandler = ClientHandler::getInstance($btclient);
                     $clientHandler->stop($transfer);
+                    if (count($clientHandler->messages) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
                 }
             }
     	}
+    	if (count($dispatcherMessages) > 0)
+    		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
     	break;
     case "bulkResume": /* bulkResume */
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkResume");
-			@error("bulkops are disabled", "index.php?iid=index", "");
+			@error("bulkops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
 		}
 		// resume all
+		$dispatcherMessages = array();
     	$transfers = getTorrentListFromDB();
     	foreach ($transfers as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
@@ -179,17 +185,22 @@ switch ($action) {
                     }
                     $clientHandler = ClientHandler::getInstance($btclient);
                     $clientHandler->start($transfer, false, false);
+                    if (count($clientHandler->messages) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
                 }
             }
     	}
+    	if (count($dispatcherMessages) > 0)
+    		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
     	break;
     case "bulkStart": /* bulkStart */
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStart");
-			@error("bulkops are disabled", "index.php?iid=index", "");
+			@error("bulkops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
 		}
 		// start all
+		$dispatcherMessages = array();
     	$transfers = getTorrentListFromFS();
     	foreach ($transfers as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
@@ -204,9 +215,13 @@ switch ($action) {
                     }
                     $clientHandler = ClientHandler::getInstance($btclient);
                     $clientHandler->start($transfer, false, false);
+                    if (count($clientHandler->messages) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
                 }
             }
     	}
+    	if (count($dispatcherMessages) > 0)
+    		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
     	break;
 
 /*******************************************************************************
@@ -217,8 +232,10 @@ switch ($action) {
     	// is enabled ?
 		if ($cfg["enable_multiops"] != 1) {
 			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multi-op ".$action);
-			@error("multiops are disabled", "index.php?iid=index", "");
+			@error("multiops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
 		}
+
+		$dispatcherMessages = array();
 
 		foreach($_POST['transfer'] as $key => $element) {
 
@@ -243,7 +260,7 @@ switch ($action) {
 			}
 			if ($invalid) {
 				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$cfg["user"]." tried to ".$action." ".$element);
-				@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+				array_push($dispatcherMessages, "Invalid Transfer : ".$transfer);
 			}
 
 			// is transfer running ?
@@ -254,18 +271,19 @@ switch ($action) {
 
 				case "transferStart": /* transferStart */
 					if ($tRunningFlag == 0) {
+						$clientHandler = ClientHandler::getInstance($tclient);
 						if ($isTorrent) {
 							if ($cfg["enable_file_priority"]) {
 								include_once("inc/functions/functions.setpriority.php");
 								// Process setPriority Request.
 								setPriority($element);
 							}
-							$clientHandler = ClientHandler::getInstance($tclient);
 							$clientHandler->start($element, false, FluxdQmgr::isRunning());
 						} else {
-							$clientHandler = ClientHandler::getInstance($tclient);
 							$clientHandler->start($element, false, false);
 						}
+						if (count($clientHandler->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
 					}
 					break;
 
@@ -273,6 +291,8 @@ switch ($action) {
 					if (($isTorrent) && ($tRunningFlag != 0)) {
 						$clientHandler = ClientHandler::getInstance($tclient);
 						$clientHandler->stop($element);
+						if (count($clientHandler->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
 					}
 					break;
 
@@ -286,6 +306,8 @@ switch ($action) {
 						}
 						$clientHandler = ClientHandler::getInstance($tclient);
 						$clientHandler->start($element, false, true);
+						if (count($clientHandler->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
 					}
 					break;
 
@@ -297,7 +319,9 @@ switch ($action) {
 					break;
 
 				case "transferResetTotals": /* transferResetTotals */
-					resetTorrentTotals($element, false);
+					$msgs = resetTorrentTotals($element, false);
+					if (count($msgs) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
 					break;
 
 				default:
@@ -305,6 +329,8 @@ switch ($action) {
 						// stop torrent first
 						$clientHandler = ClientHandler::getInstance($tclient);
 						$clientHandler->stop($element);
+						if (count($clientHandler->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
 						// is transfer running ?
 						$tRunningFlag = isTransferRunning($element);
 					}
@@ -315,7 +341,9 @@ switch ($action) {
 							case "transferWipe": /* transferWipe */
 								if ($isTorrent) {
 									deleteTorrentData($element);
-									resetTorrentTotals($element, true);
+									$msgs = resetTorrentTotals($element, true);
+									if (count($msgs) > 0)
+                    					$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
 								}
 								break;
 							case "transferData": /* transferData */
@@ -324,17 +352,20 @@ switch ($action) {
 							case "transfer": /* transfer */
 								$clientHandler = ClientHandler::getInstance($tclient);
 								$clientHandler->delete($element);
+								if (count($clientHandler->messages) > 0)
+                    				$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
 						}
 					}
 
 			} // end switch
 		} // end loop
+		if (count($dispatcherMessages) > 0)
+			@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
 }
 
 /*******************************************************************************
  * redirect
  ******************************************************************************/
-
 if (isset($_SERVER["HTTP_REFERER"]))
 	@header("location: ".$_SERVER["HTTP_REFERER"]);
 else

@@ -105,7 +105,7 @@ if ($with_profiles == 1) {
 		$tmpl->setvar('superseeder', ($settings['superseeder'] == 1) ? "checked" : "");
 		$tmpl->setvar('superseederValue', $settings['superseeder']);
 		// Load saved settings
-		loadTorrentSettingsToConfig($transfer);
+		loadTransferSettingsToConfig($transfer);
 		// savepath
 		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
 			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)

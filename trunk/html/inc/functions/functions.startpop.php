@@ -26,7 +26,7 @@
 function setVarsFromPersistentSettings() {
 	global $cfg, $tmpl, $transfer;
 	// Load saved settings
-	loadTorrentSettingsToConfig($transfer);
+	loadTransferSettingsToConfig($transfer);
 	// set settings
 	$tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
 	$tmpl->setvar('max_uploads', $cfg["max_uploads"]);

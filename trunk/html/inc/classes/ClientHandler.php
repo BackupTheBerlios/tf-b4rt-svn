@@ -287,7 +287,7 @@ class ClientHandler
             $this->skip_hash_check = $cfg["skiphashcheck"];
             $this->superseeder = 0;
             // load settings
-            $settingsAry = loadTorrentSettings($transfer);
+            $settingsAry = loadTransferSettings($transfer);
             $this->rate = $settingsAry["max_upload_rate"];
             $this->drate = $settingsAry["max_download_rate"];
             $this->runtime = $settingsAry["torrent_dies_when_done"];
@@ -438,7 +438,7 @@ class ClientHandler
         if (empty($this->messages)) {
             // Save transfer settings
             if ($save)
-            	saveTorrentSettings($this->transfer, $transferRunningFlag, $this->rate, $this->drate, $this->maxuploads, $this->runtime, $this->sharekill, $this->minport, $this->maxport, $this->maxcons, $this->savepath, $this->handlerName);
+            	saveTransferSettings($this->transfer, $transferRunningFlag, $this->rate, $this->drate, $this->maxuploads, $this->runtime, $this->sharekill, $this->minport, $this->maxport, $this->maxcons, $this->savepath, $this->handlerName);
             $this->state = CLIENTHANDLER_STATE_OK;
         } else {
             $this->state = CLIENTHANDLER_STATE_ERROR;

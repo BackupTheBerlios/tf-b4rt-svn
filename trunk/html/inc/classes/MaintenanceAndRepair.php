@@ -322,7 +322,7 @@ class MaintenanceAndRepair
 			$transfer = $bogusTransfer.".torrent";
 			$alias = $bogusTransfer.".stat";
 			$pidFile = $alias.".pid";
-			$settingsAry = loadTorrentSettings($transfer);
+			$settingsAry = loadTransferSettings($transfer);
 			if ((isset($settingsAry)) && (is_array($settingsAry))) {
 				// this is a torrent-client
 				// set stopped flag in db
@@ -374,7 +374,7 @@ class MaintenanceAndRepair
 				$transfer = $bogusTransfer.".torrent";
 				$alias = $bogusTransfer.".stat";
 				$pidFile = $alias.".pid";
-				$settingsAry = loadTorrentSettings($transfer);
+				$settingsAry = loadTransferSettings($transfer);
 				if (!((isset($settingsAry)) && (is_array($settingsAry)))) {
 					// this is a wget-client, skip it
 					continue;
