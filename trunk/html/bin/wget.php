@@ -181,7 +181,6 @@ function writeStatFile() {
 	$af->downtotal = $_COMPLETED;
 	$af->size = ($_SIZE > 0) ? $_SIZE : $_COMPLETED;
 	$af->write();
-	unset($af);
 }
 
 /**

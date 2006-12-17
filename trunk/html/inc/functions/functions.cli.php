@@ -358,7 +358,7 @@ function cliWipeTransfer($transfer = "") {
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if ($tRunningFlag == 0) {
-        	if ((substr($transfer, -8) == ".torrent")) {
+        	if (substr($transfer, -8) == ".torrent") {
         		deleteTorrentData($transfer);
 				$msgs = resetTorrentTotals($transfer, true);
 				if (count($msgs) > 0) {

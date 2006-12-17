@@ -36,7 +36,7 @@ require_once("inc/functions/functions.metainfo.php");
 tmplInitializeInstance($cfg["theme"], "page.details.tmpl");
 
 // set vars
-$transfer = getRequestVar('torrent');
+$transfer = getRequestVar('transfer');
 if (substr($transfer, -8) == ".torrent") {
 	// this is a torrent-client
 	$als = getRequestVar('als');

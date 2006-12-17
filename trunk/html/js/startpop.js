@@ -5,7 +5,7 @@ var setQueue = 0;
 /**
  * StartTorrent
  */
-function StartTorrent() {
+function StartTransfer() {
 	if (setQueue == 1) {
 		var qbox = document.getElementById("queuebox");
 		if (qbox.checked)

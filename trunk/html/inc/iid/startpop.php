@@ -48,15 +48,14 @@ require_once("inc/functions/functions.metainfo.php");
 tmplInitializeInstance($cfg["theme"], "page.startpop.tmpl");
 
 // get torren-param
-$transfer = getRequestVar('torrent');
+$transfer = getRequestVar('transfer');
 
-// torrent exists ?
-$torrentExists = (getTorrentDataSize($transfer) > 0);
+// transfer exists ?
+$transferExists = (getTorrentDataSize($transfer) > 0);
 
 // set some template-vars
 $tmpl->setvar('displayName', (strlen($transfer) >= 55) ? substr($transfer, 0, 52)."..." : $transfer);
-$tmpl->setvar('torrent', $transfer);
-$tmpl->setvar('torrentExists', $torrentExists);
+$tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 if ($cfg["enable_btclient_chooser"] != 0)
@@ -70,8 +69,8 @@ $dirTree = ($cfg["enable_home_dirs"] != 0)
 	: $cfg["path"].$cfg["path_incoming"].'/';
 tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
-if ($torrentExists) {
-	$tmpl->setvar('torrent_exists', 1);
+if ($transferExists) {
+	$tmpl->setvar('transfer_exists', 1);
 	$tmpl->setvar('is_skip', ($cfg["skiphashcheck"] != 0) ? 1 : 0);
 }
 // Force Queuing if not an admin.

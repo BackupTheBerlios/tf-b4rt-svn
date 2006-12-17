@@ -161,7 +161,7 @@ class ClientHandlerWget extends ClientHandler
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->urlFile);
-        $this->command .= " " . escapeshellarg($this->aliasFilePath);
+        $this->command .= " " . escapeshellarg($this->aliasFile);
         $this->command .= " " . escapeshellarg($this->pidFilePath);
         $this->command .= " " . $this->owner;
         $this->command .= ($cfg["enable_home_dirs"] != 0)

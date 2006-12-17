@@ -35,7 +35,7 @@ function downloadTorrent($tfile) {
 				? preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1)
 				: $tfile;
 			// Prompt the user to download file.
-			if ((substr($tfile, -8) == ".torrent"))
+			if (substr($tfile, -8) == ".torrent")
 				@header("Content-type: application/x-bittorrent\n");
 			else
 				@header( "Content-type: application/octet-stream\n" );

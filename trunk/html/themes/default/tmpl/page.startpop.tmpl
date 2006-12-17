@@ -16,10 +16,10 @@
 						<tmpl_if name="with_profiles">
 						    <tr>
 								<form name="profile" action="index.php?iid=startpop" method="POST">
-									<input type="hidden" name="torrent" value="<tmpl_var name="torrent">">
+									<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
 									<td align="center" colspan="2">Profile:
 										<select name="profile" size="1" onChange="javascript:submit();">
-											<tmpl_if name="torrentExists">
+											<tmpl_if name="transfer_exists">
 												<option value="last_used" selected>Last used Settings</option>
 											<tmpl_else>
 												<option value="">default</option>
@@ -42,7 +42,7 @@
 								<form name="theForm" target="_parent" action="dispatcher.php?action=indexStart" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
-								<input type="hidden" name="transfer" value="<tmpl_var name="torrent">">
+								<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
 								<td align="center" colspan="2">
 									<tmpl_if name="enableBtclientChooser">
 										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
@@ -112,7 +112,7 @@
 								<form name="theForm" target="_parent" action="dispatcher.php?action=indexStart" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
-								<input type="hidden" name="transfer" value="<tmpl_var name="torrent">">
+								<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
 								<td align="center" colspan="4">
 									<tmpl_if name="enableBtclientChooser">
 										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
@@ -181,7 +181,7 @@
 					<table>
 						<tr>
 							<td align="right">Dont check hashes :</td>
-							<tmpl_if name="torrent_exists">
+							<tmpl_if name="transfer_exists">
 								<td colspan="3"><input type="checkbox" name="skiphashcheck"
 								<tmpl_if name="is_skip">
 									 checked
@@ -216,7 +216,7 @@
 								<input type="checkbox" name="queuebox" id="queuebox" onclick="setQueue = 1;">Enqueue
 							</tmpl_if>
 						</tmpl_if>
-						<input type="button" id="startbtn" name="startbtn" value="<tmpl_var name="_RUNTRANSFER">" onclick="StartTorrent();">&nbsp;&nbsp;
+						<input type="button" id="startbtn" name="startbtn" value="<tmpl_var name="_RUNTRANSFER">" onclick="StartTransfer();">&nbsp;&nbsp;
 						<input type="button" value="Cancel" onclick="window.close()">
 					</td>
 				</tr>

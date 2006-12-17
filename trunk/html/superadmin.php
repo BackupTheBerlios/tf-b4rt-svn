@@ -722,7 +722,7 @@ if (isset($_REQUEST["m"])) {
 				if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ((substr($file, -1, 1)) == "d") {
-							$tname = substr($file,0,-9).'.torrent';
+							$tname = substr($file, 0, -9).'.torrent';
 							if (! in_array($tname, $torrents)) {
 								// torrent not in db. delete pid-file.
 								$result .= $file."\n";
@@ -1632,7 +1632,7 @@ function getReleaseList() {
 			if ((isset($release)) && ($release != "")) {
 				$tempArray = explode("_", $release);
 				$tempString = array_pop($tempArray);
-				$releaseVersion = substr(($tempString), 0, -8);
+				$releaseVersion = substr($tempString, 0, -8);
 				$retVal .= '<tr>';
 				$retVal .= '<td align="center">';
 				$retVal .= '<a href="'._SUPERADMIN_URLBASE.'files/'.$release.'">';

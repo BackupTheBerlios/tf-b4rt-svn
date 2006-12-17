@@ -808,10 +808,10 @@ function stopTransferSettings($transfer) {
  */
 function isTransferRunning($transfer) {
 	global $cfg;
-	if ((substr($transfer, -8) == ".torrent")) {
+	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.stat.pid')) ? 1 : 0;
-	} else if ((substr($transfer, -5) == ".wget")) {
+	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid')) ? 1 : 0;
 	} else {

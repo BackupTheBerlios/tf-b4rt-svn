@@ -130,10 +130,10 @@ function indexStopTransfer($transfer) {
 	global $cfg;
 	$invalid = true;
 	if (isValidTransfer($transfer) === true) {
-		if ((substr($transfer, -8) == ".torrent")) {
+		if (substr($transfer, -8) == ".torrent") {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-		} else if ((substr($transfer, -5) == ".wget")) {
+		} else if (substr($transfer, -5) == ".wget") {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
 		}

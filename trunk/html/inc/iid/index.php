@@ -96,18 +96,18 @@ foreach ($arList as $entry) {
 	// ---------------------------------------------------------------------
 	// alias / stat
 	$aliasFile = getAliasName($entry).".stat";
-	if (substr($entry, -8 == ".torrent")) {
+	if (substr($entry, -8) == ".torrent") {
 		// this is a torrent-client
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
-		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
+		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = loadTransferSettings($entry);
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else if (substr($entry, -5) == ".wget") {
 		// this is wget.
 		$isTorrent = false;
 		$transferowner = getOwner($entry);
-		$owner = (IsOwner($cfg["user"], $transferowner)) ? 1 : 0;
+		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
 		$settingsAry['hash'] = $entry;
@@ -310,7 +310,7 @@ foreach ($arList as $entry) {
 	// -------------------------------------------------------------------------
 	// create temp-array
 	$tArray = array(
-		'is_owner' => ($cfg['isAdmin']) ? 1 : $owner,
+		'is_owner' => ($cfg['isAdmin']) ? true : $owner,
 		'transferRunning' => $transferRunning,
 		'url_entry' => urlencode($entry),
 		'hd_image' => $hd->image,
@@ -341,7 +341,7 @@ foreach ($arList as $entry) {
 		'entry' => $entry
 	);
 	// Is this transfer for the user list or the general list?
-	if ($owner == 1)
+	if ($owner)
 		array_push($arUserTorrent, $tArray);
 	else
 		array_push($arListTorrent, $tArray);
@@ -368,11 +368,11 @@ $tmpl->setvar('settings_10', $settings[10]);
 $tmpl->setvar('settings_11', $settings[11]);
 
 if (sizeof($arUserTorrent) > 0)
-	$tmpl->setvar('are_user_torrent', 1);
+	$tmpl->setvar('are_user_transfer', 1);
 $boolCond = true;
 if ($cfg['enable_restrictivetview'] == 1)
 	$boolCond = $cfg['isAdmin'];
-$tmpl->setvar('are_torrent', (($boolCond) && (sizeof($arListTorrent) > 0)) ? 1 : 0);
+$tmpl->setvar('are_transfer', (($boolCond) && (sizeof($arListTorrent) > 0)) ? 1 : 0);
 
 // =============================================================================
 // ajax-index
