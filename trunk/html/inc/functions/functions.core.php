@@ -645,6 +645,35 @@ function getSumMaxDownRate() {
 }
 
 /**
+ * Function to load the settings for all transfers. returns ref to array
+ *
+ * @return array-ref
+ */
+function &loadAllTransferSettings() {
+	global $db;
+	$recordset = $db->Execute("SELECT * FROM tf_torrents");
+	$trAry = array();
+	while ($row = $recordset->FetchRow()) {
+		$trAry[$row["torrent"]] = array(
+			"running" => $row["running"],
+			"max_upload_rate" => $row["rate"],
+			"max_download_rate" => $row["drate"],
+			"torrent_dies_when_done" => $row["runtime"],
+			"max_uploads" => $row["maxuploads"],
+			"minport" => $row["minport"],
+			"maxport" => $row["maxport"],
+			"sharekill" => $row["sharekill"],
+			"maxcons" => $row["maxcons"],
+			"savepath" => $row["savepath"],
+			"btclient" => $row["btclient"],
+			"hash" => $row["hash"],
+			"datapath" => $row["datapath"]
+		);
+	}
+	return $trAry;
+}
+
+/**
  * Function to load the settings for a transfer. returns array with settings
  *
  * @param $transfer
@@ -1122,6 +1151,8 @@ function getTransferListArray() {
 	$sortOrder = getRequestVar("so");
 	if ($sortOrder == "")
 		$sortOrder = $cfg["index_page_sortorder"];
+	// transfer-settings
+	$transferSettings =& loadAllTransferSettings();
 	// t-list
 	$arList = getTransferArray($sortOrder);
 	foreach($arList as $entry) {
@@ -1139,7 +1170,7 @@ function getTransferListArray() {
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
-			$settingsAry = loadTransferSettings($entry);
+			$settingsAry = $transferSettings[$entry];
 			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($entry, -5) == ".wget") {
 			// this is wget.

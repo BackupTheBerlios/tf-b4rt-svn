@@ -88,6 +88,7 @@ $tmpl->setvar('sortOrder', (empty($sortOrder)) ? $cfg["index_page_sortorder"] : 
 $arList = getTransferArray($sortOrder);
 $progress_color = "#00ff00";
 $bar_width = "4";
+$transferSettings =& loadAllTransferSettings();
 foreach ($arList as $entry) {
 	// ---------------------------------------------------------------------
 	// displayname
@@ -101,7 +102,7 @@ foreach ($arList as $entry) {
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
 		$owner = IsOwner($cfg["user"], $transferowner);
-		$settingsAry = loadTransferSettings($entry);
+		$settingsAry = $transferSettings[$entry];
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else if (substr($entry, -5) == ".wget") {
 		// this is wget.
