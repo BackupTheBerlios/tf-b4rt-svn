@@ -111,7 +111,7 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 		// link + linklabel
 		if (!empty($link)) {
 			$_tmpl->setvar('link', $link);
-			$_tmpl->setvar('linklabel', (!empty($linklabel)) ? htmlentities($linklabel, ENT_QUOTES) : "OK");
+			$_tmpl->setvar('linklabel', (!empty($linklabel)) ? htmlentities($linklabel, ENT_QUOTES) : "Ok");
 		}
 		// parse template
 		$_tmpl->pparse();

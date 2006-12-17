@@ -20,18 +20,25 @@
 
 *******************************************************************************/
 
-// check for upgrade.php
-if (@file_exists("upgrade.php") === true) {
-	@ob_end_clean();
-	@header("location: upgrade.php");
-	exit();
-}
+// start session
+@session_start();
 
+// file-checks
+// check for upgrade.php
+if (!isset($_SESSION['check']['setup'])) {
+	if (@file_exists("upgrade.php") === true) {
+		@ob_end_clean();
+		@header("location: upgrade.php");
+		exit();
+	}
+}
 // check for setup.php
-if (@file_exists("setup.php") === true) {
-	@ob_end_clean();
-	@header("location: setup.php");
-	exit();
+if (!isset($_SESSION['check']['upgrade'])) {
+	if (@file_exists("setup.php") === true) {
+		@ob_end_clean();
+		@header("location: setup.php");
+		exit();
+	}
 }
 
 // cache
