@@ -30,26 +30,39 @@
 			<td align="center">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-							<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
-								<tmpl_if name="fluxdRunning">
-									<input type="Hidden" name="a" value="stop">
-									<tr><br>
-										<td align="center" colspan="2">
-											<input type="Submit" value="Stop fluxd">
-										<br><br></td>
-									</tr>
+							<tmpl_if name="fluxdSupported" value="1">
+								<form name="controlForm" action="admin.php?op=controlFluxd" method="post">
+									<tmpl_if name="fluxdRunning">
+										<input type="Hidden" name="a" value="stop">
+										<tr>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Stop fluxd">
+												<br><br>
+											</td>
+										</tr>
 									<tmpl_else>
-									<input type="Hidden" name="a" value="start">
-									<tr>
-										<td align="left" width="350" valign="top"><strong>Start fluxd:</strong><br></td>
-									</tr>
-									<tr>
-										<td align="center" colspan="2">
-											<input type="Submit" value="Start fluxd">
-										<br><br></td>
-									</tr>
-								</tmpl_if>
-							</form>
+										<input type="Hidden" name="a" value="start">
+										<tr>
+											<td align="left" width="350" valign="top"><strong>Start fluxd:</strong><br></td>
+										</tr>
+										<tr>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Start fluxd">
+												<br><br>
+											</td>
+										</tr>
+									</tmpl_if>
+								</form>
+							<tmpl_else>
+								<tr>
+									<td align="center" colspan="2">
+										<strong><font color="red">fluxd not supported</font><strong>
+										<br>
+										PHP does not have support for <em>sockets</em>, fluxd cannot work.
+										<br>
+									</td>
+								</tr>
+							</tmpl_if>
 							<tr>
 								<td align="center" colspan="2">
 									<table width="100%" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">

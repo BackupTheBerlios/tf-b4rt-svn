@@ -46,6 +46,10 @@ $message = getRequestVar('m');
 if ($message != "")
 	$tmpl->setvar('message', urldecode($message));
 
+// check for sessions
+$loadedExtensions = get_loaded_extensions();
+$tmpl->setvar('fluxdSupported', (in_array("sockets", $loadedExtensions)) ? 1 : 0);
+
 // fluxd core
 if (Fluxd::isRunning()) {
 	$tmpl->setvar('fluxdRunning', 1);
