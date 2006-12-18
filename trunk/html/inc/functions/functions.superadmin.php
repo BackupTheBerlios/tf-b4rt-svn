@@ -861,8 +861,8 @@ function backupSend($filename, $delete = false) {
 		@unlink($backupFile);
 		echo $data;
 	} else { // read / write file with 8kb-buffer
-		if($handle = fopen($backupFile, 'rb')){
-			while( (! feof($handle)) && (connection_status() == 0) ){
+		if ($handle = fopen($backupFile, 'rb')){
+			while ((!feof($handle)) && (connection_status() == 0)) {
 				print(fread($handle, 8192));
 				flush();
 			}

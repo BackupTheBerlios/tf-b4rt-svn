@@ -15,11 +15,6 @@ $Id$
     enhance all upgrade.php-scripts ("equal" to setup.php).
 
   - (3)
-    rewrite superadmin-update as current implementation is only for a flat dir-
-    tree and not suited for dir-layout of new branch. (so both ends (client +
-    server can currently be seen as "broken"))
-
-  - (3)
     finalize code
 
 
