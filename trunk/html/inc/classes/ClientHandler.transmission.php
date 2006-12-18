@@ -164,7 +164,7 @@ class ClientHandlerTransmission extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrent($transfer) {
-    	global $db;
+    	global $db, $transfers;
         $retVal = array();
         // transfer from stat-file
 		$af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
@@ -210,6 +210,7 @@ class ClientHandlerTransmission extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotal($transfer) {
+    	global $transfers;
         // transfer from stat-file
         $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);

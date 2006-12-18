@@ -24,7 +24,7 @@
  * setVarsFromPersistentSettings
  */
 function setVarsFromPersistentSettings() {
-	global $cfg, $tmpl, $transfer;
+	global $cfg, $tmpl, $transfer, $transfers;
 	// Load saved settings
 	loadTransferSettingsToConfig($transfer);
 	// set settings

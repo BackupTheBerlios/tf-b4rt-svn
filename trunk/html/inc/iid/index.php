@@ -88,21 +88,21 @@ $tmpl->setvar('sortOrder', (empty($sortOrder)) ? $cfg["index_page_sortorder"] : 
 $arList = getTransferArray($sortOrder);
 $progress_color = "#00ff00";
 $bar_width = "4";
-foreach ($arList as $entry) {
+foreach ($arList as $transfer) {
 	// ---------------------------------------------------------------------
 	// displayname
-	$displayname = (strlen($entry) >= 47) ? substr($entry, 0, 44)."..." : $entry;
+	$displayname = (strlen($transfer) >= 47) ? substr($transfer, 0, 44)."..." : $transfer;
 
+	$transferowner = getOwner($transfer);
 	// ---------------------------------------------------------------------
 	// alias / stat
-	$aliasFile = getAliasName($entry).".stat";
-	if (substr($entry, -8) == ".torrent") {
+	$aliasFile = getAliasName($transfer).".stat";
+	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		$isTorrent = true;
-		$transferowner = getOwner($entry);
 		$owner = IsOwner($cfg["user"], $transferowner);
-		if (isset($transfers['settings'][$entry])) {
-			$settingsAry = $transfers['settings'][$entry];
+		if (isset($transfers['settings'][$transfer])) {
+			$settingsAry = $transfers['settings'][$transfer];
 		} else {
 			$settingsAry = array();
 			$settingsAry['btclient'] = $cfg["btclient"];
@@ -113,22 +113,21 @@ foreach ($arList as $entry) {
 			$settingsAry['datapath'] = "";
 		}
 		$af = new AliasFile($aliasFile, $transferowner);
-	} else if (substr($entry, -5) == ".wget") {
+	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$isTorrent = false;
-		$transferowner = getOwner($entry);
 		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
-		$settingsAry['hash'] = $entry;
+		$settingsAry['hash'] = $transfer;
 		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else {
-		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$entry);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($entry));
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = $af->running;
@@ -139,27 +138,27 @@ foreach ($arList as $entry) {
 	$hd = getStatusImage($af);
 
 	// more vars
-	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=".urlencode($entry)."')\">";
+	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=".urlencode($transfer)."')\">";
 
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		$newday = transferListXferUpdate1($entry, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
+		$newday = transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
 
 	// ---------------------------------------------------------------------
 	// injects
 	if(!file_exists($cfg["transfer_file_path"].$aliasFile)) {
 		$transferRunning = 2;
 		$af->running = "2";
-		$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
-		injectAlias($entry);
+		$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+		injectAlias($transfer);
 	}
 
 	// totals-preparation
 	// if downtotal + uptotal + progress > 0
 	if (($settings[2] + $settings[3] + $settings[5]) > 0) {
 		$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
-		$transferTotals = $clientHandler->getTransferTotalOP($entry, $settingsAry['hash'], $af->uptotal, $af->downtotal);
+		$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $af->uptotal, $af->downtotal);
 	}
 
 	// ---------------------------------------------------------------------
@@ -322,7 +321,7 @@ foreach ($arList as $entry) {
 	$tArray = array(
 		'is_owner' => ($cfg['isAdmin']) ? true : $owner,
 		'transferRunning' => $transferRunning,
-		'url_entry' => urlencode($entry),
+		'url_entry' => urlencode($transfer),
 		'hd_image' => $hd->image,
 		'hd_title' => $hd->title,
 		'displayname' => $displayname,
@@ -348,7 +347,7 @@ foreach ($arList as $entry) {
 		'is_no_file' => $is_no_file,
 		'isTorrent' => $isTorrent,
 		'show_run' => $show_run,
-		'entry' => $entry
+		'entry' => $transfer
 	);
 	// Is this transfer for the user list or the general list?
 	if ($owner)

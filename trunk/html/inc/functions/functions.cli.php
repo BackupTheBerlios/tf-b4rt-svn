@@ -169,7 +169,7 @@ function cliPrintTransfers() {
  * @param $transfer name of the Transfer
  */
 function cliStartTransfer($transfer = "") {
-	global $cfg;
+	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
 		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag == 0) {
@@ -202,7 +202,7 @@ function cliStartTransfer($transfer = "") {
  * cliStartTransfers
  */
 function cliStartTransfers() {
-    global $cfg;
+    global $cfg, $transfers;
     printMessage("fluxcli.php", "Starting all transfers ...\n");
 	$transferList = getTorrentListFromFS();
 	foreach ($transferList as $transfer) {
@@ -230,7 +230,7 @@ function cliStartTransfers() {
  * cliResumeTransfers
  */
 function cliResumeTransfers() {
-    global $cfg;
+    global $cfg, $transfers;
     printMessage("fluxcli.php", "Resuming all transfers ...\n");
 	$transferList = getTorrentListFromDB();
 	foreach ($transferList as $transfer) {
@@ -271,7 +271,7 @@ function cliStopTransfers() {
  * @param $transfer name of the Transfer
  */
 function cliStopTransfer($transfer = "") {
-	global $cfg;
+	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
 		$tRunningFlag = isTransferRunning($transfer);
 		if ($tRunningFlag == 0) {
@@ -314,7 +314,7 @@ function cliResetTransfer($transfer = "") {
  * @param $transfer name of the transfer
  */
 function cliDeleteTransfer($transfer = "") {
-	global $cfg;
+	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
 		printMessage("fluxcli.php", "Deleting ".$transfer." ...\n");
 		$cfg["user"] = getOwner($transfer);
@@ -343,7 +343,7 @@ function cliDeleteTransfer($transfer = "") {
  * @param $transfer name of the Transfer
  */
 function cliWipeTransfer($transfer = "") {
-	global $cfg;
+	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
 		printMessage("fluxcli.php", "Wipe ".$transfer." ...\n");
 		$cfg["user"] = getOwner($transfer);

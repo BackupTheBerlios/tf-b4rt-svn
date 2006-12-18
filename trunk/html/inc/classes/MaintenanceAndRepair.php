@@ -270,7 +270,7 @@ class MaintenanceAndRepair
 	 * @return boolean
 	 */
 	function _maintenanceTransfers($trestart = false) {
-		global $cfg, $db;
+		global $cfg, $db, $transfers;
 		// set var
 		$this->_restartTransfers = $trestart;
 		// output
@@ -628,15 +628,15 @@ class MaintenanceAndRepair
 			closedir($dirHandle);
 		}
 		// rewrite stat-files
-		$torrents = getTorrentListFromFS();
-		foreach ($torrents as $torrent) {
-			$alias = getAliasName($torrent);
-			$owner = getOwner($torrent);
-			$btclient = getTransferClient($torrent);
+		$arList = getTransferArray();
+		foreach ($arList as $transfer) {
+			$owner = getOwner($transfer);
+			$btclient = getTransferClient($transfer);
+			$alias = getAliasName($transfer);
 			$af = new AliasFile($alias.".stat", $owner);
 			if (isset($af)) {
 				// output
-				$this->_outputMessage("rewrite stat-file for ".$torrent." ...\n");
+				$this->_outputMessage("rewrite stat-file for ".$transfer." ...\n");
 				$af->running = 0;
 				$af->percent_done = -100.0;
 				$af->time_left = 'Torrent Stopped';

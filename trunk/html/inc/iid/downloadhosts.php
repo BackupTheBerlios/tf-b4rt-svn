@@ -31,14 +31,13 @@ if (!isset($cfg['user'])) {
 
 // request-vars
 $transfer = getRequestVar('transfer');
-$aliasFile = getAliasName($transfer).".stat";
+if (empty($transfer))
+	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
 // alias
 $transferowner = getOwner($transfer);
-if ((!empty($transfer)) && (!empty($aliasFile)))
-	$af = new AliasFile($aliasFile, $transferowner);
-else
-	@error("missing params", "index.php?iid=index", "", array('transfer'));
+$aliasFile = getAliasName($transfer).".stat";
+$af = new AliasFile($aliasFile, $transferowner);
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");

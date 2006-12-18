@@ -79,7 +79,7 @@ function indexStartTransfer($transfer) {
  * @param $interactive (1|0) : is this a interactive startup with dialog ?
  */
 function indexStartTorrent($transfer, $interactive) {
-	global $cfg;
+	global $cfg, $transfers;
 	if ($cfg["enable_file_priority"]) {
 		include_once("inc/functions/functions.setpriority.php");
 		// Process setPriority Request.

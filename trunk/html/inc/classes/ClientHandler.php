@@ -720,7 +720,7 @@ class ClientHandler
      * @param $transfer
      */
     function setVarsFromTransfer($transfer) {
-    	global $cfg;
+    	global $cfg, $transfers;
         $this->transfer = $transfer;
         $this->alias = getAliasName($this->transfer);
         $this->aliasFile = $this->alias.".stat";
@@ -729,7 +729,7 @@ class ClientHandler
         $this->logFilePath = $cfg["transfer_file_path"].$this->alias.".log";
         $this->prioFilePath = $cfg["transfer_file_path"].$this->alias.".prio";
         $this->transferFilePath = $cfg["transfer_file_path"].$this->transfer;
-        $this->owner = getOwner($this->transfer);
+        $this->owner = getOwner($transfer);
     }
 
     // =========================================================================

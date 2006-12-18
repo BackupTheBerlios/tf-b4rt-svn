@@ -1445,7 +1445,7 @@ function waitForTransfer($transfer, $state, $maxWait = 10) {
  * @return message
  */
 function resetTorrentTotals($transfer, $delete = false) {
-	global $cfg, $db;
+	global $cfg, $db, $transfers;
 	$msgs = array();
 	// delete torrent
 	if ($delete == true) {
@@ -1477,7 +1477,7 @@ function resetTorrentTotals($transfer, $delete = false) {
  * @param $transfer name of the torrent
  */
 function deleteTorrentData($transfer) {
-	global $cfg;
+	global $cfg, $transfers;
 	$owner = getOwner($transfer);
 	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
 		require_once('inc/classes/BDecode.php');
@@ -1522,7 +1522,7 @@ function deleteTorrentData($transfer) {
  *		   4096 if dir (lol ~)
  */
 function getTorrentDataSize($transfer) {
-	global $cfg;
+	global $cfg, $transfers;
 	require_once('inc/classes/BDecode.php');
 	$ftorrent = $cfg["transfer_file_path"].$transfer;
 	$fd = fopen($ftorrent, "rd");

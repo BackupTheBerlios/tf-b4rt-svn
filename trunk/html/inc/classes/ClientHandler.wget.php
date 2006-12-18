@@ -127,6 +127,9 @@ class ClientHandlerWget extends ClientHandler
             $this->logMessage($msg."\n", true);
 		}
 
+		// set transfers-cache
+		cacheTransfersSet();
+
 		// return
 		return $resultSuccess;
 	}
@@ -218,6 +221,7 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrent($transfer) {
+    	global $transfers;
         // transfer from stat-file
         $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
@@ -243,6 +247,7 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotal($transfer) {
+    	global $transfers;
         // transfer from stat-file
         $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);

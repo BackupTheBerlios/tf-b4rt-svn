@@ -645,6 +645,19 @@ function getSumMaxDownRate() {
 }
 
 /**
+ * Function to load the owner for all transfers. returns ref to array
+ *
+ * @return array-ref
+ */
+function &loadAllTransferOwner() {
+	$owAry = array();
+	$arList = getTransferArray();
+	foreach ($arList as $transfer)
+		$owAry[$transfer] = getOwner($transfer);
+	return $owAry;
+}
+
+/**
  * Function to load the totals for all transfers. returns ref to array
  *
  * @return array-ref
@@ -776,6 +789,9 @@ function initGlobalTransfersArray() {
 		'rate' => getSumMaxUpRate(),
 		'drate' => getSumMaxDownRate()
 	);
+    // owner
+	$transferOwner =& loadAllTransferOwner();
+	$transfers['owner'] = $transferOwner;
 }
 
 /**
@@ -804,13 +820,17 @@ function isTransferRunning($transfer) {
  * @return string
  */
 function getTransferClient($transfer) {
-	global $cfg, $db;
-	$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
-	if (empty($client)) {
-		return ((substr($transfer, -5) == ".wget"))
-			? "wget"
-			: $cfg["btclient"];
+	global $cfg, $db, $transfers;
+	if (isset($transfers['settings'][$transfer]['btclient'])) {
+		return $transfers['settings'][$transfer]['btclient'];
 	} else {
+		$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
+		if (empty($client)) {
+			$client = ((substr($transfer, -5) == ".wget"))
+				? "wget"
+				: $cfg["btclient"];
+		}
+		$transfers['settings'][$transfer]['btclient'] = $client;
 		return $client;
 	}
 }
@@ -1043,6 +1063,8 @@ function injectAlias($transfer) {
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
 	if ($af->write()) {
+		// set transfers-cache
+		cacheTransfersSet();
 		return true;
 	} else {
         AuditAction($cfg["constants"]["error"], "aliasfile cannot be written when injecting : ".$transfer);
@@ -1097,9 +1119,9 @@ function getTransferArray($sortOrder = '') {
 	if (!$handle)
 		return null;
 	$arList = array();
-	while ($entry = readdir($handle)) {
-		if (($entry{0} != ".") && isValidTransfer($entry))
-			$arList[filemtime($cfg["transfer_file_path"]."/".$entry)] = $entry;
+	while ($transfer = readdir($handle)) {
+		if (($transfer{0} != ".") && isValidTransfer($transfer))
+			$arList[filemtime($cfg["transfer_file_path"]."/".$transfer)] = $transfer;
 	}
 	closedir($handle);
 	// sort transfer-array
@@ -1194,23 +1216,23 @@ function getTransferListArray() {
 		$sortOrder = $cfg["index_page_sortorder"];
 	// t-list
 	$arList = getTransferArray($sortOrder);
-	foreach($arList as $entry) {
+	foreach($arList as $transfer) {
 
 		// ---------------------------------------------------------------------
 		// init some vars
-		$displayname = $entry;
+		$displayname = $transfer;
 		$show_run = true;
+		$transferowner = getOwner($transfer);
 
 		// ---------------------------------------------------------------------
 		// alias / stat
-		$alias = getAliasName($entry).".stat";
-		if (substr($entry, -8) == ".torrent") {
+		$alias = getAliasName($transfer).".stat";
+		if (substr($transfer, -8) == ".torrent") {
 			// this is a torrent-client
 			$isTorrent = true;
-			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
-			if (isset($transfers['settings'][$entry])) {
-				$settingsAry = $transfers['settings'][$entry];
+			if (isset($transfers['settings'][$transfer])) {
+				$settingsAry = $transfers['settings'][$transfer];
 			} else {
 				$settingsAry = array();
 				$settingsAry['btclient'] = $cfg["btclient"];
@@ -1221,18 +1243,17 @@ function getTransferListArray() {
 				$settingsAry['datapath'] = "";
 			}
 			$af = new AliasFile($alias, $transferowner);
-		} else if (substr($entry, -5) == ".wget") {
+		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
 			$isTorrent = false;
-			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
-			$settingsAry['hash'] = $entry;
+			$settingsAry['hash'] = $transfer;
 			$af = new AliasFile($alias, $transferowner);
 		} else {
-			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$entry);
-			@error("Invalid Transfer", "index.php?iid=index", "", array($entry));
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+			@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $af->running;
@@ -1242,22 +1263,22 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			$newday = transferListXferUpdate1($entry, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
+			$newday = transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
 
 		// ---------------------------------------------------------------------
 		// injects
 		if(!file_exists($cfg["transfer_file_path"].$alias)) {
 			$transferRunning = 2;
 			$af->running = "2";
-			$af->size = getDownloadSize($cfg["transfer_file_path"].$entry);
-			injectAlias($entry);
+			$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+			injectAlias($transfer);
 		}
 
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
 			$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
-			$transferTotals = $clientHandler->getTransferTotalOP($entry, $settingsAry['hash'], $af->uptotal, $af->downtotal);
+			$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $af->uptotal, $af->downtotal);
 		}
 
 		// ---------------------------------------------------------------------
@@ -1312,7 +1333,7 @@ function getTransferListArray() {
 		$transferAry = array();
 
 		// ================================================================ name
-		array_push($transferAry, $entry);
+		array_push($transferAry, $transfer);
 
 		// =============================================================== owner
 		if ($settings[0] != 0)
@@ -1547,7 +1568,7 @@ function getServerStats() {
  *
  */
 function getTransferDetails($transfer, $full, $alias = "") {
-	global $cfg;
+	global $cfg, $transfers;
 	$details = array();
 	// common functions
 	require_once('inc/functions/functions.common.php');
@@ -1556,21 +1577,26 @@ function getTransferDetails($transfer, $full, $alias = "") {
 		$aliasName = getAliasName($transfer);
 		$alias = $aliasName.".stat";
 	}
+	$transferowner = getOwner($transfer);
 	// alias / stat
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
-		$transferowner = getOwner($transfer);
-		$transferExists = loadTransferSettingsToConfig($transfer);
-		if (!$transferExists) {
-			// new torrent
-			$cfg['hash'] = $transfer;
+		if (isset($transfers['settings'][$transfer])) {
+			$settingsAry = $transfers['settings'][$transfer];
+		} else {
+			$settingsAry = array();
+			$settingsAry['btclient'] = $cfg["btclient"];
+			$settingsAry['hash'] = "";
+			$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].$transferowner.'/'
+				: $cfg["path"].$cfg["path_incoming"].'/';
+			$settingsAry['datapath'] = "";
 		}
 		$af = new AliasFile($alias, $transferowner);
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
-		$transferowner = getOwner($transfer);
-		$cfg['btclient'] = "wget";
-		$cfg['hash'] = $transfer;
+		$settingsAry['btclient'] = "wget";
+		$settingsAry['hash'] = $transfer;
 		$af = new AliasFile($alias, $transferowner);
 	} else {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
@@ -1581,9 +1607,9 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// totals
 	$afu = $af->uptotal;
 	$afd = $af->downtotal;
-	$clientHandler = ClientHandler::getInstance($cfg['btclient']);
-	$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $cfg['hash'], $afu, $afd);
-	$totals = $clientHandler->getTransferTotalOP($transfer, $cfg['hash'], $afu, $afd);
+	$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+	$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
+	$totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 	// running
 	$running = $af->running;
 	$details['running'] = $running;
@@ -1805,33 +1831,35 @@ function IsUser($user) {
 }
 
 /**
- * getOwner
+ * get Owner
  *
- * @param $file
+ * @param $transfer
  * @return string
  */
-function getOwner($file) {
-	global $cfg, $db;
-	$rtnValue = "n/a";
-	// Check log to see what user has a history with this file
-	$user_id = $db->GetOne("SELECT user_id FROM tf_log WHERE file=".$db->qstr($file)." AND (action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["reset_owner"]).") ORDER BY time DESC");
-	$rtnValue = ($user_id != "")
-		? $user_id
-		: resetOwner($file); // try and get the owner from the stat file
-	return $rtnValue;
+function getOwner($transfer) {
+	global $cfg, $db, $transfers;
+	if (isset($transfers['owner'][$transfer])) {
+		return $transfers['owner'][$transfer];
+	} else {
+		// Check log to see what user has a history with this file
+		$transfers['owner'][$transfer] = $db->GetOne("SELECT user_id FROM tf_log WHERE file=".$db->qstr($transfer)." AND (action=".$db->qstr($cfg["constants"]["file_upload"])." OR action=".$db->qstr($cfg["constants"]["url_upload"])." OR action=".$db->qstr($cfg["constants"]["reset_owner"]).") ORDER BY time DESC");
+		return ($transfers['owner'][$transfer] != "")
+			? $transfers['owner'][$transfer]
+			: resetOwner($transfer); // try and get the owner from the stat file;
+	}
 }
 
 /**
- * resetOwner
+ * reset Owner
  *
- * @param $file
+ * @param $transfer
  * @return string
  */
-function resetOwner($file) {
-	global $cfg, $db;
+function resetOwner($transfer) {
+	global $cfg, $db, $transfers;
 	// log entry has expired so we must renew it
-	$rtnValue = "";
-	$alias = getAliasName($file).".stat";
+	$rtnValue = "n/a";
+	$alias = getAliasName($transfer).".stat";
 	if (file_exists($cfg["transfer_file_path"].$alias)) {
 		$af = new AliasFile($alias, $cfg["user"]);
 		$rtnValue = (IsUser($af->transferowner))
@@ -1839,7 +1867,7 @@ function resetOwner($file) {
 			: GetSuperAdmin(); /* no owner found, so the super admin will now own it */
 		$rec = array(
 						'user_id' => $rtnValue,
-						'file' => $file,
+						'file' => $transfer,
 						'action' => $cfg["constants"]["reset_owner"],
 						'ip' => $cfg['ip'],
 						'ip_resolved' => gethostbyaddr($cfg['ip']),
@@ -1852,6 +1880,7 @@ function resetOwner($file) {
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 	}
+	$transfers['owner'][$transfer] = $rtnValue;
 	return $rtnValue;
 }
 

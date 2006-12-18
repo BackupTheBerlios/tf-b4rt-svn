@@ -231,6 +231,7 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $alias
      */
     function _updateStatFile($transfer, $alias) {
+    	global $transfers;
         $the_user = getOwner($transfer);
         $btclient = getTransferClient($transfer);
         $modded = 0;
@@ -265,6 +266,8 @@ class FluxdQmgr extends FluxdServiceMod
         }
         // Write out the new Stat File
         $af->write();
+		// set transfers-cache
+		cacheTransfersSet();
     }
 
 }

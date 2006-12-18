@@ -176,6 +176,7 @@ class ClientHandlerTornado extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrent($transfer) {
+    	global $transfers;
         // transfer from stat-file
         $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
@@ -201,7 +202,7 @@ class ClientHandlerTornado extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotal($transfer) {
-    	global $db;
+    	global $db, $transfers;
         $retVal = array();
         // transfer from db
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";

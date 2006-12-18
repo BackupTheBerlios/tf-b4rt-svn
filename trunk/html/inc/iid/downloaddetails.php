@@ -31,34 +31,37 @@ if (!isset($cfg['user'])) {
 
 // request-vars
 $transfer = getRequestVar('transfer');
-$aliasFile = getAliasName($transfer).".stat";
+if (empty($transfer))
+	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
-// check
-if (!empty($transfer)) {
-	$tmpl->setvar('transfer', $transfer);
-	$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
-} else {
-	@error("missing params", "index.php?iid=index", "", array('transfer'));
-}
+// set some vars
+$tmpl->setvar('transfer', $transfer);
+$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 
 // alias / stat
+$transferowner = getOwner($transfer);
+$aliasFile = getAliasName($transfer).".stat";
 if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
-	$transferowner = getOwner($transfer);
-	$transferExists = loadTransferSettingsToConfig($transfer);
-	if (!$transferExists) {
-		// new t
-		$cfg['hash'] = $transfer;
+	if (isset($transfers['settings'][$transfer])) {
+		$settingsAry = $transfers['settings'][$transfer];
+	} else {
+		$settingsAry = array();
+		$settingsAry['btclient'] = $cfg["btclient"];
+		$settingsAry['hash'] = "";
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
+		$settingsAry['datapath'] = "";
 	}
 	$af = new AliasFile($aliasFile, $transferowner);
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
-	$transferowner = getOwner($transfer);
-	$cfg['btclient'] = "wget";
-	$cfg['hash'] = $transfer;
+	$settingsAry['btclient'] = "wget";
+	$settingsAry['hash'] = $transfer;
 	$af = new AliasFile($aliasFile, $transferowner);
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
@@ -68,9 +71,9 @@ if (substr($transfer, -8) == ".torrent") {
 // totals
 $afu = $af->uptotal;
 $afd = $af->downtotal;
-$clientHandler = ClientHandler::getInstance($cfg['btclient']);
-$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $cfg['hash'], $afu, $afd);
-$totals = $clientHandler->getTransferTotalOP($transfer, $cfg['hash'], $afu, $afd);
+$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
+$totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 // owner
 $tmpl->setvar('transferowner', $transferowner);
 
