@@ -192,19 +192,14 @@ class ClientHandlerTransmission extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        global $db;
+        global $transfers;
         $retVal = array();
-        // transfer from stat-file
-        $retVal["uptotal"] = $afu;
-        $retVal["downtotal"] = $afd;
-        // transfer from db
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
-        $result = $db->Execute($sql);
-        $row = $result->FetchRow();
-        if (!empty($row)) {
-            $retVal["uptotal"] -= $row["uptotal"];
-            $retVal["downtotal"] -= $row["downtotal"];
-        }
+        $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+        	? $afu - $transfers['totals'][$tid]['uptotal']
+        	: $afu;
+        $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
+        	? $afd - $transfers['totals'][$tid]['downtotal']
+        	: $afd;
         return $retVal;
     }
 

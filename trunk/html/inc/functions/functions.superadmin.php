@@ -416,13 +416,15 @@ function setWebappLock($lock) {
  *
  * @return true or function exits with error
  */
-function resetTorentTotals() {
+function resetAllTorentTotals() {
 	// get ado-connection
 	$dbCon = getAdoConnection();
 	if (!$dbCon) {
 		return $dbCon->ErrorMsg();
 	} else {
 		$dbCon->Execute("DELETE FROM tf_torrent_totals");
+		// set transfers-cache
+		cacheTransfersSet();
 		if ($dbCon->ErrorNo() == 0) {
 			// close ado-connection
 			$dbCon->Close();

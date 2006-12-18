@@ -547,6 +547,8 @@ class ClientHandler
 			? "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'"
 			: "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal ) VALUES ('".$tid."', '".$transferTotals["uptotal"]."', '".$transferTotals["downtotal"]."')";
 		$db->Execute($sql);
+		// set transfers-cache
+		cacheTransfersSet();
 	}
 
 	/**

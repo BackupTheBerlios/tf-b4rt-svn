@@ -533,7 +533,7 @@ if ($onLoad != "") {
 // connections
 if ($cfg["index_page_connections"] != 0) {
 	$netstatConnectionsSum = @netstatConnectionsSum();
-	$netstatConnectionsMax = "(".@getSumMaxCons().")";
+	$netstatConnectionsMax = "(".$transfers['sum']['maxcons'].")";
 } else {
 	$netstatConnectionsSum = "n/a";
 	$netstatConnectionsMax = "";
@@ -653,15 +653,12 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('limitUser', $cfg["fluxd_Qmgr_maxUserTorrents"]);
 	}
 	$tmpl->setvar('_OTHERSERVERSTATS', $cfg['_OTHERSERVERSTATS']);
-	$sumMaxUpRate = getSumMaxUpRate();
-	$sumMaxDownRate = getSumMaxDownRate();
-	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
 	$tmpl->setvar('downloadspeed1', @number_format($cfg["total_download"], 2));
-	$tmpl->setvar('downloadspeed11', @number_format($sumMaxDownRate, 2));
+	$tmpl->setvar('downloadspeed11', @number_format($transfers['sum']['drate'], 2));
 	$tmpl->setvar('uploadspeed1', @number_format($cfg["total_upload"], 2));
-	$tmpl->setvar('uploadspeed11', @number_format($sumMaxUpRate, 2));
+	$tmpl->setvar('uploadspeed11', @number_format($transfers['sum']['rate'], 2));
 	$tmpl->setvar('totalspeed1', @number_format($cfg["total_download"]+$cfg["total_upload"], 2));
-	$tmpl->setvar('totalspeed11', @number_format($sumMaxRate, 2));
+	$tmpl->setvar('totalspeed11', @number_format($transfers['sum']['rate'] + $transfers['sum']['drate'], 2));
 	$tmpl->setvar('id_connections1', $netstatConnectionsSum);
 	$tmpl->setvar('id_connections11', $netstatConnectionsMax);
 	$tmpl->setvar('drivespace1', $cfg['freeSpaceFormatted']);

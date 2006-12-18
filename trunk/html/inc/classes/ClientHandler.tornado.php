@@ -231,22 +231,14 @@ class ClientHandlerTornado extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotalOP($transfer, $tid, $afu, $afd) {
-        global $db;
+        global $transfers;
         $retVal = array();
-        // transfer from db
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$tid."'";
-        $result = $db->Execute($sql);
-        $row = $result->FetchRow();
-        if (empty($row)) {
-        	$retVal["uptotal"] = 0;
-            $retVal["downtotal"] = 0;
-        } else {
-            $retVal["uptotal"] = $row["uptotal"];
-            $retVal["downtotal"] = $row["downtotal"];
-        }
-        // transfer from stat-file
-        $retVal["uptotal"] += $afu;
-        $retVal["downtotal"] += $afd;
+        $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+        	? $transfers['totals'][$tid]['uptotal'] + $afu
+        	: $afu;
+        $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
+        	? $transfers['totals'][$tid]['downtotal'] + $afd
+        	: $afd;
         return $retVal;
     }
 

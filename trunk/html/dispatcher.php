@@ -130,6 +130,8 @@ switch ($action) {
     case "maintenance":
 		require_once("inc/classes/MaintenanceAndRepair.php");
 		MaintenanceAndRepair::maintenance((getRequestVar('trestart') == "true") ? true : false);
+		// set transfers-cache
+		cacheTransfersSet();
     	break;
 
 /*******************************************************************************

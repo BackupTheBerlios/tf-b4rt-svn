@@ -1344,6 +1344,8 @@ function deleteTransferSettings($transfer) {
 	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$transfer."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// set transfers-cache
+	cacheTransfersSet();
 	return true;
 }
 
@@ -1392,6 +1394,8 @@ function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $
 				   )";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// set transfers-cache
+	cacheTransfersSet();
 	return true;
 }
 
@@ -1401,9 +1405,11 @@ function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $
  * @param $transfer name of the torrent
  */
 function stopTransferSettings($transfer) {
-  global $db;
-  $db->Execute("UPDATE tf_torrents SET running = '0' WHERE torrent = '".$transfer."'");
-  return true;
+	global $db;
+	$db->Execute("UPDATE tf_torrents SET running = '0' WHERE torrent = '".$transfer."'");
+	// set transfers-cache
+	cacheTransfersSet();
+	return true;
 }
 
 /**
@@ -1460,6 +1466,8 @@ function resetTorrentTotals($transfer, $delete = false) {
 	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// set transfers-cache
+	cacheTransfersSet();
 	return $msgs;
 }
 
@@ -1540,7 +1548,7 @@ function getTorrentDataSize($transfer) {
 /**
  * gets datapath of a torrent.
  * this should not be called external if its no must, use cached value in
- * tf_torrents if possible.
+ * db if possible.
  *
  * @param $transfer name of the torrent
  * @return var with torrent-datapath or empty string on error

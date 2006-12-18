@@ -758,6 +758,27 @@ function loadTransferSettingsToConfig($transfer) {
 }
 
 /**
+ * initGlobalTransfersArray
+ */
+function initGlobalTransfersArray() {
+	global $transfers;
+	// transfers
+	$transfers = array();
+	// settings
+	$transferSettings =& loadAllTransferSettings();
+	$transfers['settings'] = $transferSettings;
+	// totals
+	$transferTotals =& loadAllTransferTotals();
+	$transfers['totals'] = $transferTotals;
+	// sum
+	$transfers['sum'] = array(
+		'maxcons' => getSumMaxCons(),
+		'rate' => getSumMaxUpRate(),
+		'drate' => getSumMaxDownRate()
+	);
+}
+
+/**
  * checks if transfer is running by checking for existence of pid-file.
  *
  * @param $transfer name of the transfer
@@ -872,7 +893,7 @@ function getTorrentMetaInfo($transfer) {
 /**
  * gets hash of a torrent
  * this should not be called external if its no must, use cached value in
- * tf_torrents if possible.
+ * db if possible.
  *
  * @param $transfer name of the torrent
  * @return var with torrent-hash
@@ -1152,27 +1173,6 @@ function getTransferListHeadArray($settings = null) {
 		array_push($retVal, "Client");
 	// return
 	return $retVal;
-}
-
-/**
- * initGlobalTransfersArray
- */
-function initGlobalTransfersArray() {
-	global $transfers;
-	// transfers
-	$transfers = array();
-	// settings
-	$transferSettings =& loadAllTransferSettings();
-	$transfers['settings'] = $transferSettings;
-	// totals
-	$transferTotals =& loadAllTransferTotals();
-	$transfers['totals'] = $transferTotals;
-	// sum
-	$transfers['sum'] = array(
-		'maxcons' => getSumMaxCons(),
-		'rate' => getSumMaxUpRate(),
-		'drate' => getSumMaxDownRate()
-	);
 }
 
 /**

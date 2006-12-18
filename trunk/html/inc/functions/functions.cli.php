@@ -120,7 +120,7 @@ function cliPrintNetStat() {
  * cliPrintTransfers
  */
 function cliPrintTransfers() {
-	global $cfg, $db;
+	global $cfg, $db, $transfers;
 	echo "\n";
     echo "----------------------------------------\n";
 	echo "      torrentflux-b4rt-Transfers        \n";
@@ -155,14 +155,11 @@ function cliPrintTransfers() {
         $cfg["total_download"] = 0;
     if (! array_key_exists("total_upload", $cfg))
         $cfg["total_upload"] = 0;
-	$sumMaxUpRate = getSumMaxUpRate();
-	$sumMaxDownRate = getSumMaxDownRate();
-	$sumMaxRate = $sumMaxUpRate + $sumMaxDownRate;
 	echo "\n";
-	echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format($cfg["total_download"], 2).' ('.number_format($sumMaxDownRate, 2).') kB/s'."\n";
-	echo $cfg['_UPLOADSPEED']."\t".': '.number_format($cfg["total_upload"], 2).' ('.number_format($sumMaxUpRate, 2).') kB/s'."\n";
-	echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' ('.number_format($sumMaxRate, 2).') kB/s'."\n";
-	echo $cfg['_ID_CONNECTIONS']."\t".': '.netstatConnectionsSum().' ('.getSumMaxCons().')'."\n";
+	echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format($cfg["total_download"], 2).' ('.number_format($transfers['sum']['drate'], 2).') kB/s'."\n";
+	echo $cfg['_UPLOADSPEED']."\t".': '.number_format($cfg["total_upload"], 2).' ('.number_format($transfers['sum']['rate'], 2).') kB/s'."\n";
+	echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' ('.number_format($transfers['sum']['rate'] + $transfers['sum']['drate'], 2).') kB/s'."\n";
+	echo $cfg['_ID_CONNECTIONS']."\t".': '.netstatConnectionsSum().' ('.$transfers['sum']['maxcons'].')'."\n";
 	echo "\n";
 }
 

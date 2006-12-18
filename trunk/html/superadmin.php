@@ -1009,7 +1009,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Reset - torrent-totals";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Reset of torrent-totals';
-				$result = resetTorentTotals();
+				$result = resetAllTorentTotals();
 				if ($result === true)
 					$htmlMain .= ' <font color="green">done</font>';
 				else
