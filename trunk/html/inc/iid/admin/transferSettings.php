@@ -49,6 +49,7 @@ $tmpl->setvar('torrent_dies_when_done', $cfg["torrent_dies_when_done"]);
 $tmpl->setvar('sharekill', $cfg["sharekill"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('skiphashcheck', $cfg["skiphashcheck"]);
+$tmpl->setvar('enable_sharekill', $cfg["enable_sharekill"]);
 // wget
 $tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('wget_limit_rate', $cfg["wget_limit_rate"]);

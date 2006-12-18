@@ -164,6 +164,22 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable cumulative sharekill (B+T+M)</strong><br>
+									Recalc the sharekill-param passed to clients on restart based on total amount
+									uploaded. (including previous sessions)
+								</td>
+								<td valign="top">
+									<select name="enable_sharekill">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_sharekill" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable File Priority (B)</strong><br>
 									When enabled, users will be allowed to select particular files from the torrent to download.:
 								</td>

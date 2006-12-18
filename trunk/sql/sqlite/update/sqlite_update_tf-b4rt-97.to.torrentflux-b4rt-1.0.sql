@@ -172,7 +172,6 @@ INSERT INTO tf_settings VALUES ('skiphashcheck','0');
 INSERT INTO tf_settings VALUES ('enable_umask','0');
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','tf');
---
 INSERT INTO tf_settings VALUES ('bin_vlc','/usr/local/bin/vlc');
 INSERT INTO tf_settings VALUES ('debuglevel','0');
 INSERT INTO tf_settings VALUES ('docroot','/var/www/');
@@ -206,6 +205,7 @@ INSERT INTO tf_settings VALUES ('transfer_profile_level','2');
 INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
 INSERT INTO tf_settings VALUES ('downloadhosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
+INSERT INTO tf_settings VALUES ('enable_sharekill','1');
 INSERT INTO tf_settings VALUES ('fluxd_dbmode','php');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
