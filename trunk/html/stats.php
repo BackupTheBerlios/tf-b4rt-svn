@@ -89,12 +89,24 @@ require_once('inc/functions/functions.core.php');
 // stats-functions
 require_once('inc/functions/functions.stats.php');
 
+// start session
+@session_start();
+
 // config
 if ((isset($_SESSION['user'])) && (cacheIsSet($_SESSION['user']))) {
+	// db-config
+	require_once('inc/config/config.db.php');
+	// initialize database
+	dbInitialize();
+	// init cache
 	cacheInit($_SESSION['user']);
+	// init transfers-cache
+	cacheTransfersInit();
 } else {
 	// main.core
 	require_once('inc/main.core.php');
+	// set transfers-cache
+	cacheTransfersSet();
 }
 
 // public-stats-switch
@@ -103,9 +115,17 @@ switch ($cfg['stats_enable_public']) {
 		// xfer functions
 		if ($cfg['enable_xfer'] == 1)
 			require_once('inc/functions/functions.xfer.php');
-		// load default-language if cache not set
-		if (!(cacheIsSet($_SESSION['user'])))
+		// load default-language and transfers if cache not set
+		if ((!isset($_SESSION['user'])) || (!(cacheIsSet($_SESSION['user'])))) {
+			// common functions
+			require_once('inc/functions/functions.common.php');
+			// lang file
 			loadLanguageFile($cfg["default_language"]);
+		}
+		// Fluxd
+		Fluxd::initialize();
+		// Qmgr
+		FluxdServiceMod::initializeServiceMod('Qmgr');
 		// public stats... show all .. we set the user to superadmin
 		$superAdm = GetSuperAdmin();
 		if ((isset($superAdm)) && ($superAdm != "")) {

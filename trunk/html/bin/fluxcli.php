@@ -54,6 +54,15 @@ require_once('inc/functions/functions.all.php');
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
+// transfers-array
+initGlobalTransfersArray();
+
+// Fluxd
+Fluxd::initialize();
+
+// Qmgr
+FluxdServiceMod::initializeServiceMod('Qmgr');
+
 // config
 $cfg["ip"] = '127.0.0.1';
 $_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;

@@ -24,6 +24,7 @@
   webapp-cache :
   dont change this unless you know what you are doing.
   dont use shm on multi-user-installs. it is not supported.
+  dont use shm at all now as its not working due to extensions.
 */
 
 // no cache

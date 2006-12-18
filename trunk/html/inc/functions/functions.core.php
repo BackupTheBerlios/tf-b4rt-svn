@@ -645,6 +645,26 @@ function getSumMaxDownRate() {
 }
 
 /**
+ * Function to load the totals for all transfers. returns ref to array
+ *
+ * @return array-ref
+ */
+function &loadAllTransferTotals() {
+	global $db;
+	$recordset = $db->Execute("SELECT * FROM tf_torrent_totals");
+	$toAry = array();
+	while ($row = $recordset->FetchRow()) {
+		if (strlen($row["tid"]) == 40) {
+			$toAry[$row["tid"]] = array(
+				"uptotal" => $row["uptotal"],
+				"downtotal" => $row["downtotal"]
+			);
+		}
+	}
+	return $toAry;
+}
+
+/**
  * Function to load the settings for all transfers. returns ref to array
  *
  * @return array-ref
@@ -1135,12 +1155,33 @@ function getTransferListHeadArray($settings = null) {
 }
 
 /**
+ * initGlobalTransfersArray
+ */
+function initGlobalTransfersArray() {
+	global $transfers;
+	// transfers
+	$transfers = array();
+	// settings
+	$transferSettings =& loadAllTransferSettings();
+	$transfers['settings'] = $transferSettings;
+	// totals
+	$transferTotals =& loadAllTransferTotals();
+	$transfers['totals'] = $transferTotals;
+	// sum
+	$transfers['sum'] = array(
+		'maxcons' => getSumMaxCons(),
+		'rate' => getSumMaxUpRate(),
+		'drate' => getSumMaxDownRate()
+	);
+}
+
+/**
  * This method gets the list of transfer
  *
  * @return array
  */
 function getTransferListArray() {
-	global $cfg, $db;
+	global $cfg, $db, $transfers;
 	$kill_id = "";
 	$lastUser = "";
 	$arUserTorrent = array();
@@ -1151,8 +1192,6 @@ function getTransferListArray() {
 	$sortOrder = getRequestVar("so");
 	if ($sortOrder == "")
 		$sortOrder = $cfg["index_page_sortorder"];
-	// transfer-settings
-	$transferSettings =& loadAllTransferSettings();
 	// t-list
 	$arList = getTransferArray($sortOrder);
 	foreach($arList as $entry) {
@@ -1170,8 +1209,8 @@ function getTransferListArray() {
 			$isTorrent = true;
 			$transferowner = getOwner($entry);
 			$owner = IsOwner($cfg["user"], $transferowner);
-			if (isset($transferSettings[$entry])) {
-				$settingsAry = $transferSettings[$entry];
+			if (isset($transfers['settings'][$entry])) {
+				$settingsAry = $transfers['settings'][$entry];
 			} else {
 				$settingsAry = array();
 				$settingsAry['btclient'] = $cfg["btclient"];

@@ -88,7 +88,6 @@ $tmpl->setvar('sortOrder', (empty($sortOrder)) ? $cfg["index_page_sortorder"] : 
 $arList = getTransferArray($sortOrder);
 $progress_color = "#00ff00";
 $bar_width = "4";
-$transferSettings =& loadAllTransferSettings();
 foreach ($arList as $entry) {
 	// ---------------------------------------------------------------------
 	// displayname
@@ -102,8 +101,8 @@ foreach ($arList as $entry) {
 		$isTorrent = true;
 		$transferowner = getOwner($entry);
 		$owner = IsOwner($cfg["user"], $transferowner);
-		if (isset($transferSettings[$entry])) {
-			$settingsAry = $transferSettings[$entry];
+		if (isset($transfers['settings'][$entry])) {
+			$settingsAry = $transfers['settings'][$entry];
 		} else {
 			$settingsAry = array();
 			$settingsAry['btclient'] = $cfg["btclient"];

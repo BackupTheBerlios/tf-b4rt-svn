@@ -150,8 +150,8 @@ switch ($action) {
 		}
 		// stop all
 		$dispatcherMessages = array();
-    	$transfers = getTorrentListFromFS();
-    	foreach ($transfers as $transfer) {
+    	$transferList = getTorrentListFromFS();
+    	foreach ($transferList as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
             if ($tRunningFlag != 0) {
                 $owner = getOwner($transfer);
@@ -175,8 +175,8 @@ switch ($action) {
 		}
 		// resume all
 		$dispatcherMessages = array();
-    	$transfers = getTorrentListFromDB();
-    	foreach ($transfers as $transfer) {
+    	$transferList = getTorrentListFromDB();
+    	foreach ($transferList as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
             if ($tRunningFlag == 0) {
                 $owner = getOwner($transfer);
@@ -205,8 +205,8 @@ switch ($action) {
 		}
 		// start all
 		$dispatcherMessages = array();
-    	$transfers = getTorrentListFromFS();
-    	foreach ($transfers as $transfer) {
+    	$transferList = getTorrentListFromFS();
+    	foreach ($transferList as $transfer) {
             $tRunningFlag = isTransferRunning($transfer);
             if ($tRunningFlag == 0) {
                 $owner = getOwner($transfer);

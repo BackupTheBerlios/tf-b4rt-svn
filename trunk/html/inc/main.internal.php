@@ -42,6 +42,8 @@ if (isset($_SESSION['user'])) {
 		require_once('inc/functions/functions.core.php');
 		// init cache
 		cacheInit($currentUser);
+		// init transfers-cache
+		cacheTransfersInit();
 		// initialize database
 		dbInitialize();
 		// Free space in MB
@@ -186,6 +188,9 @@ if (!(cacheIsSet($currentUser))) {
 	// maintenance-run
 	require_once("inc/classes/MaintenanceAndRepair.php");
 	MaintenanceAndRepair::maintenance(false);
+
+	// set transfers-cache
+	cacheTransfersSet();
 
 	// set session-settings
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;

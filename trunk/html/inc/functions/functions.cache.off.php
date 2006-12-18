@@ -20,6 +20,10 @@
 
 *******************************************************************************/
 
+/*******************************************************************************
+ * config
+ ******************************************************************************/
+
 /**
  * check if cache set
  *
@@ -50,5 +54,32 @@ function cacheSet($username) {}
  * @param $username
  */
 function cacheFlush($username = "") {}
+
+/*******************************************************************************
+ * transfer
+ ******************************************************************************/
+
+/**
+ * get from cache
+ *
+ * @param $username
+ * @return array-ref
+ */
+function &cacheTransfersGet($username) {
+	$transferSettings = $_SESSION['cache_transfers'][$username]['settings'];
+	return $transferSettings;
+}
+
+/**
+ * flush the cache
+ *
+ * @param $username
+ */
+function cacheTransfersFlush($username = "") {
+	if (empty($username))
+		unset($_SESSION['cache_transfers']);
+	else
+		unset($_SESSION['cache_transfers'][$username]);
+}
 
 ?>

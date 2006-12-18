@@ -207,8 +207,8 @@ function cliStartTransfer($transfer = "") {
 function cliStartTransfers() {
     global $cfg;
     printMessage("fluxcli.php", "Starting all transfers ...\n");
-	$transfers = getTorrentListFromFS();
-	foreach ($transfers as $transfer) {
+	$transferList = getTorrentListFromFS();
+	foreach ($transferList as $transfer) {
         $tRunningFlag = isTransferRunning($transfer);
         if ($tRunningFlag == 0) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
@@ -235,8 +235,8 @@ function cliStartTransfers() {
 function cliResumeTransfers() {
     global $cfg;
     printMessage("fluxcli.php", "Resuming all transfers ...\n");
-	$transfers = getTorrentListFromDB();
-	foreach ($transfers as $transfer) {
+	$transferList = getTorrentListFromDB();
+	foreach ($transferList as $transfer) {
         $tRunningFlag = isTransferRunning($transfer);
         if ($tRunningFlag == 0) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
@@ -261,8 +261,8 @@ function cliResumeTransfers() {
  * cliStopTransfers
  */
 function cliStopTransfers() {
-	$transfers = getTorrentListFromFS();
-	foreach ($transfers as $transfer) {
+	$transferList = getTorrentListFromFS();
+	foreach ($transferList as $transfer) {
 		if (isTransferRunning($transfer))
 			cliStopTransfer($transfer);
 	}
