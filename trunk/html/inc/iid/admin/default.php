@@ -29,6 +29,9 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// Image class
+require_once('inc/classes/Image.php');
+
 // readrss functions
 require_once('inc/functions/functions.readrss.php');
 
@@ -151,6 +154,21 @@ if ($register_globals) {
 } else {
 	$tmpl->setvar('server_ini_register_globals', "off");
 	$tmpl->setvar('server_ini_register_globals_state', 1);
+}
+$imageSupported = Image::isSupported();
+$imageTypes = array();
+if (Image::isTypeSupported(IMG_GIF))
+	array_push($imageTypes, "gif");
+if (Image::isTypeSupported(IMG_PNG))
+	array_push($imageTypes, "png");
+if (Image::isTypeSupported(IMG_JPG))
+	array_push($imageTypes, "jpg");
+if ($imageSupported) {
+	$tmpl->setvar('server_image', implode("/", $imageTypes));
+	$tmpl->setvar('server_image_state', 1);
+} else {
+	$tmpl->setvar('server_image', "none");
+	$tmpl->setvar('server_image_state', 0);
 }
 
 // R: db-settings

@@ -243,6 +243,18 @@
 									</font>
 								</td>
 							</tr>
+							<tr>
+								<td bordercolor="#96BFE0"><strong>imagetypes :</strong></td>
+								<td align="right">
+									<tmpl_if name="server_image_state" value="1">
+										<font color="green">
+									<tmpl_else>
+										<font color="red">
+									</tmpl_if>
+									<tmpl_var name="server_image">
+									</font>
+								</td>
+							</tr>
 						</table>
 					</td>
 				</tr>
