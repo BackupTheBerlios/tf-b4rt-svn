@@ -1,4 +1,4 @@
-# $Id: common.mk 1142 2006-11-28 21:46:28Z joshe $
+# $Id: common.mk 1202 2006-12-14 03:17:23Z titer $
 
 TMPCFLAGS   = -g -Wall -W -O3 -funroll-loops -D_FILE_OFFSET_BITS=64 \
               -D_LARGEFILE_SOURCE -D_GNU_SOURCE \
@@ -79,7 +79,7 @@ define INSTALL_MAN_RULE
 	@$(CP) $< $(DESTDIR)$(PREFIX)/man/man1/
 endef
 
-RM    = rm -Rf
-CP    = cp -f
-MKDIR = mkdir -p
-MAKE += --no-print-directory
+RM       = rm -Rf
+CP       = cp -f
+MKDIR    = mkdir -p
+MAKEARGS = --no-print-directory

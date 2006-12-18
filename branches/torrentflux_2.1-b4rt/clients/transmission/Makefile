@@ -1,4 +1,4 @@
-# $Id: Makefile 620 2006-07-16 19:39:23Z titer $
+# $Id: Makefile 1202 2006-12-14 03:17:23Z titer $
 
 include mk/common.mk
 
@@ -17,17 +17,22 @@ mk/version.mk: FORCE
 FORCE:
 
 # Now call the Makefile that'll really build
+# OS X has its special Makefile that wraps to Xcode
 
 -include mk/config.mk
-REALMAKE = $(MAKE) -f mk/default.mk
+ifneq ($(SYSTEM),Darwin)
+MAKEARGS += -f mk/default.mk
+else
+MAKEARGS += -f mk/osx.mk
+endif
 
 all: required
-	@$(REALMAKE) all
+	@$(MAKE) $(MAKEARGS) all
 clean: required
-	@$(REALMAKE) clean
-install: required
-	@$(REALMAKE) install
-package: required
-	@$(REALMAKE) package
-package-release: required
-	@$(REALMAKE) package-release
+	@$(MAKE) $(MAKEARGS) clean
+install: all
+	@$(MAKE) $(MAKEARGS) install
+package: all
+	@$(MAKE) $(MAKEARGS) package
+package-release: all
+	@$(MAKE) $(MAKEARGS) package-release

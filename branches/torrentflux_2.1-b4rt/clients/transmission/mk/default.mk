@@ -1,4 +1,4 @@
-# $Id: default.mk 1098 2006-11-16 22:25:45Z titer $
+# $Id: default.mk 1202 2006-12-14 03:17:23Z titer $
 
 include mk/config.mk
 include mk/common.mk
@@ -15,29 +15,29 @@ all: $(TARGETS)
 
 .lib:
 	@echo "* Building libtransmission"
-	@$(MAKE) -C libtransmission -f ../mk/lib.mk
+	@$(MAKE) $(MAKEARGS) -C libtransmission -f ../mk/lib.mk
 
 .cli: .lib
 	@echo "* Building Transmission CLI client"
-	@$(MAKE) -C cli -f ../mk/cli.mk
+	@$(MAKE) $(MAKEARGS) -C cli -f ../mk/cli.mk
 
 .gtk: .lib
 	@echo "* Building Transmission GTK+ client"
-	@$(MAKE) -C gtk -f ../mk/gtk.mk
+	@$(MAKE) $(MAKEARGS) -C gtk -f ../mk/gtk.mk
 
 .beos: .lib
 	@echo "* Building Transmission BeOS client"
-	@make -C beos -f ../mk/beos.mk
+	@$(MAKE) $(MAKEARGS) -C beos -f ../mk/beos.mk
 
 install: all $(foreach SUB,$(TARGETS),.install$(SUB)) .install.misc
 
 .install.cli: .cli
 	@echo "* Installing Transmission CLI client"
-	@$(MAKE) -C cli -f ../mk/cli.mk install
+	@$(MAKE) $(MAKEARGS) -C cli -f ../mk/cli.mk install
 
 .install.gtk: .gtk
 	@echo "* Installing Transmission GTK+ client"
-	@$(MAKE) -C gtk -f ../mk/gtk.mk install
+	@$(MAKE) $(MAKEARGS) -C gtk -f ../mk/gtk.mk install
 
 .install.beos:
 
@@ -47,11 +47,11 @@ install: all $(foreach SUB,$(TARGETS),.install$(SUB)) .install.misc
 	@$(CP) misc/transmissioncli.zsh $(DESTDIR)$(PREFIX)/share/zsh/site-functions/_transmissioncli
 
 clean:
-	@$(MAKE) -C libtransmission -f ../mk/lib.mk clean
-	@$(MAKE) -C cli -f ../mk/cli.mk clean
+	@$(MAKE) $(MAKEARGS) -C libtransmission -f ../mk/lib.mk clean
+	@$(MAKE) $(MAKEARGS) -C cli -f ../mk/cli.mk clean
 ifeq ($(GTK),yes)
-	@$(MAKE) -C gtk -f ../mk/gtk.mk clean
+	@$(MAKE) $(MAKEARGS) -C gtk -f ../mk/gtk.mk clean
 endif
 ifeq ($(SYSTEM),BeOS)
-	@$(MAKE) -C beos -f ../mk/beos.mk clean
+	@$(MAKE) $(MAKEARGS) -C beos -f ../mk/beos.mk clean
 endif

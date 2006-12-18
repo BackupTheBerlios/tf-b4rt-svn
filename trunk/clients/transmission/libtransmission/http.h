@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id: http.h 1242 2006-12-17 16:36:27Z livings124 $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -36,9 +36,11 @@ int         tr_httpRequestType( const char * data, int len,
 /* Return the HTTP status code for the response, or -1 for parse error */
 int         tr_httpResponseCode( const char * data, int len );
 
-#define TR_HTTP_STATUS_OK( st )       ( 200 <= (st) && 299 >= (st) )
-#define TR_HTTP_STATUS_REDIRECT( st ) ( 300 <= (st) && 399 >= (st) )
-#define TR_HTTP_STATUS_FAIL( st )     ( 400 <= (st) && 599 >= (st) )
+#define TR_HTTP_STATUS_OK( st )             ( 200 <= (st) && 299 >= (st) )
+#define TR_HTTP_STATUS_REDIRECT( st )       ( 300 <= (st) && 399 >= (st) )
+#define TR_HTTP_STATUS_FAIL( st )           ( 400 <= (st) && 599 >= (st) )
+#define TR_HTTP_STATUS_FAIL_CLIENT( st )    ( 400 <= (st) && 499 >= (st) )
+#define TR_HTTP_STATUS_FAIL_SERVER( st )    ( 500 <= (st) && 599 >= (st) )
 
 /*
   Parse an HTTP request or response, locating specified headers and

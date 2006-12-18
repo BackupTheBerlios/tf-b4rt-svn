@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1149 2006-12-02 01:46:54Z joshe $
+ * $Id: internal.h 1242 2006-12-17 16:36:27Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -159,8 +159,6 @@ struct tr_torrent_s
 
     /* An escaped string used to include the hash in HTTP queries */
     char              escapedHashString[3*SHA_DIGEST_LENGTH+1];
-
-    char              scrape[MAX_PATH_LENGTH];
 
     /* Where to download */
     char            * destination;

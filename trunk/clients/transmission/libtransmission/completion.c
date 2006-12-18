@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.c 996 2006-10-13 00:23:20Z joshe $
+ * $Id: completion.c 1197 2006-12-13 18:30:11Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -279,14 +279,17 @@ int tr_cpMostMissingBlockInPiece( tr_completion_t * cp, int piece,
         }
     }
 
-    if( poolSize < 1 )
+    if( poolSize > 0 )
     {
-        return -1;
+        ret = pool[0];
+        *downloaders = min;
+    }
+    else
+    {
+        ret = -1;
     }
 
-    ret = pool[0];
     free( pool );
-    *downloaders = min;
     return ret;
 }
 

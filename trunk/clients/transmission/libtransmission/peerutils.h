@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerutils.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id: peerutils.h 1255 2006-12-18 06:16:27Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -39,6 +39,7 @@ static tr_peer_t * peerInit()
     peer->date        = tr_date();
     peer->keepAlive   = peer->date;
     peer->download    = tr_rcInit();
+    peer->upload      = tr_rcInit();
 
     return peer;
 }
