@@ -253,6 +253,9 @@ function displaySetupMessage($msg="A problem occured.", $status=false){
 				case '2.2':
 					$queryFile .= 'queries.upgrade.tf22.php';
 					break;
+				case '2.3':
+					$queryFile .= 'queries.upgrade.tf23.php';
+					break;
 				default:
 					$queryFile .= 'queries.upgrade.'.$version.'.php';
 					break;

@@ -2,96 +2,114 @@
 -- $Id$
 -- -----------------------------------------------------------------------------
 --
--- MySQL-Update-File for 'torrentflux-b4rt-1.0'.
--- Updates a 'Torrentflux 2.2 Final' Database to a 'torrentflux-b4rt-1.0'.
+-- PostgreSQL-Update-File for 'torrentflux-b4rt-1.0'.
+-- Updates a 'Torrentflux 2.3 Final' Database to a 'torrentflux-b4rt-1.0'.
 --
 -- This Stuff is provided 'as-is'. In no way will the authors be held
 -- liable for any damages to your soft- or hardware from this.
 -- -----------------------------------------------------------------------------
 
 --
+-- begin transaction
+--
+BEGIN;
+
+--
 -- tf_torrents
 --
 CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
-  running ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
+  torrent VARCHAR(255) NOT NULL DEFAULT '',
+  running INT2 NOT NULL DEFAULT '0',
+  rate INT2 NOT NULL DEFAULT '0',
+  drate INT2 NOT NULL DEFAULT '0',
+  maxuploads INT2 NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
+  runtime VARCHAR(5) NOT NULL DEFAULT 'False',
+  sharekill INT2 NOT NULL DEFAULT '0',
+  minport INT2 NOT NULL DEFAULT '0',
+  maxport INT2 NOT NULL DEFAULT '0',
+  maxcons INT2 NOT NULL DEFAULT '0',
+  savepath VARCHAR(255) NOT NULL DEFAULT '',
+  btclient VARCHAR(32) NOT NULL DEFAULT 'tornado',
   hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
-) TYPE=MyISAM;
+  datapath VARCHAR(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (torrent),
+  CHECK (running>=0),
+  CHECK (maxuploads>=0),
+  CHECK (minport>=0),
+  CHECK (maxport>=0),
+  CHECK (maxcons>=0)
+);
 
 --
 -- tf_torrent_totals
 --
 CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
-) TYPE=MyISAM;
+  tid VARCHAR(40) NOT NULL DEFAULT '',
+  uptotal INT8 NOT NULL DEFAULT '0',
+  downtotal INT8 NOT NULL DEFAULT '0',
+  PRIMARY KEY (tid)
+);
 
 --
 -- tf_xfer
 --
-DROP TABLE IF EXISTS tf_xfer;
-
 CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL default '',
-  date DATE NOT NULL default '0000-00-00',
-  download BIGINT(80) NOT NULL default '0',
-  upload BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (user_id,date)
-) TYPE=MyISAM;
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  date DATE NOT NULL DEFAULT '0001-01-01',
+  download INT8 NOT NULL DEFAULT '0',
+  upload INT8 NOT NULL DEFAULT '0'
+);
 
 --
 -- tf_settings_user
 --
 CREATE TABLE tf_settings_user (
-  uid INT(10) NOT NULL,
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL
-) TYPE=MyISAM;
+  uid INT4 NOT NULL,
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL
+);
+
+--
+-- Sequences for table tf_trprofiles
+--
+CREATE SEQUENCE tf_trprofiles_id_seq;
 
 --
 -- tf_trprofiles
 --
 CREATE TABLE tf_trprofiles (
-  id MEDIUMINT(8) NOT NULL auto_increment,
-  name VARCHAR(255) NOT NULL default '',
-  owner INT(10) NOT NULL default '0',
-  public ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
-) TYPE=MyISAM;
+  id INT4 DEFAULT nextval('tf_trprofiles_id_seq'),
+  name VARCHAR(255) NOT NULL DEFAULT '',
+  owner INT4 NOT NULL DEFAULT '0',
+  public INT2 NOT NULL DEFAULT '0',
+  rate INT2  NOT NULL DEFAULT '0',
+  drate INT2  NOT NULL DEFAULT '0',
+  maxuploads INT2  NOT NULL DEFAULT '0',
+  superseeder INT2 NOT NULL DEFAULT '0',
+  runtime VARCHAR(5) NOT NULL DEFAULT 'False',
+  sharekill INT2  NOT NULL DEFAULT '0',
+  minport INT2 NOT NULL DEFAULT '0',
+  maxport INT2 NOT NULL DEFAULT '0',
+  maxcons INT2 NOT NULL DEFAULT '0',
+  rerequest INT4 NOT NULL DEFAULT '0',
+  PRIMARY KEY (id),
+  CHECK (public>=0),
+  CHECK (maxuploads>=0),
+  CHECK (minport>=0),
+  CHECK (maxport>=0),
+  CHECK (maxcons>=0),
+  CHECK (rerequest>=0)
+);
 
 --
 -- tf_settings_dir
 --
 CREATE TABLE tf_settings_dir (
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL,
-  PRIMARY KEY  (tf_key)
-) TYPE=MyISAM;
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key)
+);
 
 INSERT INTO tf_settings_dir VALUES ('dir_public_read','1');
 INSERT INTO tf_settings_dir VALUES ('dir_public_write','0');
@@ -115,10 +133,10 @@ INSERT INTO tf_settings_dir VALUES ('vlc_port','8080');
 -- tf_settings_stats
 --
 CREATE TABLE tf_settings_stats (
-  tf_key VARCHAR(255) NOT NULL default '',
-  tf_value TEXT NOT NULL,
-  PRIMARY KEY  (tf_key)
-) TYPE=MyISAM;
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL,
+  PRIMARY KEY (tf_key)
+);
 
 INSERT INTO tf_settings_stats VALUES ('stats_enable_public','0');
 INSERT INTO tf_settings_stats VALUES ('stats_show_usage','1');
@@ -133,7 +151,7 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 --
 -- alter
 --
-ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
+ALTER TABLE tf_users ADD state INT2 NOT NULL DEFAULT '1';
 
 --
 -- updates
@@ -142,8 +160,6 @@ UPDATE tf_users SET theme = 'default';
 
 --
 -- deletes + inserts
---
-INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0');
 --
 DELETE FROM tf_settings WHERE tf_key NOT LIKE 'path';
 INSERT INTO tf_settings VALUES ('advanced_start','1');
@@ -279,3 +295,18 @@ INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','');
 INSERT INTO tf_settings VALUES ('fluxd_Maintenance_interval','600');
 INSERT INTO tf_settings VALUES ('fluxd_Maintenance_trestart','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_interval','600');
+
+--
+-- Sequences for table tf_links
+--
+SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links));
+
+--
+-- Sequences for table tf_trprofiles
+--
+SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles));
+
+--
+-- commit
+--
+COMMIT;
