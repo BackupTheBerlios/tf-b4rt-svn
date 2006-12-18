@@ -155,10 +155,11 @@ class Rssd
      * @return Rssd
      */
     function Rssd() {
+    	global $argv;
         // cli/web
-		$this->_mode = (empty($_REQUEST))
-			? RSSD_MODE_CLI
-			: RSSD_MODE_WEB;
+		$this->_mode = (empty($argv[0]))
+			? RSSD_MODE_WEB
+			: RSSD_MODE_CLI;
         // init lastRSS-instance
 		$this->_lastRSS = new lastRSS();
 		$this->_lastRSS->cache_dir = '';

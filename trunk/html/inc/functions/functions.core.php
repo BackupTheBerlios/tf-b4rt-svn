@@ -80,17 +80,9 @@ function dbError($sql) {
  * @param $msgs
  */
 function error($msg, $link = "", $linklabel = "", $msgs = array()) {
-	global $cfg;
+	global $cfg, $argv;
 	// web/cli
-    if (empty($_REQUEST)) { // cli
-    	// message
-    	$exitMsg = "Error : ".$msg."\n";
-    	// messages
-    	if (!empty($msgs))
-    		$exitMsg .= implode("\n", $msgs)."\n";
-    	// get out here
-    	exit($exitMsg);
-    } else { // web
+    if (empty($argv[0])) { // web
 		// theme
 		$theme = "default";
 		if (isset($cfg["theme"]))
@@ -117,6 +109,14 @@ function error($msg, $link = "", $linklabel = "", $msgs = array()) {
 		$_tmpl->pparse();
 		// get out here
 		exit();
+ 	} else { // cli
+    	// message
+    	$exitMsg = "Error : ".$msg."\n";
+    	// messages
+    	if (!empty($msgs))
+    		$exitMsg .= implode("\n", $msgs)."\n";
+    	// get out here
+    	exit($exitMsg);
     }
 }
 

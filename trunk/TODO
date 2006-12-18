@@ -7,11 +7,6 @@ $Id$
 *** code ***********************************************************************
 ********************************************************************************
 
-  - (1) (includes + depends on templates)
-    fix well known bugs (if possible)
-    + multi-upload on index-page not working in FF and Opera
-    + dir/filemanager : problems with files/dirs containing "&"
-
   - (2) (includes + depends on templates)
     per-user-settings : currently not in use at all.
     need to be added to all templates and code needs to be checked if still "ok"

@@ -142,12 +142,13 @@ class MaintenanceAndRepair
      * @return MaintenanceAndRepair
      */
     function MaintenanceAndRepair() {
+    	global $argv;
         // messages
         $this->messages = array();
         // cli/web
-		$this->_mode = (empty($_REQUEST))
-			? MAINTENANCEANDREPAIR_MODE_CLI
-			: MAINTENANCEANDREPAIR_MODE_WEB;
+		$this->_mode = (empty($argv[0]))
+			? MAINTENANCEANDREPAIR_MODE_WEB
+			: MAINTENANCEANDREPAIR_MODE_CLI;
     }
 
 	// =========================================================================
