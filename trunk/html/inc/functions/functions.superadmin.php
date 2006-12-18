@@ -525,6 +525,7 @@ function getFileList() {
 	initFileList(substr($cfg['docroot'], 0 , -1));
 	if (!empty($fileList)) {
 		$size = 0;
+		$revision = 1;
 		$retVal .= '<table cellpadding="2" cellspacing="1" border="1" bordercolor="'.$cfg["table_admin_border"].'" bgcolor="'.$cfg["body_data_bg"].'">';
 		$retVal .= '<tr>';
 		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>File</strong></td>';
@@ -535,14 +536,25 @@ function getFileList() {
 		foreach ($fileList as $file) {
 			$retVal .= '<tr>';
 			$retVal .= '<td align="left">';
+			$retVal .= '<a href="'._URL_SVNFILE.$file['file']._URL_SVNFILE_SUFFIX.'" target="_blank">';
 			$retVal .= $file['file'];
+			$retVal .= '</a>';
 			$retVal .= '</td>';
 			$retVal .= '<td align="right">';
 			$size += $file['size'];
 			$retVal .= formatHumanSize($file['size']);
 			$retVal .= '</tr>';
 			$retVal .= '<td align="right">';
+			if ($file['rev'] != 'No ID') {
+				$intrev = (int)$file['rev'];
+				if ($intrev > $revision)
+					$revision = $intrev;
+			}
+			if ($file['rev'] != 'No ID')
+				$retVal .= '<a href="'._URL_SVNLOG.$file['rev']._URL_SVNLOG_SUFFIX.'" target="_blank">';
 			$retVal .= $file['rev'];
+			if ($file['rev'] != 'No ID')
+				$retVal .= '</a>';
 			$retVal .= '</tr>';
 			$retVal .= '<td align="right">';
 			$retVal .= $file['md5'];
@@ -550,6 +562,11 @@ function getFileList() {
 		}
 		$retVal .= '</table>';
 		$retVal .= '<br><strong>Processed '.count($fileList).' files. ('.formatHumanSize($size).')</strong>';
+		$retVal .= '<br><strong>Highest Revision-Number : ';
+		$retVal .= '<a href="'._URL_SVNLOG.$revision._URL_SVNLOG_SUFFIX.'" target="_blank">';
+		$retVal .= $revision;
+		$retVal .= '</a>';
+		$retVal .= '</strong>';
 	}
 	return $retVal;
 }
