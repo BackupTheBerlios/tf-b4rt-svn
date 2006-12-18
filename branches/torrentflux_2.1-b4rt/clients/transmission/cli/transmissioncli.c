@@ -183,14 +183,17 @@ int main(int argc, char ** argv) {
 	if (showInfo) {
 		// info
 		tr_info_t * info = tr_torrentInfo(tor);
+		// stat
+		s = tr_torrentStat(tor);
 		// Print torrent info (quite à la btshowmetainfo)
 		printf("hash:     ");
 		for (i = 0; i < SHA_DIGEST_LENGTH; i++) {
 			printf("%02x", info->hash[i]);
 		}
 		printf("\n");
-		printf("tracker:  %s:%d\n", info->trackerAddress, info->trackerPort);
-		printf("announce: %s\n", info->trackerAnnounce);
+        printf( "tracker:  %s:%d\n",
+                s->trackerAddress, s->trackerPort );
+        printf( "announce: %s\n", s->trackerAnnounce );
 		printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
 			info->totalSize, info->totalSize / info->pieceSize,
 			info->pieceSize, info->totalSize % info->pieceSize);
