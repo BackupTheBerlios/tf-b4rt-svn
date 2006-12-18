@@ -34,6 +34,8 @@ define('_UPDATE_DB','db.txt');
 define('_UPDATE_MYSQL','mysql.txt');
 define('_UPDATE_SQLITE','sqlite.txt');
 define('_UPDATE_POSTGRES','postgres.txt');
+define('_UPDATE_FILES','update.list');
+define('_UPDATE_ARCHIVE','update.tar.bz2');
 
 // functions
 require_once('functions.php');
@@ -63,6 +65,7 @@ if ((isset($update)) && ($update != "")) {
             exit;
         }
         switch($update) {
+
             case "0":
                 // load index-file
                 $updateIndexData = trim(getDataFromFile("./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" . _UPDATE_INDEX));
@@ -74,6 +77,7 @@ if ((isset($update)) && ($update != "")) {
                     bailOut(false);
                 }
                 exit;
+
             case "1":
                 // load db-file and spit out
                 $updateDBData = trim(getDataFromFile("./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" . _UPDATE_DB));
@@ -81,9 +85,10 @@ if ((isset($update)) && ($update != "")) {
                     header("Content-Type: text/plain");
                     echo $updateDBData;
                 } else {
-                    bailOut(true);
+                    bailOut(false);
                 }
                 exit;
+
             case "2":
                 // hold remote database-version
                 $remoteDb = @trim($_REQUEST["d"]);
@@ -114,38 +119,46 @@ if ((isset($update)) && ($update != "")) {
                     bailOut(true);
                 }
                 exit;
+
             case "3":
                 // file list
                 $updateFileList = getFileListNEW($currentVersion, $remoteVersion);
-                if ((isset($updateFileList)) && ($updateFileList != "0")) {
-                    header("Content-Type: text/plain");
-                    echo $updateFileList;
-                } else {
-                    bailOut(false);
-                }
-                exit;
-            case "4":
-                // serve a file
-                $requestFile = @trim($_REQUEST["f"]);
-                if ((isset($requestFile)) && ($requestFile != "")) {
-                    // file list (no exploits, only deliver valid data)
-                    $updateFileList = getFileListNEW($currentVersion, $remoteVersion);
-                    if ((isset($updateFileList)) && ($updateFileList != "0")) {
-                        $validFiles = explode("\n",$updateFileList);
-                        if (in_array($requestFile, $validFiles)) {
-                            outputData(getDataFromFile("./". _UPDATE_BASEDIR . "/" . $currentVersion . "/" . $remoteVersion . "/" ._UPDATE_DATADIR . "/" . _UPDATE_HTMLDIR . "/" . $requestFile));
-                            exit;
-                        } else {
-                            header("Content-Type: text/plain");
-                            echo $requestFile." is not a valid file-ressource-id.";
-                            exit;
-                        }
-                    } else {
-                        bailOut(true);
-                    }
-                } else {
+                if ((isset($updateFileList)) && ($updateFileList != "0"))
+                    outputData($updateFileList);
+                else
                     bailOut(true);
-                }
+                exit;
+
+            case "4":
+                // serve md5 of update-file
+            	$updateFile = "./". _UPDATE_BASEDIR."/".$currentVersion."/".$remoteVersion."/"._UPDATE_DATADIR."/". _UPDATE_HTMLDIR."/"._UPDATE_ARCHIVE;
+				if (file_exists($updateFile)) {
+					header("Content-Type: text/plain");
+                    echo md5_file($updateFile);
+				} else {
+					bailOut(false);
+				}
+                exit;
+
+            case "5":
+                // serve the update-file
+            	$updateFile = "./". _UPDATE_BASEDIR."/".$currentVersion."/".$remoteVersion."/"._UPDATE_DATADIR."/". _UPDATE_HTMLDIR."/"._UPDATE_ARCHIVE;
+				// send data. read / write file with 8kb-buffer
+				if ($handle = @fopen($updateFile, 'rb')) {
+					@header("Cache-Control: ");
+					@header("Pragma: ");
+					@header("Content-Type: application/octet-stream");
+					@header("Content-Length: " .(string)(filesize($updateFile)) );
+					@header('Content-Disposition: attachment; filename="'._UPDATE_ARCHIVE.'"');
+					@header("Content-Transfer-Encoding: binary\n");
+					while((!@feof($handle)) && (connection_status() == 0)) {
+						print(@fread($handle, 8192));
+						@flush();
+					}
+					@fclose($handle);
+				} else {
+					bailOut(false);
+				}
                 exit;
         }
     } else {
@@ -156,12 +169,15 @@ if ((isset($update)) && ($update != "")) {
 // standard-action
 $action = @trim($_REQUEST["a"]);
 switch($action) {
+
     case "0": // news
         outputData(rewriteNews(getDataFromFile(_FILE_NEWS)));
         exit;
+
     case "1": // changelog
         outputData(getDataFromFile(_FILE_CHANGELOG));
         exit;
+
     default:
 		header("Content-Type: text/plain");
 		echo trim(getDataFromFile(_FILE_VERSION_CURRENT));

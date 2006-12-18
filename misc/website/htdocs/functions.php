@@ -93,7 +93,7 @@ function getFileListOLD($currentVersion, $remoteVersion) {
  * @return filelist as string
  */
 function getFileListNEW($currentVersion, $remoteVersion) {
-	return "0";
+	return getDataFromFile("./". _UPDATE_BASEDIR."/".$currentVersion."/".$remoteVersion."/"._UPDATE_DATADIR."/". _UPDATE_HTMLDIR."/"._UPDATE_FILES);
 }
 
 /**
