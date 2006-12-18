@@ -125,7 +125,7 @@ class FluxdQmgr extends FluxdServiceMod
     }
 
     /**
-     * remove
+     * dequeue
      *
      * @param $transfer
      * @param $user
@@ -160,7 +160,7 @@ class FluxdQmgr extends FluxdServiceMod
      * @return string
      */
     function instance_getQueuedTransfers($user = "") {
-     	return ($this->state == FLUXDMOD_STATE_RUNNING)
+     	return ($this->modstate == FLUXDMOD_STATE_RUNNING)
     		? Fluxd::sendServiceCommand($this->moduleName, 'list-queue', 1)
     		: "";
     }
@@ -172,7 +172,7 @@ class FluxdQmgr extends FluxdServiceMod
      * @return int
      */
     function instance_countQueuedTransfers($user = "") {
-     	return ($this->state == FLUXDMOD_STATE_RUNNING)
+     	return ($this->modstate == FLUXDMOD_STATE_RUNNING)
     		? Fluxd::sendServiceCommand($this->moduleName, 'count-queue', 1)
     		: 0;
     }
@@ -184,7 +184,7 @@ class FluxdQmgr extends FluxdServiceMod
      * @param $user
      */
     function instance_enqueueTransfer($transfer, $user) {
-    	if ($this->state == FLUXDMOD_STATE_RUNNING) {
+    	if ($this->modstate == FLUXDMOD_STATE_RUNNING) {
     		// send command (hardcoded for .torrent for now)
     		Fluxd::sendServiceCommand($this->moduleName, 'enqueue;'.substr($transfer, 0, -8).';'.$user, 0);
 	        // just 2 sec... dont stress fluxd
@@ -200,7 +200,7 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function instance_dequeueTransfer($transfer, $user) {
     	global $cfg;
-    	if ($this->state == FLUXDMOD_STATE_RUNNING) {
+    	if ($this->modstate == FLUXDMOD_STATE_RUNNING) {
         	if (isTransferRunning($transfer)) {
 	            // transfer has been started...log
 	            // TODO : kill it ?
