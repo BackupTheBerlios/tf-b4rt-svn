@@ -1193,6 +1193,8 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= '<a href="' . _FILE_THIS . '?z=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="News" border="0"> News</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Files" border="0"> Files</a>';
 				$htmlMain .= '<br><br>';
 				break;
 			case "1": // Version
@@ -1275,6 +1277,12 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= @gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?a=1"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
+				break;
+			case "9": // News
+				$htmlTitle = "tf-b4rt - Files";
+				$htmlMain .= '<br>';
+				$htmlMain .= getFileList();
+				$htmlMain .= '<br><br>';
 				break;
 		}
 		printPage();

@@ -149,6 +149,8 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=2">News</a>';
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3">Changelog</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Files</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
@@ -511,6 +513,111 @@ function getReleaseList() {
 }
 
 /**
+ * get file-list
+ *
+ * @return file-list as html-snip
+ */
+function getFileList() {
+	global $cfg, $error, $fileList, $fileTypes;
+	$retVal = "";
+	$fileTypes = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
+	$fileList = array();
+	initFileList(substr($cfg['docroot'], 0 , -1));
+	if (!empty($fileList)) {
+		$size = 0;
+		$retVal .= '<table cellpadding="2" cellspacing="1" border="1" bordercolor="'.$cfg["table_admin_border"].'" bgcolor="'.$cfg["body_data_bg"].'">';
+		$retVal .= '<tr>';
+		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>File</strong></td>';
+		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Size</strong></td>';
+		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Revision</strong></td>';
+		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Checksum</strong></td>';
+		$retVal .= '</tr>';
+		foreach ($fileList as $file) {
+			$retVal .= '<tr>';
+			$retVal .= '<td align="left">';
+			$retVal .= $file['file'];
+			$retVal .= '</td>';
+			$retVal .= '<td align="right">';
+			$size += $file['size'];
+			$retVal .= formatHumanSize($file['size']);
+			$retVal .= '</tr>';
+			$retVal .= '<td align="right">';
+			$retVal .= $file['rev'];
+			$retVal .= '</tr>';
+			$retVal .= '<td align="right">';
+			$retVal .= $file['md5'];
+			$retVal .= '</tr>';
+		}
+		$retVal .= '</table>';
+		$retVal .= '<br><strong>Processed '.count($fileList).' files. ('.formatHumanSize($size).')</strong>';
+	}
+	return $retVal;
+}
+
+/**
+ * get revision-list
+ *
+ * @param $dir
+ * @return revision-list as html-snip
+ */
+function initFileList($dir) {
+	global $cfg, $error, $fileList, $fileTypes;
+	if (!is_dir($dir))
+		return false;
+	$dirHandle = opendir($dir);
+	while ($file = readdir($dirHandle)) {
+		$fullpath = $dir.'/'.$file;
+		if (is_dir($fullpath)) {
+			if ($file{0} != '.')
+				initFileList($fullpath);
+		} else {
+			$stringLength = strlen($file);
+			foreach ($fileTypes as $ftype) {
+				$extLength = strlen($ftype);
+				if (($stringLength > $extLength) && (strtolower(substr($file, -($extLength))) === ($ftype)))
+					array_push($fileList, array(
+							'file' => str_replace($cfg["docroot"], '', $fullpath),
+							'size' => filesize($fullpath),
+							'rev' => getSVNRevisionFromId($fullpath),
+							'md5' => md5_file($fullpath)
+						)
+					);
+			}
+		}
+	}
+	closedir($dirHandle);
+}
+
+/**
+ * get svn-revision from id-tag of a file
+ *
+ * @param $filename
+ * @return string
+ */
+function getSVNRevisionFromId($filename) {
+	$data = getDataFromFile($filename);
+	$len = strlen($data);
+	for ($i = 0; $i < $len; $i++) {
+		if ($data{$i} == '$') {
+            if (($data{$i+1} == 'I') && ($data{$i+2} == 'd')) {
+            	$revision = "";
+            	$j = $i + 3;
+                while ($j < $len) {
+                	if ($data{$j} == '$') {
+                		$rev = explode(" ", $revision);
+                		return trim($rev[2]);
+                	} else {
+                		$revision .= $data{$j};
+                	}
+                	$j++;
+                }
+            }
+        }
+	}
+	return 'No ID';
+}
+
+/**
  * cleans a dir (deletes all files)
  *
  * @param $dir
@@ -605,7 +712,7 @@ function backupListDisplay() {
 	$retVal = "";
 	$fileList = backupList();
 	if ((isset($fileList)) && ($fileList != "")) {
-		$retVal .= '<table cellpadding="2" cellspacing="1" border="1" bordercolor="'.$cfg["table_border_dk"].'" bgcolor="'.$cfg["body_data_bg"].'">';
+		$retVal .= '<table cellpadding="2" cellspacing="1" border="1" bordercolor="'.$cfg["table_admin_border"].'" bgcolor="'.$cfg["body_data_bg"].'">';
 		$retVal .= '<tr>';
 		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Version</strong></td>';
 		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Date</strong></td>';
