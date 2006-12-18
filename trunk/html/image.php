@@ -29,7 +29,7 @@ switch ($imageOp) {
 
 	case "login":
 		// check for valid referer
-		imageCheckReferer();
+		Image::checkReferer();
 		// main.external
 		require_once('inc/main.external.php');
 		// output image
@@ -37,35 +37,37 @@ switch ($imageOp) {
 			? 'themes/'.$cfg["default_theme"].'/images/code_bg'
 			: 'themes/tf_standard_themes/images/code_bg';
 		$rndCode = loginImageCode($cfg["db_user"], $_REQUEST["rnd"]);
-		imagePaintLabelFromImage($bgImage, $rndCode, 5, 12, 2, 80, 80, 80);
+		Image::paintLabelFromImage($bgImage, $rndCode, 5, 12, 2, 80, 80, 80);
 
 	case "test":
 		// check for valid referer
-		imageCheckReferer();
+		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
 		$bgImage = ((strpos($cfg["theme"], '/')) === false)
 			? 'themes/'.$cfg["theme"].'/images/code_bg'
 			: 'themes/tf_standard_themes/images/code_bg';
-		imagePaintLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
+		Image::paintLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
+
+	case "spacer":
+		// check for valid referer
+		Image::checkReferer();
+		// output image
+		Image::paintSpacer();
 
 	case "notsup":
 		// check for valid referer
-		imageCheckReferer();
+		Image::checkReferer();
 		// output image
-		imagePaintNotSupported();
+		Image::paintNotSupported();
 
 	case "noop":
 	default:
-		/*
-		// create Image-instance
-		$image = Image::getImage();
-		*/
 		// check for valid referer
-		imageCheckReferer();
+		Image::checkReferer();
 		// output image
-		imagePaintNoOp();
+		Image::paintNoOp();
 
 }
 

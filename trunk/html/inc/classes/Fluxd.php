@@ -44,9 +44,6 @@ class Fluxd
 
     // private fields
 
-    // config-array
-    var $_cfg = array();
-
     // pid
     var $_pid = "";
 

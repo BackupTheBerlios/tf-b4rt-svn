@@ -101,11 +101,10 @@ switch ($cfg['auth_type']) {
 	case 4: /* Form-Auth + Image-Validation */
 		// Image class
 		require_once('inc/classes/Image.php');
-		//
 		$user = getRequestVar('username');
 		$iamhim = addslashes(getRequestVar('iamhim'));
 		$md5password = "";
-		$isImageSupported = imageIsSupported();
+		$isImageSupported = Image::isSupported();
 		if (!empty($user)) {
 			$isLoginRequest = true;
 			// image-validation

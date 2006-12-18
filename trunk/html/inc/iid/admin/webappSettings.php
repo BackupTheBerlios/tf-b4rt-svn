@@ -54,7 +54,7 @@ array_push($authlist, array(
 	)
 );
 // Form-Auth + Image-Validation
-if (imageIsSupported()) {
+if (Image::isSupported()) {
 	array_push($authlist, array(
 		'avalue' => 4,
 		'atype' => "Form-Auth + Image-Validation",
