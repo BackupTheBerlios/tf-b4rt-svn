@@ -67,7 +67,7 @@ $dir = UrlHTMLSlashesDecode(getRequestVar('dir'));
 // check dir-var
 if (isValidPath($dir) !== true) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL DIR: ".$cfg["user"]." tried to access ".$dir);
-	$dir = "";
+	@error("Invalid Dir", "index.php?iid=dir", "", array($dir));
 }
 
 /*******************************************************************************
