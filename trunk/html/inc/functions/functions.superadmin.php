@@ -150,7 +150,7 @@ function buildPage($action) {
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=3">Changelog</a>';
 			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Files</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Misc</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
@@ -317,16 +317,6 @@ function updateError($message = "") {
 	@header("Content-Type: text/plain");
 	echo $errorString;
 	exit();
-}
-
-/**
- * sendLine - sends a line to the browser
- */
-function sendLine($line = "") {
-	echo $line;
-	echo str_pad('',4096)."\n";
-	@ob_flush();
-	@flush();
 }
 
 /**
@@ -512,128 +502,6 @@ function getReleaseList() {
 		$retVal .= '</table>';
 	}
 	return $retVal;
-}
-
-/**
- * get file-list
- *
- * @return file-list as html-snip
- */
-function getFileList() {
-	global $cfg, $error, $fileList, $fileTypes;
-	$retVal = "";
-	$fileTypes = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
-	$fileList = array();
-	initFileList(substr($cfg['docroot'], 0 , -1));
-	if (!empty($fileList)) {
-		$size = 0;
-		$revision = 1;
-		$retVal .= '<table cellpadding="2" cellspacing="1" border="1" bordercolor="'.$cfg["table_admin_border"].'" bgcolor="'.$cfg["body_data_bg"].'">';
-		$retVal .= '<tr>';
-		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>File</strong></td>';
-		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Size</strong></td>';
-		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Revision</strong></td>';
-		$retVal .= '<td align="center" bgcolor="'.$cfg["table_header_bg"].'"><strong>Checksum</strong></td>';
-		$retVal .= '</tr>';
-		foreach ($fileList as $file) {
-			$retVal .= '<tr>';
-			$retVal .= '<td align="left">';
-			$retVal .= '<a href="'._URL_SVNFILE.$file['file']._URL_SVNFILE_SUFFIX.'" target="_blank">';
-			$retVal .= $file['file'];
-			$retVal .= '</a>';
-			$retVal .= '</td>';
-			$retVal .= '<td align="right">';
-			$size += $file['size'];
-			$retVal .= formatHumanSize($file['size']);
-			$retVal .= '</tr>';
-			$retVal .= '<td align="right">';
-			if ($file['rev'] != 'No ID') {
-				$intrev = (int)$file['rev'];
-				if ($intrev > $revision)
-					$revision = $intrev;
-			}
-			if ($file['rev'] != 'No ID')
-				$retVal .= '<a href="'._URL_SVNLOG.$file['rev']._URL_SVNLOG_SUFFIX.'" target="_blank">';
-			$retVal .= $file['rev'];
-			if ($file['rev'] != 'No ID')
-				$retVal .= '</a>';
-			$retVal .= '</tr>';
-			$retVal .= '<td align="right">';
-			$retVal .= $file['md5'];
-			$retVal .= '</tr>';
-		}
-		$retVal .= '</table>';
-		$retVal .= '<br><strong>Processed '.count($fileList).' files. ('.formatHumanSize($size).')</strong>';
-		$retVal .= '<br><strong>Highest Revision-Number : ';
-		$retVal .= '<a href="'._URL_SVNLOG.$revision._URL_SVNLOG_SUFFIX.'" target="_blank">';
-		$retVal .= $revision;
-		$retVal .= '</a>';
-		$retVal .= '</strong>';
-	}
-	return $retVal;
-}
-
-/**
- * get revision-list
- *
- * @param $dir
- * @return revision-list as html-snip
- */
-function initFileList($dir) {
-	global $cfg, $error, $fileList, $fileTypes;
-	if (!is_dir($dir))
-		return false;
-	$dirHandle = opendir($dir);
-	while ($file = readdir($dirHandle)) {
-		$fullpath = $dir.'/'.$file;
-		if (is_dir($fullpath)) {
-			if ($file{0} != '.')
-				initFileList($fullpath);
-		} else {
-			$stringLength = strlen($file);
-			foreach ($fileTypes as $ftype) {
-				$extLength = strlen($ftype);
-				if (($stringLength > $extLength) && (strtolower(substr($file, -($extLength))) === ($ftype)))
-					array_push($fileList, array(
-							'file' => str_replace($cfg["docroot"], '', $fullpath),
-							'size' => filesize($fullpath),
-							'rev' => getSVNRevisionFromId($fullpath),
-							'md5' => md5_file($fullpath)
-						)
-					);
-			}
-		}
-	}
-	closedir($dirHandle);
-}
-
-/**
- * get svn-revision from id-tag of a file
- *
- * @param $filename
- * @return string
- */
-function getSVNRevisionFromId($filename) {
-	$data = getDataFromFile($filename);
-	$len = strlen($data);
-	for ($i = 0; $i < $len; $i++) {
-		if ($data{$i} == '$') {
-            if (($data{$i+1} == 'I') && ($data{$i+2} == 'd')) {
-            	$revision = "";
-            	$j = $i + 3;
-                while ($j < $len) {
-                	if ($data{$j} == '$') {
-                		$rev = explode(" ", $revision);
-                		return trim($rev[2]);
-                	} else {
-                		$revision .= $data{$j};
-                	}
-                	$j++;
-                }
-            }
-        }
-	}
-	return 'No ID';
 }
 
 /**

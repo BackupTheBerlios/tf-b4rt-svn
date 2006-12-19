@@ -1611,4 +1611,14 @@ function getRunningClientProcessInfo($clientType = '') {
 	return $retVal;
 }
 
+/**
+ * sendLine - sends a line to the browser
+ */
+function sendLine($line = "") {
+	echo $line;
+	echo str_pad('',4096)."\n";
+	@ob_flush();
+	@flush();
+}
+
 ?>

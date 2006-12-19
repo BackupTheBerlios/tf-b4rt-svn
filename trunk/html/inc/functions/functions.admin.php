@@ -578,4 +578,142 @@ function changeUserLevel($user_id, $level) {
 	if ($db->ErrorNo() != 0) dbError($sql);
 }
 
+/**
+ * print file-list
+ * @param $type 1 = list, 2 = checksums
+ * @param $mode 1 = text, 2 = html
+ */
+function printFileList($type = 1, $mode = 2) {
+	global $cfg, $fileList;
+	define('_URL_SVNLOG','http://svn.berlios.de/wsvn/tf-b4rt/trunk/?rev=');
+	define('_URL_SVNLOG_SUFFIX','&sc=1');
+	define('_URL_SVNFILE','http://svn.berlios.de/wsvn/tf-b4rt/trunk/html/');
+	define('_URL_SVNFILE_SUFFIX','?op=log&rev=0&sc=0&isdir=0');
+	define('_OUTPUT_TEXT_DELIM',';');
+	$fileList = array();
+	$fileList['files'] = array();
+	$fileList['types'] = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
+	$fileList['count'] = 0;
+	$fileList['size'] = 0;
+	$fileList['revision'] = 1;
+	//_printFileList(substr($cfg['docroot'], 0 , -1), $type, $mode);
+	_printFileList($cfg['docroot']."inc", $type, $mode);
+	// footer im web
+	if (($type == 1) && ($mode == 2)) {
+		sendLine('<br><strong>Processed '.$fileList['count'].' files. ('.formatHumanSize($fileList['size']).')</strong>');
+		sendLine('<br><strong>Highest Revision-Number : ');
+		sendLine('<a href="'._URL_SVNLOG.$fileList['revision']._URL_SVNLOG_SUFFIX.'" target="_blank">'.$fileList['revision'].'</a>');
+		sendLine('</strong>');
+	}
+}
+
+/**
+ * print file list worker
+ *
+ * @param $dir
+ * @param $type 1 = list, 2 = checksums
+ * @param $mode 1 = text, 2 = html
+ * @return revision-list as html-snip
+ */
+function _printFileList($dir, $type = 1, $mode = 2) {
+	global $cfg, $fileList;
+	if (!is_dir($dir))
+		return false;
+	$dirHandle = opendir($dir);
+	while ($file = readdir($dirHandle)) {
+		$fullpath = $dir.'/'.$file;
+		if (is_dir($fullpath)) {
+			if ($file{0} != '.')
+				_printFileList($fullpath, $type, $mode);
+		} else {
+			$stringLength = strlen($file);
+			foreach ($fileList['types'] as $ftype) {
+				$extLength = strlen($ftype);
+				if (($stringLength > $extLength) && (strtolower(substr($file, -($extLength))) === ($ftype))) {
+					// count
+					$fileList['count'] += 1;
+					// file
+					$_file = str_replace($cfg["docroot"], '', $fullpath);
+					switch ($type) {
+						default:
+						case 1:
+							// vars
+							$_size = filesize($fullpath);
+							$_rev = getSVNRevisionFromId($fullpath);
+							// size
+							$fileList['size'] += $_size;
+							// rev
+							if ($_rev != 'NoID') {
+								$intrev = (int)$_rev;
+								if ($intrev > $fileList['revision'])
+									$fileList['revision'] = $intrev;
+							}
+							// print
+							switch ($mode) {
+								default:
+								case 1:
+									echo $_file._OUTPUT_TEXT_DELIM.$_size._OUTPUT_TEXT_DELIM.$_rev."\n";
+									break;
+								case 2:
+									$line  = '<a href="'._URL_SVNFILE.$file['file']._URL_SVNFILE_SUFFIX.'" target="_blank">'.$_file.'</a> | ';
+									$line .= formatHumanSize($_size).' | ';
+									$line .= ($_rev != 'NoID')
+										? '<a href="'._URL_SVNLOG.$_rev._URL_SVNLOG_SUFFIX.'" target="_blank">'.$_rev.'</a>'
+										: 'NoID';
+									$line .= '<br>';
+									sendLine($line);
+									break;
+							}
+							break;
+						case 2:
+							// vars
+							$_md5 = md5_file($fullpath);
+							// print
+							switch ($mode) {
+								default:
+								case 1:
+									echo $_file._OUTPUT_TEXT_DELIM.$_md5."\n";
+									break;
+								case 2:
+									sendLine($_file." ".$_md5."<br>");
+									break;
+							}
+							break;
+					}
+				}
+			}
+		}
+	}
+	closedir($dirHandle);
+}
+
+/**
+ * get svn-revision from id-tag of a file
+ *
+ * @param $filename
+ * @return string
+ */
+function getSVNRevisionFromId($filename) {
+	$data = getDataFromFile($filename);
+	$len = strlen($data);
+	for ($i = 0; $i < $len; $i++) {
+		if ($data{$i} == '$') {
+            if (($data{$i+1} == 'I') && ($data{$i+2} == 'd')) {
+            	$revision = "";
+            	$j = $i + 3;
+                while ($j < $len) {
+                	if ($data{$j} == '$') {
+                		$rev = explode(" ", $revision);
+                		return trim($rev[2]);
+                	} else {
+                		$revision .= $data{$j};
+                	}
+                	$j++;
+                }
+            }
+        }
+	}
+	return 'NoID';
+}
+
 ?>

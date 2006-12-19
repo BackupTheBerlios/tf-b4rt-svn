@@ -33,10 +33,6 @@ require_once('inc/functions/functions.superadmin.php');
 define('_DIR_BACKUP','.backup');
 define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
-define('_URL_SVNLOG','http://svn.berlios.de/wsvn/tf-b4rt/trunk/?rev=');
-define('_URL_SVNLOG_SUFFIX','&sc=1');
-define('_URL_SVNFILE','http://svn.berlios.de/wsvn/tf-b4rt/trunk/html/');
-define('_URL_SVNFILE_SUFFIX','?op=log&rev=0&sc=0&isdir=0');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','tf-b4rt.php');
 define('_FILE_THIS', 'superadmin.php');
@@ -105,8 +101,6 @@ if (isset($_REQUEST["b"])) {
 				exit();
 
 			case "1": // server-backup
-				if (ob_get_level() == 0)
-					@ob_start();
 				buildPage("b");
 				$htmlTitle = "Backup - Create - Server";
 				printPageStart(1);
@@ -124,7 +118,6 @@ if (isset($_REQUEST["b"])) {
 					sendLine(backupListDisplay());
 				}
 				printPageEnd(1);
-				@ob_end_flush();
 				exit();
 
 			case "2": // client-backup
@@ -274,8 +267,6 @@ if (isset($_REQUEST["u"])) {
 				// get sql-data
 				$updateSQLData = @trim(gzinflate(getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=2&v=" . _VERSION . "&d=".$cfg["db_type"])));
 				if ((isset($updateSQLData)) && ($updateSQLData != "")) {
-					if (ob_get_level() == 0)
-						@ob_start();
 					sendLine('<strong>Update - Database</strong><br><br><em>Updating Database... Please Wait...</em><ul>');
 					$updateSQLStates = explode("\n",$updateSQLData);
 					// get ado-connection
@@ -283,7 +274,6 @@ if (isset($_REQUEST["u"])) {
 					if (!$dbCon) {
 						echo '</em></li></ul><font color="red"><strong>Error updating Database.</strong></font><br><br>Please restore backup and try again (or do manual update).<br><br>';
 						echo $dbCon->ErrorMsg();
-						@ob_end_flush();
 						exit();
 					} else {
 						foreach ($updateSQLStates as $sqlState) {
@@ -298,7 +288,6 @@ if (isset($_REQUEST["u"])) {
 									$dbCon->Close();
 									// talk and out
 									echo '</em></li></ul><font color="red"><strong>Error updating Database.</strong></font><br><br>Please restore backup and try again (or do manual update).<br><br>';
-									@ob_end_flush();
 									exit();
 								}
 							}
@@ -308,7 +297,6 @@ if (isset($_REQUEST["u"])) {
 						// talk and continue
 						sendLine('</ul><p><font color="green">Database-Update done.</font><br><br>');
 						sendLine('<form name="update" action="' . _FILE_THIS . '" method="post"><input type="Hidden" name="u" value="3"><input type="submit" value="Next Step - File-Update"></form><br>');
-						@ob_end_flush();
 						exit();
 					}
 				} else {
@@ -338,8 +326,6 @@ if (isset($_REQUEST["u"])) {
 				break;
 
 			case "4":
-				if (ob_get_level() == 0)
-					@ob_start();
 				sendLine('<strong>Update - Files</strong><br><br><em>Updating Files... Please Wait...</em><br><ul>');
 				sendLine('<li>Getting Update-Archive :<br>');
 				ini_set("allow_url_fopen", "1");
@@ -348,7 +334,6 @@ if (isset($_REQUEST["u"])) {
 				$md5hash = getDataFromUrl(_SUPERADMIN_URLBASE . _SUPERADMIN_PROXY ."?u=4&v=" . _VERSION);
 				if ((!isset($md5hash)) || (strlen($md5hash) != 32)) {
 					sendLine('</li></ul><br><br><font color="red"><strong>Error getting Update-Archive.</strong></font><br><br>Please restore backup and try again (or do manual update).<br><br>');
-					@ob_end_flush();
 					exit();
 				}
 				// download archive
@@ -374,12 +359,10 @@ if (isset($_REQUEST["u"])) {
 						sendLine('<font color="green">done</font></li>');
 					} else {
 						sendLine('<br></li></ul><br><br><strong><font color="red">Error writing archive <em>'.$cfg['docroot']._UPDATE_ARCHIVE.'</em>.</font></strong><br><br>Please restore backup and try again (or do manual update).<br><br>');
-						@ob_end_flush();
 						exit();
 					}
 				} else {
 					sendLine('</li></ul><br><br><strong><font color="red">Error updating files.</font></strong><br><br>Please restore backup and try again (or do manual update).<br><br>');
-					@ob_end_flush();
 					exit();
 				}
 				// validate archive
@@ -389,7 +372,6 @@ if (isset($_REQUEST["u"])) {
 					sendLine('<font color="green">ok</font> (<em>'.$md5hash.'</em>)<br></li>');
 				} else {
 					sendLine('<font color="red">failed</font></ul><br><br>Please restore backup and try again (or do manual update).</strong><br><br>');
-					@ob_end_flush();
 					exit();
 				}
 				// extract archive
@@ -422,18 +404,15 @@ if (isset($_REQUEST["u"])) {
 						} else {
 							@fclose($handle);
 							sendLine('</li></ul><br><br><font color="red"><strong>Error writing version-file</strong></font><br><br>Please restore backup and try again (or do manual update).<br><br>');
-							@ob_end_flush();
 							exit();
 						}
 					} else {
 						sendLine('<br><br>');
 						sendLine('</li></ul><font color="red"><strong>Error writing version-file</strong></font><br><br>Please restore backup and try again (or do manual update).<br><br>');
-						@ob_end_flush();
 						exit();
 					}
 				} else {
 					sendLine('</li></ul><br><br><font color="red"><strong>Error getting version-file</strong></font><br><br>Please restore backup and try again (or do manual update).<br><br>');
-					@ob_end_flush();
 					exit();
 				}
 				sendLine('</ul>');
@@ -445,7 +424,6 @@ if (isset($_REQUEST["u"])) {
 				// flush cache
 				cacheFlush();
 				// exit
-				@ob_end_flush();
 				exit();
 		}
 		exit();
@@ -1292,7 +1270,7 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= '<p>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?z=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Changelog" border="0"> Changelog</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Files" border="0"> Files</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=9"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
@@ -1380,12 +1358,41 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= '</div>';
 				break;
 
-			case "9": // Files
-				$htmlTitle = "tf-b4rt - Files";
-				$htmlMain .= '<br>';
-				$htmlMain .= getFileList();
+			case "9": // Misc-main
+				$htmlTitle = "Processes";
+				$htmlMain .= '<p>';
+				$htmlMain .= '<img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums" border="0"> File-List (';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=91" target="_blank">html</a>';
+				$htmlMain .= ' / ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=92" target="_blank">text</a>';
+				$htmlMain .= ')';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums" border="0"> Checksums (';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=93" target="_blank">html</a>';
+				$htmlMain .= ' / ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=94" target="_blank">text</a>';
+				$htmlMain .= ')';
 				$htmlMain .= '<br><br>';
 				break;
+
+			case "91": // Misc - File-List - html
+				printFileList(1, 2);
+				exit();
+
+			case "92": // Misc - File-List - text
+				@header("Content-Type: text/plain");
+				printFileList(1, 1);
+				exit();
+
+			case "93": // Misc - Checksums
+				printFileList(2, 2);
+				exit();
+
+			case "94": // Misc - Checksums
+				@header("Content-Type: text/plain");
+				printFileList(2, 1);
+				exit();
+
 		}
 		printPage();
 		exit();
