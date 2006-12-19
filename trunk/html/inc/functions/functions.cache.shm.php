@@ -137,5 +137,36 @@ function cacheFlush($username = "") {
  * transfers
  ******************************************************************************/
 
+/**
+ * check if cache set
+ *
+ * @return boolean
+ */
+function cacheTransfersIsSet() {
+	return false;
+}
+
+/**
+ * init transfers from cache
+ */
+function cacheTransfersInit() {
+	global $transfers;
+	initGlobalTransfersArray();
+}
+
+/**
+ * set the cache
+ */
+function cacheTransfersSet() {
+	global $transfers;
+	initGlobalTransfersArray();
+}
+
+/**
+ * flush the cache
+ */
+function cacheTransfersFlush() {
+	return;
+}
 
 ?>

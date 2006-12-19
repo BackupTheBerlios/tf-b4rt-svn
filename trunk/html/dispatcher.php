@@ -135,6 +135,16 @@ switch ($action) {
     	break;
 
 /*******************************************************************************
+ * Cache-Flush
+ ******************************************************************************/
+    case "cacheFlush":
+    	// flush session-cache
+		cacheFlush();
+		// flush transfers-cache (not really needed as reload is triggered)
+		cacheTransfersFlush();
+    	break;
+
+/*******************************************************************************
  * Cookie-Flush
  ******************************************************************************/
     case "cookieFlush":

@@ -60,26 +60,35 @@ function cacheFlush($username = "") {}
  ******************************************************************************/
 
 /**
- * get from cache
+ * check if cache set
  *
- * @param $username
- * @return array-ref
+ * @return boolean
  */
-function &cacheTransfersGet($username) {
-	$transferSettings = $_SESSION['cache_transfers'][$username]['settings'];
-	return $transferSettings;
+function cacheTransfersIsSet() {
+	return false;
+}
+
+/**
+ * init transfers from cache
+ */
+function cacheTransfersInit() {
+	global $transfers;
+	initGlobalTransfersArray();
+}
+
+/**
+ * set the cache
+ */
+function cacheTransfersSet() {
+	global $transfers;
+	initGlobalTransfersArray();
 }
 
 /**
  * flush the cache
- *
- * @param $username
  */
-function cacheTransfersFlush($username = "") {
-	if (empty($username))
-		unset($_SESSION['cache_transfers']);
-	else
-		unset($_SESSION['cache_transfers'][$username]);
+function cacheTransfersFlush() {
+	return;
 }
 
 ?>

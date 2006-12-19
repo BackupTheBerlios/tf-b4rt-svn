@@ -327,7 +327,10 @@
 													</td>
 												</tmpl_if>
 												<td class="tiny" align="right" nowrap>
-													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													<a href="dispatcher.php?action=cacheFlush" onclick="return actionClick(true)"><img src="themes/default/images/cache.gif" width="16" height="16" border="0" title="Flush Cache"></a>
+												</td>
+												<td class="tiny" align="left" nowrap>
 													<a href="dispatcher.php?action=maintenance" onclick="return actionClick(true)"><img src="themes/default/images/maintenance.gif" width="16" height="16" border="0" title="Maintenance"></a>
 												</td>
 												<tmpl_if name="enable_bulkops">
