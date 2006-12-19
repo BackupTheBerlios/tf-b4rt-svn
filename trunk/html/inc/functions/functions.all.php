@@ -59,4 +59,7 @@ require_once('inc/functions/functions.vlc.php');
 // cli functions
 require_once('inc/functions/functions.cli.php');
 
+// tools functions
+require_once('inc/functions/functions.tools.php');
+
 ?>
