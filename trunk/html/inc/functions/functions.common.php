@@ -1377,23 +1377,23 @@ function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $
 	// get datapath
 	$tDatapath = getTorrentDatapath($transfer);
 	// insert
-	$sql = "INSERT INTO tf_torrents ( torrent , running ,rate , drate, maxuploads , runtime , sharekill , minport , maxport, maxcons , savepath , btclient, hash, datapath )
-			VALUES (
-					".$db->qstr($transfer).",
-					".$db->qstr($running).",
-					".$db->qstr($rate).",
-					".$db->qstr($drate).",
-					".$db->qstr($maxuploads).",
-					".$db->qstr($runtime).",
-					".$db->qstr($sharekill).",
-					".$db->qstr($minport).",
-					".$db->qstr($maxport).",
-					".$db->qstr($maxcons).",
-					".$db->qstr($savepath).",
-					".$db->qstr($btclient).",
-					".$db->qstr($tHash).",
-					".$db->qstr($tDatapath)."
-				   )";
+    $sql = "INSERT INTO tf_torrents (torrent,running,rate,drate,maxuploads,runtime,sharekill,minport,maxport,maxcons,savepath,btclient,hash,datapath)"
+    	." VALUES ("
+    	. $db->qstr($transfer).","
+    	. $db->qstr($running).","
+    	. $db->qstr($rate).","
+    	. $db->qstr($drate).","
+    	. $db->qstr($maxuploads).","
+    	. $db->qstr($runtime).","
+    	. $db->qstr($sharekill).","
+    	. $db->qstr($minport).","
+    	. $db->qstr($maxport).","
+    	. $db->qstr($maxcons).","
+    	. $db->qstr($savepath).","
+    	. $db->qstr($btclient).","
+    	. $db->qstr($tHash).","
+    	. $db->qstr($tDatapath)
+    	.")";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// set transfers-cache

@@ -1437,4 +1437,27 @@ function dbDieOnError($sql) {
 	}
 }
 
+/**
+ * Audit Action
+ *
+ * @param $action
+ * @param $file
+ */
+function AuditAction($action, $file="") {
+    global $cfg, $db;
+    $rec = array(
+    	'user_id' => $cfg["user"],
+    	'file' => $file,
+    	'action' => ($action != "") ? $action : "unset",
+    	'ip' => $cfg['ip'],
+    	'ip_resolved' => htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES),
+    	'user_agent' => (isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"],
+    	'time' => time()
+        );
+    $sTable = 'tf_log';
+    $sql = $db->GetInsertSql($sTable, $rec);
+    // add record to the log
+    $db->Execute($sql);
+}
+
 ?>

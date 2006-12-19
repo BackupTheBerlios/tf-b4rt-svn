@@ -1756,19 +1756,18 @@ function tfb_strip_quotes(&$var){
  */
 function AuditAction($action, $file="") {
     global $cfg, $db;
-    $rec = array(
-    	'user_id' => $cfg["user"],
-    	'file' => $file,
-    	'action' => ($action != "") ? $action : "unset",
-    	'ip' => $cfg['ip'],
-    	'ip_resolved' => htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES),
-    	'user_agent' => (isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"],
-    	'time' => time()
-        );
-    $sTable = 'tf_log';
-    $sql = $db->GetInsertSql($sTable, $rec);
-    // add record to the log
-    $db->Execute($sql);
+    // add entry to the log
+    $db->Execute("INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
+    	." VALUES ("
+    	. $db->qstr($cfg["user"]).","
+    	. $db->qstr($file).","
+    	. $db->qstr(($action != "") ? $action : "unset").","
+    	. $db->qstr($cfg['ip']).","
+    	. $db->qstr(htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES)).","
+    	. $db->qstr((isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"]).","
+    	. $db->qstr(time())
+    	.")"
+    );
 }
 
 /**
@@ -1865,18 +1864,17 @@ function resetOwner($transfer) {
 		$rtnValue = (IsUser($af->transferowner))
 			? $af->transferowner /* We have an owner */
 			: GetSuperAdmin(); /* no owner found, so the super admin will now own it */
-		$rec = array(
-						'user_id' => $rtnValue,
-						'file' => $transfer,
-						'action' => $cfg["constants"]["reset_owner"],
-						'ip' => $cfg['ip'],
-						'ip_resolved' => gethostbyaddr($cfg['ip']),
-						'user_agent' => (isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"],
-						'time' => time()
-					);
-		$sTable = 'tf_log';
-		$sql = $db->GetInsertSql($sTable, $rec);
-		// add record to the log
+	    // add entry to the log
+	    $sql = "INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
+	    	." VALUES ("
+	    	. $db->qstr($rtnValue).","
+	    	. $db->qstr($transfer).","
+	    	. $db->qstr($cfg["constants"]["reset_owner"]).","
+	    	. $db->qstr($cfg['ip']).","
+	    	. $db->qstr(htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES)).","
+	    	. $db->qstr((isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"]).","
+	    	. $db->qstr(time())
+	    	.")";
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 	}
