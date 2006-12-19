@@ -451,14 +451,13 @@ function initXferStats() {
 function initUserStats() {
 	global $cfg, $userIds, $userList;
 	$userList = array();
-	$arUsers = GetUsers();
-	$userCount = count($arUsers);
+	$userCount = count($cfg['users']);
 	for ($i = 0; $i < $userCount; $i++) {
 		$userAry = array();
 		// name
-		array_push($userAry, $arUsers[$i]);
+		array_push($userAry, $cfg['users'][$i]);
 		// state
-		if (IsOnline($arUsers[$i]))
+		if (IsOnline($cfg['users'][$i]))
 			array_push($userAry, "online");
 		else
 			array_push($userAry, "offline");

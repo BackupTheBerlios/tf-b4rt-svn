@@ -99,12 +99,11 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 		}
 	}
 	$user_list = array();
-	$users = GetUsers();
 	$selected = "";
-	for ($inx2 = 0; $inx2 < sizeof($users); $inx2++) {
+	for ($inx2 = 0; $inx2 < sizeof($cfg['users']); $inx2++) {
 		array_push($user_list, array(
-			'user' => htmlentities($users[$inx2], ENT_QUOTES),
-			'selected' => ($user == $users[$inx2]) ? "selected" : "",
+			'user' => htmlentities($cfg['users'][$inx2], ENT_QUOTES),
+			'selected' => ($user == $cfg['users'][$inx2]) ? "selected" : "",
 			)
 		);
 	}
@@ -509,6 +508,8 @@ function DeleteThisUser($user_id) {
 	$sql = "DELETE FROM tf_users WHERE user_id=".$db->qstr($user_id);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush();
 }
 
 /**
@@ -550,6 +551,8 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
 		$sql = "UPDATE tf_log SET user_id=".$db->qstr($user_id)." WHERE user_id=".$db->qstr($org_user_id);
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
+		// flush session-cache
+		cacheFlush();
 	}
 }
 

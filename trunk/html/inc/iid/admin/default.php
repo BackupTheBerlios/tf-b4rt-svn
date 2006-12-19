@@ -49,8 +49,7 @@ $arTransfers = getTorrentListFromFS();
 $countTransfers = count($arTransfers);
 $tmpl->setvar('server_transfers_total', $countTransfers);
 // users
-$arUsers = GetUsers();
-$countUsers = count($arUsers);
+$countUsers = count($cfg['users']);
 $tmpl->setvar('server_users_total', $countUsers);
 // hits
 $hits = $db->GetOne("SELECT SUM(hits) AS hits FROM tf_users");

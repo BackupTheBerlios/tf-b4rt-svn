@@ -86,10 +86,9 @@ if (strlen($cfg["fluxd_Watch_jobs"]) > 0) {
 	$tmpl->setloop('fluxd_Watch_jobs_list', $watchlist);
 }
 $watchuser = array();
-$users = GetUsers();
-$userCount = count($users);
+$userCount = count($cfg['users']);
 for ($i = 0; $i < $userCount; $i++)
-	array_push($watchuser, array('user' => $users[$i]));
+	array_push($watchuser, array('user' => $cfg['users'][$i]));
 $tmpl->setloop('watch_user', $watchuser);
 $tmpl->setvar('fluxd_Watch_jobs', $cfg["fluxd_Watch_jobs"]);
 

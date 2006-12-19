@@ -104,6 +104,12 @@ if (is_file('inc/config/config.db.php')) {
 	// load stats-settings
 	loadSettings('tf_settings_stats');
 
+	// load users
+	$arUsers = GetUsers();
+	$cfg['users'] = ((isset($arUsers)) && (is_array($arUsers)))
+		? $arUsers
+		: array($cfg['user']);
+
 	// load links
 	$arLinks = GetLinks();
 	if ((isset($arLinks)) && (is_array($arLinks))) {

@@ -421,15 +421,14 @@ if ($isAjaxUpdate) {
 			$isFirst = false;
 		else
 			$content .= "|";
-		$arUsers = GetUsers();
-		$countUsers = count($arUsers);
+		$countUsers = count($cfg['users']);
 		$arOnlineUsers = array();
 		$arOfflineUsers = array();
 		for ($i = 0; $i < $countUsers; $i++) {
-			if (IsOnline($arUsers[$i]))
-				array_push($arOnlineUsers, $arUsers[$i]);
+			if (IsOnline($cfg['users'][$i]))
+				array_push($arOnlineUsers, $cfg['users'][$i]);
 			else
-				array_push($arOfflineUsers, $arUsers[$i]);
+				array_push($arOfflineUsers, $cfg['users'][$i]);
 		}
 		$countOnline = count($arOnlineUsers);
 		for ($i = 0; $i < $countOnline; $i++) {
@@ -578,15 +577,14 @@ if ($cfg["enable_goodlookstats"] != "0") {
 if ($cfg["ui_displayusers"] != "0") {
 	$tmpl->setvar('ui_displayusers',1);
 	$tmpl->setvar('hide_offline', $cfg["hide_offline"]);
-	$arUsers = GetUsers();
-	$userCount = count($arUsers);
+	$userCount = count($cfg['users']);
 	$arOnlineUsers = array();
 	$arOfflineUsers = array();
 	for ($inx = 0; $inx < $userCount; $inx++) {
-		if (IsOnline($arUsers[$inx]))
-			array_push($arOnlineUsers, array('user' => $arUsers[$inx]));
+		if (IsOnline($cfg['users'][$inx]))
+			array_push($arOnlineUsers, array('user' => $cfg['users'][$inx]));
 		else
-			array_push($arOfflineUsers, array('user' => $arUsers[$inx]));
+			array_push($arOfflineUsers, array('user' => $cfg['users'][$inx]));
 	}
 	if (count($arOnlineUsers) > 0)
 		$tmpl->setloop('arOnlineUsers', $arOnlineUsers);

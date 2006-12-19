@@ -655,6 +655,8 @@ function addNewUser($newUser, $pass1, $userType) {
 	$sql = $db->GetInsertSql($sTable, $record);
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush();
 }
 
 /**
