@@ -45,6 +45,7 @@ BIN_FROMDOS="/usr/bin/fromdos"
 BIN_XARGS="/usr/bin/xargs"
 BIN_TAR="/bin/tar"
 BIN_MDSUM="/usr/bin/md5sum"
+BIN_PHP="/usr/bin/php"
 
 #------------------------------------------------------------------------------#
 
@@ -74,7 +75,7 @@ ENDINGS="php
 #echo VERSION : $VERSION
 
 # export from svn
-$BIN_SVN export --quiet --non-interactive $SVN_URL
+$BIN_SVN export --non-interactive $SVN_URL
 
 # Get current SVN revision of tfb from Ids in all files
 REV_TFB=`( find $MAINDIR '(' -name 'CHANGES' \
@@ -135,7 +136,14 @@ done
 find $MAINDIR -name "*.sh" | $BIN_XARGS chmod +x
 find $MAINDIR -name "*.pl" | $BIN_XARGS chmod +x
 chmod +x $MAINDIR/html/bin/fluxcli.php
+chmod +x $MAINDIR/html/bin/tools/*.php
 chmod +x $MAINDIR/clients/transmission/configure
+
+# filelist
+$BIN_PHP $MAINDIR/html/bin/tools/filelist.php $MAINDIR/html | tee -a  filelist-$VERSION_STRING.txt
+
+# checksums
+$BIN_PHP $MAINDIR/html/bin/tools/checksums.php $MAINDIR/html | tee -a  checksums-$VERSION_STRING.txt
 
 # rename dir
 mv $MAINDIR $TARNAME
