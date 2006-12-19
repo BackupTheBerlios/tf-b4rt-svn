@@ -674,7 +674,6 @@ function getFileChecksums($talk = false) {
 	$fileList['files'] = array();
 	$fileList['types'] = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
 	_getFileChecksums(substr($cfg['docroot'], 0 , -1), $talk);
-//_getFileChecksums($cfg['docroot']."inc/classes", $talk);
 	return $fileList['files'];
 }
 
@@ -712,11 +711,17 @@ function _getFileChecksums($dir, $talk = false) {
 
 /**
  * print file-list
+ *
+ * @param $basedir
  * @param $type 1 = list, 2 = checksums
  * @param $mode 1 = text, 2 = html
  */
-function printFileList($type = 1, $mode = 2) {
-	global $cfg, $fileList;
+function printFileList($basedir, $type = 1, $mode = 2) {
+	global $fileList;
+	$basedir = checkDirPathString($basedir);
+	$dir = substr($basedir, 0 , -1);
+	if (!is_dir($dir))
+		return false;
 	define('_URL_SVNLOG','http://svn.berlios.de/wsvn/tf-b4rt/trunk/?rev=');
 	define('_URL_SVNLOG_SUFFIX','&sc=1');
 	define('_URL_SVNFILE','http://svn.berlios.de/wsvn/tf-b4rt/trunk/html/');
@@ -727,9 +732,8 @@ function printFileList($type = 1, $mode = 2) {
 	$fileList['count'] = 0;
 	$fileList['size'] = 0;
 	$fileList['revision'] = 1;
-	_printFileList(substr($cfg['docroot'], 0 , -1), $type, $mode);
-//_printFileList($cfg['docroot']."inc/classes", $type, $mode);
-	// footer im web
+	_printFileList($basedir, $dir, $type, $mode);
+	// footer in html
 	if (($type == 1) && ($mode == 2)) {
 		sendLine('<br><strong>Processed '.$fileList['count'].' files. ('.formatHumanSize($fileList['size']).')</strong>');
 		sendLine('<br><strong>Highest Revision-Number : ');
@@ -741,13 +745,14 @@ function printFileList($type = 1, $mode = 2) {
 /**
  * print file list worker
  *
+ * @param $basedir
  * @param $dir
  * @param $type 1 = list, 2 = checksums
  * @param $mode 1 = text, 2 = html
  * @return revision-list as html-snip
  */
-function _printFileList($dir, $type = 1, $mode = 2) {
-	global $cfg, $fileList;
+function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
+	global $fileList;
 	if (!is_dir($dir))
 		return false;
 	$dirHandle = opendir($dir);
@@ -755,7 +760,7 @@ function _printFileList($dir, $type = 1, $mode = 2) {
 		$fullpath = $dir.'/'.$file;
 		if (is_dir($fullpath)) {
 			if ($file{0} != '.')
-				_printFileList($fullpath, $type, $mode);
+				_printFileList($basedir, $fullpath, $type, $mode);
 		} else {
 			$stringLength = strlen($file);
 			foreach ($fileList['types'] as $ftype) {
@@ -764,7 +769,7 @@ function _printFileList($dir, $type = 1, $mode = 2) {
 					// count
 					$fileList['count'] += 1;
 					// file
-					$_file = str_replace($cfg["docroot"], '', $fullpath);
+					$_file = str_replace($basedir, '', $fullpath);
 					switch ($type) {
 						default:
 						case 1:

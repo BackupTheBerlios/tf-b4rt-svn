@@ -121,19 +121,19 @@ if ((isset($action)) && ($action != "")) {
 		case "repair":
 			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::repair();
-        	exit();
+        	break;
 		case "maintenance":
 			require_once("inc/classes/MaintenanceAndRepair.php");
 			MaintenanceAndRepair::maintenance(((isset($argv[2])) && ($argv[2] == "true")) ? true : false);
-        	exit();
+        	break;
 		case "dump":
 			cliDumpDatabase(@$argv[2]);
 			break;
 		case "filelist":
-			printFileList(1, 1);
+			printFileList((isset($argv[2])) ? $argv[2] : $cfg['docroot'], 1, 1);
 			break;
 		case "checksums":
-			printFileList(2, 1);
+			printFileList((isset($argv[2])) ? $argv[2] : $cfg['docroot'], 2, 1);
 			break;
 		case "version":
 		case "-version":

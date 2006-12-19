@@ -65,7 +65,9 @@ function cliPrintUsage() {
 	. " <dump>        : dump database.\n"
 	. "                 extra-arg 1 : type : settings/users\n"
 	. " <filelist>    : print file-list.\n"
+	. "                 extra-arg 1 : dir (if empty docroot is used)\n"
 	. " <checksums>   : print checksum-list.\n"
+	. "                 extra-arg 1 : dir (if empty docroot is used)\n"
 	. "\n"
 	. "examples: \n"
 	. "fluxcli.php transfers\n"
@@ -86,8 +88,8 @@ function cliPrintUsage() {
 	. "fluxcli.php maintenance true\n"
 	. "fluxcli.php dump settings\n"
 	. "fluxcli.php dump users\n"
-	. "fluxcli.php filelist\n"
-	. "fluxcli.php checksums\n"
+	. "fluxcli.php filelist /var/www\n"
+	. "fluxcli.php checksums /var/www\n"
 	. "\n";
 	echo $content;
 }

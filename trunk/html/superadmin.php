@@ -1384,21 +1384,21 @@ if (isset($_REQUEST["z"])) {
 				break;
 
 			case "91": // Misc - File-List - html
-				printFileList(1, 2);
+				printFileList($cfg['docroot'], 1, 2);
 				exit();
 
 			case "92": // Misc - File-List - text
 				@header("Content-Type: text/plain");
-				printFileList(1, 1);
+				printFileList($cfg['docroot'], 1, 1);
 				exit();
 
 			case "93": // Misc - Checksums - html
-				printFileList(2, 2);
+				printFileList($cfg['docroot'], 2, 2);
 				exit();
 
 			case "94": // Misc - Checksums - text
 				@header("Content-Type: text/plain");
-				printFileList(2, 1);
+				printFileList($cfg['docroot'], 2, 1);
 				exit();
 
 			case "95": // Misc - Checksums - Latest
