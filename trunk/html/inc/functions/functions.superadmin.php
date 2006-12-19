@@ -320,40 +320,6 @@ function updateError($message = "") {
 }
 
 /**
- * load data of file
- *
- * @param $file the file
- * @return data
- */
-function getDataFromFile($file) {
-	if ($fileHandle = @fopen($file, 'r')) {
-		$data = null;
-		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 8192);
-		@fclose ($fileHandle);
-		return $data;
-	}
-}
-
-/**
- * get data of a url
- *
- * @param $url the url
- * @return data
- */
-function getDataFromUrl($url) {
-	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
-	if ($fileHandle = @fopen($url, 'r')) {
-		$data = null;
-		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 4096);
-		@fclose ($fileHandle);
-		return $data;
-	}
-}
-
-/**
  * get a ado-connection to our database.
  *
  * @return database-connection or false on error
@@ -369,90 +335,6 @@ function getAdoConnection() {
     	return false;
     // return db-connection
 	return $db;
-}
-
-/**
- * sets webapp-lock
- *
- * @param $lock 1|0
- * @return true or function exits with error
- */
-function setWebappLock($lock) {
-	global $cfg;
-	// get ado-connection
-	$dbCon = getAdoConnection();
-	if (!$dbCon) {
-		return $dbCon->ErrorMsg();
-	} else {
-		$dbCon->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
-		// flush session-cache
-		cacheFlush();
-		if ($dbCon->ErrorNo() == 0) {
-			// close ado-connection
-			$dbCon->Close();
-			// return
-			return true;
-		} else { // there was an error
-			// close ado-connection
-			$dbCon->Close();
-			// return error
-			return $dbCon->ErrorMsg();
-		}
-	}
-}
-
-/**
- * reset Torent-Totals
- *
- * @return true or function exits with error
- */
-function resetAllTorentTotals() {
-	// get ado-connection
-	$dbCon = getAdoConnection();
-	if (!$dbCon) {
-		return $dbCon->ErrorMsg();
-	} else {
-		$dbCon->Execute("DELETE FROM tf_torrent_totals");
-		// set transfers-cache
-		cacheTransfersSet();
-		if ($dbCon->ErrorNo() == 0) {
-			// close ado-connection
-			$dbCon->Close();
-			// return
-			return true;
-		} else { // there was an error
-			// close ado-connection
-			$dbCon->Close();
-			// return error
-			return $dbCon->ErrorMsg();
-		}
-	}
-}
-
-/**
- * reset Xfer-Stats
- *
- * @return true or function exits with error
- */
-function resetXferStats() {
-	// get ado-connection
-	$dbCon = getAdoConnection();
-	if (!$dbCon) {
-		return $dbCon->ErrorMsg();
-	} else {
-		$dbCon->Execute("DELETE FROM tf_xfer");
-		if ($dbCon->ErrorNo() == 0) {
-			// close ado-connection
-			$dbCon->Close();
-			// return
-			return true;
-		} else { // there was an error
-			// close ado-connection
-			$dbCon->Close();
-			// return error
-			return $dbCon->ErrorMsg();
-		}
-	}
 }
 
 /**
@@ -835,6 +717,113 @@ function backupCreate($talk = false, $compression = 0) {
 		sendLine('<font color="green">Backup Complete.</font><br>');
 	AuditAction($cfg["constants"]["admin"], "FluxBackup Created : ".$fileArchiveName);
 	return $fileArchiveName;
+}
+
+/**
+ * validate Local Files
+ */
+function validateLocalFiles() {
+	sendLine('<h3>Validate Files</h3>');
+	sendLine('<strong>Getting Checksum-list</strong>');
+	// download list
+	$checksumsString = "";
+	ini_set("allow_url_fopen", "1");
+	ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
+	if ($urlHandle = @fopen(_SUPERADMIN_URLBASE._FILE_CHECKSUMS_PRE._VERSION._FILE_CHECKSUMS_SUF, 'r')) {
+		while (!@feof($urlHandle)) {
+			$checksumsString .= @fgets($urlHandle, 8192);
+			sendLine('.');
+		}
+		@fclose($urlHandle);
+	}
+	if (empty($checksumsString))
+		exit('error getting checksum-list from '._SUPERADMIN_URLBASE);
+	sendLine('<font color="green">done</font><br>');
+	sendLine('<br><strong>Processing list</strong>');
+	// remote Checksums
+	$remoteChecksums = array();
+	$remoteSums = explode("\n", $checksumsString);
+	$remoteSums = array_map('trim', $remoteSums);
+	foreach ($remoteSums as $remSum) {
+		$tempAry = explode(";", $remSum);
+		if ((!empty($tempAry[0])) && (!empty($tempAry[1]))) {
+			$remoteChecksums[$tempAry[0]] = $tempAry[1];
+			sendLine('.');
+		}
+	}
+	$remoteChecksumsCount = count($remoteChecksums);
+	sendLine('<font color="green">done</font> ('.$remoteChecksumsCount.')<br>');
+	// local Checksums
+	sendLine('<br><strong>Getting local checksums</strong>');
+	$localChecksums = getFileChecksums(true);
+	$localChecksumsCount = count($localChecksums);
+	sendLine('<font color="green">done</font> ('.$localChecksumsCount.')<br>');
+	// init some arrays
+	$filesMissing = array();
+	$filesNew = array();
+	$filesOk = array();
+	$filesChanged = array();
+	// validate
+	sendLine('<br><strong>Validating...</strong><br>');
+	// validate pass 1
+	foreach ($remoteChecksums as $file => $md5) {
+		$line = $file;
+		if (isset($localChecksums[$file])) {
+			if ($md5 == $localChecksums[$file]) {
+				array_push($filesOk, $file);
+				$line .= ' <font color="green"> Ok</font>';
+			} else {
+				array_push($filesChanged, $file);
+				$line .= ' <font color="red"> Changed</font>';
+			}
+		} else {
+			array_push($filesMissing, $file);
+			$line .= ' <font color="red"> Missing</font>';
+		}
+		sendLine($line."<br>");
+	}
+	// validate pass 2
+	foreach ($localChecksums as $file => $md5)
+		if (!isset($remoteChecksums[$file]))
+			array_push($filesNew, $file);
+	// summary
+	sendLine('<h3>Done.</h3>');
+	// files Total
+	sendLine('<strong>'._VERSION.' : '.$remoteChecksumsCount.'</strong><br>');
+	sendLine('<strong>Local : '.$localChecksumsCount.'</strong><br>');
+	// files Ok
+	$filesOkCount = count($filesOk);
+	$line  = '<strong>Ok : </strong>';
+	$line .= ($filesOkCount == $remoteChecksumsCount)
+		? '<font color="green">'.$filesOkCount.'</font>'
+		: '<font color="red">'.$filesOkCount.'</font>';
+	sendLine($line.'<br>');
+	// files Missing
+	$filesMissingCount = count($filesMissing);
+	$line  = '<strong>Missing : </strong>';
+	$line .= ($filesMissingCount == 0)
+		? '<font color="green">'.$filesMissingCount.'</font>'
+		: '<font color="red">'.$filesMissingCount.'</font>';
+	sendLine($line.'<br>');
+	// files Changed
+	$filesChangedCount = count($filesChanged);
+	$line  = '<strong>Changed : </strong>';
+	$line .= ($filesChangedCount == 0)
+		? '<font color="green">'.$filesChangedCount.'</font>'
+		: '<font color="red">'.$filesChangedCount.'</font>';
+	sendLine($line.'<br>');
+	// files New
+	$filesNewCount = count($filesNew);
+	$line  = '<strong>New : </strong>';
+	$line .= ($filesNewCount == 0)
+		? '<font color="green">'.$filesNewCount.'</font>'
+		: '<font color="red">'.$filesNewCount.'</font>';
+	sendLine($line.'<br>');
+	if (count($filesNew) > 0) {
+		sendLine('<br><strong>New Files : </strong><br>');
+		foreach ($filesNew as $newFile)
+			sendLine($newFile.'<br>');
+	}
 }
 
 ?>

@@ -129,6 +129,12 @@ if ((isset($action)) && ($action != "")) {
 		case "dump":
 			cliDumpDatabase(@$argv[2]);
 			break;
+		case "filelist":
+			printFileList(1, 1);
+			break;
+		case "checksums":
+			printFileList(2, 1);
+			break;
 		case "version":
 		case "-version":
 		case "--version":

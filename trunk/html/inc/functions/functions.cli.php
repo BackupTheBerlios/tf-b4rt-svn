@@ -64,6 +64,8 @@ function cliPrintUsage() {
 	. "                 extra-arg 1 : restart died transfers (true/false)\n"
 	. " <dump>        : dump database.\n"
 	. "                 extra-arg 1 : type : settings/users\n"
+	. " <filelist>    : print file-list.\n"
+	. " <checksums>   : print checksum-list.\n"
 	. "\n"
 	. "examples: \n"
 	. "fluxcli.php transfers\n"
@@ -84,6 +86,8 @@ function cliPrintUsage() {
 	. "fluxcli.php maintenance true\n"
 	. "fluxcli.php dump settings\n"
 	. "fluxcli.php dump users\n"
+	. "fluxcli.php filelist\n"
+	. "fluxcli.php checksums\n"
 	. "\n";
 	echo $content;
 }

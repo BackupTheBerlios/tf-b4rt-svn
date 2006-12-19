@@ -579,6 +579,138 @@ function changeUserLevel($user_id, $level) {
 }
 
 /**
+ * sets webapp-lock
+ *
+ * @param $lock 1|0
+ * @return true or function exits with error
+ */
+function setWebappLock($lock) {
+	global $cfg;
+	// get ado-connection
+	$dbCon = getAdoConnection();
+	if (!$dbCon) {
+		return $dbCon->ErrorMsg();
+	} else {
+		$dbCon->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
+		// flush session-cache
+		cacheFlush();
+		if ($dbCon->ErrorNo() == 0) {
+			// close ado-connection
+			$dbCon->Close();
+			// return
+			return true;
+		} else { // there was an error
+			// close ado-connection
+			$dbCon->Close();
+			// return error
+			return $dbCon->ErrorMsg();
+		}
+	}
+}
+
+/**
+ * reset Torent-Totals
+ *
+ * @return true or function exits with error
+ */
+function resetAllTorentTotals() {
+	// get ado-connection
+	$dbCon = getAdoConnection();
+	if (!$dbCon) {
+		return $dbCon->ErrorMsg();
+	} else {
+		$dbCon->Execute("DELETE FROM tf_torrent_totals");
+		// set transfers-cache
+		cacheTransfersSet();
+		if ($dbCon->ErrorNo() == 0) {
+			// close ado-connection
+			$dbCon->Close();
+			// return
+			return true;
+		} else { // there was an error
+			// close ado-connection
+			$dbCon->Close();
+			// return error
+			return $dbCon->ErrorMsg();
+		}
+	}
+}
+
+/**
+ * reset Xfer-Stats
+ *
+ * @return true or function exits with error
+ */
+function resetXferStats() {
+	// get ado-connection
+	$dbCon = getAdoConnection();
+	if (!$dbCon) {
+		return $dbCon->ErrorMsg();
+	} else {
+		$dbCon->Execute("DELETE FROM tf_xfer");
+		if ($dbCon->ErrorNo() == 0) {
+			// close ado-connection
+			$dbCon->Close();
+			// return
+			return true;
+		} else { // there was an error
+			// close ado-connection
+			$dbCon->Close();
+			// return error
+			return $dbCon->ErrorMsg();
+		}
+	}
+}
+
+/**
+ * get list with files+checksums
+ *
+ * @param $talk
+ * @return array
+ */
+function getFileChecksums($talk = false) {
+	global $cfg, $fileList;
+	$fileList = array();
+	$fileList['files'] = array();
+	$fileList['types'] = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
+	_getFileChecksums(substr($cfg['docroot'], 0 , -1), $talk);
+//_getFileChecksums($cfg['docroot']."inc/classes", $talk);
+	return $fileList['files'];
+}
+
+/**
+ * get list with files+checksums worker
+ *
+ * @param $dir
+ * @param $talk
+ */
+function _getFileChecksums($dir, $talk = false) {
+	global $cfg, $fileList;
+	if (!is_dir($dir))
+		return false;
+	$dirHandle = opendir($dir);
+	while ($file = readdir($dirHandle)) {
+		$fullpath = $dir.'/'.$file;
+		if (is_dir($fullpath)) {
+			if ($file{0} != '.')
+				_getFileChecksums($fullpath, $talk);
+		} else {
+			$stringLength = strlen($file);
+			foreach ($fileList['types'] as $ftype) {
+				$extLength = strlen($ftype);
+				if (($stringLength > $extLength) && (strtolower(substr($file, -($extLength))) === ($ftype))) {
+					$file = str_replace($cfg["docroot"], '', $fullpath);
+					$fileList['files'][$file] = md5_file($fullpath);
+					if ($talk)
+						sendLine('.');
+				}
+			}
+		}
+	}
+	closedir($dirHandle);
+}
+
+/**
  * print file-list
  * @param $type 1 = list, 2 = checksums
  * @param $mode 1 = text, 2 = html
@@ -589,15 +721,14 @@ function printFileList($type = 1, $mode = 2) {
 	define('_URL_SVNLOG_SUFFIX','&sc=1');
 	define('_URL_SVNFILE','http://svn.berlios.de/wsvn/tf-b4rt/trunk/html/');
 	define('_URL_SVNFILE_SUFFIX','?op=log&rev=0&sc=0&isdir=0');
-	define('_OUTPUT_TEXT_DELIM',';');
 	$fileList = array();
 	$fileList['files'] = array();
 	$fileList['types'] = array(".php", ".dist", ".pl", ".pm", ".tmpl", ".html", ".js", ".css", ".xml", ".xsd", ".py");
 	$fileList['count'] = 0;
 	$fileList['size'] = 0;
 	$fileList['revision'] = 1;
-	//_printFileList(substr($cfg['docroot'], 0 , -1), $type, $mode);
-	_printFileList($cfg['docroot']."inc", $type, $mode);
+	_printFileList(substr($cfg['docroot'], 0 , -1), $type, $mode);
+//_printFileList($cfg['docroot']."inc/classes", $type, $mode);
 	// footer im web
 	if (($type == 1) && ($mode == 2)) {
 		sendLine('<br><strong>Processed '.$fileList['count'].' files. ('.formatHumanSize($fileList['size']).')</strong>');
@@ -652,7 +783,7 @@ function _printFileList($dir, $type = 1, $mode = 2) {
 							switch ($mode) {
 								default:
 								case 1:
-									echo $_file._OUTPUT_TEXT_DELIM.$_size._OUTPUT_TEXT_DELIM.$_rev."\n";
+									echo $_file.';'.$_size.';'.$_rev."\n";
 									break;
 								case 2:
 									$line  = '<a href="'._URL_SVNFILE.$file['file']._URL_SVNFILE_SUFFIX.'" target="_blank">'.$_file.'</a> | ';
@@ -672,7 +803,7 @@ function _printFileList($dir, $type = 1, $mode = 2) {
 							switch ($mode) {
 								default:
 								case 1:
-									echo $_file._OUTPUT_TEXT_DELIM.$_md5."\n";
+									echo $_file.';'.$_md5."\n";
 									break;
 								case 2:
 									sendLine($_file." ".$_md5."<br>");
@@ -714,6 +845,40 @@ function getSVNRevisionFromId($filename) {
         }
 	}
 	return 'NoID';
+}
+
+/**
+ * load data of file
+ *
+ * @param $file the file
+ * @return data
+ */
+function getDataFromFile($file) {
+	if ($fileHandle = @fopen($file, 'r')) {
+		$data = null;
+		while (!@feof($fileHandle))
+			$data .= @fgets($fileHandle, 8192);
+		@fclose ($fileHandle);
+		return $data;
+	}
+}
+
+/**
+ * get data of a url
+ *
+ * @param $url the url
+ * @return data
+ */
+function getDataFromUrl($url) {
+	ini_set("allow_url_fopen", "1");
+	ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
+	if ($fileHandle = @fopen($url, 'r')) {
+		$data = null;
+		while (!@feof($fileHandle))
+			$data .= @fgets($fileHandle, 4096);
+		@fclose ($fileHandle);
+		return $data;
+	}
 }
 
 ?>

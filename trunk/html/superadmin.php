@@ -35,6 +35,8 @@ define('_URL_HOME','http://tf-b4rt.berlios.de/');
 define('_URL_RELEASE','http://tf-b4rt.berlios.de/current');
 define('_SUPERADMIN_URLBASE','http://tf-b4rt.berlios.de/');
 define('_SUPERADMIN_PROXY','tf-b4rt.php');
+define('_FILE_CHECKSUMS_PRE','checksums-');
+define('_FILE_CHECKSUMS_SUF','.txt');
 define('_FILE_THIS', 'superadmin.php');
 define('_UPDATE_ARCHIVE','update.tar.bz2');
 
@@ -369,7 +371,7 @@ if (isset($_REQUEST["u"])) {
 				sendLine('<li>Validating Update-Archive : ');
 				if ((file_exists($cfg['docroot']._UPDATE_ARCHIVE))
 					&& ($md5hash == @md5_file($cfg['docroot']._UPDATE_ARCHIVE))) {
-					sendLine('<font color="green">ok</font> (<em>'.$md5hash.'</em>)<br></li>');
+					sendLine('<font color="green">Ok</font> (<em>'.$md5hash.'</em>)<br></li>');
 				} else {
 					sendLine('<font color="red">failed</font></ul><br><br>Please restore backup and try again (or do manual update).</strong><br><br>');
 					exit();
@@ -393,6 +395,7 @@ if (isset($_REQUEST["u"])) {
 					sendLine('<font color="green">done</font></li>');
 				else
 					sendLine('<font color="red">failed</font><br>remove archive '.$cfg['docroot']._UPDATE_ARCHIVE.' manual now.</li>');
+
 				// version-file
 				sendLine('<li>Updating Version-Information : ');
 				$versionAvailable = trim(getDataFromUrl(_SUPERADMIN_URLBASE._SUPERADMIN_PROXY));
@@ -425,6 +428,7 @@ if (isset($_REQUEST["u"])) {
 				cacheFlush();
 				// exit
 				exit();
+
 		}
 		exit();
 	}
@@ -1359,7 +1363,7 @@ if (isset($_REQUEST["z"])) {
 				break;
 
 			case "9": // Misc-main
-				$htmlTitle = "Processes";
+				$htmlTitle = "Misc";
 				$htmlMain .= '<p>';
 				$htmlMain .= '<img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums" border="0"> File-List (';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?z=91" target="_blank">html</a>';
@@ -1372,6 +1376,10 @@ if (isset($_REQUEST["z"])) {
 				$htmlMain .= ' / ';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?z=94" target="_blank">text</a>';
 				$htmlMain .= ')';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=95" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Checksums of '._VERSION.'" border="0"> Checksums of '._VERSION.'</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?z=96" target="_blank"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Validate local files" border="0"> Validate local files</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
@@ -1384,13 +1392,22 @@ if (isset($_REQUEST["z"])) {
 				printFileList(1, 1);
 				exit();
 
-			case "93": // Misc - Checksums
+			case "93": // Misc - Checksums - html
 				printFileList(2, 2);
 				exit();
 
-			case "94": // Misc - Checksums
+			case "94": // Misc - Checksums - text
 				@header("Content-Type: text/plain");
 				printFileList(2, 1);
+				exit();
+
+			case "95": // Misc - Checksums - Latest
+				@header("Content-Type: text/plain");
+				echo getDataFromUrl(_SUPERADMIN_URLBASE._FILE_CHECKSUMS_PRE._VERSION._FILE_CHECKSUMS_SUF);
+				exit();
+
+			case "96": // Misc - Validate
+				validateLocalFiles();
 				exit();
 
 		}
