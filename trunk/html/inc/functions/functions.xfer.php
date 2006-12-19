@@ -20,6 +20,17 @@
 
 *******************************************************************************/
 
+/*******************************************************************************
+ *  TorrentFlux xfer Statistics hack
+ *  blackwidow - matt@mattjanssen.net
+ ******************************************************************************/
+/*
+	TorrentFlux xfer Statistics hack is free code; you can redistribute it
+	and/or modify it under the terms of the GNU General Public License as
+	published by the Free Software Foundation; either version 2 of the License,
+	or (at your option) any later version.
+*/
+
 /**
  * get xfer stats
  * note : this can only be used after a call to update transfer-values in cfg-
@@ -79,21 +90,19 @@ function getXferStats() {
  * @param $hash
  * @param $uptotal
  * @param $downtotal
- * @return unknown
  */
 function transferListXferUpdate1($entry, $transferowner, $tclient, $hash, $uptotal, $downtotal) {
 	global $cfg, $db;
 	$clientHandler = ClientHandler::getInstance($tclient);
 	$transferTotalsCurrent = $clientHandler->getTransferCurrentOP($entry, $hash, $uptotal, $downtotal);
-	$newday = 0;
-	$newday = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'total');
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'month');
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'week');
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'day');
-	//XFER: if new day add upload/download totals to last date on record and subtract from today in SQL
-	if ($newday) {
-		$newday = 2;
+	//XFER: if new day add upload/download totals to last date on record and
+	// substract from today in SQL
+	if ($cfg['xfer_newday'] > 0) {
+		$cfg['xfer_newday'] = 2;
 		$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
 		$sql = ($db->GetOne("SELECT 1 FROM tf_xfer WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"))
 			? "UPDATE tf_xfer SET download = download+".@($transferTotalsCurrent["downtotal"] + 0).", upload = upload+".@($transferTotalsCurrent["uptotal"] + 0)." WHERE user_id = '".$transferowner."' AND date = '".$lastDate."'"
@@ -104,17 +113,16 @@ function transferListXferUpdate1($entry, $transferowner, $tclient, $hash, $uptot
 			: "INSERT INTO tf_xfer (user_id,date,download,upload) values ('".$transferowner."',".$db->DBDate(time()).",-".@($transferTotalsCurrent["downtotal"] + 0).",-".@($transferTotalsCurrent["uptotal"] + 0).")";
 		$db->Execute($sql);
 	}
-	return $newday;
 }
 
 /**
  * transferListXferUpdate2
- *
- * @param $newday
  */
-function transferListXferUpdate2($newday) {
+function transferListXferUpdate2() {
 	global $cfg, $db;
-	if ($newday == 1)
+	//XFER: if a new day but no .stat files where found put blank entry into the
+	// DB for today to indicate accounting has been done for the new day
+	if ($cfg['xfer_newday'] == 1)
 		$db->Execute("INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")");
 	getUsage(0, 'total');
 	$month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];

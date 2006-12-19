@@ -55,7 +55,10 @@ tmplInitializeInstance($cfg["theme"], "page.xfer.tmpl");
 // set vars
 $tmpl->setvar('is_xfer', 1);
 // getTransferListArray to update xfer-stats
+// xfer-init
 $cfg['xfer_realtime'] = 1;
+$cfg['xfer_newday'] = 0;
+$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
 @getTransferListArray();
 if ($cfg['xfer_day'])
 	$tmpl->setvar('xfer_day', getXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));

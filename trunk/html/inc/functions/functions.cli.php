@@ -489,7 +489,12 @@ function cliXferShutdown($delta = '') {
 	}
 	if ((isset($delta)) && ($delta != "")) {
 		// getTransferListArray to update xfer-stats
-		$cfg['xfer_realtime'] = 1;
+    	// xfer-init
+    	if ($cfg['xfer_realtime'] == 0) {
+			$cfg['xfer_realtime'] = 1;
+			$cfg['xfer_newday'] = 0;
+			$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+    	}
 		$dirList = @getTransferListArray();
 		// check if break needed
 		// total

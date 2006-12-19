@@ -194,6 +194,19 @@ if (!(cacheIsSet($currentUser))) {
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;
 	$_SESSION['settings']['index_ajax_update'] = ($cfg["enable_index_ajax_update"] != 0) ? 1 : 0;
 
+	// xfer
+	if ($cfg['enable_xfer'] == 1) {
+		// xfer functions
+		require_once('inc/functions/functions.xfer.php');
+		// if xfer is empty, insert a zero record for today
+		$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
+		if (empty($xferRecord)) {
+			$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
+			$sTable = 'tf_xfer';
+			$sql = $db->GetInsertSql($sTable, $rec);
+			$db->Execute($sql);
+		}
+	}
 }
 
 // free space in MB var
@@ -211,30 +224,13 @@ Fluxd::initialize();
 // Qmgr
 FluxdServiceMod::initializeServiceMod('Qmgr');
 
-/*******************************************************************************
- *  TorrentFlux xfer Statistics hack
- *  blackwidow - matt@mattjanssen.net
- ******************************************************************************/
-/*
-	TorrentFlux xfer Statistics hack is free code; you can redistribute it
-	and/or modify it under the terms of the GNU General Public License as
-	published by the Free Software Foundation; either version 2 of the License,
-	or (at your option) any later version.
-*/
-// if xfer is empty, insert a zero record for today
-if ($cfg['enable_xfer'] == 1) {
+// xfer
+if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1)) {
 	// xfer functions
 	require_once('inc/functions/functions.xfer.php');
 	// xfer-init
-	$xferRecord = $db->GetRow("SELECT 1 FROM tf_xfer");
-	if (empty($xferRecord)) {
-		$rec = array('user_id'=>'', 'date'=>$db->DBDate(time()));
-		$sTable = 'tf_xfer';
-		$sql = $db->GetInsertSql($sTable, $rec);
-		$db->Execute($sql);
-	}
-	$newday = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
-	$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
+	$cfg['xfer_newday'] = 0;
+	$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
 }
 
 // vlib

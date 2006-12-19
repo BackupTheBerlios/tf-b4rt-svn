@@ -143,7 +143,7 @@ foreach ($arList as $transfer) {
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		$newday = transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
+		@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
 
 	// ---------------------------------------------------------------------
 	// injects
@@ -361,7 +361,7 @@ $tmpl->setloop('arListTorrent', $arListTorrent);
 //XFER: if a new day but no .stat files where found put blank entry into the
 //      DB for today to indicate accounting has been done for the new day
 if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-	transferListXferUpdate2($newday);
+	@transferListXferUpdate2();
 
 $tmpl->setvar('settings_0', $settings[0]);
 $tmpl->setvar('settings_1', $settings[1]);
