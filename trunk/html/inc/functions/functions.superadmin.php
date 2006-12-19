@@ -789,36 +789,16 @@ function validateLocalFiles() {
 	// summary
 	sendLine('<h3>Done.</h3>');
 	// files Total
-	sendLine('<strong>'._VERSION.' : '.$remoteChecksumsCount.'</strong><br>');
-	sendLine('<strong>Local : '.$localChecksumsCount.'</strong><br>');
+	sendLine('<strong>'._VERSION.' : </strong>'.$remoteChecksumsCount.'<br>');
+	sendLine('<strong>Local : </strong>'.$localChecksumsCount.'<br>');
 	// files Ok
-	$filesOkCount = count($filesOk);
-	$line  = '<strong>Ok : </strong>';
-	$line .= ($filesOkCount == $remoteChecksumsCount)
-		? '<font color="green">'.$filesOkCount.'</font>'
-		: '<font color="red">'.$filesOkCount.'</font>';
-	sendLine($line.'<br>');
+	sendLine('<strong>Unchanged : </strong>'.count($filesOk).'<br>');
 	// files Missing
-	$filesMissingCount = count($filesMissing);
-	$line  = '<strong>Missing : </strong>';
-	$line .= ($filesMissingCount == 0)
-		? '<font color="green">'.$filesMissingCount.'</font>'
-		: '<font color="red">'.$filesMissingCount.'</font>';
-	sendLine($line.'<br>');
+	sendLine('<strong>Missing : </strong>'.count($filesMissing).'<br>');
 	// files Changed
-	$filesChangedCount = count($filesChanged);
-	$line  = '<strong>Changed : </strong>';
-	$line .= ($filesChangedCount == 0)
-		? '<font color="green">'.$filesChangedCount.'</font>'
-		: '<font color="red">'.$filesChangedCount.'</font>';
-	sendLine($line.'<br>');
+	sendLine('<strong>Changed : </strong>'.count($filesChanged).'<br>');
 	// files New
-	$filesNewCount = count($filesNew);
-	$line  = '<strong>New : </strong>';
-	$line .= ($filesNewCount == 0)
-		? '<font color="green">'.$filesNewCount.'</font>'
-		: '<font color="red">'.$filesNewCount.'</font>';
-	sendLine($line.'<br>');
+	sendLine('<strong>New : </strong>'.count($filesNew).'<br>');
 	if (count($filesNew) > 0) {
 		sendLine('<br><strong>New Files : </strong><br>');
 		foreach ($filesNew as $newFile)
