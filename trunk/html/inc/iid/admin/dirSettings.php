@@ -33,7 +33,6 @@ if (!isset($cfg['user'])) {
 require_once('inc/functions/functions.dir.php');
 
 // config
-loadSettings('tf_settings_dir');
 initRestrictedDirEntries();
 
 // init template-instance

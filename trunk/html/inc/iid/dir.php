@@ -52,7 +52,6 @@ require_once('inc/functions/functions.common.php');
 require_once('inc/functions/functions.dir.php');
 
 // config
-loadSettings('tf_settings_dir');
 initRestrictedDirEntries();
 
 // check incoming path

@@ -98,6 +98,9 @@ if (is_file('inc/config/config.db.php')) {
 	// load global settings
 	loadSettings('tf_settings');
 
+	// load dir-settings
+	loadSettings('tf_settings_dir');
+
 	// load stats-settings
 	loadSettings('tf_settings_stats');
 

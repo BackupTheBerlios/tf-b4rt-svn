@@ -89,7 +89,6 @@ switch ($op) {
 
 	case "updateDirSettings":
 		$settings = processSettingsParams(false, false);
-		loadSettings('tf_settings_dir');
 		saveSettings('tf_settings_dir', $settings);
 		AuditAction($cfg["constants"]["admin"], " Updating Dir Settings");
 		@header("location: admin.php?op=dirSettings");

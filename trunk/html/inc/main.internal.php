@@ -46,8 +46,6 @@ if (isset($_SESSION['user'])) {
 		cacheTransfersInit();
 		// initialize database
 		dbInitialize();
-		// Free space in MB
-		$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
 	} else {
 		// main.core
 		require_once('inc/main.core.php');
@@ -198,14 +196,20 @@ if (!(cacheIsSet($currentUser))) {
 
 }
 
-// drivespace-var
+// free space in MB var
+$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
+
+// drive space var
 $cfg['driveSpace'] = getDriveSpace($cfg["path"]);
 
-// free space-var
+// free space fromatted var
 $cfg['freeSpaceFormatted'] = formatFreeSpace($cfg["free_space"]);
 
-// vlib
-require_once("inc/lib/vlib/vlibTemplate.php");
+// Fluxd
+Fluxd::initialize();
+
+// Qmgr
+FluxdServiceMod::initializeServiceMod('Qmgr');
 
 /*******************************************************************************
  *  TorrentFlux xfer Statistics hack
@@ -217,7 +221,6 @@ require_once("inc/lib/vlib/vlibTemplate.php");
 	published by the Free Software Foundation; either version 2 of the License,
 	or (at your option) any later version.
 */
-
 // if xfer is empty, insert a zero record for today
 if ($cfg['enable_xfer'] == 1) {
 	// xfer functions
@@ -234,14 +237,7 @@ if ($cfg['enable_xfer'] == 1) {
 	$lastDate = $db->GetOne('SELECT date FROM tf_xfer ORDER BY date DESC');
 }
 
-/*******************************************************************************
- *  fluxd
- ******************************************************************************/
-
-// Fluxd
-Fluxd::initialize();
-
-// Qmgr
-FluxdServiceMod::initializeServiceMod('Qmgr');
+// vlib
+require_once("inc/lib/vlib/vlibTemplate.php");
 
 ?>
