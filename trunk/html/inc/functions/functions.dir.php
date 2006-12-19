@@ -91,14 +91,9 @@ function checkIncomingPath() {
  */
 function delDirEntry($del) {
 	global $cfg;
+
 	$current = "";
-	// we need to strip slashes twice in some circumstances
-	// Ex.	If we are trying to delete test/tester's file/test.txt
-	//	  $del will be "test/tester\\\'s file/test.txt"
-	//	  one strip will give us "test/tester\'s file/test.txt
-	//	  the second strip will give us the correct
-	//		  "test/tester's file/test.txt"
-	$del = stripslashes(stripslashes($del));
+
 	if (isValidPath($del)) {
 		avddelete($cfg["path"].$del);
 		$arTemp = explode("/", $del);
