@@ -23,7 +23,6 @@
 // defines
 define('_FILE_CHANGELOG','changelog-torrentflux-b4rt.txt');
 define('_FILE_VERSION_CURRENT','version-torrentflux-b4rt.txt');
-define('_FILE_CHECKSUMS_CURRENT','checksums-torrentflux-b4rt.txt');
 define('_UPDATE_BASEDIR','update_new');
 //
 define('_FILE_NEWS','newshtml.txt');
@@ -177,15 +176,6 @@ switch($action) {
 
     case "1": // changelog
         outputData(getDataFromFile(_FILE_CHANGELOG));
-        exit;
-
-    case "9": // checksums
-		header("Content-Type: text/plain");
-		echo getDataFromFile(_FILE_CHECKSUMS_CURRENT);
-        exit;
-
-    case "9c": // checksums compressed
-        outputData(getDataFromFile(_FILE_CHECKSUMS_CURRENT));
         exit;
 
     default:
