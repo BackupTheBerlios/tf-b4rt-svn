@@ -350,6 +350,8 @@ function addNewLink($newLink,$newSite) {
 	$sql = $db->GetInsertSql($sTable, $rec);
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush();
 }
 
 /**
@@ -364,6 +366,8 @@ function alterLink($lid,$newLink,$newSite) {
 	$sql = "UPDATE tf_links SET url='".$newLink."',sitename='".$newSite."' WHERE lid = ".$lid;
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush();
 }
 
 /**
@@ -394,22 +398,23 @@ function deleteOldLink($lid) {
 	// Fetch all link ids and their sort orders where the sort order is greater
 	// than the one we're removing - we need to shuffle each sort order down
 	// one:
-	$sql="SELECT sort_order, lid FROM tf_links ";
-	$sql.="WHERE sort_order > $idx ORDER BY sort_order ASC";
-	$result=$db->Execute($sql);
+	$sql = "SELECT sort_order, lid FROM tf_links ";
+	$sql .= "WHERE sort_order > ".$idx." ORDER BY sort_order ASC";
+	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$arLinks=$result->GetAssoc();
 	// Decrement the sort order of each link:
 	foreach ($arLinks as $sid=>$this_lid) {
-		$sql="UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=$this_lid";
+		$sql="UPDATE tf_links SET sort_order=sort_order-1 WHERE lid=".$this_lid;
 		$db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 	}
 	// Finally delete the link:
 	$sql = "DELETE FROM tf_links WHERE lid=".$lid;
-	// Link Mod
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush();
 }
 
 /**

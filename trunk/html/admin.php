@@ -288,6 +288,8 @@ switch ($op) {
 		$sql = "UPDATE tf_links SET sort_order = $new_idx WHERE lid = $lid";
 		$db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
+		// flush session-cache
+		cacheFlush();
 		@header("Location: admin.php?op=editLinks");
 		exit();
 
@@ -295,6 +297,8 @@ switch ($op) {
 		$lid = getRequestVar('lid');
 		AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
 		deleteOldLink($lid);
+		// flush session-cache
+		cacheFlush();
 		@header("location: admin.php?op=editLinks");
 		exit();
 

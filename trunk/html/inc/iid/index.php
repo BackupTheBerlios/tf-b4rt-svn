@@ -542,18 +542,8 @@ $loadavgString = ($cfg["show_server_load"] != 0) ? @getLoadAverageString() : "n/
 
 // links
 if ($cfg["ui_displaylinks"] != "0") {
-	$arLinks = GetLinks();
-	if ((isset($arLinks)) && (is_array($arLinks))) {
-		$linklist = array();
-		foreach ($arLinks as $link) {
-			array_push($linklist, array(
-				'link_url' => $link['url'],
-				'link_sitename' => $link['sitename'],
-				)
-			);
-		}
-		$tmpl->setloop('linklist', $linklist);
-	}
+	if (isset($cfg['linklist']))
+		$tmpl->setloop('linklist', $cfg['linklist']);
 }
 
 // goodlookingstats

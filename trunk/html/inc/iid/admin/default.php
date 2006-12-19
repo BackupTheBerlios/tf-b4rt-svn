@@ -62,8 +62,9 @@ $tmpl->setvar('server_logs_total', $log);
 $messages = $db->GetOne("SELECT COUNT(mid) AS mid FROM tf_messages");
 $tmpl->setvar('server_messages_total', $messages);
 // links
-$arLinks = GetLinks();
-$countLinks = count($arLinks);
+$countLinks = (isset($cfg['linklist']))
+	? count($cfg['linklist'])
+	: 0;
 $tmpl->setvar('server_links_total', $countLinks);
 // rss
 $arRss = GetRSSLinks();

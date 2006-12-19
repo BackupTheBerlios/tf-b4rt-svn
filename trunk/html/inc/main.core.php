@@ -101,6 +101,20 @@ if (is_file('inc/config/config.db.php')) {
 	// load stats-settings
 	loadSettings('tf_settings_stats');
 
+	// load links
+	$arLinks = GetLinks();
+	if ((isset($arLinks)) && (is_array($arLinks))) {
+		$linklist = array();
+		foreach ($arLinks as $link) {
+			array_push($linklist, array(
+				'link_url' => $link['url'],
+				'link_sitename' => $link['sitename']
+				)
+			);
+		}
+		$cfg['linklist'] = $linklist;
+	}
+
 	// Path to where the meta files will be stored... usually a sub of $cfg["path"]
 	$cfg["transfer_file_path"] = $cfg["path"].".transfers/";
 
