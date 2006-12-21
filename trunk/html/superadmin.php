@@ -969,6 +969,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Repair';
+				require_once("inc/classes/MaintenanceAndRepair.php");
 				MaintenanceAndRepair::repair();
 				$htmlMain .= ' <font color="green">done</font>';
 				$htmlMain .= '<br><br>';
