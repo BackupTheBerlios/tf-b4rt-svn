@@ -150,7 +150,7 @@ function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
 									echo $_file.';'.$_size.';'.$_rev."\n";
 									break;
 								case 2:
-									$line  = '<a href="'._URL_SVNFILE.$file['file']._URL_SVNFILE_SUFFIX.'" target="_blank">'.$_file.'</a> | ';
+									$line  = '<a href="'._URL_SVNFILE.$_file._URL_SVNFILE_SUFFIX.'" target="_blank">'.$_file.'</a> | ';
 									$line .= formatHumanSize($_size).' | ';
 									$line .= ($_rev != 'NoID')
 										? '<a href="'._URL_SVNLOG.$_rev._URL_SVNLOG_SUFFIX.'" target="_blank">'.$_rev.'</a>'
