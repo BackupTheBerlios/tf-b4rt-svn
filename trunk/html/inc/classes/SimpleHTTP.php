@@ -300,7 +300,8 @@ class SimpleHTTP
 				// Connection: Close
 				// Cookie: uid=12345;pass=asdfasdf;
 				//
-				$this->request  = "GET " . ($this->httpVersion=="1.1" ? $this->getcmd : $this->url ). " HTTP/" . $this->httpVersion ."\r\n";
+				//$this->request  = "GET " . ($this->httpVersion=="1.1" ? $this->getcmd : $this->url ). " HTTP/" . $this->httpVersion ."\r\n";
+				$this->request  = "GET ".$this->getcmd." HTTP/".$this->httpVersion."\r\n";
 				$this->request .= (!empty($this->referer)) ? "Referer: " . $this->referer . "\r\n" : "";
 				$this->request .= "Accept: */*\r\n";
 				$this->request .= "Accept-Language: en-us\r\n";
