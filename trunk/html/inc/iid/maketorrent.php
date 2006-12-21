@@ -53,7 +53,7 @@ if ((isset($_REQUEST["download"])) && (!(empty($_REQUEST["download"]))))
 
 // file + torrent vars
 $path = @ $_REQUEST['path'];
-$torrent = @cleanFileName(StripFolders(trim($path))).".torrent";
+$torrent = @cleanFileName((StripFolders(trim($path))).".torrent");
 
 // check if there is a var sent for client, if not use default
 $client = (isset($_REQUEST["client"])) ? $_REQUEST["client"] : $cfg["dir_maketorrent_default"];
