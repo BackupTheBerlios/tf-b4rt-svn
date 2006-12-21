@@ -781,7 +781,7 @@ function GetMessage($mid) {
 	global $cfg, $db;
 	$sql = "select from_user, message, ip, time, isnew, force_read from tf_messages where mid=".$mid." and to_user=".$db->qstr($cfg["user"]);
 	$rtnValue = $db->GetRow($sql);
-	dbDieOnErrorr($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
 	return $rtnValue;
 }
 
