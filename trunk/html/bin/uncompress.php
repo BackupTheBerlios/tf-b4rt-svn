@@ -47,13 +47,13 @@ $arg4 = $argv[4];
 $arg5 = $argv[5];
 
 // unrar file
-if(strcasecmp('rar', $arg3) == 0){
-	if(file_exists($arg2.$logfile))
-		del($arg2.$logfile);
-    $Command = escapeshellarg($arg4)." x -p". escapeshellarg($arg5) ." ". escapeshellarg($arg1) . " " . escapeshellarg($arg2);
-    //echo "command " . $Command;
-	$unrarpid = shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
+if (strcasecmp('rar', $arg3) == 0){
+	if (file_exists($arg2.$logfile))
+		@unlink($arg2.$logfile);
+    $Command = escapeshellarg($arg4)." x -o+ -p". escapeshellarg($arg5) ." ". escapeshellarg($arg1) . " " . escapeshellarg($arg2);
+	$unrarpid = trim(shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!"));
 	echo 'Uncompressing file...<BR>PID is: ' . $unrarpid . '<BR>';
+	usleep(250000); // wait for 0.25 seconds
 	while (is_running($unrarpid)) {
 		if (file_exists($arg2.$logfile)) {
 			$lines = file($arg2.$logfile);
@@ -80,29 +80,37 @@ if(strcasecmp('rar', $arg3) == 0){
 				}
 			}
 		}
+		usleep(250000); // wait for 0.25 seconds
 	}
 	if (file_exists($arg2.$logfile)) {
 		$lines = file($arg2.$logfile);
 		foreach($lines as $chkline) {
-			if(strpos($chkline, 'All OK') !== FALSE){
+			if (strpos($chkline, 'All OK') !== FALSE){
 				echo 'File has successfully been extracted!';
-				if (file_exists($arg2.$logfile))
-					del($arg2.$logfile);
+				@unlink($arg2.$logfile);
+				// exit
+				exit();
 			}
 		}
 	}
+	// exit
+	exit();
 }
 
 // unzip
 if (strcasecmp('zip', $arg3) == 0) {
-	if(file_exists($arg2.$logfile))
-		del($arg2.$logfile);
-    $Command = escapeshellarg($arg4).' ' . escapeshellarg($arg1) . ' -d ' . escapeshellarg($arg2);
-	$unzippid = shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!");
+	if (file_exists($arg2.$logfile))
+		@unlink($arg2.$logfile);
+    $Command = escapeshellarg($arg4).' -o ' . escapeshellarg($arg1) . ' -d ' . escapeshellarg($arg2);
+	$unzippid = trim(shell_exec("nohup ".$Command." > " . escapeshellarg($arg2.$logfile) . " 2>&1 & echo $!"));
 	echo 'Uncompressing file...<BR>PID is: ' . $unzippid . '<BR>';
-	while(is_running($unzippid)) {
+	usleep(250000); // wait for 0.25 seconds
+	while (is_running($unzippid)) {
+		usleep(250000); // wait for 0.25 seconds
 		/* occupy time to cause popup window load bar to load in conjunction with unzip progress */
 	}
+	// exit
+	exit();
 }
 
 //debug: echo variables
@@ -121,8 +129,8 @@ if (strcasecmp('debug', $arg3) == 0) {
  * @return
  */
 function is_running($PID){
-    exec("ps ".escapeshellarg($PID), $ProcessState);
-    return(count($ProcessState) >= 2);
+    $ProcessState = exec("ps ".escapeshellarg($PID));
+    return (count($ProcessState) >= 2);
 }
 
 /**

@@ -61,6 +61,7 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 			$cmd .= ' 2>&1 &';
 			break;
 	}
+	@session_write_close();
 	$handle = popen($cmd, 'r' );
 	$buff= "";
 	while (!feof($handle))
