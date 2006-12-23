@@ -446,6 +446,12 @@ def run(autoDie,shareKill,statusFile,userName,params):
             startupMessage += " - super_seeder : " + str(config['super_seeder']) + "\n"
             startupMessage += " - security : " + str(config['security']) + "\n"
             startupMessage += " - auto_kick : " + str(config['auto_kick']) + "\n"
+            if config['crypto_allowed'] is not None:
+                startupMessage += " - crypto_allowed : " + str(config['crypto_allowed']) + "\n"
+            if config['crypto_only'] is not None:
+                startupMessage += " - crypto_only : " + str(config['crypto_only']) + "\n"
+            if config['crypto_stealth'] is not None:
+                startupMessage += " - crypto_stealth : " + str(config['crypto_stealth']) + "\n"
             startupMessage += " - priority : " + str(config['priority']) + "\n"
             startupMessage += " - alloc_type : " + str(config['alloc_type']) + "\n"
             startupMessage += " - alloc_rate : " + str(config['alloc_rate']) + "\n"
