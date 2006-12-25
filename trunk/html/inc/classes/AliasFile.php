@@ -44,7 +44,6 @@ class AliasFile
     var $uptotal = "";
     var $downtotal = "";
     var $size = "";
-    var $errors = array();
 
 	// =========================================================================
 	// public static methods
@@ -82,21 +81,21 @@ class AliasFile
         // load file
         if (@file_exists($this->theFile)) {
             // read the alias file
-            $this->errors = @file($this->theFile);
-            $this->errors = @array_map('rtrim', $this->errors);
-            $this->running = @array_shift($this->errors);
-            $this->percent_done = @array_shift($this->errors);
-            $this->time_left = @array_shift($this->errors);
-            $this->down_speed = @array_shift($this->errors);
-            $this->up_speed = @array_shift($this->errors);
-            $this->transferowner = @array_shift($this->errors);
-            $this->seeds = @array_shift($this->errors);
-            $this->peers = @array_shift($this->errors);
-            $this->sharing = @array_shift($this->errors);
-            $this->seedlimit = @array_shift($this->errors);
-            $this->uptotal = @array_shift($this->errors);
-            $this->downtotal = @array_shift($this->errors);
-            $this->size = @array_shift($this->errors);
+            $content = @file($this->theFile);
+            $content = @array_map('rtrim', $content);
+            $this->running = @ $content[0];
+            $this->percent_done = @ $content[1];
+            $this->time_left = @ $content[2];
+            $this->down_speed = @ $content[3];
+            $this->up_speed = @ $content[4];
+            $this->transferowner = @ $content[5];
+            $this->seeds = @ $content[6];
+            $this->peers = @ $content[7];
+            $this->sharing = @ $content[8];
+            $this->seedlimit = @ $content[9];
+            $this->uptotal = @ $content[10];
+            $this->downtotal = @ $content[11];
+            $this->size = @ $content[12];
         }
     }
 
@@ -122,7 +121,6 @@ class AliasFile
         $this->seedlimit = "";
         $this->uptotal = "";
         $this->downtotal = "";
-        $this->errors = array();
         // Write to file
         return $this->write();
     }
@@ -142,7 +140,6 @@ class AliasFile
         $this->peers = "";
         $this->uptotal = "";
         $this->downtotal = "";
-        $this->errors = array();
         // Write to file
         return $this->write();
     }
@@ -167,17 +164,6 @@ class AliasFile
         $content .= $this->uptotal."\n";
         $content .= $this->downtotal."\n";
         $content .= $this->size;
-        // errors
-        $errCtr = count($this->errors);
-        if ($errCtr > 0) {
-			for ($i = 0; $i < $errCtr; $ii) {
-				if ($this->errors[$i] != "") {
-					$output .= ($i == 0)
-						? "\n".$this->errors[$i]."\n"
-						: $this->errors[$i]."\n";
-				}
-			}
-        }
 		// write file
 		if ($handle = @fopen($this->theFile, "w")) {
 	        $resultSuccess = (@fwrite($handle, $content) !== false);

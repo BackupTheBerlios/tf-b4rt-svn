@@ -291,7 +291,7 @@ function printPageEnd($echoMode = 0) {
 }
 
 /**
- * bails out cause of version-errors.
+ * bails out cause of version-error.
  */
 function updateErrorNice($message = "") {
 	global $statusImage, $statusMessage, $htmlTop, $htmlMain;
@@ -308,7 +308,7 @@ function updateErrorNice($message = "") {
 }
 
 /**
- * bails out cause of version-errors.
+ * bails out cause of version-error.
  */
 function updateError($message = "") {
 	$errorString = "ERROR processing auto-update. please do manual update.";

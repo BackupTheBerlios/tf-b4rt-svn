@@ -179,18 +179,6 @@ $hd = getStatusImage($af);
 $tmpl->setvar('hd_image', $hd->image);
 $tmpl->setvar('hd_title', $hd->title);
 
-// errors
-$errorCount = sizeof($af->errors);
-if ($errorCount > 0) {
-	$error = "";
-	for ($inx = 0; $inx < $errorCount; $inx++)
-		$error .= "<li style=\"font-size:10px;color:#ff0000;\">".$af->errors[$inx]."</li>";
-	$tmpl->setvar('is_error', 1);
-	$tmpl->setvar('error', $error);
-} else {
-	$tmpl->setvar('is_error', 0);
-}
-
 // standard / ajax switch
 $tmpl->setvar('details_type', $cfg['details_type']);
 switch ($cfg['details_type']) {

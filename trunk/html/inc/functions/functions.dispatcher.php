@@ -256,7 +256,7 @@ function indexProcessDownload($url_upload) {
 			if (count($msgs) > 0)
 				$downloadMessages = array_merge($downloadMessages, $msgs);
 		}
-		if (empty($downloadMessages)) { // no errors
+		if (empty($downloadMessages)) { // no messages
 			AuditAction($cfg["constants"]["url_upload"], $file_name);
 			// init stat-file
 			injectAlias($file_name);

@@ -1565,7 +1565,6 @@ function getServerStats() {
  * seeds
  * peers
  * cons
- * errors
  *
  * owner
  * size
@@ -1673,8 +1672,6 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	$details['eta'] = $af->time_left;
 	// sharing
 	$details['sharing'] = ($size > 0) ? @number_format((($totals["uptotal"] / $size) * 100), 2) : 0;
-	// errors
-	$details['errors'] = $af->errors;
 	// full (including static) details
 	if ($full) {
 		// owner

@@ -644,7 +644,6 @@ class MaintenanceAndRepair
 				$af->up_speed = 0;
 				$af->seeds = 0;
 				$af->peers = 0;
-				$af->errors = array();
 				$af->write();
 				unset($af);
 				// output
