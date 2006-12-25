@@ -67,7 +67,7 @@ $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
 $tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
-tmplSetSearchEngineDDL($cfg["searchEngine"]);
+$tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($cfg["searchEngine"]));
 //
 tmplSetTitleBar("Administration - Index Settings");
 tmplSetAdminMenu();

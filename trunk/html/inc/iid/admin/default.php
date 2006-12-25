@@ -76,7 +76,7 @@ $tmpl->setvar('server_cookies_total', $cookies);
 $profiles = $db->GetOne("SELECT COUNT(id) AS id FROM tf_trprofiles");
 $tmpl->setvar('server_profiles_total', $profiles);
 // search-engines
-$arSearchEngines = buildSearchEngineArray();
+$arSearchEngines = tmplSetSearchEngineDDL($cfg["searchEngine"]);
 $countSearchEngines = count($arSearchEngines);
 $tmpl->setvar('server_searchengines_total', $countSearchEngines);
 // themes

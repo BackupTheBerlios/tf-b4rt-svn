@@ -229,14 +229,23 @@ function tmplSetSearchEngineDDL($selectedEngine = 'TorrentSpy', $autoSubmit = fa
 	foreach($entrys as $entry) {
 		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != "." && strpos($entry,"Engine.php")) {
 			$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
+			if (array_key_exists($tmpEngine,$cfg['searchEngineLinks'])) {
+				$hreflink = $cfg['searchEngineLinks'][$tmpEngine];
+				$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
+			} else {
+				$hreflink = getEngineLink($tmpEngine);
+				$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
+				$settingsNeedsSaving = true;
+			}
 			array_push($Engine_List, array(
 				'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
-				'Engine' => $tmpEngine
+				'Engine' => $tmpEngine,
+				'hreflink' => $hreflink,
 				)
 			);
 		}
 	}
-	$tmpl->setloop('Engine_List', $Engine_List);
+	return $Engine_List;
 }
 
 /**
@@ -1962,53 +1971,6 @@ function GetLinks() {
 	$link_array = array();
 	$link_array = $db->GetAssoc("SELECT lid, url, sitename, sort_order FROM tf_links ORDER BY sort_order");
 	return $link_array;
-}
-
-/**
- * Build Search Engine Links
- *
- * @param $selectedEngine
- * @return array
- */
-function buildSearchEngineArray($selectedEngine = 'TorrentSpy') {
-	global $cfg;
-	$settingsNeedsSaving = false;
-	$settings['searchEngineLinks'] = Array();
-	$output = array();
-	if ((!array_key_exists('searchEngineLinks', $cfg)) || (!is_array($cfg['searchEngineLinks'])))
-		saveSettings('tf_settings', $settings);
-	$handle = opendir("./inc/searchEngines");
-	while($entry = readdir($handle))
-		$entrys[] = $entry;
-	natcasesort($entrys);
-	foreach($entrys as $entry) {
-		if ($entry != "." && $entry != ".." && substr($entry, 0, 1) != ".")
-			if (strpos($entry, "Engine.php")) {
-				$tmpEngine = str_replace("Engine",'',substr($entry,0,strpos($entry,".")));
-				if (array_key_exists($tmpEngine,$cfg['searchEngineLinks'])) {
-					$hreflink = $cfg['searchEngineLinks'][$tmpEngine];
-					$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
-				} else {
-					$hreflink = getEngineLink($tmpEngine);
-					$settings['searchEngineLinks'][$tmpEngine] = $hreflink;
-					$settingsNeedsSaving = true;
-				}
-				if (strlen($hreflink) > 0) {
-					array_push($output, array(
-							'hreflink' => $hreflink,
-							'selected' => ($selectedEngine == $tmpEngine) ? 1 : 0,
-							)
-						);
-				}
-			}
-	}
-	if (count($settings['searchEngineLinks'],COUNT_RECURSIVE) <> count($cfg['searchEngineLinks'],COUNT_RECURSIVE))
-		$settingsNeedsSaving = true;
-	if ($settingsNeedsSaving) {
-		natcasesort($settings['searchEngineLinks']);
-		saveSettings('tf_settings', $settings);
-	}
-	return $output;
 }
 
 /**

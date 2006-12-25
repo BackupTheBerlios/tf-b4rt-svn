@@ -692,7 +692,7 @@ $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('drivespace', $cfg['driveSpace']);
 $tmpl->setvar('freeSpaceFormatted', $cfg['freeSpaceFormatted']);
-tmplSetSearchEngineDDL($cfg["searchEngine"]);
+$tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($cfg["searchEngine"]));
 //
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

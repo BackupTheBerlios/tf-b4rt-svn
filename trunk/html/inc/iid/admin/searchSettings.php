@@ -71,7 +71,7 @@ if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 		$tmpl->setvar('is_file', 0);
 	}
 }
-tmplSetSearchEngineDDL($searchEngine,true);
+$tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($searchEngine,true));
 //
 tmplSetTitleBar("Administration - Search Settings");
 tmplSetAdminMenu();
