@@ -10,7 +10,7 @@
 #
 ################################################################################
 #
-# btphptornado.py - use BitTornado with torrentflux
+# btphptornado.py - use BitTornado with torrentflux-b4rt
 #
 ################################################################################
 from BitTornado import PSYCO
@@ -294,12 +294,12 @@ class HeadlessDisplayer:
                     self.upRate = ''
                     #self.finished()
 
+        # write stat-file
         lcount = 0
-
         while 1:
             lcount += 1
             try:
-                f=open(self.statFile,'w')
+                f = open(self.statFile,'w')
                 f.write(running + '\n')
                 f.write(self.percentDone + '\n')
                 f.write(self.timeEst + '\n')
@@ -313,26 +313,8 @@ class HeadlessDisplayer:
                 f.write(str(self.upTotal) + '\n')
                 f.write(str(self.downTotal) + '\n')
                 f.write(str(self.size))
-                # log errors and append to stat-file
-                try:
-                    errs = []
-                    errs = self.scrub_errs()
-                    #for errmsg in errs:
-                    #    f.write('\n' + errmsg)
-                    if errs:
-                        errorMessage = ""
-                        for errmsg in errs:
-                            errorMessage += "\n" + errmsg
-                        f.write(errorMessage)
-                        transferLog("self.scrub_errs() : \n" + errorMessage + "\n", True)
-                except:
-                    if __debug__: traceMsg('writeStatus - Failed during writing Errors')
-                    transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
-                    pass
-
                 f.flush()
                 f.close()
-
                 break
             except:
                 if __debug__: traceMsg('writeStatus - Failed to Open StatFile for Writing')
@@ -340,6 +322,13 @@ class HeadlessDisplayer:
                 if lcount > 30:
                     break
                 pass
+
+        # log errors
+        errs = []
+        errs = self.scrub_errs()
+        if errs:
+            for errmsg in errs:
+                transferLog("scrub_errs : " + errmsg + "\n", True)
 
         if die:
             if __debug__: traceMsg('writeStatus - dieing - raising ki')
