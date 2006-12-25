@@ -61,9 +61,6 @@ my %data;
 # downtotal
 # size
 
-# alias-file-error-array
-my @errors;
-
 ################################################################################
 # constructor + destructor                                                     #
 ################################################################################
@@ -100,7 +97,6 @@ sub destroy {
 
 	# undef
 	undef %data;
-	undef @errors;
 }
 
 ################################################################################
@@ -140,21 +136,21 @@ sub initialize {
 		close ALIASFILE;
 		$/ = $lineSep;
 		# process data
-		@errors = split(/\n/, $content);
+		my @contentary = split(/\n/, $content);
 		%data = ();
-		$data{"running"} = shift @errors;
-		$data{"percent_done"} = shift @errors;
-		$data{"time_left"} = shift @errors;
-		$data{"down_speed"} = shift @errors;
-		$data{"up_speed"} = shift @errors;
-		$data{"transferowner"} = shift @errors;
-		$data{"seeds"} = shift @errors;
-		$data{"peers"} = shift @errors;
-		$data{"sharing"} = shift @errors;
-		$data{"seedlimit"} = shift @errors;
-		$data{"uptotal"} = shift @errors;
-		$data{"downtotal"} = shift @errors;
-		$data{"size"} = shift @errors;
+		$data{"running"} = shift @contentary;
+		$data{"percent_done"} = shift @contentary;
+		$data{"time_left"} = shift @contentary;
+		$data{"down_speed"} = shift @contentary;
+		$data{"up_speed"} = shift @contentary;
+		$data{"transferowner"} = shift @contentary;
+		$data{"seeds"} = shift @contentary;
+		$data{"peers"} = shift @contentary;
+		$data{"sharing"} = shift @contentary;
+		$data{"seedlimit"} = shift @contentary;
+		$data{"uptotal"} = shift @contentary;
+		$data{"downtotal"} = shift @contentary;
+		$data{"size"} = shift @contentary;
 		# set state
 		$state = 1;
 		# return
@@ -205,7 +201,6 @@ sub get {
 	shift; # class
 	my $key = shift;
 	return $data{$key};
-	#if (exists $data{$key}) {
 }
 
 #------------------------------------------------------------------------------#
@@ -235,15 +230,6 @@ sub getFilename {
 #------------------------------------------------------------------------------#
 sub getData {
 	return %data;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: getErrors                                                               #
-# Arguments: null                                                              #
-# Returns: array                                                               #
-#------------------------------------------------------------------------------#
-sub getErrors {
-	return @errors;
 }
 
 ################################################################################
