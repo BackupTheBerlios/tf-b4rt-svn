@@ -19,7 +19,7 @@
 #
 ################################################################################
 #
-# tfmainline.py - use mainline with torrentflux
+# tfmainline.py - use BitTorrent ("mainline") with torrentflux-b4rt
 #
 ################################################################################
 from __future__ import division
@@ -267,7 +267,7 @@ class HeadlessDisplayer(object):
                     self.running = '1'
                     transferLog("Failed to read stat-file : " + self.statFile + "\n", True)
 
-            # shutdown or write stat-file
+            # shutdown or write stat-file + log errors
             if self.running == '0':
                 # log
                 transferLog("mainline shutting down...\n", True)
@@ -280,9 +280,9 @@ class HeadlessDisplayer(object):
                 stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
                 df.addCallbacks(stop_rawserver, stop_rawserver)
             else:
+                # write stat-file
                 try:
                     FILE = open(self.statFile,"w")
-                    # write stats to stat-file
                     FILE.write(repr(self.state)+"\n")
                     FILE.write(self.percentDone+"\n")
                     FILE.write(self.timeEst+"\n")
@@ -296,20 +296,15 @@ class HeadlessDisplayer(object):
                     FILE.write(repr(upTotal)+"\n")
                     FILE.write(repr(downTotal)+"\n")
                     FILE.write(repr(self.fileSize_stat))
-                    # log errors and append to stat-file
-                    if self.errors:
-                        # FILE.write("\n")
-                        #for err in self.errors[-4:]:
-                        errorMessage = "\n"
-                        for err in self.errors[0:]:
-                            errorMessage += err + "\n"
-                            # FILE.write(err)
-                        FILE.write(errorMessage)
-                        transferLog("self.errors : \n" + errorMessage, True)
                     FILE.flush()
                     FILE.close()
                 except Exception, e:
                     transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
+                # log errors
+                if self.errors:
+                    for err in self.errors[0:]:
+                        transferLog("self.errors : " + err + "\n", True)
+
 
     def print_spew(self, spew):
         s = StringIO()
