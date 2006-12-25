@@ -614,12 +614,7 @@ function netstatHostsByPid($transferPid) {
  */
 function getTransferPid($transferAlias) {
 	global $cfg;
-	$data = "";
-	if ($fileHandle = @fopen($cfg["transfer_file_path"].$transferAlias.".pid",'r')) {
-		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 64);
-		@fclose ($fileHandle);
-	}
+	$data = file_get_contents($cfg["transfer_file_path"].$transferAlias.".pid");
 	return trim($data);
 }
 

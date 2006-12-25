@@ -451,7 +451,7 @@ if (isset($_REQUEST["f"])) {
 				$htmlTitle = "fluxd - log";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd.log');
+				$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd.log');
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;
@@ -460,7 +460,7 @@ if (isset($_REQUEST["f"])) {
 				$htmlTitle = "fluxd - error-log";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd-error.log');
+				$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;
@@ -1085,7 +1085,7 @@ if (isset($_REQUEST["l"])) {
 				$htmlTitle = "log - fluxd";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd.log');
+				$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd.log');
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;
@@ -1094,7 +1094,7 @@ if (isset($_REQUEST["l"])) {
 				$htmlTitle = "log - fluxd - error-log";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
-				$htmlMain .= getDataFromFile($cfg["path"].'.fluxd/fluxd-error.log');
+				$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;
@@ -1105,7 +1105,7 @@ if (isset($_REQUEST["l"])) {
 				$htmlMain .= '<pre>';
 				$mainlineLog = $cfg["path"].'.bittorrent/tfmainline.log';
 				if (is_file($mainlineLog))
-					$htmlMain .= getDataFromFile($mainlineLog);
+					$htmlMain .= file_get_contents($mainlineLog);
 				else
 					$htmlMain .= "mainline-log not found.";
 				$htmlMain .= '</pre>';

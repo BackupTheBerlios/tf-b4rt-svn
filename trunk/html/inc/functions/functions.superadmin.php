@@ -609,7 +609,7 @@ function backupSend($filename, $delete = false) {
 	@header('Content-Disposition: attachment; filename="'.$filename.'"');
 	@header("Content-Transfer-Encoding: binary\n");
 	if ($delete) { // read data to mem, delete file and send complete
-		$data = getDataFromFile($backupFile);
+		$data = file_get_contents($backupFile);
 		@unlink($backupFile);
 		echo $data;
 	} else { // read / write file with 8kb-buffer

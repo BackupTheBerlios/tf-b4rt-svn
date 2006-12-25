@@ -189,7 +189,7 @@ function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
  * @return string
  */
 function getSVNRevisionFromId($filename) {
-	$data = getDataFromFile($filename);
+	$data = file_get_contents($filename);
 	$len = strlen($data);
 	for ($i = 0; $i < $len; $i++) {
 		if ($data{$i} == '$') {
@@ -209,22 +209,6 @@ function getSVNRevisionFromId($filename) {
         }
 	}
 	return 'NoID';
-}
-
-/**
- * load data of file
- *
- * @param $file the file
- * @return data
- */
-function getDataFromFile($file) {
-	if ($fileHandle = @fopen($file, 'r')) {
-		$data = null;
-		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 8192);
-		@fclose ($fileHandle);
-		return $data;
-	}
 }
 
 /**

@@ -521,12 +521,7 @@ class ClientHandler
 		    		return false;
             	}
             } else {
-            	$data = "";
-				if ($fileHandle = @fopen($this->pidFilePath,'r')) {
-					while (!@feof($fileHandle))
-						$data .= @fgets($fileHandle, 64);
-					@fclose ($fileHandle);
-				}
+            	$data = file_get_contents($this->pidFilePath);
                 $this->pid = rtrim($data);
             }
             // kill it

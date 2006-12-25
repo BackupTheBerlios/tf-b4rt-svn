@@ -156,24 +156,6 @@ function getAdoConnection($type, $host, $user, $pass, $name = "") {
 }
 
 /**
- * load data of file
- *
- * @param $file the file
- * @return data
- */
-function getDataFromFile($file) {
-	if ($fileHandle = @fopen($file, 'r')) {
-		$data = null;
-		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 8192);
-		@fclose ($fileHandle);
-		return $data;
-	} else {
-		return false;
-	}
-}
-
-/**
  * send button
  */
 function sendButton($name = "", $value = "") {

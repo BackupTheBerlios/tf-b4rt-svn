@@ -78,11 +78,7 @@ if ($htmlTargetsCount > 0) {
 }
 $filename = "./mrtg/".$mrtgTarget.".inc";
 if (is_file($filename)) {
-	$htmlGraph = "";
-	$fileHandle = fopen($filename, "r");
-	while (!feof($fileHandle))
-		$htmlGraph .= fgets($fileHandle, 4096);
-	fclose ($fileHandle);
+	$htmlGraph = file_get_contents($filename);
 	// we are only interested in the "real" content
 	$tempAry = explode("_CONTENT_BEGIN_", $htmlGraph);
 	$tempVar = array_pop($tempAry);
