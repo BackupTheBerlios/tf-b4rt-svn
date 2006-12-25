@@ -68,64 +68,57 @@ if (strlen($searchterm) == 0) {
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
 $tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($searchEngine));
 $tmpl->setvar('searchEngine', $searchEngine);
-if (is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
-	$tmpl->setvar('is_searchEngine', 1);
+// Check if Search Engine works properly
+if (!is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
+	$tmpl->setvar('sEngine_error', 1);
+	$tmpl->setvar('sEngine_msg', "Search Engine not installed.");
+}
+else {
 	include_once('inc/searchEngines/'.$searchEngine.'Engine.php');
 	$sEngine = new SearchEngine(serialize($cfg));
-	if ($sEngine->initialized) {
-		$tmpl->setvar('is_initialized', 1);
+	if (!$sEngine->initialized) {
+		$tmpl->setvar('sEngine_error', 1);
+		$tmpl->setvar('sEngine_msg', $sEngine->msg);
+	}
+	else {
+		// Search Engine ready to go
 		$mainStart = true;
 		$catLinks = '';
 		$tmpCatLinks = '';
 		$tmpLen = 0;
+		$link_list = array();
 		foreach ($sEngine->getMainCategories() as $mainId => $mainName) {
-			if (strlen($tmpCatLinks) >= 500 && $mainStart == false) {
-				$catLinks .= $tmpCatLinks . "<br>";
-				$tmpCatLinks = '';
-				$mainStart = true;
-			}
-			if ($mainStart == false)
-				$tmpCatLinks .= " | ";
-			$tmpCatLinks .= "<a href=\"index.php?iid=torrentSearch&searchEngine=".$searchEngine."&mainGenre=".$mainId."\">".$mainName."</a>";
-			$mainStart = false;
+			array_push($link_list, array(
+				'searchEngine' => $searchEngine,
+				'mainId' => $mainId,
+				'mainName' => $mainName,
+				)
+			);
 		}
-		$tmpl->setvar('links_list', $catLinks.$tmpCatLinks);
-		$tmpl->setvar('no_mainStart', ($mainStart == false) ? 1 : 0);
+		$tmpl->setloop('link_list', $link_list);
 		$mainGenre = getRequestVar('mainGenre');
-		if (!empty($mainGenre) && !array_key_exists("subGenre",$_REQUEST)) {
-			$tmpl->setvar('no_empty_genre', 1);
-			$subCats = $sEngine->getSubCategories($mainGenre);
-			if (count($subCats) > 0) {
-				$tmpl->setvar('count_subCats', 1);
-				$mainGenreName = $sEngine->GetMainCatName($mainGenre);
-				$tmpl->setvar('mainGenreName', $mainGenreName);
-				$list_cats = array();
-				foreach ($subCats as $subId => $subName) {
-					array_push($list_cats, array(
-						'subId' => $subId,
-						'subName' => $subName,
-						)
-					);
-				}
-				$tmpl->setloop('list_cats', $list_cats);
-			} else {
-				// Set the Sub to equal the main for groups that don't have subs.
-				$_REQUEST["subGenre"] = $mainGenre;
-				$tmpl->setvar('getLatest', $sEngine->getLatest());
-			}
-		} else {
-			if (array_key_exists("LATEST",$_REQUEST) && $_REQUEST["LATEST"] == "1") {
-				$tmpl->setvar('is_latest', 1);
-				$tmpl->setvar('getLatest', $sEngine->getLatest());
-			} else {
-				$tmpl->setvar('is_latest', 0);
+		$subCats = $sEngine->getSubCategories($mainGenre);
+		if ((empty($mainGenre) && array_key_exists("subGenre",$_REQUEST)) || (count($subCats) <= 0)) {
+			$tmpl->setvar('no_genre', 1);
+			if (!array_key_exists("LATEST",$_REQUEST) && $_REQUEST["LATEST"] != "1") {
 				$tmpl->setvar('performSearch', $sEngine->performSearch($searchterm));
+			} else {
+				$tmpl->setvar('performSearch', $sEngine->getLatest());
 			}
 		}
-	} else {
-		$tmpl->setvar('is_initialized', 0);
-		// there was an error connecting
-		$tmpl->setvar('sEngine_msg', $sEngine->msg);
+		else {
+			$mainGenreName = $sEngine->GetMainCatName($mainGenre);
+			$tmpl->setvar('mainGenreName', $mainGenreName);
+			$list_cats = array();
+			foreach ($subCats as $subId => $subName) {
+				array_push($list_cats, array(
+					'subId' => $subId,
+					'subName' => $subName,
+					)
+				);
+			}
+			$tmpl->setloop('list_cats', $list_cats);
+		}
 	}
 }
 //
