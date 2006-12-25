@@ -81,21 +81,22 @@ class AliasFile
         // load file
         if (@file_exists($this->theFile)) {
             // read the alias file
-            $content = @file($this->theFile);
-            $content = @array_map('rtrim', $content);
-            $this->running = @ $content[0];
-            $this->percent_done = @ $content[1];
-            $this->time_left = @ $content[2];
-            $this->down_speed = @ $content[3];
-            $this->up_speed = @ $content[4];
-            $this->transferowner = @ $content[5];
-            $this->seeds = @ $content[6];
-            $this->peers = @ $content[7];
-            $this->sharing = @ $content[8];
-            $this->seedlimit = @ $content[9];
-            $this->uptotal = @ $content[10];
-            $this->downtotal = @ $content[11];
-            $this->size = @ $content[12];
+            $data = @file_get_contents($this->theFile);
+			// assign vars from content
+	        $content = @explode("\n", $data, 13);
+	        $this->running = @ $content[0];
+	        $this->percent_done = @ $content[1];
+	        $this->time_left = @ $content[2];
+	        $this->down_speed = @ $content[3];
+	        $this->up_speed = @ $content[4];
+	        $this->transferowner = @ $content[5];
+	        $this->seeds = @ $content[6];
+	        $this->peers = @ $content[7];
+	        $this->sharing = @ $content[8];
+	        $this->seedlimit = @ $content[9];
+	        $this->uptotal = @ $content[10];
+	        $this->downtotal = @ $content[11];
+	        $this->size = @ $content[12];
         }
     }
 
