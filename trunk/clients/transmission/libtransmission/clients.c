@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1263 2006-12-19 16:30:34Z livings124 $
+ * $Id: clients.c 1273 2006-12-24 01:08:23Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -55,6 +55,11 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "Azureus %c.%c.%c.%c",
                       id[3], id[4], id[5], id[6] );
         }
+        else if( !memcmp( &id[1], "UT", 2 ) )
+        {
+            asprintf( &ret, "\xc2\xb5Torrent %c.%d", id[3],
+                      charToInt( id[4] ) * 10 + charToInt( id[5] ) );
+        }
         else if( !memcmp( &id[1], "TS", 2 ) )
         {
             asprintf( &ret, "TorrentStorm (%c%c%c%c)",
@@ -71,11 +76,6 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "Shareaza %c.%c.%c.%c",
                       id[3], id[4], id[5], id[6] );
         }
-        else if( !memcmp( &id[1], "UT", 2 ) )
-        {
-            asprintf( &ret, "\xc2\xb5Torrent %c.%d", id[3],
-                      charToInt( id[4] ) * 10 + charToInt( id[5] ) );
-        }
         else if( !memcmp( &id[1], "BOW", 3 ) )
         {
             asprintf( &ret, "Bits on Wheels (%c%c)",
@@ -85,6 +85,12 @@ char * tr_clientForId( uint8_t * id )
         {
             asprintf( &ret, "BitRocket %c.%c (%d)",
                       id[3], id[4], charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+        }
+        else if( !memcmp( &id[1], "XX", 2 ) )
+        {
+            asprintf( &ret, "Xtorrent (%d)",
+                      charToInt( id[3] ) * 1000 + charToInt( id[4] ) * 100
+                      + charToInt( id[5] ) * 10 + charToInt( id[6] ) );
         }
         else if( !memcmp( &id[1], "KT", 2 ) )
         {
@@ -113,6 +119,16 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "CTorrent %d.%d",
                       charToInt( id[3] ) * 10 + charToInt( id[4] ),
                       charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+        }
+        else if( !memcmp( &id[1], "LP", 2 ) )
+        {
+            asprintf( &ret, "Lphant %d.%c%c",
+                      charToInt( id[3] ) * 10 + charToInt( id[4] ),
+                      id[5], id[6] );
+        }
+        else if( !memcmp( &id[1], "AR", 2 ) )
+        {
+            asprintf( &ret, "Arctic Torrent" );
         }
         
         if( ret )
@@ -190,6 +206,16 @@ char * tr_clientForId( uint8_t * id )
     {
         asprintf( &ret, "MLDonkey %c%c%c%c%c",
                   id[3], id[4], id[5], id[6], id[7] );
+    }
+    else if( !memcmp( id, "-FG", 3 ) )
+    {
+        asprintf( &ret, "FlashGet %d.%c%c",
+                  charToInt( id[3] ) * 10 + charToInt( id[4] ),
+                      id[5], id[6] );
+    }
+    else if( !memcmp( id, "Plus", 4 ) )
+    {
+        asprintf( &ret, "Plus! v2 %c.%c%c", id[4], id[5], id[6] );
     }
     else if( !memcmp( id, "XBT", 3 ) )
     {
