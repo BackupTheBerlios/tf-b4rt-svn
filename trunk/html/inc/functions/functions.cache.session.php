@@ -93,7 +93,7 @@ function cacheTransfersInit() {
 function cacheTransfersSet() {
 	global $transfers;
 	initGlobalTransfersArray();
-	// add to session
+	// add to cache
 	$_SESSION['cache_transfers'] = $transfers;
 }
 

@@ -20,11 +20,13 @@
 
 *******************************************************************************/
 
-// size of shared memory to allocate (ok : 16384)
-define("_WEBAPP_CACHE_SHM_SIZE", 16384);
+// size of shared memory to allocate
+define("_WEBAPP_CACHE_SHM_SIZE_CONFIG", 16384); // (ok : 16384)
+define("_WEBAPP_CACHE_SHM_SIZE_TRANSFERS", 8192); // (depends on transfer-count)
 
-// shm-id
-define("_WEBAPP_CACHE_SHM_ID", 0x8457); // ftok(__FILE__, 'b')
+// shm-ids
+define("_WEBAPP_CACHE_SHM_ID_CONFIG", 0x8457); // ftok(__FILE__, 'b')
+define("_WEBAPP_CACHE_SHM_ID_TRANSFERS", 0x7544); // ftok('index.php', 'b')
 
 /*******************************************************************************
  * config
@@ -37,7 +39,7 @@ define("_WEBAPP_CACHE_SHM_ID", 0x8457); // ftok(__FILE__, 'b')
  * @return boolean
  */
 function cacheIsSet($username) {
-	return isset($_SESSION['shm_key']);
+	return isset($_SESSION['SHM_ID_CONFIG']);
 }
 
 /**
@@ -47,12 +49,10 @@ function cacheIsSet($username) {
  */
 function cacheInit($username) {
 	global $cfg;
-
 	// attach
-	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID)))
-	    die("shmem_attach failed\n");
-
-	// get cfg from shared mem
+	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID_CONFIG)))
+	    error("shmem_attach failed", "", "");
+	// get var from shared mem
 	$cfg = shm_get_var($mkey, 1);
 }
 
@@ -63,29 +63,8 @@ function cacheInit($username) {
  */
 function cacheSet($username) {
 	global $cfg;
-
-	// attach
-	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID, _WEBAPP_CACHE_SHM_SIZE, 0666)))
-	    die("shmem_attach failed\n");
-
-	// save id in session-var
-	$_SESSION['shm_key'] = $mkey;
-
-	// get sem
-	if (!($skey = sem_get(_WEBAPP_CACHE_SHM_ID, 1, 0666)))
-	    die("sem_get failed\n");
-
-	// acquire sem
-	if (!sem_acquire($skey))
-	    die("sem_acquire failed\n");
-
-	// put cfg to shared mem
-	if (!shm_put_var($mkey, 1, $cfg))
-		die("Fail to put cfg to Shared memory ".$mkey.".\n");
-
-	// release sem
-	if (!sem_release($skey))
-		die("sem_release failed\n");
+	// add to cache
+	_cacheShmSet('SHM_ID_CONFIG', _WEBAPP_CACHE_SHM_ID_CONFIG, _WEBAPP_CACHE_SHM_SIZE_CONFIG, $cfg);
 }
 
 /**
@@ -94,43 +73,7 @@ function cacheSet($username) {
  * @param $username
  */
 function cacheFlush($username = "") {
-
-	// keys
-	if (!($skey = sem_get(_WEBAPP_CACHE_SHM_ID, 1)))
-	    die("sem_get failed\n");
-
-	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID)))
-	    die("shmem_attach failed\n");
-
-	// error-array
-	$errors = array();
-
-	// remove var
-	shm_remove_var(_WEBAPP_CACHE_SHM_ID, 1);
-
-	// Release semaphore
-	sem_release($skey);
-
-	// remove shared memory segment from SysV
-	if (!(shm_remove($mkey) === true))
-		array_push($errors, "Failed : shm_remove");
-
-	// detach
-	if (!(shm_detach($mkey) === true))
-		array_push($errors, "Failed : shm_detach");
-
-	// Remove semaphore
-	if (!(sem_remove($skey) === true))
-		array_push($errors, "Failed : sem_remove");
-
-	// session-id
-	unset($_SESSION['shm_key']);
-
-	// check for errors
-	if (count($errors) > 0) {
-		foreach ($errors as $errorMessage)
-			echo $errorMessage."\n";
-	}
+	_cacheShmFlush('SHM_ID_CONFIG', _WEBAPP_CACHE_SHM_ID_CONFIG);
 }
 
 /*******************************************************************************
@@ -143,7 +86,7 @@ function cacheFlush($username = "") {
  * @return boolean
  */
 function cacheTransfersIsSet() {
-	return false;
+	return isset($_SESSION['SHM_ID_TRANSFERS']);
 }
 
 /**
@@ -151,7 +94,11 @@ function cacheTransfersIsSet() {
  */
 function cacheTransfersInit() {
 	global $transfers;
-	initGlobalTransfersArray();
+	// attach
+	if (!($mkey = shm_attach(_WEBAPP_CACHE_SHM_ID_TRANSFERS)))
+	    error("shmem_attach failed", "", "");
+	// get var from shared mem
+	$transfers = shm_get_var($mkey, 1);
 }
 
 /**
@@ -160,13 +107,74 @@ function cacheTransfersInit() {
 function cacheTransfersSet() {
 	global $transfers;
 	initGlobalTransfersArray();
+	// add to cache
+	_cacheShmSet('SHM_ID_TRANSFERS', _WEBAPP_CACHE_SHM_ID_TRANSFERS, _WEBAPP_CACHE_SHM_SIZE_TRANSFERS, $transfers);
 }
 
 /**
  * flush the cache
  */
 function cacheTransfersFlush() {
-	return;
+	_cacheShmFlush('SHM_ID_TRANSFERS', _WEBAPP_CACHE_SHM_ID_TRANSFERS);
+}
+
+
+/*******************************************************************************
+ * common shm-functions
+ ******************************************************************************/
+
+/**
+ * generic shm set
+ *
+ * @param $shmname
+ * @param $shmid
+ * @param $shmsize
+ * @param $var
+ */
+function _cacheShmSet($shmname, $shmid, $shmsize, &$var) {
+	// attach
+	if (!($mkey = shm_attach($shmid, $shmsize, 0666)))
+	    error("shmem_attach failed", "", "");
+	// save id in session-var
+	$_SESSION[$shmname] = $mkey;
+	// get sem
+	if (!($skey = sem_get($shmid, 1, 0666)))
+	    error("sem_get failed", "", "");
+	// acquire sem
+	if (!sem_acquire($skey))
+	    error("sem_acquire failed", "", "");
+	// put var to shared mem
+	if (!shm_put_var($mkey, 1, $var))
+		error("Fail to put var to Shared memory ".$mkey.".", "", "");
+	// release sem
+	if (!sem_release($skey))
+		error("sem_release failed", "", "");
+}
+
+/**
+ * generic shm flush
+ *
+ * @param $shmname
+ * @param $shmid
+ */
+function _cacheShmFlush($shmname, $shmid) {
+	// keys
+	if (!($skey = sem_get($shmid, 1)))
+	    error("sem_get failed", "", "");
+	if (!($mkey = shm_attach($shmid)))
+	    error("shmem_attach failed", "", "");
+	// remove var
+	@shm_remove_var($shmid, 1);
+	// Release semaphore
+	@sem_release($skey);
+	// remove shared memory segment from SysV
+	@shm_remove($mkey);
+	// detach
+	@shm_detach($mkey);
+	// Remove semaphore
+	@sem_remove($skey);
+	// session-id
+	unset($_SESSION[$shmname]);
 }
 
 ?>
