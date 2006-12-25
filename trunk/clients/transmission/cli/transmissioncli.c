@@ -24,7 +24,7 @@
 
 /*******************************************************************************
  *
- * This version of transmissioncli is meant to be used with torrentflux-b4rt
+ * transmissioncli.c - use transmission with torrentflux-b4rt
  *
  ******************************************************************************/
 
@@ -571,12 +571,6 @@ int main(int argc, char ** argv) {
 				// print errors to stderr
 				fprintTimestamp();
 				fprintf(stderr, "trackerError : %s\n", s->trackerError);
-				// append errors to stat-file
-				tf_stat = fopen(tf_stat_file, "a+");
-				if (tf_stat != NULL) {
-					fprintf(tf_stat, "\n%s\n", s->trackerError);
-					fclose(tf_stat);
-				}
 			}
 		} else if (verboseLevel > 0) {
 			if (tf_stat_file == NULL) { /* standalone */
@@ -632,7 +626,7 @@ int main(int argc, char ** argv) {
 				                  /* upload speed     */
 				tf_user,          /* user             */
 				                  /* seeds            */
-									/* peers            */
+				                  /* peers            */
 				tf_sharing,       /* sharing          */
 				seedLimit,        /* seedlimit        */
 				s->uploaded,      /* uploaded bytes   */
