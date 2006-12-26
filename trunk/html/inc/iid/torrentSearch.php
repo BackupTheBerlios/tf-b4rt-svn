@@ -59,11 +59,9 @@ $searchterm = getRequestVar('searchterm');
 if (empty($searchterm))
 	$searchterm = getRequestVar('query');
 $searchterm = str_replace(" ", "+",$searchterm);
-// Check to see if there was a searchterm.
-// if not set the get latest flag.
-if (strlen($searchterm) == 0) {
-	if (! array_key_exists("LATEST",$_REQUEST))
-		$_REQUEST["LATEST"] = "1";
+if (empty($searchterm)) {
+	// no searchterm set the get latest flag.
+	$_REQUEST["LATEST"] = "1";
 }
 $tmpl->setvar('searchterm', str_replace("+", " ",$searchterm));
 $tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($searchEngine));
@@ -72,15 +70,13 @@ $tmpl->setvar('searchEngine', $searchEngine);
 if (!is_file('inc/searchEngines/'.$searchEngine.'Engine.php')) {
 	$tmpl->setvar('sEngine_error', 1);
 	$tmpl->setvar('sEngine_msg', "Search Engine not installed.");
-}
-else {
+} else {
 	include_once('inc/searchEngines/'.$searchEngine.'Engine.php');
 	$sEngine = new SearchEngine(serialize($cfg));
 	if (!$sEngine->initialized) {
 		$tmpl->setvar('sEngine_error', 1);
 		$tmpl->setvar('sEngine_msg', $sEngine->msg);
-	}
-	else {
+	} else {
 		// Search Engine ready to go
 		$mainStart = true;
 		$catLinks = '';
@@ -91,29 +87,27 @@ else {
 			array_push($link_list, array(
 				'searchEngine' => $searchEngine,
 				'mainId' => $mainId,
-				'mainName' => $mainName,
+				'mainName' => $mainName
 				)
 			);
 		}
 		$tmpl->setloop('link_list', $link_list);
 		$mainGenre = getRequestVar('mainGenre');
 		$subCats = $sEngine->getSubCategories($mainGenre);
-		if ((empty($mainGenre) && array_key_exists("subGenre",$_REQUEST)) || (count($subCats) <= 0)) {
+		if ((empty($mainGenre) && array_key_exists("subGenre", $_REQUEST)) || (count($subCats) <= 0)) {
 			$tmpl->setvar('no_genre', 1);
-			if (!array_key_exists("LATEST",$_REQUEST) && $_REQUEST["LATEST"] != "1") {
-				$tmpl->setvar('performSearch', $sEngine->performSearch($searchterm));
-			} else {
-				$tmpl->setvar('performSearch', $sEngine->getLatest());
-			}
-		}
-		else {
+			$tmpl->setvar('performSearch', (array_key_exists("LATEST", $_REQUEST) && $_REQUEST["LATEST"] == "1")
+				? $sEngine->getLatest()
+				: $sEngine->performSearch($searchterm)
+			);
+		} else {
 			$mainGenreName = $sEngine->GetMainCatName($mainGenre);
 			$tmpl->setvar('mainGenreName', $mainGenreName);
 			$list_cats = array();
 			foreach ($subCats as $subId => $subName) {
 				array_push($list_cats, array(
 					'subId' => $subId,
-					'subName' => $subName,
+					'subName' => $subName
 					)
 				);
 			}
