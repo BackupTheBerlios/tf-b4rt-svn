@@ -1125,7 +1125,7 @@ function getTransferArray($sortOrder = '') {
 	$arList = array();
 	while ($transfer = readdir($handle)) {
 		if (($transfer{0} != ".") && isValidTransfer($transfer))
-			$arList[filemtime($cfg["transfer_file_path"]."/".$transfer)] = $transfer;
+			$arList[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
 	}
 	closedir($handle);
 	// sort transfer-array
