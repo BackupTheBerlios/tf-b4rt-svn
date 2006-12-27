@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1259 2006-12-18 20:48:46Z titer $
+ * $Id: transmission.c 1288 2006-12-27 01:04:30Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -190,32 +190,27 @@ int tr_natTraversalStatus( tr_handle_t * h )
     return TR_NAT_TRAVERSAL_ERROR;
 }
 
-/***********************************************************************
- * tr_setUploadLimit
- ***********************************************************************
- * 
- **********************************************************************/
-void tr_setUploadLimit( tr_handle_t * h, int limit )
+void tr_setGlobalUploadLimit( tr_handle_t * h, int limit )
 {
     tr_rcSetLimit( h->upload, limit );
     tr_chokingSetLimit( h->choking, limit );
 }
 
-/***********************************************************************
- * tr_setDownloadLimit
- ***********************************************************************
- * 
- **********************************************************************/
-void tr_setDownloadLimit( tr_handle_t * h, int limit )
+void tr_setGlobalDownloadLimit( tr_handle_t * h, int limit )
 {
     tr_rcSetLimit( h->download, limit );
 }
 
-/***********************************************************************
- * tr_torrentRates
- ***********************************************************************
- *
- **********************************************************************/
+void tr_setUploadLimit( tr_torrent_t * tor, int limit )
+{
+    tr_rcSetLimit( tor->upload, limit );
+}
+
+void tr_setDownloadLimit( tr_torrent_t * tor, int limit )
+{
+    tr_rcSetLimit( tor->download, limit );
+}
+
 void tr_torrentRates( tr_handle_t * h, float * dl, float * ul )
 {
     tr_torrent_t * tor;
@@ -449,6 +444,16 @@ int tr_getFinished( tr_torrent_t * tor )
         return 1;
     }
     return 0;
+}
+
+void tr_manualUpdate( tr_torrent_t * tor )
+{
+    if( !( tor->status & TR_STATUS_ACTIVE ) )
+        return;
+    
+    tr_lockLock( &tor->lock );
+    tr_trackerAnnouncePulse( tor->tracker, 1 );
+    tr_lockUnlock( &tor->lock );
 }
 
 tr_stat_t * tr_torrentStat( tr_torrent_t * tor )

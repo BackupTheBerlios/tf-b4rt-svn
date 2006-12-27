@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1255 2006-12-18 06:16:27Z livings124 $
+ * $Id: transmission.h 1286 2006-12-27 00:22:38Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -131,18 +131,18 @@ void tr_natTraversalDisable( tr_handle_t * );
 int tr_natTraversalStatus( tr_handle_t * );
 
 /***********************************************************************
- * tr_setUploadLimit
+ * tr_setGlobalUploadLimit
  ***********************************************************************
  * Sets the total upload rate limit in KB/s
  **********************************************************************/
-void tr_setUploadLimit( tr_handle_t *, int );
+void tr_setGlobalUploadLimit( tr_handle_t *, int );
 
 /***********************************************************************
- * tr_setDownloadLimit
+ * tr_setGlobalDownloadLimit
  ***********************************************************************
  * Sets the total download rate limit in KB/s
  **********************************************************************/
-void tr_setDownloadLimit( tr_handle_t *, int );
+void tr_setGlobalDownloadLimit( tr_handle_t *, int );
 
 /***********************************************************************
  * tr_torrentCount
@@ -244,6 +244,13 @@ void tr_torrentStop( tr_torrent_t * );
  * in other cases.
  **********************************************************************/
 int tr_getFinished( tr_torrent_t * );
+
+/***********************************************************************
+ * tr_manualUpdate
+ ***********************************************************************
+ * Reannounce to tracker regardless of wait interval
+ **********************************************************************/
+void tr_manualUpdate( tr_torrent_t * );
 
 /***********************************************************************
  * tr_torrentStat

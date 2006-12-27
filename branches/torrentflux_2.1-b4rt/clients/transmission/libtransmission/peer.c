@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1251 2006-12-18 04:56:27Z livings124 $
+ * $Id: peer.c 1288 2006-12-27 01:04:30Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -266,7 +266,8 @@ int tr_peerRead( tr_torrent_t * tor, tr_peer_t * peer )
     /* Try to read */
     for( ;; )
     {
-        if( tor && !tr_rcCanTransfer( tor->globalDownload ) )
+        if( tor && (!tr_rcCanTransfer( tor->globalDownload )
+                    || !tr_rcCanTransfer( tor->download ) ) )
         {
             break;
         }
@@ -436,7 +437,8 @@ writeBegin:
         /* Send pieces if we can */
         while( ( p = blockPending( tor, peer, &size ) ) )
         {
-            if( !tr_rcCanTransfer( tor->globalUpload ) )
+            if( !tr_rcCanTransfer( tor->globalUpload )
+                || !tr_rcCanTransfer( tor->upload ) )
             {
                 break;
             }
