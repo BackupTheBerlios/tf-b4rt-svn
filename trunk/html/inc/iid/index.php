@@ -191,7 +191,7 @@ foreach ($arList as $transfer) {
 				if ($af->time_left != "" && $af->time_left != "0") {
 					if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
 						$estTime = (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-							? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left"
+							? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed))
 							: '-';
 					} else {
 						$estTime = $af->time_left;
