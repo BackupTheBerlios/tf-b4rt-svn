@@ -264,8 +264,8 @@ int main(int argc, char ** argv) {
 
 	// init some things
 	tr_setBindPort(h, bindPort);
-	tr_setUploadLimit(h, uploadLimit);
-	tr_setDownloadLimit(h, downloadLimit);
+	tr_setGlobalUploadLimit(h, uploadLimit);
+	tr_setGlobalDownloadLimit(h, downloadLimit);
 
 	// nat-traversal
 	if (natTraversal) {
