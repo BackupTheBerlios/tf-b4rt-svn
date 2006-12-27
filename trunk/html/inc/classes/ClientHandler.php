@@ -333,14 +333,8 @@ class ClientHandler
             $this->logMessage($msg."\n", true);
             return false;
 		}
-        // create AliasFile object and write out the stat file
+        // create AliasFile object
         $this->af = new AliasFile($this->aliasFile, $this->owner);
-        $transferTotals = $this->getTransferCurrent($this->transfer);
-        //XFER: before a transfer start/restart save upload/download xfer to SQL
-        if ($cfg['enable_xfer'] == 1)
-        	saveXfer($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
-        // update totals for this transfer
-        $this->execUpdateTransferTotals();
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
         // recalc sharekill ?
@@ -396,14 +390,23 @@ class ClientHandler
         	$this->sharekill_param = $this->sharekill;
         	$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
         }
-        // write stat-file
-        if ($this->queue) {
-            $this->af->queue();
-        } else {
-            if ($this->_setClientPort() === false)
+        // set port if start (not queue)
+        if (!$this->queue) {
+        	if ($this->_setClientPort() === false)
                 return;
-            $this->af->start();
         }
+        // get current transfer
+		$transferTotals = $this->getTransferCurrent($this->transfer);
+        //XFER: before a transfer start/restart save upload/download xfer to SQL
+        if ($cfg['enable_xfer'] == 1)
+        	saveXfer($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
+        // update totals for this transfer
+        $this->execUpdateTransferTotals();
+        // write stat-file
+        if ($this->queue)
+            $this->af->queue();
+        else
+            $this->af->start();
         // set state
         $this->state = CLIENTHANDLER_STATE_READY;
     }
