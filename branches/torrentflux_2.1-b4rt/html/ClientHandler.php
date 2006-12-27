@@ -258,11 +258,6 @@ class ClientHandler
         // create AliasFile object and write out the stat file
         include_once("AliasFile.php");
         $this->af = AliasFile::getAliasFileInstance($this->cfg["torrent_file_path"].$this->alias.".stat", $this->owner, $this->cfg, $this->handlerName);
-        //XFER: before a torrent start/restart save upload/download xfer to SQL
-        $torrentTotals = getTorrentTotalsCurrent($this->torrent);
-        saveXfer($this->owner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
-        // update totals for this torrent
-        updateTorrentTotals($this->torrent);
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
         if ($this->sharekill == 0) { // nice, we seed forever
@@ -302,21 +297,21 @@ class ClientHandler
         } else {
         	$this->sharekill_param = $this->sharekill;
         }
-        // continue
-        if ($this->cfg["AllowQueing"]) {
-            if($this->queue == "1") {
-                $this->af->QueueTorrentFile();  // this only writes out the stat file (does not start torrent)
-            } else {
-                if ($this->setClientPort() === false)
-                    return;
-                $this->af->StartTorrentFile();  // this only writes out the stat file (does not start torrent)
-            }
-        } else {
-            if ($this->setClientPort() === false)
+        // set port if start (not queue)
+        if (!(($this->cfg["AllowQueing"]) && ($this->queue == "1"))) {
+        	if ($this->setClientPort() === false)
                 return;
-            $this->af->StartTorrentFile();  // this only writes out the stat file (does not start torrent)
-
         }
+        //XFER: before a torrent start/restart save upload/download xfer to SQL
+        $torrentTotals = getTorrentTotalsCurrent($this->torrent);
+        saveXfer($this->owner,($torrentTotals["downtotal"]+0),($torrentTotals["uptotal"]+0));
+        // update totals for this torrent
+        updateTorrentTotals($this->torrent);
+        // write stat-file
+        if (($this->cfg["AllowQueing"]) && ($this->queue == "1"))
+			$this->af->QueueTorrentFile();
+        else
+            $this->af->StartTorrentFile();
         // set state
         $this->state = 2;
     }
