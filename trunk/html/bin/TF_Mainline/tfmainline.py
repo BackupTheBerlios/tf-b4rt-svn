@@ -172,8 +172,9 @@ class HeadlessDisplayer(object):
         self.display({'activity':_("download succeeded"), 'fractionDone':1})
 
     def error(self, errormsg):
-        newerrmsg = strftime('[%H:%M:%S] ') + errormsg
-        self.errors.append(newerrmsg)
+        self.errors.append(errormsg)
+        # log error
+        transferLog("error: " + errormsg + "\n", True)
 
     def display(self, statistics):
 
@@ -300,11 +301,6 @@ class HeadlessDisplayer(object):
                     FILE.close()
                 except Exception, e:
                     transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
-                # log errors
-                if self.errors:
-                    for err in self.errors[0:]:
-                        transferLog("self.errors : " + err + "\n", True)
-
 
     def print_spew(self, spew):
         s = StringIO()
