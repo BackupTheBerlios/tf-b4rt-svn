@@ -424,6 +424,8 @@ class ClientHandler
             array_push($this->messages , "Error. ClientHandler in wrong state on execStart-request.");
             return;
         }
+        // flush session-cache (trigger transfers-cache-set on next page-load)
+		cacheFlush($cfg['user']);
         // write the session to close so older version of PHP will not hang
         @session_write_close();
         // queue or start ?
@@ -509,6 +511,8 @@ class ClientHandler
         // blame me for this dirty shit, i am lazy. of course this should be
         // hooked into the place where client really dies.
         stopTransferSettings($this->transfer);
+		// set transfers-cache
+		cacheTransfersSet();
         // kill-request
         if ($kill && $isHung) {
         	AuditAction($cfg["constants"]["kill_transfer"], $this->transfer);
@@ -669,8 +673,8 @@ class ClientHandler
 	            } else {
 	                if (!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
 	                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
-	                        array_push($cProcess,$pinfo->pid);
-	                        array_push($cpProcess,$pinfo->ppid);
+	                        array_push($cProcess, $pinfo->pid);
+	                        array_push($cpProcess, $pinfo->ppid);
 	                    }
 	                }
 	            }
