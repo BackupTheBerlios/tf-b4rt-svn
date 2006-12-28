@@ -531,7 +531,9 @@ if ($onLoad != "") {
 // connections
 if ($cfg["index_page_connections"] != 0) {
 	$netstatConnectionsSum = @netstatConnectionsSum();
-	$netstatConnectionsMax = "(".$transfers['sum']['maxcons'].")";
+	$netstatConnectionsMax = (isset($transfers['sum']['maxcons']))
+		? "(".$transfers['sum']['maxcons'].")"
+		: "(0)";
 } else {
 	$netstatConnectionsSum = "n/a";
 	$netstatConnectionsMax = "";
