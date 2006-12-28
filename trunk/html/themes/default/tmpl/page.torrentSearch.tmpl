@@ -5,7 +5,7 @@
 	function getLatest() {
 		var selectedItem = document.searchForm.searchEngine.selectedIndex;
 		document.searchForm.searchterm.value = '';
-		document.location.href = 'index.php?iid=torrentSearch&searchEngine='+document.searchForm.searchEngine.options[selectedItem].value+'&LATEST=1';
+		document.location.href = 'index.php?iid=torrentSearch&searchEngine='+document.searchForm.searchEngine.options[selectedItem].text+'&LATEST=1';
 		return true;
 	}
 </script>
@@ -24,7 +24,7 @@
 					</tmpl_loop>
 					</select>
 					&nbsp;<input type="Submit" value="<tmpl_var name="_SEARCH">">&nbsp;&nbsp;
-					
+
 					&nbsp;&nbsp;<a href="#" onclick="javascript:getLatest()");"><img src="themes/default/images/properties.png" width="18"" height="13" title="Show Latest Torrents" align="absmiddle" border=0>Show Latest Torrents</a>
 				</form><br>
 				* Click on Torrent Links to add them to the Torrent Download List
