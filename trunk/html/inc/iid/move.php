@@ -68,9 +68,15 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		 if (strlen($tempDir) > 0)
 			$targetDir = $tempDir;
 	}
-	if (($targetDir == "") && (isset($_POST['selector'])))
-		 $targetDir = trim(urldecode($_POST['selector']));
+
 	$dirValid = true;
+	if (isset($_POST['selector'])){
+		$targetDir = trim(urldecode($_POST['selector'])).$targetDir;
+		if(!isValidPath($targetDir)){
+			$dirValid = false;
+		}
+	}
+
 	if (strlen($targetDir) <= 0) {
 		 $dirValid = false;
 	} else {
