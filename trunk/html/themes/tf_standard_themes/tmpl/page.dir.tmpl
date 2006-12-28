@@ -83,9 +83,9 @@
 					</tmpl_if>
 					<td align="right" nowrap>
 						<tmpl_if name="show_rar" value="1">
-							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=rar')"><img src="themes/tf_standard_themes/images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0></a>
+							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var escape="url" name="urlencode1">&dir=<tmpl_var escape="url" name="urlencode2">&type=rar')"><img src="themes/tf_standard_themes/images/rar_enabled.gif" width=16 height=16 title="Unrar" border=0></a>
 						<tmpl_elseif name="show_rar" value="2">
-							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var name="urlencode1">&dir=<tmpl_var name="urlencode2">&type=zip')"><img src="themes/tf_standard_themes/images/zip.png" width=16 height=16 title="Unzip" border=0></a>
+							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var escape="url" name="urlencode1">&dir=<tmpl_var escape="url" name="urlencode2">&type=zip')"><img src="themes/tf_standard_themes/images/zip.png" width=16 height=16 title="Unzip" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="show_nfo" value="1">
 							<a href="index.php?iid=viewnfo&path=<tmpl_var name="urlencode4">"><img src="themes/tf_standard_themes/images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0></a>
