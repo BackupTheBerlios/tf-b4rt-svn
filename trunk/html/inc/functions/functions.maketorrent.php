@@ -135,10 +135,9 @@ function createTorrentTornado() {
 	// make path URL friendly to support non-standard characters
 	$downpath = urlencode($tfile);
 	// Depending if we were successful, display the required information
-	if ($success)
-		$onLoad = "completed('".$downpath."',".$alert.",'".$diff."');";
-	else
-		$onLoad = "failed('".$downpath."',".$alert.");";
+	$onLoad = ($success)
+		? "completed('".$downpath."',".$alert.",'".$diff."');"
+		: "failed('".$downpath."',".$alert.");";
 	return $onLoad;
 }
 
@@ -210,10 +209,9 @@ function createTorrentMainline() {
 	// make path URL friendly to support non-standard characters
 	$downpath = urlencode($tfile);
 	// Depending if we were successful, display the required information
-	if ($success)
-		$onLoad = "completed('".$downpath."',".$alert.",'".$diff."');";
-	else
-		$onLoad = "failed('".$downpath."',".$alert.");";
+	$onLoad = ($success)
+		? "completed('".$downpath."',".$alert.",'".$diff."');"
+		: "failed('".$downpath."',".$alert.");";
 	return $onLoad;
 }
 

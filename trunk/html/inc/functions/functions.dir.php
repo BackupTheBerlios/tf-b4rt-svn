@@ -158,6 +158,8 @@ function downloadFile($down) {
 					@header("Content-Type: application/force-download");
 					@header("Content-Disposition: attachment; filename=\"".$headerName."\"");
 					@header("Content-Transfer-Encoding: binary");
+					// write the session to close so you can continue to browse on the site.
+					@session_write_close();
 					$fh = fopen($path, "rb");
 					fseek($fh, $from);
 					$cur_pos = ftell($fh);
