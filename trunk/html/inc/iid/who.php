@@ -37,7 +37,7 @@ $tmpl->setvar('result1', shell_exec("w"));
 $tmpl->setvar('result2', shell_exec("free -mo"));
 if ($cfg['isAdmin']) {
 	// array with all clients
-	$clients = array('tornado', 'transmission', 'mainline', 'wget');
+	$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
 	// get informations
 	$process_list = array();
 	foreach ($clients as $client) {

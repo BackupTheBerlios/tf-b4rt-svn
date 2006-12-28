@@ -65,6 +65,8 @@ $tmpl->setvar('bin_du', $cfg["bin_du"]);
 $tmpl->setvar('validate_du', validateBinary($cfg["bin_du"]));
 $tmpl->setvar('bin_wget', $cfg["bin_wget"]);
 $tmpl->setvar('validate_wget', validateBinary($cfg["bin_wget"]));
+$tmpl->setvar('bin_nzbperl', $cfg['bin_nzbperl']);
+$tmpl->setvar('validate_nzbperl', validateFile($cfg['bin_nzbperl']));
 $tmpl->setvar('bin_unzip', $cfg["bin_unzip"]);
 $tmpl->setvar('validate_unzip', validateBinary($cfg["bin_unzip"]));
 $tmpl->setvar('bin_cksfv', $cfg["bin_cksfv"]);

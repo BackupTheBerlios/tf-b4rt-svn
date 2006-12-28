@@ -125,6 +125,18 @@ foreach ($arList as $transfer) {
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
 		$af = new AliasFile($aliasFile, $transferowner);
+	} else if ((substr($transfer, -4) == ".nzb")) {
+		// This is nzbperl
+		$isTorrent = false;
+		$owner = IsOwner($cfg["user"], $transferowner);
+		$settingsAry = array();
+		$settingsAry['btclient'] = "nzbperl";
+		$settingsAry['hash'] = $transfer;
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
+		$settingsAry['datapath'] = "";
+		$af = new AliasFile($aliasFile, $transferowner);
 	} else {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
@@ -308,6 +320,9 @@ foreach ($arList as $transfer) {
 				break;
 			case "wget":
 				$client = "W";
+				break;
+			case "nzbperl":
+				$client = "N";
 				break;
 			default:
 				$client = "U";
@@ -679,6 +694,16 @@ switch ($cfg["enable_wget"]) {
 	case 1:
 		if ($cfg['isAdmin'])
 			$tmpl->setvar('enable_wget', 1);
+}
+
+// nzbperl
+switch ($cfg['enable_nzbperl']) {
+	case 2:
+		$tmpl->setvar('enable_nzbperl', 1);
+		break;
+	case 1:
+		if ($cfg['isAdmin'])
+			$tmpl->setvar('enable_nzbperl', 1);
 }
 
 $tmpl->setvar('version', $cfg["version"]);

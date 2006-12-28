@@ -63,6 +63,12 @@ if (substr($transfer, -8) == ".torrent") {
 	$settingsAry['btclient'] = "wget";
 	$settingsAry['hash'] = $transfer;
 	$af = new AliasFile($aliasFile, $transferowner);
+} else if ((substr(strtolower($transfer), -4) == ".nzb")) {
+	// this is nzbperl.
+	$transferowner = getOwner($transfer);
+	$cfg['btclient'] = "nzbperl";
+	$cfg['hash'] = $transfer;
+	$af = AliasFile::getAliasFileInstance($cfg['transfer_file_path'].$alias, $transferowner, $cfg, 'nzbperl');
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 	@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));

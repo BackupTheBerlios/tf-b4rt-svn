@@ -439,11 +439,11 @@ function netstatConnectionsSum() {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			return (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget).*'"));
+			return (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget|nzbperl).*'"));
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'"));
+			return (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission|nzbperl).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'"));
 	}
 	return 0;
 }
@@ -491,7 +491,7 @@ function netstatPortList() {
 			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
-			$clients = array('tornado', 'transmission', 'wget');
+			$clients = array('tornado', 'transmission', 'wget', 'nzbperl');
 			// get informations
 			foreach ($clients as $client) {
 				$clientHandler = ClientHandler::getInstance($client);
@@ -501,7 +501,7 @@ function netstatPortList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/(python|transmis|wget).+tcp/ {split(\$6, a, \":\");print a[2]}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/(python|transmis|wget|nzbperl).+tcp/ {split(\$6, a, \":\");print a[2]}'");
 			break;
 	}
 	return $retStr;
@@ -548,7 +548,7 @@ function netstatHostList() {
 			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
-			$clients = array('tornado', 'transmission', 'wget');
+			$clients = array('tornado', 'transmission', 'wget', 'nzbperl');
 			// get informations
 			foreach($clients as $client) {
 				$clientHandler = ClientHandler::getInstance($client);
@@ -558,7 +558,7 @@ function netstatHostList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E \"".$webserverUser.".+(python|transmis|wget).+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:[[:digit:]]\"");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E \"".$webserverUser.".+(python|transmis|wget|nzbperl).+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:[[:digit:]]\"");
 			break;
 	}
 	return $retStr;
@@ -812,6 +812,9 @@ function isTransferRunning($transfer) {
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid')) ? 1 : 0;
+	} else if (substr($transfer, -4) == ".nzb") {
+		// this is nzbperl.
+		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -4).'.stat.pid')) ? 1 : 0;
 	} else {
 		return 0;
 	}
@@ -830,9 +833,16 @@ function getTransferClient($transfer) {
 	} else {
 		$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
 		if (empty($client)) {
-			$client = ((substr($transfer, -5) == ".wget"))
-				? "wget"
-				: $cfg["btclient"];
+			if (substr($transfer, -5) == ".wget") {
+				$client = "wget";
+			} else if (substr($transfer, -4) == ".nzb") {
+				$client = "nzbperl";
+			} else {
+				$client = $cfg["btclient"];
+			}
+			//$client = ((substr($transfer, -5) == ".wget"))
+			//	? "wget"
+			//	: $cfg["btclient"];
 		}
 		$transfers['settings'][$transfer]['btclient'] = $client;
 		return $client;
@@ -1255,6 +1265,14 @@ function getTransferListArray() {
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $transfer;
 			$af = new AliasFile($alias, $transferowner);
+		} else if (substr($transfer, -4) == ".nzb") {
+			// This is nzbperl.
+			$isTorrent = false;
+			$owner = IsOwner($cfg["user"], $transferowner);
+			$settingsAry = array();
+			$settingsAry['btclient'] = "nzbperl";
+			$settingsAry['hash'] = $transfer;
+			$af = new AliasFile($alias, $transferowner);
 		} else {
 			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 			@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
@@ -1425,6 +1443,9 @@ function getTransferListArray() {
 					break;
 				case "wget":
 					array_push($transferAry, "W");
+					break;
+				case "nzbperl":
+					array_push($transferAry, "N");
 					break;
 				default:
 					array_push($transferAry, "U");
@@ -1599,6 +1620,11 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$settingsAry['btclient'] = "wget";
+		$settingsAry['hash'] = $transfer;
+		$af = new AliasFile($alias, $transferowner);
+	} else if (substr($transfer, -4) == ".nzb") {
+		// This is nzbperl.
+		$settingsAry['btclient'] = "nzbperl";
 		$settingsAry['hash'] = $transfer;
 		$af = new AliasFile($alias, $transferowner);
 	} else {

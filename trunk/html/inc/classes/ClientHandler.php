@@ -122,6 +122,9 @@ class ClientHandler
             case "wget":
             	require_once('inc/classes/ClientHandler.wget.php');
                 return new ClientHandlerWget();
+	    case "nzbperl":
+		require_once('inc/classes/ClientHandler.nzbperl.php');
+		return new ClientHandlerNzbperl();
             default:
             	global $cfg;
             	return ClientHandler::getInstance($cfg["btclient"]);

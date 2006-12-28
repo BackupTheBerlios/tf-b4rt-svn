@@ -284,6 +284,11 @@ switch ($action) {
 					$invalid = false;
 					$isTorrent = false;
 					$tclient = "wget";
+				} else if (substr($element, -4) == ".nzb") {
+					// This is nzbperl.
+					$invalid = false;
+					$isTorrent = false;
+					$tclient = "nzbperl";
 				}
 			}
 			if ($invalid) {

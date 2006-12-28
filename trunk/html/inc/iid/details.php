@@ -56,6 +56,15 @@ if (substr($transfer, -8) == ".torrent") {
 	$metaInfo .= "</table>";
 	$tmpl->setvar('metaInfo', $metaInfo);
 	$tmpl->setvar('scrape', 0);
+} else if ((substr(strtolower($transfer), -4) == ".nzb")) {
+	// this is nzbperl
+	require_once("inc/classes/ClientHandler.php");
+	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'nzbperl');
+	$metaInfo = "<table>";
+	$metaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
+	$metaInfo .= "</table>";
+	$tmpl->setvar('metaInfo', $metaInfo);
+	$tmpl->setvar('scrape', 0);
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 	@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));

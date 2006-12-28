@@ -56,6 +56,9 @@ class RunningTransfer
             case "wget":
             	require_once('inc/classes/RunningTransfer.wget.php');
                 return new RunningTransferWget($psLine);
+	    case "nzbperl":
+		require_once('inc/classes/RunningTransfer.nzbperl.php');
+		return new RunningTransferNzbperl($psLine);
             default:
             	global $cfg;
             	return RunningTransfer::getInstance($psLine, $cfg["btclient"]);

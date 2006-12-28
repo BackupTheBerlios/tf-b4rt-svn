@@ -545,7 +545,7 @@ if (isset($_REQUEST["p"])) {
 				$htmlMain .= '<pre>';
 				$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep");
 				$htmlMain .= '</pre>';
-				$clients = array('tornado', 'transmission', 'mainline', 'wget');
+				$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
 				foreach ($clients as $client) {
 					$clientHandler = ClientHandler::getInstance($client);
 					$htmlMain .= '<p><strong>'.$client.'</strong>';
@@ -686,9 +686,13 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= 'use this to kill all wget processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
 				$htmlMain .= '<p>';
+				$htmlMain .= '<strong>nzbperl</strong><br>';
+				$htmlMain .= 'use this to kill all nzbperl processes.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="nzbperl-kill" border="0"> nzbperl-kill</a>';
+				$htmlMain .= '<p>;
 				$htmlMain .= '<strong>vlc</strong><br>';
 				$htmlMain .= 'use this to kill all vlc processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=27"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
@@ -817,7 +821,32 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				break;
 
-			case "26": // Maintenance-Kill : vlc
+			case "26": // Maintainance-Kill : nzbperl
+				$htmlTitle = "Maintainance - Kill - nzbperl";
+				$htmlMain .= '<br>';
+				$htmlMain .= '"Kill all nzbperl processes" done.';
+				$htmlMain .= '<br><br>';
+				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec(ps auxww | ".$cfg['bin_grep']." nzbperl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				$callResult = "TODO";
+				if ((isset($callResult)) &&($callResult != "")) {
+					$htmlMain .= '<br>';
+					$htmlMain .= 'Call-Result : <br>';
+					$htmlMain .= '<pre>'.$callResult.'</pre>';
+					$htmlMain .= '<br>';
+				}
+				sleep(2);
+				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
+				$htmlMain .= '<pre>';
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." nzbperl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= '</pre>';
+				$htmlMain .= '<br>';
+				brek;
+
+			case "27": // Maintenance-Kill : vlc
 				$htmlTitle = "Maintenance - Kill - vlc";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all vlc processes" done.';

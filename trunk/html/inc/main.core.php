@@ -53,7 +53,7 @@ $cfg["constants"]["debug"] = "DEBUG";
 asort($cfg["constants"]);
 
 // valid file extensions
-$cfg["file_types_array"] = array(".torrent", ".wget");
+$cfg["file_types_array"] = array(".torrent", ".wget", ".nzb");
 // do NOT (!) touch the next line
 $cfg["file_types_string"] = implode("|", $cfg["file_types_array"]);
 

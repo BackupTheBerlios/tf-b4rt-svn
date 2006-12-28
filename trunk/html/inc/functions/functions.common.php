@@ -268,6 +268,7 @@ function firstLogin($username = '', $password = '') {
 						"bin_awk" => $cfg["bin_awk"],
 						"bin_du" => $cfg["bin_du"],
 						"bin_wget" => $cfg["bin_wget"],
+						"bin_nzbperl" => $cfg["bin_nzbperl"],
 						"bin_unrar" => $cfg["bin_unrar"],
 						"bin_unzip" => $cfg["bin_unzip"],
 						"bin_cksfv" => $cfg["bin_cksfv"],
@@ -1574,7 +1575,7 @@ function getTorrentDatapath($transfer) {
 function getRunningClientProcesses($clientType = '') {
 	// client-array
 	$clients = ($clientType == '')
-		? array('tornado', 'transmission', 'mainline', 'wget')
+		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl')
 		: array($clientType);
 	// get clients
 	$retVal = array();
@@ -1598,7 +1599,7 @@ function getRunningClientProcesses($clientType = '') {
 function getRunningClientProcessInfo($clientType = '') {
 	// client-array
 	$clients = ($clientType == '')
-		? array('tornado', 'transmission', 'mainline', 'wget')
+		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl')
 		: array($clientType);
 	// get clients
 	$retVal = "";

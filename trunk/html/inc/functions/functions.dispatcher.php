@@ -44,13 +44,39 @@ function indexStartTransfer($transfer) {
 			if ($cfg["enable_wget"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
 				@error("wget is disabled", "index.php?iid=index", "");
-			} elseif ($cfg["enable_wget"] == 1) {
+			} else if ($cfg["enable_wget"] == 1) {
 				if (!$cfg['isAdmin']) {
 					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
 					@error("wget is disabled for users", "index.php?iid=index", "");
 				}
 			}
 			$clientHandler = ClientHandler::getInstance('wget');
+			$clientHandler->start($transfer, false, false);
+			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+				$msgs = array();
+				array_push($msgs, "transfer : ".$transfer);
+				array_push($msgs, "\nmessages :");
+				$msgs = array_merge($msgs, $clientHandler->messages);
+				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+				@error("Start failed", "", "", $msgs);
+			} else {
+				sleep(3);
+				@header("location: index.php?iid=index");
+				exit();
+			}
+		} else if (substr($transfer, -4) == ".nzb") {
+			// This is nzbperl.
+			$invalid = false;
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+				@error("nzbperl is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+					@error("nzbperl is disabled for users", "index.php?iid=index", "");
+				}
+			}
+			$clientHandler = ClientHandler::getInstance('nzbperl');
 			$clientHandler->start($transfer, false, false);
 			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 				$msgs = array();
@@ -136,6 +162,9 @@ function indexStopTransfer($transfer) {
 		} else if (substr($transfer, -5) == ".wget") {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
+		} else if (substr($transfer, -4) == ".nzb") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance('nzbperl');
 		}
 		$clientHandler->stop($transfer);
 		if (count($clientHandler->messages) > 0)
@@ -375,6 +404,9 @@ function forceStopTransfer($transfer, $pid) {
 		} else if (substr($transfer, -5) == ".wget") {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
+		} else if (substr($transfer, -4) == ".nzb") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance('nzbperl');
 		}
 		$clientHandler->stop($transfer, true, $pid);
 		if (count($clientHandler->messages) > 0)

@@ -55,6 +55,14 @@ $tmpl->setvar('enable_wget', $cfg["enable_wget"]);
 $tmpl->setvar('wget_limit_rate', $cfg["wget_limit_rate"]);
 $tmpl->setvar('wget_limit_retries', $cfg["wget_limit_retries"]);
 $tmpl->setvar('wget_ftp_pasv', $cfg["wget_ftp_pasv"]);
+// nzbperl
+$tmpl->setvar('enable_nzbperl', $cfg['enable_nzbperl']);
+$tmpl->setvar('nzbperl_badAction', $cfg['nzbperl_badAction']);
+$tmpl->setvar('nzbperl_server', $cfg['nzbperl_server']);
+$tmpl->setvar('nzbperl_user', $cfg['nzbperl_user']);
+$tmpl->setvar('nzbperl_pw', $cfg['nzbperl_pw']);
+$tmpl->setvar('nzbperl_threads', $cfg['nzbperl_threads']);
+$tmpl->setvar('nzbperl_conn', $cfg['nzbperl_conn']);
 // common
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
