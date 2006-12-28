@@ -179,7 +179,8 @@ class HeadlessDisplayer:
 
     def error(self, errormsg):
         self.errors.append(errormsg)
-        self.display()
+        # log error
+        transferLog("error: " + errormsg + "\n", True)
 
     def display(self, dpflag = Event(), fractionDone = None, timeEst = None,
         downRate = None, upRate = None, activity = None,
@@ -322,13 +323,6 @@ class HeadlessDisplayer:
                 if lcount > 30:
                     break
                 pass
-
-        # log errors
-        errs = []
-        errs = self.scrub_errs()
-        if errs:
-            for errmsg in errs:
-                transferLog("scrub_errs : " + errmsg + "\n", True)
 
         if die:
             if __debug__: traceMsg('writeStatus - dieing - raising ki')
