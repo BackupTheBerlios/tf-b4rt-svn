@@ -31,6 +31,7 @@ if (!isset($cfg['user'])) {
 
 // common functions
 require_once('inc/functions/functions.common.php');
+require_once('inc/functions/functions.dir.php');
 
 // is enabled ?
 if ($cfg["enable_rename"] != 1) {
@@ -44,8 +45,8 @@ tmplInitializeInstance($cfg["theme"], "page.rename.tmpl");
 // process move and set vars
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('file', rawurldecode(stripslashes($_REQUEST['file'])));
-	$tmpl->setvar('dir', rawurldecode($_REQUEST['dir']));
+	$tmpl->setvar('file', UrlHTMLSlashesDecode($_REQUEST['file']));
+	$tmpl->setvar('dir', UrlHTMLSlashesDecode($_REQUEST['dir']));
 	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 } else {
