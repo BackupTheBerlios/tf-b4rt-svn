@@ -3,63 +3,33 @@ $Id$
 ================================================================================
 
 
-********************************************************************************
 *** code ***********************************************************************
-********************************************************************************
 
-  - (2) (includes + depends on templates)
-    per-user-settings : currently not in use at all.
-    need to be added to all templates and code needs to be checked if still "ok"
+  - personal (per-user) settings : currently not available.
+    (includes + depends on templates)
 
-  - (3)
-    enhance all upgrade.php-scripts ("equal" to setup.php).
-
-  - (3)
-    finalize code
+  - enhance all upgrade.php-scripts (like setup.php).
 
 
-********************************************************************************
 *** themes *********************************************************************
-********************************************************************************
 
-  - (1)
-    page.torrentSearch.tmpl very messed html/templates in both template-sets.
-    (wonder why this works, weird nested if/else and html)
+  - template-files for "default"-theme
 
-  - (1)
-    template-files for "default"-theme
-    note : as there is much functionality in the template-files some of the open
-           code-things require changes in templates as well. so they are kinda
-           dependant on a finalized default-template-set.
-
-  - (1)
-    images for "default"-theme
+  - images for "default"-theme
 
 
-********************************************************************************
 *** docu ***********************************************************************
-********************************************************************************
 
-  - (2)
-    common docu
+  - common docu
 
-  - (2)
-    fluxd in common
+  - fluxd in common
 
-  - (2)
-    fluxd-modules
+  - fluxd-modules
 
 
-********************************************************************************
 *** infra **********************************************************************
-********************************************************************************
 
-  - (3)
-    new website for release of new codebase
+  - new website for release of new codebase
 
-  - (3)
-    forum-restructure (+ resort)
-
-
-
+  - forum-restructure (+ resort)
 
