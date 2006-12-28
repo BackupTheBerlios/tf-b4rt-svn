@@ -88,7 +88,7 @@
 							<a href="javascript:UncompDetails('index.php?iid=uncomp&file=<tmpl_var escape="url" name="urlencode1">&dir=<tmpl_var escape="url" name="urlencode2">&type=zip')"><img src="themes/default/images/zip.png" width=16 height=16 title="Unzip" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="show_nfo" value="1">
-							<a href="index.php?iid=viewnfo&path=<tmpl_var name="urlencode4">"><img src="themes/default/images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0></a>
+							<a href="index.php?iid=viewnfo&path=<tmpl_var escape="url" name="urlencode4">"><img src="themes/default/images/view_nfo.gif" width=16 height=16 title="View <tmpl_var name="entry">" border=0></a>
 						</tmpl_if>
 						<tmpl_if name="enable_vlc" value="1">
 							<a href="JavaScript:StreamMultimedia('index.php?iid=vlc&dir=<tmpl_var name="urlencode2">&file=<tmpl_var name="urlencode3">')"><img src="themes/default/images/vlc.png" width="16" height="16" title="Stream Multimedia (vlc)" border="0"></a>

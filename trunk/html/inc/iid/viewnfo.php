@@ -31,6 +31,7 @@ if (!isset($cfg['user'])) {
 
 // common functions
 require_once('inc/functions/functions.common.php');
+require_once('inc/functions/functions.dir.php');
 
 // is enabled ?
 if ($cfg["enable_view_nfo"] != 1) {
@@ -39,7 +40,7 @@ if ($cfg["enable_view_nfo"] != 1) {
 }
 
 // target-file
-$file = getRequestVar("path");
+$file = UrlHTMLSlashesDecode(getRequestVar("path"));
 $fileIsValid = (isValidPath($file, ".nfo") || isValidPath($file, ".txt") || isValidPath($file, ".log"));
 if (!$fileIsValid) {
 	AuditAction($cfg["constants"]["error"], "INVALID NFO: ".$cfg["user"]." tried to access ".$file);
@@ -59,7 +60,7 @@ if ($fileHandle = @fopen($cfg["path"].$file,'r')) {
 		$output .= @fgets($fileHandle, 4096);
 	@fclose ($fileHandle);
 } else {
-	$output = "Error opening NFO File.";
+	$output = "Error opening NFO File: ".$cfg["path"].$file;
 }
 if ((empty($_REQUEST["dos"]) && empty($_REQUEST["win"])) || !empty($_REQUEST["dos"]))
 	$tmpl->setvar('output', htmlentities($output, ENT_COMPAT, "cp866"));
