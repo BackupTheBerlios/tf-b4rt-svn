@@ -93,7 +93,7 @@ function doSubmit(obj, client) {
 				document.getElementById('output').innerHTML += "<b style=\"color: #990000;\">* Please enter a valid Tracker Name.</b><BR />";
 				valid = false;
 			}
-		}		
+		}
 	}
 	// If validation passed, submit form
 	if (valid === true) {
@@ -169,7 +169,7 @@ function completed(downpath, alertme, timetaken) {
 	document.getElementById('output').innerHTML	 = "<b style='color: #005500;'>Creation completed!</b><BR />";
 	document.getElementById('output').innerHTML += "Time taken: <i>" + timetaken + "</i><BR />";
 	document.getElementById('output').innerHTML += "The new torrent has been added to your list.<BR /><BR />"
-	document.getElementById('output').innerHTML += "You can download the <a style='font-weight: bold;' href='index.php?iid=maketorrent&download=" + downpath + "'>torrent here</a><BR />";
+	document.getElementById('output').innerHTML += "You can download the <a style='font-weight: bold;' href='dispatcher.php?action=metafileDownload&transfer=" + downpath + "'>torrent here</a><BR />";
 	if(alertme === 1)
 		alert('Creation of torrent completed!');
 }

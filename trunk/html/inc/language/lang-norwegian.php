@@ -64,7 +64,7 @@ define("_RUNTRANSFER","Start nedlastingen");
 define("_SEEDTRANSFER","Seed torrenten");
 define("_DELETE","Slett");
 define("_ABOUTTODELETE","Du skal til å slette");
-define("_NOTOWNER","Ikke eier av torrent");
+define("_NOTOWNER","Ikke eier av Transfer");
 define("_AUTHORIZATIONFAILED","Godkjenning feileit.   Hendelsen har blitt logget.");
 define("_MESSAGETOALL","Denne meldingen ble sendt til ALLE BRUKERE");
 define("_TRYDIFFERENTUSERID","Feil: Prøv en annen bruker ID.");

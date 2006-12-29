@@ -65,7 +65,7 @@ define("_RUNTRANSFER","Starte Transfer");
 define("_SEEDTRANSFER","Seed Transfer");
 define("_DELETE","Löschen");
 define("_ABOUTTODELETE","Möchten Sie löschen");
-define("_NOTOWNER","Sie sind nicht der Besitzer des Torrent");
+define("_NOTOWNER","Sie sind nicht der Besitzer des Transfers");
 define("_AUTHORIZATIONFAILED","Authorization FAILED.   Action has been logged.");
 define("_MESSAGETOALL","Diese Nachricht wurde an ALLE Benutzer geschickt");
 define("_TRYDIFFERENTUSERID","Fehler: Versuchen Sie eine andere Benutzer ID.");

@@ -68,7 +68,7 @@ define("_RUNTRANSFER","Transfer Indítása");
 define("_SEEDTRANSFER","Transfer Seed-elése");
 define("_DELETE","Töröl");
 define("_ABOUTTODELETE","Törölni készül");
-define("_NOTOWNER","Nem a Torrent Tulajdonosa");
+define("_NOTOWNER","Nem a Transfer Tulajdonosa");
 define("_MESSAGETOALL","Ez az üzenet MINDEN FELHASZNÁLÓNAK el lett küldve");
 define("_TRYDIFFERENTUSERID","Hiba: Próbáljon másik Felhasználói Azonosítót.");
 define("_HASBEENUSED","már használt.");

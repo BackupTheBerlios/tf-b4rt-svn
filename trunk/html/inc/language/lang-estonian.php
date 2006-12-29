@@ -67,7 +67,7 @@ define("_RUNTRANSFER","Käivita Transfer");
 define("_SEEDTRANSFER","Jaga Transfer");
 define("_DELETE","Kustuta");
 define("_ABOUTTODELETE","Sa oled kustutamas");
-define("_NOTOWNER","Ei ole torenti omanik");
+define("_NOTOWNER","Ei ole Transfer omanik");
 define("_MESSAGETOALL","See sõnum saadeti kõikidele kasutajatele");
 define("_TRYDIFFERENTUSERID","Viga! Proovi teist kasutaja ID'd.");
 define("_HASBEENUSED","on kasutatud.");

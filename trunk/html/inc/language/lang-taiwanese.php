@@ -73,7 +73,7 @@ define("_RUNTRANSFER","啟動 Transfer");
 define("_SEEDTRANSFER","Seed Transfer"); // No Official Chinese translation for "seed"
 define("_DELETE","刪除");
 define("_ABOUTTODELETE","你將要刪除");
-define("_NOTOWNER","你不是這個 Torrent 檔的上傳者");
+define("_NOTOWNER","你不是這個 Transfer 檔的上傳者");
 define("_MESSAGETOALL","這個訊息將傳送給每一位用戶");
 define("_TRYDIFFERENTUSERID","發生錯誤: 請試試另一個用戶帳號.");
 define("_HASBEENUSED","已經被使用了.");

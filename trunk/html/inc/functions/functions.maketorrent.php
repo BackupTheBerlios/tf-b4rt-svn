@@ -21,44 +21,6 @@
 *******************************************************************************/
 
 /**
- * download meta-file
- *
- * @param $tfile
- */
-function downloadTorrent($tfile) {
-	global $cfg;
-	if (isValidTransfer($tfile) === true) {
-		// Does the file exist?
-		if (file_exists($cfg["transfer_file_path"].$tfile)) {
-			// filenames in IE containing dots will screw up the filename
-			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
-				? preg_replace('/\./', '%2e', $tfile, substr_count($tfile, '.') - 1)
-				: $tfile;
-			// Prompt the user to download file.
-			if (substr($tfile, -8) == ".torrent")
-				@header("Content-type: application/x-bittorrent\n");
-			else
-				@header( "Content-type: application/octet-stream\n" );
-			@header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
-			@header("Content-transfer-encoding: binary\n");
-			@header("Content-length: ".@filesize($cfg["transfer_file_path"].$tfile)."\n");
-			// Send the file
-			$fp = @fopen($cfg["transfer_file_path"].$tfile, "r");
-			@fpassthru($fp);
-			@fclose($fp);
-			AuditAction($cfg["constants"]["fm_download"], $tfile);
-		} else {
-			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$tfile);
-			@error("File Not found for download", "index.php?iid=index", "", array($tfile));
-		}
-	} else {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$tfile);
-		@error("Invalid File", "index.php?iid=index", "", array($tfile));
-	}
-	exit();
-}
-
-/**
  * create torrent with BitTornado
  *
  * @return string $onLoad

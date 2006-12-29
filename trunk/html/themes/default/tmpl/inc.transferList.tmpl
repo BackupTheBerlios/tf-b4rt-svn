@@ -71,7 +71,7 @@
 						<img src="themes/default/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle">
 					</tmpl_if>
 					<tmpl_if name="enable_torrent_download">
-						<a href="index.php?iid=maketorrent&download=<tmpl_var name="url_entry">"><img src="themes/default/images/down.gif" width=9 height=9 title="Download Torrent File" border=0 align="absmiddle"></a>
+						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">"><img src="themes/default/images/down.gif" width=9 height=9 title="Download Metafile" border=0 align="absmiddle"></a>
 					</tmpl_if>
 				</td>
 				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
@@ -301,7 +301,7 @@
 						<img src="themes/default/images/<tmpl_var name="hd_image">" width="16" height="16" title="<tmpl_var name="hd_title"><tmpl_var name="entry">" border="0" align="absmiddle">
 					</tmpl_if>
 					<tmpl_if name="enable_torrent_download">
-						<a href="index.php?iid=maketorrent&download=<tmpl_var name="url_entry">"><img src="themes/default/images/down.gif" width=9 height=9 title="Download Torrent File" border=0 align="absmiddle"></a>
+						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">"><img src="themes/default/images/down.gif" width=9 height=9 title="Download Metafile" border=0 align="absmiddle"></a>
 					</tmpl_if>
 				</td>
 				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>

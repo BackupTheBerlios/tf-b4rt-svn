@@ -85,7 +85,7 @@ define("_RUNTRANSFER","Executar Transfer");
 define("_SEEDTRANSFER","Alimentar Transfer");
 define("_DELETE","Borrar");
 define("_ABOUTTODELETE","Está a punto de borrar");
-define("_NOTOWNER","Ese Torrent non é seu");
+define("_NOTOWNER","Ese Transfer non é seu");
 define("_MESSAGETOALL","Esta mesaxe é para TÓDOLOS USUARIOS");
 define("_TRYDIFFERENTUSERID","Error: Intenta outra ID de Usuario");
 define("_HASBEENUSED","foi usado.");

@@ -65,7 +65,7 @@ define("_RUNTRANSFER","Starta nedladdningen");
 define("_SEEDTRANSFER","Distribuera Transfer");
 define("_DELETE","Radera");
 define("_ABOUTTODELETE","Du är på väg att radera");
-define("_NOTOWNER","Ej ägare av torrent");
+define("_NOTOWNER","Ej ägare av Transfer");
 define("_MESSAGETOALL","Det här meddelandet skickades till ALLA ANVÄNDARE");
 define("_TRYDIFFERENTUSERID","Fel: Försök med ett annat användar-ID");
 define("_HASBEENUSED","har använts.");

@@ -65,7 +65,7 @@ define("_RUNTRANSFER","Run Transfer");
 define("_SEEDTRANSFER","Seed Transfer");
 define("_DELETE","Delete");
 define("_ABOUTTODELETE","You are about to delete");
-define("_NOTOWNER","Not Owner of Torrent");
+define("_NOTOWNER","Not Owner of Transfer");
 define("_MESSAGETOALL","This message was sent to ALL USERS");
 define("_TRYDIFFERENTUSERID","Error: Try a different User ID.");
 define("_HASBEENUSED","has been used.");

@@ -65,7 +65,7 @@ define("_RUNTRANSFER","Lancer le Transfer");
 define("_SEEDTRANSFER","Partager le Transfer");
 define("_DELETE","Effacer");
 define("_ABOUTTODELETE","Vous êtes sur le point de supprimer");
-define("_NOTOWNER","Pas propriétaire du torrent");
+define("_NOTOWNER","Pas propriétaire du Transfer");
 define("_MESSAGETOALL","Ce message a été envoyé à TOUS LES UTILISATEURS");
 define("_TRYDIFFERENTUSERID","Erreur: Essayez un utilisateur différent.");
 define("_HASBEENUSED","a été utilisé.");

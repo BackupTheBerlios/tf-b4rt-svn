@@ -68,7 +68,7 @@ define("_RUNTRANSFER","Zaženi Transfer");
 define("_SEEDTRANSFER","Posadi Transfer");
 define("_DELETE","Izbriši");
 define("_ABOUTTODELETE","Izbrisali boste");
-define("_NOTOWNER","Niste lastnik torrenta");
+define("_NOTOWNER","Niste lastnik Transfer");
 define("_MESSAGETOALL","To sporo�?ilo je bilo poslano vsem uporabnikom");
 define("_TRYDIFFERENTUSERID","Napaka: Poskusite z drugim uporabnikom.");
 define("_HASBEENUSED","uporabljeno.");

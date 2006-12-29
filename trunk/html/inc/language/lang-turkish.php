@@ -67,7 +67,7 @@ define("_RUNTRANSFER","Torrenti Baslat");
 define("_SEEDTRANSFER","Torrenti Seed Et");
 define("_DELETE","Sil");
 define("_ABOUTTODELETE","Silme islemi");
-define("_NOTOWNER","Torrent sahibi baskasidir");
+define("_NOTOWNER","Transfer sahibi baskasidir");
 define("_MESSAGETOALL","Bu mesaj Tüm Kullanicilara gönderilmistir");
 define("_TRYDIFFERENTUSERID","Hata: Lütfen baska bir kullanici ID'si deneyin.");
 define("_HASBEENUSED","kullanimda.");

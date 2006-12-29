@@ -62,7 +62,7 @@ switch ($action) {
  * force-Stop
  ******************************************************************************/
     case "forceStop":
-    	$transfer=urldecode(getRequestVar('transfer'));
+    	$transfer = urldecode(getRequestVar('transfer'));
     	preg_match("@.*/(.*)@", $transfer, $matches);
     	if(isset($matches[1]) && !empty($matches[1])){
 			forceStopTransfer($matches[1], getRequestVar('pid'));
@@ -82,6 +82,13 @@ switch ($action) {
  ******************************************************************************/
 	case "fileUpload":
 		processFileUpload();
+    	break;
+
+/*******************************************************************************
+ * metafile-download
+ ******************************************************************************/
+	case "metafileDownload":
+		sendMetafile(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************

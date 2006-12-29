@@ -554,6 +554,46 @@ function processFileUpload() {
 }
 
 /**
+ * send meta-file
+ *
+ * @param $mfile
+ */
+function sendMetafile($mfile) {
+	global $cfg;
+	if (isValidTransfer($mfile) === true) {
+		// Does the file exist?
+		if (file_exists($cfg["transfer_file_path"].$mfile)) {
+			// filenames in IE containing dots will screw up the filename
+			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
+				? preg_replace('/\./', '%2e', $mfile, substr_count($mfile, '.') - 1)
+				: $mfile;
+			// Prompt the user to download file.
+			if (substr($mfile, -8) == ".torrent")
+				@header("Content-type: application/x-bittorrent\n");
+			else
+				@header( "Content-type: application/octet-stream\n" );
+			@header("Content-disposition: attachment; filename=\"".$headerName."\"\n");
+			@header("Content-transfer-encoding: binary\n");
+			@header("Content-length: ".@filesize($cfg["transfer_file_path"].$mfile)."\n");
+			// write the session to close so you can continue to browse on the site.
+			@session_write_close();
+			// Send the file
+			$fp = @fopen($cfg["transfer_file_path"].$mfile, "r");
+			@fpassthru($fp);
+			@fclose($fp);
+			AuditAction($cfg["constants"]["fm_download"], $mfile);
+		} else {
+			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$mfile);
+			@error("File Not found for download", "index.php?iid=index", "", array($mfile));
+		}
+	} else {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$mfile);
+		@error("Invalid File", "index.php?iid=index", "", array($mfile));
+	}
+	exit();
+}
+
+/**
  * tf 2.x compat function
  */
 function compatIndexDispatch() {
