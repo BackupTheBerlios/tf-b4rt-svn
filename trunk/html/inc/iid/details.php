@@ -40,35 +40,43 @@ tmplInitializeInstance($cfg["theme"], "page.details.tmpl");
 
 // set vars
 $transfer = getRequestVar('transfer');
-if (substr($transfer, -8) == ".torrent") {
-	// this is a torrent-client
-	$als = getRequestVar('als');
-	$tmpl->setvar('metaInfo', ($als == "false") ? showMetaInfo($transfer, false) : showMetaInfo($transfer, true));
-	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
-	$tmpl->setvar('scrape', 1);
-} else if (substr($transfer, -5) == ".wget") {
-	// this is wget.
-	$clientHandler = ClientHandler::getInstance('wget');
-	$clientHandler->setVarsFromFile($transfer);
-	$metaInfo = "<table>";
-	$metaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
-	$metaInfo .= "<tr><td>URL:</td><td>".$clientHandler->url."</td></tr>";
-	$metaInfo .= "</table>";
-	$tmpl->setvar('metaInfo', $metaInfo);
-	$tmpl->setvar('scrape', 0);
-} else if ((substr(strtolower($transfer), -4) == ".nzb")) {
-	// this is nzbperl
-	require_once("inc/classes/ClientHandler.php");
-	$clientHandler = ClientHandler::getInstance('nzbperl');
-	$metaInfo = "<table>";
-	$metaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
-	$metaInfo .= "</table>";
-	$tmpl->setvar('metaInfo', $metaInfo);
-	$tmpl->setvar('scrape', 0);
-} else {
+$inValid = true;
+if (isValidTransfer($transfer)) {
+	if (substr($transfer, -8) == ".torrent") {
+		// this is a torrent-client
+		$inValid = false;
+		$als = getRequestVar('als');
+		$tmpl->setvar('metaInfo', ($als == "false") ? showMetaInfo($transfer, false) : showMetaInfo($transfer, true));
+		$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
+		$tmpl->setvar('scrape', 1);
+	} else if (substr($transfer, -5) == ".wget") {
+		// this is wget.
+		$inValid = false;
+		$clientHandler = ClientHandler::getInstance('wget');
+		$clientHandler->setVarsFromFile($transfer);
+		$metaInfo  = '<table>';
+		$metaInfo .= '<tr><td width="110" align="left">Metainfo File:</td><td>'.$transfer.'</td></tr>';
+		$metaInfo .= '<tr><td align="left">URL:</td><td align="left">'.$clientHandler->url.'</td></tr>';
+		$metaInfo .= '</table>';
+		$tmpl->setvar('metaInfo', $metaInfo);
+		$tmpl->setvar('scrape', 0);
+	} else if (substr($transfer, -4) == ".nzb") {
+		// this is nzbperl
+		$inValid = false;
+		$metaInfo  = '<table>';
+		$metaInfo .= '<tr><td width="110" align="left">Metainfo File:</td><td>'.$transfer.'</td></tr>';
+		$metaInfo .= '<tr><td colspan="2" align="left">Content:</td></tr>';
+		$metaInfo .= '</table>';
+		$metaInfo .= '<pre>'.htmlentities(@file_get_contents($cfg["transfer_file_path"].$transfer), ENT_QUOTES).'</pre>';
+		$tmpl->setvar('metaInfo', $metaInfo);
+		$tmpl->setvar('scrape', 0);
+	}
+}
+if ($inValid) {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 	@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 }
+
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_TRANSFERDETAILS']);
 tmplSetDriveSpaceBar();

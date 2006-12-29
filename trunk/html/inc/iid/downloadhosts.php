@@ -71,7 +71,7 @@ if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 			$tmpl->setvar('hosts', 1);
 			array_push($list_host, array(
 				'host' => $host,
-				'port' => $port,
+				'port' => $port
 				)
 			);
 		}
