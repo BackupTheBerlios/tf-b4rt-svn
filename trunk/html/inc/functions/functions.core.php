@@ -833,16 +833,12 @@ function getTransferClient($transfer) {
 	} else {
 		$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
 		if (empty($client)) {
-			if (substr($transfer, -5) == ".wget") {
+			if (substr($transfer, -5) == ".wget")
 				$client = "wget";
-			} else if (substr($transfer, -4) == ".nzb") {
+			else if (substr($transfer, -4) == ".nzb")
 				$client = "nzbperl";
-			} else {
+			else
 				$client = $cfg["btclient"];
-			}
-			//$client = ((substr($transfer, -5) == ".wget"))
-			//	? "wget"
-			//	: $cfg["btclient"];
 		}
 		$transfers['settings'][$transfer]['btclient'] = $client;
 		return $client;

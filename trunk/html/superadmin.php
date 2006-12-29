@@ -689,7 +689,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<strong>nzbperl</strong><br>';
 				$htmlMain .= 'use this to kill all nzbperl processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="nzbperl-kill" border="0"> nzbperl-kill</a>';
-				$htmlMain .= '<p>;
+				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>vlc</strong><br>';
 				$htmlMain .= 'use this to kill all vlc processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=27"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
@@ -828,11 +828,11 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br><br>';
 				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
 				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec(ps auxww | ".$cfg['bin_grep']." nzbperl | ".$cfg['bin_grep']." -v grep"));
+				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." nzbperl | ".$cfg['bin_grep']." -v grep"));
 				$htmlMain .= '</pre>';
 				$htmlMain .= '<br>';
 				$callResult = "TODO";
-				if ((isset($callResult)) &&($callResult != "")) {
+				if ((isset($callResult)) && ($callResult != "")) {
 					$htmlMain .= '<br>';
 					$htmlMain .= 'Call-Result : <br>';
 					$htmlMain .= '<pre>'.$callResult.'</pre>';

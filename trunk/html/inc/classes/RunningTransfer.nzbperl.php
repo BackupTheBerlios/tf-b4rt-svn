@@ -20,8 +20,9 @@
 
 *******************************************************************************/
 
-
-// class RunningTransfer for nzbperl-client
+/**
+ * class RunningTransferNzbperl for nzbperl-client
+ */
 class RunningTransferNzbperl extends RunningTransfer
 {
     //--------------------------------------------------------------------------

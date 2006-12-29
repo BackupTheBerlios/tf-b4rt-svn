@@ -59,7 +59,7 @@ if (substr($transfer, -8) == ".torrent") {
 } else if ((substr(strtolower($transfer), -4) == ".nzb")) {
 	// this is nzbperl
 	require_once("inc/classes/ClientHandler.php");
-	$clientHandler = ClientHandler::getClientHandlerInstance($cfg, 'nzbperl');
+	$clientHandler = ClientHandler::getInstance('nzbperl');
 	$metaInfo = "<table>";
 	$metaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
 	$metaInfo .= "</table>";
