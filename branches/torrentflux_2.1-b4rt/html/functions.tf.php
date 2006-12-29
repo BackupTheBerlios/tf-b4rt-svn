@@ -230,14 +230,13 @@ function resetOwner($file) {
             // no owner found, so the super admin will now own it
             $rtnValue = GetSuperAdmin();
         }
-        $host_resolved = gethostbyaddr($cfg['ip']);
         $create_time = time();
         $rec = array(
                         'user_id' => $rtnValue,
                         'file' => $file,
                         'action' => $cfg["constants"]["reset_owner"],
                         'ip' => $cfg['ip'],
-                        'ip_resolved' => $host_resolved,
+                        'ip_resolved' => $cfg['ip'],
                         'user_agent' => $_SERVER['HTTP_USER_AGENT'],
                         'time' => $create_time
                     );

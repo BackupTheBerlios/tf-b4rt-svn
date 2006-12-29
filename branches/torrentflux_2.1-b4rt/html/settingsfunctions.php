@@ -40,7 +40,6 @@ function getRequestVar($varName) {
 //******************************************************************************
 function AuditAction($action, $file="") {
     global $_SERVER, $cfg, $db;
-    $host_resolved = gethostbyaddr($cfg['ip']);
     $create_time = time();
 	if (isset($_SERVER['HTTP_USER_AGENT']))
 	   $user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -53,7 +52,7 @@ function AuditAction($action, $file="") {
     	'file' => $file,
     	'action' => $action,
     	'ip' => $cfg['ip'],
-    	'ip_resolved' => $host_resolved,
+    	'ip_resolved' => $cfg['ip'],
     	'user_agent' => $user_agent,
     	'time' => $create_time
         );
