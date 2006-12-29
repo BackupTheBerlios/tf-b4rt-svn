@@ -177,6 +177,35 @@ function indexStopTransfer($transfer) {
 }
 
 /**
+ * forceStopTransfer
+ *
+ * @param $transfer
+ */
+function forceStopTransfer($transfer, $pid) {
+	global $cfg;
+	$invalid = true;
+	if (isValidTransfer($transfer) === true) {
+		if (substr($transfer, -8) == ".torrent") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+		} else if (substr($transfer, -5) == ".wget") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance('wget');
+		} else if (substr($transfer, -4) == ".nzb") {
+			$invalid = false;
+			$clientHandler = ClientHandler::getInstance('nzbperl');
+		}
+		$clientHandler->stop($transfer, true, $pid);
+		if (count($clientHandler->messages) > 0)
+    		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
+	}
+	if ($invalid) {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($transfer));
+	}
+}
+
+/**
  * indexDeleteTransfer
  *
  * @param $transfer
@@ -348,24 +377,26 @@ function indexProcessUpload() {
 						// init stat-file
 						injectAlias($file_name);
 						// instant action ?
-						$actionId = getRequestVar('aid');
-						if (isset($actionId)) {
-							if ($cfg["enable_file_priority"]) {
-								include_once("inc/functions/functions.setpriority.php");
-								// Process setPriority Request.
-								setPriority(urldecode($file_name));
+						if (substr($file_name, -8) == ".torrent") {
+							$actionId = getRequestVar('aid');
+							if (isset($actionId)) {
+								if ($cfg["enable_file_priority"]) {
+									include_once("inc/functions/functions.setpriority.php");
+									// Process setPriority Request.
+									setPriority(urldecode($file_name));
+								}
+								$clientHandler = ClientHandler::getInstance();
+								switch ($actionId) {
+									case 3:
+										$clientHandler->start($file_name, false, true);
+										break;
+									case 2:
+										$clientHandler->start($file_name, false, false);
+										break;
+								}
+								if (count($clientHandler->messages) > 0)
+	               					$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
 							}
-							$clientHandler = ClientHandler::getInstance();
-							switch ($actionId) {
-								case 3:
-									$clientHandler->start($file_name, false, true);
-									break;
-								case 2:
-									$clientHandler->start($file_name, false, false);
-									break;
-							}
-							if (count($clientHandler->messages) > 0)
-               					$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
 						}
 					} else {
 						array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
@@ -386,35 +417,6 @@ function indexProcessUpload() {
 	} else {
 		@header("location: index.php?iid=index");
 		exit();
-	}
-}
-
-/**
- * forceStopTransfer
- *
- * @param $transfer
- */
-function forceStopTransfer($transfer, $pid) {
-	global $cfg;
-	$invalid = true;
-	if (isValidTransfer($transfer) === true) {
-		if (substr($transfer, -8) == ".torrent") {
-			$invalid = false;
-			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-		} else if (substr($transfer, -5) == ".wget") {
-			$invalid = false;
-			$clientHandler = ClientHandler::getInstance('wget');
-		} else if (substr($transfer, -4) == ".nzb") {
-			$invalid = false;
-			$clientHandler = ClientHandler::getInstance('nzbperl');
-		}
-		$clientHandler->stop($transfer, true, $pid);
-		if (count($clientHandler->messages) > 0)
-    		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
-	}
-	if ($invalid) {
-		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($transfer));
 	}
 }
 
@@ -477,20 +479,23 @@ function processFileUpload() {
 			foreach ($tStack as $transfer) {
 				// init stat-file
 				injectAlias($transfer);
-				// file prio
-				if ($cfg["enable_file_priority"]) {
-					include_once("inc/functions/functions.setpriority.php");
-					// Process setPriority Request.
-					setPriority(urldecode($transfer));
-				}
-				$clientHandler = ClientHandler::getInstance();
-				switch ($actionId) {
-					case 3:
-						$clientHandler->start($transfer, false, true);
-						break;
-					case 2:
-						$clientHandler->start($transfer, false, false);
-						break;
+				// only t-clients
+				if (substr($transfer, -8) == ".torrent") {
+					// file prio
+					if ($cfg["enable_file_priority"]) {
+						include_once("inc/functions/functions.setpriority.php");
+						// Process setPriority Request.
+						setPriority(urldecode($transfer));
+					}
+					$clientHandler = ClientHandler::getInstance();
+					switch ($actionId) {
+						case 3:
+							$clientHandler->start($transfer, false, true);
+							break;
+						case 2:
+							$clientHandler->start($transfer, false, false);
+							break;
+					}
 				}
 				if (count($clientHandler->messages) > 0)
                		$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
