@@ -78,22 +78,33 @@ class ClientHandlerNzbperl extends ClientHandler
 			return false;
 		}
 
-		// Prepare to start it
-		$this->prepareStart($interactive, $enqueue);
+        // umask
+        $this->umask = ($cfg["enable_umask"] != 0)
+        	? " umask 0000;"
+        	: "";
+        // nice
+        $this->nice = ($cfg["nice_adjust"] != 0)
+        	? "nice -n ".$cfg["nice_adjust"]." "
+        	: "";
 
-		// Only continue if prepare succeeded.
-		if ($this->state != CLIENTHANDLER_STATE_READY) {
-			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
-				$msg = "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")";
-				array_push($this->messages, $msg);
-				$this->logMessage($msg."\n", true);
-			}
-			return false;
+		// savepath
+		$this->savepath = ($cfg["enable_home_dirs"] != 0)
+        		? $cfg['path'].$this->owner."/"
+        		: $cfg['path'].$cfg["path_incoming"]."/";
+
+        // check target-directory, create if not present
+		if (!(checkDirectory($this->savepath, 0777))) {
+			$this->state = CLIENTHANDLER_STATE_ERROR;
+			$msg = "Error checking savepath ".$this->savepath;
+			array_push($this->messages, $msg);
+			AuditAction($cfg["constants"]["error"], $msg);
+            $this->logMessage($msg."\n", true);
+            return false;
 		}
 
 		// Build Command String
 		$this->command  = "cd ".escapeshellarg($this->savepath).";";
-		$this->command .= " HOME=".escapeshellarg($cfg["path"]);
+		$this->command .= " HOME=".escapeshellarg(substr($cfg["path"], 0, -1));
 		$this->command .= "; export HOME;";
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
@@ -116,6 +127,9 @@ class ClientHandlerNzbperl extends ClientHandler
         $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
         $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
         $this->command .= " &";
+
+		// state
+		$this->state = CLIENTHANDLER_STATE_READY;
 
 		// Start the client
 		$this->execStart(false, false);

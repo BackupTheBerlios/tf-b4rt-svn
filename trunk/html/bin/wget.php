@@ -175,7 +175,7 @@ function writeStatFile() {
 	$af->sharing = "0";
 	$af->transferowner = $_OWNER;
 	$af->seeds = "1";
-	$af->peers = "0";
+	$af->peers = "1";
 	$af->seedlimit = "0";
 	$af->uptotal = "0";
 	$af->downtotal = $_COMPLETED;

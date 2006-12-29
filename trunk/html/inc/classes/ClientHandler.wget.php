@@ -165,6 +165,21 @@ class ClientHandlerWget extends ClientHandler
 		// queue false
 		$this->queue = false;
 
+		// savepath
+		$this->savepath = ($cfg["enable_home_dirs"] != 0)
+        		? $cfg['path'].$this->owner."/"
+        		: $cfg['path'].$cfg["path_incoming"]."/";
+
+        // check target-directory, create if not present
+		if (!(checkDirectory($this->savepath, 0777))) {
+			$this->state = CLIENTHANDLER_STATE_ERROR;
+			$msg = "Error checking savepath ".$this->savepath;
+			array_push($this->messages, $msg);
+			AuditAction($cfg["constants"]["error"], $msg);
+            $this->logMessage($msg."\n", true);
+            return false;
+		}
+
 		// build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferWget
@@ -173,9 +188,7 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . escapeshellarg($this->aliasFile);
         $this->command .= " " . escapeshellarg($this->pidFilePath);
         $this->command .= " " . $this->owner;
-        $this->command .= ($cfg["enable_home_dirs"] != 0)
-        	? " " . $this->owner
-        	: " " . escapeshellarg($cfg["path_incoming"]);
+        $this->command .= " " . escapeshellarg($this->savepath);
         $this->command .= " " . $cfg["wget_limit_rate"];
         $this->command .= " " . $cfg["wget_limit_retries"];
         $this->command .= " " . $cfg["wget_ftp_pasv"];
