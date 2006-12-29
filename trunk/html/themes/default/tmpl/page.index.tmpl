@@ -65,10 +65,11 @@
 									</form>
 								</tr>
 								<tr>
-									<form name="form_url" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
+									<form name="form_url_torrent" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
+										<input type="hidden" name="type" value="torrent">
 										<input type="text" name="url" size="40">
 										<select name="aid" size="1">
 											<option value="1" selected><tmpl_var name="_GETFILE"></option>
@@ -85,6 +86,19 @@
 									</td>
 									</form>
 								</tr>
+								<tmpl_if name="enable_nzbperl">
+									<tr>
+										<form name="form_url_nzb" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
+										<td>
+											<hr>
+											URL for the nzb-File :<br>
+											<input type="hidden" name="type" value="nzb">
+											<input type="text" name="url" size="40">
+											<input type="Submit" value="Go">
+										</td>
+										</form>
+									</tr>
+								</tmpl_if>
 								<tmpl_if name="enable_wget">
 									<tr>
 										<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">

@@ -243,22 +243,53 @@ function indexDeQueueTransfer($transfer) {
 }
 
 /**
- * Function with which torrents are downloaded and injected on index-page
+ * Function with which metafiles are downloaded and injected on index-page
  *
- * @param $url_upload url of torrent to download
+ * @param $url url of metafile to download
  */
-function indexProcessDownload($url_upload) {
+function indexProcessDownload($url, $type = 'torrent') {
 	global $cfg;
-	// is enabled ?
-	if ($cfg["enable_torrent_download"] != 1) {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");
-		@error("torrent download is disabled", "index.php?iid=index", "");
+	switch ($type) {
+		default:
+		case 'torrent':
+			// is enabled ?
+			if ($cfg["enable_torrent_download"] != 1) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");
+				@error("torrent download is disabled", "index.php?iid=index", "");
+			}
+			// process download
+			_indexProcessDownload($url, 'torrent', '.torrent');
+			break;
+		case 'nzb':
+			// is enabled ?
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzb-download");
+				@error("nzbperl is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzb-download");
+					@error("nzbperl is disabled for users", "index.php?iid=index", "");
+				}
+			}
+			// process download
+			_indexProcessDownload($url, 'nzb', '.nzb');
+			break;
 	}
+}
+
+/**
+ * (internal) Function with which metafiles are downloaded and injected on index-page
+ *
+ * @param $url url to download
+ * @param $type
+ */
+function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
+	global $cfg;
 	$ext_msg = "";
 	$file_name = "";
 	$downloadMessages = array();
-	if (!empty($url_upload)) {
-		$arURL = explode("/", $url_upload);
+	if (!empty($url)) {
+		$arURL = explode("/", $url);
 		$file_name = urldecode($arURL[count($arURL)-1]); // get the file name
 		$file_name = str_replace(array("'",","), "", $file_name);
 		$file_name = stripslashes($file_name);
@@ -266,21 +297,30 @@ function indexProcessDownload($url_upload) {
 		// If so remove it.
 		if (($point = strrpos($file_name, "?")) !== false )
 			$file_name = substr( $file_name, 0, $point );
-		$ret = strrpos($file_name,".");
+		$ret = strrpos($file_name, ".");
 		if ($ret === false) {
-			$file_name .= ".torrent";
+			$file_name .= $ext;
 		} else {
-			if (!strcmp(strtolower(substr($file_name, -8)), ".torrent") == 0)
-				$file_name .= ".torrent";
+			if (!strcmp(strtolower(substr($file_name, -8)), $ext) == 0)
+				$file_name .= $ext;
 		}
-		$url_upload = str_replace(" ", "%20", $url_upload);
-		// This is to support Sites that pass an id along with the url for torrent downloads.
+		$url = str_replace(" ", "%20", $url);
+		// This is to support Sites that pass an id along with the url for downloads.
 		$tmpId = getRequestVar("id");
 		if(!empty($tmpId))
-			$url_upload .= "&id=".$tmpId;
-		// retrieve the torrent file
+			$url .= "&id=".$tmpId;
+		// retrieve the file
 		require_once("inc/classes/SimpleHTTP.php");
-		$content = SimpleHTTP::getTorrent($url_upload);
+		$content = "";
+		switch ($type) {
+			default:
+			case 'torrent':
+				$content = SimpleHTTP::getTorrent($url);
+				break;
+			case 'nzb':
+				$content = SimpleHTTP::getNzb($url);
+				break;
+		}
 		if ((SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
 			$filename = SimpleHTTP::getFilename();
 			$file_name = ($filename != "")
@@ -289,7 +329,7 @@ function indexProcessDownload($url_upload) {
 			// check if content contains html
 			if ($cfg['debuglevel'] > 0) {
 				if (strpos($content, "<br />") !== false)
-					AuditAction($cfg["constants"]["debug"], "indexProcessDownload : content contained html : ".htmlentities(addslashes($url_upload), ENT_QUOTES));
+					AuditAction($cfg["constants"]["debug"], "download-content contained html : ".htmlentities(addslashes($url), ENT_QUOTES));
 			}
 			if (is_file($cfg["transfer_file_path"].$file_name)) {
 				// Error
@@ -319,28 +359,30 @@ function indexProcessDownload($url_upload) {
 			// init stat-file
 			injectAlias($file_name);
 			// instant action ?
-			$actionId = getRequestVar('aid');
-			if (isset($actionId)) {
-				if ($cfg["enable_file_priority"]) {
-					include_once("inc/functions/functions.setpriority.php");
-					// Process setPriority Request.
-					setPriority(urldecode($file_name));
+			if ($type == 'torrent') {
+				$actionId = getRequestVar('aid');
+				if (isset($actionId)) {
+					if ($cfg["enable_file_priority"]) {
+						include_once("inc/functions/functions.setpriority.php");
+						// Process setPriority Request.
+						setPriority(urldecode($file_name));
+					}
+					$clientHandler = ClientHandler::getInstance();
+					switch ($actionId) {
+						case 3:
+							$clientHandler->start($file_name, false, true);
+							break;
+						case 2:
+							$clientHandler->start($file_name, false, false);
+							break;
+					}
+					if (count($clientHandler->messages) > 0)
+	               		$downloadMessages = array_merge($downloadMessages, $clientHandler->messages);
 				}
-				$clientHandler = ClientHandler::getInstance();
-				switch ($actionId) {
-					case 3:
-						$clientHandler->start($file_name, false, true);
-						break;
-					case 2:
-						$clientHandler->start($file_name, false, false);
-						break;
-				}
-				if (count($clientHandler->messages) > 0)
-               		$downloadMessages = array_merge($downloadMessages, $clientHandler->messages);
 			}
 		}
 	} else {
-		array_push($downloadMessages, "Invalid Url : ".$url_upload);
+		array_push($downloadMessages, "Invalid Url : ".$url);
 	}
 	if (count($downloadMessages) > 0) {
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
@@ -522,7 +564,7 @@ function compatIndexDispatch() {
 		indexStartTransfer(urldecode(getRequestVar('torrent')));
 	// get torrent via url
 	if (isset($_REQUEST['url_upload']))
-		indexProcessDownload(getRequestVar('url_upload'));
+		indexProcessDownload(getRequestVar('url_upload'), 'torrent');
 	// file upload
 	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
 		indexProcessUpload();

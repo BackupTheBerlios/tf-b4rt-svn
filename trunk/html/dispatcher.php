@@ -46,7 +46,7 @@ switch ($action) {
 		indexStartTransfer(urldecode(getRequestVar('transfer')));
     	break;
     case "indexUrlUpload":
-		indexProcessDownload(urldecode(getRequestVar('url')));
+		indexProcessDownload(urldecode(getRequestVar('url')), getRequestVar('type'));
     	break;
     case "indexDelete":
     	indexDeleteTransfer(urldecode(getRequestVar('transfer')));
