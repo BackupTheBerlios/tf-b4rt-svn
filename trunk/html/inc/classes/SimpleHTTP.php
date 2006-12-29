@@ -237,7 +237,7 @@ class SimpleHTTP
     function SimpleHTTP() {
     	global $cfg;
 		// user-agent
-		$this->userAgent = (isset($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : "torrentflux-b4rt/". $cfg["version"];
+		$this->userAgent = $cfg['user_agent'];
 		// ini-settings
 		@ini_set("allow_url_fopen", "1");
 		@ini_set("user_agent", $this->userAgent);

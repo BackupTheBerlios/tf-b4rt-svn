@@ -58,19 +58,30 @@ $cfg["file_types_array"] = array(".torrent", ".wget", ".nzb");
 $cfg["file_types_regexp"] = implode("|", $cfg["file_types_array"]);
 $cfg["file_types_label"] = implode(", ", $cfg["file_types_array"]);
 
-// Capture username
-$cfg["user"] = "";
-
-// Capture ip
-$cfg["ip"] = (isset($_SERVER['REMOTE_ADDR'])) ? $_SERVER['REMOTE_ADDR'] : "127.0.0.1";
-
 // torrentflux-b4rt Version
 if (is_file('version.php')) {
 	require_once('version.php');
 	$cfg["version"] = _VERSION;
 } else {
-	$cfg["version"] =  "Error getting local Version";
+	$cfg["version"] =  "unknown-version";
 }
+
+// username
+$cfg["user"] = "";
+
+// ip + hostname
+if (isset($_SERVER['REMOTE_ADDR'])) {
+	$cfg['ip'] = htmlentities($_SERVER['REMOTE_ADDR'], ENT_QUOTES);
+	$cfg['ip_resolved'] = htmlentities(@gethostbyaddr($_SERVER['REMOTE_ADDR']), ENT_QUOTES);
+} else {
+	$cfg['ip'] = "127.0.0.1";
+	$cfg['ip_resolved'] = "localhost";
+}
+
+// user-agent
+$cfg['user_agent'] = (isset($_SERVER['HTTP_USER_AGENT']))
+	? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES)
+	: "torrentflux-b4rt/".$cfg["version"];
 
 // get os
 $osString = @php_uname('s');

@@ -1774,7 +1774,7 @@ function tfb_strip_quotes(&$var){
  * @param $action
  * @param $file
  */
-function AuditAction($action, $file="") {
+function AuditAction($action, $file = "") {
     global $cfg, $db;
     // add entry to the log
     $db->Execute("INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
@@ -1783,8 +1783,8 @@ function AuditAction($action, $file="") {
     	. $db->qstr($file).","
     	. $db->qstr(($action != "") ? $action : "unset").","
     	. $db->qstr($cfg['ip']).","
-    	. $db->qstr(htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES)).","
-    	. $db->qstr((isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"]).","
+    	. $db->qstr($cfg['ip_resolved']).","
+    	. $db->qstr($cfg['user_agent']).","
     	. $db->qstr(time())
     	.")"
     );
@@ -1890,9 +1890,9 @@ function resetOwner($transfer) {
 	    	. $db->qstr($rtnValue).","
 	    	. $db->qstr($transfer).","
 	    	. $db->qstr($cfg["constants"]["reset_owner"]).","
-	    	. $db->qstr($cfg['ip']).","
-	    	. $db->qstr(htmlentities(gethostbyaddr($cfg['ip']), ENT_QUOTES)).","
-	    	. $db->qstr((isset($_SERVER['HTTP_USER_AGENT'])) ? htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES) : "torrentflux-b4rt/".$cfg["version"]).","
+    		. $db->qstr($cfg['ip']).","
+    		. $db->qstr($cfg['ip_resolved']).","
+	    	. $db->qstr($cfg['user_agent']).","
 	    	. $db->qstr(time())
 	    	.")";
 		$result = $db->Execute($sql);

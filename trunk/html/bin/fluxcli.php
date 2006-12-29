@@ -45,6 +45,9 @@ if ($cwdBase == "bin")
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
+// set user-agent
+$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;
+
 // main.core
 require_once('inc/main.core.php');
 
@@ -62,10 +65,6 @@ Fluxd::initialize();
 
 // Qmgr
 FluxdServiceMod::initializeServiceMod('Qmgr');
-
-// config
-$cfg["ip"] = '127.0.0.1';
-$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;
 
 // set admin-var
 $cfg['isAdmin'] = true;
