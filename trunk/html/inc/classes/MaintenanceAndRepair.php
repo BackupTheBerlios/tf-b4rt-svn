@@ -329,7 +329,8 @@ class MaintenanceAndRepair
 				// set stopped flag in db
 				stopTransferSettings($transfer);
 			} else {
-				// this is a wget-client
+				// TODO : this is wrong
+				// this is wget client
 				$transfer = $bogusTransfer.".wget";
 				$settingsAry = array();
 				$settingsAry['btclient'] = "wget";

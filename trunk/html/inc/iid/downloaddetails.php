@@ -66,7 +66,6 @@ if (substr($transfer, -8) == ".torrent") {
 	$af = new AliasFile($aliasFile, $transferowner);
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
-	$transferowner = getOwner($transfer);
 	$settingsAry = array();
 	$settingsAry['btclient'] = "nzbperl";
 	$settingsAry['hash'] = $transfer;

@@ -165,16 +165,16 @@
 						<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/datadir.gif" title="<tmpl_var name="datapath">" border="0"></a>
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
-								<tmpl_if name="isTorrent">
+								<tmpl_if name="clientType" value="wget">
+									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="-">
+									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
+									<input type="checkbox" disabled="disabled">
+								<tmpl_else>
 									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 									</tmpl_if>
-								<tmpl_else>
-									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="-">
-									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
-									<input type="checkbox" disabled="disabled">
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
@@ -184,7 +184,7 @@
 										<a href="dispatcher.php?action=indexDeQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
-											<tmpl_if name="isTorrent">
+											<tmpl_if name="clientType" value="torrent">
 												<tmpl_if name="advanced_start">
 													<tmpl_if name="show_run" value="1">
 														<a href="#" onclick="StartTransfer('index.php?iid=startpop&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
@@ -387,16 +387,16 @@
 						<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/datadir.gif" title="<tmpl_var name="datapath">" border="0"></a>
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
-								<tmpl_if name="isTorrent">
+								<tmpl_if name="clientType" value="wget">
+									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="-">
+									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
+									<input type="checkbox" disabled="disabled">
+								<tmpl_else>
 									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 									<tmpl_if name="enable_multiops">
 										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 									</tmpl_if>
-								<tmpl_else>
-									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="-">
-									<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
-									<input type="checkbox" disabled="disabled">
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
@@ -406,7 +406,7 @@
 										<a href="dispatcher.php?action=indexDeQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
-											<tmpl_if name="isTorrent">
+											<tmpl_if name="clientType" value="torrent">
 												<tmpl_if name="advanced_start">
 													<tmpl_if name="show_run" value="1">
 														<a href="#" onclick="StartTransfer('index.php?iid=startpop&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>

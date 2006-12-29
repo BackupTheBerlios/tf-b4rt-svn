@@ -1239,7 +1239,6 @@ function getTransferListArray() {
 		$alias = getAliasName($transfer).".stat";
 		if (substr($transfer, -8) == ".torrent") {
 			// this is a torrent-client
-			$isTorrent = true;
 			$owner = IsOwner($cfg["user"], $transferowner);
 			if (isset($transfers['settings'][$transfer])) {
 				$settingsAry = $transfers['settings'][$transfer];
@@ -1255,7 +1254,6 @@ function getTransferListArray() {
 			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
-			$isTorrent = false;
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
@@ -1263,7 +1261,6 @@ function getTransferListArray() {
 			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($transfer, -4) == ".nzb") {
 			// This is nzbperl.
-			$isTorrent = false;
 			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = array();
 			$settingsAry['btclient'] = "nzbperl";
@@ -1324,7 +1321,7 @@ function getTransferListArray() {
 					if ($af->time_left != "" && $af->time_left != "0") {
 						if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
 							$estTime = (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-									? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed)) . " left"
+									? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed))
 									: '-';
 						} else {
 							$estTime = $af->time_left;
@@ -1407,17 +1404,17 @@ function getTransferListArray() {
 
 		// =============================================================== seeds
 		if ($settings[8] != 0) {
-			$seeds = "";
-			if ($transferRunning == 1)
-				$seeds = $af->seeds;
+			$seeds = ($transferRunning == 1)
+			? $af->seeds
+			:  "";
 			array_push($transferAry, $seeds);
 		}
 
 		// =============================================================== peers
 		if ($settings[9] != 0) {
-			$peers = "";
-			if ($transferRunning == 1)
-				$peers = $af->peers;
+			$peers = ($transferRunning == 1)
+			? $af->peers
+			:  "";
 			array_push($transferAry, $peers);
 		}
 

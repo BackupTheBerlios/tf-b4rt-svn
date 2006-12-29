@@ -92,14 +92,14 @@ foreach ($arList as $transfer) {
 	// ---------------------------------------------------------------------
 	// displayname
 	$displayname = (strlen($transfer) >= 47) ? substr($transfer, 0, 44)."..." : $transfer;
-
+	// owner
 	$transferowner = getOwner($transfer);
 	// ---------------------------------------------------------------------
 	// alias / stat
 	$aliasFile = getAliasName($transfer).".stat";
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
-		$isTorrent = true;
+		$clientType = "torrent";
 		$owner = IsOwner($cfg["user"], $transferowner);
 		if (isset($transfers['settings'][$transfer])) {
 			$settingsAry = $transfers['settings'][$transfer];
@@ -115,7 +115,7 @@ foreach ($arList as $transfer) {
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
-		$isTorrent = false;
+		$clientType = "wget";
 		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = array();
 		$settingsAry['btclient'] = "wget";
@@ -127,7 +127,7 @@ foreach ($arList as $transfer) {
 		$af = new AliasFile($aliasFile, $transferowner);
 	} else if ((substr($transfer, -4) == ".nzb")) {
 		// This is nzbperl
-		$isTorrent = false;
+		$clientType = "nzb";
 		$owner = IsOwner($cfg["user"], $transferowner);
 		$settingsAry = array();
 		$settingsAry['btclient'] = "nzbperl";
@@ -286,20 +286,18 @@ foreach ($arList as $transfer) {
 
 	// =================================================================== seeds
 	if ($settings[8] != 0) {
-		if ($transferRunning == 1)
-			$seeds = $af->seeds;
-		else
-			$seeds = "&nbsp;";
+		$seeds = ($transferRunning == 1)
+			? $af->seeds
+			:  "&nbsp;";
 	} else {
 		$seeds = "&nbsp;";
 	}
 
 	// =================================================================== peers
 	if ($settings[9] != 0) {
-		if ($transferRunning == 1)
-			$peers = $af->peers;
-		else
-			$peers = "&nbsp;";
+		$peers = ($transferRunning == 1)
+			? $af->peers
+			:  "&nbsp;";
 	} else {
 		$peers = "&nbsp;";
 	}
@@ -356,11 +354,11 @@ foreach ($arList as $transfer) {
 		'seeds' => $seeds,
 		'peers' => $peers,
 		'estTime' => $estTime,
+		'clientType' => $clientType,
 		'client' => $client,
 		'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
 		'datapath' => $settingsAry['datapath'],
 		'is_no_file' => $is_no_file,
-		'isTorrent' => $isTorrent,
 		'show_run' => $show_run,
 		'entry' => $transfer
 	);

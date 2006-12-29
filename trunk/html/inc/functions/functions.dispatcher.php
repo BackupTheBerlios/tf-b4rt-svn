@@ -393,7 +393,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 }
 
 /**
- * Function with which torrents are uploaded and injected on index-page
+ * Function with which metafiles are uploaded and injected on index-page
  */
 function indexProcessUpload() {
 	global $cfg;
@@ -495,9 +495,13 @@ function processFileUpload() {
 						if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
 							chmod($cfg["transfer_file_path"].$file_name, 0644);
 							AuditAction($cfg["constants"]["file_upload"], $file_name);
+							// init stat-file
+							injectAlias($file_name);
 							// instant action ?
-							if ((isset($actionId)) && ($actionId > 1))
-								array_push($tStack,$file_name);
+							if (substr($file_name, -8) == ".torrent") {
+								if ((isset($actionId)) && ($actionId > 1))
+									array_push($tStack,$file_name);
+							}
 						} else {
 							array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
 					  	}
@@ -516,31 +520,26 @@ function processFileUpload() {
 			}
 		} // End File Upload
 		// instant action ?
-		if (!empty($actionId)) {
+		if ((!empty($actionId)) && (!empty($tStack))) {
 			foreach ($tStack as $transfer) {
-				// init stat-file
-				injectAlias($transfer);
-				// only t-clients
-				if (substr($transfer, -8) == ".torrent") {
-					// file prio
-					if ($cfg["enable_file_priority"]) {
-						include_once("inc/functions/functions.setpriority.php");
-						// Process setPriority Request.
-						setPriority(urldecode($transfer));
-					}
-					$clientHandler = ClientHandler::getInstance();
-					switch ($actionId) {
-						case 3:
-							$clientHandler->start($transfer, false, true);
-							break;
-						case 2:
-							$clientHandler->start($transfer, false, false);
-							break;
-					}
+				// file prio
+				if ($cfg["enable_file_priority"]) {
+					include_once("inc/functions/functions.setpriority.php");
+					// Process setPriority Request.
+					setPriority(urldecode($transfer));
 				}
-				if (count($clientHandler->messages) > 0)
-               		$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
+				$clientHandler = ClientHandler::getInstance();
+				switch ($actionId) {
+					case 3:
+						$clientHandler->start($transfer, false, true);
+						break;
+					case 2:
+						$clientHandler->start($transfer, false, false);
+						break;
+				}
 			}
+			if (count($clientHandler->messages) > 0)
+           		$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
 		}
 	}
 	if (count($uploadMessages) > 0) {
