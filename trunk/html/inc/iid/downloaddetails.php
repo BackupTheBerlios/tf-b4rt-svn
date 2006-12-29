@@ -34,6 +34,12 @@ $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
+// validate transfer
+if (isValidTransfer($transfer) !== true) {
+	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+	@error("Invalid Transfer", "", "", array($transfer));
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
@@ -72,7 +78,7 @@ if (substr($transfer, -8) == ".torrent") {
 	$af = new AliasFile($aliasFile, $transferowner);
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-	@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+	@error("Invalid Transfer", "", "", array($transfer));
 }
 
 // totals

@@ -34,6 +34,12 @@ $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
+// validate transfer
+if (isValidTransfer($transfer) !== true) {
+	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+	@error("Invalid Transfer", "", "", array($transfer));
+}
+
 // alias
 $transferowner = getOwner($transfer);
 $aliasFile = getAliasName($transfer).".stat";
