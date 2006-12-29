@@ -301,7 +301,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 		if ($ret === false) {
 			$file_name .= $ext;
 		} else {
-			if (!strcmp(strtolower(substr($file_name, -8)), $ext) == 0)
+			if (!strcmp(strtolower(substr($file_name, -(strlen($ext)))), $ext) == 0)
 				$file_name .= $ext;
 		}
 		$url = str_replace(" ", "%20", $url);
@@ -349,7 +349,6 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 				}
 			}
 		} else {
-			array_push($downloadMessages, "could not get the file ".$file_name.", could be a dead URL.");
 			$msgs = SimpleHTTP::getMessages();
 			if (count($msgs) > 0)
 				$downloadMessages = array_merge($downloadMessages, $msgs);

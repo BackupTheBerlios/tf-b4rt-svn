@@ -198,16 +198,31 @@ class SimpleHTTP
 	/**
 	 * get torrent from URL. Has support for specific sites
 	 *
-	 * @param $turl
+	 * @param $durl
 	 * @return string
 	 */
-	function getTorrent($turl) {
+	function getTorrent($durl) {
 		global $instanceSimpleHTTP;
 		// initialize if needed
 		if (!isset($instanceSimpleHTTP))
 			SimpleHTTP::initialize();
 		// call instance-method
-		return $instanceSimpleHTTP->instance_getTorrent($turl);
+		return $instanceSimpleHTTP->instance_getTorrent($durl);
+	}
+
+	/**
+	 * get nzb from URL.
+	 *
+	 * @param $durl
+	 * @return string
+	 */
+	function getNzb($durl) {
+		global $instanceSimpleHTTP;
+		// initialize if needed
+		if (!isset($instanceSimpleHTTP))
+			SimpleHTTP::initialize();
+		// call instance-method
+		return $instanceSimpleHTTP->instance_getNzb($durl);
 	}
 
 	// =========================================================================
@@ -457,24 +472,24 @@ class SimpleHTTP
 	/**
 	 * get torrent from URL. Has support for specific sites
 	 *
-	 * @param $turl
+	 * @param $durl
 	 * @return string
 	 */
-	function instance_getTorrent($turl) {
+	function instance_getTorrent($durl) {
 		global $cfg;
 
     	// (re)set state
     	$this->state = SIMPLEHTTP_STATE_NULL;
 
-		// Initialize torrent name:
+		// Initialize file name:
 		$this->filename = "";
 
-		$domain	 = parse_url($turl);
+		$domain	 = parse_url($durl);
 
 		// Check we have a remote URL:
 		if (!isset($domain["host"])){
 			// Not a remote URL:
-			$msg = "The torrent requested for download (".$turl.") is not a remote torrent.  Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
+			$msg = "The torrent requested for download (".$durl.") is not a remote torrent. Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
 			AuditAction($cfg["constants"]["error"], $msg);
 			array_push($this->messages , $msg);
 			// state
@@ -490,25 +505,26 @@ class SimpleHTTP
 				URL rewriting in some way.
 			*/
 			// Check known domain types
+			// mininova
 			if (strpos(strtolower($domain["host"]), "mininova") !== false) {
 				// Sample (http://www.mininova.org/rss.xml):
 				// http://www.mininova.org/tor/2254847
 				// <a href="/get/2281554">FreeLinux.ISO.iso.torrent</a>
 				// If received a /tor/ get the required information
-				if (strpos($turl, "/tor/") !== false) {
+				if (strpos($durl, "/tor/") !== false) {
 					// Get the contents of the /tor/ to find the real torrent name
-					$data = $this->instance_getData($turl);
+					$data = $this->instance_getData($durl);
 					// Check for the tag used on mininova.org
 					if (preg_match("/<a href=\"\/get\/[0-9].[^\"]+\">(.[^<]+)<\/a>/i", $data, $data_preg_match)) {
 						// This is the real torrent filename
 						$this->filename = $data_preg_match[1];
 					}
 					// Change to GET torrent url
-					$turl = str_replace("/tor/", "/get/", $turl);
+					$durl = str_replace("/tor/", "/get/", $durl);
 				}
-
 				// Now fetch the torrent file
-				$data = $this->instance_getData($turl);
+				$data = $this->instance_getData($durl);
+			// isohunt
 			} elseif (strpos(strtolower($domain["host"]), "isohunt") !== false) {
 				// Sample (http://isohunt.com/js/rss.php):
 				// http://isohunt.com/download.php?mode=bt&id=8837938
@@ -516,18 +532,18 @@ class SimpleHTTP
 				$treferer = "http://" . $domain["host"] . "/btDetails.php?id=";
 
 				// If the url points to the details page, change it to the download url
-				if (strpos(strtolower($turl), "/btdetails.php?") !== false) {
+				if (strpos(strtolower($durl), "/btdetails.php?") !== false) {
 					// Need to make it grab the torrent
-					$turl = str_replace("/btDetails.php?", "/download.php?", $turl) . "&mode=bt";
+					$durl = str_replace("/btDetails.php?", "/download.php?", $durl) . "&mode=bt";
 				}
-
 				// Grab contents of details page
-				$data = $this->instance_getData($turl, $treferer);
-			} elseif (strpos(strtolower($turl), "details.php?") !== false) {
+				$data = $this->instance_getData($durl, $treferer);
+			// details.php
+			} elseif (strpos(strtolower($durl), "details.php?") !== false) {
 				// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
 				// http://www.bitmetv.org/details.php?id=18435&hit=1
 				$treferer = "http://" . $domain["host"] . "/details.php?id=";
-				$data = $this->instance_getData($turl, $treferer);
+				$data = $this->instance_getData($durl, $treferer);
 
 				// Sample (http://www.bitmetv.org/details.php?id=18435)
 				// download.php/18435/SpiderMan%20Season%204.torrent
@@ -536,7 +552,7 @@ class SimpleHTTP
 					$turl2 = "http://" . $domain["host"] . "/" . $torrent;
 					$data = $this->instance_getData($turl2);
 				} else {
-					$msg = "Error: could not find link to torrent file in $turl";
+					$msg = "Error: could not find link to torrent file in $durl";
 					AuditAction($cfg["constants"]["error"], $msg);
 					array_push($this->messages , $msg);
 					// state
@@ -544,33 +560,36 @@ class SimpleHTTP
 					// return empty data:
 					return($data="");
 				}
-			} elseif (strpos(strtolower($turl), "download.asp?") !== false) {
+			// download.asp
+			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
 				// Sample (TF's TorrenySpy Search):
 				// http://www.torrentspy.com/download.asp?id=519793
 				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
-				$data = $this->instance_getData($turl, $treferer);
+				$data = $this->instance_getData($durl, $treferer);
+			// default
 			} else {
 				// Fallback case for any URL not ending in .torrent and not matching the above cases:
-				$data = $this->instance_getData($turl);
+				$data = $this->instance_getData($durl);
 			}
 		} else {
-			$data = $this->instance_getData($turl);
+			$data = $this->instance_getData($durl);
 		}
 		// Make sure we have a torrent file
 		if (strpos($data, "d8:") === false)	{
 			// We don't have a Torrent File... it is something else.  Let the user know about it:
-			$msg = "Content returned from $turl does not appear to be a valid torrent.";
+			$msg = "Content returned from $durl does not appear to be a valid torrent.";
 			AuditAction($cfg["constants"]["error"], $msg);
 			array_push($this->messages , $msg);
 			// Display the first part of $data if debuglevel higher than 1:
 			if ($cfg["debuglevel"] > 1){
 				if (strlen($data) > 0){
-					array_push($this->messages , "  Displaying first 1024 chars of output: ".htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
+					array_push($this->messages , "Displaying first 1024 chars of output: ");
+					array_push($this->messages , htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
 				} else {
-					array_push($this->messages , "  Output from $turl was empty.");
+					array_push($this->messages , "Output from $durl was empty.");
 				}
 			} else {
-				array_push($this->messages , "  Set debuglevel > 2 in 'Admin, Webapps' to see the content returned from $turl.");
+				array_push($this->messages , "Set debuglevel > 2 in 'Admin, Webapps' to see the content returned from $durl.");
 			}
 			$data = "";
 			// state
@@ -587,6 +606,103 @@ class SimpleHTTP
 					$this->filename = "unknown.torrent";
 				}
 			}
+	        // state
+	        $this->state = SIMPLEHTTP_STATE_OK;
+		}
+		return $data;
+	}
+
+	/**
+	 * get nzb from URL
+	 *
+	 * @param $durl
+	 * @return string
+	 */
+	function instance_getNzb($durl) {
+		global $cfg;
+
+    	// (re)set state
+    	$this->state = SIMPLEHTTP_STATE_NULL;
+
+		// Initialize file name:
+		$this->filename = "";
+
+		$domain	 = parse_url($durl);
+
+		// Check we have a remote URL:
+		if (!isset($domain["host"])){
+			// Not a remote URL:
+			$msg = "The nzb requested for download (".$durl.") is not a remote nzb. Please enter a valid remote nzb URL such as http://example.com/example.nzb\n";
+			AuditAction($cfg["constants"]["error"], $msg);
+			array_push($this->messages , $msg);
+			// state
+        	$this->state = SIMPLEHTTP_STATE_ERROR;
+			// return empty data:
+			return ($data="");
+		}
+
+		if (strtolower(substr($domain["path"], -4)) != ".nzb") {
+			/*
+				In these cases below, we check for URLs that have to be manipulated in some
+				way to obtain the content.  These are sites that perhaps use redirection or
+				URL rewriting in some way.
+			*/
+			// details.php
+			if (strpos(strtolower($durl), "details.php?") !== false) {
+				// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
+				// http://www.bitmetv.org/details.php?id=18435&hit=1
+				$treferer = "http://" . $domain["host"] . "/details.php?id=";
+				$data = $this->instance_getData($durl, $treferer);
+				// Sample (http://www.bitmetv.org/details.php?id=18435)
+				// download.php/18435/SpiderMan%20Season%204.torrent
+				if (preg_match("/(download.php.[^\"]+)/i", $data, $data_preg_match)) {
+					$tr = str_replace(" ", "%20", substr($data_preg_match[0], 0, -1));
+					$turl2 = "http://" . $domain["host"] . "/" . $tr;
+					$data = $this->instance_getData($turl2);
+				} else {
+					$msg = "Error: could not find link to nzb file in $durl";
+					AuditAction($cfg["constants"]["error"], $msg);
+					array_push($this->messages , $msg);
+					// state
+			    	$this->state = SIMPLEHTTP_STATE_ERROR;
+					// return empty data:
+					return($data="");
+				}
+			// download.asp
+			} elseif (strpos(strtolower($durl), "download.asp?") !== false) {
+				// Sample (TF's TorrenySpy Search):
+				// http://www.torrentspy.com/download.asp?id=519793
+				$treferer = "http://" . $domain["host"] . "/download.asp?id=";
+				$data = $this->instance_getData($durl, $treferer);
+			// default
+			} else {
+				// Fallback case for any URL not ending in .nzb and not matching the above cases:
+				$data = $this->instance_getData($durl);
+			}
+		} else {
+			$data = $this->instance_getData($durl);
+		}
+		// Make sure we have a nzb file
+		if (strpos($data, "nzb") === false)	{
+			// We don't have a nzb File... it is something else.  Let the user know about it:
+			$msg = "Content returned from $durl does not appear to be a valid nzb.";
+			AuditAction($cfg["constants"]["error"], $msg);
+			array_push($this->messages , $msg);
+			// Display the first part of $data if debuglevel higher than 1:
+			if ($cfg["debuglevel"] > 1){
+				if (strlen($data) > 0){
+					array_push($this->messages , "Displaying first 1024 chars of output: ");
+					array_push($this->messages , htmlentities(substr($data, 0, 1023)), ENT_QUOTES);
+				} else {
+					array_push($this->messages , "Output from $durl was empty.");
+				}
+			} else {
+				array_push($this->messages , "Set debuglevel > 2 in 'Admin, Webapps' to see the content returned from $durl.");
+			}
+			$data = "";
+			// state
+			$this->state = SIMPLEHTTP_STATE_ERROR;
+		} else {
 	        // state
 	        $this->state = SIMPLEHTTP_STATE_OK;
 		}
