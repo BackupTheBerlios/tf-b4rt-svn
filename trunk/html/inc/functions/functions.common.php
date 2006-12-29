@@ -268,7 +268,6 @@ function firstLogin($username = '', $password = '') {
 						"bin_awk" => $cfg["bin_awk"],
 						"bin_du" => $cfg["bin_du"],
 						"bin_wget" => $cfg["bin_wget"],
-						"bin_nzbperl" => $cfg["bin_nzbperl"],
 						"bin_unrar" => $cfg["bin_unrar"],
 						"bin_unzip" => $cfg["bin_unzip"],
 						"bin_cksfv" => $cfg["bin_cksfv"],
