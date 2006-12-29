@@ -20,7 +20,7 @@
 /**************************************************************************/
 
 define("_CHARSET","utf-8");  // if you don't know... then leave this as is.
-define("_SELECTFILE","Välj torrent att ladda upp");
+define("_SELECTFILE","Välj Metafile att ladda upp");
 define("_URLFILE","URL till torrent");
 define("_UPLOAD","Ladda upp");
 define("_GETFILE","Hämta");

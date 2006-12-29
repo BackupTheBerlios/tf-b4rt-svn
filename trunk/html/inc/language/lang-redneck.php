@@ -20,7 +20,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-1");
-define("_SELECTFILE","Seleck a To'rent fo' upload");
+define("_SELECTFILE","Seleck a Metafile fo' upload");
 define("_URLFILE","URL fo' th' To'rent File");
 define("_UPLOAD","Put it Der");
 define("_GETFILE","Git File");

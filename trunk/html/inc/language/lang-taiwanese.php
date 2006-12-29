@@ -28,7 +28,7 @@
 /**************************************************************************/
 
 define("_CHARSET","big5");  // if you don't know... then leave this as is.
-define("_SELECTFILE","請選擇一個要上傳的 Torrent 檔案");
+define("_SELECTFILE","請選擇一個要上傳的 Metafile 檔案");
 define("_URLFILE","Torrent 檔案的網址");
 define("_UPLOAD","上傳");
 define("_GETFILE","取得檔案");

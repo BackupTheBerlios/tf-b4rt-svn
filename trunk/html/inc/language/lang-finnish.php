@@ -20,7 +20,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-1");  // if you don't know... then leave this as is.
-define("_SELECTFILE","Valitse torrent tiedosto");
+define("_SELECTFILE","Valitse Metafile tiedosto");
 define("_URLFILE","URL torrent tiedostoon");
 define("_UPLOAD","Lis‰‰");
 define("_GETFILE","Lis‰‰");

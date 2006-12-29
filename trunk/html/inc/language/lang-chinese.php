@@ -46,7 +46,7 @@
 /**************************************************************************/
 
 define("_CHARSET","gb2312");  // if you don't know... then leave this as is.
-define("_SELECTFILE","请选择一个要上传的 Torrent 档案");
+define("_SELECTFILE","请选择一个要上传的 Metafile 档案");
 define("_URLFILE","Torrent 档案的网址");
 define("_UPLOAD","上传");
 define("_GETFILE","取得档案");

@@ -22,7 +22,7 @@
 /**************************************************************************/
 
 define("_CHARSET","windows1254");  // if you don't know... then leave this as is.
-define("_SELECTFILE","Yükleme için Torrent seç");
+define("_SELECTFILE","Yükleme için Metafile seç");
 define("_URLFILE","URL ile Torrent yükle");
 define("_UPLOAD","Yükle");
 define("_GETFILE","Dosyayi Al");

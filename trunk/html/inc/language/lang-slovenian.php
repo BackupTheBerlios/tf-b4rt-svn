@@ -23,7 +23,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-2");
-define("_SELECTFILE","Dodaj torrent z diska na strežnik");
+define("_SELECTFILE","Dodaj Metafile z diska na strežnik");
 define("_URLFILE","Prenesi torrent z interneta na strežnik");
 define("_UPLOAD","Dodaj");
 define("_GETFILE","Prenesi");

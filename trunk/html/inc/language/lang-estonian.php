@@ -23,7 +23,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-15");  // if you don't know... then leave this as is.
-define("_SELECTFILE","Vali torrent laadimiseks");
+define("_SELECTFILE","Vali Metafile laadimiseks");
 define("_URLFILE","Torrenti URL");
 define("_UPLOAD","Lae ülesse");
 define("_GETFILE","Tõmba fail");

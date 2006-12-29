@@ -23,7 +23,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-2"); // if you don't know... then leave this as is.
-define("_SELECTFILE","Wybierz Torrenta do wczytania");
+define("_SELECTFILE","Wybierz Metafile do wczytania");
 define("_URLFILE","Adres URL z plikiem Torrenta");
 define("_UPLOAD","Wczytaj");
 define("_GETFILE","Pobierz");

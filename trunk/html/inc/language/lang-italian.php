@@ -20,7 +20,7 @@
 /**************************************************************************/
 
 define("_CHARSET","iso-8859-1");  // if you don't know... then leave this as is.
-define("_SELECTFILE","Scegli un Torrent da caricare");
+define("_SELECTFILE","Scegli un Metafile da caricare");
 define("_URLFILE","URL del File Torrent");
 define("_UPLOAD","Upload");
 define("_GETFILE","Scarica File");

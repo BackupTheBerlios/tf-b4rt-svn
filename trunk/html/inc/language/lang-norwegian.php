@@ -19,7 +19,7 @@
 /* And, if you use HTML code, please double check it.
 /**************************************************************************/
 
-define("_SELECTFILE","Velg en torrent å laste opp");
+define("_SELECTFILE","Velg en Metafile å laste opp");
 define("_URLFILE","URL til torrent filen");
 define("_UPLOAD","Last opp");
 define("_GETFILE","Hent fil");
