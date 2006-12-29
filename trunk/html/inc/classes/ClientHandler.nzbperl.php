@@ -20,7 +20,9 @@
 
 *******************************************************************************/
 
-// class ClientHandler for nzbperl-client
+/**
+ * class ClientHandler for nzbperl-client
+ */
 class ClientHandlerNzbperl extends ClientHandler
 {
 
@@ -34,13 +36,14 @@ class ClientHandlerNzbperl extends ClientHandler
 	// =====================================================================
 
 	/**
-	* ctor
-	*/
+	 * ctor
+	 */
 	function ClientHandlerNzbperl() {
 		global $cfg;
 		$this->handlerName = "nzbperl";
-		$this->version = "0.6";
-		$this->binSocket = "perl";
+        $this->binSystem = "perl";
+        $this->binSocket = "perl";
+        $this->binClient = "nzbperl.pl";
 		$this->nzbbin = $cfg["docroot"]."bin/nzbperl/nzbperl.pl";
 	}
 
@@ -49,11 +52,11 @@ class ClientHandlerNzbperl extends ClientHandler
 	// =====================================================================
 
 	/**
-	* starts a client
-	* @param $transfer name of the transfer
-	* @param $interactive (1|0) : is this a interactive startup with dialog ?
-	* @param $enqueue (boolean) : enqueue ?
-	*/
+	 * starts a client
+	 * @param $transfer name of the transfer
+	 * @param $interactive (1|0) : is this a interactive startup with dialog ?
+	 * @param $enqueue (boolean) : enqueue ?
+	 */
 	function start($transfer, $interactive = false, $enqueue = false) {
 		global $cfg;
 
