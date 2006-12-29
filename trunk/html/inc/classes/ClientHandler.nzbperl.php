@@ -92,7 +92,13 @@ class ClientHandlerNzbperl extends ClientHandler
 		}
 
 		// Build Command String
-		$this->command = "nohup ".$cfg['perlCmd']." ".$this->nzbbin;
+		$this->command  = "cd ".escapeshellarg($this->savepath).";";
+		$this->command .= " HOME=".escapeshellarg($cfg["path"]);
+		$this->command .= "; export HOME;";
+		$this->command .= $this->umask;
+		$this->command .= " nohup ";
+		$this->command .= $this->nice;
+		$this->command .= $cfg['perlCmd']." ".escapeshellarg($this->nzbbin);
 		$this->command .= " --dthreadct ".$cfg['nzbperl_threads'];
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
@@ -101,14 +107,15 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " --statfile ".$this->aliasFilePath;
 		$this->command .= " --pidfile ".$this->pidFilePath;
 		$this->command .= " --server ".$cfg['nzbperl_server'];
-        $this->command .= ($cfg["enable_home_dirs"] != 0)
-        	? " --dlpath ".$cfg['path'].$this->owner
-        	: " --dlpath ".$cfg["path_incoming"];
+        $this->command .= " --dlpath ".$this->savepath;
 		$this->command .= " --conn ".$cfg['nzbperl_conn'];
 		$this->command .= " --log ".$this->logFilePath;
-		$this->command .= " ".$cfg['nzbperl_options'];
+		if (strlen($cfg["nzbperl_options"]) > 0)
+			$this->command .= " ".$cfg['nzbperl_options'];
 		$this->command .= " ".$this->transferFilePath;
-		$this->command .= " &";
+        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " &";
 
 		// Start the client
 		$this->execStart(false, false);
