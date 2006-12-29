@@ -134,7 +134,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " &";
 
 		// Start the client
-		$this->execStart(false, true);
+		$this->execStart(false, false);
 	}
 
     /**
@@ -162,7 +162,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		//set vars
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(true, false);
+		$this->execDelete(false, false);
     }
 
     /**
