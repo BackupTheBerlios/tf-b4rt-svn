@@ -329,11 +329,23 @@ class MaintenanceAndRepair
 				// set stopped flag in db
 				stopTransferSettings($transfer);
 			} else {
-				// TODO : this is wrong
-				// this is wget client
-				$transfer = $bogusTransfer.".wget";
-				$settingsAry = array();
-				$settingsAry['btclient'] = "wget";
+				// not a torrent-client
+				$found = false;
+				// try wget
+				if (!$found) {
+					$transfer = $bogusTransfer.".wget";
+					if (file_exists($cfg["transfer_file_path"].$transfer))
+						$found = true;
+				}
+				// try nzb
+				if (!$found) {
+					$transfer = $bogusTransfer.".nzb";
+					if (file_exists($cfg["transfer_file_path"].$transfer))
+						$found = true;
+				}
+				// skip if nothing found
+				if (!$found)
+					continue;
 			}
 			// output
 			$this->_outputMessage("repairing ".$transfer." ...\n");
@@ -378,7 +390,7 @@ class MaintenanceAndRepair
 				$pidFile = $alias.".pid";
 				$settingsAry = loadTransferSettings($transfer);
 				if (!((isset($settingsAry)) && (is_array($settingsAry)))) {
-					// this is a wget-client, skip it
+					// this is not a torrent-client, skip it
 					continue;
 				}
 				// output
@@ -421,7 +433,6 @@ class MaintenanceAndRepair
 			if ($this->_countFixed > 0)
 				$this->_outputMessage("restarted transfers : ".$this->_countFixed."/".$this->_countProblems."\n");
 		}
-
 		/* done */
 		$this->_outputMessage("transfers-maintenance done.\n");
 		// return
@@ -435,7 +446,6 @@ class MaintenanceAndRepair
 		global $cfg, $db;
 		// output
 		$this->_outputMessage("database-maintenance...\n");
-
 		/* tf_torrents */
 		$this->_countProblems = 0;
 		$this->_countFixed = 0;
@@ -543,10 +553,8 @@ class MaintenanceAndRepair
 			// output
 			$this->_outputMessage("no problems found.\n");
 		}
-
 		// prune db
 		$this->_maintenanceDatabasePrune();
-
 		/* done */
 		$this->_outputMessage("database-maintenance done.\n");
 
