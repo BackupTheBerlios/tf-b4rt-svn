@@ -25,7 +25,7 @@
 								<tr>
 									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
 									<td>
-										<tmpl_var name="_SELECTFILE">:<br>
+										<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">) : <br>
 										<table cellpadding="1" cellspacing="1" border="0">
 											<tr>
 												<td id="fileUploadCell">

@@ -2173,7 +2173,7 @@ function isValidPath($path, $ext = "") {
  */
 function isValidTransfer($transfer) {
 	global $cfg;
-	return ((preg_match('/^[0-9a-zA-Z._-]+('.$cfg["file_types_string"].')$/', $transfer)) == 1);
+	return ((preg_match('/^[0-9a-zA-Z._-]+('.$cfg["file_types_regexp"].')$/', $transfer)) == 1);
 }
 
 /**
@@ -2205,8 +2205,8 @@ function cleanFileName($inName) {
 	$msgs = array();
 	array_push($msgs, "inName : ".$inName);
 	array_push($msgs, "outName : ".$outName);
-	array_push($msgs, "\nvalid file-extensions :");
-	$msgs = array_merge($msgs, $cfg['file_types_array']);
+	array_push($msgs, "\nvalid file-extensions: ");
+	array_push($msgs, $cfg["file_types_label"]);
 	AuditAction($cfg["constants"]["error"], "INVALID FILETYPE: ".$inName);
 	@error("Invalid File-Type", "index.php?iid=index", "", $msgs);
 }

@@ -38,11 +38,6 @@ if ($cfg["enable_multiupload"] != 1) {
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.multiup.tmpl");
 
-// messages
-if (isset($_REQUEST['messages']))
-	if ($_REQUEST['messages'] != "")
-		$tmpl->setvar('messages', urldecode($_REQUEST['messages']));
-
 // form
 $row_list = array();
 for ($j = 0; $j < $cfg["hack_multiupload_rows"]; ++$j)
@@ -51,6 +46,8 @@ $tmpl->setloop('row_list', $row_list);
 
 // queue
 $tmpl->setvar('queueActive', (FluxdQmgr::isRunning()) ? 1 : 0);
+//
+$tmpl->setvar('file_types_label', $cfg['file_types_label']);
 //
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);

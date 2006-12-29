@@ -54,8 +54,9 @@ asort($cfg["constants"]);
 
 // valid file extensions
 $cfg["file_types_array"] = array(".torrent", ".wget", ".nzb");
-// do NOT (!) touch the next line
-$cfg["file_types_string"] = implode("|", $cfg["file_types_array"]);
+// do NOT (!) touch the next 2 lines
+$cfg["file_types_regexp"] = implode("|", $cfg["file_types_array"]);
+$cfg["file_types_label"] = implode(", ", $cfg["file_types_array"]);
 
 // Capture username
 $cfg["user"] = "";

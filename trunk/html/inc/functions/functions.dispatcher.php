@@ -446,8 +446,8 @@ function indexProcessUpload() {
 				}
 			} else {
 				array_push($uploadMessages, "The type of file you are uploading is not allowed.");
-				array_push($uploadMessages, "\nvalid file-extensions :");
-				$uploadMessages = array_merge($uploadMessages, $cfg['file_types_array']);
+				array_push($uploadMessages, "\nvalid file-extensions: ");
+				array_push($uploadMessages, $cfg["file_types_label"]);
 			}
 		} else {
 			array_push($uploadMessages, "File not uploaded, file size limit is ".$uploadLimit.". file has ".$_FILES['upload_file']['size']);
@@ -505,8 +505,8 @@ function processFileUpload() {
 					}
 				} else {
 					array_push($uploadMessages, "The type of file you are uploading is not allowed.");
-					array_push($uploadMessages, "\nvalid file-extensions :");
-					$uploadMessages = array_merge($uploadMessages, $cfg['file_types_array']);
+					array_push($uploadMessages, "\nvalid file-extensions: ");
+					array_push($uploadMessages, $cfg["file_types_label"]);
 				}
 			} else {
 				array_push($uploadMessages, "File not uploaded, file size limit is ".$uploadLimit.". file has ".$size);
