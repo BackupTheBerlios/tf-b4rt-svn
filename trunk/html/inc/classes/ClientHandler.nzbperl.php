@@ -49,32 +49,6 @@ class ClientHandlerNzbperl extends ClientHandler
 	// =====================================================================
 
 	/**
-	* injects a transfer
-	*
-	* @param $nzb
-	* @return boolean
-	*/
-	function inject($nzb) {
-		global $cfg;
-
-		// TODO: check if this is ok
-		$this->setVarsFromTransfer($nzb);
-
-		// write out aliasfile
-		require_once("inc/classes/AliasFile.php");
-		$af = new AliasFile($this->aliasFile);
-		$af->running = "2"; // file is new
-		$af->size = 0;
-		$af->WriteFile();
-
-		// Make an entry for the owner
-		AuditAction($cfg["constants"]["file_upload"], basename($this->nzbFile));
-
-		// return
-		return true;
-	}
-
-	/**
 	* starts a client
 	* @param $transfer name of the transfer
 	* @param $interactive (1|0) : is this a interactive startup with dialog ?
