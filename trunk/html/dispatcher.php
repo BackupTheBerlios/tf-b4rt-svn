@@ -191,6 +191,7 @@ switch ($action) {
     	if (count($dispatcherMessages) > 0)
     		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
     	break;
+
     case "bulkResume": /* bulkResume */
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
@@ -221,6 +222,7 @@ switch ($action) {
     	if (count($dispatcherMessages) > 0)
     		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
     	break;
+
     case "bulkStart": /* bulkStart */
     	// is enabled ?
 		if ($cfg["enable_bulkops"] != 1) {
@@ -263,8 +265,10 @@ switch ($action) {
 			@error("multiops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
 		}
 
+		// messages-ary
 		$dispatcherMessages = array();
 
+		// loop
 		foreach($_POST['transfer'] as $key => $element) {
 
 			// url-decode
@@ -276,24 +280,25 @@ switch ($action) {
 				// client
 				if (substr($element, -8) == ".torrent") {
 					// this is a torrent-client
+					$clientType = "torrent";
 					$invalid = false;
-					$isTorrent = true;
 					$tclient = getTransferClient($element);
 				} else if (substr($element, -5) == ".wget") {
 					// this is wget.
+					$clientType = "wget";
 					$invalid = false;
-					$isTorrent = false;
 					$tclient = "wget";
 				} else if (substr($element, -4) == ".nzb") {
 					// This is nzbperl.
+					$clientType = "nzb";
 					$invalid = false;
-					$isTorrent = false;
 					$tclient = "nzbperl";
 				}
 			}
 			if ($invalid) {
 				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$cfg["user"]." tried to ".$action." ".$element);
 				array_push($dispatcherMessages, "Invalid Transfer : ".$transfer);
+				continue;
 			}
 
 			// is transfer running ?
@@ -305,7 +310,7 @@ switch ($action) {
 				case "transferStart": /* transferStart */
 					if ($tRunningFlag == 0) {
 						$clientHandler = ClientHandler::getInstance($tclient);
-						if ($isTorrent) {
+						if ($clientType == "torrent") {
 							if ($cfg["enable_file_priority"]) {
 								include_once("inc/functions/functions.setpriority.php");
 								// Process setPriority Request.
@@ -321,7 +326,7 @@ switch ($action) {
 					break;
 
 				case "transferStop": /* transferStop */
-					if (($isTorrent) && ($tRunningFlag != 0)) {
+					if (($clientType != "wget") && ($tRunningFlag != 0)) {
 						$clientHandler = ClientHandler::getInstance($tclient);
 						$clientHandler->stop($element);
 						if (count($clientHandler->messages) > 0)
@@ -330,7 +335,7 @@ switch ($action) {
 					break;
 
 				case "transferEnQueue": /* transferEnQueue */
-					if (($isTorrent) && ($tRunningFlag == 0)) {
+					if (($clientType == "torrent") && ($tRunningFlag == 0)) {
 						// enqueue it
 						if ($cfg["enable_file_priority"]) {
 							include_once("inc/functions/functions.setpriority.php");
@@ -345,20 +350,22 @@ switch ($action) {
 					break;
 
 				case "transferDeQueue": /* transferDeQueue */
-					if (($isTorrent) && ($tRunningFlag == 0)) {
+					if (($clientType == "torrent") && ($tRunningFlag == 0)) {
 						// dequeue it
 						FluxdQmgr::dequeueTransfer($element, $cfg['user']);
 					}
 					break;
 
 				case "transferResetTotals": /* transferResetTotals */
-					$msgs = resetTorrentTotals($element, false);
-					if (count($msgs) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
+					if ($clientType == "torrent") {
+						$msgs = resetTorrentTotals($element, false);
+						if (count($msgs) > 0)
+	                    	$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
+					}
 					break;
 
 				default:
-					if (($isTorrent) && ($tRunningFlag != 0)) {
+					if (($clientType != "wget") && ($tRunningFlag != 0)) {
 						// stop torrent first
 						$clientHandler = ClientHandler::getInstance($tclient);
 						$clientHandler->stop($element);
@@ -372,7 +379,7 @@ switch ($action) {
 					if ($tRunningFlag == 0) {
 						switch ($action) {
 							case "transferWipe": /* transferWipe */
-								if ($isTorrent) {
+								if ($clientType == "torrent") {
 									deleteTorrentData($element);
 									$msgs = resetTorrentTotals($element, true);
 									if (count($msgs) > 0)
@@ -380,7 +387,7 @@ switch ($action) {
 								}
 								break;
 							case "transferData": /* transferData */
-								if ($isTorrent)
+								if ($clientType == "torrent")
 									deleteTorrentData($element);
 							case "transfer": /* transfer */
 								$clientHandler = ClientHandler::getInstance($tclient);
