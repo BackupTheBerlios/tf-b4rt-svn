@@ -134,6 +134,13 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_cust
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('downloadhosts','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_sharekill','1')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_nzbperl','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_badAction','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_server','')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_user','')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_pw','')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_threads','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_conn','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_dbmode','php')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_loglevel','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0')");
