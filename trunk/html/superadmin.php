@@ -1024,11 +1024,20 @@ if (isset($_REQUEST["y"])) {
 				$htmlMain .= '<br><br>';
 				break;
 
-			case "51": // misc-Perl Check
+			case "51": // misc - Check - Perl
 				$htmlTitle = "Misc - Check - Perl";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
 				$htmlMain .= shell_exec($cfg["perlCmd"]." ".$cfg["docroot"]."bin/check/check.pl all");
+				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
+				break;
+
+			case "511": // misc - Check - Perl - nzbperl
+				$htmlTitle = "Misc - Check - Perl";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<pre>';
+				$htmlMain .= shell_exec($cfg["perlCmd"]." ".$cfg["docroot"]."bin/check/check.pl nzbperl");
 				$htmlMain .= '</pre>';
 				$htmlMain .= '</div>';
 				break;

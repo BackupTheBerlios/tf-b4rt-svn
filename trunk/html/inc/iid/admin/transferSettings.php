@@ -56,6 +56,13 @@ $tmpl->setvar('wget_limit_rate', $cfg["wget_limit_rate"]);
 $tmpl->setvar('wget_limit_retries', $cfg["wget_limit_retries"]);
 $tmpl->setvar('wget_ftp_pasv', $cfg["wget_ftp_pasv"]);
 // nzbperl
+$link = '<img src="themes/';
+if ((strpos($cfg["theme"], '/')) === false)
+	$link .= $cfg["theme"].'/images/';
+else
+	$link .= 'tf_standard_themes/images/';
+$link .= 'arrow.gif" width="9" height="9" title="nzbperl Requirements Check" border="0"> nzbperl Requirements Check</a>';
+$tmpl->setvar('SuperAdminLink_nzbperl_check', getSuperAdminLink('?y=511', $link));
 $tmpl->setvar('enable_nzbperl', $cfg['enable_nzbperl']);
 $tmpl->setvar('nzbperl_badAction', $cfg['nzbperl_badAction']);
 $tmpl->setvar('nzbperl_server', $cfg['nzbperl_server']);
