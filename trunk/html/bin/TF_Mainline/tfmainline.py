@@ -20,6 +20,7 @@
 ################################################################################
 #
 # tfmainline.py - use BitTorrent ("mainline") with torrentflux-b4rt
+# http://tf-b4rt.berlios.de/
 #
 ################################################################################
 from __future__ import division

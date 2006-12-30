@@ -11,6 +11,7 @@
 ################################################################################
 #
 # btphptornado.py - use BitTornado with torrentflux-b4rt
+# http://tf-b4rt.berlios.de/
 #
 ################################################################################
 from BitTornado import PSYCO

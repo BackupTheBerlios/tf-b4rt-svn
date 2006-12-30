@@ -1,28 +1,53 @@
 #!/usr/bin/perl -w
-#
-# nzbperl.pl -- version 0.6.8
-#
-# for more information:
-# http://noisybox.net/computers/nzbperl/
-#
-#########################################################################################
-# Copyright (C) 2004 jason plumb
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#########################################################################################
-
+################################################################################
+# $Id: fluxd.pl 2048 2006-12-30 14:47:09Z b4rt $
+# $Date: 2006-12-30 15:47:09 +0100 (Sa, 30 Dez 2006) $
+# $Revision: 2048 $
+################################################################################
+#                                                                              #
+# Copyright (C) 2004 jason plumb                                               #
+#                                                                              #
+# This program is free software; you can redistribute it and/or                #
+# modify it under the terms of the GNU General Public License                  #
+# as published by the Free Software Foundation; either version 2               #
+# of the License, or (at your option) any later version.                       #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU General Public License for more details.                                 #
+#                                                                              #
+# You should have received a copy of the GNU General Public License            #
+# along with this program; if not, write to the Free Software                  #
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.  #
+#                                                                              #
+################################################################################
+#                                                                              #
+# nzbperl.pl -- version 0.6.8                                                  #
+#                                                                              #
+# for more information:                                                        #
+# http://noisybox.net/computers/nzbperl/                                       #
+#                                                                              #
+# this version is modified and extended for torrentflux-b4rt                   #
+# http://tf-b4rt.berlios.de/                                                   #
+#                                                                              #
+################################################################################
+#                                                                              #
+#  Required :                                                                  #
+#   * IO::File                                                                 #
+#   * IO::Select                                                               #
+#   * IO::Socket::INET                                                         #
+#   * File::Basename                                                           #
+#   * Getopt::Long                                                             #
+#   * Cwd                                                                      #
+#   * XML::Simple                                                              #
+#   * XML::DOM                                                                 #
+#                                                                              #
+#  Optional :                                                                  #
+#   * threads                                                                  #
+#   * Thread::Queue                                                            #
+#                                                                              #
+################################################################################
 use strict;
 use File::Basename;
 use IO::File;
@@ -33,6 +58,11 @@ use Time::HiRes qw(gettimeofday tv_interval);	# timer stuff
 #use Term::ReadKey;	# for no echo password reading
 #use Term::Cap;
 use Cwd;
+################################################################################
+
+################################################################################
+# fields                                                                       #
+################################################################################
 
 my $version = '0.6.8';
 #my $ospeed = 9600;
@@ -99,6 +129,10 @@ my %optionsmap = ('server=s' => \$server, 'user=s' => \$user, 'pw=s' => \$pw,
 				'ipv6' => \$ipv6, 'chunksize=s' => \$recv_chunksize, 'decodelog=s' => \$DECODE_DBG_FILE,
 				'ifilter=s' => \$ifilterregex, 'dthreadct=s' => \$dthreadct, 'diskfree=s' => \$diskfree,
 				'tfuser=s' => \$tfuser, 'statfile=s' => \$statfile, 'pidfile=s' => \$pidfile);
+
+################################################################################
+# main                                                                         #
+################################################################################
 
 if(defined(my $errmsg = handleCommandLineOptions())){
 	showUsage($errmsg);
@@ -309,6 +343,10 @@ foreach my $i (0..$dthreadct-1){
 pc("Thanks for using ", 'bold yellow');
 pc("nzbperl", 'bold red');
 pc("! Enjoy!\n\n", 'bold yellow');
+
+################################################################################
+# subs                                                                         #
+################################################################################
 
 #########################################################################################
 # no_more_work_to_do - returns 1 if there is more work to do, 0 otherwise.  Used to
