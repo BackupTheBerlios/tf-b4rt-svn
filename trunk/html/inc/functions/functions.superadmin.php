@@ -51,6 +51,8 @@ function buildPage($action) {
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?l=0">Log</a>';
 	$htmlTop .= ' | ';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?y=0">Misc</a>';
+	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?z=0">tf-b4rt</a>';
 	// body
 	switch($action) {
@@ -76,28 +78,8 @@ function buildPage($action) {
 			$htmlMain .= 'Please use the most recent tarball and perform a manual update.';
 			$htmlMain .= '<br>';
 			break;
-		case "f": // fluxd passthru
-			$htmlTop = "";
-			$statusImage = "";
-			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?f=1">log</a>';
-			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?f=2">error-log</a>';
-			$htmlMain .= ' | ';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?f=3">ps</a>';
-			if (Fluxd::isRunning()) {
-				$htmlMain .= ' | ';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?f=4">status</a>';
-			} else {
-				$htmlMain .= ' | ';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?f=5">check</a>';
-				$htmlMain .= ' | ';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?f=6">db-debug</a>';
-				$htmlMain .= ' | ';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?f=9">version</a>';
-			}
-			$htmlMain .= '</td><td align="right"><strong>fluxd</strong>';
-			$htmlMain .= '</tr></table>';
+		case "t": // torrent passthru
+			$statusImage = "black.gif";
 			break;
 		case "p": // processes passthru
 			$statusImage = "black.gif";
@@ -138,8 +120,14 @@ function buildPage($action) {
 			$htmlMain .= '</td><td align="right"><strong>Log</strong></td>';
 			$htmlMain .= '</tr></table>';
 			break;
-		case "t": // torrent passthru
+		case "y": // misc passthru
 			$statusImage = "black.gif";
+			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=1">Lists</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=5">Check</a>';
+			$htmlMain .= '</td><td align="right" nowrap><strong>Misc</strong></td>';
+			$htmlMain .= '</tr></table>';
 			break;
 		case "z": // tf-b4rt passthru
 			$statusImage = "black.gif";
@@ -152,6 +140,29 @@ function buildPage($action) {
 			$htmlMain .= ' | ';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=9">Misc</a>';
 			$htmlMain .= '</td><td align="right" nowrap><strong>tf-b4rt</strong></td>';
+			$htmlMain .= '</tr></table>';
+			break;
+		case "f": // fluxd passthru
+			$htmlTop = "";
+			$statusImage = "";
+			$htmlMain .= '<table width="100%" bgcolor="'.$cfg["table_data_bg"].'" border="0" cellpadding="4" cellspacing="0"><tr><td width="100%">';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?f=1">log</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?f=2">error-log</a>';
+			$htmlMain .= ' | ';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?f=3">ps</a>';
+			if (Fluxd::isRunning()) {
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=4">status</a>';
+			} else {
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=5">check</a>';
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=6">db-debug</a>';
+				$htmlMain .= ' | ';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?f=9">version</a>';
+			}
+			$htmlMain .= '</td><td align="right"><strong>fluxd</strong>';
 			$htmlMain .= '</tr></table>';
 			break;
 		case "_": // default
@@ -169,6 +180,8 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?b=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Backup" border="0"> Backup</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?l=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Log" border="0"> Log</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?y=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> tf-b4rt</a>';
 			$htmlMain .= '<br><br>';
@@ -727,8 +740,8 @@ function validateLocalFiles() {
 	sendLine('<strong>Getting Checksum-list</strong>');
 	// download list
 	$checksumsString = "";
-	ini_set("allow_url_fopen", "1");
-	ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
+	@ini_set("allow_url_fopen", "1");
+	@ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
 	if ($urlHandle = @fopen(_SUPERADMIN_URLBASE._FILE_CHECKSUMS_PRE._VERSION._FILE_CHECKSUMS_SUF, 'r')) {
 		while (!@feof($urlHandle)) {
 			$checksumsString .= @fgets($urlHandle, 8192);
