@@ -134,6 +134,7 @@ my %optionsmap = ('server=s' => \$server, 'user=s' => \$user, 'pw=s' => \$pw,
 # main                                                                         #
 ################################################################################
 
+# parse args
 if(defined(my $errmsg = handleCommandLineOptions())){
 	showUsage($errmsg);
 	exit 1;
@@ -184,12 +185,14 @@ if ($tfuser and !$pidfile) {
 	exit;
 }
 
+=for later
 if (defined($tfuser)) {
-#	$pidfile = substr($pidfile, 1, -1);
-#	$statfile = substr($statfile, 1, -1);
-#	$dlpath = substr($dlpath, 1, -1);
-#	$log = substr($log, 1, -1);
+	$pidfile = substr($pidfile, 1, -1);
+	$statfile = substr($statfile, 1, -1);
+	$dlpath = substr($dlpath, 1, -1);
+	$log = substr($log, 1, -1);
 }
+=cut
 
 $pidfile and writePid();
 
@@ -203,10 +206,11 @@ my %nzbfiles;	# the hash/queue of nzb files we're handling
 # statusmessages
 my @statusmsgs;
 
+# fileset
 my @fileset;
 while(scalar(@ARGV) > 0){
-	my $nzbfilename = $ARGV[0]; # shift @ARGV; #$ARGV[0];
-	my @fsparts = parseNZB($nzbfilename);
+	my $nzbfilename = shift @ARGV; #$ARGV[0];
+	my @fsparts = parseNZB($nzbfilename, 1);
 	if(!defined($fsparts[0])){
 		exit;
 	}
@@ -217,7 +221,7 @@ while(scalar(@ARGV) > 0){
 statMsg('Looks like we have got ' . scalar @fileset . ' possible files ahead of us.');
 
 my @suspectFileInd;
-if($insane){
+if ($insane) {
 } else{
 	&doNZBSanityChecks();
 	if($dropbad){
@@ -303,6 +307,9 @@ while(1){
 	doReceiverPart();
 	my $elapsed = tv_interval ( $lasttime );
 	if ($elapsed >= 5) {
+
+		# TODO : read state from stat-file
+
 		writeStat();
 		$lasttime = [gettimeofday];
 	}
@@ -1382,7 +1389,7 @@ sub createSingleConnection {
 	    $osock = IO::Socket::Socks->new( %sockparam );
 	}
 	elsif (defined($http_proxy_server)) {
-	    porlp(sprintf('Attempting HTTP Proxy connection #%d %s:%d -> %s:%d...',
+	    porlp(sprintf('Attempting HTTP Proxy connection #%d %s:%d -> %s:%d...'."\n",
 				   $i+1, $http_proxy_server, $http_proxy_port, $server, $port), $silent);
 	    $osock = Net::HTTPTunnel->new( 'proxy-host' => $http_proxy_server,
 					   'proxy-port' => $http_proxy_port,
@@ -1390,7 +1397,7 @@ sub createSingleConnection {
 					   'remote-port' => $port );
 	}
 	else {
-	    porlp(sprintf('Attempting connection #%d to %s:%d...', $i+1, $server, $port), $silent);
+	    porlp(sprintf('Attempting connection #%d to %s:%d...'."\n", $i+1, $server, $port), $silent);
 	    $osock = createNNTPClientSocket($paddr);
 	}
 	if(!$osock){
@@ -1400,7 +1407,7 @@ sub createSingleConnection {
 	porlp("success!\n", $silent);
 
 	if (defined($ssl)) {
-	    porlp(sprintf("Establishing SSL connection #%d to %s:%d...", $i+1, $server, $port), $silent);
+	    porlp(sprintf("Establishing SSL connection #%d to %s:%d...\n", $i+1, $server, $port), $silent);
 	    $sock = IO::Socket::SSL->start_SSL($osock);
 	    die "SSL error: " . IO::Socket::SSL::errstr() . $!  unless (defined($sock));
 	}
@@ -1448,7 +1455,7 @@ sub doSingleLogin {
 	my $conn = $conn[$i];
 	my $sock = $conn[$i]->{'sock'};
 	return unless $sock;
-	not $silent and printf("Attempting login on connection #%d...", $i+1);
+	not $silent and printMessage(sprintf("Attempting login on connection #%d...", $i+1));
 
 	sockSend($sock, "AUTHINFO USER $user\r\n");
 
@@ -2047,12 +2054,15 @@ sub statMsg {
 	my @t = localtime;
 	my $msg = sprintf("%0.2d:%0.2d - %s", $t[2], $t[1], $str);
 	push @statusmsgs, $msg;
+=for later
 	if($logfile){
 		open LOGFH, ">>" . $logfile or
 				(push @statusmsgs, sprintf("%0.2d:%0.2d:%0.2d - Error writing to log file  %s", $logfile) and return 1);
-		print LOGFH getMessage("nzbperl.pl", $str);
+		print LOGFH getMessage("nzbperl.pl", $str."\n");
 		close LOGFH;
 	}
+=cut
+	printMessage($str."\n");
 	return 1;
 }
 
@@ -2371,7 +2381,7 @@ sub filterFilesOnSubject {
 	if(scalar @nset < 1){
 		pc("\nWhoops:  Filter removed all files (nothing left)...aborting!\n\n", 'bold yellow') and exit 0;
 	}
-	printf("Kept %d of %d files (filtered %d)\n", scalar(@nset), $orgsize, $orgsize-scalar(@nset));
+	printMessage(sprintf("Kept %d of %d files (filtered %d)\n", scalar(@nset), $orgsize, $orgsize-scalar(@nset)));
 	return @nset;
 }
 
@@ -2531,10 +2541,10 @@ sub getSuspectSegmentIndexes {
 
 #########################################################################################
 sub dropSuspectFiles(){ my @newset; my $dropct = 0; foreach my $i (0..scalar @fileset-1){
-		if($i == $suspectFileInd[0]){
+		if ((defined($suspectFileInd[0])) && ($i == $suspectFileInd[0])) {
 			my $ind = shift @suspectFileInd;
 			my $file = $fileset[$ind];
-			printf("Dropping [%s] from filset (suspect)\n", $file->{'name'});
+			printMessage(sprintf("Dropping [%s] from filset (suspect)\n", $file->{'name'}));
 			$dropct++;
 			next;
 		}
@@ -2996,29 +3006,25 @@ if($errmsg and (length($errmsg))){
 sub writeStat {
 	my $dlperc = $totals{'total size'} == 0 ? 0 : int(100.0*$totals{'total bytes'} / $totals{'total size'});
 	# my @stats = ("1", "$dlperc", getETA(), getCurrentSpeed(), "0", "", "", "", "", "", "$totals{'total bytes'}");
-
 	# open the stat file for writing
 	open(STATFILE,">$statfile");
-
 	# write the stats
 	#foreach my $stat (@stats) {
 	#	printSTATFILE $stat."\n";
 	#}
-
-	print STATFILE "1\n";
-	print STATFILE "$dlperc\n";
-	print STATFILE getETA()."\n";
-	print STATFILE getCurrentSpeed()."\n";
-	print STATFILE "0\n"; # upspeed
-	print STATFILE "$tfuser\n";
+	print STATFILE "1\n"; # state
+	print STATFILE "$dlperc\n"; # progress
+	print STATFILE getETA()."\n"; # ETA
+	print STATFILE getCurrentSpeed()."\n"; # downspeed
+	print STATFILE "0.00 kB/s\n"; # upspeed
+	print STATFILE "$tfuser\n"; # user
 	print STATFILE "1\n"; # seeds
 	print STATFILE "1\n"; # peers
 	print STATFILE "\n"; # sharing
 	print STATFILE "\n"; # seedlimit
 	print STATFILE "0\n"; # uptotal
-	print STATFILE "$totals{'total bytes'}\n";
-	print STATFILE "$totals{'total size'}\n";
-
+	print STATFILE "$totals{'total bytes'}\n"; # downtotal
+	print STATFILE "$totals{'total size'}\n"; # size
 	# close stat file
 	close(STATFILE);
 }
