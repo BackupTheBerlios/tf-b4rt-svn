@@ -139,21 +139,31 @@ if(defined(my $errmsg = handleCommandLineOptions())){
 	exit 1;
 }
 
-if(not $ipv6){
+# ipv6
+if (not $ipv6){
 	use IO::Socket::INET;
 }
-if(not $nocolor){
-	# use Term::ANSIColor;
+
+=for later
+if (not $nocolor){
+	use Term::ANSIColor;
 }
-if(not haveUUDeview()){	# Verify that uudeview is installed
-	pc("* Please install and configure uudeview and try again.\n", "bold red");
+=cut
+
+# Verify that uudeview is installed
+if (not haveUUDeview()){
+	printError("Please install and configure uudeview and try again.\n");
 	exit 1;
 }
-$uudeview =~ m#^([\w\s\.\_\-\/\\]+)$# or die "Invalid characters in uudeview path.";
+if (!($uudeview =~ m#^([\w\s\.\_\-\/\\]+)$#)) {
+	printError("Invalid characters in uudeview path.\n");
+	exit;
+}
 
+=for later
 displayShortGPL();
 
-#checkForNewVersion();
+checkForNewVersion();
 
 if($user and !$pw){
 	print "Password for '$user': ";
@@ -163,11 +173,15 @@ if(defined($proxy_user) and not defined($proxy_passwd)){
 	print "SOCKS Password for '$proxy_user': ";
 	$proxy_passwd = readPassword();
 }
-if ($tfuser and !$statfile){
-	die "no statfile path given";
+=cut
+
+if ($tfuser and !$statfile) {
+	printError("no statfile path given\n");
+	exit;
 }
-if ($tfuser and !$pidfile){
-	die "no pidfile path given";
+if ($tfuser and !$pidfile) {
+	printError("no pidfile path given\n");
+	exit;
 }
 
 if (defined($tfuser)) {
@@ -191,7 +205,7 @@ my @statusmsgs;
 
 my @fileset;
 while(scalar(@ARGV) > 0){
-	my $nzbfilename = shift @ARGV; #$ARGV[0];
+	my $nzbfilename = $ARGV[0]; # shift @ARGV; #$ARGV[0];
 	my @fsparts = parseNZB($nzbfilename);
 	if(!defined($fsparts[0])){
 		exit;
@@ -1965,6 +1979,8 @@ sub drawVLine {
 # helper for printing in color (or not)
 #########################################################################################
 sub pc {
+	my $str = shift;
+	printMessage($str);
 #	my ($string, $colstr) = @_;
 #	not defined($colstr) and $colstr = "white";	# default to plain white
 #	$daemon and return length($string);
