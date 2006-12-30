@@ -57,8 +57,6 @@ use IO::Select;
 use XML::DOM;
 use Getopt::Long;
 use Time::HiRes qw(gettimeofday tv_interval);	# timer stuff
-#use Term::ReadKey;	# for no echo password reading
-#use Term::Cap;
 use Cwd;
 ################################################################################
 
@@ -68,7 +66,6 @@ use Cwd;
 
 my $version = '0.6.8';
 #my $ospeed = 9600;
-#my $terminal = Tgetent Term::Cap { TERM => undef, OSPEED => $ospeed };
 my $recv_chunksize = 5*1024;	# How big of chunks we read at once from a connection (this is pulled from ass)
 my $UPDATE_URL = 'http://noisybox.net/computers/nzbperl/nzbperl_version.txt';
 
@@ -142,16 +139,13 @@ if (defined(my $errmsg = handleCommandLineOptions())) {
 	exit 1;
 }
 
+# output
+printMessage("nzbperl starting up...\n");
+
 # ipv6
 if (not $ipv6){
 	use IO::Socket::INET;
 }
-
-=for later
-if (not $nocolor){
-	use Term::ANSIColor;
-}
-=cut
 
 # Verify that uudeview is installed
 if (not haveUUDeview()){
@@ -163,46 +157,8 @@ if (!($uudeview =~ m#^([\w\s\.\_\-\/\\]+)$#)) {
 	exit;
 }
 
-=for later
-displayShortGPL();
-
-checkForNewVersion();
-
-if($user and !$pw){
-	print "Password for '$user': ";
-	$pw = readPassword();
-}
-if(defined($proxy_user) and not defined($proxy_passwd)){
-	print "SOCKS Password for '$proxy_user': ";
-	$proxy_passwd = readPassword();
-}
-=cut
-
-# check tf-args
-if (!$tfuser) {
-	printError("no tfuser given\n");
-	exit;
-}
-if (!$statfile) {
-	printError("no statfile path given\n");
-	exit;
-}
-if (!$pidfile) {
-	printError("no pidfile path given\n");
-	exit;
-}
-
-=for later
-if (defined($tfuser)) {
-	$pidfile = substr($pidfile, 1, -1);
-	$statfile = substr($statfile, 1, -1);
-	$dlpath = substr($dlpath, 1, -1);
-	$log = substr($log, 1, -1);
-}
-=cut
-
 # write pid
-writePid();
+pidFileWrite();
 
 my $lastDirCheckTime = 0;
 my $lastDiskFullTime = undef;
@@ -238,6 +194,7 @@ if ($insane) {
 	}
 }
 
+# start remote control
 my $rc_sock = undef;
 my @rc_clients;
 startRemoteControl();
@@ -279,21 +236,9 @@ if ($user){
 	doLogins() or die "Error authenticating to server.\nPlease check the user/pass info and try again.";
 }
 
-=for later
-if($daemon){
-	printMessage("nzbperl is running in --daemon mode, output suppressed\n");
-	printMessage("Check log for additional details during run...\n");
-	my $pid = fork;
-	$pid and printMessage("Daemon started [$pid]\n") and exit;
-	#close STDIN;
-	#close STDOUT;
-	#close STDERR;
-}
-=cut
-
 # Start up the decoding thread(s)...
 my ($decMsgQ, $decQ, @decThreads);
-if(usingThreadedDecoding()){
+if (usingThreadedDecoding()){
 	$decMsgQ = Thread::Queue->new;	# For status msgs
 	$decQ = Thread::Queue->new;
 	foreach my $i (1..$dthreadct){
@@ -302,35 +247,34 @@ if(usingThreadedDecoding()){
 }
 
 my ($oldwchar, $wchar, $oldhchar, $hchar, $wpixels, $hpixels) = (0);  	# holds screen size info
-#($wchar, $hchar, $wpixels, $hpixels) = GetTerminalSize();
-# clearScreen();
 
 # af-instance-field to reuse object
-my $af = AliasFile->new($statfile);
+my $afWrite = AliasFile->new($statfile);
 
 # set some values
-$af->set("running", 1);
-$af->set("percent_done", 0);
-$af->set("time_left", "Starting...");
-$af->set("down_speed", "0.00 kB/s");
-$af->set("up_speed", "0.00 kB/s");
-$af->set("transferowner", $tfuser);
-$af->set("seeds", 1);
-$af->set("peers", 1);
-$af->set("sharing", "");
-$af->set("seedlimit", "");
-$af->set("uptotal", 0);
-$af->set("downtotal", 0);
-$af->set("size", $totals{'total size'});
+$afWrite->set("running", 1);
+$afWrite->set("percent_done", 0);
+$afWrite->set("time_left", "Starting...");
+$afWrite->set("down_speed", "0.00 kB/s");
+$afWrite->set("up_speed", "0.00 kB/s");
+$afWrite->set("transferowner", $tfuser);
+$afWrite->set("seeds", 1);
+$afWrite->set("peers", 1);
+$afWrite->set("sharing", "");
+$afWrite->set("seedlimit", "");
+$afWrite->set("uptotal", 0);
+$afWrite->set("downtotal", 0);
+$afWrite->set("size", $totals{'total size'});
 
 # write af
-$af->write();
+$afWrite->write();
 
 my @queuefileset = @fileset;
 my @dlstarttime = Time::HiRes::gettimeofday();
 my $lasttime = [gettimeofday];
 
 # main loop
+my $noMoreWorkTodo = scalar @fileset;
 while (1) {
 
 	doFileAssignments();
@@ -341,36 +285,43 @@ while (1) {
 
 	# 5 secs passed, write stat-file
 	if ($elapsed >= 5) {
+
+		# TODO : read stat-file
+
 		# write stat-file
 		writeStat();
+
 		# set time
 		$lasttime = [gettimeofday];
 	}
 
 	# queueNewNZBFilesFromDir();	# queue up new nzb files from dir (guards inside)
-
 	# See if queuefileset is empty AND all sockets don't have files
 	# when that happens, that's when we're done.
 	# if(not scalar @queuefileset){		# no more files in queue
 	# 	doBodyRequests();		# total hack, but that's where decoding happens...
 	# }
-
 	# dequeueNextNZBFileIfNecessary();
 
+	# remote controls
 	doRemoteControls();
 
+	# exit on quit
 	$quitnow and last;
-	my $done = no_more_work_to_do();
-	if($done and defined($forever)){
+
+	# done + wait a bit
+	$noMoreWorkTodo = no_more_work_to_do();
+	if ($noMoreWorkTodo != 0) {
 		select undef, undef, undef, 0.25;
 		next;
 	}
-	$done and last;
 }
 
-#cursorPos(0, $hchar);
-pc("All downloads complete!\n", 'bold white');
-#cursorPos(0, $hchar);
+# output
+if ($noMoreWorkTodo == 0) {
+	printMessage("All downloads complete!\n");
+}
+printMessage("nzbperl shutting down...\n");
 
 if ($quitnow){# Do some cleanups
 	foreach my $c (@conn){
@@ -384,7 +335,6 @@ if ($quitnow){# Do some cleanups
 }
 
 # TODO: Clean up server socket for remote control schtuff
-
 disconnectAll();
 pc("Waiting for file decoding thread(s) to terminate...\n", 'bold white');
 foreach my $i (1..$dthreadct){
@@ -395,9 +345,14 @@ foreach my $i (0..$dthreadct-1){
 	# Now join on every decoder thread, waiting for all to finish
 	usingThreadedDecoding() and $decThreads[$i]->join;
 }
-pc("Thanks for using ", 'bold yellow');
-pc("nzbperl", 'bold red');
-pc("! Enjoy!\n\n", 'bold yellow');
+
+# delete pid-file
+pidFileDelete();
+
+# exit message
+printMessage("nzbperl exit.\n");
+
+# exit
 
 ################################################################################
 # subs                                                                         #
@@ -408,24 +363,12 @@ pc("! Enjoy!\n\n", 'bold yellow');
 # detect when the main loop body should terminate
 #########################################################################################
 sub no_more_work_to_do {
-	if (!(defined($tfuser))) {
-		foreach my $i (1..$connct){
-			if($conn[$i-1]->{'file'}){
-				return 0;
-			}
-		}
-		return scalar(@queuefileset) == 0;	# no more files in queue, all done
-	} else {
-		# running as TF
-		open(STATFILE,"<$statfile") || die "couldn't open $statfile";
-		my $state = <STATFILE>;
-		if ($state == "1\n") {
+	foreach my $i (1..$connct){
+		if($conn[$i-1]->{'file'}){
 			return 0;
-		} else {
-			unlink $pidfile;
-			return 1;
 		}
 	}
+	return scalar(@queuefileset) == 0;	# no more files in queue, all done
 }
 #########################################################################################
 # This is the thread that does file decoding
@@ -2774,6 +2717,17 @@ sub handleCommandLineOptions {
 						" You must install the IO::Socket::INET6 module to use IPv6";
 	}
 
+	# check tf-args
+	if (!$tfuser) {
+		return "no tfuser given\n";
+	}
+	if (!$statfile) {
+		return "no statfile path given\n";
+	}
+	if (!$pidfile) {
+		return "no pidfile path given\n";
+	}
+
 	return undef;	# success
 }
 
@@ -3016,51 +2970,41 @@ if($errmsg and (length($errmsg))){
 }
 
 }
-################################################################################
-#sub: writeStat
-################################################################################
+
+#------------------------------------------------------------------------------#
+# Sub: writeStat                                                               #
+# Arguments: null                                                              #
+# Returns: return-value of write                                               #
+#------------------------------------------------------------------------------#
 sub writeStat {
-=for later
-	my $dlperc = $totals{'total size'} == 0 ? 0 : int(100.0*$totals{'total bytes'} / $totals{'total size'});
-	# my @stats = ("1", "$dlperc", getETA(), getCurrentSpeed(), "0", "", "", "", "", "", "$totals{'total bytes'}");
-	# open the stat file for writing
-	open(STATFILE,">$statfile");
-	# write the stats
-	#foreach my $stat (@stats) {
-	#	printSTATFILE $stat."\n";
-	#}
-	print STATFILE "1\n"; # state
-	print STATFILE "$dlperc\n"; # progress
-	print STATFILE getETA()."\n"; # ETA
-	print STATFILE getCurrentSpeed()."\n"; # downspeed
-	print STATFILE "0.00 kB/s\n"; # upspeed
-	print STATFILE "$tfuser\n"; # user
-	print STATFILE "1\n"; # seeds
-	print STATFILE "1\n"; # peers
-	print STATFILE "\n"; # sharing
-	print STATFILE "\n"; # seedlimit
-	print STATFILE "0\n"; # uptotal
-	print STATFILE "$totals{'total bytes'}\n"; # downtotal
-	print STATFILE "$totals{'total size'}\n"; # size
-	# close stat file
-	close(STATFILE);
-=cut
 	# set some af-values
-	$af->set("percent_done", $totals{'total size'} == 0 ? 0 : int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
-	$af->set("time_left", getETA());
-	$af->set("down_speed", getCurrentSpeed());
-	$af->set("downtotal", $totals{'total bytes'});
-	$af->set("size", $totals{'total size'});
+	$afWrite->set("percent_done", $totals{'total size'} == 0 ? 0 : int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
+	$afWrite->set("time_left", getETA());
+	$afWrite->set("down_speed", getCurrentSpeed());
+	$afWrite->set("downtotal", $totals{'total bytes'});
+	$afWrite->set("size", $totals{'total size'});
 	# write af
-	$af->write();
+	return $afWrite->write();
 }
 
-################################################################################
-#sub: writePid
-################################################################################
-sub writePid {
+#------------------------------------------------------------------------------#
+# Sub: pidFileWrite                                                            #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub pidFileWrite {
 	printMessage("writing pid-file ".$pidfile." (pid: ".$$.")\n");
 	open(PIDFILE,">$pidfile");
 	print PIDFILE $$."\n";
 	close(PIDFILE);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: pidFileDelete                                                           #
+# Arguments: null                                                              #
+# Returns: return-val of delete                                                #
+#------------------------------------------------------------------------------#
+sub pidFileDelete {
+	printMessage("deleting pid-file ".$pidfile."\n");
+	return unlink($pidfile);
 }
