@@ -49,6 +49,8 @@
 #                                                                              #
 ################################################################################
 use strict;
+use FluxdCommon;
+use AliasFile;
 use File::Basename;
 use IO::File;
 use IO::Select;
@@ -2058,29 +2060,12 @@ sub statMsg {
 	if($logfile){
 		open LOGFH, ">>" . $logfile or
 				(push @statusmsgs, sprintf("%0.2d:%0.2d:%0.2d - Error writing to log file  %s", $logfile) and return 1);
-		print LOGFH getMessage("nzbperl.pl", $str."\n");
+		print LOGFH FluxdCommon::getMessage("nzbperl.pl", $str."\n");
 		close LOGFH;
 	}
 =cut
 	printMessage($str."\n");
 	return 1;
-}
-
-#------------------------------------------------------------------------------#
-# Sub: getMessage                                                              #
-# Arguments: module, message                                                   #
-# Return: string                                                               #
-#------------------------------------------------------------------------------#
-sub getMessage {
-	my $module = shift;
-	my $message = shift;
-	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-		= localtime(time);
-	return sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
-						$year + 1900, $mon + 1, $mday,
-						$hour, $min, $sec,
-						$module, $message
-	);
 }
 
 #------------------------------------------------------------------------------#
@@ -2090,7 +2075,7 @@ sub getMessage {
 #------------------------------------------------------------------------------#
 sub printMessage {
 	my $message = shift;
-	print STDOUT getMessage("nzbperl.pl", $message);
+	print STDOUT FluxdCommon::getMessage("nzbperl.pl", $message);
 }
 
 #------------------------------------------------------------------------------#
@@ -2100,7 +2085,7 @@ sub printMessage {
 #------------------------------------------------------------------------------#
 sub printError {
 	my $message = shift;
-	print STDERR getMessage("nzbperl.pl", $message);
+	print STDERR FluxdCommon::getMessage("nzbperl.pl", $message);
 }
 
 #########################################################################################
@@ -2552,12 +2537,11 @@ sub dropSuspectFiles(){ my @newset; my $dropct = 0; foreach my $i (0..scalar @fi
 	}
 	@fileset = @newset;
 	pc(sprintf("Dropped %d suspect files from NZB (%d files remain)\n", $dropct, scalar @fileset), 'bold yellow');
-	print " -> short delay (for user review)";
+	printMessage(" -> short delay (for user review)\n");
 	foreach(5,4,3,2,1){
-		print "...$_";
 		sleep 1;
 	}
-	print "...let's go!\n";
+	printMessage("...let's go!\n");
 }
 
 #########################################################################################

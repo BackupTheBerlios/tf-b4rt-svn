@@ -60,7 +60,7 @@ function indexStartTransfer($transfer) {
 				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
 				@error("Start failed", "", "", $msgs);
 			} else {
-				sleep(3);
+				sleep(5);
 				@header("location: index.php?iid=index");
 				exit();
 			}
@@ -86,7 +86,7 @@ function indexStartTransfer($transfer) {
 				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
 				@error("Start failed", "", "", $msgs);
 			} else {
-				sleep(3);
+				sleep(5);
 				@header("location: index.php?iid=index");
 				exit();
 			}

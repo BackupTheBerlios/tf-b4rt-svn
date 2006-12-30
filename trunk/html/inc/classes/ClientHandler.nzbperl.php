@@ -109,7 +109,9 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= $this->umask;
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
-		$this->command .= $cfg['perlCmd']." ".escapeshellarg($this->nzbbin);
+		$this->command .= $cfg['perlCmd'];
+		$this->command .= " -I ".$cfg["docroot"]."bin/fluxd";
+		$this->command .= " ".escapeshellarg($this->nzbbin);
 		$this->command .= " --dthreadct ".$cfg['nzbperl_threads'];
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
