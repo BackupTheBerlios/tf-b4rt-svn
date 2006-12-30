@@ -269,11 +269,13 @@ $afWrite->set("size", $totals{'total size'});
 # write af
 $afWrite->write();
 
+# af-instance-field to reuse object
+my $afRead = AliasFile->new();
+
+# main loop
 my @queuefileset = @fileset;
 my @dlstarttime = Time::HiRes::gettimeofday();
 my $lasttime = [gettimeofday];
-
-# main loop
 my $noMoreWorkTodo = scalar @fileset;
 while (1) {
 
@@ -286,10 +288,19 @@ while (1) {
 	# 5 secs passed, write stat-file
 	if ($elapsed >= 5) {
 
-		# TODO : read stat-file
+		# initializestat-file
+		$afRead->initialize($statfile);
+		if ($afRead->get("running") eq "0") {
+			printMessage("stop-request, setting shutdown-flag...\n");
+			$quitnow = 1;
+		}
 
 		# write stat-file
-		writeStat();
+		if ($quitnow == 1) {
+			writeStatShutdown();
+		} else {
+			writeStatRunning();
+		}
 
 		# set time
 		$lasttime = [gettimeofday];
@@ -493,7 +504,6 @@ sub doReceiverPart {
 	}
 }
 
-
 #########################################################################################
 # spoolOutConnBuffData - spool the given connection's data to the output file.
 # There's other stuff here too....it should be made simpler.
@@ -605,6 +615,7 @@ sub connIsStartingSeg {
 		defined($conn->{'bstatus'}) and
 		($conn->{'bstatus'} =~ /starting/));
 }
+
 #########################################################################################
 # startSegmentOnConnection - Handles an input line when a segment is just starting
 # on a connection.  This looks into detecting missing segments and handles server
@@ -785,6 +796,7 @@ sub doBodyRequests {
 		}
 	}
 }
+
 #########################################################################################
 # doStartFileDecoding - initiates or performs a decode for a completed file.
 # If dthreadct == 0, this will decode in place, otherwise it just queues the request
@@ -871,6 +883,7 @@ sub doUUDeViewFile {
 	runPostDecodeProgram($tmpfilename, $decodedir, $truefilename, $isbroken);
 	$islastonnzb and (runPostNzbDecodeProgram($nzbpath, $nzbfile, $decodedir, $truefilename));
 }
+
 #########################################################################################
 # runPostDecodeProgram -- Possibly runs an external program after a file has been
 # decoded (regardless of success).
@@ -897,6 +910,7 @@ sub runPostNzbDecodeProgram {
 		NZBP_NZBDIR => $nzbpath, NZBP_NZBFILE => $nzbfile,
 		NZBP_DECODEDIR => $decodedir, NZBP_LASTFILE => $truefilename);
 }
+
 #########################################################################################
 # Runs a program with environment vars prepended to the commandline as parameters.
 # This is used by the post decoder program runner and the post nzb program runner.
@@ -920,6 +934,7 @@ sub runProgWithEnvParams {
 	statMsg("Finished running $desc program.");
 	drawStatusMsgs();
 }
+
 #########################################################################################
 # Shifts from the file queue and assigns the files to a connection.  When a file is
 # assigned, the first segment is not assigned.
@@ -1051,6 +1066,7 @@ sub reconnectAllDisconnectedNow {
 	}
 	return $retCt;
 }
+
 #########################################################################################
 # Pulls out the next nzb file in queue, parses it, and then add its files/parts to
 # @queuefileset.
@@ -1075,6 +1091,7 @@ sub dequeueNextNZBFile {
 	}
 	return 0;
 }
+
 #########################################################################################
 # Looks at the nzbfile hash and counts the number that haven't been read (are queued)
 #########################################################################################
@@ -1175,6 +1192,7 @@ sub handleRcClients{
 		defined($cmd) and handleRcClientCmd($client, $cmd);
 	}
 }
+
 #########################################################################################
 # handleRcClientCmd - Handle's an rc client command
 #########################################################################################
@@ -1234,6 +1252,7 @@ sub handleRcClientCmd {
 	}
 	sendRemoteResponse($client, $responsemsg);
 }
+
 #########################################################################################
 # sendRemoteResponse -- send a remote command response to the remote client.
 #########################################################################################
@@ -1243,6 +1262,7 @@ sub sendRemoteResponse {
 	# simple protocol, eh?
 	sockSend($sock, sprintf("%d\r\n%s\r\n", length($msg)+2, $msg));
 }
+
 #########################################################################################
 # readRcClientCommand -- Attempts to read a command from the client socket
 # returns the command or undef
@@ -1261,6 +1281,7 @@ sub readRcClientCommand {
 	}
 	return undef;
 }
+
 #########################################################################################
 # readNewRcClientSockData -- Pulls client data off the socket if there is any.
 #########################################################################################
@@ -1330,6 +1351,7 @@ sub generateRcSummary {
 	$summary =~ s/\s+$//;
 	return $summary ;
 }
+
 #########################################################################################
 # Creates all connections and adds them to the @conn global
 #########################################################################################
@@ -1483,6 +1505,7 @@ sub getCurrentSpeed {
 {
   my @old_speeds;
   sub getETA {
+
 	  my ($h, $m, $s);
 	  my $curspeed = getCurrentSpeed(1) || 0; # in bytes/sec
 
@@ -1496,7 +1519,7 @@ sub getCurrentSpeed {
 	  }
 	  $avgspeed /= scalar(@old_speeds);
 	  if ($avgspeed == 0) {
-		 return "??:??:??";
+		 return "-";
 	  }
 
 	  my $remainbytes = $totals{'total size'} - $totals{'total bytes'};
@@ -1505,7 +1528,7 @@ sub getCurrentSpeed {
 	  $m = int(($etasec-(60*60*$h))/60);
 	  $s = $etasec-(60*60*$h)-(60*$m);
 	  if($h > 240){	# likely bogus...just punt
-		 return "??:??:??";
+		 return "-";
 	  }
 	  return sprintf("%.2d:%.2d:%.2d", $h, $m, $s);
 	}
@@ -1547,6 +1570,7 @@ sub drawScreenAndHandleKeys {
 		handleKey($char);
 	}
 }
+
 #########################################################################################
 # Simple helper to determine if we're using threaded or nonthreaded decoding.
 # It looks at the dthreadct variable and returns 1 if dthreadct > 0.
@@ -1554,6 +1578,7 @@ sub drawScreenAndHandleKeys {
 sub usingThreadedDecoding {
 	return ($dthreadct > 0);
 }
+
 #########################################################################################
 # getch -- gets a key in nonblocking mode
 #########################################################################################
@@ -1689,7 +1714,6 @@ sub handleKey {
 	}
 }
 
-
 #########################################################################################
 # When the bandwidth changes, update all bw baselines for all connections
 #########################################################################################
@@ -1757,7 +1781,6 @@ sub drawHeader(){
 	$len += pc(getTotalSpeed(), 'bold green');
 	pc((' ' x ($wchar-$len-4)), 'white');
 }
-
 
 #########################################################################################
 # Draws statuses for all individual connections
@@ -2043,26 +2066,6 @@ sub statMsg {
 	return 1;
 }
 
-#------------------------------------------------------------------------------#
-# Sub: printMessage                                                            #
-# Arguments: message                                                           #
-# Return: null                                                                 #
-#------------------------------------------------------------------------------#
-sub printMessage {
-	my $message = shift;
-	print STDOUT FluxdCommon::getMessage("nzbperl.pl", $message);
-}
-
-#------------------------------------------------------------------------------#
-# Sub: printError                                                              #
-# Arguments: message                                                           #
-# Return: null                                                                 #
-#------------------------------------------------------------------------------#
-sub printError {
-	my $message = shift;
-	print STDERR FluxdCommon::getMessage("nzbperl.pl", $message);
-}
-
 #########################################################################################
 # Socket send that can handle both SSL and regular socket...
 #########################################################################################
@@ -2075,7 +2078,6 @@ sub sockSend {
 		send $sock, $msg, 0;
 	}
 }
-
 
 #########################################################################################
 # Reads a line from the socket in a blocking manner.
@@ -2095,7 +2097,6 @@ sub blockReadLine {
 	}
 	return $line;
 }
-
 
 #########################################################################################
 # Gracefully close down all server connections.
@@ -2121,7 +2122,6 @@ sub disconnectAll {
 		$conn[$i-1]->{'sock'} = undef;
 	}
 }
-
 
 #########################################################################################
 # human readable time value (from seconds)
@@ -2188,6 +2188,7 @@ sub computeTotalNZBSize {
 	}
 	return $tot;
 }
+
 #########################################################################################
 # Parse NZB file and return array of files
 # TODO: The structure returned from this function should really be documented....but
@@ -2361,6 +2362,7 @@ sub sortFilesBySubject {
 	}
 	return @fileset;
 }
+
 #########################################################################################
 # Traverses a fileset and resets the islastonnzb flag.
 #########################################################################################
@@ -2376,6 +2378,7 @@ sub resetLastOnNzbFlag {
 	}
 	return @fileset;
 }
+
 #########################################################################################
 # Derives a path from a filename (passed on commandline).
 # The result isn't necessarily absolute, can be relative
@@ -2388,6 +2391,7 @@ sub derivePath {
 	}
 	return cwd;
 }
+
 #########################################################################################
 # Main entry point for NZB file sanity checking
 #########################################################################################
@@ -2756,6 +2760,7 @@ sub haveUUDeview {
 	pc("Error: uudeview not found in path...aborting!\n", "bold red");
 	return 0;
 }
+
 #########################################################################################
 # Reads options from the config file and tucks them into @ARGV, so that they all
 # look like they were passd on the commandline.  So, when this returns (successfully),
@@ -2962,27 +2967,68 @@ print <<EOL
 
 EOL
 ;
-if($errmsg and (length($errmsg))){
-	print " *****************************************************************\n";
-	print " ERROR:\n";
-	print " $errmsg\n";
-	print " *****************************************************************\n";
-}
+	if($errmsg and (length($errmsg))){
+		print " *****************************************************************\n";
+		print " ERROR:\n";
+		print " $errmsg\n";
+		print " *****************************************************************\n";
+	}
 
 }
 
 #------------------------------------------------------------------------------#
-# Sub: writeStat                                                               #
+# Sub: getAliasSpeed                                                           #
+# Arguments: null                                                              #
+# Returns: down-speed formatted for alias-file                                 #
+#------------------------------------------------------------------------------#
+sub getAliasSpeed {
+	my $sumbps = 0;
+	foreach my $i (1..$connct){
+		my $c = $conn[$i-1];
+		next unless $c->{'file'};	# skip inactive connections
+		$sumbps += ($c->{'filebytes'} - $c->{'bwstartbytes'})/Time::HiRes::tv_interval($c->{'bwstarttime'});
+	}
+	return sprintf("%0.2f %s", ($sumbps / 1024), "kB/s");
+}
+
+#------------------------------------------------------------------------------#
+# Sub: writeStatRunning                                                        #
 # Arguments: null                                                              #
 # Returns: return-value of write                                               #
 #------------------------------------------------------------------------------#
-sub writeStat {
+sub writeStatRunning {
 	# set some af-values
 	$afWrite->set("percent_done", $totals{'total size'} == 0 ? 0 : int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
 	$afWrite->set("time_left", getETA());
-	$afWrite->set("down_speed", getCurrentSpeed());
+	$afWrite->set("down_speed", getAliasSpeed());
 	$afWrite->set("downtotal", $totals{'total bytes'});
-	$afWrite->set("size", $totals{'total size'});
+	# write af
+	return $afWrite->write();
+}
+
+#------------------------------------------------------------------------------#
+# Sub: writeStatShutdown                                                       #
+# Arguments: null                                                              #
+# Returns: return-value of write                                               #
+#------------------------------------------------------------------------------#
+sub writeStatShutdown {
+	# set some af-values
+	$afWrite->set("running", 0);
+	$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : 0 - int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
+	if ($noMoreWorkTodo == 0) {
+		$afWrite->set("time_left", "Download Succeeded!");
+	} else {
+		$afWrite->set("time_left", "Transfer Stopped");
+	}
+	$afWrite->set("down_speed", "");
+	$afWrite->set("up_speed", "");
+	$afWrite->set("transferowner", $tfuser);
+	$afWrite->set("seeds", "");
+	$afWrite->set("peers", "");
+	$afWrite->set("sharing", "");
+	$afWrite->set("seedlimit", "");
+	$afWrite->set("uptotal", 0);
+	$afWrite->set("downtotal", $totals{'total bytes'});
 	# write af
 	return $afWrite->write();
 }
@@ -3007,4 +3053,24 @@ sub pidFileWrite {
 sub pidFileDelete {
 	printMessage("deleting pid-file ".$pidfile."\n");
 	return unlink($pidfile);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printMessage                                                            #
+# Arguments: message                                                           #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub printMessage {
+	my $message = shift;
+	print STDOUT FluxdCommon::getMessage("nzbperl.pl", $message);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: printError                                                              #
+# Arguments: message                                                           #
+# Return: null                                                                 #
+#------------------------------------------------------------------------------#
+sub printError {
+	my $message = shift;
+	print STDERR FluxdCommon::getMessage("nzbperl.pl", $message);
 }

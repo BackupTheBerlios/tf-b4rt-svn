@@ -488,7 +488,7 @@ class ClientHandler
             // The transfer is being stopped but is not completed dowloading
             $this->af->percent_done = ($this->af->percent_done + 100)*-1;
             $this->af->running = "0";
-            $this->af->time_left = "Torrent Stopped";
+            $this->af->time_left = "Transfer Stopped";
         } else {
             // transfer was seeding and is now being stopped
             $this->af->percent_done = 100;
