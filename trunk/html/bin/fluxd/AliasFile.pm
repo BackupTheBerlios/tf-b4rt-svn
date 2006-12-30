@@ -232,6 +232,38 @@ sub getData {
 	return %data;
 }
 
+#------------------------------------------------------------------------------#
+# Sub: write                                                                   #
+# Arguments: null                                                              #
+# Returns: 1|0                                                                 #
+#------------------------------------------------------------------------------#
+sub write {
+	# open file
+	open(ALIASFILE,">$aliasFile") or return 0;
+	my $retVal = 1;
+	# content
+	my $content = "";
+	$content .= $data{"running"}."\n";
+	$content .= $data{"percent_done"}."\n";
+	$content .= $data{"time_left"}."\n";
+	$content .= $data{"down_speed"}."\n";
+	$content .= $data{"up_speed"}."\n";
+	$content .= $data{"transferowner"}."\n";
+	$content .= $data{"seeds"}."\n";
+	$content .= $data{"peers"}."\n";
+	$content .= $data{"sharing"}."\n";
+	$content .= $data{"seedlimit"}."\n";
+	$content .= $data{"uptotal"}."\n";
+	$content .= $data{"downtotal"}."\n";
+	$content .= $data{"size"};
+	# print
+	print ALIASFILE $content or $retVal = 0;
+	# close file
+	close(ALIASFILE);
+	# return
+	return $retVal;
+}
+
 ################################################################################
 # make perl happy                                                              #
 ################################################################################
