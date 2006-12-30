@@ -1631,7 +1631,7 @@ sub check {
 		FluxdCommon::printMessage("CORE", "   - FAILED : DBI\n");
 	}
 	my $dbdwarnings = 0;
-	@mods = ('DBD::mysql', 'DBD::SQLite', 'DBD::Pg',);
+	@mods = ('DBD::mysql', 'DBD::SQLite', 'DBD::Pg');
 	foreach my $mod (@mods) {
 		if (eval "require $mod")  {
 			FluxdCommon::printMessage("CORE", "   - OK : ".$mod."\n");
