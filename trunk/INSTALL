@@ -378,6 +378,9 @@ Additional / Optional
    found at :
    http://www.zope.org/Products/ZopeInterface
 
+-- UUDeview is needed for nzbperl.pl. It can be found at :
+   http://fpx.de/fp/Software/UUDeview/
+
 -- unrar (for Linux) and rarbsd (for FreeBSD) can be found at :
    http://www.rarlab.com/rar/
 
