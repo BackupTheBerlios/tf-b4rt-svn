@@ -31,8 +31,9 @@ System Requirements
    higher for Mainline (BitTorrent).
    (http://www.python.org)
 
--- Perl 5.6 or higher for fluxd, tfrss.pl, ttools.pl and
-   fluxpoller.pl
+-- Perl 5.6 or higher for fluxd, nzbperl.pl, ttools.pl and
+   fluxpoller.pl (see Section "Perl-Modules" for Perl-Module-
+   Requirements)
    (http://www.perl.org)
 
 -- Safe Mode must be turned off.
@@ -416,6 +417,20 @@ Perl-Modules
 -- Fluxinet.pm (part of fluxd)
    * IO::Select       (perl -MCPAN -e "install IO::Select")
    * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
+
+-- nzbperl.pl (usenet transfer-client)
+   Required :
+   * IO::File
+   * IO::Select
+   * IO::Socket::INET
+   * File::Basename
+   * Getopt::Long
+   * Cwd
+   * XML::Simple
+   * XML::DOM
+   Optional :
+   * threads
+   * Thread::Queue
 
 -- ttools.pl (alternative metainfoclient)
    * LWP::UserAgent   (perl -MCPAN -e "install LWP::UserAgent")
