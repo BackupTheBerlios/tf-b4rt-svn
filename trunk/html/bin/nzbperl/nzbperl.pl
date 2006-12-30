@@ -137,7 +137,7 @@ my %optionsmap = ('server=s' => \$server, 'user=s' => \$user, 'pw=s' => \$pw,
 ################################################################################
 
 # parse args
-if(defined(my $errmsg = handleCommandLineOptions())){
+if (defined(my $errmsg = handleCommandLineOptions())) {
 	showUsage($errmsg);
 	exit 1;
 }
@@ -178,11 +178,16 @@ if(defined($proxy_user) and not defined($proxy_passwd)){
 }
 =cut
 
-if ($tfuser and !$statfile) {
+# check tf-args
+if (!$tfuser) {
+	printError("no tfuser given\n");
+	exit;
+}
+if (!$statfile) {
 	printError("no statfile path given\n");
 	exit;
 }
-if ($tfuser and !$pidfile) {
+if (!$pidfile) {
 	printError("no pidfile path given\n");
 	exit;
 }
@@ -196,7 +201,8 @@ if (defined($tfuser)) {
 }
 =cut
 
-$pidfile and writePid();
+# write pid
+writePid();
 
 my $lastDirCheckTime = 0;
 my $lastDiskFullTime = undef;
@@ -210,10 +216,11 @@ my @statusmsgs;
 
 # fileset
 my @fileset;
-while(scalar(@ARGV) > 0){
+while (scalar(@ARGV) > 0){
 	my $nzbfilename = shift @ARGV; #$ARGV[0];
 	my @fsparts = parseNZB($nzbfilename, 1);
-	if(!defined($fsparts[0])){
+	if (!defined($fsparts[0])) {
+		printError("No Fileset-Parts found. exit.");
 		exit;
 	}
 	@fsparts = regexAndSkipping(@fsparts);	# It checks options inside too
@@ -268,10 +275,11 @@ statMsg('Welcome -- nzbperl started!');
 my @lastdrawtime = Time::HiRes::gettimeofday();
 my @conn;
 createNNTPConnections();
-if($user){
+if ($user){
 	doLogins() or die "Error authenticating to server.\nPlease check the user/pass info and try again.";
 }
 
+=for later
 if($daemon){
 	printMessage("nzbperl is running in --daemon mode, output suppressed\n");
 	printMessage("Check log for additional details during run...\n");
@@ -281,13 +289,13 @@ if($daemon){
 	#close STDOUT;
 	#close STDERR;
 }
+=cut
 
 # Start up the decoding thread(s)...
 my ($decMsgQ, $decQ, @decThreads);
 if(usingThreadedDecoding()){
 	$decMsgQ = Thread::Queue->new;	# For status msgs
 	$decQ = Thread::Queue->new;
-
 	foreach my $i (1..$dthreadct){
 		push @decThreads, threads->new(\&file_decoder_thread, $i);
 	}
@@ -295,36 +303,60 @@ if(usingThreadedDecoding()){
 
 my ($oldwchar, $wchar, $oldhchar, $hchar, $wpixels, $hpixels) = (0);  	# holds screen size info
 #($wchar, $hchar, $wpixels, $hpixels) = GetTerminalSize();
-clearScreen();
+# clearScreen();
+
+# af-instance-field to reuse object
+my $af = AliasFile->new($statfile);
+
+# set some values
+$af->set("running", 1);
+$af->set("percent_done", 0);
+$af->set("time_left", "Starting...");
+$af->set("down_speed", "0.00 kB/s");
+$af->set("up_speed", "0.00 kB/s");
+$af->set("transferowner", $tfuser);
+$af->set("seeds", 1);
+$af->set("peers", 1);
+$af->set("sharing", "");
+$af->set("seedlimit", "");
+$af->set("uptotal", 0);
+$af->set("downtotal", 0);
+$af->set("size", $totals{'total size'});
+
+# write af
+$af->write();
 
 my @queuefileset = @fileset;
 my @dlstarttime = Time::HiRes::gettimeofday();
 my $lasttime = [gettimeofday];
-$tfuser and writeStat();
-while(1){
+
+# main loop
+while (1) {
 
 	doFileAssignments();
 	doBodyRequests();
-
 	doReceiverPart();
+
 	my $elapsed = tv_interval ( $lasttime );
+
+	# 5 secs passed, write stat-file
 	if ($elapsed >= 5) {
-
-		# TODO : read state from stat-file
-
+		# write stat-file
 		writeStat();
+		# set time
 		$lasttime = [gettimeofday];
 	}
 
-	queueNewNZBFilesFromDir();	# queue up new nzb files from dir (guards inside)
+	# queueNewNZBFilesFromDir();	# queue up new nzb files from dir (guards inside)
 
 	# See if queuefileset is empty AND all sockets don't have files
 	# when that happens, that's when we're done.
-	if(not scalar @queuefileset){		# no more files in queue
-		doBodyRequests();		# total hack, but that's where decoding happens...
-	}
+	# if(not scalar @queuefileset){		# no more files in queue
+	# 	doBodyRequests();		# total hack, but that's where decoding happens...
+	# }
 
-	dequeueNextNZBFileIfNecessary();
+	# dequeueNextNZBFileIfNecessary();
+
 	doRemoteControls();
 
 	$quitnow and last;
@@ -336,11 +368,11 @@ while(1){
 	$done and last;
 }
 
-cursorPos(0, $hchar);
+#cursorPos(0, $hchar);
 pc("All downloads complete!\n", 'bold white');
-cursorPos(0, $hchar);
+#cursorPos(0, $hchar);
 
-if($quitnow){# Do some cleanups
+if ($quitnow){# Do some cleanups
 	foreach my $c (@conn){
 		next unless $c->{'file'};
 		if($c->{'tmpfile'}){
@@ -2988,6 +3020,7 @@ if($errmsg and (length($errmsg))){
 #sub: writeStat
 ################################################################################
 sub writeStat {
+=for later
 	my $dlperc = $totals{'total size'} == 0 ? 0 : int(100.0*$totals{'total bytes'} / $totals{'total size'});
 	# my @stats = ("1", "$dlperc", getETA(), getCurrentSpeed(), "0", "", "", "", "", "", "$totals{'total bytes'}");
 	# open the stat file for writing
@@ -3011,7 +3044,17 @@ sub writeStat {
 	print STATFILE "$totals{'total size'}\n"; # size
 	# close stat file
 	close(STATFILE);
+=cut
+	# set some af-values
+	$af->set("percent_done", $totals{'total size'} == 0 ? 0 : int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
+	$af->set("time_left", getETA());
+	$af->set("down_speed", getCurrentSpeed());
+	$af->set("downtotal", $totals{'total bytes'});
+	$af->set("size", $totals{'total size'});
+	# write af
+	$af->write();
 }
+
 ################################################################################
 #sub: writePid
 ################################################################################
