@@ -21,6 +21,8 @@ $Id$
 - bug in clienthandler (could cause wrong inserted totals + xfer and wrong
   calculated sharekill (when a start is skipped))
 
+- various minors.
+
 
 ***** updates *****
 

@@ -1284,7 +1284,7 @@ function configSettings()
 		<input type="Hidden" name="continue" value="configSettings">
 		<tr>
 			<td align="left" width="350" valign="top"><strong>Path</strong><br>
-			Define the PATH where the downloads will go <br>(make sure it ends with a / [slash]).
+			Define the PATH where the downloads will go <br>
 			It must be chmod'd to 777:
 			</td>
 			<td valign="top">
@@ -2331,13 +2331,13 @@ function controlQueueManager() {
 				if ($queueManager->isQueueManagerReadyToStart()) {
 					if ($queueManager->prepareQueueManager()) {
 						$queueManager->startQueueManager();
-						$message = '<br><strong>QueueManager '. $queueManager->managerName .' started.</strong><br><br>';
+						$message = 'QueueManager '. $queueManager->managerName .' started.';
 						break;
 					}
 				}
-				$message = '<br><font color="red">Error starting queuemanager '.$queuemanager.'</font><br><br>';
+				$message = 'Error starting queuemanager '.$queuemanager;
 			} else {
-				$message = '<br><font color="red">Error : queuemanager not set.</font><br><br>';
+				$message = 'Error : queuemanager not set.';
 			}
 		break;
 		case "stop":
@@ -2351,13 +2351,13 @@ function controlQueueManager() {
 			$queueManager = QueueManager::getQueueManagerInstance($cfg);
 			if ($queueManager->isQueueManagerRunning()) {
 				$queueManager->stopQueueManager();
-				$message = '<br><strong>Stop-Command sent. Wait until shutdown and dont click stop again now !</strong><br><br>';
+				$message = 'Stop-Command sent. Wait until shutdown and dont click stop again now !';
 				header("Location: admin.php?op=queueSettings&m=".urlencode($message).'&s=1');
 				exit;
 			}
 		break;
 		default:
-			$message = '<br><font color="red">Error : no control-operation.</font><br><br>';
+			$message = 'Error : no control-operation.';
 		break;
 	}
 	if ($message != "")
@@ -2392,7 +2392,7 @@ function updateQueueSettings() {
 		$_POST["Qmgr_host"] != $cfg["Qmgr_host"] ||
 		$_POST["Qmgr_port"] != $cfg["Qmgr_port"] )
 	{
-		$message = '<br>Settings changed.<br>';
+		$message = 'Settings changed. ';
 		if ($cfg["AllowQueing"] != 0) {
 			include_once("QueueManager.php");
 			$queueManager = QueueManager::getQueueManagerInstance($cfg);
@@ -2420,7 +2420,7 @@ function updateQueueSettings() {
 						$needsRestart = true;
 					//
 					if ($needsRestart)
-					   $message .= 'You have to restart '. $queueManager->managerName .' to use the new Settings.<br><br>';
+					   $message .= 'You have to restart '. $queueManager->managerName .' to use the new Settings.';
 					// reconfig of running daemon
 					switch ($queueManager->managerName) {
 						case "tfqmgr":
@@ -2443,11 +2443,9 @@ function updateQueueSettings() {
 							break;
 					}
 				} else {
-				   $message .= 'You have to restart '. $queueManager->managerName .' to use the new Settings.<br><br>';
+				   $message .= 'You have to restart '. $queueManager->managerName .' to use the new Settings.';
 				}
 			}
-		} else {
-			$message .= '<br><br>';
 		}
 		$settings = $_POST;
 		saveSettings($settings);

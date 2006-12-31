@@ -624,7 +624,7 @@ if (isset($_REQUEST["m"])) {
 				$hashes = array();
 				foreach ($torrents as $torrent)
 					array_push($hashes, getTorrentHash($torrent));
-				if ($dirHandle = opendir($cfg["path"].".transmission/cache/")) {
+				if ($dirHandle = @opendir($cfg["path"].".transmission/cache/")) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ($file{0} == "r") {
 							$thash = substr($file,-40);

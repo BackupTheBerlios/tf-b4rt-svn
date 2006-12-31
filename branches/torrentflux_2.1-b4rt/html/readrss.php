@@ -79,7 +79,7 @@ echo "<ul>";
 // Loop through each RSS feed
 foreach( $arURL as $rid => $url )
 {
-    if( $rs = $rss->get( $url ) )
+    if( $rs = @$rss->get( $url ) )
     {
         if( !empty( $rs["items"] ) )
         {
@@ -123,7 +123,7 @@ if (isset($rssfeed) && is_array($rssfeed)) {
                 if( empty( $link ) )
                     continue;
                 if($link != "" && $title2 !="")
-                    $content .= "<tr><td><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\" title=\"".$link."\"><a href=\"index.php?url_upload=".$link."\">".$title2."</a></td><td> ".$pubDate."</td></tr>\n";
+                    $content .= "<tr><td><a href=\"index.php?url_upload=".$link."\"><img src=\"images/download_owner.gif\" width=\"16\" border=\"0\" height=\"16\" title=\"".$link."\">".$title2."</a></td><td> ".$pubDate."</td></tr>\n";
                 else
                     $content .= "<tr><td  class=\"tiny\"><img src=\"images/download_owner.gif\" width=\"16\" height=\"16\">".ScrubDescription(str_replace("Torrent: <a href=\"", "Torrent: <a href=\"index.php?url_upload=", html_entity_decode($rs["items"][$i]["description"])), $title2)."</td><td valign=\"top\">".$pubDate."</td></tr>";
             }
