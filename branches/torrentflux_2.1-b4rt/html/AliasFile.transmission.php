@@ -27,7 +27,7 @@ class AliasFileTransmission extends AliasFile
     // ctor
     function AliasFileTransmission($inFile,$user="",$cfg) {
 		// version
-		$this->version = "0.3";
+		$this->version = "0.4";
         // init conf
         $this->Initialize($cfg);
         // init some vars

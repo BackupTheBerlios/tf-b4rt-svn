@@ -27,7 +27,7 @@ class RunningTorrentTornado extends RunningTorrent
     // ctor
     function RunningTorrentTornado($psLine,$cfg) {
 		// version
-		$this->version = "0.3";
+		$this->version = "0.4";
         // init conf
         $this->Initialize($cfg);
         //

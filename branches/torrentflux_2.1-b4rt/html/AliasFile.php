@@ -122,5 +122,4 @@ class AliasFile
     function GetRealDownloadTotal() { return; }
 }
 
-
 ?>

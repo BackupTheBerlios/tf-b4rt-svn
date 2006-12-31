@@ -32,7 +32,6 @@ if (!function_exists("posix_geteuid"))
 function netstatConnectionsSum() {
     global $cfg;
     include_once("ClientHandler.php");
-    // messy...
     $nCount = 0;
     switch (_OS) {
         case 1: // linux
@@ -90,7 +89,6 @@ function netstatConnectionsByPid($torrentPid) {
 function netstatPortList() {
     global $cfg;
     include_once("ClientHandler.php");
-    // messy...
     $retStr = "";
     switch (_OS) {
         case 1: // linux
@@ -143,7 +141,6 @@ function netstatPortByPid($torrentPid) {
 function netstatHostList() {
     global $cfg;
     include_once("ClientHandler.php");
-    // messy...
     $retStr = "";
     switch (_OS) {
         case 1: // linux

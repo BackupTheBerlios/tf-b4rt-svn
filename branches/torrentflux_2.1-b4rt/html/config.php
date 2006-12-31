@@ -135,7 +135,7 @@ define('_URL_DEREFERRER','dereferrer.php?u=');
 define('_AUTH_BASIC_REALM','TorrentFlux');
 
 // public stats (xml|rss)
-define('_PUBLIC_STATS',0);
+define('_PUBLIC_STATS', 0);
 
 /**
  * gets version-info of local version

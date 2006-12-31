@@ -27,7 +27,7 @@ class RunningTorrentTransmission extends RunningTorrent
     // ctor
     function RunningTorrentTransmission($psLine,$cfg) {
 		// version
-		$this->version = "0.3";
+		$this->version = "0.4";
         // init conf
         $this->Initialize($cfg);
         //

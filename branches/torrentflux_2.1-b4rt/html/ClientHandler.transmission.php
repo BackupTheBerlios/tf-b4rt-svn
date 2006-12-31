@@ -30,7 +30,7 @@ class ClientHandlerTransmission extends ClientHandler
     function ClientHandlerTransmission($cfg) {
         $this->handlerName = "transmission";
 		// version
-		$this->version = "0.31";
+		$this->version = "0.4";
         //
         $this->binSocket = "transmissionc";
         //
