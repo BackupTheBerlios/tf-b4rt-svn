@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1288 2006-12-27 01:04:30Z livings124 $
+ * $Id: transmission.c 1302 2006-12-30 19:24:09Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -560,7 +560,16 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
 
     s->downloaded = tor->downloadedCur + tor->downloadedPrev;
     s->uploaded   = tor->uploadedCur   + tor->uploadedPrev;
-
+    
+    if( s->downloaded == 0 )
+    {
+        s->ratio = s->uploaded == 0 ? TR_RATIO_NA : TR_RATIO_INF;
+    }
+    else
+    {
+        s->ratio = (float)s->uploaded / (float)s->downloaded;
+    }
+    
     tr_lockUnlock( &tor->lock );
 
     return s;

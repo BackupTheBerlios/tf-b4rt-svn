@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1286 2006-12-27 00:22:38Z livings124 $
+ * $Id: transmission.h 1302 2006-12-30 19:24:09Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -391,6 +391,10 @@ struct tr_stat_s
     uint64_t            downloaded;
     uint64_t            uploaded;
     float               swarmspeed;
+
+#define TR_RATIO_NA  -1
+#define TR_RATIO_INF -2
+    float               ratio;
 };
 
 struct tr_peer_stat_s

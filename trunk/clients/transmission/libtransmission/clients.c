@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1273 2006-12-24 01:08:23Z livings124 $
+ * $Id: clients.c 1301 2006-12-30 18:00:45Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -222,6 +222,10 @@ char * tr_clientForId( uint8_t * id )
         asprintf( &ret, "XBT Client %c%c%c%s", id[3], id[4], id[5],
                   id[6] == 'd' ? " (debug)" : "" );
     }
+    else if( !memcmp( id, "Mbrst", 5 ) )
+    {
+        asprintf( &ret, "burst! %c.%c.%c", id[5], id[7], id[9] );
+    }
     else if( !memcmp( id, "LIME", 4 ) )
     {
         asprintf( &ret, "Limewire (%c%c%c%c)", id[4], id[5], id[6], id[7] );
@@ -233,6 +237,10 @@ char * tr_clientForId( uint8_t * id )
     else if( !memcmp( id, "10-------", 9 ) )
     {
         asprintf( &ret, "JVtorrent" );
+    }
+    else if( !memcmp( id, "346-", 4 ) )
+    {
+        asprintf( &ret, "TorrentTopia" );
     }
 
     /* No match */
