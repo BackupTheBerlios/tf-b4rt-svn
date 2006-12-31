@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 // defines
-define('_NAME', 'TorrentFlux 2.1-b4rt-97');
+define('_NAME', 'TorrentFlux 2.1-b4rt-98');
 preg_match('|.* (\d+) .*|', '$Revision$', $revisionMatches);
 define('_REVISION', $revisionMatches[1]);
 define('_TITLE', _NAME.' - check - Revision '._REVISION);
