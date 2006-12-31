@@ -3,6 +3,43 @@ $Id$
 ================================================================================
 
 
+  2.1-b4rt-98
+
+
+***** changes *****
+
+- do not use gethostbyaddr in AuditAction + resetOwner
+
+- validate searchEngine-param in torrentSearch.php
+
+- added checks to operations and pages to check if a feature is activated.
+  show error page (and log an error) if a feature is disabled and accessed.
+
+
+***** fixes *****
+
+- bug in clienthandler (could cause wrong inserted totals + xfer and wrong
+  calculated sharekill (when a start is skipped))
+
+- various minors.
+
+
+***** updates *****
+
+- BitTornado 0.3.18
+
+- Transmission :
+  * tfCLI-version : 1995
+  * Transmission-version : 0.7-svn-1302
+
+- added update-SQL-files for upgrades from TF 2.3
+
+- Search-Engines :
+  * Demonoid 1.06
+
+
+--------------------------------------------------------------------------------
+
   2.1-b4rt-972
 
 
