@@ -199,8 +199,6 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_d
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_format','xml')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0')");
-// tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : mysql
@@ -328,17 +326,6 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
-// tf_links
-array_push($queries[$cqt][$cdb], "DROP TABLE tf_links;");
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_links (
-  lid INT4 DEFAULT nextval('tf_links_lid_seq'),
-  url VARCHAR(255) NOT NULL DEFAULT '',
-  sitename VARCHAR(255) NOT NULL DEFAULT 'Old Link',
-  sort_order INT2  DEFAULT '0',
-  PRIMARY KEY (lid),
-  CHECK (sort_order>=0)
-)");
 // tf_torrents
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_torrents (
@@ -435,10 +422,8 @@ $cqt = 'data';
 $queries[$cqt][$cdb] = array();
 foreach ($queries['data']['common'] as $dataQuery)
 	array_push($queries[$cqt][$cdb], $dataQuery);
-// tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES ('0','http://tf-b4rt.berlios.de/','tf-b4rt','0')");
+
 // sequences
-array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links))");
 array_push($queries[$cqt][$cdb], "SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles))");
 
 ?>

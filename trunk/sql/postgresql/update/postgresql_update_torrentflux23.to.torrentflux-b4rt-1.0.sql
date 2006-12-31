@@ -304,11 +304,6 @@ INSERT INTO tf_settings VALUES ('fluxd_Maintenance_trestart','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_interval','600');
 
 --
--- Sequences for table tf_links
---
-SELECT SETVAL('tf_links_lid_seq',(select case when max(lid)>0 then max(lid)+1 else 1 end from tf_links));
-
---
 -- Sequences for table tf_trprofiles
 --
 SELECT SETVAL('tf_trprofiles_id_seq',(select case when max(id)>0 then max(id)+1 else 1 end from tf_trprofiles));

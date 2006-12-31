@@ -199,8 +199,6 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_d
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_format','xml')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_attach','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0')");
-// tf_links
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_links VALUES (NULL,'http://tf-b4rt.berlios.de/','tf-b4rt','0')");
 
 // -----------------------------------------------------------------------------
 // SQL : mysql
