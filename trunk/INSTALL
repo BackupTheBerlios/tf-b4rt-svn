@@ -233,7 +233,7 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-97x
 
 
 -----------------------------------------------------------------
-Upgrade from TorrentFlux 2.1/2.2/2.3 with "upgrade.php"
+Upgrade from official TorrentFlux 2.1/2.2/2.3 with "upgrade.php"
 -----------------------------------------------------------------
 
 1. If QueueManager is running dequeue all torrents and stop it.
@@ -277,7 +277,7 @@ Upgrade from TorrentFlux 2.1/2.2/2.3 with "upgrade.php"
 
 
 -----------------------------------------------------------------
-Manual Upgrade from TorrentFlux 2.1/2.2/2.3
+Manual Upgrade from official TorrentFlux 2.1/2.2/2.3
 -----------------------------------------------------------------
 
 1. If QueueManager is running dequeue all torrents and stop it.
