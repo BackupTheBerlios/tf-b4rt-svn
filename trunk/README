@@ -1,0 +1,57 @@
+Introduction:
+Torrentflux-b4rt is an open source web based transfer control client based on the popular torrentflux client.  Install torrentflux-b4rt on your webserver and you can control your transfers from anywhere - whether they be torrents, wget transfers or even usenet transfers.  tfb is very easy to install on a webserver and includes a simple setup script which can be accessed from a web browser.  Just upload the files to your webserver, run he setup script and your tfb installation is ready to go.
+
+tfb incorporates a huge number of advanced options to allow you finer grained control of your bittorrent transfers, as well as supporting other transfer options like wget and USENET/nzb transfers.  The administration panel in tfb includes a large number of options to allow you fine grained control over every aspect of your bittorrent/transfers usage.  tfb is also a multi-user application, allowing you to create individual accounts and assign restrictions to those accounts as you wish.
+
+For a full list of features included in tfb, please see the FEATURES file.
+
+
+Requirements:
+TODO
+
+
+TODO: Add alternative options for support - ie superadmin/updates section?
+Support:
+For support with your tfb installation please see the tfb forum:
+
+http://tf-b4rt.berlios.de/forum/
+
+Please take the time to search the forum first for a solution to your problem.  If you still can't find the solution after searching, please leave a clear and concise message stating:
+
+a. The version of tfb you are using.
+b. The problem that occurs and what you did to see the problem.
+c. Ask a question and make sure the question doesn't require just a yes/no answer!  This sounds odd but saves a lot of time - asking 'is this broken?' will probably get you a 'yes' or 'no' answer - asking 'why does this happen when I do this/that/other?' will probably get you a better answer.
+
+
+TODO: separate FEATURES file for features
+Features:
+- Basic Usage
+  o Upload torrents:
+    - upload individual files from your local machine to the webserver
+    - upload multiple files in one go from your local machine to the webserver
+    - upload files directly to your webserver from another webserver
+
+  o AJAX updates for maximum info with minimal bandwidth
+    - Display of transfer lists can be easily configured to use AJAX to update transfer stats in real time.  This saves on bandwidth.
+    - Individual torrent transfer windows can also use AJAX to update stats in real time.
+
+  o Choice of BitTorrent clients to suit your needs - tfb supports various clients including:
+    - Original BitTorrent/Mainline (supports trackerless torrents and encryption)
+    - BitTornado (uses slightly less resources than the original BT, allows file priority for downloading files selectively)
+    - Transmission (much smaller memory footprint without too much loss in functionality)
+
+  o Individual torrents 'remember' their own settings, allowing you to use different settings for different torrents.
+    Universal settings available on a per-torrent basis:
+    - Option to choose which BitTorrent client to use for each torrent
+    - File priority - only download certain files from a torrent
+    - Option to save each torrent to a specific location
+    - Around 6 other options configurable as well as many more from the Admin settings, see below.
+
+  o Control torrents directly in the web browser:
+    - start, stop, resume and delete individual torrents
+    - start, stop, resume and delete discrete torrents in one operation - easily start/stop/resume all torrents in one go
+
+  o View torrent transfer information:
+    - cumulative transfer statistics are available for every torrent in the transfer list.  tfb keeps track of how much data has been transfered up and down even when you stop and restart the torrent.  This allows you to keep track of what your actual ratio is rather than what the current session ratio is.
+    - logfiles are maintained for each and every torrent, allowing you to easily see when problems occur with your transfers.
+    - current upload/download bandwidth rate as well as the number of seeds/peers and estimated time left is viewable in the transfer list
