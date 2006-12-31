@@ -162,14 +162,14 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-94
 
 
 -----------------------------------------------------------------
-Manual Upgrade from TorrentFlux 2.1/2.2/2.3
+Manual Upgrade from official TorrentFlux 2.1/2.2/2.3
 -----------------------------------------------------------------
 
 1. If QueueManager is running dequeue all torrents and stop it.
 
 2. Stop all transfers.
 
-3. Delete content of docroot of the 2.1/2.2/2.3 installation. 
+3. Delete content of docroot of the 2.1/2.2/2.3 installation.
    (recursive)
 
 4. Untar the package into a directory then copy the contents of
