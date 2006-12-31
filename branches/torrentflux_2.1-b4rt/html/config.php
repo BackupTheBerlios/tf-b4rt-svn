@@ -129,10 +129,10 @@ define('_ID_HOSTS','Hosts');
 define('_ID_MRTG','Graph');
 
 // url constants
-define('_URL_DEREFERRER','dereferrer.php?u=');
+define('_URL_DEREFERRER', 'dereferrer.php?u=');
 
 // auth-constants
-define('_AUTH_BASIC_REALM','TorrentFlux');
+define('_AUTH_BASIC_REALM', 'torrentflux-b4rt');
 
 // public stats (xml|rss)
 define('_PUBLIC_STATS', 0);
