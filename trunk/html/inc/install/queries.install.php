@@ -171,6 +171,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_unzip','/
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_cksfv','/usr/bin/cksfv')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_sockstat','/usr/bin/sockstat')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_vlc','/usr/local/bin/vlc')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bin_uudeview','/usr/local/bin/uudeview')");
 // tf_settings_dir
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('dir_public_read','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings_dir VALUES ('dir_public_write','0')");
