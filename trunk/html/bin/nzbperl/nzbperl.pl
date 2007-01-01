@@ -183,7 +183,7 @@ while (scalar(@ARGV) > 0){
 	push @fileset, @fsparts;
 }
 
-statMsg('Looks like we have got ' . scalar @fileset . ' possible files ahead of us.');
+printMessage('Looks like we have got ' . scalar @fileset . ' possible files ahead of us.'."\n");
 
 my @suspectFileInd;
 if ($insane) {
@@ -206,7 +206,14 @@ my %totals = (
 	'total file ct' => scalar @fileset
 );
 
-statMsg('Welcome -- nzbperl started!');
+# afWrite-instance-field (reuse object)
+my $afWrite = AliasFile->new($statfile);
+
+# write af
+writeStatStartup();
+
+# afRead-instance-field (reuse object)
+my $afRead = AliasFile->new();
 
 # Descriptions of what's in the connection hash (for sanity sake)
 #
@@ -233,7 +240,10 @@ my @lastdrawtime = Time::HiRes::gettimeofday();
 my @conn;
 createNNTPConnections();
 if ($user){
-	doLogins() or die "Error authenticating to server.\nPlease check the user/pass info and try again.";
+	unless (doLogins()) {
+		printError("Error authenticating to server.\nPlease check the user/pass info and try again.\n");
+		exit;
+	}
 }
 
 # Start up the decoding thread(s)...
@@ -248,35 +258,14 @@ if (usingThreadedDecoding()){
 
 my ($oldwchar, $wchar, $oldhchar, $hchar, $wpixels, $hpixels) = (0);  	# holds screen size info
 
-# af-instance-field to reuse object
-my $afWrite = AliasFile->new($statfile);
-
-# set some values
-$afWrite->set("running", 1);
-$afWrite->set("percent_done", 0);
-$afWrite->set("time_left", "Starting...");
-$afWrite->set("down_speed", "0.00 kB/s");
-$afWrite->set("up_speed", "0.00 kB/s");
-$afWrite->set("transferowner", $tfuser);
-$afWrite->set("seeds", 1);
-$afWrite->set("peers", 1);
-$afWrite->set("sharing", "");
-$afWrite->set("seedlimit", "");
-$afWrite->set("uptotal", 0);
-$afWrite->set("downtotal", 0);
-$afWrite->set("size", $totals{'total size'});
-
-# write af
-$afWrite->write();
-
-# af-instance-field to reuse object
-my $afRead = AliasFile->new();
+# message
+printMessage("nzbperl up and running.\n");
 
 # main loop
 my @queuefileset = @fileset;
 my @dlstarttime = Time::HiRes::gettimeofday();
 my $lasttime = [gettimeofday];
-my $noMoreWorkTodo = scalar @fileset;
+my $noMoreWorkTodo;
 while (1) {
 
 	doFileAssignments();
@@ -288,16 +277,11 @@ while (1) {
 	# 5 secs passed, write stat-file
 	if ($elapsed >= 5) {
 
-		# initializestat-file
+		# stat-file
 		$afRead->initialize($statfile);
 		if ($afRead->get("running") eq "0") {
 			printMessage("stop-request, setting shutdown-flag...\n");
 			$quitnow = 1;
-		}
-
-		# write stat-file
-		if ($quitnow == 1) {
-			writeStatShutdown();
 		} else {
 			writeStatRunning();
 		}
@@ -322,23 +306,24 @@ while (1) {
 
 	# done + wait a bit
 	$noMoreWorkTodo = no_more_work_to_do();
-	if ($noMoreWorkTodo != 0) {
+
+	if ($noMoreWorkTodo) {
+		printMessage("all downloads complete.\n");
+		last;
+	} else {
 		select undef, undef, undef, 0.25;
 		next;
 	}
 }
 
-# output
-if ($noMoreWorkTodo == 0) {
-	printMessage("All downloads complete!\n");
-}
+# message
 printMessage("nzbperl shutting down...\n");
 
 if ($quitnow){# Do some cleanups
 	foreach my $c (@conn){
 		next unless $c->{'file'};
 		if($c->{'tmpfile'}){
-			pc("Closing and deleting " . $c->{'tmpfilename'} . "...\n", 'bold white');
+			printMessage("Closing and deleting " . $c->{'tmpfilename'} . "...\n");
 			undef $c->{'tmpfile'};	# causes a close
 			unlink $c->{'tmpfilename'};
 		}
@@ -347,7 +332,9 @@ if ($quitnow){# Do some cleanups
 
 # TODO: Clean up server socket for remote control schtuff
 disconnectAll();
-pc("Waiting for file decoding thread(s) to terminate...\n", 'bold white');
+
+# decoder-threads
+printMessage("Waiting for file decoding thread(s) to terminate...\n");
 foreach my $i (1..$dthreadct){
 	# Send a quit now message for each decoder thread.
 	usingThreadedDecoding() and $decQ->enqueue('quit now');
@@ -356,6 +343,9 @@ foreach my $i (0..$dthreadct-1){
 	# Now join on every decoder thread, waiting for all to finish
 	usingThreadedDecoding() and $decThreads[$i]->join;
 }
+
+# write stat-file
+writeStatShutdown();
 
 # delete pid-file
 pidFileDelete();
@@ -1454,7 +1444,7 @@ sub doSingleLogin {
 	my $conn = $conn[$i];
 	my $sock = $conn[$i]->{'sock'};
 	return unless $sock;
-	not $silent and printMessage(sprintf("Attempting login on connection #%d...", $i+1));
+	not $silent and printMessage(sprintf("Attempting login on connection #%d...\n", $i+1));
 
 	sockSend($sock, "AUTHINFO USER $user\r\n");
 
@@ -1473,7 +1463,8 @@ sub doSingleLogin {
 	}
 	else {
 		not $silent and printError("server returned: $line\n");
-		die ">LOGIN FAILED<\n";
+		printError(">LOGIN FAILED<\n");
+		exit;
 	}
 }
 
@@ -2104,7 +2095,7 @@ sub blockReadLine {
 sub disconnectAll {
 	foreach my $i (1..$connct){
 		my $sock = $conn[$i-1]->{'sock'},
-		printMessage("Closing down connection #$i...");
+		printMessage("Closing down connection #$i...\n");
 		not $sock and printMessage("(already closed)\n") and next;
 
 		sockSend($sock, "QUIT\r\n");
@@ -2992,6 +2983,30 @@ sub getAliasSpeed {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: writeStatStartup                                                        #
+# Arguments: null                                                              #
+# Returns: return-value of write                                               #
+#------------------------------------------------------------------------------#
+sub writeStatStartup {
+	# set some af-values
+	$afWrite->set("running", 1);
+	$afWrite->set("percent_done", 0);
+	$afWrite->set("time_left", "Starting...");
+	$afWrite->set("down_speed", "0.00 kB/s");
+	$afWrite->set("up_speed", "0.00 kB/s");
+	$afWrite->set("transferowner", $tfuser);
+	$afWrite->set("seeds", 1);
+	$afWrite->set("peers", 1);
+	$afWrite->set("sharing", "");
+	$afWrite->set("seedlimit", "");
+	$afWrite->set("uptotal", 0);
+	$afWrite->set("downtotal", 0);
+	$afWrite->set("size", $totals{'total size'});
+	# write af
+	return $afWrite->write();
+}
+
+#------------------------------------------------------------------------------#
 # Sub: writeStatRunning                                                        #
 # Arguments: null                                                              #
 # Returns: return-value of write                                               #
@@ -3014,10 +3029,11 @@ sub writeStatRunning {
 sub writeStatShutdown {
 	# set some af-values
 	$afWrite->set("running", 0);
-	$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : 0 - int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
-	if ($noMoreWorkTodo == 0) {
+	if ($noMoreWorkTodo) {
+		$afWrite->set("percent_done", "100");
 		$afWrite->set("time_left", "Download Succeeded!");
 	} else {
+		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : 0 - int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
 		$afWrite->set("time_left", "Transfer Stopped");
 	}
 	$afWrite->set("down_speed", "");
