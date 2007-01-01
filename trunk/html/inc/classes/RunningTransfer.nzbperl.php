@@ -27,11 +27,8 @@ class RunningTransferNzbperl extends RunningTransfer
 {
     //--------------------------------------------------------------------------
     // ctor
-    function RunningTransferNzbperl($psLine,$cfg) {
-        // version
-		$this->version = "0.6";
-        // init conf
-        $this->Initialize($cfg);
+    function RunningTransferNzbperl($psLine) {
+    	global $cfg;
         // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
@@ -40,18 +37,13 @@ class RunningTransferNzbperl extends RunningTransfer
             $count = count($arr);
             $this->processId = $arr[0];
             $this->args = "";
-            $this->transferowner = $arr[($count - 5)];
-            $this->filePath = substr($arr[($count - 7)], 0, strrpos($arr[($count - 7)], "/")+1);
-            $this->statFile = str_replace($this->filePath,'',$arr[($count - 8)]);
-            $this->transferFile = str_replace($this->filePath,'',$arr[($count - 8)]);
+            $this->transferowner = $arr[($count - 2)];
+            $this->filePath = $arr[($count - 6)];
+            $this->statFile = str_replace($cfg['transfer_file_path'],'', $arr[($count - 4)]);
+            $this->transferFile = str_replace($this->filePath,'', $arr[($count - 1)]);
         }
     }
 
-    //----------------------------------------------------------------
-    // Function to put the variables into a string for writing to file
-    function BuildAdminOutput($theme) {
-        return parent::BuildAdminOutput($theme);
-    }
 }
 
 ?>

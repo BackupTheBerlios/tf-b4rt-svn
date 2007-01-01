@@ -102,7 +102,7 @@ class ClientHandlerNzbperl extends ClientHandler
             return false;
 		}
 
-		// Build Command String
+		// Build Command String (do not change order of last args !)
 		$this->command  = "cd ".escapeshellarg($this->savepath).";";
 		$this->command .= " HOME=".escapeshellarg(substr($cfg["path"], 0, -1));
 		$this->command .= "; export HOME;";
@@ -116,19 +116,20 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
 			: " --dropbad";
+		$this->command .= " --server ".$cfg['nzbperl_server'];
+		$this->command .= " --conn ".$cfg['nzbperl_conn'];
+		$this->command .= " --log ".$this->logFilePath;
 		if ($cfg['nzbperl_user'] != "")
 			$this->command .= " --user ".$cfg['nzbperl_user'];
 		if ($cfg['nzbperl_pw'] != "")
 			$this->command .= " --pw ".$cfg['nzbperl_pw'];
-		$this->command .= " --tfuser ".$this->owner;
-		$this->command .= " --statfile ".$this->aliasFilePath;
-		$this->command .= " --pidfile ".$this->pidFilePath;
-		$this->command .= " --server ".$cfg['nzbperl_server'];
-        $this->command .= " --dlpath ".$this->savepath;
-		$this->command .= " --conn ".$cfg['nzbperl_conn'];
-		$this->command .= " --log ".$this->logFilePath;
 		if (strlen($cfg["nzbperl_options"]) > 0)
 			$this->command .= " ".$cfg['nzbperl_options'];
+		$this->command .= " --pidfile ".$this->pidFilePath;
+		// do NOT change anything below (not even order)
+		$this->command .= " --dlpath ".$this->savepath;
+		$this->command .= " --statfile ".$this->aliasFilePath;
+		$this->command .= " --tfuser ".$this->owner;
 		$this->command .= " ".$this->transferFilePath;
         $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
         $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
