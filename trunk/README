@@ -1,16 +1,310 @@
-Introduction:
-Torrentflux-b4rt is an open source web based transfer control client based on the popular torrentflux client.  Install torrentflux-b4rt on your webserver and you can control your transfers from anywhere - whether they be torrents, wget transfers or even usenet transfers.  tfb is very easy to install on a webserver and includes a simple setup script which can be accessed from a web browser.  Just upload the files to your webserver, run he setup script and your tfb installation is ready to go.
+=======================================================================
+$Id$
+=======================================================================
+macros:
+:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb,torrentflux-b4rt,gqap
+:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,Tfb,Torrentflux-b4rt,gqap
+:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb-forum,http://tf-b4rt.berlios.de/forum/,gqap
 
-tfb incorporates a huge number of advanced options to allow you finer grained control of your bittorrent transfers, as well as supporting other transfer options like wget and USENET/nzb transfers.  The administration panel in tfb includes a large number of options to allow you fine grained control over every aspect of your bittorrent/transfers usage.  tfb is also a multi-user application, allowing you to create individual accounts and assign restrictions to those accounts as you wish.
+/**********************************************************************
+Tfb 1.0 README file
+**********************************************************************/
 
-For a full list of features included in tfb, please see the FEATURES file.
+	Contents:
+	=========
+	1. Introduction
+	2. Features
+	3. Requirements
+		3.1 Minimum Requirements
+		3.2 Additional/Optional Feature Requirements
+	4. Installation
 
 
-Requirements:
+/**********************************************************************
+1. Introduction
+**********************************************************************/
+
+	Tfb is a web based transfer control client based on the popular
+	torrentflux.  Tfb allows you to control your bittorrent transfers
+	from anywhere using a highly configurable web based front end.
+
+	Tfb is very easy to install on a webserver and includes a simple
+	setup script which can be accessed from a web browser.  Just upload
+	the files to your webserver, run the setup script and your tfb
+	installation is ready to go.
+
+	Tfb has builtin support for:
+
+	- Original BitTorrent/Mainline: supports trackerless torrents and
+	  encryption
+
+	- BitTornado: uses slightly less resources than the original BT,
+	  allows file priority for downloading files selectively
+
+	- Transmission: much smaller memory footprint without too much loss
+	  in functionality
+
+	- wget and nzb (USENET/news server) transfers (wget must be
+	  installed on your server)
+
+	Tfb incorporates a huge number of advanced options to allow you
+	finer grained control of your transfers. The administration panel in
+	tfb includes a large number of options to allow you fine grained
+	control over every aspect of your bittorrent/transfers usage.
+
+	Tfb is also a multi-user application, allowing you to create
+	individual accounts and assign restrictions to those accounts as you
+	wish.
+
+
+/**********************************************************************
+2. Features
+**********************************************************************/
+
+	Some of the most popular features of tfb are listed below.  For a
+	full list of tfb features, please see the FEATURES file.
+
+	o Transfer statistics and logging:
+
+		- View detailed torrent transfer statistics and information,
+		  including:
+
+			o per torrent error logging for easy troubleshooting
+			o cumulative upload/download totals
+			o number of seeders/leechers
+
+
+	o Torrent control:
+
+		- Perform stop/start/resume/kill/delete operations on individual
+		  torrents, all torrents or a selection of torrents
+
+
+	o Uploading of torrents:
+
+		- upload single/multiple torrent files from your local machine
+		  to the webserver
+
+		- upload files directly to your webserver from another webserver
+
+
+	o AJAX updates for maximum info with minimal bandwidth
+
+		- Display of transfer lists can be easily configured to use AJAX
+		  to update transfer stats in real time.  This saves on
+		  bandwidth.
+
+		- Individual torrent transfer windows can also use AJAX to
+		  update stats in real time.
+
+
+	o Support for a large number of additional third party
+	  utilities/functionality, including:
+
+		- archive file extraction from the browser (zip/rar)
+
+		- vlc streaming controllable from browser
+
+		- download of completed torrents directly from browser
+
+
+/**********************************************************************
+3. Requirements
+**********************************************************************/
+
+	Due to the extensible nature of tfb, there are a variety of 3rd
+	party tools/utilities and extra functionality that can be enabled
+	from within the administration control panel.  For this reason the
+	requirements section is split into two parts:
+
+		3.1 Minimum Requirements
+		3.2 Additional/Optional Feature Requirements
+
+
+/**********************************************************************
+3.1 Minimum Requirements
+**********************************************************************/
+
+	This section lists the minimum requirements required to operate tfb
+	with the basic core functionality.  This list may seem daunting, but
+	most Unix like OSs have many of these features available as part of
+	their software distribution system.
+
+	/******************************************************************
+	Notes:
+	=====
+	- The following lists are NOT exhaustive - if you use a Unix like
+	  OS/webserver/database/etc not listed below, basic functionality of
+	  tfb may well work.  Success reports on other OSs other than the
+	  above are welcome on the forum:
+
+			tfb-forum
+
+	- IT IS STRONGLY ADVISED THAT YOU INSTALL THE COMPONENTS LISTED
+	  BELOW FROM THE SOFTWARE DISTRIBUTION SYSTEM INCLUDED WITH YOUR OS
+	  (ie apt-get, rpm package management, FreeBSD ports system, etc).
+	******************************************************************/
+
+
+	The core minimum requirements follow below:
+
+	o A Unix like OS (no Win32 support).
+	  Current tested OSs include:
+
+		* Linux:
+			o Debian, Ubuntu, Gentoo, RedHat, Fedora and others
+
+			Note:
+			=====
+			SELinux should be turned off.
+
+		* BSD:
+			o FreeBSD, OpenBSD
+
+
+	o A Web Server.
+	  Current tested webservers include:
+
+		* Apache
+			- http://www.apache.org/
+
+		* LightTPD
+			- http://www.lighttpd.net/
+
+
+	o An SQL-Database.
+	  Currently Supported databases:
+
+		* MySQL
+			- http://www.mysql.com/
+
+		* SQLite
+			- http://www.sqlite.org/
+
+		* PostgreSQL
+			- http://www.postgresql.org/
+
+
+	o PHP Version 4.3.x or higher with Session and PCRE support
+	  enabled. Socket-Support is required for fluxd.
+
+		- http://www.php.net/
+
+		Notes:
+		=====
+		o Safe Mode must be turned off:
+			* php.ini: safe_mode = Off
+
+		o Allow Url fopen must be allowed:
+			* php.ini: allow_url_fopen = On
+
+
+	o Python is required for the BitTorrent and BitTornado
+	  bittorrent clients:
+
+		* Python >= 2.2 for BitTornado
+		* Python >= 2.4 for BitTorrent Mainline
+		  (original 'BitTorrent client).
+
+
+	o Perl >= 5.6 or higher for fluxd, nzbperl.pl, ttools.pl and
+	  fluxpoller.pl.  See section 3.2 below for extra info.
+
+
+
+TODO: gothere
+/**********************************************************************
+3.2 Additional/Optional Feature Requirements
+**********************************************************************/
+
+	The following is a list of additional features/options that can be
+	enabled or used with tfb.  By default these options or features are
+	disabled and can be enabled via the administration panel - please
+	ensure the requirements are installed before enabling additional
+	features.
+
+	Additional/optional feature requirements follow below:
+
+	o PyCrypto (Python Cryptography Toolkit) is needed to run
+	   Mainline (BitTorrent) Client. It can be found at :
+	   http://sourceforge.net/projects/pycrypto/
+
+	o Twisted is needed to run Mainline (BitTorrent) Client.
+	   It can be found at :
+	   http://twistedmatrix.com
+	   Twisted requires at least Zope Interface 3.0.1 or higher. It
+	   can also work with ZopeX3 version 3.0.0c1 or higher.
+	   Zope Interface is included in Twisted-source-tarball or can be
+	   found at :
+	   http://www.zope.org/Products/ZopeInterface
+
+	o UUDeview is needed for nzbperl.pl. It can be found at :
+	   http://fpx.de/fp/Software/UUDeview/
+
+	o unrar (for Linux) and rarbsd (for FreeBSD) can be found at :
+	   http://www.rarlab.com/rar/
+
+	o cksfv (needed for SFV check) can be found at :
+	   http://zakalwe.virtuaalipalvelin.net/~shd/foss/cksfv/files/devel/
+
+	o vlc (needed for Streaming Feature) can be found at :
+	   http://www.videolan.org/
+
+	o To compile Transmission on Mac OS X you need the Developer
+	   Tools from Apple.
+
+	o To use wget on Mac OS X install :
+	   http://www.statusq.org/images/wget.zip
+
+
+-----------------------------------------------------------------
+Perl-Modules
+-----------------------------------------------------------------
+
+-- fluxd.pl (part of fluxd)
+   * IO::Select       (perl -MCPAN -e "install IO::Select")
+   * IO::Socket::UNIX (perl -MCPAN -e "install IO::Socket::UNIX")
+   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
+   * POSIX            (perl -MCPAN -e "install POSIX")
+
+-- FluxDB.pm (part of fluxd) (only in dbi-mode)
+   * all database-types :
+     DBI              (perl -MCPAN -e "install Bundle::DBI")
+   * MySQL :
+     DBD::mysql       (perl -MCPAN -e "install DBD::mysql")
+   * SQLite :
+     DBD::SQLite      (perl -MCPAN -e "install DBD::SQLite")
+   * PostgreSQL :
+     DBD::Pg          (perl -MCPAN -e "install DBD::Pg")
+
+-- Fluxinet.pm (part of fluxd)
+   * IO::Select       (perl -MCPAN -e "install IO::Select")
+   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
+
+-- nzbperl.pl (usenet transfer-client)
+   Required :
+   * IO::File
+   * IO::Select
+   * IO::Socket::INET
+   * File::Basename
+   * Getopt::Long
+   * Cwd
+   * XML::Simple
+   * XML::DOM
+   Optional :
+   * threads
+   * Thread::Queue
+
+-- ttools.pl (alternative metainfoclient)
+   * LWP::UserAgent   (perl -MCPAN -e "install LWP::UserAgent")
+
+-- tfrss.pl (not used)
+   * LWP::Simple      (perl -MCPAN -e "install LWP::Simple")
+   * XML::Simple      (perl -MCPAN -e "install XML::Simple")
+Requirements
 TODO
 
 
-TODO: Add alternative options for support - ie superadmin/updates section?
 Support:
 For support with your tfb installation please see the tfb forum:
 
@@ -21,37 +315,8 @@ Please take the time to search the forum first for a solution to your problem.  
 a. The version of tfb you are using.
 b. The problem that occurs and what you did to see the problem.
 c. Ask a question and make sure the question doesn't require just a yes/no answer!  This sounds odd but saves a lot of time - asking 'is this broken?' will probably get you a 'yes' or 'no' answer - asking 'why does this happen when I do this/that/other?' will probably get you a better answer.
+TODO: Add alternative options for support - ie superadmin/updates section?
 
-
-TODO: separate FEATURES file for features
 Features:
-- Basic Usage
-  o Upload torrents:
-    - upload individual files from your local machine to the webserver
-    - upload multiple files in one go from your local machine to the webserver
-    - upload files directly to your webserver from another webserver
+TODO: separate FEATURES file for features
 
-  o AJAX updates for maximum info with minimal bandwidth
-    - Display of transfer lists can be easily configured to use AJAX to update transfer stats in real time.  This saves on bandwidth.
-    - Individual torrent transfer windows can also use AJAX to update stats in real time.
-
-  o Choice of BitTorrent clients to suit your needs - tfb supports various clients including:
-    - Original BitTorrent/Mainline (supports trackerless torrents and encryption)
-    - BitTornado (uses slightly less resources than the original BT, allows file priority for downloading files selectively)
-    - Transmission (much smaller memory footprint without too much loss in functionality)
-
-  o Individual torrents 'remember' their own settings, allowing you to use different settings for different torrents.
-    Universal settings available on a per-torrent basis:
-    - Option to choose which BitTorrent client to use for each torrent
-    - File priority - only download certain files from a torrent
-    - Option to save each torrent to a specific location
-    - Around 6 other options configurable as well as many more from the Admin settings, see below.
-
-  o Control torrents directly in the web browser:
-    - start, stop, resume and delete individual torrents
-    - start, stop, resume and delete discrete torrents in one operation - easily start/stop/resume all torrents in one go
-
-  o View torrent transfer information:
-    - cumulative transfer statistics are available for every torrent in the transfer list.  tfb keeps track of how much data has been transfered up and down even when you stop and restart the torrent.  This allows you to keep track of what your actual ratio is rather than what the current session ratio is.
-    - logfiles are maintained for each and every torrent, allowing you to easily see when problems occur with your transfers.
-    - current upload/download bandwidth rate as well as the number of seeds/peers and estimated time left is viewable in the transfer list
