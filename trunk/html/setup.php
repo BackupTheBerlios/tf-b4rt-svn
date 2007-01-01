@@ -686,7 +686,8 @@ if (isset($_REQUEST["1"])) {                                                    
 				'unzip'		=> '/usr/bin/unzip',
 				'cksfv'		=> '/usr/bin/cksfv',
 				'sockstat'	=> '/usr/bin/sockstat',
-				'vlc'		=> '/usr/local/bin/vlc'
+				'vlc'		=> '/usr/local/bin/vlc',
+				'uudeview'	=> '/usr/local/bin/uudeview'
 			);
 
 			$pathErrCount = 0;
