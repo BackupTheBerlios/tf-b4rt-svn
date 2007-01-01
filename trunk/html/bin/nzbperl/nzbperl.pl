@@ -209,6 +209,12 @@ my %totals = (
 	'total bytes' => 0,
 	'total file ct' => scalar @fileset
 );
+my %totalsCopy = (
+	'total size' => $totals{'total size'},
+	'finished files' => $totals{'finished files'},
+	'total bytes' => $totals{'total bytes'},
+	'total file ct' => $totals{'total file ct'}
+);
 
 # afWrite-instance-field (reuse object)
 my $afWrite = AliasFile->new($statfile);
@@ -2739,23 +2745,22 @@ sub handleCommandLineOptions {
 #########################################################################################
 sub haveUUDeview {
 	if(defined($uudeview)){	# Given on commandline or config file
-		if(-e $uudeview){
-			pc("uudeview found: $uudeview\n", "bold green");
+		if (-e $uudeview){
 			return 1;
 		}
-		pc("Warning: uudeview not found at location $uudeview\n", "bold yellow");
+		printError("Warning: uudeview not found at location $uudeview\n");
 	}
 	my @paths = split /:/, $ENV{'PATH'};	# path sep different on winderz?
 	foreach my $p (@paths){
 		$p =~ s/\/$//;
 		$p = $p . "/uudeview";
 		if(-e $p){
-			pc("uudeview found: $p\n", "bold green");
+			printMessage("uudeview found: $p\n");
 			$uudeview = $p;
 			return 1;
 		}
 	}
-	pc("Error: uudeview not found in path...aborting!\n", "bold red");
+	printError("Error: uudeview not found in path...aborting!\n");
 	return 0;
 }
 
@@ -3006,7 +3011,7 @@ sub writeStatStartup {
 	$afWrite->set("seedlimit", "");
 	$afWrite->set("uptotal", 0);
 	$afWrite->set("downtotal", 0);
-	$afWrite->set("size", $totals{'total size'});
+	$afWrite->set("size", $totalsCopy{'total size'});
 	# write af
 	return $afWrite->write();
 }
@@ -3038,7 +3043,7 @@ sub writeStatShutdown {
 		$afWrite->set("percent_done", "100");
 		$afWrite->set("time_left", "Download Succeeded!");
 	} else {
-		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : 0 - int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
+		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : int(100.0 * $totals{'total bytes'} / $totals{'total size'}) - 100);
 		$afWrite->set("time_left", "Transfer Stopped");
 	}
 	$afWrite->set("down_speed", "");
@@ -3049,7 +3054,12 @@ sub writeStatShutdown {
 	$afWrite->set("sharing", "");
 	$afWrite->set("seedlimit", "");
 	$afWrite->set("uptotal", 0);
-	$afWrite->set("downtotal", $totals{'total bytes'});
+	if ($noMoreWorkTodo) {
+		$afWrite->set("downtotal", $totalsCopy{'total size'});
+	} else {
+		$afWrite->set("downtotal", $totals{'total bytes'});
+	}
+	$afWrite->set("size", $totalsCopy{'total size'});
 	# write af
 	return $afWrite->write();
 }
