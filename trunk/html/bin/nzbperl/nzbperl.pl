@@ -139,7 +139,7 @@ if (defined(my $errmsg = handleCommandLineOptions())) {
 	exit 1;
 }
 
-# output
+# message
 printMessage("nzbperl starting up...\n");
 
 # ipv6
@@ -160,12 +160,17 @@ if (!($uudeview =~ m#^([\w\s\.\_\-\/\\]+)$#)) {
 # write pid
 pidFileWrite();
 
+# some vars
 my $lastDirCheckTime = 0;
 my $lastDiskFullTime = undef;
 my $lastDiskFreePerc = 0;
 my %nzbfiles;	# the hash/queue of nzb files we're handling
 # $nzbfiles{'files'}->{<filename>}->{'read'}     : 1 if we've parsed/loaded it
 # $nzbfiles{'files'}->{<filename>}->{'finished'} : 1 if all files have been downloaded
+
+# ui-vars
+my ($oldwchar, $wchar, $oldhchar, $hchar, $wpixels, $hpixels) = (0); # holds screen size info
+my @lastdrawtime = Time::HiRes::gettimeofday();
 
 # statusmessages
 my @statusmsgs;
@@ -182,9 +187,12 @@ while (scalar(@ARGV) > 0){
 	@fsparts = regexAndSkipping(@fsparts);	# It checks options inside too
 	push @fileset, @fsparts;
 }
+my @queuefileset = @fileset;
 
+# message
 printMessage('Looks like we have got ' . scalar @fileset . ' possible files ahead of us.'."\n");
 
+# suspectFileInd
 my @suspectFileInd;
 if ($insane) {
 } else{
@@ -194,11 +202,7 @@ if ($insane) {
 	}
 }
 
-# start remote control
-my $rc_sock = undef;
-my @rc_clients;
-startRemoteControl();
-
+# totals
 my %totals = (
 	'total size' => computeTotalNZBSize(@fileset),
 	'finished files' => 0,
@@ -215,28 +219,11 @@ writeStatStartup();
 # afRead-instance-field (reuse object)
 my $afRead = AliasFile->new();
 
-# Descriptions of what's in the connection hash (for sanity sake)
-#
-# $conn->{'sock'}       : the socket for comms
-# $conn->{'msg'}        : message that describes what's going on
-# $conn->{'file'}       : the file it's working on
-# $conn->{'segnum'}     : the segment number of the file it's working on
-# $conn->{'segbytes'}   : number of bytes read in the current segment
-# $conn->{'filebytes'}  : number of bytes read in the current file
-# $conn->{'bstatus'}    : status about how we're handling a body (starting/finishing)
-# $conn->{'buff'}       : where body data is buffered
-# $conn->{'tmpfilename'}: temporary file name
-# $conn->{'tmpfile'}    : temporary file handle
-# $conn->{'bwstarttime'}: time when the bandwdith applied
-# $conn->{'bwstartbytes'}: bytes read on file when bandwidth applied
-# $conn->{'truefname'}  : true filename on disk (assumed after decoding)
-# $conn->{'skipping'}   : indicates we're in the middle of a skipping operation
-# $conn->{'last data'}  : time when data was last seen on this channel
-# $conn->{'sleep start'}: time that we started sleeping (for retries)
-# $conn->{'isbroken'}   : set when one or more parts fails to download
-# $conn->{'tfseq'}      : temporary file sequence id
+# start remote control
+my $rc_sock = undef;
+my @rc_clients;
+#startRemoteControl();
 
-my @lastdrawtime = Time::HiRes::gettimeofday();
 my @conn;
 createNNTPConnections();
 if ($user){
@@ -256,13 +243,10 @@ if (usingThreadedDecoding()){
 	}
 }
 
-my ($oldwchar, $wchar, $oldhchar, $hchar, $wpixels, $hpixels) = (0);  	# holds screen size info
-
 # message
 printMessage("nzbperl up and running.\n");
 
 # main loop
-my @queuefileset = @fileset;
 my @dlstarttime = Time::HiRes::gettimeofday();
 my $lasttime = [gettimeofday];
 my $noMoreWorkTodo;
@@ -274,13 +258,13 @@ while (1) {
 
 	my $elapsed = tv_interval ( $lasttime );
 
-	# 5 secs passed, write stat-file
+	# 5 secs passed, process stat-file
 	if ($elapsed >= 5) {
 
 		# stat-file
 		$afRead->initialize($statfile);
 		if ($afRead->get("running") eq "0") {
-			printMessage("stop-request, setting shutdown-flag...\n");
+			printMessage("got stop-request, setting shutdown-flag...\n");
 			$quitnow = 1;
 		} else {
 			writeStatRunning();
@@ -299,18 +283,19 @@ while (1) {
 	# dequeueNextNZBFileIfNecessary();
 
 	# remote controls
-	doRemoteControls();
+	#doRemoteControls();
 
 	# exit on quit
 	$quitnow and last;
 
-	# done + wait a bit
+	# check if done
 	$noMoreWorkTodo = no_more_work_to_do();
-
 	if ($noMoreWorkTodo) {
+		# done
 		printMessage("all downloads complete.\n");
 		last;
 	} else {
+		# wait a bit then next
 		select undef, undef, undef, 0.25;
 		next;
 	}
@@ -330,8 +315,8 @@ if ($quitnow){# Do some cleanups
 	}
 }
 
-# TODO: Clean up server socket for remote control schtuff
-disconnectAll();
+# Clean up server socket for remote control schtuff
+#disconnectAll();
 
 # decoder-threads
 printMessage("Waiting for file decoding thread(s) to terminate...\n");
@@ -358,6 +343,28 @@ printMessage("nzbperl exit.\n");
 ################################################################################
 # subs                                                                         #
 ################################################################################
+
+# Descriptions of what's in the connection hash (for sanity sake)
+#
+# $conn->{'sock'}       : the socket for comms
+# $conn->{'msg'}        : message that describes what's going on
+# $conn->{'file'}       : the file it's working on
+# $conn->{'segnum'}     : the segment number of the file it's working on
+# $conn->{'segbytes'}   : number of bytes read in the current segment
+# $conn->{'filebytes'}  : number of bytes read in the current file
+# $conn->{'bstatus'}    : status about how we're handling a body (starting/finishing)
+# $conn->{'buff'}       : where body data is buffered
+# $conn->{'tmpfilename'}: temporary file name
+# $conn->{'tmpfile'}    : temporary file handle
+# $conn->{'bwstarttime'}: time when the bandwdith applied
+# $conn->{'bwstartbytes'}: bytes read on file when bandwidth applied
+# $conn->{'truefname'}  : true filename on disk (assumed after decoding)
+# $conn->{'skipping'}   : indicates we're in the middle of a skipping operation
+# $conn->{'last data'}  : time when data was last seen on this channel
+# $conn->{'sleep start'}: time that we started sleeping (for retries)
+# $conn->{'isbroken'}   : set when one or more parts fails to download
+# $conn->{'tfseq'}      : temporary file sequence id
+
 
 #########################################################################################
 # no_more_work_to_do - returns 1 if there is more work to do, 0 otherwise.  Used to
@@ -2941,20 +2948,18 @@ print <<EOL
  --filter <regex>  : Filter NZB contents on <regex> in subject line
  --ifilter <regex> : Inverse filter NZB contents on <regex> in subject line
  --uudeview <app>  : Specify full path to uudeview (default found in \$PATH)
- --nocolor         : Don't use color
- --noansi          : Don't use ANSI characters (text only)
- --noupdate        : Don't check for newer versions at startup
- --tfuser          : TF username to run as
- --statfile	   : path to stat file for TF
- --pidfile	   : path to pid file for TF
+ --tfuser          : TF username to run as (required)
+ --statfile	       : path to stat file for TF (required)
+ --pidfile	       : path to pid file for TF (required)
  --help            : Show this screen
-
-  During runtime, press 'h' or '?' to see a list of key commands.
 
   nzbperl version $version, Copyright (C) 2004 Jason Plumb
   nzbperl comes with ABSOLUTELY NO WARRANTY; This is free software, and
   you are welcome to redistribute it under certain conditions;  Please
   see the source for additional details.
+
+  this version is rewritten to be used with torrentflux-b4rt and cannot work
+  in standalone mode.
 
 EOL
 ;
