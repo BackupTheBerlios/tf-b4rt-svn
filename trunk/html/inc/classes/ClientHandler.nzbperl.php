@@ -117,9 +117,9 @@ class ClientHandlerNzbperl extends ClientHandler
 			? " --insane"
 			: " --dropbad";
 		if ($cfg['nzbperl_user'] != "")
-			$this->command .= " --user".$cfg['nzbperl_user'];
+			$this->command .= " --user ".$cfg['nzbperl_user'];
 		if ($cfg['nzbperl_pw'] != "")
-			$this->command .= " --pw".$cfg['nzbperl_pw'];
+			$this->command .= " --pw ".$cfg['nzbperl_pw'];
 		$this->command .= " --tfuser ".$this->owner;
 		$this->command .= " --statfile ".$this->aliasFilePath;
 		$this->command .= " --pidfile ".$this->pidFilePath;
