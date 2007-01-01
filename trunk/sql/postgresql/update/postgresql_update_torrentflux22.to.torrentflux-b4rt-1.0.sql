@@ -207,6 +207,7 @@ INSERT INTO tf_settings VALUES ('bin_wget','/usr/bin/wget');
 INSERT INTO tf_settings VALUES ('bin_unrar','/usr/bin/unrar');
 INSERT INTO tf_settings VALUES ('bin_unzip','/usr/bin/unzip');
 INSERT INTO tf_settings VALUES ('bin_cksfv','/usr/bin/cksfv');
+INSERT INTO tf_settings VALUES ('bin_uudeview','/usr/local/bin/uudeview');
 INSERT INTO tf_settings VALUES ('btclient','tornado');
 INSERT INTO tf_settings VALUES ('btclient_tornado_options','');
 INSERT INTO tf_settings VALUES ('btclient_transmission_bin','/usr/local/bin/transmissioncli');
