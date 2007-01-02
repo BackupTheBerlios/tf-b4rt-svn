@@ -119,6 +119,9 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " --conn ".$cfg['nzbperl_conn'];
 		$this->command .= " --log ".$this->logFilePath;
 		$this->command .= " --uudeview ".$cfg["bin_uudeview"];
+		// TODO
+		//
+		//
 		$this->command .= " --server ".$cfg['nzbperl_server'];
 		if ($cfg['nzbperl_user'] != "")
 			$this->command .= " --user ".$cfg['nzbperl_user'];
