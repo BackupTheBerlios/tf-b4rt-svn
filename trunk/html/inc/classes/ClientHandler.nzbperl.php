@@ -127,6 +127,7 @@ class ClientHandlerNzbperl extends ClientHandler
 				$this->command .= " --dlcreategrp";
 				break;
 		}
+		$this->command .= " --speed ".$cfg['nzbperl_rate'];
 		$this->command .= " --server ".$cfg['nzbperl_server'];
 		if ($cfg['nzbperl_user'] != "") {
 			$this->command .= " --user ".$cfg['nzbperl_user'];
