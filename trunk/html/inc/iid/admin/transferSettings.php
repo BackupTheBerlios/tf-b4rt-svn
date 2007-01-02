@@ -62,7 +62,7 @@ if ((strpos($cfg["theme"], '/')) === false)
 else
 	$link .= 'tf_standard_themes/images/';
 $link .= 'arrow.gif" width="9" height="9" title="nzbperl Requirements Check" border="0"> nzbperl Requirements Check</a>';
-$tmpl->setvar('SuperAdminLink_nzbperl_check', getSuperAdminLink('?y=511', $link));
+$tmpl->setvar('SuperAdminLink_nzbperl_check', getSuperAdminLink('?y=521', $link));
 $tmpl->setvar('enable_nzbperl', $cfg['enable_nzbperl']);
 $tmpl->setvar('nzbperl_badAction', $cfg['nzbperl_badAction']);
 $tmpl->setvar('nzbperl_server', $cfg['nzbperl_server']);

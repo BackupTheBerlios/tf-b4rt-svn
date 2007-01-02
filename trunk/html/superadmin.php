@@ -348,13 +348,9 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= 'use this to kill all wget processes.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=25"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="wget-kill" border="0"> wget-kill</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<strong>nzbperl</strong><br>';
-				$htmlMain .= 'use this to kill all nzbperl processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="nzbperl-kill" border="0"> nzbperl-kill</a>';
-				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>vlc</strong><br>';
 				$htmlMain .= 'use this to kill all vlc processes.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=27"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=26"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="vlc-kill" border="0"> vlc-kill</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
@@ -483,32 +479,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				break;
 
-			case "26": // Maintainance-Kill : nzbperl
-				$htmlTitle = "Maintainance - Kill - nzbperl";
-				$htmlMain .= '<br>';
-				$htmlMain .= '"Kill all nzbperl processes" done.';
-				$htmlMain .= '<br><br>';
-				$htmlMain .= '<strong>process-list (filtered) before call :</strong><br>';
-				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." nzbperl | ".$cfg['bin_grep']." -v grep"));
-				$htmlMain .= '</pre>';
-				$htmlMain .= '<br>';
-				$callResult = "TODO";
-				if ((isset($callResult)) && ($callResult != "")) {
-					$htmlMain .= '<br>';
-					$htmlMain .= 'Call-Result : <br>';
-					$htmlMain .= '<pre>'.$callResult.'</pre>';
-					$htmlMain .= '<br>';
-				}
-				sleep(2);
-				$htmlMain .= '<strong>process-list (filtered) after call :</strong><br>';
-				$htmlMain .= '<pre>';
-				$htmlMain .= trim(shell_exec("ps auxww | ".$cfg['bin_grep']." nzbperl | ".$cfg['bin_grep']." -v grep"));
-				$htmlMain .= '</pre>';
-				$htmlMain .= '<br>';
-				brek;
-
-			case "27": // Maintenance-Kill : vlc
+			case "26": // Maintenance-Kill : vlc
 				$htmlTitle = "Maintenance - Kill - vlc";
 				$htmlMain .= '<br>';
 				$htmlMain .= '"kill all vlc processes" done.';
@@ -1020,11 +991,22 @@ if (isset($_REQUEST["y"])) {
 			case "5": // misc - Check
 				$htmlTitle = "Misc - Check";
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?y=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Perl" border="0"> Perl</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?y=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-cli" border="0"> php-cli</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?y=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Perl" border="0"> Perl</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
-			case "51": // misc - Check - Perl
+			case "51": // misc - Check - php-cli
+				$htmlTitle = "Misc - Check - php-cli";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= '<pre>';
+				$htmlMain .= shell_exec($cfg["bin_php"]." ".$cfg["docroot"]."bin/check/check-cli.php");
+				$htmlMain .= '</pre>';
+				$htmlMain .= '</div>';
+				break;
+
+			case "52": // misc - Check - Perl
 				$htmlTitle = "Misc - Check - Perl";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
@@ -1033,7 +1015,7 @@ if (isset($_REQUEST["y"])) {
 				$htmlMain .= '</div>';
 				break;
 
-			case "511": // misc - Check - Perl - nzbperl
+			case "521": // misc - Check - Perl - nzbperl
 				$htmlTitle = "Misc - Check - Perl";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
