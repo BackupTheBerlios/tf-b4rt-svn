@@ -35,6 +35,7 @@ define('MAINTENANCEANDREPAIR_MODE_WEB', 2);                               // web
 class MaintenanceAndRepair
 {
 	// public fields
+	var $name = "MaintenanceAndRepair";
 
     // state
     var $state = MAINTENANCEANDREPAIR_STATE_NULL;
