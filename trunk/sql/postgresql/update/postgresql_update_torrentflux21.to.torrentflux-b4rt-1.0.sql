@@ -302,6 +302,7 @@ INSERT INTO tf_settings VALUES ('nzbperl_threads','0');
 INSERT INTO tf_settings VALUES ('nzbperl_conn','1');
 INSERT INTO tf_settings VALUES ('nzbperl_rate','0');
 INSERT INTO tf_settings VALUES ('nzbperl_create','0');
+INSERT INTO tf_settings VALUES ('nzbperl_options','');
 INSERT INTO tf_settings VALUES ('fluxd_dbmode','php');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');
