@@ -332,7 +332,7 @@ int main(int argc, char ** argv) {
 			tf_stat = fopen(tf_stat_file, "r");
 			if (tf_stat != NULL) {
 				// stat-state
-				int stat_state = 1;
+				char stat_state = '1';
 				// Get state
 				stat_state = fgetc(tf_stat);
 				// Close the file
