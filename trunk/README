@@ -2,9 +2,9 @@
 $Id$
 =======================================================================
 macros:
-:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb,torrentflux-b4rt,gqap
-:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,Tfb,Torrentflux-b4rt,gqap
-:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb-forum,http://tf-b4rt.berlios.de/forum/,gqap
+:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb,torrentflux-b4rt,gqap
+:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,Tfb,Torrentflux-b4rt,gqap
+:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb-forum,http://tf-b4rt.berlios.de/forum/,gqap
 
 /**********************************************************************
 Tfb 1.0 README file
@@ -439,11 +439,11 @@ Tfb 1.0 README file
 		In a shell:
 
 		# Change to a temporary directory, make sure it exists first!
-		root@users /home/root# cd tmp
+		root@users /root# cd tmp
 
 		# Use wget to download the tarball
 		# (EXAMPLE ONLY, PLEASE USE THE URL ABOVE TO GET THE LATESST TARBALL!):
-		root@users /home/root/tmp# wget http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
+		root@users /root/tmp# wget http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
 		--12:23:20--  http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
 		=> `torrentflux-b4rt_1.0-alpha5.tar.bz2'
 		<snip>
@@ -458,7 +458,7 @@ Tfb 1.0 README file
 
 		# Extracts the tarball into the temp directory
 		# (EXAMPLE ONLY, CHECK THE NAME OF YOUR TARBALL!):
-		root@users /home/root/tmp# tar jxvf torrentflux-b4rt_1.0-alpha5.tar.bz2
+		root@users /root/tmp# tar jxvf torrentflux-b4rt_1.0-alpha5.tar.bz2
 		torrentflux-b4rt_1.0-alpha5/
 		torrentflux-b4rt_1.0-alpha5/sql/
 		<snip>
@@ -473,11 +473,11 @@ Tfb 1.0 README file
 		In a shell:
 
 		# Change to the extracted tarball's directory:
-		root@users /home/root/tmp# cd torrentflux-b4rt_1.0-alpha5
+		root@users /root/tmp# cd torrentflux-b4rt_1.0-alpha5
 
 		# Recursively copy the contents of the 'html' folder to a folder
 		# under your website docroot:
-		root@users /home/root/tmp/torrentflux-b4rt_1.0-alpha5# cp -R html /var/www/html/tfb
+		root@users /root/tmp/torrentflux-b4rt_1.0-alpha5# cp -R html /var/www/html/tfb
 
 
 	4.	Ensure the files and directories in the tfb directory under your
@@ -487,7 +487,7 @@ Tfb 1.0 README file
 		In a shell:
 
 		# Change to the docroot/tfb directory:
-		root@users /home/root/tmp/torrentflux-b4rt_1.0-alpha5# cd /var/www/html/tfb
+		root@users /root/tmp/torrentflux-b4rt_1.0-alpha5# cd /var/www/html/tfb
 
 		# Change the ownership of all files under /var/www/html/tfb to
 		# that of the user 'www'.  Change 'www' to the user your
@@ -596,5 +596,6 @@ Tfb 1.0 README file
 		'Preview' feature to read over your message and check that any
 		questions you ask won't be simple 'yes/no' answers (unless of
 		course that's all you want!).
+
 
 	TODO: Add alternative options for support - ie superadmin/updates section?
