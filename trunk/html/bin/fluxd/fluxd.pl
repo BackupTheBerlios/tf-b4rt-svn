@@ -498,7 +498,7 @@ sub daemonIsRunning {
 	if (!(defined $docroot)) {
 		return 0;
 	}
-	my $qstring = "ps -aux 2> /dev/null";
+	my $qstring = "ps x -o pid='' -o ppid='' -o command='' -ww 2> /dev/null";
 	my $pcount = 0;
 	foreach my $line (grep(/$0.*$docroot/, qx($qstring))) {
 		$pcount++;
