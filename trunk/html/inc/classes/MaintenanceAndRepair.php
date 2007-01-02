@@ -240,9 +240,17 @@ class MaintenanceAndRepair
 		$fds = $cfg["path"].'.fluxd/fluxd.sock';
 		$fdpe = file_exists($fdp);
 		$fdse = file_exists($fds);
-		// pid or socket exists
-		if (($fdpe || $fdse) && (
-			("0" == @trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl"))))) {
+		$fluxdLeftoversFound = false;
+		$fctr = 0;
+		if ($fdpe)
+			$fctr++;
+		if ($fdse)
+			$fctr++;
+		if ($fctr > 0) {
+			if ("1" != @trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl")))
+				$fluxdLeftoversFound = true;
+		}
+		if ($fluxdLeftoversFound) {
 			// problems
 			$this->_outputMessage("found and removing fluxd-leftovers...\n");
 			// pid
