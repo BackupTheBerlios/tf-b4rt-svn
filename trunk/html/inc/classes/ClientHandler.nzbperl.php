@@ -119,14 +119,19 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " --conn ".$cfg['nzbperl_conn'];
 		$this->command .= " --log ".$this->logFilePath;
 		$this->command .= " --uudeview ".$cfg["bin_uudeview"];
-		// TODO
-		//
-		//
+		switch ($cfg['nzbperl_create']) {
+			case 1:
+				$this->command .= " --dlcreate";
+				break;
+			case 2:
+				$this->command .= " --dlcreategrp";
+				break;
+		}
 		$this->command .= " --server ".$cfg['nzbperl_server'];
-		if ($cfg['nzbperl_user'] != "")
+		if ($cfg['nzbperl_user'] != "") {
 			$this->command .= " --user ".$cfg['nzbperl_user'];
-		if ($cfg['nzbperl_pw'] != "")
 			$this->command .= " --pw ".$cfg['nzbperl_pw'];
+		}
 		if (strlen($cfg["nzbperl_options"]) > 0)
 			$this->command .= " ".$cfg['nzbperl_options'];
 		$this->command .= " --pidfile ".$this->pidFilePath;
