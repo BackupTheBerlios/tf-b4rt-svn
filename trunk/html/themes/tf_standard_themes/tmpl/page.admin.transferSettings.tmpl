@@ -280,6 +280,18 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Nzbperl sub-dirs</strong><br>
+								Set if nzbperl-downloads should go into extra sub-dirs.
+								</td>
+								<td valign="top">
+									<select name="nzbperl_create">
+										<option value="0" <tmpl_if name="nzbperl_create" value="0"> selected</tmpl_if>>no extra dir</option>
+										<option value="1" <tmpl_if name="nzbperl_create" value="1"> selected</tmpl_if>>nzb file name</option>
+										<option value="2" <tmpl_if name="nzbperl_create" value="2"> selected</tmpl_if>>usenet group name</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Nzbperl bad file Action</strong><br>
 								Set the action to perform on finding a bad entry in the nzb:
 								</td>
