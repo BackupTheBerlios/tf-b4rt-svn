@@ -154,6 +154,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_user'
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_pw','')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_threads','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_conn','1')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_create','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_dbmode','php')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_loglevel','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0')");
