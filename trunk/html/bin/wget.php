@@ -97,8 +97,8 @@ $cfg['isAdmin'] = IsAdmin($_OWNER);
 writeStatFile();
 
 // command-string
-$command = "cd ".$cfg["path"].$_PATH.";";
-$command .= " HOME=".$cfg["path"].$_PATH."/; export HOME;";
+$command = "cd ".$_PATH.";";
+$command .= " HOME=".$_PATH."/; export HOME;";
 if ($cfg["enable_umask"] != 0)
     $command .= " umask 0000;";
 if ($cfg["nice_adjust"] != 0)
