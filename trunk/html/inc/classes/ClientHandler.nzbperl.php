@@ -112,13 +112,12 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= $cfg['perlCmd'];
 		$this->command .= " -I ".$cfg["docroot"]."bin/fluxd";
 		$this->command .= " ".escapeshellarg($this->nzbbin);
-		$this->command .= " --dthreadct ".$cfg['nzbperl_threads'];
+		$this->command .= " --conn ".escapeshellarg($cfg['nzbperl_conn']);
+		$this->command .= " --log ".escapeshellarg($this->logFilePath);
+		$this->command .= " --uudeview ".escapeshellarg($cfg["bin_uudeview"]);
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
 			: " --dropbad";
-		$this->command .= " --conn ".$cfg['nzbperl_conn'];
-		$this->command .= " --log ".$this->logFilePath;
-		$this->command .= " --uudeview ".$cfg["bin_uudeview"];
 		switch ($cfg['nzbperl_create']) {
 			case 1:
 				$this->command .= " --dlcreate";
@@ -127,20 +126,21 @@ class ClientHandlerNzbperl extends ClientHandler
 				$this->command .= " --dlcreategrp";
 				break;
 		}
-		$this->command .= " --speed ".$cfg['nzbperl_rate'];
-		$this->command .= " --server ".$cfg['nzbperl_server'];
+		$this->command .= " --dthreadct ".escapeshellarg($cfg['nzbperl_threads']);
+		$this->command .= " --speed ".escapeshellarg($cfg['nzbperl_rate']);
+		$this->command .= " --server ".escapeshellarg($cfg['nzbperl_server']);
 		if ($cfg['nzbperl_user'] != "") {
-			$this->command .= " --user ".$cfg['nzbperl_user'];
-			$this->command .= " --pw ".$cfg['nzbperl_pw'];
+			$this->command .= " --user ".escapeshellarg($cfg['nzbperl_user']);
+			$this->command .= " --pw ".escapeshellarg($cfg['nzbperl_pw']);
 		}
 		if (strlen($cfg["nzbperl_options"]) > 0)
 			$this->command .= " ".$cfg['nzbperl_options'];
-		$this->command .= " --pidfile ".$this->pidFilePath;
+		$this->command .= " --pidfile ".escapeshellarg($this->pidFilePath);
 		// do NOT change anything below (not even order)
-		$this->command .= " --dlpath ".$this->savepath;
-		$this->command .= " --statfile ".$this->aliasFilePath;
+		$this->command .= " --dlpath ".escapeshellarg($this->savepath);
+		$this->command .= " --statfile ".escapeshellarg($this->aliasFilePath);
 		$this->command .= " --tfuser ".$this->owner;
-		$this->command .= " ".$this->transferFilePath;
+		$this->command .= " ".escapeshellarg($this->transferFilePath);
         $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
         $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
         $this->command .= " &";
