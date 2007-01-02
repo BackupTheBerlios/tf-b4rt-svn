@@ -538,7 +538,7 @@ sub spoolOutConnBuffData {
 				my $targdir = getDestDirForFile($conn->{'file'}); # where the file is going on disk
 				makeTargetDirIfNecessary($targdir);
 
-				my $tfndisk = $targdir . $tfn;
+				my $tfndisk = $targdir . '/' . $tfn;
 
 				if(-e $tfndisk){
 					if(!$overwritefiles){
