@@ -288,7 +288,7 @@ int main(int argc, char ** argv) {
 		int chars = 0;
 		//
 		int result;
-		int stat_state;
+		char stat_state;
 
 		// sleep
 		sleep(displayInterval);
