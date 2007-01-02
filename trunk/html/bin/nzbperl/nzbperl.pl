@@ -3045,10 +3045,14 @@ sub writeStatShutdown {
 		$afWrite->set("time_left", "Download Succeeded!");
 		$afWrite->set("downtotal", $totalsCopy{'total size'});
 	} else {
-		$afWrite->set("running", 2); # new
-		$afWrite->set("percent_done", 0);
-		$afWrite->set("time_left", "");
-		$afWrite->set("downtotal", 0);
+		#$afWrite->set("running", 2); # new
+		#$afWrite->set("percent_done", 0);
+		#$afWrite->set("time_left", "");
+		#$afWrite->set("downtotal", 0);
+		$afWrite->set("running", 0); # stopped
+		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : ((int(100.0 * $totals{'total bytes'} / $totals{'total size'})) + 100) * (-1));
+		$afWrite->set("time_left", "Transfer Stopped");
+		$afWrite->set("downtotal", $totals{'total bytes'});
 	}
 	$afWrite->set("down_speed", "");
 	$afWrite->set("up_speed", "");
