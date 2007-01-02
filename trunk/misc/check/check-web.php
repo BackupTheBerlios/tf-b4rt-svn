@@ -218,7 +218,7 @@ if (($warnings + $errors) == 0) {
 		send(_NAME." may run on this system, but there may be problems.");
 	} else {
 		// not ok
-		$state .= '<font color="red">Error</font>';
+		$state .= '<font color="red">Failed</font>';
 		$state .= "</strong><br>";
 		send($state);
 		send(_NAME." cannot run on this system.");
