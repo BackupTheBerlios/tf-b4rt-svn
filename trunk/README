@@ -207,8 +207,8 @@ Tfb 1.0 README file
 	  4.3.x built with database (MySQL, SQLite or PostgreSQL), session
 	  and PCRE support enabled.
 
-	o PHP in 'commandline mode' (cli) >= 4.3.x built with database (MySQL,
-	  SQLite or PostgreSQL), session and PCRE support enabled.
+	o PHP in 'commandline mode' (php-cli) >= 4.3.x built with database (MySQL,
+	  SQLite or PostgreSQL), session, sockets and PCRE support enabled.
 
 		- http://www.php.net/
 
