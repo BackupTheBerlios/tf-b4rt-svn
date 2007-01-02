@@ -247,7 +247,7 @@ class MaintenanceAndRepair
 		if ($fdse)
 			$fctr++;
 		if ($fctr > 0) {
-			if ("1" != @trim(shell_exec("ps aux 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl")))
+			if ("1" != @trim(shell_exec("ps x -o pid='' -o ppid='' -o command='' -ww 2> /dev/null | ".$cfg['bin_grep']." -v grep | ".$cfg['bin_grep']." -c ".$cfg["docroot"]."bin/fluxd/fluxd.pl")))
 				$fluxdLeftoversFound = true;
 		}
 		if ($fluxdLeftoversFound) {
