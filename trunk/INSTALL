@@ -366,8 +366,10 @@ Additional / Optional
 -----------------------------------------------------------------
 
 -- PyCrypto (Python Cryptography Toolkit) is needed to run
-   Mainline (BitTorrent) Client. It can be found at :
-   http://sourceforge.net/projects/pycrypto/
+   BitTornado with encryption. (avail. since BitTornado 0.3.18)
+   PyCrypto is also required for Mainline (BitTorrent) Client.
+   PyCrypto can be found at :
+   http://www.amk.ca/python/code/crypto
 
 -- Twisted is needed to run Mainline (BitTorrent) Client.
    It can be found at :
@@ -378,7 +380,7 @@ Additional / Optional
    found at :
    http://www.zope.org/Products/ZopeInterface
 
--- UUDeview is needed for nzbperl.pl. It can be found at :
+-- UUDeview is needed for nzbperl.pl. UUDeview can be found at :
    http://fpx.de/fp/Software/UUDeview/
 
 -- unrar (for Linux) and rarbsd (for FreeBSD) can be found at :
