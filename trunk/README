@@ -1,6 +1,7 @@
 =======================================================================
 $Id$
 =======================================================================
+Dist Version: $DistVersion$
 macros:
 :set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb,torrentflux-b4rt,gqap
 :set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,Tfb,Torrentflux-b4rt,gqap
