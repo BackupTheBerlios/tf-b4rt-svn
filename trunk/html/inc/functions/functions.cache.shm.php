@@ -129,7 +129,7 @@ function cacheTransfersFlush() {
  * @param $shmname
  * @param $shmid
  * @param $shmsize
- * @param $var
+ * @param &$var
  */
 function _cacheShmSet($shmname, $shmid, $shmsize, &$var) {
 	// attach
