@@ -1389,12 +1389,12 @@ sub doSysCall {
 	$command .= " 1>> ".$LOG." 2>> ".$ERROR_LOG." &";
     system($command);
     if ($? == -1) {
-		FluxdCommon::printError("CORE", "failed to execute: ".$!."\ncommand:\n".$command);
+		FluxdCommon::printError("CORE", "failed to execute: ".$!."\ncommand:\n".$command."\n");
     } elsif ($? & 127) {
-		FluxdCommon::printError("CORE", (sprintf "child died with signal %d, %s coredump\ncommand:\n%s", ($? & 127),  ($? & 128) ? 'with' : 'without'), $command);
+		FluxdCommon::printError("CORE", (sprintf "child died with signal %d, %s coredump\ncommand:\n%s\n", ($? & 127),  ($? & 128) ? 'with' : 'without'), $command);
     } else {
 		if ($LOGLEVEL > 2) {
-			FluxdCommon::printMessage("CORE", (sprintf "child exited with value %d\ncommand:\n%s", $? >> 8, $command));
+			FluxdCommon::printMessage("CORE", (sprintf "child exited with value %d\ncommand:\n%s\n", $? >> 8, $command));
 		}
 		return 1;
     }
