@@ -203,18 +203,29 @@ Tfb 1.0 README file
 			- http://www.postgresql.org/
 
 
-	o PHP Version 4.3.x or higher with Session and PCRE support
-	  enabled. Socket-Support is required for fluxd.
+	o PHP in 'web mode' (ie mod_php or php-cgi - preferably mod_php) >=
+	  4.3.x built with database (MySQL, SQLite or PostgreSQL), session
+	  and PCRE support enabled.
+
+	o PHP in 'commandline mode' (cli) >= 4.3.x built with database (MySQL,
+	  SQLite or PostgreSQL), session and PCRE support enabled.
 
 		- http://www.php.net/
 
-		Notes:
-		=====
+		PHP Notes:
+		==========
 		o Safe Mode must be turned off:
 			* php.ini: safe_mode = Off
 
 		o Allow Url fopen must be allowed:
 			* php.ini: allow_url_fopen = On
+
+		o As mentioned above, both the PHP web module and the
+		  commandline / cli binary must be installed, both with support
+		  for the database you plan to use and with support for PCRE and
+		  sessions.  Check the package management system
+		  documentation/website for your OS for more info on installing
+		  PHP with support for web and cli.
 
 
 	o Python is required for the BitTorrent and BitTornado
@@ -349,14 +360,22 @@ Tfb 1.0 README file
 	install the modules from there rather than directly using the perl
 	CPAN system.
 
-	The required modules are as follows:
+	The required perl modules are as follows:
 
 	o Core fluxd functionality:
 
-	   * IO::Select       (perl -MCPAN -e "install IO::Select")
-	   * IO::Socket::UNIX (perl -MCPAN -e "install IO::Socket::UNIX")
-	   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
-	   * POSIX            (perl -MCPAN -e "install POSIX")
+		* IO::Select       (perl -MCPAN -e "install IO::Select")
+		* IO::Socket::UNIX (perl -MCPAN -e "install IO::Socket::UNIX")
+		* IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
+		* POSIX            (perl -MCPAN -e "install POSIX")
+
+	IMPORTANT:
+	==========
+	Additionally, Fluxd uses a PHP based helper script called
+	fluxcli.php and for this to run correctly the commandline (cli)
+	version of PHP must be installed with the correct extensions
+	(database, PCRE and session support).  See the notes above in
+	section 3.1 for more information.
 
 
 	o (Optional) Fluxd database connectivity using Perl DBI - Perl DBI
@@ -386,22 +405,196 @@ Tfb 1.0 README file
 	   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
 
 
-TODO: gothere
 /**********************************************************************
 4. Installation
 **********************************************************************/
+
+	Tfb can be installed quickly from a web browser using the included
+	setup script.  For full details of how to install tfb manually,
+	please see the INSTALL file.
+
+	IMPORTANT:
+	==========
+	Before running the setup script, the tfb files must be copied to the
+	webserver 'document root' folder.  It is highly recommended that you
+	do this as the 'root' user in a shell so that the permissions on
+	your tfb files can be set correctly for security and correct
+	operation.  Login via SSH or telnet to your server and carry out the
+	commands after running 'su'.
+
+	It is possible to intall tfb without root access to your server - ie
+	in a shared environment.  However be aware that running tfb in a
+	shared environment is not officially supported due to the large
+	number of features that tfb supports which require root or
+	equivalent installation/configuration and maintenance.
+
+
+	The installation guide follows below:
+
+	1.	Download the latest tfb distribution tarball from:
+
+		http://tf-b4rt.berlios.de/downloads
+
+
+		In a shell:
+
+		# Change to a temporary directory, make sure it exists first!
+		root@users /home/root# cd tmp
+
+		# Use wget to download the tarball
+		# (EXAMPLE ONLY, PLEASE USE THE URL ABOVE TO GET THE LATESST TARBALL!):
+		root@users /home/root/tmp# wget http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
+		--12:23:20--  http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
+		=> `torrentflux-b4rt_1.0-alpha5.tar.bz2'
+		<snip>
+		12:23:29 (212.19 KB/s) - `torrentflux-b4rt_1.0-alpha5.tar.bz2.1' saved [2038014/2038014]
+
+
+	2.	Extract the distribution from the tarball in a temporary
+		directory.
+
+
+		In a shell:
+
+		# Extracts the tarball into the temp directory
+		# (EXAMPLE ONLY, CHECK THE NAME OF YOUR TARBALL!):
+		root@users /home/root/tmp# tar jxvf torrentflux-b4rt_1.0-alpha5.tar.bz2
+		torrentflux-b4rt_1.0-alpha5/
+		torrentflux-b4rt_1.0-alpha5/sql/
+		<snip>
+		torrentflux-b4rt_1.0-alpha5/misc/check/
+		torrentflux-b4rt_1.0-alpha5/misc/check/check_1.0.php
+
+
+	3.	Copy the contents of the "html" folder into your web site
+		directory (docroot).
+
+
+		In a shell:
+
+		# Change to the extracted tarball's directory:
+		root@users /home/root/tmp# cd torrentflux-b4rt_1.0-alpha5
+
+		# Recursively copy the contents of the 'html' folder to a folder
+		# under your website docroot:
+		root@users /home/root/tmp/torrentflux-b4rt_1.0-alpha5# cp -R html /var/www/html/tfb
+
+
+	4.	Ensure the files and directories in the tfb directory under your
+		website docroot are readable by the webserver user.
+
+
+		In a shell:
+
+		# Change to the docroot/tfb directory:
+		root@users /home/root/tmp/torrentflux-b4rt_1.0-alpha5# cd /var/www/html/tfb
+
+		# Change the ownership of all files under /var/www/html/tfb to
+		# that of the user 'www'.  Change 'www' to the user your
+		# webserver runs as:
+		root@users /var/www/html/tfb# chown -R www:www /var/www/html/tfb
+
+
+
+	5.	Ensure the "inc/config/" directory under your docroot/tfb is
+		writeable by the webserver user and not accessible by others.
+
+
+		In a shell:
+
+		# Change ownership of inc/config/ so the 'user' group has write
+		# access and the 'other' group has neither read, write nor
+		# execute access:
+		root@users /var/www/html/tfb# chmod u+w,o-rwx inc/config/
+
+
+	6.	Finally, open "setup.php" in a web browser and complete it step
+		by step.
+
+
+		In a browser, browse to:
+
+		http://example.com/tfb/setup.php
+
+
+	IMPORTANT: LOGIN TO YOUR tfb INSTALLATION IMMEDIATELY
+	=====================================================
+	The first time you login/access the application, you will be
+	prompted for a username and password.  This user/pass pair will be
+	for the SUPERADMIN user on your installation of tfb.  If someone
+	else browses to your tfb installation before you, they will be able
+	to create a superadmin user and effectively 'own' your tfb
+	installation.
+
+	On your first login you should check all the admin settings pages
+	and configure your installation.  Take the time to go through the
+	options there to enable any features you require.
+
 
 /**********************************************************************
 5. Support
 **********************************************************************/
 
-For support with your tfb installation please see the tfb forum:
+	For support with your tfb installation please see the tfb forum:
 
-http://tf-b4rt.berlios.de/forum/
+		http://tf-b4rt.berlios.de/forum/
 
-Please take the time to search the forum first for a solution to your problem.  If you still can't find the solution after searching, please leave a clear and concise message stating:
+	Please take the time to search the forum first for a solution to your
+	problem.  If you still can't find the solution after searching, please
+	leave a clear and concise subject/message:
 
-a. The version of tfb you are using.
-b. The problem that occurs and what you did to see the problem.
-c. Ask a question and make sure the question doesn't require just a yes/no answer!  This sounds odd but saves a lot of time - asking 'is this broken?' will probably get you a 'yes' or 'no' answer - asking 'why does this happen when I do this/that/other?' will probably get you a better answer.
-TODO: Add alternative options for support - ie superadmin/updates section?
+	1.	Ensure the subject of your message takes the format:
+
+			[tfb-VersionXXX] Description
+
+		where:
+
+			VersionXXX is the version of tfb you are running.
+
+			and
+
+			Description gives a concise description of your problem.
+			A message with a subject of 'HELP!!!' is NOT a good subject
+			and is likely to be ignored.
+
+
+	2.	Ensure the content of your message describes:
+
+		a.	Your working environment if relevant
+
+			- ie OS, PHP/DB/Python/etc
+
+			(if in doubt, always include this info!)
+
+		b.	A clear and concise description of what the problem is, what
+			you did to see the problem and any additional info that you
+			think might be relevant to helping you fix the problem.
+
+		c.	What steps can be taken to reproduce the problem - this is
+			useful to help others test your problem out.
+
+		d.	A suggested fix for the problem if you think this is a bug -
+			these kind of posts are always welcome!!!
+
+			Please be very careful however before labelling something a
+			'bug' before you are absolutely positive it is!
+
+
+	3.	This is probably one of the most obvious important factors when asking a
+		question on a technical forum but is surprisingly overlooked
+		very often:
+
+		MAKE SURE YOU ACTUALLY ASK A QUESTION!
+
+		It's suprising how often people rock up on a forum with the
+		intention of getting help, but they don't actually ask a
+		question and only provide a load of information that leaves
+		potential helpers thinking 'And.... the question is...?'!
+
+		Also make sure you ask a question that doesn't just require a
+		yes/no answer.  Before you actually submit the post, use the
+		'Preview' feature to read over your message and check that any
+		questions you ask won't be simple 'yes/no' answers (unless of
+		course that's all you want!).
+
+	TODO: Add alternative options for support - ie superadmin/updates section?
