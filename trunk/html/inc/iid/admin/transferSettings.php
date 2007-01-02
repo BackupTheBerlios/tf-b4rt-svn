@@ -72,6 +72,7 @@ $tmpl->setvar('nzbperl_threads', $cfg['nzbperl_threads']);
 $tmpl->setvar('nzbperl_conn', $cfg['nzbperl_conn']);
 $tmpl->setvar('nzbperl_rate', $cfg['nzbperl_rate']);
 $tmpl->setvar('nzbperl_create', $cfg['nzbperl_create']);
+$tmpl->setvar('nzbperl_options', $cfg['nzbperl_options']);
 // common
 $tmpl->setvar('enable_umask', $cfg["enable_umask"]);
 $tmpl->setvar('nice_adjust', $cfg["nice_adjust"]);
