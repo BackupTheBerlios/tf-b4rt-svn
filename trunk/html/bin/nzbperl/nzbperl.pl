@@ -310,7 +310,8 @@ while (1) {
 # message
 printMessage("nzbperl shutting down...\n");
 
-if ($quitnow){# Do some cleanups
+# Do some cleanups
+if ($quitnow) {
 	foreach my $c (@conn){
 		next unless $c->{'file'};
 		if($c->{'tmpfile'}){
@@ -3038,13 +3039,16 @@ sub writeStatRunning {
 #------------------------------------------------------------------------------#
 sub writeStatShutdown {
 	# set some af-values
-	$afWrite->set("running", 0);
 	if ($noMoreWorkTodo) {
-		$afWrite->set("percent_done", "100");
+		$afWrite->set("running", 0); # done
+		$afWrite->set("percent_done", 100);
 		$afWrite->set("time_left", "Download Succeeded!");
+		$afWrite->set("downtotal", $totalsCopy{'total size'});
 	} else {
-		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : ((int(100.0 * $totals{'total bytes'} / $totals{'total size'})) + 100) * (-1));
-		$afWrite->set("time_left", "Transfer Stopped");
+		$afWrite->set("running", 2); # new
+		$afWrite->set("percent_done", 0);
+		$afWrite->set("time_left", "");
+		$afWrite->set("downtotal", 0);
 	}
 	$afWrite->set("down_speed", "");
 	$afWrite->set("up_speed", "");
@@ -3054,11 +3058,6 @@ sub writeStatShutdown {
 	$afWrite->set("sharing", "");
 	$afWrite->set("seedlimit", "");
 	$afWrite->set("uptotal", 0);
-	if ($noMoreWorkTodo) {
-		$afWrite->set("downtotal", $totalsCopy{'total size'});
-	} else {
-		$afWrite->set("downtotal", $totals{'total bytes'});
-	}
 	$afWrite->set("size", $totalsCopy{'total size'});
 	# write af
 	return $afWrite->write();
