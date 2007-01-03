@@ -1,11 +1,10 @@
 =======================================================================
 $Id$
 =======================================================================
-Dist Version: $DistVersion$
 macros:
-:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb,torrentflux-b4rt,gqap
-:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,Tfb,Torrentflux-b4rt,gqap
-:set noignorecase	/tfb:s/tfb€kb€kb€kb€kb,tfb-forum,http://tf-b4rt.berlios.de/forum/,gqap
+:set noignorecase/tfbms:s,tfb,torrentflux-b4rt,gqap'sk
+:set noignorecase/Tfbms:s,tfb,Torrentflux-b4rt,gqap'sk
+:set noignorecase/tfb-forumms:s,tfb-forum,http://tf-b4rt.berlios.de/forum/,gqap'sk
 
 /**********************************************************************
 Tfb 1.0 README file
@@ -23,6 +22,7 @@ Tfb 1.0 README file
 	5. Support
 
 
+
 /**********************************************************************
 1. Introduction
 **********************************************************************/
@@ -36,26 +36,30 @@ Tfb 1.0 README file
 	the files to your webserver, run the setup script and your tfb
 	installation is ready to go.
 
-	Tfb has builtin support for:
+	Tfb has builtin support for transfers via:
 
-    * Torrent *
+    o BitTorrent - supported client(s) include:
 
-    o Original BitTorrent/Mainline: supports trackerless torrents and
-	  encryption
+		* Original BitTorrent/Mainline: supports trackerless torrents
+		  and encryption
 
-	o BitTornado: uses slightly less resources than the original BT,
-	  allows file priority for downloading files selectively
+		* BitTornado: uses slightly less resources than the original BT,
+		  allows file priority for downloading files selectively
 
-	o Transmission: much smaller memory footprint without too much loss
-	  in functionality
+		* Transmission: much smaller memory footprint without to* much
+		  loss in functionality
 
-    * HTTP/FTP *
+    o HTTP/FTP - supported client(s) include:
 
-	o wget
+		* wget - standard lightweight file transfer utility on Linux,
+		  supported on many other platforms also
 
-    * Usenet *
+    o Usenet - supported client(s) include:
 
-	o nzbperl
+		* nzbperl - perl based application allowing multi-connection
+		  news server downloads from nzb files with functionality for
+		  bandwidth throttling.
+
 
 	Tfb incorporates a huge number of advanced options to allow you
 	finer grained control of your transfers. The administration panel in
@@ -65,6 +69,7 @@ Tfb 1.0 README file
 	Tfb is also a multi-user application, allowing you to create
 	individual accounts and assign restrictions to those accounts as you
 	wish.
+
 
 
 /**********************************************************************
@@ -90,12 +95,13 @@ Tfb 1.0 README file
 		  torrents, all transfers or a selection of transfers
 
 
-	o Uploading of Metafiles:
+	o Uploading of metafiles (.torrent, .wget, .nzb files):
 
 		- upload single/multiple metafiles from your local machine
 		  to the webserver
 
-		- upload files directly to your webserver from another webserver
+		- upload metafiles directly to your webserver from another
+		  webserver
 
 
 	o AJAX updates for maximum info with minimal bandwidth
@@ -117,7 +123,21 @@ Tfb 1.0 README file
 
 		- download of completed torrents directly from browser
 
-    o Templating-Engine
+
+	o Templating Engine
+
+		- the tfb GUI is template driven using the vLib template engine:
+
+			http://vlib.clausvb.de/vlibtemplate.php
+
+		  This allows developers to completely redesign the look and
+		  feel of tfb without having to worry about the underlying PHP
+		  codebase.
+
+		- tfb also incorporates template caching to speed up the load
+		  time of pages.  This feature can be enabled via the
+		  Adminstration control panel.
+
 
 
 /**********************************************************************
@@ -194,33 +214,34 @@ Tfb 1.0 README file
 	  Current tested webservers include:
 
 		* Apache
-			- http://www.apache.org/
+			http://www.apache.org/
 
 		* LightTPD
-			- http://www.lighttpd.net/
+			http://www.lighttpd.net/
 
 
 	o An SQL-Database.
 	  Currently Supported databases:
 
 		* MySQL
-			- http://www.mysql.com/
+			http://www.mysql.com/
 
 		* SQLite
-			- http://www.sqlite.org/
+			http://www.sqlite.org/
 
 		* PostgreSQL
-			- http://www.postgresql.org/
+			http://www.postgresql.org/
 
 
 	o PHP in 'web mode' (ie mod_php or php-cgi - preferably mod_php) >=
 	  4.3.x built with database (MySQL, SQLite or PostgreSQL), session
 	  and PCRE support enabled.
 
-	o PHP in 'commandline mode' (php-cli) >= 4.3.x built with database (MySQL,
-	  SQLite or PostgreSQL), session, sockets and PCRE support enabled.
+	o PHP in 'commandline mode' (php-cli) >= 4.3.x built with database
+	  (MySQL, SQLite or PostgreSQL), session, sockets and PCRE support
+	  enabled.
 
-		- http://www.php.net/
+		http://www.php.net/
 
 		PHP Notes:
 		==========
@@ -254,6 +275,7 @@ Tfb 1.0 README file
 	using the recommended package management system for your OS.
 
 
+
 /**********************************************************************
 3.2 Additional/Optional Feature Requirements
 **********************************************************************/
@@ -274,28 +296,28 @@ Tfb 1.0 README file
 	o BitTorrent Mainline Client requirements:
 
 		* PyCrypto (Python Cryptography Toolkit)
-			- http://sourceforge.net/projects/pycrypto/
+			http://sourceforge.net/projects/pycrypto/
 
 		* Twisted Python libs
-			- http://twistedmatrix.com/trac/
+			http://twistedmatrix.com/trac/
 
 			Note:
 			=====
 			Twisted also requires Zope Interface >=3.0.1
-				- http://www.zope.org/Products/ZopeInterface/
+				http://www.zope.org/Products/ZopeInterface/
 
 			see Twisted installation docs for more info.
 
 
 	o wget transfer functionality requirements:
 		* wget
-			- http://www.gnu.org/software/wget/
+			http://www.gnu.org/software/wget/
 
 
 	o nzbperl.pl requirements:
 
 		* UUDeview
-			- http://fpx.de/fp/Software/UUDeview/
+			http://fpx.de/fp/Software/UUDeview/
 
 		The following perl modules are also required for nzbperl:
 
@@ -317,18 +339,18 @@ Tfb 1.0 README file
 	o Archive (rar/zip) extraction functionality requirements:
 
 		* unrar
-			- http://www.rarlab.com/rar/
+			http://www.rarlab.com/rar/
 
 
 	o SFV file integrity checking functionality requirements:
 
 		* cksfv
-			- http://zakalwe.fi/~shd/foss/cksfv/
+			http://zakalwe.fi/~shd/foss/cksfv/
 
 
 	o vlc streaming functionality requirements:
 		* vlc
-			- http://www.videolan.org/
+			http://www.videolan.org/
 
 
 	o ttools.pl is an alternative BitTorrent metadata client that can be
@@ -341,11 +363,11 @@ Tfb 1.0 README file
 
 		o Compilation of Transmision on Mac OS X requirements:
 			* Apple Developer Tools
-				- http://developer.apple.com/tools/
+				http://developer.apple.com/tools/
 
 		o wget functionality on Mac OS X requirements:
 			* wget
-				- http://www.statusq.org/images/wget.zip
+				http://www.statusq.org/images/wget.zip
 
 
 	o tfrss.pl (deprecated)
@@ -413,6 +435,7 @@ Tfb 1.0 README file
 	   * IO::Select       (perl -MCPAN -e "install IO::Select")
 
 	   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
+
 
 
 /**********************************************************************
@@ -534,11 +557,12 @@ Tfb 1.0 README file
 	for the SUPERADMIN user on your installation of tfb.  If someone
 	else browses to your tfb installation before you, they will be able
 	to create a superadmin user and effectively 'own' your tfb
-	installation.
+	installation which is not a good thing.
 
 	On your first login you should check all the admin settings pages
 	and configure your installation.  Take the time to go through the
 	options there to enable any features you require.
+
 
 
 /**********************************************************************
@@ -559,13 +583,19 @@ Tfb 1.0 README file
 
 		where:
 
-			VersionXXX is the version of tfb you are running.
+			VersionXXX is the version of tfb you are running
+			- ie 1.0-alpha5.
 
 			and
 
 			Description gives a concise description of your problem.
 			A message with a subject of 'HELP!!!' is NOT a good subject
 			and is likely to be ignored.
+
+		For example, a good subject for a message would be something
+		like:
+
+		[tfb-alpha5] Transfers fail to start when template caching enabled
 
 
 	2.	Ensure the content of your message describes:
@@ -578,7 +608,23 @@ Tfb 1.0 README file
 
 		b.	A clear and concise description of what the problem is, what
 			you did to see the problem and any additional info that you
-			think might be relevant to helping you fix the problem.
+			think might be relevant to helping us help you fix the
+			problem.
+
+			IMPORTANT:
+			==========
+			Most useful of all are the tfb logfiles for troubleshooting.
+			Always check these logfiles first and ALWAYS post the
+			relevant info from them when posting on the forum!:
+
+			- transfer logfiles - click on the logfile icon in the
+			  transfer list to view the transfer logfiles
+
+			- fluxd logfiles - the fluxd logs are located in the
+			  Adminstration section for fluxd, one for fluxd general
+			  messages and one for fluxd errors.  Check both of these
+			  when troubleshooting fluxd problems.
+
 
 		c.	What steps can be taken to reproduce the problem - this is
 			useful to help others test your problem out.
@@ -590,9 +636,9 @@ Tfb 1.0 README file
 			'bug' before you are absolutely positive it is!
 
 
-	3.	This is probably one of the most obvious important factors when asking a
-		question on a technical forum but is surprisingly overlooked
-		very often:
+	3.	This is probably one of the most obvious important factors when
+		asking a question on a technical forum but is surprisingly
+		overlooked very often:
 
 		MAKE SURE YOU ACTUALLY ASK A QUESTION!
 
@@ -606,6 +652,14 @@ Tfb 1.0 README file
 		'Preview' feature to read over your message and check that any
 		questions you ask won't be simple 'yes/no' answers (unless of
 		course that's all you want!).
+
+
+	Finally, PLEASE PLEASE PLEASE take the time to read the following
+	document if you plan on asking a question on the forum. This is
+	recommended reading for all levels of users who wish to get help on
+	a technical forum:
+
+		http://catb.org/~esr/faqs/smart-questions.html
 
 
 	TODO: Add alternative options for support - ie superadmin/updates section?
