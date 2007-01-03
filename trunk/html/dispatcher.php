@@ -326,6 +326,7 @@ switch ($action) {
 							$clientHandler->start($element, false, FluxdQmgr::isRunning());
 						} else {
 							$clientHandler->start($element, false, false);
+							sleep(8);
 						}
 						if (count($clientHandler->messages) > 0)
                     		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
