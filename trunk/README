@@ -38,7 +38,9 @@ Tfb 1.0 README file
 
 	Tfb has builtin support for:
 
-	o Original BitTorrent/Mainline: supports trackerless torrents and
+    * Torrent *
+
+    o Original BitTorrent/Mainline: supports trackerless torrents and
 	  encryption
 
 	o BitTornado: uses slightly less resources than the original BT,
@@ -47,8 +49,13 @@ Tfb 1.0 README file
 	o Transmission: much smaller memory footprint without too much loss
 	  in functionality
 
-	o wget and nzb (USENET/news server) transfers (wget must be
-	  installed on your server)
+    * HTTP/FTP *
+
+	o wget
+
+    * Usenet *
+
+	o nzbperl
 
 	Tfb incorporates a huge number of advanced options to allow you
 	finer grained control of your transfers. The administration panel in
@@ -77,15 +84,15 @@ Tfb 1.0 README file
 			o number of seeders/leechers
 
 
-	o Torrent control:
+	o Transfer control:
 
 		- Perform stop/start/resume/kill/delete operations on individual
-		  torrents, all torrents or a selection of torrents
+		  torrents, all transfers or a selection of transfers
 
 
-	o Uploading of torrents:
+	o Uploading of Metafiles:
 
-		- upload single/multiple torrent files from your local machine
+		- upload single/multiple metafiles from your local machine
 		  to the webserver
 
 		- upload files directly to your webserver from another webserver
@@ -109,6 +116,8 @@ Tfb 1.0 README file
 		- vlc streaming controllable from browser
 
 		- download of completed torrents directly from browser
+
+    o Templating-Engine
 
 
 /**********************************************************************
