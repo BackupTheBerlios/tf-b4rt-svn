@@ -95,7 +95,7 @@ switch ($pageop) {
 		$tmpl->setvar('host', $_SERVER['SERVER_ADDR']);
 		$tmpl->setvar('port', $cfg['vlc_port']);
 		// already streaming
-		if (vlcIsRunning("127.0.0.1", $cfg['vlc_port']) === true) {
+		if (vlcIsRunning($_SERVER['SERVER_ADDR'], $cfg['vlc_port']) === true) {
 			$tmpl->setvar('is_streaming', 1);
 			$tmpl->setvar('current_stream', vlcGetRunningCurrent());
 		} else {
