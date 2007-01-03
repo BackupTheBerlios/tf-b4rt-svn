@@ -29,6 +29,9 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// host
+$vlcHost = $_SERVER['SERVER_ADDR'];
+
 // option-lists
 $vidcList = array('DIV3', 'DIV4', 'WMV1', 'WMV2', 'RV10', 'mp1v', 'mp4v');
 $vbitList = array('192', '256', '384', '512', '768', '1024', '1280', '1536', '1792', '2048');
@@ -92,10 +95,10 @@ switch ($pageop) {
 		$tmpl->setvar('file', $fileName);
 		$tmpl->setvar('target', urlencode(addslashes($dirName.$fileName)));
 		// host vars
-		$tmpl->setvar('host', $_SERVER['SERVER_ADDR']);
+		$tmpl->setvar('host', $vlcHost);
 		$tmpl->setvar('port', $cfg['vlc_port']);
 		// already streaming
-		if (vlcIsRunning($_SERVER['SERVER_ADDR'], $cfg['vlc_port']) === true) {
+		if (vlcIsRunning($vlcHost, $cfg['vlc_port']) === true) {
 			$tmpl->setvar('is_streaming', 1);
 			$tmpl->setvar('current_stream', vlcGetRunningCurrent());
 		} else {
@@ -119,7 +122,7 @@ switch ($pageop) {
 		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
 		$tmpl->setvar('port', $cfg['vlc_port']);
 		// start vlc
-		@vlcStart($_SERVER['SERVER_ADDR'], $cfg['vlc_port'], $cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
+		@vlcStart($vlcHost, $cfg['vlc_port'], $cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
 		break;
 	case "stop":
 		// stop vlc
