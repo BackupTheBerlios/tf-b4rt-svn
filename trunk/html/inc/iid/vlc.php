@@ -119,7 +119,7 @@ switch ($pageop) {
 		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
 		$tmpl->setvar('port', $cfg['vlc_port']);
 		// start vlc
-		@vlcStart("127.0.0.1", $cfg['vlc_port'], $cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
+		@vlcStart($_SERVER['SERVER_ADDR'], $cfg['vlc_port'], $cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
 		break;
 	case "stop":
 		// stop vlc
