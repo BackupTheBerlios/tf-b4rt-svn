@@ -270,7 +270,7 @@ while (1) {
 		# stat-file
 		$afRead->initialize($statfile);
 		if ($afRead->get("running") eq "0") {
-			printMessage("got stop-request, setting shutdown-flag...\n");
+			printMessage("stop-request, setting shutdown-flag...\n");
 			$quitnow = 1;
 		} else {
 			writeStatRunning();
