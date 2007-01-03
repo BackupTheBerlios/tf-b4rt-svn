@@ -819,4 +819,209 @@ function validateLocalFiles() {
 	}
 }
 
+/**
+ * phpCheckWeb
+ *
+ * @return string
+ */
+function phpCheckWeb() {
+	$retVal = "<br>";
+	$errors = 0;
+	$warnings = 0;
+	$dbsupported = 0;
+	$errorsMessages = array();
+	$warningsMessages = array();
+	// PHP-Version
+	$retVal .= '<p><strong>1. PHP-Version</strong></p>';
+	$phpVersion = 'PHP-Version : <em>'.PHP_VERSION.'</em> ';
+	if (PHP_VERSION < 4.3) {
+		$phpVersion .= '<font color="red">Failed</font>';
+		$errors++;
+		array_push($errorsMessages, "PHP-Version : 4.3 or higher required.");
+	} else {
+		$phpVersion .= '<font color="green">Passed</font>';
+	}
+	$retVal .= $phpVersion;
+	// PHP-Extensions
+	$retVal .= '<p><strong>2. PHP-Extensions</strong></p>';
+	$retVal .= "<ul>";
+	$loadedExtensions = get_loaded_extensions();
+	// session
+	$session = '<li>session ';
+	if (in_array("session", $loadedExtensions)) {
+		$session .= '<font color="green">Passed</font>';
+	} else {
+		$session .= '<font color="red">Failed</font>';
+		$errors++;
+		array_push($errorsMessages, "PHP-Extensions : session required.");
+	}
+	$retVal .= $session.'</li>';
+	// pcre
+	$pcre = '<li>pcre ';
+	if (in_array("pcre", $loadedExtensions)) {
+		$pcre .= '<font color="green">Passed</font>';
+	} else {
+		$pcre .= '<font color="red">Failed</font>';
+		$errors++;
+		array_push($errorsMessages, "PHP-Extensions : pcre required.");
+	}
+	$retVal .= $pcre.'</li>';
+	// sockets
+	$sockets = '<li>sockets ';
+	if (in_array("sockets", $loadedExtensions)) {
+		$sockets .= '<font color="green">Passed</font>';
+	} else {
+		$sockets .= '<font color="red">Failed</font>';
+		$warnings++;
+		array_push($warningsMessages, "PHP-Extensions : sockets required for communication with fluxd. fluxd cannot work without sockets.");
+	}
+	$retVal .= $sockets.'</li>';
+	//
+	$retVal .= "</ul>";
+	// PHP-Configuration
+	$retVal .= '<p><strong>3. PHP-Configuration</strong></p>';
+	$retVal .= "<ul>";
+	// safe_mode
+	$safe_mode = '<li>safe_mode ';
+	if ((ini_get("safe_mode")) == 0) {
+		$safe_mode .= '<font color="green">Passed</font>';
+	} else {
+		$safe_mode .= '<font color="red">Failed</font>';
+		$errors++;
+		array_push($errorsMessages, "PHP-Configuration : safe_mode must be turned off.");
+	}
+	$retVal .= $safe_mode.'</li>';
+	// allow_url_fopen
+	$allow_url_fopen = '<li>allow_url_fopen ';
+	if ((ini_get("allow_url_fopen")) == 1) {
+		$allow_url_fopen .= '<font color="green">Passed</font>';
+	} else {
+		$allow_url_fopen .= '<font color="red">Failed</font>';
+		array_push($warningsMessages, "PHP-Configuration : allow_url_fopen must be turned on. some features wont work if it is turned off.");
+		$warnings++;
+	}
+	$retVal .= $allow_url_fopen.'</li>';
+	// register_globals
+	$register_globals = '<li>register_globals ';
+	if ((ini_get("register_globals")) == 0) {
+		$register_globals .= '<font color="green">Passed</font>';
+	} else {
+		$register_globals .= '<font color="red">Failed</font>';
+		$errors++;
+		array_push($errorsMessages, "PHP-Configuration : register_globals must be turned off.");
+	}
+	$retVal .= $register_globals.'</li>';
+	//
+	$retVal .= "</ul>";
+	// PHP-Database-Support
+	$retVal .= '<p><strong>4. PHP-Database-Support</strong></p>';
+	$retVal .= "<ul>";
+	// define valid db-types
+	$databaseTypes = array();
+	$databaseTypes['mysql'] = 'mysql_connect';
+	$databaseTypes['sqlite'] = 'sqlite_open';
+	$databaseTypes['postgres'] = 'pg_connect';
+	// test db-types
+	foreach ($databaseTypes as $databaseTypeName => $databaseTypeFunction) {
+		$dbtest = '<li>'.$databaseTypeName.' ';
+		if (function_exists($databaseTypeFunction)) {
+			$dbtest .= '<font color="green">Passed</font>';
+			$dbsupported++;
+		} else {
+			$dbtest .= '<font color="red">Failed</font>';
+		}
+		$retVal .= $dbtest.'</li>';
+	}
+	$retVal .= "</ul>";
+	// db-state
+	if ($dbsupported == 0) {
+		$errors++;
+		array_push($errorsMessages, "PHP-Database-Support : no supported database-type found.");
+	}
+	// OS-Specific
+	// get os
+	$osString = php_uname('s');
+	if (isset($osString)) {
+	    if (!(stristr($osString, 'linux') === false)) /* linux */
+	    	define('_OS', 1);
+	    else if (!(stristr($osString, 'bsd') === false)) /* bsd */
+	    	define('_OS', 2);
+	    else
+	    	define('_OS', 0);
+	} else {
+		define('_OS', 0);
+	}
+	$retVal .= '<p><strong>5. OS-Specific ('.$osString.' '.php_uname('r').')</strong></p>';
+	switch (_OS) {
+		case 1: // linux
+			$retVal .= 'No Special Requirements on Linux-OS. <font color="green">Passed</font>';
+			break;
+		case 2: // bsd
+			$retVal .= "<ul>";
+			// posix
+			$posix = '<li>posix ';
+			if ((function_exists('posix_geteuid')) && (function_exists('posix_getpwuid'))) {
+				$posix .= '<font color="green">Passed</font>';
+			} else {
+				$posix .= '<font color="red">Failed</font>';
+				$warnings++;
+				array_push($warningsMessages, "OS-Specific : PHP-extension posix missing. some netstat-features wont work without.");
+			}
+			$retVal .= $posix.'</li>';
+			$retVal .= "</ul>";
+			break;
+		case 0: // unknown
+		default:
+			$retVal .= "OS not supported.<br>";
+			$errors++;
+			array_push($errorsMessages, "OS-Specific : ".$osString." not supported.");
+			break;
+	}
+	// summary
+	$retVal .= '<p><strong>Summary</strong></p>';
+	// state
+	$state = "<strong>State : ";
+	if (($warnings + $errors) == 0) {
+		// good
+		$state .= '<font color="green">Ok</font>';
+		$state .= "</strong><br>";
+		$retVal .= $state;
+		$retVal .= "torrentflux-b4rt should run on this system.";
+	} else {
+		if (($errors == 0) && ($warnings > 0)) {
+			// may run with flaws
+			$state .= '<font color="orange">Warning</font>';
+			$state .= "</strong><br>";
+			$retVal .= $state;
+			$retVal .= "torrentflux-b4rt may run on this system, but there may be problems.";
+		} else {
+			// not ok
+			$state .= '<font color="red">Failed</font>';
+			$state .= "</strong><br>";
+			$retVal .= $state;
+			$retVal .= "torrentflux-b4rt cannot run on this system.";
+		}
+	}
+	// errors
+	if (count($errorsMessages) > 0) {
+		$retVal .= '<p><strong><font color="red">Errors : </font></strong><br>';
+		$retVal .= "<ul>";
+		foreach ($errorsMessages as $errorsMessage) {
+			$retVal .= "<li>".$errorsMessage."</li>";
+		}
+		$retVal .= "</ul>";
+	}
+	// warnings
+	if (count($warningsMessages) > 0) {
+		$retVal .= '<p><strong><font color="orange">Warnings : </font></strong><br>';
+		$retVal .= "<ul>";
+		foreach ($warningsMessages as $warningsMessage) {
+			$retVal .= "<li>".$warningsMessage."</li>";
+		}
+		$retVal .= "</ul>";
+	}
+	// return
+	return $retVal;
+}
+
 ?>

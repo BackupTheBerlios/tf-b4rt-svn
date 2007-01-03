@@ -991,13 +991,22 @@ if (isset($_REQUEST["y"])) {
 			case "5": // misc - Check
 				$htmlTitle = "Misc - Check";
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?y=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-cli" border="0"> php-cli</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?y=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-web" border="0"> php-web</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?y=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Perl" border="0"> Perl</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?y=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="php-cli" border="0"> php-cli</a>';
+				$htmlMain .= '<p>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?y=53"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Perl" border="0"> Perl</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
-			case "51": // misc - Check - php-cli
+			case "51": // misc - Check - php-web
+				$htmlTitle = "Misc - Check - php-web";
+				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+				$htmlMain .= phpCheckWeb();
+				$htmlMain .= '</div>';
+				break;
+
+			case "52": // misc - Check - php-cli
 				$htmlTitle = "Misc - Check - php-cli";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
@@ -1006,7 +1015,7 @@ if (isset($_REQUEST["y"])) {
 				$htmlMain .= '</div>';
 				break;
 
-			case "52": // misc - Check - Perl
+			case "53": // misc - Check - Perl
 				$htmlTitle = "Misc - Check - Perl";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
@@ -1015,7 +1024,7 @@ if (isset($_REQUEST["y"])) {
 				$htmlMain .= '</div>';
 				break;
 
-			case "521": // misc - Check - Perl - nzbperl
+			case "531": // misc - Check - Perl - nzbperl
 				$htmlTitle = "Misc - Check - Perl";
 				$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 				$htmlMain .= '<pre>';
