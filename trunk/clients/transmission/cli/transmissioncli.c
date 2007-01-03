@@ -339,6 +339,8 @@ int main(int argc, char ** argv) {
 				fclose(tf_stat);
 				// Torrentflux asked to shutdown the torrent, set flag
 				if (stat_state == '0') {
+					fprintTimestamp();
+					fprintf(stderr, "stop-request, setting shutdown-flag...\n");
 					mustDie = 1;
 				}
 			} else {
