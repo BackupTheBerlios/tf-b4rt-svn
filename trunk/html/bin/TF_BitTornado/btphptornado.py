@@ -259,6 +259,7 @@ class HeadlessDisplayer:
         if __debug__: traceMsg('writeStatus - stoppedAt :' + self.stoppedAt)
 
         if running == '0':
+            transferLog("stop-request, setting shutdown-flag...\n", True)
             if self.stoppedAt == '':
                 if self.percentDone == '100':
                     self.stoppedAt = '100'
