@@ -272,6 +272,7 @@ class HeadlessDisplayer(object):
             # shutdown or write stat-file + log errors
             if self.running == '0':
                 # log
+                transferLog("stop-request, setting shutdown-flag...\n", True)
                 transferLog("mainline shutting down...\n", True)
                 # set flags
                 self.state = 0
