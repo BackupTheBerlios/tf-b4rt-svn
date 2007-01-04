@@ -335,7 +335,7 @@ class Fluxd
             $result = exec($startCommand);
             // check if fluxd could be started
             $loop = true;
-            $maxLoops = 75;
+            $maxLoops = 125;
             $loopCtr = 0;
             $started = false;
             while ($loop) {
@@ -379,7 +379,7 @@ class Fluxd
         	AuditAction($cfg["constants"]["fluxd"], "Stopping fluxd");
             $this->instance_sendCommand('die', 0);
             // check if fluxd still running
-            $maxLoops = 75;
+            $maxLoops = 125;
             $loopCtr = 0;
             while (1) {
             	if ($this->_isRunning()) {
