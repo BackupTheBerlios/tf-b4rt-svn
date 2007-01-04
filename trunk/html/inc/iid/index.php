@@ -73,6 +73,7 @@ $tmpl->setvar('path_incoming', ($cfg["enable_home_dirs"] != 0) ? $cfg["user"] : 
 $tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
+$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 
 // =============================================================================
 // transfer-list
@@ -714,7 +715,6 @@ $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
-$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
 $tmpl->setvar('drivespace', $cfg['driveSpace']);
 $tmpl->setvar('freeSpaceFormatted', $cfg['freeSpaceFormatted']);
 $tmpl->setvar('file_types_label', $cfg['file_types_label']);
