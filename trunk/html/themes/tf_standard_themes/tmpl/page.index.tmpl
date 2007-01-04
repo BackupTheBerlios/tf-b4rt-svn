@@ -25,7 +25,7 @@
 								<tr>
 									<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
 									<td>
-										<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">) : <br>
+										<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">): <br>
 										<table cellpadding="1" cellspacing="1" border="0">
 											<tr>
 												<td id="fileUploadCell">
@@ -91,7 +91,7 @@
 									<form name="form_url_nzb" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
 										<td>
 											<hr>
-											URL for the nzb-File :<br>
+											URL for the nzb-File:<br>
 											<input type="hidden" name="type" value="nzb">
 											<input type="text" name="url" size="40">
 											<input type="Submit" value="Go">
@@ -104,7 +104,7 @@
 									<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
 										<td>
 											<hr>
-											URL for the File to wget :<br>
+											URL for the File to wget:<br>
 											<input type="text" name="url" size="40">
 											<input name="wget_start" type="Checkbox" value="1">Start
 											<input type="Submit" value="Go">
@@ -136,7 +136,7 @@
 						<table width="100%" cellpadding="1" border="0">
 							<tr>
 								<tmpl_if name="ui_displaylinks" value="1">
-									<td valign="top">
+									<td valign="top" nowrap>
 										<b><tmpl_var name="_TORRENTLINKS">:</b><br>
 										<tmpl_loop name="linklist">
 											<tmpl_if name="enable_dereferrer">
@@ -152,7 +152,7 @@
 										<table width="100%" cellpadding="0" border="0">
 											<tr>
 										    	<td><img src="themes/tf_standard_themes/images/user.gif" width=17 height=14 title="" border=0 align="bottom"></td>
-										    	<td><b><tmpl_var name="_ONLINE"> :</b></td>
+										    	<td><b><tmpl_var name="_ONLINE">:</b></td>
 										    </tr>
 										    <tr>
 										    	<td>&nbsp;</td>
@@ -167,7 +167,7 @@
 		    								<tmpl_if name="hide_offline" value="0">
 												<tr>
 			    									<td><img src="themes/tf_standard_themes/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"></td>
-			    									<td><b><tmpl_var name="_OFFLINE"> :</b></td>
+			    									<td><b><tmpl_var name="_OFFLINE">:</b></td>
 											    </tr>
 										    	<tr>
 											    	<td>&nbsp;</td>
