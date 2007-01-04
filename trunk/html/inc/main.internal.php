@@ -100,47 +100,49 @@ if (isAuthenticated() == 1) {
 // log the hit
 AuditAction($cfg["constants"]["hit"], $_SERVER['PHP_SELF']);
 
-// login-tasks
+// cache is not set
 if (!(cacheIsSet($currentUser))) {
 
 	// login-check-tasks
-	// check for setup.php
-	if (!isset($_SESSION['check']['setup'])) {
-		$_SESSION['check']['setup'] = 1;
-		// check for setup.php and upgrade.php
-		if (@file_exists("setup.php") === true)
-			@error("setup.php must be deleted", "index.php?iid=index", "");
-	}
-	// check for upgrade.php
-	if (!isset($_SESSION['check']['upgrade'])) {
-		$_SESSION['check']['upgrade'] = 1;
-		if (@file_exists("upgrade.php") === true)
-			@error("upgrade.php must be deleted", "index.php?iid=index", "");
-	}
-	// safe_mode
-	if (!isset($_SESSION['check']['safe_mode'])) {
-		$_SESSION['check']['safe_mode'] = 1;
-		if (@ini_get('safe_mode'))
-			@error("safe_mode enabled", "index.php?iid=index", "", array("tf-b4rt will not run with this setting", "PHP-setting : safe_mode"));
-	}
-	// allow_url_fopen
-	if (!isset($_SESSION['check']['allow_url_fopen'])) {
-		$_SESSION['check']['allow_url_fopen'] = 1;
-		if (!@ini_get('allow_url_fopen'))
-			@error("allow_url_fopen disabled", "index.php?iid=index", "", array("tf-b4rt will not run flawless with this setting", "PHP-setting : allow_url_fopen"));
-	}
-	// register_globals
-	if (!isset($_SESSION['check']['register_globals'])) {
-		$_SESSION['check']['register_globals'] = 1;
-		if (@ini_get('register_globals'))
-			@error("register_globals enabled", "index.php?iid=index", "", array("tf-b4rt may not run flawless with this setting", "PHP-setting : register_globals"));
-	}
-	// config-checks
-	if (!isset($_SESSION['check']['config'])) {
-		$_SESSION['check']['config'] = 1;
-		// check if file is writable
-		if (is_writable('inc/config/config.db.php'))
-			@error("config-file is writable", "index.php?iid=index", "", array("remove write-permissions from database-config-file (inc/config/config.db.php)"));
+	if (!isset($_SESSION['login_tasks'])) {
+		// check for setup.php
+		if (!isset($_SESSION['check']['setup'])) {
+			$_SESSION['check']['setup'] = 1;
+			// check for setup.php and upgrade.php
+			if (@file_exists("setup.php") === true)
+				@error("setup.php must be deleted", "index.php?iid=index", "");
+		}
+		// check for upgrade.php
+		if (!isset($_SESSION['check']['upgrade'])) {
+			$_SESSION['check']['upgrade'] = 1;
+			if (@file_exists("upgrade.php") === true)
+				@error("upgrade.php must be deleted", "index.php?iid=index", "");
+		}
+		// safe_mode
+		if (!isset($_SESSION['check']['safe_mode'])) {
+			$_SESSION['check']['safe_mode'] = 1;
+			if (@ini_get('safe_mode'))
+				@error("safe_mode enabled", "index.php?iid=index", "", array("tf-b4rt will not run with this setting", "PHP-setting : safe_mode"));
+		}
+		// allow_url_fopen
+		if (!isset($_SESSION['check']['allow_url_fopen'])) {
+			$_SESSION['check']['allow_url_fopen'] = 1;
+			if (!@ini_get('allow_url_fopen'))
+				@error("allow_url_fopen disabled", "index.php?iid=index", "", array("tf-b4rt will not run flawless with this setting", "PHP-setting : allow_url_fopen"));
+		}
+		// register_globals
+		if (!isset($_SESSION['check']['register_globals'])) {
+			$_SESSION['check']['register_globals'] = 1;
+			if (@ini_get('register_globals'))
+				@error("register_globals enabled", "index.php?iid=index", "", array("tf-b4rt may not run flawless with this setting", "PHP-setting : register_globals"));
+		}
+		// config-checks
+		if (!isset($_SESSION['check']['config'])) {
+			$_SESSION['check']['config'] = 1;
+			// check if file is writable
+			if (is_writable('inc/config/config.db.php'))
+				@error("config-file is writable", "index.php?iid=index", "", array("remove write-permissions from database-config-file (inc/config/config.db.php)"));
+		}
 	}
 
 	// set admin-var
@@ -180,12 +182,19 @@ if (!(cacheIsSet($currentUser))) {
 	// set cache
 	cacheSet($currentUser);
 
-	// check main-directories.
-	checkMainDirectories();
+	// login-tasks
+	if (!isset($_SESSION['login_tasks'])) {
 
-	// maintenance-run
-	require_once("inc/classes/MaintenanceAndRepair.php");
-	MaintenanceAndRepair::maintenance(false);
+		// check main-directories.
+		checkMainDirectories();
+
+		// maintenance-run
+		require_once("inc/classes/MaintenanceAndRepair.php");
+		MaintenanceAndRepair::maintenance(false);
+
+		// set flag
+		$_SESSION['login_tasks'] = 1;
+	}
 
 	// set transfers-cache
 	cacheTransfersSet();
