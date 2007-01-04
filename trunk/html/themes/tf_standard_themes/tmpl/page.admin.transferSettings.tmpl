@@ -337,10 +337,16 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Threads</strong><br>
-									If your perl supports threads, enter the number of threads to run here. Otherwise, enter 0
+									Enable only if your Perl supports threads.
 								</td>
 								<td valign="top">
-									<input name="nzbperl_threads" type="Text" maxlength="4" value="<tmpl_var name="nzbperl_threads">" size="4">
+									<select name="nzbperl_threads">
+										<tmpl_loop name="nzbperl_threadList">
+											<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
+												<tmpl_var name="name">
+											</option>
+										</tmpl_loop>
+									</select>
 								</td>
 							</tr>
 							<tr>
@@ -378,7 +384,7 @@
 													 selected
 												</tmpl_if>
 											>
-											<tmpl_if name="i" value=0">
+											<tmpl_if name="i" value="0">
 												Dont use nice
 											<tmpl_else name="i">
 												<tmpl_var name="i">

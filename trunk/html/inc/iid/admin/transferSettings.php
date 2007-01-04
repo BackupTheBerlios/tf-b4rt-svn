@@ -69,6 +69,23 @@ $tmpl->setvar('nzbperl_server', $cfg['nzbperl_server']);
 $tmpl->setvar('nzbperl_user', $cfg['nzbperl_user']);
 $tmpl->setvar('nzbperl_pw', $cfg['nzbperl_pw']);
 $tmpl->setvar('nzbperl_threads', $cfg['nzbperl_threads']);
+$nzbThreadList = array();
+array_push($nzbThreadList, array(
+	'name' => 'No Threads',
+	'value' => 0,
+	'is_selected' => ($cfg["nzbperl_threads"] == 0) ? 1 : 0
+	)
+);
+for ($i = 1; $i <= 5 ; $i++) {
+	if ($i == 3) continue;
+	array_push($nzbThreadList, array(
+		'name' => $i,
+		'value' => $i,
+		'is_selected' => ($cfg["nzbperl_threads"] == $i) ? 1 : 0
+		)
+	);
+}
+$tmpl->setloop('nzbperl_threadList', $nzbThreadList);
 $tmpl->setvar('nzbperl_conn', $cfg['nzbperl_conn']);
 $tmpl->setvar('nzbperl_rate', $cfg['nzbperl_rate']);
 $tmpl->setvar('nzbperl_create', $cfg['nzbperl_create']);
