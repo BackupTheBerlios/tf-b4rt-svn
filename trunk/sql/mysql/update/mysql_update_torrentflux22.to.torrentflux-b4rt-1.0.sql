@@ -258,7 +258,7 @@ INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
 INSERT INTO tf_settings VALUES ('enable_transfer_profile','1');
 INSERT INTO tf_settings VALUES ('transfer_profile_level','2');
 INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
-INSERT INTO tf_settings VALUES ('downloadhosts','0');
+INSERT INTO tf_settings VALUES ('transferHosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('enable_sharekill','1');
 INSERT INTO tf_settings VALUES ('enable_nzbperl','0');

@@ -85,8 +85,8 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Download-Details Type</strong><br>
-								Choose Type of Download-Details-Popup :
+								<td align="left" width="350" valign="top"><strong>Transfer-Stats Type</strong><br>
+								Choose Type of Transfer-Stats-Window :
 								</td>
 								<td valign="bottom">
 									<select name="details_type">
@@ -100,22 +100,22 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Download-Details Update Intervall</strong><br>
-								Update-intervall in seconds of the details-popup :
+								<td align="left" width="350" valign="top"><strong>Transfer-Stats Update Intervall</strong><br>
+								Update-intervall in seconds of the Transfer-Stats-Window :
 								</td>
 								<td valign="bottom">
 									<input name="details_update" type="Text" maxlength="3" value="<tmpl_var name="details_update">" size="3">
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Download-Hosts</strong><br>
-								Show IPs or Hostnames in Download-Hosts of a client :
+								<td align="left" width="350" valign="top"><strong>Transfer-Hosts</strong><br>
+								Show IPs or Hostnames in Transfer-Hosts-Window :
 								</td>
 								<td valign="top">
-									<select name="downloadhosts">
+									<select name="transferHosts">
 										<option value="1">Hostnames</option>
 										<option value="0"
-										<tmpl_if name="downloadhosts" value="0">
+										<tmpl_if name="transferHosts" value="0">
 											 selected
 										</tmpl_if>
 										>IPs</option>

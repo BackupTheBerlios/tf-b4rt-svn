@@ -41,7 +41,7 @@ if (isValidTransfer($transfer) !== true) {
 }
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.transferHosts.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
@@ -77,7 +77,7 @@ if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 	foreach ($hostAry as $host) {
 		$host = @trim($host);
 		$port = @trim($transfer_hosts[$host]);
-		if ($cfg["downloadhosts"] == 1)
+		if ($cfg["transferHosts"] == 1)
 			$host = @gethostbyaddr($host);
 		if ($host != "") {
 			$tmpl->setvar('hosts', 1);
@@ -91,7 +91,7 @@ if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 	$tmpl->setloop('list_host', $list_host);
 }
 //
-$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadhosts&transfer='.$transfer);
+$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferHosts&transfer='.$transfer);
 //
 tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_ID_HOSTS'], false);
 tmplSetFoot(false);

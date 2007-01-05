@@ -97,7 +97,7 @@ $tmpl->setvar('servermon_update', $cfg["servermon_update"]);
 $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
 $tmpl->setvar('debuglevel', $cfg["debuglevel"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
-$tmpl->setvar('downloadhosts', $cfg["downloadhosts"]);
+$tmpl->setvar('transferHosts', $cfg["transferHosts"]);
 $tmpl->setvar('details_type', $cfg["details_type"]);
 $tmpl->setvar('details_update', $cfg["details_update"]);
 $tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);

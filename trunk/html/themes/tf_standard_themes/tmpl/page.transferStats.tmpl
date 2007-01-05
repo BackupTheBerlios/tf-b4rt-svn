@@ -37,7 +37,7 @@
 														<td align="left">
 															<a href="index.php?iid=transferStats&transfer=<tmpl_var name="transfer">">Stats</a>
 															 |
-															<a href="index.php?iid=downloadhosts&transfer=<tmpl_var name="transfer">">Hosts</a>
+															<a href="index.php?iid=transferHosts&transfer=<tmpl_var name="transfer">">Hosts</a>
 														</td>
 													</tr>
 												</table>
@@ -49,7 +49,7 @@
 														</td>
 														<td align="right" width="16">
 															<tmpl_if name="running">
-																<a href="index.php?iid=downloadhosts&transfer=<tmpl_var name="transfer">">
+																<a href="index.php?iid=transferHosts&transfer=<tmpl_var name="transfer">">
 															</tmpl_if>
 															<img id="statusImage" src="themes/tf_standard_themes/images/<tmpl_var name="hd_image">" width="16" height="16" border="0" title="<tmpl_var name="hd_title">">
 															<tmpl_if name="running">
