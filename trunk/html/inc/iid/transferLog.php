@@ -38,14 +38,14 @@ if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.downloadlog.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.transferLog.tmpl");
 
 // set vars
 $tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('transferLog', getTransferLog($transfer));
 
 // refresh
-// $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=downloadlog&transfer='.$transfer);
+// $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferLog&transfer='.$transfer);
 
 // shorten name if too long
 if(strlen($transfer) >= 70)
