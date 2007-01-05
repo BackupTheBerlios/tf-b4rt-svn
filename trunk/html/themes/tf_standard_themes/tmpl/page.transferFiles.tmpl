@@ -1,0 +1,45 @@
+<tmpl_include name="inc.head.tmpl">
+<tmpl_include name="inc.subhead.tmpl">
+<div align="center">
+	<tmpl_include name="inc.transferNavi.tmpl">
+	<table width="380" cellpadding="3" cellspacing="0" border="0">
+		<tr>
+			<td align="center">
+				<strong><tmpl_var name="transferLabel"></strong><font class="tiny"> (<tmpl_var name="transferFileCount">)</font>
+			</td>
+			<td align="right" width="16">
+				<a href="index.php?iid=transferStats&transfer=<tmpl_var name="transfer">">
+					<img src="themes/tf_standard_themes/images/<tmpl_var name="statusImage">" width="16" height="16" border="0">
+				</a>
+			</td>
+		</tr>
+	</table>
+	<table bgcolor="<tmpl_var name="table_header_bg">" width="100%" cellpadding="1">
+		<tr>
+			<td>
+				<div align="center">
+					<table border="0" cellpadding="2" cellspacing="2" width="90%">
+						<tmpl_if name="transferFilesList">
+							<tr>
+								<td><div class="tiny"><strong>Name</strong></div></td>
+								<td><div class="tiny"><strong>Size</strong></div></td>
+							</tr>
+							<tmpl_loop name="transferFilesList">
+								<tr>
+									<td bgcolor="<tmpl_var name="body_data_bg">"><div class="tiny"><tmpl_var name="name"></div></td>
+									<td bgcolor="<tmpl_var name="body_data_bg">" nowrap><div class="tiny"><tmpl_var name="size"></div></td>
+								</tr>
+							</tmpl_loop>
+						</tmpl_if>
+						<tmpl_if name="transferFilesString">
+							<tr>
+								<td bgcolor="<tmpl_var name="body_data_bg">" colspan="2"><pre><tmpl_var name="transferFilesString"></pre></td>
+							</tr>
+						</tmpl_if>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<tmpl_include name="inc.subfoot.tmpl">

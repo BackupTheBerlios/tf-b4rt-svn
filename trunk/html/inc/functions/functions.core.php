@@ -2008,7 +2008,7 @@ function getDriveSpace($drive) {
 function getDownloadSize($transfer) {
 	if (@file_exists($transfer)) {
 		require_once("inc/classes/BDecode.php");
-		if ($fd = fopen($transfer, "rd")) {
+		if ($fd = @fopen($transfer, "rd")) {
 			$alltorrent = @fread($fd, @filesize($transfer));
 			$array = @BDecode($alltorrent);
 			@fclose($fd);

@@ -48,9 +48,9 @@ function showMetaInfo($torrent, $allowSave = false) {
 		$fp = fopen($ftorrent, "rd");
 		$alltorrent = fread($fp, filesize($ftorrent));
 		fclose($fp);
-		$btmeta = BDecode($alltorrent);
+		$btmeta = @BDecode($alltorrent);
 		$torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
-		$dirnum = (array_key_exists('files',$btmeta['info'])) ? $dirnum = count($btmeta['info']['files']) : 0;
+		$dirnum = (array_key_exists('files',$btmeta['info'])) ? count($btmeta['info']['files']) : 0;
 		if (is_readable($prioFileName)) {
 			$prio = split(',',file_get_contents($prioFileName));
 			$prio = array_splice($prio,1);
