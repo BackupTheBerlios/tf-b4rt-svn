@@ -43,7 +43,7 @@ if (isValidTransfer($transfer) !== true) {
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
 
-// set some vars
+// set transfer vars
 $tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 

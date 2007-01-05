@@ -40,26 +40,32 @@ if (isValidTransfer($transfer) !== true) {
 	@error("Invalid Transfer", "", "", array($transfer));
 }
 
-// alias
+// init template-instance
+tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");
+
+// set transfer vars
+$tmpl->setvar('transfer', $transfer);
+$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+
+// alias / stat
 $transferowner = getOwner($transfer);
 $aliasFile = getAliasName($transfer).".stat";
 $af = new AliasFile($aliasFile, $transferowner);
 
-// init template-instance
-tmplInitializeInstance($cfg["theme"], "page.downloadhosts.tmpl");
-
 // set vars
 if ($af->running == 1) {
+	// running
+	$tmpl->setvar('running', 1);
 	$transfer_pid = getTransferPid($aliasFile);
 	$transfer_cons = netstatConnectionsByPid($transfer_pid);
 	$transfer_hosts = netstatHostsByPid($transfer_pid);
 } else {
+	// running
+	$tmpl->setvar('running', 0);
 	$transfer_cons = "";
 }
 $hd = getStatusImage($af);
-$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 $tmpl->setvar('cons_hosts', $transfer_cons." ".$cfg['_ID_HOSTS']);
-$tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('hd_image', $hd->image);
 $tmpl->setvar('hd_title', $hd->title);
 if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
