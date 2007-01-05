@@ -37,9 +37,9 @@ A.	There are reports from users that torrentflux-b4rt will run on the
 /**********************************************************************
 Fluxd
 **********************************************************************/
-Q.  I get the following error when trying to start fluxd:
+Q.	I get the following error when trying to start fluxd:
 
-		Error : initializing FluxDB : loglevel not defined
+	Error : initializing FluxDB : loglevel not defined
 
 	What does it mean and how can I solve the problem?
 
