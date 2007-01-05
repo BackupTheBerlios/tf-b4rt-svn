@@ -1290,18 +1290,27 @@ function deleteProfileInfo($pid) {
  */
 function getTorrentScrapeInfo($transfer) {
 	global $cfg;
-	switch ($cfg["metainfoclient"]) {
-		case "transmissioncli":
-			return shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$transfer));
-		case "ttools.pl":
-			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -s '.escapeshellarg($cfg["transfer_file_path"].$transfer));
-		case "btshowmetainfo.py":
-			return "not supported by btshowmetainfo.py.";
-		case "torrentinfo-console.py":
-			return "not supported by torrentinfo-console.py.";
-		default:
-			return "error.";
+	$hasClient = false;
+	// transmissioncli
+	if (is_executable($cfg["btclient_transmission_bin"])) {
+		$hasClient = true;
+		$retVal = "";
+		$retVal = @shell_exec($cfg["btclient_transmission_bin"] . " -s ".escapeshellarg($cfg["transfer_file_path"].$transfer));
+		if ((isset($retVal)) && ($retVal != "") && (!preg_match('/.*failed.*/i', $retVal)))
+			return trim($retVal);
 	}
+	// ttools.pl
+	if (is_executable($cfg["perlCmd"])) {
+		$hasClient = true;
+		$retVal = "";
+		$retVal = @shell_exec($cfg["perlCmd"].' -I '.escapeshellarg($cfg["docroot"].'bin/ttools').' '.escapeshellarg($cfg["docroot"].'bin/ttools/ttools.pl').' -s '.escapeshellarg($cfg["transfer_file_path"].$transfer));
+		if ((isset($retVal)) && ($retVal != "") && (!preg_match('/.*failed.*/i', $retVal)))
+			return trim($retVal);
+	}
+	// failed
+	return ($hasClient)
+		? "Scrape failed"
+		: "No Scrape-Client";
 }
 
 /**
