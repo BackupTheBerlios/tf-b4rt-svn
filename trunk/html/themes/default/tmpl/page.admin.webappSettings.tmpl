@@ -89,10 +89,10 @@
 								Choose Type of Transfer-Stats-Window :
 								</td>
 								<td valign="bottom">
-									<select name="details_type">
+									<select name="transferStatsType">
 										<option value="standard">standard</option>
 										<option value="ajax"
-										<tmpl_if name="details_type" value="ajax">
+										<tmpl_if name="transferStatsType" value="ajax">
 											 selected
 										</tmpl_if>
 										>ajax</option>
@@ -104,7 +104,7 @@
 								Update-intervall in seconds of the Transfer-Stats-Window :
 								</td>
 								<td valign="bottom">
-									<input name="details_update" type="Text" maxlength="3" value="<tmpl_var name="details_update">" size="3">
+									<input name="transferStatsUpdate" type="Text" maxlength="3" value="<tmpl_var name="transferStatsUpdate">" size="3">
 								</td>
 							</tr>
 							<tr>

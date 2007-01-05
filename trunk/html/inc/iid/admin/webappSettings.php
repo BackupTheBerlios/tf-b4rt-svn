@@ -98,8 +98,8 @@ $tmpl->setvar('debug_sql', $cfg["debug_sql"]);
 $tmpl->setvar('debuglevel', $cfg["debuglevel"]);
 $tmpl->setvar('ui_displayfluxlink', $cfg["ui_displayfluxlink"]);
 $tmpl->setvar('transferHosts', $cfg["transferHosts"]);
-$tmpl->setvar('details_type', $cfg["details_type"]);
-$tmpl->setvar('details_update', $cfg["details_update"]);
+$tmpl->setvar('transferStatsType', $cfg["transferStatsType"]);
+$tmpl->setvar('transferStatsUpdate', $cfg["transferStatsUpdate"]);
 $tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
 // themes
 $theme_list = array();

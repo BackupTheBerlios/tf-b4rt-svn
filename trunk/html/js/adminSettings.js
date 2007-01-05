@@ -169,9 +169,9 @@ function validateSettings(section) {
 			}
 			break;
 		case 'webapp':
-			if (isNumber(document.theForm.details_update.value) == false) {
+			if (isNumber(document.theForm.transferStatsUpdate.value) == false) {
 				msg = msg + "* Download-Details Update Intervall must be a valid number.\n";
-				document.theForm.details_update.focus();
+				document.theForm.transferStatsUpdate.focus();
 			}
 			if (isNumber(document.theForm.servermon_update.value) == false) {
 				msg = msg + "* Server Monitor Update Intervall must be a valid number.\n";

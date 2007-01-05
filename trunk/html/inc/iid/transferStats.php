@@ -193,17 +193,17 @@ $tmpl->setvar('hd_image', $hd->image);
 $tmpl->setvar('hd_title', $hd->title);
 
 // standard / ajax switch
-$tmpl->setvar('details_type', $cfg['details_type']);
-switch ($cfg['details_type']) {
+$tmpl->setvar('transferStatsType', $cfg['transferStatsType']);
+switch ($cfg['transferStatsType']) {
 	default:
 	case "standard":
 		// refresh
-		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=transferStats&transfer='.$transfer);
+		$tmpl->setvar('meta_refresh', $cfg['transferStatsUpdate'].';URL=index.php?iid=transferStats&transfer='.$transfer);
 		break;
 	case "ajax":
 		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);
 		// onload
-		$tmpl->setvar('onLoad', "ajax_initialize(".(((int) $cfg['details_update']) * 1000).",'".$cfg['stats_txt_delim']."','".$transfer."');");
+		$tmpl->setvar('onLoad', "ajax_initialize(".(((int) $cfg['transferStatsUpdate']) * 1000).",'".$cfg['stats_txt_delim']."','".$transfer."');");
 		break;
 }
 

@@ -126,8 +126,8 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_index_
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_index_meta_refresh','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_index_ajax_update','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('index_ajax_update','10')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('details_type','ajax')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('details_update','5')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transferStatsType','ajax')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transferStatsUpdate','5')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('auth_basic_realm','torrentflux-b4rt')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('servermon_update','5')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_home_dirs','1')");
