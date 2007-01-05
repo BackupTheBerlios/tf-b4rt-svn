@@ -41,7 +41,7 @@ if (isValidTransfer($transfer) !== true) {
 }
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.downloaddetails.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.transferStats.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
@@ -198,7 +198,7 @@ switch ($cfg['details_type']) {
 	default:
 	case "standard":
 		// refresh
-		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=downloaddetails&transfer='.$transfer);
+		$tmpl->setvar('meta_refresh', $cfg['details_update'].';URL=index.php?iid=transferStats&transfer='.$transfer);
 		break;
 	case "ajax":
 		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);

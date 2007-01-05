@@ -122,7 +122,7 @@ define("_CREATE","Erstellen"); // button text to create a new user
 define("_ADMINEDITLINKS","Administration - Editiere Links");
 define("_FULLURLLINK","Kompletter URL Link");
 define("_BACKTOPARRENT","Zurück zum übergeordneten Verzeichnis");  // indicates going back to parrent directory
-define("_DOWNLOADDETAILS","Download Details");
+define("_DOWNLOADDETAILS","Stats");
 define("_PERCENTDONE","Prozent fertig");
 define("_RETURNTOTRANSFERS","Zurück zu den Transfers"); // Link at the bottom of each page
 define("_DATE","Datum");

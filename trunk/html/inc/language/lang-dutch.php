@@ -124,7 +124,7 @@ define("_CREATE","Aanmaken"); // button text to create a new user
 define("_ADMINEDITLINKS","Administratie - Links bewerken");
 define("_FULLURLLINK","Volledige adres link");
 define("_BACKTOPARRENT","Terug naar vorige map");  // indicates going back to parent directory
-define("_DOWNLOADDETAILS","Download-details");
+define("_DOWNLOADDETAILS","Stats");
 define("_PERCENTDONE","Percentage voltooid");
 define("_RETURNTOTRANSFERS","Terug naar transfers"); // Link at the bottom of each page
 define("_DATE","Datum");

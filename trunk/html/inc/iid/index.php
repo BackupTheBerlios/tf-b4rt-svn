@@ -151,7 +151,7 @@ foreach ($arList as $transfer) {
 	$hd = getStatusImage($af);
 
 	// more vars
-	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=".urlencode($transfer)."')\">";
+	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:ShowDetails('index.php?iid=transferStats&transfer=".urlencode($transfer)."')\">";
 
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array

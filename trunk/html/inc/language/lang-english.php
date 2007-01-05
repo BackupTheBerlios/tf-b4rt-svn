@@ -121,7 +121,7 @@ define("_CREATE","Create"); // button text to create a new user
 define("_ADMINEDITLINKS","Administration - Edit Links");
 define("_FULLURLLINK","Full URL Link");
 define("_BACKTOPARRENT","Back Parent Directory");  // indicates going back to parent directory
-define("_DOWNLOADDETAILS","Download Details");
+define("_DOWNLOADDETAILS","Stats");
 define("_PERCENTDONE","Percent Done");
 define("_RETURNTOTRANSFERS","Return to Transfers"); // Link at the bottom of each page
 define("_DATE","Date");

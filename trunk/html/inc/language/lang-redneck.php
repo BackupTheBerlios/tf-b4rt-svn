@@ -122,7 +122,7 @@ define("_CREATE","Create");
 define("_ADMINEDITLINKS","Administrashun - Edit Links");
 define("_FULLURLLINK","Full URL Link");
 define("_BACKTOPARRENT","Back Parrent Direcko'y");
-define("_DOWNLOADDETAILS","Download Details");
+define("_DOWNLOADDETAILS","Stats");
 define("_PERCENTDONE","Percent Done");
 define("_RETURNTOTRANSFERS","Return t'Transfers");
 define("_DATE","Date");

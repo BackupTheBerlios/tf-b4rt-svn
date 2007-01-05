@@ -62,7 +62,7 @@
 		<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_ADMIN"></div></td>
 	</tr>
 		<tmpl_loop name="arUserTorrent">
-			<a href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')">
+			<a href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')">
 			<tr onmouseover="className='bg';" onmouseout="className='fg';" class="fg">
 				<td valign="bottom" align="center" nowrap>
 					<tmpl_if name="transferRunning" value="1">
@@ -74,33 +74,33 @@
 						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/down.gif" width=9 height=9 title="Download Metafile" border=0 align="absmiddle"></a>
 					</tmpl_if>
 				</td>
-				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
+				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
 				<tmpl_if name="settings_0">
 					<td valign="bottom" align="center" nowrap><a href="index.php?iid=message&to_user=<tmpl_var name="transferowner">"><font class="tiny"><tmpl_var name="transferowner"></font></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_1">
-					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_af_size"></a></td>
+					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_af_size"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_2">
-					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_downtotal"></a></td>
+					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_downtotal"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_3">
-					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_uptotal"></a></td>
+					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_uptotal"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_4">
-					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="statusStr"></a></td>
+					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="statusStr"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_5">
 					<td valign="bottom" align="center" nowrap>
 						<tmpl_if name="graph_width" value="-1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
 						<tmpl_else>
 							<tmpl_if name="transferRunning" op="<" value="2">
-								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
+								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
 								<br>
 								<table width="100" cellpadding="0" cellspacing="0" border="0"><tr>
-									<td background="themes/<tmpl_var name="theme">/images/progressbar.gif" bgcolor="<tmpl_var name="progress_color">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
-									<td bgcolor="<tmpl_var name="background">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="100_graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
+									<td background="themes/<tmpl_var name="theme">/images/progressbar.gif" bgcolor="<tmpl_var name="progress_color">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
+									<td bgcolor="<tmpl_var name="background">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="100_graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
 								</tr></table>
 							<tmpl_else>
 								&nbsp;
@@ -111,7 +111,7 @@
 				<tmpl_if name="settings_6">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="down_speed"></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="down_speed"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
@@ -120,7 +120,7 @@
 				<tmpl_if name="settings_7">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="up_speed"></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="up_speed"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
@@ -130,7 +130,7 @@
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
 							<tmpl_if name="seeds" op="!=" value="">
-								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="seeds"></a>
+								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="seeds"></a>
 							<tmpl_else>
 								&nbsp;
 							</tmpl_if>
@@ -143,7 +143,7 @@
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
 							<tmpl_if name="peers" op="!=" value="">
-								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="peers"></a>
+								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="peers"></a>
 							<tmpl_else>
 								&nbsp;
 							</tmpl_if>
@@ -153,7 +153,7 @@
 					</td>
 				</tmpl_if>
 				<tmpl_if name="settings_10">
-					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_if name="estTime" value="-">&#8734<tmpl_else><tmpl_var name="estTime"></tmpl_if></a></td>
+					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_if name="estTime" value="-">&#8734<tmpl_else><tmpl_var name="estTime"></tmpl_if></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_11">
 					<td valign="bottom" align="center"><tmpl_var name="client"></a></td>
@@ -292,7 +292,7 @@
 			<td background="themes/<tmpl_var name="theme">/images/bar.gif" bgcolor="<tmpl_var name="table_header_bg">" nowrap><div align="center" class="title"><tmpl_var name="_ADMIN"></div></td>
 		</tr>
 		<tmpl_loop name="arListTorrent">
-			<a href="JavaScript:ShowDetails('index.php?iid=downloaddetails&atransfer=<tmpl_var name="url_entry">')">
+			<a href="JavaScript:ShowDetails('index.php?iid=transferStats&atransfer=<tmpl_var name="url_entry">')">
 			<tr onmouseover="className='bg';" onmouseout="className='fg';" class="fg">
 				<td valign="bottom" align="center" nowrap>
 					<tmpl_if name="transferRunning" value="1">
@@ -304,33 +304,33 @@
 						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">"><img src="themes/tf_standard_themes/images/down.gif" width=9 height=9 title="Download Metafile" border=0 align="absmiddle"></a>
 					</tmpl_if>
 				</td>
-				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
+				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
 				<tmpl_if name="settings_0">
 					<td valign="bottom" align="center" nowrap><a href="index.php?iid=message&to_user=<tmpl_var name="transferowner">"><font class="tiny"><tmpl_var name="transferowner"></font></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_1">
-					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_af_size"></a></td>
+					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_af_size"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_2">
-					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_downtotal"></a></td>
+					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_downtotal"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_3">
-					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_uptotal"></a></td>
+					<td valign="bottom" align="right" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="format_uptotal"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_4">
-					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="statusStr"></a></td>
+					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="statusStr"></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_5">
 					<td valign="bottom" align="center" nowrap>
 						<tmpl_if name="graph_width" value="-1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
 						<tmpl_else>
 							<tmpl_if name="transferRunning" op="<" value="2">
-								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
+								<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><strong><tmpl_var name="percentage"></strong></a>
 								<br>
 								<table width="100" cellpadding="0" cellspacing="0" border="0"><tr>
-									<td background="themes/<tmpl_var name="theme">/images/progressbar.gif" bgcolor="<tmpl_var name="progress_color">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
-									<td bgcolor="<tmpl_var name="background">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="100_graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
+									<td background="themes/<tmpl_var name="theme">/images/progressbar.gif" bgcolor="<tmpl_var name="progress_color">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
+									<td bgcolor="<tmpl_var name="background">"><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/blank.gif" width="<tmpl_var name="100_graph_width">" height="<tmpl_var name="bar_width">" border="0"></a></td>
 								</tr></table>
 							<tmpl_else>
 								&nbsp;
@@ -341,7 +341,7 @@
 				<tmpl_if name="settings_6">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="down_speed"></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="down_speed"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
@@ -350,7 +350,7 @@
 				<tmpl_if name="settings_7">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="up_speed"></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="up_speed"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
@@ -359,7 +359,7 @@
 				<tmpl_if name="settings_8">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="seeds"></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="seeds"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
@@ -368,14 +368,14 @@
 				<tmpl_if name="settings_9">
 					<td valign="bottom" align="right" nowrap>
 						<tmpl_if name="transferRunning" value="1">
-							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="peers"></a>
+							<a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="peers"></a>
 						<tmpl_else>
 							&nbsp;
 						</tmpl_if>
 					</td>
 				</tmpl_if>
 				<tmpl_if name="settings_10">
-					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=downloaddetails&transfer=<tmpl_var name="url_entry">')"><tmpl_if name="estTime" value="-">&#8734<tmpl_else><tmpl_var name="estTime"></tmpl_if></a></td>
+					<td valign="bottom" align="center" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:ShowDetails('index.php?iid=transferStats&transfer=<tmpl_var name="url_entry">')"><tmpl_if name="estTime" value="-">&#8734<tmpl_else><tmpl_var name="estTime"></tmpl_if></a></td>
 				</tmpl_if>
 				<tmpl_if name="settings_11">
 					<td valign="bottom" align="center"><tmpl_var name="client"></a></td>
