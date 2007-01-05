@@ -47,8 +47,6 @@ tmplInitializeInstance($cfg["theme"], "page.transferFiles.tmpl");
 $tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 
-$tmpl->setvar('transferFileCount', '0 Files');
-
 // client-switch
 $transferFilesList = array();
 if (substr($transfer, -8) == ".torrent") {
@@ -68,16 +66,15 @@ if (substr($transfer, -8) == ".torrent") {
 				)
 			);
 		}
-		if (empty($transferFilesList)) {
-			$tmpl->setvar('statusImage', "red.gif");
-			$tmpl->setvar('transferFilesString', "Empty");
-		} else {
-			$tmpl->setvar('statusImage', "green.gif");
-			$tmpl->setloop('transferFilesList', $transferFilesList);
-		}
-	} else {
+	}
+	if (empty($transferFilesList)) {
 		$tmpl->setvar('statusImage', "red.gif");
 		$tmpl->setvar('transferFilesString', "Empty");
+		$tmpl->setvar('transferFileCount', '0 Files');
+	} else {
+		$tmpl->setvar('statusImage', "green.gif");
+		$tmpl->setloop('transferFilesList', $transferFilesList);
+		$tmpl->setvar('transferFileCount', count($transferFilesList).' Files');
 	}
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
@@ -92,65 +89,40 @@ if (substr($transfer, -8) == ".torrent") {
 				)
 			);
 		}
-		if (empty($transferFilesList)) {
-			$tmpl->setvar('statusImage', "red.gif");
-			$tmpl->setvar('transferFilesString', "Empty");
-		} else {
-			$tmpl->setvar('statusImage', "green.gif");
-			$tmpl->setloop('transferFilesList', $transferFilesList);
-		}
-	} else {
+	}
+	if (empty($transferFilesList)) {
 		$tmpl->setvar('statusImage', "red.gif");
 		$tmpl->setvar('transferFilesString', "Empty");
+		$tmpl->setvar('transferFileCount', '0 Files');
+	} else {
+		$tmpl->setvar('statusImage', "green.gif");
+		$tmpl->setloop('transferFilesList', $transferFilesList);
+		$tmpl->setvar('transferFileCount', count($transferFilesList).' Files');
 	}
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
-	$tmpl->setvar('statusImage', "green.gif");
-	$fileContent = @file_get_contents($cfg["transfer_file_path"].$transfer);
-	$tList = explode("\n", $fileContent);
-	if ((isset($tList)) && (is_array($tList))) {
-		$isFile = false;
-		$name = "";
-		$size = 0;
-		foreach ($tList as $tLine) {
-			// file-start
-			if (strpos($tLine, "<file") !== false) {
-				$name = preg_replace('/<file.*subject="(.*)">/i', '${1}', $tLine);
-				$size = 0;
-			}
-			// segments
-			if (strpos($tLine, "<segment bytes") !== false) {
-				$bytes = preg_replace('/<segment bytes="(\d+)".*/i', '${1}', $tLine);
-				if (is_numeric($bytes))
-					$size += $bytes;
-			}
-			// file end
-			if (strpos($tLine, "</file>") !== false) {
-				array_push($transferFilesList, array(
-					'name' => $name,
-					'size' => ($size != 0) ? formatBytesTokBMBGBTB($size) : 0
-					)
-				);
-			}
-		}
-		if (empty($transferFilesList)) {
-			$tmpl->setvar('statusImage', "red.gif");
-			$tmpl->setvar('transferFilesString', "Empty");
-		} else {
-			$tmpl->setvar('statusImage', "green.gif");
-			$tmpl->setloop('transferFilesList', $transferFilesList);
-		}
-	} else {
+	require_once("inc/classes/NZBFile.php");
+	$nzb = new NZBFile($transfer);
+	if (empty($nzb->files)) {
 		$tmpl->setvar('statusImage', "red.gif");
 		$tmpl->setvar('transferFilesString', "Empty");
+		$tmpl->setvar('transferFileCount', '0 Files');
+	} else {
+		$tmpl->setvar('statusImage', "green.gif");
+		foreach ($nzb->files as $file) {
+			array_push($transferFilesList, array(
+				'name' => $file['name'],
+				'size' => formatBytesTokBMBGBTB($file['size'])
+				)
+			);
+		}
+		$tmpl->setloop('transferFilesList', $transferFilesList);
+		$tmpl->setvar('transferFileCount', $nzb->filecount.' Files');
 	}
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 	@error("Invalid Transfer", "", "", array($transfer));
 }
-
-// count
-$tmpl->setvar('transferFileCount', (((isset($transferFilesList)) && (is_array($transferFilesList))) ? count($transferFilesList) : 0).' Files');
 
 // title + foot
 tmplSetFoot(false);
