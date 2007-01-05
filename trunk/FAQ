@@ -12,6 +12,7 @@ Torrentflux-b4rt 1.0 Frequently Asked Questions / FAQ file
 	The file is split into the following sections:
 
 		Torrentflux-b4rt compatibility with other operating systems
+		Fluxd
 
 
 /**********************************************************************
@@ -32,3 +33,57 @@ A.	There are reports from users that torrentflux-b4rt will run on the
 	http://tf-b4rt.berlios.de/forum/index.php/topic,134.msg2262.html#msg2262
 
 
+
+/**********************************************************************
+Fluxd
+**********************************************************************/
+Q.  I get the following error when trying to start fluxd:
+
+		Error : initializing FluxDB : loglevel not defined
+
+	What does it mean and how can I solve the problem?
+
+A.	This error indicates that your PHP commandline binary (php-cli) is
+	not built with support for the database you're using.  You can check
+	the supported modules you have built into your php-cli binary by
+	issing the command 'php -m' in a shell:
+
+		root@users /root# php -m
+		[PHP Modules]
+		mysql
+		pcre
+		session
+		sockets
+
+	These 3 modules listed above - mysql (or one of the other supported
+	database types), pcre, session and sockets - are all required to run
+	Fluxd correctly.  If you don't see these, you should reinstall your
+	php-cli binary with support for the missing options.
+
+	Notes:
+	======
+	It may be the case that you have installed php-cli with support for
+	all the above options but for some reason the php.ini file has not
+	been modified to actually enable the extensions correctly.  Check
+	that your php.ini file has the following in it:
+
+	extension=/path/to/mysql.so
+	extension=/path/to/pcre.so
+	extension=/path/to/session.so
+	extension=/path/to/sockets.so
+
+	where '/path/to' is the path to the extension libs.
+
+	Another useful troubleshooting tip for this problem is to run
+	'php -i' on the commandline and search for 'ini' in the output:
+
+
+	root@users /root# php -i | grep ini
+	Configuration File (php.ini) Path => /usr/local/etc/php.ini
+	Scan this dir for additional .ini files => /usr/local/etc/php
+	additional .ini files parsed => /usr/local/etc/php/extensions.ini
+	phpini => /usr/local/etc/php.ini
+
+	This gives you an idea where all the config files for your php
+	binary are sourced from so that you can check and confirm everything
+	is in place.
