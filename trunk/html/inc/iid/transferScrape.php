@@ -29,6 +29,9 @@ if (!isset($cfg['user'])) {
 
 /******************************************************************************/
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
 // request-vars
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
@@ -41,60 +44,35 @@ if (isValidTransfer($transfer) !== true) {
 }
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.transferHosts.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.transferScrape.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
 $tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
 
-// alias / stat
-$transferowner = getOwner($transfer);
-$aliasFile = getAliasName($transfer).".stat";
-$af = new AliasFile($aliasFile, $transferowner);
-
-// set vars
-if ($af->running == 1) {
-	// running
-	$tmpl->setvar('running', 1);
-	$transfer_pid = getTransferPid($aliasFile);
-	$transfer_cons = netstatConnectionsByPid($transfer_pid);
-	$transfer_hosts = netstatHostsByPid($transfer_pid);
+// client-switch
+if (substr($transfer, -8) == ".torrent") {
+	// this is a t-client
+	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
+	$tmpl->setvar('statusImage', "green.gif");
+} else if (substr($transfer, -5) == ".wget") {
+	// this is wget.
+	$tmpl->setvar('scrapeInfo', "Scrape not supported by wget");
+	$tmpl->setvar('statusImage', "red.gif");
+} else if (substr($transfer, -4) == ".nzb") {
+	// this is nzbperl.
+	$tmpl->setvar('scrapeInfo', "Scrape not supported by nzbperl");
+	$tmpl->setvar('statusImage', "red.gif");
 } else {
-	// running
-	$tmpl->setvar('running', 0);
-	$transfer_cons = "";
+	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+	@error("Invalid Transfer", "", "", array($transfer));
 }
-$hd = getStatusImage($af);
-$tmpl->setvar('cons_hosts', ((isset($transfer_cons)) && ($transfer_cons != "")) ? $transfer_cons : "0" ." ".$cfg['_ID_HOSTS']);
-$tmpl->setvar('hd_image', $hd->image);
-$tmpl->setvar('hd_title', $hd->title);
-if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
-	$tmpl->setvar('transfer_hosts_aval', 1);
-	$tmpl->setvar('_ID_HOST', $cfg['_ID_HOST']);
-	$tmpl->setvar('_ID_PORT', $cfg['_ID_PORT']);
-	$hostAry = array_keys($transfer_hosts);
-	$list_host = array();
-	foreach ($hostAry as $host) {
-		$host = @trim($host);
-		$port = @trim($transfer_hosts[$host]);
-		if ($cfg["transferHosts"] == 1)
-			$host = @gethostbyaddr($host);
-		if ($host != "") {
-			$tmpl->setvar('hosts', 1);
-			array_push($list_host, array(
-				'host' => $host,
-				'port' => $port
-				)
-			);
-		}
-	}
-	$tmpl->setloop('list_host', $list_host);
-}
-//
-$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferHosts&transfer='.$transfer);
-//
-tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_ID_HOSTS'], false);
+
+// title + foot
 tmplSetFoot(false);
+tmplSetTitleBar($cfg["pagetitle"]." - Scrape", false);
+
+// iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template

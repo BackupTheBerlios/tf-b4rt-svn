@@ -47,8 +47,6 @@ if (isValidTransfer($transfer)) {
 		$inValid = false;
 		$als = getRequestVar('als');
 		$tmpl->setvar('metaInfo', ($als == "false") ? showMetaInfo($transfer, false) : showMetaInfo($transfer, true));
-		$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
-		$tmpl->setvar('scrape', 1);
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$inValid = false;
@@ -58,8 +56,6 @@ if (isValidTransfer($transfer)) {
 		$metaInfo .= '<tr><td width="110" align="left">Metainfo File:</td><td>'.$transfer.'</td></tr>';
 		$metaInfo .= '<tr><td align="left">URL:</td><td align="left">'.$clientHandler->url.'</td></tr>';
 		$metaInfo .= '</table>';
-		$tmpl->setvar('metaInfo', $metaInfo);
-		$tmpl->setvar('scrape', 0);
 	} else if (substr($transfer, -4) == ".nzb") {
 		// this is nzbperl
 		$inValid = false;
@@ -68,8 +64,6 @@ if (isValidTransfer($transfer)) {
 		$metaInfo .= '<tr><td colspan="2" align="left">Content:</td></tr>';
 		$metaInfo .= '</table>';
 		$metaInfo .= '<pre>'.htmlentities(@file_get_contents($cfg["transfer_file_path"].$transfer), ENT_QUOTES).'</pre>';
-		$tmpl->setvar('metaInfo', $metaInfo);
-		$tmpl->setvar('scrape', 0);
 	}
 }
 if ($inValid) {

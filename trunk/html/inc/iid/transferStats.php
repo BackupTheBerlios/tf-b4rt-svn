@@ -50,6 +50,9 @@ $tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 
 // alias / stat
 $transferowner = getOwner($transfer);
 $aliasFile = getAliasName($transfer).".stat";
+$af = new AliasFile($aliasFile, $transferowner);
+
+// client-switch
 if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
 	if (isset($transfers['settings'][$transfer])) {
@@ -63,19 +66,16 @@ if (substr($transfer, -8) == ".torrent") {
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
 	}
-	$af = new AliasFile($aliasFile, $transferowner);
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
 	$settingsAry = array();
 	$settingsAry['btclient'] = "wget";
 	$settingsAry['hash'] = $transfer;
-	$af = new AliasFile($aliasFile, $transferowner);
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
 	$settingsAry = array();
 	$settingsAry['btclient'] = "nzbperl";
 	$settingsAry['hash'] = $transfer;
-	$af = new AliasFile($aliasFile, $transferowner);
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 	@error("Invalid Transfer", "", "", array($transfer));

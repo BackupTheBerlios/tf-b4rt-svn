@@ -32,20 +32,12 @@
 	<tmpl_include name="inc.head.tmpl">
 	<tmpl_include name="inc.subhead.tmpl">
 </tmpl_if>
-												<table width="100%" bordercolor="#A2BED4" bgcolor="#829FB5" cellpadding="4" cellspacing="0" border="0">
-													<tr>
-														<td align="left">
-															<a href="index.php?iid=transferStats&transfer=<tmpl_var name="transfer">">Stats</a>
-															 |
-															<a href="index.php?iid=transferHosts&transfer=<tmpl_var name="transfer">">Hosts</a>
-														</td>
-													</tr>
-												</table>
+												<tmpl_include name="inc.transferNavi.tmpl">
 												<br>
 												<table width="100%" cellpadding="0" cellspacing="0" border="0">
 													<tr>
 														<td align="center">
-															<tmpl_var name="transferLabel"><font class="tiny"> (<tmpl_var name="size">)</font>
+															<strong><tmpl_var name="transferLabel"></strong><font class="tiny"> (<tmpl_var name="size">)</font>
 														</td>
 														<td align="right" width="16">
 															<tmpl_if name="running">
