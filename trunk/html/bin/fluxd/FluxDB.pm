@@ -65,6 +65,9 @@ my $loadConf = 1;
 # flux-config-hash
 my %fluxConf;
 
+# flux-config-test-keys
+my @fluxConfTestKeys = ('fluxd_dbmode', 'fluxd_loglevel');
+
 # load users : 0|1
 my $loadUsers = 0;
 
@@ -296,14 +299,6 @@ sub initialize {
 	}
 
 	# loglevel
-	if (!(defined $fluxConf{"fluxd_loglevel"})) {
-		# message
-		$message = "loglevel not defined";
-		# set state
-		$state = -1;
-		# return
-		return 0;
-	}
 	$LOGLEVEL = $fluxConf{"fluxd_loglevel"};
 
 	# print
@@ -648,6 +643,52 @@ sub dbDisconnect {
 	}
 }
 
+#------------------------------------------------------------------------------#
+# Sub: checkFluxConfig                                                         #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub checkFluxConfig {
+	foreach my $fluxConfTestKey (@fluxConfTestKeys) {
+		if (!(exists $fluxConf{$fluxConfTestKey})) {
+			# message
+			$message = "checkFluxConfig failed. config does not exist : ".$fluxConfTestKey;
+			# set state
+			$state = -1;
+			# return
+			return 0;
+		}
+		if (!(defined $fluxConf{$fluxConfTestKey})) {
+			# message
+			$message = "checkFluxConfig failed. config not defined : ".$fluxConfTestKey;
+			# set state
+			$state = -1;
+			# return
+			return 0;
+		}
+	}
+	# return
+	return 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: checkFluxUsers                                                          #
+# Arguments: null                                                              #
+# Returns: 0|1                                                                 #
+#------------------------------------------------------------------------------#
+sub checkFluxUsers{
+	if (scalar(@users) > 0) {
+		# return
+		return 1;
+	} else {
+		# message
+		$message = "checkFluxUsers failed.";
+		# set state
+		$state = -1;
+		# return
+		return 0;
+	}
+}
 
 #------------------------------------------------------------------------------#
 # Sub: loadFluxConfigDBI                                                       #
@@ -666,14 +707,18 @@ sub loadFluxConfigDBI {
 		my ($tfKey, $tfValue);
 		my $rv = $sth->bind_columns(undef, \$tfKey, \$tfValue);
 		while ($sth->fetch()) {
-			#print STDERR "fluxconf : ".$tfKey."=".$tfValue."\n"; # DEBUG
 			$fluxConf{$tfKey} = $tfValue;
 		}
 		$sth->finish();
 
-		# return
-		return 1;
+		# check
+		return checkFluxConfig();
 	} else {
+		# message
+		$message = "cannot load flux-config from database (dbi)";
+		# set state
+		$state = -1;
+		# return
 		return 0;
 	}
 }
@@ -697,7 +742,6 @@ sub loadFluxUsersDBI {
 		my $rv = $sth->bind_columns(undef, \$uid, \$userid);
 		my $index = 0;
 		while ($sth->fetch()) {
-			#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
 			$users[$index] = {
 				uid => $uid,
 				username => $userid
@@ -707,9 +751,14 @@ sub loadFluxUsersDBI {
 		}
 		$sth->finish();
 
-		# return
-		return 1;
+		# check
+		return checkFluxUsers();
 	} else {
+		# message
+		$message = "cannot load flux-users from database (dbi)";
+		# set state
+		$state = -1;
+		# return
 		return 0;
 	}
 }
@@ -731,13 +780,12 @@ sub loadFluxConfigPHP {
 	while(<CALL>) {
 		chomp;
 		($tfKey, $tfValue) = split(/\*/, $_);
-		#print STDERR "fluxconf : ".$tfKey."=".$tfValue."\n"; # DEBUG
 		$fluxConf{$tfKey} = $tfValue;
 	}
 	close(CALL);
 
-	# return
-	return 1;
+	# check
+	return checkFluxConfig();
 }
 
 #------------------------------------------------------------------------------#
@@ -759,7 +807,6 @@ sub loadFluxUsersPHP {
 	while(<CALL>) {
 		chomp;
 		($uid, $userid) = split(/\*/, $_);
-		#print STDERR "fluxusers : ".$uid."=".$userid."\n"; # DEBUG
 		$users[$index] = {
 			uid => $uid,
 			username => $userid
@@ -769,8 +816,8 @@ sub loadFluxUsersPHP {
 	}
 	close(CALL);
 
-	# return
-	return 1;
+	# check
+	return checkFluxUsers();
 }
 
 ################################################################################
