@@ -453,7 +453,7 @@ class ClientHandler
             AuditAction($cfg["constants"]["start_torrent"], $this->transfer);
             // wait until transfer is up
             if ($wait)
-            	waitForTransfer($this->transfer, 1, 15);
+            	waitForTransfer($this->transfer, 1, 20);
             // set flag
             $transferRunningFlag = 1;
         }
@@ -498,7 +498,7 @@ class ClientHandler
         // Write out the new Stat File
         $this->af->write();
         // wait until transfer is down
-        waitForTransfer($this->transfer, 0, 15);
+        waitForTransfer($this->transfer, 0, 20);
         // see if the transfer process is hung.
         $running = $this->runningProcesses();
         $isHung = false;
