@@ -89,7 +89,7 @@ switch ($imageOp) {
 
 	case "pieTransferPeers":
 		// check for valid referer
-		//Image::checkReferer();
+		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
@@ -183,6 +183,50 @@ switch ($imageOp) {
 			2,
 			14
 		);
+
+	case "pieTransferScrape":
+		// check for valid referer
+		Image::checkReferer();
+		// main.internal
+		require_once('inc/main.internal.php');
+		// output image
+		// transfer-id
+		$transfer = getRequestVar('transfer');
+		if (empty($transfer))
+			Image::paintNoOp();
+		// validate transfer
+		if (isValidTransfer($transfer) !== true) {
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+			Image::paintNoOp();
+		}
+		// get scrape-data
+		require_once('inc/functions/functions.common.php');
+		$scrape = @trim(getTorrentScrapeInfo($transfer));
+		if ((!empty($scrape)) && (preg_match("/(\d+) seeder\(s\), (\d+) leecher\(s\).*/i", $scrape, $reg))) {
+			$seeder = $reg[1];
+			$leecher = $reg[2];
+			// output image
+			Image::paintPie3D(
+				202,
+				160,
+				100,
+				50,
+				200,
+				100,
+				20,
+				Image::stringToRGBColor($cfg["body_data_bg"]),
+				array($seeder+0.00001, $leecher+0.00001),
+				array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
+				array('Seeder : '.$seeder, 'Leecher : '.$leecher),
+				58,
+				130,
+				2,
+				14
+			);
+		} else {
+			// output image
+			Image::paintNoOp();
+		}
 
 	case "spacer":
 		// check for valid referer
