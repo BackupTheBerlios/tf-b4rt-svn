@@ -148,7 +148,7 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 --
 -- alter
 --
-ALTER TABLE tf_users CHANGE user_id user_id VARCHAR(32) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL;
+ALTER TABLE tf_users CHANGE user_id user_id VARCHAR(32) BINARY NOT NULL;
 ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
 ALTER TABLE tf_cookies CHANGE cid cid INT(10) NOT NULL AUTO_INCREMENT;
 
