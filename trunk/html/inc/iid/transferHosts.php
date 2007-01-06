@@ -55,20 +55,13 @@ $af = new AliasFile($aliasFile, $transferowner);
 
 // set vars
 if ($af->running == 1) {
-	// running
-	$tmpl->setvar('running', 1);
 	$transfer_pid = getTransferPid($aliasFile);
 	$transfer_cons = netstatConnectionsByPid($transfer_pid);
 	$transfer_hosts = netstatHostsByPid($transfer_pid);
 } else {
-	// running
-	$tmpl->setvar('running', 0);
-	$transfer_cons = "";
+	$transfer_cons = 0;
 }
-$hd = getStatusImage($af);
-$tmpl->setvar('cons_hosts', ((isset($transfer_cons)) && ($transfer_cons != "")) ? $transfer_cons : "0" ." ".$cfg['_ID_HOSTS']);
-$tmpl->setvar('hd_image', $hd->image);
-$tmpl->setvar('hd_title', $hd->title);
+$tmpl->setvar('cons_hosts', ((isset($transfer_cons)) && ($transfer_cons != "")) ? $transfer_cons : 0);
 if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 	$tmpl->setvar('transfer_hosts_aval', 1);
 	$tmpl->setvar('_ID_HOST', $cfg['_ID_HOST']);

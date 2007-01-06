@@ -71,10 +71,6 @@ if (substr($transfer, -8) == ".torrent") {
 	@error("Invalid Transfer", "", "", array($transfer));
 }
 
-// image
-$tmpl->setvar('statusImage', "red.gif");
-$tmpl->setvar('statusImage', "green.gif");
-
 // title + foot
 tmplSetFoot(false);
 tmplSetTitleBar($transferLabel." - Details", false);

@@ -69,13 +69,11 @@ if (substr($transfer, -8) == ".torrent") {
 		}
 	}
 	if (empty($transferFilesList)) {
-		$tmpl->setvar('statusImage', "red.gif");
 		$tmpl->setvar('transferFilesString', "Empty");
-		$tmpl->setvar('transferFileCount', '0 Files');
+		$tmpl->setvar('transferFileCount', 0);
 	} else {
-		$tmpl->setvar('statusImage', "green.gif");
 		$tmpl->setloop('transferFilesList', $transferFilesList);
-		$tmpl->setvar('transferFileCount', count($transferFilesList).' Files');
+		$tmpl->setvar('transferFileCount', count($transferFilesList));
 	}
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
@@ -92,24 +90,20 @@ if (substr($transfer, -8) == ".torrent") {
 		}
 	}
 	if (empty($transferFilesList)) {
-		$tmpl->setvar('statusImage', "red.gif");
 		$tmpl->setvar('transferFilesString', "Empty");
-		$tmpl->setvar('transferFileCount', '0 Files');
+		$tmpl->setvar('transferFileCount', 0);
 	} else {
-		$tmpl->setvar('statusImage', "green.gif");
 		$tmpl->setloop('transferFilesList', $transferFilesList);
-		$tmpl->setvar('transferFileCount', count($transferFilesList).' Files');
+		$tmpl->setvar('transferFileCount', count($transferFilesList));
 	}
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
 	require_once("inc/classes/NZBFile.php");
 	$nzb = new NZBFile($transfer);
 	if (empty($nzb->files)) {
-		$tmpl->setvar('statusImage', "red.gif");
 		$tmpl->setvar('transferFilesString', "Empty");
-		$tmpl->setvar('transferFileCount', '0 Files');
+		$tmpl->setvar('transferFileCount', 0);
 	} else {
-		$tmpl->setvar('statusImage', "green.gif");
 		foreach ($nzb->files as $file) {
 			array_push($transferFilesList, array(
 				'name' => $file['name'],
@@ -118,7 +112,7 @@ if (substr($transfer, -8) == ".torrent") {
 			);
 		}
 		$tmpl->setloop('transferFilesList', $transferFilesList);
-		$tmpl->setvar('transferFileCount', $nzb->filecount.' Files');
+		$tmpl->setvar('transferFileCount', $nzb->filecount);
 	}
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);

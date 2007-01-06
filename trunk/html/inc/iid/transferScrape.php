@@ -55,15 +55,12 @@ $tmpl->setvar('transferLabel', $transferLabel);
 if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
 	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
-	$tmpl->setvar('statusImage', "green.gif");
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
 	$tmpl->setvar('scrapeInfo', "Scrape not supported by wget");
-	$tmpl->setvar('statusImage', "red.gif");
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
 	$tmpl->setvar('scrapeInfo', "Scrape not supported by nzbperl");
-	$tmpl->setvar('statusImage', "red.gif");
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 	@error("Invalid Transfer", "", "", array($transfer));

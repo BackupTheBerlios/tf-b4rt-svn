@@ -188,11 +188,6 @@ if ($af->percent_done >= 100) {
 // percentage
 $tmpl->setvar('percent_done', $af->percent_done);
 
-// hd
-$hd = getStatusImage($af);
-$tmpl->setvar('hd_image', $hd->image);
-$tmpl->setvar('hd_title', $hd->title);
-
 // standard / ajax switch
 $tmpl->setvar('transferStatsType', $cfg['transferStatsType']);
 switch ($cfg['transferStatsType']) {
