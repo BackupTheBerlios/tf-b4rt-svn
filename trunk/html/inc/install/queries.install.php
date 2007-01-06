@@ -278,7 +278,7 @@ CREATE TABLE tf_rss (
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_users (
   uid int(10) NOT NULL auto_increment,
-  user_id VARCHAR(32) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL default '',
+  user_id VARCHAR(32) BINARY NOT NULL default '',
   password VARCHAR(34) NOT NULL default '',
   hits int(10) NOT NULL default '0',
   last_visit VARCHAR(14) NOT NULL default '0',

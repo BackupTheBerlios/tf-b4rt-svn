@@ -357,7 +357,7 @@ function getCredentials() {
 	if (($cfg['auth_type'] == 2) || ($cfg['auth_type'] == 3)) {
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
 			$retVal = array();
-			$retVal['username'] = $_SERVER['PHP_AUTH_USER'];
+			$retVal['username'] = strtolower($_SERVER['PHP_AUTH_USER']);
 			$retVal['password'] = addslashes($_SERVER['PHP_AUTH_PW']);
 			$retVal['md5pass'] = "";
 			return $retVal;
@@ -368,13 +368,13 @@ function getCredentials() {
 		if (isset($_REQUEST['username'])) {
 			if (isset($_REQUEST['md5pass'])) {
 				$retVal = array();
-				$retVal['username'] = $_REQUEST['username'];
+				$retVal['username'] = strtolower($_REQUEST['username']);
 				$retVal['password'] = "";
 				$retVal['md5pass'] = $_REQUEST['md5pass'];
 				return $retVal;
 			} elseif (isset($_REQUEST['iamhim'])) {
 				$retVal = array();
-				$retVal['username'] = $_REQUEST['username'];
+				$retVal['username'] = strtolower($_REQUEST['username']);
 				$retVal['password'] = addslashes($_REQUEST['iamhim']);
 				$retVal['md5pass'] = "";
 				return $retVal;
@@ -386,7 +386,7 @@ function getCredentials() {
 		if (isset($_COOKIE["autologin"])) {
 			$creds = explode('|', $_COOKIE["autologin"]);
 			$retVal = array();
-			$retVal['username'] = $creds[0];
+			$retVal['username'] = strtolower($creds[0]);
 			$retVal['password'] = "";
 			$retVal['md5pass'] = $creds[1];
 			return $retVal;
