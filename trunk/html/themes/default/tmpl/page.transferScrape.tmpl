@@ -1,31 +1,17 @@
 <tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
-<div align="center">
-	<tmpl_include name="inc.transferNavi.tmpl">
-	<table width="380" cellpadding="3" cellspacing="0" border="0">
-		<tr>
-			<td align="center">
-				<strong><tmpl_var name="transferLabel"></strong>
-			</td>
-			<td align="right" width="16">
-				<a href="index.php?iid=transferStats&transfer=<tmpl_var name="transfer">">
-					<img src="themes/default/images/<tmpl_var name="statusImage">" width="16" height="16" border="0">
-				</a>
-			</td>
-		</tr>
-	</table>
-	<table bgcolor="#A2BED4" width="100%" cellpadding="1">
-		<tr>
-			<td>
-				<div align="center">
-					<table border="0" cellpadding="2" cellspacing="2" width="90%">
-						<tr>
-							<td><tmpl_var name="scrapeInfo"></td>
-						</tr>
-					</table>
-				</div>
-			</td>
-		</tr>
-	</table>
-</div>
-<tmpl_include name="inc.subfoot.tmpl">
+<tmpl_include name="inc.transferHead.tmpl">
+<tmpl_include name="inc.transferNavi.tmpl">
+<table bgcolor="#A2BED4" width="100%" cellpadding="1">
+	<tr>
+		<td>
+			<div align="center">
+				<table border="0" cellpadding="2" cellspacing="2" width="90%">
+					<tr>
+						<td><tmpl_var name="scrapeInfo"></td>
+					</tr>
+				</table>
+			</div>
+		</td>
+	</tr>
+</table>
+<tmpl_include name="inc.transferFoot.tmpl">

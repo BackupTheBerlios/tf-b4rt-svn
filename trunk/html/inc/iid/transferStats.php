@@ -45,7 +45,8 @@ tmplInitializeInstance($cfg["theme"], "page.transferStats.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
-$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+$tmpl->setvar('transferLabel', $transferLabel);
 
 // alias / stat
 $transferowner = getOwner($transfer);
@@ -219,7 +220,7 @@ $tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
 
 // title + foot
 tmplSetFoot(false);
-tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_DOWNLOADDETAILS'], false);
+tmplSetTitleBar($transferLabel." - ".$cfg['_DOWNLOADDETAILS'], false);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);

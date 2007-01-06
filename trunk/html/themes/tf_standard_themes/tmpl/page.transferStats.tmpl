@@ -13,10 +13,10 @@
 	</head>
 	<body topmargin="8" leftmargin="5" bgcolor="<tmpl_var name="main_bgcolor">" onLoad="<tmpl_var name="onLoad">">
 	<div align="center">
-		<table border="0" cellpadding="0" cellspacing="0">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
 			<tr>
 				<td>
-					<table border="1" bordercolor="<tmpl_var name="table_border_dk">" cellpadding="4" cellspacing="0">
+					<table border="1" bordercolor="<tmpl_var name="table_border_dk">" cellpadding="4" cellspacing="0" width="100%">
 						<tr>
 							<td bgcolor="<tmpl_var name="main_bgcolor">" background="themes/<tmpl_var name="theme">/images/bar.gif">
 								<tmpl_include name="inc.titleBar.tmpl">
@@ -30,8 +30,9 @@
 											<td>
 <tmpl_else>
 	<tmpl_include name="inc.head.tmpl">
-	<tmpl_include name="inc.subhead.tmpl">
+	<tmpl_include name="inc.transferHead.tmpl">
 </tmpl_if>
+											<div align="center">
 												<tmpl_include name="inc.transferNavi.tmpl">
 												<table width="380" cellpadding="3" cellspacing="0" border="0">
 													<tr>
@@ -115,4 +116,5 @@
 														</td>
 													</tr>
 												</table>
-<tmpl_include name="inc.subfoot.tmpl">
+											</div>
+<tmpl_include name="inc.transferFoot.tmpl">

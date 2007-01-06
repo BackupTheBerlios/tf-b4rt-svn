@@ -48,7 +48,8 @@ tmplInitializeInstance($cfg["theme"], "page.transferScrape.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
-$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+$tmpl->setvar('transferLabel', $transferLabel);
 
 // client-switch
 if (substr($transfer, -8) == ".torrent") {
@@ -70,7 +71,7 @@ if (substr($transfer, -8) == ".torrent") {
 
 // title + foot
 tmplSetFoot(false);
-tmplSetTitleBar($cfg["pagetitle"]." - Scrape", false);
+tmplSetTitleBar($transferLabel." - Scrape", false);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);

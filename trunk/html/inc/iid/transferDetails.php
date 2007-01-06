@@ -48,7 +48,8 @@ tmplInitializeInstance($cfg["theme"], "page.transferDetails.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
-$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+$tmpl->setvar('transferLabel', $transferLabel);
 
 // client-switch
 if (substr($transfer, -8) == ".torrent") {
@@ -76,7 +77,7 @@ $tmpl->setvar('statusImage', "green.gif");
 
 // title + foot
 tmplSetFoot(false);
-tmplSetTitleBar($cfg["pagetitle"]." - Details", false);
+tmplSetTitleBar($transferLabel." - Details", false);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);

@@ -45,7 +45,8 @@ tmplInitializeInstance($cfg["theme"], "page.transferHosts.tmpl");
 
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
-$tmpl->setvar('transferLabel', (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer);
+$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+$tmpl->setvar('transferLabel', $transferLabel);
 
 // alias / stat
 $transferowner = getOwner($transfer);
@@ -90,11 +91,15 @@ if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 	}
 	$tmpl->setloop('list_host', $list_host);
 }
-//
+
+//refresh
 $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferHosts&transfer='.$transfer);
-//
-tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_ID_HOSTS'], false);
+
+// title + foot
+tmplSetTitleBar($transferLabel." - ".$cfg['_ID_HOSTS'], false);
 tmplSetFoot(false);
+
+// iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template
