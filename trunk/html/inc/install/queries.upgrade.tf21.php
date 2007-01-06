@@ -312,7 +312,7 @@ CREATE TABLE tf_settings_stats (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM");
 // ALTER
-array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users CHANGE user_id user_id VARCHAR(32) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL");
+array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users CHANGE user_id user_id VARCHAR(32) BINARY NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_cookies CHANGE cid cid INT(10) NOT NULL AUTO_INCREMENT");
 

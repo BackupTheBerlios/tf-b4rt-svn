@@ -50,7 +50,7 @@ switch ($cfg['auth_type']) {
 	case 3: /* Basic-Passthru */
 	case 2: /* Basic-Auth */
 		if ((isset($_SERVER['PHP_AUTH_USER'])) && (isset($_SERVER['PHP_AUTH_PW']))) {
-			$user = $_SERVER['PHP_AUTH_USER'];
+			$user = strtolower($_SERVER['PHP_AUTH_USER']);
 			$iamhim = addslashes($_SERVER['PHP_AUTH_PW']);
 			$md5password = "";
 			if ((!empty($user)) && (isset($iamhim)))
@@ -68,7 +68,7 @@ switch ($cfg['auth_type']) {
 		$isCookieLoginRequest = getRequestVar('docookielogin');
 		if ($isCookieLoginRequest == "true") {
 			$isLoginRequest = true;
-			$user = getRequestVar('username');
+			$user = strtolower(getRequestVar('username'));
 			$iamhim = "";
 			$md5password = getRequestVar('md5pass');
 			// set new cookie
@@ -78,7 +78,7 @@ switch ($cfg['auth_type']) {
 			$docookieloginnew = getRequestVar('docookieloginnew');
 			if ($docookieloginnew == "true") {
 				$isLoginRequest = true;
-				$user = getRequestVar('username');
+				$user = strtolower(getRequestVar('username'));
 				$requestPW = getRequestVar('iamhim');
 				$iamhim = addslashes($requestPW);
 				$md5password = "";
@@ -101,7 +101,7 @@ switch ($cfg['auth_type']) {
 	case 4: /* Form-Auth + Image-Validation */
 		// Image class
 		require_once('inc/classes/Image.php');
-		$user = getRequestVar('username');
+		$user = strtolower(getRequestVar('username'));
 		$iamhim = addslashes(getRequestVar('iamhim'));
 		$md5password = "";
 		$isImageSupported = Image::isSupported();
@@ -132,7 +132,7 @@ switch ($cfg['auth_type']) {
 		break;
 	case 0: /* Form-Based Auth Standard */
 	default:
-		$user = getRequestVar('username');
+		$user = strtolower(getRequestVar('username'));
 		$iamhim = addslashes(getRequestVar('iamhim'));
 		$md5password = "";
 		if (!empty($user))
