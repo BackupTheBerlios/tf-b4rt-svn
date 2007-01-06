@@ -821,9 +821,9 @@ function isTransferRunning($transfer) {
 }
 
 /**
- * gets the btclient of the torrent out of the the db.
+ * gets the transfer-client
  *
- * @param $transfer name of the torrent
+ * @param $transfer name of the transfer
  * @return string
  */
 function getTransferClient($transfer) {
@@ -831,14 +831,19 @@ function getTransferClient($transfer) {
 	if (isset($transfers['settings'][$transfer]['btclient'])) {
 		return $transfers['settings'][$transfer]['btclient'];
 	} else {
-		$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
-		if (empty($client)) {
-			if (substr($transfer, -5) == ".wget")
-				$client = "wget";
-			else if (substr($transfer, -4) == ".nzb")
-				$client = "nzbperl";
-			else
+		if (substr($transfer, -8) == ".torrent") {
+			// this is a torrent-client
+			$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
+			if (empty($client))
 				$client = $cfg["btclient"];
+		} else if (substr($transfer, -5) == ".wget") {
+			// this is wget.
+			$client = "wget";
+		} else if (substr($transfer, -4) == ".nzb") {
+			// This is nzbperl.
+			$client = "nzbperl";
+		} else {
+			$client = $cfg["btclient"];
 		}
 		$transfers['settings'][$transfer]['btclient'] = $client;
 		return $client;

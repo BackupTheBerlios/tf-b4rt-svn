@@ -131,32 +131,6 @@ class ClientHandler
         }
     }
 
-    /**
-     * get ClientHandler-instance
-     *
-     * @return ClientHandler
-     */
-    function getInstanceForTransfer($transfer) {
-    	global $transfers;
-		if (substr($transfer, -8) == ".torrent") {
-			// this is a torrent-client
-			if (isset($transfers['settings'][$transfer])) {
-				return ClientHandler::getInstance($transfers['settings'][$transfer]["btclient"]);
-			} else {
-				global $cfg;
-				return ClientHandler::getInstance($cfg["btclient"]);
-			}
-		} else if (substr($transfer, -5) == ".wget") {
-			// this is wget.
-			return ClientHandler::getInstance('wget');
-		} else if (substr($transfer, -4) == ".nzb") {
-			// This is nzbperl.
-			return ClientHandler::getInstance('nzbperl');
-		} else {
-			return false;
-		}
-    }
-
 	// =========================================================================
 	// ctor
 	// =========================================================================
