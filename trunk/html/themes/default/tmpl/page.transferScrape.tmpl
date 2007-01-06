@@ -9,6 +9,13 @@
 					<tr>
 						<td align="center"><div class="tiny"><tmpl_var name="scrapeInfo"></div></td>
 					</tr>
+					<tmpl_if name="hasScrape" value="1">
+						<tr>
+							<td align="center">
+								<img src="image.php?i=pieTransferPeers&transfer=<tmpl_var name="transfer">" border="0" title="Peers">
+							</td>
+						</tr>
+					</tmpl_if>
 				</table>
 			</div>
 		</td>

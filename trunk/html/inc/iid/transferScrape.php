@@ -54,12 +54,15 @@ $tmpl->setvar('transferLabel', $transferLabel);
 // client-switch
 if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
+	$tmpl->setvar('hasScrape', 1);
 	$tmpl->setvar('scrapeInfo', getTorrentScrapeInfo($transfer));
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
+	$tmpl->setvar('hasScrape', 0);
 	$tmpl->setvar('scrapeInfo', "Scrape not supported by wget");
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
+	$tmpl->setvar('hasScrape', 0);
 	$tmpl->setvar('scrapeInfo', "Scrape not supported by nzbperl");
 } else {
 	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);

@@ -52,7 +52,7 @@ switch ($imageOp) {
 
 	case "pieTransferTotals":
 		// check for valid referer
-		//Image::checkReferer();
+		Image::checkReferer();
 		// main.internal
 		require_once('inc/main.internal.php');
 		// output image
@@ -88,8 +88,101 @@ switch ($imageOp) {
 		);
 
 	case "pieTransferPeers":
+		// check for valid referer
+		//Image::checkReferer();
+		// main.internal
+		require_once('inc/main.internal.php');
 		// output image
-		Image::paintNotSupported();
+		// transfer-id
+		$transfer = getRequestVar('transfer');
+		if (empty($transfer))
+			Image::paintNoOp();
+		// validate transfer
+		if (isValidTransfer($transfer) !== true) {
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+			Image::paintNoOp();
+		}
+		// alias / stat
+		$af = new AliasFile(getAliasName($transfer).".stat");
+		$seeds = trim($af->seeds);
+		$peers = trim($af->peers);
+		// client-switch + get peer-data
+		$peerData = array();
+		$peerData['seeds'] = 0;
+		$peerData['peers'] = 0;
+		$peerData['seedsLabel'] = ($seeds != "") ? $seeds : 0;
+		$peerData['peersLabel'] = ($peers != "") ? $peers : 0;
+		$clientType = getTransferClient($transfer);
+        switch ($clientType) {
+			case "tornado":
+				if ($seeds != "") {
+					if (strpos($seeds, "+") !== false)
+						$seeds = preg_replace('/(\d+)\+.*/i', '${1}', $seeds);
+					if (is_numeric($seeds))
+						$peerData['seeds'] = $seeds;
+					$peerData['seedsLabel'] = $seeds;
+				}
+				if ($peers != "") {
+					if (strpos($peers, "+") !== false)
+						$peers = preg_replace('/(\d+)\+.*/i', '${1}', $peers);
+					if (is_numeric($peers))
+						$peerData['peers'] = $peers;
+					$peerData['peersLabel'] = $peers;
+				}
+            	break;
+            case "transmission":
+				if ($seeds != "") {
+					if (strpos($seeds, "(") !== false)
+						$seeds = preg_replace('/.*(\d+) .*/i', '${1}', $seeds);
+					if (is_numeric($seeds))
+						$peerData['seeds'] = $seeds;
+					$peerData['seedsLabel'] = $seeds;
+				}
+				if ($peers != "") {
+					if (strpos($peers, "(") !== false)
+						$peers = preg_replace('/.*(\d+) .*/i', '${1}', $peers);
+					if (is_numeric($peers))
+						$peerData['peers'] = $peers;
+					$peerData['peersLabel'] = $peers;
+				}
+            	break;
+            case "mainline":
+            	if (($seeds != "") && (is_numeric($seeds))) {
+            		$peerData['seeds'] = $seeds;
+            		$peerData['seedsLabel'] = $seeds;
+            	}
+            	if (($peers != "") && (is_numeric($peers))) {
+            		$peerData['peers'] = $peers;
+            		$peerData['peersLabel'] = $peers;
+            	}
+            	break;
+            case "wget":
+			case "nzbperl":
+				$peerData['seeds'] = ($seeds != "") ? $seeds : 0;
+				$peerData['peers'] = ($peers != "") ? $peers : 0;
+				break;
+            default:
+            	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+				Image::paintNoOp();
+        }
+		// output image
+		Image::paintPie3D(
+			202,
+			160,
+			100,
+			50,
+			200,
+			100,
+			20,
+			Image::stringToRGBColor($cfg["body_data_bg"]),
+			array($peerData['seeds']+0.00001, $peerData['peers']+0.00001),
+			array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
+			array('Seeds : '.$peerData['seedsLabel'], 'Peers : '.$peerData['peersLabel']),
+			58,
+			130,
+			2,
+			14
+		);
 
 	case "spacer":
 		// check for valid referer
