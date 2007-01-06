@@ -136,13 +136,6 @@ if (!(cacheIsSet($currentUser))) {
 			if (@ini_get('register_globals'))
 				@error("register_globals enabled", "index.php?iid=index", "", array("tf-b4rt may not run flawless with this setting", "PHP-setting : register_globals"));
 		}
-		// config-checks
-		if (!isset($_SESSION['check']['config'])) {
-			$_SESSION['check']['config'] = 1;
-			// check if file is writable
-			if (is_writable('inc/config/config.db.php'))
-				@error("config-file is writable", "index.php?iid=index", "", array("remove write-permissions from database-config-file (inc/config/config.db.php)"));
-		}
 	}
 
 	// set admin-var
