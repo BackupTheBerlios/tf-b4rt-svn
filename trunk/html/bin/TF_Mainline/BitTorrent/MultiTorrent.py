@@ -126,6 +126,9 @@ class MultiTorrent(Feedback):
         assert isinstance(listen_fail_ok, bool)
         assert not (is_single_torrent and resume_from_torrent_config)
 
+        # flag for done
+        self.isDone = False
+
         self.config = config
         self.data_dir = data_dir
         self.last_save_time = 0
@@ -553,6 +556,9 @@ class MultiTorrent(Feedback):
         t = self.get_torrent(torrent.infohash)
 
     def finished(self, torrent):
+        # set done-flag
+        self.isDone = True
+        #
         torrent.logger.debug("torrent finished")
         t = self.get_torrent(torrent.infohash)
         t._dump_torrent_config()

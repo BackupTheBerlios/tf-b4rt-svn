@@ -61,6 +61,14 @@ basic_options = [
        "temporary directories for dot, data, incomplete torrents and "
        "complete torrents.  Allows multiple clients on the same machine to "
        "communicate with each other." )),
+    ('tf_owner', '',
+     _("Torrentflux user to run the torrent as." )),
+    ('stat_file', '',
+     _("Path to the torrentflux stat file." )),
+    ('seed_limit', '0',
+     _("Die when ratio reaches this amount." )),
+    ('die_when_done', 'False',
+     _("die when the torrent is finished. Please seed your Torrents !" )),
     ]
 
 common_options = [
@@ -106,7 +114,7 @@ common_options = [
        "time, 0 means no limit. Used to avoid running out of file descriptors.")),
     ('start_trackerless_client', True,
      _("Initialize a trackerless client.  This must be enabled in order to download trackerless torrents.")),
-    ('upnp', True,
+    ('upnp', False,
      _("Enable automatic port mapping")+' (UPnP)'),
     ('resolve_hostnames', True,
      _("Resolve hostnames in peer list")),
