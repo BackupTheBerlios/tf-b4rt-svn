@@ -77,7 +77,7 @@ switch ($imageOp) {
 			200,
 			100,
 			20,
-			array('r' => 0xFF, 'g' => 0xFF, 'b' => 0xFF),
+			Image::stringToRGBColor($cfg["body_data_bg"]),
 			array($totals["uptotal"]+1, $totals["downtotal"]+1),
 			array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
 			array('Up : '.@formatFreeSpace($totals["uptotal"] / 1048576), 'Down : '.@formatFreeSpace($totals["downtotal"] / 1048576)),
@@ -86,6 +86,10 @@ switch ($imageOp) {
 			2,
 			14
 		);
+
+	case "pieTransferPeers":
+		// output image
+		Image::paintNotSupported();
 
 	case "spacer":
 		// check for valid referer

@@ -98,6 +98,7 @@ foreach ($arList as $transfer) {
 	// ---------------------------------------------------------------------
 	// alias / stat
 	$aliasFile = getAliasName($transfer).".stat";
+	$af = new AliasFile($aliasFile, $transferowner);
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		$clientType = "torrent";
@@ -113,7 +114,6 @@ foreach ($arList as $transfer) {
 				: $cfg["path"].$cfg["path_incoming"].'/';
 			$settingsAry['datapath'] = "";
 		}
-		$af = new AliasFile($aliasFile, $transferowner);
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$clientType = "wget";
@@ -125,7 +125,6 @@ foreach ($arList as $transfer) {
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
-		$af = new AliasFile($aliasFile, $transferowner);
 	} else if ((substr($transfer, -4) == ".nzb")) {
 		// This is nzbperl
 		$clientType = "nzb";
@@ -137,7 +136,6 @@ foreach ($arList as $transfer) {
 			? $cfg["path"].$transferowner.'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		$settingsAry['datapath'] = "";
-		$af = new AliasFile($aliasFile, $transferowner);
 	} else {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));

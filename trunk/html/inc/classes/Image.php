@@ -150,6 +150,18 @@ class Image
 	}
 
 	/**
+	 * check referer
+	 */
+	function stringToRGBColor($color) {
+		$retVal = array();
+		$color = str_replace('#', '', $color);
+		$retVal['r'] = hexdec(substr($color, 0, 2));
+		$retVal['g'] = hexdec(substr($color, 2, 2));
+		$retVal['b'] = hexdec(substr($color, 4, 2));
+		return $retVal;
+	}
+
+	/**
 	 * paint label-image created with a existing image-file
 	 *
 	 * @param $bgimage
