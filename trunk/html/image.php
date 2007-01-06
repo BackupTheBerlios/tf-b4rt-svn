@@ -68,7 +68,7 @@ switch ($imageOp) {
 		// client-handler + totals
 		$clientHandler = ClientHandler::getInstanceForTransfer($transfer);
 		$totals = $clientHandler->getTransferTotal($transfer);
-		// output image
+		// draw image
 		Image::paintPie3D(
 			202,
 			160,
@@ -78,7 +78,7 @@ switch ($imageOp) {
 			100,
 			20,
 			Image::stringToRGBColor($cfg["body_data_bg"]),
-			array($totals["uptotal"]+1, $totals["downtotal"]+1),
+			array($totals["uptotal"] + 1, $totals["downtotal"] + 1),
 			array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
 			array('Up : '.@formatFreeSpace($totals["uptotal"] / 1048576), 'Down : '.@formatFreeSpace($totals["downtotal"] / 1048576)),
 			48,
@@ -165,7 +165,7 @@ switch ($imageOp) {
             	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 				Image::paintNoOp();
         }
-		// output image
+		// draw image
 		Image::paintPie3D(
 			202,
 			160,
@@ -175,7 +175,7 @@ switch ($imageOp) {
 			100,
 			20,
 			Image::stringToRGBColor($cfg["body_data_bg"]),
-			array($peerData['seeds']+0.00001, $peerData['peers']+0.00001),
+			array($peerData['seeds'] + 0.00001, $peerData['peers'] + 0.00001),
 			array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
 			array('Seeds : '.$peerData['seedsLabel'], 'Peers : '.$peerData['peersLabel']),
 			58,
@@ -205,7 +205,7 @@ switch ($imageOp) {
 		if ((!empty($scrape)) && (preg_match("/(\d+) seeder\(s\), (\d+) leecher\(s\).*/i", $scrape, $reg))) {
 			$seeder = $reg[1];
 			$leecher = $reg[2];
-			// output image
+			// draw image
 			Image::paintPie3D(
 				202,
 				160,
@@ -215,7 +215,7 @@ switch ($imageOp) {
 				100,
 				20,
 				Image::stringToRGBColor($cfg["body_data_bg"]),
-				array($seeder+0.00001, $leecher+0.00001),
+				array($seeder + 0.00001, $leecher + 0.00001),
 				array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
 				array('Seeder : '.$seeder, 'Leecher : '.$leecher),
 				58,

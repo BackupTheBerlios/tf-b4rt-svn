@@ -61,6 +61,8 @@ class Image
 	// public static methods
 	// =========================================================================
 
+	/* factories */
+
     /**
      * getImage
      *
@@ -109,6 +111,8 @@ class Image
 		}
     }
 
+    /* generic static helper-meths */
+
 	/**
 	 * check image support of PHP + GD
 	 *
@@ -150,7 +154,10 @@ class Image
 	}
 
 	/**
-	 * check referer
+	 * convert a string (#RRGGBB or RRGGBB) to a array with R-G-B as decimals
+	 *
+	 * @param string $color
+	 * @return array
 	 */
 	function stringToRGBColor($color) {
 		$retVal = array();
@@ -160,6 +167,8 @@ class Image
 		$retVal['b'] = hexdec(substr($color, 4, 2));
 		return $retVal;
 	}
+
+	/* static paint-image-methods */
 
 	/**
 	 * paint label-image created with a existing image-file
@@ -230,8 +239,8 @@ class Image
 		$legend = false,
 		$legendX = 0,
 		$legendY = 0,
-		$legendFont = 1,
-		$legendSpace = 10) {
+		$legendFont = 2,
+		$legendSpace = 14) {
 		// img
 		$imageObject = false;
 		// gif
@@ -257,7 +266,7 @@ class Image
 		// colors.
 		for ($i = 0; $i < $valueCount; $i++) {
 			$col_s[$i] = imagecolorallocate($imageObject->image, $colors[$i]['r'], $colors[$i]['g'], $colors[$i]['b']);
-			$col_d[$i] = imagecolorallocate($imageObject->image, ($colors[$i]['r'] / 2), ($colors[$i]['g'] / 2), ($colors[$i]['b'] / 2));
+			$col_d[$i] = imagecolorallocate($imageObject->image, ($colors[$i]['r'] >> 1), ($colors[$i]['g'] >> 1), ($colors[$i]['b'] >> 1));
 		}
 		// 3D effect.
 		for ($z = 1; $z <= $sz; $z++) {
@@ -297,6 +306,8 @@ class Image
 		// output
 		$imageObject->paint();
 	}
+
+	/* static paint-methods "drawing" inline-media */
 
 	/**
 	 * output image not supported image
