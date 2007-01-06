@@ -59,18 +59,27 @@ if (substr($transfer, -8) == ".torrent") {
 		$btmeta = @BDecode($alltorrent);
 		@fclose($fd);
 	}
-	if ((isset($btmeta)) && (is_array($btmeta)) && (isset($btmeta['info'])) && (array_key_exists('files', $btmeta['info']))) {
-		foreach ($btmeta['info']['files'] as $filenum => $file) {
+	if ((isset($btmeta)) && (is_array($btmeta)) && (isset($btmeta['info']))) {
+		if (array_key_exists('files', $btmeta['info'])) {
+			foreach ($btmeta['info']['files'] as $filenum => $file) {
+				array_push($transferFilesList, array(
+					'name' => (is_array($file['path'])) ? $file['path'][0] : $file['path'],
+					'size' => ((isset($file['length'])) && (is_numeric($file['length']))) ? formatBytesTokBMBGBTB($file['length']) : 0
+					)
+				);
+			}
+		} else {
 			array_push($transferFilesList, array(
-				'name' => (is_array($file['path'])) ? $file['path'][0] : $file['path'],
-				'size' => ((isset($file['length'])) && (is_numeric($file['length']))) ? formatBytesTokBMBGBTB($file['length']) : 0
+				'name' => $btmeta["info"]["name"],
+				'size' => formatBytesTokBMBGBTB($btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20))
 				)
 			);
+
 		}
 	}
 	if (empty($transferFilesList)) {
 		$tmpl->setvar('transferFilesString', "Empty");
-		$tmpl->setvar('transferFileCount', 0);
+		$tmpl->setvar('transferFileCount', count($btmeta['info']['files']));
 	} else {
 		$tmpl->setloop('transferFilesList', $transferFilesList);
 		$tmpl->setvar('transferFileCount', count($transferFilesList));
