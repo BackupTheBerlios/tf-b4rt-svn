@@ -50,6 +50,43 @@ switch ($imageOp) {
 			: 'themes/tf_standard_themes/images/code_bg';
 		Image::paintLabelFromImage($bgImage, 'tf-b4rt', 5, 8, 2, 0, 0, 0);
 
+	case "pieTransferTotals":
+		// check for valid referer
+		//Image::checkReferer();
+		// main.internal
+		require_once('inc/main.internal.php');
+		// output image
+		// transfer-id
+		$transfer = getRequestVar('transfer');
+		if (empty($transfer))
+			Image::paintNoOp();
+		// validate transfer
+		if (isValidTransfer($transfer) !== true) {
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+			Image::paintNoOp();
+		}
+		// client-handler + totals
+		$clientHandler = ClientHandler::getInstanceForTransfer($transfer);
+		$totals = $clientHandler->getTransferTotal($transfer);
+		// output image
+		Image::paintPie3D(
+			202,
+			160,
+			100,
+			50,
+			200,
+			100,
+			20,
+			array('r' => 0xFF, 'g' => 0xFF, 'b' => 0xFF),
+			array($totals["uptotal"]+1, $totals["downtotal"]+1),
+			array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
+			array('Up : '.@formatFreeSpace($totals["uptotal"] / 1048576), 'Down : '.@formatFreeSpace($totals["downtotal"] / 1048576)),
+			48,
+			130,
+			2,
+			14
+		);
+
 	case "spacer":
 		// check for valid referer
 		Image::checkReferer();

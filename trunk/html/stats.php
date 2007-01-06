@@ -232,7 +232,15 @@ switch ($type) {
     case "transfer":
 		if (! isset($_REQUEST["i"]))
 			sendUsage();
-		$transferID = trim($_REQUEST["i"]);
+		// transfer-id
+		$transferID = getRequestVar('i');
+		if (empty($transferID))
+			@error("missing params", "stats.php", "", array('i'));
+		// validate transfer
+		if (isValidTransfer($transferID) !== true) {
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transferID);
+			@error("Invalid Transfer", "", "", array($transferID));
+		}
     	$indent = "";
     	$transferDetails = getTransferDetails($transferID, false);
     	break;

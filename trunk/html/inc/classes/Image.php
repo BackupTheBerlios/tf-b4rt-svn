@@ -69,7 +69,13 @@ class Image
      * @param $h
      */
     function getImage($t = IMG_GIF, $w = 0, $h = 0) {
-    	return new Image($t, $w, $h);
+    	$img = new Image($t, $w, $h);
+    	if (!$img)
+    		return false;
+    	$img->image = @imagecreate($w, $h);
+		return (!$img->image)
+			? false
+			: $img;
     }
 
     /**
@@ -159,23 +165,125 @@ class Image
 			$font = 1,
 			$x = 0, $y = 0,
 			$r = 0, $g = 0, $b = 0) {
-			$imageObject = false;
-			// gif
-			$imageObject = Image::getImageFromRessource(IMG_GIF, $bgimage.".gif");
-			// try png if failed
-			if (!$imageObject)
-				$imageObject = Image::getImageFromRessource(IMG_PNG, $bgimage.".png");
-			// try jpg if failed
-			if (!$imageObject)
-				$imageObject = Image::getImageFromRessource(IMG_JPG, $bgimage.".jpg");
-			// bail if no object
-			if (!$imageObject)
-				Image::paintNotSupported();
-			// paint offscreen-image
-			$textcolor = imagecolorallocate($imageObject->image, $r, $g, $b);
-			imagestring($imageObject->image, $font, $x, $y, $label, $textcolor);
-			// output
-			$imageObject->paint();
+		// img
+		$imageObject = false;
+		// gif
+		$imageObject = Image::getImageFromRessource(IMG_GIF, $bgimage.".gif");
+		// try png if failed
+		if (!$imageObject)
+			$imageObject = Image::getImageFromRessource(IMG_PNG, $bgimage.".png");
+		// try jpg if failed
+		if (!$imageObject)
+			$imageObject = Image::getImageFromRessource(IMG_JPG, $bgimage.".jpg");
+		// bail if no object
+		if (!$imageObject)
+			Image::paintNotSupported();
+		// paint offscreen-image
+		$textcolor = imagecolorallocate($imageObject->image, $r, $g, $b);
+		imagestring($imageObject->image, $font, $x, $y, $label, $textcolor);
+		// output
+		$imageObject->paint();
+	}
+
+	/**
+	 * paint a 3d-pie
+	 *
+	 * @param int $w
+	 * @param int $h
+	 * @param int $cx
+	 * @param int $cy
+	 * @param int $sx
+	 * @param int $sy
+	 * @param int $sz
+	 * @param array $bg []
+	 * @param array $values []
+	 * @param array $colors [][]
+	 * @param array $legend []
+	 * @param int $legendX
+	 * @param int $legendY
+	 * @param int $legendFont
+	 * @param int $legendSpace
+	 */
+	function paintPie3D(
+		$w,
+		$h,
+		$cx,
+		$cy,
+		$sx,
+		$sy,
+		$sz,
+		$bg,
+		$values,
+		$colors,
+		$legend = false,
+		$legendX = 0,
+		$legendY = 0,
+		$legendFont = 1,
+		$legendSpace = 10) {
+		// img
+		$imageObject = false;
+		// gif
+		$imageObject = Image::getImage(IMG_GIF, $w, $h);
+		// try png if failed
+		if (!$imageObject)
+			$imageObject = Image::getImage(IMG_PNG, $w, $h);
+		// try jpg if failed
+		if (!$imageObject)
+			$imageObject = Image::getImage(IMG_JPG, $w, $h);
+		// bail if no object
+		if (!$imageObject)
+			Image::paintNotSupported();
+		// paint offscreen-image
+		$background = imagecolorallocate($imageObject->image, $bg['r'], $bg['g'], $bg['b']);
+		// convert to angles.
+		$valueCount = count($values);
+		$valueSum = array_sum($values);
+		for ($i = 0; $i < $valueCount; $i++){
+			$angle[$i] = (($values[$i] / $valueSum) * 360);
+			$angle_sum[$i] = array_sum($angle);
+		}
+		// colors.
+		for ($i = 0; $i < $valueCount; $i++) {
+			$col_s[$i] = imagecolorallocate($imageObject->image, $colors[$i]['r'], $colors[$i]['g'], $colors[$i]['b']);
+			$col_d[$i] = imagecolorallocate($imageObject->image, ($colors[$i]['r'] / 2), ($colors[$i]['g'] / 2), ($colors[$i]['b'] / 2));
+		}
+		// 3D effect.
+		for ($z = 1; $z <= $sz; $z++) {
+			for ($i = 0; $i < $valueCount; $i++) {
+				imagefilledarc($imageObject->image,
+					$cx,
+					($cy + $sz) - $z,
+					$sx,
+					$sy,
+					$angle_sum[($i != 0) ? $i - 1 : $valueCount - 1],
+					$angle_sum[$i],
+					$col_d[$i],
+					IMG_ARC_PIE);
+			}
+		}
+		// top pie.
+		for ($i = 0; $i < $valueCount; $i++) {
+			imagefilledarc($imageObject->image,
+				$cx,
+				$cy,
+				$sx,
+				$sy,
+				$angle_sum[($i != 0) ? $i - 1 : $valueCount - 1],
+				$angle_sum[$i],
+				$col_s[$i],
+				IMG_ARC_PIE);
+		}
+		// legend
+		if ($legend) {
+			$curY = $legendY;
+			for ($i = 0; $i < $valueCount; $i++) {
+				$textcolor = imagecolorallocate($imageObject->image, $colors[$i]['r'], $colors[$i]['g'], $colors[$i]['b']);
+				imagestring($imageObject->image, $legendFont, $legendX, $curY, $legend[$i], $textcolor);
+				$curY += $legendSpace;
+			}
+		}
+		// output
+		$imageObject->paint();
 	}
 
 	/**
