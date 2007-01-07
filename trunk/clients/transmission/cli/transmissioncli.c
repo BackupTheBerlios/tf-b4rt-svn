@@ -114,10 +114,11 @@ static int seedLimit = 0;
 static int displayInterval = 1;
 static char * finishCall = NULL;
 // tf
-static char * tf_pid_file = NULL;
-static char * tf_cmd_file = NULL;
 static char * tf_stat_file = NULL;
 static FILE * tf_stat_fp = NULL;
+static char * tf_cmd_file = NULL;
+static FILE * tf_cmd_fp = NULL;
+static char * tf_pid_file = NULL;
 static char * tf_user = NULL;
 
 /* functions */
@@ -126,9 +127,13 @@ static void sigHandler(int signal);
 // tf
 static int tf_initCommandFacility(void);
 static int tf_processCommandStack(tr_handle_t *h);
+static int tf_processCommandFile(tr_handle_t *h);
 static int tf_execCommand(tr_handle_t *h, char *s);
-static int tf_strlen(char *s);
 static void tf_fprintTimestamp(void);
+
+static int test_processCommandStack(void);
+static int test_processCommandFile(void);
+static int test_execCommand(char *s);
 
 /*******************************************************************************
  * main
@@ -150,8 +155,11 @@ int main(int argc, char ** argv) {
 // DEBUG
 		// init command-facility
 		if (tf_stat_file != NULL) { /* tf */
+			fprintf(stderr, "\n\n");
 			tf_initCommandFacility();
 			fprintf(stderr, "tf_cmd_file : %s\n", tf_cmd_file);
+			test_processCommandStack();
+			fprintf(stderr, "\n\n");
 		}
 // DEBUG
 
@@ -819,10 +827,11 @@ static void sigHandler(int signal) {
  ******************************************************************************/
 static int tf_initCommandFacility(void) {
 	int i, len;
-	len = tf_strlen(tf_stat_file) - 1;
+	len = strlen(tf_stat_file) - 1;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
 	if (tf_cmd_file == NULL) {
-		fprintf(stderr, "not enough mem for malloc\n");
+		tf_fprintTimestamp();
+		fprintf(stderr, "Error : tf_initCommandFacility : not enough mem for malloc\n");
 		return 0;
 	}
 	for (i = 0; i < len - 3; i++) {
@@ -839,6 +848,13 @@ static int tf_initCommandFacility(void) {
  * tf_processCommandStack
  ******************************************************************************/
 static int tf_processCommandStack(tr_handle_t *h) {
+	return (tf_processCommandFile(h));
+}
+
+/*******************************************************************************
+ * tf_processCommandFile
+ ******************************************************************************/
+static int tf_processCommandFile(tr_handle_t *h) {
 	return (tf_execCommand(h, tf_cmd_file));
 }
 
@@ -854,14 +870,114 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 	return 1;
 }
 
-/*******************************************************************************
- * tf_strlen
- ******************************************************************************/
-static int tf_strlen(char *s) {
-	char *p = s;
-	while (*p++);
-	return p - s - 1;
+
+
+static int test_processCommandStack(void) {
+	// null pointer
+	tf_cmd_fp = NULL;
+	// open file
+	tf_cmd_fp = fopen(tf_cmd_file, "r");
+	if (tf_cmd_fp != NULL) {
+		return test_processCommandFile();
+	} else {
+		/* DEBUG */ fprintf(stderr, "file does not exist: %s\n", tf_cmd_file);
+		// return
+		return 0;
+	}
 }
+
+static int test_processCommandFile(void) {
+
+	// local vars
+	int isNewline;
+	long fileLen;
+	long index;
+	long startPos;
+	long totalChars;
+	char currentLine[128];
+	char *fileBuffer;
+	char *fileCurrentPos;
+
+	// process file
+
+	// get length
+	fseek(tf_cmd_fp, 0L, SEEK_END);
+	fileLen = ftell(tf_cmd_fp);
+	rewind(tf_cmd_fp);
+
+	// alloc buffer
+	fileBuffer = calloc(fileLen + 1, sizeof(char));
+	if (fileBuffer == NULL) {
+		tf_fprintTimestamp();
+		fprintf(stderr, "Error : test_processCommandFile : not enough mem to read command-file\n");
+		return 0;
+	}
+
+	// read file to buffer
+	fread(fileBuffer, fileLen, 1, tf_cmd_fp);
+
+	// close file
+	fclose(tf_cmd_fp);
+
+	// remove file
+	// remove(tf_cmd_file);
+
+	// null pointer
+	tf_cmd_fp = NULL;
+
+	// reset counter
+	totalChars = 0L;
+
+	// set current pos pointer to begin
+	fileCurrentPos = fileBuffer;
+
+	// process content
+	while (*fileCurrentPos) {
+		// reset counter and flags
+		index = 0L;
+		isNewline = 0;
+		startPos = totalChars;
+		while (*fileCurrentPos) {
+			if (!isNewline) {
+				// check for new-line, flag if found
+				if (*fileCurrentPos == 10)
+					isNewline = 1;
+			} else if (*fileCurrentPos != 10) {
+				// done with line
+				break;
+			}
+			// add char and increment
+			currentLine[index++] = *fileCurrentPos++;
+			++totalChars;
+		} // end line while loop
+		if (index > 1) {
+			// term string, rtrim it
+			currentLine[index - 1] = '\0';
+			// exec
+			test_execCommand(currentLine);
+			// early out when reading a quit-command
+			//if (foo == 0)
+			//	return 0;
+		}
+	} // end file while loop
+
+	// return
+	return 1;
+}
+
+static int test_execCommand(char *s) {
+	tf_fprintTimestamp();
+	fprintf(stderr, "Command: %s\n", s);
+	return 1;
+
+	/*
+	tf_fprintTimestamp();
+	fprintf(stderr, "stop-request, setting shutdown-flag...\n");
+	mustDie = 1;
+	*/
+}
+
+
 
 /*******************************************************************************
  * tf_fprintTimestamp
