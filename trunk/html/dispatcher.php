@@ -62,19 +62,7 @@ switch ($action) {
  * force-Stop
  ******************************************************************************/
     case "forceStop":
-    	$transfer = urldecode(getRequestVar('transfer'));
-    	preg_match("@.*/(.*)@", $transfer, $matches);
-    	if(isset($matches[1]) && !empty($matches[1])){
-			forceStopTransfer($matches[1], getRequestVar('pid'));
-		} else {
-			AuditAction($cfg["constants"]["error"], "FORCE STOP ERROR: ".$cfg["user"]." - could not determine file name from path: $transfer");
-			@error(
-				"Could not determine filename from file path:",
-				(isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "",
-				"",
-				array($transfer)
-			);
-		}
+    	forceStopTransfer(urldecode(getRequestVar('transfer'), getRequestVar('pid')));
     	break;
 
 /*******************************************************************************
