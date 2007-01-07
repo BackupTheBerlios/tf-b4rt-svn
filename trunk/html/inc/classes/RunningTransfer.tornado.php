@@ -52,7 +52,7 @@ class RunningTransferTornado extends RunningTransfer
                     if(!@strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
                     $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
-                    $this->statFile = str_replace($this->filePath,'',$arr[$key+$offset]);
+                    $this->statFile = str_replace($cfg['transfer_file_path'],'',$arr[$key+$offset]);
                     $this->transferowner = $arr[$key+$offset+1];
                 }
                 if ($value == '--display_interval')
@@ -71,7 +71,7 @@ class RunningTransferTornado extends RunningTransfer
                     }
                 }
                 if ($value == '--responsefile')
-                    $this->transferFile = str_replace($this->filePath,'',$arr[$key+1]);
+                    $this->transferFile = str_replace($cfg['transfer_file_path'],'',$arr[$key+1]);
             }
             $this->args = str_replace("--","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));
