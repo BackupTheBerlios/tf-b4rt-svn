@@ -49,22 +49,8 @@ class RunningTransferMainline extends RunningTransfer
                 if ($value == $mainlineBin) {
                 	$this->transferowner = $arr[7];
                 	$this->filePath = substr($arr[$arrC - 1], 0, strrpos($arr[$arrC - 1], "/") + 1);
-                	$this->statFile = str_replace($this->filePath,'', $arr[9]);
-                }
-                if ($value == '--language')
-                    $startArgs = true;
-                if ($startArgs) {
-                    if (!empty($value)) {
-                        if (strpos($value,"-",1) > 0) {
-                            if(array_key_exists($key+1,$arr)) {
-                            	$this->args .= (strpos($value,"priority") > 0)
-                            		? "\n file ".$value." set"
-                            		: $value.":".$arr[$key+1].",";
-                            } else {
-                            	$this->transferFile = str_replace($this->filePath,'',$value);
-                            }
-                        }
-                    }
+                	$this->statFile = str_replace($cfg['transfer_file_path'],'', $arr[9]);
+                	$this->transferFile = str_replace('.stat','.torrent', $this->statFile);
                 }
             }
             $this->args = str_replace("--","",$this->args);
