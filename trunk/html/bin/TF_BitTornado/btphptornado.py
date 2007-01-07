@@ -360,10 +360,13 @@ class HeadlessDisplayer:
                     transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
                     pass
                 # exec commands
-                for command in commands:
-                    command = command.replace("\n", "")
-                    if len(command) > 0:
-                        self.execCommand(command)
+                if len(commands) > 0:
+                    for command in commands:
+                        command = command.replace("\n", "")
+                        if len(command) > 0:
+                            self.execCommand(command)
+                else:
+                    transferLog("No commands found in " + transferCommandFile + "\n", True)
             except:
                 transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
                 pass
@@ -373,11 +376,11 @@ class HeadlessDisplayer:
         opCode = command[0]
         if opCode == 'u':
             rate = command[1:]
-            transferLog("Command: setting UploadRate to " + rate + "...\n", True)
+            transferLog("Command: setting Upload-Rate to " + rate + "...\n", True)
             self.dow.setUploadRate(int(rate))
         elif opCode == 'd':
             rate = command[1:]
-            transferLog("Command: setting DownloadRate to " + rate + "...\n", True)
+            transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
             self.dow.setDownloadRate(int(rate))
         else:
             transferLog("opCode unknown: " + opCode + "\n", True)

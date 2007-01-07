@@ -29,6 +29,7 @@ from BitTorrent.translation import _
 import sys
 import os
 from os import getpid, remove
+from os.path import isfile
 from cStringIO import StringIO
 import logging
 from logging import ERROR, WARNING
@@ -61,13 +62,28 @@ def wrap_log(context_string, logger):
        specifies what was being done when the exception was raised."""
     return lambda e, *args, **kwargs : logger.error(context_string, exc_info=e)
 
+def fmtsize(n):
+    s = str(n)
+    size = s[-3:]
+    while len(s) > 3:
+        s = s[:-3]
+        size = '%s,%s' % (s[-3:], size)
+    size = '%s (%s)' % (size, str(Size(n)))
+    return size
+
+#------------------------------------------------------------------------------#
+# tfb static methods                                                           #
+#------------------------------------------------------------------------------#
+
 def fmttime(n):
+    """ fmttime """
     # short format :
     return fmttimeshort(n)
     # long format :
     # return fmttimelong(n)
 
 def fmttimeshort(n):
+    """ fmttimeshort """
     if n == 0:
         return 'complete!'
     try:
@@ -86,6 +102,7 @@ def fmttimeshort(n):
         return '%02d:%02d:%02d' % (h, m, s)
 
 def fmttimelong(n):
+    """ fmttimelong """
     if n == 0:
         return 'complete!'
     try:
@@ -110,16 +127,8 @@ def fmttimelong(n):
     else:
         return '%02d:%02d:%02d' % (h, m, s)
 
-def fmtsize(n):
-    s = str(n)
-    size = s[-3:]
-    while len(s) > 3:
-        s = s[:-3]
-        size = '%s,%s' % (s[-3:], size)
-    size = '%s (%s)' % (size, str(Size(n)))
-    return size
-
 def transferLog(message, ts):
+    """ transferLog """
     try:
         FILE = open(transferLogFile,"a+")
         if not ts:
@@ -269,7 +278,7 @@ class HeadlessDisplayer(object):
                     self.running = '1'
                     transferLog("Failed to read stat-file : " + self.statFile + "\n", True)
 
-            # shutdown or write stat-file + log errors
+            # shutdown or write stat-file + process command-stack
             if self.running == '0':
                 # log
                 transferLog("stop-request, setting shutdown-flag...\n", True)
@@ -303,6 +312,8 @@ class HeadlessDisplayer(object):
                     FILE.close()
                 except Exception, e:
                     transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
+                # process command-stack
+                app.processCommandStack()
 
     def print_spew(self, spew):
         s = StringIO()
@@ -560,6 +571,48 @@ class TorrentApp(object):
            curses window."""
         self.d.error(text)
 
+    def processCommandStack(self):
+        """ processCommandStack """
+        if isfile(transferCommandFile):
+            # process file
+            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
+            try:
+                # read file to mem
+                f = open(transferCommandFile, 'r')
+                commands = f.readlines()
+                f.close
+                # remove file
+                try:
+                    remove(transferCommandFile)
+                except:
+                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
+                    pass
+                # exec commands
+                if len(commands) > 0:
+                    for command in commands:
+                        command = command.replace("\n", "")
+                        if len(command) > 0:
+                            self.execCommand(command)
+                else:
+                    transferLog("No commands found in " + transferCommandFile + "\n", True)
+            except:
+                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
+                pass
+
+    def execCommand(self, command):
+        """ execCommand """
+        opCode = command[0]
+        if opCode == 'u':
+            rate = command[1:]
+            transferLog("Command: setting Upload-Rate to " + rate + "...\n", True)
+            self.multitorrent.set_option('max_upload_rate', int(rate), None, False)
+        elif opCode == 'd':
+            rate = command[1:]
+            transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
+            self.multitorrent.set_option('max_download_rate', int(rate), None, False)
+        else:
+            transferLog("opCode unknown: " + opCode + "\n", True)
+
 #------------------------------------------------------------------------------#
 # __main__                                                                     #
 #------------------------------------------------------------------------------#
@@ -604,6 +657,10 @@ if __name__ == '__main__':
     # get/set log-file
     transferLogFile = config['stat_file']
     transferLogFile = transferLogFile.replace(".stat", ".log")
+
+    # get/set cmd-file
+    transferCommandFile = config['stat_file']
+    transferCommandFile = transferCommandFile.replace(".stat", ".cmd")
 
     # log what we are starting up
     startupMessage = "mainline starting up :\n"
