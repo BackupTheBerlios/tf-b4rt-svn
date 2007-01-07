@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// upload-limit
+define("_UPLOAD_LIMIT", 10000000);
+
 /**
  * indexStartTransfer
  *
@@ -160,9 +163,28 @@ function indexStopTransfer($transfer) {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if (substr($transfer, -5) == ".wget") {
+			// is enabled ?
+			if ($cfg["enable_wget"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+				@error("wget is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_wget"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+					@error("wget is disabled for users", "index.php?iid=index", "");
+				}
+			}
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
 		} else if (substr($transfer, -4) == ".nzb") {
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+				@error("nzbperl is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+					@error("nzbperl is disabled for users", "index.php?iid=index", "");
+				}
+			}
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('nzbperl');
 		}
@@ -189,9 +211,28 @@ function forceStopTransfer($transfer, $pid) {
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if (substr($transfer, -5) == ".wget") {
+			// is enabled ?
+			if ($cfg["enable_wget"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+				@error("wget is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_wget"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+					@error("wget is disabled for users", "", "");
+				}
+			}
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('wget');
 		} else if (substr($transfer, -4) == ".nzb") {
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+				@error("nzbperl is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+					@error("nzbperl is disabled for users", "", "");
+				}
+			}
 			$invalid = false;
 			$clientHandler = ClientHandler::getInstance('nzbperl');
 		}
@@ -358,26 +399,27 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 			// init stat-file
 			injectAlias($file_name);
 			// instant action ?
-			if ($type == 'torrent') {
-				$actionId = getRequestVar('aid');
-				if (isset($actionId)) {
-					if ($cfg["enable_file_priority"]) {
-						include_once("inc/functions/functions.setpriority.php");
-						// Process setPriority Request.
-						setPriority(urldecode($file_name));
-					}
-					$clientHandler = ClientHandler::getInstance();
-					switch ($actionId) {
-						case 3:
-							$clientHandler->start($file_name, false, true);
-							break;
-						case 2:
-							$clientHandler->start($file_name, false, false);
-							break;
-					}
-					if (count($clientHandler->messages) > 0)
-	               		$downloadMessages = array_merge($downloadMessages, $clientHandler->messages);
+			$actionId = getRequestVar('aid');
+			if (isset($actionId)) {
+				if (($cfg["enable_file_priority"]) && ($type == 'torrent')) {
+					include_once("inc/functions/functions.setpriority.php");
+					// Process setPriority Request.
+					setPriority($file_name);
 				}
+				$clientHandler = ClientHandler::getInstance(getTransferClient($file_name));
+				switch ($actionId) {
+					case 3:
+						if ($type == 'torrent')
+							$clientHandler->start($file_name, false, true);
+						break;
+					case 2:
+						$clientHandler->start($file_name, false, false);
+						if ($type == 'nzb')
+							sleep(8);
+						break;
+				}
+				if (count($clientHandler->messages) > 0)
+               		$downloadMessages = array_merge($downloadMessages, $clientHandler->messages);
 			}
 		}
 	} else {
@@ -397,14 +439,13 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
  */
 function indexProcessUpload() {
 	global $cfg;
-	$uploadLimit = 5000000;
 	$ext_msg = "";
 	$file_name = "";
 	$uploadMessages = array();
 	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name']))) {
 		$file_name = stripslashes($_FILES['upload_file']['name']);
 		$file_name = cleanFileName($file_name);
-		if ($_FILES['upload_file']['size'] <= $uploadLimit && $_FILES['upload_file']['size'] > 0) {
+		if ($_FILES['upload_file']['size'] <= _UPLOAD_LIMIT && $_FILES['upload_file']['size'] > 0) {
 			if (isValidTransfer($file_name)) {
 				//FILE IS BEING UPLOADED
 				if (is_file($cfg["transfer_file_path"].$file_name)) {
@@ -418,26 +459,31 @@ function indexProcessUpload() {
 						// init stat-file
 						injectAlias($file_name);
 						// instant action ?
-						if (substr($file_name, -8) == ".torrent") {
-							$actionId = getRequestVar('aid');
-							if (isset($actionId)) {
-								if ($cfg["enable_file_priority"]) {
-									include_once("inc/functions/functions.setpriority.php");
-									// Process setPriority Request.
-									setPriority(urldecode($file_name));
-								}
-								$clientHandler = ClientHandler::getInstance();
-								switch ($actionId) {
-									case 3:
-										$clientHandler->start($file_name, false, true);
-										break;
-									case 2:
-										$clientHandler->start($file_name, false, false);
-										break;
-								}
-								if (count($clientHandler->messages) > 0)
-	               					$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
+						$actionId = getRequestVar('aid');
+						if (isset($actionId)) {
+							$isTorrent = (substr($file_name, -8) == ".torrent")
+								? true
+								: false;
+							// file prio
+							if ($cfg["enable_file_priority"] && $isTorrent) {
+								include_once("inc/functions/functions.setpriority.php");
+								// Process setPriority Request.
+								setPriority($file_name);
 							}
+							$clientHandler = ClientHandler::getInstance(getTransferClient($file_name));
+							switch ($actionId) {
+								case 3:
+									if ($isTorrent)
+										$clientHandler->start($file_name, false, true);
+									break;
+								case 2:
+									$clientHandler->start($file_name, false, false);
+									if (!$isTorrent)
+										sleep(8);
+									break;
+							}
+							if (count($clientHandler->messages) > 0)
+               					$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
 						}
 					} else {
 						array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
@@ -449,7 +495,7 @@ function indexProcessUpload() {
 				array_push($uploadMessages, $cfg["file_types_label"]);
 			}
 		} else {
-			array_push($uploadMessages, "File not uploaded, file size limit is ".$uploadLimit.". file has ".$_FILES['upload_file']['size']);
+			array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$_FILES['upload_file']['size']);
 		}
 	}
 	if (count($uploadMessages) > 0) {
@@ -466,7 +512,6 @@ function indexProcessUpload() {
  */
 function processFileUpload() {
 	global $cfg;
-	$uploadLimit = 5000000;
 	$ext_msg = "";
 	$file_name = "";
 	$uploadMessages = array();
@@ -484,7 +529,7 @@ function processFileUpload() {
 			}
 			$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
 			$file_name = cleanFileName($file_name);
-			if ($_FILES['upload_files']['size'][$id] <= $uploadLimit && $_FILES['upload_files']['size'][$id] > 0) {
+			if ($_FILES['upload_files']['size'][$id] <= _UPLOAD_LIMIT && $_FILES['upload_files']['size'][$id] > 0) {
 				if (isValidTransfer($file_name)) {
 					//FILE IS BEING UPLOADED
 					if (is_file($cfg["transfer_file_path"].$file_name)) {
@@ -498,10 +543,8 @@ function processFileUpload() {
 							// init stat-file
 							injectAlias($file_name);
 							// instant action ?
-							if (substr($file_name, -8) == ".torrent") {
-								if ((isset($actionId)) && ($actionId > 1))
-									array_push($tStack,$file_name);
-							}
+							if ((isset($actionId)) && ($actionId > 1))
+								array_push($tStack,$file_name);
 						} else {
 							array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
 					  	}
@@ -512,7 +555,7 @@ function processFileUpload() {
 					array_push($uploadMessages, $cfg["file_types_label"]);
 				}
 			} else {
-				array_push($uploadMessages, "File not uploaded, file size limit is ".$uploadLimit.". file has ".$size);
+				array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$size);
 			}
 			if (count($uploadMessages) > 0) {
 			  // there was an error
@@ -522,19 +565,25 @@ function processFileUpload() {
 		// instant action ?
 		if ((!empty($actionId)) && (!empty($tStack))) {
 			foreach ($tStack as $transfer) {
+				$isTorrent = (substr($file_name, -8) == ".torrent")
+					? true
+					: false;
 				// file prio
-				if ($cfg["enable_file_priority"]) {
+				if ($cfg["enable_file_priority"] && $isTorrent) {
 					include_once("inc/functions/functions.setpriority.php");
 					// Process setPriority Request.
-					setPriority(urldecode($transfer));
+					setPriority($transfer);
 				}
-				$clientHandler = ClientHandler::getInstance();
+				$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 				switch ($actionId) {
 					case 3:
-						$clientHandler->start($transfer, false, true);
+						if ($isTorrent)
+							$clientHandler->start($transfer, false, true);
 						break;
 					case 2:
 						$clientHandler->start($transfer, false, false);
+						if (!$isTorrent)
+							sleep(8);
 						break;
 				}
 			}
@@ -545,10 +594,7 @@ function processFileUpload() {
 	if (count($uploadMessages) > 0) {
 		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $uploadMessages);
 	} else {
-		if (isset($_SERVER["HTTP_REFERER"]))
-			@header("location: ".$_SERVER["HTTP_REFERER"]);
-		else
-			@header("location: index.php?iid=index");
+		@header("location: index.php?iid=index");
 		exit();
 	}
 }
