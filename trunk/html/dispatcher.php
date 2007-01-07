@@ -62,7 +62,7 @@ switch ($action) {
  * force-Stop
  ******************************************************************************/
     case "forceStop":
-    	forceStopTransfer(urldecode(getRequestVar('transfer'), getRequestVar('pid')));
+    	forceStopTransfer(urldecode(getRequestVar('transfer')), getRequestVar('pid'));
     	break;
 
 /*******************************************************************************

@@ -33,19 +33,20 @@ class RunningTransferTransmission extends RunningTransfer
 	 * @return RunningTransferTransmission
 	 */
     function RunningTransferTransmission($psLine) {
+    	global $cfg;
         // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)
                 $psLine = str_replace("  ",' ',trim($psLine));
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
-            $this->transferFile = str_replace($this->filePath,'',$arr[(count($arr) - 1)]);
+            $this->transferFile = str_replace($cfg['transfer_file_path'],'',$arr[(count($arr) - 1)]);
             foreach($arr as $key =>$value) {
                 if ($key == 0)
                     $startArgs = false;
                 if ($value == '-t') {
                     $this->filePath = substr($arr[$key+1],0,strrpos($arr[$key+1],"/")+1);
-                    $this->statFile = str_replace($this->filePath,'',$arr[$key+1]);
+                    $this->statFile = str_replace($cfg['transfer_file_path'],'',$arr[$key+1]);
                 }
                 if ($value == '-w')
                     $this->transferowner = $arr[$key+1];
