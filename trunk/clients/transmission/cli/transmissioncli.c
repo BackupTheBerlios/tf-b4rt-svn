@@ -880,7 +880,6 @@ static int test_processCommandStack(void) {
 	if (tf_cmd_fp != NULL) {
 		return test_processCommandFile();
 	} else {
-		/* DEBUG */ fprintf(stderr, "file does not exist: %s\n", tf_cmd_file);
 		// return
 		return 0;
 	}
@@ -920,7 +919,7 @@ static int test_processCommandFile(void) {
 	fclose(tf_cmd_fp);
 
 	// remove file
-	// remove(tf_cmd_file);
+	remove(tf_cmd_file);
 
 	// null pointer
 	tf_cmd_fp = NULL;
@@ -953,11 +952,9 @@ static int test_processCommandFile(void) {
 		if (index > 1) {
 			// term string, rtrim it
 			currentLine[index - 1] = '\0';
-			// exec
-			test_execCommand(currentLine);
-			// early out when reading a quit-command
-			//if (foo == 0)
-			//	return 0;
+			// exec, early out when reading a quit-command
+			if (test_execCommand(currentLine) == 0)
+				return 0;
 		}
 	} // end file while loop
 
@@ -966,15 +963,39 @@ static int test_processCommandFile(void) {
 }
 
 static int test_execCommand(char *s) {
-	tf_fprintTimestamp();
-	fprintf(stderr, "Command: %s\n", s);
-	return 1;
 
-	/*
-	tf_fprintTimestamp();
-	fprintf(stderr, "stop-request, setting shutdown-flag...\n");
-	mustDie = 1;
-	*/
+	// local vars
+	int len, i;
+	char opcode;
+	char workload[strlen(s)];
+
+	// parse command-string
+	len = strlen(s);
+	opcode = s[0];
+	for (i = 0; i < len - 1; i++) {
+		workload[i] = s[i + 1];
+	}
+	workload[len - 1] = '\0';
+
+	// opcode-switch
+	switch (opcode) {
+		case 'q':
+			tf_fprintTimestamp();
+			fprintf(stderr, "Command: stop-request, setting shutdown-flag...\n");
+			mustDie = 1;
+			return 0;
+		case 'u':
+			tf_fprintTimestamp();
+			fprintf(stderr, "Command: setting Upload-Rate to %s\n", workload);
+			//tr_setGlobalUploadLimit(h, atoi(workload));
+			return 1;
+		case 'd':
+			tf_fprintTimestamp();
+			fprintf(stderr, "Command: setting Download-Rate to %s\n", workload);
+			//tr_setGlobalDownloadLimit(h, atoi(workload));
+			return 1;
+	}
+	return 1;
 }
 
 
