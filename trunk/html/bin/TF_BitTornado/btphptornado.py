@@ -29,7 +29,7 @@ from socket import error as socketerror
 from BitTornado.bencode import bencode
 from BitTornado.natpunch import UPnP_test
 from threading import Event
-from os.path import abspath
+from os.path import abspath, isfile
 from os import getpid, remove
 from sys import argv, stdout
 import sys
@@ -57,13 +57,19 @@ def traceMsg(msg):
     except:
         return
 
+#------------------------------------------------------------------------------#
+# tfb static methods                                                           #
+#------------------------------------------------------------------------------#
+
 def fmttime(n):
+    """ fmttime """
     # short format :
     return fmttimeshort(n)
     # long format :
     # return fmttimelong(n)
 
 def fmttimeshort(n):
+    """ fmttimeshort """
     if n == 0:
         return 'complete!'
     try:
@@ -82,6 +88,7 @@ def fmttimeshort(n):
         return '%02d:%02d:%02d' % (h, m, s)
 
 def fmttimelong(n):
+    """ fmttimelong """
     if n == 0:
         return 'complete!'
     try:
@@ -107,6 +114,7 @@ def fmttimelong(n):
         return '%02d:%02d:%02d' % (h, m, s)
 
 def transferLog(message, ts):
+    """ transferLog """
     try:
         FILE = open(transferLogFile,"a+")
         if not ts:
@@ -147,6 +155,7 @@ class HeadlessDisplayer:
         self.shareKill = '100'
         self.distcopy = ''
         self.stoppedAt = ''
+        self.dow = None
 
     def finished(self):
         if __debug__: traceMsg('finished - begin')
@@ -326,10 +335,52 @@ class HeadlessDisplayer:
                     break
                 pass
 
+        # die or process command-stack
         if die:
             if __debug__: traceMsg('writeStatus - dieing - raising ki')
             transferLog("tornado shutting down...\n", True)
             raise KeyboardInterrupt
+        else:
+            self.processCommandStack()
+
+    def processCommandStack(self):
+        """ processCommandStack """
+        if isfile(transferCommandFile):
+            # process file
+            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
+            try:
+                # read file to mem
+                f = open(transferCommandFile, 'r')
+                commands = f.readlines()
+                f.close
+                # remove file
+                try:
+                    remove(transferCommandFile)
+                except:
+                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
+                    pass
+                # exec commands
+                for command in commands:
+                    command = command.replace("\n", "")
+                    if len(command) > 0:
+                        self.execCommand(command)
+            except:
+                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
+                pass
+
+    def execCommand(self, command):
+        """ execCommand """
+        opCode = command[0]
+        if opCode == 'u':
+            rate = command[1:]
+            transferLog("Command: setting UploadRate to " + rate + "...\n", True)
+            self.dow.setUploadRate(int(rate))
+        elif opCode == 'd':
+            rate = command[1:]
+            transferLog("Command: setting DownloadRate to " + rate + "...\n", True)
+            self.dow.setDownloadRate(int(rate))
+        else:
+            transferLog("opCode unknown: " + opCode + "\n", True)
 
     def newpath(self, path):
         self.downloadTo = path
@@ -491,33 +542,33 @@ def run(autoDie,shareKill,statusFile,userName,params):
 
             infohash = sha(bencode(response['info'])).digest()
 
-            dow = BT1Download(h.display, h.finished, h.error, disp_exception, doneflag,
+            h.dow = BT1Download(h.display, h.finished, h.error, disp_exception, doneflag,
                         config, response, infohash, myid, rawserver, listen_port)
 
-            if not dow.saveAs(h.chooseFile, h.newpath):
+            if not h.dow.saveAs(h.chooseFile, h.newpath):
                 break
 
-            if not dow.initFiles(old_style = True):
+            if not h.dow.initFiles(old_style = True):
                 break
 
-            if not dow.startEngine():
-                dow.shutdown()
+            if not h.dow.startEngine():
+                h.dow.shutdown()
                 break
-            dow.startRerequester()
-            dow.autoStats()
+            h.dow.startRerequester()
+            h.dow.autoStats()
 
-            if not dow.am_I_finished():
+            if not h.dow.am_I_finished():
                 h.display(activity = 'connecting to peers')
 
             # log that we are done with startup
             transferLog("tornado up and running.\n", True)
 
             # listen forever
-            rawserver.listen_forever(dow.getPortHandler())
+            rawserver.listen_forever(h.dow.getPortHandler())
 
             # shutdown
             h.display(activity = 'shutting down')
-            dow.shutdown()
+            h.dow.shutdown()
             break
 
         try:
@@ -556,6 +607,10 @@ if __name__ == '__main__':
     # get/set log-file
     transferLogFile = argv[3]
     transferLogFile = transferLogFile.replace(".stat", ".log")
+
+    # get/set cmd-file
+    transferCommandFile = argv[3]
+    transferCommandFile = transferCommandFile.replace(".stat", ".cmd")
 
     if PROFILER:
         import profile, pstats
