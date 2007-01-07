@@ -295,11 +295,34 @@ switch ($action) {
 					$clientType = "wget";
 					$invalid = false;
 					$tclient = "wget";
+					// is enabled ?
+					if ($cfg["enable_wget"] == 0) {
+						$invalid = true;
+						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+						array_push($dispatcherMessages, "wget is disabled : ".$transfer);
+					} else if ($cfg["enable_wget"] == 1) {
+						if (!$cfg['isAdmin']) {
+							$invalid = true;
+							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
+							array_push($dispatcherMessages, "wget is disabled for users : ".$transfer);
+						}
+					}
 				} else if (substr($element, -4) == ".nzb") {
 					// This is nzbperl.
 					$clientType = "nzb";
 					$invalid = false;
 					$tclient = "nzbperl";
+					if ($cfg["enable_nzbperl"] == 0) {
+						$invalid = true;
+						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+						array_push($dispatcherMessages, "nzbperl is disabled : ".$transfer);
+					} else if ($cfg["enable_nzbperl"] == 1) {
+						if (!$cfg['isAdmin']) {
+							$invalid = true;
+							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
+							array_push($dispatcherMessages, "nzbperl is disabled for users : ".$transfer);
+						}
+					}
 				}
 			}
 			if ($invalid) {
