@@ -222,9 +222,6 @@ my $afWrite = AliasFile->new($statfile);
 # write af
 writeStatStartup();
 
-# afRead-instance-field (reuse object)
-my $afRead = AliasFile->new();
-
 # start remote control
 my $rc_sock = undef;
 my @rc_clients;
@@ -252,6 +249,12 @@ if (usingThreadedDecoding()){
 # message
 printMessage("nzbperl up and running.\n");
 
+# Create cmd file name var
+(my $cmdfile = $statfile) =~ s/stat\b/cmd/;
+
+# Check for and delete stale .cmd files
+unlink($cmdfile) if ( -e $cmdfile );
+
 # main loop
 my @dlstarttime = Time::HiRes::gettimeofday();
 my $lasttime = [gettimeofday];
@@ -268,14 +271,8 @@ while (1) {
 	if ($elapsed >= 5) {
 
 		# stat-file
-		$afRead->initialize($statfile);
-		if ($afRead->get("running") eq "0") {
-			printMessage("stop-request, setting shutdown-flag...\n");
-			$quitnow = 1;
-		} else {
-			writeStatRunning();
-		}
-
+		writeStatRunning();
+		
 		# set time
 		$lasttime = [gettimeofday];
 	}
@@ -290,6 +287,9 @@ while (1) {
 
 	# remote controls
 	#doRemoteControls();
+
+	# check for command-file
+	processCmd() if (-e $cmdfile);
 
 	# exit on quit
 	$quitnow and last;
@@ -3107,4 +3107,29 @@ sub printMessage {
 sub printError {
 	my $message = shift;
 	print STDERR FluxdCommon::getMessage("nzbperl.pl", $message);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: processCmd                                                              #
+# Arguments: Null                                                              #
+# Return: Null                                                                 #
+#------------------------------------------------------------------------------#
+sub processCmd {
+	# process the command file
+	open(CMDFILE, "< $cmdfile");
+	while(<CMDFILE>) {
+
+		SWITCH: {
+			/^q$/ && do {
+				# quit
+				$quitnow = 1;
+			};
+			/^d(\d+)/ && do {
+				# set download speed
+				$targkBps = $1;
+			};
+		} # SWITCH
+	} #while
+	close(CMDFILE);
+	unlink($cmdfile);
 }
