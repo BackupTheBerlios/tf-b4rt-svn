@@ -43,8 +43,8 @@ class ClientHandlerTornado extends ClientHandler
         $this->handlerName = "tornado";
         $this->binSystem = "python";
         $this->binSocket = "python";
-        $this->binClient = "btphptornado.py";
-        $this->tornadoBin = $cfg["docroot"]."bin/TF_BitTornado/btphptornado.py";
+        $this->binClient = "tftornado.py";
+        $this->tornadoBin = $cfg["docroot"]."bin/TF_BitTornado/tftornado.py";
     }
 
 	// =========================================================================
@@ -71,7 +71,7 @@ class ClientHandlerTornado extends ClientHandler
         // check to see if the path to the python script is valid
         if (!is_file($this->tornadoBin)) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
-        	$msg = "path for btphptornado.py is not valid";
+        	$msg = "path for tftornado.py is not valid";
         	AuditAction($cfg["constants"]["error"], $msg);
         	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
