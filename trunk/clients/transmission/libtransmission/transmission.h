@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1302 2006-12-30 19:24:09Z livings124 $
+ * $Id: transmission.h 1320 2007-01-08 21:53:55Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -159,6 +159,10 @@ int tr_torrentCount( tr_handle_t * h );
 typedef struct tr_torrent_s tr_torrent_t;
 typedef void (*tr_callback_t) ( tr_torrent_t *, void * );
 void tr_torrentIterate( tr_handle_t *, tr_callback_t, void * );
+
+void tr_setUseCustomLimit( tr_torrent_t * tor, int limit );
+void tr_setUploadLimit( tr_torrent_t * tor, int limit );
+void tr_setDownloadLimit( tr_torrent_t * tor, int limit );
 
 /***********************************************************************
  * tr_torrentRates

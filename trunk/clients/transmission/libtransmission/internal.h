@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1242 2006-12-17 16:36:27Z livings124 $
+ * $Id: internal.h 1320 2007-01-08 21:53:55Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -139,10 +139,10 @@ typedef enum { TR_OK, TR_ERROR, TR_WAIT } tr_tristate_t;
 
 struct tr_torrent_s
 {
+    tr_handle_t * handle;
     tr_info_t info;
 
-    tr_ratecontrol_t * globalUpload;
-    tr_ratecontrol_t * globalDownload;
+    int                customSpeedLimit;
     tr_ratecontrol_t * upload;
     tr_ratecontrol_t * download;
     tr_ratecontrol_t * swarmspeed;
@@ -201,8 +201,8 @@ struct tr_handle_s
     int            torrentCount;
     tr_torrent_t * torrentList;
 
-    tr_ratecontrol_t * upload;
-    tr_ratecontrol_t * download;
+    int            uploadLimit;
+    int            downloadLimit;
     tr_fd_t      * fdlimit;
     tr_choking_t * choking;
     tr_natpmp_t  * natpmp;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1301 2006-12-30 18:00:45Z livings124 $
+ * $Id: clients.c 1318 2007-01-08 15:18:05Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -41,7 +41,7 @@ char * tr_clientForId( uint8_t * id )
 {
     char * ret = NULL;
     
-    /* Azureus style */
+    /* Azureus-style */
     if( id[0] == '-' && id[7] == '-' )
     {
         if( !memcmp( &id[1], "TR", 2 ) )
@@ -78,8 +78,8 @@ char * tr_clientForId( uint8_t * id )
         }
         else if( !memcmp( &id[1], "BOW", 3 ) )
         {
-            asprintf( &ret, "Bits on Wheels (%c%c)",
-                      id[5], id[6] );
+            asprintf( &ret, "Bits on Wheels (%c%c%c)",
+                      id[4], id[5], id[6] );
         }
         else if( !memcmp( &id[1], "BR", 2 ) )
         {
@@ -138,7 +138,7 @@ char * tr_clientForId( uint8_t * id )
     }
     
     /* Tornado-style */
-    if( !memcmp( &id[4], "----", 4 ) || !memcmp( &id[4], "--00", 4 ) )
+    if( !memcmp( &id[4], "-----", 5 ) || !memcmp( &id[4], "--0", 3 ) )
     {
         if( id[0] == 'T' )
         {
@@ -207,6 +207,11 @@ char * tr_clientForId( uint8_t * id )
         asprintf( &ret, "MLDonkey %c%c%c%c%c",
                   id[3], id[4], id[5], id[6], id[7] );
     }
+    else if( !memcmp( id, "AZ", 2 ) && !memcmp( &id[6], "BT", 2 ) )
+    {
+        asprintf( &ret, "BitTyrant %c.%c.%c.%c",
+                    id[2], id[3], id[4], id[5] );
+    }
     else if( !memcmp( id, "-FG", 3 ) )
     {
         asprintf( &ret, "FlashGet %d.%c%c",
@@ -226,9 +231,13 @@ char * tr_clientForId( uint8_t * id )
     {
         asprintf( &ret, "burst! %c.%c.%c", id[5], id[7], id[9] );
     }
+    else if( !memcmp( id, "btpd", 4 ) )
+    {
+        asprintf( &ret, "BT Protocol Daemon %c%c%c", id[5], id[6], id[7] );
+    }
     else if( !memcmp( id, "LIME", 4 ) )
     {
-        asprintf( &ret, "Limewire (%c%c%c%c)", id[4], id[5], id[6], id[7] );
+        asprintf( &ret, "Limewire" );
     }
     else if( !memcmp( id, "-G3", 3 ) )
     {
@@ -241,6 +250,10 @@ char * tr_clientForId( uint8_t * id )
     else if( !memcmp( id, "346-", 4 ) )
     {
         asprintf( &ret, "TorrentTopia" );
+    }
+    else if( !memcmp( id, "eX", 2 ) )
+    {
+        asprintf( &ret, "eXeem" );
     }
 
     /* No match */
