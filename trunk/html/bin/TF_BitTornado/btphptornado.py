@@ -366,7 +366,7 @@ class HeadlessDisplayer:
                         if len(command) > 0:
                             self.execCommand(command)
                 else:
-                    transferLog("No commands found in " + transferCommandFile + "\n", True)
+                    transferLog("No commands found.\n", True)
             except:
                 transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
                 pass
@@ -383,7 +383,7 @@ class HeadlessDisplayer:
             transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
             self.dow.setDownloadRate(int(rate))
         else:
-            transferLog("opCode unknown: " + opCode + "\n", True)
+            transferLog("op-code unknown: " + opCode + "\n", True)
 
     def newpath(self, path):
         self.downloadTo = path
@@ -500,6 +500,14 @@ def run(autoDie,shareKill,statusFile,userName,params):
             startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
             startupMessage += " - upnp_nat_access : " + str(config['upnp_nat_access']) + "\n"
             transferLog(startupMessage, True)
+
+            # remove command-file if exists
+            if isfile(transferCommandFile):
+                try:
+                    transferLog("removing command-file " + transferCommandFile + "...\n", True)
+                    remove(transferCommandFile)
+                except:
+                    pass
 
             # write pid-file
             currentPid = (str(getpid())).strip()

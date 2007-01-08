@@ -594,7 +594,7 @@ class TorrentApp(object):
                         if len(command) > 0:
                             self.execCommand(command)
                 else:
-                    transferLog("No commands found in " + transferCommandFile + "\n", True)
+                    transferLog("No commands found.\n", True)
             except:
                 transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
                 pass
@@ -611,7 +611,7 @@ class TorrentApp(object):
             transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
             self.multitorrent.set_option('max_download_rate', int(rate), None, False)
         else:
-            transferLog("opCode unknown: " + opCode + "\n", True)
+            transferLog("op-code unknown: " + opCode + "\n", True)
 
 #------------------------------------------------------------------------------#
 # __main__                                                                     #
@@ -688,6 +688,14 @@ if __name__ == '__main__':
     startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
     startupMessage += " - upnp : " + str(config['upnp']) + "\n"
     transferLog(startupMessage, True)
+
+    # remove command-file if exists
+    if isfile(transferCommandFile):
+        try:
+            transferLog("removing command-file " + transferCommandFile + "...\n", True)
+            remove(transferCommandFile)
+        except:
+            pass
 
     # app
     app = TorrentApp(metainfo, config)
