@@ -462,6 +462,7 @@ def run(autoDie,shareKill,statusFile,userName,params):
             startupMessage += " - statusFile : " + statusFile + "\n"
             startupMessage += " - pid-file : " + statusFile + ".pid" + "\n"
             startupMessage += " - transferLogFile : " + transferLogFile + "\n"
+            startupMessage += " - transferCommandFile : " + transferCommandFile + "\n"
             startupMessage += " - autoDie : " + autoDie + "\n"
             startupMessage += " - shareKill : " + shareKill + "\n"
             startupMessage += " - minport : " + str(config['minport']) + "\n"
@@ -624,3 +625,4 @@ if __name__ == '__main__':
 
     # log exit
     transferLog("tornado exit.\n", True)
+

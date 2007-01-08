@@ -255,42 +255,30 @@ class HeadlessDisplayer(object):
             app.upTotal = upTotal
             app.downTotal = downTotal
 
+            # process command-stack
+            die = app.processCommandStack()
+            if die:
+                # shutdown
+                self.execShutdown()
+                return;
+
             # die-on-seed-limit / die-when-done
             if app.multitorrent.isDone:
                 if self.dieWhenDone == 'True':
                     transferLog("die-when-done set, setting shutdown-flag...\n", True)
-                    self.running = '0'
+                    die = True
                 else:
                     seedLimitMax = int(self.seedLimit)
                     if seedLimitMax > 0:
                         totalShareRating = int(((upTotal * 100) / self.fileSize_stat))
                         if totalShareRating >= seedLimitMax:
                             transferLog("seed-limit "+str(self.seedLimit)+" reached, setting shutdown-flag...\n", True)
-                            self.running = '0'
+                            die = True
 
-            # read state from stat-file
-            if self.running == '1':
-                try:
-                    FILE = open(self.statFile, 'r')
-                    self.running = FILE.read(1)
-                    FILE.close()
-                except Exception, e:
-                    self.running = '1'
-                    transferLog("Failed to read stat-file : " + self.statFile + "\n", True)
-
-            # shutdown or write stat-file + process command-stack
-            if self.running == '0':
-                # log
-                transferLog("stop-request, setting shutdown-flag...\n", True)
-                transferLog("mainline shutting down...\n", True)
-                # set flags
-                self.state = 0
-                self.isInShutDown = 1
-                self.running = '0'
+            # shutdown / stat
+            if die:
                 # shutdown
-                df = app.multitorrent.shutdown()
-                stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
-                df.addCallbacks(stop_rawserver, stop_rawserver)
+                self.execShutdown()
             else:
                 # write stat-file
                 try:
@@ -312,8 +300,19 @@ class HeadlessDisplayer(object):
                     FILE.close()
                 except Exception, e:
                     transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
-                # process command-stack
-                app.processCommandStack()
+
+    def execShutdown(self):
+        """ execShutdown """
+        # log
+        transferLog("mainline shutting down...\n", True)
+        # set flags
+        self.state = 0
+        self.isInShutDown = 1
+        self.running = '0'
+        # shutdown
+        df = app.multitorrent.shutdown()
+        stop_rawserver = lambda *a : app.multitorrent.rawserver.stop()
+        df.addCallbacks(stop_rawserver, stop_rawserver)
 
     def print_spew(self, spew):
         s = StringIO()
@@ -679,6 +678,7 @@ if __name__ == '__main__':
     startupMessage += " - stat_file : " + config['stat_file'] + "\n"
     startupMessage += " - pid-file : " + config['stat_file'] + ".pid" + "\n"
     startupMessage += " - transferLogFile : " + transferLogFile + "\n"
+    startupMessage += " - transferCommandFile : " + transferCommandFile + "\n"
     startupMessage += " - die_when_done : " + str(config['die_when_done']) + "\n"
     startupMessage += " - seed_limit : " + str(config['seed_limit']) + "\n"
     startupMessage += " - minport : " + str(config['minport']) + "\n"
@@ -738,3 +738,4 @@ if __name__ == '__main__':
 
     # log exit
     transferLog("mainline exit.\n", True)
+
