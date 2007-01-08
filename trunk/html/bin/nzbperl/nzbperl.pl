@@ -49,7 +49,6 @@
 #                                                                              #
 ################################################################################
 use strict;
-use FluxdCommon;
 use AliasFile;
 use File::Basename;
 use IO::File;
@@ -157,9 +156,6 @@ if (!($uudeview =~ m#^([\w\s\.\_\-\/\\]+)$#)) {
 	exit;
 }
 
-# write pid
-pidFileWrite();
-
 # some vars
 my $lastDirCheckTime = 0;
 my $lastDiskFullTime = undef;
@@ -216,11 +212,32 @@ my %totalsCopy = (
 	'total file ct' => $totals{'total file ct'}
 );
 
+# Create cmd file name var
+(my $cmdfile = $statfile) =~ s/stat\b/cmd/;
+
+# startup-message
+printMessage("nzbperl starting up :\n".
+	" - files : ".$totals{'total file ct'}."\n".
+	" - size : ".$totals{'total size'}."\n".
+	" - tfuser : ".$tfuser."\n".
+	" - statfile : ".$statfile."\n".
+	" - pidfile : ".$pidfile."\n".
+	" - cmdfile : ".$cmdfile."\n".
+	" - dlpath : ".$dlpath."\n".
+	" - server : ".$server."\n".
+	" - speed : ".$targkBps."\n".
+	" - conn : ".$connct."\n".
+	" - dthreadct : ".$dthreadct."\n"
+);
+
 # afWrite-instance-field (reuse object)
 my $afWrite = AliasFile->new($statfile);
 
 # write af
 writeStatStartup();
+
+# write pid
+pidFileWrite();
 
 # start remote control
 my $rc_sock = undef;
@@ -232,7 +249,8 @@ createNNTPConnections();
 if ($user){
 	unless (doLogins()) {
 		printError("Error authenticating to server.\nPlease check the user/pass info and try again.\n");
-		exit;
+		# shutdown
+		shutdownClient();
 	}
 }
 
@@ -249,11 +267,11 @@ if (usingThreadedDecoding()){
 # message
 printMessage("nzbperl up and running.\n");
 
-# Create cmd file name var
-(my $cmdfile = $statfile) =~ s/stat\b/cmd/;
-
 # Check for and delete stale .cmd files
-unlink($cmdfile) if ( -e $cmdfile );
+if (-e $cmdfile ) {
+	printMessage("removing command-file ".$cmdfile."...\n");
+	unlink($cmdfile);
+}
 
 # main loop
 my @dlstarttime = Time::HiRes::gettimeofday();
@@ -265,14 +283,17 @@ while (1) {
 	doBodyRequests();
 	doReceiverPart();
 
-	my $elapsed = tv_interval ( $lasttime );
+	my $elapsed = tv_interval($lasttime);
 
 	# 5 secs passed, process stat-file
 	if ($elapsed >= 5) {
 
 		# stat-file
 		writeStatRunning();
-		
+
+		# process command stack
+		processCommandStack();
+
 		# set time
 		$lasttime = [gettimeofday];
 	}
@@ -287,9 +308,6 @@ while (1) {
 
 	# remote controls
 	#doRemoteControls();
-
-	# check for command-file
-	processCmd() if (-e $cmdfile);
 
 	# exit on quit
 	$quitnow and last;
@@ -336,16 +354,8 @@ foreach my $i (0..$dthreadct-1){
 	usingThreadedDecoding() and $decThreads[$i]->join;
 }
 
-# write stat-file
-writeStatShutdown();
-
-# delete pid-file
-pidFileDelete();
-
-# exit message
-printMessage("nzbperl exit.\n");
-
-# exit
+# shutdown
+shutdownClient();
 
 ################################################################################
 # subs                                                                         #
@@ -1469,7 +1479,7 @@ sub doSingleLogin {
 
 		$line = blockReadLine($sock);
 		$line =~ s/\r\n//;
-		(not $line =~ /^281/) and not $silent and printError(">FAILED<\n* Authentication to server failed: ($line)\n") and exit(0);
+		(not $line =~ /^281/) and not $silent and printError(">FAILED<\n* Authentication to server failed: ($line)\n") and shutdownClient();
 		not $silent and printMessage("success!\n");
 	}
 	elsif($line =~ /^281/){ # not sure if this happens, but this means no pw needed I guess
@@ -1478,7 +1488,8 @@ sub doSingleLogin {
 	else {
 		not $silent and printError("server returned: $line\n");
 		printError(">LOGIN FAILED<\n");
-		exit;
+		# shutdown
+		shutdownClient();
 	}
 }
 
@@ -2063,7 +2074,7 @@ sub statMsg {
 	if($logfile){
 		open LOGFH, ">>" . $logfile or
 				(push @statusmsgs, sprintf("%0.2d:%0.2d:%0.2d - Error writing to log file  %s", $logfile) and return 1);
-		print LOGFH FluxdCommon::getMessage("nzbperl.pl", $str."\n");
+		print LOGFH ($str."\n");
 		close LOGFH;
 	}
 =cut
@@ -2314,7 +2325,7 @@ sub regexAndSkipping {
 	if($skipfilect){
 		if($skipfilect >= scalar @fileset){
 			pc("\nWhoops:  --skip $skipfilect would skip ALL " . scalar @fileset .
-					" files...aborting!\n\n", 'bold yellow') and exit 0;
+					" files...aborting!\n\n", 'bold yellow') and shutdownClient();
 		}
 		printMessage("Removing $skipfilect files from nzb set (--skip $skipfilect)\n");
 		while($skipfilect > 0){
@@ -2345,7 +2356,7 @@ sub filterFilesOnSubject {
 		}
 	}
 	if(scalar @nset < 1){
-		pc("\nWhoops:  Filter removed all files (nothing left)...aborting!\n\n", 'bold yellow') and exit 0;
+		pc("\nWhoops:  Filter removed all files (nothing left)...aborting!\n\n", 'bold yellow') and shutdownClient();
 	}
 	printMessage(sprintf("Kept %d of %d files (filtered %d)\n", scalar(@nset), $orgsize, $orgsize-scalar(@nset)));
 	return @nset;
@@ -2422,7 +2433,8 @@ sub doNZBSanityChecks(){
 			if(defined ($char = getch()) ) {	# have a key
 				print "\n";
 				if($char =~ /q/){
-					exit 1;
+					# shutdown
+					shutdownClient();
 				}
 				elsif($char =~ /k/){
 					print "Setting --insane option...\n";
@@ -3045,10 +3057,6 @@ sub writeStatShutdown {
 		$afWrite->set("time_left", "Download Succeeded!");
 		$afWrite->set("downtotal", $totalsCopy{'total size'});
 	} else {
-		#$afWrite->set("running", 2); # new
-		#$afWrite->set("percent_done", 0);
-		#$afWrite->set("time_left", "");
-		#$afWrite->set("downtotal", 0);
 		$afWrite->set("running", 0); # stopped
 		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : ((int(100.0 * $totals{'total bytes'} / $totals{'total size'})) + 100) * (-1));
 		$afWrite->set("time_left", "Transfer Stopped");
@@ -3096,7 +3104,7 @@ sub pidFileDelete {
 #------------------------------------------------------------------------------#
 sub printMessage {
 	my $message = shift;
-	print STDOUT FluxdCommon::getMessage("nzbperl.pl", $message);
+	print STDOUT getMessage($message);
 }
 
 #------------------------------------------------------------------------------#
@@ -3106,30 +3114,107 @@ sub printMessage {
 #------------------------------------------------------------------------------#
 sub printError {
 	my $message = shift;
-	print STDERR FluxdCommon::getMessage("nzbperl.pl", $message);
+	print STDERR getMessage($message);
 }
 
 #------------------------------------------------------------------------------#
-# Sub: processCmd                                                              #
+# Sub: getMessage                                                              #
+# Arguments: message                                                           #
+# Return: string                                                               #
+#------------------------------------------------------------------------------#
+sub getMessage {
+	my $message = shift;
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+		= localtime(time);
+	return sprintf("[%4d/%02d/%02d - %02d:%02d:%02d] %s",
+						$year + 1900, $mon + 1, $mday,
+						$hour, $min, $sec,
+						$message
+	);
+}
+
+#------------------------------------------------------------------------------#
+# Sub: processCommandStack                                                     #
+# Arguments: Null                                                              #
+# Return: 1|0                                                                  #
+#------------------------------------------------------------------------------#
+sub processCommandStack {
+	# check for command-file
+	if (!(-e $cmdfile)) {
+		return 0;
+	}
+	# process the command file
+	printMessage("Processing command-file ".$cmdfile."...\n");
+	# sep + open file
+	my $lineSep = $/;
+	undef $/;
+	open(CMDFILE,"<$cmdfile");
+	# read data
+	my $content = <CMDFILE>;
+	# close file + sep
+	close(CMDFILE);
+	$/ = $lineSep;
+	# delete file
+	unlink($cmdfile);
+	# process data
+	my @contentary = split(/\n/, $content);
+	my $commandCount = 0;
+	foreach my $command (@contentary) {
+		# exec command
+		my $result = execCommand($command);
+		if ($result == 1) {
+			return 1;
+		} elsif ($result == 0) {
+			$commandCount++;
+		}
+	}
+	if ($commandCount == 0) {
+		printMessage("No commands found.\n");
+	}
+	return 0;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: execCommand                                                             #
+# Arguments: command                                                           #
+# Return: -1|0|1                                                               #
+#------------------------------------------------------------------------------#
+sub execCommand {
+	my $command = shift;
+	chomp $command;
+	$_ = $command;
+	SWITCH: {
+		/^q$/ && do {
+			# quit
+			printMessage("Command: stop-request, setting shutdown-flag...\n");
+			$quitnow = 1;
+			return 1;
+		};
+		/^d(\d+)/ && do {
+			# set download speed
+			printMessage("Command: setting Download-Rate to ".$1."\n");
+			$targkBps = $1;
+			return 0;
+		};
+		# default
+		printMessage("op-code unknown: ".substr($command, 0 , 1)."\n");
+	} # SWITCH
+	return -1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: shutdownClient                                                          #
 # Arguments: Null                                                              #
 # Return: Null                                                                 #
 #------------------------------------------------------------------------------#
-sub processCmd {
-	# process the command file
-	open(CMDFILE, "< $cmdfile");
-	while(<CMDFILE>) {
-
-		SWITCH: {
-			/^q$/ && do {
-				# quit
-				$quitnow = 1;
-			};
-			/^d(\d+)/ && do {
-				# set download speed
-				$targkBps = $1;
-			};
-		} # SWITCH
-	} #while
-	close(CMDFILE);
-	unlink($cmdfile);
+sub shutdownClient {
+	# write stat-file
+	writeStatShutdown();
+	# delete pid-file
+	pidFileDelete();
+	# exit message
+	printMessage("nzbperl exit.\n");
+	# exit
+	exit;
 }
+
