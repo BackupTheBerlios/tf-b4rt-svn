@@ -344,31 +344,6 @@ int main(int argc, char ** argv) {
 		// sleep
 		sleep(displayInterval);
 
-// TODO
-		// Check if we must stop
-		if (tf_stat_file != NULL) { /* tf */
-			tf_stat_fp = fopen(tf_stat_file, "r");
-			if (tf_stat_fp != NULL) {
-				// stat-state
-				char stat_state = '1';
-				// Get state
-				stat_state = fgetc(tf_stat_fp);
-				// Close the file
-				fclose(tf_stat_fp);
-				// Torrentflux asked to shutdown the torrent, set flag
-				if (stat_state == '0') {
-					tf_fprintTimestamp();
-					fprintf(stderr, "stop-request, setting shutdown-flag...\n");
-					mustDie = 1;
-				}
-			} else {
-				tf_fprintTimestamp();
-				fprintf(stderr, "error opening stat-file for read : %s\n",
-					tf_stat_file);
-			}
-		}
-// TODO
-
 		// torrent-stat
 		s = tr_torrentStat(tor);
 
@@ -829,6 +804,7 @@ static int tf_initCommandFacility(void) {
 	tf_cmd_file[len - 1] = 'd';
 	tf_cmd_file[len] = '\0';
 	// remove command-file if exists
+	tf_cmd_fp = NULL;
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
 	if (tf_cmd_fp != NULL) {
 		// close file
@@ -847,9 +823,8 @@ static int tf_initCommandFacility(void) {
  * tf_processCommandStack
  ******************************************************************************/
 static int tf_processCommandStack(tr_handle_t *h) {
-	// null pointer
+	// process command-file if exists
 	tf_cmd_fp = NULL;
-	// open file
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
 	if (tf_cmd_fp != NULL) {
 		return tf_processCommandFile(h);
@@ -1026,3 +1001,4 @@ static void tf_fprintTimestamp(void) {
 		cts->tm_sec
 	);
 }
+
