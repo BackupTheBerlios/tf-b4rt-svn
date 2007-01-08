@@ -131,10 +131,6 @@ static int tf_processCommandFile(tr_handle_t *h);
 static int tf_execCommand(tr_handle_t *h, char *s);
 static void tf_fprintTimestamp(void);
 
-static int test_processCommandStack(void);
-static int test_processCommandFile(void);
-static int test_execCommand(char *s);
-
 /*******************************************************************************
  * main
  ******************************************************************************/
@@ -151,18 +147,6 @@ int main(int argc, char ** argv) {
 
 	/* Get options */
 	if (parseCommandLine(argc, argv)) {
-
-// DEBUG
-		// init command-facility
-		if (tf_stat_file != NULL) { /* tf */
-			fprintf(stderr, "\n\n");
-			tf_initCommandFacility();
-			fprintf(stderr, "tf_cmd_file : %s\n", tf_cmd_file);
-			test_processCommandStack();
-			fprintf(stderr, "\n\n");
-		}
-// DEBUG
-
 		printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
 			VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
@@ -193,14 +177,6 @@ int main(int argc, char ** argv) {
 	if (bindPort < 1 || bindPort > 65535) {
 		printf("Invalid port '%d'\n", bindPort);
 		return 1;
-	}
-
-	// init command-facility
-	if (tf_stat_file != NULL) { /* tf */
-		if (tf_initCommandFacility() == 0) {
-			fprintf(stderr, "Failed to init command-facility. exit.\n");
-			return 1;
-		}
 	}
 
 	// Initialize libtransmission
@@ -285,15 +261,13 @@ int main(int argc, char ** argv) {
 	// print what we are starting up /* tf */
 	if ((tf_user != NULL) &&
 		(tf_stat_file != NULL) &&
-		(tf_pid_file != NULL) &&
-		(tf_cmd_file != NULL)) {
+		(tf_pid_file != NULL)) {
 		tf_fprintTimestamp();
 		fprintf(stderr, "transmission starting up :\n");
 		fprintf(stderr, " - torrentPath : %s\n", torrentPath);
 		fprintf(stderr, " - tf_user : %s\n", tf_user);
 		fprintf(stderr, " - tf_stat_file : %s\n", tf_stat_file);
 		fprintf(stderr, " - tf_pid_file : %s\n", tf_pid_file);
-		fprintf(stderr, " - tf_cmd_file : %s\n", tf_cmd_file);
 		fprintf(stderr, " - seedLimit : %d\n", seedLimit);
 		fprintf(stderr, " - bindPort : %d\n", bindPort);
 		fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
@@ -301,6 +275,14 @@ int main(int argc, char ** argv) {
 		fprintf(stderr, " - natTraversal : %d\n", natTraversal);
 		if (finishCall != NULL) {
 			fprintf(stderr, " - finishCall : %s\n", finishCall);
+		}
+	}
+
+	// init command-facility
+	if (tf_stat_file != NULL) { /* tf */
+		if (tf_initCommandFacility() == 0) {
+			fprintf(stderr, "Failed to init command-facility. exit.\n");
+			goto failed;
 		}
 	}
 
@@ -362,6 +344,7 @@ int main(int argc, char ** argv) {
 		// sleep
 		sleep(displayInterval);
 
+// TODO
 		// Check if we must stop
 		if (tf_stat_file != NULL) { /* tf */
 			tf_stat_fp = fopen(tf_stat_file, "r");
@@ -384,6 +367,7 @@ int main(int argc, char ** argv) {
 					tf_stat_file);
 			}
 		}
+// TODO
 
 		// torrent-stat
 		s = tr_torrentStat(tor);
@@ -622,6 +606,7 @@ int main(int argc, char ** argv) {
 			result = system(finishCall);
 		} else {
 			if (tf_stat_file != NULL) { /* tf */
+				// process command-stack
 				tf_processCommandStack(h);
 			}
 		}
@@ -827,11 +812,13 @@ static void sigHandler(int signal) {
  ******************************************************************************/
 static int tf_initCommandFacility(void) {
 	int i, len;
+	// path-string
 	len = strlen(tf_stat_file) - 1;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
 	if (tf_cmd_file == NULL) {
 		tf_fprintTimestamp();
-		fprintf(stderr, "Error : tf_initCommandFacility : not enough mem for malloc\n");
+		fprintf(stderr,
+			"Error : tf_initCommandFacility : not enough mem for malloc\n");
 		return 0;
 	}
 	for (i = 0; i < len - 3; i++) {
@@ -841,6 +828,18 @@ static int tf_initCommandFacility(void) {
 	tf_cmd_file[len - 2] = 'm';
 	tf_cmd_file[len - 1] = 'd';
 	tf_cmd_file[len] = '\0';
+	// remove command-file if exists
+	tf_cmd_fp = fopen(tf_cmd_file, "r");
+	if (tf_cmd_fp != NULL) {
+		// close file
+		fclose(tf_cmd_fp);
+		tf_fprintTimestamp();
+		fprintf(stderr, "removing command-file %s...\n", tf_cmd_file);
+		// remove file
+		remove(tf_cmd_file);
+		// null pointer
+		tf_cmd_fp = NULL;
+	}
 	return 1;
 }
 
@@ -848,46 +847,25 @@ static int tf_initCommandFacility(void) {
  * tf_processCommandStack
  ******************************************************************************/
 static int tf_processCommandStack(tr_handle_t *h) {
-	return (tf_processCommandFile(h));
-}
-
-/*******************************************************************************
- * tf_processCommandFile
- ******************************************************************************/
-static int tf_processCommandFile(tr_handle_t *h) {
-	return (tf_execCommand(h, tf_cmd_file));
-}
-
-/*******************************************************************************
- * tf_execCommand
- ******************************************************************************/
-static int tf_execCommand(tr_handle_t *h, char *s) {
-	char *p = s;
-	tf_fprintTimestamp();
-	fprintf(stderr, "Command: %s\n", p);
-	tf_fprintTimestamp();
-	fprintf(stderr, "tr_torrentCount: %d\n", tr_torrentCount(h));
-	return 1;
-}
-
-
-
-static int test_processCommandStack(void) {
 	// null pointer
 	tf_cmd_fp = NULL;
 	// open file
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
 	if (tf_cmd_fp != NULL) {
-		return test_processCommandFile();
+		return tf_processCommandFile(h);
 	} else {
 		// return
 		return 0;
 	}
 }
 
-static int test_processCommandFile(void) {
+/*******************************************************************************
+ * tf_processCommandFile
+ ******************************************************************************/
+static int tf_processCommandFile(tr_handle_t *h) {
 
 	// local vars
+	int commandCount = 0;
 	int isNewline;
 	long fileLen;
 	long index;
@@ -898,17 +876,20 @@ static int test_processCommandFile(void) {
 	char *fileCurrentPos;
 
 	// process file
+	tf_fprintTimestamp();
+	fprintf(stderr, "Processing command-file %s...\n", tf_cmd_file);
 
 	// get length
 	fseek(tf_cmd_fp, 0L, SEEK_END);
 	fileLen = ftell(tf_cmd_fp);
 	rewind(tf_cmd_fp);
 
-	// alloc buffer
+	// calloc buffer
 	fileBuffer = calloc(fileLen + 1, sizeof(char));
 	if (fileBuffer == NULL) {
 		tf_fprintTimestamp();
-		fprintf(stderr, "Error : test_processCommandFile : not enough mem to read command-file\n");
+		fprintf(stderr,
+			"Error : test_processCommandFile : not enough mem to read command-file\n");
 		return 0;
 	}
 
@@ -923,6 +904,13 @@ static int test_processCommandFile(void) {
 
 	// null pointer
 	tf_cmd_fp = NULL;
+
+	// sanity-check if file contained "something"
+	if (fileLen < 1) {
+		tf_fprintTimestamp();
+		fprintf(stderr, "No commands found.\n");
+		return 0;
+	}
 
 	// reset counter
 	totalChars = 0L;
@@ -946,31 +934,47 @@ static int test_processCommandFile(void) {
 				break;
 			}
 			// add char and increment
-			currentLine[index++] = *fileCurrentPos++;
 			++totalChars;
+			if (index < 128) {
+				currentLine[index++] = *fileCurrentPos++;
+			} else {
+				*fileCurrentPos++;
+				break;
+			}
 		} // end line while loop
 		if (index > 1) {
-			// term string, rtrim it
+			// increment command-count
+			commandCount++;
+			// term string, chop it
 			currentLine[index - 1] = '\0';
 			// exec, early out when reading a quit-command
-			if (test_execCommand(currentLine) == 0)
-				return 0;
+			if (tf_execCommand(h, currentLine) == 0)
+				return 1;
 		}
 	} // end file while loop
 
 	// return
-	return 1;
+	if (commandCount > 0) {
+		return 1;
+	} else {
+		tf_fprintTimestamp();
+		fprintf(stderr, "No commands found.\n");
+		return 0;
+	}
 }
 
-static int test_execCommand(char *s) {
+/*******************************************************************************
+ * tf_execCommand
+ ******************************************************************************/
+static int tf_execCommand(tr_handle_t *h, char *s) {
 
 	// local vars
-	int len, i;
+	int i;
+	int len = strlen(s);
 	char opcode;
-	char workload[strlen(s)];
+	char workload[len];
 
 	// parse command-string
-	len = strlen(s);
 	opcode = s[0];
 	for (i = 0; i < len - 1; i++) {
 		workload[i] = s[i + 1];
@@ -981,24 +985,29 @@ static int test_execCommand(char *s) {
 	switch (opcode) {
 		case 'q':
 			tf_fprintTimestamp();
-			fprintf(stderr, "Command: stop-request, setting shutdown-flag...\n");
+			fprintf(stderr,
+				"Command: stop-request, setting shutdown-flag...\n");
 			mustDie = 1;
 			return 0;
 		case 'u':
 			tf_fprintTimestamp();
-			fprintf(stderr, "Command: setting Upload-Rate to %s\n", workload);
-			//tr_setGlobalUploadLimit(h, atoi(workload));
+			fprintf(stderr,
+				"Command: setting Upload-Rate to %s\n", workload);
+			tr_setGlobalUploadLimit(h, atoi(workload));
 			return 1;
 		case 'd':
 			tf_fprintTimestamp();
-			fprintf(stderr, "Command: setting Download-Rate to %s\n", workload);
-			//tr_setGlobalDownloadLimit(h, atoi(workload));
+			fprintf(stderr,
+				"Command: setting Download-Rate to %s\n", workload);
+			tr_setGlobalDownloadLimit(h, atoi(workload));
+			return 1;
+		default:
+			tf_fprintTimestamp();
+			fprintf(stderr, "op-code unknown: %c\n", opcode);
 			return 1;
 	}
 	return 1;
 }
-
-
 
 /*******************************************************************************
  * tf_fprintTimestamp
@@ -1017,6 +1026,3 @@ static void tf_fprintTimestamp(void) {
 		cts->tm_sec
 	);
 }
-
-
-
