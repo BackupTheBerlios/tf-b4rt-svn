@@ -133,6 +133,7 @@ class HeadlessDisplayer:
     def __init__(self):
         self.done = False
         self.file = ''
+        self.running = '1'
         self.percentDone = ''
         self.timeEst = 'Connecting to Peers'
         self.downloadTo = ''
@@ -192,198 +193,13 @@ class HeadlessDisplayer:
         # log error
         transferLog("error: " + errormsg + "\n", True)
 
-    def display(self, dpflag = Event(), fractionDone = None, timeEst = None,
-        downRate = None, upRate = None, activity = None,
-        statistics = None,  **kws):
-        if __debug__: traceMsg('display - begin')
-        if self.last_update_time + 0.1 > clock() and fractionDone not in (0.0, 1.0) and activity is not None:
-            return
-        self.last_update_time = clock()
-        if fractionDone is not None:
-            self.percentDone = str(float(int(fractionDone * 1000)) / 10)
-        if timeEst is not None:
-            self.timeEst = fmttime(timeEst)
-        if activity is not None and not self.done:
-            self.timeEst = activity
-        if downRate is not None:
-            self.downRate = '%.1f kB/s' % (float(downRate) / (1 << 10))
-        if upRate is not None:
-            self.upRate = '%.1f kB/s' % (float(upRate) / (1 << 10))
-        if statistics is not None:
-           if (statistics.shareRating < 0) or (statistics.shareRating > 100):
-               self.shareRating = 'oo  (%.1f MB up / %.1f MB down)' % (float(statistics.upTotal) / (1<<20), float(statistics.downTotal) / (1<<20))
-               self.downTotal = statistics.downTotal
-               self.upTotal = statistics.upTotal
-           else:
-               self.shareRating = '%.3f  (%.1f MB up / %.1f MB down)' % (statistics.shareRating, float(statistics.upTotal) / (1<<20), float(statistics.downTotal) / (1<<20))
-               self.downTotal = statistics.downTotal
-               self.upTotal = statistics.upTotal
-           if not self.done:
-              self.seedStatus = '%d seen now, plus %.3f distributed copies' % (statistics.numSeeds,0.001*int(1000*statistics.numCopies))
-              self.seeds = (str(statistics.numSeeds))
-           else:
-              self.seedStatus = '%d seen recently, plus %.3f distributed copies' % (statistics.numOldSeeds,0.001*int(1000*statistics.numCopies))
-              self.seeds = (str(statistics.numOldSeeds))
-
-           self.peers = '%d' % (statistics.numPeers)
-           self.distcopy = '%.3f' % (0.001*int(1000*statistics.numCopies))
-           self.peerStatus = '%d seen now, %.1f%% done at %.1f kB/s' % (statistics.numPeers,statistics.percentDone,float(statistics.torrentRate) / (1 << 10))
-
-        dpflag.set()
-
-        if __debug__: traceMsg('display - prior to self.write')
-
-        if self.stoppedAt == '':
-           self.writeStatus()
-
-        if __debug__: traceMsg('display - end')
-
     def chooseFile(self, default, size, saveas, dir):
-        if __debug__: traceMsg('chooseFile - begin')
-
         self.file = '%s (%.1f MB)' % (default, float(size) / (1 << 20))
         self.size = size
         if saveas != '':
             default = saveas
         self.downloadTo = abspath(default)
-        if __debug__: traceMsg('chooseFile - end')
         return default
-
-    def writeStatus(self):
-        if __debug__: traceMsg('writeStatus - begin')
-        downRate = self.downTotal
-        die = False
-
-        try:
-            f=open(self.statFile,'r')
-            running = f.read(1)
-            f.close
-        except:
-            running = 0
-            self.timeEst = 'Failed To Open StatFile'
-            if __debug__: traceMsg('writeStatus - Failed to Open StatFile')
-            transferLog("Failed to read stat-file : " + self.statFile + "\n", True)
-
-        if __debug__: traceMsg('writeStatus - running :' + str(running))
-        if __debug__: traceMsg('writeStatus - stoppedAt :' + self.stoppedAt)
-
-        if running == '0':
-            transferLog("stop-request, setting shutdown-flag...\n", True)
-            if self.stoppedAt == '':
-                if self.percentDone == '100':
-                    self.stoppedAt = '100'
-                else:
-                    self.stoppedAt = str((float(self.percentDone)+100)*-1)
-                    self.timeEst = 'Torrent Stopped'
-            die = True
-            self.upRate = ''
-            self.downRate = ''
-            self.percentDone = self.stoppedAt
-        else:
-            if downRate == 0 and self.upTotal > 0:
-                downRate = self.size
-            if self.done:
-                self.percentDone = '100'
-                downRate = self.size
-                if self.autoShutdown == 'True':
-                    transferLog("die-when-done set, setting shutdown-flag...\n", True)
-                    running = '0'
-            if self.upTotal > 0:
-                self.percentShare = '%.1f' % ((float(self.upTotal)/float(downRate))*100)
-            else:
-                self.percentShare = '0.0'
-            if self.done and self.percentShare is not '' and self.autoShutdown == 'False':
-                if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
-                    transferLog("seed-limit "+str(self.shareKill)+" reached, setting shutdown-flag...\n", True)
-                    die = True
-                    running = '0'
-                    self.upRate = ''
-            elif (not self.done) and (self.timeEst == 'complete!') and (self.percentDone == '100.0'):
-                if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
-                    transferLog("seed-limit "+str(self.shareKill)+" reached, setting shutdown-flag...\n", True)
-                    die = True
-                    running = '0'
-                    self.upRate = ''
-                    #self.finished()
-
-        # write stat-file
-        lcount = 0
-        while 1:
-            lcount += 1
-            try:
-                f = open(self.statFile,'w')
-                f.write(running + '\n')
-                f.write(self.percentDone + '\n')
-                f.write(self.timeEst + '\n')
-                f.write(self.downRate + '\n')
-                f.write(self.upRate + '\n')
-                f.write(self.user + '\n')
-                f.write(self.seeds + '+' + self.distcopy + '\n')
-                f.write(self.peers + '\n')
-                f.write(self.percentShare + '\n')
-                f.write(self.shareKill + '\n')
-                f.write(str(self.upTotal) + '\n')
-                f.write(str(self.downTotal) + '\n')
-                f.write(str(self.size))
-                f.flush()
-                f.close()
-                break
-            except:
-                if __debug__: traceMsg('writeStatus - Failed to Open StatFile for Writing')
-                transferLog("Failed to open stat-file for writing : " + self.statFile + "\n", True)
-                if lcount > 30:
-                    break
-                pass
-
-        # die or process command-stack
-        if die:
-            if __debug__: traceMsg('writeStatus - dieing - raising ki')
-            transferLog("tornado shutting down...\n", True)
-            raise KeyboardInterrupt
-        else:
-            self.processCommandStack()
-
-    def processCommandStack(self):
-        """ processCommandStack """
-        if isfile(transferCommandFile):
-            # process file
-            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
-            try:
-                # read file to mem
-                f = open(transferCommandFile, 'r')
-                commands = f.readlines()
-                f.close
-                # remove file
-                try:
-                    remove(transferCommandFile)
-                except:
-                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
-                    pass
-                # exec commands
-                if len(commands) > 0:
-                    for command in commands:
-                        command = command.replace("\n", "")
-                        if len(command) > 0:
-                            self.execCommand(command)
-                else:
-                    transferLog("No commands found.\n", True)
-            except:
-                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
-                pass
-
-    def execCommand(self, command):
-        """ execCommand """
-        opCode = command[0]
-        if opCode == 'u':
-            rate = command[1:]
-            transferLog("Command: setting Upload-Rate to " + rate + "...\n", True)
-            self.dow.setUploadRate(int(rate))
-        elif opCode == 'd':
-            rate = command[1:]
-            transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
-            self.dow.setDownloadRate(int(rate))
-        else:
-            transferLog("op-code unknown: " + opCode + "\n", True)
 
     def newpath(self, path):
         self.downloadTo = path
@@ -439,12 +255,187 @@ class HeadlessDisplayer:
 
         return new_errors
 
+    def display(self, dpflag = Event(), fractionDone = None, timeEst = None,
+        downRate = None, upRate = None, activity = None,
+        statistics = None,  **kws):
+        if self.last_update_time + 0.1 > clock() and fractionDone not in (0.0, 1.0) and activity is not None:
+            return
+        self.last_update_time = clock()
+        if fractionDone is not None:
+            self.percentDone = str(float(int(fractionDone * 1000)) / 10)
+        if timeEst is not None:
+            self.timeEst = fmttime(timeEst)
+        if activity is not None and not self.done:
+            self.timeEst = activity
+        if downRate is not None:
+            self.downRate = '%.1f kB/s' % (float(downRate) / (1 << 10))
+        if upRate is not None:
+            self.upRate = '%.1f kB/s' % (float(upRate) / (1 << 10))
+        if statistics is not None:
+           if (statistics.shareRating < 0) or (statistics.shareRating > 100):
+               self.shareRating = 'oo  (%.1f MB up / %.1f MB down)' % (float(statistics.upTotal) / (1<<20), float(statistics.downTotal) / (1<<20))
+               self.downTotal = statistics.downTotal
+               self.upTotal = statistics.upTotal
+           else:
+               self.shareRating = '%.3f  (%.1f MB up / %.1f MB down)' % (statistics.shareRating, float(statistics.upTotal) / (1<<20), float(statistics.downTotal) / (1<<20))
+               self.downTotal = statistics.downTotal
+               self.upTotal = statistics.upTotal
+           if not self.done:
+              self.seedStatus = '%d seen now, plus %.3f distributed copies' % (statistics.numSeeds,0.001*int(1000*statistics.numCopies))
+              self.seeds = (str(statistics.numSeeds))
+           else:
+              self.seedStatus = '%d seen recently, plus %.3f distributed copies' % (statistics.numOldSeeds,0.001*int(1000*statistics.numCopies))
+              self.seeds = (str(statistics.numOldSeeds))
+
+           self.peers = '%d' % (statistics.numPeers)
+           self.distcopy = '%.3f' % (0.001*int(1000*statistics.numCopies))
+           self.peerStatus = '%d seen now, %.1f%% done at %.1f kB/s' % (statistics.numPeers,statistics.percentDone,float(statistics.torrentRate) / (1 << 10))
+
+        dpflag.set()
+
+        # process command-stack
+        die = self.processCommandStack()
+        # shutdown if requested
+        if die:
+            self.execShutdown()
+            return;
+
+        # ratio- + limit- checks / shutdown / stat
+        if self.stoppedAt == '':
+            die = False
+            downRate = self.downTotal
+            die = False
+            if downRate == 0 and self.upTotal > 0:
+                downRate = self.size
+            if self.done:
+                self.percentDone = '100'
+                downRate = self.size
+                if self.autoShutdown == 'True':
+                    transferLog("die-when-done set, setting shutdown-flag...\n", True)
+                    die = True
+            if self.upTotal > 0:
+                self.percentShare = '%.1f' % ((float(self.upTotal)/float(downRate))*100)
+            else:
+                self.percentShare = '0.0'
+            if self.done and self.percentShare is not '' and self.autoShutdown == 'False':
+                if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
+                    transferLog("seed-limit "+str(self.shareKill)+" reached, setting shutdown-flag...\n", True)
+                    die = True
+                    self.upRate = ''
+            elif (not self.done) and (self.timeEst == 'complete!') and (self.percentDone == '100.0'):
+                if (float(self.percentShare) >= float(self.shareKill)) and (self.shareKill != '0'):
+                    transferLog("seed-limit "+str(self.shareKill)+" reached, setting shutdown-flag...\n", True)
+                    die = True
+                    self.upRate = ''
+            # shutdown / write stat-file
+            if die:
+                self.execShutdown()
+            else:
+                self.writeStatus()
+
+    def processCommandStack(self):
+        """ processCommandStack """
+        if isfile(transferCommandFile):
+            # process file
+            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
+            try:
+                # read file to mem
+                f = open(transferCommandFile, 'r')
+                commands = f.readlines()
+                f.close
+                # remove file
+                try:
+                    remove(transferCommandFile)
+                except:
+                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
+                    pass
+                # exec commands
+                if len(commands) > 0:
+                    for command in commands:
+                        command = command.replace("\n", "")
+                        if len(command) > 0:
+                            # exec, early out when reading a quit-command
+                            if self.execCommand(command):
+                                return True
+                else:
+                    transferLog("No commands found.\n", True)
+            except:
+                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
+                pass
+        return False
+
+    def execCommand(self, command):
+        """ execCommand """
+        opCode = command[0]
+        if opCode == 'q':
+            transferLog("Command: stop-request, setting shutdown-flag...\n", True)
+            return True
+        elif opCode == 'u':
+            rate = command[1:]
+            transferLog("Command: setting Upload-Rate to " + rate + "...\n", True)
+            self.dow.setUploadRate(int(rate))
+            return False
+        elif opCode == 'd':
+            rate = command[1:]
+            transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
+            self.dow.setDownloadRate(int(rate))
+            return False
+        else:
+            transferLog("op-code unknown: " + opCode + "\n", True)
+            return False
+
+    def execShutdown(self):
+        """ execShutdown """
+        transferLog("initializing shutdown...\n", True)
+        # write stat
+        if self.stoppedAt == '':
+            if self.percentDone == '100':
+                self.stoppedAt = '100'
+            else:
+                self.stoppedAt = str((float(self.percentDone)+100)*-1)
+                self.timeEst = 'Torrent Stopped'
+        self.running = '0'
+        self.upRate = ''
+        self.downRate = ''
+        self.percentDone = self.stoppedAt
+        self.writeStatus()
+        # quit
+        transferLog("tornado shutting down...\n", True)
+        raise KeyboardInterrupt
+
+    def writeStatus(self):
+        """ writeStatus """
+        lcount = 0
+        while 1:
+            lcount += 1
+            try:
+                f = open(self.statFile,'w')
+                f.write(self.running + '\n')
+                f.write(self.percentDone + '\n')
+                f.write(self.timeEst + '\n')
+                f.write(self.downRate + '\n')
+                f.write(self.upRate + '\n')
+                f.write(self.user + '\n')
+                f.write(self.seeds + '+' + self.distcopy + '\n')
+                f.write(self.peers + '\n')
+                f.write(self.percentShare + '\n')
+                f.write(self.shareKill + '\n')
+                f.write(str(self.upTotal) + '\n')
+                f.write(str(self.downTotal) + '\n')
+                f.write(str(self.size))
+                f.flush()
+                f.close()
+                break
+            except:
+                transferLog("Failed to open stat-file for writing : " + self.statFile + "\n", True)
+                if lcount > 30:
+                    break
+                pass
+
 #------------------------------------------------------------------------------#
 # run                                                                          #
 #------------------------------------------------------------------------------#
 def run(autoDie,shareKill,statusFile,userName,params):
-
-    if __debug__: traceMsg('run - begin')
 
     try:
 
@@ -518,7 +509,6 @@ def run(autoDie,shareKill,statusFile,userName,params):
                 pidFile.flush()
                 pidFile.close()
             except Exception, e:
-                if __debug__: traceMsg('run - Failed to Create PID file, shutting down')
                 transferLog("Failed to write pid-file, shutting down : " + statusFile + ".pid (" + currentPid + ")" + "\n", True)
                 break
 
@@ -591,16 +581,12 @@ def run(autoDie,shareKill,statusFile,userName,params):
             h.failed()
 
     finally:
-        if __debug__: traceMsg('run - removing PID file :'+statusFile+".pid")
         transferLog("removing pid-file : " + statusFile + ".pid" + "\n", True)
         try:
             remove(statusFile+".pid")
         except:
-            if __debug__: traceMsg('run - Failed to remove PID file')
             transferLog("Failed to remove pid-file : " + statusFile + ".pid" + "\n", True)
             pass
-
-    if __debug__: traceMsg('run - end')
 
 #------------------------------------------------------------------------------#
 # __main__                                                                     #
@@ -630,7 +616,7 @@ if __name__ == '__main__':
         log = open('profile_data.'+strftime('%y%m%d%H%M%S')+'.txt','a')
         normalstdout = sys.stdout
         sys.stdout = log
-#        pstats.Stats(p).strip_dirs().sort_stats('cumulative').print_stats()
+        # pstats.Stats(p).strip_dirs().sort_stats('cumulative').print_stats()
         pstats.Stats(p).strip_dirs().sort_stats('time').print_stats()
         sys.stdout = normalstdout
     else:
