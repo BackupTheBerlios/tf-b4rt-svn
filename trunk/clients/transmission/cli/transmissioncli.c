@@ -162,11 +162,10 @@ int main(int argc, char ** argv) {
 	}
 
 	// verbose
-	if (verboseLevel < 0) {
+	if (verboseLevel < 0)
 		verboseLevel = 0;
-	} else if (verboseLevel > 9) {
+	else if (verboseLevel > 9)
 		verboseLevel = 9;
-	}
 	if (verboseLevel) {
 		static char env[11];
 		sprintf(env, "TR_DEBUG=%d", verboseLevel);
@@ -196,27 +195,23 @@ int main(int argc, char ** argv) {
 		s = tr_torrentStat(tor);
 		// Print torrent info (quite à la btshowmetainfo)
 		printf("hash:     ");
-		for (i = 0; i < SHA_DIGEST_LENGTH; i++) {
+		for (i = 0; i < SHA_DIGEST_LENGTH; i++)
 			printf("%02x", info->hash[i]);
-		}
 		printf("\n");
-        printf( "tracker:  %s:%d\n",
-                s->trackerAddress, s->trackerPort );
-        printf( "announce: %s\n", s->trackerAnnounce );
+        printf("tracker:  %s:%d\n",
+				s->trackerAddress, s->trackerPort );
+        printf("announce: %s\n", s->trackerAnnounce );
 		printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
 			info->totalSize, info->totalSize / info->pieceSize,
 			info->pieceSize, info->totalSize % info->pieceSize);
-		if (info->comment[0]) {
+		if (info->comment[0])
 			printf("comment:  %s\n", info->comment);
-		}
-		if (info->creator[0]) {
+		if (info->creator[0])
 			printf("creator:  %s\n", info->creator);
-		}
 		printf("file(s):\n");
-		for (i = 0; i < info->fileCount; i++) {
+		for (i = 0; i < info->fileCount; i++)
 			printf(" %s (%"PRIu64")\n", info->files[i].name,
 				info->files[i].length);
-		}
 		// cleanup
 		goto cleanup;
 	}
@@ -224,12 +219,11 @@ int main(int argc, char ** argv) {
 	/* show scrape */
 	if (showScrape) {
 		int seeders, leechers, downloaded;
-		if (tr_torrentScrape(tor, &seeders, &leechers, &downloaded)) {
+		if (tr_torrentScrape(tor, &seeders, &leechers, &downloaded))
 			printf("Scrape failed.\n");
-		} else {
+		else
 			printf("%d seeder(s), %d leecher(s), %d download(s).\n",
 					seeders, leechers, downloaded);
-		}
 		// cleanup
 		goto cleanup;
 	}
@@ -273,9 +267,8 @@ int main(int argc, char ** argv) {
 		fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
 		fprintf(stderr, " - downloadLimit : %d\n", downloadLimit);
 		fprintf(stderr, " - natTraversal : %d\n", natTraversal);
-		if (finishCall != NULL) {
+		if (finishCall != NULL)
 			fprintf(stderr, " - finishCall : %s\n", finishCall);
-		}
 	}
 
 	// init command-facility
@@ -313,11 +306,10 @@ int main(int argc, char ** argv) {
 	tr_setGlobalDownloadLimit(h, downloadLimit);
 
 	// nat-traversal
-	if (natTraversal) {
+	if (natTraversal)
 		tr_natTraversalEnable(h);
-	} else {
+	else
 		tr_natTraversalDisable(h);
-	}
 
 	// set folder
 	tr_torrentSetFolder(tor, ".");
@@ -399,22 +391,17 @@ int main(int argc, char ** argv) {
 			} else { /* tf */
 
 				// sharing
-				if (s->downloaded != 0) {
+				if (s->downloaded != 0)
 					tf_sharing =
 						((double)(s->uploaded) / (double)(s->downloaded)) * 100;
-				}
 
 				// seeders + leechers
-				if (s->seeders < 0) {
-					tf_seeders = 0;
-				} else {
-					tf_seeders = s->seeders;
-				}
-				if (s->leechers < 0) {
-					tf_leechers = 0;
-				} else {
-					tf_leechers = s->leechers;
-				}
+				tf_seeders = (s->seeders < 0)
+					? 0
+					: s->seeders;
+				tf_leechers = (s->leechers < 0)
+					? 0
+					: s->leechers;
 
 				// eta
 				if (s->eta != -1) {
@@ -441,9 +428,8 @@ int main(int argc, char ** argv) {
 				} else {
 					sprintf(tf_string,"-");
 				}
-				if ((s->seeders == -1) && (s->peersTotal == 0)) {
+				if ((s->seeders == -1) && (s->peersTotal == 0))
 					sprintf(tf_string,"Connecting to Peers");
-				}
 
 				// write tf-stat-file
 				tf_stat_fp = fopen(tf_stat_file, "w+");
@@ -487,15 +473,9 @@ int main(int argc, char ** argv) {
 			} else { /* tf */
 
 				// sharing
-				if (s->downloaded != 0) {
-					tf_sharing =
-						((double)(s->uploaded) /
-							(double)(s->downloaded)) * 100;
-				} else {
-					tf_sharing =
-						((double)(s->uploaded) /
-							(double)(info->totalSize)) * 100;
-				}
+				tf_sharing = (s->downloaded != 0)
+					? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
+					: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
 
 				// die-on-seed-limit / die-when-done
 				if (seedLimit == -1) {
@@ -513,16 +493,12 @@ int main(int argc, char ** argv) {
 				}
 
 				// seeders + leechers
-				if (s->seeders < 0) {
-					tf_seeders = 0;
-				} else {
-					tf_seeders = s->seeders;
-				}
-				if (s->leechers < 0) {
-					tf_leechers = 0;
-				} else {
-					tf_leechers = s->leechers;
-				}
+				tf_seeders = (s->seeders < 0)
+					? 0
+					: s->seeders;
+				tf_leechers = (s->leechers < 0)
+					? 0
+					: s->leechers;
 
 				// write tf-stat-file
 				tf_stat_fp = fopen(tf_stat_file, "w+");
@@ -601,13 +577,9 @@ int main(int argc, char ** argv) {
 		tr_info_t * info = tr_torrentInfo(tor);
 
 		// sharing
-		if (s->downloaded != 0) {
-			tf_sharing =
-				((double)(s->uploaded) / (double)(s->downloaded)) * 100;
-		} else {
-			tf_sharing =
-				((double)(s->uploaded) / (double)(info->totalSize)) * 100;
-		}
+		tf_sharing = (s->downloaded != 0)
+			? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
+			: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
 
 		// write tf-stat-file
 		tf_stat_fp = fopen(tf_stat_file, "w+");
@@ -708,9 +680,8 @@ static int parseCommandLine(int argc, char ** argv) {
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
 			"hisv:p:u:d:f:c:e:t:w:z:n", long_options, &optind);
-		if (c < 0) {
+		if (c < 0)
 			break;
-		}
 		switch(c) {
 			case 'h':
 				showHelp = 1;
@@ -758,9 +729,8 @@ static int parseCommandLine(int argc, char ** argv) {
 				return 1;
 		}
 	}
-	if (optind > argc - 1) {
+	if (optind > argc - 1)
 		return !showHelp;
-	}
 	torrentPath = argv[optind];
 	return 0;
 }
@@ -787,6 +757,9 @@ static void sigHandler(int signal) {
  ******************************************************************************/
 static int tf_initCommandFacility(void) {
 	int i, len;
+	// verbose
+	tf_fprintTimestamp();
+	fprintf(stderr, "initializing Command-Facility...\n");
 	// path-string
 	len = strlen(tf_stat_file) - 1;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
@@ -796,9 +769,8 @@ static int tf_initCommandFacility(void) {
 			"Error : tf_initCommandFacility : not enough mem for malloc\n");
 		return 0;
 	}
-	for (i = 0; i < len - 3; i++) {
+	for (i = 0; i < len - 3; i++)
 		tf_cmd_file[i] = tf_stat_file[i];
-	}
 	tf_cmd_file[len - 3] = 'c';
 	tf_cmd_file[len - 2] = 'm';
 	tf_cmd_file[len - 1] = 'd';
@@ -826,12 +798,10 @@ static int tf_processCommandStack(tr_handle_t *h) {
 	// process command-file if exists
 	tf_cmd_fp = NULL;
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
-	if (tf_cmd_fp != NULL) {
+	if (tf_cmd_fp != NULL)
 		return tf_processCommandFile(h);
-	} else {
-		// return
+	else
 		return 0;
-	}
 }
 
 /*******************************************************************************
@@ -913,7 +883,7 @@ static int tf_processCommandFile(tr_handle_t *h) {
 			if (index < 128) {
 				currentLine[index++] = *fileCurrentPos++;
 			} else {
-				*fileCurrentPos++;
+				fileCurrentPos++;
 				break;
 			}
 		} // end line while loop
@@ -951,9 +921,8 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 
 	// parse command-string
 	opcode = s[0];
-	for (i = 0; i < len - 1; i++) {
+	for (i = 0; i < len - 1; i++)
 		workload[i] = s[i + 1];
-	}
 	workload[len - 1] = '\0';
 
 	// opcode-switch
@@ -1003,4 +972,3 @@ static void tf_fprintTimestamp(void) {
 		cts->tm_sec
 	);
 }
-
