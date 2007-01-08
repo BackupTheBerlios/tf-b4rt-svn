@@ -592,26 +592,35 @@ class TorrentApp(object):
                     for command in commands:
                         command = command.replace("\n", "")
                         if len(command) > 0:
-                            self.execCommand(command)
+                            # exec, early out when reading a quit-command
+                            if self.execCommand(command):
+                                return True
                 else:
                     transferLog("No commands found.\n", True)
             except:
                 transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
                 pass
+        return False
 
     def execCommand(self, command):
         """ execCommand """
         opCode = command[0]
-        if opCode == 'u':
+        if opCode == 'q':
+            transferLog("Command: stop-request, setting shutdown-flag...\n", True)
+            return True
+        elif opCode == 'u':
             rate = command[1:]
             transferLog("Command: setting Upload-Rate to " + rate + "...\n", True)
             self.multitorrent.set_option('max_upload_rate', int(rate), None, False)
+            return False
         elif opCode == 'd':
             rate = command[1:]
             transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
             self.multitorrent.set_option('max_download_rate', int(rate), None, False)
+            return False
         else:
             transferLog("op-code unknown: " + opCode + "\n", True)
+            return False
 
 #------------------------------------------------------------------------------#
 # __main__                                                                     #

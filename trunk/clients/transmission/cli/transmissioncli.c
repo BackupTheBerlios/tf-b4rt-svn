@@ -965,16 +965,18 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			mustDie = 1;
 			return 0;
 		case 'u':
+			uploadLimit = atoi(workload);
 			tf_fprintTimestamp();
 			fprintf(stderr,
-				"Command: setting Upload-Rate to %s\n", workload);
-			tr_setGlobalUploadLimit(h, atoi(workload));
+				"Command: setting Upload-Rate to %d\n", uploadLimit);
+			tr_setGlobalUploadLimit(h, uploadLimit);
 			return 1;
 		case 'd':
+			downloadLimit = atoi(workload);
 			tf_fprintTimestamp();
 			fprintf(stderr,
-				"Command: setting Download-Rate to %s\n", workload);
-			tr_setGlobalDownloadLimit(h, atoi(workload));
+				"Command: setting Download-Rate to %d\n", downloadLimit);
+			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 1;
 		default:
 			tf_fprintTimestamp();
