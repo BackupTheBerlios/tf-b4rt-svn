@@ -85,18 +85,16 @@
 "  -n, --nat-traversal            Attempt NAT traversal using NAT-PMP or UPnP IGD\n" \
 "  -p, --port <int>               Port we should listen on (default = %d)\n" \
 "  -u, --upload <int>             Maximum upload rate \n" \
-"                                 (std : -1 = no limit, default = 20)\n" \
-"                                 (tf  : -1|0 = no limit, -2 = null, default = 20)\n" \
+"                                 (-1|0 = no limit, -2 = null, default = 10)\n" \
 "  -d, --download <int>           Maximum download rate \n" \
-"                                 (std : -1 = no limit, default = -1)\n" \
-"                                 (tf  : -1|0 = no limit, -2 = null, default = -1)\n" \
+"                                 (-1|0 = no limit, -2 = null, default = -1)\n" \
 "  -f, --finish <shell script>    Command you wish to run on completion\n" \
 "  -c, --seedlimit <int>          Seed to reach before exiting transmission\n" \
 "                                 (0 = seed forever -1 = no seeding)\n" \
-"  -e, --display_interval <int>   Time between updates of displayed information\n" \
-"  -t, --torrentflux <file>       Name of the stat file shared with torrentflux\n" \
-"  -w, --torrentflux-owner <file> Name of the TF owner of the torrent\n" \
-"  -z, --pid <file>               File containing PID of transmission\n" \
+"  -e, --display_interval <int>   Time between updates of information in stat-file\n" \
+"  -w, --owner <string>           Name of the owner (required)\n" \
+"  -t, --stat <file>              Path to stat-file (required)\n" \
+"  -z, --pid <file>               Path to pid-file (required)\n" \
 "\n"
 
 /* fields */
@@ -105,7 +103,7 @@ static int showInfo = 0;
 static int showScrape = 0;
 static int verboseLevel = 0;
 static int bindPort = TR_DEFAULT_PORT;
-static int uploadLimit = 20;
+static int uploadLimit = 10;
 static int downloadLimit = -1;
 static char * torrentPath = NULL;
 static volatile char mustDie = 0;
@@ -140,17 +138,42 @@ int main(int argc, char ** argv) {
 	int i, error, nat;
 	tr_handle_t * h;
 	tr_torrent_t * tor;
-	tr_stat_t * s;
+	tr_stat_t * s = NULL;
 	double tf_sharing = 0.0;
 	char tf_string[80];
 	int tf_seeders, tf_leechers;
 
-	/* Get options */
+	/* Get options + check tf-args */
 	if (parseCommandLine(argc, argv)) {
 		printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
 			VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
 		return 1;
+	} else {
+		// check tf-args
+		if ((!showHelp) && (!showInfo) && (!showScrape) && (torrentPath != NULL)) {
+			if (tf_user == NULL) {
+				printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
+					VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+				printf(USAGE, argv[0], TR_DEFAULT_PORT);
+				printf("Error. Missing argument: Name of the owner.\n\n");
+				return 1;
+			}
+			if (tf_stat_file == NULL) {
+				printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
+					VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+				printf(USAGE, argv[0], TR_DEFAULT_PORT);
+				printf("Error. Missing argument: Path to stat-file.\n\n");
+				return 1;
+			}
+			if (tf_pid_file == NULL) {
+				printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
+					VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+				printf(USAGE, argv[0], TR_DEFAULT_PORT);
+				printf("Error. Missing argument: Path to pid-file.\n\n");
+				return 1;
+			}
+		}
 	}
 
 	/* show help */
@@ -174,7 +197,8 @@ int main(int argc, char ** argv) {
 
 	// check port
 	if (bindPort < 1 || bindPort > 65535) {
-		printf("Invalid port '%d'\n", bindPort);
+		tf_fprintTimestamp();
+		fprintf(stderr, "Invalid port '%d'\n", bindPort);
 		return 1;
 	}
 
@@ -183,7 +207,8 @@ int main(int argc, char ** argv) {
 
 	// Open and parse torrent file
 	if (!(tor = tr_torrentInit(h, torrentPath, 0, &error))) {
-		printf("Failed opening torrent file `%s'\n", torrentPath);
+		tf_fprintTimestamp();
+		fprintf(stderr, "Failed opening torrent file `%s'\n", torrentPath);
 		goto failed;
 	}
 
@@ -231,45 +256,39 @@ int main(int argc, char ** argv) {
 	/* start up transmission */
 
 	// If running torrentflux, Download limit = 0 means no limit
-	if (tf_stat_file != NULL) { /* tf */
-		// up
-		switch (uploadLimit) {
-			case 0:
-				uploadLimit = -1;
-				break;
-			case -2:
-				uploadLimit = 0;
-				break;
-		}
-		// down
-		switch (downloadLimit) {
-			case 0:
-				downloadLimit = -1;
-				break;
-			case -2:
-				downloadLimit = 0;
-				break;
-		}
+	// up
+	switch (uploadLimit) {
+		case 0:
+			uploadLimit = -1;
+			break;
+		case -2:
+			uploadLimit = 0;
+			break;
+	}
+	// down
+	switch (downloadLimit) {
+		case 0:
+			downloadLimit = -1;
+			break;
+		case -2:
+			downloadLimit = 0;
+			break;
 	}
 
-	// print what we are starting up /* tf */
-	if ((tf_user != NULL) &&
-		(tf_stat_file != NULL) &&
-		(tf_pid_file != NULL)) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "transmission starting up :\n");
-		fprintf(stderr, " - torrentPath : %s\n", torrentPath);
-		fprintf(stderr, " - tf_user : %s\n", tf_user);
-		fprintf(stderr, " - tf_stat_file : %s\n", tf_stat_file);
-		fprintf(stderr, " - tf_pid_file : %s\n", tf_pid_file);
-		fprintf(stderr, " - seedLimit : %d\n", seedLimit);
-		fprintf(stderr, " - bindPort : %d\n", bindPort);
-		fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
-		fprintf(stderr, " - downloadLimit : %d\n", downloadLimit);
-		fprintf(stderr, " - natTraversal : %d\n", natTraversal);
-		if (finishCall != NULL)
-			fprintf(stderr, " - finishCall : %s\n", finishCall);
-	}
+	// print what we are starting up
+	tf_fprintTimestamp();
+	fprintf(stderr, "transmission starting up :\n");
+	fprintf(stderr, " - torrentPath : %s\n", torrentPath);
+	fprintf(stderr, " - tf_user : %s\n", tf_user);
+	fprintf(stderr, " - tf_stat_file : %s\n", tf_stat_file);
+	fprintf(stderr, " - tf_pid_file : %s\n", tf_pid_file);
+	fprintf(stderr, " - seedLimit : %d\n", seedLimit);
+	fprintf(stderr, " - bindPort : %d\n", bindPort);
+	fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
+	fprintf(stderr, " - downloadLimit : %d\n", downloadLimit);
+	fprintf(stderr, " - natTraversal : %d\n", natTraversal);
+	if (finishCall != NULL)
+		fprintf(stderr, " - finishCall : %s\n", finishCall);
 
 	// signal
 	signal(SIGINT, sigHandler);
@@ -292,14 +311,13 @@ int main(int argc, char ** argv) {
 	tr_torrentStart(tor);
 
 	// init command-facility
-	if (tf_stat_file != NULL) { /* tf */
-		if (tf_initCommandFacility() == 0) {
-			fprintf(stderr, "Failed to init command-facility. exit.\n");
-			goto failed;
-		}
+	if (tf_initCommandFacility() == 0) {
+		tf_fprintTimestamp();
+		fprintf(stderr, "Failed to init command-facility. exit.\n");
+		goto failed;
 	}
 
-	// Create PID file if wanted by user
+	// Create pid file
 	if (tf_pid_file != NULL) {
 		pid_t currentPid = getpid();
 		FILE * pidFile;
@@ -318,74 +336,43 @@ int main(int argc, char ** argv) {
 	}
 
 	// print that we are done with startup
-	if (tf_stat_file != NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "transmission up and running.\n");
-	}
+	tf_fprintTimestamp();
+	fprintf(stderr, "transmission up and running.\n");
 
 	/* main-loop */
 	while (!mustDie) {
 
-		// status-string
-		char string[80];
-		int chars = 0;
-
-		// result
-		int result;
-
 		// torrent-stat
 		s = tr_torrentStat(tor);
 
-		if (s->status & TR_STATUS_CHECK) { /* --- CHECK --- */
+		if (s->status & TR_STATUS_CHECK) {                   /* --- CHECK --- */
 
-			if (tf_stat_file == NULL) { /* standalone */
-
-				// status-string
-				chars = snprintf(string, 80,
-					"Checking files... %.2f %%", 100.0 * s->progress );
-
-			} else { /* tf */
-
-				// write tf-stat-file
-				tr_info_t * info = tr_torrentInfo(tor);
-				tf_stat_fp = fopen(tf_stat_file, "w+");
-				if (tf_stat_fp != NULL) {
-					fprintf(tf_stat_fp, "%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
-						1,                        /* State             */
-						100.0 * s->progress,      /* checking progress */
-						"Checking existing data", /* State text        */
-						                          /* download speed    */
-						                          /* upload speed      */
-						tf_user,                  /* user              */
-						                          /* seeds             */
-						                          /* peers             */
-						                          /* sharing           */
-						seedLimit,                /* seedlimit         */
-						                          /* uploaded bytes    */
-						s->downloaded,            /* downloaded bytes  */
-						info->totalSize);         /* global size       */
-					fclose(tf_stat_fp);
-				} else {
-					tf_fprintTimestamp();
-					fprintf(stderr, "error opening stat-file for write : %s\n",
-						tf_stat_file);
-				}
-
+			// write tf-stat-file
+			tr_info_t * info = tr_torrentInfo(tor);
+			tf_stat_fp = fopen(tf_stat_file, "w+");
+			if (tf_stat_fp != NULL) {
+				fprintf(tf_stat_fp, "%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
+					1,                        /* State             */
+					100.0 * s->progress,      /* checking progress */
+					"Checking existing data", /* State text        */
+											  /* download speed    */
+											  /* upload speed      */
+					tf_user,                  /* user              */
+											  /* seeds             */
+											  /* peers             */
+											  /* sharing           */
+					seedLimit,                /* seedlimit         */
+											  /* uploaded bytes    */
+					s->downloaded,            /* downloaded bytes  */
+					info->totalSize);         /* global size       */
+				fclose(tf_stat_fp);
+			} else {
+				tf_fprintTimestamp();
+				fprintf(stderr, "error opening stat-file for write : %s\n",
+					tf_stat_file);
 			}
 
-		} else if (s->status & TR_STATUS_DOWNLOAD) { /* --- DOWNLOAD --- */
-
-			if (tf_stat_file == NULL) { /* standalone */
-
-				// status-string
-				chars = snprintf(string, 80,
-					"Progress: %.2f %%, %d peer%s, dl from %d (%.2f KB/s), "
-					"ul to %d (%.2f KB/s)", 100.0 * s->progress,
-					s->peersTotal, ( s->peersTotal == 1 ) ? "" : "s",
-					s->peersUploading, s->rateDownload,
-					s->peersDownloading, s->rateUpload);
-
-			} else { /* tf */
+		} else if (s->status & TR_STATUS_DOWNLOAD) {      /* --- DOWNLOAD --- */
 
 				// sharing
 				if (s->downloaded != 0)
@@ -452,22 +439,11 @@ int main(int argc, char ** argv) {
 					fprintf(stderr, "error opening stat-file for write : %s\n",
 						tf_stat_file);
 				}
-			}
 
-		} else if (s->status & TR_STATUS_SEED) { /* --- SEED --- */
+		} else if (s->status & TR_STATUS_SEED) {              /* --- SEED --- */
 
 			// info
 			tr_info_t * info = tr_torrentInfo(tor);
-
-			if (tf_stat_file == NULL) { /* standalone */
-
-				// status-string
-				chars = snprintf(string, 80,
-					"Seeding, uploading to %d of %d peer(s), %.2f KB/s",
-					s->peersDownloading, s->peersTotal,
-					s->rateUpload);
-
-			} else { /* tf */
 
 				// sharing
 				tf_sharing = (s->downloaded != 0)
@@ -520,62 +496,39 @@ int main(int argc, char ** argv) {
 					fprintf(stderr, "error opening stat-file for write : %s\n",
 						tf_stat_file);
 				}
-			}
 
-		}
-
-		// status-string
-		if (tf_stat_file == NULL) { /* standalone */
-			memset( &string[chars], ' ', 79 - chars );
-			string[79] = '\0';
-			// print status to stderr
-			fprintf(stderr, "\r%s", string);
-		}
+		} // end status-if
 
 		// errors
 		if (s->error & TR_ETRACKER) {
-			if (tf_stat_file == NULL) { /* standalone */
-				// print errors to stderr
-				fprintf(stderr, "\n%s\n", s->trackerError);
-			} else { /* tf */
-				// print errors to stderr
-				tf_fprintTimestamp();
-				fprintf(stderr, "trackerError : %s\n", s->trackerError);
-			}
-		} else if (verboseLevel > 0) {
-			if (tf_stat_file == NULL) { /* standalone */
-				// stderr
-				fprintf(stderr, "\n");
-			}
+			// print errors to stderr
+			tf_fprintTimestamp();
+			fprintf(stderr, "trackerError : %s\n", s->trackerError);
 		}
 
-		// finishCall / process command-stack / sleep
+		// check if finished / finishCall / process command-stack / sleep
 		if (tr_getFinished(tor)) {
-			result = system(finishCall);
+			// finishCall
+			if (finishCall != NULL)
+				system(finishCall);
 		} else {
-			if (tf_stat_file != NULL) { /* tf */
-				for (i = 0; i < displayInterval; i++) {
-					// process command-stack
-					tf_processCommandStack(h);
-					// sleep
-					sleep(1);
-				}
-			} else { /* standalone */
+			for (i = 0; i < displayInterval; i++) {
+				// process command-stack
+				if (tf_processCommandStack(h))
+					break;
 				// sleep
-				sleep(displayInterval);
+				sleep(1);
 			}
 		}
 
 	} /* main-loop */
 
 	// print that we are going down
-	if (tf_stat_file != NULL) { /* tf */
-		tf_fprintTimestamp();
-		fprintf(stderr, "transmission shutting down...\n");
-	}
+	tf_fprintTimestamp();
+	fprintf(stderr, "transmission shutting down...\n");
 
 	// mark torrent as stopped in tf-stat-file
-	if (tf_stat_file != NULL) { /* tf */
+	if (tf_stat_file != NULL) {
 
 		// info
 		tr_info_t * info = tr_torrentInfo(tor);
@@ -618,11 +571,6 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	// stderr
-	if (tf_stat_file == NULL) { /* standalone */
-		fprintf(stderr, "\n");
-	}
-
 	// Try for 5 seconds to notify the tracker that we are leaving
 	// and to delete any port mappings for nat traversal
 	tr_torrentStop(tor);
@@ -638,18 +586,14 @@ int main(int argc, char ** argv) {
 		usleep(500000);
 	}
 
-	// Remove PID file if created !
-	if (tf_pid_file != NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "removing pid-file : %s\n", tf_pid_file);
-		remove(tf_pid_file);
-	}
+	// Remove PID file
+	tf_fprintTimestamp();
+	fprintf(stderr, "removing pid-file : %s\n", tf_pid_file);
+	remove(tf_pid_file);
 
 	// print exit
-	if (tf_stat_file != NULL) { /* tf */
-		tf_fprintTimestamp();
-		fprintf(stderr, "transmission exit.\n");
-	}
+	tf_fprintTimestamp();
+	fprintf(stderr, "transmission exit.\n");
 
 cleanup:
 	tr_torrentClose(h, tor);
@@ -661,151 +605,15 @@ failed:
 }
 
 /*******************************************************************************
- * parseCommandLine
- ******************************************************************************/
-static int parseCommandLine(int argc, char ** argv) {
-	for(;;) {
-		static struct option long_options[] =
-		{ { "help",               no_argument,       NULL, 'h' },
-		  { "info",               no_argument,       NULL, 'i' },
-		  { "scrape",             no_argument,       NULL, 's' },
-		  { "verbose",            required_argument, NULL, 'v' },
-		  { "port",               required_argument, NULL, 'p' },
-		  { "upload",             required_argument, NULL, 'u' },
-		  { "download",           required_argument, NULL, 'd' },
-		  { "finish",             required_argument, NULL, 'f' },
-		  { "seedlimit",          required_argument, NULL, 'c' },
-		  { "display_interval",   required_argument, NULL, 'e' },
-		  { "torrentflux",        required_argument, NULL, 't' },
-		  { "torrentflux-owner",  required_argument, NULL, 'w' },
-		  { "pid",                required_argument, NULL, 'z' },
-		  { "nat-traversal",      no_argument,       NULL, 'n' },
-		  { 0, 0, 0, 0} };
-		int c, optind = 0;
-		c = getopt_long(argc, argv,
-			"hisv:p:u:d:f:c:e:t:w:z:n", long_options, &optind);
-		if (c < 0)
-			break;
-		switch(c) {
-			case 'h':
-				showHelp = 1;
-				break;
-			case 'i':
-				showInfo = 1;
-				break;
-			case 's':
-				showScrape = 1;
-				break;
-			case 'v':
-				verboseLevel = atoi(optarg);
-				break;
-			case 'p':
-				bindPort = atoi(optarg);
-				break;
-			case 'u':
-				uploadLimit = atoi(optarg);
-				break;
-			case 'd':
-				downloadLimit = atoi(optarg);
-				break;
-			case 'f':
-				finishCall = optarg;
-				break;
-			case 'n':
-				natTraversal = 1;
-				break;
-			case 'c':
-				seedLimit = atoi(optarg);
-				break;
-			case 'e':
-				displayInterval = atoi(optarg);
-				break;
-			case 't':
-				tf_stat_file = optarg;
-				break;
-			case 'w':
-				tf_user = optarg;
-				break;
-			case 'z':
-				tf_pid_file = optarg;
-				break;
-			default:
-				return 1;
-		}
-	}
-	if (optind > argc - 1)
-		return !showHelp;
-	torrentPath = argv[optind];
-	return 0;
-}
-
-/*******************************************************************************
- * sigHandler
- ******************************************************************************/
-static void sigHandler(int signal) {
-	switch(signal) {
-		case SIGINT:
-			if (tf_stat_file != NULL) { /* tf */
-				tf_fprintTimestamp();
-				fprintf(stderr, "got SIGINT, setting shutdown-flag...\n");
-			}
-			mustDie = 1;
-			break;
-		default:
-			break;
-	}
-}
-
-/*******************************************************************************
- * tf_initCommandFacility
- ******************************************************************************/
-static int tf_initCommandFacility(void) {
-	int i, len;
-	// verbose
-	tf_fprintTimestamp();
-	fprintf(stderr, "initializing Command-Facility...\n");
-	// path-string
-	len = strlen(tf_stat_file) - 1;
-	tf_cmd_file = malloc((len + 1) * sizeof(char));
-	if (tf_cmd_file == NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr,
-			"Error : tf_initCommandFacility : not enough mem for malloc\n");
-		return 0;
-	}
-	for (i = 0; i < len - 3; i++)
-		tf_cmd_file[i] = tf_stat_file[i];
-	tf_cmd_file[len - 3] = 'c';
-	tf_cmd_file[len - 2] = 'm';
-	tf_cmd_file[len - 1] = 'd';
-	tf_cmd_file[len] = '\0';
-	// remove command-file if exists
-	tf_cmd_fp = NULL;
-	tf_cmd_fp = fopen(tf_cmd_file, "r");
-	if (tf_cmd_fp != NULL) {
-		// close file
-		fclose(tf_cmd_fp);
-		tf_fprintTimestamp();
-		fprintf(stderr, "removing command-file %s...\n", tf_cmd_file);
-		// remove file
-		remove(tf_cmd_file);
-		// null pointer
-		tf_cmd_fp = NULL;
-	}
-	return 1;
-}
-
-/*******************************************************************************
  * tf_processCommandStack
  ******************************************************************************/
 static int tf_processCommandStack(tr_handle_t *h) {
 	// process command-file if exists
 	tf_cmd_fp = NULL;
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
-	if (tf_cmd_fp != NULL)
-		return tf_processCommandFile(h);
-	else
-		return 0;
+	return (tf_cmd_fp == NULL)
+		? 0
+		: tf_processCommandFile(h);
 }
 
 /*******************************************************************************
@@ -897,19 +705,19 @@ static int tf_processCommandFile(tr_handle_t *h) {
 			// term string, chop it
 			currentLine[index - 1] = '\0';
 			// exec, early out when reading a quit-command
-			if (tf_execCommand(h, currentLine) == 0)
+			if (tf_execCommand(h, currentLine))
 				return 1;
 		}
 	} // end file while loop
 
-	// return
-	if (commandCount > 0) {
-		return 1;
-	} else {
+	// print if no commands found
+	if (commandCount == 0) {
 		tf_fprintTimestamp();
 		fprintf(stderr, "No commands found.\n");
-		return 0;
 	}
+
+	// return
+	return 0;
 }
 
 /*******************************************************************************
@@ -936,25 +744,64 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			fprintf(stderr,
 				"Command: stop-request, setting shutdown-flag...\n");
 			mustDie = 1;
-			return 0;
+			return 1;
 		case 'u':
 			uploadLimit = atoi(workload);
 			tf_fprintTimestamp();
 			fprintf(stderr,
 				"Command: setting Upload-Rate to %d\n", uploadLimit);
 			tr_setGlobalUploadLimit(h, uploadLimit);
-			return 1;
+			return 0;
 		case 'd':
 			downloadLimit = atoi(workload);
 			tf_fprintTimestamp();
 			fprintf(stderr,
 				"Command: setting Download-Rate to %d\n", downloadLimit);
 			tr_setGlobalDownloadLimit(h, downloadLimit);
-			return 1;
+			return 0;
 		default:
 			tf_fprintTimestamp();
 			fprintf(stderr, "op-code unknown: %c\n", opcode);
-			return 1;
+			return 0;
+	}
+	return 0;
+}
+
+/*******************************************************************************
+ * tf_initCommandFacility
+ ******************************************************************************/
+static int tf_initCommandFacility(void) {
+	int i, len;
+	// verbose
+	tf_fprintTimestamp();
+	fprintf(stderr, "initializing Command-Facility...\n");
+	// path-string
+	len = strlen(tf_stat_file) - 1;
+	tf_cmd_file = malloc((len + 1) * sizeof(char));
+	if (tf_cmd_file == NULL) {
+		tf_fprintTimestamp();
+		fprintf(stderr,
+			"Error : tf_initCommandFacility : not enough mem for malloc\n");
+		return 0;
+	}
+	for (i = 0; i < len - 3; i++)
+		tf_cmd_file[i] = tf_stat_file[i];
+	tf_cmd_file[len - 3] = 'c';
+	tf_cmd_file[len - 2] = 'm';
+	tf_cmd_file[len - 1] = 'd';
+	tf_cmd_file[len] = '\0';
+	// remove command-file if exists
+	tf_cmd_fp = NULL;
+	tf_cmd_fp = fopen(tf_cmd_file, "r");
+	if (tf_cmd_fp != NULL) {
+		// close file
+		fclose(tf_cmd_fp);
+		tf_fprintTimestamp();
+		fprintf(stderr, "removing command-file %s...\n", tf_cmd_file);
+		// remove file
+		remove(tf_cmd_file);
+		// null pointer
+		tf_cmd_fp = NULL;
 	}
 	return 1;
 }
@@ -975,4 +822,98 @@ static void tf_fprintTimestamp(void) {
 		cts->tm_min,
 		cts->tm_sec
 	);
+}
+
+/*******************************************************************************
+ * sigHandler
+ ******************************************************************************/
+static void sigHandler(int signal) {
+	switch(signal) {
+		case SIGINT:
+			tf_fprintTimestamp();
+			fprintf(stderr, "got SIGINT, setting shutdown-flag...\n");
+			mustDie = 1;
+			break;
+		default:
+			break;
+	}
+}
+
+/*******************************************************************************
+ * parseCommandLine
+ ******************************************************************************/
+static int parseCommandLine(int argc, char ** argv) {
+	for(;;) {
+		static struct option long_options[] =
+		{ { "help",               no_argument,       NULL, 'h' },
+		  { "info",               no_argument,       NULL, 'i' },
+		  { "scrape",             no_argument,       NULL, 's' },
+		  { "verbose",            required_argument, NULL, 'v' },
+		  { "port",               required_argument, NULL, 'p' },
+		  { "upload",             required_argument, NULL, 'u' },
+		  { "download",           required_argument, NULL, 'd' },
+		  { "finish",             required_argument, NULL, 'f' },
+		  { "seedlimit",          required_argument, NULL, 'c' },
+		  { "display_interval",   required_argument, NULL, 'e' },
+		  { "stat",               required_argument, NULL, 't' },
+		  { "owner",              required_argument, NULL, 'w' },
+		  { "pid",                required_argument, NULL, 'z' },
+		  { "nat-traversal",      no_argument,       NULL, 'n' },
+		  { 0, 0, 0, 0} };
+		int c, optind = 0;
+		c = getopt_long(argc, argv,
+			"hisv:p:u:d:f:c:e:t:w:z:n", long_options, &optind);
+		if (c < 0)
+			break;
+		switch(c) {
+			case 'h':
+				showHelp = 1;
+				break;
+			case 'i':
+				showInfo = 1;
+				break;
+			case 's':
+				showScrape = 1;
+				break;
+			case 'v':
+				verboseLevel = atoi(optarg);
+				break;
+			case 'p':
+				bindPort = atoi(optarg);
+				break;
+			case 'u':
+				uploadLimit = atoi(optarg);
+				break;
+			case 'd':
+				downloadLimit = atoi(optarg);
+				break;
+			case 'f':
+				finishCall = optarg;
+				break;
+			case 'n':
+				natTraversal = 1;
+				break;
+			case 'c':
+				seedLimit = atoi(optarg);
+				break;
+			case 'e':
+				displayInterval = atoi(optarg);
+				break;
+			case 't':
+				tf_stat_file = optarg;
+				break;
+			case 'w':
+				tf_user = optarg;
+				break;
+			case 'z':
+				tf_pid_file = optarg;
+				break;
+			default:
+				return 1;
+		}
+	}
+	if (optind > argc - 1)
+		return !showHelp;
+	torrentPath = argv[optind];
+	return 0;
 }
