@@ -20,14 +20,17 @@
 
 *******************************************************************************/
 
-// AliasFile
-require_once("inc/classes/AliasFile.php");
-
 // ClientHandler
 require_once("inc/classes/ClientHandler.php");
 
+// CommandHandler
+require_once("inc/classes/CommandHandler.php");
+
 // RunningTransfer
 require_once("inc/classes/RunningTransfer.php");
+
+// AliasFile
+require_once("inc/classes/AliasFile.php");
 
 // Fluxd
 require_once("inc/classes/Fluxd.php");
