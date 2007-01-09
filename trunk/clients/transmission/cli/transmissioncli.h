@@ -93,6 +93,7 @@ static char * tf_stat_file = NULL;
 static FILE * tf_stat_fp = NULL;
 static char * tf_cmd_file = NULL;
 static FILE * tf_cmd_fp = NULL;
+
 static char tf_message[256];
 
 static char * tf_pid_file = NULL;
@@ -113,6 +114,8 @@ static int tf_processCommandFile(tr_handle_t *h);
 static int tf_execCommand(tr_handle_t *h, char *s);
 static int tf_pidWrite(void);
 static int tf_pidDelete(void);
+
 static int tf_printMessage(int len);
+
 static void tf_fprintTimestamp(void);
 

@@ -53,7 +53,11 @@ int main(int argc, char ** argv) {
 		return 1;
 	} else {
 
+printf("torrentPath : %s\n", torrentPath);
 tf_initializeStatusFacility();
+printf("tf_stat_file : %s\n", tf_stat_file);
+tf_initializeCommandFacility();
+printf("tf_cmd_file : %s\n", tf_cmd_file);
 return 0;
 
 		// check tf-args
@@ -688,10 +692,6 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
  * tf_initializeStatusFacility
  ******************************************************************************/
 static int tf_initializeStatusFacility(void) {
-	// .torrent
-	// .stat
-	// .pid
-	// vars
 	int len = strlen(torrentPath) - 3;
 	tf_stat_file = malloc((len + 1) * sizeof(char));
 	if (tf_stat_file == NULL) {
@@ -702,8 +702,6 @@ static int tf_initializeStatusFacility(void) {
 	}
 	strncat(tf_stat_file, torrentPath, len - 4);
 	strncat(tf_stat_file, "stat", 4);
-	tf_printMessage(sprintf(tf_message, "torrentPath : %s\n", torrentPath));
-	tf_printMessage(sprintf(tf_message, "tf_stat_file : %s\n", tf_stat_file));
 	return 1;
 }
 
@@ -711,12 +709,7 @@ static int tf_initializeStatusFacility(void) {
  * tf_initializeCommandFacility
  ******************************************************************************/
 static int tf_initializeCommandFacility(void) {
-	int i, len;
-	// verbose
-	tf_fprintTimestamp();
-	fprintf(stderr, "initializing command-facility...\n");
-	// path-string
-	len = strlen(tf_stat_file) - 1;
+	int len = strlen(torrentPath) - 4;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
 	if (tf_cmd_file == NULL) {
 		tf_fprintTimestamp();
@@ -724,12 +717,8 @@ static int tf_initializeCommandFacility(void) {
 			"Error : tf_initializeCommandFacility : not enough mem for malloc\n");
 		return 0;
 	}
-	for (i = 0; i < len - 3; i++)
-		tf_cmd_file[i] = tf_stat_file[i];
-	tf_cmd_file[len - 3] = 'c';
-	tf_cmd_file[len - 2] = 'm';
-	tf_cmd_file[len - 1] = 'd';
-	tf_cmd_file[len] = '\0';
+	strncat(tf_cmd_file, torrentPath, len - 3);
+	strncat(tf_cmd_file, "cmd", 3);
 	// remove command-file if exists
 	tf_cmd_fp = NULL;
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
@@ -775,7 +764,7 @@ static int tf_printMessage(int len) {
 		cts->tm_hour,
 		cts->tm_min,
 		cts->tm_sec,
-		(tf_message != NULL) ? tf_message : "\n"
+		((tf_message != NULL) && (len > 0)) ? tf_message : "\n"
 	);
 }
 
