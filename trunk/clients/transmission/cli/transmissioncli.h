@@ -86,13 +86,12 @@ static int displayInterval = 1;
 static char * finishCall = NULL;
 
 // tf
-static char * tf_user = NULL;
+static char tf_message[512];
+static char * tf_owner = NULL;
 static char * tf_stat_file = NULL;
 static FILE * tf_stat_fp = NULL;
 static char * tf_cmd_file = NULL;
 static FILE * tf_cmd_fp = NULL;
-
-static char tf_message[512];
 
 /*******************************************************************************
  * functions
@@ -110,8 +109,5 @@ static int tf_processCommandFile(tr_handle_t *h);
 static int tf_execCommand(tr_handle_t *h, char *s);
 static int tf_pidWrite(void);
 static int tf_pidDelete(void);
-
-static int tf_printMessage(int len);
-
-static void tf_fprintTimestamp(void);
+static int tf_print(int len);
 

@@ -41,30 +41,11 @@ class RunningTransferTransmission extends RunningTransfer
             $arr = split(' ',$psLine);
             $this->processId = $arr[0];
             $this->transferFile = str_replace($cfg['transfer_file_path'],'',$arr[(count($arr) - 1)]);
+            $this->statFile = str_replace('.torrent','.stat', $this->transferFile);
+            $this->filePath = substr($this->statFile,0,strrpos($this->statFile,"/")+1);
             foreach($arr as $key =>$value) {
-                if ($key == 0)
-                    $startArgs = false;
-                if ($value == '-t') {
-                    $this->filePath = substr($arr[$key+1],0,strrpos($arr[$key+1],"/")+1);
-                    $this->statFile = str_replace($cfg['transfer_file_path'],'',$arr[$key+1]);
-                }
-                if ($value == '-w')
+                if ($value == '-o')
                     $this->transferowner = $arr[$key+1];
-                if ($value == '-e')
-                    $startArgs = true;
-                if ($startArgs) {
-                    if (!empty($value)) {
-                        if (strpos($value,"-",1) > 0) {
-                            if(array_key_exists($key+1,$arr)) {
-                            	$this->args .= (strpos($value,"priority") > 0)
-                            		? "\n file ".$value." set"
-                            		: $value.":".$arr[$key+1].",";
-                            } else {
-                                $this->args .= "";
-                            }
-                        }
-                    }
-                }
             }
             $this->args = str_replace("-","",$this->args);
             $this->args = substr($this->args,0,strlen($this->args));

@@ -60,29 +60,18 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-	// check user-arg
-	if ((torrentPath != NULL) && (tf_user == NULL) &&
-		(!showInfo) && (!showScrape)) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "no owner supplied, using 'n/a'.\n");
-		tf_user = malloc((4) * sizeof(char));
-		if (tf_user == NULL) {
-			tf_fprintTimestamp();
-			fprintf(stderr,
-				"Error : not enough mem for malloc\n");
-			return 1;
-		}
-		strcpy(tf_user, "n/a");
-	}
-
-tf_fprintTimestamp(); printf("torrentPath : %s\n", torrentPath);
+/* -------------------------------------------------------------------------- */
+/*
+tf_print(sprintf(tf_message, "torrentPath : %s\n", torrentPath));
 tf_initializeStatusFacility();
-tf_fprintTimestamp(); printf("tf_stat_file : %s\n", tf_stat_file);
+tf_print(sprintf(tf_message, "tf_stat_file : %s\n", tf_stat_file));
 tf_initializeCommandFacility();
-tf_fprintTimestamp(); printf("tf_cmd_file : %s\n", tf_cmd_file);
+tf_print(sprintf(tf_message, "tf_cmd_file : %s\n", tf_cmd_file));
 tf_pidWrite();
 tf_pidDelete();
 return 0;
+*/
+/* -------------------------------------------------------------------------- */
 
 	// verbose
 	if (verboseLevel < 0)
@@ -95,22 +84,15 @@ return 0;
 		putenv(env);
 	}
 
-	// check port
-	if (bindPort < 1 || bindPort > 65535) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "Invalid port '%d'\n", bindPort);
-		return 1;
-	}
-
 	// Initialize libtransmission
 	h = tr_init();
 
 	// Open and parse torrent file
 	if (!(tor = tr_torrentInit(h, torrentPath, 0, &error))) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "Failed opening torrent file `%s'\n", torrentPath);
+		tf_print(sprintf(tf_message, "Failed opening torrent file '%s'\n", torrentPath));
 		goto failed;
 	}
+
 
 	/* show info */
 	if (showInfo) {
@@ -141,6 +123,7 @@ return 0;
 		goto cleanup;
 	}
 
+
 	/* show scrape */
 	if (showScrape) {
 		int seeders, leechers, downloaded;
@@ -153,7 +136,27 @@ return 0;
 		goto cleanup;
 	}
 
+
 	/* start up transmission */
+
+	// check port
+	if (bindPort < 1 || bindPort > 65535) {
+		tf_print(sprintf(tf_message, "Invalid port '%d'\n", bindPort));
+		// cleanup
+		goto cleanup;
+	}
+
+	// check owner-arg
+	if (tf_owner == NULL) {
+		tf_print(sprintf(tf_message, "no owner supplied, using 'n/a'.\n"));
+		tf_owner = malloc((4) * sizeof(char));
+		if (tf_owner == NULL) {
+			tf_print(sprintf(tf_message, "Error : not enough mem for malloc\n"));
+			// cleanup
+			goto cleanup;
+		}
+		strcpy(tf_owner, "n/a");
+	}
 
 	// If running torrentflux, Download limit = 0 means no limit
 	// up
@@ -176,10 +179,9 @@ return 0;
 	}
 
 	// print what we are starting up
-	tf_fprintTimestamp();
-	fprintf(stderr, "transmission starting up :\n");
-	fprintf(stderr, " - torrentPath : %s\n", torrentPath);
-	fprintf(stderr, " - tf_user : %s\n", tf_user);
+	tf_print(sprintf(tf_message, "transmission starting up :\n"));
+	fprintf(stderr, " - torrent : %s\n", torrentPath);
+	fprintf(stderr, " - owner : %s\n", tf_owner);
 	fprintf(stderr, " - seedLimit : %d\n", seedLimit);
 	fprintf(stderr, " - bindPort : %d\n", bindPort);
 	fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
@@ -192,7 +194,7 @@ return 0;
 	// signal
 	signal(SIGINT, sigHandler);
 
-	// init some things
+	// set port + rates
 	tr_setBindPort(h, bindPort);
 	tr_setGlobalUploadLimit(h, uploadLimit);
 	tr_setGlobalDownloadLimit(h, downloadLimit);
@@ -211,28 +213,24 @@ return 0;
 
 	// initialize status-facility
 	if (tf_initializeStatusFacility() == 0) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "Failed to init status-facility. exit.\n");
+		tf_print(sprintf(tf_message, "Failed to init status-facility. exit.\n"));
 		goto failed;
 	}
 
 	// initialize command-facility
 	if (tf_initializeCommandFacility() == 0) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "Failed to init command-facility. exit.\n");
+		tf_print(sprintf(tf_message, "Failed to init command-facility. exit.\n"));
 		goto failed;
 	}
 
 	// write pid
 	if (tf_pidWrite() == 0) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "Failed to write pid-file. exit.\n");
+		tf_print(sprintf(tf_message, "Failed to write pid-file. exit.\n"));
 		goto failed;
 	}
 
 	// print that we are done with startup
-	tf_fprintTimestamp();
-	fprintf(stderr, "transmission up and running.\n");
+	tf_print(sprintf(tf_message, "transmission up and running.\n"));
 
 	/* main-loop */
 	while (!mustDie) {
@@ -252,7 +250,7 @@ return 0;
 					"Checking existing data", /* State text        */
 											  /* download speed    */
 											  /* upload speed      */
-					tf_user,                  /* user              */
+					tf_owner,                 /* owner              */
 											  /* seeds             */
 											  /* peers             */
 											  /* sharing           */
@@ -262,9 +260,8 @@ return 0;
 					info->totalSize);         /* global size       */
 				fclose(tf_stat_fp);
 			} else {
-				tf_fprintTimestamp();
-				fprintf(stderr, "error opening stat-file for write : %s\n",
-					tf_stat_file);
+				tf_print(sprintf(tf_message,
+					"error opening stat-file for write : %s\n", tf_stat_file));
 			}
 
 		} else if (s->status & TR_STATUS_DOWNLOAD) {      /* --- DOWNLOAD --- */
@@ -320,7 +317,7 @@ return 0;
 						tf_eta,                           /* Estimated time   */
 						s->rateDownload,                  /* download speed   */
 						s->rateUpload,                    /* upload speed     */
-						tf_user,                          /* user             */
+						tf_owner,                         /* owner             */
 						s->peersUploading, tf_seeders,    /* seeds            */
 						s->peersDownloading, tf_leechers, /* peers            */
 						tf_sharing,                       /* sharing          */
@@ -330,9 +327,9 @@ return 0;
 						info->totalSize);                 /* global size      */
 					fclose(tf_stat_fp);
 				} else {
-					tf_fprintTimestamp();
-					fprintf(stderr, "error opening stat-file for write : %s\n",
-						tf_stat_file);
+					tf_print(sprintf(tf_message,
+						"error opening stat-file for write : %s\n",
+						tf_stat_file));
 				}
 
 		} else if (s->status & TR_STATUS_SEED) {              /* --- SEED --- */
@@ -347,16 +344,14 @@ return 0;
 
 				// die-on-seed-limit / die-when-done
 				if (seedLimit == -1) {
-					tf_fprintTimestamp();
-					fprintf(stderr,
-						"die-when-done set, setting shutdown-flag...\n");
+					tf_print(sprintf(tf_message,
+						"die-when-done set, setting shutdown-flag...\n"));
 					mustDie = 1;
 				} else if ((seedLimit != 0) &&
 					(tf_sharing > (double)(seedLimit))) {
-					tf_fprintTimestamp();
-					fprintf(stderr,
+					tf_print(sprintf(tf_message,
 						"seed-limit %d reached, setting shutdown-flag...\n",
-						seedLimit);
+						seedLimit));
 					mustDie = 1;
 				}
 
@@ -377,7 +372,7 @@ return 0;
 						"Download Succeeded!",            /* State text       */
 						s->rateDownload,                  /* download speed   */
 						s->rateUpload,                    /* upload speed     */
-						tf_user,                          /* user             */
+						tf_owner,                         /* owner             */
 						s->peersUploading, tf_seeders,    /* seeds            */
 						s->peersDownloading, tf_leechers, /* peers            */
 						tf_sharing,                       /* sharing          */
@@ -387,19 +382,17 @@ return 0;
 						info->totalSize);                 /* global size      */
 					fclose(tf_stat_fp);
 				} else {
-					tf_fprintTimestamp();
-					fprintf(stderr, "error opening stat-file for write : %s\n",
-						tf_stat_file);
+					tf_print(sprintf(tf_message,
+						"error opening stat-file for write : %s\n",
+						tf_stat_file));
 				}
 
 		} // end status-if
 
 		// errors
-		if (s->error & TR_ETRACKER) {
-			// print errors to stderr
-			tf_fprintTimestamp();
-			fprintf(stderr, "trackerError : %s\n", s->trackerError);
-		}
+		if (s->error & TR_ETRACKER)
+			tf_print(sprintf(tf_message,
+				"trackerError : %s\n", s->trackerError));
 
 		// check if finished / finishCall / process command-stack / sleep
 		if (tr_getFinished(tor)) {
@@ -419,8 +412,7 @@ return 0;
 	} /* main-loop */
 
 	// print that we are going down
-	tf_fprintTimestamp();
-	fprintf(stderr, "transmission shutting down...\n");
+	tf_print(sprintf(tf_message, "transmission shutting down...\n"));
 
 	// mark torrent as stopped in tf-stat-file
 	if (tf_stat_file != NULL) {
@@ -450,7 +442,7 @@ return 0;
 				tf_eta,           /* State text       */
 				                  /* download speed   */
 				                  /* upload speed     */
-				tf_user,          /* user             */
+				tf_owner,         /* owner             */
 				                  /* seeds            */
 				                  /* peers            */
 				tf_sharing,       /* sharing          */
@@ -460,9 +452,8 @@ return 0;
 				info->totalSize); /* global size      */
 			fclose(tf_stat_fp);
 		} else {
-			tf_fprintTimestamp();
-			fprintf(stderr, "error opening stat-file for write : %s\n",
-				tf_stat_file);
+			tf_print(sprintf(tf_message,
+				"error opening stat-file for write : %s\n", tf_stat_file));
 		}
 	}
 
@@ -485,16 +476,20 @@ return 0;
 	tf_pidDelete();
 
 	// print exit
-	tf_fprintTimestamp();
-	fprintf(stderr, "transmission exit.\n");
+	tf_print(sprintf(tf_message, "transmission exit.\n"));
 
-cleanup:
-	tr_torrentClose(h, tor);
+	/*
+	 * cleanup
+	 */
+	cleanup:
+		tr_torrentClose(h, tor);
 
-failed:
-	tr_close(h);
-
-	return 0;
+	/*
+	 * failed
+	 */
+	failed:
+		tr_close(h);
+		return 0;
 }
 
 /*******************************************************************************
@@ -526,8 +521,8 @@ static int tf_processCommandFile(tr_handle_t *h) {
 	char *fileCurrentPos;
 
 	// process file
-	tf_fprintTimestamp();
-	fprintf(stderr, "Processing command-file %s...\n", tf_cmd_file);
+	tf_print(sprintf(tf_message,
+		"Processing command-file %s...\n", tf_cmd_file));
 
 	// get length
 	fseek(tf_cmd_fp, 0L, SEEK_END);
@@ -537,9 +532,8 @@ static int tf_processCommandFile(tr_handle_t *h) {
 	// calloc buffer
 	fileBuffer = calloc(fileLen + 1, sizeof(char));
 	if (fileBuffer == NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr,
-			"Error : test_processCommandFile : not enough mem to read command-file\n");
+		tf_print(sprintf(tf_message,
+			"Error : test_processCommandFile : not enough mem to read command-file\n"));
 		return 0;
 	}
 
@@ -557,8 +551,7 @@ static int tf_processCommandFile(tr_handle_t *h) {
 
 	// sanity-check if file contained "something"
 	if (fileLen < 1) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "No commands found.\n");
+		tf_print(sprintf(tf_message, "No commands found.\n"));
 		return 0;
 	}
 
@@ -604,10 +597,8 @@ static int tf_processCommandFile(tr_handle_t *h) {
 	} // end file while loop
 
 	// print if no commands found
-	if (commandCount == 0) {
-		tf_fprintTimestamp();
-		fprintf(stderr, "No commands found.\n");
-	}
+	if (commandCount == 0)
+		tf_print(sprintf(tf_message, "No commands found.\n"));
 
 	// return
 	return 0;
@@ -633,28 +624,25 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 	// opcode-switch
 	switch (opcode) {
 		case 'q':
-			tf_fprintTimestamp();
-			fprintf(stderr,
-				"command: stop-request, setting shutdown-flag...\n");
+			tf_print(sprintf(tf_message,
+				"command: stop-request, setting shutdown-flag...\n"));
 			mustDie = 1;
 			return 1;
 		case 'u':
 			uploadLimit = atoi(workload);
-			tf_fprintTimestamp();
-			fprintf(stderr,
-				"command: setting upload-rate to %d\n", uploadLimit);
+			tf_print(sprintf(tf_message,
+				"command: setting upload-rate to %d\n", uploadLimit));
 			tr_setGlobalUploadLimit(h, uploadLimit);
 			return 0;
 		case 'd':
 			downloadLimit = atoi(workload);
-			tf_fprintTimestamp();
-			fprintf(stderr,
-				"command: setting download-rate to %d\n", downloadLimit);
+			tf_print(sprintf(tf_message,
+				"command: setting download-rate to %d\n", downloadLimit));
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
 		default:
-			tf_fprintTimestamp();
-			fprintf(stderr, "op-code unknown: %c\n", opcode);
+			tf_print(sprintf(tf_message,
+				"op-code unknown: %c\n", opcode));
 			return 0;
 	}
 	return 0;
@@ -668,9 +656,8 @@ static int tf_initializeStatusFacility(void) {
 	int len = strlen(torrentPath) - 3;
 	tf_stat_file = malloc((len + 1) * sizeof(char));
 	if (tf_stat_file == NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr,
-			"Error : tf_initializeStatusFacility : not enough mem for malloc\n");
+		tf_print(sprintf(tf_message,
+			"Error : tf_initializeStatusFacility : not enough mem for malloc\n"));
 		return 0;
 	}
 	for (i = 0; i < len - 4; i++)
@@ -691,9 +678,8 @@ static int tf_initializeCommandFacility(void) {
 	int len = strlen(torrentPath) - 4;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
 	if (tf_cmd_file == NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr,
-			"Error : tf_initializeCommandFacility : not enough mem for malloc\n");
+		tf_print(sprintf(tf_message,
+			"Error : tf_initializeCommandFacility : not enough mem for malloc\n"));
 		return 0;
 	}
 	for (i = 0; i < len - 3; i++)
@@ -708,8 +694,7 @@ static int tf_initializeCommandFacility(void) {
 	if (tf_cmd_fp != NULL) {
 		// close file
 		fclose(tf_cmd_fp);
-		tf_fprintTimestamp();
-		fprintf(stderr, "removing command-file %s...\n", tf_cmd_file);
+		tf_print(sprintf(tf_message, "removing command-file %s...\n", tf_cmd_file));
 		// remove file
 		remove(tf_cmd_file);
 		// null pointer
@@ -737,14 +722,12 @@ static int tf_pidWrite(void) {
 	if (pidFile != NULL) {
 		fprintf(pidFile, "%d", currentPid);
 		fclose(pidFile);
-		tf_fprintTimestamp();
-		fprintf(stderr, "wrote pid-file : %s (%d)\n" ,
-			tf_pid_file , currentPid);
+		tf_print(sprintf(tf_message,
+			"wrote pid-file : %s (%d)\n" , tf_pid_file , currentPid));
 		return 1;
 	} else {
-		tf_fprintTimestamp();
-		fprintf(stderr, "error opening pid-file for write : %s (%d)\n",
-			tf_pid_file , currentPid);
+		tf_print(sprintf(tf_message,
+			"error opening pid-file for write : %s (%d)\n", tf_pid_file , currentPid));
 		return 0;
 	}
 }
@@ -762,16 +745,15 @@ static int tf_pidDelete(void) {
 	tf_pid_file[len - 2] = 'i';
 	tf_pid_file[len - 1] = 'd';
 	tf_pid_file[len] = '\0';
-	tf_fprintTimestamp();
-	fprintf(stderr, "removing pid-file : %s\n", tf_pid_file);
+	tf_print(sprintf(tf_message, "removing pid-file : %s\n", tf_pid_file));
 	remove(tf_pid_file);
 	return 1;
 }
 
 /*******************************************************************************
- * tf_printMessage
+ * tf_print
  ******************************************************************************/
-static int tf_printMessage(int len) {
+static int tf_print(int len) {
 	time_t ct;
 	struct tm * cts;
 	time(&ct);
@@ -788,31 +770,12 @@ static int tf_printMessage(int len) {
 }
 
 /*******************************************************************************
- * tf_fprintTimestamp
- ******************************************************************************/
-static void tf_fprintTimestamp(void) {
-	time_t ct;
-	struct tm * cts;
-	time(&ct);
-	cts = localtime(&ct);
-	fprintf(stderr, "[%4d/%02d/%02d - %02d:%02d:%02d] ",
-		cts->tm_year + 1900,
-		cts->tm_mon + 1,
-		cts->tm_mday,
-		cts->tm_hour,
-		cts->tm_min,
-		cts->tm_sec
-	);
-}
-
-/*******************************************************************************
  * sigHandler
  ******************************************************************************/
 static void sigHandler(int signal) {
 	switch(signal) {
 		case SIGINT:
-			tf_fprintTimestamp();
-			fprintf(stderr, "got SIGINT, setting shutdown-flag...\n");
+			tf_print(sprintf(tf_message, "got SIGINT, setting shutdown-flag...\n"));
 			mustDie = 1;
 			break;
 		default:
@@ -879,7 +842,7 @@ static int parseCommandLine(int argc, char ** argv) {
 				displayInterval = atoi(optarg);
 				break;
 			case 'o':
-				tf_user = optarg;
+				tf_owner = optarg;
 				break;
 			default:
 				return 1;
