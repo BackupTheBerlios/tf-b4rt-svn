@@ -25,8 +25,13 @@
  */
 class RunningTransferNzbperl extends RunningTransfer
 {
-    //--------------------------------------------------------------------------
-    // ctor
+
+	/**
+	 * ctor
+	 *
+	 * @param $psLine
+	 * @return RunningTransferNzbperl
+	 */
     function RunningTransferNzbperl($psLine) {
     	global $cfg;
         // ps-parse

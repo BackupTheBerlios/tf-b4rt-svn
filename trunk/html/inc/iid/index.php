@@ -97,7 +97,8 @@ foreach ($arList as $transfer) {
 	$transferowner = getOwner($transfer);
 	// ---------------------------------------------------------------------
 	// alias / stat
-	$aliasFile = getTransferName($transfer).".stat";
+	$alias = getTransferName($transfer);
+	$aliasFile = $alias.".stat";
 	$af = new AliasFile($aliasFile, $transferowner);
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
@@ -220,7 +221,7 @@ foreach ($arList as $transfer) {
 				$statusStr = $detailsLinkString."Leeching</a>";
 			}
 			// pid-file
-			$is_no_file = (is_file($cfg["transfer_file_path"].$aliasFile.".pid")) ? 0 : 1;
+			$is_no_file = (is_file($cfg["transfer_file_path"].$alias.".pid")) ? 0 : 1;
 			break;
 	}
 

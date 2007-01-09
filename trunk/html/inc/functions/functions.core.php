@@ -451,11 +451,11 @@ function netstatConnectionsSum() {
 /**
  * netstatConnections
  *
- * @param $transferAlias
+ * @param $transfer
  * @return int
  */
-function netstatConnections($transferAlias) {
-	return netstatConnectionsByPid(getTransferPid($transferAlias));
+function netstatConnections($transfer) {
+	return netstatConnectionsByPid(getTransferPid($transfer));
 }
 
 /**
@@ -510,11 +510,11 @@ function netstatPortList() {
 /**
  * netstatPort
  *
- * @param $transferAlias
+ * @param $transfer
  * @return int
  */
-function netstatPort($transferAlias) {
-	return netstatPortByPid(getTransferPid($transferAlias));
+function netstatPort($transfer) {
+	return netstatPortByPid(getTransferPid($transfer));
 }
 
 /**
@@ -567,11 +567,11 @@ function netstatHostList() {
 /**
  * netstatHosts
  *
- * @param $transferAlias
+ * @param $transfer
  * @return array
  */
-function netstatHosts($transferAlias) {
-	return netstatHostsByPid(getTransferPid($transferAlias));
+function netstatHosts($transfer) {
+	return netstatHostsByPid(getTransferPid($transfer));
 }
 
 /**
@@ -609,13 +609,12 @@ function netstatHostsByPid($transferPid) {
 /**
  * getTransferPid
  *
- * @param $transferAlias
+ * @param $transfer
  * @return int
  */
-function getTransferPid($transferAlias) {
+function getTransferPid($transfer) {
 	global $cfg;
-	$data = file_get_contents($cfg["transfer_file_path"].$transferAlias.".pid");
-	return trim($data);
+	return @rtrim(file_get_contents($cfg["transfer_file_path"].$transfer.".pid"));
 }
 
 /**
@@ -808,13 +807,13 @@ function isTransferRunning($transfer) {
 	global $cfg;
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
-		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.stat.pid')) ? 1 : 0;
+		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.pid')) ? 1 : 0;
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
-		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.stat.pid')) ? 1 : 0;
+		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.pid')) ? 1 : 0;
 	} else if (substr($transfer, -4) == ".nzb") {
 		// this is nzbperl.
-		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -4).'.stat.pid')) ? 1 : 0;
+		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -4).'.pid')) ? 1 : 0;
 	} else {
 		return 0;
 	}
@@ -1643,7 +1642,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// speed_down + speed_up + seeds + peers + cons
 	if ($running == 1) {
 		// pid
-		$pid = getTransferPid($alias);
+		$pid = getTransferPid($transfer);
 		// speed_down
 		$details['speedDown'] = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
 		// speed_up

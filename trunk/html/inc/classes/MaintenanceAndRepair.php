@@ -312,8 +312,7 @@ class MaintenanceAndRepair
 		// test if client for pid is still up
 		$this->_bogusTransfers = array();
 		foreach ($pidFiles as $pidFile) {
-			$alias = substr($pidFile, 0, -4);
-			$transfer = (substr($alias, 0, -5));
+			$transfer = (substr($pidFile, 0, -4));
 			if (stristr($psString, $transfer) === false)
 				array_push($this->_bogusTransfers, $transfer);
 		}
@@ -331,7 +330,7 @@ class MaintenanceAndRepair
 		foreach ($this->_bogusTransfers as $bogusTransfer) {
 			$transfer = $bogusTransfer.".torrent";
 			$alias = $bogusTransfer.".stat";
-			$pidFile = $alias.".pid";
+			$pidFile = $bogusTransfer.".pid";
 			$settingsAry = loadTransferSettings($transfer);
 			if ((isset($settingsAry)) && (is_array($settingsAry))) {
 				// this is a torrent-client
@@ -396,7 +395,7 @@ class MaintenanceAndRepair
 			foreach ($this->_bogusTransfers as $bogusTransfer) {
 				$transfer = $bogusTransfer.".torrent";
 				$alias = $bogusTransfer.".stat";
-				$pidFile = $alias.".pid";
+				$pidFile = $bogusTransfer.".pid";
 				$settingsAry = loadTransferSettings($transfer);
 				if (!((isset($settingsAry)) && (is_array($settingsAry)))) {
 					// this is not a torrent-client, skip it

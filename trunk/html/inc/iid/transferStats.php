@@ -117,7 +117,7 @@ if ($af->running == 1) {
 	$tmpl->setvar('peers', $af->peers);
 
 	// port + cons
-	$transfer_pid = getTransferPid($aliasFile);
+	$transfer_pid = getTransferPid($transfer);
 	$tmpl->setvar('port', netstatPortByPid($transfer_pid));
 	$tmpl->setvar('cons', netstatConnectionsByPid($transfer_pid));
 	$tmpl->setvar('maxcons', '('.$cfg["maxcons"].')');

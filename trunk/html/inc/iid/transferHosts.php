@@ -54,7 +54,7 @@ $af = new AliasFile($aliasFile);
 
 // set vars
 if ($af->running == 1) {
-	$transfer_pid = getTransferPid($aliasFile);
+	$transfer_pid = getTransferPid($transfer);
 	$transfer_cons = netstatConnectionsByPid($transfer_pid);
 	$transfer_hosts = netstatHostsByPid($transfer_pid);
 } else {
