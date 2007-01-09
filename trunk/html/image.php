@@ -103,7 +103,7 @@ switch ($imageOp) {
 			Image::paintNoOp();
 		}
 		// alias / stat
-		$af = new AliasFile(getAliasName($transfer).".stat");
+		$af = new AliasFile(getTransferName($transfer).".stat");
 		$seeds = trim($af->seeds);
 		$peers = trim($af->peers);
 		// client-switch + get peer-data

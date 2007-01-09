@@ -44,7 +44,7 @@ function setPriority($torrent) {
     // to skip a file. so we will need to create the prio file.
     $okToCreate = false;
     if (!empty($torrent)) {
-        $alias = getAliasName($torrent);
+        $alias = getTransferName($torrent);
         $fileName = $cfg["transfer_file_path"].$alias.".prio";
         $result = array();
         $files = array();
@@ -60,7 +60,7 @@ function setPriority($torrent) {
                     array_push($result,-1);
                 }
             }
-            $alias = getAliasName($torrent);
+            $alias = getTransferName($torrent);
             if ($okToCreate) {
                 $fp = fopen($fileName, "w");
                 fwrite($fp,getRequestVar('filecount').",");

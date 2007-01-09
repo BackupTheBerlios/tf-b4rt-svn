@@ -178,7 +178,7 @@ class ClientHandlerTornado extends ClientHandler
     function getTransferCurrent($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
@@ -216,7 +216,7 @@ class ClientHandlerTornado extends ClientHandler
             $retVal["downtotal"] = $row["downtotal"];
         }
         // transfer from stat-file
-        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
         $retVal["uptotal"] += $af->uptotal;
         $retVal["downtotal"] += $af->downtotal;
         return $retVal;

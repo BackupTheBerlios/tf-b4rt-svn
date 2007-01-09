@@ -50,7 +50,7 @@ $tmpl->setvar('transferLabel', $transferLabel);
 
 // alias / stat
 $transferowner = getOwner($transfer);
-$aliasFile = getAliasName($transfer).".stat";
+$aliasFile = getTransferName($transfer).".stat";
 $af = new AliasFile($aliasFile, $transferowner);
 
 // client-switch

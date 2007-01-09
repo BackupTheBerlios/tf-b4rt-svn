@@ -236,7 +236,7 @@ class ClientHandlerWget extends ClientHandler
     function getTransferCurrent($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 
@@ -262,7 +262,7 @@ class ClientHandlerWget extends ClientHandler
     function getTransferTotal($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
         return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
     }
 

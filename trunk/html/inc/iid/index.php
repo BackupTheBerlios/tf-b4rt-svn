@@ -97,7 +97,7 @@ foreach ($arList as $transfer) {
 	$transferowner = getOwner($transfer);
 	// ---------------------------------------------------------------------
 	// alias / stat
-	$aliasFile = getAliasName($transfer).".stat";
+	$aliasFile = getTransferName($transfer).".stat";
 	$af = new AliasFile($aliasFile, $transferowner);
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client

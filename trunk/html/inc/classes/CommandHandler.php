@@ -165,7 +165,7 @@ class CommandHandler
     	if (isset($this->_commands[$transfer]))
     		unset($this->_commands[$transfer]);
 		// if exist remove command-file
-		$file = $cfg["transfer_file_path"].getAliasName($transfer).'.cmd';
+		$file = $cfg["transfer_file_path"].getTransferName($transfer).'.cmd';
 		if (@file_exists($file))
 			@unlink($file);
 		// return
@@ -184,7 +184,7 @@ class CommandHandler
      */
 	function _writeCommandFile($transfer) {
 		global $cfg;
-		$file = $cfg["transfer_file_path"].getAliasName($transfer).'.cmd';
+		$file = $cfg["transfer_file_path"].getTransferName($transfer).'.cmd';
 		$handle = false;
 		$handle = @fopen($file, "w");
 		if (!$handle) {

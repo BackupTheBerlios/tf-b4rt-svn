@@ -715,7 +715,7 @@ class ClientHandler
     function setVarsFromTransfer($transfer) {
     	global $cfg, $transfers;
         $this->transfer = $transfer;
-        $this->alias = getAliasName($this->transfer);
+        $this->alias = getTransferName($this->transfer);
         $this->aliasFile = $this->alias.".stat";
         $this->aliasFilePath = $cfg["transfer_file_path"].$this->aliasFile;
 		$this->pidFilePath = $cfg["transfer_file_path"].$this->alias.".stat.pid";

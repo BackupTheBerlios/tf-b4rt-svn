@@ -32,7 +32,7 @@ function showMetaInfo($torrent, $allowSave = false) {
 	if (empty($torrent)) {
 		$showMetaInfo = $cfg['_NORECORDSFOUND'];
 	} elseif ($cfg["enable_file_priority"]) {
-		$prioFileName = $cfg["transfer_file_path"].getAliasName($torrent).".prio";
+		$prioFileName = $cfg["transfer_file_path"].getTransferName($torrent).".prio";
 		require_once('inc/classes/BDecode.php');
 		$showMetaInfo = "";
 		// theme-switch

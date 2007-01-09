@@ -650,7 +650,7 @@ class MaintenanceAndRepair
 		foreach ($arList as $transfer) {
 			$owner = getOwner($transfer);
 			$btclient = getTransferClient($transfer);
-			$alias = getAliasName($transfer);
+			$alias = getTransferName($transfer);
 			$af = new AliasFile($alias.".stat", $owner);
 			if (isset($af)) {
 				// output

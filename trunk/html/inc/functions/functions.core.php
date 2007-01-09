@@ -1074,7 +1074,7 @@ function getLoadAverageString() {
  */
 function injectAlias($transfer) {
 	global $cfg;
-	$af = new AliasFile(getAliasName($transfer).".stat");
+	$af = new AliasFile(getTransferName($transfer).".stat");
 	$af->running = "2"; // file is new
 	$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
 	if ($af->write()) {
@@ -1241,7 +1241,7 @@ function getTransferListArray() {
 
 		// ---------------------------------------------------------------------
 		// alias / stat
-		$alias = getAliasName($transfer).".stat";
+		$alias = getTransferName($transfer).".stat";
 		if (substr($transfer, -8) == ".torrent") {
 			// this is a torrent-client
 			$owner = IsOwner($cfg["user"], $transferowner);
@@ -1596,7 +1596,7 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	require_once('inc/functions/functions.common.php');
 	// alias-file
 	if ((!(isset($alias))) || ($alias == "")) {
-		$aliasName = getAliasName($transfer);
+		$aliasName = getTransferName($transfer);
 		$alias = $aliasName.".stat";
 	}
 	$transferowner = getOwner($transfer);
@@ -1883,7 +1883,7 @@ function resetOwner($transfer) {
 	global $cfg, $db, $transfers;
 	// log entry has expired so we must renew it
 	$rtnValue = "n/a";
-	$alias = getAliasName($transfer).".stat";
+	$alias = getTransferName($transfer).".stat";
 	if (file_exists($cfg["transfer_file_path"].$alias)) {
 		$af = new AliasFile($alias, $cfg["user"]);
 		$rtnValue = (IsUser($af->transferowner))
@@ -2179,12 +2179,12 @@ function isValidTransfer($transfer) {
 }
 
 /**
- * Create Alias name for Text file and Screen Alias
+ * get name of transfer (no extension). possibly sanitized.
  *
  * @param $inName
  * @return string
  */
-function getAliasName($inName) {
+function getTransferName($inName) {
 	global $cfg;
 	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName));
 }

@@ -211,7 +211,7 @@ class FluxdQmgr extends FluxdServiceMod
 	            // flag the transfer as stopped (in db)
 	            stopTransferSettings($transfer);
 	            // update the stat file.
-	            $this->_updateStatFile($transfer, getAliasName($transfer).".stat");
+	            $this->_updateStatFile($transfer, getTransferName($transfer).".stat");
 	            // log
 	            AuditAction($cfg["constants"]["unqueued_transfer"], $transfer);
 	            // just 2 sec... dont stress fluxd

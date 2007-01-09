@@ -1326,7 +1326,7 @@ function getTransferLog($transfer) {
 	if (!isset($transfer) || (isValidTransfer($transfer) !== true))
 		return "invalid transfer";
 	// alias-name + log-file
-	$aliasName = getAliasName($transfer);
+	$aliasName = getTransferName($transfer);
 	$transferLogFile = $cfg["transfer_file_path"].$aliasName.".log";
 	// check
 	if (!(file_exists($transferLogFile)))
@@ -1469,7 +1469,7 @@ function resetTorrentTotals($transfer, $delete = false) {
     		$msgs = array_merge($msgs, $clientHandler->messages);
 	} else {
 		// reset in stat-file
-		$af = new AliasFile(getAliasName($transfer).".stat", getOwner($transfer));
+		$af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
 		if (isset($af)) {
 			$af->uptotal = 0;
 			$af->downtotal = 0;
