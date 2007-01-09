@@ -62,72 +62,8 @@
  *                     (was trying to close a file that wasn't open)
  ******************************************************************************/
 
-/* defines */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <getopt.h>
-#include <signal.h>
-#include <transmission.h>
-#include <sys/types.h>
-#ifdef SYS_BEOS
-#include <kernel/OS.h>
-#define usleep snooze
-#endif
-#define USAGE \
-"Usage: %s [options] file.torrent [options]\n\n" \
-"Options:\n" \
-"  -h, --help                     Print this help and exit\n" \
-"  -i, --info                     Print metainfo and exit\n" \
-"  -s, --scrape                   Print counts of seeders/leechers and exit\n" \
-"  -v, --verbose <int>            Verbose level (0 to 2, default = 0)\n" \
-"  -n, --nat-traversal            Attempt NAT traversal using NAT-PMP or UPnP IGD\n" \
-"  -p, --port <int>               Port we should listen on (default = %d)\n" \
-"  -u, --upload <int>             Maximum upload rate \n" \
-"                                 (-1|0 = no limit, -2 = null, default = 10)\n" \
-"  -d, --download <int>           Maximum download rate \n" \
-"                                 (-1|0 = no limit, -2 = null, default = -1)\n" \
-"  -f, --finish <shell script>    Command you wish to run on completion\n" \
-"  -c, --seedlimit <int>          Seed to reach before exiting transmission\n" \
-"                                 (0 = seed forever -1 = no seeding)\n" \
-"  -e, --display_interval <int>   Time between updates of information in stat-file\n" \
-"  -w, --owner <string>           Name of the owner (required)\n" \
-"  -t, --stat <file>              Path to stat-file (required)\n" \
-"  -z, --pid <file>               Path to pid-file (required)\n" \
-"\n"
-
-/* fields */
-static int showHelp = 0;
-static int showInfo = 0;
-static int showScrape = 0;
-static int verboseLevel = 0;
-static int bindPort = TR_DEFAULT_PORT;
-static int uploadLimit = 10;
-static int downloadLimit = -1;
-static char * torrentPath = NULL;
-static volatile char mustDie = 0;
-static int natTraversal = 0;
-static int seedLimit = 0;
-static int displayInterval = 1;
-static char * finishCall = NULL;
-// tf
-static char * tf_stat_file = NULL;
-static FILE * tf_stat_fp = NULL;
-static char * tf_cmd_file = NULL;
-static FILE * tf_cmd_fp = NULL;
-static char * tf_pid_file = NULL;
-static char * tf_user = NULL;
-
-/* functions */
-static int parseCommandLine(int argc, char ** argv);
-static void sigHandler(int signal);
-// tf
-static int tf_initCommandFacility(void);
-static int tf_processCommandStack(tr_handle_t *h);
-static int tf_processCommandFile(tr_handle_t *h);
-static int tf_execCommand(tr_handle_t *h, char *s);
-static void tf_fprintTimestamp(void);
+/* includes */
+#include "transmissioncli.h"
 
 /*******************************************************************************
  * main
@@ -140,7 +76,7 @@ int main(int argc, char ** argv) {
 	tr_torrent_t * tor;
 	tr_stat_t * s = NULL;
 	double tf_sharing = 0.0;
-	char tf_string[80];
+	char tf_eta[80];
 	int tf_seeders, tf_leechers;
 
 	/* Get options + check tf-args */
@@ -153,22 +89,19 @@ int main(int argc, char ** argv) {
 		// check tf-args
 		if ((!showHelp) && (!showInfo) && (!showScrape) && (torrentPath != NULL)) {
 			if (tf_user == NULL) {
-				printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
-					VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+				printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 				printf(USAGE, argv[0], TR_DEFAULT_PORT);
 				printf("Error. Missing argument: Name of the owner.\n\n");
 				return 1;
 			}
 			if (tf_stat_file == NULL) {
-				printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
-					VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+				printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 				printf(USAGE, argv[0], TR_DEFAULT_PORT);
 				printf("Error. Missing argument: Path to stat-file.\n\n");
 				return 1;
 			}
 			if (tf_pid_file == NULL) {
-				printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
-					VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+				printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 				printf(USAGE, argv[0], TR_DEFAULT_PORT);
 				printf("Error. Missing argument: Path to pid-file.\n\n");
 				return 1;
@@ -178,8 +111,7 @@ int main(int argc, char ** argv) {
 
 	/* show help */
 	if (showHelp) {
-		printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
-			VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
 		return 0;
 	}
@@ -311,7 +243,7 @@ int main(int argc, char ** argv) {
 	tr_torrentStart(tor);
 
 	// init command-facility
-	if (tf_initCommandFacility() == 0) {
+	if (tf_initializeCommandFacility() == 0) {
 		tf_fprintTimestamp();
 		fprintf(stderr, "Failed to init command-facility. exit.\n");
 		goto failed;
@@ -392,28 +324,28 @@ int main(int argc, char ** argv) {
 					// sanity-check. value of eta >= 7 days is not really of use
 					if (s->eta < 604800) {
 						if ((s->eta / (24 * 60 * 60)) != 0) {
-							sprintf(tf_string,"%d:%02d:%02d:%02d",
+							sprintf(tf_eta, "%d:%02d:%02d:%02d",
 								s->eta / (24 * 60 * 60),
 								((s->eta) % (24 * 60 * 60)) / (60 * 60),
 								((s->eta) % (60 * 60) / 60),
 								s->eta % 60);
 						} else if ((s->eta / (60 * 60)) != 0) {
-							sprintf(tf_string, "%d:%02d:%02d",
+							sprintf(tf_eta, "%d:%02d:%02d",
 								(s->eta) / (60 * 60),
 								((s->eta) % (60 * 60) / 60),
 								s->eta % 60);
 						} else {
-							sprintf(tf_string, "%d:%02d",
+							sprintf(tf_eta, "%d:%02d",
 								(s->eta) / 60, s->eta % 60);
 						}
 					} else {
-						sprintf(tf_string,"-");
+						sprintf(tf_eta, "-");
 					}
 				} else {
-					sprintf(tf_string,"-");
+					sprintf(tf_eta, "-");
 				}
 				if ((s->seeders == -1) && (s->peersTotal == 0))
-					sprintf(tf_string,"Connecting to Peers");
+					sprintf(tf_eta, "Connecting to Peers");
 
 				// write tf-stat-file
 				tf_stat_fp = fopen(tf_stat_file, "w+");
@@ -422,7 +354,7 @@ int main(int argc, char ** argv) {
 					fprintf(tf_stat_fp, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
 						1,                                /* State            */
 						100.0 * s->progress,              /* progress         */
-						tf_string,                        /* Estimated time   */
+						tf_eta,                           /* Estimated time   */
 						s->rateDownload,                  /* download speed   */
 						s->rateUpload,                    /* upload speed     */
 						tf_user,                          /* user             */
@@ -543,16 +475,16 @@ int main(int argc, char ** argv) {
 		if (tf_stat_fp != NULL) {
 			float progress;
 			if (s->status & TR_STATUS_SEED) {
-				sprintf(tf_string,"Download Succeeded!");
+				sprintf(tf_eta, "Download Succeeded!");
 				progress = 100;
 			} else {
-				sprintf(tf_string,"Torrent Stopped");
+				sprintf(tf_eta, "Torrent Stopped");
 				progress = -(1 + s->progress) * 100;
 			}
 			fprintf(tf_stat_fp, "%d\n%.1f\n%s\n\n\n%s\n\n\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
 				0,                /* State            */
 				progress,         /* progress         */
-				tf_string,        /* State text       */
+				tf_eta,           /* State text       */
 				                  /* download speed   */
 				                  /* upload speed     */
 				tf_user,          /* user             */
@@ -768,9 +700,9 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 }
 
 /*******************************************************************************
- * tf_initCommandFacility
+ * tf_initializeCommandFacility
  ******************************************************************************/
-static int tf_initCommandFacility(void) {
+static int tf_initializeCommandFacility(void) {
 	int i, len;
 	// verbose
 	tf_fprintTimestamp();
@@ -781,7 +713,7 @@ static int tf_initCommandFacility(void) {
 	if (tf_cmd_file == NULL) {
 		tf_fprintTimestamp();
 		fprintf(stderr,
-			"Error : tf_initCommandFacility : not enough mem for malloc\n");
+			"Error : tf_initializeCommandFacility : not enough mem for malloc\n");
 		return 0;
 	}
 	for (i = 0; i < len - 3; i++)

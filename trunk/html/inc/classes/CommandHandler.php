@@ -115,6 +115,7 @@ class CommandHandler
      * @return CommandHandler
      */
     function CommandHandler() {
+    	$this->_messages = array();
     	$this->_commands = array();
     }
 
