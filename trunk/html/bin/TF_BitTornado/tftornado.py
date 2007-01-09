@@ -368,16 +368,16 @@ class HeadlessDisplayer:
         """ execCommand """
         opCode = command[0]
         if opCode == 'q':
-            transferLog("Command: stop-request, setting shutdown-flag...\n", True)
+            transferLog("command: stop-request, setting shutdown-flag...\n", True)
             return True
         elif opCode == 'u':
             rate = command[1:]
-            transferLog("Command: setting Upload-Rate to " + rate + "...\n", True)
+            transferLog("command: setting upload-rate to " + rate + "...\n", True)
             self.dow.setUploadRate(int(rate))
             return False
         elif opCode == 'd':
             rate = command[1:]
-            transferLog("Command: setting Download-Rate to " + rate + "...\n", True)
+            transferLog("command: setting download-rate to " + rate + "...\n", True)
             self.dow.setDownloadRate(int(rate))
             return False
         else:
