@@ -63,8 +63,6 @@ basic_options = [
        "communicate with each other." )),
     ('tf_owner', '',
      _("Torrentflux user to run the torrent as." )),
-    ('stat_file', '',
-     _("Path to the torrentflux stat file." )),
     ('seed_limit', '0',
      _("Die when ratio reaches this amount." )),
     ('die_when_done', 'False',

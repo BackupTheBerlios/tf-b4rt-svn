@@ -47,10 +47,10 @@ class RunningTransferMainline extends RunningTransfer
                 if ($key == 0)
                     $startArgs = false;
                 if ($value == $mainlineBin) {
-                	$this->transferowner = $arr[7];
+                	$this->transferowner = $arr[5];
                 	$this->filePath = substr($arr[$arrC - 1], 0, strrpos($arr[$arrC - 1], "/") + 1);
-                	$this->statFile = str_replace($cfg['transfer_file_path'],'', $arr[9]);
-                	$this->transferFile = str_replace('.stat','.torrent', $this->statFile);
+                	$this->transferFile = str_replace($cfg['transfer_file_path'],'', $arr[$arrC - 1]);
+                	$this->statFile = str_replace('.torrent','.stat', $this->transferFile);
                 }
             }
             $this->args = str_replace("--","",$this->args);

@@ -163,7 +163,6 @@ class HeadlessDisplayer(object):
         self.numpieces = 0
         self.tfOwner = config['tf_owner']
         self.seedLimit = config['seed_limit']
-        self.statFile = config['stat_file']
         self.dieWhenDone = config['die_when_done']
         self.isInShutDown = 0
         self.running = '1'
@@ -282,7 +281,7 @@ class HeadlessDisplayer(object):
             else:
                 # write stat-file
                 try:
-                    FILE = open(self.statFile,"w")
+                    FILE = open(transferStatFile, "w")
                     FILE.write(repr(self.state)+"\n")
                     FILE.write(self.percentDone+"\n")
                     FILE.write(self.timeEst+"\n")
@@ -299,7 +298,7 @@ class HeadlessDisplayer(object):
                     FILE.flush()
                     FILE.close()
                 except Exception, e:
-                    transferLog("Failed to write stat-file : " + self.statFile + "\n", True)
+                    transferLog("Failed to write stat-file : " + transferStatFile + "\n", True)
 
     def execShutdown(self):
         """ execShutdown """
@@ -451,15 +450,15 @@ class TorrentApp(object):
 
         # write pid-file
         currentPid = (str(getpid())).strip()
-        transferLog("writing pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")\n", True)
+        transferLog("writing pid-file : " + transferPidFile + " (" + currentPid + ")\n", True)
         try:
-            pidFile = open(self.config['stat_file'] + ".pid", 'w')
+            pidFile = open(transferPidFile, 'w')
             pidFile.write(currentPid + "\n")
             pidFile.flush()
             pidFile.close()
         except Exception, e:
-            transferLog("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")" + "\n", True)
-            self.logger.error("Failed to write pid-file : " + self.config['stat_file'] + ".pid (" + currentPid + ")", exc_info = e)
+            transferLog("Failed to write pid-file : " + transferPidFile + " (" + currentPid + ")" + "\n", True)
+            self.logger.error("Failed to write pid-file : " + transferPidFile + " (" + currentPid + ")", exc_info = e)
             raise BTFailure(_("Failed to write pid-file."))
 
         # It is safe to addCallback here, because there is only one thread,
@@ -532,7 +531,7 @@ class TorrentApp(object):
 
         # overwrite stat-file in "Torrent Stopped"/"Download Succeeded!" format.
         try:
-            FILE = open(self.d.statFile,"w")
+            FILE = open(transferStatFile, "w")
             FILE.write("0\n")
             pcts = "-"+self.percentDone
             pctf = float(pcts)
@@ -556,7 +555,7 @@ class TorrentApp(object):
             FILE.flush()
             FILE.close()
         except Exception, e:
-            transferLog("Failed to write stat-file : " + self.config['stat_file'] + "\n", True)
+            transferLog("Failed to write stat-file : " + transferStatFile + "\n", True)
 
     def get_status(self):
         self.multitorrent.rawserver.add_task(self.config['display_interval'],
@@ -662,41 +661,48 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         sys.exit(1)
 
-    # get/set log-file
-    transferLogFile = config['stat_file']
-    transferLogFile = transferLogFile.replace(".stat", ".log")
-
     # get/set cmd-file
-    transferCommandFile = config['stat_file']
-    transferCommandFile = transferCommandFile.replace(".stat", ".cmd")
+    transferCommandFile = torrentfile
+    transferCommandFile = transferCommandFile.replace(".torrent", ".cmd")
+
+    # get/set stats-file
+    transferStatFile = torrentfile
+    transferStatFile = transferStatFile.replace(".torrent", ".stat")
+
+    # get/set log-file
+    transferLogFile = torrentfile
+    transferLogFile = transferLogFile.replace(".torrent", ".log")
+
+    # get/set pid-file
+    transferPidFile = torrentfile
+    transferPidFile = transferPidFile.replace(".torrent", ".pid")
 
     # log what we are starting up
-    startupMessage = "mainline starting up :\n"
-    startupMessage += " - torrentfile : " + torrentfile + "\n"
-    startupMessage += " - save_in : " + config['save_in'] + "\n"
-    startupMessage += " - tf_owner : " + config['tf_owner'] + "\n"
-    startupMessage += " - stat_file : " + config['stat_file'] + "\n"
-    startupMessage += " - pid-file : " + config['stat_file'] + ".pid" + "\n"
-    startupMessage += " - transferLogFile : " + transferLogFile + "\n"
-    startupMessage += " - transferCommandFile : " + transferCommandFile + "\n"
-    startupMessage += " - die_when_done : " + str(config['die_when_done']) + "\n"
-    startupMessage += " - seed_limit : " + str(config['seed_limit']) + "\n"
-    startupMessage += " - minport : " + str(config['minport']) + "\n"
-    startupMessage += " - maxport : " + str(config['maxport']) + "\n"
-    startupMessage += " - max_upload_rate : " + str(config['max_upload_rate']) + "\n"
-    startupMessage += " - max_download_rate : " + str(config['max_download_rate']) + "\n"
-    startupMessage += " - min_uploads : " + str(config['min_uploads']) + "\n"
-    startupMessage += " - max_uploads : " + str(config['max_uploads']) + "\n"
-    startupMessage += " - min_peers : " + str(config['min_peers']) + "\n"
-    startupMessage += " - max_initiate : " + str(config['max_initiate']) + "\n"
-    startupMessage += " - max_incomplete : " + str(config['max_incomplete']) + "\n"
-    startupMessage += " - max_allow_in : " + str(config['max_allow_in']) + "\n"
-    startupMessage += " - rerequest_interval : " + str(config['rerequest_interval']) + "\n"
-    startupMessage += " - start_trackerless_client : " + str(config['start_trackerless_client']) + "\n"
-    startupMessage += " - check_hashes : " + str(config['check_hashes']) + "\n"
-    startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
-    startupMessage += " - upnp : " + str(config['upnp']) + "\n"
-    transferLog(startupMessage, True)
+    transferLog("mainline starting up :\n", True)
+    transferLog(" - torrentfile : " + torrentfile + "\n", True)
+    transferLog(" - save_in : " + config['save_in'] + "\n", True)
+    transferLog(" - tf_owner : " + config['tf_owner'] + "\n", True)
+    transferLog(" - transferStatFile : " + transferStatFile + "\n", True)
+    transferLog(" - transferCommandFile : " + transferCommandFile + "\n", True)
+    transferLog(" - transferLogFile : " + transferLogFile + "\n", True)
+    transferLog(" - transferPidFile : " + transferPidFile + "\n", True)
+    transferLog(" - die_when_done : " + str(config['die_when_done']) + "\n", True)
+    transferLog(" - seed_limit : " + str(config['seed_limit']) + "\n", True)
+    transferLog(" - minport : " + str(config['minport']) + "\n", True)
+    transferLog(" - maxport : " + str(config['maxport']) + "\n", True)
+    transferLog(" - max_upload_rate : " + str(config['max_upload_rate']) + "\n", True)
+    transferLog(" - max_download_rate : " + str(config['max_download_rate']) + "\n", True)
+    transferLog(" - min_uploads : " + str(config['min_uploads']) + "\n", True)
+    transferLog(" - max_uploads : " + str(config['max_uploads']) + "\n", True)
+    transferLog(" - min_peers : " + str(config['min_peers']) + "\n", True)
+    transferLog(" - max_initiate : " + str(config['max_initiate']) + "\n", True)
+    transferLog(" - max_incomplete : " + str(config['max_incomplete']) + "\n", True)
+    transferLog(" - max_allow_in : " + str(config['max_allow_in']) + "\n", True)
+    transferLog(" - rerequest_interval : " + str(config['rerequest_interval']) + "\n", True)
+    transferLog(" - start_trackerless_client : " + str(config['start_trackerless_client']) + "\n", True)
+    transferLog(" - check_hashes : " + str(config['check_hashes']) + "\n", True)
+    transferLog(" - max_files_open : " + str(config['max_files_open']) + "\n", True)
+    transferLog(" - upnp : " + str(config['upnp']) + "\n", True)
 
     # remove command-file if exists
     if isfile(transferCommandFile):
@@ -729,11 +735,11 @@ if __name__ == '__main__':
                print " ", th
 
     # remove pid-file
-    transferLog("removing pid-file : " + app.config['stat_file'] + ".pid" + "\n", True)
+    transferLog("removing pid-file : " + transferPidFile + "\n", True)
     try:
-        remove(app.config['stat_file'] + ".pid")
+        remove(transferPidFile)
     except Exception, e:
-        transferLog("Failed to remove pid-file : " + app.config['stat_file'] + ".pid" + "\n", True)
+        transferLog("Failed to remove pid-file : " + transferPidFile + "\n", True)
         app.logger.error("Failed to remove pid-file", exc_info = e)
 
     # log exit
