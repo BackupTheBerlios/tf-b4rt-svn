@@ -49,8 +49,7 @@ $transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $t
 $tmpl->setvar('transferLabel', $transferLabel);
 
 // alias / stat
-$aliasFile = getTransferName($transfer).".stat";
-$af = new AliasFile($aliasFile);
+$af = new AliasFile(getTransferName($transfer).".stat");
 
 // set vars
 if ($af->running == 1) {

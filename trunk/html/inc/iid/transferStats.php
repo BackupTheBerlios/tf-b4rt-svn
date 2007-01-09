@@ -50,8 +50,7 @@ $tmpl->setvar('transferLabel', $transferLabel);
 
 // alias / stat
 $transferowner = getOwner($transfer);
-$aliasFile = getTransferName($transfer).".stat";
-$af = new AliasFile($aliasFile, $transferowner);
+$af = new AliasFile(getTransferName($transfer).".stat", $transferowner);
 
 // client-switch
 if (substr($transfer, -8) == ".torrent") {

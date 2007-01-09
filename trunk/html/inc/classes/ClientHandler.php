@@ -63,7 +63,6 @@ class ClientHandler
     var $transferFilePath = "";
 
     // alias
-    var $alias = "";
     var $aliasFile = "";
     var $aliasFilePath = "";
 
@@ -715,12 +714,11 @@ class ClientHandler
     function setVarsFromTransfer($transfer) {
     	global $cfg, $transfers;
         $this->transfer = $transfer;
-        $this->alias = getTransferName($this->transfer);
-        $this->aliasFile = $this->alias.".stat";
+        $this->aliasFile = $this->transfer.".stat";
         $this->aliasFilePath = $cfg["transfer_file_path"].$this->aliasFile;
-		$this->pidFilePath = $cfg["transfer_file_path"].$this->alias.".pid";
-        $this->logFilePath = $cfg["transfer_file_path"].$this->alias.".log";
-        $this->prioFilePath = $cfg["transfer_file_path"].$this->alias.".prio";
+		$this->pidFilePath = $cfg["transfer_file_path"].$this->transfer.".pid";
+        $this->logFilePath = $cfg["transfer_file_path"].$this->transfer.".log";
+        $this->prioFilePath = $cfg["transfer_file_path"].$this->transfer.".prio";
         $this->transferFilePath = $cfg["transfer_file_path"].$this->transfer;
         $this->owner = getOwner($transfer);
     }

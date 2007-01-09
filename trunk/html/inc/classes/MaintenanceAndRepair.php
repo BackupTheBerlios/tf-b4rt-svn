@@ -649,8 +649,7 @@ class MaintenanceAndRepair
 		foreach ($arList as $transfer) {
 			$owner = getOwner($transfer);
 			$btclient = getTransferClient($transfer);
-			$alias = getTransferName($transfer);
-			$af = new AliasFile($alias.".stat", $owner);
+			$af = new AliasFile(getTransferName($transfer).".stat", $owner);
 			if (isset($af)) {
 				// output
 				$this->_outputMessage("rewrite stat-file for ".$transfer." ...\n");

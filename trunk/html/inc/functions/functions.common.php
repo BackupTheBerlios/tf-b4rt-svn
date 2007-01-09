@@ -1326,8 +1326,7 @@ function getTransferLog($transfer) {
 	if (!isset($transfer) || (isValidTransfer($transfer) !== true))
 		return "invalid transfer";
 	// alias-name + log-file
-	$aliasName = getTransferName($transfer);
-	$transferLogFile = $cfg["transfer_file_path"].$aliasName.".log";
+	$transferLogFile = $cfg["transfer_file_path"].getTransferName($transfer).".log";
 	// check
 	if (!(file_exists($transferLogFile)))
 		return $emptyLog;

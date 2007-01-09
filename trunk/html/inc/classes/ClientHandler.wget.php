@@ -60,7 +60,7 @@ class ClientHandlerWget extends ClientHandler
         if ($transfer{0} == '/')
         	$transfer = substr($transfer, 1);
 		$this->setVarsFromTransfer($transfer);
-        $this->urlFile = $cfg["transfer_file_path"].$this->alias.".wget";
+        $this->urlFile = $cfg["transfer_file_path"].$transfer.".wget";
         if (empty($this->owner) || (strtolower($this->owner) == "n/a"))
         	$this->owner = $cfg['user'];
     }
@@ -73,7 +73,7 @@ class ClientHandlerWget extends ClientHandler
     function setVarsFromFile($transfer) {
     	global $cfg;
 		$this->setVarsFromTransfer($transfer);
-    	$this->urlFile = $cfg["transfer_file_path"].$this->alias.".wget";
+    	$this->urlFile = $cfg["transfer_file_path"].$transfer.".wget";
 	    $data = "";
 	    if ($fileHandle = @fopen($this->urlFile,'r')) {
 	        while (!@feof($fileHandle))
