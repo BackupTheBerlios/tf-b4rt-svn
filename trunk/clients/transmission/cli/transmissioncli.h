@@ -65,7 +65,6 @@
 "  -e, --display_interval <int>   Time between updates of stat-file\n" \
 "  -w, --owner <string>           Name of the owner (required)\n" \
 "  -t, --stat <file>              Path to stat-file (required)\n" \
-"  -z, --pid <file>               Path to pid-file (required)\n" \
 "\n"
 
 /*******************************************************************************
@@ -95,8 +94,6 @@ static char * tf_cmd_file = NULL;
 static FILE * tf_cmd_fp = NULL;
 
 static char tf_message[256];
-
-static char * tf_pid_file = NULL;
 
 /*******************************************************************************
  * functions
