@@ -165,18 +165,19 @@ int main(int argc, char ** argv) {
 
 	// print what we are starting up
 	tf_print(sprintf(tf_message, "transmission starting up :\n"));
-	fprintf(stderr, " - torrent : %s\n", torrentPath);
-	fprintf(stderr, " - owner : %s\n", tf_owner);
-	fprintf(stderr, " - seedLimit : %d\n", seedLimit);
-	fprintf(stderr, " - bindPort : %d\n", bindPort);
-	fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
-	fprintf(stderr, " - downloadLimit : %d\n", downloadLimit);
-	fprintf(stderr, " - natTraversal : %d\n", natTraversal);
-	fprintf(stderr, " - displayInterval : %d\n", displayInterval);
+	tf_print(sprintf(tf_message, " - torrent : %s\n", torrentPath));
+	tf_print(sprintf(tf_message, " - owner : %s\n", tf_owner));
+	tf_print(sprintf(tf_message, " - seedLimit : %d\n", seedLimit));
+	tf_print(sprintf(tf_message, " - bindPort : %d\n", bindPort));
+	tf_print(sprintf(tf_message, " - uploadLimit : %d\n", uploadLimit));
+	tf_print(sprintf(tf_message, " - downloadLimit : %d\n", downloadLimit));
+	tf_print(sprintf(tf_message, " - natTraversal : %d\n", natTraversal));
+	tf_print(sprintf(tf_message, " - displayInterval : %d\n", displayInterval));
 	if (finishCall != NULL)
-		fprintf(stderr, " - finishCall : %s\n", finishCall);
+		tf_print(sprintf(tf_message, " - finishCall : %s\n", finishCall));
 
-	// signal
+	// signals
+	signal(SIGTERM, sigHandler);
 	signal(SIGINT, sigHandler);
 
 	// set port + rates
@@ -654,6 +655,8 @@ static int tf_initializeStatusFacility(void) {
 	tf_stat_file[len - 2] = 'a';
 	tf_stat_file[len - 1] = 't';
 	tf_stat_file[len] = '\0';
+	tf_print(sprintf(tf_message,
+			"initialized status-facility. (%s)\n" , tf_stat_file));
 	return 1;
 }
 
@@ -675,6 +678,8 @@ static int tf_initializeCommandFacility(void) {
 	tf_cmd_file[len - 2] = 'm';
 	tf_cmd_file[len - 1] = 'd';
 	tf_cmd_file[len] = '\0';
+	tf_print(sprintf(tf_message,
+			"initialized command-facility. (%s)\n" , tf_cmd_file));
 	// remove command-file if exists
 	tf_cmd_fp = NULL;
 	tf_cmd_fp = fopen(tf_cmd_file, "r");
@@ -760,7 +765,10 @@ static int tf_print(int len) {
  * sigHandler
  ******************************************************************************/
 static void sigHandler(int signal) {
-	switch(signal) {
+	switch (signal) {
+		case SIGTERM:
+			tf_print(sprintf(tf_message, "got SIGTERM, setting shutdown-flag...\n"));
+			mustDie = 1;
 		case SIGINT:
 			tf_print(sprintf(tf_message, "got SIGINT, setting shutdown-flag...\n"));
 			mustDie = 1;
@@ -840,3 +848,4 @@ static int parseCommandLine(int argc, char ** argv) {
 	torrentPath = argv[optind];
 	return 0;
 }
+

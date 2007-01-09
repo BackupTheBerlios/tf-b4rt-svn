@@ -82,7 +82,7 @@ static char * torrentPath = NULL;
 static volatile char mustDie = 0;
 static int natTraversal = 0;
 static int seedLimit = 0;
-static int displayInterval = 1;
+static int displayInterval = 5;
 static char * finishCall = NULL;
 
 // tf
