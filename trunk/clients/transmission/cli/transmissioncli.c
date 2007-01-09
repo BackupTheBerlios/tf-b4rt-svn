@@ -271,6 +271,26 @@ int main(int argc, char ** argv) {
 			fprintf(stderr, " - finishCall : %s\n", finishCall);
 	}
 
+	// signal
+	signal(SIGINT, sigHandler);
+
+	// init some things
+	tr_setBindPort(h, bindPort);
+	tr_setGlobalUploadLimit(h, uploadLimit);
+	tr_setGlobalDownloadLimit(h, downloadLimit);
+
+	// nat-traversal
+	if (natTraversal)
+		tr_natTraversalEnable(h);
+	else
+		tr_natTraversalDisable(h);
+
+	// set folder
+	tr_torrentSetFolder(tor, ".");
+
+	// start the torrent
+	tr_torrentStart(tor);
+
 	// init command-facility
 	if (tf_stat_file != NULL) { /* tf */
 		if (tf_initCommandFacility() == 0) {
@@ -297,26 +317,6 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	// signal
-	signal(SIGINT, sigHandler);
-
-	// init some things
-	tr_setBindPort(h, bindPort);
-	tr_setGlobalUploadLimit(h, uploadLimit);
-	tr_setGlobalDownloadLimit(h, downloadLimit);
-
-	// nat-traversal
-	if (natTraversal)
-		tr_natTraversalEnable(h);
-	else
-		tr_natTraversalDisable(h);
-
-	// set folder
-	tr_torrentSetFolder(tor, ".");
-
-	// start the torrent
-	tr_torrentStart(tor);
-
 	// print that we are done with startup
 	if (tf_stat_file != NULL) {
 		tf_fprintTimestamp();
@@ -332,9 +332,6 @@ int main(int argc, char ** argv) {
 
 		// result
 		int result;
-
-		// sleep
-		sleep(displayInterval);
 
 		// torrent-stat
 		s = tr_torrentStat(tor);
@@ -552,13 +549,20 @@ int main(int argc, char ** argv) {
 			}
 		}
 
-		// finishCall / process command-stack
+		// finishCall / process command-stack / sleep
 		if (tr_getFinished(tor)) {
 			result = system(finishCall);
 		} else {
 			if (tf_stat_file != NULL) { /* tf */
-				// process command-stack
-				tf_processCommandStack(h);
+				for (i = 0; i < displayInterval; i++) {
+					// process command-stack
+					tf_processCommandStack(h);
+					// sleep
+					sleep(1);
+				}
+			} else { /* standalone */
+				// sleep
+				sleep(displayInterval);
 			}
 		}
 
