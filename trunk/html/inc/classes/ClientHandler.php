@@ -480,25 +480,11 @@ class ClientHandler
     	global $cfg;
         // log
         AuditAction($cfg["constants"]["stop_transfer"], $this->transfer);
-        // We are going to write a '0' on the front of the stat file so that
-        // the client will no to stop -- this will report stats when it dies
-        // read the alias file + create AliasFile object
-        $this->af = new AliasFile($this->aliasFile, $this->owner);
-        if ($this->af->percent_done < 100) {
-            // The transfer is being stopped but is not completed dowloading
-            $this->af->percent_done = ($this->af->percent_done + 100)*-1;
-            $this->af->running = "0";
-            $this->af->time_left = "Transfer Stopped";
-        } else {
-            // transfer was seeding and is now being stopped
-            $this->af->percent_done = 100;
-            $this->af->running = "0";
-            $this->af->time_left = "Download Succeeded!";
-        }
-        // Write out the new Stat File
-        $this->af->write();
+        // send quit-command to client
+        CommandHandler::add($this->transfer, "q");
+		CommandHandler::send($this->transfer);
         // wait until transfer is down
-        waitForTransfer($this->transfer, 0, 20);
+        waitForTransfer($this->transfer, 0, 25);
         // see if the transfer process is hung.
         $running = $this->runningProcesses();
         $isHung = false;
@@ -580,6 +566,8 @@ class ClientHandler
 				$transferTotals = $this->getTransferCurrent($this->transfer);
 				saveXfer($this->owner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
 			}
+			// command-clean
+       		CommandHandler::clean($this->transfer);
 			// remove meta-file
 			if (@file_exists($this->transferFilePath))
 				@unlink($this->transferFilePath);

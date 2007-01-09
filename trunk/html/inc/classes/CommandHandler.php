@@ -68,6 +68,21 @@ class CommandHandler
 		return $instanceCommandHandler->instance_send($transfer);
     }
 
+	/**
+	 * cleans command(s) of transfer
+	 *
+	 * @param $transfer
+	 * @return boolean
+	 */
+    function clean($transfer) {
+		global $instanceCommandHandler;
+		// initialize if needed
+		if (!isset($instanceCommandHandler))
+			CommandHandler::initialize();
+		// call instance-method
+		return $instanceCommandHandler->instance_clean($transfer);
+    }
+
     /**
      * getMessages
      *
@@ -137,6 +152,25 @@ class CommandHandler
     		: $this->_writeCommandFile($transfer);
     }
 
+	/**
+	 * cleans command(s) of transfer
+	 *
+	 * @param $transfer
+	 * @return boolean
+	 */
+    function instance_clean($transfer) {
+    	global $cfg;
+    	// if set unset
+    	if (isset($this->_commands[$transfer]))
+    		unset($this->_commands[$transfer]);
+		// if exist remove command-file
+		$file = $cfg["transfer_file_path"].getAliasName($transfer).'.cmd';
+		if (@file_exists($file))
+			@unlink($file);
+		// return
+		return true;
+    }
+
 	// =========================================================================
 	// private methods
 	// =========================================================================
@@ -149,18 +183,7 @@ class CommandHandler
      */
 	function _writeCommandFile($transfer) {
 		global $cfg;
-		$filename = "";
-		if (substr($transfer, -8) == ".torrent") {
-			$filename = substr($transfer, 0, -8).'.cmd';
-		} else if (substr($transfer, -5) == ".wget") {
-			$filename = substr($transfer, 0, -5).'.cmd';
-		} else if (substr($transfer, -4) == ".nzb") {
-			$filename = substr($transfer, 0, -4).'.cmd';
-		} else {
-			array_push($this->_messages , "Invalid Transfer : ".$transfer);
-			return false;
-		}
-		$file = $cfg["transfer_file_path"].$filename;
+		$file = $cfg["transfer_file_path"].getAliasName($transfer).'.cmd';
 		$handle = false;
 		$handle = @fopen($file, "w");
 		if (!$handle) {
