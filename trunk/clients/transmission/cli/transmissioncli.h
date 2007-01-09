@@ -29,7 +29,9 @@
  *
  ******************************************************************************/
 
-/* includes and defines */
+/*******************************************************************************
+ * includes and defines
+ ******************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -66,7 +68,11 @@
 "  -z, --pid <file>               Path to pid-file (required)\n" \
 "\n"
 
-/* fields */
+/*******************************************************************************
+ * fields
+ ******************************************************************************/
+
+// tr
 static int showHelp = 0;
 static int showInfo = 0;
 static int showScrape = 0;
@@ -80,6 +86,7 @@ static int natTraversal = 0;
 static int seedLimit = 0;
 static int displayInterval = 1;
 static char * finishCall = NULL;
+
 // tf
 static char * tf_user = NULL;
 static char * tf_stat_file = NULL;
@@ -87,18 +94,25 @@ static FILE * tf_stat_fp = NULL;
 static char * tf_cmd_file = NULL;
 static FILE * tf_cmd_fp = NULL;
 static char tf_message[256];
+
 static char * tf_pid_file = NULL;
 
-/* functions */
+/*******************************************************************************
+ * functions
+ ******************************************************************************/
+
+// tr
 static int parseCommandLine(int argc, char ** argv);
 static void sigHandler(int signal);
+
 // tf
+static int tf_initializeStatusFacility(void);
 static int tf_initializeCommandFacility(void);
 static int tf_processCommandStack(tr_handle_t *h);
 static int tf_processCommandFile(tr_handle_t *h);
 static int tf_execCommand(tr_handle_t *h, char *s);
 static int tf_pidWrite(void);
 static int tf_pidDelete(void);
-static char * tf_pidGetFilepath(void);
+static int tf_printMessage(int len);
 static void tf_fprintTimestamp(void);
 

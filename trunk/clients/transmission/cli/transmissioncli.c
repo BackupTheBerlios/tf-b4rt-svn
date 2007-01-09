@@ -29,40 +29,7 @@
  *
  ******************************************************************************/
 
-/*******************************************************************************
- *
- * tf integration history :
- *
- * 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here,
- *                     check svn-log on berliOS-svn from now on.
- * 15/07/06 : b4rt   - changes due to move to svn.
- * 08/07/06 : b4rt   - synced changes of official transmissioncli (r163-r310)
- *                   - changed statfile-output-format for "seeds" and "peers"
- *                     to have "tflux-format" (0) for "no seeds" and "no peers"
- *                     as transmission uses "-1" in that case.
- *                   - only print out version-info-string in usage+arg-error.
- * 03/07/06 : b4rt   - changes in statfile-output for "seeds" and "peers"
- * 02/07/06 : b4rt   - change to work with transmission 0.6.x codebase
- *                     (function tr_torrentInit has new argument)
- * 22/05/06 : Sylver - corrected output file when exiting transmission
- *                     (when download is not finished)
- *                   - revert default download speed back to 20 kb/s
- *                     (no need to change as torrenflux give wanted speed)
- * 22/05/06 : b4rt   - minor output-things. (just cosmetics~)
- *                   - standard-upload = 10 (like tornado)
- *                   - modified arg-conversion :
- *                     ~ applies for upload and download
- *                     ~ if user really wants to have a 0-arg (zero) he can
- *                       pass -2.
- * 21/05/06 : Sylver - When running torrentflux, download rate = 0 is
- *                     converted to -1 (no limit)
- *                   - option -z (--pid) added to log the PID in the
- *                     specified file.
- * 17/05/06 : Sylver - Corrected a bug causing segfault under FreeBSD
- *                     (was trying to close a file that wasn't open)
- ******************************************************************************/
-
-/* includes */
+// include header
 #include "transmissioncli.h"
 
 /*******************************************************************************
@@ -81,11 +48,14 @@ int main(int argc, char ** argv) {
 
 	/* Get options + check tf-args */
 	if (parseCommandLine(argc, argv)) {
-		printf("Transmission %s [%d] - tfCLI [%d]\nhttp://transmission.m0k.org/ - http://tf-b4rt.berlios.de/\n\n",
-			VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
+		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
 		return 1;
 	} else {
+
+tf_initializeStatusFacility();
+return 0;
+
 		// check tf-args
 		if ((!showHelp) && (!showInfo) && (!showScrape) && (torrentPath != NULL)) {
 			if (tf_user == NULL) {
@@ -212,13 +182,12 @@ int main(int argc, char ** argv) {
 	fprintf(stderr, "transmission starting up :\n");
 	fprintf(stderr, " - torrentPath : %s\n", torrentPath);
 	fprintf(stderr, " - tf_user : %s\n", tf_user);
-	fprintf(stderr, " - tf_stat_file : %s\n", tf_stat_file);
-	fprintf(stderr, " - tf_pid_file : %s\n", tf_pid_file);
 	fprintf(stderr, " - seedLimit : %d\n", seedLimit);
 	fprintf(stderr, " - bindPort : %d\n", bindPort);
 	fprintf(stderr, " - uploadLimit : %d\n", uploadLimit);
 	fprintf(stderr, " - downloadLimit : %d\n", downloadLimit);
 	fprintf(stderr, " - natTraversal : %d\n", natTraversal);
+	fprintf(stderr, " - displayInterval : %d\n", displayInterval);
 	if (finishCall != NULL)
 		fprintf(stderr, " - finishCall : %s\n", finishCall);
 
@@ -242,12 +211,27 @@ int main(int argc, char ** argv) {
 	// start the torrent
 	tr_torrentStart(tor);
 
-	// init command-facility
+	// initialize status-facility
+	if (tf_initializeStatusFacility() == 0) {
+		tf_fprintTimestamp();
+		fprintf(stderr, "Failed to init status-facility. exit.\n");
+		goto failed;
+	}
+
+	// initialize command-facility
 	if (tf_initializeCommandFacility() == 0) {
 		tf_fprintTimestamp();
 		fprintf(stderr, "Failed to init command-facility. exit.\n");
 		goto failed;
 	}
+
+	// write pid
+	if (tf_pidWrite() == 0) {
+		tf_fprintTimestamp();
+		fprintf(stderr, "Failed to write pid-file. exit.\n");
+		goto failed;
+	}
+
 
 	// Create pid file
 	if (tf_pid_file != NULL) {
@@ -266,6 +250,7 @@ int main(int argc, char ** argv) {
 				currentPid);
 		}
 	}
+
 
 	// print that we are done with startup
 	tf_fprintTimestamp();
@@ -674,21 +659,21 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 		case 'q':
 			tf_fprintTimestamp();
 			fprintf(stderr,
-				"Command: stop-request, setting shutdown-flag...\n");
+				"command: stop-request, setting shutdown-flag...\n");
 			mustDie = 1;
 			return 1;
 		case 'u':
 			uploadLimit = atoi(workload);
 			tf_fprintTimestamp();
 			fprintf(stderr,
-				"Command: setting Upload-Rate to %d\n", uploadLimit);
+				"command: setting upload-rate to %d\n", uploadLimit);
 			tr_setGlobalUploadLimit(h, uploadLimit);
 			return 0;
 		case 'd':
 			downloadLimit = atoi(workload);
 			tf_fprintTimestamp();
 			fprintf(stderr,
-				"Command: setting Download-Rate to %d\n", downloadLimit);
+				"command: setting download-rate to %d\n", downloadLimit);
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
 		default:
@@ -700,13 +685,36 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 }
 
 /*******************************************************************************
+ * tf_initializeStatusFacility
+ ******************************************************************************/
+static int tf_initializeStatusFacility(void) {
+	// .torrent
+	// .stat
+	// .pid
+	// vars
+	int len = strlen(torrentPath) - 3;
+	tf_stat_file = malloc((len + 1) * sizeof(char));
+	if (tf_stat_file == NULL) {
+		tf_fprintTimestamp();
+		fprintf(stderr,
+			"Error : tf_initializeStatusFacility : not enough mem for malloc\n");
+		return 0;
+	}
+	strncat(tf_stat_file, torrentPath, len - 4);
+	strncat(tf_stat_file, "stat", 4);
+	tf_printMessage(sprintf(tf_message, "torrentPath : %s\n", torrentPath));
+	tf_printMessage(sprintf(tf_message, "tf_stat_file : %s\n", tf_stat_file));
+	return 1;
+}
+
+/*******************************************************************************
  * tf_initializeCommandFacility
  ******************************************************************************/
 static int tf_initializeCommandFacility(void) {
 	int i, len;
 	// verbose
 	tf_fprintTimestamp();
-	fprintf(stderr, "initializing Command-Facility...\n");
+	fprintf(stderr, "initializing command-facility...\n");
 	// path-string
 	len = strlen(tf_stat_file) - 1;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
@@ -736,6 +744,39 @@ static int tf_initializeCommandFacility(void) {
 		tf_cmd_fp = NULL;
 	}
 	return 1;
+}
+
+/*******************************************************************************
+ * tf_pidWrite
+ ******************************************************************************/
+static int tf_pidWrite(void) {
+	return 1;
+}
+
+/*******************************************************************************
+ * tf_pidDelete
+ ******************************************************************************/
+static int tf_pidDelete(void) {
+	return 1;
+}
+
+/*******************************************************************************
+ * tf_printMessage
+ ******************************************************************************/
+static int tf_printMessage(int len) {
+	time_t ct;
+	struct tm * cts;
+	time(&ct);
+	cts = localtime(&ct);
+	return fprintf(stderr, "[%4d/%02d/%02d - %02d:%02d:%02d] %s",
+		cts->tm_year + 1900,
+		cts->tm_mon + 1,
+		cts->tm_mday,
+		cts->tm_hour,
+		cts->tm_min,
+		cts->tm_sec,
+		(tf_message != NULL) ? tf_message : "\n"
+	);
 }
 
 /*******************************************************************************

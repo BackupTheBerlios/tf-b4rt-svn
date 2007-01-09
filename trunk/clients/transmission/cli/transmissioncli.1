@@ -1,5 +1,7 @@
 .\" $Id$
 .\"
+.\" ****************************************************************************
+.\"
 .\"  Copyright (c) Deanna Phillips <deanna@sdf.lonestar.org>
 .\"
 .\"  Permission to use, copy, modify, and distribute this software for any
@@ -13,6 +15,38 @@
 .\"  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 .\"  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\"  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.\" ****************************************************************************
+.\"
+.\" 16/07/06 : b4rt   - changes due to move to berliOS. last history-entry here,
+.\"                     check svn-log on berliOS-svn from now on.
+.\" 15/07/06 : b4rt   - changes due to move to svn.
+.\" 08/07/06 : b4rt   - synced changes of official transmissioncli (r163-r310)
+.\"                   - changed statfile-output-format for "seeds" and "peers"
+.\"                     to have "tflux-format" (0) for "no seeds" and "no peers"
+.\"                     as transmission uses "-1" in that case.
+.\"                   - only print out version-info-string in usage+arg-error.
+.\" 03/07/06 : b4rt   - changes in statfile-output for "seeds" and "peers"
+.\" 02/07/06 : b4rt   - change to work with transmission 0.6.x codebase
+.\"                     (function tr_torrentInit has new argument)
+.\" 22/05/06 : Sylver - corrected output file when exiting transmission
+.\"                     (when download is not finished)
+.\"                   - revert default download speed back to 20 kb/s
+.\"                     (no need to change as torrenflux give wanted speed)
+.\" 22/05/06 : b4rt   - minor output-things. (just cosmetics~)
+.\"                   - standard-upload = 10 (like tornado)
+.\"                   - modified arg-conversion :
+.\"                     ~ applies for upload and download
+.\"                     ~ if user really wants to have a 0-arg (zero) he can
+.\"                       pass -2.
+.\" 21/05/06 : Sylver - When running torrentflux, download rate = 0 is
+.\"                     converted to -1 (no limit)
+.\"                   - option -z (--pid) added to log the PID in the
+.\"                     specified file.
+.\" 17/05/06 : Sylver - Corrected a bug causing segfault under FreeBSD
+.\"                     was trying to close a file that wasn't open)
+.\"
+.\" ****************************************************************************
 .\"
 .Dd $Date$
 .Dt TRANSMISSIONCLI 1
