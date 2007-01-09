@@ -641,15 +641,16 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
  ******************************************************************************/
 static int tf_initializeStatusFacility(void) {
 	int i;
-	int len = strlen(torrentPath) - 3;
+	int len = strlen(torrentPath) + 5;
 	tf_stat_file = malloc((len + 1) * sizeof(char));
 	if (tf_stat_file == NULL) {
 		tf_print(sprintf(tf_message,
 			"Error : tf_initializeStatusFacility : not enough mem for malloc\n"));
 		return 0;
 	}
-	for (i = 0; i < len - 4; i++)
+	for (i = 0; i < len - 5; i++)
 		tf_stat_file[i] = torrentPath[i];
+	tf_stat_file[len - 5] = '.';
 	tf_stat_file[len - 4] = 's';
 	tf_stat_file[len - 3] = 't';
 	tf_stat_file[len - 2] = 'a';
@@ -665,15 +666,16 @@ static int tf_initializeStatusFacility(void) {
  ******************************************************************************/
 static int tf_initializeCommandFacility(void) {
 	int i;
-	int len = strlen(torrentPath) - 4;
+	int len = strlen(torrentPath) + 4;
 	tf_cmd_file = malloc((len + 1) * sizeof(char));
 	if (tf_cmd_file == NULL) {
 		tf_print(sprintf(tf_message,
 			"Error : tf_initializeCommandFacility : not enough mem for malloc\n"));
 		return 0;
 	}
-	for (i = 0; i < len - 3; i++)
+	for (i = 0; i < len - 4; i++)
 		tf_cmd_file[i] = torrentPath[i];
+	tf_cmd_file[len - 4] = '.';
 	tf_cmd_file[len - 3] = 'c';
 	tf_cmd_file[len - 2] = 'm';
 	tf_cmd_file[len - 1] = 'd';
@@ -702,10 +704,11 @@ static int tf_pidWrite(void) {
 	int i;
 	FILE * pidFile;
 	pid_t currentPid = getpid();
-	int len = strlen(torrentPath) - 4;
+	int len = strlen(torrentPath) + 4;
 	char tf_pid_file[len + 1];
-	for (i = 0; i < len - 3; i++)
+	for (i = 0; i < len - 4; i++)
 		tf_pid_file[i] = torrentPath[i];
+	tf_pid_file[len - 4] = '.';
 	tf_pid_file[len - 3] = 'p';
 	tf_pid_file[len - 2] = 'i';
 	tf_pid_file[len - 1] = 'd';
@@ -729,10 +732,11 @@ static int tf_pidWrite(void) {
  ******************************************************************************/
 static int tf_pidDelete(void) {
 	int i;
-	int len = strlen(torrentPath) - 4;
+	int len = strlen(torrentPath) + 4;
 	char tf_pid_file[len + 1];
-	for (i = 0; i < len - 3; i++)
+	for (i = 0; i < len - 4; i++)
 		tf_pid_file[i] = torrentPath[i];
+	tf_pid_file[len - 4] = '.';
 	tf_pid_file[len - 3] = 'p';
 	tf_pid_file[len - 2] = 'i';
 	tf_pid_file[len - 1] = 'd';
