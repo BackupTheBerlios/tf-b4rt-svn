@@ -1,10 +1,10 @@
 .\"
 .\"  Copyright (c) Deanna Phillips <deanna@sdf.lonestar.org>
-.\" 
+.\"
 .\"  Permission to use, copy, modify, and distribute this software for any
 .\"  purpose with or without fee is hereby granted, provided that the above
 .\"  copyright notice and this permission notice appear in all copies.
-.\" 
+.\"
 .\"  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
 .\"  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
 .\"  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -13,12 +13,12 @@
 .\"  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\"  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd April 22, 2006
+.Dd Jan 9, 2007
 .Dt TRANSMISSIONCLI 1
 .Os
 .Sh NAME
 .Nm transmissioncli
-.Nd a lightweight bittorrent client
+.Nd torrentflux-b4rt-version.
 .Sh SYNOPSIS
 .Nm transmissioncli
 .Bk -words
@@ -31,12 +31,17 @@
 .Op Fl u Ar upload-rate
 .Op Fl u Ar download-rate
 .Op Fl f Ar script
+.Op Fl w Ar username
+.Op Fl t Ar stat-file
+.Op Fl z Ar pid-file
 .Ek
 .Sh DESCRIPTION
 The
 .Nm
 program is a lightweight, command-line BitTorrent client with
-scripting capabilities.  The options are as follows:
+scripting capabilities.
+this version of transmissioncli is for torrentflux-b4rt.
+The options are as follows:
 .Pp
 .Bl -tag -width Ds
 .It Fl h, Fl -help
@@ -58,13 +63,24 @@ mapping for allowing incoming peer connections.
 Specifies an alternate port for the client to listen on.  The default is
 9090.
 .It Fl u, -upload Ar upload-rate
-Specifies the maximum upload rate in kB/s, which defaults to 20. The
-level -1 may be used for unlimited uploads.
+Specifies the maximum upload rate in kB/s, which defaults to 10. The
+level -1 or 0 may be used for unlimited uploads.
 .It Fl d, -download Ar download-rate
 Specifies the maximum download rate in kB/s, which defaults to -1 for
-no download limit.
+no download limit).
 .It Fl f, -finish Ar script
 Specifies a shell script to be executed upon successful download.
+.It Fl s, -seedlimit Ar int
+Seed to reach before exiting transmission.
+(0 = seed forever -1 = no seeding)
+.It Fl e, -display_interval Ar int
+Time between updates of information in stat-file
+.It Fl w, -owner Ar string
+Name of the owner (required)
+.It Fl t, -stat Ar file
+Path to stat-file (required)
+.It Fl z, -pid Ar file
+Path to pid-file (required)
 .El
 .Sh FILES
 .Pa ~/.transmission
@@ -75,16 +91,20 @@ keeps torrent information for future seeding and resume operations.
 .Sh AUTHORS
 The
 .Nm
-program was written by 
+program was written by
 .An -nosplit
 .An Eric Petit Aq titer@m0k.org
 .An Josh Elsasser Aq josh@elsasser.org
 .An Bryan Varner Aq bryan@varnernet.com
 and
 .An Michael Demars Aq keul@m0k.org .
+tfCLI by
+.An b4rt Aq b4rt@users.berlios.de
+and
+.An Sylver
 .Sh SEE ALSO
-http://transmission.m0k.org
-.Sh CAVEATS 
+http://transmission.m0k.org - http://tf-b4rt.berlios.de/
+.Sh CAVEATS
 .Nm
 currently saves its downloads into the directory from which it was
 called.  If this directory is not writeable by the user, the program
