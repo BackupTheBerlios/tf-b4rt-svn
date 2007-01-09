@@ -718,7 +718,7 @@ class ClientHandler
         $this->alias = getTransferName($this->transfer);
         $this->aliasFile = $this->alias.".stat";
         $this->aliasFilePath = $cfg["transfer_file_path"].$this->aliasFile;
-		$this->pidFilePath = $cfg["transfer_file_path"].$this->alias.".stat.pid";
+		$this->pidFilePath = $cfg["transfer_file_path"].$this->alias.".pid";
         $this->logFilePath = $cfg["transfer_file_path"].$this->alias.".log";
         $this->prioFilePath = $cfg["transfer_file_path"].$this->alias.".prio";
         $this->transferFilePath = $cfg["transfer_file_path"].$this->transfer;
