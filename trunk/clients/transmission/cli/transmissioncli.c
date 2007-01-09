@@ -41,12 +41,13 @@ int main(int argc, char ** argv) {
 	int i, error, nat;
 	tr_handle_t * h;
 	tr_torrent_t * tor;
-	tr_stat_t * s = NULL;
+	tr_stat_t * s;
+	tr_info_t * info;
 	double tf_sharing = 0.0;
 	char tf_eta[80];
 	int tf_seeders, tf_leechers;
 
-	/* Get options */
+	/* get options */
 	if (parseCommandLine(argc, argv)) {
 		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
@@ -60,19 +61,6 @@ int main(int argc, char ** argv) {
 		return 0;
 	}
 
-/* -------------------------------------------------------------------------- */
-/*
-tf_print(sprintf(tf_message, "torrentPath : %s\n", torrentPath));
-tf_initializeStatusFacility();
-tf_print(sprintf(tf_message, "tf_stat_file : %s\n", tf_stat_file));
-tf_initializeCommandFacility();
-tf_print(sprintf(tf_message, "tf_cmd_file : %s\n", tf_cmd_file));
-tf_pidWrite();
-tf_pidDelete();
-return 0;
-*/
-/* -------------------------------------------------------------------------- */
-
 	// verbose
 	if (verboseLevel < 0)
 		verboseLevel = 0;
@@ -84,20 +72,19 @@ return 0;
 		putenv(env);
 	}
 
-	// Initialize libtransmission
+	// initialize libtransmission
 	h = tr_init();
 
-	// Open and parse torrent file
+	// open and parse torrent file
 	if (!(tor = tr_torrentInit(h, torrentPath, 0, &error))) {
 		tf_print(sprintf(tf_message, "Failed opening torrent file '%s'\n", torrentPath));
 		goto failed;
 	}
 
-
 	/* show info */
 	if (showInfo) {
 		// info
-		tr_info_t * info = tr_torrentInfo(tor);
+		info = tr_torrentInfo(tor);
 		// stat
 		s = tr_torrentStat(tor);
 		// Print torrent info (quite à la btshowmetainfo)
@@ -123,7 +110,6 @@ return 0;
 		goto cleanup;
 	}
 
-
 	/* show scrape */
 	if (showScrape) {
 		int seeders, leechers, downloaded;
@@ -135,7 +121,6 @@ return 0;
 		// cleanup
 		goto cleanup;
 	}
-
 
 	/* start up transmission */
 
@@ -158,7 +143,7 @@ return 0;
 		strcpy(tf_owner, "n/a");
 	}
 
-	// If running torrentflux, Download limit = 0 means no limit
+	// check rate-args
 	// up
 	switch (uploadLimit) {
 		case 0:
@@ -211,6 +196,9 @@ return 0;
 	// start the torrent
 	tr_torrentStart(tor);
 
+	// info
+	info = tr_torrentInfo(tor);
+
 	// initialize status-facility
 	if (tf_initializeStatusFacility() == 0) {
 		tf_print(sprintf(tf_message, "Failed to init status-facility. exit.\n"));
@@ -240,22 +228,21 @@ return 0;
 
 		if (s->status & TR_STATUS_CHECK) {                   /* --- CHECK --- */
 
-			// write tf-stat-file
-			tr_info_t * info = tr_torrentInfo(tor);
+			// write stat-file
 			tf_stat_fp = fopen(tf_stat_file, "w+");
 			if (tf_stat_fp != NULL) {
 				fprintf(tf_stat_fp, "%d\n%.1f\n%s\n0 kB/s\n0 kB/s\n%s\n0\n0\n0.0\n%d\n0\n%" PRIu64 "\n%" PRIu64,
 					1,                        /* State             */
 					100.0 * s->progress,      /* checking progress */
 					"Checking existing data", /* State text        */
-											  /* download speed    */
-											  /* upload speed      */
-					tf_owner,                 /* owner              */
-											  /* seeds             */
-											  /* peers             */
-											  /* sharing           */
+					                          /* download speed    */
+					                          /* upload speed      */
+					tf_owner,                 /* owner             */
+					                          /* seeds             */
+					                          /* peers             */
+					                          /* sharing           */
 					seedLimit,                /* seedlimit         */
-											  /* uploaded bytes    */
+					                          /* uploaded bytes    */
 					s->downloaded,            /* downloaded bytes  */
 					info->totalSize);         /* global size       */
 				fclose(tf_stat_fp);
@@ -266,126 +253,122 @@ return 0;
 
 		} else if (s->status & TR_STATUS_DOWNLOAD) {      /* --- DOWNLOAD --- */
 
-				// sharing
-				if (s->downloaded != 0)
-					tf_sharing =
-						((double)(s->uploaded) / (double)(s->downloaded)) * 100;
+			// sharing
+			if (s->downloaded != 0)
+				tf_sharing =
+					((double)(s->uploaded) / (double)(s->downloaded)) * 100;
 
-				// seeders + leechers
-				tf_seeders = (s->seeders < 0)
-					? 0
-					: s->seeders;
-				tf_leechers = (s->leechers < 0)
-					? 0
-					: s->leechers;
+			// seeders + leechers
+			tf_seeders = (s->seeders < 0)
+				? 0
+				: s->seeders;
+			tf_leechers = (s->leechers < 0)
+				? 0
+				: s->leechers;
 
-				// eta
-				if (s->eta != -1) {
-					// sanity-check. value of eta >= 7 days is not really of use
-					if (s->eta < 604800) {
-						if ((s->eta / (24 * 60 * 60)) != 0) {
-							sprintf(tf_eta, "%d:%02d:%02d:%02d",
-								s->eta / (24 * 60 * 60),
-								((s->eta) % (24 * 60 * 60)) / (60 * 60),
-								((s->eta) % (60 * 60) / 60),
-								s->eta % 60);
-						} else if ((s->eta / (60 * 60)) != 0) {
-							sprintf(tf_eta, "%d:%02d:%02d",
-								(s->eta) / (60 * 60),
-								((s->eta) % (60 * 60) / 60),
-								s->eta % 60);
-						} else {
-							sprintf(tf_eta, "%d:%02d",
-								(s->eta) / 60, s->eta % 60);
-						}
+			// eta
+			if (s->eta != -1) {
+				// sanity-check. value of eta >= 7 days is not really of use
+				if (s->eta < 604800) {
+					if ((s->eta / (24 * 60 * 60)) != 0) {
+						sprintf(tf_eta, "%d:%02d:%02d:%02d",
+							s->eta / (24 * 60 * 60),
+							((s->eta) % (24 * 60 * 60)) / (60 * 60),
+							((s->eta) % (60 * 60) / 60),
+							s->eta % 60);
+					} else if ((s->eta / (60 * 60)) != 0) {
+						sprintf(tf_eta, "%d:%02d:%02d",
+							(s->eta) / (60 * 60),
+							((s->eta) % (60 * 60) / 60),
+							s->eta % 60);
 					} else {
-						sprintf(tf_eta, "-");
+						sprintf(tf_eta, "%d:%02d",
+							(s->eta) / 60, s->eta % 60);
 					}
 				} else {
 					sprintf(tf_eta, "-");
 				}
-				if ((s->seeders == -1) && (s->peersTotal == 0))
-					sprintf(tf_eta, "Connecting to Peers");
+			} else {
+				sprintf(tf_eta, "-");
+			}
+			if ((s->seeders == -1) && (s->peersTotal == 0))
+				sprintf(tf_eta, "Connecting to Peers");
 
-				// write tf-stat-file
-				tf_stat_fp = fopen(tf_stat_file, "w+");
-				if (tf_stat_fp != NULL) {
-					tr_info_t * info = tr_torrentInfo( tor );
-					fprintf(tf_stat_fp, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
-						1,                                /* State            */
-						100.0 * s->progress,              /* progress         */
-						tf_eta,                           /* Estimated time   */
-						s->rateDownload,                  /* download speed   */
-						s->rateUpload,                    /* upload speed     */
-						tf_owner,                         /* owner             */
-						s->peersUploading, tf_seeders,    /* seeds            */
-						s->peersDownloading, tf_leechers, /* peers            */
-						tf_sharing,                       /* sharing          */
-						seedLimit,                        /* seedlimit        */
-						s->uploaded,                      /* uploaded bytes   */
-						s->downloaded,                    /* downloaded bytes */
-						info->totalSize);                 /* global size      */
-					fclose(tf_stat_fp);
-				} else {
-					tf_print(sprintf(tf_message,
-						"error opening stat-file for write : %s\n",
-						tf_stat_file));
-				}
+			// write stat-file
+			tf_stat_fp = fopen(tf_stat_file, "w+");
+			if (tf_stat_fp != NULL) {
+				fprintf(tf_stat_fp, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
+					1,                                /* State            */
+					100.0 * s->progress,              /* progress         */
+					tf_eta,                           /* Estimated time   */
+					s->rateDownload,                  /* download speed   */
+					s->rateUpload,                    /* upload speed     */
+					tf_owner,                         /* owner            */
+					s->peersUploading, tf_seeders,    /* seeds            */
+					s->peersDownloading, tf_leechers, /* peers            */
+					tf_sharing,                       /* sharing          */
+					seedLimit,                        /* seedlimit        */
+					s->uploaded,                      /* uploaded bytes   */
+					s->downloaded,                    /* downloaded bytes */
+					info->totalSize);                 /* global size      */
+				fclose(tf_stat_fp);
+			} else {
+				tf_print(sprintf(tf_message,
+					"error opening stat-file for write : %s\n",
+					tf_stat_file));
+			}
 
 		} else if (s->status & TR_STATUS_SEED) {              /* --- SEED --- */
 
-			// info
-			tr_info_t * info = tr_torrentInfo(tor);
+			// sharing
+			tf_sharing = (s->downloaded != 0)
+				? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
+				: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
 
-				// sharing
-				tf_sharing = (s->downloaded != 0)
-					? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
-					: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
+			// die-on-seed-limit / die-when-done
+			if (seedLimit == -1) {
+				tf_print(sprintf(tf_message,
+					"die-when-done set, setting shutdown-flag...\n"));
+				mustDie = 1;
+			} else if ((seedLimit != 0) &&
+				(tf_sharing > (double)(seedLimit))) {
+				tf_print(sprintf(tf_message,
+					"seed-limit %d reached, setting shutdown-flag...\n",
+					seedLimit));
+				mustDie = 1;
+			}
 
-				// die-on-seed-limit / die-when-done
-				if (seedLimit == -1) {
-					tf_print(sprintf(tf_message,
-						"die-when-done set, setting shutdown-flag...\n"));
-					mustDie = 1;
-				} else if ((seedLimit != 0) &&
-					(tf_sharing > (double)(seedLimit))) {
-					tf_print(sprintf(tf_message,
-						"seed-limit %d reached, setting shutdown-flag...\n",
-						seedLimit));
-					mustDie = 1;
-				}
+			// seeders + leechers
+			tf_seeders = (s->seeders < 0)
+				? 0
+				: s->seeders;
+			tf_leechers = (s->leechers < 0)
+				? 0
+				: s->leechers;
 
-				// seeders + leechers
-				tf_seeders = (s->seeders < 0)
-					? 0
-					: s->seeders;
-				tf_leechers = (s->leechers < 0)
-					? 0
-					: s->leechers;
-
-				// write tf-stat-file
-				tf_stat_fp = fopen(tf_stat_file, "w+");
-				if (tf_stat_fp != NULL) {
-					fprintf(tf_stat_fp, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
-						1,                                /* State            */
-						100.0 * s->progress,              /* progress         */
-						"Download Succeeded!",            /* State text       */
-						s->rateDownload,                  /* download speed   */
-						s->rateUpload,                    /* upload speed     */
-						tf_owner,                         /* owner             */
-						s->peersUploading, tf_seeders,    /* seeds            */
-						s->peersDownloading, tf_leechers, /* peers            */
-						tf_sharing,                       /* sharing          */
-						seedLimit,                        /* seedlimit        */
-						s->uploaded,                      /* uploaded bytes   */
-						s->downloaded,                    /* downloaded bytes */
-						info->totalSize);                 /* global size      */
-					fclose(tf_stat_fp);
-				} else {
-					tf_print(sprintf(tf_message,
-						"error opening stat-file for write : %s\n",
-						tf_stat_file));
-				}
+			// write stat-file
+			tf_stat_fp = fopen(tf_stat_file, "w+");
+			if (tf_stat_fp != NULL) {
+				fprintf(tf_stat_fp, "%d\n%.1f\n%s\n%.1f kB/s\n%.1f kB/s\n%s\n%d (%d)\n%d (%d)\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
+					1,                                /* State            */
+					100.0 * s->progress,              /* progress         */
+					"Download Succeeded!",            /* State text       */
+					s->rateDownload,                  /* download speed   */
+					s->rateUpload,                    /* upload speed     */
+					tf_owner,                         /* owner             */
+					s->peersUploading, tf_seeders,    /* seeds            */
+					s->peersDownloading, tf_leechers, /* peers            */
+					tf_sharing,                       /* sharing          */
+					seedLimit,                        /* seedlimit        */
+					s->uploaded,                      /* uploaded bytes   */
+					s->downloaded,                    /* downloaded bytes */
+					info->totalSize);                 /* global size      */
+				fclose(tf_stat_fp);
+			} else {
+				tf_print(sprintf(tf_message,
+					"error opening stat-file for write : %s\n",
+					tf_stat_file));
+			}
 
 		} // end status-if
 
@@ -415,46 +398,44 @@ return 0;
 	tf_print(sprintf(tf_message, "transmission shutting down...\n"));
 
 	// mark torrent as stopped in tf-stat-file
-	if (tf_stat_file != NULL) {
 
-		// info
-		tr_info_t * info = tr_torrentInfo(tor);
+	// torrent-stat
+	s = tr_torrentStat(tor);
 
-		// sharing
-		tf_sharing = (s->downloaded != 0)
-			? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
-			: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
+	// sharing
+	tf_sharing = (s->downloaded != 0)
+		? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
+		: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
 
-		// write tf-stat-file
-		tf_stat_fp = fopen(tf_stat_file, "w+");
-		if (tf_stat_fp != NULL) {
-			float progress;
-			if (s->status & TR_STATUS_SEED) {
-				sprintf(tf_eta, "Download Succeeded!");
-				progress = 100;
-			} else {
-				sprintf(tf_eta, "Torrent Stopped");
-				progress = -(1 + s->progress) * 100;
-			}
-			fprintf(tf_stat_fp, "%d\n%.1f\n%s\n\n\n%s\n\n\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
-				0,                /* State            */
-				progress,         /* progress         */
-				tf_eta,           /* State text       */
-				                  /* download speed   */
-				                  /* upload speed     */
-				tf_owner,         /* owner             */
-				                  /* seeds            */
-				                  /* peers            */
-				tf_sharing,       /* sharing          */
-				seedLimit,        /* seedlimit        */
-				s->uploaded,      /* uploaded bytes   */
-				s->downloaded,    /* downloaded bytes */
-				info->totalSize); /* global size      */
-			fclose(tf_stat_fp);
+	// write stat-file
+	tf_stat_fp = fopen(tf_stat_file, "w+");
+	if (tf_stat_fp != NULL) {
+		float progress;
+		if (s->status & TR_STATUS_SEED) {
+			sprintf(tf_eta, "Download Succeeded!");
+			progress = 100;
 		} else {
-			tf_print(sprintf(tf_message,
-				"error opening stat-file for write : %s\n", tf_stat_file));
+			sprintf(tf_eta, "Torrent Stopped");
+			progress = -(1 + s->progress) * 100;
 		}
+		fprintf(tf_stat_fp, "%d\n%.1f\n%s\n\n\n%s\n\n\n%.1f\n%d\n%" PRIu64 "\n%" PRIu64 "\n%" PRIu64,
+			0,                /* State            */
+			progress,         /* progress         */
+			tf_eta,           /* State text       */
+							  /* download speed   */
+							  /* upload speed     */
+			tf_owner,         /* owner            */
+							  /* seeds            */
+							  /* peers            */
+			tf_sharing,       /* sharing          */
+			seedLimit,        /* seedlimit        */
+			s->uploaded,      /* uploaded bytes   */
+			s->downloaded,    /* downloaded bytes */
+			info->totalSize); /* global size      */
+		fclose(tf_stat_fp);
+	} else {
+		tf_print(sprintf(tf_message,
+			"error opening stat-file for write : %s\n", tf_stat_file));
 	}
 
 	// Try for 5 seconds to notify the tracker that we are leaving
@@ -478,19 +459,20 @@ return 0;
 	// print exit
 	tf_print(sprintf(tf_message, "transmission exit.\n"));
 
-	/*
-	 * cleanup
-	 */
-	cleanup:
-		tr_torrentClose(h, tor);
+/*
+ * cleanup
+ */
+cleanup:
+tr_torrentClose(h, tor);
 
-	/*
-	 * failed
-	 */
-	failed:
-		tr_close(h);
-		return 0;
-}
+/*
+ * failed
+ */
+failed:
+tr_close(h);
+return 0;
+
+} // end main
 
 /*******************************************************************************
  * tf_processCommandStack
@@ -623,27 +605,32 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 
 	// opcode-switch
 	switch (opcode) {
+
 		case 'q':
 			tf_print(sprintf(tf_message,
 				"command: stop-request, setting shutdown-flag...\n"));
 			mustDie = 1;
 			return 1;
+
 		case 'u':
 			uploadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
 				"command: setting upload-rate to %d\n", uploadLimit));
 			tr_setGlobalUploadLimit(h, uploadLimit);
 			return 0;
+
 		case 'd':
 			downloadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
 				"command: setting download-rate to %d\n", downloadLimit));
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
+
 		default:
 			tf_print(sprintf(tf_message,
 				"op-code unknown: %c\n", opcode));
 			return 0;
+
 	}
 	return 0;
 }
@@ -853,4 +840,3 @@ static int parseCommandLine(int argc, char ** argv) {
 	torrentPath = argv[optind];
 	return 0;
 }
-

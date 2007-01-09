@@ -102,9 +102,6 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " nohup ";
         $this->command .= $this->nice;
         $this->command .= escapeshellarg($cfg["btclient_transmission_bin"]);
-        //$this->command .= " -t ".escapeshellarg($this->aliasFilePath);
-        //$this->command .= " -w ".$this->owner;
-        //$this->command .= " -z ".escapeshellarg($this->pidFilePath);
         $this->command .= " -o ".$this->owner;
         $this->command .= " -e 5";
         $this->command .= " -c ".escapeshellarg($this->sharekill_param);
