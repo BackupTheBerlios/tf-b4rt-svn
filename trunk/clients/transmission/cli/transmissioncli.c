@@ -46,21 +46,12 @@ int main(int argc, char ** argv) {
 	char tf_eta[80];
 	int tf_seeders, tf_leechers;
 
-	/* Get options + check tf-args */
+	/* Get options */
 	if (parseCommandLine(argc, argv)) {
 		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
 		printf(USAGE, argv[0], TR_DEFAULT_PORT);
 		return 1;
 	}
-
-tf_fprintTimestamp(); printf("torrentPath : %s\n", torrentPath);
-tf_initializeStatusFacility();
-tf_fprintTimestamp(); printf("tf_stat_file : %s\n", tf_stat_file);
-tf_initializeCommandFacility();
-tf_fprintTimestamp(); printf("tf_cmd_file : %s\n", tf_cmd_file);
-tf_pidWrite();
-tf_pidDelete();
-return 0;
 
 	/* show help */
 	if (showHelp) {
@@ -72,11 +63,26 @@ return 0;
 	// check user-arg
 	if ((torrentPath != NULL) && (tf_user == NULL) &&
 		(!showInfo) && (!showScrape)) {
-		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-		printf(USAGE, argv[0], TR_DEFAULT_PORT);
-		printf("Error. Missing argument: Name of the owner.\n\n");
-		return 1;
+		tf_fprintTimestamp();
+		fprintf(stderr, "no owner supplied, using 'n/a'.\n");
+		tf_user = malloc((4) * sizeof(char));
+		if (tf_user == NULL) {
+			tf_fprintTimestamp();
+			fprintf(stderr,
+				"Error : not enough mem for malloc\n");
+			return 1;
+		}
+		strcpy(tf_user, "n/a");
 	}
+
+tf_fprintTimestamp(); printf("torrentPath : %s\n", torrentPath);
+tf_initializeStatusFacility();
+tf_fprintTimestamp(); printf("tf_stat_file : %s\n", tf_stat_file);
+tf_initializeCommandFacility();
+tf_fprintTimestamp(); printf("tf_cmd_file : %s\n", tf_cmd_file);
+tf_pidWrite();
+tf_pidDelete();
+return 0;
 
 	// verbose
 	if (verboseLevel < 0)
@@ -717,17 +723,10 @@ static int tf_initializeCommandFacility(void) {
  ******************************************************************************/
 static int tf_pidWrite(void) {
 	int i;
-	char * tf_pid_file;
 	FILE * pidFile;
 	pid_t currentPid = getpid();
 	int len = strlen(torrentPath) - 4;
-	tf_pid_file = malloc((len + 1) * sizeof(char));
-	if (tf_pid_file == NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr,
-			"Error : tf_pidWrite : not enough mem for malloc\n");
-		return 0;
-	}
+	char tf_pid_file[len + 1];
 	for (i = 0; i < len - 3; i++)
 		tf_pid_file[i] = torrentPath[i];
 	tf_pid_file[len - 3] = 'p';
@@ -755,15 +754,8 @@ static int tf_pidWrite(void) {
  ******************************************************************************/
 static int tf_pidDelete(void) {
 	int i;
-	char * tf_pid_file;
 	int len = strlen(torrentPath) - 4;
-	tf_pid_file = malloc((len + 1) * sizeof(char));
-	if (tf_pid_file == NULL) {
-		tf_fprintTimestamp();
-		fprintf(stderr,
-			"Error : tf_pidDelete : not enough mem for malloc\n");
-		return 0;
-	}
+	char tf_pid_file[len + 1];
 	for (i = 0; i < len - 3; i++)
 		tf_pid_file[i] = torrentPath[i];
 	tf_pid_file[len - 3] = 'p';
@@ -844,13 +836,12 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { "finish",             required_argument, NULL, 'f' },
 		  { "seedlimit",          required_argument, NULL, 'c' },
 		  { "display_interval",   required_argument, NULL, 'e' },
-		  { "stat",               required_argument, NULL, 't' },
-		  { "owner",              required_argument, NULL, 'w' },
+		  { "owner",              required_argument, NULL, 'o' },
 		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:f:c:e:t:w:n", long_options, &optind);
+			"hisv:p:u:d:f:c:e:o:n", long_options, &optind);
 		if (c < 0)
 			break;
 		switch(c) {
@@ -887,10 +878,7 @@ static int parseCommandLine(int argc, char ** argv) {
 			case 'e':
 				displayInterval = atoi(optarg);
 				break;
-			case 't':
-				tf_stat_file = optarg;
-				break;
-			case 'w':
+			case 'o':
 				tf_user = optarg;
 				break;
 			default:
@@ -902,3 +890,4 @@ static int parseCommandLine(int argc, char ** argv) {
 	torrentPath = argv[optind];
 	return 0;
 }
+

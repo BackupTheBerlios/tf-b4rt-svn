@@ -66,8 +66,7 @@
 .Op Fl u Ar upload-rate
 .Op Fl u Ar download-rate
 .Op Fl f Ar script
-.Op Fl w Ar username
-.Op Fl t Ar stat-file
+.Op Fl o Ar owner
 .Ek
 .Sh DESCRIPTION
 The
@@ -109,10 +108,8 @@ Seed to reach before exiting transmission.
 (0 = seed forever -1 = no seeding)
 .It Fl e, -display_interval Ar int
 Time between updates of stat-file
-.It Fl w, -owner Ar string
-Name of the owner (required)
-.It Fl t, -stat Ar file
-Path to stat-file (required)
+.It Fl o, -owner Ar string
+Name of the owner
 .El
 .Sh FILES
 .Pa ~/.transmission

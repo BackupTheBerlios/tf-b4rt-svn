@@ -63,8 +63,7 @@
 "  -c, --seedlimit <int>          Seed to reach before exiting transmission\n" \
 "                                 (0 = seed forever -1 = no seeding)\n" \
 "  -e, --display_interval <int>   Time between updates of stat-file\n" \
-"  -w, --owner <string>           Name of the owner (required)\n" \
-"  -t, --stat <file>              Path to stat-file (required)\n" \
+"  -o, --owner <string>           Name of the owner\n" \
 "\n"
 
 /*******************************************************************************
@@ -93,7 +92,7 @@ static FILE * tf_stat_fp = NULL;
 static char * tf_cmd_file = NULL;
 static FILE * tf_cmd_fp = NULL;
 
-static char tf_message[256];
+static char tf_message[512];
 
 /*******************************************************************************
  * functions
