@@ -118,8 +118,10 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
         $this->command .= " ".escapeshellarg($this->runtime);
         $this->command .= " ".escapeshellarg($this->sharekill_param);
-        $this->command .= " ".escapeshellarg($this->aliasFilePath);
+        //$this->command .= " ".escapeshellarg($this->aliasFilePath);
+        // $this->command .= " ".$this->owner;
         $this->command .= " ".$this->owner;
+        $this->command .= " ".escapeshellarg($this->transferFilePath);
         $this->command .= " --responsefile ".escapeshellarg($this->transferFilePath);
         $this->command .= " --display_interval 5";
         $this->command .= " --max_download_rate ".escapeshellarg($this->drate);

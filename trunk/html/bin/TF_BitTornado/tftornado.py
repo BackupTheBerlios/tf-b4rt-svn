@@ -149,7 +149,6 @@ class HeadlessDisplayer:
         self.peers = ''
         self.errors = []
         self.last_update_time = -1
-        self.statFile = 'percent.txt'
         self.autoShutdown = 'False'
         self.user = 'unknown'
         self.size = 0
@@ -409,7 +408,7 @@ class HeadlessDisplayer:
         while 1:
             lcount += 1
             try:
-                f = open(self.statFile,'w')
+                f = open(transferStatFile, 'w')
                 f.write(self.running + '\n')
                 f.write(self.percentDone + '\n')
                 f.write(self.timeEst + '\n')
@@ -427,7 +426,7 @@ class HeadlessDisplayer:
                 f.close()
                 break
             except:
-                transferLog("Failed to open stat-file for writing : " + self.statFile + "\n", True)
+                transferLog("Failed to open stat-file for writing : " + transferStatFile + "\n", True)
                 if lcount > 30:
                     break
                 pass
@@ -435,12 +434,11 @@ class HeadlessDisplayer:
 #------------------------------------------------------------------------------#
 # run                                                                          #
 #------------------------------------------------------------------------------#
-def run(autoDie,shareKill,statusFile,userName,params):
+def run(autoDie, shareKill, userName, params):
 
     try:
 
         h = HeadlessDisplayer()
-        h.statFile = statusFile
         h.autoShutdown = autoDie
         h.shareKill = shareKill
         h.user = userName
@@ -456,42 +454,41 @@ def run(autoDie,shareKill,statusFile,userName,params):
                 break
 
             # log what we are starting up
-            startupMessage = "tornado starting up :\n"
-            startupMessage += " - torrentfile : " + config['responsefile'] + "\n"
-            startupMessage += " - userName : " + userName + "\n"
-            startupMessage += " - statusFile : " + statusFile + "\n"
-            startupMessage += " - pid-file : " + statusFile + ".pid" + "\n"
-            startupMessage += " - transferLogFile : " + transferLogFile + "\n"
-            startupMessage += " - transferCommandFile : " + transferCommandFile + "\n"
-            startupMessage += " - autoDie : " + autoDie + "\n"
-            startupMessage += " - shareKill : " + shareKill + "\n"
-            startupMessage += " - minport : " + str(config['minport']) + "\n"
-            startupMessage += " - maxport : " + str(config['maxport']) + "\n"
-            startupMessage += " - max_upload_rate : " + str(config['max_upload_rate']) + "\n"
-            startupMessage += " - max_download_rate : " + str(config['max_download_rate']) + "\n"
-            startupMessage += " - min_uploads : " + str(config['min_uploads']) + "\n"
-            startupMessage += " - max_uploads : " + str(config['max_uploads']) + "\n"
-            startupMessage += " - min_peers : " + str(config['min_peers']) + "\n"
-            startupMessage += " - max_initiate : " + str(config['max_initiate']) + "\n"
-            startupMessage += " - max_connections : " + str(config['max_connections']) + "\n"
-            startupMessage += " - super_seeder : " + str(config['super_seeder']) + "\n"
-            startupMessage += " - security : " + str(config['security']) + "\n"
-            startupMessage += " - auto_kick : " + str(config['auto_kick']) + "\n"
+            transferLog("tornado starting up :\n", True)
+            transferLog(" - torrentfile : " + config['responsefile'] + "\n", True)
+            transferLog(" - userName : " + userName + "\n", True)
+            transferLog(" - transferStatFile : " + transferStatFile + "\n", True)
+            transferLog(" - transferCommandFile : " + transferCommandFile + "\n", True)
+            transferLog(" - transferLogFile : " + transferLogFile + "\n", True)
+            transferLog(" - transferPidFile : " + transferPidFile + "\n", True)
+            transferLog(" - autoDie : " + autoDie + "\n", True)
+            transferLog(" - shareKill : " + shareKill + "\n", True)
+            transferLog(" - minport : " + str(config['minport']) + "\n", True)
+            transferLog(" - maxport : " + str(config['maxport']) + "\n", True)
+            transferLog(" - max_upload_rate : " + str(config['max_upload_rate']) + "\n", True)
+            transferLog(" - max_download_rate : " + str(config['max_download_rate']) + "\n", True)
+            transferLog(" - min_uploads : " + str(config['min_uploads']) + "\n", True)
+            transferLog(" - max_uploads : " + str(config['max_uploads']) + "\n", True)
+            transferLog(" - min_peers : " + str(config['min_peers']) + "\n", True)
+            transferLog(" - max_initiate : " + str(config['max_initiate']) + "\n", True)
+            transferLog(" - max_connections : " + str(config['max_connections']) + "\n", True)
+            transferLog(" - super_seeder : " + str(config['super_seeder']) + "\n", True)
+            transferLog(" - security : " + str(config['security']) + "\n", True)
+            transferLog(" - auto_kick : " + str(config['auto_kick']) + "\n", True)
             if config['crypto_allowed'] is not None:
-                startupMessage += " - crypto_allowed : " + str(config['crypto_allowed']) + "\n"
+                transferLog(" - crypto_allowed : " + str(config['crypto_allowed']) + "\n", True)
             if config['crypto_only'] is not None:
-                startupMessage += " - crypto_only : " + str(config['crypto_only']) + "\n"
+                transferLog(" - crypto_only : " + str(config['crypto_only']) + "\n", True)
             if config['crypto_stealth'] is not None:
-                startupMessage += " - crypto_stealth : " + str(config['crypto_stealth']) + "\n"
-            startupMessage += " - priority : " + str(config['priority']) + "\n"
-            startupMessage += " - alloc_type : " + str(config['alloc_type']) + "\n"
-            startupMessage += " - alloc_rate : " + str(config['alloc_rate']) + "\n"
-            startupMessage += " - buffer_reads : " + str(config['buffer_reads']) + "\n"
-            startupMessage += " - write_buffer_size : " + str(config['write_buffer_size']) + "\n"
-            startupMessage += " - check_hashes : " + str(config['check_hashes']) + "\n"
-            startupMessage += " - max_files_open : " + str(config['max_files_open']) + "\n"
-            startupMessage += " - upnp_nat_access : " + str(config['upnp_nat_access']) + "\n"
-            transferLog(startupMessage, True)
+                transferLog(" - crypto_stealth : " + str(config['crypto_stealth']) + "\n", True)
+            transferLog(" - priority : " + str(config['priority']) + "\n", True)
+            transferLog(" - alloc_type : " + str(config['alloc_type']) + "\n", True)
+            transferLog(" - alloc_rate : " + str(config['alloc_rate']) + "\n", True)
+            transferLog(" - buffer_reads : " + str(config['buffer_reads']) + "\n", True)
+            transferLog(" - write_buffer_size : " + str(config['write_buffer_size']) + "\n", True)
+            transferLog(" - check_hashes : " + str(config['check_hashes']) + "\n", True)
+            transferLog(" - max_files_open : " + str(config['max_files_open']) + "\n", True)
+            transferLog(" - upnp_nat_access : " + str(config['upnp_nat_access']) + "\n", True)
 
             # remove command-file if exists
             if isfile(transferCommandFile):
@@ -503,14 +500,14 @@ def run(autoDie,shareKill,statusFile,userName,params):
 
             # write pid-file
             currentPid = (str(getpid())).strip()
-            transferLog("writing pid-file : " + statusFile + ".pid (" + currentPid + ")\n", True)
+            transferLog("writing pid-file : " + transferPidFile + " (" + currentPid + ")\n", True)
             try:
-                pidFile = open(statusFile + ".pid", 'w')
+                pidFile = open(transferPidFile, 'w')
                 pidFile.write(currentPid + "\n")
                 pidFile.flush()
                 pidFile.close()
             except Exception, e:
-                transferLog("Failed to write pid-file, shutting down : " + statusFile + ".pid (" + currentPid + ")" + "\n", True)
+                transferLog("Failed to write pid-file, shutting down : " + transferPidFile + " (" + currentPid + ")" + "\n", True)
                 break
 
             myid = createPeerID()
@@ -582,11 +579,11 @@ def run(autoDie,shareKill,statusFile,userName,params):
             h.failed()
 
     finally:
-        transferLog("removing pid-file : " + statusFile + ".pid" + "\n", True)
+        transferLog("removing pid-file : " + transferPidFile + "\n", True)
         try:
-            remove(statusFile+".pid")
+            remove(transferPidFile)
         except:
-            transferLog("Failed to remove pid-file : " + statusFile + ".pid" + "\n", True)
+            transferLog("Failed to remove pid-file : " + transferPidFile + "\n", True)
             pass
 
 #------------------------------------------------------------------------------#
@@ -602,18 +599,26 @@ if __name__ == '__main__':
         print "Error : missing arguments, exiting. \n"
         sys.exit(0)
 
-    # get/set log-file
-    transferLogFile = argv[3]
-    transferLogFile = transferLogFile.replace(".stat", ".log")
+    # get/set stat-file
+    transferStatFile = argv[4]
+    transferStatFile = transferStatFile.replace(".torrent", ".stat")
 
     # get/set cmd-file
-    transferCommandFile = argv[3]
-    transferCommandFile = transferCommandFile.replace(".stat", ".cmd")
+    transferCommandFile = argv[4]
+    transferCommandFile = transferCommandFile.replace(".torrent", ".cmd")
+
+    # get/set log-file
+    transferLogFile = argv[4]
+    transferLogFile = transferLogFile.replace(".torrent", ".log")
+
+    # get/set pid-file
+    transferPidFile = argv[4]
+    transferPidFile = transferPidFile.replace(".torrent", ".pid")
 
     if PROFILER:
         import profile, pstats
         p = profile.Profile()
-        p.runcall(run, argv[1],argv[2],argv[3],argv[4],argv[5:])
+        p.runcall(run, argv[1],argv[2],argv[3],argv[5:])
         log = open('profile_data.'+strftime('%y%m%d%H%M%S')+'.txt','a')
         normalstdout = sys.stdout
         sys.stdout = log
@@ -621,7 +626,7 @@ if __name__ == '__main__':
         pstats.Stats(p).strip_dirs().sort_stats('time').print_stats()
         sys.stdout = normalstdout
     else:
-        run(argv[1],argv[2],argv[3],argv[4],argv[5:])
+        run(argv[1],argv[2],argv[3],argv[5:])
 
     # log exit
     transferLog("tornado exit.\n", True)
