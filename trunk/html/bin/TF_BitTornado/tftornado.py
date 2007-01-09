@@ -600,20 +600,16 @@ if __name__ == '__main__':
         sys.exit(0)
 
     # get/set stat-file
-    transferStatFile = argv[4]
-    transferStatFile = transferStatFile.replace(".torrent", ".stat")
+    transferStatFile = argv[4] + ".stat"
 
     # get/set cmd-file
-    transferCommandFile = argv[4]
-    transferCommandFile = transferCommandFile.replace(".torrent", ".cmd")
+    transferCommandFile = argv[4] + ".cmd"
 
     # get/set log-file
-    transferLogFile = argv[4]
-    transferLogFile = transferLogFile.replace(".torrent", ".log")
+    transferLogFile = argv[4] + ".log"
 
     # get/set pid-file
-    transferPidFile = argv[4]
-    transferPidFile = transferPidFile.replace(".torrent", ".pid")
+    transferPidFile = argv[4] + ".pid"
 
     if PROFILER:
         import profile, pstats

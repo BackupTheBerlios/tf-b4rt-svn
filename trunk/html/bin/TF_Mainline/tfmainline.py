@@ -662,20 +662,16 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # get/set cmd-file
-    transferCommandFile = torrentfile
-    transferCommandFile = transferCommandFile.replace(".torrent", ".cmd")
+    transferCommandFile = torrentfile + ".cmd"
 
     # get/set stats-file
-    transferStatFile = torrentfile
-    transferStatFile = transferStatFile.replace(".torrent", ".stat")
+    transferStatFile = torrentfile + ".stat"
 
     # get/set log-file
-    transferLogFile = torrentfile
-    transferLogFile = transferLogFile.replace(".torrent", ".log")
+    transferLogFile = torrentfile + ".log"
 
     # get/set pid-file
-    transferPidFile = torrentfile
-    transferPidFile = transferPidFile.replace(".torrent", ".pid")
+    transferPidFile = torrentfile + ".pid"
 
     # log what we are starting up
     transferLog("mainline starting up :\n", True)
