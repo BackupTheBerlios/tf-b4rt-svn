@@ -110,14 +110,7 @@ sub destroy {
 	# log
 	Fluxd::printMessage("Qmgr", "shutdown\n");
 	# save queue
-	my $jobcount = queueCount();
-	if ($jobcount > 0) {
-		if ($LOGLEVEL > 0) {
-			Fluxd::printMessage("Qmgr", "jobs queued : ".$jobcount.". writing queue-file...\n");
-		}
-		# save queue
-		queueSave();
-	}
+	queueSave();
 	# strings
 	undef $dataDir;
 	undef $fileQueue;
@@ -317,8 +310,7 @@ sub set {
 #------------------------------------------------------------------------------#
 sub main {
 
-	my $now = time();
-	if (($now - $time_last_run) >= $interval) {
+	if ((time() - $time_last_run) >= $interval) {
 
 		# log
 		if ($LOGLEVEL > 1) {
@@ -393,8 +385,7 @@ sub queueProcess {
 			# this may be after a restart or transfer was started outside.
 			if (exists $jobs{"running"}{$nextTransfer}) {                       # already running
 				# remove job from queue
-				my $removed = queueRemove($nextTransfer, $nextUser);
-				if ($removed == 0) { $queueIdx++; }
+				if (queueRemove($nextTransfer, $nextUser) == 0) { $queueIdx++; }
 				# check if more entries
 				if (queueCountEntriesLeft() == 0) { last QUEUE; }
 			} else {                                                            # transfer not already running
@@ -424,8 +415,7 @@ sub queueProcess {
 							# reset start-counter-var
 							delete($startTries{$nextTransfer});
 							# remove job from queue
-							my $removed = queueRemove($nextTransfer, $nextUser);
-							if ($removed == 0) { $queueIdx++; }
+							if (queueRemove($nextTransfer, $nextUser) == 0) { $queueIdx++; }
 							# add job to jobs running
 							if ($LOGLEVEL > 0) {
 								Fluxd::printMessage("Qmgr", "adding job to jobs running : ".$nextTransfer." (".$nextUser.")\n");
@@ -441,8 +431,7 @@ sub queueProcess {
 								delete($startTries{$nextTransfer});
 								Fluxd::printError("Qmgr", $globals{'limitStartTries'}." errors when starting, cancel job : ".$nextTransfer." (".$nextUser.")\n");
 								# remove job from queue
-								my $removed = queueRemove($nextTransfer, $nextUser);
-								if ($removed == 0) { $queueIdx++; }
+								if (queueRemove($nextTransfer, $nextUser) == 0) { $queueIdx++; }
 								# check if more entries
 								if (queueCountEntriesLeft() == 0) { last QUEUE; }
 							} else {
@@ -492,19 +481,14 @@ sub queueProcess {
 sub queueCountEntriesLeft {
 	# check if more entries
 	my $jobcount = queueCount();
-	if ($jobcount > 0) { # more jobs in queue
-		if ($queueIdx < ($jobcount)) { # there is a next entry
-			if ($LOGLEVEL > 1) {
-				Fluxd::printMessage("Qmgr", "next queue-entry\n");
-			}
-			return ($jobcount - $queueIdx);
-		} else { # no more in queue
-			if ($LOGLEVEL > 1) {
-				Fluxd::printMessage("Qmgr", "last queue-entry\n");
-			}
-			return 0;
+	if (($jobcount > 0) && ($queueIdx < ($jobcount))) {
+		# more jobs in queue
+		if ($LOGLEVEL > 1) {
+			Fluxd::printMessage("Qmgr", "next queue-entry\n");
 		}
-	} else { # nothing more in queue
+		return ($jobcount - $queueIdx);
+	} else {
+		# nothing more in queue
 		if ($LOGLEVEL > 1) {
 			Fluxd::printMessage("Qmgr", "last queue-entry\n");
 		}
@@ -534,7 +518,6 @@ sub runningUpdate {
 			$sf->initialize($transfersDir.$transfer.".stat");
 			my $running = $sf->get("running");
 			my $user = $sf->get("transferowner");
-			my $addIt = 1;
 			# user
 			if ((!(defined $user)) || ($user eq "")) {
 				if ($LOGLEVEL > 1) {
@@ -555,20 +538,19 @@ sub runningUpdate {
 					if ($LOGLEVEL > 1) {
 						Fluxd::printMessage("Qmgr", "transfer not running, skipping add to running transfers : ".$transfer." (".$user.")\n");
 					}
-					$addIt = 0;
+					# skip
+					next;
 				}
 			}
 			# add it
-			if ($addIt == 1) {
-				if (! exists $jobs{"running"}{$transfer}) {
-					if ($LOGLEVEL > 1) {
-						Fluxd::printMessage("Qmgr", "adding to running transfers : ".$transfer." (".$user.")\n");
-					}
-					$jobs{"running"}{$transfer} = $user;
-				} else {
-					if ($LOGLEVEL > 1) {
-						Fluxd::printMessage("Qmgr", "transfer already exists in running transfers, skipping : ".$transfer." (".$user.")\n");
-					}
+			if (! exists $jobs{"running"}{$transfer}) {
+				if ($LOGLEVEL > 1) {
+					Fluxd::printMessage("Qmgr", "adding to running transfers : ".$transfer." (".$user.")\n");
+				}
+				$jobs{"running"}{$transfer} = $user;
+			} else {
+				if ($LOGLEVEL > 1) {
+					Fluxd::printMessage("Qmgr", "transfer already exists in running transfers, skipping : ".$transfer." (".$user.")\n");
 				}
 			}
 		}
@@ -619,8 +601,8 @@ sub queueLoad {
 			}
 		}
 	}
-	# done loading, delete queue-file
-	return unlink($fileQueue);
+	# done loading
+	return 1;
 }
 
 #------------------------------------------------------------------------------#
@@ -629,20 +611,30 @@ sub queueLoad {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub queueSave {
-	if ($LOGLEVEL > 1) {
-		Fluxd::printMessage("Qmgr", "saving queue-file : ".$fileQueue."\n");
-	}
-	# open queue-file
-	open(QUEUEFILE,">$fileQueue");
-	# queued transfers
-	foreach my $queueEntry (@queue) {
-		if ($LOGLEVEL > 1) {
-			Fluxd::printMessage("Qmgr", "saving job : ".$queueEntry."\n");
+	my $jobcount = queueCount();
+	if ($jobcount > 0) {
+		if ($LOGLEVEL > 0) {
+			Fluxd::printMessage("Qmgr", $jobcount." job(s) queued, writing queue-file...\n");
 		}
-		print QUEUEFILE $queueEntry."\n";
+		# open queue-file
+		open(QUEUEFILE,">$fileQueue");
+		# queued transfers
+		foreach my $queueEntry (@queue) {
+			if ($LOGLEVEL > 1) {
+				Fluxd::printMessage("Qmgr", "saving job : ".$queueEntry."\n");
+			}
+			print QUEUEFILE $queueEntry."\n";
+		}
+		# close queue-file
+		close(QUEUEFILE);
+	} else {
+		if (-f $fileQueue) {
+			if ($LOGLEVEL > 0) {
+				Fluxd::printMessage("Qmgr", "no jobs queued, deleting queue-file...\n");
+			}
+			return unlink($fileQueue);
+		}
 	}
-	# close queue-file
-	close(QUEUEFILE);
 }
 
 #------------------------------------------------------------------------------#
@@ -707,26 +699,24 @@ sub queueAdd {
 	}
 	my $username = $temp;
 	# add it
-	my $addIt = 0;
 	if ((! exists $jobs{"queued"}{$transfer}) && (! exists $jobs{"running"}{$transfer})) {
-		$addIt = 1;
 		if ($LOGLEVEL > 0) {
 			Fluxd::printMessage("Qmgr", "adding job to jobs queued : ".$transfer." (".$username.")\n");
 		}
 		$jobs{"queued"}{$transfer} = $username;
-	} else {
-		if ($LOGLEVEL > 0) {
-			Fluxd::printMessage("Qmgr", "job already present in jobs : ".$transfer." (".$username.")\n");
-		}
-	}
-	if ($addIt == 1) {
 		# add
 		push(@queue,$transfer);
 		# save queue
 		queueSave();
+		# return
+		return 1;
+	} else {
+		if ($LOGLEVEL > 0) {
+			Fluxd::printMessage("Qmgr", "job already present in jobs : ".$transfer." (".$username.")\n");
+		}
+		# return
+		return 0;
 	}
-	# return
-	return $addIt;
 }
 
 #------------------------------------------------------------------------------#
@@ -812,7 +802,6 @@ sub jobsCount {
 #------------------------------------------------------------------------------#
 sub queueCount {
 	return scalar(@queue);
-	#return scalar((keys %{$jobs{"queued"}}));
 }
 
 #------------------------------------------------------------------------------#
@@ -835,7 +824,7 @@ sub transferStart {
 		return 0;
 	}
 	# fluxcli-call
-	my $result = Fluxd::fluxcli("start", $transfer.".torrent");
+	my $result = Fluxd::fluxcli("start", $transfer);
 	if ($result == 1) {
 		$globals{"started"} += 1;
 		return 1;
@@ -898,7 +887,7 @@ sub status {
 		$return .= "  * ".$jobName." (".$jobUser.")\n";
 	}
 	# misc stats
-	$return .= "running since : $localtime (";
+	$return .= "running since : ".$localtime." (";
 	$return .= FluxCommon::niceTimeString($time).") ";
 	$return .= "(".$globals{'main'}." cycles) \n";
 	$return .= "started transfers : ".$globals{'started'}."\n";

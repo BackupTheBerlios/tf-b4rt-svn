@@ -185,8 +185,8 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function instance_enqueueTransfer($transfer, $user) {
     	if ($this->modstate == FLUXDMOD_STATE_RUNNING) {
-    		// send command (hardcoded for .torrent for now)
-    		Fluxd::sendServiceCommand($this->moduleName, 'enqueue;'.substr($transfer, 0, -8).';'.$user, 0);
+    		// send command
+    		Fluxd::sendServiceCommand($this->moduleName, 'enqueue;'.$transfer.';'.$user, 0);
 	        // just 2 sec... dont stress fluxd
 	        sleep(2);
     	}
@@ -203,11 +203,10 @@ class FluxdQmgr extends FluxdServiceMod
     	if ($this->modstate == FLUXDMOD_STATE_RUNNING) {
         	if (isTransferRunning($transfer)) {
 	            // transfer has been started...log
-	            // TODO : kill it ?
 	            AuditAction($cfg["constants"]["unqueued_transfer"], $transfer . "has been already started.");
         	} else {
-	            // send command (hardcoded for .torrent for now)
-    			Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.substr($transfer, 0, -8).';'.$user, 0);
+	            // send command
+    			Fluxd::sendServiceCommand($this->moduleName, 'dequeue;'.$transfer.';'.$user, 0);
 	            // flag the transfer as stopped (in db)
 	            stopTransferSettings($transfer);
 	            // update the stat file.

@@ -167,8 +167,8 @@ sub set {
 # Returns:                                                                     #
 #------------------------------------------------------------------------------#
 sub main {
-	my $now = time();
-	if (($now - $time_last_run) >= $interval) {
+
+	if ((time() - $time_last_run) >= $interval) {
 
 		Fluxd::printMessage("Trigger", "main\n"); # DEBUG
 

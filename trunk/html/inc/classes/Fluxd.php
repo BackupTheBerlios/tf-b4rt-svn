@@ -416,16 +416,8 @@ class Fluxd
     	if ($this->_pid != "") {
     		return $this->_pid;
     	} else {
-	        if ($fileHandle = @fopen($this->_pathPidFile,'r')) {
-	            $data = "";
-	            while (!@feof($fileHandle))
-	                $data .= @fgets($fileHandle, 1024);
-	            @fclose ($fileHandle);
-	            $this->_pid = trim($data);
-	            return $this->_pid;
-	        } else {
-	            return "";
-	        }
+    		$this->_pid = @rtrim(file_get_contents($this->_pathPidFile));
+    		return $this->_pid;
     	}
     }
 

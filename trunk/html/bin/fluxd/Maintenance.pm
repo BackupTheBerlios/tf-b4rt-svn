@@ -182,8 +182,8 @@ sub set {
 # Returns: Info String                                                         #
 #------------------------------------------------------------------------------#
 sub main {
-	my $now = time();
-	if (($now - $time_last_run) >= $interval) {
+
+	if ((time() - $time_last_run) >= $interval) {
 
 		# print
 		if ($LOGLEVEL > 1) {
