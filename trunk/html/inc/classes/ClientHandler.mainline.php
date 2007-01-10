@@ -104,7 +104,6 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= $cfg["pythonCmd"] . " -OO" . " " .escapeshellarg($this->mainlineBin);
 		$this->command .= " --tf_owner ".$this->owner;
 		$this->command .= " --display_interval 5";
-		//$this->command .= " --stat_file ".escapeshellarg($this->aliasFilePath);
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);
 		$this->command .= " --die_when_done ".escapeshellarg($this->runtime);
@@ -125,8 +124,8 @@ class ClientHandlerMainline extends ClientHandler
 		if (strlen($cfg["btclient_mainline_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_mainline_options"];
 		$this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
-        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " &";
 
 		// start the client
@@ -169,8 +168,8 @@ class ClientHandlerMainline extends ClientHandler
     function getTransferCurrent($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -178,12 +177,12 @@ class ClientHandlerMainline extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 
     /**
@@ -207,9 +206,9 @@ class ClientHandlerMainline extends ClientHandler
             $retVal["downtotal"] = $row["downtotal"];
         }
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        $retVal["uptotal"] += $af->uptotal;
-        $retVal["downtotal"] += $af->downtotal;
+        $sf = new StatFile($transfer);
+        $retVal["uptotal"] += $sf->uptotal;
+        $retVal["downtotal"] += $sf->downtotal;
         return $retVal;
     }
 
@@ -218,19 +217,19 @@ class ClientHandlerMainline extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer, $tid, $afu, $afd) {
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
         global $transfers;
         $retVal = array();
         $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
-        	? $transfers['totals'][$tid]['uptotal'] + $afu
-        	: $afu;
+        	? $transfers['totals'][$tid]['uptotal'] + $sfu
+        	: $sfu;
         $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
-        	? $transfers['totals'][$tid]['downtotal'] + $afd
-        	: $afd;
+        	? $transfers['totals'][$tid]['downtotal'] + $sfd
+        	: $sfd;
         return $retVal;
     }
 

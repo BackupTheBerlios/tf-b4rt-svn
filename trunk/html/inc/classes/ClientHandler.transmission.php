@@ -91,7 +91,7 @@ class ClientHandlerTransmission extends ClientHandler
 
         // workaround for bsd-pid-file-problem : touch file first
         if ((!$this->queue) && ($cfg["_OS"] == 2))
-        	@touch($this->pidFilePath);
+        	@touch($this->transferFilePath.".pid");
 
         // build the command-string
 		// note : order of args must not change for ps-parsing-code in
@@ -111,8 +111,8 @@ class ClientHandlerTransmission extends ClientHandler
         if (strlen($cfg["btclient_transmission_options"]) > 0)
         	$this->command .= " ".$cfg["btclient_transmission_options"];
         $this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
-        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " &";
 
         // start the client
@@ -165,9 +165,9 @@ class ClientHandlerTransmission extends ClientHandler
     	global $db, $transfers;
         $retVal = array();
         // transfer from stat-file
-		$af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        $retVal["uptotal"] = $af->uptotal;
-        $retVal["downtotal"] = $af->downtotal;
+		$sf = new StatFile($transfer);
+        $retVal["uptotal"] = $sf->uptotal;
+        $retVal["downtotal"] = $sf->downtotal;
         // transfer from db
         $torrentId = getTorrentHash($transfer);
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
@@ -185,19 +185,19 @@ class ClientHandlerTransmission extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
         global $transfers;
         $retVal = array();
         $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
-        	? $afu - $transfers['totals'][$tid]['uptotal']
-        	: $afu;
+        	? $sfu - $transfers['totals'][$tid]['uptotal']
+        	: $sfu;
         $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
-        	? $afd - $transfers['totals'][$tid]['downtotal']
-        	: $afd;
+        	? $sfd - $transfers['totals'][$tid]['downtotal']
+        	: $sfd;
         return $retVal;
     }
 
@@ -210,8 +210,8 @@ class ClientHandlerTransmission extends ClientHandler
     function getTransferTotal($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -219,12 +219,12 @@ class ClientHandlerTransmission extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 }
 

@@ -1066,22 +1066,22 @@ function getLoadAverageString() {
 }
 
 /**
- * injects a Alias
+ * injects a transfer
  *
  * @param $transfer
  * @return boolean
  */
-function injectAlias($transfer) {
+function injectTransfer($transfer) {
 	global $cfg;
-	$af = new AliasFile(getTransferName($transfer).".stat");
-	$af->running = "2"; // file is new
-	$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
-	if ($af->write()) {
+	$sf = new StatFile($transfer);
+	$sf->running = "2"; // file is new
+	$sf->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+	if ($sf->write()) {
 		// set transfers-cache
 		cacheTransfersSet();
 		return true;
 	} else {
-        AuditAction($cfg["constants"]["error"], "aliasfile cannot be written when injecting : ".$transfer);
+        AuditAction($cfg["constants"]["error"], "stat-file cannot be written when injecting : ".$transfer);
         return false;
 	}
 }
@@ -1237,13 +1237,13 @@ function getTransferListArray() {
 		$displayname = $transfer;
 		$show_run = true;
 		$transferowner = getOwner($transfer);
+		$owner = IsOwner($cfg["user"], $transferowner);
+		$sf = new StatFile($transfer, $transferowner);
 
 		// ---------------------------------------------------------------------
-		// alias / stat
-		$alias = getTransferName($transfer).".stat";
+		// client-switch
 		if (substr($transfer, -8) == ".torrent") {
 			// this is a torrent-client
-			$owner = IsOwner($cfg["user"], $transferowner);
 			if (isset($transfers['settings'][$transfer])) {
 				$settingsAry = $transfers['settings'][$transfer];
 			} else {
@@ -1255,53 +1255,48 @@ function getTransferListArray() {
 					: $cfg["path"].$cfg["path_incoming"].'/';
 				$settingsAry['datapath'] = "";
 			}
-			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($transfer, -5) == ".wget") {
 			// this is wget.
-			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = array();
 			$settingsAry['btclient'] = "wget";
 			$settingsAry['hash'] = $transfer;
-			$af = new AliasFile($alias, $transferowner);
 		} else if (substr($transfer, -4) == ".nzb") {
 			// This is nzbperl.
-			$owner = IsOwner($cfg["user"], $transferowner);
 			$settingsAry = array();
 			$settingsAry['btclient'] = "nzbperl";
 			$settingsAry['hash'] = $transfer;
-			$af = new AliasFile($alias, $transferowner);
 		} else {
 			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 			@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 		}
 		// cache running-flag in local var. we will access that often
-		$transferRunning = (int) $af->running;
+		$transferRunning = (int) $sf->running;
 		// cache percent-done in local var. ...
-		$percentDone = $af->percent_done;
+		$percentDone = $sf->percent_done;
 
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
+			@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 
 		// ---------------------------------------------------------------------
 		// injects
-		if(!file_exists($cfg["transfer_file_path"].$alias)) {
+		if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 			$transferRunning = 2;
-			$af->running = "2";
-			$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
-			injectAlias($transfer);
+			$sf->running = "2";
+			$sf->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+			injectTransfer($transfer);
 		}
 
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
 			$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
-			$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $af->uptotal, $af->downtotal);
+			$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 		}
 
 		// ---------------------------------------------------------------------
-		// preprocess alias-file and get some vars
+		// preprocess stat-file and get some vars
 		$estTime = "";
 		$statusStr = "";
 		switch ($transferRunning) {
@@ -1316,19 +1311,19 @@ function getTransferListArray() {
 				// increment the totals
 				if (!isset($cfg["total_upload"])) $cfg["total_upload"] = 0;
 				if (!isset($cfg["total_download"])) $cfg["total_download"] = 0;
-				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
-				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
+				$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($sf->up_speed);
+				$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($sf->down_speed);
 				// $estTime
 				if ($transferRunning == 0) {
-					$estTime = $af->time_left;
+					$estTime = $sf->time_left;
 				} else {
-					if ($af->time_left != "" && $af->time_left != "0") {
-						if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
-							$estTime = (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-									? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed))
+					if ($sf->time_left != "" && $sf->time_left != "0") {
+						if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100) ) {
+							$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && ((int) ($sf->up_speed{0}) > 0))
+									? convertTime(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
 									: '-';
 						} else {
-							$estTime = $af->time_left;
+							$estTime = $sf->time_left;
 						}
 					}
 				}
@@ -1336,7 +1331,7 @@ function getTransferListArray() {
 				$lastUser = $transferowner;
 				// $show_run + $statusStr
 				if($percentDone >= 100) {
-					$statusStr = (($transferRunning == 1) && (trim($af->up_speed) != "")) ? 'Seeding' : 'Done';
+					$statusStr = (($transferRunning == 1) && (trim($sf->up_speed) != "")) ? 'Seeding' : 'Done';
 					$show_run = false;
 				} else if ($percentDone < 0) {
 					$statusStr = 'Stopped';
@@ -1360,7 +1355,7 @@ function getTransferListArray() {
 
 		// ================================================================ size
 		if ($settings[1] != 0)
-			array_push($transferAry, @formatBytesTokBMBGBTB($af->size));
+			array_push($transferAry, @formatBytesTokBMBGBTB($sf->size));
 
 		// =========================================================== downtotal
 		if ($settings[2] != 0)
@@ -1377,8 +1372,8 @@ function getTransferListArray() {
 		// ============================================================ progress
 		if ($settings[5] != 0) {
 			$percentage = "";
-			if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
-				$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
+			if (($percentDone >= 100) && (trim($sf->up_speed) != "")) {
+				$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2) . '%';
 			} else {
 				if ($percentDone >= 1)
 					$percentage = $percentDone . '%';
@@ -1394,7 +1389,7 @@ function getTransferListArray() {
 		if ($settings[6] != 0) {
 			$down = "";
 			if ($transferRunning == 1)
-				$down = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
+				$down = (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s';
 			array_push($transferAry, $down);
 		}
 
@@ -1402,14 +1397,14 @@ function getTransferListArray() {
 		if ($settings[7] != 0) {
 			$up = "";
 			if ($transferRunning == 1)
-				$up = (trim($af->up_speed) != "") ? $af->up_speed : '0.0 kB/s';
+				$up = (trim($sf->up_speed) != "") ? $sf->up_speed : '0.0 kB/s';
 			array_push($transferAry, $up);
 		}
 
 		// =============================================================== seeds
 		if ($settings[8] != 0) {
 			$seeds = ($transferRunning == 1)
-			? $af->seeds
+			? $sf->seeds
 			:  "";
 			array_push($transferAry, $seeds);
 		}
@@ -1417,7 +1412,7 @@ function getTransferListArray() {
 		// =============================================================== peers
 		if ($settings[9] != 0) {
 			$peers = ($transferRunning == 1)
-			? $af->peers
+			? $sf->peers
 			:  "";
 			array_push($transferAry, $peers);
 		}
@@ -1560,7 +1555,6 @@ function getServerStats() {
  *
  * @param $transfer
  * @param $full
- * @param $alias
  * @return array with details
  *
  * array-keys :
@@ -1588,18 +1582,15 @@ function getServerStats() {
  * port
  *
  */
-function getTransferDetails($transfer, $full, $alias = "") {
+function getTransferDetails($transfer, $full) {
 	global $cfg, $transfers;
 	$details = array();
 	// common functions
 	require_once('inc/functions/functions.common.php');
-	// alias-file
-	if ((!(isset($alias))) || ($alias == "")) {
-		$aliasName = getTransferName($transfer);
-		$alias = $aliasName.".stat";
-	}
 	$transferowner = getOwner($transfer);
-	// alias / stat
+	// stat
+	$sf = new StatFile($transfer, $transferowner);
+	// client-switch
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		if (isset($transfers['settings'][$transfer])) {
@@ -1613,48 +1604,45 @@ function getTransferDetails($transfer, $full, $alias = "") {
 				: $cfg["path"].$cfg["path_incoming"].'/';
 			$settingsAry['datapath'] = "";
 		}
-		$af = new AliasFile($alias, $transferowner);
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$settingsAry['btclient'] = "wget";
 		$settingsAry['hash'] = $transfer;
-		$af = new AliasFile($alias, $transferowner);
 	} else if (substr($transfer, -4) == ".nzb") {
 		// This is nzbperl.
 		$settingsAry['btclient'] = "nzbperl";
 		$settingsAry['hash'] = $transfer;
-		$af = new AliasFile($alias, $transferowner);
 	} else {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 	// size
-	$size = (int) $af->size;
+	$size = (int) $sf->size;
 	// totals
-	$afu = $af->uptotal;
-	$afd = $af->downtotal;
+	$afu = $sf->uptotal;
+	$afd = $sf->downtotal;
 	$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
 	$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
 	$totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 	// running
-	$running = $af->running;
+	$running = $sf->running;
 	$details['running'] = $running;
 	// speed_down + speed_up + seeds + peers + cons
 	if ($running == 1) {
 		// pid
 		$pid = getTransferPid($transfer);
 		// speed_down
-		$details['speedDown'] = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
+		$details['speedDown'] = (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s';
 		// speed_up
-		$details['speedUp'] = (trim($af->up_speed) != "") ? $af->up_speed : '0.0 kB/s';
+		$details['speedUp'] = (trim($sf->up_speed) != "") ? $sf->up_speed : '0.0 kB/s';
 		// down_current
 		$details['downCurrent'] = @formatFreeSpace($totalsCurrent["downtotal"] / 1048576);
 		// up_current
 		$details['upCurrent'] = @formatFreeSpace($totalsCurrent["uptotal"] / 1048576);
 		// seeds
-		$details['seeds'] = $af->seeds;
+		$details['seeds'] = $sf->seeds;
 		// peers
-		$details['peers'] = $af->peers;
+		$details['peers'] = $sf->peers;
 		// cons
 		$details['cons'] = netstatConnectionsByPid($pid);
 	} else {
@@ -1678,16 +1666,16 @@ function getTransferDetails($transfer, $full, $alias = "") {
 	// up_total
 	$details['upTotal'] = @formatFreeSpace($totals["uptotal"] / 1048576);
 	// percentage
-	$percentage = $af->percent_done;
+	$percentage = $sf->percent_done;
 	if ($percentage < 0) {
 		$percentage = round(($percentage * -1) - 100, 1);
-		$af->time_left = $cfg['_INCOMPLETE'];
+		$sf->time_left = $cfg['_INCOMPLETE'];
 	} elseif ($percentage > 100) {
 		$percentage = 100;
 	}
 	$details['percentDone'] = $percentage;
 	// eta
-	$details['eta'] = $af->time_left;
+	$details['eta'] = $sf->time_left;
 	// sharing
 	$details['sharing'] = ($size > 0) ? @number_format((($totals["uptotal"] / $size) * 100), 2) : 0;
 	// full (including static) details
@@ -1882,11 +1870,10 @@ function resetOwner($transfer) {
 	global $cfg, $db, $transfers;
 	// log entry has expired so we must renew it
 	$rtnValue = "n/a";
-	$alias = getTransferName($transfer).".stat";
-	if (file_exists($cfg["transfer_file_path"].$alias)) {
-		$af = new AliasFile($alias, $cfg["user"]);
-		$rtnValue = (IsUser($af->transferowner))
-			? $af->transferowner /* We have an owner */
+	if (file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
+		$sf = new StatFile($transfer);
+		$rtnValue = (IsUser($sf->transferowner))
+			? $sf->transferowner /* We have an owner */
 			: GetSuperAdmin(); /* no owner found, so the super admin will now own it */
 	    // add entry to the log
 	    $sql = "INSERT INTO tf_log (user_id,file,action,ip,ip_resolved,user_agent,time)"
@@ -2059,30 +2046,30 @@ function formatFreeSpace($freeSpace) {
 /**
  * Returns a string "file name" of the status image icon
  *
- * @param $af
+ * @param $sf
  * @return string
  */
-function getStatusImage($af) {
+function getStatusImage($sf) {
 	$hd = new HealthData();
 	$hd->image = "black.gif";
 	$hd->title = "";
-	if ($af->running == "1") {
+	if ($sf->running == "1") {
 		// torrent is running
-		if ($af->seeds < 2)
+		if ($sf->seeds < 2)
 			$hd->image = "yellow.gif";
-		if ($af->seeds == 0)
+		if ($sf->seeds == 0)
 			$hd->image = "red.gif";
-		if ($af->seeds >= 2)
+		if ($sf->seeds >= 2)
 			$hd->image = "green.gif";
 	}
-	if ($af->percent_done >= 100) {
-		$hd->image = (trim($af->up_speed) != "" && $af->running == "1")
+	if ($sf->percent_done >= 100) {
+		$hd->image = (trim($sf->up_speed) != "" && $sf->running == "1")
 			? "green.gif" /* is seeding */
 			: "black.gif"; /*  the torrent is finished */
 	}
 	if ($hd->image != "black.gif")
-		$hd->title = "S:".$af->seeds." P:".$af->peers." ";
-	if ($af->running == "3") {
+		$hd->title = "S:".$sf->seeds." P:".$sf->peers." ";
+	if ($sf->running == "3") {
 		// torrent is queued
 		$hd->image = "black.gif";
 	}
@@ -2178,18 +2165,18 @@ function isValidTransfer($transfer) {
 }
 
 /**
- * get name of transfer (no extension). possibly sanitized.
+ * get name of transfer. name cleaned and extension removed.
  *
- * @param $inName
+ * @param $transfer
  * @return string
  */
-function getTransferName($inName) {
+function getCleanTransferName($transfer) {
 	global $cfg;
 	return str_replace($cfg["file_types_array"], "", preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName));
 }
 
 /**
- * Remove bad characters make extension lower-case
+ * clean file-name, validate extension and make it lower-case
  *
  * @param $inName
  * @return string
@@ -2200,8 +2187,9 @@ function cleanFileName($inName) {
 	$stringLength = strlen($outName);
 	foreach ($cfg['file_types_array'] as $ftype) {
 		$extLength = strlen($ftype);
-		if (($stringLength > $extLength) && (strtolower(substr($outName, -($extLength))) === ($ftype)))
-			return substr($outName, 0, -($extLength)).$ftype;
+		$extIndex = 0 - $extLength;
+		if (($stringLength > $extLength) && (strtolower(substr($outName, $extIndex)) === ($ftype)))
+			return substr($outName, 0, $extIndex).$ftype;
 	}
 	$msgs = array();
 	array_push($msgs, "inName : ".$inName);

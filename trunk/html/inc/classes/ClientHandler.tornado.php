@@ -100,8 +100,8 @@ class ClientHandlerTornado extends ClientHandler
         if ((!(empty($this->skip_hash_check))) && (getTorrentDataSize($transfer) > 0))
             $skipHashCheck = " --check_hashes 0";
         $filePrio = "";
-        if (@file_exists($this->prioFilePath)) {
-            $priolist = explode(',', file_get_contents($this->prioFilePath));
+        if (@file_exists($this->transferFilePath.".prio")) {
+            $priolist = explode(',', file_get_contents($this->transferFilePath.".prio"));
             $priolist = implode(',', array_slice($priolist, 1, $priolist[0]));
             $filePrio = " --priority ".escapeshellarg($priolist);
         }
@@ -118,8 +118,6 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $pyCmd . " " .escapeshellarg($this->tornadoBin);
         $this->command .= " ".escapeshellarg($this->runtime);
         $this->command .= " ".escapeshellarg($this->sharekill_param);
-        //$this->command .= " ".escapeshellarg($this->aliasFilePath);
-        // $this->command .= " ".$this->owner;
         $this->command .= " ".$this->owner;
         $this->command .= " ".escapeshellarg($this->transferFilePath);
         $this->command .= " --responsefile ".escapeshellarg($this->transferFilePath);
@@ -136,8 +134,8 @@ class ClientHandlerTornado extends ClientHandler
 		$this->command .= $filePrio;
 		if (strlen($cfg["btclient_tornado_options"]) > 0)
 			$this->command .= " ".$cfg["btclient_tornado_options"];
-        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
-        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " &";
 
         // start the client
@@ -180,8 +178,8 @@ class ClientHandlerTornado extends ClientHandler
     function getTransferCurrent($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -189,12 +187,12 @@ class ClientHandlerTornado extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 
     /**
@@ -218,9 +216,9 @@ class ClientHandlerTornado extends ClientHandler
             $retVal["downtotal"] = $row["downtotal"];
         }
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        $retVal["uptotal"] += $af->uptotal;
-        $retVal["downtotal"] += $af->downtotal;
+        $sf = new StatFile($transfer);
+        $retVal["uptotal"] += $sf->uptotal;
+        $retVal["downtotal"] += $sf->downtotal;
         return $retVal;
     }
 
@@ -229,19 +227,19 @@ class ClientHandlerTornado extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer, $tid, $afu, $afd) {
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
         global $transfers;
         $retVal = array();
         $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
-        	? $transfers['totals'][$tid]['uptotal'] + $afu
-        	: $afu;
+        	? $transfers['totals'][$tid]['uptotal'] + $sfu
+        	: $sfu;
         $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
-        	? $transfers['totals'][$tid]['downtotal'] + $afd
-        	: $afd;
+        	? $transfers['totals'][$tid]['downtotal'] + $sfd
+        	: $sfd;
         return $retVal;
     }
 

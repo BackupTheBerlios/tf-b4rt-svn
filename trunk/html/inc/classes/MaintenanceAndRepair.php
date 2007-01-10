@@ -329,7 +329,6 @@ class MaintenanceAndRepair
 		$this->_outputMessage("repairing died clients...\n");
 		foreach ($this->_bogusTransfers as $bogusTransfer) {
 			$transfer = $bogusTransfer.".torrent";
-			$alias = $bogusTransfer.".stat";
 			$pidFile = $bogusTransfer.".pid";
 			$settingsAry = loadTransferSettings($transfer);
 			if ((isset($settingsAry)) && (is_array($settingsAry))) {
@@ -360,18 +359,15 @@ class MaintenanceAndRepair
 			// get owner
 			$transferowner = getOwner($transfer);
 			// rewrite stat-file
-			$af = new AliasFile($alias, $transferowner);
-			if (isset($af)) {
-				$af->running = 0;
-				$af->percent_done = -100.0;
-				$af->time_left = 'Transfer Died';
-				$af->down_speed = 0;
-				$af->up_speed = 0;
-				$af->seeds = 0;
-				$af->peers = 0;
-				$af->write();
-				unset($af);
-			}
+			$sf = new StatFile($transfer, $transferowner);
+			$sf->running = 0;
+			$sf->percent_done = -100.0;
+			$sf->time_left = 'Transfer Died';
+			$sf->down_speed = 0;
+			$sf->up_speed = 0;
+			$sf->seeds = 0;
+			$sf->peers = 0;
+			$sf->write();
 			// delete pid-file
 			@unlink($cfg["transfer_file_path"].$pidFile);
 			// DEBUG : log the repair of the bogus transfer
@@ -394,7 +390,6 @@ class MaintenanceAndRepair
 			$whoami = ($this->_mode == MAINTENANCEANDREPAIR_MODE_CLI) ? GetSuperAdmin() : $cfg["user"];
 			foreach ($this->_bogusTransfers as $bogusTransfer) {
 				$transfer = $bogusTransfer.".torrent";
-				$alias = $bogusTransfer.".stat";
 				$pidFile = $bogusTransfer.".pid";
 				$settingsAry = loadTransferSettings($transfer);
 				if (!((isset($settingsAry)) && (is_array($settingsAry)))) {
@@ -647,24 +642,19 @@ class MaintenanceAndRepair
 		// rewrite stat-files
 		$arList = getTransferArray();
 		foreach ($arList as $transfer) {
-			$owner = getOwner($transfer);
-			$btclient = getTransferClient($transfer);
-			$af = new AliasFile(getTransferName($transfer).".stat", $owner);
-			if (isset($af)) {
-				// output
-				$this->_outputMessage("rewrite stat-file for ".$transfer." ...\n");
-				$af->running = 0;
-				$af->percent_done = -100.0;
-				$af->time_left = 'Torrent Stopped';
-				$af->down_speed = 0;
-				$af->up_speed = 0;
-				$af->seeds = 0;
-				$af->peers = 0;
-				$af->write();
-				unset($af);
-				// output
-				$this->_outputMessage("done.\n");
-			}
+			$sf = new StatFile($transfer, getOwner($transfer));
+			// output
+			$this->_outputMessage("rewrite stat-file for ".$transfer." ...\n");
+			$sf->running = 0;
+			$sf->percent_done = -100.0;
+			$sf->time_left = 'Transfer Stopped';
+			$sf->down_speed = 0;
+			$sf->up_speed = 0;
+			$sf->seeds = 0;
+			$sf->peers = 0;
+			$sf->write();
+			// output
+			$this->_outputMessage("done.\n");
 		}
 		// set flags in db
 		$this->_outputMessage("reset running-flag in database...\n");

@@ -21,9 +21,9 @@
 *******************************************************************************/
 
 /**
- * AliasFile
+ * StatFile
  */
-class AliasFile
+class StatFile
 {
     // public fields
 
@@ -52,12 +52,12 @@ class AliasFile
     /**
      * factory
      *
-     * @param $aliasname
+     * @param $transfer
      * @param $user
-     * @return AliasFile
+     * @return StatFile
      */
-    function getInstance($aliasname, $user = '') {
-        return new AliasFile($aliasname, $user);
+    function getInstance($transfer, $user = '') {
+        return new StatFile($transfer, $user);
     }
 
 	// =========================================================================
@@ -67,20 +67,20 @@ class AliasFile
     /**
      * ctor
      *
-     * @param $aliasname
+     * @param $transfer
      * @param $user
-     * @return AliasFile
+     * @return StatFile
      */
-    function AliasFile($aliasname, $user = '') {
+    function StatFile($transfer, $user = '') {
     	global $cfg;
     	// file
-    	$this->theFile = $cfg["transfer_file_path"].$aliasname;
+    	$this->theFile = $cfg["transfer_file_path"].$transfer.".stat";
         // set user
         if ($user != '')
             $this->transferowner = $user;
         // load file
         if (@file_exists($this->theFile)) {
-            // read the alias file
+            // read the stat file
             $data = @file_get_contents($this->theFile);
 			// assign vars from content
 	        $content = @explode("\n", $data, 13);
@@ -122,7 +122,7 @@ class AliasFile
         $this->seedlimit = "";
         $this->uptotal = "";
         $this->downtotal = "";
-        // Write to file
+        // write to file
         return $this->write();
     }
 
@@ -141,7 +141,7 @@ class AliasFile
         $this->peers = "";
         $this->uptotal = "";
         $this->downtotal = "";
-        // Write to file
+        // write to file
         return $this->write();
     }
 

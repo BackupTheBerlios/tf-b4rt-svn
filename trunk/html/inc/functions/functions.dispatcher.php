@@ -423,8 +423,8 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 		}
 		if (empty($downloadMessages)) { // no messages
 			AuditAction($cfg["constants"]["url_upload"], $file_name);
-			// init stat-file
-			injectAlias($file_name);
+			// inject
+			injectTransfer($file_name);
 			// instant action ?
 			$actionId = getRequestVar('aid');
 			if (isset($actionId)) {
@@ -506,8 +506,8 @@ function indexProcessUpload() {
 					if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
 						chmod($cfg["transfer_file_path"].$file_name, 0644);
 						AuditAction($cfg["constants"]["file_upload"], $file_name);
-						// init stat-file
-						injectAlias($file_name);
+						// inject
+						injectTransfer($file_name);
 						// instant action ?
 						$actionId = getRequestVar('aid');
 						if (isset($actionId)) {
@@ -617,8 +617,8 @@ function processFileUpload() {
 						if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
 							chmod($cfg["transfer_file_path"].$file_name, 0644);
 							AuditAction($cfg["constants"]["file_upload"], $file_name);
-							// init stat-file
-							injectAlias($file_name);
+							// inject
+							injectTransfer($file_name);
 							// instant action ?
 							if ((isset($actionId)) && ($actionId > 1))
 								array_push($tStack,$file_name);

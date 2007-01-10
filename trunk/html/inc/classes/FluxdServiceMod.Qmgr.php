@@ -211,7 +211,7 @@ class FluxdQmgr extends FluxdServiceMod
 	            // flag the transfer as stopped (in db)
 	            stopTransferSettings($transfer);
 	            // update the stat file.
-	            $this->_updateStatFile($transfer, getTransferName($transfer).".stat");
+	            $this->_updateStatFile($transfer);
 	            // log
 	            AuditAction($cfg["constants"]["unqueued_transfer"], $transfer);
 	            // just 2 sec... dont stress fluxd
@@ -228,44 +228,43 @@ class FluxdQmgr extends FluxdServiceMod
      * _updateStatFile
      *
      * @param $transfer
-     * @param $alias
      */
-    function _updateStatFile($transfer, $alias) {
+    function _updateStatFile($transfer) {
     	global $transfers;
         $the_user = getOwner($transfer);
         $btclient = getTransferClient($transfer);
         $modded = 0;
-        // create AliasFile object
-        $af = new AliasFile($alias, $the_user);
-        if ($af->percent_done > 0 && $af->percent_done < 100) {
+        // create sf object
+        $sf = new StatFile($transfer, $the_user);
+        if ($sf->percent_done > 0 && $sf->percent_done < 100) {
             // has downloaded something at some point, mark it is incomplete
-            $af->running = "0";
-            $af->time_left = "Transfer Stopped";
+            $sf->running = "0";
+            $sf->time_left = "Transfer Stopped";
             $modded++;
         }
         if ($modded == 0) {
-            if ($af->percent_done == 0 || $af->percent_done == "") {
+            if ($sf->percent_done == 0 || $sf->percent_done == "") {
                 // We are going to write a '2' on the front of the stat file so that it will be set back to New Status
-                $af->running = "2";
-                $af->time_left = "";
+                $sf->running = "2";
+                $sf->time_left = "";
                 $modded++;
             }
         }
         if ($modded == 0) {
-            if ($af->percent_done == 100) {
+            if ($sf->percent_done == 100) {
                 // Torrent was seeding and is now being stopped
-                $af->running = "0";
-                $af->time_left = "Download Succeeded!";
+                $sf->running = "0";
+                $sf->time_left = "Download Succeeded!";
                 $modded++;
             }
         }
         if ($modded == 0) {
             // hmmm this stat-file is quite strange... just rewrite it stopped.
-            $af->running = "0";
-            $af->time_left = "Transfer Stopped";
+            $sf->running = "0";
+            $sf->time_left = "Transfer Stopped";
         }
         // Write out the new Stat File
-        $af->write();
+        $sf->write();
 		// set transfers-cache
 		cacheTransfersSet();
     }

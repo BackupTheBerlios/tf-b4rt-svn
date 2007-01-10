@@ -48,11 +48,11 @@ $tmpl->setvar('transfer', $transfer);
 $transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
 $tmpl->setvar('transferLabel', $transferLabel);
 
-// alias / stat
-$af = new AliasFile(getTransferName($transfer).".stat");
+// stat
+$sf = new StatFile($transfer);
 
 // set vars
-if ($af->running == 1) {
+if ($sf->running == 1) {
 	$transfer_pid = getTransferPid($transfer);
 	$transfer_cons = netstatConnectionsByPid($transfer_pid);
 	$transfer_hosts = netstatHostsByPid($transfer_pid);

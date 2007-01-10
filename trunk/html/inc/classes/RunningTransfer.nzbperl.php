@@ -42,10 +42,10 @@ class RunningTransferNzbperl extends RunningTransfer
             $count = count($arr);
             $this->processId = $arr[0];
             $this->args = "";
+            $this->filePath = $arr[($count - 4)];
             $this->transferowner = $arr[($count - 2)];
-            $this->filePath = $arr[($count - 6)];
-            $this->statFile = str_replace($cfg['transfer_file_path'],'', $arr[($count - 4)]);
             $this->transferFile = str_replace($cfg['transfer_file_path'],'', $arr[($count - 1)]);
+            $this->statFile = str_replace('.nzb','.stat', $this->transferFile);
         }
     }
 

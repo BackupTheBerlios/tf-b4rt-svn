@@ -95,11 +95,10 @@ foreach ($arList as $transfer) {
 	$displayname = (strlen($transfer) >= 47) ? substr($transfer, 0, 44)."..." : $transfer;
 	// owner
 	$transferowner = getOwner($transfer);
+	// stat
+	$sf = new StatFile($transfer, $transferowner);
 	// ---------------------------------------------------------------------
-	// alias / stat
-	$alias = getTransferName($transfer);
-	$aliasFile = $alias.".stat";
-	$af = new AliasFile($aliasFile, $transferowner);
+	// client-switch
 	if (substr($transfer, -8) == ".torrent") {
 		// this is a torrent-client
 		$clientType = "torrent";
@@ -142,12 +141,12 @@ foreach ($arList as $transfer) {
 		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
 	}
 	// cache running-flag in local var. we will access that often
-	$transferRunning = $af->running;
+	$transferRunning = $sf->running;
 	// cache percent-done in local var. ...
-	$percentDone = $af->percent_done;
+	$percentDone = $sf->percent_done;
 
 	// status-image
-	$hd = getStatusImage($af);
+	$hd = getStatusImage($sf);
 
 	// more vars
 	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:showTransfer('index.php?iid=transferStats&transfer=".urlencode($transfer)."')\">";
@@ -155,26 +154,26 @@ foreach ($arList as $transfer) {
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $af->uptotal, $af->downtotal);
+		@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 
 	// ---------------------------------------------------------------------
 	// injects
-	if(!file_exists($cfg["transfer_file_path"].$aliasFile)) {
+	if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 		$transferRunning = 2;
-		$af->running = "2";
-		$af->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
-		injectAlias($transfer);
+		$sf->running = "2";
+		$sf->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+		injectTransfer($transfer);
 	}
 
 	// totals-preparation
 	// if downtotal + uptotal + progress > 0
 	if (($settings[2] + $settings[3] + $settings[5]) > 0) {
 		$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
-		$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $af->uptotal, $af->downtotal);
+		$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 	}
 
 	// ---------------------------------------------------------------------
-	// preprocess alias-file and get some vars
+	// preprocess stat-file and get some vars
 	$estTime = "&nbsp;";
 	$statusStr = "&nbsp;";
 	$show_run = true;
@@ -194,25 +193,25 @@ foreach ($arList as $transfer) {
 				$cfg["total_upload"] = 0;
 			if (!isset($cfg["total_download"]))
 				 $cfg["total_download"] = 0;
-			$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($af->up_speed);
-			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($af->down_speed);
+			$cfg["total_upload"] = $cfg["total_upload"] + GetSpeedValue($sf->up_speed);
+			$cfg["total_download"] = $cfg["total_download"] + GetSpeedValue($sf->down_speed);
 			// $estTime
 			if ($transferRunning == 0) {
-				$estTime = $af->time_left;
+				$estTime = $sf->time_left;
 			} else {
-				if ($af->time_left != "" && $af->time_left != "0") {
-					if (($cfg["display_seeding_time"] == 1) && ($af->percent_done >= 100) ) {
-						$estTime = (($af->seedlimit > 0) && (!empty($af->up_speed)) && ((int) ($af->up_speed{0}) > 0))
-							? convertTime(((($af->seedlimit) / 100 * $af->size) - $af->uptotal) / GetSpeedInBytes($af->up_speed))
+				if ($sf->time_left != "" && $sf->time_left != "0") {
+					if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100) ) {
+						$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && ((int) ($sf->up_speed{0}) > 0))
+							? convertTime(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
 							: '-';
 					} else {
-						$estTime = $af->time_left;
+						$estTime = $sf->time_left;
 					}
 				}
 			}
 			// $show_run + $statusStr
 			if ($percentDone >= 100) {
-				$statusStr = (trim($af->up_speed) != "" && $transferRunning == 1) ? $detailsLinkString.'Seeding</a>' : $detailsLinkString.'Done</a>';
+				$statusStr = (trim($sf->up_speed) != "" && $transferRunning == 1) ? $detailsLinkString.'Seeding</a>' : $detailsLinkString.'Done</a>';
 				$show_run = false;
 			} else if ($percentDone < 0) {
 				$statusStr = $detailsLinkString."Stopped</a>";
@@ -221,7 +220,7 @@ foreach ($arList as $transfer) {
 				$statusStr = $detailsLinkString."Leeching</a>";
 			}
 			// pid-file
-			$is_no_file = (is_file($cfg["transfer_file_path"].$alias.".pid")) ? 0 : 1;
+			$is_no_file = (is_file($cfg["transfer_file_path"].$transfer.".pid")) ? 0 : 1;
 			break;
 	}
 
@@ -230,7 +229,7 @@ foreach ($arList as $transfer) {
 	// =================================================================== owner
 
 	// ==================================================================== size
-	$format_af_size = ($settings[1] != 0) ? formatBytesTokBMBGBTB($af->size) : "&nbsp;";
+	$format_af_size = ($settings[1] != 0) ? formatBytesTokBMBGBTB($sf->size) : "&nbsp;";
 
 	// =============================================================== downtotal
 	$format_downtotal = ($settings[2] != 0) ? formatBytesTokBMBGBTB($transferTotals["downtotal"]) : "&nbsp;";
@@ -242,9 +241,9 @@ foreach ($arList as $transfer) {
 
 	// ================================================================ progress
 	if ($settings[5] != 0) {
-		if (($percentDone >= 100) && (trim($af->up_speed) != "")) {
+		if (($percentDone >= 100) && (trim($sf->up_speed) != "")) {
 			$graph_width = -1;
-			$percentage = @number_format((($transferTotals["uptotal"] / $af->size) * 100), 2) . '%';
+			$percentage = @number_format((($transferTotals["uptotal"] / $sf->size) * 100), 2) . '%';
 		} else {
 			if ($percentDone >= 1) {
 				$graph_width = $percentDone;
@@ -267,7 +266,7 @@ foreach ($arList as $transfer) {
 	// ==================================================================== down
 	if ($settings[6] != 0) {
 		if ($transferRunning == 1)
-			$down_speed = (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s';
+			$down_speed = (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s';
 		else
 			$down_speed = "&nbsp;";
 	} else {
@@ -277,7 +276,7 @@ foreach ($arList as $transfer) {
 	// ====================================================================== up
 	if ($settings[7] != 0) {
 		if ($transferRunning == 1)
-			$up_speed = (trim($af->up_speed) != "") ? $af->up_speed : '0.0 kB/s';
+			$up_speed = (trim($sf->up_speed) != "") ? $sf->up_speed : '0.0 kB/s';
 		else
 			$up_speed = "&nbsp;";
 	} else {
@@ -287,7 +286,7 @@ foreach ($arList as $transfer) {
 	// =================================================================== seeds
 	if ($settings[8] != 0) {
 		$seeds = ($transferRunning == 1)
-			? $af->seeds
+			? $sf->seeds
 			:  "&nbsp;";
 	} else {
 		$seeds = "&nbsp;";
@@ -296,7 +295,7 @@ foreach ($arList as $transfer) {
 	// =================================================================== peers
 	if ($settings[9] != 0) {
 		$peers = ($transferRunning == 1)
-			? $af->peers
+			? $sf->peers
 			:  "&nbsp;";
 	} else {
 		$peers = "&nbsp;";

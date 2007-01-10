@@ -62,19 +62,8 @@ class ClientHandler
     var $transfer = "";
     var $transferFilePath = "";
 
-    // alias
-    var $aliasFile = "";
-    var $aliasFilePath = "";
-
     // pid
     var $pid = "";
-    var $pidFilePath = "";
-
-    // logfile
-    var $logFilePath = "";
-
-    // priofile
-    var $prioFilePath = "";
 
     // owner
     var $owner = "";
@@ -183,11 +172,11 @@ class ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer, $tid, $afu, $afd)  { return; }
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd)  { return; }
 
     /**
      * gets total transfer-vals of a transfer
@@ -202,11 +191,11 @@ class ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer, $tid, $afu, $afd) { return; }
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) { return; }
 
     /**
      * prepares start of a client.
@@ -335,8 +324,8 @@ class ClientHandler
             $this->logMessage($msg."\n", true);
             return false;
 		}
-        // create AliasFile object
-        $this->af = new AliasFile($this->aliasFile, $this->owner);
+        // sf
+        $sf = new StatFile($this->transfer, $this->owner);
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
         // recalc sharekill ?
@@ -347,7 +336,7 @@ class ClientHandler
 	            $this->logMessage("seed forever\n", true);
 	        } elseif ($this->sharekill > 0) { // recalc sharekill
 	            // sanity-check. catch "data-size = 0".
-	            $transferSize = intval($this->af->size);
+	            $transferSize = intval($sf->size);
 	            if ($transferSize > 0) {
 					$totalAry = $this->getTransferTotal($this->transfer);
 	            	$upTotal = $totalAry["uptotal"] + 0;
@@ -406,9 +395,9 @@ class ClientHandler
         $this->execUpdateTransferTotals();
         // write stat-file
         if ($this->queue)
-            $this->af->queue();
+            $sf->queue();
         else
-            $this->af->start();
+            $sf->start();
         // set state
         $this->state = CLIENTHANDLER_STATE_READY;
     }
@@ -489,7 +478,7 @@ class ClientHandler
         $isHung = false;
         foreach ($running as $rng) {
             $rt = RunningTransfer::getInstance($rng['pinfo'], $this->handlerName);
-            if ($rt->statFile == $this->aliasFile) {
+            if ($rt->statFile == ($this->transfer.".stat")) {
             	$isHung = true;
                 AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->statFile." (".$rt->processId.")");
             	//$this->callResult = exec("kill ".escapeshellarg($rt->processId));
@@ -516,13 +505,12 @@ class ClientHandler
 		    		return false;
             	}
             } else {
-            	$data = file_get_contents($this->pidFilePath);
-                $this->pid = rtrim($data);
+                $this->pid = getTransferPid($this->transfer);;
             }
             // kill it
             $this->callResult = exec("kill ".escapeshellarg($this->pid));
             // try to remove the pid file
-            @unlink($this->pidFilePath);
+            @unlink($this->transferFilePath.".pid");
         }
     }
 
@@ -570,18 +558,18 @@ class ClientHandler
 			// remove meta-file
 			if (@file_exists($this->transferFilePath))
 				@unlink($this->transferFilePath);
-			// remove alias-file
-			if (@file_exists($this->aliasFilePath))
-				@unlink($this->aliasFilePath);
+			// remove stat-file
+			if (@file_exists($this->transferFilePath.".stat"))
+				@unlink($this->transferFilePath.".stat");
 			// if exist remove pid file
-			if (@file_exists($this->pidFilePath))
-				@unlink($this->pidFilePath);
+			if (@file_exists($this->transferFilePath.".pid"))
+				@unlink($this->transferFilePath.".pid");
 			// if exist remove log-file
-			if (@file_exists($this->logFilePath))
-				@unlink($this->logFilePath);
+			if (@file_exists($this->transferFilePath.".log"))
+				@unlink($this->transferFilePath.".log");
 			// if exist remove prio-file
-			if (@file_exists($this->prioFilePath))
-				@unlink($this->prioFilePath);
+			if (@file_exists($this->transferFilePath.".prio"))
+				@unlink($this->transferFilePath.".prio");
 			AuditAction($cfg["constants"]["delete_transfer"], $this->transfer);
 			return true;
 		} else {
@@ -692,10 +680,10 @@ class ClientHandler
      * @param $withTS
      */
     function logMessage($message, $withTS = true) {
-    	// return if log-file-field not set
-    	if ($this->logFilePath == "") return false;
+    	// return if transfer-file-field not set
+    	if ($this->transferFilePath == "") return false;
     	// log
-		if ($handle = @fopen($this->logFilePath, "a+")) {
+		if ($handle = @fopen($this->transferFilePath.".log", "a+")) {
 			$content = ($withTS)
 				? @date("[Y/m/d - H:i:s]")." ".$message
 				: $message;
@@ -714,11 +702,6 @@ class ClientHandler
     function setVarsFromTransfer($transfer) {
     	global $cfg, $transfers;
         $this->transfer = $transfer;
-        $this->aliasFile = $this->transfer.".stat";
-        $this->aliasFilePath = $cfg["transfer_file_path"].$this->aliasFile;
-		$this->pidFilePath = $cfg["transfer_file_path"].$this->transfer.".pid";
-        $this->logFilePath = $cfg["transfer_file_path"].$this->transfer.".log";
-        $this->prioFilePath = $cfg["transfer_file_path"].$this->transfer.".prio";
         $this->transferFilePath = $cfg["transfer_file_path"].$this->transfer;
         $this->owner = getOwner($transfer);
     }

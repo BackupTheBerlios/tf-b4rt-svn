@@ -51,12 +51,13 @@ class ClientHandlerNzbperl extends ClientHandler
 	// Public Methods
 	// =====================================================================
 
-	/**
-	 * starts a client
-	 * @param $transfer name of the transfer
-	 * @param $interactive (1|0) : is this a interactive startup with dialog ?
-	 * @param $enqueue (boolean) : enqueue ?
-	 */
+    /**
+     * starts a client
+     *
+     * @param $transfer name of the transfer
+     * @param $interactive (boolean) : is this a interactive startup with dialog ?
+     * @param $enqueue (boolean) : enqueue ?
+     */
 	function start($transfer, $interactive = false, $enqueue = false) {
 		global $cfg;
 
@@ -113,7 +114,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " -I ".$cfg["docroot"]."bin/fluxd";
 		$this->command .= " ".escapeshellarg($this->nzbbin);
 		$this->command .= " --conn ".escapeshellarg($cfg['nzbperl_conn']);
-		$this->command .= " --log ".escapeshellarg($this->logFilePath);
+		$this->command .= " --log ".escapeshellarg($this->transferFilePath.".log");
 		$this->command .= " --uudeview ".escapeshellarg($cfg["bin_uudeview"]);
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
@@ -135,14 +136,12 @@ class ClientHandlerNzbperl extends ClientHandler
 		}
 		if (strlen($cfg["nzbperl_options"]) > 0)
 			$this->command .= " ".$cfg['nzbperl_options'];
-		$this->command .= " --pidfile ".escapeshellarg($this->pidFilePath);
 		// do NOT change anything below (not even order)
 		$this->command .= " --dlpath ".escapeshellarg($this->savepath);
-		$this->command .= " --statfile ".escapeshellarg($this->aliasFilePath);
 		$this->command .= " --tfuser ".$this->owner;
 		$this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
-        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " &";
 
 		// state
@@ -156,9 +155,8 @@ class ClientHandlerNzbperl extends ClientHandler
      * stops a client
      *
      * @param $transfer name of the transfer
-     * @param $aliasFile alias-file of the transfer
+     * @param $kill kill-param (optional)
      * @param $transferPid transfer Pid (optional)
-     * @param $return return-param (optional)
      */
     function stop($transfer, $kill = false, $transferpid = 0) {
 		// set vars
@@ -189,8 +187,8 @@ class ClientHandlerNzbperl extends ClientHandler
     function getTransferCurrent($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -198,12 +196,12 @@ class ClientHandlerNzbperl extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 
     /**
@@ -215,8 +213,8 @@ class ClientHandlerNzbperl extends ClientHandler
     function getTransferTotal($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -224,12 +222,12 @@ class ClientHandlerNzbperl extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 }
 

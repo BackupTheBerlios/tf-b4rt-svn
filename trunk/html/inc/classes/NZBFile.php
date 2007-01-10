@@ -61,7 +61,7 @@ class NZBFile
      *
      * @param $nzbname
      * @param $user
-     * @return AliasFile
+     * @return NZBFile
      */
     function NZBFile($nzbname = "") {
     	$this->initialize($nzbname);

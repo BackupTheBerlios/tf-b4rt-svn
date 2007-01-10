@@ -31,6 +31,20 @@ if ($argv[0] != $_SERVER['argv'][0]) die();
 
 /******************************************************************************/
 
+// check args
+if (!isset($argv[1]))
+	die('Arg Error');
+if (!isset($argv[2]))
+	die('Arg Error');
+if (!isset($argv[3]))
+	die('Arg Error');
+if (!isset($argv[4]))
+	die('Arg Error');
+if (!isset($argv[5]))
+	die('Arg Error');
+if (!isset($argv[6]))
+	die('Arg Error');
+
 // change to docroot if cwd is in bin.
 $cwd = getcwd();
 $cwdBase = basename($cwd);
@@ -47,72 +61,59 @@ require_once('inc/main.core.php');
 loadLanguageFile($cfg["default_language"]);
 
 // some vars
-$_STATUS = 1;
-$_SIZE = 0;
-$_COMPLETED = 0;
-$_PERCENTAGE = 0;
-$_SPEED = "0.00 kB/s";
-$_INT_SPEED = 0;
-$_URL = '';
-$_REAL_NAME = '';
-$_OWNER = '';
-$_ETA = '-';
+$s_running = 1;
+$s_size = 0;
+$s_downtotal = 0;
+$s_percent_done = 0;
+$s_down_speed = "0.00 kB/s";
+$s_time_left = '-';
+$speed = 0;
 
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------
 
-// check args
-if (!isset($argv[1]))
-	die('Arg Error');
-if (!isset($argv[2]))
-	die('Arg Error');
-if (!isset($argv[3]))
-	die('Arg Error');
-if (!isset($argv[4]))
-	die('Arg Error');
-if (!isset($argv[5]))
-	die('Arg Error');
-if (!isset($argv[6]))
-	die('Arg Error');
-if (!isset($argv[7]))
-	die('Arg Error');
-if (!isset($argv[8]))
-	die('Arg Error');
-
 // args
-$_URL = $argv[1];
-$_ALIAS = $argv[2];
-$_PID = $argv[3];
-$_OWNER = $argv[4];
-$_PATH = $argv[5];
-$_LIMIT_RATE = $argv[6];
-$_LIMIT_RETRIES = $argv[7];
-$_PASV = $argv[8];
+$transfer = $argv[1];
+$owner = $argv[2];
+$path = $argv[3];
+$drate = $argv[4];
+$retries = $argv[5];
+$pasv = $argv[6];
 
 // set admin-var
-$cfg['isAdmin'] = IsAdmin($_OWNER);
+$cfg['isAdmin'] = IsAdmin($owner);
+
+// re-use sf-object
+$sf = new StatFile($transfer, $owner);
+$sf->up_speed = "0.00 kB/s";
+$sf->sharing = "0";
+$sf->transferowner = $owner;
+$sf->seeds = "1";
+$sf->peers = "1";
+$sf->seedlimit = "0";
+$sf->uptotal = "0";
 
 // write out stat-file now
 writeStatFile();
 
 // command-string
-$command = "cd ".$_PATH.";";
-$command .= " HOME=".$_PATH."/; export HOME;";
+$command = "cd ".$path.";";
+$command .= " HOME=".$path."/; export HOME;";
 if ($cfg["enable_umask"] != 0)
     $command .= " umask 0000;";
 if ($cfg["nice_adjust"] != 0)
     $command .= " nice -n ".$cfg["nice_adjust"];
 $command .= " ".$cfg['bin_wget'];
-if (($_LIMIT_RATE != "") && ($_LIMIT_RATE != "0"))
-	$command .= " --limit-rate=" . $_LIMIT_RATE;
-if ($_LIMIT_RETRIES != "")
-	$command .= " --tries=" . $_LIMIT_RETRIES;
-if ($_PASV == 1)
+if (($drate != "") && ($drate != "0"))
+	$command .= " --limit-rate=" . $drate;
+if ($retries != "")
+	$command .= " --tries=" . $retries;
+if ($pasv == 1)
 	$command .= " --passive-ftp";
-$command .= " -i ".escapeshellarg($_URL);
+$command .= " -i ".escapeshellarg($cfg['transfer_file_path'].$transfer);
 $command .= " 2>&1"; // direct STDERR to STDOUT
-$command .= " & echo $! > ".$_PID; // write pid-file
+$command .= " & echo $! > ".$cfg['transfer_file_path'].$transfer.".pid"; // write pid-file
 
 // start process
 $header = true;
@@ -126,7 +127,7 @@ do {
 		$read = @fread($wget, 1024);
 		if (preg_match("/.*Length:(.*) .*/i", $read, $reg)) {
 			$header = false;
-			$_SIZE = str_replace(',','', $reg[1]);
+			$s_size = str_replace(',','', $reg[1]);
 		}
 	}
 	// read
@@ -142,45 +143,39 @@ do {
 pclose($wget);
 
 // Run again afterwards just to make sure it finished writing the file.
-$_STATUS = '0';
-$_SPEED = "0.00 kB/s";
-$_PERCENTAGE = 100;
-if ($_SIZE > 0)
-	$_COMPLETED = $_SIZE;
+$s_running = '0';
+$s_down_speed = "0.00 kB/s";
+$s_percent_done = 100;
+if ($s_size > 0)
+	$s_downtotal = $s_size;
 else
-	$_SIZE = $_COMPLETED;
-$_ETA = "Download Succeeded!";
+	$s_size = $s_downtotal;
+$s_time_left = "Download Succeeded!";
 writeStatFile();
 
 // delete pid-file
-@unlink($_PID);
+@unlink($cfg['transfer_file_path'].$transfer.".pid");
 
 // exit
 exit();
 
-/* -------------------------------------------------------------------------- */
+// -----------------------------------------------------------------------------
+// functions
+// -----------------------------------------------------------------------------
 
 /**
  * writeStatFile
  *
  */
 function writeStatFile() {
-	global $cfg, $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_REAL_NAME, $_INT_SPEED, $_OWNER, $_ALIAS, $_ETA;
-    $af = new AliasFile($_ALIAS, $_OWNER);
-	$af->running = $_STATUS;
-	$af->percent_done = $_PERCENTAGE;
-	$af->down_speed = $_SPEED;
-	$af->time_left = $_ETA;
-	$af->up_speed = "0.00 kB/s";
-	$af->sharing = "0";
-	$af->transferowner = $_OWNER;
-	$af->seeds = "1";
-	$af->peers = "1";
-	$af->seedlimit = "0";
-	$af->uptotal = "0";
-	$af->downtotal = $_COMPLETED;
-	$af->size = ($_SIZE > 0) ? $_SIZE : $_COMPLETED;
-	$af->write();
+	global $cfg, $transfer, $sf, $s_size, $s_downtotal, $s_percent_done, $s_down_speed, $s_running, $speed, $s_time_left;
+	$sf->running = $s_running;
+	$sf->percent_done = $s_percent_done;
+	$sf->down_speed = $s_down_speed;
+	$sf->time_left = $s_time_left;
+	$sf->downtotal = $s_downtotal;
+	$sf->size = ($s_size > 0) ? $s_size : $s_downtotal;
+	$sf->write();
 }
 
 /**
@@ -189,39 +184,39 @@ function writeStatFile() {
  * @param $data
  */
 function processData($data){
-	global $_URL, $_SIZE, $_COMPLETED, $_PERCENTAGE, $_SPEED, $_STATUS, $_INT_SPEED, $_ETA;
+	global $transfer, $s_size, $s_downtotal, $s_percent_done, $s_down_speed, $s_running, $speed, $s_time_left;
 	// completed
 	if (@preg_match("/(\d*)K \./i", $data, $reg))
-		$_COMPLETED = $reg[1] << 10;
+		$s_downtotal = $reg[1] << 10;
 	// percentage + speed
 	if (@preg_match("/(\d*)%(\s*)(.*)\/s/i", $data, $reg)) {
 		// percentage
-		$_PERCENTAGE = $reg[1];
+		$s_percent_done = $reg[1];
 		// speed
-		$_SPEED = $reg[3]."/s";
+		$s_down_speed = $reg[3]."/s";
 		// we dont want upper-case k
-		$_SPEED = str_replace("KB/s", "kB/s", $_SPEED);
-		if (substr($_SPEED, -4) == "kB/s") {
-			$_INT_SPEED = substr($_SPEED, 0, strlen($_SPEED) - 5);
-		} elseif (substr($_SPEED, -4) == "MB/s"){
-			$_INT_SPEED = substr($_SPEED, 0, strlen($_SPEED) - 5);
-			$_INT_SPEED = $_INT_SPEED >> 10;
+		$s_down_speed = str_replace("KB/s", "kB/s", $s_down_speed);
+		if (substr($s_down_speed, -4) == "kB/s") {
+			$speed = substr($s_down_speed, 0, strlen($s_down_speed) - 5);
+		} elseif (substr($s_down_speed, -4) == "MB/s"){
+			$speed = substr($s_down_speed, 0, strlen($s_down_speed) - 5);
+			$speed = $speed >> 10;
 		}
 		// ETA
-		$_ETA = (($_SIZE > 0) && ($_INT_SPEED > 0))
-			? convertTime((($_SIZE - $_COMPLETED) >> 10) / $_INT_SPEED)
+		$s_time_left = (($s_size > 0) && ($speed > 0))
+			? convertTime((($s_size - $s_downtotal) >> 10) / $speed)
 			: '-';
 	}
 	// download done
 	if (@preg_match("/.*saved [.*/", $data)) {
-		$_STATUS = '0';
-		$_SPEED = "0.00 kB/s";
-		$_PERCENTAGE = 100;
-		if ($_SIZE > 0)
-			$_COMPLETED = $_SIZE;
+		$s_running = '0';
+		$s_down_speed = "0.00 kB/s";
+		$s_percent_done = 100;
+		if ($s_size > 0)
+			$s_downtotal = $s_size;
 		else
-			$_SIZE = $_COMPLETED;
-		$_ETA = "Download Succeeded!";
+			$s_size = $s_downtotal;
+		$s_time_left = "Download Succeeded!";
 	}
 }
 

@@ -48,9 +48,9 @@ $tmpl->setvar('transfer', $transfer);
 $transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
 $tmpl->setvar('transferLabel', $transferLabel);
 
-// alias / stat
+// stat
 $transferowner = getOwner($transfer);
-$af = new AliasFile(getTransferName($transfer).".stat", $transferowner);
+$sf = new StatFile($transfer, $transferowner);
 
 // client-switch
 if (substr($transfer, -8) == ".torrent") {
@@ -82,8 +82,8 @@ if (substr($transfer, -8) == ".torrent") {
 }
 
 // totals
-$afu = $af->uptotal;
-$afd = $af->downtotal;
+$afu = $sf->uptotal;
+$afd = $sf->downtotal;
 $clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
 $totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
 $totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
@@ -91,7 +91,7 @@ $totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $a
 $tmpl->setvar('transferowner', $transferowner);
 
 // size
-$transferSize = (int) $af->size;
+$transferSize = (int) $sf->size;
 $tmpl->setvar('size', @formatBytesTokBMBGBTB($transferSize));
 
 // sharing
@@ -102,7 +102,7 @@ $tmpl->setvar('downTotal', @formatFreeSpace($totals["downtotal"] / 1048576));
 $tmpl->setvar('upTotal', @formatFreeSpace($totals["uptotal"] / 1048576));
 
 // more
-if ($af->running == 1) {
+if ($sf->running == 1) {
 
 	// running
 	$tmpl->setvar('running', 1);
@@ -112,8 +112,8 @@ if ($af->running == 1) {
 	$tmpl->setvar('upTotalCurrent', formatFreeSpace($totalsCurrent["uptotal"] / 1048576));
 
 	// seeds + peers
-	$tmpl->setvar('seeds', $af->seeds);
-	$tmpl->setvar('peers', $af->peers);
+	$tmpl->setvar('seeds', $sf->seeds);
+	$tmpl->setvar('peers', $sf->peers);
 
 	// port + cons
 	$transfer_pid = getTransferPid($transfer);
@@ -122,11 +122,11 @@ if ($af->running == 1) {
 	$tmpl->setvar('maxcons', '('.$cfg["maxcons"].')');
 
 	// down speed
-	$tmpl->setvar('down_speed', (trim($af->down_speed) != "") ? $af->down_speed : '0.0 kB/s');
+	$tmpl->setvar('down_speed', (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s');
 	$tmpl->setvar('max_download_rate', ($cfg["max_download_rate"] != 0) ? ' ('.number_format($cfg["max_download_rate"], 2).')' : ' (&#8734)');
 
 	// up speed
-	$tmpl->setvar('up_speed', (trim($af->up_speed) != "") ?  $af->up_speed : '0.0 kB/s');
+	$tmpl->setvar('up_speed', (trim($sf->up_speed) != "") ?  $sf->up_speed : '0.0 kB/s');
 	$tmpl->setvar('max_upload_rate', ($cfg["max_upload_rate"] != 0) ? ' ('.number_format($cfg["max_upload_rate"], 2).')' : ' (&#8734)');
 
 	// sharekill
@@ -163,29 +163,29 @@ if ($af->running == 1) {
 }
 
 // percent and eta
-if ($af->percent_done < 0) {
-	$af->percent_done = round(($af->percent_done*-1)-100,1);
-	$af->time_left = $cfg['_INCOMPLETE'];
+if ($sf->percent_done < 0) {
+	$sf->percent_done = round(($sf->percent_done*-1)-100,1);
+	$sf->time_left = $cfg['_INCOMPLETE'];
 }
-$tmpl->setvar('time_left', $af->time_left);
+$tmpl->setvar('time_left', $sf->time_left);
 
 // graph width
-if ($af->percent_done < 1) {
+if ($sf->percent_done < 1) {
 	$tmpl->setvar('graph_width1', 3.5);
 	$tmpl->setvar('graph_width2', 100 * 3.5);
 } else {
-	$tmpl->setvar('graph_width1', $af->percent_done * 3.5);
-	$tmpl->setvar('graph_width2', (100 - $af->percent_done) * 3.5);
+	$tmpl->setvar('graph_width1', $sf->percent_done * 3.5);
+	$tmpl->setvar('graph_width2', (100 - $sf->percent_done) * 3.5);
 }
-if ($af->percent_done >= 100) {
-	$af->percent_done = 100;
+if ($sf->percent_done >= 100) {
+	$sf->percent_done = 100;
 	$tmpl->setvar('background', "#0000ff");
 } else {
 	$tmpl->setvar('background', "#000000");
 }
 
 // percentage
-$tmpl->setvar('percent_done', $af->percent_done);
+$tmpl->setvar('percent_done', $sf->percent_done);
 
 // standard / ajax switch
 $tmpl->setvar('transferStatsType', $cfg['transferStatsType']);

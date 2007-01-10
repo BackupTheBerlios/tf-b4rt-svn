@@ -102,10 +102,10 @@ switch ($imageOp) {
 			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 			Image::paintNoOp();
 		}
-		// alias / stat
-		$af = new AliasFile(getTransferName($transfer).".stat");
-		$seeds = trim($af->seeds);
-		$peers = trim($af->peers);
+		// stat
+		$sf = new StatFile($transfer);
+		$seeds = trim($sf->seeds);
+		$peers = trim($sf->peers);
 		// client-switch + get peer-data
 		$peerData = array();
 		$peerData['seeds'] = 0;

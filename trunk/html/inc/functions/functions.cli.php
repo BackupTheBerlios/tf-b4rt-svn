@@ -406,8 +406,8 @@ function cliInjectTransfer($tpath = "", $username = "") {
                 if ((is_file($tpath)) && (copy($tpath, $cfg["transfer_file_path"].$file_name))) {
                     chmod($cfg["transfer_file_path"].$file_name, 0644);
                     AuditAction($cfg["constants"]["file_upload"], $file_name);
-                    // init stat-file
-                    injectAlias($file_name);
+                    // inject
+                    injectTransfer($file_name);
                 } else {
                     $messages .= "ERROR: File could not be found or could not be copied: ".$tpath."\n";
                 }
@@ -450,8 +450,8 @@ function cliWatchDir($tpath = "", $username = "") {
                             @unlink($watchDir.$file);
                             chmod($cfg["transfer_file_path"].$file_name, 0644);
                             AuditAction($cfg["constants"]["file_upload"], $file_name);
-                            // init stat-file
-                            injectAlias($file_name);
+                            // inject
+                            injectTransfer($file_name);
                             // file-prio
                             if ($cfg["enable_file_priority"]) {
                                 include_once("inc/functions/functions.setpriority.php");

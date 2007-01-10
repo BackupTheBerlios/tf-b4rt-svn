@@ -28,7 +28,6 @@ class ClientHandlerWget extends ClientHandler
 
 	// public fields
 	var $url = "";
-	var $urlFile = "";
 
 	// =========================================================================
 	// ctor
@@ -59,8 +58,7 @@ class ClientHandlerWget extends ClientHandler
         $transfer = strrchr($transferUrl,'/');
         if ($transfer{0} == '/')
         	$transfer = substr($transfer, 1);
-		$this->setVarsFromTransfer($transfer);
-        $this->urlFile = $cfg["transfer_file_path"].$transfer.".wget";
+		$this->setVarsFromTransfer($transfer.".wget");
         if (empty($this->owner) || (strtolower($this->owner) == "n/a"))
         	$this->owner = $cfg['user'];
     }
@@ -73,9 +71,8 @@ class ClientHandlerWget extends ClientHandler
     function setVarsFromFile($transfer) {
     	global $cfg;
 		$this->setVarsFromTransfer($transfer);
-    	$this->urlFile = $cfg["transfer_file_path"].$transfer.".wget";
 	    $data = "";
-	    if ($fileHandle = @fopen($this->urlFile,'r')) {
+	    if ($fileHandle = @fopen($this->transferFilePath,'r')) {
 	        while (!@feof($fileHandle))
 	            $data .= @fgets($fileHandle, 2048);
 	        @fclose ($fileHandle);
@@ -95,13 +92,13 @@ class ClientHandlerWget extends ClientHandler
 		// set vars from the url
 		$this->setVarsFromUrl($url);
 
-		// inject alias
-		$af = new AliasFile($this->aliasFile);
-		$af->running = "2"; // file is new
-		$af->size = "0";
-		if (!$af->write()) {
+		// inject stat
+		$sf = new StatFile($this->transfer);
+		$sf->running = "2"; // file is new
+		$sf->size = "0";
+		if (!$sf->write()) {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
-            $msg = "wget-inject-error when writing alias-file : ".$this->aliasFile;
+            $msg = "wget-inject-error when writing stat-file for transfer : ".$this->transfer;
             array_push($this->messages , $msg);
             AuditAction($cfg["constants"]["error"], $msg);
             $this->logMessage($msg."\n", true);
@@ -110,7 +107,7 @@ class ClientHandlerWget extends ClientHandler
 
 		// write meta-file
 		$resultSuccess = false;
-		if ($handle = @fopen($this->urlFile, "w")) {
+		if ($handle = @fopen($this->transferFilePath, "w")) {
 	        $resultSuccess = (@fwrite($handle, $this->url) !== false);
 			@fclose($handle);
 		}
@@ -118,10 +115,10 @@ class ClientHandlerWget extends ClientHandler
 		// log
 		if ($resultSuccess) {
 			// Make an entry for the owner
-			AuditAction($cfg["constants"]["file_upload"], basename($this->urlFile));
+			AuditAction($cfg["constants"]["file_upload"], basename($this->transferFilePath));
 		} else {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
-            $msg = "wget-metafile cannot be written : ".$this->urlFile;
+            $msg = "wget-metafile cannot be written : ".$this->transferFilePath;
             array_push($this->messages , $msg);
             AuditAction($cfg["constants"]["error"], $msg);
             $this->logMessage($msg."\n", true);
@@ -184,16 +181,14 @@ class ClientHandlerWget extends ClientHandler
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
-        $this->command .= " " . escapeshellarg($this->urlFile);
-        $this->command .= " " . escapeshellarg($this->aliasFile);
-        $this->command .= " " . escapeshellarg($this->pidFilePath);
+        $this->command .= " " . escapeshellarg($this->transfer);
         $this->command .= " " . $this->owner;
         $this->command .= " " . escapeshellarg($this->savepath);
         $this->command .= " " . $cfg["wget_limit_rate"];
         $this->command .= " " . $cfg["wget_limit_retries"];
         $this->command .= " " . $cfg["wget_ftp_pasv"];
-        $this->command .= " 1>> ".escapeshellarg($this->logFilePath);
-        $this->command .= " 2>> ".escapeshellarg($this->logFilePath);
+        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " &";
 
 		// state
@@ -236,8 +231,8 @@ class ClientHandlerWget extends ClientHandler
     function getTransferCurrent($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -245,12 +240,12 @@ class ClientHandlerWget extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferCurrentOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 
     /**
@@ -262,8 +257,8 @@ class ClientHandlerWget extends ClientHandler
     function getTransferTotal($transfer) {
     	global $transfers;
         // transfer from stat-file
-        $af = new AliasFile(getTransferName($transfer).".stat", getOwner($transfer));
-        return array("uptotal" => $af->uptotal, "downtotal" => $af->downtotal);
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
     }
 
     /**
@@ -271,12 +266,12 @@ class ClientHandlerWget extends ClientHandler
      *
      * @param $transfer
      * @param $tid of the transfer
-     * @param $afu alias-file-uptotal of the transfer
-     * @param $afd alias-file-downtotal of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
      * @return array with downtotal and uptotal
      */
-    function getTransferTotalOP($transfer, $tid, $afu, $afd) {
-        return array("uptotal" => $afu, "downtotal" => $afd);
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
 }
 
