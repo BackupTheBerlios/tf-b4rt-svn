@@ -67,7 +67,6 @@ my $version = '0.6.8';
 #my $ospeed = 9600;
 my $recv_chunksize = 5*1024;	# How big of chunks we read at once from a connection (this is pulled from ass)
 my $UPDATE_URL = 'http://noisybox.net/computers/nzbperl/nzbperl_version.txt';
-
 my $dispchunkct = 250;			# Number of data lines to read between screen updates.
 my $targkBps = 0;
 my ($medbw, $lowbw) = (95, 35);	# Defaults for low and medium speed settings.
@@ -82,7 +81,6 @@ my $quitnow = 0;
 my $showinghelpscreen = 0;
 my $skipthisfile = 0;
 my $usecolor = 1;
-my $logfile;
 
 # These are getting hefty, so they're now 5 per line
 my (	$server, $port, $user, $pw, $keepparts,
@@ -93,8 +91,7 @@ my (	$server, $port, $user, $pw, $keepparts,
 		$socks_port, $proxy_user, $proxy_passwd, $http_proxy_server, $http_proxy_port,
 		$dlcreate, $dlcreategrp, $noansi, $queuedir, $rcport,
 		$postDecProg, $postNzbProg, $ipv6, $forever, $DECODE_DBG_FILE,
-		$ifilterregex, $dthreadct, $diskfree, $tfuser, $statfile,
-		$pidfile
+		$ifilterregex, $dthreadct, $diskfree, $tfuser
 		) =
 	(	'', -1, '', '', 0,
 		0, 0, 0, 0, 0,
@@ -104,8 +101,8 @@ my (	$server, $port, $user, $pw, $keepparts,
 		-1, undef, undef, undef, -1,
 		undef, undef, 0, undef, undef,
 		undef, undef, undef, undef, undef,
-		undef, 1, undef, '', '',
-		'');
+		undef, 1, undef, ''
+	);
 
 # How commandline args are mapped to vars.  This map is also used by config file processor
 my %optionsmap = ('server=s' => \$server, 'user=s' => \$user, 'pw=s' => \$pw,
@@ -113,20 +110,18 @@ my %optionsmap = ('server=s' => \$server, 'user=s' => \$user, 'pw=s' => \$pw,
 				'speed=s' => \$targkBps, 'keepparts' => \$keepparts,
 				'keepbroken' => \$keepbroken, 'keepbrokenbin' => \$keepbrokenbin,
 				'nosort' => \$nosort, 'redo' => \$overwritefiles, 'conn=i' => \$connct,
-				'nocolor' => \$nocolor, 'log=s' => \$logfile,
-				'insane' => \$insane, 'dropbad' => \$dropbad,
-				'skip=i' => \$skipfilect, 'retrywait=i' => \$reconndur,
-				'filter=s' => \$filterregex, 'config=s' => \$configfile,
-				'uudeview=s' => \$uudeview, 'daemon' => \$daemon, 'forever' => \$forever,
-				'dlrelative' => \$dlrelative, 'dlpath=s' => \$dlpath, 'noupdate' => \$noupdate,
-				'ssl' => \$ssl, 'socks_server=s' => \$socks_server, 'socks_port=i' => \$socks_port,
+				'nocolor' => \$nocolor, 'insane' => \$insane, 'dropbad' => \$dropbad,
+				'skip=i' => \$skipfilect, 'retrywait=i' => \$reconndur, 'filter=s' => \$filterregex,
+				'config=s' => \$configfile, 'uudeview=s' => \$uudeview, 'dlrelative' => \$dlrelative,
+				'dlpath=s' => \$dlpath, 'noupdate' => \$noupdate, 'ssl' => \$ssl,
+				'socks_server=s' => \$socks_server, 'socks_port=i' => \$socks_port,
 				'socks_user=s' => \$proxy_user, 'socks_passwd=s' => \$proxy_passwd,
-				'http_proxy=s' => \$http_proxy_server, 'dlcreate'=>\$dlcreate, 'dlcreategrp' => \$dlcreategrp,
-				'noansi' => \$noansi, 'queuedir=s' => \$queuedir, 'rcport=i' => \$rcport,
-				'postdec=s' => \$postDecProg, 'postnzb=s' => \$postNzbProg,
-				'ipv6' => \$ipv6, 'chunksize=s' => \$recv_chunksize, 'decodelog=s' => \$DECODE_DBG_FILE,
-				'ifilter=s' => \$ifilterregex, 'dthreadct=s' => \$dthreadct, 'diskfree=s' => \$diskfree,
-				'tfuser=s' => \$tfuser, 'statfile=s' => \$statfile, 'pidfile=s' => \$pidfile);
+				'http_proxy=s' => \$http_proxy_server, 'dlcreate'=>\$dlcreate,
+				'dlcreategrp' => \$dlcreategrp, 'noansi' => \$noansi, 'rcport=i' => \$rcport,
+				'postdec=s' => \$postDecProg, 'postnzb=s' => \$postNzbProg, 'ipv6' => \$ipv6,
+				'chunksize=s' => \$recv_chunksize, 'decodelog=s' => \$DECODE_DBG_FILE,
+				'ifilter=s' => \$ifilterregex, 'dthreadct=s' => \$dthreadct,
+				'diskfree=s' => \$diskfree, 'tfuser=s' => \$tfuser);
 
 ################################################################################
 # main                                                                         #
@@ -149,7 +144,7 @@ if (not $ipv6){
 # Verify that uudeview is installed
 if (not haveUUDeview()){
 	printError("Please install and configure uudeview and try again.\n");
-	exit 1;
+	exit;
 }
 if (!($uudeview =~ m#^([\w\s\.\_\-\/\\]+)$#)) {
 	printError("Invalid characters in uudeview path.\n");
@@ -171,9 +166,12 @@ my @lastdrawtime = Time::HiRes::gettimeofday();
 # statusmessages
 my @statusmsgs;
 
+# vars based on nzb-file
+my ($statfile, $cmdfile, $pidfile);
+
 # fileset
 my @fileset;
-while (scalar(@ARGV) > 0){
+if (scalar(@ARGV) > 0){
 	my $nzbfilename = shift @ARGV; #$ARGV[0];
 	my @fsparts = parseNZB($nzbfilename, 1);
 	if (!defined($fsparts[0])) {
@@ -182,6 +180,10 @@ while (scalar(@ARGV) > 0){
 	}
 	@fsparts = regexAndSkipping(@fsparts);	# It checks options inside too
 	push @fileset, @fsparts;
+	#
+	$statfile = $nzbfilename.".stat";
+	$cmdfile = $nzbfilename.".cmd";
+	$pidfile = $nzbfilename.".pid";
 }
 my @queuefileset = @fileset;
 
@@ -212,23 +214,19 @@ my %totalsCopy = (
 	'total file ct' => $totals{'total file ct'}
 );
 
-# Create cmd file name var
-(my $cmdfile = $statfile) =~ s/stat\b/cmd/;
-
 # startup-message
-printMessage("nzbperl starting up :\n".
-	" - files : ".$totals{'total file ct'}."\n".
-	" - size : ".$totals{'total size'}."\n".
-	" - tfuser : ".$tfuser."\n".
-	" - statfile : ".$statfile."\n".
-	" - pidfile : ".$pidfile."\n".
-	" - cmdfile : ".$cmdfile."\n".
-	" - dlpath : ".$dlpath."\n".
-	" - server : ".$server."\n".
-	" - speed : ".$targkBps."\n".
-	" - conn : ".$connct."\n".
-	" - dthreadct : ".$dthreadct."\n"
-);
+printMessage("nzbperl starting up :\n");
+printMessage(" - files : ".$totals{'total file ct'}."\n");
+printMessage(" - size : ".$totals{'total size'}."\n");
+printMessage(" - tfuser : ".$tfuser."\n");
+printMessage(" - statfile : ".$statfile."\n");
+printMessage(" - pidfile : ".$pidfile."\n");
+printMessage(" - cmdfile : ".$cmdfile."\n");
+printMessage(" - dlpath : ".$dlpath."\n");
+printMessage(" - server : ".$server."\n");
+printMessage(" - speed : ".$targkBps."\n");
+printMessage(" - conn : ".$connct."\n");
+printMessage(" - dthreadct : ".$dthreadct."\n");
 
 # sf-instance-field (reuse object)
 my $sf = StatFile->new($statfile);
@@ -238,6 +236,12 @@ writeStatStartup();
 
 # write pid
 pidFileWrite();
+
+# Check for and delete stale .cmd files
+if (-e $cmdfile ) {
+	printMessage("removing command-file ".$cmdfile."...\n");
+	unlink($cmdfile);
+}
 
 # start remote control
 my $rc_sock = undef;
@@ -266,12 +270,6 @@ if (usingThreadedDecoding()){
 
 # message
 printMessage("nzbperl up and running.\n");
-
-# Check for and delete stale .cmd files
-if (-e $cmdfile ) {
-	printMessage("removing command-file ".$cmdfile."...\n");
-	unlink($cmdfile);
-}
 
 # main loop
 my @dlstarttime = Time::HiRes::gettimeofday();
@@ -2070,14 +2068,6 @@ sub statMsg {
 	my @t = localtime;
 	my $msg = sprintf("%0.2d:%0.2d - %s", $t[2], $t[1], $str);
 	push @statusmsgs, $msg;
-=for later
-	if($logfile){
-		open LOGFH, ">>" . $logfile or
-				(push @statusmsgs, sprintf("%0.2d:%0.2d:%0.2d - Error writing to log file  %s", $logfile) and return 1);
-		print LOGFH ($str."\n");
-		close LOGFH;
-	}
-=cut
 	printMessage($str."\n");
 	return 1;
 }
@@ -2738,15 +2728,9 @@ sub handleCommandLineOptions {
 						" You must install the IO::Socket::INET6 module to use IPv6";
 	}
 
-	# check tf-args
+	# check tf-arg
 	if (!$tfuser) {
 		return "no tfuser given\n";
-	}
-	if (!$statfile) {
-		return "no statfile path given\n";
-	}
-	if (!$pidfile) {
-		return "no pidfile path given\n";
 	}
 
 	return undef;	# success
@@ -2952,12 +2936,10 @@ print <<EOL
  --med <kBps>      : Set "med" bandwidth to kBps (default is 95kBps)
  --low <kBps>      : Set "low" bandwidth to kBps (default is 35kBps)
  --speed <speed>   : Explicitly specify transfer bandwidth in kBps
- --log <file>      : Log status messages into <file> (default = none)
  --decodelog <file>: Append uudeview output into <file> (default = none)
  --dthreadct <ct>  : Use <ct> number of decoder threads.  Set ct = 0 for single
                      threaded perl operation.  (Note: When ct = 0, downloads
                      will be paused during file decoding)
- --daemon          : Run in background as daemon (use log for status)
  --rcport <port>   : Enable remote control functionality on port <port>
  --retrywait <n>   : Wait <n> seconds between reconnect tries (default = 300)
  --nosort          : Don't sort files by name before processing
@@ -2967,8 +2949,6 @@ print <<EOL
  --ifilter <regex> : Inverse filter NZB contents on <regex> in subject line
  --uudeview <app>  : Specify full path to uudeview (default found in \$PATH)
  --tfuser          : TF username to run as (required)
- --statfile	       : path to stat file for TF (required)
- --pidfile	       : path to pid file for TF (required)
  --help            : Show this screen
 
   nzbperl version $version, Copyright (C) 2004 Jason Plumb
@@ -3170,18 +3150,18 @@ sub execCommand {
 	SWITCH: {
 		/^q$/ && do {
 			# quit
-			printMessage("Command: stop-request, setting shutdown-flag...\n");
+			printMessage("command: stop-request, setting shutdown-flag...\n");
 			$quitnow = 1;
 			return 1;
 		};
 		/^d(\d+)/ && do {
 			# set download speed
-			printMessage("Command: setting Download-Rate to ".$1."\n");
+			printMessage("command: setting Download-Rate to ".$1."\n");
 			$targkBps = $1;
 			return 0;
 		};
 		# default
-		printMessage("op-code unknown: ".substr($command, 0 , 1)."\n");
+		printMessage("command unknown or invalid. op-code : ".substr($command, 0 , 1)."\n");
 	} # SWITCH
 	return -1;
 }
