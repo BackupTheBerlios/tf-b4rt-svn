@@ -161,7 +161,7 @@ foreach ($arList as $transfer) {
 	if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 		$transferRunning = 2;
 		$sf->running = "2";
-		$sf->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+		$sf->size = getDownloadSize($transfer);
 		injectTransfer($transfer);
 	}
 

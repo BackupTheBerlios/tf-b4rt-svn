@@ -1064,7 +1064,7 @@ function injectTransfer($transfer) {
 	global $cfg;
 	$sf = new StatFile($transfer);
 	$sf->running = "2"; // file is new
-	$sf->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+	$sf->size = getDownloadSize($transfer);
 	if ($sf->write()) {
 		// set transfers-cache
 		cacheTransfersSet();
@@ -1273,7 +1273,7 @@ function getTransferListArray() {
 		if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 			$transferRunning = 2;
 			$sf->running = "2";
-			$sf->size = getDownloadSize($cfg["transfer_file_path"].$transfer);
+			$sf->size = getDownloadSize($transfer);
 			injectTransfer($transfer);
 		}
 
@@ -1987,17 +1987,30 @@ function getDriveSpace($drive) {
  */
 function getDownloadSize($transfer) {
 	global $cfg;
-	$file = $cfg["transfer_file_path"].$transfer;
-	if (@file_exists($file)) {
-		require_once("inc/classes/BDecode.php");
+	// client-switch
+	if (substr($transfer, -8) == ".torrent") {
+		// this is a t-client
+		$file = $cfg["transfer_file_path"].$transfer;
 		if ($fd = @fopen($file, "rd")) {
+			require_once("inc/classes/BDecode.php");
 			$alltorrent = @fread($fd, @filesize($file));
 			$array = @BDecode($alltorrent);
 			@fclose($fd);
 		}
 		return ((isset($array["info"]["piece length"])) && (isset($array["info"]["pieces"])))
 			? $array["info"]["piece length"] * (strlen($array["info"]["pieces"]) / 20)
-			: "";
+			: 0;
+	} else if (substr($transfer, -5) == ".wget") {
+		// this is wget.
+		$clientHandler = ClientHandler::getInstance('wget');
+		$clientHandler->setVarsFromFile($transfer);
+		require_once("inc/classes/SimpleHTTP.php");
+		return SimpleHTTP::getRemoteSize($clientHandler->url);
+	} else if (substr($transfer, -4) == ".nzb") {
+		// this is nzbperl.
+		require_once("inc/classes/NZBFile.php");
+		$nzb = new NZBFile($transfer);
+		return $nzb->size;
 	}
 	return 0;
 }

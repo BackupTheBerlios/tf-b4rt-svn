@@ -225,6 +225,21 @@ class SimpleHTTP
 		return $instanceSimpleHTTP->instance_getNzb($durl);
 	}
 
+	/**
+	 * get size from URL.
+	 *
+	 * @param $durl
+	 * @return int
+	 */
+	function getRemoteSize($durl) {
+		global $instanceSimpleHTTP;
+		// initialize if needed
+		if (!isset($instanceSimpleHTTP))
+			SimpleHTTP::initialize();
+		// call instance-method
+		return $instanceSimpleHTTP->instance_getRemoteSize($durl);
+	}
+
 	// =========================================================================
 	// ctor
 	// =========================================================================
@@ -707,6 +722,22 @@ class SimpleHTTP
 	        $this->state = SIMPLEHTTP_STATE_OK;
 		}
 		return $data;
+	}
+
+	/**
+	 * get size from URL.
+	 *
+	 * @param $durl
+	 * @return string
+	 */
+	function instance_getRemoteSize($durl) {
+		global $cfg;
+
+		// set fields
+		$this->url = $durl;
+
+		// TODO : implement me
+		return 0;
 	}
 
 }
