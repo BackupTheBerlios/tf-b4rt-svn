@@ -44,7 +44,7 @@ class ClientHandlerNzbperl extends ClientHandler
         $this->binSystem = "perl";
         $this->binSocket = "perl";
         $this->binClient = "tfnzbperl.pl";
-		$this->nzbbin = $cfg["docroot"]."bin/nzbperl/tfnzbperl.pl";
+		$this->nzbbin = $cfg["docroot"]."bin/clients/nzbperl/tfnzbperl.pl";
 	}
 
 	// =====================================================================

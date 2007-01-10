@@ -35,7 +35,7 @@ class RunningTransferTornado extends RunningTransfer
     function RunningTransferTornado($psLine) {
     	global $cfg;
         // tornadoBin
-        $tornadoBin = $cfg["docroot"]."bin/tornado/tftornado.py";
+        $tornadoBin = $cfg["docroot"]."bin/clients/tornado/tftornado.py";
         // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)

@@ -44,7 +44,7 @@ class ClientHandlerMainline extends ClientHandler
         $this->binSystem = "python";
         $this->binSocket = "python";
         $this->binClient = "tfmainline.py";
-        $this->mainlineBin = $cfg["docroot"]."bin/mainline/tfmainline.py";
+        $this->mainlineBin = $cfg["docroot"]."bin/clients/mainline/tfmainline.py";
     }
 
 	// =========================================================================
