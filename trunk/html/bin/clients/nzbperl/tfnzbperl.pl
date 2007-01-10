@@ -243,6 +243,13 @@ if (-e $cmdfile ) {
 	unlink($cmdfile);
 }
 
+# set up our signal handlers
+printMessage("setting up signal handlers...\n");
+$SIG{HUP} = \&gotSigHup;
+$SIG{INT} = \&gotSigInt;
+$SIG{TERM} = \&gotSigTerm;
+$SIG{QUIT} = \&gotSigQuit;
+
 # start remote control
 my $rc_sock = undef;
 my @rc_clients;
@@ -3182,3 +3189,41 @@ sub shutdownClient {
 	exit;
 }
 
+#------------------------------------------------------------------------------#
+# Sub: gotSigHup                                                               #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigHup {
+	printMessage("got SIGHUP, ignoring...\n");
+}
+
+#------------------------------------------------------------------------------#
+# Sub: gotSigInt                                                               #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigInt {
+	printMessage("got SIGINT, setting shutdown-flag...\n");
+	$quitnow = 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: gotSigTerm                                                              #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigTerm {
+	printMessage("got SIGTERM, setting shutdown-flag...\n");
+	$quitnow = 1;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: gotSigQuit                                                              #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigQuit {
+	printMessage("got SIGQUIT, setting shutdown-flag...\n");
+	$quitnow = 1;
+}
