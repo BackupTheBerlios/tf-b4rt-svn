@@ -176,8 +176,10 @@ int main(int argc, char ** argv) {
 		tf_print(sprintf(tf_message, " - finishCall : %s\n", finishCall));
 
 	// signals
-	signal(SIGTERM, sigHandler);
+	signal(SIGHUP, sigHandler);
 	signal(SIGINT, sigHandler);
+	signal(SIGTERM, sigHandler);
+	signal(SIGQUIT, sigHandler);
 
 	// set port + rates
 	tr_setBindPort(h, bindPort);
@@ -605,27 +607,27 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 
 	// opcode-switch
 	switch (opcode) {
-
+		// q
 		case 'q':
 			tf_print(sprintf(tf_message,
 				"command: stop-request, setting shutdown-flag...\n"));
 			mustDie = 1;
 			return 1;
-
+		// u
 		case 'u':
 			uploadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
 				"command: setting upload-rate to %d\n", uploadLimit));
 			tr_setGlobalUploadLimit(h, uploadLimit);
 			return 0;
-
+		// d
 		case 'd':
 			downloadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
 				"command: setting download-rate to %d\n", downloadLimit));
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
-
+		// default
 		default:
 			tf_print(sprintf(tf_message,
 				"op-code unknown: %c\n", opcode));
@@ -769,14 +771,24 @@ static int tf_print(int len) {
  ******************************************************************************/
 static void sigHandler(int signal) {
 	switch (signal) {
-		case SIGTERM:
-			tf_print(sprintf(tf_message, "got SIGTERM, setting shutdown-flag...\n"));
-			mustDie = 1;
+		// HUP
+		case SIGHUP:
+			tf_print(sprintf(tf_message, "got SIGHUP, ignoring...\n"));
+			break;
+		// INT
 		case SIGINT:
 			tf_print(sprintf(tf_message, "got SIGINT, setting shutdown-flag...\n"));
 			mustDie = 1;
 			break;
-		default:
+		// TERM
+		case SIGTERM:
+			tf_print(sprintf(tf_message, "got SIGTERM, setting shutdown-flag...\n"));
+			mustDie = 1;
+			break;
+		// QUIT
+		case SIGQUIT:
+			tf_print(sprintf(tf_message, "got SIGQUIT, setting shutdown-flag...\n"));
+			mustDie = 1;
 			break;
 	}
 }
