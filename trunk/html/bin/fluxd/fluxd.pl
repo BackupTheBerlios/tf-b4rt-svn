@@ -32,9 +32,8 @@
 package Fluxd;
 use strict;
 use warnings;
-use FluxCommon;
 use StatFile;
-use Fluxinet;
+use FluxCommon;
 ################################################################################
 
 ################################################################################
@@ -68,7 +67,7 @@ my $SERVER;
 my $Select;
 my $start_time = time();
 my $start_time_local = localtime();
-my $loop = 0;
+my $loop = 1;
 
 #------------------------------------------------------------------------------#
 # Class reference variables                                                    #
@@ -82,115 +81,20 @@ use vars qw($fluxDB $qmgr $fluxinet $rssad $watch $maintenance $trigger);
 # flush the buffer
 $| = 1;
 
-# intialize
+# initialize
 initialize();
 
-# Verify that we have been started in a valid way
+# process arguments
 processArguments();
 
-# daemonise the script
-&daemonize();
+# daemon-startup
+daemonStartup();
 
-# load flux-service-modules
-serviceModulesLoad();
+# daemon-main
+daemonMain();
 
-# print that we started ok
-printMessage("CORE", "fluxd-startup complete. fluxd is up and running.\n");
-
-# Here we go! The main loop!
-$loop = 1;
-while ($loop) {
-
-	# check Connections
-	checkConnections();
-
-	# Fluxinet
-	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 3;
-			$fluxinet->main();
-			alarm 0;
-		};
-		# Check for alarm (timeout) condition
-		if ($@) {
-			printError("CORE", "Fluxinet Timed out:\n ".$@."\n");
-		}
-	}
-
-	# Qmgr
-	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub { die "alarm\n" };
-			alarm 20;
-			$qmgr->main();
-			alarm 0;
-		};
-		# Check for alarm (timeout) condition
-		if ($@) {
-			printError("CORE", "Qmgr Timed out:\n ".$@."\n");
-		}
-	}
-
-	# Rssad
-	if ((defined $rssad) && ($rssad->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 20;
-			$rssad->main();
-			alarm 0;
-		};
-		# Check for alarm (timeout) condition
-		if ($@) {
-			printError("CORE", "Rssad Timed out:\n ".$@."\n");
-		}
-	}
-
-	# Watch
-	if ((defined $watch) && ($watch->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 20;
-			$watch->main();
-			alarm 0;
-		};
-		# Check for alarm (timeout) condition
-		if ($@) {
-			printError("CORE", "Watch Timed out:\n ".$@."\n");
-		}
-	}
-
-	# Maintenance
-	if ((defined $maintenance) && ($maintenance->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 5;
-			$maintenance->main();
-			alarm 0;
-		};
-		# Check for alarm (timeout) condition
-		if ($@) {
-			printError("CORE", "Maintenance Timed out:\n ".$@."\n");
-		}
-	}
-
-	# Trigger
-	if ((defined $trigger) && ($trigger->getState() == 1)) {
-		eval {
-			local $SIG{ALRM} = sub {die "alarm\n"};
-			alarm 5;
-			$trigger->main();
-			alarm 0;
-		};
-		# Check for alarm (timeout) condition
-		if ($@) {
-			printError("CORE", "Trigger Timed out:\n ".$@."\n");
-		}
-	}
-
-	# sleep
-	select undef, undef, undef, 0.1;
-}
+# daemon-shutdown
+daemonShutdown();
 
 ################################################################################
 # subs                                                                         #
@@ -293,8 +197,8 @@ sub processArguments {
 			my $daemonPid = <PIDFILE>;
 			close(PIDFILE);
 			chomp $daemonPid;
-			# send QUIT to daemon
-			kill 'SIGQUIT', $daemonPid;
+			# send TERM to daemon
+			kill 'SIGTERM', $daemonPid;
 		} else {
 			printError("CORE", "Error : cant find pid-file (".$PID_FILE."), daemon running ?\n");
 		}
@@ -339,14 +243,33 @@ sub processArguments {
 		$dbMode = $temp;
 		# init paths
 		initPaths();
-		# print
-		printMessage("CORE", "Starting daemon...\n");
 		# return
 		return 1;
 	};
 	# hmmm dont know this arg, show usage screen
 	printUsage();
 	exit;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: daemonStartup                                                           #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub daemonStartup {
+
+	# print
+	printMessage("CORE", "fluxd starting...\n");
+
+	# daemonise the script
+	&daemonize();
+
+	# load flux-service-modules
+	serviceModulesLoad();
+
+	# print that we started ok
+	printMessage("CORE", "fluxd-startup complete. fluxd is up and running.\n");
+
 }
 
 #------------------------------------------------------------------------------#
@@ -447,6 +370,8 @@ sub daemonize {
 		printMessage("CORE", "setting up signal handlers...\n");
 	}
 	$SIG{HUP} = \&gotSigHup;
+	$SIG{INT} = \&gotSigInt;
+	$SIG{TERM} = \&gotSigTerm;
 	$SIG{QUIT} = \&gotSigQuit;
 
 	# set up server socket
@@ -457,15 +382,115 @@ sub daemonize {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: daemonMain                                                              #
+# Arguments: Null                                                              #
+# Returns: Null                                                                #
+#------------------------------------------------------------------------------#
+sub daemonMain {
+
+	# loop
+	while ($loop) {
+
+		# check Connections
+		checkConnections();
+
+		# Fluxinet
+		if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+			eval {
+				local $SIG{ALRM} = sub {die "alarm\n"};
+				alarm 3;
+				$fluxinet->main();
+				alarm 0;
+			};
+			# Check for alarm (timeout) condition
+			if ($@) {
+				printError("CORE", "Fluxinet Timed out:\n ".$@."\n");
+			}
+		}
+
+		# Qmgr
+		if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+			eval {
+				local $SIG{ALRM} = sub { die "alarm\n" };
+				alarm 20;
+				$qmgr->main();
+				alarm 0;
+			};
+			# Check for alarm (timeout) condition
+			if ($@) {
+				printError("CORE", "Qmgr Timed out:\n ".$@."\n");
+			}
+		}
+
+		# Rssad
+		if ((defined $rssad) && ($rssad->getState() == 1)) {
+			eval {
+				local $SIG{ALRM} = sub {die "alarm\n"};
+				alarm 20;
+				$rssad->main();
+				alarm 0;
+			};
+			# Check for alarm (timeout) condition
+			if ($@) {
+				printError("CORE", "Rssad Timed out:\n ".$@."\n");
+			}
+		}
+
+		# Watch
+		if ((defined $watch) && ($watch->getState() == 1)) {
+			eval {
+				local $SIG{ALRM} = sub {die "alarm\n"};
+				alarm 20;
+				$watch->main();
+				alarm 0;
+			};
+			# Check for alarm (timeout) condition
+			if ($@) {
+				printError("CORE", "Watch Timed out:\n ".$@."\n");
+			}
+		}
+
+		# Maintenance
+		if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+			eval {
+				local $SIG{ALRM} = sub {die "alarm\n"};
+				alarm 5;
+				$maintenance->main();
+				alarm 0;
+			};
+			# Check for alarm (timeout) condition
+			if ($@) {
+				printError("CORE", "Maintenance Timed out:\n ".$@."\n");
+			}
+		}
+
+		# Trigger
+		if ((defined $trigger) && ($trigger->getState() == 1)) {
+			eval {
+				local $SIG{ALRM} = sub {die "alarm\n"};
+				alarm 5;
+				$trigger->main();
+				alarm 0;
+			};
+			# Check for alarm (timeout) condition
+			if ($@) {
+				printError("CORE", "Trigger Timed out:\n ".$@."\n");
+			}
+		}
+
+		# sleep
+		select undef, undef, undef, 0.1;
+
+	} # loop end
+}
+
+#------------------------------------------------------------------------------#
 # Sub: daemonShutdown                                                          #
 # Arguments: null                                                              #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub daemonShutdown {
 	printMessage("CORE", "Shutting down!\n");
-
-	# set main-loop-flag
-	$loop = 0;
 
 	# unload modules
 	serviceModulesUnload();
@@ -1123,7 +1148,7 @@ sub serviceModuleState {
 # Returns: Null                                                                #
 #------------------------------------------------------------------------------#
 sub gotSigHup {
-	printMessage("CORE", "Got SIGHUP, re-loading service-modules...\n");
+	printMessage("CORE", "got SIGHUP, reloading config and service-modules...\n");
 	# have FluxDB reload the DB first, so we can see the changes
 	if ($fluxDB->reload()) {
 		serviceModulesLoad();
@@ -1135,12 +1160,36 @@ sub gotSigHup {
 }
 
 #------------------------------------------------------------------------------#
+# Sub: gotSigInt                                                               #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigInt {
+	printMessage("CORE", "got SIGINT, setting shutdown-flag...\n");
+	# set main-loop-flag
+	$loop = 0;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: gotSigTerm                                                              #
+# Arguments: null                                                              #
+# Returns: null                                                                #
+#------------------------------------------------------------------------------#
+sub gotSigTerm {
+	printMessage("CORE", "got SIGTERM, setting shutdown-flag...\n");
+	# set main-loop-flag
+	$loop = 0;
+}
+
+#------------------------------------------------------------------------------#
 # Sub: gotSigQuit                                                              #
 # Arguments: null                                                              #
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub gotSigQuit {
-	daemonShutdown();
+	printMessage("CORE", "got SIGQUIT, setting shutdown-flag...\n");
+	# set main-loop-flag
+	$loop = 0;
 }
 
 #------------------------------------------------------------------------------#
@@ -1215,7 +1264,9 @@ sub processRequest {
 			last SWITCH;
 		};
 		/^die/ && do {
-			$return = daemonShutdown();
+			# set main-loop-flag
+			$loop = 0;
+			$return = 1;
 			last SWITCH;
 		};
 		# module-calls
