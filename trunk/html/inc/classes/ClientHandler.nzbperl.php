@@ -43,8 +43,8 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->handlerName = "nzbperl";
         $this->binSystem = "perl";
         $this->binSocket = "perl";
-        $this->binClient = "nzbperl.pl";
-		$this->nzbbin = $cfg["docroot"]."bin/nzbperl/nzbperl.pl";
+        $this->binClient = "tfnzbperl.pl";
+		$this->nzbbin = $cfg["docroot"]."bin/TF_nzbperl/tfnzbperl.pl";
 	}
 
 	// =====================================================================
@@ -71,7 +71,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		// check to see if the path to the nzbperl script is valid
 		if (!is_file($this->nzbbin)) {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
-			$msg = "path for nzbperl.pl is not valid";
+			$msg = "path for tfnzbperl.pl is not valid";
 			AuditAction($cfg["constants"]["error"], $msg);
 			$this->logMessage($msg."\n", true);
 			array_push($this->messages, $msg);
@@ -111,7 +111,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $cfg['perlCmd'];
-		$this->command .= " -I ".$cfg["docroot"]."bin/fluxd";
+		$this->command .= " -I ".$cfg["docroot"]."bin/lib";
 		$this->command .= " ".escapeshellarg($this->nzbbin);
 		$this->command .= " --conn ".escapeshellarg($cfg['nzbperl_conn']);
 		$this->command .= " --log ".escapeshellarg($this->transferFilePath.".log");

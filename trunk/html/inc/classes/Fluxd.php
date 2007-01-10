@@ -323,6 +323,7 @@ class Fluxd
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $cfg["perlCmd"];
             $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/fluxd");
+            $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/lib");
             $startCommand .= " ".escapeshellarg($cfg["docroot"]."bin/fluxd/fluxd.pl");
             $startCommand .= " start";
             $startCommand .= " ".escapeshellarg($cfg["docroot"]);
