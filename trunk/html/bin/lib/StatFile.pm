@@ -20,7 +20,7 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
-package AliasFile;
+package StatFile;
 use strict;
 use warnings;
 ################################################################################
@@ -36,16 +36,16 @@ my $VERSION = do {
 # state
 # -1 error
 #  0 null
-#  1 initialized (alias-file loaded)
+#  1 initialized (stat-file loaded)
 my $state = 0;
 
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
 
-# alias-file
-my $aliasFile = "";
+# stat-file
+my $statFile = "";
 
-# alias-file-data-hash, keys 1 : 1 AliasFile-class of TF
+# stat-file-data-hash, keys 1 : 1 StatFile-class of TF
 my %data;
 # running
 # percent_done
@@ -67,16 +67,16 @@ my %data;
 
 #------------------------------------------------------------------------------#
 # Sub: new                                                                     #
-# Arguments: null or path to alias-file                                        #
+# Arguments: null or path to stat-file                                         #
 # Returns: object reference                                                    #
 #------------------------------------------------------------------------------#
 sub new {
 	my $class = shift;
 	my $self = bless ({}, ref ($class) || $class);
 	# initialize file now if name supplied in ctor
-	$aliasFile = shift;
-	if (defined($aliasFile)) {
-		$self->initialize($aliasFile);
+	$statFile = shift;
+	if (defined($statFile)) {
+		$self->initialize($statFile);
 	}
 	return $self;
 }
@@ -93,7 +93,7 @@ sub destroy {
 
 	# strings
 	$message = "";
-	$aliasFile = "";
+	$statFile = "";
 
 	# undef
 	undef %data;
@@ -106,34 +106,34 @@ sub destroy {
 #------------------------------------------------------------------------------#
 # Sub: initialize. this is separated from constructor to call it independent   #
 #      from object-creation.                                                   #
-# Arguments: path to alias-file                                                #
+# Arguments: path to stat-file                                                 #
 # Returns: 0|1                                                                 #
 #------------------------------------------------------------------------------#
 sub initialize {
 
 	shift; # class
 
-	# path-to-alias-file
-	$aliasFile = shift;
-	if (!(defined $aliasFile)) {
+	# path-to-stat-file
+	$statFile = shift;
+	if (!(defined $statFile)) {
 		# message
-		$message = "path-to-alias-file not defined";
+		$message = "path-to-stat-file not defined";
 		# set state
 		$state = -1;
 		# return
 		return 0;
 	}
 
-	# read in alias-file + set fields
-	if (-f $aliasFile) {
+	# read in stat-file + set fields
+	if (-f $statFile) {
 		# sep + open file
 		my $lineSep = $/;
 		undef $/;
-		open(ALIASFILE,"<$aliasFile");
+		open(STATFILE,"<$statFile");
 		# read data
-		my $content = <ALIASFILE>;
+		my $content = <STATFILE>;
 		# close file + sep
-		close ALIASFILE;
+		close STATFILE;
 		$/ = $lineSep;
 		# process data
 		my @contentary = split(/\n/, $content);
@@ -157,7 +157,7 @@ sub initialize {
 		return 1;
 	} else {
 		# message
-		$message = "alias-file no file";
+		$message = "stat-file no file";
 		# set state
 		$state = -1;
 		# return
@@ -220,7 +220,7 @@ sub set {
 # Returns: string                                                              #
 #------------------------------------------------------------------------------#
 sub getFilename {
-	return $aliasFile;
+	return $statFile;
 }
 
 #------------------------------------------------------------------------------#
@@ -239,7 +239,7 @@ sub getData {
 #------------------------------------------------------------------------------#
 sub write {
 	# open file
-	open(ALIASFILE,">$aliasFile") or return 0;
+	open(STATFILE,">$statFile") or return 0;
 	my $retVal = 1;
 	# content
 	my $content = "";
@@ -257,9 +257,9 @@ sub write {
 	$content .= $data{"downtotal"}."\n";
 	$content .= $data{"size"};
 	# print
-	print ALIASFILE $content or $retVal = 0;
+	print STATFILE $content or $retVal = 0;
 	# close file
-	close(ALIASFILE);
+	close(STATFILE);
 	# return
 	return $retVal;
 }

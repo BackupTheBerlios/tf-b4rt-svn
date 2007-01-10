@@ -20,16 +20,14 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
-package FluxdCommon;
+package FluxCommon;
 use Exporter;
 @ISA = ('Exporter');
 @EXPORT_OK = qw(
 				getVersion
 				transferIsRunning
+				getTimeStamp
 				niceTimeString
-				getMessage
-				printMessage
-				printError
 				);
 ################################################################################
 
@@ -46,52 +44,13 @@ my $VERSION = do {
 ################################################################################
 
 #------------------------------------------------------------------------------#
-# Sub: getMessage                                                              #
-# Arguments: module, message                                                   #
-# Return: string                                                               #
-#------------------------------------------------------------------------------#
-sub getMessage {
-	my $module = shift;
-	my $message = shift;
-	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-		= localtime(time);
-	return sprintf("[%4d/%02d/%02d - %02d:%02d:%02d][%s] %s",
-						$year + 1900, $mon + 1, $mday,
-						$hour, $min, $sec,
-						$module, $message
-	);
-}
-
-#------------------------------------------------------------------------------#
-# Sub: printMessage                                                            #
-# Arguments: module, message                                                   #
-# Return: null                                                                 #
-#------------------------------------------------------------------------------#
-sub printMessage {
-	my $module = shift;
-	my $message = shift;
-	print STDOUT getMessage($module, $message);
-}
-
-#------------------------------------------------------------------------------#
-# Sub: printError                                                              #
-# Arguments: module, message                                                   #
-# Return: null                                                                 #
-#------------------------------------------------------------------------------#
-sub printError {
-	my $module = shift;
-	my $message = shift;
-	print STDERR getMessage($module, $message);
-}
-
-#------------------------------------------------------------------------------#
 # Sub: transferIsRunning                                                       #
 # Arguments: transfer                                                          #
 # Return: 0|1                                                                  #
 #------------------------------------------------------------------------------#
 sub transferIsRunning {
 	my $name = shift;
-	my $qstring = "ps -aux 2> /dev/null";
+	my $qstring = "ps x -o pid='' -o ppid='' -o command='' -ww 2> /dev/null";
 	my $pcount = 0;
 	foreach my $line (grep(/$name/, qx($qstring))) {
 		$pcount++;
@@ -100,6 +59,20 @@ sub transferIsRunning {
 		return 1;
 	}
 	return 0;
+}
+
+#------------------------------------------------------------------------------#
+# Sub: getTimeStamp                                                            #
+# Arguments:                                                                   #
+# Return: string                                                               #
+#------------------------------------------------------------------------------#
+sub getTimeStamp {
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+		= localtime(time);
+	return sprintf("[%4d/%02d/%02d - %02d:%02d:%02d]",
+						$year + 1900, $mon + 1, $mday,
+						$hour, $min, $sec
+	);
 }
 
 #------------------------------------------------------------------------------#

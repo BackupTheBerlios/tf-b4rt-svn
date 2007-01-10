@@ -49,7 +49,6 @@
 #                                                                              #
 ################################################################################
 use strict;
-use AliasFile;
 use File::Basename;
 use IO::File;
 use IO::Select;
@@ -57,6 +56,7 @@ use XML::DOM;
 use Getopt::Long;
 use Time::HiRes qw(gettimeofday tv_interval);	# timer stuff
 use Cwd;
+use StatFile;
 ################################################################################
 
 ################################################################################
@@ -230,8 +230,8 @@ printMessage("nzbperl starting up :\n".
 	" - dthreadct : ".$dthreadct."\n"
 );
 
-# afWrite-instance-field (reuse object)
-my $afWrite = AliasFile->new($statfile);
+# sf-instance-field (reuse object)
+my $sf = StatFile->new($statfile);
 
 # write af
 writeStatStartup();
@@ -2991,11 +2991,11 @@ EOL
 }
 
 #------------------------------------------------------------------------------#
-# Sub: getAliasSpeed                                                           #
+# Sub: getStatSpeed                                                            #
 # Arguments: null                                                              #
-# Returns: down-speed formatted for alias-file                                 #
+# Returns: down-speed formatted for stat-file                                  #
 #------------------------------------------------------------------------------#
-sub getAliasSpeed {
+sub getStatSpeed {
 	my $sumbps = 0;
 	foreach my $i (1..$connct){
 		my $c = $conn[$i-1];
@@ -3011,22 +3011,22 @@ sub getAliasSpeed {
 # Returns: return-value of write                                               #
 #------------------------------------------------------------------------------#
 sub writeStatStartup {
-	# set some af-values
-	$afWrite->set("running", 1);
-	$afWrite->set("percent_done", 0);
-	$afWrite->set("time_left", "Starting...");
-	$afWrite->set("down_speed", "0.00 kB/s");
-	$afWrite->set("up_speed", "0.00 kB/s");
-	$afWrite->set("transferowner", $tfuser);
-	$afWrite->set("seeds", 1);
-	$afWrite->set("peers", 1);
-	$afWrite->set("sharing", "");
-	$afWrite->set("seedlimit", "");
-	$afWrite->set("uptotal", 0);
-	$afWrite->set("downtotal", 0);
-	$afWrite->set("size", $totalsCopy{'total size'});
-	# write af
-	return $afWrite->write();
+	# set some values
+	$sf->set("running", 1);
+	$sf->set("percent_done", 0);
+	$sf->set("time_left", "Starting...");
+	$sf->set("down_speed", "0.00 kB/s");
+	$sf->set("up_speed", "0.00 kB/s");
+	$sf->set("transferowner", $tfuser);
+	$sf->set("seeds", 1);
+	$sf->set("peers", 1);
+	$sf->set("sharing", "");
+	$sf->set("seedlimit", "");
+	$sf->set("uptotal", 0);
+	$sf->set("downtotal", 0);
+	$sf->set("size", $totalsCopy{'total size'});
+	# write
+	return $sf->write();
 }
 
 #------------------------------------------------------------------------------#
@@ -3035,13 +3035,13 @@ sub writeStatStartup {
 # Returns: return-value of write                                               #
 #------------------------------------------------------------------------------#
 sub writeStatRunning {
-	# set some af-values
-	$afWrite->set("percent_done", $totals{'total size'} == 0 ? 0 : int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
-	$afWrite->set("time_left", getETA());
-	$afWrite->set("down_speed", getAliasSpeed());
-	$afWrite->set("downtotal", $totals{'total bytes'});
-	# write af
-	return $afWrite->write();
+	# set some values
+	$sf->set("percent_done", $totals{'total size'} == 0 ? 0 : int(100.0 * $totals{'total bytes'} / $totals{'total size'}));
+	$sf->set("time_left", getETA());
+	$sf->set("down_speed", getStatSpeed());
+	$sf->set("downtotal", $totals{'total bytes'});
+	# write
+	return $sf->write();
 }
 
 #------------------------------------------------------------------------------#
@@ -3050,29 +3050,29 @@ sub writeStatRunning {
 # Returns: return-value of write                                               #
 #------------------------------------------------------------------------------#
 sub writeStatShutdown {
-	# set some af-values
+	# set some values
 	if ($noMoreWorkTodo) {
-		$afWrite->set("running", 0); # done
-		$afWrite->set("percent_done", 100);
-		$afWrite->set("time_left", "Download Succeeded!");
-		$afWrite->set("downtotal", $totalsCopy{'total size'});
+		$sf->set("running", 0); # done
+		$sf->set("percent_done", 100);
+		$sf->set("time_left", "Download Succeeded!");
+		$sf->set("downtotal", $totalsCopy{'total size'});
 	} else {
-		$afWrite->set("running", 0); # stopped
-		$afWrite->set("percent_done", $totals{'total size'} == 0 ? "-100" : ((int(100.0 * $totals{'total bytes'} / $totals{'total size'})) + 100) * (-1));
-		$afWrite->set("time_left", "Transfer Stopped");
-		$afWrite->set("downtotal", $totals{'total bytes'});
+		$sf->set("running", 0); # stopped
+		$sf->set("percent_done", $totals{'total size'} == 0 ? "-100" : ((int(100.0 * $totals{'total bytes'} / $totals{'total size'})) + 100) * (-1));
+		$sf->set("time_left", "Transfer Stopped");
+		$sf->set("downtotal", $totals{'total bytes'});
 	}
-	$afWrite->set("down_speed", "");
-	$afWrite->set("up_speed", "");
-	$afWrite->set("transferowner", $tfuser);
-	$afWrite->set("seeds", "");
-	$afWrite->set("peers", "");
-	$afWrite->set("sharing", "");
-	$afWrite->set("seedlimit", "");
-	$afWrite->set("uptotal", 0);
-	$afWrite->set("size", $totalsCopy{'total size'});
-	# write af
-	return $afWrite->write();
+	$sf->set("down_speed", "");
+	$sf->set("up_speed", "");
+	$sf->set("transferowner", $tfuser);
+	$sf->set("seeds", "");
+	$sf->set("peers", "");
+	$sf->set("sharing", "");
+	$sf->set("seedlimit", "");
+	$sf->set("uptotal", 0);
+	$sf->set("size", $totalsCopy{'total size'});
+	# write
+	return $sf->write();
 }
 
 #------------------------------------------------------------------------------#
@@ -3104,7 +3104,7 @@ sub pidFileDelete {
 #------------------------------------------------------------------------------#
 sub printMessage {
 	my $message = shift;
-	print STDOUT getMessage($message);
+	print STDOUT FluxCommon::getTimeStamp()." ".$message;
 }
 
 #------------------------------------------------------------------------------#
@@ -3114,23 +3114,7 @@ sub printMessage {
 #------------------------------------------------------------------------------#
 sub printError {
 	my $message = shift;
-	print STDERR getMessage($message);
-}
-
-#------------------------------------------------------------------------------#
-# Sub: getMessage                                                              #
-# Arguments: message                                                           #
-# Return: string                                                               #
-#------------------------------------------------------------------------------#
-sub getMessage {
-	my $message = shift;
-	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-		= localtime(time);
-	return sprintf("[%4d/%02d/%02d - %02d:%02d:%02d] %s",
-						$year + 1900, $mon + 1, $mday,
-						$hour, $min, $sec,
-						$message
-	);
+	print STDERR FluxCommon::getTimeStamp()." ".$message;
 }
 
 #------------------------------------------------------------------------------#

@@ -78,7 +78,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# print
-	FluxdCommon::printMessage("Maintenance", "shutdown\n");
+	Fluxd::printMessage("Maintenance", "shutdown\n");
 }
 
 ################################################################################
@@ -129,7 +129,7 @@ sub initialize {
 	}
 
 	# print
-	FluxdCommon::printMessage("Maintenance", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
+	Fluxd::printMessage("Maintenance", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval." ; trestart: ".$trestart.")\n");
 
 	# reset last run time
 	$time_last_run = time();
@@ -187,7 +187,7 @@ sub main {
 
 		# print
 		if ($LOGLEVEL > 1) {
-			FluxdCommon::printMessage("Maintenance", "executing maintenance (trestart: ".$trestart."):\n");
+			Fluxd::printMessage("Maintenance", "executing maintenance (trestart: ".$trestart."):\n");
 		}
 
 		# exec

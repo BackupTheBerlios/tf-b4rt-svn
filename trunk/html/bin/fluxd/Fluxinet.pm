@@ -84,7 +84,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# log
-	FluxdCommon::printMessage("Fluxinet", "shutdown\n");
+	Fluxd::printMessage("Fluxinet", "shutdown\n");
 	# remove
 	foreach my $handle ($Select->handles) {
 		$Select->remove($handle);
@@ -128,7 +128,7 @@ sub initialize {
 		return 0;
 	}
 
-	FluxdCommon::printMessage("Fluxinet", "initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n");
+	Fluxd::printMessage("Fluxinet", "initializing (loglevel: ".$LOGLEVEL." ; port: ".$port.")\n");
 
 	# load modules
 	if ($modsLoaded == 0) {
@@ -158,7 +158,7 @@ sub initialize {
 
 	# log
 	if ($LOGLEVEL > 1) {
-		FluxdCommon::printMessage("Fluxinet", "tcp-server-socket setup on port ".$port."\n");
+		Fluxd::printMessage("Fluxinet", "tcp-server-socket setup on port ".$port."\n");
 	}
 
 	# set state
@@ -177,7 +177,7 @@ sub loadModules {
 
 	# load IO::Select
 	if ($LOGLEVEL > 2) {
-		FluxdCommon::printMessage("Fluxinet", "loading Perl-module IO::Select\n");
+		Fluxd::printMessage("Fluxinet", "loading Perl-module IO::Select\n");
 	}
 	if (eval "require IO::Select")  {
 		IO::Select->import();
@@ -192,7 +192,7 @@ sub loadModules {
 
 	# load IO::Socket::INET
 	if ($LOGLEVEL > 2) {
-		FluxdCommon::printMessage("Fluxinet", "loading Perl-module IO::Socket\n");
+		Fluxd::printMessage("Fluxinet", "loading Perl-module IO::Socket\n");
 	}
 	if (eval "require IO::Socket::INET")  {
 		IO::Socket::INET->import();

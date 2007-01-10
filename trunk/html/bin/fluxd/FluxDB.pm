@@ -121,7 +121,7 @@ sub new {
 sub destroy {
 
 	# log
-	FluxdCommon::printMessage("FluxDB", "shutdown\n");
+	Fluxd::printMessage("FluxDB", "shutdown\n");
 
 	# set state
 	$state = 0;
@@ -184,7 +184,7 @@ sub initialize {
 	my $_dbmode = shift;
 
 	# print
-	FluxdCommon::printMessage("FluxDB", "initializing (mode: ".$_dbmode." ; docroot: ".$docroot." ; php: ".$php.")\n");
+	Fluxd::printMessage("FluxDB", "initializing (mode: ".$_dbmode." ; docroot: ".$docroot." ; php: ".$php.")\n");
 
 	# db-mode
 	SWITCH: {
@@ -302,7 +302,7 @@ sub initialize {
 	$LOGLEVEL = $fluxConf{"fluxd_loglevel"};
 
 	# print
-	FluxdCommon::printMessage("FluxDB", "data loaded and cached, FluxDB ready.\n");
+	Fluxd::printMessage("FluxDB", "data loaded and cached, FluxDB ready.\n");
 
 	# set state
 	$state = 1;
@@ -459,7 +459,7 @@ sub reload {
 
 	# print
 	if ($LOGLEVEL > 0) {
-		FluxdCommon::printMessage("FluxDB", "reloading DB-Cache...\n");
+		Fluxd::printMessage("FluxDB", "reloading DB-Cache...\n");
 	}
 
 	SWITCH: {
@@ -523,7 +523,7 @@ sub reload {
 
 	# print
 	if ($LOGLEVEL > 0) {
-		FluxdCommon::printMessage("FluxDB", "done reloading DB-Cache.\n");
+		Fluxd::printMessage("FluxDB", "done reloading DB-Cache.\n");
 	}
 
 	# done

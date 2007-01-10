@@ -81,7 +81,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# log
-	FluxdCommon::printMessage("Rssad", "shutdown\n");
+	Fluxd::printMessage("Rssad", "shutdown\n");
 	# undef
 	undef @jobs;
 }
@@ -124,7 +124,7 @@ sub initialize {
 	$dataDir = $ddir . $dataDir;
 	# check if our main-dir exists. try to create if it doesnt
 	if (! -d $dataDir) {
-		FluxdCommon::printMessage("Rssad", "creating data-dir : ".$dataDir."\n");
+		Fluxd::printMessage("Rssad", "creating data-dir : ".$dataDir."\n");
 		mkdir($dataDir, 0700);
 		if (! -d $dataDir) {
 			# message
@@ -158,7 +158,7 @@ sub initialize {
 		return 0;
 	}
 
-	FluxdCommon::printMessage("Rssad", "initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
+	Fluxd::printMessage("Rssad", "initializing (loglevel: ".$LOGLEVEL." ; data-dir: ".$dataDir." ; interval: ".$interval." ; jobs: ".$jobs.")\n");
 
 	# parse jobs
 	# job1|job2|job3
@@ -175,7 +175,7 @@ sub initialize {
 		chomp $filter;
 		# job-entry
 		if ($LOGLEVEL > 1) {
-			FluxdCommon::printMessage("Rssad", "job : savedir=".$savedir.", url=".$url.", filter=".$filter."\n");
+			Fluxd::printMessage("Rssad", "job : savedir=".$savedir.", url=".$url.", filter=".$filter."\n");
 		}
 		# add to jobs-array
 		if ((!($savedir eq "")) && (!($url eq "")) && (!($filter eq ""))) {
@@ -250,7 +250,7 @@ sub main {
 				$msg .= " savedir: ".$jobs[$i]{"savedir"}."\n";
 				$msg .= " filter: ".$dataDir.$jobs[$i]{"filter"}."\n";
 				$msg .= " url: ".$jobs[$i]{"url"}."\n";
-				FluxdCommon::printMessage("Rssad", $msg);
+				Fluxd::printMessage("Rssad", $msg);
 			}
 			# exec
 			tfrss($jobs[$i]{"savedir"}, $dataDir.$jobs[$i]{"filter"}, $jobs[$i]{"url"});

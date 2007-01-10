@@ -75,7 +75,7 @@ sub destroy {
 	# set state
 	$state = 0;
 	# log
-	FluxdCommon::printMessage("Trigger", "shutdown\n");
+	Fluxd::printMessage("Trigger", "shutdown\n");
 }
 
 ################################################################################
@@ -114,7 +114,7 @@ sub initialize {
 		return 0;
 	}
 
-	FluxdCommon::printMessage("Trigger", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n");
+	Fluxd::printMessage("Trigger", "initializing (loglevel: ".$LOGLEVEL." ; interval: ".$interval.")\n");
 
 	# reset last run time
 	$time_last_run = time();
@@ -170,7 +170,7 @@ sub main {
 	my $now = time();
 	if (($now - $time_last_run) >= $interval) {
 
-		FluxdCommon::printMessage("Trigger", "main\n"); # DEBUG
+		Fluxd::printMessage("Trigger", "main\n"); # DEBUG
 
 		# set last run time
 		$time_last_run = time();
