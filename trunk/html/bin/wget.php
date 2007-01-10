@@ -29,6 +29,9 @@ if (empty($argv[0])) die();
 if (empty($_SERVER['argv'][0])) die();
 if ($argv[0] != $_SERVER['argv'][0]) die();
 
+// dummy
+$_SESSION = array('cache' => false);
+
 /******************************************************************************/
 
 // check args

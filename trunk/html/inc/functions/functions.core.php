@@ -1986,10 +1986,12 @@ function getDriveSpace($drive) {
  * @return int
  */
 function getDownloadSize($transfer) {
-	if (@file_exists($transfer)) {
+	global $cfg;
+	$file = $cfg["transfer_file_path"].$transfer;
+	if (@file_exists($file)) {
 		require_once("inc/classes/BDecode.php");
-		if ($fd = @fopen($transfer, "rd")) {
-			$alltorrent = @fread($fd, @filesize($transfer));
+		if ($fd = @fopen($file, "rd")) {
+			$alltorrent = @fread($fd, @filesize($file));
 			$array = @BDecode($alltorrent);
 			@fclose($fd);
 		}

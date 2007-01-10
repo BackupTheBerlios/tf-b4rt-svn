@@ -361,14 +361,16 @@ class ClientHandler
 		                $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
 		            }
 	            } else {
+	            	// skip start of client
+					// set state
+		            $this->state = CLIENTHANDLER_STATE_NULL;
 	    			// message
-		            $msg = "data-size is 0 when recalcing share-kill for ".$this->transfer.". setting sharekill absolute to ".$this->sharekill;
+		            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", skipping start.";
 		            array_push($this->messages , $msg);
 					AuditAction($cfg["constants"]["error"], $msg);
 					$this->logMessage($msg."\n", true);
-					// set 1:1 to provided value
-					$this->sharekill_param = $this->sharekill;
-					$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+		            // return
+		            return;
 	            }
 			} else {
 	        	$this->sharekill_param = $this->sharekill;
