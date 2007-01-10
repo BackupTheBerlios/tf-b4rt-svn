@@ -530,7 +530,7 @@ sub runningUpdate {
 	# refill hash
 	if (scalar(@pids) > 0) {
 		foreach my $pidFile (@pids) {
-			my $transfer = (substr ($pidFile, 0, (length($pidFile)) - 9));
+			my $transfer = (substr ($pidFile, 0, (length($pidFile)) - 4));
 			$sf->initialize($transfersDir.$transfer.".stat");
 			my $running = $sf->get("running");
 			my $user = $sf->get("transferowner");

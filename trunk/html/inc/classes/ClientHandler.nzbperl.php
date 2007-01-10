@@ -114,7 +114,6 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->command .= " -I ".$cfg["docroot"]."bin/lib";
 		$this->command .= " ".escapeshellarg($this->nzbbin);
 		$this->command .= " --conn ".escapeshellarg($cfg['nzbperl_conn']);
-		$this->command .= " --log ".escapeshellarg($this->transferFilePath.".log");
 		$this->command .= " --uudeview ".escapeshellarg($cfg["bin_uudeview"]);
 		$this->command .= ($cfg['nzbperl_badAction'])
 			? " --insane"
