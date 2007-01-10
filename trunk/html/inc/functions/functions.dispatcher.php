@@ -54,7 +54,7 @@ function indexStartTransfer($transfer) {
 				}
 			}
 			$clientHandler = ClientHandler::getInstance('wget');
-			$clientHandler->start($transfer, false, false);
+			$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
 			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 				$msgs = array();
 				array_push($msgs, "transfer : ".$transfer);
@@ -63,7 +63,6 @@ function indexStartTransfer($transfer) {
 				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
 				@error("Start failed", "", "", $msgs);
 			} else {
-				sleep(10);
 				@header("location: index.php?iid=index");
 				exit();
 			}
@@ -80,7 +79,7 @@ function indexStartTransfer($transfer) {
 				}
 			}
 			$clientHandler = ClientHandler::getInstance('nzbperl');
-			$clientHandler->start($transfer, false, false);
+			$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
 			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 				$msgs = array();
 				array_push($msgs, "transfer : ".$transfer);
@@ -89,7 +88,6 @@ function indexStartTransfer($transfer) {
 				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
 				@error("Start failed", "", "", $msgs);
 			} else {
-				sleep(10);
 				@header("location: index.php?iid=index");
 				exit();
 			}

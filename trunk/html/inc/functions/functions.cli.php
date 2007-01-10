@@ -177,8 +177,7 @@ function cliPrintTransfers() {
 function cliStartTransfer($transfer = "") {
 	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
-		$tRunningFlag = isTransferRunning($transfer);
-		if ($tRunningFlag == 0) {
+		if (!isTransferRunning($transfer)) {
 			$btclient = getTransferClient($transfer);
 			$cfg["user"] = getOwner($transfer);
 			printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
@@ -212,8 +211,7 @@ function cliStartTransfers() {
     printMessage("fluxcli.php", "Starting all transfers ...\n");
 	$transferList = getTorrentListFromFS();
 	foreach ($transferList as $transfer) {
-        $tRunningFlag = isTransferRunning($transfer);
-        if ($tRunningFlag == 0) {
+        if (!isTransferRunning($transfer)) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
             $btclient = getTransferClient($transfer);
@@ -240,8 +238,7 @@ function cliResumeTransfers() {
     printMessage("fluxcli.php", "Resuming all transfers ...\n");
 	$transferList = getTorrentListFromDB();
 	foreach ($transferList as $transfer) {
-        $tRunningFlag = isTransferRunning($transfer);
-        if ($tRunningFlag == 0) {
+        if (!isTransferRunning($transfer)) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
             $btclient = getTransferClient($transfer);
@@ -279,15 +276,14 @@ function cliStopTransfers() {
 function cliStopTransfer($transfer = "") {
 	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
-		$tRunningFlag = isTransferRunning($transfer);
-		if ($tRunningFlag == 0) {
-			printError("fluxcli.php", "Transfer not running.\n");
-		} else {
+		if (isTransferRunning($transfer)) {
 			printMessage("fluxcli.php", "Stopping ".$transfer." ...\n");
 			$cfg["user"] = getOwner($transfer);
 			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
             $clientHandler->stop($transfer);
 			printMessage("fluxcli.php", "done.\n");
+		} else {
+			printError("fluxcli.php", "Transfer not running.\n");
 		}
 	} else {
 		cliPrintUsage();
@@ -326,12 +322,12 @@ function cliDeleteTransfer($transfer = "") {
 		$cfg["user"] = getOwner($transfer);
 		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		$tRunningFlag = isTransferRunning($transfer);
-		if ($tRunningFlag == 1) {
+		if ($tRunningFlag) {
 			// stop transfer first
 			$clientHandler->stop($transfer);
 			$tRunningFlag = isTransferRunning($transfer);
         }
-        if ($tRunningFlag == 0) {
+        if (!$tRunningFlag) {
         	$clientHandler->delete($transfer);
         	printMessage("fluxcli.php", "done.\n");
         } else {
@@ -355,12 +351,12 @@ function cliWipeTransfer($transfer = "") {
 		$cfg["user"] = getOwner($transfer);
 		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		$tRunningFlag = isTransferRunning($transfer);
-		if ($tRunningFlag == 1) {
+		if ($tRunningFlag) {
 			// stop transfer first
 			$clientHandler->stop($transfer);
 			$tRunningFlag = isTransferRunning($transfer);
         }
-        if ($tRunningFlag == 0) {
+        if (!$tRunningFlag) {
         	if (substr($transfer, -8) == ".torrent") {
         		deleteTorrentData($transfer);
 				$msgs = resetTorrentTotals($transfer, true);

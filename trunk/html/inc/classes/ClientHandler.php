@@ -301,10 +301,9 @@ class ClientHandler
         }
 		// queue
         if ($enqueue) {
-            if ($cfg['isAdmin'])
-            	$this->queue = ($enqueue) ? true : false;
-            else
-                $this->queue = true;
+        	$this->queue = ($cfg['isAdmin'])
+        		? $enqueue
+        		: true;
         } else {
             $this->queue = false;
         }
@@ -324,8 +323,6 @@ class ClientHandler
             $this->logMessage($msg."\n", true);
             return false;
 		}
-        // sf
-        $sf = new StatFile($this->transfer, $this->owner);
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
         // recalc sharekill ?
@@ -336,7 +333,7 @@ class ClientHandler
 	            $this->logMessage("seed forever\n", true);
 	        } elseif ($this->sharekill > 0) { // recalc sharekill
 	            // sanity-check. catch "data-size = 0".
-	            $transferSize = intval($sf->size);
+	            $transferSize = intval(getDownloadSize($this->transfer));
 	            if ($transferSize > 0) {
 					$totalAry = $this->getTransferTotal($this->transfer);
 	            	$upTotal = $totalAry["uptotal"] + 0;
@@ -393,11 +390,6 @@ class ClientHandler
         	saveXfer($this->owner,($transferTotals["downtotal"]),($transferTotals["uptotal"]));
         // update totals for this transfer
         $this->execUpdateTransferTotals();
-        // write stat-file
-        if ($this->queue)
-            $sf->queue();
-        else
-            $sf->start();
         // set state
         $this->state = CLIENTHANDLER_STATE_READY;
     }
@@ -419,10 +411,16 @@ class ClientHandler
 		cacheFlush($cfg['user']);
         // write the session to close so older version of PHP will not hang
         @session_write_close();
+        // sf
+        $sf = new StatFile($this->transfer, $this->owner);
         // queue or start ?
         if ($this->queue) { // queue
 			if (FluxdQmgr::isRunning()) {
+		        // write stat-file
+		        $sf->queue();
+		        // send command
 				FluxdQmgr::enqueueTransfer($this->transfer, $cfg['user']);
+				// log
 				AuditAction($cfg["constants"]["queued_transfer"], $this->transfer);
 				$this->logMessage("transfer enqueued : ".$this->transfer."\n", true);
 			} else {
@@ -434,6 +432,8 @@ class ClientHandler
 			// set flag
             $transferRunningFlag = 0;
         } else { // start
+        	// write stat-file
+        	$sf->start();
         	// log the command
         	$this->logMessage("executing command : \n".$this->command."\n", true);
             // startup
@@ -441,7 +441,7 @@ class ClientHandler
             AuditAction($cfg["constants"]["start_torrent"], $this->transfer);
             // wait until transfer is up
             if ($wait)
-            	waitForTransfer($this->transfer, 1, 20);
+            	waitForTransfer($this->transfer, true, 20);
             // set flag
             $transferRunningFlag = 1;
         }
@@ -472,7 +472,7 @@ class ClientHandler
         CommandHandler::add($this->transfer, "q");
 		CommandHandler::send($this->transfer);
         // wait until transfer is down
-        waitForTransfer($this->transfer, 0, 25);
+        waitForTransfer($this->transfer, false, 25);
         // see if the transfer process is hung.
         $running = $this->runningProcesses();
         $isHung = false;

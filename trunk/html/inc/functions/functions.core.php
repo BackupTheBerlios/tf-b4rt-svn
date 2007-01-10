@@ -801,22 +801,11 @@ function initGlobalTransfersArray() {
  * checks if transfer is running by checking for existence of pid-file.
  *
  * @param $transfer name of the transfer
- * @return 1|0
+ * @return boolean
  */
 function isTransferRunning($transfer) {
 	global $cfg;
-	if (substr($transfer, -8) == ".torrent") {
-		// this is a torrent-client
-		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -8).'.pid')) ? 1 : 0;
-	} else if (substr($transfer, -5) == ".wget") {
-		// this is wget.
-		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -5).'.pid')) ? 1 : 0;
-	} else if (substr($transfer, -4) == ".nzb") {
-		// this is nzbperl.
-		return (file_exists($cfg["transfer_file_path"].substr($transfer, 0, -4).'.pid')) ? 1 : 0;
-	} else {
-		return 0;
-	}
+	return file_exists($cfg["transfer_file_path"].$transfer.'.pid');
 }
 
 /**

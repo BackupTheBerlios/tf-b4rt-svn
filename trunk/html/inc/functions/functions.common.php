@@ -1429,25 +1429,25 @@ function stopTransferSettings($transfer) {
  * waits until transfer is up/down
  *
  * @param $transfer name of the transfer
- * @param $state : 1 = start, 0 = stop
+ * @param $state : true = start, false = stop
  * @param $maxWait in seconds
- * @return 1|0
+ * @return boolean
  */
-function waitForTransfer($transfer, $state, $maxWait = 10) {
+function waitForTransfer($transfer, $state, $maxWait = 15) {
 	$maxLoops = $maxWait * 5;
 	$loopCtr = 0;
 	while (1) {
-		if (isTransferRunning($transfer) == $state) {
-			return 1;
+		if (isTransferRunning($transfer) === $state) {
+			return true;
 		} else {
 		 	$loopCtr++;
 		 	if ($loopCtr > $maxLoops)
-		 		return 0;
+		 		return false;
 		 	else
 		 		usleep(200000); // wait for 0.2 seconds
 		}
 	}
-	return 0;
+	return true;
 }
 
 /**

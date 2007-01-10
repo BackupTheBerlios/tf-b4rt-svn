@@ -88,6 +88,15 @@ class ClientHandlerNzbperl extends ClientHandler
         	? "nice -n ".$cfg["nice_adjust"]." "
         	: "";
 
+		// queue
+        if ($enqueue) {
+        	$this->queue = ($cfg['isAdmin'])
+        		? $enqueue
+        		: true;
+        } else {
+            $this->queue = false;
+        }
+
 		// savepath
 		$this->savepath = ($cfg["enable_home_dirs"] != 0)
         		? $cfg['path'].$this->owner."/"
@@ -147,7 +156,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->state = CLIENTHANDLER_STATE_READY;
 
 		// Start the client
-		$this->execStart(false, false);
+		$this->execStart(true, false);
 	}
 
     /**

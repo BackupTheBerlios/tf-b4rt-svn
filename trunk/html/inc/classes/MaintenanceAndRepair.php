@@ -461,7 +461,7 @@ class MaintenanceAndRepair
 		$rc = $recordset->RecordCount();
 		if ($rc > 0) {
 			while (list($tname) = $recordset->FetchRow()) {
-				if (isTransferRunning($tname) == 0) {
+				if (!isTransferRunning($tname)) {
 					$this->_countProblems++;
 					// t is not running, reset running-flag
 					$this->_outputMessage("reset of running-flag for transfer which is not running : ".$tname."\n");

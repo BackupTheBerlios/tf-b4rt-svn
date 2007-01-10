@@ -159,8 +159,14 @@ class ClientHandlerWget extends ClientHandler
             return false;
         }
 
-		// queue false
-		$this->queue = false;
+		// queue
+        if ($enqueue) {
+        	$this->queue = ($cfg['isAdmin'])
+        		? $enqueue
+        		: true;
+        } else {
+            $this->queue = false;
+        }
 
 		// savepath
 		$this->savepath = ($cfg["enable_home_dirs"] != 0)
@@ -195,7 +201,7 @@ class ClientHandlerWget extends ClientHandler
 		$this->state = CLIENTHANDLER_STATE_READY;
 
 		// start the client
-		$this->execStart(false, false);
+		$this->execStart(true, false);
     }
 
     /**
