@@ -72,6 +72,12 @@ int main(int argc, char ** argv) {
 		putenv(env);
 	}
 
+	// check bin-port
+	if (bindPort < 1 || bindPort > 65535) {
+		tf_print(sprintf(tf_message, "Invalid port '%d'\n", bindPort));
+		return 1;
+	}
+
 	// initialize libtransmission
 	h = tr_init();
 
@@ -123,13 +129,6 @@ int main(int argc, char ** argv) {
 	}
 
 	/* start up transmission */
-
-	// check port
-	if (bindPort < 1 || bindPort > 65535) {
-		tf_print(sprintf(tf_message, "Invalid port '%d'\n", bindPort));
-		// cleanup
-		goto cleanup;
-	}
 
 	// check owner-arg
 	if (tf_owner == NULL) {
