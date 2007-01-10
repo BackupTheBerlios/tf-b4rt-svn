@@ -56,6 +56,7 @@ use XML::DOM;
 use Getopt::Long;
 use Time::HiRes qw(gettimeofday tv_interval);	# timer stuff
 use Cwd;
+use FluxCommon;
 use StatFile;
 ################################################################################
 
@@ -166,14 +167,14 @@ my @lastdrawtime = Time::HiRes::gettimeofday();
 # statusmessages
 my @statusmsgs;
 
-# vars based on nzb-file
-my ($statfile, $cmdfile, $pidfile);
+# file-vars
+my ($file_nzb, $file_stat, $file_cmd, $file_pid);
 
 # fileset
 my @fileset;
 if (scalar(@ARGV) > 0){
-	my $nzbfilename = shift @ARGV; #$ARGV[0];
-	my @fsparts = parseNZB($nzbfilename, 1);
+	$file_nzb = shift @ARGV; #$ARGV[0];
+	my @fsparts = parseNZB($file_nzb, 1);
 	if (!defined($fsparts[0])) {
 		printError("No Fileset-Parts found. exit.");
 		exit;
@@ -181,9 +182,9 @@ if (scalar(@ARGV) > 0){
 	@fsparts = regexAndSkipping(@fsparts);	# It checks options inside too
 	push @fileset, @fsparts;
 	#
-	$statfile = $nzbfilename.".stat";
-	$cmdfile = $nzbfilename.".cmd";
-	$pidfile = $nzbfilename.".pid";
+	$file_stat = $file_nzb.".stat";
+	$file_cmd = $file_nzb.".cmd";
+	$file_pid = $file_nzb.".pid";
 }
 my @queuefileset = @fileset;
 
@@ -219,9 +220,10 @@ printMessage("nzbperl starting up :\n");
 printMessage(" - files : ".$totals{'total file ct'}."\n");
 printMessage(" - size : ".$totals{'total size'}."\n");
 printMessage(" - tfuser : ".$tfuser."\n");
-printMessage(" - statfile : ".$statfile."\n");
-printMessage(" - pidfile : ".$pidfile."\n");
-printMessage(" - cmdfile : ".$cmdfile."\n");
+printMessage(" - nzbfile : ".$file_nzb."\n");
+printMessage(" - statfile : ".$file_stat."\n");
+printMessage(" - pidfile : ".$file_pid."\n");
+printMessage(" - cmdfile : ".$file_cmd."\n");
 printMessage(" - dlpath : ".$dlpath."\n");
 printMessage(" - server : ".$server."\n");
 printMessage(" - speed : ".$targkBps."\n");
@@ -229,7 +231,7 @@ printMessage(" - conn : ".$connct."\n");
 printMessage(" - dthreadct : ".$dthreadct."\n");
 
 # sf-instance-field (reuse object)
-my $sf = StatFile->new($statfile);
+my $sf = StatFile->new($file_stat);
 
 # write af
 writeStatStartup();
@@ -238,9 +240,9 @@ writeStatStartup();
 pidFileWrite();
 
 # Check for and delete stale .cmd files
-if (-e $cmdfile ) {
-	printMessage("removing command-file ".$cmdfile."...\n");
-	unlink($cmdfile);
+if (-e $file_cmd ) {
+	printMessage("removing command-file ".$file_cmd."...\n");
+	unlink($file_cmd);
 }
 
 # set up our signal handlers
@@ -280,27 +282,39 @@ printMessage("nzbperl up and running.\n");
 
 # main loop
 my @dlstarttime = Time::HiRes::gettimeofday();
-my $lasttime = [gettimeofday];
-my $noMoreWorkTodo;
+my %lasttime = (
+	'stat' => [gettimeofday],
+	'cmd' => [gettimeofday]
+);
+my $noMoreWorkTodo = 0;
+my $elapsed = 0;
 while (1) {
 
+	# nzb-action
 	doFileAssignments();
 	doBodyRequests();
 	doReceiverPart();
 
-	my $elapsed = tv_interval($lasttime);
-
-	# 5 secs passed, process stat-file
+	# if 5 secs passed, write stat-file
+	$elapsed = tv_interval($lasttime{'stat'});
 	if ($elapsed >= 5) {
 
 		# stat-file
 		writeStatRunning();
 
+		# set time
+		$lasttime{'stat'} = [gettimeofday];
+	}
+
+	# if 1 sec passed, process command-stack
+	$elapsed = tv_interval($lasttime{'cmd'});
+	if ($elapsed >= 1) {
+
 		# process command stack
 		processCommandStack();
 
 		# set time
-		$lasttime = [gettimeofday];
+		$lasttime{'cmd'} = [gettimeofday];
 	}
 
 	# queueNewNZBFilesFromDir();	# queue up new nzb files from dir (guards inside)
@@ -350,13 +364,24 @@ if ($quitnow) {
 
 # decoder-threads
 printMessage("Waiting for file decoding thread(s) to terminate...\n");
-foreach my $i (1..$dthreadct){
-	# Send a quit now message for each decoder thread.
-	usingThreadedDecoding() and $decQ->enqueue('quit now');
-}
-foreach my $i (0..$dthreadct-1){
-	# Now join on every decoder thread, waiting for all to finish
-	usingThreadedDecoding() and $decThreads[$i]->join;
+eval {
+	local $SIG{ALRM} = sub {die "alarm\n"};
+	alarm 30;
+	#
+	foreach my $i (1..$dthreadct){
+		# Send a quit now message for each decoder thread.
+		usingThreadedDecoding() and $decQ->enqueue('quit now');
+	}
+	foreach my $i (0..$dthreadct-1){
+		# Now join on every decoder thread, waiting for all to finish
+		usingThreadedDecoding() and $decThreads[$i]->join;
+	}
+	#
+	alarm 0;
+};
+# Check for alarm (timeout) condition
+if ($@) {
+	printMessage("possible hung thread(s), waited 30 secs for file decoding thread(s) :\n ".$@."\n");
 }
 
 # shutdown
@@ -3068,8 +3093,8 @@ sub writeStatShutdown {
 # Returns: null                                                                #
 #------------------------------------------------------------------------------#
 sub pidFileWrite {
-	printMessage("writing pid-file ".$pidfile." (pid: ".$$.")\n");
-	open(PIDFILE,">$pidfile");
+	printMessage("writing pid-file ".$file_pid." (pid: ".$$.")\n");
+	open(PIDFILE,">$file_pid");
 	print PIDFILE $$."\n";
 	close(PIDFILE);
 }
@@ -3080,8 +3105,8 @@ sub pidFileWrite {
 # Returns: return-val of delete                                                #
 #------------------------------------------------------------------------------#
 sub pidFileDelete {
-	printMessage("deleting pid-file ".$pidfile."\n");
-	return unlink($pidfile);
+	printMessage("deleting pid-file ".$file_pid."\n");
+	return unlink($file_pid);
 }
 
 #------------------------------------------------------------------------------#
@@ -3111,22 +3136,22 @@ sub printError {
 #------------------------------------------------------------------------------#
 sub processCommandStack {
 	# check for command-file
-	if (!(-e $cmdfile)) {
+	if (!(-e $file_cmd)) {
 		return 0;
 	}
 	# process the command file
-	printMessage("Processing command-file ".$cmdfile."...\n");
+	printMessage("Processing command-file ".$file_cmd."...\n");
 	# sep + open file
 	my $lineSep = $/;
 	undef $/;
-	open(CMDFILE,"<$cmdfile");
+	open(CMDFILE,"<$file_cmd");
 	# read data
 	my $content = <CMDFILE>;
 	# close file + sep
 	close(CMDFILE);
 	$/ = $lineSep;
 	# delete file
-	unlink($cmdfile);
+	unlink($file_cmd);
 	# process data
 	my @contentary = split(/\n/, $content);
 	my $commandCount = 0;
