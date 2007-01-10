@@ -119,33 +119,29 @@ function indexStartTorrent($transfer, $interactive) {
 		// This is a setPriorityOnly Request.
 		return 1;
 	}
-	switch ($interactive) {
-		case 0:
-			$btclient = getTransferClient($transfer);
-			$clientHandler = ClientHandler::getInstance($btclient);
-			$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
-			// header + out
+	$clientHandler = ($interactive == 1)
+		? ClientHandler::getInstance(getRequestVar('btclient'))
+		: ClientHandler::getInstance(getTransferClient($transfer));
+	if ($interactive == 1)
+		$clientHandler->start($transfer, true, (getRequestVar('queue') == 'true') ? FluxdQmgr::isRunning() : false);
+	else
+		$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
+	if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+		$msgs = array();
+		array_push($msgs, "transfer : ".$transfer);
+		array_push($msgs, "\nmessages :");
+		$msgs = array_merge($msgs, $clientHandler->messages);
+		AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+		@error("Start failed", "", "", $msgs);
+	} else {
+		if (array_key_exists("closeme", $_POST)) {
+			echo '<script  language="JavaScript">';
+			echo ' window.opener.location.reload(true);';
+			echo ' window.close();';
+			echo '</script>';
+		} else {
 			@header("location: index.php?iid=index");
-		case 1:
-			$clientHandler = ClientHandler::getInstance(getRequestVar('btclient'));
-			$clientHandler->start($transfer, true, FluxdQmgr::isRunning());
-			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
-				$msgs = array();
-				array_push($msgs, "transfer : ".$transfer);
-				array_push($msgs, "\nmessages :");
-				$msgs = array_merge($msgs, $clientHandler->messages);
-				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
-				@error("Start failed", "", "", $msgs);
-			} else {
-				if (array_key_exists("closeme",$_POST)) {
-					echo '<script  language="JavaScript">';
-					echo ' window.opener.location.reload(true);';
-					echo ' window.close();';
-					echo '</script>';
-				} else {
-					@header("location: index.php?iid=index");
-				}
-			}
+		}
 	}
 	exit();
 }
