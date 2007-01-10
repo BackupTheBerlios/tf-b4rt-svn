@@ -44,7 +44,7 @@ class ClientHandlerTornado extends ClientHandler
         $this->binSystem = "python";
         $this->binSocket = "python";
         $this->binClient = "tftornado.py";
-        $this->tornadoBin = $cfg["docroot"]."bin/TF_BitTornado/tftornado.py";
+        $this->tornadoBin = $cfg["docroot"]."bin/tornado/tftornado.py";
     }
 
 	// =========================================================================

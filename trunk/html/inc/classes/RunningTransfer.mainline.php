@@ -35,7 +35,7 @@ class RunningTransferMainline extends RunningTransfer
     function RunningTransferMainline($psLine) {
     	global $cfg;
         // mainlineBin
-        $mainlineBin = $cfg["docroot"]."bin/TF_Mainline/tfmainline.py";
+        $mainlineBin = $cfg["docroot"]."bin/mainline/tfmainline.py";
         // ps-parse
         if (strlen($psLine) > 0) {
             while (strpos($psLine,"  ") > 0)

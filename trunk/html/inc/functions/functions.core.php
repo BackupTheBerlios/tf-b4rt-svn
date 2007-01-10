@@ -917,10 +917,10 @@ function getTorrentMetaInfo($transfer) {
 		case "ttools.pl":
 			return shell_exec($cfg["perlCmd"].' -I "'.$cfg["docroot"].'bin/ttools" "'.$cfg["docroot"].'bin/ttools/ttools.pl" -i '.escapeshellarg($cfg["transfer_file_path"].$transfer));
 		case "torrentinfo-console.py":
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_Mainline/torrentinfo-console.py ".escapeshellarg($transfer));
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/mainline/torrentinfo-console.py ".escapeshellarg($transfer));
 		case "btshowmetainfo.py":
 		default:
-			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/TF_BitTornado/btshowmetainfo.py ".escapeshellarg($transfer));
+			return shell_exec("cd ".$cfg["transfer_file_path"]."; ".$cfg["pythonCmd"]." -OO ".$cfg["docroot"]."bin/tornado/btshowmetainfo.py ".escapeshellarg($transfer));
 	}
 }
 
