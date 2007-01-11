@@ -85,6 +85,19 @@ $retries = $argv[5];
 $pasv = $argv[6];
 $transfer = str_replace($cfg['transfer_file_path'], '', $transferFile);
 
+// clienthandler-object
+$clientHandler = ClientHandler::getInstance('wget');
+$clientHandler->setVarsFromTransfer($transfer);
+
+// log
+$clientHandler->logMessage("wget.php starting up :\n");
+$clientHandler->logMessage(" - transfer : ".$transferFile."\n");
+$clientHandler->logMessage(" - owner : ".$owner."\n");
+$clientHandler->logMessage(" - path : ".$path."\n");
+$clientHandler->logMessage(" - drate : ".$drate."\n");
+$clientHandler->logMessage(" - retries : ".$retries."\n");
+$clientHandler->logMessage(" - pasv : ".$pasv."\n");
+
 // set admin-var
 $cfg['isAdmin'] = IsAdmin($owner);
 
@@ -103,7 +116,7 @@ writeStatFile();
 
 // command-string
 $command = "cd ".$path.";";
-$command .= " HOME=".$path."/; export HOME;";
+$command .= " HOME=".$path."; export HOME;";
 if ($cfg["enable_umask"] != 0)
     $command .= " umask 0000;";
 if ($cfg["nice_adjust"] != 0)
@@ -119,29 +132,37 @@ $command .= " -i ".escapeshellarg($cfg['transfer_file_path'].$transfer);
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$cfg['transfer_file_path'].$transfer.".pid"; // write pid-file
 
+// log
+$clientHandler->logMessage("wget.php starting up wget...\n");
+$clientHandler->logMessage("executing command : \n".$command."\n", true);
+
 // start process
-$header = true;
 $wget = popen($command,'r');
 // wait for 0.25 seconds
 usleep(250000);
+$header = true;
+$read = "";
 do {
 	// read header
 	$ctr = 0;
-	while ($ctr < 10) {
+	while ($header) {
 		// read
-		$read = @fread($wget, 1024);
-		if (preg_match("/.*Length:(.*) .*/i", $read, $reg)) {
+		$read .= @fread($wget, 256);
+		if (preg_match("/.*Length: (.*) .*/i", $read, $reg)) {
 			$header = false;
 			$s_size = str_replace(',','', $reg[1]);
-			break;
 		} else if (empty($read)) {
-			break;
+			$header = false;
 		} else {
+			if ($ctr > 10)
+				$header = false;
 			$ctr++;
 		}
+		// log
+		$clientHandler->logMessage($read."\n");
 	}
 	// read
-	$read = @fread($wget, 2048);
+	$read = @fread($wget, 16384);
 	// process data
 	processData($read);
 	// write stat file
@@ -151,6 +172,9 @@ do {
 
 } while (!feof($wget));
 pclose($wget);
+
+// log exit
+$clientHandler->logMessage("wget.php shutting down...\n");
 
 // Run again afterwards just to make sure it finished writing the file.
 $s_running = '0';
@@ -164,7 +188,11 @@ $s_time_left = "Download Succeeded!";
 writeStatFile();
 
 // delete pid-file
+$clientHandler->logMessage("removing pid-file : ".$cfg['transfer_file_path'].$transfer.".pid\n");
 @unlink($cfg['transfer_file_path'].$transfer.".pid");
+
+// log exit
+$clientHandler->logMessage("wget.php exit\n");
 
 // exit
 exit();
@@ -219,6 +247,7 @@ function processData($data){
 	}
 	// download done
 	if (@preg_match("/.*saved [.*/", $data)) {
+		$clientHandler->logMessage($data."\n");
 		$s_running = '0';
 		$s_down_speed = "0.00 kB/s";
 		$s_percent_done = 100;

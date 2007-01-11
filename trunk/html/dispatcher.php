@@ -98,7 +98,7 @@ switch ($action) {
 			$clientHandler = ClientHandler::getInstance('wget');
 			$clientHandler->inject($url);
 			if (getRequestVar('wget_start') == 1) {
-				$clientHandler->start($url, false, false);
+				$clientHandler->start($clientHandler->transfer, false, FluxdQmgr::isRunning());
 				if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 					$msgs = array();
 					array_push($msgs, "url : ".$url);
