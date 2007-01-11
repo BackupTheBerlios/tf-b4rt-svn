@@ -156,6 +156,7 @@ class HeadlessDisplayer:
         self.distcopy = ''
         self.stoppedAt = ''
         self.dow = None
+        self.displayCounter = 0
 
     def finished(self):
         if __debug__: traceMsg('finished - begin')
@@ -330,7 +331,13 @@ class HeadlessDisplayer:
             if die:
                 self.execShutdown()
             else:
-                self.writeStatus()
+                # write every 5 secs
+                if self.displayCounter < 5:
+                    self.displayCounter += 1
+                else:
+                    self.displayCounter = 0
+                    # write stat-file
+                    self.writeStatus()
 
     def processCommandStack(self):
         """ processCommandStack """

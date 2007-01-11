@@ -121,7 +121,7 @@ class ClientHandlerTornado extends ClientHandler
         $this->command .= " ".$this->owner;
         $this->command .= " ".escapeshellarg($this->transferFilePath);
         $this->command .= " --responsefile ".escapeshellarg($this->transferFilePath);
-        $this->command .= " --display_interval 5";
+        $this->command .= " --display_interval 1";
         $this->command .= " --max_download_rate ".escapeshellarg($this->drate);
         $this->command .= " --max_upload_rate ".escapeshellarg($this->rate);
         $this->command .= " --max_uploads ".escapeshellarg($this->maxuploads);

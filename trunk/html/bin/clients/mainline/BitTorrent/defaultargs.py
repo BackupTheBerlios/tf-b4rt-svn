@@ -483,7 +483,7 @@ def get_defaults(ui):
 
     if ui == 'bittorrent-console' :
         r.extend([
-            ('display_interval', 5,
+            ('display_interval', 1,
             _("seconds between updates of displayed information")),
             ] )
     elif ui.startswith('launchmany-console'):

@@ -166,6 +166,7 @@ class HeadlessDisplayer(object):
         self.dieWhenDone = config['die_when_done']
         self.isInShutDown = 0
         self.running = '1'
+        self.displayCounter = 0
 
     def set_torrent_values(self, name, path, size, numpieces):
         self.file = name
@@ -279,26 +280,31 @@ class HeadlessDisplayer(object):
                 # shutdown
                 self.execShutdown()
             else:
-                # write stat-file
-                try:
-                    FILE = open(transferStatFile, "w")
-                    FILE.write(repr(self.state)+"\n")
-                    FILE.write(self.percentDone+"\n")
-                    FILE.write(self.timeEst+"\n")
-                    FILE.write(self.downRate+"\n")
-                    FILE.write(self.upRate+"\n")
-                    FILE.write(self.tfOwner+"\n")
-                    FILE.write(self.seedStatus+"\n")
-                    FILE.write(self.peerStatus+"\n")
-                    FILE.write(self.shareRating+"\n")
-                    FILE.write(self.seedLimit+"\n")
-                    FILE.write(repr(upTotal)+"\n")
-                    FILE.write(repr(downTotal)+"\n")
-                    FILE.write(repr(self.fileSize_stat))
-                    FILE.flush()
-                    FILE.close()
-                except Exception, e:
-                    transferLog("Failed to write stat-file : " + transferStatFile + "\n", True)
+                # write every 5 secs
+                if self.displayCounter < 5:
+                    self.displayCounter += 1
+                else:
+                    self.displayCounter = 0
+                    # write stat-file
+                    try:
+                        FILE = open(transferStatFile, "w")
+                        FILE.write(repr(self.state)+"\n")
+                        FILE.write(self.percentDone+"\n")
+                        FILE.write(self.timeEst+"\n")
+                        FILE.write(self.downRate+"\n")
+                        FILE.write(self.upRate+"\n")
+                        FILE.write(self.tfOwner+"\n")
+                        FILE.write(self.seedStatus+"\n")
+                        FILE.write(self.peerStatus+"\n")
+                        FILE.write(self.shareRating+"\n")
+                        FILE.write(self.seedLimit+"\n")
+                        FILE.write(repr(upTotal)+"\n")
+                        FILE.write(repr(downTotal)+"\n")
+                        FILE.write(repr(self.fileSize_stat))
+                        FILE.flush()
+                        FILE.close()
+                    except Exception, e:
+                        transferLog("Failed to write stat-file : " + transferStatFile + "\n", True)
 
     def execShutdown(self):
         """ execShutdown """
