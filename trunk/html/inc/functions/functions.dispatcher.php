@@ -295,6 +295,29 @@ function indexDeleteTransfer($transfer) {
 function indexDeQueueTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
+		if (substr($transfer, -5) == ".wget") {
+			// is enabled ?
+			if ($cfg["enable_wget"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue wget-file ".$transfer);
+				@error("wget is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_wget"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue wget-file ".$transfer);
+					@error("wget is disabled for users", "", "");
+				}
+			}
+		} else if (substr($transfer, -4) == ".nzb") {
+			// is enabled ?
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue nzb-file ".$transfer);
+				@error("nzbperl is disabled", "index.php?iid=index", "");
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue nzb-file ".$transfer);
+					@error("nzbperl is disabled for users", "", "");
+				}
+			}
+		}
 		FluxdQmgr::dequeueTransfer($transfer, $cfg['user']);
 		@header("location: index.php?iid=index");
 		exit();
@@ -421,7 +444,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 			injectTransfer($file_name);
 			// instant action ?
 			$actionId = getRequestVar('aid');
-			if (isset($actionId)) {
+			if ($actionId > 1) {
 				if ($cfg["enable_file_priority"]) {
 					include_once("inc/functions/functions.setpriority.php");
 					// Process setPriority Request.
@@ -501,7 +524,7 @@ function indexProcessUpload() {
 						injectTransfer($file_name);
 						// instant action ?
 						$actionId = getRequestVar('aid');
-						if (isset($actionId)) {
+						if ($actionId > 1) {
 							// file prio
 							if ($cfg["enable_file_priority"]) {
 								include_once("inc/functions/functions.setpriority.php");
@@ -605,7 +628,7 @@ function processFileUpload() {
 							// inject
 							injectTransfer($file_name);
 							// instant action ?
-							if ((isset($actionId)) && ($actionId > 1))
+							if ($actionId > 1)
 								array_push($tStack,$file_name);
 						} else {
 							array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
@@ -625,7 +648,7 @@ function processFileUpload() {
 			}
 		} // End File Upload
 		// instant action ?
-		if ((!empty($actionId)) && (!empty($tStack))) {
+		if (($actionId > 1) && (!empty($tStack))) {
 			foreach ($tStack as $transfer) {
 				// file prio
 				if ($cfg["enable_file_priority"]) {

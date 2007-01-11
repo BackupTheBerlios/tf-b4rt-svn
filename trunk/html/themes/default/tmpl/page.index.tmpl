@@ -94,7 +94,17 @@
 											URL for the nzb-File:<br>
 											<input type="hidden" name="type" value="nzb">
 											<input type="text" name="url" size="40">
-											<input name="aid" type="Checkbox" value="2">Start
+											<select name="aid" size="1">
+												<option value="1" selected><tmpl_var name="_GETFILE"></option>
+												<tmpl_if name="queueActive" value="1">
+													<tmpl_if name="isAdmin">
+														<option value="2"><tmpl_var name="_GETFILE">+Start</option>
+													</tmpl_if>
+													<option value="3"><tmpl_var name="_GETFILE">+Queue</option>
+												<tmpl_else>
+													<option value="2"><tmpl_var name="_GETFILE">+Start</option>
+												</tmpl_if>
+											</select>
 											<input type="Submit" value="Go">
 										</td>
 										</form>
@@ -107,7 +117,17 @@
 											<hr>
 											URL for the File to wget:<br>
 											<input type="text" name="url" size="40">
-											<input name="wget_start" type="Checkbox" value="1">Start
+											<select name="aid" size="1">
+												<option value="1" selected>Inject</option>
+												<tmpl_if name="queueActive" value="1">
+													<tmpl_if name="isAdmin">
+														<option value="2">Inject+Start</option>
+													</tmpl_if>
+													<option value="3">Inject+Queue</option>
+												<tmpl_else>
+													<option value="2">Inject+Start</option>
+												</tmpl_if>
+											</select>
 											<input type="Submit" value="Go">
 										</td>
 										</form>
