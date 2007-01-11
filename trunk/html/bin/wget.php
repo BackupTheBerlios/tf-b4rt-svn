@@ -77,12 +77,13 @@ $speed = 0;
 // -----------------------------------------------------------------------------
 
 // args
-$transfer = $argv[1];
+$transferFile = $argv[1];
 $owner = $argv[2];
 $path = $argv[3];
 $drate = $argv[4];
 $retries = $argv[5];
 $pasv = $argv[6];
+$transfer = str_replace($cfg['transfer_file_path'], '', $transferFile);
 
 // set admin-var
 $cfg['isAdmin'] = IsAdmin($owner);
@@ -125,12 +126,18 @@ $wget = popen($command,'r');
 usleep(250000);
 do {
 	// read header
-	while ($header) {
+	$ctr = 0;
+	while ($ctr < 10) {
 		// read
 		$read = @fread($wget, 1024);
 		if (preg_match("/.*Length:(.*) .*/i", $read, $reg)) {
 			$header = false;
 			$s_size = str_replace(',','', $reg[1]);
+			break;
+		} else if (empty($read)) {
+			break;
+		} else {
+			$ctr++;
 		}
 	}
 	// read
@@ -139,7 +146,7 @@ do {
 	processData($read);
 	// write stat file
 	writeStatFile();
-	// sleep
+	// wait
 	sleep(5);
 
 } while (!feof($wget));

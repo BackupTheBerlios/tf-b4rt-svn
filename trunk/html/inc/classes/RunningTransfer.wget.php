@@ -43,7 +43,6 @@ class RunningTransferWget extends RunningTransfer
             $this->processId = $arr[0];
             $this->args = "";
 			$this->transferFile = str_replace($cfg['transfer_file_path'],'',$arr[($count - 6)]);
-            $this->statFile = str_replace('.wget','.stat', $this->transferFile);
             $this->transferowner = $arr[($count - 5)];
             $this->filePath = substr($arr[($count - 4)], 0, strrpos($arr[($count - 4)], "/")+1);
         }

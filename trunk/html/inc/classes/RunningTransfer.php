@@ -27,7 +27,6 @@ class RunningTransfer
 {
 
 	// public fields
-    var $statFile = "";
     var $transferFile = "";
     var $filePath = "";
     var $transferowner = "";

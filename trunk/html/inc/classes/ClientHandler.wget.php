@@ -38,7 +38,7 @@ class ClientHandlerWget extends ClientHandler
      */
     function ClientHandlerWget() {
         $this->handlerName = "wget";
-        $this->binSystem = "wget";
+        $this->binSystem = "php";
         $this->binSocket = "wget";
         $this->binClient = "wget.php";
     }
@@ -187,7 +187,7 @@ class ClientHandlerWget extends ClientHandler
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
-        $this->command .= " " . escapeshellarg($this->transfer);
+        $this->command .= " " . escapeshellarg($this->transferFilePath);
         $this->command .= " " . $this->owner;
         $this->command .= " " . escapeshellarg($this->savepath);
         $this->command .= " " . $cfg["wget_limit_rate"];

@@ -480,9 +480,9 @@ class ClientHandler
         $isHung = false;
         foreach ($running as $rng) {
             $rt = RunningTransfer::getInstance($rng['pinfo'], $this->handlerName);
-            if ($rt->statFile == ($this->transfer.".stat")) {
+            if ($rt->transferFile == $this->transfer) {
             	$isHung = true;
-                AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->statFile." (".$rt->processId.")");
+                AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->transferFile." (".$rt->processId.")");
             	//$this->callResult = exec("kill ".escapeshellarg($rt->processId));
             }
         }
@@ -639,15 +639,15 @@ class ClientHandler
 	    $cpProcess = array();
 	    $pProcess = array();
 	    $ProcessCmd = array();
-	    for($i = 0; $i < sizeof($arScreen); $i++) {
-	        if(strpos($arScreen[$i], $this->binClient) !== false) {
+	    for ($i = 0; $i < sizeof($arScreen); $i++) {
+	        if (strpos($arScreen[$i], $this->binClient) !== false) {
 	            $pinfo = new ProcessInfo($arScreen[$i]);
 	            if (intval($pinfo->ppid) == 1) {
 	                if (!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
 	                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
 	                        array_push($pProcess,$pinfo->pid);
 	                        $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $this->handlerName);
-	                        array_push($ProcessCmd, $rt->transferowner."\t".str_replace(array(".stat"), "", $rt->statFile));
+	                        array_push($ProcessCmd, $rt->transferowner."\t".$rt->transferFile);
 	                    }
 	                }
 	            } else {
@@ -665,12 +665,8 @@ class ClientHandler
 	    $retVal .= " Children : " . count($cProcess) . "\n";
 	    $retVal .= "\n";
 	    $retVal .= " PID \tOwner\tTransfer File\n";
-	    foreach($pProcess as $key => $value) {
+	    foreach ($pProcess as $key => $value)
 	        $retVal .= " " . $value . "\t" . $ProcessCmd[$key] . "\n";
-	        foreach($cpProcess as $cKey => $cValue)
-	            if (intval($value) == intval($cValue))
-	                $retVal .= "\t" . $cProcess[$cKey] . "\n";
-	    }
 	    $retVal .= "\n";
 	    return $retVal;
 	}

@@ -242,7 +242,7 @@ if (isset($_REQUEST["p"])) {
 				    $htmlMain .= $rt->transferowner;
 				    $htmlMain .= '</div></td>';
 				    $htmlMain .= '<td nowrap><div align=center><div class="tiny" align="left">';
-				    $htmlMain .= str_replace(array(".stat"),"",$rt->statFile);
+				    $htmlMain .= $rt->transferFile;
 				    $htmlMain .= '</div></td>';
 				    $htmlMain .= '<td nowrap>';
 				    $htmlMain .= '<a href="dispatcher.php?action=forceStop';

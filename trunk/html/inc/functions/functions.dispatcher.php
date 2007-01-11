@@ -422,7 +422,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 			// instant action ?
 			$actionId = getRequestVar('aid');
 			if (isset($actionId)) {
-				if (($cfg["enable_file_priority"]) && ($type == 'torrent')) {
+				if ($cfg["enable_file_priority"]) {
 					include_once("inc/functions/functions.setpriority.php");
 					// Process setPriority Request.
 					setPriority($file_name);
@@ -430,13 +430,10 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 				$clientHandler = ClientHandler::getInstance(getTransferClient($file_name));
 				switch ($actionId) {
 					case 3:
-						if ($type == 'torrent')
-							$clientHandler->start($file_name, false, true);
+						$clientHandler->start($file_name, false, true);
 						break;
 					case 2:
 						$clientHandler->start($file_name, false, false);
-						if ($type == 'nzb')
-							sleep(8);
 						break;
 				}
 				if (count($clientHandler->messages) > 0)
@@ -505,11 +502,8 @@ function indexProcessUpload() {
 						// instant action ?
 						$actionId = getRequestVar('aid');
 						if (isset($actionId)) {
-							$isTorrent = (substr($file_name, -8) == ".torrent")
-								? true
-								: false;
 							// file prio
-							if ($cfg["enable_file_priority"] && $isTorrent) {
+							if ($cfg["enable_file_priority"]) {
 								include_once("inc/functions/functions.setpriority.php");
 								// Process setPriority Request.
 								setPriority($file_name);
@@ -517,13 +511,10 @@ function indexProcessUpload() {
 							$clientHandler = ClientHandler::getInstance(getTransferClient($file_name));
 							switch ($actionId) {
 								case 3:
-									if ($isTorrent)
-										$clientHandler->start($file_name, false, true);
+									$clientHandler->start($file_name, false, true);
 									break;
 								case 2:
 									$clientHandler->start($file_name, false, false);
-									if (!$isTorrent)
-										sleep(8);
 									break;
 							}
 							if (count($clientHandler->messages) > 0)
@@ -568,7 +559,7 @@ function processFileUpload() {
 		// process upload
 		foreach($_FILES['upload_files']['size'] as $id => $size) {
 			if ($size == 0) {
-				//no or empty file, skip it
+				// no or empty file, skip it
 				continue;
 			}
 			$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
@@ -636,11 +627,8 @@ function processFileUpload() {
 		// instant action ?
 		if ((!empty($actionId)) && (!empty($tStack))) {
 			foreach ($tStack as $transfer) {
-				$isTorrent = (substr($file_name, -8) == ".torrent")
-					? true
-					: false;
 				// file prio
-				if ($cfg["enable_file_priority"] && $isTorrent) {
+				if ($cfg["enable_file_priority"]) {
 					include_once("inc/functions/functions.setpriority.php");
 					// Process setPriority Request.
 					setPriority($transfer);
@@ -648,18 +636,15 @@ function processFileUpload() {
 				$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 				switch ($actionId) {
 					case 3:
-						if ($isTorrent)
-							$clientHandler->start($transfer, false, true);
+						$clientHandler->start($transfer, false, true);
 						break;
 					case 2:
 						$clientHandler->start($transfer, false, false);
-						if (!$isTorrent)
-							sleep(8);
 						break;
 				}
+				if (count($clientHandler->messages) > 0)
+           			$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
 			}
-			if (count($clientHandler->messages) > 0)
-           		$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
 		}
 	}
 	if (count($uploadMessages) > 0) {

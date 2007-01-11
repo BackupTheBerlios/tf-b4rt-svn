@@ -149,7 +149,7 @@ switch ($op) {
 					// reconfig of running daemon :
 					if ($_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"]) {
 						Fluxd::setConfig('LOGLEVEL', $_POST["fluxd_loglevel"]);
-						sleep(1);
+						sleep(2);
 					}
 					// save settings
 					$settings = processSettingsParams(false, false);
@@ -158,7 +158,7 @@ switch ($op) {
 					Fluxd::reloadDBCache();
 					// reload fluxd-modules
 					if ($reloadModules) {
-						sleep(3);
+						sleep(5);
 						Fluxd::reloadModules();
 						$message .= 'modules reloaded.';
 					} else {

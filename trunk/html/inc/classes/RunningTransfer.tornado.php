@@ -46,7 +46,7 @@ class RunningTransferTornado extends RunningTransfer
                 if ($key == 0)
                     $startArgs = false;
                 if ($value == $tornadoBin) {
-                    $offset = 2;
+                    $offset = 1;
                     if(!@strpos($arr[$key+$offset],"/",1) > 0)
                         $offset += 1;
                     if(!@strpos($arr[$key+$offset],"/",1) > 0)
@@ -54,7 +54,6 @@ class RunningTransferTornado extends RunningTransfer
                     $this->filePath = substr($arr[$key+$offset],0,strrpos($arr[$key+$offset],"/")+1);
                     $this->transferowner = $arr[$key+$offset];
                     $this->transferFile = str_replace($cfg['transfer_file_path'],'',$arr[$key+$offset+1]);
-                    $this->statFile = str_replace('.torrent','.stat', $this->transferFile);
                 }
                 if ($value == '--display_interval')
                     $startArgs = true;

@@ -50,7 +50,6 @@ class RunningTransferMainline extends RunningTransfer
                 	$this->transferowner = $arr[5];
                 	$this->filePath = substr($arr[$arrC - 1], 0, strrpos($arr[$arrC - 1], "/") + 1);
                 	$this->transferFile = str_replace($cfg['transfer_file_path'],'', $arr[$arrC - 1]);
-                	$this->statFile = str_replace('.torrent','.stat', $this->transferFile);
                 }
             }
             $this->args = str_replace("--","",$this->args);

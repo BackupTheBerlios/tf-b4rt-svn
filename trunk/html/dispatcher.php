@@ -257,10 +257,10 @@ switch ($action) {
 		$dispatcherMessages = array();
 
 		// loop
-		foreach($_POST['transfer'] as $key => $transfer) {
+		foreach ($_POST['transfer'] as $key => $element) {
 
 			// url-decode
-			$transfer = urldecode($transfer);
+			$transfer = urldecode($element);
 
 			// is valid transfer ?
 			$invalid = true;
