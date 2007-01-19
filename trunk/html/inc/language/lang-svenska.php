@@ -155,7 +155,7 @@ define("_STARTED", "Startad");
 define("_ENDED", "Avslutad");
 define("_QUEUED","Köad");
 define("_DELQUEUE","Ta bort från kö");
-define("_FORCESTOP","Döda torrent");
+define("_FORCESTOP","Döda Transfer");
 define("_STOPPING","Stannar");
 define("_COOKIE_MENU","kakor");
 define('_TOTALXFER','Total Transfer');

@@ -78,7 +78,7 @@ function buildPage($action) {
 			$htmlMain .= 'Please use the most recent tarball and perform a manual update.';
 			$htmlMain .= '<br>';
 			break;
-		case "t": // torrent passthru
+		case "t": // transfers passthru
 			$statusImage = "black.gif";
 			break;
 		case "p": // processes passthru

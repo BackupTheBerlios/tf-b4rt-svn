@@ -610,11 +610,11 @@ function setWebappLock($lock) {
 }
 
 /**
- * reset Torent-Totals
+ * reset transfer-Totals
  *
  * @return true or function exits with error
  */
-function resetAllTorentTotals() {
+function resetAllTransferTotals() {
 	// get ado-connection
 	$dbCon = getAdoConnection();
 	if (!$dbCon) {

@@ -40,7 +40,8 @@ class ClientHandlerMainline extends ClientHandler
      */
     function ClientHandlerMainline() {
     	global $cfg;
-        $this->handlerName = "mainline";
+    	$this->type = "torrent";
+        $this->client = "mainline";
         $this->binSystem = "python";
         $this->binSocket = "python";
         $this->binClient = "tfmainline.py";
@@ -65,7 +66,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->setVarsFromTransfer($transfer);
 
     	// log
-    	$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+    	$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
         // do mainline special-pre-start-checks
         // check to see if the path to the python script is valid
@@ -85,7 +86,7 @@ class ClientHandlerMainline extends ClientHandler
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
-				$msg = "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")";
+				$msg = "Error after prepare (".$transfer.",".$interactive.",".$enqueue.")";
 				array_push($this->messages , $msg);
 				$this->logMessage($msg."\n", true);
 			}
@@ -129,7 +130,7 @@ class ClientHandlerMainline extends ClientHandler
         $this->command .= " &";
 
 		// start the client
-		$this->execStart(true, true);
+		$this->execStart();
     }
 
     /**
@@ -156,7 +157,7 @@ class ClientHandlerMainline extends ClientHandler
     	// set vars
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(true, true);
+		$this->execDelete();
 	}
 
     /**

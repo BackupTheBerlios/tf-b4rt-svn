@@ -43,8 +43,8 @@ function cliPrintUsage() {
 	. "                 extra-arg : name of transfer as known inside torrentflux\n"
 	. " <delete>      : delete a transfer.\n"
 	. "                 extra-arg : name of transfer as known inside torrentflux\n"
-	. " <wipe>        : reset totals, delete torrent, delete torrent-data.\n"
-	. "                 extra-arg : name of torrent as known inside torrentflux\n"
+	. " <wipe>        : reset totals, delete metafile, delete data.\n"
+	. "                 extra-arg : name of transfer as known inside torrentflux\n"
 	. " <inject>      : injects a transfer-file into tflux.\n"
 	. "                 extra-arg 1 : path to transfer-meta-file\n"
 	. "                 extra-arg 2 : username of fluxuser\n"
@@ -178,7 +178,6 @@ function cliStartTransfer($transfer = "") {
 	global $cfg, $transfers;
 	if ((isset($transfer)) && ($transfer != "")) {
 		if (!isTransferRunning($transfer)) {
-			$btclient = getTransferClient($transfer);
 			$cfg["user"] = getOwner($transfer);
 			printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
 			if ($cfg["enable_file_priority"]) {
@@ -187,7 +186,7 @@ function cliStartTransfer($transfer = "") {
 				setPriority($transfer);
 			}
 			// clientHandler
-			$clientHandler = ClientHandler::getInstance($btclient);
+			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 			// force start, dont queue
 			$clientHandler->start($transfer, false, false);
 			if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
@@ -214,13 +213,12 @@ function cliStartTransfers() {
         if (!isTransferRunning($transfer)) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
-            $btclient = getTransferClient($transfer);
             if ($cfg["enable_file_priority"]) {
                 include_once("inc/functions/functions.setpriority.php");
                 // Process setPriority Request.
                 setPriority($transfer);
             }
-            $clientHandler = ClientHandler::getInstance($btclient);
+            $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
             $clientHandler->start($transfer, false, false);
 			if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
 				printMessage("fluxcli.php", "done.\n");
@@ -241,13 +239,12 @@ function cliResumeTransfers() {
         if (!isTransferRunning($transfer)) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
-            $btclient = getTransferClient($transfer);
             if ($cfg["enable_file_priority"]) {
                 include_once("inc/functions/functions.setpriority.php");
                 // Process setPriority Request.
                 setPriority($transfer);
             }
-            $clientHandler = ClientHandler::getInstance($btclient);
+            $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
             $clientHandler->start($transfer, false, false);
 			if ($clientHandler->state == CLIENTHANDLER_STATE_OK) /* hooray */
 				printMessage("fluxcli.php", "done.\n");
@@ -436,9 +433,9 @@ function cliWatchDir($tpath = "", $username = "") {
             $watchDir = checkDirPathString($tpath);
             if ($dirHandle = opendir($tpath)) {
                 while (false !== ($file = readdir($dirHandle))) {
-                    if (substr($file, -8) == ".torrent") {
-                        $file_name = stripslashes($file);
-                        $file_name = cleanFileName($file_name);
+                	$file_name = stripslashes($file);
+                    $file_name = cleanFileName($file_name);
+                    if (isValidTransfer($file_name)) {
                         printMessage("fluxcli.php", "Injecting and Starting ".$watchDir.$file." as ".$file_name." for user ".$cfg["user"]."...\n");
                         if ((is_file($watchDir.$file)) && (copy($watchDir.$file, $cfg["transfer_file_path"].$file_name))) {
                             @unlink($watchDir.$file);

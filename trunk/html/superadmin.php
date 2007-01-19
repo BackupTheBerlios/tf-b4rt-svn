@@ -106,8 +106,7 @@ if (isset($_REQUEST["t"])) {
 				$torrents = getTorrentListFromFS();
 				foreach ($torrents as $transfer) {
 					if (isTransferRunning($transfer)) {
-						$btclient = getTransferClient($transfer);
-						$clientHandler = ClientHandler::getInstance($btclient);
+						$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 						$clientHandler->stop($transfer);
 						$htmlMain .=  ' - '.$transfer."";
 						$htmlMain .=  "\n";
@@ -124,13 +123,12 @@ if (isset($_REQUEST["t"])) {
 				$torrents = getTorrentListFromFS();
 				foreach ($torrents as $transfer) {
 					if (!isTransferRunning($transfer)) {
-						$btclient = getTransferClient($transfer);
 						if ($cfg["enable_file_priority"]) {
 							include_once("inc/functions/functions.setpriority.php");
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance($btclient);
+						$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 						$clientHandler->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";
 						$htmlMain .=  "\n";
@@ -147,13 +145,12 @@ if (isset($_REQUEST["t"])) {
 				$torrents = getTorrentListFromDB();
 				foreach ($torrents as $transfer) {
 					if (!isTransferRunning($transfer)) {
-						$btclient = getTransferClient($transfer);
 						if ($cfg["enable_file_priority"]) {
 							include_once("inc/functions/functions.setpriority.php");
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance($cfg,$btclient);
+						$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 						$clientHandler->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";
 						$htmlMain .=  "\n";
@@ -637,9 +634,9 @@ if (isset($_REQUEST["m"])) {
 			case "5": // Maintenance : Reset
 				$htmlTitle = "Maintenance - Reset";
 				$htmlMain .= '<br>';
-				$htmlMain .= '<strong>torrent-totals</strong><br>';
-				$htmlMain .= 'use this to reset the torrent-totals.<br>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="torrent-totals" border="0"> torrent-totals-reset</a>';
+				$htmlMain .= '<strong>transfer-totals</strong><br>';
+				$htmlMain .= 'use this to reset the transfer-totals.<br>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?m=51"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="transfer-totals" border="0"> transfer-totals-reset</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>xfer-stats</strong><br>';
 				$htmlMain .= 'use this to reset the xfer-stats.<br>';
@@ -647,15 +644,14 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br><br>';
 				break;
 
-			case "51": // Maintenance : Reset - torrent-totals
-				$htmlTitle = "Maintenance - Reset - torrent-totals";
+			case "51": // Maintenance : Reset - transfer-totals
+				$htmlTitle = "Maintenance - Reset - transfer-totals";
 				$htmlMain .= '<br>';
-				$htmlMain .= 'Reset of torrent-totals';
-				$result = resetAllTorentTotals();
-				if ($result === true)
-					$htmlMain .= ' <font color="green">done</font>';
-				else
-					$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
+				$htmlMain .= 'Reset of transfer-totals';
+				$result = resetAllTransferTotals();
+				$htmlMain .= ($result === true)
+					? ' <font color="green">done</font>'
+					: '<br><font color="red">Error :</font><br>'.$result;
 				$htmlMain .= '<br><br>';
 				break;
 
@@ -664,10 +660,9 @@ if (isset($_REQUEST["m"])) {
 				$htmlMain .= '<br>';
 				$htmlMain .= 'Reset of xfer-stats';
 				$result = resetXferStats();
-				if ($result === true)
-					$htmlMain .= ' <font color="green">done</font>';
-				else
-					$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
+				$htmlMain .= ($result === true)
+					? ' <font color="green">done</font>'
+					: '<br><font color="red">Error :</font><br>'.$result;
 				$htmlMain .= '<br><br>';
 				break;
 
@@ -697,17 +692,15 @@ if (isset($_REQUEST["m"])) {
 				switch ($cfg['webapp_locked']) {
 					case 0:
 						$result = setWebappLock(1);
-						if ($result === true)
-							$htmlMain .= '<font color="red">webapp locked.</font>';
-						else
-							$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
+						$htmlMain .= ($result === true)
+							? '<font color="red">webapp locked.</font>'
+							: '<br><font color="red">Error :</font><br>'.$result;
 						break;
 					case 1:
 						$result = setWebappLock(0);
-						if ($result === true)
-							$htmlMain .= '<font color="green">webapp unlocked.</font>';
-						else
-							$htmlMain .= '<br><font color="red">Error :</font><br>'.$result;
+						$htmlMain .= ($result === true)
+							? '<font color="red">webapp unlocked.</font>'
+							: '<br><font color="red">Error :</font><br>'.$result;
 						break;
 				}
 				$htmlMain .= '<br><br>';

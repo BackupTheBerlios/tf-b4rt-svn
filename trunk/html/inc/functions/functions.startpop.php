@@ -26,29 +26,43 @@
 function setVarsFromPersistentSettings() {
 	global $cfg, $tmpl, $transfer, $transfers;
 	// Load saved settings
-	loadTransferSettingsToConfig($transfer);
-	// set settings
-	$tmpl->setvar('max_upload_rate', $cfg["max_upload_rate"]);
-	$tmpl->setvar('max_uploads', $cfg["max_uploads"]);
-	$tmpl->setvar('max_download_rate', $cfg["max_download_rate"]);
-	$tmpl->setvar('maxcons', $cfg["maxcons"]);
-	$tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
-	$tmpl->setvar('minport', $cfg["minport"]);
-	$tmpl->setvar('maxport', $cfg["maxport"]);
-	$tmpl->setvar('sharekill', $cfg["sharekill"]);
-	$tmpl->setvar('selected', ($cfg["torrent_dies_when_done"] == "False") ? "selected" : "");
-	// btclient-chooser
-	if ($cfg["enable_btclient_chooser"] != 0)
-		tmplSetClientSelectForm($cfg["btclient"]);
-	else
-		$tmpl->setvar('btclientDefault', $cfg["btclient"]);
-	// savepath
-	if ((! isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-		$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
+	$settings = loadTransferSettings($transfer);
+	if (!is_array($settings)) {
+		$settings = array();
+		$settings["type"]                    = "torrent";
+		$settings["client"]                  = $cfg["btclient"];
+		$settings["hash"]                    = "";
+		$settings["datapath"]                = "";
+		$settings["savepath"]                = ($cfg["enable_home_dirs"] != 0)
 			? $cfg["path"].getOwner($transfer).'/'
 			: $cfg["path"].$cfg["path_incoming"].'/';
+		$settings["running"]                 = "0";
+		$settings["max_upload_rate"]         = $cfg["max_upload_rate"];
+		$settings["max_download_rate"]		 = $cfg["max_download_rate"];
+		$settings["torrent_dies_when_done"]	 = $cfg["torrent_dies_when_done"];
+		$settings["max_uploads"]			 = $cfg["max_uploads"];
+		$settings["minport"]				 = $cfg["minport"];
+		$settings["maxport"]				 = $cfg["maxport"];
+		$settings["sharekill"]				 = $cfg["sharekill"];
+		$settings["maxcons"]				 = $cfg["maxcons"];
 	}
-	$tmpl->setvar('savepath', $cfg["savepath"]);
+	// set settings
+	$tmpl->setvar('max_upload_rate', $settings["max_upload_rate"]);
+	$tmpl->setvar('max_uploads', $settings["max_uploads"]);
+	$tmpl->setvar('max_download_rate', $settings["max_download_rate"]);
+	$tmpl->setvar('maxcons', $settings["maxcons"]);
+	$tmpl->setvar('rerequest_interval', $settings["rerequest_interval"]);
+	$tmpl->setvar('minport', $settings["minport"]);
+	$tmpl->setvar('maxport', $settings["maxport"]);
+	$tmpl->setvar('sharekill', $settings["sharekill"]);
+	$tmpl->setvar('selected', ($settings["torrent_dies_when_done"] == "False") ? "selected" : "");
+	$tmpl->setvar('savepath', $settings["savepath"]);
+	// btclient-chooser
+	if ($cfg["enable_btclient_chooser"] != 0)
+		tmplSetClientSelectForm($settings["client"]);
+	else
+		$tmpl->setvar('btclientDefault', $settings["client"]);
+
 }
 
 ?>

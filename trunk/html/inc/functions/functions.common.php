@@ -1354,7 +1354,7 @@ function getTransferLog($transfer) {
  */
 function deleteTransferSettings($transfer) {
 	global $db;
-	$sql = "DELETE FROM tf_torrents WHERE torrent = '".$transfer."'";
+	$sql = "DELETE FROM tf_transfers WHERE transfer = '".$transfer."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// set transfers-cache
@@ -1366,44 +1366,64 @@ function deleteTransferSettings($transfer) {
  * Function for saving transfer Settings
  *
  * @param $transfer
+ * @param $type
+ * @param $client
+ * @param $hash
+ * @param $datapath
+ * @param $savepath
  * @param $running
  * @param $rate
  * @param $drate
  * @param $maxuploads
+ * @param $superseeder
  * @param $runtime
  * @param $sharekill
  * @param $minport
  * @param $maxport
  * @param $maxcons
- * @param $savepath
- * @param $btclient
  * @return boolean
  */
-function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $runtime, $sharekill, $minport, $maxport, $maxcons, $savepath, $btclient = 'tornado') {
+function saveTransferSettings(
+	$transfer,
+	$type,
+	$client,
+	$hash,
+	$datapath,
+	$savepath,
+	$running,
+	$rate,
+	$drate,
+	$maxuploads,
+	$superseeder,
+	$runtime,
+	$sharekill,
+	$minport,
+	$maxport,
+	$maxcons
+	) {
+	//
 	global $db;
 	// Messy - a not exists would prob work better
 	deleteTransferSettings($transfer);
-	// get hash
-	$tHash = getTransferHash($transfer);
-	// get datapath
-	$tDatapath = getTransferDatapath($transfer);
 	// insert
-    $sql = "INSERT INTO tf_torrents (torrent,running,rate,drate,maxuploads,runtime,sharekill,minport,maxport,maxcons,savepath,btclient,hash,datapath)"
+    $sql = "INSERT INTO tf_transfers (transfer,type,client,hash,datapath,savepath,running,rate,drate,maxuploads,superseeder,runtime,sharekill,minport,maxport,maxcons)"
     	." VALUES ("
     	. $db->qstr($transfer).","
+    	. $db->qstr($type).","
+    	. $db->qstr($client).","
+    	. $db->qstr($hash).","
+    	. $db->qstr($datapath).","
+    	. $db->qstr($savepath).","
     	. $db->qstr($running).","
     	. $db->qstr($rate).","
     	. $db->qstr($drate).","
     	. $db->qstr($maxuploads).","
+    	. $db->qstr($superseeder).","
     	. $db->qstr($runtime).","
     	. $db->qstr($sharekill).","
     	. $db->qstr($minport).","
     	. $db->qstr($maxport).","
-    	. $db->qstr($maxcons).","
-    	. $db->qstr($savepath).","
-    	. $db->qstr($btclient).","
-    	. $db->qstr($tHash).","
-    	. $db->qstr($tDatapath)
+    	. $db->qstr($maxcons)
     	.")";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
@@ -1415,11 +1435,11 @@ function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $
 /**
  * sets the running flag in the db to stopped.
  *
- * @param $transfer name of the torrent
+ * @param $transfer name of the transfer
  */
 function stopTransferSettings($transfer) {
 	global $db;
-	$db->Execute("UPDATE tf_torrents SET running = '0' WHERE torrent = '".$transfer."'");
+	$db->Execute("UPDATE tf_transfers SET running = '0' WHERE transfer = '".$transfer."'");
 	// set transfers-cache
 	cacheTransfersSet();
 	return true;
@@ -1491,37 +1511,24 @@ function resetTransferTotals($transfer, $delete = false) {
  */
 function deleteTransferData($transfer) {
 	global $cfg, $transfers;
-	if (substr($transfer, -8) != ".torrent")
-		return false;
-	$owner = getOwner($transfer);
-	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
-		require_once('inc/classes/BDecode.php');
-		$ftorrent = $cfg["transfer_file_path"].$transfer;
-		$fd = fopen($ftorrent, "rd");
-		$alltorrent = fread($fd, filesize($ftorrent));
-		$btmeta = @BDecode($alltorrent);
-		$delete = @trim($btmeta['info']['name']);
-		if (!empty($delete)) {
-			// load transfer-settings from db to get data-location
-			loadTransferSettingsToConfig($transfer);
-			if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-				$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
-					? $cfg["path"].$owner.'/'
-					: $cfg["path"].$cfg["path_incoming"].'/';
-			}
-			$delete = $cfg["savepath"].$delete;
-			$del = stripslashes(stripslashes($delete));
-			if (isValidPath($del)) {
-				 avddelete($del);
-				 AuditAction($cfg["constants"]["fm_delete"], $del);
+	if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
+		// only torrent
+		if (substr($transfer, -8) != ".torrent")
+			return false;
+		// delete data
+		$datapath = getTransferDatapath($transfer);
+		if (!empty($datapath)) {
+			if (isValidPath($datapath)) {
+				 avddelete($datapath);
+				 AuditAction($cfg["constants"]["fm_delete"], $datapath);
 				 return true;
 			} else {
-				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
+				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete data of ".$datapath);
 				 return false;
 			}
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
+		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete data of ".$transfer);
 		return false;
 	}
 }
@@ -1535,27 +1542,10 @@ function deleteTransferData($transfer) {
  *		   4096 if dir (lol ~)
  */
 function getTorrentDataSize($transfer) {
-	global $cfg, $transfers;
-	require_once('inc/classes/BDecode.php');
-	$ftorrent = $cfg["transfer_file_path"].$transfer;
-	$fd = fopen($ftorrent, "rd");
-	$alltorrent = fread($fd, filesize($ftorrent));
-	$btmeta = @BDecode($alltorrent);
-	$name = @trim($btmeta['info']['name']);
-	if (!empty($name)) {
-		// load transfer-settings from db to get data-location
-		loadTransferSettingsToConfig($transfer);
-		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
-				? $cfg["path"].getOwner($transfer).'/'
-				: $cfg["path"].$cfg["path_incoming"].'/';
-		}
-		$name = $cfg["savepath"].$name;
-		$tData = stripslashes(stripslashes($name));
-		if (isValidPath($tData))
-			return file_size($tData);
-	}
-	return -1;
+	$datapath = getTransferDatapath($transfer);
+	return (!empty($datapath))
+		? file_size($datapath)
+		: -1;
 }
 
 /**
@@ -1583,16 +1573,38 @@ function getTransferDatapath($transfer) {
 			    	: trim($btmeta['info']['name']);
 			} else if (substr($transfer, -5) == ".wget") {
 				// this is wget.
-				$datapath = "";
+				$datapath = ".";
 			} else if (substr($transfer, -4) == ".nzb") {
 				// This is nzbperl.
-				$datapath = "";
+				$datapath = ".";
 			} else {
 				$datapath = "";
 			}
 		}
 		$transfers['settings'][$transfer]['datapath'] = $datapath;
 		return $datapath;
+	}
+}
+
+
+/**
+ * gets savepath of a transfer.
+ *
+ * @param $transfer name of the torrent
+ * @return var with transfer-savepath or empty string
+ */
+function getTransferSavepath($transfer) {
+	global $cfg, $db, $transfers;
+	if (isset($transfers['settings'][$transfer]['savepath'])) {
+		return $transfers['settings'][$transfer]['savepath'];
+	} else {
+		$savepath = $db->GetOne("SELECT savepath FROM tf_transfers WHERE transfer = '".$transfer."'");
+		if (empty($savepath))
+			$savepath = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].getOwner($transfer).'/'
+				: $cfg["path"].$cfg["path_incoming"].'/';
+		$transfers['settings'][$transfer]['savepath'] = $savepath;
+		return $savepath;
 	}
 }
 

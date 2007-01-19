@@ -37,7 +37,8 @@ class ClientHandlerWget extends ClientHandler
      * ctor
      */
     function ClientHandlerWget() {
-        $this->handlerName = "wget";
+    	$this->type = "wget";
+        $this->client = "wget";
         $this->binSystem = "php";
         $this->binSocket = "wget";
         $this->binClient = "wget.php";
@@ -145,7 +146,7 @@ class ClientHandlerWget extends ClientHandler
 		$this->setVarsFromFile($transfer);
 
     	// log
-    	$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+    	$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
         // do wget special-pre-start-checks
         // check to see if the path to the wget-bin is valid
@@ -159,28 +160,17 @@ class ClientHandlerWget extends ClientHandler
             return false;
         }
 
-		// queue
-        if ($enqueue) {
-        	$this->queue = ($cfg['isAdmin'])
-        		? $enqueue
-        		: true;
-        } else {
-            $this->queue = false;
-        }
+		// prepare starting of client
+        $this->prepareStart($interactive, $enqueue);
 
-		// savepath
-		$this->savepath = ($cfg["enable_home_dirs"] != 0)
-        		? $cfg['path'].$this->owner."/"
-        		: $cfg['path'].$cfg["path_incoming"]."/";
-
-        // check target-directory, create if not present
-		if (!(checkDirectory($this->savepath, 0777))) {
-			$this->state = CLIENTHANDLER_STATE_ERROR;
-			$msg = "Error checking savepath ".$this->savepath;
-			array_push($this->messages, $msg);
-			AuditAction($cfg["constants"]["error"], $msg);
-            $this->logMessage($msg."\n", true);
-            return false;
+		// only continue if prepare succeeded (skip start / error)
+		if ($this->state != CLIENTHANDLER_STATE_READY) {
+			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
+				$msg = "Error after prepare (".$transfer.",".$interactive.",".$enqueue.")";
+				array_push($this->messages , $msg);
+				$this->logMessage($msg."\n", true);
+			}
+			return false;
 		}
 
 		// build the command-string
@@ -201,7 +191,7 @@ class ClientHandlerWget extends ClientHandler
 		$this->state = CLIENTHANDLER_STATE_READY;
 
 		// start the client
-		$this->execStart(true, false);
+		$this->execStart();
     }
 
     /**
@@ -225,7 +215,7 @@ class ClientHandlerWget extends ClientHandler
         // set vars from the wget-file
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(false, false);
+		$this->execDelete();
 	}
 
     /**
@@ -279,6 +269,30 @@ class ClientHandlerWget extends ClientHandler
     function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
         return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
+
+    /**
+     * sets all fields needed for start with default-vals
+     */
+    function setDefaultVars() {
+    	global $cfg;
+		if (preg_match("/(\d*)k/i", $cfg["wget_limit_rate"], $reg))
+			$drate = intval($reg[1]) * 1024;
+		else if (preg_match("/(\d*)m/i", $cfg["wget_limit_rate"], $reg))
+			$drate = intval($reg[1]) * 11048576;
+		else
+			$drate = $cfg["wget_limit_rate"];
+		// set vars
+		$this->rate        = 0;
+		$this->drate       = is_numeric($drate) ? $drate : 0;
+		$this->runtime     = "True";
+		$this->maxuploads  = 0;
+		$this->superseeder = 0;
+		$this->sharekill   = 0;
+		$this->minport     = 1;
+		$this->maxport     = 65535;
+		$this->maxcons     = 1;
+    }
+
 }
 
 ?>

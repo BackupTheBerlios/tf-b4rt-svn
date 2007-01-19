@@ -69,10 +69,12 @@ $dirTree = ($cfg["enable_home_dirs"] != 0)
 	: $cfg["path"].$cfg["path_incoming"].'/';
 tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
+// exists + hash-check
 if ($transferExists) {
 	$tmpl->setvar('transfer_exists', 1);
 	$tmpl->setvar('is_skip', ($cfg["skiphashcheck"] != 0) ? 1 : 0);
 }
+
 // Force Queuing if not an admin.
 $tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);
 
@@ -103,15 +105,7 @@ if ($with_profiles == 1) {
 		$tmpl->setvar('sharekill', $settings["sharekill"]);
 		$tmpl->setvar('superseeder', ($settings['superseeder'] == 1) ? "checked" : "");
 		$tmpl->setvar('superseederValue', $settings['superseeder']);
-		// Load saved settings
-		loadTransferSettingsToConfig($transfer);
-		// savepath
-		if ((!isset($cfg["savepath"])) || (empty($cfg["savepath"]))) {
-			$cfg["savepath"] = ($cfg["enable_home_dirs"] != 0)
-				? $cfg["path"].getOwner($transfer).'/'
-				: $cfg["path"].$cfg["path_incoming"].'/';
-		}
-		$tmpl->setvar('savepath', $cfg["savepath"]);
+		$tmpl->setvar('savepath', getTransferSavepath($transfer));
 	} else {
 		$tmpl->setvar('useLastSettings', 1);
 		setVarsFromPersistentSettings();

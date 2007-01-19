@@ -327,39 +327,13 @@ class MaintenanceAndRepair
 		/* repair the bogus clients */
 		$this->_countFixed = 0;
 		$this->_outputMessage("repairing died clients...\n");
-		foreach ($this->_bogusTransfers as $bogusTransfer) {
-			$transfer = $bogusTransfer.".torrent";
-			$pidFile = $bogusTransfer.".pid";
-			$settingsAry = loadTransferSettings($transfer);
-			if ((isset($settingsAry)) && (is_array($settingsAry))) {
-				// this is a torrent-client
-				// set stopped flag in db
-				stopTransferSettings($transfer);
-			} else {
-				// not a torrent-client
-				$found = false;
-				// try wget
-				if (!$found) {
-					$transfer = $bogusTransfer.".wget";
-					if (file_exists($cfg["transfer_file_path"].$transfer))
-						$found = true;
-				}
-				// try nzb
-				if (!$found) {
-					$transfer = $bogusTransfer.".nzb";
-					if (file_exists($cfg["transfer_file_path"].$transfer))
-						$found = true;
-				}
-				// skip if nothing found
-				if (!$found)
-					continue;
-			}
+		foreach ($this->_bogusTransfers as $transfer) {
 			// output
 			$this->_outputMessage("repairing ".$transfer." ...\n");
-			// get owner
-			$transferowner = getOwner($transfer);
+			// set stopped flag in db
+			stopTransferSettings($transfer);
 			// rewrite stat-file
-			$sf = new StatFile($transfer, $transferowner);
+			$sf = new StatFile($transfer, getOwner($transfer));
 			$sf->running = 0;
 			$sf->percent_done = -100.0;
 			$sf->time_left = 'Transfer Died';
@@ -369,7 +343,7 @@ class MaintenanceAndRepair
 			$sf->peers = 0;
 			$sf->write();
 			// delete pid-file
-			@unlink($cfg["transfer_file_path"].$pidFile);
+			@unlink($cfg["transfer_file_path"].$transfer.".pid");
 			// DEBUG : log the repair of the bogus transfer
 			if ($cfg['debuglevel'] > 0)
 				AuditAction($cfg["constants"]["debug"], "transfers-maintenance : transfer repaired : ".$transfer);
@@ -388,20 +362,11 @@ class MaintenanceAndRepair
 			$this->_outputMessage("restarting died clients...\n");
 			// hold current user
 			$whoami = ($this->_mode == MAINTENANCEANDREPAIR_MODE_CLI) ? GetSuperAdmin() : $cfg["user"];
-			foreach ($this->_bogusTransfers as $bogusTransfer) {
-				$transfer = $bogusTransfer.".torrent";
-				$pidFile = $bogusTransfer.".pid";
-				$settingsAry = loadTransferSettings($transfer);
-				if (!((isset($settingsAry)) && (is_array($settingsAry)))) {
-					// this is not a torrent-client, skip it
-					continue;
-				}
+			foreach ($this->_bogusTransfers as $transfer) {
 				// output
 				$this->_outputMessage("Starting ".$transfer." ...\n");
-				// get owner
-				$transferowner = getOwner($transfer);
 				// set current user to transfer-owner
-				$cfg["user"] = $transferowner;
+				$cfg["user"] = getOwner($transfer);
 				// file-prio
 	            if ($cfg["enable_file_priority"]) {
 	                include_once("inc/functions/functions.setpriority.php");
@@ -409,12 +374,12 @@ class MaintenanceAndRepair
 	                setPriority($transfer);
 	            }
 				// clientHandler + start
-				$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+				$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 				$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
 				// DEBUG : log the restart of the died transfer
 				if ($cfg['debuglevel'] > 0) {
 					$staret = ($clientHandler->state == CLIENTHANDLER_STATE_OK) ? "OK" : "FAILED";
-					AuditAction($cfg["constants"]["debug"], "transfers-maintenance : restarted transfer ".$transfer." for ".$whoami." : ".$staret);
+					AuditAction($cfg["constants"]["debug"], "transfers-maintenance : restarted transfer ".$transfer." by ".$whoami." : ".$staret);
 				}
 				//
 				if ($clientHandler->state == CLIENTHANDLER_STATE_OK) {
@@ -449,13 +414,13 @@ class MaintenanceAndRepair
 		global $cfg, $db;
 		// output
 		$this->_outputMessage("database-maintenance...\n");
-		/* tf_torrents */
+		/* tf_transfers */
 		$this->_countProblems = 0;
 		$this->_countFixed = 0;
 		// output
-		$this->_outputMessage("table-maintenance : tf_torrents\n");
+		$this->_outputMessage("table-maintenance : tf_transfers\n");
 		// running-flag
-		$sql = "SELECT torrent FROM tf_torrents WHERE running = '1'";
+		$sql = "SELECT transfer FROM tf_transfers WHERE running = '1'";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -465,7 +430,7 @@ class MaintenanceAndRepair
 					$this->_countProblems++;
 					// t is not running, reset running-flag
 					$this->_outputMessage("reset of running-flag for transfer which is not running : ".$tname."\n");
-					$sql = "UPDATE tf_torrents SET running = '0' WHERE torrent = '".$tname."'";
+					$sql = "UPDATE tf_transfers SET running = '0' WHERE transfer = '".$tname."'";
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
@@ -474,7 +439,7 @@ class MaintenanceAndRepair
 			}
 		}
 		// empty hash
-		$sql = "SELECT torrent FROM tf_torrents WHERE hash = ''";
+		$sql = "SELECT transfer FROM tf_transfers WHERE hash = ''";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -487,7 +452,7 @@ class MaintenanceAndRepair
 				$thash = getTransferHash($tname);
 				// update
 				if (!empty($thash)) {
-					$sql = "UPDATE tf_torrents SET hash = '".$thash."' WHERE torrent = '".$tname."'";
+					$sql = "UPDATE tf_transfers SET hash = '".$thash."' WHERE transfer = '".$tname."'";
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
@@ -496,7 +461,7 @@ class MaintenanceAndRepair
 			}
 		}
 		// empty datapath
-		$sql = "SELECT torrent FROM tf_torrents WHERE datapath = ''";
+		$sql = "SELECT transfer FROM tf_transfers WHERE datapath = ''";
 		$recordset = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
 		$rc = $recordset->RecordCount();
@@ -509,7 +474,7 @@ class MaintenanceAndRepair
 				$tDatapath = getTransferDatapath($tname);
 				// update
 				if (!empty($tDatapath)) {
-					$sql = "UPDATE tf_torrents SET datapath = ".$db->qstr($tDatapath)." WHERE torrent = '".$tname."'";
+					$sql = "UPDATE tf_transfers SET datapath = ".$db->qstr($tDatapath)." WHERE transfer = '".$tname."'";
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
@@ -523,7 +488,7 @@ class MaintenanceAndRepair
 			$this->_outputMessage("no problems found.\n");
 		} else {
 			// DEBUG : log
-			$msg = "found and fixed problems in tf_torrents : ".$this->_countFixed."/".$this->_countProblems;
+			$msg = "found and fixed problems in tf_transfers : ".$this->_countFixed."/".$this->_countProblems;
 			if ($cfg['debuglevel'] > 0)
 				AuditAction($cfg["constants"]["debug"], "database-maintenance : table-maintenance : ".$msg);
 			// output
@@ -631,7 +596,7 @@ class MaintenanceAndRepair
 			$this->_outputError($msg."\n");
 			return false;
 		}
-		// delete pid-files of torrent-clients
+		// delete pid-files of clients
 		if ($dirHandle = opendir($cfg["transfer_file_path"])) {
 			while (false !== ($file = readdir($dirHandle))) {
 				if ((strlen($file) > 3) && ((substr($file, -4, 4)) == ".pid"))
@@ -658,7 +623,7 @@ class MaintenanceAndRepair
 		}
 		// set flags in db
 		$this->_outputMessage("reset running-flag in database...\n");
-		$db->Execute("UPDATE tf_torrents SET running = '0'");
+		$db->Execute("UPDATE tf_transfers SET running = '0'");
 		// output
 		$this->_outputMessage("done.\n");
 		/* done */

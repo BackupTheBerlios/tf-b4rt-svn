@@ -52,39 +52,31 @@ $tmpl->setvar('transferLabel', $transferLabel);
 $transferowner = getOwner($transfer);
 $sf = new StatFile($transfer, $transferowner);
 
-// client-switch
-if (substr($transfer, -8) == ".torrent") {
-	// this is a t-client
-	if (isset($transfers['settings'][$transfer])) {
-		$settingsAry = $transfers['settings'][$transfer];
-	} else {
-		$settingsAry = array();
-		$settingsAry['btclient'] = $cfg["btclient"];
-		$settingsAry['hash'] = "";
-		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-			? $cfg["path"].$transferowner.'/'
-			: $cfg["path"].$cfg["path_incoming"].'/';
-		$settingsAry['datapath'] = "";
-	}
-} else if (substr($transfer, -5) == ".wget") {
-	// this is wget.
-	$settingsAry = array();
-	$settingsAry['btclient'] = "wget";
-	$settingsAry['hash'] = $transfer;
-} else if (substr($transfer, -4) == ".nzb") {
-	// this is nzbperl.
-	$settingsAry = array();
-	$settingsAry['btclient'] = "nzbperl";
-	$settingsAry['hash'] = $transfer;
+// settings
+if (isset($transfers['settings'][$transfer])) {
+	$settingsAry = $transfers['settings'][$transfer];
 } else {
-	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-	@error("Invalid Transfer", "", "", array($transfer));
+	$settingsAry = array();
+	if (substr($transfer, -8) == ".torrent") {
+		// this is a t-client
+		$settingsAry['client'] = $cfg["btclient"];
+	} else if (substr($transfer, -5) == ".wget") {
+		// this is wget.
+		$settingsAry['client'] = "wget";
+	} else if (substr($transfer, -4) == ".nzb") {
+		// this is nzbperl.
+		$settingsAry['client'] = "nzbperl";
+	} else {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "", "", array($transfer));
+	}
+	$settingsAry['hash'] = "";
 }
 
 // totals
 $afu = $sf->uptotal;
 $afd = $sf->downtotal;
-$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+$clientHandler = ClientHandler::getInstance($settingsAry['client']);
 $totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
 $totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 // owner

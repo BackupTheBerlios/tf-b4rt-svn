@@ -34,7 +34,8 @@ class ClientHandler
 	// public fields
 
 	// client-specific fields
-    var $handlerName = "";
+	var $type = "";
+    var $client = "";
     var $binSystem = ""; // the system-binary of this client.
     var $binSocket = ""; // the binary this client uses for socket-connections.
     var $binClient = ""; // the binary of this client. (eg. python-script))
@@ -276,28 +277,23 @@ class ClientHandler
         } else { // non-interactive, load settings from db and set vars
             $this->rerequest = $cfg["rerequest_interval"];
             $this->skip_hash_check = $cfg["skiphashcheck"];
-            $this->superseeder = 0;
             // load settings
             $settingsAry = loadTransferSettings($this->transfer);
-            $this->rate = $settingsAry["max_upload_rate"];
-            $this->drate = $settingsAry["max_download_rate"];
-            $this->runtime = $settingsAry["torrent_dies_when_done"];
-            $this->maxuploads = $settingsAry["max_uploads"];
-            $this->minport = $settingsAry["minport"];
-            $this->maxport = $settingsAry["maxport"];
-            $this->maxcons = $settingsAry["maxcons"];
-            $this->sharekill = $settingsAry["sharekill"];
-            $this->savepath = $settingsAry["savepath"];
-            // fallback-values if fresh-transfer is started non-interactive or
-            // something else strange happened
-            if ($this->rate == '') $this->rate = $cfg["max_upload_rate"];
-            if ($this->drate == '') $this->drate = $cfg["max_download_rate"];
-            if ($this->runtime == '') $this->runtime = $cfg["torrent_dies_when_done"];
-            if ($this->maxuploads == '') $this->maxuploads = $cfg["max_uploads"];
-            if ($this->minport == '') $this->minport = $cfg["minport"];
-            if ($this->maxport == '') $this->maxport = $cfg["maxport"];
-            if ($this->maxcons == '') $this->maxcons = $cfg["maxcons"];
-            if ($this->sharekill == '') $this->sharekill = $cfg["sharekill"];
+            if (is_array($settingsAry)) {
+	            $this->savepath    = $settingsAry["savepath"];
+	            $this->rate        = $settingsAry["max_upload_rate"];
+	            $this->drate       = $settingsAry["max_download_rate"];
+	            $this->runtime     = $settingsAry["torrent_dies_when_done"];
+	            $this->maxuploads  = $settingsAry["max_uploads"];
+	            $this->superseeder = $settingsAry["superseeder"];
+	            $this->minport     = $settingsAry["minport"];
+	            $this->maxport     = $settingsAry["maxport"];
+	            $this->maxcons     = $settingsAry["maxcons"];
+	            $this->sharekill   = $settingsAry["sharekill"];
+        	} else {
+        		// fallback-values if fresh-transfer is started non-interactive
+        		$this->setDefaultVars();
+        	}
         }
 		// queue
         if ($enqueue) {
@@ -325,65 +321,69 @@ class ClientHandler
 		}
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
-        // recalc sharekill ?
-        if ($cfg['enable_sharekill'] == 1) { // sharekill enabled
-        	$this->logMessage("recalc sharekill for ".$this->transfer."\n", true);
-	        if ($this->sharekill == 0) { // nice, we seed forever
-	            $this->sharekill_param = 0;
-	            $this->logMessage("seed forever\n", true);
-	        } elseif ($this->sharekill > 0) { // recalc sharekill
-	            // sanity-check. catch "data-size = 0".
-	            $transferSize = intval(getDownloadSize($this->transfer));
-	            if ($transferSize > 0) {
-					$totalAry = $this->getTransferTotal($this->transfer);
-	            	$upTotal = $totalAry["uptotal"] + 0;
-	            	$downTotal = $totalAry["downtotal"] + 0;
-					$upWanted = ($this->sharekill / 100) * $transferSize;
-					$sharePercentage = ($upTotal / $transferSize) * 100;
-		            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
-		            	// we already have seeded at least wanted percentage.
-		            	// skip start of client
-		                // set state
-	        			$this->state = CLIENTHANDLER_STATE_NULL;
-	        			// message
-			            $msg = "skipping start of transfer ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
-			            array_push($this->messages , $msg);
-						AuditAction($cfg["constants"]["debug"], $msg);
-						$this->logMessage($msg."\n", true);
-						// return
-						return;
+        // recalc sharekill ? (only torrent)
+        if ($this->type == "torrent") {
+	        if ($cfg['enable_sharekill'] == 1) { // sharekill enabled
+	        	$this->logMessage("recalc sharekill for ".$this->transfer."\n", true);
+		        if ($this->sharekill == 0) { // nice, we seed forever
+		            $this->sharekill_param = 0;
+		            $this->logMessage("seed forever\n", true);
+		        } elseif ($this->sharekill > 0) { // recalc sharekill
+		            // sanity-check. catch "data-size = 0".
+		            $transferSize = intval(getDownloadSize($this->transfer));
+		            if ($transferSize > 0) {
+						$totalAry = $this->getTransferTotal($this->transfer);
+		            	$upTotal = $totalAry["uptotal"] + 0;
+		            	$downTotal = $totalAry["downtotal"] + 0;
+						$upWanted = ($this->sharekill / 100) * $transferSize;
+						$sharePercentage = ($upTotal / $transferSize) * 100;
+			            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
+			            	// we already have seeded at least wanted percentage.
+			            	// skip start of client
+			                // set state
+		        			$this->state = CLIENTHANDLER_STATE_NULL;
+		        			// message
+				            $msg = "skipping start of transfer ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
+				            array_push($this->messages , $msg);
+							AuditAction($cfg["constants"]["debug"], $msg);
+							$this->logMessage($msg."\n", true);
+							// return
+							return;
+			            } else {
+			            	// not done seeding wanted percentage
+			                $this->sharekill_param = intval(ceil($this->sharekill - $sharePercentage));
+			                // sanity-check.
+			                if ($this->sharekill_param < 1)
+			                    $this->sharekill_param = 1;
+			                $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+			            }
 		            } else {
-		            	// not done seeding wanted percentage
-		                $this->sharekill_param = intval(ceil($this->sharekill - $sharePercentage));
-		                // sanity-check.
-		                if ($this->sharekill_param < 1)
-		                    $this->sharekill_param = 1;
-		                $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+		            	// skip start of client
+						// set state
+			            $this->state = CLIENTHANDLER_STATE_NULL;
+		    			// message
+			            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", skipping start.";
+			            array_push($this->messages , $msg);
+						AuditAction($cfg["constants"]["error"], $msg);
+						$this->logMessage($msg."\n", true);
+			            // return
+			            return;
 		            }
-	            } else {
-	            	// skip start of client
-					// set state
-		            $this->state = CLIENTHANDLER_STATE_NULL;
-	    			// message
-		            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", skipping start.";
-		            array_push($this->messages , $msg);
-					AuditAction($cfg["constants"]["error"], $msg);
-					$this->logMessage($msg."\n", true);
-		            // return
-		            return;
-	            }
-			} else {
+				} else {
+		        	$this->sharekill_param = $this->sharekill;
+		        	$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+		        }
+	        } else { // sharekill disabled
 	        	$this->sharekill_param = $this->sharekill;
 	        	$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
 	        }
-        } else { // sharekill disabled
-        	$this->sharekill_param = $this->sharekill;
-        	$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
         }
-        // set port if start (not queue)
-        if (!$this->queue) {
-        	if ($this->_setClientPort() === false)
-                return;
+        // set port if start (only torrent and not if queue)
+        if ($this->type == "torrent") {
+	        if (!$this->queue) {
+	        	if ($this->_setClientPort() === false)
+	                return;
+	        }
         }
         // get current transfer
 		$transferTotals = $this->getTransferCurrent($this->transfer);
@@ -398,11 +398,8 @@ class ClientHandler
 
     /**
      * start a client.
-     *
-     * @param $wait
-     * @param $save
      */
-    function execStart($wait = true, $save = true) {
+    function execStart() {
     	global $cfg;
         if ($this->state != CLIENTHANDLER_STATE_READY) {
             $this->state = CLIENTHANDLER_STATE_ERROR;
@@ -442,15 +439,30 @@ class ClientHandler
             $this->callResult = exec($this->command);
             AuditAction($cfg["constants"]["start_torrent"], $this->transfer);
             // wait until transfer is up
-            if ($wait)
-            	waitForTransfer($this->transfer, true, 20);
+            waitForTransfer($this->transfer, true, 20);
             // set flag
             $transferRunningFlag = 1;
         }
         if (empty($this->messages)) {
             // Save transfer settings
-            if ($save)
-            	saveTransferSettings($this->transfer, $transferRunningFlag, $this->rate, $this->drate, $this->maxuploads, $this->runtime, $this->sharekill, $this->minport, $this->maxport, $this->maxcons, $this->savepath, $this->handlerName);
+            saveTransferSettings(
+            	$this->transfer,
+            	$this->type,
+            	$this->client,
+            	getTransferHash($this->transfer),
+            	getTransferDatapath($this->transfer),
+            	$this->savepath,
+            	$transferRunningFlag,
+            	$this->rate,
+            	$this->drate,
+            	$this->maxuploads,
+            	$this->superseeder,
+            	$this->runtime,
+            	$this->sharekill,
+            	$this->minport,
+            	$this->maxport,
+            	$this->maxcons
+            );
             $this->state = CLIENTHANDLER_STATE_OK;
         } else {
             $this->state = CLIENTHANDLER_STATE_ERROR;
@@ -479,7 +491,7 @@ class ClientHandler
         $running = $this->runningProcesses();
         $isHung = false;
         foreach ($running as $rng) {
-            $rt = RunningTransfer::getInstance($rng['pinfo'], $this->handlerName);
+            $rt = RunningTransfer::getInstance($rng['pinfo'], $this->client);
             if ($rt->transferFile == $this->transfer) {
             	$isHung = true;
                 AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->transferFile." (".$rt->processId.")");
@@ -534,27 +546,23 @@ class ClientHandler
 	/**
 	 * deletes a transfer
 	 *
-	 * @param $updateTotals
-	 * @param $deleteSettings
 	 * @return boolean
 	 */
-	function execDelete($updateTotals = true, $deleteSettings = true) {
+	function execDelete() {
 		global $cfg;
         // delete
 		if (($cfg["user"] == $this->owner) || $cfg['isAdmin']) {
-			// update totals for this torrent
-			if ($updateTotals)
-				$this->execUpdateTransferTotals();
-			// remove torrent-settings from db
-			if ($deleteSettings)
-				deleteTransferSettings($this->transfer);
-			// client-cache
-			$this->execDeleteCache();
-			if ($cfg['enable_xfer'] != 0) {
-				// XFER: before torrent deletion save upload/download xfer data to SQL
+			// XFER: before deletion save upload/download xfer data to SQL
+			if ($cfg['enable_xfer'] == 1) {
 				$transferTotals = $this->getTransferCurrent($this->transfer);
 				saveXfer($this->owner, $transferTotals["downtotal"], $transferTotals["uptotal"]);
 			}
+			// update totals
+			$this->execUpdateTransferTotals();
+			// remove settings from db
+			deleteTransferSettings($this->transfer);
+			// client-cache
+			$this->execDeleteCache();
 			// command-clean
        		CommandHandler::clean($this->transfer);
 			// remove meta-file
@@ -608,7 +616,7 @@ class ClientHandler
 					if (!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
 						if (!strpos($pinfo->cmdline, "ps x") > 0) {
 							array_push($retAry, array(
-								'client' => $this->handlerName,
+								'client' => $this->client,
 								'pinfo' => $pinfo->pid." ".$pinfo->cmdline
 								)
 							);
@@ -646,7 +654,7 @@ class ClientHandler
 	                if (!strpos($pinfo->cmdline, "rep ". $this->binSystem) > 0) {
 	                    if (!strpos($pinfo->cmdline, "ps x") > 0) {
 	                        array_push($pProcess,$pinfo->pid);
-	                        $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $this->handlerName);
+	                        $rt = RunningTransfer::getInstance($pinfo->pid." ".$pinfo->cmdline, $this->client);
 	                        array_push($ProcessCmd, $rt->transferowner."\t".$rt->transferFile);
 	                    }
 	                }
@@ -702,6 +710,23 @@ class ClientHandler
         $this->transfer = $transfer;
         $this->transferFilePath = $cfg["transfer_file_path"].$this->transfer;
         $this->owner = getOwner($transfer);
+    }
+
+    /**
+     * sets all fields needed for start with default-vals
+     */
+    function setDefaultVars() {
+    	global $cfg;
+    	// set vars
+		$this->rate        = $cfg["max_upload_rate"];
+		$this->drate       = $cfg["max_download_rate"];
+		$this->runtime     = $cfg["torrent_dies_when_done"];
+		$this->maxuploads  = $cfg["max_uploads"];
+		$this->superseeder = 0;
+		$this->sharekill   = $cfg["sharekill"];
+		$this->minport     = $cfg["minport"];
+		$this->maxport     = $cfg["maxport"];
+		$this->maxcons     = $cfg["maxcons"];
     }
 
     // =========================================================================

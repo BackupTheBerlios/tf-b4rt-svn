@@ -618,33 +618,33 @@ function getTransferPid($transfer) {
 }
 
 /**
- * Returns sum of max numbers of connections of all running torrents.
+ * Returns sum of max numbers of connections of all running transfers.
  *
  * @return int with max cons
  */
 function getSumMaxCons() {
 	global $db;
-	return $db->GetOne("SELECT SUM(maxcons) AS maxcons FROM tf_torrents WHERE running = '1'");
+	return $db->GetOne("SELECT SUM(maxcons) AS maxcons FROM tf_transfers WHERE running = '1'");
 }
 
 /**
- * Returns sum of max upload-speed of all running torrents.
+ * Returns sum of max upload-speed of all running transfers.
  *
  * @return int with max upload-speed
  */
 function getSumMaxUpRate() {
 	global $db;
-	return $db->GetOne("SELECT SUM(rate) AS rate FROM tf_torrents WHERE running = '1'");
+	return $db->GetOne("SELECT SUM(rate) AS rate FROM tf_transfers WHERE running = '1'");
 }
 
 /**
- * Returns sum of max download-speed of all running torrents.
+ * Returns sum of max download-speed of all running transfers.
  *
  * @return int with max download-speed
  */
 function getSumMaxDownRate() {
 	global $db;
-	return $db->GetOne("SELECT SUM(drate) AS drate FROM tf_torrents WHERE running = '1'");
+	return $db->GetOne("SELECT SUM(drate) AS drate FROM tf_transfers WHERE running = '1'");
 }
 
 /**
@@ -687,23 +687,24 @@ function &loadAllTransferTotals() {
  */
 function &loadAllTransferSettings() {
 	global $db;
-	$recordset = $db->Execute("SELECT * FROM tf_torrents");
+	$recordset = $db->Execute("SELECT * FROM tf_transfers");
 	$trAry = array();
 	while ($row = $recordset->FetchRow()) {
-		$trAry[$row["torrent"]] = array(
-			"running" => $row["running"],
-			"max_upload_rate" => $row["rate"],
-			"max_download_rate" => $row["drate"],
+		$trAry[$row["transfer"]] = array(
+			"type"                   => $row["type"],
+			"client"                 => $row["client"],
+			"hash"                   => $row["hash"],
+			"datapath"               => $row["datapath"],
+			"savepath"               => $row["savepath"],
+			"running"                => $row["running"],
+			"max_upload_rate"        => $row["rate"],
+			"max_download_rate"      => $row["drate"],
 			"torrent_dies_when_done" => $row["runtime"],
-			"max_uploads" => $row["maxuploads"],
-			"minport" => $row["minport"],
-			"maxport" => $row["maxport"],
-			"sharekill" => $row["sharekill"],
-			"maxcons" => $row["maxcons"],
-			"savepath" => $row["savepath"],
-			"btclient" => $row["btclient"],
-			"hash" => $row["hash"],
-			"datapath" => $row["datapath"]
+			"max_uploads"            => $row["maxuploads"],
+			"minport"                => $row["minport"],
+			"maxport"                => $row["maxport"],
+			"sharekill"              => $row["sharekill"],
+			"maxcons"                => $row["maxcons"]
 		);
 	}
 	return $trAry;
@@ -717,60 +718,29 @@ function &loadAllTransferSettings() {
  */
 function loadTransferSettings($transfer) {
 	global $db;
-	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
+	$sql = "SELECT * FROM tf_transfers WHERE transfer = '".$transfer."'";
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$row = $result->FetchRow();
 	if (!empty($row)) {
 		$retAry = array();
-		$retAry["running"]					= $row["running"];
-		$retAry["max_upload_rate"]			= $row["rate"];
-		$retAry["max_download_rate"]		= $row["drate"];
-		$retAry["torrent_dies_when_done"]	= $row["runtime"];
-		$retAry["max_uploads"]				= $row["maxuploads"];
-		$retAry["minport"]					= $row["minport"];
-		$retAry["maxport"]					= $row["maxport"];
-		$retAry["sharekill"]				= $row["sharekill"];
-		$retAry["maxcons"]					= $row["maxcons"];
-		$retAry["savepath"]					= $row["savepath"];
-		$retAry["btclient"]					= $row["btclient"];
-		$retAry["hash"]						= $row["hash"];
-		$retAry["datapath"]					= $row["datapath"];
+		$retAry["type"]                   = $row["type"];
+		$retAry["client"]                 = $row["client"];
+		$retAry["hash"]                   = $row["hash"];
+		$retAry["datapath"]               = $row["datapath"];
+		$retAry["savepath"]               = $row["savepath"];
+		$retAry["running"]                = $row["running"];
+		$retAry["max_upload_rate"]        = $row["rate"];
+		$retAry["max_download_rate"]      = $row["drate"];
+		$retAry["torrent_dies_when_done"] = $row["runtime"];
+		$retAry["max_uploads"]            = $row["maxuploads"];
+		$retAry["minport"]                = $row["minport"];
+		$retAry["maxport"]                = $row["maxport"];
+		$retAry["sharekill"]              = $row["sharekill"];
+		$retAry["maxcons"]                = $row["maxcons"];
 		return $retAry;
 	}
 	return;
-}
-
-/*
- * Function to load the settings for a transfer to global cfg-array
- *
- * @param $transfer name of the transfer
- * @return boolean if the settings could be loaded (were existent in db already)
- */
-function loadTransferSettingsToConfig($transfer) {
-	global $cfg, $db;
-	$sql = "SELECT * FROM tf_torrents WHERE torrent = '".$transfer."'";
-	$result = $db->Execute($sql);
-	if ($db->ErrorNo() != 0) dbError($sql);
-	$row = $result->FetchRow();
-	if (!empty($row)) {
-		$cfg["running"]					= $row["running"];
-		$cfg["max_upload_rate"]			= $row["rate"];
-		$cfg["max_download_rate"]		= $row["drate"];
-		$cfg["torrent_dies_when_done"]	= $row["runtime"];
-		$cfg["max_uploads"]				= $row["maxuploads"];
-		$cfg["minport"]					= $row["minport"];
-		$cfg["maxport"]					= $row["maxport"];
-		$cfg["sharekill"]				= $row["sharekill"];
-		$cfg["maxcons"]					= $row["maxcons"];
-		$cfg["savepath"]				= $row["savepath"];
-		$cfg["btclient"]				= $row["btclient"];
-		$cfg["hash"]					= $row["hash"];
-		$cfg["datapath"]				= $row["datapath"];
-		return true;
-	} else {
-		return false;
-	}
 }
 
 /**
@@ -816,24 +786,25 @@ function isTransferRunning($transfer) {
  */
 function getTransferClient($transfer) {
 	global $cfg, $db, $transfers;
-	if (isset($transfers['settings'][$transfer]['btclient'])) {
-		return $transfers['settings'][$transfer]['btclient'];
+	if (isset($transfers['settings'][$transfer]['client'])) {
+		return $transfers['settings'][$transfer]['client'];
 	} else {
-		if (substr($transfer, -8) == ".torrent") {
-			// this is a torrent-client
-			$client = $db->GetOne("SELECT btclient FROM tf_torrents WHERE torrent = '".$transfer."'");
-			if (empty($client))
+		$client = $db->GetOne("SELECT client FROM tf_transfers WHERE transfer = '".$transfer."'");
+		if (empty($client)) {
+			if (substr($transfer, -8) == ".torrent") {
+				// this is a torrent-client
 				$client = $cfg["btclient"];
-		} else if (substr($transfer, -5) == ".wget") {
-			// this is wget.
-			$client = "wget";
-		} else if (substr($transfer, -4) == ".nzb") {
-			// This is nzbperl.
-			$client = "nzbperl";
-		} else {
-			$client = $cfg["btclient"];
+			} else if (substr($transfer, -5) == ".wget") {
+				// this is wget.
+				$client = "wget";
+			} else if (substr($transfer, -4) == ".nzb") {
+				// This is nzbperl.
+				$client = "nzbperl";
+			} else {
+				$client = $cfg["btclient"];
+			}
 		}
-		$transfers['settings'][$transfer]['btclient'] = $client;
+		$transfers['settings'][$transfer]['client'] = $client;
 		return $client;
 	}
 }
@@ -884,7 +855,7 @@ function getTorrentListFromFS() {
 function getTorrentListFromDB() {
 	global $db;
 	$retVal = array();
-	$sql = "SELECT torrent FROM tf_torrents ORDER BY torrent ASC";
+	$sql = "SELECT transfer FROM tf_transfers WHERE type = 'torrent' ORDER BY transfer ASC";
 	$recordset = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	while(list($transfer) = $recordset->FetchRow())
@@ -928,11 +899,11 @@ function getTransferHash($transfer) {
 		if (empty($hash)) {
 			if (substr($transfer, -8) == ".torrent") {
 				// this is a torrent-client
-				$result = getTorrentMetaInfo($transfer);
-				if (empty($result)) {
+				$metainfo = getTorrentMetaInfo($transfer);
+				if (empty($metainfo)) {
 					$hash = "";
 				} else {
-					$resultAry = explode("\n", $result);
+					$resultAry = explode("\n", $metainfo);
 					$hashAry = array();
 					switch ($cfg["metainfoclient"]) {
 						case "transmissioncli":
@@ -1230,8 +1201,8 @@ function getTransferListArray() {
 	global $cfg, $db, $transfers;
 	$kill_id = "";
 	$lastUser = "";
-	$arUserTorrent = array();
-	$arListTorrent = array();
+	$arUserTransfers = array();
+	$arListTransfers = array();
 	// settings
 	$settings = convertIntegerToArray($cfg["index_page_settings"]);
 	// sortOrder
@@ -1240,44 +1211,40 @@ function getTransferListArray() {
 		$sortOrder = $cfg["index_page_sortorder"];
 	// t-list
 	$arList = getTransferArray($sortOrder);
-	foreach($arList as $transfer) {
-
-		// ---------------------------------------------------------------------
+	foreach ($arList as $transfer) {
 		// init some vars
 		$displayname = $transfer;
 		$show_run = true;
 		$transferowner = getOwner($transfer);
 		$owner = IsOwner($cfg["user"], $transferowner);
+		// stat
 		$sf = new StatFile($transfer, $transferowner);
-
-		// ---------------------------------------------------------------------
-		// client-switch
-		if (substr($transfer, -8) == ".torrent") {
-			// this is a torrent-client
-			if (isset($transfers['settings'][$transfer])) {
-				$settingsAry = $transfers['settings'][$transfer];
-			} else {
-				$settingsAry = array();
-				$settingsAry['btclient'] = $cfg["btclient"];
-				$settingsAry['hash'] = "";
-				$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-					? $cfg["path"].$transferowner.'/'
-					: $cfg["path"].$cfg["path_incoming"].'/';
-				$settingsAry['datapath'] = "";
-			}
-		} else if (substr($transfer, -5) == ".wget") {
-			// this is wget.
-			$settingsAry = array();
-			$settingsAry['btclient'] = "wget";
-			$settingsAry['hash'] = $transfer;
-		} else if (substr($transfer, -4) == ".nzb") {
-			// This is nzbperl.
-			$settingsAry = array();
-			$settingsAry['btclient'] = "nzbperl";
-			$settingsAry['hash'] = $transfer;
+		// settings
+		if (isset($transfers['settings'][$transfer])) {
+			$settingsAry = $transfers['settings'][$transfer];
 		} else {
-			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-			@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+			$settingsAry = array();
+			if (substr($transfer, -8) == ".torrent") {
+				// this is a t-client
+				$settingsAry['type'] = "torrent";
+				$settingsAry['client'] = $cfg["btclient"];
+			} else if (substr($transfer, -5) == ".wget") {
+				// this is wget.
+				$settingsAry['type'] = "wget";
+				$settingsAry['client'] = "wget";
+			} else if (substr($transfer, -4) == ".nzb") {
+				// this is nzbperl.
+				$settingsAry['type'] = "nzb";
+				$settingsAry['client'] = "nzbperl";
+			} else {
+				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+				@error("Invalid Transfer", "", "", array($transfer));
+			}
+			$settingsAry['hash'] = "";
+			$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].$transferowner.'/'
+				: $cfg["path"].$cfg["path_incoming"].'/';
+			$settingsAry['datapath'] = "";
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = (int) $sf->running;
@@ -1287,7 +1254,7 @@ function getTransferListArray() {
 		// ---------------------------------------------------------------------
 		//XFER: add upload/download stats to the xfer array
 		if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-			@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
+			@transferListXferUpdate1($transfer, $transferowner, $settingsAry['client'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 
 		// ---------------------------------------------------------------------
 		// injects
@@ -1301,7 +1268,7 @@ function getTransferListArray() {
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-			$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+			$clientHandler = ClientHandler::getInstance($settingsAry['client']);
 			$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 		}
 
@@ -1433,7 +1400,7 @@ function getTransferListArray() {
 
 		// ============================================================== client
 		if ($settings[11] != 0) {
-			switch ($settingsAry['btclient']) {
+			switch ($settingsAry['client']) {
 				case "tornado":
 					array_push($transferAry, "B");
 					break;
@@ -1455,11 +1422,11 @@ function getTransferListArray() {
 		}
 
 		// ---------------------------------------------------------------------
-		// Is this torrent for the user list or the general list?
+		// Is this transfer for the user list or the general list?
 		if ($owner)
-			array_push($arUserTorrent, $transferAry);
+			array_push($arUserTransfers, $transferAry);
 		else
-			array_push($arListTorrent, $transferAry);
+			array_push($arListTransfers, $transferAry);
 	}
 
 	//XFER: if a new day but no .stat files where found put blank entry into the
@@ -1470,15 +1437,15 @@ function getTransferListArray() {
 	// -------------------------------------------------------------------------
 	// build output-array
 	$retVal = array();
-	if (sizeof($arUserTorrent) > 0) {
-		foreach($arUserTorrent as $torrentrow)
+	if (sizeof($arUserTransfers) > 0) {
+		foreach($arUserTransfers as $torrentrow)
 			array_push($retVal, $torrentrow);
 	}
 	$boolCond = true;
 	if ($cfg['enable_restrictivetview'] == 1)
 		$boolCond = $cfg['isAdmin'];
-	if (($boolCond) && (sizeof($arListTorrent) > 0)) {
-		foreach($arListTorrent as $torrentrow)
+	if (($boolCond) && (sizeof($arListTransfers) > 0)) {
+		foreach($arListTransfers as $torrentrow)
 			array_push($retVal, $torrentrow);
 	}
 	return $retVal;
@@ -1600,38 +1567,39 @@ function getTransferDetails($transfer, $full) {
 	$transferowner = getOwner($transfer);
 	// stat
 	$sf = new StatFile($transfer, $transferowner);
-	// client-switch
-	if (substr($transfer, -8) == ".torrent") {
-		// this is a torrent-client
-		if (isset($transfers['settings'][$transfer])) {
-			$settingsAry = $transfers['settings'][$transfer];
-		} else {
-			$settingsAry = array();
-			$settingsAry['btclient'] = $cfg["btclient"];
-			$settingsAry['hash'] = "";
-			$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-				? $cfg["path"].$transferowner.'/'
-				: $cfg["path"].$cfg["path_incoming"].'/';
-			$settingsAry['datapath'] = "";
-		}
-	} else if (substr($transfer, -5) == ".wget") {
-		// this is wget.
-		$settingsAry['btclient'] = "wget";
-		$settingsAry['hash'] = $transfer;
-	} else if (substr($transfer, -4) == ".nzb") {
-		// This is nzbperl.
-		$settingsAry['btclient'] = "nzbperl";
-		$settingsAry['hash'] = $transfer;
+	// settings
+	if (isset($transfers['settings'][$transfer])) {
+		$settingsAry = $transfers['settings'][$transfer];
 	} else {
-		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+		$settingsAry = array();
+		if (substr($transfer, -8) == ".torrent") {
+			// this is a t-client
+			$settingsAry['type'] = "torrent";
+			$settingsAry['client'] = $cfg["btclient"];
+		} else if (substr($transfer, -5) == ".wget") {
+			// this is wget.
+			$settingsAry['type'] = "wget";
+			$settingsAry['client'] = "wget";
+		} else if (substr($transfer, -4) == ".nzb") {
+			// this is nzbperl.
+			$settingsAry['type'] = "nzb";
+			$settingsAry['client'] = "nzbperl";
+		} else {
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+			@error("Invalid Transfer", "", "", array($transfer));
+		}
+		$settingsAry['hash'] = "";
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
+		$settingsAry['datapath'] = "";
 	}
 	// size
 	$size = (int) $sf->size;
 	// totals
 	$afu = $sf->uptotal;
 	$afd = $sf->downtotal;
-	$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+	$clientHandler = ClientHandler::getInstance($settingsAry['client']);
 	$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
 	$totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 	// running
@@ -2001,7 +1969,7 @@ function getDriveSpace($drive) {
 }
 
 /**
- * Grab the full size of the download from the torrent metafile
+ * Grab the full size of the download from the metafile
  *
  * @param $transfer
  * @return int
@@ -2079,7 +2047,7 @@ function getStatusImage($sf) {
 	$hd->image = "black.gif";
 	$hd->title = "";
 	if ($sf->running == "1") {
-		// torrent is running
+		// running
 		if ($sf->seeds < 2)
 			$hd->image = "yellow.gif";
 		if ($sf->seeds == 0)
@@ -2089,13 +2057,13 @@ function getStatusImage($sf) {
 	}
 	if ($sf->percent_done >= 100) {
 		$hd->image = (trim($sf->up_speed) != "" && $sf->running == "1")
-			? "green.gif" /* is seeding */
-			: "black.gif"; /*  the torrent is finished */
+			? "green.gif" /* seeding */
+			: "black.gif"; /* finished */
 	}
 	if ($hd->image != "black.gif")
 		$hd->title = "S:".$sf->seeds." P:".$sf->peers." ";
 	if ($sf->running == "3") {
-		// torrent is queued
+		// queued
 		$hd->image = "black.gif";
 	}
 	return $hd;

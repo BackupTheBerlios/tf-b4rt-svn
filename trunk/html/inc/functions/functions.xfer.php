@@ -86,14 +86,14 @@ function getXferStats() {
  *
  * @param $entry
  * @param $transferowner
- * @param $tclient
+ * @param $client
  * @param $hash
  * @param $uptotal
  * @param $downtotal
  */
-function transferListXferUpdate1($entry, $transferowner, $tclient, $hash, $uptotal, $downtotal) {
+function transferListXferUpdate1($entry, $transferowner, $client, $hash, $uptotal, $downtotal) {
 	global $cfg, $db;
-	$clientHandler = ClientHandler::getInstance($tclient);
+	$clientHandler = ClientHandler::getInstance($client;
 	$transferTotalsCurrent = $clientHandler->getTransferCurrentOP($entry, $hash, $uptotal, $downtotal);
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'total');
 	sumUsage($transferowner, ($transferTotalsCurrent["downtotal"]), ($transferTotalsCurrent["uptotal"]), 'month');

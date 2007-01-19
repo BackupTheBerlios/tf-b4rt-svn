@@ -618,6 +618,7 @@ class SimpleHTTP
 					$file_name = $data_preg_match[2];
 					$this->filename = substr($file_name, 0, $filelength) . ".torrent";
 				} else {
+					// TODO : better fallback
 					$this->filename = "unknown.torrent";
 				}
 			}

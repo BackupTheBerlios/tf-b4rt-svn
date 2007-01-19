@@ -230,11 +230,9 @@ class FluxdQmgr extends FluxdServiceMod
      */
     function _updateStatFile($transfer) {
     	global $transfers;
-        $the_user = getOwner($transfer);
-        $btclient = getTransferClient($transfer);
         $modded = 0;
         // create sf object
-        $sf = new StatFile($transfer, $the_user);
+        $sf = new StatFile($transfer, getOwner($transfer));
         if ($sf->percent_done > 0 && $sf->percent_done < 100) {
             // has downloaded something at some point, mark it is incomplete
             $sf->running = "0";

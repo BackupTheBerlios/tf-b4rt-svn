@@ -95,50 +95,35 @@ foreach ($arList as $transfer) {
 	$displayname = (strlen($transfer) >= 47) ? substr($transfer, 0, 44)."..." : $transfer;
 	// owner
 	$transferowner = getOwner($transfer);
+	$owner = IsOwner($cfg["user"], $transferowner);
 	// stat
 	$sf = new StatFile($transfer, $transferowner);
-	// ---------------------------------------------------------------------
-	// client-switch
-	if (substr($transfer, -8) == ".torrent") {
-		// this is a torrent-client
-		$clientType = "torrent";
-		$owner = IsOwner($cfg["user"], $transferowner);
-		if (isset($transfers['settings'][$transfer])) {
-			$settingsAry = $transfers['settings'][$transfer];
-		} else {
-			$settingsAry = array();
-			$settingsAry['btclient'] = $cfg["btclient"];
-			$settingsAry['hash'] = "";
-			$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-				? $cfg["path"].$transferowner.'/'
-				: $cfg["path"].$cfg["path_incoming"].'/';
-			$settingsAry['datapath'] = "";
-		}
-	} else if (substr($transfer, -5) == ".wget") {
-		// this is wget.
-		$clientType = "wget";
-		$owner = IsOwner($cfg["user"], $transferowner);
-		$settingsAry = array();
-		$settingsAry['btclient'] = "wget";
-		$settingsAry['hash'] = $transfer;
-		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-			? $cfg["path"].$transferowner.'/'
-			: $cfg["path"].$cfg["path_incoming"].'/';
-		$settingsAry['datapath'] = "";
-	} else if ((substr($transfer, -4) == ".nzb")) {
-		// This is nzbperl
-		$clientType = "nzb";
-		$owner = IsOwner($cfg["user"], $transferowner);
-		$settingsAry = array();
-		$settingsAry['btclient'] = "nzbperl";
-		$settingsAry['hash'] = $transfer;
-		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
-			? $cfg["path"].$transferowner.'/'
-			: $cfg["path"].$cfg["path_incoming"].'/';
-		$settingsAry['datapath'] = "";
+	// settings
+	if (isset($transfers['settings'][$transfer])) {
+		$settingsAry = $transfers['settings'][$transfer];
 	} else {
-		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+		$settingsAry = array();
+		if (substr($transfer, -8) == ".torrent") {
+			// this is a t-client
+			$settingsAry['type'] = "torrent";
+			$settingsAry['client'] = $cfg["btclient"];
+		} else if (substr($transfer, -5) == ".wget") {
+			// this is wget.
+			$settingsAry['type'] = "wget";
+			$settingsAry['client'] = "wget";
+		} else if (substr($transfer, -4) == ".nzb") {
+			// this is nzbperl.
+			$settingsAry['type'] = "nzb";
+			$settingsAry['client'] = "nzbperl";
+		} else {
+			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+			@error("Invalid Transfer", "", "", array($transfer));
+		}
+		$settingsAry['hash'] = "";
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
+		$settingsAry['datapath'] = "";
 	}
 	// cache running-flag in local var. we will access that often
 	$transferRunning = $sf->running;
@@ -154,7 +139,7 @@ foreach ($arList as $transfer) {
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
 	if (($cfg['enable_xfer'] == 1) && ($cfg['xfer_realtime'] == 1))
-		@transferListXferUpdate1($transfer, $transferowner, $settingsAry['btclient'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
+		@transferListXferUpdate1($transfer, $transferowner, $settingsAry['client'], $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 
 	// ---------------------------------------------------------------------
 	// injects
@@ -168,7 +153,7 @@ foreach ($arList as $transfer) {
 	// totals-preparation
 	// if downtotal + uptotal + progress > 0
 	if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-		$clientHandler = ClientHandler::getInstance($settingsAry['btclient']);
+		$clientHandler = ClientHandler::getInstance($settingsAry['client']);
 		$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 	}
 
@@ -305,7 +290,7 @@ foreach ($arList as $transfer) {
 
 	// ================================================================== client
 	if ($settings[11] != 0) {
-		switch ($settingsAry['btclient']) {
+		switch ($settingsAry['client']) {
 			case "tornado":
 				$client = "B";
 				break;
@@ -353,7 +338,7 @@ foreach ($arList as $transfer) {
 		'seeds' => $seeds,
 		'peers' => $peers,
 		'estTime' => $estTime,
-		'clientType' => $clientType,
+		'clientType' => $settingsAry['type'],
 		'client' => $client,
 		'url_path' => urlencode(str_replace($cfg["path"],'', $settingsAry['savepath']).$settingsAry['datapath']),
 		'datapath' => $settingsAry['datapath'],

@@ -34,7 +34,8 @@ class ClientHandlerTransmission extends ClientHandler
      * ctor
      */
     function ClientHandlerTransmission() {
-        $this->handlerName = "transmission";
+    	$this->type = "torrent";
+        $this->client = "transmission";
         $this->binSystem = "transmissioncli";
         $this->binSocket = "transmissionc";
         $this->binClient = "transmissioncli";
@@ -58,7 +59,7 @@ class ClientHandlerTransmission extends ClientHandler
 		$this->setVarsFromTransfer($transfer);
 
     	// log
-    	$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+    	$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
         // do transmission special-pre-start-checks
         // check to see if the path to the transmission-bin is valid
@@ -78,7 +79,7 @@ class ClientHandlerTransmission extends ClientHandler
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
-				$msg = "Error after call to prepareStart(".$transfer.",".$interactive.",".$enqueue.")";
+				$msg = "Error after prepare (".$transfer.",".$interactive.",".$enqueue.")";
 				array_push($this->messages , $msg);
 				$this->logMessage($msg."\n", true);
 			}
@@ -116,7 +117,7 @@ class ClientHandlerTransmission extends ClientHandler
         $this->command .= " &";
 
         // start the client
-        $this->execStart(true, true);
+        $this->execStart();
     }
 
     /**
@@ -143,7 +144,7 @@ class ClientHandlerTransmission extends ClientHandler
 		// set vars
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(true, true);
+		$this->execDelete();
 	}
 
     /**

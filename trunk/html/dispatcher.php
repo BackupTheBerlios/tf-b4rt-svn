@@ -179,8 +179,7 @@ switch ($action) {
     	$transferList = getTorrentListFromFS();
     	foreach ($transferList as $transfer) {
             if (isTransferRunning($transfer)) {
-                $owner = getOwner($transfer);
-                if ((isset($owner)) && ($owner == $cfg["user"])) {
+                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
                     $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
                     $clientHandler->stop($transfer);
                     if (count($clientHandler->messages) > 0)
@@ -203,8 +202,7 @@ switch ($action) {
     	$transferList = getTorrentListFromDB();
     	foreach ($transferList as $transfer) {
             if (!isTransferRunning($transfer)) {
-                $owner = getOwner($transfer);
-                if ((isset($owner)) && ($owner == $cfg["user"])) {
+                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
                     if ($cfg["enable_file_priority"]) {
                         include_once("inc/functions/functions.setpriority.php");
                         // Process setPriority Request.
@@ -232,15 +230,13 @@ switch ($action) {
     	$transferList = getTorrentListFromFS();
     	foreach ($transferList as $transfer) {
             if (!isTransferRunning($transfer)) {
-                $owner = getOwner($transfer);
-                if ((isset($owner)) && ($owner == $cfg["user"])) {
-                    $btclient = getTransferClient($transfer);
+                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
                     if ($cfg["enable_file_priority"]) {
                         include_once("inc/functions/functions.setpriority.php");
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getInstance($btclient);
+                    $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
                     $clientHandler->start($transfer, false, false);
                     if (count($clientHandler->messages) > 0)
                     	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
@@ -271,20 +267,15 @@ switch ($action) {
 			// url-decode
 			$transfer = urldecode($element);
 
-			// is valid transfer ?
+			// is valid transfer ? + check permissions
 			$invalid = true;
 			if (isValidTransfer($transfer) === true) {
-				// client
 				if (substr($transfer, -8) == ".torrent") {
 					// this is a torrent-client
-					$clientType = "torrent";
 					$invalid = false;
-					$tclient = getTransferClient($transfer);
 				} else if (substr($transfer, -5) == ".wget") {
 					// this is wget.
-					$clientType = "wget";
 					$invalid = false;
-					$tclient = "wget";
 					// is enabled ?
 					if ($cfg["enable_wget"] == 0) {
 						$invalid = true;
@@ -299,9 +290,7 @@ switch ($action) {
 					}
 				} else if (substr($transfer, -4) == ".nzb") {
 					// This is nzbperl.
-					$clientType = "nzb";
 					$invalid = false;
-					$tclient = "nzbperl";
 					if ($cfg["enable_nzbperl"] == 0) {
 						$invalid = true;
 						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
@@ -321,6 +310,9 @@ switch ($action) {
 				continue;
 			}
 
+			// client
+			$client = getTransferClient($transfer);
+
 			// is transfer running ?
 			$tRunningFlag = isTransferRunning($transfer);
 
@@ -334,7 +326,7 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance($tclient);
+						$clientHandler = ClientHandler::getInstance($client);
 						$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
 						if (count($clientHandler->messages) > 0)
                     		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
@@ -343,7 +335,7 @@ switch ($action) {
 
 				case "transferStop": /* transferStop */
 					if ($tRunningFlag) {
-						$clientHandler = ClientHandler::getInstance($tclient);
+						$clientHandler = ClientHandler::getInstance($client);
 						$clientHandler->stop($transfer);
 						if (count($clientHandler->messages) > 0)
                     		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
@@ -358,7 +350,7 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance($tclient);
+						$clientHandler = ClientHandler::getInstance($client);
 						$clientHandler->start($transfer, false, true);
 						if (count($clientHandler->messages) > 0)
                     		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
@@ -380,8 +372,8 @@ switch ($action) {
 
 				default:
 					if ($tRunningFlag) {
-						// stop torrent first
-						$clientHandler = ClientHandler::getInstance($tclient);
+						// stop first
+						$clientHandler = ClientHandler::getInstance($client);
 						$clientHandler->stop($transfer);
 						if (count($clientHandler->messages) > 0)
                     		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
@@ -401,7 +393,7 @@ switch ($action) {
 							case "transferData": /* transferData */
 								deleteTransferData($transfer);
 							case "transfer": /* transfer */
-								$clientHandler = ClientHandler::getInstance($tclient);
+								$clientHandler = ClientHandler::getInstance($client);
 								$clientHandler->delete($transfer);
 								if (count($clientHandler->messages) > 0)
                     				$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);

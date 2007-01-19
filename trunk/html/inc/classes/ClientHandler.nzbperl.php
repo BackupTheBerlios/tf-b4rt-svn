@@ -40,7 +40,8 @@ class ClientHandlerNzbperl extends ClientHandler
 	 */
 	function ClientHandlerNzbperl() {
 		global $cfg;
-		$this->handlerName = "nzbperl";
+		$this->type = "nzb";
+		$this->client = "nzbperl";
         $this->binSystem = "perl";
         $this->binSocket = "perl";
         $this->binClient = "tfnzbperl.pl";
@@ -65,7 +66,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->setVarsFromTransfer($transfer);
 
 		// log
-		$this->logMessage($this->handlerName."-start : ".$transfer."\n", true);
+		$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
 		// do nzbperl special-pre-start-checks
 		// check to see if the path to the nzbperl script is valid
@@ -79,37 +80,17 @@ class ClientHandlerNzbperl extends ClientHandler
 			return false;
 		}
 
-        // umask
-        $this->umask = ($cfg["enable_umask"] != 0)
-        	? " umask 0000;"
-        	: "";
-        // nice
-        $this->nice = ($cfg["nice_adjust"] != 0)
-        	? "nice -n ".$cfg["nice_adjust"]." "
-        	: "";
+		// prepare starting of client
+        $this->prepareStart($interactive, $enqueue);
 
-		// queue
-        if ($enqueue) {
-        	$this->queue = ($cfg['isAdmin'])
-        		? $enqueue
-        		: true;
-        } else {
-            $this->queue = false;
-        }
-
-		// savepath
-		$this->savepath = ($cfg["enable_home_dirs"] != 0)
-        		? $cfg['path'].$this->owner."/"
-        		: $cfg['path'].$cfg["path_incoming"]."/";
-
-        // check target-directory, create if not present
-		if (!(checkDirectory($this->savepath, 0777))) {
-			$this->state = CLIENTHANDLER_STATE_ERROR;
-			$msg = "Error checking savepath ".$this->savepath;
-			array_push($this->messages, $msg);
-			AuditAction($cfg["constants"]["error"], $msg);
-            $this->logMessage($msg."\n", true);
-            return false;
+		// only continue if prepare succeeded (skip start / error)
+		if ($this->state != CLIENTHANDLER_STATE_READY) {
+			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
+				$msg = "Error after prepare (".$transfer.",".$interactive.",".$enqueue.")";
+				array_push($this->messages , $msg);
+				$this->logMessage($msg."\n", true);
+			}
+			return false;
 		}
 
 		// Build Command String (do not change order of last args !)
@@ -156,7 +137,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->state = CLIENTHANDLER_STATE_READY;
 
 		// Start the client
-		$this->execStart(true, false);
+		$this->execStart();
 	}
 
     /**
@@ -183,7 +164,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		//set vars
 		$this->setVarsFromTransfer($transfer);
 		// delete
-		$this->execDelete(false, false);
+		$this->execDelete();
     }
 
     /**
@@ -237,6 +218,24 @@ class ClientHandlerNzbperl extends ClientHandler
     function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
         return array("uptotal" => $sfu, "downtotal" => $sfd);
     }
+
+    /**
+     * sets all fields needed for start with default-vals
+     */
+    function setDefaultVars() {
+    	global $cfg;
+    	// set vars
+		$this->rate        = 0;
+		$this->drate       = $cfg["nzbperl_rate"];
+		$this->runtime     = "True";
+		$this->maxuploads  = 0;
+		$this->superseeder = 0;
+		$this->sharekill   = 0;
+		$this->minport     = 1;
+		$this->maxport     = 65535;
+		$this->maxcons     = $cfg["nzbperl_conn"];
+    }
+
 }
 
 ?>
