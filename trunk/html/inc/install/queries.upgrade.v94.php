@@ -224,6 +224,30 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
+// tf_transfers
+array_push($queries[$cqt][$cdb], "DROP TABLE IF EXISTS tf_torrents");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
+  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  hash VARCHAR(40) NOT NULL DEFAULT '',
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
+  running ENUM('0','1') NOT NULL default '0',
+  rate SMALLINT(4) NOT NULL default '0',
+  drate SMALLINT(4) NOT NULL default '0',
+  maxuploads TINYINT(3) unsigned NOT NULL default '0',
+  superseeder ENUM('0','1') NOT NULL default '0',
+  runtime ENUM('True','False') NOT NULL default 'False',
+  sharekill SMALLINT(4) unsigned NOT NULL default '0',
+  minport SMALLINT(5) unsigned NOT NULL default '0',
+  maxport SMALLINT(5) unsigned NOT NULL default '0',
+  maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  PRIMARY KEY  (transfer)
+) TYPE=MyISAM");
+// tf_transfer_totals
+array_push($queries[$cqt][$cdb], "RENAME TABLE tf_torrent_totals TO tf_transfer_totals");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_trprofiles (
@@ -258,9 +282,6 @@ CREATE TABLE tf_settings_stats (
   PRIMARY KEY  (tf_key)
 ) TYPE=MyISAM");
 // ALTER
-array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents CHANGE rate rate SMALLINT(4) DEFAULT '0' NOT NULL");
-array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents CHANGE drate drate SMALLINT(4) DEFAULT '0' NOT NULL");
-array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users CHANGE user_id user_id VARCHAR(32) BINARY NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL");
@@ -289,6 +310,37 @@ array_push($queries[$cqt][$cdb], "DROP TABLE tf_test");
 // sql-queries : Create
 $cqt = 'create';
 $queries[$cqt][$cdb] = array();
+// tf_transfers
+array_push($queries[$cqt][$cdb], "DROP TABLE tf_torrents");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type VARCHAR(32) NOT NULL default 'torrent',
+  client VARCHAR(32) NOT NULL default 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
+  running INTEGER(1) NOT NULL default '0',
+  rate INTEGER(4) NOT NULL default '0',
+  drate INTEGER(4) NOT NULL default '0',
+  maxuploads INTEGER(3) NOT NULL default '0',
+  superseeder INTEGER(1) NOT NULL default '0',
+  runtime VARCHAR(5) NOT NULL default 'False',
+  sharekill INTEGER(4) NOT NULL default '0',
+  minport INTEGER(5) NOT NULL default '0',
+  maxport INTEGER(5) NOT NULL default '0',
+  maxcons INTEGER(4) NOT NULL default '0',
+  PRIMARY KEY  (transfer)
+)");
+// tf_transfer_totals
+array_push($queries[$cqt][$cdb], "DROP TABLE tf_torrent_totals");
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
+)");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_trprofiles (
@@ -322,7 +374,6 @@ CREATE TABLE tf_settings_stats (
   PRIMARY KEY  (tf_key)
 )");
 // ALTER
-array_push($queries[$cqt][$cdb], "ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL");
 array_push($queries[$cqt][$cdb], "ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL");
 

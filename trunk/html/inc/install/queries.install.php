@@ -290,10 +290,15 @@ CREATE TABLE tf_users (
   state TINYINT(1) NOT NULL default '1',
   PRIMARY KEY  (uid)
 ) TYPE=MyISAM");
-// tf_torrents
+// tf_transfers
 array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
+  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  hash VARCHAR(40) NOT NULL DEFAULT '',
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
   running ENUM('0','1') NOT NULL default '0',
   rate SMALLINT(4) NOT NULL default '0',
   drate SMALLINT(4) NOT NULL default '0',
@@ -304,11 +309,15 @@ CREATE TABLE tf_torrents (
   minport SMALLINT(5) unsigned NOT NULL default '0',
   maxport SMALLINT(5) unsigned NOT NULL default '0',
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
+  PRIMARY KEY  (transfer)
+) TYPE=MyISAM");
+// tf_transfer_totals
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
 ) TYPE=MyISAM");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "
@@ -328,14 +337,6 @@ CREATE TABLE tf_trprofiles (
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
   rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
-) TYPE=MyISAM");
-// tf_torrent_totals
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
 ) TYPE=MyISAM");
 // tf_xfer
 array_push($queries[$cqt][$cdb], "
@@ -462,10 +463,15 @@ CREATE TABLE tf_users (
   language_file VARCHAR(60) default 'lang-english.php',
   state TINYINT(1) NOT NULL default '1'
 )");
-// tf_torrents
+// tf_transfers
 array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type VARCHAR(32) NOT NULL default 'torrent',
+  client VARCHAR(32) NOT NULL default 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
   running INTEGER(1) NOT NULL default '0',
   rate INTEGER(4) NOT NULL default '0',
   drate INTEGER(4) NOT NULL default '0',
@@ -474,13 +480,17 @@ CREATE TABLE tf_torrents (
   runtime VARCHAR(5) NOT NULL default 'False',
   sharekill INTEGER(4) NOT NULL default '0',
   minport INTEGER(5) NOT NULL default '0',
-maxport INTEGER(5) NOT NULL default '0',
+  maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
+  PRIMARY KEY  (transfer)
+)");
+// tf_transfer_totals
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
 )");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "
@@ -499,14 +509,6 @@ CREATE TABLE tf_trprofiles (
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
   rerequest INTEGER(8) NOT NULL default '0'
-)");
-// tf_torrent_totals
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
 )");
 // tf_xfer
 array_push($queries[$cqt][$cdb], "
@@ -643,10 +645,15 @@ CREATE TABLE tf_users (
   state INT2 NOT NULL DEFAULT '1',
   PRIMARY KEY (uid)
 )");
-// tf_torrents
+// tf_transfers
 array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL DEFAULT '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL DEFAULT '',
+  type VARCHAR(32) NOT NULL DEFAULT 'torrent',
+  client VARCHAR(32) NOT NULL DEFAULT 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL DEFAULT '',  
+  savepath VARCHAR(255) NOT NULL DEFAULT '',
   running INT2 NOT NULL DEFAULT '0',
   rate INT2 NOT NULL DEFAULT '0',
   drate INT2 NOT NULL DEFAULT '0',
@@ -657,16 +664,20 @@ CREATE TABLE tf_torrents (
   minport INT2 NOT NULL DEFAULT '0',
   maxport INT2 NOT NULL DEFAULT '0',
   maxcons INT2 NOT NULL DEFAULT '0',
-  savepath VARCHAR(255) NOT NULL DEFAULT '',
-  btclient VARCHAR(32) NOT NULL DEFAULT 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (torrent),
   CHECK (running>=0),
   CHECK (maxuploads>=0),
   CHECK (minport>=0),
   CHECK (maxport>=0),
   CHECK (maxcons>=0)
+)");
+// tf_transfer_totals
+array_push($queries[$cqt][$cdb], "
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL DEFAULT '',
+  uptotal INT8 NOT NULL DEFAULT '0',
+  downtotal INT8 NOT NULL DEFAULT '0',
+  PRIMARY KEY (tid)
 )");
 // tf_trprofiles
 array_push($queries[$cqt][$cdb], "CREATE SEQUENCE tf_trprofiles_id_seq");
@@ -693,14 +704,6 @@ CREATE TABLE tf_trprofiles (
   CHECK (maxport>=0),
   CHECK (maxcons>=0),
   CHECK (rerequest>=0)
-)");
-// tf_torrent_totals
-array_push($queries[$cqt][$cdb], "
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL DEFAULT '',
-  uptotal INT8 NOT NULL DEFAULT '0',
-  downtotal INT8 NOT NULL DEFAULT '0',
-  PRIMARY KEY (tid)
 )");
 // tf_xfer
 array_push($queries[$cqt][$cdb], "
