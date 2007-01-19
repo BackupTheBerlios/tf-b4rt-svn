@@ -1384,7 +1384,7 @@ function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $
 	// Messy - a not exists would prob work better
 	deleteTransferSettings($transfer);
 	// get hash
-	$tHash = getTorrentHash($transfer);
+	$tHash = getTransferHash($transfer);
 	// get datapath
 	$tDatapath = getTorrentDatapath($transfer);
 	// insert
@@ -1451,17 +1451,17 @@ function waitForTransfer($transfer, $state, $maxWait = 15) {
 }
 
 /**
- * resets totals of a torrent
+ * resets totals of a transfer
  *
- * @param $transfer name of the torrent
- * @param $delete boolean if to delete torrent-file
+ * @param $transfer name of the transfer
+ * @param $delete boolean if to delete meta-file
  * @return array
  */
-function resetTorrentTotals($transfer, $delete = false) {
+function resetTransferTotals($transfer, $delete = false) {
 	global $cfg, $db, $transfers;
 	$msgs = array();
-	$tid = getTorrentHash($transfer);
-	// delete torrent
+	$tid = getTransferHash($transfer);
+	// delete meta-file
 	if ($delete) {
 		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		$clientHandler->delete($transfer);
@@ -1484,11 +1484,11 @@ function resetTorrentTotals($transfer, $delete = false) {
 }
 
 /**
- * deletes data of a torrent
+ * deletes data of a transfer
  *
- * @param $transfer name of the torrent
+ * @param $transfer name of the transfer
  */
-function deleteTorrentData($transfer) {
+function deleteTransferData($transfer) {
 	global $cfg, $transfers;
 	$owner = getOwner($transfer);
 	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
@@ -1578,14 +1578,14 @@ function getTorrentDatapath($transfer) {
 /**
  * gets ary of running clients (via call to ps)
  *
- * @param $clientType
+ * @param $client
  * @return array
  */
-function getRunningClientProcesses($clientType = '') {
+function getRunningClientProcesses($client = '') {
 	// client-array
-	$clients = ($clientType == '')
+	$clients = ($client == '')
 		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl')
-		: array($clientType);
+		: array($client);
 	// get clients
 	$retVal = array();
 	foreach ($clients as $client) {
@@ -1602,14 +1602,14 @@ function getRunningClientProcesses($clientType = '') {
 /**
  * get info of running clients (via call to ps)
  *
- * @param $clientType
+ * @param $client
  * @return string
  */
-function getRunningClientProcessInfo($clientType = '') {
+function getRunningClientProcessInfo($client = '') {
 	// client-array
-	$clients = ($clientType == '')
+	$clients = ($client == '')
 		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl')
-		: array($clientType);
+		: array($client);
 	// get clients
 	$retVal = "";
 	foreach ($clients as $client) {

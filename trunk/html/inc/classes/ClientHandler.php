@@ -95,9 +95,9 @@ class ClientHandler
      *
      * @return ClientHandler
      */
-    function getInstance($clientType = '') {
+    function getInstance($client = '') {
     	// create and return object-instance
-        switch ($clientType) {
+        switch ($client) {
             case "tornado":
             	require_once('inc/classes/ClientHandler.tornado.php');
                 return new ClientHandlerTornado();
@@ -521,7 +521,7 @@ class ClientHandler
 	 */
 	function execUpdateTransferTotals() {
 		global $db;
-		$tid = getTorrentHash($this->transfer);
+		$tid = getTransferHash($this->transfer);
 		$transferTotals = $this->getTransferTotal($this->transfer);
 		$sql = ($db->GetOne("SELECT 1 FROM tf_torrent_totals WHERE tid = '".$tid."'"))
 			? "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'"

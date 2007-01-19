@@ -112,8 +112,8 @@ switch ($imageOp) {
 		$peerData['peers'] = 0;
 		$peerData['seedsLabel'] = ($seeds != "") ? $seeds : 0;
 		$peerData['peersLabel'] = ($peers != "") ? $peers : 0;
-		$clientType = getTransferClient($transfer);
-        switch ($clientType) {
+		$client = getTransferClient($transfer);
+        switch ($client) {
 			case "tornado":
 				if ($seeds != "") {
 					if (strpos($seeds, "+") !== false)

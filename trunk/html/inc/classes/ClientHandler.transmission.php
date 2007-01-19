@@ -151,7 +151,7 @@ class ClientHandlerTransmission extends ClientHandler
      */
     function execDeleteCache() {
     	global $cfg;
-        @unlink($cfg["path"].".transmission/cache/resume.".getTorrentHash($this->transfer));
+        @unlink($cfg["path"].".transmission/cache/resume.".getTransferHash($this->transfer));
         return;
     }
 
@@ -169,7 +169,7 @@ class ClientHandlerTransmission extends ClientHandler
         $retVal["uptotal"] = $sf->uptotal;
         $retVal["downtotal"] = $sf->downtotal;
         // transfer from db
-        $torrentId = getTorrentHash($transfer);
+        $torrentId = getTransferHash($transfer);
         $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
         $result = $db->Execute($sql);
         $row = $result->FetchRow();

@@ -299,7 +299,7 @@ function cliStopTransfer($transfer = "") {
 function cliResetTransfer($transfer = "") {
 	if ((isset($transfer)) && ($transfer != "")) {
 		printMessage("fluxcli.php", "Resetting totals of ".$transfer." ...\n");
-		$msgs = resetTorrentTotals($transfer, false);
+		$msgs = resetTransferTotals($transfer, false);
 		if (count($msgs) > 0)
         	printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $msgs));
 		else
@@ -358,8 +358,8 @@ function cliWipeTransfer($transfer = "") {
         }
         if (!$tRunningFlag) {
         	if (substr($transfer, -8) == ".torrent") {
-        		deleteTorrentData($transfer);
-				$msgs = resetTorrentTotals($transfer, true);
+        		deleteTransferData($transfer);
+				$msgs = resetTransferTotals($transfer, true);
 				if (count($msgs) > 0) {
 		        	printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $msgs));
 		        	exit;

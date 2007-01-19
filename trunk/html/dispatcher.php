@@ -374,7 +374,7 @@ switch ($action) {
 
 				case "transferResetTotals": /* transferResetTotals */
 					if ($clientType == "torrent") {
-						$msgs = resetTorrentTotals($transfer, false);
+						$msgs = resetTransferTotals($transfer, false);
 						if (count($msgs) > 0)
 	                    	$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
 					}
@@ -396,15 +396,15 @@ switch ($action) {
 						switch ($action) {
 							case "transferWipe": /* transferWipe */
 								if ($clientType == "torrent") {
-									deleteTorrentData($transfer);
-									$msgs = resetTorrentTotals($transfer, true);
+									deleteTransferData($transfer);
+									$msgs = resetTransferTotals($transfer, true);
 									if (count($msgs) > 0)
                     					$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
 								}
 								break;
 							case "transferData": /* transferData */
 								if ($clientType == "torrent")
-									deleteTorrentData($transfer);
+									deleteTransferData($transfer);
 							case "transfer": /* transfer */
 								$clientHandler = ClientHandler::getInstance($tclient);
 								$clientHandler->delete($transfer);

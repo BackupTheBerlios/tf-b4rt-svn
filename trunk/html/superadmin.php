@@ -571,7 +571,7 @@ if (isset($_REQUEST["m"])) {
 				$torrents = getTorrentListFromDB();
 				$hashes = array();
 				foreach ($torrents as $transfer)
-					array_push($hashes, getTorrentHash($transfer));
+					array_push($hashes, getTransferHash($transfer));
 				if ($dirHandle = @opendir($cfg["path"].".transmission/cache/")) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ($file{0} == "r") {

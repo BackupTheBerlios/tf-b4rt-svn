@@ -484,7 +484,7 @@ class MaintenanceAndRepair
 				// t has no hash, update
 				$this->_outputMessage("updating transfer which has empty hash : ".$tname."\n");
 				// get hash
-				$thash = getTorrentHash($tname);
+				$thash = getTransferHash($tname);
 				// update
 				if (!empty($thash)) {
 					$sql = "UPDATE tf_torrents SET hash = '".$thash."' WHERE torrent = '".$tname."'";

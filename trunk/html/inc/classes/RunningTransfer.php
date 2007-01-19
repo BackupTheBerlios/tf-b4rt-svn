@@ -37,12 +37,12 @@ class RunningTransfer
      * factory
      *
      * @param $psLine ps-line
-     * @param $clientType client-type
+     * @param $client client
      * @return RunningTransfer
      */
-    function getInstance($psLine, $clientType = '') {
+    function getInstance($psLine, $client = '') {
     	// create and return object-instance
-        switch ($clientType) {
+        switch ($client) {
             case "tornado":
             	require_once('inc/classes/RunningTransfer.tornado.php');
                 return new RunningTransferTornado($psLine);

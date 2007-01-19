@@ -914,14 +914,14 @@ function getTorrentMetaInfo($transfer) {
 }
 
 /**
- * gets hash of a torrent
+ * gets hash of a transfer
  * this should not be called external if its no must, use cached value in
  * db if possible.
  *
- * @param $transfer name of the torrent
- * @return var with torrent-hash
+ * @param $transfer name of the transfer
+ * @return transfer-hash
  */
-function getTorrentHash($transfer) {
+function getTransferHash($transfer) {
 	//info = metainfo['info']
 	//info_hash = sha(bencode(info))
 	//print 'metainfo file.: %s' % basename(metainfo_name)
