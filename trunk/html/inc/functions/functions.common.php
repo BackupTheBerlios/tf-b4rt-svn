@@ -1386,7 +1386,7 @@ function saveTransferSettings($transfer, $running, $rate, $drate, $maxuploads, $
 	// get hash
 	$tHash = getTransferHash($transfer);
 	// get datapath
-	$tDatapath = getTorrentDatapath($transfer);
+	$tDatapath = getTransferDatapath($transfer);
 	// insert
     $sql = "INSERT INTO tf_torrents (torrent,running,rate,drate,maxuploads,runtime,sharekill,minport,maxport,maxcons,savepath,btclient,hash,datapath)"
     	." VALUES ("
@@ -1475,7 +1475,7 @@ function resetTransferTotals($transfer, $delete = false) {
 		$sf->write();
 	}
 	// reset in db
-	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".$tid."'";
+	$sql = "DELETE FROM tf_transfer_totals WHERE tid = '".$tid."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// set transfers-cache
@@ -1487,9 +1487,12 @@ function resetTransferTotals($transfer, $delete = false) {
  * deletes data of a transfer
  *
  * @param $transfer name of the transfer
+ * @return boolean
  */
 function deleteTransferData($transfer) {
 	global $cfg, $transfers;
+	if (substr($transfer, -8) != ".torrent")
+		return false;
 	$owner = getOwner($transfer);
 	if (($cfg["user"] == $owner) || $cfg['isAdmin']) {
 		require_once('inc/classes/BDecode.php');
@@ -1510,18 +1513,16 @@ function deleteTransferData($transfer) {
 			$del = stripslashes(stripslashes($delete));
 			if (isValidPath($del)) {
 				 avddelete($del);
-				 $arTemp = explode("/", $del);
-				 if (count($arTemp) > 1) {
-					 array_pop($arTemp);
-					 $current = implode("/", $arTemp);
-				 }
 				 AuditAction($cfg["constants"]["fm_delete"], $del);
+				 return true;
 			} else {
 				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete ".$del);
+				 return false;
 			}
 		}
 	} else {
 		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete ".$transfer);
+		return false;
 	}
 }
 
@@ -1558,21 +1559,41 @@ function getTorrentDataSize($transfer) {
 }
 
 /**
- * gets datapath of a torrent.
- * this should not be called external if its no must, use cached value in
- * db if possible.
+ * gets datapath of a transfer.
  *
  * @param $transfer name of the torrent
- * @return var with torrent-datapath or empty string on error
+ * @return var with transfer-datapath or empty string
  */
-function getTorrentDatapath($transfer) {
-	global $cfg;
-    require_once('inc/classes/BDecode.php');
-    $ftorrent = $cfg["transfer_file_path"].$transfer;
-    $fd = fopen($ftorrent, "rd");
-    $alltorrent = fread($fd, filesize($ftorrent));
-    $btmeta = @BDecode($alltorrent);
-    return (empty($btmeta['info']['name'])) ? "" : trim($btmeta['info']['name']);
+function getTransferDatapath($transfer) {
+	global $cfg, $db, $transfers;
+	if (isset($transfers['settings'][$transfer]['datapath'])) {
+		return $transfers['settings'][$transfer]['datapath'];
+	} else {
+		$datapath = $db->GetOne("SELECT datapath FROM tf_transfers WHERE transfer = '".$transfer."'");
+		if (empty($datapath)) {
+			if (substr($transfer, -8) == ".torrent") {
+				// this is a torrent-client
+			    require_once('inc/classes/BDecode.php');
+			    $ftorrent = $cfg["transfer_file_path"].$transfer;
+			    $fd = fopen($ftorrent, "rd");
+			    $alltorrent = fread($fd, filesize($ftorrent));
+			    $btmeta = @BDecode($alltorrent);
+			    $datapath = (empty($btmeta['info']['name']))
+			    	? ""
+			    	: trim($btmeta['info']['name']);
+			} else if (substr($transfer, -5) == ".wget") {
+				// this is wget.
+				$datapath = "";
+			} else if (substr($transfer, -4) == ".nzb") {
+				// This is nzbperl.
+				$datapath = "";
+			} else {
+				$datapath = "";
+			}
+		}
+		$transfers['settings'][$transfer]['datapath'] = $datapath;
+		return $datapath;
+	}
 }
 
 /**

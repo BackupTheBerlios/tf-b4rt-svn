@@ -506,7 +506,7 @@ class MaintenanceAndRepair
 				// t has no datapath, update
 				$this->_outputMessage("updating transfer which has empty datapath : ".$tname."\n");
 				// get datapath
-				$tDatapath = getTorrentDatapath($tname);
+				$tDatapath = getTransferDatapath($tname);
 				// update
 				if (!empty($tDatapath)) {
 					$sql = "UPDATE tf_torrents SET datapath = ".$db->qstr($tDatapath)." WHERE torrent = '".$tname."'";

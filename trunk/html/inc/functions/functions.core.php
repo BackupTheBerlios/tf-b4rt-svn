@@ -915,36 +915,57 @@ function getTorrentMetaInfo($transfer) {
 
 /**
  * gets hash of a transfer
- * this should not be called external if its no must, use cached value in
- * db if possible.
  *
  * @param $transfer name of the transfer
  * @return transfer-hash
  */
 function getTransferHash($transfer) {
-	//info = metainfo['info']
-	//info_hash = sha(bencode(info))
-	//print 'metainfo file.: %s' % basename(metainfo_name)
-	//print 'info hash.....: %s' % info_hash.hexdigest()
-	global $cfg;
-	$result = getTorrentMetaInfo($transfer);
-	if (empty($result))
-		return "";
-	$resultAry = explode("\n",$result);
-	$hashAry = array();
-	switch ($cfg["metainfoclient"]) {
-		case "transmissioncli":
-		case "ttools.pl":
-			$hashAry = explode(":",trim($resultAry[0]));
-			break;
-		case "btshowmetainfo.py":
-		case "torrentinfo-console.py":
-		default:
-			$hashAry = explode(":",trim($resultAry[3]));
-			break;
+	global $cfg, $db, $transfers;
+	if (isset($transfers['settings'][$transfer]['hash'])) {
+		return $transfers['settings'][$transfer]['hash'];
+	} else {
+		$hash = $db->GetOne("SELECT hash FROM tf_transfers WHERE transfer = '".$transfer."'");
+		if (empty($hash)) {
+			if (substr($transfer, -8) == ".torrent") {
+				// this is a torrent-client
+				$result = getTorrentMetaInfo($transfer);
+				if (empty($result)) {
+					$hash = "";
+				} else {
+					$resultAry = explode("\n", $result);
+					$hashAry = array();
+					switch ($cfg["metainfoclient"]) {
+						case "transmissioncli":
+						case "ttools.pl":
+							$hashAry = explode(":", trim($resultAry[0]));
+							break;
+						case "btshowmetainfo.py":
+						case "torrentinfo-console.py":
+						default:
+							$hashAry = explode(":", trim($resultAry[3]));
+							break;
+					}
+					$hash = (isset($hashAry[1])) ? trim($hashAry[1]) : "";
+				}
+			} else if (substr($transfer, -5) == ".wget") {
+				// this is wget.
+				$metacontent = @file_get_contents($cfg["transfer_file_path"].$transfer);
+				$hash = (empty($metacontent))
+					? ""
+					: sha1($metacontent);
+			} else if (substr($transfer, -4) == ".nzb") {
+				// This is nzbperl.
+				$metacontent = @file_get_contents($cfg["transfer_file_path"].$transfer);
+				$hash = (empty($metacontent))
+					? ""
+					: sha1($metacontent);
+			} else {
+				$hash = "";
+			}
+		}
+		$transfers['settings'][$transfer]['hash'] = $hash;
+		return $hash;
 	}
-	// return
-	return (isset($hashAry[1])) ? trim($hashAry[1]) : "";
 }
 
 /**

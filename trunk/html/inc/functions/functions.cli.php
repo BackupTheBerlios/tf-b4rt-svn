@@ -357,14 +357,12 @@ function cliWipeTransfer($transfer = "") {
 			$tRunningFlag = isTransferRunning($transfer);
         }
         if (!$tRunningFlag) {
-        	if (substr($transfer, -8) == ".torrent") {
-        		deleteTransferData($transfer);
-				$msgs = resetTransferTotals($transfer, true);
-				if (count($msgs) > 0) {
-		        	printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $msgs));
-		        	exit;
-				}
-        	}
+    		deleteTransferData($transfer);
+			$msgs = resetTransferTotals($transfer, true);
+			if (count($msgs) > 0) {
+	        	printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $msgs));
+	        	exit;
+			}
         	$clientHandler->delete($transfer);
         	if (count($clientHandler->messages) > 0)
     			printMessage("fluxcli.php", "failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
