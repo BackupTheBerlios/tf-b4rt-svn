@@ -12,6 +12,41 @@
 BEGIN TRANSACTION;
 
 --
+-- tf_transfers
+--
+DROP TABLE tf_torrents;
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type VARCHAR(32) NOT NULL default 'torrent',
+  client VARCHAR(32) NOT NULL default 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
+  running INTEGER(1) NOT NULL default '0',
+  rate INTEGER(4) NOT NULL default '0',
+  drate INTEGER(4) NOT NULL default '0',
+  maxuploads INTEGER(3) NOT NULL default '0',
+  superseeder INTEGER(1) NOT NULL default '0',
+  runtime VARCHAR(5) NOT NULL default 'False',
+  sharekill INTEGER(4) NOT NULL default '0',
+  minport INTEGER(5) NOT NULL default '0',
+  maxport INTEGER(5) NOT NULL default '0',
+  maxcons INTEGER(4) NOT NULL default '0',
+  PRIMARY KEY  (transfer)
+) ;
+
+--
+-- tf_transfer_totals
+--
+DROP TABLE tf_torrent_totals;
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
+) ;
+
+--
 -- tf_trprofiles
 --
 CREATE TABLE tf_trprofiles (
@@ -80,7 +115,6 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 --
 -- alter
 --
-ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL;
 ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
 
 --

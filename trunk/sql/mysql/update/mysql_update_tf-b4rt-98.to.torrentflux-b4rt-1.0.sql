@@ -7,6 +7,36 @@
 -- -----------------------------------------------------------------------------
 
 --
+-- tf_transfers
+--
+DROP TABLE IF EXISTS tf_torrents;
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
+  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  hash VARCHAR(40) NOT NULL DEFAULT '',
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
+  running ENUM('0','1') NOT NULL default '0',
+  rate SMALLINT(4) NOT NULL default '0',
+  drate SMALLINT(4) NOT NULL default '0',
+  maxuploads TINYINT(3) unsigned NOT NULL default '0',
+  superseeder ENUM('0','1') NOT NULL default '0',
+  runtime ENUM('True','False') NOT NULL default 'False',
+  sharekill SMALLINT(4) unsigned NOT NULL default '0',
+  minport SMALLINT(5) unsigned NOT NULL default '0',
+  maxport SMALLINT(5) unsigned NOT NULL default '0',
+  maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  PRIMARY KEY  (transfer)
+) TYPE=MyISAM;
+
+
+--
+-- tf_transfer_totals
+--
+RENAME TABLE tf_torrent_totals TO tf_transfer_totals;
+
+--
 -- tf_trprofiles
 --
 CREATE TABLE tf_trprofiles (
@@ -76,9 +106,6 @@ INSERT INTO tf_settings_stats VALUES ('stats_default_compress','0');
 --
 -- alter
 --
-ALTER TABLE tf_torrents CHANGE rate rate SMALLINT(4) DEFAULT '0' NOT NULL;
-ALTER TABLE tf_torrents CHANGE drate drate SMALLINT(4) DEFAULT '0' NOT NULL;
-ALTER TABLE tf_torrents ADD datapath VARCHAR(255) DEFAULT '' NOT NULL;
 ALTER TABLE tf_users CHANGE user_id user_id VARCHAR(32) BINARY NOT NULL;
 ALTER TABLE tf_users ADD state TINYINT(1) DEFAULT '1' NOT NULL;
 

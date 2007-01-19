@@ -10,11 +10,46 @@
 -- -----------------------------------------------------------------------------
 
 --
--- tf_torrents
+-- tf_transfers
 --
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
+  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  hash VARCHAR(40) NOT NULL DEFAULT '',
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
   running ENUM('0','1') NOT NULL default '0',
+  rate SMALLINT(4) NOT NULL default '0',
+  drate SMALLINT(4) NOT NULL default '0',
+  maxuploads TINYINT(3) unsigned NOT NULL default '0',
+  superseeder ENUM('0','1') NOT NULL default '0',
+  runtime ENUM('True','False') NOT NULL default 'False',
+  sharekill SMALLINT(4) unsigned NOT NULL default '0',
+  minport SMALLINT(5) unsigned NOT NULL default '0',
+  maxport SMALLINT(5) unsigned NOT NULL default '0',
+  maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  PRIMARY KEY  (transfer)
+) TYPE=MyISAM;
+
+--
+-- tf_transfer_totals
+--
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
+) TYPE=MyISAM;
+
+--
+-- tf_trprofiles
+--
+CREATE TABLE tf_trprofiles (
+  id MEDIUMINT(8) NOT NULL auto_increment,
+  name VARCHAR(255) NOT NULL default '',
+  owner INT(10) NOT NULL default '0',
+  public ENUM('0','1') NOT NULL default '0',
   rate SMALLINT(4) unsigned NOT NULL default '0',
   drate SMALLINT(4) unsigned NOT NULL default '0',
   maxuploads TINYINT(3) unsigned NOT NULL default '0',
@@ -24,21 +59,8 @@ CREATE TABLE tf_torrents (
   minport SMALLINT(5) unsigned NOT NULL default '0',
   maxport SMALLINT(5) unsigned NOT NULL default '0',
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
-) TYPE=MyISAM;
-
---
--- tf_torrent_totals
---
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
+  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
+  PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
 --
@@ -61,27 +83,6 @@ CREATE TABLE tf_settings_user (
   uid INT(10) NOT NULL,
   tf_key VARCHAR(255) NOT NULL default '',
   tf_value TEXT NOT NULL
-) TYPE=MyISAM;
-
---
--- tf_trprofiles
---
-CREATE TABLE tf_trprofiles (
-  id MEDIUMINT(8) NOT NULL auto_increment,
-  name VARCHAR(255) NOT NULL default '',
-  owner INT(10) NOT NULL default '0',
-  public ENUM('0','1') NOT NULL default '0',
-  rate SMALLINT(4) unsigned NOT NULL default '0',
-  drate SMALLINT(4) unsigned NOT NULL default '0',
-  maxuploads TINYINT(3) unsigned NOT NULL default '0',
-  superseeder ENUM('0','1') NOT NULL default '0',
-  runtime ENUM('True','False') NOT NULL default 'False',
-  sharekill SMALLINT(4) unsigned NOT NULL default '0',
-  minport SMALLINT(5) unsigned NOT NULL default '0',
-  maxport SMALLINT(5) unsigned NOT NULL default '0',
-  maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
 --

@@ -90,10 +90,15 @@ CREATE TABLE tf_users (
 ) TYPE=MyISAM;
 
 --
--- tf_torrents
+-- tf_transfers
 --
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
+  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  hash VARCHAR(40) NOT NULL DEFAULT '',
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
   running ENUM('0','1') NOT NULL default '0',
   rate SMALLINT(4) NOT NULL default '0',
   drate SMALLINT(4) NOT NULL default '0',
@@ -104,11 +109,17 @@ CREATE TABLE tf_torrents (
   minport SMALLINT(5) unsigned NOT NULL default '0',
   maxport SMALLINT(5) unsigned NOT NULL default '0',
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
+  PRIMARY KEY  (transfer)
+) TYPE=MyISAM;
+
+--
+-- tf_transfer_totals
+--
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
 ) TYPE=MyISAM;
 
 --
@@ -130,16 +141,6 @@ CREATE TABLE tf_trprofiles (
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
   rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
-) TYPE=MyISAM;
-
---
--- tf_torrent_totals
---
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
 ) TYPE=MyISAM;
 
 --

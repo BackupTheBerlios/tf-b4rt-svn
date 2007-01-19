@@ -15,10 +15,15 @@
 BEGIN;
 
 --
--- tf_torrents
+-- tf_transfers
 --
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL DEFAULT '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL DEFAULT '',
+  type VARCHAR(32) NOT NULL DEFAULT 'torrent',
+  client VARCHAR(32) NOT NULL DEFAULT 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL DEFAULT '',  
+  savepath VARCHAR(255) NOT NULL DEFAULT '',
   running INT2 NOT NULL DEFAULT '0',
   rate INT2 NOT NULL DEFAULT '0',
   drate INT2 NOT NULL DEFAULT '0',
@@ -29,10 +34,6 @@ CREATE TABLE tf_torrents (
   minport INT2 NOT NULL DEFAULT '0',
   maxport INT2 NOT NULL DEFAULT '0',
   maxcons INT2 NOT NULL DEFAULT '0',
-  savepath VARCHAR(255) NOT NULL DEFAULT '',
-  btclient VARCHAR(32) NOT NULL DEFAULT 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL DEFAULT '',
   PRIMARY KEY (torrent),
   CHECK (running>=0),
   CHECK (maxuploads>=0),
@@ -42,32 +43,13 @@ CREATE TABLE tf_torrents (
 );
 
 --
--- tf_torrent_totals
+-- tf_transfer_totals
 --
-CREATE TABLE tf_torrent_totals (
+CREATE TABLE tf_transfer_totals (
   tid VARCHAR(40) NOT NULL DEFAULT '',
   uptotal INT8 NOT NULL DEFAULT '0',
   downtotal INT8 NOT NULL DEFAULT '0',
   PRIMARY KEY (tid)
-);
-
---
--- tf_xfer
---
-CREATE TABLE tf_xfer (
-  user_id VARCHAR(32) NOT NULL DEFAULT '',
-  date DATE NOT NULL DEFAULT '0001-01-01',
-  download INT8 NOT NULL DEFAULT '0',
-  upload INT8 NOT NULL DEFAULT '0'
-);
-
---
--- tf_settings_user
---
-CREATE TABLE tf_settings_user (
-  uid INT4 NOT NULL,
-  tf_key VARCHAR(255) NOT NULL DEFAULT '',
-  tf_value TEXT DEFAULT '' NOT NULL
 );
 
 --
@@ -100,6 +82,25 @@ CREATE TABLE tf_trprofiles (
   CHECK (maxport>=0),
   CHECK (maxcons>=0),
   CHECK (rerequest>=0)
+);
+
+--
+-- tf_xfer
+--
+CREATE TABLE tf_xfer (
+  user_id VARCHAR(32) NOT NULL DEFAULT '',
+  date DATE NOT NULL DEFAULT '0001-01-01',
+  download INT8 NOT NULL DEFAULT '0',
+  upload INT8 NOT NULL DEFAULT '0'
+);
+
+--
+-- tf_settings_user
+--
+CREATE TABLE tf_settings_user (
+  uid INT4 NOT NULL,
+  tf_key VARCHAR(255) NOT NULL DEFAULT '',
+  tf_value TEXT DEFAULT '' NOT NULL
 );
 
 --

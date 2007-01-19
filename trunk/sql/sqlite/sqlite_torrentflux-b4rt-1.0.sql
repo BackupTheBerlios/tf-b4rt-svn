@@ -89,10 +89,15 @@ CREATE TABLE tf_users (
 ) ;
 
 --
--- tf_torrents
+-- tf_transfers
 --
-CREATE TABLE tf_torrents (
-  torrent VARCHAR(255) NOT NULL default '',
+CREATE TABLE tf_transfers (
+  transfer VARCHAR(255) NOT NULL default '',
+  type VARCHAR(32) NOT NULL default 'torrent',
+  client VARCHAR(32) NOT NULL default 'tornado',
+  hash VARCHAR(40) DEFAULT '' NOT NULL,
+  datapath VARCHAR(255) NOT NULL default '',
+  savepath VARCHAR(255) NOT NULL default '',
   running INTEGER(1) NOT NULL default '0',
   rate INTEGER(4) NOT NULL default '0',
   drate INTEGER(4) NOT NULL default '0',
@@ -103,11 +108,17 @@ CREATE TABLE tf_torrents (
   minport INTEGER(5) NOT NULL default '0',
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
-  savepath VARCHAR(255) NOT NULL default '',
-  btclient VARCHAR(32) NOT NULL default 'tornado',
-  hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL default '',
-  PRIMARY KEY  (torrent)
+  PRIMARY KEY  (transfer)
+) ;
+
+--
+-- tf_transfer_totals
+--
+CREATE TABLE tf_transfer_totals (
+  tid VARCHAR(40) NOT NULL default '',
+  uptotal BIGINT(80) NOT NULL default '0',
+  downtotal BIGINT(80) NOT NULL default '0',
+  PRIMARY KEY  (tid)
 ) ;
 
 --
@@ -128,17 +139,6 @@ CREATE TABLE tf_trprofiles (
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
   rerequest INTEGER(8) NOT NULL default '0'
-) ;
-
-
---
--- tf_torrent_totals
---
-CREATE TABLE tf_torrent_totals (
-  tid VARCHAR(40) NOT NULL default '',
-  uptotal BIGINT(80) NOT NULL default '0',
-  downtotal BIGINT(80) NOT NULL default '0',
-  PRIMARY KEY  (tid)
 ) ;
 
 --
