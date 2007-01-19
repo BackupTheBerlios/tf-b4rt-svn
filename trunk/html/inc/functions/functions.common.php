@@ -1455,13 +1455,14 @@ function waitForTransfer($transfer, $state, $maxWait = 15) {
  *
  * @param $transfer name of the torrent
  * @param $delete boolean if to delete torrent-file
- * @return message
+ * @return array
  */
 function resetTorrentTotals($transfer, $delete = false) {
 	global $cfg, $db, $transfers;
 	$msgs = array();
+	$tid = getTorrentHash($transfer);
 	// delete torrent
-	if ($delete == true) {
+	if ($delete) {
 		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
 		$clientHandler->delete($transfer);
 		if (count($clientHandler->messages) > 0)
@@ -1474,7 +1475,7 @@ function resetTorrentTotals($transfer, $delete = false) {
 		$sf->write();
 	}
 	// reset in db
-	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".getTorrentHash($transfer)."'";
+	$sql = "DELETE FROM tf_torrent_totals WHERE tid = '".$tid."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	// set transfers-cache
