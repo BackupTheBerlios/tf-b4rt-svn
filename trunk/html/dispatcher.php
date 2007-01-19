@@ -381,9 +381,10 @@ switch ($action) {
 					break;
 
 				default:
-					if (!$tRunningFlag) {
+					if ($tRunningFlag) {
 						// stop torrent first
 						$clientHandler = ClientHandler::getInstance($tclient);
+						// munk: why stop transfer if $tRunningFlag not set?'
 						$clientHandler->stop($transfer);
 						if (count($clientHandler->messages) > 0)
                     		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
