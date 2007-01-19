@@ -1483,10 +1483,10 @@ function resetTransferTotals($transfer, $delete = false) {
 	$tid = getTransferHash($transfer);
 	// delete meta-file
 	if ($delete) {
-		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-		$clientHandler->delete($transfer);
-		if (count($clientHandler->messages) > 0)
-    		$msgs = array_merge($msgs, $clientHandler->messages);
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$ch->delete($transfer);
+		if (count($ch->messages) > 0)
+    		$msgs = array_merge($msgs, $ch->messages);
 	} else {
 		// reset in stat-file
 		$sf = new StatFile($transfer, getOwner($transfer));
@@ -1623,8 +1623,8 @@ function getRunningClientProcesses($client = '') {
 	$retVal = array();
 	foreach ($clients as $client) {
 		// client-handler
-		$clientHandler = ClientHandler::getInstance($client);
-		$procs = $clientHandler->runningProcesses();
+		$ch = ClientHandler::getInstance($client);
+		$procs = $ch->runningProcesses();
 		if (!empty($procs))
 			$retVal = array_merge($retVal, $procs);
 	}
@@ -1647,8 +1647,8 @@ function getRunningClientProcessInfo($client = '') {
 	$retVal = "";
 	foreach ($clients as $client) {
 		// client-handler
-		$clientHandler = ClientHandler::getInstance($client);
-		$retVal .= $clientHandler->runningProcessInfo();
+		$ch = ClientHandler::getInstance($client);
+		$retVal .= $ch->runningProcessInfo();
 	}
 	// return
 	return $retVal;

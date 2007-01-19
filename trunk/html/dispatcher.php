@@ -95,25 +95,25 @@ switch ($action) {
 		}
 		$url = getRequestVar('url');
 		if (!empty($url)) {
-			$clientHandler = ClientHandler::getInstance('wget');
-			$clientHandler->inject($url);
+			$ch = ClientHandler::getInstance('wget');
+			$ch->inject($url);
 			// instant action ?
 			$actionId = getRequestVar('aid');
 			if ($actionId > 1) {
 				switch ($actionId) {
 					case 3:
-						$clientHandler->start($clientHandler->transfer, false, true);
+						$ch->start($ch->transfer, false, true);
 						break;
 					case 2:
-						$clientHandler->start($clientHandler->transfer, false, false);
+						$ch->start($ch->transfer, false, false);
 						break;
 				}
-				if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+				if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 					$msgs = array();
 					array_push($msgs, "url : ".$url);
 					array_push($msgs, "\nmessages :");
-					$msgs = array_merge($msgs, $clientHandler->messages);
-					AuditAction($cfg["constants"]["error"], "Start failed: ".$url."\n".implode("\n", $clientHandler->messages));
+					$msgs = array_merge($msgs, $ch->messages);
+					AuditAction($cfg["constants"]["error"], "Start failed: ".$url."\n".implode("\n", $ch->messages));
 					@error("Start failed", "", "", $msgs);
 				}
 			}
@@ -180,10 +180,10 @@ switch ($action) {
     	foreach ($transferList as $transfer) {
             if (isTransferRunning($transfer)) {
                 if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
-                    $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-                    $clientHandler->stop($transfer);
-                    if (count($clientHandler->messages) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+                    $ch = ClientHandler::getInstance(getTransferClient($transfer));
+                    $ch->stop($transfer);
+                    if (count($ch->messages) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
                 }
             }
     	}
@@ -208,10 +208,10 @@ switch ($action) {
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-                    $clientHandler->start($transfer, false, false);
-                    if (count($clientHandler->messages) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+                    $ch = ClientHandler::getInstance(getTransferClient($transfer));
+                    $ch->start($transfer, false, false);
+                    if (count($ch->messages) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
                 }
             }
     	}
@@ -236,10 +236,10 @@ switch ($action) {
                         // Process setPriority Request.
                         setPriority($transfer);
                     }
-                    $clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-                    $clientHandler->start($transfer, false, false);
-                    if (count($clientHandler->messages) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+                    $ch = ClientHandler::getInstance(getTransferClient($transfer));
+                    $ch->start($transfer, false, false);
+                    if (count($ch->messages) > 0)
+                    	$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
                 }
             }
     	}
@@ -326,19 +326,19 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance($client);
-						$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
-						if (count($clientHandler->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+						$ch = ClientHandler::getInstance($client);
+						$ch->start($transfer, false, FluxdQmgr::isRunning());
+						if (count($ch->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
 					}
 					break;
 
 				case "transferStop": /* transferStop */
 					if ($tRunningFlag) {
-						$clientHandler = ClientHandler::getInstance($client);
-						$clientHandler->stop($transfer);
-						if (count($clientHandler->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+						$ch = ClientHandler::getInstance($client);
+						$ch->stop($transfer);
+						if (count($ch->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
 					}
 					break;
 
@@ -350,10 +350,10 @@ switch ($action) {
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance($client);
-						$clientHandler->start($transfer, false, true);
-						if (count($clientHandler->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+						$ch = ClientHandler::getInstance($client);
+						$ch->start($transfer, false, true);
+						if (count($ch->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
 					}
 					break;
 
@@ -373,10 +373,10 @@ switch ($action) {
 				default:
 					if ($tRunningFlag) {
 						// stop first
-						$clientHandler = ClientHandler::getInstance($client);
-						$clientHandler->stop($transfer);
-						if (count($clientHandler->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+						$ch = ClientHandler::getInstance($client);
+						$ch->stop($transfer);
+						if (count($ch->messages) > 0)
+                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
 						// is transfer running ?
 						$tRunningFlag = isTransferRunning($transfer);
 					}
@@ -393,10 +393,10 @@ switch ($action) {
 							case "transferData": /* transferData */
 								deleteTransferData($transfer);
 							case "transfer": /* transfer */
-								$clientHandler = ClientHandler::getInstance($client);
-								$clientHandler->delete($transfer);
-								if (count($clientHandler->messages) > 0)
-                    				$dispatcherMessages = array_merge($dispatcherMessages, $clientHandler->messages);
+								$ch = ClientHandler::getInstance($client);
+								$ch->delete($transfer);
+								if (count($ch->messages) > 0)
+                    				$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
 						}
 					}
 

@@ -76,9 +76,9 @@ if (isset($transfers['settings'][$transfer])) {
 // totals
 $afu = $sf->uptotal;
 $afd = $sf->downtotal;
-$clientHandler = ClientHandler::getInstance($settingsAry['client']);
-$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
-$totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
+$ch = ClientHandler::getInstance($settingsAry['client']);
+$totalsCurrent = $ch->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
+$totals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 // owner
 $tmpl->setvar('transferowner', $transferowner);
 

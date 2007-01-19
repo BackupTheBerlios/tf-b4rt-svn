@@ -439,25 +439,21 @@ class SimpleHTTP
 			){
 
 			// Give CURL a Try
-			$ch = curl_init();
-
+			$curl = curl_init();
 			if ($this->cookie != "")
-				curl_setopt($ch, CURLOPT_COOKIE, $this->cookie);
-
-			curl_setopt($ch, CURLOPT_PORT, $domain["port"]);
-			curl_setopt($ch, CURLOPT_URL, $this->url);
-			curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
-			curl_setopt($ch, CURLOPT_HEADER, FALSE);
-			curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-			curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
-
-			$this->responseBody = curl_exec($ch);
-
-			curl_close($ch);
+				curl_setopt($curl, CURLOPT_COOKIE, $this->cookie);
+			curl_setopt($curl, CURLOPT_PORT, $domain["port"]);
+			curl_setopt($curl, CURLOPT_URL, $this->url);
+			curl_setopt($curl, CURLOPT_VERBOSE, FALSE);
+			curl_setopt($curl, CURLOPT_HEADER, FALSE);
+			curl_setopt($curl, CURLOPT_USERAGENT, $this->userAgent);
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+			curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
+			$this->responseBody = curl_exec($curl);
+			curl_close($curl);
 		}
 
 		// Trim any extraneous linefeed chars:

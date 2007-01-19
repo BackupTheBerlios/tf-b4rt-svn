@@ -153,8 +153,8 @@ foreach ($arList as $transfer) {
 	// totals-preparation
 	// if downtotal + uptotal + progress > 0
 	if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-		$clientHandler = ClientHandler::getInstance($settingsAry['client']);
-		$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
+		$ch = ClientHandler::getInstance($settingsAry['client']);
+		$transferTotals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 	}
 
 	// ---------------------------------------------------------------------

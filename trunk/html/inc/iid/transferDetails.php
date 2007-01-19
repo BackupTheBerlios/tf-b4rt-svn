@@ -59,9 +59,9 @@ if (substr($transfer, -8) == ".torrent") {
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
 	$tmpl->setvar('clientType', "wget");
-	$clientHandler = ClientHandler::getInstance('wget');
-	$clientHandler->setVarsFromFile($transfer);
-	$tmpl->setvar('transferUrl', $clientHandler->url);
+	$ch = ClientHandler::getInstance('wget');
+	$ch->setVarsFromFile($transfer);
+	$tmpl->setvar('transferUrl', $ch->url);
 } else if (substr($transfer, -4) == ".nzb") {
 	// this is nzbperl.
 	$tmpl->setvar('clientType', "nzb");

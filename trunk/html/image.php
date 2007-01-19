@@ -66,8 +66,8 @@ switch ($imageOp) {
 			Image::paintNoOp();
 		}
 		// client-handler + totals
-		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-		$totals = $clientHandler->getTransferTotal($transfer);
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$totals = $ch->getTransferTotal($transfer);
 		// draw image
 		Image::paintPie3D(
 			202,

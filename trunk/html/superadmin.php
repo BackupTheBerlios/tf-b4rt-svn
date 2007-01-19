@@ -106,8 +106,8 @@ if (isset($_REQUEST["t"])) {
 				$torrents = getTorrentListFromFS();
 				foreach ($torrents as $transfer) {
 					if (isTransferRunning($transfer)) {
-						$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-						$clientHandler->stop($transfer);
+						$ch = ClientHandler::getInstance(getTransferClient($transfer));
+						$ch->stop($transfer);
 						$htmlMain .=  ' - '.$transfer."";
 						$htmlMain .=  "\n";
 					}
@@ -128,8 +128,8 @@ if (isset($_REQUEST["t"])) {
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-						$clientHandler->start($transfer, false, false);
+						$ch = ClientHandler::getInstance(getTransferClient($transfer));
+						$ch->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";
 						$htmlMain .=  "\n";
 					}
@@ -150,8 +150,8 @@ if (isset($_REQUEST["t"])) {
 							// Process setPriority Request.
 							setPriority($transfer);
 						}
-						$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-						$clientHandler->start($transfer, false, false);
+						$ch = ClientHandler::getInstance(getTransferClient($transfer));
+						$ch->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";
 						$htmlMain .=  "\n";
 					}
@@ -203,15 +203,15 @@ if (isset($_REQUEST["p"])) {
 				$htmlMain .= '</pre>';
 				$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
 				foreach ($clients as $client) {
-					$clientHandler = ClientHandler::getInstance($client);
+					$ch = ClientHandler::getInstance($client);
 					$htmlMain .= '<p><strong>'.$client.'</strong>';
 					$htmlMain .= '<br>';
 					$htmlMain .= '<pre>';
-					$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." ".$clientHandler->binClient." | ".$cfg['bin_grep']." -v grep");
+					$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." ".$ch->binClient." | ".$cfg['bin_grep']." -v grep");
 					$htmlMain .= '</pre>';
 					$htmlMain .= '<br>';
 					$htmlMain .= '<pre>';
-					$htmlMain .= $clientHandler->runningProcessInfo();
+					$htmlMain .= $ch->runningProcessInfo();
 					$htmlMain .= '</pre>';
 				}
 				$htmlMain .= '</div>';

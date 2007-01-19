@@ -50,11 +50,11 @@ if (isValidTransfer($transfer)) {
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
 		$inValid = false;
-		$clientHandler = ClientHandler::getInstance('wget');
-		$clientHandler->setVarsFromFile($transfer);
+		$ch = ClientHandler::getInstance('wget');
+		$ch->setVarsFromFile($transfer);
 		$metaInfo  = '<table>';
 		$metaInfo .= '<tr><td width="110" align="left">Metainfo File:</td><td>'.$transfer.'</td></tr>';
-		$metaInfo .= '<tr><td align="left">URL:</td><td align="left">'.$clientHandler->url.'</td></tr>';
+		$metaInfo .= '<tr><td align="left">URL:</td><td align="left">'.$ch->url.'</td></tr>';
 		$metaInfo .= '</table>';
 		$tmpl->setvar('metaInfo', $metaInfo);
 	} else if (substr($transfer, -4) == ".nzb") {

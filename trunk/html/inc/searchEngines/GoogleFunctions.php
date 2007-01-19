@@ -65,26 +65,21 @@ function FetchHTMLNoWaitNoFollow( $url, $referer = "" )
     if (($rtnValue == "" && function_exists("curl_init")) || /*(strpos($rtnValue, "HTTP/1.1 302") > 0 &&*/ function_exists("curl_init"))//)
     {
         // Give CURL a Try
-        $ch = curl_init();
+        $curl = curl_init();
         if ($cookie != "")
-        {
-            curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-        }
-        curl_setopt($ch, CURLOPT_PORT, $domain["port"]);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_VERBOSE, FALSE);
-        curl_setopt($ch, CURLOPT_HEADER, TRUE);
-        curl_setopt($ch, CURLOPT_USERAGENT, $cfg['user_agent']);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, FALSE);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-
-        $response = curl_exec($ch);
-
-        curl_close($ch);
-
+            curl_setopt($curl, CURLOPT_COOKIE, $cookie);
+        curl_setopt($curl, CURLOPT_PORT, $domain["port"]);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_VERBOSE, FALSE);
+        curl_setopt($curl, CURLOPT_HEADER, TRUE);
+        curl_setopt($curl, CURLOPT_USERAGENT, $cfg['user_agent']);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, FALSE);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+        $response = curl_exec($curl);
+        curl_close($curl);
         $rtnValue = substr($response, strpos($response, "d8:"));
         $rtnValue = rtrim($rtnValue, "\r\n");
     }

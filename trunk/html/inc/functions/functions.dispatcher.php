@@ -53,14 +53,14 @@ function indexStartTransfer($transfer) {
 					@error("wget is disabled for users", "index.php?iid=index", "");
 				}
 			}
-			$clientHandler = ClientHandler::getInstance('wget');
-			$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
-			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+			$ch = ClientHandler::getInstance('wget');
+			$ch->start($transfer, false, FluxdQmgr::isRunning());
+			if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 				$msgs = array();
 				array_push($msgs, "transfer : ".$transfer);
 				array_push($msgs, "\nmessages :");
-				$msgs = array_merge($msgs, $clientHandler->messages);
-				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+				$msgs = array_merge($msgs, $ch->messages);
+				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
 				@error("Start failed", "", "", $msgs);
 			} else {
 				@header("location: index.php?iid=index");
@@ -78,14 +78,14 @@ function indexStartTransfer($transfer) {
 					@error("nzbperl is disabled for users", "index.php?iid=index", "");
 				}
 			}
-			$clientHandler = ClientHandler::getInstance('nzbperl');
-			$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
-			if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+			$ch = ClientHandler::getInstance('nzbperl');
+			$ch->start($transfer, false, FluxdQmgr::isRunning());
+			if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 				$msgs = array();
 				array_push($msgs, "transfer : ".$transfer);
 				array_push($msgs, "\nmessages :");
-				$msgs = array_merge($msgs, $clientHandler->messages);
-				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+				$msgs = array_merge($msgs, $ch->messages);
+				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
 				@error("Start failed", "", "", $msgs);
 			} else {
 				@header("location: index.php?iid=index");
@@ -117,19 +117,19 @@ function indexStartTorrent($transfer, $interactive) {
 		// This is a setPriorityOnly Request.
 		return 1;
 	}
-	$clientHandler = ($interactive == 1)
+	$ch = ($interactive == 1)
 		? ClientHandler::getInstance(getRequestVar('btclient'))
 		: ClientHandler::getInstance(getTransferClient($transfer));
 	if ($interactive == 1)
-		$clientHandler->start($transfer, true, (getRequestVar('queue') == 'true') ? FluxdQmgr::isRunning() : false);
+		$ch->start($transfer, true, (getRequestVar('queue') == 'true') ? FluxdQmgr::isRunning() : false);
 	else
-		$clientHandler->start($transfer, false, FluxdQmgr::isRunning());
-	if ($clientHandler->state == CLIENTHANDLER_STATE_ERROR) { // start failed
+		$ch->start($transfer, false, FluxdQmgr::isRunning());
+	if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 		$msgs = array();
 		array_push($msgs, "transfer : ".$transfer);
 		array_push($msgs, "\nmessages :");
-		$msgs = array_merge($msgs, $clientHandler->messages);
-		AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $clientHandler->messages));
+		$msgs = array_merge($msgs, $ch->messages);
+		AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
 		@error("Start failed", "", "", $msgs);
 	} else {
 		if (array_key_exists("closeme", $_POST)) {
@@ -155,7 +155,7 @@ function indexStopTransfer($transfer) {
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -8) == ".torrent") {
 			$invalid = false;
-			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if (substr($transfer, -5) == ".wget") {
 			// is enabled ?
 			if ($cfg["enable_wget"] == 0) {
@@ -168,7 +168,7 @@ function indexStopTransfer($transfer) {
 				}
 			}
 			$invalid = false;
-			$clientHandler = ClientHandler::getInstance('wget');
+			$ch = ClientHandler::getInstance('wget');
 		} else if (substr($transfer, -4) == ".nzb") {
 			if ($cfg["enable_nzbperl"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to stop nzbperl ".$transfer);
@@ -180,12 +180,12 @@ function indexStopTransfer($transfer) {
 				}
 			}
 			$invalid = false;
-			$clientHandler = ClientHandler::getInstance('nzbperl');
+			$ch = ClientHandler::getInstance('nzbperl');
 		}
 		if (!$invalid) {
-			$clientHandler->stop($transfer);
-			if (count($clientHandler->messages) > 0)
-	    		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
+			$ch->stop($transfer);
+			if (count($ch->messages) > 0)
+	    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
 		}
 	}
 	if ($invalid) {
@@ -205,7 +205,7 @@ function forceStopTransfer($transfer, $pid) {
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -8) == ".torrent") {
 			$invalid = false;
-			$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if (substr($transfer, -5) == ".wget") {
 			// is enabled ?
 			if ($cfg["enable_wget"] == 0) {
@@ -218,7 +218,7 @@ function forceStopTransfer($transfer, $pid) {
 				}
 			}
 			$invalid = false;
-			$clientHandler = ClientHandler::getInstance('wget');
+			$ch = ClientHandler::getInstance('wget');
 		} else if (substr($transfer, -4) == ".nzb") {
 			if ($cfg["enable_nzbperl"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to force-stop nzbperl ".$transfer);
@@ -230,12 +230,12 @@ function forceStopTransfer($transfer, $pid) {
 				}
 			}
 			$invalid = false;
-			$clientHandler = ClientHandler::getInstance('nzbperl');
+			$ch = ClientHandler::getInstance('nzbperl');
 		}
 		if (!$invalid) {
-			$clientHandler->stop($transfer, true, $pid);
-			if (count($clientHandler->messages) > 0)
-	    		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
+			$ch->stop($transfer, true, $pid);
+			if (count($ch->messages) > 0)
+	    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
 		}
 	}
 	if ($invalid) {
@@ -275,10 +275,10 @@ function indexDeleteTransfer($transfer) {
 				}
 			}
 		}
-		$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
-		$clientHandler->delete($transfer);
-		if (count($clientHandler->messages) > 0)
-    		@error("There were Problems", "index.php?iid=index", "", $clientHandler->messages);
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$ch->delete($transfer);
+		if (count($ch->messages) > 0)
+    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
 		@header("location: index.php?iid=index");
 		exit();
 	} else {
@@ -450,17 +450,17 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 					// Process setPriority Request.
 					setPriority($file_name);
 				}
-				$clientHandler = ClientHandler::getInstance(getTransferClient($file_name));
+				$ch = ClientHandler::getInstance(getTransferClient($file_name));
 				switch ($actionId) {
 					case 3:
-						$clientHandler->start($file_name, false, true);
+						$ch->start($file_name, false, true);
 						break;
 					case 2:
-						$clientHandler->start($file_name, false, false);
+						$ch->start($file_name, false, false);
 						break;
 				}
-				if (count($clientHandler->messages) > 0)
-               		$downloadMessages = array_merge($downloadMessages, $clientHandler->messages);
+				if (count($ch->messages) > 0)
+               		$downloadMessages = array_merge($downloadMessages, $ch->messages);
 			}
 		}
 	} else {
@@ -531,17 +531,17 @@ function indexProcessUpload() {
 								// Process setPriority Request.
 								setPriority($file_name);
 							}
-							$clientHandler = ClientHandler::getInstance(getTransferClient($file_name));
+							$ch = ClientHandler::getInstance(getTransferClient($file_name));
 							switch ($actionId) {
 								case 3:
-									$clientHandler->start($file_name, false, true);
+									$ch->start($file_name, false, true);
 									break;
 								case 2:
-									$clientHandler->start($file_name, false, false);
+									$ch->start($file_name, false, false);
 									break;
 							}
-							if (count($clientHandler->messages) > 0)
-               					$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
+							if (count($ch->messages) > 0)
+               					$uploadMessages = array_merge($uploadMessages, $ch->messages);
 						}
 					} else {
 						array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
@@ -656,17 +656,17 @@ function processFileUpload() {
 					// Process setPriority Request.
 					setPriority($transfer);
 				}
-				$clientHandler = ClientHandler::getInstance(getTransferClient($transfer));
+				$ch = ClientHandler::getInstance(getTransferClient($transfer));
 				switch ($actionId) {
 					case 3:
-						$clientHandler->start($transfer, false, true);
+						$ch->start($transfer, false, true);
 						break;
 					case 2:
-						$clientHandler->start($transfer, false, false);
+						$ch->start($transfer, false, false);
 						break;
 				}
-				if (count($clientHandler->messages) > 0)
-           			$uploadMessages = array_merge($uploadMessages, $clientHandler->messages);
+				if (count($ch->messages) > 0)
+           			$uploadMessages = array_merge($uploadMessages, $ch->messages);
 			}
 		}
 	}

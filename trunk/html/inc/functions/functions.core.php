@@ -494,8 +494,8 @@ function netstatPortList() {
 			$clients = array('tornado', 'transmission', 'wget', 'nzbperl');
 			// get informations
 			foreach ($clients as $client) {
-				$clientHandler = ClientHandler::getInstance($client);
-				$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
+				$ch = ClientHandler::getInstance($client);
+				$retStr .= shell_exec($cfg['bin_netstat']." -e -l -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." ". $ch->binSocket ." | ".$cfg['bin_awk']." '{print \$4}' | ".$cfg['bin_awk']." 'BEGIN{FS=\":\"}{print \$2}'");
 			}
 			break;
 		case 2: // bsd
@@ -551,8 +551,8 @@ function netstatHostList() {
 			$clients = array('tornado', 'transmission', 'wget', 'nzbperl');
 			// get informations
 			foreach($clients as $client) {
-				$clientHandler = ClientHandler::getInstance($client);
-				$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $clientHandler->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
+				$ch = ClientHandler::getInstance($client);
+				$retStr .= shell_exec($cfg['bin_netstat']." -e -p --tcp --numeric-hosts --numeric-ports 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." ". $ch->binSocket ." | ".$cfg['bin_awk']." '{print \$5}'");
 			}
 			break;
 		case 2: // bsd
@@ -1268,8 +1268,8 @@ function getTransferListArray() {
 		// totals-preparation
 		// if downtotal + uptotal + progress > 0
 		if (($settings[2] + $settings[3] + $settings[5]) > 0) {
-			$clientHandler = ClientHandler::getInstance($settingsAry['client']);
-			$transferTotals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
+			$ch = ClientHandler::getInstance($settingsAry['client']);
+			$transferTotals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $sf->uptotal, $sf->downtotal);
 		}
 
 		// ---------------------------------------------------------------------
@@ -1599,9 +1599,9 @@ function getTransferDetails($transfer, $full) {
 	// totals
 	$afu = $sf->uptotal;
 	$afd = $sf->downtotal;
-	$clientHandler = ClientHandler::getInstance($settingsAry['client']);
-	$totalsCurrent = $clientHandler->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
-	$totals = $clientHandler->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
+	$ch = ClientHandler::getInstance($settingsAry['client']);
+	$totalsCurrent = $ch->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
+	$totals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
 	// running
 	$running = $sf->running;
 	$details['running'] = $running;
@@ -1991,10 +1991,10 @@ function getDownloadSize($transfer) {
 			: 0;
 	} else if (substr($transfer, -5) == ".wget") {
 		// this is wget.
-		$clientHandler = ClientHandler::getInstance('wget');
-		$clientHandler->setVarsFromFile($transfer);
+		$ch = ClientHandler::getInstance('wget');
+		$ch->setVarsFromFile($transfer);
 		require_once("inc/classes/SimpleHTTP.php");
-		return SimpleHTTP::getRemoteSize($clientHandler->url);
+		return SimpleHTTP::getRemoteSize($ch->url);
 	} else if (substr($transfer, -4) == ".nzb") {
 		// this is nzbperl.
 		require_once("inc/classes/NZBFile.php");
