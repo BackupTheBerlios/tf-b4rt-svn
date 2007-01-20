@@ -249,7 +249,7 @@ class FluxdQmgr extends FluxdServiceMod
         }
         if ($modded == 0) {
             if ($sf->percent_done == 100) {
-                // Torrent was seeding and is now being stopped
+                // transfer was done and is now being stopped
                 $sf->running = "0";
                 $sf->time_left = "Download Succeeded!";
                 $modded++;

@@ -832,38 +832,6 @@ function getRunningTransferCount() {
 }
 
 /**
- * gets torrent-list from file-system. (never-started are included here)
- * @return array with torrents
- */
-function getTorrentListFromFS() {
-	global $cfg;
-	$retVal = array();
-	if ($dirHandle = opendir($cfg["transfer_file_path"])) {
-		while (false !== ($file = readdir($dirHandle))) {
-			if ((substr($file, -2)) == "nt")
-				array_push($retVal, $file);
-		}
-		closedir($dirHandle);
-	}
-	return $retVal;
-}
-
-/**
- * gets torrent-list from database.
- * @return array with torrents
- */
-function getTorrentListFromDB() {
-	global $db;
-	$retVal = array();
-	$sql = "SELECT transfer FROM tf_transfers WHERE type = 'torrent' ORDER BY transfer ASC";
-	$recordset = $db->Execute($sql);
-	if ($db->ErrorNo() != 0) dbError($sql);
-	while(list($transfer) = $recordset->FetchRow())
-		array_push($retVal, $transfer);
-	return $retVal;
-}
-
-/**
  * gets metainfo of a torrent as string
  *
  * @param $transfer name of the torrent
@@ -1103,6 +1071,22 @@ function getEngineLink($searchEngine) {
 }
 
 /**
+ * This method gets transfers from database in an array
+ *
+ * @return array with transfers
+ */
+function getTransferArrayFromDB() {
+	global $db;
+	$retVal = array();
+	$sql = "SELECT transfer FROM tf_transfers ORDER BY transfer ASC";
+	$recordset = $db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	while(list($transfer) = $recordset->FetchRow())
+		array_push($retVal, $transfer);
+	return $retVal;
+}
+
+/**
  * This method gets transfers in an array
  *
  * @param $sortOrder
@@ -1113,30 +1097,30 @@ function getTransferArray($sortOrder = '') {
 	$handle = @opendir($cfg["transfer_file_path"]);
 	if (!$handle)
 		return null;
-	$arList = array();
+	$retVal = array();
 	while ($transfer = readdir($handle)) {
 		if (($transfer{0} != ".") && isValidTransfer($transfer))
-			$arList[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
+			$retVal[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
 	}
 	closedir($handle);
 	// sort transfer-array
 	$sortId = ($sortOrder != "") ? $sortOrder : $cfg["index_page_sortorder"];
 	switch ($sortId) {
 		case 'da': // sort by date ascending
-			ksort($arList);
+			ksort($retVal);
 			break;
 		case 'dd': // sort by date descending
-			krsort($arList);
+			krsort($retVal);
 			break;
 		case 'na': // sort alphabetically by name ascending
-			natcasesort($arList);
+			natcasesort($retVal);
 			break;
 		case 'nd': // sort alphabetically by name descending
-			natcasesort($arList);
-			$arList = array_reverse($arList, true);
+			natcasesort($retVal);
+			$retVal = array_reverse($retVal, true);
 			break;
 	}
-	return $arList;
+	return $retVal;
 }
 
 /**

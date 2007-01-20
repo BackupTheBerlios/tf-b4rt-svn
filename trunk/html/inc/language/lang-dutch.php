@@ -42,7 +42,7 @@ define("_TURNOFFREFRESH","Zet paginaverversing UIT");
 define("_WARNING","WAARSCHUWING");
 define("_DRIVESPACEUSED","Schijfruimte in gebruik!");
 define("_ADMINMESSAGE","U heeft een bericht van een beheerder in uw brievenbus");
-define("_TORRENTS","torrents");
+define("_TORRENTS","transfers");
 define("_UPLOADHISTORY","Upload-geschiedenis");
 define("_MYPROFILE","Bewerk mijn profiel");
 define("_ADMINISTRATION","Administratie");

@@ -176,7 +176,7 @@ switch ($action) {
 		}
 		// stop all
 		$dispatcherMessages = array();
-    	$transferList = getTorrentListFromFS();
+    	$transferList = getTransferArray();
     	foreach ($transferList as $transfer) {
             if (isTransferRunning($transfer)) {
                 if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
@@ -199,7 +199,7 @@ switch ($action) {
 		}
 		// resume all
 		$dispatcherMessages = array();
-    	$transferList = getTorrentListFromDB();
+    	$transferList = getTransferArrayFromDB();
     	foreach ($transferList as $transfer) {
             if (!isTransferRunning($transfer)) {
                 if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
@@ -227,7 +227,7 @@ switch ($action) {
 		}
 		// start all
 		$dispatcherMessages = array();
-    	$transferList = getTorrentListFromFS();
+    	$transferList = getTransferArray();
     	foreach ($transferList as $transfer) {
             if (!isTransferRunning($transfer)) {
                 if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {

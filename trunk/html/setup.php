@@ -545,7 +545,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$line .= '"></td></tr>';
 				$line .= '<tr><td>&nbsp;</td><td width="400"><strong>Note:</strong> this is what you may know as "path" (or "downloads") ';
 				$line .= 'from TF 2.1 and TF 2.1-b4rt - the parent directory where home directories will ';
-				$line .= 'be created and torrents will be downloaded to.</td></tr>';
+				$line .= 'be created and transfers will be downloaded to.</td></tr>';
 				send($line);
 				send('</table>');
 

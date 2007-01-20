@@ -41,7 +41,7 @@ function superadminAuthentication($message = "") {
 function buildPage($action) {
 	global $cfg, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
 	// navi
-	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Torrents</a>';
+	$htmlTop .= '<a href="' . _FILE_THIS . '?t=0">Transfers</a>';
 	$htmlTop .= ' | ';
 	$htmlTop .= '<a href="' . _FILE_THIS . '?p=0">Processes</a>';
 	$htmlTop .= ' | ';
@@ -171,7 +171,7 @@ function buildPage($action) {
 			$statusImage = "black.gif";
 			$htmlMain = '<br>';
 			$htmlMain .= '<p>';
-			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Torrents" border="0"> Torrents</a>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?p=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Processes" border="0"> Processes</a>';
 			$htmlMain .= '<p>';

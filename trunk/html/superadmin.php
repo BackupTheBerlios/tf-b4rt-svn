@@ -66,7 +66,7 @@ else
 
 /**
  *
- * t : torrents
+ * t : transfers
  * p : Processes
  * m : maintenance
  * b : backup
@@ -79,7 +79,7 @@ else
  */
 
 // -----------------------------------------------------------------------------
-// torrents "t"
+// transfers "t"
 // -----------------------------------------------------------------------------
 if (isset($_REQUEST["t"])) {
 	$torrentAction = @trim($_REQUEST["t"]);
@@ -87,24 +87,24 @@ if (isset($_REQUEST["t"])) {
 		buildPage("t");
 		switch($torrentAction) {
 
-			case "0": // Torrents-main
-				$htmlTitle = "Torrents";
+			case "0": // Transfers-main
+				$htmlTitle = "Transfers";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?t=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Stop All Torrents" border="0"> Stop All Torrents</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?t=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Stop All Transfers" border="0"> Stop All Transfers</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?t=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Start All Torrents" border="0"> Start All Torrents</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?t=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Start All Transfers" border="0"> Start All Transfers</a>';
 				$htmlMain .= '<p>';
-				$htmlMain .= '<a href="' . _FILE_THIS . '?t=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Resume All Torrents" border="0"> Resume All Torrents</a>';
+				$htmlMain .= '<a href="' . _FILE_THIS . '?t=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Resume All Transfers" border="0"> Resume All Transfers</a>';
 				$htmlMain .= '<br><br>';
 				break;
 
-			case "1": // Torrents-Stop
-				$htmlTitle = "Torrents - Stop";
-				$htmlMain .= '<br><strong>Torrents Stopped :</strong><br>';
+			case "1": // Transfers-Stop
+				$htmlTitle = "Transfers - Stop";
+				$htmlMain .= '<br><strong>Transfers Stopped :</strong><br>';
 				$htmlMain .= '<pre>';
-				$torrents = getTorrentListFromFS();
-				foreach ($torrents as $transfer) {
+				$transferList = getTransferArray();
+				foreach ($transferList as $transfer) {
 					if (isTransferRunning($transfer)) {
 						$ch = ClientHandler::getInstance(getTransferClient($transfer));
 						$ch->stop($transfer);
@@ -116,12 +116,12 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<hr><br>';
 				break;
 
-			case "2": // Torrents-Start
-				$htmlTitle = "Torrents - Start";
-				$htmlMain .= '<br><strong>Torrents Started :</strong><br>';
+			case "2": // Transfers-Start
+				$htmlTitle = "Transfers - Start";
+				$htmlMain .= '<br><strong>Transfers Started :</strong><br>';
 				$htmlMain .= '<pre>';
-				$torrents = getTorrentListFromFS();
-				foreach ($torrents as $transfer) {
+				$transferList = getTransferArray();
+				foreach ($transferList as $transfer) {
 					if (!isTransferRunning($transfer)) {
 						if ($cfg["enable_file_priority"]) {
 							include_once("inc/functions/functions.setpriority.php");
@@ -138,12 +138,12 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<hr><br>';
 				break;
 
-			case "3": // Torrents-Resume
-				$htmlTitle = "Torrents - Resume";
-				$htmlMain .= '<br><strong>Torrents Resumed :</strong><br>';
+			case "3": // Transfers-Resume
+				$htmlTitle = "Transfers - Resume";
+				$htmlMain .= '<br><strong>Transfers Resumed :</strong><br>';
 				$htmlMain .= '<pre>';
-				$torrents = getTorrentListFromDB();
-				foreach ($torrents as $transfer) {
+				$transferList = getTransferArrayFromDB();
+    			foreach ($transferList as $transfer) {
 					if (!isTransferRunning($transfer)) {
 						if ($cfg["enable_file_priority"]) {
 							include_once("inc/functions/functions.setpriority.php");
@@ -160,10 +160,10 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<hr><br>';
 				break;
 		}
-		$htmlMain .= '<br><strong>Torrents :</strong><br>';
+		$htmlMain .= '<br><strong>Transfers :</strong><br>';
 		$htmlMain .= '<pre>';
-		$torrents = getTorrentListFromFS();
-		foreach ($torrents as $transfer) {
+		$transferList = getTransferArray();
+		foreach ($transferList as $transfer) {
 			$htmlMain .=  ' - '.$transfer."";
 			if (isTransferRunning($transfer))
 				$htmlMain .=  " (running)";
@@ -502,7 +502,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Clean";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<strong>pid-file-leftovers</strong><br>';
-				$htmlMain .= 'use this to delete pid-file-leftovers of deleted torrents.<br>';
+				$htmlMain .= 'use this to delete pid-file-leftovers of deleted transfers.<br>';
 				$htmlMain .= '<a href="' . _FILE_THIS . '?m=31"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="pid-file-clean" border="0"> pid-file-clean</a>';
 				$htmlMain .= '<p>';
 				$htmlMain .= '<strong>tornado</strong><br>';
@@ -527,13 +527,13 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Clean - pid-file";
 				$htmlMain .= '<br>';
 				$result = "";
-				$torrents = getTorrentListFromDB();
+				$transferList = getTransferArrayFromDB();
 				if ($dirHandle = @opendir($cfg["transfer_file_path"])) {
 					while (false !== ($file = readdir($dirHandle))) {
-						if ((substr($file, -1, 1)) == "d") {
-							$tname = substr($file, 0, -9).'.torrent';
-							if (! in_array($tname, $torrents)) {
-								// torrent not in db. delete pid-file.
+						if ((strlen($file) > 3) && ((substr($file, -4, 4)) == ".pid")) {
+							$tname = substr($file, 0, -4);
+							if (!in_array($tname, $transferList)) {
+								// transfer not in db. delete pid-file.
 								$result .= $file."\n";
 								@unlink($cfg["transfer_file_path"].$file);
 							}
@@ -565,15 +565,15 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Clean - transmission";
 				$htmlMain .= '<br>';
 				$result = "";
-				$torrents = getTorrentListFromDB();
 				$hashes = array();
-				foreach ($torrents as $transfer)
+				$transferList = getTransferArray();
+				foreach ($transferList as $transfer)
 					array_push($hashes, getTransferHash($transfer));
 				if ($dirHandle = @opendir($cfg["path"].".transmission/cache/")) {
 					while (false !== ($file = readdir($dirHandle))) {
 						if ($file{0} == "r") {
-							$thash = substr($file,-40);
-							if (! in_array($thash, $hashes)) {
+							$thash = substr($file, -40);
+							if (!in_array($thash, $hashes)) {
 								// torrent not in db. delete cache-file.
 								$result .= $file."\n";
 								@unlink($cfg["path"].".transmission/cache/resume.".$thash);
@@ -616,7 +616,7 @@ if (isset($_REQUEST["m"])) {
 				$htmlTitle = "Maintenance - Repair";
 				$htmlMain .= '<br>';
 				$htmlMain .= '<font color="red"><strong>DONT</strong> do this if your system is running as it should. You WILL break something.</font>';
-				$htmlMain .= '<br>use this after server-reboot, if torrents were killed or if there are other problems with the webapp.';
+				$htmlMain .= '<br>use this after server-reboot, if transfers were killed or if there are other problems with the webapp.';
 				$htmlMain .= '<br><a href="' . _FILE_THIS . '?m=41"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Repair" border="0"> Repair</a>';
 				$htmlMain .= '<br><br>';
 				break;

@@ -45,7 +45,7 @@ tmplSetAdminMenu();
 
 // L: tfb-stats
 // transfers
-$arTransfers = getTorrentListFromFS();
+$arTransfers = getTransferArray();
 $countTransfers = count($arTransfers);
 $tmpl->setvar('server_transfers_total', $countTransfers);
 // users

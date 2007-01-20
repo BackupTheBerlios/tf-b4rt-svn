@@ -23,9 +23,6 @@
 /**
  * set vars for form of index page settings (0-2047)
  *
- * #
- * Torrent
- *
  * User			  [0]
  * Size			  [1]
  * DLed			  [2]
