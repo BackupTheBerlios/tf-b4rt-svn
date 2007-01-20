@@ -38,6 +38,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_download_
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_uploads','4')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('minport','49160')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('maxport','49300')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('superseeder','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('rerequest_interval','1800')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_search','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('show_server_load','1')");
