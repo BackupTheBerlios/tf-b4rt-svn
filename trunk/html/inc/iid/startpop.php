@@ -50,9 +50,6 @@ tmplInitializeInstance($cfg["theme"], "page.startpop.tmpl");
 // get torren-param
 $transfer = getRequestVar('transfer');
 
-// transfer exists ?
-$transferExists = (getTorrentDataSize($transfer) > 0);
-
 // set some template-vars
 $tmpl->setvar('displayName', (strlen($transfer) >= 55) ? substr($transfer, 0, 52)."..." : $transfer);
 $tmpl->setvar('transfer', $transfer);
@@ -69,11 +66,15 @@ $dirTree = ($cfg["enable_home_dirs"] != 0)
 	: $cfg["path"].$cfg["path_incoming"].'/';
 tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
-// exists + hash-check
-if ($transferExists) {
+// transfer exists ?
+$tstemp = loadTransferSettings($transfer);
+if (is_array($tstemp))
 	$tmpl->setvar('transfer_exists', 1);
-	$tmpl->setvar('is_skip', ($cfg["skiphashcheck"] != 0) ? 1 : 0);
-}
+
+// hash-check
+$dsize = getTorrentDataSize($transfer);
+if (($dsize > 0) && ($dsize != 4096))
+	$tmpl->setvar('is_skip', $cfg["skiphashcheck"]);
 
 // Force Queuing if not an admin.
 $tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);

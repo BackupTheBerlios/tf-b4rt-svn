@@ -715,7 +715,7 @@ function &loadAllTransferSettings() {
  * Function to load the settings for a transfer. returns array with settings
  *
  * @param $transfer
- * @return array
+ * @return array or false
  */
 function loadTransferSettings($transfer) {
 	global $db;
@@ -723,7 +723,9 @@ function loadTransferSettings($transfer) {
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$row = $result->FetchRow();
-	if (!empty($row)) {
+	if (empty($row)) {
+		return false;
+	} else {
 		$retAry = array();
 		$retAry["type"]                   = $row["type"];
 		$retAry["client"]                 = $row["client"];
@@ -742,7 +744,6 @@ function loadTransferSettings($transfer) {
 		$retAry["maxcons"]                = $row["maxcons"];
 		return $retAry;
 	}
-	return;
 }
 
 /**
