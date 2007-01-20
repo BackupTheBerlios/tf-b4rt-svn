@@ -166,8 +166,8 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Trigger
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Maintenance_enabled','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_port','3150')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Qmgr_interval','15')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTorrents','5')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTorrents','2')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxTotalTransfers','5')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Qmgr_maxUserTransfers','2')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Rssad_interval','1800')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Rssad_jobs','')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Watch_interval','120')");
@@ -339,7 +339,7 @@ CREATE TABLE tf_transfers (
   type VARCHAR(32) NOT NULL DEFAULT 'torrent',
   client VARCHAR(32) NOT NULL DEFAULT 'tornado',
   hash VARCHAR(40) DEFAULT '' NOT NULL,
-  datapath VARCHAR(255) NOT NULL DEFAULT '',  
+  datapath VARCHAR(255) NOT NULL DEFAULT '',
   savepath VARCHAR(255) NOT NULL DEFAULT '',
   running INT2 NOT NULL DEFAULT '0',
   rate INT2 NOT NULL DEFAULT '0',
