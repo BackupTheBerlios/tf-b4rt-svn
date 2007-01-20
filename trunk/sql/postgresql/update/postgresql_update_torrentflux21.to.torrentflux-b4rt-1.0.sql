@@ -203,7 +203,7 @@ INSERT INTO tf_settings VALUES ('searchEngine','TorrentSpy');
 INSERT INTO tf_settings VALUES ('TorrentSpyGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('TorrentBoxGenreFilter','a:1:{i:0;s:0:\"\";}');
 INSERT INTO tf_settings VALUES ('TorrentPortalGenreFilter','a:1:{i:0;s:0:\"\";}');
-INSERT INTO tf_settings VALUES ('enable_torrent_download','1');
+INSERT INTO tf_settings VALUES ('enable_metafile_download','1');
 INSERT INTO tf_settings VALUES ('enable_file_priority','1');
 INSERT INTO tf_settings VALUES ('searchEngineLinks','a:5:{s:7:\"isoHunt\";s:11:\"isohunt.com\";s:7:\"NewNova\";s:11:\"newnova.org\";s:10:\"TorrentBox\";s:14:\"torrentbox.com\";s:13:\"TorrentPortal\";s:17:\"torrentportal.com\";s:10:\"TorrentSpy\";s:14:\"torrentspy.com\";}');
 INSERT INTO tf_settings VALUES ('maxcons','40');
