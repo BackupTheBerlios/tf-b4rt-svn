@@ -335,25 +335,10 @@ class ClientHandler
             $this->rerequest = $cfg["rerequest_interval"];
             $this->skip_hash_check = $cfg["skiphashcheck"];
             // load settings
-            $settingsAry = loadTransferSettings($this->transfer);
-            if (is_array($settingsAry)) {
-            	$this->hash        = $settingsAry["hash"];
-            	$this->datapath    = $settingsAry["datapath"];
-	            $this->savepath    = $settingsAry["savepath"];
-	            $this->running     = $settingsAry["running"];
-	            $this->rate        = $settingsAry["max_upload_rate"];
-	            $this->drate       = $settingsAry["max_download_rate"];
-	            $this->maxuploads  = $settingsAry["max_uploads"];
-	            $this->superseeder = $settingsAry["superseeder"];
-	            $this->runtime     = $settingsAry["torrent_dies_when_done"];
-	            $this->sharekill   = $settingsAry["sharekill"];
-	            $this->minport     = $settingsAry["minport"];
-	            $this->maxport     = $settingsAry["maxport"];
-	            $this->maxcons     = $settingsAry["maxcons"];
-        	} else {
-        		// default-settings if fresh-transfer is started non-interactive
-        		$this->setDefaultSettings();
-        	}
+            $loaded = $this->settingsLoad($this->transfer);
+            // default-settings if settings could not be loaded (fresh transfer)
+            if ($loaded !== true)
+        		$this->settingsDefault();
         }
 		// queue
         if ($enqueue) {
@@ -505,26 +490,11 @@ class ClientHandler
         }
         if (empty($this->messages)) {
             // Save transfer settings
-            saveTransferSettings(
-            	$this->transfer,
-            	$this->type,
-            	$this->client,
-            	$this->hash,
-            	$this->datapath,
-            	$this->savepath,
-            	$this->running,
-            	$this->rate,
-            	$this->drate,
-            	$this->maxuploads,
-            	$this->superseeder,
-            	$this->runtime,
-            	$this->sharekill,
-            	$this->minport,
-            	$this->maxport,
-            	$this->maxcons
-            );
+            $this->settingsSave();
+            // set state
             $this->state = CLIENTHANDLER_STATE_OK;
         } else {
+        	// error
             $this->state = CLIENTHANDLER_STATE_ERROR;
             $msg = "error starting client. messages :\n";
             $msg .= implode("\n", $this->messages);
@@ -775,7 +745,7 @@ class ClientHandler
     /**
      * sets fields from default-vals
      */
-    function setDefaultSettings() {
+    function settingsDefault() {
     	global $cfg;
     	// set vars
         $this->hash        = getTransferHash($this->transfer);
@@ -791,6 +761,60 @@ class ClientHandler
 		$this->minport     = $cfg["minport"];
 		$this->maxport     = $cfg["maxport"];
 		$this->maxcons     = $cfg["maxcons"];
+    }
+
+    /**
+     * load settings
+     *
+     * @param $transfer
+     * @return boolean
+     */
+    function settingsLoad($transfer) {
+        $settingsAry = loadTransferSettings($transfer);
+        if (is_array($settingsAry)) {
+        	$this->hash        = $settingsAry["hash"];
+        	$this->datapath    = $settingsAry["datapath"];
+            $this->savepath    = $settingsAry["savepath"];
+            $this->running     = $settingsAry["running"];
+            $this->rate        = $settingsAry["max_upload_rate"];
+            $this->drate       = $settingsAry["max_download_rate"];
+            $this->maxuploads  = $settingsAry["max_uploads"];
+            $this->superseeder = $settingsAry["superseeder"];
+            $this->runtime     = $settingsAry["torrent_dies_when_done"];
+            $this->sharekill   = $settingsAry["sharekill"];
+            $this->minport     = $settingsAry["minport"];
+            $this->maxport     = $settingsAry["maxport"];
+            $this->maxcons     = $settingsAry["maxcons"];
+            // loaded
+            return true;
+    	} else {
+    		// not loaded
+    		return false;
+    	}
+    }
+
+    /**
+     * save settings
+     */
+    function settingsSave() {
+        saveTransferSettings(
+        	$this->transfer,
+        	$this->type,
+        	$this->client,
+        	$this->hash,
+        	$this->datapath,
+        	$this->savepath,
+        	$this->running,
+        	$this->rate,
+        	$this->drate,
+        	$this->maxuploads,
+        	$this->superseeder,
+        	$this->runtime,
+        	$this->sharekill,
+        	$this->minport,
+        	$this->maxport,
+        	$this->maxcons
+        );
     }
 
     // =========================================================================

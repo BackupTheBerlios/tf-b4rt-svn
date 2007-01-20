@@ -117,7 +117,7 @@ class ClientHandlerNzbperl extends ClientHandler
 				break;
 		}
 		$this->command .= " --dthreadct ".escapeshellarg($cfg['nzbperl_threads']);
-		$this->command .= " --speed ".escapeshellarg($cfg['nzbperl_rate']);
+		$this->command .= " --speed ".escapeshellarg($this->drate);
 		$this->command .= " --server ".escapeshellarg($cfg['nzbperl_server']);
 		if ($cfg['nzbperl_user'] != "") {
 			$this->command .= " --user ".escapeshellarg($cfg['nzbperl_user']);
@@ -242,9 +242,41 @@ class ClientHandlerNzbperl extends ClientHandler
     }
 
     /**
+     * set upload rate of a transfer
+     *
+     * @param $transfer
+     * @param $uprate
+     * @param $autosend
+     */
+    function setRateUpload($transfer, $uprate, $autosend = false) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+    	// set rate-field
+    	$this->rate = $uprate;
+    	// exec rate change
+    	$this->execRateChange($autosend);
+    }
+
+    /**
+     * set download rate of a transfer
+     *
+     * @param $transfer
+     * @param $downrate
+     * @param $autosend
+     */
+    function setRateDownload($transfer, $downrate, $autosend = false) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+    	// set rate-field
+    	$this->drate = $downrate;
+    	// exec rate change
+    	$this->execRateChange($autosend);
+    }
+
+    /**
      * sets fields from default-vals
      */
-    function setDefaultSettings() {
+    function settingsDefault() {
     	global $cfg;
     	// set vars
 		$this->hash        = getTransferHash($this->transfer);

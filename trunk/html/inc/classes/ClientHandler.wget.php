@@ -180,9 +180,9 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . escapeshellarg($this->transferFilePath);
         $this->command .= " " . $this->owner;
         $this->command .= " " . escapeshellarg($this->savepath);
-        $this->command .= " " . $cfg["wget_limit_rate"];
-        $this->command .= " " . $cfg["wget_limit_retries"];
-        $this->command .= " " . $cfg["wget_ftp_pasv"];
+        $this->command .= " " . escapeshellarg($this->drate);
+        $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);
+        $this->command .= " " . escapeshellarg($cfg["wget_ftp_pasv"]);
         $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " &";
@@ -293,9 +293,41 @@ class ClientHandlerWget extends ClientHandler
     }
 
     /**
+     * set upload rate of a transfer
+     *
+     * @param $transfer
+     * @param $uprate
+     * @param $autosend
+     */
+    function setRateUpload($transfer, $uprate, $autosend = false) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+    	// set rate-field
+    	$this->rate = $uprate;
+    	// exec rate change
+    	$this->execRateChange($autosend);
+    }
+
+    /**
+     * set download rate of a transfer
+     *
+     * @param $transfer
+     * @param $downrate
+     * @param $autosend
+     */
+    function setRateDownload($transfer, $downrate, $autosend = false) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+    	// set rate-field
+    	$this->drate = $downrate;
+    	// exec rate change
+    	$this->execRateChange($autosend);
+    }
+
+    /**
      * sets fields from default-vals
      */
-    function setDefaultSettings() {
+    function settingsDefault() {
     	global $cfg;
 		if (preg_match("/(\d*)k/i", $cfg["wget_limit_rate"], $reg))
 			$drate = intval($reg[1]);
