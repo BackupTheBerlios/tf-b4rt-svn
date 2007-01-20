@@ -107,16 +107,6 @@ function indexStartTransfer($transfer) {
  */
 function indexStartTorrent($transfer, $interactive) {
 	global $cfg, $transfers;
-	if ($cfg["enable_file_priority"]) {
-		include_once("inc/functions/functions.setpriority.php");
-		// Process setPriority Request.
-		setPriority($transfer);
-	}
-	$spo = getRequestVar('setPriorityOnly');
-	if (!empty($spo)){
-		// This is a setPriorityOnly Request.
-		return 1;
-	}
 	$ch = ($interactive == 1)
 		? ClientHandler::getInstance(getRequestVar('btclient'))
 		: ClientHandler::getInstance(getTransferClient($transfer));
@@ -441,11 +431,6 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 			// instant action ?
 			$actionId = getRequestVar('aid');
 			if ($actionId > 1) {
-				if ($cfg["enable_file_priority"]) {
-					include_once("inc/functions/functions.setpriority.php");
-					// Process setPriority Request.
-					setPriority($file_name);
-				}
 				$ch = ClientHandler::getInstance(getTransferClient($file_name));
 				switch ($actionId) {
 					case 3:
@@ -521,12 +506,6 @@ function indexProcessUpload() {
 						// instant action ?
 						$actionId = getRequestVar('aid');
 						if ($actionId > 1) {
-							// file prio
-							if ($cfg["enable_file_priority"]) {
-								include_once("inc/functions/functions.setpriority.php");
-								// Process setPriority Request.
-								setPriority($file_name);
-							}
 							$ch = ClientHandler::getInstance(getTransferClient($file_name));
 							switch ($actionId) {
 								case 3:
@@ -646,12 +625,6 @@ function processFileUpload() {
 		// instant action ?
 		if (($actionId > 1) && (!empty($tStack))) {
 			foreach ($tStack as $transfer) {
-				// file prio
-				if ($cfg["enable_file_priority"]) {
-					include_once("inc/functions/functions.setpriority.php");
-					// Process setPriority Request.
-					setPriority($transfer);
-				}
 				$ch = ClientHandler::getInstance(getTransferClient($transfer));
 				switch ($actionId) {
 					case 3:

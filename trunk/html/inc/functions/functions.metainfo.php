@@ -93,9 +93,8 @@ function showMetaInfo($torrent, $allowSave = false) {
 			$showMetaInfo .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
 			$showMetaInfo .= "</table><br>\n";
 			if ($allowSave) {
-				$showMetaInfo .= "<form name=\"priority\" action=\"dispatcher.php?action=indexStart\" method=\"POST\" >";
+				$showMetaInfo .= "<form name=\"priority\" action=\"dispatcher.php?action=setPriority\" method=\"POST\" >";
 				$showMetaInfo .= "<input type=\"hidden\" name=\"transfer\" value=\"".$torrent."\" >";
-				$showMetaInfo .= "<input type=\"hidden\" name=\"setPriorityOnly\" value=\"true\" >";
 			}
 			$showMetaInfo .= "<script type=\"text/javascript\">\n";
 			$showMetaInfo .= "var sel = 0;\n";
@@ -123,7 +122,6 @@ function showMetaInfo($torrent, $allowSave = false) {
 	}
 	return $showMetaInfo;
 }
-
 
 // =============================================================================
 // classes

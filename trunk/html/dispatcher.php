@@ -66,6 +66,16 @@ switch ($action) {
     	break;
 
 /*******************************************************************************
+ * set prio
+ ******************************************************************************/
+    case "setPriority":
+		if ($cfg["enable_file_priority"]) {
+			include_once("inc/functions/functions.setpriority.php");
+			setPriority($transfer);
+		}
+    	break;
+
+/*******************************************************************************
  * file-upload
  ******************************************************************************/
 	case "fileUpload":
@@ -142,7 +152,6 @@ switch ($action) {
     	}
     	break;
 
-
 /*******************************************************************************
  * Maintenance
  ******************************************************************************/
@@ -208,11 +217,6 @@ switch ($action) {
     	foreach ($transferList as $transfer) {
             if (!isTransferRunning($transfer)) {
                 if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
-                    if ($cfg["enable_file_priority"]) {
-                        include_once("inc/functions/functions.setpriority.php");
-                        // Process setPriority Request.
-                        setPriority($transfer);
-                    }
                     $ch = ClientHandler::getInstance(getTransferClient($transfer));
                     $ch->start($transfer, false, false);
                     if (count($ch->messages) > 0)
@@ -236,11 +240,6 @@ switch ($action) {
     	foreach ($transferList as $transfer) {
             if (!isTransferRunning($transfer)) {
                 if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
-                    if ($cfg["enable_file_priority"]) {
-                        include_once("inc/functions/functions.setpriority.php");
-                        // Process setPriority Request.
-                        setPriority($transfer);
-                    }
                     $ch = ClientHandler::getInstance(getTransferClient($transfer));
                     $ch->start($transfer, false, false);
                     if (count($ch->messages) > 0)
@@ -326,11 +325,6 @@ switch ($action) {
 
 				case "transferStart": /* transferStart */
 					if (!$tRunningFlag) {
-						if ($cfg["enable_file_priority"]) {
-							include_once("inc/functions/functions.setpriority.php");
-							// Process setPriority Request.
-							setPriority($transfer);
-						}
 						$ch = ClientHandler::getInstance($client);
 						$ch->start($transfer, false, FluxdQmgr::isRunning());
 						if (count($ch->messages) > 0)
@@ -350,11 +344,6 @@ switch ($action) {
 				case "transferEnQueue": /* transferEnQueue */
 					if (!$tRunningFlag) {
 						// enqueue it
-						if ($cfg["enable_file_priority"]) {
-							include_once("inc/functions/functions.setpriority.php");
-							// Process setPriority Request.
-							setPriority($transfer);
-						}
 						$ch = ClientHandler::getInstance($client);
 						$ch->start($transfer, false, true);
 						if (count($ch->messages) > 0)

@@ -180,11 +180,6 @@ function cliStartTransfer($transfer = "") {
 		if (!isTransferRunning($transfer)) {
 			$cfg["user"] = getOwner($transfer);
 			printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
-			if ($cfg["enable_file_priority"]) {
-				include_once("inc/functions/functions.setpriority.php");
-				// Process setPriority Request.
-				setPriority($transfer);
-			}
 			// clientHandler
 			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 			// force start, dont queue
@@ -213,11 +208,6 @@ function cliStartTransfers() {
         if (!isTransferRunning($transfer)) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
-            if ($cfg["enable_file_priority"]) {
-                include_once("inc/functions/functions.setpriority.php");
-                // Process setPriority Request.
-                setPriority($transfer);
-            }
             $ch = ClientHandler::getInstance(getTransferClient($transfer));
             $ch->start($transfer, false, false);
 			if ($ch->state == CLIENTHANDLER_STATE_OK) /* hooray */
@@ -239,11 +229,6 @@ function cliResumeTransfers() {
         if (!isTransferRunning($transfer)) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
-            if ($cfg["enable_file_priority"]) {
-                include_once("inc/functions/functions.setpriority.php");
-                // Process setPriority Request.
-                setPriority($transfer);
-            }
             $ch = ClientHandler::getInstance(getTransferClient($transfer));
             $ch->start($transfer, false, false);
 			if ($ch->state == CLIENTHANDLER_STATE_OK) /* hooray */
@@ -443,12 +428,6 @@ function cliWatchDir($tpath = "", $username = "") {
                             AuditAction($cfg["constants"]["file_upload"], $file_name);
                             // inject
                             injectTransfer($file_name);
-                            // file-prio
-                            if ($cfg["enable_file_priority"]) {
-                                include_once("inc/functions/functions.setpriority.php");
-                                // Process setPriority Request.
-                                setPriority($file_name);
-                            }
                             // start
                             $ch = ClientHandler::getInstance();
                             $ch->start($file_name, false, false);

@@ -123,11 +123,6 @@ if (isset($_REQUEST["t"])) {
 				$transferList = getTransferArray();
 				foreach ($transferList as $transfer) {
 					if (!isTransferRunning($transfer)) {
-						if ($cfg["enable_file_priority"]) {
-							include_once("inc/functions/functions.setpriority.php");
-							// Process setPriority Request.
-							setPriority($transfer);
-						}
 						$ch = ClientHandler::getInstance(getTransferClient($transfer));
 						$ch->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";
@@ -145,11 +140,6 @@ if (isset($_REQUEST["t"])) {
 				$transferList = getTransferArrayFromDB();
     			foreach ($transferList as $transfer) {
 					if (!isTransferRunning($transfer)) {
-						if ($cfg["enable_file_priority"]) {
-							include_once("inc/functions/functions.setpriority.php");
-							// Process setPriority Request.
-							setPriority($transfer);
-						}
 						$ch = ClientHandler::getInstance(getTransferClient($transfer));
 						$ch->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";

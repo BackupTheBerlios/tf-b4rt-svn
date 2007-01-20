@@ -21,7 +21,7 @@
 *******************************************************************************/
 
 /**
- * getFile
+ * get File
  *
  * @param $var
  * @return boolean
@@ -31,7 +31,7 @@ function getFile($var) {
 }
 
 /**
- * setPriority
+ * set file prio
  *
  * @param $torrent
  */
@@ -51,12 +51,12 @@ function setPriority($torrent) {
 			$files = array_filter($_REQUEST['files'],"getFile");
         // if there are files to get then process and create a prio file.
         if (count($files) > 0) {
-            for($i=0;$i<getRequestVar('count');$i++) {
+            for ($i=0; $i < getRequestVar('count'); $i++) {
                 if (in_array($i,$files)) {
-                    array_push($result,1);
+                    array_push($result, 1);
                 } else {
                     $okToCreate = true;
-                    array_push($result,-1);
+                    array_push($result, -1);
                 }
             }
             if ($okToCreate) {

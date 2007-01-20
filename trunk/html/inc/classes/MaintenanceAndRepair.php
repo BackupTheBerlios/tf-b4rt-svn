@@ -367,12 +367,6 @@ class MaintenanceAndRepair
 				$this->_outputMessage("Starting ".$transfer." ...\n");
 				// set current user to transfer-owner
 				$cfg["user"] = getOwner($transfer);
-				// file-prio
-	            if ($cfg["enable_file_priority"]) {
-	                include_once("inc/functions/functions.setpriority.php");
-	                // Process setPriority Request.
-	                setPriority($transfer);
-	            }
 				// clientHandler + start
 				$ch = ClientHandler::getInstance(getTransferClient($transfer));
 				$ch->start($transfer, false, FluxdQmgr::isRunning());
@@ -381,7 +375,6 @@ class MaintenanceAndRepair
 					$staret = ($ch->state == CLIENTHANDLER_STATE_OK) ? "OK" : "FAILED";
 					AuditAction($cfg["constants"]["debug"], "transfers-maintenance : restarted transfer ".$transfer." by ".$whoami." : ".$staret);
 				}
-				//
 				if ($ch->state == CLIENTHANDLER_STATE_OK) {
 					// output
 					$this->_outputMessage("done.\n");
