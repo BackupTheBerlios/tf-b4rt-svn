@@ -234,7 +234,7 @@ class ClientHandlerMainline extends ClientHandler
         return $retVal;
     }
 
-    /**
+ 	/**
      * set upload rate of a transfer
      *
      * @param $transfer
@@ -242,14 +242,16 @@ class ClientHandlerMainline extends ClientHandler
      * @param $autosend
      */
     function setRateUpload($transfer, $uprate, $autosend = false) {
-		// set vars
-		$this->setVarsFromTransfer($transfer);
     	// set rate-field
-    	$this->rate = ($uprate != 0)
+    	$this->rate = $uprate;
+    	// add command
+    	$nrate = ($uprate != 0)
     		? $uprate * 1024
     		: 125000000; // 1 GBit local net = 125MB/s
-    	// exec rate change
-    	$this->execRateChange($autosend);
+		CommandHandler::add($transfer, "u".$nrate);
+		// send command to client
+        if ($autosend)
+			CommandHandler::send($transfer);
     }
 
     /**
@@ -260,14 +262,37 @@ class ClientHandlerMainline extends ClientHandler
      * @param $autosend
      */
     function setRateDownload($transfer, $downrate, $autosend = false) {
-		// set vars
-		$this->setVarsFromTransfer($transfer);
     	// set rate-field
-    	$this->drate = ($downrate != 0)
-    		? $uprate * 1024
+    	$this->drate = $downrate;
+    	// add command
+    	$nrate = ($downrate != 0)
+    		? $downrate * 1024
     		: 125000000; // 1 GBit local net = 125MB/s
-    	// exec rate change
-    	$this->execRateChange($autosend);
+		CommandHandler::add($transfer, "d".$nrate);
+		// send command to client
+        if ($autosend)
+			CommandHandler::send($transfer);
+    }
+
+    /**
+     * sets fields from default-vals
+     */
+    function settingsDefault() {
+    	global $cfg;
+    	// set vars
+        $this->hash        = getTransferHash($this->transfer);
+        $this->datapath    = getTransferDatapath($this->transfer);
+    	$this->savepath    = getTransferSavepath($this->transfer);
+    	$this->running     = 0;
+		$this->rate        = $cfg["max_upload_rate"];
+		$this->drate       = $cfg["max_download_rate"];
+		$this->maxuploads  = $cfg["max_uploads"];
+		$this->superseeder = $cfg["superseeder"];
+		$this->runtime     = $cfg["torrent_dies_when_done"];
+		$this->sharekill   = $cfg["sharekill"];
+		$this->minport     = $cfg["minport"];
+		$this->maxport     = $cfg["maxport"];
+		$this->maxcons     = $cfg["maxcons"];
     }
 
 }

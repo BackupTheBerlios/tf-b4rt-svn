@@ -292,7 +292,7 @@ class ClientHandlerWget extends ClientHandler
         return $retVal;
     }
 
-    /**
+ 	/**
      * set upload rate of a transfer
      *
      * @param $transfer
@@ -300,12 +300,13 @@ class ClientHandlerWget extends ClientHandler
      * @param $autosend
      */
     function setRateUpload($transfer, $uprate, $autosend = false) {
-		// set vars
-		$this->setVarsFromTransfer($transfer);
     	// set rate-field
     	$this->rate = $uprate;
-    	// exec rate change
-    	$this->execRateChange($autosend);
+    	// add command
+		CommandHandler::add($transfer, "u".($uprate * 1024));
+		// send command to client
+        if ($autosend)
+			CommandHandler::send($transfer);
     }
 
     /**
@@ -316,12 +317,13 @@ class ClientHandlerWget extends ClientHandler
      * @param $autosend
      */
     function setRateDownload($transfer, $downrate, $autosend = false) {
-		// set vars
-		$this->setVarsFromTransfer($transfer);
     	// set rate-field
     	$this->drate = $downrate;
-    	// exec rate change
-    	$this->execRateChange($autosend);
+    	// add command
+		CommandHandler::add($transfer, "d".($downrate * 1024));
+		// send command to client
+        if ($autosend)
+			CommandHandler::send($transfer);
     }
 
     /**
@@ -336,7 +338,7 @@ class ClientHandlerWget extends ClientHandler
 		$this->running     = 0;
 		$this->rate        = 0;
 		$this->drate       = $cfg["wget_limit_rate"];
-		$this->maxuploads  = 0;
+		$this->maxuploads  = 1;
 		$this->superseeder = 0;
 		$this->runtime     = "True";
 		$this->sharekill   = 0;

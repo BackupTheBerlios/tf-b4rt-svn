@@ -143,7 +143,7 @@ class ClientHandler
     }
 
 	// =========================================================================
-	// public methods
+	// public methods (abstract)
 	// =========================================================================
 
     /**
@@ -170,6 +170,11 @@ class ClientHandler
 	 * @return boolean of success
 	 */
 	function delete($transfer) { return; }
+
+    /**
+     * deletes cache of a transfer
+     */
+    function execDeleteCache() { return; }
 
     /**
      * gets current transfer-vals of a transfer
@@ -228,32 +233,13 @@ class ClientHandler
     function setRateDownload($transfer, $downrate, $autosend = false) { return; }
 
     /**
-     * generic rate change
-     *
-     * @param $autosend
+     * sets fields from default-vals
      */
-    function execRateChange($autosend = false) {
-		// hold rates
-		$rateUpNew = $this->rate;
-		$rateDownNew = $this->drate;
-    	// set up-rate + add command
-    	if ($rateUpNew != "") {
-    		// set field
-    		$this->rate = $rateUpNew;
-	        // add command
-	        CommandHandler::add($this->transfer, "u".$this->rate);
-    	}
-    	// set down-rate + add command
-    	if ($rateDownNew != "") {
-    		// set field
-    		$this->drate = $rateDownNew;
-	        // add command
-	        CommandHandler::add($this->transfer, "d".$this->drate);
-    	}
-		// send command to client
-        if ($autosend)
-			CommandHandler::send($this->transfer);
-    }
+    function settingsDefault() { return; }
+
+	// =========================================================================
+	// public methods
+	// =========================================================================
 
     /**
      * prepares start of a client.
@@ -331,11 +317,11 @@ class ClientHandler
             $this->savepath = getRequestVar('savepath') ;
             // skip_hash_check
             $this->skip_hash_check = getRequestVar('skiphashcheck');
-        } else { // non-interactive, load settings from db and set vars
+        } else { // non-interactive, load settings from db
             $this->rerequest = $cfg["rerequest_interval"];
             $this->skip_hash_check = $cfg["skiphashcheck"];
             // load settings
-            $loaded = $this->settingsLoad($this->transfer);
+            $loaded = $this->settingsLoad();
             // default-settings if settings could not be loaded (fresh transfer)
             if ($loaded !== true)
         		$this->settingsDefault();
@@ -348,7 +334,7 @@ class ClientHandler
         } else {
             $this->queue = false;
         }
-		// savepath
+		// savepath-check
         if (empty($this->savepath))
         	$this->savepath = ($cfg["enable_home_dirs"] != 0)
         		? $cfg['path'].$this->owner."/"
@@ -366,8 +352,9 @@ class ClientHandler
 		}
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
-        // recalc sharekill ? (only torrent)
+        // torrent-only-section
         if ($this->type == "torrent") {
+        	// recalc sharekill ?
 	        if ($cfg['enable_sharekill'] == 1) { // sharekill enabled
 	        	$this->logMessage("recalc sharekill for ".$this->transfer."\n", true);
 		        if ($this->sharekill == 0) { // nice, we seed forever
@@ -422,13 +409,11 @@ class ClientHandler
 	        	$this->sharekill_param = $this->sharekill;
 	        	$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
 	        }
-        }
-        // set port if start (only torrent and not if queue)
-        if ($this->type == "torrent") {
-	        if (!$this->queue) {
-	        	if ($this->_setClientPort() === false)
-	                return;
-	        }
+			// set port if start (only if not queue)
+			if (!$this->queue) {
+				if ($this->_setClientPort() === false)
+					return;
+			}
         }
         // get current transfer
 		$transferTotals = $this->getTransferCurrent($this->transfer);
@@ -618,11 +603,6 @@ class ClientHandler
 		}
 	}
 
-    /**
-     * deletes cache of a transfer
-     */
-    function execDeleteCache() { return; }
-
 	/**
 	 * gets ary of running clients (via call to ps)
 	 *
@@ -743,34 +723,12 @@ class ClientHandler
     }
 
     /**
-     * sets fields from default-vals
-     */
-    function settingsDefault() {
-    	global $cfg;
-    	// set vars
-        $this->hash        = getTransferHash($this->transfer);
-        $this->datapath    = getTransferDatapath($this->transfer);
-    	$this->savepath    = getTransferSavepath($this->transfer);
-    	$this->running     = 0;
-		$this->rate        = $cfg["max_upload_rate"];
-		$this->drate       = $cfg["max_download_rate"];
-		$this->maxuploads  = $cfg["max_uploads"];
-		$this->superseeder = $cfg["superseeder"];
-		$this->runtime     = $cfg["torrent_dies_when_done"];
-		$this->sharekill   = $cfg["sharekill"];
-		$this->minport     = $cfg["minport"];
-		$this->maxport     = $cfg["maxport"];
-		$this->maxcons     = $cfg["maxcons"];
-    }
-
-    /**
      * load settings
      *
-     * @param $transfer
      * @return boolean
      */
-    function settingsLoad($transfer) {
-        $settingsAry = loadTransferSettings($transfer);
+    function settingsLoad() {
+        $settingsAry = loadTransferSettings($this->transfer);
         if (is_array($settingsAry)) {
         	$this->hash        = $settingsAry["hash"];
         	$this->datapath    = $settingsAry["datapath"];
