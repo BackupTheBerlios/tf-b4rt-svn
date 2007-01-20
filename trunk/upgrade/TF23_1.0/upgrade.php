@@ -557,7 +557,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$path = $tf_settings["path"];
 				$pathExists = false;
 				$renameOk = false;
-				$allDone = false;
+				$allDone = true;
 				if ((@is_dir($path) === true) && (@is_dir($path.".torrents") === true)) {
 					$pathExists = true;
 					send('<ul>');
@@ -565,10 +565,12 @@ if (isset($_REQUEST["1"])) {                                                    
 					// transfers-dir
 					send('<li><em>'.$path.".torrents -> ".$path.".transfers".'</em> : ');
 					$renameOk = rename($path.".torrents", $path.".transfers");
-					if ($renameOk === true)
+					if ($renameOk === true) {
 						send('<font color="green">Ok</font></li>');
-					else
+					} else {
+						$allDone = false;
 						send('<font color="red">Error</font></li>');
+					}
 
 					// old queue-dir
 					if ($renameOk) {
@@ -585,7 +587,7 @@ if (isset($_REQUEST["1"])) {                                                    
 							$filesCtr = 0;
 							if ($filesCount > 0) {
 								foreach ($files as $file) {
-									$fileSource = $path.".transfers/".$file;
+									$fileSource = $path.".transfers/queue/".$file;
 									send('<li>delete : <em>'.$fileSource.'</em> : ');
 									$fileUnlinkOk = @unlink($fileSource);
 									if ($fileUnlinkOk === true) {
@@ -600,10 +602,12 @@ if (isset($_REQUEST["1"])) {                                                    
 							}
 							send('<li>delete : <em>'.$path.".transfers/queue".'</em> : ');
 							$rmdirOk = @rmdir($path.".transfers/queue");
-							if ($rmdirOk === true)
+							if ($rmdirOk === true) {
 								send('<font color="green">Ok</font></li>');
-							else
+							} else {
+								$allDone = false;
 								send('<font color="red">Error</font></li>');
+							}
 						}
 					}
 

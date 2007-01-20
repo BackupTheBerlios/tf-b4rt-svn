@@ -581,6 +581,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$path = $tf_settings["path"];
 				$pathExists = false;
 				$renameOk = false;
+				$allDone = true;
 				if ((@is_dir($path) === true) && (@is_dir($path.".torrents") === true)) {
 					$pathExists = true;
 					send('<ul>');
@@ -588,50 +589,66 @@ if (isset($_REQUEST["1"])) {                                                    
 					// transfers-dir
 					send('<li><em>'.$path.".torrents -> ".$path.".transfers".'</em> : ');
 					$renameOk = rename($path.".torrents", $path.".transfers");
-					if ($renameOk === true)
+					if ($renameOk === true) {
 						send('<font color="green">Ok</font></li>');
-					else
+					} else {
+						$allDone = false;
 						send('<font color="red">Error</font></li>');
+					}
 
-					// stat-files
+					// old queue-dir
 					if ($renameOk) {
-						$files = array();
-						if ($dirHandle = opendir($path.".transfers")) {
-							while (false !== ($file = readdir($dirHandle))) {
-								if ((strlen($file) > 4) && ((substr($file, -4)) == "stat"))
-									array_push($files, $file);
-							}
-							closedir($dirHandle);
-						}
-						$filesCount = count($files);
-						$filesCtr = 0;
-						if ($filesCount > 0) {
-							foreach ($files as $file) {
-								$fileNameSource = $file;
-								$fileSource = $path.".transfers/".$fileNameSource;
-								$fileNameTarget = substr($file, 0, -4)."torrent.stat";
-								$fileTarget = $path.".transfers/".$fileNameTarget;
-								send('<li><em>'.$fileSource.' -> '.$fileTarget.'</em> : ');
-								$fileRenameOk = rename($fileSource, $fileTarget);
-								if ($fileRenameOk === true) {
-									$filesCtr++;
-									send('<font color="green">Ok</font></li>');
-								} else {
-									send('<font color="red">Error</font></li>');
+						if (@is_dir($path.".transfers/queue")) {
+							$files = array();
+							if ($dirHandle = opendir($path.".transfers/queue")) {
+								while (false !== ($file = readdir($dirHandle))) {
+									if ((strlen($file) > 4) && ((substr($file, -4)) == "stat"))
+										array_push($files, $file);
 								}
+								closedir($dirHandle);
 							}
-							if ($filesCount != $filesCtr)
-								$renameOk = false;
+							$filesCount = count($files);
+							$filesCtr = 0;
+							if ($filesCount > 0) {
+								foreach ($files as $file) {
+									$fileSource = $path.".transfers/queue/".$file;
+									send('<li>delete : <em>'.$fileSource.'</em> : ');
+									$fileUnlinkOk = @unlink($fileSource);
+									if ($fileUnlinkOk === true) {
+										$filesCtr++;
+										send('<font color="green">Ok</font></li>');
+									} else {
+										send('<font color="red">Error</font></li>');
+									}
+								}
+								if ($filesCount != $filesCtr)
+									$allDone = false;
+							}
+							send('<li>delete : <em>'.$path.".transfers/queue".'</em> : ');
+							$rmdirOk = @rmdir($path.".transfers/queue");
+							if ($rmdirOk === true) {
+								send('<font color="green">Ok</font></li>');
+							} else {
+								$allDone = false;
+								send('<font color="red">Error</font></li>');
+							}
 						}
 					}
 
-					// prio-files
+					// transfer-files (should not be here anymore if transfers
+					// were deleted like required and written in the docu)
 					if ($renameOk) {
+						$fileTypes = array(".torrent", ".stat", ".pid", ".prio", ".url");
 						$files = array();
 						if ($dirHandle = opendir($path.".transfers")) {
 							while (false !== ($file = readdir($dirHandle))) {
-								if ((strlen($file) > 4) && ((substr($file, -4)) == "prio"))
-									array_push($files, $file);
+								$stringLength = strlen($file);
+								foreach ($fileTypes as $ftype) {
+									$extLength = strlen($ftype);
+									$extIndex = 0 - $extLength;
+									if (($stringLength > $extLength) && (strtolower(substr($file, $extIndex)) === ($ftype)))
+										array_push($files, $file);
+								}
 							}
 							closedir($dirHandle);
 						}
@@ -639,13 +656,10 @@ if (isset($_REQUEST["1"])) {                                                    
 						$filesCtr = 0;
 						if ($filesCount > 0) {
 							foreach ($files as $file) {
-								$fileNameSource = $file;
-								$fileSource = $path.".transfers/".$fileNameSource;
-								$fileNameTarget = substr($file, 0, -4)."torrent.prio";
-								$fileTarget = $path.".transfers/".$fileNameTarget;
-								send('<li><em>'.$fileSource.' -> '.$fileTarget.'</em> : ');
-								$fileRenameOk = rename($fileSource, $fileTarget);
-								if ($fileRenameOk === true) {
+								$fileSource = $path.".transfers/".$file;
+								send('<li>delete : <em>'.$fileSource.'</em> : ');
+								$fileUnlinkOk = @unlink($fileSource);
+								if ($fileUnlinkOk === true) {
 									$filesCtr++;
 									send('<font color="green">Ok</font></li>');
 								} else {
@@ -653,12 +667,12 @@ if (isset($_REQUEST["1"])) {                                                    
 								}
 							}
 							if ($filesCount != $filesCtr)
-								$renameOk = false;
+								$allDone = false;
 						}
 					}
 
 					send('</ul>');
-					if ($renameOk) {
+					if ($allDone) {
 						send('<font color="green"><strong>Ok</strong></font><br>');
 						send('Files and Dirs renamed.');
 						send("<h2>Next : End</h2>");
