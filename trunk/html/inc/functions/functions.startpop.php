@@ -41,6 +41,7 @@ function setVarsFromPersistentSettings() {
 		$settings["max_download_rate"]		 = $cfg["max_download_rate"];
 		$settings["torrent_dies_when_done"]	 = $cfg["torrent_dies_when_done"];
 		$settings["max_uploads"]			 = $cfg["max_uploads"];
+		$settings["superseeder"]			 = $cfg["superseeder"];
 		$settings["minport"]				 = $cfg["minport"];
 		$settings["maxport"]				 = $cfg["maxport"];
 		$settings["sharekill"]				 = $cfg["sharekill"];
@@ -51,7 +52,9 @@ function setVarsFromPersistentSettings() {
 	$tmpl->setvar('max_uploads', $settings["max_uploads"]);
 	$tmpl->setvar('max_download_rate', $settings["max_download_rate"]);
 	$tmpl->setvar('maxcons', $settings["maxcons"]);
-	$tmpl->setvar('rerequest_interval', $settings["rerequest_interval"]);
+	$tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
+	$tmpl->setvar('superseeder', ($settings['superseeder'] == 1) ? "checked" : "");
+	$tmpl->setvar('superseederValue', $settings['superseeder']);
 	$tmpl->setvar('minport', $settings["minport"]);
 	$tmpl->setvar('maxport', $settings["maxport"]);
 	$tmpl->setvar('sharekill', $settings["sharekill"]);

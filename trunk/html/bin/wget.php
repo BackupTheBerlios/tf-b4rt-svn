@@ -60,6 +60,9 @@ ini_set('include_path', ini_get('include_path').':../:');
 // main.core
 require_once('inc/main.core.php');
 
+// all functions
+require_once('inc/functions/functions.all.php');
+
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
@@ -186,6 +189,9 @@ else
 	$s_size = $s_downtotal;
 $s_time_left = "Download Succeeded!";
 writeStatFile();
+
+// stop transfer settings
+stopTransferSettings($transfer);
 
 // delete pid-file
 $ch->logMessage("removing pid-file : ".$cfg['transfer_file_path'].$transfer.".pid\n");

@@ -701,6 +701,7 @@ function &loadAllTransferSettings() {
 			"max_download_rate"      => $row["drate"],
 			"torrent_dies_when_done" => $row["runtime"],
 			"max_uploads"            => $row["maxuploads"],
+			"superseeder"            => $row["superseeder"],
 			"minport"                => $row["minport"],
 			"maxport"                => $row["maxport"],
 			"sharekill"              => $row["sharekill"],
@@ -734,6 +735,7 @@ function loadTransferSettings($transfer) {
 		$retAry["max_download_rate"]      = $row["drate"];
 		$retAry["torrent_dies_when_done"] = $row["runtime"];
 		$retAry["max_uploads"]            = $row["maxuploads"];
+		$retAry["superseeder"]            = $row["superseeder"];
 		$retAry["minport"]                = $row["minport"];
 		$retAry["maxport"]                = $row["maxport"];
 		$retAry["sharekill"]              = $row["sharekill"];

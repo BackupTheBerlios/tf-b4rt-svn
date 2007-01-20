@@ -298,11 +298,11 @@ class ClientHandlerWget extends ClientHandler
     function setDefaultVars() {
     	global $cfg;
 		if (preg_match("/(\d*)k/i", $cfg["wget_limit_rate"], $reg))
-			$drate = intval($reg[1]) * 1024;
+			$drate = intval($reg[1]);
 		else if (preg_match("/(\d*)m/i", $cfg["wget_limit_rate"], $reg))
-			$drate = intval($reg[1]) * 11048576;
+			$drate = intval($reg[1]) * 1024;
 		else
-			$drate = $cfg["wget_limit_rate"];
+			$drate = intval($cfg["wget_limit_rate"] / 1024);
 		// set vars
 		$this->rate        = 0;
 		$this->drate       = is_numeric($drate) ? $drate : 0;
