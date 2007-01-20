@@ -195,6 +195,21 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Superseeder (B)</strong><br>
+									Set the default for superseeder-setting on torrent-start:
+								</td>
+								<td valign="top">
+									<select name="superseeder">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="superseeder" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Skip HashCheck (B+M)</strong><br>
 									Set the default for skip hash-checks on torrent-start:
 								</td>
