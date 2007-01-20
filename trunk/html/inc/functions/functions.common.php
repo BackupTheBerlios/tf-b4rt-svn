@@ -1583,7 +1583,6 @@ function getTransferDatapath($transfer) {
 	}
 }
 
-
 /**
  * gets savepath of a transfer.
  *

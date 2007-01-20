@@ -155,7 +155,6 @@ function indexStopTransfer($transfer) {
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -8) == ".torrent") {
 			$invalid = false;
-			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if (substr($transfer, -5) == ".wget") {
 			// is enabled ?
 			if ($cfg["enable_wget"] == 0) {
@@ -168,7 +167,6 @@ function indexStopTransfer($transfer) {
 				}
 			}
 			$invalid = false;
-			$ch = ClientHandler::getInstance('wget');
 		} else if (substr($transfer, -4) == ".nzb") {
 			if ($cfg["enable_nzbperl"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to stop nzbperl ".$transfer);
@@ -180,9 +178,9 @@ function indexStopTransfer($transfer) {
 				}
 			}
 			$invalid = false;
-			$ch = ClientHandler::getInstance('nzbperl');
 		}
 		if (!$invalid) {
+			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 			$ch->stop($transfer);
 			if (count($ch->messages) > 0)
 	    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
@@ -205,7 +203,6 @@ function forceStopTransfer($transfer, $pid) {
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -8) == ".torrent") {
 			$invalid = false;
-			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		} else if (substr($transfer, -5) == ".wget") {
 			// is enabled ?
 			if ($cfg["enable_wget"] == 0) {
@@ -218,7 +215,6 @@ function forceStopTransfer($transfer, $pid) {
 				}
 			}
 			$invalid = false;
-			$ch = ClientHandler::getInstance('wget');
 		} else if (substr($transfer, -4) == ".nzb") {
 			if ($cfg["enable_nzbperl"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to force-stop nzbperl ".$transfer);
@@ -230,9 +226,9 @@ function forceStopTransfer($transfer, $pid) {
 				}
 			}
 			$invalid = false;
-			$ch = ClientHandler::getInstance('nzbperl');
 		}
 		if (!$invalid) {
+			$ch = ClientHandler::getInstance(getTransferClient($transfer));
 			$ch->stop($transfer, true, $pid);
 			if (count($ch->messages) > 0)
 	    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
