@@ -250,6 +250,38 @@ class ClientHandlerTornado extends ClientHandler
         return $retVal;
     }
 
+    /**
+     * set upload rate of a transfer
+     *
+     * @param $transfer
+     * @param $uprate
+     * @param $autosend
+     */
+    function setRateUpload($transfer, $uprate, $autosend = false) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+    	// set rate-field
+    	$this->rate = $uprate;
+    	// exec rate change
+    	$this->execRateChange($autosend);
+    }
+
+    /**
+     * set download rate of a transfer
+     *
+     * @param $transfer
+     * @param $downrate
+     * @param $autosend
+     */
+    function setRateDownload($transfer, $downrate, $autosend = false) {
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+    	// set rate-field
+    	$this->drate = $downrate;
+    	// exec rate change
+    	$this->execRateChange($autosend);
+    }
+
 }
 
 ?>

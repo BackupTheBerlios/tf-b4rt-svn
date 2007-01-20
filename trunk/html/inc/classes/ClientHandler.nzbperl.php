@@ -242,16 +242,20 @@ class ClientHandlerNzbperl extends ClientHandler
     }
 
     /**
-     * sets all fields needed for start with default-vals
+     * sets fields from default-vals
      */
-    function setDefaultVars() {
+    function setDefaultSettings() {
     	global $cfg;
     	// set vars
+		$this->hash        = getTransferHash($this->transfer);
+        $this->datapath    = getTransferDatapath($this->transfer);
+    	$this->savepath    = getTransferSavepath($this->transfer);
+		$this->running     = 0;
 		$this->rate        = 0;
 		$this->drate       = $cfg["nzbperl_rate"];
-		$this->runtime     = "True";
 		$this->maxuploads  = 0;
 		$this->superseeder = 0;
+		$this->runtime     = "True";
 		$this->sharekill   = 0;
 		$this->minport     = 1;
 		$this->maxport     = 65535;

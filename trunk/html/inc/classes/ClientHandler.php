@@ -53,7 +53,6 @@ class ClientHandler
     var $rerequest = "";
     var $sharekill = "";
     var $sharekill_param = "";
-    var $savepath = "";
     var $skip_hash_check = "";
 
     // queue
@@ -63,13 +62,25 @@ class ClientHandler
     var $transfer = "";
     var $transferFilePath = "";
 
+    // running
+    var $running = 0;
+
+    // hash
+    var $hash = "";
+
+    // datapath
+    var $datapath = "";
+
+    // savepath
+    var $savepath = "";
+
     // pid
     var $pid = "";
 
     // owner
     var $owner = "";
 
-    // command
+    // command (startup)
     var $command = "";
 
     // umask
@@ -199,6 +210,52 @@ class ClientHandler
     function getTransferTotalOP($transfer, $tid, $sfu, $sfd) { return; }
 
     /**
+     * set upload rate of a transfer
+     *
+     * @param $transfer
+     * @param $uprate
+     * @param $autosend
+     */
+    function setRateUpload($transfer, $uprate, $autosend = false) { return; }
+
+    /**
+     * set download rate of a transfer
+     *
+     * @param $transfer
+     * @param $downrate
+     * @param $autosend
+     */
+    function setRateDownload($transfer, $downrate, $autosend = false) { return; }
+
+    /**
+     * generic rate change
+     *
+     * @param $autosend
+     */
+    function execRateChange($autosend = false) {
+		// hold rates
+		$rateUpNew = $this->rate;
+		$rateDownNew = $this->drate;
+    	// set up-rate + add command
+    	if ($rateUpNew != "") {
+    		// set field
+    		$this->rate = $rateUpNew;
+	        // add command
+	        CommandHandler::add($this->transfer, "u".$this->rate);
+    	}
+    	// set down-rate + add command
+    	if ($rateDownNew != "") {
+    		// set field
+    		$this->drate = $rateDownNew;
+	        // add command
+	        CommandHandler::add($this->transfer, "d".$this->drate);
+    	}
+		// send command to client
+        if ($autosend)
+			CommandHandler::send($this->transfer);
+    }
+
+    /**
      * prepares start of a client.
      * prepares vars and other generic stuff
      *
@@ -280,19 +337,22 @@ class ClientHandler
             // load settings
             $settingsAry = loadTransferSettings($this->transfer);
             if (is_array($settingsAry)) {
+            	$this->hash        = $settingsAry["hash"];
+            	$this->datapath    = $settingsAry["datapath"];
 	            $this->savepath    = $settingsAry["savepath"];
+	            $this->running     = $settingsAry["running"];
 	            $this->rate        = $settingsAry["max_upload_rate"];
 	            $this->drate       = $settingsAry["max_download_rate"];
-	            $this->runtime     = $settingsAry["torrent_dies_when_done"];
 	            $this->maxuploads  = $settingsAry["max_uploads"];
 	            $this->superseeder = $settingsAry["superseeder"];
+	            $this->runtime     = $settingsAry["torrent_dies_when_done"];
+	            $this->sharekill   = $settingsAry["sharekill"];
 	            $this->minport     = $settingsAry["minport"];
 	            $this->maxport     = $settingsAry["maxport"];
 	            $this->maxcons     = $settingsAry["maxcons"];
-	            $this->sharekill   = $settingsAry["sharekill"];
         	} else {
-        		// fallback-values if fresh-transfer is started non-interactive
-        		$this->setDefaultVars();
+        		// default-settings if fresh-transfer is started non-interactive
+        		$this->setDefaultSettings();
         	}
         }
 		// queue
@@ -429,7 +489,7 @@ class ClientHandler
 				$this->logMessage($msg."\n", true);
 			}
 			// set flag
-            $transferRunningFlag = 0;
+            $this->running = 0;
         } else { // start
         	// write stat-file
         	$sf->start();
@@ -441,7 +501,7 @@ class ClientHandler
             // wait until transfer is up
             waitForTransfer($this->transfer, true, 20);
             // set flag
-            $transferRunningFlag = 1;
+            $this->running = 1;
         }
         if (empty($this->messages)) {
             // Save transfer settings
@@ -449,10 +509,10 @@ class ClientHandler
             	$this->transfer,
             	$this->type,
             	$this->client,
-            	getTransferHash($this->transfer),
-            	getTransferDatapath($this->transfer),
+            	$this->hash,
+            	$this->datapath,
             	$this->savepath,
-            	$transferRunningFlag,
+            	$this->running,
             	$this->rate,
             	$this->drate,
             	$this->maxuploads,
@@ -713,16 +773,20 @@ class ClientHandler
     }
 
     /**
-     * sets all fields needed for start with default-vals
+     * sets fields from default-vals
      */
-    function setDefaultVars() {
+    function setDefaultSettings() {
     	global $cfg;
     	// set vars
+        $this->hash        = getTransferHash($this->transfer);
+        $this->datapath    = getTransferDatapath($this->transfer);
+    	$this->savepath    = getTransferSavepath($this->transfer);
+    	$this->running     = 0;
 		$this->rate        = $cfg["max_upload_rate"];
 		$this->drate       = $cfg["max_download_rate"];
-		$this->runtime     = $cfg["torrent_dies_when_done"];
 		$this->maxuploads  = $cfg["max_uploads"];
 		$this->superseeder = $cfg["superseeder"];
+		$this->runtime     = $cfg["torrent_dies_when_done"];
 		$this->sharekill   = $cfg["sharekill"];
 		$this->minport     = $cfg["minport"];
 		$this->maxport     = $cfg["maxport"];
