@@ -557,6 +557,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$path = $tf_settings["path"];
 				$pathExists = false;
 				$renameOk = false;
+				$allDone = false;
 				if ((@is_dir($path) === true) && (@is_dir($path.".torrents") === true)) {
 					$pathExists = true;
 					send('<ul>');
@@ -568,6 +569,43 @@ if (isset($_REQUEST["1"])) {                                                    
 						send('<font color="green">Ok</font></li>');
 					else
 						send('<font color="red">Error</font></li>');
+
+					// old queue-dir
+					if ($renameOk) {
+						if (@is_dir($path.".transfers/queue")) {
+							$files = array();
+							if ($dirHandle = opendir($path.".transfers/queue")) {
+								while (false !== ($file = readdir($dirHandle))) {
+									if ((strlen($file) > 4) && ((substr($file, -4)) == "stat"))
+										array_push($files, $file);
+								}
+								closedir($dirHandle);
+							}
+							$filesCount = count($files);
+							$filesCtr = 0;
+							if ($filesCount > 0) {
+								foreach ($files as $file) {
+									$fileSource = $path.".transfers/".$file;
+									send('<li>delete : <em>'.$fileSource.'</em> : ');
+									$fileUnlinkOk = @unlink($fileSource);
+									if ($fileUnlinkOk === true) {
+										$filesCtr++;
+										send('<font color="green">Ok</font></li>');
+									} else {
+										send('<font color="red">Error</font></li>');
+									}
+								}
+								if ($filesCount != $filesCtr)
+									$allDone = false;
+							}
+							send('<li>delete : <em>'.$path.".transfers/queue".'</em> : ');
+							$rmdirOk = @rmdir($path.".transfers/queue");
+							if ($rmdirOk === true)
+								send('<font color="green">Ok</font></li>');
+							else
+								send('<font color="red">Error</font></li>');
+						}
+					}
 
 					// stat-files
 					if ($renameOk) {
@@ -597,7 +635,7 @@ if (isset($_REQUEST["1"])) {                                                    
 								}
 							}
 							if ($filesCount != $filesCtr)
-								$renameOk = false;
+								$allDone = false;
 						}
 					}
 
@@ -629,7 +667,7 @@ if (isset($_REQUEST["1"])) {                                                    
 								}
 							}
 							if ($filesCount != $filesCtr)
-								$renameOk = false;
+								$allDone = false;
 						}
 					}
 
