@@ -367,7 +367,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 		// Check to see if url has something like ?passkey=12345
 		// If so remove it.
 		if (($point = strrpos($file_name, "?")) !== false )
-			$file_name = substr( $file_name, 0, $point );
+			$file_name = substr($file_name, 0, $point);
 		$ret = strrpos($file_name, ".");
 		if ($ret === false) {
 			$file_name .= $ext;
@@ -394,7 +394,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 		}
 		if ((SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
 			$filename = SimpleHTTP::getFilename();
-			$file_name = ($filename != "")
+			$file_name = (($filename != "") && (strpos($filename, ".torrent") !== false))
 				? cleanFileName($filename)
 				: cleanFileName($file_name);
 			// check if content contains html

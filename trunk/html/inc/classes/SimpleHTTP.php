@@ -612,11 +612,14 @@ class SimpleHTTP
 				if (preg_match("/name([0-9][^:]):(.[^:]+)/i", $data, $data_preg_match)) {
 					$filelength = $data_preg_match[1];
 					$file_name = $data_preg_match[2];
-					$this->filename = substr($file_name, 0, $filelength) . ".torrent";
+					$this->filename = substr($file_name, 0, $filelength).".torrent";
 				} else {
-					// TODO : better fallback
-					$this->filename = "unknown.torrent";
-				}
+					require_once('inc/classes/BDecode.php');
+				    $btmeta = @BDecode($data);
+				    $this->filename = ((is_array($btmeta)) && (!empty($btmeta['info'])) && (!empty($btmeta['info']['name'])))
+				    	? trim($btmeta['info']['name']).".torrent"
+				    	: "";
+					}
 			}
 	        // state
 	        $this->state = SIMPLEHTTP_STATE_OK;

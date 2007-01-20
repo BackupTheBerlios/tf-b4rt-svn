@@ -370,7 +370,7 @@ class Rssd
 		if (SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) {
 			// filename
 			$filename = SimpleHTTP::getFilename();
-			$filename = (($filename != "") && ($filename != "unknown.torrent") && (strpos($filename, ".torrent") !== false))
+			$filename = (($filename != "") && (strpos($filename, ".torrent") !== false))
 				? cleanFileName($filename)
 				: cleanFileName($title);
 			// file
