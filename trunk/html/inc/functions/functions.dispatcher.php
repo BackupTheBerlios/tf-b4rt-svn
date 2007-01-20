@@ -338,9 +338,9 @@ function indexProcessDownload($url, $type = 'torrent') {
 		default:
 		case 'torrent':
 			// is enabled ?
-			if ($cfg["enable_torrent_download"] != 1) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use torrent download");
-				@error("torrent download is disabled", "index.php?iid=index", "");
+			if ($cfg["enable_metafile_download"] != 1) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use metafile download");
+				@error("metafile download is disabled", "index.php?iid=index", "");
 			}
 			// process download
 			_indexProcessDownload($url, 'torrent', '.torrent');

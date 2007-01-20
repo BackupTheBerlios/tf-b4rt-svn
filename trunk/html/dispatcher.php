@@ -76,6 +76,11 @@ switch ($action) {
  * metafile-download
  ******************************************************************************/
 	case "metafileDownload":
+		// is enabled ?
+		if ($cfg["enable_metafile_download"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to download a metafile");
+			@error("metafile download is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
+		}
 		sendMetafile(getRequestVar('transfer'));
     	break;
 

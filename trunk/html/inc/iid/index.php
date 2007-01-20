@@ -70,7 +70,7 @@ $tmpl->setvar('queueActive', (FluxdQmgr::isRunning()) ? 1 : 0);
 $tmpl->setvar('path_incoming', ($cfg["enable_home_dirs"] != 0) ? $cfg["user"] : $cfg["path_incoming"]);
 
 // some configs
-$tmpl->setvar('enable_torrent_download', $cfg["enable_torrent_download"]);
+$tmpl->setvar('enable_metafile_download', $cfg["enable_metafile_download"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
