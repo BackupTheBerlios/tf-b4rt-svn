@@ -653,11 +653,11 @@ function getSumMaxDownRate() {
  * @return array-ref
  */
 function &loadAllTransferOwner() {
-	$owAry = array();
-	$arList = getTransferArray();
-	foreach ($arList as $transfer)
-		$owAry[$transfer] = getOwner($transfer);
-	return $owAry;
+	$ary = array();
+	$tary = getTransferArray();
+	foreach ($tary as $transfer)
+		$ary[$transfer] = getOwner($transfer);
+	return $ary;
 }
 
 /**
@@ -667,17 +667,17 @@ function &loadAllTransferOwner() {
  */
 function &loadAllTransferTotals() {
 	global $db;
-	$recordset = $db->Execute("SELECT * FROM tf_torrent_totals");
-	$toAry = array();
+	$recordset = $db->Execute("SELECT * FROM tf_transfer_totals");
+	$ary = array();
 	while ($row = $recordset->FetchRow()) {
 		if (strlen($row["tid"]) == 40) {
-			$toAry[$row["tid"]] = array(
+			$ary[$row["tid"]] = array(
 				"uptotal" => $row["uptotal"],
 				"downtotal" => $row["downtotal"]
 			);
 		}
 	}
-	return $toAry;
+	return $ary;
 }
 
 /**
@@ -688,9 +688,9 @@ function &loadAllTransferTotals() {
 function &loadAllTransferSettings() {
 	global $db;
 	$recordset = $db->Execute("SELECT * FROM tf_transfers");
-	$trAry = array();
+	$ary = array();
 	while ($row = $recordset->FetchRow()) {
-		$trAry[$row["transfer"]] = array(
+		$ary[$row["transfer"]] = array(
 			"type"                   => $row["type"],
 			"client"                 => $row["client"],
 			"hash"                   => $row["hash"],
@@ -707,7 +707,7 @@ function &loadAllTransferSettings() {
 			"maxcons"                => $row["maxcons"]
 		);
 	}
-	return $trAry;
+	return $ary;
 }
 
 /**

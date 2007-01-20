@@ -495,16 +495,16 @@ class MaintenanceAndRepair
 			$this->_outputMessage($msg."\n");
 		}
 
-		/* tf_torrent_totals */
+		/* tf_transfer_totals */
 		$this->_countProblems = 0;
 		$this->_countFixed = 0;
 		// output
-		$this->_outputMessage("table-maintenance : tf_torrent_totals\n");
-		$this->_countProblems = $db->GetOne("SELECT COUNT(*) FROM tf_torrent_totals WHERE tid = ''");
+		$this->_outputMessage("table-maintenance : tf_transfer_totals\n");
+		$this->_countProblems = $db->GetOne("SELECT COUNT(*) FROM tf_transfer_totals WHERE tid = ''");
 		if (($this->_countProblems !== false) && ($this->_countProblems > 0)) {
 			// output
 			$this->_outputMessage("found ".$this->_countProblems." invalid entries, deleting...\n");
-			$sql = "DELETE FROM tf_torrent_totals WHERE tid = ''";
+			$sql = "DELETE FROM tf_transfer_totals WHERE tid = ''";
 			$result = $db->Execute($sql);
 			if ($db->ErrorNo() != 0) dbError($sql);
 			$this->_countFixed = $db->Affected_Rows();
@@ -512,7 +512,7 @@ class MaintenanceAndRepair
 			$this->_outputMessage("done.\n");
 			$rCount = ($this->_countFixed !== false) ? $this->_countFixed : $this->_countProblems;
 			// DEBUG : log
-			$msg = "found and removed invalid totals-entries from tf_torrent_totals : ".$rCount."/".$this->_countProblems;
+			$msg = "found and removed invalid totals-entries from tf_transfer_totals : ".$rCount."/".$this->_countProblems;
 			if ($cfg['debuglevel'] > 0)
 				AuditAction($cfg["constants"]["debug"], "database-maintenance : table-maintenance : ".$msg);
 			// output

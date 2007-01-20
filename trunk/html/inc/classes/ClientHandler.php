@@ -535,9 +535,9 @@ class ClientHandler
 		global $db;
 		$tid = getTransferHash($this->transfer);
 		$transferTotals = $this->getTransferTotal($this->transfer);
-		$sql = ($db->GetOne("SELECT 1 FROM tf_torrent_totals WHERE tid = '".$tid."'"))
-			? "UPDATE tf_torrent_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'"
-			: "INSERT INTO tf_torrent_totals ( tid , uptotal ,downtotal ) VALUES ('".$tid."', '".$transferTotals["uptotal"]."', '".$transferTotals["downtotal"]."')";
+		$sql = ($db->GetOne("SELECT 1 FROM tf_transfer_totals WHERE tid = '".$tid."'"))
+			? "UPDATE tf_transfer_totals SET uptotal = '".$transferTotals["uptotal"]."', downtotal = '".$transferTotals["downtotal"]."' WHERE tid = '".$tid."'"
+			: "INSERT INTO tf_transfer_totals (tid,uptotal,downtotal) VALUES ('".$tid."','".$transferTotals["uptotal"]."','".$transferTotals["downtotal"]."')";
 		$db->Execute($sql);
 		// set transfers-cache
 		cacheTransfersSet();

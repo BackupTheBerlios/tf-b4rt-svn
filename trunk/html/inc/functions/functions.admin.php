@@ -570,7 +570,7 @@ function updateThisUser($user_id, $org_user_id, $pass1, $userType, $hideOffline)
  */
 function changeUserLevel($user_id, $level) {
 	global $db;
-	$sql='select * from tf_users where user_id = '.$db->qstr($user_id);
+	$sql = 'select * from tf_users where user_id = '.$db->qstr($user_id);
 	$rs = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
 	$rec = array('user_level'=>$level);
@@ -586,27 +586,13 @@ function changeUserLevel($user_id, $level) {
  * @return true or function exits with error
  */
 function setWebappLock($lock) {
-	global $cfg;
-	// get ado-connection
-	$dbCon = getAdoConnection();
-	if (!$dbCon) {
-		return $dbCon->ErrorMsg();
-	} else {
-		$dbCon->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
-		// flush session-cache
-		cacheFlush();
-		if ($dbCon->ErrorNo() == 0) {
-			// close ado-connection
-			$dbCon->Close();
-			// return
-			return true;
-		} else { // there was an error
-			// close ado-connection
-			$dbCon->Close();
-			// return error
-			return $dbCon->ErrorMsg();
-		}
-	}
+	global $db;
+	$db->Execute("UPDATE tf_settings SET tf_value = '".$lock."' WHERE tf_key = 'webapp_locked'");
+	// set transfers-cache
+	cacheTransfersSet();
+	return ($db->ErrorNo() == 0)
+		? true
+		: $db->ErrorMsg();
 }
 
 /**
@@ -615,26 +601,13 @@ function setWebappLock($lock) {
  * @return true or function exits with error
  */
 function resetAllTransferTotals() {
-	// get ado-connection
-	$dbCon = getAdoConnection();
-	if (!$dbCon) {
-		return $dbCon->ErrorMsg();
-	} else {
-		$dbCon->Execute("DELETE FROM tf_torrent_totals");
-		// set transfers-cache
-		cacheTransfersSet();
-		if ($dbCon->ErrorNo() == 0) {
-			// close ado-connection
-			$dbCon->Close();
-			// return
-			return true;
-		} else { // there was an error
-			// close ado-connection
-			$dbCon->Close();
-			// return error
-			return $dbCon->ErrorMsg();
-		}
-	}
+	global $db;
+	$db->Execute("DELETE FROM tf_transfer_totals");
+	// set transfers-cache
+	cacheTransfersSet();
+	return ($db->ErrorNo() == 0)
+		? true
+		: $db->ErrorMsg();
 }
 
 /**
@@ -643,24 +616,13 @@ function resetAllTransferTotals() {
  * @return true or function exits with error
  */
 function resetXferStats() {
-	// get ado-connection
-	$dbCon = getAdoConnection();
-	if (!$dbCon) {
-		return $dbCon->ErrorMsg();
-	} else {
-		$dbCon->Execute("DELETE FROM tf_xfer");
-		if ($dbCon->ErrorNo() == 0) {
-			// close ado-connection
-			$dbCon->Close();
-			// return
-			return true;
-		} else { // there was an error
-			// close ado-connection
-			$dbCon->Close();
-			// return error
-			return $dbCon->ErrorMsg();
-		}
-	}
+	global $db;
+	$db->Execute("DELETE FROM tf_xfer");
+	// set transfers-cache
+	cacheTransfersSet();
+	return ($db->ErrorNo() == 0)
+		? true
+		: $db->ErrorMsg();
 }
 
 ?>

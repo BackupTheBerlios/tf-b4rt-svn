@@ -251,10 +251,24 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotal($transfer) {
-    	global $transfers;
+    	global $db, $transfers;
+        $retVal = array();
+        // transfer from db
+        $sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = '".getTransferHash($transfer)."'";
+        $result = $db->Execute($sql);
+        $row = $result->FetchRow();
+        if (empty($row)) {
+        	$retVal["uptotal"] = 0;
+            $retVal["downtotal"] = 0;
+        } else {
+            $retVal["uptotal"] = $row["uptotal"];
+            $retVal["downtotal"] = $row["downtotal"];
+        }
         // transfer from stat-file
         $sf = new StatFile($transfer);
-        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
+        $retVal["uptotal"] += $sf->uptotal;
+        $retVal["downtotal"] += $sf->downtotal;
+        return $retVal;
     }
 
     /**
@@ -267,7 +281,15 @@ class ClientHandlerWget extends ClientHandler
      * @return array with downtotal and uptotal
      */
     function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
-        return array("uptotal" => $sfu, "downtotal" => $sfd);
+        global $transfers;
+        $retVal = array();
+        $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+        	? $transfers['totals'][$tid]['uptotal'] + $sfu
+        	: $sfu;
+        $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
+        	? $transfers['totals'][$tid]['downtotal'] + $sfd
+        	: $sfd;
+        return $retVal;
     }
 
     /**

@@ -171,7 +171,7 @@ class ClientHandlerTransmission extends ClientHandler
         $retVal["downtotal"] = $sf->downtotal;
         // transfer from db
         $torrentId = getTransferHash($transfer);
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".$torrentId."'";
+        $sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = '".$torrentId."'";
         $result = $db->Execute($sql);
         $row = $result->FetchRow();
         if (!empty($row)) {

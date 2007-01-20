@@ -254,12 +254,12 @@ class Image
 		// bail if no object
 		if (!$imageObject)
 			Image::paintNotSupported();
-		// paint offscreen-image
+		// background
 		$background = imagecolorallocate($imageObject->image, $bg['r'], $bg['g'], $bg['b']);
 		// convert to angles.
 		$valueCount = count($values);
 		$valueSum = array_sum($values);
-		for ($i = 0; $i < $valueCount; $i++){
+		for ($i = 0; $i < $valueCount; $i++) {
 			$angle[$i] = (($values[$i] / $valueSum) * 360);
 			$angle_sum[$i] = array_sum($angle);
 		}

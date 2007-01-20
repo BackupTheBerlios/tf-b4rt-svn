@@ -206,7 +206,7 @@ class ClientHandlerTornado extends ClientHandler
     	global $db, $transfers;
         $retVal = array();
         // transfer from db
-        $sql = "SELECT uptotal,downtotal FROM tf_torrent_totals WHERE tid = '".getTransferHash($transfer)."'";
+        $sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = '".getTransferHash($transfer)."'";
         $result = $db->Execute($sql);
         $row = $result->FetchRow();
         if (empty($row)) {
