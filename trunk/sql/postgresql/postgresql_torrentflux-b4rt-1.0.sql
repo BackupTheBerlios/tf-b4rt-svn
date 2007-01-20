@@ -230,6 +230,7 @@ INSERT INTO tf_settings VALUES ('max_download_rate','0');
 INSERT INTO tf_settings VALUES ('max_uploads','4');
 INSERT INTO tf_settings VALUES ('minport','49160');
 INSERT INTO tf_settings VALUES ('maxport','49300');
+INSERT INTO tf_settings VALUES ('superseeder','0');
 INSERT INTO tf_settings VALUES ('rerequest_interval','1800');
 INSERT INTO tf_settings VALUES ('enable_search','1');
 INSERT INTO tf_settings VALUES ('show_server_load','1');
