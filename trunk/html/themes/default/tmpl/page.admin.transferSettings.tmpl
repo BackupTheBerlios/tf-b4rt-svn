@@ -239,11 +239,10 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Limit Download Rate</strong><br>
-									Rate may be expressed in bytes, kilobytes with the k suffix, or megabytes with the m suffix.
-									(0 for no limit).
+									Set the default value for the max download rate per transfer (0 for no limit).
 								</td>
 								<td valign="top">
-									<input name="wget_limit_rate" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_rate">" size="5">
+									<input name="wget_limit_rate" type="Text" maxlength="5" value="<tmpl_var name="wget_limit_rate">" size="5"> kB/second
 								</td>
 							</tr>
 							<tr>
@@ -312,10 +311,10 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Download Rate</strong><br>
-									Explicitly specify transfer bandwidth in kBps. (0 for no limit).
+									Set the default value for the max download rate per transfer (0 for no limit).
 								</td>
 								<td valign="top">
-									<input name="nzbperl_rate" type="Text" maxlength="5" value="<tmpl_var name="nzbperl_rate">" size="5">
+									<input name="nzbperl_rate" type="Text" maxlength="5" value="<tmpl_var name="nzbperl_rate">" size="5"> kB/second
 								</td>
 							</tr>
 							<tr>

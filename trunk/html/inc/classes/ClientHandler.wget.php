@@ -180,7 +180,7 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . escapeshellarg($this->transferFilePath);
         $this->command .= " " . $this->owner;
         $this->command .= " " . escapeshellarg($this->savepath);
-        $this->command .= " " . escapeshellarg($this->drate);
+        $this->command .= " " . escapeshellarg($this->rate * 1024);
         $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);
         $this->command .= " " . escapeshellarg($cfg["wget_ftp_pasv"]);
         $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
@@ -329,19 +329,13 @@ class ClientHandlerWget extends ClientHandler
      */
     function settingsDefault() {
     	global $cfg;
-		if (preg_match("/(\d*)k/i", $cfg["wget_limit_rate"], $reg))
-			$drate = intval($reg[1]);
-		else if (preg_match("/(\d*)m/i", $cfg["wget_limit_rate"], $reg))
-			$drate = intval($reg[1]) * 1024;
-		else
-			$drate = intval($cfg["wget_limit_rate"] / 1024);
 		// set vars
 		$this->hash        = getTransferHash($this->transfer);
         $this->datapath    = getTransferDatapath($this->transfer);
     	$this->savepath    = getTransferSavepath($this->transfer);
 		$this->running     = 0;
 		$this->rate        = 0;
-		$this->drate       = is_numeric($drate) ? $drate : 0;
+		$this->drate       = $cfg["wget_limit_rate"];
 		$this->maxuploads  = 0;
 		$this->superseeder = 0;
 		$this->runtime     = "True";

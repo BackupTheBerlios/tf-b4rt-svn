@@ -151,6 +151,10 @@ function validateSettings(section) {
 				msg = msg + "* Keep seeding until Sharing % must be a valid number.\n";
 				document.theForm.sharekill.focus();
 			}
+			if (isNumber(document.theForm.wget_limit_rate.value) == false) {
+				msg = msg + "* wget Download Rate must be a valid number.\n";
+				document.theForm.wget_limit_rate.focus();
+			}
 			if (isNumber(document.theForm.wget_limit_retries.value) == false) {
 				msg = msg + "* wget Limit Number of Retries must be a valid number.\n";
 				document.theForm.wget_limit_retries.focus();
