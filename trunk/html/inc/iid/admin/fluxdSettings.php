@@ -65,8 +65,8 @@ FluxdServiceMod::initializeServiceMod('Qmgr'); // would not be needed as its don
 $tmpl->setvar('fluxd_Qmgr_enabled', $cfg["fluxd_Qmgr_enabled"]);
 $tmpl->setvar('fluxd_Qmgr_state', FluxdQmgr::getModState());
 $tmpl->setvar('fluxd_Qmgr_interval', $cfg["fluxd_Qmgr_interval"]);
-$tmpl->setvar('fluxd_Qmgr_maxTotalTorrents', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
-$tmpl->setvar('fluxd_Qmgr_maxUserTorrents', $cfg["fluxd_Qmgr_maxUserTorrents"]);
+$tmpl->setvar('fluxd_Qmgr_maxTotalTransfers', $cfg["fluxd_Qmgr_maxTotalTransfers"]);
+$tmpl->setvar('fluxd_Qmgr_maxUserTransfers', $cfg["fluxd_Qmgr_maxUserTransfers"]);
 
 // Watch
 FluxdServiceMod::initializeServiceMod('Watch');

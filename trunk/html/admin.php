@@ -117,8 +117,8 @@ switch ($op) {
 			$_POST["fluxd_Trigger_enabled"] != $cfg["fluxd_Trigger_enabled"] ||
 			$_POST["fluxd_Watch_enabled"] != $cfg["fluxd_Watch_enabled"] ||
 			$_POST["fluxd_Rssad_enabled"] != $cfg["fluxd_Rssad_enabled"] ||
-			$_POST["fluxd_Qmgr_maxUserTorrents"] != $cfg["fluxd_Qmgr_maxUserTorrents"] ||
-			$_POST["fluxd_Qmgr_maxTotalTorrents"] != $cfg["fluxd_Qmgr_maxTotalTorrents"] ||
+			$_POST["fluxd_Qmgr_maxTotalTransfers"] != $cfg["fluxd_Qmgr_maxTotalTransfers"] ||
+			$_POST["fluxd_Qmgr_maxUserTransfers"] != $cfg["fluxd_Qmgr_maxUserTransfers"] ||
 			$_POST["fluxd_Qmgr_interval"] != $cfg["fluxd_Qmgr_interval"] ||
 			$_POST["fluxd_Fluxinet_port"] != $cfg["fluxd_Fluxinet_port"] ||
 			$_POST["fluxd_Watch_interval"] != $cfg["fluxd_Watch_interval"] ||

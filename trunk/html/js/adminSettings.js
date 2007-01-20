@@ -10,16 +10,16 @@ function validateSettings(section) {
 			break;
 		case 'fluxd':
 			if (isNumber(document.theForm.fluxd_Qmgr_interval.value) == false ) {
-				msg = msg + "* Qmgr Intervall must be a valid number.\n";
+				msg = msg + "* Qmgr Interval must be a valid number.\n";
 				document.theForm.fluxd_Qmgr_interval.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Qmgr_maxTotalTorrents.value) == false) {
-				msg = msg + "* Max Total Threads must be a valid number.\n";
-				document.theForm.fluxd_Qmgr_maxTotalTorrents.focus();
+			if (isNumber(document.theForm.fluxd_Qmgr_maxTotalTransfers.value) == false) {
+				msg = msg + "* Max Total Transfers must be a valid number.\n";
+				document.theForm.fluxd_Qmgr_maxTotalTransfers.focus();
 			}
-			if (isNumber(document.theForm.fluxd_Qmgr_maxUserTorrents.value) == false) {
-				msg = msg + "* Max User Threads must be a valid number.\n";
-				document.theForm.fluxd_Qmgr_maxUserTorrents.focus();
+			if (isNumber(document.theForm.fluxd_Qmgr_maxUserTransfers.value) == false) {
+				msg = msg + "* Max User Transfers must be a valid number.\n";
+				document.theForm.fluxd_Qmgr_maxUserTransfers.focus();
 			}
 			if (isNumber(document.theForm.fluxd_Fluxinet_port.value) == false ) {
 				msg = msg + "* Fluxinet port must be a valid number.\n";

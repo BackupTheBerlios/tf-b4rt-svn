@@ -635,8 +635,8 @@ if ($cfg['index_page_stats'] != 0) {
 		$tmpl->setvar('_QUEUEMANAGER', $cfg['_QUEUEMANAGER']);
 		$tmpl->setvar('runningTransferCount', getRunningTransferCount());
 		$tmpl->setvar('countQueuedTransfers', FluxdQmgr::countQueuedTransfers());
-		$tmpl->setvar('limitGlobal', $cfg["fluxd_Qmgr_maxTotalTorrents"]);
-		$tmpl->setvar('limitUser', $cfg["fluxd_Qmgr_maxUserTorrents"]);
+		$tmpl->setvar('limitGlobal', $cfg["fluxd_Qmgr_maxTotalTransfers"]);
+		$tmpl->setvar('limitUser', $cfg["fluxd_Qmgr_maxUserTransfers"]);
 	}
 	$tmpl->setvar('_OTHERSERVERSTATS', $cfg['_OTHERSERVERSTATS']);
 	$tmpl->setvar('downloadspeed1', @number_format($cfg["total_download"], 2));
