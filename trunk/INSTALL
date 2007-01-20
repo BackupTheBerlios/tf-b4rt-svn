@@ -223,12 +223,20 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-98
     ->
    /usr/local/torrent/.transfers/
 
-9. Remove or rename the file /path/to/torrentflux-docroot/setup.php.
-   This is a security precaution to ensure a malicious user does not
-   attempt to overwrite your torrentflux-b4rt installation.  Your
-   installation will not run with setup.php in the document root folder.
+9. rename stat-files and prio-files. (torrent only)
+   change to your path-dir. (the dir just renamed in 8.) on a
+   default install this would be :
+   cd /usr/local/torrent/.transfers/
+   execute this commands (requires perl) in that dir :
+   ls -1 *.stat | perl -e 'while(<STDIN>){chomp;$o=$_;$n=((substr($_,0,(length($_))-4)))."torrent.stat";print $o."->".$n;print `mv $o $n;echo`;}'
+   ls -1 *.prio | perl -e 'while(<STDIN>){chomp;$o=$_;$n=((substr($_,0,(length($_))-4)))."torrent.prio";print $o."->".$n;print `mv $o $n;echo`;}'
 
-10. On your first login after the upgrade you should check all the
+10. Remove or rename the file /path/to/torrentflux-docroot/setup.php.
+    This is a security precaution to ensure a malicious user does not
+    attempt to overwrite your torrentflux-b4rt installation.  Your
+    installation will not run with setup.php in the document root folder.
+
+11. On your first login after the upgrade you should check all the
     admin settings pages and configure your installation.
 
 
@@ -326,12 +334,13 @@ Manual Upgrade from official TorrentFlux 2.1/2.2/2.3
     ->
    /usr/local/torrent/.transfers/
 
-9. rename your stat-files.
+9. rename stat-files and prio-files.
    change to your path-dir. (the dir just renamed in 8.) on a
    default install this would be :
    cd /usr/local/torrent/.transfers/
-   execute this command (requires perl) in that dir :
-   ls -1 *.torrent | perl -e 'while(<STDIN>){$n=((substr($_,0,(length($_))-8)))."stat";$o=lc($n);print $o."->".$n;print`mv $o $n;echo`;}'
+   execute this commands (requires perl) in that dir :
+   ls -1 *.torrent | perl -e 'while(<STDIN>){chomp;$o=lc(((substr($_,0,(length($_))-7))))."stat";$n=$_.".stat";print $o."->".$n;print `mv $o $n;echo`;}'
+   ls -1 *.prio | perl -e 'while(<STDIN>){chomp;$o=$_;$n=((substr($_,0,(length($_))-4)))."torrent.prio";print $o."->".$n;print `mv $o $n;echo`;}'
 
 10. Remove or rename the file /path/to/torrentflux-docroot/setup.php.
     This is a security precaution to ensure a malicious user does not
