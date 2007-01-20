@@ -86,18 +86,14 @@ if (substr($transfer, -8) == ".torrent") {
 	}
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
-	$fileContent = @file_get_contents($cfg["transfer_file_path"].$transfer);
-	$tList = explode("\n", $fileContent);
-	if ((isset($tList)) && (is_array($tList))) {
-		foreach ($tList as $tLine) {
-			$tfile = trim($tLine);
-			array_push($transferFilesList, array(
-				'name' => $tfile,
-				'size' => "unknown"
-				)
-			);
-		}
-	}
+	$ch = ClientHandler::getInstance('wget');
+	$ch->setVarsFromFile($transfer);
+	if (!empty($ch->url))
+		array_push($transferFilesList, array(
+			'name' => $ch->url,
+			'size' => "unknown"
+			)
+		);
 	if (empty($transferFilesList)) {
 		$tmpl->setvar('transferFilesString', "Empty");
 		$tmpl->setvar('transferFileCount', 0);
