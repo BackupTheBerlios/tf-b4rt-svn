@@ -4,7 +4,7 @@ $Id$
 
 torrentflux-b4rt 1.0
 
-http://tf-b4rt.berlios.de/
+http://tf-b4rt.berlios.de
 
 
 -----------------------------------------------------------------
@@ -16,12 +16,12 @@ System Requirements
 
 -- Web Server.
    * Apache (http://www.apache.org)
-   * LightTPD (http://www.lighttpd.net/)
+   * LightTPD (http://www.lighttpd.net)
 
 -- SQL-Database. Supported are :
    * MySQL (http://www.mysql.com)
    * SQLite (http://www.sqlite.org)
-   * PostgreSQL (http://www.postgresql.org/)
+   * PostgreSQL (http://www.postgresql.org)
 
 -- PHP Version 4.3.x or higher with Session and PCRE support
    enabled. Socket-Support is required for fluxd.
@@ -139,7 +139,8 @@ Upgrade from TorrentFlux 2.1-b4rt-9x with "upgrade.php"
 
 1. If QueueManager is running dequeue all torrents and stop it.
 
-2. Stop all transfers.
+2. Stop all transfers and delete them. (data-delete/reset/wipe is
+   not needed, delete is enough)
 
 3. Delete content of docroot of the v9x-installation. (recursive)
 
@@ -181,7 +182,8 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-98
 
 1. If QueueManager is running dequeue all torrents and stop it.
 
-2. Stop all transfers.
+2. Stop all transfers and delete them. (data-delete/reset/wipe is
+   not needed, delete is enough)
 
 3. Delete content of docroot of the v98-installation. (recursive)
 
@@ -223,20 +225,12 @@ Manual Upgrade from TorrentFlux 2.1-b4rt-98
     ->
    /usr/local/torrent/.transfers/
 
-9. rename stat-files and prio-files. (torrent only)
-   change to your path-dir. (the dir just renamed in 8.) on a
-   default install this would be :
-   cd /usr/local/torrent/.transfers/
-   execute this commands (requires perl) in that dir :
-   ls -1 *.stat | perl -e 'while(<STDIN>){chomp;$o=$_;$n=((substr($_,0,(length($_))-4)))."torrent.stat";print $o."->".$n;print `mv $o $n;echo`;}'
-   ls -1 *.prio | perl -e 'while(<STDIN>){chomp;$o=$_;$n=((substr($_,0,(length($_))-4)))."torrent.prio";print $o."->".$n;print `mv $o $n;echo`;}'
+9. Remove or rename the file /path/to/torrentflux-docroot/setup.php.
+   This is a security precaution to ensure a malicious user does not
+   attempt to overwrite your torrentflux-b4rt installation.  Your
+   installation will not run with setup.php in the document root folder.
 
-10. Remove or rename the file /path/to/torrentflux-docroot/setup.php.
-    This is a security precaution to ensure a malicious user does not
-    attempt to overwrite your torrentflux-b4rt installation.  Your
-    installation will not run with setup.php in the document root folder.
-
-11. On your first login after the upgrade you should check all the
+10. On your first login after the upgrade you should check all the
     admin settings pages and configure your installation.
 
 
@@ -456,5 +450,5 @@ Perl-Modules
 -----------------------------------------------------------------
 Known Issues
 -----------------------------------------------------------------
-Please check at: http://tf-b4rt.berlios.de/
+Please check at: http://tf-b4rt.berlios.de
 
