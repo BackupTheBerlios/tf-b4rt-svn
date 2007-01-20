@@ -41,7 +41,7 @@ function setVarsFromPersistentSettings() {
 		$settings["max_download_rate"]		 = $cfg["max_download_rate"];
 		$settings["torrent_dies_when_done"]	 = $cfg["torrent_dies_when_done"];
 		$settings["max_uploads"]			 = $cfg["max_uploads"];
-		$settings["superseeder"]			 = 0;
+		$settings["superseeder"]			 = $cfg["superseeder"];
 		$settings["minport"]				 = $cfg["minport"];
 		$settings["maxport"]				 = $cfg["maxport"];
 		$settings["sharekill"]				 = $cfg["sharekill"];
