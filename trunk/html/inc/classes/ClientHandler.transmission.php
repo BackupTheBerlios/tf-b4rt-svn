@@ -90,9 +90,11 @@ class ClientHandlerTransmission extends ClientHandler
         if ($this->sharekill == -1)
             $this->sharekill_param = -1;
 
+        /*
         // workaround for bsd-pid-file-problem : touch file first
         if ((!$this->queue) && ($cfg["_OS"] == 2))
         	@touch($this->transferFilePath.".pid");
+        */
 
         // build the command-string
 		// note : order of args must not change for ps-parsing-code in
