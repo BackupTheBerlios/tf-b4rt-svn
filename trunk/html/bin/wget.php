@@ -128,9 +128,10 @@ $command .= " ".$cfg['bin_wget'];
 if (($drate != "") && ($drate != "0"))
 	$command .= " --limit-rate=" . $drate;
 if ($retries != "")
-	$command .= " --tries=" . $retries;
+	$command .= " -t ".$retries;
 if ($pasv == 1)
-	$command .= " --passive-ftp";
+	$command .= " -c";
+$command .= " --passive-ftp";
 $command .= " -i ".escapeshellarg($cfg['transfer_file_path'].$transfer);
 $command .= " 2>&1"; // direct STDERR to STDOUT
 $command .= " & echo $! > ".$cfg['transfer_file_path'].$transfer.".pid"; // write pid-file
@@ -163,6 +164,8 @@ do {
 		}
 		// log
 		$ch->logMessage($read."\n");
+		// wait for 0.25 seconds
+		usleep(250000);
 	}
 	// read
 	$read = @fread($wget, 16384);
@@ -172,7 +175,6 @@ do {
 	writeStatFile();
 	// wait
 	sleep(5);
-
 } while (!feof($wget));
 pclose($wget);
 

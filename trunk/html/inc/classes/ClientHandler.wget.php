@@ -187,7 +187,7 @@ class ClientHandlerWget extends ClientHandler
         $this->command .= " " . escapeshellarg($this->transferFilePath);
         $this->command .= " " . $this->owner;
         $this->command .= " " . escapeshellarg($this->savepath);
-        $this->command .= " " . escapeshellarg($this->rate * 1024);
+        $this->command .= " " . escapeshellarg($this->drate * 1024);
         $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);
         $this->command .= " " . escapeshellarg($cfg["wget_ftp_pasv"]);
         $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
