@@ -1027,7 +1027,7 @@ function injectTransfer($transfer) {
 	global $cfg;
 	$sf = new StatFile($transfer);
 	$sf->running = "2"; // file is new
-	$sf->size = getDownloadSize($transfer);
+	$sf->size = getTransferSize($transfer);
 	if ($sf->write()) {
 		// set transfers-cache
 		cacheTransfersSet();
@@ -1248,7 +1248,7 @@ function getTransferListArray() {
 		if (!file_exists($cfg["transfer_file_path"].$transfer.".stat")) {
 			$transferRunning = 2;
 			$sf->running = "2";
-			$sf->size = getDownloadSize($transfer);
+			$sf->size = getTransferSize($transfer);
 			injectTransfer($transfer);
 		}
 
@@ -1956,12 +1956,12 @@ function getDriveSpace($drive) {
 }
 
 /**
- * Grab the full size of the download from the metafile
+ * get the full size of the transfer
  *
  * @param $transfer
  * @return int
  */
-function getDownloadSize($transfer) {
+function getTransferSize($transfer) {
 	global $cfg;
 	// client-switch
 	if (substr($transfer, -8) == ".torrent") {

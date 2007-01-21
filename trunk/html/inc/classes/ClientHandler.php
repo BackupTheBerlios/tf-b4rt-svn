@@ -362,7 +362,7 @@ class ClientHandler
 		            $this->logMessage("seed forever\n", true);
 		        } elseif ($this->sharekill > 0) { // recalc sharekill
 		            // sanity-check. catch "data-size = 0".
-		            $transferSize = intval(getDownloadSize($this->transfer));
+		            $transferSize = intval(getTransferSize($this->transfer));
 		            if ($transferSize > 0) {
 						$totalAry = $this->getTransferTotal($this->transfer);
 		            	$upTotal = $totalAry["uptotal"] + 0;
