@@ -5,7 +5,9 @@ try:
     try:
         setrlimit(RLIMIT_NOFILE, (100000, 100000))
     except ValueError, e:
-        print ">>> unable to setrlimit ", e
+        # dont be so noisy here
+        pass
+        # print ">>> unable to setrlimit ", e
 except ImportError, e:
     pass
 

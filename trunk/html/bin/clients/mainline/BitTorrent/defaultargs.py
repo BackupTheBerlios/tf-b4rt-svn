@@ -61,6 +61,12 @@ basic_options = [
        "temporary directories for dot, data, incomplete torrents and "
        "complete torrents.  Allows multiple clients on the same machine to "
        "communicate with each other." )),
+    ('tf_owner', '',
+     _("The tf-user to run the torrent as." )),
+    ('seed_limit', '0',
+     _("Die when ratio reaches this amount." )),
+    ('die_when_done', 'False',
+     _("Die when the torrent is finished. Please seed your Torrents !" )),
     ]
 
 common_options = [
@@ -106,7 +112,7 @@ common_options = [
        "time, 0 means no limit. Used to avoid running out of file descriptors.")),
     ('start_trackerless_client', True,
      _("Initialize a trackerless client.  This must be enabled in order to download trackerless torrents.")),
-    ('upnp', True,
+    ('upnp', False,
      _("Enable automatic port mapping")+' (UPnP)'),
     ('resolve_hostnames', True,
      _("Resolve hostnames in peer list")),
@@ -477,7 +483,7 @@ def get_defaults(ui):
 
     if ui == 'bittorrent-console' :
         r.extend([
-            ('display_interval', 5,
+            ('display_interval', 1,
             _("seconds between updates of displayed information")),
             ] )
     elif ui.startswith('launchmany-console'):
