@@ -1956,7 +1956,7 @@ function getDriveSpace($drive) {
 }
 
 /**
- * get the full size of the transfer
+ * get the full size of a transfer
  *
  * @param $transfer
  * @return int

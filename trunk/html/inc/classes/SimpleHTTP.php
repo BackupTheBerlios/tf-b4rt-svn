@@ -87,6 +87,11 @@ class SimpleHTTP
 	var $status = "";
 
 	/**
+	 * socket
+	 */
+	var $socket = 0;
+
+	/**
 	 * Error string used in fsockopen
 	 * @param	string	$errstr
 	 */
@@ -288,6 +293,7 @@ class SimpleHTTP
 		$this->status = "";
 		$this->errstr = "";
 		$this->errno = 0;
+		$this->socket = 0;
 
 		/**
 		 * array of URL component parts for use in raw HTTP request
@@ -315,9 +321,9 @@ class SimpleHTTP
 		// Check to see if this site requires the use of cookies
 		// Whilst in SVN/testing, always use the cookie/raw HTTP handling code:
 		if (true || !empty($this->cookie)) {
-			$socket = @fsockopen($domain["host"], $domain["port"], $this->errno , $this->errstr, $this->timeout); //connect to server
+			$this->socket = @fsockopen($domain["host"], $domain["port"], $this->errno , $this->errstr, $this->timeout); //connect to server
 
-			if(!empty($socket)) {
+			if(!empty($this->socket)) {
 				// Write the outgoing HTTP request using cookie info
 
 				// Standard HTTP/1.1 request looks like:
@@ -343,10 +349,10 @@ class SimpleHTTP
 				$this->request .= "Cookie: " . $this->cookie . "\r\n\r\n";
 
 				// Send header packet information to server
-				fputs($socket, $this->request);
+				fputs($this->socket, $this->request);
 
 				// Get response headers:
-				while ($line=@fgets($socket, 500000)){
+				while ($line=@fgets($this->socket, 500000)){
 					// First empty line/\r\n indicates end of response headers:
 					if($line == "\r\n"){
 						break;
@@ -391,15 +397,15 @@ class SimpleHTTP
 					$chunkLength=0;
 
 					// Get first chunk size:
-					$chunkSize = hexdec(trim(fgets($socket)));
+					$chunkSize = hexdec(trim(fgets($this->socket)));
 
 					// 0 size chunk indicates end of content:
 					while($chunkSize > 0){
 						// Read in up to $chunkSize chars:
-						$line=@fgets($socket, $chunkSize);
+						$line=@fgets($this->socket, $chunkSize);
 
 						// Discard crlf after current chunk:
-						fgets($socket);
+						fgets($this->socket);
 
 						// Append chunk to response body:
 						$this->responseBody.=$line;
@@ -408,15 +414,15 @@ class SimpleHTTP
 						$chunkLength+=$chunkSize;
 
 						// Read next chunk size:
-						$chunkSize = hexdec(trim(fgets($socket)));
+						$chunkSize = hexdec(trim(fgets($this->socket)));
 					}
 					$this->responseHeaders["content-length"] = $chunkLength;
 				} else {
-					while ($line=@fread($socket, 500000)){
+					while ($line=@fread($this->socket, 500000)){
 						$this->responseBody .= $line;
 					}
 				}
-				@fclose($socket); // Close our connection
+				@fclose($this->socket); // Close our connection
 			} else {
 				return "Error fetching ".$this->url.".  PHP Error No=".$this->errno." . PHP Error String=".$this->errstr;
 			}
@@ -498,7 +504,7 @@ class SimpleHTTP
 		$domain	 = parse_url($durl);
 
 		// Check we have a remote URL:
-		if (!isset($domain["host"])){
+		if (!isset($domain["host"])) {
 			// Not a remote URL:
 			$msg = "The torrent requested for download (".$durl.") is not a remote torrent. Please enter a valid remote torrent URL such as http://example.com/example.torrent\n";
 			AuditAction($cfg["constants"]["error"], $msg);
@@ -645,7 +651,7 @@ class SimpleHTTP
 		$domain	 = parse_url($durl);
 
 		// Check we have a remote URL:
-		if (!isset($domain["host"])){
+		if (!isset($domain["host"])) {
 			// Not a remote URL:
 			$msg = "The nzb requested for download (".$durl.") is not a remote nzb. Please enter a valid remote nzb URL such as http://example.com/example.nzb\n";
 			AuditAction($cfg["constants"]["error"], $msg);
@@ -731,13 +737,44 @@ class SimpleHTTP
 	 * @return string
 	 */
 	function instance_getRemoteSize($durl) {
-		global $cfg;
-
 		// set fields
 		$this->url = $durl;
-
-		// TODO : implement me
-		return 0;
+		$this->timeout = 5;
+		$this->status = "";
+		$this->errstr = "";
+		$this->errno = 0;
+		// domain
+		$domain = parse_url($this->url);
+		if (!isset($domain["port"]))
+			$domain["port"] = 80;
+		// check we have a remote URL:
+		if (!isset($domain["host"]))
+			return 0;
+		// check we have a remote path:
+		if (!isset($domain["path"]))
+			return 0;
+		// open socket
+		$this->socket = @fsockopen($domain["host"], $domain["port"], $this->errno, $this->errstr, $this->timeout);
+		if (!$this->socket)
+			return 0;
+		// send HEAD request
+		$this->request  = "HEAD ".$domain["path"]." HTTP/1.0\r\nConnection: Close\r\n\r\n";
+		@fwrite($this->socket, $this->request);
+		// read the response
+		$this->responseBody = "";
+		for ($i = 0; $i < 25; $i++) {
+			$s = @fgets($this->socket, 4096);
+			$this->responseBody .= $s;
+			if (strcmp($s, "\r\n") == 0 || strcmp($s, "\n") == 0)
+				break;
+		}
+		// close socket
+		fclose($this->socket);
+		// try to get Content-Length in response-body
+		preg_match('/Content-Length:\s([0-9].+?)\s/', $this->responseBody, $matches);
+		return (isset($matches[1]))
+			? $matches[1]
+			: 0;
 	}
 
 }

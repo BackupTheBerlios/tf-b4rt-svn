@@ -93,30 +93,27 @@ class ClientHandlerWget extends ClientHandler
 		// set vars from the url
 		$this->setVarsFromUrl($url);
 
-		// inject stat
-		$sf = new StatFile($this->transfer);
-		$sf->running = "2"; // file is new
-		$sf->size = "0";
-		if (!$sf->write()) {
-			$this->state = CLIENTHANDLER_STATE_ERROR;
-            $msg = "wget-inject-error when writing stat-file for transfer : ".$this->transfer;
-            array_push($this->messages , $msg);
-            AuditAction($cfg["constants"]["error"], $msg);
-            $this->logMessage($msg."\n", true);
-            return false;
-		}
-
 		// write meta-file
 		$resultSuccess = false;
 		if ($handle = @fopen($this->transferFilePath, "w")) {
 	        $resultSuccess = (@fwrite($handle, $this->url) !== false);
 			@fclose($handle);
 		}
-
-		// log
 		if ($resultSuccess) {
 			// Make an entry for the owner
 			AuditAction($cfg["constants"]["file_upload"], basename($this->transferFilePath));
+			// inject stat
+			$sf = new StatFile($this->transfer);
+			$sf->running = "2"; // file is new
+			$sf->size = getTransferSize($this->transfer);
+			if (!$sf->write()) {
+				$this->state = CLIENTHANDLER_STATE_ERROR;
+	            $msg = "wget-inject-error when writing stat-file for transfer : ".$this->transfer;
+	            array_push($this->messages , $msg);
+	            AuditAction($cfg["constants"]["error"], $msg);
+	            $this->logMessage($msg."\n", true);
+	            $resultSuccess = false;
+			}
 		} else {
 			$this->state = CLIENTHANDLER_STATE_ERROR;
             $msg = "wget-metafile cannot be written : ".$this->transferFilePath;
