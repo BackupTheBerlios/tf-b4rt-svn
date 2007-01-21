@@ -739,7 +739,7 @@ class SimpleHTTP
 	function instance_getRemoteSize($durl) {
 		// set fields
 		$this->url = $durl;
-		$this->timeout = 5;
+		$this->timeout = 8;
 		$this->status = "";
 		$this->errstr = "";
 		$this->errno = 0;

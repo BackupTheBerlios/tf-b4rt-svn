@@ -259,13 +259,7 @@ class ClientHandlerNzbperl extends ClientHandler
      * @param $autosend
      */
     function setRateUpload($transfer, $uprate, $autosend = false) {
-    	// set rate-field
-    	$this->rate = $uprate;
-    	// add command
-		CommandHandler::add($transfer, "u".$uprate);
-		// send command to client
-        if ($autosend)
-			CommandHandler::send($transfer);
+    	return;
     }
 
     /**

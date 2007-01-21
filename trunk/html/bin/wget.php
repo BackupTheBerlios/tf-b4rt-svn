@@ -94,7 +94,7 @@ $ch->setVarsFromTransfer($transfer);
 
 // log
 $ch->logMessage("wget.php starting up :\n");
-$ch->logMessage(" - transfer : ".$transferFile."\n");
+$ch->logMessage(" - transfer : ".$transfer."\n");
 $ch->logMessage(" - owner : ".$owner."\n");
 $ch->logMessage(" - path : ".$path."\n");
 $ch->logMessage(" - drate : ".$drate."\n");

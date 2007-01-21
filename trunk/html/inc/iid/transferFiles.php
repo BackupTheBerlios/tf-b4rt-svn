@@ -88,12 +88,14 @@ if (substr($transfer, -8) == ".torrent") {
 	// this is wget.
 	$ch = ClientHandler::getInstance('wget');
 	$ch->setVarsFromFile($transfer);
-	if (!empty($ch->url))
+	if (!empty($ch->url)) {
+		require_once("inc/classes/SimpleHTTP.php");
 		array_push($transferFilesList, array(
 			'name' => $ch->url,
-			'size' => "unknown"
+			'size' => formatBytesTokBMBGBTB(SimpleHTTP::getRemoteSize($ch->url))
 			)
 		);
+	}
 	if (empty($transferFilesList)) {
 		$tmpl->setvar('transferFilesString', "Empty");
 		$tmpl->setvar('transferFileCount', 0);
