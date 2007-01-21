@@ -37,23 +37,28 @@ $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
 
+// validate transfer
+if (isValidTransfer($transfer) !== true) {
+	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+	@error("Invalid Transfer", "", "", array($transfer));
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.transferLog.tmpl");
 
-// set vars
+// set transfer vars
 $tmpl->setvar('transfer', $transfer);
+$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+$tmpl->setvar('transferLabel', $transferLabel);
+
+// log-content
 $tmpl->setvar('transferLog', getTransferLog($transfer));
 
-// refresh
-// $tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferLog&transfer='.$transfer);
-
-// shorten name if too long
-if(strlen($transfer) >= 70)
-	$transfer = substr($transfer, 0, 67)."...";
-
-// more vars
-tmplSetTitleBar($cfg["pagetitle"]." - Transfer-Log - ".$transfer, false);
+// title + foot
 tmplSetFoot(false);
+tmplSetTitleBar($transferLabel." - Log", false);
+
+// iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template

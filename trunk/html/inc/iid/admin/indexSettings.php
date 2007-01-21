@@ -94,6 +94,12 @@ array_push($transferWindowDefaultList, array(
 	)
 );
 array_push($transferWindowDefaultList, array(
+	'name' => 'Log',
+	'value' => 'transferLog',
+	'is_selected' => ('transferLog' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
 	'name' => 'Files',
 	'value' => 'transferFiles',
 	'is_selected' => ('transferFiles' == $cfg["transfer_window_default"]) ? 1 : 0
