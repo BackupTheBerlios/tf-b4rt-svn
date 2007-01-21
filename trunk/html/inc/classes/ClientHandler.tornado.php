@@ -77,6 +77,11 @@ class ClientHandlerTornado extends ClientHandler
         	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
             array_push($this->messages, "tornadoBin : ".$this->tornadoBin);
+            // write error to stat
+			$sf = new StatFile($this->transfer, $this->owner);
+			$sf->time_left = 'Error';
+			$sf->write();
+			// return
             return false;
         }
 
@@ -89,7 +94,12 @@ class ClientHandlerTornado extends ClientHandler
 				$msg = "Error after prepare (".$transfer.",".$interactive.",".$enqueue.")";
 				array_push($this->messages , $msg);
 				$this->logMessage($msg."\n", true);
+	            // write error to stat
+				$sf = new StatFile($this->transfer, $this->owner);
+				$sf->time_left = 'Error';
+				$sf->write();
 			}
+			// return
 			return false;
 		}
 

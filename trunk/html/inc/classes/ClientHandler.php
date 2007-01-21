@@ -390,9 +390,8 @@ class ClientHandler
 			                $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
 			            }
 		            } else {
-		            	// skip start of client
 						// set state
-			            $this->state = CLIENTHANDLER_STATE_NULL;
+			            $this->state = CLIENTHANDLER_STATE_ERROR;
 		    			// message
 			            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", skipping start.";
 			            array_push($this->messages , $msg);
@@ -434,6 +433,11 @@ class ClientHandler
         if ($this->state != CLIENTHANDLER_STATE_READY) {
             $this->state = CLIENTHANDLER_STATE_ERROR;
             array_push($this->messages , "Error. ClientHandler in wrong state on execStart-request.");
+            // write error to stat
+			$sf = new StatFile($this->transfer, $this->owner);
+			$sf->time_left = 'Error';
+			$sf->write();
+			// return
             return;
         }
         // flush session-cache (trigger transfers-cache-set on next page-load)
@@ -484,6 +488,10 @@ class ClientHandler
             $msg = "error starting client. messages :\n";
             $msg .= implode("\n", $this->messages);
             $this->logMessage($msg."\n", true);
+            // write error to stat
+			$sf = new StatFile($this->transfer, $this->owner);
+			$sf->time_left = 'Error';
+			$sf->write();
         }
     }
 
