@@ -62,13 +62,23 @@
 								<input name="max_download_rate" type="Text" maxlength="5" value="<tmpl_var name="max_download_rate">" size="5"> kB/second
 							</td>
 						</tr>
+						<tmpl_if name="type" value="torrent">
+							<tr>
+								<td align="left" width="75%">Max Upload Connections:</td>
+								<td nowrap>
+									<input name="max_uploads" type="Text" maxlength="5" value="<tmpl_var name="max_uploads">" size="5">
+								</td>
+							</tr>
+						<tmpl_else>
+							<input type="hidden" name="max_uploads" value="<tmpl_var name="max_uploads">" />
+						</tmpl_if>
 						<tmpl_if name="type" value="wget">
 							<input type="hidden" name="maxcons" value="<tmpl_var name="maxcons">" />
 						<tmpl_else>
 							<tr>
 								<td align="left" width="75%">Max Cons:</td>
 								<td nowrap>
-									<input name="maxcons" type="Text" maxlength="4" value="<tmpl_var name="maxcons">" size="4">
+									<input name="maxcons" type="Text" maxlength="5" value="<tmpl_var name="maxcons">" size="5">
 								</td>
 							</tr>
 						</tmpl_if>
@@ -106,12 +116,6 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="75%">Max Upload Connections:</td>
-								<td nowrap>
-									<input name="max_uploads" type="Text" maxlength="5" value="<tmpl_var name="max_uploads">" size="5">
-								</td>
-							</tr>
-							<tr>
 								<td align="left" width="75%">Port Range:</td>
 								<td nowrap>
 									<input name="minport" type="Text" maxlength="5" value="<tmpl_var name="minport">" size="5"> -
@@ -122,7 +126,6 @@
 							<input type="hidden" name="torrent_dies_when_done" value="<tmpl_var name="torrent_dies_when_done">" />
 							<input type="hidden" name="sharekill" value="<tmpl_var name="sharekill">" />
 							<input type="hidden" name="superseeder" value="<tmpl_var name="superseeder">" />
-							<input type="hidden" name="max_uploads" value="<tmpl_var name="max_uploads">" />
 							<input type="hidden" name="minport" value="<tmpl_var name="minport">" />
 							<input type="hidden" name="maxport" value="<tmpl_var name="maxport">" />
 						</tmpl_if>

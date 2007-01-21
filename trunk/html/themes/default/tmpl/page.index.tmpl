@@ -328,72 +328,80 @@
 									<div align="right">
 										<table width="100%">
 											<tr>
-												<tmpl_if name="enable_metafile_download">
-													<td>
-														<img src="themes/default/images/down.gif" width="9" height="9" title="Download Metafile">
-													</td>
-													<td class="tiny">Download Metafile</td>
-												</tmpl_if>
-												<td>
-													<img src="themes/default/images/datadir.gif" width="16" height="16" title="Transfer-Data">
+												<td align="left">
+													<table><tr>
+														<tmpl_if name="enable_metafile_download">
+															<td>
+																<img src="themes/default/images/down.gif" width="9" height="9" title="Download Metafile">
+															</td>
+															<td class="tiny">Download Metafile</td>
+														</tmpl_if>
+														<td>
+															<img src="themes/default/images/datadir.gif" width="14" height="14" title="Transfer-Data">
+														</td>
+														<td class="tiny">Data</td>
+														<td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+														<td>
+															<img src="themes/default/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">">
+														</td>
+														<td class="tiny"><tmpl_var name="_RUNTRANSFER"></td>
+														<td>
+															<img src="themes/default/images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">">
+														</td>
+														<td class="tiny"><tmpl_var name="_STOPTRANSFER"></td>
+														<tmpl_if name="queueActive" value="1">
+															<td><img src="themes/default/images/queued.gif" width="16" height="16" title="<tmpl_var name="_DELQUEUE">">
+														</td>
+															<td class="tiny"><tmpl_var name="_DELQUEUE"></td>
+														</tmpl_if>
+														<td>
+															<img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">">
+														</td>
+														<td class="tiny"><tmpl_var name="_SEEDTRANSFER"></td>
+														<td>
+															<img src="themes/default/images/delete_on.gif" width="16" height="16" title="<tmpl_var name="_DELETE">">
+														</td>
+														<td class="tiny"><tmpl_var name="_DELETE"></td>
+													</tr></table>
 												</td>
-												<td class="tiny">Data</td>
-												<td>
-													<img src="themes/default/images/run_on.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">">
+												<td align="right">
+													<table><tr>
+														<td class="tiny" align="right" nowrap>
+															<a href="dispatcher.php?action=cacheFlush" onclick="return actionClick(true)"><img src="themes/default/images/cache.gif" width="16" height="16" border="0" title="Flush Cache"></a>
+														</td>
+														<td class="tiny" align="left" nowrap>
+															<a href="dispatcher.php?action=maintenance" onclick="return actionClick(true)"><img src="themes/default/images/maintenance.gif" width="16" height="16" border="0" title="Maintenance"></a>
+														</td>
+														<tmpl_if name="enable_bulkops">
+															<td nowrap>&nbsp;&nbsp;&nbsp;</td>
+															<td class="tiny" align="right" nowrap>
+																<a href="dispatcher.php?action=bulkStart" onclick="return actionConfirm('Start All Transfers ?')"><img src="themes/default/images/bulkstart.gif" width="16" height="16" border="0" title="Start All Transfers"></a>
+																<a href="dispatcher.php?action=bulkResume" onclick="return actionConfirm('Resume All Transfers ?')"><img src="themes/default/images/bulkresume.gif" width="16" height="16" border="0" title="Resume All Transfers"></a>
+																<a href="dispatcher.php?action=bulkStop" onclick="return actionConfirm('Stop All Transfers ?')"><img src="themes/default/images/bulkstop.gif" width="16" height="16" border="0" title="Stop All Transfers"></a>
+															</td>
+														</tmpl_if>
+														<tmpl_if name="enable_multiops">
+															<td nowrap>&nbsp;&nbsp;&nbsp;</td>
+															<td class="tiny" align="right" nowrap>
+																<select name="action" size="1">
+																	<option value="---" selected>---</option>
+																	<option value="transferStart" style="background-color: #00EC00">Start</option>
+																	<option value="transferStop" style="background-color: #94ABC0">Stop</option>
+																	<tmpl_if name="queueActive" value="1">
+																		<option value="transferEnQueue" style="background-color: #FFFC00">EnQueue</option>
+																		<option value="transferDeQueue" style="background-color: #FFFC00">DeQueue</option>
+																	</tmpl_if>
+																	<option value="transfer" style="background-color: #DDAAAA">Delete</option>
+																	<option value="transferData" style="background-color: #DDAAAA">Delete with Data</option>
+																	<option value="transferResetTotals" style="background-color: #DDAAAA">Reset Totals</option>
+																	<option value="transferWipe" style="background-color: #DDAAAA">Wipe</option>
+																</select>
+																<input type="submit" value="Go">
+																<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);">
+															</td>
+														</tmpl_if>
+													</tr></table>
 												</td>
-												<td class="tiny"><tmpl_var name="_RUNTRANSFER"></td>
-												<td>
-													<img src="themes/default/images/kill.gif" width="16" height="16" title="<tmpl_var name="_STOPTRANSFER">">
-												</td>
-												<td class="tiny"><tmpl_var name="_STOPTRANSFER"></td>
-												<tmpl_if name="queueActive" value="1">
-													<td><img src="themes/default/images/queued.gif" width="16" height="16" title="<tmpl_var name="_DELQUEUE">">
-												</td>
-													<td class="tiny"><tmpl_var name="_DELQUEUE"></td>
-												</tmpl_if>
-												<td>
-													<img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">">
-												</td>
-												<td class="tiny"><tmpl_var name="_SEEDTRANSFER"></td>
-												<td>
-													<img src="themes/default/images/delete_on.gif" width="16" height="16" title="<tmpl_var name="_DELETE">">
-												</td>
-												<td class="tiny"><tmpl_var name="_DELETE"></td>
-												<td class="tiny" align="right" nowrap>
-													&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-													<a href="dispatcher.php?action=cacheFlush" onclick="return actionClick(true)"><img src="themes/default/images/cache.gif" width="16" height="16" border="0" title="Flush Cache"></a>
-												</td>
-												<td class="tiny" align="left" nowrap>
-													<a href="dispatcher.php?action=maintenance" onclick="return actionClick(true)"><img src="themes/default/images/maintenance.gif" width="16" height="16" border="0" title="Maintenance"></a>
-												</td>
-												<tmpl_if name="enable_bulkops">
-													<td class="tiny" align="right" nowrap>
-														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<a href="dispatcher.php?action=bulkStart" onclick="return actionConfirm('Start All Transfers ?')"><img src="themes/default/images/bulkstart.gif" width="16" height="16" border="0" title="Start All Transfers"></a>
-														<a href="dispatcher.php?action=bulkResume" onclick="return actionConfirm('Resume All Transfers ?')"><img src="themes/default/images/bulkresume.gif" width="16" height="16" border="0" title="Resume All Transfers"></a>
-														<a href="dispatcher.php?action=bulkStop" onclick="return actionConfirm('Stop All Transfers ?')"><img src="themes/default/images/bulkstop.gif" width="16" height="16" border="0" title="Stop All Transfers"></a>
-													</td>
-												</tmpl_if>
-												<tmpl_if name="enable_multiops">
-													<td class="tiny" align="right" nowrap>
-														&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-														<select name="action" size="1">
-															<option value="---" selected>---</option>
-															<option value="transferStart" style="background-color: #00EC00">Start</option>
-															<option value="transferStop" style="background-color: #94ABC0">Stop</option>
-															<tmpl_if name="queueActive" value="1">
-																<option value="transferEnQueue" style="background-color: #FFFC00">EnQueue</option>
-																<option value="transferDeQueue" style="background-color: #FFFC00">DeQueue</option>
-															</tmpl_if>
-															<option value="transfer" style="background-color: #DDAAAA">Delete</option>
-															<option value="transferData" style="background-color: #DDAAAA">Delete with Data</option>
-															<option value="transferResetTotals" style="background-color: #DDAAAA">Reset Totals</option>
-															<option value="transferWipe" style="background-color: #DDAAAA">Wipe</option>
-														</select>
-														<input type="submit" value="Go">
-														<input type="checkbox" name="bulkBox" onclick="bulkCheck(this);">
-													</td>
-												</tmpl_if>
 											</tr>
 										</table>
 									</form>

@@ -69,6 +69,7 @@
 					<tmpl_if name="enable_metafile_download">
 						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">"><img src="themes/default/images/down.gif" width=9 height=9 title="Download Metafile" border=0 align="absmiddle"></a>
 					</tmpl_if>
+					<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/default/images/datadir.gif" width="14" height="14" title="<tmpl_var name="datapath">" border="0"></a>
 				</td>
 				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
 				<tmpl_if name="settings_0">
@@ -156,7 +157,6 @@
 				</tmpl_if>
 				<td nowrap>
 					<div align="center" class="admincell">
-						<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/default/images/datadir.gif" title="<tmpl_var name="datapath">" border="0"></a>
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
 								<tmpl_if name="clientType" value="wget">
@@ -293,6 +293,7 @@
 					<tmpl_if name="enable_metafile_download">
 						<a href="dispatcher.php?action=metafileDownload&transfer=<tmpl_var name="url_entry">"><img src="themes/default/images/down.gif" width=9 height=9 title="Download Metafile" border=0 align="absmiddle"></a>
 					</tmpl_if>
+					<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/default/images/datadir.gif" width="14" height="14" title="<tmpl_var name="datapath">" border="0"></a>
 				</td>
 				<td valign="bottom" nowrap><a style="font-size:9px; text-decoration:none;" href="JavaScript:showTransfer('index.php?iid=<tmpl_var name="twd">&transfer=<tmpl_var name="url_entry">')"><tmpl_var name="displayname"></a></td>
 				<tmpl_if name="settings_0">
@@ -372,7 +373,6 @@
 				</tmpl_if>
 				<td nowrap>
 					<div align="center" class="admincell">
-						<a href="index.php?iid=dir&dir=<tmpl_var name="url_path">" onclick="return actionClick(true)"><img src="themes/default/images/datadir.gif" title="<tmpl_var name="datapath">" border="0"></a>
 						<tmpl_if name="is_owner">
 							<tmpl_if name="transferRunning" value="1">
 								<tmpl_if name="clientType" value="wget">
