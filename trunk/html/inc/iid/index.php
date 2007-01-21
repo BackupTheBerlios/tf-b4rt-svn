@@ -74,6 +74,7 @@ $tmpl->setvar('enable_metafile_download', $cfg["enable_metafile_download"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('advanced_start', $cfg["advanced_start"]);
+$tmpl->setvar('twd', $cfg["transfer_window_default"]);
 
 // =============================================================================
 // transfer-list
@@ -134,7 +135,7 @@ foreach ($arList as $transfer) {
 	$hd = getStatusImage($sf);
 
 	// more vars
-	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:showTransfer('index.php?iid=transferStats&transfer=".urlencode($transfer)."')\">";
+	$detailsLinkString = "<a style=\"font-size:9px; text-decoration:none;\" href=\"JavaScript:showTransfer('index.php?iid=".$cfg["transfer_window_default"]."&transfer=".urlencode($transfer)."')\">";
 
 	// ---------------------------------------------------------------------
 	//XFER: add upload/download stats to the xfer array
