@@ -7,14 +7,45 @@
 		<td>
 			<div align="center">
 			<tmpl_if name="isSave" value="1">
-
-				<tmpl_var name="message">
-
+				<tmpl_var name="message"><br>
+				<tmpl_if name="list_changes">
+					<br><strong>Changes :</strong>
+					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+						<tmpl_loop name="list_changes">
+							<tr>
+								<td align="left" width="75%"><tmpl_var name="key">:</td>
+								<td nowrap><tmpl_var name="val"></td>
+							</tr>
+						</tmpl_loop>
+					</table>
+				</tmpl_if>
+				<tmpl_if name="list_send">
+					<br><strong>Changes sent to Client :</strong>
+					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+						<tmpl_loop name="list_send">
+							<tr>
+								<td align="left" width="75%"><tmpl_var name="key">:</td>
+								<td nowrap><tmpl_var name="val"></td>
+							</tr>
+						</tmpl_loop>
+					</table>
+				</tmpl_if>
+				<tmpl_if name="list_restart">
+					<br><strong>Changes that require a Client-Restart :</strong>
+					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+						<tmpl_loop name="list_restart">
+							<tr>
+								<td align="left" width="75%"><tmpl_var name="key">:</td>
+								<td nowrap><tmpl_var name="val"></td>
+							</tr>
+						</tmpl_loop>
+					</table>
+				</tmpl_if>
 			<tmpl_else>
 				<form name="theForm" action="index.php?iid=transferSettings&save" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
 					<input type="hidden" name="transfer" value="<tmpl_var name="transfer">" />
 					<input type="hidden" name="type" value="<tmpl_var name="type">" />
-					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 						<tmpl_if name="type" value="torrent">
 							<tr>
 								<td align="left" width="75%">Max Upload Rate:</td>
@@ -97,10 +128,8 @@
 						</tmpl_if>
 						<tr>
 							<td colspan="2" align="right">
-								<tmpl_if name="type" value="wget">
-									&nbsp;
-								<tmpl_else>
-									<input type="checkbox" name="sendbox" id="sendbox" <tmpl_if name="running" value="1"> checked<tmpl_else> disabled</tmpl_if>>Send Changes to Client&nbsp;
+								<tmpl_if name="sendboxShow" value="1">
+									<input type="checkbox" name="sendbox" id="sendbox" <tmpl_var name="sendboxAttr">>Send Changes to Client&nbsp;
 								</tmpl_if>
 								<input type="Submit" value="Save">
 							</td>

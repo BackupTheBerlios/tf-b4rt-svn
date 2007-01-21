@@ -46,28 +46,19 @@ function validateSettings(type) {
 			break;
 
 		case 'wget':
-			if (isNumber(document.theForm.wget_limit_rate.value) == false) {
-				msg = msg + "* wget Download Rate must be a valid number.\n";
-				document.theForm.wget_limit_rate.focus();
-			}
-			if (isNumber(document.theForm.wget_limit_retries.value) == false) {
-				msg = msg + "* wget Limit Number of Retries must be a valid number.\n";
-				document.theForm.wget_limit_retries.focus();
+			if (isNumber(document.theForm.max_download_rate.value) == false) {
+				msg = msg + "* Max Download Rate must be a valid number.\n";
+				document.theForm.max_download_rate.focus();
 			}
 			break;
 
 		case 'nzb':
-			if (isNumber(document.theForm.nzbperl_rate.value) == false) {
-				msg = msg + "* nzbperl Download Rate must be a valid number.\n";
-				document.theForm.nzbperl_rate.focus();
+			if (isNumber(document.theForm.max_download_rate.value) == false) {
+				msg = msg + "* Max Download Rate must be a valid number.\n";
+				document.theForm.max_download_rate.focus();
 			}
-			if (isNumber(document.theForm.nzbperl_conn.value) == false) {
-				msg = msg + "* nzbperl Connections must be a valid number.\n";
-				document.theForm.nzbperl_conn.focus();
-			}
-			if (isNumber(document.theForm.nzbperl_threads.value) == false) {
-				msg = msg + "* nzbperl Threads must be a valid number.\n";
-				document.theForm.nzbperl_threads.focus();
+			if (isNumber(document.theForm.maxcons.value) == false) {
+				msg = msg + "* Max Cons must be a valid number.\n" ;
 			}
 			break;
 

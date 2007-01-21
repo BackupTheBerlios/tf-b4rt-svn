@@ -69,9 +69,7 @@ $ch->running = isTransferRunning($transfer)
 	? 1
 	: 0;
 
-// display/save
-if ($isSave) {
-	// display
+if ($isSave) { /* save */
 
 	// set save-var
 	$tmpl->setvar('isSave', 1);
@@ -81,18 +79,126 @@ if ($isSave) {
 		? true
 		: false;
 
-	// DEBUG
+	// settings-keys
+	$settingsKeys = array(
+		'max_upload_rate',
+		'max_download_rate',
+		'max_uploads',
+		'superseeder',
+		'torrent_dies_when_done',
+		'sharekill',
+		'minport',
+		'maxport',
+		'maxcons'
+	);
 
-	// set message-var
+	// current settings
+	$settingsCurrent = array();
+	$settingsCurrent['max_upload_rate'] = $ch->rate;
+	$settingsCurrent['max_download_rate'] = $ch->drate;
+	$settingsCurrent['max_uploads'] = $ch->maxuploads;
+	$settingsCurrent['superseeder'] = $ch->superseeder;
+	$settingsCurrent['torrent_dies_when_done'] = $ch->runtime;
+	$settingsCurrent['sharekill'] = $ch->sharekill;
+	$settingsCurrent['minport'] = $ch->minport;
+	$settingsCurrent['maxport'] = $ch->maxport;
+	$settingsCurrent['maxcons'] = $ch->maxcons;
 
-	$tmpl->setvar('message', "saved");
+	// new settings
+	$settingsNew = array();
+	foreach ($settingsKeys as $settingsKey) {
+		$settingsNew[$settingsKey] = getRequestVar($settingsKey);
+		if ($settingsNew[$settingsKey] == "")
+			$settingsNew[$settingsKey] = $settingsCurrent[$settingsKey];
+	}
 
-	if ($doSend)
-		$tmpl->setvar('message', "saved + sent");
+	// process changes
+	$settingsChanged = array();
+	foreach ($settingsKeys as $settingsKey) {
+		if ($settingsNew[$settingsKey] != $settingsCurrent[$settingsKey])
+			array_push($settingsChanged, $settingsKey);
+	}
+	if (empty($settingsChanged)) { /* no changes */
 
+		// set message-var
+		$tmpl->setvar('message', "no changes");
 
-} else {
-	// save
+	} else { /* something changed */
+
+		// fill lists
+		$list_changes = array();
+		$list_restart = array();
+		$list_send = array();
+		foreach ($settingsChanged as $settingsKey) {
+			// list
+			array_push($list_changes, array(
+				'key' => $settingsKey,
+				'val' => $settingsNew[$settingsKey]
+				)
+			);
+			if ($ch->running == 1) {
+				// send
+				if (($doSend) && (($settingsKey == 'max_upload_rate') || ($settingsKey == 'max_download_rate')))
+					array_push($list_send, array(
+						'key' => $settingsKey,
+						'val' => $settingsNew[$settingsKey]
+						)
+					);
+				// restart
+				if (($doSend) && ($settingsKey != 'max_upload_rate') && ($settingsKey != 'max_download_rate'))
+					array_push($list_restart, array(
+						'key' => $settingsKey,
+						'val' => $settingsNew[$settingsKey]
+						)
+					);
+			}
+		}
+		$tmpl->setloop('list_changes', $list_changes);
+		if (empty($list_send))
+			$doSend = false;
+		else
+			$tmpl->setloop('list_send', $list_send);
+		if (!empty($list_restart))
+			$tmpl->setloop('list_restart', $list_restart);
+
+		// save settings
+		$ch->rate = $settingsNew['max_upload_rate'];
+		$ch->drate = $settingsNew['max_download_rate'];
+		$ch->maxuploads = $settingsNew['max_uploads'];
+		$ch->superseeder = $settingsNew['superseeder'];
+		$ch->runtime = $settingsNew['torrent_dies_when_done'];
+		$ch->sharekill = $settingsNew['sharekill'];
+		$ch->minport = $settingsNew['minport'];
+		$ch->maxport = $settingsNew['maxport'];
+		$ch->maxcons = $settingsNew['maxcons'];
+		$ch->settingsSave();
+
+		if ($doSend) { /* send changes */
+
+			// upload-rate
+			if ($settingsNew['max_upload_rate'] != $settingsCurrent['max_upload_rate'])
+				$ch->setRateUpload($transfer, $settingsNew['max_upload_rate']);
+
+			// upload-rate
+			if ($settingsNew['max_download_rate'] != $settingsCurrent['max_download_rate'])
+				$ch->setRateDownload($transfer, $settingsNew['max_download_rate']);
+
+			// send command-buffer to client
+			CommandHandler::send($transfer);
+
+			// set message-var
+			$tmpl->setvar('message', "settings saved + changes sent to client");
+
+		} else { /* dont send changes or no changes to send */
+
+			// set message-var
+			$tmpl->setvar('message', "settings saved");
+
+		}
+
+	}
+
+} else { /* display */
 
 	// set save-var
 	$tmpl->setvar('isSave', 0);
@@ -113,6 +219,10 @@ if ($isSave) {
 	$tmpl->setvar('minport', $ch->minport);
 	$tmpl->setvar('maxport', $ch->maxport);
 	$tmpl->setvar('maxcons', $ch->maxcons);
+
+	// send-box
+	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);
+	$tmpl->setvar('sendboxAttr', ($ch->running == 1) ? "checked" : "disabled");
 }
 
 // title + foot
