@@ -22,7 +22,7 @@ function bulkCheck(thisIn) {
 	}
 }
 function showTransfer(name_file, width, height) {
-	window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=450,height=320">')
+	window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=450,height=340">')
 }
 function showTransferLog(transfer) {
 	window.open ('index.php?iid=transferLog&transfer=' + transfer,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=no,width=800,height=600">')
