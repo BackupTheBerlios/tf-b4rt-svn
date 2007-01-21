@@ -318,13 +318,7 @@ class ClientHandlerWget extends ClientHandler
      * @param $autosend
      */
     function setRateDownload($transfer, $downrate, $autosend = false) {
-    	// set rate-field
-    	$this->drate = $downrate;
-    	// add command
-		CommandHandler::add($transfer, "d".($downrate * 1024));
-		// send command to client
-        if ($autosend)
-			CommandHandler::send($transfer);
+    	return;
     }
 
     /**
