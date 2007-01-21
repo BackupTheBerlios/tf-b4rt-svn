@@ -31,7 +31,7 @@ function showMetaInfo($torrent, $allowSave = false) {
 	global $cfg;
 	if (empty($torrent)) {
 		$showMetaInfo = $cfg['_NORECORDSFOUND'];
-	} elseif ($cfg["enable_file_priority"]) {
+	} elseif (($cfg["enable_file_priority"]) && (!isTransferRunning($torrent))) {
 		$prioFileName = $cfg["transfer_file_path"].$torrent.".prio";
 		require_once('inc/classes/BDecode.php');
 		$showMetaInfo = "";
