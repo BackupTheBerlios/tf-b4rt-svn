@@ -224,9 +224,10 @@ function cliStartTransfers() {
 function cliResumeTransfers() {
     global $cfg, $transfers;
     printMessage("fluxcli.php", "Resuming all transfers ...\n");
-	$transferList = getTransferArray();
+	$transferList = getTransferArrayFromDB();
 	foreach ($transferList as $transfer) {
-        if (!isTransferRunning($transfer)) {
+		$sf = new StatFile($transfer);
+        if (((trim($sf->running)) == 0) && (!isTransferRunning($transfer))) {
             printMessage("fluxcli.php", "Starting ".$transfer." ...\n");
             $cfg["user"] = getOwner($transfer);
             $ch = ClientHandler::getInstance(getTransferClient($transfer));

@@ -139,7 +139,8 @@ if (isset($_REQUEST["t"])) {
 				$htmlMain .= '<pre>';
 				$transferList = getTransferArrayFromDB();
     			foreach ($transferList as $transfer) {
-					if (!isTransferRunning($transfer)) {
+    				$sf = new StatFile($transfer);
+					if (((trim($sf->running)) == 0) && (!isTransferRunning($transfer))) {
 						$ch = ClientHandler::getInstance(getTransferClient($transfer));
 						$ch->start($transfer, false, false);
 						$htmlMain .=  ' - '.$transfer."";
