@@ -52,33 +52,21 @@ $tmpl->setvar('transferLabel', $transferLabel);
 $transferowner = getOwner($transfer);
 $sf = new StatFile($transfer, $transferowner);
 
-// settings
-if (isset($transfers['settings'][$transfer])) {
-	$settingsAry = $transfers['settings'][$transfer];
-} else {
-	$settingsAry = array();
-	if (substr($transfer, -8) == ".torrent") {
-		// this is a t-client
-		$settingsAry['client'] = $cfg["btclient"];
-	} else if (substr($transfer, -5) == ".wget") {
-		// this is wget.
-		$settingsAry['client'] = "wget";
-	} else if (substr($transfer, -4) == ".nzb") {
-		// this is nzbperl.
-		$settingsAry['client'] = "nzbperl";
-	} else {
-		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "", "", array($transfer));
-	}
-	$settingsAry['hash'] = "";
-}
+// init ch-instance
+$ch = ClientHandler::getInstance(getTransferClient($transfer));
+$ch->setVarsFromTransfer($transfer);
+
+// load settings
+$loaded = $ch->settingsLoad();
+// default-settings if settings could not be loaded (fresh transfer)
+if ($loaded !== true)
+	$ch->settingsDefault();
 
 // totals
 $afu = $sf->uptotal;
 $afd = $sf->downtotal;
-$ch = ClientHandler::getInstance($settingsAry['client']);
-$totalsCurrent = $ch->getTransferCurrentOP($transfer, $settingsAry['hash'], $afu, $afd);
-$totals = $ch->getTransferTotalOP($transfer, $settingsAry['hash'], $afu, $afd);
+$totalsCurrent = $ch->getTransferCurrentOP($transfer, $ch->hash, $afu, $afd);
+$totals = $ch->getTransferTotalOP($transfer, $ch->hash, $afu, $afd);
 // owner
 $tmpl->setvar('transferowner', $transferowner);
 
@@ -111,18 +99,18 @@ if ($sf->running == 1) {
 	$transfer_pid = getTransferPid($transfer);
 	$tmpl->setvar('port', netstatPortByPid($transfer_pid));
 	$tmpl->setvar('cons', netstatConnectionsByPid($transfer_pid));
-	$tmpl->setvar('maxcons', '('.$cfg["maxcons"].')');
-
-	// down speed
-	$tmpl->setvar('down_speed', (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s');
-	$tmpl->setvar('max_download_rate', ($cfg["max_download_rate"] != 0) ? ' ('.number_format($cfg["max_download_rate"], 2).')' : ' (&#8734)');
+	$tmpl->setvar('maxcons', '('.$ch->maxcons.')');
 
 	// up speed
 	$tmpl->setvar('up_speed', (trim($sf->up_speed) != "") ?  $sf->up_speed : '0.0 kB/s');
-	$tmpl->setvar('max_upload_rate', ($cfg["max_upload_rate"] != 0) ? ' ('.number_format($cfg["max_upload_rate"], 2).')' : ' (&#8734)');
+	$tmpl->setvar('max_upload_rate', ($ch->rate != 0) ? ' ('.number_format($ch->rate, 2).')' : ' (&#8734)');
+
+	// down speed
+	$tmpl->setvar('down_speed', (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s');
+	$tmpl->setvar('max_download_rate', ($ch->drate != 0) ? ' ('.number_format($ch->drate, 2).')' : ' (&#8734)');
 
 	// sharekill
-	$tmpl->setvar('sharekill', ($cfg["sharekill"] != 0) ? $cfg["sharekill"].'%' : '&#8734');
+	$tmpl->setvar('sharekill', ($ch->sharekill != 0) ? $ch->sharekill.'%' : '&#8734');
 
 } else {
 
@@ -142,13 +130,13 @@ if ($sf->running == 1) {
 	$tmpl->setvar('cons', "");
 	$tmpl->setvar('maxcons', "");
 
-	// down speed
-	$tmpl->setvar('down_speed', "");
-	$tmpl->setvar('max_download_rate', "");
-
 	// up speed
 	$tmpl->setvar('up_speed', "");
 	$tmpl->setvar('max_upload_rate', "");
+
+	// down speed
+	$tmpl->setvar('down_speed', "");
+	$tmpl->setvar('max_download_rate', "");
 
 	// sharekill
 	$tmpl->setvar('sharekill', "");
