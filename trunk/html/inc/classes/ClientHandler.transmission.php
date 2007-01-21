@@ -96,7 +96,7 @@ class ClientHandlerTransmission extends ClientHandler
 			return false;
 		}
 
-        // transmission wants -1 for no seeding.
+        // transmission uses "sharekill = -1" for "runtime = true"
         if ($this->sharekill == -1)
             $this->sharekill_param = -1;
 
