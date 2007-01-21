@@ -102,15 +102,12 @@ if ($sf->running == 1) {
 	$transfer_pid = getTransferPid($transfer);
 	$tmpl->setvar('port', netstatPortByPid($transfer_pid));
 	$tmpl->setvar('cons', netstatConnectionsByPid($transfer_pid));
-	$tmpl->setvar('maxcons', '('.$ch->maxcons.')');
 
 	// up speed
 	$tmpl->setvar('up_speed', (trim($sf->up_speed) != "") ?  $sf->up_speed : '0.0 kB/s');
-	$tmpl->setvar('max_upload_rate', ($ch->rate != 0) ? ' ('.number_format($ch->rate, 2).')' : ' (&#8734)');
 
 	// down speed
 	$tmpl->setvar('down_speed', (trim($sf->down_speed) != "") ? $sf->down_speed : '0.0 kB/s');
-	$tmpl->setvar('max_download_rate', ($ch->drate != 0) ? ' ('.number_format($ch->drate, 2).')' : ' (&#8734)');
 
 	// sharekill
 	$tmpl->setvar('sharekill', ($ch->sharekill != 0) ? $ch->sharekill.'%' : '&#8734');
@@ -131,15 +128,12 @@ if ($sf->running == 1) {
 	// port + cons
 	$tmpl->setvar('port', "");
 	$tmpl->setvar('cons', "");
-	$tmpl->setvar('maxcons', "");
 
 	// up speed
 	$tmpl->setvar('up_speed', "");
-	$tmpl->setvar('max_upload_rate', "");
 
 	// down speed
 	$tmpl->setvar('down_speed', "");
-	$tmpl->setvar('max_download_rate', "");
 
 	// sharekill
 	$tmpl->setvar('sharekill', "");

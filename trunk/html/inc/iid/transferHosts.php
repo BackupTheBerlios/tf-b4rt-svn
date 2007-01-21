@@ -84,7 +84,7 @@ if ((isset($transfer_hosts)) && ($transfer_hosts != "")) {
 }
 
 //refresh
-$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferHosts&transfer='.$transfer);
+//$tmpl->setvar('meta_refresh', '15;URL=index.php?iid=transferHosts&transfer='.$transfer);
 
 // title + foot
 tmplSetTitleBar($transferLabel." - ".$cfg['_ID_HOSTS'], false);
