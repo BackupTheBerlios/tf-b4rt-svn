@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1320 2007-01-08 21:53:55Z livings124 $
+ * $Id: transmission.h 1403 2007-01-19 04:42:31Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -50,7 +50,23 @@ extern "C" {
 #endif
 
 #define TR_DEFAULT_PORT   9090
-#define TR_NOERROR        0
+
+/***********************************************************************
+ * Error codes
+ **********************************************************************/
+/* General errors */
+#define TR_OK                   0x00000000
+#define TR_ERROR                0x81000000
+#define TR_ERROR_ASSERT         0x82000000
+/* I/O errors */
+#define TR_ERROR_IO_MASK        0x0000000F
+#define TR_ERROR_IO_PARENT      0x80000001
+#define TR_ERROR_IO_PERMISSIONS 0x80000002
+#define TR_ERROR_IO_OTHER       0x80000008
+/* Misc */
+#define TR_ERROR_TC_MASK        0x000000F0
+#define TR_ERROR_TC_ERROR       0x80000010
+#define TR_ERROR_TC_WARNING     0x80000020
 
 /***********************************************************************
  * tr_init
@@ -112,8 +128,7 @@ void tr_setBindPort( tr_handle_t *, int );
  ***********************************************************************
  * Enable or disable NAT traversal using NAT-PMP or UPnP IGD.
  **********************************************************************/
-void tr_natTraversalEnable( tr_handle_t * );
-void tr_natTraversalDisable( tr_handle_t * );
+void tr_natTraversalEnable( tr_handle_t *, int enable );
 
 /***********************************************************************
  * tr_natTraversalStatus
@@ -370,10 +385,8 @@ struct tr_stat_s
 #define TR_STATUS_INACTIVE (TR_STATUS_STOPPING|TR_STATUS_STOPPED|TR_STATUS_PAUSE)
     int                 status;
 
-#define TR_ETRACKER 1
-#define TR_EINOUT   2
     int                 error;
-    char                trackerError[128];
+    char                errorString[128];
     int                 cannotConnect;
     
     const char        * trackerAddress;

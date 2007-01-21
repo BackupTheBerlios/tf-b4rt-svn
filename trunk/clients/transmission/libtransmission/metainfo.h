@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.h 1242 2006-12-17 16:36:27Z livings124 $
+ * $Id: metainfo.h 1403 2007-01-19 04:42:31Z titer $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -24,6 +24,8 @@
 
 #ifndef TR_METAINFO_H
 #define TR_METAINFO_H 1
+
+#include "transmission.h"
 
 int tr_metainfoParse( tr_info_t *, const char * path,
                       const char * savedHash, int saveCopy );

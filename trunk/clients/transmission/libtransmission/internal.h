@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1320 2007-01-08 21:53:55Z livings124 $
+ * $Id: internal.h 1423 2007-01-21 08:43:58Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -33,6 +33,11 @@
 #endif
 #include <stdio.h>
 #include <stdarg.h>
+#ifdef SYS_BEOS
+/* BeOS doesn't declare vasprintf in its headers, but actually
+ * implements it */
+int vasprintf( char **, const char *, va_list );
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -118,8 +123,9 @@ static inline void tr_htonl( uint32_t a, uint8_t * p )
 #define TR_MAX_PEER_COUNT 60
 
 typedef struct tr_completion_s tr_completion_t;
+typedef struct tr_shared_s tr_shared_t;
 
-typedef enum { TR_OK, TR_ERROR, TR_WAIT } tr_tristate_t;
+typedef enum { TR_NET_OK, TR_NET_ERROR, TR_NET_WAIT } tr_tristate_t;
 
 #include "platform.h"
 #include "bencode.h"
@@ -137,6 +143,9 @@ typedef enum { TR_OK, TR_ERROR, TR_WAIT } tr_tristate_t;
 #include "http.h"
 #include "xml.h"
 
+void tr_torrentAddCompact( tr_torrent_t * tor, uint8_t * buf, int count );
+void tr_torrentAttachPeer( tr_torrent_t * tor, tr_peer_t * peer );
+
 struct tr_torrent_s
 {
     tr_handle_t * handle;
@@ -146,11 +155,10 @@ struct tr_torrent_s
     tr_ratecontrol_t * upload;
     tr_ratecontrol_t * download;
     tr_ratecontrol_t * swarmspeed;
-    tr_fd_t          * fdlimit;
 
     int               status;
     int               error;
-    char              trackerError[128];
+    char              errorString[128];
     int               finished;
 
     char            * id;
@@ -172,6 +180,7 @@ struct tr_torrent_s
     volatile char     die;
     tr_thread_t       thread;
     tr_lock_t         lock;
+    tr_cond_t         cond;
 
     tr_tracker_t    * tracker;
     tr_io_t         * io;
@@ -201,25 +210,13 @@ struct tr_handle_s
     int            torrentCount;
     tr_torrent_t * torrentList;
 
+    int            bindPort;
     int            uploadLimit;
     int            downloadLimit;
-    tr_fd_t      * fdlimit;
-    tr_choking_t * choking;
-    tr_natpmp_t  * natpmp;
-    tr_upnp_t    * upnp;
-
-    int            bindPort;
-    int            bindSocket;
-
-    int            acceptPeerCount;
-    tr_peer_t    * acceptPeers[TR_MAX_PEER_COUNT];
+    tr_shared_t  * shared;
 
     char           id[21];
     char           key[21];
-
-    volatile char  acceptDie;
-    tr_thread_t    acceptThread;
-    tr_lock_t      acceptLock;
 };
 
 #endif

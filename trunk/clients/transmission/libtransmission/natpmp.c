@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.c 920 2006-09-25 18:37:45Z joshe $
+ * $Id: natpmp.c 1420 2007-01-21 07:16:18Z titer $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -64,7 +64,6 @@ typedef struct tr_natpmp_req_s
     uint64_t             retry;
     uint64_t             timeout;
     int                  port;
-    tr_fd_t *            fdlimit;
     tr_natpmp_uptime_t * uptime;
 } tr_natpmp_req_t;
 
@@ -82,7 +81,6 @@ struct tr_natpmp_s
     struct in_addr     dest;
     int                newport;
     int                mappedport;
-    tr_fd_t         *  fdlimit;
     tr_lock_t          lock;
     uint64_t           renew;
     tr_natpmp_req_t *  req;
@@ -93,14 +91,14 @@ struct tr_natpmp_s
 static int
 checktime( tr_natpmp_uptime_t * uptime, uint32_t seen );
 static void
-killsock( int * fd, tr_fd_t * fdlimit );
+killsock( int * fd );
 static tr_natpmp_req_t *
-newreq( int adding, struct in_addr addr, int port, tr_fd_t * fdlimit,
+newreq( int adding, struct in_addr addr, int port,
         tr_natpmp_uptime_t * uptime );
 static tr_tristate_t
 pulsereq( tr_natpmp_req_t * req, uint64_t * renew );
 static int
-mcastsetup( tr_fd_t * fdlimit );
+mcastsetup();
 static void
 mcastpulse( tr_natpmp_t * pmp );
 static void
@@ -112,7 +110,7 @@ readrequest( uint8_t * buf, int len, int adding, int port,
              tr_natpmp_uptime_t * uptime, uint64_t * renew, int * tmpfail );
 
 tr_natpmp_t *
-tr_natpmpInit( tr_fd_t * fdlimit )
+tr_natpmpInit()
 {
     tr_natpmp_t * pmp;
 
@@ -123,7 +121,6 @@ tr_natpmpInit( tr_fd_t * fdlimit )
     }
 
     pmp->state       = PMP_STATE_IDLE;
-    pmp->fdlimit     = fdlimit;
     pmp->mcastfd     = -1;
 
     if( tr_getDefaultRoute( &pmp->dest ) || INADDR_ANY == pmp->dest.s_addr )
@@ -158,7 +155,7 @@ tr_natpmpStart( tr_natpmp_t * pmp )
         pmp->active = 1;
         if( 0 > pmp->mcastfd )
         {
-            pmp->mcastfd = mcastsetup( pmp->fdlimit );
+            pmp->mcastfd = mcastsetup();
         }
         /* XXX should I change state? */
     }
@@ -175,7 +172,7 @@ tr_natpmpStop( tr_natpmp_t * pmp )
     {
         tr_inf( "stopping nat-pmp" );
         pmp->active = 0;
-        killsock( &pmp->mcastfd, pmp->fdlimit );
+        killsock( &pmp->mcastfd );
         switch( pmp->state )
         {
             case PMP_STATE_IDLE:
@@ -319,7 +316,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                     else
                     {
                         pmp->req = newreq( 1, pmp->dest, pmp->newport,
-                                           pmp->fdlimit, &pmp->uptime );
+                                           &pmp->uptime );
                         if( NULL == pmp->req )
                         {
                             pmp->state = PMP_STATE_FAILED;
@@ -331,7 +328,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                 {
                     switch( pulsereq( pmp->req, &pmp->renew ) )
                     {
-                        case TR_ERROR:
+                        case TR_NET_ERROR:
                             if( pmp->req->nobodyhome )
                             {
                                 pmp->state = PMP_STATE_NOBODYHOME;
@@ -353,7 +350,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                             }
                             killreq( &pmp->req );
                             break;
-                        case TR_OK:
+                        case TR_NET_OK:
                             pmp->mappedport = pmp->req->port;
                             killreq( &pmp->req );
                             pmp->state = PMP_STATE_MAPPED;
@@ -361,7 +358,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                                     pmp->mappedport);
                             tr_inf( "nat-pmp mapped port %i", pmp->mappedport );
                             break;
-                        case TR_WAIT:
+                        case TR_NET_WAIT:
                             break;
                     }
                 }
@@ -372,7 +369,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                 {
                     assert( 0 < pmp->mappedport );
                     pmp->req = newreq( 0, pmp->dest, pmp->mappedport,
-                                       pmp->fdlimit, &pmp->uptime );
+                                       &pmp->uptime );
                     if( NULL == pmp->req )
                     {
                         pmp->state = PMP_STATE_FAILED;
@@ -383,7 +380,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                 {
                     switch( pulsereq( pmp->req, &pmp->renew ) )
                     {
-                        case TR_ERROR:
+                        case TR_NET_ERROR:
                             if( pmp->req->nobodyhome )
                             {
                                 pmp->state = PMP_STATE_NOBODYHOME;
@@ -402,7 +399,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                             }
                             killreq( &pmp->req );
                             break;
-                        case TR_OK:
+                        case TR_NET_OK:
                             tr_dbg( "nat-pmp state del -> idle with port %i",
                                     pmp->req->port);
                             tr_inf( "nat-pmp unmapped port %i", pmp->req->port );
@@ -410,7 +407,7 @@ tr_natpmpPulse( tr_natpmp_t * pmp )
                             killreq( &pmp->req );
                             pmp->state = PMP_STATE_IDLE;
                             break;
-                        case TR_WAIT:
+                        case TR_NET_WAIT:
                             break;
                     }
                 }
@@ -468,18 +465,18 @@ checktime( tr_natpmp_uptime_t * uptime, uint32_t cursecs )
 }
 
 static void
-killsock( int * fd, tr_fd_t * fdlimit )
+killsock( int * fd )
 {
     if( 0 <= *fd )
     {
         tr_netClose( *fd );
         *fd = -1;
-        tr_fdSocketClosed( fdlimit, 0 );
+        tr_fdSocketClosed( 0 );
     }
 }
 
 static tr_natpmp_req_t *
-newreq( int adding, struct in_addr addr, int port, tr_fd_t * fdlimit,
+newreq( int adding, struct in_addr addr, int port,
         tr_natpmp_uptime_t * uptime )
 {
     tr_natpmp_req_t * ret;
@@ -491,7 +488,7 @@ newreq( int adding, struct in_addr addr, int port, tr_fd_t * fdlimit,
         goto err;
     }
     ret->fd = -1;
-    if( tr_fdSocketWillCreate( fdlimit, 0 ) )
+    if( tr_fdSocketWillCreate( 0 ) )
     {
         goto err;
     }
@@ -511,7 +508,6 @@ newreq( int adding, struct in_addr addr, int port, tr_fd_t * fdlimit,
     ret->retry   = now + PMP_INITIAL_DELAY;
     ret->timeout = now + PMP_TOTAL_DELAY;
     ret->port    = port;
-    ret->fdlimit = fdlimit;
     ret->uptime  = uptime;
 
     return ret;
@@ -519,7 +515,7 @@ newreq( int adding, struct in_addr addr, int port, tr_fd_t * fdlimit,
   err:
     if( NULL != ret )
     {
-        killsock( &ret->fd, fdlimit );
+        killsock( &ret->fd );
     }
     free( ret );
 
@@ -541,14 +537,14 @@ pulsereq( tr_natpmp_req_t * req, uint64_t * renew )
     {
         tr_dbg( "nat-pmp request timed out" );
         req->nobodyhome = 1;
-        return TR_ERROR;
+        return TR_NET_ERROR;
     }
 
     if( now >= req->retry )
     {
         if( sendrequest( req->adding, req->fd, req->port ) )
         {
-            return TR_ERROR;
+            return TR_NET_ERROR;
         }
         req->delay *= 2;
         req->timeout = now + req->delay;
@@ -557,7 +553,7 @@ pulsereq( tr_natpmp_req_t * req, uint64_t * renew )
     res = tr_netRecvFrom( req->fd, buf, sizeof( buf ), &sin );
     if( TR_NET_BLOCK & res )
     {
-        return TR_WAIT;
+        return TR_NET_WAIT;
     }
     else if( TR_NET_CLOSE & res )
     {
@@ -570,7 +566,7 @@ pulsereq( tr_natpmp_req_t * req, uint64_t * renew )
         {
             tr_inf( "error reading nat-pmp response (%s)", strerror( errno ) );
         }
-        return TR_ERROR;
+        return TR_NET_ERROR;
     }
 
     tr_dbg( "nat-pmp read %i byte response", res );
@@ -582,12 +578,12 @@ pulsereq( tr_natpmp_req_t * req, uint64_t * renew )
 }
 
 static int
-mcastsetup( tr_fd_t * fdlimit )
+mcastsetup()
 {
     int fd;
     struct in_addr addr;
 
-    if( tr_fdSocketWillCreate( fdlimit, 0 ) )
+    if( tr_fdSocketWillCreate( 0 ) )
     {
         return -1;
     }
@@ -596,7 +592,7 @@ mcastsetup( tr_fd_t * fdlimit )
     fd = tr_netMcastOpen( PMP_PORT, addr );
     if( 0 > fd )
     {
-        tr_fdSocketClosed( fdlimit, 0 );
+        tr_fdSocketClosed( 0 );
         return -1;
     }
 
@@ -621,7 +617,7 @@ mcastpulse( tr_natpmp_t * pmp )
     else if( TR_NET_CLOSE & res )
     {
         tr_err( "error reading nat-pmp multicast message" );
-        killsock( &pmp->mcastfd, pmp->fdlimit );
+        killsock( &pmp->mcastfd );
         return;
     }
 
@@ -635,7 +631,7 @@ mcastpulse( tr_natpmp_t * pmp )
         return;
     }
 
-    if( TR_OK == readrequest( buf, res, 0, -1, &pmp->uptime, &pmp->renew, NULL ) &&
+    if( TR_NET_OK == readrequest( buf, res, 0, -1, &pmp->uptime, &pmp->renew, NULL ) &&
         PMP_STATE_NOBODYHOME == pmp->state )
     {
         tr_dbg( "nat-pmp state notfound -> idle" );
@@ -648,7 +644,7 @@ killreq( tr_natpmp_req_t ** req )
 {
     if( NULL != *req )
     {
-        killsock( &(*req)->fd, (*req)->fdlimit );
+        killsock( &(*req)->fd );
         free( *req );
         *req = NULL;
     }
@@ -700,7 +696,7 @@ readrequest( uint8_t * buf, int len, int adding, int port,
     if( 4 > len )
     {
         tr_err( "read truncated %i byte nat-pmp response packet", len );
-        return TR_ERROR;
+        return TR_NET_ERROR;
     }
     version      = buf[0];
     opcode       = buf[1];
@@ -710,19 +706,19 @@ readrequest( uint8_t * buf, int len, int adding, int port,
     if( !PMP_OPCODE_IS_RESPONSE( opcode ) )
     {
         tr_dbg( "nat-pmp ignoring request packet" );
-        return TR_WAIT;
+        return TR_NET_WAIT;
     }
     opcode = PMP_OPCODE_FROM_RESPONSE( opcode );
 
     if( PMP_VERSION != version )
     {
         tr_err( "bad nat-pmp version %hhu", buf[0] );
-        return TR_ERROR;
+        return TR_NET_ERROR;
     }
     if( wantedopcode != opcode )
     {
         tr_err( "bad nat-pmp opcode %hhu", opcode );
-        return TR_ERROR;
+        return TR_NET_ERROR;
     }
     switch( rescode )
     {
@@ -738,13 +734,13 @@ readrequest( uint8_t * buf, int len, int adding, int port,
             /* fallthrough */
         default:
             tr_err( "bad nat-pmp result code %hu", rescode );
-            return TR_ERROR;
+            return TR_NET_ERROR;
     }
 
     if( 8 > len )
     {
         tr_err( "read truncated %i byte nat-pmp response packet", len );
-        return TR_ERROR;
+        return TR_NET_ERROR;
     }
     seconds = PMP_FROMBUF32( buf + 4 );
 
@@ -753,7 +749,7 @@ readrequest( uint8_t * buf, int len, int adding, int port,
         *renew = 0;
         tr_inf( "detected nat-pmp device reset" );
         /* XXX should reset retry counter here */
-        return TR_WAIT;
+        return TR_NET_WAIT;
     }
 
     if( 0 <= port )
@@ -762,7 +758,7 @@ readrequest( uint8_t * buf, int len, int adding, int port,
         if( 16 > len )
         {
             tr_err( "read truncated %i byte nat-pmp response packet", len );
-            return TR_ERROR;
+            return TR_NET_ERROR;
         }
         privport = PMP_FROMBUF16( buf + 8 );
         pubport  = PMP_FROMBUF16( buf + 10 );
@@ -773,7 +769,7 @@ readrequest( uint8_t * buf, int len, int adding, int port,
             /* private port doesn't match, ignore it */
             tr_dbg( "nat-pmp ignoring message for port %i, expected port %i",
                     privport, port );
-            return TR_WAIT;
+            return TR_NET_WAIT;
         }
 
         if( adding )
@@ -782,12 +778,12 @@ readrequest( uint8_t * buf, int len, int adding, int port,
             {
                 *tmpfail = 1;
                 /* XXX should just start announcing the pub port we're given */
-                return TR_ERROR;
+                return TR_NET_ERROR;
             }
             tr_dbg( "nat-pmp set renew to half of %u", lifetime );
             *renew = tr_date() + ( lifetime / 2 * 1000 );
         }
     }
 
-    return TR_OK;
+    return TR_NET_OK;
 }

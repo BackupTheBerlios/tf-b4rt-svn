@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1318 2007-01-08 15:18:05Z livings124 $
+ * $Id: clients.c 1375 2007-01-16 15:49:13Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -123,6 +123,12 @@ char * tr_clientForId( uint8_t * id )
         else if( !memcmp( &id[1], "LP", 2 ) )
         {
             asprintf( &ret, "Lphant %d.%c%c",
+                      charToInt( id[3] ) * 10 + charToInt( id[4] ),
+                      id[5], id[6] );
+        }
+        else if( !memcmp( &id[1], "AX", 2 ) )
+        {
+            asprintf( &ret, "BitPump %d.%c%c",
                       charToInt( id[3] ) * 10 + charToInt( id[4] ),
                       id[5], id[6] );
         }

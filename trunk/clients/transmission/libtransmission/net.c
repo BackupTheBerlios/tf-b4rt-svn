@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: net.c 920 2006-09-25 18:37:45Z joshe $
+ * $Id: net.c 1420 2007-01-21 07:16:18Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -41,9 +41,9 @@ int tr_netResolve( const char * address, struct in_addr * addr )
     return ( addr->s_addr == 0xFFFFFFFF );
 }
 
-/* TODO: Make this code reentrant */
 static tr_thread_t  resolveThread;
 static tr_lock_t    resolveLock;
+static tr_cond_t    resolveCond;
 static volatile int resolveDie;
 static tr_resolve_t * resolveQueue;
 
@@ -71,7 +71,8 @@ void tr_netResolveThreadInit()
     resolveDie   = 0;
     resolveQueue = NULL;
     tr_lockInit( &resolveLock );
-    tr_threadCreate( &resolveThread, resolveFunc, NULL );
+    tr_condInit( &resolveCond );
+    tr_threadCreate( &resolveThread, resolveFunc, NULL, "resolve" );
 }
 
 /***********************************************************************
@@ -86,6 +87,7 @@ void tr_netResolveThreadClose()
     tr_lockLock( &resolveLock );
     resolveDie = 1;
     tr_lockUnlock( &resolveLock );
+    tr_condSignal( &resolveCond );
     tr_wait( 200 );
 }
 
@@ -99,7 +101,7 @@ tr_resolve_t * tr_netResolveInit( const char * address )
     tr_resolve_t * r;
 
     r           = malloc( sizeof( tr_resolve_t ) );
-    r->status   = TR_WAIT;
+    r->status   = TR_NET_WAIT;
     r->address  = strdup( address );
     r->refcount = 2;
     r->next     = NULL;
@@ -116,6 +118,7 @@ tr_resolve_t * tr_netResolveInit( const char * address )
         iter->next = r;
     }
     tr_lockUnlock( &resolveLock );
+    tr_condSignal( &resolveCond );
 
     return r;
 }
@@ -131,7 +134,7 @@ tr_tristate_t tr_netResolvePulse( tr_resolve_t * r, struct in_addr * addr )
 
     tr_lockLock( &resolveLock );
     ret = r->status;
-    if( ret == TR_OK )
+    if( ret == TR_NET_OK )
     {
         *addr = r->addr;
     }
@@ -178,18 +181,13 @@ static void resolveFunc( void * arg UNUSED )
     tr_resolve_t * r;
     struct hostent * host;
 
-    tr_dbg( "Resolve thread started" );
-
     tr_lockLock( &resolveLock );
 
     while( !resolveDie )
     {
         if( !( r = resolveQueue ) )
         {
-            /* TODO: Use a condition wait */
-            tr_lockUnlock( &resolveLock );
-            tr_wait( 50 );
-            tr_lockLock( &resolveLock );
+            tr_condWait( &resolveCond, &resolveLock );
             continue;
         }
 
@@ -201,11 +199,11 @@ static void resolveFunc( void * arg UNUSED )
         if( host )
         {
             memcpy( &r->addr, host->h_addr, host->h_length );
-            r->status = TR_OK;
+            r->status = TR_NET_OK;
         }
         else
         {
-            r->status = TR_ERROR;
+            r->status = TR_NET_ERROR;
         }
         
         resolveQueue = r->next;
@@ -220,8 +218,6 @@ static void resolveFunc( void * arg UNUSED )
         resolveQueue = r->next;
         resolveRelease( r );
     }
-
-    tr_dbg( "Resolve thread exited" );
 }
 
 

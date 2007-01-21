@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peermessages.h 261 2006-05-29 21:27:31Z titer $
+ * $Id: peermessages.h 1356 2007-01-14 12:00:21Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -254,15 +254,7 @@ static void sendRequest( tr_torrent_t * tor, tr_peer_t * peer, int block )
     r->index  = block / ( inf->pieceSize / tor->blockSize );
     r->begin  = ( block % ( inf->pieceSize / tor->blockSize ) ) *
                     tor->blockSize;
-    r->length = tor->blockSize;
-    if( block == tor->blockCount - 1 )
-    {
-        int lastSize = inf->totalSize % tor->blockSize;
-        if( lastSize )
-        {
-            r->length = lastSize;
-        }
-    }
+    r->length = tr_blockSize( block );
     (peer->inRequestCount)++;
 
     /* Build the "ask" message */

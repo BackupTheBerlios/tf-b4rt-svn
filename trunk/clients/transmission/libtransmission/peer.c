@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1320 2007-01-08 21:53:55Z livings124 $
+ * $Id: peer.c 1422 2007-01-21 07:32:31Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -38,6 +38,8 @@ typedef struct tr_request_s
 
 struct tr_peer_s
 {
+    tr_torrent_t   * tor;
+
     struct in_addr addr;
     in_port_t      port;
 
@@ -97,7 +99,6 @@ struct tr_peer_s
     tr_request_t   outRequests[MAX_REQUEST_COUNT];
     uint64_t       outTotal;
     uint64_t       outDate;
-    int            outSlow;
 
     tr_ratecontrol_t * download;
     tr_ratecontrol_t * upload;
@@ -125,55 +126,6 @@ static void __peer_dbg( tr_peer_t * peer, char * msg, ... )
 #include "peerparse.h"
 
 /***********************************************************************
- * tr_peerAddOld
- ***********************************************************************
- * Tries to add a peer given its IP and port (received from a tracker
- * which doesn't support the "compact" extension).
- **********************************************************************/
-void tr_peerAddOld( tr_torrent_t * tor, char * ip, int port )
-{
-    struct in_addr addr;
-
-    if( tr_netResolve( ip, &addr ) )
-    {
-        return;
-    }
-
-    addWithAddr( tor, addr, htons( port ) );
-}
-
-/***********************************************************************
- * tr_peerAddCompact
- ***********************************************************************
- * Tries to add a peer, using 'addr' and 'port' to connect to the peer.
- **********************************************************************/
-void tr_peerAddCompact( tr_torrent_t * tor, struct in_addr addr,
-                        in_port_t port )
-{
-    addWithAddr( tor, addr, port );
-}
-
-/***********************************************************************
- * tr_peerAddCompactMany
- ***********************************************************************
- * Adds several peers in compact form
- **********************************************************************/
-void tr_peerAddCompactMany( tr_torrent_t * tor, uint8_t * buf, int len )
-{
-    struct in_addr addr;
-    in_port_t port;
-    int i;
-
-    len /= 6;
-    for( i = 0; i < len; i++ )
-    {
-        memcpy( &addr, buf, 4 ); buf += 4;
-        memcpy( &port, buf, 2 ); buf += 2;
-        tr_peerAddCompact( tor, addr, port );
-    }
-}
-
-/***********************************************************************
  * tr_peerInit
  ***********************************************************************
  * Initializes a new peer.
@@ -182,22 +134,34 @@ tr_peer_t * tr_peerInit( struct in_addr addr, in_port_t port, int s )
 {
     tr_peer_t * peer = peerInit();
 
-    peer->socket   = s;
-    peer->addr     = addr;
-    peer->port     = port;
-    peer->status   = PEER_STATUS_CONNECTING;
-    peer->incoming = 1;
+    peer->socket = s;
+    peer->addr = addr;
+    peer->port = port;
+    if( s >= 0 )
+    {
+        peer->status = PEER_STATUS_CONNECTING;
+        peer->incoming = 1;
+    }
+    else
+    {
+        peer->status = PEER_STATUS_IDLE;
+    }
 
     return peer;
 }
 
-void tr_peerAttach( tr_torrent_t * tor, tr_peer_t * peer )
+void tr_peerDestroy( tr_peer_t * peer )
 {
-    peerAttach( tor, peer );
-}
+    tr_torrent_t * tor = peer->tor;
+    tr_request_t * r;
+    int i, block;
 
-void tr_peerDestroy( tr_fd_t * fdlimit, tr_peer_t * peer )
-{
+    for( i = 0; i < peer->inRequestCount; i++ )
+    {
+        r = &peer->inRequests[i];
+        block = tr_block( r->index, r->begin );
+        tr_cpDownloaderRem( tor->completion, block );
+    }
     if( peer->bitfield )
     {
         free( peer->bitfield );
@@ -221,37 +185,16 @@ void tr_peerDestroy( tr_fd_t * fdlimit, tr_peer_t * peer )
     if( peer->status > PEER_STATUS_IDLE )
     {
         tr_netClose( peer->socket );
-        tr_fdSocketClosed( fdlimit, 0 );
+        tr_fdSocketClosed( 0 );
     }
     tr_rcClose( peer->download );
     tr_rcClose( peer->upload );
     free( peer );
 }
 
-/***********************************************************************
- * tr_peerRem
- ***********************************************************************
- * Frees and closes everything related to the peer at index 'i', and
- * removes it from the peers list.
- **********************************************************************/
-void tr_peerRem( tr_torrent_t * tor, int i )
+void tr_peerSetTorrent( tr_peer_t * peer, tr_torrent_t * tor )
 {
-    tr_peer_t * peer = tor->peers[i];
-    int j;
-
-    for( j = 0; j < peer->inRequestCount; j++ )
-    {
-        tr_request_t * r;
-        int            block;
-
-        r     = &peer->inRequests[j];
-        block = tr_block( r->index,r->begin );
-        tr_cpDownloaderRem( tor->completion, block );
-    }
-    tr_peerDestroy( tor->fdlimit, peer );
-    tor->peerCount--;
-    memmove( &tor->peers[i], &tor->peers[i+1],
-             ( tor->peerCount - i ) * sizeof( tr_peer_t * ) );
+    peer->tor = tor;
 }
 
 /***********************************************************************
@@ -259,8 +202,9 @@ void tr_peerRem( tr_torrent_t * tor, int i )
  ***********************************************************************
  *
  **********************************************************************/
-int tr_peerRead( tr_torrent_t * tor, tr_peer_t * peer )
+int tr_peerRead( tr_peer_t * peer )
 {
+    tr_torrent_t * tor = peer->tor;
     int ret;
 
     /* Try to read */
@@ -289,7 +233,7 @@ int tr_peerRead( tr_torrent_t * tor, tr_peer_t * peer )
         if( ret & TR_NET_CLOSE )
         {
             peer_dbg( "connection closed" );
-            return 1;
+            return TR_ERROR;
         }
         else if( ret & TR_NET_BLOCK )
         {
@@ -301,21 +245,21 @@ int tr_peerRead( tr_torrent_t * tor, tr_peer_t * peer )
         {
             tr_rcTransferred( peer->download, ret );
             tr_rcTransferred( tor->download, ret );
-            if( parseBuf( tor, peer ) )
+            if( ( ret = parseBuf( tor, peer ) ) )
             {
-                return 1;
+                return ret;
             }
         }
         else
         {
-            if( parseBufHeader( peer ) )
+            if( ( ret = parseBufHeader( peer ) ) )
             {
-                return 1;
+                return ret;
             }
         }
     }
 
-    return 0;
+    return TR_OK;
 }
 
 uint64_t tr_peerDate( tr_peer_t * peer )
@@ -358,145 +302,109 @@ uint8_t * tr_peerHash( tr_peer_t * peer )
  ***********************************************************************
  *
  **********************************************************************/
-void tr_peerPulse( tr_torrent_t * tor )
+int tr_peerPulse( tr_peer_t * peer )
 {
-    int i, ret, size;
+    tr_torrent_t * tor = peer->tor;
+    int ret, size;
     uint8_t * p;
-    tr_peer_t * peer;
 
-    if( tr_date() > tor->date + 1000 )
+    if( ( ret = checkPeer( peer ) ) )
     {
-        tor->date = tr_date();
-
-        for( i = 0; i < tor->peerCount; )
-        {
-            if( checkPeer( tor, i ) )
-            {
-                tr_peerRem( tor, i );
-                continue;
-            }
-            i++;
-        }
-    }
-
-    if( tor->status & TR_STATUS_STOPPING )
-    {
-        return;
-    }
-    
-    /* Shuffle peers */
-    if( tor->peerCount > 1 )
-    {
-        peer = tor->peers[0];
-        memmove( &tor->peers[0], &tor->peers[1],
-                 ( tor->peerCount - 1 ) * sizeof( void * ) );
-        tor->peers[tor->peerCount - 1] = peer;
+        return ret;
     }
 
     /* Handle peers */
-    for( i = 0; i < tor->peerCount; )
+    if( peer->status < PEER_STATUS_HANDSHAKE )
     {
-        peer = tor->peers[i];
+        return TR_OK;;
+    }
 
-        if( peer->status < PEER_STATUS_HANDSHAKE )
-        {
-            i++;
-            continue;
-        }
+    if( ( ret = tr_peerRead( peer ) ) )
+    {
+        return ret;
+    }
 
-        if( tr_peerRead( tor, tor->peers[i] ) )
-        {
-            goto dropPeer;
-        }
+    if( peer->status < PEER_STATUS_CONNECTED )
+    {
+        return TR_OK;
+    }
 
-        if( peer->status < PEER_STATUS_CONNECTED )
-        {
-            i++;
-            continue;
-        }
-
-        /* Try to write */
+    /* Try to write */
 writeBegin:
 
-        /* Send all smaller messages regardless of the upload cap */
-        while( ( p = messagesPending( peer, &size ) ) )
+    /* Send all smaller messages regardless of the upload cap */
+    while( ( p = messagesPending( peer, &size ) ) )
+    {
+        ret = tr_netSend( peer->socket, p, size );
+        if( ret & TR_NET_CLOSE )
         {
-            ret = tr_netSend( peer->socket, p, size );
-            if( ret & TR_NET_CLOSE )
-            {
-                goto dropPeer;
-            }
-            else if( ret & TR_NET_BLOCK )
-            {
-                goto writeEnd;
-            }
-            messagesSent( peer, ret );
+            return TR_ERROR;
+        }
+        else if( ret & TR_NET_BLOCK )
+        {
+            goto writeEnd;
+        }
+        messagesSent( peer, ret );
+    }
+
+    /* Send pieces if we can */
+    while( ( p = blockPending( tor, peer, &size ) ) )
+    {
+        if( ( !tor->customSpeedLimit && !tr_rcCanGlobalTransfer( tor->handle, 1 ) )
+                || ( tor->customSpeedLimit && !tr_rcCanTransfer( tor->upload ) ) )
+        {
+            break;
         }
 
-        /* Send pieces if we can */
-        while( ( p = blockPending( tor, peer, &size ) ) )
+        ret = tr_netSend( peer->socket, p, size );
+        if( ret & TR_NET_CLOSE )
         {
-            if( ( !tor->customSpeedLimit && !tr_rcCanGlobalTransfer( tor->handle, 1 ) )
-                    || ( tor->customSpeedLimit && !tr_rcCanTransfer( tor->upload ) ) )
-            {
-                break;
-            }
-
-            ret = tr_netSend( peer->socket, p, size );
-            if( ret & TR_NET_CLOSE )
-            {
-                goto dropPeer;
-            }
-            else if( ret & TR_NET_BLOCK )
-            {
-                break;
-            }
-
-            blockSent( peer, ret );
-            tr_rcTransferred( peer->upload, ret );
-            tr_rcTransferred( tor->upload, ret );
-
-            tor->uploadedCur += ret;
-            peer->outTotal   += ret;
-            peer->outDate     = tr_date();
-
-            /* In case this block is done, you may have messages
-               pending. Send them before we start the next block */
-            goto writeBegin;
+            return TR_ERROR;
         }
+        else if( ret & TR_NET_BLOCK )
+        {
+            break;
+        }
+
+        blockSent( peer, ret );
+        tr_rcTransferred( peer->upload, ret );
+        tr_rcTransferred( tor->upload, ret );
+
+        tor->uploadedCur += ret;
+        peer->outTotal   += ret;
+        peer->outDate     = tr_date();
+
+        /* In case this block is done, you may have messages
+           pending. Send them before we start the next block */
+        goto writeBegin;
+    }
 writeEnd:
 
-        /* Ask for a block whenever possible */
-        if( !tr_cpIsSeeding( tor->completion ) &&
-            !peer->amInterested && tor->peerCount > TR_MAX_PEER_COUNT - 2 )
-        {
-            /* This peer is no use to us, and it seems there are
-               more */
-            peer_dbg( "not interesting" );
-            tr_peerRem( tor, i );
-            continue;
-        }
-
-        if( peer->amInterested && !peer->peerChoking && !peer->banned )
-        {
-            int block;
-            while( peer->inRequestCount < OUR_REQUEST_COUNT )
-            {
-                block = chooseBlock( tor, peer );
-                if( block < 0 )
-                {
-                    break;
-                }
-                sendRequest( tor, peer, block );
-            }
-        }
-        
-        i++;
-        continue;
-
-dropPeer:
-        tr_peerRem( tor, i );
+    /* Ask for a block whenever possible */
+    if( !tr_cpIsSeeding( tor->completion ) &&
+        !peer->amInterested && tor->peerCount > TR_MAX_PEER_COUNT - 2 )
+    {
+        /* This peer is no use to us, and it seems there are
+           more */
+        peer_dbg( "not interesting" );
+        return TR_ERROR;
     }
+
+    if( peer->amInterested && !peer->peerChoking && !peer->banned )
+    {
+        int block;
+        while( peer->inRequestCount < OUR_REQUEST_COUNT )
+        {
+            block = chooseBlock( tor, peer );
+            if( block < 0 )
+            {
+                break;
+            }
+            sendRequest( tor, peer, block );
+        }
+    }
+
+    return TR_OK;
 }
 
 /***********************************************************************
@@ -519,24 +427,21 @@ int tr_peerIsIncoming( tr_peer_t * peer )
     return peer->incoming;
 }
 
-/***********************************************************************
- * tr_peerIsUploading
- ***********************************************************************
- *
- **********************************************************************/
-int tr_peerIsUploading( tr_peer_t * peer )
+int tr_peerAmChoking( tr_peer_t * peer )
 {
-    return ( peer->inRequestCount > 0 );
+    return peer->amChoking;
 }
-
-/***********************************************************************
- * tr_peerIsDownloading
- ***********************************************************************
- *
- **********************************************************************/
-int tr_peerIsDownloading( tr_peer_t * peer )
+int tr_peerAmInterested( tr_peer_t * peer )
 {
-    return peer->outBlockSending;
+    return peer->amInterested;
+}
+int tr_peerIsChoking( tr_peer_t * peer )
+{
+    return peer->peerChoking;
+}
+int tr_peerIsInterested( tr_peer_t * peer )
+{
+    return peer->peerInterested;
 }
 
 /***********************************************************************
@@ -579,16 +484,6 @@ float tr_peerUploadRate( tr_peer_t * peer )
     return tr_rcRate( peer->upload );
 }
 
-int tr_peerIsUnchoked( tr_peer_t * peer )
-{
-    return !peer->amChoking;
-}
-
-int tr_peerIsInterested  ( tr_peer_t * peer )
-{
-    return peer->peerInterested;
-}
-
 void tr_peerChoke( tr_peer_t * peer )
 {
     sendChoke( peer, 1 );
@@ -626,9 +521,10 @@ static inline int peerIsGood( tr_peer_t * peer )
     return ( peer->goodPcs > 3 * peer->badPcs );
 }
 
-void tr_peerBlame( tr_torrent_t * tor, tr_peer_t * peer,
-                   int piece, int success )
+void tr_peerBlame( tr_peer_t * peer, int piece, int success )
 {
+    tr_torrent_t * tor = peer->tor;
+
     if( !peer->blamefield || !tr_bitfieldHas( peer->blamefield, piece ) )
     {
         return;
@@ -670,18 +566,22 @@ void tr_peerBlame( tr_torrent_t * tor, tr_peer_t * peer,
 int tr_peerGetConnectable( tr_torrent_t * tor, uint8_t ** _buf )
 {
     int count = 0;
-    uint8_t * buf = malloc( 6 * tor->peerCount );
+    uint8_t * buf;
     tr_peer_t * peer;
     int i;
 
+    if( tor->peerCount < 1 )
+    {
+        *_buf = NULL;
+        return 0;
+    }
+
+    buf = malloc( 6 * tor->peerCount );
     for( i = 0; i < tor->peerCount; i++ )
     {
         peer = tor->peers[i];
 
-        /* Skip peers for which the connection isn't established,
-         * and peers that came from incoming connections */
-        if( peer->status < PEER_STATUS_CONNECTED )
-            continue;
+        /* Skip peers that came from incoming connections */
         if( peer->incoming )
             continue;
 
@@ -692,13 +592,9 @@ int tr_peerGetConnectable( tr_torrent_t * tor, uint8_t ** _buf )
 
     if( count < 1 )
     {
-        free( buf );
-        *_buf = NULL;
+        free( buf ); buf = NULL;
     }
-    else
-    {
-        *_buf = buf;
-    }
+    *_buf = buf;
 
     return count * 6;
 }

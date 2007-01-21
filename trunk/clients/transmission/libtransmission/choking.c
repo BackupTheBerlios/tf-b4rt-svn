@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: choking.c 1300 2006-12-30 00:27:05Z titer $
+ * $Id: choking.c 1421 2007-01-21 07:27:57Z titer $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -181,7 +181,7 @@ void tr_chokingPulse( tr_choking_t * c )
             /* Choke peers who have lost their interest in us */
             if( !tr_peerIsInterested( peer ) )
             {
-                if( tr_peerIsUnchoked( peer ) )
+                if( !tr_peerAmChoking( peer ) )
                 {
                     tr_peerChoke( peer );
                     tr_peerSetOptimistic( peer, 0 );
@@ -193,7 +193,7 @@ void tr_chokingPulse( tr_choking_t * c )
                those we may unchoke. Whatever happens, we never choke a
                peer less than 10 seconds after the time we unchoked him
                (or the other way around). */
-            if( tr_peerIsUnchoked( peer ) )
+            if( !tr_peerAmChoking( peer ) )
             {
                 if( tr_peerIsOptimistic( peer ) )
                 {

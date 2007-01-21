@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 1074 2006-11-10 21:30:32Z titer $
+ * $Id: inout.c 1420 2007-01-21 07:16:18Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -46,7 +46,6 @@ struct tr_io_s
 /***********************************************************************
  * Local prototypes
  **********************************************************************/
-static int  createFiles( tr_io_t * );
 static int  checkFiles( tr_io_t * );
 static void closeFiles( tr_io_t * );
 static int  readOrWriteBytes( tr_io_t *, uint64_t, int, uint8_t *, int );
@@ -95,7 +94,7 @@ tr_io_t * tr_ioInit( tr_torrent_t * tor )
     io      = malloc( sizeof( tr_io_t ) );
     io->tor = tor;
 
-    if( createFiles( io ) || checkFiles( io ) )
+    if( checkFiles( io ) )
     {
         free( io );
         return NULL;
@@ -106,14 +105,12 @@ tr_io_t * tr_ioInit( tr_torrent_t * tor )
 
 /***********************************************************************
  * tr_ioRead
- ***********************************************************************
- *
  **********************************************************************/
 int tr_ioRead( tr_io_t * io, int index, int begin, int length,
                uint8_t * buf )
 {
-    uint64_t    offset;
     tr_info_t * inf = &io->tor->info;
+    uint64_t    offset;
 
     offset = (uint64_t) io->pieceSlot[index] *
         (uint64_t) inf->pieceSize + (uint64_t) begin;
@@ -123,20 +120,12 @@ int tr_ioRead( tr_io_t * io, int index, int begin, int length,
 
 /***********************************************************************
  * tr_ioWrite
- ***********************************************************************
- *
  **********************************************************************/
 int tr_ioWrite( tr_io_t * io, int index, int begin, int length,
                 uint8_t * buf )
 {
-    tr_torrent_t * tor = io->tor;
     tr_info_t    * inf = &io->tor->info;
     uint64_t       offset;
-    int            i, hashFailed;
-    uint8_t        hash[SHA_DIGEST_LENGTH];
-    uint8_t      * pieceBuf;
-    int            pieceSize;
-    int            startBlock, endBlock;
 
     if( io->pieceSlot[index] < 0 )
     {
@@ -148,27 +137,31 @@ int tr_ioWrite( tr_io_t * io, int index, int begin, int length,
     offset = (uint64_t) io->pieceSlot[index] *
         (uint64_t) inf->pieceSize + (uint64_t) begin;
 
-    if( writeBytes( io, offset, length, buf ) )
-    {
-        return 1;
-    }
+    return writeBytes( io, offset, length, buf );
+}
 
-    startBlock = tr_pieceStartBlock( index );
-    endBlock   = startBlock + tr_pieceCountBlocks( index );
-    for( i = startBlock; i < endBlock; i++ )
-    {
-        if( !tr_cpBlockIsComplete( tor->completion, i ) )
-        {
-            /* The piece is not complete */
-            return 0;
-        }
-    }
+/***********************************************************************
+ * tr_ioHash
+ **********************************************************************/
+int tr_ioHash( tr_io_t * io, int index )
+{
+    tr_torrent_t * tor = io->tor;
+    tr_info_t    * inf = &io->tor->info;
+    int            pieceSize;
+    uint8_t      * pieceBuf;
+    uint8_t        hash[SHA_DIGEST_LENGTH];
+    int            hashFailed;
+    int            ret;
+    int            i;
 
-    /* The piece is complete, check the hash */
     pieceSize = tr_pieceSize( index );
     pieceBuf  = malloc( pieceSize );
-    readBytes( io, (uint64_t) io->pieceSlot[index] *
-               (uint64_t) inf->pieceSize, pieceSize, pieceBuf );
+    if( ( ret = readBytes( io, (uint64_t) io->pieceSlot[index] *
+                    (uint64_t) inf->pieceSize, pieceSize, pieceBuf ) ) )
+    {
+        free( pieceBuf );
+        return ret;
+    }
     SHA1( pieceBuf, pieceSize, hash );
     free( pieceBuf );
 
@@ -177,12 +170,7 @@ int tr_ioWrite( tr_io_t * io, int index, int begin, int length,
     {
         tr_inf( "Piece %d (slot %d): hash FAILED", index,
                 io->pieceSlot[index] );
-
-        /* We will need to reload the whole piece */
-        for( i = startBlock; i < endBlock; i++ )
-        {
-            tr_cpBlockRem( tor->completion, i );
-        }
+        tr_cpPieceRem( tor->completion, index );
     }
     else
     {
@@ -194,94 +182,31 @@ int tr_ioWrite( tr_io_t * io, int index, int begin, int length,
     /* Assign blame or credit to peers */
     for( i = 0; i < tor->peerCount; i++ )
     {
-        tr_peerBlame( tor, tor->peers[i], index, !hashFailed );
+        tr_peerBlame( tor->peers[i], index, !hashFailed );
     }
 
     return 0;
 }
 
-void tr_ioClose( tr_io_t * io )
+/***********************************************************************
+ * tr_ioSync
+ **********************************************************************/
+void tr_ioSync( tr_io_t * io )
 {
     closeFiles( io );
-
-    fastResumeSave( io );
-
-    free( io->pieceSlot );
-    free( io->slotPiece );
-    free( io );
-}
-
-void tr_ioSaveResume( tr_io_t * io )
-{
     fastResumeSave( io );
 }
 
 /***********************************************************************
- * createFiles
- ***********************************************************************
- * Make sure the existing folders/files have correct types and
- * permissions, and create missing folders and files
+ * tr_ioClose
  **********************************************************************/
-static int createFiles( tr_io_t * io )
+void tr_ioClose( tr_io_t * io )
 {
-    tr_torrent_t * tor = io->tor;
-    tr_info_t    * inf = &tor->info;
+    tr_ioSync( io );
 
-    int           i;
-    char        * path, * p;
-    struct stat   sb;
-    int           file;
-
-    tr_dbg( "Creating files..." );
-
-    for( i = 0; i < inf->fileCount; i++ )
-    {
-        asprintf( &path, "%s/%s", tor->destination, inf->files[i].name );
-
-        /* Create folders */
-        if( NULL != ( p = strrchr( path, '/' ) ) )
-        {
-            *p = '\0';
-            if( tr_mkdir( path ) )
-            {
-                free( path );
-                return 1;
-            }
-            *p = '/';
-        }
-
-        /* Empty folders use a dummy "" file, skip those */
-        if( p == &path[strlen( path ) - 1] )
-        {
-            free( path );
-            continue;
-        }
-
-        if( stat( path, &sb ) )
-        {
-            /* File doesn't exist yet */
-            if( ( file = open( path, O_WRONLY|O_CREAT|O_TRUNC, 0666 ) ) < 0 )
-            {
-                tr_err( "Could not create `%s' (%s)", path,
-                        strerror( errno ) );
-                free( path );
-                return 1;
-            }
-            close( file );
-        }
-        else if( ( sb.st_mode & S_IFMT ) != S_IFREG )
-        {
-            /* Node exists but isn't a file */
-            /* XXX this should be reported to the frontend somehow */
-            tr_err( "Remove %s, it's in the way.", path );
-            free( path );
-            return 1;
-        }
-
-        free( path );
-    }
-
-    return 0;
+    free( io->pieceSlot );
+    free( io->slotPiece );
+    free( io );
 }
 
 /***********************************************************************
@@ -369,13 +294,10 @@ static void closeFiles( tr_io_t * io )
     tr_info_t    * inf = &tor->info;
 
     int i;
-    char * path;
 
     for( i = 0; i < inf->fileCount; i++ )
     {
-        asprintf( &path, "%s/%s", tor->destination, inf->files[i].name );
-        tr_fdFileClose( tor->fdlimit, path );
-        free( path );
+        tr_fdFileClose( tor->destination, inf->files[i].name );
     }
 }
 
@@ -395,9 +317,9 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
     int    begin = offset % inf->pieceSize;
     int    i;
     size_t cur;
-    char * path;
     int    file;
     iofunc readOrWrite = isWrite ? (iofunc) write : (iofunc) read;
+    int    ret = 0;
 
     /* Release the torrent lock so the UI can still update itself if
        this blocks for a while */
@@ -407,7 +329,8 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
     if( tr_pieceSize( piece ) < begin + size )
     {
         tr_err( "readOrWriteBytes: trying to write more than a piece" );
-        goto fail;
+        ret = TR_ERROR_ASSERT;
+        goto cleanup;
     }
 
     /* Find which file we shall start reading/writing in */
@@ -425,7 +348,8 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
         /* Should not happen */
         tr_err( "readOrWriteBytes: offset out of range (%"PRIu64", %d, %d)",
                 offset, size, isWrite );
-        goto fail;
+        ret = TR_ERROR_ASSERT;
+        goto cleanup;
     }
 
     while( size > 0 )
@@ -442,31 +366,33 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
 
         if( cur > 0 )
         {
-            /* Now let's get a stream on the file... */
-            asprintf( &path, "%s/%s", tor->destination, inf->files[i].name );
-            file = tr_fdFileOpen( tor->fdlimit, path );
+            /* Now let's get a descriptor on the file... */
+            file = tr_fdFileOpen( tor->destination, inf->files[i].name,
+                                  isWrite );
             if( file < 0 )
             {
-                tr_err( "readOrWriteBytes: could not open file '%s'", path );
-                free( path );
-                goto fail;
+                ret = file;
+                goto cleanup;
             }
-            free( path );
 
             /* seek to the right offset... */
             if( lseek( file, offset, SEEK_SET ) < 0 )
             {
-                goto fail;
+                tr_fdFileRelease( file );
+                ret = TR_ERROR_IO_OTHER;
+                goto cleanup;
             }
 
             /* do what we are here to do... */
             if( readOrWrite( file, buf, cur ) != cur )
             {
-                goto fail;
+                tr_fdFileRelease( file );
+                ret = TR_ERROR_IO_OTHER;
+                goto cleanup;
             }
 
-            /* and close the stream. */
-            tr_fdFileRelease( tor->fdlimit, file );
+            /* and release the descriptor. */
+            tr_fdFileRelease( file );
         }
 
         /* 'cur' bytes done, 'size - cur' bytes to go with the next file */
@@ -476,12 +402,9 @@ static int readOrWriteBytes( tr_io_t * io, uint64_t offset, int size,
         buf    += cur;
     }
 
+cleanup:
     tr_lockLock( &tor->lock );
-    return 0;
-
-fail:
-    tr_lockLock( &tor->lock );
-    return 1;
+    return ret;
 }
 
 /***********************************************************************

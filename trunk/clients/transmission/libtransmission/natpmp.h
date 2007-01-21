@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id: natpmp.h 1420 2007-01-21 07:16:18Z titer $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -27,7 +27,7 @@
 
 typedef struct tr_natpmp_s tr_natpmp_t; 
 
-tr_natpmp_t * tr_natpmpInit( tr_fd_t * );
+tr_natpmp_t * tr_natpmpInit();
 void        tr_natpmpStart( tr_natpmp_t * );
 void        tr_natpmpStop( tr_natpmp_t * );
 int         tr_natpmpStatus( tr_natpmp_t * );

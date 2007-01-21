@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.c 1320 2007-01-08 21:53:55Z livings124 $
+ * $Id: ratecontrol.c 1372 2007-01-15 19:16:32Z livings124 $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -97,23 +97,30 @@ int tr_rcCanGlobalTransfer( tr_handle_t * h, int isUpload )
     float rate = 0;
     int limit = isUpload ? h->uploadLimit : h->downloadLimit;
     
-    if( limit < 0 )
+    if( limit <= 0 )
     {
-        return 1;
+        return limit < 0;
     }
     
-    for( tor = h->torrentList; tor && rate < (float)limit; tor = tor->next )
+    for( tor = h->torrentList; tor; tor = tor->next )
     {
-        if( !tor->customSpeedLimit )
+        if( tor->customSpeedLimit )
         {
-            r = isUpload ? tor->upload : tor->download;
-            tr_lockLock( &r->lock );
-            rate += rateForInterval( r, 1000 );
-            tr_lockUnlock( &r->lock );
+            continue;
+        }
+        
+        r = isUpload ? tor->upload : tor->download;
+        tr_lockLock( &r->lock );
+        rate += rateForInterval( r, 1000 );
+        tr_lockUnlock( &r->lock );
+        
+        if( rate >= (float)limit )
+        {
+            return 0;
         }
     }
     
-    return rate < (float)limit;
+    return 1;
 }
 
 void tr_rcSetLimit( tr_ratecontrol_t * r, int limit )
@@ -128,7 +135,7 @@ int tr_rcCanTransfer( tr_ratecontrol_t * r )
     int ret;
 
     tr_lockLock( &r->lock );
-    ret = ( r->limit < 0 ) || ( rateForInterval( r, 1000 ) < r->limit );
+    ret = ( r->limit <= 0 ) ? ( r->limit < 0 ) : ( rateForInterval( r, 1000 ) < r->limit );
     tr_lockUnlock( &r->lock );
 
     return ret;

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id: upnp.h 1420 2007-01-21 07:16:18Z titer $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -27,7 +27,7 @@
 
 typedef struct tr_upnp_s tr_upnp_t; 
 
-tr_upnp_t * tr_upnpInit( tr_fd_t * );
+tr_upnp_t * tr_upnpInit();
 void        tr_upnpStart( tr_upnp_t * );
 void        tr_upnpStop( tr_upnp_t * );
 int         tr_upnpStatus( tr_upnp_t * );

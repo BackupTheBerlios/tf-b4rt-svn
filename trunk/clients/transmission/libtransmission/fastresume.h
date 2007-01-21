@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fastresume.h 1074 2006-11-10 21:30:32Z titer $
+ * $Id: fastresume.h 1419 2007-01-21 06:42:05Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -87,11 +87,9 @@ static int fastResumeMTimes( tr_io_t * io, int * tab )
         asprintf( &path, "%s/%s", tor->destination, inf->files[i].name );
         if( stat( path, &sb ) )
         {
-            tr_err( "Could not stat '%s'", path );
-            free( path );
-            return 1;
+            tab[i] = 0xFFFFFFFF;
         }
-        if( ( sb.st_mode & S_IFMT ) == S_IFREG )
+        else if( S_ISREG( sb.st_mode ) )
         {
 #ifdef SYS_DARWIN
             tab[i] = ( sb.st_mtimespec.tv_sec & 0x7FFFFFFF );
@@ -378,7 +376,7 @@ static int fastResumeLoad( tr_io_t * io )
                     fclose( file );
                     return 1;
                 }
-                tr_peerAddCompactMany( tor, buf, len );
+                tr_torrentAddCompact( tor, buf, len / 6 );
                 free( buf );
                 continue;
             }

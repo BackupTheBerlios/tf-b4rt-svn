@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.h 1251 2006-12-18 04:56:27Z livings124 $
+ * $Id: peer.h 1422 2007-01-21 07:32:31Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -25,38 +25,35 @@
 #ifndef TR_PEER_H
 #define TR_PEER_H 1
 
+#include "transmission.h"
+
 typedef struct tr_peer_s tr_peer_t; 
 
-void        tr_peerAddOld        ( tr_torrent_t *, char *, int );
-void        tr_peerAddCompact    ( tr_torrent_t *, struct in_addr, in_port_t );
-void        tr_peerAddCompactMany( tr_torrent_t *, uint8_t *, int );
-tr_peer_t * tr_peerInit          ( struct in_addr, in_port_t, int );
-void        tr_peerAttach        ( tr_torrent_t *, tr_peer_t * );
-void        tr_peerDestroy       ( tr_fd_t *, tr_peer_t * );
-void        tr_peerRem           ( tr_torrent_t *, int );
-int         tr_peerRead          ( tr_torrent_t *, tr_peer_t * );
+tr_peer_t * tr_peerInit          ( struct in_addr, in_port_t, int socket );
+void        tr_peerDestroy       ( tr_peer_t * );
+void        tr_peerSetTorrent    ( tr_peer_t *, tr_torrent_t * );
+int         tr_peerRead          ( tr_peer_t * );
 uint64_t    tr_peerDate          ( tr_peer_t * );
 uint8_t *   tr_peerId            ( tr_peer_t * );
 uint8_t *   tr_peerHash          ( tr_peer_t * );
-void        tr_peerPulse         ( tr_torrent_t * );
+int         tr_peerPulse         ( tr_peer_t * );
 int         tr_peerIsConnected   ( tr_peer_t * );
 int         tr_peerIsIncoming    ( tr_peer_t * );
-int         tr_peerIsUploading   ( tr_peer_t * );
-int         tr_peerIsDownloading ( tr_peer_t * );
+int         tr_peerAmChoking     ( tr_peer_t * );
+int         tr_peerAmInterested  ( tr_peer_t * );
+int         tr_peerIsChoking     ( tr_peer_t * );
+int         tr_peerIsInterested  ( tr_peer_t * );
 float       tr_peerProgress      ( tr_peer_t * );
 int         tr_peerPort          ( tr_peer_t * );
 uint8_t *   tr_peerBitfield      ( tr_peer_t * );
 float       tr_peerDownloadRate  ( tr_peer_t * );
 float       tr_peerUploadRate    ( tr_peer_t * );
-int         tr_peerIsUnchoked    ( tr_peer_t * );
-int         tr_peerIsInterested  ( tr_peer_t * );
 void        tr_peerChoke         ( tr_peer_t * );
 void        tr_peerUnchoke       ( tr_peer_t * );
 uint64_t    tr_peerLastChoke     ( tr_peer_t * );
 void        tr_peerSetOptimistic ( tr_peer_t *, int );
 int         tr_peerIsOptimistic  ( tr_peer_t * );
-void        tr_peerBlame         ( tr_torrent_t *, tr_peer_t *,
-                                   int piece, int success );
+void        tr_peerBlame         ( tr_peer_t *, int piece, int success );
 struct in_addr * tr_peerAddress  ( tr_peer_t * );
 int         tr_peerGetConnectable( tr_torrent_t *, uint8_t ** );
 

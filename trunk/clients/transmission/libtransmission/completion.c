@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: completion.c 1197 2006-12-13 18:30:11Z livings124 $
+ * $Id: completion.c 1356 2007-01-14 12:00:21Z titer $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -85,6 +85,22 @@ uint64_t tr_cpLeftBytes( tr_completion_t * cp )
 }
 
 /* Pieces */
+int tr_cpPieceHasAllBlocks( tr_completion_t * cp, int piece )
+{
+    tr_torrent_t * tor = cp->tor;
+    int startBlock  = tr_pieceStartBlock( piece );
+    int endBlock    = startBlock + tr_pieceCountBlocks( piece );
+    int i;
+
+    for( i = startBlock; i < endBlock; i++ )
+    {
+        if( !tr_bitfieldHas( cp->blockBitfield, i ) )
+        {
+            return 0;
+        }
+    }    
+    return 1;
+}
 int tr_cpPieceIsComplete( tr_completion_t * cp, int piece )
 {
     return tr_bitfieldHas( cp->pieceBitfield, piece );
@@ -108,6 +124,21 @@ void tr_cpPieceAdd( tr_completion_t * cp, int piece )
     }
 
     tr_bitfieldAdd( cp->pieceBitfield, piece );
+}
+
+void tr_cpPieceRem( tr_completion_t * cp, int piece )
+{
+    tr_torrent_t * tor = cp->tor;
+    int startBlock, endBlock, i;
+
+    startBlock = tr_pieceStartBlock( piece );
+    endBlock   = startBlock + tr_pieceCountBlocks( piece );
+    for( i = startBlock; i < endBlock; i++ )
+    {
+        tr_cpBlockRem( cp, i );
+    }
+
+    tr_bitfieldRem( cp->pieceBitfield, piece );
 }
 
 /* Blocks */

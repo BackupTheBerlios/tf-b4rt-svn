@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.h 261 2006-05-29 21:27:31Z titer $
+ * $Id: fdlimit.h 1420 2007-01-21 07:16:18Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -22,15 +22,56 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-typedef struct tr_fd_s tr_fd_t;
+/***********************************************************************
+ * tr_fdInit
+ ***********************************************************************
+ * Detect the maximum number of open files and initializes things.
+ **********************************************************************/
+void tr_fdInit();
 
-tr_fd_t * tr_fdInit();
+/***********************************************************************
+ * tr_fdFileOpen
+ ***********************************************************************
+ * If it isn't open already, tries to open the file 'name' in the
+ * directory 'folder'. If 'name' itself contains '/'s, required
+ * subfolders are created. The file is open read-write if 'write' is 1
+ * (created if necessary), read-only if 0.
+ * Returns the file descriptor if successful, otherwise returns
+ * one of the TR_ERROR_IO_*.
+ **********************************************************************/
+int tr_fdFileOpen( char * folder, char * name, int write );
 
-int       tr_fdFileOpen         ( tr_fd_t *, char * );
-void      tr_fdFileRelease      ( tr_fd_t *, int );
-void      tr_fdFileClose        ( tr_fd_t *, char * );
+/***********************************************************************
+ * tr_fdFileRelease
+ ***********************************************************************
+ * Indicates that the file whose descriptor is 'file' is unused at the
+ * moment and can safely be closed.
+ **********************************************************************/
+void tr_fdFileRelease( int file );
 
-int       tr_fdSocketWillCreate ( tr_fd_t *, int );
-void      tr_fdSocketClosed     ( tr_fd_t *, int );
+/***********************************************************************
+ * tr_fdFileClose
+ ***********************************************************************
+ * If the file 'name' in directory 'folder' was open, closes it,
+ * flushing data on disk.
+ **********************************************************************/
+void tr_fdFileClose( char * folder, char * name );
 
-void      tr_fdClose            ( tr_fd_t * );
+/***********************************************************************
+ * tr_fdSocketWillCreate
+ **********************************************************************/
+int tr_fdSocketWillCreate( int );
+
+/***********************************************************************
+ * tr_fdSocketClosed
+ **********************************************************************/
+void tr_fdSocketClosed( int );
+
+
+/***********************************************************************
+ * tr_fdClose
+ ***********************************************************************
+ * Frees resources allocated by tr_fdInit.
+ **********************************************************************/
+void tr_fdClose();
+

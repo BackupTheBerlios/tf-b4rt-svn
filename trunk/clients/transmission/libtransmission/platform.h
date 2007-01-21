@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: platform.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id: platform.h 1401 2007-01-19 01:39:33Z titer $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -26,18 +26,29 @@
 
 #ifdef SYS_BEOS
   #include <kernel/OS.h>
-  typedef thread_id tr_thread_t;
+  typedef thread_id tr_thread_id_t;
   typedef sem_id    tr_lock_t;
+  typedef int       tr_cond_t;
 #else
   #include <pthread.h>
-  typedef pthread_t       tr_thread_t;
+  typedef pthread_t       tr_thread_id_t;
   typedef pthread_mutex_t tr_lock_t;
+  typedef pthread_cond_t  tr_cond_t;
 #endif
+typedef struct tr_thread_s
+{
+    void          (* func ) ( void * );
+    void           * arg;
+    char           * name;
+    tr_thread_id_t thread;;
+}
+tr_thread_t;
 
 char * tr_getCacheDirectory();
 char * tr_getTorrentsDirectory();
 
-void tr_threadCreate ( tr_thread_t *, void (*func)(void *), void * arg );
+void tr_threadCreate ( tr_thread_t *, void (*func)(void *),
+                       void * arg, char * name );
 void tr_threadJoin   ( tr_thread_t * );
 void tr_lockInit     ( tr_lock_t * );
 void tr_lockClose    ( tr_lock_t * );
@@ -59,6 +70,11 @@ static inline void tr_lockUnlock( tr_lock_t * l )
     pthread_mutex_unlock( l );
 #endif
 }
+
+void tr_condInit( tr_cond_t * );
+void tr_condWait( tr_cond_t *, tr_lock_t * );
+void tr_condSignal( tr_cond_t * );
+void tr_condClose( tr_cond_t * );
 
 int
 tr_getDefaultRoute( struct in_addr * addr );

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.h 920 2006-09-25 18:37:45Z joshe $
+ * $Id: utils.h 1356 2007-01-14 12:00:21Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -69,6 +69,8 @@ int tr_vsprintf( char **, int *, int *, const char *, va_list, va_list );
  * Creates a nul-terminated string 
  **********************************************************************/
 char * tr_dupstr( const char * base, int len );
+
+char * tr_errorString( int code );
 
 /***********************************************************************
  * tr_date
