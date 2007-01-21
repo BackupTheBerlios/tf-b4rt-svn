@@ -68,6 +68,50 @@ $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('display_seeding_time', $cfg["display_seeding_time"]);
 $tmpl->setvar('index_page_sortorder', $cfg["index_page_sortorder"]);
 $tmpl->setloop('Engine_List', tmplSetSearchEngineDDL($cfg["searchEngine"]));
+$transferWindowDefaultList = array();
+array_push($transferWindowDefaultList, array(
+	'name' => 'Stats',
+	'value' => 'transferStats',
+	'is_selected' => ('transferStats' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Hosts',
+	'value' => 'transferHosts',
+	'is_selected' => ('transferHosts' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Details',
+	'value' => 'transferDetails',
+	'is_selected' => ('transferDetails' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Files',
+	'value' => 'transferFiles',
+	'is_selected' => ('transferFiles' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Scrape',
+	'value' => 'transferScrape',
+	'is_selected' => ('transferScrape' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Images',
+	'value' => 'transferImages',
+	'is_selected' => ('transferImages' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Settings',
+	'value' => 'transferSettings',
+	'is_selected' => ('transferSettings' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+$tmpl->setloop('transfer_window_default_list', $transferWindowDefaultList);
 //
 tmplSetTitleBar("Administration - Index Settings");
 tmplSetAdminMenu();

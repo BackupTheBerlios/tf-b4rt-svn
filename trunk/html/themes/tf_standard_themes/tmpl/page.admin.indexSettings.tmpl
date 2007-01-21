@@ -389,6 +389,20 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Default Transfer Window</strong><br>
+									Select the default-page of the transfer-windows.
+								</td>
+								<td valign="top">
+									<select name="transfer_window_default">
+										<tmpl_loop name="transfer_window_default_list">
+											<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
+												<tmpl_var name="name">
+											</option>
+										</tmpl_loop>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable multi-operations</strong><br>
 									Enable/Disable client-multi-operations. (Start/Stop/Delete/...) :
 								</td>
