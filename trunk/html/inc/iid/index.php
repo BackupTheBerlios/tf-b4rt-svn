@@ -47,7 +47,6 @@ if (isset($_REQUEST['ajax_update'])) {
 // language
 $tmpl->setvar('_STATUS', $cfg['_STATUS']);
 $tmpl->setvar('_ESTIMATEDTIME', $cfg['_ESTIMATEDTIME']);
-$tmpl->setvar('_TRANSFERDETAILS', $cfg['_TRANSFERDETAILS']);
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 $tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
 $tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);

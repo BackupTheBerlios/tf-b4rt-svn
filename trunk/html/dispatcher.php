@@ -71,7 +71,7 @@ switch ($action) {
     case "setPriority":
 		if ($cfg["enable_file_priority"]) {
 			include_once("inc/functions/functions.setpriority.php");
-			setPriority($transfer);
+			setPriority(getRequestVar('transfer'));
 		}
     	break;
 

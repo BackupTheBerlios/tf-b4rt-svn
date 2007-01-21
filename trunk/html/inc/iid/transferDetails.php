@@ -32,6 +32,9 @@ if (!isset($cfg['user'])) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// metainfo-functions
+require_once("inc/functions/functions.metainfo.php");
+
 // request-vars
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
@@ -55,7 +58,7 @@ $tmpl->setvar('transferLabel', $transferLabel);
 if (substr($transfer, -8) == ".torrent") {
 	// this is a t-client
 	$tmpl->setvar('clientType', "torrent");
-	$tmpl->setvar('transferMetaInfo', @htmlentities(getTorrentMetaInfo($transfer), ENT_QUOTES));
+	$tmpl->setvar('transferMetaInfo', ($cfg["enable_file_priority"] == 1) ? showMetaInfo($transfer, true) : showMetaInfo($transfer, false));
 } else if (substr($transfer, -5) == ".wget") {
 	// this is wget.
 	$tmpl->setvar('clientType', "wget");

@@ -82,18 +82,6 @@ array_push($transferWindowDefaultList, array(
 	)
 );
 array_push($transferWindowDefaultList, array(
-	'name' => 'Details',
-	'value' => 'transferDetails',
-	'is_selected' => ('transferDetails' == $cfg["transfer_window_default"]) ? 1 : 0
-	)
-);
-array_push($transferWindowDefaultList, array(
-	'name' => 'Files',
-	'value' => 'transferFiles',
-	'is_selected' => ('transferFiles' == $cfg["transfer_window_default"]) ? 1 : 0
-	)
-);
-array_push($transferWindowDefaultList, array(
 	'name' => 'Scrape',
 	'value' => 'transferScrape',
 	'is_selected' => ('transferScrape' == $cfg["transfer_window_default"]) ? 1 : 0
@@ -103,6 +91,18 @@ array_push($transferWindowDefaultList, array(
 	'name' => 'Images',
 	'value' => 'transferImages',
 	'is_selected' => ('transferImages' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Files',
+	'value' => 'transferFiles',
+	'is_selected' => ('transferFiles' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
+array_push($transferWindowDefaultList, array(
+	'name' => 'Details',
+	'value' => 'transferDetails',
+	'is_selected' => ('transferDetails' == $cfg["transfer_window_default"]) ? 1 : 0
 	)
 );
 array_push($transferWindowDefaultList, array(
