@@ -146,6 +146,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_cust
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transferHosts','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_sharekill','1')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_window_default','transferSettings')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_nzbperl','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_badAction','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_server','')");
