@@ -92,6 +92,19 @@ if ($isSave) { /* save */
 		'maxcons'
 	);
 
+	// settings-labels
+	$settingsLabels = array(
+		'max_upload_rate' => 'Max Upload Rate',
+		'max_download_rate' => 'Max Download Rate',
+		'max_uploads' => 'Max Upload Connections',
+		'superseeder' => 'Superseeder',
+		'torrent_dies_when_done' => 'Torrent Completion Activity',
+		'sharekill' => 'Percentage When Seeding should Stop',
+		'minport' => 'Min-Port',
+		'maxport' => 'Max-Port',
+		'maxcons' => 'Max Cons'
+	);
+
 	// current settings
 	$settingsCurrent = array();
 	$settingsCurrent['max_upload_rate'] = $ch->rate;
@@ -130,25 +143,36 @@ if ($isSave) { /* save */
 		$list_restart = array();
 		$list_send = array();
 		foreach ($settingsChanged as $settingsKey) {
+			// value
+			switch ($settingsKey) {
+				case 'superseeder':
+					$value = ($settingsNew[$settingsKey] == 1) ? "True" : "False";
+					break;
+				case 'torrent_dies_when_done':
+					$value = ($settingsNew[$settingsKey] == "True") ? "Die When Done" : "Keep Seeding";
+					break;
+				default:
+					$value = $settingsNew[$settingsKey];
+			}
 			// list
 			array_push($list_changes, array(
-				'key' => $settingsKey,
-				'val' => $settingsNew[$settingsKey]
+				'lbl' => $settingsLabels[$settingsKey],
+				'val' => $value
 				)
 			);
 			if ($ch->running == 1) {
 				// send
 				if (($doSend) && (($settingsKey == 'max_upload_rate') || ($settingsKey == 'max_download_rate')))
 					array_push($list_send, array(
-						'key' => $settingsKey,
-						'val' => $settingsNew[$settingsKey]
+						'lbl' => $settingsLabels[$settingsKey],
+						'val' => $value
 						)
 					);
 				// restart
 				if (($doSend) && ($settingsKey != 'max_upload_rate') && ($settingsKey != 'max_download_rate'))
 					array_push($list_restart, array(
-						'key' => $settingsKey,
-						'val' => $settingsNew[$settingsKey]
+						'lbl' => $settingsLabels[$settingsKey],
+						'val' => $value
 						)
 					);
 			}
