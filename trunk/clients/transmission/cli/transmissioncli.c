@@ -40,7 +40,6 @@ int main(int argc, char ** argv) {
 	// vars
 	int i, error, nat;
 	tr_handle_t * h;
-	tr_torrent_t * tor;
 	tr_stat_t * s;
 	tr_info_t * info;
 	double tf_sharing = 0.0;
@@ -50,14 +49,22 @@ int main(int argc, char ** argv) {
 	/* get options */
 	if (parseCommandLine(argc, argv)) {
 		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-		printf(USAGE, argv[0], TR_DEFAULT_PORT);
+		printf(USAGE, argv[0],
+			verboseLevel, natTraversal, TR_DEFAULT_PORT,
+			uploadLimit, downloadLimit,
+			tf_seedLimit, tf_displayInterval
+		);
 		return 1;
 	}
 
 	/* show help */
 	if (showHelp) {
 		printf(HEADER, VERSION_STRING, VERSION_REVISION, VERSION_REVISION_CLI);
-		printf(USAGE, argv[0], TR_DEFAULT_PORT);
+		printf(USAGE, argv[0],
+			verboseLevel, natTraversal, TR_DEFAULT_PORT,
+			uploadLimit, downloadLimit,
+			tf_seedLimit, tf_displayInterval
+		);
 		return 0;
 	}
 
@@ -166,12 +173,12 @@ int main(int argc, char ** argv) {
 	tf_print(sprintf(tf_message, "transmission starting up :\n"));
 	tf_print(sprintf(tf_message, " - torrent : %s\n", torrentPath));
 	tf_print(sprintf(tf_message, " - owner : %s\n", tf_owner));
-	tf_print(sprintf(tf_message, " - seedLimit : %d\n", seedLimit));
+	tf_print(sprintf(tf_message, " - seedLimit : %d\n", tf_seedLimit));
 	tf_print(sprintf(tf_message, " - bindPort : %d\n", bindPort));
 	tf_print(sprintf(tf_message, " - uploadLimit : %d\n", uploadLimit));
 	tf_print(sprintf(tf_message, " - downloadLimit : %d\n", downloadLimit));
 	tf_print(sprintf(tf_message, " - natTraversal : %d\n", natTraversal));
-	tf_print(sprintf(tf_message, " - displayInterval : %d\n", displayInterval));
+	tf_print(sprintf(tf_message, " - displayInterval : %d\n", tf_displayInterval));
 	if (finishCall != NULL)
 		tf_print(sprintf(tf_message, " - finishCall : %s\n", finishCall));
 
@@ -187,10 +194,7 @@ int main(int argc, char ** argv) {
 	tr_setGlobalDownloadLimit(h, downloadLimit);
 
 	// nat-traversal
-	if (natTraversal)
-		tr_natTraversalEnable(h);
-	else
-		tr_natTraversalDisable(h);
+	tr_natTraversalEnable(h, natTraversal);
 
 	// set folder
 	tr_torrentSetFolder(tor, ".");
@@ -223,12 +227,17 @@ int main(int argc, char ** argv) {
 	tf_print(sprintf(tf_message, "transmission up and running.\n"));
 
 	/* main-loop */
-	while (!mustDie) {
+	while (tf_running) {
 
 		// torrent-stat
 		s = tr_torrentStat(tor);
 
-		if (s->status & TR_STATUS_CHECK) {                   /* --- CHECK --- */
+        if(s->status & TR_STATUS_PAUSE) {                    /* --- PAUSE --- */
+
+			// break
+            break;
+
+		} else if (s->status & TR_STATUS_CHECK) {            /* --- CHECK --- */
 
 			// write stat-file
 			tf_stat_fp = fopen(tf_stat_file, "w+");
@@ -243,7 +252,7 @@ int main(int argc, char ** argv) {
 					                          /* seeds             */
 					                          /* peers             */
 					                          /* sharing           */
-					seedLimit,                /* seedlimit         */
+					tf_seedLimit,             /* seedlimit         */
 					                          /* uploaded bytes    */
 					s->downloaded,            /* downloaded bytes  */
 					info->totalSize);         /* global size       */
@@ -309,7 +318,7 @@ int main(int argc, char ** argv) {
 					s->peersUploading, tf_seeders,    /* seeds            */
 					s->peersDownloading, tf_leechers, /* peers            */
 					tf_sharing,                       /* sharing          */
-					seedLimit,                        /* seedlimit        */
+					tf_seedLimit,                     /* seedlimit        */
 					s->uploaded,                      /* uploaded bytes   */
 					s->downloaded,                    /* downloaded bytes */
 					info->totalSize);                 /* global size      */
@@ -328,16 +337,16 @@ int main(int argc, char ** argv) {
 				: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
 
 			// die-on-seed-limit / die-when-done
-			if (seedLimit == -1) {
+			if (tf_seedLimit == -1) {
 				tf_print(sprintf(tf_message,
 					"die-when-done set, setting shutdown-flag...\n"));
-				mustDie = 1;
-			} else if ((seedLimit != 0) &&
-				(tf_sharing > (double)(seedLimit))) {
+				tf_running = 0;
+			} else if ((tf_seedLimit != 0) &&
+				(tf_sharing > (double)(tf_seedLimit))) {
 				tf_print(sprintf(tf_message,
 					"seed-limit %d reached, setting shutdown-flag...\n",
-					seedLimit));
-				mustDie = 1;
+					tf_seedLimit));
+				tf_running = 0;
 			}
 
 			// seeders + leechers
@@ -361,7 +370,7 @@ int main(int argc, char ** argv) {
 					s->peersUploading, tf_seeders,    /* seeds            */
 					s->peersDownloading, tf_leechers, /* peers            */
 					tf_sharing,                       /* sharing          */
-					seedLimit,                        /* seedlimit        */
+					tf_seedLimit,                     /* seedlimit        */
 					s->uploaded,                      /* uploaded bytes   */
 					s->downloaded,                    /* downloaded bytes */
 					info->totalSize);                 /* global size      */
@@ -375,9 +384,9 @@ int main(int argc, char ** argv) {
 		} // end status-if
 
 		// errors
-		if (s->error & TR_ETRACKER)
+		if (s->error)
 			tf_print(sprintf(tf_message,
-				"trackerError : %s\n", s->trackerError));
+				"errorString : %s\n", s->errorString));
 
 		// check if finished / finishCall / process command-stack / sleep
 		if (tr_getFinished(tor)) {
@@ -385,7 +394,7 @@ int main(int argc, char ** argv) {
 			if (finishCall != NULL)
 				system(finishCall);
 		} else {
-			for (i = 0; i < displayInterval; i++) {
+			for (i = 0; i < tf_displayInterval; i++) {
 				// process command-stack
 				if (tf_processCommandStack(h))
 					break;
@@ -430,7 +439,7 @@ int main(int argc, char ** argv) {
 							  /* seeds            */
 							  /* peers            */
 			tf_sharing,       /* sharing          */
-			seedLimit,        /* seedlimit        */
+			tf_seedLimit,     /* seedlimit        */
 			s->uploaded,      /* uploaded bytes   */
 			s->downloaded,    /* downloaded bytes */
 			info->totalSize); /* global size      */
@@ -440,20 +449,19 @@ int main(int argc, char ** argv) {
 			"error opening stat-file for write : %s\n", tf_stat_file));
 	}
 
-	// Try for 5 seconds to notify the tracker that we are leaving
-	// and to delete any port mappings for nat traversal
+	// stop torrent
 	tr_torrentStop(tor);
-	tr_natTraversalDisable(h);
-	for (i = 0; i < 10; i++) {
-		s = tr_torrentStat(tor);
-		nat = tr_natTraversalStatus(h);
-		if (s->status & TR_STATUS_PAUSE && TR_NAT_TRAVERSAL_DISABLED == nat) {
-			// The 'stopped' tracker message was sent
-			// and port mappings were deleted
-			break;
-		}
-		usleep(500000);
-	}
+
+    // Try for 5 seconds to delete any port mappings for nat traversal
+    tr_natTraversalEnable(h, 0);
+    for (i = 0; i < 10; i++) {
+        nat = tr_natTraversalStatus(h);
+        if (TR_NAT_TRAVERSAL_DISABLED == nat) {
+            /* Port mappings were deleted */
+            break;
+        }
+        usleep(500000);
+    }
 
 	// remove pid file
 	tf_pidDelete();
@@ -575,14 +583,21 @@ static int tf_processCommandFile(tr_handle_t *h) {
 			// term string, chop it
 			currentLine[index - 1] = '\0';
 			// exec, early out when reading a quit-command
-			if (tf_execCommand(h, currentLine))
+			if (tf_execCommand(h, currentLine)) {
+				// free buffer
+				free(fileBuffer);
+				// return
 				return 1;
+			}
 		}
 	} // end file while loop
 
 	// print if no commands found
 	if (commandCount == 0)
 		tf_print(sprintf(tf_message, "No commands found.\n"));
+
+	// free buffer
+	free(fileBuffer);
 
 	// return
 	return 0;
@@ -611,7 +626,7 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 		case 'q':
 			tf_print(sprintf(tf_message,
 				"command: stop-request, setting shutdown-flag...\n"));
-			mustDie = 1;
+			tf_running = 0;
 			return 1;
 		// u
 		case 'u':
@@ -778,17 +793,17 @@ static void sigHandler(int signal) {
 		// INT
 		case SIGINT:
 			tf_print(sprintf(tf_message, "got SIGINT, setting shutdown-flag...\n"));
-			mustDie = 1;
+			tf_running = 0;
 			break;
 		// TERM
 		case SIGTERM:
 			tf_print(sprintf(tf_message, "got SIGTERM, setting shutdown-flag...\n"));
-			mustDie = 1;
+			tf_running = 0;
 			break;
 		// QUIT
 		case SIGQUIT:
 			tf_print(sprintf(tf_message, "got SIGQUIT, setting shutdown-flag...\n"));
-			mustDie = 1;
+			tf_running = 0;
 			break;
 	}
 }
@@ -846,10 +861,10 @@ static int parseCommandLine(int argc, char ** argv) {
 				natTraversal = 1;
 				break;
 			case 'c':
-				seedLimit = atoi(optarg);
+				tf_seedLimit = atoi(optarg);
 				break;
 			case 'e':
-				displayInterval = atoi(optarg);
+				tf_displayInterval = atoi(optarg);
 				break;
 			case 'o':
 				tf_owner = optarg;

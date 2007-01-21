@@ -13,8 +13,15 @@ else
 	REV_TR=0
 fi
 
-# get cli-revision from id in transmissioncli.c
-REV_CLI=`sed -e '/\$Id:/!d' -e 's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' cli/transmissioncli.c`
+# get cli-revision from svn-ids in files in cli-dir
+REV_CLI=`( find cli '(' -name '*.[chm1]' -o -name '*.cpp' -o -name '*.po' \
+            -o -name '*.mk' -o -name '*.in' -o -name 'Makefile' \
+            -o -name 'configure' ')' -exec cat '{}' ';' ) | \
+          sed -e '/\$Id:/!d' -e \
+            's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' |
+          awk 'BEGIN { REV_CLI=0 }
+               //    { if ( $1 > REV_CLI ) REV_CLI=$1 }
+               END   { print REV_CLI }'`
 
 # Generate files to be included: only overwrite them if changed so make
 # won't rebuild everything unless necessary
