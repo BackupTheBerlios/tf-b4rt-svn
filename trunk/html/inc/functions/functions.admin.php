@@ -81,7 +81,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 			'ip_resolved' => htmlentities($ip_resolved, ENT_QUOTES),
 			'user_agent' => htmlentities($user_agent, ENT_QUOTES),
 			'ip' => htmlentities($ip, ENT_QUOTES),
-			'date' => date($cfg['_DATETIMEFORMAT'], $time),
+			'date' => date($cfg['_DATETIMEFORMAT'], $time)
 			)
 		);
 		$inx++;
@@ -93,7 +93,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 		if ($action != $cfg["constants"]["hit"]) {
 			array_push($action_list, array(
 				'action' => htmlentities($action, ENT_QUOTES),
-				'selected' => ($srchAction == $action) ? "selected" : "",
+				'selected' => ($srchAction == $action) ? "selected" : ""
 				)
 			);
 		}
@@ -103,7 +103,7 @@ function tmplSetActivity($min = 0, $user = "", $srchFile = "", $srchAction = "")
 	for ($inx2 = 0; $inx2 < sizeof($cfg['users']); $inx2++) {
 		array_push($user_list, array(
 			'user' => htmlentities($cfg['users'][$inx2], ENT_QUOTES),
-			'selected' => ($user == $cfg['users'][$inx2]) ? "selected" : "",
+			'selected' => ($user == $cfg['users'][$inx2]) ? "selected" : ""
 			)
 		);
 	}
@@ -202,10 +202,9 @@ function tmplSetUserSection() {
 		}
 		// activity
 		$user_activity = GetActivityCount($user_id);
-		if ($user_activity == 0)
-			$user_percent = 0;
-		else
-			$user_percent = number_format(($user_activity / $total_activity)*100);
+		$user_percent = ($user_activity == 0)
+			? 0
+			: number_format(($user_activity / $total_activity) * 100);
 		// online
 		$user_icon = "themes/".$cfg['theme']."/images/user_offline.gif";
 		if (IsOnline($user_id))
@@ -239,7 +238,7 @@ function tmplSetUserSection() {
 			'type_user' => $type_user,
 			'user_level' => $user_level,
 			'user_state' => $user_state,
-			'is_superadmin' => $is_superadmin,
+			'is_superadmin' => $is_superadmin
 			)
 		);
 	}
@@ -271,9 +270,9 @@ function tmplSetUserSection() {
  */
 function validateFile($the_file) {
 	global $cfg;
-	if (isFile($the_file))
-		return '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">';
-	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
+	return (isFile($the_file))
+		? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
+		: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
 }
 
 /**
@@ -285,10 +284,9 @@ function validateFile($the_file) {
 function validateBinary($the_file) {
 	global $cfg;
 	if (isFile($the_file)) {
-		if (is_executable($the_file))
-			return '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">';
-		else
-			return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
+		return (is_executable($the_file))
+			? '<img src="themes/'.$cfg['theme'].'/images/green.gif" align="absmiddle" title="Valid">'
+			: '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="File exists but is not executable"><br><font color="#ff0000">File exists but is not executable</font>';
 	}
 	return '<img src="themes/'.$cfg['theme'].'/images/red.gif" align="absmiddle" title="Path is not Valid"><br><font color="#ff0000">Path is not Valid</font>';
 }
