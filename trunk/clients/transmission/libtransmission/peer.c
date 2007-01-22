@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1422 2007-01-21 07:32:31Z titer $
+ * $Id: peer.c 1425 2007-01-21 19:42:11Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -185,7 +185,6 @@ void tr_peerDestroy( tr_peer_t * peer )
     if( peer->status > PEER_STATUS_IDLE )
     {
         tr_netClose( peer->socket );
-        tr_fdSocketClosed( 0 );
     }
     tr_rcClose( peer->download );
     tr_rcClose( peer->upload );
@@ -313,19 +312,56 @@ int tr_peerPulse( tr_peer_t * peer )
         return ret;
     }
 
-    /* Handle peers */
-    if( peer->status < PEER_STATUS_HANDSHAKE )
+    /* Connect */
+    if( peer->status & PEER_STATUS_IDLE )
     {
-        return TR_OK;;
+        peer->socket = tr_netOpenTCP( peer->addr, peer->port, 0 );
+        if( peer->socket < 0 )
+        {
+            return TR_ERROR;
+        }
+        peer->status = PEER_STATUS_CONNECTING;
     }
 
+    /* Try to send handshake */
+    if( peer->status & PEER_STATUS_CONNECTING )
+    {
+        uint8_t buf[68];
+        tr_info_t * inf = &tor->info;
+
+        buf[0] = 19;
+        memcpy( &buf[1], "BitTorrent protocol", 19 );
+        memset( &buf[20], 0, 8 );
+        memcpy( &buf[28], inf->hash, 20 );
+        memcpy( &buf[48], tor->id, 20 );
+
+        switch( tr_netSend( peer->socket, buf, 68 ) )
+        {
+            case 68:
+                peer_dbg( "SEND handshake" );
+                peer->status = PEER_STATUS_HANDSHAKE;
+                break;
+            case TR_NET_BLOCK:
+                break;
+            default:
+                peer_dbg( "connection closed" );
+                return TR_ERROR;
+        }
+    }
+    if( peer->status < PEER_STATUS_HANDSHAKE )
+    {
+        /* Nothing more we can do till we sent the handshake */
+        return TR_OK;
+    }
+
+    /* Read incoming messages */
     if( ( ret = tr_peerRead( peer ) ) )
     {
         return ret;
     }
-
     if( peer->status < PEER_STATUS_CONNECTED )
     {
+        /* Nothing more we can do till we got the other guy's handshake */
         return TR_OK;
     }
 

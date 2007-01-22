@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.c 1356 2007-01-14 12:00:21Z titer $
+ * $Id: http.c 1425 2007-01-21 19:42:11Z titer $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -545,7 +545,7 @@ tr_httpPulse( tr_http_t * http, const char ** data, int * len )
             }
             if( !tr_netResolve( http->host, &addr ) )
             {
-                http->sock = tr_netOpenTCP( addr, htons( http->port ) );
+                http->sock = tr_netOpenTCP( addr, htons( http->port ), 1 );
                 http->state = HTTP_STATE_CONNECT;
                 break;
             }
@@ -567,7 +567,7 @@ tr_httpPulse( tr_http_t * http, const char ** data, int * len )
                 case TR_NET_OK:
                     tr_netResolveClose( http->resolve );
                     http->resolve = NULL;
-                    http->sock = tr_netOpenTCP( addr, htons( http->port ) );
+                    http->sock = tr_netOpenTCP( addr, htons( http->port ), 1 );
                     http->state = HTTP_STATE_CONNECT;
             }
             /* fallthrough */

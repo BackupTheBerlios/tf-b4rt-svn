@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 1420 2007-01-21 07:16:18Z titer $
+ * $Id: tracker.c 1425 2007-01-21 19:42:11Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -345,10 +345,6 @@ void tr_trackerAnnouncePulse( tr_tracker_t * tc, int * peerCount,
         
         tc->randOffset = tr_rand( 60000 );
         
-        if( tr_fdSocketWillCreate( 1 ) )
-        {
-            return;
-        }
         tc->dateTry = tr_date();
         
         /* Use redirected address */
@@ -459,10 +455,6 @@ void tr_trackerAnnouncePulse( tr_tracker_t * tc, int * peerCount,
     
     if( ( NULL == tc->httpScrape ) && shouldScrape( tc ) )
     {
-        if( tr_fdSocketWillCreate( 1 ) )
-        {
-            return;
-        }
         tc->dateScrape = tr_date();
         
         if ( tc->redirectScrapeAddress != NULL )
@@ -1165,7 +1157,6 @@ static void killHttp( tr_http_t ** http )
     if( NULL != *http )
     {
         tr_httpClose( *http );
-        tr_fdSocketClosed( 1 );
         *http = NULL;
     }
 }

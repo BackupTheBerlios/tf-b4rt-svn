@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerutils.h 1420 2007-01-21 07:16:18Z titer $
+ * $Id: peerutils.h 1425 2007-01-21 19:42:11Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -58,8 +58,6 @@ static int peerCmp( tr_peer_t * peer1, tr_peer_t * peer2 )
 
 static int checkPeer( tr_peer_t * peer )
 {
-    tr_torrent_t * tor = peer->tor;
-
     if( peer->status < PEER_STATUS_CONNECTED &&
         tr_date() > peer->date + 8000 )
     {
@@ -92,46 +90,6 @@ static int checkPeer( tr_peer_t * peer )
         {
             sendKeepAlive( peer );
             peer->keepAlive = tr_date();
-        }
-    }
-
-    /* Connect */
-    if( ( peer->status & PEER_STATUS_IDLE ) &&
-        !tr_fdSocketWillCreate( 0 ) )
-    {
-        peer->socket = tr_netOpenTCP( peer->addr, peer->port );
-        if( peer->socket < 0 )
-        {
-            peer_dbg( "connection failed" );
-            tr_fdSocketClosed( 0 );
-            return TR_ERROR;
-        }
-        peer->status = PEER_STATUS_CONNECTING;
-    }
-
-    /* Try to send handshake */
-    if( peer->status & PEER_STATUS_CONNECTING )
-    {
-        uint8_t buf[68];
-        tr_info_t * inf = &tor->info;
-        int ret;
-
-        buf[0] = 19;
-        memcpy( &buf[1], "BitTorrent protocol", 19 );
-        memset( &buf[20], 0, 8 );
-        memcpy( &buf[28], inf->hash, 20 );
-        memcpy( &buf[48], tor->id, 20 );
-
-        ret = tr_netSend( peer->socket, buf, 68 );
-        if( ret & TR_NET_CLOSE )
-        {
-            peer_dbg( "connection closed" );
-            return TR_ERROR;
-        }
-        else if( !( ret & TR_NET_BLOCK ) )
-        {
-            peer_dbg( "SEND handshake" );
-            peer->status = PEER_STATUS_HANDSHAKE;
         }
     }
 

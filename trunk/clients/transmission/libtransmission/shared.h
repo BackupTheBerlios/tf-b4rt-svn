@@ -1,7 +1,7 @@
 /******************************************************************************
- * $Id: fdlimit.h 1425 2007-01-21 19:42:11Z titer $
+ * $Id$
  *
- * Copyright (c) 2005-2006 Transmission authors and contributors
+ * Copyright (c) 2005-2007 Transmission authors and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -22,52 +22,50 @@
  * DEALINGS IN THE SOFTWARE.
  *****************************************************************************/
 
-/***********************************************************************
- * tr_fdInit
- ***********************************************************************
- * Detect the maximum number of open files and initializes things.
- **********************************************************************/
-void tr_fdInit();
+#ifndef SHARED_H
+#define SHARED_H 1
+
+#include "transmission.h"
 
 /***********************************************************************
- * tr_fdFileOpen
+ * tr_sharedInit, tr_sharedClose
  ***********************************************************************
- * If it isn't open already, tries to open the file 'name' in the
- * directory 'folder'. If 'name' itself contains '/'s, required
- * subfolders are created. The file is open read-write if 'write' is 1
- * (created if necessary), read-only if 0.
- * Returns the file descriptor if successful, otherwise returns
- * one of the TR_ERROR_IO_*.
+ * Starts / stops a thread to handle running things that are shared
+ * among the torrents: NAT-PMP/UPnP, incoming connections, peer choking
  **********************************************************************/
-int tr_fdFileOpen( char * folder, char * name, int write );
+tr_shared_t * tr_sharedInit           ( tr_handle_t * );
+void          tr_sharedClose          ( tr_shared_t * );
 
 /***********************************************************************
- * tr_fdFileRelease
+ * tr_sharedLock, tr_sharedUnlock
  ***********************************************************************
- * Indicates that the file whose descriptor is 'file' is unused at the
- * moment and can safely be closed.
+ * Gets / releases exclusive access to ressources used by the shared
+ * thread
  **********************************************************************/
-void tr_fdFileRelease( int file );
+void          tr_sharedLock           ( tr_shared_t * );
+void          tr_sharedUnlock         ( tr_shared_t * );
 
 /***********************************************************************
- * tr_fdFileClose
+ * tr_sharedSetPort
  ***********************************************************************
- * If the file 'name' in directory 'folder' was open, closes it,
- * flushing data on disk.
+ * Changes the port for incoming connections
  **********************************************************************/
-void tr_fdFileClose( char * folder, char * name );
+void         tr_sharedSetPort         ( tr_shared_t *, int port );
 
 /***********************************************************************
- * Sockets
+ * tr_sharedTraversalEnable, tr_natTraversalStatus
+ ***********************************************************************
+ *
  **********************************************************************/
-int  tr_fdSocketCreate( int type, int priority );
-int  tr_fdSocketAccept( int b, struct in_addr * addr, in_port_t * port );
-void tr_fdSocketClose( int s );
+void         tr_sharedTraversalEnable ( tr_shared_t *, int enable );
+int          tr_sharedTraversalStatus ( tr_shared_t * );
 
 /***********************************************************************
- * tr_fdClose
+ * tr_sharedSetLimit
  ***********************************************************************
- * Frees resources allocated by tr_fdInit.
+ *
  **********************************************************************/
-void tr_fdClose();
+void         tr_sharedSetLimit        ( tr_shared_t *, int limit );
+
+#endif
 

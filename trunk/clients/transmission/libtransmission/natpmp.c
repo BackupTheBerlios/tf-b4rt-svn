@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.c 1420 2007-01-21 07:16:18Z titer $
+ * $Id: natpmp.c 1425 2007-01-21 19:42:11Z titer $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -471,7 +471,6 @@ killsock( int * fd )
     {
         tr_netClose( *fd );
         *fd = -1;
-        tr_fdSocketClosed( 0 );
     }
 }
 
@@ -488,11 +487,7 @@ newreq( int adding, struct in_addr addr, int port,
         goto err;
     }
     ret->fd = -1;
-    if( tr_fdSocketWillCreate( 0 ) )
-    {
-        goto err;
-    }
-    ret->fd = tr_netOpenUDP( addr, htons( PMP_PORT ) );
+    ret->fd = tr_netOpenUDP( addr, htons( PMP_PORT ), 1 );
     if( 0 > ret->fd )
     {
         goto err;
@@ -583,16 +578,10 @@ mcastsetup()
     int fd;
     struct in_addr addr;
 
-    if( tr_fdSocketWillCreate( 0 ) )
-    {
-        return -1;
-    }
-
     addr.s_addr = inet_addr( PMP_MCAST_ADDR );
     fd = tr_netMcastOpen( PMP_PORT, addr );
     if( 0 > fd )
     {
-        tr_fdSocketClosed( 0 );
         return -1;
     }
 
