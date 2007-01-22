@@ -31,13 +31,9 @@ define('WGET_STATE_ERROR', -1);                                         // error
 class WrapperWget
 {
 	// public fields
-	var $name = "wget";
 
     // state
     var $state = WGET_STATE_NULL;
-
-    // messages-array
-    var $messages = array();
 
     // startup-command
     var $command = "";
@@ -63,9 +59,6 @@ class WrapperWget
 	var $pasv = 0;
 
 	// private fields
-
-    // running-flag
-    var $_running = WGET_STATE_NULL;
 
     // done-flag
     var $_done = false;
@@ -134,9 +127,9 @@ class WrapperWget
 		// start
 		$this->_wrapperStart();
 		// main
-		$this->_wrapperMain();
+		$mainRet = $this->_wrapperMain();
 		// stop
-		$this->_wrapperStop();
+		$this->_wrapperStop(!$mainRet);
 	}
 
 	/**
@@ -144,7 +137,7 @@ class WrapperWget
 	 */
 	function stop() {
 		// stop
-		$this->_wrapperStop();
+		$this->_wrapperStop(false);
 	}
 
 	// =========================================================================
@@ -153,6 +146,8 @@ class WrapperWget
 
 	/**
 	 * wrapper main
+	 *
+	 * @return boolean
 	 */
 	function _wrapperMain() {
 
@@ -162,41 +157,53 @@ class WrapperWget
 		// process header
 		$this->_processHeader();
 
+		// flush buffer
+		$this->_buffer = "";
+
 		// main loop
-		$this->_outputMessage("starting download and entering main-loop...\n");
+		$this->_outputMessage("download started, entering main-loop...\n");
 		$tick = 1;
 		for (;;) {
 
+			// read to buffer
+			if (!@feof($this->wget))
+				$this->_buffer .= @fread($this->wget, 8192);
 
-			/* DEBUG */
+			// process buffer
+			$this->_done = $this->_processBuffer();
 
-			$this->_processBuffer();
+			// return if done
+			if ($this->_done)
+				return true;
 
-			$this->_outputMessage("tick ".$tick."\n");
+			// _processCommandStack, return if quit
+			if ($this->_processCommandStack())
+				return true;
 
+			// write stat-file every 5 secs
+			if (($tick % 5) == 0)
+				$this->_statRunning();
 
-			if (($tick % 5) == 0) {
-				if ($this->_clientIsRunning()) {
-					$this->_outputMessage("proc running. pid : ".$this->pid."\n");
-				} else {
-					$this->_outputMessage("proc NOT running. pid : ".$this->pid."\n");
-					break;
+			// check if client is still up once a minute
+			if (($tick % 60) == 0) {
+				if ($this->_clientIsRunning() === false) {
+					$this->_outputMessage("wget-client not running. initializing shutdown... (pid: ".$this->pid.")\n");
+					return false;
 				}
 			}
 
-			if (($tick % 30) == 0) {
-				$this->_outputMessage("bye bye...\n");
-				break;
-			}
-
-			/* DEBUG */
-
+			// check buffer-size, truncate if needed
+			if (strlen($this->_buffer) > 16384)
+				$this->_buffer = substr($this->_buffer, -1024);
 
 			// sleep 1 second and increment tick-counter
 			sleep(1);
 			$tick++;
 			if ($tick < 0) $tick = 1;
 		}
+
+		// return
+		return true;
 	}
 
 	/**
@@ -231,7 +238,7 @@ class WrapperWget
 		// start client
 		if (!$this->_clientStart()) {
 			// stop
-			$this->_wrapperStop();
+			$this->_wrapperStop(true);
 			// return
 			return false;
 		}
@@ -242,27 +249,25 @@ class WrapperWget
 
 	/**
 	 * stop wrapper
+	 *
+	 * @param $error
 	 */
-	function _wrapperStop() {
+	function _wrapperStop($error = false) {
 
 		// output
 		$this->_outputMessage("wget-wrapper shutting down...\n");
 
-		// if running stop client
-		if ($this->state == WGET_STATE_RUNNING) {
+		// state
+		$this->state = WGET_STATE_NULL;
 
-			// stop client
-			$this->_clientStop();
-
-			// state
-			$this->state = WGET_STATE_NULL;
-		}
+		// stop client
+		$this->_clientStop();
 
 		// transfer settings
 		stopTransferSettings($this->transfer);
 
 		// stat
-		$this->_statShutdown();
+		$this->_statShutdown($error);
 
 		// pid
 		$this->_pidFileDelete();
@@ -310,8 +315,14 @@ class WrapperWget
 		// start process
 		$this->wget = @popen($this->command, 'r');
 
+		// wait for 1 second
+		sleep(1);
+
+		// get + set pid
+		$this->pid = getTransferPid($this->transfer);
+
 		// check for error
-		if ($this->wget === false) {
+		if (($this->wget === false) || ($this->_clientIsRunning() === false)) {
 			// error
 			$this->_outputError("error starting up wget-client, shutting down...\n");
 			// return
@@ -320,12 +331,6 @@ class WrapperWget
 
 		// state
 		$this->state = WGET_STATE_RUNNING;
-
-		// wait for 0.5 seconds
-		usleep(500000);
-
-		// get + set pid
-		$this->pid = getTransferPid($this->transfer);
 
 		// output
 		$this->_outputMessage("wget-client started. (pid: ".$this->pid.")\n");
@@ -342,12 +347,16 @@ class WrapperWget
 	function _clientStop() {
 
 		// close handle
-		if (is_resource($this->wget)) {
+		// weird : instance-field is not set in sig-call if field is not set in ctor
+		if ((!empty($this->wget)) && (is_resource($this->wget))) {
 			$this->_outputMessage("closing process-handle...\n");
 			@pclose($this->wget);
 		}
 
 		// try to kill if running
+		// weird : instance-field is not set in sig-call if field is not set in ctor
+		if (empty($this->pid))
+			$this->pid = getTransferPid($this->transfer);
 		if ($this->_clientIsRunning()) {
 			// send SIGTERM
 			$this->_outputMessage("sending SIGTERM to wget-client... (pid: ".$this->pid.")\n");
@@ -390,26 +399,116 @@ class WrapperWget
 		return (strpos(exec('ps --pid '.escapeshellarg($this->pid)), $this->pid) !== false);
 	}
 
-
 	/**
 	 * process header
+	 *
+	 * @return boolean
 	 */
 	function _processHeader() {
 
 		// output
-		$this->_outputMessage("processing header...\n");
+		$this->_outputMessage("starting download...\n");
 
-		// TODO
+		// flush buffer
+		$this->_buffer = "";
 
+		// read until we find the Length-string which indicates dl-start
+		$ctr = 0;
+		while (($ctr < 32) && (!@feof($this->wget))) {
+
+			// read
+			$this->_buffer .= @fread($this->wget, 256);
+
+			// check for Length
+			if (preg_match("/.*Length:\s(.+)\s\[.*/i", $this->_buffer, $matches)) {
+				// set size
+				$this->size = str_replace(',','', $matches[1]);
+				// set size in stat-file
+				$this->_sf->size = $this->size;
+				// return
+				return true;
+			}
+
+			// wait for 0.25 seconds
+			usleep(250000);
+
+			// increment counter
+			$ctr++;
+		}
+
+		// there were problems
+		$this->_outputMessage("problems when processing header...\n");
+
+		// set size from sf
+		$this->_outputMessage("try to set size from stat-file...\n");
+		if (!empty($this->_sf->size)) {
+			$this->_outputMessage("set size from stat-file :".formatBytesTokBMBGBTB($this->_sf->size)."\n");
+			$this->size = $this->_sf->size;
+			// return
+			return true;
+		}
+
+		// give up, then we got no size
+		$this->_outputError("failed to get size for download.\n");
+
+		// set size to 0
+		$this->size = 0;
+
+		// set size in stat-file
+		$this->_sf->size = $this->size;
+
+		// return
+		return false;
 	}
 
 	/**
 	 * process buffer
+	 *
+	 * @return boolean
 	 */
 	function _processBuffer() {
 
-		// TODO
+		// downtotal
+		if (preg_match_all("/(\d*)K\s\./i", $this->_buffer, $matches, PREG_SET_ORDER))
+			$this->downtotal = $matches[count($matches) - 1][1] << 10;
 
+		// percent_done + down_speed + _speed
+		if (preg_match_all("/(\d*)%(\s*)(.*)\/s/i", $this->_buffer, $matches, PREG_SET_ORDER)) {
+			$matchIdx = count($matches) - 1;
+			// percentage
+			$this->percent_done = $matches[$matchIdx][1];
+			// speed
+			$this->down_speed = $matches[$matchIdx][3]."/s";
+			// we dont want upper-case k
+			$this->down_speed = str_replace("KB/s", "kB/s", $this->down_speed);
+			// size as int + convert MB/s
+			$sizeTemp = substr($this->down_speed, 0, -5);
+			if (is_numeric($sizeTemp)) {
+				$this->_speed = intval($sizeTemp);
+				if (substr($this->down_speed, -4) == "MB/s") {
+					$this->_speed = $this->_speed << 10;
+					$this->down_speed = $this->_speed." kB/s";
+				}
+			} else {
+				$this->_speed = 0;
+				$this->down_speed = "0.00 kB/s";
+			}
+		}
+
+		// time left
+		$this->time_left = (($this->size > 0) && ($this->_speed > 0))
+			? convertTime((($this->size - $this->downtotal) >> 10) / $this->_speed)
+			: '-';
+
+		// download done
+		if (preg_match("/.*saved\s\[.*/", $this->_buffer)) {
+			$this->_outputMessage("download complete. initializing shutdown...\n");
+			// return
+			return true;
+		}
+
+		// return
+		return false;
 	}
 
 	/**
@@ -419,8 +518,20 @@ class WrapperWget
 	 */
 	function _processCommandStack() {
 
-		// TODO
+		// check for command-file
+		if (@is_file($this->commandFile)) {
 
+			// print
+			$this->_outputMessage("processing command-file ".$this->commandFile."...\n");
+
+
+			/* DEBUG */
+			$cmd = 'foo';
+			return $this->_execCommand($cmd);
+			/* DEBUG */
+		}
+
+		// return
 		return false;
 	}
 
@@ -438,7 +549,7 @@ class WrapperWget
 	}
 
 	/**
-	 * stat-file before startup
+	 * stat-file at startup
 	 *
 	 * @return boolean
 	 */
@@ -476,20 +587,23 @@ class WrapperWget
 	}
 
 	/**
-	 * stat-file after shutdown
+	 * stat-file at shutdown
 	 *
+	 * @param $error
 	 * @return boolean
 	 */
-	function _statShutdown() {
+	function _statShutdown($error = false) {
 		// set some values
 		$this->_sf->running = 0;
 		if ($this->_done) {
 			$this->_sf->percent_done = 100;
 			$this->_sf->time_left = "Download Succeeded!";
 		} else {
-			$this->_sf->percent_done = ($this->size == 0) ? "-100" : (((int(100.0 * $this->downtotal / $this->size)) + 100) * (-1));
+			$this->_sf->percent_done = ($this->size == 0) ? "-100" : ((((int)(100.0 * $this->downtotal / $this->size)) + 100) * (-1));
 			$this->_sf->time_left = "Transfer Stopped";
 		}
+		if ($error)
+			$this->_sf->time_left = "Error";
 		$this->_sf->down_speed = "";
 		$this->_sf->up_speed = "";
 		$this->_sf->transferowner = $this->owner;
@@ -529,17 +643,17 @@ class WrapperWget
 			// INT
 			case SIGINT:
 				$this->_outputMessage("got SIGINT, shutting down...\n");
-				$this->_wrapperStop();
+				$this->_wrapperStop(false);
 				break;
 			// TERM
 			case SIGTERM:
 				$this->_outputMessage("got SIGTERM, shutting down...\n");
-				$this->_wrapperStop();
+				$this->_wrapperStop(false);
 				break;
 			// QUIT
 			case SIGQUIT:
 				$this->_outputMessage("got SIGQUIT, shutting down...\n");
-				$this->_wrapperStop();
+				$this->_wrapperStop(false);
 				break;
 		}
 	}

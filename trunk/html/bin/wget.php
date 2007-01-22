@@ -59,13 +59,13 @@ require_once('inc/functions/functions.all.php');
 // wget functions
 require_once('inc/functions/functions.wget.php');
 
-// wget class
+// wget wrapper class
 require_once('inc/classes/Wrapper.wget.php');
 
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
-// from here on the controller-object takes over
+// from here on the wrapper-object takes over
 $wrapper = new WrapperWget($argv[1], $argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
 $wrapper->start();
 
