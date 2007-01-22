@@ -35,18 +35,8 @@ $_SESSION = array('cache' => false);
 /******************************************************************************/
 
 // check args
-if (!isset($argv[1]))
-	die('Arg Error');
-if (!isset($argv[2]))
-	die('Arg Error');
-if (!isset($argv[3]))
-	die('Arg Error');
-if (!isset($argv[4]))
-	die('Arg Error');
-if (!isset($argv[5]))
-	die('Arg Error');
-if (!isset($argv[6]))
-	die('Arg Error');
+if ((!isset($argc)) || ($argc < 7))
+	die("Arg Error\n");
 
 // change to docroot if cwd is in bin.
 $cwd = getcwd();
@@ -69,9 +59,26 @@ require_once('inc/functions/functions.wget.php');
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
-// -----------------------------------------------------------------------------
-// Main
-// -----------------------------------------------------------------------------
+// from here on the controller-object takes over
+$ww = new WrapperWget($argv[1], $argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
+$ww->start();
+
+// exit
+exit();
+
+
+
+
+
+
+
+
+
+
+
+
+/* --------------------------------------------------------------- DEPRECATED */
+
 
 // some vars
 $s_running = 1;
@@ -90,12 +97,6 @@ $drate = $argv[4];
 $retries = $argv[5];
 $pasv = $argv[6];
 $transfer = str_replace($cfg['transfer_file_path'], '', $transferFile);
-
-// TODO : from here on the controller-object has to take over
-
-
-
-
 
 
 // clienthandler-object
