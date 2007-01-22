@@ -21,17 +21,70 @@
 *******************************************************************************/
 
 /**
- * writeStatFile
+ * process header
  */
-function writeStatFile() {
+function processHeader() {
+}
+
+/**
+ * delete the pid-file
+ */
+function pidFileDelete() {
+	global $cfg, $transfer, $ch;
+	$ch->logMessage("removing pid-file : ".$cfg['transfer_file_path'].$transfer.".pid\n");
+	@unlink($cfg['transfer_file_path'].$transfer.".pid");
+}
+
+/**
+ * process the command stack
+ *
+ * @return boolean
+ */
+function processCommandStack() {
+	return false;
+}
+
+/**
+ * exec a command
+ *
+ * @param $command
+ * @return boolean
+ */
+function execCommand($command) {
+	return false;
+}
+
+/**
+ * startup client
+ */
+function clientStartup() {
+}
+
+/**
+ * shutdown client
+ */
+function clientShutdown() {
+}
+
+/**
+ * writeStatStartup
+ */
+function writeStatStartup() {
 	global $cfg, $transfer, $sf, $s_size, $s_downtotal, $s_percent_done, $s_down_speed, $s_running, $speed, $s_time_left;
-	$sf->running = $s_running;
-	$sf->percent_done = $s_percent_done;
-	$sf->down_speed = $s_down_speed;
-	$sf->time_left = $s_time_left;
-	$sf->downtotal = $s_downtotal;
-	$sf->size = ($s_size > 0) ? $s_size : $s_downtotal;
-	$sf->write();
+}
+
+/**
+ * writeStatRunning
+ */
+function writeStatRunning() {
+	global $cfg, $transfer, $sf, $s_size, $s_downtotal, $s_percent_done, $s_down_speed, $s_running, $speed, $s_time_left;
+}
+
+/**
+ * writeStatShutdown
+ */
+function writeStatShutdown() {
+	global $cfg, $transfer, $sf, $s_size, $s_downtotal, $s_percent_done, $s_down_speed, $s_running, $speed, $s_time_left;
 }
 
 /**
@@ -75,6 +128,20 @@ function processData($data){
 			$s_size = $s_downtotal;
 		$s_time_left = "Download Succeeded!";
 	}
+}
+
+/**
+ * writeStatFile
+ */
+function writeStatFile() {
+	global $cfg, $transfer, $sf, $s_size, $s_downtotal, $s_percent_done, $s_down_speed, $s_running, $speed, $s_time_left;
+	$sf->running = $s_running;
+	$sf->percent_done = $s_percent_done;
+	$sf->down_speed = $s_down_speed;
+	$sf->time_left = $s_time_left;
+	$sf->downtotal = $s_downtotal;
+	$sf->size = ($s_size > 0) ? $s_size : $s_downtotal;
+	$sf->write();
 }
 
 ?>

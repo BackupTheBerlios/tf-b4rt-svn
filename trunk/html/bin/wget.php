@@ -69,6 +69,10 @@ require_once('inc/functions/functions.wget.php');
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
+// -----------------------------------------------------------------------------
+// Main
+// -----------------------------------------------------------------------------
+
 // some vars
 $s_running = 1;
 $s_size = 0;
@@ -77,10 +81,6 @@ $s_percent_done = 0;
 $s_down_speed = "0.00 kB/s";
 $s_time_left = '-';
 $speed = 0;
-
-// -----------------------------------------------------------------------------
-// Main
-// -----------------------------------------------------------------------------
 
 // args
 $transferFile = $argv[1];
@@ -91,9 +91,39 @@ $retries = $argv[5];
 $pasv = $argv[6];
 $transfer = str_replace($cfg['transfer_file_path'], '', $transferFile);
 
+// TODO : from here on the controller-object has to take over
+
+
+
+
+
+
 // clienthandler-object
 $ch = ClientHandler::getInstance('wget');
 $ch->setVarsFromTransfer($transfer);
+
+
+
+// set admin-var
+$cfg['isAdmin'] = IsAdmin($owner);
+
+// re-use sf-object
+$sf = new StatFile($transfer, $owner);
+
+
+// write out stat-file now
+
+$sf->up_speed = "0.00 kB/s";
+$sf->sharing = "0";
+$sf->transferowner = $owner;
+$sf->seeds = "1";
+$sf->peers = "1";
+$sf->seedlimit = "0";
+$sf->uptotal = "0";
+
+writeStatFile();
+
+
 
 // log
 $ch->logMessage("wget.php starting up :\n");
@@ -103,22 +133,6 @@ $ch->logMessage(" - path : ".$path."\n");
 $ch->logMessage(" - drate : ".$drate."\n");
 $ch->logMessage(" - retries : ".$retries."\n");
 $ch->logMessage(" - pasv : ".$pasv."\n");
-
-// set admin-var
-$cfg['isAdmin'] = IsAdmin($owner);
-
-// re-use sf-object
-$sf = new StatFile($transfer, $owner);
-$sf->up_speed = "0.00 kB/s";
-$sf->sharing = "0";
-$sf->transferowner = $owner;
-$sf->seeds = "1";
-$sf->peers = "1";
-$sf->seedlimit = "0";
-$sf->uptotal = "0";
-
-// write out stat-file now
-writeStatFile();
 
 // command-string
 $command = "cd ".$path.";";
@@ -145,8 +159,11 @@ $ch->logMessage("executing command : \n".$command."\n", true);
 
 // start process
 $wget = popen($command, 'r');
+
 // wait for 0.25 seconds
 usleep(250000);
+
+
 $header = true;
 $read = "";
 do {
@@ -199,8 +216,7 @@ writeStatFile();
 stopTransferSettings($transfer);
 
 // delete pid-file
-$ch->logMessage("removing pid-file : ".$cfg['transfer_file_path'].$transfer.".pid\n");
-@unlink($cfg['transfer_file_path'].$transfer.".pid");
+pidFileDelete();
 
 // log exit
 $ch->logMessage("wget.php exit\n");
