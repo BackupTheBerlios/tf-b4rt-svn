@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: shared.h 1407 2007-01-19 08:41:37Z titer $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *

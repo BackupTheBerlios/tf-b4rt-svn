@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id$
+ * $Id: torrent.c 1422 2007-01-21 07:32:31Z titer $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
