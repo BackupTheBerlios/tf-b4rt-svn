@@ -3063,16 +3063,15 @@ sub writeStatRunning {
 #------------------------------------------------------------------------------#
 sub writeStatShutdown {
 	# set some values
+	$sf->set("running", 0);
 	if ($noMoreWorkTodo) {
-		$sf->set("running", 0); # done
+		# done
 		$sf->set("percent_done", 100);
 		$sf->set("time_left", "Download Succeeded!");
-		$sf->set("downtotal", $totalsCopy{'total size'});
 	} else {
-		$sf->set("running", 0); # stopped
+		# stopped
 		$sf->set("percent_done", $totals{'total size'} == 0 ? "-100" : ((int(100.0 * $totals{'total bytes'} / $totals{'total size'})) + 100) * (-1));
 		$sf->set("time_left", "Transfer Stopped");
-		$sf->set("downtotal", $totals{'total bytes'});
 	}
 	$sf->set("down_speed", "");
 	$sf->set("up_speed", "");
@@ -3082,6 +3081,7 @@ sub writeStatShutdown {
 	$sf->set("sharing", "");
 	$sf->set("seedlimit", "");
 	$sf->set("uptotal", 0);
+	$sf->set("downtotal", $totals{'total bytes'});
 	$sf->set("size", $totalsCopy{'total size'});
 	# write
 	return $sf->write();
