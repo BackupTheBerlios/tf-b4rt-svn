@@ -23,7 +23,7 @@
 /**
  * POSIX-wrapper for PHPs lacking posix-support (--disable-posix)
  */
-if (!function_exists("posix_geteuid"))
+if (!function_exists("posix_kill"))
 	require_once("inc/functions/functions.posix.php");
 
 /**

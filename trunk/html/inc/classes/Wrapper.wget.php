@@ -170,10 +170,12 @@ class WrapperWget
 				$this->_outputMessage("proc running. pid : ".$this->pid."\n");
 			} else {
 				$this->_outputMessage("proc NOT running. pid : ".$this->pid."\n");
+				$this->_running = WGET_STATE_NULL;
+				break;
 			}
 
 			sleep(1);
-			if ($tick == 60)
+			if ($tick == 120)
 				$this->_running = WGET_STATE_NULL;
 			else
 				$tick++;
@@ -303,7 +305,7 @@ class WrapperWget
 		$this->_outputMessage("executing command : \n".$this->command."\n", true);
 
 		// start process
-		$this->wget = popen($this->command, 'r');
+		$this->wget = @popen($this->command, 'r');
 
 		// check for error
 		if ($this->wget === false) {
@@ -370,7 +372,7 @@ class WrapperWget
 
 		// close process
 		$this->_outputMessage("closing wget-handle...\n");
-		pclose($this->wget);
+		@pclose($this->wget);
 
 	}
 

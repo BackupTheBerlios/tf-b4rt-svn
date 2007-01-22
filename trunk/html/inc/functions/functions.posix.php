@@ -20,13 +20,27 @@
 
 *******************************************************************************/
 
-/*
- * posix_getpwuid() and posix_geteuid() emergency replacements if PHP is
- * built with "--disable-posix" - osearth@gmail.c0m
+// signals
+if (!defined("SIGHUP")) define("SIGHUP", 1);
+if (!defined("SIGINT")) define("SIGINT", 2);
+if (!defined("SIGQUIT")) define("SIGQUIT", 3);
+if (!defined("SIGTERM")) define("SIGTERM", 15);
+
+/**
+ * posix_kill
+ *
+ * @param $pid
+ * @param $sig
+ * @return string
  */
+function posix_kill($pid, $sig) {
+	return exec("kill -s ".$sig." ".$pid);
+}
 
 /**
  * posix_geteuid
+ *
+ * @author osearth@gmail.c0m
  *
  * @return string
  */
@@ -36,6 +50,8 @@ function posix_geteuid() {
 
 /**
  * posix_getpwuid
+ *
+ * @author osearth@gmail.c0m
  *
  * @param $uid
  * @return array
