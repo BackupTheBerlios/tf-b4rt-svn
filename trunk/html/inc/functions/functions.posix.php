@@ -24,6 +24,7 @@
 if (!defined("SIGHUP")) define("SIGHUP", 1);
 if (!defined("SIGINT")) define("SIGINT", 2);
 if (!defined("SIGQUIT")) define("SIGQUIT", 3);
+if (!defined("SIGKILL")) define("SIGKILL", 9);
 if (!defined("SIGTERM")) define("SIGTERM", 15);
 
 /**

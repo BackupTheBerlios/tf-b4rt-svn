@@ -201,7 +201,7 @@ do {
 		usleep(250000);
 	}
 	// read
-	$read = @fread($wget, 16384);
+	$read = @fread($wget, 8192);
 	// process data
 	processData($read);
 	// write stat file
