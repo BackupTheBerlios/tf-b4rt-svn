@@ -21,6 +21,9 @@
 
 *******************************************************************************/
 
+// declare ticks
+declare(ticks = 1);
+
 // prevent invocation from web (hopefully on all the php-config-permutations)
 if (!empty($_REQUEST)) die();
 if (!empty($_GET)) die();
@@ -56,12 +59,15 @@ require_once('inc/functions/functions.all.php');
 // wget functions
 require_once('inc/functions/functions.wget.php');
 
+// wget class
+require_once('inc/classes/Wrapper.wget.php');
+
 // load default-language
 loadLanguageFile($cfg["default_language"]);
 
 // from here on the controller-object takes over
-$ww = new WrapperWget($argv[1], $argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
-$ww->start();
+$wrapper = new WrapperWget($argv[1], $argv[2], $argv[3], $argv[4], $argv[5], $argv[6]);
+$wrapper->start();
 
 // exit
 exit();
@@ -77,8 +83,22 @@ exit();
 
 
 
-/* --------------------------------------------------------------- DEPRECATED */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* --------------------------------------------------------------- DEPRECATED */
 
 // some vars
 $s_running = 1;
@@ -98,12 +118,9 @@ $retries = $argv[5];
 $pasv = $argv[6];
 $transfer = str_replace($cfg['transfer_file_path'], '', $transferFile);
 
-
 // clienthandler-object
 $ch = ClientHandler::getInstance('wget');
 $ch->setVarsFromTransfer($transfer);
-
-
 
 // set admin-var
 $cfg['isAdmin'] = IsAdmin($owner);
@@ -111,9 +128,7 @@ $cfg['isAdmin'] = IsAdmin($owner);
 // re-use sf-object
 $sf = new StatFile($transfer, $owner);
 
-
 // write out stat-file now
-
 $sf->up_speed = "0.00 kB/s";
 $sf->sharing = "0";
 $sf->transferowner = $owner;
@@ -121,10 +136,7 @@ $sf->seeds = "1";
 $sf->peers = "1";
 $sf->seedlimit = "0";
 $sf->uptotal = "0";
-
 writeStatFile();
-
-
 
 // log
 $ch->logMessage("wget.php starting up :\n");
@@ -164,7 +176,7 @@ $wget = popen($command, 'r');
 // wait for 0.25 seconds
 usleep(250000);
 
-
+// main-loop
 $header = true;
 $read = "";
 do {
