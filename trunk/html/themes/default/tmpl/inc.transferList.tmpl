@@ -158,17 +158,12 @@
 				<td nowrap>
 					<div align="center" class="admincell">
 						<tmpl_if name="is_owner">
+							<a href="JavaScript:showTransfer('index.php?iid=transferSettings&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/properties.png" width="18" height="13" border="0" title="Transfer Settings"></a>
 							<tmpl_if name="transferRunning" value="1">
-								<tmpl_if name="clientType" value="wget">
-									<img src="themes/default/images/run_off.gif" width="16" height="16" border="0" title="-">
-									<img src="themes/default/images/delete_off.gif" width=16 height=16 border=0>
-									<input type="checkbox" disabled="disabled">
-								<tmpl_else>
-									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
-									<img src="themes/default/images/delete_off.gif" width=16 height=16 border=0>
-									<tmpl_if name="enable_multiops">
-										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
-									</tmpl_if>
+								<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+								<img src="themes/default/images/delete_off.gif" width="16" height="16" border=0>
+								<tmpl_if name="enable_multiops">
+									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
@@ -214,6 +209,7 @@
 							</tmpl_if>
 						</tmpl_if>
 					<tmpl_else>
+						<img src="themes/default/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<img src="themes/default/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<img src="themes/default/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<input type="checkbox" disabled="disabled">
@@ -374,17 +370,12 @@
 				<td nowrap>
 					<div align="center" class="admincell">
 						<tmpl_if name="is_owner">
+							<a href="JavaScript:showTransfer('index.php?iid=transferSettings&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/properties.png" width="18" height="13" border="0" title="Transfer Settings"></a>
 							<tmpl_if name="transferRunning" value="1">
-								<tmpl_if name="clientType" value="wget">
-									<img src="themes/default/images/run_off.gif" width="16" height="16" border="0" title="-">
-									<img src="themes/default/images/delete_off.gif" width=16 height=16 border=0>
-									<input type="checkbox" disabled="disabled">
-								<tmpl_else>
-									<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
-									<img src="themes/default/images/delete_off.gif" width=16 height=16 border=0>
-									<tmpl_if name="enable_multiops">
-										<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
-									</tmpl_if>
+								<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/kill.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+								<img src="themes/default/images/delete_off.gif" width=16 height=16 border=0>
+								<tmpl_if name="enable_multiops">
+									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
@@ -430,6 +421,7 @@
 							</tmpl_if>
 						</tmpl_if>
 					<tmpl_else>
+						<img src="themes/default/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<img src="themes/default/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<img src="themes/default/images/locked.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 						<input type="checkbox" disabled="disabled">
