@@ -545,7 +545,7 @@ class ClientHandler
                 $this->pid = getTransferPid($this->transfer);;
             }
             // kill it
-            $this->callResult = exec("kill ".escapeshellarg($this->pid));
+            $this->callResult = posix_kill($this->pid, SIGKILL);
             // try to remove the pid file
             @unlink($this->transferFilePath.".pid");
         }
