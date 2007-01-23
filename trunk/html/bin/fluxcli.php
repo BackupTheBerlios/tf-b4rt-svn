@@ -115,7 +115,7 @@ if ((isset($action)) && ($action != "")) {
 			cliWatchDir(@$argv[2],@$argv[3]);
 			break;
 		case "rss":
-			cliProcessRssFeed(@$argv[2],@$argv[3],@$argv[4],@$argv[5]);
+			cliProcessRssFeed(@$argv[2],@$argv[3],@$argv[4],@$argv[5], @$argv[6]);
 			break;
 		case "xfer":
 			cliXferShutdown(@$argv[2]);

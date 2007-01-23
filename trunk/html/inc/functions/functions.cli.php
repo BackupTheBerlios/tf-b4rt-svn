@@ -56,6 +56,7 @@ function cliPrintUsage() {
 	. "                 extra-arg 2 : filter-file\n"
 	. "                 extra-arg 3 : history-file\n"
 	. "                 extra-arg 4 : rss-feed-url\n"
+	. "                 extra-arg 5 : use cookies from this torrentflux user\n"
 	. " <xfer>        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
 	. "                 extra-arg 1 : time-delta of xfer to use : <all|total|month|week|day>\n"
 	. " <repair>      : repair of torrentflux. DONT do this unless you have to.\n"
@@ -568,7 +569,7 @@ function cliDumpDatabase($type = "") {
  * @param $history
  * @param $url
  */
-function cliProcessRssFeed($sdir = "", $filter = "", $history = "", $url = "") {
+function cliProcessRssFeed($sdir = "", $filter = "", $history = "", $url = "", $username="") {
 	global $cfg;
 	$gotArgs = 0;
 	if ((isset($sdir)) && ($sdir != ""))
@@ -579,7 +580,11 @@ function cliProcessRssFeed($sdir = "", $filter = "", $history = "", $url = "") {
 		$gotArgs++;
 	if ((isset($url)) && ($url != ""))
 		$gotArgs++;
-	if ($gotArgs == 4) {
+	if ($username != ""){
+		$cfg["user"] = $username;
+		$gotArgs++;
+	}
+	if ($gotArgs >= 4) {
 		require_once("inc/classes/Rssd.php");
 		Rssd::processFeed($sdir, $filter, $history, $url);
 	} else {
