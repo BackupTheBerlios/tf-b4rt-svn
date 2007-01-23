@@ -65,6 +65,35 @@ class WrapperWget
 	var $_wget = null;
 
 	// =========================================================================
+	// public static methods
+	// =========================================================================
+
+	/**
+	 * start
+	 *
+	 * @param $file
+	 * @param $owner
+	 * @param $path
+	 * @param $drate
+	 * @param $retries
+	 * @param $pasv
+	 */
+    function start($file, $owner, $path, $drate, $retries, $pasv) {
+		global $instanceWrapperWget;
+		$instanceWrapperWget = new WrapperWget($file, $owner, $path, $drate, $retries, $pasv);
+		$instanceWrapperWget->instance_start();
+    }
+
+    /**
+     * stop
+     */
+    function stop() {
+		global $instanceWrapperWget;
+		if (isset($instanceWrapperWget))
+			$instanceWrapperWget->instance_stop();
+    }
+
+	// =========================================================================
 	// ctor
 	// =========================================================================
 
@@ -104,11 +133,11 @@ class WrapperWget
 	// =========================================================================
 
 	/**
-	 * start
+	 * instance_start
 	 *
 	 * @return boolean
 	 */
-	function start() {
+	function instance_start() {
 		// wrapper start
 		$this->_wrapperStart();
 		// wrapper main
@@ -118,9 +147,9 @@ class WrapperWget
 	}
 
 	/**
-	 * stop
+	 * instance_stop
 	 */
-	function stop() {
+	function instance_stop() {
 		// wrapper stop
 		$this->_wrapperStop(false);
 	}
@@ -166,6 +195,14 @@ class WrapperWget
 			pcntl_signal(SIGQUIT, array($this, "_sigHandler"));
 		}
 
+		// remove command-file if exists
+		if (@is_file($this->_commandFile)) {
+			// print
+			$this->_outputMessage("removing command-file ".$this->_commandFile."...\n");
+			// delete command-file
+			@unlink($this->_commandFile);
+		}
+
 		// return
 		return true;
 	}
@@ -206,7 +243,7 @@ class WrapperWget
 		$this->_buffer = "";
 
 		// main loop
-		$this->_outputMessage("download started, entering main-loop...\n");
+		$this->_outputMessage("downloading...\n");
 		$tick = 1;
 		for (;;) {
 
@@ -352,26 +389,17 @@ class WrapperWget
 
 		// try to kill if running
 		if ($this->_clientIsRunning()) {
-			// send SIGTERM
-			$this->_outputMessage("sending TERM to wget-client... (pid: ".$this->_pid.")\n");
-			posix_kill($this->_pid, SIGTERM);
-			// give it 1 second
-			sleep(1);
+			// send KILL ("nohup")
+			$this->_outputMessage("sending KILL to wget-client... (pid: ".$this->_pid.")\n");
+			posix_kill($this->_pid, SIGKILL);
+			// wait for 0.25 seconds
+			usleep(250000);
 			// check if running
 			if ($this->_clientIsRunning()) {
-				$this->_outputMessage("wget-client still running 1 second after TERM. waiting another second... (pid: ".$this->_pid.")\n");
-				sleep(1);
+				// check if running
 				if ($this->_clientIsRunning()) {
-					// send SIGKILL
-					$this->_outputMessage("wget-client still running after another second. sending KILL... (pid: ".$this->_pid.")\n");
-					posix_kill($this->_pid, SIGKILL);
-					// give it 2 seconds
-					sleep(2);
-					// check if running
-					if ($this->_clientIsRunning()) {
-						$this->_outputMessage("wget-client still running 2 seconds after KILL. giving up. (pid: ".$this->_pid.")\n");
-						return false;
-					}
+					$this->_outputMessage("wget-client still running 0.25 seconds after KILL. (pid: ".$this->_pid.")\n");
+					return false;
 				}
 			}
 			// output
@@ -422,7 +450,7 @@ class WrapperWget
 			}
 
 			// check for Length
-			if (preg_match("/.*Length:\s(.+)\s\[.*/i", $this->_buffer, $matches)) {
+			if (preg_match("/.*Length:\s(.+\d)\s(\[|\()/i", $this->_buffer, $matches)) {
 				// set size
 				$this->_size = str_replace(',','', $matches[1]);
 				// set size in stat-file
@@ -522,15 +550,28 @@ class WrapperWget
 
 		// check for command-file
 		if (@is_file($this->_commandFile)) {
-
 			// print
 			$this->_outputMessage("processing command-file ".$this->_commandFile."...\n");
-
-
-			/* DEBUG */
-			$cmd = 'foo';
-			return $this->_execCommand($cmd);
-			/* DEBUG */
+			// read command-file
+			$data = @file_get_contents($this->_commandFile);
+			// delete command-file
+			@unlink($this->_commandFile);
+			// process content
+	        $commands = @explode("\n", $data);
+	        if ((is_array($commands)) && (count($commands > 0))) {
+	        	foreach ($commands as $command) {
+	        		// exec, early out when reading a quit-command
+	        		$command = str_replace("\n", "", $command);
+	        		$command = trim($command);
+	        		if ($this->_execCommand($command)) {
+	        			// return
+						return true;
+	        		}
+	        	}
+	        } else {
+	        	// no commands found
+	        	$this->_outputMessage("No commands found.\n");
+	        }
 		}
 
 		// return
@@ -545,9 +586,26 @@ class WrapperWget
 	 */
 	function _execCommand($command) {
 
-		// TODO
+		// parse command-string
+		$len = strlen($command);
+		if ($len < 1)
+			return false;
+		$opcode = $command{0};
+		$workload = ($len > 1)
+			? substr($command, 1)
+			: "";
 
-		return false;
+		// opcode-switch
+		switch ($opcode) {
+			// q
+			case 'q':
+				$this->_outputMessage("command: stop-request, initializing shutdown...\n");
+				return true;
+			// default
+			default:
+				$this->_outputMessage("op-code unknown: ".$opcode."\n");
+				return false;
+		}
 	}
 
 	/**
@@ -605,7 +663,9 @@ class WrapperWget
 			$this->_sf->percent_done = 100;
 			$this->_sf->time_left = "Download Succeeded!";
 		} else {
-			$this->_sf->percent_done = ($this->_size == 0) ? "-100" : (((intval((100.0 * $this->_downtotal / $this->_size))) + 100) * (-1));
+			$this->_sf->percent_done = ($this->_size > 0)
+				? (((intval((100.0 * $this->_downtotal / $this->_size))) + 100) * (-1))
+				: "-100";
 			$this->_sf->time_left = "Transfer Stopped";
 		}
 		if ($error)
