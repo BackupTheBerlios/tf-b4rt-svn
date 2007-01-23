@@ -25,11 +25,6 @@
  */
 function image_login() {
 	global $cfg;
-	// check for valid referer
-	Image::checkReferer();
-	// main.external
-	require_once('inc/main.external.php');
-	// output image
 	$bgImage = ((strpos($cfg["default_theme"], '/')) === false)
 		? 'themes/'.$cfg["default_theme"].'/images/code_bg'
 		: 'themes/tf_standard_themes/images/code_bg';
@@ -42,11 +37,6 @@ function image_login() {
  */
 function image_test() {
 	global $cfg;
-	// check for valid referer
-	Image::checkReferer();
-	// main.internal
-	require_once('inc/main.internal.php');
-	// output image
 	$bgImage = ((strpos($cfg["theme"], '/')) === false)
 		? 'themes/'.$cfg["theme"].'/images/code_bg'
 		: 'themes/tf_standard_themes/images/code_bg';
@@ -58,11 +48,6 @@ function image_test() {
  */
 function image_pieTransferTotals() {
 	global $cfg;
-	// check for valid referer
-	Image::checkReferer();
-	// main.internal
-	require_once('inc/main.internal.php');
-	// output image
 	// transfer-id
 	$transfer = getRequestVar('transfer');
 	if (empty($transfer))
@@ -100,11 +85,6 @@ function image_pieTransferTotals() {
  */
 function image_pieTransferPeers() {
 	global $cfg;
-	// check for valid referer
-	Image::checkReferer();
-	// main.internal
-	require_once('inc/main.internal.php');
-	// output image
 	// transfer-id
 	$transfer = getRequestVar('transfer');
 	if (empty($transfer))
@@ -202,11 +182,6 @@ function image_pieTransferPeers() {
  */
 function image_pieTransferScrape() {
 	global $cfg;
-	// check for valid referer
-	Image::checkReferer();
-	// main.internal
-	require_once('inc/main.internal.php');
-	// output image
 	// transfer-id
 	$transfer = getRequestVar('transfer');
 	if (empty($transfer))
@@ -250,8 +225,6 @@ function image_pieTransferScrape() {
  * spacer
  */
 function image_spacer() {
-	// check for valid referer
-	Image::checkReferer();
 	// output image
 	Image::paintSpacer();
 }
@@ -260,8 +233,6 @@ function image_spacer() {
  * notsup
  */
 function image_notsup() {
-	// check for valid referer
-	Image::checkReferer();
 	// output image
 	Image::paintNotSupported();
 }
@@ -270,8 +241,6 @@ function image_notsup() {
  * noop
  */
 function image_noop() {
-	// check for valid referer
-	Image::checkReferer();
 	// output image
 	Image::paintNoOp();
 }
