@@ -52,7 +52,7 @@ int main(int argc, char ** argv) {
 		printf(USAGE, argv[0],
 			verboseLevel, natTraversal, TR_DEFAULT_PORT,
 			uploadLimit, downloadLimit,
-			tf_seedLimit, tf_displayInterval
+			tf_dieWhenDone, tf_seedLimit, tf_displayInterval
 		);
 		return 1;
 	}
@@ -63,7 +63,7 @@ int main(int argc, char ** argv) {
 		printf(USAGE, argv[0],
 			verboseLevel, natTraversal, TR_DEFAULT_PORT,
 			uploadLimit, downloadLimit,
-			tf_seedLimit, tf_displayInterval
+			tf_dieWhenDone, tf_seedLimit, tf_displayInterval
 		);
 		return 0;
 	}
@@ -173,6 +173,7 @@ int main(int argc, char ** argv) {
 	tf_print(sprintf(tf_message, "transmission starting up :\n"));
 	tf_print(sprintf(tf_message, " - torrent : %s\n", torrentPath));
 	tf_print(sprintf(tf_message, " - owner : %s\n", tf_owner));
+	tf_print(sprintf(tf_message, " - dieWhenDone : %d\n", tf_dieWhenDone));
 	tf_print(sprintf(tf_message, " - seedLimit : %d\n", tf_seedLimit));
 	tf_print(sprintf(tf_message, " - bindPort : %d\n", bindPort));
 	tf_print(sprintf(tf_message, " - uploadLimit : %d\n", uploadLimit));
@@ -336,17 +337,23 @@ int main(int argc, char ** argv) {
 				? (((double)(s->uploaded) / (double)(s->downloaded)) * 100)
 				: (((double)(s->uploaded) / (double)(info->totalSize)) * 100);
 
-			// die-on-seed-limit / die-when-done
-			if (tf_seedLimit == -1) {
+			// die-when-done / die-on-seed-limit
+			if (tf_dieWhenDone == 1) {
 				tf_print(sprintf(tf_message,
 					"die-when-done set, setting shutdown-flag...\n"));
 				tf_running = 0;
-			} else if ((tf_seedLimit != 0) &&
-				(tf_sharing > (double)(tf_seedLimit))) {
-				tf_print(sprintf(tf_message,
-					"seed-limit %d reached, setting shutdown-flag...\n",
-					tf_seedLimit));
-				tf_running = 0;
+			} else {
+				if (tf_seedLimit == -1) {
+					tf_print(sprintf(tf_message,
+						"sharekill set to -1, setting shutdown-flag...\n"));
+					tf_running = 0;
+				} else if ((tf_seedLimit > 0) &&
+					(tf_sharing > (double)(tf_seedLimit))) {
+					tf_print(sprintf(tf_message,
+						"seed-limit %d reached, setting shutdown-flag...\n",
+						tf_seedLimit));
+					tf_running = 0;
+				}
 			}
 
 			// seeders + leechers
@@ -394,6 +401,10 @@ int main(int argc, char ** argv) {
 			if (finishCall != NULL)
 				system(finishCall);
 		} else {
+			// leave main-loop when shutdown-flag-set
+			if (tf_running == 0)
+				break;
+			// internal loop
 			for (i = 0; i < tf_displayInterval; i++) {
 				// process command-stack
 				if (tf_processCommandStack(h))
@@ -622,26 +633,65 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 
 	// opcode-switch
 	switch (opcode) {
+
 		// q
 		case 'q':
 			tf_print(sprintf(tf_message,
 				"command: stop-request, setting shutdown-flag...\n"));
 			tf_running = 0;
 			return 1;
+
 		// u
 		case 'u':
+			if (strlen(workload) < 1) {
+				tf_print(sprintf(tf_message,
+					"invalid rate.\n"));
+				return 0;
+			}
 			uploadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
-				"command: setting upload-rate to %d\n", uploadLimit));
+				"command: setting upload-rate to %d...\n", uploadLimit));
 			tr_setGlobalUploadLimit(h, uploadLimit);
 			return 0;
+
 		// d
 		case 'd':
+			if (strlen(workload) < 1) {
+				tf_print(sprintf(tf_message,
+					"invalid rate.\n"));
+				return 0;
+			}
 			downloadLimit = atoi(workload);
 			tf_print(sprintf(tf_message,
-				"command: setting download-rate to %d\n", downloadLimit));
+				"command: setting download-rate to %d...\n", downloadLimit));
 			tr_setGlobalDownloadLimit(h, downloadLimit);
 			return 0;
+
+		// r
+		case 'r':
+			if (strlen(workload) < 1) {
+				tf_print(sprintf(tf_message,
+					"invalid runtime-code.\n"));
+				return 0;
+			}
+			switch (workload[0]) {
+				case '0':
+					tf_print(sprintf(tf_message,
+						"command: command: setting die-when-done to False\n"));
+																				// TODO
+					return 0;
+				case '1':
+					tf_print(sprintf(tf_message,
+						"command: command: setting die-when-done to True\n"));
+																				// TODO
+					return 0;
+				default:
+					tf_print(sprintf(tf_message,
+						"runtime-code unknown: %c\n", workload[0]));
+					return 0;
+			}
+			return 0;
+
 		// default
 		default:
 			tf_print(sprintf(tf_message,
@@ -822,17 +872,18 @@ static int parseCommandLine(int argc, char ** argv) {
 		  { "upload",             required_argument, NULL, 'u' },
 		  { "download",           required_argument, NULL, 'd' },
 		  { "finish",             required_argument, NULL, 'f' },
+		  { "die-when-done",      required_argument, NULL, 'r' },
 		  { "seedlimit",          required_argument, NULL, 'c' },
-		  { "display_interval",   required_argument, NULL, 'e' },
+		  { "display-interval",   required_argument, NULL, 'e' },
 		  { "owner",              required_argument, NULL, 'o' },
 		  { "nat-traversal",      no_argument,       NULL, 'n' },
 		  { 0, 0, 0, 0} };
 		int c, optind = 0;
 		c = getopt_long(argc, argv,
-			"hisv:p:u:d:f:c:e:o:n", long_options, &optind);
+			"hisv:p:u:d:f:r:c:e:o:n", long_options, &optind);
 		if (c < 0)
 			break;
-		switch(c) {
+		switch (c) {
 			case 'h':
 				showHelp = 1;
 				break;
@@ -859,6 +910,9 @@ static int parseCommandLine(int argc, char ** argv) {
 				break;
 			case 'n':
 				natTraversal = 1;
+				break;
+			case 'r':
+				tf_dieWhenDone = atoi(optarg);
 				break;
 			case 'c':
 				tf_seedLimit = atoi(optarg);

@@ -64,8 +64,11 @@
 .Op Fl n
 .Op Fl p Ar port
 .Op Fl u Ar upload-rate
-.Op Fl u Ar download-rate
+.Op Fl d Ar download-rate
 .Op Fl f Ar script
+.Op Fl r Ar die-when-done
+.Op Fl c Ar seedlimit
+.Op Fl e Ar display-interval
 .Op Fl o Ar owner
 .Ek
 .Sh DESCRIPTION
@@ -103,10 +106,11 @@ Specifies the maximum download rate in kB/s, which defaults to -1 for
 no download limit).
 .It Fl f, -finish Ar script
 Specifies a shell script to be executed upon successful download.
-.It Fl s, -seedlimit Ar int
-Seed to reach before exiting transmission.
-(0 = seed forever -1 = no seeding)
-.It Fl e, -display_interval Ar int
+.It Fl r, -die-when-done Ar int
+Auto-Shutdown when done (0 = False, 1 = True)
+.It Fl c, -seedlimit Ar int
+Seed to reach before shutdown. (0 = seed forever -1 = no seeding)
+.It Fl e, -display-interval Ar int
 Time between updates of stat-file
 .It Fl o, -owner Ar string
 Name of the owner

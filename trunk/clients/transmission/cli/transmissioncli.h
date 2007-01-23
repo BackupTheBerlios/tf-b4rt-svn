@@ -60,9 +60,10 @@
 "  -d, --download <int>           Maximum download rate \n" \
 "                                 (-1|0 = no limit, -2 = null, default = %d)\n" \
 "  -f, --finish <shell script>    Command you wish to run on completion (default = none)\n" \
+"  -r, --die-when-done            Shutdown when done (0 = False, 1 = True, default = %d)\n" \
 "  -c, --seedlimit <int>          Seed to reach before exiting transmission\n" \
 "                                 (0 = seed forever, -1 = no seeding, default = %d)\n" \
-"  -e, --display_interval <int>   Time between updates of stat-file (default = %d)\n" \
+"  -e, --display-interval <int>   Time between updates of stat-file (default = %d)\n" \
 "  -o, --owner <string>           Name of the owner (default = 'n/a')\n" \
 "\n"
 
@@ -85,6 +86,7 @@ static tr_torrent_t * tor;
 
 // tf
 static volatile char tf_running = 1;
+static int tf_dieWhenDone = 0;
 static int tf_seedLimit = 0;
 static int tf_displayInterval = 5;
 static char tf_message[512];
