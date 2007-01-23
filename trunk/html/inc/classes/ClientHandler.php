@@ -764,51 +764,94 @@ class ClientHandler
             $this->sharekill_param = 0;
             $this->logMessage("seed forever\n", true);
         } elseif ($this->sharekill > 0) { // recalc sharekill
-            // sanity-check. catch "data-size = 0".
-            $transferSize = intval(getTransferSize($this->transfer));
-            if ($transferSize > 0) {
-				$totalAry = $this->getTransferTotal($this->transfer);
-            	$upTotal = $totalAry["uptotal"] + 0;
-            	$downTotal = $totalAry["downtotal"] + 0;
-				$upWanted = ($this->sharekill / 100) * $transferSize;
-				$sharePercentage = ($upTotal / $transferSize) * 100;
-	            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
-	            	// we already have seeded at least wanted percentage. skip start of client
-	                // set state
-        			$this->state = CLIENTHANDLER_STATE_NULL;
-        			// message
-		            $msg = "skipping start of transfer ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)." ; set:".$this->sharekill.")";
-		            array_push($this->messages , $msg);
-					AuditAction($cfg["constants"]["debug"], $msg);
-					$this->logMessage($msg."\n", true);
-					// write Skipped to stat
-					$sf = new StatFile($this->transfer, $this->owner);
-					$sf->time_left = 'Skipped';
-					$sf->write();
-					// return
-					return false;
-	            } else {
-	            	// not done seeding wanted percentage
-	                $this->sharekill_param = intval(ceil($this->sharekill - $sharePercentage));
-	                // sanity-check.
-	                if ($this->sharekill_param < 1)
-	                    $this->sharekill_param = 1;
-	                $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
-	            }
-            } else {
-				// set state
-	            $this->state = CLIENTHANDLER_STATE_ERROR;
+            /* get size */
+            // try stat-file first
+            $sf = new StatFile($this->transfer, $this->owner);
+            $transferSize = (empty($sf->size)) ? 0 : floatval($sf->size);
+            // try to reget if stat was empty
+            if ($transferSize <= 0)
+            	$transferSize = floatval(getTransferSize($this->transfer));
+            // if still no size just pass thru the param
+            if ($transferSize <= 0) {
     			// message
-	            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", skipping start.";
+	            $msg = "data-size = '".$transferSize."' when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
 	            array_push($this->messages , $msg);
-				AuditAction($cfg["constants"]["error"], $msg);
+				AuditAction($cfg["constants"]["debug"], $msg);
 				$this->logMessage($msg."\n", true);
-				// write error to stat
+				// set sharekill param
+				$this->sharekill_param = $this->sharekill;
+				// return
+				return true;
+            }
+            /* get vars */
+        	// get totals
+			$totalAry = $this->getTransferTotal($this->transfer);
+        	$upTotal = floatval($totalAry["uptotal"]);
+        	$downTotal = floatval($totalAry["downtotal"]);
+        	// check totals
+        	if (($upTotal < 0) || ($downTotal < 0)) {
+    			// message
+	            $msg = "problems getting totals (upTotal: ".$upTotal."; downTotal: ".$downTotal.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
+	            array_push($this->messages , $msg);
+				AuditAction($cfg["constants"]["debug"], $msg);
+				$this->logMessage($msg."\n", true);
+				// set sharekill param
+				$this->sharekill_param = $this->sharekill;
+				// return
+				return true;
+        	}
+			// wanted
+			$upWanted = ($this->sharekill / 100) * $transferSize;
+			// check wanted
+			if ($upWanted < 0) {
+    			// message
+	            $msg = "problems calculating wanted upload (upWanted: ".$upWanted.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
+	            array_push($this->messages , $msg);
+				AuditAction($cfg["constants"]["debug"], $msg);
+				$this->logMessage($msg."\n", true);
+				// set sharekill param
+				$this->sharekill_param = $this->sharekill;
+				// return
+				return true;
+			}
+			// share percentage
+			$sharePercentage = ($upTotal / $transferSize) * 100;
+			// check percentage
+			if (($sharePercentage < 0) || ($sharePercentage >= 2147483647)) {
+    			// message
+	            $msg = "problems calculating share percentage (sharePercentage: ".$sharePercentage.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
+	            array_push($this->messages , $msg);
+				AuditAction($cfg["constants"]["debug"], $msg);
+				$this->logMessage($msg."\n", true);
+				// set sharekill param
+				$this->sharekill_param = $this->sharekill;
+				// return
+				return true;
+			}
+			/* check */
+            if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
+            	// we already have seeded at least wanted percentage. skip start of client
+                // set state
+    			$this->state = CLIENTHANDLER_STATE_NULL;
+    			// message
+	            $msg = "skip ".$this->transfer." due to share-ratio (has: ".@number_format($sharePercentage, 2)."; set:".$this->sharekill."; upTotal: ".$upTotal."; upWanted: ".$upWanted.")";
+	            array_push($this->messages , $msg);
+				AuditAction($cfg["constants"]["debug"], $msg);
+				$this->logMessage($msg."\n", true);
+				// write Skipped to stat
 				$sf = new StatFile($this->transfer, $this->owner);
-				$sf->time_left = 'Error';
+				$sf->time_left = 'Skipped';
 				$sf->write();
-	            // return
-	            return false;
+				// return
+				return false;
+            } else {
+            	// not done seeding wanted percentage
+                $this->sharekill_param = intval(ceil($this->sharekill - $sharePercentage));
+                // sanity-check.
+                if ($this->sharekill_param < 1)
+                    $this->sharekill_param = 1;
+                $this->logMessage("recalcing sharekill. wanted: ".$this->sharekill."; done: ".$sharePercentage."\n", true);
+                $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
             }
 		} else {
         	$this->sharekill_param = $this->sharekill;
@@ -826,7 +869,7 @@ class ClientHandler
     function _setClientPort() {
         $portString = netstatPortList();
         $portAry = explode("\n", $portString);
-        $this->port = (int) $this->minport;
+        $this->port = intval($this->minport);
         while (1) {
             if (in_array($this->port, $portAry))
                 $this->port += 1;
