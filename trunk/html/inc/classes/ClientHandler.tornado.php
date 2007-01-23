@@ -86,7 +86,7 @@ class ClientHandlerTornado extends ClientHandler
         }
 
         // prepare starting of client
-        $this->prepareStart($interactive, $enqueue);
+        $this->prepareStart($interactive, $enqueue, true, ($cfg['enable_sharekill'] == 1));
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {

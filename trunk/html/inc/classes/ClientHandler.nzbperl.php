@@ -86,7 +86,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		}
 
 		// prepare starting of client
-        $this->prepareStart($interactive, $enqueue);
+        $this->prepareStart($interactive, $enqueue, false, false);
 
 		// only continue if prepare succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
