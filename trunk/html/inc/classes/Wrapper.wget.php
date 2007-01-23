@@ -258,7 +258,7 @@ class WrapperWget
 			if ($this->_done)
 				return true;
 
-			// _processCommandStack, return if quit
+			// process Command Stack, return if quit
 			if ($this->_processCommandStack())
 				return true;
 
@@ -278,10 +278,10 @@ class WrapperWget
 			if (strlen($this->_buffer) > 16384)
 				$this->_buffer = substr($this->_buffer, -1024);
 
-			// sleep 1 second and increment tick-counter
+			// sleep 1 second and increment tick-count
 			sleep(1);
 			$tick++;
-			if ($tick < 0) $tick = 1;
+			if (($tick <= 0) || ($tick >= 2147483647)) $tick = 1;
 		}
 
 		// return
