@@ -803,7 +803,7 @@ class ClientHandler
 			// wanted
 			$upWanted = ($this->sharekill / 100) * $transferSize;
 			// check wanted
-			if ($upWanted < 0) {
+			if ($upWanted <= 0) {
     			// message
 	            $msg = "problems calculating wanted upload (upWanted: ".$upWanted.") when recalcing share-kill for ".$this->transfer.", setting sharekill-param to ".$this->sharekill_param;
 	            array_push($this->messages , $msg);
