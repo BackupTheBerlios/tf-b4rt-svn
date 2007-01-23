@@ -186,7 +186,7 @@ foreach ($arList as $transfer) {
 			} else {
 				if ($sf->time_left != "" && $sf->time_left != "0") {
 					if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100) ) {
-						$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && ((int) ($sf->up_speed{0}) > 0))
+						$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && (intval(($sf->up_speed{0})) > 0))
 							? convertTime(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
 							: '-';
 					} else {
@@ -485,7 +485,7 @@ if ($_SESSION['settings']['index_meta_refresh'] != 0) {
 if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
 	$ajaxInit = "ajax_initialize(";
-	$ajaxInit .= (((int) $cfg['index_ajax_update']) * 1000);
+	$ajaxInit .= (intval($cfg['index_ajax_update']) * 1000);
 	$ajaxInit .= ",'".$cfg['stats_txt_delim']."'";
 	$ajaxInit .= ",".$cfg["enable_index_ajax_update_silent"];
 	$ajaxInit .= ",".$cfg["enable_index_ajax_update_title"];

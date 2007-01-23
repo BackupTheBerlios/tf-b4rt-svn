@@ -393,11 +393,11 @@ function processSettingsParams($updateIndexSettings = true, $updateGoodlookinSet
 	foreach ($_POST as $key => $value) {
 		if (($updateIndexSettings) && ((substr($key, 0, $hackStatsStringLen)) == $hackStatsPrefix)) {
 			// good-look-stats
-			$idx = (int) substr($key, -1, 1);
+			$idx = intval(substr($key, -1, 1));
 			$settingsHackAry[$idx] = ($value != "0") ? 1 : 0;
 		} else if (($updateGoodlookinSettings) && ((substr($key, 0, $indexPageSettingsPrefixLen)) == $indexPageSettingsPrefix)) {
 			// index-page
-			$idx = (int) substr($key, ($indexPageSettingsPrefixLen - (strlen($key))));
+			$idx = intval(substr($key, ($indexPageSettingsPrefixLen - (strlen($key)))));
 			$settingsIndexPageAry[$idx] = ($value != "0") ? 1 : 0;
 		} else {
 			switch ($key) {

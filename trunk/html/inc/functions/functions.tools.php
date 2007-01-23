@@ -139,7 +139,7 @@ function _printFileList($basedir, $dir, $type = 1, $mode = 2) {
 							$fileList['size'] += $_size;
 							// rev
 							if ($_rev != 'NoID') {
-								$intrev = (int)$_rev;
+								$intrev = intval($_rev);
 								if ($intrev > $fileList['revision'])
 									$fileList['revision'] = $intrev;
 							}

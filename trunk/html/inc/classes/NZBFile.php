@@ -98,7 +98,7 @@ class NZBFile
 				// segment
 				if (strpos($tLine, "<segment bytes") !== false) {
 					$bytes = preg_replace('/<segment bytes="(\d+)".*/i', '${1}', $tLine);
-					$fsize += intval($bytes);
+					$fsize += floatval($bytes);
 				}
 				// file end
 				if (strpos($tLine, "</file>") !== false) {

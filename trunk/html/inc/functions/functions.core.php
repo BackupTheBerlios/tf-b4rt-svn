@@ -439,11 +439,11 @@ function netstatConnectionsSum() {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			return (int) trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget|nzbperl).*'"));
+			return intval(trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget|nzbperl).*'")));
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission|nzbperl).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'"));
+			return intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission|nzbperl).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'")));
 	}
 	return 0;
 }
@@ -472,7 +472,7 @@ function netstatConnectionsByPid($transferPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$netcon = (int) trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid.".+tcp"));
+			$netcon = intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid.".+tcp")));
 			$netcon--;
 			return $netcon;
 	}
@@ -1234,7 +1234,7 @@ function getTransferListArray() {
 			$settingsAry['datapath'] = "";
 		}
 		// cache running-flag in local var. we will access that often
-		$transferRunning = (int) $sf->running;
+		$transferRunning = $sf->running;
 		// cache percent-done in local var. ...
 		$percentDone = $sf->percent_done;
 
@@ -1283,7 +1283,7 @@ function getTransferListArray() {
 				} else {
 					if ($sf->time_left != "" && $sf->time_left != "0") {
 						if (($cfg["display_seeding_time"] == 1) && ($sf->percent_done >= 100) ) {
-							$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && ((int) ($sf->up_speed{0}) > 0))
+							$estTime = (($sf->seedlimit > 0) && (!empty($sf->up_speed)) && (intval(($sf->up_speed{0})) > 0))
 									? convertTime(((($sf->seedlimit) / 100 * $sf->size) - $sf->uptotal) / GetSpeedInBytes($sf->up_speed))
 									: '-';
 						} else {
@@ -1582,7 +1582,7 @@ function getTransferDetails($transfer, $full) {
 		$settingsAry['datapath'] = "";
 	}
 	// size
-	$size = (int) $sf->size;
+	$size = floatval($sf->size);
 	// totals
 	$afu = $sf->uptotal;
 	$afd = $sf->downtotal;
@@ -2093,7 +2093,7 @@ function convertTime($seconds) {
 	if ($seconds >= 604800) return '-';
 	// format time-delta
 	$periods = array (/* 31556926, 2629743, 604800,*/ 86400, 3600, 60, 1);
-	$seconds = (float) $seconds;
+	$seconds = floatval($seconds);
 	$values = array();
 	foreach ($periods as $period) {
 		$count = floor($seconds / $period);

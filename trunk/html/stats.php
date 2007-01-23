@@ -180,11 +180,11 @@ if (isset($_REQUEST["f"])) {
     $gotParams++;
 }
 if (isset($_REQUEST["a"])) {
-	$sendAsAttachment = (int) trim($_REQUEST["a"]);
+	$sendAsAttachment = trim($_REQUEST["a"]);
 	$gotParams++;
 }
 if (isset($_REQUEST["c"])) {
-    $sendCompressed = (int) trim($_REQUEST["c"]);
+    $sendCompressed = trim($_REQUEST["c"]);
     $gotParams++;
 }
 if (($cfg['stats_show_usage'] == 1) && ($gotParams == 0))

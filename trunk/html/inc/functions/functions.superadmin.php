@@ -432,12 +432,12 @@ function cleanDir($dir) {
  */
 function formatHumanDate($timestampString) {
 	return gmstrftime("%b %d %Y %H:%M:%S", mktime(
-		(int) substr($timestampString, 8, 2),
-		(int) substr($timestampString, 10, 2),
-		(int) substr($timestampString, 12, 2),
-		(int) substr($timestampString, 4, 2),
-		(int) substr($timestampString, 6, 2),
-		(int) substr($timestampString, 0, 4)
+		intval(substr($timestampString, 8, 2)),
+		intval(substr($timestampString, 10, 2)),
+		intval(substr($timestampString, 12, 2)),
+		intval(substr($timestampString, 4, 2)),
+		intval(substr($timestampString, 6, 2)),
+		intval(substr($timestampString, 0, 4))
 		));
 }
 

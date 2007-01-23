@@ -73,7 +73,7 @@ $totals = $ch->getTransferTotalOP($transfer, $ch->hash, $afu, $afd);
 $tmpl->setvar('transferowner', $transferowner);
 
 // size
-$transferSize = (int) $sf->size;
+$transferSize = floatval($sf->size);
 $tmpl->setvar('size', @formatBytesTokBMBGBTB($transferSize));
 
 // sharing
@@ -174,7 +174,7 @@ switch ($cfg['transferStatsType']) {
 	case "ajax":
 		$tmpl->setvar('_DOWNLOADDETAILS', $cfg['_DOWNLOADDETAILS']);
 		// onload
-		$tmpl->setvar('onLoad', "ajax_initialize(".(((int) $cfg['transferStatsUpdate']) * 1000).",'".$cfg['stats_txt_delim']."','".$transfer."');");
+		$tmpl->setvar('onLoad', "ajax_initialize(".(intval($cfg['transferStatsUpdate']) * 1000).",'".$cfg['stats_txt_delim']."','".$transfer."');");
 		break;
 }
 

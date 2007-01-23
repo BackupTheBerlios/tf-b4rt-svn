@@ -459,7 +459,7 @@ class Fluxd
      */
     function instance_modStatePoll($mod) {
 		return ($this->state == FLUXD_STATE_RUNNING)
-			? (int) $this->instance_sendCommand('modstate '.$mod, 1)
+			? $this->instance_sendCommand('modstate '.$mod, 1)
 			: 0;
     }
 
