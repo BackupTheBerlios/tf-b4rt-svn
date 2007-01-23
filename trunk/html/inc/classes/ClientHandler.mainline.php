@@ -109,7 +109,7 @@ class ClientHandlerMainline extends ClientHandler
 		$this->command .= " nohup ";
 		$this->command .= $this->nice;
 		$this->command .= $cfg["pythonCmd"] . " -OO" . " " .escapeshellarg($this->mainlineBin);
-		$this->command .= " --tf_owner ".$this->owner;
+		$this->command .= " --tf_owner ".escapeshellarg($this->owner);
 		$this->command .= " --display_interval 1";
 		$this->command .= " --save_incomplete_in ".escapeshellarg($this->savepath);
 		$this->command .= " --save_in ".escapeshellarg($this->savepath);

@@ -181,7 +181,7 @@ class ClientHandlerWget extends ClientHandler
 		// RunningTransferWget
         $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
         $this->command .= " " . escapeshellarg($this->transferFilePath);
-        $this->command .= " " . $this->owner;
+        $this->command .= " " . escapeshellarg($this->owner);
         $this->command .= " " . escapeshellarg($this->savepath);
         $this->command .= " " . escapeshellarg($this->drate * 1024);
         $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);

@@ -133,7 +133,7 @@ class ClientHandlerNzbperl extends ClientHandler
 			$this->command .= " ".$cfg['nzbperl_options'];
 		// do NOT change anything below (not even order)
 		$this->command .= " --dlpath ".escapeshellarg($this->savepath);
-		$this->command .= " --tfuser ".$this->owner;
+		$this->command .= " --tfuser ".escapeshellarg($this->owner);
 		$this->command .= " ".escapeshellarg($this->transferFilePath);
         $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
         $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");

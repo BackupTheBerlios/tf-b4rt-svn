@@ -495,8 +495,6 @@ class ClientHandler
         	$this->sharekill = ($reqvar != "")
         		? $reqvar
         		: $cfg["sharekill"];
-            if ($this->runtime == "True" )
-                $this->sharekill = "-1";
             // savepath
             $this->savepath = getRequestVar('savepath') ;
             // skip_hash_check
@@ -763,6 +761,8 @@ class ClientHandler
         if ($this->sharekill == 0) { // nice, we seed forever
             $this->sharekill_param = 0;
             $this->logMessage("seed forever\n", true);
+			// return
+			return true;
         } elseif ($this->sharekill > 0) { // recalc sharekill
             /* get size */
             // try stat-file first
@@ -830,6 +830,13 @@ class ClientHandler
 			}
 			/* check */
             if (($upTotal >= $upWanted) && ($downTotal >= $transferSize)) {
+            	// just pass thru param if runtime is true
+            	if ($this->runtime == "True") {
+            		$this->sharekill_param = $this->sharekill;
+        			$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+        			// return
+					return true;
+            	}
             	// we already have seeded at least wanted percentage. skip start of client
                 // set state
     			$this->state = CLIENTHANDLER_STATE_NULL;
@@ -852,10 +859,14 @@ class ClientHandler
                     $this->sharekill_param = 1;
                 $this->logMessage("recalcing sharekill. wanted: ".$this->sharekill."; done: ".$sharePercentage."\n", true);
                 $this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+				// return
+				return true;
             }
 		} else {
         	$this->sharekill_param = $this->sharekill;
         	$this->logMessage("setting sharekill-param to ".$this->sharekill_param."\n", true);
+			// return
+			return true;
         }
 		// return
 		return true;
