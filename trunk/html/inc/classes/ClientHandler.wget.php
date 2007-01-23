@@ -209,7 +209,10 @@ class ClientHandlerWget extends ClientHandler
      * @param $transferPid transfer Pid (optional)
      */
     function stop($transfer, $kill = false, $transferPid = 0) {
-        // stop the client
+		// set vars
+		$this->setVarsFromTransfer($transfer);
+		// stop the client
+		$this->execStop($kill, $transferPid);
     }
 
 	/**
