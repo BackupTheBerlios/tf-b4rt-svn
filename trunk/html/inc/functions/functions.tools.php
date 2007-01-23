@@ -220,11 +220,15 @@ function getSVNRevisionFromId($filename) {
 function getDataFromUrl($url) {
 	ini_set("allow_url_fopen", "1");
 	ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
-	if ($fileHandle = @fopen($url, 'r')) {
+	if ($urlHandle = @fopen($url, 'r')) {
+		stream_set_timeout($urlHandle, 15);
+		$info = stream_get_meta_data($urlHandle);
 		$data = null;
-		while (!@feof($fileHandle))
-			$data .= @fgets($fileHandle, 4096);
-		@fclose ($fileHandle);
+		while ((!feof($urlHandle)) && (!$info['timed_out'])) {
+			$data .= @fgets($urlHandle, 4096);
+			$info = stream_get_meta_data($urlHandle);
+		}
+		@fclose ($urlHandle);
 		return $data;
 	}
 }

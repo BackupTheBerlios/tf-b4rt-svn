@@ -1311,9 +1311,12 @@ if (isset($_REQUEST["u"])) {
 				if (($fileHandle) && ($urlHandle)) {
 					$results = array();
 					$i = 0;
-					while (!@feof($urlHandle)) {
+					stream_set_timeout($urlHandle, 15);
+					$info = stream_get_meta_data($urlHandle);
+					while ((!feof($urlHandle)) && (!$info['timed_out'])) {
 						$data = @fgets($urlHandle, 8192);
 						$results[$i] = @fwrite($fileHandle, $data);
+						$info = stream_get_meta_data($urlHandle);
 						sendLine('.');
 						$i++;
 					}

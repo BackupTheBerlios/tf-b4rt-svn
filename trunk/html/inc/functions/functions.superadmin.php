@@ -743,8 +743,11 @@ function validateLocalFiles() {
 	@ini_set("allow_url_fopen", "1");
 	@ini_set("user_agent", "torrentflux-b4rt/". _VERSION);
 	if ($urlHandle = @fopen(_SUPERADMIN_URLBASE._FILE_CHECKSUMS_PRE._VERSION._FILE_CHECKSUMS_SUF, 'r')) {
-		while (!@feof($urlHandle)) {
+		stream_set_timeout($urlHandle, 15);
+		$info = stream_get_meta_data($urlHandle);
+		while ((!feof($urlHandle)) && (!$info['timed_out'])) {
 			$checksumsString .= @fgets($urlHandle, 8192);
+			$info = stream_get_meta_data($urlHandle);
 			sendLine('.');
 		}
 		@fclose($urlHandle);

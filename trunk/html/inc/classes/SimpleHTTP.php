@@ -92,13 +92,13 @@ class SimpleHTTP
 	var $socket = 0;
 
 	/**
-	 * Error string used in fsockopen
+	 * Error string
 	 * @param	string	$errstr
 	 */
 	var $errstr = "";
 
 	/**
-	 * Error number used in fsockopen
+	 * Error number
 	 * @param	int		$errno
 	 */
 	var $errno = 0;
@@ -323,7 +323,7 @@ class SimpleHTTP
 		if (true || !empty($this->cookie)) {
 			$this->socket = @fsockopen($domain["host"], $domain["port"], $this->errno , $this->errstr, $this->timeout); //connect to server
 
-			if(!empty($this->socket)) {
+			if (!empty($this->socket)) {
 				// Write the outgoing HTTP request using cookie info
 
 				// Standard HTTP/1.1 request looks like:
@@ -351,14 +351,20 @@ class SimpleHTTP
 				// Send header packet information to server
 				fputs($this->socket, $this->request);
 
+				// socket-options
+				stream_set_timeout($this->socket, $this->timeout);
+
+				// meta-data
+				$info = stream_get_meta_data($this->socket);
+
 				// Get response headers:
-				while ($line=@fgets($this->socket, 500000)){
+				while ((!$info['timed_out']) && ($line = @fgets($this->socket, 500000))) {
 					// First empty line/\r\n indicates end of response headers:
 					if($line == "\r\n"){
 						break;
 					}
 
-					if(!$this->gotResponseLine){
+					if (!$this->gotResponseLine) {
 						preg_match("@HTTP/[^ ]+ (\d\d\d)@", $line, $matches);
 						// TODO: Use this to see if we redirected (30x) and follow the redirect:
 						$this->status = $matches[1];
@@ -369,13 +375,16 @@ class SimpleHTTP
 					// Get response headers:
 					preg_match("/^([^:]+):\s*(.*)/", trim($line), $matches);
 					$this->responseHeaders[strtolower($matches[1])] = $matches[2];
+
+					// meta-data
+					$info = stream_get_meta_data($this->socket);
 				}
 
 				if(
 					$this->httpVersion=="1.1"
 					&& isset($this->responseHeaders["transfer-encoding"])
 					&& !empty($this->responseHeaders["transfer-encoding"])
-				){
+				) {
 					/*
 					// NOT CURRENTLY WORKING, USE HTTP/1.0 ONLY UNTIL THIS IS FIXED!
 					*/
@@ -400,26 +409,31 @@ class SimpleHTTP
 					$chunkSize = hexdec(trim(fgets($this->socket)));
 
 					// 0 size chunk indicates end of content:
-					while($chunkSize > 0){
+					while ((!$info['timed_out']) && ($chunkSize > 0)) {
 						// Read in up to $chunkSize chars:
-						$line=@fgets($this->socket, $chunkSize);
+						$line = @fgets($this->socket, $chunkSize);
 
 						// Discard crlf after current chunk:
 						fgets($this->socket);
 
 						// Append chunk to response body:
-						$this->responseBody.=$line;
+						$this->responseBody .= $line;
 
 						// Keep track of total chunk/content length:
-						$chunkLength+=$chunkSize;
+						$chunkLength += $chunkSize;
 
 						// Read next chunk size:
 						$chunkSize = hexdec(trim(fgets($this->socket)));
+
+						// meta-data
+						$info = stream_get_meta_data($this->socket);
 					}
 					$this->responseHeaders["content-length"] = $chunkLength;
 				} else {
-					while ($line=@fread($this->socket, 500000)){
+					while ((!$info['timed_out']) && ($line = @fread($this->socket, 500000))) {
 						$this->responseBody .= $line;
+						// meta-data
+						$info = stream_get_meta_data($this->socket);
 					}
 				}
 				@fclose($this->socket); // Close our connection
@@ -428,11 +442,14 @@ class SimpleHTTP
 			}
 		} else {
 			// No cookies - no need for raw HTTP:
-			if ($fp = @fopen($this->url, 'r')) {
-				while (!@feof($fp))
-					$this->responseBody .= @fgets($fp, 4096);
-
-				@fclose($fp);
+			if ($urlHandle = @fopen($this->url, 'r')) {
+				stream_set_timeout($urlHandle, $this->timeout);
+				$info = stream_get_meta_data($urlHandle);
+				while ((!feof($urlHandle)) && (!$info['timed_out'])) {
+					$this->responseBody .= @fgets($urlHandle, 4096);
+					$info = stream_get_meta_data($urlHandle);
+				}
+				@fclose($urlHandle);
 			}
 		}
 
@@ -760,16 +777,25 @@ class SimpleHTTP
 		// send HEAD request
 		$this->request  = "HEAD ".$domain["path"]." HTTP/1.0\r\nConnection: Close\r\n\r\n";
 		@fwrite($this->socket, $this->request);
+		// socket options
+		stream_set_timeout($this->socket, $this->timeout);
+		// meta data
+		$info = stream_get_meta_data($this->socket);
 		// read the response
 		$this->responseBody = "";
-		for ($i = 0; $i < 25; $i++) {
+		$ctr = 0;
+		while ((!$info['timed_out']) && ($ctr < 25)) {
 			$s = @fgets($this->socket, 4096);
 			$this->responseBody .= $s;
 			if (strcmp($s, "\r\n") == 0 || strcmp($s, "\n") == 0)
 				break;
+			// meta data
+			$info = stream_get_meta_data($this->socket);
+			// increment counter
+			$ctr++;
 		}
 		// close socket
-		fclose($this->socket);
+		@fclose($this->socket);
 		// try to get Content-Length in response-body
 		preg_match('/Content-Length:\s([0-9].+?)\s/', $this->responseBody, $matches);
 		return (isset($matches[1]))
