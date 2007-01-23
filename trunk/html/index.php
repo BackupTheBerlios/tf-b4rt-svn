@@ -25,7 +25,7 @@ require_once("inc/main.internal.php");
 
 // iid-check
 if (!isset($_REQUEST['iid'])) {
-	// this is for tf 2.1 compat
+	// this is for official tf compat
 	require_once("inc/functions/functions.dispatcher.php");
 	compatIndexDispatch();
 	// set iid-var

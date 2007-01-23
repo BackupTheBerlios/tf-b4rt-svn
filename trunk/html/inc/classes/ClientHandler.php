@@ -708,7 +708,7 @@ class ClientHandler
 			// remove settings from db
 			deleteTransferSettings($this->transfer);
 			// client-cache
-			$this->deleteCache();
+			$this->deleteCache($this->transfer);
 			// command-clean
        		CommandHandler::clean($this->transfer);
 			// remove meta-file
