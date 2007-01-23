@@ -57,6 +57,9 @@ switch ($action) {
     case "indexDeQueue":
     	indexDeQueueTransfer(urldecode(getRequestVar('transfer')));
     	break;
+    case "wget":
+		indexInjectWget(getRequestVar('url'));
+    	break;
 
 /*******************************************************************************
  * force-Stop
@@ -69,10 +72,7 @@ switch ($action) {
  * set prio
  ******************************************************************************/
     case "setPriority":
-		if ($cfg["enable_file_priority"]) {
-			include_once("inc/functions/functions.setpriority.php");
-			setPriority(getRequestVar('transfer'));
-		}
+		dispatcherSetPriority(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************
@@ -86,70 +86,14 @@ switch ($action) {
  * metafile-download
  ******************************************************************************/
 	case "metafileDownload":
-		// is enabled ?
-		if ($cfg["enable_metafile_download"] != 1) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to download a metafile");
-			@error("metafile download is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-		}
 		sendMetafile(getRequestVar('transfer'));
-    	break;
-
-/*******************************************************************************
- * wget
- ******************************************************************************/
-    case "wget":
-		// is enabled ?
-		if ($cfg["enable_wget"] == 0) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-			@error("wget is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-		} elseif ($cfg["enable_wget"] == 1) {
-			if (!$cfg['isAdmin']) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-				@error("wget is disabled for users", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-			}
-		}
-		$url = getRequestVar('url');
-		if (!empty($url)) {
-			$ch = ClientHandler::getInstance('wget');
-			$ch->inject($url);
-			// instant action ?
-			$actionId = getRequestVar('aid');
-			if ($actionId > 1) {
-				switch ($actionId) {
-					case 3:
-						$ch->start($ch->transfer, false, true);
-						break;
-					case 2:
-						$ch->start($ch->transfer, false, false);
-						break;
-				}
-				if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
-					$msgs = array();
-					array_push($msgs, "url : ".$url);
-					array_push($msgs, "\nmessages :");
-					$msgs = array_merge($msgs, $ch->messages);
-					AuditAction($cfg["constants"]["error"], "Start failed: ".$url."\n".implode("\n", $ch->messages));
-					@error("Start failed", "", "", $msgs);
-				}
-			}
-		}
     	break;
 
 /*******************************************************************************
  * set
  ******************************************************************************/
     case "set":
-    	$key = getRequestVar('key');
-    	$val = getRequestVar('val');
-    	if (!empty($key)) {
-    		if ($key == "_all_") {
-    			$keys = array_keys($_SESSION['settings']);
-    			foreach ($keys as $settingKey)
-    				$_SESSION['settings'][$settingKey] = $val;
-    		} else {
-    			$_SESSION['settings'][$key] = $val;
-    		}
-    	}
+    	dispatcherSet(getRequestVar('key'), getRequestVar('val'));
     	break;
 
 /*******************************************************************************
@@ -182,223 +126,22 @@ switch ($action) {
 /*******************************************************************************
  * bulk operations
  ******************************************************************************/
-    case "bulkStop": /* bulkStop *///
-    	// is enabled ?
-		if ($cfg["enable_bulkops"] != 1) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStop");
-			@error("bulkops are disabled", "index.php?iid=index", "");
-		}
-		// stop all
-		$dispatcherMessages = array();
-    	$transferList = getTransferArray();
-    	foreach ($transferList as $transfer) {
-            if (isTransferRunning($transfer)) {
-                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
-                    $ch = ClientHandler::getInstance(getTransferClient($transfer));
-                    $ch->stop($transfer);
-                    if (count($ch->messages) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-                }
-            }
-    	}
-    	if (count($dispatcherMessages) > 0)
-    		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
+    case "bulkStop":
+    	dispatcherBulk("stop");
     	break;
-
-    case "bulkResume": /* bulkResume */
-    	// is enabled ?
-		if ($cfg["enable_bulkops"] != 1) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkResume");
-			@error("bulkops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-		}
-		// resume all
-		$dispatcherMessages = array();
-    	$transferList = getTransferArrayFromDB();
-    	foreach ($transferList as $transfer) {
-			$sf = new StatFile($transfer);
-	        if (((trim($sf->running)) == 0) && (!isTransferRunning($transfer))) {
-                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
-                    $ch = ClientHandler::getInstance(getTransferClient($transfer));
-                    $ch->start($transfer, false, false);
-                    if (count($ch->messages) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-                }
-            }
-    	}
-    	if (count($dispatcherMessages) > 0)
-    		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
+    case "bulkResume":
+    	dispatcherBulk("resume");
     	break;
-
-    case "bulkStart": /* bulkStart */
-    	// is enabled ?
-		if ($cfg["enable_bulkops"] != 1) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use bulkStart");
-			@error("bulkops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-		}
-		// start all
-		$dispatcherMessages = array();
-    	$transferList = getTransferArray();
-    	foreach ($transferList as $transfer) {
-            if (!isTransferRunning($transfer)) {
-                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
-                    $ch = ClientHandler::getInstance(getTransferClient($transfer));
-                    $ch->start($transfer, false, false);
-                    if (count($ch->messages) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-                }
-            }
-    	}
-    	if (count($dispatcherMessages) > 0)
-    		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
+    case "bulkStart":
+    	dispatcherBulk("start");
     	break;
 
 /*******************************************************************************
- * selected transfers (index-page)
+ * multi operations
  ******************************************************************************/
     default:
-
-    	// is enabled ?
-		if ($cfg["enable_multiops"] != 1) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multi-op ".$action);
-			@error("multiops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-		}
-
-		// messages-ary
-		$dispatcherMessages = array();
-
-		// loop
-		foreach ($_POST['transfer'] as $key => $element) {
-
-			// url-decode
-			$transfer = urldecode($element);
-
-			// is valid transfer ? + check permissions
-			$invalid = true;
-			if (isValidTransfer($transfer) === true) {
-				if (substr($transfer, -8) == ".torrent") {
-					// this is a torrent-client
-					$invalid = false;
-				} else if (substr($transfer, -5) == ".wget") {
-					// this is wget.
-					$invalid = false;
-					// is enabled ?
-					if ($cfg["enable_wget"] == 0) {
-						$invalid = true;
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-						array_push($dispatcherMessages, "wget is disabled : ".$transfer);
-					} else if ($cfg["enable_wget"] == 1) {
-						if (!$cfg['isAdmin']) {
-							$invalid = true;
-							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-							array_push($dispatcherMessages, "wget is disabled for users : ".$transfer);
-						}
-					}
-				} else if (substr($transfer, -4) == ".nzb") {
-					// This is nzbperl.
-					$invalid = false;
-					if ($cfg["enable_nzbperl"] == 0) {
-						$invalid = true;
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
-						array_push($dispatcherMessages, "nzbperl is disabled : ".$transfer);
-					} else if ($cfg["enable_nzbperl"] == 1) {
-						if (!$cfg['isAdmin']) {
-							$invalid = true;
-							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzbperl");
-							array_push($dispatcherMessages, "nzbperl is disabled for users : ".$transfer);
-						}
-					}
-				}
-			}
-			if ($invalid) {
-				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$cfg["user"]." tried to ".$action." ".$transfer);
-				array_push($dispatcherMessages, "Invalid Transfer : ".$transfer);
-				continue;
-			}
-
-			// client
-			$client = getTransferClient($transfer);
-
-			// is transfer running ?
-			$tRunningFlag = isTransferRunning($transfer);
-
-			// action switch
-			switch ($action) {
-
-				case "transferStart": /* transferStart */
-					if (!$tRunningFlag) {
-						$ch = ClientHandler::getInstance($client);
-						$ch->start($transfer, false, FluxdQmgr::isRunning());
-						if (count($ch->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-					}
-					break;
-
-				case "transferStop": /* transferStop */
-					if ($tRunningFlag) {
-						$ch = ClientHandler::getInstance($client);
-						$ch->stop($transfer);
-						if (count($ch->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-					}
-					break;
-
-				case "transferEnQueue": /* transferEnQueue */
-					if (!$tRunningFlag) {
-						// enqueue it
-						$ch = ClientHandler::getInstance($client);
-						$ch->start($transfer, false, true);
-						if (count($ch->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-					}
-					break;
-
-				case "transferDeQueue": /* transferDeQueue */
-					if (!$tRunningFlag) {
-						// dequeue it
-						FluxdQmgr::dequeueTransfer($transfer, $cfg['user']);
-					}
-					break;
-
-				case "transferResetTotals": /* transferResetTotals */
-					$msgs = resetTransferTotals($transfer, false);
-					if (count($msgs) > 0)
-                    	$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
-					break;
-
-				default:
-					if ($tRunningFlag) {
-						// stop first
-						$ch = ClientHandler::getInstance($client);
-						$ch->stop($transfer);
-						if (count($ch->messages) > 0)
-                    		$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-						// is transfer running ?
-						$tRunningFlag = isTransferRunning($transfer);
-					}
-					// if it was running... hope the thing is down...
-					// only continue if it is
-					if (!$tRunningFlag) {
-						switch ($action) {
-							case "transferWipe": /* transferWipe */
-								deleteTransferData($transfer);
-								$msgs = resetTransferTotals($transfer, true);
-								if (count($msgs) > 0)
-                					$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
-								break;
-							case "transferData": /* transferData */
-								deleteTransferData($transfer);
-							case "transfer": /* transfer */
-								$ch = ClientHandler::getInstance($client);
-								$ch->delete($transfer);
-								if (count($ch->messages) > 0)
-                    				$dispatcherMessages = array_merge($dispatcherMessages, $ch->messages);
-						}
-					}
-
-			} // end switch
-		} // end loop
-		if (count($dispatcherMessages) > 0)
-			@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
+    	dispatcherMulti($action);
+    	break;
 }
 
 /*******************************************************************************
