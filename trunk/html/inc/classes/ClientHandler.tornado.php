@@ -100,10 +100,8 @@ class ClientHandlerTornado extends ClientHandler
 		}
 
 		// file-prio
-		if ($cfg["enable_file_priority"]) {
-			include_once("inc/functions/functions.setpriority.php");
-			setPriority($transfer);
-		}
+		if ($cfg["enable_file_priority"])
+			setFilePriority($transfer);
 
 		// pythonCmd
 		$pyCmd = $cfg["pythonCmd"] . " -OO";

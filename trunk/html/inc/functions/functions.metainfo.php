@@ -93,7 +93,7 @@ function showMetaInfo($torrent, $allowSave = false) {
 			$showMetaInfo .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
 			$showMetaInfo .= "</table><br>\n";
 			if ($allowSave) {
-				$showMetaInfo .= "<form name=\"priority\" action=\"dispatcher.php?action=setPriority\" method=\"POST\" >";
+				$showMetaInfo .= "<form name=\"priority\" action=\"dispatcher.php?action=setFilePriority\" method=\"POST\" >";
 				$showMetaInfo .= "<input type=\"hidden\" name=\"transfer\" value=\"".$torrent."\" >";
 			}
 			$showMetaInfo .= "<script type=\"text/javascript\">\n";

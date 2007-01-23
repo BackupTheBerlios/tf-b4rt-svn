@@ -357,16 +357,14 @@ function indexInjectWget($url) {
 }
 
 /**
- * dispatcherSetPriority
+ * dispatcherSetFilePriority
  *
  * @param $transfer
  */
-function dispatcherSetPriority($transfer) {
+function dispatcherSetFilePriority($transfer) {
 	global $cfg;
-	if ($cfg["enable_file_priority"]) {
-		include_once("inc/functions/functions.setpriority.php");
-		setPriority($transfer);
-	}
+	if ($cfg["enable_file_priority"])
+		setFilePriority($transfer);
 }
 
 /**

@@ -71,8 +71,8 @@ switch ($action) {
 /*******************************************************************************
  * set prio
  ******************************************************************************/
-    case "setPriority":
-		dispatcherSetPriority(getRequestVar('transfer'));
+    case "setFilePriority":
+		dispatcherSetFilePriority(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************

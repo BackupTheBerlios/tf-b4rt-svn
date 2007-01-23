@@ -34,7 +34,7 @@ if (!isset($_REQUEST['iid'])) {
 
 // include page
 if (preg_match('/^[a-zA-Z]+$/', $_REQUEST['iid'])) {
-	require_once("inc/iid/".$_REQUEST['iid'].".php");
+	@require_once("inc/iid/".$_REQUEST['iid'].".php");
 } else {
 	$iid = getRequestVar('iid');
 	AuditAction($cfg["constants"]["error"], "INVALID PAGE: ".$iid);
