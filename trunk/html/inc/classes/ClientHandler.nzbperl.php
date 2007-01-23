@@ -35,9 +35,9 @@ class ClientHandlerNzbperl extends ClientHandler
 	// ctor
 	// =====================================================================
 
-	/**
-	 * ctor
-	 */
+    /**
+     * ctor
+     */
 	function ClientHandlerNzbperl() {
 		global $cfg;
 		$this->type = "nzb";
@@ -63,7 +63,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		global $cfg;
 
 		// set vars
-		$this->setVarsFromTransfer($transfer);
+		$this->_setVarsForTransfer($transfer);
 
 		// log
 		$this->logMessage($this->client."-start : ".$transfer."\n", true);
@@ -85,19 +85,15 @@ class ClientHandlerNzbperl extends ClientHandler
 			return false;
 		}
 
-		// prepare starting of client
-        $this->prepareStart($interactive, $enqueue, false, false);
+		// init starting of client
+        $this->_init($interactive, $enqueue, false, false);
 
-		// only continue if prepare succeeded (skip start / error)
+		// only continue if init succeeded (skip start / error)
 		if ($this->state != CLIENTHANDLER_STATE_READY) {
 			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
-				$msg = "Error after prepare (".$transfer.",".$interactive.",".$enqueue.")";
+				$msg = "Error after init (".$transfer.",".$interactive.",".$enqueue.",true,".$cfg['enable_sharekill'].")";
 				array_push($this->messages , $msg);
 				$this->logMessage($msg."\n", true);
-	            // write error to stat
-				$sf = new StatFile($this->transfer, $this->owner);
-				$sf->time_left = 'Error';
-				$sf->write();
 			}
 			// return
 			return false;
@@ -147,7 +143,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->state = CLIENTHANDLER_STATE_READY;
 
 		// Start the client
-		$this->execStart();
+		$this->_start();
 	}
 
     /**
@@ -159,9 +155,9 @@ class ClientHandlerNzbperl extends ClientHandler
      */
     function stop($transfer, $kill = false, $transferPid = 0) {
 		// set vars
-		$this->setVarsFromTransfer($transfer);
+		$this->_setVarsForTransfer($transfer);
 		// stop the client
-		$this->execStop($kill, $transferPid);
+		$this->_stop($kill, $transferPid);
     }
 
     /**
@@ -172,9 +168,9 @@ class ClientHandlerNzbperl extends ClientHandler
      */
     function delete($transfer) {
 		//set vars
-		$this->setVarsFromTransfer($transfer);
+		$this->_setVarsForTransfer($transfer);
 		// delete
-		$this->execDelete();
+		$this->_delete();
     }
 
     /**
@@ -281,10 +277,14 @@ class ClientHandlerNzbperl extends ClientHandler
 
     /**
      * sets fields from default-vals
+     *
+     * @param $transfer
      */
-    function settingsDefault() {
+    function settingsDefault($transfer = "") {
     	global $cfg;
     	// set vars
+        if ($transfer != "")
+        	$this->_setVarsForTransfer($transfer);
 		$this->hash        = getTransferHash($this->transfer);
         $this->datapath    = getTransferDatapath($this->transfer);
     	$this->savepath    = getTransferSavepath($this->transfer);

@@ -58,9 +58,6 @@ class WrapperWget
 	// statfile-object-instance
 	var $_sf = null;
 
-	// clienthandler-object-instance
-	var $_ch = null;
-
 	// process-handle
 	var $_wget = null;
 
@@ -123,9 +120,6 @@ class WrapperWget
 		// init object-instances
 		// sf
 		$this->_sf = new StatFile($this->_transfer, $this->_owner);
-		// ch
-		$this->_ch = ClientHandler::getInstance('wget');
-		$this->_ch->setVarsFromTransfer($this->_transfer);
     }
 
 	// =========================================================================
