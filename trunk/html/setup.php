@@ -841,7 +841,7 @@ if (isset($_REQUEST["1"])) {                                                    
 
 			send("<br/>");
 			send("<h2>Next: Login</h2>");
-			send("<p>To continue on to the "._NAME."login screen, click the button below:</p>");
+			send("<p>To continue on to the "._NAME." login screen, click the button below:</p>");
 			send('<form name="setup" action="login.php" method="post">');
 			send('<input type="submit" value="Continue">');
 			send('</form>');
