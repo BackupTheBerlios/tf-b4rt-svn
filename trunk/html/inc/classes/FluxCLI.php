@@ -231,15 +231,6 @@ class FluxCLI
 					return $this->_transferWipe($this->_params[0]);
 				}
 
-			/* inject */
-			case "inject":
-				if ($this->_paramc < 2) {
-					array_push($this->_argErrors, "missing argument(s) for inject.");
-					break;
-				} else {
-					return $this->_transferInject($this->_params[0], $this->_params[1]);
-				}
-
 			/* start-all */
 			case "start-all":
 				return $this->_transfersStart();
@@ -251,6 +242,15 @@ class FluxCLI
 			/* stop-all */
 			case "stop-all":
 				return $this->_transfersStop();
+
+			/* inject */
+			case "inject":
+				if ($this->_paramc < 2) {
+					array_push($this->_argErrors, "missing argument(s) for inject.");
+					break;
+				} else {
+					return $this->_inject($this->_params[0], $this->_params[1]);
+				}
 
 			/* watch */
 			case "watch":
@@ -280,7 +280,7 @@ class FluxCLI
 					array_push($this->_argErrors, "missing argument: time-delta of xfer to use : (all/total/month/week/day) (extra-arg 1)");
 					break;
 				} else {
-					return $this->_xferShutdown($this->_params[0]);
+					return $this->_xfer($this->_params[0]);
 				}
 
 			/* repair */
@@ -596,7 +596,7 @@ class FluxCLI
 	 * @param $username
 	 * @return mixed
 	 */
-	function _transferInject($transferFile, $username) {
+	function _inject($transferFile, $username) {
 		global $cfg;
 		// check file
 		if (!@is_file($transferFile)) {
@@ -686,7 +686,7 @@ class FluxCLI
             	// source-file
             	$sourceFile = $watchDir.$file;
             	// inject
-            	$transfer = $this->_transferInject();
+            	$transfer = $this->_inject();
             	// continue if inject failed
             	if ($transfer === false) {
             		$this->_outputError("skip file ".$sourceFile." as inject failed.\n");
@@ -721,7 +721,82 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _xfer($delta) {
-		// TODO
+		global $cfg, $db, $xfer_total;
+		// check xfer
+		if ($cfg['enable_xfer'] != 1) {
+			$this->_outputError("xfer must be enabled.\n");
+			return false;
+		}
+		$this->_outputMessage('checking xfer-limit(s) for "'.$delta.'" ...'."\n");
+    	// xfer-init
+		$cfg['xfer_realtime'] = 1;
+		$cfg['xfer_newday'] = 0;
+		$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+    	// getTransferListArray to update xfer-stats
+		$transferList = @getTransferListArray();
+		// check if break needed
+		// total
+		if (($delta == "total") || ($delta == "all")) {
+			// only do if a limit is set
+			if ($cfg["xfer_total"] > 0) {
+				if ($xfer_total['total']['total'] >= $cfg["xfer_total"]) {
+					// limit met, stop all Transfers now.
+					$this->_outputMessage('Limit met for "total" : '.formatFreeSpace($xfer_total['total']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_total"] / (1048576))."\n");
+					return $this->_transfersStop();
+				} else {
+					$this->_outputMessage('Limit not met for "total" : '.formatFreeSpace($xfer_total['total']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_total"] / (1048576))."\n");
+				}
+			} else {
+				$this->_outputMessage('no limit set for "total"'."\n");
+			}
+		}
+		// month
+		if (($delta == "month") || ($delta == "all")) {
+			// only do if a limit is set
+			if ($cfg["xfer_month"] > 0) {
+				if ($xfer_total['month']['total'] >= $cfg["xfer_month"]) {
+					// limit met, stop all Transfers now.
+					$this->_outputMessage('Limit met for "month" : '.formatFreeSpace($xfer_total['month']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_month"] / (1048576))."\n");
+					return $this->_transfersStop();
+				} else {
+					$this->_outputMessage('Limit not met for "month" : '.formatFreeSpace($xfer_total['month']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_month"] / (1048576))."\n");
+				}
+			} else {
+				$this->_outputMessage('no limit set for "month"'."\n");
+			}
+		}
+		// week
+		if (($delta == "week") || ($delta == "all")) {
+			// only do if a limit is set
+			if ($cfg["xfer_week"] > 0) {
+				if ($xfer_total['week']['total'] >= $cfg["xfer_week"]) {
+					// limit met, stop all Transfers now.
+					$this->_outputMessage('Limit met for "week" : '.formatFreeSpace($xfer_total['week']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_week"] / (1048576))."\n");
+					return $this->_transfersStop();
+				} else {
+					$this->_outputMessage('Limit not met for "week" : '.formatFreeSpace($xfer_total['week']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_week"] / (1048576))."\n");
+				}
+			} else {
+				$this->_outputMessage('no limit set for "week"'."\n");
+			}
+		}
+		// day
+		if (($delta == "day") || ($delta == "all")) {
+			// only do if a limit is set
+			if ($cfg["xfer_day"] > 0) {
+				if ($xfer_total['day']['total'] >= $cfg["xfer_day"]) {
+					// limit met, stop all Transfers now.
+					$this->_outputMessage('Limit met for "day" : '.formatFreeSpace($xfer_total['day']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_day"] / (1048576))."\n");
+					return $this->_transfersStop();
+				} else {
+					$this->_outputMessage('Limit not met for "day" : '.formatFreeSpace($xfer_total['day']['total'] / (1048576))." / ".formatFreeSpace($cfg["xfer_day"] / (1048576))."\n");
+				}
+			} else {
+				$this->_outputMessage('no limit set for "day"'."\n");
+			}
+		}
+		// done
+		$this->_outputMessage("done.\n");
 		return true;
 	}
 
@@ -848,19 +923,19 @@ class FluxCLI
 		. "                extra-arg : name of transfer as known inside webapp\n"
 		. "  stop        : stop a transfer.\n"
 		. "                extra-arg : name of transfer as known inside webapp\n"
-	    . "  start-all   : start all transfers.\n"
-	    . "  resume-all  : resume all transfers.\n"
-		. "  stop-all    : stop all running transfers.\n"
 		. "  reset       : reset totals of a transfer.\n"
 		. "                extra-arg : name of transfer as known inside webapp\n"
 		. "  delete      : delete a transfer.\n"
 		. "                extra-arg : name of transfer as known inside webapp\n"
 		. "  wipe        : reset totals, delete metafile, delete data.\n"
 		. "                extra-arg : name of transfer as known inside webapp\n"
+	    . "  start-all   : start all transfers.\n"
+	    . "  resume-all  : resume all transfers.\n"
+		. "  stop-all    : stop all running transfers.\n"
 		. "  inject      : injects a transfer-file into the application.\n"
 		. "                extra-arg 1 : path to transfer-meta-file\n"
 		. "                extra-arg 2 : username of fluxuser\n"
-		. "  watch       : watch a dir and inject+start transfers into app.\n"
+		. "  watch       : watch a dir and inject + start transfers into the app.\n"
 		. "                extra-arg 1 : path to users watch-dir\n"
 		. "                extra-arg 2 : username of fluxuser\n"
 		. "  rss         : download torrents matching filter-rules from a rss-feed.\n"
@@ -868,7 +943,7 @@ class FluxCLI
 		. "                extra-arg 2 : filter-file\n"
 		. "                extra-arg 3 : history-file\n"
 		. "                extra-arg 4 : rss-feed-url\n"
-		. "                extra-arg 5 : use cookies from this torrentflux user (optional, default is none)\n"
+		. "                extra-arg 5 : use cookies from this torrentflux user (optional, default is superadmin)\n"
 		. "  xfer        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
 		. "                extra-arg 1 : time-delta of xfer to use : (all/total/month/week/day)\n"
 		. "  repair      : repair of torrentflux. DONT do this unless you have to.\n"
