@@ -248,17 +248,6 @@ class ClientHandlerNzbperl extends ClientHandler
     }
 
     /**
-     * set upload rate of a transfer
-     *
-     * @param $transfer
-     * @param $uprate
-     * @param $autosend
-     */
-    function setRateUpload($transfer, $uprate, $autosend = false) {
-    	return;
-    }
-
-    /**
      * set download rate of a transfer
      *
      * @param $transfer

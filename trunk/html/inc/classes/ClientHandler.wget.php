@@ -298,28 +298,6 @@ class ClientHandlerWget extends ClientHandler
         return $retVal;
     }
 
- 	/**
-     * set upload rate of a transfer
-     *
-     * @param $transfer
-     * @param $uprate
-     * @param $autosend
-     */
-    function setRateUpload($transfer, $uprate, $autosend = false) {
-    	return;
-    }
-
-    /**
-     * set download rate of a transfer
-     *
-     * @param $transfer
-     * @param $downrate
-     * @param $autosend
-     */
-    function setRateDownload($transfer, $downrate, $autosend = false) {
-    	return;
-    }
-
     /**
      * sets fields from default-vals
      *

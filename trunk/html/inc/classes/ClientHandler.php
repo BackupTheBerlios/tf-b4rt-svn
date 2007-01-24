@@ -236,6 +236,16 @@ class ClientHandler
     function setRateDownload($transfer, $downrate, $autosend = false) { return; }
 
     /**
+     * set sharekill of a transfer
+     *
+     * @param $transfer
+     * @param $sharekill
+     * @param $autosend
+     * @return boolean
+     */
+    function setSharekill($transfer, $sharekill, $autosend = false) { return true; }
+
+    /**
      * sets fields from default-vals
      *
      * @param $transfer

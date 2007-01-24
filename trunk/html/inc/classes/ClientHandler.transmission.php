@@ -274,6 +274,26 @@ class ClientHandlerTransmission extends ClientHandler
     }
 
     /**
+     * set sharekill of a transfer
+     *
+     * @param $transfer
+     * @param $sharekill
+     * @param $autosend
+     * @return boolean
+     */
+    function setSharekill($transfer, $sharekill, $autosend = false) {
+		// set sharekill
+        $this->sharekill = $sharekill;
+    	// add command
+		CommandHandler::add($transfer, "s".$this->sharekill);
+		// send command to client
+        if ($autosend)
+			CommandHandler::send($transfer);
+    	// return
+    	return true;
+    }
+
+    /**
      * sets fields from default-vals
      *
      * @param $transfer
