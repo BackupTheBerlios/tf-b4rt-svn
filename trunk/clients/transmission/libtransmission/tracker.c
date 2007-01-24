@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: tracker.c 1428 2007-01-23 20:54:54Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -987,17 +987,12 @@ static void readScrapeAnswer( tr_tracker_t * tc, const char * data, int len )
     }
 
     val1 = tr_bencDictFind( &scrape, "files" );
-    if( !val1 )
+    if( !val1 || val1->type != TYPE_DICT || val1->val.l.count < 1 )
     {
         tr_bencFree( &scrape );
         return;
     }
     val1 = &val1->val.l.vals[1];
-    if( !val1 )
-    {
-        tr_bencFree( &scrape );
-        return;
-    }
     
     val2 = tr_bencDictFind( val1, "complete" );
     if( !val2 )

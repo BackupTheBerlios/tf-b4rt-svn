@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: fdlimit.c 1427 2007-01-23 17:59:21Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -311,6 +311,7 @@ static int SocketGetPriority( int s )
     gSocketsCount--;
     memmove( &gSockets[i], &gSockets[i+1],
             ( gSocketsCount - i ) * sizeof( tr_socket_t ) );
+    return ret;
 }
 
 /***********************************************************************

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: natpmp.c 1429 2007-01-23 23:46:10Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -182,8 +182,8 @@ tr_natpmpStop( tr_natpmp_t * pmp )
                 tr_dbg( "nat-pmp state add -> idle" );
                 if( NULL != pmp->req )
                 {
-                    killreq( &pmp->req );
                     pmp->mappedport = pmp->req->port;
+                    killreq( &pmp->req );
                     pmp->state = PMP_STATE_DELETING;
                     tr_dbg( "nat-pmp state idle -> del" );
                 }
