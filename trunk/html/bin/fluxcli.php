@@ -59,9 +59,6 @@ Fluxd::initialize();
 // Qmgr
 FluxdServiceMod::initializeServiceMod('Qmgr');
 
-// set admin-var
-$cfg['isAdmin'] = true;
-
 // control to class
 FluxCLI::processRequest($argv);
 
