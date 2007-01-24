@@ -71,7 +71,22 @@ class StatFile
      * @param $user
      * @return StatFile
      */
-    function StatFile($transfer, $user = '') {
+    function StatFile($transfer, $user = "") {
+		// init
+    	$this->init($transfer, $user);
+    }
+
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
+    /**
+     * init stat-file
+     *
+     * @param $transfer
+     * @param $user
+     */
+    function init($transfer, $user = '') {
     	global $cfg;
     	// file
     	$this->theFile = $cfg["transfer_file_path"].$transfer.".stat";
@@ -99,10 +114,6 @@ class StatFile
 	        $this->size = @ $content[12];
         }
     }
-
-	// =========================================================================
-	// public methods
-	// =========================================================================
 
     /**
      * call this on start
