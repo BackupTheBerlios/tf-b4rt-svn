@@ -52,9 +52,6 @@ if ((!isset($argc)) || ($argc < 7))
 // main.core
 require_once('inc/main.core.php');
 
-// cache
-require_once("inc/main.cache.php");
-
 // common functions
 require_once('inc/functions/functions.common.php');
 

@@ -20,6 +20,9 @@
 
 *******************************************************************************/
 
+// cache
+require_once('inc/main.cache.php');
+
 // core classes
 require_once("inc/classes/CoreClasses.php");
 

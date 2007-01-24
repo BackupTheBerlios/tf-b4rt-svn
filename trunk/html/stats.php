@@ -92,6 +92,12 @@ require_once('inc/functions/functions.stats.php');
 // start session
 @session_start();
 
+// unregister globals
+if (@ini_get('register_globals')) {
+	require_once('inc/functions/functions.compat.php');
+	unregister_GLOBALS();
+}
+
 // config
 if ((isset($_SESSION['user'])) && (cacheIsSet($_SESSION['user']))) {
 	// db-config

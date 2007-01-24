@@ -640,7 +640,7 @@ class FluxCLI
         }
 		if (count($this->_messages) == 0) {
 			$this->_outputMessage("done.\n");
-			return true;
+			return $fileName;
 		} else {
 			$this->_outputError("failed: ".$transfer."\n".implode("\n", $this->_messages));
 			return false;
@@ -655,8 +655,63 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _watch($watchDir, $username) {
-		// TODO
-		return true;
+		global $cfg;
+		// check dir
+		if (!@is_dir($transferFile)) {
+			$this->_outputError("watch-dir ".$watchDir." is no dir.\n");
+			return false;
+		}
+		// check username
+		if (!IsUser($username)) {
+			$this->_outputError("username ".$username." is no valid user.\n");
+			return false;
+		}
+		// trailing slash
+        $watchDir = checkDirPathString($watchDir);
+        // process dir
+        $this->_outputMessage("Processing watch-dir ".$watchDir." for user ".$username." ...\n");
+        if ($dirHandle = @opendir($watchDir)) {
+        	// read input-files
+        	$input = array();
+			while (false !== ($file = @readdir($dirHandle)))
+        		array_push($input, $file);
+            @closedir($dirHandle);
+            if (empty($input)) {
+            	$this->_outputMessage("done. no files found.\n");
+            	return true;
+            }
+            // process files
+            $ctr = array('files' => count($input), 'injects' => 0, 'starts' => 0);
+            foreach ($input as $file) {
+            	// source-file
+            	$sourceFile = $watchDir.$file;
+            	// inject
+            	$transfer = $this->_transferInject();
+            	// continue if inject failed
+            	if ($transfer === false) {
+            		$this->_outputError("skip file ".$sourceFile." as inject failed.\n");
+					continue;
+            	}
+            	// ctr
+            	$ctr['injects']++;
+            	// delete source-file
+            	$this->_outputMessage("deleting source-file ".$sourceFile." ...\n");
+            	@unlink($sourceFile);
+            	// start
+				if ($this->_transferStart($transfer))
+					$ctr['starts']++;
+            }
+            if ($ctr['files'] == $ctr['starts']) {
+            	$this->_outputMessage("done. files: ".$ctr['files']."; injects: ".$ctr['injects']."; starts: ".$ctr['starts']."\n");
+            	return true;
+            } else {
+            	$this->_outputError("done with errors. files: ".$ctr['files']."; injects: ".$ctr['injects']."; starts: ".$ctr['starts']."\n");
+            	return false;
+            }
+        } else {
+        	$this->_outputError("failed to open watch-dir ".$watchDir.".\n");
+			return false;
+        }
 	}
 
 	/**
@@ -727,8 +782,25 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _dump($type) {
-		// TODO
-		return true;
+		global $cfg, $db;
+		switch ($type) {
+			case "settings":
+			    $sql = "SELECT tf_key, tf_value FROM tf_settings";
+				break;
+			case "users":
+				$sql = "SELECT uid, user_id FROM tf_users";
+				break;
+			default:
+				$this->_outputError("username ".$username." is no valid user.\n");
+				return false;
+		}
+	    $recordset = $db->Execute($sql);
+	    if ($db->ErrorNo() != 0) dbError($sql);
+	    $content = "";
+	    while (list($a, $b) = $recordset->FetchRow())
+	    	 $content .= $a._DUMP_DELIM.$b."\n";
+	    echo $content;
+		return ($content != "");
 	}
 
     /**
@@ -756,7 +828,7 @@ class FluxCLI
      */
     function _printVersion() {
     	echo $this->name." Revision "._REVISION_FLUXCLI."\n";
-    	return true;
+    	return (_REVISION_FLUXCLI > 0);
     }
 
     /**

@@ -20,9 +20,6 @@
 
 *******************************************************************************/
 
-// cache
-require_once("inc/main.cache.php");
-
 // core
 require_once("inc/functions/functions.core.php");
 
@@ -55,9 +52,6 @@ require_once('inc/functions/functions.startpop.php');
 
 // vlc functions
 require_once('inc/functions/functions.vlc.php');
-
-// cli functions
-require_once('inc/functions/functions.cli.php');
 
 // tools functions
 require_once('inc/functions/functions.tools.php');

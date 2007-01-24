@@ -29,12 +29,13 @@ if (@ini_get('register_globals')) {
 	unregister_GLOBALS();
 }
 
-// cache
-require_once('inc/main.cache.php');
-
 // init
 if (isset($_SESSION['user'])) {
+	// cache
+	require_once("inc/main.cache.php");
+	// set current user
 	$currentUser = $_SESSION['user'];
+	// check if cache set
 	if (cacheIsSet($currentUser)) {
 		// core classes
 		require_once("inc/classes/CoreClasses.php");
