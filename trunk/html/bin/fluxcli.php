@@ -34,11 +34,6 @@ $_SESSION = array('cache' => false);
 
 /******************************************************************************/
 
-// defines
-define('_DUMP_DELIM', '*');
-preg_match('|.* (\d+) .*|', '$Revision$', $revisionMatches);
-define('_REVISION_FLUXCLI', $revisionMatches[1]);
-
 // change to docroot if cwd is in bin.
 $cwd = getcwd();
 $cwdBase = basename($cwd);
@@ -48,14 +43,14 @@ if ($cwdBase == "bin")
 // include path
 ini_set('include_path', ini_get('include_path').':../:');
 
-// set user-agent
-$_SERVER['HTTP_USER_AGENT'] = "fluxcli.php/" . _REVISION_FLUXCLI;
-
 // main.core
 require_once('inc/main.core.php');
 
 // all functions
 require_once('inc/functions/functions.all.php');
+
+// FluxCLI-class
+require_once('inc/classes/FluxCLI.php');
 
 // load default-language
 loadLanguageFile($cfg["default_language"]);
@@ -72,9 +67,49 @@ FluxdServiceMod::initializeServiceMod('Qmgr');
 // set admin-var
 $cfg['isAdmin'] = true;
 
-// -----------------------------------------------------------------------------
-// Main
-// -----------------------------------------------------------------------------
+// control to class
+FluxCLI::processRequest($argv);
+
+// exit
+exit();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ------------------ DEPRECATED -------------------------------------------- */
+
+
+
 $action = @$argv[1];
 if ((isset($action)) && ($action != "")) {
 	switch ($action) {
