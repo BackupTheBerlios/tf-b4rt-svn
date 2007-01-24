@@ -31,12 +31,12 @@ if ($argv[0] != $_SERVER['argv'][0]) die();
 
 /******************************************************************************/
 
+// change to docroot if needed
+if (!is_file(realpath(getcwd().'/inc/functions/functions.tools.php')))
+	chdir(realpath(dirname(__FILE__)."/../.."));
+
 // tools-functions
-$functionsDir = dirname(__FILE__);
-$functionsDir = str_replace("bin/tools", '', $functionsDir);
-if (!is_file($functionsDir.'inc/functions/functions.tools.php'))
-	exit('error: functions-file missing.\n');
-require_once($functionsDir.'inc/functions/functions.tools.php');
+require_once('inc/functions/functions.tools.php');
 
 // action
 if (isset($argv[1]))
