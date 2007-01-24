@@ -415,9 +415,10 @@ function dispatcherBulk($op) {
 	    	}
 	    	break;
 	    case "resume":
-	    	$transferList = getTransferArrayFromDB();
+	    	$transferList = getTransferArray();
+	    	$sf = new StatFile("");
 	    	foreach ($transferList as $transfer) {
-				$sf = new StatFile($transfer);
+				$sf->init($transfer);
 		        if (((trim($sf->running)) == 0) && (!isTransferRunning($transfer))) {
 	                if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
 	                    $ch = ClientHandler::getInstance(getTransferClient($transfer));

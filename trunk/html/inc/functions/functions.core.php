@@ -782,6 +782,17 @@ function isTransferRunning($transfer) {
 }
 
 /**
+ * checks if transfer exists by checking for existence of meta-file.
+ *
+ * @param $transfer name of the transfer
+ * @return boolean
+ */
+function transferExists($transfer) {
+	global $cfg;
+	return file_exists($cfg["transfer_file_path"].$transfer);
+}
+
+/**
  * gets the transfer-client
  *
  * @param $transfer name of the transfer
@@ -2161,7 +2172,7 @@ function getCleanTransferName($transfer) {
  * @param $inName
  * @return string
  */
-function cleanFileName($inName) {
+function cleanFileName($inName, $error = true) {
 	global $cfg;
 	$outName = preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName);
 	$stringLength = strlen($outName);
@@ -2171,13 +2182,16 @@ function cleanFileName($inName) {
 		if (($stringLength > $extLength) && (strtolower(substr($outName, $extIndex)) === ($ftype)))
 			return substr($outName, 0, $extIndex).$ftype;
 	}
-	$msgs = array();
-	array_push($msgs, "inName : ".$inName);
-	array_push($msgs, "outName : ".$outName);
-	array_push($msgs, "\nvalid file-extensions: ");
-	array_push($msgs, $cfg["file_types_label"]);
-	AuditAction($cfg["constants"]["error"], "INVALID FILETYPE: ".$inName);
-	@error("Invalid File-Type", "index.php?iid=index", "", $msgs);
+	if ($error) {
+		$msgs = array();
+		array_push($msgs, "inName : ".$inName);
+		array_push($msgs, "outName : ".$outName);
+		array_push($msgs, "\nvalid file-extensions: ");
+		array_push($msgs, $cfg["file_types_label"]);
+		AuditAction($cfg["constants"]["error"], "INVALID FILETYPE: ".$inName);
+		@error("Invalid File-Type", "index.php?iid=index", "", $msgs);
+	}
+	return false;
 }
 
 /**

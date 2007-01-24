@@ -37,13 +37,17 @@ $_SESSION = array('cache' => false);
 
 /******************************************************************************/
 
-// check args
-if ((!isset($argc)) || ($argc < 7))
-	die("Arg Error\n");
-
 // change to docroot if needed
 if (!is_file(realpath(getcwd().'/inc/main.core.php')))
 	chdir(realpath(dirname(__FILE__)."/.."));
+
+// check for home
+if (!is_file('inc/main.core.php'))
+	exit("Error: this script can only be used in its default-path (DOCROOT/bin/)\n");
+
+// check args
+if ((!isset($argc)) || ($argc < 7))
+	exit("Arg Error\n");
 
 // main.core
 require_once('inc/main.core.php');

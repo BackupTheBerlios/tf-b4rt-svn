@@ -342,7 +342,13 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _netstat() {
-		// TODO
+		global $cfg;
+		echo $cfg['_ID_CONNECTIONS'].":\n";
+		echo netstatConnectionsSum()."\n";
+		echo $cfg['_ID_PORTS'].":\n";
+		echo netstatPortList();
+		echo $cfg['_ID_HOSTS'].":\n";
+		echo netstatHostList();
 		return true;
 	}
 
@@ -352,7 +358,24 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transfers() {
-		// TODO
+		global $cfg;
+		// print out transfers
+		echo "Transfers:\n";
+		$transferHeads = getTransferListHeadArray();
+		echo "* Name * ".implode(" * ", $transferHeads)."\n";
+		$transferList = getTransferListArray();
+		foreach ($transferList as $transferAry)
+			echo "- ".implode(" - ", $transferAry)."\n";
+		// print out stats
+		echo "Server:\n";
+	    if (! array_key_exists("total_download", $cfg))
+	        $cfg["total_download"] = 0;
+	    if (! array_key_exists("total_upload", $cfg))
+	        $cfg["total_upload"] = 0;
+		echo $cfg['_UPLOADSPEED']."\t".': '.number_format($cfg["total_upload"], 2).' kB/s'."\n";
+		echo $cfg['_DOWNLOADSPEED']."\t".': '.number_format($cfg["total_download"], 2).' kB/s'."\n";
+		echo $cfg['_TOTALSPEED']."\t".': '.number_format($cfg["total_download"]+$cfg["total_upload"], 2).' kB/s'."\n";
+		echo $cfg['_ID_CONNECTIONS']."\t".': '.netstatConnectionsSum()."\n";
 		return true;
 	}
 
@@ -363,9 +386,32 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transferStart($transfer) {
-		echo $transfer."\n";
-		// TODO
-		return true;
+		global $cfg;
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		// check running
+		if (isTransferRunning($transfer)) {
+			$this->_outputError("transfer already running.\n");
+			return false;
+		}
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// output
+		$this->_outputMessage("Starting ".$transfer." ...\n");
+		// force start, dont queue
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$ch->start($transfer, false, false);
+		if ($ch->state == CLIENTHANDLER_STATE_OK) { /* hooray */
+			$this->_outputMessage("done.\n");
+			return true;
+		} else {
+			$this->_messages = array_merge($this->_messages, $ch->messages);
+			$this->_outputError("failed:\n".implode("\n", $ch->messages)."\n");
+			return false;
+		}
 	}
 
 	/**
@@ -375,8 +421,25 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transferStop($transfer) {
-		echo $transfer."\n";
-		// TODO
+		global $cfg;
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		// check running
+		if (!isTransferRunning($transfer)) {
+			$this->_outputError("transfer not running.\n");
+			return false;
+		}
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// output
+		$this->_outputMessage("Stopping ".$transfer." ...\n");
+		// stop
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+        $ch->stop($transfer);
+        $this->_outputMessage("done.\n");
 		return true;
 	}
 
@@ -387,8 +450,16 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transferReset($transfer) {
-		// TODO
-		return true;
+		$this->_outputMessage("Resetting totals of ".$transfer." ...\n");
+		$msgs = resetTransferTotals($transfer, false);
+		if (count($msgs) == 0) {
+			$this->_outputMessage("done.\n");
+			return true;
+		} else {
+			$this->_messages = array_merge($this->_messages, $msgs);
+			$this->_outputError("failed:\n".implode("\n", $msgs)."\n");
+			return false;
+		}
 	}
 
 	/**
@@ -398,8 +469,33 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transferDelete($transfer) {
-		// TODO
-		return true;
+		global $cfg;
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		$this->_outputMessage("Delete ".$transfer." ...\n");
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// delete
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$tRunningFlag = isTransferRunning($transfer);
+		if ($tRunningFlag) {
+			// stop transfer first
+			$this->_outputMessage("transfer is running, stopping first...\n");
+			$ch->stop($transfer);
+			$tRunningFlag = isTransferRunning($transfer);
+        }
+        if (!$tRunningFlag) {
+        	$this->_outputMessage("Deleting...\n");
+        	$ch->delete($transfer);
+			$this->_outputMessage("done.\n");
+			return true;
+        } else {
+        	$this->_outputError("transfer still up... cannot delete\n");
+        	return false;
+        }
 	}
 
 	/**
@@ -409,8 +505,88 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transferWipe($transfer) {
-		// TODO
-		return true;
+		global $cfg;
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		$this->_outputMessage("Wipe ".$transfer." ...\n");
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// wipe
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$tRunningFlag = isTransferRunning($transfer);
+		if ($tRunningFlag) {
+			// stop transfer first
+			$this->_outputMessage("transfer is running, stopping first...\n");
+			$ch->stop($transfer);
+			$tRunningFlag = isTransferRunning($transfer);
+        }
+        if (!$tRunningFlag) {
+        	$this->_outputMessage("Deleting...\n");
+    		deleteTransferData($transfer);
+			$msgs = resetTransferTotals($transfer, true);
+			if (count($msgs) > 0)
+				$this->_messages = array_merge($this->_messages, $msgs);
+        	$ch->delete($transfer);
+        	if (count($ch->messages) > 0)
+				$this->_messages = array_merge($this->_messages, $ch->messages);
+        	if (count($this->_messages) == 0) {
+				$this->_outputMessage("done.\n");
+				return true;
+        	} else {
+				$this->_outputError("failed: ".$transfer."\n".implode("\n", $this->_messages));
+				return false;
+        	}
+        } else {
+        	$this->_outputError("transfer still up... cannot delete\n");
+        	return false;
+        }
+	}
+
+	/**
+	 * Start Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersStart() {
+	    $this->_outputMessage("Starting all transfers ...\n");
+		$transferList = getTransferArray();
+		foreach ($transferList as $transfer) {
+	        if (!isTransferRunning($transfer))
+	        	$this->_transferStart($transfer);
+		}
+	}
+
+	/**
+	 * Resume Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersResume() {
+	    $this->_outputMessage("Resuming all transfers ...\n");
+		$transferList = getTransferArray();
+		$sf = new StatFile("");
+		foreach ($transferList as $transfer) {
+			$sf->init($transfer);
+			if (trim($sf->running) == 0)
+				$this->_transferStart($transfer);
+		}
+	}
+
+	/**
+	 * Stop Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersStop() {
+		$this->_outputMessage("Stopping all transfers ...\n");
+		$transferList = getTransferArray();
+		foreach ($transferList as $transfer) {
+			if (isTransferRunning($transfer))
+				$this->_transferStop($transfer);
+		}
 	}
 
 	/**
@@ -421,38 +597,54 @@ class FluxCLI
 	 * @return mixed
 	 */
 	function _transferInject($transferFile, $username) {
-		// TODO
-		return true;
-	}
-
-	/**
-	 * Start Transfers
-	 *
-	 * @return mixed
-	 */
-	function _transfersStart() {
-		// TODO
-		return true;
-	}
-
-	/**
-	 * Resume Transfers
-	 *
-	 * @return mixed
-	 */
-	function _transfersResume() {
-		// TODO
-		return true;
-	}
-
-	/**
-	 * Stop Transfers
-	 *
-	 * @return mixed
-	 */
-	function _transfersStop() {
-		// TODO
-		return true;
+		global $cfg;
+		// check file
+		if (!@is_file($transferFile)) {
+			$this->_outputError("transfer-file ".$transferFile." is no file.\n");
+			return false;
+		}
+		// check username
+		if (!IsUser($username)) {
+			$this->_outputError("username ".$username." is no valid user.\n");
+			return false;
+		}
+		$this->_outputMessage("Inject ".$transferFile." for user ".$username." ...\n");
+		// set user
+	    $cfg["user"] = $username;
+	    // set filename
+	    $fileName = basename($transferFile);
+        $fileName = cleanFileName($fileName, false);
+        // only inject valid transfers
+        if (($fileName !== false) && (isValidTransfer($fileName))) {
+        	$targetFile = $cfg["transfer_file_path"].$fileName;
+            if (is_file($targetFile)) {
+            	array_push($this->_messages, "transfer ".$fileName.", already exists.");
+            } else {
+            	$this->_outputMessage("copy ".$transferFile." to ".$targetFile." ...\n");
+                if (@copy($transferFile, $targetFile)) {
+                	// chmod
+                    @chmod($cfg["transfer_file_path"].$fileName, 0644);
+                    // make owner entry
+                    AuditAction($cfg["constants"]["file_upload"], $fileName);
+                    // inject
+                    $this->_outputMessage("injecting ".$fileName." ...\n");
+                    injectTransfer($fileName);
+                } else {
+                	array_push($this->_messages, "File could not be copied: ".$transferFile);
+                }
+            }
+        } else {
+        	array_push($this->_messages, "The type of file you are injecting is not allowed.");
+			array_push($this->_messages, "valid file-extensions: ");
+			array_push($this->_messages, $cfg["file_types_label"]);
+        }
+		if (count($this->_messages) == 0) {
+			$this->_outputMessage("done.\n");
+			return true;
+		} else {
+			$this->_outputError("failed: ".$transfer."\n".implode("\n", $this->_messages));
+			return false;
+		}
 	}
 
 	/**
@@ -468,12 +660,16 @@ class FluxCLI
 	}
 
 	/**
-	 * Watch Dir
+	 * Xfer Shutdown
 	 *
-	 * @param $watchDir
-	 * @param $username
+	 * @param $delta
 	 * @return mixed
 	 */
+	function _xfer($delta) {
+		// TODO
+		return true;
+	}
+
 	/**
 	 * rss download
 	 *
@@ -487,22 +683,18 @@ class FluxCLI
 	function _rss($saveDir, $filterFile, $historyFile, $url, $username = "") {
 		global $cfg;
 		// set user
-		if (!empty($username))
-			$cfg["user"] = $username;
+		if (!empty($username)) {
+			// check first
+			if (IsUser($username)) {
+				$cfg["user"] = $username;
+			} else {
+				$this->_outputError("username ".$username." is no valid user.\n");
+				return false;
+			}
+		}
 		// process Feed
 		require_once("inc/classes/Rssd.php");
 		return Rssd::processFeed($saveDir, $filterFile, $historyFile, $url);
-	}
-
-	/**
-	 * Xfer Shutdown
-	 *
-	 * @param $delta
-	 * @return mixed
-	 */
-	function _xfer($delta) {
-		// TODO
-		return true;
 	}
 
 	/**

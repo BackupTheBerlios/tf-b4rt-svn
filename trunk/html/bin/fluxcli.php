@@ -38,6 +38,10 @@ $_SESSION = array('cache' => false);
 if (!is_file(realpath(getcwd().'/inc/main.core.php')))
 	chdir(realpath(dirname(__FILE__)."/.."));
 
+// check for home
+if (!is_file('inc/main.core.php'))
+	exit("Error: this script can only be used in its default-path (DOCROOT/bin/)\n");
+
 // main.core
 require_once('inc/main.core.php');
 

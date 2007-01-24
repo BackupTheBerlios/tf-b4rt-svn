@@ -83,9 +83,10 @@ function sa_transfers($action = "") {
 			$htmlTitle = "Transfers - Resume";
 			$htmlMain .= '<br><strong>Transfers Resumed :</strong><br>';
 			$htmlMain .= '<pre>';
-			$transferList = getTransferArrayFromDB();
+			$transferList = getTransferArray();
+			$sf = new StatFile("");
 			foreach ($transferList as $transfer) {
-				$sf = new StatFile($transfer);
+				$sf->init($transfer);
 				if (((trim($sf->running)) == 0) && (!isTransferRunning($transfer))) {
 					$ch = ClientHandler::getInstance(getTransferClient($transfer));
 					$ch->start($transfer, false, false);

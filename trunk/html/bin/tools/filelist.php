@@ -35,6 +35,10 @@ if ($argv[0] != $_SERVER['argv'][0]) die();
 if (!is_file(realpath(getcwd().'/inc/functions/functions.tools.php')))
 	chdir(realpath(dirname(__FILE__)."/../.."));
 
+// check for home
+if (!is_file('inc/functions/functions.tools.php'))
+	exit("Error: this script can only be used in its default-path (DOCROOT/bin/tools/)\n");
+
 // tools-functions
 require_once('inc/functions/functions.tools.php');
 
