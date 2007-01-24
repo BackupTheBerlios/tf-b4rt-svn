@@ -620,9 +620,9 @@ class TorrentApp(object):
             if len(command) < 2:
                 transferLog("invalid rate.\n", True)
                 return False
-            rate = command[1:]
-            transferLog("command: setting upload-rate to " + rate + "...\n", True)
-            self.multitorrent.set_option('max_upload_rate', int(rate), None, False)
+            rateNew = command[1:]
+            transferLog("command: setting upload-rate to " + rateNew + "...\n", True)
+            self.multitorrent.set_option('max_upload_rate', int(rateNew), None, False)
             return False
 
         # d
@@ -630,9 +630,9 @@ class TorrentApp(object):
             if len(command) < 2:
                 transferLog("invalid rate.\n", True)
                 return False
-            rate = command[1:]
-            transferLog("command: setting download-rate to " + rate + "...\n", True)
-            self.multitorrent.set_option('max_download_rate', int(rate), None, False)
+            rateNew = command[1:]
+            transferLog("command: setting download-rate to " + rateNew + "...\n", True)
+            self.multitorrent.set_option('max_download_rate', int(rateNew), None, False)
             return False
 
         # r
@@ -640,17 +640,27 @@ class TorrentApp(object):
             if len(command) < 2:
                 transferLog("invalid runtime-code.\n", True)
                 return False
-            runtime = command[1]
+            runtimeNew = command[1]
             rt = ''
-            if runtime == '0':
+            if runtimeNew == '0':
                 rt = 'False'
-            elif runtime == '1':
+            elif runtimeNew == '1':
                 rt = 'True'
             else:
-                transferLog("runtime-code unknown: " + runtime + "\n", True)
+                transferLog("runtime-code unknown: " + runtimeNew + "\n", True)
                 return False
             transferLog("command: setting die-when-done to " + rt + "...\n", True)
             self.d.dieWhenDone = rt
+            return False
+
+        # s
+        elif opCode == 's':
+            if len(command) < 2:
+                transferLog("invalid sharekill.\n", True)
+                return False
+            sharekillNew = command[1:]
+            transferLog("command: setting sharekill to " + sharekillNew + "...\n", True)
+            self.d.seedLimit = sharekillNew
             return False
 
         # default
