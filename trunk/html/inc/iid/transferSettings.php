@@ -36,9 +36,7 @@ require_once('inc/functions/functions.common.php');
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
-$isSave = (isset($_REQUEST['save']))
-	? true
-	: false;
+$isSave = (isset($_REQUEST['save'])) ? true : false;
 
 // validate transfer
 if (isValidTransfer($transfer) !== true) {
@@ -64,9 +62,7 @@ if ($loaded !== true)
 	$ch->settingsDefault();
 
 // set running-field
-$ch->running = isTransferRunning($transfer)
-	? 1
-	: 0;
+$ch->running = isTransferRunning($transfer) ? 1 : 0;
 
 if ($isSave) { /* save */
 
@@ -89,6 +85,13 @@ if ($isSave) { /* save */
 		'minport',
 		'maxport',
 		'maxcons'
+	);
+
+	// runtime-settings
+	$settingsRuntime = array(
+		'max_upload_rate',
+		'max_download_rate',
+		'torrent_dies_when_done'
 	);
 
 	// settings-labels
@@ -159,16 +162,17 @@ if ($isSave) { /* save */
 				'val' => $value
 				)
 			);
-			if ($ch->running == 1) {
-				// send
-				if (($doSend) && (($settingsKey == 'max_upload_rate') || ($settingsKey == 'max_download_rate')))
+			// send
+			if (($ch->running == 1) && ($doSend)) {
+				// runtime
+				if (in_array($settingsKey, $settingsRuntime))
 					array_push($list_send, array(
 						'lbl' => $settingsLabels[$settingsKey],
 						'val' => $value
 						)
 					);
 				// restart
-				if (($doSend) && ($settingsKey != 'max_upload_rate') && ($settingsKey != 'max_download_rate'))
+				else
 					array_push($list_restart, array(
 						'lbl' => $settingsLabels[$settingsKey],
 						'val' => $value
@@ -205,6 +209,13 @@ if ($isSave) { /* save */
 			// upload-rate
 			if ($settingsNew['max_download_rate'] != $settingsCurrent['max_download_rate'])
 				$ch->setRateDownload($transfer, $settingsNew['max_download_rate']);
+
+			// die-when-done
+			if ($settingsNew['torrent_dies_when_done'] != $settingsCurrent['torrent_dies_when_done']) {
+				$workload = ($settingsNew['torrent_dies_when_done'] == "True") ? "1" : "0";
+				// add command to buffer
+	        	CommandHandler::add($transfer, "r".$workload);
+			}
 
 			// send command-buffer to client
 			CommandHandler::send($transfer);
