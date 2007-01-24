@@ -41,14 +41,9 @@ $_SESSION = array('cache' => false);
 if ((!isset($argc)) || ($argc < 7))
 	die("Arg Error\n");
 
-// change to docroot if cwd is in bin.
-$cwd = getcwd();
-$cwdBase = basename($cwd);
-if ($cwdBase == "bin")
-	chdir("..");
-
-// include path
-ini_set('include_path', ini_get('include_path').':../:');
+// change to docroot if needed
+if (!is_file(realpath(getcwd().'/inc/main.core.php')))
+	chdir(realpath(dirname(__FILE__)."/.."));
 
 // main.core
 require_once('inc/main.core.php');
