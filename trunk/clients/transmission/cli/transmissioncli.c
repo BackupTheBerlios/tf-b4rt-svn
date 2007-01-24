@@ -105,9 +105,9 @@ int main(int argc, char ** argv) {
 		for (i = 0; i < SHA_DIGEST_LENGTH; i++)
 			printf("%02x", info->hash[i]);
 		printf("\n");
-        printf("tracker:  %s:%d\n",
+		printf("tracker:  %s:%d\n",
 				s->trackerAddress, s->trackerPort );
-        printf("announce: %s\n", s->trackerAnnounce );
+		printf("announce: %s\n", s->trackerAnnounce );
 		printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
 			info->totalSize, info->totalSize / info->pieceSize,
 			info->pieceSize, info->totalSize % info->pieceSize);
@@ -233,10 +233,10 @@ int main(int argc, char ** argv) {
 		// torrent-stat
 		s = tr_torrentStat(tor);
 
-        if(s->status & TR_STATUS_PAUSE) {                    /* --- PAUSE --- */
+		if(s->status & TR_STATUS_PAUSE) {                    /* --- PAUSE --- */
 
 			// break
-            break;
+			break;
 
 		} else if (s->status & TR_STATUS_CHECK) {            /* --- CHECK --- */
 
@@ -282,16 +282,16 @@ int main(int argc, char ** argv) {
 			if (s->eta != -1) {
 				// sanity-check. value of eta >= 7 days is not really of use
 				if (s->eta < 604800) {
-					if ((s->eta / (24 * 60 * 60)) != 0) {
+					if ((s->eta / (86400)) != 0) {
 						sprintf(tf_eta, "%d:%02d:%02d:%02d",
-							s->eta / (24 * 60 * 60),
-							((s->eta) % (24 * 60 * 60)) / (60 * 60),
-							((s->eta) % (60 * 60) / 60),
+							s->eta / (86400),
+							((s->eta) % (86400)) / (3600),
+							((s->eta) % (3600) / 60),
 							s->eta % 60);
-					} else if ((s->eta / (60 * 60)) != 0) {
+					} else if ((s->eta / (3600)) != 0) {
 						sprintf(tf_eta, "%d:%02d:%02d",
-							(s->eta) / (60 * 60),
-							((s->eta) % (60 * 60) / 60),
+							(s->eta) / (3600),
+							((s->eta) % (3600) / 60),
 							s->eta % 60);
 					} else {
 						sprintf(tf_eta, "%d:%02d",
@@ -373,7 +373,7 @@ int main(int argc, char ** argv) {
 					"Download Succeeded!",            /* State text       */
 					s->rateDownload,                  /* download speed   */
 					s->rateUpload,                    /* upload speed     */
-					tf_owner,                         /* owner             */
+					tf_owner,                         /* owner            */
 					s->peersUploading, tf_seeders,    /* seeds            */
 					s->peersDownloading, tf_leechers, /* peers            */
 					tf_sharing,                       /* sharing          */
@@ -444,11 +444,11 @@ int main(int argc, char ** argv) {
 			0,                /* State            */
 			progress,         /* progress         */
 			tf_eta,           /* State text       */
-							  /* download speed   */
-							  /* upload speed     */
+			                  /* download speed   */
+			                  /* upload speed     */
 			tf_owner,         /* owner            */
-							  /* seeds            */
-							  /* peers            */
+			                  /* seeds            */
+			                  /* peers            */
 			tf_sharing,       /* sharing          */
 			tf_seedLimit,     /* seedlimit        */
 			s->uploaded,      /* uploaded bytes   */
@@ -463,16 +463,16 @@ int main(int argc, char ** argv) {
 	// stop torrent
 	tr_torrentStop(tor);
 
-    // Try for 5 seconds to delete any port mappings for nat traversal
-    tr_natTraversalEnable(h, 0);
-    for (i = 0; i < 10; i++) {
-        nat = tr_natTraversalStatus(h);
-        if (TR_NAT_TRAVERSAL_DISABLED == nat) {
-            /* Port mappings were deleted */
-            break;
-        }
-        usleep(500000);
-    }
+	// Try for 5 seconds to delete any port mappings for nat traversal
+	tr_natTraversalEnable(h, 0);
+	for (i = 0; i < 10; i++) {
+		nat = tr_natTraversalStatus(h);
+		if (TR_NAT_TRAVERSAL_DISABLED == nat) {
+			/* Port mappings were deleted */
+			break;
+		}
+		usleep(500000);
+	}
 
 	// remove pid file
 	tf_pidDelete();
@@ -677,13 +677,13 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			switch (workload[0]) {
 				case '0':
 					tf_print(sprintf(tf_message,
-						"command: command: setting die-when-done to False\n"));
-																				// TODO
+						"command: command: setting die-when-done to 0\n"));
+					tf_dieWhenDone = 0;
 					return 0;
 				case '1':
 					tf_print(sprintf(tf_message,
-						"command: command: setting die-when-done to True\n"));
-																				// TODO
+						"command: command: setting die-when-done to 1\n"));
+					tf_dieWhenDone = 1;
 					return 0;
 				default:
 					tf_print(sprintf(tf_message,
