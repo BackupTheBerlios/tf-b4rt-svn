@@ -30,7 +30,7 @@ vlc
 */
 
 // prevent direct invocation
-if (!isset($cfg['user'])) {
+if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 	@ob_end_clean();
 	@header("location: ../../index.php");
 	exit();
