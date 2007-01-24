@@ -173,7 +173,7 @@ class Rssd
 	/**
 	 * process a feed
 	 *
-	 * @param $tdir
+	 * @param $sdir
 	 * @param $filter
 	 * @param $hist
 	 * @param $url

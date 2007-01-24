@@ -137,7 +137,7 @@ class FluxCLI
 			$this->_outputError("invalid args.\n");
 			return false;
 		}
-		$this->_script = $args[0];
+		$this->_script = basename($args[0]);
 		$this->_action = (isset($args[1])) ? $args[1] : "";
 		$this->_params = ($argCount > 2) ? array_splice($argv, 2) : array();
 
@@ -160,18 +160,13 @@ class FluxCLI
 		// action-switch
 		switch ($this->_action) {
 
-			case "transfers":
-				echo "\ntransfers\n\n";
-				break;
 
 
 			case "version":
 			case "-version":
 			case "--version":
 			case "-v":
-
-				echo "\nversion\n\n";
-
+				$this->_printVersion();
 				break;
 
 			case "help":
@@ -183,12 +178,147 @@ class FluxCLI
 				break;
 
 		}
-
     }
 
 	// =========================================================================
 	// private methods
 	// =========================================================================
+
+	/**
+	 * Print Net Stat
+	 *
+	 * @return mixed
+	 */
+	function _netstatShow() {
+	}
+
+	/**
+	 * Print Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersPrint() {
+	}
+
+	/**
+	 * Start Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferStart($transfer) {
+	}
+
+	/**
+	 * Stop Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferStop($transfer) {
+	}
+
+	/**
+	 * Reset Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferReset($transfer) {
+	}
+
+	/**
+	 * Delete Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferDelete($transfer) {
+	}
+
+	/**
+	 * Wipe Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferWipe($transfer) {
+	}
+
+	/**
+	 * Inject Transfer
+	 *
+	 * @param $transferFile
+	 * @param $username
+	 * @return mixed
+	 */
+	function _transferInject($transferFile, $username) {
+	}
+
+	/**
+	 * Start Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersStart() {
+	}
+
+	/**
+	 * Resume Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersResume() {
+	}
+
+	/**
+	 * Stop Transfers
+	 *
+	 * @return mixed
+	 */
+	function _transfersStop() {
+	}
+
+	/**
+	 * Watch Dir
+	 *
+	 * @param $watchDir
+	 * @param $username
+	 * @return mixed
+	 */
+	function _watchDir($watchDir, $username) {
+	}
+
+	/**
+	 * Xfer Shutdown
+	 *
+	 * @param $delta
+	 * @return mixed
+	 */
+	function _xferShutdown($delta) {
+	}
+
+	/**
+	 * Dump Database
+	 *
+	 * @param $type
+	 * @return mixed
+	 */
+	function _databaseDump($type) {
+	}
+
+	/**
+	 * Process Rss Feed
+	 *
+	 * @param $saveDir
+	 * @param $filterFile
+	 * @param $historyFile
+	 * @param $url
+	 * @param $username
+	 * @return mixed
+	 */
+	function _rssProcessFeed($saveDir, $filterFile, $historyFile, $url, $username) {
+	}
 
     /**
      * output message
@@ -209,11 +339,18 @@ class FluxCLI
     }
 
     /**
+     * prints version
+     */
+    function _printVersion() {
+    	echo $this->name." Revision "._REVISION_FLUXCLI."\n";
+    }
+
+    /**
      * prints usage
      */
     function _printUsage() {
-		echo $this->name." Revision "._REVISION_FLUXCLI."\n"
-		. "\n"
+		$this->_printVersion();
+		echo "\n"
 		. "Usage: ".$this->_script." action [extra-args]\n"
 		. "\n"
 		. "action: \n"
@@ -280,6 +417,7 @@ class FluxCLI
 		. $this->_script." checksums /var/www\n"
 		. "\n";
     }
+
 
 }
 
