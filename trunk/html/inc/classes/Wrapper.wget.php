@@ -107,6 +107,7 @@ class WrapperWget
      */
     function WrapperWget($file, $owner, $path, $drate, $retries, $pasv) {
     	global $cfg;
+
         // set fields from params
 		$this->_transfer = str_replace($cfg['transfer_file_path'], '', $file);
 		$this->_owner = $owner;
@@ -115,10 +116,14 @@ class WrapperWget
 		$this->_retries = $retries;
 		$this->_pasv = $pasv;
 		$this->_commandFile = $file.".cmd";
+
+		// set user-var
+		$cfg["user"] = $this->_owner;
+
 		// set admin-var
 		$cfg['isAdmin'] = IsAdmin($this->_owner);
-		// init object-instances
-		// sf
+
+		// init sf-instance
 		$this->_sf = new StatFile($this->_transfer, $this->_owner);
     }
 
