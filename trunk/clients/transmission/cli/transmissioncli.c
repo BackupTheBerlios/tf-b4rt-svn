@@ -692,6 +692,18 @@ static int tf_execCommand(tr_handle_t *h, char *s) {
 			}
 			return 0;
 
+		// s
+		case 's':
+			if (strlen(workload) < 1) {
+				tf_print(sprintf(tf_message,
+					"invalid sharekill.\n"));
+				return 0;
+			}
+			tf_print(sprintf(tf_message,
+				"command: setting sharekill to %d...\n", atoi(workload)));
+			tf_seedLimit = atoi(workload);
+			return 0;
+
 		// default
 		default:
 			tf_print(sprintf(tf_message,
