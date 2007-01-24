@@ -91,7 +91,8 @@ if ($isSave) { /* save */
 	$settingsRuntime = array(
 		'max_upload_rate',
 		'max_download_rate',
-		'torrent_dies_when_done'
+		'torrent_dies_when_done',
+		'sharekill'
 	);
 
 	// settings-labels
@@ -216,6 +217,10 @@ if ($isSave) { /* save */
 				// add command to buffer
 	        	CommandHandler::add($transfer, "r".$workload);
 			}
+
+			// sharekill
+			if ($settingsNew['sharekill'] != $settingsCurrent['sharekill'])
+				$ch->setSharekill($transfer, $settingsNew['sharekill']);
 
 			// send command-buffer to client
 			CommandHandler::send($transfer);
