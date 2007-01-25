@@ -281,7 +281,7 @@ class FluxCLI
 				} else {
 					return $this->_watch(
 						$this->_args[0], $this->_args[1],
-						empty($this->_args[2]) ? "" : $this->_args[2]
+						empty($this->_args[2]) ? "ds" : $this->_args[2]
 					);
 				}
 
