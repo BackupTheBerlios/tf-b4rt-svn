@@ -182,7 +182,6 @@ class MaintenanceAndRepair
 	 * instance_repair
 	 */
 	function instance_repair() {
-		global $cfg;
     	// (re)set state
     	$this->state = MAINTENANCEANDREPAIR_STATE_NULL;
 		// output
@@ -193,8 +192,6 @@ class MaintenanceAndRepair
 		$this->_repairApp();
 		// database
 		$this->_maintenanceDatabase();
-		// log
-		AuditAction($cfg["constants"]["debug"], "Repair done.");
 		/* done */
 		$this->_outputMessage("Repair done.\n");
 		// state
@@ -206,26 +203,6 @@ class MaintenanceAndRepair
 	// =========================================================================
 
 	/* maintenance-methods */
-
-	/**
-	 * _maintenance
-	 *
-	 * @param $trestart
-	 */
-	function _maintenance($trestart = false) {
-		// output
-		$this->_outputMessage("Running Maintenance...\n");
-		// fluxd
-		$this->_maintenanceFluxd();
-		// transfers
-		$this->_maintenanceTransfers($trestart);
-		// database
-		$this->_maintenanceDatabase();
-		// output
-		$this->_outputMessage("Maintenance done.\n");
-		// state
-		$this->state = MAINTENANCEANDREPAIR_STATE_OK;
-	}
 
 	/**
 	 * _maintenanceFluxd
@@ -555,27 +532,6 @@ class MaintenanceAndRepair
 	}
 
 	/* repair-methods */
-
-	/**
-	 * _repair
-	 */
-	function _repair() {
-		global $cfg;
-		// output
-		$this->_outputMessage("Running Repair...\n");
-		// fluxd
-		$this->_maintenanceFluxd();
-		// repair app
-		$this->_repairApp();
-		// database
-		$this->_maintenanceDatabase();
-		// log
-		AuditAction($cfg["constants"]["debug"], "Repair done.");
-		/* done */
-		$this->_outputMessage("Repair done.\n");
-		// state
-		$this->state = MAINTENANCEANDREPAIR_STATE_OK;
-	}
 
 	/**
 	 * _repairApp

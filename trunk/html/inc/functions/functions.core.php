@@ -1238,9 +1238,11 @@ function getTransferListArray() {
 				AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 				@error("Invalid Transfer", "", "", array($transfer));
 			}
-			$settingsAry['hash'] = getTransferHash($transfer);
-			$settingsAry["savepath"] = getTransferSavepath($transfer);
-			$settingsAry['datapath'] = getTransferDatapath($transfer);
+			$settingsAry['hash'] = "";
+			$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+				? $cfg["path"].$transferowner.'/'
+				: $cfg["path"].$cfg["path_incoming"].'/';
+			$settingsAry['datapath'] = "";
 		}
 		// cache running-flag in local var. we will access that often
 		$transferRunning = $sf->running;
@@ -1584,9 +1586,11 @@ function getTransferDetails($transfer, $full) {
 			AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
 			@error("Invalid Transfer", "", "", array($transfer));
 		}
-		$settingsAry['hash'] = getTransferHash($transfer);
-		$settingsAry["savepath"] = getTransferSavepath($transfer);
-		$settingsAry['datapath'] = getTransferDatapath($transfer);
+		$settingsAry['hash'] = "";
+		$settingsAry["savepath"] = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].$transferowner.'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
+		$settingsAry['datapath'] = "";
 	}
 	// size
 	$size = floatval($sf->size);
