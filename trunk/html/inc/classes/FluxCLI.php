@@ -249,7 +249,10 @@ class FluxCLI
 					array_push($this->_argErrors, "missing argument(s) for inject.");
 					break;
 				} else {
-					return $this->_inject($this->_args[0], $this->_args[1]);
+					return $this->_inject(
+						$this->_args[0], $this->_args[1],
+						empty($this->_args[2]) ? "" : $this->_args[2]
+					);
 				}
 
 			/* watch */
@@ -258,7 +261,10 @@ class FluxCLI
 					array_push($this->_argErrors, "missing argument(s) for watch.");
 					break;
 				} else {
-					return $this->_watch($this->_args[0], $this->_args[1]);
+					return $this->_watch(
+						$this->_args[0], $this->_args[1],
+						empty($this->_args[2]) ? "" : $this->_args[2]
+					);
 				}
 
 			/* rss */
@@ -594,9 +600,10 @@ class FluxCLI
 	 *
 	 * @param $transferFile
 	 * @param $username
+	 * @param $options
 	 * @return mixed
 	 */
-	function _inject($transferFile, $username) {
+	function _inject($transferFile, $username, $options) {
 		global $cfg;
 		// check file
 		if (!@is_file($transferFile)) {
@@ -630,6 +637,15 @@ class FluxCLI
                     // inject
                     $this->_outputMessage("injecting ".$fileName." ...\n");
                     injectTransfer($fileName);
+	            	// delete source-file
+	            	if (strpos($options, 'd') !== false) {
+		            	$this->_outputMessage("deleting source-file ".$sourceFile." ...\n");
+		            	@unlink($sourceFile);
+	            	}
+	            	// start and/or return
+	            	return (strpos($options, 's') !== false)
+	            		? $this->_transferStart($transfer)
+	            		: true;
                 } else {
                 	array_push($msgs, "File could not be copied: ".$transferFile);
                 }
@@ -641,7 +657,7 @@ class FluxCLI
         }
 		if (count($msgs) == 0) {
 			$this->_outputMessage("done.\n");
-			return $fileName;
+			return true;
 		} else {
 			$this->_messages = array_merge($this->_messages, $msgs);
 			$this->_outputError("failed: ".$transfer."\n".implode("\n", $msgs));
@@ -654,9 +670,10 @@ class FluxCLI
 	 *
 	 * @param $watchDir
 	 * @param $username
+	 * @param $options
 	 * @return mixed
 	 */
-	function _watch($watchDir, $username) {
+	function _watch($watchDir, $username, $options) {
 		global $cfg;
 		// check dir
 		if (!@is_dir($transferFile)) {
@@ -668,12 +685,10 @@ class FluxCLI
 			$this->_outputError("username ".$username." is no valid user.\n");
 			return false;
 		}
-		// trailing slash
-        $watchDir = checkDirPathString($watchDir);
         // process dir
         $this->_outputMessage("Processing watch-dir ".$watchDir." for user ".$username." ...\n");
         if ($dirHandle = @opendir($watchDir)) {
-        	// read input-files
+        	// get input-files
         	$input = array();
 			while (false !== ($file = @readdir($dirHandle)))
         		array_push($input, $file);
@@ -682,32 +697,20 @@ class FluxCLI
             	$this->_outputMessage("done. no files found.\n");
             	return true;
             }
-            // process files
-            $ctr = array('files' => count($input), 'injects' => 0, 'starts' => 0);
+			// trailing slash
+        	$watchDir = checkDirPathString($watchDir);
+            // process input-files
+            $ctr = array('files' => count($input), 'ok' => 0);
             foreach ($input as $file) {
-            	// source-file
-            	$sourceFile = $watchDir.$file;
-            	// inject
-            	$transfer = $this->_inject();
-            	// continue if inject failed
-            	if ($transfer === false) {
-            		$this->_outputError("skip file ".$sourceFile." as inject failed.\n");
-					continue;
-            	}
-            	// ctr
-            	$ctr['injects']++;
-            	// delete source-file
-            	$this->_outputMessage("deleting source-file ".$sourceFile." ...\n");
-            	@unlink($sourceFile);
-            	// start
-				if ($this->_transferStart($transfer))
-					$ctr['starts']++;
+            	// inject, increment if ok
+            	if ($this->_inject($watchDir.$file, $username, $options) !== false)
+            		$ctr['ok']++;
             }
-            if ($ctr['files'] == $ctr['starts']) {
-            	$this->_outputMessage("done. files: ".$ctr['files']."; injects: ".$ctr['injects']."; starts: ".$ctr['starts']."\n");
+            if ($ctr['files'] == $ctr['ok']) {
+            	$this->_outputMessage("done. files: ".$ctr['files']."; ok: ".$ctr['ok']."\n");
             	return true;
             } else {
-            	$this->_outputError("done with errors. files: ".$ctr['files']."; injects: ".$ctr['injects']."; starts: ".$ctr['starts']."\n");
+            	$this->_outputError("done with errors. files: ".$ctr['files']."; ok: ".$ctr['ok']."\n");
             	return false;
             }
         } else {
@@ -942,9 +945,15 @@ class FluxCLI
 		. "  inject      : injects a transfer-file into the application.\n"
 		. "                extra-arg 1 : path to transfer-meta-file\n"
 		. "                extra-arg 2 : username of fluxuser\n"
+		. "                extra-arg 3 : options (s/d) (default : none)\n"
+		. "                              options-arg contains 'd' : delete source-file after inject\n"
+		. "                              options-arg contains 's' : start transfer after inject\n"
 		. "  watch       : watch a dir and inject + start transfers into the app.\n"
 		. "                extra-arg 1 : path to users watch-dir\n"
 		. "                extra-arg 2 : username of fluxuser\n"
+		. "                extra-arg 3 : options (d/s) (default : ds)\n"
+		. "                              options-arg contains 'd' : delete source-file(s) after inject\n"
+		. "                              options-arg contains 's' : start transfer(s) after inject\n"
 		. "  rss         : download torrents matching filter-rules from a rss-feed.\n"
 		. "                extra-arg 1 : save-dir\n"
 		. "                extra-arg 2 : filter-file\n"
@@ -976,7 +985,9 @@ class FluxCLI
 		. $this->_script." delete foo.torrent\n"
 		. $this->_script." wipe foo.torrent\n"
 		. $this->_script." inject /path/to/foo.torrent fluxuser\n"
+		. $this->_script." inject /path/to/foo.torrent fluxuser ds\n"
 	    . $this->_script." watch /path/to/watch-dir/ fluxuser\n"
+	    . $this->_script." watch /path/to/watch-dir/ fluxuser d\n"
 	    . $this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml fluxuser\n"
 	    . $this->_script." xfer month\n"
 		. $this->_script." repair\n"

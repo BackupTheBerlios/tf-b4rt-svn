@@ -63,7 +63,7 @@ Fluxd::initialize();
 // Qmgr
 FluxdServiceMod::initializeServiceMod('Qmgr');
 
-// control to class
+// FluxCLI
 FluxCLI::processRequest($argv);
 
 ?>
