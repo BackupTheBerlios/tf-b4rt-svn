@@ -204,6 +204,24 @@ class FluxCLI
 					return $this->_transferStop($this->_args[0]);
 				}
 
+			/* enqueue */
+			case "enqueue":
+				if (empty($this->_args[0])) {
+					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
+					break;
+				} else {
+					return $this->_transferEnqueue($this->_args[0]);
+				}
+
+			/* dequeue */
+			case "dequeue":
+				if (empty($this->_args[0])) {
+					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
+					break;
+				} else {
+					return $this->_transferDequeue($this->_args[0]);
+				}
+
 			/* reset */
 			case "reset":
 				if (empty($this->_args[0])) {
@@ -406,7 +424,7 @@ class FluxCLI
 		// set user
 		$cfg["user"] = getOwner($transfer);
 		// output
-		$this->_outputMessage("Starting ".$transfer." ...\n");
+		$this->_outputMessage("Starting ".$transfer." for user ".$cfg["user"]."...\n");
 		// force start, dont queue
 		$ch = ClientHandler::getInstance(getTransferClient($transfer));
 		$ch->start($transfer, false, false);
@@ -441,11 +459,79 @@ class FluxCLI
 		// set user
 		$cfg["user"] = getOwner($transfer);
 		// output
-		$this->_outputMessage("Stopping ".$transfer." ...\n");
+		$this->_outputMessage("Stopping ".$transfer." for user ".$cfg["user"]."...\n");
 		// stop
 		$ch = ClientHandler::getInstance(getTransferClient($transfer));
         $ch->stop($transfer);
         $this->_outputMessage("done.\n");
+		return true;
+	}
+
+	/**
+	 * Enqueue Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferEnqueue($transfer) {
+		global $cfg;
+		// check queue
+		if (!FluxdQmgr::isRunning()) {
+			$this->_outputError("Qmgr is not running.\n");
+			return false;
+		}
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		// check running
+		if (isTransferRunning($transfer)) {
+			$this->_outputError("transfer already running.\n");
+			return false;
+		}
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// output
+		$this->_outputMessage("Enqueue ".$transfer." for user ".$cfg["user"]."...\n");
+		// force start, dont queue
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		$ch->start($transfer, false, true);
+		if ($ch->state == CLIENTHANDLER_STATE_OK) { /* hooray */
+			$this->_outputMessage("done.\n");
+			return true;
+		} else {
+			$this->_messages = array_merge($this->_messages, $ch->messages);
+			$this->_outputError("failed:\n".implode("\n", $ch->messages)."\n");
+			return false;
+		}
+	}
+
+	/**
+	 * Dequeue Transfer
+	 *
+	 * @param $transfer
+	 * @return mixed
+	 */
+	function _transferDequeue($transfer) {
+		global $cfg;
+		// check queue
+		if (!FluxdQmgr::isRunning()) {
+			$this->_outputError("Qmgr is not running.\n");
+			return false;
+		}
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// output
+		$this->_outputMessage("Dequeue ".$transfer." for user ".$cfg["user"]."...\n");
+		// dequeue
+		FluxdQmgr::dequeueTransfer($transfer, $cfg["user"]);
+		$this->_outputMessage("done.\n");
 		return true;
 	}
 
@@ -939,19 +1025,23 @@ class FluxCLI
 		. "                extra-arg : name of transfer as known inside webapp\n"
 		. "  wipe        : reset totals, delete metafile, delete data.\n"
 		. "                extra-arg : name of transfer as known inside webapp\n"
+		. "  enqueue     : enqueue a transfer.\n"
+		. "                extra-arg : name of transfer as known inside webapp\n"
+		. "  dequeue     : dequeue a transfer.\n"
+		. "                extra-arg : name of transfer as known inside webapp\n"
 	    . "  start-all   : start all transfers.\n"
 	    . "  resume-all  : resume all transfers.\n"
 		. "  stop-all    : stop all running transfers.\n"
 		. "  inject      : injects a transfer-file into the application.\n"
 		. "                extra-arg 1 : path to transfer-meta-file\n"
 		. "                extra-arg 2 : username of fluxuser\n"
-		. "                extra-arg 3 : options (s/d) (default : none)\n"
+		. "                extra-arg 3 : options (s/d) (optional, default : none)\n"
 		. "                              options-arg contains 'd' : delete source-file after inject\n"
 		. "                              options-arg contains 's' : start transfer after inject\n"
 		. "  watch       : watch a dir and inject + start transfers into the app.\n"
 		. "                extra-arg 1 : path to users watch-dir\n"
 		. "                extra-arg 2 : username of fluxuser\n"
-		. "                extra-arg 3 : options (d/s) (default : ds)\n"
+		. "                extra-arg 3 : options (d/s) (optional, default : ds)\n"
 		. "                              options-arg contains 'd' : delete source-file(s) after inject\n"
 		. "                              options-arg contains 's' : start transfer(s) after inject\n"
 		. "  rss         : download torrents matching filter-rules from a rss-feed.\n"
@@ -978,6 +1068,8 @@ class FluxCLI
 		. $this->_script." netstat\n"
 		. $this->_script." start foo.torrent\n"
 		. $this->_script." stop foo.torrent\n"
+		. $this->_script." enqueue foo.torrent\n"
+		. $this->_script." dequeue foo.torrent\n"
 		. $this->_script." start-all\n"
 		. $this->_script." resume-all\n"
 		. $this->_script." stop-all\n"
@@ -988,6 +1080,7 @@ class FluxCLI
 		. $this->_script." inject /path/to/foo.torrent fluxuser ds\n"
 	    . $this->_script." watch /path/to/watch-dir/ fluxuser\n"
 	    . $this->_script." watch /path/to/watch-dir/ fluxuser d\n"
+	    . $this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml\n"
 	    . $this->_script." rss /path/to/rss-torrents/ /path/to/filter.dat /path/to/filter.hist http://www.example.com/rss.xml fluxuser\n"
 	    . $this->_script." xfer month\n"
 		. $this->_script." repair\n"
