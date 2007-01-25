@@ -116,15 +116,6 @@ if (strcasecmp('zip', $arg3) == 0) {
 	exit();
 }
 
-//debug: echo variables
-if (strcasecmp('debug', $arg3) == 0) {
-	echo $arg1 . '<BR>';
-	echo $arg2 . '<BR>';
-	echo $arg3 . '<BR>';
-	echo $arg4 . '<BR>';
-	echo $arg5 . '<BR>';
-}
-
 /**
  * is_running
  *

@@ -147,33 +147,6 @@ class ClientHandlerNzbperl extends ClientHandler
 	}
 
     /**
-     * stops a client
-     *
-     * @param $transfer name of the transfer
-     * @param $kill kill-param (optional)
-     * @param $transferPid transfer Pid (optional)
-     */
-    function stop($transfer, $kill = false, $transferPid = 0) {
-		// set vars
-		$this->_setVarsForTransfer($transfer);
-		// stop the client
-		$this->_stop($kill, $transferPid);
-    }
-
-    /**
-     * deletes the transfer
-     *
-     * @param $transfer name of the transfer
-     * @return boolean on success
-     */
-    function delete($transfer) {
-		//set vars
-		$this->_setVarsForTransfer($transfer);
-		// delete
-		$this->_delete();
-    }
-
-    /**
      * set download rate of a transfer
      *
      * @param $transfer

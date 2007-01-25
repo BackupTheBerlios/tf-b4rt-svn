@@ -49,6 +49,100 @@ class ClientHandlerWget extends ClientHandler
 	// =========================================================================
 
     /**
+     * starts a client
+     *
+     * @param $transfer name of the transfer
+     * @param $interactive (boolean) : is this a interactive startup with dialog ?
+     * @param $enqueue (boolean) : enqueue ?
+     */
+    function start($transfer, $interactive = false, $enqueue = false) {
+    	global $cfg;
+
+        // set vars from the wget-file
+		$this->setVarsFromFile($transfer);
+
+    	// log
+    	$this->logMessage($this->client."-start : ".$transfer."\n", true);
+
+        // do wget special-pre-start-checks
+        // check to see if the path to the wget-bin is valid
+        if (!is_executable($cfg["bin_wget"])) {
+        	$this->state = CLIENTHANDLER_STATE_ERROR;
+        	$msg = "wget cannot be executed";
+        	AuditAction($cfg["constants"]["error"], $msg);
+        	$this->logMessage($msg."\n", true);
+        	array_push($this->messages, $msg);
+            array_push($this->messages, "bin_wget : ".$cfg["bin_wget"]);
+            // write error to stat
+			$sf = new StatFile($this->transfer, $this->owner);
+			$sf->time_left = 'Error';
+			$sf->write();
+			// return
+            return false;
+        }
+
+		// init starting of client
+        $this->_init($interactive, $enqueue, false, false);
+
+		// only continue if init succeeded (skip start / error)
+		if ($this->state != CLIENTHANDLER_STATE_READY) {
+			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
+				$msg = "Error after init (".$transfer.",".$interactive.",".$enqueue.",true,".$cfg['enable_sharekill'].")";
+				array_push($this->messages , $msg);
+				$this->logMessage($msg."\n", true);
+			}
+			// return
+			return false;
+		}
+
+		// build the command-string
+		// note : order of args must not change for ps-parsing-code in
+		// RunningTransferWget
+        $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
+        $this->command .= " " . escapeshellarg($this->transferFilePath);
+        $this->command .= " " . escapeshellarg($this->owner);
+        $this->command .= " " . escapeshellarg($this->savepath);
+        $this->command .= " " . escapeshellarg($this->drate * 1024);
+        $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);
+        $this->command .= " " . escapeshellarg($cfg["wget_ftp_pasv"]);
+        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
+        $this->command .= " &";
+
+		// state
+		$this->state = CLIENTHANDLER_STATE_READY;
+
+		// start the client
+		$this->_start();
+    }
+
+    /**
+     * sets fields from default-vals
+     *
+     * @param $transfer
+     */
+    function settingsDefault($transfer = "") {
+    	global $cfg;
+		// transfer vars
+        if ($transfer != "")
+        	$this->_setVarsForTransfer($transfer);
+        // common vars
+		$this->hash        = getTransferHash($this->transfer);
+        $this->datapath    = getTransferDatapath($this->transfer);
+    	$this->savepath    = getTransferSavepath($this->transfer);
+		$this->running     = 0;
+		$this->rate        = 0;
+		$this->drate       = $cfg["wget_limit_rate"];
+		$this->maxuploads  = 1;
+		$this->superseeder = 0;
+		$this->runtime     = "True";
+		$this->sharekill   = 0;
+		$this->minport     = 1;
+		$this->maxport     = 65535;
+		$this->maxcons     = 1;
+    }
+
+    /**
      * setVarsFromUrl
      *
      * @param $transferUrl
@@ -128,127 +222,6 @@ class ClientHandlerWget extends ClientHandler
 		// return
 		return $resultSuccess;
 	}
-
-    /**
-     * starts a client
-     *
-     * @param $transfer name of the transfer
-     * @param $interactive (boolean) : is this a interactive startup with dialog ?
-     * @param $enqueue (boolean) : enqueue ?
-     */
-    function start($transfer, $interactive = false, $enqueue = false) {
-    	global $cfg;
-
-        // set vars from the wget-file
-		$this->setVarsFromFile($transfer);
-
-    	// log
-    	$this->logMessage($this->client."-start : ".$transfer."\n", true);
-
-        // do wget special-pre-start-checks
-        // check to see if the path to the wget-bin is valid
-        if (!is_executable($cfg["bin_wget"])) {
-        	$this->state = CLIENTHANDLER_STATE_ERROR;
-        	$msg = "wget cannot be executed";
-        	AuditAction($cfg["constants"]["error"], $msg);
-        	$this->logMessage($msg."\n", true);
-        	array_push($this->messages, $msg);
-            array_push($this->messages, "bin_wget : ".$cfg["bin_wget"]);
-            // write error to stat
-			$sf = new StatFile($this->transfer, $this->owner);
-			$sf->time_left = 'Error';
-			$sf->write();
-			// return
-            return false;
-        }
-
-		// init starting of client
-        $this->_init($interactive, $enqueue, false, false);
-
-		// only continue if init succeeded (skip start / error)
-		if ($this->state != CLIENTHANDLER_STATE_READY) {
-			if ($this->state == CLIENTHANDLER_STATE_ERROR) {
-				$msg = "Error after init (".$transfer.",".$interactive.",".$enqueue.",true,".$cfg['enable_sharekill'].")";
-				array_push($this->messages , $msg);
-				$this->logMessage($msg."\n", true);
-			}
-			// return
-			return false;
-		}
-
-		// build the command-string
-		// note : order of args must not change for ps-parsing-code in
-		// RunningTransferWget
-        $this->command  = "nohup ".$cfg['bin_php']." -f bin/wget.php";
-        $this->command .= " " . escapeshellarg($this->transferFilePath);
-        $this->command .= " " . escapeshellarg($this->owner);
-        $this->command .= " " . escapeshellarg($this->savepath);
-        $this->command .= " " . escapeshellarg($this->drate * 1024);
-        $this->command .= " " . escapeshellarg($cfg["wget_limit_retries"]);
-        $this->command .= " " . escapeshellarg($cfg["wget_ftp_pasv"]);
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " &";
-
-		// state
-		$this->state = CLIENTHANDLER_STATE_READY;
-
-		// start the client
-		$this->_start();
-    }
-
-    /**
-     * stops a client
-     *
-     * @param $transfer name of the transfer
-     * @param $kill kill-param (optional)
-     * @param $transferPid transfer Pid (optional)
-     */
-    function stop($transfer, $kill = false, $transferPid = 0) {
-		// set vars
-		$this->_setVarsForTransfer($transfer);
-		// stop the client
-		$this->_stop($kill, $transferPid);
-    }
-
-	/**
-	 * deletes a transfer
-	 *
-	 * @param $transfer name of the transfer
-	 * @return boolean of success
-	 */
-	function delete($transfer) {
-        // set vars from the wget-file
-		$this->_setVarsForTransfer($transfer);
-		// delete
-		$this->_delete();
-	}
-
-    /**
-     * sets fields from default-vals
-     *
-     * @param $transfer
-     */
-    function settingsDefault($transfer = "") {
-    	global $cfg;
-		// transfer vars
-        if ($transfer != "")
-        	$this->_setVarsForTransfer($transfer);
-        // common vars
-		$this->hash        = getTransferHash($this->transfer);
-        $this->datapath    = getTransferDatapath($this->transfer);
-    	$this->savepath    = getTransferSavepath($this->transfer);
-		$this->running     = 0;
-		$this->rate        = 0;
-		$this->drate       = $cfg["wget_limit_rate"];
-		$this->maxuploads  = 1;
-		$this->superseeder = 0;
-		$this->runtime     = "True";
-		$this->sharekill   = 0;
-		$this->minport     = 1;
-		$this->maxport     = 65535;
-		$this->maxcons     = 1;
-    }
 
 }
 

@@ -156,23 +156,6 @@ class ClientHandler
     function start($transfer, $interactive = false, $enqueue = false) { return; }
 
     /**
-     * stops a client
-     *
-     * @param $transfer name of the transfer
-     * @param $kill kill-param (optional)
-     * @param $transferPid transfer Pid (optional)
-     */
-    function stop($transfer, $kill = false, $transferPid = 0) { return; }
-
-	/**
-	 * deletes a transfer
-	 *
-	 * @param $transfer name of the transfer
-	 * @return boolean of success
-	 */
-	function delete($transfer) { return; }
-
-    /**
      * deletes cache of a transfer
      *
      * @param $transfer
@@ -225,8 +208,7 @@ class ClientHandler
      * sets settings-fields
      */
     function settingsInit() {
-
-    	return;
+    	$this->_settingsInit();
     }
 
     /**
@@ -313,6 +295,33 @@ class ClientHandler
         	$this->maxcons
         );
     }
+
+    /**
+     * stops a client
+     *
+     * @param $transfer name of the transfer
+     * @param $kill kill-param (optional)
+     * @param $transferPid transfer Pid (optional)
+     */
+    function stop($transfer, $kill = false, $transferPid = 0) {
+    	// set vars
+		$this->_setVarsForTransfer($transfer);
+        // stop the client
+        $this->_stop($kill, $transferPid);
+    }
+
+	/**
+	 * deletes a transfer
+	 *
+	 * @param $transfer name of the transfer
+	 * @return boolean of success
+	 */
+	function delete($transfer) {
+    	// set vars
+		$this->_setVarsForTransfer($transfer);
+		// delete
+		$this->_delete();
+	}
 
     /**
      * gets current transfer-vals of a transfer
@@ -512,6 +521,67 @@ class ClientHandler
     }
 
     /**
+     * sets common settings-fields
+     */
+    function _settingsInit() {
+    	global $cfg;
+    	// rate
+    	$reqvar = getRequestVar('rate');
+    	$this->rate = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["max_upload_rate"];
+		// drate
+    	$reqvar = getRequestVar('drate');
+    	$this->drate = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["max_download_rate"];
+		// superseeder
+    	$reqvar = getRequestVar('superseeder');
+    	$this->superseeder = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["superseeder"];
+		// maxuploads
+    	$reqvar = getRequestVar('maxuploads');
+    	$this->maxuploads = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["max_uploads"];
+		// minport
+    	$reqvar = getRequestVar('minport');
+    	$this->minport = (empty($reqvar))
+    		? $cfg["minport"]
+    		: $reqvar;
+        // maxport
+    	$reqvar = getRequestVar('maxport');
+    	$this->maxport = (empty($reqvar))
+    		? $cfg["maxport"]
+    		: $reqvar;
+		// maxcons
+    	$reqvar = getRequestVar('maxcons');
+    	$this->maxcons = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["maxcons"];
+		// rerequest
+    	$reqvar = getRequestVar('rerequest');
+    	$this->rerequest = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["rerequest_interval"];
+    	// runtime
+    	$reqvar = getRequestVar('runtime');
+    	$this->runtime = (empty($reqvar))
+    		? $cfg["die_when_done"]
+    		: $reqvar;
+		// sharekill
+    	$reqvar = getRequestVar('sharekill');
+    	$this->sharekill = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["sharekill"];
+        // savepath
+        $this->savepath = getRequestVar('savepath');
+        // skip_hash_check
+        $this->skip_hash_check = getRequestVar('skiphashcheck');
+    }
+
+    /**
      * init start of a client.
      *
      * @param $interactive
@@ -521,70 +591,9 @@ class ClientHandler
      */
     function _init($interactive, $enqueue = false, $setPort = false, $recalcSharekill = false) {
     	global $cfg;
-        // umask
-        $this->umask = ($cfg["enable_umask"] != 0)
-        	? " umask 0000;"
-        	: "";
-        // nice
-        $this->nice = ($cfg["nice_adjust"] != 0)
-        	? "nice -n ".$cfg["nice_adjust"]." "
-        	: "";
         // request-vars / defaults / database
         if ($interactive) { // interactive, get vars from request vars
-        	// rate
-        	$reqvar = getRequestVar('rate');
-        	$this->rate = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["max_upload_rate"];
-			// drate
-        	$reqvar = getRequestVar('drate');
-        	$this->drate = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["max_download_rate"];
-			// superseeder
-        	$reqvar = getRequestVar('superseeder');
-        	$this->superseeder = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["superseeder"];
-			// maxuploads
-        	$reqvar = getRequestVar('maxuploads');
-        	$this->maxuploads = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["max_uploads"];
-			// minport
-        	$reqvar = getRequestVar('minport');
-        	$this->minport = (empty($reqvar))
-        		? $cfg["minport"]
-        		: $reqvar;
-            // maxport
-        	$reqvar = getRequestVar('maxport');
-        	$this->maxport = (empty($reqvar))
-        		? $cfg["maxport"]
-        		: $reqvar;
-			// maxcons
-        	$reqvar = getRequestVar('maxcons');
-        	$this->maxcons = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["maxcons"];
-			// rerequest
-        	$reqvar = getRequestVar('rerequest');
-        	$this->rerequest = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["rerequest_interval"];
-        	// runtime
-        	$reqvar = getRequestVar('runtime');
-        	$this->runtime = (empty($reqvar))
-        		? $cfg["die_when_done"]
-        		: $reqvar;
-			// sharekill
-        	$reqvar = getRequestVar('sharekill');
-        	$this->sharekill = ($reqvar != "")
-        		? $reqvar
-        		: $cfg["sharekill"];
-            // savepath
-            $this->savepath = getRequestVar('savepath') ;
-            // skip_hash_check
-            $this->skip_hash_check = getRequestVar('skiphashcheck');
+			$this->settingsInit();
         } else { // non-interactive, load settings from db
             $this->rerequest = $cfg["rerequest_interval"];
             $this->skip_hash_check = $cfg["skiphashcheck"];
@@ -620,6 +629,14 @@ class ClientHandler
 			$sf->write();
             return false;
 		}
+        // umask
+        $this->umask = ($cfg["enable_umask"] != 0)
+        	? " umask 0000;"
+        	: "";
+        // nice
+        $this->nice = ($cfg["nice_adjust"] != 0)
+        	? "nice -n ".$cfg["nice_adjust"]." "
+        	: "";
         // set param for sharekill
         $this->sharekill = intval($this->sharekill);
         // recalc sharekill
@@ -742,8 +759,6 @@ class ClientHandler
             }
         }
         // flag the transfer as stopped (in db)
-        // blame me for this dirty shit, i am lazy. of course this should be
-        // hooked into the place where client really dies.
         stopTransferSettings($this->transfer);
 		// set transfers-cache
 		cacheTransfersSet();

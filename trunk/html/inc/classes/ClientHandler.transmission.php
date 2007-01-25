@@ -126,33 +126,6 @@ class ClientHandlerTransmission extends ClientHandler
     }
 
     /**
-     * stops a client
-     *
-     * @param $transfer name of the transfer
-     * @param $kill kill-param (optional)
-     * @param $transferPid transfer Pid (optional)
-     */
-    function stop($transfer, $kill = false, $transferPid = 0) {
-    	// set vars
-		$this->_setVarsForTransfer($transfer);
-        // stop the client
-        $this->_stop($kill, $transferPid);
-    }
-
-	/**
-	 * deletes a transfer
-	 *
-	 * @param $transfer name of the transfer
-	 * @return boolean of success
-	 */
-	function delete($transfer) {
-		// set vars
-		$this->_setVarsForTransfer($transfer);
-		// delete
-		$this->_delete();
-	}
-
-    /**
      * deletes cache of a transfer
      *
      * @param $transfer
