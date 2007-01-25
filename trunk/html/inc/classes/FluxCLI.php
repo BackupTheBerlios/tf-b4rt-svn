@@ -611,16 +611,19 @@ class FluxCLI
         }
         if (!$tRunningFlag) {
         	$this->_outputMessage("Deleting...\n");
-    		deleteTransferData($transfer);
-			$msgs = resetTransferTotals($transfer, true);
-			$countReset = count($msgs);
-        	$ch->delete($transfer);
-        	$countCh = count($ch->messages);
-        	if (($countReset + $countCh) == 0) {
+    		$msgsDelete = deleteTransferData($transfer);
+    		$countDelete = count($msgsDelete);
+			$msgsReset = resetTransferTotals($transfer, true);
+			$countReset = count($msgsReset);
+        	if (($countDelete + $countReset) == 0) {
 				$this->_outputMessage("done.\n");
 				return true;
         	} else {
-				$this->_outputError("failed: ".(($countReset > 0) ? implode("\n", $msgs)."\n" : "").(($countCh > 0) ? implode("\n", $ch->messages) : "")."\n");
+				$this->_outputError("there were problems: "
+					.(($countDelete > 0) ? implode("\n", $msgsDelete)."\n" : "")
+					.(($countReset > 0) ? implode("\n", $msgsReset) : "")
+					."\n"
+				);
 				return false;
         	}
         } else {

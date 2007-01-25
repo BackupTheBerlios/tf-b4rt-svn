@@ -466,12 +466,15 @@ class MaintenanceAndRepair
 				// get datapath
 				$tDatapath = getTransferDatapath($tname);
 				// update
-				if (!empty($tDatapath)) {
+				if ($tDatapath != "") {
 					$sql = "UPDATE tf_transfers SET datapath = ".$db->qstr($tDatapath)." WHERE transfer = '".$tname."'";
 					$db->Execute($sql);
 					$this->_countFixed++;
 					// output
 					$this->_outputMessage("done.\n");
+				} else {
+					// output
+					$this->_outputMessage("cannot get datapath for ".$tname.".\n");
 				}
 			}
 		}

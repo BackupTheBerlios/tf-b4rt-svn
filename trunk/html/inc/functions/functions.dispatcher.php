@@ -580,13 +580,17 @@ function dispatcherMulti($action) {
 				if (!$tRunningFlag) {
 					switch ($action) {
 						case "transferWipe": /* transferWipe */
-							deleteTransferData($transfer);
-							$msgs = resetTransferTotals($transfer, true);
-							if (count($msgs) > 0)
-            					$dispatcherMessages = array_merge($dispatcherMessages, $msgs);
+							$msgsDelete = deleteTransferData($transfer);
+							if (count($msgsDelete) > 0)
+                				$dispatcherMessages = array_merge($dispatcherMessages, $msgsDelete);
+							$msgsReset = resetTransferTotals($transfer, true);
+							if (count($msgsReset) > 0)
+            					$dispatcherMessages = array_merge($dispatcherMessages, $msgsReset);
 							break;
 						case "transferData": /* transferData */
-							deleteTransferData($transfer);
+							$msgsDelete = deleteTransferData($transfer);
+							if (count($msgsDelete) > 0)
+                				$dispatcherMessages = array_merge($dispatcherMessages, $msgsDelete);
 						case "transfer": /* transfer */
 							$ch = ClientHandler::getInstance($client);
 							$ch->delete($transfer);

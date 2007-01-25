@@ -1504,30 +1504,38 @@ function resetTransferTotals($transfer, $delete = false) {
  * deletes data of a transfer
  *
  * @param $transfer name of the transfer
- * @return boolean
+ * @return array
  */
 function deleteTransferData($transfer) {
 	global $cfg, $transfers;
+	$msgs = array();
 	if (($cfg['isAdmin']) || (IsOwner($cfg["user"], getOwner($transfer)))) {
 		// only torrent
 		if (substr($transfer, -8) != ".torrent")
-			return false;
+			return $msgs;
 		// delete data
 		$datapath = getTransferDatapath($transfer);
-		if (!empty($datapath)) {
-			if (isValidPath($datapath)) {
-				 avddelete($datapath);
-				 AuditAction($cfg["constants"]["fm_delete"], $datapath);
-				 return true;
+		if (($datapath != "") && ($datapath != ".")) {
+			$targetPath = getTransferSavepath($transfer).$datapath;
+			if (isValidPath($targetPath)) {
+				if ((@is_dir($targetPath)) || (@is_file($targetPath))) {
+					avddelete($targetPath);
+					AuditAction($cfg["constants"]["fm_delete"], $targetPath);
+				}
 			} else {
-				 AuditAction($cfg["constants"]["error"], "ILLEGAL DELETE: ".$cfg["user"]." tried to delete data of ".$datapath);
-				 return false;
+				$msg = "ILLEGAL DELETE: ".$cfg["user"]." attempted to delete data of ".$transfer;
+				AuditAction($cfg["constants"]["error"], $msg);
+				array_push($msgs, $msg);
 			}
+		} else {
+			array_push($msgs, "skip data-deletion as datapath is empty for transfer ".$transfer);
 		}
 	} else {
-		AuditAction($cfg["constants"]["error"], $cfg["user"]." attempted to delete data of ".$transfer);
-		return false;
+		$msg = "ILLEGAL DELETE: ".$cfg["user"]." attempted to delete data of ".$transfer;
+		AuditAction($cfg["constants"]["error"], $msg);
+		array_push($msgs, $msg);
 	}
+	return $msgs;
 }
 
 /**
@@ -1539,9 +1547,10 @@ function deleteTransferData($transfer) {
  *		   4096 if dir (lol ~)
  */
 function getTorrentDataSize($transfer) {
+	global $cfg;
 	$datapath = getTransferDatapath($transfer);
-	return (!empty($datapath))
-		? file_size($datapath)
+	return (($datapath != "") && ($datapath != "."))
+		? file_size(getTransferSavepath($transfer).$datapath)
 		: -1;
 }
 
