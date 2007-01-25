@@ -45,7 +45,7 @@ $tmpl->setvar('maxcons', $cfg["maxcons"]);
 $tmpl->setvar('minport', $cfg["minport"]);
 $tmpl->setvar('maxport', $cfg["maxport"]);
 $tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
-$tmpl->setvar('torrent_dies_when_done', $cfg["torrent_dies_when_done"]);
+$tmpl->setvar('die_when_done', $cfg["die_when_done"]);
 $tmpl->setvar('sharekill', $cfg["sharekill"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
 $tmpl->setvar('superseeder', $cfg["superseeder"]);

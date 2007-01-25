@@ -39,7 +39,7 @@ function setVarsFromPersistentSettings() {
 		$settings["running"]                 = "0";
 		$settings["max_upload_rate"]         = $cfg["max_upload_rate"];
 		$settings["max_download_rate"]		 = $cfg["max_download_rate"];
-		$settings["torrent_dies_when_done"]	 = $cfg["torrent_dies_when_done"];
+		$settings["die_when_done"]	         = $cfg["die_when_done"];
 		$settings["max_uploads"]			 = $cfg["max_uploads"];
 		$settings["superseeder"]			 = $cfg["superseeder"];
 		$settings["minport"]				 = $cfg["minport"];
@@ -58,7 +58,7 @@ function setVarsFromPersistentSettings() {
 	$tmpl->setvar('minport', $settings["minport"]);
 	$tmpl->setvar('maxport', $settings["maxport"]);
 	$tmpl->setvar('sharekill', $settings["sharekill"]);
-	$tmpl->setvar('selected', ($settings["torrent_dies_when_done"] == "False") ? "selected" : "");
+	$tmpl->setvar('selected', ($settings["die_when_done"] == "False") ? "selected" : "");
 	$tmpl->setvar('savepath', $settings["savepath"]);
 	// btclient-chooser
 	if ($cfg["enable_btclient_chooser"] != 0)

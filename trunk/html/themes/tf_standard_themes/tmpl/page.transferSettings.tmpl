@@ -86,10 +86,10 @@
 							<tr>
 								<td align="left" width="75%">Torrent Completion Activity:</td>
 								<td nowrap>
-									<select name="torrent_dies_when_done">
+									<select name="die_when_done">
 										<option value="True">Die When Done</option>
 										<option value="False"
-											<tmpl_if name="torrent_dies_when_done" value="False">
+											<tmpl_if name="die_when_done" value="False">
 												 selected
 											</tmpl_if>
 										>Keep Seeding</option>
@@ -123,7 +123,7 @@
 								</td>
 							</tr>
 						<tmpl_else>
-							<input type="hidden" name="torrent_dies_when_done" value="<tmpl_var name="torrent_dies_when_done">" />
+							<input type="hidden" name="die_when_done" value="<tmpl_var name="die_when_done">" />
 							<input type="hidden" name="sharekill" value="<tmpl_var name="sharekill">" />
 							<input type="hidden" name="superseeder" value="<tmpl_var name="superseeder">" />
 							<input type="hidden" name="minport" value="<tmpl_var name="minport">" />

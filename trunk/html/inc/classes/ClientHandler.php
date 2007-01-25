@@ -285,7 +285,7 @@ class ClientHandler
             $this->drate       = $settingsAry["max_download_rate"];
             $this->maxuploads  = $settingsAry["max_uploads"];
             $this->superseeder = $settingsAry["superseeder"];
-            $this->runtime     = $settingsAry["torrent_dies_when_done"];
+            $this->runtime     = $settingsAry["die_when_done"];
             $this->sharekill   = $settingsAry["sharekill"];
             $this->minport     = $settingsAry["minport"];
             $this->maxport     = $settingsAry["maxport"];
@@ -508,7 +508,7 @@ class ClientHandler
         	// runtime
         	$reqvar = getRequestVar('runtime');
         	$this->runtime = (empty($reqvar))
-        		? $cfg["torrent_dies_when_done"]
+        		? $cfg["die_when_done"]
         		: $reqvar;
 			// sharekill
         	$reqvar = getRequestVar('sharekill');

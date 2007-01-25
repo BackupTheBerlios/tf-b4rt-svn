@@ -81,7 +81,7 @@ if ($isSave) {                                                        /* save */
 		'max_download_rate',
 		'max_uploads',
 		'superseeder',
-		'torrent_dies_when_done',
+		'die_when_done',
 		'sharekill',
 		'minport',
 		'maxport',
@@ -92,7 +92,7 @@ if ($isSave) {                                                        /* save */
 	$settingsRuntime = array(
 		'max_upload_rate',
 		'max_download_rate',
-		'torrent_dies_when_done',
+		'die_when_done',
 		'sharekill'
 	);
 
@@ -102,7 +102,7 @@ if ($isSave) {                                                        /* save */
 		'max_download_rate' => 'Max Download Rate',
 		'max_uploads' => 'Max Upload Connections',
 		'superseeder' => 'Superseeder',
-		'torrent_dies_when_done' => 'Torrent Completion Activity',
+		'die_when_done' => 'Torrent Completion Activity',
 		'sharekill' => 'Percentage When Seeding should Stop',
 		'minport' => 'Min-Port',
 		'maxport' => 'Max-Port',
@@ -115,7 +115,7 @@ if ($isSave) {                                                        /* save */
 	$settingsCurrent['max_download_rate'] = $ch->drate;
 	$settingsCurrent['max_uploads'] = $ch->maxuploads;
 	$settingsCurrent['superseeder'] = $ch->superseeder;
-	$settingsCurrent['torrent_dies_when_done'] = $ch->runtime;
+	$settingsCurrent['die_when_done'] = $ch->runtime;
 	$settingsCurrent['sharekill'] = $ch->sharekill;
 	$settingsCurrent['minport'] = $ch->minport;
 	$settingsCurrent['maxport'] = $ch->maxport;
@@ -152,7 +152,7 @@ if ($isSave) {                                                        /* save */
 				case 'superseeder':
 					$value = ($settingsNew[$settingsKey] == 1) ? "True" : "False";
 					break;
-				case 'torrent_dies_when_done':
+				case 'die_when_done':
 					$value = ($settingsNew[$settingsKey] == "True") ? "Die When Done" : "Keep Seeding";
 					break;
 				default:
@@ -195,7 +195,7 @@ if ($isSave) {                                                        /* save */
 		$ch->drate = $settingsNew['max_download_rate'];
 		$ch->maxuploads = $settingsNew['max_uploads'];
 		$ch->superseeder = $settingsNew['superseeder'];
-		$ch->runtime = $settingsNew['torrent_dies_when_done'];
+		$ch->runtime = $settingsNew['die_when_done'];
 		$ch->sharekill = $settingsNew['sharekill'];
 		$ch->minport = $settingsNew['minport'];
 		$ch->maxport = $settingsNew['maxport'];
@@ -213,8 +213,8 @@ if ($isSave) {                                                        /* save */
 				$ch->setRateDownload($transfer, $settingsNew['max_download_rate']);
 
 			// runtime
-			if ($settingsNew['torrent_dies_when_done'] != $settingsCurrent['torrent_dies_when_done'])
-				$ch->setRuntime($transfer, $settingsNew['torrent_dies_when_done']);
+			if ($settingsNew['die_when_done'] != $settingsCurrent['die_when_done'])
+				$ch->setRuntime($transfer, $settingsNew['die_when_done']);
 
 			// sharekill
 			if ($settingsNew['sharekill'] != $settingsCurrent['sharekill'])
@@ -251,7 +251,7 @@ if ($isSave) {                                                        /* save */
 	$tmpl->setvar('max_download_rate', $ch->drate);
 	$tmpl->setvar('max_uploads', $ch->maxuploads);
 	$tmpl->setvar('superseeder', $ch->superseeder);
-	$tmpl->setvar('torrent_dies_when_done', $ch->runtime);
+	$tmpl->setvar('die_when_done', $ch->runtime);
 	$tmpl->setvar('sharekill', $ch->sharekill);
 	$tmpl->setvar('minport', $ch->minport);
 	$tmpl->setvar('maxport', $ch->maxport);

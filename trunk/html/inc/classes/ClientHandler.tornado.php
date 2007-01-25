@@ -347,7 +347,7 @@ class ClientHandlerTornado extends ClientHandler
 		$this->drate       = $cfg["max_download_rate"];
 		$this->maxuploads  = $cfg["max_uploads"];
 		$this->superseeder = $cfg["superseeder"];
-		$this->runtime     = $cfg["torrent_dies_when_done"];
+		$this->runtime     = $cfg["die_when_done"];
 		$this->sharekill   = $cfg["sharekill"];
 		$this->minport     = $cfg["minport"];
 		$this->maxport     = $cfg["maxport"];
