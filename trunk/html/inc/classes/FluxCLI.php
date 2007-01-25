@@ -50,9 +50,6 @@ class FluxCLI
     // arg-errors-array
     var $_argErrors = array();
 
-    // messages-array
-    var $_messages = array();
-
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -90,18 +87,6 @@ class FluxCLI
 		global $instanceFluxCLI;
 		return (isset($instanceFluxCLI))
 			? $instanceFluxCLI->_args
-			: array();
-    }
-
-    /**
-     * getMessages
-     *
-     * @return array
-     */
-    function getMessages() {
-		global $instanceFluxCLI;
-		return (isset($instanceFluxCLI))
-			? $instanceFluxCLI->_messages
 			: array();
     }
 
@@ -261,6 +246,18 @@ class FluxCLI
 			case "stop-all":
 				return $this->_transfersStop();
 
+			/* tset */
+			case "tset":
+				if ($this->_argc < 3) {
+					array_push($this->_argErrors, "missing argument(s) for tset.");
+					break;
+				} else {
+					return $this->_tset(
+						$this->_args[0], $this->_args[1], $this->_args[2],
+						(isset($this->_args[3])) ? $this->_args[3] : "s"
+					);
+				}
+
 			/* inject */
 			case "inject":
 				if ($this->_argc < 2) {
@@ -269,7 +266,7 @@ class FluxCLI
 				} else {
 					return $this->_inject(
 						$this->_args[0], $this->_args[1],
-						empty($this->_args[2]) ? "" : $this->_args[2]
+						(isset($this->_args[2])) ? $this->_args[2] : ""
 					);
 				}
 
@@ -281,7 +278,7 @@ class FluxCLI
 				} else {
 					return $this->_watch(
 						$this->_args[0], $this->_args[1],
-						empty($this->_args[2]) ? "ds" : $this->_args[2]
+						(isset($this->_args[2])) ? $this->_args[2] : "ds"
 					);
 				}
 
@@ -294,7 +291,7 @@ class FluxCLI
 					return $this->_rss(
 						$this->_args[0], $this->_args[1],
 						$this->_args[2], $this->_args[3],
-						empty($this->_args[4]) ? "" : $this->_args[4]
+						(isset($this->_args[4])) ? $this->_args[4] : ""
 					);
 				}
 
@@ -313,7 +310,7 @@ class FluxCLI
 
 	        /* maintenance */
 			case "maintenance":
-				return $this->_maintenance(((isset($this->_args[0])) && ($this->_args[0] == "true")) ? true : false);
+				return $this->_maintenance(((isset($this->_args[0])) && (strtolower($this->_args[0]) == "true")) ? true : false);
 	        	return true;
 
 	        /* dump */
@@ -432,8 +429,7 @@ class FluxCLI
 			$this->_outputMessage("done.\n");
 			return true;
 		} else {
-			$this->_messages = array_merge($this->_messages, $ch->messages);
-			$this->_outputError("failed:\n".implode("\n", $ch->messages)."\n");
+			$this->_outputError("failed: ".implode("\n", $ch->messages)."\n");
 			return false;
 		}
 	}
@@ -501,8 +497,7 @@ class FluxCLI
 			$this->_outputMessage("done.\n");
 			return true;
 		} else {
-			$this->_messages = array_merge($this->_messages, $ch->messages);
-			$this->_outputError("failed:\n".implode("\n", $ch->messages)."\n");
+			$this->_outputError("failed: ".implode("\n", $ch->messages)."\n");
 			return false;
 		}
 	}
@@ -548,8 +543,7 @@ class FluxCLI
 			$this->_outputMessage("done.\n");
 			return true;
 		} else {
-			$this->_messages = array_merge($this->_messages, $msgs);
-			$this->_outputError("failed:\n".implode("\n", $msgs)."\n");
+			$this->_outputError("failed: ".implode("\n", $msgs)."\n");
 			return false;
 		}
 	}
@@ -619,16 +613,14 @@ class FluxCLI
         	$this->_outputMessage("Deleting...\n");
     		deleteTransferData($transfer);
 			$msgs = resetTransferTotals($transfer, true);
-			if (count($msgs) > 0)
-				$this->_messages = array_merge($this->_messages, $msgs);
+			$countReset = count($msgs);
         	$ch->delete($transfer);
-        	if (count($ch->messages) > 0)
-				$this->_messages = array_merge($this->_messages, $ch->messages);
-        	if ((count($msgs) + count($ch->messages)) == 0) {
+        	$countCh = count($ch->messages);
+        	if (($countReset + $countCh) == 0) {
 				$this->_outputMessage("done.\n");
 				return true;
         	} else {
-				$this->_outputError("failed: ".$transfer."\n".implode("\n", $msgs)."\n".implode("\n", $ch->messages));
+				$this->_outputError("failed: ".(($countReset > 0) ? implode("\n", $msgs)."\n" : "").(($countCh > 0) ? implode("\n", $ch->messages) : "")."\n");
 				return false;
         	}
         } else {
@@ -682,6 +674,108 @@ class FluxCLI
 	}
 
 	/**
+	 * set transfer setting
+	 *
+	 * @param $transfer
+	 * @param $key
+	 * @param $val
+	 * @param $options
+	 * @return mixed
+	 */
+	function _tset($transfer, $key, $val, $options) {
+		global $cfg;
+		// check transfer
+		if (!transferExists($transfer)) {
+			$this->_outputError("transfer does not exist.\n");
+			return false;
+		}
+		// check params
+		$settingsKeys = array(
+			'uprate' => 'NUMBER',
+			'downrate' => 'NUMBER',
+			'completion' => 'BOOL',
+			'sharekill' => 'NUMBER'
+		);
+		if (!array_key_exists($key, $settingsKeys)) {
+			$this->_outputError("invalid settings-key: ".$key."\n");
+			return false;
+		}
+		if (strlen($val) < 1) {
+			$this->_outputError("value for ".$key." invalid.\n");
+			return false;
+		}
+		switch ($settingsKeys[$key]) {
+			case 'NUMBER':
+				if (!preg_match('/^[0-9\-]+$/', $val)) {
+					$this->_outputError("value for ".$key." must be a number: ".$val."\n");
+					return false;
+				}
+				break;
+			case 'BOOL':
+				$val = strtolower($val);
+				if (($val != 'true') && ($val != 'false')) {
+					$this->_outputError("completion must be true or false: ".$val."\n");
+					return false;
+				}
+				break;
+		}
+		// set user
+		$cfg["user"] = getOwner($transfer);
+		// output
+		$this->_outputMessage("Setting ".$key." to ".$val." for ".$transfer." for user ".$cfg["user"]."...\n");
+		// init ch-instance
+		$ch = ClientHandler::getInstance(getTransferClient($transfer));
+		// load settings, default if settings could not be loaded (fresh transfer)
+		if ($ch->settingsLoad($transfer) !== true)
+			$ch->settingsDefault();
+		// autosend
+		$send = ((strpos($options, 's') !== false) && (isTransferRunning($transfer)));
+		// set setting
+		switch ($key) {
+			case 'uprate':
+				if ($ch->rate != $val) {
+					$ch->setRateUpload($transfer, $val, $send);
+					break;
+				} else {
+					$this->_outputMessage("no changes.\n");
+					return false;
+				}
+			case 'downrate':
+				if ($ch->drate != $val) {
+					$ch->setRateDownload($transfer, $val, $send);
+					break;
+				} else {
+					$this->_outputMessage("no changes.\n");
+					return false;
+				}
+			case 'completion':
+				if (strtolower($ch->runtime) != $val) {
+					$ch->setRuntime($transfer, ($val == 'true') ? 'True' : 'False', $send);
+					break;
+				} else {
+					$this->_outputMessage("no changes.\n");
+					return false;
+				}
+			case 'sharekill':
+				if ($ch->sharekill != $val) {
+					$ch->setSharekill($transfer, $val, $send);
+					break;
+				} else {
+					$this->_outputMessage("no changes.\n");
+					return false;
+				}
+		}
+		// save
+		$ch->settingsSave();
+		// output + return
+		if ($send)
+			$this->_outputMessage("settings saved + changes sent to client.\n");
+		else
+			$this->_outputMessage("settings saved.\n");
+		return true;
+	}
+
+	/**
 	 * Inject Transfer
 	 *
 	 * @param $transferFile
@@ -705,28 +799,28 @@ class FluxCLI
 		// set user
 	    $cfg["user"] = $username;
 	    // set filename
-	    $fileName = basename($transferFile);
-        $fileName = cleanFileName($fileName, false);
+	    $transfer = basename($transferFile);
+        $transfer = cleanFileName($transfer, false);
         // only inject valid transfers
         $msgs = array();
-        if (($fileName !== false) && (isValidTransfer($fileName))) {
-        	$targetFile = $cfg["transfer_file_path"].$fileName;
+        if (($transfer !== false) && (isValidTransfer($transfer))) {
+        	$targetFile = $cfg["transfer_file_path"].$transfer;
             if (is_file($targetFile)) {
-            	array_push($msgs, "transfer ".$fileName.", already exists.");
+            	array_push($msgs, "transfer ".$transfer.", already exists.");
             } else {
             	$this->_outputMessage("copy ".$transferFile." to ".$targetFile." ...\n");
                 if (@copy($transferFile, $targetFile)) {
                 	// chmod
-                    @chmod($cfg["transfer_file_path"].$fileName, 0644);
+                    @chmod($cfg["transfer_file_path"].$transfer, 0644);
                     // make owner entry
-                    AuditAction($cfg["constants"]["file_upload"], $fileName);
+                    AuditAction($cfg["constants"]["file_upload"], $transfer);
                     // inject
-                    $this->_outputMessage("injecting ".$fileName." ...\n");
-                    injectTransfer($fileName);
+                    $this->_outputMessage("injecting ".$transfer." ...\n");
+                    injectTransfer($transfer);
 	            	// delete source-file
 	            	if (strpos($options, 'd') !== false) {
-		            	$this->_outputMessage("deleting source-file ".$sourceFile." ...\n");
-		            	@unlink($sourceFile);
+		            	$this->_outputMessage("deleting source-file ".$transferFile." ...\n");
+		            	@unlink($transferFile);
 	            	}
 	            	// start and/or return
 	            	return (strpos($options, 's') !== false)
@@ -745,8 +839,7 @@ class FluxCLI
 			$this->_outputMessage("done.\n");
 			return true;
 		} else {
-			$this->_messages = array_merge($this->_messages, $msgs);
-			$this->_outputError("failed: ".$transfer."\n".implode("\n", $msgs));
+			$this->_outputError("failed: ".implode("\n", $msgs)."\n");
 			return false;
 		}
 	}
@@ -762,7 +855,7 @@ class FluxCLI
 	function _watch($watchDir, $username, $options) {
 		global $cfg;
 		// check dir
-		if (!@is_dir($transferFile)) {
+		if (!@is_dir($watchDir)) {
 			$this->_outputError("watch-dir ".$watchDir." is no dir.\n");
 			return false;
 		}
@@ -777,7 +870,8 @@ class FluxCLI
         	// get input-files
         	$input = array();
 			while (false !== ($file = @readdir($dirHandle)))
-        		array_push($input, $file);
+				if (@is_file($watchDir.$file))
+        			array_push($input, $file);
             @closedir($dirHandle);
             if (empty($input)) {
             	$this->_outputMessage("done. no files found.\n");
@@ -787,9 +881,9 @@ class FluxCLI
         	$watchDir = checkDirPathString($watchDir);
             // process input-files
             $ctr = array('files' => count($input), 'ok' => 0);
-            foreach ($input as $file) {
+            foreach ($input as $transfer) {
             	// inject, increment if ok
-            	if ($this->_inject($watchDir.$file, $username, $options) !== false)
+            	if ($this->_inject($watchDir.$transfer, $username, $options) !== false)
             		$ctr['ok']++;
             }
             if ($ctr['files'] == $ctr['ok']) {
@@ -1032,16 +1126,27 @@ class FluxCLI
 	    . "  start-all   : start all transfers.\n"
 	    . "  resume-all  : resume all transfers.\n"
 		. "  stop-all    : stop all running transfers.\n"
-		. "  inject      : injects a transfer-file into the application.\n"
+		. "  tset        : set a transfer-setting.\n"
+		. "                extra-arg 1 : name of transfer as known inside webapp\n"
+		. "                extra-arg 2 : settings-key\n"
+		. "                extra-arg 3 : settings-value\n"
+		. "                extra-arg 4 : options (optional, default: s )\n"
+		. "                              options-arg contains 's' : send changes to running client\n"
+		. "                valid settings :\n"
+		. "                uprate     ; value: uprate in kB/s   ; options: s\n"
+		. "                downrate   ; value: downrate in kB/s ; options: s\n"
+		. "                completion ; value: true/false       ; options: s\n"
+		. "                sharekill  ; value: seed-percentage  ; options: s\n"
+		. "  inject      : injects (+ starts) a transfer.\n"
 		. "                extra-arg 1 : path to transfer-meta-file\n"
 		. "                extra-arg 2 : username of fluxuser\n"
-		. "                extra-arg 3 : options (s/d) (optional, default : none)\n"
+		. "                extra-arg 3 : options (d/s) (optional, default: none)\n"
 		. "                              options-arg contains 'd' : delete source-file after inject\n"
 		. "                              options-arg contains 's' : start transfer after inject\n"
-		. "  watch       : watch a dir and inject + start transfers into the app.\n"
-		. "                extra-arg 1 : path to users watch-dir\n"
+		. "  watch       : watch a dir and inject (+ start) transfers.\n"
+		. "                extra-arg 1 : watch-dir\n"
 		. "                extra-arg 2 : username of fluxuser\n"
-		. "                extra-arg 3 : options (d/s) (optional, default : ds)\n"
+		. "                extra-arg 3 : options (d/s) (optional, default: ds)\n"
 		. "                              options-arg contains 'd' : delete source-file(s) after inject\n"
 		. "                              options-arg contains 's' : start transfer(s) after inject\n"
 		. "  rss         : download torrents matching filter-rules from a rss-feed.\n"
@@ -1049,19 +1154,19 @@ class FluxCLI
 		. "                extra-arg 2 : filter-file\n"
 		. "                extra-arg 3 : history-file\n"
 		. "                extra-arg 4 : rss-feed-url\n"
-		. "                extra-arg 5 : use cookies from this torrentflux user (optional, default is superadmin)\n"
+		. "                extra-arg 5 : use cookies from this torrentflux user (optional, default: superadmin)\n"
 		. "  xfer        : xfer-Limit-Shutdown. stop all transfers if xfer-limit is met.\n"
 		. "                extra-arg 1 : time-delta of xfer to use : (all/total/month/week/day)\n"
 		. "  repair      : repair of torrentflux. DONT do this unless you have to.\n"
 		. "                Doing this on a running ok flux _will_ screw up things.\n"
 		. "  maintenance : call maintenance and repair all died transfers.\n"
-		. "                extra-arg 1 : restart died transfers (true/false. optional, default is false)\n"
+		. "                extra-arg 1 : restart died transfers (true/false. optional, default: false)\n"
 		. "  dump        : dump database.\n"
 		. "                extra-arg 1 : type. (settings/users)\n"
 		. "  filelist    : print file-list.\n"
-		. "                extra-arg 1 : dir (optional, default is docroot)\n"
+		. "                extra-arg 1 : dir (optional, default: docroot)\n"
 		. "  checksums   : print checksum-list.\n"
-		. "                extra-arg 1 : dir (optional, default is docroot)\n"
+		. "                extra-arg 1 : dir (optional, default: docroot)\n"
 		. "\n"
 		. "examples:\n"
 		. $this->_script." transfers\n"
@@ -1073,6 +1178,10 @@ class FluxCLI
 		. $this->_script." start-all\n"
 		. $this->_script." resume-all\n"
 		. $this->_script." stop-all\n"
+		. $this->_script." tset foo.torrent uprate 100\n"
+		. $this->_script." tset foo.torrent downrate 100\n"
+		. $this->_script." tset foo.torrent completion false\n"
+		. $this->_script." tset foo.torrent sharekill 200\n"
 		. $this->_script." reset foo.torrent\n"
 		. $this->_script." delete foo.torrent\n"
 		. $this->_script." wipe foo.torrent\n"

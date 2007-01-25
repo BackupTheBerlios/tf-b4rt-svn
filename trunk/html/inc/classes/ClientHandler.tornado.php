@@ -300,7 +300,7 @@ class ClientHandlerTornado extends ClientHandler
     	// set runtime-field
     	$this->runtime = $runtime;
     	// add command
-		CommandHandler::add($transfer, "r".($this->runtime == "True") ? "1" : "0");
+		CommandHandler::add($transfer, "r".(($this->runtime == "True") ? "1" : "0"));
 		// send command to client
         if ($autosend)
 			CommandHandler::send($transfer);

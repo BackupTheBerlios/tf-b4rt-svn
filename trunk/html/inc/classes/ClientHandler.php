@@ -775,6 +775,7 @@ class ClientHandler
      * @return boolean
      */
     function _recalcSharekill() {
+    	global $cfg;
     	$this->logMessage("recalc sharekill for ".$this->transfer."\n", true);
         if ($this->sharekill == 0) { // nice, we seed forever
             $this->sharekill_param = 0;
@@ -896,6 +897,7 @@ class ClientHandler
      * @return boolean
      */
     function _setClientPort() {
+    	global $cfg;
         $portString = netstatPortList();
         $portAry = explode("\n", $portString);
         $this->port = intval($this->minport);
