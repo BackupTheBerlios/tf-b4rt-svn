@@ -370,13 +370,32 @@ class Rssd
 		if (SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) {
 			// filename
 			$filename = SimpleHTTP::getFilename();
-			$filename = (($filename != "") && (strpos($filename, ".torrent") !== false))
-				? cleanFileName($filename)
-				: cleanFileName($title);
+			if ($filename != "") {
+				$filename = ((strpos($filename, ".torrent") !== false))
+					? cleanFileName($filename)
+					: cleanFileName($filename.".torrent");
+			}
+			if (($filename == "") || ($filename === false) || (transferExists($filename))) {
+				$filename = cleanFileName($title.".torrent");
+				if (($filename === false) || (transferExists($filename))) {
+					$filename = cleanFileName($url.".torrent");
+					if (($filename === false) || (transferExists($filename))) {
+						$filename = cleanFileName(md5($url.strval(@microtime())).".torrent");
+						if (($filename === false) || (transferExists($filename))) {
+							// Error
+							$msg = "failed to get a valid transfer-filename for ".$url;
+							array_push($this->messages , $msg);
+							AuditAction($cfg["constants"]["error"], "Rssd downloadMetafile-Error : ".$msg);
+							$this->_outputError($msg."\n");
+							return false;
+						}
+					}
+				}
+			}
 			// file
 			$file = $this->_dirSave.$filename;
 			// check if file already exists
-			if (is_file($file)) {
+			if (@is_file($file)) {
 				// Error
 	            $msg = "the file ".$file." already exists in ".$this->_dirSave;
 	            array_push($this->messages , $msg);

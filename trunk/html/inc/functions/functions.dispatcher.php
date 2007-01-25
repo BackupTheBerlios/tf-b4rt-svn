@@ -651,24 +651,23 @@ function indexProcessDownload($url, $type = 'torrent') {
  */
 function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 	global $cfg;
-	$ext_msg = "";
-	$file_name = "";
+	$filename = "";
 	$downloadMessages = array();
 	if (!empty($url)) {
 		$arURL = explode("/", $url);
-		$file_name = urldecode($arURL[count($arURL)-1]); // get the file name
-		$file_name = str_replace(array("'",","), "", $file_name);
-		$file_name = stripslashes($file_name);
+		$filename = urldecode($arURL[count($arURL)-1]); // get the file name
+		$filename = str_replace(array("'",","), "", $filename);
+		$filename = stripslashes($filename);
 		// Check to see if url has something like ?passkey=12345
 		// If so remove it.
-		if (($point = strrpos($file_name, "?")) !== false )
-			$file_name = substr($file_name, 0, $point);
-		$ret = strrpos($file_name, ".");
+		if (($point = strrpos($filename, "?")) !== false )
+			$filename = substr($filename, 0, $point);
+		$ret = strrpos($filename, ".");
 		if ($ret === false) {
-			$file_name .= $ext;
+			$filename .= $ext;
 		} else {
-			if (!strcmp(strtolower(substr($file_name, -(strlen($ext)))), $ext) == 0)
-				$file_name .= $ext;
+			if (!strcmp(strtolower(substr($filename, -(strlen($ext)))), $ext) == 0)
+				$filename .= $ext;
 		}
 		$url = str_replace(" ", "%20", $url);
 		// This is to support Sites that pass an id along with the url for downloads.
@@ -688,30 +687,47 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 				break;
 		}
 		if ((SimpleHTTP::getState() == SIMPLEHTTP_STATE_OK) && (strlen($content) > 0)) {
+			$fileNameBackup = $filename;
 			$filename = SimpleHTTP::getFilename();
-			$file_name = (($filename != "") && (strpos($filename, ".torrent") !== false))
-				? cleanFileName($filename)
-				: cleanFileName($file_name);
-			// check if content contains html
-			if ($cfg['debuglevel'] > 0) {
-				if (strpos($content, "<br />") !== false)
-					AuditAction($cfg["constants"]["debug"], "download-content contained html : ".htmlentities(addslashes($url), ENT_QUOTES));
+			if ($filename != "") {
+				$filename = ((strpos($filename, $ext) !== false))
+					? cleanFileName($filename)
+					: cleanFileName($filename.$ext);
 			}
-			if (is_file($cfg["transfer_file_path"].$file_name)) {
-				// Error
-				array_push($downloadMessages, "the file ".$file_name." already exists on the server.");
-				$ext_msg = "DUPLICATE :: ";
-			} else {
-				// write to file
-				$handle = false;
-				$handle = @fopen($cfg["transfer_file_path"].$file_name, "w");
-				if (!$handle) {
-					array_push($downloadMessages, "cannot open ".$file_name." for writing.");
+			if (($filename == "") || ($filename === false) || (transferExists($filename))) {
+				$filename = cleanFileName($fileNameBackup);
+				if (($filename === false) || (transferExists($filename))) {
+					$filename = cleanFileName($url.$ext);
+					if (($filename === false) || (transferExists($filename))) {
+						$filename = cleanFileName(md5($url.strval(@microtime())).$ext);
+						if (($filename === false) || (transferExists($filename))) {
+							// Error
+							array_push($downloadMessages , "failed to get a valid transfer-filename for ".$url);
+						}
+					}
+				}
+			}
+			if (empty($downloadMessages)) { // no messages
+				// check if content contains html
+				if ($cfg['debuglevel'] > 0) {
+					if (strpos($content, "<br />") !== false)
+						AuditAction($cfg["constants"]["debug"], "download-content contained html : ".htmlentities(addslashes($url), ENT_QUOTES));
+				}
+				if (is_file($cfg["transfer_file_path"].$filename)) {
+					// Error
+					array_push($downloadMessages, "the file ".$filename." already exists on the server.");
 				} else {
-					$result = @fwrite($handle, $content);
-					@fclose($handle);
-					if ($result === false)
-						array_push($downloadMessages, "cannot write content to ".$file_name.".");
+					// write to file
+					$handle = false;
+					$handle = @fopen($cfg["transfer_file_path"].$filename, "w");
+					if (!$handle) {
+						array_push($downloadMessages, "cannot open ".$filename." for writing.");
+					} else {
+						$result = @fwrite($handle, $content);
+						@fclose($handle);
+						if ($result === false)
+							array_push($downloadMessages, "cannot write content to ".$filename.".");
+					}
 				}
 			}
 		} else {
@@ -720,19 +736,19 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 				$downloadMessages = array_merge($downloadMessages, $msgs);
 		}
 		if (empty($downloadMessages)) { // no messages
-			AuditAction($cfg["constants"]["url_upload"], $file_name);
+			AuditAction($cfg["constants"]["url_upload"], $filename);
 			// inject
-			injectTransfer($file_name);
+			injectTransfer($filename);
 			// instant action ?
 			$actionId = getRequestVar('aid');
 			if ($actionId > 1) {
-				$ch = ClientHandler::getInstance(getTransferClient($file_name));
+				$ch = ClientHandler::getInstance(getTransferClient($filename));
 				switch ($actionId) {
 					case 3:
-						$ch->start($file_name, false, true);
+						$ch->start($filename, false, true);
 						break;
 					case 2:
-						$ch->start($file_name, false, false);
+						$ch->start($filename, false, false);
 						break;
 				}
 				if (count($ch->messages) > 0)
@@ -743,7 +759,7 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 		array_push($downloadMessages, "Invalid Url : ".$url);
 	}
 	if (count($downloadMessages) > 0) {
-		AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$ext_msg.$file_name);
+		AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$filename);
 		@error("There were Problems", "index.php?iid=index", "", $downloadMessages);
 	} else {
 		@header("location: index.php?iid=index");
@@ -756,78 +772,78 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
  */
 function indexProcessUpload() {
 	global $cfg;
-	$ext_msg = "";
-	$file_name = "";
+	$filename = "";
 	$uploadMessages = array();
 	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name']))) {
-		$file_name = stripslashes($_FILES['upload_file']['name']);
-		$file_name = cleanFileName($file_name);
-		if (substr($file_name, -5) == ".wget") {
-			// is enabled ?
-			if ($cfg["enable_wget"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$file_name);
-				@error("wget is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_wget"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$file_name);
-					@error("wget is disabled for users", "", "");
+		$filename = stripslashes($_FILES['upload_file']['name']);
+		$filename = cleanFileName($filename);
+		if ($filename === false) {
+			// invalid file
+			array_push($uploadMessages, "The type of file you are uploading is not allowed.");
+			array_push($uploadMessages, "\nvalid file-extensions: ");
+			array_push($uploadMessages, $cfg["file_types_label"]);
+		} else {
+			// file is valid
+			if (substr($filename, -5) == ".wget") {
+				// is enabled ?
+				if ($cfg["enable_wget"] == 0) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
+					@error("wget is disabled", "index.php?iid=index", "");
+				} else if ($cfg["enable_wget"] == 1) {
+					if (!$cfg['isAdmin']) {
+						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
+						@error("wget is disabled for users", "", "");
+					}
+				}
+			} else if (substr($filename, -4) == ".nzb") {
+				// is enabled ?
+				if ($cfg["enable_nzbperl"] == 0) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
+					@error("nzbperl is disabled", "index.php?iid=index", "");
+				} else if ($cfg["enable_nzbperl"] == 1) {
+					if (!$cfg['isAdmin']) {
+						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
+						@error("nzbperl is disabled for users", "", "");
+					}
 				}
 			}
-		} else if (substr($file_name, -4) == ".nzb") {
-			// is enabled ?
-			if ($cfg["enable_nzbperl"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$file_name);
-				@error("nzbperl is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_nzbperl"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$file_name);
-					@error("nzbperl is disabled for users", "", "");
-				}
-			}
-		}
-		if ($_FILES['upload_file']['size'] <= _UPLOAD_LIMIT && $_FILES['upload_file']['size'] > 0) {
-			if (isValidTransfer($file_name)) {
+			if ($_FILES['upload_file']['size'] <= _UPLOAD_LIMIT && $_FILES['upload_file']['size'] > 0) {
 				//FILE IS BEING UPLOADED
-				if (is_file($cfg["transfer_file_path"].$file_name)) {
+				if (@is_file($cfg["transfer_file_path"].$filename)) {
 					// Error
-					array_push($uploadMessages, "the file ".$file_name." already exists on the server.");
-					$ext_msg = "DUPLICATE :: ";
+					array_push($uploadMessages, "the file ".$filename." already exists on the server.");
 				} else {
-					if (move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$file_name)) {
-						chmod($cfg["transfer_file_path"].$file_name, 0644);
-						AuditAction($cfg["constants"]["file_upload"], $file_name);
+					if (@move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$filename)) {
+						@chmod($cfg["transfer_file_path"].$filename, 0644);
+						AuditAction($cfg["constants"]["file_upload"], $filename);
 						// inject
-						injectTransfer($file_name);
+						injectTransfer($filename);
 						// instant action ?
 						$actionId = getRequestVar('aid');
 						if ($actionId > 1) {
-							$ch = ClientHandler::getInstance(getTransferClient($file_name));
+							$ch = ClientHandler::getInstance(getTransferClient($filename));
 							switch ($actionId) {
 								case 3:
-									$ch->start($file_name, false, true);
+									$ch->start($filename, false, true);
 									break;
 								case 2:
-									$ch->start($file_name, false, false);
+									$ch->start($filename, false, false);
 									break;
 							}
 							if (count($ch->messages) > 0)
-               					$uploadMessages = array_merge($uploadMessages, $ch->messages);
+	           					$uploadMessages = array_merge($uploadMessages, $ch->messages);
 						}
 					} else {
-						array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
+						array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$filename);
 					}
 				}
 			} else {
-				array_push($uploadMessages, "The type of file you are uploading is not allowed.");
-				array_push($uploadMessages, "\nvalid file-extensions: ");
-				array_push($uploadMessages, $cfg["file_types_label"]);
+				array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$_FILES['upload_file']['size']);
 			}
-		} else {
-			array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$_FILES['upload_file']['size']);
 		}
 	}
 	if (count($uploadMessages) > 0) {
-		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
+		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$filename);
 		@error("There were Problems", "index.php?iid=index", "", $uploadMessages);
 	} else {
 		@header("location: index.php?iid=index");
@@ -840,8 +856,7 @@ function indexProcessUpload() {
  */
 function processFileUpload() {
 	global $cfg;
-	$ext_msg = "";
-	$file_name = "";
+	$filename = "";
 	$uploadMessages = array();
 	// file upload
 	if (!empty($_FILES['upload_files'])) {
@@ -855,66 +870,67 @@ function processFileUpload() {
 				// no or empty file, skip it
 				continue;
 			}
-			$file_name = stripslashes($_FILES['upload_files']['name'][$id]);
-			$file_name = cleanFileName($file_name);
-			if (substr($file_name, -5) == ".wget") {
-				// is enabled ?
-				if ($cfg["enable_wget"] == 0) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$file_name);
-					array_push($uploadMessages, "wget is disabled  : ".$file_name);
-					continue;
-				} else if ($cfg["enable_wget"] == 1) {
-					if (!$cfg['isAdmin']) {
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$file_name);
-						array_push($uploadMessages, "wget is disabled for users : ".$file_name);
+			$filename = stripslashes($_FILES['upload_files']['name'][$id]);
+			$filename = cleanFileName($filename);
+			if ($filename === false) {
+				// invalid file
+				array_push($uploadMessages, "The type of file ".stripslashes($_FILES['upload_files']['name'][$id])." is not allowed.");
+				array_push($uploadMessages, "\nvalid file-extensions: ");
+				array_push($uploadMessages, $cfg["file_types_label"]);
+				continue;
+			} else {
+				// file is valid
+				if (substr($filename, -5) == ".wget") {
+					// is enabled ?
+					if ($cfg["enable_wget"] == 0) {
+						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
+						array_push($uploadMessages, "wget is disabled  : ".$filename);
 						continue;
+					} else if ($cfg["enable_wget"] == 1) {
+						if (!$cfg['isAdmin']) {
+							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
+							array_push($uploadMessages, "wget is disabled for users : ".$filename);
+							continue;
+						}
+					}
+				} else if (substr($filename, -4) == ".nzb") {
+					// is enabled ?
+					if ($cfg["enable_nzbperl"] == 0) {
+						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
+						array_push($uploadMessages, "nzbperl is disabled  : ".$filename);
+						continue;
+					} else if ($cfg["enable_nzbperl"] == 1) {
+						if (!$cfg['isAdmin']) {
+							AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
+							array_push($uploadMessages, "nzbperl is disabled for users : ".$filename);
+							continue;
+						}
 					}
 				}
-			} else if (substr($file_name, -4) == ".nzb") {
-				// is enabled ?
-				if ($cfg["enable_nzbperl"] == 0) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$file_name);
-					array_push($uploadMessages, "nzbperl is disabled  : ".$file_name);
-					continue;
-				} else if ($cfg["enable_nzbperl"] == 1) {
-					if (!$cfg['isAdmin']) {
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$file_name);
-						array_push($uploadMessages, "nzbperl is disabled for users : ".$file_name);
-						continue;
-					}
-				}
-			}
-			if ($_FILES['upload_files']['size'][$id] <= _UPLOAD_LIMIT && $_FILES['upload_files']['size'][$id] > 0) {
-				if (isValidTransfer($file_name)) {
+				if ($_FILES['upload_files']['size'][$id] <= _UPLOAD_LIMIT && $_FILES['upload_files']['size'][$id] > 0) {
 					//FILE IS BEING UPLOADED
-					if (is_file($cfg["transfer_file_path"].$file_name)) {
+					if (@is_file($cfg["transfer_file_path"].$filename)) {
 						// Error
-						array_push($uploadMessages, "the file ".$file_name." already exists on the server.");
-						$ext_msg = "DUPLICATE :: ";
+						array_push($uploadMessages, "the file ".$filename." already exists on the server.");
+						continue;
 					} else {
-						if (move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$file_name)) {
-							chmod($cfg["transfer_file_path"].$file_name, 0644);
-							AuditAction($cfg["constants"]["file_upload"], $file_name);
+						if (@move_uploaded_file($_FILES['upload_files']['tmp_name'][$id], $cfg["transfer_file_path"].$filename)) {
+							@chmod($cfg["transfer_file_path"].$filename, 0644);
+							AuditAction($cfg["constants"]["file_upload"], $filename);
 							// inject
-							injectTransfer($file_name);
+							injectTransfer($filename);
 							// instant action ?
 							if ($actionId > 1)
-								array_push($tStack,$file_name);
+								array_push($tStack,$filename);
 						} else {
-							array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$file_name);
+							array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$filename);
+							continue;
 					  	}
 					}
 				} else {
-					array_push($uploadMessages, "The type of file you are uploading is not allowed.");
-					array_push($uploadMessages, "\nvalid file-extensions: ");
-					array_push($uploadMessages, $cfg["file_types_label"]);
+					array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$size);
+					continue;
 				}
-			} else {
-				array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$size);
-			}
-			if (count($uploadMessages) > 0) {
-			  // there was an error
-				AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$ext_msg.$file_name);
 			}
 		} // End File Upload
 		// instant action ?

@@ -2166,9 +2166,9 @@ function getCleanTransferName($transfer) {
  * clean file-name, validate extension and make it lower-case
  *
  * @param $inName
- * @return string
+ * @return string or false
  */
-function cleanFileName($inName, $error = true) {
+function cleanFileName($inName) {
 	global $cfg;
 	$outName = preg_replace("/[^0-9a-zA-Z.-]+/",'_', $inName);
 	$stringLength = strlen($outName);
@@ -2177,15 +2177,6 @@ function cleanFileName($inName, $error = true) {
 		$extIndex = 0 - $extLength;
 		if (($stringLength > $extLength) && (strtolower(substr($outName, $extIndex)) === ($ftype)))
 			return substr($outName, 0, $extIndex).$ftype;
-	}
-	if ($error) {
-		$msgs = array();
-		array_push($msgs, "inName : ".$inName);
-		array_push($msgs, "outName : ".$outName);
-		array_push($msgs, "\nvalid file-extensions: ");
-		array_push($msgs, $cfg["file_types_label"]);
-		AuditAction($cfg["constants"]["error"], "INVALID FILETYPE: ".$inName);
-		@error("Invalid File-Type", "index.php?iid=index", "", $msgs);
 	}
 	return false;
 }

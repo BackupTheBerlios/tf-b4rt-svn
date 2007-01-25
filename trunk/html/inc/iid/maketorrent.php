@@ -47,10 +47,11 @@ if ($cfg["enable_maketorrent"] != 1) {
 
 // file + torrent vars
 $path = getRequestVar('path');
-$torrent = @cleanFileName((StripFolders(trim($path))).".torrent");
-
-// validate path
+$torrent = "";
 if (!empty($path)) {
+	$torrent = cleanFileName(StripFolders($path).".torrent");
+	if ($torrent === false)
+		@error("Invalid torrent-name", "", "", array($path));
 	if (isValidPath($path) !== true)
 		@error("Invalid path", "", "", array($path));
 }
@@ -59,19 +60,19 @@ if (!empty($path)) {
 $client = (isset($_REQUEST["client"])) ? $_REQUEST["client"] : $cfg["dir_maketorrent_default"];
 
 // client-generic vars
-$tfile = @ $_POST['torrent'];
-$comment = @ $_POST['comments'];
+$tfile = getRequestVar('torrent');
+$comment = getRequestVar('comments');
 $alert = (isset($_POST["alert"])) ? 1 : 0;
 
 // client-switch
 switch ($client) {
 	default:
 	case "tornado":
-		$announce = @ ($_POST['announce']) ? $_POST['announce'] : "http://";
-		$ancelist = @ $_POST['announcelist'];
+		$announce = (isset($_POST['announce'])) ? $_POST['announce'] : "http://";
+		$ancelist = getRequestVar('announcelist');
 		$private = @ ($_POST['Private'] == "Private") ? true : false;
 		$dht = @ ($_POST['DHT'] == "DHT") ? true : false;
-		$piece = @ $_POST['piecesize'];
+		$piece = getRequestVar('piecesize');
 		break;
 	case "mainline":
 		$use_tracker = (isset($_POST['use_tracker'])) ? $_POST['use_tracker'] : 1;

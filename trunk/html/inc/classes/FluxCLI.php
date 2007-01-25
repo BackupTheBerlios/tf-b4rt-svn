@@ -803,12 +803,12 @@ class FluxCLI
 	    $cfg["user"] = $username;
 	    // set filename
 	    $transfer = basename($transferFile);
-        $transfer = cleanFileName($transfer, false);
+        $transfer = cleanFileName($transfer);
         // only inject valid transfers
         $msgs = array();
-        if (($transfer !== false) && (isValidTransfer($transfer))) {
+        if ($transfer !== false) {
         	$targetFile = $cfg["transfer_file_path"].$transfer;
-            if (is_file($targetFile)) {
+            if (@is_file($targetFile)) {
             	array_push($msgs, "transfer ".$transfer.", already exists.");
             } else {
             	$this->_outputMessage("copy ".$transferFile." to ".$targetFile." ...\n");
