@@ -117,6 +117,12 @@ array_push($transferWindowDefaultList, array(
 	'is_selected' => ('transferSettings' == $cfg["transfer_window_default"]) ? 1 : 0
 	)
 );
+array_push($transferWindowDefaultList, array(
+	'name' => 'Control',
+	'value' => 'transferControl',
+	'is_selected' => ('transferControl' == $cfg["transfer_window_default"]) ? 1 : 0
+	)
+);
 $tmpl->setloop('transfer_window_default_list', $transferWindowDefaultList);
 //
 tmplSetTitleBar("Administration - Index Settings");
