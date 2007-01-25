@@ -98,8 +98,6 @@ class ClientHandlerTransmission extends ClientHandler
         	@touch($this->transferFilePath.".pid");
         */
 
-
-
         // build the command-string
 		// note : order of args must not change for ps-parsing-code in
 		// RunningTransferTransmission
@@ -309,31 +307,6 @@ class ClientHandlerTransmission extends ClientHandler
 			CommandHandler::send($transfer);
     	// return
     	return true;
-    }
-
-    /**
-     * sets fields from default-vals
-     *
-     * @param $transfer
-     */
-    function settingsDefault($transfer = "") {
-    	global $cfg;
-    	// set vars
-        if ($transfer != "")
-        	$this->_setVarsForTransfer($transfer);
-        $this->hash        = getTransferHash($this->transfer);
-        $this->datapath    = getTransferDatapath($this->transfer);
-    	$this->savepath    = getTransferSavepath($this->transfer);
-    	$this->running     = 0;
-		$this->rate        = $cfg["max_upload_rate"];
-		$this->drate       = $cfg["max_download_rate"];
-		$this->maxuploads  = $cfg["max_uploads"];
-		$this->superseeder = $cfg["superseeder"];
-		$this->runtime     = $cfg["die_when_done"];
-		$this->sharekill   = $cfg["sharekill"];
-		$this->minport     = $cfg["minport"];
-		$this->maxport     = $cfg["maxport"];
-		$this->maxcons     = $cfg["maxcons"];
     }
 
 }

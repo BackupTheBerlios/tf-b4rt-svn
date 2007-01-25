@@ -180,44 +180,6 @@ class ClientHandler
     function deleteCache($transfer) { return; }
 
     /**
-     * gets current transfer-vals of a transfer
-     *
-     * @param $transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferCurrent($transfer)  { return; }
-
-    /**
-     * gets current transfer-vals of a transfer. optimized version
-     *
-     * @param $transfer
-     * @param $tid of the transfer
-     * @param $sfu stat-file-uptotal of the transfer
-     * @param $sfd stat-file-downtotal of the transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd)  { return; }
-
-    /**
-     * gets total transfer-vals of a transfer
-     *
-     * @param $transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferTotal($transfer) { return; }
-
-    /**
-     * gets total transfer-vals of a transfer. optimized version
-     *
-     * @param $transfer
-     * @param $tid of the transfer
-     * @param $sfu stat-file-uptotal of the transfer
-     * @param $sfd stat-file-downtotal of the transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) { return; }
-
-    /**
      * set upload rate of a transfer
      *
      * @param $transfer
@@ -255,16 +217,43 @@ class ClientHandler
      */
     function setSharekill($transfer, $sharekill, $autosend = false) { return true; }
 
+	// =========================================================================
+	// public methods
+	// =========================================================================
+
+    /**
+     * sets settings-fields
+     */
+    function settingsInit() {
+
+    	return;
+    }
+
     /**
      * sets fields from default-vals
      *
      * @param $transfer
      */
-    function settingsDefault($transfer = "") { return; }
-
-	// =========================================================================
-	// public methods
-	// =========================================================================
+    function settingsDefault($transfer = "") {
+    	global $cfg;
+		// transfer vars
+        if ($transfer != "")
+        	$this->_setVarsForTransfer($transfer);
+        // common vars
+        $this->hash        = getTransferHash($this->transfer);
+        $this->datapath    = getTransferDatapath($this->transfer);
+    	$this->savepath    = getTransferSavepath($this->transfer);
+    	$this->running     = 0;
+		$this->rate        = $cfg["max_upload_rate"];
+		$this->drate       = $cfg["max_download_rate"];
+		$this->maxuploads  = $cfg["max_uploads"];
+		$this->superseeder = $cfg["superseeder"];
+		$this->runtime     = $cfg["die_when_done"];
+		$this->sharekill   = $cfg["sharekill"];
+		$this->minport     = $cfg["minport"];
+		$this->maxport     = $cfg["maxport"];
+		$this->maxcons     = $cfg["maxcons"];
+    }
 
     /**
      * load settings
@@ -273,8 +262,10 @@ class ClientHandler
      * @return boolean
      */
     function settingsLoad($transfer = "") {
+		// transfer vars
         if ($transfer != "")
         	$this->_setVarsForTransfer($transfer);
+        // common vars
         $settingsAry = loadTransferSettings($this->transfer);
         if (is_array($settingsAry)) {
         	$this->hash        = $settingsAry["hash"];
@@ -302,6 +293,7 @@ class ClientHandler
      * save settings
      */
     function settingsSave() {
+    	// common vars
         saveTransferSettings(
         	$this->transfer,
         	$this->type,
@@ -320,6 +312,80 @@ class ClientHandler
         	$this->maxport,
         	$this->maxcons
         );
+    }
+
+    /**
+     * gets current transfer-vals of a transfer
+     *
+     * @param $transfer
+     * @return array with downtotal and uptotal
+     */
+    function getTransferCurrent($transfer) {
+    	global $transfers;
+        // transfer from stat-file
+        $sf = new StatFile($transfer);
+        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
+    }
+
+    /**
+     * gets current transfer-vals of a transfer. optimized version
+     *
+     * @param $transfer
+     * @param $tid of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
+     * @return array with downtotal and uptotal
+     */
+    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
+        return array("uptotal" => $sfu, "downtotal" => $sfd);
+    }
+
+    /**
+     * gets total transfer-vals of a transfer
+     *
+     * @param $transfer
+     * @return array with downtotal and uptotal
+     */
+    function getTransferTotal($transfer) {
+    	global $db, $transfers;
+        $retVal = array();
+        // transfer from db
+        $sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = '".getTransferHash($transfer)."'";
+        $result = $db->Execute($sql);
+        $row = $result->FetchRow();
+        if (empty($row)) {
+        	$retVal["uptotal"] = 0;
+            $retVal["downtotal"] = 0;
+        } else {
+            $retVal["uptotal"] = $row["uptotal"];
+            $retVal["downtotal"] = $row["downtotal"];
+        }
+        // transfer from stat-file
+        $sf = new StatFile($transfer);
+        $retVal["uptotal"] += $sf->uptotal;
+        $retVal["downtotal"] += $sf->downtotal;
+        return $retVal;
+    }
+
+    /**
+     * gets total transfer-vals of a transfer. optimized version
+     *
+     * @param $transfer
+     * @param $tid of the transfer
+     * @param $sfu stat-file-uptotal of the transfer
+     * @param $sfd stat-file-downtotal of the transfer
+     * @return array with downtotal and uptotal
+     */
+    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
+        global $transfers;
+        $retVal = array();
+        $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
+        	? $transfers['totals'][$tid]['uptotal'] + $sfu
+        	: $sfu;
+        $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
+        	? $transfers['totals'][$tid]['downtotal'] + $sfd
+        	: $sfd;
+        return $retVal;
     }
 
 	/**

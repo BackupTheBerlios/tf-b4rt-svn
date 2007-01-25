@@ -98,7 +98,7 @@ class StatFile
             // read the stat file
             $data = @file_get_contents($this->theFile);
 			// assign vars from content
-	        $content = @explode("\n", $data, 13);
+	        $content = @explode("\n", $data);
 	        $this->running = @ $content[0];
 	        $this->percent_done = @ $content[1];
 	        $this->time_left = @ $content[2];

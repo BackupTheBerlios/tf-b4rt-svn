@@ -225,89 +225,16 @@ class ClientHandlerWget extends ClientHandler
 	}
 
     /**
-     * gets current transfer-vals of a transfer
-     *
-     * @param $transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferCurrent($transfer) {
-    	global $transfers;
-        // transfer from stat-file
-        $sf = new StatFile($transfer);
-        return array("uptotal" => $sf->uptotal, "downtotal" => $sf->downtotal);
-    }
-
-    /**
-     * gets current transfer-vals of a transfer. optimized version
-     *
-     * @param $transfer
-     * @param $tid of the transfer
-     * @param $sfu stat-file-uptotal of the transfer
-     * @param $sfd stat-file-downtotal of the transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferCurrentOP($transfer, $tid, $sfu, $sfd) {
-        return array("uptotal" => $sfu, "downtotal" => $sfd);
-    }
-
-    /**
-     * gets total transfer-vals of a transfer
-     *
-     * @param $transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferTotal($transfer) {
-    	global $db, $transfers;
-        $retVal = array();
-        // transfer from db
-        $sql = "SELECT uptotal,downtotal FROM tf_transfer_totals WHERE tid = '".getTransferHash($transfer)."'";
-        $result = $db->Execute($sql);
-        $row = $result->FetchRow();
-        if (empty($row)) {
-        	$retVal["uptotal"] = 0;
-            $retVal["downtotal"] = 0;
-        } else {
-            $retVal["uptotal"] = $row["uptotal"];
-            $retVal["downtotal"] = $row["downtotal"];
-        }
-        // transfer from stat-file
-        $sf = new StatFile($transfer);
-        $retVal["uptotal"] += $sf->uptotal;
-        $retVal["downtotal"] += $sf->downtotal;
-        return $retVal;
-    }
-
-    /**
-     * gets total transfer-vals of a transfer. optimized version
-     *
-     * @param $transfer
-     * @param $tid of the transfer
-     * @param $sfu stat-file-uptotal of the transfer
-     * @param $sfd stat-file-downtotal of the transfer
-     * @return array with downtotal and uptotal
-     */
-    function getTransferTotalOP($transfer, $tid, $sfu, $sfd) {
-        global $transfers;
-        $retVal = array();
-        $retVal["uptotal"] = (isset($transfers['totals'][$tid]['uptotal']))
-        	? $transfers['totals'][$tid]['uptotal'] + $sfu
-        	: $sfu;
-        $retVal["downtotal"] = (isset($transfers['totals'][$tid]['downtotal']))
-        	? $transfers['totals'][$tid]['downtotal'] + $sfd
-        	: $sfd;
-        return $retVal;
-    }
-
-    /**
      * sets fields from default-vals
      *
      * @param $transfer
      */
     function settingsDefault($transfer = "") {
     	global $cfg;
-		// set vars
+		// transfer vars
         if ($transfer != "")
         	$this->_setVarsForTransfer($transfer);
+        // common vars
 		$this->hash        = getTransferHash($this->transfer);
         $this->datapath    = getTransferDatapath($this->transfer);
     	$this->savepath    = getTransferSavepath($this->transfer);
