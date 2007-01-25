@@ -22,7 +22,7 @@
 
 // defines
 define('_DUMP_DELIM', '*');
-preg_match('|.* (\d+) .*|', '$Revision$', $revisionMatches);
+preg_match('|.*\s(\d+)\s.*|', '$Revision$', $revisionMatches);
 define('_REVISION_FLUXCLI', $revisionMatches[1]);
 
 /**
@@ -43,9 +43,9 @@ class FluxCLI
     // action
     var $_action = "";
 
-    // params
-    var $_params = array();
-    var $_paramc = 0;
+    // args
+    var $_args = array();
+    var $_argc = 0;
 
     // arg-errors-array
     var $_argErrors = array();
@@ -82,14 +82,14 @@ class FluxCLI
     }
 
     /**
-     * getParams
+     * getArgs
      *
      * @return array
      */
-    function getParams() {
+    function getArgs() {
 		global $instanceFluxCLI;
 		return (isset($instanceFluxCLI))
-			? $instanceFluxCLI->_params
+			? $instanceFluxCLI->_args
 			: array();
     }
 
@@ -155,11 +155,11 @@ class FluxCLI
 		$this->_action = (isset($args[1])) ? $args[1] : "";
 		if ($argCount > 2) {
 			$prm = array_splice($args, 2);
-			$this->_params = array_map('trim', $prm);
-			$this->_paramc = count($this->_params);
+			$this->_args = array_map('trim', $prm);
+			$this->_argc = count($this->_args);
 		} else {
-			$this->_params = array();
-			$this->_paramc = 0;
+			$this->_args = array();
+			$this->_argc = 0;
 		}
     }
 
@@ -188,47 +188,47 @@ class FluxCLI
 
 			/* start */
 			case "start":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
 					break;
 				} else {
-					return $this->_transferStart($this->_params[0]);
+					return $this->_transferStart($this->_args[0]);
 				}
 
 			/* stop */
 			case "stop":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
 					break;
 				} else {
-					return $this->_transferStop($this->_params[0]);
+					return $this->_transferStop($this->_args[0]);
 				}
 
 			/* reset */
 			case "reset":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
 					break;
 				} else {
-					return $this->_transferReset($this->_params[0]);
+					return $this->_transferReset($this->_args[0]);
 				}
 
 			/* delete */
 			case "delete":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
 					break;
 				} else {
-					return $this->_transferDelete($this->_params[0]);
+					return $this->_transferDelete($this->_args[0]);
 				}
 
 			/* wipe */
 			case "wipe":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: name of transfer. (extra-arg 1)");
 					break;
 				} else {
-					return $this->_transferWipe($this->_params[0]);
+					return $this->_transferWipe($this->_args[0]);
 				}
 
 			/* start-all */
@@ -245,42 +245,42 @@ class FluxCLI
 
 			/* inject */
 			case "inject":
-				if ($this->_paramc < 2) {
+				if ($this->_argc < 2) {
 					array_push($this->_argErrors, "missing argument(s) for inject.");
 					break;
 				} else {
-					return $this->_inject($this->_params[0], $this->_params[1]);
+					return $this->_inject($this->_args[0], $this->_args[1]);
 				}
 
 			/* watch */
 			case "watch":
-				if ($this->_paramc < 2) {
+				if ($this->_argc < 2) {
 					array_push($this->_argErrors, "missing argument(s) for watch.");
 					break;
 				} else {
-					return $this->_watch($this->_params[0], $this->_params[1]);
+					return $this->_watch($this->_args[0], $this->_args[1]);
 				}
 
 			/* rss */
 			case "rss":
-				if ($this->_paramc < 4) {
+				if ($this->_argc < 4) {
 					array_push($this->_argErrors, "missing argument(s) for rss.");
 					break;
 				} else {
 					return $this->_rss(
-						$this->_params[0], $this->_params[1],
-						$this->_params[2], $this->_params[3],
-						empty($this->_params[4]) ? "" : $this->_params[4]
+						$this->_args[0], $this->_args[1],
+						$this->_args[2], $this->_args[3],
+						empty($this->_args[4]) ? "" : $this->_args[4]
 					);
 				}
 
 			/* xfer */
 			case "xfer":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: time-delta of xfer to use : (all/total/month/week/day) (extra-arg 1)");
 					break;
 				} else {
-					return $this->_xfer($this->_params[0]);
+					return $this->_xfer($this->_args[0]);
 				}
 
 			/* repair */
@@ -289,26 +289,26 @@ class FluxCLI
 
 	        /* maintenance */
 			case "maintenance":
-				return $this->_maintenance(((isset($this->_params[0])) && ($this->_params[0] == "true")) ? true : false);
+				return $this->_maintenance(((isset($this->_args[0])) && ($this->_args[0] == "true")) ? true : false);
 	        	return true;
 
 	        /* dump */
 			case "dump":
-				if (empty($this->_params[0])) {
+				if (empty($this->_args[0])) {
 					array_push($this->_argErrors, "missing argument: type. (settings/users) (extra-arg 1)");
 					break;
 				} else {
-					return $this->_databaseDump($this->_params[0]);
+					return $this->_dump($this->_args[0]);
 				}
 
 			/* filelist */
 			case "filelist":
-				printFileList((empty($this->_params[0])) ? $cfg['docroot'] : $this->_params[0], 1, 1);
+				printFileList((empty($this->_args[0])) ? $cfg['docroot'] : $this->_args[0], 1, 1);
 				return true;
 
 			/* checksums */
 			case "checksums":
-				printFileList((empty($this->_params[0])) ? $cfg['docroot'] : $this->_params[0], 2, 1);
+				printFileList((empty($this->_args[0])) ? $cfg['docroot'] : $this->_args[0], 2, 1);
 				return true;
 
 			/* version */
@@ -532,11 +532,11 @@ class FluxCLI
         	$ch->delete($transfer);
         	if (count($ch->messages) > 0)
 				$this->_messages = array_merge($this->_messages, $ch->messages);
-        	if (count($this->_messages) == 0) {
+        	if ((count($msgs) + count($ch->messages)) == 0) {
 				$this->_outputMessage("done.\n");
 				return true;
         	} else {
-				$this->_outputError("failed: ".$transfer."\n".implode("\n", $this->_messages));
+				$this->_outputError("failed: ".$transfer."\n".implode("\n", $msgs)."\n".implode("\n", $ch->messages));
 				return false;
         	}
         } else {
@@ -615,10 +615,11 @@ class FluxCLI
 	    $fileName = basename($transferFile);
         $fileName = cleanFileName($fileName, false);
         // only inject valid transfers
+        $msgs = array();
         if (($fileName !== false) && (isValidTransfer($fileName))) {
         	$targetFile = $cfg["transfer_file_path"].$fileName;
             if (is_file($targetFile)) {
-            	array_push($this->_messages, "transfer ".$fileName.", already exists.");
+            	array_push($msgs, "transfer ".$fileName.", already exists.");
             } else {
             	$this->_outputMessage("copy ".$transferFile." to ".$targetFile." ...\n");
                 if (@copy($transferFile, $targetFile)) {
@@ -630,19 +631,20 @@ class FluxCLI
                     $this->_outputMessage("injecting ".$fileName." ...\n");
                     injectTransfer($fileName);
                 } else {
-                	array_push($this->_messages, "File could not be copied: ".$transferFile);
+                	array_push($msgs, "File could not be copied: ".$transferFile);
                 }
             }
         } else {
-        	array_push($this->_messages, "The type of file you are injecting is not allowed.");
-			array_push($this->_messages, "valid file-extensions: ");
-			array_push($this->_messages, $cfg["file_types_label"]);
+        	array_push($msgs, "The type of file you are injecting is not allowed.");
+			array_push($msgs, "valid file-extensions: ");
+			array_push($msgs, $cfg["file_types_label"]);
         }
-		if (count($this->_messages) == 0) {
+		if (count($msgs) == 0) {
 			$this->_outputMessage("done.\n");
 			return $fileName;
 		} else {
-			$this->_outputError("failed: ".$transfer."\n".implode("\n", $this->_messages));
+			$this->_messages = array_merge($this->_messages, $msgs);
+			$this->_outputError("failed: ".$transfer."\n".implode("\n", $msgs));
 			return false;
 		}
 	}
@@ -725,6 +727,11 @@ class FluxCLI
 		// check xfer
 		if ($cfg['enable_xfer'] != 1) {
 			$this->_outputError("xfer must be enabled.\n");
+			return false;
+		}
+		// check arg
+		if (($delta != "all") && ($delta != "total") && ($delta != "month") && ($delta != "week") && ($delta != "day")) {
+			$this->_outputMessage('invalid delta : "'.$delta.'"'."\n");
 			return false;
 		}
 		$this->_outputMessage('checking xfer-limit(s) for "'.$delta.'" ...'."\n");
@@ -866,7 +873,7 @@ class FluxCLI
 				$sql = "SELECT uid, user_id FROM tf_users";
 				break;
 			default:
-				$this->_outputError("username ".$username." is no valid user.\n");
+				$this->_outputError("invalid type : ".$type."\n");
 				return false;
 		}
 	    $recordset = $db->Execute($sql);

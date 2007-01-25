@@ -605,7 +605,7 @@ class MaintenanceAndRepair
 			$this->_outputMessage("rewrite stat-file for ".$transfer." ...\n");
 			$sf->running = 0;
 			$sf->percent_done = -100.0;
-			$sf->time_left = 'Transfer Stopped';
+			$sf->time_left = 'repaired';
 			$sf->down_speed = 0;
 			$sf->up_speed = 0;
 			$sf->seeds = 0;
