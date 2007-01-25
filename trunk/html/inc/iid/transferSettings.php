@@ -47,24 +47,25 @@ if (isValidTransfer($transfer) !== true) {
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.transferSettings.tmpl");
 
+// get label
+$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+
 // set transfer vars
 $tmpl->setvar('transfer', $transfer);
-$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
 $tmpl->setvar('transferLabel', $transferLabel);
 
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
 
-// load settings
-$loaded = $ch->settingsLoad($transfer);
-// default-settings if settings could not be loaded (fresh transfer)
-if ($loaded !== true)
+// load settings, default if settings could not be loaded (fresh transfer)
+if ($ch->settingsLoad($transfer) !== true)
 	$ch->settingsDefault();
 
 // set running-field
 $ch->running = isTransferRunning($transfer) ? 1 : 0;
 
-if ($isSave) { /* save */
+// save/display
+if ($isSave) {                                                        /* save */
 
 	// set save-var
 	$tmpl->setvar('isSave', 1);
@@ -211,12 +212,9 @@ if ($isSave) { /* save */
 			if ($settingsNew['max_download_rate'] != $settingsCurrent['max_download_rate'])
 				$ch->setRateDownload($transfer, $settingsNew['max_download_rate']);
 
-			// die-when-done
-			if ($settingsNew['torrent_dies_when_done'] != $settingsCurrent['torrent_dies_when_done']) {
-				$workload = ($settingsNew['torrent_dies_when_done'] == "True") ? "1" : "0";
-				// add command to buffer
-	        	CommandHandler::add($transfer, "r".$workload);
-			}
+			// runtime
+			if ($settingsNew['torrent_dies_when_done'] != $settingsCurrent['torrent_dies_when_done'])
+				$ch->setRuntime($transfer, $settingsNew['torrent_dies_when_done']);
 
 			// sharekill
 			if ($settingsNew['sharekill'] != $settingsCurrent['sharekill'])
@@ -237,7 +235,7 @@ if ($isSave) { /* save */
 
 	}
 
-} else { /* display */
+} else {                                                           /* display */
 
 	// set save-var
 	$tmpl->setvar('isSave', 0);

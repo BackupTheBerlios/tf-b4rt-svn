@@ -58,10 +58,8 @@ $sf = new StatFile($transfer, $transferowner);
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
 
-// load settings
-$loaded = $ch->settingsLoad($transfer);
-// default-settings if settings could not be loaded (fresh transfer)
-if ($loaded !== true)
+// load settings, default if settings could not be loaded (fresh transfer)
+if ($ch->settingsLoad($transfer) !== true)
 	$ch->settingsDefault();
 
 // totals

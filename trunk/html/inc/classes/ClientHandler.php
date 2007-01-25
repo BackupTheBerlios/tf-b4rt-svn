@@ -236,6 +236,16 @@ class ClientHandler
     function setRateDownload($transfer, $downrate, $autosend = false) { return; }
 
     /**
+     * set runtime of a transfer
+     *
+     * @param $transfer
+     * @param $runtime
+     * @param $autosend
+     * @return boolean
+     */
+    function setRuntime($transfer, $runtime, $autosend = false) { return true; }
+
+    /**
      * set sharekill of a transfer
      *
      * @param $transfer
@@ -512,11 +522,9 @@ class ClientHandler
         } else { // non-interactive, load settings from db
             $this->rerequest = $cfg["rerequest_interval"];
             $this->skip_hash_check = $cfg["skiphashcheck"];
-            // load settings
-            $loaded = $this->settingsLoad();
-            // default-settings if settings could not be loaded (fresh transfer)
-            if ($loaded !== true)
-        		$this->settingsDefault();
+			// load settings, default if settings could not be loaded (fresh transfer)
+			if ($this->settingsLoad() !== true)
+				$this->settingsDefault();
         }
 		// queue
         if ($enqueue) {
