@@ -61,8 +61,8 @@ switch ($op) {
 	case "updateIndexSettings":
 		admin_updateIndexSettings();
 
-	case "updateStartpopSettings":
-		admin_updateStartpopSettings();
+	case "updateControlSettings":
+		admin_updateControlSettings();
 
 	case "updateDirSettings":
 		admin_updateDirSettings();

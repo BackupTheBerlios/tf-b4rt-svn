@@ -100,7 +100,7 @@ function validateSettings(section) {
 				document.theForm.path_incoming.focus();
 			}
 			break;
-		case 'startpop':
+		case 'control':
 			if (isNumber(document.theForm.maxdepth.value) == false) {
 				msg = msg + "* Max Depth must be a valid number.\n" ;
 			}

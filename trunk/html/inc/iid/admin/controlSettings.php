@@ -30,7 +30,7 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.admin.startpopSettings.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.admin.controlSettings.tmpl");
 
 // set vars
 $tmpl->setvar('enable_btclient_chooser', $cfg["enable_btclient_chooser"]);
@@ -40,7 +40,7 @@ $tmpl->setvar('transfer_customize_settings', $cfg["transfer_customize_settings"]
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('maxdepth', $cfg["maxdepth"]);
 //
-tmplSetTitleBar("Administration - StartPop Settings");
+tmplSetTitleBar("Administration - Control Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
 

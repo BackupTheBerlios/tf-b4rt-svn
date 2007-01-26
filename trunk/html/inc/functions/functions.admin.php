@@ -25,7 +25,6 @@
  */
 function admin_updateServerSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Server Settings");
@@ -38,7 +37,6 @@ function admin_updateServerSettings() {
  */
 function admin_updateTransferSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Transfer Settings");
@@ -51,7 +49,6 @@ function admin_updateTransferSettings() {
  */
 function admin_updateWebappSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating WebApp Settings");
@@ -64,7 +61,6 @@ function admin_updateWebappSettings() {
  */
 function admin_updateIndexSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(true, true);
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Index Settings");
@@ -73,15 +69,14 @@ function admin_updateIndexSettings() {
 }
 
 /**
- * updateStartpopSettings
+ * updateControlSettings
  */
-function admin_updateStartpopSettings() {
+function admin_updateControlSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings', $settings);
-	AuditAction($cfg["constants"]["admin"], " Updating StartPop Settings");
-	@header("location: admin.php?op=startpopSettings");
+	AuditAction($cfg["constants"]["admin"], " Updating Control Settings");
+	@header("location: admin.php?op=controlSettings");
 	exit();
 }
 
@@ -90,7 +85,6 @@ function admin_updateStartpopSettings() {
  */
 function admin_updateDirSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings_dir', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Dir Settings");
@@ -103,7 +97,6 @@ function admin_updateDirSettings() {
  */
 function admin_updateStatsSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings_stats', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Stats Settings");
@@ -116,7 +109,6 @@ function admin_updateStatsSettings() {
  */
 function admin_updateXferSettings() {
 	global $cfg;
-
 	$settings = processSettingsParams(false, false);
 	saveSettings('tf_settings', $settings);
 	AuditAction($cfg["constants"]["admin"], " Updating Xfer Settings");
@@ -129,7 +121,6 @@ function admin_updateXferSettings() {
  */
 function admin_updateFluxdSettings() {
 	global $cfg;
-
 	if ($_POST["fluxd_dbmode"] != $cfg["fluxd_dbmode"] ||
 		$_POST["fluxd_loglevel"] != $cfg["fluxd_loglevel"] ||
 		$_POST["fluxd_Qmgr_enabled"] != $cfg["fluxd_Qmgr_enabled"] ||
@@ -260,7 +251,6 @@ function admin_controlFluxd() {
  */
 function admin_updateSearchSettings() {
 	global $cfg;
-
 	foreach ($_POST as $key => $value) {
 		if ($key != "searchEngine")
 			$settings[$key] = $value;
@@ -279,7 +269,6 @@ function admin_updateSearchSettings() {
  */
 function admin_addLink() {
 	global $cfg;
-
 	$newLink = getRequestVar('newLink');
 	$newSite = getRequestVar('newSite');
 	if (!empty($newLink)){
@@ -298,7 +287,6 @@ function admin_addLink() {
  */
 function admin_editLink() {
 	global $cfg;
-
 	$lid = getRequestVar('lid');
 	$newLink = getRequestVar('editLink');
 	$newSite = getRequestVar('editSite');
@@ -345,7 +333,6 @@ function admin_moveLink() {
  */
 function admin_deleteLink() {
 	global $cfg;
-
 	$lid = getRequestVar('lid');
 	AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." Link: ".getSite($lid)." [".getLink($lid)."]");
 	deleteOldLink($lid);
@@ -360,7 +347,6 @@ function admin_deleteLink() {
  */
 function admin_addRSS() {
 	global $cfg;
-
 	$newRSS = getRequestVar('newRSS');
 	if(!empty($newRSS)){
 		addNewRSS($newRSS);
@@ -375,7 +361,6 @@ function admin_addRSS() {
  */
 function admin_deleteRSS() {
 	global $cfg;
-
 	$rid = getRequestVar('rid');
 	AuditAction($cfg["constants"]["admin"], $cfg['_DELETE']." RSS: ".getRSS($rid));
 	deleteOldRSS($rid);
@@ -388,7 +373,6 @@ function admin_deleteRSS() {
  */
 function admin_deleteUser() {
 	global $cfg;
-
 	$user_id = getRequestVar('user_id');
 	if (!IsSuperAdmin($user_id)) {
 		DeleteThisUser($user_id);

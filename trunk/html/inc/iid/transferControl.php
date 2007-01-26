@@ -37,6 +37,7 @@ $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
 $pageop = getRequestVar('pageop');
+$profile = getRequestVar('profile');
 
 // validate transfer
 if (isValidTransfer($transfer) !== true) {

@@ -30,7 +30,7 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 // is enabled ?
-if ($cfg["transfer_customize_settings"] != 1) {
+if ($cfg["transfer_customize_settings"] < 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use start-pop");
 	@error("disabled", "index.php?iid=index", "");
 }
