@@ -36,7 +36,7 @@ require_once('inc/functions/functions.common.php');
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
 	@error("missing params", "index.php?iid=index", "", array('transfer'));
-$isSave = (isset($_REQUEST['save'])) ? true : false;
+$pageop = getRequestVar('pageop');
 
 // validate transfer
 if (isValidTransfer($transfer) !== true) {
@@ -58,14 +58,70 @@ $tmpl->setvar('transferLabel', $transferLabel);
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
 
 // load settings, default if settings could not be loaded (fresh transfer)
-if ($ch->settingsLoad($transfer) !== true)
+if ($ch->settingsLoad($transfer) !== true) {
 	$ch->settingsDefault();
+	$tmpl->setvar('settings_exist', 0);
+} else {
+	$tmpl->setvar('settings_exist', 1);
+}
+
+// hash-check
+$dsize = getTorrentDataSize($transfer);
+if (($dsize > 0) && ($dsize != 4096))
+	$tmpl->setvar('is_skip', $cfg["skiphashcheck"]);
 
 // set running-field
 $ch->running = isTransferRunning($transfer) ? 1 : 0;
 
+// pageop
+//
+// * default
+//
+// * control (start, stop, restart)
+// * start (form or link)
+//
+$tmpl->setvar('pageop', (empty($pageop)) ? "default" : $pageop);
+// op-switch
+switch ($pageop) {
+
+	default:
+	case "default":
+		break;
+
+	case "control":
+		break;
+
+	case "start":
+
+		// meta-info
+		$tmpl->setvar('metaInfo', showMetaInfo($transfer,false));
+
+		// more vars
+		$tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
+
+		break;
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 // save/display
-if ($isSave) {                                                        /* save */
+if ($isSave) {
 
 	// set pageop-var
 	$tmpl->setvar('pageop', 'startexec');
@@ -135,12 +191,12 @@ if ($isSave) {                                                        /* save */
 		if ($settingsNew[$settingsKey] != $settingsCurrent[$settingsKey])
 			array_push($settingsChanged, $settingsKey);
 	}
-	if (empty($settingsChanged)) { /* no changes */
+	if (empty($settingsChanged)) {
 
 		// set message-var
 		$tmpl->setvar('message', "no changes");
 
-	} else { /* something changed */
+	} else {
 
 		// fill lists
 		$list_changes = array();
@@ -202,7 +258,7 @@ if ($isSave) {                                                        /* save */
 		$ch->maxcons = $settingsNew['maxcons'];
 		$ch->settingsSave();
 
-		if ($doSend) { /* send changes */
+		if ($doSend) {
 
 			// upload-rate
 			if ($settingsNew['max_upload_rate'] != $settingsCurrent['max_upload_rate'])
@@ -226,7 +282,7 @@ if ($isSave) {                                                        /* save */
 			// set message-var
 			$tmpl->setvar('message', "settings saved + changes sent to client");
 
-		} else { /* dont send changes or no changes to send */
+		} else {
 
 			// set message-var
 			$tmpl->setvar('message', "settings saved");
@@ -235,7 +291,7 @@ if ($isSave) {                                                        /* save */
 
 	}
 
-} else {                                                           /* display */
+} else {
 
 	// set pageop var
 	$tmpl->setvar('pageop', 'startform');
@@ -261,6 +317,7 @@ if ($isSave) {                                                        /* save */
 	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);
 	$tmpl->setvar('sendboxAttr', ($ch->running == 1) ? "checked" : "disabled");
 }
+*/
 
 // title + foot
 tmplSetFoot(false);
