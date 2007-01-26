@@ -14,34 +14,23 @@
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
 						<form name="theForm" action="admin.php?op=updateStartpopSettings" method="post" onsubmit="return validateSettings('startpop')">
-
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Advanced Start Dialog</strong><br>
-									When enabled, users will be given the advanced start dialog popup when starting a torrent:
+								<td align="left" width="350" valign="top"><strong>Customize Settings</strong><br>
+								 Define who can customize Transfer-Settings :
 								</td>
 								<td valign="top">
-									<select name="advanced_start">
-										<option value="1">true</option>
-										<option value="0"
-										<tmpl_if name="advanced_start" value="0">
+									<select name="transfer_customize_settings">
+										<option value="2">All Users</option>
+										<option value="1"
+										<tmpl_if name="transfer_customize_settings" value="1">
 											 selected
 										</tmpl_if>
-										>false</option>
-									</select>
-								</td>
-							</tr>
-							<tr>
-								<td align="left" width="350" valign="top"><strong>Enable Client-Chooser</strong><br>
-									When enabled, users will be given the option to choose the Client in advanced start dialog popup:
-								</td>
-								<td valign="top">
-									<select name="enable_btclient_chooser">
-										<option value="1">true</option>
+										>Only Admins</option>
 										<option value="0"
-										<tmpl_if name="enable_btclient_chooser" value="0">
+										<tmpl_if name="transfer_customize_settings" value="0">
 											 selected
 										</tmpl_if>
-										>false</option>
+										>Disabled</option>
 									</select>
 								</td>
 							</tr>
@@ -81,31 +70,24 @@
 								</td>
 							</tr>
 							<tr>
-								<td align="left" width="350" valign="top"><strong>Customize profiles</strong><br>
-								 Define who can customize settings in the Torrentstart Popup :
+								<td align="left" width="350" valign="top"><strong>Enable Client-Chooser</strong><br>
+									When enabled, users will be given the option to choose the Client when starting a transfer:
 								</td>
 								<td valign="top">
-									<select name="transfer_customize_settings">
-										<option value="2">All Users</option>
-										<option value="1"
-										<tmpl_if name="transfer_customize_settings" value="1">
-											 selected
-										</tmpl_if>
-										>Only Admins</option>
+									<select name="enable_btclient_chooser">
+										<option value="1">true</option>
 										<option value="0"
-										<tmpl_if name="transfer_customize_settings" value="0">
+										<tmpl_if name="enable_btclient_chooser" value="0">
 											 selected
 										</tmpl_if>
-										>Disabled</option>
+										>false</option>
 									</select>
 								</td>
 							</tr>
-
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable Specific save path</strong><br>
-								Show Directory Tree when you are going to start a torrent,
-								allowing you to select the path where you want
-								to download the file(s).
+								Show Directory Tree when you are going to start a transfer,
+								allowing you to select the path where you want to download the file(s).
 								</td>
 								<td valign="top">
 									<select name="showdirtree">
@@ -121,8 +103,7 @@
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Max Depth in Directory Tree</strong><br>
 								Set the max depth of subfolders in your user directory when
-								displaying directory tree. Set it to 0 if you want to
-								display all subfolders.
+								displaying directory tree. Set it to 0 if you want to display all subfolders.
 								</td>
 								<td valign="top">
 									<input name="maxdepth" type="Text" maxlength="1" value="<tmpl_var name="maxdepth">" size="1">

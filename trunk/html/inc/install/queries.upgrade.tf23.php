@@ -31,7 +31,6 @@ $queries[$cqt][$cdb] = array();
 // updates + deletes
 array_push($queries[$cqt][$cdb], "UPDATE tf_users SET theme = 'default'");
 // tf_settings
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('advanced_start','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_upload_rate','10')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_download_rate','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('max_uploads','4')");

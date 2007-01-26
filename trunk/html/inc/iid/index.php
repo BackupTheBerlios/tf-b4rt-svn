@@ -72,7 +72,7 @@ $tmpl->setvar('path_incoming', ($cfg["enable_home_dirs"] != 0) ? $cfg["user"] : 
 $tmpl->setvar('enable_metafile_download', $cfg["enable_metafile_download"]);
 $tmpl->setvar('enable_multiops', $cfg["enable_multiops"]);
 $tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
-$tmpl->setvar('advanced_start', $cfg["advanced_start"]);
+$tmpl->setvar('transfer_customize_settings', $cfg["transfer_customize_settings"]);
 $tmpl->setvar('twd', $cfg["transfer_window_default"]);
 
 // =============================================================================

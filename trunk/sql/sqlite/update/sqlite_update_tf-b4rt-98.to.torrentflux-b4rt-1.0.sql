@@ -127,7 +127,6 @@ UPDATE tf_users SET theme = 'default';
 --
 DELETE FROM tf_settings_user;
 DELETE FROM tf_settings WHERE tf_key NOT LIKE 'path';
-INSERT INTO tf_settings VALUES ('advanced_start','1');
 INSERT INTO tf_settings VALUES ('max_upload_rate','10');
 INSERT INTO tf_settings VALUES ('max_download_rate','0');
 INSERT INTO tf_settings VALUES ('max_uploads','4');

@@ -30,9 +30,9 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 // is enabled ?
-if ($cfg["advanced_start"] != 1) {
-	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use advanced start");
-	@error("advanced start is disabled", "index.php?iid=index", "");
+if ($cfg["transfer_customize_settings"] != 1) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use start-pop");
+	@error("disabled", "index.php?iid=index", "");
 }
 
 // common functions
