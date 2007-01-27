@@ -245,6 +245,7 @@ CREATE TABLE tf_transfers (
   minport SMALLINT(5) unsigned NOT NULL default '0',
   maxport SMALLINT(5) unsigned NOT NULL default '0',
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (transfer)
 ) TYPE=MyISAM");
 // tf_transfer_totals
@@ -331,6 +332,7 @@ CREATE TABLE tf_transfers (
   minport INTEGER(5) NOT NULL default '0',
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
+  rerequest INTEGER(8) NOT NULL default '0',
   PRIMARY KEY  (transfer)
 )");
 // tf_transfer_totals

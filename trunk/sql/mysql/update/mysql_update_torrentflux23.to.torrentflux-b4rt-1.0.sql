@@ -29,6 +29,7 @@ CREATE TABLE tf_transfers (
   minport SMALLINT(5) unsigned NOT NULL default '0',
   maxport SMALLINT(5) unsigned NOT NULL default '0',
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (transfer)
 ) TYPE=MyISAM;
 

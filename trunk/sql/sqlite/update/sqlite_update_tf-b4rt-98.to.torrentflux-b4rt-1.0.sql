@@ -32,6 +32,7 @@ CREATE TABLE tf_transfers (
   minport INTEGER(5) NOT NULL default '0',
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
+  rerequest INTEGER(8) NOT NULL default '0',
   PRIMARY KEY  (transfer)
 ) ;
 

@@ -34,12 +34,14 @@ CREATE TABLE tf_transfers (
   minport INT2 NOT NULL DEFAULT '0',
   maxport INT2 NOT NULL DEFAULT '0',
   maxcons INT2 NOT NULL DEFAULT '0',
-  PRIMARY KEY (torrent),
+  rerequest INT4 NOT NULL DEFAULT '0',
+  PRIMARY KEY (transfer),
   CHECK (running>=0),
   CHECK (maxuploads>=0),
   CHECK (minport>=0),
   CHECK (maxport>=0),
-  CHECK (maxcons>=0)
+  CHECK (maxcons>=0),
+  CHECK (rerequest>=0)
 );
 
 --

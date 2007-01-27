@@ -310,6 +310,7 @@ CREATE TABLE tf_transfers (
   minport SMALLINT(5) unsigned NOT NULL default '0',
   maxport SMALLINT(5) unsigned NOT NULL default '0',
   maxcons SMALLINT(4) unsigned NOT NULL default '0',
+  rerequest MEDIUMINT(8) unsigned NOT NULL default '0',
   PRIMARY KEY  (transfer)
 ) TYPE=MyISAM");
 // tf_transfer_totals
@@ -483,6 +484,7 @@ CREATE TABLE tf_transfers (
   minport INTEGER(5) NOT NULL default '0',
   maxport INTEGER(5) NOT NULL default '0',
   maxcons INTEGER(4) NOT NULL default '0',
+  rerequest INTEGER(8) NOT NULL default '0',
   PRIMARY KEY  (transfer)
 )");
 // tf_transfer_totals
@@ -665,12 +667,14 @@ CREATE TABLE tf_transfers (
   minport INT2 NOT NULL DEFAULT '0',
   maxport INT2 NOT NULL DEFAULT '0',
   maxcons INT2 NOT NULL DEFAULT '0',
-  PRIMARY KEY (torrent),
+  rerequest INT4 NOT NULL DEFAULT '0',
+  PRIMARY KEY (transfer),
   CHECK (running>=0),
   CHECK (maxuploads>=0),
   CHECK (minport>=0),
   CHECK (maxport>=0),
-  CHECK (maxcons>=0)
+  CHECK (maxcons>=0),
+  CHECK (rerequest>=0)
 )");
 // tf_transfer_totals
 array_push($queries[$cqt][$cdb], "
