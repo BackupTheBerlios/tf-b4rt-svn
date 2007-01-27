@@ -43,10 +43,13 @@ transfer_init();
 
 // request-vars
 $pageop = getRequestVar('pageop');
+$client = getRequestVar('client');
 $profile = getRequestVar('profile');
 
 // init ch-instance
-$ch = ClientHandler::getInstance(getTransferClient($transfer));
+$ch = ($client == "")
+	? ClientHandler::getInstance(getTransferClient($transfer))
+	: ClientHandler::getInstance($client);
 
 // customize-vars
 transfer_setCustomizeVars();
@@ -80,14 +83,15 @@ switch ($pageop) {
 	case "start":
 
 		// client-chooser
-		$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 		if ($ch->type == "torrent") {
+			$tmpl->setvar('enableClientChooser', 1);
+			$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 			if ($cfg["enable_btclient_chooser"] != 0)
 				tmplSetClientSelectForm($cfg["btclient"]);
 			else
 				$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 		} else {
-			$tmpl->setvar('btclientDefault', $ch->type);
+			$tmpl->setvar('enableClientChooser', 0);
 		}
 
 		// hash-check

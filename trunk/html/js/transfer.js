@@ -1,6 +1,14 @@
 /* $Id$ */
 
 /**
+ * changeClient
+ */
+function changeClient() {
+	document.theForm.save.value = 0;
+	document.theForm.submit();
+}
+
+/**
  * validateSettings
  */
 function validateSettings(type) {

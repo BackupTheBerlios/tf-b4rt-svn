@@ -42,10 +42,14 @@ tmplInitializeInstance($cfg["theme"], "page.transferSettings.tmpl");
 transfer_init();
 
 // request-vars
-$isSave = (isset($_REQUEST['save'])) ? true : false;
+$saveop = getRequestVar('save');
+$client = getRequestVar('client');
+$isSave = ($saveop == 1) ? true : false;
 
 // init ch-instance
-$ch = ClientHandler::getInstance(getTransferClient($transfer));
+$ch = ($client == "")
+	? ClientHandler::getInstance(getTransferClient($transfer))
+	: ClientHandler::getInstance($client);
 
 // customize-vars
 transfer_setCustomizeVars();
@@ -236,6 +240,18 @@ if ($isSave) {                                                        /* save */
 
 	// set save-var
 	$tmpl->setvar('isSave', 0);
+
+	// client-chooser
+	if ($ch->type == "torrent") {
+		$tmpl->setvar('enableClientChooser', 1);
+		$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
+		if ($cfg["enable_btclient_chooser"] != 0)
+			tmplSetClientSelectForm($ch->client);
+		else
+			$tmpl->setvar('btclientDefault', $cfg["btclient"]);
+	} else {
+		$tmpl->setvar('enableClientChooser', 0);
+	}
 
 	// set vars for transfer from ch
 	transfer_setVarsFromCHSettings();
