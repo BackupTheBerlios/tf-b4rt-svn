@@ -96,7 +96,7 @@ function tmplSetClientSelectForm($btclient = 'tornado') {
 function tmplSetDirTree($dir, $maxdepth) {
 	global $cfg, $tmpl;
 	$tmpl->setvar('dirtree_dir', $dir);
-	if (is_numeric ($maxdepth)) {
+	if (is_numeric($maxdepth)) {
 		$retvar_list = array();
 		$last = ($maxdepth == 0)
 			? exec("find ".escapeshellarg($dir)." -type d | sort && echo", $retval)

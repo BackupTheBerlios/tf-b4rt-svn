@@ -32,6 +32,9 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// transfer functions
+require_once('inc/functions/functions.transfer.php');
+
 // request-vars
 $transfer = getRequestVar('transfer');
 if (empty($transfer))
@@ -56,6 +59,9 @@ $tmpl->setvar('transferLabel', $transferLabel);
 
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
+
+// supports-settings
+transfer_setSupportsVars();
 
 // load settings, default if settings could not be loaded (fresh transfer)
 if ($ch->settingsLoad($transfer) !== true)
@@ -240,22 +246,8 @@ if ($isSave) {                                                        /* save */
 	// set save-var
 	$tmpl->setvar('isSave', 0);
 
-	// set vars for transfer
-	$tmpl->setvar('type', $ch->type);
-	$tmpl->setvar('client', $ch->client);
-	$tmpl->setvar('hash', $ch->hash);
-	$tmpl->setvar('datapath', $ch->datapath);
-	$tmpl->setvar('savepath', $ch->savepath);
-	$tmpl->setvar('running', $ch->running);
-	$tmpl->setvar('max_upload_rate', $ch->rate);
-	$tmpl->setvar('max_download_rate', $ch->drate);
-	$tmpl->setvar('max_uploads', $ch->maxuploads);
-	$tmpl->setvar('superseeder', $ch->superseeder);
-	$tmpl->setvar('die_when_done', $ch->runtime);
-	$tmpl->setvar('sharekill', $ch->sharekill);
-	$tmpl->setvar('minport', $ch->minport);
-	$tmpl->setvar('maxport', $ch->maxport);
-	$tmpl->setvar('maxcons', $ch->maxcons);
+	// set vars for transfer from ch
+	transfer_setVarsFromCHSettings();
 
 	// send-box
 	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);

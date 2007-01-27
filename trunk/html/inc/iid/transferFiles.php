@@ -121,9 +121,6 @@ if (substr($transfer, -8) == ".torrent") {
 		$tmpl->setloop('transferFilesList', $transferFilesList);
 		$tmpl->setvar('transferFileCount', $nzb->filecount);
 	}
-} else {
-	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-	@error("Invalid Transfer", "", "", array($transfer));
 }
 
 // title + foot

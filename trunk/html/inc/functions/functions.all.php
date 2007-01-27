@@ -47,8 +47,8 @@ require_once('inc/functions/functions.xfer.php');
 // readrss
 require_once('inc/functions/functions.readrss.php');
 
-// startpop
-require_once('inc/functions/functions.startpop.php');
+// transfer
+require_once('inc/functions/functions.transfer.php');
 
 // vlc functions
 require_once('inc/functions/functions.vlc.php');
