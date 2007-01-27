@@ -48,8 +48,8 @@ $profile = getRequestVar('profile');
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
 
-// supports-settings
-transfer_setSupportsVars();
+// customize-vars
+transfer_setCustomizeVars();
 
 // load settings, default if settings could not be loaded (fresh transfer)
 if ($ch->settingsLoad($transfer) !== true) {
@@ -60,16 +60,12 @@ if ($ch->settingsLoad($transfer) !== true) {
 }
 $tmpl->setvar('settings_exist', $settings_exist);
 
-// hash-check
-$dsize = getTorrentDataSize($transfer);
-$tmpl->setvar('is_skip', (($dsize > 0) && ($dsize != 4096)) ? $cfg["skiphashcheck"] : 0);
-
 // set running-field
 $ch->running = isTransferRunning($transfer) ? 1 : 0;
 
 // pageop
 //
-// * control (start, stop, restart)
+// * control (start, stats)
 // * start (form or link)
 //
 if (empty($pageop))
@@ -83,10 +79,6 @@ switch ($pageop) {
 
 	case "start":
 
-		// file prio
-		if ($supportMap[$ch->client]['supports_file_priority'] == 1)
-			$tmpl->setvar('enable_file_priority', $cfg["enable_file_priority"]);
-
 		// client-chooser
 		$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 		if ($ch->type == "torrent") {
@@ -98,6 +90,25 @@ switch ($pageop) {
 			$tmpl->setvar('btclientDefault', $ch->type);
 		}
 
+		// hash-check
+		if ($supportMap[$ch->client]['skip_hash_check'] == 1) {
+			$dsize = getTorrentDataSize($transfer);
+			$tmpl->setvar('is_skip',
+				(($dsize > 0) && ($dsize != 4096))
+					? $cfg["skiphashcheck"]
+					: 0
+			);
+		} else {
+			$tmpl->setvar('is_skip', 0);
+		}
+
+		// file prio
+		$tmpl->setvar('enable_file_priority',
+			($supportMap[$ch->client]['file_priority'] == 1)
+				? $cfg["enable_file_priority"]
+				: 0
+		);
+
 		// dirtree
 		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 		$dirTree = ($cfg["enable_home_dirs"] != 0)
@@ -105,7 +116,7 @@ switch ($pageop) {
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
-		// queuing
+		// queue
 		$tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);
 
 		// profiles
@@ -119,11 +130,11 @@ switch ($pageop) {
 		}
 		if ($with_profiles == 0) {
 			// set vars
-			transfer_setVars($with_profiles);
+			transfer_setVarsFromCHSettings();
 			$tmpl->setvar('useLastSettings', $settings_exist);
 		} else {
 			// set vars
-			transfer_setVars($with_profiles);
+			transfer_setVarsFromProfileSettings();
 			$tmpl->setvar('useLastSettings', (($profile != "") && ($profile != "last_used")) ? 0 : $settings_exist);
 			// load profile list
 			if ($cfg['transfer_profile_level'] == "2" || $cfg['isAdmin'])
@@ -138,15 +149,6 @@ switch ($pageop) {
 			}
 		}
 		$tmpl->setvar('with_profiles', $with_profiles);
-
-		// customize settings
-		if ($cfg['transfer_customize_settings'] == "2")
-			$customize_settings = 1;
-		elseif ($cfg['transfer_customize_settings'] == "1" && $cfg['isAdmin'])
-			$customize_settings = 1;
-		else
-			$customize_settings = 0;
-		$tmpl->setvar('customize_settings', $customize_settings);
 
 		// meta-info
 		//$tmpl->setvar('metaInfo', showMetaInfo($transfer, false));

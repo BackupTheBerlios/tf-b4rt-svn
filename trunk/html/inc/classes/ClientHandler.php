@@ -250,30 +250,29 @@ class ClientHandler
         if ($transfer != "")
         	$this->_setVarsForTransfer($transfer);
 		// common vars
-		$sql = "SELECT * FROM tf_transfers WHERE transfer = '".$transfer."'";
+		$sql = "SELECT * FROM tf_transfers WHERE transfer = '".$this->transfer."'";
 		$result = $db->Execute($sql);
 		if ($db->ErrorNo() != 0) dbError($sql);
-		$row = $result->FetchRow();
-		if (empty($row)) {
-			// not loaded
-			return false;
-		} else {
+		if ($row = $result->FetchRow()) {
         	$this->hash        = $row["hash"];
         	$this->datapath    = $row["datapath"];
             $this->savepath    = $row["savepath"];
             $this->running     = $row["running"];
             $this->rate        = $row["rate"];
             $this->drate       = $row["drate"];
-            $this->maxuploads  = $row["runtime"];
-            $this->superseeder = $row["maxuploads"];
-            $this->runtime     = $row["superseeder"];
-            $this->sharekill   = $row["minport"];
-            $this->minport     = $row["maxport"];
-            $this->maxport     = $row["sharekill"];
+            $this->maxuploads  = $row["maxuploads"];
+            $this->superseeder = $row["superseeder"];
+            $this->runtime     = $row["runtime"];
+            $this->sharekill   = $row["sharekill"];
+            $this->minport     = $row["minport"];
+            $this->maxport     = $row["maxport"];
             $this->maxcons     = $row["maxcons"];
             $this->rerequest   = $row["rerequest"];
 			// loaded
             return true;
+		} else {
+			// not loaded
+			return false;
 		}
     }
 

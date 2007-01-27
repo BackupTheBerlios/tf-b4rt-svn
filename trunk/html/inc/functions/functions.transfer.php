@@ -25,69 +25,74 @@
  */
 $supportMap = array(
 	'tornado' => array(
-		'supports_max_upload_rate' => 1,
-		'supports_max_download_rate' => 1,
-		'supports_max_uploads' => 1,
-		'supports_superseeder' => 1,
-		'supports_die_when_done' => 1,
-		'supports_sharekill' => 1,
-		'supports_minport' => 1,
-		'supports_maxport' => 1,
-		'supports_maxcons' => 1,
-		'supports_rerequest_interval' => 1,
-		'supports_file_priority' => 1
+		'max_upload_rate'   => 1,
+		'max_download_rate' => 1,
+		'max_uploads'       => 1,
+		'superseeder'       => 1,
+		'die_when_done'     => 1,
+		'sharekill'         => 1,
+		'minport'           => 1,
+		'maxport'           => 1,
+		'maxcons'           => 1,
+		'rerequest'         => 1,
+		'file_priority'     => 1,
+		'skip_hash_check'   => 1
 	),
 	'transmission' => array(
-		'supports_max_upload_rate' => 1,
-		'supports_max_download_rate' => 1,
-		'supports_max_uploads' => 0,
-		'supports_superseeder' => 0,
-		'supports_die_when_done' => 1,
-		'supports_sharekill' => 1,
-		'supports_minport' => 1,
-		'supports_maxport' => 1,
-		'supports_maxcons' => 0,
-		'supports_rerequest_interval' => 0,
-		'supports_file_priority' => 0
+		'max_upload_rate'   => 1,
+		'max_download_rate' => 1,
+		'max_uploads'       => 0,
+		'superseeder'       => 0,
+		'die_when_done'     => 1,
+		'sharekill'         => 1,
+		'minport'           => 1,
+		'maxport'           => 1,
+		'maxcons'           => 0,
+		'rerequest'         => 0,
+		'file_priority'     => 0,
+		'skip_hash_check'   => 0
 	),
 	'mainline' => array(
-		'supports_max_upload_rate' => 1,
-		'supports_max_download_rate' => 1,
-		'supports_max_uploads' => 1,
-		'supports_superseeder' => 0,
-		'supports_die_when_done' => 1,
-		'supports_sharekill' => 1,
-		'supports_minport' => 1,
-		'supports_maxport' => 1,
-		'supports_maxcons' => 1,
-		'supports_rerequest_interval' => 1,
-		'supports_file_priority' => 0
+		'max_upload_rate'   => 1,
+		'max_download_rate' => 1,
+		'max_uploads'       => 1,
+		'superseeder'       => 0,
+		'die_when_done'     => 1,
+		'sharekill'         => 1,
+		'minport'           => 1,
+		'maxport'           => 1,
+		'maxcons'           => 1,
+		'rerequest'         => 1,
+		'file_priority'     => 0,
+		'skip_hash_check'   => 1
 	),
 	'wget' => array(
-		'supports_max_upload_rate' => 0,
-		'supports_max_download_rate' => 1,
-		'supports_max_uploads' => 0,
-		'supports_superseeder' => 0,
-		'supports_die_when_done' => 0,
-		'supports_sharekill' => 0,
-		'supports_minport' => 0,
-		'supports_maxport' => 0,
-		'supports_maxcons' => 0,
-		'supports_rerequest_interval' => 0,
-		'supports_file_priority' => 0
+		'max_upload_rate'   => 0,
+		'max_download_rate' => 1,
+		'max_uploads'       => 0,
+		'superseeder'       => 0,
+		'die_when_done'     => 0,
+		'sharekill'         => 0,
+		'minport'           => 0,
+		'maxport'           => 0,
+		'maxcons'           => 0,
+		'rerequest'         => 0,
+		'file_priority'     => 0,
+		'skip_hash_check'   => 0
 	),
 	'nzbperl' => array(
-		'supports_max_upload_rate' => 0,
-		'supports_max_download_rate' => 1,
-		'supports_max_uploads' => 0,
-		'supports_superseeder' => 0,
-		'supports_die_when_done' => 0,
-		'supports_sharekill' => 0,
-		'supports_minport' => 0,
-		'supports_maxport' => 0,
-		'supports_maxcons' => 1,
-		'supports_rerequest_interval' => 0,
-		'supports_file_priority' => 0
+		'max_upload_rate'   => 0,
+		'max_download_rate' => 1,
+		'max_uploads'       => 0,
+		'superseeder'       => 0,
+		'die_when_done'     => 0,
+		'sharekill'         => 0,
+		'minport'           => 0,
+		'maxport'           => 0,
+		'maxcons'           => 1,
+		'rerequest'         => 0,
+		'file_priority'     => 0,
+		'skip_hash_check'   => 0
 	)
 );
 
@@ -113,41 +118,41 @@ function transfer_init() {
 }
 
 /**
- * setSupportsVars
+ * setCustomizeVars
  */
-function transfer_setSupportsVars() {
+function transfer_setCustomizeVars() {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
-	// set vars for transfer
-	$tmpl->setvar('supports_max_upload_rate', $supportMap[$ch->client]['supports_max_upload_rate']);
-	$tmpl->setvar('supports_max_download_rate', $supportMap[$ch->client]['supports_max_download_rate']);
-	$tmpl->setvar('supports_max_uploads', $supportMap[$ch->client]['supports_max_uploads']);
-	$tmpl->setvar('supports_superseeder', $supportMap[$ch->client]['supports_superseeder']);
-	$tmpl->setvar('supports_die_when_done', $supportMap[$ch->client]['supports_die_when_done']);
-	$tmpl->setvar('supports_sharekill', $supportMap[$ch->client]['supports_sharekill']);
-	$tmpl->setvar('supports_minport', $supportMap[$ch->client]['supports_minport']);
-	$tmpl->setvar('supports_maxport', $supportMap[$ch->client]['supports_maxport']);
-	$tmpl->setvar('supports_maxcons', $supportMap[$ch->client]['supports_maxcons']);
-	// rerequest
-	$tmpl->setvar('supports_rerequest_interval', $supportMap[$ch->client]['supports_rerequest_interval']);
-	// rerequest
-	$tmpl->setvar('supports_file_priority', $supportMap[$ch->client]['supports_file_priority']);
-}
-
-/**
- * setVars
- *
- * @param $with_profiles
- */
-function transfer_setVars($with_profiles = 0) {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
-	if ($with_profiles == 0) {
-		// set from profile
-		transfer_setVarsFromProfileSettings();
+	// customize settings
+	if ($cfg['transfer_customize_settings'] == "2")
+		$customize_settings = 1;
+	elseif ($cfg['transfer_customize_settings'] == "1" && $cfg['isAdmin'])
+		$customize_settings = 1;
+	else
+		$customize_settings = 0;
+	$tmpl->setvar('customize_settings', $customize_settings);
+	// set supported-vars for transfer
+	if ($customize_settings == 0) {
+		$tmpl->setvar('max_upload_rate_enabled', 0);
+		$tmpl->setvar('max_download_rate_enabled', 0);
+		$tmpl->setvar('max_uploads_enabled', 0);
+		$tmpl->setvar('superseeder_enabled', 0);
+		$tmpl->setvar('die_when_done_enabled', 0);
+		$tmpl->setvar('sharekill_enabled', 0);
+		$tmpl->setvar('minport_enabled', 0);
+		$tmpl->setvar('maxport_enabled', 0);
+		$tmpl->setvar('maxcons_enabled', 0);
+		$tmpl->setvar('rerequest_enabled', 0);
 	} else {
-		// set from ch
-		transfer_setVarsFromCHSettings();
-		// rerequest
-		$tmpl->setvar('rerequest_interval', $cfg["rerequest_interval"]);
+		$tmpl->setvar('max_upload_rate_enabled', $supportMap[$ch->client]['max_upload_rate']);
+		$tmpl->setvar('max_download_rate_enabled', $supportMap[$ch->client]['max_download_rate']);
+		$tmpl->setvar('max_uploads_enabled', $supportMap[$ch->client]['max_uploads']);
+		$tmpl->setvar('superseeder_enabled', $supportMap[$ch->client]['superseeder']);
+		$tmpl->setvar('die_when_done_enabled', $supportMap[$ch->client]['die_when_done']);
+		$tmpl->setvar('sharekill_enabled', $supportMap[$ch->client]['sharekill']);
+		$tmpl->setvar('minport_enabled', $supportMap[$ch->client]['minport']);
+		$tmpl->setvar('maxport_enabled', $supportMap[$ch->client]['maxport']);
+		$tmpl->setvar('maxcons_enabled', $supportMap[$ch->client]['maxcons']);
+		$tmpl->setvar('rerequest_enabled', $supportMap[$ch->client]['rerequest']);
 	}
 }
 
@@ -182,6 +187,7 @@ function transfer_setVarsFromCHSettings() {
 	$tmpl->setvar('minport', $ch->minport);
 	$tmpl->setvar('maxport', $ch->maxport);
 	$tmpl->setvar('maxcons', $ch->maxcons);
+	$tmpl->setvar('rerequest', $ch->rerequest);
 }
 
 /**
@@ -201,8 +207,7 @@ function transfer_setVarsFromProfileSettings() {
 	$tmpl->setvar('minport', $settings["minport"]);
 	$tmpl->setvar('maxport', $settings["maxport"]);
 	$tmpl->setvar('maxcons', $settings["maxcons"]);
-	// rerequest
-	$tmpl->setvar('rerequest_interval', $settings["rerequest"]);
+	$tmpl->setvar('rerequest', $settings["rerequest"]);
 }
 
 ?>

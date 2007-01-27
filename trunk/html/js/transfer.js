@@ -20,8 +20,9 @@ function validateSettings(type) {
 				msg = msg + "* Max # Uploads must be a valid number.\n";
 				document.theForm.max_uploads.focus();
 			}
-			if (isNumber(document.theForm.maxcons.value) == false) {
-				msg = msg + "* Max Cons must be a valid number.\n" ;
+			if (isNumber(document.theForm.sharekill.value) == false) {
+				msg = msg + "* Keep seeding until Sharing % must be a valid number.\n";
+				document.theForm.sharekill.focus();
 			}
 			if ((isNumber(document.theForm.minport.value) == false) || (isNumber(document.theForm.maxport.value) == false)) {
 				msg = msg + "* Port Range must have valid numbers.\n";
@@ -39,9 +40,16 @@ function validateSettings(type) {
 				msg = msg + "* Port Range is not valid.\n";
 				document.theForm.minport.focus();
 			}
-			if (isNumber(document.theForm.sharekill.value) == false) {
-				msg = msg + "* Keep seeding until Sharing % must be a valid number.\n";
-				document.theForm.sharekill.focus();
+			if (isNumber(document.theForm.maxcons.value) == false) {
+				msg = msg + "* Max Cons must be a valid number.\n" ;
+			}
+			if (isNumber(document.theForm.rerequest.value) == false) {
+				msg = msg + "* Rerequest Intervall must have a valid number.\n";
+				document.theForm.rerequest.focus();
+			}
+			if (document.theForm.rerequest.value < 10) {
+				msg = msg + "* Rerequest Intervall must be 10 or greater.\n";
+				document.theForm.rerequest.focus();
 			}
 			break;
 

@@ -47,8 +47,8 @@ $isSave = (isset($_REQUEST['save'])) ? true : false;
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
 
-// supports-settings
-transfer_setSupportsVars();
+// customize-vars
+transfer_setCustomizeVars();
 
 // load settings, default if settings could not be loaded (fresh transfer)
 if ($ch->settingsLoad($transfer) !== true)
@@ -78,7 +78,8 @@ if ($isSave) {                                                        /* save */
 		'sharekill',
 		'minport',
 		'maxport',
-		'maxcons'
+		'maxcons',
+		'rerequest'
 	);
 
 	// runtime-settings
@@ -99,7 +100,8 @@ if ($isSave) {                                                        /* save */
 		'sharekill' => 'Percentage When Seeding should Stop',
 		'minport' => 'Min-Port',
 		'maxport' => 'Max-Port',
-		'maxcons' => 'Max Cons'
+		'maxcons' => 'Max Cons',
+		'rerequest' => 'Rerequest Intervall'
 	);
 
 	// current settings
@@ -113,6 +115,7 @@ if ($isSave) {                                                        /* save */
 	$settingsCurrent['minport'] = $ch->minport;
 	$settingsCurrent['maxport'] = $ch->maxport;
 	$settingsCurrent['maxcons'] = $ch->maxcons;
+	$settingsCurrent['rerequest'] = $ch->rerequest;
 
 	// new settings
 	$settingsNew = array();
@@ -193,6 +196,7 @@ if ($isSave) {                                                        /* save */
 		$ch->minport = $settingsNew['minport'];
 		$ch->maxport = $settingsNew['maxport'];
 		$ch->maxcons = $settingsNew['maxcons'];
+		$ch->rerequest = $settingsNew['rerequest'];
 		$ch->settingsSave();
 
 		if ($doSend) { /* send changes */
