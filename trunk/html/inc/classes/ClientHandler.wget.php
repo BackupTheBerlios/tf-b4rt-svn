@@ -140,6 +140,7 @@ class ClientHandlerWget extends ClientHandler
 		$this->minport     = 1;
 		$this->maxport     = 65535;
 		$this->maxcons     = 1;
+		$this->rerequest   = 1;
     }
 
     /**

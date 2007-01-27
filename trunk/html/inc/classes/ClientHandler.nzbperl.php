@@ -187,6 +187,7 @@ class ClientHandlerNzbperl extends ClientHandler
 		$this->minport     = 1;
 		$this->maxport     = 65535;
 		$this->maxcons     = $cfg["nzbperl_conn"];
+		$this->rerequest   = 1;
     }
 
 }

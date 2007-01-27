@@ -705,45 +705,11 @@ function &loadAllTransferSettings() {
 			"minport"                => $row["minport"],
 			"maxport"                => $row["maxport"],
 			"sharekill"              => $row["sharekill"],
-			"maxcons"                => $row["maxcons"]
+			"maxcons"                => $row["maxcons"],
+			"rerequest"              => $row["rerequest"]
 		);
 	}
 	return $ary;
-}
-
-/**
- * Function to load the settings for a transfer. returns array with settings
- *
- * @param $transfer
- * @return array or false
- */
-function loadTransferSettings($transfer) {
-	global $db;
-	$sql = "SELECT * FROM tf_transfers WHERE transfer = '".$transfer."'";
-	$result = $db->Execute($sql);
-	if ($db->ErrorNo() != 0) dbError($sql);
-	$row = $result->FetchRow();
-	if (empty($row)) {
-		return false;
-	} else {
-		$retAry = array();
-		$retAry["type"]                   = $row["type"];
-		$retAry["client"]                 = $row["client"];
-		$retAry["hash"]                   = $row["hash"];
-		$retAry["datapath"]               = $row["datapath"];
-		$retAry["savepath"]               = $row["savepath"];
-		$retAry["running"]                = $row["running"];
-		$retAry["max_upload_rate"]        = $row["rate"];
-		$retAry["max_download_rate"]      = $row["drate"];
-		$retAry["die_when_done"] = $row["runtime"];
-		$retAry["max_uploads"]            = $row["maxuploads"];
-		$retAry["superseeder"]            = $row["superseeder"];
-		$retAry["minport"]                = $row["minport"];
-		$retAry["maxport"]                = $row["maxport"];
-		$retAry["sharekill"]              = $row["sharekill"];
-		$retAry["maxcons"]                = $row["maxcons"];
-		return $retAry;
-	}
 }
 
 /**

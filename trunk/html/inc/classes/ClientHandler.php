@@ -235,6 +235,7 @@ class ClientHandler
 		$this->minport     = $cfg["minport"];
 		$this->maxport     = $cfg["maxport"];
 		$this->maxcons     = $cfg["maxcons"];
+		$this->rerequest   = $cfg["rerequest_interval"];
     }
 
     /**
@@ -244,56 +245,89 @@ class ClientHandler
      * @return boolean
      */
     function settingsLoad($transfer = "") {
+		global $db;
 		// transfer vars
         if ($transfer != "")
         	$this->_setVarsForTransfer($transfer);
-        // common vars
-        $settingsAry = loadTransferSettings($this->transfer);
-        if (is_array($settingsAry)) {
-        	$this->hash        = $settingsAry["hash"];
-        	$this->datapath    = $settingsAry["datapath"];
-            $this->savepath    = $settingsAry["savepath"];
-            $this->running     = $settingsAry["running"];
-            $this->rate        = $settingsAry["max_upload_rate"];
-            $this->drate       = $settingsAry["max_download_rate"];
-            $this->maxuploads  = $settingsAry["max_uploads"];
-            $this->superseeder = $settingsAry["superseeder"];
-            $this->runtime     = $settingsAry["die_when_done"];
-            $this->sharekill   = $settingsAry["sharekill"];
-            $this->minport     = $settingsAry["minport"];
-            $this->maxport     = $settingsAry["maxport"];
-            $this->maxcons     = $settingsAry["maxcons"];
-            // loaded
+		// common vars
+		$sql = "SELECT * FROM tf_transfers WHERE transfer = '".$transfer."'";
+		$result = $db->Execute($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
+		$row = $result->FetchRow();
+		if (empty($row)) {
+			// not loaded
+			return false;
+		} else {
+        	$this->hash        = $row["hash"];
+        	$this->datapath    = $row["datapath"];
+            $this->savepath    = $row["savepath"];
+            $this->running     = $row["running"];
+            $this->rate        = $row["rate"];
+            $this->drate       = $row["drate"];
+            $this->maxuploads  = $row["runtime"];
+            $this->superseeder = $row["maxuploads"];
+            $this->runtime     = $row["superseeder"];
+            $this->sharekill   = $row["minport"];
+            $this->minport     = $row["maxport"];
+            $this->maxport     = $row["sharekill"];
+            $this->maxcons     = $row["maxcons"];
+            $this->rerequest   = $row["rerequest"];
+			// loaded
             return true;
-    	} else {
-    		// not loaded
-    		return false;
-    	}
+		}
     }
 
     /**
      * save settings
      */
     function settingsSave() {
-    	// common vars
-        saveTransferSettings(
-        	$this->transfer,
-        	$this->type,
-        	$this->client,
-        	$this->hash,
-        	$this->datapath,
-        	$this->savepath,
-        	$this->running,
-        	$this->rate,
-        	$this->drate,
-        	$this->maxuploads,
-        	$this->superseeder,
-        	$this->runtime,
-        	$this->sharekill,
-        	$this->minport,
-        	$this->maxport,
-        	$this->maxcons
-        );
+		global $db;
+		// Messy - a not exists would prob work better
+		deleteTransferSettings($this->transfer);
+		// insert
+	    $sql = "INSERT INTO tf_transfers "
+	    	."("
+	    	."transfer,"
+	    	."type,"
+	    	."client,"
+	    	."hash,"
+	    	."datapath,"
+	    	."savepath,"
+	    	."running,"
+	    	."rate,"
+	    	."drate,"
+	    	."maxuploads,"
+	    	."superseeder,"
+	    	."runtime,"
+	    	."sharekill,"
+	    	."minport,"
+	    	."maxport,"
+	    	."maxcons,"
+	    	."rerequest"
+	    	.") VALUES ("
+	    	. $db->qstr($this->transfer).","
+	    	. $db->qstr($this->type).","
+	    	. $db->qstr($this->client).","
+	    	. $db->qstr($this->hash).","
+	    	. $db->qstr($this->datapath).","
+	    	. $db->qstr($this->savepath).","
+	    	. $db->qstr($this->running).","
+	    	. $db->qstr($this->rate).","
+	    	. $db->qstr($this->drate).","
+	    	. $db->qstr($this->maxuploads).","
+	    	. $db->qstr($this->superseeder).","
+	    	. $db->qstr($this->runtime).","
+	    	. $db->qstr($this->sharekill).","
+	    	. $db->qstr($this->minport).","
+	    	. $db->qstr($this->maxport).","
+	    	. $db->qstr($this->maxcons).","
+	    	. $db->qstr($this->rerequest)
+	    	.")";
+		$db->Execute($sql);
+		if ($db->ErrorNo() != 0) dbError($sql);
+		// set transfers-cache
+		cacheTransfersSet();
+		return true;
     }
 
     /**
@@ -535,16 +569,26 @@ class ClientHandler
     	$this->drate = ($reqvar != "")
     		? $reqvar
     		: $cfg["max_download_rate"];
-		// superseeder
-    	$reqvar = getRequestVar('superseeder');
-    	$this->superseeder = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["superseeder"];
 		// maxuploads
     	$reqvar = getRequestVar('maxuploads');
     	$this->maxuploads = ($reqvar != "")
     		? $reqvar
     		: $cfg["max_uploads"];
+		// superseeder
+    	$reqvar = getRequestVar('superseeder');
+    	$this->superseeder = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["superseeder"];
+    	// runtime
+    	$reqvar = getRequestVar('runtime');
+    	$this->runtime = (empty($reqvar))
+    		? $cfg["die_when_done"]
+    		: $reqvar;
+		// sharekill
+    	$reqvar = getRequestVar('sharekill');
+    	$this->sharekill = ($reqvar != "")
+    		? $reqvar
+    		: $cfg["sharekill"];
 		// minport
     	$reqvar = getRequestVar('minport');
     	$this->minport = (empty($reqvar))
@@ -565,16 +609,6 @@ class ClientHandler
     	$this->rerequest = ($reqvar != "")
     		? $reqvar
     		: $cfg["rerequest_interval"];
-    	// runtime
-    	$reqvar = getRequestVar('runtime');
-    	$this->runtime = (empty($reqvar))
-    		? $cfg["die_when_done"]
-    		: $reqvar;
-		// sharekill
-    	$reqvar = getRequestVar('sharekill');
-    	$this->sharekill = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["sharekill"];
         // savepath
         $this->savepath = getRequestVar('savepath');
         // skip_hash_check
