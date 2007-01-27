@@ -20,7 +20,9 @@
 
 *******************************************************************************/
 
-// client-support-map
+/**
+ * client-support-map
+ */
 $supportMap = array(
 	'tornado' => array(
 		'supports_max_upload_rate' => 1,
@@ -90,10 +92,31 @@ $supportMap = array(
 );
 
 /**
+ * init
+ */
+function transfer_init() {
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	// request-var
+	$transfer = getRequestVar('transfer');
+	if (empty($transfer))
+		@error("missing params", "", "", array('transfer'));
+	// validate transfer
+	if (isValidTransfer($transfer) !== true) {
+		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+		@error("Invalid Transfer", "", "", array($transfer));
+	}
+	// get label
+	$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+	// set transfer vars
+	$tmpl->setvar('transfer', $transfer);
+	$tmpl->setvar('transferLabel', $transferLabel);
+}
+
+/**
  * setSupportsVars
  */
 function transfer_setSupportsVars() {
-	global $cfg, $tmpl, $transfer, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// set vars for transfer
 	$tmpl->setvar('supports_max_upload_rate', $supportMap[$ch->client]['supports_max_upload_rate']);
 	$tmpl->setvar('supports_max_download_rate', $supportMap[$ch->client]['supports_max_download_rate']);
@@ -116,7 +139,7 @@ function transfer_setSupportsVars() {
  * @param $with_profiles
  */
 function transfer_setVars($with_profiles = 0) {
-	global $cfg, $tmpl, $transfer, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	if ($with_profiles == 0) {
 		// set from profile
 		transfer_setVarsFromProfileSettings();
@@ -132,7 +155,7 @@ function transfer_setVars($with_profiles = 0) {
  * setGenericVarsFromCH
  */
 function transfer_setGenericVarsFromCH() {
-	global $cfg, $tmpl, $transfer, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// set generic vars for transfer
 	$tmpl->setvar('type', $ch->type);
 	$tmpl->setvar('client', $ch->client);
@@ -146,7 +169,7 @@ function transfer_setGenericVarsFromCH() {
  * setVarsFromCHSettings
  */
 function transfer_setVarsFromCHSettings() {
-	global $cfg, $tmpl, $transfer, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// set generic vars for transfer
 	transfer_setGenericVarsFromCH();
 	// set vars for transfer
@@ -165,7 +188,7 @@ function transfer_setVarsFromCHSettings() {
  * setVarsFromProfileSettings
  */
 function transfer_setVarsFromProfileSettings() {
-	global $cfg, $tmpl, $transfer, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	//load custom settings
 	$settings = GetProfileSettings($profile);
 	// set vars for transfer

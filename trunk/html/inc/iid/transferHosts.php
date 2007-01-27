@@ -29,24 +29,14 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-// request-vars
-$transfer = getRequestVar('transfer');
-if (empty($transfer))
-	@error("missing params", "index.php?iid=index", "", array('transfer'));
-
-// validate transfer
-if (isValidTransfer($transfer) !== true) {
-	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-	@error("Invalid Transfer", "", "", array($transfer));
-}
+// transfer functions
+require_once('inc/functions/functions.transfer.php');
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.transferHosts.tmpl");
 
-// set transfer vars
-$tmpl->setvar('transfer', $transfer);
-$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
-$tmpl->setvar('transferLabel', $transferLabel);
+// init transfer
+transfer_init();
 
 // stat
 $sf = new StatFile($transfer);

@@ -35,28 +35,15 @@ require_once('inc/functions/functions.common.php');
 // transfer functions
 require_once('inc/functions/functions.transfer.php');
 
-// request-vars
-$transfer = getRequestVar('transfer');
-if (empty($transfer))
-	@error("missing params", "index.php?iid=index", "", array('transfer'));
-$pageop = getRequestVar('pageop');
-$profile = getRequestVar('profile');
-
-// validate transfer
-if (isValidTransfer($transfer) !== true) {
-	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-	@error("Invalid Transfer", "", "", array($transfer));
-}
-
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.transferControl.tmpl");
 
-// get label
-$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
+// init transfer
+transfer_init();
 
-// set transfer vars
-$tmpl->setvar('transfer', $transfer);
-$tmpl->setvar('transferLabel', $transferLabel);
+// request-vars
+$pageop = getRequestVar('pageop');
+$profile = getRequestVar('profile');
 
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
