@@ -185,9 +185,9 @@
 											<tmpl_if name="clientType" value="torrent">
 												<tmpl_if name="transfer_customize_settings">
 													<tmpl_if name="show_run" value="1">
-														<a href="#" onclick="StartTransfer('index.php?iid=startpop&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+														<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 													<tmpl_else>
-														<a href="#" onclick="StartTransfer('index.php?iid=startpop&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+														<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 													</tmpl_if>
 												</tmpl_if>
 												<tmpl_if name="show_run" value="1">
@@ -411,9 +411,9 @@
 											<tmpl_if name="clientType" value="torrent">
 												<tmpl_if name="transfer_customize_settings">
 													<tmpl_if name="show_run" value="1">
-														<a href="#" onclick="StartTransfer('index.php?iid=startpop&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+														<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 													<tmpl_else>
-														<a href="#" onclick="StartTransfer('index.php?iid=startpop&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+														<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 													</tmpl_if>
 												</tmpl_if>
 												<tmpl_if name="show_run" value="1">

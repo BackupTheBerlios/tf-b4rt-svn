@@ -21,18 +21,15 @@ function bulkCheck(thisIn) {
 		}
 	}
 }
-function showTransfer(name_file, width, height) {
-	window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=510,height=350">')
+function showTransfer(name_file) {
+	if (actionInProgress)
+		return false;
+	window.open(name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=510,height=350">')
 }
 function openServerMonitor() {
-	window.open('index.php?iid=servermon','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=470,height=220')
-}
-function StartTransfer(name_file) {
-	if (actionInProgress) {
-		actionRequestError();
+	if (actionInProgress)
 		return false;
-	}
-	window.open (name_file,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=700')
+	window.open('index.php?iid=servermon','_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=470,height=220')
 }
 function actionClick(showlabel) {
 	if (actionInProgress) {
