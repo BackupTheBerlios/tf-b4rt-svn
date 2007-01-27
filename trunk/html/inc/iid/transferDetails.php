@@ -59,9 +59,6 @@ if (substr($transfer, -8) == ".torrent") {
 	// this is nzbperl.
 	$tmpl->setvar('clientType', "nzb");
 	$tmpl->setvar('transferMetaInfo', @htmlentities(file_get_contents($cfg["transfer_file_path"].$transfer), ENT_QUOTES));
-} else {
-	AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-	@error("Invalid Transfer", "", "", array($transfer));
 }
 
 // title + foot
