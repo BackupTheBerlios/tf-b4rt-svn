@@ -64,6 +64,7 @@ $tmpl->setvar('settings_exist', $settings_exist);
 
 // set running-field
 $ch->running = isTransferRunning($transfer) ? 1 : 0;
+$tmpl->setvar('running', $ch->running);
 
 // pageop
 //
@@ -77,6 +78,10 @@ $tmpl->setvar('pageop', $pageop);
 switch ($pageop) {
 
 	case "control":
+
+
+
+
 		break;
 
 	case "start":
@@ -103,14 +108,15 @@ switch ($pageop) {
 			: $cfg["path"].$cfg["path_incoming"].'/';
 		tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
+		// set file vars
+		transfer_setFileVars();
+
 		// file prio
 		if (($supportMap[$ch->client]['file_priority'] == 1) && ($cfg["enable_file_priority"] == 1)) {
-			$tmpl->setvar('file_priority_enabled', 1);
-			$tmpl->setvar('enable_file_priority', 1);
-			// TODO
 			require_once("inc/functions/functions.fileprio.php");
 			$tmpl->setvar('filePrio', getFilePrioForm($transfer, false));
-			//$tmpl->setvar('filePrio', getFilePrioForm($transfer, false));
+			$tmpl->setvar('file_priority_enabled', 1);
+			$tmpl->setvar('enable_file_priority', 1);
 		} else {
 			$tmpl->setvar('file_priority_enabled', 0);
 			$tmpl->setvar('enable_file_priority', 0);
@@ -137,12 +143,6 @@ switch ($pageop) {
 		// queue
 		$tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);
 
-		// set file vars
-		// TODO
-		transfer_setFileVars();
-
-		//filePrio
-
 		// break
 		break;
 
@@ -157,6 +157,7 @@ tmplSetTitleBar($transferLabel." - Control", false);
 
 // lang vars
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
+$tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);

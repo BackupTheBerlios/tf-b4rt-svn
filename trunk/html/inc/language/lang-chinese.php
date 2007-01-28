@@ -50,7 +50,7 @@ define("_SELECTFILE","请选择一个要上传的 Metafile 档案");
 define("_URLFILE","Torrent 档案的网址");
 define("_UPLOAD","上传");
 define("_GETFILE","取得档案");
-define("_TORRENTLINKS","Torrent 的连结");
+define("_LINKS","的连结");
 define("_ONLINE","在线");
 define("_OFFLINE","离线");
 define("_STORAGE","储藏空间");

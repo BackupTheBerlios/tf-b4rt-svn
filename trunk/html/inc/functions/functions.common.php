@@ -922,7 +922,7 @@ function loadLanguageFile($language) {
 	$cfg['_URLFILE'] = _URLFILE;
 	$cfg['_UPLOAD'] = _UPLOAD;
 	$cfg['_GETFILE'] = _GETFILE;
-	$cfg['_TORRENTLINKS'] = _TORRENTLINKS;
+	$cfg['_LINKS'] = _LINKS;
 	$cfg['_ONLINE'] = _ONLINE;
 	$cfg['_OFFLINE'] = _OFFLINE;
 	$cfg['_STORAGE'] = _STORAGE;

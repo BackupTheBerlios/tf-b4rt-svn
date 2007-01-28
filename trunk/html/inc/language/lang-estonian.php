@@ -27,7 +27,7 @@ define("_SELECTFILE","Vali Metafile laadimiseks");
 define("_URLFILE","Torrenti URL");
 define("_UPLOAD","Lae ülesse");
 define("_GETFILE","Tõmba fail");
-define("_TORRENTLINKS","Torrentite lingid");
+define("_LINKS","Lingid");
 define("_ONLINE","Aktiivne");
 define("_OFFLINE","Passiivne");
 define("_STORAGE","Kõvaketas");

@@ -44,7 +44,7 @@ define("_SELECTFILE","Seleccione un Metafile para subir");
 define("_URLFILE","URL do arquivo Torrent");
 define("_UPLOAD","Subir");
 define("_GETFILE","Baixar");
-define("_TORRENTLINKS","Enlaces Torrent");
+define("_LINKS","Enlaces");
 define("_ONLINE","En Líña");
 define("_OFFLINE","Fora de Líña");
 define("_STORAGE","Almacenamento");

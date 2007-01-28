@@ -32,7 +32,7 @@ define("_SELECTFILE","Selecione um Metafile para upload");
 define("_URLFILE","URL para o arquivo .torrent");
 define("_UPLOAD","Upload");
 define("_GETFILE","Get File");
-define("_TORRENTLINKS","Torrent Links");
+define("_LINKS","Links");
 define("_ONLINE","Online");
 define("_OFFLINE","Offline");
 define("_STORAGE","Storage");

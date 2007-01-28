@@ -24,7 +24,7 @@ define("_SELECTFILE","Välj Metafile att ladda upp");
 define("_URLFILE","URL till torrent");
 define("_UPLOAD","Ladda upp");
 define("_GETFILE","Hämta");
-define("_TORRENTLINKS","Torrentlänkar");
+define("_LINKS","Länkar");
 define("_ONLINE","Uppkopplad");
 define("_OFFLINE","Frånkopplad");
 define("_STORAGE","Utrymme");

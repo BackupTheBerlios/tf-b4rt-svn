@@ -24,7 +24,7 @@ define("_SELECTFILE","Select a Metafile for upload");
 define("_URLFILE","URL for the Torrent File");
 define("_UPLOAD","Upload");
 define("_GETFILE","Get File");
-define("_TORRENTLINKS","Torrent Links");
+define("_LINKS","Links");
 define("_ONLINE","Online");
 define("_OFFLINE","Offline");
 define("_STORAGE","Storage");

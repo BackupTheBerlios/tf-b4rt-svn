@@ -24,7 +24,7 @@ define("_SELECTFILE","Seleck a Metafile fo' upload");
 define("_URLFILE","URL fo' th' To'rent File");
 define("_UPLOAD","Put it Der");
 define("_GETFILE","Git File");
-define("_TORRENTLINKS","To'rent Links");
+define("_LINKS","Links");
 define("_ONLINE","Attend'n");
 define("_OFFLINE","Not Here");
 define("_STORAGE","Sto'age");

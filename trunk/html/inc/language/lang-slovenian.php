@@ -27,7 +27,7 @@ define("_SELECTFILE","Dodaj Metafile z diska na strežnik");
 define("_URLFILE","Prenesi torrent z interneta na strežnik");
 define("_UPLOAD","Dodaj");
 define("_GETFILE","Prenesi");
-define("_TORRENTLINKS","Povezave do Torrentov");
+define("_LINKS","Povezave");
 define("_ONLINE","Prijavljeni");
 define("_OFFLINE","Neprijavljeni");
 define("_STORAGE","Prostor");

@@ -24,7 +24,7 @@ define("_SELECTFILE","Valitse Metafile tiedosto");
 define("_URLFILE","URL torrent tiedostoon");
 define("_UPLOAD","Lis‰‰");
 define("_GETFILE","Lis‰‰");
-define("_TORRENTLINKS","Torrent Linkit");
+define("_LINKS","Linkit");
 define("_ONLINE","Online");
 define("_OFFLINE","Offline");
 define("_STORAGE","Varasto");

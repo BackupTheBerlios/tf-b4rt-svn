@@ -23,7 +23,7 @@ define("_SELECTFILE","Velg en Metafile å laste opp");
 define("_URLFILE","URL til torrent filen");
 define("_UPLOAD","Last opp");
 define("_GETFILE","Hent fil");
-define("_TORRENTLINKS","Torrent Linker");
+define("_LINKS","Linker");
 define("_ONLINE","Online");
 define("_OFFLINE","Offline");
 define("_STORAGE","Lagringsplass");

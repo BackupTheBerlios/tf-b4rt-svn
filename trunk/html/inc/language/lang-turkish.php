@@ -26,7 +26,7 @@ define("_SELECTFILE","Yükleme için Metafile seç");
 define("_URLFILE","URL ile Torrent yükle");
 define("_UPLOAD","Yükle");
 define("_GETFILE","Dosyayi Al");
-define("_TORRENTLINKS","Sik Kullanilanlar");
+define("_LINKS","Sik Kullanilanlar");
 define("_ONLINE","Online");
 define("_OFFLINE","Offline");
 define("_STORAGE","Storage");

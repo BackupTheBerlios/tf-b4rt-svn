@@ -27,7 +27,7 @@ define("_SELECTFILE","Selecteer een Metafile voor upload");
 define("_URLFILE","Adres van het torrent-bestand");
 define("_UPLOAD","Upload");
 define("_GETFILE","Download");
-define("_TORRENTLINKS","Torrent-links");
+define("_LINKS","Links");
 define("_ONLINE","On-line");
 define("_OFFLINE","Off-line");
 define("_STORAGE","Opslag");

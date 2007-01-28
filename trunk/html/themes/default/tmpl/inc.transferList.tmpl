@@ -189,15 +189,11 @@
 													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 												</tmpl_if>
 											</tmpl_if>
-											<tmpl_if name="clientType" value="torrent">
-												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
-												<tmpl_else>
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
-												</tmpl_if>
+											<tmpl_if name="show_run" value="1">
+												<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 											<tmpl_else>
-												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+												<tmpl_if name="clientType" value="torrent">
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 												<tmpl_else>
 													<img src="themes/default/images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
@@ -412,15 +408,11 @@
 													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 												</tmpl_if>
 											</tmpl_if>
-											<tmpl_if name="clientType" value="torrent">
-												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
-												<tmpl_else>
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
-												</tmpl_if>
+											<tmpl_if name="show_run" value="1">
+												<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 											<tmpl_else>
-												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+												<tmpl_if name="clientType" value="torrent">
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/default/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 												<tmpl_else>
 													<img src="themes/default/images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>

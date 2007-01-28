@@ -27,7 +27,7 @@ define("_SELECTFILE","Metafile kiválasztása feltöltéshez");
 define("_URLFILE","A Torrent fájl URL hivatkozása");
 define("_UPLOAD","Feltöltés");
 define("_GETFILE","Fájl töltése");
-define("_TORRENTLINKS","Torrent Hivatkozások");
+define("_LINKS","Hivatkozások");
 define("_ONLINE","Bejelentkezve");
 define("_OFFLINE","Kijelentkezve");
 define("_STORAGE","Tárolókapacitás");

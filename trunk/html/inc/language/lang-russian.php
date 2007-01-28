@@ -24,7 +24,7 @@ define("_SELECTFILE","Выберите файл для загрузки");
 define("_URLFILE","Ссылка на торрент файл");
 define("_UPLOAD","Загрузить");
 define("_GETFILE","Загрузить файл");
-define("_TORRENTLINKS","Торрент ссылки");
+define("_LINKS","Торрент ссылки");
 define("_ONLINE","В сети");
 define("_OFFLINE","Отключены");
 define("_STORAGE","Хранилище");

@@ -24,7 +24,7 @@ define("_SELECTFILE","Choisissez un Metafile à télécharger");
 define("_URLFILE","URL pour le dossier de torrent");
 define("_UPLOAD","Téléchargement");
 define("_GETFILE","Charger le Fichier");
-define("_TORRENTLINKS","Liens De Torrents");
+define("_LINKS","Liens");
 define("_ONLINE","En Ligne");
 define("_OFFLINE","Hors Ligne");
 define("_STORAGE","Stockage");

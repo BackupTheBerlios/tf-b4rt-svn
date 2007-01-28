@@ -32,7 +32,7 @@ define("_SELECTFILE","請選擇一個要上傳的 Metafile 檔案");
 define("_URLFILE","Torrent 檔案的網址");
 define("_UPLOAD","上傳");
 define("_GETFILE","取得檔案");
-define("_TORRENTLINKS","Torrent 的連結");
+define("_LINKS","的連結");
 define("_ONLINE","在線");
 define("_OFFLINE","離線");
 define("_STORAGE","儲藏空間");

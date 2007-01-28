@@ -710,7 +710,7 @@ $tmpl->setvar('_MULTIPLE_UPLOAD', $cfg['_MULTIPLE_UPLOAD']);
 $tmpl->setvar('_URLFILE', $cfg['_URLFILE']);
 $tmpl->setvar('_GETFILE', $cfg['_GETFILE']);
 $tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
-$tmpl->setvar('_TORRENTLINKS', $cfg['_TORRENTLINKS']);
+$tmpl->setvar('_LINKS', $cfg['_LINKS']);
 $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_TOTALSPEED', $cfg['_TOTALSPEED']);
