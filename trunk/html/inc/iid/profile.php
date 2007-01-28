@@ -204,7 +204,7 @@ switch ($op) {
 					array_push($cookie_data, array(
 						'cid' => $cookie["cid"],
 						'host' => $cookie["host"],
-						'data' => $cookie["data"],
+						'data' => $cookie["data"]
 						)
 					);
 				}
@@ -282,7 +282,7 @@ switch ($op) {
 				foreach( $dat as $profile ) {
 					array_push($profile_data, array(
 						'pid' => $profile["id"],
-						'name' => $profile["name"],
+						'name' => $profile["name"]
 						)
 					);
 				}
@@ -349,7 +349,7 @@ switch ($op) {
 				$selected = "selected";
 			array_push($theme_list, array(
 				'arThemes' => $arThemes[$inx],
-				'selected' => $selected,
+				'selected' => $selected
 				)
 			);
 		}
@@ -365,7 +365,7 @@ switch ($op) {
 			array_push($tfstandard_theme_list, array(
 				'arThemes' => $arThemes[$inx],
 				'arThemes2' => $arThemes2[$inx],
-				'selected' => $selected,
+				'selected' => $selected
 				)
 			);
 		}
@@ -380,7 +380,7 @@ switch ($op) {
 			array_push($language_list, array(
 				'arLanguage' => $arLanguage[$inx],
 				'selected' => $selected,
-				'language_file' => GetLanguageFromFile($arLanguage[$inx]),
+				'language_file' => GetLanguageFromFile($arLanguage[$inx])
 				)
 			);
 		}
@@ -390,17 +390,13 @@ switch ($op) {
 }
 
 // set defines
-if ($cfg["enable_transfer_profile"] == 1) {
-	if ($cfg['isAdmin']) {
-		$tmpl->setvar('with_profiles', 1);
-	} else {
-		if($cfg['transfer_profile_level'] == 2)
-			$tmpl->setvar('with_profiles', 1);
-		else
-			$tmpl->setvar('with_profiles', 0);
-	}
-} else {
+if ($cfg['transfer_profiles'] <= 0) {
 	$tmpl->setvar('with_profiles', 0);
+} else {
+	if ($cfg['transfer_profiles'] >= 2)
+		$tmpl->setvar('with_profiles', 1);
+	else
+		$tmpl->setvar('with_profiles', ($cfg['isAdmin']) ? 1 : 0);
 }
 $tmpl->setvar('user', $cfg["user"]);
 //

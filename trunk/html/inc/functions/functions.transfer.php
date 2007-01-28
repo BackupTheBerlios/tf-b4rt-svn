@@ -328,13 +328,13 @@ function transfer_setDetailsVars() {
 function transfer_setProfiledVars() {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// set vars for transfer
-	if ($cfg["enable_transfer_profile"] == "1") {
-		if ($cfg['transfer_profile_level'] >= "1")
+	if ($cfg['transfer_profiles'] <= 0) {
+		$with_profiles = 0;
+	} else {
+		if ($cfg['transfer_profiles'] >= 2)
 			$with_profiles = 1;
 		else
 			$with_profiles = ($cfg['isAdmin']) ? 1 : 0;
-	} else {
-		$with_profiles = 0;
 	}
 	if ($with_profiles == 0) {
 		// set vars for transfer from ch
@@ -351,11 +351,13 @@ function transfer_setProfiledVars() {
 			transfer_setVarsFromCHSettings();
 			$tmpl->setvar('useLastSettings', $settings_exist);
 		}
-		// load profile list
-		if ($cfg['transfer_profile_level'] == "2" || $cfg['isAdmin'])
-			$profiles = GetProfiles($cfg["uid"], $profile);
-		if ($cfg['transfer_profile_level'] >= "1")
-			$public_profiles = GetPublicProfiles($profile);
+		// load profile lists
+		$profiles = ($cfg['transfer_profiles'] >= 3 || $cfg['isAdmin'])
+			? GetProfiles($cfg["uid"], $profile)
+			: array();
+		$public_profiles = ($cfg['transfer_profiles'] >= 2)
+			? GetPublicProfiles($profile)
+			: array();
 		if ((count($profiles) + count($public_profiles)) > 0) {
 			$tmpl->setloop('profiles', $profiles);
 			$tmpl->setloop('public_profiles', $public_profiles);

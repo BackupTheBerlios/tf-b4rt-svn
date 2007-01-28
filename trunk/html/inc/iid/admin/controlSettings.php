@@ -34,8 +34,7 @@ tmplInitializeInstance($cfg["theme"], "page.admin.controlSettings.tmpl");
 
 // set vars
 $tmpl->setvar('enable_btclient_chooser', $cfg["enable_btclient_chooser"]);
-$tmpl->setvar('enable_transfer_profile', $cfg["enable_transfer_profile"]);
-$tmpl->setvar('transfer_profile_level', $cfg["transfer_profile_level"]);
+$tmpl->setvar('transfer_profiles', $cfg["transfer_profiles"]);
 $tmpl->setvar('transfer_customize_settings', $cfg["transfer_customize_settings"]);
 $tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 $tmpl->setvar('maxdepth', $cfg["maxdepth"]);

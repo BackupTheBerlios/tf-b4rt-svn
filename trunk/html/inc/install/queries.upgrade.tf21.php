@@ -140,8 +140,7 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bandwidth_dow
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('bandwidth_up','10240')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('webapp_locked','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('enable_transfer_profile','1')");
-array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_profile_level','2')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_profiles','3')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transfer_customize_settings','1')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('transferHosts','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt')");
