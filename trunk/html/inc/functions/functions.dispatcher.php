@@ -30,108 +30,40 @@ define("_UPLOAD_LIMIT", 10000000);
  */
 function dispatcher_startTransfer($transfer) {
 	global $cfg;
-	$invalid = true;
-	if (isValidTransfer($transfer) === true) {
-		if (substr($transfer, -8) == ".torrent") {
-			// this is a torrent-client
-			$invalid = false;
-			$interactiveStart = getRequestVar('interactive');
-			if ((isset($interactiveStart)) && ($interactiveStart)) // interactive
-				indexStartTorrent($transfer, 1);
-			else // silent
-				indexStartTorrent($transfer, 0);
-		} else if (substr($transfer, -5) == ".wget") {
-			// this is wget.
-			$invalid = false;
-			// is enabled ?
-			if ($cfg["enable_wget"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to start wget ".$transfer);
-				@error("wget is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_wget"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to start wget ".$transfer);
-					@error("wget is disabled for users", "index.php?iid=index", "");
-				}
-			}
-			$ch = ClientHandler::getInstance('wget');
-			$ch->start($transfer, false, FluxdQmgr::isRunning());
-			if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
-				$msgs = array();
-				array_push($msgs, "transfer : ".$transfer);
-				array_push($msgs, "\nmessages :");
-				$msgs = array_merge($msgs, $ch->messages);
-				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
-				@error("Start failed", "", "", $msgs);
-			} else {
-				@header("location: index.php?iid=index");
-				exit();
-			}
-		} else if (substr($transfer, -4) == ".nzb") {
-			// This is nzbperl.
-			$invalid = false;
-			if ($cfg["enable_nzbperl"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to start nzbperl ".$transfer);
-				@error("nzbperl is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_nzbperl"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to start nzbperl ".$transfer);
-					@error("nzbperl is disabled for users", "index.php?iid=index", "");
-				}
-			}
-			$ch = ClientHandler::getInstance('nzbperl');
-			$ch->start($transfer, false, FluxdQmgr::isRunning());
-			if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
-				$msgs = array();
-				array_push($msgs, "transfer : ".$transfer);
-				array_push($msgs, "\nmessages :");
-				$msgs = array_merge($msgs, $ch->messages);
-				AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
-				@error("Start failed", "", "", $msgs);
-			} else {
-				@header("location: index.php?iid=index");
-				exit();
-			}
-		}
-	}
-	if ($invalid) {
+	// valid
+	if (isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+		@error("Invalid Transfer", "", "", array($transfer));
 	}
-}
-
-/**
- * Function with which torrents are started in index-page
- *
- * @param $transfer
- * @param $interactive (1|0) : is this a interactive startup with dialog ?
- */
-function indexStartTorrent($transfer, $interactive) {
-	global $cfg, $transfers;
+	// interactive
+	$interactive = (getRequestVar('interactive') == 1) ? 1 : 0;
+	// ch
 	$ch = ($interactive == 1)
-		? ClientHandler::getInstance(getRequestVar('btclient'))
+		? ClientHandler::getInstance(getRequestVar('client'))
 		: ClientHandler::getInstance(getTransferClient($transfer));
+	// permission
+	dispatcher_checkTypePermission($transfer, $ch->type, "start");
+	// start
 	if ($interactive == 1)
-		$ch->start($transfer, true, (getRequestVar('queue') == 'true') ? FluxdQmgr::isRunning() : false);
+		$ch->start($transfer, true, (getRequestVar('queue') == '1') ? FluxdQmgr::isRunning() : false);
 	else
 		$ch->start($transfer, false, FluxdQmgr::isRunning());
+	// check
 	if ($ch->state == CLIENTHANDLER_STATE_ERROR) { // start failed
 		$msgs = array();
 		array_push($msgs, "transfer : ".$transfer);
 		array_push($msgs, "\nmessages :");
 		$msgs = array_merge($msgs, $ch->messages);
 		AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
-		@error("Start failed", "", "", $msgs);
+		@error("Start failed", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $msgs);
 	} else {
-		if (array_key_exists("closeme", $_POST)) {
+		if (($interactive == 1) && (isset($_REQUEST["closeme"]))) {
 			echo '<script  language="JavaScript">';
 			echo ' window.opener.location.reload(true);';
 			echo ' window.close();';
 			echo '</script>';
-		} else {
-			@header("location: index.php?iid=index");
 		}
 	}
-	exit();
 }
 
 /**
@@ -141,45 +73,20 @@ function indexStartTorrent($transfer, $interactive) {
  */
 function dispatcher_stopTransfer($transfer) {
 	global $cfg;
-	$invalid = true;
-	if (isValidTransfer($transfer) === true) {
-		if (substr($transfer, -8) == ".torrent") {
-			$invalid = false;
-		} else if (substr($transfer, -5) == ".wget") {
-			// is enabled ?
-			if ($cfg["enable_wget"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to stop wget ".$transfer);
-				@error("wget is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_wget"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to stop wget ".$transfer);
-					@error("wget is disabled for users", "index.php?iid=index", "");
-				}
-			}
-			$invalid = false;
-		} else if (substr($transfer, -4) == ".nzb") {
-			if ($cfg["enable_nzbperl"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to stop nzbperl ".$transfer);
-				@error("nzbperl is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_nzbperl"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to stop nzbperl ".$transfer);
-					@error("nzbperl is disabled for users", "index.php?iid=index", "");
-				}
-			}
-			$invalid = false;
-		}
-		if (!$invalid) {
-			$ch = ClientHandler::getInstance(getTransferClient($transfer));
-			$ch->stop($transfer);
-			if (count($ch->messages) > 0)
-	    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
-		}
-	}
-	if ($invalid) {
+	// valid
+	if (isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+		@error("Invalid Transfer", "", "", array($transfer));
 	}
+	// ch
+	$ch = ClientHandler::getInstance(getTransferClient($transfer));
+	// permission
+	dispatcher_checkTypePermission($transfer, $ch->type, "stop");
+	// stop
+	$ch->stop($transfer);
+	// check
+	if (count($ch->messages) > 0)
+    	@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $ch->messages);
 }
 
 /**
@@ -189,45 +96,20 @@ function dispatcher_stopTransfer($transfer) {
  */
 function dispatcher_forceStopTransfer($transfer, $pid) {
 	global $cfg;
-	$invalid = true;
-	if (isValidTransfer($transfer) === true) {
-		if (substr($transfer, -8) == ".torrent") {
-			$invalid = false;
-		} else if (substr($transfer, -5) == ".wget") {
-			// is enabled ?
-			if ($cfg["enable_wget"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to force-stop wget ".$transfer);
-				@error("wget is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_wget"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to force-stop wget ".$transfer);
-					@error("wget is disabled for users", "", "");
-				}
-			}
-			$invalid = false;
-		} else if (substr($transfer, -4) == ".nzb") {
-			if ($cfg["enable_nzbperl"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to force-stop nzbperl ".$transfer);
-				@error("nzbperl is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_nzbperl"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to force-stop nzbperl ".$transfer);
-					@error("nzbperl is disabled for users", "", "");
-				}
-			}
-			$invalid = false;
-		}
-		if (!$invalid) {
-			$ch = ClientHandler::getInstance(getTransferClient($transfer));
-			$ch->stop($transfer, true, $pid);
-			if (count($ch->messages) > 0)
-	    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
-		}
-	}
-	if ($invalid) {
+	// valid
+	if (isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($transfer));
+		@error("Invalid Transfer", "", "", array($transfer));
 	}
+	// ch
+	$ch = ClientHandler::getInstance(getTransferClient($transfer));
+	// permission
+	dispatcher_checkTypePermission($transfer, $ch->type, "forceStop");
+	// forceStop
+	$ch->stop($transfer, true, $pid);
+	// check
+	if (count($ch->messages) > 0)
+    	@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $ch->messages);
 }
 
 /**
@@ -237,40 +119,20 @@ function dispatcher_forceStopTransfer($transfer, $pid) {
  */
 function dispatcher_deleteTransfer($transfer) {
 	global $cfg;
-	if (isValidTransfer($transfer) === true) {
-		if (substr($transfer, -5) == ".wget") {
-			// is enabled ?
-			if ($cfg["enable_wget"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to delete wget-file ".$transfer);
-				@error("wget is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_wget"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to delete wget-file ".$transfer);
-					@error("wget is disabled for users", "", "");
-				}
-			}
-		} else if (substr($transfer, -4) == ".nzb") {
-			// is enabled ?
-			if ($cfg["enable_nzbperl"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to delete nzb-file ".$transfer);
-				@error("nzbperl is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_nzbperl"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to delete nzb-file ".$transfer);
-					@error("nzbperl is disabled for users", "", "");
-				}
-			}
-		}
-		$ch = ClientHandler::getInstance(getTransferClient($transfer));
-		$ch->delete($transfer);
-		if (count($ch->messages) > 0)
-    		@error("There were Problems", "index.php?iid=index", "", $ch->messages);
-		@header("location: index.php?iid=index");
-		exit();
-	} else {
+	// valid
+	if (isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+		@error("Invalid Transfer", "", "", array($transfer));
 	}
+	// ch
+	$ch = ClientHandler::getInstance(getTransferClient($transfer));
+	// permission
+	dispatcher_checkTypePermission($transfer, $ch->type, "delete");
+	// delete
+	$ch->delete($transfer);
+	// check
+	if (count($ch->messages) > 0)
+    	@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $ch->messages);
 }
 
 /**
@@ -280,37 +142,17 @@ function dispatcher_deleteTransfer($transfer) {
  */
 function dispatcher_deQueueTransfer($transfer) {
 	global $cfg;
-	if (isValidTransfer($transfer) === true) {
-		if (substr($transfer, -5) == ".wget") {
-			// is enabled ?
-			if ($cfg["enable_wget"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue wget-file ".$transfer);
-				@error("wget is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_wget"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue wget-file ".$transfer);
-					@error("wget is disabled for users", "", "");
-				}
-			}
-		} else if (substr($transfer, -4) == ".nzb") {
-			// is enabled ?
-			if ($cfg["enable_nzbperl"] == 0) {
-				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue nzb-file ".$transfer);
-				@error("nzbperl is disabled", "index.php?iid=index", "");
-			} else if ($cfg["enable_nzbperl"] == 1) {
-				if (!$cfg['isAdmin']) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to dequeue nzb-file ".$transfer);
-					@error("nzbperl is disabled for users", "", "");
-				}
-			}
-		}
-		FluxdQmgr::dequeueTransfer($transfer, $cfg['user']);
-		@header("location: index.php?iid=index");
-		exit();
-	} else {
+	// valid
+	if (isValidTransfer($transfer) !== true) {
 		AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
-		@error("Invalid Transfer", "index.php?iid=index", "", array($transfer));
+		@error("Invalid Transfer", "", "", array($transfer));
 	}
+	// ch
+	$ch = ClientHandler::getInstance(getTransferClient($transfer));
+	// permission
+	dispatcher_checkTypePermission($transfer, $ch->type, "dequeue");
+	// dequeue
+	FluxdQmgr::dequeueTransfer($transfer, $cfg['user']);
 }
 
 /**
@@ -320,16 +162,9 @@ function dispatcher_deQueueTransfer($transfer) {
  */
 function dispatcher_injectWget($url) {
 	global $cfg;
-	// is enabled ?
-	if ($cfg["enable_wget"] == 0) {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-		@error("wget is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-	} elseif ($cfg["enable_wget"] == 1) {
-		if (!$cfg['isAdmin']) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use wget");
-			@error("wget is disabled for users", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
-		}
-	}
+	// permission
+	dispatcher_checkTypePermission($transfer, 'wget', "inject");
+	// inject
 	if (!empty($url)) {
 		$ch = ClientHandler::getInstance('wget');
 		$ch->inject($url);
@@ -350,7 +185,7 @@ function dispatcher_injectWget($url) {
 				array_push($msgs, "\nmessages :");
 				$msgs = array_merge($msgs, $ch->messages);
 				AuditAction($cfg["constants"]["error"], "Start failed: ".$url."\n".implode("\n", $ch->messages));
-				@error("Start failed", "", "", $msgs);
+				@error("Start failed", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $msgs);
 			}
 		}
 	}
@@ -395,7 +230,7 @@ function dispatcher_bulk($op) {
 	// is enabled ?
 	if ($cfg["enable_bulkops"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use ".$op);
-		@error("bulkops are disabled", "index.php?iid=index", "");
+		@error("bulkops are disabled", "", "");
 	}
 	// messages
 	$dispatcherMessages = array();
@@ -445,7 +280,7 @@ function dispatcher_bulk($op) {
 	}
 	// error if messages
 	if (count($dispatcherMessages) > 0)
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
+		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $dispatcherMessages);
 }
 
 /**
@@ -459,7 +294,7 @@ function dispatcher_multi($action) {
 	// is enabled ?
 	if ($cfg["enable_multiops"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use multi-op ".$action);
-		@error("multiops are disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
+		@error("multiops are disabled", "", "");
 	}
 
 	// messages-ary
@@ -605,7 +440,7 @@ function dispatcher_multi($action) {
 
 	// error if messages
 	if (count($dispatcherMessages) > 0)
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $dispatcherMessages);
+		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $dispatcherMessages);
 }
 
 /**
@@ -621,7 +456,7 @@ function dispatcher_processDownload($url, $type = 'torrent') {
 			// is enabled ?
 			if ($cfg["enable_metafile_download"] != 1) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use metafile download");
-				@error("metafile download is disabled", "index.php?iid=index", "");
+				@error("metafile download is disabled", "", "");
 			}
 			// process download
 			_dispatcher_processDownload($url, 'torrent', '.torrent');
@@ -630,11 +465,11 @@ function dispatcher_processDownload($url, $type = 'torrent') {
 			// is enabled ?
 			if ($cfg["enable_nzbperl"] == 0) {
 				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzb-download");
-				@error("nzbperl is disabled", "index.php?iid=index", "");
+				@error("nzbperl is disabled", "", "");
 			} else if ($cfg["enable_nzbperl"] == 1) {
 				if (!$cfg['isAdmin']) {
 					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nzb-download");
-					@error("nzbperl is disabled for users", "index.php?iid=index", "");
+					@error("nzbperl is disabled for users", "", "");
 				}
 			}
 			// process download
@@ -760,10 +595,7 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 	}
 	if (count($downloadMessages) > 0) {
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$filename);
-		@error("There were Problems", "index.php?iid=index", "", $downloadMessages);
-	} else {
-		@header("location: index.php?iid=index");
-		exit();
+		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $downloadMessages);
 	}
 }
 
@@ -788,7 +620,7 @@ function dispatcher_processUpload() {
 				// is enabled ?
 				if ($cfg["enable_wget"] == 0) {
 					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
-					@error("wget is disabled", "index.php?iid=index", "");
+					@error("wget is disabled", "", "");
 				} else if ($cfg["enable_wget"] == 1) {
 					if (!$cfg['isAdmin']) {
 						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
@@ -799,7 +631,7 @@ function dispatcher_processUpload() {
 				// is enabled ?
 				if ($cfg["enable_nzbperl"] == 0) {
 					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
-					@error("nzbperl is disabled", "index.php?iid=index", "");
+					@error("nzbperl is disabled", "", "");
 				} else if ($cfg["enable_nzbperl"] == 1) {
 					if (!$cfg['isAdmin']) {
 						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
@@ -844,10 +676,7 @@ function dispatcher_processUpload() {
 	}
 	if (count($uploadMessages) > 0) {
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$filename);
-		@error("There were Problems", "index.php?iid=index", "", $uploadMessages);
-	} else {
-		@header("location: index.php?iid=index");
-		exit();
+		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $uploadMessages);
 	}
 }
 
@@ -951,10 +780,7 @@ function dispatcher_processUploadFile() {
 		}
 	}
 	if (count($uploadMessages) > 0) {
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "", $uploadMessages);
-	} else {
-		@header("location: index.php?iid=index");
-		exit();
+		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $uploadMessages);
 	}
 }
 
@@ -968,11 +794,11 @@ function dispatcher_sendMetafile($mfile) {
 	// is enabled ?
 	if ($cfg["enable_metafile_download"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to download a metafile");
-		@error("metafile download is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "index.php?iid=index", "");
+		@error("metafile download is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "");
 	}
 	if (isValidTransfer($mfile) === true) {
 		// Does the file exist?
-		if (file_exists($cfg["transfer_file_path"].$mfile)) {
+		if (@file_exists($cfg["transfer_file_path"].$mfile)) {
 			// filenames in IE containing dots will screw up the filename
 			$headerName = (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 				? preg_replace('/\./', '%2e', $mfile, substr_count($mfile, '.') - 1)
@@ -994,13 +820,50 @@ function dispatcher_sendMetafile($mfile) {
 			AuditAction($cfg["constants"]["fm_download"], $mfile);
 		} else {
 			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$mfile);
-			@error("File Not found for download", "index.php?iid=index", "", array($mfile));
+			@error("File Not found for download", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($mfile));
 		}
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$mfile);
-		@error("Invalid File", "index.php?iid=index", "", array($mfile));
+		@error("Invalid File", "", "", array($mfile));
 	}
 	exit();
+}
+
+/**
+ * checkTypePermission
+ *
+ * @param $transfer
+ * @param $type
+ * @param $action
+ */
+function dispatcher_checkTypePermission($transfer, $type, $action) {
+	global $cfg;
+	switch ($type) {
+		case "wget":
+			// is enabled ?
+			if ($cfg["enable_wget"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use ".$action.". wget-transfer: ".$transfer);
+				@error("wget is disabled", "", "");
+			} else if ($cfg["enable_wget"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use ".$action.". wget-transfer: ".$transfer);
+					@error("wget is disabled for users", "", "");
+				}
+			}
+			break;
+		case "nzb":
+			// is enabled ?
+			if ($cfg["enable_nzbperl"] == 0) {
+				AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use ".$action.". nzb-transfer: ".$transfer);
+				@error("nzbperl is disabled", "", "");
+			} else if ($cfg["enable_nzbperl"] == 1) {
+				if (!$cfg['isAdmin']) {
+					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use ".$action.". nzb-transfer: ".$transfer);
+					@error("nzbperl is disabled for users", "", "");
+				}
+			}
+			break;
+	}
 }
 
 /**
