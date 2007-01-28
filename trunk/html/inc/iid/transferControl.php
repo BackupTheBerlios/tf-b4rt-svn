@@ -66,25 +66,72 @@ $tmpl->setvar('settings_exist', $settings_exist);
 $ch->running = isTransferRunning($transfer) ? 1 : 0;
 $tmpl->setvar('running', $ch->running);
 
+// sf
+$sf = new StatFile($transfer);
+
 // pageop
 //
 // * control (start, stats)
 // * start (form or link)
 //
-if (empty($pageop))
-	$pageop = ($ch->running == 0) ? "start" : "control";
+if (empty($pageop)) {
+	if ($ch->running == 1) {
+		$pageop = "control";
+		$sf->running = 1;
+	} else {
+		switch ($sf->running) {
+			case 0:
+			case 2:
+				$pageop = "start";
+				break;
+			case 1:
+				$ch->running = 1;
+			case 3:
+				$pageop = "control";
+				break;
+			default:
+				@error("We got a Problem, Stat-File-state unknown.", "", "", array($transfer));
+		}
+	}
+}
 $tmpl->setvar('pageop', $pageop);
+
 // op-switch
 switch ($pageop) {
 
-	case "control":
+	case "control":                                                /* control */
 
+		switch ($sf->running) {
 
+			case 1: // running
+				// state
+				$tmpl->setvar('state', "running");
+				// get pid
+				$pid = 0;
+		        $running = $ch->runningProcesses();
+		        foreach ($running as $rng) {
+		            $rt = RunningTransfer::getInstance($rng['pinfo'], $ch->client);
+		            if ($rt->transferFile == $transfer)
+		            	$pid = $rt->processId;
+						break;
+		        }
+				if ($pid == 0)
+					$pid = getTransferPid($transfer);
+				$tmpl->setvar('pid', $pid);
+				// break
+				break;
 
+			case 3: // queued
+				// state
+				$tmpl->setvar('state', "queued");
+				// break
+				break;
+		}
 
+		// break
 		break;
 
-	case "start":
+	case "start":                                                    /* start */
 
 		// client-chooser
 		if ($ch->type == "torrent") {
@@ -146,7 +193,7 @@ switch ($pageop) {
 		// break
 		break;
 
-	default:
+	default:                                                       /* default */
 		@error("Invalid pageop", "", "", array($pageop));
 
 }
@@ -158,6 +205,7 @@ tmplSetTitleBar($transferLabel." - Control", false);
 // lang vars
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 $tmpl->setvar('_STOPTRANSFER', $cfg['_STOPTRANSFER']);
+$tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);

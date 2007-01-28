@@ -7,19 +7,44 @@
 		<td>
 			<div align="center">
 			<tmpl_if name="pageop" value="control">
-
-
-
-			<form name="stopForm" action="dispatcher.php?action=stop" method="post">
-				<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
-				<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
-					<tr>
-						<td colspan="2" align="center">
-							<input type="Submit" value="<tmpl_var name="_STOPTRANSFER">">
-						</td>
-					</tr>
-				</table>
-			</form>
+				<tmpl_if name="state" value="running">
+					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+						<tr>
+							<td colspan="2" align="center">
+								Transfer running. (pid: <tmpl_var name="pid">)
+							</td>
+						</tr>
+					</table>
+					<form name="controlForm" action="dispatcher.php?action=stop" method="post">
+						<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
+						<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+							<tr>
+								<td colspan="2" align="center">
+									<input type="Submit" value="<tmpl_var name="_STOPTRANSFER">">
+								</td>
+							</tr>
+						</table>
+					</form>
+					TODO
+				<tmpl_elseif name="state" value="queued">
+					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+						<tr>
+							<td colspan="2" align="center">
+								Transfer queued.
+							</td>
+						</tr>
+					</table>
+					<form name="controlForm" action="dispatcher.php?action=deQueue" method="post">
+						<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
+						<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
+							<tr>
+								<td colspan="2" align="center">
+									<input type="Submit" value="<tmpl_var name="_DELQUEUE">">
+								</td>
+							</tr>
+						</table>
+					</form>
+				</tmpl_if>
 			<tmpl_elseif name="pageop" value="start">
 				<tmpl_if name="enableClientChooser" value="1">
 					<tmpl_if name="enableBtclientChooser" value="1">
