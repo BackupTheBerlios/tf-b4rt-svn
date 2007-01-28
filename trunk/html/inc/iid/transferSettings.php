@@ -248,7 +248,7 @@ if ($isSave) {                                                        /* save */
 		if ($cfg["enable_btclient_chooser"] != 0)
 			tmplSetClientSelectForm($ch->client);
 		else
-			$tmpl->setvar('btclientDefault', $cfg["btclient"]);
+			$tmpl->setvar('btclientDefault', $ch->client);
 	} else {
 		$tmpl->setvar('enableClientChooser', 0);
 	}

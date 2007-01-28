@@ -32,6 +32,46 @@
 					<input type="hidden" name="interactive" value="1">
 					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 						<tmpl_include name="inc.transferSettings.tmpl">
+						<tmpl_if name="showdirtree">
+							<tr>
+								<td colspan="2" align="right">
+									<table border="0" cellpadding="0" cellspacing="0" width="100%">
+										<tr>
+											<td align="left" valign="top" rowspan="2">Save Path:</td>
+											<td align="right" valign="top">
+												<input type="text" name="savepath" size="70" value="<tmpl_var name="savepath">">
+											</td>
+										</tr>
+										<tr>
+											<td align="right" valign="top">
+												<select width="45" size="5" onchange="savepath.value= this.options[this.selectedIndex].value;"><tmpl_include name="inc.dirTree.tmpl"></select>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</tmpl_if>
+						<tmpl_if name="skip_hash_check_enabled" value="1">
+							<tr>
+								<td colspan="2" align="right">
+									<tmpl_if name="transfer_exists">
+										<input type="checkbox" name="skiphashcheck" id="skiphashcheck"<tmpl_if name="is_skip"> checked</tmpl_if>>
+									<tmpl_else>
+										<input type="checkbox" name="skiphashcheck" disabled>
+									</tmpl_if>
+									Dont check hashes
+								</td>
+							</tr>
+						</tmpl_if>
+						<tmpl_if name="is_queue" value="1">
+							<tmpl_if name="isAdmin">
+								<tr>
+									<td colspan="2" align="right">
+										<input type="checkbox" name="queuebox" id="queuebox">Enqueue
+									</td>
+								</tr>
+							</tmpl_if>
+						</tmpl_if>
 						<tr>
 							<td colspan="2" align="right">
 								<input type="checkbox" value="1" name="close">Close Window

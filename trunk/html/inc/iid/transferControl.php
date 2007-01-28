@@ -86,14 +86,15 @@ switch ($pageop) {
 			$tmpl->setvar('enableClientChooser', 1);
 			$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 			if ($cfg["enable_btclient_chooser"] != 0)
-				tmplSetClientSelectForm($ch->type);
+				tmplSetClientSelectForm($ch->client);
 			else
-				$tmpl->setvar('btclientDefault', $cfg["btclient"]);
+				$tmpl->setvar('btclientDefault', $ch->client);
 		} else {
 			$tmpl->setvar('enableClientChooser', 0);
 		}
 
 		// hash-check
+		$tmpl->setvar('skip_hash_check_enabled', $supportMap[$ch->client]['skip_hash_check']);
 		if ($supportMap[$ch->client]['skip_hash_check'] == 1) {
 			$dsize = getTorrentDataSize($transfer);
 			$tmpl->setvar('is_skip',
@@ -125,7 +126,8 @@ switch ($pageop) {
 		// set vars
 		transfer_setProfiledVars();
 
-		// TODO
+		// set details vars
+		//transfer_setDetailsVars(($cfg["enable_file_priority"] == 1));
 
 		break;
 
