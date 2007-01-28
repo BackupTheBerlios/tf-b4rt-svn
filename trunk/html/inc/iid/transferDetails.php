@@ -49,7 +49,7 @@ if ($ch->settingsLoad($transfer) !== true)
 	$ch->settingsDefault();
 
 // set details vars
-transfer_setDetailsVars(($cfg["enable_file_priority"] == 1));
+transfer_setDetailsVars();
 
 // title + foot
 tmplSetFoot(false);

@@ -93,6 +93,34 @@ switch ($pageop) {
 			$tmpl->setvar('enableClientChooser', 0);
 		}
 
+		// set vars
+		transfer_setProfiledVars();
+
+		// dirtree
+		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
+		$dirTree = ($cfg["enable_home_dirs"] != 0)
+			? $cfg["path"].getOwner($transfer).'/'
+			: $cfg["path"].$cfg["path_incoming"].'/';
+		tmplSetDirTree($dirTree, $cfg["maxdepth"]);
+
+		// file prio
+		if (($supportMap[$ch->client]['file_priority'] == 1) && ($cfg["enable_file_priority"] == 1)) {
+			$tmpl->setvar('file_priority_enabled', 1);
+			$tmpl->setvar('enable_file_priority', 1);
+			// TODO
+			require_once("inc/functions/functions.fileprio.php");
+			$tmpl->setvar('filePrio', getFilePrioForm($transfer, false));
+			//$tmpl->setvar('filePrio', getFilePrioForm($transfer, false));
+		} else {
+			$tmpl->setvar('file_priority_enabled', 0);
+			$tmpl->setvar('enable_file_priority', 0);
+		}
+		$tmpl->setvar('enable_file_priority',
+			($supportMap[$ch->client]['file_priority'] == 1)
+				? $cfg["enable_file_priority"]
+				: 0
+		);
+
 		// hash-check
 		$tmpl->setvar('skip_hash_check_enabled', $supportMap[$ch->client]['skip_hash_check']);
 		if ($supportMap[$ch->client]['skip_hash_check'] == 1) {
@@ -106,41 +134,14 @@ switch ($pageop) {
 			$tmpl->setvar('is_skip', 0);
 		}
 
-		// file prio
-		$tmpl->setvar('enable_file_priority',
-			($supportMap[$ch->client]['file_priority'] == 1)
-				? $cfg["enable_file_priority"]
-				: 0
-		);
-
-		// dirtree
-		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-		$dirTree = ($cfg["enable_home_dirs"] != 0)
-			? $cfg["path"].getOwner($transfer).'/'
-			: $cfg["path"].$cfg["path_incoming"].'/';
-		tmplSetDirTree($dirTree, $cfg["maxdepth"]);
-
 		// queue
 		$tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);
 
-		// set vars
-		transfer_setProfiledVars();
+		// set file vars
+		// TODO
+		transfer_setFileVars();
 
-		// set details vars
-		switch ($ch->type) {
-			case "torrent":
-				if (($cfg["enable_file_priority"] == 1) && ($supportMap[$ch->client]['file_priority'] == 1)) {
-					require_once("inc/functions/functions.fileprio.php");
-					$tmpl->setvar('transferMetaInfo', getFilePrioForm($transfer, $withForm));
-				} else {
-					$tmpl->setvar('transferMetaInfo', "<pre>".getTorrentMetaInfo($transfer)."</pre>");
-				}
-				break;
-			case "wget":
-			case "nzb":
-				transfer_setFileVars();
-				break;
-		}
+		//filePrio
 
 		// break
 		break;

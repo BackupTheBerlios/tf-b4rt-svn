@@ -34,12 +34,11 @@
 						<tmpl_include name="inc.transferSettings.tmpl">
 						<tr>
 							<td colspan="2" align="left">
-								<tmpl_if name="type" value="torrent">
-									Details:<br>
-									<tmpl_var name="transferMetaInfo">
-								<tmpl_else>
-									File(s): <tmpl_var name="transferFileCount"><br>
-									<tmpl_include name="inc.transferFiles.tmpl">
+								File(s): <tmpl_var name="transferFileCount"><br>
+								<tmpl_include name="inc.transferFiles.tmpl">
+								<tmpl_if name="file_priority_enabled" value="1">
+									<br>
+									<tmpl_var name="filePrio">
 								</tmpl_if>
 							</td>
 						</tr>

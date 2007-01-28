@@ -299,20 +299,12 @@ function transfer_setFileVars() {
  *
  * @param $withForm
  */
-function transfer_setDetailsVars($withForm = false) {
+function transfer_setDetailsVars() {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// set vars for transfer
 	$tmpl->setvar('clientType', $ch->type);
 	switch ($ch->type) {
 		case "torrent":
-			/*
-			if (($cfg["enable_file_priority"] == 1) && ($supportMap[$ch->client]['file_priority'] == 1) && (!isTransferRunning($transfer))) {
-				require_once("inc/functions/functions.fileprio.php");
-				$tmpl->setvar('transferMetaInfo', getFilePrioForm($transfer, $withForm));
-			} else {
-				$tmpl->setvar('transferMetaInfo', "<pre>".getTorrentMetaInfo($transfer)."</pre>");
-			}
-			*/
 			$tmpl->setvar('transferMetaInfo', getTorrentMetaInfo($transfer));
 			return;
 		case "wget":

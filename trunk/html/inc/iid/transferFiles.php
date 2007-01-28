@@ -41,12 +41,17 @@ transfer_init();
 // init ch-instance
 $ch = ClientHandler::getInstance(getTransferClient($transfer));
 
-// load settings, default if settings could not be loaded (fresh transfer)
-if ($ch->settingsLoad($transfer) !== true)
-	$ch->settingsDefault();
-
 // set file vars
 transfer_setFileVars();
+
+// file-prio
+if (($cfg["enable_file_priority"] == 1) && ($supportMap[$ch->client]['file_priority'] == 1) && (!isTransferRunning($transfer))) {
+	require_once("inc/functions/functions.fileprio.php");
+	$tmpl->setvar('filePrio', getFilePrioForm($transfer, true));
+	$tmpl->setvar('file_priority_enabled', 1);
+} else {
+	$tmpl->setvar('file_priority_enabled', 0);
+}
 
 // title + foot
 tmplSetFoot(false);
