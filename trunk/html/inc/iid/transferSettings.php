@@ -253,8 +253,8 @@ if ($isSave) {                                                        /* save */
 		$tmpl->setvar('enableClientChooser', 0);
 	}
 
-	// set vars for transfer from ch
-	transfer_setVarsFromCHSettings();
+	// set vars
+	transfer_setProfiledVars();
 
 	// send-box
 	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);

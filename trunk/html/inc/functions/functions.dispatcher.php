@@ -57,7 +57,7 @@ function dispatcher_startTransfer($transfer) {
 		AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
 		@error("Start failed", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $msgs);
 	} else {
-		if (($interactive == 1) && (isset($_REQUEST["closeme"]))) {
+		if (($interactive == 1) && (isset($_REQUEST["close"]))) {
 			echo '<script  language="JavaScript">';
 			echo ' window.opener.location.reload(true);';
 			echo ' window.close();';
@@ -818,6 +818,7 @@ function dispatcher_sendMetafile($mfile) {
 			@fpassthru($fp);
 			@fclose($fp);
 			AuditAction($cfg["constants"]["fm_download"], $mfile);
+			exit();
 		} else {
 			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$mfile);
 			@error("File Not found for download", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($mfile));
@@ -826,7 +827,6 @@ function dispatcher_sendMetafile($mfile) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$mfile);
 		@error("Invalid File", "", "", array($mfile));
 	}
-	exit();
 }
 
 /**

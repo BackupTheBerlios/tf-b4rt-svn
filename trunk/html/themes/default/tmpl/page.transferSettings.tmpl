@@ -56,6 +56,11 @@
 						</form>
 					</tmpl_if>
 				</tmpl_if>
+				<tmpl_if name="with_profiles" value="1">
+					<form name="profileForm" action="index.php?iid=transferSettings" method="post">
+						<tmpl_include name="inc.transferProfile.tmpl">
+					</form>
+				</tmpl_if>
 				<form name="theForm" action="index.php?iid=transferSettings" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
 					<input type="hidden" name="save" value="1" />
 					<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">

@@ -71,16 +71,16 @@ function tmplSetGoodLookingStatsForm() {
 /**
  * Set Client Select Form vars
  *
- * @param $btclient
+ * @param $client
  */
-function tmplSetClientSelectForm($btclient = 'tornado') {
+function tmplSetClientSelectForm($client = 'tornado') {
 	global $cfg, $tmpl;
-	$btclients = array("tornado", "transmission", "mainline");
+	$clients = array("tornado", "transmission", "mainline");
 	$client_list = array();
-	foreach ($btclients as $client) {
+	foreach ($clients as $clnt) {
 		array_push($client_list, array(
-			'client' => $client,
-			'selected' => ($btclient == $client) ? 1 : 0
+			'client' => $clnt,
+			'selected' => ($client == $clnt) ? 1 : 0
 			)
 		);
 	}

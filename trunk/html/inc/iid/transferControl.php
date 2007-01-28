@@ -44,7 +44,6 @@ transfer_init();
 // request-vars
 $pageop = getRequestVar('pageop');
 $client = getRequestVar('client');
-$profile = getRequestVar('profile');
 
 // init ch-instance
 $ch = ($client == "")
@@ -87,7 +86,7 @@ switch ($pageop) {
 			$tmpl->setvar('enableClientChooser', 1);
 			$tmpl->setvar('enableBtclientChooser', $cfg["enable_btclient_chooser"]);
 			if ($cfg["enable_btclient_chooser"] != 0)
-				tmplSetClientSelectForm($cfg["btclient"]);
+				tmplSetClientSelectForm($ch->type);
 			else
 				$tmpl->setvar('btclientDefault', $cfg["btclient"]);
 		} else {
@@ -123,36 +122,8 @@ switch ($pageop) {
 		// queue
 		$tmpl->setvar('is_queue', (FluxdQmgr::isRunning()) ? 1 : 0);
 
-		// profiles
-		if ($cfg["enable_transfer_profile"] == "1") {
-			if ($cfg['transfer_profile_level'] >= "1")
-				$with_profiles = 1;
-			else
-				$with_profiles = ($cfg['isAdmin']) ? 1 : 0;
-		} else {
-			$with_profiles = 0;
-		}
-		if ($with_profiles == 0) {
-			// set vars
-			transfer_setVarsFromCHSettings();
-			$tmpl->setvar('useLastSettings', $settings_exist);
-		} else {
-			// set vars
-			transfer_setVarsFromProfileSettings();
-			$tmpl->setvar('useLastSettings', (($profile != "") && ($profile != "last_used")) ? 0 : $settings_exist);
-			// load profile list
-			if ($cfg['transfer_profile_level'] == "2" || $cfg['isAdmin'])
-				$profiles = GetProfiles($cfg["uid"], $profile);
-			if ($cfg['transfer_profile_level'] >= "1")
-				$public_profiles = GetPublicProfiles($profile);
-			if ((count($profiles) + count($public_profiles)) > 0) {
-				$tmpl->setloop('profiles', $profiles);
-				$tmpl->setloop('public_profiles', $public_profiles);
-			} else {
-				$with_profiles = 0;
-			}
-		}
-		$tmpl->setvar('with_profiles', $with_profiles);
+		// set vars
+		transfer_setProfiledVars();
 
 		// TODO
 

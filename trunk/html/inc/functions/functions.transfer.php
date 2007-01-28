@@ -192,8 +192,10 @@ function transfer_setVarsFromCHSettings() {
 
 /**
  * setVarsFromProfileSettings
+ *
+ * @param $profile
  */
-function transfer_setVarsFromProfileSettings() {
+function transfer_setVarsFromProfileSettings($profile) {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	//load custom settings
 	$settings = GetProfileSettings($profile);
@@ -303,12 +305,12 @@ function transfer_setDetailsVars($withForm = false) {
 	$tmpl->setvar('clientType', $ch->type);
 	switch ($ch->type) {
 		case "torrent":
-			require_once("inc/functions/functions.metainfo.php");
-			$tmpl->setvar('transferMetaInfo', showMetaInfo($transfer, $withForm));
-			$tmpl->setvar('transferMetaInfo', (($cfg["enable_file_priority"] == 1) && ($ch->client == "tornado") && (!isTransferRunning($transfer)))
-				? (showMetaInfo($transfer, $withForm))
-				: ("<pre>".getTorrentMetaInfo($transfer)."</pre>")
-			);
+			if (($cfg["enable_file_priority"] == 1) && ($supportMap[$ch->client]['file_priority'] == 1) && (!isTransferRunning($transfer))) {
+				require_once("inc/functions/functions.metainfo.php");
+				$tmpl->setvar('transferMetaInfo', showMetaInfo($transfer, $withForm));
+			} else {
+				$tmpl->setvar('transferMetaInfo', "<pre>".getTorrentMetaInfo($transfer)."</pre>");
+			}
 			return;
 		case "wget":
 			$ch->setVarsFromFile($transfer);
@@ -318,6 +320,50 @@ function transfer_setDetailsVars($withForm = false) {
 			$tmpl->setvar('transferMetaInfo', @htmlentities(file_get_contents($cfg["transfer_file_path"].$transfer), ENT_QUOTES));
 			return;
 	}
+}
+
+/**
+ * setProfiledVars
+ */
+function transfer_setProfiledVars() {
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	// set vars for transfer
+	if ($cfg["enable_transfer_profile"] == "1") {
+		if ($cfg['transfer_profile_level'] >= "1")
+			$with_profiles = 1;
+		else
+			$with_profiles = ($cfg['isAdmin']) ? 1 : 0;
+	} else {
+		$with_profiles = 0;
+	}
+	if ($with_profiles == 0) {
+		// set vars for transfer from ch
+		transfer_setVarsFromCHSettings();
+		$tmpl->setvar('useLastSettings', $settings_exist);
+	} else {
+		$profile = getRequestVar('profile');
+		if (($profile != "") && ($profile != "last_used")) {
+			// set vars for transfer from profile
+			transfer_setVarsFromProfileSettings($profile);
+			$tmpl->setvar('useLastSettings', 0);
+		} else {
+			// set vars for transfer from ch
+			transfer_setVarsFromCHSettings();
+			$tmpl->setvar('useLastSettings', $settings_exist);
+		}
+		// load profile list
+		if ($cfg['transfer_profile_level'] == "2" || $cfg['isAdmin'])
+			$profiles = GetProfiles($cfg["uid"], $profile);
+		if ($cfg['transfer_profile_level'] >= "1")
+			$public_profiles = GetPublicProfiles($profile);
+		if ((count($profiles) + count($public_profiles)) > 0) {
+			$tmpl->setloop('profiles', $profiles);
+			$tmpl->setloop('public_profiles', $public_profiles);
+		} else {
+			$with_profiles = 0;
+		}
+	}
+	$tmpl->setvar('with_profiles', $with_profiles);
 }
 
 ?>
