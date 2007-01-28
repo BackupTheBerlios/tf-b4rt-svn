@@ -32,9 +32,6 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
-// metainfo-functions
-require_once("inc/functions/functions.metainfo.php");
-
 // transfer functions
 require_once('inc/functions/functions.transfer.php');
 
@@ -44,22 +41,15 @@ tmplInitializeInstance($cfg["theme"], "page.transferDetails.tmpl");
 // init transfer
 transfer_init();
 
-// client-switch
-if (substr($transfer, -8) == ".torrent") {
-	// this is a t-client
-	$tmpl->setvar('clientType', "torrent");
-	$tmpl->setvar('transferMetaInfo', ($cfg["enable_file_priority"] == 1) ? showMetaInfo($transfer, true) : showMetaInfo($transfer, false));
-} else if (substr($transfer, -5) == ".wget") {
-	// this is wget.
-	$tmpl->setvar('clientType', "wget");
-	$ch = ClientHandler::getInstance('wget');
-	$ch->setVarsFromFile($transfer);
-	$tmpl->setvar('transferUrl', $ch->url);
-} else if (substr($transfer, -4) == ".nzb") {
-	// this is nzbperl.
-	$tmpl->setvar('clientType', "nzb");
-	$tmpl->setvar('transferMetaInfo', @htmlentities(file_get_contents($cfg["transfer_file_path"].$transfer), ENT_QUOTES));
-}
+// init ch-instance
+$ch = ClientHandler::getInstance(getTransferClient($transfer));
+
+// load settings, default if settings could not be loaded (fresh transfer)
+if ($ch->settingsLoad($transfer) !== true)
+	$ch->settingsDefault();
+
+// set details vars
+transfer_setDetailsVars(($cfg["enable_file_priority"] == 1));
 
 // title + foot
 tmplSetFoot(false);

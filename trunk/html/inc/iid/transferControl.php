@@ -154,8 +154,7 @@ switch ($pageop) {
 		}
 		$tmpl->setvar('with_profiles', $with_profiles);
 
-		// meta-info
-		//$tmpl->setvar('metaInfo', showMetaInfo($transfer, false));
+		// TODO
 
 		break;
 

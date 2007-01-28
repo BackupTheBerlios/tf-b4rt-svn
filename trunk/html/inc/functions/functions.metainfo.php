@@ -21,106 +21,100 @@
 *******************************************************************************/
 
 /**
- * showMetaInfo
+ * show Meta Info
  *
- * @param $torrent
- * @param $allowSave
+ * @param $transfer
+ * @param $withForm
  * @return string
  */
-function showMetaInfo($torrent, $allowSave = false) {
+function showMetaInfo($transfer, $withForm = false) {
 	global $cfg;
-	if (empty($torrent)) {
-		$showMetaInfo = $cfg['_NORECORDSFOUND'];
-	} elseif (($cfg["enable_file_priority"]) && (!isTransferRunning($torrent))) {
-		$prioFileName = $cfg["transfer_file_path"].$torrent.".prio";
-		require_once('inc/classes/BDecode.php');
-		$showMetaInfo = "";
-		// theme-switch
-		if ((strpos($cfg["theme"], '/')) === false) {
-			$showMetaInfo .= '<link rel="StyleSheet" href="themes/'.$cfg["theme"].'/css/dtree.css" type="text/css" />';
-			$showMetaInfo .= '<script type="text/javascript">var dtree_path_images = "themes/'.$cfg["theme"].'/images/dtree/";</script>';
-		} else {
-			$showMetaInfo .= '<link rel="StyleSheet" href="themes/tf_standard_themes/css/dtree.css" type="text/css" />';
-			$showMetaInfo .= '<script type="text/javascript">var dtree_path_images = "themes/tf_standard_themes/images/dtree/";</script>';
-		}
-		$showMetaInfo .= '<script type="text/javascript" src="js/dtree.js"></script>';
-		$ftorrent = $cfg["transfer_file_path"].$torrent;
-		$fp = fopen($ftorrent, "rd");
-		$alltorrent = fread($fp, filesize($ftorrent));
-		fclose($fp);
-		$btmeta = @BDecode($alltorrent);
-		$torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
-		$dirnum = (array_key_exists('files',$btmeta['info'])) ? count($btmeta['info']['files']) : 0;
-		if (is_readable($prioFileName)) {
-			$prio = split(',',file_get_contents($prioFileName));
-			$prio = array_splice($prio,1);
-		} else {
-			$prio = array();
-			for ($i=0; $i<$dirnum; $i++)
-				$prio[$i] = -1;
-		}
-		$tree = new dir("/",$dirnum,isset($prio[$dirnum])?$prio[$dirnum]:-1);
-		if (array_key_exists('files',$btmeta['info'])) {
-			foreach( $btmeta['info']['files'] as $filenum => $file) {
-				$depth = count($file['path']);
-				$branch =& $tree;
-				for ($i=0; $i < $depth; $i++) {
-					if ($i != $depth - 1) {
-						$d =& $branch->findDir($file['path'][$i]);
-						if ($d) {
-							$branch =& $d;
-						} else {
-							$dirnum++;
-							$d =& $branch->addDir(new dir($file['path'][$i], $dirnum, (isset($prio[$dirnum])?$prio[$dirnum]:-1)));
-							$branch =& $d;
-						}
+	$prioFileName = $cfg["transfer_file_path"].$transfer.".prio";
+	require_once('inc/classes/BDecode.php');
+	$retVal = "";
+	// theme-switch
+	if ((strpos($cfg["theme"], '/')) === false) {
+		$retVal .= '<link rel="StyleSheet" href="themes/'.$cfg["theme"].'/css/dtree.css" type="text/css" />';
+		$retVal .= '<script type="text/javascript">var dtree_path_images = "themes/'.$cfg["theme"].'/images/dtree/";</script>';
+	} else {
+		$retVal .= '<link rel="StyleSheet" href="themes/tf_standard_themes/css/dtree.css" type="text/css" />';
+		$retVal .= '<script type="text/javascript">var dtree_path_images = "themes/tf_standard_themes/images/dtree/";</script>';
+	}
+	$retVal .= '<script type="text/javascript" src="js/dtree.js"></script>';
+	$ftorrent = $cfg["transfer_file_path"].$transfer;
+	$fp = @fopen($ftorrent, "rd");
+	$alltorrent = @fread($fp, @filesize($ftorrent));
+	@fclose($fp);
+	$btmeta = @BDecode($alltorrent);
+	$torrent_size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
+	$dirnum = (array_key_exists('files',$btmeta['info'])) ? count($btmeta['info']['files']) : 0;
+	if (@is_readable($prioFileName)) {
+		$prio = split(',', @file_get_contents($prioFileName));
+		$prio = array_splice($prio,1);
+	} else {
+		$prio = array();
+		for ($i=0; $i<$dirnum; $i++)
+			$prio[$i] = -1;
+	}
+	$tree = new dir("/",$dirnum, isset($prio[$dirnum]) ? $prio[$dirnum] : -1);
+	if (array_key_exists('files',$btmeta['info'])) {
+		foreach( $btmeta['info']['files'] as $filenum => $file) {
+			$depth = count($file['path']);
+			$branch =& $tree;
+			for ($i=0; $i < $depth; $i++) {
+				if ($i != $depth - 1) {
+					$d =& $branch->findDir($file['path'][$i]);
+					if ($d) {
+						$branch =& $d;
 					} else {
-						$branch->addFile(new file($file['path'][$i]." (".$file['length'].")",$filenum,$file['length'],$prio[$filenum]));
+						$dirnum++;
+						$d =& $branch->addDir(new dir($file['path'][$i], $dirnum, (isset($prio[$dirnum]) ? $prio[$dirnum] : -1)));
+						$branch =& $d;
 					}
+				} else {
+					$branch->addFile(new file($file['path'][$i]." (".$file['length'].")", $filenum,$file['length'], $prio[$filenum]));
 				}
 			}
 		}
-		$showMetaInfo .= "<table><tr>";
-		$showMetaInfo .= "<tr><td width=\"110\">Metainfo File:</td><td>".$torrent."</td></tr>";
-		$showMetaInfo .= "<tr><td>Directory Name:</td><td>".$btmeta['info']['name']."</td></tr>";
-		$showMetaInfo .= "<tr><td>Announce URL:</td><td>".$btmeta['announce']."</td></tr>";
-		if (array_key_exists('comment',$btmeta))
-			$showMetaInfo .= "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
-		$showMetaInfo .= "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
-		$showMetaInfo .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")</td></tr>";
-		$showMetaInfo .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".@formatBytesTokBMBGBTB($btmeta['info']['piece length']).")</td></tr>";
-		if (array_key_exists('files',$btmeta['info'])) {
-			$showMetaInfo .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
-			$showMetaInfo .= "</table><br>\n";
-			if ($allowSave) {
-				$showMetaInfo .= "<form name=\"priority\" action=\"dispatcher.php?action=setFilePriority\" method=\"POST\" >";
-				$showMetaInfo .= "<input type=\"hidden\" name=\"transfer\" value=\"".$torrent."\" >";
-			}
-			$showMetaInfo .= "<script type=\"text/javascript\">\n";
-			$showMetaInfo .= "var sel = 0;\n";
-			$showMetaInfo .= "d = new dTree('d');\n";
-			$showMetaInfo .= $tree->draw(-1);
-			$showMetaInfo .= "document.write(d);\n";
-			$showMetaInfo .= "sel = getSizes();\n";
-			$showMetaInfo .= "drawSel();\n";
-			$showMetaInfo .= "</script>\n";
-			$showMetaInfo .= "<input type=\"hidden\" name=\"filecount\" value=\"".count($btmeta['info']['files'])."\">";
-			$showMetaInfo .= "<input type=\"hidden\" name=\"count\" value=\"".$dirnum."\">";
-			$showMetaInfo .= "<br>";
-			if ($allowSave) {
-				$showMetaInfo .= '<input type="submit" value="Save" >';
-				$showMetaInfo .= "<br>";
-			}
-			$showMetaInfo .= "</form>";
-		} else {
-			$showMetaInfo .= "</table><br>";
-			$showMetaInfo .= $btmeta['info']['name'].$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")";
+	}
+	$retVal .= "<table><tr>";
+	$retVal .= "<tr><td width=\"110\">Metainfo File:</td><td>".$transfer."</td></tr>";
+	$retVal .= "<tr><td>Directory Name:</td><td>".$btmeta['info']['name']."</td></tr>";
+	$retVal .= "<tr><td>Announce URL:</td><td>".$btmeta['announce']."</td></tr>";
+	if (array_key_exists('comment',$btmeta))
+		$retVal .= "<tr><td valign=\"top\">Comment:</td><td>".$btmeta['comment']."</td></tr>";
+	$retVal .= "<tr><td>Created:</td><td>".date("F j, Y, g:i a",$btmeta['creation date'])."</td></tr>";
+	$retVal .= "<tr><td>Torrent Size:</td><td>".$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")</td></tr>";
+	$retVal .= "<tr><td>Chunk size:</td><td>".$btmeta['info']['piece length']." (".@formatBytesTokBMBGBTB($btmeta['info']['piece length']).")</td></tr>";
+	if (array_key_exists('files',$btmeta['info'])) {
+		$retVal .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
+		$retVal .= "</table><br>\n";
+		if ($withForm) {
+			$retVal .= "<form name=\"priority\" action=\"dispatcher.php?action=setFilePriority\" method=\"POST\" >";
+			$retVal .= "<input type=\"hidden\" name=\"transfer\" value=\"".$transfer."\" >";
+		}
+		$retVal .= "<script type=\"text/javascript\">\n";
+		$retVal .= "var sel = 0;\n";
+		$retVal .= "d = new dTree('d');\n";
+		$retVal .= $tree->draw(-1);
+		$retVal .= "document.write(d);\n";
+		$retVal .= "sel = getSizes();\n";
+		$retVal .= "drawSel();\n";
+		$retVal .= "</script>\n";
+		$retVal .= "<input type=\"hidden\" name=\"filecount\" value=\"".count($btmeta['info']['files'])."\">";
+		$retVal .= "<input type=\"hidden\" name=\"count\" value=\"".$dirnum."\">";
+		$retVal .= "<br>";
+		if ($withForm) {
+			$retVal .= '<input type="submit" value="Save" >';
+			$retVal .= "<br>";
+			$retVal .= "</form>";
 		}
 	} else {
-		$result = getTorrentMetaInfo($torrent);
-		$showMetaInfo = "<pre>".$result."</pre>";
+		$retVal .= "</table><br>";
+		$retVal .= $btmeta['info']['name'].$torrent_size." (".@formatBytesTokBMBGBTB($torrent_size).")";
 	}
-	return $showMetaInfo;
+	// return
+	return $retVal;
 }
 
 // =============================================================================
@@ -164,8 +158,7 @@ class dir {
 			if($dir->name == $name)
 				return $dir;
 		}
-		$retVal = false;
-		return $retVal;
+		return false;
 	}
 
 	function draw($parent) {

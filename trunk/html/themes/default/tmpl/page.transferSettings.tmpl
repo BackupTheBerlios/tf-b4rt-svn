@@ -42,6 +42,20 @@
 					</table>
 				</tmpl_if>
 			<tmpl_else>
+				<tmpl_if name="enableClientChooser" value="1">
+					<tmpl_if name="enableBtclientChooser" value="1">
+						<form name="clientForm" action="index.php?iid=transferSettings" method="post">
+							<input type="hidden" name="transfer" value="<tmpl_var name="transfer">" />
+							<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
+								<tr>
+									<td align="center" colspan="2">
+										BitTorrent-Client : <tmpl_include name="inc.clientSelectForm.tmpl">
+									</td>
+								</tr>
+							</table>
+						</form>
+					</tmpl_if>
+				</tmpl_if>
 				<form name="theForm" action="index.php?iid=transferSettings" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
 					<input type="hidden" name="save" value="1" />
 					<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">

@@ -217,77 +217,106 @@ function transfer_setFileVars() {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// set vars for transfer
 	$transferFilesList = array();
-	if (substr($transfer, -8) == ".torrent") {
-		// this is a t-client
-		require_once("inc/classes/BDecode.php");
-		$tFile = $cfg["transfer_file_path"].$transfer;
-		if ($fd = @fopen($tFile, "rd")) {
-			$alltorrent = @fread($fd, @filesize($tFile));
-			$btmeta = @BDecode($alltorrent);
-			@fclose($fd);
-		}
-		if ((isset($btmeta)) && (is_array($btmeta)) && (isset($btmeta['info']))) {
-			if (array_key_exists('files', $btmeta['info'])) {
-				foreach ($btmeta['info']['files'] as $filenum => $file) {
+	switch ($ch->type) {
+		case "torrent":
+			require_once("inc/classes/BDecode.php");
+			$tFile = $cfg["transfer_file_path"].$transfer;
+			if ($fd = @fopen($tFile, "rd")) {
+				$alltorrent = @fread($fd, @filesize($tFile));
+				$btmeta = @BDecode($alltorrent);
+				@fclose($fd);
+			}
+			if ((isset($btmeta)) && (is_array($btmeta)) && (isset($btmeta['info']))) {
+				if (array_key_exists('files', $btmeta['info'])) {
+					foreach ($btmeta['info']['files'] as $filenum => $file) {
+						array_push($transferFilesList, array(
+							'name' => (is_array($file['path'])) ? $file['path'][0] : $file['path'],
+							'size' => ((isset($file['length'])) && (is_numeric($file['length']))) ? formatBytesTokBMBGBTB($file['length']) : 0
+							)
+						);
+					}
+				} else {
 					array_push($transferFilesList, array(
-						'name' => (is_array($file['path'])) ? $file['path'][0] : $file['path'],
-						'size' => ((isset($file['length'])) && (is_numeric($file['length']))) ? formatBytesTokBMBGBTB($file['length']) : 0
+						'name' => $btmeta["info"]["name"],
+						'size' => formatBytesTokBMBGBTB($btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20))
+						)
+					);
+
+				}
+			}
+			if (empty($transferFilesList)) {
+				$tmpl->setvar('transferFilesString', "Empty");
+				$tmpl->setvar('transferFileCount', count($btmeta['info']['files']));
+			} else {
+				$tmpl->setloop('transferFilesList', $transferFilesList);
+				$tmpl->setvar('transferFileCount', count($transferFilesList));
+			}
+			return;
+		case "wget":
+			$ch = ClientHandler::getInstance('wget');
+			$ch->setVarsFromFile($transfer);
+			if (!empty($ch->url)) {
+				require_once("inc/classes/SimpleHTTP.php");
+				array_push($transferFilesList, array(
+					'name' => $ch->url,
+					'size' => formatBytesTokBMBGBTB(SimpleHTTP::getRemoteSize($ch->url))
+					)
+				);
+			}
+			if (empty($transferFilesList)) {
+				$tmpl->setvar('transferFilesString', "Empty");
+				$tmpl->setvar('transferFileCount', 0);
+			} else {
+				$tmpl->setloop('transferFilesList', $transferFilesList);
+				$tmpl->setvar('transferFileCount', count($transferFilesList));
+			}
+			return;
+		case "nzb":
+			require_once("inc/classes/NZBFile.php");
+			$nzb = new NZBFile($transfer);
+			if (empty($nzb->files)) {
+				$tmpl->setvar('transferFilesString', "Empty");
+				$tmpl->setvar('transferFileCount', 0);
+			} else {
+				foreach ($nzb->files as $file) {
+					array_push($transferFilesList, array(
+						'name' => $file['name'],
+						'size' => formatBytesTokBMBGBTB($file['size'])
 						)
 					);
 				}
-			} else {
-				array_push($transferFilesList, array(
-					'name' => $btmeta["info"]["name"],
-					'size' => formatBytesTokBMBGBTB($btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20))
-					)
-				);
+				$tmpl->setloop('transferFilesList', $transferFilesList);
+				$tmpl->setvar('transferFileCount', $nzb->filecount);
+			}
+			return;
+	}
+}
 
-			}
-		}
-		if (empty($transferFilesList)) {
-			$tmpl->setvar('transferFilesString', "Empty");
-			$tmpl->setvar('transferFileCount', count($btmeta['info']['files']));
-		} else {
-			$tmpl->setloop('transferFilesList', $transferFilesList);
-			$tmpl->setvar('transferFileCount', count($transferFilesList));
-		}
-	} else if (substr($transfer, -5) == ".wget") {
-		// this is wget.
-		$ch = ClientHandler::getInstance('wget');
-		$ch->setVarsFromFile($transfer);
-		if (!empty($ch->url)) {
-			require_once("inc/classes/SimpleHTTP.php");
-			array_push($transferFilesList, array(
-				'name' => $ch->url,
-				'size' => formatBytesTokBMBGBTB(SimpleHTTP::getRemoteSize($ch->url))
-				)
+/**
+ * setDetailsVars
+ *
+ * @param $withForm
+ */
+function transfer_setDetailsVars($withForm = false) {
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	// set vars for transfer
+	$tmpl->setvar('clientType', $ch->type);
+	switch ($ch->type) {
+		case "torrent":
+			require_once("inc/functions/functions.metainfo.php");
+			$tmpl->setvar('transferMetaInfo', showMetaInfo($transfer, $withForm));
+			$tmpl->setvar('transferMetaInfo', (($cfg["enable_file_priority"] == 1) && ($ch->client == "tornado") && (!isTransferRunning($transfer)))
+				? (showMetaInfo($transfer, $withForm))
+				: ("<pre>".getTorrentMetaInfo($transfer)."</pre>")
 			);
-		}
-		if (empty($transferFilesList)) {
-			$tmpl->setvar('transferFilesString', "Empty");
-			$tmpl->setvar('transferFileCount', 0);
-		} else {
-			$tmpl->setloop('transferFilesList', $transferFilesList);
-			$tmpl->setvar('transferFileCount', count($transferFilesList));
-		}
-	} else if (substr($transfer, -4) == ".nzb") {
-		// this is nzbperl.
-		require_once("inc/classes/NZBFile.php");
-		$nzb = new NZBFile($transfer);
-		if (empty($nzb->files)) {
-			$tmpl->setvar('transferFilesString', "Empty");
-			$tmpl->setvar('transferFileCount', 0);
-		} else {
-			foreach ($nzb->files as $file) {
-				array_push($transferFilesList, array(
-					'name' => $file['name'],
-					'size' => formatBytesTokBMBGBTB($file['size'])
-					)
-				);
-			}
-			$tmpl->setloop('transferFilesList', $transferFilesList);
-			$tmpl->setvar('transferFileCount', $nzb->filecount);
-		}
+			return;
+		case "wget":
+			$ch->setVarsFromFile($transfer);
+			$tmpl->setvar('transferUrl', $ch->url);
+			return;
+		case "nzb":
+			$tmpl->setvar('transferMetaInfo', @htmlentities(file_get_contents($cfg["transfer_file_path"].$transfer), ENT_QUOTES));
+			return;
 	}
 }
 

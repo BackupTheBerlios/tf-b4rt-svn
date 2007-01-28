@@ -38,6 +38,13 @@ tmplInitializeInstance($cfg["theme"], "page.transferFiles.tmpl");
 // init transfer
 transfer_init();
 
+// init ch-instance
+$ch = ClientHandler::getInstance(getTransferClient($transfer));
+
+// load settings, default if settings could not be loaded (fresh transfer)
+if ($ch->settingsLoad($transfer) !== true)
+	$ch->settingsDefault();
+
 // set file vars
 transfer_setFileVars();
 
