@@ -558,58 +558,71 @@ class ClientHandler
      */
     function _settingsInit() {
     	global $cfg;
-    	// rate
-    	$reqvar = getRequestVar('rate');
-    	$this->rate = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["max_upload_rate"];
-		// drate
-    	$reqvar = getRequestVar('drate');
-    	$this->drate = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["max_download_rate"];
-		// maxuploads
-    	$reqvar = getRequestVar('maxuploads');
-    	$this->maxuploads = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["max_uploads"];
-		// superseeder
-    	$reqvar = getRequestVar('superseeder');
-    	$this->superseeder = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["superseeder"];
-    	// runtime
-    	$reqvar = getRequestVar('runtime');
-    	$this->runtime = (empty($reqvar))
-    		? $cfg["die_when_done"]
-    		: $reqvar;
-		// sharekill
-    	$reqvar = getRequestVar('sharekill');
-    	$this->sharekill = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["sharekill"];
-		// minport
-    	$reqvar = getRequestVar('minport');
-    	$this->minport = (empty($reqvar))
-    		? $cfg["minport"]
-    		: $reqvar;
-        // maxport
-    	$reqvar = getRequestVar('maxport');
-    	$this->maxport = (empty($reqvar))
-    		? $cfg["maxport"]
-    		: $reqvar;
-		// maxcons
-    	$reqvar = getRequestVar('maxcons');
-    	$this->maxcons = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["maxcons"];
-		// rerequest
-    	$reqvar = getRequestVar('rerequest');
-    	$this->rerequest = ($reqvar != "")
-    		? $reqvar
-    		: $cfg["rerequest_interval"];
-        // savepath
-        $this->savepath = getRequestVar('savepath');
+		// customize settings
+		if ($cfg['transfer_customize_settings'] == 2)
+			$customize_settings = 1;
+		elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
+			$customize_settings = 1;
+		else
+			$customize_settings = 0;
+		// only read request-vars if enabled
+    	if ($customize_settings == 0) { // default
+    		$this->settingsDefault();
+    	} else { // from req-vars
+	    	// rate
+	    	$reqvar = getRequestVar('rate');
+	    	$this->rate = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["max_upload_rate"];
+			// drate
+	    	$reqvar = getRequestVar('drate');
+	    	$this->drate = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["max_download_rate"];
+			// maxuploads
+	    	$reqvar = getRequestVar('maxuploads');
+	    	$this->maxuploads = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["max_uploads"];
+			// superseeder
+	    	$reqvar = getRequestVar('superseeder');
+	    	$this->superseeder = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["superseeder"];
+	    	// runtime
+	    	$reqvar = getRequestVar('runtime');
+	    	$this->runtime = (empty($reqvar))
+	    		? $cfg["die_when_done"]
+	    		: $reqvar;
+			// sharekill
+	    	$reqvar = getRequestVar('sharekill');
+	    	$this->sharekill = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["sharekill"];
+			// minport
+	    	$reqvar = getRequestVar('minport');
+	    	$this->minport = (empty($reqvar))
+	    		? $cfg["minport"]
+	    		: $reqvar;
+	        // maxport
+	    	$reqvar = getRequestVar('maxport');
+	    	$this->maxport = (empty($reqvar))
+	    		? $cfg["maxport"]
+	    		: $reqvar;
+			// maxcons
+	    	$reqvar = getRequestVar('maxcons');
+	    	$this->maxcons = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["maxcons"];
+			// rerequest
+	    	$reqvar = getRequestVar('rerequest');
+	    	$this->rerequest = ($reqvar != "")
+	    		? $reqvar
+	    		: $cfg["rerequest_interval"];
+    	}
+    	// savepath
+    	if ($cfg["showdirtree"] == 1)
+    		 $this->savepath = getRequestVar('savepath');
         // skip_hash_check
         $this->skip_hash_check = getRequestVar('skiphashcheck');
     }
