@@ -24,11 +24,11 @@
 define("_UPLOAD_LIMIT", 10000000);
 
 /**
- * indexStartTransfer
+ * startTransfer
  *
  * @param $transfer
  */
-function indexStartTransfer($transfer) {
+function dispatcher_startTransfer($transfer) {
 	global $cfg;
 	$invalid = true;
 	if (isValidTransfer($transfer) === true) {
@@ -135,11 +135,11 @@ function indexStartTorrent($transfer, $interactive) {
 }
 
 /**
- * indexStopTransfer
+ * stopTransfer
  *
  * @param $transfer
  */
-function indexStopTransfer($transfer) {
+function dispatcher_stopTransfer($transfer) {
 	global $cfg;
 	$invalid = true;
 	if (isValidTransfer($transfer) === true) {
@@ -187,7 +187,7 @@ function indexStopTransfer($transfer) {
  *
  * @param $transfer
  */
-function forceStopTransfer($transfer, $pid) {
+function dispatcher_forceStopTransfer($transfer, $pid) {
 	global $cfg;
 	$invalid = true;
 	if (isValidTransfer($transfer) === true) {
@@ -231,11 +231,11 @@ function forceStopTransfer($transfer, $pid) {
 }
 
 /**
- * indexDeleteTransfer
+ * deleteTransfer
  *
  * @param $transfer
  */
-function indexDeleteTransfer($transfer) {
+function dispatcher_deleteTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -5) == ".wget") {
@@ -274,11 +274,11 @@ function indexDeleteTransfer($transfer) {
 }
 
 /**
- * indexDeQueueTransfer
+ * deQueueTransfer
  *
  * @param $transfer
  */
-function indexDeQueueTransfer($transfer) {
+function dispatcher_deQueueTransfer($transfer) {
 	global $cfg;
 	if (isValidTransfer($transfer) === true) {
 		if (substr($transfer, -5) == ".wget") {
@@ -314,11 +314,11 @@ function indexDeQueueTransfer($transfer) {
 }
 
 /**
- * indexInjectWget
+ * injectWget
  *
  * @param $url
  */
-function indexInjectWget($url) {
+function dispatcher_injectWget($url) {
 	global $cfg;
 	// is enabled ?
 	if ($cfg["enable_wget"] == 0) {
@@ -357,23 +357,23 @@ function indexInjectWget($url) {
 }
 
 /**
- * dispatcherSetFilePriority
+ * setFilePriority
  *
  * @param $transfer
  */
-function dispatcherSetFilePriority($transfer) {
+function dispatcher_setFilePriority($transfer) {
 	global $cfg;
 	if ($cfg["enable_file_priority"])
 		setFilePriority($transfer);
 }
 
 /**
- * dispatcherSet
+ * set
  *
  * @param $key
  * @param $val
  */
-function dispatcherSet($key, $val) {
+function dispatcher_set($key, $val) {
 	if (!empty($key)) {
 		if ($key == "_all_") {
 			$keys = array_keys($_SESSION['settings']);
@@ -386,11 +386,11 @@ function dispatcherSet($key, $val) {
 }
 
 /**
- * dispatcherBulk
+ * bulk
  *
  * @param $op
  */
-function dispatcherBulk($op) {
+function dispatcher_bulk($op) {
 	global $cfg;
 	// is enabled ?
 	if ($cfg["enable_bulkops"] != 1) {
@@ -449,11 +449,11 @@ function dispatcherBulk($op) {
 }
 
 /**
- * dispatcherMulti
+ * multi
  *
  * @param $action
  */
-function dispatcherMulti($action) {
+function dispatcher_multi($action) {
 	global $cfg;
 
 	// is enabled ?
@@ -609,11 +609,11 @@ function dispatcherMulti($action) {
 }
 
 /**
- * Function with which metafiles are downloaded and injected on index-page
+ * processDownload
  *
  * @param $url url of metafile to download
  */
-function indexProcessDownload($url, $type = 'torrent') {
+function dispatcher_processDownload($url, $type = 'torrent') {
 	global $cfg;
 	switch ($type) {
 		default:
@@ -624,7 +624,7 @@ function indexProcessDownload($url, $type = 'torrent') {
 				@error("metafile download is disabled", "index.php?iid=index", "");
 			}
 			// process download
-			_indexProcessDownload($url, 'torrent', '.torrent');
+			_dispatcher_processDownload($url, 'torrent', '.torrent');
 			break;
 		case 'nzb':
 			// is enabled ?
@@ -638,18 +638,18 @@ function indexProcessDownload($url, $type = 'torrent') {
 				}
 			}
 			// process download
-			_indexProcessDownload($url, 'nzb', '.nzb');
+			_dispatcher_processDownload($url, 'nzb', '.nzb');
 			break;
 	}
 }
 
 /**
- * (internal) Function with which metafiles are downloaded and injected on index-page
+ * (internal) Function with which metafiles are downloaded and injected
  *
  * @param $url url to download
  * @param $type
  */
-function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
+function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent') {
 	global $cfg;
 	$filename = "";
 	$downloadMessages = array();
@@ -768,9 +768,9 @@ function _indexProcessDownload($url, $type = 'torrent', $ext = '.torrent') {
 }
 
 /**
- * Function with which metafiles are uploaded and injected on index-page
+ * Function with which metafiles are uploaded and injected
  */
-function indexProcessUpload() {
+function dispatcher_processUpload() {
 	global $cfg;
 	$filename = "";
 	$uploadMessages = array();
@@ -852,9 +852,9 @@ function indexProcessUpload() {
 }
 
 /**
- * file-upload
+ * processUploadFile
  */
-function processFileUpload() {
+function dispatcher_processUploadFile() {
 	global $cfg;
 	$filename = "";
 	$uploadMessages = array();
@@ -959,11 +959,11 @@ function processFileUpload() {
 }
 
 /**
- * send meta-file
+ * sendMetafile
  *
  * @param $mfile
  */
-function sendMetafile($mfile) {
+function dispatcher_sendMetafile($mfile) {
 	global $cfg;
 	// is enabled ?
 	if ($cfg["enable_metafile_download"] != 1) {
@@ -1004,27 +1004,27 @@ function sendMetafile($mfile) {
 }
 
 /**
- * tf 2.x compat function
+ * compatIndexDispatch
  */
-function compatIndexDispatch() {
+function dispatcher_compatIndexDispatch() {
 	// transfer-start
 	if (isset($_REQUEST['torrent']))
-		indexStartTransfer(urldecode(getRequestVar('torrent')));
+		dispatcher_startTransfer(urldecode(getRequestVar('torrent')));
 	// get torrent via url
 	if (isset($_REQUEST['url_upload']))
-		indexProcessDownload(getRequestVar('url_upload'), 'torrent');
+		dispatcher_processDownload(getRequestVar('url_upload'), 'torrent');
 	// file upload
 	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
-		indexProcessUpload();
+		dispatcher_processUpload();
 	// del file
 	if (isset($_REQUEST['delfile']))
-		indexDeleteTransfer(urldecode(getRequestVar('delfile')));
+		dispatcher_deleteTransfer(urldecode(getRequestVar('delfile')));
 	// kill
 	if (isset($_REQUEST["kill_torrent"]))
-		indexStopTransfer(urldecode(getRequestVar('kill_torrent')));
+		dispatcher_stopTransfer(urldecode(getRequestVar('kill_torrent')));
 	// deQueue
 	if (isset($_REQUEST["QEntry"]))
-		indexDeQueueTransfer(urldecode(getRequestVar('QEntry')));
+		dispatcher_deQueueTransfer(urldecode(getRequestVar('QEntry')));
 }
 
 ?>

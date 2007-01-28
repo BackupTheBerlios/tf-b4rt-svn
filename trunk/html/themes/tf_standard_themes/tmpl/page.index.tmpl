@@ -65,7 +65,7 @@
 									</form>
 								</tr>
 								<tr>
-									<form name="form_url_torrent" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
+									<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
 									<td>
 										<hr>
 										<tmpl_var name="_URLFILE">:<br>
@@ -88,7 +88,7 @@
 								</tr>
 								<tmpl_if name="enable_nzbperl">
 									<tr>
-									<form name="form_url_nzb" action="dispatcher.php?action=indexUrlUpload" method="post" onsubmit="return actionSubmit()">
+									<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
 										<td>
 											<hr>
 											URL for the nzb-File:<br>

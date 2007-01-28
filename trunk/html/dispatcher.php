@@ -40,60 +40,56 @@ switch ($action) {
     	break;
 
 /*******************************************************************************
- * index-page ops
+ * single transfer ops
  ******************************************************************************/
-    case "indexStart":
-		indexStartTransfer(urldecode(getRequestVar('transfer')));
+    case "start":
+		dispatcher_startTransfer(urldecode(getRequestVar('transfer')));
     	break;
-    case "indexUrlUpload":
-		indexProcessDownload(urldecode(getRequestVar('url')), getRequestVar('type'));
+    case "urlUpload":
+		dispatcher_processDownload(urldecode(getRequestVar('url')), getRequestVar('type'));
     	break;
-    case "indexDelete":
-    	indexDeleteTransfer(urldecode(getRequestVar('transfer')));
+    case "delete":
+    	dispatcher_deleteTransfer(urldecode(getRequestVar('transfer')));
     	break;
-    case "indexStop":
-    	indexStopTransfer(urldecode(getRequestVar('transfer')));
+    case "stop":
+    	dispatcher_stopTransfer(urldecode(getRequestVar('transfer')));
     	break;
-    case "indexDeQueue":
-    	indexDeQueueTransfer(urldecode(getRequestVar('transfer')));
+    case "forceStop":
+    	dispatcher_forceStopTransfer(urldecode(getRequestVar('transfer')), getRequestVar('pid'));
+    	break;
+    case "deQueue":
+    	dispatcher_deQueueTransfer(urldecode(getRequestVar('transfer')));
     	break;
     case "wget":
-		indexInjectWget(getRequestVar('url'));
-    	break;
-
-/*******************************************************************************
- * force-Stop
- ******************************************************************************/
-    case "forceStop":
-    	forceStopTransfer(urldecode(getRequestVar('transfer')), getRequestVar('pid'));
+		dispatcher_injectWget(getRequestVar('url'));
     	break;
 
 /*******************************************************************************
  * set prio
  ******************************************************************************/
     case "setFilePriority":
-		dispatcherSetFilePriority(getRequestVar('transfer'));
+		dispatcher_setFilePriority(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************
  * file-upload
  ******************************************************************************/
 	case "fileUpload":
-		processFileUpload();
+		dispatcher_processUploadFile();
     	break;
 
 /*******************************************************************************
  * metafile-download
  ******************************************************************************/
 	case "metafileDownload":
-		sendMetafile(getRequestVar('transfer'));
+		dispatcher_sendMetafile(getRequestVar('transfer'));
     	break;
 
 /*******************************************************************************
  * set
  ******************************************************************************/
     case "set":
-    	dispatcherSet(getRequestVar('key'), getRequestVar('val'));
+    	dispatcher_set(getRequestVar('key'), getRequestVar('val'));
     	break;
 
 /*******************************************************************************
@@ -127,20 +123,20 @@ switch ($action) {
  * bulk operations
  ******************************************************************************/
     case "bulkStop":
-    	dispatcherBulk("stop");
+    	dispatcher_bulk("stop");
     	break;
     case "bulkResume":
-    	dispatcherBulk("resume");
+    	dispatcher_bulk("resume");
     	break;
     case "bulkStart":
-    	dispatcherBulk("start");
+    	dispatcher_bulk("start");
     	break;
 
 /*******************************************************************************
  * multi operations
  ******************************************************************************/
     default:
-    	dispatcherMulti($action);
+    	dispatcher_multi($action);
     	break;
 }
 

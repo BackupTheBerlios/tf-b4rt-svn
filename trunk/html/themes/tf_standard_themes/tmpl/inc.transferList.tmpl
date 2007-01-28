@@ -163,7 +163,7 @@
 								<tmpl_if name="transfer_customize_settings">
 									<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 								</tmpl_if>
-								<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+								<a href="dispatcher.php?action=stop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 								<tmpl_if name="enable_multiops">
 									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
@@ -179,7 +179,7 @@
 										<tmpl_if name="transfer_customize_settings">
 											<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 										</tmpl_if>
-										<a href="dispatcher.php?action=indexDeQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+										<a href="dispatcher.php?action=deQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="clientType" value="torrent">
@@ -191,16 +191,16 @@
 													</tmpl_if>
 												</tmpl_if>
 												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
-													<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 												</tmpl_if>
 											<tmpl_else>
 												<tmpl_if name="transfer_customize_settings">
 													<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 												</tmpl_if>
 												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
 													<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
@@ -214,7 +214,7 @@
 									</tmpl_if>
 								</tmpl_if>
 							<tmpl_if name="is_no_file">
-								<a href="dispatcher.php?action=indexDelete&transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+								<a href="dispatcher.php?action=delete&transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<tmpl_else>
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>
@@ -389,7 +389,7 @@
 								<tmpl_if name="transfer_customize_settings">
 									<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 								</tmpl_if>
-								<a href="dispatcher.php?action=indexStop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
+								<a href="dispatcher.php?action=stop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 								<tmpl_if name="enable_multiops">
 									<input type="checkbox" name="transfer[]" value="<tmpl_var name="url_entry">" onclick="ajax_updateState = 0;">
@@ -405,7 +405,7 @@
 										<tmpl_if name="transfer_customize_settings">
 											<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 										</tmpl_if>
-										<a href="dispatcher.php?action=indexDeQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
+										<a href="dispatcher.php?action=deQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
 											<tmpl_if name="clientType" value="torrent">
@@ -417,16 +417,16 @@
 													</tmpl_if>
 												</tmpl_if>
 												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
-													<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 												</tmpl_if>
 											<tmpl_else>
 												<tmpl_if name="transfer_customize_settings">
 													<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 												</tmpl_if>
 												<tmpl_if name="show_run" value="1">
-													<a href="dispatcher.php?action=indexStart&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+													<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
 												<tmpl_else>
 													<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="Done">
 												</tmpl_if>
@@ -440,7 +440,7 @@
 									</tmpl_if>
 								</tmpl_if>
 							<tmpl_if name="is_no_file">
-								<a href="dispatcher.php?action=indexDelete&transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
+								<a href="dispatcher.php?action=delete&transfer=<tmpl_var name="url_entry">" onclick="return actionConfirm('Delete <tmpl_var name="entry"> ?')"><img src="themes/tf_standard_themes/images/delete_on.gif" width=16 height=16 title="<tmpl_var name="_DELETE">" border=0></a>
 							<tmpl_else>
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width="16" height="16" title="<tmpl_var name="_STOPPING">" border=0>
 							</tmpl_if>

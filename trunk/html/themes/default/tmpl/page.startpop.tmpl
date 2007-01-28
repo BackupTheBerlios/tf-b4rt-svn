@@ -39,7 +39,7 @@
 										</select>
 									</td>
 								</form>
-								<form name="theForm" target="_parent" action="dispatcher.php?action=indexStart" method="POST">
+								<form name="theForm" target="_parent" action="dispatcher.php?action=start" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
 								<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
@@ -109,7 +109,7 @@
 							</tmpl_if>
 						<tmpl_else>
 						    <tr>
-								<form name="theForm" target="_parent" action="dispatcher.php?action=indexStart" method="POST">
+								<form name="theForm" target="_parent" action="dispatcher.php?action=start" method="POST">
 								<input type="hidden" name="interactive" value="true">
 								<input type="hidden" name="closeme" value="true">
 								<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">

@@ -40,7 +40,9 @@
 <tmpl_loop name="feedItems">
 	<tr>
 		<td>
-			<a href="dispatcher.php?action=indexUrlUpload&type=torrent&url=<tmpl_var name="link">" title="<tmpl_var name="label">"><img src="themes/tf_standard_themes/images/download_owner.gif" width="16" height="16" border="0" title="<tmpl_var name="label">"></a>&nbsp;&nbsp;<a href="dispatcher.php?action=indexUrlUpload&url=<tmpl_var name="link">" title="<tmpl_var name="label">"><tmpl_var name="title"></a>
+			<a href="dispatcher.php?action=urlUpload&type=torrent&url=<tmpl_var name="link">" title="<tmpl_var name="label">"><img src="themes/tf_standard_themes/images/download_owner.gif" width="16" height="16" border="0" title="<tmpl_var name="label">"></a>
+			&nbsp;&nbsp;
+			<a href="dispatcher.php?action=urlUpload&url=<tmpl_var name="link">" title="<tmpl_var name="label">"><tmpl_var name="title"></a>
 		</td>
 		<td><tmpl_var name="pubDate"></td>
 	</tr>
