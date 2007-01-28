@@ -74,6 +74,7 @@ if ($isSave) {                                                        /* save */
 
 	// settings-keys
 	$settingsKeys = array(
+		'savepath',
 		'max_upload_rate',
 		'max_download_rate',
 		'max_uploads',
@@ -96,6 +97,7 @@ if ($isSave) {                                                        /* save */
 
 	// settings-labels
 	$settingsLabels = array(
+		'savepath' => 'Savepath',
 		'max_upload_rate' => 'Max Upload Rate',
 		'max_download_rate' => 'Max Download Rate',
 		'max_uploads' => 'Max Upload Connections',
@@ -110,6 +112,7 @@ if ($isSave) {                                                        /* save */
 
 	// current settings
 	$settingsCurrent = array();
+	$settingsCurrent['savepath'] = $ch->savepath;
 	$settingsCurrent['max_upload_rate'] = $ch->rate;
 	$settingsCurrent['max_download_rate'] = $ch->drate;
 	$settingsCurrent['max_uploads'] = $ch->maxuploads;
@@ -148,6 +151,7 @@ if ($isSave) {                                                        /* save */
 		$list_send = array();
 		foreach ($settingsChanged as $settingsKey) {
 			// value
+			$valid = true;
 			switch ($settingsKey) {
 				case 'superseeder':
 					$value = ($settingsNew[$settingsKey] == 1) ? "True" : "False";
@@ -155,34 +159,50 @@ if ($isSave) {                                                        /* save */
 				case 'die_when_done':
 					$value = ($settingsNew[$settingsKey] == "True") ? "Die When Done" : "Keep Seeding";
 					break;
+				case 'savepath':
+					if ($cfg["showdirtree"] == 1) {
+						$value =  checkDirPathString($settingsNew[$settingsKey]);
+						// skip if invalid
+						if ((@checkDirectory($value, 0777)) !== true)
+							$valid = false;
+					} else {
+						AuditAction($cfg["constants"]["error"], $cfg["user"]." tried to change save-path-setting of ".$transfer." to ".$settingsNew[$settingsKey]);
+						$valid = false;
+					}
+					break;
+
 				default:
 					$value = $settingsNew[$settingsKey];
 			}
-			// list
-			array_push($list_changes, array(
-				'lbl' => $settingsLabels[$settingsKey],
-				'val' => $value
-				)
-			);
-			// send
-			if (($ch->running == 1) && ($doSend)) {
-				// runtime
-				if (in_array($settingsKey, $settingsRuntime))
-					array_push($list_send, array(
-						'lbl' => $settingsLabels[$settingsKey],
-						'val' => $value
-						)
-					);
-				// restart
-				else
-					array_push($list_restart, array(
-						'lbl' => $settingsLabels[$settingsKey],
-						'val' => $value
-						)
-					);
+			// only valid
+			if ($valid) {
+				// list
+				array_push($list_changes, array(
+					'lbl' => $settingsLabels[$settingsKey],
+					'val' => $value
+					)
+				);
+				// send
+				if (($ch->running == 1) && ($doSend)) {
+					// runtime
+					if (in_array($settingsKey, $settingsRuntime))
+						array_push($list_send, array(
+							'lbl' => $settingsLabels[$settingsKey],
+							'val' => $value
+							)
+						);
+					// restart
+					else
+						array_push($list_restart, array(
+							'lbl' => $settingsLabels[$settingsKey],
+							'val' => $value
+							)
+						);
+				}
 			}
 		}
-		$tmpl->setloop('list_changes', $list_changes);
+		if (!empty($list_changes))
+			$tmpl->setloop('list_changes', $list_changes);
 		if (empty($list_send))
 			$doSend = false;
 		else
@@ -191,6 +211,15 @@ if ($isSave) {                                                        /* save */
 			$tmpl->setloop('list_restart', $list_restart);
 
 		// save settings
+		if ($cfg["showdirtree"] == 1) {
+			$newSavepath =  checkDirPathString($settingsNew['savepath']);
+			if ($newSavepath != $settingsCurrent['savepath']) {
+				if ((@checkDirectory($newSavepath, 0777)) !== true)
+					$tmpl->setvar('error', "savepath ".$newSavepath." not valid and change not saved.");
+				else
+					$ch->savepath = $newSavepath;
+			}
+		}
 		$ch->rate = $settingsNew['max_upload_rate'];
 		$ch->drate = $settingsNew['max_download_rate'];
 		$ch->maxuploads = $settingsNew['max_uploads'];
@@ -255,6 +284,13 @@ if ($isSave) {                                                        /* save */
 
 	// set vars
 	transfer_setProfiledVars();
+
+	// dirtree
+	$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
+	$dirTree = ($cfg["enable_home_dirs"] != 0)
+		? $cfg["path"].getOwner($transfer).'/'
+		: $cfg["path"].$cfg["path_incoming"].'/';
+	tmplSetDirTree($dirTree, $cfg["maxdepth"]);
 
 	// send-box
 	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);

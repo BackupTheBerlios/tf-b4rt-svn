@@ -7,7 +7,12 @@
 		<td>
 			<div align="center">
 			<tmpl_if name="isSave" value="1">
-				<tmpl_var name="message"><br>
+				<tmpl_if name="message">
+					<tmpl_var name="message"><br>
+				</tmpl_if>
+				<tmpl_if name="error">
+					<tmpl_var name="error"><br>
+				</tmpl_if>
 				<tmpl_if name="list_changes">
 					<br><strong>Changes :</strong>
 					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
@@ -65,6 +70,25 @@
 					<input type="hidden" name="save" value="1" />
 					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 						<tmpl_include name="inc.transferSettings.tmpl">
+						<tmpl_if name="showdirtree">
+							<tr>
+								<td colspan="2" align="right">
+									<table border="0" cellpadding="0" cellspacing="0" width="100%">
+										<tr>
+											<td align="left" valign="top" rowspan="2">Save Path:</td>
+											<td align="right" valign="top">
+												<input type="text" name="savepath" size="70" value="<tmpl_var name="savepath">">
+											</td>
+										</tr>
+										<tr>
+											<td align="right" valign="top">
+												<select width="45" size="5" onchange="savepath.value= this.options[this.selectedIndex].value;"><tmpl_include name="inc.dirTree.tmpl"></select>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</tmpl_if>
 						<tr>
 							<td colspan="2" align="right">
 								<tmpl_if name="sendboxShow" value="1">
