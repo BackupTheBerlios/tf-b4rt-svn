@@ -21,13 +21,13 @@
 *******************************************************************************/
 
 /**
- * show Meta Info
+ * File Prio Form
  *
  * @param $transfer
  * @param $withForm
  * @return string
  */
-function showMetaInfo($transfer, $withForm = false) {
+function getFilePrioForm($transfer, $withForm = false) {
 	global $cfg;
 	$prioFileName = $cfg["transfer_file_path"].$transfer.".prio";
 	require_once('inc/classes/BDecode.php');

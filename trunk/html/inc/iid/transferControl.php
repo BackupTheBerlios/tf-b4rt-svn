@@ -127,8 +127,22 @@ switch ($pageop) {
 		transfer_setProfiledVars();
 
 		// set details vars
-		//transfer_setDetailsVars(($cfg["enable_file_priority"] == 1));
+		switch ($ch->type) {
+			case "torrent":
+				if (($cfg["enable_file_priority"] == 1) && ($supportMap[$ch->client]['file_priority'] == 1)) {
+					require_once("inc/functions/functions.fileprio.php");
+					$tmpl->setvar('transferMetaInfo', getFilePrioForm($transfer, $withForm));
+				} else {
+					$tmpl->setvar('transferMetaInfo', "<pre>".getTorrentMetaInfo($transfer)."</pre>");
+				}
+				break;
+			case "wget":
+			case "nzb":
+				transfer_setFileVars();
+				break;
+		}
 
+		// break
 		break;
 
 	default:

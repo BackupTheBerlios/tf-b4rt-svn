@@ -41,8 +41,8 @@ require_once('inc/functions/functions.common.php');
 // startpop functions
 require_once('inc/functions/functions.startpop.php');
 
-// metainfo-functions
-require_once("inc/functions/functions.metainfo.php");
+// fileprio-functions
+require_once("inc/functions/functions.fileprio.php");
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.startpop.tmpl");
@@ -135,7 +135,7 @@ if ($with_profiles == 1) {
 $tmpl->setvar('with_profiles', $with_profiles);
 //
 $tmpl->setvar('bgLight', $cfg["bgLight"]);
-$tmpl->setvar('metaInfo', showMetaInfo($transfer,false));
+$tmpl->setvar('metaInfo', getFilePrioForm($transfer, false));
 //
 $tmpl->setvar('_RUNTRANSFER', $cfg['_RUNTRANSFER']);
 //
