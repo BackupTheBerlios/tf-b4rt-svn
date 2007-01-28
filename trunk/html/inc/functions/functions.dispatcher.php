@@ -90,6 +90,24 @@ function dispatcher_stopTransfer($transfer) {
 }
 
 /**
+ * restartTransfer
+ *
+ * @param $transfer
+ */
+function dispatcher_restartTransfer($transfer) {
+	global $cfg;
+	// stop if running
+	$tRunningFlag = isTransferRunning($transfer);
+	if ($tRunningFlag) {
+		dispatcher_stopTransfer($transfer);
+		$tRunningFlag = isTransferRunning($transfer);
+	}
+	// start if not running
+	if (!$tRunningFlag)
+		dispatcher_startTransfer($transfer);
+}
+
+/**
  * forceStopTransfer
  *
  * @param $transfer

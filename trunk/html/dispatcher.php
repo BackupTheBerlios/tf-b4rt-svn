@@ -57,6 +57,9 @@ switch ($action) {
     case "forceStop":
     	dispatcher_forceStopTransfer(urldecode(getRequestVar('transfer')), getRequestVar('pid'));
     	break;
+    case "restart":
+    	dispatcher_restartTransfer(urldecode(getRequestVar('transfer')));
+    	break;
     case "deQueue":
     	dispatcher_deQueueTransfer(urldecode(getRequestVar('transfer')));
     	break;

@@ -15,8 +15,7 @@
 							</td>
 						</tr>
 					</table>
-					<form name="controlForm" action="dispatcher.php?action=stop" method="post">
-						<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
+					<form name="controlForm" action="dispatcher.php?action=stop&transfer=<tmpl_var name="transfer">" method="post">
 						<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 							<tr>
 								<td colspan="2" align="center">
@@ -25,7 +24,15 @@
 							</tr>
 						</table>
 					</form>
-					TODO
+					<form name="controlForm" action="dispatcher.php?action=restart&transfer=<tmpl_var name="transfer">" method="post">
+						<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
+							<tr>
+								<td colspan="2" align="center">
+									<input type="Submit" value="Restart Transfer">
+								</td>
+							</tr>
+						</table>
+					</form>
 				<tmpl_elseif name="state" value="queued">
 					<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 						<tr>
@@ -34,8 +41,7 @@
 							</td>
 						</tr>
 					</table>
-					<form name="controlForm" action="dispatcher.php?action=deQueue" method="post">
-						<input type="hidden" name="transfer" value="<tmpl_var name="transfer">">
+					<form name="controlForm" action="dispatcher.php?action=deQueue&transfer=<tmpl_var name="transfer">" method="post">
 						<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 							<tr>
 								<td colspan="2" align="center">
@@ -48,8 +54,7 @@
 			<tmpl_elseif name="pageop" value="start">
 				<tmpl_if name="enableClientChooser" value="1">
 					<tmpl_if name="enableBtclientChooser" value="1">
-						<form name="clientForm" action="index.php?iid=transferControl" method="post">
-							<input type="hidden" name="transfer" value="<tmpl_var name="transfer">" />
+						<form name="clientForm" action="index.php?iid=transferControl&transfer=<tmpl_var name="transfer">" method="post">
 							<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 								<tr>
 									<td align="center" colspan="2">
@@ -61,11 +66,11 @@
 					</tmpl_if>
 				</tmpl_if>
 				<tmpl_if name="with_profiles" value="1">
-					<form name="profileForm" action="index.php?iid=transferControl" method="post">
+					<form name="profileForm" action="index.php?iid=transferControl&transfer=<tmpl_var name="transfer">" method="post">
 						<tmpl_include name="inc.transferProfile.tmpl">
 					</form>
 				</tmpl_if>
-				<form name="theForm" action="dispatcher.php?action=start" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
+				<form name="theForm" action="dispatcher.php?action=start&transfer=<tmpl_var name="transfer">" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
 					<input type="hidden" name="interactive" value="1">
 					<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 						<tmpl_include name="inc.transferSettings.tmpl">
