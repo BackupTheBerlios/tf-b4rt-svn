@@ -1457,8 +1457,6 @@ function deleteTransferData($transfer) {
 				AuditAction($cfg["constants"]["error"], $msg);
 				array_push($msgs, $msg);
 			}
-		} else {
-			array_push($msgs, "skip data-deletion as datapath is empty for transfer ".$transfer);
 		}
 	} else {
 		$msg = "ILLEGAL DELETE: ".$cfg["user"]." attempted to delete data of ".$transfer;
