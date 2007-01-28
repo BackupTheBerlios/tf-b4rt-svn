@@ -132,11 +132,21 @@ if ($isSave) {                                                        /* save */
 			$settingsNew[$settingsKey] = $settingsCurrent[$settingsKey];
 	}
 
+	// customize settings
+	if ($cfg['transfer_customize_settings'] == 2)
+		$customize_settings = 1;
+	elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
+		$customize_settings = 1;
+	else
+		$customize_settings = 0;
+
 	// process changes
 	$settingsChanged = array();
 	foreach ($settingsKeys as $settingsKey) {
-		if ($settingsNew[$settingsKey] != $settingsCurrent[$settingsKey])
-			array_push($settingsChanged, $settingsKey);
+		if ($settingsNew[$settingsKey] != $settingsCurrent[$settingsKey]) {
+			if (($settingsKey == 'savepath') || ($customize_settings == 1))
+				array_push($settingsChanged, $settingsKey);
+		}
 	}
 	if (empty($settingsChanged)) { /* no changes */
 

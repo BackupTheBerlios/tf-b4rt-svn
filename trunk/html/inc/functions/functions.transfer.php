@@ -128,9 +128,9 @@ function transfer_init() {
 function transfer_setCustomizeVars() {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
 	// customize settings
-	if ($cfg['transfer_customize_settings'] == "2")
+	if ($cfg['transfer_customize_settings'] == 2)
 		$customize_settings = 1;
-	elseif ($cfg['transfer_customize_settings'] == "1" && $cfg['isAdmin'])
+	elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
 		$customize_settings = 1;
 	else
 		$customize_settings = 0;
