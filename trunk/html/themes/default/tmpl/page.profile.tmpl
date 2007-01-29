@@ -289,7 +289,8 @@
 	<div align="center">[<a href="index.php?iid=profile">Return to Profile</a>]</div>
 	<br />
 	<div align="center">
-		<form action="index.php?iid=profile&op=<tmpl_var name="op">" method="post">
+		<script src="js/profile.js" type="text/javascript"></script>
+		<form name="theForm" action="index.php?iid=profile&op=<tmpl_var name="op">" method="post" onsubmit="return validateProfileSettings()">
 			<input type="hidden" name="pid" value="<tmpl_var name="pid">" />
 			<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4">
 				<tr>
@@ -335,42 +336,6 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="120" align="right">&nbsp;Min-Port:</td>
-					<td>
-						<input type="Text" size="45" maxlength="255" name="minport" <tmpl_var name="minport">><br />
-					</td>
-					<td width="150">
-						(default: <tmpl_var name="default_minport">)
-					</td>
-				</tr>
-				<tr>
-					<td width="120" align="right">&nbsp;Max-Port:</td>
-					<td>
-						<input type="Text" size="45" maxlength="255" name="maxport" <tmpl_var name="maxport">><br />
-					</td>
-					<td width="150">
-						(default: <tmpl_var name="default_maxport">)
-					</td>
-				</tr>
-				<tr>
-					<td width="120" align="right">&nbsp;Max Cons:</td>
-					<td>
-						<input type="Text" size="45" maxlength="255" name="maxcons" <tmpl_var name="maxcons">><br />
-					</td>
-					<td width="150">
-						(default: <tmpl_var name="default_maxcons">)
-					</td>
-				</tr>
-				<tr>
-					<td width="120" align="right">&nbsp;Rerequest Intervall:</td>
-					<td>
-						<input type="Text" size="45" maxlength="255" name="rerequest" <tmpl_var name="rerequest">><br />
-					</td>
-					<td width="150">
-						(default: <tmpl_var name="default_rerequest">)
-					</td>
-				</tr>
-				<tr>
 					<td width="120" align="right">&nbsp;Max. Uploads:</td>
 					<td>
 						<input type="Text" size="45" maxlength="255" name="maxuploads" <tmpl_var name="maxuploads">><br />
@@ -380,12 +345,12 @@
 					</td>
 				</tr>
 				<tr>
-					<td width="120" align="right">&nbsp;Sharekill:</td>
+					<td width="120" align="right">&nbsp;Max Cons:</td>
 					<td>
-						<input type="Text" size="45" maxlength="255" name="sharekill" <tmpl_var name="sharekill">><br />
+						<input type="Text" size="45" maxlength="255" name="maxcons" <tmpl_var name="maxcons">><br />
 					</td>
 					<td width="150">
-						(default: <tmpl_var name="default_sharekill">)
+						(default: <tmpl_var name="default_maxcons">)
 					</td>
 				</tr>
 				<tr>
@@ -405,12 +370,48 @@
 					</td>
 				</tr>
 				<tr>
+					<td width="120" align="right">&nbsp;Sharekill:</td>
+					<td>
+						<input type="Text" size="45" maxlength="255" name="sharekill" <tmpl_var name="sharekill">><br />
+					</td>
+					<td width="150">
+						(default: <tmpl_var name="default_sharekill">)
+					</td>
+				</tr>
+				<tr>
+					<td width="120" align="right">&nbsp;Rerequest Intervall:</td>
+					<td>
+						<input type="Text" size="45" maxlength="255" name="rerequest" <tmpl_var name="rerequest">><br />
+					</td>
+					<td width="150">
+						(default: <tmpl_var name="default_rerequest">)
+					</td>
+				</tr>
+				<tr>
 					<td width="120" align="right">&nbsp;Enable Superseeder:</td>
 					<td>
 						<input name="superseeder" type="Checkbox" value="1" <tmpl_var name="superseeder">> <br />
 					</td>
 					<td width="150">
 						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td width="120" align="right">&nbsp;Min-Port:</td>
+					<td>
+						<input type="Text" size="45" maxlength="255" name="minport" <tmpl_var name="minport">><br />
+					</td>
+					<td width="150">
+						(default: <tmpl_var name="default_minport">)
+					</td>
+				</tr>
+				<tr>
+					<td width="120" align="right">&nbsp;Max-Port:</td>
+					<td>
+						<input type="Text" size="45" maxlength="255" name="maxport" <tmpl_var name="maxport">><br />
+					</td>
+					<td width="150">
+						(default: <tmpl_var name="default_maxport">)
 					</td>
 				</tr>
 				<tr>
