@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1441 2007-01-28 00:24:41Z joshe $
+ * $Id: peer.c 1446 2007-01-29 12:16:56Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -209,10 +209,22 @@ int tr_peerRead( tr_peer_t * peer )
     /* Try to read */
     for( ;; )
     {
-        if( tor && ( ( !tor->customSpeedLimit && !tr_rcCanGlobalTransfer( tor->handle, 0 ) )
-            || ( tor->customSpeedLimit && !tr_rcCanTransfer( tor->download ) ) ) )
+        if( tor )
         {
-            break;
+            if( !tor->customSpeedLimit )
+            {
+                tr_lockUnlock( &tor->lock );
+                if( !tr_rcCanGlobalTransfer( tor->handle, 0 ) )
+                {
+                    tr_lockLock( &tor->lock );
+                    break;
+                }
+                tr_lockLock( &tor->lock );
+            }
+            else if( !tr_rcCanTransfer( tor->download ) )
+            {
+                break;
+            }
         }
 
         if( peer->size < 1 )
@@ -386,8 +398,17 @@ writeBegin:
     /* Send pieces if we can */
     while( ( p = blockPending( tor, peer, &size ) ) )
     {
-        if( ( !tor->customSpeedLimit && !tr_rcCanGlobalTransfer( tor->handle, 1 ) )
-                || ( tor->customSpeedLimit && !tr_rcCanTransfer( tor->upload ) ) )
+        if( !tor->customSpeedLimit )
+        {
+            tr_lockUnlock( &tor->lock );
+            if( !tr_rcCanGlobalTransfer( tor->handle, 1 ) )
+            {
+                tr_lockLock( &tor->lock );
+                break;
+            }
+            tr_lockLock( &tor->lock );
+        }
+        else if( !tr_rcCanTransfer( tor->upload ) )
         {
             break;
         }
