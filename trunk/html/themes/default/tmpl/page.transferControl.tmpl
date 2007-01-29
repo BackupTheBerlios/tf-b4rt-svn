@@ -74,16 +74,13 @@
 					<input type="hidden" name="interactive" value="1">
 					<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 						<tmpl_include name="inc.transferSettings.tmpl">
-						<tr>
-							<td colspan="2" align="left">
-								File(s): <tmpl_var name="transferFileCount"><br>
-								<tmpl_include name="inc.transferFiles.tmpl">
-								<tmpl_if name="file_priority_enabled" value="1">
-									<br>
+						<tmpl_if name="file_priority_enabled" value="1">
+							<tr>
+								<td colspan="2" align="left">
 									<tmpl_var name="filePrio">
-								</tmpl_if>
-							</td>
-						</tr>
+								</td>
+							</tr>
+						</tmpl_if>
 						<tmpl_if name="showdirtree">
 							<tr>
 								<td colspan="2" align="right">

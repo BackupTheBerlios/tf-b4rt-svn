@@ -148,14 +148,6 @@ switch ($pageop) {
 		// set vars
 		transfer_setProfiledVars();
 
-		// dirtree
-		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-		if ($cfg["showdirtree"] == 1)
-			tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
-
-		// set file vars
-		transfer_setFileVars();
-
 		// file prio
 		if (($supportMap[$ch->client]['file_priority'] == 1) && ($cfg["enable_file_priority"] == 1)) {
 			require_once("inc/functions/functions.fileprio.php");
@@ -166,11 +158,11 @@ switch ($pageop) {
 			$tmpl->setvar('file_priority_enabled', 0);
 			$tmpl->setvar('enable_file_priority', 0);
 		}
-		$tmpl->setvar('enable_file_priority',
-			($supportMap[$ch->client]['file_priority'] == 1)
-				? $cfg["enable_file_priority"]
-				: 0
-		);
+
+		// dirtree
+		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
+		if ($cfg["showdirtree"] == 1)
+			tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
 
 		// hash-check
 		$tmpl->setvar('skip_hash_check_enabled', $supportMap[$ch->client]['skip_hash_check']);
