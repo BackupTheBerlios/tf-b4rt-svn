@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: peer.c 1441 2007-01-28 00:24:41Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -41,7 +41,7 @@ struct tr_peer_s
     tr_torrent_t   * tor;
 
     struct in_addr addr;
-    in_port_t      port;
+    in_port_t      port;  /* peer's listening port, 0 if not known */
 
 #define PEER_STATUS_IDLE       1 /* Need to connect */
 #define PEER_STATUS_CONNECTING 2 /* Trying to send handshake */
@@ -617,8 +617,8 @@ int tr_peerGetConnectable( tr_torrent_t * tor, uint8_t ** _buf )
     {
         peer = tor->peers[i];
 
-        /* Skip peers that came from incoming connections */
-        if( peer->incoming )
+        /* Skip peers with no known listening port */
+        if( 0 == peer->port )
             continue;
 
         memcpy( &buf[count*6], &peer->addr, 4 );

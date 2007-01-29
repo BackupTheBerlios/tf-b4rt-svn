@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: utils.c 1358 2007-01-14 16:57:31Z livings124 $
+ * $Id: utils.c 1444 2007-01-28 23:26:57Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -300,22 +300,46 @@ int tr_vsprintf( char ** buf, int * used, int * max, const char * fmt,
                  va_list ap1, va_list ap2 )
 {
     int     want;
-    char  * newbuf;
 
     want = vsnprintf( NULL, 0, fmt, ap1 );
 
-    while( *used + want + 1 > *max )
+    if( tr_concat( buf, used, max, NULL, want ) )
     {
-        *max += SPRINTF_BUFSIZE;
-        newbuf = realloc( *buf, *max );
+        return 1;
+    }
+    assert( *used + want + 1 <= *max );
+
+    *used += vsnprintf( *buf + *used, *max - *used, fmt, ap2 );
+
+    return 0;
+}
+
+int tr_concat( char ** buf, int * used, int * max, const char * data, int len )
+{
+    int     newmax;
+    char  * newbuf;
+
+    newmax = *max;
+    while( *used + len + 1 > newmax )
+    {
+        newmax += SPRINTF_BUFSIZE;
+    }
+    if( newmax > *max )
+    {
+        newbuf = realloc( *buf, newmax );
         if( NULL == newbuf )
         {
             return 1;
         }
         *buf = newbuf;
+        *max = newmax;
     }
 
-    *used += vsnprintf( *buf + *used, *max - *used, fmt, ap2 );
+    if( NULL != data )
+    {
+        memcpy( *buf + *used, data, len );
+        *used += len;
+    }
 
     return 0;
 }

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fdlimit.c 1427 2007-01-23 17:59:21Z titer $
+ * $Id: fdlimit.c 1441 2007-01-28 00:24:41Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -358,8 +358,14 @@ int tr_fdSocketAccept( int b, struct in_addr * addr, in_port_t * port )
     if( s > -1 )
     {
         SocketSetPriority( s, 0 );
-        *addr = sock.sin_addr;
-        *port = sock.sin_port;
+        if( NULL != addr )
+        {
+            *addr = sock.sin_addr;
+        }
+        if( NULL != port )
+        {
+            *port = sock.sin_port;
+        }
         gFd->normal++;
     }
     tr_lockUnlock( &gFd->lock );

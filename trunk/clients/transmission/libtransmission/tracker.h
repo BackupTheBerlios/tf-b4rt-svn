@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.h 1408 2007-01-19 11:19:20Z titer $
+ * $Id: tracker.h 1439 2007-01-27 21:17:10Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -28,7 +28,6 @@
 typedef struct tr_tracker_s tr_tracker_t;
 
 tr_tracker_t * tr_trackerInit      ( tr_torrent_t * );
-void           tr_trackerChangePort( tr_tracker_t *, int );
 
 #define tr_trackerPulse(tc,a,b) tr_trackerAnnouncePulse((tc),(a),(b),0)
 void           tr_trackerAnnouncePulse( tr_tracker_t *, int * peerCount,

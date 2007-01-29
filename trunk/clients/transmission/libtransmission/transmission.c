@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1420 2007-01-21 07:16:18Z titer $
+ * $Id: transmission.c 1445 2007-01-29 08:24:09Z titer $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -77,7 +77,7 @@ tr_handle_t * tr_init()
  **********************************************************************/
 void tr_setBindPort( tr_handle_t * h, int port )
 {
-    h->bindPort = port;
+    h->isPortSet = 1;
     tr_sharedSetPort( h->shared, port );
 }
 
@@ -108,6 +108,7 @@ void tr_torrentRates( tr_handle_t * h, float * dl, float * ul )
 
     *dl = 0.0;
     *ul = 0.0;
+    tr_sharedLock( h->shared );
     for( tor = h->torrentList; tor; tor = tor->next )
     {
         tr_lockLock( &tor->lock );
@@ -116,6 +117,7 @@ void tr_torrentRates( tr_handle_t * h, float * dl, float * ul )
         *ul += tr_rcRate( tor->upload );
         tr_lockUnlock( &tor->lock );
     }
+    tr_sharedUnlock( h->shared );
 }
 
 int tr_torrentCount( tr_handle_t * h )

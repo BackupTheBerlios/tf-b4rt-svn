@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: http.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: http.c 1436 2007-01-26 01:14:15Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -337,7 +337,6 @@ tr_httpParseUrl( const char * url, int len,
     ii = tr_httpIsUrl( url, len );
     if( 0 >= ii )
     {
-        tr_err( "Invalid HTTP URL" );
         return 1;
     }
     url += ii;
@@ -479,6 +478,7 @@ tr_httpClientUrl( int method, const char * fmt, ... )
 
     if( tr_httpParseUrl( url, -1, &host, &port, &path ) )
     {
+        tr_err( "Invalid HTTP URL: %s", url );
         free( url );
         return NULL;
     }

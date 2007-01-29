@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: metainfo.c 1242 2006-12-17 16:36:27Z livings124 $
+ * $Id: metainfo.c 1440 2007-01-27 22:37:10Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -171,9 +171,12 @@ int tr_metainfoParse( tr_info_t * inf, const char * path,
     }
     
     /* Private torrent */
-    if( ( val = tr_bencDictFind( beInfo, "private" ) ) && TYPE_INT == val->type )
+    if( ( NULL != ( val = tr_bencDictFind( beInfo, "private" ) ) &&
+          TYPE_INT == val->type && val->val.i ) ||
+        ( NULL != ( val = tr_bencDictFind( &meta, "private" ) ) &&
+          TYPE_INT == val->type && val->val.i ) )
     {
-        inf->privateTorrent = val->val.i;
+        inf->flags |= TR_FLAG_PRIVATE;
     }
     
     /* Piece length */

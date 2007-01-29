@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.h 1407 2007-01-19 08:41:37Z titer $
+ * $Id: shared.h 1439 2007-01-27 21:17:10Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -51,6 +51,7 @@ void          tr_sharedUnlock         ( tr_shared_t * );
  * Changes the port for incoming connections
  **********************************************************************/
 void         tr_sharedSetPort         ( tr_shared_t *, int port );
+int          tr_sharedGetPublicPort   ( tr_shared_t * s );
 
 /***********************************************************************
  * tr_sharedTraversalEnable, tr_natTraversalStatus

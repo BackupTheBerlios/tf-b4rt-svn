@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: upnp.c 1425 2007-01-21 19:42:11Z titer $
+ * $Id: upnp.c 1436 2007-01-26 01:14:15Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -559,6 +559,7 @@ deviceAdd( tr_upnp_device_t ** first, const char * id, int idLen,
     memset( ii, 0, sizeof( *ii ) );
     if( tr_httpParseUrl( url, urlLen, &ii->host, &ii->port, &ii->root ) )
     {
+        tr_err( "Invalid HTTP URL from UPnP" );
         free( ii );
         return;
     }

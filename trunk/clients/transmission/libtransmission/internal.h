@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1423 2007-01-21 08:43:58Z titer $
+ * $Id: internal.h 1439 2007-01-27 21:17:10Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -163,7 +163,7 @@ struct tr_torrent_s
 
     char            * id;
     char            * key;
-    int             * bindPort;
+    int               publicPort;
 
     /* An escaped string used to include the hash in HTTP queries */
     char              escapedHashString[3*SHA_DIGEST_LENGTH+1];
@@ -210,7 +210,7 @@ struct tr_handle_s
     int            torrentCount;
     tr_torrent_t * torrentList;
 
-    int            bindPort;
+    int            isPortSet;
     int            uploadLimit;
     int            downloadLimit;
     tr_shared_t  * shared;

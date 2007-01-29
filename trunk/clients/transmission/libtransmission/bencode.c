@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.c 920 2006-09-25 18:37:45Z joshe $
+ * $Id: bencode.c 1444 2007-01-28 23:26:57Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -164,7 +164,8 @@ static void __bencPrint( benc_val_t * val, int space )
             break;
 
         case TYPE_STR:
-            fprintf( stderr, "%s\n", val->val.s.s );
+            fwrite( val->val.s.s, 1, val->val.s.i, stderr );
+            putc( '\n', stderr );
             break;
 
         case TYPE_LIST:
@@ -265,12 +266,8 @@ int tr_bencSave( benc_val_t * val, char ** buf, int * used, int * max )
             break;
 
         case TYPE_STR:
-            if( (int)strlen(val->val.s.s) != val->val.s.i )
-            {
-                return 1;
-            }
-            if( tr_sprintf( buf, used, max, "%i:%s",
-                            val->val.s.i, val->val.s.s ) )
+            if( tr_sprintf( buf, used, max, "%i:", val->val.s.i ) ||
+                tr_concat( buf, used,  max, val->val.s.s, val->val.s.i ) )
             {
                 return 1;
             }
