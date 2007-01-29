@@ -911,22 +911,22 @@ sub serviceModulesLoad {
 	# set command line
 	my @cmdmodlist = ();
 	if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "fluxinet");
+		push(@cmdmodlist, "Fluxinet");
 	}
 	if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "qmgr");
+		push(@cmdmodlist, "Qmgr");
 	}
 	if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "rssad");
+		push(@cmdmodlist, "Rssad");
 	}
 	if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "watch");
+		push(@cmdmodlist, "Watch");
 	}
 	if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "maintenance");
+		push(@cmdmodlist, "Maintenance");
 	}
 	if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
-		push(@cmdmodlist, "trigger");
+		push(@cmdmodlist, "Trigger");
 	}
 	my $cmdmodliststr = "";
 	my $modCount = scalar(@cmdmodlist);
