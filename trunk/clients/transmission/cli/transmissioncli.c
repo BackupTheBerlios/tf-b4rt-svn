@@ -532,11 +532,31 @@ static int tf_processCommandFile(tr_handle_t *h) {
 	fileLen = ftell(tf_cmd_fp);
 	rewind(tf_cmd_fp);
 
+	// check for file-len
+	if (fileLen > TF_CMDFILE_MAXLEN) {
+		tf_print(sprintf(tf_message,
+			"Size of command-file too big, skip. (max-size: %d)\n",
+			TF_CMDFILE_MAXLEN));
+		// remove file
+		remove(tf_cmd_file);
+		// return
+		return 0;
+	}
+
+	// check if file contains "something"
+	if (fileLen < 1) {
+		tf_print(sprintf(tf_message, "No commands found in command-file.\n"));
+		// remove file
+		remove(tf_cmd_file);
+		// return
+		return 0;
+	}
+
 	// calloc buffer
 	fileBuffer = calloc(fileLen + 1, sizeof(char));
 	if (fileBuffer == NULL) {
 		tf_print(sprintf(tf_message,
-			"Error : test_processCommandFile : not enough mem to read command-file\n"));
+			"Error : not enough mem to read command-file\n"));
 		return 0;
 	}
 
@@ -551,12 +571,6 @@ static int tf_processCommandFile(tr_handle_t *h) {
 
 	// null pointer
 	tf_cmd_fp = NULL;
-
-	// sanity-check if file contained "something"
-	if (fileLen < 1) {
-		tf_print(sprintf(tf_message, "No commands found.\n"));
-		return 0;
-	}
 
 	// reset counter
 	totalChars = 0L;
@@ -605,7 +619,7 @@ static int tf_processCommandFile(tr_handle_t *h) {
 
 	// print if no commands found
 	if (commandCount == 0)
-		tf_print(sprintf(tf_message, "No commands found.\n"));
+		tf_print(sprintf(tf_message, "No commands found in command-file.\n"));
 
 	// free buffer
 	free(fileBuffer);
