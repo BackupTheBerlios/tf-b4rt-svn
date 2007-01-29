@@ -34,10 +34,7 @@ my $VERSION = do {
 	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
 # state
-# -1 error
-#  0 not initialized (null)
-#  1 initialized
-my $state = 0;
+my $state = Fluxd::MOD_STATE_NULL;
 
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
@@ -76,7 +73,7 @@ sub new {
 #------------------------------------------------------------------------------#
 sub destroy {
 	# set state
-	$state = 0;
+	$state = Fluxd::MOD_STATE_NULL;
 	# print
 	Fluxd::printMessage("Maintenance", "shutdown\n");
 }
@@ -101,7 +98,7 @@ sub initialize {
 		# message
 		$message = "loglevel not defined";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -112,7 +109,7 @@ sub initialize {
 		# message
 		$message = "interval not defined";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -123,7 +120,7 @@ sub initialize {
 		# message
 		$message = "transfer-restart not defined";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -135,7 +132,7 @@ sub initialize {
 	$time_last_run = time();
 
 	# set state
-	$state = 1;
+	$state = Fluxd::MOD_STATE_OK;
 
 	# return
 	return 1;

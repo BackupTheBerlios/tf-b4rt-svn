@@ -42,10 +42,7 @@ my $VERSION = do {
 	my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 
 # state
-# -1 error
-#  0 null (disconnected)
-#  1 initialized ((connected +) loaded)
-my $state = 0;
+my $state = Fluxd::MOD_STATE_NULL;
 
 # message, error etc. keep it in one string for simplicity atm.
 my $message = "";
@@ -124,7 +121,7 @@ sub destroy {
 	Fluxd::printMessage("FluxDB", "shutdown\n");
 
 	# set state
-	$state = 0;
+	$state = Fluxd::MOD_STATE_NULL;
 
 	# close connection
 	dbDisconnect();
@@ -156,7 +153,7 @@ sub initialize {
 		# message
 		$message = "path-to-docroot not defined";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -167,7 +164,7 @@ sub initialize {
 		# message
 		$message = "path-to-php not defined";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -175,7 +172,7 @@ sub initialize {
 		# message
 		$message = "cant execute php (".$php.")";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -200,7 +197,7 @@ sub initialize {
 				# message
 				$message = "cant load DBI-module : ".$@;
 				# set state
-				$state = -1;
+				$state = Fluxd::MOD_STATE_ERROR;
 				# return
 				return 0;
 			}
@@ -211,7 +208,7 @@ sub initialize {
 				# message
 				$message = "db-config no file (".$dbConfig.")";
 				# set state
-				$state = -1;
+				$state = Fluxd::MOD_STATE_ERROR;
 				# return
 				return 0;
 			}
@@ -265,7 +262,7 @@ sub initialize {
 				# message
 				$message = "fluxcli missing (".$docroot.$fluxcli.")";
 				# set state
-				$state = -1;
+				$state = Fluxd::MOD_STATE_ERROR;
 				# return
 				return 0;
 			}
@@ -293,7 +290,7 @@ sub initialize {
 		# message
 		$message = "no valid mode";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -305,7 +302,7 @@ sub initialize {
 	Fluxd::printMessage("FluxDB", "data loaded and cached, FluxDB ready.\n");
 
 	# set state
-	$state = 1;
+	$state = Fluxd::MOD_STATE_OK;
 
 	# return
 	return 1;
@@ -599,7 +596,7 @@ sub loadDatabaseConfig {
 		# message
 		$message = "no valid db-type : ".$dbType;
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -623,7 +620,7 @@ sub dbConnect {
 		# message
 		$message = "error connecting to database :\n".$DBI::errstr;
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -654,7 +651,7 @@ sub checkFluxConfig {
 			# message
 			$message = "checkFluxConfig failed. config does not exist : ".$fluxConfTestKey;
 			# set state
-			$state = -1;
+			$state = Fluxd::MOD_STATE_ERROR;
 			# return
 			return 0;
 		}
@@ -662,7 +659,7 @@ sub checkFluxConfig {
 			# message
 			$message = "checkFluxConfig failed. config not defined : ".$fluxConfTestKey;
 			# set state
-			$state = -1;
+			$state = Fluxd::MOD_STATE_ERROR;
 			# return
 			return 0;
 		}
@@ -684,7 +681,7 @@ sub checkFluxUsers{
 		# message
 		$message = "checkFluxUsers failed.";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -717,7 +714,7 @@ sub loadFluxConfigDBI {
 		# message
 		$message = "cannot load flux-config from database (dbi)";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}
@@ -757,7 +754,7 @@ sub loadFluxUsersDBI {
 		# message
 		$message = "cannot load flux-users from database (dbi)";
 		# set state
-		$state = -1;
+		$state = Fluxd::MOD_STATE_ERROR;
 		# return
 		return 0;
 	}

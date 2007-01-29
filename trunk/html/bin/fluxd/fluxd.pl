@@ -40,6 +40,11 @@ use StatFile;
 # fields                                                                       #
 ################################################################################
 
+# constants
+use constant MOD_STATE_ERROR => -1;
+use constant MOD_STATE_NULL => 0;
+use constant MOD_STATE_OK => 1;
+
 # files and dirs
 my $PATH_DATA_DIR = ".fluxd";
 my $PATH_TRANSFER_DIR = ".transfers";
@@ -329,7 +334,7 @@ sub daemonize {
 
 	# initialize
 	$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, $dbMode);
-	if ($fluxDB->getState() < 1) {
+	if ($fluxDB->getState() != MOD_STATE_OK) {
 		printError("CORE", "Error : initializing FluxDB : ".$fluxDB->getMessage()."\n");
 		exit;
 	}
@@ -395,7 +400,7 @@ sub daemonMain {
 		checkConnections();
 
 		# Fluxinet
-		if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+		if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
 			eval {
 				local $SIG{ALRM} = sub {die "alarm\n"};
 				alarm 3;
@@ -409,7 +414,7 @@ sub daemonMain {
 		}
 
 		# Qmgr
-		if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
 			eval {
 				local $SIG{ALRM} = sub { die "alarm\n" };
 				alarm 20;
@@ -423,7 +428,7 @@ sub daemonMain {
 		}
 
 		# Rssad
-		if ((defined $rssad) && ($rssad->getState() == 1)) {
+		if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
 			eval {
 				local $SIG{ALRM} = sub {die "alarm\n"};
 				alarm 20;
@@ -437,7 +442,7 @@ sub daemonMain {
 		}
 
 		# Watch
-		if ((defined $watch) && ($watch->getState() == 1)) {
+		if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
 			eval {
 				local $SIG{ALRM} = sub {die "alarm\n"};
 				alarm 20;
@@ -451,7 +456,7 @@ sub daemonMain {
 		}
 
 		# Maintenance
-		if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+		if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
 			eval {
 				local $SIG{ALRM} = sub {die "alarm\n"};
 				alarm 5;
@@ -465,7 +470,7 @@ sub daemonMain {
 		}
 
 		# Trigger
-		if ((defined $trigger) && ($trigger->getState() == 1)) {
+		if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
 			eval {
 				local $SIG{ALRM} = sub {die "alarm\n"};
 				alarm 5;
@@ -623,7 +628,7 @@ sub serviceModulesLoad {
 						$LOGLEVEL,
 						FluxDB->getFluxConfig("fluxd_Fluxinet_port")
 					);
-					if ($fluxinet->getState() < 1) {
+					if ($fluxinet->getState() != MOD_STATE_OK) {
 						my $msg = "error initializing service-module Fluxinet :\n";
 						$msg .= " ".$fluxinet->getMessage()."\n";
 						printError("CORE", $msg);
@@ -674,7 +679,7 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Qmgr_maxTotalTransfers"),
 						FluxDB->getFluxConfig("fluxd_Qmgr_maxUserTransfers")
 					);
-					if ($qmgr->getState() < 1) {
+					if ($qmgr->getState() != MOD_STATE_OK) {
 						my $msg = "error initializing service-module Qmgr :\n";
 						$msg .= " ".$qmgr->getMessage()."\n";
 						printError("CORE", $msg);
@@ -723,7 +728,7 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Rssad_interval"),
 						FluxDB->getFluxConfig("fluxd_Rssad_jobs")
 					);
-					if ($rssad->getState() < 1) {
+					if ($rssad->getState() != MOD_STATE_OK) {
 						my $msg = "error initializing service-module Rssad :\n";
 						$msg .= " ".$rssad->getMessage()."\n";
 						printError("CORE", $msg);
@@ -771,7 +776,7 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Watch_interval"),
 						FluxDB->getFluxConfig("fluxd_Watch_jobs")
 					);
-					if ($watch->getState() < 1) {
+					if ($watch->getState() != MOD_STATE_OK) {
 						my $msg = "error initializing service-module Watch :\n";
 						$msg .= " ".$watch->getMessage()."\n";
 						printError("CORE", $msg);
@@ -819,7 +824,7 @@ sub serviceModulesLoad {
 						FluxDB->getFluxConfig("fluxd_Maintenance_interval"),
 						FluxDB->getFluxConfig("fluxd_Maintenance_trestart")
 					);
-					if ($maintenance->getState() < 1) {
+					if ($maintenance->getState() != MOD_STATE_OK) {
 						my $msg = "error initializing service-module Maintenance :\n";
 						$msg .= " ".$maintenance->getMessage()."\n";
 						printError("CORE", $msg);
@@ -866,7 +871,7 @@ sub serviceModulesLoad {
 						$LOGLEVEL,
 						FluxDB->getFluxConfig("fluxd_Trigger_interval")
 					);
-					if ($trigger->getState() < 1) {
+					if ($trigger->getState() != MOD_STATE_OK) {
 						my $msg = "error initializing service-module Trigger :\n";
 						$msg .= " ".$trigger->getMessage()."\n";
 						printError("CORE", $msg);
@@ -905,22 +910,22 @@ sub serviceModulesLoad {
 
 	# set command line
 	my @cmdmodlist = ();
-	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+	if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
 		push(@cmdmodlist, "fluxinet");
 	}
-	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+	if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
 		push(@cmdmodlist, "qmgr");
 	}
-	if ((defined $rssad) && ($rssad->getState() == 1)) {
+	if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
 		push(@cmdmodlist, "rssad");
 	}
-	if ((defined $watch) && ($watch->getState() == 1)) {
+	if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
 		push(@cmdmodlist, "watch");
 	}
-	if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+	if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
 		push(@cmdmodlist, "maintenance");
 	}
-	if ((defined $trigger) && ($trigger->getState() == 1)) {
+	if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
 		push(@cmdmodlist, "trigger");
 	}
 	my $cmdmodliststr = "";
@@ -1074,7 +1079,7 @@ sub serviceModuleList {
 	if (defined $fluxinet) {
 		$modList .= $fluxinet->getState();
 	} else {
-		$modList .= "0";
+		$modList .= MOD_STATE_NULL;
 	}
 
 	# Qmgr
@@ -1082,7 +1087,7 @@ sub serviceModuleList {
 	if (defined $qmgr) {
 		$modList .= $qmgr->getState();
 	} else {
-		$modList .= "0";
+		$modList .= MOD_STATE_NULL;
 	}
 
 	# Rssad
@@ -1090,7 +1095,7 @@ sub serviceModuleList {
 	if (defined $rssad) {
 		$modList .= $rssad->getState();
 	} else {
-		$modList .= "0";
+		$modList .= MOD_STATE_NULL;
 	}
 
 	# Watch
@@ -1098,7 +1103,7 @@ sub serviceModuleList {
 	if (defined $watch) {
 		$modList .= $watch->getState();
 	} else {
-		$modList .= "0";
+		$modList .= MOD_STATE_NULL;
 	}
 
 	# Maintenance
@@ -1106,7 +1111,7 @@ sub serviceModuleList {
 	if (defined $maintenance) {
 		$modList .= $maintenance->getState();
 	} else {
-		$modList .= "0";
+		$modList .= MOD_STATE_NULL;
 	}
 
 	# Trigger
@@ -1114,7 +1119,7 @@ sub serviceModuleList {
 	if (defined $trigger) {
 		$modList .= $trigger->getState();
 	} else {
-		$modList .= "0";
+		$modList .= MOD_STATE_NULL;
 	}
 
 	# return
@@ -1135,42 +1140,42 @@ sub serviceModuleState {
 			if (defined $qmgr) {
 				return $qmgr->getState();
 			} else {
-				return 0;
+				return MOD_STATE_NULL;
 			}
 		};
 		/Watch/ && do {
 			if (defined $watch) {
 				return $watch->getState();
 			} else {
-				return 0;
+				return MOD_STATE_NULL;
 			}
 		};
 		/Rssad/ && do {
 			if (defined $rssad) {
 				return $rssad->getState();
 			} else {
-				return 0;
+				return MOD_STATE_NULL;
 			}
 		};
 		/Fluxinet/ && do {
 			if (defined $fluxinet) {
 				return $fluxinet->getState();
 			} else {
-				return 0;
+				return MOD_STATE_NULL;
 			}
 		};
 		/Maintenance/ && do {
 			if (defined $maintenance) {
 				return $maintenance->getState();
 			} else {
-				return 0;
+				return MOD_STATE_NULL;
 			}
 		};
 		/Trigger/ && do {
 			if (defined $trigger) {
 				return $trigger->getState();
 			} else {
-				return 0;
+				return MOD_STATE_NULL;
 			}
 		};
 	}
@@ -1311,37 +1316,37 @@ sub processRequest {
 			$_ = $mod;
 			MODCALL: {
 				/Fluxinet/ && do {
-					if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+					if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
 						$return = $fluxinet->command($command);
 					}
 					last SWITCH;
 				};
 				/Qmgr/ && do {
-					if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+					if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
 						$return = $qmgr->command($command);
 					}
 					last SWITCH;
 				};
 				/Rssad/ && do {
-					if ((defined $rssad) && ($rssad->getState() == 1)) {
+					if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
 						$return = $rssad->command($command);
 					}
 					last SWITCH;
 				};
 				/Watch/ && do {
-					if ((defined $watch) && ($watch->getState() == 1)) {
+					if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
 						$return = $watch->command($command);
 					}
 					last SWITCH;
 				};
 				/Maintenance/ && do {
-					if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+					if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
 						$return = $maintenance->command($command);
 					}
 					last SWITCH;
 				};
 				/Trigger/ && do {
-					if ((defined $trigger) && ($trigger->getState() == 1)) {
+					if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
 						$return = $trigger->command($command);
 					}
 					last SWITCH;
@@ -1583,32 +1588,32 @@ sub status {
 	my $status = "";
 	my $modules = "- Loaded Modules -\n";
 	# Fluxinet
-	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+	if ((defined $fluxinet) && ($fluxinet->getState() == MOD_STATE_OK)) {
 		$modules .= "  * Fluxinet\n";
 		$status .= eval { $fluxinet->status(); };
 	}
 	# Qmgr
-	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+	if ((defined $qmgr) && ($qmgr->getState() == MOD_STATE_OK)) {
 		$modules .= "  * Qmgr\n";
 		$status .= $qmgr->status();
 	}
 	# Rssad
-	if ((defined $rssad) && ($rssad->getState() == 1)) {
+	if ((defined $rssad) && ($rssad->getState() == MOD_STATE_OK)) {
 		$modules .= "  * Rssad\n";
 		$status .= eval { $rssad->status(); };
 	}
 	# Watch
-	if ((defined $watch) && ($watch->getState() == 1)) {
+	if ((defined $watch) && ($watch->getState() == MOD_STATE_OK)) {
 		$modules .= "  * Watch\n";
 		$status .= eval { $watch->status(); };
 	}
 	# Maintenance
-	if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+	if ((defined $maintenance) && ($maintenance->getState() == MOD_STATE_OK)) {
 		$modules .= "  * Maintenance\n";
 		$status .= eval { $maintenance->status(); };
 	}
 	# Trigger
-	if ((defined $trigger) && ($trigger->getState() == 1)) {
+	if ((defined $trigger) && ($trigger->getState() == MOD_STATE_OK)) {
 		$modules .= "  * Trigger\n";
 		$status .= eval { $trigger->status(); };
 	}
@@ -1803,7 +1808,7 @@ sub debug {
 		# initialize
 		printMessage("CORE", "initializing \$fluxDB (php)\n");
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "php");
-		if ($fluxDB->getState() < 1) {
+		if ($fluxDB->getState() != MOD_STATE_OK) {
 			printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			exit;
 		}
@@ -1824,7 +1829,7 @@ sub debug {
 		# initialize
 		printMessage("CORE", "initializing \$fluxDB (dbi)\n");
 		$fluxDB->initialize($PATH_DOCROOT, $BIN_PHP, "dbi");
-		if ($fluxDB->getState() < 1) {
+		if ($fluxDB->getState() != MOD_STATE_OK) {
 			printMessage("CORE", "error : ".$fluxDB->getMessage()."\n");
 			# db-settings
 			printMessage("CORE", " DatabaseType : \"".$fluxDB->getDatabaseType()."\"\n");
