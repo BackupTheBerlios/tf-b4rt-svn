@@ -202,6 +202,8 @@ function transfer_setVarsFromCHSettings() {
  */
 function transfer_setVarsFromProfileSettings($profile) {
 	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	// set generic vars for transfer
+	transfer_setGenericVarsFromCH();
 	//load custom settings
 	$settings = GetProfileSettings($profile);
 	// set vars for transfer

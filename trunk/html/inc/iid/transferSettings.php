@@ -297,10 +297,8 @@ if ($isSave) {                                                        /* save */
 
 	// dirtree
 	$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-	$dirTree = ($cfg["enable_home_dirs"] != 0)
-		? $cfg["path"].getOwner($transfer).'/'
-		: $cfg["path"].$cfg["path_incoming"].'/';
-	tmplSetDirTree($dirTree, $cfg["maxdepth"]);
+	if ($cfg["showdirtree"] == 1)
+		tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
 
 	// send-box
 	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);

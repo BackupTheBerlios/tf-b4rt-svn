@@ -181,7 +181,7 @@ function dispatcher_deQueueTransfer($transfer) {
 function dispatcher_injectWget($url) {
 	global $cfg;
 	// permission
-	dispatcher_checkTypePermission($transfer, 'wget', "inject");
+	dispatcher_checkTypePermission($url, 'wget', "inject");
 	// inject
 	if (!empty($url)) {
 		$ch = ClientHandler::getInstance('wget');
