@@ -282,7 +282,7 @@ INSERT INTO tf_settings VALUES ('bandwidth_up','10240');
 INSERT INTO tf_settings VALUES ('webapp_locked','0');
 INSERT INTO tf_settings VALUES ('enable_btclient_chooser','1');
 INSERT INTO tf_settings VALUES ('transfer_profiles','3');
-INSERT INTO tf_settings VALUES ('transfer_customize_settings','1');
+INSERT INTO tf_settings VALUES ('transfer_customize_settings','2');
 INSERT INTO tf_settings VALUES ('transferHosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('enable_sharekill','1');
