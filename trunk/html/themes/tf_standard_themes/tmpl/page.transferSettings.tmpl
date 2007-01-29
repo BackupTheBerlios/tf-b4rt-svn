@@ -76,12 +76,12 @@
 										<tr>
 											<td align="left" valign="top" rowspan="2">Save Path:</td>
 											<td align="right" valign="top">
-												<input type="text" name="savepath" size="70" value="<tmpl_var name="savepath">">
+												<input type="text" name="savepath" style="width:300px" value="<tmpl_var name="savepath">">
 											</td>
 										</tr>
 										<tr>
 											<td align="right" valign="top">
-												<select width="45" size="5" onchange="savepath.value= this.options[this.selectedIndex].value;"><tmpl_include name="inc.dirTree.tmpl"></select>
+												<select style="width:300px" size="5" onchange="savepath.value= this.options[this.selectedIndex].value;"><tmpl_include name="inc.dirTree.tmpl"></select>
 											</td>
 										</tr>
 									</table>
