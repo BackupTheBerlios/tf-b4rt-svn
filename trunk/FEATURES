@@ -1,6 +1,12 @@
 =======================================================================
 $Id$
 =======================================================================
+
+
+IMPORTANT NOTE:
+This Document is "work in progress" and not completed !
+
+
 /**********************************************************************
 Torrentflux-b4rt FEATURES file
 **********************************************************************/
@@ -13,64 +19,113 @@ list is split into various sections:
 	3. Fluxd Server Configuration Options and Features
 
 - Basic Usage
+
+	o Multiple Transfer-Types with multiple Clients under a unified
+      Frontend. The App-Suite can be used both via Web as via the
+      commandline ("fluxcli.php").
+
+	o Unified Transfer control:
+
+		- Perform stop/start/resume/kill/delete operations on individual
+		  transfers, all transfers or a selection of transfers
+
+        - Changes Settings of running Transfers: Rates, Ratio, ...
+
 	o Transfer statistics and logging:
 
-		- View detailed torrent transfer statistics and information,
-		  including:
+		- View detailed Transfer statistics and information, including:
 
-			o per torrent error logging for easy troubleshooting
+			o per transfer error logging for easy troubleshooting
 			o cumulative upload/download totals
 			o number of seeders/leechers
 
+	o Upload + Inject of metafiles (.torrent, .wget, .nzb files):
 
-	o Torrent control:
+		- upload single/multiple metafiles from your local machine
+		  to the web server
 
-		- Perform stop/start/resume/kill/delete operations on individual
-		  torrents, all torrents or a selection of torrents
+		- upload metafiles directly to your web server from another
+		  web server
 
+        - multiple operations in "fluxcli.php" allow inject and more
+          from command-line (cron, etc.)
+          eg.: "inject", "watch", "rss"
 
-	o Uploading of torrents:
+	o fluxd
 
-		- upload single/multiple torrent files from your local machine
-		  to the webserver
+	o Web : Integrated Filemanager
 
-		- upload files directly to your webserver from another webserver
+	o Support for a large number of additional third party
+	  utilities/functionality, including:
 
+		- archive file extraction from the browser (zip/rar)
 
-	o AJAX updates for maximum info with minimal bandwidth
+		- vlc streaming controllable from browser
+
+		- download of completed transfers directly from browser
+
+	o Web : AJAX updates for maximum info with minimal bandwidth
 
 		- Display of transfer lists can be easily configured to use AJAX
 		  to update transfer stats in real time.  This saves on
 		  bandwidth.
 
-		- Individual torrent transfer windows can also use AJAX to
+		- Individual Transfer windows can also use AJAX to
 		  update stats in real time.
-  o Upload torrents:
+
+	o Web : Templating Engine
+
+		- the torrentflux-b4rt GUI is template driven using the vLib
+		  template engine:
+
+			http://vlib.clausvb.de/vlibtemplate.php
+
+		  This allows developers to completely redesign the look and
+		  feel of torrentflux-b4rt without having to worry about the
+		  underlying PHP codebase.
+
+		- Torrentflux-b4rt also incorporates template caching to speed
+		  up the load time of pages.  This feature can be enabled via
+		  the Administration control panel.
+
+
+TODO
+
+  o Upload Meta-files:
     - upload individual files from your local machine to the webserver
     - upload multiple files in one go from your local machine to the webserver
     - upload files directly to your webserver from another webserver
 
   o AJAX updates for maximum info with minimal bandwidth
-    - Display of transfer lists can be easily configured to use AJAX to update transfer stats in real time.  This saves on bandwidth.
-    - Individual torrent transfer windows can also use AJAX to update stats in real time.
+    - Display of transfer lists can be easily configured to use AJAX to update
+      transfer stats in real time.  This saves on bandwidth.
+    - Individual Transfer windows can also use AJAX to update stats in real time.
 
-  o Choice of BitTorrent clients to suit your needs - tfb supports various clients including:
-    - Original BitTorrent/Mainline (supports trackerless torrents and encryption)
-    - BitTornado (uses slightly less resources than the original BT, allows file priority for downloading files selectively)
-    - Transmission (much smaller memory footprint without too much loss in functionality)
+  o Choice of BitTorrent clients to suit your needs - clients including:
+    - Original BitTorrent/Mainline (supports DHT and encryption)
+    - BitTornado (uses slightly less resources than the original BT, allows file
+      priority for downloading files selectively)
+    - Transmission (much smaller memory footprint without too much loss in
+      functionality)
 
-  o Individual torrents 'remember' their own settings, allowing you to use different settings for different torrents.
-    Universal settings available on a per-torrent basis:
-    - Option to choose which BitTorrent client to use for each torrent
-    - File priority - only download certain files from a torrent
-    - Option to save each torrent to a specific location
-    - Around 6 other options configurable as well as many more from the Admin settings, see below.
+  o Individual Transfers 'remember' their own settings, allowing you to use
+    different settings for different Transfers.
 
-  o Control torrents directly in the web browser:
-    - start, stop, resume and delete individual torrents
-    - start, stop, resume and delete discrete torrents in one operation - easily start/stop/resume all torrents in one go
+  o Control Transfers directly in the web browser:
+    - start, stop, resume and delete individual transfers
+    - start, stop, resume and delete discrete transfers in one operation -
+      easily start/stop/resume all transfers in one go
 
-  o View torrent transfer information:
-    - cumulative transfer statistics are available for every torrent in the transfer list.  tfb keeps track of how much data has been transfered up and down even when you stop and restart the torrent.  This allows you to keep track of what your actual ratio is rather than what the current session ratio is.
-    - logfiles are maintained for each and every torrent, allowing you to easily see when problems occur with your transfers.
-    - current upload/download bandwidth rate as well as the number of seeds/peers and estimated time left is viewable in the transfer list
+  o View torrent Transfer information:
+    - cumulative transfer statistics are available for every transfer in the
+      transfer list. tfb keeps track of how much data has been transfered up
+      and down even when you stop and restart the transfer.  This allows you to
+      keep track of what your actual ratio is rather than what the current
+      session ratio is.
+    - logfiles are maintained for each and every torrent, allowing you to
+      easily see when problems occur with your transfers.
+    - current upload/download bandwidth rate as well as the number of
+      seeds/peers and estimated time left is viewable in the transfer list
+
+TODO
+

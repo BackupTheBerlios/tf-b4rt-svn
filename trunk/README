@@ -2,6 +2,11 @@
 $Id$
 =======================================================================
 
+
+IMPORTANT NOTE:
+This Document is "work in progress" and not completed !
+
+
 /**********************************************************************
 Torrentflux-b4rt 1.0 README file
 **********************************************************************/
@@ -79,23 +84,26 @@ Torrentflux-b4rt 1.0 README file
 	below.  For a full list of torrentflux-b4rt features, please see the
 	FEATURES file.
 
+	o Multiple Transfer-Types with multiple Clients under a unified
+      Frontend. The App-Suite can be used both via Web as via the
+      commandline ("fluxcli.php").
+
+	o Unified Transfer control:
+
+		- Perform stop/start/resume/kill/delete operations on individual
+		  transfers, all transfers or a selection of transfers
+
+        - Changes Settings of running Transfers: Rates, Ratio, ...
+
 	o Transfer statistics and logging:
 
-		- View detailed torrent transfer statistics and information,
-		  including:
+		- View detailed Transfer statistics and information, including:
 
-			o per torrent error logging for easy troubleshooting
+			o per transfer error logging for easy troubleshooting
 			o cumulative upload/download totals
 			o number of seeders/leechers
 
-
-	o Transfer control:
-
-		- Perform stop/start/resume/kill/delete operations on individual
-		  torrents, all transfers or a selection of transfers
-
-
-	o Uploading of metafiles (.torrent, .wget, .nzb files):
+	o Upload + Inject of metafiles (.torrent, .wget, .nzb files):
 
 		- upload single/multiple metafiles from your local machine
 		  to the web server
@@ -103,16 +111,13 @@ Torrentflux-b4rt 1.0 README file
 		- upload metafiles directly to your web server from another
 		  web server
 
+        - multiple operations in "fluxcli.php" allow inject and more
+          from command-line (cron, etc.)
+          eg.: "inject", "watch", "rss"
 
-	o AJAX updates for maximum info with minimal bandwidth
+	o fluxd
 
-		- Display of transfer lists can be easily configured to use AJAX
-		  to update transfer stats in real time.  This saves on
-		  bandwidth.
-
-		- Individual torrent transfer windows can also use AJAX to
-		  update stats in real time.
-
+	o Web : Integrated Filemanager
 
 	o Support for a large number of additional third party
 	  utilities/functionality, including:
@@ -121,10 +126,18 @@ Torrentflux-b4rt 1.0 README file
 
 		- vlc streaming controllable from browser
 
-		- download of completed torrents directly from browser
+		- download of completed transfers directly from browser
 
+	o Web : AJAX updates for maximum info with minimal bandwidth
 
-	o Templating Engine
+		- Display of transfer lists can be easily configured to use AJAX
+		  to update transfer stats in real time.  This saves on
+		  bandwidth.
+
+		- Individual transfer windows can also use AJAX to
+		  update stats in real time.
+
+	o Web : Templating Engine
 
 		- the torrentflux-b4rt GUI is template driven using the vLib
 		  template engine:
@@ -139,6 +152,8 @@ Torrentflux-b4rt 1.0 README file
 		  up the load time of pages.  This feature can be enabled via
 		  the Administration control panel.
 
+
+TODO
 
 
 /**********************************************************************
@@ -371,12 +386,6 @@ Torrentflux-b4rt 1.0 README file
 		o wget functionality on Mac OS X requirements:
 			* wget
 				http://www.statusq.org/images/wget.zip
-
-
-	o tfrss.pl (deprecated)
-	   * LWP::Simple      (perl -MCPAN -e "install LWP::Simple")
-	   * XML::Simple      (perl -MCPAN -e "install XML::Simple")
-
 
 
 /**********************************************************************

@@ -3,7 +3,7 @@ $Id$
 ================================================================================
 
 
-*** code ***********************************************************************
+* code
 
   - personal (per-user) settings : currently not available.
     (includes + depends on templates)
@@ -11,23 +11,23 @@ $Id$
   - enhance all upgrade.php-scripts (like setup.php).
 
 
-*** themes *********************************************************************
+* themes
 
   - template-files for "default"-theme
 
   - images for "default"-theme
 
 
-*** docu ***********************************************************************
+* docu
 
-  - common docu
+  - common docu : README, FEATURES, ...
 
-  - fluxd in common
+  - fluxd :
+    + common fluxd docu. (whats "fluxd" about)
+    + fluxd-modules and their purpose + usage.
+    + troubleshooting fluxd-problems.
 
-  - fluxd-modules
-
-
-*** infra **********************************************************************
+* infra
 
   - new website for release of new codebase
 
