@@ -69,18 +69,15 @@ ENDINGS="php
 
 ###############################################################################
 
-# DEBUG
-#echo SVN_URL : $SVN_URL
-#echo MAINDIR : $MAINDIR
-#echo VERSION : $VERSION
-
 # export from svn
 $BIN_SVN export --non-interactive $SVN_URL
 
 # Get current SVN revision of tfb from Ids in all files
 REV_TFB=`( find $MAINDIR '(' -name 'CHANGES' \
 			-o -name 'INSTALL' -o -name 'TODO' \
+			-o -name 'transmissioncli.h' \
 			-o -name 'transmissioncli.c' \
+			-o -name 'transmissioncli.1' \
 			-o -name 'flux-mrtg-update.sh' \
 			-o -name '*.php' -o -name '*.dist' \
 			-o -name '*.pl' -o -name '*.pm' \
@@ -108,16 +105,15 @@ else
 	REV_TR=0
 fi
 
-# get cli-revision from id in transmissioncli.c
-REV_CLI=`sed -e '/\$Id:/!d' -e \
-	's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' \
-	$MAINDIR/clients/transmission/cli/transmissioncli.c`
-
-# DEBUG
-#echo REV_TFB : $REV_TFB
-#echo REV_TR  : $REV_TR
-#echo REV_CLI : $REV_CLI
-#echo $TARNAME
+# get cli-revision from svn-ids in files in cli-dir
+REV_CLI=`( find $MAINDIR/clients/transmission/cli '(' -name '*.[chm1]' -o -name '*.cpp' -o -name '*.po' \
+            -o -name '*.mk' -o -name '*.in' -o -name 'Makefile' \
+            -o -name 'configure' ')' -exec cat '{}' ';' ) | \
+          sed -e '/\$Id:/!d' -e \
+            's/.*\$Id: [^ ]* \([0-9]*\) .*/\1/' |
+          awk 'BEGIN { REV_CLI=0 }
+               //    { if ( $1 > REV_CLI ) REV_CLI=$1 }
+               END   { print REV_CLI }'`
 
 # write new version-file
 VERSION_STRING=$VERSION
@@ -139,11 +135,17 @@ chmod +x $MAINDIR/html/bin/fluxcli.php
 chmod +x $MAINDIR/html/bin/tools/*.php
 chmod +x $MAINDIR/clients/transmission/configure
 
+# lists
+cd $MAINDIR/html/
+
 # filelist
-$BIN_PHP $MAINDIR/html/bin/tools/filelist.php $MAINDIR/html | tee -a  filelist-$VERSION_STRING.txt
+$BIN_PHP bin/tools/filelist.php . | tee -a ../../filelist-$VERSION_STRING.txt
 
 # checksums
-$BIN_PHP $MAINDIR/html/bin/tools/checksums.php $MAINDIR/html | tee -a  checksums-$VERSION_STRING.txt
+$BIN_PHP bin/tools/checksums.php . | tee -a ../../checksums-$VERSION_STRING.txt
+
+# back to main
+cd ../../
 
 # rename dir
 mv $MAINDIR $TARNAME
