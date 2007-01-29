@@ -139,7 +139,7 @@ function sa_processes($action = "") {
 			$htmlMain .= '<br>';
 			$htmlMain .= '<p><strong>fluxd</strong>';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep");
 			$htmlMain .= '</pre>';
 			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
 			foreach ($clients as $client) {
@@ -1401,7 +1401,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - ps";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd.pl | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep");
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;

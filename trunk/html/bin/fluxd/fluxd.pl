@@ -111,7 +111,7 @@ sub initialize {
 		my @r = (q$Revision$ =~ /\d+/g); sprintf "%d"."%02d" x $#r, @r };
 	($DIR=$0) =~ s/([^\/\\]*)$//;
 	($PROG=$1) =~ s/\.([^\.]*)$//;
-	$EXTENSION=$1;
+	$EXTENSION = $1;
 }
 
 #------------------------------------------------------------------------------#
@@ -526,10 +526,11 @@ sub daemonIsRunning {
 	}
 	my $qstring = "ps x -o pid='' -o ppid='' -o command='' -ww 2> /dev/null";
 	my $pcount = 0;
-	foreach my $line (grep(/$0.*$docroot/, qx($qstring))) {
+	foreach my $line (grep(/fluxd running.*$docroot/, qx($qstring))) {
+		print STDOUT $line."\n";
 		$pcount++;
 	}
-	if ($pcount > 1) {
+	if ($pcount > 0) {
 		return 1;
 	}
 	return 0;
@@ -900,6 +901,39 @@ sub serviceModulesLoad {
 			}
 		}
 	}
+
+
+	# set command line
+	my @cmdmodlist = ();
+	if ((defined $fluxinet) && ($fluxinet->getState() == 1)) {
+		push(@cmdmodlist, "fluxinet");
+	}
+	if ((defined $qmgr) && ($qmgr->getState() == 1)) {
+		push(@cmdmodlist, "qmgr");
+	}
+	if ((defined $rssad) && ($rssad->getState() == 1)) {
+		push(@cmdmodlist, "rssad");
+	}
+	if ((defined $watch) && ($watch->getState() == 1)) {
+		push(@cmdmodlist, "watch");
+	}
+	if ((defined $maintenance) && ($maintenance->getState() == 1)) {
+		push(@cmdmodlist, "maintenance");
+	}
+	if ((defined $trigger) && ($trigger->getState() == 1)) {
+		push(@cmdmodlist, "trigger");
+	}
+	my $cmdmodliststr = "";
+	my $modCount = scalar(@cmdmodlist);
+	if ($modCount > 0) {
+		for (my $i = 0; $i < $modCount; $i++) {
+			if ($i > 0) {
+				$cmdmodliststr .= " ";
+			}
+			$cmdmodliststr .= $cmdmodlist[$i];
+		}
+	}
+	$0 = '[ fluxd running ('.$PATH_DOCROOT.') ('.$cmdmodliststr.') ]';
 
 	# print
 	if ($LOGLEVEL > 0) {

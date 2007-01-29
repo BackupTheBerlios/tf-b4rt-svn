@@ -622,7 +622,8 @@ class Fluxd
     function _log($logFile, $message, $withTS = false) {
     	$content = "";
     	if ($withTS)
-    		$content .= @date("Y/m/d - H:i:s") . " - ";
+    		$content .= @date("[Y/m/d - H:i:s]");
+    	$content .= '[FRONTEND] ';
     	$content .= $message;
 		$fp = false;
 		$fp = @fopen($logFile, "a+");

@@ -215,9 +215,9 @@ function admin_controlFluxd() {
 				} else {
 					$message = 'Error starting fluxd.';
 					$msgs = Fluxd::getMessages();
-					Fluxd::logError("Error starting fluxd, please check fluxd-logs. Messages :\n".implode("\n", $msgs), true);
+					Fluxd::logError("Error starting fluxd. Messages :\n".implode("\n", $msgs)."\n", true);
 					array_unshift($msgs, "please check fluxd-logs");
-					@error($message, "admin.php?op=fluxdSettings", "fluxd-Settings", $msgs);
+					@error($message, "admin.php?op=fluxdSettings", "fluxd-Settings", "please check fluxd-logs.");
 				}
 				break;
 			}
