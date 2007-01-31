@@ -50,6 +50,9 @@
 				<tmpl_if name="enableClientChooser" value="1">
 					<tmpl_if name="enableBtclientChooser" value="1">
 						<form name="clientForm" action="index.php?iid=transferSettings&transfer=<tmpl_var name="transfer">" method="post">
+							<tmpl_if name="profile">
+								<input type="hidden" name="profile" value="<tmpl_var name="profile">" />
+							</tmpl_if>
 							<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 								<tr>
 									<td align="center" colspan="2">
@@ -62,6 +65,9 @@
 				</tmpl_if>
 				<tmpl_if name="with_profiles" value="1">
 					<form name="profileForm" action="index.php?iid=transferSettings&transfer=<tmpl_var name="transfer">" method="post">
+						<tmpl_if name="client">
+							<input type="hidden" name="client" value="<tmpl_var name="client">" />
+						</tmpl_if>
 						<tmpl_include name="inc.transferProfile.tmpl">
 					</form>
 				</tmpl_if>

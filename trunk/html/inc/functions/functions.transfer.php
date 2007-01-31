@@ -348,6 +348,7 @@ function transfer_setProfiledVars() {
 			// set vars for transfer from profile
 			transfer_setVarsFromProfileSettings($profile);
 			$tmpl->setvar('useLastSettings', 0);
+			$tmpl->setvar('profile', $profile);
 		} else {
 			// set vars for transfer from ch
 			transfer_setVarsFromCHSettings();
