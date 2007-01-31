@@ -524,11 +524,11 @@ def run(autoDie, shareKill, userName, params):
             transferLog(" - super_seeder : " + str(config['super_seeder']) + "\n", True)
             transferLog(" - security : " + str(config['security']) + "\n", True)
             transferLog(" - auto_kick : " + str(config['auto_kick']) + "\n", True)
-            if config['crypto_allowed'] is not None:
+            if 'crypto_allowed' in config:
                 transferLog(" - crypto_allowed : " + str(config['crypto_allowed']) + "\n", True)
-            if config['crypto_only'] is not None:
+            if 'crypto_only' in config:
                 transferLog(" - crypto_only : " + str(config['crypto_only']) + "\n", True)
-            if config['crypto_stealth'] is not None:
+            if 'crypto_stealth' in config:
                 transferLog(" - crypto_stealth : " + str(config['crypto_stealth']) + "\n", True)
             transferLog(" - priority : " + str(config['priority']) + "\n", True)
             transferLog(" - alloc_type : " + str(config['alloc_type']) + "\n", True)
