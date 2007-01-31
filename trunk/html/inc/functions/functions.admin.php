@@ -307,6 +307,7 @@ function admin_editLink() {
  * moveLink
  */
 function admin_moveLink() {
+	global $db;
 	$lid = getRequestVar('lid');
 	$direction = getRequestVar('direction');
 	if (!isset($lid) && !isset($direction) && $direction !== "up" && $direction !== "down") {
