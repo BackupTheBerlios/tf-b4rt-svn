@@ -111,9 +111,9 @@ function transfer_init() {
 		@error("Invalid Transfer", "", "", array($transfer));
 	}
 	// permission
-	if ((!$cfg['isAdmin']) || (!IsOwner($cfg["user"], getOwner($transfer)))) {
+	if ((!$cfg['isAdmin']) && (!IsOwner($cfg["user"], getOwner($transfer)))) {
 		AuditAction($cfg["constants"]["error"], "ACCESS DENIED: ".$transfer);
-		@error("Invalid Transfer", "", "", array($transfer));
+		@error("Access Denied", "", "", array($transfer));
 	}
 	// get label
 	$transferLabel = (strlen($transfer) >= 39) ? substr($transfer, 0, 35)."..." : $transfer;
