@@ -238,8 +238,9 @@ function transfer_setFileVars() {
 			if ((isset($btmeta)) && (is_array($btmeta)) && (isset($btmeta['info']))) {
 				if (array_key_exists('files', $btmeta['info'])) {
 					foreach ($btmeta['info']['files'] as $filenum => $file) {
+						$name = (is_array($file['path'])) ? (implode("/", ($file['path']))) : $file['path'];
 						array_push($transferFilesList, array(
-							'name' => (is_array($file['path'])) ? $file['path'][0] : $file['path'],
+							'name' => $name,
 							'size' => ((isset($file['length'])) && (is_numeric($file['length']))) ? formatBytesTokBMBGBTB($file['length']) : 0
 							)
 						);
@@ -250,7 +251,6 @@ function transfer_setFileVars() {
 						'size' => formatBytesTokBMBGBTB($btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20))
 						)
 					);
-
 				}
 			}
 			if (empty($transferFilesList)) {
