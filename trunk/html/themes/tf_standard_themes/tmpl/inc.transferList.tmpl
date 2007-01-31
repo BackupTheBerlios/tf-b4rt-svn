@@ -160,9 +160,7 @@
 						<tmpl_if name="is_owner">
 							<a href="JavaScript:showTransfer('index.php?iid=transferSettings&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" border="0" title="Transfer Settings"></a>
 							<tmpl_if name="transferRunning" value="1">
-								<tmpl_if name="transfer_customize_settings">
-									<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-								</tmpl_if>
+								<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 								<a href="dispatcher.php?action=stop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 								<tmpl_if name="enable_multiops">
@@ -170,24 +168,18 @@
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
-									<tmpl_if name="transfer_customize_settings">
-										<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-									</tmpl_if>
+									<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
-										<tmpl_if name="transfer_customize_settings">
-											<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-										</tmpl_if>
+										<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 										<a href="dispatcher.php?action=deQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
-											<tmpl_if name="transfer_customize_settings">
-												<tmpl_if name="show_run" value="1">
-													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
-												<tmpl_else>
-													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
-												</tmpl_if>
+											<tmpl_if name="show_run" value="1">
+												<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+											<tmpl_else>
+												<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 											</tmpl_if>
 											<tmpl_if name="show_run" value="1">
 												<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
@@ -199,9 +191,7 @@
 												</tmpl_if>
 											</tmpl_if>
 										<tmpl_else>
-											<tmpl_if name="transfer_customize_settings">
-												<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-											</tmpl_if>
+											<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 											<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPPING">">
 										</tmpl_if>
 									</tmpl_if>
@@ -379,9 +369,7 @@
 						<tmpl_if name="is_owner">
 							<a href="JavaScript:showTransfer('index.php?iid=transferSettings&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/properties.png" width="18" height="13" border="0" title="Transfer Settings"></a>
 							<tmpl_if name="transferRunning" value="1">
-								<tmpl_if name="transfer_customize_settings">
-									<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-								</tmpl_if>
+								<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 								<a href="dispatcher.php?action=stop&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkstop.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPTRANSFER">"></a>
 								<img src="themes/tf_standard_themes/images/delete_off.gif" width=16 height=16 border=0>
 								<tmpl_if name="enable_multiops">
@@ -389,24 +377,18 @@
 								</tmpl_if>
 							<tmpl_else>
 								<tmpl_if name="transferowner" value="n/a">
-									<tmpl_if name="transfer_customize_settings">
-										<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-									</tmpl_if>
+									<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 									<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_NOTOWNER">">
 								<tmpl_else>
 									<tmpl_if name="transferRunning" value="3">
-										<tmpl_if name="transfer_customize_settings">
-											<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-										</tmpl_if>
+										<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 										<a href="dispatcher.php?action=deQueue&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/queued.gif" width="16" height="16" border="0" title="<tmpl_var name="_DELQUEUE">"></a>
 									<tmpl_else>
 										<tmpl_if name="is_no_file">
-											<tmpl_if name="transfer_customize_settings">
-												<tmpl_if name="show_run" value="1">
-													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
-												<tmpl_else>
-													<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
-												</tmpl_if>
+											<tmpl_if name="show_run" value="1">
+												<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
+											<tmpl_else>
+												<a href="#" onclick="showTransfer('index.php?iid=transferControl&transfer=<tmpl_var name="url_entry">')"><img src="themes/tf_standard_themes/images/seed_on.gif" width="16" height="16" title="<tmpl_var name="_SEEDTRANSFER">" border="0"></a>
 											</tmpl_if>
 											<tmpl_if name="show_run" value="1">
 												<a href="dispatcher.php?action=start&transfer=<tmpl_var name="url_entry">" onclick="return actionClick(true)"><img src="themes/tf_standard_themes/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">" border="0"></a>
@@ -418,9 +400,7 @@
 												</tmpl_if>
 											</tmpl_if>
 										<tmpl_else>
-											<tmpl_if name="transfer_customize_settings">
-												<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
-											</tmpl_if>
+											<img src="themes/tf_standard_themes/images/blank.gif" width="16" height="16" border="0">
 											<img src="themes/tf_standard_themes/images/run_off.gif" width="16" height="16" border="0" title="<tmpl_var name="_STOPPING">">
 										</tmpl_if>
 									</tmpl_if>
