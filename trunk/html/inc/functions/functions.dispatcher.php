@@ -807,6 +807,7 @@ function dispatcher_checkTypePermission($transfer, $type, $action) {
  * exit
  */
 function dispatcher_exit() {
+	global $cfg;
 	$redir = (isset($_REQUEST['riid']))
 		? getRequestVar('riid')
 		: "index";
@@ -820,9 +821,10 @@ function dispatcher_exit() {
 				: false;
 			break;
 		default:
-			if (!(preg_match('/^[a-zA-Z]+$/', $redir)))
-				$redir = false;
-			break;
+			if (!(preg_match('/^[a-zA-Z]+$/', $redir))) {
+				AuditAction($cfg["constants"]["error"], "INVALID PAGE (riid): ".$redir);
+				@error("Invalid Page", "", "", array($redir));
+			}
 	}
 	// header
 	if ($redir !== false)
