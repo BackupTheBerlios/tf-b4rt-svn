@@ -29,8 +29,8 @@ require_once("inc/classes/CoreClasses.php");
 // core functions
 require_once('inc/functions/functions.core.php');
 
-// stats-functions
-require_once('inc/functions/functions.stats.php');
+// Stats-class
+require_once('inc/classes/Stats.php');
 
 // start session
 @session_start();
