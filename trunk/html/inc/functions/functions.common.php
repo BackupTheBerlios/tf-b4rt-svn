@@ -1624,8 +1624,12 @@ function setFilePriority($transfer) {
         $fileName = $cfg["transfer_file_path"].$transfer.".prio";
         $result = array();
         $files = array();
-        if (isset($_REQUEST['files']))
-			$files = array_filter($_REQUEST['files'],"getFile");
+        if (isset($_REQUEST['files'])) {
+        	$filesTemp = (is_array($_REQUEST['files']))
+        		? $_REQUEST['files']
+        		: array($_REQUEST['files']);
+        	$files = array_filter($filesTemp, "getFile");
+        }
         // if there are files to get then process and create a prio file.
         if (count($files) > 0) {
             for ($i=0; $i < getRequestVar('count'); $i++) {
