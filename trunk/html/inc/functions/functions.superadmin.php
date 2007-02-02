@@ -182,7 +182,7 @@ function sa_processes($action = "") {
 			    $htmlMain .= $rt->transferFile;
 			    $htmlMain .= '</div></td>';
 			    $htmlMain .= '<td nowrap>';
-			    $htmlMain .= '<a href="dispatcher.php?action=forceStop';
+			    $htmlMain .= '<a href="dispatcher.php?action=forceStop&riid=_referer_';
 			    $htmlMain .= "&transfer=".urlencode($rt->transferFile);
 			    $htmlMain .= "&pid=".$rt->processId;
 			    $htmlMain .= '"><img src="themes/'.$cfg["theme"].'/images/kill.gif" width="16" height="16" title="'.$cfg['_FORCESTOP'].'" border="0"></a></td>';

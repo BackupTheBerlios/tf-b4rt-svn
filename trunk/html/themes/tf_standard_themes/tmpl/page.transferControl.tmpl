@@ -15,7 +15,7 @@
 							</td>
 						</tr>
 					</table>
-					<form name="controlForm" action="dispatcher.php?action=stop&transfer=<tmpl_var name="transfer">" method="post">
+					<form name="controlForm" action="dispatcher.php?action=stop&riid=_referer_&transfer=<tmpl_var name="transfer">" method="post">
 						<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 							<tr>
 								<td colspan="2" align="center">
@@ -24,7 +24,7 @@
 							</tr>
 						</table>
 					</form>
-					<form name="controlForm" action="dispatcher.php?action=restart&transfer=<tmpl_var name="transfer">" method="post">
+					<form name="controlForm" action="dispatcher.php?action=restart&riid=_referer_&transfer=<tmpl_var name="transfer">" method="post">
 						<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 							<tr>
 								<td colspan="2" align="center">
@@ -41,7 +41,7 @@
 							</td>
 						</tr>
 					</table>
-					<form name="controlForm" action="dispatcher.php?action=deQueue&transfer=<tmpl_var name="transfer">" method="post">
+					<form name="controlForm" action="dispatcher.php?action=deQueue&riid=_referer_&transfer=<tmpl_var name="transfer">" method="post">
 						<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 							<tr>
 								<td colspan="2" align="center">
@@ -76,7 +76,7 @@
 						<tmpl_include name="inc.transferProfile.tmpl">
 					</form>
 				</tmpl_if>
-				<form name="theForm" action="dispatcher.php?action=start&transfer=<tmpl_var name="transfer">" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
+				<form name="theForm" action="dispatcher.php?action=start&riid=_referer_&transfer=<tmpl_var name="transfer">" method="post" onsubmit="return validateSettings('<tmpl_var name="type">')">
 					<input type="hidden" name="interactive" value="1">
 					<table border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">" width="100%">
 						<tmpl_include name="inc.transferSettings.tmpl">

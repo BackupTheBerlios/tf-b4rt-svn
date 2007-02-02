@@ -90,7 +90,7 @@ function getFilePrioForm($transfer, $withForm = false) {
 		$retVal .= "<tr><td>Selected size:</td><td id=\"sel\">0</td></tr>";
 		$retVal .= "</table><br>\n";
 		if ($withForm) {
-			$retVal .= "<form name=\"priority\" action=\"dispatcher.php?action=setFilePriority\" method=\"POST\" >";
+			$retVal .= "<form name=\"priority\" action=\"dispatcher.php?action=setFilePriority&riid=_referer_\" method=\"POST\" >";
 			$retVal .= "<input type=\"hidden\" name=\"transfer\" value=\"".$transfer."\" >";
 		}
 		$retVal .= "<script type=\"text/javascript\">\n";
