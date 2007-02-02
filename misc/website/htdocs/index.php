@@ -93,20 +93,20 @@ function printPageHead() {
     <meta name="robots" content="index,follow" />
     <meta name="author" content="Design : DocTom ; Rest : b4rt" />
     <link rel="stylesheet" type="text/css" href="css/default.css" />
-    <link rel="alternate" title="News - RSS 0.91" href="http://developer.berlios.de/export/rss_bsnews.php?group_id=7000" type="application/rss+xml" />
-    <link rel="alternate" title="Releases - RSS 0.91" href="http://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" type="application/rss+xml" />
-    <link rel="alternate" title="News - RSS 2.0" href="http://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" type="application/rss+xml" />
-    <link rel="alternate" title="Releases - RSS 2.0" href="http://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" type="application/rss+xml" />
-    <link rel="alternate" title="Forum - RSS 0.92" href="http://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" type="application/rss+xml" />
+    <link rel="alternate" title="News - RSS 0.91" href="https://developer.berlios.de/export/rss_bsnews.php?group_id=7000" type="application/rss+xml" />
+    <link rel="alternate" title="Releases - RSS 0.91" href="https://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" type="application/rss+xml" />
+    <link rel="alternate" title="News - RSS 2.0" href="https://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" type="application/rss+xml" />
+    <link rel="alternate" title="Releases - RSS 2.0" href="https://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" type="application/rss+xml" />
+    <link rel="alternate" title="Forum - RSS 0.92" href="https://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" type="application/rss+xml" />
 </head>
 <body>
 <div id="container">
 	<div id="header">
 		<p class="version">
 			<span class="versionspan">Current Versions:</span>
-			<a href="http://tf-b4rt.berlios.de/current" title="2.1-b4rt"><?php echo $versions['old']; ?></a>
+			<a href="current" title="2.1-b4rt"><?php echo $versions['old']; ?></a>
 			<span class="versionspan"> | </span>
-			<a href="http://tf-b4rt.berlios.de/tfb" title="1.0"><?php echo $versions['new']; ?></a>
+			<a href="tfb" title="1.0"><?php echo $versions['new']; ?></a>
 		</p>
 	</div>
 	<div id="navi">
@@ -134,12 +134,12 @@ function printPageFoot() {
 		</div>
 		<div id="credits">
 			<p>
-				<a href="http://developer.berlios.de/projects/tf-b4rt/" title="BerliOS Developer Project" target="_blank">
-					<img src="http://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo" />
+				<a href="https://developer.berlios.de/projects/tf-b4rt/" title="BerliOS Developer Project" target="_blank">
+					<img src="https://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo" />
 				</a>
 			</p>
 			<p class="svnid">
-				<a href="http://tf-b4rt.berlios.de/wsvn-website" title="WebSVN" target="_blank">$Id$</a>
+				<a href="https://tf-b4rt.berlios.de/wsvn-website" title="WebSVN" target="_blank">$Id$</a>
 			</p>
 		</div>
 	</div>
@@ -156,7 +156,7 @@ function printPageHome() {
 ?>
 		<h1 id="home">Home</h1>
 		<p>
-			<a href="http://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94 : Index-Page" target="_blank">
+			<a href="https://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94 : Index-Page" target="_blank">
 				<img src="images/v94-index_mini.png" width="334px" height="165px" border="0" alt="torrentflux 2.1-b4rt-94 : Index-Page" align="right" class="img_right" />
 			</a>
 		</p>
@@ -214,7 +214,7 @@ function printPageFeatures() {
 			<li>Much more... see <a href="changelog" title="Changelog">Changelog</a>.</li>
 		</ul>
 		<p>
-			<a href="http://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94 : Index-Page" target="_blank">
+			<a href="https://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94 : Index-Page" target="_blank">
 				<img src="images/v94-index_small.png" width="445px" height="220px" border="0" alt="torrentflux 2.1-b4rt-94 : Index-Page" align="left" class="img_left" />
 			</a>
 		</p>
@@ -229,7 +229,7 @@ function printPageFeatures() {
 			column labeled with "C" where "B" is BitTornado and "T" is Transmission.
 		</p>
 		<p>
-			<a href="http://developer.berlios.de/dbimage.php?id=3025" title="torrentflux 2.1-b4rt-94 : User-Profile" target="_blank">
+			<a href="https://developer.berlios.de/dbimage.php?id=3025" title="torrentflux 2.1-b4rt-94 : User-Profile" target="_blank">
 				<img src="images/v94-userprofile_small.png" width="315px" height="337px" border="0" alt="torrentflux 2.1-b4rt-94 : User-Profile" align="right" class="img_right" />
 			</a>
 		</p>
@@ -254,12 +254,12 @@ function printPageNews() {
 		<ul>
 			<?php echo(rewriteNews(trim(getDataFromFile(_FILE_NEWS)))); ?>
 		</ul>
-		<p>More detailed <a href="http://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="http://tf-b4rt.berlios.de/forum" title="Forum">Forum</a>.</p>
+		<p>More detailed <a href="https://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="https://tf-b4rt.berlios.de/forum" title="Forum">Forum</a>.</p>
 		<h2 id="feeds">Feeds</h2>
 		<ul>
-			<li>News (<a href="http://developer.berlios.de/export/rss_bsnews.php?group_id=7000" title="News - RSS 0.91">RSS 0.91</a>/<a href="http://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" title="News - RSS 2.0">RSS 2.0</a>)</li>
-			<li>Downloads (<a href="http://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" title="Downloads - RSS 0.91">RSS 0.91</a>/<a href="http://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" title="Downloads - RSS 2.0">RSS 2.0</a>)</li>
-			<li>Forum (<a href="http://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" title="Forum - RSS 0.92">RSS 0.92</a>)</li>
+			<li>News (<a href="https://developer.berlios.de/export/rss_bsnews.php?group_id=7000" title="News - RSS 0.91">RSS 0.91</a>/<a href="https://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" title="News - RSS 2.0">RSS 2.0</a>)</li>
+			<li>Downloads (<a href="https://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" title="Downloads - RSS 0.91">RSS 0.91</a>/<a href="https://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" title="Downloads - RSS 2.0">RSS 2.0</a>)</li>
+			<li>Forum (<a href="https://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" title="Forum - RSS 0.92">RSS 0.92</a>)</li>
 		</ul>
 <?php
 }
@@ -271,7 +271,7 @@ function printPageAbout() {
 ?>
 		<h1 id="about">About</h1>
 		<p>
-			<a href="http://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94 : Admin-Settings" target="_blank">
+			<a href="https://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94 : Admin-Settings" target="_blank">
 				<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94 : Admin-Settings" align="right" class="img_right" />
 			</a>
 		</p>

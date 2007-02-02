@@ -8,12 +8,12 @@ RewriteRule ^features\.html$ /index.php?s=features
 RewriteRule ^news\.html$ /index.php?s=news
 RewriteRule ^about\.html$ /index.php?s=about
 RewriteRule ^changelog\.html$ /index.php?s=changelog
-RewriteRule ^version$ http://tf-b4rt.berlios.de/version.txt [R]
-RewriteRule ^changelog$ http://tf-b4rt.berlios.de/changelog-torrentflux_2.1-b4rt.txt [R]
-RewriteRule ^faq$ http://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
-RewriteRule ^fixes$ http://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
-RewriteRule ^downloads$ http://developer.berlios.de/project/showfiles.php?group_id=7000 [R]
-RewriteRule ^current$ http://tf-b4rt.berlios.de/forum/index.php/topic,392.0.html [R]
-RewriteRule ^tfb$ http://tf-b4rt.berlios.de/forum/index.php/topic,435.0.html [R]
-RewriteRule ^transmission$ http://tf-b4rt.berlios.de/forum/index.php/topic,90.0.html [R]
-RewriteRule ^wsvn-website$ http://svn.berlios.de/wsvn/tf-b4rt/misc/website/htdocs/index.php?op=file&rev=0&sc=0 [R]
+RewriteRule ^version$ https://tf-b4rt.berlios.de/version.txt [R]
+RewriteRule ^changelog$ https://tf-b4rt.berlios.de/changelog-torrentflux_2.1-b4rt.txt [R]
+RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
+RewriteRule ^fixes$ https://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
+RewriteRule ^downloads$ https://developer.berlios.de/project/showfiles.php?group_id=7000 [R]
+RewriteRule ^current$ https://tf-b4rt.berlios.de/forum/index.php/topic,392.0.html [R]
+RewriteRule ^tfb$ https://tf-b4rt.berlios.de/forum/index.php/topic,435.0.html [R]
+RewriteRule ^transmission$ https://tf-b4rt.berlios.de/forum/index.php/topic,90.0.html [R]
+RewriteRule ^wsvn-website$ https://svn.berlios.de/wsvn/tf-b4rt/misc/website/htdocs/index.php?op=file&rev=0&sc=0 [R]
