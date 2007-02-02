@@ -78,7 +78,7 @@ switch ($action) {
  * file-upload
  ******************************************************************************/
 	case "fileUpload":
-		dispatcher_processUploadFile();
+		dispatcher_processUpload();
     	break;
 
 /*******************************************************************************

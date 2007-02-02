@@ -618,90 +618,9 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 }
 
 /**
- * Function with which metafiles are uploaded and injected
+ * processUpload
  */
 function dispatcher_processUpload() {
-	global $cfg;
-	$filename = "";
-	$uploadMessages = array();
-	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name']))) {
-		$filename = stripslashes($_FILES['upload_file']['name']);
-		$filename = cleanFileName($filename);
-		if ($filename === false) {
-			// invalid file
-			array_push($uploadMessages, "The type of file you are uploading is not allowed.");
-			array_push($uploadMessages, "\nvalid file-extensions: ");
-			array_push($uploadMessages, $cfg["file_types_label"]);
-		} else {
-			// file is valid
-			if (substr($filename, -5) == ".wget") {
-				// is enabled ?
-				if ($cfg["enable_wget"] == 0) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
-					@error("wget is disabled", "", "");
-				} else if ($cfg["enable_wget"] == 1) {
-					if (!$cfg['isAdmin']) {
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload wget-file ".$filename);
-						@error("wget is disabled for users", "", "");
-					}
-				}
-			} else if (substr($filename, -4) == ".nzb") {
-				// is enabled ?
-				if ($cfg["enable_nzbperl"] == 0) {
-					AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
-					@error("nzbperl is disabled", "", "");
-				} else if ($cfg["enable_nzbperl"] == 1) {
-					if (!$cfg['isAdmin']) {
-						AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to upload nzb-file ".$filename);
-						@error("nzbperl is disabled for users", "", "");
-					}
-				}
-			}
-			if ($_FILES['upload_file']['size'] <= _UPLOAD_LIMIT && $_FILES['upload_file']['size'] > 0) {
-				//FILE IS BEING UPLOADED
-				if (@is_file($cfg["transfer_file_path"].$filename)) {
-					// Error
-					array_push($uploadMessages, "the file ".$filename." already exists on the server.");
-				} else {
-					if (@move_uploaded_file($_FILES['upload_file']['tmp_name'], $cfg["transfer_file_path"].$filename)) {
-						@chmod($cfg["transfer_file_path"].$filename, 0644);
-						AuditAction($cfg["constants"]["file_upload"], $filename);
-						// inject
-						injectTransfer($filename);
-						// instant action ?
-						$actionId = getRequestVar('aid');
-						if ($actionId > 1) {
-							$ch = ClientHandler::getInstance(getTransferClient($filename));
-							switch ($actionId) {
-								case 3:
-									$ch->start($filename, false, true);
-									break;
-								case 2:
-									$ch->start($filename, false, false);
-									break;
-							}
-							if (count($ch->messages) > 0)
-	           					$uploadMessages = array_merge($uploadMessages, $ch->messages);
-						}
-					} else {
-						array_push($uploadMessages, "File not uploaded, file could not be found or could not be moved: ".$cfg["transfer_file_path"].$filename);
-					}
-				}
-			} else {
-				array_push($uploadMessages, "File not uploaded, file size limit is "._UPLOAD_LIMIT.". file has ".$_FILES['upload_file']['size']);
-			}
-		}
-	}
-	if (count($uploadMessages) > 0) {
-		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$filename);
-		@error("There were Problems", "", "", $uploadMessages);
-	}
-}
-
-/**
- * processUploadFile
- */
-function dispatcher_processUploadFile() {
 	global $cfg;
 	$filename = "";
 	$uploadMessages = array();
@@ -910,30 +829,6 @@ function dispatcher_exit() {
 		@header("location: index.php?iid=".$redir);
 	// exit
 	exit();
-}
-
-/**
- * compatIndexDispatch
- */
-function dispatcher_compatIndexDispatch() {
-	// transfer-start
-	if (isset($_REQUEST['torrent']))
-		dispatcher_startTransfer(urldecode(getRequestVar('torrent')));
-	// get torrent via url
-	if (isset($_REQUEST['url_upload']))
-		dispatcher_processDownload(getRequestVar('url_upload'), 'torrent');
-	// file upload
-	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
-		dispatcher_processUpload();
-	// del file
-	if (isset($_REQUEST['delfile']))
-		dispatcher_deleteTransfer(urldecode(getRequestVar('delfile')));
-	// kill
-	if (isset($_REQUEST["kill_torrent"]))
-		dispatcher_stopTransfer(urldecode(getRequestVar('kill_torrent')));
-	// deQueue
-	if (isset($_REQUEST["QEntry"]))
-		dispatcher_deQueueTransfer(urldecode(getRequestVar('QEntry')));
 }
 
 ?>
