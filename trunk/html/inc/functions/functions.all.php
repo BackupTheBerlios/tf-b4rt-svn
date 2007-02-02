@@ -35,9 +35,6 @@ require_once("inc/functions/functions.admin.php");
 // dir
 require_once("inc/functions/functions.dir.php");
 
-// stats
-require_once("inc/functions/functions.stats.php");
-
 // maketorrent
 require_once("inc/functions/functions.maketorrent.php");
 

@@ -813,22 +813,19 @@ function dispatcher_exit() {
 		: "index";
 	switch ($redir) {
 		case "_none_":
-			$redir = false;
 			break;
 		case "_referer_":
-			$redir = (isset($_SERVER["HTTP_REFERER"]))
-				? $_SERVER["HTTP_REFERER"]
-				: false;
+			if (isset($_SERVER["HTTP_REFERER"]))
+				@header("location: ".$_SERVER["HTTP_REFERER"]);
 			break;
 		default:
-			if (!(preg_match('/^[a-zA-Z]+$/', $redir))) {
+			if (preg_match('/^[a-zA-Z]+$/', $redir)) {
+				@header("location: index.php?iid=".$redir);
+			} else {
 				AuditAction($cfg["constants"]["error"], "INVALID PAGE (riid): ".$redir);
 				@error("Invalid Page", "", "", array($redir));
 			}
 	}
-	// header
-	if ($redir !== false)
-		@header("location: index.php?iid=".$redir);
 	// exit
 	exit();
 }
