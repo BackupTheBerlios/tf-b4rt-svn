@@ -29,28 +29,13 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-// host
-$vlcHost = $_SERVER['SERVER_ADDR'];
-
-// option-lists
-$vidcList = array('DIV3', 'DIV4', 'WMV1', 'WMV2', 'RV10', 'mp1v', 'mp4v');
-$vbitList = array('192', '256', '384', '512', '768', '1024', '1280', '1536', '1792', '2048');
-$audcList = array('mp3', 'mp4a', 'mpga', 'vorb', 'flac');
-$abitList = array('64', '96', '128', '192', '256', '384');
-
-// common functions
-require_once('inc/functions/functions.common.php');
-
-// dir functions
-require_once('inc/functions/functions.dir.php');
-
-// vlc functions
-require_once('inc/functions/functions.vlc.php');
+// vlc class
+require_once('inc/classes/Vlc.php');
 
 // is enabled ?
 if ($cfg["enable_vlc"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use vlc");
-	@error("vlc is disabled", "index.php?iid=index", "");
+	@error("vlc is disabled", "", "");
 }
 
 // init template-instance
@@ -70,21 +55,25 @@ switch ($pageop) {
 	case "default":
 		// fill lists
 		// vidc
+		$vidcList = Vlc::getList('vidc');
 		$list_vidc = array();
 		foreach ($vidcList as $vidcT)
 			array_push($list_vidc, array('name' => $vidcT));
 		$tmpl->setloop('list_vidc', $list_vidc);
 		// vbit
+		$vbitList = Vlc::getList('vbit');
 		$list_vbit = array();
 		foreach ($vbitList as $vbitT)
 			array_push($list_vbit, array('name' => $vbitT));
 		$tmpl->setloop('list_vbit', $list_vbit);
 		// audc
+		$audcList = Vlc::getList('audc');
 		$list_audc = array();
 		foreach ($audcList as $audcT)
 			array_push($list_audc, array('name' => $audcT));
 		$tmpl->setloop('list_audc', $list_audc);
 		// abit
+		$abitList = Vlc::getList('abit');
 		$list_abit = array();
 		foreach ($abitList as $abitT)
 			array_push($list_abit, array('name' => $abitT));
@@ -92,15 +81,26 @@ switch ($pageop) {
 		// requested file
 		$dirName = urldecode($_REQUEST['dir']);
 		$fileName = urldecode(stripslashes($_REQUEST['file']));
+		$targetFile = $dirName.$fileName;
+		// check target
+		if (isValidPath($targetFile) !== true) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-FILE: ".$cfg["user"]." tried to access ".$targetFile);
+			@error("Invalid File", "", "", array($targetFile));
+		}
+		// set vars
 		$tmpl->setvar('file', $fileName);
-		$tmpl->setvar('target', urlencode(addslashes($dirName.$fileName)));
+		$tmpl->setvar('target', urlencode(addslashes($targetFile)));
 		// host vars
-		$tmpl->setvar('host', $vlcHost);
-		$tmpl->setvar('port', $cfg['vlc_port']);
+		$tmpl->setvar('addr', Vlc::getAddr());
+		$tmpl->setvar('port', Vlc::getPort());
 		// already streaming
-		if (vlcIsRunning($vlcHost, $cfg['vlc_port']) === true) {
+		if (Vlc::isStreamRunning(Vlc::getPort()) === true) {
 			$tmpl->setvar('is_streaming', 1);
-			$tmpl->setvar('current_stream', vlcGetRunningCurrent());
+			$streams = Vlc::getRunning(Vlc::getPort());
+			$currentStream = (empty($streams))
+				? ""
+				: array_pop($streams);
+			$tmpl->setvar('current_stream', $currentStream);
 		} else {
 			$tmpl->setvar('is_streaming', 0);
 		}
@@ -108,32 +108,38 @@ switch ($pageop) {
 	case "start":
 		// get vars
 		$fileName = urldecode(stripslashes($_REQUEST['file']));
-		$targetFile = urldecode(stripslashes($_POST['target']));
+		$targetFile = $cfg["path"].urldecode(stripslashes($_POST['target']));
 		$target_vidc = $_POST['vidc'];
 		$target_vbit = $_POST['vbit'];
 		$target_audc = $_POST['audc'];
 		$target_abit = $_POST['abit'];
+		// check target
+		if (isValidPath($targetFile) !== true) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-FILE: ".$cfg["user"]." tried to access ".$targetFile);
+			@error("Invalid File", "", "", array($targetFile));
+		}
 		// set template vars
 		$tmpl->setvar('file', $fileName);
 		$tmpl->setvar('vidc', $target_vidc);
 		$tmpl->setvar('vbit', $target_vbit);
 		$tmpl->setvar('audc', $target_audc);
 		$tmpl->setvar('abit', $target_abit);
-		$tmpl->setvar('host', $_SERVER['SERVER_NAME']);
-		$tmpl->setvar('port', $cfg['vlc_port']);
+		$tmpl->setvar('addr', Vlc::getAddr());
+		$tmpl->setvar('port', Vlc::getPort());
 		// start vlc
-		@vlcStart($vlcHost, $cfg['vlc_port'], $cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
+		Vlc::start($targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
 		break;
 	case "stop":
 		// stop vlc
-		@vlcStop();
+		Vlc::stop();
 		break;
 }
 
-//
+// title-bar + link
 tmplSetTitleBar($cfg["pagetitle"]." - "."vlc", false);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
-//
+
+// iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 
 // parse template

@@ -47,9 +47,6 @@ require_once('inc/functions/functions.readrss.php');
 // transfer
 require_once('inc/functions/functions.transfer.php');
 
-// vlc functions
-require_once('inc/functions/functions.vlc.php');
-
 // tools functions
 require_once('inc/functions/functions.tools.php');
 
