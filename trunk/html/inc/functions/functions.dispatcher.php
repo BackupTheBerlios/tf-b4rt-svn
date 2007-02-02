@@ -55,7 +55,7 @@ function dispatcher_startTransfer($transfer) {
 		array_push($msgs, "\nmessages :");
 		$msgs = array_merge($msgs, $ch->messages);
 		AuditAction($cfg["constants"]["error"], "Start failed: ".$transfer."\n".implode("\n", $ch->messages));
-		@error("Start failed", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $msgs);
+		@error("Start failed", "", "", $msgs);
 	} else {
 		if (($interactive == 1) && (isset($_REQUEST["close"]))) {
 			echo '<script  language="JavaScript">';
@@ -86,7 +86,7 @@ function dispatcher_stopTransfer($transfer) {
 	$ch->stop($transfer);
 	// check
 	if (count($ch->messages) > 0)
-    	@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $ch->messages);
+    	@error("There were Problems", "", "", $ch->messages);
 }
 
 /**
@@ -127,7 +127,7 @@ function dispatcher_forceStopTransfer($transfer, $pid) {
 	$ch->stop($transfer, true, $pid);
 	// check
 	if (count($ch->messages) > 0)
-    	@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $ch->messages);
+    	@error("There were Problems", "", "", $ch->messages);
 }
 
 /**
@@ -150,7 +150,7 @@ function dispatcher_deleteTransfer($transfer) {
 	$ch->delete($transfer);
 	// check
 	if (count($ch->messages) > 0)
-    	@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $ch->messages);
+    	@error("There were Problems", "", "", $ch->messages);
 }
 
 /**
@@ -203,7 +203,7 @@ function dispatcher_injectWget($url) {
 				array_push($msgs, "\nmessages :");
 				$msgs = array_merge($msgs, $ch->messages);
 				AuditAction($cfg["constants"]["error"], "Start failed: ".$url."\n".implode("\n", $ch->messages));
-				@error("Start failed", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $msgs);
+				@error("Start failed", "", "", $msgs);
 			}
 		}
 	}
@@ -298,7 +298,7 @@ function dispatcher_bulk($op) {
 	}
 	// error if messages
 	if (count($dispatcherMessages) > 0)
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $dispatcherMessages);
+		@error("There were Problems", "", "", $dispatcherMessages);
 }
 
 /**
@@ -458,7 +458,7 @@ function dispatcher_multi($action) {
 
 	// error if messages
 	if (count($dispatcherMessages) > 0)
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $dispatcherMessages);
+		@error("There were Problems", "", "", $dispatcherMessages);
 }
 
 /**
@@ -613,7 +613,7 @@ function _dispatcher_processDownload($url, $type = 'torrent', $ext = '.torrent')
 	}
 	if (count($downloadMessages) > 0) {
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["url_upload"]." :: ".$filename);
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $downloadMessages);
+		@error("There were Problems", "", "", $downloadMessages);
 	}
 }
 
@@ -694,7 +694,7 @@ function dispatcher_processUpload() {
 	}
 	if (count($uploadMessages) > 0) {
 		AuditAction($cfg["constants"]["error"], $cfg["constants"]["file_upload"]." :: ".$filename);
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $uploadMessages);
+		@error("There were Problems", "", "", $uploadMessages);
 	}
 }
 
@@ -798,7 +798,7 @@ function dispatcher_processUploadFile() {
 		}
 	}
 	if (count($uploadMessages) > 0) {
-		@error("There were Problems", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", $uploadMessages);
+		@error("There were Problems", "", "", $uploadMessages);
 	}
 }
 
@@ -812,7 +812,7 @@ function dispatcher_sendMetafile($mfile) {
 	// is enabled ?
 	if ($cfg["enable_metafile_download"] != 1) {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to download a metafile");
-		@error("metafile download is disabled", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "");
+		@error("metafile download is disabled", "", "");
 	}
 	if (isValidTransfer($mfile) === true) {
 		// Does the file exist?
@@ -839,7 +839,7 @@ function dispatcher_sendMetafile($mfile) {
 			exit();
 		} else {
 			AuditAction($cfg["constants"]["error"], "File Not found for download: ".$mfile);
-			@error("File Not found for download", (isset($_SERVER["HTTP_REFERER"])) ? $_SERVER["HTTP_REFERER"] : "", "", array($mfile));
+			@error("File Not found for download", "", "", array($mfile));
 		}
 	} else {
 		AuditAction($cfg["constants"]["error"], "ILLEGAL DOWNLOAD: ".$mfile);
@@ -882,6 +882,34 @@ function dispatcher_checkTypePermission($transfer, $type, $action) {
 			}
 			break;
 	}
+}
+
+/**
+ * exit
+ */
+function dispatcher_exit() {
+	$redir = (isset($_REQUEST['riid']))
+		? getRequestVar('riid')
+		: "index";
+	switch ($redir) {
+		case "_none_":
+			$redir = false;
+			break;
+		case "_referer_":
+			$redir = (isset($_SERVER["HTTP_REFERER"]))
+				? $_SERVER["HTTP_REFERER"]
+				: false;
+			break;
+		default:
+			if (!(preg_match('/^[a-zA-Z]+$/', $redir)))
+				$redir = false;
+			break;
+	}
+	// header
+	if ($redir !== false)
+		@header("location: index.php?iid=".$redir);
+	// exit
+	exit();
 }
 
 /**
