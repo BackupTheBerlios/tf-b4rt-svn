@@ -31,15 +31,15 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 // is enabled ?
 if ($cfg["enable_graphs"] != 1) {
-	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use mrtg");
-	@error("mrtg is disabled", "index.php?iid=index", "");
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use graphs");
+	@error("graphs are disabled", "index.php?iid=index", "");
 }
 
 // default-target
 define('_DEFAULT_TARGET','traffic');
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.mrtg.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.graphs.tmpl");
 
 // request-vars
 $mrtgTarget = (isset($_REQUEST['mrtg_target'])) ? getRequestVar('mrtg_target') : _DEFAULT_TARGET;
@@ -90,7 +90,7 @@ if (is_file($filename)) {
 	$tmpl->setvar('htmlGraph', $htmlGraph);
 }
 //
-tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_MRTG']);
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_GRAPHS']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 

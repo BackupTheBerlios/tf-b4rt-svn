@@ -221,6 +221,6 @@ define('_ID_PORTS','Ports');
 define('_ID_CONNECTIONS','Connections');
 define('_ID_HOST','Host');
 define('_ID_HOSTS','Hosts');
-define('_ID_MRTG','Graph');
+define('_ID_GRAPHS','Graphs');
 
 ?>

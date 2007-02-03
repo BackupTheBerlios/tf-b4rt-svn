@@ -718,7 +718,7 @@ $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
 $tmpl->setvar('_ONLINE', $cfg['_ONLINE']);
 $tmpl->setvar('_OFFLINE', $cfg['_OFFLINE']);
 $tmpl->setvar('_XFER_USAGE', $cfg['_XFER_USAGE']);
-$tmpl->setvar('_ID_MRTG', $cfg['_ID_MRTG']);
+$tmpl->setvar('_ID_GRAPHS', $cfg['_ID_GRAPHS']);
 $tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
 $tmpl->setvar('_ALL', $cfg['_ALL']);
 $tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
