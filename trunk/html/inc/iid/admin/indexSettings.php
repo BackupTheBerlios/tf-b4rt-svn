@@ -49,7 +49,6 @@ $tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_displayusers', $cfg["ui_displayusers"]);
-$tmpl->setvar('enable_graphs', $cfg["enable_graphs"]);
 $tmpl->setvar('ui_displaybandwidthbars', $cfg["ui_displaybandwidthbars"]);
 $tmpl->setvar('bandwidthbar', $cfg["bandwidthbar"]);
 $tmpl->setvar('bandwidth_up', $cfg["bandwidth_up"]);

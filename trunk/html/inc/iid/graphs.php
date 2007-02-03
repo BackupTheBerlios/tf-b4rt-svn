@@ -29,12 +29,6 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 /******************************************************************************/
 
-// is enabled ?
-if ($cfg["enable_graphs"] != 1) {
-	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use graphs");
-	@error("graphs are disabled", "index.php?iid=index", "");
-}
-
 // default-type
 define('_DEFAULT_TYPE', 'mrtg');
 
