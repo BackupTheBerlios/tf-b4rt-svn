@@ -35,15 +35,31 @@ if ($cfg["enable_graphs"] != 1) {
 	@error("graphs are disabled", "index.php?iid=index", "");
 }
 
+// input-dir
+define('_DIR_INPUT', $cfg["path"].'.mrtg');
+
+// default-type
+define('_DEFAULT_TYPE', 'mrtg');
+
 // default-target
-define('_DEFAULT_TARGET','traffic');
+define('_DEFAULT_TARGET', 'traffic');
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.graphs.tmpl");
 
 // request-vars
-$mrtgTarget = (isset($_REQUEST['mrtg_target'])) ? getRequestVar('mrtg_target') : _DEFAULT_TARGET;
+$type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
+$target = (isset($_REQUEST['target'])) ? getRequestVar('target') : _DEFAULT_TARGET;
 
+
+
+
+/* -------------------------------------------------------------------------- */
+
+$tmpl->setvar('htmlTargets', "");
+$tmpl->setvar('htmlGraph', "");
+
+/*
 // set vars
 $htmlTargetsCount = 0;
 if ($dirHandle = @opendir('./mrtg')) {
@@ -89,7 +105,9 @@ if (is_file($filename)) {
 	// set var
 	$tmpl->setvar('htmlGraph', $htmlGraph);
 }
-//
+*/
+
+// more vars
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_GRAPHS']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
