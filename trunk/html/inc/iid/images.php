@@ -43,7 +43,7 @@ define('_IMAGE_URL', "image.php");
 define('_IMAGE_PREFIX_MRTG', "?i=mrtg&f=");
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.graphs.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.images.tmpl");
 
 // request-vars
 $type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
@@ -89,14 +89,14 @@ switch ($type) {
 
 		// stop here if no targets found
 		if (empty($target_list)) {
-			$tmpl->setvar('htmlGraph', "<br><p><strong>No Graphs found.</strong></p>");
+			$tmpl->setvar('content', "<br><p><strong>No Targets found.</strong></p>");
 			break;
 		}
 
 		// set target-list
 		$tmpl->setloop('target_list', $target_list);
 
-		// graph
+		// target-content
 		$targetFile = _MRTG_DIR_INPUT."/".$target.".inc";
 		// check target
 		if (isValidPath($targetFile) !== true) {
@@ -104,19 +104,18 @@ switch ($type) {
 			@error("Invalid Target", "", "", array($targetFile));
 		}
 		if (@is_file($targetFile)) {
-			$htmlGraph = @file_get_contents($targetFile);
+			$content = @file_get_contents($targetFile);
 			// we are only interested in the "real" content
-			$tempAry = explode("_CONTENT_BEGIN_", $htmlGraph);
+			$tempAry = explode("_CONTENT_BEGIN_", $content);
 			if (is_array($tempAry)) {
 				$tempVar = array_pop($tempAry);
 				$tempAry = explode("_CONTENT_END_", $tempVar);
 				if (is_array($tempAry)) {
-					$htmlGraph = array_shift($tempAry);
+					$content = array_shift($tempAry);
 					// rewrite image-links
-					//$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
-					$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}'._IMAGE_URL._IMAGE_PREFIX_MRTG.'${2}${3}', $htmlGraph);
+					$content = preg_replace('/(.*")(.*)(png".*)/i', '${1}'._IMAGE_URL._IMAGE_PREFIX_MRTG.'${2}${3}', $content);
 					// set var
-					$tmpl->setvar('htmlGraph', $htmlGraph);
+					$tmpl->setvar('content', $content);
 				}
 			}
 		} else {
@@ -127,61 +126,11 @@ switch ($type) {
 		break;
 
 
+
 	default:
-		$tmpl->setvar('htmlGraph', "Invalid Type");
+		$tmpl->setvar('content', "Invalid Type");
 		break;
 }
-
-
-/* -------------------------------------------------------------------------- */
-
-/*
-// set vars
-$htmlTargetsCount = 0;
-if ($dirHandle = @opendir('./mrtg')) {
-	$htmlTargets = "";
-	$htmlTargets .= '<table width="740" border="0" cellpadding="0" cellspacing="0"><tr><td align="center">';
-	$htmlTargets .= '<form name="targetSelector" action="index.php" method="get">';
-	$htmlTargets .= '<input type="hidden" name="iid" value="mrtg">';
-	$htmlTargets .= '<select name="mrtg_target" size="1" onChange="submit();">';
-	$idx = 0;
-	while (false !== ($file = readdir($dirHandle))) {
-		if ((strlen($file) > 4) && (strtolower(substr($file, -4)) == ".inc")) {
-			$htmlTargetsCount++;
-			$tempAry = explode('.',$file);
-      		$targetName = array_shift($tempAry);
-			$htmlTargets .= '<option value="'.$targetName.'"';
-			if ($mrtgTarget == $targetName)
-				$htmlTargets .= ' selected';
-			$htmlTargets .= '>'.$targetName.'</option>';
-			$idx++;
-		}
-	}
-	closedir($dirHandle);
-	$htmlTargets .= '</select><input type="submit" value="Change Graph">';
-	$htmlTargets .= '</form>';
-	$htmlTargets .= '</td></tr></table>'."\n";
-}
-if ($htmlTargetsCount > 0) {
-	$tmpl->setvar('htmlTargets', $htmlTargets);
-} else {
-	$tmpl->setvar('htmlTargets', "");
-	$tmpl->setvar('htmlGraph', "<br><p><strong>No Graphs found.</strong></p>");
-}
-$filename = "./mrtg/".$mrtgTarget.".inc";
-if (is_file($filename)) {
-	$htmlGraph = file_get_contents($filename);
-	// we are only interested in the "real" content
-	$tempAry = explode("_CONTENT_BEGIN_", $htmlGraph);
-	$tempVar = array_pop($tempAry);
-	$tempAry = explode("_CONTENT_END_", $tempVar);
-	$htmlGraph = array_shift($tempAry);
-	// rewrite image-links
-	$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
-	// set var
-	$tmpl->setvar('htmlGraph', $htmlGraph);
-}
-*/
 
 // more vars
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_IMAGES']);
