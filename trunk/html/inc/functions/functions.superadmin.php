@@ -2022,7 +2022,7 @@ function backupDelete($filename) {
 	global $cfg;
 	$backupFile = $cfg["path"]. _DIR_BACKUP . '/' . $filename;
 	@unlink($backupFile);
-	AuditAction($cfg["constants"]["admin"], "FluxBackup Deleted : ".$filename);
+	AuditAction($cfg["constants"]["admin"], "Backup Deleted : ".$filename);
 }
 
 /**
@@ -2044,7 +2044,7 @@ function backupSend($filename, $delete = false) {
 	if (!is_file($backupFile))
 		return false;
 	// log before we screw up the file-name
-	AuditAction($cfg["constants"]["admin"], "FluxBackup Sent : ".$filename);
+	AuditAction($cfg["constants"]["admin"], "Backup Sent : ".$filename);
 	// filenames in IE containing dots will screw up the filename
 	if (strstr($_SERVER['HTTP_USER_AGENT'], "MSIE"))
 		$filename = preg_replace('/\./', '%2e', $filename, substr_count($filename, '.') - 1);
@@ -2105,64 +2105,111 @@ function backupCreate($talk = false, $compression = 0) {
 			$tarSwitch = "-jcf";
 			break;
 	}
-	$fileArchive = $dirBackup . '/' . $fileArchiveName;
-	$fileDatabase = $dirBackup . '/database.sql';
-	$fileDocroot = $dirBackup . '/docroot.tar';
-	// command-strings
-	$commandArchive = "cd ".$dirBackup."; tar ".$tarSwitch." ".$fileArchiveName." ";
-	$commandDatabase = "";
+	// files
+	$files = array();
+	$files['archive'] = $dirBackup . '/' . $fileArchiveName;
+	$files['db'] = $dirBackup . '/database.sql';
+	$files['docroot'] = $dirBackup . '/docroot.tar';
+	$files['transfers'] = $dirBackup . '/transfers.tar';
+	$files['fluxd'] = $dirBackup . '/fluxd.tar';
+	$files['mrtg'] = $dirBackup . '/mrtg.tar';
+	// exec
+	$exec = array();
+	$exec['transfers'] = ((@is_dir($cfg["transfer_file_path"])) === true);
+	$exec['fluxd'] = ((@is_dir($cfg["path"].'.fluxd')) === true);
+	$exec['mrtg'] = ((@is_dir($cfg["path"].'.mrtg')) === true);
+	// commands
+	$commands = array();
+	$commands['archive'] = "cd ".$dirBackup."; tar ".$tarSwitch." ".$fileArchiveName." ";
+	$commands['db'] = "";
 	switch ($cfg["db_type"]) {
 		case "mysql":
-			$commandDatabase = "mysqldump -h ".$cfg["db_host"]." -u ".$cfg["db_user"]." --password=".$cfg["db_pass"]." --all -f ".$cfg["db_name"]." > ".$fileDatabase;
-			$commandArchive .= 'database.sql ';
+			$commands['db'] = "mysqldump -h ".$cfg["db_host"]." -u ".$cfg["db_user"]." --password=".$cfg["db_pass"]." --all -f ".$cfg["db_name"]." > ".$files['db'];
+			$commands['archive'] .= 'database.sql ';
 			break;
 		case "sqlite":
-			$commandDatabase = "sqlite ".$cfg["db_host"]." .dump > ".$fileDatabase;
-			$commandArchive .= 'database.sql ';
+			$commands['db'] = "sqlite ".$cfg["db_host"]." .dump > ".$files['db'];
+			$commands['archive'] .= 'database.sql ';
 			break;
 		case "postgres":
-			$commandDatabase = "pg_dump -h ".$cfg["db_host"]." -D ".$cfg["db_name"]." -U ".$cfg["db_user"]." -f ".$fileDatabase;
-			$commandArchive .= 'database.sql ';
+			$commands['db'] = "pg_dump -h ".$cfg["db_host"]." -D ".$cfg["db_name"]." -U ".$cfg["db_user"]." -f ".$files['db'];
+			$commands['archive'] .= 'database.sql ';
 			break;
 	}
-	$commandArchive .= 'docroot.tar';
-	//$commandDocroot = "cd ".$dirBackup."; tar -cf docroot.tar ".$cfg["docroot"]; // with path of docroot
-	$commandDocroot = "cd ".escapeshellarg($cfg["docroot"])."; tar -cf ".$fileDocroot." ."; // only content of docroot
-	//
+	$commands['archive'] .= 'docroot.tar';
+	if ($exec['transfers'] === true)
+		$commands['archive'] .= ' transfers.tar';
+	if ($exec['fluxd'] === true)
+		$commands['archive'] .= ' fluxd.tar';
+	if ($exec['mrtg'] === true)
+		$commands['archive'] .= ' mrtg.tar';
+	//$commands['docroot'] = "cd ".$dirBackup."; tar -cf docroot.tar ".$cfg["docroot"]; // with path of docroot
+	$commands['docroot'] = "cd ".escapeshellarg($cfg["docroot"])."; tar -cf ".$files['docroot']." ."; // only content of docroot
+	$commands['transfers'] = "cd ".escapeshellarg($cfg["transfer_file_path"])."; tar -cf ".$files['transfers']." .";
+	$commands['fluxd'] = "cd ".escapeshellarg($cfg["path"].'.fluxd')."; tar -cf ".$files['fluxd']." .";
+	$commands['mrtg'] = "cd ".escapeshellarg($cfg["path"].'.mrtg')."; tar -cf ".$files['mrtg']." .";
+	// action
 	if ($talk)
 		sendLine('<br>');
 	// database-command
-	if ($commandDatabase != "") {
+	if ($commands['db'] != "") {
 		if ($talk)
 			sendLine('Backup of Database <em>'.$cfg["db_name"].'</em> ...');
-		shell_exec($commandDatabase);
+		shell_exec($commands['db']);
 	}
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
 	// docroot-command
 	if ($talk)
 		sendLine('Backup of Docroot <em>'.$cfg["docroot"].'</em> ...');
-	shell_exec($commandDocroot);
+	shell_exec($commands['docroot']);
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
+	// transfers-command
+	if ($exec['transfers'] === true) {
+		if ($talk)
+			sendLine('Backup of transfers <em>'.$cfg["transfer_file_path"].'</em> ...');
+		shell_exec($commands['transfers']);
+		if ($talk)
+			sendLine(' <font color="green">Ok</font><br>');
+	}
+	// fluxd-command
+	if ($exec['fluxd'] === true) {
+		if ($talk)
+			sendLine('Backup of fluxd <em>'.$cfg["path"].'.fluxd'.'</em> ...');
+		shell_exec($commands['fluxd']);
+		if ($talk)
+			sendLine(' <font color="green">Ok</font><br>');
+	}
+	// mrtg-command
+	if ($exec['mrtg'] === true) {
+		if ($talk)
+			sendLine('Backup of mrtg <em>'.$cfg["path"].'.mrtg'.'</em> ...');
+		shell_exec($commands['mrtg']);
+		if ($talk)
+			sendLine(' <font color="green">Ok</font><br>');
+	}
 	// create the archive
 	if ($talk)
 		sendLine('Creating Archive <em>'.$fileArchiveName.'</em> ...');
-	shell_exec($commandArchive);
+	shell_exec($commands['archive']);
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
 	// delete temp-file(s)
 	if ($talk)
 		sendLine('Deleting temp-files ...');
-	if ($commandDatabase != "")
-		@unlink($fileDatabase);
-	@unlink($fileDocroot);
+	if ($commands['db'] != "")
+		@unlink($files['db']);
+	@unlink($files['docroot']);
+	@unlink($files['transfers']);
+	@unlink($files['fluxd']);
+	@unlink($files['mrtg']);
 	if ($talk)
 		sendLine(' <font color="green">Ok</font><br>');
 	// log
 	if ($talk)
 		sendLine('<font color="green">Backup Complete.</font><br>');
-	AuditAction($cfg["constants"]["admin"], "FluxBackup Created : ".$fileArchiveName);
+	AuditAction($cfg["constants"]["admin"], "Backup Created : ".$fileArchiveName);
 	return $fileArchiveName;
 }
 
