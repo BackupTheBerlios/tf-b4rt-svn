@@ -1,7 +1,40 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
-<tmpl_var name="htmlTargets">
-<div align="center" id="BodyLayer" name="BodyLayer" style="border: thin solid <tmpl_var name="main_bgcolor">position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
-	<tmpl_var name="htmlGraph">
-</div>
+
+
+<table width="740" border="0" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center">
+			<form name="typeSelector" action="index.php?iid=graphs" method="post">
+				<input type="hidden" name="target" value="<tmpl_var name="target">">
+				<select name="type" onChange="javascript:submit();">
+					<tmpl_loop name="type_list">
+						<option value="<tmpl_var name="name">" <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="name"></option>
+					</tmpl_loop>
+				</select>
+				<input type="submit" value="Change Type">
+			</form>
+		</td>
+		<td align="center">
+			<form name="targetSelector" action="index.php?iid=graphs" method="post">
+				<input type="hidden" name="type" value="<tmpl_var name="type">">
+				<select name="target" onChange="javascript:submit();">
+					<tmpl_if name="target_list">
+						<tmpl_loop name="target_list">
+							<option value="<tmpl_var name="name">" <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="name"></option>
+						</tmpl_loop>
+					</tmpl_if>
+				</select>
+				<input type="submit" value="Change Graph">
+			</form>
+		</td>
+	</tr>
+</table>
+
+
+<tmpl_if name="htmlGraph">
+	<div align="center" id="BodyLayer" name="BodyLayer" style="border: thin solid <tmpl_var name="main_bgcolor">position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
+		<tmpl_var name="htmlGraph">
+	</div>
+</tmpl_if>
 <tmpl_include name="inc.subfoot.tmpl">

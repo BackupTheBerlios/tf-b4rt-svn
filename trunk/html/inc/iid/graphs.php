@@ -35,14 +35,14 @@ if ($cfg["enable_graphs"] != 1) {
 	@error("graphs are disabled", "index.php?iid=index", "");
 }
 
-// input-dir
-define('_DIR_INPUT', $cfg["path"].'.mrtg');
-
 // default-type
 define('_DEFAULT_TYPE', 'mrtg');
 
 // default-target
 define('_DEFAULT_TARGET', 'traffic');
+
+// input-dir mrtg
+define('_DIR_INPUT_MRTG', $cfg["path"].'.mrtg');
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.graphs.tmpl");
@@ -51,13 +51,70 @@ tmplInitializeInstance($cfg["theme"], "page.graphs.tmpl");
 $type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
 $target = (isset($_REQUEST['target'])) ? getRequestVar('target') : _DEFAULT_TARGET;
 
+// set vars
+$tmpl->setvar('type', $type);
+$tmpl->setvar('target', $target);
 
+// types
+$types = array("mrtg");
+$type_list = array();
+foreach ($types as $_type) {
+	array_push($type_list, array(
+		'name' => $_type,
+		'selected' => ($type == $_type) ? 1 : 0
+		)
+	);
+}
+$tmpl->setloop('type_list', $type_list);
+
+// type-switch
+switch ($type) {
+
+	// mrtg
+	case "mrtg":
+
+		// targets
+		$target_list = array();
+		if ((@is_dir(_DIR_INPUT_MRTG)) && ($dirHandle = @opendir(_DIR_INPUT_MRTG))) {
+			while (false !== ($file = @readdir($dirHandle))) {
+				if ((strlen($file) > 4) && (substr($file, -4) == ".inc")) {
+		      		$targetName = (substr($file, 0, -4));
+					array_push($target_list, array(
+						'name' => $targetName,
+						'selected' => ($target == $targetName) ? 1 : 0
+						)
+					);
+				}
+			}
+			@closedir($dirHandle);
+		}
+
+		// stop here if no targets found
+		if (empty($target_list)) {
+			$tmpl->setvar('htmlGraph', "<br><p><strong>No Graphs found.</strong></p>");
+			break;
+		}
+
+		// set target-list
+		$tmpl->setloop('target_list', $target_list);
+
+		// graph
+		$htmlGraph = "";
+
+
+
+		//$tmpl->setvar('htmlGraph', $htmlGraph);
+
+		break;
+
+
+	default:
+		$tmpl->setvar('htmlGraph', "Invalid Type");
+		break;
+}
 
 
 /* -------------------------------------------------------------------------- */
-
-$tmpl->setvar('htmlTargets', "");
-$tmpl->setvar('htmlGraph', "");
 
 /*
 // set vars
