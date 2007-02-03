@@ -19,13 +19,13 @@
 	margin: 0px;
 	border: none;
 	position: relative;
-		top: 8px;
+		top: 9px;
 		left: 10px;
 }
 #logout {
 	padding: 0px;
 	margin: 0px;
-	margin-right: 5px;
+	padding-right: 5px;
 	border: none;
 	position: absolute;
 		right: 0px;
@@ -36,8 +36,8 @@
 #logoutButton{
 	padding: 0px;
 	margin: 0px;
-	height: 21px;
-	width: 21px;
+	height: 22px;
+	width: 22px;
 	border: none;
 	display:block;
 	background-image:url("../pics/logout.jpg");
