@@ -30,7 +30,7 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 // is enabled ?
-if ($cfg["enable_mrtg"] != 1) {
+if ($cfg["enable_graphs"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use mrtg");
 	@error("mrtg is disabled", "index.php?iid=index", "");
 }

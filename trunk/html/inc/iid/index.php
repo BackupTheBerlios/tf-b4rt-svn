@@ -691,7 +691,7 @@ $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('enable_search', $cfg["enable_search"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('enable_sorttable', $cfg["enable_sorttable"]);
-$tmpl->setvar('enable_mrtg', $cfg["enable_mrtg"]);
+$tmpl->setvar('enable_graphs', $cfg["enable_graphs"]);
 $tmpl->setvar('enable_bulkops', $cfg["enable_bulkops"]);
 $tmpl->setvar('ui_displaylinks', $cfg["ui_displaylinks"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
