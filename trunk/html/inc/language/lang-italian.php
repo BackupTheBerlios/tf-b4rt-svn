@@ -195,6 +195,6 @@ define('_ID_PORTS','Ports');
 define('_ID_CONNECTIONS','Connections');
 define('_ID_HOST','Host');
 define('_ID_HOSTS','Hosts');
-define('_ID_GRAPHS','Graphs');
+define('_ID_IMAGES','Images');
 
 ?>

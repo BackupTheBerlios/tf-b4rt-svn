@@ -184,7 +184,7 @@ if (is_file($filename)) {
 */
 
 // more vars
-tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_GRAPHS']);
+tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_IMAGES']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 

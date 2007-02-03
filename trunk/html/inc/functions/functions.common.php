@@ -1093,7 +1093,7 @@ function loadLanguageFile($language) {
 	$cfg['_ID_CONNECTIONS'] = _ID_CONNECTIONS;
 	$cfg['_ID_HOST'] = _ID_HOST;
 	$cfg['_ID_HOSTS'] = _ID_HOSTS;
-	$cfg['_ID_GRAPHS'] = _ID_GRAPHS;
+	$cfg['_ID_IMAGES'] = _ID_IMAGES;
 }
 
 /**
