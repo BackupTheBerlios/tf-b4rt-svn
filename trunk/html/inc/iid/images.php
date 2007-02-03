@@ -82,13 +82,13 @@ switch ($type) {
 			)
 		);
 		array_push($target_list, array(
-			'name' => "drivespace",
-			'selected' => ($target == "drivespace") ? 1 : 0
+			'name' => "bandwidth",
+			'selected' => ($target == "bandwidth") ? 1 : 0
 			)
 		);
 		array_push($target_list, array(
-			'name' => "bandwidth",
-			'selected' => ($target == "bandwidth") ? 1 : 0
+			'name' => "drivespace",
+			'selected' => ($target == "drivespace") ? 1 : 0
 			)
 		);
 		$tmpl->setloop('target_list', $target_list);
@@ -100,16 +100,16 @@ switch ($type) {
 
 		// set vars
 		$image_list = array();
-		if (($target == "drivespace") || ($target == "all"))
-			array_push($image_list, array(
-				'title' => "Drivespace",
-				'src' => "image.php?i=pieServerDrivespace"
-				)
-			);
 		if (($target == "bandwidth") || ($target == "all"))
 			array_push($image_list, array(
 				'title' => "Bandwidth",
 				'src' => "image.php?i=pieServerBandwidth"
+				)
+			);
+		if (($target == "drivespace") || ($target == "all"))
+			array_push($image_list, array(
+				'title' => "Drivespace",
+				'src' => "image.php?i=pieServerDrivespace"
 				)
 			);
 		if (!empty($image_list))

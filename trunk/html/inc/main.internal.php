@@ -213,7 +213,7 @@ if (!(cacheIsSet($currentUser))) {
 }
 
 // free space in MB var
-$cfg["free_space"] = @disk_free_space($cfg["path"]) / (1048576);
+$cfg["free_space"] = @disk_free_space($cfg["path"]) / 1048576;
 
 // drive space var
 $cfg['driveSpace'] = getDriveSpace($cfg["path"]);

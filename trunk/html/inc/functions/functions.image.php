@@ -222,23 +222,75 @@ function image_pieTransferScrape() {
 }
 
 /**
- * pieServerDrivespace
- */
-function image_pieServerDrivespace() {
-	global $cfg;
-
-	// output image
-	Image::paintSpacer();
-}
-
-/**
  * pieServerBandwidth
  */
 function image_pieServerBandwidth() {
 	global $cfg;
+	// get vars
+	getTransferListArray();
+	$bwU = (isset($cfg["total_upload"])) ? $cfg["total_upload"] : 0.0;
+	$bwD = (isset($cfg["total_download"])) ? $cfg["total_download"] : 0.0;
+	// check vars
+	if (($bwU < 0) || ($bwD < 0)) {
+		// output image
+		Image::paintNoOp();
+	}
+	// draw image
+	Image::paintPie3D(
+		202,
+		160,
+		100,
+		50,
+		200,
+		100,
+		20,
+		Image::stringToRGBColor($cfg["body_data_bg"]),
+		array($bwU + 0.00001, $bwD + 0.00001),
+		array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
+		array('Up : '.@number_format($bwU, 2)." kB/s", 'Down : '.@number_format($bwD, 2)." kB/s"),
+		48,
+		130,
+		2,
+		14
+	);
+}
 
-	// output image
-	Image::paintSpacer();
+/**
+ * pieServerDrivespace
+ */
+function image_pieServerDrivespace() {
+	global $cfg;
+	// get vars
+	$df_b = @disk_free_space($cfg["path"]);
+	$dt_b = @disk_total_space($cfg["path"]);
+	// check vars
+	if (($df_b < 0) || ($dt_b < 0)) {
+		// output image
+		Image::paintNoOp();
+	}
+	$du_b = $dt_b - $df_b;
+	if ($du_b < 0) {
+		// output image
+		Image::paintNoOp();
+	}
+	// draw image
+	Image::paintPie3D(
+		202,
+		160,
+		100,
+		50,
+		200,
+		100,
+		20,
+		Image::stringToRGBColor($cfg["body_data_bg"]),
+		array($df_b + 0.00001, $du_b + 0.00001),
+		array(array('r' => 0x00, 'g' => 0xEB, 'b' => 0x0C), array('r' => 0x10, 'g' => 0x00, 'b' => 0xFF)),
+		array('Free : '.formatFreeSpace($df_b / 1048576), 'Used : '.formatFreeSpace($du_b / 1048576)),
+		58,
+		130,
+		2,
+		14
+	);
 }
 
 /**
