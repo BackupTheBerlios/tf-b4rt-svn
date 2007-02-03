@@ -222,6 +222,32 @@ function image_pieTransferScrape() {
 }
 
 /**
+ * mrtg
+ */
+function image_mrtg() {
+	global $cfg;
+	// filename
+	$fileName = getRequestVar('f');
+	if (empty($fileName))
+		Image::paintNoOp();
+	$targetFile = $cfg["path"].'.mrtg/'.$fileName;
+	// validate file
+	if (!((isValidPath($targetFile) === true) && (true))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-IMAGE: ".$cfg["user"]." tried to access ".$targetFile);
+		Image::paintNoOp();
+	}
+	// send content
+	@header('Accept-Ranges: bytes');
+	@header('Content-Length: '.filesize($targetFile));
+	@header('Content-Type: image/png');
+	@session_write_close();
+	$fp = @popen("cat ".escapeshellarg($targetFile), "r");
+	@fpassthru($fp);
+	@pclose($fp);
+	exit();
+}
+
+/**
  * spacer
  */
 function image_spacer() {

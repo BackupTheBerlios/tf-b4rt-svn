@@ -20,7 +20,7 @@
 
 *******************************************************************************/
 
-// image functions
+// common functions
 require_once('inc/functions/functions.common.php');
 
 // image functions
@@ -72,6 +72,14 @@ switch ($imageOp) {
 		require_once('inc/main.internal.php');
 		// output image
 		image_pieTransferScrape();
+
+	case "mrtg":
+		// check for valid referer
+		Image::checkReferer();
+		// main.internal
+		require_once('inc/main.internal.php');
+		// output image
+		image_mrtg();
 
 	case "spacer":
 		// check for valid referer
