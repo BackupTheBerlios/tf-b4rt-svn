@@ -1,0 +1,492 @@
+<tmpl_include name="inc.head.tmpl">
+<tmpl_include name="inc.subhead.tmpl">
+<tmpl_include name="inc.adminmenu.tmpl">
+<script src="js/adminSettings.js" type="text/javascript"></script>
+<div align="center">
+	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+		<tr>
+			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/default/images/bar.gif">
+				<img src="themes/default/images/properties.png" width="18" height="13" border="0">&nbsp;&nbsp;<font class="title">Index Settings</font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<div align="center">
+					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+						<form name="theForm" action="admin.php?op=updateIndexSettings" method="post" onsubmit="return validateSettings('index')">
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Page Refresh</strong><br>
+								Enable/Disable Page Refresh :
+								</td>
+								<td valign="top">
+									<select name="enable_index_meta_refresh">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_meta_refresh" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Page Refresh Intervall</strong><br>
+								Number of seconds before the page refreshes :
+								</td>
+								<td valign="top">
+									<input name="page_refresh" type="Text" maxlength="3" value="<tmpl_var name="page_refresh">" size="3">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>AJAX Update</strong><br>
+								Enable/Disable AJAX Update :
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Page-Title AJAX Update</strong><br>
+								Enable/Disable update of the Page-Title in AJAX Updates :
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update_title">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update_title" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Users AJAX Update</strong><br>
+								Enable/Disable update of the User-List in AJAX Updates :
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update_users">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update_users" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Transfer List AJAX Update</strong><br>
+								Enable/Disable Transfer List AJAX Update :
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update_list">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update_list" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Silent AJAX Update</strong><br>
+								If enabled the AJAX-Update is more silent :<br>
+								No "Update in Progress..." shown in Title and on Label and no Counter shown.
+								</td>
+								<td valign="top">
+									<select name="enable_index_ajax_update_silent">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_index_ajax_update_silent" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>AJAX Update Intervall</strong><br>
+								Number of seconds between AJAX-Updates :
+								</td>
+								<td valign="top">
+									<input name="index_ajax_update" type="Text" maxlength="3" value="<tmpl_var name="index_ajax_update">" size="3">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Width</strong><br>
+								Specify the width of the index-page. (900):
+								</td>
+								<td valign="bottom">
+									<input name="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable multi-upload</strong><br>
+								Enable/Disable multi-upload :
+								</td>
+								<td valign="top">
+									<select name="enable_multiupload">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_multiupload" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>multi-upload - rows</strong><br>
+								Specify rows on multi-upload page :
+								</td>
+								<td valign="bottom">
+									<input name="hack_multiupload_rows" type="Text" maxlength="2" value="<tmpl_var name="hack_multiupload_rows">" size="2">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Torrent Search</strong><br>
+									When enabled, users will be allowed to perform torrent searches from the home page:
+								</td>
+								<td valign="top">
+									<select name="enable_search">
+											<option value="1">true</option>
+											<option value="0"
+										<tmpl_if name="enable_search" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Default Torrent Search Engine</strong><br>
+									Select the default search engine for torrent searches:
+								</td>
+								<td valign="top">
+									<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
+									<tmpl_loop name="Engine_List">
+										<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
+									</tmpl_loop>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Display Links</strong><br>
+								Display Links on the index-page :
+								</td>
+								<td valign="bottom">
+									<select name="ui_displaylinks">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="ui_displaylinks" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Display Users</strong><br>
+								Display Users on the index-page :
+								</td>
+								<td valign="bottom">
+									<select name="ui_displayusers">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="ui_displayusers" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Good looking statistics</strong><br>
+								Enable/Disable "Good looking statistics" :
+								</td>
+								<td valign="top">
+									<select name="enable_goodlookstats">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_goodlookstats" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Good looking statistics settings</strong><br>
+								Select Fields shown in "Good looking statistics" :
+								</td>
+								<td valign="top">
+									<tmpl_include name="inc.goodLookingStatsForm.tmpl">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Graphs-Link</strong><br>
+								Show Graphs-Link :
+								</td>
+								<td valign="top">
+									<select name="enable_graphs">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_graphs" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Display Bandwidth-Bars</strong><br>
+								Display Bandwidth-Bars :
+								</td>
+								<td valign="bottom">
+									<select name="ui_displaybandwidthbars">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="ui_displaybandwidthbars" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Bandwidth-Bars Style</strong><br>
+								Select Style of Bandwidth-Bars :
+								</td>
+								<td valign="top">
+									<select name="bandwidthbar">
+										<option value="tf"
+										<tmpl_if name="bandwidthbar" value="tf">
+											 selected
+										</tmpl_if>
+										>tf</option>
+										<option value="xfer"
+										<tmpl_if name="bandwidthbar" value="xfer">
+											 selected
+										</tmpl_if>
+										>xfer</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Bandwidth Up</strong><br>
+								Define the line-speed up in kbits :
+								</td>
+								<td valign="top">
+									<input name="bandwidth_up" type="Text" maxlength="10" value="<tmpl_var name="bandwidth_up">" size="6">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Bandwidth Down</strong><br>
+								Define the line-speed down in kbits :
+								</td>
+								<td valign="top">
+									<input name="bandwidth_down" type="Text" maxlength="10" value="<tmpl_var name="bandwidth_down">" size="6">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Big bold drivespace warning</strong><br>
+								Enable/Disable "Big bold drivespace warning" :
+								</td>
+								<td valign="top">
+									<select name="enable_bigboldwarning">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_bigboldwarning" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Only Admin can see other users transfers</strong><br>
+								Enable/Disable "Only Admin can see other users transfers" :
+								</td>
+								<td valign="top">
+									<select name="enable_restrictivetview">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_restrictivetview" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Transfer File Download</strong><br>
+								When enabled, users will be allowed to download the transfer meta file from the torrent list view:
+								</td>
+								<td valign="top">
+									<select name="enable_metafile_download">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_metafile_download" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Estimated Time to Seed</strong><br>
+									Display the estimated time until your seeding reaches the cutoff you set :
+								</td>
+								<td valign="top">
+									<select name="display_seeding_time">
+                                        <option value="1">true</option>
+                                        <option value="0"
+                                        <tmpl_if name="display_seeding_time" value="0">
+                                                 selected
+                                        </tmpl_if>
+                                        >false</option>
+                                    </select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable sorttable</strong><br>
+								Enable Client-Side sorting of Transfer-Table:
+								</td>
+								<td valign="top">
+									<select name="enable_sorttable">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_sorttable" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Select Sort-Order</strong><br>
+								Select default Sort-Order of transfers :
+								</td>
+								<td valign="top">
+									<tmpl_include name="inc.sortOrderSettings.tmpl">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Transfer-List Settings</strong><br>
+								Select the columns shown in the transfer-list.
+								</td>
+								<td valign="top">
+									<tmpl_include name="inc.indexPageSettingsForm.tmpl">
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Default Transfer Window</strong><br>
+									Select the default-page of the transfer-windows.
+								</td>
+								<td valign="top">
+									<select name="transfer_window_default">
+										<tmpl_loop name="transfer_window_default_list">
+											<option value="<tmpl_var name="value">"<tmpl_if name="is_selected" value="1"> selected</tmpl_if>>
+												<tmpl_var name="name">
+											</option>
+										</tmpl_loop>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable multi-operations</strong><br>
+									Enable/Disable client-multi-operations. (Start/Stop/Delete/...) :
+								</td>
+								<td valign="top">
+									<select name="enable_multiops">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_multiops" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable bulk-operations</strong><br>
+									Enable/Disable bulk-operations. (Stop/Resume/Start) :
+								</td>
+								<td valign="top">
+									<select name="enable_bulkops">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_bulkops" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Server Stats</strong><br>
+								Enable showing the server stats at the bottom :
+								</td>
+								<td valign="top">
+									<select name="index_page_stats">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="index_page_stats" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Connections</strong><br>
+								Enable showing the Sum of TCP-Connections:
+								</td>
+								<td valign="top">
+									<select name="index_page_connections">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="index_page_connections" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Server Load</strong><br>
+								Enable showing the average server load over the last 15 minutes:
+								</td>
+								<td valign="top">
+									<select name="show_server_load">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="show_server_load" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
+								<td align="center" colspan="2">
+								<input type="Submit" value="Update Settings">
+								</td>
+							</tr>
+						</form>
+					</table>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div>
+<tmpl_include name="inc.subfoot.tmpl">
