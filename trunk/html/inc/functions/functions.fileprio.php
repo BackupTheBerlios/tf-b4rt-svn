@@ -158,7 +158,8 @@ class dir {
 			if($dir->name == $name)
 				return $dir;
 		}
-		return false;
+		$retVal = false;
+		return $retVal;
 	}
 
 	function draw($parent) {
