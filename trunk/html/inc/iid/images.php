@@ -54,15 +54,12 @@ $tmpl->setvar('type', $type);
 $tmpl->setvar('target', $target);
 
 // types
-$types = array("mrtg");
 $type_list = array();
-foreach ($types as $_type) {
-	array_push($type_list, array(
-		'name' => $_type,
-		'selected' => ($type == $_type) ? 1 : 0
-		)
-	);
-}
+array_push($type_list, array(
+	'name' => "mrtg",
+	'selected' => ($type == "mrtg") ? 1 : 0
+	)
+);
 $tmpl->setloop('type_list', $type_list);
 
 // type-switch
@@ -99,34 +96,31 @@ switch ($type) {
 		// target-content
 		$targetFile = _MRTG_DIR_INPUT."/".$target.".inc";
 		// check target
-		if (isValidPath($targetFile) !== true) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$targetFile);
-			@error("Invalid Target", "", "", array($targetFile));
+		if (!((isValidPath($targetFile) === true)
+			&& (preg_match('/^[0-9a-zA-Z_]+$/', $target))
+			&& (@is_file($targetFile))
+			)) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$target);
+			@error("Invalid Target", "", "", array($target));
 		}
-		if (@is_file($targetFile)) {
-			$content = @file_get_contents($targetFile);
-			// we are only interested in the "real" content
-			$tempAry = explode("_CONTENT_BEGIN_", $content);
+		$content = @file_get_contents($targetFile);
+		// we are only interested in the "real" content
+		$tempAry = explode("_CONTENT_BEGIN_", $content);
+		if (is_array($tempAry)) {
+			$tempVar = array_pop($tempAry);
+			$tempAry = explode("_CONTENT_END_", $tempVar);
 			if (is_array($tempAry)) {
-				$tempVar = array_pop($tempAry);
-				$tempAry = explode("_CONTENT_END_", $tempVar);
-				if (is_array($tempAry)) {
-					$content = array_shift($tempAry);
-					// rewrite image-links
-					$content = preg_replace('/(.*")(.*)(png".*)/i', '${1}'._IMAGE_URL._IMAGE_PREFIX_MRTG.'${2}${3}', $content);
-					// set var
-					$tmpl->setvar('content', $content);
-				}
+				$content = array_shift($tempAry);
+				// rewrite image-links
+				$content = preg_replace('/(.*")(.*)(png".*)/i', '${1}'._IMAGE_URL._IMAGE_PREFIX_MRTG.'${2}${3}', $content);
+				// set var
+				$tmpl->setvar('content', $content);
 			}
-		} else {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$targetFile);
-			@error("Invalid Target", "", "", array($targetFile));
 		}
 
 		break;
 
-
-
+	// default
 	default:
 		$tmpl->setvar('content', "Invalid Type");
 		break;

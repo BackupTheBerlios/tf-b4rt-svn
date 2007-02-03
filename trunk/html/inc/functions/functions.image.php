@@ -232,18 +232,18 @@ function image_mrtg() {
 		Image::paintNoOp();
 	$targetFile = $cfg["path"].'.mrtg/'.$fileName;
 	// validate file
-	if (!((isValidPath($targetFile) === true) && (true))) {
-		AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-IMAGE: ".$cfg["user"]." tried to access ".$targetFile);
+	if (!((isValidPath($targetFile) === true)
+		&& (preg_match('/^[0-9a-zA-Z_]+(-day|-week|-month|-year)(.png)$/', $fileName))
+		&& (@is_file($targetFile))
+		)) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-IMAGE: ".$cfg["user"]." tried to access ".$fileName);
 		Image::paintNoOp();
 	}
 	// send content
 	@header('Accept-Ranges: bytes');
 	@header('Content-Length: '.filesize($targetFile));
 	@header('Content-Type: image/png');
-	@session_write_close();
-	$fp = @popen("cat ".escapeshellarg($targetFile), "r");
-	@fpassthru($fp);
-	@pclose($fp);
+	@fpassthru(fopen($targetFile, 'rb'));
 	exit();
 }
 
