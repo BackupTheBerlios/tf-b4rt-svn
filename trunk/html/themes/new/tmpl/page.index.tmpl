@@ -1,6 +1,9 @@
 <tmpl_include name="inc.head.tmpl">
-<body>
-<span>
+<body id="body">
+<tmpl_include name="inc.titleBar.tmpl">
+
+
+<div>
 	<ul>
 		<li>Home</li>
 		<ul>
@@ -22,12 +25,17 @@
 		<ul>
 			<li>Multiple Upload</li>
 		</ul>
-		<li>Admin</li>
-		<ul>
-			<li>Multiple Upload</li>
-		</ul>
+		<tmpl_if name="isAdmin">
+			<li>Admin</li>
+			<ul>
+				<li>Multiple Upload</li>
+			</ul>
+		</tmpl_if>
 	</ul>
-</span>
+</div>
+<div>
+	
+</div>
 
 
 

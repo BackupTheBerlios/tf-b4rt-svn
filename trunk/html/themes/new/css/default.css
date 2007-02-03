@@ -1,3 +1,55 @@
+#body {
+	padding:0px;
+	margin: 0px;
+	border: none;
+}
+#titleBar {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #585858;
+	background-color: #c1b18d;
+	background-image: url("../pics/title_background_left.jpg");
+	background-repeat: no-repeat;
+}
+#title {
+	padding: 0px;
+	margin: 0px;
+	border: none;
+	position: relative;
+		top: 8px;
+		left: 10px;
+}
+#logout {
+	padding: 0px;
+	margin: 0px;
+	margin-right: 5px;
+	border: none;
+	position: absolute;
+		right: 0px;
+	background-image: url("../pics/title_background_right.jpg");
+	background-repeat: no-repeat;
+	background-position: right;
+}
+#logoutButton{
+	padding: 0px;
+	margin: 0px;
+	height: 21px;
+	width: 21px;
+	border: none;
+	display:block;
+	background-image:url("../pics/logout.jpg");
+	}
+#logoutButton:hover{
+	background-image:url("../pics/logout_hover.jpg");
+}
+
+
+
+
+
 FONT		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
 TD		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
 BODY		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
