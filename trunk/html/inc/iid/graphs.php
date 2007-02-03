@@ -42,7 +42,11 @@ define('_DEFAULT_TYPE', 'mrtg');
 define('_DEFAULT_TARGET', 'traffic');
 
 // input-dir mrtg
-define('_DIR_INPUT_MRTG', $cfg["path"].'.mrtg');
+define('_MRTG_DIR_INPUT', $cfg["path"].'.mrtg');
+
+// image-defines
+define('_IMAGE_URL', "image.php");
+define('_IMAGE_PREFIX_MRTG', "?i=mrtg&f=");
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.graphs.tmpl");
@@ -75,7 +79,7 @@ switch ($type) {
 
 		// targets
 		$target_list = array();
-		if ((@is_dir(_DIR_INPUT_MRTG)) && ($dirHandle = @opendir(_DIR_INPUT_MRTG))) {
+		if ((@is_dir(_MRTG_DIR_INPUT)) && ($dirHandle = @opendir(_MRTG_DIR_INPUT))) {
 			while (false !== ($file = @readdir($dirHandle))) {
 				if ((strlen($file) > 4) && (substr($file, -4) == ".inc")) {
 		      		$targetName = (substr($file, 0, -4));
@@ -99,11 +103,32 @@ switch ($type) {
 		$tmpl->setloop('target_list', $target_list);
 
 		// graph
-		$htmlGraph = "";
-
-
-
-		//$tmpl->setvar('htmlGraph', $htmlGraph);
+		$targetFile = _MRTG_DIR_INPUT."/".$target.".inc";
+		// check target
+		if (isValidPath($targetFile) !== true) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$targetFile);
+			@error("Invalid Target", "", "", array($targetFile));
+		}
+		if (@is_file($targetFile)) {
+			$htmlGraph = @file_get_contents($targetFile);
+			// we are only interested in the "real" content
+			$tempAry = explode("_CONTENT_BEGIN_", $htmlGraph);
+			if (is_array($tempAry)) {
+				$tempVar = array_pop($tempAry);
+				$tempAry = explode("_CONTENT_END_", $tempVar);
+				if (is_array($tempAry)) {
+					$htmlGraph = array_shift($tempAry);
+					// rewrite image-links
+					//$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}mrtg/${2}${3}', $htmlGraph);
+					$htmlGraph = preg_replace('/(.*")(.*)(png".*)/i', '${1}'._IMAGE_URL._IMAGE_PREFIX_MRTG.'${2}${3}', $htmlGraph);
+					// set var
+					$tmpl->setvar('htmlGraph', $htmlGraph);
+				}
+			}
+		} else {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$targetFile);
+			@error("Invalid Target", "", "", array($targetFile));
+		}
 
 		break;
 
