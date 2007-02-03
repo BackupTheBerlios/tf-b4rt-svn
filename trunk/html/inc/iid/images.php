@@ -30,10 +30,11 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 // default-type
-define('_DEFAULT_TYPE', 'mrtg');
+define('_DEFAULT_TYPE', 'server');
 
-// default-target
-define('_DEFAULT_TARGET', 'traffic');
+// default-targets
+define('_DEFAULT_TARGET_SERVER', 'all');
+define('_DEFAULT_TARGET_MRTG', 'traffic');
 
 // input-dir mrtg
 define('_MRTG_DIR_INPUT', $cfg["path"].'.mrtg');
@@ -47,14 +48,15 @@ tmplInitializeInstance($cfg["theme"], "page.images.tmpl");
 
 // request-vars
 $type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
-$target = (isset($_REQUEST['target'])) ? getRequestVar('target') : _DEFAULT_TARGET;
-
-// set vars
-$tmpl->setvar('type', $type);
-$tmpl->setvar('target', $target);
+$target = getRequestVar('target');
 
 // types
 $type_list = array();
+array_push($type_list, array(
+	'name' => "server",
+	'selected' => ($type == "server") ? 1 : 0
+	)
+);
 array_push($type_list, array(
 	'name' => "mrtg",
 	'selected' => ($type == "mrtg") ? 1 : 0
@@ -65,8 +67,67 @@ $tmpl->setloop('type_list', $type_list);
 // type-switch
 switch ($type) {
 
+	// server
+	case "server":
+
+		// target
+		if ($target == "")
+			$target = _DEFAULT_TARGET_SERVER;
+
+		// targets
+		$target_list = array();
+		array_push($target_list, array(
+			'name' => "all",
+			'selected' => ($target == "all") ? 1 : 0
+			)
+		);
+		array_push($target_list, array(
+			'name' => "drivespace",
+			'selected' => ($target == "drivespace") ? 1 : 0
+			)
+		);
+		array_push($target_list, array(
+			'name' => "bandwidth",
+			'selected' => ($target == "bandwidth") ? 1 : 0
+			)
+		);
+		$tmpl->setloop('target_list', $target_list);
+
+		// target-content
+
+		// create template-instance
+		$_tmpl = tmplGetInstance($cfg["theme"], "component.images.server.tmpl");
+
+		// set vars
+		$image_list = array();
+		if (($target == "drivespace") || ($target == "all"))
+			array_push($image_list, array(
+				'title' => "Drivespace",
+				'src' => "image.php?i=pieServerDrivespace"
+				)
+			);
+		if (($target == "bandwidth") || ($target == "all"))
+			array_push($image_list, array(
+				'title' => "Bandwidth",
+				'src' => "image.php?i=pieServerBandwidth"
+				)
+			);
+		if (!empty($image_list))
+			$_tmpl->setloop('image_list', $image_list);
+		$_tmpl->setvar('type', $type);
+		$_tmpl->setvar('target', $target);
+
+		// grab + set the content of template
+		$tmpl->setvar('content', $_tmpl->grab());
+
+		break;
+
 	// mrtg
 	case "mrtg":
+
+		// target
+		if ($target == "")
+			$target = _DEFAULT_TARGET_MRTG;
 
 		// targets
 		$target_list = array();
@@ -125,6 +186,10 @@ switch ($type) {
 		$tmpl->setvar('content', "Invalid Type");
 		break;
 }
+
+// set vars
+$tmpl->setvar('type', $type);
+$tmpl->setvar('target', $target);
 
 // more vars
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_IMAGES']);

@@ -222,6 +222,26 @@ function image_pieTransferScrape() {
 }
 
 /**
+ * pieServerDrivespace
+ */
+function image_pieServerDrivespace() {
+	global $cfg;
+
+	// output image
+	Image::paintSpacer();
+}
+
+/**
+ * pieServerBandwidth
+ */
+function image_pieServerBandwidth() {
+	global $cfg;
+
+	// output image
+	Image::paintSpacer();
+}
+
+/**
  * mrtg
  */
 function image_mrtg() {
