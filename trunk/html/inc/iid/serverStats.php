@@ -68,25 +68,280 @@ switch ($type) {
 
 	// all
 	case "all":
+		// set vars
+		$tmpl->setvar('all_df', shell_exec("df -h ".$cfg["path"]));
+		$tmpl->setvar('all_du', shell_exec("du -sh ".$cfg["path"]."*"));
+		$tmpl->setvar('all_w', shell_exec("w"));
+		$tmpl->setvar('all_free', shell_exec("free -mo"));
+		$tmpl->setvar('netstatConnectionsSum', netstatConnectionsSum());
+		$tmpl->setvar('netstatPortList', netstatPortList());
+		$tmpl->setvar('netstatHostList', netstatHostList());
+		// language
+		$tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
+		$tmpl->setvar('_ID_HOSTS', $cfg['_ID_HOSTS']);
+		$tmpl->setvar('_ID_PORTS', $cfg['_ID_PORTS']);
+		$tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
+		$tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
+		// drivespace-bar
+		tmplSetDriveSpaceBar();
 		break;
 
 	// drivespace
 	case "drivespace":
+		// set vars
+		$tmpl->setvar('drivespace_df', shell_exec("df -h ".$cfg["path"]));
+		$tmpl->setvar('drivespace_du', shell_exec("du -sh ".$cfg["path"]."*"));
+		// language
+		tmplSetTitleBar($cfg['_DRIVESPACE']);
+		// drivespace-bar
+		tmplSetDriveSpaceBar();
 		break;
 
 	// who
 	case "who":
+		// set vars
+		$tmpl->setvar('who_w', shell_exec("w"));
+		$tmpl->setvar('who_free', shell_exec("free -mo"));
+		if ($cfg['isAdmin']) {
+			// array with all clients
+			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
+			// get informations
+			$process_list = array();
+			foreach ($clients as $client) {
+				$ch = ClientHandler::getInstance($client);
+				array_push($process_list, array(
+					'client' => $client,
+					'RunningProcessInfo' => $ch->runningProcessInfo(),
+					'pinfo' => shell_exec("ps auxww | ".$cfg['bin_grep']." ".$ch->binClient." | ".$cfg['bin_grep']." -v grep")
+					)
+				);
+			}
+			$tmpl->setloop('process_list', $process_list);
+		}
+		// drivespace-bar
+		tmplSetDriveSpaceBar();
 		break;
 
 	// xfer
 	case "xfer":
-		if ($cfg['enable_xfer'] != 1)
-			exit();
+		// is enabled ?
+		if ($cfg["enable_xfer"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use xfer");
+			@error("xfer is disabled", "index.php?iid=serverStats", "");
+		}
+		// xfer functions
+		require_once('inc/functions/functions.xfer.php');
+		// set vars
+		$tmpl->setvar('is_xfer', 1);
+		// getTransferListArray to update xfer-stats
+		// xfer-init
+		$cfg['xfer_realtime'] = 1;
+		$cfg['xfer_newday'] = 0;
+		$cfg['xfer_newday'] = !$db->GetOne('SELECT 1 FROM tf_xfer WHERE date = '.$db->DBDate(time()));
+		getTransferListArray();
+		if ($cfg['xfer_day'])
+			$tmpl->setvar('xfer_day', tmplGetXferBar($cfg['xfer_day'],$xfer_total['day']['total'],$cfg['_XFERTHRU'].' Today:'));
+		if ($cfg['xfer_week'])
+			$tmpl->setvar('xfer_week', tmplGetXferBar($cfg['xfer_week'],$xfer_total['week']['total'],$cfg['_XFERTHRU'].' '.$cfg['week_start'].':'));
+		$monthStart = strtotime(date('Y-m-').$cfg['month_start']);
+		$monthText = (date('j') < $cfg['month_start']) ? date('M j',strtotime('-1 Day',$monthStart)) : date('M j',strtotime('+1 Month -1 Day',$monthStart));
+		if ($cfg['xfer_month'])
+			$tmpl->setvar('xfer_month', tmplGetXferBar($cfg['xfer_month'],$xfer_total['month']['total'],$cfg['_XFERTHRU'].' '.$monthText.':'));
+		if ($cfg['xfer_total'])
+			$tmpl->setvar('xfer_total', tmplGetXferBar($cfg['xfer_total'],$xfer_total['total']['total'],$cfg['_TOTALXFER'].':'));
+		if (($cfg['enable_public_xfer'] == 1 ) || $cfg['isAdmin']) {
+			$tmpl->setvar('show_xfer', 1);
+			$sql = 'SELECT user_id FROM tf_users ORDER BY user_id';
+			$rtnValue = $db->GetCol($sql);
+			if ($db->ErrorNo() != 0) dbError($sql);
+			$user_list = array();
+			foreach ($rtnValue as $user_id) {
+				array_push($user_list, array(
+					'user_id' => $user_id,
+					'total' => formatFreeSpace(@ $xfer["$user_id"]['total']['total'] / (1048576)),
+					'month' => formatFreeSpace(@ $xfer["$user_id"]['month']['total'] / (1048576)),
+					'week' => formatFreeSpace(@ $xfer["$user_id"]['week']['total'] / (1048576)),
+					'day' => formatFreeSpace(@ $xfer["$user_id"]['day']['total'] / (1048576))
+					)
+				);
+			}
+			$tmpl->setloop('user_list', $user_list);
+			$tmpl->setvar('total_total', formatFreeSpace(@ $xfer_total['total']['total'] / (1048576)));
+			$tmpl->setvar('total_month', formatFreeSpace(@ $xfer_total['month']['total'] / (1048576)));
+			$tmpl->setvar('total_week', formatFreeSpace(@ $xfer_total['week']['total'] / (1048576)));
+			$tmpl->setvar('total_day', formatFreeSpace(@ $xfer_total['day']['total'] / (1048576)));
+			if (isset($_REQUEST['user']) && ($_REQUEST['user'] != "%")) {
+				$tmpl->setvar('user', $_REQUEST['user']);
+				if (isset($_REQUEST['month'])) {
+					$mstart = $_REQUEST['month'].'-'.$cfg['month_start'];
+					$mend = date('Y-m-d',strtotime('+1 Month',strtotime($mstart)));
+				} else {
+					$mstart = 0;
+					$mend = 0;
+				}
+				if (isset($_REQUEST['week'])) {
+					$wstart = $_REQUEST['week'];
+					$wend = date('Y-m-d',strtotime('+1 Week',strtotime($_REQUEST['week'])));
+				} else {
+					$wstart = $mstart;
+					$wend = $mend;
+				}
+				// month stats
+				$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' GROUP BY date ORDER BY date";
+				$rtnValue = $db->GetAll($sql);
+				if ($db->ErrorNo() != 0) dbError($sql);
+				$start = '';
+				$download = 0;
+				$upload = 0;
+				$month_list = array();
+				foreach ($rtnValue as $row) {
+					$rtime = strtotime($row[2]);
+					$newstart = $cfg['month_start'].' ';
+					$newstart .= (date('j',$rtime) < $cfg['month_start']) ? date('M Y',strtotime('-1 Month',$rtime)) : date('M Y',$rtime);
+					if ($start != $newstart) {
+						if ($upload + $download != 0) {
+							array_push($month_list, array(
+								'user_id' => $_REQUEST["user"],
+								'month' => date('Y-m',strtotime($start)),
+								'start' => $start,
+								'downloadstr' => formatFreeSpace($download / (1048576)),
+								'uploadstr' => formatFreeSpace($upload / (1048576)),
+								'totalstr' => formatFreeSpace(($download + $upload) / (1048576))
+								)
+							);
+						}
+						$download = $row[0];
+						$upload = $row[1];
+						$start = $newstart;
+					}
+					else {
+						$download += $row[0];
+						$upload += $row[1];
+					}
+				}
+				if ($upload + $download != 0) {
+					array_push($month_list, array(
+						'user_id' => $_REQUEST["user"],
+						'month' => date('Y-m',strtotime($start)),
+						'start' => $start,
+						'downloadstr' => formatFreeSpace($download / (1048576)),
+						'uploadstr' => formatFreeSpace($upload / (1048576)),
+						'totalstr' => formatFreeSpace(($download + $upload) / (1048576))
+						)
+					);
+				}
+				$tmpl->setloop('month_list', $month_list);
+				// weekly stats
+				$period_query = ($mstart) ? "and date >= '".$mstart."' and date < '".$mend."'" : "";
+				$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' ".$period_query." GROUP BY date ORDER BY date";
+				$rtnValue = $db->GetAll($sql);
+				if ($db->ErrorNo() != 0) dbError($sql);
+				$start = '';
+				$download = 0;
+				$upload = 0;
+				$week_list = array();
+				foreach ($rtnValue as $row) {
+					$rtime = strtotime($row[2]);
+					$newstart = date('d M Y',strtotime('+1 Day last '.$cfg['week_start'],$rtime));
+					if ($start != $newstart) {
+						if ($upload + $download != 0) {
+							array_push($week_list, array(
+								'user_id' => $_REQUEST["user"],
+								'month' => @ $_REQUEST["month"],
+								'week' => date('Y-m-d',strtotime($start)),
+								'start' => $start,
+								'downloadstr' => formatFreeSpace($download / (1048576)),
+								'uploadstr' => formatFreeSpace($upload / (1048576)),
+								'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
+								)
+							);
+						}
+						$download = $row[0];
+						$upload = $row[1];
+						$start = $newstart;
+					}
+					else {
+						$download += $row[0];
+						$upload += $row[1];
+					}
+				}
+				if ($upload + $download != 0) {
+					array_push($week_list, array(
+						'user_id' => $_REQUEST["user"],
+						'month' => @ $_REQUEST["month"],
+						'week' => date('Y-m-d',strtotime($start)),
+						'start' => $start,
+						'downloadstr' => formatFreeSpace($download / (1048576)),
+						'uploadstr' => formatFreeSpace($upload / (1048576)),
+						'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
+						)
+					);
+				}
+				$tmpl->setloop('week_list', $week_list);
+				// daily stats
+				$period_query = ($wstart) ? "and date >= '".$wstart."' and date < '".$wend."'" : "";
+				$sql = "SELECT SUM(download) AS download, SUM(upload) AS upload, date FROM tf_xfer WHERE user_id LIKE '".$_REQUEST["user"]."' ".$period_query." GROUP BY date ORDER BY date";
+				$rtnValue = $db->GetAll($sql);
+				if ($db->ErrorNo() != 0) dbError($sql);
+				$start = '';
+				$download = 0;
+				$upload = 0;
+				$day_list = array();
+				foreach ($rtnValue as $row) {
+					$rtime = strtotime($row[2]);
+					$newstart = $row[2];
+					if ($row[2] == date('Y-m-d')) {
+						if ($user_id == '%') {
+							$row[0] = $xfer_total['day']['download'];
+							$row[1] = $xfer_total['day']['upload'];
+						} else {
+							$row[0] = $xfer[$_REQUEST["user"]]['day']['download'];
+							$row[1] = $xfer[$_REQUEST["user"]]['day']['upload'];
+						}
+					}
+					if ($upload + $download != 0) {
+						array_push($day_list, array(
+							'start' => $start,
+							'downloadstr' => formatFreeSpace($download / (1048576)),
+							'uploadstr' => formatFreeSpace($upload / (1048576)),
+							'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
+							)
+						);
+					}
+					$download = $row[0];
+					$upload = $row[1];
+					$start = $newstart;
+				}
+				if ($upload + $download != 0) {
+					array_push($day_list, array(
+						'start' => $start,
+						'downloadstr' => formatFreeSpace($download / (1048576)),
+						'uploadstr' => formatFreeSpace($upload / (1048576)),
+						'totalstr' => formatFreeSpace(($download+$upload) / (1048576))
+						)
+					);
+				}
+				$tmpl->setloop('day_list', $day_list);
+			}
+			//
+			$tmpl->setvar('_TOTAL', $cfg["_TOTAL"]);
+			$tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
+			$tmpl->setvar('_USERDETAILS', $cfg['_USERDETAILS']);
+			$tmpl->setvar('_USER', $cfg["_USER"]);
+			$tmpl->setvar('_TOTALXFER', $cfg["_TOTALXFER"]);
+			$tmpl->setvar('_MONTHXFER', $cfg["_MONTHXFER"]);
+			$tmpl->setvar('_WEEKXFER', $cfg["_WEEKXFER"]);
+			$tmpl->setvar('_DAYXFER', $cfg["_DAYXFER"]);
+			$tmpl->setvar('_DOWNLOAD', $cfg['_DOWNLOAD']);
+			$tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
+		}
+		//
+		$tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 		break;
 
 	// default
 	default:
-		$tmpl->setvar('content', "Invalid Type");
+		@error("Invalid Type", "index.php?iid=serverStats", "", array($type));
 		break;
 }
 

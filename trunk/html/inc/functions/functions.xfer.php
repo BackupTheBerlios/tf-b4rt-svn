@@ -192,7 +192,7 @@ function saveXfer($user, $down, $up) {
  * @param $title
  * @return string
  */
-function getXferBar($total, $used, $title) {
+function tmplGetXferBar($total, $used, $title) {
 	global $cfg;
 	// create template-instance
 	$tmpl = tmplGetInstance($cfg["theme"], "component.xferBar.tmpl");

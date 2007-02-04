@@ -1,5 +1,3 @@
-<tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
 <table width="740" border=0 cellpadding=0 cellspacing=0>
 	<tr>
 		<td>
@@ -15,14 +13,14 @@
 <div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid <tmpl_var name="main_bgcolor">; position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
 <pre>
 <strong><tmpl_var name="_DRIVESPACE"></strong>
-<tmpl_var name="result1">
+<tmpl_var name="all_df">
 <br><hr><br>
-<tmpl_var name="result2">
+<tmpl_var name="all_du">
 <br><hr><br>
 <strong><tmpl_var name="_SERVERSTATS"></strong>
-<tmpl_var name="result3">
+<tmpl_var name="all_w">
 <br><hr><br>
-<tmpl_var name="result4">
+<tmpl_var name="all_free">
 <br><hr><br>
 <strong><tmpl_var name="_ID_CONNECTIONS"> : </strong>
 <tmpl_var name="netstatConnectionsSum">
@@ -34,4 +32,3 @@
 <tmpl_var name="netstatHostList">
 </pre>
 </div>
-<tmpl_include name="inc.subfoot.tmpl">
