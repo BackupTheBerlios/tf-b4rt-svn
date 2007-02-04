@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1375 2007-01-16 15:49:13Z livings124 $
+ * $Id: clients.c 1449 2007-01-31 02:11:18Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -71,7 +71,7 @@ char * tr_clientForId( uint8_t * id )
                       charToInt( id[3] ) * 10 + charToInt( id[4] ),
                       id[5], id[6] );
         }
-        else if( !memcmp( &id[1], "SZ", 2 ) )
+        else if( !memcmp( &id[1], "SZ", 2 ) || !memcmp( &id[1], "S~", 2 ) )
         {
             asprintf( &ret, "Shareaza %c.%c.%c.%c",
                       id[3], id[4], id[5], id[6] );
@@ -131,6 +131,18 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "BitPump %d.%c%c",
                       charToInt( id[3] ) * 10 + charToInt( id[4] ),
                       id[5], id[6] );
+        }
+        else if( !memcmp( &id[1], "DE", 2 ) )
+        {
+            asprintf( &ret, "Deluge %d.%d.%d",
+                      charToInt( id[3] ), charToInt( id[4] ),
+                      charToInt( id[5] ) );
+        }
+        else if( !memcmp( &id[1], "AG", 2 ) )
+        {
+            asprintf( &ret, "Ares Galaxy %d.%d.%d",
+                      charToInt( id[3] ), charToInt( id[4] ),
+                      charToInt( id[5] ) );
         }
         else if( !memcmp( &id[1], "AR", 2 ) )
         {

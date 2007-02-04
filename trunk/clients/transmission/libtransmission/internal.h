@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1439 2007-01-27 21:17:10Z joshe $
+ * $Id: internal.h 1452 2007-02-02 17:33:32Z livings124 $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -151,7 +151,8 @@ struct tr_torrent_s
     tr_handle_t * handle;
     tr_info_t info;
 
-    int                customSpeedLimit;
+    int                customUploadLimit;
+    int                customDownloadLimit;
     tr_ratecontrol_t * upload;
     tr_ratecontrol_t * download;
     tr_ratecontrol_t * swarmspeed;

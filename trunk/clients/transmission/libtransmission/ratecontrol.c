@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: ratecontrol.c 1445 2007-01-29 08:24:09Z titer $
+ * $Id: ratecontrol.c 1452 2007-02-02 17:33:32Z livings124 $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -97,7 +97,7 @@ int tr_rcCanGlobalTransfer( tr_handle_t * h, int isUpload )
     tr_sharedLock( h->shared );
     for( tor = h->torrentList; tor; tor = tor->next )
     {
-        if( tor->customSpeedLimit )
+        if( isUpload ? tor->customUploadLimit : tor->customDownloadLimit )
         {
             continue;
         }

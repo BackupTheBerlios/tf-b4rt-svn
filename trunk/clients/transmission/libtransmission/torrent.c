@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 1445 2007-01-29 08:24:09Z titer $
+ * $Id: torrent.c 1452 2007-02-02 17:33:32Z livings124 $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -33,9 +33,14 @@ static tr_torrent_t * torrentRealInit( tr_handle_t *, tr_torrent_t * tor,
 static void torrentReallyStop( tr_torrent_t * );
 static void downloadLoop( void * );
 
-void tr_setUseCustomLimit( tr_torrent_t * tor, int limit )
+void tr_setUseCustomUpload( tr_torrent_t * tor, int limit )
 {
-    tor->customSpeedLimit = limit;
+    tor->customUploadLimit = limit;
+}
+
+void tr_setUseCustomDownload( tr_torrent_t * tor, int limit )
+{
+    tor->customDownloadLimit = limit;
 }
 
 void tr_setUploadLimit( tr_torrent_t * tor, int limit )
@@ -469,11 +474,13 @@ void tr_torrentPeersFree( tr_peer_stat_t * peers, int peerCount )
 void tr_torrentAvailability( tr_torrent_t * tor, int8_t * tab, int size )
 {
     int i, j, piece;
+    float interval;
 
     tr_lockLock( &tor->lock );
+    interval = (float)tor->info.pieceCount / (float)size;
     for( i = 0; i < size; i++ )
     {
-        piece = i * tor->info.pieceCount / size;
+        piece = i * interval;
 
         if( tr_cpPieceIsComplete( tor->completion, piece ) )
         {
@@ -497,11 +504,13 @@ void tr_torrentAvailability( tr_torrent_t * tor, int8_t * tab, int size )
 void tr_torrentAmountFinished( tr_torrent_t * tor, float * tab, int size )
 {
     int i, piece;
+    float interval;
 
     tr_lockLock( &tor->lock );
+    interval = (float)tor->info.pieceCount / (float)size;
     for( i = 0; i < size; i++ )
     {
-        piece = i * tor->info.pieceCount / size;
+        piece = i * interval;
         tab[i] = tr_cpPercentBlocksInPiece( tor->completion, piece );
     }
     tr_lockUnlock( &tor->lock );

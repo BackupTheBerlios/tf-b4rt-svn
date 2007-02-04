@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peermessages.h 1442 2007-01-28 02:23:09Z joshe $
+ * $Id: peermessages.h 1447 2007-01-30 20:06:42Z titer $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -94,6 +94,12 @@ static uint8_t * blockPending( tr_torrent_t * tor, tr_peer_t * peer,
         TR_HTONL( r->begin, p + 9 );
 
         tr_ioRead( tor->io, r->index, r->begin, r->length, &p[13] );
+
+        if( peer->outRequestCount < 1 )
+        {
+            /* We were choked during the read */
+            return NULL;
+        }
 
         peer_dbg( "SEND piece %d/%d (%d bytes)",
                   r->index, r->begin, r->length );
