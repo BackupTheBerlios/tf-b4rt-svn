@@ -351,6 +351,7 @@ $tmpl->setvar('type', $type);
 // more vars
 tmplSetTitleBar($cfg["pagetitle"].' - Server Stats');
 tmplSetFoot();
+$tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 $tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 

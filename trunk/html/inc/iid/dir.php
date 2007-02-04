@@ -371,6 +371,7 @@ $tmpl->setvar('_DIR_REN_LINK', $cfg['_DIR_REN_LINK']);
 $tmpl->setvar('_DIR_MOVE_LINK', $cfg['_DIR_MOVE_LINK']);
 $tmpl->setvar('_ABOUTTODELETE', $cfg['_ABOUTTODELETE']);
 $tmpl->setvar('_BACKTOPARRENT', $cfg['_BACKTOPARRENT']);
+$tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_DIRECTORYLIST']);
 tmplSetDriveSpaceBar();

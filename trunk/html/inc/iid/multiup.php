@@ -51,6 +51,7 @@ $tmpl->setvar('file_types_label', $cfg['file_types_label']);
 //
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
+$tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MULTIPLE_UPLOAD']);
 tmplSetFoot();
