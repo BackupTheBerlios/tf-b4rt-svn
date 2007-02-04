@@ -82,6 +82,7 @@ tmplSetFoot(false);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

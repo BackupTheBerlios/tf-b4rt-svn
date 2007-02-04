@@ -123,6 +123,7 @@ $tmpl->setvar('_SEARCH', $cfg['_SEARCH']);
 tmplSetTitleBar("Torrent ".$cfg['_SEARCH']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

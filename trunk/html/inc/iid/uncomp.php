@@ -83,6 +83,7 @@ if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
 tmplSetTitleBar('Uncompressing File', false);
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

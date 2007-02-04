@@ -51,6 +51,7 @@ tmplSetTitleBar($cfg["pagetitle"].' - All Services');
 tmplSetDriveSpaceBar();
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 $tmpl->pparse();
 
 ?>

@@ -195,6 +195,7 @@ $tmpl->setvar('target', $target);
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_IMAGES']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

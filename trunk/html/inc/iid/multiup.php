@@ -55,6 +55,7 @@ $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MULTIPLE_UPLOAD']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

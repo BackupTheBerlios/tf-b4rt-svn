@@ -199,6 +199,7 @@ $tmpl->setvar('_DELQUEUE', $cfg['_DELQUEUE']);
 
 // iid
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

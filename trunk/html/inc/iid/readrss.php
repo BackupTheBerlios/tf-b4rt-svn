@@ -128,6 +128,7 @@ $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 tmplSetTitleBar($cfg["pagetitle"].' - RSS Torrents');
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

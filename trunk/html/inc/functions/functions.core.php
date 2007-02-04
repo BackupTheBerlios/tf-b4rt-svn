@@ -2180,4 +2180,36 @@ function printError($mod, $msg) {
 	@fwrite(STDERR, @date("[Y/m/d - H:i:s]")."[".$mod."] ".$msg);
 }
 
+/**
+ * main menu
+ *
+ * @param $iid
+ * @return string
+ */
+function mainMenu($iid) {
+	$key = array(
+		"index" => "home",
+		"readrss" => "home",
+		"multiup" => "home",
+		"drivespace" => "home",
+		"xfer" => "home",
+		"images" => "home",
+		"who" => "home",
+		"allServices" => "home",
+		"dir" => "dir",
+		"history" => "history",
+		"profile" => "profile",
+		"readmsg" => "msg",
+		"message" => "msg",
+		"admin" => "admin",
+	);
+	$return = $key[$iid];;
+	if (empty($return)) {
+		return "home";
+	}
+	else {
+		return $return;
+	}
+}
+
 ?>

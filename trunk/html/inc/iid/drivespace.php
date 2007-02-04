@@ -40,6 +40,7 @@ tmplSetTitleBar($cfg['_DRIVESPACE']);
 tmplSetDriveSpaceBar();
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

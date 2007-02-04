@@ -126,6 +126,7 @@ tmplSetTitleBar($cfg["pagetitle"]." - ".$cfg['_MOVE_FILE_TITLE'], false);
 $tmpl->setvar('getTorrentFluxLink', getTorrentFluxLink());
 //
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

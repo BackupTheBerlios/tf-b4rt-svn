@@ -56,6 +56,7 @@ tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_SERVERSTATS']);
 tmplSetDriveSpaceBar();
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();

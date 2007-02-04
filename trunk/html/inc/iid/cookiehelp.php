@@ -36,6 +36,7 @@ tmplInitializeInstance($cfg["theme"], "page.cookiehelp.tmpl");
 tmplSetTitleBar("Cookie Help", false);
 tmplSetFoot(false);
 $tmpl->setvar('iid', $_REQUEST["iid"]);
+$tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
 
 // parse template
 $tmpl->pparse();
