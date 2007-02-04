@@ -802,7 +802,7 @@ function sa_log($action = "") {
 			$htmlTitle = "log - fluxd";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd.log');
+			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd.log');
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -811,7 +811,7 @@ function sa_log($action = "") {
 			$htmlTitle = "log - fluxd - error-log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
+			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -822,7 +822,7 @@ function sa_log($action = "") {
 			$htmlMain .= '<pre>';
 			$mainlineLog = $cfg["path"].'.bittorrent/tfmainline.log';
 			if (is_file($mainlineLog))
-				$htmlMain .= file_get_contents($mainlineLog);
+				$htmlMain .= @file_get_contents($mainlineLog);
 			else
 				$htmlMain .= "mainline-log not found.";
 			$htmlMain .= '</pre>';
@@ -1383,7 +1383,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd.log');
+			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd.log');
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
@@ -1392,7 +1392,7 @@ function sa_fluxd($action = "") {
 			$htmlTitle = "fluxd - error-log";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
-			$htmlMain .= file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
+			$htmlMain .= @file_get_contents($cfg["path"].'.fluxd/fluxd-error.log');
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;
