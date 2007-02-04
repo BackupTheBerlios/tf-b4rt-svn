@@ -712,14 +712,10 @@ $tmpl->setvar('_DOWNLOADSPEED', $cfg['_DOWNLOADSPEED']);
 $tmpl->setvar('_UPLOADSPEED', $cfg['_UPLOADSPEED']);
 $tmpl->setvar('_TOTALSPEED', $cfg['_TOTALSPEED']);
 $tmpl->setvar('_ID_CONNECTIONS', $cfg['_ID_CONNECTIONS']);
-$tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
 $tmpl->setvar('_SERVERLOAD', $cfg['_SERVERLOAD']);
 $tmpl->setvar('_ONLINE', $cfg['_ONLINE']);
 $tmpl->setvar('_OFFLINE', $cfg['_OFFLINE']);
-$tmpl->setvar('_XFER_USAGE', $cfg['_XFER_USAGE']);
 $tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
-$tmpl->setvar('_SERVERSTATS', $cfg['_SERVERSTATS']);
-$tmpl->setvar('_ALL', $cfg['_ALL']);
 $tmpl->setvar('_DIRECTORYLIST', $cfg['_DIRECTORYLIST']);
 $tmpl->setvar('_DRIVESPACEUSED', $cfg['_DRIVESPACEUSED']);
 $tmpl->setvar('_SERVERXFERSTATS', $cfg['_SERVERXFERSTATS']);
@@ -728,6 +724,8 @@ $tmpl->setvar('_TOTALXFER', $cfg['_TOTALXFER']);
 $tmpl->setvar('_MONTHXFER', $cfg['_MONTHXFER']);
 $tmpl->setvar('_WEEKXFER', $cfg['_WEEKXFER']);
 $tmpl->setvar('_DAYXFER', $cfg['_DAYXFER']);
+$tmpl->setvar('_DRIVESPACE', $cfg['_DRIVESPACE']);
+
 //
 tmplSetTitleBar($cfg["pagetitle"]);
 tmplSetDriveSpaceBar();
