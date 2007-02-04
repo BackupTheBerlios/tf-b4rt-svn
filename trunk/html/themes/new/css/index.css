@@ -3,10 +3,9 @@
 	margin: 0px;
 	margin-left: 20px;
 	padding-top: 15px;
-	height: 26px;
 	background-image: url("../pics/upload.jpg");
 	background-repeat: repeat-x;
-	background-position: bottom;
+	background-position: 0px 15px;
 	float: left;
 }
 div.upload_first {
@@ -39,5 +38,14 @@ div.upload_last {
 	background-image: url("../pics/upload_right.jpg");
 	background-repeat: no-repeat;
 	background-position: top right;
-	float: left;
+}
+#file {
+	padding: 0px;
+	margin: 0px;
+	display: none;
+	height: 0px;
+}
+#file_open {
+	padding: 0px;
+	margin: 0px;
 }
