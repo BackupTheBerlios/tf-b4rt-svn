@@ -30,155 +30,58 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 /******************************************************************************/
 
 // default-type
-define('_DEFAULT_TYPE', 'server');
-
-// default-targets
-define('_DEFAULT_TARGET_SERVER', 'all');
-define('_DEFAULT_TARGET_MRTG', 'traffic');
-
-// input-dir mrtg
-define('_MRTG_DIR_INPUT', $cfg["path"].'.mrtg');
-
-// image-defines
-define('_IMAGE_URL', "image.php");
-define('_IMAGE_PREFIX_MRTG', "?i=mrtg&f=");
+define('_DEFAULT_TYPE', 'all');
 
 // init template-instance
-tmplInitializeInstance($cfg["theme"], "page.images.tmpl");
+tmplInitializeInstance($cfg["theme"], "page.serverStats.tmpl");
 
 // request-vars
 $type = (isset($_REQUEST['type'])) ? getRequestVar('type') : _DEFAULT_TYPE;
-$target = getRequestVar('target');
 
 // types
 $type_list = array();
 array_push($type_list, array(
-	'name' => "server",
-	'selected' => ($type == "server") ? 1 : 0
+	'name' => "all",
+	'selected' => ($type == "all") ? 1 : 0
 	)
 );
 array_push($type_list, array(
-	'name' => "mrtg",
-	'selected' => ($type == "mrtg") ? 1 : 0
+	'name' => "drivespace",
+	'selected' => ($type == "drivespace") ? 1 : 0
 	)
 );
+array_push($type_list, array(
+	'name' => "who",
+	'selected' => ($type == "who") ? 1 : 0
+	)
+);
+if ($cfg['enable_xfer'] == 1)
+	array_push($type_list, array(
+		'name' => "xfer",
+		'selected' => ($type == "xfer") ? 1 : 0
+		)
+	);
 $tmpl->setloop('type_list', $type_list);
 
 // type-switch
 switch ($type) {
 
-	// server
-	case "server":
-
-		// target
-		if ($target == "")
-			$target = _DEFAULT_TARGET_SERVER;
-
-		// targets
-		$target_list = array();
-		array_push($target_list, array(
-			'name' => "all",
-			'selected' => ($target == "all") ? 1 : 0
-			)
-		);
-		array_push($target_list, array(
-			'name' => "bandwidth",
-			'selected' => ($target == "bandwidth") ? 1 : 0
-			)
-		);
-		array_push($target_list, array(
-			'name' => "drivespace",
-			'selected' => ($target == "drivespace") ? 1 : 0
-			)
-		);
-		$tmpl->setloop('target_list', $target_list);
-
-		// target-content
-
-		// create template-instance
-		$_tmpl = tmplGetInstance($cfg["theme"], "component.images.server.tmpl");
-
-		// set vars
-		$image_list = array();
-		if (($target == "bandwidth") || ($target == "all"))
-			array_push($image_list, array(
-				'title' => "Bandwidth",
-				'src' => "image.php?i=pieServerBandwidth"
-				)
-			);
-		if (($target == "drivespace") || ($target == "all"))
-			array_push($image_list, array(
-				'title' => "Drivespace",
-				'src' => "image.php?i=pieServerDrivespace"
-				)
-			);
-		if (!empty($image_list))
-			$_tmpl->setloop('image_list', $image_list);
-		$_tmpl->setvar('type', $type);
-		$_tmpl->setvar('target', $target);
-
-		// grab + set the content of template
-		$tmpl->setvar('content', $_tmpl->grab());
-
+	// all
+	case "all":
 		break;
 
-	// mrtg
-	case "mrtg":
+	// drivespace
+	case "drivespace":
+		break;
 
-		// target
-		if ($target == "")
-			$target = _DEFAULT_TARGET_MRTG;
+	// who
+	case "who":
+		break;
 
-		// targets
-		$target_list = array();
-		if ((@is_dir(_MRTG_DIR_INPUT)) && ($dirHandle = @opendir(_MRTG_DIR_INPUT))) {
-			while (false !== ($file = @readdir($dirHandle))) {
-				if ((strlen($file) > 4) && (substr($file, -4) == ".inc")) {
-		      		$targetName = (substr($file, 0, -4));
-					array_push($target_list, array(
-						'name' => $targetName,
-						'selected' => ($target == $targetName) ? 1 : 0
-						)
-					);
-				}
-			}
-			@closedir($dirHandle);
-		}
-
-		// stop here if no targets found
-		if (empty($target_list)) {
-			$tmpl->setvar('content', "<br><p><strong>No Targets found.</strong></p>");
-			break;
-		}
-
-		// set target-list
-		$tmpl->setloop('target_list', $target_list);
-
-		// target-content
-		$targetFile = _MRTG_DIR_INPUT."/".$target.".inc";
-		// check target
-		if (!((isValidPath($targetFile) === true)
-			&& (preg_match('/^[0-9a-zA-Z_]+$/', $target))
-			&& (@is_file($targetFile))
-			)) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL MRTG-TARGET: ".$cfg["user"]." tried to access ".$target);
-			@error("Invalid Target", "", "", array($target));
-		}
-		$content = @file_get_contents($targetFile);
-		// we are only interested in the "real" content
-		$tempAry = explode("_CONTENT_BEGIN_", $content);
-		if (is_array($tempAry)) {
-			$tempVar = array_pop($tempAry);
-			$tempAry = explode("_CONTENT_END_", $tempVar);
-			if (is_array($tempAry)) {
-				$content = array_shift($tempAry);
-				// rewrite image-links
-				$content = preg_replace('/(.*")(.*)(png".*)/i', '${1}'._IMAGE_URL._IMAGE_PREFIX_MRTG.'${2}${3}', $content);
-				// set var
-				$tmpl->setvar('content', $content);
-			}
-		}
-
+	// xfer
+	case "xfer":
+		if ($cfg['enable_xfer'] != 1)
+			exit();
 		break;
 
 	// default
@@ -189,10 +92,9 @@ switch ($type) {
 
 // set vars
 $tmpl->setvar('type', $type);
-$tmpl->setvar('target', $target);
 
 // more vars
-tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_ID_IMAGES']);
+tmplSetTitleBar($cfg["pagetitle"].' - Server Stats');
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 $tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
