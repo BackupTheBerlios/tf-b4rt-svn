@@ -112,7 +112,7 @@ class ClientHandlerTornado extends ClientHandler
             $skipHashCheck = " --check_hashes 0";
         $filePrio = "";
         if (@file_exists($this->transferFilePath.".prio")) {
-            $priolist = explode(',', file_get_contents($this->transferFilePath.".prio"));
+            $priolist = explode(',', @file_get_contents($this->transferFilePath.".prio"));
             $priolist = implode(',', array_slice($priolist, 1, $priolist[0]));
             $filePrio = " --priority ".escapeshellarg($priolist);
         }
