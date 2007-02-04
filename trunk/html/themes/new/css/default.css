@@ -45,6 +45,69 @@
 #logoutButton:hover{
 	background-image:url("../pics/logout_hover.jpg");
 }
+#mainMenu {
+	padding: 0px;
+	margin: 0px;
+	padding-top: 10px;
+}
+li.mainMenu {
+	padding: 0px;
+	margin: 0px;
+	margin-top: 5px;
+	width: 160px;
+	height: 16px;
+	list-style-type: none;
+	background-image:url("../pics/menu.jpg");
+	background-repeat: no-repeat;
+}
+a.mainMenu {
+	padding: 0px;
+	margin: 0px;
+	margin-left: 10px;
+	font-weight: bold;
+	color: #585858;
+	text-decoration: none;
+}
+a.mainMenu:hover {
+	color: #FFFFFF;
+}
+a.mainMenuActive {
+	color: #FFFFFF;
+}
+ul.menu {
+	padding: 0px;
+	margin: 0px;
+	position: relative;
+		left: 8px;
+}
+li.menu {
+	padding: 0px;
+	margin: 0px;
+	list-style-type: none;
+	background-image:url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
+li.menu_last {
+	padding: 0px;
+	margin: 0px;
+	height: 19px;
+	list-style-type: none;
+	background-image:url("../pics/menu_box_bottom.jpg");
+	background-repeat: no-repeat;
+	background-position: bottom left;
+}
+a.menu {
+	padding: 0px;
+	margin: 0px;
+	margin-left: 10px;
+	color: #585858;
+	text-decoration: none;
+}
+a.menu:hover {
+	color: #c1b18d;
+}
+
+
 
 
 
@@ -59,10 +122,6 @@ INPUT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COL
 TEXTAREA	{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
 SELECT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
 FORM 		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-A:link          {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
-A:active        {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
-A:visited       {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
-A:hover         {BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
 .titleblack 		{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 14px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
 .content 	{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}
 .block-title	{BACKGROUND: none; COLOR: #FFFFFF; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}

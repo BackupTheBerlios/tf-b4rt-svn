@@ -3,67 +3,61 @@
 		<tmpl_var name="titleBar_title">
 	</span>
 	<tmpl_if name="titleBar_showButtons">
-			<span id="logout">
+		<span id="logout">
 			<a id="logoutButton" href="index.php?iid=logout"></a>
 		</span>
 	</tmpl_if>
 </div>
+
 <tmpl_if name="titleBar_showButtons">
 	<div id="mainMenu">
-		<ul>
-			<li id="mainMenu_home"><a href="index.php?iid=index">Home</a></li>
-			<tmpl_if name="mainMenu" value="home">
+		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="home">mainMenuActive</tmpl_if>" href="index.php?iid=index">Home</a></li>
+		<tmpl_if name="mainMenu" value="home">
+			<ul class="menu">
+				<tmpl_if name="enable_multiupload">
+					<li class="menu"><a class="menu" href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a></li>
+				</tmpl_if>
+				<li class="menu"><a class="menu" href="index.php?iid=readrss">RSS Torrents</a></li>
+				<li class="menu"><a class="menu" href="index.php?iid=drivespace"><tmpl_var name="_DRIVESPACE"></a></li>
+				<tmpl_if name="enable_xfer">
+					<li class="menu"><a class="menu" href="index.php?iid=xfer"><tmpl_var name="_XFER_USAGE"></a></li>
+				</tmpl_if>
+				<li class="menu"><a class="menu" href="index.php?iid=images"><tmpl_var name="_ID_IMAGES"></a></li>
+				<li class="menu"><a class="menu" href="index.php?iid=who"><tmpl_var name="_SERVERSTATS"></a></li>
+				<li class="menu"><a class="menu" href="index.php?iid=allServices"><tmpl_var name="_ALL"></a></li>
+				<li class="menu"><a class="menu" href="index.php?iid=dir"><tmpl_var name="_DIRECTORYLIST"></a></li>
+				<li class="menu_last"><a class="menu" href="index.php?iid=dir&dir=<tmpl_var name="path_incoming">">Incoming</a></li>
+			</ul>
+		</tmpl_if>
+		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="dir">mainMenuActive</tmpl_if>" href="index.php?iid=dir">Directory</a></li>
+		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="history">mainMenuActive</tmpl_if>" href="index.php?iid=history">History</a></li>
+		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="profile">mainMenuActive</tmpl_if>" href="index.php?iid=profile">Profile</a></li>
+		<tmpl_if name="mainMenu" value="profile">
+			<ul>
+				<li class="menu_last"><a class="menu" href="index.php?iid=profile&op=showCookies">Cookie Management</a></li>
+			</ul>
+		</tmpl_if>
+		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="msg">mainMenuActive</tmpl_if>" href="index.php?iid=readmsg">Messages</a></li>
+		<tmpl_if name="isAdmin">
+			<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="admin">mainMenuActive</tmpl_if>" href="admin.php">Admin</a></li>
+			<tmpl_if name="mainMenu" value="admin">
 				<ul>
-					<tmpl_if name="enable_multiupload">
-						<li><a href="index.php?iid=multiup"><tmpl_var name="_MULTIPLE_UPLOAD"></a></li>
-					</tmpl_if>
-					<li><a href="index.php?iid=readrss">RSS Torrents</a></li>
-					<li><a href="index.php?iid=drivespace"><tmpl_var name="_DRIVESPACE"></a></li>
-					<tmpl_if name="enable_xfer">
-						<li><a href="index.php?iid=xfer"><tmpl_var name="_XFER_USAGE"></a></li>
-					</tmpl_if>
-					<li><a href="index.php?iid=images"><tmpl_var name="_ID_IMAGES"></a></li>
-					<li><a href="index.php?iid=who"><tmpl_var name="_SERVERSTATS"></a></li>
-					<li><a href="index.php?iid=allServices"><tmpl_var name="_ALL"></a></li>
-					<li><a href="index.php?iid=dir"><tmpl_var name="_DIRECTORYLIST"></a></li>
-					<li><a href="index.php?iid=dir&dir=<tmpl_var name="path_incoming">">Incoming</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=serverSettings">Server</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=transferSettings">Transfer</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=controlSettings">Control</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=webappSettings">Webapp</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=indexSettings">Index</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=dirSettings">Dir</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=statsSettings">Stats</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=fluxdSettings">Fluxd</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=xferSettings">Xfer</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=searchSettings">Search</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=editLinks">Links</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=editRSS">RSS</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=showUsers">Users</a></li>
+					<li class="menu_last"><a class="menu" href="admin.php?op=showUserActivity">Activity</a></li>
 				</ul>
 			</tmpl_if>
-			<li><a href="index.php?iid=dir">Directory</a></li>
-			<li><a href="index.php?iid=history">History</a></li>
-			<li><a href="index.php?iid=profile">Profile</a></li>
-			<tmpl_if name="mainMenu" value="profile">
-				<ul>
-					<li><a href="index.php?iid=profile&op=showCookies">Cookie Management</a></li>
-				</ul>
-			</tmpl_if>
-			<li><a href="index.php?iid=readmsg">Messages</a></li>
-			<tmpl_if name="mainMenu" value="msg">
-				<ul>
-					<li><a href="index.php?iid=message">Compose</a></li>
-				</ul>
-			</tmpl_if>
-			<tmpl_if name="isAdmin">
-				<li><a href="admin.php">Admin</a></li>
-				<tmpl_if name="mainMenu" value="admin">
-				<ul>
-					<li><a href="admin.php?op=serverSettings">Server</a></li>
-					<li><a href="admin.php?op=transferSettings">Transfer</a></li>
-					<li><a href="admin.php?op=controlSettings">Control</a></li>
-					<li><a href="admin.php?op=webappSettings">Webapp</a></li>
-					<li><a href="admin.php?op=indexSettings">Index</a></li>
-					<li><a href="admin.php?op=dirSettings">Dir</a></li>
-					<li><a href="admin.php?op=statsSettings">Stats</a></li>
-					<li><a href="admin.php?op=fluxdSettings">Fluxd</a></li>
-					<li><a href="admin.php?op=xferSettings">Xfer</a></li>
-					<li><a href="admin.php?op=searchSettings">Search</a></li>
-					<li><a href="admin.php?op=editLinks">Links</a></li>
-					<li><a href="admin.php?op=editRSS">RSS</a></li>
-					<li><a href="admin.php?op=showUsers">Users</a></li>
-					<li><a href="admin.php?op=showUserActivity">Activity</a></li>
-				</ul>
-			</tmpl_if>
-			</tmpl_if>
-		</ul>
+		</tmpl_if>
 	</div>
 </tmpl_if>
