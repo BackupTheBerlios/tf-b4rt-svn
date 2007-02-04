@@ -41,7 +41,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "TorrentBox";
 
         $this->author = "kboy";
-        $this->version = "1.04";
+        $this->version = "1.04-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,876.0.html";
 
         $this->Initialize($cfg);
@@ -291,7 +291,7 @@ class SearchEngine extends SearchEngineBase
             {
                 $pages = str_replace("/torrents-browse.php?",$this->searchURL()."&",$pages);
             }
-            $output = "<div align=center>".$pages."</div>";
+            $output .= "<div align=center>".$pages."</div>";
         }
 
         return $output;

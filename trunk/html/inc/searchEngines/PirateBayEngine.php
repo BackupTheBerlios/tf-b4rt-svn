@@ -41,7 +41,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "PirateBay";
 
         $this->author = "kboy";
-        $this->version = "1.04";
+        $this->version = "1.04-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1125.0.html";
 
         $this->Initialize($cfg);
@@ -265,11 +265,11 @@ class SearchEngine extends SearchEngineBase
 
         // We got a response so display it.
         // Chop the front end off.
-        $thing = str_replace("Recent Torrents","Search results",$thing);
+        $thing = str_replace("Recent Torrents","searchResult",$thing);
 
-        while (is_integer(strpos($thing,"Search results")))
+        while (is_integer(strpos($thing,"searchResult")))
         {
-            $thing = substr($thing,strpos($thing,"Search results"));
+            $thing = substr($thing,strpos($thing,"searchResult"));
             $thing = substr($thing,strpos($thing,"</thead>"));
             $thing = substr($thing,strpos($thing,"<tr>"));
 
@@ -361,6 +361,7 @@ class SearchEngine extends SearchEngineBase
 
             $pages = str_replace("page=","pg=",$pages);
             $pages = str_replace("d=","cat=",$pages);
+            $pages = str_replace("iicat=","iid=",$pages);
             $pages = str_replace("c=","subGenre=",$pages);
             $pages = str_replace("q=","searchterm=", $pages);
             $pages = str_replace("orderby=","",$pages);

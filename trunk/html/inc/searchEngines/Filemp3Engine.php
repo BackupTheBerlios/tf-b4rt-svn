@@ -40,7 +40,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "Filemp3";
 
         $this->author = "kboy";
-        $this->version = "1.02";
+        $this->version = "1.02-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1967.0.html";
 
         $this->Initialize($cfg);

@@ -43,7 +43,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "Demonoid";
 
         $this->author = "moldavite";
-        $this->version = "1.06";
+        $this->version = "1.06-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1210.0.html";
 
         $this->Initialize($cfg);

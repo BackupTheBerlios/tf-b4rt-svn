@@ -35,7 +35,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "BitMeTv";
 
         $this->author = "AnglaChel";
-        $this->version = "1.0";
+        $this->version = "1.0-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1582.0.html";
 
         $this->Initialize($cfg);

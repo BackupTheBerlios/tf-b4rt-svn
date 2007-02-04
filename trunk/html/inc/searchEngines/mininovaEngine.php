@@ -29,13 +29,13 @@ class SearchEngine extends SearchEngineBase
 
     function SearchEngine($cfg)
     {
-        $this->mainURL = "mininova.org";
-        $this->altURL = "mininova.org";
+        $this->mainURL = "www.mininova.org";
+        $this->altURL = "www.mininova.org";
         $this->mainTitle = "mininova";
         $this->engineName = "mininova";
 
         $this->author = "sloan";
-        $this->version = "1.01";
+        $this->version = "1.01-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,1501.0.html";
 
         $this->Initialize($cfg);

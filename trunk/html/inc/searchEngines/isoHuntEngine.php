@@ -42,7 +42,7 @@ class SearchEngine extends SearchEngineBase
         $this->engineName = "isoHunt";
 
         $this->author = "kboy";
-        $this->version = "1.05";
+        $this->version = "1.05-tfb";
         $this->updateURL = "http://www.torrentflux.com/forum/index.php/topic,878.0.html";
 
         $this->Initialize($cfg);
@@ -120,9 +120,9 @@ class SearchEngine extends SearchEngineBase
         // Chop the front end off.
         if ($latest)
         {
-            $start = strrpos($thing, "New torrents on isoHunt");
+            $start = strpos($thing, "New torrents on isoHunt");
         } else {
-            $start = strrpos($thing, "isoHunt Rank");
+            $start = strpos($thing, "isoHunt Rank");
         }
 
         $thing = substr($thing, $start, strlen($thing) - $start);
