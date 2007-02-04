@@ -2187,29 +2187,10 @@ function printError($mod, $msg) {
  * @return string
  */
 function mainMenu($iid) {
-	$key = array(
-		"index" => "home",
-		"readrss" => "home",
-		"multiup" => "home",
-		"drivespace" => "home",
-		"xfer" => "home",
-		"images" => "home",
-		"who" => "home",
-		"allServices" => "home",
-		"dir" => "dir",
-		"history" => "history",
-		"profile" => "profile",
-		"readmsg" => "msg",
-		"message" => "msg",
-		"admin" => "admin",
-	);
-	$return = $key[$iid];;
-	if (empty($return)) {
-		return "home";
-	}
-	else {
-		return $return;
-	}
+	global $cfg;
+	return (isset($cfg['mainMenu'][$iid]))
+		? $cfg['mainMenu'][$iid]
+		: "home";
 }
 
 ?>

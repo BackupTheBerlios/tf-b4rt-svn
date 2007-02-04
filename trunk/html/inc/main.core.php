@@ -101,6 +101,24 @@ if (isset($osString)) {
 	$cfg["_OS"] = 1;
 }
 
+// main menu
+$cfg['mainMenu'] = array(
+	"index" => "home",
+	"readrss" => "home",
+	"multiup" => "home",
+	"drivespace" => "home",
+	"xfer" => "home",
+	"images" => "home",
+	"who" => "home",
+	"allServices" => "home",
+	"dir" => "dir",
+	"history" => "history",
+	"profile" => "profile",
+	"readmsg" => "msg",
+	"message" => "msg",
+	"admin" => "admin"
+);
+
 // db
 if (is_file('inc/config/config.db.php')) {
 
