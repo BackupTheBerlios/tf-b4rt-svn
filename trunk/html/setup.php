@@ -127,7 +127,6 @@ if (isset($_REQUEST["1"])) {                                                    
 	send("<h1>"._TITLE."</h1>");
 	send("<h2>Database - Config - ".$type."</h2>");
 	send("<p>The installation will now configure and test your database settings.</p><br/>");
-
 	send('<form name="setup" action="' . _FILE_THIS . '" method="post">');
 	send('<table border="0">');
 
@@ -144,6 +143,7 @@ if (isset($_REQUEST["1"])) {                                                    
 				$line .= $_REQUEST["db_host"];
 			$line .= '"></td></tr>';
 			send($line);
+			break;
 
 		// MySQL and PostgreSQL have same data reqs, make it default case:
 		case "mysql":
@@ -235,6 +235,7 @@ if (isset($_REQUEST["1"])) {                                                    
 			$name = "";
 			$user = "";
 			$pass = "";
+			break;
 		case "mysql":
 		case "postgres":
 		default:
