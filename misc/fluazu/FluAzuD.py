@@ -68,7 +68,7 @@ class FluAzuD(object):
         self.flu_path = path
         self.azu_host = host
         self.azu_port = int(port)
-        if secure == 1:
+        if secure == '1':
             self.azu_secure = True
         else:
             self.azu_secure = False
@@ -106,15 +106,7 @@ class FluAzuD(object):
             if not self.checkConnection():
                 return 0
 
-            # inner loop
-            for i in range(5):
-
-                print "%s (%s)" % (self.flu_path, str(i))
-
-                # sleep
-                sleep(1)
-
-            # print downloads
+            # process downloads
             downloads = self.dm.getDownloads()
             for download in downloads:
                 print "* %s" % str(download)
@@ -128,6 +120,15 @@ class FluAzuD(object):
                 print "  getDownloaded: %s" % str(stats.getDownloaded())
                 print "  getUploadAverage: %s" % str(stats.getUploadAverage())
                 print "  getDownloadAverage: %s" % str(stats.getDownloadAverage())
+
+            # inner loop
+            for i in range(5):
+
+				# debug
+                print "%s (%s)" % (self.flu_path, str(i))
+
+                # sleep
+                sleep(1)
 
         # return
         return 1

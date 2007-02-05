@@ -54,7 +54,19 @@ if __name__ == '__main__':
 
     # check argv-length
     if len(argv) < 7:
-        print "Error : missing arguments, exiting. \n"
+        print "fluazu-version: %s\n" % version_fluazu
+        print "Error : missing arguments, exiting."
+        print
+        print "Usage :"
+        print "fluazu.py path host port secure username password"
+        print
+        print " path     : flux-path"
+        print " host     : hostname of azureus-server"
+        print " port     : port of azureus-server (xml/http)"
+        print " secure   : use secure connection to azureus (0/1)"
+        print " username : username to use when connecting to azureus-server"
+        print " password : password to use when connecting to azureus-server"
+        print
         exit(0)
 
     # run daemon
