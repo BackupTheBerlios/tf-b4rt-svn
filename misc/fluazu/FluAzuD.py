@@ -87,7 +87,7 @@ class FluAzuD(object):
         self.initialize()
 
         # check all dopal-objects
-        if self.connection is None or self.dm is None or self.dm is None:
+        if self.connection is None or self.interface is None or self.dm is None:
             print "there were problems, not starting up daemon-mainloop."
             return 0
 
