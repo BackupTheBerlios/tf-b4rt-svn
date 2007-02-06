@@ -784,7 +784,6 @@ if __name__ == '__main__':
         remove(transferPidFile)
     except Exception, e:
         transferLog("Failed to remove pid-file : " + transferPidFile + "\n", True)
-        app.logger.error("Failed to remove pid-file", exc_info = e)
 
     # log exit
     transferLog("mainline exit.\n", True)
