@@ -464,7 +464,6 @@ class TorrentApp(object):
             pidFile.close()
         except Exception, e:
             transferLog("Failed to write pid-file : " + transferPidFile + " (" + currentPid + ")" + "\n", True)
-            self.logger.error("Failed to write pid-file : " + transferPidFile + " (" + currentPid + ")", exc_info = e)
             raise BTFailure(_("Failed to write pid-file."))
 
         # It is safe to addCallback here, because there is only one thread,
