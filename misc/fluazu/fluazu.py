@@ -34,11 +34,8 @@
 import sys
 from sys import argv, exit
 # fluazu
-from FluAzuD import FluAzuD
+from fluazu.FluAzuD import FluAzuD
 ################################################################################
-
-# version
-version_fluazu = '0.1'
 
 """ ------------------------------------------------------------------------ """
 """ main                                                                     """
@@ -47,24 +44,23 @@ if __name__ == '__main__':
 
     # version
     if argv[1:] == ['--version']:
-        print version_fluazu
+        from fluazu import __version_str__
+        print __version_str__
         exit(0)
 
     # check argv-length
     if len(argv) < 7:
-        print "fluazu-version: %s\n" % version_fluazu
-        print "Error : missing arguments, exiting."
-        print
-        print "Usage :"
-        print "fluazu.py path host port secure username password"
-        print
+        from fluazu import __version_str__
+        print "Version: %s\n" % __version_str__
+        print "Error: missing arguments, exiting.\n"
+        print "Usage:"
+        print "fluazu.py path host port secure username password\n"
         print " path     : flux-path"
         print " host     : hostname of azureus-server"
         print " port     : port of azureus-server (xml/http)"
         print " secure   : use secure connection to azureus (0/1)"
         print " username : username to use when connecting to azureus-server"
-        print " password : password to use when connecting to azureus-server"
-        print
+        print " password : password to use when connecting to azureus-server\n"
         exit(0)
 
     # run daemon

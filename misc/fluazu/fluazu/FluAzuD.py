@@ -125,7 +125,7 @@ class FluAzuD(object):
             for i in range(5):
 
 				# debug
-                print "%s (%s)" % (self.flu_path, str(i))
+                #print "%s (%s)" % (self.flu_path, str(i))
 
                 # sleep
                 sleep(1)
