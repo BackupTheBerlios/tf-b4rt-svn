@@ -50,8 +50,8 @@ if __name__ == '__main__':
     # check argv-length
     if len(sys.argv) < 7:
         from fluazu import __version_str__
-        print "Version: %s\n" % __version_str__
-        print "Error: missing arguments, exiting.\n"
+        print "fluazu %s" % __version_str__
+        print "\nError: missing arguments.\n"
         print "Usage:"
         print "fluazu.py path host port secure username password\n"
         print " path     : flux-path"

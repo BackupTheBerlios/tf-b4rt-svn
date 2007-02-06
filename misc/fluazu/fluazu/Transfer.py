@@ -21,33 +21,72 @@
 #                                                                              #
 ################################################################################
 # fluazu
+from fluazu.output import printMessage, printError
 from fluazu.StatFile import StatFile
 ################################################################################
 
+""" ------------------------------------------------------------------------ """
+""" Transfer                                                                 """
+""" ------------------------------------------------------------------------ """
 class Transfer(object):
 
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
-    def __init__(self, name, file, owner):
+    def __init__(self, tf_pathTransfers, flu_pathTransfers, file):
         self.state = 1
-        self.name = name
-        self.file = file
-        self.owner = owner
+        self.tf_pathTransfers = tf_pathTransfers
+        self.flu_pathTransfers = flu_pathTransfers
+        self.name = file
+        self.fileTorrent = self.tf_pathTransfers + file
+        self.fileMeta = self.flu_pathTransfers + file
+
+        # owner
+        self.owner = ''
+
         # file-vars
-        self.fileStat = file + ".stat"
-        self.fileCommand = file + ".cmd"
-        self.fileLog = file + ".log"
-        self.filePid = file + ".pid"
-        # stat-file
-        self.statFile = StatFile(self.fileStat)
+        self.fileStat = self.fileTorrent + ".stat"
+        self.fileCommand = self.fileTorrent + ".cmd"
+        self.fileLog = self.fileTorrent + ".log"
+        self.filePid = self.fileTorrent + ".pid"
+
+        # initialize
+        self.initialize()
 
     """ -------------------------------------------------------------------- """
     """ initialize                                                           """
     """ -------------------------------------------------------------------- """
     def initialize(self):
+
+        # verbose
+        printMessage("initializing transfer %s ..." % self.name)
+
+        # meta-file
+        printMessage("loading metafile %s ..." % self.fileMeta)
+        try:
+            # read file to mem
+            f = open(self.fileMeta, 'r')
+            content = f.readlines()
+            f.close
+            # process content
+            if len(content) > 0:
+                # owner
+                self.owner = content[0].replace("\n", "")
+                printMessage("owner: %s" % self.owner)
+            else:
+                printMessage("No owner found.")
+                return False
+        except:
+            printError("Failed to read metafile %s " % self.fileMeta)
+            return False
+
+        # stat-file
+        printMessage("loading statfile %s ..." % self.fileStat)
+        self.statFile = StatFile(self.fileStat)
+
+        # verbose
+        printMessage("transfer loaded.")
+
+        # return
         return True
-
-
-
 

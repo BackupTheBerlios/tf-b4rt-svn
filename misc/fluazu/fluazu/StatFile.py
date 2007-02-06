@@ -20,7 +20,15 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
+# standard-imports
+import os
+# fluazu
+from fluazu.output import printMessage, printError
+################################################################################
 
+""" ------------------------------------------------------------------------ """
+""" StatFile                                                                 """
+""" ------------------------------------------------------------------------ """
 class StatFile(object):
 
     """ -------------------------------------------------------------------- """
@@ -56,29 +64,33 @@ class StatFile(object):
         self.file = file
 
         # read in stat-file + set fields
-        if isfile(self.file):
+        if os.path.isfile(self.file):
             try:
                 # read file to mem
                 f = open(self.file, 'r')
-                content = f.readlines()
+                data = f.read()
                 f.close
                 # set fields
+                content = data.split("\n")
                 if len(content) > 12:
-                    self.running = content[0].replace("\n", "")
-                    self.percent_done = content[1].replace("\n", "")
-                    self.time_left = content[2].replace("\n", "")
-                    self.down_speed = content[3].replace("\n", "")
-                    self.up_speed = content[4].replace("\n", "")
-                    self.transferowner = content[5].replace("\n", "")
-                    self.seeds = content[6].replace("\n", "")
-                    self.peers = content[7].replace("\n", "")
-                    self.sharing = content[8].replace("\n", "")
-                    self.seedlimit = content[9].replace("\n", "")
-                    self.uptotal = content[10].replace("\n", "")
-                    self.downtotal = content[11].replace("\n", "")
-                    self.size = content[12].replace("\n", "")
+                    self.running = content[0]
+                    self.percent_done = content[1]
+                    self.time_left = content[2]
+                    self.down_speed = content[3]
+                    self.up_speed = content[4]
+                    self.transferowner = content[5]
+                    self.seeds = content[6]
+                    self.peers = content[7]
+                    self.sharing = content[8]
+                    self.seedlimit = content[9]
+                    self.uptotal = content[10]
+                    self.downtotal = content[11]
+                    self.size = content[12]
                     return True
+                else:
+                    printError("Failed to parse statfile %s " % self.file)
             except:
+                printError("Failed to read statfile %s " % self.file)
                 pass
         return False
 
@@ -107,6 +119,7 @@ class StatFile(object):
             f.close()
             return True
         except:
+            printError("Failed to write statfile %s " % self.file)
             pass
         return False
 
