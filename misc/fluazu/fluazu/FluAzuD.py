@@ -21,14 +21,19 @@
 #                                                                              #
 ################################################################################
 # standard
+import sys
 import time
 from time import time, strftime, sleep
+# fluazu
+from fluazu.StatFile import StatFile
+from fluazu.Transfer import Transfer
 # dopal
 from dopal.main import make_connection
 from dopal.errors import LinkError
 ################################################################################
 
 class FluAzuD(object):
+
 
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
@@ -37,6 +42,7 @@ class FluAzuD(object):
         self.state = 1
         self.running = 1
         self.errors = []
+        self.transfers = []
         # flux-settings
         self.flu_path = ''
         # azu-settings
@@ -51,18 +57,19 @@ class FluAzuD(object):
         self.interface = None
         self.dm = None
 
+
     """ -------------------------------------------------------------------- """
     """ run                                                                  """
     """ -------------------------------------------------------------------- """
     def run(self, path, host, port, secure, username, password):
 
         # dump vars
-        print "path: %s" % path
-        print "host: %s" % host
-        print "port: %s" % port
-        print "secure: %s" % secure
-        print "user: %s" % username
-        print "pass: %s" % password
+        self.printMessage("path: %s" % path)
+        self.printMessage("host: %s" % host)
+        self.printMessage("port: %s" % port)
+        self.printMessage("secure: %s" % secure)
+        self.printMessage("user: %s" % username)
+        self.printMessage("pass: %s" % password)
 
         # set vars
         self.flu_path = path
@@ -88,11 +95,12 @@ class FluAzuD(object):
 
         # check all dopal-objects
         if self.connection is None or self.interface is None or self.dm is None:
-            print "there were problems, not starting up daemon-mainloop."
+            self.printError("there were problems, not starting up daemon-mainloop.")
             return 0
 
         # main
         self.main()
+
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -103,29 +111,37 @@ class FluAzuD(object):
         while self.running > 0:
 
             # check if connection still valid
-            if not self.checkConnection():
+            if not self.azu_checkConnection():
                 return 0
 
             # process downloads
             downloads = self.dm.getDownloads()
             for download in downloads:
-                print "* %s" % str(download)
-                print "  %s" % str(download.getTorrentFileName())
+                # download
+                self.printMessage("* %s" % str(download))
+                self.printMessage("  %s" % str(download.getName()))
+                self.printMessage("  %s" % str(download.getState()))
+                self.printMessage("  %s" % str(download.getTorrentFileName()))
+                self.printMessage("  %s" % str(download.getSavePath()))
+                self.printMessage("  %s" % str(download.getLastScrapeResult()))
+                # torrent
                 torrent = download.getTorrent()
-                print "  %s" % str(torrent.getName())
-                print "  getState: %s" % str(download.getState())
-                print "  getSize: %s" % str(torrent.getSize())
+                self.printMessage("  %s" % str(torrent.getName()))
+                self.printMessage("  getState: %s" % str(download.getState()))
+                self.printMessage("  getSize: %s" % str(torrent.getSize()))
+                # stats
                 stats = download.getStats()
-                print "  getUploaded: %s" % str(stats.getUploaded())
-                print "  getDownloaded: %s" % str(stats.getDownloaded())
-                print "  getUploadAverage: %s" % str(stats.getUploadAverage())
-                print "  getDownloadAverage: %s" % str(stats.getDownloadAverage())
+                self.printMessage("  getUploaded: %s" % str(stats.getUploaded()))
+                self.printMessage("  getDownloaded: %s" % str(stats.getDownloaded()))
+                self.printMessage("  getUploadAverage: %s" % str(stats.getUploadAverage()))
+                self.printMessage("  getDownloadAverage: %s" % str(stats.getDownloadAverage()))
+                self.printMessage("  getETA: %s" % str(stats.getETA()))
 
             # inner loop
             for i in range(5):
 
-				# debug
-                #print "%s (%s)" % (self.flu_path, str(i))
+                # debug
+                self.printMessage(str(i))
 
                 # sleep
                 sleep(1)
@@ -133,10 +149,16 @@ class FluAzuD(object):
         # return
         return 1
 
+
     """ -------------------------------------------------------------------- """
     """ initialize                                                           """
     """ -------------------------------------------------------------------- """
     def initialize(self):
+
+        # tf
+
+
+        # azu
 
         # connect
         self.connection = make_connection(**self.connection_details)
@@ -149,23 +171,221 @@ class FluAzuD(object):
         else:
             connection_error = None
         if connection_error is None:
-            print "Connected to %s" % self.azu_host
+            self.printMessage("Connected to %s" % self.azu_host)
         else:
-            print "Error getting plugin interface object - could not connect to Azureus, error:\n %s" % connection_error.to_error_string()
+            self.printError("Error getting plugin interface object - could not connect to Azureus, error:\n %s" % connection_error.to_error_string())
 
-        # print azureus version
-        print "Azureus-Version: " + str(self.connection.get_azureus_version())
+        # azureus version
+        self.printMessage("Azureus-Version: " + str(self.connection.get_azureus_version()))
 
         # download-manager
         self.dm = self.interface.getDownloadManager()
         if self.dm is None:
-            print "Error getting plugin Download-Manager object"
-            return 0
+            self.printError("Error getting plugin Download-Manager object")
+            return False
+
 
     """ -------------------------------------------------------------------- """
-    """ checkConnection                                                      """
+    """ processCommandStack                                                  """
     """ -------------------------------------------------------------------- """
-    def checkConnection(self):
+    def processCommandStack(self):
+        return False
+
+        """
+        if isfile(transferCommandFile):
+            # process file
+            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
+            try:
+                # read file to mem
+                f = open(transferCommandFile, 'r')
+                commands = f.readlines()
+                f.close
+                # remove file
+                try:
+                    remove(transferCommandFile)
+                except:
+                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
+                    pass
+                # exec commands
+                if len(commands) > 0:
+                    for command in commands:
+                        command = command.replace("\n", "")
+                        if len(command) > 0:
+                            # exec, early out when reading a quit-command
+                            if self.execCommand(command):
+                                return True
+                else:
+                    transferLog("No commands found.\n", True)
+            except:
+                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
+                pass
+        return False
+        """
+
+    """ -------------------------------------------------------------------- """
+    """ execCommand                                                          """
+    """ -------------------------------------------------------------------- """
+    def execCommand(self, command):
+        return False
+
+        """
+        # op-code
+        opCode = command[0]
+
+        # q
+        if opCode == 'q':
+            transferLog("command: stop-request, setting shutdown-flag...\n", True)
+            return True
+
+        # u
+        elif opCode == 'u':
+            if len(command) < 2:
+                transferLog("invalid rate.\n", True)
+                return False
+            rateNew = command[1:]
+            transferLog("command: setting upload-rate to " + rateNew + "...\n", True)
+            self.multitorrent.set_option('max_upload_rate', int(rateNew), None, False)
+            return False
+
+        # default
+        else:
+            transferLog("op-code unknown: " + opCode + "\n", True)
+            return False
+        """
+
+
+    """ -------------------------------------------------------------------- """
+    """ reloadTransfers                                                      """
+    """ -------------------------------------------------------------------- """
+    def reloadTransfers(self):
+        return True
+
+
+    """ -------------------------------------------------------------------- """
+    """ printMessage                                                         """
+    """ -------------------------------------------------------------------- """
+    def printMessage(self, message):
+        sys.stdout.write(strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message + "\n")
+
+    """ -------------------------------------------------------------------- """
+    """ printError                                                           """
+    """ -------------------------------------------------------------------- """
+    def printError(self, message):
+        sys.stderr.write(strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message + "\n")
+
+
+    """ -------------------------------------------------------------------- """
+    """ transfer_processCommandStack                                         """
+    """ -------------------------------------------------------------------- """
+    def transfer_processCommandStack(self, transfer):
+        return False
+
+        """
+        if isfile(transferCommandFile):
+            # process file
+            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
+            try:
+                # read file to mem
+                f = open(transferCommandFile, 'r')
+                commands = f.readlines()
+                f.close
+                # remove file
+                try:
+                    remove(transferCommandFile)
+                except:
+                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
+                    pass
+                # exec commands
+                if len(commands) > 0:
+                    for command in commands:
+                        command = command.replace("\n", "")
+                        if len(command) > 0:
+                            # exec, early out when reading a quit-command
+                            if self.execCommand(command):
+                                return True
+                else:
+                    transferLog("No commands found.\n", True)
+            except:
+                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
+                pass
+        return False
+        """
+
+
+    """ -------------------------------------------------------------------- """
+    """ transfer_execCommand                                                 """
+    """ -------------------------------------------------------------------- """
+    def transfer_execCommand(self, transfer, command):
+        return False
+
+        """
+        # op-code
+        opCode = command[0]
+
+        # q
+        if opCode == 'q':
+            transferLog("command: stop-request, setting shutdown-flag...\n", True)
+            return True
+
+        # u
+        elif opCode == 'u':
+            if len(command) < 2:
+                transferLog("invalid rate.\n", True)
+                return False
+            rateNew = command[1:]
+            transferLog("command: setting upload-rate to " + rateNew + "...\n", True)
+            self.multitorrent.set_option('max_upload_rate', int(rateNew), None, False)
+            return False
+
+        # d
+        elif opCode == 'd':
+            if len(command) < 2:
+                transferLog("invalid rate.\n", True)
+                return False
+            rateNew = command[1:]
+            transferLog("command: setting download-rate to " + rateNew + "...\n", True)
+            self.multitorrent.set_option('max_download_rate', int(rateNew), None, False)
+            return False
+
+        # r
+        elif opCode == 'r':
+            if len(command) < 2:
+                transferLog("invalid runtime-code.\n", True)
+                return False
+            runtimeNew = command[1]
+            rt = ''
+            if runtimeNew == '0':
+                rt = 'False'
+            elif runtimeNew == '1':
+                rt = 'True'
+            else:
+                transferLog("runtime-code unknown: " + runtimeNew + "\n", True)
+                return False
+            transferLog("command: setting die-when-done to " + rt + "...\n", True)
+            self.d.dieWhenDone = rt
+            return False
+
+        # s
+        elif opCode == 's':
+            if len(command) < 2:
+                transferLog("invalid sharekill.\n", True)
+                return False
+            sharekillNew = command[1:]
+            transferLog("command: setting sharekill to " + sharekillNew + "...\n", True)
+            self.d.seedLimit = sharekillNew
+            return False
+
+        # default
+        else:
+            transferLog("op-code unknown: " + opCode + "\n", True)
+            return False
+        """
+
+
+    """ -------------------------------------------------------------------- """
+    """ azu_checkConnection                                                  """
+    """ -------------------------------------------------------------------- """
+    def azu_checkConnection(self):
 
         # con valid
         if self.connection.is_connection_valid():
@@ -177,9 +397,9 @@ class FluAzuD(object):
             # establish con
             try:
                 self.connection.establish_connection(True)
-                print "established connection to " + self.azu_host
+                self.printMessage("established connection to " + self.azu_host)
             except:
-                print "Error establishing connection to " + self.azu_host
+                self.printError("Error establishing connection to " + self.azu_host)
                 return False
 
             # interface
@@ -188,14 +408,14 @@ class FluAzuD(object):
             except LinkError, error:
                 self.interface = None
             if self.interface is None:
-                print "Error getting plugin interface object"
+                self.printError("Error getting plugin interface object")
                 return False
 
             # download-manager
             self.dm = None
             self.dm = self.interface.getDownloadManager()
             if self.dm is None:
-                print "Error getting plugin Download-Manager object"
+                self.printError("Error getting plugin Download-Manager object")
                 return False
             else:
                 return True

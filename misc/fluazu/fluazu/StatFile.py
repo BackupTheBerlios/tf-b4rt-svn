@@ -77,14 +77,10 @@ class StatFile(object):
                     self.uptotal = content[10].replace("\n", "")
                     self.downtotal = content[11].replace("\n", "")
                     self.size = content[12].replace("\n", "")
-                    # return
-                    return 1
+                    return True
             except:
-                print "Failed to read StatFile %s" % self.file
                 pass
-
-        # return
-        return 0
+        return False
 
     """ -------------------------------------------------------------------- """
     """ write                                                                """
@@ -109,7 +105,8 @@ class StatFile(object):
             f.write(str(self.size))
             f.flush()
             f.close()
+            return True
         except:
-            print "Failed to write StatFile %s" % self.file
             pass
+        return False
 
