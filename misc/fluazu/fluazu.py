@@ -47,9 +47,7 @@ if __name__ == '__main__':
 
     # version
     if argv[1:] == ['--version']:
-        print "fluazu-version: %s" % version_fluazu
-        from dopal import __version_str__
-        print "DOPAL-version: %s" % __version_str__
+        print version_fluazu
         exit(0)
 
     # check argv-length
