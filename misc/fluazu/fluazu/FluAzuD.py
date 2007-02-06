@@ -20,10 +20,10 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
-# standard
+# standard-imports
 import sys
+import os
 import time
-from time import time, strftime, sleep
 # fluazu
 from fluazu.StatFile import StatFile
 from fluazu.Transfer import Transfer
@@ -33,7 +33,6 @@ from dopal.errors import LinkError
 ################################################################################
 
 class FluAzuD(object):
-
 
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
@@ -45,6 +44,9 @@ class FluAzuD(object):
         self.transfers = []
         # flux-settings
         self.flu_path = ''
+        self.flu_pathTransfers = ''
+        self.flu_fileCommand = ''
+        self.flu_filePid = ''
         # azu-settings
         self.azu_host = '127.0.0.1'
         self.azu_port = 6884
@@ -57,22 +59,16 @@ class FluAzuD(object):
         self.interface = None
         self.dm = None
 
-
     """ -------------------------------------------------------------------- """
     """ run                                                                  """
     """ -------------------------------------------------------------------- """
     def run(self, path, host, port, secure, username, password):
 
-        # dump vars
-        self.printMessage("path: %s" % path)
-        self.printMessage("host: %s" % host)
-        self.printMessage("port: %s" % port)
-        self.printMessage("secure: %s" % secure)
-        self.printMessage("user: %s" % username)
-        self.printMessage("pass: %s" % password)
-
         # set vars
         self.flu_path = path
+        self.flu_pathTransfers = path + '.transfers/'
+        self.flu_fileCommand = path + '.fluazu/fluazu.cmd'
+        self.flu_filePid = path + '.fluazu/fluazu.pid'
         self.azu_host = host
         self.azu_port = int(port)
         if secure == '1':
@@ -81,6 +77,15 @@ class FluAzuD(object):
             self.azu_secure = False
         self.azu_user = username
         self.azu_pass = password
+
+        # print vars
+        self.printMessage("flu-path: %s" % str(self.flu_path))
+        self.printMessage("azu-host: %s" % str(self.azu_host))
+        self.printMessage("azu-port: %s" % str(self.azu_host))
+        self.printMessage("azu-secure: %s" % str(self.azu_secure))
+        if len(self.azu_user) > 0:
+            self.printMessage("azu-user: %s" % str(self.azu_user))
+            self.printMessage("azu-pass: %s" % str(self.azu_pass))
 
         # set connection details
         self.connection_details['host'] = self.azu_host
@@ -99,8 +104,18 @@ class FluAzuD(object):
             return 0
 
         # main
-        self.main()
+        return self.main()
 
+    """ -------------------------------------------------------------------- """
+    """ shutdown                                                             """
+    """ -------------------------------------------------------------------- """
+    def shutdown(self):
+        # shutdown
+        self.printMessage("fluazu shutting down...")
+
+
+        # return
+        return 0
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -121,7 +136,11 @@ class FluAzuD(object):
                 self.printMessage("* %s" % str(download))
                 self.printMessage("  %s" % str(download.getName()))
                 self.printMessage("  %s" % str(download.getState()))
-                self.printMessage("  %s" % str(download.getTorrentFileName()))
+                tfile = str(download.getTorrentFileName())
+                self.printMessage("  %s" % tfile)
+                comp = tfile.split('/')
+                tfile = comp.pop()
+                self.printMessage("  %s" % tfile)
                 self.printMessage("  %s" % str(download.getSavePath()))
                 self.printMessage("  %s" % str(download.getLastScrapeResult()))
                 # torrent
@@ -143,12 +162,17 @@ class FluAzuD(object):
                 # debug
                 self.printMessage(str(i))
 
+                # process command stack
+                if self.processCommandStack():
+                    # shutdown
+                    self.running = 0
+                    break;
+
                 # sleep
-                sleep(1)
+                time.sleep(1)
 
-        # return
-        return 1
-
+        # shutdown
+        return self.shutdown()
 
     """ -------------------------------------------------------------------- """
     """ initialize                                                           """
@@ -184,27 +208,23 @@ class FluAzuD(object):
             self.printError("Error getting plugin Download-Manager object")
             return False
 
-
     """ -------------------------------------------------------------------- """
     """ processCommandStack                                                  """
     """ -------------------------------------------------------------------- """
     def processCommandStack(self):
-        return False
-
-        """
-        if isfile(transferCommandFile):
+        if os.path.isfile(self.flu_fileCommand):
             # process file
-            transferLog("Processing command-file " + transferCommandFile + "...\n", True)
+            self.printMessage("Processing command-file " + self.flu_fileCommand + "...")
             try:
                 # read file to mem
-                f = open(transferCommandFile, 'r')
+                f = open(self.flu_fileCommand, 'r')
                 commands = f.readlines()
                 f.close
                 # remove file
                 try:
-                    remove(transferCommandFile)
+                    os.remove(self.flu_fileCommand)
                 except:
-                    transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
+                    self.printError("Failed to remove command-file : " + self.flu_fileCommand)
                     pass
                 # exec commands
                 if len(commands) > 0:
@@ -215,44 +235,35 @@ class FluAzuD(object):
                             if self.execCommand(command):
                                 return True
                 else:
-                    transferLog("No commands found.\n", True)
+                    self.printMessage("No commands found.")
             except:
-                transferLog("Failed to read command-file : " + transferCommandFile + "\n", True)
+                self.printError("Failed to read command-file : " + self.flu_fileCommand)
                 pass
         return False
-        """
 
     """ -------------------------------------------------------------------- """
     """ execCommand                                                          """
     """ -------------------------------------------------------------------- """
     def execCommand(self, command):
-        return False
 
-        """
         # op-code
         opCode = command[0]
 
         # q
         if opCode == 'q':
-            transferLog("command: stop-request, setting shutdown-flag...\n", True)
+            self.printMessage("command: stop-request, setting shutdown-flag...")
             return True
 
-        # u
-        elif opCode == 'u':
-            if len(command) < 2:
-                transferLog("invalid rate.\n", True)
-                return False
-            rateNew = command[1:]
-            transferLog("command: setting upload-rate to " + rateNew + "...\n", True)
-            self.multitorrent.set_option('max_upload_rate', int(rateNew), None, False)
+        # t
+        elif opCode == 't':
+            self.printMessage("command: transfers-reload-request, reloading...")
+            self.reloadTransfers()
             return False
 
         # default
         else:
-            transferLog("op-code unknown: " + opCode + "\n", True)
+            self.printError("op-code unknown: " + opCode)
             return False
-        """
-
 
     """ -------------------------------------------------------------------- """
     """ reloadTransfers                                                      """
@@ -262,26 +273,12 @@ class FluAzuD(object):
 
 
     """ -------------------------------------------------------------------- """
-    """ printMessage                                                         """
-    """ -------------------------------------------------------------------- """
-    def printMessage(self, message):
-        sys.stdout.write(strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message + "\n")
-
-    """ -------------------------------------------------------------------- """
-    """ printError                                                           """
-    """ -------------------------------------------------------------------- """
-    def printError(self, message):
-        sys.stderr.write(strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message + "\n")
-
-
-    """ -------------------------------------------------------------------- """
     """ transfer_processCommandStack                                         """
     """ -------------------------------------------------------------------- """
     def transfer_processCommandStack(self, transfer):
         return False
-
         """
-        if isfile(transferCommandFile):
+        if os.path.isfile(transferCommandFile):
             # process file
             transferLog("Processing command-file " + transferCommandFile + "...\n", True)
             try:
@@ -291,7 +288,7 @@ class FluAzuD(object):
                 f.close
                 # remove file
                 try:
-                    remove(transferCommandFile)
+                    os.remove(transferCommandFile)
                 except:
                     transferLog("Failed to remove command-file : " + transferCommandFile + "\n", True)
                     pass
@@ -311,13 +308,11 @@ class FluAzuD(object):
         return False
         """
 
-
     """ -------------------------------------------------------------------- """
     """ transfer_execCommand                                                 """
     """ -------------------------------------------------------------------- """
     def transfer_execCommand(self, transfer, command):
         return False
-
         """
         # op-code
         opCode = command[0]
@@ -420,3 +415,15 @@ class FluAzuD(object):
             else:
                 return True
 
+
+    """ -------------------------------------------------------------------- """
+    """ printMessage                                                         """
+    """ -------------------------------------------------------------------- """
+    def printMessage(self, message):
+        sys.stdout.write(time.strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message + "\n")
+
+    """ -------------------------------------------------------------------- """
+    """ printError                                                           """
+    """ -------------------------------------------------------------------- """
+    def printError(self, message):
+        sys.stderr.write(time.strftime('[%Y/%m/%d - %H:%M:%S]') + " " + message + "\n")

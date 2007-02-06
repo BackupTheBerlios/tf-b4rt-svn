@@ -30,9 +30,8 @@
 #     http://azureus.sourceforge.net/plugin_details.php?plugin=xml_http_if)    #
 #                                                                              #
 ################################################################################
-# standard
+# standard-imports
 import sys
-from sys import argv, exit
 # fluazu
 from fluazu.FluAzuD import FluAzuD
 ################################################################################
@@ -43,13 +42,13 @@ from fluazu.FluAzuD import FluAzuD
 if __name__ == '__main__':
 
     # version
-    if argv[1:] == ['--version']:
+    if sys.argv[1:] == ['--version']:
         from fluazu import __version_str__
         print __version_str__
-        exit(0)
+        sys.exit(0)
 
     # check argv-length
-    if len(argv) < 7:
+    if len(sys.argv) < 7:
         from fluazu import __version_str__
         print "Version: %s\n" % __version_str__
         print "Error: missing arguments, exiting.\n"
@@ -61,13 +60,13 @@ if __name__ == '__main__':
         print " secure   : use secure connection to azureus (0/1)"
         print " username : username to use when connecting to azureus-server"
         print " password : password to use when connecting to azureus-server\n"
-        exit(0)
+        sys.exit(0)
 
     # run daemon
     daemon = FluAzuD()
     exitVal = 0
     try:
-        exitVal = daemon.run(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6])
+        exitVal = daemon.run(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
     except KeyboardInterrupt:
         daemon.running = 0
         pass
@@ -75,5 +74,5 @@ if __name__ == '__main__':
         print e
 
     # exit
-    exit(exitVal)
+    sys.exit(exitVal)
 
