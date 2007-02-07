@@ -55,6 +55,7 @@ class FluAzuD(object):
         self.flu_path = ''
         self.flu_pathTransfers = ''
         self.flu_pathTransfersRun = ''
+        self.flu_pathTransfersDel = ''
         self.flu_fileCommand = ''
         self.flu_filePid = ''
         # azu-settings
@@ -84,6 +85,7 @@ class FluAzuD(object):
         self.flu_filePid = self.flu_path + 'fluazu.pid'
         self.flu_pathTransfers = self.flu_path + 'cur/'
         self.flu_pathTransfersRun = self.flu_path + 'run/'
+        self.flu_pathTransfersDel = self.flu_path + 'del/'
         self.azu_host = host
         self.azu_port = int(port)
         if secure == '1':
@@ -255,6 +257,9 @@ class FluAzuD(object):
     def reload(self):
         printMessage("reloading...")
 
+        # delete-requests
+        self.processDeleteRequests()
+
         # run-requests
         self.processRunRequests()
 
@@ -262,12 +267,53 @@ class FluAzuD(object):
         self.loadTransfers()
 
     """ -------------------------------------------------------------------- """
+    """ processDeleteRequests                                                """
+    """ -------------------------------------------------------------------- """
+    def processDeleteRequests(self):
+        printMessage("processing delete-requests...")
+        # read requests
+        requests = []
+        try:
+            for fileName in os.listdir(self.flu_pathTransfersDel):
+                # add
+                requests.append(fileName)
+                # del file
+                delFile = self.flu_pathTransfersDel + fileName
+                try:
+                    os.remove(delFile)
+                except:
+                    printError("Failed to delete file : %s" % delFile)
+                    pass
+        except:
+            return False
+        # process requests
+        if len(requests) > 0:
+            for fileName in requests:
+                # update downloads
+                self.updateDownloads()
+                # transfer
+                transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
+                # delete if needed
+                if transfer.name in self.downloads:
+                    # delete transfer
+                    transfer.delete(self.downloads[transfer.name])
+                # del file
+                delFile = self.flu_pathTransfers + fileName
+                try:
+                    os.remove(delFile)
+                except:
+                    printError("Failed to delete file : %s" % delFile)
+                    pass
+        # return
+        return True
+
+    """ -------------------------------------------------------------------- """
     """ processRunRequests                                                   """
     """ -------------------------------------------------------------------- """
     def processRunRequests(self):
         printMessage("processing run-requests...")
         # read requests
-        runRequests = []
+        requests = []
         try:
             for fileName in os.listdir(self.flu_pathTransfersRun):
                 inputFile = self.flu_pathTransfersRun + fileName
@@ -286,16 +332,16 @@ class FluAzuD(object):
                     f.flush()
                     f.close()
                     # add
-                    runRequests.append(fileName)
+                    requests.append(fileName)
                 except:
                     printError("Failed to move file : %s" % inputFile)
                     pass
         except:
             return False
         # process requests
-        if len(runRequests) > 0:
+        if len(requests) > 0:
             self.updateDownloads()
-            for fileName in runRequests:
+            for fileName in requests:
                 transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
                 # inject if needed
                 if transfer.name not in self.downloads:
@@ -448,4 +494,5 @@ class FluAzuD(object):
             # seems like azu is down. give up
             printError("no connection after %d tries, i give up, azu is gone" % FluAzuD.MAX_RECONNECT_TRIES)
             return False
+
 

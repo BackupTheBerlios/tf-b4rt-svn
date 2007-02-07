@@ -39,27 +39,27 @@ class Transfer(object):
     TF_QUEUED = 3
 
     """ azu states """
-    ST_DOWNLOADING = 4
-    ST_ERROR = 8
-    ST_PREPARING = 2
-    ST_QUEUED = 9
-    ST_READY = 3
-    ST_SEEDING = 5
-    ST_STOPPED = 7
-    ST_STOPPING = 6
-    ST_WAITING = 1
+    AZ_DOWNLOADING = 4
+    AZ_ERROR = 8
+    AZ_PREPARING = 2
+    AZ_QUEUED = 9
+    AZ_READY = 3
+    AZ_SEEDING = 5
+    AZ_STOPPED = 7
+    AZ_STOPPING = 6
+    AZ_WAITING = 1
 
     """ azu -> flu map """
-    azu_state_map = { \
-        ST_DOWNLOADING: TF_RUNNING, \
-        ST_ERROR: TF_STOPPED, \
-        ST_PREPARING: TF_RUNNING, \
-        ST_QUEUED: TF_RUNNING, \
-        ST_READY: TF_STOPPED, \
-        ST_SEEDING: TF_RUNNING, \
-        ST_STOPPED: TF_STOPPED, \
-        ST_STOPPING: TF_RUNNING, \
-        ST_WAITING: TF_STOPPED \
+    state_map = { \
+        AZ_DOWNLOADING: TF_RUNNING, \
+        AZ_ERROR: TF_STOPPED, \
+        AZ_PREPARING: TF_RUNNING, \
+        AZ_QUEUED: TF_RUNNING, \
+        AZ_READY: TF_STOPPED, \
+        AZ_SEEDING: TF_RUNNING, \
+        AZ_STOPPED: TF_STOPPED, \
+        AZ_STOPPING: TF_RUNNING, \
+        AZ_WAITING: TF_STOPPED \
     }
 
     """ -------------------------------------------------------------------- """
@@ -82,8 +82,8 @@ class Transfer(object):
         self.fileLog = self.fileTorrent + ".log"
         self.filePid = self.fileTorrent + ".pid"
 
-        # stat-file
-        self.statFile = None
+        # stat-object
+        self.sf = None
 
         # initialize
         self.initialize()
@@ -122,7 +122,7 @@ class Transfer(object):
 
         # stat-file
         printMessage("loading statfile %s ..." % self.fileStat)
-        self.statFile = StatFile(self.fileStat)
+        self.sf = StatFile(self.fileStat)
 
         # verbose
         printMessage("transfer loaded.")
@@ -131,11 +131,83 @@ class Transfer(object):
         return True
 
     """ -------------------------------------------------------------------- """
+    """ update                                                               """
+    """ -------------------------------------------------------------------- """
+    def update(self, download):
+
+        # set state
+        self.state = Transfer.state_map[download.getState()]
+
+        # DEBUG
+        printMessage("* update: %s (%s)" % (self.name, str(self.state)))
+
+        # stat
+        return self.statRunning()
+
+    """ -------------------------------------------------------------------- """
+    """ start                                                                """
+    """ -------------------------------------------------------------------- """
+    def start(self, download):
+        printMessage("starting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+
+        # stat
+        self.statStartup()
+
+        # write pid
+        self.writePid()
+
+        # TODO
+
+        # return
+        return True
+
+    """ -------------------------------------------------------------------- """
+    """ stop                                                                 """
+    """ -------------------------------------------------------------------- """
+    def stop(self, download):
+        printMessage("stopping transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+
+        # stat
+        self.statShutdown()
+
+        # TODO
+
+        # delete pid
+        self.deletePid()
+
+        # return
+        return True
+
+    """ -------------------------------------------------------------------- """
+    """ inject                                                               """
+    """ -------------------------------------------------------------------- """
+    def inject(self, dm):
+        printMessage("injecting new transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+
+
+        # TODO
+        return True
+
+    """ -------------------------------------------------------------------- """
+    """ delete                                                               """
+    """ -------------------------------------------------------------------- """
+    def delete(self, dm):
+        printMessage("deleting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+
+
+        # TODO
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ isRunning                                                            """
+    """ -------------------------------------------------------------------- """
+    def isRunning(self):
+        return (self.state == Transfer.TF_RUNNING)
+
+    """ -------------------------------------------------------------------- """
     """ processCommandStack                                                  """
     """ -------------------------------------------------------------------- """
     def processCommandStack(self, download):
-        # DEBUG
-        printMessage("* processCommandStack: %s (%s)" % (self.name, self.fileCommand))
         if os.path.isfile(self.fileCommand):
             # process file
             printMessage("Processing command-file %s ..." % self.fileCommand)
@@ -174,118 +246,51 @@ class Transfer(object):
     def execCommand(self, download, command):
 
         # DEBUG
-        printMessage("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.azu_state_map[download.getState()])))
+        printMessage("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.state_map[download.getState()])))
 
         # TODO
 
         return False
-
-    """ -------------------------------------------------------------------- """
-    """ update                                                               """
-    """ -------------------------------------------------------------------- """
-    def update(self, download):
-
-        # set state
-        self.state = Transfer.azu_state_map[download.getState()]
-
-        # DEBUG
-        printMessage("* update: %s (%s)" % (self.name, str(self.state)))
-
-        # stat
-        self.statRunning()
-
-        # return
-        return False
-
-    """ -------------------------------------------------------------------- """
-    """ start                                                                """
-    """ -------------------------------------------------------------------- """
-    def start(self, download):
-        printMessage("starting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
-
-        # stat
-        self.statStartup()
-
-        # return
-        return False
-
-    """ -------------------------------------------------------------------- """
-    """ stop                                                                 """
-    """ -------------------------------------------------------------------- """
-    def stop(self, download):
-        printMessage("stopping transfer %s (%s) ..." % (str(self.name), str(self.owner)))
-
-        # stat
-        self.statShutdown()
-
-        # return
-        return False
-
-    """ -------------------------------------------------------------------- """
-    """ inject                                                               """
-    """ -------------------------------------------------------------------- """
-    def inject(self, dm):
-        printMessage("injecting new transfer %s (%s) ..." % (str(self.name), str(self.owner)))
-
-        # TODO
-
-        return False
-
-    """ -------------------------------------------------------------------- """
-    """ delete                                                               """
-    """ -------------------------------------------------------------------- """
-    def delete(self, dm):
-        printMessage("deleting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
-
-        # TODO
-
-        return False
-
-    """ -------------------------------------------------------------------- """
-    """ isRunning                                                            """
-    """ -------------------------------------------------------------------- """
-    def isRunning(self):
-        return (self.state == Transfer.TF_RUNNING)
 
     """ -------------------------------------------------------------------- """
     """ statStartup                                                          """
     """ -------------------------------------------------------------------- """
     def statStartup(self):
         # set some values
-        self.statFile.running = Transfer.TF_RUNNING;
-        self.statFile.percent_done = 0;
-        self.statFile.time_left = "Starting...";
-        self.statFile.down_speed = "0.00 kB/s";
-        self.statFile.up_speed = "0.00 kB/s";
-        self.statFile.transferowner = 0;
-        self.statFile.seeds = "";
-        self.statFile.peers = "";
-        self.statFile.sharing = "";
-        self.statFile.seedlimit = "";
-        self.statFile.uptotal = 0;
-        self.statFile.downtotal = 0;
+        self.sf.running = Transfer.TF_RUNNING;
+        self.sf.percent_done = 0;
+        self.sf.time_left = "Starting...";
+        self.sf.down_speed = "0.00 kB/s";
+        self.sf.up_speed = "0.00 kB/s";
+        self.sf.transferowner = 0;
+        self.sf.seeds = "";
+        self.sf.peers = "";
+        self.sf.sharing = "";
+        self.sf.seedlimit = "";
+        self.sf.uptotal = 0;
+        self.sf.downtotal = 0;
         # write
-        return self.statFile.write()
+        return self.sf.write()
 
     """ -------------------------------------------------------------------- """
     """ statRunning                                                          """
     """ -------------------------------------------------------------------- """
     def statRunning(self):
         # set some values
-        self.statFile.running = Transfer.TF_RUNNING;
-        self.statFile.percent_done = 0;
-        self.statFile.time_left = "Running...";
-        self.statFile.down_speed = "0.00 kB/s";
-        self.statFile.up_speed = "0.00 kB/s";
-        self.statFile.transferowner = 0;
-        self.statFile.seeds = "";
-        self.statFile.peers = "";
-        self.statFile.sharing = "";
-        self.statFile.seedlimit = "";
-        self.statFile.uptotal = 0;
-        self.statFile.downtotal = 0;
+        self.sf.running = Transfer.TF_RUNNING;
+        self.sf.percent_done = 0;
+        self.sf.time_left = "Running...";
+        self.sf.down_speed = "0.00 kB/s";
+        self.sf.up_speed = "0.00 kB/s";
+        self.sf.transferowner = 0;
+        self.sf.seeds = "";
+        self.sf.peers = "";
+        self.sf.sharing = "";
+        self.sf.seedlimit = "";
+        self.sf.uptotal = 0;
+        self.sf.downtotal = 0;
         # write
-        return self.statFile.write()
+        return self.sf.write()
         """
         // set some values
         $this->_sf->percent_done = $percent_done;
@@ -301,20 +306,20 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def statShutdown(self, error = None):
         # set some values
-        self.statFile.running = Transfer.TF_STOPPED;
-        self.statFile.percent_done = 0;
-        self.statFile.time_left = "Stopping...";
-        self.statFile.down_speed = "0.00 kB/s";
-        self.statFile.up_speed = "0.00 kB/s";
-        self.statFile.transferowner = 0;
-        self.statFile.seeds = "";
-        self.statFile.peers = "";
-        self.statFile.sharing = "";
-        self.statFile.seedlimit = "";
-        self.statFile.uptotal = 0;
-        self.statFile.downtotal = 0;
+        self.sf.running = Transfer.TF_STOPPED;
+        self.sf.percent_done = 0;
+        self.sf.time_left = "Stopping...";
+        self.sf.down_speed = "0.00 kB/s";
+        self.sf.up_speed = "0.00 kB/s";
+        self.sf.transferowner = 0;
+        self.sf.seeds = "";
+        self.sf.peers = "";
+        self.sf.sharing = "";
+        self.sf.seedlimit = "";
+        self.sf.uptotal = 0;
+        self.sf.downtotal = 0;
         # write
-        return self.statFile.write()
+        return self.sf.write()
         """
         // set some values
         $this->_sf->running = 0;
@@ -341,4 +346,31 @@ class Transfer(object):
         // write
         return $this->_sf->write();
         """
+
+    """ -------------------------------------------------------------------- """
+    """ writePid                                                             """
+    """ -------------------------------------------------------------------- """
+    def writePid(self):
+        printMessage("writing pid-file %s " % self.filePid)
+        try:
+            pidFile = open(self.filePid, 'w')
+            pidFile.write("0\n")
+            pidFile.flush()
+            pidFile.close()
+            return True
+        except Exception, e:
+            printError("Failed to write pid-file %s" % self.filePid)
+            return False
+
+    """ -------------------------------------------------------------------- """
+    """ deletePid                                                            """
+    """ -------------------------------------------------------------------- """
+    def deletePid(self):
+        printMessage("deleting pid-file %s " % self.filePid)
+        try:
+            os.remove(self.filePid)
+            return True
+        except Exception, e:
+            printError("Failed to delete pid-file %s" % self.filePid)
+            return False
 
