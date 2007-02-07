@@ -82,6 +82,9 @@ class Transfer(object):
         self.fileLog = self.fileTorrent + ".log"
         self.filePid = self.fileTorrent + ".pid"
 
+        # stat-file
+        self.statFile = None
+
         # initialize
         self.initialize()
 
@@ -181,13 +184,15 @@ class Transfer(object):
     """ update                                                               """
     """ -------------------------------------------------------------------- """
     def update(self, download):
+
         # set state
         self.state = Transfer.azu_state_map[download.getState()]
 
         # DEBUG
         printMessage("* update: %s (%s)" % (self.name, str(self.state)))
 
-        # TODO
+        # stat
+        self.statRunning()
 
         # return
         return False
@@ -196,19 +201,24 @@ class Transfer(object):
     """ start                                                                """
     """ -------------------------------------------------------------------- """
     def start(self, download):
-        # DEBUG
-        printMessage("* start: %s (%s)" % (self.name, str(Transfer.azu_state_map[download.getState()])))
+        printMessage("starting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
 
-        # TODO
+        # stat
+        self.statStartup()
 
+        # return
         return False
 
     """ -------------------------------------------------------------------- """
     """ stop                                                                 """
     """ -------------------------------------------------------------------- """
     def stop(self, download):
-        # DEBUG
-        printMessage("* stop: %s (%s)" % (self.name, str(Transfer.azu_state_map[download.getState()])))
+        printMessage("stopping transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+
+        # stat
+        self.statShutdown()
+
+        # return
         return False
 
     """ -------------------------------------------------------------------- """
@@ -225,8 +235,7 @@ class Transfer(object):
     """ delete                                                               """
     """ -------------------------------------------------------------------- """
     def delete(self, dm):
-        # DEBUG
-        printMessage("* delete: %s" % self.name)
+        printMessage("deleting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
 
         # TODO
 
@@ -237,4 +246,99 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def isRunning(self):
         return (self.state == Transfer.TF_RUNNING)
+
+    """ -------------------------------------------------------------------- """
+    """ statStartup                                                          """
+    """ -------------------------------------------------------------------- """
+    def statStartup(self):
+        # set some values
+        self.statFile.running = Transfer.TF_RUNNING;
+        self.statFile.percent_done = 0;
+        self.statFile.time_left = "Starting...";
+        self.statFile.down_speed = "0.00 kB/s";
+        self.statFile.up_speed = "0.00 kB/s";
+        self.statFile.transferowner = 0;
+        self.statFile.seeds = "";
+        self.statFile.peers = "";
+        self.statFile.sharing = "";
+        self.statFile.seedlimit = "";
+        self.statFile.uptotal = 0;
+        self.statFile.downtotal = 0;
+        # write
+        return self.statFile.write()
+
+    """ -------------------------------------------------------------------- """
+    """ statRunning                                                          """
+    """ -------------------------------------------------------------------- """
+    def statRunning(self):
+        # set some values
+        self.statFile.running = Transfer.TF_RUNNING;
+        self.statFile.percent_done = 0;
+        self.statFile.time_left = "Running...";
+        self.statFile.down_speed = "0.00 kB/s";
+        self.statFile.up_speed = "0.00 kB/s";
+        self.statFile.transferowner = 0;
+        self.statFile.seeds = "";
+        self.statFile.peers = "";
+        self.statFile.sharing = "";
+        self.statFile.seedlimit = "";
+        self.statFile.uptotal = 0;
+        self.statFile.downtotal = 0;
+        # write
+        return self.statFile.write()
+        """
+        // set some values
+        $this->_sf->percent_done = $percent_done;
+        $this->_sf->time_left = $time_left;
+        $this->_sf->down_speed = $down_speed;
+        $this->_sf->downtotal = $downtotal;
+        // write
+        return $this->_sf->write();
+        """
+
+    """ -------------------------------------------------------------------- """
+    """ statShutdown                                                         """
+    """ -------------------------------------------------------------------- """
+    def statShutdown(self, error = None):
+        # set some values
+        self.statFile.running = Transfer.TF_STOPPED;
+        self.statFile.percent_done = 0;
+        self.statFile.time_left = "Stopping...";
+        self.statFile.down_speed = "0.00 kB/s";
+        self.statFile.up_speed = "0.00 kB/s";
+        self.statFile.transferowner = 0;
+        self.statFile.seeds = "";
+        self.statFile.peers = "";
+        self.statFile.sharing = "";
+        self.statFile.seedlimit = "";
+        self.statFile.uptotal = 0;
+        self.statFile.downtotal = 0;
+        # write
+        return self.statFile.write()
+        """
+        // set some values
+        $this->_sf->running = 0;
+        if ($this->_done) {
+        $this->_sf->percent_done = 100;
+        $this->_sf->time_left = "Download Succeeded!";
+        } else {
+        $this->_sf->percent_done = ($this->_size > 0)
+        ? (((intval((100.0 * $this->_downtotal / $this->_size))) + 100) * (-1))
+        : "-100";
+        $this->_sf->time_left = "Transfer Stopped";
+        }
+        if ($error)
+        $this->_sf->time_left = "Error";
+        $this->_sf->down_speed = "";
+        $this->_sf->up_speed = "";
+        $this->_sf->transferowner = $this->_owner;
+        $this->_sf->seeds = "";
+        $this->_sf->peers = "";
+        $this->_sf->sharing = "";
+        $this->_sf->seedlimit = "";
+        $this->_sf->uptotal = 0;
+        $this->_sf->downtotal = $this->_downtotal;
+        // write
+        return $this->_sf->write();
+        """
 

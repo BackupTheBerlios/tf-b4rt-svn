@@ -37,6 +37,9 @@ from dopal.errors import LinkError
 """ ------------------------------------------------------------------------ """
 class FluAzuD(object):
 
+    """ class-fields """
+    MAX_RECONNECT_TRIES = 5
+
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
@@ -60,6 +63,7 @@ class FluAzuD(object):
         self.azu_secure = False
         self.azu_user = ''
         self.azu_pass = ''
+        self.azu_version_str = ''
         # dopal
         self.connection_details = {}
         self.connection = None
@@ -98,14 +102,6 @@ class FluAzuD(object):
             printMessage("azu-user: %s" % str(self.azu_user))
             printMessage("azu-pass: %s" % str(self.azu_pass))
 
-        # set connection details
-        self.connection_details['host'] = self.azu_host
-        self.connection_details['port'] = self.azu_port
-        self.connection_details['secure'] = self.azu_secure
-        if len(self.azu_user) > 0:
-            self.connection_details['user'] = self.azu_user
-            self.connection_details['password'] = self.azu_pass
-
         # initialize
         if not self.initialize():
             printError("there were problems initializing fluazu, shutting down...")
@@ -132,22 +128,30 @@ class FluAzuD(object):
             pidFile.close()
         except Exception, e:
             printError("Failed to write pid-file %s (%s)" % (self.flu_filePid, self.pid))
-
-        # tf
+            return False
 
         # delete command-file if exists
         if os.path.isfile(self.flu_fileCommand):
             try:
-                transferLog("removing command-file %s ..." % self.flu_fileCommand)
+                printMessage("removing command-file %s ..." % self.flu_fileCommand)
                 os.remove(self.flu_fileCommand)
             except:
                 printError("Failed to delete commandfile %s" % self.flu_fileCommand)
-                pass
+                return False
 
         # load transfers
         self.loadTransfers()
 
         # azu
+        printMessage("connecting to Azureus-Server (%s:%d)..." % (self.azu_host, self.azu_port))
+
+        # set connection details
+        self.connection_details['host'] = self.azu_host
+        self.connection_details['port'] = self.azu_port
+        self.connection_details['secure'] = self.azu_secure
+        if len(self.azu_user) > 0:
+            self.connection_details['user'] = self.azu_user
+            self.connection_details['password'] = self.azu_pass
 
         # connect
         self.connection = make_connection(**self.connection_details)
@@ -159,15 +163,16 @@ class FluAzuD(object):
             connection_error = error
         else:
             connection_error = None
-        if connection_error is None:
-            printMessage("Connected to %s" % self.azu_host)
-        else:
-            printError("Error getting interface object - could not connect to Azureus-Server %s:%s" % (str(self.azu_host), str(self.azu_port)))
-            printError(connection_error.to_error_string())
+        if connection_error is not None:
+            printError("could not connect to Azureus-Server")
             return False
 
         # azureus version
-        printMessage("Azureus-Version: " + str(self.connection.get_azureus_version()))
+        self.azu_version_str = str(self.connection.get_azureus_version())
+        self.azu_version_str = self.azu_version_str.replace(", ", ".")
+        self.azu_version_str = self.azu_version_str.replace("(", "")
+        self.azu_version_str = self.azu_version_str.replace(")", "")
+        printMessage("connected. Azureus-Version: %s" % self.azu_version_str)
 
         # download-manager
         self.dm = self.interface.getDownloadManager()
@@ -199,8 +204,11 @@ class FluAzuD(object):
         # main-loop
         while self.running > 0:
 
-            # check if connection still valid
-            if not self.azu_checkConnection():
+            # check if connection still valid, shutdown if it is not
+            if not self.checkAzuConnection():
+                # shutdown
+                self.shutdown()
+                # return
                 return 1
 
             # update downloads
@@ -385,43 +393,59 @@ class FluAzuD(object):
             return False
 
     """ -------------------------------------------------------------------- """
-    """ azu_checkConnection                                                  """
+    """ checkAzuConnection                                                   """
     """ -------------------------------------------------------------------- """
-    def azu_checkConnection(self):
+    def checkAzuConnection(self):
 
         # con valid
-        if self.connection.is_connection_valid():
-            return True
+        try:
+            if self.connection.is_connection_valid():
+                return True
+            else:
+                raise
 
         # con not valid
-        else:
+        except:
 
             # out
-            printMessage("connection to Azureus-server lost, re-establishing connection to %s ..." % self.azu_host)
+            printMessage("connection to Azureus-server lost, reconnecting to %s:%d ..." % (self.azu_host, self.azu_port))
 
-            # establish con
-            try:
-                self.connection.establish_connection(True)
-                printMessage("established connection to %s" % self.azu_host)
-            except:
-                printError("Error establishing connection to %s" % self.azu_host)
-                return False
+            # try to reconnect
+            for i in range(FluAzuD.MAX_RECONNECT_TRIES):
 
-            # interface
-            try:
-                self.interface = self.connection.get_plugin_interface()
-            except LinkError, error:
-                self.interface = None
-            if self.interface is None:
-                printError("Error getting interface object")
-                return False
+                # sleep
+                time.sleep(i << 2)
 
-            # download-manager
-            self.dm = None
-            self.dm = self.interface.getDownloadManager()
-            if self.dm is None:
-                printError("Error getting Download-Manager object")
-                return False
-            else:
-                return True
+                # out
+                printMessage("reconnect-try %d ..." % (i + 1))
+
+                # establish con
+                try:
+                    self.connection.establish_connection(True)
+                    printMessage("established connection to Azureus-server")
+                except:
+                    printError("Error establishing connection to Azureus-server")
+                    continue
+
+                # interface
+                try:
+                    self.interface = self.connection.get_plugin_interface()
+                except LinkError, error:
+                    self.interface = None
+                if self.interface is None:
+                    printError("Error getting interface object")
+                    continue
+
+                # download-manager
+                self.dm = None
+                self.dm = self.interface.getDownloadManager()
+                if self.dm is None:
+                    printError("Error getting Download-Manager object")
+                    continue
+                else:
+                    return True
+
+            # seems like azu is down. give up
+            printError("no connection after %d tries, i give up, azu is gone" % FluAzuD.MAX_RECONNECT_TRIES)
+            return False
 
