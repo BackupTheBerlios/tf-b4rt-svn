@@ -32,11 +32,22 @@ from fluazu.StatFile import StatFile
 """ ------------------------------------------------------------------------ """
 class Transfer(object):
 
+    """ azu states """
+    ST_DOWNLOADING = 4
+    ST_ERROR = 8
+    ST_PREPARING = 2
+    ST_QUEUED = 9
+    ST_READY = 3
+    ST_SEEDING = 5
+    ST_STOPPED = 7
+    ST_STOPPING = 6
+    ST_WAITING = 1
+
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
     def __init__(self, tf_pathTransfers, flu_pathTransfers, file):
-        self.state = 1
+        self.state = Transfer.ST_STOPPED
         self.tf_pathTransfers = tf_pathTransfers
         self.flu_pathTransfers = flu_pathTransfers
         self.name = file
@@ -100,7 +111,7 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     """ processCommandStack                                                  """
     """ -------------------------------------------------------------------- """
-    def processCommandStack(self, interface):
+    def processCommandStack(self, download):
         if os.path.isfile(self.fileCommand):
             # process file
             printMessage("Processing command-file %s ..." % self.fileCommand)
@@ -122,7 +133,7 @@ class Transfer(object):
                         for command in commands:
                             if len(command) > 0:
                                 # exec, early out when reading a quit-command
-                                if self.execCommand(command, interface):
+                                if self.execCommand(download, command):
                                     return True
                     else:
                         printMessage("No commands found.")
@@ -136,9 +147,24 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     """ execCommand                                                          """
     """ -------------------------------------------------------------------- """
-    def execCommand(self, command, interface):
-        printMessage("Command: %s" % command)
+    def execCommand(self, download, command):
+        printMessage("Command: %s (%s) (%s)" % (command, self.name, str(download.getState())))
         return False
 
+    """ -------------------------------------------------------------------- """
+    """ update                                                               """
+    """ -------------------------------------------------------------------- """
+    def update(self, download):
+        # DEBUG
+        printMessage("* update: %s (%s)" % (self.name, str(download.getState())))
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ inject                                                               """
+    """ -------------------------------------------------------------------- """
+    def inject(self, dm):
+        # DEBUG
+        printMessage("* inject: %s" % self.name)
+        return False
 
 

@@ -41,10 +41,9 @@ class FluAzuD(object):
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
     def __init__(self):
-        self.state = 1
         self.running = 1
-        self.errors = []
         self.transfers = []
+        self.downloads = {}
         self.pid = '0'
         # tf-settings
         self.tf_path = ''
@@ -203,40 +202,25 @@ class FluAzuD(object):
             if not self.azu_checkConnection():
                 return 1
 
-            # DEBUG
+            # update downloads
+            self.updateDownloads()
 
-            # process downloads
-            downloads = self.dm.getDownloads()
-            for download in downloads:
-                # download
-                printMessage("* %s" % str(download))
-                printMessage("  %s" % str(download.getName()))
-                printMessage("  %s" % str(download.getState()))
-                tfile = str(download.getTorrentFileName())
-                printMessage("  %s" % tfile)
-                comp = tfile.split('/')
-                tfile = comp.pop()
-                printMessage("  %s" % tfile)
-                printMessage("  %s" % str(download.getSavePath()))
-                printMessage("  %s" % str(download.getLastScrapeResult()))
-                # torrent
-                torrent = download.getTorrent()
-                printMessage("  %s" % str(torrent.getName()))
-                printMessage("  getState: %s" % str(download.getState()))
-                printMessage("  getSize: %s" % str(torrent.getSize()))
-                # stats
-                stats = download.getStats()
-                printMessage("  getUploaded: %s" % str(stats.getUploaded()))
-                printMessage("  getDownloaded: %s" % str(stats.getDownloaded()))
-                printMessage("  getUploadAverage: %s" % str(stats.getUploadAverage()))
-                printMessage("  getDownloadAverage: %s" % str(stats.getDownloadAverage()))
-                printMessage("  getETA: %s" % str(stats.getETA()))
+            # update and sync transfers
+            for transfer in self.transfers:
+                if transfer.name in self.downloads:
+                    # DEBUG
+                    printMessage("* update %s (%s)" % (str(transfer.name), str(transfer.owner)))
+                    # update
+                    transfer.update(self.downloads[transfer.name])
+                else:
+                    # inject
+                    printMessage("inject new transfer %s (%s) ..." % (str(transfer.name), str(transfer.owner)))
+                    transfer.inject(self.dm)
+                    # update downloads
+                    self.updateDownloads()
 
             # inner loop
             for i in range(5):
-
-                # debug
-                printMessage(str(i))
 
                 # process command stack
                 if self.processCommandStack():
@@ -246,8 +230,9 @@ class FluAzuD(object):
 
                 # process transfers
                 for transfer in self.transfers:
-                    printMessage("* %s (%s)" % (str(transfer.name), str(transfer.owner)))
-                    transfer.processCommandStack(self.interface)
+                    # DEBUG
+                    printMessage("* process %s (%s)" % (str(transfer.name), str(transfer.owner)))
+                    transfer.processCommandStack(self.downloads[transfer.name])
 
                 # sleep
                 time.sleep(1)
@@ -257,6 +242,17 @@ class FluAzuD(object):
 
         # return
         return 0
+
+    """ -------------------------------------------------------------------- """
+    """ updateDownloads                                                      """
+    """ -------------------------------------------------------------------- """
+    def updateDownloads(self):
+        azu_dls = self.dm.getDownloads()
+        for download in azu_dls:
+            tfile = str(download.getTorrentFileName())
+            comp = tfile.split('/')
+            tfile = comp.pop()
+            self.downloads[tfile] = download
 
     """ -------------------------------------------------------------------- """
     """ processCommandStack                                                  """

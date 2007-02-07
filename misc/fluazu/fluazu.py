@@ -68,7 +68,8 @@ if __name__ == '__main__':
     try:
         exitVal = daemon.run(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
     except KeyboardInterrupt:
-        daemon.running = 0
+        daemon.shutdown()
+        exitVal = 0
         pass
     except Exception, e:
         print e
