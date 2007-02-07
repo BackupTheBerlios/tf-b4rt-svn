@@ -120,6 +120,11 @@ class FluAzuD(object):
 
         # flu
 
+        # check dirs
+        if not self.checkDirs():
+            printError("Error checking dirs. path: %s" % self.tf_path)
+            return False
+
         # write pid-file
         self.pid = (str(os.getpid())).strip()
         printMessage("writing pid-file %s (%s)" % (self.flu_filePid, self.pid))
@@ -372,9 +377,7 @@ class FluAzuD(object):
     def updateDownloads(self):
         azu_dls = self.dm.getDownloads()
         for download in azu_dls:
-            tfile = str(download.getTorrentFileName())
-            comp = tfile.split('/')
-            tfile = comp.pop()
+            tfile = (os.path.split(str(download.getTorrentFileName())))[1]
             self.downloads[tfile] = download
 
     """ -------------------------------------------------------------------- """
@@ -436,6 +439,56 @@ class FluAzuD(object):
         else:
             printError("op-code unknown: " + opCode)
             return False
+
+    """ -------------------------------------------------------------------- """
+    """ checkDirs                                                            """
+    """ -------------------------------------------------------------------- """
+    def checkDirs(self):
+
+        # tf-paths
+        if not os.path.isdir(self.tf_path):
+            printError("Invalid path-dir: %s" % self.tf_path)
+            return False
+        if not os.path.isdir(self.tf_pathTransfers):
+            printError("Invalid tf-transfers-dir: %s" % self.tf_pathTransfers)
+            return False
+
+        # flu-paths
+        if not os.path.isdir(self.flu_path):
+            try:
+                printMessage("flu-main-path %s does not exist, trying to create ..." % self.flu_path)
+                os.mkdir(self.flu_path, 0700)
+                printMessage("done.")
+            except:
+                printError("Failed to create flu-main-path %s" % self.flu_path)
+                return False
+        if not os.path.isdir(self.flu_pathTransfers):
+            try:
+                printMessage("flu-transfers-path %s does not exist, trying to create ..." % self.flu_pathTransfers)
+                os.mkdir(self.flu_pathTransfers, 0700)
+                printMessage("done.")
+            except:
+                printError("Failed to create flu-main-path %s" % self.flu_pathTransfers)
+                return False
+        if not os.path.isdir(self.flu_pathTransfersRun):
+            try:
+                printMessage("flu-transfers-run-path %s does not exist, trying to create ..." % self.flu_pathTransfersRun)
+                os.mkdir(self.flu_pathTransfersRun, 0700)
+                printMessage("done.")
+            except:
+                printError("Failed to create flu-main-path %s" % self.flu_pathTransfersRun)
+                return False
+        if not os.path.isdir(self.flu_pathTransfersDel):
+            try:
+                printMessage("flu-transfers-del-path %s does not exist, trying to create ..." % self.flu_pathTransfersDel)
+                os.mkdir(self.flu_pathTransfersDel, 0700)
+                printMessage("done.")
+            except:
+                printError("Failed to create flu-main-path %s" % self.flu_pathTransfersDel)
+                return False
+
+        # return
+        return True
 
     """ -------------------------------------------------------------------- """
     """ checkAzuConnection                                                   """

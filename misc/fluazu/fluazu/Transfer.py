@@ -72,6 +72,7 @@ class Transfer(object):
         self.name = file
         self.fileTorrent = self.tf_pathTransfers + file
         self.fileMeta = self.flu_pathTransfers + file
+        self.updateCtr = 0
 
         # owner
         self.owner = ''
@@ -142,7 +143,13 @@ class Transfer(object):
         self.state = Transfer.state_map[download.getState()]
 
         # stat
-        return self.statRunning(download)
+        self.statRunning(download)
+
+        # increment counter
+        if self.updateCtr <= 0 or self.updateCtr >= 2147483647:
+            self.updateCtr = 1
+        else:
+            self.updateCtr += 1
 
     """ -------------------------------------------------------------------- """
     """ start                                                                """
@@ -162,11 +169,14 @@ class Transfer(object):
                 download.start()
             else:
                 download.restart()
+            # return
             return True
         except Exception, e:
             self.log("exception when starting transfer :")
             self.log(str(e))
             return False
+
+
 
     """ -------------------------------------------------------------------- """
     """ stop                                                                 """
@@ -297,18 +307,20 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def statRunning(self, download):
         try:
-            # get stats
+            # stats
             stats = download.getStats()
             # set some values
             self.sf.running = Transfer.TF_RUNNING
-            self.sf.percent_done = str(stats.getCompleted())
+            pctf = float(stats.getCompleted())
+            pctf /= 10
+            self.sf.percent_done = str(pctf)
             self.sf.time_left = str(stats.getETA())
             self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
             self.sf.up_speed = "%.1f kB/s" % ((float(stats.getUploadAverage())) / 1024)
-            """ TODO """
-            self.sf.seeds = ""
-            self.sf.peers = ""
-            self.sf.sharing = str(stats.getShareRatio())
+            ps = download.getPeerManager().getStats()
+            scrape = download.getLastScrapeResult()
+            self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), scrape.getSeedCount())
+            self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), scrape.getNonSeedCount())
             self.sf.uptotal = str(stats.getUploaded())
             self.sf.downtotal = str(stats.getDownloaded())
             # write
@@ -333,7 +345,9 @@ class Transfer(object):
                 self.sf.time_left = "Download Succeeded!"
             # not done
             else:
-                pcts = "-" + str(stats.getCompleted())
+                pctf = float(stats.getCompleted())
+                pctf /= 10
+                pcts = "-" + str(pctf)
                 pctf = float(pcts)
                 pctf -= 100
                 self.sf.percent_done = str(pctf)
