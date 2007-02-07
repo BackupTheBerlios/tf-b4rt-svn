@@ -90,7 +90,7 @@ class FluAzuD(object):
         # print vars
         printMessage("flu-path: %s" % str(self.flu_path))
         printMessage("azu-host: %s" % str(self.azu_host))
-        printMessage("azu-port: %s" % str(self.azu_host))
+        printMessage("azu-port: %s" % str(self.azu_port))
         printMessage("azu-secure: %s" % str(self.azu_secure))
         if len(self.azu_user) > 0:
             printMessage("azu-user: %s" % str(self.azu_user))
@@ -105,15 +105,76 @@ class FluAzuD(object):
             self.connection_details['password'] = self.azu_pass
 
         # initialize
-        self.initialize()
-
-        # check all dopal-objects
-        if self.connection is None or self.interface is None or self.dm is None:
-            printError("there were problems, not starting up daemon-mainloop.")
-            return self.shutdown()
+        if not self.initialize():
+            printError("there were problems initializing fluazu, shutting down...")
+            self.shutdown()
+            return 1
 
         # main
         return self.main()
+
+    """ -------------------------------------------------------------------- """
+    """ initialize                                                           """
+    """ -------------------------------------------------------------------- """
+    def initialize(self):
+
+        # flu
+
+        # write pid-file
+        self.pid = (str(os.getpid())).strip()
+        printMessage("writing pid-file %s (%s)" % (self.flu_filePid, self.pid))
+        try:
+            pidFile = open(self.flu_filePid, 'w')
+            pidFile.write(self.pid + "\n")
+            pidFile.flush()
+            pidFile.close()
+        except Exception, e:
+            printError("Failed to write pid-file %s (%s)" % (self.flu_filePid, self.pid))
+
+        # tf
+
+        # delete command-file if exists
+        if os.path.isfile(self.flu_fileCommand):
+            try:
+                transferLog("removing command-file %s ..." % self.flu_fileCommand)
+                os.remove(self.flu_fileCommand)
+            except:
+                printError("Failed to delete commandfile %s" % self.flu_fileCommand)
+                pass
+
+        # load transfers
+        self.loadTransfers()
+
+        # azu
+
+        # connect
+        self.connection = make_connection(**self.connection_details)
+        self.connection.is_persistent_connection = True
+        try:
+            self.interface = self.connection.get_plugin_interface()
+        except LinkError, error:
+            self.interface = None
+            connection_error = error
+        else:
+            connection_error = None
+        if connection_error is None:
+            printMessage("Connected to %s" % self.azu_host)
+        else:
+            printError("Error getting plugin interface object - could not connect to Azureus-Server %s:%s" % (str(self.azu_host), str(self.azu_port)))
+            printError(connection_error.to_error_string())
+            return False
+
+        # azureus version
+        printMessage("Azureus-Version: " + str(self.connection.get_azureus_version()))
+
+        # download-manager
+        self.dm = self.interface.getDownloadManager()
+        if self.dm is None:
+            printError("Error getting plugin Download-Manager object")
+            return False
+
+        # return
+        return True
 
     """ -------------------------------------------------------------------- """
     """ shutdown                                                             """
@@ -123,15 +184,12 @@ class FluAzuD(object):
         # shutdown
         printMessage("fluazu shutting down...")
 
-        # remove pid-file
-        printMessage("removing pid-file %s ..." % self.flu_filePid)
+        # delete pid-file
+        printMessage("deleting pid-file %s ..." % self.flu_filePid)
         try:
-            remove(self.flu_filePid)
+            os.remove(self.flu_filePid)
         except Exception, e:
-            printError("Failed to remove pid-file %s " % self.flu_filePid)
-
-        # return
-        return 0
+            printError("Failed to delete pid-file %s " % self.flu_filePid)
 
     """ -------------------------------------------------------------------- """
     """ main                                                                 """
@@ -143,11 +201,7 @@ class FluAzuD(object):
 
             # check if connection still valid
             if not self.azu_checkConnection():
-                return 0
-
-            # process transfers
-            for transfer in self.transfers:
-                printMessage("* %s (%s)" % (str(transfer.name), str(transfer.owner)))
+                return 1
 
             # DEBUG
 
@@ -190,68 +244,19 @@ class FluAzuD(object):
                     self.running = 0
                     break;
 
+                # process transfers
+                for transfer in self.transfers:
+                    printMessage("* %s (%s)" % (str(transfer.name), str(transfer.owner)))
+                    transfer.processCommandStack(self.interface)
+
                 # sleep
                 time.sleep(1)
 
         # shutdown
-        return self.shutdown()
+        self.shutdown()
 
-    """ -------------------------------------------------------------------- """
-    """ initialize                                                           """
-    """ -------------------------------------------------------------------- """
-    def initialize(self):
-
-        # flu
-
-        # write pid-file
-        self.pid = (str(os.getpid())).strip()
-        printMessage("writing pid-file %s (%s)" % (self.flu_filePid, self.pid))
-        try:
-            pidFile = open(self.flu_filePid, 'w')
-            pidFile.write(self.pid + "\n")
-            pidFile.flush()
-            pidFile.close()
-        except Exception, e:
-            printError("Failed to write pid-file %s (%s)" % (self.flu_filePid, self.pid))
-
-        # tf
-
-        # remove command-file if exists
-        if os.path.isfile(self.flu_fileCommand):
-            try:
-                transferLog("removing command-file %s ..." % self.flu_fileCommand)
-                remove(self.flu_fileCommand)
-            except:
-                pass
-
-        # load transfers
-        self.loadTransfers()
-
-        # azu
-
-        # connect
-        self.connection = make_connection(**self.connection_details)
-        self.connection.is_persistent_connection = True
-        try:
-            self.interface = self.connection.get_plugin_interface()
-        except LinkError, error:
-            self.interface = None
-            connection_error = error
-        else:
-            connection_error = None
-        if connection_error is None:
-            printMessage("Connected to %s" % self.azu_host)
-        else:
-            printError("Error getting plugin interface object - could not connect to Azureus, error:\n %s" % connection_error.to_error_string())
-
-        # azureus version
-        printMessage("Azureus-Version: " + str(self.connection.get_azureus_version()))
-
-        # download-manager
-        self.dm = self.interface.getDownloadManager()
-        if self.dm is None:
-            printError("Error getting plugin Download-Manager object")
-            return False
+        # return
+        return 0
 
     """ -------------------------------------------------------------------- """
     """ processCommandStack                                                  """
@@ -259,17 +264,17 @@ class FluAzuD(object):
     def processCommandStack(self):
         if os.path.isfile(self.flu_fileCommand):
             # process file
-            printMessage("Processing command-file " + self.flu_fileCommand + "...")
+            printMessage("Processing command-file %s ..." % self.flu_fileCommand)
             try:
                 # read file to mem
                 f = open(self.flu_fileCommand, 'r')
                 data = f.read()
                 f.close
-                # remove file
+                # delete file
                 try:
                     os.remove(self.flu_fileCommand)
                 except:
-                    printError("Failed to remove command-file : " + self.flu_fileCommand)
+                    printError("Failed to delete command-file : %s" % self.flu_fileCommand)
                     pass
                 # exec commands
                 if len(data) > 0:
@@ -285,7 +290,7 @@ class FluAzuD(object):
                 else:
                     printMessage("No commands found.")
             except:
-                printError("Failed to read command-file : " + self.flu_fileCommand)
+                printError("Failed to read command-file : %s" % self.flu_fileCommand)
                 pass
         return False
 

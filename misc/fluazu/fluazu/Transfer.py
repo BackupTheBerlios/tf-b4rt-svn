@@ -20,6 +20,8 @@
 #                                                                              #
 #                                                                              #
 ################################################################################
+# standard-imports
+import os
 # fluazu
 from fluazu.output import printMessage, printError
 from fluazu.StatFile import StatFile
@@ -66,13 +68,18 @@ class Transfer(object):
         try:
             # read file to mem
             f = open(self.fileMeta, 'r')
-            content = f.readlines()
+            data = f.read()
             f.close
-            # process content
-            if len(content) > 0:
-                # owner
-                self.owner = content[0].replace("\n", "")
-                printMessage("owner: %s" % self.owner)
+            # process data
+            if len(data) > 0:
+                content = data.split("\n")
+                if len(content) > 0:
+                    # owner
+                    self.owner = content[0]
+                    printMessage("owner: %s" % self.owner)
+                else:
+                    printMessage("No owner found.")
+                    return False
             else:
                 printMessage("No owner found.")
                 return False
@@ -89,4 +96,49 @@ class Transfer(object):
 
         # return
         return True
+
+    """ -------------------------------------------------------------------- """
+    """ processCommandStack                                                  """
+    """ -------------------------------------------------------------------- """
+    def processCommandStack(self, interface):
+        if os.path.isfile(self.fileCommand):
+            # process file
+            printMessage("Processing command-file %s ..." % self.fileCommand)
+            try:
+                # read file to mem
+                f = open(self.fileCommand, 'r')
+                data = f.read()
+                f.close
+                # delete file
+                try:
+                    os.remove(self.fileCommand)
+                except:
+                    printError("Failed to delete command-file : %s" % self.fileCommand)
+                    pass
+                # exec commands
+                if len(data) > 0:
+                    commands = data.split("\n")
+                    if len(commands) > 0:
+                        for command in commands:
+                            if len(command) > 0:
+                                # exec, early out when reading a quit-command
+                                if self.execCommand(command, interface):
+                                    return True
+                    else:
+                        printMessage("No commands found.")
+                else:
+                    printMessage("No commands found.")
+            except:
+                printError("Failed to read command-file : %s" % self.fileCommand)
+                pass
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ execCommand                                                          """
+    """ -------------------------------------------------------------------- """
+    def execCommand(self, command, interface):
+        printMessage("Command: %s" % command)
+        return False
+
+
 
