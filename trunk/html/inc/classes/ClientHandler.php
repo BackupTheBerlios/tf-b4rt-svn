@@ -815,7 +815,8 @@ class ClientHandler
                 $this->pid = getTransferPid($this->transfer);;
             }
             // kill it
-            $this->callResult = posix_kill($this->pid, SIGKILL);
+            if ($this->pid > 0)
+            	$this->callResult = posix_kill($this->pid, SIGKILL);
             // try to remove the pid file
             @unlink($this->transferFilePath.".pid");
         }
