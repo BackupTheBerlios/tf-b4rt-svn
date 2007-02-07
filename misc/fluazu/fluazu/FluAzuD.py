@@ -51,6 +51,7 @@ class FluAzuD(object):
         # flu-settings
         self.flu_path = ''
         self.flu_pathTransfers = ''
+        self.flu_pathTransfersRun = ''
         self.flu_fileCommand = ''
         self.flu_filePid = ''
         # azu-settings
@@ -69,6 +70,7 @@ class FluAzuD(object):
     """ run                                                                  """
     """ -------------------------------------------------------------------- """
     def run(self, path, host, port, secure, username, password):
+        printMessage("fluazu starting up:")
 
         # set vars
         self.tf_path = path
@@ -76,7 +78,8 @@ class FluAzuD(object):
         self.flu_path = self.tf_path + '.fluazu/'
         self.flu_fileCommand = self.flu_path + 'fluazu.cmd'
         self.flu_filePid = self.flu_path + 'fluazu.pid'
-        self.flu_pathTransfers = self.flu_path + 'transfers/'
+        self.flu_pathTransfers = self.flu_path + 'cur/'
+        self.flu_pathTransfersRun = self.flu_path + 'run/'
         self.azu_host = host
         self.azu_port = int(port)
         if secure == '1':
@@ -159,7 +162,7 @@ class FluAzuD(object):
         if connection_error is None:
             printMessage("Connected to %s" % self.azu_host)
         else:
-            printError("Error getting plugin interface object - could not connect to Azureus-Server %s:%s" % (str(self.azu_host), str(self.azu_port)))
+            printError("Error getting interface object - could not connect to Azureus-Server %s:%s" % (str(self.azu_host), str(self.azu_port)))
             printError(connection_error.to_error_string())
             return False
 
@@ -169,7 +172,7 @@ class FluAzuD(object):
         # download-manager
         self.dm = self.interface.getDownloadManager()
         if self.dm is None:
-            printError("Error getting plugin Download-Manager object")
+            printError("Error getting Download-Manager object")
             return False
 
         # return
@@ -179,8 +182,6 @@ class FluAzuD(object):
     """ shutdown                                                             """
     """ -------------------------------------------------------------------- """
     def shutdown(self):
-
-        # shutdown
         printMessage("fluazu shutting down...")
 
         # delete pid-file
@@ -208,13 +209,11 @@ class FluAzuD(object):
             # update and sync transfers
             for transfer in self.transfers:
                 if transfer.name in self.downloads:
-                    # DEBUG
-                    printMessage("* update %s (%s)" % (str(transfer.name), str(transfer.owner)))
                     # update
-                    transfer.update(self.downloads[transfer.name])
+                    if transfer.isRunning():
+                        transfer.update(self.downloads[transfer.name])
                 else:
                     # inject
-                    printMessage("inject new transfer %s (%s) ..." % (str(transfer.name), str(transfer.owner)))
                     transfer.inject(self.dm)
                     # update downloads
                     self.updateDownloads()
@@ -222,17 +221,16 @@ class FluAzuD(object):
             # inner loop
             for i in range(5):
 
-                # process command stack
+                # process daemon command stack
                 if self.processCommandStack():
                     # shutdown
                     self.running = 0
                     break;
 
-                # process transfers
+                # process transfers command stacks
                 for transfer in self.transfers:
-                    # DEBUG
-                    printMessage("* process %s (%s)" % (str(transfer.name), str(transfer.owner)))
-                    transfer.processCommandStack(self.downloads[transfer.name])
+                    if transfer.isRunning():
+                        transfer.processCommandStack(self.downloads[transfer.name])
 
                 # sleep
                 time.sleep(1)
@@ -242,6 +240,78 @@ class FluAzuD(object):
 
         # return
         return 0
+
+    """ -------------------------------------------------------------------- """
+    """ reload                                                               """
+    """ -------------------------------------------------------------------- """
+    def reload(self):
+        printMessage("reloading...")
+
+        # run-requests
+        self.processRunRequests()
+
+        # transfers
+        self.loadTransfers()
+
+    """ -------------------------------------------------------------------- """
+    """ processRunRequests                                                   """
+    """ -------------------------------------------------------------------- """
+    def processRunRequests(self):
+        printMessage("processing run-requests...")
+        # read requests
+        runRequests = []
+        try:
+            for fileName in os.listdir(self.flu_pathTransfersRun):
+                inputFile = self.flu_pathTransfersRun + fileName
+                outputFile = self.flu_pathTransfers + fileName
+                # move file + add to requests
+                try:
+                    # read file to mem
+                    f = open(inputFile, 'r')
+                    data = f.read()
+                    f.close()
+                    # delete
+                    os.remove(inputFile)
+                    # write file
+                    f = open(outputFile, 'w')
+                    f.write(data)
+                    f.flush()
+                    f.close()
+                    # add
+                    runRequests.append(fileName)
+                except:
+                    printError("Failed to move file : %s" % inputFile)
+                    pass
+        except:
+            return False
+        # process requests
+        if len(runRequests) > 0:
+            self.updateDownloads()
+            for fileName in runRequests:
+                transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
+                # inject if needed
+                if transfer.name not in self.downloads:
+                    # inject
+                    transfer.inject(self.dm)
+                    # update downloads
+                    self.updateDownloads()
+                # start transfer
+                transfer.start(self.downloads[transfer.name])
+        # return
+        return True
+
+    """ -------------------------------------------------------------------- """
+    """ loadTransfers                                                        """
+    """ -------------------------------------------------------------------- """
+    def loadTransfers(self):
+        printMessage("loading transfers...")
+        self.transfers = []
+        try:
+            for fileName in os.listdir(self.flu_pathTransfers):
+                self.transfers.append(Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName))
+            return True
+        except:
+            return False
 
     """ -------------------------------------------------------------------- """
     """ updateDownloads                                                      """
@@ -265,7 +335,7 @@ class FluAzuD(object):
                 # read file to mem
                 f = open(self.flu_fileCommand, 'r')
                 data = f.read()
-                f.close
+                f.close()
                 # delete file
                 try:
                     os.remove(self.flu_fileCommand)
@@ -303,28 +373,15 @@ class FluAzuD(object):
             printMessage("command: stop-request, setting shutdown-flag...")
             return True
 
-        # t
-        elif opCode == 't':
-            printMessage("command: transfers-reload-request, reloading...")
-            self.loadTransfers()
+        # r
+        elif opCode == 'r':
+            printMessage("command: reload-request, reloading...")
+            self.reload()
             return False
 
         # default
         else:
             printError("op-code unknown: " + opCode)
-            return False
-
-    """ -------------------------------------------------------------------- """
-    """ loadTransfers                                                        """
-    """ -------------------------------------------------------------------- """
-    def loadTransfers(self):
-        printMessage("loading transfers...")
-        self.transfers = []
-        try:
-            for fileName in os.listdir(self.flu_pathTransfers):
-                self.transfers.append(Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName))
-            return True
-        except:
             return False
 
     """ -------------------------------------------------------------------- """
@@ -339,12 +396,15 @@ class FluAzuD(object):
         # con not valid
         else:
 
+            # out
+            printMessage("connection to Azureus-server lost, re-establishing connection to %s ..." % self.azu_host)
+
             # establish con
             try:
                 self.connection.establish_connection(True)
-                printMessage("established connection to " + self.azu_host)
+                printMessage("established connection to %s" % self.azu_host)
             except:
-                printError("Error establishing connection to " + self.azu_host)
+                printError("Error establishing connection to %s" % self.azu_host)
                 return False
 
             # interface
@@ -353,14 +413,14 @@ class FluAzuD(object):
             except LinkError, error:
                 self.interface = None
             if self.interface is None:
-                printError("Error getting plugin interface object")
+                printError("Error getting interface object")
                 return False
 
             # download-manager
             self.dm = None
             self.dm = self.interface.getDownloadManager()
             if self.dm is None:
-                printError("Error getting plugin Download-Manager object")
+                printError("Error getting Download-Manager object")
                 return False
             else:
                 return True

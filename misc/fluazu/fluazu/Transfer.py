@@ -32,6 +32,12 @@ from fluazu.StatFile import StatFile
 """ ------------------------------------------------------------------------ """
 class Transfer(object):
 
+    """ tf states """
+    TF_STOPPED = 0
+    TF_RUNNING = 1
+    TF_NEW = 2
+    TF_QUEUED = 3
+
     """ azu states """
     ST_DOWNLOADING = 4
     ST_ERROR = 8
@@ -43,11 +49,24 @@ class Transfer(object):
     ST_STOPPING = 6
     ST_WAITING = 1
 
+    """ azu -> flu map """
+    azu_state_map = { \
+        ST_DOWNLOADING: TF_RUNNING, \
+        ST_ERROR: TF_STOPPED, \
+        ST_PREPARING: TF_RUNNING, \
+        ST_QUEUED: TF_RUNNING, \
+        ST_READY: TF_STOPPED, \
+        ST_SEEDING: TF_RUNNING, \
+        ST_STOPPED: TF_STOPPED, \
+        ST_STOPPING: TF_RUNNING, \
+        ST_WAITING: TF_STOPPED \
+    }
+
     """ -------------------------------------------------------------------- """
     """ __init__                                                             """
     """ -------------------------------------------------------------------- """
     def __init__(self, tf_pathTransfers, flu_pathTransfers, file):
-        self.state = Transfer.ST_STOPPED
+        self.state = Transfer.TF_STOPPED
         self.tf_pathTransfers = tf_pathTransfers
         self.flu_pathTransfers = flu_pathTransfers
         self.name = file
@@ -71,7 +90,7 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def initialize(self):
 
-        # verbose
+        # out
         printMessage("initializing transfer %s ..." % self.name)
 
         # meta-file
@@ -80,7 +99,7 @@ class Transfer(object):
             # read file to mem
             f = open(self.fileMeta, 'r')
             data = f.read()
-            f.close
+            f.close()
             # process data
             if len(data) > 0:
                 content = data.split("\n")
@@ -112,6 +131,8 @@ class Transfer(object):
     """ processCommandStack                                                  """
     """ -------------------------------------------------------------------- """
     def processCommandStack(self, download):
+        # DEBUG
+        printMessage("* processCommandStack: %s (%s)" % (self.name, self.fileCommand))
         if os.path.isfile(self.fileCommand):
             # process file
             printMessage("Processing command-file %s ..." % self.fileCommand)
@@ -119,7 +140,7 @@ class Transfer(object):
                 # read file to mem
                 f = open(self.fileCommand, 'r')
                 data = f.read()
-                f.close
+                f.close()
                 # delete file
                 try:
                     os.remove(self.fileCommand)
@@ -148,23 +169,72 @@ class Transfer(object):
     """ execCommand                                                          """
     """ -------------------------------------------------------------------- """
     def execCommand(self, download, command):
-        printMessage("Command: %s (%s) (%s)" % (command, self.name, str(download.getState())))
+
+        # DEBUG
+        printMessage("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.azu_state_map[download.getState()])))
+
+        # TODO
+
         return False
 
     """ -------------------------------------------------------------------- """
     """ update                                                               """
     """ -------------------------------------------------------------------- """
     def update(self, download):
+        # set state
+        self.state = Transfer.azu_state_map[download.getState()]
+
         # DEBUG
-        printMessage("* update: %s (%s)" % (self.name, str(download.getState())))
+        printMessage("* update: %s (%s)" % (self.name, str(self.state)))
+
+        # TODO
+
+        # return
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ start                                                                """
+    """ -------------------------------------------------------------------- """
+    def start(self, download):
+        # DEBUG
+        printMessage("* start: %s (%s)" % (self.name, str(Transfer.azu_state_map[download.getState()])))
+
+        # TODO
+
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ stop                                                                 """
+    """ -------------------------------------------------------------------- """
+    def stop(self, download):
+        # DEBUG
+        printMessage("* stop: %s (%s)" % (self.name, str(Transfer.azu_state_map[download.getState()])))
         return False
 
     """ -------------------------------------------------------------------- """
     """ inject                                                               """
     """ -------------------------------------------------------------------- """
     def inject(self, dm):
-        # DEBUG
-        printMessage("* inject: %s" % self.name)
+        printMessage("injecting new transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+
+        # TODO
+
         return False
 
+    """ -------------------------------------------------------------------- """
+    """ delete                                                               """
+    """ -------------------------------------------------------------------- """
+    def delete(self, dm):
+        # DEBUG
+        printMessage("* delete: %s" % self.name)
+
+        # TODO
+
+        return False
+
+    """ -------------------------------------------------------------------- """
+    """ isRunning                                                            """
+    """ -------------------------------------------------------------------- """
+    def isRunning(self):
+        return (self.state == Transfer.TF_RUNNING)
 

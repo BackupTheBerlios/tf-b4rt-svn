@@ -69,7 +69,7 @@ class StatFile(object):
                 # read file to mem
                 f = open(self.file, 'r')
                 data = f.read()
-                f.close
+                f.close()
                 # set fields
                 content = data.split("\n")
                 if len(content) > 12:
