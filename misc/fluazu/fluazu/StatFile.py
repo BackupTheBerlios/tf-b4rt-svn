@@ -89,8 +89,9 @@ class StatFile(object):
                     return True
                 else:
                     printError("Failed to parse statfile %s " % self.file)
-            except:
+            except Exception, e:
                 printError("Failed to read statfile %s " % self.file)
+                printError(e)
                 pass
         return False
 
@@ -118,8 +119,9 @@ class StatFile(object):
             f.flush()
             f.close()
             return True
-        except:
+        except Exception, e:
             printError("Failed to write statfile %s " % self.file)
+            printError(e)
             pass
         return False
 

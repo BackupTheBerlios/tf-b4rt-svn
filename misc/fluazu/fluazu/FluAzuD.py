@@ -220,11 +220,10 @@ class FluAzuD(object):
             for transfer in self.transfers:
                 if transfer.name in self.downloads:
                     # update
-                    if transfer.isRunning():
-                        transfer.update(self.downloads[transfer.name])
+                    transfer.update(self.downloads[transfer.name])
                 else:
-                    # inject
-                    transfer.inject(self.dm)
+                    # add
+                    transfer.add(self.dm)
                     # update downloads
                     self.updateDownloads()
 
@@ -293,10 +292,10 @@ class FluAzuD(object):
                 self.updateDownloads()
                 # transfer
                 transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
-                # delete if needed
+                # remove if needed
                 if transfer.name in self.downloads:
-                    # delete transfer
-                    transfer.delete(self.downloads[transfer.name])
+                    # remove transfer
+                    transfer.remove(self.downloads[transfer.name])
                 # del file
                 delFile = self.flu_pathTransfers + fileName
                 try:
@@ -343,10 +342,10 @@ class FluAzuD(object):
             self.updateDownloads()
             for fileName in requests:
                 transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
-                # inject if needed
+                # add if needed
                 if transfer.name not in self.downloads:
-                    # inject
-                    transfer.inject(self.dm)
+                    # add
+                    transfer.add(self.dm)
                     # update downloads
                     self.updateDownloads()
                 # start transfer

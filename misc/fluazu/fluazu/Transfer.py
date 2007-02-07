@@ -23,7 +23,7 @@
 # standard-imports
 import os
 # fluazu
-from fluazu.output import printMessage, printError
+from fluazu.output import printMessage, printError, getOutput
 from fluazu.StatFile import StatFile
 ################################################################################
 
@@ -94,10 +94,10 @@ class Transfer(object):
     def initialize(self):
 
         # out
-        printMessage("initializing transfer %s ..." % self.name)
+        self.log("initializing transfer %s ..." % self.name)
 
         # meta-file
-        printMessage("loading metafile %s ..." % self.fileMeta)
+        self.log("loading metafile %s ..." % self.fileMeta)
         try:
             # read file to mem
             f = open(self.fileMeta, 'r')
@@ -109,23 +109,23 @@ class Transfer(object):
                 if len(content) > 0:
                     # owner
                     self.owner = content[0]
-                    printMessage("owner: %s" % self.owner)
+                    self.log("owner: %s" % self.owner)
                 else:
-                    printMessage("No owner found.")
+                    self.log("No owner found.")
                     return False
             else:
-                printMessage("No owner found.")
+                self.log("No owner found.")
                 return False
         except:
-            printError("Failed to read metafile %s " % self.fileMeta)
+            self.log("Failed to read metafile %s " % self.fileMeta)
             return False
 
         # stat-file
-        printMessage("loading statfile %s ..." % self.fileStat)
+        self.log("loading statfile %s ..." % self.fileStat)
         self.sf = StatFile(self.fileStat)
 
         # verbose
-        printMessage("transfer loaded.")
+        self.log("transfer loaded.")
 
         # return
         return True
@@ -135,64 +135,79 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def update(self, download):
 
+        # DEBUG
+        self.log("* update: %s" % self.name)
+
         # set state
         self.state = Transfer.state_map[download.getState()]
 
-        # DEBUG
-        printMessage("* update: %s (%s)" % (self.name, str(self.state)))
-
         # stat
-        return self.statRunning()
+        return self.statRunning(download)
 
     """ -------------------------------------------------------------------- """
     """ start                                                                """
     """ -------------------------------------------------------------------- """
     def start(self, download):
-        printMessage("starting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+        self.log("starting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
 
         # stat
-        self.statStartup()
+        self.statStartup(download)
 
         # write pid
         self.writePid()
 
-        # TODO
-
-        # return
-        return True
+        # start transfer
+        try:
+            if download.getState() == Transfer.AZ_READY:
+                download.start()
+            else:
+                download.restart()
+            return True
+        except Exception, e:
+            self.log("exception when starting transfer :")
+            self.log(str(e))
+            return False
 
     """ -------------------------------------------------------------------- """
     """ stop                                                                 """
     """ -------------------------------------------------------------------- """
     def stop(self, download):
-        printMessage("stopping transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+        self.log("stopping transfer %s (%s) ..." % (str(self.name), str(self.owner)))
 
         # stat
-        self.statShutdown()
+        self.statShutdown(download)
 
-        # TODO
+        # stop transfer
+        retVal = True
+        try:
+            download.stop()
+            retVal = True
+        except Exception, e:
+            self.log("exception when stopping transfer :")
+            self.log(str(e))
+            retVal = False
 
         # delete pid
         self.deletePid()
 
         # return
-        return True
+        return retVal
 
     """ -------------------------------------------------------------------- """
-    """ inject                                                               """
+    """ add                                                               """
     """ -------------------------------------------------------------------- """
-    def inject(self, dm):
-        printMessage("injecting new transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+    def add(self, dm):
+        self.log("adding new transfer %s (%s) ..." % (str(self.name), str(self.owner)))
 
 
         # TODO
         return True
 
     """ -------------------------------------------------------------------- """
-    """ delete                                                               """
+    """ remove                                                               """
     """ -------------------------------------------------------------------- """
-    def delete(self, dm):
-        printMessage("deleting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+    def remove(self, dm):
+        self.log("removing transfer %s (%s) ..." % (str(self.name), str(self.owner)))
 
 
         # TODO
@@ -210,7 +225,7 @@ class Transfer(object):
     def processCommandStack(self, download):
         if os.path.isfile(self.fileCommand):
             # process file
-            printMessage("Processing command-file %s ..." % self.fileCommand)
+            self.log("Processing command-file %s ..." % self.fileCommand)
             try:
                 # read file to mem
                 f = open(self.fileCommand, 'r')
@@ -220,7 +235,7 @@ class Transfer(object):
                 try:
                     os.remove(self.fileCommand)
                 except:
-                    printError("Failed to delete command-file : %s" % self.fileCommand)
+                    self.log("Failed to delete command-file : %s" % self.fileCommand)
                     pass
                 # exec commands
                 if len(data) > 0:
@@ -232,11 +247,11 @@ class Transfer(object):
                                 if self.execCommand(download, command):
                                     return True
                     else:
-                        printMessage("No commands found.")
+                        self.log("No commands found.")
                 else:
-                    printMessage("No commands found.")
+                    self.log("No commands found.")
             except:
-                printError("Failed to read command-file : %s" % self.fileCommand)
+                self.log("Failed to read command-file : %s" % self.fileCommand)
                 pass
         return False
 
@@ -246,7 +261,7 @@ class Transfer(object):
     def execCommand(self, download, command):
 
         # DEBUG
-        printMessage("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.state_map[download.getState()])))
+        self.log("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.state_map[download.getState()])))
 
         # TODO
 
@@ -255,103 +270,100 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     """ statStartup                                                          """
     """ -------------------------------------------------------------------- """
-    def statStartup(self):
-        # set some values
-        self.sf.running = Transfer.TF_RUNNING;
-        self.sf.percent_done = 0;
-        self.sf.time_left = "Starting...";
-        self.sf.down_speed = "0.00 kB/s";
-        self.sf.up_speed = "0.00 kB/s";
-        self.sf.transferowner = 0;
-        self.sf.seeds = "";
-        self.sf.peers = "";
-        self.sf.sharing = "";
-        self.sf.seedlimit = "";
-        self.sf.uptotal = 0;
-        self.sf.downtotal = 0;
-        # write
-        return self.sf.write()
+    def statStartup(self, download):
+        try:
+            # set some values
+            self.sf.running = Transfer.TF_RUNNING
+            self.sf.percent_done = 0
+            self.sf.time_left = "Starting..."
+            self.sf.down_speed = "0.00 kB/s"
+            self.sf.up_speed = "0.00 kB/s"
+            self.sf.transferowner = self.owner
+            self.sf.seeds = ""
+            self.sf.peers = ""
+            self.sf.sharing = ""
+            self.sf.seedlimit = ""
+            self.sf.uptotal = 0
+            self.sf.downtotal = 0
+            self.sf.size = str(download.getTorrent().getSize())
+            # write
+            return self.sf.write()
+        except Exception, e:
+            self.log(e)
+            return False
 
     """ -------------------------------------------------------------------- """
     """ statRunning                                                          """
     """ -------------------------------------------------------------------- """
-    def statRunning(self):
-        # set some values
-        self.sf.running = Transfer.TF_RUNNING;
-        self.sf.percent_done = 0;
-        self.sf.time_left = "Running...";
-        self.sf.down_speed = "0.00 kB/s";
-        self.sf.up_speed = "0.00 kB/s";
-        self.sf.transferowner = 0;
-        self.sf.seeds = "";
-        self.sf.peers = "";
-        self.sf.sharing = "";
-        self.sf.seedlimit = "";
-        self.sf.uptotal = 0;
-        self.sf.downtotal = 0;
-        # write
-        return self.sf.write()
-        """
-        // set some values
-        $this->_sf->percent_done = $percent_done;
-        $this->_sf->time_left = $time_left;
-        $this->_sf->down_speed = $down_speed;
-        $this->_sf->downtotal = $downtotal;
-        // write
-        return $this->_sf->write();
-        """
+    def statRunning(self, download):
+        try:
+            # get stats
+            stats = download.getStats()
+            # set some values
+            self.sf.running = Transfer.TF_RUNNING
+            self.sf.percent_done = str(stats.getCompleted())
+            self.sf.time_left = str(stats.getETA())
+            self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
+            self.sf.up_speed = "%.1f kB/s" % ((float(stats.getUploadAverage())) / 1024)
+            """ TODO """
+            self.sf.seeds = ""
+            self.sf.peers = ""
+            self.sf.sharing = str(stats.getShareRatio())
+            self.sf.uptotal = str(stats.getUploaded())
+            self.sf.downtotal = str(stats.getDownloaded())
+            # write
+            return self.sf.write()
+        except Exception, e:
+            self.log(e)
+            return False
 
     """ -------------------------------------------------------------------- """
     """ statShutdown                                                         """
     """ -------------------------------------------------------------------- """
-    def statShutdown(self, error = None):
-        # set some values
-        self.sf.running = Transfer.TF_STOPPED;
-        self.sf.percent_done = 0;
-        self.sf.time_left = "Stopping...";
-        self.sf.down_speed = "0.00 kB/s";
-        self.sf.up_speed = "0.00 kB/s";
-        self.sf.transferowner = 0;
-        self.sf.seeds = "";
-        self.sf.peers = "";
-        self.sf.sharing = "";
-        self.sf.seedlimit = "";
-        self.sf.uptotal = 0;
-        self.sf.downtotal = 0;
-        # write
-        return self.sf.write()
-        """
-        // set some values
-        $this->_sf->running = 0;
-        if ($this->_done) {
-        $this->_sf->percent_done = 100;
-        $this->_sf->time_left = "Download Succeeded!";
-        } else {
-        $this->_sf->percent_done = ($this->_size > 0)
-        ? (((intval((100.0 * $this->_downtotal / $this->_size))) + 100) * (-1))
-        : "-100";
-        $this->_sf->time_left = "Transfer Stopped";
-        }
-        if ($error)
-        $this->_sf->time_left = "Error";
-        $this->_sf->down_speed = "";
-        $this->_sf->up_speed = "";
-        $this->_sf->transferowner = $this->_owner;
-        $this->_sf->seeds = "";
-        $this->_sf->peers = "";
-        $this->_sf->sharing = "";
-        $this->_sf->seedlimit = "";
-        $this->_sf->uptotal = 0;
-        $this->_sf->downtotal = $this->_downtotal;
-        // write
-        return $this->_sf->write();
-        """
+    def statShutdown(self, download, error = None):
+        try:
+            size = float(download.getTorrent().getSize())
+            # get stats
+            stats = download.getStats()
+            # set some values
+            self.sf.running = Transfer.TF_STOPPED
+            # done
+            if download.isComplete():
+                self.sf.percent_done = 100
+                self.sf.time_left = "Download Succeeded!"
+            # not done
+            else:
+                pcts = "-" + str(stats.getCompleted())
+                pctf = float(pcts)
+                pctf -= 100
+                self.sf.percent_done = str(pctf)
+                self.sf.time_left = "Transfer Stopped"
+            # error
+            if error is not None:
+                self.sf.time_left = "Error: %s" % error
+            # rest-vars
+            self.sf.down_speed = "0.00 kB/s"
+            self.sf.up_speed = "0.00 kB/s"
+            self.sf.transferowner = self.owner
+            self.sf.seeds = ""
+            self.sf.peers = ""
+            self.sf.sharing = ""
+            self.sf.seedlimit = ""
+            self.sf.uptotal = str(stats.getUploaded())
+            self.sf.downtotal = str(stats.getDownloaded())
+            # size
+            self.sf.size = str(size)
+            # write
+            return self.sf.write()
+        except Exception, e:
+            self.log(e)
+            return False
 
     """ -------------------------------------------------------------------- """
     """ writePid                                                             """
     """ -------------------------------------------------------------------- """
     def writePid(self):
-        printMessage("writing pid-file %s " % self.filePid)
+        self.log("writing pid-file %s " % self.filePid)
         try:
             pidFile = open(self.filePid, 'w')
             pidFile.write("0\n")
@@ -359,18 +371,33 @@ class Transfer(object):
             pidFile.close()
             return True
         except Exception, e:
-            printError("Failed to write pid-file %s" % self.filePid)
+            self.log("Failed to write pid-file %s" % self.filePid)
             return False
 
     """ -------------------------------------------------------------------- """
     """ deletePid                                                            """
     """ -------------------------------------------------------------------- """
     def deletePid(self):
-        printMessage("deleting pid-file %s " % self.filePid)
+        self.log("deleting pid-file %s " % self.filePid)
         try:
             os.remove(self.filePid)
             return True
         except Exception, e:
-            printError("Failed to delete pid-file %s" % self.filePid)
+            self.log("Failed to delete pid-file %s" % self.filePid)
             return False
+
+    """ -------------------------------------------------------------------- """
+    """ log                                                                  """
+    """ -------------------------------------------------------------------- """
+    def log(self, message):
+        printMessage(message)
+        try:
+            f = open(self.fileLog, "a+")
+            f.write(getOutput(message))
+            f.flush()
+            f.close()
+        except Exception, e:
+            printError("Failed to write log-file %s\n" % self.fileLog)
+
+
 
