@@ -72,7 +72,6 @@ class Transfer(object):
         self.name = file
         self.fileTorrent = self.tf_pathTransfers + file
         self.fileMeta = self.flu_pathTransfers + file
-        self.updateCtr = 0
 
         # owner
         self.owner = ''
@@ -142,14 +141,11 @@ class Transfer(object):
         # set state
         self.state = Transfer.state_map[download.getState()]
 
-        # stat
-        self.statRunning(download)
+        # only when running
+        if self.state == Transfer.TF_RUNNING:
 
-        # increment counter
-        if self.updateCtr <= 0 or self.updateCtr >= 2147483647:
-            self.updateCtr = 1
-        else:
-            self.updateCtr += 1
+            # stat
+            self.statRunning(download)
 
     """ -------------------------------------------------------------------- """
     """ start                                                                """
@@ -169,14 +165,16 @@ class Transfer(object):
                 download.start()
             else:
                 download.restart()
+            # refresh
+            download.refresh_object()
+            # set state
+            self.state = Transfer.state_map[download.getState()]
             # return
             return True
         except Exception, e:
             self.log("exception when starting transfer :")
             self.log(str(e))
             return False
-
-
 
     """ -------------------------------------------------------------------- """
     """ stop                                                                 """
@@ -202,26 +200,6 @@ class Transfer(object):
 
         # return
         return retVal
-
-    """ -------------------------------------------------------------------- """
-    """ add                                                               """
-    """ -------------------------------------------------------------------- """
-    def add(self, dm):
-        self.log("adding new transfer %s (%s) ..." % (str(self.name), str(self.owner)))
-
-
-        # TODO
-        return True
-
-    """ -------------------------------------------------------------------- """
-    """ remove                                                               """
-    """ -------------------------------------------------------------------- """
-    def remove(self, dm):
-        self.log("removing transfer %s (%s) ..." % (str(self.name), str(self.owner)))
-
-
-        # TODO
-        return False
 
     """ -------------------------------------------------------------------- """
     """ isRunning                                                            """

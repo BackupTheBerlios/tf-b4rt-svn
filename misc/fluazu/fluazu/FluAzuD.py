@@ -66,7 +66,6 @@ class FluAzuD(object):
         self.azu_pass = ''
         self.azu_version_str = ''
         # dopal
-        self.connection_details = {}
         self.connection = None
         self.interface = None
         self.dm = None
@@ -153,15 +152,16 @@ class FluAzuD(object):
         printMessage("connecting to Azureus-Server (%s:%d)..." % (self.azu_host, self.azu_port))
 
         # set connection details
-        self.connection_details['host'] = self.azu_host
-        self.connection_details['port'] = self.azu_port
-        self.connection_details['secure'] = self.azu_secure
+        connection_details = {}
+        connection_details['host'] = self.azu_host
+        connection_details['port'] = self.azu_port
+        connection_details['secure'] = self.azu_secure
         if len(self.azu_user) > 0:
-            self.connection_details['user'] = self.azu_user
-            self.connection_details['password'] = self.azu_pass
+            connection_details['user'] = self.azu_user
+            connection_details['password'] = self.azu_pass
 
         # connect
-        self.connection = make_connection(**self.connection_details)
+        self.connection = make_connection(**connection_details)
         self.connection.is_persistent_connection = True
         try:
             self.interface = self.connection.get_plugin_interface()
@@ -228,7 +228,7 @@ class FluAzuD(object):
                     transfer.update(self.downloads[transfer.name])
                 else:
                     # add
-                    transfer.add(self.dm)
+                    self.addTransfer(transfer.name)
                     # update downloads
                     self.updateDownloads()
 
@@ -293,14 +293,16 @@ class FluAzuD(object):
         # process requests
         if len(requests) > 0:
             for fileName in requests:
+                printMessage("deleting %s ..." % fileName)
+
                 # update downloads
                 self.updateDownloads()
-                # transfer
-                transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
+
                 # remove if needed
-                if transfer.name in self.downloads:
+                if fileName in self.downloads:
                     # remove transfer
-                    transfer.remove(self.downloads[transfer.name])
+                    self.removeTransfer(fileName)
+
                 # del file
                 delFile = self.flu_pathTransfers + fileName
                 try:
@@ -350,13 +352,41 @@ class FluAzuD(object):
                 # add if needed
                 if transfer.name not in self.downloads:
                     # add
-                    transfer.add(self.dm)
+                    self.addTransfer(transfer.name)
                     # update downloads
                     self.updateDownloads()
                 # start transfer
                 transfer.start(self.downloads[transfer.name])
         # return
         return True
+
+    """ -------------------------------------------------------------------- """
+    """ addTransfer                                                          """
+    """ -------------------------------------------------------------------- """
+    def addTransfer(self, tname):
+        printMessage("adding new transfer %s ..." % tname)
+        # call azu-method
+        try:
+            self.dm.addDownload(self.tf_pathTransfers + tname)
+            return True
+        except Exception, e:
+            printMessage("exception when adding transfer:")
+            printMessage(str(e))
+            return False
+
+    """ -------------------------------------------------------------------- """
+    """ removeTransfer                                                       """
+    """ -------------------------------------------------------------------- """
+    def removeTransfer(self, tname):
+        printMessage("removing transfer %s ..." % tname)
+        # call azu-method
+        try:
+            self.downloads[tname].remove()
+            return True
+        except Exception, e:
+            printMessage("exception when removing transfer:")
+            printMessage(str(e))
+            return False
 
     """ -------------------------------------------------------------------- """
     """ loadTransfers                                                        """
@@ -388,31 +418,39 @@ class FluAzuD(object):
             # process file
             printMessage("Processing command-file %s ..." % self.flu_fileCommand)
             try:
-                # read file to mem
-                f = open(self.flu_fileCommand, 'r')
-                data = f.read()
-                f.close()
+                try:
+                    # read file to mem
+                    f = open(self.flu_fileCommand, 'r')
+                    data = f.read()
+                    f.close()
+                except:
+                    printError("Failed to read command-file : %s" % self.flu_fileCommand)
+                    raise
                 # delete file
                 try:
                     os.remove(self.flu_fileCommand)
                 except:
                     printError("Failed to delete command-file : %s" % self.flu_fileCommand)
                     pass
-                # exec commands
-                if len(data) > 0:
-                    commands = data.split("\n")
-                    if len(commands) > 0:
-                        for command in commands:
-                            if len(command) > 0:
-                                # exec, early out when reading a quit-command
-                                if self.execCommand(command):
-                                    return True
+                try:
+                    # exec commands
+                    if len(data) > 0:
+                        commands = data.split("\n")
+                        if len(commands) > 0:
+                            for command in commands:
+                                if len(command) > 0:
+                                    # exec, early out when reading a quit-command
+                                    if self.execCommand(command):
+                                        return True
+                        else:
+                            printMessage("No commands found.")
                     else:
                         printMessage("No commands found.")
-                else:
-                    printMessage("No commands found.")
+                except:
+                    printError("Failed to exec commands.")
+                    raise
             except:
-                printError("Failed to read command-file : %s" % self.flu_fileCommand)
+                printError("Failed to process command-stack : %s" % self.flu_fileCommand)
                 pass
         return False
 
