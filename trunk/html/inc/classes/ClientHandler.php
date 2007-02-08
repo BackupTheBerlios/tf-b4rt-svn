@@ -120,6 +120,9 @@ class ClientHandler
             case "mainline":
             	require_once('inc/classes/ClientHandler.mainline.php');
                 return new ClientHandlerMainline();
+            case "azureus":
+            	require_once('inc/classes/ClientHandler.azureus.php');
+                return new ClientHandlerAzureus();
             case "wget":
             	require_once('inc/classes/ClientHandler.wget.php');
                 return new ClientHandlerWget();

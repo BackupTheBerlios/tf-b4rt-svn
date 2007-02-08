@@ -52,6 +52,9 @@ class RunningTransfer
             case "mainline":
             	require_once('inc/classes/RunningTransfer.mainline.php');
                 return new RunningTransferMainline($psLine);
+            case "azureus":
+            	require_once('inc/classes/RunningTransfer.azureus.php');
+                return new RunningTransferAzureus($psLine);
             case "wget":
             	require_once('inc/classes/RunningTransfer.wget.php');
                 return new RunningTransferWget($psLine);
