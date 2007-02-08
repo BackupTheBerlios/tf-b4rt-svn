@@ -1,0 +1,134 @@
+<tmpl_include name="inc.head.tmpl">
+<tmpl_include name="inc.subhead.tmpl">
+<tmpl_include name="inc.adminmenu.tmpl">
+<tmpl_if name="message">
+	<table cellpadding="5" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td align="center" bgcolor="#A2BED4">
+				<strong><tmpl_var name="message"></strong>
+			</td>
+		</tr>
+	</table>
+</tmpl_if>
+<script src="js/adminSettings.js" type="text/javascript"></script>
+<div align="center">
+	<a name="FluAzu" id="FluAzu"></a>
+	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
+		<tr>
+			<td bgcolor="#A2BED4" background="themes/default/images/bar.gif">
+				<font class="title">
+					<tmpl_if name="fluazuRunning">
+						&nbsp;&nbsp;<img src="themes/default/images/green.gif" align="absmiddle" align="absmiddle"> FluAzu Running (pid: <tmpl_var name="fluazudPid">)
+					<tmpl_else>
+						&nbsp;&nbsp;<img src="themes/default/images/black.gif" align="absmiddle"> FluAzu Off
+					</tmpl_if>
+				</font>
+			</td>
+		</tr>
+		<tr>
+			<td align="center">
+				<div align="center">
+					<table cellpadding="5" cellspacing="0" border="0" width="100%">
+							<form name="controlForm" action="admin.php?op=controlFluAzu" method="post">
+								<tmpl_if name="fluazuRunning">
+									<input type="Hidden" name="a" value="stop">
+									<tr>
+										<td align="center" colspan="2">
+											<input type="Submit" value="Stop FluAzu">
+											<br><br>
+										</td>
+									</tr>
+								<tmpl_else>
+									<input type="Hidden" name="a" value="start">
+									<tr>
+										<td align="left" width="350" valign="top"><strong>Start FluAzu:</strong><br></td>
+									</tr>
+									<tr>
+										<td align="center" colspan="2">
+											<input type="Submit" value="Start FluAzu">
+											<br><br>
+										</td>
+									</tr>
+								</tmpl_if>
+							</form>
+							<tr>
+								<td align="center" colspan="2">
+									<table width="100%" border="2" bgcolor="#829FB5" bordercolor="#829FB5" cellpadding="2" cellspacing="0">
+										<tr>
+											<td colspan="6">
+												<div align="center">
+													<tmpl_var name="SuperAdminLink1">
+													|<tmpl_var name="SuperAdminLink2">
+													|<tmpl_var name="SuperAdminLink3">
+													|<tmpl_var name="SuperAdminLink9">
+												</div>
+											</td>
+										</tr>
+									</table>
+									<br>
+								</td>
+							</tr>
+							<form name="theForm" action="admin.php?op=updateFluAzuSettings" method="post" onsubmit="return validateSettings('fluazu')">
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Host</strong><br>
+									Host of Azureus-server (currently only localhost is supported):
+									</td>
+									<td valign="top">
+										<input name="fluazu_host" type="Text" maxlength="254" value="<tmpl_var name="fluazu_host">" size="55">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Port</strong><br>
+									Port of Azureus-server (XML/HTTP, default: 6884):
+									</td>
+									<td valign="top">
+										<input name="fluazu_port" type="Text" maxlength="5" value="<tmpl_var name="fluazu_port">" size="5">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Secure</strong><br>
+									Use secure connection to azureus:
+									</td>
+									<td valign="bottom">
+										<select name="fluazu_secure">
+											<option value="1">true</option>
+											<option value="0"
+											<tmpl_if name="fluazu_secure" value="0">
+												 selected
+											</tmpl_if>
+											>false</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Username</strong><br>
+									Username to use when connecting to Azureus-server:
+									</td>
+									<td>
+										<input name="fluazu_user" type="Text" maxlength="254" value="<tmpl_var name="fluazu_user">" size="55">
+									</td>
+								</tr>
+								<tr>
+									<td align="left" width="350" valign="top"><strong>Password</strong><br>
+									Password to use when connecting to Azureus-server:
+									</td>
+									<td>
+										<input name="fluazu_pw" type="password" maxlength="254" value="<tmpl_var name="fluazu_pw">" size="55">
+									</td>
+								</tr>
+								<tr><td colspan="2"><hr noshade></td></tr>
+								<tr>
+									<td align="center" colspan="2">
+									<input type="Submit" value="Update Settings">
+									</td>
+								</tr>
+							</form>
+						</table>
+					</div>
+					<br>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<tmpl_include name="inc.subfoot.tmpl">

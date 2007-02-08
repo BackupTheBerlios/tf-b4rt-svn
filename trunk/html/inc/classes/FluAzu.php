@@ -234,6 +234,9 @@ class FluAzu
      * @return boolean
      */
     function instance_start() {
+
+    	return true;
+
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
             AuditAction($cfg["constants"]["fluxd"], "fluxd already started");
@@ -295,6 +298,9 @@ class FluAzu
      * instance_stop
      */
     function instance_stop() {
+
+    	return true;
+
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
         	AuditAction($cfg["constants"]["fluxd"], "Stopping fluxd");

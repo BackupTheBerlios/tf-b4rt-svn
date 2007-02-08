@@ -79,6 +79,12 @@ switch ($op) {
 	case "controlFluxd":
 		admin_controlFluxd();
 
+	case "controlFluAzu":
+		admin_controlFluAzu();
+
+	case "updateFluAzuSettings":
+		admin_updateFluAzuSettings();
+
 	case "updateSearchSettings":
 		admin_updateSearchSettings();
 

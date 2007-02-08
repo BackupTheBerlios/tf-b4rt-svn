@@ -172,6 +172,16 @@ function validateSettings(section) {
 				document.theForm.nzbperl_threads.focus();
 			}
 			break;
+		case 'fluazu':
+			if (document.theForm.fluazu_host.value.length < 1) {
+				msg = msg + "* Azureus Host cannot be empty.\n";
+				document.theForm.fluazu_host.focus();
+			}
+			if (isNumber(document.theForm.fluazu_port.value) == false) {
+				msg = msg + "* Azureus Port must be a valid number.\n";
+				document.theForm.fluazu_port.focus();
+			}
+			break;
 		case 'webapp':
 			if (isNumber(document.theForm.transferStatsUpdate.value) == false) {
 				msg = msg + "* Download-Details Update Intervall must be a valid number.\n";

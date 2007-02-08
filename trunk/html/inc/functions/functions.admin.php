@@ -203,6 +203,7 @@ function admin_updateFluxdSettings() {
  * controlFluxd
  */
 function admin_controlFluxd() {
+	global $cfg;
 	$message = "";
 	$action = getRequestVar('a');
 	switch($action) {
@@ -227,12 +228,9 @@ function admin_controlFluxd() {
 			// kill fluxd
 			if (Fluxd::isRunning()) {
 				Fluxd::stop();
-				if (Fluxd::isRunning())
-					$message = 'Stop-Command sent.';
-				else
-					$message = 'fluxd stopped.';
-				@header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
-				exit();
+				$message = (Fluxd::isRunning())
+					? 'Stop-Command sent.'
+					: 'fluxd stopped.';
 			}
 			break;
 		default:
@@ -243,6 +241,85 @@ function admin_controlFluxd() {
 		@header("Location: admin.php?op=fluxdSettings&m=".urlencode($message));
 	else
 		@header("Location: admin.php?op=fluxdSettings");
+	exit();
+}
+
+/**
+ * updateFluAzuSettings
+ */
+function admin_updateFluAzuSettings() {
+	global $cfg;
+	// FluAzu
+	require_once("inc/classes/FluAzu.php");
+	$message = "";
+	if ($_POST["fluazu_host"] != $cfg["fluazu_host"] ||
+		$_POST["fluazu_port"] != $cfg["fluazu_port"] ||
+		$_POST["fluazu_secure"] != $cfg["fluazu_secure"] ||
+		$_POST["fluazu_user"] != $cfg["fluazu_user"] ||
+		$_POST["fluazu_pw"] != $cfg["fluazu_pw"]) {
+		// fluazu Running?
+		if (FluAzu::isRunning()) {
+			$message = 'fluazu needs to be stopped before settings can be changed.';
+		} else {
+			// save settings
+			$settings = processSettingsParams(false, false);
+			saveSettings('tf_settings', $settings);
+			$message = 'Settings changed.';
+			// log
+			AuditAction($cfg["constants"]["admin"], " Updating fluazu Settings");
+		}
+	}
+	if ($message != "")
+		@header("Location: admin.php?op=fluazuSettings&m=".urlencode($message));
+	else
+		@header("Location: admin.php?op=fluazuSettings");
+	exit();
+}
+
+/**
+ * controlFluAzu
+ */
+function admin_controlFluAzu() {
+	global $cfg;
+	// FluAzu
+	require_once("inc/classes/FluAzu.php");
+	$message = "";
+	$action = getRequestVar('a');
+	switch($action) {
+		case "start":
+			// start fluazu
+			if (!FluAzu::isRunning()) {
+				FluAzu::start();
+				/*
+				if (FluAzu::isRunning()) {
+					$message = 'fluazu started';
+				} else {
+					$message = 'Error starting fluazu.';
+					$msgs = FluAzu::getMessages();
+					FluAzu::logError("Error starting fluazu. Messages :\n".implode("\n", $msgs)."\n", true);
+					array_unshift($msgs, "please check fluazu-logs");
+					@error($message, "admin.php?op=fluazuSettings", "fluazu-Settings", "please check fluazu-logs.");
+				}
+				*/
+				break;
+			}
+			$message = 'Error starting fluazu.';
+			break;
+		case "stop":
+			// kill fluazu
+			if (FluAzu::isRunning()) {
+				FluAzu::stop();
+				$message = 'Stop-Command sent.';
+			}
+			break;
+		default:
+			$message = 'Error : no control-operation.';
+			break;
+	}
+	if ($message != "")
+		@header("Location: admin.php?op=fluazuSettings&m=".urlencode($message));
+	else
+		@header("Location: admin.php?op=fluazuSettings");
 	exit();
 }
 
