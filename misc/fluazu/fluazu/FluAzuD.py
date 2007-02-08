@@ -25,7 +25,7 @@ import sys
 import os
 import time
 # fluazu
-from fluazu.output import printMessage, printError
+from fluazu.output import printMessage, printError, getPrefix
 from fluazu.Transfer import Transfer
 # dopal
 from dopal.main import make_connection
@@ -132,7 +132,7 @@ class FluAzuD(object):
             pidFile.write(self.pid + "\n")
             pidFile.flush()
             pidFile.close()
-        except Exception, e:
+        except:
             printError("Failed to write pid-file %s (%s)" % (self.flu_filePid, self.pid))
             return False
 
@@ -200,7 +200,7 @@ class FluAzuD(object):
         printMessage("deleting pid-file %s ..." % self.flu_filePid)
         try:
             os.remove(self.flu_filePid)
-        except Exception, e:
+        except:
             printError("Failed to delete pid-file %s " % self.flu_filePid)
 
     """ -------------------------------------------------------------------- """
@@ -287,7 +287,6 @@ class FluAzuD(object):
                     os.remove(delFile)
                 except:
                     printError("Failed to delete file : %s" % delFile)
-                    pass
         except:
             return False
         # process requests
@@ -309,7 +308,6 @@ class FluAzuD(object):
                     os.remove(delFile)
                 except:
                     printError("Failed to delete file : %s" % delFile)
-                    pass
         # return
         return True
 
@@ -341,7 +339,6 @@ class FluAzuD(object):
                     requests.append(fileName)
                 except:
                     printError("Failed to move file : %s" % inputFile)
-                    pass
         except:
             return False
         # process requests
@@ -369,9 +366,9 @@ class FluAzuD(object):
         try:
             self.dm.addDownload(self.tf_pathTransfers + tname)
             return True
-        except Exception, e:
+        except:
             printMessage("exception when adding transfer:")
-            printMessage(str(e))
+            print getPrefix(), sys.exc_info()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -383,9 +380,9 @@ class FluAzuD(object):
         try:
             self.downloads[tname].remove()
             return True
-        except Exception, e:
+        except:
             printMessage("exception when removing transfer:")
-            printMessage(str(e))
+            print getPrefix(), sys.exc_info()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -431,7 +428,6 @@ class FluAzuD(object):
                     os.remove(self.flu_fileCommand)
                 except:
                     printError("Failed to delete command-file : %s" % self.flu_fileCommand)
-                    pass
                 try:
                     # exec commands
                     if len(data) > 0:
@@ -451,7 +447,6 @@ class FluAzuD(object):
                     raise
             except:
                 printError("Failed to process command-stack : %s" % self.flu_fileCommand)
-                pass
         return False
 
     """ -------------------------------------------------------------------- """
@@ -584,5 +579,3 @@ class FluAzuD(object):
             # seems like azu is down. give up
             printError("no connection after %d tries, i give up, azu is gone" % FluAzuD.MAX_RECONNECT_TRIES)
             return False
-
-

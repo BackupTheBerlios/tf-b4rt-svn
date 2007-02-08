@@ -70,10 +70,10 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         daemon.shutdown()
         exitVal = 0
-        pass
     except Exception, e:
         print e
 
     # exit
     sys.exit(exitVal)
+
 

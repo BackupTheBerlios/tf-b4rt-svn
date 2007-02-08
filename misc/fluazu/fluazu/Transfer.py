@@ -21,9 +21,10 @@
 #                                                                              #
 ################################################################################
 # standard-imports
+import sys
 import os
 # fluazu
-from fluazu.output import printMessage, printError, getOutput
+from fluazu.output import printMessage, printError, getOutput, getPrefix
 from fluazu.StatFile import StatFile
 ################################################################################
 
@@ -50,7 +51,7 @@ class Transfer(object):
     AZ_WAITING = 1
 
     """ azu -> flu map """
-    state_map = { \
+    STATE_MAP = { \
         AZ_DOWNLOADING: TF_RUNNING, \
         AZ_ERROR: TF_STOPPED, \
         AZ_PREPARING: TF_RUNNING, \
@@ -139,7 +140,7 @@ class Transfer(object):
         self.log("* update: %s" % self.name)
 
         # set state
-        self.state = Transfer.state_map[download.getState()]
+        self.state = Transfer.STATE_MAP[download.getState()]
 
         # only when running
         if self.state == Transfer.TF_RUNNING:
@@ -168,12 +169,12 @@ class Transfer(object):
             # refresh
             download.refresh_object()
             # set state
-            self.state = Transfer.state_map[download.getState()]
+            self.state = Transfer.STATE_MAP[download.getState()]
             # return
             return True
-        except Exception, e:
+        except:
             self.log("exception when starting transfer :")
-            self.log(str(e))
+            print getPrefix(), sys.exc_info()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -190,9 +191,9 @@ class Transfer(object):
         try:
             download.stop()
             retVal = True
-        except Exception, e:
+        except:
             self.log("exception when stopping transfer :")
-            self.log(str(e))
+            print getPrefix(), sys.exc_info()
             retVal = False
 
         # delete pid
@@ -224,7 +225,6 @@ class Transfer(object):
                     os.remove(self.fileCommand)
                 except:
                     self.log("Failed to delete command-file : %s" % self.fileCommand)
-                    pass
                 # exec commands
                 if len(data) > 0:
                     commands = data.split("\n")
@@ -240,7 +240,6 @@ class Transfer(object):
                     self.log("No commands found.")
             except:
                 self.log("Failed to read command-file : %s" % self.fileCommand)
-                pass
         return False
 
     """ -------------------------------------------------------------------- """
@@ -249,7 +248,7 @@ class Transfer(object):
     def execCommand(self, download, command):
 
         # DEBUG
-        self.log("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.state_map[download.getState()])))
+        self.log("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.STATE_MAP[download.getState()])))
 
         # TODO
 
@@ -259,96 +258,155 @@ class Transfer(object):
     """ statStartup                                                          """
     """ -------------------------------------------------------------------- """
     def statStartup(self, download):
+        # set some values
+        self.sf.running = Transfer.TF_RUNNING
+        self.sf.percent_done = 0
+        self.sf.time_left = "Starting..."
+        self.sf.down_speed = "0.00 kB/s"
+        self.sf.up_speed = "0.00 kB/s"
+        self.sf.transferowner = self.owner
+        self.sf.seeds = ""
+        self.sf.peers = ""
+        self.sf.sharing = ""
+        self.sf.seedlimit = ""
+        self.sf.uptotal = 0
+        self.sf.downtotal = 0
         try:
-            # set some values
-            self.sf.running = Transfer.TF_RUNNING
-            self.sf.percent_done = 0
-            self.sf.time_left = "Starting..."
-            self.sf.down_speed = "0.00 kB/s"
-            self.sf.up_speed = "0.00 kB/s"
-            self.sf.transferowner = self.owner
-            self.sf.seeds = ""
-            self.sf.peers = ""
-            self.sf.sharing = ""
-            self.sf.seedlimit = ""
-            self.sf.uptotal = 0
-            self.sf.downtotal = 0
-            self.sf.size = str(download.getTorrent().getSize())
+            # get size
+            try:
+                size = str(download.getTorrent().getSize())
+                self.sf.size = size
+            except:
+                print getPrefix(), sys.exc_info()
             # write
             return self.sf.write()
-        except Exception, e:
-            self.log(e)
+        except:
+            print getPrefix(), sys.exc_info()
             return False
 
     """ -------------------------------------------------------------------- """
     """ statRunning                                                          """
     """ -------------------------------------------------------------------- """
     def statRunning(self, download):
+        # set some values
+        self.sf.running = Transfer.TF_RUNNING
         try:
             # stats
-            stats = download.getStats()
-            # set some values
-            self.sf.running = Transfer.TF_RUNNING
-            pctf = float(stats.getCompleted())
-            pctf /= 10
-            self.sf.percent_done = str(pctf)
-            self.sf.time_left = str(stats.getETA())
-            self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
-            self.sf.up_speed = "%.1f kB/s" % ((float(stats.getUploadAverage())) / 1024)
-            ps = download.getPeerManager().getStats()
-            scrape = download.getLastScrapeResult()
-            self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), scrape.getSeedCount())
-            self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), scrape.getNonSeedCount())
-            self.sf.uptotal = str(stats.getUploaded())
-            self.sf.downtotal = str(stats.getDownloaded())
+            try:
+                stats = download.getStats()
+                # completed
+                try:
+                    pctf = float(stats.getCompleted())
+                    pctf /= 10
+                    self.sf.percent_done = str(pctf)
+                except:
+                    print getPrefix(), sys.exc_info()
+                # time_left
+                try:
+                    self.sf.time_left = str(stats.getETA())
+                except:
+                    print getPrefix(), sys.exc_info()
+                # down_speed
+                try:
+                    self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
+                except:
+                    print getPrefix(), sys.exc_info()
+                # up_speed
+                try:
+                    self.sf.up_speed = "%.1f kB/s" % ((float(stats.getUploadAverage())) / 1024)
+                except:
+                    print getPrefix(), sys.exc_info()
+                # uptotal
+                try:
+                    self.sf.uptotal = str(stats.getUploaded())
+                except:
+                    print getPrefix(), sys.exc_info()
+                # downtotal
+                try:
+                    self.sf.downtotal = str(stats.getDownloaded())
+                except:
+                    print getPrefix(), sys.exc_info()
+            except:
+                print getPrefix(), sys.exc_info()
+            # hosts
+            try:
+                ps = download.getPeerManager().getStats()
+                scrape = download.getLastScrapeResult()
+                # seeds
+                try:
+                    self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), scrape.getSeedCount())
+                except:
+                    print getPrefix(), sys.exc_info()
+                # peers
+                try:
+                    self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), scrape.getNonSeedCount())
+                except:
+                    print getPrefix(), sys.exc_info()
+            except:
+                print getPrefix(), sys.exc_info()
             # write
             return self.sf.write()
-        except Exception, e:
-            self.log(e)
+        except:
+            print getPrefix(), sys.exc_info()
             return False
 
     """ -------------------------------------------------------------------- """
     """ statShutdown                                                         """
     """ -------------------------------------------------------------------- """
     def statShutdown(self, download, error = None):
+        # set some values
+        self.sf.running = Transfer.TF_STOPPED
+        self.sf.down_speed = "0.00 kB/s"
+        self.sf.up_speed = "0.00 kB/s"
+        self.sf.transferowner = self.owner
+        self.sf.seeds = ""
+        self.sf.peers = ""
+        self.sf.sharing = ""
+        self.sf.seedlimit = ""
         try:
-            size = float(download.getTorrent().getSize())
-            # get stats
-            stats = download.getStats()
-            # set some values
-            self.sf.running = Transfer.TF_STOPPED
-            # done
-            if download.isComplete():
-                self.sf.percent_done = 100
-                self.sf.time_left = "Download Succeeded!"
-            # not done
-            else:
-                pctf = float(stats.getCompleted())
-                pctf /= 10
-                pcts = "-" + str(pctf)
-                pctf = float(pcts)
-                pctf -= 100
-                self.sf.percent_done = str(pctf)
-                self.sf.time_left = "Transfer Stopped"
+            # stats
+            try:
+                stats = download.getStats()
+                # done
+                if download.isComplete():
+                    self.sf.percent_done = 100
+                    self.sf.time_left = "Download Succeeded!"
+                # not done
+                else:
+                    try:
+                        pctf = float(stats.getCompleted())
+                        pctf /= 10
+                        pcts = "-" + str(pctf)
+                        pctf = float(pcts)
+                        pctf -= 100
+                        self.sf.percent_done = str(pctf)
+                    except:
+                        print getPrefix(), sys.exc_info()
+                    self.sf.time_left = "Transfer Stopped"
+                # uptotal
+                try:
+                    self.sf.uptotal = str(stats.getUploaded())
+                except:
+                    print getPrefix(), sys.exc_info()
+                # downtotal
+                try:
+                    self.sf.downtotal = str(stats.getDownloaded())
+                except:
+                    print getPrefix(), sys.exc_info()
+            except:
+                print getPrefix(), sys.exc_info()
+            # size
+            try:
+                self.sf.size = str(download.getTorrent().getSize())
+            except:
+                print getPrefix(), sys.exc_info()
             # error
             if error is not None:
                 self.sf.time_left = "Error: %s" % error
-            # rest-vars
-            self.sf.down_speed = "0.00 kB/s"
-            self.sf.up_speed = "0.00 kB/s"
-            self.sf.transferowner = self.owner
-            self.sf.seeds = ""
-            self.sf.peers = ""
-            self.sf.sharing = ""
-            self.sf.seedlimit = ""
-            self.sf.uptotal = str(stats.getUploaded())
-            self.sf.downtotal = str(stats.getDownloaded())
-            # size
-            self.sf.size = str(size)
             # write
             return self.sf.write()
-        except Exception, e:
-            self.log(e)
+        except:
+            print getPrefix(), sys.exc_info()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -390,6 +448,3 @@ class Transfer(object):
             f.close()
         except Exception, e:
             printError("Failed to write log-file %s\n" % self.fileLog)
-
-
-

@@ -23,7 +23,7 @@
 # standard-imports
 import os
 # fluazu
-from fluazu.output import printMessage, printError
+from fluazu.output import printError
 ################################################################################
 
 """ ------------------------------------------------------------------------ """
@@ -89,10 +89,8 @@ class StatFile(object):
                     return True
                 else:
                     printError("Failed to parse statfile %s " % self.file)
-            except Exception, e:
+            except:
                 printError("Failed to read statfile %s " % self.file)
-                printError(e)
-                pass
         return False
 
     """ -------------------------------------------------------------------- """
@@ -119,9 +117,7 @@ class StatFile(object):
             f.flush()
             f.close()
             return True
-        except Exception, e:
+        except:
             printError("Failed to write statfile %s " % self.file)
-            printError(e)
-            pass
         return False
 
