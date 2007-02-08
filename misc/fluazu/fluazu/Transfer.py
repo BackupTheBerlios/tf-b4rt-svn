@@ -247,10 +247,65 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def execCommand(self, download, command):
 
-        # DEBUG
-        self.log("Command: %s (%s) (%s)" % (command, self.name, str(Transfer.STATE_MAP[download.getState()])))
+        opCode = command[0]
 
-        # TODO
+        # q
+        if opCode == 'q':
+            self.log("command: stop-request, setting shutdown-flag...")
+            return True
+
+        # u
+        elif opCode == 'u':
+            if len(command) < 2:
+                self.log("invalid rate.")
+                return False
+            rateNew = command[1:]
+            self.log("command: setting upload-rate to %s ..." % rateNew)
+            # TODO
+            return False
+
+        # d
+        elif opCode == 'd':
+            if len(command) < 2:
+                self.log("invalid rate.")
+                return False
+            rateNew = command[1:]
+            self.log("command: setting download-rate to %s ..." % rateNew)
+            # TODO
+            return False
+
+        # r
+        elif opCode == 'r':
+            if len(command) < 2:
+                self.log("invalid runtime-code.")
+                return False
+            runtimeNew = command[1]
+            rt = ''
+            if runtimeNew == '0':
+                rt = 'False'
+            elif runtimeNew == '1':
+                rt = 'True'
+            else:
+                self.log("runtime-code unknown: %s" % runtimeNew)
+                return False
+            self.log("command: setting die-when-done to %s" % rt)
+            # TODO
+            return False
+
+        # s
+        elif opCode == 's':
+            if len(command) < 2:
+                self.log("invalid sharekill.")
+                return False
+            sharekillNew = command[1:]
+            self.log("command: setting sharekill to %s ..." % sharekillNew)
+            # TODO
+            return False
+
+        # default
+        else:
+            self.log("op-code unknown: %s" % opCode)
+            return False
 
         return False
 
@@ -447,4 +502,6 @@ class Transfer(object):
             f.flush()
             f.close()
         except Exception, e:
-            printError("Failed to write log-file %s\n" % self.fileLog)
+            printError("Failed to write log-file %s" % self.fileLog)
+
+

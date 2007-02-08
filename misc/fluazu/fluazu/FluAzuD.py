@@ -244,7 +244,11 @@ class FluAzuD(object):
                 # process transfers command stacks
                 for transfer in self.transfers:
                     if transfer.isRunning():
-                        transfer.processCommandStack(self.downloads[transfer.name])
+                        if transfer.processCommandStack(self.downloads[transfer.name]):
+                            # stop it
+                            transfer.stop(self.downloads[transfer.name])
+                            # update downloads
+                            self.updateDownloads()
 
                 # sleep
                 time.sleep(1)
