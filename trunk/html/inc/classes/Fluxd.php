@@ -317,7 +317,7 @@ class Fluxd
     	global $cfg;
         if ($this->state == FLUXD_STATE_RUNNING) {
             AuditAction($cfg["constants"]["fluxd"], "fluxd already started");
-            return true;
+            return false;
         } else {
             $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
@@ -333,6 +333,8 @@ class Fluxd
 	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
 	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFileError);
 	        $startCommand .= " &";
+        	$this->instance_logMessage("executing command : \n".$startCommand."\n", true);
+        	// exec
             $result = exec($startCommand);
             // check if fluxd could be started
             $loop = true;

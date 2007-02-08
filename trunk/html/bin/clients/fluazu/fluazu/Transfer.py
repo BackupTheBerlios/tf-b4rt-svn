@@ -24,7 +24,7 @@
 import sys
 import os
 # fluazu
-from fluazu.output import printMessage, printError, getOutput, getPrefix
+from fluazu.output import printMessage, printError, getOutput, printException
 from fluazu.StatFile import StatFile
 ################################################################################
 
@@ -174,7 +174,7 @@ class Transfer(object):
             return True
         except:
             self.log("exception when starting transfer :")
-            print getPrefix(), sys.exc_info()
+            printException()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -193,7 +193,7 @@ class Transfer(object):
             retVal = True
         except:
             self.log("exception when stopping transfer :")
-            print getPrefix(), sys.exc_info()
+            printException()
             retVal = False
 
         # delete pid
@@ -332,11 +332,11 @@ class Transfer(object):
                 size = str(download.getTorrent().getSize())
                 self.sf.size = size
             except:
-                print getPrefix(), sys.exc_info()
+                printException()
             # write
             return self.sf.write()
         except:
-            print getPrefix(), sys.exc_info()
+            printException()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -355,34 +355,34 @@ class Transfer(object):
                     pctf /= 10
                     self.sf.percent_done = str(pctf)
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # time_left
                 try:
                     self.sf.time_left = str(stats.getETA())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # down_speed
                 try:
                     self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # up_speed
                 try:
                     self.sf.up_speed = "%.1f kB/s" % ((float(stats.getUploadAverage())) / 1024)
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # uptotal
                 try:
                     self.sf.uptotal = str(stats.getUploaded())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # downtotal
                 try:
                     self.sf.downtotal = str(stats.getDownloaded())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
             except:
-                print getPrefix(), sys.exc_info()
+                printException()
             # hosts
             try:
                 ps = download.getPeerManager().getStats()
@@ -391,18 +391,18 @@ class Transfer(object):
                 try:
                     self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), scrape.getSeedCount())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # peers
                 try:
                     self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), scrape.getNonSeedCount())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
             except:
-                print getPrefix(), sys.exc_info()
+                printException()
             # write
             return self.sf.write()
         except:
-            print getPrefix(), sys.exc_info()
+            printException()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -436,32 +436,32 @@ class Transfer(object):
                         pctf -= 100
                         self.sf.percent_done = str(pctf)
                     except:
-                        print getPrefix(), sys.exc_info()
+                        printException()
                     self.sf.time_left = "Transfer Stopped"
                 # uptotal
                 try:
                     self.sf.uptotal = str(stats.getUploaded())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
                 # downtotal
                 try:
                     self.sf.downtotal = str(stats.getDownloaded())
                 except:
-                    print getPrefix(), sys.exc_info()
+                    printException()
             except:
-                print getPrefix(), sys.exc_info()
+                printException()
             # size
             try:
                 self.sf.size = str(download.getTorrent().getSize())
             except:
-                print getPrefix(), sys.exc_info()
+                printException()
             # error
             if error is not None:
                 self.sf.time_left = "Error: %s" % error
             # write
             return self.sf.write()
         except:
-            print getPrefix(), sys.exc_info()
+            printException()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -503,5 +503,3 @@ class Transfer(object):
             f.close()
         except Exception, e:
             printError("Failed to write log-file %s" % self.fileLog)
-
-

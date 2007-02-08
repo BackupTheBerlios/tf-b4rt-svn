@@ -25,7 +25,7 @@ import sys
 import os
 import time
 # fluazu
-from fluazu.output import printMessage, printError, getPrefix
+from fluazu.output import printMessage, printError, printException
 from fluazu.Transfer import Transfer
 # dopal
 from dopal.main import make_connection
@@ -94,7 +94,7 @@ class FluAzuD(object):
         self.azu_user = username
         self.azu_pass = password
 
-        # print vars
+        # vars
         printMessage("flu-path: %s" % str(self.flu_path))
         printMessage("azu-host: %s" % str(self.azu_host))
         printMessage("azu-port: %s" % str(self.azu_port))
@@ -372,7 +372,7 @@ class FluAzuD(object):
             return True
         except:
             printMessage("exception when adding transfer:")
-            print getPrefix(), sys.exc_info()
+            printException()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -386,7 +386,7 @@ class FluAzuD(object):
             return True
         except:
             printMessage("exception when removing transfer:")
-            print getPrefix(), sys.exc_info()
+            printException()
             return False
 
     """ -------------------------------------------------------------------- """
@@ -583,5 +583,3 @@ class FluAzuD(object):
             # seems like azu is down. give up
             printError("no connection after %d tries, i give up, azu is gone" % FluAzuD.MAX_RECONNECT_TRIES)
             return False
-
-

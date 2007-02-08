@@ -42,9 +42,18 @@ def getOutput(message):
 """ ------------------------------------------------------------------------ """
 def printMessage(message):
     sys.stdout.write(getOutput(message))
+    sys.stdout.flush()
 
 """ ------------------------------------------------------------------------ """
 """ printError                                                               """
 """ ------------------------------------------------------------------------ """
 def printError(message):
     sys.stderr.write(getOutput(message))
+    sys.stderr.flush()
+
+""" ------------------------------------------------------------------------ """
+""" printException                                                           """
+""" ------------------------------------------------------------------------ """
+def printException():
+    print getPrefix(), sys.exc_info()
+    sys.stdout.flush()

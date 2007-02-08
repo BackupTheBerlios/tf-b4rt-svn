@@ -114,7 +114,7 @@ class FluAzu
 		// initialize if needed
 		if (!isset($instanceFluAzu))
 			FluAzu::initialize();
-		return ($instanceFluAzu->state == FLUAZU_STATE_RUNNING);
+		return $instanceFluAzu->instance_isRunning();
     }
 
 	/**
@@ -210,17 +210,17 @@ class FluAzu
     	// paths
         $this->_pathDataDir = $cfg["path"] . '.fluazu/';
         $this->_pathPidFile = $this->_pathDataDir . 'fluazu.pid';
-        $this->_pathCommandFile = $this->_pathDataDir . 'fluxd.cmd';
-        $this->_pathLogFile = $this->_pathDataDir . 'fluxd.log';
-        $this->_pathLogFileError = $this->_pathDataDir . 'fluxd-error.log';
+        $this->_pathCommandFile = $this->_pathDataDir . 'fluazu.cmd';
+        $this->_pathLogFile = $this->_pathDataDir . 'fluazu.log';
+        $this->_pathLogFileError = $this->_pathDataDir . 'fluazu-error.log';
         $this->_pathTransfers = $this->_pathDataDir . 'cur/';
         $this->_pathTransfersRun = $this->_pathDataDir . 'run/';
         $this->_pathTransfersDel = $this->_pathDataDir . 'del/';
         // check path
 		if (!checkDirectory($this->_pathDataDir))
 			@error("fluazu-Main-Path does not exist and cannot be created or is not writable", "admin.php?op=serverSettings", "Server-Settings", array("path : ".$this->_pathDataDir));
-        // check if fluxd running
-        if ($this->_isRunning())
+        // check if fluazu running
+        if ($this->instance_isRunning())
         	$this->state = FLUAZU_STATE_RUNNING;
     }
 
@@ -234,36 +234,43 @@ class FluAzu
      * @return boolean
      */
     function instance_start() {
-
-    	return true;
-
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
-            AuditAction($cfg["constants"]["fluxd"], "fluxd already started");
-            return true;
+            AuditAction($cfg["constants"]["admin"], "fluazu already started");
+            return false;
         } else {
-            $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
+        	//$startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
+            $startCommand = "cd ".$cfg["docroot"]."bin/clients/fluazu/ ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
-            $startCommand .= " nohup " . $cfg["perlCmd"];
-            $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/fluxd");
-            $startCommand .= " -I ".escapeshellarg($cfg["docroot"]."bin/lib");
-            $startCommand .= " ".escapeshellarg($cfg["docroot"]."bin/fluxd/fluxd.pl");
-            $startCommand .= " start";
-            $startCommand .= " ".escapeshellarg($cfg["docroot"]);
+            $startCommand .= " nohup";
+            //$startCommand .= " ".$cfg["pythonCmd"]." -OO";
+            $startCommand .= " ".$cfg["pythonCmd"];
+            //$startCommand .= " ".escapeshellarg($cfg["docroot"]."bin/clients/fluazu/fluazu.py");
+            $startCommand .= " ".escapeshellarg("fluazu.py");
             $startCommand .= " ".escapeshellarg($cfg["path"]);
-            $startCommand .= " ".escapeshellarg($cfg["bin_php"]);
-            $startCommand .= " ".escapeshellarg($cfg["fluxd_dbmode"]);
+            $startCommand .= " ".escapeshellarg($cfg["fluazu_host"]);
+            $startCommand .= " ".escapeshellarg($cfg["fluazu_port"]);
+            $startCommand .= " ".escapeshellarg($cfg["fluazu_secure"]);
+            $startCommand .= ($cfg["fluazu_user"] == "")
+            	? ' ""'
+            	: " ".escapeshellarg($cfg["fluazu_user"]);
+            $startCommand .= ($cfg["fluazu_pw"] == "")
+            	? ' ""'
+            	: " ".escapeshellarg($cfg["fluazu_pw"]);
 	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
 	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFileError);
 	        $startCommand .= " &";
+			// log the command
+        	$this->instance_logMessage("executing command : \n".$startCommand."\n", true);
+        	// exec
             $result = exec($startCommand);
-            // check if fluxd could be started
+            // check if fluazu could be started
             $loop = true;
             $maxLoops = 125;
             $loopCtr = 0;
             $started = false;
             while ($loop) {
-            	if ($this->_isRunning()) {
+            	if ($this->instance_isRunning()) {
             		$started = true;
             		$loop = false;
             	} else {
@@ -276,13 +283,13 @@ class FluAzu
             }
             // check if started
             if ($started) {
-            	AuditAction($cfg["constants"]["fluxd"], "fluxd started");
+            	AuditAction($cfg["constants"]["admin"], "fluazu started");
             	// Set the state
             	$this->state = FLUAZU_STATE_RUNNING;
             	// return
             	return true;
             } else {
-            	AuditAction($cfg["constants"]["fluxd"], "errors starting fluxd");
+            	AuditAction($cfg["constants"]["admin"], "errors starting fluazu");
             	// add startcommand to messages for debug
             	// TODO : set better message
             	array_push($this->messages , $startCommand);
@@ -298,18 +305,15 @@ class FluAzu
      * instance_stop
      */
     function instance_stop() {
-
-    	return true;
-
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
-        	AuditAction($cfg["constants"]["fluxd"], "Stopping fluxd");
-            $this->instance_sendCommand('die', 0);
-            // check if fluxd still running
+        	AuditAction($cfg["constants"]["admin"], "Stopping fluazu");
+            $this->instance_sendCommand('q');
+            // check if fluazu still running
             $maxLoops = 125;
             $loopCtr = 0;
             while (1) {
-            	if ($this->_isRunning()) {
+            	if ($this->instance_isRunning()) {
 	            	$loopCtr++;
 	            	if ($loopCtr > $maxLoops)
 	            		return 0;
@@ -324,8 +328,8 @@ class FluAzu
             }
             return 0;
         } else {
-        	$msg = "errors stopping fluxd as was not running.";
-        	AuditAction($cfg["constants"]["fluxd"], $msg);
+        	$msg = "errors stopping fluazu as was not running.";
+        	AuditAction($cfg["constants"]["admin"], $msg);
         	array_push($this->messages , $msg);
             // Set the state
             $this->state = FLUAZU_STATE_ERROR;
@@ -373,33 +377,26 @@ class FluAzu
      * send command
      *
      * @param $command
-     * @param $read does this command return something ?
-     * @return string with retval or null if error
+     * @return boolean
      */
     function instance_sendCommand($command) {
-        if ($this->state == FLUAZU_STATE_RUNNING) {
+    	return ($this->state == FLUAZU_STATE_RUNNING)
+    		? $this->_writeCommandFile($command."\n")
+    		: false;
+    }
 
-        	// TODO
-
-            // return
-            return true;
-        } else { // fluazu not running
-        	return null;
-        }
+    /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function instance_isRunning() {
+    	return file_exists($this->_pathPidFile);
     }
 
     // =========================================================================
 	// private methods
 	// =========================================================================
-
-    /**
-     * _isRunning
-     *
-     * @return boolean
-     */
-    function _isRunning() {
-    	return file_exists($this->_pathPidFile);
-    }
 
     /**
      * log a message
@@ -423,6 +420,33 @@ class FluAzu
 		@fclose($fp);
 		if ($result === false)
 			return false;
+		return true;
+    }
+
+     /**
+     * write the command-file
+     *
+	 * @param $content
+     * @return boolean
+     */
+	function _writeCommandFile($content) {
+		global $cfg;
+		$handle = false;
+		$handle = @fopen($this->_pathCommandFile, "w");
+		if (!$handle) {
+            $msg = "cannot open command-file ".$this->_pathCommandFile." for writing.";
+            array_push($this->_messages , $msg);
+            AuditAction($cfg["constants"]["error"], "FluAzu _writeCommandFile-Error : ".$msg);
+			return false;
+		}
+        $result = @fwrite($handle, $content);
+		@fclose($handle);
+		if ($result === false) {
+            $msg = "cannot write content to command-file ".$this->_pathCommandFile.".";
+            array_push($this->_messages , $msg);
+            AuditAction($cfg["constants"]["error"], "FluAzu _writeCommandFile-Error : ".$msg);
+			return false;
+		}
 		return true;
     }
 

@@ -196,7 +196,7 @@ class CommandHandler
         $result = @fwrite($handle, implode("\n", $this->_commands[$transfer])."\n");
 		@fclose($handle);
 		if ($result === false) {
-            $msg = "cannot write content to command-file ".$this->_fileHistory.".";
+            $msg = "cannot write content to command-file ".$file.".";
             array_push($this->_messages , $msg);
             AuditAction($cfg["constants"]["error"], "CommandHandler _writeCommandFile-Error : ".$msg);
 			return false;

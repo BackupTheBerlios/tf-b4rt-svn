@@ -289,9 +289,7 @@ function admin_controlFluAzu() {
 		case "start":
 			// start fluazu
 			if (!FluAzu::isRunning()) {
-				FluAzu::start();
-				/*
-				if (FluAzu::isRunning()) {
+				if (FluAzu::start()) {
 					$message = 'fluazu started';
 				} else {
 					$message = 'Error starting fluazu.';
@@ -300,7 +298,6 @@ function admin_controlFluAzu() {
 					array_unshift($msgs, "please check fluazu-logs");
 					@error($message, "admin.php?op=fluazuSettings", "fluazu-Settings", "please check fluazu-logs.");
 				}
-				*/
 				break;
 			}
 			$message = 'Error starting fluazu.';
@@ -309,7 +306,9 @@ function admin_controlFluAzu() {
 			// kill fluazu
 			if (FluAzu::isRunning()) {
 				FluAzu::stop();
-				$message = 'Stop-Command sent.';
+				$message = (FluAzu::isRunning())
+					? 'Stop-Command sent.'
+					: 'fluazu stopped.';
 			}
 			break;
 		default:
