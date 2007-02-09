@@ -257,7 +257,7 @@ class FluAzu
             $startCommand .= " export HOME;";
             $startCommand .= " nohup";
             $startCommand .= " ".$cfg["pythonCmd"]." -OO";
-            $startCommand .= " ".escapeshellarg("fluazu.py");
+            $startCommand .= " fluazu.py";
             $startCommand .= " ".escapeshellarg($cfg["path"]);
             $startCommand .= " ".escapeshellarg($cfg["fluazu_host"]);
             $startCommand .= " ".escapeshellarg($cfg["fluazu_port"]);

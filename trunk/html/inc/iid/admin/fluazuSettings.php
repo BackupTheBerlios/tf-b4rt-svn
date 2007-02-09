@@ -62,7 +62,7 @@ $tmpl->setvar('fluazu_user', $cfg['fluazu_user']);
 $tmpl->setvar('fluazu_pw', $cfg['fluazu_pw']);
 
 // templ-calls
-tmplSetTitleBar("Administration - FluAzu Settings");
+tmplSetTitleBar("Administration - fluazu Settings");
 tmplSetAdminMenu();
 tmplSetFoot();
 

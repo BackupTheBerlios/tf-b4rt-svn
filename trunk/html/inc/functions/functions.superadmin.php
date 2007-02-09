@@ -141,6 +141,10 @@ function sa_processes($action = "") {
 			$htmlMain .= '<pre>';
 			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluxd | ".$cfg['bin_grep']." -v grep");
 			$htmlMain .= '</pre>';
+			$htmlMain .= '<p><strong>fluazu</strong>';
+			$htmlMain .= '<pre>';
+			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= '</pre>';
 			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
 			foreach ($clients as $client) {
 				$ch = ClientHandler::getInstance($client);
@@ -1442,6 +1446,61 @@ function sa_fluxd($action = "") {
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
 			$htmlMain .= '<pre>';
 			$htmlMain .= shell_exec($cfg["perlCmd"]." -I ".$cfg["docroot"]."bin/fluxd -I ".$cfg["docroot"]."bin/lib ".$cfg["docroot"]."bin/fluxd/fluxd.pl version");
+			$htmlMain .= '</pre>';
+			$htmlMain .= '</div>';
+			break;
+	}
+	printPage();
+	exit();
+}
+
+/**
+ * fluazu
+ *
+ * @param $action
+ */
+function sa_fluazu($action = "") {
+	global $cfg, $error, $statusImage, $statusMessage, $htmlTitle, $htmlTop, $htmlMain;
+	if ($action == "")
+		return;
+	switch ($action) {
+
+		case "0": // fluazu-main
+			$htmlTitle = "fluazu";
+			break;
+
+		case "1": // fluazu-log
+			$htmlTitle = "fluazu - log";
+			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+			$htmlMain .= '<pre>';
+			$htmlMain .= @file_get_contents($cfg["path"].'.fluazu/fluazu.log');
+			$htmlMain .= '</pre>';
+			$htmlMain .= '</div>';
+			break;
+
+		case "2": // fluazu-error-log
+			$htmlTitle = "fluazu - error-log";
+			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+			$htmlMain .= '<pre>';
+			$htmlMain .= @file_get_contents($cfg["path"].'.fluazu/fluazu-error.log');
+			$htmlMain .= '</pre>';
+			$htmlMain .= '</div>';
+			break;
+
+		case "3": // fluazu-ps
+			$htmlTitle = "fluazu - ps";
+			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+			$htmlMain .= '<pre>';
+			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep");
+			$htmlMain .= '</pre>';
+			$htmlMain .= '</div>';
+			break;
+
+		case "9": // fluazu-version
+			$htmlTitle = "fluazu - version";
+			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
+			$htmlMain .= '<pre>';
+			$htmlMain .= shell_exec("cd ".$cfg["docroot"]."bin/clients/fluazu/; ".$cfg["pythonCmd"]." -OO fluazu.py --version");
 			$htmlMain .= '</pre>';
 			$htmlMain .= '</div>';
 			break;

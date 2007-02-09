@@ -12,15 +12,15 @@
 </tmpl_if>
 <script src="js/adminSettings.js" type="text/javascript"></script>
 <div align="center">
-	<a name="FluAzu" id="FluAzu"></a>
+	<a name="fluazu" id="fluazu"></a>
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
 			<td bgcolor="<tmpl_var name="table_header_bg">" background="themes/<tmpl_var name="theme">/images/bar.gif">
 				<font class="title">
 					<tmpl_if name="fluazuRunning">
-						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/green.gif" align="absmiddle" align="absmiddle"> FluAzu Running (pid: <tmpl_var name="fluazudPid">)
+						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/green.gif" align="absmiddle" align="absmiddle"> fluazu Running (pid: <tmpl_var name="fluazudPid">)
 					<tmpl_else>
-						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/black.gif" align="absmiddle"> FluAzu Off
+						&nbsp;&nbsp;<img src="themes/tf_standard_themes/images/black.gif" align="absmiddle"> fluazu Off
 					</tmpl_if>
 				</font>
 			</td>
@@ -34,18 +34,18 @@
 									<input type="Hidden" name="a" value="stop">
 									<tr>
 										<td align="center" colspan="2">
-											<input type="Submit" value="Stop FluAzu">
+											<input type="Submit" value="Stop fluazu">
 											<br><br>
 										</td>
 									</tr>
 								<tmpl_else>
 									<input type="Hidden" name="a" value="start">
 									<tr>
-										<td align="left" width="350" valign="top"><strong>Start FluAzu:</strong><br></td>
+										<td align="left" width="350" valign="top"><strong>Start fluazu:</strong><br></td>
 									</tr>
 									<tr>
 										<td align="center" colspan="2">
-											<input type="Submit" value="Start FluAzu">
+											<input type="Submit" value="Start fluazu">
 											<br><br>
 										</td>
 									</tr>
