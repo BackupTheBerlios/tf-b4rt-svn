@@ -160,9 +160,13 @@ switch ($pageop) {
 		}
 
 		// dirtree
-		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-		if ($cfg["showdirtree"] == 1)
-			tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
+		if ($supportMap[$ch->client]['savepath'] == 1) {
+			$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
+			if ($cfg["showdirtree"] == 1)
+				tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
+		} else {
+			$tmpl->setvar('showdirtree', 0);
+		}
 
 		// hash-check
 		$tmpl->setvar('skip_hash_check_enabled', $supportMap[$ch->client]['skip_hash_check']);

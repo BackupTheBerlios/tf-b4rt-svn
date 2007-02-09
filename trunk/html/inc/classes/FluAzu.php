@@ -432,7 +432,8 @@ class FluAzu
 	            AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
 				return false;
 			}
-			return true;
+			// send reload-command
+			return $this->instance_sendCommand('r');
         } else {
         	$msg = "fluazu not running, cannot delete transfer ".$transfer;
         	AuditAction($cfg["constants"]["admin"], $msg);

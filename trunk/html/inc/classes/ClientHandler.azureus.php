@@ -94,13 +94,37 @@ class ClientHandlerAzureus extends ClientHandler
 			return false;
 		}
 
+		// set savepath
+		$this->savepath = $cfg['path'].$cfg["path_incoming"]."/";
+
         // build the command-string
-        $content = $cfg['user']."\n";
-		$this->command  = "echo ".escapeshellarg($content)." > ".$cfg["path"].'.fluazu/run/'.escapeshellarg($transfer);
+        $content = $cfg['user'];
+		$this->command  = "echo ".escapeshellarg($content);
+		$this->command .= " > ".escapeshellarg($cfg["path"].'.fluazu/run/'.$transfer);
+		$this->command .= " && echo r";
+		$this->command .= " > ".$cfg["path"].'.fluazu/fluazu.cmd';
 
         // start the client
         $this->_start();
     }
+
+	/**
+	 * deletes a transfer
+	 *
+	 * @param $transfer name of the transfer
+	 * @return boolean of success
+	 */
+	function delete($transfer) {
+    	// set vars
+		$this->_setVarsForTransfer($transfer);
+		// FluAzu
+		require_once("inc/classes/FluAzu.php");
+		// remove from azu
+		if (FluAzu::delTransfer($transfer)) {
+			// delete
+			$this->_delete();
+		}
+	}
 
     /**
      * gets current transfer-vals of a transfer

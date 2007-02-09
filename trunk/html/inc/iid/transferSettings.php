@@ -296,9 +296,13 @@ if ($isSave) {                                                        /* save */
 	transfer_setProfiledVars();
 
 	// dirtree
-	$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
-	if ($cfg["showdirtree"] == 1)
-		tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
+	if ($supportMap[$ch->client]['savepath'] == 1) {
+		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
+		if ($cfg["showdirtree"] == 1)
+			tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
+	} else {
+		$tmpl->setvar('showdirtree', 0);
+	}
 
 	// send-box
 	$tmpl->setvar('sendboxShow', ($ch->type == "wget") ? 0 : 1);

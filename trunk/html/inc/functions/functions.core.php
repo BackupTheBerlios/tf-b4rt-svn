@@ -1374,6 +1374,9 @@ function getTransferListArray() {
 				case "mainline":
 					array_push($transferAry, "M");
 					break;
+				case "azureus":
+					array_push($transferAry, "A");
+					break;
 				case "wget":
 					array_push($transferAry, "W");
 					break;

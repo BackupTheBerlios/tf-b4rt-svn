@@ -75,7 +75,7 @@ function tmplSetGoodLookingStatsForm() {
  */
 function tmplSetClientSelectForm($client = 'tornado') {
 	global $cfg, $tmpl;
-	$clients = array("tornado", "transmission", "mainline");
+	$clients = array("tornado", "transmission", "mainline", "azureus");
 	$client_list = array();
 	foreach ($clients as $clnt) {
 		array_push($client_list, array(

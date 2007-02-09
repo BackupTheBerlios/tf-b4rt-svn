@@ -298,6 +298,9 @@ foreach ($arList as $transfer) {
 			case "mainline":
 				$client = "M";
 				break;
+			case "azureus":
+				$client = "A";
+				break;
 			case "wget":
 				$client = "W";
 				break;

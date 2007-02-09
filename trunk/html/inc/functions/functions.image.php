@@ -123,6 +123,7 @@ function image_pieTransferPeers() {
 			}
         	break;
         case "transmission":
+		case "azureus":
 			if ($seeds != "") {
 				if (strpos($seeds, "(") !== false)
 					$seeds = preg_replace('/.*(\d+) .*/i', '${1}', $seeds);

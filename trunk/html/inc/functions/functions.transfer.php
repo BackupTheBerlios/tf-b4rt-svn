@@ -36,7 +36,8 @@ $supportMap = array(
 		'maxcons'           => 1,
 		'rerequest'         => 1,
 		'file_priority'     => 1,
-		'skip_hash_check'   => 1
+		'skip_hash_check'   => 1,
+		'savepath'          => 1
 	),
 	'transmission' => array(
 		'max_upload_rate'   => 1,
@@ -50,7 +51,8 @@ $supportMap = array(
 		'maxcons'           => 0,
 		'rerequest'         => 0,
 		'file_priority'     => 0,
-		'skip_hash_check'   => 0
+		'skip_hash_check'   => 0,
+		'savepath'          => 1
 	),
 	'mainline' => array(
 		'max_upload_rate'   => 1,
@@ -64,7 +66,23 @@ $supportMap = array(
 		'maxcons'           => 1,
 		'rerequest'         => 1,
 		'file_priority'     => 0,
-		'skip_hash_check'   => 1
+		'skip_hash_check'   => 1,
+		'savepath'          => 1
+	),
+	'azureus' => array(
+		'max_upload_rate'   => 0,
+		'max_download_rate' => 0,
+		'max_uploads'       => 0,
+		'superseeder'       => 0,
+		'die_when_done'     => 0,
+		'sharekill'         => 0,
+		'minport'           => 0,
+		'maxport'           => 0,
+		'maxcons'           => 0,
+		'rerequest'         => 0,
+		'file_priority'     => 0,
+		'skip_hash_check'   => 0,
+		'savepath'          => 0
 	),
 	'wget' => array(
 		'max_upload_rate'   => 0,
@@ -78,7 +96,8 @@ $supportMap = array(
 		'maxcons'           => 0,
 		'rerequest'         => 0,
 		'file_priority'     => 0,
-		'skip_hash_check'   => 0
+		'skip_hash_check'   => 0,
+		'savepath'          => 1
 	),
 	'nzbperl' => array(
 		'max_upload_rate'   => 0,
@@ -92,7 +111,8 @@ $supportMap = array(
 		'maxcons'           => 1,
 		'rerequest'         => 0,
 		'file_priority'     => 0,
-		'skip_hash_check'   => 0
+		'skip_hash_check'   => 0,
+		'savepath'          => 1
 	)
 );
 
