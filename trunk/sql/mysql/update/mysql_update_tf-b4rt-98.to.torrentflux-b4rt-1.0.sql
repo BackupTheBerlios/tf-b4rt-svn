@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS tf_torrents;
 CREATE TABLE tf_transfers (
   transfer VARCHAR(255) NOT NULL default '',
   type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
-  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  client ENUM('tornado','transmission','mainline','azureus','wget','nzbperl') NOT NULL default 'tornado',
   hash VARCHAR(40) NOT NULL DEFAULT '',
   datapath VARCHAR(255) NOT NULL default '',
   savepath VARCHAR(255) NOT NULL default '',
@@ -244,6 +244,11 @@ INSERT INTO tf_settings VALUES ('nzbperl_conn','1');
 INSERT INTO tf_settings VALUES ('nzbperl_rate','0');
 INSERT INTO tf_settings VALUES ('nzbperl_create','0');
 INSERT INTO tf_settings VALUES ('nzbperl_options','');
+INSERT INTO tf_settings VALUES ('fluazu_host','localhost');
+INSERT INTO tf_settings VALUES ('fluazu_port','6884');
+INSERT INTO tf_settings VALUES ('fluazu_secure','0');
+INSERT INTO tf_settings VALUES ('fluazu_user','');
+INSERT INTO tf_settings VALUES ('fluazu_pw','');
 INSERT INTO tf_settings VALUES ('fluxd_dbmode','php');
 INSERT INTO tf_settings VALUES ('fluxd_loglevel','0');
 INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0');

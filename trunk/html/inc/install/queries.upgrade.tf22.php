@@ -154,6 +154,11 @@ array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_conn'
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_rate','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_create','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('nzbperl_options','')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluazu_host','localhost')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluazu_port','6884')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluazu_secure','0')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluazu_user','')");
+array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluazu_pw','')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_dbmode','php')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_loglevel','0')");
 array_push($queries[$cqt][$cdb], "INSERT INTO tf_settings VALUES ('fluxd_Fluxinet_enabled','0')");
@@ -226,7 +231,7 @@ array_push($queries[$cqt][$cdb], "
 CREATE TABLE tf_transfers (
   transfer VARCHAR(255) NOT NULL default '',
   type ENUM('torrent','wget','nzb') NOT NULL default 'torrent',
-  client ENUM('tornado','transmission','mainline','wget','nzbperl') NOT NULL default 'tornado',
+  client ENUM('tornado','transmission','mainline','azureus','wget','nzbperl') NOT NULL default 'tornado',
   hash VARCHAR(40) NOT NULL DEFAULT '',
   datapath VARCHAR(255) NOT NULL default '',
   savepath VARCHAR(255) NOT NULL default '',
