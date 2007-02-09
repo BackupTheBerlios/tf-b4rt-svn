@@ -168,8 +168,11 @@ class MaintenanceAndRepair
 		$this->_outputMessage("Running Maintenance...\n");
 		// fluxd
 		$this->_maintenanceFluxd();
+
 		// transfers
-		$this->_maintenanceTransfers($trestart);
+		//$this->_maintenanceTransfers($trestart);
+		$this->_outputMessage("Transfers-Maintenance deactivated.\n");
+
 		// database
 		$this->_maintenanceDatabase();
 		// output
