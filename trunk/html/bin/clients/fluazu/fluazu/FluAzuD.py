@@ -347,17 +347,40 @@ class FluAzuD(object):
             return False
         # process requests
         if len(requests) > 0:
-            self.updateDownloads()
-            for fileName in requests:
-                transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
-                # add if needed
-                if transfer.name not in self.downloads:
-                    # add
-                    self.addTransfer(transfer.name)
-                    # update downloads
-                    self.updateDownloads()
-                # start transfer
-                transfer.start(self.downloads[transfer.name])
+            try:
+                self.updateDownloads()
+                for fileName in requests:
+                    # add if needed
+                    if fileName not in self.downloads:
+                        try:
+                            # add
+                            self.addTransfer(fileName)
+                        except:
+                            printError("exception when adding new transfer %s" % fileName)
+                            raise
+                    # downloads
+                    tries = 0
+                    while tries < 5 and fileName not in self.downloads:
+                        #if fileName not in self.downloads:
+                        printMessage("download %s missing, update downloads..." % fileName)
+                        self.updateDownloads()
+                        # sleep + increment
+                        time.sleep(1)
+                        tries += 1
+                    # start transfer
+                    if fileName in self.downloads:
+                        try:
+                            transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, fileName)
+                            transfer.start(self.downloads[fileName])
+                        except:
+                            printError("exception when starting new transfer %s" % fileName)
+                            raise
+                    else:
+                        printError("download %s not in azureus-downloads, cannot start it." % fileName)
+            except:
+                printMessage("exception when processing run-requests:")
+                printException()
+
         # return
         return True
 
@@ -432,23 +455,22 @@ class FluAzuD(object):
                     os.remove(self.flu_fileCommand)
                 except:
                     printError("Failed to delete command-file : %s" % self.flu_fileCommand)
-                try:
-                    # exec commands
-                    if len(data) > 0:
-                        commands = data.split("\n")
-                        if len(commands) > 0:
-                            for command in commands:
-                                if len(command) > 0:
+                # exec commands
+                if len(data) > 0:
+                    commands = data.split("\n")
+                    if len(commands) > 0:
+                        for command in commands:
+                            if len(command) > 0:
+                                try:
                                     # exec, early out when reading a quit-command
                                     if self.execCommand(command):
                                         return True
-                        else:
-                            printMessage("No commands found.")
+                                except:
+                                    printError("Failed to exec command: %s" % command)
                     else:
                         printMessage("No commands found.")
-                except:
-                    printError("Failed to exec commands.")
-                    raise
+                else:
+                    printMessage("No commands found.")
             except:
                 printError("Failed to process command-stack : %s" % self.flu_fileCommand)
         return False

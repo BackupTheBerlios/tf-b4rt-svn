@@ -136,9 +136,6 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def update(self, download):
 
-        # DEBUG
-        self.log("* update: %s" % self.name)
-
         # set state
         self.state = Transfer.STATE_MAP[download.getState()]
 
@@ -162,20 +159,22 @@ class Transfer(object):
 
         # start transfer
         try:
-            if download.getState() == Transfer.AZ_READY:
-                download.start()
-            else:
-                download.restart()
-            # refresh
-            download.refresh_object()
-            # set state
-            self.state = Transfer.STATE_MAP[download.getState()]
-            # return
-            return True
+            download.restart()
         except:
             self.log("exception when starting transfer :")
             printException()
-            return False
+
+        # refresh
+        download.refresh_object()
+
+        # set state
+        self.state = Transfer.STATE_MAP[download.getState()]
+
+        # log
+        self.log("transfer started.")
+
+        # return
+        return True
 
     """ -------------------------------------------------------------------- """
     """ stop                                                                 """
@@ -198,6 +197,9 @@ class Transfer(object):
 
         # delete pid
         self.deletePid()
+
+        # log
+        self.log("transfer stopped.")
 
         # return
         return retVal
