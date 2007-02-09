@@ -198,6 +198,20 @@ class FluAzu
 		return $instanceFluAzu->instance_sendCommand($command);
     }
 
+    /**
+     * del transfer
+     *
+     * @param $transfer
+     * @return boolean
+     */
+    function delTransfer($transfer) {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_delTransfer($transfer);
+    }
+
 	// =========================================================================
 	// ctor
 	// =========================================================================
@@ -239,13 +253,10 @@ class FluAzu
             AuditAction($cfg["constants"]["admin"], "fluazu already started");
             return false;
         } else {
-        	//$startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
             $startCommand = "cd ".$cfg["docroot"]."bin/clients/fluazu/ ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup";
-            //$startCommand .= " ".$cfg["pythonCmd"]." -OO";
-            $startCommand .= " ".$cfg["pythonCmd"];
-            //$startCommand .= " ".escapeshellarg($cfg["docroot"]."bin/clients/fluazu/fluazu.py");
+            $startCommand .= " ".$cfg["pythonCmd"]." -OO";
             $startCommand .= " ".escapeshellarg("fluazu.py");
             $startCommand .= " ".escapeshellarg($cfg["path"]);
             $startCommand .= " ".escapeshellarg($cfg["fluazu_host"]);
@@ -338,6 +349,15 @@ class FluAzu
     }
 
     /**
+     * isRunning
+     *
+     * @return boolean
+     */
+    function instance_isRunning() {
+    	return file_exists($this->_pathPidFile);
+    }
+
+    /**
      * instance_getPid
      *
      * @return string with pid
@@ -386,12 +406,41 @@ class FluAzu
     }
 
     /**
-     * isRunning
+     * del transfer
      *
+     * @param $transfer
      * @return boolean
      */
-    function instance_isRunning() {
-    	return file_exists($this->_pathPidFile);
+    function instance_delTransfer($transfer) {
+    	global $cfg;
+        if ($this->state == FLUAZU_STATE_RUNNING) {
+        	AuditAction($cfg["constants"]["admin"], "fluazu deleting transfer ".$transfer);
+        	$file = $this->_pathTransfersDel.$transfer;
+			$handle = false;
+			$handle = @fopen($file, "w");
+			if (!$handle) {
+	            $msg = "cannot open file ".$file." for writing.";
+	            array_push($this->_messages , $msg);
+	            AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
+				return false;
+			}
+	        $result = @fwrite($handle, $cfg['user']);
+			@fclose($handle);
+			if ($result === false) {
+	            $msg = "cannot write content to file ".$file.".";
+	            array_push($this->_messages , $msg);
+	            AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
+				return false;
+			}
+			return true;
+        } else {
+        	$msg = "fluazu not running, cannot delete transfer ".$transfer;
+        	AuditAction($cfg["constants"]["admin"], $msg);
+        	array_push($this->messages , $msg);
+            // Set the state
+            $this->state = FLUAZU_STATE_ERROR;
+			return false;
+        }
     }
 
     // =========================================================================
