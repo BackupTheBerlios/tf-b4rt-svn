@@ -168,11 +168,8 @@ class MaintenanceAndRepair
 		$this->_outputMessage("Running Maintenance...\n");
 		// fluxd
 		$this->_maintenanceFluxd();
-
 		// transfers
-		//$this->_maintenanceTransfers($trestart);
-		$this->_outputMessage("Transfers-Maintenance deactivated.\n");
-
+		$this->_maintenanceTransfers($trestart);
 		// database
 		$this->_maintenanceDatabase();
 		// output
@@ -293,8 +290,10 @@ class MaintenanceAndRepair
 		$this->_bogusTransfers = array();
 		foreach ($pidFiles as $pidFile) {
 			$transfer = (substr($pidFile, 0, -4));
-			if (stristr($psString, $transfer) === false)
-				array_push($this->_bogusTransfers, $transfer);
+			if (stristr($psString, $transfer) === false) {
+				if (getTransferClient($transfer) != "azureus")
+					array_push($this->_bogusTransfers, $transfer);
+			}
 		}
 		// return if no stale pid-files
 		$this->_countProblems = count($this->_bogusTransfers);
