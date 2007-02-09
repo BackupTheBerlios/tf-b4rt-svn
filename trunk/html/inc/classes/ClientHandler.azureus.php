@@ -55,24 +55,26 @@ class ClientHandlerAzureus extends ClientHandler
     function start($transfer, $interactive = false, $enqueue = false) {
     	global $cfg;
 
+		// FluAzu
+		require_once("inc/classes/FluAzu.php");
+
     	// set vars
 		$this->_setVarsForTransfer($transfer);
 
     	// log
     	$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
-        // do transmission special-pre-start-checks
-        // check to see if the path to the transmission-bin is valid
-        if (!is_executable($cfg["btclient_transmission_bin"])) {
+        // do azureus special-pre-start-checks
+        // check to see if fluazu is running
+        if (!FluAzu::isRunning()) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
-        	$msg = "transmissioncli cannot be executed";
+        	$msg = "fluazu is not running";
         	AuditAction($cfg["constants"]["error"], $msg);
         	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
-            array_push($this->messages, "btclient_transmission_bin : ".$cfg["btclient_transmission_bin"]);
             // write error to stat
 			$sf = new StatFile($this->transfer, $this->owner);
-			$sf->time_left = 'Error';
+			$sf->time_left = 'Error: fluazu down';
 			$sf->write();
 			// return
             return false;
@@ -92,50 +94,12 @@ class ClientHandlerAzureus extends ClientHandler
 			return false;
 		}
 
-        /*
-        // workaround for bsd-pid-file-problem : touch file first
-        if ((!$this->queue) && ($cfg["_OS"] == 2))
-        	@touch($this->transferFilePath.".pid");
-        */
-
         // build the command-string
-		// note : order of args must not change for ps-parsing-code in
-		// RunningTransferTransmission
-        $this->command  = "cd ".escapeshellarg($this->savepath).";";
-        $this->command .= " HOME=".escapeshellarg($cfg["path"])."; export HOME;".
-        $this->command .= $this->umask;
-        $this->command .= " nohup ";
-        $this->command .= $this->nice;
-        $this->command .= escapeshellarg($cfg["btclient_transmission_bin"]);
-        $this->command .= " -d ".escapeshellarg($this->drate);
-        $this->command .= " -u ".escapeshellarg($this->rate);
-        $this->command .= " -p ".escapeshellarg($this->port);
-		$this->command .= " -r ".escapeshellarg(($this->runtime == "True") ? 1 : 0);
-        $this->command .= " -c ".escapeshellarg($this->sharekill_param);
-        $this->command .= " -e 5";
-        $this->command .= " -o ".escapeshellarg($this->owner);
-        if (strlen($cfg["btclient_transmission_options"]) > 0)
-        	$this->command .= " ".$cfg["btclient_transmission_options"];
-        $this->command .= " ".escapeshellarg($this->transferFilePath);
-        $this->command .= " 1>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " 2>> ".escapeshellarg($this->transferFilePath.".log");
-        $this->command .= " &";
+        $content = $cfg['user']."\n";
+		$this->command  = "echo ".escapeshellarg($content)." > ".$cfg["path"].'.fluazu/run/'.escapeshellarg($transfer);
 
         // start the client
         $this->_start();
-    }
-
-    /**
-     * deletes cache of a transfer
-     *
-     * @param $transfer
-     */
-    function deleteCache($transfer) {
-    	global $cfg;
-    	$cFile = $cfg["path"].".transmission/cache/resume.".getTransferHash($transfer);
-    	if (@file_exists($cFile))
-        	return @unlink($cFile);
-        return false;
     }
 
     /**
