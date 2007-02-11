@@ -1,12 +1,15 @@
-#upload {
+#content {
 	padding: 0px;
 	margin: 0px;
 	margin-left: 20px;
 	padding-top: 15px;
+	float: left;
+}
+#upload {
+	padding: 0px;
+	margin: 0px;
 	background-image: url("../pics/upload.jpg");
 	background-repeat: repeat-x;
-	background-position: 0px 15px;
-	float: left;
 }
 div.upload_first {
 	padding: 0px;
