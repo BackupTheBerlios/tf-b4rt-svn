@@ -38,9 +38,10 @@
 int main(int argc, char ** argv) {
 
 	// vars
-	int i, error, nat;
+	int i, error;
 	tr_handle_t * h;
 	tr_stat_t * s;
+	tr_handle_status_t * hstat;
 	tr_info_t * info;
 	double tf_sharing = 0.0;
 	char tf_eta[80];
@@ -466,8 +467,8 @@ int main(int argc, char ** argv) {
 	// Try for 5 seconds to delete any port mappings for nat traversal
 	tr_natTraversalEnable(h, 0);
 	for (i = 0; i < 10; i++) {
-		nat = tr_natTraversalStatus(h);
-		if (TR_NAT_TRAVERSAL_DISABLED == nat) {
+		hstat = tr_handleStatus(h);
+		if (TR_NAT_TRAVERSAL_DISABLED == hstat->natTraversalStatus) {
 			/* Port mappings were deleted */
 			break;
 		}
@@ -958,4 +959,3 @@ static int parseCommandLine(int argc, char ** argv) {
 	torrentPath = argv[optind];
 	return 0;
 }
-
