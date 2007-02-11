@@ -362,7 +362,8 @@ class Transfer(object):
                 try:
                     self.sf.time_left = str(stats.getETA())
                 except:
-                    printException()
+                    self.sf.time_left = 'initializing...'
+                    #printException()
                 # down_speed
                 try:
                     self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
@@ -391,12 +392,18 @@ class Transfer(object):
                 scrape = download.getLastScrapeResult()
                 # seeds
                 try:
-                    self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), scrape.getSeedCount())
+                    countS = int(scrape.getSeedCount())
+                    if (countS < 0):
+                        countS = 0
+                    self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), countS)
                 except:
                     printException()
                 # peers
                 try:
-                    self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), scrape.getNonSeedCount())
+                    countP = int(scrape.getNonSeedCount())
+                    if (countP < 0):
+                        countP = 0
+                    self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), countP)
                 except:
                     printException()
             except:
