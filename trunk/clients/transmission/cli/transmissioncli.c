@@ -55,7 +55,7 @@ int main(int argc, char ** argv) {
 			uploadLimit, downloadLimit,
 			tf_dieWhenDone, tf_seedLimit, tf_displayInterval
 		);
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	/* show help */
@@ -66,7 +66,7 @@ int main(int argc, char ** argv) {
 			uploadLimit, downloadLimit,
 			tf_dieWhenDone, tf_seedLimit, tf_displayInterval
 		);
-		return 0;
+		return EXIT_SUCCESS;
 	}
 
 	// verbose
@@ -83,7 +83,7 @@ int main(int argc, char ** argv) {
 	// check bin-port
 	if (bindPort < 1 || bindPort > 65535) {
 		tf_print(sprintf(tf_message, "Invalid port '%d'\n", bindPort));
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	// initialize libtransmission
@@ -92,7 +92,8 @@ int main(int argc, char ** argv) {
 	// open and parse torrent file
 	if (!(tor = tr_torrentInit(h, torrentPath, 0, &error))) {
 		tf_print(sprintf(tf_message, "Failed opening torrent file '%s'\n", torrentPath));
-		goto failed;
+		tr_close(h);
+		return EXIT_FAILURE;
 	}
 
 	/* show info */
@@ -485,14 +486,17 @@ int main(int argc, char ** argv) {
  * cleanup
  */
 cleanup:
-tr_torrentClose(h, tor);
+	tr_torrentClose(h, tor);
+	tr_close(h);
+	return EXIT_SUCCESS;
 
 /*
  * failed
  */
 failed:
-tr_close(h);
-return 0;
+	tr_torrentClose(h, tor);
+	tr_close(h);
+	return EXIT_FAILURE;
 
 } // end main
 
