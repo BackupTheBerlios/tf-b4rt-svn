@@ -37,7 +37,6 @@ tmplInitializeInstance($cfg["theme"], "page.admin.fluazuSettings.tmpl");
 
 // superadmin-links
 $tmpl->setvar('SuperAdminLink1', getSuperAdminLink('?a=1','<font class="adminlink">log</font></a>'));
-$tmpl->setvar('SuperAdminLink2', getSuperAdminLink('?a=2','<font class="adminlink">error-log</font></a>'));
 $tmpl->setvar('SuperAdminLink3', getSuperAdminLink('?a=3','<font class="adminlink">ps</font></a>'));
 $tmpl->setvar('SuperAdminLink9', getSuperAdminLink('?a=9','<font class="adminlink">version</font></a>'));
 

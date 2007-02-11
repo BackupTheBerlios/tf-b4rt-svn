@@ -1478,15 +1478,6 @@ function sa_fluazu($action = "") {
 			$htmlMain .= '</div>';
 			break;
 
-		case "2": // fluazu-error-log
-			$htmlTitle = "fluazu - error-log";
-			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';
-			$htmlMain .= '<pre>';
-			$htmlMain .= @file_get_contents($cfg["path"].'.fluazu/fluazu-error.log');
-			$htmlMain .= '</pre>';
-			$htmlMain .= '</div>';
-			break;
-
 		case "3": // fluazu-ps
 			$htmlTitle = "fluazu - ps";
 			$htmlMain .= '<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid '.$cfg['main_bgcolor'].'; position:relative; width:740; height:498; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">';

@@ -48,7 +48,6 @@ class FluAzu
 	var $_pathCommandFile = "";
     var $_pathPidFile = "";
     var $_pathLogFile = "";
-    var $_pathLogFileError = "";
     var $_pathTransfers = "";
     var $_pathTransfersRun = "";
     var $_pathTransfersDel = "";
@@ -170,21 +169,6 @@ class FluAzu
     }
 
     /**
-     * writes a message to the error-log
-     *
-     * @param $message
-     * @param $withTS
-     * @return boolean
-     */
-    function logError($message, $withTS = true) {
-    	global $instanceFluAzu;
-		// initialize if needed
-		if (!isset($instanceFluAzu))
-			FluAzu::initialize();
-		return $instanceFluAzu->instance_logError($message, $withTS);
-    }
-
-    /**
      * send command
      *
      * @param $command
@@ -226,7 +210,6 @@ class FluAzu
         $this->_pathPidFile = $this->_pathDataDir . 'fluazu.pid';
         $this->_pathCommandFile = $this->_pathDataDir . 'fluazu.cmd';
         $this->_pathLogFile = $this->_pathDataDir . 'fluazu.log';
-        $this->_pathLogFileError = $this->_pathDataDir . 'fluazu-error.log';
         $this->_pathTransfers = $this->_pathDataDir . 'cur/';
         $this->_pathTransfersRun = $this->_pathDataDir . 'run/';
         $this->_pathTransfersDel = $this->_pathDataDir . 'del/';
@@ -269,7 +252,7 @@ class FluAzu
             	? ' ""'
             	: " ".escapeshellarg($cfg["fluazu_pw"]);
 	        $startCommand .= " 1>> ".escapeshellarg($this->_pathLogFile);
-	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFileError);
+	        $startCommand .= " 2>> ".escapeshellarg($this->_pathLogFile);
 	        $startCommand .= " &";
 			// log the command
         	$this->instance_logMessage("executing command : \n".$startCommand."\n", true);
@@ -380,17 +363,6 @@ class FluAzu
      */
     function instance_logMessage($message, $withTS = true) {
 		return $this->_log($this->_pathLogFile, $message, $withTS);
-    }
-
-    /**
-     * writes a message to the error-log
-     *
-     * @param $message
-     * @param $withTS
-     * @return boolean
-     */
-    function instance_logError($message, $withTS = true) {
-		return $this->_log($this->_pathLogFileError, $message, $withTS);
     }
 
     /**

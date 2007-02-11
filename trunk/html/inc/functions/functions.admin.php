@@ -294,7 +294,7 @@ function admin_controlFluAzu() {
 				} else {
 					$message = 'Error starting fluazu.';
 					$msgs = FluAzu::getMessages();
-					FluAzu::logError("Error starting fluazu. Messages :\n".implode("\n", $msgs)."\n", true);
+					FluAzu::logMessage("Error starting fluazu. Messages :\n".implode("\n", $msgs)."\n", true);
 					array_unshift($msgs, "please check fluazu-logs");
 					@error($message, "admin.php?op=fluazuSettings", "fluazu-Settings", "please check fluazu-logs.");
 				}
