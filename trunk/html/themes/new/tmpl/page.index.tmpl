@@ -3,30 +3,33 @@
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
 	<div id="upload">
-		<div class="upload_first" onclick="slider('fileUpload')">
-			File Upload
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload_first" onclick="slider('fileUpload')">
+				File Upload
+			</span>
+			<span class="upload" onclick="slider('torrentUrl')">
+				URL (Torrent)
+			</span>
+			<tmpl_if name="enable_nzbperl">
+				<span class="upload" onclick="slider('nzbUrl')">
+					URL (nzb)
+				</span>
+			</tmpl_if>
+			<tmpl_if name="enable_wget">
+				<span class="upload" onclick="slider('wgetUrl')">
+					URL (Wget)
+				</span>
+			</tmpl_if>
+			<tmpl_if name="enable_search">
+				<span class="upload_last" onclick="slider('search')">
+					Search
+				</span>
+			</tmpl_if>
 		</div>
-		<div class="upload" onclick="slider('torrentUrl')">
-			URL (Torrent)
-		</div>
-		<tmpl_if name="enable_nzbperl">
-			<div class="upload" onclick="slider('nzbUrl')">
-				URL (nzb)
-			</div>
-		</tmpl_if>
-		<tmpl_if name="enable_wget">
-			<div class="upload" onclick="slider('wgetUrl')">
-				URL (Wget)
-			</div>
-		</tmpl_if>
-		<tmpl_if name="enable_search">
-			<div class="upload_last" onclick="slider('search')">
-				Search
-			</div>
-		</tmpl_if>
+		
 	</div>
 	<div id="fileUpload" class="uploadClass" style="display: none; height: 0px">
-		<!-- TODO -->
 		<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
 			<tmpl_var name="_SELECTFILE"> (<tmpl_var name="file_types_label">): <br>
 			<input type="File" name="upload_files[]" size="40"><span id="fileUploadSpan"></span>
@@ -44,12 +47,11 @@
 			<input type="Submit" value="Go">
 			<tmpl_if name="enable_multiupload">
 				<script src="js/multiup.js" type="text/javascript"></script>
-				<a href="JavaScript:addUploadField()">More...</a>
+				<a href="JavaScript:addUploadField()" id="addUploadField">More...</a>
 			</tmpl_if>
 		</form>
 	</div>
 	<div id="torrentUrl" class="uploadClass" style="display: none; height: 0px">
-		<!-- TODO -->
 		<form name="form_url_torrent" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
 			<tmpl_var name="_URLFILE">:<br>
 			<input type="hidden" name="type" value="torrent">
@@ -70,7 +72,6 @@
 	</div>
 	<tmpl_if name="enable_nzbperl">
 		<div id="nzbUrl" class="uploadClass" style="display: none; height: 0px">
-			<!-- TODO -->
 			<form name="form_url_nzb" action="dispatcher.php?action=urlUpload" method="post" onsubmit="return actionSubmit()">
 				URL for the nzb-File:<br>
 				<input type="hidden" name="type" value="nzb">
@@ -113,7 +114,6 @@
 	</tmpl_if>
 	<tmpl_if name="enable_search">
 		<div id="search" class="uploadClass" style="display: none; height: 0px">
-			<!-- TODO -->
 			<form name="form_search" action="index.php" method="get" onsubmit="return actionSubmit()">
 				<input type="hidden" name="iid" value="torrentSearch">
 				Torrent <tmpl_var name="_SEARCH">:<br>

@@ -10,6 +10,7 @@
 	padding: 0px;
 	margin: 0px;
 	height: 26px;
+	text-align: center;
 	background-image: url("../pics/upload.jpg");
 	background-repeat: repeat-x;
 }
@@ -17,43 +18,52 @@
 	padding: 0px;
 	margin: 0px;
 }
-div.upload_first {
+span.upload_first {
 	padding: 0px;
 	margin: 0px;
-	width: 20%;
-	height: 21px;
-	padding-top: 5px;
-	text-align: center;
+	padding-right: 10px;
+	position: relative;
+		top: 5px;
+	color: #585858;
+}
+span.upload {
+	padding: 0px;
+	margin: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
+	position: relative;
+		top: 5px;
+	color: #585858;
+}
+span.upload_last {
+	padding: 0px;
+	margin: 0px;
+	padding-left: 10px;
+	position: relative;
+		top: 5px;
+	color: #585858;
+}
+#uploadFirst {
+	position: relative;
+		top: -26px;
+	height: 26px;
 	background-image: url("../pics/upload_left.jpg");
 	background-repeat: no-repeat;
-	float: left;
 }
-div.upload {
-	padding: 0px;
-	margin: 0px;
-	padding-top: 5px;
-	width: 20%;
-	height: 21px;
-	text-align: center;
-	float: left;
-}
-div.upload_last {
-	padding: 0px;
-	margin: 0px;
-	padding-top: 5px;
-	width: 20%;
-	height: 21px;
-	text-align: center;
+#uploadLast {
+	height: 26px;
 	background-image: url("../pics/upload_right.jpg");
 	background-repeat: no-repeat;
 	background-position: right;
-	float: left;
 }
 div.uploadClass {
 	padding: 0px;
 	margin: 0px;
 	margin-left: 10px;
 	margin-right: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
 	background-color: #c1b18d;
 }
 #uploadBottom {
@@ -78,4 +88,12 @@ div.uploadClass {
 	background-image: url("../pics/upload_bottom_right.jpg");
 	background-repeat: no-repeat;
 	background-position: right;
+}
+#addUploadField {
+	color: #585858;
+	text-decoration: none;
+}
+#addUploadField:hover {
+	color: #FFFFFF;
+	text-decoration: none;
 }
