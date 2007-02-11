@@ -1,10 +1,10 @@
-# $Id: gtk.mk 1202 2006-12-14 03:17:23Z titer $
+# $Id: gtk.mk 1475 2007-02-07 07:35:33Z joshe $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
 SRCS = conf.c dialogs.c io.c ipc.c main.c msgwin.c tr_backend.c tr_torrent.c \
-	tr_cell_renderer_progress.c util.c
+	tr_cell_renderer_progress.c tr_window.c util.c
 OBJS = $(SRCS:%.c=%.o)
 
 CFLAGS  += $(CFLAGS_GTK) -I../libtransmission
@@ -33,9 +33,15 @@ clean:
 .depend: $(SRCS) ../mk/config.mk ../mk/common.mk ../mk/gtk.mk
 	$(DEP_RULE)
 
-install: transmission-gtk .po
+install: transmission-gtk .po desktop.install icon.install
 	$(INSTALL_BIN_RULE)
 	@$(MAKE) $(MAKEARGS) -C po -f ../../mk/po.mk install
+
+desktop.install: transmission-gtk.desktop
+	$(INSTALL_DESKTOP_RULE)
+
+icon.install: transmission.png
+	$(INSTALL_ICON_RULE)
 
 morepot: $(SRCS)
 	xgettext --output=po/transmission-gtk.pot --from-code=UTF-8 --add-comments --keyword=_ --keyword=N_ $^

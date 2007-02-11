@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1452 2007-02-02 17:33:32Z livings124 $
+ * $Id: internal.h 1462 2007-02-06 04:26:40Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -218,6 +218,9 @@ struct tr_handle_s
 
     char           id[21];
     char           key[21];
+
+    tr_handle_status_t stats[2];
+    int                statCur;
 };
 
 #endif

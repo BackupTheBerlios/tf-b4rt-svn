@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.h 1439 2007-01-27 21:17:10Z joshe $
+ * $Id: shared.h 1463 2007-02-06 05:37:48Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -48,15 +48,17 @@ void          tr_sharedUnlock         ( tr_shared_t * );
 /***********************************************************************
  * tr_sharedSetPort
  ***********************************************************************
- * Changes the port for incoming connections
+ * Changes the port for incoming connections.  tr_sharedGetPublicPort
+ * should be called with the shared lock held.
  **********************************************************************/
 void         tr_sharedSetPort         ( tr_shared_t *, int port );
 int          tr_sharedGetPublicPort   ( tr_shared_t * s );
 
 /***********************************************************************
- * tr_sharedTraversalEnable, tr_natTraversalStatus
+ * tr_sharedTraversalEnable, tr_sharedTraversalStatus
  ***********************************************************************
- *
+ * Enables/disables and retrieves the status of NAT traversal.  Should
+ * be called with the shared lock held.
  **********************************************************************/
 void         tr_sharedTraversalEnable ( tr_shared_t *, int enable );
 int          tr_sharedTraversalStatus ( tr_shared_t * );

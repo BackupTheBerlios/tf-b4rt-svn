@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: natpmp.h 1420 2007-01-21 07:16:18Z titer $
+ * $Id: natpmp.h 1460 2007-02-06 03:24:55Z joshe $
  *
  * Copyright (c) 2006 Transmission authors and contributors
  *
@@ -32,7 +32,7 @@ void        tr_natpmpStart( tr_natpmp_t * );
 void        tr_natpmpStop( tr_natpmp_t * );
 int         tr_natpmpStatus( tr_natpmp_t * );
 void        tr_natpmpForwardPort( tr_natpmp_t *, int );
-void        tr_natpmpPulse( tr_natpmp_t * );
+void        tr_natpmpPulse( tr_natpmp_t *, int * );
 void        tr_natpmpClose( tr_natpmp_t * );
 
 #endif

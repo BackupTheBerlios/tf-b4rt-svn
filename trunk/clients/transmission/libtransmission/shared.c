@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 1441 2007-01-28 00:24:41Z joshe $
+ * $Id: shared.c 1462 2007-02-06 04:26:40Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -190,7 +190,7 @@ int tr_sharedGetPublicPort( tr_shared_t * s )
 }
 
 /***********************************************************************
- * tr_sharedTraversalEnable, tr_natTraversalStatus
+ * tr_sharedTraversalEnable, tr_sharedTraversalStatus
  ***********************************************************************
  *
  **********************************************************************/
@@ -258,6 +258,7 @@ static void SharedLoop( void * _s )
 {
     tr_shared_t * s = _s;
     uint64_t      date1, date2, lastchoke = 0;
+    int           newPort;
 
     tr_sharedLock( s );
 
@@ -266,7 +267,12 @@ static void SharedLoop( void * _s )
         date1 = tr_date();
 
         /* NAT-PMP and UPnP pulses */
-        tr_natpmpPulse( s->natpmp );
+        newPort = -1;
+        tr_natpmpPulse( s->natpmp, &newPort );
+        if( 0 < newPort && newPort != s->publicPort )
+        {
+            SetPublicPort( s, newPort );
+        }
         tr_upnpPulse( s->upnp );
 
         /* Handle incoming connections */

@@ -1,4 +1,4 @@
-# $Id: common.mk 1202 2006-12-14 03:17:23Z titer $
+# $Id: common.mk 1470 2007-02-07 04:19:12Z joshe $
 
 TMPCFLAGS   = -g -Wall -W -O3 -funroll-loops -D_FILE_OFFSET_BITS=64 \
               -D_LARGEFILE_SOURCE -D_GNU_SOURCE \
@@ -77,6 +77,18 @@ define INSTALL_MAN_RULE
 	@echo "Install $<"
 	@$(MKDIR) $(DESTDIR)$(PREFIX)/man/man1
 	@$(CP) $< $(DESTDIR)$(PREFIX)/man/man1/
+endef
+
+define INSTALL_DESKTOP_RULE
+	@echo "Install $<"
+	@$(MKDIR) $(DESTDIR)$(PREFIX)/share/applications
+	@$(CP) $< $(DESTDIR)$(PREFIX)/share/applications/
+endef
+
+define INSTALL_ICON_RULE
+	@echo "Install $<"
+	@$(MKDIR) $(DESTDIR)$(PREFIX)/share/pixmaps
+	@$(CP) $< $(DESTDIR)$(PREFIX)/share/pixmaps/
 endef
 
 RM       = rm -Rf

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1445 2007-01-29 08:24:09Z titer $
+ * $Id: transmission.c 1463 2007-02-06 05:37:48Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -83,12 +83,26 @@ void tr_setBindPort( tr_handle_t * h, int port )
 
 void tr_natTraversalEnable( tr_handle_t * h, int enable )
 {
+    tr_sharedLock( h->shared );
     tr_sharedTraversalEnable( h->shared, enable );
+    tr_sharedUnlock( h->shared );
 }
 
-int tr_natTraversalStatus( tr_handle_t * h )
+tr_handle_status_t * tr_handleStatus( tr_handle_t * h )
 {
-    return tr_sharedTraversalStatus( h->shared );
+    tr_handle_status_t * s;
+
+    h->statCur = ( h->statCur + 1 ) % 2;
+    s = &h->stats[h->statCur];
+
+    tr_sharedLock( h->shared );
+
+    s->natTraversalStatus = tr_sharedTraversalStatus( h->shared );
+    s->publicPort = tr_sharedGetPublicPort( h->shared );
+
+    tr_sharedUnlock( h->shared );
+
+    return s;
 }
 
 void tr_setGlobalUploadLimit( tr_handle_t * h, int limit )
