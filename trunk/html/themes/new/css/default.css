@@ -40,8 +40,10 @@
 	background-image: url("../pics/logout_hover.jpg");
 }
 #mainMenu {
+	position: absolute;
+		left: 0px;
+	width: 180px;
 	padding-top: 10px;
-	width: 170px;
 	float: left;
 }
 li.mainMenu {

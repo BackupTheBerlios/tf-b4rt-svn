@@ -1,8 +1,6 @@
 #content {
-	margin-left: 15px;
-	margin-top: 15px;
+	margin: 15px 180px 0px 180px;
 	float: left;
-	width: 60%;
 }
 #upload {
 	height: 26px;
@@ -11,7 +9,11 @@
 	background-repeat: repeat-x;
 }
 #stats {
+	position: absolute;
+		right: 0px;
+	width: 180px;
 	margin-top: 15px;
+	float: left;
 }
 span.upload_first {
 	padding-right: 10px;
@@ -82,5 +84,20 @@ div.uploadClass {
 }
 #bandwidthTitle {
 	margin-left: 20px;
-	margin-top: 5px;
+	width: 160px;
+	height: 16px;
+	background-image: url("../pics/menu.jpg");
+	background-repeat: no-repeat;
+}
+#statsBandwidth {
+	width: 100px;
+	height: 20px;
+	background-image: url("../pics/bandwidth_background.jpg");
+	background-repeat: no-repeat;
+}
+#bandwidth {
+	width: 70%;
+	height: 20px;
+	background-image: url("../pics/bandwidth.jpg");
+	background-repeat: no-repeat;
 }
