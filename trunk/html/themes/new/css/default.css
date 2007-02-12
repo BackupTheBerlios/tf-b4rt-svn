@@ -1,30 +1,26 @@
-#body {
+* {
 	padding:0px;
 	margin: 0px;
 	border: none;
+	font-family: Verdana, Helvetica;
+	font-size: 12px;
 }
 #titleBar {
-	padding: 0px;
-	margin: 0px;
 	border: none;
-	font-size: 1.5em;
-	font-weight: bold;
-	color: #585858;
 	background-color: #c1b18d;
 	background-image: url("../pics/title_background_left.jpg");
 	background-repeat: no-repeat;
 }
 #title {
-	padding: 0px;
-	margin: 0px;
 	border: none;
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #585858;
 	position: relative;
 		top: 9px;
 		left: 10px;
 }
 #logout {
-	padding: 0px;
-	margin: 0px;
 	padding-right: 5px;
 	border: none;
 	position: absolute;
@@ -34,37 +30,29 @@
 	background-position: right;
 }
 #logoutButton{
-	padding: 0px;
-	margin: 0px;
 	height: 22px;
 	width: 22px;
 	border: none;
 	display:block;
-	background-image:url("../pics/logout.jpg");
+	background-image: url("../pics/logout.jpg");
 	}
 #logoutButton:hover{
-	background-image:url("../pics/logout_hover.jpg");
+	background-image: url("../pics/logout_hover.jpg");
 }
 #mainMenu {
-	padding: 0px;
-	margin: 0px;
 	padding-top: 10px;
 	width: 170px;
 	float: left;
 }
 li.mainMenu {
-	padding: 0px;
-	margin: 0px;
 	margin-top: 5px;
 	width: 160px;
 	height: 16px;
 	list-style-type: none;
-	background-image:url("../pics/menu.jpg");
+	background-image: url("../pics/menu.jpg");
 	background-repeat: no-repeat;
 }
 a.mainMenu {
-	padding: 0px;
-	margin: 0px;
 	margin-left: 10px;
 	font-weight: bold;
 	color: #585858;
@@ -77,30 +65,22 @@ a.mainMenuActive {
 	color: #FFFFFF;
 }
 ul.menu {
-	padding: 0px;
-	margin: 0px;
 	position: relative;
 		left: 8px;
 }
 li.menu {
-	padding: 0px;
-	margin: 0px;
 	list-style-type: none;
-	background-image:url("../pics/menu_box.jpg");
+	background-image: url("../pics/menu_box.jpg");
 	background-repeat: repeat-y;
 }
 li.menu_last {
-	padding: 0px;
-	margin: 0px;
 	height: 19px;
 	list-style-type: none;
-	background-image:url("../pics/menu_box_bottom.jpg");
+	background-image: url("../pics/menu_box_bottom.jpg");
 	background-repeat: no-repeat;
 	background-position: bottom left;
 }
 a.menu {
-	padding: 0px;
-	margin: 0px;
 	margin-left: 10px;
 	color: #585858;
 	text-decoration: none;
@@ -108,44 +88,3 @@ a.menu {
 a.menu:hover {
 	color: #c1b18d;
 }
-
-
-
-
-
-
-
-FONT		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-TD		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-BODY		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-P		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-DIV		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-INPUT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
-TEXTAREA	{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
-SELECT 		{BORDER-TOP-COLOR: #000000; BORDER-LEFT-COLOR: #000000; BORDER-RIGHT-COLOR: #000000; BORDER-BOTTOM-COLOR: #000000; BORDER-TOP-WIDTH: 1px; BORDER-LEFT-WIDTH: 1px; FONT-SIZE: 12px; BORDER-BOTTOM-WIDTH: 1px; FONT-FAMILY: Verdana,Helvetica; BORDER-RIGHT-WIDTH: 1px}
-FORM 		{FONT-FAMILY: Verdana,Helvetica; FONT-SIZE: 12px}
-.titleblack 		{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 14px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.content 	{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}
-.block-title	{BACKGROUND: none; COLOR: #FFFFFF; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}
-.storytitle 	{BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.storycat	{BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
-.boxtitle 	{BACKGROUND: none; COLOR: #363636; FONT-SIZE: 12px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.boxcontent 	{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica}
-.option 	{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 12px; FONT-WEIGHT: bold; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.tiny		{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 9px; FONT-WEIGHT: normal; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.tinywhite		{BACKGROUND: none; COLOR: #ffffff; FONT-SIZE: 9px; FONT-WEIGHT: normal; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.tinyunderline	{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 9px; FONT-WEIGHT: normal; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
-.title {FONT-FAMILY: Verdana,Helvetica; FONT-WEIGHT: bold; COLOR: #ffffff; FONT-SIZE: 12px}
-.adminlink {BACKGROUND: none; COLOR: #ffffff; FONT-SIZE: 12px; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: underline}
-.tinypercent		{BACKGROUND: none; COLOR: #000000; FONT-SIZE: 9px; FONT-WEIGHT: normal; FONT-FAMILY: Verdana, Helvetica; TEXT-DECORATION: none}
-.bg { border: 0px outset #E6E6E6; background-color:#829FB5; }
-.fg { border: 0px outset #E6E6E6; background-color:#A2BED4; }
-.overCaption {font-family:arial; color:#ffffff; font-size:9pt; font-weight:bold;}
-.overClose {font-family:arial; background:#94ABC0; color:#000000; font-size:9pt; font-weight:bold;}
-.overBody {font-family:arial; background:#A2BED4; font-size:9pt; font-weight:normal;}
-.detailbar {
-	border-right-width: 1px;
-	border-right-style: solid;
-	border-right-color: #000000;
-}
-hr{ color: #94ABC0; noshade }

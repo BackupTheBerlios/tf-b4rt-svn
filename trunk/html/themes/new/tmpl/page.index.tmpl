@@ -1,5 +1,5 @@
 <tmpl_include name="inc.head.tmpl">
-<body id="body">
+<body>
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
 	<div id="upload">
@@ -27,7 +27,6 @@
 				</span>
 			</tmpl_if>
 		</div>
-		
 	</div>
 	<div id="fileUpload" class="uploadClass" style="display: none; height: 0px">
 		<form name="form_file" action="dispatcher.php?action=fileUpload" method="post" enctype="multipart/form-data" onsubmit="return actionSubmit()">
@@ -93,7 +92,6 @@
 	</tmpl_if>
 	<tmpl_if name="enable_wget">
 		<div id="wgetUrl" class="uploadClass" style="display: none; height: 0px">
-			<!-- TODO -->
 			<form name="form_wget" action="dispatcher.php?action=wget" method="post" onsubmit="return actionSubmit()">
 				URL for the File to wget:<br>
 				<input type="text" name="url" size="40">
@@ -130,17 +128,25 @@
 	<div id="uploadBottom"></div>
 	<div id="uploadBottomEnd"></div>
 
+
+
 	<!--
+	
+	<tmpl_include name="inc.bandwidthBars_xfer.tmpl">
+	
 	<div id="transferList">
 		<tmpl_include name="inc.transferList.tmpl">
 	</div>
+	
 	-->
 </div>
 
 
 
 <div id="stats">
-	TO DO: Stats
+	<span id="bandwidthTitle">
+		Bandwidth
+	</span>
 </div>
 
 
