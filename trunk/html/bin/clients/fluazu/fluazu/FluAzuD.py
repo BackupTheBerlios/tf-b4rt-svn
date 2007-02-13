@@ -494,6 +494,26 @@ class FluAzuD(object):
             self.reload()
             return False
 
+        # u
+        elif opCode == 'u':
+            if len(command) < 2:
+                self.log("invalid rate.")
+                return False
+            rateNew = command[1:]
+            printMessage("command: setting upload-rate to %s ..." % rateNew)
+            self.setRateU(int(rateNew))
+            return False
+
+        # d
+        elif opCode == 'd':
+            if len(command) < 2:
+                self.log("invalid rate.")
+                return False
+            rateNew = command[1:]
+            printMessage("command: setting download-rate to %s ..." % rateNew)
+            self.setRateD(int(rateNew))
+            return False
+
         # default
         else:
             printError("op-code unknown: " + opCode)
@@ -548,6 +568,32 @@ class FluAzuD(object):
 
         # return
         return True
+
+    """ -------------------------------------------------------------------- """
+    """ setRateU                                                             """
+    """ -------------------------------------------------------------------- """
+    def setRateU(self, rate):
+        try:
+            config_object = self.interface.getPluginconfig()
+            config_object.set_upload_speed_limit(rate)
+            return True
+        except:
+            printMessage("Failed to set upload-rate.")
+            printException()
+            return False
+
+    """ -------------------------------------------------------------------- """
+    """ setRateD                                                             """
+    """ -------------------------------------------------------------------- """
+    def setRateD(self, rate):
+        try:
+            config_object = self.interface.getPluginconfig()
+            config_object.set_download_speed_limit(rate)
+            return True
+        except:
+            printMessage("Failed to set download-rate.")
+            printException()
+            return False
 
     """ -------------------------------------------------------------------- """
     """ checkAzuConnection                                                   """

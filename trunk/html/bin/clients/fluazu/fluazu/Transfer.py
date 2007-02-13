@@ -69,6 +69,7 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def __init__(self, tf_pathTransfers, flu_pathTransfers, file):
         self.state = Transfer.TF_STOPPED
+        self.state_azu = Transfer.AZ_STOPPED
         self.tf_pathTransfers = tf_pathTransfers
         self.flu_pathTransfers = flu_pathTransfers
         self.name = file
@@ -117,8 +118,11 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def update(self, download):
 
+        # azu-state
+        self.state_azu = download.getState()
+
         # set state
-        self.state = Transfer.STATE_MAP[download.getState()]
+        self.state = Transfer.STATE_MAP[self.state_azu]
 
         # only when running
         if self.state == Transfer.TF_RUNNING:
@@ -244,6 +248,9 @@ class Transfer(object):
                 return False
             rateNew = command[1:]
             self.log("command: setting upload-rate to %s ..." % rateNew)
+            # update meta-object
+            self.tf.max_upload_rate = rateNew
+            self.tf.write()
             # TODO
             return False
 
@@ -254,6 +261,9 @@ class Transfer(object):
                 return False
             rateNew = command[1:]
             self.log("command: setting download-rate to %s ..." % rateNew)
+            # update meta-object
+            self.tf.max_download_rate = rateNew
+            self.tf.write()
             # TODO
             return False
 
@@ -272,7 +282,9 @@ class Transfer(object):
                 self.log("runtime-code unknown: %s" % runtimeNew)
                 return False
             self.log("command: setting die-when-done to %s" % rt)
-            # TODO
+            # update meta-object
+            self.tf.die_when_done = rt
+            self.tf.write()
             return False
 
         # s
@@ -282,7 +294,9 @@ class Transfer(object):
                 return False
             sharekillNew = command[1:]
             self.log("command: setting sharekill to %s ..." % sharekillNew)
-            # TODO
+            # update meta-object
+            self.tf.sharekill = sharekillNew
+            self.tf.write()
             return False
 
         # default
@@ -326,6 +340,10 @@ class Transfer(object):
     """ statRunning                                                          """
     """ -------------------------------------------------------------------- """
     def statRunning(self, download):
+
+        # TODO
+        # self.state_azu == AZ_SEEDING
+
         # set some values
         self.sf.running = Transfer.TF_RUNNING
         try:
@@ -334,6 +352,9 @@ class Transfer(object):
                 stats = download.getStats()
                 # completed
                 try:
+
+                    # TODO
+
                     pctf = float(stats.getCompleted())
                     pctf /= 10
                     self.sf.percent_done = str(pctf)
