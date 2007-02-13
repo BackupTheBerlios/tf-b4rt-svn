@@ -58,6 +58,7 @@ class FluAzuD(object):
         self.flu_pathTransfersDel = ''
         self.flu_fileCommand = ''
         self.flu_filePid = ''
+        self.flu_fileStat = ''
         # azu-settings
         self.azu_host = '127.0.0.1'
         self.azu_port = 6884
@@ -82,6 +83,7 @@ class FluAzuD(object):
         self.flu_path = self.tf_path + '.fluazu/'
         self.flu_fileCommand = self.flu_path + 'fluazu.cmd'
         self.flu_filePid = self.flu_path + 'fluazu.pid'
+        self.flu_fileStat = self.flu_path + 'fluazu.stat'
         self.flu_pathTransfers = self.flu_path + 'cur/'
         self.flu_pathTransfersRun = self.flu_path + 'run/'
         self.flu_pathTransfersDel = self.flu_path + 'del/'
@@ -187,14 +189,21 @@ class FluAzuD(object):
             printError("Error getting Download-Manager object")
             return False
 
-        # return
-        return True
+        # write stat-file and return
+        return self.writeStatFile()
 
     """ -------------------------------------------------------------------- """
     """ shutdown                                                             """
     """ -------------------------------------------------------------------- """
     def shutdown(self):
         printMessage("fluazu shutting down...")
+
+        # delete stat-file
+        printMessage("deleting stat-file %s ..." % self.flu_fileStat)
+        try:
+            os.remove(self.flu_fileStat)
+        except:
+            printError("Failed to delete stat-file %s " % self.flu_fileStat)
 
         # delete pid-file
         printMessage("deleting pid-file %s ..." % self.flu_filePid)
@@ -568,6 +577,45 @@ class FluAzuD(object):
 
         # return
         return True
+
+    """ -------------------------------------------------------------------- """
+    """ writeStatFile                                                        """
+    """ -------------------------------------------------------------------- """
+    def writeStatFile(self):
+        # vars
+        rateU = None
+        rateD = None
+        try:
+            config_object = self.interface.getPluginconfig()
+            try:
+                rateU = config_object.get_upload_speed_limit()
+            except:
+                rateU = 0
+                printMessage("Failed to get upload-rate.")
+                printException()
+            try:
+                rateD = config_object.get_download_speed_limit()
+            except:
+                rateD = 0
+                printMessage("Failed to get download-rate.")
+                printException()
+        except:
+            printMessage("Failed to get Plugin-Config.")
+            printException()
+        # write file
+        try:
+            f = open(self.flu_fileStat, 'w')
+            f.write("host: %s\n" % self.azu_host)
+            f.write("port: %d\n" % self.azu_port)
+            f.write("version: %s\n" % self.azu_version_str)
+            f.write("max_upload_rate: %d\n" % rateU)
+            f.write("max_download_rate: %d\n" % rateD)
+            f.flush()
+            f.close()
+            return True
+        except:
+            printError("Failed to write statfile %s " % self.flu_fileStat)
+            return False
 
     """ -------------------------------------------------------------------- """
     """ setRateU                                                             """

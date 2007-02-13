@@ -48,6 +48,7 @@ class FluAzu
 	var $_pathCommandFile = "";
     var $_pathPidFile = "";
     var $_pathLogFile = "";
+    var $_pathStatFile = "";
     var $_pathTransfers = "";
     var $_pathTransfersRun = "";
     var $_pathTransfersDel = "";
@@ -196,6 +197,19 @@ class FluAzu
 		return $instanceFluAzu->instance_delTransfer($transfer);
     }
 
+    /**
+     * get status
+     *
+     * @return string
+     */
+    function getStatus() {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_getStatus();
+    }
+
 	// =========================================================================
 	// ctor
 	// =========================================================================
@@ -210,6 +224,7 @@ class FluAzu
         $this->_pathPidFile = $this->_pathDataDir . 'fluazu.pid';
         $this->_pathCommandFile = $this->_pathDataDir . 'fluazu.cmd';
         $this->_pathLogFile = $this->_pathDataDir . 'fluazu.log';
+        $this->_pathStatFile = $this->_pathDataDir . 'fluazu.stat';
         $this->_pathTransfers = $this->_pathDataDir . 'cur/';
         $this->_pathTransfersRun = $this->_pathDataDir . 'run/';
         $this->_pathTransfersDel = $this->_pathDataDir . 'del/';
@@ -414,6 +429,17 @@ class FluAzu
             $this->state = FLUAZU_STATE_ERROR;
 			return false;
         }
+    }
+
+    /**
+     * get status
+     *
+     * @return string
+     */
+    function instance_getStatus() {
+		return ($this->state == FLUAZU_STATE_RUNNING)
+			? @file_get_contents($this->_pathStatFile)
+			: "fluazu not running.";
     }
 
     // =========================================================================

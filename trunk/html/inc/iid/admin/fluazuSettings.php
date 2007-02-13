@@ -48,7 +48,8 @@ if ($message != "")
 // fluazu core
 if (FluAzu::isRunning()) {
 	$tmpl->setvar('fluazuRunning', 1);
-	$tmpl->setvar('fluazudPid', FluAzu::getPid());
+	$tmpl->setvar('fluazuPid', FluAzu::getPid());
+	$tmpl->setvar('fluazuStatus', FluAzu::getStatus());
 } else {
 	$tmpl->setvar('fluazuRunning', 0);
 }

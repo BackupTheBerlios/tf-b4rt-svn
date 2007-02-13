@@ -18,13 +18,25 @@
 			<td bgcolor="#A2BED4" background="themes/default/images/bar.gif">
 				<font class="title">
 					<tmpl_if name="fluazuRunning">
-						&nbsp;&nbsp;<img src="themes/default/images/green.gif" align="absmiddle" align="absmiddle"> fluazu Running (pid: <tmpl_var name="fluazudPid">)
+						&nbsp;&nbsp;<img src="themes/default/images/green.gif" align="absmiddle" align="absmiddle"> fluazu Running (pid: <tmpl_var name="fluazuPid">)
 					<tmpl_else>
 						&nbsp;&nbsp;<img src="themes/default/images/black.gif" align="absmiddle"> fluazu Off
 					</tmpl_if>
 				</font>
 			</td>
 		</tr>
+		<tmpl_if name="fluazuStatus">
+			<tr bgcolor="#829FB5">
+				<td align="center">
+					<strong>Status</strong>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<pre><tmpl_var name="fluazuStatus"></pre>
+				</td>
+			</tr>
+		</tmpl_if>
 		<tr>
 			<td align="center">
 				<div align="center">
@@ -124,7 +136,6 @@
 							</form>
 						</table>
 					</div>
-					<br>
 				</td>
 			</tr>
 		</table>
