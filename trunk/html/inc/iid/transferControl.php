@@ -149,7 +149,7 @@ switch ($pageop) {
 		transfer_setProfiledVars();
 
 		// file prio
-		if (($supportMap[$ch->client]['file_priority'] == 1) && ($cfg["enable_file_priority"] == 1)) {
+		if (($cfg["supportMap"][$ch->client]['file_priority'] == 1) && ($cfg["enable_file_priority"] == 1)) {
 			require_once("inc/functions/functions.fileprio.php");
 			$tmpl->setvar('filePrio', getFilePrioForm($transfer, false));
 			$tmpl->setvar('file_priority_enabled', 1);
@@ -160,7 +160,7 @@ switch ($pageop) {
 		}
 
 		// dirtree
-		if ($supportMap[$ch->client]['savepath'] == 1) {
+		if ($cfg["supportMap"][$ch->client]['savepath'] == 1) {
 			$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 			if ($cfg["showdirtree"] == 1)
 				tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
@@ -169,8 +169,8 @@ switch ($pageop) {
 		}
 
 		// hash-check
-		$tmpl->setvar('skip_hash_check_enabled', $supportMap[$ch->client]['skip_hash_check']);
-		if ($supportMap[$ch->client]['skip_hash_check'] == 1) {
+		$tmpl->setvar('skip_hash_check_enabled', $cfg["supportMap"][$ch->client]['skip_hash_check']);
+		if ($cfg["supportMap"][$ch->client]['skip_hash_check'] == 1) {
 			$dsize = getTorrentDataSize($transfer);
 			$tmpl->setvar('is_skip',
 				(($dsize > 0) && ($dsize != 4096))

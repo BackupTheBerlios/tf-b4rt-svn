@@ -20,107 +20,14 @@
 
 *******************************************************************************/
 
-/**
- * client-support-map
- */
-$supportMap = array(
-	'tornado' => array(
-		'max_upload_rate'   => 1,
-		'max_download_rate' => 1,
-		'max_uploads'       => 1,
-		'superseeder'       => 1,
-		'die_when_done'     => 1,
-		'sharekill'         => 1,
-		'minport'           => 1,
-		'maxport'           => 1,
-		'maxcons'           => 1,
-		'rerequest'         => 1,
-		'file_priority'     => 1,
-		'skip_hash_check'   => 1,
-		'savepath'          => 1
-	),
-	'transmission' => array(
-		'max_upload_rate'   => 1,
-		'max_download_rate' => 1,
-		'max_uploads'       => 0,
-		'superseeder'       => 0,
-		'die_when_done'     => 1,
-		'sharekill'         => 1,
-		'minport'           => 1,
-		'maxport'           => 1,
-		'maxcons'           => 0,
-		'rerequest'         => 0,
-		'file_priority'     => 0,
-		'skip_hash_check'   => 0,
-		'savepath'          => 1
-	),
-	'mainline' => array(
-		'max_upload_rate'   => 1,
-		'max_download_rate' => 1,
-		'max_uploads'       => 1,
-		'superseeder'       => 0,
-		'die_when_done'     => 1,
-		'sharekill'         => 1,
-		'minport'           => 1,
-		'maxport'           => 1,
-		'maxcons'           => 1,
-		'rerequest'         => 1,
-		'file_priority'     => 0,
-		'skip_hash_check'   => 1,
-		'savepath'          => 1
-	),
-	'azureus' => array(
-		'max_upload_rate'   => 0,
-		'max_download_rate' => 0,
-		'max_uploads'       => 0,
-		'superseeder'       => 0,
-		'die_when_done'     => 0,
-		'sharekill'         => 0,
-		'minport'           => 0,
-		'maxport'           => 0,
-		'maxcons'           => 0,
-		'rerequest'         => 0,
-		'file_priority'     => 0,
-		'skip_hash_check'   => 0,
-		'savepath'          => 0
-	),
-	'wget' => array(
-		'max_upload_rate'   => 0,
-		'max_download_rate' => 1,
-		'max_uploads'       => 0,
-		'superseeder'       => 0,
-		'die_when_done'     => 0,
-		'sharekill'         => 0,
-		'minport'           => 0,
-		'maxport'           => 0,
-		'maxcons'           => 0,
-		'rerequest'         => 0,
-		'file_priority'     => 0,
-		'skip_hash_check'   => 0,
-		'savepath'          => 1
-	),
-	'nzbperl' => array(
-		'max_upload_rate'   => 0,
-		'max_download_rate' => 1,
-		'max_uploads'       => 0,
-		'superseeder'       => 0,
-		'die_when_done'     => 0,
-		'sharekill'         => 0,
-		'minport'           => 0,
-		'maxport'           => 0,
-		'maxcons'           => 1,
-		'rerequest'         => 0,
-		'file_priority'     => 0,
-		'skip_hash_check'   => 0,
-		'savepath'          => 1
-	)
-);
+// config
+require_once('inc/config/config.clients.php');
 
 /**
  * init
  */
 function transfer_init() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// request-var
 	$transfer = getRequestVar('transfer');
 	if (empty($transfer))
@@ -146,7 +53,7 @@ function transfer_init() {
  * setCustomizeVars
  */
 function transfer_setCustomizeVars() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// customize settings
 	if ($cfg['transfer_customize_settings'] == 2)
 		$customize_settings = 1;
@@ -168,16 +75,16 @@ function transfer_setCustomizeVars() {
 		$tmpl->setvar('maxcons_enabled', 0);
 		$tmpl->setvar('rerequest_enabled', 0);
 	} else {
-		$tmpl->setvar('max_upload_rate_enabled', $supportMap[$ch->client]['max_upload_rate']);
-		$tmpl->setvar('max_download_rate_enabled', $supportMap[$ch->client]['max_download_rate']);
-		$tmpl->setvar('max_uploads_enabled', $supportMap[$ch->client]['max_uploads']);
-		$tmpl->setvar('superseeder_enabled', $supportMap[$ch->client]['superseeder']);
-		$tmpl->setvar('die_when_done_enabled', $supportMap[$ch->client]['die_when_done']);
-		$tmpl->setvar('sharekill_enabled', $supportMap[$ch->client]['sharekill']);
-		$tmpl->setvar('minport_enabled', $supportMap[$ch->client]['minport']);
-		$tmpl->setvar('maxport_enabled', $supportMap[$ch->client]['maxport']);
-		$tmpl->setvar('maxcons_enabled', $supportMap[$ch->client]['maxcons']);
-		$tmpl->setvar('rerequest_enabled', $supportMap[$ch->client]['rerequest']);
+		$tmpl->setvar('max_upload_rate_enabled', $cfg["supportMap"][$ch->client]['max_upload_rate']);
+		$tmpl->setvar('max_download_rate_enabled', $cfg["supportMap"][$ch->client]['max_download_rate']);
+		$tmpl->setvar('max_uploads_enabled', $cfg["supportMap"][$ch->client]['max_uploads']);
+		$tmpl->setvar('superseeder_enabled', $cfg["supportMap"][$ch->client]['superseeder']);
+		$tmpl->setvar('die_when_done_enabled', $cfg["supportMap"][$ch->client]['die_when_done']);
+		$tmpl->setvar('sharekill_enabled', $cfg["supportMap"][$ch->client]['sharekill']);
+		$tmpl->setvar('minport_enabled', $cfg["supportMap"][$ch->client]['minport']);
+		$tmpl->setvar('maxport_enabled', $cfg["supportMap"][$ch->client]['maxport']);
+		$tmpl->setvar('maxcons_enabled', $cfg["supportMap"][$ch->client]['maxcons']);
+		$tmpl->setvar('rerequest_enabled', $cfg["supportMap"][$ch->client]['rerequest']);
 	}
 }
 
@@ -185,7 +92,7 @@ function transfer_setCustomizeVars() {
  * setGenericVarsFromCH
  */
 function transfer_setGenericVarsFromCH() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// set generic vars for transfer
 	$tmpl->setvar('type', $ch->type);
 	$tmpl->setvar('client', $ch->client);
@@ -199,7 +106,7 @@ function transfer_setGenericVarsFromCH() {
  * setVarsFromCHSettings
  */
 function transfer_setVarsFromCHSettings() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// set generic vars for transfer
 	transfer_setGenericVarsFromCH();
 	// set vars for transfer
@@ -221,7 +128,7 @@ function transfer_setVarsFromCHSettings() {
  * @param $profile
  */
 function transfer_setVarsFromProfileSettings($profile) {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// set generic vars for transfer
 	transfer_setGenericVarsFromCH();
 	//load custom settings
@@ -243,7 +150,7 @@ function transfer_setVarsFromProfileSettings($profile) {
  * setFileVars
  */
 function transfer_setFileVars() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// set vars for transfer
 	$transferFilesList = array();
 	switch ($ch->type) {
@@ -327,7 +234,7 @@ function transfer_setFileVars() {
  * @param $withForm
  */
 function transfer_setDetailsVars() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// set vars for transfer
 	$tmpl->setvar('clientType', $ch->type);
 	switch ($ch->type) {
@@ -348,7 +255,7 @@ function transfer_setDetailsVars() {
  * setProfiledVars
  */
 function transfer_setProfiledVars() {
-	global $cfg, $tmpl, $transfer, $transferLabel, $ch, $supportMap;
+	global $cfg, $tmpl, $transfer, $transferLabel, $ch;
 	// set vars for transfer
 	if ($cfg['transfer_profiles'] <= 0) {
 		$with_profiles = 0;

@@ -87,14 +87,6 @@ if ($isSave) {                                                        /* save */
 		'rerequest'
 	);
 
-	// runtime-settings
-	$settingsRuntime = array(
-		'max_upload_rate',
-		'max_download_rate',
-		'die_when_done',
-		'sharekill'
-	);
-
 	// settings-labels
 	$settingsLabels = array(
 		'savepath' => 'Savepath',
@@ -195,7 +187,7 @@ if ($isSave) {                                                        /* save */
 				// send
 				if (($ch->running == 1) && ($doSend)) {
 					// runtime
-					if (in_array($settingsKey, $settingsRuntime))
+					if ($cfg["runtimeMap"][$ch->client][$settingsKey] == 1)
 						array_push($list_send, array(
 							'lbl' => $settingsLabels[$settingsKey],
 							'val' => $value
@@ -296,7 +288,7 @@ if ($isSave) {                                                        /* save */
 	transfer_setProfiledVars();
 
 	// dirtree
-	if ($supportMap[$ch->client]['savepath'] == 1) {
+	if ($cfg["supportMap"][$ch->client]['savepath'] == 1) {
 		$tmpl->setvar('showdirtree', $cfg["showdirtree"]);
 		if ($cfg["showdirtree"] == 1)
 			tmplSetDirTree($ch->savepath, $cfg["maxdepth"]);
