@@ -98,11 +98,21 @@ class ClientHandlerAzureus extends ClientHandler
 		$this->savepath = $cfg['path'].$cfg["path_incoming"]."/";
 
         // build the command-string
-        $content = $cfg['user'];
-		$this->command  = "echo ".escapeshellarg($content);
-		$this->command .= " > ".escapeshellarg($cfg["path"].'.fluazu/run/'.$transfer);
-		$this->command .= " && echo r";
-		$this->command .= " > ".$cfg["path"].'.fluazu/fluazu.cmd';
+        $content  = $cfg['user']."\n";
+        $content .= $this->savepath."\n";
+        $content .= $this->rate."\n";
+        $content .= $this->drate."\n";
+        $content .= $this->maxuploads."\n";
+        $content .= $this->superseeder."\n";
+        $content .= $this->runtime."\n";
+        $content .= $this->sharekill_param."\n";
+        $content .= $this->minport."\n";
+        $content .= $this->maxport."\n";
+        $content .= $this->maxcons."\n";
+        $content .= $this->rerequest;
+		$this->command  = "echo -e ".escapeshellarg($content)." > ".escapeshellarg($cfg["path"].'.fluazu/run/'.$transfer);
+		$this->command .= " && ";
+		$this->command .= "echo r > ".$cfg["path"].'.fluazu/fluazu.cmd';
 
         // start the client
         $this->_start();

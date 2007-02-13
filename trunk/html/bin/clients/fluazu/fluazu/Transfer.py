@@ -25,6 +25,7 @@ import sys
 import os
 # fluazu
 from fluazu.output import printMessage, printError, getOutput, printException
+from fluazu.TransferFile import TransferFile
 from fluazu.StatFile import StatFile
 ################################################################################
 
@@ -74,14 +75,14 @@ class Transfer(object):
         self.fileTorrent = self.tf_pathTransfers + file
         self.fileMeta = self.flu_pathTransfers + file
 
-        # owner
-        self.owner = ''
-
         # file-vars
         self.fileStat = self.fileTorrent + ".stat"
         self.fileCommand = self.fileTorrent + ".cmd"
         self.fileLog = self.fileTorrent + ".log"
         self.filePid = self.fileTorrent + ".pid"
+
+        # meta-file-object
+        self.tf = None
 
         # stat-object
         self.sf = None
@@ -98,28 +99,8 @@ class Transfer(object):
         self.log("initializing transfer %s ..." % self.name)
 
         # meta-file
-        self.log("loading metafile %s ..." % self.fileMeta)
-        try:
-            # read file to mem
-            f = open(self.fileMeta, 'r')
-            data = f.read()
-            f.close()
-            # process data
-            if len(data) > 0:
-                content = data.split("\n")
-                if len(content) > 0:
-                    # owner
-                    self.owner = content[0]
-                    self.log("owner: %s" % self.owner)
-                else:
-                    self.log("No owner found.")
-                    return False
-            else:
-                self.log("No owner found.")
-                return False
-        except:
-            self.log("Failed to read metafile %s " % self.fileMeta)
-            return False
+        self.log("loading transfer-file %s ..." % self.fileMeta)
+        self.tf = TransferFile(self.fileMeta)
 
         # stat-file
         self.log("loading statfile %s ..." % self.fileStat)
@@ -149,7 +130,7 @@ class Transfer(object):
     """ start                                                                """
     """ -------------------------------------------------------------------- """
     def start(self, download):
-        self.log("starting transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+        self.log("starting transfer %s (%s) ..." % (str(self.name), str(self.tf.transferowner)))
 
         # stat
         self.statStartup(download)
@@ -180,7 +161,7 @@ class Transfer(object):
     """ stop                                                                 """
     """ -------------------------------------------------------------------- """
     def stop(self, download):
-        self.log("stopping transfer %s (%s) ..." % (str(self.name), str(self.owner)))
+        self.log("stopping transfer %s (%s) ..." % (str(self.name), str(self.tf.transferowner)))
 
         # stat
         self.statShutdown(download)
@@ -321,7 +302,7 @@ class Transfer(object):
         self.sf.time_left = "Starting..."
         self.sf.down_speed = "0.00 kB/s"
         self.sf.up_speed = "0.00 kB/s"
-        self.sf.transferowner = self.owner
+        self.sf.transferowner = self.tf.transferowner
         self.sf.seeds = ""
         self.sf.peers = ""
         self.sf.sharing = ""
@@ -422,7 +403,7 @@ class Transfer(object):
         self.sf.running = Transfer.TF_STOPPED
         self.sf.down_speed = "0.00 kB/s"
         self.sf.up_speed = "0.00 kB/s"
-        self.sf.transferowner = self.owner
+        self.sf.transferowner = self.tf.transferowner
         self.sf.seeds = ""
         self.sf.peers = ""
         self.sf.sharing = ""
