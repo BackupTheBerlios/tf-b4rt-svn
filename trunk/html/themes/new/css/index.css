@@ -82,6 +82,9 @@ div.uploadClass {
 	color: #FFFFFF;
 	text-decoration: none;
 }
+#transfer_table {
+	width: 100%;
+}
 #bandwidthTitle {
 	margin-left: 20px;
 	width: 160px;
@@ -90,14 +93,4 @@ div.uploadClass {
 	background-repeat: no-repeat;
 }
 #statsBandwidth {
-	width: 100px;
-	height: 20px;
-	background-image: url("../pics/bandwidth_background.jpg");
-	background-repeat: no-repeat;
-}
-#bandwidth {
-	width: 70%;
-	height: 20px;
-	background-image: url("../pics/bandwidth.jpg");
-	background-repeat: no-repeat;
 }
