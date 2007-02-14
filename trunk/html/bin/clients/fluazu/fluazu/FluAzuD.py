@@ -587,40 +587,47 @@ class FluAzuD(object):
     """ writeStatFile                                                        """
     """ -------------------------------------------------------------------- """
     def writeStatFile(self):
-        # vars
-        rateU = None
-        rateD = None
         try:
+            # get plugin-config
             config_object = self.interface.getPluginconfig()
+            # get vars
+            coreVars = [ \
+                config_object.CORE_PARAM_INT_MAX_ACTIVE, \
+                config_object.CORE_PARAM_INT_MAX_ACTIVE_SEEDING, \
+                config_object.CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL, \
+                config_object.CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT, \
+                config_object.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC, \
+                config_object.CORE_PARAM_INT_MAX_DOWNLOADS, \
+                config_object.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC, \
+                config_object.CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC, \
+                config_object.CORE_PARAM_INT_MAX_UPLOADS, \
+                config_object.CORE_PARAM_INT_MAX_UPLOADS_SEEDING \
+            ]
+            coreParams = {}
+            for coreVar in coreVars:
+                try:
+                    coreParams[coreVar] = config_object.getIntParameter(coreVar, 0)
+                except:
+                    coreParams[coreVar] = 0
+                    printException()
+            # write file
             try:
-                rateU = config_object.get_upload_speed_limit()
+                f = open(self.flu_fileStat, 'w')
+                f.write("%s\n" % self.azu_host)
+                f.write("%d\n" % self.azu_port)
+                f.write("%s\n" % self.azu_version_str)
+                for coreVar in coreVars:
+                    f.write("%d\n" % coreParams[coreVar])
+                f.flush()
+                f.close()
+                return True
             except:
-                rateU = 0
-                printMessage("Failed to get upload-rate.")
-                printException()
-            try:
-                rateD = config_object.get_download_speed_limit()
-            except:
-                rateD = 0
-                printMessage("Failed to get download-rate.")
+                printError("Failed to write statfile %s " % self.flu_fileStat)
                 printException()
         except:
             printMessage("Failed to get Plugin-Config.")
             printException()
-        # write file
-        try:
-            f = open(self.flu_fileStat, 'w')
-            f.write("host: %s\n" % self.azu_host)
-            f.write("port: %d\n" % self.azu_port)
-            f.write("version: %s\n" % self.azu_version_str)
-            f.write("max_upload_rate: %d\n" % rateU)
-            f.write("max_download_rate: %d\n" % rateD)
-            f.flush()
-            f.close()
-            return True
-        except:
-            printError("Failed to write statfile %s " % self.flu_fileStat)
-            return False
+        return False
 
     """ -------------------------------------------------------------------- """
     """ setRateU                                                             """

@@ -200,7 +200,7 @@ class FluAzu
     /**
      * get status
      *
-     * @return string
+     * @return array
      */
     function getStatus() {
     	global $instanceFluAzu;
@@ -279,7 +279,7 @@ class FluAzu
             $loopCtr = 0;
             $started = false;
             while ($loop) {
-            	if ($this->instance_isRunning()) {
+            	if (file_exists($this->_pathStatFile)) {
             		$started = true;
             		$loop = false;
             	} else {
@@ -434,12 +434,39 @@ class FluAzu
     /**
      * get status
      *
-     * @return string
+     * @return array
      */
     function instance_getStatus() {
-		return ($this->state == FLUAZU_STATE_RUNNING)
-			? @file_get_contents($this->_pathStatFile)
-			: "fluazu not running.";
+    	$keys = array(
+    		'azu_host',
+    		'azu_port',
+    		'azu_version',
+    		'CORE_PARAM_INT_MAX_ACTIVE',
+    		'CORE_PARAM_INT_MAX_ACTIVE_SEEDING',
+    		'CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL',
+    		'CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT',
+    		'CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC',
+    		'CORE_PARAM_INT_MAX_DOWNLOADS',
+    		'CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC',
+    		'CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC',
+    		'CORE_PARAM_INT_MAX_UPLOADS',
+    		'CORE_PARAM_INT_MAX_UPLOADS_SEEDING'
+    	);
+    	$retVal = array();
+    	if ($this->state == FLUAZU_STATE_RUNNING) {
+    		$data = @file_get_contents($this->_pathStatFile);
+	        $content = @explode("\n", $data);
+	        $count = count($keys);
+	        if (is_array($content) && (count($content) >= $count)) {
+	        	$content = array_map('trim', $content);
+		    	for ($i = 0; $i < $count; $i++)
+					$retVal[$keys[$i]] = $content[$i];
+	        	return $retVal;
+	        }
+    	}
+    	foreach ($keys as $key)
+			$retVal[$key] = 0;
+    	return $retVal;
     }
 
     // =========================================================================
