@@ -186,6 +186,10 @@ class Transfer(object):
         # log
         self.log("transfer stopped.")
 
+        # states
+        self.state = Transfer.TF_STOPPED
+        self.state_azu = Transfer.AZ_STOPPED
+
         # return
         return retVal
 
@@ -218,8 +222,11 @@ class Transfer(object):
                     if len(commands) > 0:
                         for command in commands:
                             if len(command) > 0:
-                                # exec, early out when reading a quit-command
+                                # stop reading a quit-command
                                 if self.execCommand(download, command):
+                                    # stop it
+                                    self.stop(download)
+                                    # return
                                     return True
                     else:
                         self.log("No commands found.")
@@ -341,22 +348,37 @@ class Transfer(object):
     """ -------------------------------------------------------------------- """
     def statRunning(self, download):
 
-        # TODO
-        # self.state_azu == AZ_SEEDING
+        # die-when-done
+        if self.state_azu == Transfer.AZ_SEEDING and self.tf.die_when_done.lower() == 'true':
+            self.log("die-when-done set, setting shutdown-flag...")
+            self.stop(download)
+            return
 
         # set some values
         self.sf.running = Transfer.TF_RUNNING
         try:
-            # stats
             try:
+
+                # stats
                 stats = download.getStats()
+                if stats == None:
+                    return
+
+                # die-on-seed-limit
+                sk = float(self.tf.sharekill)
+                if sk > 0 and self.state_azu == Transfer.AZ_SEEDING:
+                    try:
+                        shareRatio = (float(stats.getShareRatio())) / 10
+                        if shareRatio >= sk:
+                            self.log("seed-limit %s reached (%s), setting shutdown-flag..." % (self.tf.sharekill, str(shareRatio)))
+                            self.stop(download)
+                            return
+                    except:
+                        printException()
+
                 # completed
                 try:
-
-                    # TODO
-
-                    pctf = float(stats.getCompleted())
-                    pctf /= 10
+                    pctf = (float(stats.getCompleted())) / 10
                     self.sf.percent_done = str(pctf)
                 except:
                     printException()
@@ -365,7 +387,6 @@ class Transfer(object):
                     self.sf.time_left = str(stats.getETA())
                 except:
                     self.sf.time_left = 'initializing...'
-                    #printException()
                 # down_speed
                 try:
                     self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)

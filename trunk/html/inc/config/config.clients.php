@@ -70,8 +70,8 @@ $cfg["supportMap"] = array(
 		'savepath'          => 1
 	),
 	'azureus' => array(
-		'max_upload_rate'   => 1,
-		'max_download_rate' => 1,
+		'max_upload_rate'   => 0,
+		'max_download_rate' => 0,
 		'max_uploads'       => 0,
 		'superseeder'       => 0,
 		'die_when_done'     => 1,

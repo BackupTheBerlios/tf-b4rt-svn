@@ -11,7 +11,7 @@
 					<table border="1" bordercolor="#94ABC0" cellpadding="2" cellspacing="0" bgcolor="#A2BED4" width="100%">
 						<tr>
 							<td colspan="2" align="center">
-								Transfer running. (pid: <tmpl_var name="pid">)
+								Transfer running.<tmpl_if name="pid" op=">" value="0"> (pid: <tmpl_var name="pid">)</tmpl_if>
 							</td>
 						</tr>
 					</table>

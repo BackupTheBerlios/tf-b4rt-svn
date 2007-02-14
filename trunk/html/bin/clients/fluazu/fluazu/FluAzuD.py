@@ -231,19 +231,14 @@ class FluAzuD(object):
             # update downloads
             self.updateDownloads()
 
-            # update and sync transfers
+            # update transfers
             for transfer in self.transfers:
                 if transfer.name in self.downloads:
                     # update
                     transfer.update(self.downloads[transfer.name])
-                else:
-                    # add
-                    self.addTransfer(transfer.name)
-                    # update downloads
-                    self.updateDownloads()
 
             # inner loop
-            for i in range(5):
+            for i in range(4):
 
                 # process daemon command stack
                 if self.processCommandStack():
@@ -255,8 +250,6 @@ class FluAzuD(object):
                 for transfer in self.transfers:
                     if transfer.isRunning():
                         if transfer.processCommandStack(self.downloads[transfer.name]):
-                            # stop it
-                            transfer.stop(self.downloads[transfer.name])
                             # update downloads
                             self.updateDownloads()
 
