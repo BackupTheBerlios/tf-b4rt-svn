@@ -30,6 +30,7 @@ from fluazu.Transfer import Transfer
 # dopal
 from dopal.main import make_connection
 from dopal.errors import LinkError
+import dopal.aztypes
 ################################################################################
 
 """ ------------------------------------------------------------------------ """
@@ -398,9 +399,20 @@ class FluAzuD(object):
     """ -------------------------------------------------------------------- """
     def addTransfer(self, tname):
         printMessage("adding new transfer %s ..." % tname)
-        # call azu-method
         try:
-            self.dm.addDownload(self.tf_pathTransfers + tname)
+            # transfer-object
+            transfer = Transfer(self.tf_pathTransfers, self.flu_pathTransfers, tname)
+
+            # torrent-object
+            torrent = self.interface.getTorrentManager().createFromBEncodedFile(transfer.fileTorrent)
+
+            # file-objects
+            fileSource = dopal.aztypes.wrap_file(transfer.fileTorrent)
+            fileTarget = dopal.aztypes.wrap_file(transfer.tf.savepath)
+
+            # add
+            self.dm.addDownload(torrent, fileSource, fileTarget)
+
             return True
         except:
             printMessage("exception when adding transfer:")

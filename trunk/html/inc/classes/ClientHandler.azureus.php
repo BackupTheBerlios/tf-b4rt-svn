@@ -94,9 +94,6 @@ class ClientHandlerAzureus extends ClientHandler
 			return false;
 		}
 
-		// set savepath
-		$this->savepath = $cfg['path'].$cfg["path_incoming"]."/";
-
         // build the command-string
         $content  = $cfg['user']."\n";
         $content .= $this->savepath."\n";
