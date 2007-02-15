@@ -323,6 +323,68 @@ function admin_controlFluAzu() {
 }
 
 /**
+ * updateAzureusSettings
+ */
+function admin_updateAzureusSettings() {
+	global $cfg;
+	// FluAzu
+	require_once("inc/classes/FluAzu.php");
+	$message = "";
+	// fluazu Running?
+	if (FluAzu::isRunning()) {
+		$status = FluAzu::getStatus();
+		$statusKeys = FluAzu::getStatusKeys();
+		// current settings
+		$settingsCurrent = array();
+		foreach ($statusKeys as $statusKey)
+			$settingsCurrent[$statusKey] = $status[$statusKey];
+		// new settings
+		$settingsNew = array();
+		foreach ($statusKeys as $statusKey) {
+			$settingsNew[$statusKey] = getRequestVar($statusKey);
+			if ($settingsNew[$statusKey] == "")
+				$settingsNew[$statusKey] = $settingsCurrent[$statusKey];
+		}
+		// customize settings
+		if ($cfg['transfer_customize_settings'] == 2)
+			$customize_settings = 1;
+		elseif ($cfg['transfer_customize_settings'] == 1 && $cfg['isAdmin'])
+			$customize_settings = 1;
+		else
+			$customize_settings = 0;
+		// get changes
+		$settingsChanged = array();
+		foreach ($statusKeys as $statusKey) {
+			if ($settingsNew[$statusKey] != $settingsCurrent[$statusKey]) {
+				if ($customize_settings == 1)
+					array_push($settingsChanged, $statusKey);
+			}
+		}
+		if (empty($settingsChanged)) { /* no changes */
+			$message = 'no changes.';
+		} else { /* something changed */
+			// set
+			foreach ($settingsChanged as $statusKey)
+				FluAzu::setAzu($statusKey, $settingsNew[$statusKey], false);
+			// send
+			FluAzu::sendCommands();
+			// give fluazu some time
+			sleep(2);
+			$message = 'Settings changed.';
+			// log
+			AuditAction($cfg["constants"]["admin"], " Updating azureus Settings");
+		}
+	} else {
+		$message = 'fluazu/azureus not running.';
+	}
+	if ($message != "")
+		@header("Location: admin.php?op=fluazuSettings&m=".urlencode($message));
+	else
+		@header("Location: admin.php?op=fluazuSettings");
+	exit();
+}
+
+/**
  * updateSearchSettings
  */
 function admin_updateSearchSettings() {

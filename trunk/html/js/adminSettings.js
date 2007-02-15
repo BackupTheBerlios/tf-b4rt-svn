@@ -174,12 +174,22 @@ function validateSettings(section) {
 			break;
 		case 'fluazu':
 			if (document.theForm.fluazu_host.value.length < 1) {
-				msg = msg + "* Azureus Host cannot be empty.\n";
+				msg = msg + "* Host cannot be empty.\n";
 				document.theForm.fluazu_host.focus();
 			}
 			if (isNumber(document.theForm.fluazu_port.value) == false) {
-				msg = msg + "* Azureus Port must be a valid number.\n";
+				msg = msg + "* Port must be a valid number.\n";
 				document.theForm.fluazu_port.focus();
+			}
+			break;
+		case 'azureus':
+			if (isNumber(document.azuForm.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC.value) == false) {
+				msg = msg + "* Max Download Speed KBs must be a valid number.\n";
+				document.azuForm.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC.focus();
+			}
+			if (isNumber(document.azuForm.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC.value) == false) {
+				msg = msg + "* Max Upload Speed KBs must be a valid number.\n";
+				document.azuForm.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC.focus();
 			}
 			break;
 		case 'webapp':

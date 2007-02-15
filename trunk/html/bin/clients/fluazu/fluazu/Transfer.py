@@ -258,7 +258,9 @@ class Transfer(object):
             # update meta-object
             self.tf.max_upload_rate = rateNew
             self.tf.write()
-            # TODO
+            # set rate
+            self.setRateU(download, rateNew)
+            # return
             return False
 
         # d
@@ -271,7 +273,9 @@ class Transfer(object):
             # update meta-object
             self.tf.max_download_rate = rateNew
             self.tf.write()
-            # TODO
+            # set rate
+            self.setRateD(download, rateNew)
+            # return
             return False
 
         # r
@@ -312,6 +316,30 @@ class Transfer(object):
             return False
 
         return False
+
+    """ -------------------------------------------------------------------- """
+    """ setRateU                                                             """
+    """ -------------------------------------------------------------------- """
+    def setRateU(self, download, rate):
+        try:
+            download.setUploadRateLimitBytesPerSecond((int(rate) << 10))
+            return True
+        except:
+            printMessage("Failed to set upload-rate.")
+            printException()
+            return False
+
+    """ -------------------------------------------------------------------- """
+    """ setRateD                                                             """
+    """ -------------------------------------------------------------------- """
+    def setRateD(self, download, rate):
+        try:
+            download.setMaximumDownloadKBPerSecond(int(rate))
+            return True
+        except:
+            printMessage("Failed to set download-rate.")
+            printException()
+            return False
 
     """ -------------------------------------------------------------------- """
     """ statStartup                                                          """

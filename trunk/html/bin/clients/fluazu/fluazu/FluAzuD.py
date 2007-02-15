@@ -511,7 +511,7 @@ class FluAzuD(object):
         # u
         elif opCode == 'u':
             if len(command) < 2:
-                self.log("invalid rate.")
+                printMessage("invalid rate.")
                 return False
             rateNew = command[1:]
             printMessage("command: setting upload-rate to %s ..." % rateNew)
@@ -521,16 +521,34 @@ class FluAzuD(object):
         # d
         elif opCode == 'd':
             if len(command) < 2:
-                self.log("invalid rate.")
+                printMessage("invalid rate.")
                 return False
             rateNew = command[1:]
             printMessage("command: setting download-rate to %s ..." % rateNew)
             self.setRateD(int(rateNew))
             return False
 
+        # s
+        elif opCode == 's':
+            try:
+                if len(command) < 3:
+                    raise
+                workLoad = command[1:]
+                sets = workLoad.split(":")
+                setKey = sets[0]
+                setVal = sets[1]
+                if len(setKey) < 1 or len(setVal) < 1:
+                    raise
+                printMessage("command: changing setting %s to %s ..." % (setKey, setVal))
+                if self.changeSetting(setKey, setVal):
+                    self.writeStatFile()
+                return False
+            except:
+                printMessage("invalid setting.")
+                return False
         # default
         else:
-            printError("op-code unknown: " + opCode)
+            printMessage("op-code unknown: %s" % opCode)
             return False
 
     """ -------------------------------------------------------------------- """
@@ -582,6 +600,42 @@ class FluAzuD(object):
 
         # return
         return True
+
+    """ -------------------------------------------------------------------- """
+    """ changeSetting                                                        """
+    """ -------------------------------------------------------------------- """
+    def changeSetting(self, key, val):
+        try:
+            # get plugin-config
+            config_object = self.interface.getPluginconfig()
+            # core-keys
+            coreKeys = { \
+                'CORE_PARAM_INT_MAX_ACTIVE': config_object.CORE_PARAM_INT_MAX_ACTIVE, \
+                'CORE_PARAM_INT_MAX_ACTIVE_SEEDING': config_object.CORE_PARAM_INT_MAX_ACTIVE_SEEDING, \
+                'CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL': config_object.CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL, \
+                'CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT': config_object.CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT, \
+                'CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC': config_object.CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC, \
+                'CORE_PARAM_INT_MAX_DOWNLOADS': config_object.CORE_PARAM_INT_MAX_DOWNLOADS, \
+                'CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC': config_object.CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC, \
+                'CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC': config_object.CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC, \
+                'CORE_PARAM_INT_MAX_UPLOADS': config_object.CORE_PARAM_INT_MAX_UPLOADS, \
+                'CORE_PARAM_INT_MAX_UPLOADS_SEEDING': config_object.CORE_PARAM_INT_MAX_UPLOADS_SEEDING \
+            }
+            if key not in coreKeys:
+                printMessage("settings-key unknown: %s" % key)
+                return False
+            # change setting
+            try:
+                config_object.setIntParameter(coreKeys[key], int(val))
+                return True
+            except:
+                printMessage("Failed to change setting %s to %s" % (key, val))
+                printException()
+                return False
+        except:
+            printMessage("Failed to get Plugin-Config.")
+            printException()
+        return False
 
     """ -------------------------------------------------------------------- """
     """ writeStatFile                                                        """

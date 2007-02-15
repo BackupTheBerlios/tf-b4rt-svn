@@ -85,6 +85,9 @@ switch ($op) {
 	case "updateFluAzuSettings":
 		admin_updateFluAzuSettings();
 
+	case "updateAzureusSettings":
+		admin_updateAzureusSettings();
+
 	case "updateSearchSettings":
 		admin_updateSearchSettings();
 

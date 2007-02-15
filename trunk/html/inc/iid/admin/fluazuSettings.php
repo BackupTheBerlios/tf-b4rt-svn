@@ -45,24 +45,14 @@ $message = getRequestVar('m');
 if ($message != "")
 	$tmpl->setvar('message', urldecode($message));
 
-// fluazu core
+// fluazu status
 if (FluAzu::isRunning()) {
 	$tmpl->setvar('fluazuRunning', 1);
 	$tmpl->setvar('fluazuPid', FluAzu::getPid());
 	$status = FluAzu::getStatus();
-	$tmpl->setvar('azu_host', $status['azu_host']);
-	$tmpl->setvar('azu_port', $status['azu_port']);
-	$tmpl->setvar('azu_version', $status['azu_version']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_ACTIVE', $status['CORE_PARAM_INT_MAX_ACTIVE']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_ACTIVE_SEEDING', $status['CORE_PARAM_INT_MAX_ACTIVE_SEEDING']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL', $status['CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT', $status['CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC', $status['CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_DOWNLOADS', $status['CORE_PARAM_INT_MAX_DOWNLOADS']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC', $status['CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC', $status['CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_UPLOADS', $status['CORE_PARAM_INT_MAX_UPLOADS']);
-	$tmpl->setvar('CORE_PARAM_INT_MAX_UPLOADS_SEEDING', $status['CORE_PARAM_INT_MAX_UPLOADS_SEEDING']);
+	$statusKeys = FluAzu::getStatusKeys();
+	foreach ($statusKeys as $statusKey)
+		$tmpl->setvar($statusKey, $status[$statusKey]);
 } else {
 	$tmpl->setvar('fluazuRunning', 0);
 }

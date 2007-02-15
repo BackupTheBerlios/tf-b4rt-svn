@@ -53,6 +53,9 @@ class FluAzu
     var $_pathTransfersRun = "";
     var $_pathTransfersDel = "";
 
+	// commands-array
+    var $_commands = array();
+
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -173,14 +176,28 @@ class FluAzu
      * send command
      *
      * @param $command
+     * @param $autosend
      * @return boolean
      */
-    function sendCommand($command) {
+    function addCommand($command, $autosend = false) {
     	global $instanceFluAzu;
 		// initialize if needed
 		if (!isset($instanceFluAzu))
 			FluAzu::initialize();
-		return $instanceFluAzu->instance_sendCommand($command);
+		return $instanceFluAzu->instance_addCommand($command, $autosend);
+    }
+
+    /**
+     * send commands
+     *
+     * @return boolean
+     */
+    function sendCommands() {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_sendCommands();
     }
 
     /**
@@ -208,6 +225,62 @@ class FluAzu
 		if (!isset($instanceFluAzu))
 			FluAzu::initialize();
 		return $instanceFluAzu->instance_getStatus();
+    }
+
+    /**
+     * get status-keys
+     *
+     * @return array
+     */
+    function getStatusKeys() {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_getStatusKeys();
+    }
+
+    /**
+     * set global upload rate
+     *
+     * @param $uprate
+     * @param $autosend
+     */
+    function setRateUpload($uprate, $autosend = false) {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_setRateUpload($uprate, $autosend);
+    }
+
+    /**
+     * set global download rate
+     *
+     * @param $downrate
+     * @param $autosend
+     */
+    function setRateDownload($downrate, $autosend = false) {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_setRateDownload($downrate, $autosend);
+    }
+
+    /**
+     * set a azu-setting
+     *
+     * @param $key
+     * @param $val
+     * @param $autosend
+     */
+    function setAzu($key, $val, $autosend = false) {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_setAzu($key, $val, $autosend);
     }
 
 	// =========================================================================
@@ -317,7 +390,7 @@ class FluAzu
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
         	AuditAction($cfg["constants"]["admin"], "Stopping fluazu");
-            $this->instance_sendCommand('q');
+            $this->instance_addCommand('q', true);
             // check if fluazu still running
             $maxLoops = 125;
             $loopCtr = 0;
@@ -384,11 +457,30 @@ class FluAzu
      * send command
      *
      * @param $command
+     * @param $autosend
      * @return boolean
      */
-    function instance_sendCommand($command) {
-    	return ($this->state == FLUAZU_STATE_RUNNING)
-    		? $this->_writeCommandFile($command."\n")
+    function instance_addCommand($command, $autosend = false) {
+    	if (!isset($this->_commands))
+    		$this->_commands = array();
+    	if ((!in_array($command, $this->_commands)) && (strlen($command) > 0)) {
+    		array_push($this->_commands, $command);
+    		return ($autosend)
+    			? $this->sendCommands()
+    			: true;
+    	} else {
+			return false;
+    	}
+    }
+
+    /**
+     * send commands
+     *
+     * @return boolean
+     */
+    function instance_sendCommands() {
+    	return (($this->state == FLUAZU_STATE_RUNNING) && (!empty($this->_commands)))
+    		? $this->_writeCommandFile(implode("\n", $this->_commands)."\n")
     		: false;
     }
 
@@ -420,7 +512,7 @@ class FluAzu
 				return false;
 			}
 			// send reload-command
-			return $this->instance_sendCommand('r');
+			return $this->instance_addCommand('r', true);
         } else {
         	$msg = "fluazu not running, cannot delete transfer ".$transfer;
         	AuditAction($cfg["constants"]["admin"], $msg);
@@ -437,21 +529,7 @@ class FluAzu
      * @return array
      */
     function instance_getStatus() {
-    	$keys = array(
-    		'azu_host',
-    		'azu_port',
-    		'azu_version',
-    		'CORE_PARAM_INT_MAX_ACTIVE',
-    		'CORE_PARAM_INT_MAX_ACTIVE_SEEDING',
-    		'CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL',
-    		'CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT',
-    		'CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC',
-    		'CORE_PARAM_INT_MAX_DOWNLOADS',
-    		'CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC',
-    		'CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC',
-    		'CORE_PARAM_INT_MAX_UPLOADS',
-    		'CORE_PARAM_INT_MAX_UPLOADS_SEEDING'
-    	);
+    	$keys = $this->instance_getStatusKeys();
     	$retVal = array();
     	if ($this->state == FLUAZU_STATE_RUNNING) {
     		$data = @file_get_contents($this->_pathStatFile);
@@ -467,6 +545,60 @@ class FluAzu
     	foreach ($keys as $key)
 			$retVal[$key] = 0;
     	return $retVal;
+    }
+
+    /**
+     * get status-keys
+     *
+     * @return array
+     */
+    function instance_getStatusKeys() {
+    	return array(
+    		'azu_host',
+    		'azu_port',
+    		'azu_version',
+    		'CORE_PARAM_INT_MAX_ACTIVE',
+    		'CORE_PARAM_INT_MAX_ACTIVE_SEEDING',
+    		'CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL',
+    		'CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT',
+    		'CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC',
+    		'CORE_PARAM_INT_MAX_DOWNLOADS',
+    		'CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC',
+    		'CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC',
+    		'CORE_PARAM_INT_MAX_UPLOADS',
+    		'CORE_PARAM_INT_MAX_UPLOADS_SEEDING'
+    	);
+    }
+
+    /**
+     * set global upload rate
+     *
+     * @param $uprate
+     * @param $autosend
+     */
+    function instance_setRateUpload($uprate, $autosend = false) {
+    	$this->instance_setAzu('CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC', $uprate, $autosend);
+    }
+
+    /**
+     * set global download rate
+     *
+     * @param $downrate
+     * @param $autosend
+     */
+    function instance_setRateDownload($downrate, $autosend = false) {
+    	$this->instance_setAzu('CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC', $downrate, $autosend);
+    }
+
+    /**
+     * set a azu-setting
+     *
+     * @param $key
+     * @param $val
+     * @param $autosend
+     */
+    function instance_setAzu($key, $val, $autosend = false) {
+    	$this->instance_addCommand('s'.$key.':'.$val, $autosend);
     }
 
     // =========================================================================
