@@ -155,6 +155,10 @@ class Transfer(object):
         # set state
         self.state = Transfer.STATE_MAP[download.getState()]
 
+        # set rates
+        self.setRateU(download, int(self.tf.max_upload_rate))
+        self.setRateD(download, int(self.tf.max_download_rate))
+
         # log
         self.log("transfer started.")
 
@@ -255,11 +259,11 @@ class Transfer(object):
                 return False
             rateNew = command[1:]
             self.log("command: setting upload-rate to %s ..." % rateNew)
-            # update meta-object
-            self.tf.max_upload_rate = rateNew
-            self.tf.write()
             # set rate
-            self.setRateU(download, rateNew)
+            if self.setRateU(download, rateNew):
+                # update meta-object
+                self.tf.max_upload_rate = rateNew
+                self.tf.write()
             # return
             return False
 
@@ -270,11 +274,11 @@ class Transfer(object):
                 return False
             rateNew = command[1:]
             self.log("command: setting download-rate to %s ..." % rateNew)
-            # update meta-object
-            self.tf.max_download_rate = rateNew
-            self.tf.write()
             # set rate
-            self.setRateD(download, rateNew)
+            if self.setRateD(download, rateNew):
+                # update meta-object
+                self.tf.max_download_rate = rateNew
+                self.tf.write()
             # return
             return False
 
