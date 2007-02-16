@@ -83,6 +83,7 @@ static int uploadLimit = 10;
 static int downloadLimit = -1;
 static char * torrentPath = NULL;
 static int natTraversal = 0;
+static sig_atomic_t gotsig = 0;
 static char * finishCall = NULL;
 static tr_torrent_t * tor;
 
@@ -107,6 +108,9 @@ static int parseCommandLine(int argc, char ** argv);
 static void sigHandler(int signal);
 
 // tf
+static void tf_showInfo(void);
+static void tf_showScrape(void);
+static void tf_torrentStop(tr_handle_t * h, tr_info_t * info);
 static int tf_initializeStatusFacility(void);
 static int tf_initializeCommandFacility(void);
 static int tf_processCommandStack(tr_handle_t *h);
@@ -115,4 +119,3 @@ static int tf_execCommand(tr_handle_t *h, char *s);
 static int tf_pidWrite(void);
 static int tf_pidDelete(void);
 static int tf_print(int len);
-

@@ -41,7 +41,6 @@ int main(int argc, char ** argv) {
 	int i, error;
 	tr_handle_t * h;
 	tr_stat_t * s;
-	tr_handle_status_t * hstat;
 	tr_info_t * info;
 	double tf_sharing = 0.0;
 	char tf_eta[80];
@@ -98,42 +97,13 @@ int main(int argc, char ** argv) {
 
 	/* show info */
 	if (showInfo) {
-		// info
-		info = tr_torrentInfo(tor);
-		// stat
-		s = tr_torrentStat(tor);
-		// Print torrent info (quite à la btshowmetainfo)
-		printf("hash:     ");
-		for (i = 0; i < SHA_DIGEST_LENGTH; i++)
-			printf("%02x", info->hash[i]);
-		printf("\n");
-		printf("tracker:  %s:%d\n",
-				s->trackerAddress, s->trackerPort );
-		printf("announce: %s\n", s->trackerAnnounce );
-		printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
-			info->totalSize, info->totalSize / info->pieceSize,
-			info->pieceSize, info->totalSize % info->pieceSize);
-		if (info->comment[0])
-			printf("comment:  %s\n", info->comment);
-		if (info->creator[0])
-			printf("creator:  %s\n", info->creator);
-		printf("file(s):\n");
-		for (i = 0; i < info->fileCount; i++)
-			printf(" %s (%"PRIu64")\n", info->files[i].name,
-				info->files[i].length);
-		// cleanup
+		tf_showInfo();
 		goto cleanup;
 	}
 
 	/* show scrape */
 	if (showScrape) {
-		int seeders, leechers, downloaded;
-		if (tr_torrentScrape(tor, &seeders, &leechers, &downloaded))
-			printf("Scrape failed.\n");
-		else
-			printf("%d seeder(s), %d leecher(s), %d download(s).\n",
-					seeders, leechers, downloaded);
-		// cleanup
+		tf_showScrape();
 		goto cleanup;
 	}
 
@@ -145,7 +115,6 @@ int main(int argc, char ** argv) {
 		tf_owner = malloc((4) * sizeof(char));
 		if (tf_owner == NULL) {
 			tf_print(sprintf(tf_message, "Error : not enough mem for malloc\n"));
-			// cleanup
 			goto cleanup;
 		}
 		strcpy(tf_owner, "n/a");
@@ -232,10 +201,28 @@ int main(int argc, char ** argv) {
 	/* main-loop */
 	while (tf_running) {
 
+		// check for signal
+        if (gotsig) {
+            gotsig = 0;
+			tf_torrentStop(h, info);
+			goto cleanup;
+        }
+
+		// internal loop
+		for (i = 0; i < tf_displayInterval; i++) {
+			// process command-stack
+			if (tf_processCommandStack(h)) {
+				tf_torrentStop(h, info);
+				goto cleanup;
+			}
+			// sleep
+			sleep(1);
+		}
+
 		// torrent-stat
 		s = tr_torrentStat(tor);
 
-		if(s->status & TR_STATUS_PAUSE) {                    /* --- PAUSE --- */
+		if (s->status & TR_STATUS_PAUSE) {                    /* --- PAUSE --- */
 
 			// break
 			break;
@@ -390,6 +377,8 @@ int main(int argc, char ** argv) {
 					tf_stat_file));
 			}
 
+		} else if (s->status & TR_STATUS_STOPPING) {      /* --- STOPPING --- */
+
 		} // end status-if
 
 		// errors
@@ -402,26 +391,91 @@ int main(int argc, char ** argv) {
 			// finishCall
 			if (finishCall != NULL)
 				system(finishCall);
-		} else {
-			// leave main-loop when shutdown-flag-set
-			if (tf_running == 0)
-				break;
-			// internal loop
-			for (i = 0; i < tf_displayInterval; i++) {
-				// process command-stack
-				if (tf_processCommandStack(h))
-					break;
-				// sleep
-				sleep(1);
-			}
 		}
 
 	} /* main-loop */
 
+	// shutdown
+	tf_torrentStop(h, info);
+
+/*
+ * cleanup
+ */
+cleanup:
+	tr_torrentClose(h, tor);
+	tr_close(h);
+	return EXIT_SUCCESS;
+
+/*
+ * failed
+ */
+failed:
+	tr_torrentClose(h, tor);
+	tr_close(h);
+	return EXIT_FAILURE;
+
+} // end main
+
+/*******************************************************************************
+ * tf_showInfo
+ ******************************************************************************/
+static void tf_showInfo(void) {
+	// vars
+	int i;
+	tr_info_t * info;
+	tr_stat_t * s;
+	// info
+	info = tr_torrentInfo(tor);
+	// stat
+	s = tr_torrentStat(tor);
+	// Print torrent info (quite à la btshowmetainfo)
+	printf("hash:     ");
+	for (i = 0; i < SHA_DIGEST_LENGTH; i++)
+		printf("%02x", info->hash[i]);
+	printf("\n");
+	printf("tracker:  %s:%d\n",
+			s->trackerAddress, s->trackerPort );
+	printf("announce: %s\n", s->trackerAnnounce );
+	printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
+		info->totalSize, info->totalSize / info->pieceSize,
+		info->pieceSize, info->totalSize % info->pieceSize);
+	if (info->comment[0])
+		printf("comment:  %s\n", info->comment);
+	if (info->creator[0])
+		printf("creator:  %s\n", info->creator);
+	printf("file(s):\n");
+	for (i = 0; i < info->fileCount; i++)
+		printf(" %s (%"PRIu64")\n", info->files[i].name,
+			info->files[i].length);
+}
+
+/*******************************************************************************
+ * tf_showScrape
+ ******************************************************************************/
+static void tf_showScrape(void) {
+	int seeders, leechers, downloaded;
+	if (tr_torrentScrape(tor, &seeders, &leechers, &downloaded))
+		printf("Scrape failed.\n");
+	else
+		printf("%d seeder(s), %d leecher(s), %d download(s).\n",
+				seeders, leechers, downloaded);
+}
+
+/*******************************************************************************
+ * tf_torrentStop
+ ******************************************************************************/
+static void tf_torrentStop(tr_handle_t * h, tr_info_t * info) {
+
+	// vars
+	int i;
+	tr_stat_t * s;
+	tr_handle_status_t * hstat;
+	double tf_sharing;
+	char tf_eta[80];
+	float progress;
+
 	// print that we are going down
 	tf_print(sprintf(tf_message, "transmission shutting down...\n"));
-
-	// mark torrent as stopped in tf-stat-file
 
 	// torrent-stat
 	s = tr_torrentStat(tor);
@@ -434,7 +488,6 @@ int main(int argc, char ** argv) {
 	// write stat-file
 	tf_stat_fp = fopen(tf_stat_file, "w+");
 	if (tf_stat_fp != NULL) {
-		float progress;
 		if (s->status & TR_STATUS_SEED) {
 			sprintf(tf_eta, "Download Succeeded!");
 			progress = 100;
@@ -481,24 +534,7 @@ int main(int argc, char ** argv) {
 
 	// print exit
 	tf_print(sprintf(tf_message, "transmission exit.\n"));
-
-/*
- * cleanup
- */
-cleanup:
-	tr_torrentClose(h, tor);
-	tr_close(h);
-	return EXIT_SUCCESS;
-
-/*
- * failed
- */
-failed:
-	tr_torrentClose(h, tor);
-	tr_close(h);
-	return EXIT_FAILURE;
-
-} // end main
+}
 
 /*******************************************************************************
  * tf_processCommandStack
