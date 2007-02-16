@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: clients.c 1449 2007-01-31 02:11:18Z livings124 $
+ * $Id: clients.c 1497 2007-02-16 02:56:19Z livings124 $
  *
  * Copyright (c) 2005 Transmission authors and contributors
  *
@@ -60,11 +60,6 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "\xc2\xb5Torrent %c.%d", id[3],
                       charToInt( id[4] ) * 10 + charToInt( id[5] ) );
         }
-        else if( !memcmp( &id[1], "TS", 2 ) )
-        {
-            asprintf( &ret, "TorrentStorm (%c%c%c%c)",
-                      id[3], id[4], id[5], id[6] );
-        }
         else if( !memcmp( &id[1], "BC", 2 ) )
         {
             asprintf( &ret, "BitComet %d.%c%c",
@@ -91,6 +86,11 @@ char * tr_clientForId( uint8_t * id )
             asprintf( &ret, "Xtorrent (%d)",
                       charToInt( id[3] ) * 1000 + charToInt( id[4] ) * 100
                       + charToInt( id[5] ) * 10 + charToInt( id[6] ) );
+        }
+        else if( !memcmp( &id[1], "TS", 2 ) )
+        {
+            asprintf( &ret, "TorrentStorm %c.%c.%c.%c",
+                      id[3], id[4], id[5], id[6] );
         }
         else if( !memcmp( &id[1], "KT", 2 ) )
         {
@@ -156,7 +156,7 @@ char * tr_clientForId( uint8_t * id )
     }
     
     /* Tornado-style */
-    if( !memcmp( &id[4], "-----", 5 ) || !memcmp( &id[4], "--0", 3 ) )
+    if( !memcmp( &id[4], "----", 4 ) || !memcmp( &id[4], "--0", 3 ) )
     {
         if( id[0] == 'T' )
         {
@@ -166,6 +166,15 @@ char * tr_clientForId( uint8_t * id )
         else if( id[0] == 'A' )
         {
             asprintf( &ret, "ABC %d.%d.%d", charToInt( id[1] ),
+                        charToInt( id[2] ), charToInt( id[3] ) );
+        }
+        else if( id[0] == 'R' )
+        {
+            asprintf( &ret, "Tribler %c.%c", id[1], id[2] );
+        }
+        else if( id[0] == 'S' )
+        {
+            asprintf( &ret, "Shad0w's Client %d.%d.%d", charToInt( id[1] ),
                         charToInt( id[2] ), charToInt( id[3] ) );
         }
         
