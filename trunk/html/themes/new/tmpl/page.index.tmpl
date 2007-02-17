@@ -140,7 +140,22 @@
 		<a class="mainMenu" href="javascript:slider('statsBandwidth')">Bandwidth</a>
 	</div>
 	<div id="statsBandwidth">
-	<!-- TODO -->
+		<div id="statsBandwidthBars">
+			<div id="statsBandwidthUpload">
+				<img src="themes/new/pics/bandwidthUp.jpg" style="position: absolute; clip: rect(20px 30px 100px 0px);">
+			</div>
+			<div id="statsBandwidthDownload">
+				<img src="themes/new/pics/bandwidthDown.jpg" style="position: absolute; clip: rect(70px 30px 100px 0px);">
+			</div>
+		</div>
+		<div id="bandwidth">
+			<span id="bandwidthUp">
+				<tmpl_var name="settingsHackStats11"> kB/s
+			</span>
+			<span id="bandwidthDown">
+				<tmpl_var name="settingsHackStats22"> kB/s
+			</span>
+		</div>
 	</div>
 </div>
 

@@ -93,4 +93,42 @@ div.uploadClass {
 	background-repeat: no-repeat;
 }
 #statsBandwidth {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
+#statsBandwidthBars {
+	margin-left: 10px;
+	padding-top: 5px;
+	height: 102px;
+	vertical-align: middle;
+}
+#statsBandwidthUpload {
+	margin-left: 20px;
+	width: 30px;
+	height: 100px;
+	float: left;
+	background-image: url("../pics/bandwidthUpBack.jpg");
+	background-repeat: no-repeat;
+}
+#statsBandwidthDownload {
+	margin-left: 20px;
+	width: 30px;
+	height: 100px;
+	float: left;
+	background-image: url("../pics/bandwidthDownBack.jpg");
+	background-repeat: no-repeat;
+}
+#bandwidth {
+	height: 19px;
+	background-image: url("../pics/menu_box_bottom.jpg");
+	background-repeat: no-repeat;
+}
+#bandwidthUp {
+	margin-left: 26px;
+	font-size: 9px;
+}
+#bandwidthDown {
+	margin-left: 4px;
+	font-size: 9px;
 }
