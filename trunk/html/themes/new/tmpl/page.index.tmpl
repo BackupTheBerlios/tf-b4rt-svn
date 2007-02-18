@@ -142,18 +142,18 @@
 	<div id="statsBandwidth">
 		<div id="statsBandwidthBars">
 			<div id="statsBandwidthUpload">
-				<img src="themes/new/pics/bandwidthUp.jpg" style="position: absolute; clip: rect(20px 30px 100px 0px);">
+				<img src="themes/new/pics/bandwidthUp.jpg" style="position: absolute; clip: rect(<tmpl_var name="bandwidthbars_upload_percent2">px 30px 100px 0px);">
 			</div>
 			<div id="statsBandwidthDownload">
-				<img src="themes/new/pics/bandwidthDown.jpg" style="position: absolute; clip: rect(70px 30px 100px 0px);">
+				<img src="themes/new/pics/bandwidthDown.jpg" style="position: absolute; clip: rect(<tmpl_var name="bandwidthbars_download_percent2">px 30px 100px 0px);">
 			</div>
 		</div>
 		<div id="bandwidth">
 			<span id="bandwidthUp">
-				<tmpl_var name="downloadspeed1"> kB/s
+				<tmpl_var name="uploadspeed1"> kB/s
 			</span>
 			<span id="bandwidthDown">
-				<tmpl_var name="uploadspeed1"> kB/s
+				<tmpl_var name="downloadspeed1"> kB/s
 			</span>
 		</div>
 	</div>
