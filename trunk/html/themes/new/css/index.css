@@ -126,10 +126,12 @@ div.uploadClass {
 #bandwidthUp {
 	margin-left: 26px;
 	font-size: 9px;
+	color: #585858;
 }
 #bandwidthDown {
 	margin-left: 4px;
 	font-size: 9px;
+	color: #585858;
 }
 #drivespaceTitle {
 	margin-top: 5px;
@@ -177,6 +179,11 @@ div.linksTitle {
 	background-image: url("../pics/menu_box.jpg");
 	background-repeat: repeat-y;
 }
+#statsDrivespace {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
 span.serverStats {
 	margin-left: 10px;
 	color: #585858;
@@ -185,8 +192,23 @@ span.serverStats2 {
 	color: #585858;
 	margin-left: 40px;
 }
-#serverStatsBottom {
+div.serverStatsBottom {
 	height: 19px;
 	background-image: url("../pics/menu_box_bottom.jpg");
 	background-repeat: no-repeat;
+}
+#statsDiskspaceBar {
+	padding-top: 5px;
+	margin-left: 20px;
+	margin-bottom: 2px;
+	width: 100px;
+	height: 30px;
+	background-image: url("../pics/diskspaceBackground.jpg");
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
+#diskspace {
+	font-size: 9px;
+	margin-left: 22px;
+	color: #585858;
 }

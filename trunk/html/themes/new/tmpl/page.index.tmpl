@@ -161,7 +161,12 @@
 		<a class="mainMenu" href="javascript:slider('statsDrivespace')">Drivespace</a>
 	</div>
 	<div id="statsDrivespace">
-	<!-- TODO -->
+		<div id="statsDiskspaceBar">
+			<img src="themes/new/pics/Diskspace.jpg" style="position: absolute; clip: rect(0px <tmpl_var name="drivespacebar_space">px 30px 0px);">
+		</div>
+		<div class="serverStatsBottom">
+			<span id="diskspace"><tmpl_var name="drivespacebar_space2">% (<tmpl_var name="drivespacebar_freeSpace">) Free</span>
+		</div>
 	</div>
 	<tmpl_if name="ui_displaylinks" value="1">
 		<div class="linksTitle">
@@ -215,7 +220,7 @@
 			<span class="serverStats">Total: <tmpl_var name="totalxfer1"></span><br>
 			<span class="serverStats">Month: <tmpl_var name="monthxfer1"></span><br>
 			<span class="serverStats">Week: <tmpl_var name="weekxfer1"></span><br>
-			<div id="serverStatsBottom">
+			<div class="serverStatsBottom">
 				<span class="serverStats">Today: <tmpl_var name="dayxfer1"></span>
 			</div>
 		</div>
@@ -226,7 +231,7 @@
 			<span class="serverStats">Total: <tmpl_var name="total2"></span><br>
 			<span class="serverStats">Month: <tmpl_var name="month2"></span><br>
 			<span class="serverStats">Week: <tmpl_var name="week2"></span><br>
-			<div id="serverStatsBottom">
+			<div class="serverStatsBottom">
 				<span class="serverStats">Today: <tmpl_var name="day2"></span>
 			</div>
 		</div>
@@ -237,7 +242,7 @@
 	<div id="serverStats" style="display: none; height: 0px;">
 		<span class="serverStats"><tmpl_var name="_ID_CONNECTIONS">: <tmpl_var name="id_connections1"></span><br>
 		<span class="serverStats"><tmpl_var name="_SERVERLOAD">:</span><br>
-		<div id="serverStatsBottom">
+		<div class="serverStatsBottom">
 			<span class="serverStats2"><tmpl_var name="serverload1"></span>
 		</div>
 	</div>
