@@ -150,10 +150,10 @@
 		</div>
 		<div id="bandwidth">
 			<span id="bandwidthUp">
-				<tmpl_var name="settingsHackStats11"> kB/s
+				<tmpl_var name="downloadspeed1"> kB/s
 			</span>
 			<span id="bandwidthDown">
-				<tmpl_var name="settingsHackStats22"> kB/s
+				<tmpl_var name="uploadspeed1"> kB/s
 			</span>
 		</div>
 	</div>
@@ -207,6 +207,40 @@
 			</tmpl_if>
 		</tmpl_if>
 	</tmpl_if>
+	<tmpl_if name="xfer_realtime">
+		<div class="linksTitle">
+			<a class="mainMenu" href="javascript:slider('statsGlobalXfer')"><tmpl_var name="_SERVERXFERSTATS"></a>
+		</div>
+		<div id="statsGlobalXfer" style="display: none; height: 0px;">
+			<span class="serverStats">Total: <tmpl_var name="totalxfer1"></span><br>
+			<span class="serverStats">Month: <tmpl_var name="monthxfer1"></span><br>
+			<span class="serverStats">Week: <tmpl_var name="weekxfer1"></span><br>
+			<div id="serverStatsBottom">
+				<span class="serverStats">Today: <tmpl_var name="dayxfer1"></span>
+			</div>
+		</div>
+		<div class="linksTitle">
+			<a class="mainMenu" href="javascript:slider('statsUserXfer')"><tmpl_var name="_YOURXFERSTATS"></a>
+		</div>
+		<div id="statsUserXfer" style="display: none; height: 0px;">
+			<span class="serverStats">Total: <tmpl_var name="total2"></span><br>
+			<span class="serverStats">Month: <tmpl_var name="month2"></span><br>
+			<span class="serverStats">Week: <tmpl_var name="week2"></span><br>
+			<div id="serverStatsBottom">
+				<span class="serverStats">Today: <tmpl_var name="day2"></span>
+			</div>
+		</div>
+	</tmpl_if>
+	<div class="linksTitle">
+		<a class="mainMenu" href="javascript:slider('serverStats')"><tmpl_var name="_OTHERSERVERSTATS"></a>
+	</div>
+	<div id="serverStats" style="display: none; height: 0px;">
+		<span class="serverStats"><tmpl_var name="_ID_CONNECTIONS">: <tmpl_var name="id_connections1"></span><br>
+		<span class="serverStats"><tmpl_var name="_SERVERLOAD">:</span><br>
+		<div id="serverStatsBottom">
+			<span class="serverStats2"><tmpl_var name="serverload1"></span>
+		</div>
+	</div>
 </div>
 
 
@@ -338,15 +372,10 @@ Turn ON AJAX-Update
 <div align="center">
 <table width="100%">
 <tr>
-<tmpl_if name="xfer_realtime">
-<td class="tiny" align="left" valign="bottom">
-<b><tmpl_var name="_SERVERXFERSTATS"></b><br>
-<tmpl_var name="_TOTALXFER">: <strong><label id="xferGlobalTotal"><tmpl_var name="totalxfer1"></label></strong><br>
-<tmpl_var name="_MONTHXFER">: <strong><label id="xferGlobalMonth"><tmpl_var name="monthxfer1"></label></strong><br>
-<tmpl_var name="_WEEKXFER">: <strong><label id="xferGlobalWeek"><tmpl_var name="weekxfer1"></label></strong><br>
-<tmpl_var name="_DAYXFER">: <strong><label id="xferGlobalDay"><tmpl_var name="dayxfer1"></label></strong><br>
-</td>
-</tmpl_if>
+
+
+
+
 <tmpl_if name="queueActive" value="1">
 <td align="center" valign="bottom">
 <div class="tiny">
@@ -357,24 +386,9 @@ Total transfers a user may run: <strong><tmpl_var name="limitUser"></strong><br>
 </div>
 </td>
 </tmpl_if>
-<td class="tiny" align="center" valign="bottom">
-<b><tmpl_var name="_OTHERSERVERSTATS"></b><br>
-<tmpl_var name="_DOWNLOADSPEED">: <strong><label id="b_speedDown"><tmpl_var name="downloadspeed1"></label> (<tmpl_var name="downloadspeed11">)</strong> kB/s<br>
-<tmpl_var name="_UPLOADSPEED">: <strong><label id="b_speedUp"><tmpl_var name="uploadspeed1"></label> (<tmpl_var name="uploadspeed11">)</strong> kB/s<br>
-<tmpl_var name="_TOTALSPEED">: <strong><label id="b_speedTotal"><tmpl_var name="totalspeed1"></label> (<tmpl_var name="totalspeed11">)</strong> kB/s<br>
-<tmpl_var name="_ID_CONNECTIONS">: <strong><label id="b_cons"><tmpl_var name="id_connections1"></label> <tmpl_var name="id_connections11"></strong><br>
-<tmpl_var name="_DRIVESPACE">: <strong><label id="b_freeSpace"><tmpl_var name="drivespace1"></label></strong><br>
-<tmpl_var name="_SERVERLOAD">: <strong><label id="b_loadavg"><tmpl_var name="serverload1"></label></strong>
-</td>
-<tmpl_if name="xfer_realtime">
-<td class="tiny" align="right" valign="bottom">
-<b><tmpl_var name="_YOURXFERSTATS"></b><br>
-<tmpl_var name="_TOTALXFER">: <strong><label id="xferUserTotal"><tmpl_var name="total2"></label></strong><br>
-<tmpl_var name="_MONTHXFER">: <strong><label id="xferUserMonth"><tmpl_var name="month2"></label></strong><br>
-<tmpl_var name="_WEEKXFER">: <strong><label id="xferUserWeek"><tmpl_var name="week2"></label></strong><br>
-<tmpl_var name="_DAYXFER">: <strong><label id="xferUserDay"><tmpl_var name="day2"></label></strong><br>
-</td>
-</tmpl_if>
+
+
+
 </tr>
 </table>
 </div>
@@ -494,25 +508,8 @@ document.location = "index.php?iid=readmsg";
 </div>
 </td>
 </tr>
-<tr>
-<td bgcolor="#A2BED4" colspan="2">
-<tmpl_if name="drivespacebar_type" value="xfer">
-<tmpl_include name="inc.driveSpaceBar_xfer.tmpl">
-<tmpl_else>
-<tmpl_include name="inc.driveSpaceBar_tf.tmpl">
-</tmpl_if>
-<tmpl_if name="xfer_realtime">
-<table width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr>
-<tmpl_var name="xfer_day">
-<tmpl_var name="xfer_week">
-<tmpl_var name="xfer_month">
-<tmpl_var name="xfer_total">
-</tr>
-</table>
-</tmpl_if>
-</td>
-</tr>
+
+
 <tmpl_if name="enable_bigboldwarning" value="1">
 <tr>
 <td bgcolor="#A2BED4" colspan="2" nowrap>
