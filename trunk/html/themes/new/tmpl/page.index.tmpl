@@ -157,6 +157,28 @@
 			</span>
 		</div>
 	</div>
+	<div id="drivespaceTitle">
+		<a class="mainMenu" href="javascript:slider('statsDrivespace')">Drivespace</a>
+	</div>
+	<div id="statsDrivespace">
+	<!-- TODO -->
+	</div>
+	<tmpl_if name="ui_displaylinks" value="1">
+		<div id="linksTitle">
+			<a class="mainMenu" href="javascript:slider('statsLinks')"><tmpl_var name="_LINKS"></a>
+		</div>
+		<div id="statsLinks" style="display: none; height: 0px;">
+			<ul>
+				<tmpl_loop name="linklist">
+					<tmpl_if name="enable_dereferrer">
+						<li class="menu <tmpl_if name='__LAST__'>menu_last</tmpl_if>"><a class="menu" href="index.php?iid=dereferrer&u=<tmpl_var name="link_url">"><tmpl_var name="link_sitename"></a></li>
+					<tmpl_else>
+						<li class="menu <tmpl_if name='__LAST__'>menu_last</tmpl_if>"><a class="menu" href="<tmpl_var name="link_url">"><tmpl_var name="link_sitename"></a></li>
+					</tmpl_if>
+				</tmpl_loop>
+			</ul>
+		</div>
+	</tmpl_if>
 </div>
 
 
@@ -373,18 +395,6 @@ document.location = "index.php?iid=readmsg";
 <td bgcolor="#A2BED4" width="330" valign="top">
 <table width="100%" cellpadding="6" border="0">
 <tr>
-<tmpl_if name="ui_displaylinks" value="1">
-<td valign="top" nowrap>
-<b><tmpl_var name="_LINKS">:</b><br>
-<tmpl_loop name="linklist">
-<tmpl_if name="enable_dereferrer">
-<a href="index.php?iid=dereferrer&u=<tmpl_var name="link_url">" target="_blank"><img src="themes/new/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
-<tmpl_else>
-<a href="<tmpl_var name="link_url">" target="_blank"><img src="themes/new/images/arrow.gif" width=9 height=9 title="<tmpl_var name="link_url">" border=0 align="baseline"><tmpl_var name="link_sitename"></a><br>
-</tmpl_if>
-</tmpl_loop>
-</td>
-</tmpl_if>
 <tmpl_if name="ui_displayusers">
 <td bgcolor="#A2BED4" valign="top">
 <table width="100%" cellpadding="0" border="0">
