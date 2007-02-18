@@ -164,7 +164,7 @@
 	<!-- TODO -->
 	</div>
 	<tmpl_if name="ui_displaylinks" value="1">
-		<div id="linksTitle">
+		<div class="linksTitle">
 			<a class="mainMenu" href="javascript:slider('statsLinks')"><tmpl_var name="_LINKS"></a>
 		</div>
 		<div id="statsLinks" style="display: none; height: 0px;">
@@ -178,6 +178,34 @@
 				</tmpl_loop>
 			</ul>
 		</div>
+	</tmpl_if>
+	<tmpl_if name="ui_displayusers">
+		<tmpl_if name="arOnlineUsers">
+			<div class="linksTitle">
+				<a class="mainMenu" href="javascript:slider('statsUsersOnline')">Users - <tmpl_var name="_ONLINE"></a>
+			</div>
+			<div id="statsUsersOnline" style="display: none; height: 0px;">
+				<ul>
+					<tmpl_loop name="arOnlineUsers">
+						<li class="menu <tmpl_if name='__LAST__'>menu_last</tmpl_if>"><a class="menu" href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a></li>
+					</tmpl_loop>
+				</ul>
+			</div>
+		</tmpl_if>
+		<tmpl_if name="hide_offline" value="0">
+			<tmpl_if name="arOfflineUsers">
+				<div class="linksTitle">
+					<a class="mainMenu" href="javascript:slider('statsUsersOffline')">Users - <tmpl_var name="_OFFLINE"></a>
+				</div>
+				<div id="statsUsersOffline" style="display: none; height: 0px;">
+					<ul>
+						<tmpl_loop name="arOfflineUsers">
+							<li class="menu <tmpl_if name='__LAST__'>menu_last</tmpl_if>"><a class="menu" href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a></li>
+						</tmpl_loop>
+					</ul>
+				</div>
+			</tmpl_if>
+		</tmpl_if>
 	</tmpl_if>
 </div>
 
@@ -392,45 +420,7 @@ document.location = "index.php?iid=readmsg";
 
 
 
-<td bgcolor="#A2BED4" width="330" valign="top">
-<table width="100%" cellpadding="6" border="0">
-<tr>
-<tmpl_if name="ui_displayusers">
-<td bgcolor="#A2BED4" valign="top">
-<table width="100%" cellpadding="0" border="0">
-<tr>
-<td><img src="themes/new/images/user.gif" width=17 height=14 title="" border=0 align="bottom"></td>
-<td><b><tmpl_var name="_ONLINE">:</b></td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-<td id="usersOnline">
-<tmpl_if name="arOnlineUsers">
-<tmpl_loop name="arOnlineUsers">
-<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
-</tmpl_loop>
-</tmpl_if>
-</td>
-</tr>
-<tmpl_if name="hide_offline" value="0">
-<tr>
-<td><img src="themes/new/images/user_offline.gif" width=17 height=14 title="" border=0 align="bottom"></td>
-<td><b><tmpl_var name="_OFFLINE">:</b></td>
-</tr>
-<tr>
-<td>&nbsp;</td>
-<td id="usersOffline">
-<tmpl_if name="arOfflineUsers">
-<tmpl_loop name="arOfflineUsers">
-<a href="index.php?iid=message&to_user=<tmpl_var name="user">"><tmpl_var name="user"></a><br>
-</tmpl_loop>
-</tmpl_if>
-</td>
-</tr>
-</tmpl_if>
-</table>
-</td>
-</tmpl_if>
+
 <tmpl_if name="enable_goodlookstats">
 <td bgcolor="#A2BED4" valign="top">
 <tmpl_if name="settingsHackStats1">
@@ -523,15 +513,6 @@ document.location = "index.php?iid=readmsg";
 </tmpl_if>
 </td>
 </tr>
-<tmpl_if name="ui_displaybandwidthbars">
-<tr><td bgcolor="#A2BED4" colspan="2">
-<tmpl_if name="bandwidthbars_type" value="xfer">
-<tmpl_include name="inc.bandwidthBars_xfer.tmpl">
-<tmpl_else>
-<tmpl_include name="inc.bandwidthBars_tf.tmpl">
-</tmpl_if>
-</td></tr>
-</tmpl_if>
 <tmpl_if name="enable_bigboldwarning" value="1">
 <tr>
 <td bgcolor="#A2BED4" colspan="2" nowrap>

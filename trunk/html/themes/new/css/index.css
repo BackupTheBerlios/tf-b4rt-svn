@@ -139,7 +139,7 @@ div.uploadClass {
 	background-image: url("../pics/menu.jpg");
 	background-repeat: no-repeat;
 }
-#linksTitle {
+div.linksTitle {
 	margin-top: 5px;
 	margin-left: 20px;
 	width: 160px;
@@ -148,6 +148,16 @@ div.uploadClass {
 	background-repeat: no-repeat;
 }
 #statsLinks {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
+#statsUsersOnline {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
+#statsUsersOffline {
 	margin-left: 30px;
 	background-image: url("../pics/menu_box.jpg");
 	background-repeat: repeat-y;
