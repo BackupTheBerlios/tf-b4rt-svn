@@ -2,6 +2,16 @@
 <body>
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
+	<tmpl_if name="enable_bigboldwarning" value="1">
+		<div id="warning">
+			<div id="warningLast"></div>
+			<div id="warningFirst">
+				<span id="warningText">
+					Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var name="freeSpaceFormatted"> left!
+				</span>
+			</div>
+		</div>
+	</tmpl_if>
 	<div id="upload">
 		<div id="uploadLast"></div>
 		<div id="uploadFirst">

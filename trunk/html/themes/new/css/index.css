@@ -190,7 +190,7 @@ span.serverStats {
 }
 span.serverStats2 {
 	color: #585858;
-	margin-left: 40px;
+	margin-left: 35px;
 }
 div.serverStatsBottom {
 	height: 19px;
@@ -211,4 +211,31 @@ div.serverStatsBottom {
 	font-size: 9px;
 	margin-left: 22px;
 	color: #585858;
+}
+#warning {
+	height: 26px;
+	margin-bottom: 5px;
+	text-align: center;
+	background-image: url("../pics/warning.jpg");
+	background-repeat: repeat-x;
+}
+#warningFirst {
+	position: relative;
+		top: -26px;
+	height: 26px;
+	background-image: url("../pics/warning_left.jpg");
+	background-repeat: no-repeat;
+}
+#warningLast {
+	height: 26px;
+	background-image: url("../pics/warning_right.jpg");
+	background-repeat: no-repeat;
+	background-position: right;
+}
+#warningText {
+	position: relative;
+		top: 3px;
+	color: #585858;
+	font-size: 12pt;
+	font-weight: 700;
 }
