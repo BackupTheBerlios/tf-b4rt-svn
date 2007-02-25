@@ -97,18 +97,18 @@ class Transfer(object):
     def initialize(self):
 
         # out
-        self.log("initializing transfer %s ..." % self.name)
+        printMessage("initializing transfer %s ..." % self.name)
 
         # meta-file
-        self.log("loading transfer-file %s ..." % self.fileMeta)
+        printMessage("loading transfer-file %s ..." % self.fileMeta)
         self.tf = TransferFile(self.fileMeta)
 
         # stat-file
-        self.log("loading statfile %s ..." % self.fileStat)
+        printMessage("loading statfile %s ..." % self.fileStat)
         self.sf = StatFile(self.fileStat)
 
         # verbose
-        self.log("transfer loaded.")
+        printMessage("transfer loaded.")
 
         # return
         return True
@@ -392,6 +392,8 @@ class Transfer(object):
             try:
 
                 # stats
+                if download == None:
+                    return
                 stats = download.getStats()
                 if stats == None:
                     return
@@ -418,7 +420,7 @@ class Transfer(object):
                 try:
                     self.sf.time_left = str(stats.getETA())
                 except:
-                    self.sf.time_left = 'initializing...'
+                    self.sf.time_left = '-'
                 # down_speed
                 try:
                     self.sf.down_speed = "%.1f kB/s" % ((float(stats.getDownloadAverage())) / 1024)
@@ -450,7 +452,10 @@ class Transfer(object):
                     countS = int(scrape.getSeedCount())
                     if (countS < 0):
                         countS = 0
-                    self.sf.seeds = "%d (%d)" % (ps.getConnectedSeeds(), countS)
+                    countSC = int(ps.getConnectedSeeds())
+                    if (countSC < 0):
+                        countSC = 0
+                    self.sf.seeds = "%d (%d)" % (countSC, countS)
                 except:
                     printException()
                 # peers
@@ -458,7 +463,10 @@ class Transfer(object):
                     countP = int(scrape.getNonSeedCount())
                     if (countP < 0):
                         countP = 0
-                    self.sf.peers = "%d (%d)" % (ps.getConnectedLeechers(), countP)
+                    countPC = int(ps.getConnectedLeechers())
+                    if (countPC < 0):
+                        countPC = 0
+                    self.sf.peers = "%d (%d)" % (countPC, countP)
                 except:
                     printException()
             except:
