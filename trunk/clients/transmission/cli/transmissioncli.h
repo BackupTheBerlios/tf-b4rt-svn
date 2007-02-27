@@ -110,7 +110,7 @@ static void sigHandler(int signal);
 // tf
 static void tf_showInfo(void);
 static void tf_showScrape(void);
-static void tf_torrentStop(tr_handle_t * h, tr_info_t * info);
+static void tf_torrentStop(tr_handle_t *h, tr_info_t *info);
 static int tf_initializeStatusFacility(void);
 static int tf_initializeCommandFacility(void);
 static int tf_processCommandStack(tr_handle_t *h);

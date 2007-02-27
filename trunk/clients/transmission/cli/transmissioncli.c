@@ -434,8 +434,8 @@ static void tf_showInfo(void) {
 		printf("%02x", info->hash[i]);
 	printf("\n");
 	printf("tracker:  %s:%d\n",
-			s->trackerAddress, s->trackerPort );
-	printf("announce: %s\n", s->trackerAnnounce );
+			s->tracker->address, s->tracker->port);
+	printf("announce: %s\n", s->tracker->announce);
 	printf("size:     %"PRIu64" (%"PRIu64" * %d + %"PRIu64")\n",
 		info->totalSize, info->totalSize / info->pieceSize,
 		info->pieceSize, info->totalSize % info->pieceSize);
