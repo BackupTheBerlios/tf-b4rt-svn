@@ -124,7 +124,7 @@ function transferListXferUpdate2() {
 	// DB for today to indicate accounting has been done for the new day
 	if ($cfg['xfer_newday'] == 1)
 		$db->Execute("INSERT INTO tf_xfer (user_id,date) values ('',".$db->DBDate(time()).")");
-	getUsage('0000-00-00', 'total');
+	getUsage('0001-01-01', 'total');
 	$month_start = (date('j')>=$cfg['month_start']) ? date('Y-m-').$cfg['month_start'] : date('Y-m-',strtotime('-1 Month')).$cfg['month_start'];
 	getUsage($month_start, 'month');
 	$week_start = date('Y-m-d', strtotime('last '.$cfg['week_start']));
