@@ -1,10 +1,11 @@
-# $Id: gtk.mk 1475 2007-02-07 07:35:33Z joshe $
+# $Id: gtk.mk 1504 2007-02-19 22:09:05Z joshe $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
-SRCS = conf.c dialogs.c io.c ipc.c main.c msgwin.c tr_backend.c tr_torrent.c \
-	tr_cell_renderer_progress.c tr_window.c util.c
+SRCS = conf.c dialogs.c io.c ipc.c main.c msgwin.c tr_backend.c \
+	tr_cell_renderer_progress.c tr_icon.c tr_prefs.c tr_torrent.c \
+	tr_window.c util.c
 OBJS = $(SRCS:%.c=%.o)
 
 CFLAGS  += $(CFLAGS_GTK) -I../libtransmission

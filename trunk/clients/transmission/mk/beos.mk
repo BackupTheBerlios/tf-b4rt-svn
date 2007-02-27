@@ -1,21 +1,21 @@
-# $Id: beos.mk 947 2006-09-28 16:04:06Z titer $
+# $Id: beos.mk 1505 2007-02-22 12:49:34Z bvarner $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
-SRCS = TRApplication.cpp TRWindow.cpp TRTransfer.cpp \
-       TRPrefsWindow.cpp TRInfoWindow.cpp
+SRCS = ../beos/TRApplication.cpp ../beos/TRWindow.cpp ../beos/TRTransfer.cpp \
+       ../beos/TRPrefsWindow.cpp ../beos/TRInfoWindow.cpp
 OBJS = $(SRCS:%.cpp=%.o)
 
-CXXFLAGS += -I../libtransmission
+CXXFLAGS += -I../libtransmission -I../beos/libPrefs
 LDLIBS   += ../libtransmission/libtransmission.a
 CXXFLAGS += -IlibPrefs
 LDFLAGS  += -lbe -ltracker
-LDLIBS   += libPrefs/libPrefs.a
+LDLIBS   += ../beos/libPrefs/libPrefs.a
 
-Transmission: $(OBJS) Transmission.rsrc
+Transmission: $(OBJS) ../beos/Transmission.rsrc
 	$(CXX) -o $@ $(OBJS) $(LDLIBS) $(LDFLAGS)
-	xres -o Transmission Transmission.rsrc
+	xres -o Transmission ../beos/Transmission.rsrc
 	mimeset -f Transmission
 
 %.o: %.cpp ../mk/config.mk ../mk/common.mk ../mk/beos.mk

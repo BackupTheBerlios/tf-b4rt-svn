@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.h 1439 2007-01-27 21:17:10Z joshe $
+ * $Id: tracker.h 1517 2007-02-27 04:00:38Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -59,9 +59,12 @@ int tr_trackerLeechers ( tr_tracker_t * );
  **********************************************************************/
 int tr_trackerDownloaded( tr_tracker_t * tc );
 
-const char * tr_trackerAddress ( tr_tracker_t * tc );
-int          tr_trackerPort    ( tr_tracker_t * tc );
-const char * tr_trackerAnnounce( tr_tracker_t * tc );
+/***********************************************************************
+ * tr_trackerGet
+ ***********************************************************************
+ * Return the tracker currently in use.
+ **********************************************************************/
+tr_tracker_info_t * tr_trackerGet( tr_tracker_t * tc );
 
 int tr_trackerCannotConnect( tr_tracker_t * tc );
 

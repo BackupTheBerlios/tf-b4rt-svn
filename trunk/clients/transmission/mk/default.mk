@@ -1,4 +1,4 @@
-# $Id: default.mk 1202 2006-12-14 03:17:23Z titer $
+# $Id: default.mk 1505 2007-02-22 12:49:34Z bvarner $
 
 include mk/config.mk
 include mk/common.mk
@@ -8,7 +8,7 @@ ifeq ($(GTK),yes)
 TARGETS += .gtk
 endif
 ifeq ($(SYSTEM),BeOS)
-#TARGETS += .beos
+TARGETS += .beos
 endif
 
 all: $(TARGETS)

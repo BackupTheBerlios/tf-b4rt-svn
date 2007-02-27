@@ -1,7 +1,7 @@
 /******************************************************************************
- * $Id: transmission.h 1462 2007-02-06 04:26:40Z joshe $
+ * $Id: transmission.h 1517 2007-02-27 04:00:38Z joshe $
  *
- * Copyright (c) 2005-2006 Transmission authors and contributors
+ * Copyright (c) 2005-2007 Transmission authors and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -297,6 +297,15 @@ void tr_torrentAvailability( tr_torrent_t *, int8_t * tab, int size );
 void tr_torrentAmountFinished( tr_torrent_t * tor, float * tab, int size );
 
 /***********************************************************************
+ * tr_torrentCompletion
+ ***********************************************************************
+ * Returns the completion progress for each file in the torrent as an
+ * array of floats the same size and order as in tr_info_t. Free the
+ * array when done.
+ **********************************************************************/
+float * tr_torrentCompletion( tr_torrent_t * tor );
+
+/***********************************************************************
  * tr_torrentRemoveSaved
  ***********************************************************************
  * Removes the saved copy of a torrent file for torrents which the
@@ -381,10 +390,8 @@ struct tr_stat_s
     int                 error;
     char                errorString[128];
     int                 cannotConnect;
-    
-    const char        * trackerAddress;
-    int                 trackerPort;
-    const char        * trackerAnnounce;
+
+    tr_tracker_info_t * tracker;
 
     float               progress;
     float               rateDownload;
@@ -436,6 +443,7 @@ struct tr_tracker_info_s
     char * address;
     int    port;
     char * announce;
+    char * scrape;
 };
 
 struct tr_handle_status_s

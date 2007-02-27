@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 1452 2007-02-02 17:33:32Z livings124 $
+ * $Id: torrent.c 1517 2007-02-27 04:00:38Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -319,19 +319,7 @@ tr_stat_t * tr_torrentStat( tr_torrent_t * tor )
 
     tc = tor->tracker;
     s->cannotConnect = tr_trackerCannotConnect( tc );
-    
-    if( tc )
-    {
-        s->trackerAddress  = tr_trackerAddress(  tc );
-        s->trackerPort     = tr_trackerPort(     tc );
-        s->trackerAnnounce = tr_trackerAnnounce( tc );
-    }
-    else
-    {
-        s->trackerAddress  = inf->trackerList[0].list[0].address;
-        s->trackerPort     = inf->trackerList[0].list[0].port;
-        s->trackerAnnounce = inf->trackerList[0].list[0].announce;
-    }
+    s->tracker = ( tc ? tr_trackerGet( tc ) : &inf->trackerList[0].list[0] );
 
     s->peersTotal       = 0;
     s->peersIncoming    = 0;
@@ -499,6 +487,55 @@ void tr_torrentAvailability( tr_torrent_t * tor, int8_t * tab, int size )
         }
     }
     tr_lockUnlock( &tor->lock );
+}
+
+float * tr_torrentCompletion( tr_torrent_t * tor )
+{
+    tr_info_t * inf = &tor->info;
+    int         piece, file;
+    float     * ret, prog, weight;
+    uint64_t    piecemax, piecesize;
+    uint64_t    filestart, fileoff, filelen, blockend, blockused;
+
+    tr_lockLock( &tor->lock );
+
+    ret       = calloc( inf->fileCount, sizeof( float ) );
+    file      = 0;
+    piecemax  = inf->pieceSize;
+    filestart = 0;
+    fileoff   = 0;
+    piece     = 0;
+    while( inf->pieceCount > piece )
+    {
+        assert( file < inf->fileCount );
+        assert( filestart + fileoff < inf->totalSize );
+        filelen    = inf->files[file].length;
+        piecesize  = tr_pieceSize( piece );
+        blockend   = MIN( filestart + filelen, piecemax * piece + piecesize );
+        blockused  = blockend - ( filestart + fileoff );
+        weight     = ( filelen ? ( float )blockused / ( float )filelen : 1.0 );
+        prog       = tr_cpPercentBlocksInPiece( tor->completion, piece );
+        ret[file] += prog * weight;
+        fileoff   += blockused;
+        assert( -0.1 < prog   && 1.1 > prog );
+        assert( -0.1 < weight && 1.1 > weight );
+        if( fileoff == filelen )
+        {
+            ret[file] = MIN( 1.0, ret[file] );
+            ret[file] = MAX( 0.0, ret[file] );
+            filestart += fileoff;
+            fileoff    = 0;
+            file++;
+        }
+        if( filestart + fileoff >= piecemax * piece + piecesize )
+        {
+            piece++;
+        }
+    }
+
+    tr_lockUnlock( &tor->lock );
+
+    return ret;
 }
 
 void tr_torrentAmountFinished( tr_torrent_t * tor, float * tab, int size )
