@@ -52,7 +52,9 @@ $tmpl->setvar('file_types_label', $cfg['file_types_label']);
 $tmpl->setvar('_UPLOAD', $cfg['_UPLOAD']);
 $tmpl->setvar('_SELECTFILE', $cfg['_SELECTFILE']);
 $tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
+$tmpl->setvar('_MULTIPLE_UPLOAD', $cfg['_MULTIPLE_UPLOAD']);
 //
+$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_MULTIPLE_UPLOAD']);
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);

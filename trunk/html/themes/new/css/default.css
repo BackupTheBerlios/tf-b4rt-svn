@@ -90,3 +90,14 @@ a.menu {
 a.menu:hover {
 	color: #c1b18d;
 }
+#content {
+	margin: 15px 180px 0px 180px;
+	float: left;
+}
+#stats {
+	position: absolute;
+		right: 0px;
+	width: 180px;
+	margin-top: 15px;
+	float: left;
+}

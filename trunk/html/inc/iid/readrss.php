@@ -123,9 +123,11 @@ $tmpl->setloop('rss_list', $rss_list);
 $tmpl->setvar('_TRANSFERFILE',$cfg['_TRANSFERFILE']);
 $tmpl->setvar('_TIMESTAMP', $cfg['_TIMESTAMP']);
 $tmpl->setvar('_ID_IMAGES', $cfg['_ID_IMAGES']);
+$tmpl->setvar('_MULTIPLE_UPLOAD', $cfg['_MULTIPLE_UPLOAD']);
 //
 $tmpl->setvar('table_admin_border', $cfg["table_admin_border"]);
 //
+$tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 tmplSetTitleBar($cfg["pagetitle"].' - RSS Torrents');
 tmplSetFoot();
 $tmpl->setvar('iid', $_REQUEST["iid"]);
