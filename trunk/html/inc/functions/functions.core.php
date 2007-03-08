@@ -473,7 +473,6 @@ function netstatConnectionsByPid($transferPid) {
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
 			$netcon = intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE ".$webserverUser.".+".$transferPid.".+tcp.+[[:digit:]]:[[:digit:]]")));
-			$netcon--;
 			return $netcon;
 	}
 }
@@ -531,7 +530,7 @@ function netstatPortByPid($transferPid) {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$transferPid.".*tcp.*[[:digit:]]:[[:digit:]]/ {split(\$6, a, \":\");print a[2];nextfile}'");
+			return shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/".$webserverUser.".*".$transferPid.".*tcp4 .*\*:[0-9]/ {split(\$6, a, \":\");print a[2];nextfile}'");
 	}
 }
 
