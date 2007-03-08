@@ -128,6 +128,11 @@ foreach ($arList as $transfer) {
 	// cache percent-done in local var. ...
 	$percentDone = $sf->percent_done;
 
+	// hide seeding - we do it asap to keep things as fast as possible
+	if (($_SESSION['settings']['index_show_seeding'] == 0) && ($percentDone >= 100)) {
+		continue;
+	}
+
 	// status-image
 	$hd = getStatusImage($sf);
 
@@ -517,6 +522,11 @@ if ($_SESSION['settings']['index_ajax_update'] != 0) {
 	$ajaxInit .= ",'".$cfg['bandwidthbar']."'";
 	$ajaxInit .= ");";
 	$onLoad .= $ajaxInit;
+}
+
+//Hide Seeds
+if ($_SESSION['settings']['index_show_seeding'] != 0) {
+	$tmpl->setvar('index_show_seeding', $_SESSION['settings']['index_show_seeding']);
 }
 
 // onLoad

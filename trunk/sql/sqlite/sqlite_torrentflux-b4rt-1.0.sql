@@ -264,6 +264,7 @@ INSERT INTO tf_settings VALUES ('enable_index_ajax_update_title','1');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update_list','1');
 INSERT INTO tf_settings VALUES ('enable_index_meta_refresh','0');
 INSERT INTO tf_settings VALUES ('enable_index_ajax_update','0');
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 INSERT INTO tf_settings VALUES ('index_ajax_update','10');
 INSERT INTO tf_settings VALUES ('transferStatsType','ajax');
 INSERT INTO tf_settings VALUES ('transferStatsUpdate','5');

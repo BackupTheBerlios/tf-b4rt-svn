@@ -130,6 +130,21 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Seeding Torrents</strong><br>
+								Specify if we show seeding torrents
+								</td>
+								<td valign="top">
+									<select name="index_ajax_update">
+										<option value="1">true</toption>
+										<option value="0"
+										<tmpl_if name="index_ajax_update" value="0">
+											selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Enable multi-upload</strong><br>
 								Enable/Disable multi-upload :
 								</td>

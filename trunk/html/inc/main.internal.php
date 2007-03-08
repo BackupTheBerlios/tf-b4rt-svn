@@ -196,6 +196,7 @@ if (!(cacheIsSet($currentUser))) {
 	// set session-settings
 	$_SESSION['settings']['index_meta_refresh'] = ($cfg["enable_index_meta_refresh"] != 0) ? 1 : 0;
 	$_SESSION['settings']['index_ajax_update'] = ($cfg["enable_index_ajax_update"] != 0) ? 1 : 0;
+	$_SESSION['settings']['index_show_seeding'] = ($cfg["index_show_seeding"] != 0) ? 1 : 0;
 
 	// xfer
 	if ($cfg['enable_xfer'] == 1) {

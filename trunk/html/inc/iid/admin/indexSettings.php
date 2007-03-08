@@ -44,6 +44,7 @@ $tmpl->setvar('enable_index_ajax_update_users', $cfg["enable_index_ajax_update_u
 $tmpl->setvar('enable_index_ajax_update_list', $cfg["enable_index_ajax_update_list"]);
 $tmpl->setvar('enable_index_ajax_update_silent', $cfg["enable_index_ajax_update_silent"]);
 $tmpl->setvar('index_ajax_update', $cfg["index_ajax_update"]);
+$tmpl->setvar('index_show_seeding', $cfg["index_show_seeding"]);
 $tmpl->setvar('enable_multiupload', $cfg["enable_multiupload"]);
 $tmpl->setvar('hack_multiupload_rows', $cfg["hack_multiupload_rows"]);
 $tmpl->setvar('ui_dim_main_w', $cfg["ui_dim_main_w"]);
