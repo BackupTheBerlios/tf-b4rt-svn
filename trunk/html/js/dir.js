@@ -30,6 +30,13 @@ function UncompDetails(URL) {
 }
 
 /**
+ * CompressDetails
+ */
+function CompressDetails(URL) {
+	window.open (URL,'_blank','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizeable=no,width=600,height=300');
+}
+
+/**
  * rename
  */
 function rename(name_file) {
