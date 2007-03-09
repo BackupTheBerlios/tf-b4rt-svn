@@ -42,3 +42,4 @@ INSERT INTO tf_settings VALUES ('enable_rar','1');
 INSERT INTO tf_settings VALUES ('showdirtree','1');
 INSERT INTO tf_settings VALUES ('maxdepth','0');
 UPDATE tf_settings SET tf_value = '1' WHERE tf_key = 'advanced_start';
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');

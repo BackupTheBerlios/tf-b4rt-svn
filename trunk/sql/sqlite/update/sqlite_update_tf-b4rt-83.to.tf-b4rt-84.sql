@@ -18,6 +18,7 @@ BEGIN TRANSACTION;
 -- inserts
 --
 INSERT INTO tf_settings VALUES ('bin_fstat','/usr/bin/fstat');
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- commit

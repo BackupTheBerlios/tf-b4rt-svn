@@ -84,6 +84,7 @@ INSERT INTO tf_settings_dir VALUES ('move_paths','');
 INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder');
 INSERT INTO tf_settings_dir VALUES ('enable_vlc','1');
 INSERT INTO tf_settings_dir VALUES ('vlc_port','8080');
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- tf_settings_stats

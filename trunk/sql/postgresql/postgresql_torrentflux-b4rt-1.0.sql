@@ -396,6 +396,7 @@ INSERT INTO tf_settings_dir VALUES ('enable_view_nfo','1');
 INSERT INTO tf_settings_dir VALUES ('package_type','tar');
 INSERT INTO tf_settings_dir VALUES ('enable_sfvcheck','1');
 INSERT INTO tf_settings_dir VALUES ('enable_rar','1');
+INSERT INTO tf_settings_dir VALUES ('enable_make_rar','1');
 INSERT INTO tf_settings_dir VALUES ('enable_move','0');
 INSERT INTO tf_settings_dir VALUES ('enable_rename','1');
 INSERT INTO tf_settings_dir VALUES ('move_paths','');

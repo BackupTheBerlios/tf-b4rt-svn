@@ -311,4 +311,4 @@ INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','');
 INSERT INTO tf_settings VALUES ('fluxd_Maintenance_interval','600');
 INSERT INTO tf_settings VALUES ('fluxd_Maintenance_trestart','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_interval','600');
-
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');

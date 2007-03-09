@@ -40,6 +40,7 @@ INSERT INTO tf_settings VALUES ('enable_move','0');
 INSERT INTO tf_settings VALUES ('enable_rename','1');
 INSERT INTO tf_settings VALUES ('move_paths','');
 INSERT INTO tf_settings VALUES ('bin_sockstat','/usr/bin/sockstat');
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- commit
