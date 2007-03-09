@@ -27,7 +27,6 @@ INSERT INTO tf_settings VALUES ('nice_adjust','0');
 INSERT INTO tf_settings VALUES ('xfer_realtime','1');
 INSERT INTO tf_settings VALUES ('skiphashcheck','0');
 INSERT INTO tf_settings VALUES ('enable_umask','0');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- commit

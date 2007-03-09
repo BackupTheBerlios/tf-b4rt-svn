@@ -17,4 +17,4 @@ ALTER TABLE tf_xfer CHANGE user user_id VARCHAR(32) NOT NULL;
 --
 -- inserts
 --
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
+

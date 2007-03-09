@@ -18,7 +18,6 @@ BEGIN TRANSACTION;
 -- inserts
 --
 INSERT INTO tf_settings VALUES ('enable_dereferrer','1');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- commit

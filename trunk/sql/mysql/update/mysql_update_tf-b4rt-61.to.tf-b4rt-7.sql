@@ -14,4 +14,4 @@
 --
 INSERT INTO tf_settings VALUES ('metainfoclient','btshowmetainfo.py');
 INSERT INTO tf_settings VALUES ('enable_restrictivetview','1');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
+

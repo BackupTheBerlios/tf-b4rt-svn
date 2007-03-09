@@ -18,4 +18,3 @@ INSERT INTO tf_settings VALUES ('month_start','1');
 INSERT INTO tf_settings VALUES ('hack_multiupload_rows','6');
 INSERT INTO tf_settings VALUES ('hack_goodlookstats_settings','63');
 INSERT INTO tf_settings VALUES ('ui_indexrefresh','1');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');

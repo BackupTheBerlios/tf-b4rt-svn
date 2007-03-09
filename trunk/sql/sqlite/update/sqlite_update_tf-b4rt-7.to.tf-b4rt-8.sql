@@ -29,7 +29,6 @@ INSERT INTO tf_settings VALUES ('ui_dim_details_w','450');
 INSERT INTO tf_settings VALUES ('ui_dim_details_h','290');
 INSERT INTO tf_settings VALUES ('ui_dim_superadmin_w','800');
 INSERT INTO tf_settings VALUES ('ui_dim_superadmin_h','600');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- commit

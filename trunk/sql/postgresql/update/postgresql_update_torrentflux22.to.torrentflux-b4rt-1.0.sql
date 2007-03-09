@@ -279,6 +279,7 @@ INSERT INTO tf_settings VALUES ('transferHosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('enable_sharekill','1');
 INSERT INTO tf_settings VALUES ('transfer_window_default','transferStats');
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 INSERT INTO tf_settings VALUES ('enable_nzbperl','0');
 INSERT INTO tf_settings VALUES ('nzbperl_badAction','0');
 INSERT INTO tf_settings VALUES ('nzbperl_server','');
@@ -313,7 +314,6 @@ INSERT INTO tf_settings VALUES ('fluxd_Watch_jobs','');
 INSERT INTO tf_settings VALUES ('fluxd_Maintenance_interval','600');
 INSERT INTO tf_settings VALUES ('fluxd_Maintenance_trestart','0');
 INSERT INTO tf_settings VALUES ('fluxd_Trigger_interval','600');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- Sequences for table tf_trprofiles

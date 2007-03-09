@@ -34,7 +34,6 @@ INSERT INTO tf_settings VALUES ('xfer_total','0');
 INSERT INTO tf_settings VALUES ('xfer_month','0');
 INSERT INTO tf_settings VALUES ('xfer_week','0');
 INSERT INTO tf_settings VALUES ('xfer_day','0');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- commit

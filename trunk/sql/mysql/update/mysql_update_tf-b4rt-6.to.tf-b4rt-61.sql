@@ -32,4 +32,5 @@ CREATE TABLE tf_links (
 ) TYPE=MyISAM;
 
 INSERT INTO tf_links VALUES (NULL,'http://www.torrentflux.com/forum/index.php/topic,1265.0.html','Home','0');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
+
+

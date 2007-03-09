@@ -19,4 +19,4 @@ ALTER TABLE tf_torrents ADD hash VARCHAR(40) DEFAULT '' NOT NULL;
 --
 INSERT INTO tf_settings VALUES ('enable_sorttable','1');
 INSERT INTO tf_settings VALUES ('drivespacebar','xfer');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
+

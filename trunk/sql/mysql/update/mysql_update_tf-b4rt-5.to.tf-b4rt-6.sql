@@ -38,4 +38,5 @@ INSERT INTO tf_settings VALUES ('btclient_tornado_bin','/var/www/TF_BitTornado/b
 INSERT INTO tf_settings VALUES ('btclient_tornado_options','--alloc_type sparse --min_peers 40 --upnp_nat_access 0 --write_buffer_size 8');
 INSERT INTO tf_settings VALUES ('btclient_transmission_bin','/usr/local/bin/transmissioncli');
 INSERT INTO tf_settings VALUES ('btclient_transmission_options','');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
+
+

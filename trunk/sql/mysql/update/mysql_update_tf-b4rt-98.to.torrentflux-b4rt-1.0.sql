@@ -84,7 +84,6 @@ INSERT INTO tf_settings_dir VALUES ('move_paths','');
 INSERT INTO tf_settings_dir VALUES ('dir_restricted','lost+found:CVS:Temporary Items:Network Trash Folder:TheVolumeSettingsFolder');
 INSERT INTO tf_settings_dir VALUES ('enable_vlc','1');
 INSERT INTO tf_settings_dir VALUES ('vlc_port','8080');
-INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 
 --
 -- tf_settings_stats
@@ -235,6 +234,7 @@ INSERT INTO tf_settings VALUES ('transferHosts','0');
 INSERT INTO tf_settings VALUES ('pagetitle','torrentflux-b4rt');
 INSERT INTO tf_settings VALUES ('enable_sharekill','1');
 INSERT INTO tf_settings VALUES ('transfer_window_default','transferStats');
+INSERT INTO tf_settings VALUES ('index_show_seeding','1');
 INSERT INTO tf_settings VALUES ('enable_nzbperl','0');
 INSERT INTO tf_settings VALUES ('nzbperl_badAction','0');
 INSERT INTO tf_settings VALUES ('nzbperl_server','');
