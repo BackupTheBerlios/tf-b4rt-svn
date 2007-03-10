@@ -2,11 +2,9 @@
 	<span id="title">
 		<tmpl_var name="titleBar_title">
 	</span>
-	<tmpl_if name="titleBar_showButtons">
-		<span id="logout">
-			<a id="logoutButton" href="index.php?iid=logout"></a>
-		</span>
-	</tmpl_if>
+	<span id="logout">
+		<a id="logoutButton" href="index.php?iid=logout"></a>
+	</span>
 </div>
 <tmpl_if name="titleBar_showButtons">
 	<div id="mainMenu">
@@ -44,6 +42,7 @@
 					<li class="menu"><a class="menu" href="admin.php?op=dirSettings">Dir</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=statsSettings">Stats</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=fluxdSettings">Fluxd</a></li>
+					<li class="menu"><a class="menu" href="admin.php?op=fluazuSettings">FluAzu</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=xferSettings">Xfer</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=searchSettings">Search</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=editLinks">Links</a></li>
