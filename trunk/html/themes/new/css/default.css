@@ -101,3 +101,26 @@ a.menu:hover {
 	margin-top: 15px;
 	float: left;
 }
+#bandwidthTitle {
+	margin-left: 20px;
+	width: 160px;
+	height: 16px;
+	background-image: url("../pics/menu.jpg");
+	background-repeat: no-repeat;
+}
+#drivespaceTitle {
+	margin-top: 5px;
+	margin-left: 20px;
+	width: 160px;
+	height: 16px;
+	background-image: url("../pics/menu.jpg");
+	background-repeat: no-repeat;
+}
+#close {
+	padding-top: 5px;
+	text-align: center;
+}
+#closeLink {
+	color: #000000;
+	text-decoration: none;
+}

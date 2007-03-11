@@ -4,13 +4,6 @@
 	background-image: url("../pics/upload.jpg");
 	background-repeat: repeat-x;
 }
-#stats {
-	position: absolute;
-		right: 0px;
-	width: 180px;
-	margin-top: 15px;
-	float: left;
-}
 span.upload_first {
 	padding-right: 10px;
 	position: relative;
@@ -81,13 +74,6 @@ div.uploadClass {
 #transfer_table {
 	width: 100%;
 }
-#bandwidthTitle {
-	margin-left: 20px;
-	width: 160px;
-	height: 16px;
-	background-image: url("../pics/menu.jpg");
-	background-repeat: no-repeat;
-}
 #statsBandwidth {
 	margin-left: 30px;
 	background-image: url("../pics/menu_box.jpg");
@@ -128,14 +114,6 @@ div.uploadClass {
 	margin-left: 4px;
 	font-size: 9px;
 	color: #585858;
-}
-#drivespaceTitle {
-	margin-top: 5px;
-	margin-left: 20px;
-	width: 160px;
-	height: 16px;
-	background-image: url("../pics/menu.jpg");
-	background-repeat: no-repeat;
 }
 div.linksTitle {
 	margin-top: 5px;
