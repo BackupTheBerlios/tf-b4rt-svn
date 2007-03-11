@@ -129,7 +129,7 @@ foreach ($arList as $transfer) {
 	$percentDone = $sf->percent_done;
 
 	// hide seeding - we do it asap to keep things as fast as possible
-	if (($_SESSION['settings']['index_show_seeding'] == 0) && ($percentDone >= 100)) {
+	if (($_SESSION['settings']['index_show_seeding'] == 0) && ($percentDone >= 100) && ($transferRunning == 1)) {
 		continue;
 	}
 
