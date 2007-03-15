@@ -93,6 +93,10 @@ a.menu:hover {
 #content {
 	margin: 15px 180px 0px 180px;
 	float: left;
+	text-align: center;
+	position: absolute;
+		right: 0px;
+		left: 0px;
 }
 #stats {
 	position: absolute;
@@ -117,8 +121,9 @@ a.menu:hover {
 	background-repeat: no-repeat;
 }
 #close {
-	padding-top: 5px;
+	padding-top: 10px;
 	text-align: center;
+	width: 100%;
 }
 #closeLink {
 	color: #000000;

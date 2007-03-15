@@ -1,12 +1,9 @@
 <tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
-<tmpl_include name="inc.adminmenu.tmpl">
-<br>
-<div align="center">
+<tmpl_include name="inc.titleBar.tmpl">
+<div id="content">
 	<tmpl_var name="_TRYDIFFERENTUSERID">
 	<br>
-	<strong><tmpl_var name="newUser"></strong>
+	<span id="newUser"><tmpl_var name="newUser"></span>
 	<tmpl_var name="_HASBEENUSED">
+	<tmpl_include name="inc.subfoot.tmpl">
 </div>
-<br><br><br>
-<tmpl_include name="inc.subfoot.tmpl">
