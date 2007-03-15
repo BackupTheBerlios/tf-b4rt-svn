@@ -1,3 +1,23 @@
 #newUser {
 	font-weight: 700;
 }
+#settings {
+	width: 100%;
+	table-layout: fixed;
+}
+td.settingsTitle {
+	padding-right: 10px;
+	width: 50%;
+	font-weight: 700;
+	text-align: right;
+}
+td.settingsSetting {
+	padding-left: 10px;
+	width: 50%;
+}
+td.settingsText {
+	padding-right: 10px;
+	padding-bottom: 5px;
+	width: 50%;
+	text-align: right;
+}
