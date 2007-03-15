@@ -48,7 +48,7 @@ $tmpl->setvar('_PASSWORDLENGTH', $cfg['_PASSWORDLENGTH']);
 $tmpl->setvar('_PASSWORDNOTMATCH', $cfg['_PASSWORDNOTMATCH']);
 $tmpl->setvar('_PLEASECHECKFOLLOWING', $cfg['_PLEASECHECKFOLLOWING']);
 //
-tmplSetTitleBar($cfg["pagetitle"].' - '.$cfg['_USERADMIN']);
+tmplSetTitleBar("Administration - Create User");
 tmplSetAdminMenu();
 tmplSetUserSection();
 tmplSetFoot();

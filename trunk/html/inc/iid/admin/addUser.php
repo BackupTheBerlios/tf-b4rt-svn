@@ -38,7 +38,7 @@ $newUser = strtolower($newUser);
 if (!(IsUser($newUser))) {
 	addNewUser($newUser, $pass1, $userType);
 	AuditAction($cfg["constants"]["admin"], $cfg['_NEWUSER'].": ".$newUser);
-	@header("location: admin.php?op=CreateUser");
+	@header("location: admin.php?op=showUsers");
 	exit();
 }
 
