@@ -124,6 +124,7 @@ a.menu:hover {
 	padding-top: 10px;
 	text-align: center;
 	width: 100%;
+	float: left;
 }
 #closeLink {
 	color: #000000;

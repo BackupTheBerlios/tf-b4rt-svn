@@ -5,6 +5,11 @@
 	width: 100%;
 	table-layout: fixed;
 }
+table.settings2 {
+	padding-top: 10px;
+	width: 100%;
+	table-layout: fixed;
+}
 td.settingsTitle {
 	padding-right: 10px;
 	width: 50%;
@@ -15,9 +20,30 @@ td.settingsSetting {
 	padding-left: 10px;
 	width: 50%;
 }
+td.settingsSetting2 {
+	padding-left: 10px;
+	width: 50%;
+	color: #FF0000;
+}
 td.settingsText {
 	padding-right: 10px;
 	padding-bottom: 5px;
 	width: 50%;
 	text-align: right;
+}
+#left {
+	float: left;
+	width: 33%;
+}
+#middle {
+	float: left;
+	width: 34%;
+}
+#right {
+	float: left;
+	width: 33%;
+}
+span.titles {
+	font-weight: 700;
+	font-size: 16px;
 }
