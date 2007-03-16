@@ -420,4 +420,5 @@ function UrlHTMLSlashesEncode($input){
 function UrlHTMLSlashesDecode($input){
 	return(stripslashes(html_entity_decode(rawurldecode($input), ENT_QUOTES)));
 }
+
 ?>
