@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1463 2007-02-06 05:37:48Z joshe $
+ * $Id: transmission.c 1564 2007-03-13 06:56:50Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -30,7 +30,7 @@
  ***********************************************************************
  * Allocates a tr_handle_t structure and initializes a few things
  **********************************************************************/
-tr_handle_t * tr_init()
+tr_handle_t * tr_init( const char * tag )
 {
     tr_handle_t * h;
     int           i, r;
@@ -39,11 +39,23 @@ tr_handle_t * tr_init()
     tr_netResolveThreadInit();
 
     h = calloc( sizeof( tr_handle_t ), 1 );
+    if( NULL == h )
+    {
+        return NULL;
+    }
+
+    h->tag = strdup( tag );
+    if( NULL == h->tag )
+    {
+        free( h );
+        return NULL;
+    }
 
     /* Generate a peer id : "-TRxxyy-" + 12 random alphanumeric
        characters, where xx is the major version number and yy the
        minor version number (Azureus-style) */
-    sprintf( h->id, "-TR%02d%02d-", VERSION_MAJOR, VERSION_MINOR );
+    snprintf( h->id, sizeof h->id, "-TR%02d%02d-",
+              VERSION_MAJOR, VERSION_MINOR );
     for( i = 8; i < 20; i++ )
     {
         r        = tr_rand( 36 );

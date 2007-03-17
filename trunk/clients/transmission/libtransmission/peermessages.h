@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peermessages.h 1447 2007-01-30 20:06:42Z titer $
+ * $Id: peermessages.h 1555 2007-03-09 01:43:10Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -250,12 +250,13 @@ static void sendHave( tr_peer_t * peer, int piece )
  **********************************************************************/
 static void sendBitfield( tr_torrent_t * tor, tr_peer_t * peer )
 {
-    uint8_t * p;
-    int       bitfieldSize = ( tor->info.pieceCount + 7 ) / 8;
+    uint8_t       * p;
+    tr_bitfield_t * bitfield;
 
-    p = getMessagePointer( peer, bitfieldSize, PEER_MSG_BITFIELD );
+    bitfield = tr_cpPieceBitfield( tor->completion );
+    p = getMessagePointer( peer, bitfield->len, PEER_MSG_BITFIELD );
 
-    memcpy( p, tr_cpPieceBitfield( tor->completion ), bitfieldSize );
+    memcpy( p, bitfield->bits, bitfield->len );
 
     peer_dbg( "SEND bitfield" );
 }

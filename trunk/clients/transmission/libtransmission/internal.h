@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1462 2007-02-06 04:26:40Z joshe $
+ * $Id: internal.h 1564 2007-03-13 06:56:50Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -124,6 +124,7 @@ static inline void tr_htonl( uint32_t a, uint8_t * p )
 
 typedef struct tr_completion_s tr_completion_t;
 typedef struct tr_shared_s tr_shared_t;
+typedef struct tr_bitfield_s tr_bitfield_t;
 
 typedef enum { TR_NET_OK, TR_NET_ERROR, TR_NET_WAIT } tr_tristate_t;
 
@@ -211,6 +212,7 @@ struct tr_handle_s
     int            torrentCount;
     tr_torrent_t * torrentList;
 
+    char         * tag;
     int            isPortSet;
     int            uploadLimit;
     int            downloadLimit;

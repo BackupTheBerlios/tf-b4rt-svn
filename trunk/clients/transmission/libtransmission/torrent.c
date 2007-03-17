@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: torrent.c 1517 2007-02-27 04:00:38Z joshe $
+ * $Id: torrent.c 1564 2007-03-13 06:56:50Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -60,7 +60,7 @@ tr_torrent_t * tr_torrentInit( tr_handle_t * h, const char * path,
     int             saveCopy = ( TR_FLAG_SAVE & flags );
 
     /* Parse torrent file */
-    if( tr_metainfoParse( &tor->info, path, NULL, saveCopy ) )
+    if( tr_metainfoParse( &tor->info, h->tag, path, NULL, saveCopy ) )
     {
         *error = TR_EINVALID;
         free( tor );
@@ -76,7 +76,7 @@ tr_torrent_t * tr_torrentInitSaved( tr_handle_t * h, const char * hashStr,
     tr_torrent_t  * tor = calloc( sizeof( tr_torrent_t ), 1 );
 
     /* Parse torrent file */
-    if( tr_metainfoParse( &tor->info, NULL, hashStr, 0 ) )
+    if( tr_metainfoParse( &tor->info, h->tag, NULL, hashStr, 0 ) )
     {
         *error = TR_EINVALID;
         free( tor );
@@ -99,8 +99,8 @@ static tr_torrent_t * torrentRealInit( tr_handle_t * h, tr_torrent_t * tor,
     tr_info_t     * inf;
     int             i;
     
-    inf        = &tor->info;
-    inf->flags = flags;
+    inf         = &tor->info;
+    inf->flags |= flags;
 
     tr_sharedLock( h->shared );
 
@@ -127,7 +127,9 @@ static tr_torrent_t * torrentRealInit( tr_handle_t * h, tr_torrent_t * tor,
     /* Escaped info hash for HTTP queries */
     for( i = 0; i < SHA_DIGEST_LENGTH; i++ )
     {
-        sprintf( &tor->escapedHashString[3*i], "%%%02x", inf->hash[i] );
+        snprintf( &tor->escapedHashString[3*i],
+                  sizeof( tor->escapedHashString ) - 3 * i,
+                  "%%%02x", inf->hash[i] );
     }
 
     /* Block size: usually 16 ko, or less if we have to */
@@ -555,7 +557,7 @@ void tr_torrentAmountFinished( tr_torrent_t * tor, float * tab, int size )
 
 void tr_torrentRemoveSaved( tr_torrent_t * tor )
 {
-    tr_metainfoRemoveSaved( tor->info.hashString );
+    tr_metainfoRemoveSaved( tor->info.hashString, tor->handle->tag );
 }
 
 /***********************************************************************

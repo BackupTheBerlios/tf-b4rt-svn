@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fastresume.h 1419 2007-01-21 06:42:05Z titer $
+ * $Id: fastresume.h 1549 2007-03-08 06:04:47Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -128,6 +128,7 @@ static void fastResumeSave( tr_io_t * io )
     uint8_t * buf;
     uint64_t  total;
     int       size;
+    tr_bitfield_t * bitfield;
 
     buf = malloc( FR_PROGRESS_LEN( tor ) );
 
@@ -152,8 +153,9 @@ static void fastResumeSave( tr_io_t * io )
     fwrite( &version, 4, 1, file );
 
     /* Build and copy the bitfield for blocks */
-    memcpy(buf + FR_MTIME_LEN( tor ), tr_cpBlockBitfield( tor->completion ),
-           FR_BLOCK_BITFIELD_LEN( tor ) );
+    bitfield = tr_cpBlockBitfield( tor->completion );
+    assert( FR_BLOCK_BITFIELD_LEN( tor ) == bitfield->len );
+    memcpy(buf + FR_MTIME_LEN( tor ), bitfield->bits, bitfield->len );
 
     /* Copy the 'slotPiece' table */
     memcpy(buf + FR_MTIME_LEN( tor ) + FR_BLOCK_BITFIELD_LEN( tor ),
@@ -191,6 +193,7 @@ static int fastResumeLoadProgress( tr_io_t * io, FILE * file )
     int       i, j;
     uint8_t * buf;
     size_t    len;
+    tr_bitfield_t bitfield;
 
     len = FR_PROGRESS_LEN( tor );
     buf = calloc( len, 1 );
@@ -219,7 +222,10 @@ static int fastResumeLoadProgress( tr_io_t * io, FILE * file )
     free( fileMTimes );
 
     /* Copy the bitfield for blocks and fill blockHave */
-    tr_cpBlockBitfieldSet( tor->completion, buf + FR_MTIME_LEN( tor ) );
+    memset( &bitfield, 0, sizeof bitfield );
+    bitfield.len = FR_BLOCK_BITFIELD_LEN( tor );
+    bitfield.bits = buf + FR_MTIME_LEN( tor );
+    tr_cpBlockBitfieldSet( tor->completion, &bitfield );
 
     /* Copy the 'slotPiece' table */
     memcpy( io->slotPiece, buf + FR_MTIME_LEN( tor ) +

@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1517 2007-02-27 04:00:38Z joshe $
+ * $Id: transmission.h 1564 2007-03-13 06:56:50Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -72,10 +72,14 @@ extern "C" {
  * tr_init
  ***********************************************************************
  * Initializes a libtransmission instance. Returns a obscure handle to
- * be passed to all functions below.
+ * be passed to all functions below. The tag argument is a short string
+ * unique to the program invoking tr_init(), it is currently used as
+ * part of saved torrent files' names to prevent one frontend from
+ * deleting a torrent used by another. The following tags are used:
+ *   beos cli daemon gtk macosx
  **********************************************************************/
 typedef struct tr_handle_s tr_handle_t;
-tr_handle_t * tr_init();
+tr_handle_t * tr_init( const char * tag );
 
 typedef struct tr_tracker_info_s tr_tracker_info_t;
 

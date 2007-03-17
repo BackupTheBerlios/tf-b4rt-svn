@@ -1,32 +1,34 @@
-# $Id: beos.mk 1505 2007-02-22 12:49:34Z bvarner $
+# $Id: beos.mk 1531 2007-03-05 07:15:17Z joshe $
 
 include ../mk/config.mk
 include ../mk/common.mk
 
-SRCS = ../beos/TRApplication.cpp ../beos/TRWindow.cpp ../beos/TRTransfer.cpp \
-       ../beos/TRPrefsWindow.cpp ../beos/TRInfoWindow.cpp
+SRCS = TRApplication.cpp TRWindow.cpp TRTransfer.cpp \
+       TRPrefsWindow.cpp TRInfoWindow.cpp
 OBJS = $(SRCS:%.cpp=%.o)
 
-CXXFLAGS += -I../libtransmission -I../beos/libPrefs
+CXXFLAGS += -I../libtransmission -IlibPrefs
 LDLIBS   += ../libtransmission/libtransmission.a
 CXXFLAGS += -IlibPrefs
 LDFLAGS  += -lbe -ltracker
-LDLIBS   += ../beos/libPrefs/libPrefs.a
+LDLIBS   += libPrefs/libPrefs.a
 
-Transmission: $(OBJS) ../beos/Transmission.rsrc
-	$(CXX) -o $@ $(OBJS) $(LDLIBS) $(LDFLAGS)
-	xres -o Transmission ../beos/Transmission.rsrc
-	mimeset -f Transmission
+Transmission: $(OBJS) ../libtransmission/libtransmission.a Transmission.rsrc
+	$(LINK_RULE_CXX)
+	$(XRES_RULE)
+	$(MIMESET_RULE)
 
 %.o: %.cpp ../mk/config.mk ../mk/common.mk ../mk/beos.mk
-	$(CXX) $(CXXFLAGS) -o $@ -c $<
+	$(CXX_RULE)
 
 clean:
-	$(RM) Transmission $(OBJS)
+	@echo "Clean Transmission"
+	@$(RM) Transmission
+	@echo "Clean $(OBJS)"
+	@$(RM) $(OBJS)
 
 .depend: $(SRCS) ../mk/config.mk ../mk/common.mk ../mk/beos.mk
-	$(RM) .depend
-	$(foreach SRC, $(SRCS), $(CXX) $(CXXFLAGS) -MM $(SRC) >> .depend;)
+	$(DEP_RULE_CXX)
 
 install:
 	@true

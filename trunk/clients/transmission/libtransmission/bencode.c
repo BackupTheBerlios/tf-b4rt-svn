@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: bencode.c 1444 2007-01-28 23:26:57Z joshe $
+ * $Id: bencode.c 1524 2007-03-05 00:07:48Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -214,7 +214,7 @@ void tr_bencFree( benc_val_t * val )
     }
 }
 
-benc_val_t * tr_bencDictFind( benc_val_t * val, char * key )
+benc_val_t * tr_bencDictFind( benc_val_t * val, const char * key )
 {
     int i;
     if( val->type != TYPE_DICT )
@@ -231,6 +231,26 @@ benc_val_t * tr_bencDictFind( benc_val_t * val, char * key )
     }
 
     return NULL;
+}
+
+benc_val_t * tr_bencDictFindFirst( benc_val_t * val, ... )
+{
+    const char * key;
+    benc_val_t * ret;
+    va_list      ap;
+
+    va_start( ap, val );
+    while( ( key = va_arg( ap, const char * ) ) )
+    {
+        ret = tr_bencDictFind( val, key );
+        if( NULL != ret )
+        {
+            break;
+        }
+    }
+    va_end( ap );
+
+    return ret;
 }
 
 char * tr_bencSaveMalloc( benc_val_t * val, int * len )
