@@ -793,7 +793,6 @@ class ClientHandler
             if ($rt->transferFile == $this->transfer) {
             	$isHung = true;
                 AuditAction($cfg["constants"]["error"], "Possible Hung Process for ".$rt->transferFile." (".$rt->processId.")");
-            	// $this->callResult = posix_kill($rt->processId, SIGKILL);
             }
         }
         // flag the transfer as stopped (in db)
@@ -818,6 +817,7 @@ class ClientHandler
                 $this->pid = getTransferPid($this->transfer);;
             }
             // kill it
+            require_once('inc/defines/defines.signals.php');
             if ($this->pid > 0)
             	$this->callResult = posix_kill($this->pid, SIGKILL);
             // try to remove the pid file

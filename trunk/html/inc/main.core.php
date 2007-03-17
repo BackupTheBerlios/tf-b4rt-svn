@@ -66,7 +66,7 @@ if (is_file('version.php')) {
 	require_once('version.php');
 	$cfg["version"] = _VERSION;
 } else {
-	$cfg["version"] =  "unknown-version";
+	$cfg["version"] =  "unknown";
 }
 
 // username

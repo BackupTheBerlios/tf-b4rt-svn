@@ -185,7 +185,7 @@ class WrapperWget
 			return false;
 		}
 
-		// signal-handler (unsure if this is common so it is in a conditional)
+		// signal-handler
 		if (function_exists("pcntl_signal")) {
 			$this->_outputMessage("setting up signal-handler...\n");
 			pcntl_signal(SIGHUP, array($this, "_sigHandler"));

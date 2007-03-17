@@ -20,52 +20,11 @@
 
 *******************************************************************************/
 
-/**
- * posix_kill
- *
- * @param $pid
- * @param $sig
- * @return string
- */
-function posix_kill($pid, $sig) {
-	return exec("kill -s ".$sig." ".$pid);
-}
-
-/**
- * posix_geteuid
- *
- * @author osearth@gmail.c0m
- *
- * @return string
- */
-function posix_geteuid() {
-	return exec("id -u");
-}
-
-/**
- * posix_getpwuid
- *
- * @author osearth@gmail.c0m
- *
- * @param $uid
- * @return array
- */
-function posix_getpwuid($uid) {
-	if (!$uid) return FALSE;
-	$file = file("/etc/passwd");
-	foreach ($file as $f) {
-		$l = explode(":",$f);
-		if ($l[2] == $uid) {
-			$out[name] = $l[0];
-			$out[passwd] = $l[1];
-			$out[uid] = $l[2];
-			$out[gid] = $l[3];
-			$out[gecos] = $l[4];
-			$out[dir] = $l[5];
-			$out[shell] = $l[6];
-			return $out;
-		}
-	}
-}
+// signals
+if (!defined("SIGHUP")) define("SIGHUP", 1);
+if (!defined("SIGINT")) define("SIGINT", 2);
+if (!defined("SIGQUIT")) define("SIGQUIT", 3);
+if (!defined("SIGKILL")) define("SIGKILL", 9);
+if (!defined("SIGTERM")) define("SIGTERM", 15);
 
 ?>

@@ -49,6 +49,9 @@ if (!is_file('inc/main.core.php'))
 if ((!isset($argc)) || ($argc < 7))
 	exit("Arg Error\n");
 
+// signals
+require_once('inc/defines/defines.signals.php');
+
 // main.core
 require_once('inc/main.core.php');
 
