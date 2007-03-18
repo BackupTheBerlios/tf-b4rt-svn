@@ -86,6 +86,10 @@ Torrentflux-b4rt 1.0 README file
 	Some of the most popular features of torrentflux-b4rt are listed
 	below.
 
+	NOTE! This list is definitely NOT exhaustive, there are
+	a massive number of features that can be configured via the
+	torrentflux-b4rt admin panel!
+
 	o Supports multiple internet transfer protocols:
 
 		- BitTorrent - supported client(s) include:
@@ -160,6 +164,10 @@ Torrentflux-b4rt 1.0 README file
 		- Check up on the status of transfers directly from a Unix shell
 
 	o Fluxd - background perl daemon toperform scheduled tasks
+
+		- Qmgr module handles queueing of transfers with per-user and
+		  global limits.  Add transfers to the queue and Qmgr will
+		  automatically start one transfer after another finishes.
 
 		- automate fetching of torrent files from RSS feeds
 
