@@ -55,6 +55,10 @@ Torrentflux-b4rt 1.0 README file
 			* Transmission - much smaller memory footprint without much
 			  loss in functionality
 
+			* Azureus - control a number of transfers from a single
+			  control process, tighter control on total max bandwidth
+			  for all torrents
+
 		o HTTP/FTP - supported client(s) include:
 
 			* wget - standard lightweight file transfer utility on
