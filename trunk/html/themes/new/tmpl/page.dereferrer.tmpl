@@ -1,9 +1,6 @@
 <tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
-<br>
-<div align="left" id="BodyLayer" name="BodyLayer" style="border: thin solid #829FB5; position:relative; width:740; height:500; padding-left: 5px; padding-right: 5px; z-index:1; overflow: scroll; visibility: visible">
-	<br><br>
-	<strong>forwarding to <a href="<tmpl_var name="url">"><tmpl_var name="url"></a> ...</strong>
-	<br><br>
+<tmpl_include name="inc.titleBar.tmpl">
+<div id="content">
+	<span id="titles">forwarding to <a id="link" href="<tmpl_var name="url">"><tmpl_var name="url"></a> ...</span>
+	<tmpl_include name="inc.subfoot.tmpl">
 </div>
-<tmpl_include name="inc.subfoot.tmpl">
