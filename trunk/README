@@ -28,29 +28,32 @@ Torrentflux-b4rt 1.0 README file
 1. Introduction
 **********************************************************************/
 
-	Torrentflux-b4rt is a web based transfer control client based on the
-	popular torrentflux.  Torrentflux-b4rt allows you to control your
-	bittorrent transfers from anywhere using a highly configurable web
-	based front end.
+	Torrentflux-b4rt is a web based transfer control client.
+	Torrentflux-b4rt allows you to control your bittorrent transfers
+	from anywhere using a highly configurable web based front end.
 
 	Torrentflux-b4rt is very easy to install on a web server and includes
 	a simple setup script which can be accessed from a web browser.
 	Just upload the files to your web server, run the setup script and
 	your torrentflux-b4rt installation is ready to go.
 
+	Torrentflux-b4rt was originally based on the TorrentFlux BitTorrent
+	controller written by Qrome, although has recently undergone a major
+	rewrite to allow transparent integration with a number of transfer
+	clients and protocols:
 
 	Torrentflux-b4rt has builtin support for transfers via:
 
 		o BitTorrent - supported client(s) include:
 
-			* Original BitTorrent/Mainline: supports trackerless
+			* Original BitTorrent/Mainline - supports trackerless
 			  torrents and encryption
 
-			* BitTornado: uses slightly less resources than the original
+			* BitTornado - uses slightly less resources than the original
 			  BT, allows file priority for downloading files selectively
 
-			* Transmission: much smaller memory footprint without to*
-			  much loss in functionality
+			* Transmission - much smaller memory footprint without much
+			  loss in functionality
 
 		o HTTP/FTP - supported client(s) include:
 
@@ -81,31 +84,53 @@ Torrentflux-b4rt 1.0 README file
 **********************************************************************/
 
 	Some of the most popular features of torrentflux-b4rt are listed
-	below.  For a full list of torrentflux-b4rt features, please see the
-	FEATURES file.
+	below.
 
-	o Multiple Transfer-Types with multiple Clients under a unified
-      Frontend. The App-Suite can be used both via Web as via the
-      commandline ("fluxcli.php").
+	o Supports various internet transfer protocols, including:
+
+		- BitTorrent - supported client(s) include:
+
+			* Original BitTorrent/Mainline - supports trackerless
+			  torrents and encryption
+
+			* BitTornado - uses slightly less resources than the original
+			  BT, allows file priority for downloading files selectively
+
+			* Transmission - much smaller memory footprint without much
+			  loss in functionality
+
+		- HTTP/FTP - supported client(s) include:
+
+			* wget - standard lightweight file transfer utility on
+			  Linux, supported on many other platforms also
+
+		- Usenet - supported client(s) include:
+
+			* nzbperl - perl based application allowing multi-connection
+			  news server downloads from nzb files with functionality
+			  for bandwidth throttling.
 
 	o Unified Transfer control:
 
 		- Perform stop/start/resume/kill/delete operations on individual
 		  transfers, all transfers or a selection of transfers
 
-        - Changes Settings of running Transfers: Rates, Ratio, ...
+        - Changes Settings of running transfers on the fly - down/up
+		  rates, what ratio to stop seeding at, how many connections to
+		  use at same time, ...
 
 	o Transfer statistics and logging:
 
 		- View detailed Transfer statistics and information, including:
 
 			o per transfer error logging for easy troubleshooting
-			o cumulative upload/download totals
-			o number of seeders/leechers
+			o upload/download totals for each user, by day/month/year
+			o number of seeders/leechers for a torrent in a graphical
+			  display
 
-	o Upload + Inject of metafiles (.torrent, .wget, .nzb files):
+	o Uploading and injection of metafiles (.torrent, .wget, .nzb files):
 
-		- upload single/multiple metafiles from your local machine
+		- upload single or multiple metafiles from your local machine
 		  to the web server
 
 		- upload metafiles directly to your web server from another
@@ -115,29 +140,54 @@ Torrentflux-b4rt 1.0 README file
           from command-line (cron, etc.)
           eg.: "inject", "watch", "rss"
 
-	o fluxd
+	o fluxcli.php - essentially a complete command-line version of
+	  torrentflux-b4rt!
 
-	o Web : Integrated Filemanager
+		- As mentioned, can perform all the tasks available in the
+		  torrentflux-b4rt frontend but from the commandline.  Makes it
+		  ideal for running from a cron job.
 
-	o Support for a large number of additional third party
-	  utilities/functionality, including:
+		- Schedule cron jobs to check RSS feeds on a regular basis and
+		  download them to a directory.
 
-		- archive file extraction from the browser (zip/rar)
+		- Schedule cron jobs to watch folders for new torrent files and
+		  then autostart/inject them
 
-		- vlc streaming controllable from browser
+		- Check up on the status of transfers directly from a Unix shell
 
-		- download of completed transfers directly from browser
+	o Fluxd - background perl daemon toperform scheduled tasks
 
-	o Web : AJAX updates for maximum info with minimal bandwidth
+		- automate fetching of torrent files from RSS feeds
+
+		- watch a list of directories for new upload of torrent files
+		  and automatically start those torrents running
+
+	o Integrated Filemanager
+
+		- Support for a large number of additional third party
+		  utilities/functionality, including:
+
+			* archive file extraction from the browser (zip/rar)
+
+			* vlc streaming controllable from browser
+
+			* download of completed transfers directly from browser
+
+			* reading of .nfo files directly in the browser
+
+			* creation of torrent files directly in the browser
+
+	o Web: AJAX updates for maximum info with minimal bandwidth
 
 		- Display of transfer lists can be easily configured to use AJAX
 		  to update transfer stats in real time.  This saves on
-		  bandwidth.
+		  bandwidth since only the transfer list needs to be sent across
+		  the network, not the whole web page.
 
-		- Individual transfer windows can also use AJAX to
-		  update stats in real time.
+		- Individual transfer windows can also use AJAX to update stats
+		  in real time.
 
-	o Web : Templating Engine
+	o Web: Templating Engine
 
 		- the torrentflux-b4rt GUI is template driven using the vLib
 		  template engine:
@@ -153,7 +203,6 @@ Torrentflux-b4rt 1.0 README file
 		  the Administration control panel.
 
 
-TODO
 
 
 /**********************************************************************
@@ -215,14 +264,15 @@ TODO
 	  Current tested OSs include:
 
 		* Linux:
-			o Debian, Ubuntu, Gentoo, RedHat, Fedora and others
+			o Debian, Ubuntu, Gentoo, RedHat, Fedora, NSLU2,
+			  ClarkConnect - amonst others
 
 			Note:
 			=====
 			SELinux should be turned off.
 
 		* BSD:
-			o FreeBSD, OpenBSD
+			o FreeBSD, OpenBSD, NetBSD
 
 		* Apple:
 			o Mac OS X
