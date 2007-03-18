@@ -527,7 +527,9 @@ class FluAzu
 				return false;
 			}
 			// send reload-command
-			return $this->instance_addCommand('r', true);
+			$this->instance_addCommand('r', true);
+			// return
+			return true;
         } else {
         	$msg = "fluazu not running, cannot delete transfer ".$transfer;
         	AuditAction($cfg["constants"]["admin"], $msg);
@@ -545,11 +547,7 @@ class FluAzu
      * @return boolean
      */
     function instance_transferExists($transfer) {
-    	if (@is_file($this->_pathTransfers.$transfer))
-    		return true;
-    	if (@is_file($this->_pathTransfersRun.$transfer))
-    		return true;
-    	return false;
+    	return is_file($this->_pathTransfers.$transfer);
     }
 
     /**

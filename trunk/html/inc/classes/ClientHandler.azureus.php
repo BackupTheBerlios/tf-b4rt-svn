@@ -55,20 +55,20 @@ class ClientHandlerAzureus extends ClientHandler
     function start($transfer, $interactive = false, $enqueue = false) {
     	global $cfg;
 
-		// FluAzu
-		require_once("inc/classes/FluAzu.php");
-
     	// set vars
 		$this->_setVarsForTransfer($transfer);
 
     	// log
     	$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
+		// FluAzu
+		require_once("inc/classes/FluAzu.php");
+
         // do azureus special-pre-start-checks
         // check to see if fluazu is running
         if (!FluAzu::isRunning()) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
-        	$msg = "fluazu is not running";
+        	$msg = "fluazu not running, cannot start transfer ".$transfer;
         	AuditAction($cfg["constants"]["error"], $msg);
         	$this->logMessage($msg."\n", true);
         	array_push($this->messages, $msg);
@@ -128,7 +128,7 @@ class ClientHandlerAzureus extends ClientHandler
 		// FluAzu
 		require_once("inc/classes/FluAzu.php");
 		// only if fluazu running and transfer exists in fluazu
-		if (!FluAzu::isRunning($transfer)) {
+		if (!FluAzu::isRunning()) {
         	array_push($this->messages , "fluazu not running, cannot stop transfer ".$transfer);
 			return false;
 		}
@@ -153,6 +153,11 @@ class ClientHandlerAzureus extends ClientHandler
 		require_once("inc/classes/FluAzu.php");
 		// only if transfer exists in fluazu
 		if (FluAzu::transferExists($transfer)) {
+			// only if fluazu running
+			if (!FluAzu::isRunning()) {
+	        	array_push($this->messages , "fluazu not running, cannot delete transfer ".$transfer);
+				return false;
+			}
 			// remove from azu
 			if (!FluAzu::delTransfer($transfer)) {
 	        	array_push($this->messages , $this->client.": error when deleting transfer ".$transfer." :");
