@@ -31,6 +31,12 @@ System Requirements
    higher for Mainline (BitTorrent).
    (http://www.python.org)
 
+-- Azureus 2.5.0.0 or higher with the XML/HTTP Plugin to use
+   an Azureus-Server as Client within tfb (with fluazu).
+   * Azureus (http://azureus.sourceforge.net)
+   * XML/HTTP Plugin
+    (http://azureus.sourceforge.net/plugin_details.php?plugin=xml_http_if)
+
 -- Perl 5.6 or higher for fluxd, nzbperl, ttools.pl and
    fluxpoller.pl (see Section "Perl-Modules" for Perl-Module-
    Requirements)
@@ -449,4 +455,3 @@ Perl-Modules
 Known Issues
 -----------------------------------------------------------------
 Please check at: http://tf-b4rt.berlios.de
-
