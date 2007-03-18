@@ -35,6 +35,11 @@
 											selected
 										</tmpl_if>
 										>mainline</option>
+										<option value="azureus"
+										<tmpl_if name="btclient" value="azureus">
+											selected
+										</tmpl_if>
+										>azureus</option>
 									</select>
 								</td>
 							</tr>
@@ -222,6 +227,15 @@
 										</tmpl_if>
 										>false</option>
 									</select>
+								</td>
+							</tr>
+							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>fluazu</strong></td></tr>
+							<tr>
+								<td align="left" width="350" valign="top"><strong>fluazu daemon</strong><br>
+									fluazu is a proxy to use an Azureus-Server as client for torrents.<br>
+								</td>
+								<td valign="top">
+									<a href="admin.php?op=fluazuSettings">fluazu-settings</a>
 								</td>
 							</tr>
 							<tr><td colspan="2" align="center" bgcolor="<tmpl_var name="table_header_bg">"><strong>wget</strong></td></tr>
