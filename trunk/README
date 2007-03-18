@@ -86,7 +86,7 @@ Torrentflux-b4rt 1.0 README file
 	Some of the most popular features of torrentflux-b4rt are listed
 	below.
 
-	o Supports various internet transfer protocols, including:
+	o Supports various internet transfer protocols:
 
 		- BitTorrent - supported client(s) include:
 
