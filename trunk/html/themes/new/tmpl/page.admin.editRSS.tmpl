@@ -1,36 +1,23 @@
 <tmpl_include name="inc.head.tmpl">
-<tmpl_include name="inc.subhead.tmpl">
-<tmpl_include name="inc.adminmenu.tmpl">
-<div align="center">
-	<table border=1 bordercolor="#94ABC0" cellpadding="2" cellspacing="0">
-		<tr>
-			<td bgcolor="#A2BED4" background="themes/default/images/bar.gif">
-				<img src="themes/default/images/properties.png" width=18 height=13 border=0>&nbsp;&nbsp;<font class="title">RSS Feeds</font>
-			</td>
-		</tr>
-		<tr>
-			<td align="center">
-				<form action="admin.php?op=addRSS" method="post">
-					<tmpl_var name="_FULLURLLINK">:
-					<input type="Text" size="50" maxlength="255" name="newRSS">
-					<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
-				</form>
-			</td>
-		</tr>
-		<tmpl_loop name="link_rss">
-			<tmpl_if name="true">
-				<tr>
-					<td><a href="admin.php?op=deleteRSS&rid=<tmpl_var name="rid">"><img src="themes/default/images/delete_on.gif" width=16 height=16 border=0 title="<tmpl_var name="_DELETE"> <tmpl_var name="rid">" align="absmiddle"></a>&nbsp;
-						<tmpl_if name="enable_dereferrer">
-							<a href="index.php?iid=dereferrer&u=<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
-						<tmpl_else>
-							<a href="<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
-						</tmpl_if>
-					</td>
-				</tr>
+<tmpl_include name="inc.titleBar.tmpl">
+<div id="content">
+	<form action="admin.php?op=addRSS" method="post">
+		<tmpl_var name="_FULLURLLINK">:
+		<input type="Text" size="50" maxlength="255" name="newRSS">
+		<input type="Submit" value="<tmpl_var name="_UPDATE">">
+	</form>
+	<br />
+	<!-- Use table for final Design -->
+	<tmpl_loop name="link_rss">
+		<tmpl_if name="true">
+			<a href="admin.php?op=deleteRSS&rid=<tmpl_var name="rid">"><tmpl_var name="_DELETE"> <tmpl_var name="rid"></a>
+			<tmpl_if name="enable_dereferrer">
+				<a href="index.php?iid=dereferrer&u=<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
+			<tmpl_else>
+				<a href="<tmpl_var name="link">" target="_blank"><tmpl_var name="link"></a>
 			</tmpl_if>
-		</tmpl_loop>
-	</table>
+		</tmpl_if>
+		<br />
+	</tmpl_loop>
+	<tmpl_include name="inc.subfoot.tmpl">
 </div>
-<br><br><br>
-<tmpl_include name="inc.subfoot.tmpl">
