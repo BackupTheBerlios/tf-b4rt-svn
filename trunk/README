@@ -123,9 +123,9 @@ Torrentflux-b4rt 1.0 README file
 
 		- View detailed Transfer statistics and information, including:
 
-			o per transfer error logging for easy troubleshooting
-			o upload/download totals for each user, by day/month/year
-			o number of seeders/leechers for a torrent in a graphical
+			* per transfer error logging for easy troubleshooting
+			* upload/download totals for each user, by day/month/year
+			* number of seeders/leechers for a torrent in a graphical
 			  display
 
 	o Uploading and injection of metafiles (.torrent, .wget, .nzb files):
