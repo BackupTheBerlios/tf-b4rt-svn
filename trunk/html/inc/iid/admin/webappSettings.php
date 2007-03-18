@@ -107,7 +107,7 @@ $arThemes = GetThemes();
 for ($inx = 0; $inx < sizeof($arThemes); $inx++) {
 	array_push($theme_list, array(
 		'arThemes' => $arThemes[$inx],
-		'selected' => ($cfg["default_theme"] == $arThemes[$inx])
+		'selected' => ($cfg["default_theme"] == $arThemes[$inx]) ? "selected" : ""
 		)
 	);
 }
