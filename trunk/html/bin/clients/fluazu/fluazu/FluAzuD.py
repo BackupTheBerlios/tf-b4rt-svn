@@ -300,15 +300,13 @@ class FluAzuD(object):
         if len(requests) > 0:
             for fileName in requests:
                 printMessage("deleting %s ..." % fileName)
-
                 # update downloads
+                self.downloads = {}
                 self.updateDownloads()
-
                 # remove if needed
                 if fileName in self.downloads:
                     # remove transfer
                     self.removeTransfer(fileName)
-
                 # del file
                 delFile = self.flu_pathTransfers + fileName
                 try:
@@ -351,6 +349,8 @@ class FluAzuD(object):
         # process requests
         if len(requests) > 0:
             try:
+                # update downloads
+                self.downloads = {}
                 self.updateDownloads()
                 for fileName in requests:
                     # add if needed
@@ -383,7 +383,6 @@ class FluAzuD(object):
             except:
                 printMessage("exception when processing run-requests:")
                 printException()
-
         # return
         return True
 
