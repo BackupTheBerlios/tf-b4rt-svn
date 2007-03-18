@@ -215,6 +215,20 @@ class FluAzu
     }
 
     /**
+     * transfer exists
+     *
+     * @param $transfer
+     * @return boolean
+     */
+    function transferExists($transfer) {
+    	global $instanceFluAzu;
+		// initialize if needed
+		if (!isset($instanceFluAzu))
+			FluAzu::initialize();
+		return $instanceFluAzu->instance_transferExists($transfer);
+    }
+
+    /**
      * get status
      *
      * @return array
@@ -494,12 +508,13 @@ class FluAzu
     	global $cfg;
         if ($this->state == FLUAZU_STATE_RUNNING) {
         	AuditAction($cfg["constants"]["admin"], "fluazu deleting transfer ".$transfer);
+        	// write file
         	$file = $this->_pathTransfersDel.$transfer;
 			$handle = false;
 			$handle = @fopen($file, "w");
 			if (!$handle) {
 	            $msg = "cannot open file ".$file." for writing.";
-	            array_push($this->_messages , $msg);
+	            array_push($this->messages , $msg);
 	            AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
 				return false;
 			}
@@ -507,7 +522,7 @@ class FluAzu
 			@fclose($handle);
 			if ($result === false) {
 	            $msg = "cannot write content to file ".$file.".";
-	            array_push($this->_messages , $msg);
+	            array_push($this->messages , $msg);
 	            AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
 				return false;
 			}
@@ -521,6 +536,20 @@ class FluAzu
             $this->state = FLUAZU_STATE_ERROR;
 			return false;
         }
+    }
+
+    /**
+     * transfer exists
+     *
+     * @param $transfer
+     * @return boolean
+     */
+    function instance_transferExists($transfer) {
+    	if (@is_file($this->_pathTransfers.$transfer))
+    		return true;
+    	if (@is_file($this->_pathTransfersRun.$transfer))
+    		return true;
+    	return false;
     }
 
     /**
@@ -642,7 +671,7 @@ class FluAzu
 		$handle = @fopen($this->_pathCommandFile, "w");
 		if (!$handle) {
             $msg = "cannot open command-file ".$this->_pathCommandFile." for writing.";
-            array_push($this->_messages , $msg);
+            array_push($this->messages , $msg);
             AuditAction($cfg["constants"]["error"], "FluAzu _writeCommandFile-Error : ".$msg);
 			return false;
 		}
@@ -650,7 +679,7 @@ class FluAzu
 		@fclose($handle);
 		if ($result === false) {
             $msg = "cannot write content to command-file ".$this->_pathCommandFile.".";
-            array_push($this->_messages , $msg);
+            array_push($this->messages , $msg);
             AuditAction($cfg["constants"]["error"], "FluAzu _writeCommandFile-Error : ".$msg);
 			return false;
 		}

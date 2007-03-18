@@ -115,6 +115,31 @@ class ClientHandlerAzureus extends ClientHandler
         $this->_start();
     }
 
+    /**
+     * stops a client
+     *
+     * @param $transfer name of the transfer
+     * @param $kill kill-param (optional)
+     * @param $transferPid transfer Pid (optional)
+     */
+    function stop($transfer, $kill = false, $transferPid = 0) {
+    	// set vars
+		$this->_setVarsForTransfer($transfer);
+		// FluAzu
+		require_once("inc/classes/FluAzu.php");
+		// only if fluazu running and transfer exists in fluazu
+		if (!FluAzu::isRunning($transfer)) {
+        	array_push($this->messages , "fluazu not running, cannot stop transfer ".$transfer);
+			return false;
+		}
+		if (!FluAzu::transferExists($transfer)) {
+        	array_push($this->messages , "transfer ".$transfer." does not exist in fluazu, cannot stop it");
+			return false;
+		}
+		// stop the client
+        $this->_stop($kill, $transferPid);
+    }
+
 	/**
 	 * deletes a transfer
 	 *
@@ -126,11 +151,17 @@ class ClientHandlerAzureus extends ClientHandler
 		$this->_setVarsForTransfer($transfer);
 		// FluAzu
 		require_once("inc/classes/FluAzu.php");
-		// remove from azu
-		if (FluAzu::delTransfer($transfer)) {
-			// delete
-			$this->_delete();
+		// only if transfer exists in fluazu
+		if (FluAzu::transferExists($transfer)) {
+			// remove from azu
+			if (!FluAzu::delTransfer($transfer)) {
+	        	array_push($this->messages , $this->client.": error when deleting transfer ".$transfer." :");
+	        	$this->messages = array_merge($this->messages, FluAzu::getMessages());
+				return false;
+			}
 		}
+		// delete
+		return $this->_delete();
 	}
 
     /**

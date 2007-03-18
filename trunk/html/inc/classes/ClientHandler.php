@@ -356,7 +356,7 @@ class ClientHandler
     	// set vars
 		$this->_setVarsForTransfer($transfer);
 		// delete
-		$this->_delete();
+		return $this->_delete();
 	}
 
     /**
