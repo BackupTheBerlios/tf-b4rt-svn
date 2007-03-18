@@ -82,7 +82,6 @@ Torrentflux-b4rt 1.0 README file
 	as you wish.
 
 
-
 /**********************************************************************
 2. Features
 **********************************************************************/
@@ -217,8 +216,6 @@ Torrentflux-b4rt 1.0 README file
 		- Torrentflux-b4rt also incorporates template caching to speed
 		  up the load time of pages.  This feature can be enabled via
 		  the Administration control panel.
-
-
 
 
 /**********************************************************************
@@ -357,7 +354,6 @@ Torrentflux-b4rt 1.0 README file
 
 	Once more(!), it is highly advisable to install these requirements
 	using the recommended package management system for your OS.
-
 
 
 /**********************************************************************
@@ -516,7 +512,6 @@ Torrentflux-b4rt 1.0 README file
 	   * IO::Socket::INET (perl -MCPAN -e "install IO::Socket::INET")
 
 
-
 /**********************************************************************
 4. Installation
 **********************************************************************/
@@ -648,7 +643,6 @@ Torrentflux-b4rt 1.0 README file
 	options there to enable any features you require.
 
 
-
 /**********************************************************************
 5. Support
 **********************************************************************/
@@ -750,6 +744,3 @@ Torrentflux-b4rt 1.0 README file
 	a technical forum:
 
 		http://catb.org/~esr/faqs/smart-questions.html
-
-
-	TODO: Add alternative options for support - ie superadmin/updates section?
