@@ -439,11 +439,11 @@ function netstatConnectionsSum() {
 	global $cfg;
 	switch ($cfg["_OS"]) {
 		case 1: // linux
-			return intval(trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget|nzbperl).*'")));
+			return intval(trim(shell_exec($cfg['bin_netstat']." -e -p --tcp -n 2> /dev/null | ".$cfg['bin_grep']." -v root | ".$cfg['bin_grep']." -v 127.0.0.1 | ".$cfg['bin_grep']." -cE '.*(python|transmissionc|wget|nzbperl|java).*'")));
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			return intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission|nzbperl).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'")));
+			return intval(trim(shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -cE '".$webserverUser.".+(python|transmission|wget|nzbperl|java).+tcp.+[[:digit:]]:[[:digit:]].+\*:\*|".$webserverUser.".+wget.+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:(21|80)'")));
 	}
 	return 0;
 }
@@ -490,7 +490,7 @@ function netstatPortList() {
 			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
-			$clients = array('tornado', 'transmission', 'wget', 'nzbperl');
+			$clients = array('tornado', 'transmission', 'wget', 'nzbperl', 'azureus');
 			// get informations
 			foreach ($clients as $client) {
 				$ch = ClientHandler::getInstance($client);
@@ -500,7 +500,7 @@ function netstatPortList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/(python|transmis|wget|nzbperl).+tcp.+[[:digit:]]:[[:digit:]]/ {split(\$6, a, \":\");print a[2]}'");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_awk']." '/(python|transmis|wget|nzbperl|java).+tcp.+[[:digit:]]:[[:digit:]]/ {split(\$6, a, \":\");print a[2]}'");
 			break;
 	}
 	return $retStr;
@@ -547,7 +547,7 @@ function netstatHostList() {
 			// not time-critical (only used on allServices-page), use the
 			// generic and correct way :
 			// array with all clients
-			$clients = array('tornado', 'transmission', 'wget', 'nzbperl');
+			$clients = array('tornado', 'transmission', 'wget', 'nzbperl', 'azureus');
 			// get informations
 			foreach($clients as $client) {
 				$ch = ClientHandler::getInstance($client);
@@ -557,7 +557,7 @@ function netstatHostList() {
 		case 2: // bsd
 			$processUser = posix_getpwuid(posix_geteuid());
 			$webserverUser = $processUser['name'];
-			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E \"".$webserverUser.".+(python|transmis|wget|nzbperl).+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:[[:digit:]]\"");
+			$retStr .= shell_exec($cfg['bin_sockstat']." | ".$cfg['bin_grep']." -E \"".$webserverUser.".+(python|transmis|wget|nzbperl|java).+tcp.+[[:digit:]]:[[:digit:]].+[[:digit:]]:[[:digit:]]\"");
 			break;
 	}
 	return $retStr;

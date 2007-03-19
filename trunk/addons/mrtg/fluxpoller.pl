@@ -37,7 +37,7 @@ my $WEBUSER = "www";
 
 # define socket-bins. default : qw( python transmissionc wget )
 # (only used on bsd)
-my @BINS_SOCKET = qw( python transmissionc wget );
+my @BINS_SOCKET = qw( python transmissionc wget java );
 
 # should we try to find needed binaries ? (using "whereis" + "awk")
 # use 1 to activate, else "constants" are used (the faster + safer way)

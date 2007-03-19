@@ -1550,7 +1550,7 @@ function getTransferSavepath($transfer) {
 function getRunningClientProcesses($client = '') {
 	// client-array
 	$clients = ($client == '')
-		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl')
+		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl', 'azureus')
 		: array($client);
 	// get clients
 	$retVal = array();
@@ -1574,7 +1574,7 @@ function getRunningClientProcesses($client = '') {
 function getRunningClientProcessInfo($client = '') {
 	// client-array
 	$clients = ($client == '')
-		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl')
+		? array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl', 'azureus')
 		: array($client);
 	// get clients
 	$retVal = "";

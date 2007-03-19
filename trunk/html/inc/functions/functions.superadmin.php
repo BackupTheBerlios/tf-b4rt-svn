@@ -145,7 +145,7 @@ function sa_processes($action = "") {
 			$htmlMain .= '<pre>';
 			$htmlMain .= shell_exec("ps auxww | ".$cfg['bin_grep']." fluazu.py | ".$cfg['bin_grep']." -v grep");
 			$htmlMain .= '</pre>';
-			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
+			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl', 'azureus');
 			foreach ($clients as $client) {
 				$ch = ClientHandler::getInstance($client);
 				$htmlMain .= '<p><strong>'.$client.'</strong>';

@@ -104,7 +104,7 @@ switch ($type) {
 		$tmpl->setvar('who_free', shell_exec("free -mo"));
 		if ($cfg['isAdmin']) {
 			// array with all clients
-			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl');
+			$clients = array('tornado', 'transmission', 'mainline', 'wget', 'nzbperl', 'azureus');
 			// get informations
 			$process_list = array();
 			foreach ($clients as $client) {
