@@ -315,8 +315,8 @@ Torrentflux-b4rt 1.0 README file
 
 
 	o PHP in 'web mode' (ie mod_php or php-cgi - preferably mod_php) >=
-	  4.3.x built with database (MySQL, SQLite or PostgreSQL), session
-	  and PCRE support enabled.
+	  4.3.x built with database (MySQL, SQLite or PostgreSQL), session,
+	  sockets and PCRE support enabled.
 
 	o PHP in 'commandline mode' (php-cli) >= 4.3.x built with database
 	  (MySQL, SQLite or PostgreSQL), session, sockets and PCRE support
@@ -331,6 +331,25 @@ Torrentflux-b4rt 1.0 README file
 
 		o Allow Url fopen must be allowed:
 			* php.ini: allow_url_fopen = On
+
+		o open_basedir must be empty:
+			* php.ini: open_basedir = ''
+
+			Note: some web control panels like cPanel use
+			open_basedir to restrict users as to what they can do with
+			PHP.  torrentflux-b4rt does NOT officially support
+			installations on shared hosting platforms due to the
+			complications that arise (such as the use of open_basedir
+			amongst many other things).  However if you do choose to
+			attempt to install torrentflux-b4rt on a shared host running
+			a control panel such as cPanel, be aware of the problems
+			open_basedir can cause.
+
+			Please see:
+
+			http://php.net/manual/en/features.safe-mode.php#ini.open-basedir
+
+			for more info.
 
 		o As mentioned above, both the PHP web module and the
 		  commandline / cli binary must be installed, both with support
@@ -433,9 +452,9 @@ Torrentflux-b4rt 1.0 README file
 			http://www.videolan.org/
 
 
-	o ttools.pl is an alternative BitTorrent metadata client that can be
-	  enabled in the Administration panel.  It requires the following
-	  module:
+	o ttools.pl is an alternative BitTorrent metadata client that
+	  supports metadata scraping.  It can be enabled in the
+	  Administration panel.  It requires the following module:
 
 		* LWP::UserAgent   (perl -MCPAN -e "install LWP::UserAgent")
 
@@ -481,8 +500,8 @@ Torrentflux-b4rt 1.0 README file
 	Additionally, Fluxd uses a PHP based helper script called
 	fluxcli.php and for this to run correctly the commandline (cli)
 	version of PHP must be installed with the correct extensions
-	(database, PCRE and session support).  See the notes above in
-	section 3.1 for more information.
+	(database, PCRE, socket and session support).  See the notes above
+	in section 3.1 for more information.
 
 
 	o (Optional) Fluxd database connectivity using Perl DBI - Perl DBI
@@ -504,8 +523,8 @@ Torrentflux-b4rt 1.0 README file
 
 
 	o (Optional) Fluxinet functionality requirements - Fluxinet allows
-	  local unix domain socket connections to Fluxd and is not enabled
-	  by default:
+	  remote connections directly to the Fluxd daemon over TCP.  It
+	  is not enabled by default:
 
 	   * IO::Select       (perl -MCPAN -e "install IO::Select")
 
