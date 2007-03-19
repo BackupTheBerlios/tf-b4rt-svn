@@ -18,18 +18,7 @@ $Id$
   - images for "default"-theme
 
 
-* docu
-
-  - common docu : README, FEATURES, ...
-
-  - fluxd :
-    + common fluxd docu. (whats "fluxd" about)
-    + fluxd-modules and their purpose + usage.
-    + troubleshooting fluxd-problems.
-
 * infra
-
-  - new website for release of new codebase
 
   - forum-restructure (+ resort)
 
