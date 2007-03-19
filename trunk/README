@@ -201,7 +201,7 @@ Torrentflux-b4rt 1.0 README file
 		- Individual transfer windows can also use AJAX to update stats
 		  in real time.
 
-	o Templating ngine:
+	o Templating engine:
 
 		- The torrentflux-b4rt GUI is template driven using the vLib
 		  template engine:
