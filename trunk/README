@@ -121,7 +121,7 @@ Torrentflux-b4rt 1.0 README file
 			  news server downloads from nzb files with functionality
 			  for bandwidth throttling.
 
-	o Unified Transfer control:
+	o Unified transfer control:
 
 		- Perform stop/start/resume/kill/delete operations on individual
 		  transfers, all transfers or a selection of transfers
@@ -141,18 +141,17 @@ Torrentflux-b4rt 1.0 README file
 
 	o Uploading and injection of metafiles (.torrent, .wget, .nzb files):
 
-		- upload single or multiple metafiles from your local machine
+		- Upload single or multiple metafiles from your local machine
 		  to the web server
 
-		- upload metafiles directly to your web server from another
+		- Upload metafiles directly to your web server from another
 		  web server
 
-        - multiple operations in "fluxcli.php" allow inject and more
+        - Multiple operations in "fluxcli.php" allow inject and more
           from command-line (cron, etc.)
           eg.: "inject", "watch", "rss"
 
-	o fluxcli.php - essentially a complete command-line version of
-	  torrentflux-b4rt!
+	o fluxcli.php - a complete command-line version of torrentflux-b4rt:
 
 		- As mentioned, can perform all the tasks available in the
 		  torrentflux-b4rt frontend but from the commandline.  Makes it
@@ -166,7 +165,7 @@ Torrentflux-b4rt 1.0 README file
 
 		- Check up on the status of transfers directly from a Unix shell
 
-	o Fluxd - background perl daemon toperform scheduled tasks
+	o Fluxd - background perl daemon toperform scheduled tasks:
 
 		- Qmgr module handles queueing of transfers with per-user and
 		  global limits.  Add transfers to the queue and Qmgr will
@@ -177,7 +176,7 @@ Torrentflux-b4rt 1.0 README file
 		- watch a list of directories for new upload of torrent files
 		  and automatically start those torrents running
 
-	o Integrated Filemanager
+	o Integrated Filemanager:
 
 		- Support for a large number of additional third party
 		  utilities/functionality, including:
@@ -192,7 +191,7 @@ Torrentflux-b4rt 1.0 README file
 
 			* creation of torrent files directly in the browser
 
-	o Web: AJAX updates for maximum info with minimal bandwidth
+	o AJAX updates for maximum info with minimal bandwidth:
 
 		- Display of transfer lists can be easily configured to use AJAX
 		  to update transfer stats in real time.  This saves on
@@ -202,9 +201,9 @@ Torrentflux-b4rt 1.0 README file
 		- Individual transfer windows can also use AJAX to update stats
 		  in real time.
 
-	o Web: Templating Engine
+	o Templating ngine:
 
-		- the torrentflux-b4rt GUI is template driven using the vLib
+		- The torrentflux-b4rt GUI is template driven using the vLib
 		  template engine:
 
 			http://vlib.clausvb.de/vlibtemplate.php
