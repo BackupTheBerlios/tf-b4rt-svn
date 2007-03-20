@@ -717,7 +717,7 @@ class FluxCLI
 			case 'BOOL':
 				$val = strtolower($val);
 				if (($val != 'true') && ($val != 'false')) {
-					$this->_outputError("completion must be true or false: ".$val."\n");
+					$this->_outputError("value for ".$key." must be true or false: ".$val."\n");
 					return false;
 				}
 				break;
