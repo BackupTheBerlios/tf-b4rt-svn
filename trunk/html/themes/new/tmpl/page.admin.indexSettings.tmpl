@@ -358,6 +358,21 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Show Seeding Torrents</strong><br>
+								Specify if we show seeding torrents on the index page
+								</td>
+								<td valign="top">
+									<select name="index_show_seeding">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="index_show_seeding" value="0">
+											selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Estimated Time to Seed</strong><br>
 									Display the estimated time until your seeding reaches the cutoff you set :
 								</td>
