@@ -100,12 +100,20 @@ switch ($op) {
 		exit();
 
 //******************************************************************************
+// resetSettingsUser -- reset (-> delete) per user settings
+//******************************************************************************
+	case "resetSettingsUser":
+		deleteUserSettings($cfg["uid"]);
+		AuditAction($cfg["constants"]["admin"], "deleted per user settings for ".$cfg["user"]);
+		@header( "location: index.php?iid=profile" );
+		exit();
+
+//******************************************************************************
 // updateSettingsUser -- update per user settings
 //******************************************************************************
 	case "updateSettingsUser":
-		// TODO
-		//$settings = processSettingsParams(true,true);
-		//saveUserSettings($cfg["uid"],$settings);
+		$settings = processSettingsParams(true, true);
+		saveUserSettings($cfg["uid"], $settings);
 		AuditAction($cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
 		@header( "location: index.php?iid=profile" );
 		exit();
@@ -386,6 +394,15 @@ switch ($op) {
 		}
 		$tmpl->setloop('language_list', $language_list);
 		$tmpl->setvar('hideChecked', $hideChecked);
+		// settings
+		// set template-vars for webapp-settings
+		$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
+		$tmpl->setvar('servermon_update', $cfg["servermon_update"]);
+		$tmpl->setvar('transferHosts', $cfg["transferHosts"]);
+		$tmpl->setvar('transferStatsType', $cfg["transferStatsType"]);
+		$tmpl->setvar('transferStatsUpdate', $cfg["transferStatsUpdate"]);
+		// set template-vars for index-settings
+		tmplSetIndexPageFormVars();
 		break;
 }
 
