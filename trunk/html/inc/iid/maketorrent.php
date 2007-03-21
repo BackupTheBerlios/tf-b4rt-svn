@@ -32,6 +32,9 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
 // maketorrent
 require_once("inc/functions/functions.maketorrent.php");
 
@@ -52,8 +55,13 @@ if (!empty($path)) {
 	$torrent = cleanFileName(StripFolders($path).".torrent");
 	if ($torrent === false)
 		@error("Invalid torrent-name", "", "", array($path));
-	if (isValidPath($path) !== true)
-		@error("Invalid path", "", "", array($path));
+}
+
+// only valid dirs + entries with permission
+if (!((isValidPath($cfg["path"].$path)) &&
+	(hasPermission($path, $cfg["user"], 'w')))) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL MAKETORRENT: ".$cfg["user"]." tried to maketorrent with ".$path);
+	@error("Illegal maketorrent. Action has been logged.", "", "");
 }
 
 // check if there is a var sent for client, if not use default
