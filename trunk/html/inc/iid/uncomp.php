@@ -32,10 +32,13 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
 // is enabled ?
 if ($cfg["enable_rar"] != 1) {
-	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use rar");
-	@error("rar is disabled", "index.php?iid=index", "");
+	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use uncompress");
+	@error("uncompress is disabled. Action has been logged.", "", "");
 }
 
 // init template-instance
@@ -43,14 +46,30 @@ tmplInitializeInstance($cfg["theme"], "page.uncomp.tmpl");
 
 // process
 if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
-	$passwd = @ $_POST['passwd'];
+	$file = getRequestVar('file');
+	$dir = getRequestVar('dir');
+	// only valid dirs + entries with permission
+	$fileS = str_replace($cfg["path"], '', $file);
+	$dirS = str_replace($cfg["path"], '', $dir);
+	if (!((isValidPath($file)) &&
+		(isValidEntry(basename($file))) &&
+		(hasPermission($fileS, $cfg["user"], 'r')) &&
+		(hasPermission($dirS, $cfg["user"], 'w')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL UNCOMPRESS-ACCESS: ".$cfg["user"]." tried to uncompress ".$fileS." in ".$dirS);
+		@error("Illegal access. Action has been logged.", "", "");
+	}
+	//
+	$passwd = isset($_POST['passwd']) ? $_POST['passwd'] : "";
 	if ($passwd == "")
 		$passwd = "-";
-	$cmd = $cfg['bin_php']." bin/uncompress.php " .escapeshellarg($_POST['file']) ." ". escapeshellarg($_POST['dir']) ." ". escapeshellarg($_REQUEST['type']);
+	$cmd = $cfg['bin_php']." bin/uncompress.php";
+	$cmd .= " ".escapeshellarg($file);
+	$cmd .= " ".escapeshellarg($dir);
+	$cmd .= " ".escapeshellarg(getRequestVar('type'));
 	if (strcasecmp('rar', $_REQUEST['type']) == 0)
-		$cmd .= " ". $cfg['bin_unrar'];
+		$cmd .= " ".$cfg['bin_unrar'];
 	else if (strcasecmp('zip', $_REQUEST['type']) == 0)
-		$cmd .= " ". $cfg['bin_unzip'];
+		$cmd .= " ".$cfg['bin_unzip'];
 	$cmd .= " ".escapeshellarg($passwd);
 	// os-switch
 	switch ($cfg["_OS"]) {
@@ -72,15 +91,29 @@ if ((isset($_POST['exec'])) && ($_POST['exec'] == true)) {
 
 // set vars
 if ((isset($_REQUEST['file'])) && ($_REQUEST['file'] != "")) {
+	$file = getRequestVar('file');
+	$dir = getRequestVar('dir');
+	$file = str_replace($cfg["path"], '', $file);
+	$dir = str_replace($cfg["path"], '', $dir);
+	$targetFile = $cfg["path"].$file;
+	// only valid dirs + entries with permission
+	if (!((isValidPath($targetFile)) &&
+		(isValidEntry(basename($targetFile))) &&
+		(hasPermission($file, $cfg["user"], 'r')) &&
+		(hasPermission($dir, $cfg["user"], 'w')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL UNCOMPRESS-ACCESS: ".$cfg["user"]." tried to uncompress ".$file);
+		@error("Illegal access. Action has been logged.", "", "");
+	}
+	//
 	$tmpl->setvar('is_file', 1);
-	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$_REQUEST['file'])));
-	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$_REQUEST['dir'])));
+	$tmpl->setvar('url_file', str_replace('%2F', '/', urlencode($cfg["path"].$file)));
+	$tmpl->setvar('url_dir', str_replace('%2F', '/', urlencode($cfg["path"].$dir)));
 	$tmpl->setvar('type', $_REQUEST['type']);
 } else {
 	$tmpl->setvar('is_file', 0);
 }
 //
-tmplSetTitleBar('Uncompressing File', false);
+tmplSetTitleBar('Uncompress File', false);
 $tmpl->setvar('torrentFluxLink', getTorrentFluxLink());
 $tmpl->setvar('iid', $_REQUEST["iid"]);
 $tmpl->setvar('mainMenu', mainMenu($_REQUEST["iid"]));
