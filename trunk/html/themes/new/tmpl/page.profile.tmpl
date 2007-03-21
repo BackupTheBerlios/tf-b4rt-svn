@@ -75,9 +75,16 @@
 													</tmpl_if>
 													<tr>
 														<td align="center">
-															<br />[ <a href="dispatcher.php?action=cookieFlush&riid=profile">Delete "Auto-Login" Cookie</a> ]
+															<br />[ <a href="dispatcher.php?action=cookieFlush&riid=profile" onclick="return confirm('Delete Auto-Login-Cookie ?')">Delete "Auto-Login" Cookie</a> ]
 														</td>
 													</tr>
+													<tmpl_if name="enable_personal_settings" value="1">
+														<tr>
+															<td align="center">
+																<br />[ <a href="index.php?iid=profile&op=resetSettingsUser" onclick="return confirm('Reset Personal Settings ?')">Reset Personal Settings</a> ]
+															</td>
+														</tr>
+													</tmpl_if>
 												</table>
 											</td>
 										</tr>
@@ -148,23 +155,16 @@
 							</td>
 						</tr>
 						<!-- user-settings -->
-						<tr>
-							<td colspan="2" align="center" bgcolor="#94ABC0"><strong><tmpl_var name="user">'s Settings</strong></td>
-						</tr>
-						<tr><td colspan="2"><br></td></tr>
-						<tr>
-							<td colspan="2">
-								<form name="settingsForm" action="index.php?iid=profile&op=updateSettingsUser" method="post">
-									<table border="0" cellpadding="3" cellspacing="0" width="100%">
-										<tr>
-											<td align="center" colspan="2">
-												<input type="Submit" value="Update Settings">
-											</td>
-										</tr>
-									</table>
-								</form>
-							</td>
-						</tr>
+						<tmpl_if name="enable_personal_settings" value="1">
+							<tr>
+								<td colspan="2" align="center" bgcolor="#94ABC0"><strong>Personal Settings</strong></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<tmpl_include name="inc.personalSettingsForm.tmpl">
+								</td>
+							</tr>
+						</tmpl_if>
 					</table>
 				</td>
 			</tr>

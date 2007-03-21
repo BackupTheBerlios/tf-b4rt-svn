@@ -103,6 +103,11 @@ switch ($op) {
 // resetSettingsUser -- reset (-> delete) per user settings
 //******************************************************************************
 	case "resetSettingsUser":
+		// permission
+		if ($cfg["enable_personal_settings"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ACCESS DENIED: ".$cfg["user"]." tried to reset personal settings");
+			@error("Personal Settings are disabled. Action has been logged.", "", "");
+		}
 		deleteUserSettings($cfg["uid"]);
 		AuditAction($cfg["constants"]["admin"], "reset personal settings for ".$cfg["user"]);
 		@header( "location: index.php?iid=profile" );
@@ -112,6 +117,11 @@ switch ($op) {
 // updateSettingsUser -- update per user settings
 //******************************************************************************
 	case "updateSettingsUser":
+		// permission
+		if ($cfg["enable_personal_settings"] != 1) {
+			AuditAction($cfg["constants"]["error"], "ACCESS DENIED: ".$cfg["user"]." tried to reset personal settings");
+			@error("Personal Settings are disabled. Action has been logged.", "", "");
+		}
 		$settings = processSettingsParams(true, true);
 		saveUserSettings($cfg["uid"], $settings);
 		AuditAction($cfg["constants"]["admin"], "updated personal settings for ".$cfg["user"]);
@@ -395,14 +405,17 @@ switch ($op) {
 		$tmpl->setloop('language_list', $language_list);
 		$tmpl->setvar('hideChecked', $hideChecked);
 		// settings
-		// set template-vars for webapp-settings
-		$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
-		$tmpl->setvar('servermon_update', $cfg["servermon_update"]);
-		$tmpl->setvar('transferHosts', $cfg["transferHosts"]);
-		$tmpl->setvar('transferStatsType', $cfg["transferStatsType"]);
-		$tmpl->setvar('transferStatsUpdate', $cfg["transferStatsUpdate"]);
-		// set template-vars for index-settings
-		tmplSetIndexPageFormVars();
+		$tmpl->setvar('enable_personal_settings', $cfg["enable_personal_settings"]);
+		if ($cfg["enable_personal_settings"] == 1) {
+			// set template-vars for webapp-settings
+			$tmpl->setvar('drivespacebar', $cfg["drivespacebar"]);
+			$tmpl->setvar('servermon_update', $cfg["servermon_update"]);
+			$tmpl->setvar('transferHosts', $cfg["transferHosts"]);
+			$tmpl->setvar('transferStatsType', $cfg["transferStatsType"]);
+			$tmpl->setvar('transferStatsUpdate', $cfg["transferStatsUpdate"]);
+			// set template-vars for index-settings
+			tmplSetIndexPageFormVars();
+		}
 		break;
 }
 

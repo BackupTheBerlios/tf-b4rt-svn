@@ -51,6 +51,21 @@
 								</td>
 							</tr>
 							<tr>
+								<td align="left" width="350" valign="top"><strong>Enable Personal Settings</strong><br>
+								Enable to allow Users to change Personal Settings  :
+								</td>
+								<td valign="bottom">
+									<select name="enable_personal_settings">
+										<option value="1">true</option>
+										<option value="0"
+										<tmpl_if name="enable_personal_settings" value="0">
+											 selected
+										</tmpl_if>
+										>false</option>
+									</select>
+								</td>
+							</tr>
+							<tr>
 								<td align="left" width="350" valign="top"><strong>Display Bottom-Link</strong><br>
 								Display Link at bottom of pages :
 								</td>
@@ -67,7 +82,7 @@
 							</tr>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Drivespace-Bar Style</strong><br>
-								Select Style of Drivespace-Bar on index-Page :
+								Select Style of Drivespace-Bar :
 								</td>
 								<td valign="top">
 									<select name="drivespacebar">

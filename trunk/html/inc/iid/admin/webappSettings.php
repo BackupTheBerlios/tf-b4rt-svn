@@ -89,6 +89,7 @@ else
 	$link .= 'tf_standard_themes/images/';
 $link .= 'arrow.gif" width="9" height="9" title="clean template-cache" border="0"> clean template-cache</a>';
 $tmpl->setvar('SuperAdminLink_tmplCache', getSuperAdminLink('?m=35', $link));
+$tmpl->setvar('enable_personal_settings', $cfg["enable_personal_settings"]);
 $tmpl->setvar('enable_dereferrer', $cfg["enable_dereferrer"]);
 $tmpl->setvar('days_to_keep', $cfg["days_to_keep"]);
 $tmpl->setvar('minutes_to_keep', $cfg["minutes_to_keep"]);

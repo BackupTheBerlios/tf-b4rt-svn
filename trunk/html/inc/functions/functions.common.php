@@ -649,8 +649,6 @@ function saveSettings($dbTable, $settings) {
  * @param $settings settings-array
  */
 function saveUserSettings($uid, $settings) {
-	if (!isset($uid))
-		return false;
 	global $cfg;
 	// Messy - a not exists would prob work better. but would have to be done
 	// on every key/value pair so lots of extra-statements.
@@ -681,8 +679,6 @@ function saveUserSettings($uid, $settings) {
  * @return boolean
  */
 function insertUserSettingPair($uid, $key, $value) {
-	if (!isset($uid))
-		return false;
 	global $cfg, $db;
 	$insert_value = $value;
 	if (is_array($value)) {
@@ -707,8 +703,6 @@ function insertUserSettingPair($uid, $key, $value) {
  * @param $uid uid of the user
  */
 function deleteUserSettings($uid) {
-	if (!isset($uid))
-		return false;
 	global $cfg, $db;
 	// delete from db
 	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
@@ -742,8 +736,6 @@ function deleteAllUserSettings() {
  * @return boolean
  */
 function loadUserSettingsToConfig($uid) {
-	if (!isset($uid))
-		return false;
 	global $cfg, $db;
 	// get user-settings from db and set in global cfg-array
 	$sql = "SELECT tf_key, tf_value FROM tf_settings_user WHERE uid = '".$uid."'";

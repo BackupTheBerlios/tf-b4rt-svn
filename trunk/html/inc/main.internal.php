@@ -165,7 +165,9 @@ if (!(cacheIsSet($currentUser))) {
 		$cfg["language_file"] = $cfg["default_language"];
 
 	// load per user settings
-	loadUserSettingsToConfig($cfg["uid"]);
+	// activated ?
+	if ($cfg["enable_personal_settings"] == 1)
+		loadUserSettingsToConfig($cfg["uid"]);
 
 	// theme
 	require_once("themes/".$cfg["theme"]."/index.php");
