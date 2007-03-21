@@ -33,7 +33,10 @@ function getDataFromFile($file) {
         while (!@feof($fileHandle))
             $data .= @fgets($fileHandle, 4096);
         @fclose($fileHandle);
-    }
+	} else {
+		$data = "Could not open file: $file";
+	}
+
     return $data;
 }
 

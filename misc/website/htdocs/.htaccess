@@ -5,6 +5,7 @@ RewriteCond !^usage [NC]
 RewriteRule ^index\.html$ /index.php?s=index
 RewriteRule ^home\.html$ /index.php?s=home
 RewriteRule ^features\.html$ /index.php?s=features
+RewriteRule ^requirements\.html$ /index.php?s=requirements
 RewriteRule ^news\.html$ /index.php?s=news
 RewriteRule ^about\.html$ /index.php?s=about
 RewriteRule ^changelog\.html$ /index.php?s=changelog
@@ -14,6 +15,7 @@ RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
 RewriteRule ^fixes$ https://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
 RewriteRule ^downloads$ https://developer.berlios.de/project/showfiles.php?group_id=7000 [R]
 RewriteRule ^current$ https://tf-b4rt.berlios.de/forum/index.php/topic,392.0.html [R]
-RewriteRule ^tfb$ https://tf-b4rt.berlios.de/forum/index.php/topic,435.0.html [R]
+RewriteRule ^(tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12135 [R]
 RewriteRule ^transmission$ https://tf-b4rt.berlios.de/forum/index.php/topic,90.0.html [R]
 RewriteRule ^wsvn-website$ https://svn.berlios.de/wsvn/tf-b4rt/misc/website/htdocs/index.php?op=file&rev=0&sc=0 [R]
+RewriteRule ^README$ https://svn.berlios.de/wsvn/tf-b4rt/trunk/README?op=file&rev=0&sc=0 [R]
