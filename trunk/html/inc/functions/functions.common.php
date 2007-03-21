@@ -721,6 +721,21 @@ function deleteUserSettings($uid) {
 }
 
 /*
+ * Function to delete all saved user Settings
+ */
+function deleteAllUserSettings() {
+	global $cfg, $db;
+	// delete from db
+	$sql = "DELETE FROM tf_settings_user";
+	$db->Execute($sql);
+	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush();
+	// return
+	return true;
+}
+
+/*
  * Function to load the settings for a user to global cfg-array
  *
  * @param $uid uid of the user

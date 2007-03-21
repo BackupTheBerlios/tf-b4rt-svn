@@ -35,14 +35,14 @@ function sa_transfers($action = "") {
 
 		case "0": // Transfers-main
 			$htmlTitle = "Transfers";
-			$htmlMain .= '<br>';
+			$htmlMain .= '<br><div align="left">';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=1"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Stop All Transfers" border="0"> Stop All Transfers</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=2"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Start All Transfers" border="0"> Start All Transfers</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=3"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Resume All Transfers" border="0"> Resume All Transfers</a>';
-			$htmlMain .= '<br><br>';
+			$htmlMain .= '</div><br><br>';
 			break;
 
 		case "1": // Transfers-Stop
@@ -587,6 +587,10 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<strong>xfer-stats</strong><br>';
 			$htmlMain .= 'use this to reset the xfer-stats.<br>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?m=52"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="xfer-stats" border="0"> xfer-stats-reset</a>';
+			$htmlMain .= '<p>';
+			$htmlMain .= '<strong>personal-settings</strong><br>';
+			$htmlMain .= 'use this to reset the personal settings of all users.<br>';
+			$htmlMain .= '<a href="' . _FILE_THIS . '?m=53"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="personal-settings" border="0"> personal-settings-reset</a>';
 			$htmlMain .= '<br><br>';
 			break;
 
@@ -606,6 +610,17 @@ function sa_maintenance($action = "") {
 			$htmlMain .= '<br>';
 			$htmlMain .= 'Reset of xfer-stats';
 			$result = resetXferStats();
+			$htmlMain .= ($result === true)
+				? ' <font color="green">done</font>'
+				: '<br><font color="red">Error :</font><br>'.$result;
+			$htmlMain .= '<br><br>';
+			break;
+
+		case "53": // Maintenance : Reset - personal-settings
+			$htmlTitle = "Maintenance - Reset - personal-settings";
+			$htmlMain .= '<br>';
+			$htmlMain .= 'Reset of personal-settings';
+			$result = deleteAllUserSettings();
 			$htmlMain .= ($result === true)
 				? ' <font color="green">done</font>'
 				: '<br><font color="red">Error :</font><br>'.$result;
@@ -1653,7 +1668,7 @@ function buildPage($action) {
 		default:
 			$htmlTitle = "SuperAdmin";
 			$statusImage = "black.gif";
-			$htmlMain = '<br>';
+			$htmlMain = '<br><div align="left">';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?t=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Transfers" border="0"> Transfers</a>';
 			$htmlMain .= '<p>';
@@ -1668,7 +1683,7 @@ function buildPage($action) {
 			$htmlMain .= '<a href="' . _FILE_THIS . '?y=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="Misc" border="0"> Misc</a>';
 			$htmlMain .= '<p>';
 			$htmlMain .= '<a href="' . _FILE_THIS . '?z=0"><img src="themes/'.$cfg["theme"].'/images/arrow.gif" width="9" height="9" title="tf-b4rt" border="0"> tf-b4rt</a>';
-			$htmlMain .= '<br><br>';
+			$htmlMain .= '</div><br><br>';
 			break;
 	}
 }

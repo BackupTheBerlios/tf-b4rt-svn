@@ -2,23 +2,8 @@
 $Id$
 ================================================================================
 
-
-* code
-
-  - personal (per-user) settings : currently not available.
-    (includes + depends on templates)
-
-  - enhance all upgrade.php-scripts (like setup.php).
-
-
 * themes
 
-  - template-files for "default"-theme
+  - template-files for final "default"-theme
 
-  - images for "default"-theme
-
-
-* infra
-
-  - forum-restructure (+ resort)
-
+  - images for final "default"-theme
