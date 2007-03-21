@@ -31,6 +31,8 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 // common functions
 require_once('inc/functions/functions.common.php');
+
+// dir functions
 require_once('inc/functions/functions.dir.php');
 
 // is enabled ?
@@ -44,30 +46,59 @@ tmplInitializeInstance($cfg["theme"], "page.rename.tmpl");
 
 // process move and set vars
 if ((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
+	$file = UrlHTMLSlashesDecode($_REQUEST['file']);
+	$dir = UrlHTMLSlashesDecode($_REQUEST['dir']);
+	$sourceDir = $cfg["path"].$dir;
+	// only valid dirs + entries with permission
+	if (!((isValidPath($sourceDir)) &&
+		(isValidPath($sourceDir.$file)) &&
+		(isValidEntry($file)) &&
+		(hasPermission($dir, $cfg["user"], 'w')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL RENAME: ".$cfg["user"]." tried to rename ".$file." in ".$dir);
+		@error("Illegal rename. Action has been logged.", "", "");
+	}
+	// template
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('file', UrlHTMLSlashesDecode($_REQUEST['file']));
-	$tmpl->setvar('dir', UrlHTMLSlashesDecode($_REQUEST['dir']));
+	$tmpl->setvar('file', $file);
+	$tmpl->setvar('dir', $dir);
 	$tmpl->setvar('_REN_FILE', $cfg['_REN_FILE']);
 	$tmpl->setvar('_REN_STRING', $cfg['_REN_STRING']);
 } else {
-	$tmpl->setvar('is_start', 0);
-	$targetDir=$cfg["path"].$_POST['dir'].$_POST['fileTo'];
+	$file = getRequestVar('fileFrom');
+	$fileTo = getRequestVar('fileTo');
+	$dir = getRequestVar('dir');
+	$sourceDir = $cfg["path"].$dir;
+	$targetDir = $cfg["path"].$dir.$fileTo;
 	// Add slashes if magic_quotes off:
-	if (get_magic_quotes_gpc() !== 1)
-		$targetDir=addslashes($targetDir);
+	if (get_magic_quotes_gpc() !== 1) {
+		$targetDir = addslashes($targetDir);
+		$sourceDir = addslashes($sourceDir);
+	}
+	// only valid dirs + entries with permission
+	if (!((isValidPath($sourceDir)) &&
+		(isValidPath($sourceDir.$file)) &&
+		(isValidPath($targetDir)) &&
+		(isValidEntry($file)) &&
+		(isValidEntry($fileTo)) &&
+		(hasPermission($dir, $cfg["user"], 'w')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL RENAME: ".$cfg["user"]." tried to rename ".$file." in ".$dir." to ".$fileTo);
+		@error("Illegal rename. Action has been logged.", "", "");
+	}
 	// Use single quote to escape mv args:
-	$cmd = "mv '".$cfg["path"].$_POST['dir'].$_POST['fileFrom']."' '".$targetDir."'";
+	$cmd = "mv '".$sourceDir.$file."' '".$targetDir."'";
     $cmd .= ' 2>&1';
     $handle = popen($cmd, 'r' );
     $gotError = -1;
     $buff = fgets($handle);
     $gotError = $gotError + 1;
     pclose($handle);
+    // template
+    $tmpl->setvar('is_start', 0);
     $tmpl->setvar('messages', nl2br($buff));
     if ($gotError <= 0) {
 		$tmpl->setvar('no_error', 1);
-		$tmpl->setvar('fileFrom', $_POST['fileFrom']);
-		$tmpl->setvar('fileTo', $_POST['fileTo']);
+		$tmpl->setvar('fileFrom', $file);
+		$tmpl->setvar('fileTo', $fileTo);
 		$tmpl->setvar('_REN_DONE', $cfg['_REN_DONE']);
 	} else {
 		$tmpl->setvar('no_error', 0);
