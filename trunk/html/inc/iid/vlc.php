@@ -41,7 +41,7 @@ require_once('inc/functions/functions.dir.php');
 // is enabled ?
 if ($cfg["enable_vlc"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use vlc");
-	@error("vlc is disabled", "", "");
+	@error("vlc is disabled. Action has been logged.", "", "");
 }
 
 // init template-instance

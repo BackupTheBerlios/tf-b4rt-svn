@@ -31,20 +31,26 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 
 // common functions
 require_once('inc/functions/functions.common.php');
+
+// dir functions
 require_once('inc/functions/functions.dir.php');
 
 // is enabled ?
 if ($cfg["enable_view_nfo"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use nfo-viewer");
-	@error("nfo-viewer is disabled", "index.php?iid=index", "");
+	@error("nfo-viewer is disabled. Action has been logged.", "", "");
 }
 
-// target-file
+// target
 $file = UrlHTMLSlashesDecode(getRequestVar("path"));
-$fileIsValid = (isValidPath($file, ".nfo") || isValidPath($file, ".txt") || isValidPath($file, ".log"));
-if (!$fileIsValid) {
-	AuditAction($cfg["constants"]["error"], "INVALID NFO: ".$cfg["user"]." tried to access ".$file);
-	@error("Invalid nfo", "index.php?iid=index", "", array($file));
+$path = $cfg["path"].$file;
+
+// only valid dirs + entries with permission
+if (!((isValidPath($path, ".nfo") || isValidPath($path, ".txt") || isValidPath($path, ".log")) &&
+	(isValidEntry($file)) &&
+	(hasPermission($file, $cfg["user"], 'r')))) {
+	AuditAction($cfg["constants"]["error"], "ILLEGAL NFO-ACCESS: ".$cfg["user"]." tried to view ".$file);
+	@error("Illegal access. Action has been logged.", "", "");
 }
 
 // init template-instance
@@ -54,13 +60,13 @@ tmplInitializeInstance($cfg["theme"], "page.viewnfo.tmpl");
 $tmpl->setvar('file', $file);
 $folder = htmlspecialchars(substr($file, 0, strrpos($file, "/" )));
 $tmpl->setvar('folder', $folder);
-if ($fileHandle = @fopen($cfg["path"].$file,'r')) {
+if ($fileHandle = @fopen($path,'r')) {
 	$output = "";
 	while (!@feof($fileHandle))
 		$output .= @fgets($fileHandle, 4096);
 	@fclose ($fileHandle);
 } else {
-	$output = "Error opening NFO File: ".$cfg["path"].$file;
+	$output = "Error opening NFO File: ".$file;
 }
 if ((empty($_REQUEST["dos"]) && empty($_REQUEST["win"])) || !empty($_REQUEST["dos"]))
 	$tmpl->setvar('output', htmlentities($output, ENT_COMPAT, "cp866"));
