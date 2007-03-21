@@ -22,8 +22,8 @@
 
 // defines
 define('_FILE_CHANGELOG','changelog-torrentflux_2.1-b4rt.txt');
-define('_FILE_VERSION_CURRENT','version.txt');
-define('_FILE_ISSUES','issues.txt');
+define('_FILE_VERSION_CURRENT','version-torrentflux_2.1-b4rt.txt');
+define('_FILE_ISSUES','issues-torrentflux_2.1-b4rt.txt');
 define('_UPDATE_BASEDIR','update_old');
 //
 define('_FILE_NEWS','newshtml.txt');
