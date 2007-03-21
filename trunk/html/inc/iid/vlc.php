@@ -32,6 +32,12 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // vlc class
 require_once('inc/classes/Vlc.php');
 
+// common functions
+require_once('inc/functions/functions.common.php');
+
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
 // is enabled ?
 if ($cfg["enable_vlc"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use vlc");
@@ -82,10 +88,12 @@ switch ($pageop) {
 		$dirName = urldecode($_REQUEST['dir']);
 		$fileName = urldecode(stripslashes($_REQUEST['file']));
 		$targetFile = $dirName.$fileName;
-		// check target
-		if (isValidPath($targetFile) !== true) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-FILE: ".$cfg["user"]." tried to access ".$targetFile);
-			@error("Invalid File", "", "", array($targetFile));
+		// only valid dirs + entries with permission
+		if (!((isValidPath($targetFile)) &&
+			(isValidEntry(basename($targetFile))) &&
+			(hasPermission($targetFile, $cfg["user"], 'r')))) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-ACCESS: ".$cfg["user"]." tried to view ".$fileName." in ".$dirName);
+			@error("Illegal access. Action has been logged.", "", "");
 		}
 		// set vars
 		$tmpl->setvar('file', $fileName);
@@ -108,15 +116,17 @@ switch ($pageop) {
 	case "start":
 		// get vars
 		$fileName = urldecode(stripslashes($_REQUEST['file']));
-		$targetFile = $cfg["path"].urldecode(stripslashes($_POST['target']));
+		$targetFile = urldecode(stripslashes($_POST['target']));
 		$target_vidc = $_POST['vidc'];
 		$target_vbit = $_POST['vbit'];
 		$target_audc = $_POST['audc'];
 		$target_abit = $_POST['abit'];
-		// check target
-		if (isValidPath($targetFile) !== true) {
-			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-FILE: ".$cfg["user"]." tried to access ".$targetFile);
-			@error("Invalid File", "", "", array($targetFile));
+		// only valid dirs + entries with permission
+		if (!((isValidPath($targetFile)) &&
+			(isValidEntry(basename($targetFile))) &&
+			(hasPermission($targetFile, $cfg["user"], 'r')))) {
+			AuditAction($cfg["constants"]["error"], "ILLEGAL VLC-ACCESS: ".$cfg["user"]." tried to view ".$fileName." in ".$dirName);
+			@error("Illegal access. Action has been logged.", "", "");
 		}
 		// set template vars
 		$tmpl->setvar('file', $fileName);
@@ -127,7 +137,7 @@ switch ($pageop) {
 		$tmpl->setvar('addr', Vlc::getAddr());
 		$tmpl->setvar('port', Vlc::getPort());
 		// start vlc
-		Vlc::start($targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
+		Vlc::start($cfg["path"].$targetFile, $target_vidc, $target_vbit, $target_audc, $target_abit);
 		break;
 	case "stop":
 		// stop vlc
