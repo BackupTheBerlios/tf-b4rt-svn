@@ -75,7 +75,7 @@
 													</tmpl_if>
 													<tr>
 														<td align="center">
-															<br />[ <a href="dispatcher.php?action=cookieFlush&riid=profile" onclick="return confirm('Delete Cookie ?')">Delete "Auto-Login" Cookie</a> ]
+															<br />[ <a href="dispatcher.php?action=cookieFlush&riid=profile" onclick="return confirm('Delete Auto-Login-Cookie ?')">Delete "Auto-Login" Cookie</a> ]
 														</td>
 													</tr>
 													<tr>
@@ -154,7 +154,7 @@
 						</tr>
 						<!-- user-settings -->
 						<tr>
-							<td colspan="2" align="center" bgcolor="#94ABC0"><strong><tmpl_var name="user">'s Settings</strong></td>
+							<td colspan="2" align="center" bgcolor="#94ABC0"><strong>Personal Settings</strong></td>
 						</tr>
 						<tr><td colspan="2"><br></td></tr>
 						<tr>
@@ -274,18 +274,6 @@
 											</td>
 											<td valign="bottom">
 												<input name="ui_dim_main_w" type="Text" maxlength="5" value="<tmpl_var name="ui_dim_main_w">" size="5">
-											</td>
-										</tr>
-										<tr>
-											<td align="left" width="350" valign="top"><strong>Default Torrent Search Engine</strong><br>
-												Select the default search engine for torrent searches:
-											</td>
-											<td valign="top">
-												<select name="searchEngine" <tmpl_if name="autoSubmit">onchange="this.form.submit();"</tmpl_if> STYLE="width: 125px">
-												<tmpl_loop name="Engine_List">
-													<option <tmpl_if name="selected">selected</tmpl_if>><tmpl_var name="Engine"></option>
-												</tmpl_loop>
-												</select>
 											</td>
 										</tr>
 										<tr>

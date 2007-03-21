@@ -104,7 +104,7 @@ switch ($op) {
 //******************************************************************************
 	case "resetSettingsUser":
 		deleteUserSettings($cfg["uid"]);
-		AuditAction($cfg["constants"]["admin"], "deleted per user settings for ".$cfg["user"]);
+		AuditAction($cfg["constants"]["admin"], "reset personal settings for ".$cfg["user"]);
 		@header( "location: index.php?iid=profile" );
 		exit();
 
@@ -114,7 +114,7 @@ switch ($op) {
 	case "updateSettingsUser":
 		$settings = processSettingsParams(true, true);
 		saveUserSettings($cfg["uid"], $settings);
-		AuditAction($cfg["constants"]["admin"], "updated per user settings for ".$cfg["user"]);
+		AuditAction($cfg["constants"]["admin"], "updated personal settings for ".$cfg["user"]);
 		@header( "location: index.php?iid=profile" );
 		exit();
 

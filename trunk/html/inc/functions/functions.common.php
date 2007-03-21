@@ -657,9 +657,15 @@ function saveUserSettings($uid, $settings) {
 	deleteUserSettings($uid);
 	// load global settings + overwrite per-user settings
 	loadSettings('tf_settings');
+	// config
+	require_once('inc/config/config.profile.php');
 	// insert new settings
-	foreach ($settings as $key => $value)
-		insertUserSettingPair($uid, $key, $value);
+	foreach ($settings as $key => $value) {
+		if (in_array($key, $cfg['validUserSettingsKeys']))
+			insertUserSettingPair($uid, $key, $value);
+		else
+			AuditAction($cfg["constants"]["error"], "ILLEGAL SETTING: ".$cfg["user"]." tried to insert ".$value." for key ".$key);
+	}
 	// flush session-cache
 	cacheFlush($cfg["user"]);
 	// return
@@ -686,8 +692,6 @@ function insertUserSettingPair($uid, $key, $value) {
 		if ($cfg[$key] == $value)
 			return true;
 	}
-	// TODO: sec-check for invalid settings
-	//
 	$sql = "INSERT INTO tf_settings_user VALUES ('".$uid."', '".$key."', '".$insert_value."')";
 	$result = $db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
@@ -705,12 +709,13 @@ function insertUserSettingPair($uid, $key, $value) {
 function deleteUserSettings($uid) {
 	if (!isset($uid))
 		return false;
-	global $db;
-	// flush session-cache
-	cacheFlush($cfg["user"]);
+	global $cfg, $db;
+	// delete from db
 	$sql = "DELETE FROM tf_settings_user WHERE uid = '".$uid."'";
 	$db->Execute($sql);
 	if ($db->ErrorNo() != 0) dbError($sql);
+	// flush session-cache
+	cacheFlush($cfg["user"]);
 	// return
 	return true;
 }
