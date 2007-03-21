@@ -32,10 +32,13 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
 // is enabled ?
 if ($cfg["enable_move"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use move");
-	@error("move is disabled", "index.php?iid=index", "");
+	@error("move is disabled. Action has been logged.", "", "");
 }
 
 // init template-instance
@@ -43,8 +46,19 @@ tmplInitializeInstance($cfg["theme"], "page.move.tmpl");
 
 // set vars
 if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
+	$path = stripslashes($_REQUEST['path']);
+	$dir = getRequestVar('path');
+	$source = $cfg["path"].$dir;
+	// only valid paths + entries with permission
+	if (!((isValidPath($source)) &&
+		(isValidEntry(basename($source))) &&
+		(hasPermission($dir, $cfg["user"], 'w')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL MOVE: ".$cfg["user"]." tried to move ".$dir);
+		@error("Illegal move. Action has been logged.", "", "");
+	}
+	//
 	$tmpl->setvar('is_start', 1);
-	$tmpl->setvar('path', stripslashes($_REQUEST['path']));
+	$tmpl->setvar('path', $path);
 	$tmpl->setvar('_MOVE_STRING', $cfg['_MOVE_STRING']);
 	$tmpl->setvar('_MOVE_FILE', $cfg['_MOVE_FILE']);
 	if ((isset($cfg["move_paths"])) && (strlen($cfg["move_paths"]) > 0)) {
@@ -61,27 +75,31 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		$tmpl->setvar('move_start', 0);
 	}
 } else {
-	$tmpl->setvar('is_start', 0);
+	$file = $_POST['file'];
 	$targetDir = "";
 	if (isset($_POST['dest'])) {
 		 $tempDir = trim(rawurldecode($_POST['dest']));
-		 if (strlen($tempDir) > 0)
+		 if (strlen($tempDir) > 0) {
 			$targetDir = $tempDir;
+		 } else {
+			if (isset($_POST['selector']))
+				$targetDir = trim(urldecode($_POST['selector']));
+		 }
 	}
-
+	// only valid dirs + entries with permission
+	if (!((isValidPath($cfg["path"].$file)) &&
+		(isValidPath($targetDir)) &&
+		(isValidEntry(basename($cfg["path"].$file))) &&
+		(hasPermission($file, $cfg["user"], 'w')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL MOVE: ".$cfg["user"]." tried to move ".$file." to ".$targetDir);
+		@error("Illegal move. Action has been logged.", "", "");
+	}
+	// we need absolute paths or stuff will end up in docroot
+	// inform user .. dont move it into a fallback-dir which may be a hastle
 	$dirValid = true;
-	if (isset($_POST['selector'])){
-		$targetDir = trim(urldecode($_POST['selector'])).$targetDir;
-		if(!isValidPath($targetDir)){
-			$dirValid = false;
-		}
-	}
-
 	if (strlen($targetDir) <= 0) {
 		 $dirValid = false;
 	} else {
-		// we need absolute paths or stuff will end up in docroot
-		// inform user .. dont move it into a fallback-dir which may be a hastle
 		if ($targetDir{0} != '/') {
 			$tmpl->setvar('not_absolute', 1);
 			$dirValid = false;
@@ -89,6 +107,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 			$tmpl->setvar('not_absolute', 0);
 		}
 	}
+	$tmpl->setvar('is_start', 0);
 	$tmpl->setvar('targetDir', $targetDir);
 	// check dir
 	if (($dirValid) && (checkDirectory($targetDir, 0777))) {
@@ -98,7 +117,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		if (get_magic_quotes_gpc() !== 1)
 			$targetDir = addslashes($targetDir);
 		// Use single quote to escape mv args:
-		$cmd = "mv '".$cfg["path"].$_POST['file']."' '".$targetDir."'";
+		$cmd = "mv '".$cfg["path"].$file."' '".$targetDir."'";
 		$cmd .= ' 2>&1';
 		$handle = popen($cmd, 'r');
 		// get the output and print it.
@@ -112,7 +131,7 @@ if((isset($_REQUEST['start'])) && ($_REQUEST['start'] == true)) {
 		pclose($handle);
 		if ($gotError <= 0) {
 			$tmpl->setvar('got_no_error', 1);
-			$tmpl->setvar('file', $_POST['file']);
+			$tmpl->setvar('file', $file);
 		} else {
 			$tmpl->setvar('got_no_error', 0);
 		}

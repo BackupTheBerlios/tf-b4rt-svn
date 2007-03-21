@@ -38,7 +38,7 @@ require_once('inc/functions/functions.dir.php');
 // is enabled ?
 if ($cfg["enable_rename"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use rename");
-	@error("rename is disabled", "index.php?iid=index", "");
+	@error("rename is disabled. Action has been logged.", "", "");
 }
 
 // init template-instance
