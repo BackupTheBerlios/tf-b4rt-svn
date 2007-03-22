@@ -452,7 +452,7 @@ function printPageAbout() {
 		$authors_html="<ul>\n$authors_html</ul>\n";
 	}
 ?>
-		<h1 id="about-authors">Torrentflux-b4rt Authors</h1>
+		<h1 id="about-authors-title">Torrentflux-b4rt Authors</h1>
 		<div id="about-authors">
 			<p>
 				The Torrentflux-b4rt codebase author list is as follows:
@@ -466,7 +466,7 @@ function printPageAbout() {
 			</p>
 		</div>
 
-		<h1 id="about-history">Torrentflux-b4rt History</h1>
+		<h1 id="about-history-title">Torrentflux-b4rt History</h1>
 		<div id="about-history">
 			<p>
 				<a href="https://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94: Admin-Settings" target="_blank">
@@ -488,12 +488,13 @@ function printPageAbout() {
 			</ol>
 			<p>
 				Pretty soon installing additional hacks became overwhelming because every time you added a new hack, the base system would be changed to such an extent that following any instructions for installing further hacks became just unfeasible. With this in mind, torrentflux-b4rt was an attempt to sidestep the complicated mess of adding hacks and modifications to the base torrentflux system in a random way, as well as allowing users more choice in which BitTorrent clients they used with torrentflux.
+			</p>
 			<p>
 				The first incarnation of torrentflux-b4rt was a branch from the original torrentflux codebase to include as many of the best user submitted hacks as possible and integration of other torrent clients other than torrentflux's default bittornado.  Importantly though, torrentflux-b4rt included administration settings to control most of the added modifications, something that few or none of the original hacks ever did.  With this it became a lot simpler, more secure and efficient to run a number of hacks together.
 			</p>
 		</div>
 
-		<h1 id="about-current">Current Work On Torrentflux-b4rt</h1>
+		<h1 id="about-current-title">Current Work On Torrentflux-b4rt</h1>
 		<div id="about-current">
 			<p>
 				Around the start of 2007, the torrentflux-b4rt codebase was almost completely rewritten to address a number of issues:
