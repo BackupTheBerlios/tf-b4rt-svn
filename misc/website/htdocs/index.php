@@ -453,7 +453,7 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="history">Torrentflux-b4rt History</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: profile" target="_blank">
+			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: profile" target="_blank">
 				<img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: profile" align="right" class="img_right" />
 			</a>
 		</p>
