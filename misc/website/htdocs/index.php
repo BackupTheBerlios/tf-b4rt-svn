@@ -23,8 +23,8 @@ error_reporting(E_ALL);
 
 /* defines */
 define('_FILE_NEWS', 'newshtml.txt');
-define('_FILE_VERSION_OLD', 'version.txt');
-define('_FILE_VERSION_NEW', 'version-torrentflux-b4rt.txt');
+define('_FILE_VERSION_OLD', 'version-torrentflux_2.1-b4rt.txt');
+define('_FILE_VERSION_NEW', 'version.txt');
 define('_FILE_CHANGELOG', 'CHANGES');
 define('_AUTHOR_FILE_URL', 'AUTHORS');
 

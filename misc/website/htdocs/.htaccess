@@ -42,6 +42,9 @@ RewriteRule ^install$ https://tf-b4rt.berlios.de/INSTALL [R]
 # readme
 RewriteRule ^readme.txt$ https://tf-b4rt.berlios.de/README [R]
 RewriteRule ^readme$ https://tf-b4rt.berlios.de/README [R]
+# support
+RewriteRule ^support.txt$ https://tf-b4rt.berlios.de/SUPPORT [R]
+RewriteRule ^support$ https://tf-b4rt.berlios.de/SUPPORT [R]
 # todo
 RewriteRule ^todo.txt$ https://tf-b4rt.berlios.de/TODO [R]
 RewriteRule ^todo$ https://tf-b4rt.berlios.de/TODO [R]
