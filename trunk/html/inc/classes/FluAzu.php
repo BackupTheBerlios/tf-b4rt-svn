@@ -366,6 +366,7 @@ class FluAzu
             $loopCtr = 0;
             $started = false;
             while ($loop) {
+            	@clearstatcache();
             	if (file_exists($this->_pathStatFile)) {
             		$started = true;
             		$loop = false;
@@ -408,7 +409,8 @@ class FluAzu
             // check if fluazu still running
             $maxLoops = 125;
             $loopCtr = 0;
-            while (1) {
+            for (;;) {
+            	@clearstatcache();
             	if ($this->instance_isRunning()) {
 	            	$loopCtr++;
 	            	if ($loopCtr > $maxLoops)
@@ -566,7 +568,7 @@ class FluAzu
      * @return boolean
      */
     function instance_transferExists($transfer) {
-    	return is_file($this->_pathTransfers.$transfer);
+    	return file_exists($this->_pathTransfers.$transfer);
     }
 
     /**

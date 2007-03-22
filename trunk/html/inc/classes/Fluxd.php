@@ -342,6 +342,7 @@ class Fluxd
             $loopCtr = 0;
             $started = false;
             while ($loop) {
+            	@clearstatcache();
             	if ($this->_isRunning()) {
             		$started = true;
             		$loop = false;
@@ -384,7 +385,8 @@ class Fluxd
             // check if fluxd still running
             $maxLoops = 125;
             $loopCtr = 0;
-            while (1) {
+            for (;;) {
+            	@clearstatcache();
             	if ($this->_isRunning()) {
 	            	$loopCtr++;
 	            	if ($loopCtr > $maxLoops)

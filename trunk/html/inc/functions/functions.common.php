@@ -1503,7 +1503,8 @@ function stopTransferSettings($transfer) {
 function waitForTransfer($transfer, $state, $maxWait = 15) {
 	$maxLoops = $maxWait * 5;
 	$loopCtr = 0;
-	while (1) {
+	for (;;) {
+		@clearstatcache();
 		if (isTransferRunning($transfer) === $state) {
 			return true;
 		} else {
