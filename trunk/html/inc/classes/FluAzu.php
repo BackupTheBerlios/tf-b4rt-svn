@@ -548,6 +548,7 @@ class FluAzu
             	} else {
             		// give fluazu another second before returning
             		sleep(1);
+            		// return
             		return true;
             	}
             }
