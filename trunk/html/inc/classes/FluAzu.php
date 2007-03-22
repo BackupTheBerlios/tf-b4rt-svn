@@ -495,9 +495,13 @@ class FluAzu
      * @return boolean
      */
     function instance_sendCommands() {
-    	return (($this->state == FLUAZU_STATE_RUNNING) && (!empty($this->_commands)))
-    		? $this->_writeCommandFile(implode("\n", $this->_commands)."\n")
-    		: false;
+    	if (($this->state == FLUAZU_STATE_RUNNING) && (!empty($this->_commands))) {
+    		$content = implode("\n", $this->_commands)."\n";
+    		$this->_commands = array();
+    		return $this->_writeCommandFile($content);
+    	} else {
+    		return false;
+    	}
     }
 
     /**

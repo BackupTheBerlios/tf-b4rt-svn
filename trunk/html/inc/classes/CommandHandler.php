@@ -201,6 +201,9 @@ class CommandHandler
             AuditAction($cfg["constants"]["error"], "CommandHandler _writeCommandFile-Error : ".$msg);
 			return false;
 		}
+    	// unset
+    	unset($this->_commands[$transfer]);
+    	// return
 		return true;
     }
 
