@@ -528,8 +528,27 @@ class FluAzu
 			}
 			// send reload-command
 			$this->instance_addCommand('r', true);
-			// return
-			return true;
+			// wait until file is gone (fluazu has processed the request)
+            $maxLoops = 75;
+            $loopCtr = 0;
+            for (;;) {
+            	@clearstatcache();
+            	if ($this->instance_transferExists($transfer)) {
+	            	$loopCtr++;
+	            	if ($loopCtr > $maxLoops) {
+						$msg = "fluazu did not delete transfer ".$transfer." after ".($maxLoops / 5)." seconds, giving up";
+						array_push($this->messages , $msg);
+						AuditAction($cfg["constants"]["error"], "FluAzu instance_delTransfer-Error : ".$msg);
+	            		return false;
+	            	} else {
+	            		usleep(200000); // wait for 0.2 seconds
+	            	}
+            	} else {
+            		// give fluazu another second before returning
+            		sleep(1);
+            		return true;
+            	}
+            }
         } else {
         	$msg = "fluazu not running, cannot delete transfer ".$transfer;
         	AuditAction($cfg["constants"]["admin"], $msg);
