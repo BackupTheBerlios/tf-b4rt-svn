@@ -434,6 +434,16 @@ function printPageNews() {
  * prints page "about"
  */
 function printPageAbout() {
+?>
+	<div class="subcontent">
+		<h1 id="contact">Contact Details</h1>
+		<p>
+			Please use <a href="/forum" title="Torrentflux-b4rt Forum">the Torrent-flux forum</a> for any support related queries.<br/>
+			For all other <strong>non-support</strong> related queries:<br/>
+		</p>
+		<ul><li><a href="mailto:tfb4rt@gmail.com" title="Contact Email Address For Torrentflux-b4rt">tfb4rt@gmail.com</a></li></ul>
+	</div>
+<?php
 		$authors = getAuthors();
 		if (strlen($authors) > 0) {
 			?>
