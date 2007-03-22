@@ -2,6 +2,7 @@
 RewriteEngine On
 RewriteBase /
 RewriteCond !^usage [NC]
+# pages
 RewriteRule ^index\.html$ /index.php?s=index
 RewriteRule ^home\.html$ /index.php?s=home
 RewriteRule ^features\.html$ /index.php?s=features
@@ -9,13 +10,38 @@ RewriteRule ^requirements\.html$ /index.php?s=requirements
 RewriteRule ^news\.html$ /index.php?s=news
 RewriteRule ^about\.html$ /index.php?s=about
 RewriteRule ^changelog\.html$ /index.php?s=changelog
-RewriteRule ^version$ https://tf-b4rt.berlios.de/version.txt [R]
-RewriteRule ^changelog$ https://tf-b4rt.berlios.de/changelog.txt [R]
-RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
-RewriteRule ^fixes$ https://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
-RewriteRule ^downloads$ https://developer.berlios.de/project/showfiles.php?group_id=7000 [R]
-RewriteRule ^current$ https://tf-b4rt.berlios.de/forum/index.php/topic,392.0.html [R]
-RewriteRule ^(tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12135 [R]
-RewriteRule ^transmission$ https://tf-b4rt.berlios.de/forum/index.php/topic,90.0.html [R]
+# wsvn-website
 RewriteRule ^wsvn-website$ https://svn.berlios.de/wsvn/tf-b4rt/misc/website/htdocs/index.php?op=file&rev=0&sc=0 [R]
-RewriteRule ^README$ https://svn.berlios.de/wsvn/tf-b4rt/trunk/README?op=file&rev=0&sc=0 [R]
+# version
+RewriteRule ^version$ https://tf-b4rt.berlios.de/version.txt [R]
+# faq
+RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
+# fixes
+RewriteRule ^fixes$ https://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
+# downloads / current
+RewriteRule ^downloads$ https://developer.berlios.de/project/showfiles.php?group_id=7000 [R]
+RewriteRule ^(current|tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12135 [R]
+# exported text-res
+# authors
+RewriteRule ^authors.txt$ https://tf-b4rt.berlios.de/AUTHORS [R]
+RewriteRule ^authors$ https://tf-b4rt.berlios.de/AUTHORS [R]
+# changes
+RewriteRule ^changelog.txt$ https://tf-b4rt.berlios.de/CHANGES [R]
+RewriteRule ^changelog$ https://tf-b4rt.berlios.de/CHANGES [R]
+RewriteRule ^changes.txt$ https://tf-b4rt.berlios.de/CHANGES [R]
+RewriteRule ^changes$ https://tf-b4rt.berlios.de/CHANGES [R]
+# faq
+RewriteRule ^faq.txt$ https://tf-b4rt.berlios.de/FAQ [R]
+RewriteRule ^faq$ https://tf-b4rt.berlios.de/FAQ [R]
+# features
+RewriteRule ^features.txt$ https://tf-b4rt.berlios.de/FEATURES [R]
+RewriteRule ^features$ https://tf-b4rt.berlios.de/FEATURES [R]
+# install
+RewriteRule ^install.txt$ https://tf-b4rt.berlios.de/INSTALL [R]
+RewriteRule ^install$ https://tf-b4rt.berlios.de/INSTALL [R]
+# readme
+RewriteRule ^readme.txt$ https://tf-b4rt.berlios.de/README [R]
+RewriteRule ^readme$ https://tf-b4rt.berlios.de/README [R]
+# todo
+RewriteRule ^todo.txt$ https://tf-b4rt.berlios.de/TODO [R]
+RewriteRule ^todo$ https://tf-b4rt.berlios.de/TODO [R]
