@@ -313,30 +313,27 @@ function printPageFeatures() {
 
 	<div class="subcontent">
 		<h2 id="xfer_control"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Unified transfer control</h2>
-		<a href="" title="Torrentflux-b4rt Multi-Ops" target="_blank"><img src="" width="" height="" border="0" alt="Torrentflux-b4rt Multi-Ops Screenshot" align="right" class="img_right" /></a>
 		<br clear="all"/>
 		Torrentflux-b4rt allows you to control all your transfers in one place easily:<br/><br/>
 		<ul>
 			<li>Perform stop/start/resume/kill/delete operations on individual transfers, all transfers or a selection of transfers</li>
-			<li>Changes Settings of running transfers on the fly - down/up rates, what ratio to stop seeding at, how many connections to use at same time, ...</li>
+			<li>Changes Settings of running transfers on the fly - down/up rates, what ratio to stop seeding at, how many connections to use at same time, etc <a href="images/screenshots/1.0-alpha7/transferSettings_runtime.png" target="_blank" title="Torrentflux-b4rt Dynamic Settings Update Screenshot">(screenshot)</a></li>
 		</ul>
 	</div>
 
 	<div class="subcontent">
 		<h2 id="xfer_stats"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Transfer statistics and logging</h2>
-		<a href="" title="Transfer Stats" target="_blank"><img src="" width="" height="" border="0" alt="Transfer Stats Screenshot" align="right" class="img_right" /></a>
 		<br clear="all"/>
 		View detailed Transfer statistics and information, including:<br/><br/>
 		<ul>
 				<li>per transfer error logging for easy troubleshooting</li>
 				<li>upload/download totals for each user, by day/month/year</li>
-				<li>number of seeders/leechers for a torrent in a graphical display</li>
+				<li>number of seeders/leechers/etc for a torrent in a graphical display <a href="images/screenshots/1.0-alpha7/transferStats_torrent.png" target="_blank" title="Torrentflux-b4rt Transfer Stats Screenshot">(screenshot)</a></li>
 		</ul>
 	</div>
 
 	<div class="subcontent">
 		<h2 id="metafiles"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Uploading and injection of metafiles (.torrent, .wget, .nzb files)</h2>
-		<a href="" title="Upload metafiles" target="_blank"><img src="" width="" height="" border="0" alt="Upload metafiles Screenshot" align="right" class="img_right" /></a>
 		<br clear="all"/>
 		Upload torrent/wget/nzb files one at a time or all at once:<br/><br/>
 		<ul>
@@ -358,11 +355,8 @@ function printPageFeatures() {
 
 	<div class="subcontent">
 		<h2 id="fluxd"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Fluxd - background perl daemon to perform scheduled tasks</h2>
-		<a href="" title="Fluxd: Qmgr" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: Qmgr Screenshot" align="right" class="img_right" /></a>
-		<a href="" title="Fluxd: RSS Downloader" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: RSS Downloader Screenshot" align="right" class="img_right" /></a>
-		<a href="" title="Fluxd: Watch directories" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: Watch directories Screenshot" align="right" class="img_right" /></a>
 		<br clear="all"/>
-		Fluxd is a powerful backend daemon that can run 24/7 to control various aspects of your file transfers:<br/><br/>
+		Fluxd is a powerful backend daemon that can run 24/7 to control various aspects of your file transfers <a href="images/screenshots/1.0-alpha7/admin_fluxdSettings.png" target="_blank" title="Torrentflux-b4rt Fluxd Screenshot">(screenshot)</a>:<br/><br/>
 		<ul>
 			<li>Qmgr module handles queueing of transfers with per-user and global limits.  Add transfers to the queue and Qmgr will automatically start one transfer after another finishes.</li>
 			<li>Automate fetching of torrent files from RSS feeds</li>
@@ -372,16 +366,14 @@ function printPageFeatures() {
 
 	<div class="subcontent">
 		<h2 id="filemanager"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Integrated Filemanager</h2>
-		<a href="" title="File Manager: Archive Extraction" target="_blank"><img src="" width="" height="" border="0" alt="File Manager: Archive Extraction Screenshot" align="right" class="img_right" /></a>
-		<a href="" title="File Manager: VLC Streaming" target="_blank"><img src="" width="" height="" border="0" alt="File Manager: VLC Streaming Screenshot" align="right" class="img_right" /></a>
 		<br clear="all"/>
-		Support for a large number of additional third party utilities/functionality, including:<br/><br/>
+		Support for a large number of additional third party utilities/functionality <a href="images/screenshots/1.0-alpha7/admin_dirSettings.png" target="_blank" title="Torrentflux-b4rt Dir Settings Screenshot">(screenshot)</a> <a href="images/screenshots/1.0-alpha7/dir.png" target="_blank" title="Torrentflux-b4rt File Manager Screenshot">(screenshot)</a>, including:<br/><br/>
 		<ul>
 				<li>archive file extraction from the browser (zip/rar)</li>
-				<li>vlc streaming controllable from browser</li>
+				<li>vlc streaming controllable from browser <a href="images/screenshots/1.0-alpha7/vlc.png" target="_blank" title="Torrentflux-b4rt VLC Streaming Screenshot">(screenshot)</a></li>
 				<li>download of completed transfers directly from browser</li>
+				<li>creation of torrent files directly in the browser <a href="images/screenshots/1.0-alpha7/maketorrent.png" target="_blank" title="Torrentflux-b4rt Torrent Creation Screenshot">(screenshot)</a></li>
 				<li>reading of .nfo files directly in the browser</li>
-				<li>creation of torrent files directly in the browser</li>
 		</ul>
 	</div>
 
