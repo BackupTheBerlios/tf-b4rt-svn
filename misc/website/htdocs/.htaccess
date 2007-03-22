@@ -7,6 +7,7 @@ RewriteRule ^index\.html$ /index.php?s=index
 RewriteRule ^home\.html$ /index.php?s=home
 RewriteRule ^features\.html$ /index.php?s=features
 RewriteRule ^requirements\.html$ /index.php?s=requirements
+RewriteRule ^screenshots\.html$ /index.php?s=screenshots
 RewriteRule ^news\.html$ /index.php?s=news
 RewriteRule ^about\.html$ /index.php?s=about
 RewriteRule ^changelog\.html$ /index.php?s=changelog

@@ -40,7 +40,7 @@ $css = "default";
 // To change css sheet, call URL with vbl 'css=new' for the new sheet, setting will
 // be kept for the current browser session.  To change back, use 'css=default'.
 cssSwitcher();
-function cssSwitcher(){
+function cssSwitcher() {
 	global $css;
 
 	// valid css sheets:
@@ -70,6 +70,7 @@ $pages = array(
 	"news"			=> "News and Updates",
 	"about"			=> "Authors, History and Contributers",
 	"changelog"		=> "Changelog",
+	"screenshots"	=> "Screenshots",
 	"index"			=> $defaultTitle,
 	"home"			=> $defaultTitle,
 	"default"		=> $defaultTitle
@@ -78,7 +79,6 @@ $pages = array(
 // init page-var
 if ( isset($_REQUEST["s"]) && !empty($_REQUEST["s"])){
 	$page = $_REQUEST["s"];
-
 	// Check we have the requested page:
 	if(!array_key_exists($page, $pages)){
 		$page="home";
@@ -135,10 +135,10 @@ function printPageHead($page) {
 			<li><a href="home.html" title="Home">Home</a></li>
 			<li><a href="features.html" title="Features">Features</a></li>
 			<li><a href="requirements.html" title="Requirements">Requirements</a></li>
+			<li><a href="screenshots.html" title="Screenshots">Screenshots</a></li>
 			<li><a href="about.html" title="About">About</a></li>
 			<li><a href="news.html" title="News">News</a></li>
 			<li><a href="downloads" title="Downloads">Downloads</a></li>
-			<li><a href="faq" title="Faq">Faq</a></li>
 			<li><a href="forum" title="Forum">Forum</a></li>
 		</ul>
 	</div>
@@ -503,6 +503,17 @@ function printPageChangelog() {
 ?>
 		<h1 id="changelog">Changelog</h1>
 		<pre class="changelog"><?php echo trim(getDataFromFile(_FILE_CHANGELOG)); ?></pre>
+<?php
+}
+
+/**
+ * prints page "screenshots"
+ */
+function printPageScreenshots() {
+?>
+		<h1 id="screenshots">Screenshots</h1>
+		<h2 id="screenshots - 1.0 alpha7">1.0 alpha7</h2>
+		<?php echo getScreenshotList('images/screenshots/1.0-alpha7/'); ?>
 <?php
 }
 

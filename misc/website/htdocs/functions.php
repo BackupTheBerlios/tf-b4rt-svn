@@ -188,4 +188,47 @@ function getAuthors() {
 	return $authors_html;
 }
 
+/**
+ * get list of screenshots
+ *
+ * @param $string path
+ * @return string screenshot
+ */
+function getScreenshotList($path) {
+	$basepath = dirname(__FILE__).'/';
+	$spath = $basepath.$path;
+	// images
+	$images = array();
+	if ((@is_dir($spath)) && ($dirHandle = @opendir($spath))) {
+		while (false !== ($file = @readdir($dirHandle))) {
+			if ((strlen($file) > 4) && (substr($file, -4) == ".png")) {
+				$images[$file] = array(
+					'file' => $file,
+					'path' => $path.$file
+				);
+			}
+		}
+		@closedir($dirHandle);
+	}
+	// content
+	$retVal = "";
+	if (count($images) > 1) {
+		ksort($images);
+		$image_list = "";
+		foreach ($images as $image) {
+			$image_list .= "<li>";
+			$image_list .= "<a href=\"".$image['path']."\" target=\"_blank\"";
+			$image_list .= " onMouseOver=\"status='Open ".$image['file']."'; return true;\"";
+			$image_list .= " onMouseOut=\"status=''; return true;\"";
+			$image_list .= " onclick=\"return showPicture('".$image['path']."');\">";
+			$image_list .= $image['file']."</a>";
+			$image_list .= "</li>\n";
+		}
+		if (strlen($image_list) > 0)
+			$retVal = "<ul>\n".$image_list."</ul>\n";
+	}
+	// return
+	return $retVal;
+}
+
 ?>
