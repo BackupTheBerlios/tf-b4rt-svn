@@ -219,25 +219,28 @@ function printPageRequirements() {
 		<h1 id="requirements">Requirements</h1>
 <div id="req-content">
 		<ul>
-			<li>A Unix like OS (Win32 not supported) - current tested OSs include:</li>
+			<li>A Unix like OS (Win32 not supported) - current tested OSs include:
 				<ul>
 					<li>Linux: Debian, Ubuntu, Gentoo, RedHat, Fedora, NSLU2, ClarkConnect - amongst others!</li>
 					<li>BSD: FreeBSD, OpenBSD, NetBSD</li>
 					<li>Apple: Mac OS X</li>
 				</ul>
+			</li>
 
-			<li>A Web Server - any Unix like webserver that supports PHP should work.  Current supported/tested:</li>
+			<li>A Web Server - any Unix like webserver that supports PHP should work.  Current supported/tested:
 				<ul>
 					<li><a href="http://httpd.apache.org" title="Apache HTTP Server" target="_blank">Apache</a></li>
 					<li><a href="http://www.lighttpd.net" title="LightTPD" target="_blank">LightTPD</a></li>
 				</ul>
+			</li>
 
-			<li>An SQL-Database - current supported db types are:</li>
+			<li>An SQL-Database - current supported db types are:
 				<ul>
 					<li><a href="http://www.mysql.com" title="MySQL" target="_blank">MySQL</a></li>
 					<li><a href="http://www.sqlite.org" title="SQLite" target="_blank">SQLite</a></li>
 					<li><a href="http://www.postgresql.org" title="PostgreSQL" target="_blank">PostgreSQL</a></li>
 				</ul>
+			</li>
 
 			<li><a href="http://www.php.net" title="PHP" target="_blank">PHP</a> 4.3.x or higher.</li>
 			<li><a href="http://www.python.org" title="Python" target="_blank">Python</a> 2.2 or higher.</li>
