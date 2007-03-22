@@ -288,24 +288,24 @@ function printPageFeatures() {
 			<li>
 				BitTorrent - supported client(s) include:
 				<ul>
-					<li><a href="http://www.bittorrent.com/" title="Open BitTorrent.com site in new window" target="_blank">Original BitTorrent/Mainline</a><br/>&mdash; supports trackerless torrents and encryption</li>
-					<li><a href="http://www.bittornado.com/" title="Open BitTornado site in new window" target="_blank">BitTornado</a><br/>&mdash; uses slightly less resources than the original BT, allows file priority for downloading files selectively</li>
-					<li><a href="http://transmission.m0k.org/" title="Open Transmission site in new window" target="_blank">Transmission</a><br/>&mdash; much smaller memory footprint without much loss in functionality</li>
-					<li><a href="http://azureus.sourceforge.net/" title="Open Azureus site in new window" target="_blank">Azureus</a><br/>&mdash; control a number of transfers from a single control process, tighter control on total max bandwidth for all torrents</li>
+					<li><a href="http://www.bittorrent.com/" title="Open BitTorrent.com site in new window" target="_blank">Original BitTorrent/Mainline</a><br/>&mdash; supports trackerless torrents and encryption <a href="images/screenshots/1.0-alpha7/transferControl_mainline.png" target="_blank" title="Torrentflux-b4rt BitTorrent Mainline Transfer Settings Screenshot">(screenshot)</a></li>
+					<li><a href="http://www.bittornado.com/" title="Open BitTornado site in new window" target="_blank">BitTornado</a><br/>&mdash; uses slightly less resources than the original BT, allows file priority for downloading files selectively <a href="images/screenshots/1.0-alpha7/transferControl_tornado.png" target="_blank" title="Torrentflux-b4rt BitTornado Transfer Control Screenshot">(screenshot)</a></li>
+					<li><a href="http://transmission.m0k.org/" title="Open Transmission site in new window" target="_blank">Transmission</a><br/>&mdash; much smaller memory footprint without much loss in functionality <a href="images/screenshots/1.0-alpha7/transferControl_transmission.png" target="_blank" title="Torrentflux-b4rt Transmission Transfer Settings Screenshot">(screenshot)</a></li>
+					<li><a href="http://azureus.sourceforge.net/" title="Open Azureus site in new window" target="_blank">Azureus</a><br/>&mdash; control a number of transfers from a single control process, tighter control on total max bandwidth for all torrents <a href="images/screenshots/1.0-alpha7/transferControl_azureus.png" target="_blank" title="Torrentflux-b4rt Azureus Transfer Settings Screenshot">(screenshot)</a></li>
 				</ul>
 			</li>
 
 			<li>
 				HTTP/FTP - supported client(s) include:
 				<ul>
-					<li><a href="http://www.gnu.org/software/wget/" title="Open wget site in new window" target="_blank">wget</a><br/>&mdash; standard lightweight file transfer utility on Linux, supported on many other platforms also</li>
+					<li><a href="http://www.gnu.org/software/wget/" title="Open wget site in new window" target="_blank">wget</a><br/>&mdash; standard lightweight file transfer utility on Linux, supported on many other platforms also <a href="images/screenshots/1.0-alpha7/transferControl_wget.png" target="_blank" title="Torrentflux-b4rt wget Transfer Control Screenshot">(screenshot)</a></li>
 				</ul>
 			</li>
 
 			<li>
 				Usenet - supported client(s) include:
 				<ul>
-					<li><a href="http://noisybox.net/computers/nzbperl/" title="Open nzbperl site in new window" target="_blank">nzbperl</a><br/>&mdash; perl based application allowing multi-connection news server downloads from nzb files with functionality for bandwidth throttling.</li>
+					<li><a href="http://noisybox.net/computers/nzbperl/" title="Open nzbperl site in new window" target="_blank">nzbperl</a><br/>&mdash; perl based application allowing multi-connection news server downloads from nzb files with functionality for bandwidth throttling <a href="images/screenshots/1.0-alpha7/transferControl_nzbperl.png" target="_blank" title="Torrentflux-b4rt nzbperl Screenshot">(screenshot)</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -438,7 +438,7 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="contact">Contact Details</h1>
 		<p>
-			Please use <a href="/forum" title="Torrentflux-b4rt Forum">the Torrent-flux forum</a> for any support related queries.<br/>
+			Please use <a href="/forum" title="Torrentflux-b4rt Forum">the torrentflux-b4rt forum</a> for any support related queries.<br/>
 			For all other <strong>non-support</strong> related queries:<br/>
 		</p>
 		<ul><li><script>printMailLink('tfb4rt[AT]gmail[DOT]com');</script></li></ul>
