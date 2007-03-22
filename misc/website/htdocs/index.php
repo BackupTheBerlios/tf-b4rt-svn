@@ -129,8 +129,7 @@ function printPageHead($page) {
 <div id="container">
 	<div id="header">
 		<p class="version">
-			<span class="versionspan">Current Version:</span>
-			<a href="/download-torrentflux-b4rt.html" title="1.0"><?php echo $versions['new']; ?></a>
+			<span class="versionspan"><a href="/download-torrentflux-b4rt.html" title="<?php echo $versions['new'];?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo $versions['new']; ?></a></span>
 		</p>
 	</div>
 	<div id="navi">
