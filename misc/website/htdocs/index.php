@@ -25,8 +25,8 @@ error_reporting(E_ALL);
 define('_FILE_NEWS', 'newshtml.txt');
 define('_FILE_VERSION_OLD', 'version.txt');
 define('_FILE_VERSION_NEW', 'version-torrentflux-b4rt.txt');
-define('_FILE_CHANGELOG', 'changelog-torrentflux_2.1-b4rt.txt');
-define('_AUTHOR_FILE_URL', "http://svn.berlios.de/svnroot/repos/tf-b4rt/trunk/AUTHORS");
+define('_FILE_CHANGELOG', 'CHANGES');
+define('_AUTHOR_FILE_URL', 'AUTHORS');
 
 /* global fields */
 $versions = array();
