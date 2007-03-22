@@ -190,7 +190,7 @@ function printPageHome() {
 ?>
 		<h1 id="home">Home</h1>
 		<p>
-			<a href="https://developer.berlios.de/dbimage.php?id=3023" title="torrentflux 2.1-b4rt-94: Index-Page" target="_blank"><img src="images/v94-index_mini.png" width="334px" height="165px" border="0" alt="torrentflux 2.1-b4rt-94: Index-Page" align="right" class="img_right" /></a>
+			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank"><img src="images/10a7_index_small.png" width="384px" height="280px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" /></a>
 		</p>
 		<p><strong>Torrentflux-b4rt</strong> is a web based transfer control client.  Torrentflux-b4rt allows you to control your internet downloads / transfers from anywhere using a highly configurable web based front end.
 		</p>
@@ -428,7 +428,7 @@ function printPageAbout() {
 			Please use <a href="/forum" title="Torrentflux-b4rt Forum">the torrentflux-b4rt forum</a> for any support related queries.<br/>
 			For all other <strong>non-support</strong> related queries:<br/>
 		</p>
-		<ul><li><script>printMailLink('tfb4rt[AT]gmail[DOT]com');</script></li></ul>
+		<ul><li><script>printMailLink('tfb4rt[AT]gmail[DOT]com');</script><noscript>tfb4rt[AT]gmail[DOT]com</noscript></li></ul>
 	</div>
 <?php
 		$authors = getAuthors();
@@ -453,8 +453,8 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="history">Torrentflux-b4rt History</h1>
 		<p>
-			<a href="https://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94: Admin-Settings" target="_blank">
-				<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94: Admin-Settings" align="right" class="img_right" />
+			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: profile" target="_blank">
+				<img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: profile" align="right" class="img_right" />
 			</a>
 		</p>
 		<p>
@@ -488,7 +488,7 @@ function printPageAbout() {
 			<li>Allow the frontend to be redesigned more easily.  <a href="/features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
 		</ul>
 		<p>
-			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing! 
+			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
 		</p>
 		<p>
 			<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
