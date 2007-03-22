@@ -127,7 +127,7 @@ function printPageHead($page) {
 <div id="container">
 	<div id="header">
 		<p class="version">
-			<span class="versionspan"><a href="/download-torrentflux-b4rt.html" title="<?php echo _VERSION; ?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo _VERSION; ?></a></span>
+			<span class="versionspan"><a href="/download-torrentflux-b4rt.html" title="Download Torrentflux-b4rt <?php echo _VERSION;?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo _VERSION; ?></a></span>
 		</p>
 	</div>
 	<div id="navi">
@@ -151,7 +151,7 @@ function printPageHead($page) {
  */
 function printPageFoot() {
 ?>
-		<div id="footersection" align="right"><a href="#header" title="goto top">top</a></div>
+		<div id="footer" align="right"><a href="#header" title="goto top">top</a></div>
 		<div id="credits">
 			<p>
 				<a href="https://developer.berlios.de/projects/tf-b4rt/" title="BerliOS Developer Project" target="_blank"><!-- whilst testing <img src="https://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo" /> --></a>
@@ -214,7 +214,7 @@ function printPageHome() {
 function printPageRequirements() {
 ?>
 		<h1 id="requirements">Requirements</h1>
-<div id="req-content">
+<div id="req">
 		<ul>
 			<li>A Unix like OS (Win32 not supported) - current tested OSs include:
 				<ul>
@@ -255,158 +255,154 @@ function printPageRequirements() {
 function printPageFeatures() {
 ?>
 
-	<h1 class="features">Features</h1>
-<p>
-	Some of the most popular features of torrentflux-b4rt are listed below.  This list is definitely NOT exhaustive, there are a massive number of features that can be configured via the torrentflux-b4rt admin panel!
-</p>
+	<h1 id="features">Features</h1>
+	<p>
+		Some of the most popular features of torrentflux-b4rt are listed below.  This list is definitely NOT exhaustive, there are a massive number of features that can be configured via the torrentflux-b4rt admin panel!
+	</p>
 
-<a name="toc"></a>
-<div class="feature-title">Feature List:</div>
-<div class="feature-content">
-	<a href="#protocols">Supports multiple internet transfer protocols </a><br/>
-	<a href="#xfer_control">Unified transfer control</a><br/>
-	<a href="#xfer_stats">Transfer statistics and logging</a><br/>
-	<a href="#metafiles">Uploading and injection of metafiles (.torrent, .wget, .nzb files)</a><br/>
-	<a href="#fluxcli">fluxcli.php - a complete command-line version of torrentflux-b4rt</a><br/>
-	<a href="#fluxd">Fluxd - background perl daemon toperform scheduled tasks</a><br/>
-	<a href="#filemanager">Integrated Filemanager AJAX updates for maximum info with minimal bandwidth</a><br/>
-	<a href="#ajax">AJAX updates for maximum info with minimal bandwidth</a><br/>
-	<a href="#templating">Templating engine</a><br/>
-</div>
-
-<a name="protocols"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Supports multiple internet transfer protocols</div>
-<div class="feature-content">
-	Torrentflux-b4rt supports other internet transfer protocols as well as just BitTorrent.  Integration of the various protocls is seamless, meaning you start, stop, restart transfers in the same manner regardless of the underlying transfer protocol.<br/>
+	<a name="toc"></a>
+	<p>
+	<strong>Feature List:</strong>
+	</p>
+	<div class="featurelist">
+		<ul>
+			<li><a href="#protocols">Supports multiple internet transfer protocols </a></li>
+			<li><a href="#xfer_control">Unified transfer control</a></li>
+			<li><a href="#xfer_stats">Transfer statistics and logging</a></li>
+			<li><a href="#metafiles">Uploading and injection of metafiles (.torrent, .wget, .nzb files)</a></li>
+			<li><a href="#fluxcli">fluxcli.php - a complete command-line version of torrentflux-b4rt</a></li>
+			<li><a href="#fluxd">Fluxd - background perl daemon toperform scheduled tasks</a></li>
+			<li><a href="#filemanager">Integrated Filemanager AJAX updates for maximum info with minimal bandwidth</a></li>
+			<li><a href="#ajax">AJAX updates for maximum info with minimal bandwidth</a></li>
+			<li><a href="#templating">Templating engine</a></li>
+		</ul>
+	</div>
 	<br/>
-	Supported protocols include:<br/><br/>
-	<ul>
-		<li>
-			BitTorrent - supported client(s) include:
-			<ul>
-				<li><a href="http://www.bittorrent.com/" title="Open BitTorrent.com site in new window" target="_blank">Original BitTorrent/Mainline</a><br/>&mdash; supports trackerless torrents and encryption</li>
-				<li><a href="http://www.bittornado.com/" title="Open BitTornado site in new window" target="_blank">BitTornado</a><br/>&mdash; uses slightly less resources than the original BT, allows file priority for downloading files selectively</li>
-				<li><a href="http://transmission.m0k.org/" title="Open Transmission site in new window" target="_blank">Transmission</a><br/>&mdash; much smaller memory footprint without much loss in functionality</li>
-				<li><a href="http://azureus.sourceforge.net/" title="Open Azureus site in new window" target="_blank">Azureus</a><br/>&mdash; control a number of transfers from a single control process, tighter control on total max bandwidth for all torrents</li>
-			</ul>
-		</li>
 
-		<li>
-			HTTP/FTP - supported client(s) include:
-			<ul>
-				<li><a href="http://www.gnu.org/software/wget/" title="Open wget site in new window" target="_blank">wget</a><br/>&mdash; standard lightweight file transfer utility on Linux, supported on many other platforms also</li>
-			</ul>
-		</li>
+	<div class="subcontent">
+		<h2 id="protocols"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Supports multiple internet transfer protocols</h2>
+		Torrentflux-b4rt supports other internet transfer protocols as well as just BitTorrent.  Integration of the various protocls is seamless, meaning you start, stop, restart transfers in the same manner regardless of the underlying transfer protocol.<br/>
+		<br/>
+		Supported protocols include:<br/><br/>
+		<ul class="subcontent">
+			<li>
+				BitTorrent - supported client(s) include:
+				<ul>
+					<li><a href="http://www.bittorrent.com/" title="Open BitTorrent.com site in new window" target="_blank">Original BitTorrent/Mainline</a><br/>&mdash; supports trackerless torrents and encryption</li>
+					<li><a href="http://www.bittornado.com/" title="Open BitTornado site in new window" target="_blank">BitTornado</a><br/>&mdash; uses slightly less resources than the original BT, allows file priority for downloading files selectively</li>
+					<li><a href="http://transmission.m0k.org/" title="Open Transmission site in new window" target="_blank">Transmission</a><br/>&mdash; much smaller memory footprint without much loss in functionality</li>
+					<li><a href="http://azureus.sourceforge.net/" title="Open Azureus site in new window" target="_blank">Azureus</a><br/>&mdash; control a number of transfers from a single control process, tighter control on total max bandwidth for all torrents</li>
+				</ul>
+			</li>
 
-		<li>
-			Usenet - supported client(s) include:
-			<ul>
-				<li><a href="http://noisybox.net/computers/nzbperl/" title="Open nzbperl site in new window" target="_blank">nzbperl</a><br/>&mdash; perl based application allowing multi-connection news server downloads from nzb files with functionality for bandwidth throttling.</li>
-			</ul>
-		</li>
-	</ul>
-</div>
+			<li>
+				HTTP/FTP - supported client(s) include:
+				<ul>
+					<li><a href="http://www.gnu.org/software/wget/" title="Open wget site in new window" target="_blank">wget</a><br/>&mdash; standard lightweight file transfer utility on Linux, supported on many other platforms also</li>
+				</ul>
+			</li>
 
-<a name="xfer_control"></a>
-<div class="feature-title">	<a href="#toc" title="Back To Feature List">^^</a>&nbsp;Unified transfer control</div>
-<div class="feature-content">
-	<a href="" title="Torrentflux-b4rt Multi-Ops" target="_blank"><img src="" width="" height="" border="0" alt="Torrentflux-b4rt Multi-Ops Screenshot" align="right" class="img_right" /></a>
-	<br clear="all"/>
-	Torrentflux-b4rt allows you to control all your transfers in one place easily:<br/><br/>
-	<ul>
-		<li>Perform stop/start/resume/kill/delete operations on individual transfers, all transfers or a selection of transfers</li>
-        <li>Changes Settings of running transfers on the fly - down/up rates, what ratio to stop seeding at, how many connections to use at same time, ...</li>
-	</ul>
-</div>
+			<li>
+				Usenet - supported client(s) include:
+				<ul>
+					<li><a href="http://noisybox.net/computers/nzbperl/" title="Open nzbperl site in new window" target="_blank">nzbperl</a><br/>&mdash; perl based application allowing multi-connection news server downloads from nzb files with functionality for bandwidth throttling.</li>
+				</ul>
+			</li>
+		</ul>
+	</div>
 
-<a name="xfer_stats"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Transfer statistics and logging</div>
-<div class="feature-content">
-	<a href="" title="Transfer Stats" target="_blank"><img src="" width="" height="" border="0" alt="Transfer Stats Screenshot" align="right" class="img_right" /></a>
-	<br clear="all"/>
-	View detailed Transfer statistics and information, including:<br/><br/>
-	<ul>
-			<li>per transfer error logging for easy troubleshooting</li>
-			<li>upload/download totals for each user, by day/month/year</li>
-			<li>number of seeders/leechers for a torrent in a graphical display</li>
-	</ul>
-</div>
+	<div class="subcontent">
+		<h2 id="xfer_control"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Unified transfer control</h2>
+		<a href="" title="Torrentflux-b4rt Multi-Ops" target="_blank"><img src="" width="" height="" border="0" alt="Torrentflux-b4rt Multi-Ops Screenshot" align="right" class="img_right" /></a>
+		<br clear="all"/>
+		Torrentflux-b4rt allows you to control all your transfers in one place easily:<br/><br/>
+		<ul>
+			<li>Perform stop/start/resume/kill/delete operations on individual transfers, all transfers or a selection of transfers</li>
+			<li>Changes Settings of running transfers on the fly - down/up rates, what ratio to stop seeding at, how many connections to use at same time, ...</li>
+		</ul>
+	</div>
 
-<a name="metafiles"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Uploading and injection of metafiles (.torrent, .wget, .nzb files)</div>
-<div class="feature-content">
-	<a href="" title="Upload metafiles" target="_blank"><img src="" width="" height="" border="0" alt="Upload metafiles Screenshot" align="right" class="img_right" /></a>
-	<br clear="all"/>
-	Upload torrent/wget/nzb files one at a time or all at once:<br/><br/>
-	<ul>
-		<li>Upload single or multiple metafiles from your local machine to the web server</li>
-		<li>Upload metafiles directly to your web server from another web server</li>
-        <li>Multiple operations in "fluxcli.php" allow inject and more from command-line (cron, etc.)<br/>ie: "inject", "watch", "rss"</li>
-	</ul>
-</div>
+	<div class="subcontent">
+		<h2 id="xfer_stats"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Transfer statistics and logging</h2>
+		<a href="" title="Transfer Stats" target="_blank"><img src="" width="" height="" border="0" alt="Transfer Stats Screenshot" align="right" class="img_right" /></a>
+		<br clear="all"/>
+		View detailed Transfer statistics and information, including:<br/><br/>
+		<ul>
+				<li>per transfer error logging for easy troubleshooting</li>
+				<li>upload/download totals for each user, by day/month/year</li>
+				<li>number of seeders/leechers for a torrent in a graphical display</li>
+		</ul>
+	</div>
 
-<a name="fluxcli"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;fluxcli.php - a complete command-line version of torrentflux-b4rt</div>
-<div class="feature-content">
-	fluxcli.php can perform all the tasks available in the torrentflux-b4rt frontend but from the commandline.  Makes it ideal for running scheduled tasks from a cron job:<br/><br/>
-	<ul>
-		<li>Schedule cron jobs to check RSS feeds on a regular basis and download them to a directory.</li>
-		<li>Schedule cron jobs to watch folders for new torrent files and then autostart/inject them</li>
-		<li>Check up on the status of transfers directly from a Unix shell</li>
-	</ul>
-</div>
+	<div class="subcontent">
+		<h2 id="metafiles"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Uploading and injection of metafiles (.torrent, .wget, .nzb files)</h2>
+		<a href="" title="Upload metafiles" target="_blank"><img src="" width="" height="" border="0" alt="Upload metafiles Screenshot" align="right" class="img_right" /></a>
+		<br clear="all"/>
+		Upload torrent/wget/nzb files one at a time or all at once:<br/><br/>
+		<ul>
+			<li>Upload single or multiple metafiles from your local machine to the web server</li>
+			<li>Upload metafiles directly to your web server from another web server</li>
+			<li>Multiple operations in "fluxcli.php" allow inject and more from command-line (cron, etc.)<br/>ie: "inject", "watch", "rss"</li>
+		</ul>
+	</div>
 
-<a name="fluxd"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Fluxd - background perl daemon to perform scheduled tasks</div>
-<div class="feature-content">
-	<a href="" title="Fluxd: Qmgr" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: Qmgr Screenshot" align="right" class="img_right" /></a>
-	<a href="" title="Fluxd: RSS Downloader" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: RSS Downloader Screenshot" align="right" class="img_right" /></a>
-	<a href="" title="Fluxd: Watch directories" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: Watch directories Screenshot" align="right" class="img_right" /></a>
-	<br clear="all"/>
-	Fluxd is a powerful backend daemon that can run 24/7 to control various aspects of your file transfers:<br/><br/>
-	<ul>
-		<li>Qmgr module handles queueing of transfers with per-user and global limits.  Add transfers to the queue and Qmgr will automatically start one transfer after another finishes.</li>
-		<li>Automate fetching of torrent files from RSS feeds</li>
-		<li>Watch a list of directories for new upload of torrent files and automatically start those torrents running</li>
-	</ul>
-</div>
+	<div class="subcontent">
+		<h2 id="fluxcli"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;fluxcli.php - a complete command-line version of torrentflux-b4rt</h2>
+		fluxcli.php can perform all the tasks available in the torrentflux-b4rt frontend but from the commandline.  Makes it ideal for running scheduled tasks from a cron job:<br/><br/>
+		<ul>
+			<li>Schedule cron jobs to check RSS feeds on a regular basis and download them to a directory.</li>
+			<li>Schedule cron jobs to watch folders for new torrent files and then autostart/inject them</li>
+			<li>Check up on the status of transfers directly from a Unix shell</li>
+		</ul>
+	</div>
 
-<a name="filemanager"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Integrated Filemanager</div>
-<div class="feature-content">
-	<a href="" title="File Manager: Archive Extraction" target="_blank"><img src="" width="" height="" border="0" alt="File Manager: Archive Extraction Screenshot" align="right" class="img_right" /></a>
-	<a href="" title="File Manager: VLC Streaming" target="_blank"><img src="" width="" height="" border="0" alt="File Manager: VLC Streaming Screenshot" align="right" class="img_right" /></a>
-	<br clear="all"/>
-	Support for a large number of additional third party utilities/functionality, including:<br/><br/>
-	<ul>
-			<li>archive file extraction from the browser (zip/rar)</li>
-			<li>vlc streaming controllable from browser</li>
-			<li>download of completed transfers directly from browser</li>
-			<li>reading of .nfo files directly in the browser</li>
-			<li>creation of torrent files directly in the browser</li>
-	</ul>
-</div>
+	<div class="subcontent">
+		<h2 id="fluxd"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Fluxd - background perl daemon to perform scheduled tasks</h2>
+		<a href="" title="Fluxd: Qmgr" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: Qmgr Screenshot" align="right" class="img_right" /></a>
+		<a href="" title="Fluxd: RSS Downloader" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: RSS Downloader Screenshot" align="right" class="img_right" /></a>
+		<a href="" title="Fluxd: Watch directories" target="_blank"><img src="" width="" height="" border="0" alt="Fluxd: Watch directories Screenshot" align="right" class="img_right" /></a>
+		<br clear="all"/>
+		Fluxd is a powerful backend daemon that can run 24/7 to control various aspects of your file transfers:<br/><br/>
+		<ul>
+			<li>Qmgr module handles queueing of transfers with per-user and global limits.  Add transfers to the queue and Qmgr will automatically start one transfer after another finishes.</li>
+			<li>Automate fetching of torrent files from RSS feeds</li>
+			<li>Watch a list of directories for new upload of torrent files and automatically start those torrents running</li>
+		</ul>
+	</div>
 
-<a name="ajax"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;AJAX updates for maximum info with minimal bandwidth</div>
-<div class="feature-content">
-	AJAX cuts down on the amount of bandwidth used to display data from the torrentflux-b4rt webserver and creates an experience similar to a 'standalone' application:<br/><br/>
-	<ul>
-		<li>Display of transfer lists can be easily configured to use AJAX to update transfer stats in real time.  This saves on bandwidth since only the transfer list needs to be sent across the network, not the whole web page.</li>
+	<div class="subcontent">
+		<h2 id="filemanager"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Integrated Filemanager</h2>
+		<a href="" title="File Manager: Archive Extraction" target="_blank"><img src="" width="" height="" border="0" alt="File Manager: Archive Extraction Screenshot" align="right" class="img_right" /></a>
+		<a href="" title="File Manager: VLC Streaming" target="_blank"><img src="" width="" height="" border="0" alt="File Manager: VLC Streaming Screenshot" align="right" class="img_right" /></a>
+		<br clear="all"/>
+		Support for a large number of additional third party utilities/functionality, including:<br/><br/>
+		<ul>
+				<li>archive file extraction from the browser (zip/rar)</li>
+				<li>vlc streaming controllable from browser</li>
+				<li>download of completed transfers directly from browser</li>
+				<li>reading of .nfo files directly in the browser</li>
+				<li>creation of torrent files directly in the browser</li>
+		</ul>
+	</div>
 
-		<li>Individual transfer windows can also use AJAX to update stats in real time.</li>
-	</ul>
-</div>
+	<div class="subcontent">
+		<h2 id="ajax"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;AJAX updates for maximum info with minimal bandwidth</h2>
+		AJAX cuts down on the amount of bandwidth used to display data from the torrentflux-b4rt webserver and creates an experience similar to a 'standalone' application:<br/><br/>
+		<ul>
+			<li>Display of transfer lists can be easily configured to use AJAX to update transfer stats in real time.  This saves on bandwidth since only the transfer list needs to be sent across the network, not the whole web page.</li>
 
-<a name="templating"></a>
-<div class="feature-title"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Templating Engine</div>
-<div class="feature-content">
-	Torrentflux-b4rt uses a flexible templating engine to allow development of the frontend look and feel:<br/><br/>
-	<ul>
-		<li>The torrentflux-b4rt GUI is template driven using <a href="http://vlib.clausvb.de/vlibtemplate.php" target="_blank">the vLib template engine</a>.  This allows developers to completely redesign the look and feel of torrentflux-b4rt without having to worry about the underlying PHP codebase.</li>
-		<li>Torrentflux-b4rt also incorporates template caching to speed up the load time of pages.  This feature can be enabled via the Administration control panel.</li>
-	</ul>
-</div>
+			<li>Individual transfer windows can also use AJAX to update stats in real time.</li>
+		</ul>
+	</div>
+
+	<div class="subcontent">
+		<h2 id="templating"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Templating Engine</h2>
+		Torrentflux-b4rt uses a flexible templating engine to allow development of the frontend look and feel:<br/><br/>
+		<ul>
+			<li>The torrentflux-b4rt GUI is template driven using <a href="http://vlib.clausvb.de/vlibtemplate.php" target="_blank">the vLib template engine</a>.  This allows developers to completely redesign the look and feel of torrentflux-b4rt without having to worry about the underlying PHP codebase.</li>
+			<li>Torrentflux-b4rt also incorporates template caching to speed up the load time of pages.  This feature can be enabled via the Administration control panel.</li>
+		</ul>
+	</div>
 <?php
 }
 
@@ -415,17 +411,22 @@ function printPageFeatures() {
  */
 function printPageNews() {
 ?>
+	<div class="subcontent">
 		<h1 id="news">News</h1>
 		<ul>
 			<?php echo(rewriteNews(trim(getDataFromFile(_FILE_NEWS)))); ?>
 		</ul>
 		<p>More detailed <a href="https://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="https://tf-b4rt.berlios.de/forum" title="Forum">Forum</a>.</p>
-		<h2 id="feeds">Feeds</h2>
+	</div>
+
+	<div class="subcontent">
+		<h1 id="feeds">Feeds</h1>
 		<ul>
 			<li>News (<a href="https://developer.berlios.de/export/rss_bsnews.php?group_id=7000" title="News - RSS 0.91">RSS 0.91</a>/<a href="https://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" title="News - RSS 2.0">RSS 2.0</a>)</li>
 			<li>Downloads (<a href="https://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" title="Downloads - RSS 0.91">RSS 0.91</a>/<a href="https://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" title="Downloads - RSS 2.0">RSS 2.0</a>)</li>
 			<li>Forum (<a href="https://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" title="Forum - RSS 0.92">RSS 0.92</a>)</li>
 		</ul>
+</div>
 <?php
 }
 
@@ -433,13 +434,11 @@ function printPageNews() {
  * prints page "about"
  */
 function printPageAbout() {
-?>
-	<?php
 		$authors = getAuthors();
 		if (strlen($authors) > 0) {
 			?>
-				<h1 id="about-authors-title">Torrentflux-b4rt Authors</h1>
-				<div id="about-authors">
+				<div class="subcontent">
+					<h1 id="authors">Torrentflux-b4rt Authors</h1>
 					<p>
 						Torrentflux-b4rt is written and maintained by:
 					</p>
@@ -454,9 +453,8 @@ function printPageAbout() {
 			<?php
 		}
 	?>
-
-	<h1 id="about-history-title">Torrentflux-b4rt History</h1>
-	<div id="about-history">
+	<div class="subcontent">
+		<h1 id="history">Torrentflux-b4rt History</h1>
 		<p>
 			<a href="https://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94: Admin-Settings" target="_blank">
 				<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94: Admin-Settings" align="right" class="img_right" />
@@ -483,8 +481,8 @@ function printPageAbout() {
 		</p>
 	</div>
 
-	<h1 id="about-current-title">Current Work On Torrentflux-b4rt</h1>
-	<div id="about-current">
+	<div class="subcontent">
+		<h1 id="currentwork">Current Work On Torrentflux-b4rt</h1>
 		<p>
 			Around the start of 2007, the torrentflux-b4rt codebase was almost completely rewritten to address a number of issues:
 		</p>
@@ -494,7 +492,7 @@ function printPageAbout() {
 			<li>Allow the frontend to be redesigned more easily.  <a href="/features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
 		</ul>
 		<p>
-			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
+			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing! 
 		</p>
 		<p>
 			<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
@@ -508,8 +506,10 @@ function printPageAbout() {
  */
 function printPageChangelog() {
 ?>
+	<div class="subcontent">
 		<h1 id="changelog">Changelog</h1>
 		<pre class="changelog"><?php echo trim(getDataFromFile(_FILE_CHANGELOG)); ?></pre>
+	</div>
 <?php
 }
 

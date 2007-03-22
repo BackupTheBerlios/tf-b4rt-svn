@@ -11,7 +11,7 @@ html, * {
 
 body {
 	/*background-color: #2f2f2e;*/
-	background-color: #336699;
+	background-color: #369;
 }
 
 /* Zentriert die Seite und sorgt fuer den weissen Hintergrund */
@@ -38,7 +38,7 @@ body {
 }
 
 .versionspan {
-	font-size: smaller;
+	font-size: larger;
 }
 
 .changelog {
@@ -115,15 +115,6 @@ body {
 	font-family: Georgia, "Times New Roman", Times, serif;
 }
 
-#content h2 {
-	font-size: medium;
-	color: #837b67;
-	margin-bottom: 1em;
-	font-weight: normal;
-	letter-spacing: -1px;
-	font-family: Georgia, "Times New Roman", Times, serif;
-}
-
 #content a {
 	text-decoration: none;
 	color: #506291;
@@ -137,7 +128,7 @@ body {
 #content p {
 	/* line-height: 1.8em; */
 	line-height: 1.8em;
-	margin: 0 2em 1.3em +20px;
+	margin: 0 2em 1.3em 20px;
 }
 
 #content ul, #content ol {
@@ -185,25 +176,16 @@ body {
 	color: #AF9D6E;
 }
 
-.feature-title, .req-title {
+.featurelist ul {
+	list-style: none;
+}
+
+div.feature, div.req {
+	margin-bottom: 5em;
+	margin-left: 20px;
+}
+
+.feature h2 {
 	font-weight: bold;
 	margin-bottom: 10px;
-}
-
-.feature-content, .req-content {
-	margin-bottom: 5em;
-	margin-left: +20px;
-}
-
-ul.feature-content {
-	margin: 0em 0em 2em 2em;
-}
-
-li.feature-content {
-	margin: 0em;
-	line-height: 1.3em;
-}
-
-#about-history, #about-current, #about-authors {
-	margin-bottom: 60px;
 }
