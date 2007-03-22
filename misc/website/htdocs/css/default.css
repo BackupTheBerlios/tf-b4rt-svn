@@ -150,3 +150,7 @@ a:hover {
 div.subcontent {
 	margin-bottom: 3em;
 }
+
+.featurelist ul {
+	list-style: square;
+}
