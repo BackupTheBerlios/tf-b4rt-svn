@@ -27,16 +27,20 @@
  * @return data
  */
 function getDataFromFile($file) {
-    // read content
+	// check for native php-function
+	if (function_exists('file_get_contents'))
+		return (file_exists($file))
+			? file_get_contents($file)
+			: "Could not open file: ".$file;
+    // read manual
     if ($fileHandle = @fopen($file,'r')) {
         $data = null;
         while (!@feof($fileHandle))
             $data .= @fgets($fileHandle, 4096);
         @fclose($fileHandle);
 	} else {
-		$data = "Could not open file: $file";
+		$data = "Could not open file: ".$file;
 	}
-
     return $data;
 }
 
@@ -104,10 +108,9 @@ function getFileListNEW($currentVersion, $remoteVersion) {
  */
 function logProxy() {
 	// ua
-	if ((isset($_SERVER['HTTP_USER_AGENT'])) && ($_SERVER['HTTP_USER_AGENT'] != ""))
-		$ua = addslashes($_SERVER['HTTP_USER_AGENT']);
-	else
-		$ua = "unknown";
+	$ua = ((isset($_SERVER['HTTP_USER_AGENT'])) && ($_SERVER['HTTP_USER_AGENT'] != ""))
+		? addslashes($_SERVER['HTTP_USER_AGENT'])
+		: "unknown";
 	// db
 	require_once('internal/dbconf.php');
 	$db = @mysql_connect($db_host, $db_user, $db_pass);
@@ -152,6 +155,37 @@ function rewriteNews($string) {
 	$retVal = eregi_replace("<div.*</div>", '', $retVal);
 	// return
 	return $retVal;
+}
+
+/**
+ * Fetch the list of authors from the current svn webserver AUTHORS file.
+ * Parse the list and create an HTML list with obfuscated (via javascript) links
+ * to each authors mail address
+ *
+ * @return string authors
+ */
+function getAuthors() {
+	$authors_html = "";
+	$authors = array_slice(preg_split("/\n\n/", getDataFromFile(_FILE_AUTHORS)), 2);
+	// $authors array size will be just one entry if the authors file couldn't be fetched for some reason:
+	if (count($authors) > 1) {
+		$authors_list = "";
+		foreach ($authors as $author) {
+			if (preg_match("/^\*\s(.*)\s<(.*)>$/", $author, $matches)) {
+				$username = trim($matches[1]);
+				$mailAd = trim($matches[2]);
+				$mailAd = str_replace('@', '[AT]', $mailAd);
+				$mailAd = str_replace('.', '[DOT]', $mailAd);
+				$authors_list .= "<li>";
+				$authors_list .= "<script>printMailLink('".$mailAd."', '".$username."');</script>";
+				$authors_list .= "<noscript>".$mailAd."</noscript>";
+				$authors_list .= "</li>\n";
+			}
+		}
+		if (strlen($authors_list) > 0)
+			$authors_html = "<ul>\n".$authors_list."</ul>\n";
+	}
+	return $authors_html;
 }
 
 ?>

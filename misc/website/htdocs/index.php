@@ -23,20 +23,18 @@ error_reporting(E_ALL);
 
 /* defines */
 define('_FILE_NEWS', 'newshtml.txt');
-define('_FILE_VERSION_OLD', 'version-torrentflux_2.1-b4rt.txt');
-define('_FILE_VERSION_NEW', 'version.txt');
+define('_FILE_VERSION', 'version.txt');
 define('_FILE_CHANGELOG', 'CHANGES');
-define('_AUTHOR_FILE_URL', 'AUTHORS');
+define('_FILE_AUTHORS', 'AUTHORS');
 
 /* global fields */
-$versions = array();
 $page = "";
 
 // functions
 require_once('functions.php');
 
 // default CSS to use:
-$css="default";
+$css = "default";
 
 // Temp feature to switch CSS sheets dynamically in testing.
 // To change css sheet, call URL with vbl 'css=new' for the new sheet, setting will
@@ -62,8 +60,7 @@ function cssSwitcher(){
 // -----------------------------------------------------------------------------
 
 // get current versions
-$versions['old'] = @trim(getDataFromFile(_FILE_VERSION_OLD));
-$versions['new'] = @trim(getDataFromFile(_FILE_VERSION_NEW));
+define('_VERSION', @trim(getDataFromFile(_FILE_VERSION)));
 
 // Array of 'page ids' => 'page titles'
 $defaultTitle="Home Page - A BitTorrent and Internet Transfer Web Control Application";
@@ -107,29 +104,30 @@ exit();
  * @var $page - current page requested
  */
 function printPageHead($page) {
-	global $pages, $css, $versions;
+	global $pages, $css;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>Torrentflux-b4rt <?php print $pages[$page]; ?></title>
+	<title>Torrentflux-b4rt <?php echo $pages[$page]; ?></title>
     <meta name="description" content="Torrentflux-b4rt is a web based control panel for managing BitTorrent, wget and Newzbin downloads.  Torrentflux-b4rt supports a number of transfer clients, including BitTorrent, BitTornado, Transmission, Azureus, wget and nzbperl.  Torrentflux-b4rt is based on the torrentflux download manager. Torrentflux-b4rt requires a web server, PHP and a database - MySQL, Postgresql or SQLite - to run."/>
 	<meta name="keywords" content="torrentflux-b4rt, torrentflux, bittorrent, bittornado, transmission, azureus, nzbperl, wget, torrent, download, remote, control, bandwidth, controller, fluazu, fluxd, rss, feed, downloader, automate, automation, web, web-based, transfer, manager, management, php, mysql, postgresql, perl, python, free, freeware, open, opensource, oss, gui, frontend, b4rt, tfb4rt"/>
     <meta name="robots" content="index,follow" />
     <meta name="author" content="Design: DocTom; Rest: b4rt,munk" />
-	<link rel="stylesheet" type="text/css" href="css/<?php print $css; ?>.css" />
+	<link rel="stylesheet" type="text/css" href="css/<?php echo $css; ?>.css" />
     <link rel="alternate" title="News - RSS 0.91" href="https://developer.berlios.de/export/rss_bsnews.php?group_id=7000" type="application/rss+xml" />
     <link rel="alternate" title="Releases - RSS 0.91" href="https://developer.berlios.de/export/rss_bsnewreleases.php?group_id=7000" type="application/rss+xml" />
     <link rel="alternate" title="News - RSS 2.0" href="https://developer.berlios.de/export/rss20_bsnews.php?group_id=7000" type="application/rss+xml" />
     <link rel="alternate" title="Releases - RSS 2.0" href="https://developer.berlios.de/export/rss20_bsnewreleases.php?group_id=7000" type="application/rss+xml" />
     <link rel="alternate" title="Forum - RSS 0.92" href="https://tf-b4rt.berlios.de/forum/index.php?type=rss;action=.xml" type="application/rss+xml" />
+    <script language="javascript" src="js/default.js"></script>
 </head>
 <body>
 <div id="container">
 	<div id="header">
 		<p class="version">
-			<span class="versionspan"><a href="/download-torrentflux-b4rt.html" title="<?php echo $versions['new'];?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo $versions['new']; ?></a></span>
+			<span class="versionspan"><a href="/download-torrentflux-b4rt.html" title="<?php echo _VERSION; ?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo _VERSION; ?></a></span>
 		</p>
 	</div>
 	<div id="navi">
@@ -435,31 +433,13 @@ function printPageNews() {
  * prints page "about"
  */
 function printPageAbout() {
-	/*
-	 * Fetch the list of authors from the current svn webserver AUTHORS file.
-	 * Parse the list and create an HTML list with links to each authors mail address
-	 */
-	$authors_html = "";
-	$authors = array_slice(preg_split("/\n\n/", getDataFromFile(_AUTHOR_FILE_URL)),2);
-
-	// $authors array size will be just one entry if the authors file couldn't be fetched for some reason:
-	if(count($authors)>1){
-		foreach($authors as $author){
-			$authors_html.=preg_replace(
-				"/^\*\s(.*)\s<(.*)>$/",
-				"<li><a href=\"mailto:$2\" title=\"Email $1\">$1</a></li>\n",
-				$author
-			);
-		}
-		$authors_html="<ul>\n$authors_html</ul>\n";
-	}
 ?>
 		<h1 id="about-authors-title">Torrentflux-b4rt Authors</h1>
 		<div id="about-authors">
 			<p>
-				The Torrentflux-b4rt codebase author list is as follows:
+				Torrentflux-b4rt is written and maintained by:
 			</p>
-<?php print $authors_html ?>
+			<?php echo getAuthors(); ?>
 			<p>
 			A great debt is owed to the original Torrentflux's author - Qrome - as well as all the authors of the original hacks who are too numerous to mention here.  Whilst every single 'hack' has been engineered and tweaked by b4rt to be added into torrentflux-b4rt, without Qrome and the authors of the hacks many of those cool features and ideas might never have made it into torrentflux-b4rt.  With this, many thanks go out to Qrome and the numerous authors of hacks and mods to the original torrentflux.
 			</p>
@@ -507,7 +487,7 @@ function printPageAbout() {
 				<li>Allow the frontend to be redesigned more easily.  <a href="/features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
 			</ul>
 			<p>
-				Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing! 
+				Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
 			</p>
 			<p>
 				<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
