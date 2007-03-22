@@ -190,7 +190,9 @@ function printPageHome() {
 ?>
 		<h1 id="home">Home</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank"><img src="images/10a7_index_small.png" width="252px" height="184px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" /></a>
+			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank" onMouseOver="status='Open torrentflux-b4rt 1.0 alpha7: Index-Page'; return true;" onMouseOut="status=''; return true;" onclick="return showPicture('images/screenshots/1.0-alpha7/index.png');">
+				<img src="images/10a7_index_small.png" width="252px" height="184px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" />
+			</a>
 		</p>
 		<p><strong>Torrentflux-b4rt</strong> is a web based transfer control client.  Torrentflux-b4rt allows you to control your internet downloads / transfers from anywhere using a highly configurable web based front end.
 		</p>
@@ -453,8 +455,8 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="history">Torrentflux-b4rt History</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: profile" target="_blank">
-				<img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: profile" align="right" class="img_right" />
+			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: Profile-Page" target="_blank" onMouseOver="status='Open torrentflux-b4rt 1.0 alpha7: Profile-Page'; return true;" onMouseOut="status=''; return true;" onclick="return showPicture('images/screenshots/1.0-alpha7/profile.png');">
+				<img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Profile-Page" align="right" class="img_right" />
 			</a>
 		</p>
 		<p>
