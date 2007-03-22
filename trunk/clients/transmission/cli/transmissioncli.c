@@ -89,7 +89,7 @@ int main(int argc, char ** argv) {
 	h = tr_init("cli");
 
 	// open and parse torrent file
-	if (!(tor = tr_torrentInit(h, torrentPath, 0, &error))) {
+	if (!(tor = tr_torrentInit(h, torrentPath, NULL, 0, &error))) {
 		tf_print(sprintf(tf_message,
 			"Failed opening torrent file '%s'\n", torrentPath));
 		tr_close(h);
