@@ -434,65 +434,72 @@ function printPageNews() {
  */
 function printPageAbout() {
 ?>
-		<h1 id="about-authors-title">Torrentflux-b4rt Authors</h1>
-		<div id="about-authors">
-			<p>
-				Torrentflux-b4rt is written and maintained by:
-			</p>
-			<?php echo getAuthors(); ?>
-			<p>
-			A great debt is owed to the original Torrentflux's author - Qrome - as well as all the authors of the original hacks who are too numerous to mention here.  Whilst every single 'hack' has been engineered and tweaked by b4rt to be added into torrentflux-b4rt, without Qrome and the authors of the hacks many of those cool features and ideas might never have made it into torrentflux-b4rt.  With this, many thanks go out to Qrome and the numerous authors of hacks and mods to the original torrentflux.
-			</p>
-			<p>
-				Please note that if you feel you wish to be quoted as an originating author of a feature that exists in torrentflux-b4rt, please contact us providing details of your involvement and we will endeavour to add your name to this page in a contributors section.
-			</p>
-		</div>
+	<?php
+		$authors = getAuthors();
+		if (strlen($authors) > 0) {
+			?>
+				<h1 id="about-authors-title">Torrentflux-b4rt Authors</h1>
+				<div id="about-authors">
+					<p>
+						Torrentflux-b4rt is written and maintained by:
+					</p>
+					<?php echo $authors; ?>
+					<p>
+					A great debt is owed to the original Torrentflux's author - Qrome - as well as all the authors of the original hacks who are too numerous to mention here.  Whilst every single 'hack' has been engineered and tweaked by b4rt to be added into torrentflux-b4rt, without Qrome and the authors of the hacks many of those cool features and ideas might never have made it into torrentflux-b4rt.  With this, many thanks go out to Qrome and the numerous authors of hacks and mods to the original torrentflux.
+					</p>
+					<p>
+						Please note that if you feel you wish to be quoted as an originating author of a feature that exists in torrentflux-b4rt, please contact us providing details of your involvement and we will endeavour to add your name to this page in a contributors section.
+					</p>
+				</div>
+			<?php
+		}
+	?>
 
-		<h1 id="about-history-title">Torrentflux-b4rt History</h1>
-		<div id="about-history">
-			<p>
-				<a href="https://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94: Admin-Settings" target="_blank">
-					<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94: Admin-Settings" align="right" class="img_right" />
-				</a>
-			</p>
-			<p>
-				The <strong>Torrentflux-b4rt</strong> project started as an enhancement to the base <a href="http://www.torrentflux.com/" title="Torrentflux">TorrentFlux</a> 2.1 installation.  Users began to submit their own 'hacks' or modifications to the base torrentflux system on the Torrentflux Forum, each of which provided enhanced functionality to the core system which was 'a great thing' &trade;.
-			</p>
-			<br clear="all"/>
-			<p>
-				However, for all the goodwill in the world, the method for modifying the base torrentflux system to 'install' these hacks was very unstructured by nature - at best a list of instructions:
-			</p>
-			<ol>
-				<li>add this code here at line 12.</li>
-				<li>change this code after line 33.</li>
-				<li>rewrite this line 44 to read ...</li>
-				<li>etc</li>
-			</ol>
-			<p>
-				Pretty soon installing additional hacks became overwhelming because every time you added a new hack, the base system would be changed to such an extent that following any instructions for installing further hacks became just unfeasible. With this in mind, torrentflux-b4rt was an attempt to sidestep the complicated mess of adding hacks and modifications to the base torrentflux system in a random way, as well as allowing users more choice in which BitTorrent clients they used with torrentflux.
-			</p>
-			<p>
-				The first incarnation of torrentflux-b4rt was a branch from the original torrentflux codebase to include as many of the best user submitted hacks as possible and integration of other torrent clients other than torrentflux's default bittornado.  Importantly though, torrentflux-b4rt included administration settings to control most of the added modifications, something that few or none of the original hacks ever did.  With this it became a lot simpler, more secure and efficient to run a number of hacks together.
-			</p>
-		</div>
+	<h1 id="about-history-title">Torrentflux-b4rt History</h1>
+	<div id="about-history">
+		<p>
+			<a href="https://developer.berlios.de/dbimage.php?id=3024" title="torrentflux 2.1-b4rt-94: Admin-Settings" target="_blank">
+				<img src="images/v94-adminsettings_small.png" width="315px" height="300px" border="0" alt="torrentflux 2.1-b4rt-94: Admin-Settings" align="right" class="img_right" />
+			</a>
+		</p>
+		<p>
+			The <strong>Torrentflux-b4rt</strong> project started as an enhancement to the base <a href="http://www.torrentflux.com/" title="Torrentflux">TorrentFlux</a> 2.1 installation.  Users began to submit their own 'hacks' or modifications to the base torrentflux system on the Torrentflux Forum, each of which provided enhanced functionality to the core system which was 'a great thing' &trade;.
+		</p>
+		<br clear="all"/>
+		<p>
+			However, for all the goodwill in the world, the method for modifying the base torrentflux system to 'install' these hacks was very unstructured by nature - at best a list of instructions:
+		</p>
+		<ol>
+			<li>add this code here at line 12.</li>
+			<li>change this code after line 33.</li>
+			<li>rewrite this line 44 to read ...</li>
+			<li>etc</li>
+		</ol>
+		<p>
+			Pretty soon installing additional hacks became overwhelming because every time you added a new hack, the base system would be changed to such an extent that following any instructions for installing further hacks became just unfeasible. With this in mind, torrentflux-b4rt was an attempt to sidestep the complicated mess of adding hacks and modifications to the base torrentflux system in a random way, as well as allowing users more choice in which BitTorrent clients they used with torrentflux.
+		</p>
+		<p>
+			The first incarnation of torrentflux-b4rt was a branch from the original torrentflux codebase to include as many of the best user submitted hacks as possible and integration of other torrent clients other than torrentflux's default bittornado.  Importantly though, torrentflux-b4rt included administration settings to control most of the added modifications, something that few or none of the original hacks ever did.  With this it became a lot simpler, more secure and efficient to run a number of hacks together.
+		</p>
+	</div>
 
-		<h1 id="about-current-title">Current Work On Torrentflux-b4rt</h1>
-		<div id="about-current">
-			<p>
-				Around the start of 2007, the torrentflux-b4rt codebase was almost completely rewritten to address a number of issues:
-			</p>
-			<ul>
-				<li>Allow easier integration of transfer clients - not necessarily just bittorrent.  <a href="/features.html#protocols" title="Transfer protocols and software supported by Torrentflux-b4rt">This effort has seen the inclusion of other transfer clients such as wget, nzbperl and azureus.</a></li>
-				<li>Allow scheduled tasks to run in the background via the Fluxd daemon.  <a href="/features.html#fluxd" title="Use Fluxd to schedule rss downloads, queue management of torrents and more">Fluxd is a server that can be started from torrentflux-b4rt to run scheduled tasks on a server without the need to use cron.  Fluxd uses modules to perform each type of scheduled task.</a></li>
-				<li>Allow the frontend to be redesigned more easily.  <a href="/features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
-			</ul>
-			<p>
-				Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
-			</p>
-			<p>
-				<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
-			</p>
-		</div>
+	<h1 id="about-current-title">Current Work On Torrentflux-b4rt</h1>
+	<div id="about-current">
+		<p>
+			Around the start of 2007, the torrentflux-b4rt codebase was almost completely rewritten to address a number of issues:
+		</p>
+		<ul>
+			<li>Allow easier integration of transfer clients - not necessarily just bittorrent.  <a href="/features.html#protocols" title="Transfer protocols and software supported by Torrentflux-b4rt">This effort has seen the inclusion of other transfer clients such as wget, nzbperl and azureus.</a></li>
+			<li>Allow scheduled tasks to run in the background via the Fluxd daemon.  <a href="/features.html#fluxd" title="Use Fluxd to schedule rss downloads, queue management of torrents and more">Fluxd is a server that can be started from torrentflux-b4rt to run scheduled tasks on a server without the need to use cron.  Fluxd uses modules to perform each type of scheduled task.</a></li>
+			<li>Allow the frontend to be redesigned more easily.  <a href="/features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
+		</ul>
+		<p>
+			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
+		</p>
+		<p>
+			<strong>1.0-alpha is the currently stable release of torrentflux-b4rt!</strong>  Whilst this may not seem obvious given the 'alpha' tag, you can rest assured that the currently available tarball is tested enough for it to be stable to use without breaking anything.
+		</p>
+	</div>
 <?php
 }
 
