@@ -218,9 +218,7 @@ function getScreenshotList($path) {
 		foreach ($images as $image) {
 			$image_list .= "<li>";
 			$image_list .= "<a href=\"".$image['path']."\" target=\"_blank\"";
-			$image_list .= " onMouseOver=\"status='Open ".$image['file']."'; return true;\"";
-			$image_list .= " onMouseOut=\"status=''; return true;\"";
-			$image_list .= " onclick=\"return showPicture('".$image['path']."');\">";
+			$image_list .= "\">";
 			$image_list .= $image['file']."</a>";
 			$image_list .= "</li>\n";
 		}

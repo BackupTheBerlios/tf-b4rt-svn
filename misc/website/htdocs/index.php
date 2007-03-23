@@ -190,14 +190,16 @@ function printPageHome() {
 ?>
 		<h1 id="home">Home</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank" onMouseOver="status='Open torrentflux-b4rt 1.0 alpha7: Index-Page'; return true;" onMouseOut="status=''; return true;" onclick="return showPicture('images/screenshots/1.0-alpha7/index.png');">
-				<img src="images/10a7_index_small.png" width="252px" height="184px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" />
-			</a>
+			<a href="images/screenshots/1.0-alpha7/index.png" title="torrentflux-b4rt 1.0 alpha7: Index-Page" target="_blank"><img src="images/10a7_index_small.png" width="252px" height="184px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Index-Page" align="right" class="img_right" /></a>
 		</p>
-		<p><strong>Torrentflux-b4rt</strong> is a web based transfer control client.  Torrentflux-b4rt allows you to control your internet downloads / transfers from anywhere using a highly configurable web based front end.
+		<p><strong>Torrentflux-b4rt</strong> is a web based transfer control client.
+		</p>
+		<p>
+			Torrentflux-b4rt allows you to control your internet downloads / transfers from anywhere using a highly configurable web based front end.
 		</p>
 
 		<br clear="all"/>
+		<br/>
 		<p> Torrentflux-b4rt is very easy to install on a web server and includes a simple setup script which can be accessed from a web browser.  Just upload the files to your web server, run the setup script and your torrentflux-b4rt installation is ready to go.
 		</p>
 		<p>Torrentflux-b4rt was originally based on the <a href="http://www.torrentflux.com" title="www.torrentflux.com" target="_blank">TorrentFlux</a> BitTorrent controller written by Qrome, although has recently undergone a major rewrite to allow transparent integration with a number of transfer clients and protocols.  For a full list of features please see <a href="/features.html" title="Torrentflux-b4rt Features Page">the torrentflux-b4rt features page</a>.
@@ -455,13 +457,16 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="history">Torrentflux-b4rt History</h1>
 		<p>
-			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: Profile-Page" target="_blank" onMouseOver="status='Open torrentflux-b4rt 1.0 alpha7: Profile-Page'; return true;" onMouseOut="status=''; return true;" onclick="return showPicture('images/screenshots/1.0-alpha7/profile.png');">
-				<img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Profile-Page" align="right" class="img_right" />
-			</a>
+			<a href="images/screenshots/1.0-alpha7/profile.png" title="torrentflux-b4rt 1.0 alpha7: Profile-Page" target="_blank"><img src="images/10a7_profile_small.png" width="341px" height="365px" border="0" alt="torrentflux-b4rt 1.0 alpha7: Profile-Page" align="right" class="img_right" /></a>
 		</p>
 		<p>
-			The <strong>Torrentflux-b4rt</strong> project started as an enhancement to the base <a href="http://www.torrentflux.com/" title="Torrentflux">TorrentFlux</a> 2.1 installation.  Users began to submit their own 'hacks' or modifications to the base torrentflux system on the Torrentflux Forum, each of which provided enhanced functionality to the core system which was 'a great thing' &trade;.
+			The <strong>Torrentflux-b4rt</strong> project started as an enhancement to the base <a href="http://www.torrentflux.com/" title="Torrentflux">TorrentFlux</a> 2.1 installation.
 		</p>
+		<p>
+			Users began to submit their own 'hacks' or modifications to the base torrentflux system on the Torrentflux Forum, each of which provided enhanced functionality to the core system which was 'a great thing' &trade;.
+		</p>
+<br clear="all"/>
+<br/>
 		<p>
 			However, for all the goodwill in the world, the method for modifying the base torrentflux system to 'install' these hacks was very unstructured by nature - at best a list of instructions:
 		</p>
