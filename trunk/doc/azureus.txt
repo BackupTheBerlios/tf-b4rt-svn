@@ -1,0 +1,71 @@
+
+
+
+Requirements
+
+-- Python 2.2.1 or higher for fluazu-daemon
+   (http://www.python.org)
+
+-- Azureus 2.5.0.0 or higher with the XML/HTTP Plugin
+   * Azureus (http://azureus.sourceforge.net)
+   * XML/HTTP Plugin
+    (http://azureus.sourceforge.net/plugin_details.php?plugin=xml_http_if)
+
+
+
+Setup
+
+1. Install your Azureus-Server. The Azureus-Server must share the filesystem
+   with the frontend-server and the fluazu-daemon. (assume we use same machine
+   from now on so host is "localhost")
+
+2. Install the XML/HTTP Plugin in Azureus. Plugin-Settings as follows:
+   Note: this is only an example (ongoing "localhost"-setup), you can setup the
+         plugin-options as you like. only required plugin-setting is "Mode"
+         which needs to be set to "full" (full is default)
+   Port: 6884 (default is 6884)
+   Protocol: http (default is http)
+   Mode: full (default is full)
+   Access: local (default is local)
+   Enable Password: false (default is false)
+
+3. Start the Azureus-Server. Use the same user/group as the webserver runs.
+
+4. Login to torrentflux-b4rt webinterface as admin-user.
+   + admin
+     + transfer
+       + fluazu-settings
+   Enter Azureus-Server settings in the Form and save.
+   Note: this is only an example (ongoing "localhost"-setup), enter the
+         settings of the Azureus-Server you setup and started in 1.-3. here.
+   Host: localhost
+   Port: 6884
+   Secure: false
+   Username: none (leave empty)
+   Password: none (leave empty)
+
+5. Start fluazu-daemon
+   + admin
+     + transfer
+       + fluazu-settings
+   Just click the start-button, fluazu will startup and connect to the
+   Azureus-Server. After it is connected this page will show an additional
+   form which makes it possible to see and set some settings in the Azureus-
+   Server (eg global bandwidth- and connection-limits)
+
+6. Use it like you do with any other torrent-client in tfb, just use "azureus"
+   as torrent-client
+
+
+
+Limitations
+
+Due to the Design there are some Limitations and therefore some features are
+not available when using Azureus as client for a torrent-transfer.
+(all features that depend on process-list or netstat-per-transfer-code)
+- transfer-hosts does not contain any connection-information.
+- process-list based transfer-list in superadmin does not include these
+  transfers. force-stop is also not possible.
+- maintenance (auto-restart of a died transfer-client-process) is not working
+  for these transfers.
+

@@ -227,12 +227,12 @@ Torrentflux-b4rt 1.0 README file
 		  PHP with support for web and cli.
 
 
-	o Python is required for the BitTorrent and BitTornado
+	o Python is required for the BitTorrent, BitTornado and Azureus
 	  bittorrent clients:
 
 		* Python >= 2.2 for BitTornado
-		* Python >= 2.4 for BitTorrent Mainline
-		  (original 'BitTorrent client).
+		* Python >= 2.4 for BitTorrent Mainline (original 'BitTorrent client)
+		* Python >= 2.2.1 for Azureus
 
 
 	o Perl >= 5.6 or higher for fluxd, nzbperl.pl, ttools.pl and
@@ -274,6 +274,15 @@ Torrentflux-b4rt 1.0 README file
 				http://www.zope.org/Products/ZopeInterface/
 
 			see Twisted installation docs for more info.
+
+
+	o Azureus Client requirements:
+
+		* Azureus 2.5.0.0 or higher with the XML/HTTP Plugin
+			http://azureus.sourceforge.net
+			http://azureus.sourceforge.net/plugin_details.php?plugin=xml_http_if
+
+		see azureus installation doc (doc/azureus.txt) for more info.
 
 
 	o wget transfer functionality requirements:
