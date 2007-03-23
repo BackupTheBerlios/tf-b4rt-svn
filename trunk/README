@@ -416,9 +416,9 @@ Torrentflux-b4rt 1.0 README file
 	the included setup script. For full details of how to install
 	torrentflux-b4rt, please see the INSTALL file.
 
-    It is also possible to Upgrade an existing installation of 2.1-b4rt
-    or official TF (2.1 - 2.3) to torrentflux-b4rt. Details about
-    upgrades can be found in the INSTALL file.
+	It is also possible to Upgrade an existing installation of 2.1-b4rt
+	or official TF (2.1 - 2.3) to torrentflux-b4rt. Details about
+	upgrades can be found in the INSTALL file.
 
 
 /**********************************************************************
