@@ -113,7 +113,7 @@ function printPageHead($page) {
 <div id="container">
 	<div id="header">
 		<p class="version">
-			<span class="versionspan"><a href="/download-torrentflux-b4rt.html" title="Download Torrentflux-b4rt <?php echo _VERSION;?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo _VERSION; ?></a></span>
+			<span class="versionspan"><a href="download-torrentflux-b4rt.html" title="Download Torrentflux-b4rt <?php echo _VERSION;?>">Download Current Version:<br/>Torrentflux-b4rt <?php echo _VERSION; ?></a></span>
 		</p>
 	</div>
 	<div id="navi">
@@ -143,7 +143,7 @@ function printPageFoot() {
 				<a href="https://developer.berlios.de/projects/tf-b4rt/" title="BerliOS Developer Project" target="_blank"><img src="https://developer.berlios.de/bslogo.php?group_id=7000" width="124px" height="32px" border="0" alt="BerliOS Developer Logo" /></a>
 			</p>
 			<p class="svnid">
-				<a href="https://tf-b4rt.berlios.de/wsvn-website" title="WebSVN" target="_blank">$Id$</a>
+				<a href="wsvn-website" title="WebSVN" target="_blank">$Id$</a>
 			</p>
 		</div>
 	</div>
@@ -173,11 +173,11 @@ function printPageHome() {
 		<br/>
 		<p> Torrentflux-b4rt is very easy to install on a web server and includes a simple setup script which can be accessed from a web browser.  Just upload the files to your web server, run the setup script and your torrentflux-b4rt installation is ready to go.
 		</p>
-		<p>Torrentflux-b4rt was originally based on the <a href="http://www.torrentflux.com" title="www.torrentflux.com" target="_blank">TorrentFlux</a> BitTorrent controller written by Qrome, although has recently undergone a major rewrite to allow transparent integration with a number of transfer clients and protocols.  For a full list of features please see <a href="/features.html" title="Torrentflux-b4rt Features Page">the torrentflux-b4rt features page</a>.
+		<p>Torrentflux-b4rt was originally based on the <a href="http://www.torrentflux.com" title="www.torrentflux.com" target="_blank">TorrentFlux</a> BitTorrent controller written by Qrome, although has recently undergone a major rewrite to allow transparent integration with a number of transfer clients and protocols.  For a full list of features please see <a href="features.html" title="Torrentflux-b4rt Features Page">the torrentflux-b4rt features page</a>.
 		</p>
 		<ul>
-			<li><a href="/download-torrentflux-b4rt.html" title="Download Torrentflux-b4rt">Download Torrentflux-b4rt</a></li>
-			<li><a href="/changelog.html" title="Torrentflux-b4rt Changelog">Torrentflux-b4rt Changelog</a></li>
+			<li><a href="download-torrentflux-b4rt.html" title="Download Torrentflux-b4rt">Download Torrentflux-b4rt</a></li>
+			<li><a href="changelog.html" title="Torrentflux-b4rt Changelog">Torrentflux-b4rt Changelog</a></li>
 		</ul>
 
 <?php
@@ -219,7 +219,7 @@ function printPageRequirements() {
 			<li><a href="http://www.perl.org" title="Perl" target="_blank">Perl</a> 5.6 or higher (for the optional fluxd daemon).</li>
 		</ul>
 
-		More details can be found in the file <a href="/README" title="Torrentflux-b4rt README file">README</a> file.
+		More details can be found in the file <a href="README" title="Torrentflux-b4rt README file">README</a> file.
 </div>
 <?php
 }
@@ -378,7 +378,7 @@ function printPageNews() {
 		<ul>
 			<?php echo(rewriteNews(trim(getDataFromFile(_FILE_NEWS)))); ?>
 		</ul>
-		<p>More detailed <a href="https://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="https://tf-b4rt.berlios.de/forum" title="Forum">Forum</a>.</p>
+		<p>More detailed <a href="https://tf-b4rt.berlios.de/forum/index.php/board,9.0.html" title="Announcements and News">Announcements and News</a> can be found in the <a href="forum" title="Forum">Forum</a>.</p>
 	</div>
 
 	<div class="subcontent">
@@ -400,7 +400,7 @@ function printPageAbout() {
 	<div class="subcontent">
 		<h1 id="contact">Contact Details</h1>
 		<p>
-			Please use <a href="/forum" title="Torrentflux-b4rt Forum">the torrentflux-b4rt forum</a> for any support related queries.<br/>
+			Please use <a href="forum" title="Torrentflux-b4rt Forum">the torrentflux-b4rt forum</a> for any support related queries.<br/>
 			For all other <strong>non-support</strong> related queries:<br/>
 		</p>
 		<ul><li><script>printMailLink('tfb4rt[AT]gmail[DOT]com');</script><noscript>tfb4rt[AT]gmail[DOT]com</noscript></li></ul>
@@ -461,9 +461,9 @@ function printPageAbout() {
 			Around the start of 2007, the torrentflux-b4rt codebase was almost completely rewritten to address a number of issues:
 		</p>
 		<ul>
-			<li>Allow easier integration of transfer clients - not necessarily just bittorrent.  <a href="/features.html#protocols" title="Transfer protocols and software supported by Torrentflux-b4rt">This effort has seen the inclusion of other transfer clients such as wget, nzbperl and azureus.</a></li>
-			<li>Allow scheduled tasks to run in the background via the Fluxd daemon.  <a href="/features.html#fluxd" title="Use Fluxd to schedule rss downloads, queue management of torrents and more">Fluxd is a server that can be started from torrentflux-b4rt to run scheduled tasks on a server without the need to use cron.  Fluxd uses modules to perform each type of scheduled task.</a></li>
-			<li>Allow the frontend to be redesigned more easily.  <a href="/features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
+			<li>Allow easier integration of transfer clients - not necessarily just bittorrent.  <a href="features.html#protocols" title="Transfer protocols and software supported by Torrentflux-b4rt">This effort has seen the inclusion of other transfer clients such as wget, nzbperl and azureus.</a></li>
+			<li>Allow scheduled tasks to run in the background via the Fluxd daemon.  <a href="features.html#fluxd" title="Use Fluxd to schedule rss downloads, queue management of torrents and more">Fluxd is a server that can be started from torrentflux-b4rt to run scheduled tasks on a server without the need to use cron.  Fluxd uses modules to perform each type of scheduled task.</a></li>
+			<li>Allow the frontend to be redesigned more easily.  <a href="features.html#templating" title="Torrentflux-b4rt uses vlib templating engine to allow easier redesign of frontend">Torrentflux-b4rt now uses a templating engine to allow developers to redesign the look and feel of the torrentflux-b4rt frontend more easily.</a></li>
 		</ul>
 		<p>
 			Somewhat confusingly, this latest version of torrentflux-b4rt is named 'torrentflux-b4rt_1.0-alphaX' (to indicate this is the first release of the newly rewritten b4rt codebase and 'X' represents the minor versioning), whereas the older torrentflux-b4rt is named 'torrentflux_2.1-b4rt-vX (to indicate this is the b4rt codebase based on the original torrentflux 2.1, where 'X' represents the minor versioning.  Very confusing!
