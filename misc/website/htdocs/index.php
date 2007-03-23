@@ -57,9 +57,7 @@ $pages = array(
 	"about"			=> "Authors, History and Contributors",
 	"changelog"		=> "Changelog",
 	"screenshots"	=> "Screenshots",
-	"index"			=> $defaultTitle,
 	"home"			=> $defaultTitle,
-	"default"		=> $defaultTitle
 );
 
 // init page-var
