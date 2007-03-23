@@ -5,20 +5,20 @@ RewriteBase /
 RewriteCond !^usage [NC]
 
 # pages
-RewriteRule ^index\.html$ /index.php?s=index
-RewriteRule ^home\.html$ /index.php?s=home
-RewriteRule ^features\.html$ /index.php?s=features
-RewriteRule ^requirements\.html$ /index.php?s=requirements
-RewriteRule ^screenshots\.html$ /index.php?s=screenshots
-RewriteRule ^news\.html$ /index.php?s=news
-RewriteRule ^about\.html$ /index.php?s=about
-RewriteRule ^changelog\.html$ /index.php?s=changelog
+RewriteRule ^index\.html$ index.php?s=index
+RewriteRule ^home\.html$ index.php?s=home
+RewriteRule ^features\.html$ index.php?s=features
+RewriteRule ^requirements\.html$ index.php?s=requirements
+RewriteRule ^screenshots\.html$ index.php?s=screenshots
+RewriteRule ^news\.html$ index.php?s=news
+RewriteRule ^about\.html$ index.php?s=about
+RewriteRule ^changelog\.html$ index.php?s=changelog
 
 # wsvn-website
 RewriteRule ^wsvn-website$ https://svn.berlios.de/wsvn/tf-b4rt/misc/website/htdocs/index.php?op=file&rev=0&sc=0 [R]
 
 # version
-RewriteRule ^version$ https://tf-b4rt.berlios.de/version.txt [R]
+RewriteRule ^version$ version.txt [R]
 
 # faq
 RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
@@ -27,30 +27,30 @@ RewriteRule ^faq$ https://tf-b4rt.berlios.de/forum/index.php/board,10.0.html [R]
 RewriteRule ^fixes$ https://tf-b4rt.berlios.de/forum/index.php/board,4.0.html [R]
 
 # downloads / current
-RewriteRule ^(download|current|tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12135 [R]
+RewriteRule ^(download|downloads|current|tfb|download-torrentflux-b4rt\.html)$ https://developer.berlios.de/project/showfiles.php?group_id=7000&release_id=12135 [R]
 
 # exported text-res
 
 # authors
-RewriteRule ^authors[\.txt]*$ https://tf-b4rt.berlios.de/AUTHORS [R]
+RewriteRule ^authors[\.txt]*$ AUTHORS [R]
 
 # changes
-RewriteRule ^(changelog[\.txt]*|changes[\.txt]*)$ https://tf-b4rt.berlios.de/CHANGES [R]
+RewriteRule ^(changelog[\.txt]*|changes[\.txt]*)$ CHANGES [R]
 
 # faq
-RewriteRule ^faq[\.txt]*$ https://tf-b4rt.berlios.de/FAQ [R]
+RewriteRule ^faq[\.txt]*$ FAQ [R]
 
 # features
-RewriteRule ^features[\.txt]*$ https://tf-b4rt.berlios.de/FEATURES [R]
+RewriteRule ^features[\.txt]*$ FEATURES [R]
 
 # install
-RewriteRule ^install[\.txt]*$ https://tf-b4rt.berlios.de/INSTALL [R]
+RewriteRule ^install[\.txt]*$ INSTALL [R]
 
 # readme
-RewriteRule ^readme[\.txt]*$ https://tf-b4rt.berlios.de/README [R]
+RewriteRule ^readme[\.txt]*$ README [R]
 
 # support
-RewriteRule ^support[\.txt]*$ https://tf-b4rt.berlios.de/SUPPORT [R]
+RewriteRule ^support[\.txt]*$ SUPPORT [R]
 
 # todo
-RewriteRule ^todo[\.txt]*$ https://tf-b4rt.berlios.de/TODO [R]
+RewriteRule ^todo[\.txt]*$ TODO [R]
