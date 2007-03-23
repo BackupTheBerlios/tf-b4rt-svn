@@ -244,7 +244,7 @@ function printPageFeatures() {
 			<li><a href="#xfer_stats">Transfer statistics and logging</a></li>
 			<li><a href="#metafiles">Uploading and injection of metafiles (.torrent, .wget, .nzb files)</a></li>
 			<li><a href="#fluxcli">fluxcli.php - a complete command-line version of torrentflux-b4rt</a></li>
-			<li><a href="#fluxd">Fluxd - background perl daemon toperform scheduled tasks</a></li>
+			<li><a href="#fluxd">Fluxd - background perl daemon to perform scheduled tasks</a></li>
 			<li><a href="#filemanager">Integrated Filemanager AJAX updates for maximum info with minimal bandwidth</a></li>
 			<li><a href="#ajax">AJAX updates for maximum info with minimal bandwidth</a></li>
 			<li><a href="#templating">Templating engine</a></li>
@@ -254,7 +254,7 @@ function printPageFeatures() {
 
 	<div class="subcontent">
 		<h2 id="protocols"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Supports multiple internet transfer protocols</h2>
-		Torrentflux-b4rt supports other internet transfer protocols as well as just BitTorrent.  Integration of the various protocls is seamless, meaning you start, stop, restart transfers in the same manner regardless of the underlying transfer protocol.<br/>
+		Torrentflux-b4rt supports other internet transfer protocols as well as just BitTorrent.  Integration of the various protocols is seamless, meaning you start, stop, restart transfers in the same manner regardless of the underlying transfer protocol.<br/>
 		<br/>
 		Supported protocols include:<br/>
 		<ul class="subcontent">
@@ -338,7 +338,7 @@ function printPageFeatures() {
 		Support for a large number of additional third party utilities/functionality <a href="images/screenshots/1.0-alpha7/admin_dirSettings.png" target="_blank" title="Torrentflux-b4rt Dir Settings Screenshot">(screenshot)</a> <a href="images/screenshots/1.0-alpha7/dir.png" target="_blank" title="Torrentflux-b4rt File Manager Screenshot">(screenshot)</a>, including:<br/>
 		<ul>
 				<li>Archive file extraction from the browser (zip/rar)</li>
-				<li>Vlc streaming controllable from browser <a href="images/screenshots/1.0-alpha7/vlc.png" target="_blank" title="Torrentflux-b4rt VLC Streaming Screenshot">(screenshot)</a></li>
+				<li>VLC streaming controllable from browser <a href="images/screenshots/1.0-alpha7/vlc.png" target="_blank" title="Torrentflux-b4rt VLC Streaming Screenshot">(screenshot)</a></li>
 				<li>Download of completed transfers directly from browser</li>
 				<li>Creation of torrent files directly in the browser <a href="images/screenshots/1.0-alpha7/maketorrent.png" target="_blank" title="Torrentflux-b4rt Torrent Creation Screenshot">(screenshot)</a></li>
 				<li>Reading of .nfo files directly in the browser</li>
@@ -446,7 +446,7 @@ function printPageAbout() {
 			<li>etc</li>
 		</ol>
 		<p>
-			Pretty soon installing additional hacks became overwhelming because every time you added a new hack, the base system would be changed to such an extent that following any instructions for installing further hacks became just unfeasible. With this in mind, torrentflux-b4rt was an attempt to sidestep the complicated mess of adding hacks and modifications to the base torrentflux system in a random way, as well as allowing users more choice in which BitTorrent clients they used with torrentflux.
+			Pretty soon installing additional hacks became overwhelming because every time you added a new hack, the base system would be changed to such an extent that following any instructions for installing further hacks became just infeasible. With this in mind, torrentflux-b4rt was an attempt to sidestep the complicated mess of adding hacks and modifications to the base torrentflux system in a random way, as well as allowing users more choice in which BitTorrent clients they used with torrentflux.
 		</p>
 		<p>
 			The first incarnation of torrentflux-b4rt was a branch from the original torrentflux codebase to include as many of the best user submitted hacks as possible and integration of other torrent clients other than torrentflux's default bittornado.  Importantly though, torrentflux-b4rt included administration settings to control most of the added modifications, something that few or none of the original hacks ever did.  With this it became a lot simpler, more secure and efficient to run a number of hacks together.
