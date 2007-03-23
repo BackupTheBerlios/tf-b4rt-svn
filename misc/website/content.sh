@@ -34,3 +34,16 @@ do
 	/usr/bin/svn export --quiet --non-interactive http://svn.berlios.de/svnroot/repos/tf-b4rt/trunk/doc/$SVNFILE
 	/bin/mv -f ~/tf-b4rt/$SVNFILE /home/groups/tf-b4rt/htdocs/$SVNFILE
 done
+# xml-schema
+SVNFILES_XML="tfbserver.xsd
+		tfbstats.xsd
+		tfbtransfer.xsd
+		tfbtransfers.xsd
+		tfbusers.xsd
+		tfbxfer.xsd"
+for SVNFILE in $SVNFILES_XML
+do
+	/usr/bin/svn export --quiet --non-interactive http://svn.berlios.de/svnroot/repos/tf-b4rt/trunk/html/xml/$SVNFILE
+	/bin/mv -f ~/tf-b4rt/$SVNFILE /home/groups/tf-b4rt/htdocs/$SVNFILE
+done
+
