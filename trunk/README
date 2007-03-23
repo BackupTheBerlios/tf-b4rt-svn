@@ -3,10 +3,6 @@ $Id$
 =======================================================================
 
 
-IMPORTANT NOTE:
-This Document is "work in progress" and not completed !
-
-
 /**********************************************************************
 Torrentflux-b4rt 1.0 README file
 **********************************************************************/
@@ -408,130 +404,12 @@ Torrentflux-b4rt 1.0 README file
 **********************************************************************/
 
 	Torrentflux-b4rt can be installed quickly from a web browser using
-	the included setup script.  For full details of how to install
-	torrentflux-b4rt manually, please see the INSTALL file.
+	the included setup script. For full details of how to install
+	torrentflux-b4rt, please see the INSTALL file.
 
-	IMPORTANT:
-	==========
-
-	Before running the setup script, the torrentflux-b4rt files must be
-	copied to the webserver 'document root' folder.  It is highly
-	recommended that you do this as the 'root' user in a shell so that
-	the permissions on your torrentflux-b4rt files can be set correctly
-	for security and correct operation.  Login via SSH or telnet to your
-	server and carry out the commands after running 'su'.
-
-	It is possible to install torrentflux-b4rt without root access to
-	your server - ie in a shared environment.  However be aware that
-	running torrentflux-b4rt in a shared environment is not officially
-	supported due to the large number of features that torrentflux-b4rt
-	supports which require root or equivalent installation/configuration
-	and maintenance.
-
-
-	The installation guide follows below:
-
-	1.	Download the latest torrentflux-b4rt distribution tarball from:
-
-		http://tf-b4rt.berlios.de/downloads
-
-
-		In a shell:
-
-		# Change to a temporary directory, make sure it exists first!
-		root@users /root# cd tmp
-
-		# Use wget to download the tarball
-		# (EXAMPLE ONLY, PLEASE USE THE URL ABOVE TO GET THE LATE SST TARBALL!):
-		root@users /root/tmp# wget http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
-
-		--12:23:20--  http://download.berlios.de/tf-b4rt/torrentflux-b4rt_1.0-alpha5.tar.bz2
-		=> `torrentflux-b4rt_1.0-alpha5.tar.bz2'
-		<snip>
-		12:23:29 (212.19 KB/s) - `torrentflux-b4rt_1.0-alpha5.tar.bz2.1' saved [2038014/2038014]
-
-
-	2.	Extract the distribution from the tarball in a temporary
-		directory.
-
-
-		In a shell:
-
-		# Extracts the tarball into the temp directory
-		# (EXAMPLE ONLY, CHECK THE NAME OF YOUR TARBALL!):
-		root@users /root/tmp# tar jxvf torrentflux-b4rt_1.0-alpha5.tar.bz2
-		torrentflux-b4rt_1.0-alpha5/
-		torrentflux-b4rt_1.0-alpha5/sql/
-		<snip>
-		torrentflux-b4rt_1.0-alpha5/misc/check/
-		torrentflux-b4rt_1.0-alpha5/misc/check/check_1.0.php
-
-
-	3.	Copy the contents of the "html" folder into your web site
-		directory (docroot).
-
-
-		In a shell:
-
-		# Change to the extracted tarball's directory:
-		root@users /root/tmp# cd torrentflux-b4rt_1.0-alpha5
-
-		# Recursively copy the contents of the 'html' folder to a folder
-		# under your website docroot:
-		root@users /root/tmp/torrentflux-b4rt_1.0-alpha5# cp -R html /var/www/html/tfb
-
-
-	4.	Ensure the files and directories in the tfb directory under your
-		website docroot are readable by the webserver user.
-
-
-		In a shell:
-
-		# Change to the docroot/tfb directory:
-		root@users /root/tmp/torrentflux-b4rt_1.0-alpha5# cd /var/www/html/tfb
-
-		# Change the ownership of all files under /var/www/html/tfb to
-		# that of the user 'www'.  Change 'www' to the user your
-		# webserver runs as:
-		root@users /var/www/html/tfb# chown -R www:www /var/www/html/tfb
-
-
-
-	5.	Ensure the "inc/config/" directory under your docroot/tfb is
-		writable by the webserver user and not accessible by others.
-
-
-		In a shell:
-
-		# Change ownership of inc/config/ so the 'user' group has write
-		# access and the 'other' group has neither read, write nor
-		# execute access:
-		root@users /var/www/html/tfb# chmod u+w,o-rwx inc/config/
-
-
-	6.	Finally, open "setup.php" in a web browser and complete it step
-		by step.
-
-
-		In a browser, browse to:
-
-		http://example.com/tfb/setup.php
-
-
-
-	IMPORTANT: LOGIN TO YOUR torrentflux-b4rt INSTALLATION IMMEDIATELY
-	==================================================================
-
-	The first time you login/access the application, you will be
-	prompted for a username and password.  This user/pass pair will be
-	for the SUPERADMIN user on your installation of torrentflux-b4rt.
-	If someone else browses to your torrentflux-b4rt installation before
-	you, they will be able to create a superadmin user and effectively
-	'own' your torrentflux-b4rt installation which is not a good thing.
-
-	On your first login you should check all the admin settings pages
-	and configure your installation.  Take the time to go through the
-	options there to enable any features you require.
+    It is also possible to Upgrade an existing installation of 2.1-b4rt
+    or official TF (2.1 - 2.3) to torrentflux-b4rt. Details about
+    upgrades can be found in the INSTALL file.
 
 
 /**********************************************************************

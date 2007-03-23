@@ -23,7 +23,7 @@ Torrentflux-b4rt SUPPORT file
 
 			VersionXXX is the version of torrentflux-b4rt you are
 			running
-			- ie 1.0-alpha5.
+			- ie 1.0-alpha7.
 
 			and
 
@@ -34,7 +34,7 @@ Torrentflux-b4rt SUPPORT file
 		For example, a good subject for a message would be something
 		like:
 
-		[torrentflux-b4rt-alpha5] Transfers fail to start when template
+		[torrentflux-b4rt-alpha7] Transfers fail to start when template
 		caching enabled
 
 

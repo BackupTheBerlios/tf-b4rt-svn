@@ -4,10 +4,6 @@ vim: set comments=fb\:o,fb\:#,fb\:-,fb\:*,fb\:A.,fb\:Q.:
 =======================================================================
 
 
-IMPORTANT NOTE:
-This Document is "work in progress" and not completed !
-
-
 /**********************************************************************
 Torrentflux-b4rt 1.0 Frequently Asked Questions / FAQ file
 **********************************************************************/
@@ -144,5 +140,3 @@ A.	The BSD operating systems use 'make' as part of the base operating
 	See here for more background and info on the problem:
 
 		https://tf-b4rt.berlios.de/forum/index.php/topic,266.0.html
-
-
