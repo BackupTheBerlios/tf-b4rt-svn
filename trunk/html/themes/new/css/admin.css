@@ -4,32 +4,43 @@
 #settings {
 	width: 100%;
 	table-layout: fixed;
-}
-table.settings2 {
-	padding-top: 10px;
-	width: 100%;
-	table-layout: fixed;
+	padding-bottom: 5px;
 }
 td.settingsTitle {
 	padding-right: 10px;
-	width: 50%;
+	width: 70%;
 	font-weight: 700;
 	text-align: right;
 }
 td.settingsSetting {
 	padding-left: 10px;
-	width: 50%;
-}
-td.settingsSetting2 {
-	padding-left: 10px;
-	width: 50%;
-	color: #FF0000;
+	width: 30%;
 }
 td.settingsText {
 	padding-right: 10px;
 	padding-bottom: 5px;
 	width: 50%;
 	text-align: right;
+}
+table.settings2 {
+	padding-top: 10px;
+	table-layout: fixed;
+	width: 100%;
+}
+td.settingsSetting2 {
+	padding-left: 10px;
+	width: 50%;
+	color: #FF0000;
+}
+td.settingsTitle3 {
+	padding-right: 10px;
+	width: 50%;
+	font-weight: 700;
+	text-align: right;
+}
+td.settingsSetting3 {
+	padding-left: 10px;
+	width: 50%;
 }
 #left {
 	float: left;
@@ -40,10 +51,26 @@ td.settingsText {
 	width: 34%;
 }
 #right {
-	float: left;
+	
 	width: 33%;
 }
-span.titles {
-	font-weight: 700;
-	font-size: 16px;
+#status {
+	margin-left: 10px;
+	margin-right: 10px;
+	background-color: #c1b18d;
+}
+#statusTitle {
+	padding-top: 5px;
+	width: 100%;
+}
+td.status {
+	width: 33%;
+	text-align: center;
+	color: #585858;
+}
+#statusInfos {
+	width: 100%;
+}
+td.statusInfos {
+	vertical-align: top;
 }

@@ -2,63 +2,82 @@
 <tmpl_include name="inc.titleBar.tmpl">
 <script src="js/userSettings.js" type="text/javascript"></script>
 <div id="content">
-	<form name="theForm" action="admin.php?op=addUser" method="post" onsubmit="return validateProfile(1, '<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
-		<table id="settings">
-			<tr>
-				<td class="settingsTitle">
-					<tmpl_var name="_USER">:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="newUser" type="Text" value="" size="15">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					<tmpl_var name="_PASSWORD">:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="pass1" type="Password" value="" size="15">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					<tmpl_var name="_CONFIRMPASSWORD">:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="pass2" type="Password" value="" size="15">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					<tmpl_var name="_USERTYPE">:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<select name="userType">
-						<option value="0"><tmpl_var name="_NORMALUSER"></option>
-						<option value="1"><tmpl_var name="_ADMINISTRATOR"></option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-				</td>
-			</tr>
-		</table>
-		<input type="Submit" value="<tmpl_var name="_CREATE">">
-	</form>
-	<!-- TODO <tmpl_include name="inc.userSection.tmpl"> -->
+
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				
+			</span>
+		</div>
+	</div>
+	<div class="uploadClass">
+		<form name="theForm" action="admin.php?op=addUser" method="post" onsubmit="return validateProfile(1, '<tmpl_var name="_USERIDREQUIRED">', '<tmpl_var name="_PASSWORDLENGTH">', '<tmpl_var name="_PASSWORDNOTMATCH">', '<tmpl_var name="_PLEASECHECKFOLLOWING">')">
+			<table id="settings">
+				<tr>
+					<td class="settingsTitle">
+						<tmpl_var name="_USER">:
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<input name="newUser" type="Text" value="" size="15">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						<tmpl_var name="_PASSWORD">:
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<input name="pass1" type="Password" value="" size="15">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						<tmpl_var name="_CONFIRMPASSWORD">:
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<input name="pass2" type="Password" value="" size="15">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						<tmpl_var name="_USERTYPE">:
+					</td>
+					<td class="settingsSetting" rowspan="2">
+						<select name="userType">
+							<option value="0"><tmpl_var name="_NORMALUSER"></option>
+							<option value="1"><tmpl_var name="_ADMINISTRATOR"></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsTitle">
+						
+					</td>
+					<td class="settingsSetting">
+						<input type="Submit" value="<tmpl_var name="_CREATE">">
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
 	<tmpl_include name="inc.subfoot.tmpl">
 </div>
 </body>
