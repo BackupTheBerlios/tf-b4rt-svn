@@ -162,20 +162,25 @@ function transfer_setFileVars() {
 				$btmeta = @BDecode($alltorrent);
 				@fclose($fd);
 			}
+			$transferSizeSum = 0;
 			if ((isset($btmeta)) && (is_array($btmeta)) && (isset($btmeta['info']))) {
 				if (array_key_exists('files', $btmeta['info'])) {
 					foreach ($btmeta['info']['files'] as $filenum => $file) {
 						$name = (is_array($file['path'])) ? (implode("/", ($file['path']))) : $file['path'];
+						$size = ((isset($file['length'])) && (is_numeric($file['length']))) ? $file['length'] : 0;
+						$transferSizeSum += $size;
 						array_push($transferFilesList, array(
 							'name' => $name,
-							'size' => ((isset($file['length'])) && (is_numeric($file['length']))) ? formatBytesTokBMBGBTB($file['length']) : 0
+							'size' => ($size != 0) ? formatBytesTokBMBGBTB($size) : 0
 							)
 						);
 					}
 				} else {
+					$size = $btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20);
+					$transferSizeSum += $size;
 					array_push($transferFilesList, array(
 						'name' => $btmeta["info"]["name"],
-						'size' => formatBytesTokBMBGBTB($btmeta["info"]["piece length"] * (strlen($btmeta["info"]["pieces"]) / 20))
+						'size' => formatBytesTokBMBGBTB($size)
 						)
 					);
 				}
@@ -187,15 +192,19 @@ function transfer_setFileVars() {
 				$tmpl->setloop('transferFilesList', $transferFilesList);
 				$tmpl->setvar('transferFileCount', count($transferFilesList));
 			}
+			$tmpl->setvar('transferSizeSum', ($transferSizeSum > 0) ? formatBytesTokBMBGBTB($transferSizeSum) : 0);
 			return;
 		case "wget":
 			$ch = ClientHandler::getInstance('wget');
 			$ch->setVarsFromFile($transfer);
+			$transferSizeSum = 0;
 			if (!empty($ch->url)) {
 				require_once("inc/classes/SimpleHTTP.php");
+				$size = SimpleHTTP::getRemoteSize($ch->url);
+				$transferSizeSum += $size;
 				array_push($transferFilesList, array(
 					'name' => $ch->url,
-					'size' => formatBytesTokBMBGBTB(SimpleHTTP::getRemoteSize($ch->url))
+					'size' => formatBytesTokBMBGBTB($size)
 					)
 				);
 			}
@@ -206,15 +215,18 @@ function transfer_setFileVars() {
 				$tmpl->setloop('transferFilesList', $transferFilesList);
 				$tmpl->setvar('transferFileCount', count($transferFilesList));
 			}
+			$tmpl->setvar('transferSizeSum', ($transferSizeSum > 0) ? formatBytesTokBMBGBTB($transferSizeSum) : 0);
 			return;
 		case "nzb":
 			require_once("inc/classes/NZBFile.php");
 			$nzb = new NZBFile($transfer);
+			$transferSizeSum = 0;
 			if (empty($nzb->files)) {
 				$tmpl->setvar('transferFilesString', "Empty");
 				$tmpl->setvar('transferFileCount', 0);
 			} else {
 				foreach ($nzb->files as $file) {
+					$transferSizeSum += $file['size'];
 					array_push($transferFilesList, array(
 						'name' => $file['name'],
 						'size' => formatBytesTokBMBGBTB($file['size'])
@@ -224,6 +236,7 @@ function transfer_setFileVars() {
 				$tmpl->setloop('transferFilesList', $transferFilesList);
 				$tmpl->setvar('transferFileCount', $nzb->filecount);
 			}
+			$tmpl->setvar('transferSizeSum', ($transferSizeSum > 0) ? formatBytesTokBMBGBTB($transferSizeSum) : 0);
 			return;
 	}
 }
