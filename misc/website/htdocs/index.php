@@ -289,17 +289,17 @@ function printPageFeatures() {
 		Torrentflux-b4rt allows you to control all your transfers in one place easily:<br/>
 		<ul>
 			<li>Perform stop/start/resume/kill/delete operations on individual transfers, all transfers or a selection of transfers</li>
-			<li>Changes Settings of running transfers on the fly - down/up rates, what ratio to stop seeding at, how many connections to use at same time, etc <a href="images/screenshots/1.0-alpha7/transferSettings_runtime.png" target="_blank" title="Torrentflux-b4rt Dynamic Settings Update Screenshot">(screenshot)</a></li>
+			<li>Change settings of running transfers on the fly - down/up rates, what ratio to stop seeding at, how many connections to use at same time, etc <a href="images/screenshots/1.0-alpha7/transferSettings_runtime.png" target="_blank" title="Torrentflux-b4rt Dynamic Settings Update Screenshot">(screenshot)</a></li>
 		</ul>
 	</div>
 
 	<div class="subcontent">
 		<h2 id="xfer_stats"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Transfer statistics and logging</h2>
-		View detailed Transfer statistics and information, including:<br/>
+		View detailed transfer statistics and information, including:<br/>
 		<ul>
-				<li>per transfer error logging for easy troubleshooting</li>
-				<li>upload/download totals for each user, by day/month/year</li>
-				<li>number of seeders/leechers/etc for a torrent in a graphical display <a href="images/screenshots/1.0-alpha7/transferStats_torrent.png" target="_blank" title="Torrentflux-b4rt Transfer Stats Screenshot">(screenshot)</a></li>
+				<li>Per transfer error logging for easy troubleshooting</li>
+				<li>Upload/download totals for each user, by day/month/year</li>
+				<li>Number of seeders/leechers/etc for a torrent in a graphical display <a href="images/screenshots/1.0-alpha7/transferStats_torrent.png" target="_blank" title="Torrentflux-b4rt Transfer Stats Screenshot">(screenshot)</a></li>
 		</ul>
 	</div>
 
@@ -337,11 +337,11 @@ function printPageFeatures() {
 		<h2 id="filemanager"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Integrated Filemanager</h2>
 		Support for a large number of additional third party utilities/functionality <a href="images/screenshots/1.0-alpha7/admin_dirSettings.png" target="_blank" title="Torrentflux-b4rt Dir Settings Screenshot">(screenshot)</a> <a href="images/screenshots/1.0-alpha7/dir.png" target="_blank" title="Torrentflux-b4rt File Manager Screenshot">(screenshot)</a>, including:<br/>
 		<ul>
-				<li>archive file extraction from the browser (zip/rar)</li>
-				<li>vlc streaming controllable from browser <a href="images/screenshots/1.0-alpha7/vlc.png" target="_blank" title="Torrentflux-b4rt VLC Streaming Screenshot">(screenshot)</a></li>
-				<li>download of completed transfers directly from browser</li>
-				<li>creation of torrent files directly in the browser <a href="images/screenshots/1.0-alpha7/maketorrent.png" target="_blank" title="Torrentflux-b4rt Torrent Creation Screenshot">(screenshot)</a></li>
-				<li>reading of .nfo files directly in the browser</li>
+				<li>Archive file extraction from the browser (zip/rar)</li>
+				<li>Vlc streaming controllable from browser <a href="images/screenshots/1.0-alpha7/vlc.png" target="_blank" title="Torrentflux-b4rt VLC Streaming Screenshot">(screenshot)</a></li>
+				<li>Download of completed transfers directly from browser</li>
+				<li>Creation of torrent files directly in the browser <a href="images/screenshots/1.0-alpha7/maketorrent.png" target="_blank" title="Torrentflux-b4rt Torrent Creation Screenshot">(screenshot)</a></li>
+				<li>Reading of .nfo files directly in the browser</li>
 		</ul>
 	</div>
 
