@@ -1,7 +1,7 @@
 /******************************************************************************
- * $Id: utils.h 1534 2007-03-05 23:03:38Z joshe $
+ * $Id: utils.h 1579 2007-03-23 08:28:01Z joshe $
  *
- * Copyright (c) 2005-2006 Transmission authors and contributors
+ * Copyright (c) 2005-2007 Transmission authors and contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),

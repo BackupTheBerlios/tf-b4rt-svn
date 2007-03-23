@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: net.h 1425 2007-01-21 19:42:11Z titer $
+ * $Id: net.h 1579 2007-03-23 08:28:01Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -59,3 +59,6 @@ int  tr_netSend    ( int s, uint8_t * buf, int size );
 int  tr_netRecvFrom( int s, uint8_t * buf, int size, struct sockaddr_in * );
 
 void tr_netNtop( const struct in_addr * addr, char * buf, int len );
+
+
+#define tr_addrcmp( aa, bb )    memcmp( ( void * )(aa), ( void * )(bb), 4)

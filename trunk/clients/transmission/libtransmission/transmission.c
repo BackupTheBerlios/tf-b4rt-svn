@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1564 2007-03-13 06:56:50Z joshe $
+ * $Id: transmission.c 1579 2007-03-23 08:28:01Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -67,6 +67,12 @@ tr_handle_t * tr_init( const char * tag )
     {
         r         = tr_rand( 36 );
         h->key[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;
+    }
+
+    /* Azureus identity */
+    for( i = 0; i < TR_AZ_ID_LEN; i++ )
+    {
+        h->azId[i] = tr_rand( 0xff );
     }
 
     /* Don't exit when writing on a broken socket */

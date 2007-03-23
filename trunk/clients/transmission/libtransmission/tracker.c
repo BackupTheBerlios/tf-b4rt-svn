@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: tracker.c 1517 2007-02-27 04:00:38Z joshe $
+ * $Id: tracker.c 1579 2007-03-23 08:28:01Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -721,8 +721,6 @@ static void readAnswer( tr_tracker_t * tc, const char * data, int len,
 
     tc->interval = beFoo->val.i;
     tr_inf( "Tracker: interval = %d seconds", tc->interval );
-
-    tc->interval = MIN( tc->interval, 300 );
     tc->interval = MAX( 10, tc->interval );
 
     /* Get the tracker minimum interval, force to between
@@ -732,8 +730,6 @@ static void readAnswer( tr_tracker_t * tc, const char * data, int len,
     {
         tc->minInterval = beFoo->val.i;
         tr_inf( "Tracker: min interval = %d seconds", tc->minInterval );
-
-        tc->minInterval = MIN( tc->minInterval, 300 );
         tc->minInterval = MAX( 10, tc->minInterval );
 
         if( tc->interval < tc->minInterval )

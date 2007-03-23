@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: shared.c 1462 2007-02-06 04:26:40Z joshe $
+ * $Id: shared.c 1579 2007-03-23 08:28:01Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -340,7 +340,8 @@ static void AcceptPeers( tr_shared_t * s )
         {
             break;
         }
-        s->peers[s->peerCount++] = tr_peerInit( addr, 0, socket );
+        s->peers[s->peerCount++] = tr_peerInit( addr, 0, socket,
+                                                TR_PEER_FROM_INCOMING );
     }
 }
 
