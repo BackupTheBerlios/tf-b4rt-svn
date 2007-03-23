@@ -229,4 +229,19 @@ function getScreenshotList($path) {
 	return $retVal;
 }
 
+function cssSwitcher() {
+	global $css;
+
+	// valid css sheets:
+	$valid_css=array('default', 'new');
+
+	session_start();
+
+	// store css type in session if passed in request:
+	isset($_REQUEST["css"]) && !empty($_REQUEST["css"]) && in_array($_REQUEST["css"], $valid_css) && $_SESSION["css"]=$_REQUEST["css"];
+
+	// use css sheet type stored in session if there:
+	isset($_SESSION["css"]) && !empty($_SESSION["css"]) && $css=$_SESSION["css"];
+}
+
 ?>
