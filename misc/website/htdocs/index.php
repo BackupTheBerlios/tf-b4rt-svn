@@ -230,7 +230,7 @@ function printPageFeatures() {
 
 	<h1 id="features">Features</h1>
 	<p>
-		Some of the most popular features of torrentflux-b4rt are listed below.  This list is definitely NOT exhaustive, there are a massive number of features that can be configured via the torrentflux-b4rt admin panel!
+		Some of the most popular features of torrentflux-b4rt are listed below.  This list is definitely NOT exhaustive - there are a massive number of features that can be configured via the torrentflux-b4rt administration panel!
 	</p>
 
 	<a name="toc"></a>
@@ -256,27 +256,27 @@ function printPageFeatures() {
 		<h2 id="protocols"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Supports multiple internet transfer protocols</h2>
 		Torrentflux-b4rt supports other internet transfer protocols as well as just BitTorrent.  Integration of the various protocols is seamless, meaning you start, stop, restart transfers in the same manner regardless of the underlying transfer protocol.<br/>
 		<br/>
-		Supported protocols include:<br/>
+		Supported transfer protocols include:<br/>
 		<ul class="subcontent">
 			<li>
-				BitTorrent - supported client(s) include:
+				BitTorrent - supported clients include:
 				<ul>
 					<li><a href="http://www.bittorrent.com/" title="Open BitTorrent.com site in new window" target="_blank">Original BitTorrent/Mainline</a><br/>&mdash; supports trackerless torrents and encryption <a href="images/screenshots/1.0-alpha7/transferControl_mainline.png" target="_blank" title="Torrentflux-b4rt BitTorrent Mainline Transfer Settings Screenshot">(screenshot)</a></li>
 					<li><a href="http://www.bittornado.com/" title="Open BitTornado site in new window" target="_blank">BitTornado</a><br/>&mdash; uses slightly less resources than the original BT, allows file priority for downloading files selectively <a href="images/screenshots/1.0-alpha7/transferControl_tornado.png" target="_blank" title="Torrentflux-b4rt BitTornado Transfer Control Screenshot">(screenshot)</a></li>
 					<li><a href="http://transmission.m0k.org/" title="Open Transmission site in new window" target="_blank">Transmission</a><br/>&mdash; much smaller memory footprint without much loss in functionality <a href="images/screenshots/1.0-alpha7/transferControl_transmission.png" target="_blank" title="Torrentflux-b4rt Transmission Transfer Settings Screenshot">(screenshot)</a></li>
-					<li><a href="http://azureus.sourceforge.net/" title="Open Azureus site in new window" target="_blank">Azureus</a><br/>&mdash; control a number of transfers from a single control process, tighter control on total max bandwidth for all torrents <a href="images/screenshots/1.0-alpha7/transferControl_azureus.png" target="_blank" title="Torrentflux-b4rt Azureus Transfer Settings Screenshot">(screenshot)</a></li>
+					<li><a href="http://azureus.sourceforge.net/" title="Open Azureus site in new window" target="_blank">Azureus</a><br/>&mdash; control a number of transfers from a single control process, apply global bandwidth limits on all torrents <a href="images/screenshots/1.0-alpha7/transferControl_azureus.png" target="_blank" title="Torrentflux-b4rt Azureus Transfer Settings Screenshot">(screenshot)</a></li>
 				</ul>
 			</li>
 
 			<li>
-				HTTP/FTP - supported client(s) include:
+				HTTP/FTP - supported client:
 				<ul>
-					<li><a href="http://www.gnu.org/software/wget/" title="Open wget site in new window" target="_blank">wget</a><br/>&mdash; standard lightweight file transfer utility on Linux, supported on many other platforms also <a href="images/screenshots/1.0-alpha7/transferControl_wget.png" target="_blank" title="Torrentflux-b4rt wget Transfer Control Screenshot">(screenshot)</a></li>
+					<li><a href="http://www.gnu.org/software/wget/" title="Open wget site in new window" target="_blank">wget</a><br/>&mdash; standard lightweight file transfer utility on Linux, supported on many platforms <a href="images/screenshots/1.0-alpha7/transferControl_wget.png" target="_blank" title="Torrentflux-b4rt wget Transfer Control Screenshot">(screenshot)</a></li>
 				</ul>
 			</li>
 
 			<li>
-				Usenet - supported client(s) include:
+				Usenet - supported client:
 				<ul>
 					<li><a href="http://noisybox.net/computers/nzbperl/" title="Open nzbperl site in new window" target="_blank">nzbperl</a><br/>&mdash; perl based application allowing multi-connection news server downloads from nzb files with functionality for bandwidth throttling <a href="images/screenshots/1.0-alpha7/transferControl_nzbperl.png" target="_blank" title="Torrentflux-b4rt nzbperl Screenshot">(screenshot)</a></li>
 				</ul>
@@ -295,11 +295,11 @@ function printPageFeatures() {
 
 	<div class="subcontent">
 		<h2 id="xfer_stats"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;Transfer statistics and logging</h2>
-		View detailed transfer statistics and information, including:<br/>
+		View detailed transfer statistics and information <a href="images/screenshots/1.0-alpha7/transferStats_torrent.png" target="_blank" title="Torrentflux-b4rt Transfer Stats Screenshot">(screenshot)</a>, including:<br/>
 		<ul>
-				<li>Per transfer error logging for easy troubleshooting</li>
+				<li>Per transfer error logging for easier troubleshooting</li>
 				<li>Upload/download totals for each user, by day/month/year</li>
-				<li>Number of seeders/leechers/etc for a torrent in a graphical display <a href="images/screenshots/1.0-alpha7/transferStats_torrent.png" target="_blank" title="Torrentflux-b4rt Transfer Stats Screenshot">(screenshot)</a></li>
+				<li>Number of seeders/leechers/etc for a torrent in a graphical display</li>
 		</ul>
 	</div>
 
@@ -347,11 +347,10 @@ function printPageFeatures() {
 
 	<div class="subcontent">
 		<h2 id="ajax"><a href="#toc" title="Back To Feature List">^^</a>&nbsp;AJAX updates for maximum info with minimal bandwidth</h2>
-		AJAX cuts down on the amount of bandwidth used to display data from the torrentflux-b4rt webserver and creates an experience similar to a 'standalone' application:<br/>
+		AJAX cuts down on the amount of bandwidth used to display data and creates an experience similar to a 'standalone' application:<br/>
 		<ul>
-			<li>Display of transfer lists can be easily configured to use AJAX to update transfer stats in real time.  This saves on bandwidth since only the transfer list needs to be sent across the network, not the whole web page.</li>
-
-			<li>Individual transfer windows can also use AJAX to update stats in real time.</li>
+			<li>Transfer lists update stats in real time - saves on bandwidth since only the transfer list needs to be sent across the network, not the whole web page</li>
+			<li>Individual transfer windows can also use AJAX to update stats in real time</li>
 		</ul>
 	</div>
 
@@ -417,7 +416,7 @@ function printPageAbout() {
 					A great debt is owed to the original Torrentflux's author - Qrome - as well as all the authors of the original hacks who are too numerous to mention here.  Whilst every single 'hack' has been engineered and tweaked by b4rt to be added into torrentflux-b4rt, without Qrome and the authors of the hacks many of those cool features and ideas might never have made it into torrentflux-b4rt.  With this, many thanks go out to Qrome and the numerous authors of hacks and mods to the original torrentflux.
 					</p>
 					<p>
-						Please note that if you feel you wish to be quoted as an originating author of a feature that exists in torrentflux-b4rt, please contact us providing details of your involvement and we will endeavour to add your name to this page in a contributors section.
+						Please note that if you feel you wish to be quoted as an originating author of a feature that exists in torrentflux-b4rt, please contact us providing details of your involvement and we will endeavour to add your name to this page.
 					</p>
 				</div>
 			<?php
@@ -432,7 +431,7 @@ function printPageAbout() {
 			The <strong>Torrentflux-b4rt</strong> project started as an enhancement to the base <a href="http://www.torrentflux.com/" title="Torrentflux">TorrentFlux</a> 2.1 installation.
 		</p>
 		<p>
-			Users began to submit their own 'hacks' or modifications to the base torrentflux system on the Torrentflux Forum, each of which provided enhanced functionality to the core system which was 'a great thing' &trade;.
+			Users began to submit their own 'hacks' or modifications to the base torrentflux system on the torrentflux forum, each of which provided enhanced functionality to the core system which was 'a great thing' &trade;.
 		</p>
 <br clear="all"/>
 <br/>
