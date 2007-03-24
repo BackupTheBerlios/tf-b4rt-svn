@@ -949,17 +949,12 @@ function convertIntegerToArray($dataInt) {
  * @param $mode the mode of the dir if created. default is 0755
  * @return boolean if dir exists/could be created
  */
-function checkDirectory($dir, $mode = 0755) {
-	global $CHECKDIR_RECURSION;
-	if (isset($CHECKDIR_RECURSION))
-		$CHECKDIR_RECURSION++;
-	else
-		$CHECKDIR_RECURSION = 0;
-	if ($CHECKDIR_RECURSION > 10)
+function checkDirectory($dir, $mode = 0755, $depth = 0) {
+	if ($depth > 10)
 		return false;
 	if ((@is_dir($dir) && @is_writable($dir)) || @mkdir($dir, $mode))
 		return true;
-	if (!@checkDirectory(dirname($dir), $mode))
+	if (!@checkDirectory(dirname($dir), $mode, ++$depth))
 		return false;
 	return @mkdir($dir, $mode);
 }
