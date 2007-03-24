@@ -32,14 +32,19 @@ $page = "";
 // functions
 require_once('functions.php');
 
+/*
+ * Temp feature to switch CSS sheets dynamically in testing.
+ * To change css sheet, call URL with vbl 'css=new' for the new sheet, setting 
+ * will be kept for the current browser session.  To change back, use 
+ * 'css=default'.
+session_start();
+
 // default CSS to use:
 // current available: default, new
-$css = "default";
-
-// Temp feature to switch CSS sheets dynamically in testing.
-// To change css sheet, call URL with vbl 'css=new' for the new sheet, setting will
-// be kept for the current browser session.  To change back, use 'css=default'.
-cssSwitcher();
+$css = (isset($_SESSION["css"]) && !empty($_SESSION["css"]))
+	? $_SESSION["css"] : "default";
+ */
+$css="default";
 
 // -----------------------------------------------------------------------------
 // Main

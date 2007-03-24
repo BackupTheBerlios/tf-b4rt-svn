@@ -235,8 +235,6 @@ function cssSwitcher() {
 	// valid css sheets:
 	$valid_css=array('default', 'new');
 
-	session_start();
-
 	// store css type in session if passed in request:
 	isset($_REQUEST["css"]) && !empty($_REQUEST["css"]) && in_array($_REQUEST["css"], $valid_css) && $_SESSION["css"]=$_REQUEST["css"];
 
