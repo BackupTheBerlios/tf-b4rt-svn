@@ -93,3 +93,7 @@ td.buttonLinks {
 	padding-left: 1px;
 	padding-right: 1px;
 }
+td.center {
+	text-align: center;
+	padding-top: 5px;
+}
