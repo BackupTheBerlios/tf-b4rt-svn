@@ -65,7 +65,7 @@ $transferSize = floatval($sf->size);
 $tmpl->setvar('size', @formatBytesTokBMBGBTB($transferSize));
 
 // sharing
-$tmpl->setvar('sharing', ($transferSize > 0) ? @number_format((($totals["uptotal"] / $transferSize) * 100), 2) : "0");
+$tmpl->setvar('sharing', ($totals["downtotal"] > 0) ? @number_format((($totals["uptotal"] / $totals["downtotal"]) * 100), 2) : "0");
 
 // totals
 $tmpl->setvar('downTotal', @formatFreeSpace($totals["downtotal"] / 1048576));
