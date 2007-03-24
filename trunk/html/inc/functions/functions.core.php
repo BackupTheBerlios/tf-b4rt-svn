@@ -1620,7 +1620,7 @@ function getTransferDetails($transfer, $full) {
 	// eta
 	$details['eta'] = $sf->time_left;
 	// sharing
-	$details['sharing'] = ($size > 0) ? @number_format((($totals["uptotal"] / $size) * 100), 2) : 0;
+	$details['sharing'] = ($totals["downtotal"] > 0) ? @number_format((($totals["uptotal"] / $totals["downtotal"]) * 100), 2) : 0;
 	// full (including static) details
 	if ($full) {
 		// owner
