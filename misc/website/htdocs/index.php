@@ -1,5 +1,4 @@
 <?php
-error_reporting(E_ALL);
 
 /* $Id$ */
 
@@ -40,7 +39,7 @@ $css = "default";
 // Temp feature to switch CSS sheets dynamically in testing.
 // To change css sheet, call URL with vbl 'css=new' for the new sheet, setting will
 // be kept for the current browser session.  To change back, use 'css=default'.
-isset($_REQUEST["css"]) && cssSwitcher();
+cssSwitcher();
 
 // -----------------------------------------------------------------------------
 // Main
