@@ -1038,7 +1038,7 @@ function getEngineLink($searchEngine) {
 	if (is_file($engineFile)) {
 		$fp = @fopen($engineFile,'r');
 		if ($fp) {
-			$tmp = fread($fp, filesize($engineFile));
+			$tmp = @fread($fp, filesize($engineFile));
 			@fclose( $fp );
 			$tmp = substr($tmp,strpos($tmp,'$this->mainURL'),100);
 			$tmp = substr($tmp,strpos($tmp,"=")+1);
@@ -1073,15 +1073,17 @@ function getTransferArrayFromDB() {
  */
 function getTransferArray($sortOrder = '') {
 	global $cfg;
-	$handle = @opendir($cfg["transfer_file_path"]);
-	if (!$handle)
-		return null;
 	$retVal = array();
-	while ($transfer = readdir($handle)) {
+	$handle = @opendir($cfg["transfer_file_path"]);
+	if (!$handle) {
+		AuditAction($cfg["constants"]["error"], "error when opening transfers-dir ".$cfg["transfer_file_path"]);
+		return $retVal;
+	}
+	while ($transfer = @readdir($handle)) {
 		if (($transfer{0} != ".") && isValidTransfer($transfer))
 			$retVal[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
 	}
-	closedir($handle);
+	@closedir($handle);
 	// sort transfer-array
 	$sortId = ($sortOrder != "") ? $sortOrder : $cfg["index_page_sortorder"];
 	switch ($sortId) {
