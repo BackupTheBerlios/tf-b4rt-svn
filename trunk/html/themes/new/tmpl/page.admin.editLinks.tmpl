@@ -2,42 +2,78 @@
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
 	<form action="admin.php?op=addLink" method="post">
-		<tmpl_var name="_FULLURLLINK">:
-		<input type="Text" size="30" maxlength="255" name="newLink">
-		<tmpl_var name="_FULLSITENAME">:
-		<input type="Text" size="30" maxlength="255" name="newSite">
-		<input type="Submit" value="<tmpl_var name="_UPDATE">">
+		<div id="upload">
+			<div id="uploadLast"></div>
+			<div id="uploadFirst">
+				<span class="upload">
+					New Link
+				</span>
+			</div>
+		</div>
+		<div class="uploadClass">
+			<tmpl_var name="_FULLURLLINK">:
+			<input type="Text" size="30" maxlength="255" name="newLink">
+			<tmpl_var name="_FULLSITENAME">:
+			<input type="Text" size="30" maxlength="255" name="newSite">
+			<input type="Submit" value="<tmpl_var name="_UPDATE">">
+		</div>
+		<div id="uploadBottom"></div>
+		<div id="uploadBottomEnd"></div>
 	</form>
-	<br />
-	<!-- Use a Table for final Design -->
-	<tmpl_loop name="link_list">
-		<tmpl_if name="is_edit">
-			<form action="admin.php?op=editLink" method="post">
-				<tmpl_var name="_FULLURLLINK">:
-				<input type="Text" size="30" maxlength="255" name="editLink" value="<tmpl_var name="url">">
-				<tmpl_var name="_FULLSITENAME">:
-				<input type="Text" size="30" maxlength="255" name="editSite" value="<tmpl_var name="sitename">">
-				<input type="hidden" name="lid" value="<tmpl_var name="lid">">
-				<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
-			</form>
-		<tmpl_else>
-			<a href="admin.php?op=deleteLink&lid=<tmpl_var name="lid">" onclick="return confirm('Delete Link <tmpl_var name="sitename"> ?')"><tmpl_var name="_DELETE"> <tmpl_var name="lid"></a>
-			<a href="admin.php?op=editLinks&edit=<tmpl_var name="lid">"><tmpl_var name="_EDIT"> <tmpl_var name="lid"></a>
-			<tmpl_if name="enable_dereferrer">
-				<a href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
-			<tmpl_else>
-				<a href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
-			</tmpl_if>
-				<tmpl_if name="counter" value="2">
-					<a href='admin.php?op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='themes/default/images/uparrow.png' alt='Up'></a><tmpl_elseif name="counter" value="1">
-					<img src='themes/default/images/blank.gif'>
-				</tmpl_if>
-				<tmpl_if name="counter2">
-					<a href='admin.php?op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='themes/default/images/downarrow.png' alt='Down'></a>
-				</tmpl_if>
-			<br />
-		</tmpl_if>
-	</tmpl_loop>
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				Links
+			</span>
+		</div>
+	</div>
+	<div class="uploadClass">
+		<table id="statusInfos">
+			<tmpl_loop name="link_list">
+					<tr>
+						<td class="buttonLinks">
+							<a href="admin.php?op=deleteLink&lid=<tmpl_var name="lid">" onclick="return confirm('Delete Link <tmpl_var name="sitename"> ?')"><img src='themes/default/images/uparrow.png' alt='<tmpl_var name="_DELETE"> <tmpl_var name="lid">'></a>
+						</td>
+						<td class="buttonLinks">
+							<a href="admin.php?op=editLinks&edit=<tmpl_var name="lid">"><img src='themes/default/images/uparrow.png' alt='<tmpl_var name="_EDIT"> <tmpl_var name="lid">'></a>
+						</td>
+						<td class="outlinks">
+							<tmpl_if name="is_edit">
+								<div class="linksClass">
+									<form action="admin.php?op=editLink" method="post">
+										<tmpl_var name="_FULLURLLINK">:
+										<input type="Text" size="25" maxlength="255" name="editLink" value="<tmpl_var name="url">">
+										<tmpl_var name="_FULLSITENAME">:
+										<input type="Text" size="25" maxlength="255" name="editSite" value="<tmpl_var name="sitename">">
+										<input type="hidden" name="lid" value="<tmpl_var name="lid">">
+										<input type="Submit" value="<tmpl_var name="_UPDATE">"><br>
+									</form>
+								</div>
+							<tmpl_else>
+								<tmpl_if name="enable_dereferrer">
+									<a class="outlinks" href="index.php?iid=dereferrer&u=<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+								<tmpl_else>
+									<a class="outlinks" href="<tmpl_var name="url">" target="_blank"><tmpl_var name="sitename"></a>
+								</tmpl_if>
+							</tmpl_if>
+						</td>
+						<td class="buttonLinks">
+							<tmpl_if name="counter" value="2">
+								<a href='admin.php?op=moveLink&amp;direction=up&amp;lid=<tmpl_var name="lid">'><img src='themes/default/images/uparrow.png' alt='Up'></a>
+							</tmpl_if>
+						</td>
+						<td class="buttonLinks">
+							<tmpl_if name="counter2">
+								<a href='admin.php?op=moveLink&amp;direction=down&amp;lid=<tmpl_var name="lid">'><img src='themes/default/images/downarrow.png' alt='Down'></a>
+							</tmpl_if>
+						</td>
+					</tr>
+			</tmpl_loop>
+		</table>
+	</div>
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
 	<tmpl_include name="inc.subfoot.tmpl">
 </div>
 </body>

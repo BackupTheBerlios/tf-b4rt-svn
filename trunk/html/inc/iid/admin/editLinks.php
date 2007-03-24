@@ -45,11 +45,12 @@ foreach($arLinks as $link) {
 		$is_edit = 1;
 	} else {
 		$is_edit = 0;
-		if ($inx > 1 )
-			$counter = 2;
-		if ($inx == 1)
-			$counter = 1;
 	}
+	if ($inx > 1 )
+		$counter = 2;
+	if ($inx == 1)
+		$counter = 1;
+
 	array_push($link_list, array(
 		'is_edit' => $is_edit,
 		'url' => $link['url'],

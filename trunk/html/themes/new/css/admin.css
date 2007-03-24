@@ -74,3 +74,22 @@ td.status {
 td.statusInfos {
 	vertical-align: top;
 }
+td.outlinks {
+	height: 18px;
+	padding-left: 5px;
+	width: 100%;
+}
+a.outlinks {
+	color: #000000;
+}
+a.outlinks:hover {
+	color: #FFFFFF;
+}
+div.linksClass {
+	text-align: left;
+}
+td.buttonLinks {
+	height: 18px;
+	padding-left: 1px;
+	padding-right: 1px;
+}
