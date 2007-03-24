@@ -950,10 +950,12 @@ function convertIntegerToArray($dataInt) {
  * @return boolean if dir exists/could be created
  */
 function checkDirectory($dir, $mode = 0755, $depth = 0) {
-	if ($depth > 10)
+	if ($depth > 32)
 		return false;
 	if ((@is_dir($dir) && @is_writable($dir)) || @mkdir($dir, $mode))
 		return true;
+	if ($dir == '/')
+		return false;
 	if (!@checkDirectory(dirname($dir), $mode, ++$depth))
 		return false;
 	return @mkdir($dir, $mode);
@@ -1923,7 +1925,7 @@ function GetLinks() {
  * @return int
  */
 function getDriveSpace($drive) {
-	if (is_dir($drive)) {
+	if (@is_dir($drive)) {
 		$dt = disk_total_space($drive);
 		$df = disk_free_space($drive);
 		return round((($dt - $df) / $dt) * 100);
