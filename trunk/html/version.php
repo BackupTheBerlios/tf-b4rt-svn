@@ -1,1 +1,1 @@
-<?php define("_VERSION", "1.0-alpha7"); ?>
+<?php define("_VERSION", "svn-trunk"); ?>
