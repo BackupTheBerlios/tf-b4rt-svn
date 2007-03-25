@@ -120,6 +120,14 @@ span.upload_last {
 		top: 5px;
 	color: #585858;
 }
+a.upload {
+	color: #585858;
+	text-decoration: none;
+}
+a.upload:hover {
+	color: #c1b18d;
+	text-decoration: none;
+}
 #uploadFirst {
 	position: relative;
 		top: -26px;

@@ -15,25 +15,25 @@
 	<div id="upload">
 		<div id="uploadLast"></div>
 		<div id="uploadFirst">
-			<span class="upload_first" onclick="slider('fileUpload')">
-				File Upload
+			<span class="upload_first">
+				<a class="upload" href="javascript:slider('fileUpload','toggle'); slider('torrentUrl','hide'); slider('nzbUrl','hide'); slider('wgetUrl','hide'); slider('search','hide')">File Upload</a>
 			</span>
-			<span class="upload" onclick="slider('torrentUrl')">
-				URL (Torrent)
+			<span class="upload">
+				<a class="upload" href="javascript:slider('fileUpload','hide'); slider('torrentUrl','toggle'); slider('nzbUrl','hide'); slider('wgetUrl','hide'); slider('search','hide')">URL (Torrent)</a>
 			</span>
 			<tmpl_if name="enable_nzbperl">
-				<span class="upload" onclick="slider('nzbUrl')">
-					URL (nzb)
+				<span class="upload">
+					<a class="upload" hef="javascript:slider('fileUpload','hide'); slider('torrentUrl','hide'); slider('nzbUrl','toggle'); slider('wgetUrl','hide'); slider('search','hide')">URL (nzb)</a>
 				</span>
 			</tmpl_if>
 			<tmpl_if name="enable_wget">
-				<span class="upload" onclick="slider('wgetUrl')">
-					URL (Wget)
+				<span class="upload">
+					<a class="upload" href="javascript:slider('fileUpload','hide'); slider('torrentUrl','hide'); slider('nzbUrl','hide'); slider('wgetUrl','toggle'); slider('search','hide')">URL (Wget)</a>
 				</span>
 			</tmpl_if>
 			<tmpl_if name="enable_search">
-				<span class="upload_last" onclick="slider('search')">
-					Search
+				<span class="upload_last">
+					<a class="upload" href="javascript:slider('fileUpload','hide'); slider('torrentUrl','hide'); slider('nzbUrl','hide'); slider('wgetUrl','hide'); slider('search','toggle')">Search</a>
 				</span>
 			</tmpl_if>
 		</div>
@@ -147,7 +147,7 @@
 </div>
 <div id="stats">
 	<div id="bandwidthTitle">
-		<a class="mainMenu" href="javascript:slider('statsBandwidth')">Bandwidth</a>
+		<a class="mainMenu" href="javascript:slider('statsBandwidth','toggle')">Bandwidth</a>
 	</div>
 	<div id="statsBandwidth">
 		<div id="statsBandwidthBars">
@@ -168,7 +168,7 @@
 		</div>
 	</div>
 	<div id="drivespaceTitle">
-		<a class="mainMenu" href="javascript:slider('statsDrivespace')">Drivespace</a>
+		<a class="mainMenu" href="javascript:slider('statsDrivespace','toggle')">Drivespace</a>
 	</div>
 	<div id="statsDrivespace">
 		<div id="statsDiskspaceBar">
@@ -180,7 +180,7 @@
 	</div>
 	<tmpl_if name="ui_displaylinks" value="1">
 		<div class="linksTitle">
-			<a class="mainMenu" href="javascript:slider('statsLinks')"><tmpl_var name="_LINKS"></a>
+			<a class="mainMenu" href="javascript:slider('statsLinks','toggle')"><tmpl_var name="_LINKS"></a>
 		</div>
 		<div id="statsLinks" style="display: none; height: 0px;">
 			<ul>
@@ -197,7 +197,7 @@
 	<tmpl_if name="ui_displayusers">
 		<tmpl_if name="arOnlineUsers">
 			<div class="linksTitle">
-				<a class="mainMenu" href="javascript:slider('statsUsersOnline')">Users - <tmpl_var name="_ONLINE"></a>
+				<a class="mainMenu" href="javascript:slider('statsUsersOnline','toggle')">Users - <tmpl_var name="_ONLINE"></a>
 			</div>
 			<div id="statsUsersOnline" style="display: none; height: 0px;">
 				<ul>
@@ -210,7 +210,7 @@
 		<tmpl_if name="hide_offline" value="0">
 			<tmpl_if name="arOfflineUsers">
 				<div class="linksTitle">
-					<a class="mainMenu" href="javascript:slider('statsUsersOffline')">Users - <tmpl_var name="_OFFLINE"></a>
+					<a class="mainMenu" href="javascript:slider('statsUsersOffline','toggle')">Users - <tmpl_var name="_OFFLINE"></a>
 				</div>
 				<div id="statsUsersOffline" style="display: none; height: 0px;">
 					<ul>
@@ -224,7 +224,7 @@
 	</tmpl_if>
 	<tmpl_if name="xfer_realtime">
 		<div class="linksTitle">
-			<a class="mainMenu" href="javascript:slider('statsGlobalXfer')"><tmpl_var name="_SERVERXFERSTATS"></a>
+			<a class="mainMenu" href="javascript:slider('statsGlobalXfer','toggle')"><tmpl_var name="_SERVERXFERSTATS"></a>
 		</div>
 		<div id="statsGlobalXfer" style="display: none; height: 0px;">
 			<span class="serverStats">Total: <tmpl_var name="totalxfer1"></span><br>
@@ -235,7 +235,7 @@
 			</div>
 		</div>
 		<div class="linksTitle">
-			<a class="mainMenu" href="javascript:slider('statsUserXfer')"><tmpl_var name="_YOURXFERSTATS"></a>
+			<a class="mainMenu" href="javascript:slider('statsUserXfer','toggle')"><tmpl_var name="_YOURXFERSTATS"></a>
 		</div>
 		<div id="statsUserXfer" style="display: none; height: 0px;">
 			<span class="serverStats">Total: <tmpl_var name="total2"></span><br>
@@ -247,7 +247,7 @@
 		</div>
 	</tmpl_if>
 	<div class="linksTitle">
-		<a class="mainMenu" href="javascript:slider('serverStats')"><tmpl_var name="_OTHERSERVERSTATS"></a>
+		<a class="mainMenu" href="javascript:slider('serverStats','toggle')"><tmpl_var name="_OTHERSERVERSTATS"></a>
 	</div>
 	<div id="serverStats" style="display: none; height: 0px;">
 		<span class="serverStats"><tmpl_var name="_ID_CONNECTIONS">: <tmpl_var name="id_connections1"></span><br>
@@ -286,7 +286,7 @@
 <img src="themes/new/images/datadir.gif" width="14" height="14" title="Transfer-Data">
 </td>
 <td class="tiny">Data</td>
-<td nowrap>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td nowrap>		  </td>
 <td>
 <img src="themes/new/images/bulkstart.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">">
 <img src="themes/new/images/bulkresume.gif" width="16" height="16" title="<tmpl_var name="_RUNTRANSFER">">
@@ -320,7 +320,7 @@
 <a href="dispatcher.php?action=maintenance" onclick="return actionClick(true)"><img src="themes/new/images/maintenance.gif" width="16" height="16" border="0" title="Maintenance"></a>
 </td>
 <tmpl_if name="enable_bulkops">
-<td nowrap>&nbsp;&nbsp;&nbsp;</td>
+<td nowrap>	  </td>
 <td class="tiny" align="right" nowrap>
 <a href="dispatcher.php?action=bulkStart" onclick="return actionConfirm('Start All Transfers ?')"><img src="themes/new/images/bulkstart.gif" width="16" height="16" border="0" title="Start All Transfers"></a>
 <a href="dispatcher.php?action=bulkResume" onclick="return actionConfirm('Resume All Transfers ?')"><img src="themes/new/images/bulkresume.gif" width="16" height="16" border="0" title="Resume All Transfers"></a>
@@ -328,7 +328,7 @@
 </td>
 </tmpl_if>
 <tmpl_if name="enable_multiops">
-<td nowrap>&nbsp;&nbsp;&nbsp;</td>
+<td nowrap>	  </td>
 <td class="tiny" align="right" nowrap>
 <select name="action" size="1">
 <option value="---" selected>---</option>
@@ -427,7 +427,7 @@ Total transfers a user may run: <strong><tmpl_var name="limitUser"></strong><br>
 </table>
 <tmpl_if name="ui_displayfluxlink">
 <div align="right">
-<a href="http://tf-b4rt.berlios.de" target="_blank"><font class="tinywhite">torrentflux-b4rt <tmpl_var name="version"></font></a>&nbsp;&nbsp;
+<a href="http://tf-b4rt.berlios.de" target="_blank"><font class="tinywhite">torrentflux-b4rt <tmpl_var name="version"></font></a>  
 <script language="JavaScript">
 function SuperAdmin(name_file) {
 window.open (name_file,"_blank","toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600")
@@ -548,8 +548,6 @@ Warning! <tmpl_var name="drivespace">% drivespace is used! You have <tmpl_var na
 </tr>
 </tmpl_if>
 </table>
-
-
 
 
 
