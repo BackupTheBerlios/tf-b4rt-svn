@@ -44,6 +44,21 @@ if ($cfg["enable_vlc"] != 1) {
 	@error("vlc is disabled. Action has been logged.", "", "");
 }
 
+// check the needed bins
+// vlc
+if (@file_exists($cfg['bin_vlc']) !== true) {
+	@error("Required binary could not be found", "", "",
+		(
+			($cfg['isAdmin'])
+			? array(
+				'vlc is required for vlc-streaming',
+				'Specified vlc-binary does not exist: '.$cfg['bin_vlc'],
+				'Check Settings on Admin-Server-Settings Page')
+			: array('Please contact an Admin')
+		)
+	);
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.vlc.tmpl");
 
