@@ -1,36 +1,23 @@
 /* $Id$ */
 
 /**
- * mytrim
- */
-function mytrim(value) {
-	var trimmedVal = "";
-	for (var i=0; i<value.length; i++) {
-		if (value.charCodeAt(i) != 32) {
-			trimmedVal = trimmedVal + value.charAt(i);
-		}
-	}
-	return trimmedVal;
-}
-
-/**
  * addDirEntry
  */
 function addDirEntry () {
-    var val = mytrim(document.theForm.resdirentry.value);
+    var val = lrtrim(document.theForm.resdirentry.value);
  	if (val != "") {
   		if (val.indexOf('/') != -1) {
  			alert("No slashes allowed");
 	    	return false;
- 		}	
+ 		}
  		for (var i = 0; i < document.theForm.resdirlist.options.length; i++) {
-	    	if ((mytrim(document.theForm.resdirlist.options[i].text)) == val) {
+	    	if ((lrtrim(document.theForm.resdirlist.options[i].text)) == val) {
 	    		alert("Entry already exists.");
 	    		return false;
 	    	}
 	    }
 	    var resliststr = document.theForm.dir_restricted;
-	    var reslist = document.theForm.resdirlist;	    
+	    var reslist = document.theForm.resdirlist;
  	    var newentry = document.createElement("option");
 	    newentry.text = val;
         document.theForm.resdirentry.value = "";
@@ -62,9 +49,9 @@ function removeDirEntry() {
             if (j > 0) {
                 newValue += ":";
             }
-		    newValue += mytrim(document.theForm.resdirlist.options[j].text);
+		    newValue += lrtrim(document.theForm.resdirlist.options[j].text);
 		}
-		resliststr.value = mytrim(newValue);
+		resliststr.value = lrtrim(newValue);
 	} else {
 		alert("Please select an entry first!");
 	}

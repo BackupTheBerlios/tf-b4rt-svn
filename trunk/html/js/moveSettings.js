@@ -1,22 +1,10 @@
 /* $Id$ */
 
 /**
- * mytrim
- */
-function mytrim(value) {
-	var trimmedVal = "";
-	for (var i=0; i<value.length; i++) {
-		if (value.charCodeAt(i) != 32)
-			trimmedVal = trimmedVal + value.charAt(i);
-	}
-	return trimmedVal;
-}
-
-/**
  * addMoveEntry
  */
 function addMoveEntry () {
-    var val = mytrim(document.theForm.category.value);
+    var val = lrtrim(document.theForm.category.value);
  	if (val == "") {
  		alert("Please enter a Directory first!");
  		return false;
@@ -25,11 +13,11 @@ function addMoveEntry () {
 		return false;
  	} else {
  	 	for (var i = 0; i < document.theForm.categorylist.options.length; i++) {
-	    	if ((mytrim(document.theForm.categorylist.options[i].text)) == val) {
+	    	if ((lrtrim(document.theForm.categorylist.options[i].text)) == val) {
 	    		alert("Move-dir already exists");
 	    		return false;
 	    	}
-	    	if ((mytrim(document.theForm.categorylist.options[i].text)) == val + "/") {
+	    	if ((lrtrim(document.theForm.categorylist.options[i].text)) == val + "/") {
 	    		alert("Move-dir already exists");
 	    		return false;
 	    	}
@@ -63,9 +51,9 @@ function removeMoveEntry() {
 		for (var j = 0; j < document.theForm.categorylist.options.length; j++) {
             if (j > 0)
                 newValue += ":";
-		    newValue += mytrim(document.theForm.categorylist.options[j].text);
+		    newValue += lrtrim(document.theForm.categorylist.options[j].text);
 		}
-		catliststr.value = mytrim(newValue);
+		catliststr.value = lrtrim(newValue);
 	} else {
 		alert("Please select an entry first!");
 	}

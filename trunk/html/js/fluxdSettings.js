@@ -1,28 +1,6 @@
 /* $Id$ */
 
 /**
- * mytrim
- */
-function mytrim(value) {
-	var trimmedVal = "";
-	for (var i=0; i<value.length; i++) {
-		if (value.charCodeAt(i) != 32)
-			trimmedVal = trimmedVal + value.charAt(i);
-	}
-	return trimmedVal;
-}
-
-/**
- * lrtrim
- */
-function lrtrim(value) {
-	var l, r;
-	for (l = 0;                l < value.length && value.charCodeAt(l) == 32; l++);
-	for (r = value.length - 1; r > l            && value.charCodeAt(r) == 32; r--);
-	return value.substring(l, r + 1);
-}
-
-/**
  * addWatchEntry
  */
 function addWatchEntry () {
@@ -43,8 +21,8 @@ function addWatchEntry () {
 	    	if ((lrtrim(document.theForm.watch_jobs.options[i].value)) == (wu + ":" + wd + "/")) {
 	    		alert("Job already exists");
 	    		return false;
-	    	}	    	
-	    }	    
+	    	}
+	    }
 	    var newentry = document.createElement("option");
 	    newentry.text = wu + ":" + wd;
 	    newentry.value = newentry.text;
@@ -95,7 +73,7 @@ function addRssadFilterEntry() {
 	    	}
 	    }
 	    var liststr = document.theForm.rssad_filtercontent;
-	    var list = document.theForm.rssad_filters;	    
+	    var list = document.theForm.rssad_filters;
 	    var newentry = document.createElement("option");
 	    newentry.text = filter;
 	    newentry.value = newentry.text;

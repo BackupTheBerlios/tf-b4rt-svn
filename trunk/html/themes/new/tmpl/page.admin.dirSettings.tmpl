@@ -1,13 +1,16 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.titleBar.tmpl">
+<script src="js/functions.js" type="text/javascript"></script>
 <script src="js/adminSettings.js" type="text/javascript"></script>
+<script src="js/moveSettings.js" type="text/javascript"></script>
+<script src="js/resdirSettings.js" type="text/javascript"></script>
 <div id="content">
 	<form name="theForm" action="admin.php?op=updateDirSettings" method="post" onsubmit="return validateSettings('dir')">
 		<div id="upload">
 			<div id="uploadLast"></div>
 			<div id="uploadFirst">
 				<span class="upload">
-					
+
 				</span>
 			</div>
 		</div>
@@ -306,7 +309,6 @@
 						Enable/Disable Moving Files into a specified dir.
 					</td>
 				</tr>
-				<script src="js/moveSettings.js" type="text/javascript"></script>
 				<tr>
 					<td class="settingsTitle">
 						Move Paths
@@ -342,7 +344,6 @@
 						<input type="hidden" name="move_paths" value="<tmpl_var name="moveSettings_move_paths">">
 					</td>
 				</tr>
-				<script src="js/resdirSettings.js" type="text/javascript"></script>
 				<tr>
 					<td class="settingsTitle">
 						Entries
@@ -380,7 +381,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						
+
 					</td>
 					<td class="settingsSetting">
 						<input type="Submit" value="Update Settings">

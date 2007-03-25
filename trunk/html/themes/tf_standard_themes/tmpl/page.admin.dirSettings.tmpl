@@ -1,7 +1,10 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.subhead.tmpl">
 <tmpl_include name="inc.adminmenu.tmpl">
+<script src="js/functions.js" type="text/javascript"></script>
 <script src="js/adminSettings.js" type="text/javascript"></script>
+<script src="js/moveSettings.js" type="text/javascript"></script>
+<script src="js/resdirSettings.js" type="text/javascript"></script>
 <div align="center">
 	<table width="100%" border=1 bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0" bgcolor="<tmpl_var name="table_data_bg">">
 		<tr>
@@ -233,7 +236,6 @@
 									</select>
 								</td>
 							</tr>
-							<script src="js/moveSettings.js" type="text/javascript"></script>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Move Paths</strong><br>
 									<em>Note</em> : You must specify absolute paths here. relative paths are not valid.<br>
@@ -243,7 +245,6 @@
 									<tmpl_include name="inc.moveSettings.tmpl">
 								</td>
 							</tr>
-							<script src="js/resdirSettings.js" type="text/javascript"></script>
 							<tr>
 								<td align="left" width="350" valign="top"><strong>Restricted Entries</strong><br>
 									Set the entries restricted for all dir-operations.<br>
