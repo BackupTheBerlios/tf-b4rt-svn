@@ -202,3 +202,17 @@ div.uploadClass {
 	font-weight: 700;
 	padding-bottom: 5px;
 }
+#statsDrivespace {
+	margin-left: 30px;
+	background-image: url("../pics/menu_box.jpg");
+	background-repeat: repeat-y;
+}
+div.serverStatsBottom {
+	height: 19px;
+	background-image: url("../pics/menu_box_bottom.jpg");
+	background-repeat: no-repeat;
+}
+span.serverStats {
+	margin-left: 10px;
+	color: #585858;
+}

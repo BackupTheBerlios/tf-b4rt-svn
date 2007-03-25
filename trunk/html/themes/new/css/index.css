@@ -88,23 +88,9 @@ div.linksTitle {
 	background-image: url("../pics/menu_box.jpg");
 	background-repeat: repeat-y;
 }
-#statsDrivespace {
-	margin-left: 30px;
-	background-image: url("../pics/menu_box.jpg");
-	background-repeat: repeat-y;
-}
-span.serverStats {
-	margin-left: 10px;
-	color: #585858;
-}
 span.serverStats2 {
 	color: #585858;
 	margin-left: 35px;
-}
-div.serverStatsBottom {
-	height: 19px;
-	background-image: url("../pics/menu_box_bottom.jpg");
-	background-repeat: no-repeat;
 }
 #statsDiskspaceBar {
 	padding-top: 5px;

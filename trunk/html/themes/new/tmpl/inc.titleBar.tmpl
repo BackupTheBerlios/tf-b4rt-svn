@@ -25,7 +25,7 @@
 		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="history">mainMenuActive</tmpl_if>" href="index.php?iid=history">History</a></li>
 		<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="profile">mainMenuActive</tmpl_if>" href="index.php?iid=profile">Profile</a></li>
 		<tmpl_if name="mainMenu" value="profile">
-			<ul>
+			<ul class="menu">
 				<li class="menu_last"><a class="menu" href="index.php?iid=profile&op=showCookies">Cookie Management</a></li>
 			</ul>
 		</tmpl_if>
@@ -33,7 +33,7 @@
 		<tmpl_if name="isAdmin">
 			<li class="mainMenu"><a class="mainMenu <tmpl_if name="mainMenu" value="admin">mainMenuActive</tmpl_if>" href="admin.php">Admin</a></li>
 			<tmpl_if name="mainMenu" value="admin">
-				<ul>
+				<ul class="menu">
 					<li class="menu"><a class="menu" href="admin.php?op=serverSettings">Server</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=transferSettings">Transfer</a></li>
 					<li class="menu"><a class="menu" href="admin.php?op=controlSettings">Control</a></li>

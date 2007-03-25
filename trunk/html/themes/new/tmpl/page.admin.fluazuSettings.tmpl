@@ -1,195 +1,223 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
-	<tmpl_if name="message">
-		<span class="titles"><tmpl_var name="message"></span>
-		<br />
-	</tmpl_if>
 	<script src="js/adminSettings.js" type="text/javascript"></script>
 	<a name="fluazu" id="fluazu"></a>
-	<div>
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				<tmpl_if name="message">
+					<tmpl_var name="message">
+				</tmpl_if>
+				<span id="fluazuStart">
+					<tmpl_if name="fluazuRunning">
+						<input type="Hidden" name="a" value="stop">
+						<input type="Submit" value="Stop fluAzu">
+					<tmpl_else>
+						<input type="Hidden" name="a" value="start">
+						<input type="Submit" value="Start fluAzu">
+					</tmpl_if>
+				</span>
+			</span>
+		</div>
+	</div>
+	<div class="uploadClass">
 		<tmpl_if name="fluazuRunning">
-			<img src="themes/default/images/green.gif" align="absmiddle" align="absmiddle"> fluazu Running (pid: <tmpl_var name="fluazuPid">)
-		<tmpl_else>
-			<img src="themes/default/images/black.gif" align="absmiddle"> fluazu Off
+			<form name="azuForm" action="admin.php?op=updateAzureusSettings" method="post" onsubmit="return validateSettings('azureus')">
+				<table id="settings">
+					<tr>
+						<td class="settingsTitle">
+							Max Active Torrents:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_ACTIVE" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_ACTIVE">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Active Torrents When Only Seeding:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_ACTIVE_SEEDING" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_ACTIVE_SEEDING">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Connections Global:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Connections Per Torrent:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Download Speed KBs:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Downloads:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_DOWNLOADS" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_DOWNLOADS">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Upload Speed KBs:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Upload Speed When Only Seeding KBs:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Uploads:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_UPLOADS" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOADS">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							Max Uploads Seeding:
+						</td>
+						<td class="settingsSetting">
+							<input name="CORE_PARAM_INT_MAX_UPLOADS_SEEDING" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOADS_SEEDING">" size="5">
+						</td>
+					</tr>
+					<tr>
+						<td class="settingsTitle">
+							
+						</td>
+						<td class="settingsSetting">
+							<input type="Submit" value="Update Settings">
+						</td>
+					</tr>
+				</table>
+			</form>
 		</tmpl_if>
 	</div>
-	<tmpl_if name="fluazuRunning">
-		Connected to <tmpl_var name="azu_host">:<tmpl_var name="azu_port"> (Azureus <tmpl_var name="azu_version">)
-		<form name="azuForm" action="admin.php?op=updateAzureusSettings" method="post" onsubmit="return validateSettings('azureus')">
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
+	
+	
+	<div id="upload">
+		<div id="uploadLast"></div>
+		<div id="uploadFirst">
+			<span class="upload">
+				Settings
+			</span>
+		</div>
+	</div>
+	<div class="uploadClass">
+		<form name="theForm" action="admin.php?op=updateFluAzuSettings" method="post" onsubmit="return validateSettings('fluazu')">
 			<table id="settings">
 				<tr>
 					<td class="settingsTitle">
-						Max Active Torrents:
+						Host
 					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_ACTIVE" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_ACTIVE">" size="5">
+					<td class="settingsSetting" rowspan="2">
+						<input name="fluazu_host" type="Text" maxlength="254" value="<tmpl_var name="fluazu_host">" size="20">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Host of Azureus-server (currently only localhost is supported).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Active Torrents When Only Seeding:
+						Port
 					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_ACTIVE_SEEDING" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_ACTIVE_SEEDING">" size="5">
+					<td class="settingsSetting" rowspan="2">
+						<input name="fluazu_port" type="Text" maxlength="5" value="<tmpl_var name="fluazu_port">" size="5">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Port of Azureus-server (XML/HTTP, default: 6884).
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Connections Global:
+						Secure
 					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_CONNECTIONS_GLOBAL">" size="5">
+					<td class="settingsSetting" rowspan="2">
+						<select name="fluazu_secure">
+							<option value="1">true</option>
+							<option value="0"
+							<tmpl_if name="fluazu_secure" value="0">
+								 selected
+							</tmpl_if>
+							>false</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Use secure connection to azureus.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Connections Per Torrent:
+						Username
 					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_CONNECTIONS_PER_TORRENT">" size="5">
+					<td class="settingsSetting" rowspan="2">
+						<input name="fluazu_user" type="Text" maxlength="254" value="<tmpl_var name="fluazu_user">" size="20">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Username to use when connecting to Azureus-server.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Download Speed KBs:
+						Password
 					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_DOWNLOAD_SPEED_KBYTES_PER_SEC">" size="5">
+					<td class="settingsSetting" rowspan="2">
+						<input name="fluazu_pw" type="password" maxlength="254" value="<tmpl_var name="fluazu_pw">" size="20">
+					</td>
+				</tr>
+				<tr>
+					<td class="settingsText">
+						Password to use when connecting to Azureus-server.
 					</td>
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						Max Downloads:
+						
 					</td>
 					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_DOWNLOADS" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_DOWNLOADS">" size="5">
-					</td>
-				</tr>
-				<tr>
-					<td class="settingsTitle">
-						Max Upload Speed KBs:
-					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_KBYTES_PER_SEC">" size="5">
-					</td>
-				</tr>
-				<tr>
-					<td class="settingsTitle">
-						Max Upload Speed When Only Seeding KBs:
-					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOAD_SPEED_SEEDING_KBYTES_PER_SEC">" size="5">
-					</td>
-				</tr>
-				<tr>
-					<td class="settingsTitle">
-						Max Uploads:
-					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_UPLOADS" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOADS">" size="5">
-					</td>
-				</tr>
-				<tr>
-					<td class="settingsTitle">
-						Max Uploads Seeding:
-					</td>
-					<td class="settingsSetting">
-						<input name="CORE_PARAM_INT_MAX_UPLOADS_SEEDING" type="Text" maxlength="10" value="<tmpl_var name="CORE_PARAM_INT_MAX_UPLOADS_SEEDING">" size="5">
+						<input type="Submit" value="Update Settings">
 					</td>
 				</tr>
 			</table>
-			<input type="Submit" value="Update Settings">
 		</form>
-		<br />
-	</tmpl_if>
-	<form name="controlForm" action="admin.php?op=controlFluAzu" method="post">
-		<tmpl_if name="fluazuRunning">
-			<input type="Hidden" name="a" value="stop">
-			<input type="Submit" value="Stop fluazu">
-		<tmpl_else>
-			<input type="Hidden" name="a" value="start">
-			<input type="Submit" value="Start fluazu">
-		</tmpl_if>
-	</form>
-	<form name="theForm" action="admin.php?op=updateFluAzuSettings" method="post" onsubmit="return validateSettings('fluazu')">
-		<table id="settings">
-			<tr>
-				<td class="settingsTitle">
-					Host:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="fluazu_host" type="Text" maxlength="254" value="<tmpl_var name="fluazu_host">" size="55">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-					Host of Azureus-server (currently only localhost is supported).
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					Port:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="fluazu_port" type="Text" maxlength="5" value="<tmpl_var name="fluazu_port">" size="5">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-					Port of Azureus-server (XML/HTTP, default: 6884).
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					Secure:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<select name="fluazu_secure">
-						<option value="1">true</option>
-						<option value="0"
-						<tmpl_if name="fluazu_secure" value="0">
-							 selected
-						</tmpl_if>
-						>false</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-					Use secure connection to azureus.
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					Username:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="fluazu_user" type="Text" maxlength="254" value="<tmpl_var name="fluazu_user">" size="55">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-					Username to use when connecting to Azureus-server.
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsTitle">
-					Password:
-				</td>
-				<td class="settingsSetting" rowspan="2">
-					<input name="fluazu_pw" type="password" maxlength="254" value="<tmpl_var name="fluazu_pw">" size="55">
-				</td>
-			</tr>
-			<tr>
-				<td class="settingsText">
-					Password to use when connecting to Azureus-server.
-				</td>
-			</tr>
-		</table>
-		<input type="Submit" value="Update Settings">
-	</form>
-	<tmpl_include name="inc.subfoot.tmpl">
+	</div>
+	<div id="uploadBottom"></div>
+	<div id="uploadBottomEnd"></div>
 </div>
 <div id="stats">
 	<script language="JavaScript">
@@ -206,6 +234,25 @@
 	<div id="drivespaceTitle">
 		<a class="mainMenu" href="javascript:SuperAdmin('superadmin.php?a=9')">Version</a>
 	</div>
+	<div id="drivespaceTitle">
+		<a class="mainMenu" href="">
+			<tmpl_if name="fluazuRunning">
+				fluAzu Running
+			<tmpl_else>
+				fluAzu Off
+			</tmpl_if>
+		</a>
+	</div>
+	<tmpl_if name="fluazuRunning">
+		<div id="statsDrivespace">
+			<span class="serverStats"><tmpl_var name="azu_host">:<tmpl_var name="azu_port"></span>
+			<br />
+			<span class="serverStats">(Azureus <tmpl_var name="azu_version">)</span>
+			<div class="serverStatsBottom">
+				<span class="serverStats">(pid: <tmpl_var name="fluazuPid">)</span>
+			</div>
+		</div>
+	</tmpl_if>
 </div>
 </body>
 </html>

@@ -7,16 +7,19 @@
 	padding-bottom: 5px;
 }
 td.settingsTitle {
+	padding-top: 2px;
 	padding-right: 10px;
 	width: 70%;
 	font-weight: 700;
 	text-align: right;
 }
 td.settingsSetting {
+	padding-top: 2px;
 	padding-left: 10px;
 	width: 30%;
 }
 td.settingsText {
+	padding-top: 2px;
 	padding-right: 10px;
 	padding-bottom: 5px;
 	width: 50%;
@@ -96,4 +99,7 @@ td.buttonLinks {
 td.center {
 	text-align: center;
 	padding-top: 5px;
+}
+#fluazuStart {
+	padding-left: 100px;
 }
