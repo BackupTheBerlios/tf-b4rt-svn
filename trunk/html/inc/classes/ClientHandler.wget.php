@@ -65,7 +65,24 @@ class ClientHandlerWget extends ClientHandler
     	$this->logMessage($this->client."-start : ".$transfer."\n", true);
 
         // do wget special-pre-start-checks
-        // check to see if the path to the wget-bin is valid
+
+        // check to see if the path to the php-bin is valid
+        if (@file_exists($cfg['bin_php']) !== true) {
+        	$this->state = CLIENTHANDLER_STATE_ERROR;
+        	$msg = "php-cli binary does not exist";
+        	AuditAction($cfg["constants"]["error"], $msg);
+        	$this->logMessage($msg."\n", true);
+        	array_push($this->messages, $msg);
+            array_push($this->messages, "bin_php : ".$cfg["bin_php"]);
+            // write error to stat
+			$sf = new StatFile($this->transfer, $this->owner);
+			$sf->time_left = 'Error';
+			$sf->write();
+			// return
+            return false;
+        }
+
+        // check to see if the wget-bin is executable
         if (!is_executable($cfg["bin_wget"])) {
         	$this->state = CLIENTHANDLER_STATE_ERROR;
         	$msg = "wget cannot be executed";
