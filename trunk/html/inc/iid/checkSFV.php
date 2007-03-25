@@ -32,10 +32,28 @@ if ((!isset($cfg['user'])) || (isset($_REQUEST['cfg']))) {
 // common functions
 require_once('inc/functions/functions.common.php');
 
+// dir functions
+require_once('inc/functions/functions.dir.php');
+
 // is enabled ?
 if ($cfg["enable_sfvcheck"] != 1) {
 	AuditAction($cfg["constants"]["error"], "ILLEGAL ACCESS: ".$cfg["user"]." tried to use checkSFV");
 	@error("checkSFV is disabled", "index.php?iid=index", "");
+}
+
+// check the needed bins
+// cksfv
+if (@file_exists($cfg['bin_cksfv']) !== true) {
+	@error("Required binary could not be found", "", "",
+		(
+			($cfg['isAdmin'])
+			? array(
+				'cksfv is required for sfv-checking',
+				'Specified cksfv-binary does not exist: '.$cfg['bin_cksfv'],
+				'Check Settings on Admin-Server-Settings Page')
+			: array('Please contact an Admin')
+		)
+	);
 }
 
 // target
@@ -44,12 +62,21 @@ $file = getRequestVar('file');
 
 // validate dir + file
 if (!empty($dir)) {
-	if (!isValidPath($dir))
-		@error("Invalid dir", "", "", array($dir));
+	$dirS = str_replace($cfg["path"], '', $dir);
+	if (!((isValidPath($dir)) &&
+		(hasPermission($dirS, $cfg["user"], 'r')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL SFV-ACCESS: ".$cfg["user"]." tried to check ".$dirS);
+		@error("Illegal access. Action has been logged.", "", "");
+	}
 }
 if (!empty($file)) {
-	if (!isValidPath($file))
-		@error("Invalid file", "", "", array($file));
+	$fileS = str_replace($cfg["path"], '', $file);
+	if (!((isValidPath($file)) &&
+		(isValidEntry(basename($file))) &&
+		(hasPermission($fileS, $cfg["user"], 'r')))) {
+		AuditAction($cfg["constants"]["error"], "ILLEGAL SFV-ACCESS: ".$cfg["user"]." tried to check ".$fileS);
+		@error("Illegal access. Action has been logged.", "", "");
+	}
 }
 
 // init template-instance
