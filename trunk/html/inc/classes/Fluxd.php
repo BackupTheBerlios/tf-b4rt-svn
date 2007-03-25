@@ -319,6 +319,28 @@ class Fluxd
             AuditAction($cfg["constants"]["fluxd"], "fluxd already started");
             return false;
         } else {
+			// check the needed bins
+			// perl
+			if (@file_exists($cfg['perlCmd']) !== true) {
+				$msg = "cannot start fluxd, specified Perl-binary does not exist: ".$cfg['perlCmd'];
+            	AuditAction($cfg["constants"]["admin"], $msg);
+            	array_push($this->messages , $msg);
+            	// Set the state
+            	$this->state = FLUXD_STATE_ERROR;
+            	// return
+            	return false;
+			}
+			// php-cli
+			if (@file_exists($cfg['bin_php']) !== true) {
+				$msg = "cannot start fluxd, specified php-cli-binary does not exist: ".$cfg['bin_php'];
+            	AuditAction($cfg["constants"]["admin"], $msg);
+            	array_push($this->messages , $msg);
+            	// Set the state
+            	$this->state = FLUXD_STATE_ERROR;
+            	// return
+            	return false;
+			}
+			// start it
             $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup " . $cfg["perlCmd"];

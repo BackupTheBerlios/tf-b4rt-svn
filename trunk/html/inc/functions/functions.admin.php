@@ -216,13 +216,13 @@ function admin_controlFluxd() {
 				} else {
 					$message = 'Error starting fluxd.';
 					$msgs = Fluxd::getMessages();
-					Fluxd::logError("Error starting fluxd. Messages :\n".implode("\n", $msgs)."\n", true);
-					array_unshift($msgs, "please check fluxd-logs");
-					@error($message, "admin.php?op=fluxdSettings", "fluxd-Settings", "please check fluxd-logs.");
+					Fluxd::logError("Error starting fluxd.".( (!empty($msgs)) ? "\n".implode("\n", $msgs)."\n" : "\n"), true);
+					array_push($msgs, "please check fluxd-logs");
+					@error($message, "admin.php?op=fluxdSettings", "fluxd-Settings", $msgs);
 				}
 				break;
 			}
-			$message = 'Error starting fluxd.';
+			$message = 'fluxd not ready to start';
 			break;
 		case "stop":
 			// kill fluxd

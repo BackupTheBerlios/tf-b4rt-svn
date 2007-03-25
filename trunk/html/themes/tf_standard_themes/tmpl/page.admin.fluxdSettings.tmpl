@@ -58,8 +58,18 @@
 									<td align="center" colspan="2">
 										<strong><font color="red">fluxd not supported</font><strong>
 										<br>
-										PHP does not have support for <em>sockets</em>, fluxd cannot work.
-										<br>
+										<tmpl_if name="perlMissing">
+											<br>
+											Perl is missing or Path is incorrect, check <a href="admin.php?op=serverSettings">Server-Settings</a> Page
+										</tmpl_if>
+										<tmpl_if name="phpMissing">
+											<br>
+											PHP is missing or Path is incorrect, check <a href="admin.php?op=serverSettings">Server-Settings</a> Page
+										</tmpl_if>
+										<tmpl_if name="socketsMissing">
+											<br>
+											PHP does not have support for <em>sockets</em>
+										</tmpl_if>
 									</td>
 								</tr>
 							</tmpl_if>

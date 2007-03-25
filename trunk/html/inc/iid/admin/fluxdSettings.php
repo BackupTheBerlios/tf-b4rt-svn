@@ -46,9 +46,30 @@ $message = getRequestVar('m');
 if ($message != "")
 	$tmpl->setvar('message', urldecode($message));
 
+// fluxd requirements checks
+$failed = 0;
+
+// check the needed bins
+// perl
+if (@file_exists($cfg['perlCmd']) !== true) {
+	$failed++;
+	$tmpl->setvar('perlMissing', 1);
+}
+// php-cli
+if (@file_exists($cfg['bin_php']) !== true) {
+	$failed++;
+	$tmpl->setvar('phpMissing', 1);
+}
+
 // check for sessions
 $loadedExtensions = get_loaded_extensions();
-$tmpl->setvar('fluxdSupported', (in_array("sockets", $loadedExtensions)) ? 1 : 0);
+if (!in_array("sockets", $loadedExtensions)) {
+	$failed++;
+	$tmpl->setvar('socketsMissing', 1);
+}
+
+// set supported-var
+$tmpl->setvar('fluxdSupported', ($failed > 0) ? 0 : 1);
 
 // fluxd core
 if (Fluxd::isRunning()) {
