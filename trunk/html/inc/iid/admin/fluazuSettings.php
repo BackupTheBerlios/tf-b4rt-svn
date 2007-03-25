@@ -45,6 +45,11 @@ $message = getRequestVar('m');
 if ($message != "")
 	$tmpl->setvar('message', urldecode($message));
 
+// check the needed bins
+// python
+if (@file_exists($cfg['pythonCmd']) !== true)
+	$tmpl->setvar('pythonMissing', 1);
+
 // fluazu status
 if (FluAzu::isRunning()) {
 	$tmpl->setvar('fluazuRunning', 1);

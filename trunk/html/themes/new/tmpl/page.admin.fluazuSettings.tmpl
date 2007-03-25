@@ -1,22 +1,28 @@
 <tmpl_include name="inc.head.tmpl">
 <tmpl_include name="inc.titleBar.tmpl">
 <div id="content">
+	<tmpl_if name="message">
+		<tmpl_var name="message">
+	</tmpl_if>
 	<script src="js/adminSettings.js" type="text/javascript"></script>
 	<a name="fluazu" id="fluazu"></a>
 	<div id="upload">
 		<div id="uploadLast"></div>
 		<div id="uploadFirst">
 			<span class="upload">
-				<tmpl_if name="message">
-					<tmpl_var name="message">
-				</tmpl_if>
 				<span id="fluazuStart">
-					<tmpl_if name="fluazuRunning">
-						<input type="Hidden" name="a" value="stop">
-						<input type="Submit" value="Stop fluAzu">
+					<tmpl_if name="pythonMissing">
+						<strong><font color="red">Python missing</font></strong>
+						<br><br>
+						Check <a href="admin.php?op=serverSettings">Server-Settings</a> Page.
 					<tmpl_else>
-						<input type="Hidden" name="a" value="start">
-						<input type="Submit" value="Start fluAzu">
+						<tmpl_if name="fluazuRunning">
+							<input type="Hidden" name="a" value="stop">
+							<input type="Submit" value="Stop fluAzu">
+						<tmpl_else>
+							<input type="Hidden" name="a" value="start">
+							<input type="Submit" value="Start fluAzu">
+						</tmpl_if>
 					</tmpl_if>
 				</span>
 			</span>
@@ -108,7 +114,7 @@
 					</tr>
 					<tr>
 						<td class="settingsTitle">
-							
+
 						</td>
 						<td class="settingsSetting">
 							<input type="Submit" value="Update Settings">
@@ -120,8 +126,8 @@
 	</div>
 	<div id="uploadBottom"></div>
 	<div id="uploadBottomEnd"></div>
-	
-	
+
+
 	<div id="upload">
 		<div id="uploadLast"></div>
 		<div id="uploadFirst">
@@ -207,7 +213,7 @@
 				</tr>
 				<tr>
 					<td class="settingsTitle">
-						
+
 					</td>
 					<td class="settingsSetting">
 						<input type="Submit" value="Update Settings">

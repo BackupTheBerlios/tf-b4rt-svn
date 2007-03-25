@@ -121,28 +121,38 @@
 			<td align="center">
 				<div align="center">
 					<table cellpadding="5" cellspacing="0" border="0" width="100%">
-							<form name="controlForm" action="admin.php?op=controlFluAzu" method="post">
-								<tmpl_if name="fluazuRunning">
-									<input type="Hidden" name="a" value="stop">
-									<tr>
-										<td align="center" colspan="2">
-											<input type="Submit" value="Stop fluazu">
-											<br><br>
-										</td>
-									</tr>
-								<tmpl_else>
-									<input type="Hidden" name="a" value="start">
-									<tr>
-										<td align="left" width="350" valign="top" colspan="2"><strong>Start fluazu:</strong><br></td>
-									</tr>
-									<tr>
-										<td align="center" colspan="2">
-											<input type="Submit" value="Start fluazu">
-											<br><br>
-										</td>
-									</tr>
-								</tmpl_if>
-							</form>
+							<tmpl_if name="pythonMissing">
+								<tr>
+									<td align="center" colspan="2">
+										<strong><font color="red">Python missing</font></strong>
+										<br><br>
+										Check <a href="admin.php?op=serverSettings">Server-Settings</a> Page.
+									</td>
+								</tr>
+							<tmpl_else>
+								<form name="controlForm" action="admin.php?op=controlFluAzu" method="post">
+									<tmpl_if name="fluazuRunning">
+										<input type="Hidden" name="a" value="stop">
+										<tr>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Stop fluazu">
+												<br><br>
+											</td>
+										</tr>
+									<tmpl_else>
+										<input type="Hidden" name="a" value="start">
+										<tr>
+											<td align="left" width="350" valign="top" colspan="2"><strong>Start fluazu:</strong><br></td>
+										</tr>
+										<tr>
+											<td align="center" colspan="2">
+												<input type="Submit" value="Start fluazu">
+												<br><br>
+											</td>
+										</tr>
+									</tmpl_if>
+								</form>
+							</tmpl_if>
 							<tr>
 								<td align="center" colspan="2">
 									<table width="100%" border="1" bordercolor="<tmpl_var name="table_admin_border">" cellpadding="2" cellspacing="0">
