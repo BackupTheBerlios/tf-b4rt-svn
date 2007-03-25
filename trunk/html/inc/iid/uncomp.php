@@ -41,6 +41,45 @@ if ($cfg["enable_rar"] != 1) {
 	@error("uncompress is disabled. Action has been logged.", "", "");
 }
 
+// check the needed bins
+// php
+if (@file_exists($cfg['bin_php']) !== true) {
+	@error("Required binary could not be found", "", "",
+		(
+			($cfg['isAdmin'])
+			? array(
+				'PHP-cli is required for uncompress',
+				'Specified PHP-cli-binary does not exist: '.$cfg['bin_php'],
+				'Check Settings on Admin-Server-Settings Page')
+			: array('Please contact an Admin')
+		)
+	);
+}
+// unrar / unzip
+$uncompbin = "";
+$uncomplabel = "";
+if (isset($_REQUEST['type'])) {
+	if (strcasecmp('rar', $_REQUEST['type']) == 0) {
+		$uncompbin = $cfg['bin_unrar'];
+		$uncomplabel = "unrar";
+	} else if (strcasecmp('zip', $_REQUEST['type']) == 0) {
+		$uncompbin = $cfg['bin_unzip'];
+		$uncomplabel = "unzip";
+	}
+}
+if (($uncompbin != "") && (@file_exists($uncompbin) !== true)) {
+	@error("Required binary could not be found", "", "",
+		(
+			($cfg['isAdmin'])
+			? array(
+				$uncomplabel.' is required',
+				'Specified '.$uncomplabel.' does not exist: '.$uncompbin,
+				'Check Settings on Admin-Server-Settings Page')
+			: array('Please contact an Admin')
+		)
+	);
+}
+
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.uncomp.tmpl");
 
