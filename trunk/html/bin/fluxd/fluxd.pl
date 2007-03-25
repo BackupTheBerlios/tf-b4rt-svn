@@ -1423,7 +1423,7 @@ sub fluxcli {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." 2>> ".$ERROR_LOG;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." 2>> ".$ERROR_LOG;
 			return qx($shellCmd);
 		}
 	}
@@ -1431,7 +1431,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return printUsage();
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." 2>> ".$ERROR_LOG;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." 2>> ".$ERROR_LOG;
 			return qx($shellCmd);
 		}
 	}
@@ -1440,7 +1440,7 @@ sub fluxcli {
 		if ((defined $Arg1) || (defined $Arg2)) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1448,7 +1448,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (defined $Arg2)) {;
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1456,7 +1456,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2);
 			return doSysCall($shellCmd);
 		}
 	}
@@ -1464,7 +1464,7 @@ sub fluxcli {
 		if ((!(defined $Arg1)) || (!(defined $Arg2)) || (!(defined $Arg3)) || (!(defined $Arg4))) {
 			return 0;
 		} else {
-			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".$Command." ".$Arg1." ".$Arg2." ".$Arg3." ".$Arg4;
+			my $shellCmd = $BIN_PHP." bin/".$BIN_FLUXCLI." ".quotemeta($Command)." ".quotemeta($Arg1)." ".quotemeta($Arg2)." ".quotemeta($Arg3)." ".quotemeta($Arg4);
 			return doSysCall($shellCmd);
 		}
 	}

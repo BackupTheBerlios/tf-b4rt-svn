@@ -60,6 +60,8 @@ if (!defined('vlibTemplateClassLoaded')) {
         var $ESCAPE_TAGS = array(
                             'html' => array('open' => 'htmlspecialchars('
                                             ,'close'=> ', ENT_QUOTES)'),
+                            'htmlkeepspaces' => array('open' => 'str_replace(\' \', \'&nbsp;\', htmlspecialchars('
+                                            ,'close'=> ', ENT_QUOTES))'),
                             'url' => array('open' => 'urlencode('
                                             ,'close'=> ')'),
                             'rawurl'=>array('open' => 'rawurlencode('

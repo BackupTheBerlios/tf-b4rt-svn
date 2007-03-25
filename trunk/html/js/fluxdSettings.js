@@ -13,11 +13,21 @@ function mytrim(value) {
 }
 
 /**
+ * lrtrim
+ */
+function lrtrim(value) {
+	var l, r;
+	for (l = 0;                l < value.length && value.charCodeAt(l) == 32; l++);
+	for (r = value.length - 1; r > l            && value.charCodeAt(r) == 32; r--);
+	return value.substring(l, r + 1);
+}
+
+/**
  * addWatchEntry
  */
 function addWatchEntry () {
-	var wu = mytrim(document.theForm.watch_user.options[document.theForm.watch_user.selectedIndex].value);
-    var wd = mytrim(document.theForm.watch_dir.value);
+	var wu = lrtrim(document.theForm.watch_user.options[document.theForm.watch_user.selectedIndex].value);
+    var wd = lrtrim(document.theForm.watch_dir.value);
     if ((wu != "") && (wd != "")) {
 		if (wd.indexOf('/') != 0) {
 			alert("Directory must be absolute !");
@@ -26,11 +36,11 @@ function addWatchEntry () {
 	    var liststr = document.theForm.fluxd_Watch_jobs;
 	    var list = document.theForm.watch_jobs;
 	    for (var i = 0; i < document.theForm.watch_jobs.options.length; i++) {
-	    	if ((mytrim(document.theForm.watch_jobs.options[i].text)) == (wu + ":" + wd)) {
+	    	if ((lrtrim(document.theForm.watch_jobs.options[i].value)) == (wu + ":" + wd)) {
 	    		alert("Job already exists");
 	    		return false;
 	    	}
-	    	if ((mytrim(document.theForm.watch_jobs.options[i].text)) == (wu + ":" + wd + "/")) {
+	    	if ((lrtrim(document.theForm.watch_jobs.options[i].value)) == (wu + ":" + wd + "/")) {
 	    		alert("Job already exists");
 	    		return false;
 	    	}	    	
@@ -45,9 +55,9 @@ function addWatchEntry () {
 	    else
 	    	list.add(newentry);
 	    if (liststr.value == "")
-	    	liststr.value = newentry.text;
+	    	liststr.value = newentry.value;
 	    else
-	    	liststr.value = liststr.value + ";" + newentry.text;
+	    	liststr.value = liststr.value + ";" + newentry.value;
     } else {
 		alert("Please select an Username and enter a Directory first!");
 	}
@@ -64,9 +74,9 @@ function removeWatchEntry() {
 		for (var j = 0; j < document.theForm.watch_jobs.options.length; j++) {
             if (j > 0)
                 newValue += ";";
-		    newValue += mytrim(document.theForm.watch_jobs.options[j].text);
+		    newValue += lrtrim(document.theForm.watch_jobs.options[j].value);
 		}
-		liststr.value = mytrim(newValue);
+		liststr.value = lrtrim(newValue);
 	} else {
 		alert("Please select a Job first!");
 	}
@@ -76,10 +86,10 @@ function removeWatchEntry() {
  * addRssadFilterEntry()
  */
 function addRssadFilterEntry() {
-    var filter = mytrim(document.theForm.rssad_filter_entry.value);
+    var filter = lrtrim(document.theForm.rssad_filter_entry.value);
     if (filter != "") {
 	    for (var i = 0; i < document.theForm.rssad_filters.options.length; i++) {
-	    	if ((mytrim(document.theForm.rssad_filters.options[i].text)) == filter) {
+	    	if ((lrtrim(document.theForm.rssad_filters.options[i].value)) == filter) {
 	    		alert("Filter already exists");
 	    		return false;
 	    	}
@@ -95,9 +105,9 @@ function addRssadFilterEntry() {
 	    else
 	    	list.add(newentry);
 	    if (liststr.value == "")
-	    	liststr.value = newentry.text;
+	    	liststr.value = newentry.value;
 	    else
-	    	liststr.value = liststr.value + "\n" + newentry.text;
+	    	liststr.value = liststr.value + "\n" + newentry.value;
     } else {
 		alert("Please enter a Filter.");
 	}
@@ -114,9 +124,9 @@ function removeRssadFilterEntry() {
 		for (var j = 0; j < document.theForm.rssad_filters.options.length; j++) {
             if (j > 0)
                 newValue += "\n";
-		    newValue += mytrim(document.theForm.rssad_filters.options[j].text);
+		    newValue += lrtrim(document.theForm.rssad_filters.options[j].value);
 		}
-		liststr.value = mytrim(newValue);
+		liststr.value = lrtrim(newValue);
 	} else {
 		alert("Please select a Filter first!");
 	}

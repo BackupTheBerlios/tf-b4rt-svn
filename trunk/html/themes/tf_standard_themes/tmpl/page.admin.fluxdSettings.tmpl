@@ -246,7 +246,7 @@
 													<select name="watch_jobs" size="3">
 														<tmpl_if name="fluxd_Watch_jobs_list">
 															<tmpl_loop name="fluxd_Watch_jobs_list">
-																<option value="<tmpl_var name="user">:<tmpl_var name="dir">"><tmpl_var name="user">:<tmpl_var name="dir"></option>
+																<option value="<tmpl_var escape="html" name="user">:<tmpl_var escape="html" name="dir">"><tmpl_var escape="htmlkeepspaces" name="user">:<tmpl_var escape="htmlkeepspaces" name="dir"></option>
 															</tmpl_loop>
 														</tmpl_if>
 													</select>
