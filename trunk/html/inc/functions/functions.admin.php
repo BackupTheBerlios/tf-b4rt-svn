@@ -294,13 +294,12 @@ function admin_controlFluAzu() {
 				} else {
 					$message = 'Error starting fluazu.';
 					$msgs = FluAzu::getMessages();
-					FluAzu::logMessage("Error starting fluazu. Messages :\n".implode("\n", $msgs)."\n", true);
-					array_unshift($msgs, "please check fluazu-logs");
-					@error($message, "admin.php?op=fluazuSettings", "fluazu-Settings", "please check fluazu-logs.");
+					FluAzu::logMessage("Error starting fluazu.".( (!empty($msgs)) ? "\n".implode("\n", $msgs)."\n" : "\n"), true);
+					array_push($msgs, "please check fluazu-log");
+					@error($message, "admin.php?op=fluazuSettings", "fluazu-Settings", $msgs);
 				}
 				break;
 			}
-			$message = 'Error starting fluazu.';
 			break;
 		case "stop":
 			// kill fluazu

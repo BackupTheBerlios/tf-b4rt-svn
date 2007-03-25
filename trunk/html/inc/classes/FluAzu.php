@@ -316,8 +316,12 @@ class FluAzu
         $this->_pathTransfersRun = $this->_pathDataDir . 'run/';
         $this->_pathTransfersDel = $this->_pathDataDir . 'del/';
         // check path
-		if (!checkDirectory($this->_pathDataDir))
-			@error("fluazu-Main-Path does not exist and cannot be created or is not writable", "admin.php?op=serverSettings", "Server-Settings", array("path : ".$this->_pathDataDir));
+		if (!checkDirectory($this->_pathDataDir)) {
+			@error("fluazu-Main-Path does not exist and cannot be created or is not writable",
+				"admin.php?op=serverSettings", "Server-Settings",
+				array("path : ".$this->_pathDataDir)
+			);
+		}
         // check if fluazu running
         if ($this->instance_isRunning())
         	$this->state = FLUAZU_STATE_RUNNING;
@@ -338,6 +342,18 @@ class FluAzu
             AuditAction($cfg["constants"]["admin"], "fluazu already started");
             return false;
         } else {
+			// check the needed bins
+			// python
+			if (@file_exists($cfg['pythonCmd']) !== true) {
+				$msg = "cannot start fluazu, specified python-binary does not exist: ".$cfg['pythonCmd'];
+            	AuditAction($cfg["constants"]["admin"], $msg);
+            	array_push($this->messages , $msg);
+            	// Set the state
+            	$this->state = FLUAZU_STATE_ERROR;
+            	// return
+            	return false;
+			}
+			// start it
             $startCommand = "cd ".$cfg["docroot"]."bin/clients/fluazu/ ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";
             $startCommand .= " nohup";
@@ -387,9 +403,6 @@ class FluAzu
             	return true;
             } else {
             	AuditAction($cfg["constants"]["admin"], "errors starting fluazu");
-            	// add startcommand to messages for debug
-            	// TODO : set better message
-            	array_push($this->messages , $startCommand);
             	// Set the state
             	$this->state = FLUAZU_STATE_ERROR;
             	// return
