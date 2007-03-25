@@ -340,6 +340,17 @@ class Fluxd
             	// return
             	return false;
 			}
+			// check for sockets
+			$loadedExtensions = get_loaded_extensions();
+			if (!in_array("sockets", $loadedExtensions)) {
+				$msg = "refusing to start fluxd, PHP does not have support for sockets";
+            	AuditAction($cfg["constants"]["admin"], $msg);
+            	array_push($this->messages , $msg);
+            	// Set the state
+            	$this->state = FLUXD_STATE_ERROR;
+            	// return
+            	return false;
+			}
 			// start it
             $startCommand = "cd ".$cfg["docroot"]." ; HOME=".$cfg["path"].";";
             $startCommand .= " export HOME;";

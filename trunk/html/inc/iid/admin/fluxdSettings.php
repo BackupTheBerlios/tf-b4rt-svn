@@ -61,7 +61,7 @@ if (@file_exists($cfg['bin_php']) !== true) {
 	$tmpl->setvar('phpMissing', 1);
 }
 
-// check for sessions
+// check for sockets
 $loadedExtensions = get_loaded_extensions();
 if (!in_array("sockets", $loadedExtensions)) {
 	$failed++;
