@@ -170,6 +170,7 @@ class FluAzuD(object):
             self.interface = self.connection.get_plugin_interface()
         except:
             printError("could not connect to Azureus-Server")
+            printException()
             return False
 
         # azureus version
@@ -736,25 +737,29 @@ class FluAzuD(object):
                     printMessage("established connection to Azureus-server")
                 except:
                     printError("Error establishing connection to Azureus-server")
+                    printException()
                     continue
 
                 # interface
                 try:
                     self.interface = self.connection.get_plugin_interface()
                 except LinkError, error:
-                    self.interface = None
-                if self.interface is None:
                     printError("Error getting interface object")
+                    printException()
+                    self.interface = None
                     continue
 
                 # download-manager
-                self.dm = None
-                self.dm = self.interface.getDownloadManager()
-                if self.dm is None:
+                try:
+                    self.dm = None
+                    self.dm = self.interface.getDownloadManager()
+                    if self.dm is None:
+                        raise
+                    else:
+                        return True
+                except:
                     printError("Error getting Download-Manager object")
                     continue
-                else:
-                    return True
 
             # seems like azu is down. give up
             printError("no connection after %d tries, i give up, azu is gone" % FluAzuD.MAX_RECONNECT_TRIES)
