@@ -163,17 +163,12 @@ class FluAzuD(object):
             connection_details['user'] = self.azu_user
             connection_details['password'] = self.azu_pass
 
-        # connect
-        self.connection = make_connection(**connection_details)
-        self.connection.is_persistent_connection = True
+        # make connection
         try:
+            self.connection = make_connection(**connection_details)
+            self.connection.is_persistent_connection = True
             self.interface = self.connection.get_plugin_interface()
-        except LinkError, error:
-            self.interface = None
-            connection_error = error
-        else:
-            connection_error = None
-        if connection_error is not None:
+        except:
             printError("could not connect to Azureus-Server")
             return False
 
