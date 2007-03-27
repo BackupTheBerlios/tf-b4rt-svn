@@ -69,3 +69,76 @@ not available when using Azureus as client for a torrent-transfer.
 - maintenance (auto-restart of a died transfer-client-process) is not working
   for these transfers.
 
+
+
+Check that the Azureus-plugin is working and we can communicate with it
+
+1. open shell on server and cd to the dir "/bin/clients/fluazu/" in your
+   tfb-installation. if tfb is installed in "/var/www/" this would be
+   "/var/www/bin/clients/fluazu/"
+
+2. open python. if python is in the path, just enter "python" and hit enter.
+   this should open up a interactive python-interpreter with a command-prompt
+   and look like this:
+
+   $:/var/www/bin/clients/fluazu# python
+   Python 2.5 (r25:51908, Sep 19 2006, 23:00:51)
+   [GCC 2.95.4 20011002 (Debian prerelease)] on linux2
+   Type "help", "copyright", "credits" or "license" for more information.
+   >>>
+
+3. run the dopal.interact module. for this enter the following 2 commands in the
+   python-interpreter (each one followed by an enter) :
+
+   import dopal.interact
+
+   dopal.interact.main()
+
+4. you are prompted to enter the Azureus-server-settings, do so.
+   looks like (each one submited with enter):
+
+   Enter host: localhost
+   Enter port (default is 6884): 6884
+   Enter user name (leave blank if not applicable):
+
+   Now you either got a connection (settings correct and Azureus-server + plugin
+   setup correct) or you dont.
+
+5. Connection Established
+   Looks like:
+
+   ------------------------
+
+   DOPAL 0.60 - interact module
+
+   Connection object stored in 'connection' variable.
+   Plugin interface stored in 'interface' variable.
+
+   >>>
+
+   You can now as further test print the connection with "print connection"
+   Looks like:
+
+   >>> print connection
+   DopalConnection for localhost [Azureus 2.5.0.4]
+
+   for further from now on you may check the examples-page for dopal:
+   http://dopal.sourceforge.net/examples.html
+
+6. Connection Failed
+   Looks like:
+
+   ------------------------
+
+   DOPAL 0.60 - interact module
+
+   Connection object stored in 'connection' variable.
+
+   Error getting plugin interface object - could not connect to Azureus, error:
+     URLError: <urlopen error (111, 'Connection refused')> ('http://localhost:6884/process.cgi')
+   >>>
+
+   The message is 'Connection refused' and in this test-case the Azureus-server
+   at localhost was not running.
+   for further you may check the requirements-page for dopal:
+   http://dopal.sourceforge.net/requirements.html
