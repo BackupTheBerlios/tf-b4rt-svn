@@ -2,7 +2,6 @@
 # $Id$
 RewriteEngine On
 RewriteBase /
-RewriteCond !^usage [NC]
 
 # pages
 RewriteRule ^index\.html$ index.php?s=index
