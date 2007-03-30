@@ -281,7 +281,7 @@ function transfer_setProfiledVars() {
 	if ($with_profiles == 0) {
 		// set vars for transfer from ch
 		transfer_setVarsFromCHSettings();
-		$tmpl->setvar('useLastSettings', $settings_exist);
+		$tmpl->setvar('useLastSettings', 1);
 	} else {
 		$profile = getRequestVar('profile');
 		if (($profile != "") && ($profile != "last_used")) {
@@ -292,7 +292,7 @@ function transfer_setProfiledVars() {
 		} else {
 			// set vars for transfer from ch
 			transfer_setVarsFromCHSettings();
-			$tmpl->setvar('useLastSettings', $settings_exist);
+			$tmpl->setvar('useLastSettings', 1);
 		}
 		// load profile lists
 		$profiles = ($cfg['transfer_profiles'] >= 3 || $cfg['isAdmin'])
