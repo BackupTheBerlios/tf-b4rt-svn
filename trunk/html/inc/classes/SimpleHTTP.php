@@ -121,6 +121,15 @@ class SimpleHTTP
     // state
     var $state = SIMPLEHTTP_STATE_NULL;
 
+	// Number of redirects we've followed so far:
+	var $redirectCount = 0;
+
+	// Maximum number of redirects to follow:
+	var $redirectMax = 5;
+
+	// The redirect URL specified in the location header for a 30x status code:
+	var $redirectUrl = "";
+
 	// =========================================================================
 	// public static methods
 	// =========================================================================
@@ -439,30 +448,43 @@ class SimpleHTTP
 			return "Error fetching ".$this->url.".  PHP Error No=".$this->errno." . PHP Error String=".$this->errstr;
 		}
 
-		// If no response from server or we were redirected with 30x response,
-		// try cURL:
-		if (
-				($this->responseBody == "" && function_exists("curl_init"))
-				||
-				(preg_match("#HTTP/1\.[01] 30#", $this->responseBody) > 0 && function_exists("curl_init"))
-			){
+		/*
+		Check if we need to follow a redirect:
+		http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 
-			// Give CURL a Try
-			$curl = curl_init();
-			if ($this->cookie != "")
-				curl_setopt($curl, CURLOPT_COOKIE, $this->cookie);
-			curl_setopt($curl, CURLOPT_PORT, $domain["port"]);
-			curl_setopt($curl, CURLOPT_URL, $this->url);
-			curl_setopt($curl, CURLOPT_VERBOSE, FALSE);
-			curl_setopt($curl, CURLOPT_HEADER, FALSE);
-			curl_setopt($curl, CURLOPT_USERAGENT, $this->userAgent);
-			curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-			curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-			curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-			curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-			curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
-			$this->responseBody = curl_exec($curl);
-			curl_close($curl);
+		Each of these HTTP response status codes indicates a redirect and the
+		content should be included in the Location field/header:
+
+		301 Moved Permanently
+		302 Found (has a temp location somewhere else on server)
+		303 See Other (should be fetched using GET, probably not relevant but won't hurt to include it)
+		307 Temporary Redirect
+		*/
+		if( preg_match("/^30[1-37]$/", $this->status) > 0 ){
+			// Check we're not already over the max redirects limit:
+			if ( $this->redirectCount > $this->redirectMax ) {
+				$this->state = SIMPLEHTTP_STATE_ERROR;
+				$msg = "Error fetching " . $this->url .".  The maximum number of allowed redirects ";
+				$msg .="(" .$this->redirectMax. ") was exceeded.  Last followed URL was: " .$this->redirectUrl;
+				array_push($this->messages , $msg);
+				AuditAction($cfg["constants"]["error"], $msg);
+				return($data="");
+			} else {
+				$this->redirectCount++;
+
+				// Check we're not already over the max redirects limit:
+				// Check we have a location to get redirected content:
+				if( isset($this->responseHeaders["location"]) && !empty($this->responseHeaders["location"]) ){
+					$this->redirectUrl = $this->responseHeaders["location"];
+				} else {
+					$msg = "Error fetching " . $this->url .".  A redirect status code (" . $this->status . ")";
+					$msg .= " was sent from the remote webserver, but no location header was set to obtain the redirected content from.";
+					AuditAction($cfg["constants"]["error"], $msg);
+					array_push($this->messages , $msg);
+					return($data="");
+				}
+				$this->instance_getData($this->redirectUrl);
+			}
 		}
 
 		// Trim any extraneous linefeed chars:
