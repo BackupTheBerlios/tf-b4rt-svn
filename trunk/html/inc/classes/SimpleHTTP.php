@@ -318,139 +318,125 @@ class SimpleHTTP
 		if (!array_key_exists("port", $domain))
 			$domain["port"] = 80;
 
-		// Check to see if this site requires the use of cookies
-		// Whilst in SVN/testing, always use the cookie/raw HTTP handling code:
-		if (true || !empty($this->cookie)) {
-			$this->socket = @fsockopen($domain["host"], $domain["port"], $this->errno , $this->errstr, $this->timeout); //connect to server
+		// Fetch the data using fsockopen():
+		$this->socket = @fsockopen($domain["host"], $domain["port"], $this->errno , $this->errstr, $this->timeout); //connect to server
 
-			if (!empty($this->socket)) {
-				// Write the outgoing HTTP request using cookie info
+		if (!empty($this->socket)) {
+			// Write the outgoing HTTP request using cookie info
 
-				// Standard HTTP/1.1 request looks like:
-				//
-				// GET /url/path/example.php HTTP/1.1
-				// Host: example.com
-				// Accept: */*
-				// Accept-Language: en-us
-				// User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1) Gecko/20061010 Firefox/2.0
-				// Connection: Close
-				// Cookie: uid=12345;pass=asdfasdf;
-				//
-				//$this->request  = "GET " . ($this->httpVersion=="1.1" ? $this->getcmd : $this->url ). " HTTP/" . $this->httpVersion ."\r\n";
-				$this->request  = "GET ".$this->getcmd." HTTP/".$this->httpVersion."\r\n";
-				$this->request .= (!empty($this->referer)) ? "Referer: " . $this->referer . "\r\n" : "";
-				$this->request .= "Accept: */*\r\n";
-				$this->request .= "Accept-Language: en-us\r\n";
-				$this->request .= "User-Agent: ".$this->userAgent."\r\n";
-				$this->request .= "Host: " . $domain["host"] . "\r\n";
-				if($this->httpVersion=="1.1"){
-					$this->request .= "Connection: Close\r\n";
+			// Standard HTTP/1.1 request looks like:
+			//
+			// GET /url/path/example.php HTTP/1.1
+			// Host: example.com
+			// Accept: */*
+			// Accept-Language: en-us
+			// User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.8.1) Gecko/20061010 Firefox/2.0
+			// Connection: Close
+			// Cookie: uid=12345;pass=asdfasdf;
+			//
+			//$this->request  = "GET " . ($this->httpVersion=="1.1" ? $this->getcmd : $this->url ). " HTTP/" . $this->httpVersion ."\r\n";
+			$this->request  = "GET ".$this->getcmd." HTTP/".$this->httpVersion."\r\n";
+			$this->request .= (!empty($this->referer)) ? "Referer: " . $this->referer . "\r\n" : "";
+			$this->request .= "Accept: */*\r\n";
+			$this->request .= "Accept-Language: en-us\r\n";
+			$this->request .= "User-Agent: ".$this->userAgent."\r\n";
+			$this->request .= "Host: " . $domain["host"] . "\r\n";
+			if($this->httpVersion=="1.1"){
+				$this->request .= "Connection: Close\r\n";
+			}
+			$this->request .= "Cookie: " . $this->cookie . "\r\n\r\n";
+
+			// Send header packet information to server
+			fputs($this->socket, $this->request);
+
+			// socket-options
+			stream_set_timeout($this->socket, $this->timeout);
+
+			// meta-data
+			$info = stream_get_meta_data($this->socket);
+
+			// Get response headers:
+			while ((!$info['timed_out']) && ($line = @fgets($this->socket, 500000))) {
+				// First empty line/\r\n indicates end of response headers:
+				if($line == "\r\n"){
+					break;
 				}
-				$this->request .= "Cookie: " . $this->cookie . "\r\n\r\n";
 
-				// Send header packet information to server
-				fputs($this->socket, $this->request);
+				if (!$this->gotResponseLine) {
+					preg_match("@HTTP/[^ ]+ (\d\d\d)@", $line, $matches);
+					// TODO: Use this to see if we redirected (30x) and follow the redirect:
+					$this->status = $matches[1];
+					$this->gotResponseLine = true;
+					continue;
+				}
 
-				// socket-options
-				stream_set_timeout($this->socket, $this->timeout);
+				// Get response headers:
+				preg_match("/^([^:]+):\s*(.*)/", trim($line), $matches);
+				$this->responseHeaders[strtolower($matches[1])] = $matches[2];
 
 				// meta-data
 				$info = stream_get_meta_data($this->socket);
+			}
 
-				// Get response headers:
-				while ((!$info['timed_out']) && ($line = @fgets($this->socket, 500000))) {
-					// First empty line/\r\n indicates end of response headers:
-					if($line == "\r\n"){
-						break;
-					}
+			if(
+				$this->httpVersion=="1.1"
+				&& isset($this->responseHeaders["transfer-encoding"])
+				&& !empty($this->responseHeaders["transfer-encoding"])
+			) {
+				/*
+				// NOT CURRENTLY WORKING, USE HTTP/1.0 ONLY UNTIL THIS IS FIXED!
+				*/
 
-					if (!$this->gotResponseLine) {
-						preg_match("@HTTP/[^ ]+ (\d\d\d)@", $line, $matches);
-						// TODO: Use this to see if we redirected (30x) and follow the redirect:
-						$this->status = $matches[1];
-						$this->gotResponseLine = true;
-						continue;
-					}
+				// Get body of HTTP response:
+				// Handle chunked encoding:
+				/*
+						length := 0
+						read chunk-size, chunk-extension (if any) and CRLF
+						while (chunk-size > 0) {
+						   read chunk-data and CRLF
+						   append chunk-data to entity-body
+						   length := length + chunk-size
+						   read chunk-size and CRLF
+						}
+				*/
 
-					// Get response headers:
-					preg_match("/^([^:]+):\s*(.*)/", trim($line), $matches);
-					$this->responseHeaders[strtolower($matches[1])] = $matches[2];
+				// Used to count total of all chunk lengths, the content-length:
+				$chunkLength=0;
+
+				// Get first chunk size:
+				$chunkSize = hexdec(trim(fgets($this->socket)));
+
+				// 0 size chunk indicates end of content:
+				while ((!$info['timed_out']) && ($chunkSize > 0)) {
+					// Read in up to $chunkSize chars:
+					$line = @fgets($this->socket, $chunkSize);
+
+					// Discard crlf after current chunk:
+					fgets($this->socket);
+
+					// Append chunk to response body:
+					$this->responseBody .= $line;
+
+					// Keep track of total chunk/content length:
+					$chunkLength += $chunkSize;
+
+					// Read next chunk size:
+					$chunkSize = hexdec(trim(fgets($this->socket)));
 
 					// meta-data
 					$info = stream_get_meta_data($this->socket);
 				}
-
-				if(
-					$this->httpVersion=="1.1"
-					&& isset($this->responseHeaders["transfer-encoding"])
-					&& !empty($this->responseHeaders["transfer-encoding"])
-				) {
-					/*
-					// NOT CURRENTLY WORKING, USE HTTP/1.0 ONLY UNTIL THIS IS FIXED!
-					*/
-
-					// Get body of HTTP response:
-					// Handle chunked encoding:
-					/*
-							length := 0
-							read chunk-size, chunk-extension (if any) and CRLF
-							while (chunk-size > 0) {
-							   read chunk-data and CRLF
-							   append chunk-data to entity-body
-							   length := length + chunk-size
-							   read chunk-size and CRLF
-							}
-					*/
-
-					// Used to count total of all chunk lengths, the content-length:
-					$chunkLength=0;
-
-					// Get first chunk size:
-					$chunkSize = hexdec(trim(fgets($this->socket)));
-
-					// 0 size chunk indicates end of content:
-					while ((!$info['timed_out']) && ($chunkSize > 0)) {
-						// Read in up to $chunkSize chars:
-						$line = @fgets($this->socket, $chunkSize);
-
-						// Discard crlf after current chunk:
-						fgets($this->socket);
-
-						// Append chunk to response body:
-						$this->responseBody .= $line;
-
-						// Keep track of total chunk/content length:
-						$chunkLength += $chunkSize;
-
-						// Read next chunk size:
-						$chunkSize = hexdec(trim(fgets($this->socket)));
-
-						// meta-data
-						$info = stream_get_meta_data($this->socket);
-					}
-					$this->responseHeaders["content-length"] = $chunkLength;
-				} else {
-					while ((!$info['timed_out']) && ($line = @fread($this->socket, 500000))) {
-						$this->responseBody .= $line;
-						// meta-data
-						$info = stream_get_meta_data($this->socket);
-					}
-				}
-				@fclose($this->socket); // Close our connection
+				$this->responseHeaders["content-length"] = $chunkLength;
 			} else {
-				return "Error fetching ".$this->url.".  PHP Error No=".$this->errno." . PHP Error String=".$this->errstr;
-			}
-		} else {
-			// No cookies - no need for raw HTTP:
-			if ($urlHandle = @fopen($this->url, 'r')) {
-				stream_set_timeout($urlHandle, $this->timeout);
-				$info = stream_get_meta_data($urlHandle);
-				while ((!feof($urlHandle)) && (!$info['timed_out'])) {
-					$this->responseBody .= @fgets($urlHandle, 4096);
-					$info = stream_get_meta_data($urlHandle);
+				while ((!$info['timed_out']) && ($line = @fread($this->socket, 500000))) {
+					$this->responseBody .= $line;
+					// meta-data
+					$info = stream_get_meta_data($this->socket);
 				}
-				@fclose($urlHandle);
 			}
+			@fclose($this->socket); // Close our connection
+		} else {
+			return "Error fetching ".$this->url.".  PHP Error No=".$this->errno." . PHP Error String=".$this->errstr;
 		}
 
 		// If no response from server or we were redirected with 30x response,
