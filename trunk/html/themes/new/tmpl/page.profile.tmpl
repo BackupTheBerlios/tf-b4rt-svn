@@ -354,19 +354,19 @@
 					</td>
 				</tr>
 				<tr>
-					<td align="right" width="120" valign="top">&nbsp;Die when done:</td>
+					<td align="right" width="120" valign="top">&nbsp;Completion Activity:</td>
 					<td>
 						<select name="runtime">
-							<option value="True">true</option>
+							<option value="True">Die When Done</option>
 							<option value="False"
 							<tmpl_if name="runtime" value="False">
 								 selected
 							</tmpl_if>
-							>false</option>
+							>Keep Seeding</option>
 						</select>
 					</td>
 					<td width="150">
-						&nbsp;
+						(default: <tmpl_if name="default_runtime" value="False">Keep Seeding<tmpl_else>Die When Done</tmpl_if>)
 					</td>
 				</tr>
 				<tr>

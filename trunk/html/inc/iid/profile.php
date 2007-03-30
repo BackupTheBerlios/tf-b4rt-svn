@@ -260,6 +260,8 @@ switch ($op) {
 			if ($profile['public'] == 1)
 				$public = "checked";
 		}
+		else
+			$runtime = $cfg['die_when_done'];
 		$tmpl->setvar('name', $name);
 		$tmpl->setvar('minport', $minport);
 		$tmpl->setvar('maxport', $maxport);
@@ -280,6 +282,7 @@ switch ($op) {
 		$tmpl->setvar('default_rate', $cfg['max_upload_rate']);
 		$tmpl->setvar('default_maxuploads', $cfg['max_uploads']);
 		$tmpl->setvar('default_drate', $cfg['max_download_rate']);
+		$tmpl->setvar('default_runtime', $cfg['die_when_done']);
 		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
 		$tmpl->setvar('default_btclient', $cfg['btclient']);
 		$tmpl->setvar('pid', $pid);

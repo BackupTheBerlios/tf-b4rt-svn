@@ -298,7 +298,7 @@ function transfer_setProfiledVars() {
 		$profiles = ($cfg['transfer_profiles'] >= 3 || $cfg['isAdmin'])
 			? GetProfiles($cfg["uid"], $profile)
 			: array();
-		$public_profiles = ($cfg['transfer_profiles'] >= 2)
+		$public_profiles = ($cfg['transfer_profiles'] >= 2 || $cfg['isAdmin'])
 			? GetPublicProfiles($profile)
 			: array();
 		if ((count($profiles) + count($public_profiles)) > 0) {
