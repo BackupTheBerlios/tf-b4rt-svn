@@ -62,6 +62,8 @@ function dispatcher_startTransfer($transfer) {
 			echo ' window.opener.location.reload(true);';
 			echo ' window.close();';
 			echo '</script>';
+			// Prevent dispatcher_exit from running and redirecting client, otherwise script won't be executed.
+			exit();
 		}
 	}
 }
