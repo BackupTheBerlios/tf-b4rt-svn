@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peeraz.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: peeraz.h 1607 2007-03-30 00:12:39Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -100,8 +100,7 @@ static uint8_t *
 makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
 {
     char       * buf;
-    benc_val_t   val, * idval, * clientval, * versval;
-    benc_val_t * tcpval, * msgsval, * msgdictval, * msgidval, * msgversval;
+    benc_val_t   val, * msgsval, * msgdictval;
     int          len, max, idx;
     uint8_t      vers;
 
@@ -123,13 +122,7 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
 
     /* start building a dictionary for handshake data */
     tr_bencInit( &val, TYPE_DICT );
-    if( tr_bencDictAppendNofree( &val,
-                                 "identity",       &idval,
-                                 "client",         &clientval,
-                                 "version",        &versval,
-                                 "tcp_port",       &tcpval,
-                                 "messages",       &msgsval,
-                                 NULL ) )
+    if( tr_bencDictReserve( &val, 5 ) )
     {
         free( buf );
         tr_bencFree( &val );
@@ -137,13 +130,23 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
     }
 
     /* fill in the dictionary values */
-    tr_bencInitStr( idval,     tor->azId,      TR_AZ_ID_LEN, 1 );
-    tr_bencInitStr( clientval, TR_NAME,        0,            1 );
-    tr_bencInitStr( versval,   VERSION_STRING, 0,            1 );
-    tr_bencInitInt( tcpval,    tor->publicPort );
-    tr_bencInit(    msgsval,   TYPE_LIST );
+    tr_bencInitStr( tr_bencDictAdd( &val, "identity" ),
+                    tor->azId, TR_AZ_ID_LEN, 1 );
+    tr_bencInitStr( tr_bencDictAdd( &val, "client" ),   TR_NAME, 0, 1 );
+    tr_bencInitStr( tr_bencDictAdd( &val, "version" ),  VERSION_STRING, 0, 1 );
+    tr_bencInitInt( tr_bencDictAdd( &val, "tcp_port" ), tor->publicPort );
 
-    /* fill in the supported message list */
+    /* initialize supported message list */
+    msgsval = tr_bencDictAdd( &val, "messages" );
+    tr_bencInit( msgsval, TYPE_LIST );
+    if( tr_bencListReserve( msgsval, azmsgCount() ) )
+    {
+        tr_bencFree( &val );
+        free( buf );
+        return NULL;
+    }
+
+    /* fill in the message list */
     vers = AZ_EXT_VERSION;
     for( idx = 0; azmsgCount() > idx; idx++ )
     {
@@ -156,25 +159,18 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
             /* no point in saying we can do pex if the torrent is private */
             continue;
         }
-        if( tr_bencListAppend( msgsval, &msgdictval, NULL ) )
-        {
-            tr_bencFree( &val );
-            free( buf );
-            return NULL;
-        }
         /* each item in the list is a dict with id and ver keys */
+        msgdictval = tr_bencListAdd( msgsval );
         tr_bencInit( msgdictval, TYPE_DICT );
-        if( tr_bencDictAppendNofree( msgdictval,
-                                     "id",  &msgidval,
-                                     "ver", &msgversval,
-                                     NULL ) )
+        if( tr_bencDictReserve( msgdictval, 2 ) )
         {
             tr_bencFree( &val );
             free( buf );
             return NULL;
         }
-        tr_bencInitStr( msgidval,   azmsgStr( idx ), azmsgLen( idx ), 1 );
-        tr_bencInitStr( msgversval, &vers,           1,               1 );
+        tr_bencInitStr( tr_bencDictAdd( msgdictval, "id" ),
+                        azmsgStr( idx ), azmsgLen( idx ), 1 );
+        tr_bencInitStr( tr_bencDictAdd( msgdictval, "ver" ), &vers, 1, 1 );
     }
 
     /* bencode the dictionary and append it to the buffer */
@@ -200,7 +196,7 @@ makeAZHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * buflen )
 static int
 peertreeToBencAZ( tr_peertree_t * tree, benc_val_t * val )
 {
-    int                   count, jj;
+    int                   count;
     tr_peertree_entry_t * ii;
 
     tr_bencInit( val, TYPE_LIST );
@@ -209,20 +205,16 @@ peertreeToBencAZ( tr_peertree_t * tree, benc_val_t * val )
     {
         return 0;
     }
-    if( tr_bencListExtend( val, count ) )
+    if( tr_bencListReserve( val, count ) )
     {
         return 1;
     }
 
     ii = peertreeFirst( tree );
-    jj = val->val.l.count;
     while( NULL != ii )
     {
-        assert( jj < val->val.l.alloc );
-        tr_bencInitStr( &val->val.l.vals[jj], ii->peer, 6, 1 );
-        val->val.l.count++;
+        tr_bencInitStr( tr_bencListAdd( val ), ii->peer, 6, 1 );
         ii = peertreeNext( tree, ii );
-        jj++;
     }
 
     return 0;
@@ -233,6 +225,8 @@ makeAZPex( tr_torrent_t * tor, tr_peer_t * peer, int * len )
 {
     benc_val_t val;
     char * buf;
+
+    peer_dbg( "SEND azureus-pex" );
 
     assert( !peer->private );
     tr_bencInitStr( &val, tor->info.hash, sizeof( tor->info.hash ), 1 );
@@ -268,6 +262,8 @@ sendAZHandshake( tr_torrent_t * tor, tr_peer_t * peer )
         return TR_NET_BLOCK;
     }
 
+    peer_dbg( "SEND azureus-handshake" );
+
     len = peer->outMessagesSize;
     free( peer->outMessages );
     peer->outMessages     = NULL;
@@ -298,7 +294,7 @@ parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
     }
     if( 9 > msglen )
     {
-        peer_dbg( "Azureus peer message is too short to make sense" );
+        peer_dbg( "azureus peer message is too short to make sense" );
         return TR_NET_CLOSE;
     }
     /* name length */
@@ -306,7 +302,7 @@ parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
     off += 4;
     if( off + namelen + 1 > msglen )
     {
-        peer_dbg( "Azureus peer message name is too long to make sense" );
+        peer_dbg( "azureus peer message name is too long to make sense" );
         return TR_NET_CLOSE;
     }
     /* message name */
@@ -322,13 +318,13 @@ parseAZMessageHeader( tr_peer_t * peer, uint8_t * buf, int len,
     if( AZ_EXT_VERSION != vers )
     {
         /* XXX should we close the connection here? */
-        peer_dbg( "unsupported Azureus message version %hhu", vers );
+        peer_dbg( "GET  unsupported azureus message version %hhu", vers );
         msgid = AZ_MSG_INVALID;
     }
     else if( 0 > index )
     {
         name[namelen] = '\0';
-        peer_dbg( "got unknown Azureus message: \"%s\"", name );
+        peer_dbg( "GET  unknown azureus message: \"%s\"", name );
         name[namelen] = vers;
         msgid = AZ_MSG_INVALID;
     }
@@ -352,13 +348,13 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 
     if( tr_bencLoad( buf, len, &val, NULL ) )
     {
-        peer_dbg( "invalid bencoding in Azureus handshake" );
+        peer_dbg( "GET  azureus-handshake, invalid bencoding" );
         return TR_ERROR;
     }
 
     if( TYPE_DICT != val.type )
     {
-        peer_dbg( "Azureus handshake is not a dictionary" );
+        peer_dbg( "GET  azureus-handshake, data not a dictionary" );
         tr_bencFree( &val );
         return TR_ERROR;
     }
@@ -378,15 +374,17 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
     if( NULL == sub && TYPE_LIST != sub->type )
     {
         tr_bencFree( &val );
-        peer_dbg( "Azureus handshake is missing 'messages'" );
+        peer_dbg( "GET  azureus-handshake, missing 'messages'" );
         return TR_ERROR;
     }
 
+    peer_dbg( "GET  azureus-handshake, ok" );
+
     /* fill bitmask with supported message info */
     msgs = tr_bitfieldNew( azmsgCount() );
-    for( ii = 0; ii < sub->val.l.count; ii++ )
+    ii = -1;
+    while( NULL != ( dict = tr_bencListIter( sub, &ii ) ) )
     {
-        dict = &sub->val.l.vals[ii];
         if( TYPE_DICT != dict->type )
         {
             continue;
@@ -422,7 +420,8 @@ parseAZHandshake( tr_peer_t * peer, uint8_t * buf, int len )
         if( !AZ_MSG_IS_OPTIONAL( azmsgId( ii ) ) &&
             !tr_bitfieldHas( msgs, ii ) )
         {
-            peer_dbg( "Azureus message %s not supported", azmsgStr( ii ) );
+            peer_dbg( "azureus message %s not supported by peer",
+                      azmsgStr( ii ) );
             tr_bitfieldFree( msgs );
             return TR_ERROR;
         }
@@ -437,22 +436,24 @@ parseAZPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
 {
     tr_info_t * info = &tor->info;
     benc_val_t  val, * list, * pair;
-    int         ii;
+    int         ii, used;
 
     if( peer->private || PEX_PEER_CUTOFF <= tor->peerCount )
     {
+        peer_dbg( "GET  azureus-pex, ignoring p=%i c=(%i<=%i)",
+                  peer->private, PEX_PEER_CUTOFF, tor->peerCount );
         return TR_OK;
     }
 
     if( tr_bencLoad( buf, len, &val, NULL ) )
     {
-        peer_dbg( "invalid bencoding in Azureus peer exchange" );
+        peer_dbg( "GET  azureus-pex, invalid bencoding" );
         return TR_ERROR;
     }
     if( TYPE_DICT != val.type )
     {
         tr_bencFree( &val );
-        peer_dbg( "Azureus peer exchange is not a dictionary" );
+        peer_dbg( "GET  azureus-pex, data not a dictionary" );
         return TR_ERROR;
     }
 
@@ -462,26 +463,30 @@ parseAZPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
         0 != memcmp( info->hash, list->val.s.s, sizeof( info->hash ) ) )
     {
         tr_bencFree( &val );
-        peer_dbg( "Azureus peer exchange has missing or invalid 'infohash'" );
+        peer_dbg( "GET  azureus-pex, bad infohash" );
         return TR_ERROR;
     }
 
     list = tr_bencDictFind( &val, "added" );
     if( NULL == list || TYPE_LIST != list->type )
     {
+        peer_dbg( "GET  azureus-pex, no peers" );
         tr_bencFree( &val );
         return TR_OK;
     }
 
-    for( ii = 0; ii < list->val.l.count; ii++ )
+    ii = used = 0;
+    while( NULL != ( pair = tr_bencListIter( list, &ii ) ) )
     {
-        pair = &list->val.l.vals[ii];
         if( TYPE_STR == pair->type && 6 == pair->val.s.i )
         {
-            tr_torrentAddCompact( tor, TR_PEER_FROM_PEX,
-                                  ( uint8_t * )pair->val.s.s, 1 );
+            used += tr_torrentAddCompact( tor, TR_PEER_FROM_PEX,
+                                          ( uint8_t * )pair->val.s.s, 1 );
         }
     }
+
+    peer_dbg( "GET  azureus-pex, found %i peers, using %i",
+              list->val.l.count, used );
 
     tr_bencFree( &val );
 

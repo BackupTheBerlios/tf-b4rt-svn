@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: internal.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: internal.h 1603 2007-03-29 00:19:09Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -146,9 +146,9 @@ typedef enum { TR_NET_OK, TR_NET_ERROR, TR_NET_WAIT } tr_tristate_t;
 #include "http.h"
 #include "xml.h"
 
-void tr_torrentAddCompact( tr_torrent_t * tor, int from,
+int tr_torrentAddCompact( tr_torrent_t * tor, int from,
                            uint8_t * buf, int count );
-void tr_torrentAttachPeer( tr_torrent_t * tor, tr_peer_t * peer );
+int tr_torrentAttachPeer( tr_torrent_t * tor, tr_peer_t * peer );
 
 struct tr_torrent_s
 {
@@ -222,8 +222,10 @@ struct tr_handle_s
     int            downloadLimit;
     tr_shared_t  * shared;
 
-    char           id[21];
-    char           key[21];
+#define TR_ID_LEN               20
+    char           id[TR_ID_LEN+1];
+#define TR_KEY_LEN              20
+    char           key[TR_KEY_LEN+1];
 
     tr_handle_status_t stats[2];
     int                statCur;

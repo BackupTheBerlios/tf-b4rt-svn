@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.c 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: transmission.c 1600 2007-03-28 06:28:34Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -56,14 +56,14 @@ tr_handle_t * tr_init( const char * tag )
        minor version number (Azureus-style) */
     snprintf( h->id, sizeof h->id, "-TR%02d%02d-",
               VERSION_MAJOR, VERSION_MINOR );
-    for( i = 8; i < 20; i++ )
+    for( i = 8; i < TR_ID_LEN; i++ )
     {
         r        = tr_rand( 36 );
         h->id[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;
     }
 
     /* Random key */
-    for( i = 0; i < 20; i++ )
+    for( i = 0; i < TR_KEY_LEN; i++ )
     {
         r         = tr_rand( 36 );
         h->key[i] = ( r < 26 ) ? ( 'a' + r ) : ( '0' + r - 26 ) ;

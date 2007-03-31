@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: inout.c 1420 2007-01-21 07:16:18Z titer $
+ * $Id: inout.c 1608 2007-03-30 17:35:23Z joshe $
  *
  * Copyright (c) 2005-2006 Transmission authors and contributors
  *
@@ -222,6 +222,7 @@ static int checkFiles( tr_io_t * io )
     int i;
     uint8_t * buf;
     uint8_t hash[SHA_DIGEST_LENGTH];
+    struct stat sb;
 
     io->pieceSlot = malloc( inf->pieceCount * sizeof( int ) );
     io->slotPiece = malloc( inf->pieceCount * sizeof( int ) );
@@ -236,6 +237,28 @@ static int checkFiles( tr_io_t * io )
     /* Yet we don't have anything */
     memset( io->pieceSlot, 0xFF, inf->pieceCount * sizeof( int ) );
     memset( io->slotPiece, 0xFF, inf->pieceCount * sizeof( int ) );
+
+    /* Truncate files that are too large */
+    for( i = 0; inf->fileCount > i; i++ )
+    {
+        if( 0 > stat( inf->files[i].name, &sb ) )
+        {
+            if( ENOENT == errno )
+            {
+                continue;
+            }
+            tr_err( "Could not stat %s (%s)",
+                    inf->files[i].name, strerror( errno ) );
+            break;
+        }
+
+        if( sb.st_size > ( off_t )inf->files[i].length )
+        {
+            tr_dbg( "truncate %s from %"PRIu64" to %"PRIu64" bytes",
+                    inf->files[i].name, sb.st_size, inf->files[i].length );
+            truncate( inf->files[i].name, inf->files[i].length );
+        }
+    }
 
     /* Check pieces */
     io->slotsUsed = 0;

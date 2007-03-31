@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: fastresume.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: fastresume.h 1603 2007-03-29 00:19:09Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -171,11 +171,14 @@ static void fastResumeSave( tr_io_t * io )
     total = tor->uploadedCur + tor->uploadedPrev;
     fastResumeWriteData( FR_ID_UPLOADED, &total, 8, 1, file );
 
-    /* Write IPs and ports of connectable peers, if any */
-    if( ( size = tr_peerGetConnectable( tor, &buf ) ) > 0 )
+    if( !( TR_FLAG_PRIVATE & tor->info.flags ) )
     {
-        fastResumeWriteData( FR_ID_PEERS, buf, size, 1, file );
-        free( buf );
+        /* Write IPs and ports of connectable peers, if any */
+        if( ( size = tr_peerGetConnectable( tor, &buf ) ) > 0 )
+        {
+            fastResumeWriteData( FR_ID_PEERS, buf, size, 1, file );
+            free( buf );
+        }
     }
 
     fclose( file );
@@ -374,18 +377,23 @@ static int fastResumeLoad( tr_io_t * io )
                 break;
 
             case FR_ID_PEERS:
-            {
-                uint8_t * buf = malloc( len );
-                if( 1 != fread( buf, len, 1, file ) )
+                if( !( TR_FLAG_PRIVATE & tor->info.flags ) )
                 {
+                    int used;
+                    uint8_t * buf = malloc( len );
+                    if( 1 != fread( buf, len, 1, file ) )
+                    {
+                        free( buf );
+                        fclose( file );
+                        return 1;
+                    }
+                    used = tr_torrentAddCompact( tor, TR_PEER_FROM_CACHE,
+                                                 buf, len / 6 );
+                    tr_dbg( "found %i peers in resume file, used %i",
+                            len / 6, used );
                     free( buf );
-                    fclose( file );
-                    return 1;
                 }
-                tr_torrentAddCompact( tor, TR_PEER_FROM_CACHE, buf, len / 6 );
-                free( buf );
                 continue;
-            }
 
             default:
                 break;

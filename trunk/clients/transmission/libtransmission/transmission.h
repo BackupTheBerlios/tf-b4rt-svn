@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: transmission.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: transmission.h 1595 2007-03-26 19:21:25Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *

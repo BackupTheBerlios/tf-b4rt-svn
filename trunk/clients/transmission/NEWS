@@ -1,5 +1,7 @@
 NEWS file for Transmission <http://transmission.m0k.org/>
 
+Note: From 0.7 on, Transmission for Mac OS X requires 10.4 Tiger or better.
+
 0.7 ()
  - New icon
  - Automatic port configuration (NAT-PMP and UPnP)
@@ -8,6 +10,7 @@ NEWS file for Transmission <http://transmission.m0k.org/>
  - Listen to tracker's announce and min-announce intervals
  - Fix for sending invalid stats to trackers
  - Better scrape support
+ - Cache connected peers
  - Bugfixes and improvements
  - OS X:
    + Download and seeding queue that can be user-arranged
@@ -21,6 +24,7 @@ NEWS file for Transmission <http://transmission.m0k.org/>
    + Watch folder to auto add torrent files
    + Auto resizing of the main window
    + Minimal view to take up less space
+   + Seeding bar shows progress in finishing seeding
    + Sounds when downloading and seeding complete
    + Warnings for directory unavailable or not enough space
    + Message log window

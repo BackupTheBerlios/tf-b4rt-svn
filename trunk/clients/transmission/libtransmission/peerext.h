@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peerext.h 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: peerext.h 1606 2007-03-29 21:02:59Z joshe $
  *
  * Copyright (c) 2006-2007 Transmission authors and contributors
  *
@@ -67,10 +67,19 @@ makeCommonPex( tr_torrent_t * tor, tr_peer_t * peer, int * len,
     /* build the dictionaries */
     tr_bencInit( &val, TYPE_DICT );
     if( ( peertreeEmpty( &added ) && peertreeEmpty( sent ) ) ||
-        tr_bencDictAppendNofree( &val, extrakey, &extra, "added", &addval,
-                                 "dropped", &delval, NULL ) ||
-        (*peerfunc)( &added, addval ) ||
-        (*peerfunc)( sent, delval ) )
+        tr_bencDictReserve( &val, 3 ) )
+    {
+        tr_bencFree( &val );
+        peertreeMerge( sent, &common );
+        peertreeFree( &added );
+        tr_bencFree( extraval );
+        return NULL;
+    }
+    extra  = tr_bencDictAdd( &val, extrakey );
+    addval = tr_bencDictAdd( &val, "added" );
+    delval = tr_bencDictAdd( &val, "dropped" );
+    assert( NULL != extra && NULL != addval && NULL != delval );
+    if( (*peerfunc)( &added, addval ) || (*peerfunc)( sent, delval ) )
     {
         tr_bencFree( &val );
         peertreeMerge( sent, &common );
@@ -101,7 +110,7 @@ makeCommonPex( tr_torrent_t * tor, tr_peer_t * peer, int * len,
 static char *
 makeExtendedHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * len )
 {
-    benc_val_t val, * msgsval, * portval, * versval, * pexval;
+    benc_val_t val, * msgsval;
     char * buf, * vers;
 
     /* get human-readable version string */
@@ -112,10 +121,9 @@ makeExtendedHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * len )
         return NULL;
     }
 
+    /* reserve space in toplevel dictionary for v, m, and possibly p */
     tr_bencInit( &val, TYPE_DICT );
-
-    /* append v str and m dict to toplevel dictionary */
-    if( tr_bencDictAppendNofree( &val, "v", &versval, "m", &msgsval, NULL ) )
+    if( tr_bencDictReserve( &val, ( 0 < tor->publicPort ? 3 : 2 ) ) )
     {
         free( vers );
         tr_bencFree( &val );
@@ -123,40 +131,40 @@ makeExtendedHandshake( tr_torrent_t * tor, tr_peer_t * peer, int * len )
     }
 
     /* human readable version string */
-    tr_bencInitStr( versval, vers, 0, 0 );
+    tr_bencInitStr( tr_bencDictAdd( &val, "v" ), vers, 0, 0 );
 
     /* create dict of supported extended messages */
+    msgsval  = tr_bencDictAdd( &val, "m" );
     tr_bencInit( msgsval, TYPE_DICT );
     if( !peer->private )
     {
-        /* for public torrents advertise utorrent pex message */
-        if( tr_bencDictAppendNofree( msgsval, "ut_pex", &pexval, NULL ) )
+        /* for public torrents, advertise utorrent pex message */
+        if( tr_bencDictReserve( msgsval, 1 ) )
         {
             tr_bencFree( &val );
             return NULL;
         }
-        tr_bencInitInt( pexval, EXTENDED_PEX_ID );
+        tr_bencInitInt( tr_bencDictAdd( msgsval, "ut_pex" ), EXTENDED_PEX_ID );
     }
 
     /* our listening port */
     if( 0 < tor->publicPort )
     {
-        if( tr_bencDictAppendNofree( &val, "p", &portval, NULL ) )
-        {
-            tr_bencFree( &val );
-            return NULL;
-        }
-        tr_bencInitInt( portval, tor->publicPort );
+        tr_bencInitInt( tr_bencDictAdd( &val, "p" ), tor->publicPort );
     }
 
     /* bencode it */
     buf = tr_bencSaveMalloc( &val, len );
     tr_bencFree( &val );
-
-    if( NULL != buf )
+    if( NULL == buf )
     {
-        peer->advertisedPort = tor->publicPort;
+        return NULL;
     }
+
+    peer->advertisedPort = tor->publicPort;
+
+    peer_dbg( "SEND extended-handshake, %s pex",
+              ( peer->private ? "without" : "with" ) );
 
     return buf;
 }
@@ -200,6 +208,8 @@ makeUTPex( tr_torrent_t * tor, tr_peer_t * peer, int * len )
     benc_val_t val;
     char     * ret;
 
+    peer_dbg( "SEND extended-pex" );
+
     assert( !peer->private );
     tr_bencInitStr( &val, NULL, 0, 1 );
     ret = makeCommonPex( tor, peer, len, peertreeToBencUT, "added.f", &val );
@@ -210,22 +220,24 @@ makeUTPex( tr_torrent_t * tor, tr_peer_t * peer, int * len )
 static inline int
 parseExtendedHandshake( tr_peer_t * peer, uint8_t * buf, int len )
 {
-    benc_val_t     val, * sub;
+    benc_val_t val, * sub;
+    int dbgport, dbgpex;
 
     if( tr_bencLoad( buf, len, &val, NULL ) )
     {
-        peer_dbg( "invalid bencoding in extended handshake" );
+        peer_dbg( "GET  extended-handshake, invalid bencoding" );
         return TR_ERROR;
     }
     if( TYPE_DICT != val.type )
     {
-        peer_dbg( "extended handshake is not a dictionary" );
+        peer_dbg( "GET  extended-handshake, not a dictionary" );
         tr_bencFree( &val );
         return TR_ERROR;
     }
 
     /* check supported messages for utorrent pex */
     sub = tr_bencDictFind( &val, "m" );
+    dbgpex = -1;
     if( NULL != sub && TYPE_DICT == sub->type )
     {
         sub = tr_bencDictFind( sub, "ut_pex" );
@@ -235,18 +247,22 @@ parseExtendedHandshake( tr_peer_t * peer, uint8_t * buf, int len )
             if( !peer->private && 0x0 < sub->val.i && 0xff >= sub->val.i )
             {
                 peer->pexStatus = sub->val.i;
+                dbgpex = sub->val.i;
             }
         }
     }
 
     /* get peer's listening port */
     sub = tr_bencDictFind( &val, "p" );
+    dbgport = -1;
     if( NULL != sub && TYPE_INT == sub->type &&
         0x0 < sub->val.i && 0xffff >= sub->val.i )
     {
         peer->port = htons( (uint16_t) sub->val.i );
-        peer_dbg( "got listening port %i", ntohs( peer->port ) );
+        dbgport = sub->val.i;
     }
+
+    peer_dbg( "GET  extended-handshake, ok port=%i pex=%i", dbgport, dbgpex );
 
     tr_bencFree( &val );
     return TR_OK;
@@ -256,29 +272,39 @@ static inline int
 parseUTPex( tr_torrent_t * tor, tr_peer_t * peer, uint8_t * buf, int len )
 {
     benc_val_t val, * sub;
+    int used;
 
     if( peer->private || PEX_PEER_CUTOFF <= tor->peerCount )
     {
+        peer_dbg( "GET  extended-pex, ignoring p=%i c=(%i<=%i)",
+                  peer->private, PEX_PEER_CUTOFF, tor->peerCount );
         return TR_OK;
     }
 
     if( tr_bencLoad( buf, len, &val, NULL ) )
     {
-        peer_dbg( "invalid bencoding in extended peer exchange" );
+        peer_dbg( "GET  extended-pex, invalid bencoding" );
         return TR_ERROR;
     }
     if( TYPE_DICT != val.type )
     {
         tr_bencFree( &val );
-        peer_dbg( "extended peer exchange is not a dictionary" );
+        peer_dbg( "GET  extended-pex, not a dictionary" );
         return TR_ERROR;
     }
 
     sub = tr_bencDictFind( &val, "added" );
     if( NULL != sub && TYPE_STR == sub->type && 0 == sub->val.s.i % 6 )
     {
-        tr_torrentAddCompact( tor, TR_PEER_FROM_PEX,
-                              ( uint8_t * )sub->val.s.s, sub->val.s.i / 6 );
+        used = tr_torrentAddCompact( tor, TR_PEER_FROM_PEX,
+                                     ( uint8_t * )sub->val.s.s,
+                                     sub->val.s.i / 6 );
+        peer_dbg( "GET  extended-pex, got %i peers, used %i",
+                  sub->val.s.i / 6, used );
+    }
+    else
+    {
+        peer_dbg( "GET  extended-pex, no peers" );
     }
 
     return TR_OK;

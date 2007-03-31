@@ -1,5 +1,5 @@
 /******************************************************************************
- * $Id: peer.c 1579 2007-03-23 08:28:01Z joshe $
+ * $Id: peer.c 1600 2007-03-28 06:28:34Z joshe $
  *
  * Copyright (c) 2005-2007 Transmission authors and contributors
  *
@@ -94,7 +94,7 @@ struct tr_peer_s
     int                 optimistic;
     uint64_t            lastChoke;
 
-    uint8_t             id[20];
+    uint8_t             id[TR_ID_LEN];
 
     /* The pieces that the peer has */
     tr_bitfield_t     * bitfield;
@@ -116,7 +116,7 @@ struct tr_peer_s
     uint8_t           * outMessages;
     int                 outMessagesSize;
     int                 outMessagesPos;
-    uint8_t             outBlock[13+16384];
+    uint8_t             outBlock[25+16384];
     int                 outBlockSize;
     int                 outBlockLoaded;
     int                 outBlockSending;
