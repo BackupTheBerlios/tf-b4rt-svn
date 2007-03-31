@@ -81,6 +81,14 @@ td.outlinks {
 	height: 18px;
 	padding-left: 5px;
 	width: 100%;
+	vertical-align: top;
+}
+td.outlinks2 {
+	height: 18px;
+	padding-left: 5px;
+	width: 100%;
+	font-weight: 700;
+	vertical-align: top;
 }
 a.outlinks {
 	color: #000000;
@@ -95,6 +103,14 @@ td.buttonLinks {
 	height: 18px;
 	padding-left: 1px;
 	padding-right: 1px;
+	vertical-align: top;
+}
+td.buttonLinks2 {
+	height: 18px;
+	padding-left: 1px;
+	padding-right: 1px;
+	font-weight: 700;
+	vertical-align: top;
 }
 td.center {
 	text-align: center;
