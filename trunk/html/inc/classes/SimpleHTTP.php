@@ -471,8 +471,6 @@ class SimpleHTTP
 				return($data="");
 			} else {
 				$this->redirectCount++;
-
-				// Check we're not already over the max redirects limit:
 				// Check we have a location to get redirected content:
 				if( isset($this->responseHeaders["location"]) && !empty($this->responseHeaders["location"]) ){
 					$this->redirectUrl = $this->responseHeaders["location"];
@@ -522,6 +520,9 @@ class SimpleHTTP
 
     	// (re)set state
     	$this->state = SIMPLEHTTP_STATE_NULL;
+
+    	// (re)set redir-count
+    	$this->redirectCount = 0;
 
 		// Initialize file name:
 		$this->filename = "";
@@ -669,6 +670,9 @@ class SimpleHTTP
 
     	// (re)set state
     	$this->state = SIMPLEHTTP_STATE_NULL;
+
+    	// (re)set redir-count
+    	$this->redirectCount = 0;
 
 		// Initialize file name:
 		$this->filename = "";
