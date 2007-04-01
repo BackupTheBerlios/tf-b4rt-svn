@@ -53,8 +53,7 @@ switch ($op) {
 		$newProfile["drate"] = getRequestVar('drate');
 		$newProfile["runtime"] = getRequestVar('runtime');
 		$newProfile["sharekill"] = getRequestVar('sharekill');
-		$supsed = getRequestVar('superseeder');
-		$newProfile["superseeder"] = ($supsed == "") ? 0 : $supsed;
+		$newProfile["superseeder"] = getRequestVar('superseeder');
 		$pub = getRequestVar('public');
 		$newProfile["public"] = ($pub == "") ? 0 : $pub;
 		if (!empty( $newProfile)) {
@@ -78,8 +77,7 @@ switch ($op) {
 		$newProfile["drate"] = getRequestVar('drate');
 		$newProfile["runtime"] = getRequestVar('runtime');
 		$newProfile["sharekill"] = getRequestVar('sharekill');
-		$supsed = getRequestVar('superseeder');
-		$newProfile["superseeder"] = ($supsed == "") ? 0 : $supsed;
+		$newProfile["superseeder"] = getRequestVar('superseeder');
 		$pub = getRequestVar('public');
 		$newProfile["public"] = ($pub == "") ? 0 : $pub;
 		$pid = getRequestVar('pid');
@@ -242,7 +240,9 @@ switch ($op) {
 		$tmpl->setvar('add1', $add1);
 		(!empty( $pid )) ? $op2 = "modProfile" : $op2 = "addProfile";
 		$tmpl->setvar('op', $op2);
-		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = $superseeder = $public = "";
+		$name = $minport = $maxport = $maxcons = $rerequest = $rate = $maxuploads = $drate = $runtime = $sharekill = $public = "";
+		$runtime = $cfg['die_when_done'];
+		$superseeder = 0;
 		if (!empty($pid)) {
 			$profile = getProfile( $pid );
 			$name = " value=\"" . $profile['name'] . "\"";
@@ -255,13 +255,10 @@ switch ($op) {
 			$drate = " value=\"" . $profile['drate'] . "\"";
 			$runtime = $profile['runtime'];
 			$sharekill = " value=\"" . $profile['sharekill'] . "\"";
-			if ($profile['superseeder'] == 1)
-				$superseeder = "checked";
+			$superseeder = $profile['superseeder'];
 			if ($profile['public'] == 1)
 				$public = "checked";
 		}
-		else
-			$runtime = $cfg['die_when_done'];
 		$tmpl->setvar('name', $name);
 		$tmpl->setvar('minport', $minport);
 		$tmpl->setvar('maxport', $maxport);
@@ -284,6 +281,7 @@ switch ($op) {
 		$tmpl->setvar('default_drate', $cfg['max_download_rate']);
 		$tmpl->setvar('default_runtime', $cfg['die_when_done']);
 		$tmpl->setvar('default_sharekill', $cfg['sharekill']);
+		$tmpl->setvar('default_superseeder', $cfg['superseeder']);
 		$tmpl->setvar('default_btclient', $cfg['btclient']);
 		$tmpl->setvar('pid', $pid);
 		if (!empty($pid)) {
