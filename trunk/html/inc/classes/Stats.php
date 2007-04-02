@@ -199,6 +199,8 @@ class Stats
 		    	$this->_initXferStats();
 		    	$this->_initUserStats();
 		    	break;
+		    case "xfer_speeds":
+		    case "loadavg":
 		    case "server":
 		    	$this->_indent = "";
 		    	$this->_transferList = getTransferListArray();
@@ -249,6 +251,9 @@ class Stats
 				$this->_sendRSS();
 			case "txt":
 				$this->_sendTXT();
+			case "ms":
+				// Microsummary (http://wiki.mozilla.org/Microsummaries):
+				$this->_sendMS();
 		}
     }
 
@@ -577,6 +582,37 @@ class Stats
 	}
 
 	/**
+	 * This method sends stats as a microsummary.
+	 */
+	function _sendMS() {
+	    global $cfg;
+	    // build content
+	    $this->_content = "";
+
+		// Just a POC so far...
+		switch($this->_type){
+			case "loadavg":
+				// Server load averages:
+				$this->_content .= $this->_serverLabels[5] .": ";
+				$this->_content .= $this->_serverStats[5] . "\n";
+				break;
+			case "xfer_speeds":
+			default:
+			    // Speed up / Speed down:
+				for ($i = 0; $i < 2; $i++){
+					$this->_content .= $this->_serverLabels[$i] . ": ";
+					$this->_content .= $this->_serverStats[$i];
+					$i<1 && $this->_content .= "/";
+				}
+				$this->_content .= "\n";
+				break;
+		} // switch
+
+	    // send content
+	    $this->_sendContent("text/plain", "stats.txt", $this->_compressed, $this->_attachment);
+	}
+
+	/**
 	 * init server stats
 	 * note : this can only be used after a call to update transfer-values in cfg-
 	 *        array (eg by getTransferListArray)
@@ -659,10 +695,13 @@ Params :
       "users"      : users-stats
       "transfers"  : transfer-stats
       "transfer"   : transfer-stats of a single transfer. needs extra-param "i" with the name of the transfer
+      "xfer_speeds" : current xfer speeds, microsummary only
+      "loadavg"     : current server load average, microsummary only
 "f" : format : optional, default is "'.$cfg['stats_default_format'].'"
       "xml"        : new xml-formats, see xml-schemas in dir "xml"
       "rss"        : rss 0.91
       "txt"        : csv-formatted text
+      "ms"         : microsummary (http://wiki.mozilla.org/Microsummaries)
 "h" : header : optional, only used in txt-format, default is "'.$cfg['stats_default_header'].'"
       "0"          : send header
       "1"          : dont send header.
@@ -687,6 +726,7 @@ Examples :
 
 * '.$url.'?t=all&f=xml&username=admin&iamhim=seceret                            :  all stats sent as xml. use auth-credentials "admin/seceret"
 * '.$url.'?t=all&f=rss&username=admin&md5pass=dc5c74cfa3ba35eb87cf597a60fa756c  :  all stats sent as rss. use auth-credentials "admin/dc5c74cfa3ba35eb87cf597a60fa756c"
+* '.$url.'?f=ms                     :  format suitable for a microsummary, generally shorter more compact snippets of info suitable for displaying in a live title.  See http://wiki.mozilla.org/Microsummaries/Using for information on using microsummaries.
 	';
 	    // send content
 		$this->_sendContent("text/plain", "usage.txt", 0, 0);
