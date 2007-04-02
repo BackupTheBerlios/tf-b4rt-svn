@@ -455,12 +455,13 @@ class SimpleHTTP
 		Each of these HTTP response status codes indicates a redirect and the
 		content should be included in the Location field/header:
 
+		300 Multiple Locations
 		301 Moved Permanently
 		302 Found (has a temp location somewhere else on server)
 		303 See Other (should be fetched using GET, probably not relevant but won't hurt to include it)
 		307 Temporary Redirect
 		*/
-		if( preg_match("/^30[1-7]$/", $this->status) > 0 ){
+		if( preg_match("/^30[01-37]$/", $this->status) > 0 ){
 			// Check we're not already over the max redirects limit:
 			if ( $this->redirectCount > $this->redirectMax ) {
 				$this->state = SIMPLEHTTP_STATE_ERROR;
