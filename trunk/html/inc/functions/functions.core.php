@@ -1697,6 +1697,35 @@ function getRequestVar($varName) {
 }
 
 /**
+ * Get Request Var, with no quoting or escaping (i.e. if
+ * active on server, PHP's magic quoting is removed).
+ *
+ * Be careful what you do with the return value: it must not be output in HTML
+ * without going thru htmlspecialchars, in a shell command without going thru
+ * escapeshellarg, in a DB without going thru addslashes or similar, ...
+ *
+ * @param $varName
+ * @return string
+ */
+function getRequestVarRaw($varName) {
+	// Note: CANNOT use tfb_strip_quotes directly on $_REQUEST
+	// here, because it works in-place, i.e. would break other
+	// future uses of getRequestVarRaw on the same variables.
+
+	$return='';
+
+	if (array_key_exists($varName, $_REQUEST)){
+		$return = $_REQUEST[$varName];
+		// Seems get_magic_quotes_gpc is deprecated
+		// in PHP 6, use ini_get instead.
+		if (ini_get('magic_quotes_gpc'))
+			tfb_strip_quotes($return);
+	}
+
+	return $return;
+}
+
+/**
  *  Avoid magic_quotes_gpc issues
  *  courtesy of iliaa@php.net
  * @param	ref		&$var reference to a $_REQUEST variable

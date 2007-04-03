@@ -344,7 +344,7 @@ class SimpleHTTP
 			// Cookie: uid=12345;pass=asdfasdf;
 			//
 			//$this->request  = "GET " . ($this->httpVersion=="1.1" ? $this->getcmd : $this->url ). " HTTP/" . $this->httpVersion ."\r\n";
-			$this->request  = "GET ".$this->getcmd." HTTP/".$this->httpVersion."\r\n";
+			$this->request  = "GET ".$this->_fullURLEncode($this->getcmd)." HTTP/".$this->httpVersion."\r\n";
 			$this->request .= (!empty($this->referer)) ? "Referer: " . $this->referer . "\r\n" : "";
 			$this->request .= "Accept: */*\r\n";
 			$this->request .= "Accept-Language: en-us\r\n";
@@ -586,13 +586,18 @@ class SimpleHTTP
 			} elseif (strpos(strtolower($durl), "details.php?") !== false) {
 				// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
 				// http://www.bitmetv.org/details.php?id=18435&hit=1
+
+				// Strip final &hit=1 if present, since it only ever returns a 302
+				// redirect to the same URL without the &hit=1.
+				$durl2 = preg_replace('/&hit=1$/', '', $durl);
+
 				$treferer = "http://" . $domain["host"] . "/details.php?id=";
-				$data = $this->instance_getData($durl, $treferer);
+				$data = $this->instance_getData($durl2, $treferer);
 
 				// Sample (http://www.bitmetv.org/details.php?id=18435)
 				// download.php/18435/SpiderMan%20Season%204.torrent
 				if (preg_match("/(download.php.[^\"]+)/i", $data, $data_preg_match)) {
-					$torrent = str_replace(" ", "%20", substr($data_preg_match[0], 0, -1));
+					$torrent = substr($data_preg_match[0], 0, -1);
 					$turl2 = "http://" . $domain["host"] . "/" . $torrent;
 					$data = $this->instance_getData($turl2);
 				} else {
@@ -702,12 +707,18 @@ class SimpleHTTP
 			if (strpos(strtolower($durl), "details.php?") !== false) {
 				// Sample (http://www.bitmetv.org/rss.php?passkey=123456):
 				// http://www.bitmetv.org/details.php?id=18435&hit=1
+
+				// Strip final &hit=1 if present, since it only ever returns a 302
+				// redirect to the same URL without the &hit=1.
+				$durl2 = preg_replace('/&hit=1$/', '', $durl);
+
 				$treferer = "http://" . $domain["host"] . "/details.php?id=";
 				$data = $this->instance_getData($durl, $treferer);
+
 				// Sample (http://www.bitmetv.org/details.php?id=18435)
 				// download.php/18435/SpiderMan%20Season%204.torrent
 				if (preg_match("/(download.php.[^\"]+)/i", $data, $data_preg_match)) {
-					$tr = str_replace(" ", "%20", substr($data_preg_match[0], 0, -1));
+					$tr = substr($data_preg_match[0], 0, -1);
 					$turl2 = "http://" . $domain["host"] . "/" . $tr;
 					$data = $this->instance_getData($turl2);
 				} else {
@@ -814,6 +825,24 @@ class SimpleHTTP
 		return (isset($matches[1]))
 			? $matches[1]
 			: 0;
+	}
+
+	/**
+	 * URL-encode all fragments of an URL, not re-encoding what is already encoded.
+	 *
+	 * @param $url
+	 * @return string
+	 */
+	function _fullURLEncode($url) {
+		# Split URL into fragments, delimiters are: ':', '@', '/', '?', '=', '&' and /%[[:xdigit:]]{2}/.
+		$fragments = preg_split('#[@:/?=&]+|%[[:xdigit:]]{2}#', $url, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_OFFSET_CAPTURE);
+
+		for ($i = count($fragments) - 1; $i >= 0; $i--) {
+			$fragment = $fragments[$i];	# $fragment[0] is the fragment, $fragment[1] is its starting position.
+			$url = substr_replace($url, rawurlencode($fragment[0]), $fragment[1], strlen($fragment[0]));
+		}
+
+		return $url;
 	}
 
 }
