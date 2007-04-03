@@ -74,7 +74,7 @@ switch ($action) {
 		dispatcher_processDownload(getRequestVarRaw('url'), getRequestVar('type'));
     	break;
     case "wget":
-		dispatcher_injectWget(getRequestVar('url'));
+		dispatcher_injectWget(getRequestVarRaw('url'));
     	break;
 
 /*******************************************************************************
