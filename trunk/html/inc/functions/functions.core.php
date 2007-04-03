@@ -1077,8 +1077,21 @@ function getTransferArray($sortOrder = '') {
 		return $retVal;
 	}
 	while ($transfer = @readdir($handle)) {
-		if (($transfer{0} != ".") && isValidTransfer($transfer))
-			$retVal[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
+		if ($transfer{0} != ".") {
+			switch (substr($transfer, -4)) {
+				case 'stat':
+				case '.log':
+				case '.pid':
+				case '.cmd':
+					break;
+				default:
+					if (isValidTransfer($transfer))
+						$retVal[filemtime($cfg["transfer_file_path"]."/".$transfer).md5($transfer)] = $transfer;
+					else
+						AuditAction($cfg["constants"]["error"], "INVALID TRANSFER: ".$transfer);
+					break;
+			}
+		}
 	}
 	@closedir($handle);
 	// sort transfer-array
