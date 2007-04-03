@@ -45,9 +45,6 @@ switch ($action) {
     case "start":
 		dispatcher_startTransfer(urldecode(getRequestVar('transfer')));
     	break;
-    case "urlUpload":
-		dispatcher_processDownload(urldecode(getRequestVar('url')), getRequestVar('type'));
-    	break;
     case "delete":
     	dispatcher_deleteTransfer(urldecode(getRequestVar('transfer')));
     	break;
@@ -63,22 +60,21 @@ switch ($action) {
     case "deQueue":
     	dispatcher_deQueueTransfer(urldecode(getRequestVar('transfer')));
     	break;
-    case "wget":
-		dispatcher_injectWget(getRequestVar('url'));
-    	break;
-
-/*******************************************************************************
- * set prio
- ******************************************************************************/
     case "setFilePriority":
-		dispatcher_setFilePriority(getRequestVar('transfer'));
+		dispatcher_setFilePriority(urldecode(getRequestVar('transfer')));
     	break;
 
 /*******************************************************************************
- * file-upload
+ * injects
  ******************************************************************************/
 	case "fileUpload":
 		dispatcher_processUpload();
+    	break;
+    case "urlUpload":
+		dispatcher_processDownload(getRequestVar('url'), getRequestVar('type'));
+    	break;
+    case "wget":
+		dispatcher_injectWget(getRequestVar('url'));
     	break;
 
 /*******************************************************************************
