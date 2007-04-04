@@ -26,24 +26,24 @@
 function compat_tf_indexDispatch() {
 	// dispatcher-functions
 	require_once("inc/functions/functions.dispatcher.php");
-	// transfer-start
+	// start
 	if (isset($_REQUEST['torrent']))
 		dispatcher_startTransfer(urldecode(getRequestVar('torrent')));
-	// get torrent via url
-	if (isset($_REQUEST['url_upload']))
-		dispatcher_processDownload(getRequestVar('url_upload'), 'torrent');
-	// file upload
-	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
-		compat_tf_processUpload();
-	// del file
-	if (isset($_REQUEST['delfile']))
-		dispatcher_deleteTransfer(urldecode(getRequestVar('delfile')));
-	// kill
+	// stop
 	if (isset($_REQUEST["kill_torrent"]))
 		dispatcher_stopTransfer(urldecode(getRequestVar('kill_torrent')));
+	// del
+	if (isset($_REQUEST['delfile']))
+		dispatcher_deleteTransfer(urldecode(getRequestVar('delfile')));
 	// deQueue
 	if (isset($_REQUEST["QEntry"]))
 		dispatcher_deQueueTransfer(urldecode(getRequestVar('QEntry')));
+	// get torrent via url
+	if (isset($_REQUEST['url_upload']))
+		dispatcher_processDownload(getRequestVarRaw('url_upload'), 'torrent');
+	// file upload
+	if ((isset($_FILES['upload_file'])) && (!empty($_FILES['upload_file']['name'])))
+		compat_tf_processUpload();
 }
 
 /**
