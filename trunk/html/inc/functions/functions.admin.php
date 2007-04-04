@@ -485,10 +485,10 @@ function admin_deleteLink() {
  */
 function admin_addRSS() {
 	global $cfg;
-	$newRSS = getRequestVar('newRSS');
+	$newRSS = getRequestVarRaw('newRSS');
 	if(!empty($newRSS)){
 		addNewRSS($newRSS);
-		AuditAction($cfg["constants"]["admin"], "New RSS: ".$newRSS);
+		AuditAction($cfg["constants"]["admin"], "New RSS: ".addslashes($newRSS));
 	}
 	@header("location: admin.php?op=editRSS");
 	exit();
