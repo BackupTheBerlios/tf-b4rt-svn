@@ -278,7 +278,7 @@ switch ($pageop) {
 	case "saveJob":
 		$jobNumber = trim(getRequestVar('job'));
 		$savedir = getRequestVar('savedir');
-		$url = getRequestVar('url');
+		$url = getRequestVarRaw('url');
 		$filtername = getRequestVar('filtername');
 		$checkdir = getRequestVar('checkdir');
 		$isNew = (empty($jobNumber)) ? true : false;
