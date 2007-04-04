@@ -406,14 +406,14 @@ function admin_updateSearchSettings() {
  */
 function admin_addLink() {
 	global $cfg;
-	$newLink = getRequestVar('newLink');
-	$newSite = getRequestVar('newSite');
+	$newLink = getRequestVarRaw('newLink');
+	$newSite = getRequestVarRaw('newSite');
 	if (!empty($newLink)){
 		if (strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 			$newLink = "http://".$newLink;
 		empty($newSite) && $newSite = $newLink;
 		addNewLink($newLink, $newSite);
-		AuditAction($cfg["constants"]["admin"], "New ".$cfg['_LINKS_MENU'].": ".$newSite." [".$newLink."]");
+		AuditAction($cfg["constants"]["admin"], "New ".$cfg['_LINKS_MENU'].": ".addslashes($newSite)." [".addslashes($newLink)."]");
 	}
 	@header("location: admin.php?op=editLinks");
 	exit();
@@ -425,8 +425,8 @@ function admin_addLink() {
 function admin_editLink() {
 	global $cfg;
 	$lid = getRequestVar('lid');
-	$newLink = getRequestVar('editLink');
-	$newSite = getRequestVar('editSite');
+	$newLink = getRequestVarRaw('editLink');
+	$newSite = getRequestVarRaw('editSite');
 	if (!empty($newLink)){
 		if(strpos($newLink, "http://" ) !== 0 && strpos($newLink, "https://" ) !== 0 && strpos($newLink, "ftp://" ) !== 0)
 			$newLink = "http://".$newLink;
@@ -434,7 +434,7 @@ function admin_editLink() {
 		$oldLink = getLink($lid);
 		$oldSite = getSite($lid);
 		alterLink($lid, $newLink, $newSite);
-		AuditAction($cfg["constants"]["admin"], "Change Link: ".$oldSite." [".$oldLink."] -> ".$newSite." [".$newLink."]");
+		AuditAction($cfg["constants"]["admin"], "Change Link: ".addslashes($oldSite)." [".addslashes($oldLink)."] -> ".addslashes($newSite)." [".addslashes($newLink)."]");
 	}
 	@header("location: admin.php?op=editLinks");
 	exit();
