@@ -40,14 +40,14 @@ if (!(isset($_REQUEST["u"]))) {
 	@header("location: index.php?iid=index");
 	exit();
 } else {
-	$url = getRequestVar("u");
+	$url = getRequestVarRaw("u");
 }
 
 // init template-instance
 tmplInitializeInstance($cfg["theme"], "page.dereferrer.tmpl");
 
 // set vars
-$tmpl->setvar('url', $url);
+$tmpl->setvar('url', htmlentities($url, ENT_QUOTES));
 $tmpl->setvar('meta_refresh', '0;URL='.$url);
 //
 tmplSetTitleBar($cfg["pagetitle"].' - dereferrer', false);
